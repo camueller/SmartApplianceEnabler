@@ -13,10 +13,15 @@ Der *Smart Appliance Enabler* besteht aus der hier bei Github befindlichen Softw
 TODO: Schaltplan mit Raspi, SSR, Stromzähler
 
 ## Software bauen und installieren
+
 Git installieren
-git clone
+
+git clone https://github.com/camueller/SmartApplianceEnabler.git
+
 Maven installieren
+
 mvn clean install
+
 Dateien mit ssh auf rsaspi schieben
 
 ## Konfiguration
