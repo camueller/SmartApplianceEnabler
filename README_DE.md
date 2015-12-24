@@ -14,16 +14,70 @@ Der *Smart Appliance Enabler* besteht aus der hier bei Github befindlichen Softw
 
 Die Nummerierung der Pins richtet sich nach [Pi4J](http://pi4j.com/images/gpio-control-example-large.png) und weicht von der offiziellen Nummerierung ab!
 
-## Software bauen und installieren
+## Software
+### Dank und Anerkennung
+Der *Smart Appliance Enabler* verwendet dankbar und anerkennend folgende Open-Source-Technologien:
+* [Spring Boot](http://projects.spring.io/spring-boot) für RESTful Web-Services (SEMP-Protokoll)
+* [Cling](http://4thline.org/projects/cling) für UPnP (SEMP-Protokoll)
 
-Git installieren
-
+### Bauen
+Bevor die Software auf dem Raspberry Pi installiert werden kann, muß diese zunächst gebaut werden.
+Den dafür notwendigen Source-Code kann man mit einem Git-Client ([Git installieren](https://git-scm.com/book/de/v1/Los-geht%E2%80%99s-Git-installieren)) herunterladen
+```
 git clone https://github.com/camueller/SmartApplianceEnabler.git
+```
 
-Maven installieren
+oder als [ZIP-Datei](https://github.com/camueller/SmartApplianceEnabler/archive/master.zip). Letzteres muß natürlich erst noch ausgepackt werden.
 
-mvn clean install
+Zum Bauen ist weiterhin [Maven](https://maven.apache.org) erforderlich, das gegebenenfalls noch [installiert](https://maven.apache.org/install.html) werden muss.
 
+Um *Smart Appliance Enabler* zu bauen, ruft man Maven im Verzeichnis *SmartApplianceEnabler* wie folgt auf:
+```
+axel@tpw520:~/git/SmartApplianceEnabler$ mvn clean package
+[INFO] Scanning for projects...
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building SmartApplianceEnabler 0.1.0
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ SmartApplianceEnabler ---
+[INFO] Deleting /data/git/SmartApplianceEnabler.old/target
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ SmartApplianceEnabler ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 1 resource
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.1:compile (default-compile) @ SmartApplianceEnabler ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 33 source files to /data/git/SmartApplianceEnabler.old/target/classes
+[WARNING] /data/git/SmartApplianceEnabler.old/src/main/java/de/avanux/smartapplianceenabler/appliance/FileHandler.java: /data/git/SmartApplianceEnabler.old/src/main/java/de/avanux/smartapplianceenabler/appliance/FileHandler.java uses unchecked or unsafe operations.
+[WARNING] /data/git/SmartApplianceEnabler.old/src/main/java/de/avanux/smartapplianceenabler/appliance/FileHandler.java: Recompile with -Xlint:unchecked for details.
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ SmartApplianceEnabler ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /data/git/SmartApplianceEnabler.old/src/test/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.1:testCompile (default-testCompile) @ SmartApplianceEnabler ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.18.1:test (default-test) @ SmartApplianceEnabler ---
+[INFO] No tests to run.
+[INFO] 
+[INFO] --- maven-jar-plugin:2.5:jar (default-jar) @ SmartApplianceEnabler ---
+[INFO] Building jar: /data/git/SmartApplianceEnabler.old/target/SmartApplianceEnabler-0.1.0.jar
+[INFO] 
+[INFO] --- spring-boot-maven-plugin:1.3.0.RELEASE:repackage (default) @ SmartApplianceEnabler ---
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 2.348 s
+[INFO] Finished at: 2015-12-24T17:49:00+01:00
+[INFO] Final Memory: 28M/316M
+[INFO] ------------------------------------------------------------------------
+```
+Beim erstmaligen Aufruf von Maven werden dabei alle benötigten Bibliotheken aus dem offiziellen Maven-Repository heruntergeladen. Das Bauen war nur dann erfolgreich, wenn *BUILD SUCCESS* erscheint! In diesem Fall findet sich die Datei `SmartApplianceEnabler-*.jar` im Unterverzeichnis `target`.
+
+### Installation
 Dateien mit ssh auf rsaspi schieben
 
 ## Konfiguration
