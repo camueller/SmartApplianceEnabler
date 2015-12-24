@@ -8,9 +8,11 @@ Der *Smart Appliance Enabler* dient dazu, beliebige Geräte (Wärmepumpe, Waschm
 Damit der *Smart Appliance Enabler* in die (Smart-Home-) Steuerung integriert werden kann, muss er deren Protokoll(e) unterstützen. Obwohl die Unterstützung diverser Steuerungen konzeptionell berücksichtigt wurde, wird aktuell nur das **SEMP**-Protokoll zur Integration mit dem [Sunny Home Manager](http://www.sma.de/produkte/monitoring-control/sunny-home-manager.html) von [SMA](http://www.sma.de) unterstützt.
 
 ## Aufbau
-Der *Smart Appliance Enabler* besteht aus der hier bei Github befindlichen Software und benötigt einen [Raspberry Pi](https://de.wikipedia.org/wiki/Raspberry_Pi) als Hardware. Dieser extrem preiswerte Kleinstcomputer ist perfekt zum Steuern und Messen geeignet, da er bereits [digitale Ein-/Ausgabe-Schnittstellen](https://de.wikipedia.org/wiki/Raspberry_Pi#GPIO) enthält, die zum Schalten sowie zum Messen des Stromverbrauchs benötigt werden. Der Aufbau zum Schalten einer Pumpe inklusive der Messung des Stromverbrauchs sieht wie folgt aus:
+Der *Smart Appliance Enabler* besteht aus der hier bei Github befindlichen Software und benötigt einen [Raspberry Pi](https://de.wikipedia.org/wiki/Raspberry_Pi) als Hardware. Dieser extrem preiswerte Kleinstcomputer ist perfekt zum Steuern und Messen geeignet, da er bereits [digitale Ein-/Ausgabe-Schnittstellen](https://de.wikipedia.org/wiki/Raspberry_Pi#GPIO) enthält, die zum Schalten sowie zum Messen des Stromverbrauchs benötigt werden. Der Aufbau zum Schalten einer Pumpe durch ein Solid-State-Relais inklusive der Messung des Stromverbrauchs sieht wie folgt aus:
 
 ![SmartHomeEnablerSchaltung](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/SmartHomeEnablerSchaltung.png)
+
+Die Nummerierung der Pins richtet sich nach [Pi4J](http://pi4j.com/images/gpio-control-example-large.png) und weicht von der offiziellen Nummerierung ab!
 
 ## Software bauen und installieren
 
