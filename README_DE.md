@@ -12,11 +12,13 @@ Der *Smart Appliance Enabler* besteht aus der hier bei Github befindlichen Softw
 
 ![SmartHomeEnablerSchaltung](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/SmartHomeEnablerSchaltung.png)
 
+An den anderen GPIO-Pins des Raspberry können weitere Schalter und/oder Stromzähler angeschlossen werden, d.h. ein Raspberry Pi kann eine Vielzahl von Geräten verwalten.
+
 Die Nummerierung der Pins richtet sich nach [Pi4J](http://pi4j.com/images/gpio-control-example-large.png) und weicht von der offiziellen Nummerierung ab!
 
 ## Software
 ### Dank und Anerkennung
-Der *Smart Appliance Enabler* verwendet dankbar und anerkennend folgende Open-Source-Technologien:
+Der *Smart Appliance Enabler* verwendet intern folgende Open-Source-Software:
 * [Spring Boot](http://projects.spring.io/spring-boot) für RESTful Web-Services (SEMP-Protokoll)
 * [Cling](http://4thline.org/projects/cling) für UPnP (SEMP-Protokoll)
 
