@@ -17,10 +17,20 @@ An die GPIO-Pins des Raspberry können diverse Schalter und/oder Stromzähler an
 
 Die Nummerierung der Pins richtet sich nach [Pi4J](http://pi4j.com/images/gpio-control-example-large.png) und weicht von der offiziellen Nummerierung ab!
 
-### Schaltbeispiel 1: 240V-Gerät mit Stromverbrauchsmessung
-Der Aufbau zum Schalten eines Pumpe durch ein Solid-State-Relais inklusive der Messung des Stromverbrauchs könnte wie folgt aussehen:
+### Schaltbeispiele
+Die nachfolgenden Schaltbeispiele zeigen Schaltungen zum Schalten mittels Solid-State-Relais und zur Stromverbrauchsmessung mittels digitalem Stromzähler. Beides ist unabhängig voneinander, d.h. Solid-State-Relais oder Stromzähler können entfallen, falls nur geschalten oder der Stromverbrauch ermittelt werden soll.
 
-![SmartHomeEnablerSchaltung](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/SmartHomeEnablerSchaltung.png)
+*Hinweis: Die Installation von steckerlosen 200/400V-Geräten sollte grundsätzlich durch einen autorisierten Fachbetrieb vorgenommen werden!*
+
+#### Schaltbeispiel 1: 240V-Gerät mit Stromverbrauchsmessung
+Der Aufbau zum Schalten eines 240V-Gerätes (z.B. Pumpe) könnte wie folgt aussehen:
+
+![Schaltbeispiel1](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/SmartHomeEnablerSchaltung.png)
+
+#### Schaltbeispiel 2: 400V-Gerät mit Stromverbrauchsmessung
+Der Aufbau zum Schalten eines 400V-Gerätes (z.B. Pumpe) könnte wie folgt aussehen:
+
+![Schaltbeispiel2](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/Schaltbeispiel400VMitMessung.png)
 
 ## Software
 ### Dank und Anerkennung
