@@ -59,7 +59,7 @@ axel@tpw520:~/git/SmartApplianceEnabler$ mvn clean package
 [INFO] ------------------------------------------------------------------------
 [INFO] 
 [INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ SmartApplianceEnabler ---
-[INFO] Deleting /data/git/SmartApplianceEnabler.old/target
+[INFO] Deleting /data/git/SmartApplianceEnabler/target
 [INFO] 
 [INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ SmartApplianceEnabler ---
 [INFO] Using 'UTF-8' encoding to copy filtered resources.
@@ -67,13 +67,13 @@ axel@tpw520:~/git/SmartApplianceEnabler$ mvn clean package
 [INFO] 
 [INFO] --- maven-compiler-plugin:3.1:compile (default-compile) @ SmartApplianceEnabler ---
 [INFO] Changes detected - recompiling the module!
-[INFO] Compiling 33 source files to /data/git/SmartApplianceEnabler.old/target/classes
-[WARNING] /data/git/SmartApplianceEnabler.old/src/main/java/de/avanux/smartapplianceenabler/appliance/FileHandler.java: /data/git/SmartApplianceEnabler.old/src/main/java/de/avanux/smartapplianceenabler/appliance/FileHandler.java uses unchecked or unsafe operations.
-[WARNING] /data/git/SmartApplianceEnabler.old/src/main/java/de/avanux/smartapplianceenabler/appliance/FileHandler.java: Recompile with -Xlint:unchecked for details.
+[INFO] Compiling 33 source files to /data/git/SmartApplianceEnabler/target/classes
+[WARNING] /data/git/SmartApplianceEnabler/src/main/java/de/avanux/smartapplianceenabler/appliance/FileHandler.java: /data/git/SmartApplianceEnabler/src/main/java/de/avanux/smartapplianceenabler/appliance/FileHandler.java uses unchecked or unsafe operations.
+[WARNING] /data/git/SmartApplianceEnabler/src/main/java/de/avanux/smartapplianceenabler/appliance/FileHandler.java: Recompile with -Xlint:unchecked for details.
 [INFO] 
 [INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ SmartApplianceEnabler ---
 [INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /data/git/SmartApplianceEnabler.old/src/test/resources
+[INFO] skip non existing resourceDirectory /data/git/SmartApplianceEnabler/src/test/resources
 [INFO] 
 [INFO] --- maven-compiler-plugin:3.1:testCompile (default-testCompile) @ SmartApplianceEnabler ---
 [INFO] No sources to compile
@@ -82,7 +82,7 @@ axel@tpw520:~/git/SmartApplianceEnabler$ mvn clean package
 [INFO] No tests to run.
 [INFO] 
 [INFO] --- maven-jar-plugin:2.5:jar (default-jar) @ SmartApplianceEnabler ---
-[INFO] Building jar: /data/git/SmartApplianceEnabler.old/target/SmartApplianceEnabler-0.1.0.jar
+[INFO] Building jar: /data/git/SmartApplianceEnabler/target/SmartApplianceEnabler-0.1.0.jar
 [INFO] 
 [INFO] --- spring-boot-maven-plugin:1.3.0.RELEASE:repackage (default) @ SmartApplianceEnabler ---
 [INFO] ------------------------------------------------------------------------
