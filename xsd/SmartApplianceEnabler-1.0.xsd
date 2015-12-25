@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/xsd/SmartApplianceEnabler-1.0.xsd"
+	elementFormDefault="qualified"
+	xmlns="https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/xsd/SmartApplianceEnabler-1.0.xsd"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<xs:element name="Appliances">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Appliance" type="ApplianceType" minOccurs="1" maxOccurs="unbounded" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:complexType name="ApplianceType">
+		<xs:sequence>
+			<xs:element name="Configuration" type="ConfigurationType" minOccurs="1" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="id" type="xs:string" />
+	</xs:complexType>
+
+	<xs:complexType name="ConfigurationType">
+		<xs:sequence>
+			<xs:element name="Switch" type="SwitchType" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="S0ElectricityMeter" type="S0ElectricityMeterType" minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="SwitchType">
+		<xs:attribute name="pin" type="xs:int" />
+		<xs:attribute name="reverseStates" type="xs:boolean" />
+	</xs:complexType>
+
+	<xs:complexType name="S0ElectricityMeterType">
+		<xs:attribute name="pin" type="xs:int"></xs:attribute>
+		<xs:attribute name="pinPullResistance" type="PinPullResistanceType" />
+		<xs:attribute name="impulsesPerKwh" type="xs:int"></xs:attribute>
+		<xs:attribute name="measurementInterval" type="xs:int"></xs:attribute>
+	</xs:complexType>
+
+	<xs:simpleType name="PinPullResistanceType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="PULL_DOWN" />
+			<xs:enumeration value="PULL_UP" />
+		</xs:restriction>
+	</xs:simpleType>
+
+
+</xs:schema>
