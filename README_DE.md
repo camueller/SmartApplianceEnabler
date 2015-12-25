@@ -109,7 +109,7 @@ Im Verzeichnis `example` finden sich Beispieldateien mit Kommentaren zu den einz
 Diese sollen dabei helfen, die für die eigenen Geräte passenden Dateien Device2EM.xml und Appliances.xml (mit genau diesen Namen und entsprechender Groß-/Kleinschreibung!) zu erstellen.
 
 Die angepassten XML-Dateien sollten hinsichtlich ihrer Gültigkeit überprüft werden.
-Dazu ist die Seite http://www.freeformatter.com/xml-validator-xsd.htm besonders geeignet:
+Dazu ist die Seite http://www.freeformatter.com/xml-validator-xsd.html besonders geeignet:
 Der Inhalt der XML-Datei wird in das Fenster *XML Input* kopiert. Bei *XSD Input* muss nur *Option 2* eingegeben werden:
 * beim Prüfen von Device2EM.xml: https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/xsd/SEMP-1.1.5.xsd
 * beim Prüfen von Appliances.xml: https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/xsd/SmartApplianceEnabler-1.0.xsd
