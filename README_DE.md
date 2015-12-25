@@ -7,14 +7,20 @@ Der *Smart Appliance Enabler* dient dazu, beliebige Geräte (Wärmepumpe, Waschm
 
 Damit der *Smart Appliance Enabler* in die (Smart-Home-) Steuerung integriert werden kann, muss er deren Protokoll(e) unterstützen. Obwohl die Unterstützung diverser Steuerungen konzeptionell berücksichtigt wurde, wird aktuell nur das **SEMP**-Protokoll zur Integration mit dem [Sunny Home Manager](http://www.sma.de/produkte/monitoring-control/sunny-home-manager.html) von [SMA](http://www.sma.de) unterstützt.
 
-## Aufbau
-Der *Smart Appliance Enabler* besteht aus der hier bei Github befindlichen Software und benötigt einen [Raspberry Pi](https://de.wikipedia.org/wiki/Raspberry_Pi) als Hardware. Dieser extrem preiswerte Kleinstcomputer ist perfekt zum Steuern und Messen geeignet, da er bereits [digitale Ein-/Ausgabe-Schnittstellen](https://de.wikipedia.org/wiki/Raspberry_Pi#GPIO) enthält, die zum Schalten sowie zum Messen des Stromverbrauchs benötigt werden. Der Aufbau zum Schalten einer Pumpe durch ein Solid-State-Relais inklusive der Messung des Stromverbrauchs sieht wie folgt aus:
+## Hardware
+### Raspberry Pi
+Der *Smart Appliance Enabler* benötigt einen [Raspberry Pi](https://de.wikipedia.org/wiki/Raspberry_Pi) als Hardware. Dieser extrem preiswerte Kleinstcomputer (ca. 40 Euro) ist perfekt zum Steuern und Messen geeignet, da er bereits [digitale Ein-/Ausgabe-Schnittstellen](https://de.wikipedia.org/wiki/Raspberry_Pi#GPIO) enthält, die zum Schalten sowie zum Messen des Stromverbrauchs benötigt werden. Der aktuelle **Raspberry Pi 2 Model B** ist ist deutlich performanter als die Vorgängermodelle, was der vom *Smart Appliance Enabler* benötigten Software zugute kommt.
 
-![SmartHomeEnablerSchaltung](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/SmartHomeEnablerSchaltung.png)
+Für den Raspberry Pi exitiseren verschiedene, darauf zugeschnittene, Betriebsysteme (Images), wobei  [Raspbian](https://www.raspberrypi.org/downloads/raspbian) [installiert](https://www.raspberrypi.org/documentation/installation/installing-images/README.md) werden sollte, da dieses bereits die vom *Smart Appliance Enabler* benötigte Java-Runtime beinhaltet.
 
-An den anderen GPIO-Pins des Raspberry können weitere Schalter und/oder Stromzähler angeschlossen werden, d.h. ein Raspberry Pi kann eine Vielzahl von Geräten verwalten.
+An die GPIO-Pins des Raspberry können diverse Schalter und/oder Stromzähler angeschlossen werden, d.h. ein einziger Raspberry Pi kann eine Vielzahl von Geräten verwalten. Dabei darf jedoch die **Stromstärke** am 5V-Pin den Wert von 300 mA (Model B) bzw. 500mA (Model A) und am 3,3V-Pin den Wert von 50mA nicht überschreiten ([Quelle](http://elinux.org/RPi_Low-level_peripherals#General_Purpose_Input.2FOutput_.28GPIO.29))!
 
 Die Nummerierung der Pins richtet sich nach [Pi4J](http://pi4j.com/images/gpio-control-example-large.png) und weicht von der offiziellen Nummerierung ab!
+
+### Schaltbeispiel 1: 240V-Gerät mit Stromverbrauchsmessung
+Der Aufbau zum Schalten eines Pumpe durch ein Solid-State-Relais inklusive der Messung des Stromverbrauchs könnte wie folgt aussehen:
+
+![SmartHomeEnablerSchaltung](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/SmartHomeEnablerSchaltung.png)
 
 ## Software
 ### Dank und Anerkennung
