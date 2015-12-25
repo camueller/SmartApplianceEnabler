@@ -28,7 +28,7 @@ Der Aufbau zum Schalten eines 240V-Gerätes (z.B. Pumpe) könnte wie folgt ausse
 ![Schaltbeispiel1](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/SmartHomeEnablerSchaltung.png)
 
 #### Schaltbeispiel 2: 400V-Gerät mit Stromverbrauchsmessung
-Der Aufbau zum Schalten eines 400V-Gerätes (z.B. Pumpe) könnte wie folgt aussehen:
+Der Aufbau zum Schalten eines 400V-Gerätes (z.B. Heizstab) könnte wie folgt aussehen:
 
 ![Schaltbeispiel2](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/Schaltbeispiel400VMitMessung.png)
 
