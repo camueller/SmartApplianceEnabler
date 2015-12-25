@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Konfiguration für Wärmepumpe (nur Stromverbrauchsmessung) und Filterpumpe (nur Schalten)
+ -->
+<Device2EM xmlns="http://www.sma.de/communication/schema/SEMP/v1">
+    <!--
+    ###########################################################################################
+    Wärmepumpe 
+    ###########################################################################################
+     -->
+	<DeviceInfo>
+	    
+	    <!-- Informationen zum Gerät -->
+		<Identification>
+		    <!--
+		    F unverändert lassen ("local scope")
+		    00000001 für jeden Raspberry Pi hochzählen 
+		    000000000001 für jedes von vorgenanntem Raspberry Pi verwaltete Gerät hochzählen
+		    00 unverändert lassen (sub device id)
+		    -->
+			<DeviceId>F-00000001-000000000001-00</DeviceId>
+			<!-- Gerätemodell -->
+			<DeviceName>Vitocal 300 BW 116</DeviceName>
+			<!-- Geräteart -->
+			<DeviceType>Wärmepumpe</DeviceType>
+			<!-- Gerätenummer, die sich auf dem Gerät befindet -->
+			<DeviceSerial>3004306400012108</DeviceSerial>
+			<!-- Gerätehersteller -->
+			<DeviceVendor>Viessmann</DeviceVendor>
+		</Identification>
+		
+		<!-- Geräteeigenschaften, die sich während des Betriebs nicht ändern -->
+		<Characteristics>
+		    <!-- Maximale Leistungsaufnahme des Gerätes in W -->
+			<MaxPowerConsumption>4000</MaxPowerConsumption>
+			<!-- OPTIONAL: Nachdem das Gerät eingeschaltet wurde, muss es mindestens diese Anzahl
+			von Sekunden eingeschaltet bleiben -->
+			<MinOnTime>2400</MinOnTime>
+			<!-- OPTIONAL: Nachdem das Gerät ausgeschaltet wurde, muss es mindestens diese Anzahl
+			von Sekunden ausgeschaltet bleiben -->
+			<MinOffTime>1200</MinOffTime>
+		</Characteristics>
+		
+		<!-- Energiemanagement-Eigenschaften des Gerätes -->
+		<Capabilities>
+		    <!-- FIXME: automatisch auf "Measurement" setzen, wenn Zähler vorhanden, sonst "Estimation" -->
+			<CurrentPower>
+				<Method>Measurement</Method>
+			</CurrentPower>
+			<!-- FIXME weglassen -->
+			<Timestamps>
+				<AbsoluteTimestamps>false</AbsoluteTimestamps>
+			</Timestamps>
+			<!-- Sollte auf "true" gesetzt werden, wenn der EnergyManager die Laufzeit
+			des Gerät unterbrechen darf; sonst auf "false" setzen -->
+			<Interruptions>
+				<InterruptionsAllowed>false</InterruptionsAllowed>
+			</Interruptions>
+			<!-- FIXME wird automatisch gesetzt, wenn minRunningTime ungleich maxRunningTime 
+			Wenn das Geräte zusätzliche Energie aufnehmen kann, die für den eigentlichen Betrieb nicht
+			unbeding notwendig ist, dann auf "true" setzen; sonst auf "false" setzen
+			 -->
+			<Requests>
+				<OptionalEnergy>false</OptionalEnergy>
+			</Requests>
+		</Capabilities>
+	</DeviceInfo>
+	<DeviceStatus>
+	    <!-- diese DeviceId muss identisch sein mit der DeviceId des Gerätes, zu dem dieser Gerätestatus gehört -->
+		<DeviceId>F-00000001-000000000001-00</DeviceId>
+		<!--
+		Sollte auf "true" gesetzt werden, wenn dieses Gerät Schaltempfehlungen des EnergyManagers akzeptiert.
+		In diesem Fall muss eine PlanningRequest-Sektion und mindestens 1 Timeframe vorhanden sein.
+		Falls das Gerät nicht vom EnergyManagers gesteuert werden soll, dann auf "false" setzen.
+		-->
+	   	<EMSignalsAccepted>false</EMSignalsAccepted>
+	</DeviceStatus>
+		
+    <!--
+    ###########################################################################################
+    Filterpumpe 
+    ###########################################################################################
+     -->
+		
+	<DeviceInfo>
+		<Identification>
+			<DeviceId>F-00000001-000000000002-00</DeviceId>
+			<DeviceName>Bettar 14</DeviceName>
+			<DeviceType>Filterpumpe</DeviceType>
+			<DeviceSerial>41589/34</DeviceSerial>
+			<DeviceVendor>Speck</DeviceVendor>
+		</Identification>
+		<Characteristics>
+			<MaxPowerConsumption>970</MaxPowerConsumption>
+		</Characteristics>
+		<Capabilities>
+		    <!-- FIXME: automatisch auf "Measurement" setzen, wenn Zähler vorhanden, sonst "Estimation" -->
+		    <CurrentPower>
+				<Method>Estimation</Method>
+			</CurrentPower>
+			<!-- FIXME weglassen -->
+			<Timestamps>
+				<AbsoluteTimestamps>false</AbsoluteTimestamps>
+			</Timestamps>
+			<Interruptions>
+				<InterruptionsAllowed>true</InterruptionsAllowed>
+			</Interruptions>
+			<Requests>
+				<OptionalEnergy>false</OptionalEnergy>
+			</Requests>
+		</Capabilities>
+	</DeviceInfo>
+	<DeviceStatus>
+		<DeviceId>F-00000001-000000000002-00</DeviceId>
+	   	<EMSignalsAccepted>true</EMSignalsAccepted>
+	</DeviceStatus>
+	<PlanningRequest>
+	<!-- FIXME muss mindesten 1 Timeframe enthalten; sonst Entfall -->
+		<Timeframe>
+		    <!-- diese DeviceId muss identisch sein mit der DeviceId des Gerätes, zu dem diese Planungsanfrage gehört -->
+			<DeviceId>F-00000001-000000000002-00</DeviceId>
+			<EarliestStart>995</EarliestStart>
+			<LatestEnd>9995</LatestEnd>
+			<MinRunningTime>7200</MinRunningTime>
+			<!-- muss nur gesetzt werden, we das Geräte zusätzliche Energie aufnehmen kann, 
+			die für den eigentlichen Betrieb nicht unbeding notwendig ist-->
+			<MaxRunningTime>7200</MaxRunningTime>
+		</Timeframe>
+	</PlanningRequest>
+			
+</Device2EM>

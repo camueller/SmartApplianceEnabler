@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.0">
+	<Appliance id="F-00000001-000000000001-00">
+		<Configuration>
+			<S0ElectricityMeter pin="2" pinPullResistance="PULL_DOWN" impulsesPerKwh="1000" measurementInterval="60" />
+		</Configuration>
+	</Appliance>
+    <Appliance id="F-00000001-000000000002-00">
+		<Configuration>
+			<Switch pin="1" reverseStates="true" />
+			<Timeframe minRunningTime="28800" maxRunningTime="28800">
+			    <EarliestStart hour="0" minute="0" second="0"/>
+			    <LatestEnd hour="23" minute="59" second="59"/>
+			</Timeframe>
+		</Configuration>
+	</Appliance>
+</Appliances>

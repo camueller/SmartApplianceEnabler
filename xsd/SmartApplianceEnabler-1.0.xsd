@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xs:schema targetNamespace="https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/xsd/SmartApplianceEnabler-1.0.xsd"
+<xs:schema targetNamespace="http://github.com/camueller/SmartApplianceEnabler/v1.0"
 	elementFormDefault="qualified"
-	xmlns="https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/xsd/SmartApplianceEnabler-1.0.xsd"
+	xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.0"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
 	<xs:element name="Appliances">
@@ -23,6 +23,7 @@
 		<xs:sequence>
 			<xs:element name="Switch" type="SwitchType" minOccurs="0" maxOccurs="unbounded" />
 			<xs:element name="S0ElectricityMeter" type="S0ElectricityMeterType" minOccurs="0" maxOccurs="1" />
+			<xs:element name="Timeframe" type="TimeFrameType" minOccurs="0" maxOccurs="unbounded" />
 		</xs:sequence>
 	</xs:complexType>
 
@@ -32,10 +33,10 @@
 	</xs:complexType>
 
 	<xs:complexType name="S0ElectricityMeterType">
-		<xs:attribute name="pin" type="xs:int"></xs:attribute>
+		<xs:attribute name="pin" type="xs:int"/>
 		<xs:attribute name="pinPullResistance" type="PinPullResistanceType" />
-		<xs:attribute name="impulsesPerKwh" type="xs:int"></xs:attribute>
-		<xs:attribute name="measurementInterval" type="xs:int"></xs:attribute>
+		<xs:attribute name="impulsesPerKwh" type="xs:int"/>
+		<xs:attribute name="measurementInterval" type="xs:int"/>
 	</xs:complexType>
 
 	<xs:simpleType name="PinPullResistanceType">
@@ -45,5 +46,19 @@
 		</xs:restriction>
 	</xs:simpleType>
 
+	<xs:complexType name="TimeFrameType">
+		<xs:sequence>
+			<xs:element name="EarliestStart" type="TimeOfDayType" minOccurs="1" maxOccurs="1" />
+			<xs:element name="LatestEnd" type="TimeOfDayType" minOccurs="1" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="minRunningTime" type="xs:long" />
+		<xs:attribute name="maxRunningTime" type="xs:long" use="optional" />
+	</xs:complexType>
+
+	<xs:complexType name="TimeOfDayType">
+		<xs:attribute name="hour" type="xs:int"/>
+		<xs:attribute name="minute" type="xs:int"/>
+		<xs:attribute name="second" type="xs:int"/>
+	</xs:complexType>
 
 </xs:schema>

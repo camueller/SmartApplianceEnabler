@@ -37,17 +37,31 @@ public class Switch extends GpioControllable implements Control {
     @Override
     public void start() {
         logger.info("Switch uses pin " + getPin() + (reverseStates ? " (reversed states)" : ""));
-        outputPin = getGpioController().provisionDigitalOutputPin(getPin(), adjustState(PinState.LOW));        
+        if(getGpioController() != null) {
+            outputPin = getGpioController().provisionDigitalOutputPin(getPin(), adjustState(PinState.LOW));        
+        }
+        else {
+            logGpioAccessDisabled(logger);
+        }
     }
     
     public boolean on(boolean switchOn) {
         logger.info("Switching " + (switchOn ? "on" : "off") + " pin " + getPin());
-        outputPin.setState(adjustState(switchOn ? PinState.HIGH : PinState.LOW));
+        if(outputPin != null) {
+            outputPin.setState(adjustState(switchOn ? PinState.HIGH : PinState.LOW));
+        }
+        else {
+            logGpioAccessDisabled(logger);
+        }
         return true;
     }
 
     public boolean isOn() {
-        return adjustState(outputPin.getState()) == PinState.HIGH;
+        if(outputPin != null) {
+            return adjustState(outputPin.getState()) == PinState.HIGH;
+        }
+        logGpioAccessDisabled(logger);
+        return false;
     }
     
     private PinState adjustState(PinState pinState) {

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Appliances xmlns="https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/xsd/SmartApplianceEnabler-1.0.xsd">
-	<Appliance id="F-11223344-000000000001-00">
-		<Configuration>
-			<Switch pin="1" reverseStates="true" />
-			<S0ElectricityMeter pin="2" pinPullResistance="PULL_DOWN" impulsesPerKwh="1000" measurementInterval="60" />
-		</Configuration>
-	</Appliance>
-</Appliances>

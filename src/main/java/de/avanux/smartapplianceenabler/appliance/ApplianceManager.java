@@ -27,7 +27,8 @@ import com.pi4j.io.gpio.GpioFactory;
 
 
 public class ApplianceManager implements Runnable {
-    private Logger logger = LoggerFactory.getLogger(ApplianceManager.class); 
+    private Logger logger = LoggerFactory.getLogger(ApplianceManager.class);
+    public static final String SCHEMA_LOCATION = "http://github.com/camueller/SmartApplianceEnabler/v1.0";
     private static ApplianceManager instance;
     private FileHandler fileHandler;
     private Appliances appliances;
@@ -58,7 +59,7 @@ public class ApplianceManager implements Runnable {
         appliances = fileHandler.load(Appliances.class);
         logger.info(getAppliances().size() + " appliance(s) configured.");
         for (Appliance appliance : getAppliances()) {
-            ApplianceConfiguration configuration = appliance.getSingleConfiguration();
+            ApplianceConfiguration configuration = appliance.getConfiguration();
             if(configuration != null) {
                 if(appliance.getConfiguration() != null) {
                     for(GpioControllable gpioControllable : configuration.getGpioControllables()) {

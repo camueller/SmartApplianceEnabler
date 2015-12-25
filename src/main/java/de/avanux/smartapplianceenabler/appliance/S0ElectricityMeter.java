@@ -83,7 +83,7 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
             logger.info("Start metering using pin " + getPin());
         }
         else { 
-            logger.warn("Configured for pin " + getPin()+ ", but not GPIO access disabled.");
+            logGpioAccessDisabled(logger);
         }
     }
     

@@ -28,16 +28,18 @@ import javax.xml.bind.annotation.XmlElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ApplianceConfiguration {
     @XmlElement(name = "S0ElectricityMeter")
-    private List<S0ElectricityMeter> s0ElectricityMeters;
+    private S0ElectricityMeter s0ElectricityMeter;
     @XmlElement(name = "Switch")
     private List<Switch> switches;
+    @XmlElement(name = "Timeframe")
+    private List<TimeFrame> timeFrames;
 
-    public List<S0ElectricityMeter> getS0ElectricityMeters() {
-        return s0ElectricityMeters;
+    public S0ElectricityMeter getS0ElectricityMeter() {
+        return s0ElectricityMeter;
     }
 
-    public void setS0ElectricityMeter(List<S0ElectricityMeter> s0ElectricityMeters) {
-        this.s0ElectricityMeters = s0ElectricityMeters;
+    public void setS0ElectricityMeter(S0ElectricityMeter s0ElectricityMeter) {
+        this.s0ElectricityMeter = s0ElectricityMeter;
     }
 
     public List<Switch> getSwitches() {
@@ -48,10 +50,22 @@ public class ApplianceConfiguration {
         this.switches = switches;
     }
 
+    public List<TimeFrame> getTimeFrames() {
+        return timeFrames;
+    }
+
+    public void setTimeFrames(List<TimeFrame> timeFrames) {
+        this.timeFrames = timeFrames;
+    }
+
     public Set<GpioControllable> getGpioControllables() {
         Set<GpioControllable> controllables = new HashSet<GpioControllable>();
-        controllables.addAll(s0ElectricityMeters);
-        controllables.addAll(switches);
+        if(s0ElectricityMeter != null) {
+            controllables.add(s0ElectricityMeter);
+        }
+        if(switches != null && switches.size() > 0) {
+            controllables.addAll(switches);
+        }
         return controllables;
     }
 }

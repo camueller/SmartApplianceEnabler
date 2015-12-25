@@ -22,6 +22,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.Pin;
 import com.pi4j.io.gpio.PinPullResistance;
@@ -30,6 +33,8 @@ import com.pi4j.io.gpio.RaspiPin;
 @XmlTransient
 @XmlAccessorType(XmlAccessType.FIELD)
 abstract public class GpioControllable {
+    @XmlTransient
+    private Logger logger = LoggerFactory.getLogger(GpioControllable.class);
     @XmlAttribute
     private Integer pin;
     @XmlAttribute
@@ -64,4 +69,7 @@ abstract public class GpioControllable {
 
     abstract public void start();
 
+    protected void logGpioAccessDisabled(Logger logger) {
+        logger.warn("Configured for pin " + getPin()+ ", but not GPIO access disabled.");
+    }
 }

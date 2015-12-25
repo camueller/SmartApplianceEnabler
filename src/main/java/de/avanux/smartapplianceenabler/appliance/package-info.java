@@ -15,22 +15,8 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
+@XmlSchema(namespace = ApplianceManager.SCHEMA_LOCATION, elementFormDefault = XmlNsForm.QUALIFIED) 
 package de.avanux.smartapplianceenabler.appliance;
-
-import java.util.List;
-
-public class MeterFactory {
-
-    public Meter getMeter(ApplianceConfiguration configuration) {
-        if(configuration.getS0ElectricityMeter() != null) {
-            S0ElectricityMeter s0ElectricityMeter = configuration.getS0ElectricityMeter();
-            // inject control in required to get appliance state
-            List<Switch> switches = configuration.getSwitches();
-            if(switches != null && switches.size() > 0) {
-                s0ElectricityMeter.setControl(switches.get(0));
-            }
-            return s0ElectricityMeter;
-        }
-        return null;
-    }
-}
+ 
+import javax.xml.bind.annotation.XmlNsForm;
+import javax.xml.bind.annotation.XmlSchema;

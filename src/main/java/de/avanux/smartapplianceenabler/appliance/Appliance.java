@@ -29,7 +29,7 @@ public class Appliance {
     @XmlAttribute
     private String id;
     @XmlElement(name = "Configuration")
-    private List<ApplianceConfiguration> configuration;
+    private ApplianceConfiguration configuration;
 
     public String getId() {
         return id;
@@ -39,26 +39,19 @@ public class Appliance {
         this.id = id;
     }
 
-    public List<ApplianceConfiguration> getConfiguration() {
+    public ApplianceConfiguration getConfiguration() {
         return configuration;
     }
 
-    public void setConfiguration(List<ApplianceConfiguration> configuration) {
+    public void setConfiguration(ApplianceConfiguration configuration) {
         this.configuration = configuration;
     }
-    
-    public ApplianceConfiguration getSingleConfiguration() {
-        if(configuration != null && configuration.size() > 0) {
-            return configuration.get(0);
-        }
-        return null;
-    }
-    
+
     public Meter getMeter() {
-        return new MeterFactory().getMeter(getSingleConfiguration());
+        return new MeterFactory().getMeter(configuration);
     }
     
     public Control getControl() {
-        return new ControlFactory().getControl(getSingleConfiguration());
+        return new ControlFactory().getControl(configuration);
     }
 }
