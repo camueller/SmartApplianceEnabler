@@ -102,11 +102,19 @@ Beim erstmaligen Aufruf von Maven werden dabei alle benötigten Bibliotheken aus
 * Dateien mit ssh auf rsaspi schieben
 
 ## Konfiguration
-### Geräte
-Device2EM.xml - siehe Template
+Die Konfiguration besteht aus zwei [XML](https://de.wikipedia.org/wiki/Extensible_Markup_Language)-Dateien:
+* die Datei **Device2EM.xml** enthält Gerätebeschreibung für den EnergyManager
+* die Datei **Appliances.xml** enthält die Gerätekonfiguration für den Raspberry Pi
+Im Verzeichnis `example` finden sich Beispieldateien mit Kommentaren zu den einzelnen Angaben.
+Diese sollen dabei helfen, die für die eigenen Geräte passenden Dateien Device2EM.xml und Appliances.xml (mit genau diesen Namen und entsprechender Groß-/Kleinschreibung!) zu erstellen.
 
-### Gerätesteueung
-Appliances.xml - siehe Template
+Die angepassten XML-Dateien sollten hinsichtlich ihrer Gültigkeit überprüft werden.
+Dazu ist die Seite http://www.freeformatter.com/xml-validator-xsd.htm besonders geeignet:
+Der Inhalt der XML-Datei wird in das Fenster *XML Input* kopiert. Bei *XSD Input* muss nur *Option 2* eingegeben werden:
+* beim Prüfen von Device2EM.xml: https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/xsd/SEMP-1.1.5.xsd
+* beim Prüfen von Appliances.xml: https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/xsd/SmartApplianceEnabler-1.0.xsd
+
+Ist die Prüfung erfolgreich, erscheint oberhalb des *XML Input* eine grün unterlegte Meldung *The XML document is fully valid.*. Bei Fehlern erscheint eine rot unterlegte Meldung mit entsprechender Fehlerbeschreibung.
 
 ## Fragen / Fehler
 Bei Verdacht auf Fehler in der Software oder bei Fragen zur Verwendung des *Smart Appliance Enabler* sollte [Issue](https://github.com/camueller/SmartApplianceEnabler/issues) erstellt werden.
