@@ -18,7 +18,9 @@ An die GPIO-Pins des Raspberry können diverse Schalter und/oder Stromzähler an
 Die Nummerierung der Pins richtet sich nach [Pi4J](http://pi4j.com/images/gpio-control-example-large.png) und weicht von der offiziellen Nummerierung ab!
 
 ### Schaltbeispiele
-Die nachfolgenden Schaltbeispiele zeigen Schaltungen zum Schalten mittels Solid-State-Relais und zur Stromverbrauchsmessung mittels digitalem Stromzähler. Beides ist unabhängig voneinander, d.h. Solid-State-Relais oder Stromzähler können entfallen, falls nur geschalten oder der Stromverbrauch ermittelt werden soll.
+Die nachfolgenden Schaltbeispiele zeigen Schaltungen zum Schalten mittels **Solid-State-Relais** und zur Stromverbrauchsmessung mittels Stromzähler mit **S0-Schnittstelle**. Beides ist unabhängig voneinander, d.h. Solid-State-Relais oder Stromzähler können entfallen, falls nur geschaltet oder der Stromverbrauch ermittelt werden soll.
+
+In den Schaltbeispielen ist der für den Stromzähler notwendige **Pull-Down-Widerstand** nicht eingezeichnet, weil dafür die auf dem Raspberry Pi vorhandenen Pull-Down-Widerstände per Software-Konfiguration aktiviert werden.
 
 *Hinweis: Die Installation von steckerlosen 200/400V-Geräten sollte grundsätzlich durch einen autorisierten Fachbetrieb vorgenommen werden!*
 
@@ -96,7 +98,8 @@ axel@tpw520:~/git/SmartApplianceEnabler$ mvn clean package
 Beim erstmaligen Aufruf von Maven werden dabei alle benötigten Bibliotheken aus dem offiziellen Maven-Repository heruntergeladen. Das Bauen war nur dann erfolgreich, wenn *BUILD SUCCESS* erscheint! In diesem Fall findet sich die Datei `SmartApplianceEnabler-*.jar` im Unterverzeichnis `target`.
 
 ### Installation
-Dateien mit ssh auf rsaspi schieben
+* IP herausfinden
+* Dateien mit ssh auf rsaspi schieben
 
 ## Konfiguration
 ### Geräte
