@@ -103,11 +103,11 @@ Beim erstmaligen Aufruf von Maven werden dabei alle benötigten Bibliotheken aus
 
 ## Konfiguration
 Die Konfiguration besteht aus zwei [XML](https://de.wikipedia.org/wiki/Extensible_Markup_Language)-Dateien:
-* die Datei **Device2EM.xml** enthält Gerätebeschreibung für den EnergyManager
-* die Datei **Appliances.xml** enthält die Gerätekonfiguration für den Raspberry Pi
+* die Datei `Device2EM.xml` enthält Gerätebeschreibung für den EnergyManager
+* die Datei `Appliances.xml` enthält die Gerätekonfiguration für den Raspberry Pi
 
 Im Verzeichnis `example` finden sich Beispieldateien mit Kommentaren zu den einzelnen Angaben.
-Diese sollen dabei helfen, die für die eigenen Geräte passenden Dateien Device2EM.xml und Appliances.xml (mit genau diesen Namen und entsprechender Groß-/Kleinschreibung!) zu erstellen.
+Diese sollen dabei helfen, die für die eigenen Geräte passenden Dateien `Device2EM.xml` und `Appliances.xml` (mit genau diesen Namen und entsprechender Groß-/Kleinschreibung!) zu erstellen.
 
 Die angepassten XML-Dateien sollten hinsichtlich ihrer Gültigkeit überprüft werden.
 Dazu ist die Seite http://www.freeformatter.com/xml-validator-xsd.html besonders geeignet:
