@@ -97,10 +97,6 @@ axel@tpw520:~/git/SmartApplianceEnabler$ mvn clean package
 ```
 Beim erstmaligen Aufruf von Maven werden dabei alle benötigten Bibliotheken aus dem offiziellen Maven-Repository heruntergeladen. Das Bauen war nur dann erfolgreich, wenn *BUILD SUCCESS* erscheint! In diesem Fall findet sich die Datei `SmartApplianceEnabler-*.jar` im Unterverzeichnis `target`.
 
-### Installation
-* IP herausfinden
-* Dateien mit ssh auf rsaspi schieben
-
 ## Konfiguration
 Die Konfiguration besteht aus zwei [XML](https://de.wikipedia.org/wiki/Extensible_Markup_Language)-Dateien:
 * die Datei `Device2EM.xml` enthält Gerätebeschreibung für den EnergyManager
@@ -116,6 +112,46 @@ Der Inhalt der XML-Datei wird in das Fenster *XML Input* kopiert. Bei *XSD Input
 * beim Prüfen von Appliances.xml: https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/xsd/SmartApplianceEnabler-1.0.xsd
 
 Ist die Prüfung erfolgreich, erscheint oberhalb des *XML Input* eine grün unterlegte Meldung *The XML document is fully valid.*. Bei Fehlern erscheint eine rot unterlegte Meldung mit entsprechender Fehlerbeschreibung.
+
+### Installation
+Die Installation des *Smart Appliance Enabler* besteht darin, folgende Dateien auf den Raspberry zu kopieren:
+* die beim Bauen erstellte Datei `SmartApplianceEnabler-*.jar`
+* die Konfigurationsdatei `Device2EM.xml`
+* die Konfigurationsdatei `Appliances.xml`
+* das Startscript `run.sh` aus dem Verzeichnis `run`
+Dazu sollte entweder die IP-Adresse des Raspberry bekannt sein, oder der der Raspberry einen festen Hostnamen besitzen. Nachfolgend gehe ich von Letzterem aus, da er bei mir im Netz unter dem Namen `raspi` erreichbar ist.
+
+Zunächst sollte auf dem Raspberry ein eigenes Verzeichis für diese Dateien erstellt werden, z.B. `/app` (das Passwort für den User *pi* ist *raspberry*, wenn Ihr das noch nicht geändert habt):
+```
+axel@tpw520:/data/git/SmartApplianceEnabler$ ssh pi@raspi
+pi@raspi's password: 
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Sun Dec  6 19:17:12 2015
+pi@raspberrypi ~ $ sudo mkdir /app
+pi@raspberrypi ~ $ sudo chown pi.pi /app
+pi@raspberrypi ~ $ exit
+```
+Jetzt kann man die genannten Dateien auf den Raspberry kopieren:
+```
+axel@tpw520:/data/git/SmartApplianceEnabler$ scp target/SmartApplianceEnabler-0.1.0.jar pi@raspi:/app
+pi@raspi's password:                                                                                                       SmartApplianceEnabler-0.1.0.jar                                                              100%   15MB   1.4MB/s   00:11
+axel@tpw520:/data/git/SmartApplianceEnabler$ scp run/Appliances.xml pi@raspi:/app
+pi@raspi's password:                                                                                                       Appliances.xml                                                                               100%  590     0.6KB/s   00:00
+axel@tpw520:/data/git/SmartApplianceEnabler$ scp run/Device2EM.xml  pi@raspi:/app
+pi@raspi's password:                                                                                                       Device2EM.xml                                                                                100% 1288     1.3KB/s   00:00
+axel@tpw520:/data/git/SmartApplianceEnabler$ scp run/run.sh  pi@raspi:/app
+pi@raspi's password:                                                                                                       run.sh                                                                                       100%  153     0.2KB/s   00:00
+axel@tpw520:/data/git/SmartApplianceEnabler$
+```
+
+
+
 
 ## Fragen / Fehler
 Bei Verdacht auf Fehler in der Software oder bei Fragen zur Verwendung des *Smart Appliance Enabler* sollte [Issue](https://github.com/camueller/SmartApplianceEnabler/issues) erstellt werden.
