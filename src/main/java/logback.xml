@@ -7,7 +7,7 @@
     </layout>
   </appender>
    
-  <logger name="de.avanux" level="TRACE"/>
+  <!-- logger name="de.avanux" level="TRACE"/ -->
  
   <root level="info">
     <appender-ref ref="STDOUT" />
