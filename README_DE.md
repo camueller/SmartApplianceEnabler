@@ -140,13 +140,17 @@ pi@raspberrypi ~ $ exit
 Jetzt kann man die genannten Dateien auf den Raspberry kopieren:
 ```
 axel@tpw520:/data/git/SmartApplianceEnabler$ scp target/SmartApplianceEnabler-0.1.0.jar pi@raspi:/app
-pi@raspi's password:                                                                                                       SmartApplianceEnabler-0.1.0.jar                                                              100%   15MB   1.4MB/s   00:11
+pi@raspi's password:
+SmartApplianceEnabler-0.1.0.jar                         100%   15MB   1.4MB/s   00:11
 axel@tpw520:/data/git/SmartApplianceEnabler$ scp run/Appliances.xml pi@raspi:/app
-pi@raspi's password:                                                                                                       Appliances.xml                                                                               100%  590     0.6KB/s   00:00
+pi@raspi's password:
+Appliances.xml                                          100%  590     0.6KB/s   00:00
 axel@tpw520:/data/git/SmartApplianceEnabler$ scp run/Device2EM.xml  pi@raspi:/app
-pi@raspi's password:                                                                                                       Device2EM.xml                                                                                100% 1288     1.3KB/s   00:00
+pi@raspi's password:
+Device2EM.xml                                           100% 1288     1.3KB/s   00:00
 axel@tpw520:/data/git/SmartApplianceEnabler$ scp run/run.sh  pi@raspi:/app
-pi@raspi's password:                                                                                                       run.sh                                                                                       100%  153     0.2KB/s   00:00
+pi@raspi's password:
+run.sh                                                  100%  153     0.2KB/s   00:00
 axel@tpw520:/data/git/SmartApplianceEnabler$
 ```
 
