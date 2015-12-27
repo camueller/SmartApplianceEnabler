@@ -17,6 +17,7 @@
  */
 package de.avanux.smartapplianceenabler.semp.webservice;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -39,35 +40,91 @@ public class Capabilities {
     @XmlElement(name = "OptionalEnergy")
     private List<Boolean> optionalEnergy;
 
-    public List<String> getCurrentPowerMethod() {
-        return currentPowerMethod;
+    public CurrentPowerMethod getCurrentPowerMethod() {
+        if(currentPowerMethod != null && currentPowerMethod.size() > 0) {
+            return CurrentPowerMethod.valueOf(currentPowerMethod.get(0));
+        }
+        return null;
     }
 
-    public void setCurrentPowerMethod(List<String> currentPowerMethod) {
-        this.currentPowerMethod = currentPowerMethod;
+    public void setCurrentPowerMethod(CurrentPowerMethod currentPowerMethod) {
+        if(currentPowerMethod != null) {
+            if(this.currentPowerMethod == null) {
+                this.currentPowerMethod = new ArrayList<String>();
+            }
+            else {
+                this.currentPowerMethod.clear();
+            }
+            this.currentPowerMethod.add(currentPowerMethod.name());
+        }
+        else {
+            this.currentPowerMethod = null;
+        }
     }
 
-    public List<Boolean> getAbsoluteTimestamps() {
-        return absoluteTimestamps;
+    public Boolean getAbsoluteTimestamps() {
+        if(absoluteTimestamps != null && absoluteTimestamps.size() > 0) {
+            return absoluteTimestamps.get(0);
+        }
+        return null;
     }
 
-    public void setAbsoluteTimestamps(List<Boolean> absoluteTimestamps) {
-        this.absoluteTimestamps = absoluteTimestamps;
+    public void setAbsoluteTimestamps(Boolean absoluteTimestamps) {
+        if(absoluteTimestamps != null) {
+            if(this.absoluteTimestamps == null) {
+                this.absoluteTimestamps = new ArrayList<Boolean>();
+            }
+            else {
+                this.absoluteTimestamps.clear();
+            }
+            this.absoluteTimestamps.add(absoluteTimestamps);
+        }
+        else {
+            this.absoluteTimestamps = null;
+        }
     }
 
-    public List<Boolean> getInterruptionsAllowed() {
-        return interruptionsAllowed;
+    public Boolean getInterruptionsAllowed() {
+        if(interruptionsAllowed != null && interruptionsAllowed.size() > 0) {
+            return interruptionsAllowed.get(0);
+        }
+        return null;
     }
 
-    public void setInterruptionsAllowed(List<Boolean> interruptionsAllowed) {
-        this.interruptionsAllowed = interruptionsAllowed;
+    public void setInterruptionsAllowed(Boolean interruptionsAllowed) {
+        if(interruptionsAllowed != null) {
+            if(this.interruptionsAllowed == null) {
+                this.interruptionsAllowed = new ArrayList<Boolean>();
+            }
+            else {
+                this.interruptionsAllowed.clear();
+            }
+            this.interruptionsAllowed.add(interruptionsAllowed);
+        }
+        else {
+            this.interruptionsAllowed = null;
+        }
     }
 
-    public List<Boolean> getOptionalEnergy() {
-        return optionalEnergy;
+    public Boolean getOptionalEnergy() {
+        if(optionalEnergy != null && optionalEnergy.size() > 0) {
+            return optionalEnergy.get(0);
+        }
+        return null;
     }
 
-    public void setOptionalEnergy(List<Boolean> optionalEnergy) {
-        this.optionalEnergy = optionalEnergy;
+    public void setOptionalEnergy(Boolean optionalEnergy) {
+        if(optionalEnergy != null) {
+            if(this.optionalEnergy == null) {
+                this.optionalEnergy = new ArrayList<Boolean>();
+            }
+            else {
+                this.optionalEnergy.clear();
+            }
+            this.optionalEnergy.add(optionalEnergy);
+        }
+        else {
+            this.optionalEnergy = null;
+        }
     }
 }

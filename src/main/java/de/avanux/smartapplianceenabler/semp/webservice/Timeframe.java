@@ -30,9 +30,9 @@ public class Timeframe {
     @XmlElement(name = "LatestEnd")
     private Long latestEnd;
     @XmlElement(name = "MinRunningTime")
-    private Integer minRunningTime;
+    private Long minRunningTime;
     @XmlElement(name = "MaxRunningTime")
-    private Integer maxRunningTime;
+    private Long maxRunningTime;
 
     public String getDeviceId() {
         return deviceId;
@@ -58,19 +58,19 @@ public class Timeframe {
         this.latestEnd = latestEnd;
     }
 
-    public Integer getMinRunningTime() {
+    public Long getMinRunningTime() {
         return minRunningTime;
     }
 
-    public void setMinRunningTime(Integer minRunningTime) {
+    public void setMinRunningTime(Long minRunningTime) {
         this.minRunningTime = minRunningTime;
     }
 
-    public Integer getMaxRunningTime() {
+    public Long getMaxRunningTime() {
         return maxRunningTime;
     }
 
-    public void setMaxRunningTime(Integer maxRunningTime) {
+    public void setMaxRunningTime(Long maxRunningTime) {
         this.maxRunningTime = maxRunningTime;
     }
 }

@@ -18,6 +18,8 @@
 package de.avanux.smartapplianceenabler.appliance;
 
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,15 +29,18 @@ import com.pi4j.io.gpio.GpioFactory;
 
 
 public class ApplianceManager implements Runnable {
-    private Logger logger = LoggerFactory.getLogger(ApplianceManager.class);
     public static final String SCHEMA_LOCATION = "http://github.com/camueller/SmartApplianceEnabler/v1.0";
+    private static final int RUNNING_TIME_UPDATE_INTERVAL_SECONDS = 60;
+    private Logger logger = LoggerFactory.getLogger(ApplianceManager.class);
     private static ApplianceManager instance;
     private FileHandler fileHandler;
     private Appliances appliances;
     private GpioController gpioController;
+    private Timer timer;
     
     private ApplianceManager() {
         fileHandler = new FileHandler();
+        timer = new Timer();
         try {
             gpioController = GpioFactory.getInstance();
         }
@@ -62,6 +67,17 @@ public class ApplianceManager implements Runnable {
             ApplianceConfiguration configuration = appliance.getConfiguration();
             if(configuration != null) {
                 if(appliance.getConfiguration() != null) {
+                    RunningTimeMonitor runningTimeMonitor = null;
+                    if(configuration.getTimeFrames() != null) {
+                        runningTimeMonitor = new RunningTimeMonitor();
+                        runningTimeMonitor.setTimeFrames(configuration.getTimeFrames());
+                        appliance.setRunningTimeMonitor(runningTimeMonitor);
+                    }
+                    
+                    for(Control control : appliance.getControls()) {
+                        control.setRunningTimeMonitor(runningTimeMonitor);
+                    }
+                    
                     for(GpioControllable gpioControllable : configuration.getGpioControllables()) {
                         gpioControllable.setGpioController(gpioController);
                         gpioControllable.start();
@@ -69,6 +85,19 @@ public class ApplianceManager implements Runnable {
                 }
             }
         }
+        
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                for (Appliance appliance : getAppliances()) {
+                    RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
+                    if(runningTimeMonitor != null) {
+                        runningTimeMonitor.update();
+                        logger.debug("Appliance " + appliance.getId() + ": Remaining running time " + runningTimeMonitor.getRemainingMinRunningTime() + " s (" + runningTimeMonitor.getCurrentTimeFrame() + ")");
+                    }
+                }
+            }
+        }, RUNNING_TIME_UPDATE_INTERVAL_SECONDS * 1000, RUNNING_TIME_UPDATE_INTERVAL_SECONDS * 1000);
     }
 
     public List<Appliance> getAppliances() {

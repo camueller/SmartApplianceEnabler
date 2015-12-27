@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Appliance {
@@ -30,7 +31,9 @@ public class Appliance {
     private String id;
     @XmlElement(name = "Configuration")
     private ApplianceConfiguration configuration;
-
+    @XmlTransient
+    private RunningTimeMonitor runningTimeMonitor;
+    
     public String getId() {
         return id;
     }
@@ -43,15 +46,33 @@ public class Appliance {
         return configuration;
     }
 
-    public void setConfiguration(ApplianceConfiguration configuration) {
-        this.configuration = configuration;
-    }
-
     public Meter getMeter() {
         return new MeterFactory().getMeter(configuration);
     }
     
-    public Control getControl() {
-        return new ControlFactory().getControl(configuration);
+    public List<Control> getControls() {
+        return new ControlFactory().getControls(configuration, runningTimeMonitor);
+    }
+
+    public RunningTimeMonitor getRunningTimeMonitor() {
+        return runningTimeMonitor;
+    }
+
+    public void setRunningTimeMonitor(RunningTimeMonitor runningTimeMonitor) {
+        this.runningTimeMonitor = runningTimeMonitor;
+    }
+    
+    public boolean canConsumeOptionalEnergy() {
+        if(configuration != null) {
+            List<TimeFrame> timeFrames = configuration.getTimeFrames();
+            if(timeFrames != null) {
+                for(TimeFrame timeFrame : timeFrames) {
+                    if(timeFrame.getMaxRunningTime() != timeFrame.getMinRunningTime()) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 }

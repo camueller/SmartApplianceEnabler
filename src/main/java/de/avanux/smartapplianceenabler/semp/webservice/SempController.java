@@ -26,6 +26,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
+import org.joda.time.Instant;
+import org.joda.time.Interval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,6 +42,8 @@ import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
 import de.avanux.smartapplianceenabler.appliance.Control;
 import de.avanux.smartapplianceenabler.appliance.FileHandler;
 import de.avanux.smartapplianceenabler.appliance.Meter;
+import de.avanux.smartapplianceenabler.appliance.RunningTimeMonitor;
+import de.avanux.smartapplianceenabler.appliance.TimeFrame;
 
 @RestController
 public class SempController {
@@ -75,6 +79,17 @@ public class SempController {
     public String deviceInfo(@RequestParam(value="DeviceId") String deviceId) {
         logger.debug("Device info requested for device id=" + deviceId);
         DeviceInfo deviceInfo = findDeviceInfo(device2EM, deviceId);
+        
+        Appliance appliance = findAppliance(deviceId);
+        if(appliance.getMeter() != null) {
+            deviceInfo.getCapabilities().setCurrentPowerMethod(CurrentPowerMethod.Measurement);
+        }
+        else {
+            deviceInfo.getCapabilities().setCurrentPowerMethod(CurrentPowerMethod.Estimation);
+        }
+        
+        deviceInfo.getCapabilities().setOptionalEnergy(appliance.canConsumeOptionalEnergy());
+        
         Device2EM device2EM = new Device2EM();
         device2EM.setDeviceInfo(Collections.singletonList(deviceInfo));
         return marshall(device2EM);
@@ -95,13 +110,11 @@ public class SempController {
     @ResponseBody
     public String planningRequest(@RequestParam(value="DeviceId") String deviceId) {
         logger.debug("Planning request requested for device id=" + deviceId);
-        PlanningRequest planningRequest = findPlanningRequest(device2EM, deviceId);
+        Appliance appliance = findAppliance(deviceId);
+        PlanningRequest planningRequest = createPlanningRequest(appliance);
         Device2EM device2EM = new Device2EM();
         if(planningRequest != null) {
             device2EM.setPlanningRequest(Collections.singletonList(planningRequest));
-        }
-        else {
-            logger.debug("No planning request configured for device id " + deviceId);
         }
         return marshall(device2EM);
     }
@@ -114,8 +127,10 @@ public class SempController {
             logger.debug("Received control request for device id=" + deviceControl.getDeviceId());
             Appliance appliance = findAppliance(deviceControl.getDeviceId());
             if(appliance != null) {
-                if(appliance.getControl() != null) {
-                    appliance.getControl().on(deviceControl.isOn());
+                if(appliance.getControls() != null) {
+                    for(Control control : appliance.getControls()) {
+                        control.on(deviceControl.isOn());
+                    }
                 }
                 else {
                     logger.warn("Appliance configuration does not contain control.");
@@ -130,20 +145,37 @@ public class SempController {
     private DeviceStatus createDeviceStatus(Appliance appliance) {
         DeviceStatus deviceStatus = new DeviceStatus();
         deviceStatus.setDeviceId(appliance.getId());
-        
-        Control control = appliance.getControl();
-        if(control != null) {
-            deviceStatus.setStatus(control.isOn() ? Status.On : Status.Off);
+
+        if(appliance.getControls() != null && appliance.getControls().size() > 0) {
+            for(Control control : appliance.getControls()) {
+                deviceStatus.setStatus(control.isOn() ? Status.On : Status.Off);
+                deviceStatus.setEMSignalsAccepted(true);
+                break;
+            }
         }
         else {
             deviceStatus.setStatus(Status.Offline);
+            deviceStatus.setEMSignalsAccepted(false);
         }
-        deviceStatus.setEMSignalsAccepted(control != null);
         
-        Meter meter = appliance.getMeter();
         PowerConsumption powerConsumption = new PowerConsumption();
-        powerConsumption.setAveragePower(meter.getAveragePower());
-        powerConsumption.setAveragingInterval(meter.getMeasurementInterval());
+        Meter meter = appliance.getMeter();
+        if(meter != null) {
+            powerConsumption.setAveragePower(meter.getAveragePower());
+            powerConsumption.setMinPower(meter.getMinPower());
+            powerConsumption.setMaxPower(meter.getMaxPower());
+            powerConsumption.setAveragingInterval(meter.getMeasurementInterval());
+        }
+        else {
+            DeviceInfo deviceInfo = findDeviceInfo(device2EM, appliance.getId());
+            if(deviceStatus.getStatus() == Status.On) {
+                powerConsumption.setAveragePower(deviceInfo.getCharacteristics().getMaxPowerConsumption());
+            }
+            else {
+                powerConsumption.setAveragePower(0);
+            }
+            powerConsumption.setAveragingInterval(60);
+        }
         powerConsumption.setTimestamp(0);
         deviceStatus.setPowerConsumption(Collections.singletonList(powerConsumption));
         return deviceStatus;
@@ -158,15 +190,53 @@ public class SempController {
         return null;
     }
 
-    private PlanningRequest findPlanningRequest(Device2EM device2EM, String deviceId) {
-        if(device2EM.getPlanningRequest() != null) {
-            for(PlanningRequest planningRequest : device2EM.getPlanningRequest()) {
-                if(planningRequest.getTimeframe().getDeviceId().equals(deviceId)) {
-                    return planningRequest;
+    private PlanningRequest createPlanningRequest(Appliance appliance) {
+        // FIXME ApplianceConfiguration weg da unnötig
+        PlanningRequest planningRequest = null;
+        RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
+        if(runningTimeMonitor != null) {
+            if(runningTimeMonitor.getTimeFrames() != null && runningTimeMonitor.getTimeFrames().size() > 0) {
+                Instant now = new Instant();
+                List<de.avanux.smartapplianceenabler.semp.webservice.Timeframe> sempTimeFrames = new ArrayList<de.avanux.smartapplianceenabler.semp.webservice.Timeframe>();
+                
+                TimeFrame currentTimeFrame = runningTimeMonitor.getCurrentTimeFrame();
+                if(currentTimeFrame != null) {
+                    sempTimeFrames.add(createSempTimeFrame(appliance.getId(), currentTimeFrame, runningTimeMonitor.getRemainingMinRunningTime(), now));
                 }
+                
+                for(TimeFrame timeFrame : runningTimeMonitor.findFutureTimeFrames(now)) {
+                    Long remainingMinRunningTime = timeFrame.getMinRunningTime();
+                    sempTimeFrames.add(createSempTimeFrame(appliance.getId(), timeFrame, remainingMinRunningTime, now));
+                }
+                planningRequest = new PlanningRequest();
+                planningRequest.setTimeframes(sempTimeFrames);
+            }
+            else {
+                logger.debug("No planning request configured for appliance id " + appliance.getId());
             }
         }
-        return null;
+        return planningRequest;
+    }
+    
+    private de.avanux.smartapplianceenabler.semp.webservice.Timeframe createSempTimeFrame(String deviceId, TimeFrame timeFrame, Long remainingMinRunningTime, Instant now) {
+        Long earliestStart = 0l;
+        if(timeFrame.getInterval().getStart().isAfter(now)) {
+            earliestStart = Double.valueOf(new Interval(now, timeFrame.getInterval().getStart()).toDurationMillis() / 1000).longValue();
+        }
+        Long latestEnd = Double.valueOf(new Interval(now, timeFrame.getInterval().getEnd()).toDurationMillis() / 1000).longValue();
+        Long minRunningTime = remainingMinRunningTime;
+        Long maxRunningTime = remainingMinRunningTime + (timeFrame.getMaxRunningTime() - timeFrame.getMinRunningTime());
+        return createSempTimeFrame(deviceId, earliestStart, latestEnd, minRunningTime, maxRunningTime);
+    }
+    
+    private de.avanux.smartapplianceenabler.semp.webservice.Timeframe createSempTimeFrame(String deviceId, Long earliestStart, Long latestEnd, Long minRunningTime, Long maxRunningTime) {
+        de.avanux.smartapplianceenabler.semp.webservice.Timeframe timeFrame = new de.avanux.smartapplianceenabler.semp.webservice.Timeframe();
+        timeFrame.setDeviceId(deviceId);
+        timeFrame.setEarliestStart(earliestStart);
+        timeFrame.setLatestEnd(latestEnd);
+        timeFrame.setMinRunningTime(minRunningTime);
+        timeFrame.setMaxRunningTime(maxRunningTime);
+        return timeFrame;
     }
     
     private Appliance findAppliance(String deviceId) {
