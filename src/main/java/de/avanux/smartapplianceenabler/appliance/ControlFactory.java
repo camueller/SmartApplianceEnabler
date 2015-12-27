@@ -17,13 +17,20 @@
  */
 package de.avanux.smartapplianceenabler.appliance;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ControlFactory {
     
-    public Control getControl(ApplianceConfiguration configuration) {
+    public List<Control> getControls(ApplianceConfiguration configuration, RunningTimeMonitor runningTimeMonitor) {
+        List<Control> controls = new ArrayList<Control>();
         if(configuration.getSwitches() != null) {
-            return configuration.getSwitches().iterator().next();
+            for(Switch zwitch : configuration.getSwitches()) {
+                zwitch.setRunningTimeMonitor(runningTimeMonitor);
+                controls.add(zwitch);
+            }
         }
-        return null;
+        return controls;
     }
 
 }

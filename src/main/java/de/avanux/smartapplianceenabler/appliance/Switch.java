@@ -33,6 +33,8 @@ public class Switch extends GpioControllable implements Control {
     private boolean reverseStates;
     @XmlTransient
     GpioPinDigitalOutput outputPin;
+    @XmlTransient
+    RunningTimeMonitor runningTimeMonitor;    
 
     @Override
     public void start() {
@@ -53,6 +55,9 @@ public class Switch extends GpioControllable implements Control {
         else {
             logGpioAccessDisabled(logger);
         }
+        if(runningTimeMonitor != null) {
+            runningTimeMonitor.setRunning(switchOn);
+        }
         return true;
     }
 
@@ -72,5 +77,13 @@ public class Switch extends GpioControllable implements Control {
             return PinState.HIGH;
         }
         return pinState;
+    }
+
+    public RunningTimeMonitor getRunningTimeMonitor() {
+        return runningTimeMonitor;
+    }
+
+    public void setRunningTimeMonitor(RunningTimeMonitor runningTimeMonitor) {
+        this.runningTimeMonitor = runningTimeMonitor;
     }
 }

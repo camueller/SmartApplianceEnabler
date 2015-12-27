@@ -23,4 +23,8 @@ public interface Control {
 
     boolean isOn();
     
+    public RunningTimeMonitor getRunningTimeMonitor();
+
+    public void setRunningTimeMonitor(RunningTimeMonitor runningTimeMonitor);
+    
 }

@@ -17,22 +17,7 @@
  */
 package de.avanux.smartapplianceenabler.semp.webservice;
 
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-
-@XmlAccessorType(XmlAccessType.FIELD)
-public class PlanningRequest {
-    @XmlElement(name = "Timeframe")
-    private List<Timeframe> timeframes;
-
-    public List<Timeframe> getTimeframes() {
-        return timeframes;
-    }
-
-    public void setTimeframes(List<Timeframe> timeframes) {
-        this.timeframes = timeframes;
-    }
+public enum CurrentPowerMethod {
+    Estimation,
+    Measurement
 }

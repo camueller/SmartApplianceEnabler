@@ -3,13 +3,7 @@
 Konfiguration für Wärmepumpe (nur Stromverbrauchsmessung) und Filterpumpe (nur Schalten)
  -->
 <Device2EM xmlns="http://www.sma.de/communication/schema/SEMP/v1">
-    <!--
-    ###########################################################################################
-    Wärmepumpe 
-    ###########################################################################################
-     -->
 	<DeviceInfo>
-	    
 	    <!-- Informationen zum Gerät -->
 		<Identification>
 		    <!--
@@ -43,47 +37,21 @@ Konfiguration für Wärmepumpe (nur Stromverbrauchsmessung) und Filterpumpe (nur
 		
 		<!-- Energiemanagement-Eigenschaften des Gerätes -->
 		<Capabilities>
-		    <!-- FIXME: automatisch auf "Measurement" setzen, wenn Zähler vorhanden, sonst "Estimation" -->
 			<CurrentPower>
-				<Method>Measurement</Method>
+	   			<!-- hier nicht ändern, wird von SmartApplianceEnabler automatisch richtig gesetzt -->
+			    <Method>Measurement</Method>
 			</CurrentPower>
-			<!-- FIXME weglassen -->
-			<Timestamps>
-				<AbsoluteTimestamps>false</AbsoluteTimestamps>
-			</Timestamps>
 			<!-- Sollte auf "true" gesetzt werden, wenn der EnergyManager die Laufzeit
 			des Gerät unterbrechen darf; sonst auf "false" setzen -->
 			<Interruptions>
 				<InterruptionsAllowed>false</InterruptionsAllowed>
 			</Interruptions>
-			<!-- FIXME wird automatisch gesetzt, wenn minRunningTime ungleich maxRunningTime 
-			Wenn das Geräte zusätzliche Energie aufnehmen kann, die für den eigentlichen Betrieb nicht
-			unbeding notwendig ist, dann auf "true" setzen; sonst auf "false" setzen
-			 -->
-			<Requests>
-				<OptionalEnergy>false</OptionalEnergy>
-			</Requests>
 		</Capabilities>
 	</DeviceInfo>
-	<DeviceStatus>
-	    <!-- diese DeviceId muss identisch sein mit der DeviceId des Gerätes, zu dem dieser Gerätestatus gehört -->
-		<DeviceId>F-00000001-000000000001-00</DeviceId>
-		<!--
-		Sollte auf "true" gesetzt werden, wenn dieses Gerät Schaltempfehlungen des EnergyManagers akzeptiert.
-		In diesem Fall muss eine PlanningRequest-Sektion und mindestens 1 Timeframe vorhanden sein.
-		Falls das Gerät nicht vom EnergyManagers gesteuert werden soll, dann auf "false" setzen.
-		-->
-	   	<EMSignalsAccepted>false</EMSignalsAccepted>
-	</DeviceStatus>
-		
-    <!--
-    ###########################################################################################
-    Filterpumpe 
-    ###########################################################################################
-     -->
-		
+	
 	<DeviceInfo>
-		<Identification>
+	    <!-- Dokumentation siehe vorheriges DeviceInfo-Element -->
+	    <Identification>
 			<DeviceId>F-00000001-000000000002-00</DeviceId>
 			<DeviceName>Bettar 14</DeviceName>
 			<DeviceType>Filterpumpe</DeviceType>
@@ -94,38 +62,29 @@ Konfiguration für Wärmepumpe (nur Stromverbrauchsmessung) und Filterpumpe (nur
 			<MaxPowerConsumption>970</MaxPowerConsumption>
 		</Characteristics>
 		<Capabilities>
-		    <!-- FIXME: automatisch auf "Measurement" setzen, wenn Zähler vorhanden, sonst "Estimation" -->
 		    <CurrentPower>
-				<Method>Estimation</Method>
+		        <Method>Estimation</Method>
 			</CurrentPower>
-			<!-- FIXME weglassen -->
-			<Timestamps>
-				<AbsoluteTimestamps>false</AbsoluteTimestamps>
-			</Timestamps>
 			<Interruptions>
 				<InterruptionsAllowed>true</InterruptionsAllowed>
 			</Interruptions>
-			<Requests>
-				<OptionalEnergy>false</OptionalEnergy>
-			</Requests>
 		</Capabilities>
 	</DeviceInfo>
+	
 	<DeviceStatus>
+	    <!-- diese DeviceId muss identisch sein mit der DeviceId des Gerätes, zu dem dieser Gerätestatus gehört -->
+		<DeviceId>F-00000001-000000000001-00</DeviceId>
+	   	<!-- hier nicht ändern, wird von SmartApplianceEnabler automatisch richtig gesetzt -->
+	   	<EMSignalsAccepted>false</EMSignalsAccepted>
+	   	<!-- hier nicht ändern, wird von SmartApplianceEnabler automatisch richtig gesetzt -->
+	   	<Status>Offline</Status>
+	</DeviceStatus>
+		
+	<DeviceStatus>
+	    <!-- Dokumentation siehe vorheriges DeviceStatus-Element -->
 		<DeviceId>F-00000001-000000000002-00</DeviceId>
 	   	<EMSignalsAccepted>true</EMSignalsAccepted>
+	   	<Status>Offline</Status>
 	</DeviceStatus>
-	<PlanningRequest>
-	<!-- FIXME muss mindesten 1 Timeframe enthalten; sonst Entfall -->
-		<Timeframe>
-		    <!-- diese DeviceId muss identisch sein mit der DeviceId des Gerätes, zu dem diese Planungsanfrage gehört -->
-			<DeviceId>F-00000001-000000000002-00</DeviceId>
-			<EarliestStart>995</EarliestStart>
-			<LatestEnd>9995</LatestEnd>
-			<MinRunningTime>7200</MinRunningTime>
-			<!-- muss nur gesetzt werden, we das Geräte zusätzliche Energie aufnehmen kann, 
-			die für den eigentlichen Betrieb nicht unbeding notwendig ist-->
-			<MaxRunningTime>7200</MaxRunningTime>
-		</Timeframe>
-	</PlanningRequest>
-			
+	
 </Device2EM>
