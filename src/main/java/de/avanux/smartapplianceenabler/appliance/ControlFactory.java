@@ -22,10 +22,10 @@ import java.util.List;
 
 public class ControlFactory {
     
-    public List<Control> getControls(ApplianceConfiguration configuration, RunningTimeMonitor runningTimeMonitor) {
+    public List<Control> getControls(Appliance appliance, RunningTimeMonitor runningTimeMonitor) {
         List<Control> controls = new ArrayList<Control>();
-        if(configuration.getSwitches() != null) {
-            for(Switch zwitch : configuration.getSwitches()) {
+        if(appliance.getSwitches() != null) {
+            for(Switch zwitch : appliance.getSwitches()) {
                 zwitch.setRunningTimeMonitor(runningTimeMonitor);
                 controls.add(zwitch);
             }

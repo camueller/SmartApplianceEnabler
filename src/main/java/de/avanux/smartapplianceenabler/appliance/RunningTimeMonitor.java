@@ -28,7 +28,7 @@ public class RunningTimeMonitor {
     private TimeFrame currentTimeFrame;
     private Instant intervalBeginn;
     private Instant statusChangedAt;
-    private long remainingMinRunningTime;
+    private Long remainingMinRunningTime;
     private boolean running;
 
     public void setTimeFrames(List<TimeFrame> timeFrames) {
@@ -45,6 +45,9 @@ public class RunningTimeMonitor {
     }
 
     public long getRemainingMinRunningTime() {
+        if(remainingMinRunningTime == null) {
+            update();
+        }
         return remainingMinRunningTime;
     }
     
@@ -58,8 +61,15 @@ public class RunningTimeMonitor {
         if(timeFrameForInstant != null) {
             if(currentTimeFrame == null || ! timeFrameForInstant.equals(currentTimeFrame)) {
                 // timeframe changed
-                currentTimeFrame = timeFrameForInstant; 
-                remainingMinRunningTime = timeFrameForInstant.getMinRunningTime();
+                currentTimeFrame = timeFrameForInstant;
+                if(currentTimeFrame.getInterval().getStart().isBefore(now)) {
+                    // timeframe started in past; remaining time is less than MinRunningTime
+                    remainingMinRunningTime = Double.valueOf(new Interval(now, currentTimeFrame.getInterval().getEnd()).toDurationMillis() / 1000).longValue();
+                }
+                else {
+                    // timeframe starts in future
+                    remainingMinRunningTime = timeFrameForInstant.getMinRunningTime();
+                }
             }
             Interval interval = null;
             if(running) {
@@ -80,12 +90,12 @@ public class RunningTimeMonitor {
                 statusChangedAt = null;
             }
             if(interval != null) {
-                remainingMinRunningTime -= Double.valueOf(interval.toDuration().getMillis() / 1000);
+                remainingMinRunningTime = remainingMinRunningTime - Double.valueOf(interval.toDuration().getMillis() / 1000).longValue();
             }
         }
     }
     
-    private TimeFrame findCurrentTimeFrame(Instant instant) {
+    public TimeFrame findCurrentTimeFrame(Instant instant) {
         if(timeFrames != null) {
             for(TimeFrame timeFrame : timeFrames) {
                 if(timeFrame.getInterval().contains(instant)) {

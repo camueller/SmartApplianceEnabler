@@ -17,7 +17,9 @@
  */
 package de.avanux.smartapplianceenabler.appliance;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -29,8 +31,12 @@ import javax.xml.bind.annotation.XmlTransient;
 public class Appliance {
     @XmlAttribute
     private String id;
-    @XmlElement(name = "Configuration")
-    private ApplianceConfiguration configuration;
+    @XmlElement(name = "S0ElectricityMeter")
+    private S0ElectricityMeter s0ElectricityMeter;
+    @XmlElement(name = "Switch")
+    private List<Switch> switches;
+    @XmlElement(name = "Timeframe")
+    private List<TimeFrame> timeFrames;
     @XmlTransient
     private RunningTimeMonitor runningTimeMonitor;
     
@@ -42,16 +48,36 @@ public class Appliance {
         this.id = id;
     }
 
-    public ApplianceConfiguration getConfiguration() {
-        return configuration;
+    public S0ElectricityMeter getS0ElectricityMeter() {
+        return s0ElectricityMeter;
+    }
+
+    public void setS0ElectricityMeter(S0ElectricityMeter s0ElectricityMeter) {
+        this.s0ElectricityMeter = s0ElectricityMeter;
+    }
+
+    public List<Switch> getSwitches() {
+        return switches;
+    }
+
+    public void setSwitches(List<Switch> switches) {
+        this.switches = switches;
+    }
+
+    public List<TimeFrame> getTimeFrames() {
+        return timeFrames;
+    }
+
+    public void setTimeFrames(List<TimeFrame> timeFrames) {
+        this.timeFrames = timeFrames;
     }
 
     public Meter getMeter() {
-        return new MeterFactory().getMeter(configuration);
+        return new MeterFactory().getMeter(this);
     }
     
     public List<Control> getControls() {
-        return new ControlFactory().getControls(configuration, runningTimeMonitor);
+        return new ControlFactory().getControls(this, runningTimeMonitor);
     }
 
     public RunningTimeMonitor getRunningTimeMonitor() {
@@ -62,14 +88,22 @@ public class Appliance {
         this.runningTimeMonitor = runningTimeMonitor;
     }
     
+    public Set<GpioControllable> getGpioControllables() {
+        Set<GpioControllable> controllables = new HashSet<GpioControllable>();
+        if(s0ElectricityMeter != null) {
+            controllables.add(s0ElectricityMeter);
+        }
+        if(switches != null && switches.size() > 0) {
+            controllables.addAll(switches);
+        }
+        return controllables;
+    }
+    
     public boolean canConsumeOptionalEnergy() {
-        if(configuration != null) {
-            List<TimeFrame> timeFrames = configuration.getTimeFrames();
-            if(timeFrames != null) {
-                for(TimeFrame timeFrame : timeFrames) {
-                    if(timeFrame.getMaxRunningTime() != timeFrame.getMinRunningTime()) {
-                        return true;
-                    }
+        if(timeFrames != null) {
+            for(TimeFrame timeFrame : timeFrames) {
+                if(timeFrame.getMaxRunningTime() != timeFrame.getMinRunningTime()) {
+                    return true;
                 }
             }
         }

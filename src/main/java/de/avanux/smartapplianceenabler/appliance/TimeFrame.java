@@ -36,9 +36,9 @@ public class TimeFrame {
     @XmlAttribute
     private long maxRunningTime;
     @XmlElement(name = "EarliestStart")
-    TimeOfDay earliestStart;
+    private TimeOfDay earliestStart;
     @XmlElement(name = "LatestEnd")
-    TimeOfDay latestEnd;
+    private TimeOfDay latestEnd;
     @XmlTransient
     DateTimeFormatter formatter = ISODateTimeFormat.basicTTimeNoMillis();
 

@@ -191,7 +191,6 @@ public class SempController {
     }
 
     private PlanningRequest createPlanningRequest(Appliance appliance) {
-        // FIXME ApplianceConfiguration weg da unnötig
         PlanningRequest planningRequest = null;
         RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
         if(runningTimeMonitor != null) {
@@ -199,7 +198,7 @@ public class SempController {
                 Instant now = new Instant();
                 List<de.avanux.smartapplianceenabler.semp.webservice.Timeframe> sempTimeFrames = new ArrayList<de.avanux.smartapplianceenabler.semp.webservice.Timeframe>();
                 
-                TimeFrame currentTimeFrame = runningTimeMonitor.getCurrentTimeFrame();
+                TimeFrame currentTimeFrame = runningTimeMonitor.findCurrentTimeFrame(now);
                 if(currentTimeFrame != null) {
                     sempTimeFrames.add(createSempTimeFrame(appliance.getId(), currentTimeFrame, runningTimeMonitor.getRemainingMinRunningTime(), now));
                 }

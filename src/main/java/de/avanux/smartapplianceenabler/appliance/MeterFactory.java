@@ -21,11 +21,11 @@ import java.util.List;
 
 public class MeterFactory {
 
-    public Meter getMeter(ApplianceConfiguration configuration) {
-        if(configuration.getS0ElectricityMeter() != null) {
-            S0ElectricityMeter s0ElectricityMeter = configuration.getS0ElectricityMeter();
+    public Meter getMeter(Appliance appliance) {
+        if(appliance.getS0ElectricityMeter() != null) {
+            S0ElectricityMeter s0ElectricityMeter = appliance.getS0ElectricityMeter();
             // inject control in required to get appliance state
-            List<Switch> switches = configuration.getSwitches();
+            List<Switch> switches = appliance.getSwitches();
             if(switches != null && switches.size() > 0) {
                 s0ElectricityMeter.setControl(switches.get(0));
             }

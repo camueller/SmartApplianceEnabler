@@ -64,25 +64,20 @@ public class ApplianceManager implements Runnable {
         appliances = fileHandler.load(Appliances.class);
         logger.info(getAppliances().size() + " appliance(s) configured.");
         for (Appliance appliance : getAppliances()) {
-            ApplianceConfiguration configuration = appliance.getConfiguration();
-            if(configuration != null) {
-                if(appliance.getConfiguration() != null) {
-                    RunningTimeMonitor runningTimeMonitor = null;
-                    if(configuration.getTimeFrames() != null) {
-                        runningTimeMonitor = new RunningTimeMonitor();
-                        runningTimeMonitor.setTimeFrames(configuration.getTimeFrames());
-                        appliance.setRunningTimeMonitor(runningTimeMonitor);
-                    }
-                    
-                    for(Control control : appliance.getControls()) {
-                        control.setRunningTimeMonitor(runningTimeMonitor);
-                    }
-                    
-                    for(GpioControllable gpioControllable : configuration.getGpioControllables()) {
-                        gpioControllable.setGpioController(gpioController);
-                        gpioControllable.start();
-                    }
-                }
+            RunningTimeMonitor runningTimeMonitor = null;
+            if(appliance.getTimeFrames() != null) {
+                runningTimeMonitor = new RunningTimeMonitor();
+                runningTimeMonitor.setTimeFrames(appliance.getTimeFrames());
+                appliance.setRunningTimeMonitor(runningTimeMonitor);
+            }
+            
+            for(Control control : appliance.getControls()) {
+                control.setRunningTimeMonitor(runningTimeMonitor);
+            }
+            
+            for(GpioControllable gpioControllable : appliance.getGpioControllables()) {
+                gpioControllable.setGpioController(gpioController);
+                gpioControllable.start();
             }
         }
         
