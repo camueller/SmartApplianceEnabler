@@ -238,7 +238,20 @@ sudo java -Dappliance.dir=. -jar SmartApplianceEnabler-0.1.0.jar
 17:31:48.297 [Thread-4] INFO  org.fourthline.cling.UpnpServiceImpl - <<< UPnP service started successfully
 17:31:52.161 [cling-5] INFO  d.a.s.s.d.SempDeviceDescriptorBinderImpl - SEMP UPnP will redirect to http://192.168.69.5:8080
 ```
+## Integration in den SMA Home Manager
+Der *SMA Home Manager* sollte jetzt den *Smart Appliance Enabler* finden und die von ihm verwalteten Geräte konfigurieren können. Falls das nicht so ist, sollen folgende Punkte geprüft werden:
 
+### Erweiterte Meldungsausgabe
+Auf der Console werden normalerweise nur wichtig Meldungen ausgegeben. Zur Fehlersuche kann es jedoch hilfreich sein, zusätzliche Meldungen anzeigen zu lassen. Dazu wird beim Start des *Smart Appliance Enabler* einfach der Parameter `-d` angehangen: 
+```
+pi@raspberrypi /app $ ./run.sh -d
+```
+### Verbindung zwischen Home Manager und Smart Appliance Enabler
+Home Manager auf den *Smart Appliance Enabler* müssen sich im gleichen Netz befinden!
+Wenn die Erweiterte Meldungsausgabe zuvor aktiviert wurde, kann man auf der Console sehen, wenn der Home Manager auf den *Smart Appliance Enabler* zugreift:
+```
+20:25:17.390 [http-nio-8080-exec-1] DEBUG d.a.s.semp.webservice.SempController - Device info/status/planning requested.
+```
 ## Fragen / Fehler
 Bei Verdacht auf Fehler in der Software oder bei Fragen zur Verwendung des *Smart Appliance Enabler* sollte [Issue](https://github.com/camueller/SmartApplianceEnabler/issues) erstellt werden.
 
