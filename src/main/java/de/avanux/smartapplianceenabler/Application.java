@@ -31,6 +31,11 @@ public class Application {
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
+
+        if(System.getProperty("sae.debug") != null) {
+            ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("de.avanux"))
+            .setLevel(ch.qos.logback.classic.Level.TRACE);
+        }
         
         logger.debug("Starting SEMP discovery ...");
         Thread discoveryThread = new Thread(new SempDiscovery());
