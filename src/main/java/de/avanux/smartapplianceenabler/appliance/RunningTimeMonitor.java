@@ -48,7 +48,7 @@ public class RunningTimeMonitor {
         if(remainingMinRunningTime == null) {
             update();
         }
-        return remainingMinRunningTime;
+        return remainingMinRunningTime != null ? remainingMinRunningTime : 0;
     }
     
     public TimeFrame getCurrentTimeFrame() {
