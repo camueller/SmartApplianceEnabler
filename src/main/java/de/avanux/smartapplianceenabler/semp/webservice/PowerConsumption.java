@@ -17,6 +17,8 @@
  */
 package de.avanux.smartapplianceenabler.semp.webservice;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -24,54 +26,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PowerConsumption {
-    @XmlElement(name = "AveragePower")
-    private Integer averagePower;
-    @XmlElement(name = "MinPower")
-    private Integer minPower;
-    @XmlElement(name = "MaxPower")
-    private Integer maxPower;
-    @XmlElement(name = "AveragingInterval")
-    private Integer averagingInterval;
-    @XmlElement(name = "Timestamp")
-    private Integer timestamp;
+    @XmlElement(name = "PowerInfo")
+    private List<PowerInfo> powerInfo;
 
-    public Integer getAveragePower() {
-        return averagePower;
+    public List<PowerInfo> getPowerInfo() {
+        return powerInfo;
     }
 
-    public void setAveragePower(Integer averagePower) {
-        this.averagePower = averagePower;
-    }
-
-    public Integer getMinPower() {
-        return minPower;
-    }
-
-    public void setMinPower(Integer minPower) {
-        this.minPower = minPower;
-    }
-
-    public Integer getMaxPower() {
-        return maxPower;
-    }
-
-    public void setMaxPower(Integer maxPower) {
-        this.maxPower = maxPower;
-    }
-
-    public Integer getAveragingInterval() {
-        return averagingInterval;
-    }
-
-    public void setAveragingInterval(Integer averagingInterval) {
-        this.averagingInterval = averagingInterval;
-    }
-
-    public Integer getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(Integer timestamp) {
-        this.timestamp = timestamp;
+    public void setPowerInfo(List<PowerInfo> powerInfo) {
+        this.powerInfo = powerInfo;
     }
 }

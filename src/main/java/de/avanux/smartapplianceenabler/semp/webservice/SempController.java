@@ -158,25 +158,29 @@ public class SempController {
             deviceStatus.setEMSignalsAccepted(false);
         }
         
-        PowerConsumption powerConsumption = new PowerConsumption();
+        PowerInfo powerInfo = new PowerInfo();
         Meter meter = appliance.getMeter();
         if(meter != null) {
-            powerConsumption.setAveragePower(meter.getAveragePower());
-            powerConsumption.setMinPower(meter.getMinPower());
-            powerConsumption.setMaxPower(meter.getMaxPower());
-            powerConsumption.setAveragingInterval(meter.getMeasurementInterval());
+            powerInfo.setAveragePower(meter.getAveragePower());
+            powerInfo.setMinPower(meter.getMinPower());
+            powerInfo.setMaxPower(meter.getMaxPower());
+            powerInfo.setAveragingInterval(meter.getMeasurementInterval());
         }
         else {
             DeviceInfo deviceInfo = findDeviceInfo(device2EM, appliance.getId());
             if(deviceStatus.getStatus() == Status.On) {
-                powerConsumption.setAveragePower(deviceInfo.getCharacteristics().getMaxPowerConsumption());
+                powerInfo.setAveragePower(deviceInfo.getCharacteristics().getMaxPowerConsumption());
             }
             else {
-                powerConsumption.setAveragePower(0);
+                powerInfo.setAveragePower(0);
             }
-            powerConsumption.setAveragingInterval(60);
+            powerInfo.setAveragingInterval(60);
         }
-        powerConsumption.setTimestamp(0);
+        powerInfo.setTimestamp(0);
+        
+        PowerConsumption powerConsumption = new PowerConsumption();
+        powerConsumption.setPowerInfo(Collections.singletonList(powerInfo));
+        
         deviceStatus.setPowerConsumption(Collections.singletonList(powerConsumption));
         return deviceStatus;
     }
