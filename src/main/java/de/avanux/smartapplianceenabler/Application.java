@@ -17,11 +17,20 @@
  */
 package de.avanux.smartapplianceenabler;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.lang.management.ManagementFactory;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
+import ch.qos.logback.core.FileAppender;
+import ch.qos.logback.classic.spi.ILoggingEvent;
 import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
 import de.avanux.smartapplianceenabler.semp.discovery.SempDiscovery;
 
@@ -32,19 +41,77 @@ public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
 
-        if(System.getProperty("sae.debug") != null) {
-            ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("de.avanux"))
-            .setLevel(ch.qos.logback.classic.Level.TRACE);
-        }
-        
+        Application application = new Application();
+        application.configureLogging();
+        application.startSemp();
+        application.startApplianceManager();
+        application.writePidFile();
+    }
+    
+    private void startSemp() {
         logger.debug("Starting SEMP discovery ...");
         Thread discoveryThread = new Thread(new SempDiscovery());
         discoveryThread.start();
         logger.debug("... SEMP discovery started");
-        
+    }
+    
+    private void startApplianceManager() {
         logger.debug("Starting appliance manager ...");
         Thread managerThread = new Thread(ApplianceManager.getInstance());
         managerThread.start();
         logger.debug("... Appliance manager started");
+    }
+    
+    private void writePidFile() {
+        String pidFileName = System.getProperty("sae.pidfile");
+        if(pidFileName != null) {
+            String name = ManagementFactory.getRuntimeMXBean().getName();
+            String pid = name.split("@")[0];
+            try {
+                Writer pidFile = new FileWriter(pidFileName);
+                pidFile.write(pid);
+                pidFile.close();
+            }
+            catch(IOException e) {
+                logger.error("Error writing PID file " + pidFileName, e);
+            }
+        }
+    }
+    
+    private void configureLogging() {
+        LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+        
+        PatternLayoutEncoder ple = new PatternLayoutEncoder();
+        ple.setPattern("%date %level [%thread] %logger{10} [%file:%line] %msg%n");
+        ple.setContext(lc);
+        ple.start();
+
+        String logfileString = System.getProperty("sae.logfile");
+        FileAppender<ILoggingEvent> fileAppender = null;
+        if(logfileString != null) {
+            fileAppender = new FileAppender<ILoggingEvent>();
+            fileAppender.setFile(logfileString);
+            fileAppender.setEncoder(ple);
+            fileAppender.setContext(lc);
+            fileAppender.start();
+        }
+
+        ch.qos.logback.classic.Level level = ch.qos.logback.classic.Level.INFO;
+        String levelString = System.getProperty("sae.loglevel");
+        if(levelString != null) {
+            level = ch.qos.logback.classic.Level.valueOf(levelString);    
+        }
+        
+        ch.qos.logback.classic.Logger logger = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger("de.avanux");
+        if(fileAppender != null) {
+            logger.addAppender(fileAppender);
+        }
+        logger.setLevel(level);
+        logger.setAdditive(false); /* set to true if root should log too */
+        
+        if(fileAppender != null) {
+            ch.qos.logback.classic.Logger rootLogger = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
+            rootLogger.addAppender(fileAppender);
+        }
     }
 }
