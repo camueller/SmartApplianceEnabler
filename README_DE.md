@@ -211,7 +211,7 @@ Jan 09 16:26:36 raspberrypi smartapplianceenabler[17288]: Starting smartapplianc
 Jan 09 16:27:07 raspberrypi smartapplianceenabler[17288]: .
 Jan 09 16:27:07 raspberrypi systemd[1]: Started LSB: Start Smart Appliance Enabler..
 ```
-Grundätzlich wird der Service *smartapplianceenabler* beim Start des Raspberry Pi automatisch gestarted.
+Grundätzlich wird der Service *smartapplianceenabler* beim Start des Raspberry Pi automatisch gestartet.
 
 Falls beim Starten ein Fehler auftritt, kann man die Details mit `journalctl` anzeigen lassen (`sudo` nicht vergessen, sonst bekommt man nichts zu sehen!):
 ```
