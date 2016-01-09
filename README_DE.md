@@ -118,10 +118,11 @@ Die Installation des *Smart Appliance Enabler* besteht darin, folgende Dateien a
 * die beim Bauen erstellte Datei `SmartApplianceEnabler-*.jar`
 * die Konfigurationsdatei `Device2EM.xml`
 * die Konfigurationsdatei `Appliances.xml`
-* das Startscript `run.sh` aus dem Verzeichnis `run`
+* das Startscript und die Konfigurationsdateien aus dem Verzeichnis `run` 
+
 Dazu sollte entweder die IP-Adresse des Raspberry bekannt sein, oder der der Raspberry einen festen Hostnamen besitzen. Nachfolgend gehe ich von Letzterem aus, da er bei mir im Netz unter dem Namen `raspi` erreichbar ist.
 
-Zunächst sollte auf dem Raspberry ein eigenes Verzeichis für diese Dateien erstellt werden, z.B. `/app` (das Passwort für den User *pi* ist *raspberry*, wenn Ihr das noch nicht geändert habt):
+Zunächst sollte auf dem Raspberry ein eigenes Verzeichis für diese Dateien erstellt werden (z.B. `/app`) sowie einige temporäre Verzeichnisse (das Passwort für den User *pi* ist *raspberry*, wenn Ihr das noch nicht geändert habt):
 ```
 axel@tpw520:/data/git/SmartApplianceEnabler$ ssh pi@raspi
 pi@raspi's password: 
@@ -135,6 +136,9 @@ permitted by applicable law.
 Last login: Sun Dec  6 19:17:12 2015
 pi@raspberrypi ~ $ sudo mkdir /app
 pi@raspberrypi ~ $ sudo chown pi.pi /app
+pi@raspberrypi ~ $ mkdir /tmp/init.d
+pi@raspberrypi ~ $ mkdir /tmp/logrotate.d
+pi@raspberrypi ~ $ mkdir /tmp/default
 pi@raspberrypi ~ $ exit
 ```
 Danach muss man die genannten Dateien auf den Raspberry kopieren:
@@ -148,13 +152,18 @@ Appliances.xml                                          100%  590     0.6KB/s   
 axel@tpw520:/data/git/SmartApplianceEnabler$ scp run/Device2EM.xml  pi@raspi:/app
 pi@raspi's password:
 Device2EM.xml                                           100% 1288     1.3KB/s   00:00
-axel@tpw520:/data/git/SmartApplianceEnabler$ scp run/run.sh  pi@raspi:/app
-pi@raspi's password:
-run.sh                                                  100%  153     0.2KB/s   00:00
+axel@tpw520:/data/git/SmartApplianceEnabler$ scp run/etc/init.d/smartapplianceenabler pi@raspi:/tmp/init.d
+pi@raspi's password: 
+smartapplianceenabler                                   100% 6150     6.0KB/s   00:00    
+axel@tpw520:/data/git/SmartApplianceEnabler$ scp run/etc/default/smartapplianceenabler pi@raspi:/tmp/default
+pi@raspi's password: 
+smartapplianceenabler                                   100% 1472     1.4KB/s   00:00    
+axel@tpw520:/data/git/SmartApplianceEnabler$ scp run/etc/logrotate.d/smartapplianceenabler pi@raspi:/tmp/logrotate.d
+pi@raspi's password: 
+smartapplianceenabler                                   100%   98     0.1KB/s   00:00    
 axel@tpw520:/data/git/SmartApplianceEnabler$
 ```
-
-Jetzt kann man sich erneut auf dem Raspberry einloggen um den *Smart Appliance Enabler* mittels des `run.sh`-Scriptes zu starten. Dabei sollte man etwa folgende Ausgaben zu sehen bekommen:
+Jetzt müssen die Scripte und Dateien aus dem temporären Verzeichnissen an die richtige Stelle geschoben und deren Rechte gesetzt werden:
 ```
 axel@tpw520:/data/git/SmartApplianceEnabler$ ssh pi@raspi
 pi@raspi's password: 
@@ -165,90 +174,91 @@ individual files in /usr/share/doc/*/copyright.
 
 Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
 permitted by applicable law.
-Last login: Sun Dec  6 19:17:12 2015
-pi@raspberrypi /app $ ./run.sh 
-sudo java -Dappliance.dir=. -jar SmartApplianceEnabler-0.1.0.jar
-17:31:18,279 |-INFO in ch.qos.logback.classic.LoggerContext[default] - Could NOT find resource [logback.groovy]
-17:31:18,289 |-INFO in ch.qos.logback.classic.LoggerContext[default] - Could NOT find resource [logback-test.xml]
-17:31:18,290 |-INFO in ch.qos.logback.classic.LoggerContext[default] - Found resource [logback.xml] at [jar:file:/app/SmartApplianceEnabler-0.1.0.jar!/logback.xml]
-17:31:18,492 |-INFO in ch.qos.logback.core.joran.spi.ConfigurationWatchList@1a1bbc7 - URL [jar:file:/app/SmartApplianceEnabler-0.1.0.jar!/logback.xml] is not of type file
-17:31:18,881 |-INFO in ch.qos.logback.classic.joran.action.ConfigurationAction - debug attribute not set
-17:31:18,928 |-INFO in ch.qos.logback.core.joran.action.AppenderAction - About to instantiate appender of type [ch.qos.logback.core.ConsoleAppender]
-17:31:18,990 |-INFO in ch.qos.logback.core.joran.action.AppenderAction - Naming appender as [STDOUT]
-17:31:19,690 |-WARN in ch.qos.logback.core.ConsoleAppender[STDOUT] - This appender no longer admits a layout as a sub-component, set an encoder instead.
-17:31:19,690 |-WARN in ch.qos.logback.core.ConsoleAppender[STDOUT] - To ensure compatibility, wrapping your layout in LayoutWrappingEncoder.
-17:31:19,690 |-WARN in ch.qos.logback.core.ConsoleAppender[STDOUT] - See also http://logback.qos.ch/codes.html#layoutInsteadOfEncoder for details
-17:31:19,693 |-INFO in ch.qos.logback.classic.joran.action.RootLoggerAction - Setting level of ROOT logger to INFO
-17:31:19,694 |-INFO in ch.qos.logback.core.joran.action.AppenderRefAction - Attaching appender named [STDOUT] to Logger[ROOT]
-17:31:19,698 |-INFO in ch.qos.logback.classic.joran.action.ConfigurationAction - End of configuration.
-17:31:19,704 |-INFO in ch.qos.logback.classic.joran.JoranConfigurator@e0ed11 - Registering current configuration as safe fallback point
-
-
-  .   ____          _            __ _ _
- /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
-( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
- \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
-  '  |____| .__|_| |_|_| |_\__, | / / / /
- =========|_|==============|___/=/_/_/_/
- :: Spring Boot ::        (v1.3.0.RELEASE)
-
-17:31:23.337 [main] INFO  d.a.s.Application - Starting Application v0.1.0 on raspberrypi with PID 1591 (/app/SmartApplianceEnabler-0.1.0.jar started by root in /app)
-17:31:23.358 [main] INFO  d.a.s.Application - No profiles are active
-17:31:23.938 [main] INFO  o.s.b.c.e.AnnotationConfigEmbeddedWebApplicationContext - Refreshing org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@55e19a: startup date [Sun Dec 27 17:31:23 UTC 2015]; root of context hierarchy
-17:31:25.569 [pool-1-thread-1] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 5.2.2.Final
-17:31:31.566 [main] INFO  o.s.b.f.s.DefaultListableBeanFactory - Overriding bean definition for bean 'beanNameViewResolver' with a different definition: replacing [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springframework.boot.autoconfigure.web.ErrorMvcAutoConfiguration$WhitelabelErrorViewConfiguration; factoryMethodName=beanNameViewResolver; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springframework/boot/autoconfigure/web/ErrorMvcAutoConfiguration$WhitelabelErrorViewConfiguration.class]] with [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration$WebMvcAutoConfigurationAdapter; factoryMethodName=beanNameViewResolver; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springframework/boot/autoconfigure/web/WebMvcAutoConfiguration$WebMvcAutoConfigurationAdapter.class]]
-17:31:36.930 [main] INFO  o.s.b.c.e.t.TomcatEmbeddedServletContainer - Tomcat initialized with port(s): 8080 (http)
-17:31:37.032 [main] INFO  o.a.catalina.core.StandardService - Starting service Tomcat
-17:31:37.040 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet Engine: Apache Tomcat/8.0.28
-17:31:37.720 [localhost-startStop-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-17:31:37.722 [localhost-startStop-1] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 13815 ms
-17:31:40.674 [localhost-startStop-1] INFO  o.s.b.c.e.ServletRegistrationBean - Mapping servlet: 'dispatcherServlet' to [/]
-17:31:40.720 [localhost-startStop-1] INFO  o.s.b.c.e.FilterRegistrationBean - Mapping filter: 'characterEncodingFilter' to: [/*]
-17:31:40.722 [localhost-startStop-1] INFO  o.s.b.c.e.FilterRegistrationBean - Mapping filter: 'hiddenHttpMethodFilter' to: [/*]
-17:31:40.723 [localhost-startStop-1] INFO  o.s.b.c.e.FilterRegistrationBean - Mapping filter: 'httpPutFormContentFilter' to: [/*]
-17:31:40.724 [localhost-startStop-1] INFO  o.s.b.c.e.FilterRegistrationBean - Mapping filter: 'requestContextFilter' to: [/*]
-17:31:41.133 [main] INFO  d.a.s.appliance.FileHandler - Using appliance directory .
-17:31:41.569 [main] INFO  d.a.s.semp.webservice.SempController - Controller ready to handle SEMP requests.
-17:31:43.975 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerAdapter - Looking for @ControllerAdvice: org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@55e19a: startup date [Sun Dec 27 17:31:23 UTC 2015]; root of context hierarchy
-17:31:44.690 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped "{[/semp/DeviceStatus],methods=[GET],produces=[application/xml]}" onto public java.lang.String de.avanux.smartapplianceenabler.semp.webservice.SempController.deviceStatus(java.lang.String)
-17:31:44.697 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped "{[/semp],methods=[GET],produces=[application/xml]}" onto public java.lang.String de.avanux.smartapplianceenabler.semp.webservice.SempController.device2EM()
-17:31:44.699 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped "{[/semp/DeviceInfo],methods=[GET],produces=[application/xml]}" onto public java.lang.String de.avanux.smartapplianceenabler.semp.webservice.SempController.deviceInfo(java.lang.String)
-17:31:44.700 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped "{[/semp/PlanningRequest],methods=[GET],produces=[application/xml]}" onto public java.lang.String de.avanux.smartapplianceenabler.semp.webservice.SempController.planningRequest(java.lang.String)
-17:31:44.702 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped "{[/semp],methods=[POST],consumes=[application/xml]}" onto public void de.avanux.smartapplianceenabler.semp.webservice.SempController.em2Device(de.avanux.smartapplianceenabler.semp.webservice.EM2Device)
-17:31:44.719 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped "{[/error],produces=[text/html]}" onto public org.springframework.web.servlet.ModelAndView org.springframework.boot.autoconfigure.web.BasicErrorController.errorHtml(javax.servlet.http.HttpServletRequest)
-17:31:44.721 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped "{[/error]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> org.springframework.boot.autoconfigure.web.BasicErrorController.error(javax.servlet.http.HttpServletRequest)
-17:31:45.122 [main] INFO  o.s.w.s.h.SimpleUrlHandlerMapping - Mapped URL path [/webjars/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
-17:31:45.122 [main] INFO  o.s.w.s.h.SimpleUrlHandlerMapping - Mapped URL path [/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
-17:31:45.593 [main] INFO  o.s.w.s.h.SimpleUrlHandlerMapping - Mapped URL path [/**/favicon.ico] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
-17:31:46.779 [main] INFO  o.s.j.e.a.AnnotationMBeanExporter - Registering beans for JMX exposure on startup
-17:31:47.013 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
-17:31:47.105 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
-17:31:47.176 [main] INFO  o.a.tomcat.util.net.NioSelectorPool - Using a shared selector for servlet write/read
-17:31:47.318 [main] INFO  o.s.b.c.e.t.TomcatEmbeddedServletContainer - Tomcat started on port(s): 8080 (http)
-17:31:47.345 [main] INFO  d.a.s.Application - Started Application in 26.603 seconds (JVM running for 30.461)
-17:31:47.624 [Thread-4] INFO  org.fourthline.cling.UpnpServiceImpl - >>> Starting UPnP service...
-17:31:47.626 [Thread-4] INFO  org.fourthline.cling.UpnpServiceImpl - Using configuration: de.avanux.smartapplianceenabler.semp.discovery.SempDiscovery$1
-17:31:47.809 [Thread-4] INFO  o.fourthline.cling.transport.Router - Creating Router: org.fourthline.cling.transport.RouterImpl
-17:31:47.851 [Thread-4] INFO  o.f.c.t.spi.MulticastReceiver - Creating wildcard socket (for receiving multicast datagrams) on port: 1900
-17:31:47.864 [Thread-4] INFO  o.f.c.t.spi.MulticastReceiver - Joining multicast group: /239.255.255.250:1900 on network interface: eth0
-17:31:47.941 [Thread-7] INFO  d.a.s.appliance.ApplianceManager - 1 appliance(s) configured.
-17:31:47.943 [Thread-4] INFO  o.f.cling.transport.spi.StreamServer - Created socket (for receiving TCP streams) on: /192.168.69.5:52416
-17:31:47.958 [Thread-4] INFO  o.f.cling.transport.spi.DatagramIO - Creating bound socket (for datagram input/output) on: /192.168.69.5
-17:31:47.973 [Thread-7] INFO  d.a.s.appliance.Switch - Switch uses pin GPIO 1 (reversed states)
-17:31:48.297 [Thread-4] INFO  org.fourthline.cling.UpnpServiceImpl - <<< UPnP service started successfully
-17:31:52.161 [cling-5] INFO  d.a.s.s.d.SempDeviceDescriptorBinderImpl - SEMP UPnP will redirect to http://192.168.69.5:8080
+Last login: Sat Jan  9 07:01:59 2016 from axel-laptop-wlan.fritz.box
+pi@raspberrypi ~ $ sudo mv /tmp/init.d/smartapplianceenabler /etc/init.d
+pi@raspberrypi ~ $ sudo chown root.root /etc/init.d/smartapplianceenabler
+pi@raspberrypi ~ $ sudo chmod 755 /etc/init.d/smartapplianceenabler
+pi@raspberrypi ~ $ sudo mv /tmp/default/smartapplianceenabler /etc/default
+pi@raspberrypi ~ $ sudo chown root.root /etc/default/smartapplianceenabler
+pi@raspberrypi ~ $ sudo chmod 644 /etc/default/smartapplianceenabler
+pi@raspberrypi ~ $ sudo mv /tmp/logrotate.d/smartapplianceenabler /etc/logrotate.d
+pi@raspberrypi ~ $ sudo chown root.root /etc/logrotate.d/smartapplianceenabler
+pi@raspberrypi ~ $ sudo chmod 644 /etc/logrotate.d/smartapplianceenabler
 ```
+In der Datei `/etc/default/smartapplianceenabler` finden sich die Konfigurationseinstellungen für den Dienst *smartapplianceenabler*. Die darin befindlichen Parameter sind in der Datei selbst dokumentiert. Normalerweise sollte man die Datei unverändert lassen können.
+
+Damit der [Systemd](https://de.wikipedia.org/wiki/Systemd) den Service *smartapplianceenabler* kennt, muss er mit nachfolgendem Befehl dazu gebracht werden, die Service-Konfigurationen neu zu lesen:
+```
+pi@raspberrypi /etc/logrotate.d $ sudo systemctl daemon-reload
+```
+Jetzt kann man den *Smart Appliance Enabler* starten können. Auf einem aktuellen Raspberry Pi dauert der Start ca. 30 Sekunden.  Dabei sollte man folgende Ausgaben zu sehen bekommen:
+```
+pi@raspberrypi ~ $ sudo /etc/init.d/smartapplianceenabler start
+[ ok ] Starting smartapplianceenabler (via systemctl): smartapplianceenabler.service.
+```
+Verwendet man `stop` anstelle von `start`, wird der Service *smartapplianceenabler* beendet.
+Mit dem Parameter `status` kann geprüft werden, ob der Service läuft:
+```
+pi@raspberrypi ~ $ sudo /etc/init.d/smartapplianceenabler status
+● smartapplianceenabler.service - LSB: Start Smart Appliance Enabler.
+   Loaded: loaded (/etc/init.d/smartapplianceenabler)
+   Active: active (running) since Sat 2016-01-09 16:27:07 UTC; 2min 49s ago
+  Process: 17288 ExecStart=/etc/init.d/smartapplianceenabler start (code=exited, status=0/SUCCESS)
+   CGroup: /system.slice/smartapplianceenabler.service
+           └─17300 /usr/lib/jvm/jdk-8-oracle-arm-vfp-hflt/bin/java -Djava.awt.headless=true -Xmx128m -XX:+UseConcMarkSweepGC -Dsae.pidfile=/var/run/smartapplianceenabler.pid -Dsae.logfile=/var/log/smartapplianceenabler.log -Dsae.loglevel=INFO -Dappliance.dir=/app -jar...
+
+Jan 09 16:26:36 raspberrypi smartapplianceenabler[17288]: Starting smartapplianceenabler: smartapplianceenablertouch: cannot touch ‘’: No such file or directory
+Jan 09 16:27:07 raspberrypi smartapplianceenabler[17288]: .
+Jan 09 16:27:07 raspberrypi systemd[1]: Started LSB: Start Smart Appliance Enabler..
+```
+Falls beim Starten ein Fehler auftritt, kann man die Details mit `journalctl` anzeigen lassen (`sudo` nicht vergessen, sonst bekommt man nichts zu sehen!):
+```
+pi@raspberrypi /etc/logrotate.d $ sudo journalctl -xn
+-- Logs begin at Sat 2016-01-09 06:17:01 UTC, end at Sat 2016-01-09 16:30:39 UTC. --
+Jan 09 16:27:07 raspberrypi systemd[1]: Started LSB: Start Smart Appliance Enabler..
+-- Subject: Unit smartapplianceenabler.service has finished start-up
+-- Defined-By: systemd
+-- Support: http://lists.freedesktop.org/mailman/listinfo/systemd-devel
+-- 
+-- Unit smartapplianceenabler.service has finished starting up.
+-- 
+-- The start-up result is done.
+Jan 09 16:27:07 raspberrypi sudo[17271]: pam_unix(sudo:session): session closed for user root
+Jan 09 16:28:25 raspberrypi sudo[17422]: pi : TTY=pts/0 ; PWD=/home/pi ; USER=root ; COMMAND=/bin/cat /var/log/smartapplianceenabler.log
+Jan 09 16:28:25 raspberrypi sudo[17422]: pam_unix(sudo:session): session opened for user root by pi(uid=0)
+Jan 09 16:28:25 raspberrypi sudo[17422]: pam_unix(sudo:session): session closed for user root
+Jan 09 16:29:56 raspberrypi sudo[17437]: pi : TTY=pts/0 ; PWD=/home/pi ; USER=root ; COMMAND=/etc/init.d/smartapplianceenabler status
+Jan 09 16:29:56 raspberrypi sudo[17437]: pam_unix(sudo:session): session opened for user root by pi(uid=0)
+Jan 09 16:29:56 raspberrypi sudo[17437]: pam_unix(sudo:session): session closed for user root
+Jan 09 16:30:39 raspberrypi sudo[17457]: pi : TTY=pts/1 ; PWD=/etc/logrotate.d ; USER=root ; COMMAND=/bin/journalctl -xn
+Jan 09 16:30:39 raspberrypi sudo[17457]: pam_unix(sudo:session): session opened for user root by pi(uid=0)
+```
+Der *Smart Appliance Enabler* schreibt seine Log-Informationen in die Datei `/var/log/smartapplianceenabler.log`. Der Detaillierungsgrad wird durch den gewählten Log-Level in der Datei `/etc/default/smartapplianceenabler` bestimmt.
+Mit dem Log-Level INFO sind nach dem Start des *Smart Appliance Enabler* folgende Einträge zu sehen:
+```
+pi@raspberrypi ~ $ sudo cat /var/log/smartapplianceenabler.log 
+2016-01-09 16:27:06,864 INFO [Thread-4] o.f.c.UpnpServiceImpl [UpnpServiceImpl.java:71] >>> Starting UPnP service...
+2016-01-09 16:27:06,874 INFO [Thread-4] o.f.c.UpnpServiceImpl [UpnpServiceImpl.java:73] Using configuration: de.avanux.smartapplianceenabler.semp.discovery.SempDiscovery$1
+2016-01-09 16:27:07,078 INFO [Thread-4] o.f.c.t.Router [RouterImpl.java:94] Creating Router: org.fourthline.cling.transport.RouterImpl
+2016-01-09 16:27:07,135 INFO [Thread-4] o.f.c.t.s.MulticastReceiver [MulticastReceiverImpl.java:76] Creating wildcard socket (for receiving multicast datagrams) on port: 1900
+2016-01-09 16:27:07,153 INFO [Thread-4] o.f.c.t.s.MulticastReceiver [MulticastReceiverImpl.java:83] Joining multicast group: /239.255.255.250:1900 on network interface: eth0
+2016-01-09 16:27:07,240 INFO [Thread-7] d.a.s.a.ApplianceManager [ApplianceManager.java:65] 1 appliance(s) configured.
+2016-01-09 16:27:07,250 INFO [Thread-4] o.f.c.t.s.StreamServer [StreamServerImpl.java:80] Created socket (for receiving TCP streams) on: /192.168.69.5:47336
+2016-01-09 16:27:07,266 INFO [Thread-4] o.f.c.t.s.DatagramIO [DatagramIOImpl.java:84] Creating bound socket (for datagram input/output) on: /192.168.69.5
+2016-01-09 16:27:07,269 INFO [Thread-7] d.a.s.a.Switch [Switch.java:41] Switch uses pin GPIO 1 (reversed states)
+2016-01-09 16:27:07,610 INFO [Thread-4] o.f.c.UpnpServiceImpl [UpnpServiceImpl.java:94] <<< UPnP service started successfully
+2016-01-09 16:27:10,130 INFO [cling-5] d.a.s.s.d.SempDeviceDescriptorBinderImpl [SempDeviceDescriptorBinderImpl.java:70] SEMP UPnP will redirect to http://192.168.69.5:8080
+```
+
 ## Integration in den SMA Home Manager
 Der *SMA Home Manager* sollte jetzt den *Smart Appliance Enabler* finden und die von ihm verwalteten Geräte konfigurieren können. Falls das nicht so ist, sollen folgende Punkte geprüft werden:
 
-### Erweiterte Meldungsausgabe
-Auf der Console werden normalerweise nur wichtig Meldungen ausgegeben. Zur Fehlersuche kann es jedoch hilfreich sein, zusätzliche Meldungen anzeigen zu lassen. Dazu wird beim Start des *Smart Appliance Enabler* einfach der Parameter `-d` angehangen: 
-```
-pi@raspberrypi /app $ ./run.sh -d
-```
+### Erhöhung des Log-Levels
+Standardmäßig ist der Log-Level auf INFO gesetzt. Zur Fehlersuche sollte dieser in der Datei `/etc/default/smartapplianceenabler` auf ALL gesetzt werden, damit in der Log-Datei alle verfügbaren Informationen in der Log-Datei `/var/log/smartapplianceenabler.log` protokolliert werden.
+
 ### Verbindung zwischen Home Manager und Smart Appliance Enabler
 Home Manager auf den *Smart Appliance Enabler* müssen sich im gleichen Netz befinden!
-Wenn die Erweiterte Meldungsausgabe zuvor aktiviert wurde, kann man auf der Console sehen, wenn der Home Manager auf den *Smart Appliance Enabler* zugreift:
+Wenn der Log-Level mindestens auf DEBUGgesetzt wurde, kann man in der Log-Datei sehen, wenn der Home Manager auf den *Smart Appliance Enabler* zugreift:
 ```
 20:25:17.390 [http-nio-8080-exec-1] DEBUG d.a.s.semp.webservice.SempController - Device info/status/planning requested.
 ```
