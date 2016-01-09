@@ -5,7 +5,7 @@ SAE_HOME=/app
 #   The file containing the log information. Only uncomment to specify a different location. 
 # SAE_LOGFILE=/var/log/smartapplianceenabler.log
 #   Log level defaults to INFO. May be set to OFF, ERROR, WARN, INFO, DEBUG, TRACE, ALL.
-SAE_LOGLEVEL=ALL
+# SAE_LOGLEVEL=ALL
 
 # The home directory of the Java development kit (JDK). You need at least
 # JDK version 7. If JAVA_HOME is not set, some common directories for
