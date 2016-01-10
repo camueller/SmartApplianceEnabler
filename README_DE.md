@@ -191,7 +191,7 @@ Damit der [Systemd](https://de.wikipedia.org/wiki/Systemd) den Service *smartapp
 ```
 pi@raspberrypi /etc/logrotate.d $ sudo systemctl daemon-reload
 ```
-Jetzt kann man den *Smart Appliance Enabler* starten können. Auf einem aktuellen Raspberry Pi dauert der Start ca. 30 Sekunden.  Dabei sollte man folgende Ausgaben zu sehen bekommen:
+Jetzt sollte man den *Smart Appliance Enabler* starten können. Auf einem aktuellen Raspberry Pi dauert der Start ca. 30 Sekunden.  Dabei sollte man folgende Ausgaben zu sehen bekommen:
 ```
 pi@raspberrypi ~ $ sudo /etc/init.d/smartapplianceenabler start
 [ ok ] Starting smartapplianceenabler (via systemctl): smartapplianceenabler.service.
