@@ -187,7 +187,11 @@ pi@raspberrypi ~ $ sudo chmod 644 /etc/logrotate.d/smartapplianceenabler
 ```
 In der Datei `/etc/default/smartapplianceenabler` finden sich die Konfigurationseinstellungen für den Dienst *smartapplianceenabler*. Die darin befindlichen Parameter sind in der Datei selbst dokumentiert. Normalerweise sollte man die Datei unverändert lassen können.
 
-Damit der [Systemd](https://de.wikipedia.org/wiki/Systemd) den Service *smartapplianceenabler* kennt, muss er mit nachfolgendem Befehl dazu gebracht werden, die Service-Konfigurationen neu zu lesen:
+Damit der Dienst *smartapplianceenabler* beim Systemstart ebenfalls gestartet wird, muss folgender Befehl ausgeführt werden:
+```
+pi@raspberrypi /etc/init.d $ sudo systemctl enable smartapplianceenabler.service
+```
+Nach diesen Änderungen muss der [Systemd](https://de.wikipedia.org/wiki/Systemd) dazu gebracht werden, die Service-Konfigurationen neu zu lesen:
 ```
 pi@raspberrypi /etc/logrotate.d $ sudo systemctl daemon-reload
 ```
@@ -211,7 +215,7 @@ Jan 09 16:26:36 raspberrypi smartapplianceenabler[17288]: Starting smartapplianc
 Jan 09 16:27:07 raspberrypi smartapplianceenabler[17288]: .
 Jan 09 16:27:07 raspberrypi systemd[1]: Started LSB: Start Smart Appliance Enabler..
 ```
-Grundätzlich wird der Service *smartapplianceenabler* beim Start des Raspberry Pi automatisch gestartet. Eigentlich lässt man solche Services nicht unter dem Benutzer *root* laufen. Allerdings habe ich bisher keine Möglichkeit gefunden, die Rechte für den Zugriff auf die GPIO-Ports so zu setzen, dass diese auch für andere Benutzer möglich ist.
+Eigentlich lässt man Dienste wie *smartapplianceenabler* nicht unter dem Benutzer *root* laufen. Allerdings habe ich bisher keine Möglichkeit gefunden, die Rechte für den Zugriff auf die GPIO-Ports so zu setzen, dass diese auch für andere Benutzer möglich ist.
 
 Falls beim Starten ein Fehler auftritt, kann man die Details mit `journalctl` anzeigen lassen (`sudo` nicht vergessen, sonst bekommt man nichts zu sehen!):
 ```
