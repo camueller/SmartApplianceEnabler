@@ -71,6 +71,7 @@ public class Application {
                 Writer pidFile = new FileWriter(pidFileName);
                 pidFile.write(pid);
                 pidFile.close();
+                logger.info("PID " + pid + " written to " + pidFileName);
             }
             catch(IOException e) {
                 logger.error("Error writing PID file " + pidFileName, e);
