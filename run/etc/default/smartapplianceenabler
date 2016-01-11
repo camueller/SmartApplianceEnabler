@@ -12,18 +12,16 @@ SAE_HOME=/app
 # OpenJDK and the Oracle JDK are tried.
 #JAVA_HOME=/usr/lib/jvm/java-7-openjdk
 
-# You may pass JVM startup parameters to Java here. If unset, the default
-# options will be: -Djava.awt.headless=true -Xmx128m -XX:+UseConcMarkSweepGC
-#
 # Use "-XX:+UseConcMarkSweepGC" to enable the CMS garbage collector (improved
 # response time). If you use that option and you run Tomcat on a machine with
 # exactly one CPU chip that contains one or two cores, you should also add
 # the "-XX:+CMSIncrementalMode" option.
-JAVA_OPTS="-Djava.awt.headless=true -Xmx128m -XX:+UseConcMarkSweepGC"
+#JAVA_OPTS="-Djava.awt.headless=true -Xmx128m -XX:+UseConcMarkSweepGC"
+JAVA_OPTS="-Djava.awt.headless=true -Xmx256m"
 
 # To enable remote debugging uncomment the following line.
 # You will then be able to use a java debugger on port 8000.
-#JAVA_OPTS="${JAVA_OPTS} -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n"
+# JAVA_OPTS="${JAVA_OPTS} -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n"
 
 # Number of days to keep logfiles in /var/log/tomcat8. Default is 14 days.
 #LOGFILE_DAYS=14
