@@ -29,12 +29,11 @@ import org.slf4j.LoggerFactory;
 
 public class FileHandler {
 
-    // private static final String FILE_DIR = "/data/git/SmartApplianceEnabler/xml";
     private static String FILE_DIR;
     private static Logger logger = LoggerFactory.getLogger(FileHandler.class); 
     
     static {
-        FILE_DIR=System.getProperty("appliance.dir");
+        FILE_DIR=System.getProperty("sae.home");
         if(FILE_DIR == null) {
             logger.error("Property appliance.dir not set.");
             System.exit(-1);

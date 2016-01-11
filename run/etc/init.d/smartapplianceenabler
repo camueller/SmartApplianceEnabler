@@ -15,8 +15,6 @@
 # Provides:          smartapplianceenabler
 # Required-Start:    $local_fs $remote_fs $network
 # Required-Stop:     $local_fs $remote_fs $network
-# Should-Start:      $named
-# Should-Stop:       $named
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
 # Short-Description: Start Smart Appliance Enabler.
@@ -125,12 +123,11 @@ run_sh() {
 		-Dsae.pidfile=$SAE_PID \
 		-Dsae.logfile=$SAE_LOGFILE \
 		-Dsae.loglevel=$SAE_LOGLEVEL \
-		-Dappliance.dir=$SAE_HOME \
+		-Dsae.home=$SAE_HOME \
 		-jar $SAE_JAR"
 
 	# Run the command as a daemon
 	set +e
-	touch "$SAE_PID" "$SAE_LOG_FILE"
 	start-stop-daemon --start -b -p $SAE_PID -x /bin/bash -- -c "$SAE_SH"
 	status="$?"
 	set +a -e
