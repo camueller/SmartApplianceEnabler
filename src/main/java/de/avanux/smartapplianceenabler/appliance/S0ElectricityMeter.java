@@ -18,6 +18,7 @@
 package de.avanux.smartapplianceenabler.appliance;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -43,7 +44,7 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
     @XmlAttribute
     private Integer measurementInterval; // seconds
     @XmlTransient
-    private List<Long> impulseTimestamps = new ArrayList<Long>();
+    private List<Long> impulseTimestamps = Collections.synchronizedList(new ArrayList<Long>());
     @XmlTransient
     private Control control;
 
@@ -68,6 +69,30 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
         this.control = control;
     }
 
+    /**
+     * Returns true if the appliance has a control and the control is switched on.
+     * If the appliance has no control it is considered to be switched on if the age of the most recent impulse
+     * is less than double the interval between the most recent and the second most recent impulse.
+     * @return
+     */
+    private boolean isOn() {
+        if(control != null) {
+            return control.isOn();
+        }
+        else {
+            Long intervalBetweenTwoMostRecentImpulses = getIntervalBetweenTwoMostRecentImpulses();
+            if(intervalBetweenTwoMostRecentImpulses != null) {
+                // at this point we can be sure that there are at least two timestamps cached
+                long mostRecentTimestamp = impulseTimestamps.get(impulseTimestamps.size() - 1);
+                long intervalSinceMostRecentTimestamp = System.currentTimeMillis() - mostRecentTimestamp; 
+                if(intervalSinceMostRecentTimestamp < intervalBetweenTwoMostRecentImpulses * 2) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
     public void start() {
         if(getGpioController() != null) {
             final GpioPinDigitalInput input = getGpioController().provisionDigitalInputPin(getPin(), getPinPullResistance());
@@ -108,17 +133,14 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
     
     public int getAveragePower() {
         if(impulsesPerKwh != null && measurementInterval != null) {
-            // for meter with 1000 imp/kWh and measurement interval 60s: 
-            // 1 kW = 1000imp * 1h
-            // 1 kW = count/1000imp * 60s/3600s
-            // 1  W = count/1000imp * 60s/3600s / 1000
-            int impulsesInMeasurementInterval = getImpulseTimestampsInMeasurementInterval(System.currentTimeMillis()).size();
+            int impulsesInMeasurementInterval = getImpulsesInMeasurementInterval(System.currentTimeMillis()).size();
             if(impulsesInMeasurementInterval < 2) {
                 // less than 2 timestamps in measurement interval
                 return getCurrentPowerIgnoringMeasurementInterval();
             }
             else {
-                int averagePower = impulsesInMeasurementInterval/impulsesPerKwh * measurementInterval/3600 / 1000;
+                logger.debug("imp=" + impulsesInMeasurementInterval + ", impulsesPerKwh=" + impulsesPerKwh + ", measurementInterval=" + measurementInterval + ")");
+                int averagePower = (impulsesInMeasurementInterval * 1000/impulsesPerKwh) * (3600/measurementInterval);
                 logger.debug("average power = " + averagePower + "W");
                 return averagePower;
             }
@@ -130,21 +152,21 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
     }
 
     public int getMinPower() {
-        // min power = longest gap between two timestamps
-        List<Long> timestamps = getImpulseTimestampsInMeasurementInterval(System.currentTimeMillis());
+        // min power = longest interval between two timestamps
+        List<Long> timestamps = getImpulsesInMeasurementInterval(System.currentTimeMillis());
         if(timestamps.size() > 1) {
-            long longestGap = 0;
+            long longestInterval = 0;
             for(int i=1;i<timestamps.size();i++) {
-                long gap = timestamps.get(i) - timestamps.get(i-1);
-                if(gap > longestGap) {
-                    longestGap = gap;
+                long interval = timestamps.get(i) - timestamps.get(i-1);
+                if(interval > longestInterval) {
+                    longestInterval = interval;
                 }
             }
-            int minPower = getPower(longestGap);
-            logger.debug("Min power = " + minPower + "W : longestGap=" + longestGap);
+            int minPower = getPower(longestInterval);
+            logger.debug("Min power = " + minPower + "W (longestInterval=" + longestInterval + ")");
             return minPower;
         }
-        else if (impulseTimestamps.size() > 1 && control.isOn()) {
+        else if (impulseTimestamps.size() > 1 && isOn()) {
             // less than 2 timestamps in measurement interval
             return getCurrentPowerIgnoringMeasurementInterval();
         }
@@ -152,21 +174,21 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
     }
 
     public int getMaxPower() {
-        // max power = shortest gap between two timestamps
-        List<Long> timestamps = getImpulseTimestampsInMeasurementInterval(System.currentTimeMillis());
+        // max power = shortest interval between two timestamps
+        List<Long> timestamps = getImpulsesInMeasurementInterval(System.currentTimeMillis());
         if(timestamps.size() > 1) {
-            long shortestGap = Long.MAX_VALUE;
+            long shortestInterval = Long.MAX_VALUE;
             for(int i=1;i<timestamps.size();i++) {
-                long gap = timestamps.get(i) - timestamps.get(i-1);
-                if(gap < shortestGap) {
-                    shortestGap = gap;
+                long interval = timestamps.get(i) - timestamps.get(i-1);
+                if(interval < shortestInterval) {
+                    shortestInterval = interval;
                 }
             }
-            int maxPower = getPower(shortestGap);
-            logger.debug("Max power = " + maxPower + "W : shortestGap=" + shortestGap);
+            int maxPower = getPower(shortestInterval);
+            logger.debug("Max power = " + maxPower + "W (shortestInterval=" + shortestInterval + ")");
             return maxPower;
         }
-        else if (impulseTimestamps.size() > 1 && control.isOn()) {
+        else if (impulseTimestamps.size() > 1 && isOn()) {
             // less than 2 timestamps in measurement interval
             return getCurrentPowerIgnoringMeasurementInterval();
         }
@@ -175,25 +197,26 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
 
     private int getCurrentPowerIgnoringMeasurementInterval() {
         if (impulseTimestamps.size() > 1) {
-            if(control.isOn()) {
+            if(isOn()) {
                 // calculate power from 2 most recent timestamps, but only if the device is still switched on
-                long mostRecentTimestamp = impulseTimestamps.get(impulseTimestamps.size() - 1);
-                long secondMostRecentTimestamp = impulseTimestamps.get(impulseTimestamps.size() - 2);
-                int currentPower = getPower(mostRecentTimestamp - secondMostRecentTimestamp);
-                logger.debug("Current power = " + currentPower + " W");
-                return currentPower;
+                Long intervalBetweenTwoMostRecentImpulseTimestamps = getIntervalBetweenTwoMostRecentImpulses();
+                if(intervalBetweenTwoMostRecentImpulseTimestamps != null) {
+                    int currentPower = getPower(intervalBetweenTwoMostRecentImpulseTimestamps);
+                    logger.debug("Current power = " + currentPower + " W");
+                    return currentPower;
+                }
             }
             else {
                 logger.warn("Appliance not switched on.");
             }
         }
         else {
-            logger.warn("No or less than 2 impules received.");
+            logger.warn("No or less than 2 impules cached.");
         }
         return 0;
     }
     
-    private List<Long> getImpulseTimestampsInMeasurementInterval(long referenceTimestamp) {
+    private List<Long> getImpulsesInMeasurementInterval(long referenceTimestamp) {
         List<Long> timestamps = new ArrayList<Long>();
         if(measurementInterval != null) {
             for(Long timestamp : impulseTimestamps) {
@@ -205,8 +228,26 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
         logger.debug(timestamps.size() + " timestamps in measurement interval");
         return timestamps;
     }
+
+    /**
+     * Returns the interval between the most recent and the second most recent impulse.
+     * @return the interval in milliseconds or null; if there are less than 2 impulse timestamps cached
+     */
+    private Long getIntervalBetweenTwoMostRecentImpulses() {
+        if(impulseTimestamps.size() > 1) {
+            long mostRecentTimestamp = impulseTimestamps.get(impulseTimestamps.size() - 1);
+            long secondMostRecentTimestamp = impulseTimestamps.get(impulseTimestamps.size() - 2);
+            return mostRecentTimestamp - secondMostRecentTimestamp;
+        }
+        return null;
+    }
     
-    private int getPower(long gapBetweenTwoImpulses) {
-        return Double.valueOf(3600000 / gapBetweenTwoImpulses).intValue();
+    /**
+     * Returns the power cased on the time interval between two impulses.
+     * @param intervalBetweenTwoImpulses
+     * @return
+     */
+    private int getPower(long intervalBetweenTwoImpulses) {
+        return Double.valueOf(3600000 / (intervalBetweenTwoImpulses * 1000/impulsesPerKwh)).intValue();
     }
 }
