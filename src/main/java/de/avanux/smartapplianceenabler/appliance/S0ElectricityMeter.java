@@ -133,16 +133,16 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
     
     public int getAveragePower() {
         if(impulsesPerKwh != null && measurementInterval != null) {
-            int impulsesInMeasurementInterval = getImpulsesInMeasurementInterval(System.currentTimeMillis()).size();
-            if(impulsesInMeasurementInterval < 2) {
-                // less than 2 timestamps in measurement interval
-                return getCurrentPowerIgnoringMeasurementInterval();
-            }
-            else {
-                logger.debug("imp=" + impulsesInMeasurementInterval + ", impulsesPerKwh=" + impulsesPerKwh + ", measurementInterval=" + measurementInterval + ")");
-                int averagePower = (impulsesInMeasurementInterval * 1000/impulsesPerKwh) * (3600/measurementInterval);
+            int timestampsInMeasurementInterval = getImpulsesInMeasurementInterval(System.currentTimeMillis()).size();
+            if(timestampsInMeasurementInterval > 1) {
+                logger.debug("imp=" + timestampsInMeasurementInterval + ", impulsesPerKwh=" + impulsesPerKwh + ", measurementInterval=" + measurementInterval + ")");
+                int averagePower = (timestampsInMeasurementInterval * 1000/impulsesPerKwh) * (3600/measurementInterval);
                 logger.debug("average power = " + averagePower + "W");
                 return averagePower;
+            }
+            else {
+                // less than 2 timestamps in measurement interval
+                return getCurrentPowerIgnoringMeasurementInterval();
             }
         }
         else {
