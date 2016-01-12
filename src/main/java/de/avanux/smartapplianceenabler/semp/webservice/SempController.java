@@ -165,6 +165,12 @@ public class SempController {
             powerInfo.setMinPower(meter.getMinPower());
             powerInfo.setMaxPower(meter.getMaxPower());
             powerInfo.setAveragingInterval(meter.getMeasurementInterval());
+            if(meter.getAveragePower() > 0) {
+                                deviceStatus.setStatus(Status.On);
+            }
+            else {
+                deviceStatus.setStatus(Status.Off);
+            }
         }
         else {
             DeviceInfo deviceInfo = findDeviceInfo(device2EM, appliance.getId());
