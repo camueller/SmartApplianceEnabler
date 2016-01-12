@@ -145,6 +145,7 @@ public class SempController {
     private DeviceStatus createDeviceStatus(Appliance appliance) {
         DeviceStatus deviceStatus = new DeviceStatus();
         deviceStatus.setDeviceId(appliance.getId());
+        Meter meter = appliance.getMeter();
 
         if(appliance.getControls() != null && appliance.getControls().size() > 0) {
             for(Control control : appliance.getControls()) {
@@ -154,23 +155,31 @@ public class SempController {
             }
         }
         else {
-            deviceStatus.setStatus(Status.Offline);
+            // there is no control for the appliance ...
+            if(meter != null) {
+                // ... but we can derive the status from power consumption
+                if(meter.getAveragePower() > 0) {
+                    deviceStatus.setStatus(Status.On);
+                }
+                else {
+                    deviceStatus.setStatus(Status.Off);
+                }
+            }
+            else {
+                // ... and no meter; we have to assume the appliance is switched off
+                deviceStatus.setStatus(Status.Offline);
+            }
+            
+            // an appliance without control cannot be controlled ;-)
             deviceStatus.setEMSignalsAccepted(false);
         }
         
         PowerInfo powerInfo = new PowerInfo();
-        Meter meter = appliance.getMeter();
         if(meter != null) {
             powerInfo.setAveragePower(meter.getAveragePower());
             powerInfo.setMinPower(meter.getMinPower());
             powerInfo.setMaxPower(meter.getMaxPower());
             powerInfo.setAveragingInterval(meter.getMeasurementInterval());
-            if(meter.getAveragePower() > 0) {
-                                deviceStatus.setStatus(Status.On);
-            }
-            else {
-                deviceStatus.setStatus(Status.Off);
-            }
         }
         else {
             DeviceInfo deviceInfo = findDeviceInfo(device2EM, appliance.getId());
