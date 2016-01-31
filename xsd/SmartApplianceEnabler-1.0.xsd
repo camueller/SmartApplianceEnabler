@@ -14,17 +14,11 @@
 
 	<xs:complexType name="ApplianceType">
 		<xs:sequence>
-			<xs:element name="Configuration" type="ConfigurationType" minOccurs="1" maxOccurs="1" />
-		</xs:sequence>
-		<xs:attribute name="id" type="xs:string" />
-	</xs:complexType>
-
-	<xs:complexType name="ConfigurationType">
-		<xs:sequence>
 			<xs:element name="Switch" type="SwitchType" minOccurs="0" maxOccurs="unbounded" />
 			<xs:element name="S0ElectricityMeter" type="S0ElectricityMeterType" minOccurs="0" maxOccurs="1" />
 			<xs:element name="Timeframe" type="TimeFrameType" minOccurs="0" maxOccurs="unbounded" />
 		</xs:sequence>
+		<xs:attribute name="id" type="xs:string" />
 	</xs:complexType>
 
 	<xs:complexType name="SwitchType">
