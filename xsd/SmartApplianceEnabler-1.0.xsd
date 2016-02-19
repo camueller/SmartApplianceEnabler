@@ -8,14 +8,25 @@
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element name="Appliance" type="ApplianceType" minOccurs="1" maxOccurs="unbounded" />
+				<xs:element name="Bus" type="BusType" />
 			</xs:sequence>
 		</xs:complexType>
+		<xs:key name="modbusID">
+			<xs:selector xpath="./Bus/ModbusTCP" />
+			<xs:field xpath="@id" />
+		</xs:key>
+		<xs:keyref name="modbusIDRef" refer="modbusID">
+			<xs:selector xpath="./Appliance/ModbusElectricityMeter" />
+			<xs:field xpath="@idref" />
+		</xs:keyref>
 	</xs:element>
 
 	<xs:complexType name="ApplianceType">
 		<xs:sequence>
 			<xs:element name="Switch" type="SwitchType" minOccurs="0" maxOccurs="unbounded" />
+			<!-- nur ein Zähler alternativ - durch Schema sicherstellen !!!!!!!!!!!!!!!!! -->
 			<xs:element name="S0ElectricityMeter" type="S0ElectricityMeterType" minOccurs="0" maxOccurs="1" />
+			<xs:element name="ModbusElectricityMeter" type="ModbusElectricityMeterType" minOccurs="0" maxOccurs="unbounded" />
 			<xs:element name="Timeframe" type="TimeFrameType" minOccurs="0" maxOccurs="unbounded" />
 		</xs:sequence>
 		<xs:attribute name="id" type="xs:string" />
@@ -40,6 +51,12 @@
 		</xs:restriction>
 	</xs:simpleType>
 
+	<xs:complexType name="ModbusElectricityMeterType">
+		<xs:attribute name="idref" type="xs:NCName" use="required" />
+		<xs:attribute name="slaveAddress" type="xs:int" />
+		<xs:attribute name="registerAddress" type="xs:string" />
+	</xs:complexType>
+
 	<xs:complexType name="TimeFrameType">
 		<xs:sequence>
 			<xs:element name="EarliestStart" type="TimeOfDayType" minOccurs="1" maxOccurs="1" />
@@ -53,6 +70,18 @@
 		<xs:attribute name="hour" type="xs:int"/>
 		<xs:attribute name="minute" type="xs:int"/>
 		<xs:attribute name="second" type="xs:int"/>
+	</xs:complexType>
+
+	<xs:complexType name="BusType">
+		<xs:sequence minOccurs="1">
+			<xs:element name="ModbusTCP" minOccurs="1" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:attribute name="id" type="xs:NCName" use="required" />
+					<xs:attribute name="host" type="xs:string" />
+					<xs:attribute name="port" type="xs:int" />
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
 	</xs:complexType>
 
 </xs:schema>
