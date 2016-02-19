@@ -13,19 +13,11 @@
 			</xs:sequence>
 		</xs:complexType>
 		<xs:key name="modbusID">
-<<<<<<< HEAD
 			<xs:selector xpath="sae:Bus/sae:ModbusTCP" />
 			<xs:field xpath="@id" />
 		</xs:key>
 		<xs:keyref name="modbusIDRef" refer="modbusID">
 			<xs:selector xpath="sae:Appliance/sae:ModbusElectricityMeter" />
-=======
-			<xs:selector xpath="./Bus/ModbusTCP" />
-			<xs:field xpath="@id" />
-		</xs:key>
-		<xs:keyref name="modbusIDRef" refer="modbusID">
-			<xs:selector xpath="./Appliance/ModbusElectricityMeter" />
->>>>>>> ab485c585e70683a6f900f2adb0c4df8bd0ab769
 			<xs:field xpath="@idref" />
 		</xs:keyref>
 	</xs:element>
