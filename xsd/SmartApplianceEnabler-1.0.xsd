@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xs:schema targetNamespace="http://github.com/camueller/SmartApplianceEnabler/v1.0"
-	elementFormDefault="qualified"
-	xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.0"
-	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema targetNamespace="http://github.com/camueller/SmartApplianceEnabler/v1.0" 
+	xmlns:sae="http://github.com/camueller/SmartApplianceEnabler/v1.0" 
+	xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.0" 
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified">
 
 	<xs:element name="Appliances">
 		<xs:complexType>
@@ -12,11 +13,19 @@
 			</xs:sequence>
 		</xs:complexType>
 		<xs:key name="modbusID">
+<<<<<<< HEAD
+			<xs:selector xpath="sae:Bus/sae:ModbusTCP" />
+			<xs:field xpath="@id" />
+		</xs:key>
+		<xs:keyref name="modbusIDRef" refer="modbusID">
+			<xs:selector xpath="sae:Appliance/sae:ModbusElectricityMeter" />
+=======
 			<xs:selector xpath="./Bus/ModbusTCP" />
 			<xs:field xpath="@id" />
 		</xs:key>
 		<xs:keyref name="modbusIDRef" refer="modbusID">
 			<xs:selector xpath="./Appliance/ModbusElectricityMeter" />
+>>>>>>> ab485c585e70683a6f900f2adb0c4df8bd0ab769
 			<xs:field xpath="@idref" />
 		</xs:keyref>
 	</xs:element>
