@@ -2,6 +2,7 @@
 <Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.0">
 	<!-- id muss mit der <DeviceId> des zugehörigen Gerätes aus Device2EM.xml übereinstimmen -->
 	<Appliance id="F-00000001-000000000001-00">
+	    <ModbusSwitch idref="modbus" slaveAddress="1" registerAddress="00AC"/>
 		<!-- pin : Nummer des Raspberry-GPIO-Pins laut http://pi4j.com/images/gpio-control-example-large.png pinPullResistance 
 			: PULL_UP aktiviert den Pull-Up-Widerstand an diesem Pin; PULL_DOWN aktiviert den Pull-Down-Widerstand an diesem Pin; sonst 
 			weglassen impulsesPerKwh : Anzahl der Impulse, die der Zähler an der S0-Schnittstelle pro KWh sendet measurementInterval 
@@ -13,7 +14,6 @@
 		<!-- pin : Nummer des Raspberry-GPIO-Pins laut http://pi4j.com/images/gpio-control-example-large.png reverseStates : invertiert 
 			das Signal für diesen Schalter -->
 		<Switch pin="1" reverseStates="true" />
-		<!-- address : slave address -->
 		<ModbusElectricityMeter idref="modbus" slaveAddress="1" registerAddress="0C" />
 		<!-- minRunningTime : die minimale Zeitdauer in Sekunden, die das Gerät von EarliestStart bis LatestEnd laufen muss maxRunningTime 
 			: die maximale Zeitdauer in Sekunden, die das Gerät von EarliestStart bis LatestEnd laufen darf -->
