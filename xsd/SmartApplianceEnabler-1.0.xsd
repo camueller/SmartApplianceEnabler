@@ -33,11 +33,11 @@
 	<xs:complexType name="ApplianceType">
 		<xs:sequence>
 			<xs:element name="Switch" type="SwitchType" minOccurs="0" maxOccurs="unbounded" />
-			<!-- nur ein Switch alternativ - durch Schema sicherstellen !!!!!!!!!!!!!!!!! -->
 			<xs:element name="ModbusSwitch" type="ModbusSwitchType" minOccurs="0" maxOccurs="unbounded" />
-			<!-- nur ein Zähler alternativ - durch Schema sicherstellen !!!!!!!!!!!!!!!!! -->
-			<xs:element name="S0ElectricityMeter" type="S0ElectricityMeterType" minOccurs="0" maxOccurs="1" />
-			<xs:element name="ModbusElectricityMeter" type="ModbusElectricityMeterType" minOccurs="0" maxOccurs="unbounded" />
+			<xs:choice>
+				<xs:element name="S0ElectricityMeter" type="S0ElectricityMeterType" minOccurs="0" maxOccurs="1" />
+				<xs:element name="ModbusElectricityMeter" type="ModbusElectricityMeterType" minOccurs="0" maxOccurs="1" />
+			</xs:choice>
 			<xs:element name="Timeframe" type="TimeFrameType" minOccurs="0" maxOccurs="unbounded" />
 		</xs:sequence>
 		<xs:attribute name="id" type="xs:string" />
