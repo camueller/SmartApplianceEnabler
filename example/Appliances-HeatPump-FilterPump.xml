@@ -2,19 +2,32 @@
 <Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.0">
 	<!-- id muss mit der <DeviceId> des zugehörigen Gerätes aus Device2EM.xml übereinstimmen -->
 	<Appliance id="F-00000001-000000000001-00">
-	    <ModbusSwitch idref="modbus" slaveAddress="1" registerAddress="00AC"/>
-		<!-- pin : Nummer des Raspberry-GPIO-Pins laut http://pi4j.com/images/gpio-control-example-large.png pinPullResistance 
-			: PULL_UP aktiviert den Pull-Up-Widerstand an diesem Pin; PULL_DOWN aktiviert den Pull-Down-Widerstand an diesem Pin; sonst 
-			weglassen impulsesPerKwh : Anzahl der Impulse, die der Zähler an der S0-Schnittstelle pro KWh sendet measurementInterval 
-			: muss für SEMP immer auf 60 stehen -->
+		<!-- pin : Nummer des Raspberry-GPIO-Pins laut http://pi4j.com/images/gpio-control-example-large.png reverseStates : invertiert 
+			das Signal für diesen Schalter -->
+		<Switch pin="1" reverseStates="true" />
+		<!-- pin : Nummer des Raspberry-GPIO-Pins laut http://pi4j.com/images/gpio-control-example-large.png
+		     pinPullResistance : PULL_UP aktiviert den Pull-Up-Widerstand an diesem Pin; PULL_DOWN aktiviert den Pull-Down-Widerstand an diesem Pin; sonst weglassen
+		     impulsesPerKwh : Anzahl der Impulse, die der Zähler an der S0-Schnittstelle pro KWh sendet
+		     measurementInterval : Anzahl der Sekunden, für die Min/Durchschnitt/Max-Werte berechnet werden (muss für SEMP immer auf 60 stehen)
+		     -->
 		<S0ElectricityMeter pin="2" pinPullResistance="PULL_DOWN" impulsesPerKwh="1000"
 			measurementInterval="60" />
 	</Appliance>
 	<Appliance id="F-00000001-000000000002-00">
-		<!-- pin : Nummer des Raspberry-GPIO-Pins laut http://pi4j.com/images/gpio-control-example-large.png reverseStates : invertiert 
-			das Signal für diesen Schalter -->
-		<Switch pin="1" reverseStates="true" />
-		<ModbusElectricityMeter idref="modbus" slaveAddress="1" registerAddress="0C" />
+	    <!-- 
+	    idref : reference to a ModbusTCP (value has to match the "id" of the ModbusTCP)
+	    slaveAddress : address of the ModBus slave
+	    registerAddress : the register containing the bit (coil) to be switched
+	     -->
+	   	<ModbusSwitch idref="modbus" slaveAddress="1" registerAddress="00AC"/>
+	   	<!-- 
+	    idref : reference to a ModbusTCP (value has to match the "id" of the ModbusTCP)
+	    slaveAddress : address of the ModBus slave
+	    registerAddress : the register containing current power
+	    pollInterval : the number of seconds after which the current power is polled from ModBus device
+	    measurementInterval : Anzahl der Sekunden, für die Min/Durchschnitt/Max-Werte berechnet werden (muss für SEMP immer auf 60 stehen) 
+	   	 -->
+	    <ModbusElectricityMeter idref="modbus" slaveAddress="1" registerAddress="0C" pollInterval="5" measurementInterval="60" />
 		<!-- minRunningTime : die minimale Zeitdauer in Sekunden, die das Gerät von EarliestStart bis LatestEnd laufen muss maxRunningTime 
 			: die maximale Zeitdauer in Sekunden, die das Gerät von EarliestStart bis LatestEnd laufen darf -->
 		<Timeframe minRunningTime="28800" maxRunningTime="28800">
@@ -25,6 +38,6 @@
 		</Timeframe>
 	</Appliance>
 	<Bus>
-		<ModbusTCP id="modbus" host="127.0.0.1" port="502" />
+		<ModbusTCP id="modbus" host="127.0.0.1" />
 	</Bus>
 </Appliances>
