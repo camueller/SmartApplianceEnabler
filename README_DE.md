@@ -51,9 +51,34 @@ oder als [ZIP-Datei](https://github.com/camueller/SmartApplianceEnabler/archive/
 
 Zum Bauen ist weiterhin [Maven](https://maven.apache.org) erforderlich, das gegebenenfalls noch [installiert](https://maven.apache.org/install.html) werden muss.
 
-Um *Smart Appliance Enabler* zu bauen, ruft man Maven im Verzeichnis *SmartApplianceEnabler* wie folgt auf:
+Um *Smart Appliance Enabler* zu bauen, ruft man Maven im Verzeichnis *SmartApplianceEnabler* zunächst nur mit dem Goal ```clean``` auf, damit die Bibliothek [J2Mod](https://sourceforge.net/projects/j2mod) im lokalen Maven-Repository installiert wird:
 ```
-axel@tpw520:~/git/SmartApplianceEnabler$ mvn clean package
+axel@tpw520:~/git/SmartApplianceEnabler$ mvn clean
+[INFO] Scanning for projects...
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building SmartApplianceEnabler 0.1.0
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ SmartApplianceEnabler ---
+[INFO] Deleting /data/git/SmartApplianceEnabler/target
+[INFO] 
+[INFO] --- maven-install-plugin:2.5.2:install-file (default) @ SmartApplianceEnabler ---
+[INFO] pom.xml not found in j2mod-1.06.jar
+[INFO] Installing /data/git/SmartApplianceEnabler/lib/j2mod-1.06.jar to /home/axel/.m2/repository/com/ghgande/j2mod/1.06/j2mod-1.06.jar
+[INFO] Installing /tmp/mvninstall9214044059867338460.pom to /home/axel/.m2/repository/com/ghgande/j2mod/1.06/j2mod-1.06.pom
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 0.492 s
+[INFO] Finished at: 2016-02-21T18:58:17+01:00
+[INFO] Final Memory: 12M/304M
+[INFO] ------------------------------------------------------------------------
+```
+Jetzt kann man den eigentlichen Build von *SmartApplianceEnabler* starten:
+
+```
+axel@tpw520:~/git/SmartApplianceEnabler$ mvn package
 [INFO] Scanning for projects...
 [INFO]                                                                         
 [INFO] ------------------------------------------------------------------------
@@ -95,6 +120,8 @@ axel@tpw520:~/git/SmartApplianceEnabler$ mvn clean package
 [INFO] Final Memory: 28M/316M
 [INFO] ------------------------------------------------------------------------
 ```
+Nachdem man einmalig ```mvn clean``` aufgerufen hat, kann man nachfolgend immer die Goals ``` clean``` und ```build``` zusammenfassen zu ```mvn clean build```.
+
 Beim erstmaligen Aufruf von Maven werden dabei alle benötigten Bibliotheken aus dem offiziellen Maven-Repository heruntergeladen. Das Bauen war nur dann erfolgreich, wenn *BUILD SUCCESS* erscheint! In diesem Fall findet sich die Datei `SmartApplianceEnabler-*.jar` im Unterverzeichnis `target`.
 
 ## Konfiguration
