@@ -24,12 +24,15 @@ public class MeterFactory {
     public Meter getMeter(Appliance appliance) {
         if(appliance.getS0ElectricityMeter() != null) {
             S0ElectricityMeter s0ElectricityMeter = appliance.getS0ElectricityMeter();
-            // inject control in required to get appliance state
+            // inject control required to get appliance state
             List<Switch> switches = appliance.getSwitches();
             if(switches != null && switches.size() > 0) {
                 s0ElectricityMeter.setControl(switches.get(0));
             }
             return s0ElectricityMeter;
+        }
+        else if(appliance.getModbusElectricityMeter() != null) {
+            return appliance.getModbusElectricityMeter();
         }
         return null;
     }

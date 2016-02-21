@@ -29,13 +29,14 @@ import org.slf4j.LoggerFactory;
 
 public class FileHandler {
 
+    private static final String SAE_HOME = "sae.home";
     private static String FILE_DIR;
     private static Logger logger = LoggerFactory.getLogger(FileHandler.class); 
     
     static {
-        FILE_DIR=System.getProperty("sae.home");
+        FILE_DIR=System.getProperty(SAE_HOME);
         if(FILE_DIR == null) {
-            logger.error("Property appliance.dir not set.");
+            logger.error("Property " + SAE_HOME + " not set.");
             System.exit(-1);
         }
         logger.info("Using appliance directory " + FILE_DIR);

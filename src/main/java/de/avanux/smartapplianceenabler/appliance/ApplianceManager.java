@@ -17,7 +17,9 @@
  */
 package de.avanux.smartapplianceenabler.appliance;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -41,11 +43,11 @@ public class ApplianceManager implements Runnable {
     private ApplianceManager() {
         fileHandler = new FileHandler();
         timer = new Timer();
-        try {
+        if(System.getProperty("os.arch").equals("arm")) {
             gpioController = GpioFactory.getInstance();
         }
-        catch(UnsatisfiedLinkError e) {
-            logger.error("GPIO access disabled. Probably not running on Raspberry Pi.");
+        else {
+            logger.error("GPIO access disabled - not running on Raspberry Pi.");
         }
     }
     
@@ -62,7 +64,20 @@ public class ApplianceManager implements Runnable {
     
     public void startAppliances() {
         appliances = fileHandler.load(Appliances.class);
+        if(appliances == null) {
+            logger.error("No valid appliance configuration found. Exiting ...");
+            System.exit(-1);
+        }
         logger.info(getAppliances().size() + " appliance(s) configured.");
+        
+        Bus bus = appliances.getBus();
+        // make ModbusTcp accessible by id
+        Map<String,ModbusTcp> modbusIdWithModbusTcp = new HashMap<String,ModbusTcp>();
+        for(ModbusTcp modbusTCP : bus.getModbusTCPs()) {
+            logger.info("ModBus (" + modbusTCP.getId() + ") configured for " + modbusTCP.toString());
+            modbusIdWithModbusTcp.put(modbusTCP.getId(), modbusTCP);
+        }
+        
         for (Appliance appliance : getAppliances()) {
             RunningTimeMonitor runningTimeMonitor = null;
             if(appliance.getTimeFrames() != null) {
@@ -72,12 +87,18 @@ public class ApplianceManager implements Runnable {
             }
             
             for(Control control : appliance.getControls()) {
-                control.setRunningTimeMonitor(runningTimeMonitor);
+                control.setRunningTimeController(runningTimeMonitor);
             }
             
             for(GpioControllable gpioControllable : appliance.getGpioControllables()) {
                 gpioControllable.setGpioController(gpioController);
                 gpioControllable.start();
+            }
+            for(ModbusSlave modbusSlave : appliance.getModbusSlaves()) {
+                String modbusId = modbusSlave.getIdref();
+                ModbusTcp modbusTcp = modbusIdWithModbusTcp.get(modbusId);
+                modbusSlave.setModbusTcp(modbusTcp);
+                modbusSlave.start(timer);
             }
         }
         
@@ -96,6 +117,6 @@ public class ApplianceManager implements Runnable {
     }
 
     public List<Appliance> getAppliances() {
-        return appliances.getAppliance();
+        return appliances.getAppliances();
     }
 }

@@ -25,7 +25,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-import org.hibernate.validator.internal.util.privilegedactions.GetConstraintValidatorList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,18 +52,10 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
         return impulsesPerKwh;
     }
 
-    public void setImpulsesPerKwh(Integer impulsesPerKwh) {
-        this.impulsesPerKwh = impulsesPerKwh;
-    }
-    
     public Integer getMeasurementInterval() {
         return measurementInterval;
     }
 
-    public void setMeasurementInterval(Integer measurementInterval) {
-        this.measurementInterval = measurementInterval;
-    }
-    
     public void setControl(Control control) {
         this.control = control;
     }

@@ -37,8 +37,10 @@ public interface Meter {
      */
     int getMaxPower();
 
-    Integer getImpulsesPerKwh();
-
+    /**
+     * Interval for which average power will be calculated. 
+     * @return
+     */
     Integer getMeasurementInterval();
 
 }

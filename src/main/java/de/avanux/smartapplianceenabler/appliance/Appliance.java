@@ -33,8 +33,12 @@ public class Appliance {
     private String id;
     @XmlElement(name = "S0ElectricityMeter")
     private S0ElectricityMeter s0ElectricityMeter;
+    @XmlElement(name = "ModbusElectricityMeter")
+    private ModbusElectricityMeter modbusElectricityMeter;
     @XmlElement(name = "Switch")
     private List<Switch> switches;
+    @XmlElement(name = "ModbusSwitch")
+    private List<ModbusSwitch> modbusSwitches;
     @XmlElement(name = "Timeframe")
     private List<TimeFrame> timeFrames;
     @XmlTransient
@@ -44,32 +48,24 @@ public class Appliance {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public S0ElectricityMeter getS0ElectricityMeter() {
         return s0ElectricityMeter;
     }
 
-    public void setS0ElectricityMeter(S0ElectricityMeter s0ElectricityMeter) {
-        this.s0ElectricityMeter = s0ElectricityMeter;
+    public ModbusElectricityMeter getModbusElectricityMeter() {
+        return modbusElectricityMeter;
     }
 
     public List<Switch> getSwitches() {
         return switches;
     }
 
-    public void setSwitches(List<Switch> switches) {
-        this.switches = switches;
+    public List<ModbusSwitch> getModbusSwitches() {
+        return modbusSwitches;
     }
 
     public List<TimeFrame> getTimeFrames() {
         return timeFrames;
-    }
-
-    public void setTimeFrames(List<TimeFrame> timeFrames) {
-        this.timeFrames = timeFrames;
     }
 
     public Meter getMeter() {
@@ -98,6 +94,20 @@ public class Appliance {
         }
         return controllables;
     }
+    
+    public Set<ModbusSlave> getModbusSlaves() {
+        Set<ModbusSlave> slaves = new HashSet<ModbusSlave>();
+        if(modbusElectricityMeter != null) {
+            slaves.add(modbusElectricityMeter);
+        }
+        if(modbusSwitches != null) {
+            for(ModbusSwitch modbusSwitch : modbusSwitches) {
+                slaves.add(modbusSwitch);
+            }
+        }
+        return slaves;
+    }
+    
     
     public boolean canConsumeOptionalEnergy() {
         if(timeFrames != null) {

@@ -29,8 +29,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
-import ch.qos.logback.core.FileAppender;
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.FileAppender;
 import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
 import de.avanux.smartapplianceenabler.semp.discovery.SempDiscovery;
 
@@ -43,7 +43,7 @@ public class Application {
 
         Application application = new Application();
         application.configureLogging();
-        application.startSemp();
+//        application.startSemp();
         application.startApplianceManager();
         application.writePidFile();
     }
@@ -102,13 +102,14 @@ public class Application {
         if(levelString != null) {
             level = ch.qos.logback.classic.Level.valueOf(levelString);    
         }
+        logger.info("Logging configured with log level " + level);
         
         ch.qos.logback.classic.Logger logger = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger("de.avanux");
         if(fileAppender != null) {
             logger.addAppender(fileAppender);
         }
         logger.setLevel(level);
-        logger.setAdditive(false); /* set to true if root should log too */
+        logger.setAdditive(false); /* set to true if logging not already configured by Spring */
         
         if(fileAppender != null) {
             ch.qos.logback.classic.Logger rootLogger = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);

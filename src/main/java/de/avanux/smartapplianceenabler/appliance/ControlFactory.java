@@ -22,11 +22,17 @@ import java.util.List;
 
 public class ControlFactory {
     
-    public List<Control> getControls(Appliance appliance, RunningTimeMonitor runningTimeMonitor) {
+    public List<Control> getControls(Appliance appliance, RunningTimeController runningTimeController) {
         List<Control> controls = new ArrayList<Control>();
         if(appliance.getSwitches() != null) {
             for(Switch zwitch : appliance.getSwitches()) {
-                zwitch.setRunningTimeMonitor(runningTimeMonitor);
+                zwitch.setRunningTimeController(runningTimeController);
+                controls.add(zwitch);
+            }
+        }
+        if(appliance.getModbusSwitches() != null) {
+            for(ModbusSwitch zwitch : appliance.getModbusSwitches()) {
+                zwitch.setRunningTimeController(runningTimeController);
                 controls.add(zwitch);
             }
         }

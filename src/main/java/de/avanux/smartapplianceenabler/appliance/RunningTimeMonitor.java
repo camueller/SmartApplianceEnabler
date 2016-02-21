@@ -23,7 +23,7 @@ import java.util.List;
 import org.joda.time.Instant;
 import org.joda.time.Interval;
 
-public class RunningTimeMonitor {
+public class RunningTimeMonitor implements RunningTimeController {
     private List<TimeFrame> timeFrames;
     private TimeFrame currentTimeFrame;
     private Instant intervalBeginn;

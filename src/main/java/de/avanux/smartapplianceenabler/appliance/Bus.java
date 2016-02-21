@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Axel Müller <axel.mueller@avanux.de>
+ * Copyright (C) 2016 Axel Müller <axel.mueller@avanux.de>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,19 +24,13 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name = "Appliances")
+@XmlRootElement(name = "Bus")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Appliances {
-    @XmlElement(name = "Appliance")
-    private List<Appliance> appliances;
-    @XmlElement(name = "Bus")
-    private Bus bus;
+public class Bus {
+    @XmlElement(name = "ModbusTCP")
+    private List<ModbusTcp> modbusTCPs;
 
-    public List<Appliance> getAppliances() {
-        return appliances;
-    }
-
-    public Bus getBus() {
-        return bus;
+    public List<ModbusTcp> getModbusTCPs() {
+        return modbusTCPs;
     }
 }

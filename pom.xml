@@ -41,6 +41,17 @@
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
 		</dependency>
+		<!--
+		Unfortunately the developer of J2Mod decided against publishing to a public Maven repository
+		Refert to https://sourceforge.net/p/j2mod/discussion/general/thread/9f6fc7f4/
+		 -->
+		<dependency>
+			<groupId>com.ghgande</groupId>
+			<artifactId>j2mod</artifactId>
+			<version>1.06</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/lib/j2mod-1.06.jar</systemPath>
+		</dependency>		
 	</dependencies>
 
 	<properties>
