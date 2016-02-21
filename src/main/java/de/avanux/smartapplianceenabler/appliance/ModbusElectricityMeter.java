@@ -109,7 +109,10 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter {
         try {
             ReadInputRegisterExecutor executor = new ReadInputRegisterExecutor(registerAddress);
             executeTransaction(executor, false);
-            return executor.getRegisterValue();
+            Float registerValue = executor.getRegisterValue();
+            if(registerValue != null) {
+                return registerValue;
+            }
         }
         catch(Exception e) {
             logger.error("Error reading input register " + registerAddress, e);

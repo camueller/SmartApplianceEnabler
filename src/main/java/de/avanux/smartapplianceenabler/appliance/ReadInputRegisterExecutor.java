@@ -35,8 +35,13 @@ public class ReadInputRegisterExecutor implements ModbusTransactionExecutor {
         trans.execute();
         
         ReadInputRegistersResponse res = (ReadInputRegistersResponse) trans.getResponse();
-        registerValue = Float.intBitsToFloat(res.getRegisterValue(0) << 16 | res.getRegisterValue(1));
-        logger.debug("Input register " + registerAddress + ": value=" + registerValue);
+        if(res != null) {
+            registerValue = Float.intBitsToFloat(res.getRegisterValue(0) << 16 | res.getRegisterValue(1));
+            logger.debug("Input register " + registerAddress + ": value=" + registerValue);
+        }
+        else {
+            logger.error("No response received.");
+        }
     }
     
     public Float getRegisterValue() {

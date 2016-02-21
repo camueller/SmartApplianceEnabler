@@ -17,6 +17,7 @@
  */
 package de.avanux.smartapplianceenabler.appliance;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -117,6 +118,9 @@ public class ApplianceManager implements Runnable {
     }
 
     public List<Appliance> getAppliances() {
-        return appliances.getAppliances();
+        if(appliances != null) {
+            return appliances.getAppliances();
+        }
+        return Collections.EMPTY_LIST;
     }
 }

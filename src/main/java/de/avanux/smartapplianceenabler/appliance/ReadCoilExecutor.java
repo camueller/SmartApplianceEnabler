@@ -36,8 +36,13 @@ public class ReadCoilExecutor implements ModbusTransactionExecutor {
         trans.execute();
         
         ReadCoilsResponse res = (ReadCoilsResponse) trans.getResponse();
-        coil = res.getCoils().getBit(0);
-        logger.debug("Read coil register " + registerAddress + ": coil=" + coil);
+        if(res != null) {
+            coil = res.getCoils().getBit(0);
+            logger.debug("Read coil register " + registerAddress + ": coil=" + coil);
+        }
+        else {
+            logger.error("No response received.");
+        }
     }
     
     public boolean getCoil() {

@@ -39,8 +39,13 @@ public class WriteCoilExecutor implements ModbusTransactionExecutor {
         trans.execute();
         
         WriteCoilResponse res = (WriteCoilResponse) trans.getResponse();
-        result = res.getCoil();
-        logger.debug("Write coil register " + registerAddress + ": coil=" + coil + " result=" + result);
+        if(res != null) {
+            result = res.getCoil();
+            logger.debug("Write coil register " + registerAddress + ": coil=" + coil + " result=" + result);
+        }
+        else {
+            logger.error("No response received.");
+        }
     }
     
     /**
