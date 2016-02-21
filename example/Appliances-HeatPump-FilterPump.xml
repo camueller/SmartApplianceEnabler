@@ -2,14 +2,17 @@
 <Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.0">
 	<!-- id muss mit der <DeviceId> des zugehörigen Gerätes aus Device2EM.xml übereinstimmen -->
 	<Appliance id="F-00000001-000000000001-00">
-		<!-- pin : Nummer des Raspberry-GPIO-Pins laut http://pi4j.com/images/gpio-control-example-large.png reverseStates : invertiert 
-			das Signal für diesen Schalter -->
+		<!-- 
+		pin : Nummer des Raspberry-GPIO-Pins laut http://pi4j.com/images/gpio-control-example-large.png
+		reverseStates : invertiert das Signal für diesen Schalter
+		-->
 		<Switch pin="1" reverseStates="true" />
-		<!-- pin : Nummer des Raspberry-GPIO-Pins laut http://pi4j.com/images/gpio-control-example-large.png
-		     pinPullResistance : PULL_UP aktiviert den Pull-Up-Widerstand an diesem Pin; PULL_DOWN aktiviert den Pull-Down-Widerstand an diesem Pin; sonst weglassen
-		     impulsesPerKwh : Anzahl der Impulse, die der Zähler an der S0-Schnittstelle pro KWh sendet
-		     measurementInterval : Anzahl der Sekunden, für die Min/Durchschnitt/Max-Werte berechnet werden (muss für SEMP immer auf 60 stehen)
-		     -->
+		<!-- 
+		pin : Nummer des Raspberry-GPIO-Pins laut http://pi4j.com/images/gpio-control-example-large.png
+		pinPullResistance : PULL_UP aktiviert den Pull-Up-Widerstand an diesem Pin; PULL_DOWN aktiviert den Pull-Down-Widerstand an diesem Pin; sonst weglassen
+		impulsesPerKwh : Anzahl der Impulse, die der Zähler an der S0-Schnittstelle pro KWh sendet
+		measurementInterval : Anzahl der Sekunden, für die Min/Durchschnitt/Max-Werte berechnet werden (muss für SEMP immer auf 60 stehen)
+		-->
 		<S0ElectricityMeter pin="2" pinPullResistance="PULL_DOWN" impulsesPerKwh="1000"
 			measurementInterval="60" />
 	</Appliance>
@@ -28,8 +31,10 @@
 	    measurementInterval : Anzahl der Sekunden, für die Min/Durchschnitt/Max-Werte berechnet werden (muss für SEMP immer auf 60 stehen) 
 	   	 -->
 	    <ModbusElectricityMeter idref="modbus" slaveAddress="1" registerAddress="0C" pollInterval="5" measurementInterval="60" />
-		<!-- minRunningTime : die minimale Zeitdauer in Sekunden, die das Gerät von EarliestStart bis LatestEnd laufen muss maxRunningTime 
-			: die maximale Zeitdauer in Sekunden, die das Gerät von EarliestStart bis LatestEnd laufen darf -->
+		<!--
+		minRunningTime : die minimale Zeitdauer in Sekunden, die das Gerät von EarliestStart bis LatestEnd laufen muss
+		maxRunningTime : die maximale Zeitdauer in Sekunden, die das Gerät von EarliestStart bis LatestEnd laufen darf
+		-->
 		<Timeframe minRunningTime="28800" maxRunningTime="28800">
 			<!-- hour : Einschaltzeit Stunde minute : Einschaltzeit Minute second : Einschaltzeit Sekunde -->
 			<EarliestStart hour="0" minute="0" second="0" />
