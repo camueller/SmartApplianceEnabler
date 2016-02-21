@@ -1,10 +1,13 @@
-package de.avanux.smartapplianceenabler.appliance;
+package de.avanux.smartapplianceenabler.modbus;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import de.avanux.smartapplianceenabler.appliance.Control;
+import de.avanux.smartapplianceenabler.appliance.RunningTimeController;
 
 public class ModbusSwitch extends ModbusSlave implements Control {
 

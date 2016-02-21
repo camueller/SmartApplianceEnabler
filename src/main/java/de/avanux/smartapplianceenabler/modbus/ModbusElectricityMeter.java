@@ -15,7 +15,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package de.avanux.smartapplianceenabler.appliance;
+package de.avanux.smartapplianceenabler.modbus;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,6 +31,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
+
+import de.avanux.smartapplianceenabler.appliance.Meter;
 
 /**
  * Represents a ModBus electricity meter device accessible by ModBus TCP.

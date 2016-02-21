@@ -1,4 +1,4 @@
-package de.avanux.smartapplianceenabler.appliance;
+package de.avanux.smartapplianceenabler.modbus;
 
 import com.ghgande.j2mod.modbus.ModbusException;
 import com.ghgande.j2mod.modbus.net.TCPMasterConnection;

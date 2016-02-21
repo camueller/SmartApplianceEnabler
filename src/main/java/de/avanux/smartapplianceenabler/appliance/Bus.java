@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
+
 @XmlRootElement(name = "Bus")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Bus {

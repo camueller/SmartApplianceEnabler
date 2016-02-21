@@ -20,6 +20,8 @@ package de.avanux.smartapplianceenabler.appliance;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.avanux.smartapplianceenabler.modbus.ModbusSwitch;
+
 public class ControlFactory {
     
     public List<Control> getControls(Appliance appliance, RunningTimeController runningTimeController) {

@@ -27,6 +27,10 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import de.avanux.smartapplianceenabler.modbus.ModbusElectricityMeter;
+import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
+import de.avanux.smartapplianceenabler.modbus.ModbusSwitch;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Appliance {
     @XmlAttribute

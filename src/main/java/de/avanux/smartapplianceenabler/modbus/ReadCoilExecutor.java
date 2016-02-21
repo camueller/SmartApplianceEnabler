@@ -1,4 +1,4 @@
-package de.avanux.smartapplianceenabler.appliance;
+package de.avanux.smartapplianceenabler.modbus;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
