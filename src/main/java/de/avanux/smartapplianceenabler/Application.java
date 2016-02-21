@@ -43,7 +43,7 @@ public class Application {
 
         Application application = new Application();
         application.configureLogging();
-//        application.startSemp();
+        application.startSemp();
         application.startApplianceManager();
         application.writePidFile();
     }
