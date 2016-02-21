@@ -40,25 +40,26 @@
 			</xs:choice>
 			<xs:element name="Timeframe" type="TimeFrameType" minOccurs="0" maxOccurs="unbounded" />
 		</xs:sequence>
-		<xs:attribute name="id" type="xs:string" />
+		<xs:attribute name="id" type="xs:string" use="required" />
 	</xs:complexType>
 
 	<xs:complexType name="SwitchType">
-		<xs:attribute name="pin" type="xs:int" />
-		<xs:attribute name="reverseStates" type="xs:boolean" />
+		<xs:attribute name="pin" type="xs:int" use="required" />
+		<xs:attribute name="reverseStates" type="xs:boolean" use="optional" />
 	</xs:complexType>
 
 	<xs:complexType name="ModbusSwitchType">
 		<xs:attribute name="idref" type="xs:NCName" use="required" />
-		<xs:attribute name="slaveAddress" type="xs:int" />
-		<xs:attribute name="registerAddress" type="xs:string" />
+		<xs:attribute name="slaveAddress" type="xs:int" use="required" />
+		<xs:attribute name="registerAddress" type="xs:string" use="required" />
 	</xs:complexType>
 
 	<xs:complexType name="S0ElectricityMeterType">
-		<xs:attribute name="pin" type="xs:int"/>
-		<xs:attribute name="pinPullResistance" type="PinPullResistanceType" />
-		<xs:attribute name="impulsesPerKwh" type="xs:int"/>
-		<xs:attribute name="measurementInterval" type="xs:int"/>
+		<xs:attribute name="pin" type="xs:int" use="required"/>
+		<xs:attribute name="pinPullResistance" type="PinPullResistanceType" use="optional"/>
+		<xs:attribute name="impulsesPerKwh" type="xs:int" use="required"/>
+		<xs:attribute name="pollInterval" type="xs:int" use="optional"/>
+		<xs:attribute name="measurementInterval" type="xs:int" use="required"/>
 	</xs:complexType>
 
 	<xs:simpleType name="PinPullResistanceType">
@@ -70,8 +71,9 @@
 
 	<xs:complexType name="ModbusElectricityMeterType">
 		<xs:attribute name="idref" type="xs:NCName" use="required" />
-		<xs:attribute name="slaveAddress" type="xs:int" />
-		<xs:attribute name="registerAddress" type="xs:string" />
+		<xs:attribute name="slaveAddress" type="xs:int" use="required" />
+		<xs:attribute name="registerAddress" type="xs:string" use="required" />
+		<xs:attribute name="measurementInterval" type="xs:int" use="required"/>
 	</xs:complexType>
 
 	<xs:complexType name="TimeFrameType">
@@ -79,14 +81,14 @@
 			<xs:element name="EarliestStart" type="TimeOfDayType" minOccurs="1" maxOccurs="1" />
 			<xs:element name="LatestEnd" type="TimeOfDayType" minOccurs="1" maxOccurs="1" />
 		</xs:sequence>
-		<xs:attribute name="minRunningTime" type="xs:long" />
+		<xs:attribute name="minRunningTime" type="xs:long" use="required" />
 		<xs:attribute name="maxRunningTime" type="xs:long" use="optional" />
 	</xs:complexType>
 
 	<xs:complexType name="TimeOfDayType">
-		<xs:attribute name="hour" type="xs:int"/>
-		<xs:attribute name="minute" type="xs:int"/>
-		<xs:attribute name="second" type="xs:int"/>
+		<xs:attribute name="hour" type="xs:int" use="required"/>
+		<xs:attribute name="minute" type="xs:int" use="required"/>
+		<xs:attribute name="second" type="xs:int" use="required"/>
 	</xs:complexType>
 
 	<xs:complexType name="BusType">
@@ -94,8 +96,8 @@
 			<xs:element name="ModbusTCP" minOccurs="1" maxOccurs="unbounded">
 				<xs:complexType>
 					<xs:attribute name="id" type="xs:NCName" use="required" />
-					<xs:attribute name="host" type="xs:string" />
-					<xs:attribute name="port" type="xs:int" />
+					<xs:attribute name="host" type="xs:string" use="required" />
+					<xs:attribute name="port" type="xs:int" use="optional" />
 				</xs:complexType>
 			</xs:element>
 		</xs:sequence>
