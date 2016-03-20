@@ -29,7 +29,7 @@ import de.avanux.smartapplianceenabler.appliance.RunningTimeController;
 public class ModbusSwitch extends ModbusSlave implements Control {
 
     @XmlTransient
-    private Logger logger = LoggerFactory.getLogger(ModbusElectricityMeter.class);
+    private Logger logger = LoggerFactory.getLogger(ModbusSwitch.class);
     @XmlAttribute
     private String registerAddress;
     @XmlTransient
@@ -40,7 +40,7 @@ public class ModbusSwitch extends ModbusSlave implements Control {
         try {
             logger.info("Switching " + (switchOn ? "on" : "off"));
             WriteCoilExecutor executor = new WriteCoilExecutor(registerAddress, switchOn);
-            executeTransaction(executor, false);
+            executeTransaction(executor, true);
             result = executor.getResult();
             
             if(runningTimeController != null) {
@@ -58,7 +58,7 @@ public class ModbusSwitch extends ModbusSlave implements Control {
         boolean coil = false;
         try {
             ReadCoilExecutor executor = new ReadCoilExecutor(registerAddress);
-            executeTransaction(executor, false);
+            executeTransaction(executor, true);
             coil = executor.getCoil();
         }
         catch (Exception e) {
