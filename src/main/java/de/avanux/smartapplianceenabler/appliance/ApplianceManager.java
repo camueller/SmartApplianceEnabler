@@ -74,14 +74,21 @@ public class ApplianceManager implements Runnable {
         }
         logger.info(getAppliances().size() + " appliance(s) configured.");
         
-        Bus bus = appliances.getBus();
+        Connectivity connectivity = appliances.getConnectivity();
+        // make PulseReceiver accessible by id
+        Map<String,PulseReceiver> pulseReceiverIdWithPulseReceiver = new HashMap<String,PulseReceiver>();
+        for(PulseReceiver pulseReceiver : connectivity.getPulseReceivers()) {
+            logger.info("PulseReceiver (" + pulseReceiver.getId() + ") configured for port " + pulseReceiver.getPort());
+            pulseReceiverIdWithPulseReceiver.put(pulseReceiver.getId(), pulseReceiver);
+            pulseReceiver.start();
+        }
         // make ModbusTcp accessible by id
         Map<String,ModbusTcp> modbusIdWithModbusTcp = new HashMap<String,ModbusTcp>();
-        for(ModbusTcp modbusTCP : bus.getModbusTCPs()) {
+        for(ModbusTcp modbusTCP : connectivity.getModbusTCPs()) {
             logger.info("ModBus (" + modbusTCP.getId() + ") configured for " + modbusTCP.toString());
             modbusIdWithModbusTcp.put(modbusTCP.getId(), modbusTCP);
         }
-        
+
         for (Appliance appliance : getAppliances()) {
             RunningTimeMonitor runningTimeMonitor = null;
             if(appliance.getTimeFrames() != null) {
@@ -98,6 +105,16 @@ public class ApplianceManager implements Runnable {
                 gpioControllable.setGpioController(gpioController);
                 gpioControllable.start();
             }
+
+            S0ElectricityMeterNetworked s0ElectricityMeterNetworked = appliance.getS0ElectricityMeterNetworked();
+            if(s0ElectricityMeterNetworked != null) {
+                String pulseReceiverId = s0ElectricityMeterNetworked.getIdref();
+                PulseReceiver pulseReceiver = pulseReceiverIdWithPulseReceiver.get(pulseReceiverId);
+                s0ElectricityMeterNetworked.setApplianceId(appliance.getId());
+                s0ElectricityMeterNetworked.setPulseReceiver(pulseReceiver);
+                s0ElectricityMeterNetworked.start();
+            }
+
             for(ModbusSlave modbusSlave : appliance.getModbusSlaves()) {
                 String modbusId = modbusSlave.getIdref();
                 ModbusTcp modbusTcp = modbusIdWithModbusTcp.get(modbusId);

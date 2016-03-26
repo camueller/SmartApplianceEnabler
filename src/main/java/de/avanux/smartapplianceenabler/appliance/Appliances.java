@@ -29,14 +29,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Appliances {
     @XmlElement(name = "Appliance")
     private List<Appliance> appliances;
-    @XmlElement(name = "Bus")
-    private Bus bus;
+    @XmlElement(name = "Connectivity")
+    private Connectivity connectivity;
 
     public List<Appliance> getAppliances() {
         return appliances;
     }
 
-    public Bus getBus() {
-        return bus;
+    public Connectivity getConnectivity() {
+        return connectivity;
     }
 }

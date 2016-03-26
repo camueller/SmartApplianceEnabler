@@ -37,6 +37,8 @@ public class Appliance {
     private String id;
     @XmlElement(name = "S0ElectricityMeter")
     private S0ElectricityMeter s0ElectricityMeter;
+    @XmlElement(name = "S0ElectricityMeterNetworked")
+    private S0ElectricityMeterNetworked s0ElectricityMeterNetworked;
     @XmlElement(name = "ModbusElectricityMeter")
     private ModbusElectricityMeter modbusElectricityMeter;
     @XmlElement(name = "Switch")
@@ -54,6 +56,10 @@ public class Appliance {
 
     public S0ElectricityMeter getS0ElectricityMeter() {
         return s0ElectricityMeter;
+    }
+
+    public S0ElectricityMeterNetworked getS0ElectricityMeterNetworked() {
+        return s0ElectricityMeterNetworked;
     }
 
     public ModbusElectricityMeter getModbusElectricityMeter() {

@@ -9,22 +9,32 @@
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element name="Appliance" type="ApplianceType" minOccurs="1" maxOccurs="unbounded" />
-				<xs:element name="Bus" type="BusType" />
+				<xs:element name="Connectivity" type="ConnectivityType" minOccurs="0" maxOccurs="1" />
 			</xs:sequence>
 		</xs:complexType>
 		<xs:unique name="ApplianceID">
 			<xs:selector xpath="sae:Appliance"/>
 			<xs:field xpath="@id"/>
 		</xs:unique>
-		<xs:key name="modbusID">
-			<xs:selector xpath="sae:Bus/sae:ModbusTCP" />
+		<!-- PulseReceiver id/idref -->
+		<xs:key name="PulseReceiverID">
+			<xs:selector xpath="sae:Connectivity/sae:PulseReceiver" />
 			<xs:field xpath="@id" />
 		</xs:key>
-		<xs:keyref name="ModbusElectricityMeterIDRef" refer="modbusID">
+		<xs:keyref name="S0ElectricityMeterNetworkedIDRef" refer="PulseReceiverID">
+			<xs:selector xpath="sae:Appliance/sae:S0ElectricityMeterNetworked" />
+			<xs:field xpath="@idref" />
+		</xs:keyref>
+		<!-- ModbusTCP id/idref -->
+		<xs:key name="ModbusTcpID">
+			<xs:selector xpath="sae:Connectivity/sae:ModbusTCP" />
+			<xs:field xpath="@id" />
+		</xs:key>
+		<xs:keyref name="ModbusElectricityMeterIDRef" refer="ModbusTcpID">
 			<xs:selector xpath="sae:Appliance/sae:ModbusElectricityMeter" />
 			<xs:field xpath="@idref" />
 		</xs:keyref>
-		<xs:keyref name="ModbusSwitchIDRef" refer="modbusID">
+		<xs:keyref name="ModbusSwitchIDRef" refer="ModbusTcpID">
 			<xs:selector xpath="sae:Appliance/sae:ModbusSwitch" />
 			<xs:field xpath="@idref" />
 		</xs:keyref>
@@ -36,6 +46,7 @@
 			<xs:element name="ModbusSwitch" type="ModbusSwitchType" minOccurs="0" maxOccurs="unbounded" />
 			<xs:choice>
 				<xs:element name="S0ElectricityMeter" type="S0ElectricityMeterType" minOccurs="0" maxOccurs="1" />
+				<xs:element name="S0ElectricityMeterNetworked" type="S0ElectricityMeterNetworkedType" minOccurs="0" maxOccurs="1" />
 				<xs:element name="ModbusElectricityMeter" type="ModbusElectricityMeterType" minOccurs="0" maxOccurs="1" />
 			</xs:choice>
 			<xs:element name="Timeframe" type="TimeFrameType" minOccurs="0" maxOccurs="unbounded" />
@@ -57,6 +68,12 @@
 	<xs:complexType name="S0ElectricityMeterType">
 		<xs:attribute name="pin" type="xs:int" use="required"/>
 		<xs:attribute name="pinPullResistance" type="PinPullResistanceType" use="optional"/>
+		<xs:attribute name="impulsesPerKwh" type="xs:int" use="required"/>
+		<xs:attribute name="measurementInterval" type="xs:int" use="required"/>
+	</xs:complexType>
+
+	<xs:complexType name="S0ElectricityMeterNetworkedType">
+		<xs:attribute name="idref" type="xs:NCName" use="required" />
 		<xs:attribute name="impulsesPerKwh" type="xs:int" use="required"/>
 		<xs:attribute name="measurementInterval" type="xs:int" use="required"/>
 	</xs:complexType>
@@ -91,9 +108,15 @@
 		<xs:attribute name="second" type="xs:int" use="required"/>
 	</xs:complexType>
 
-	<xs:complexType name="BusType">
-		<xs:sequence minOccurs="1">
-			<xs:element name="ModbusTCP" minOccurs="1" maxOccurs="unbounded">
+	<xs:complexType name="ConnectivityType">
+		<xs:sequence>
+			<xs:element name="PulseReceiver" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:attribute name="id" type="xs:NCName" use="required" />
+					<xs:attribute name="port" type="xs:int" use="optional" />
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ModbusTCP" minOccurs="0" maxOccurs="unbounded">
 				<xs:complexType>
 					<xs:attribute name="id" type="xs:NCName" use="required" />
 					<xs:attribute name="host" type="xs:string" use="required" />

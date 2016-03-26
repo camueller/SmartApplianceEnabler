@@ -18,16 +18,16 @@
 	</Appliance>
 	<Appliance id="F-00000001-000000000002-00">
 	    <!-- 
-	    idref : reference to a ModbusTCP (value has to match the "id" of the ModbusTCP)
-	    slaveAddress : address of the ModBus slave
-	    registerAddress : the register containing the bit (coil) to be switched
+	    idref : referenziert ein ModbusTCP-Element (Wert muss identisch sein mit dem "id"-Attribut des ModbusTCP-Elementes)
+	    slaveAddress : die Adresse des ModBus-Schalters
+	    registerAddress : das Register, welche das zu schaltende Bit (coil) enthält
 	     -->
 	   	<ModbusSwitch idref="modbus" slaveAddress="1" registerAddress="00AC"/>
 	   	<!-- 
-	    idref : reference to a ModbusTCP (value has to match the "id" of the ModbusTCP)
-	    slaveAddress : address of the ModBus slave
-	    registerAddress : the register containing current power
-	    pollInterval : the number of seconds after which the current power is polled from ModBus device
+	    idref : referenziert ein ModbusTCP-Element (Wert muss identisch sein mit dem "id"-Attribut des ModbusTCP-Elementes)
+	    slaveAddress : die Adresse des ModBus-Zählers
+	    registerAddress : das Register, welches den Wert für die aktuelle Leistungsaufnahme (current power) enthält
+	    pollInterval : die Anzahl der Sekunden, nach denen jeweils der Wert für die aktuelle Leistungsaufnahme vom Zähler abgefragt wird
 	    measurementInterval : Anzahl der Sekunden, für die Min/Durchschnitt/Max-Werte berechnet werden (muss für SEMP immer auf 60 stehen) 
 	   	 -->
 	    <ModbusElectricityMeter idref="modbus" slaveAddress="1" registerAddress="0C" pollInterval="5" measurementInterval="60" />
@@ -42,7 +42,12 @@
 			<LatestEnd hour="23" minute="59" second="59" />
 		</Timeframe>
 	</Appliance>
-	<Bus>
+	<Connectivity>
+        <!--
+        id : ein beliebiger Wert, mit dem dieses Element von anderen Elementen (ModbusElectricityMeter, ModbusSwitch) referenziert werden kann
+        host: die IP-Adresse des Modbus-Gerätes oder des mbusd (MODBUS/TCP to MODBUS/RTU gateway server - http://mbus.sourceforge.net/)
+        port : der TCP-Port des Modbus-Gerätes oder des mbusd (Optional; Standardwert ist 502)
+        -->
 		<ModbusTCP id="modbus" host="127.0.0.1" />
-	</Bus>
+	</Connectivity>
 </Appliances>

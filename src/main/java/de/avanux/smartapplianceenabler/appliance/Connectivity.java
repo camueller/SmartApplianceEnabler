@@ -26,11 +26,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
 
-@XmlRootElement(name = "Bus")
+@XmlRootElement(name = "Connectivity")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Bus {
+public class Connectivity {
+    @XmlElement(name = "PulseReceiver")
+    private List<PulseReceiver> pulseReceivers;
     @XmlElement(name = "ModbusTCP")
     private List<ModbusTcp> modbusTCPs;
+
+    public List<PulseReceiver> getPulseReceivers() {
+        return pulseReceivers;
+    }
 
     public List<ModbusTcp> getModbusTCPs() {
         return modbusTCPs;

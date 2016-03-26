@@ -31,6 +31,9 @@ public class MeterFactory {
             }
             return s0ElectricityMeter;
         }
+        else if(appliance.getS0ElectricityMeterNetworked() != null) {
+            return appliance.getS0ElectricityMeterNetworked();
+        }
         else if(appliance.getModbusElectricityMeter() != null) {
             return appliance.getModbusElectricityMeter();
         }
