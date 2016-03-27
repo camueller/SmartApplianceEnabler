@@ -73,20 +73,26 @@ public class ApplianceManager implements Runnable {
             System.exit(-1);
         }
         logger.info(getAppliances().size() + " appliance(s) configured.");
-        
-        Connectivity connectivity = appliances.getConnectivity();
-        // make PulseReceiver accessible by id
+
         Map<String,PulseReceiver> pulseReceiverIdWithPulseReceiver = new HashMap<String,PulseReceiver>();
-        for(PulseReceiver pulseReceiver : connectivity.getPulseReceivers()) {
-            logger.info("PulseReceiver (" + pulseReceiver.getId() + ") configured for port " + pulseReceiver.getPort());
-            pulseReceiverIdWithPulseReceiver.put(pulseReceiver.getId(), pulseReceiver);
-            pulseReceiver.start();
-        }
-        // make ModbusTcp accessible by id
         Map<String,ModbusTcp> modbusIdWithModbusTcp = new HashMap<String,ModbusTcp>();
-        for(ModbusTcp modbusTCP : connectivity.getModbusTCPs()) {
-            logger.info("ModBus (" + modbusTCP.getId() + ") configured for " + modbusTCP.toString());
-            modbusIdWithModbusTcp.put(modbusTCP.getId(), modbusTCP);
+        Connectivity connectivity = appliances.getConnectivity();
+        if(connectivity != null) {
+            // make PulseReceiver accessible by id
+            if(connectivity.getPulseReceivers() != null) {
+                for(PulseReceiver pulseReceiver : connectivity.getPulseReceivers()) {
+                    logger.info("PulseReceiver (" + pulseReceiver.getId() + ") configured for port " + pulseReceiver.getPort());
+                    pulseReceiverIdWithPulseReceiver.put(pulseReceiver.getId(), pulseReceiver);
+                    pulseReceiver.start();
+                }
+            }
+            // make ModbusTcp accessible by id
+            if(connectivity.getModbusTCPs() != null) {
+                for(ModbusTcp modbusTCP : connectivity.getModbusTCPs()) {
+                    logger.info("ModBus (" + modbusTCP.getId() + ") configured for " + modbusTCP.toString());
+                    modbusIdWithModbusTcp.put(modbusTCP.getId(), modbusTCP);
+                }
+            }
         }
 
         for (Appliance appliance : getAppliances()) {
