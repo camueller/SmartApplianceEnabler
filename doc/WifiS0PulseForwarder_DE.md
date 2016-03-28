@@ -41,30 +41,30 @@ Universal Überspannungsschutz-Adapter 919.004 von Bachmann
 - der Adapter wird von zwei kreuzschlitz-ähnlichen Schrauben, die 3 statt 4 Schlitze haben (dreieckig angeordnet)
 - Schrauben liessen sich mit kleinem Flachschraubendreher herausdrehen
 ![919004_stecker.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/919004_stecker.jpg)  
-Stecker-Kontakte des Universal Überspannungsschutz-Adapter 919.004 von Bachmann
+Stecker-Kontakte des Universal Überspannungsschutz-Adapter 919.004 von Bachmann  
 ![drs155b.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/drs155b.jpg)  
-Stromzähler DRS155B von B+G E-Tech ohne Gehäuse
+Stromzähler DRS155B von B+G E-Tech ohne Gehäuse  
 ![919004_gehauserueckseite.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/919004_gehauserueckseite.jpg)  
-Gehäusehälfte (Platienenhalterungen mit grossem Bohrer weggebohrt, Seitenstege entfernt)
+Gehäusehälfte (Platienenhalterungen mit grossem Bohrer weggebohrt, Seitenstege entfernt)  
 ![steckerverbindung_hochgebogen.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/steckerverbindung_hochgebogen.jpg)  
 - Verbindungssteeg zwischen Stecker und Steckdose zwecks Unterbrechnung hochgebogen
-- Kabel mit Flachtecker zum Zählereingang 
+- Kabel mit Flachtecker zum Zählereingang  
 ![steckerverbindung_isolation.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/steckerverbindung_isolation.jpg)  
-Isolation (hier rote Mantelleitung-Hälfte) zwischen Stecker und Steckdose 
-![zaehler_angeschlossen.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/zaehler_angeschlossen.jpg)  
+Isolation (hier rote Mantelleitung-Hälfte) zwischen Stecker und Steckdose  
+![zaehler_angeschlossen.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/zaehler_angeschlossen.jpg)   
 Zähler im Gehäuse
-- Zähler-Kupfer-Anschlüsse begradigt (auf dem Bild sind die Kabel noch angelötet - wurden bei Folgeversuch geschraubt)
+- Zähler-Kupfer-Anschlüsse begradigt (auf dem Bild sind die Kabel noch angelötet - wurden bei Folgeversuch geschraubt)  
 ![netzteil_mit_spannungsregler.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/netzteil_mit_spannungsregler.jpg)  
-Netzteil SUNNY NE1000 mit Spannungsregler wie den LF33CV
+Netzteil SUNNY NE1000 mit Spannungsregler wie den LF33CV  
 ![netzteil_platzierung.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/netzteil_platzierung.jpg)  
-Platzierung des Netzteils
+Platzierung des Netzteils  
 ![netzteil_verkabelt.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/netzteil_verkabelt.jpg)  
 - Netzteils mit Heisskleber im Deckel befestigt
-- ESP8266-Sockel: 2 Pin-Header (4 Pins) mit Heisskleber zusammengeklebt, Pins hochgebogen, mit Heisskleber im Deckel befestigt 
+- ESP8266-Sockel: 2 Pin-Header (4 Pins) mit Heisskleber zusammengeklebt, Pins hochgebogen, mit Heisskleber im Deckel befestigt  
 ![zaehler_kabelschuhe.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/zaehler_kabelschuhe.jpg)  
-Kabelschuhe an Zähleranschlüssen angeschraubt
+Kabelschuhe an Zähleranschlüssen angeschraubt  
 ![elektronik_komplett.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/elektronik_komplett.jpg)  
-Elektronik komplett und WLAN aktiv (siehe rote LED auf ESP8266)
+Elektronik komplett und WLAN aktiv (siehe rote LED auf ESP8266)  
 ![gehaeuse_geschlossen_nach_umbau.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/gehaeuse_geschlossen_nach_umbau.jpg)  
 Gehäuse geschlossen nach Umbau
 - das Display ist leider defekt, nachdem mir die Zählerplatine einmal heruntergefallen ist (die S0-Impulse kommen aber) 
