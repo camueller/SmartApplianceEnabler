@@ -95,10 +95,12 @@ void loop() {
     udp.write(":");
     udp.write(buffer);
     udp.endPacket();
+    
+    // de-bouncing is required:
+    // 2016-03-28 16:28:26,367 DEBUG Received UDP packet: F-00000001-000000000001-00:355
+    // 2016-03-28 16:28:26,401 DEBUG Received UDP packet: F-00000001-000000000001-00:356
+    // delay has to be shorte than impuls duration (90ms for DRS155B)
+    delay(70);
   }
   previousStatus = status;
-  // de-bouncing is required:
-  // 2016-03-28 16:28:26,367 DEBUG Received UDP packet: F-00000001-000000000001-00:355
-  // 2016-03-28 16:28:26,401 DEBUG Received UDP packet: F-00000001-000000000001-00:356
-  delay(200);
 }
