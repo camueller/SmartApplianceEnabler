@@ -50,7 +50,13 @@
 			<groupId>com.ghgande</groupId>
 			<artifactId>j2mod</artifactId>
 			<version>1.06</version>
-		</dependency>		
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<properties>

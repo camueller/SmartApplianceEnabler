@@ -70,6 +70,6 @@ abstract public class GpioControllable {
     abstract public void start();
 
     protected void logGpioAccessDisabled(Logger logger) {
-        logger.warn("Configured for pin " + getPin()+ ", but not GPIO access disabled.");
+        logger.warn("Configured for pin " + getPin()+ ", but GPIO access disabled.");
     }
 }

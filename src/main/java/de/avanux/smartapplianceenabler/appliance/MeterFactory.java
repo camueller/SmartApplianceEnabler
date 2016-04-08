@@ -17,19 +17,11 @@
  */
 package de.avanux.smartapplianceenabler.appliance;
 
-import java.util.List;
-
 public class MeterFactory {
 
     public Meter getMeter(Appliance appliance) {
         if(appliance.getS0ElectricityMeter() != null) {
-            S0ElectricityMeter s0ElectricityMeter = appliance.getS0ElectricityMeter();
-            // inject control required to get appliance state
-            List<Switch> switches = appliance.getSwitches();
-            if(switches != null && switches.size() > 0) {
-                s0ElectricityMeter.setControl(switches.get(0));
-            }
-            return s0ElectricityMeter;
+            return appliance.getS0ElectricityMeter();
         }
         else if(appliance.getS0ElectricityMeterNetworked() != null) {
             return appliance.getS0ElectricityMeterNetworked();

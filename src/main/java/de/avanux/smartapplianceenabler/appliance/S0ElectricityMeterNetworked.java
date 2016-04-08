@@ -23,10 +23,7 @@ import org.slf4j.LoggerFactory;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
-/**
- * Created by axel on 25.03.16.
- */
-public class S0ElectricityMeterNetworked implements Meter, PulseReceiver.PulseListener {
+public class S0ElectricityMeterNetworked implements Meter, PulseReceiver.PulseListener, ApplianceIdConsumer {
     @XmlTransient
     private Logger logger = LoggerFactory.getLogger(S0ElectricityMeterNetworked.class);
     @XmlAttribute
@@ -36,7 +33,9 @@ public class S0ElectricityMeterNetworked implements Meter, PulseReceiver.PulseLi
     @XmlAttribute
     private Integer impulsesPerKwh;
     @XmlAttribute
-    private Integer measurementInterval; // seconds
+    private Integer measurementInterval = 60; // seconds
+    @XmlAttribute
+    private Boolean powerOnAlways;
     @XmlTransient
     private PulseElectricityMeter pulseElectricityMeter = new PulseElectricityMeter();
     @XmlTransient
@@ -48,9 +47,12 @@ public class S0ElectricityMeterNetworked implements Meter, PulseReceiver.PulseLi
     @XmlTransient
     private Long previousPulseCounter;
 
-
+    @Override
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
+        if(this.pulseElectricityMeter != null) {
+            this.pulseElectricityMeter.setApplianceId(applianceId);
+        }
     }
 
     public String getIdref() {
@@ -81,6 +83,7 @@ public class S0ElectricityMeterNetworked implements Meter, PulseReceiver.PulseLi
     public void start() {
         pulseElectricityMeter.setImpulsesPerKwh(impulsesPerKwh);
         pulseElectricityMeter.setMeasurementInterval(measurementInterval);
+        pulseElectricityMeter.setPowerOnAlways(powerOnAlways);
         if(pulseReceiver != null) {
             pulseReceiver.addListener(applianceId, this);
         }

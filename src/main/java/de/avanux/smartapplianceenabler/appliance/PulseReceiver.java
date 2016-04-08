@@ -91,7 +91,7 @@ public class PulseReceiver implements Runnable {
     private void processReceivedPacket(String content) {
         if(content.length() > 0) {
             String[] contentParts = content.split(":");
-            if(contentParts.length == 2) {
+            if(contentParts.length > 1) {
                 // F-00000001-000000000001-00:143
                 String applianceId = contentParts[0];
                 int counter = Integer.valueOf(contentParts[1]);
@@ -99,7 +99,16 @@ public class PulseReceiver implements Runnable {
                 if(listener != null) {
                     listener.pulseReceived(counter);
                 }
+                else {
+                    logger.warn("No listener!");
+                }
             }
+            else {
+                logger.error("UDP packet content has wrong format!");
+            }
+        }
+        else {
+            logger.error("UDP packet content has length 0!");
         }
     }
 }

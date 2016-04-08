@@ -30,13 +30,15 @@ import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 
 @XmlType(propOrder={"pin", "pinPullResistance", "impulsesPerKwh", "measurementInterval"})
-public class S0ElectricityMeter extends GpioControllable implements Meter {
+public class S0ElectricityMeter extends GpioControllable implements Meter, ApplianceIdConsumer {
     @XmlTransient
     private Logger logger = LoggerFactory.getLogger(S0ElectricityMeter.class); 
     @XmlAttribute
     private Integer impulsesPerKwh;
     @XmlAttribute
-    private Integer measurementInterval; // seconds
+    private Integer measurementInterval = 60; // seconds
+    @XmlAttribute
+    private Boolean powerOnAlways;
     @XmlTransient
     private PulseElectricityMeter pulseElectricityMeter = new PulseElectricityMeter();
 
@@ -51,6 +53,11 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
 
     public void setControl(Control control) {
         this.pulseElectricityMeter.setControl(control);
+    }
+
+    @Override
+    public void setApplianceId(String applianceId) {
+        this.pulseElectricityMeter.setApplianceId(applianceId);
     }
 
     public int getAveragePower() {

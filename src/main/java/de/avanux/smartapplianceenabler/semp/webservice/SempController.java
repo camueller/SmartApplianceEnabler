@@ -179,7 +179,7 @@ public class SempController {
             powerInfo.setAveragePower(meter.getAveragePower());
             powerInfo.setMinPower(meter.getMinPower());
             powerInfo.setMaxPower(meter.getMaxPower());
-            powerInfo.setAveragingInterval(meter.getMeasurementInterval());
+            powerInfo.setAveragingInterval(60); // always report 60 for SEMP regardless of real averaging interval
         }
         else {
             DeviceInfo deviceInfo = findDeviceInfo(device2EM, appliance.getId());

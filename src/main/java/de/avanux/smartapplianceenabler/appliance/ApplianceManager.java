@@ -112,6 +112,16 @@ public class ApplianceManager implements Runnable {
                 gpioControllable.start();
             }
 
+            List<Switch> switches = appliance.getSwitches();
+
+            S0ElectricityMeter s0ElectricityMeter = appliance.getS0ElectricityMeter();
+            if(s0ElectricityMeter != null) {
+                s0ElectricityMeter.setApplianceId(appliance.getId());
+                if(switches != null && switches.size() > 0) {
+                    s0ElectricityMeter.setControl(switches.get(0));
+                }
+            }
+
             S0ElectricityMeterNetworked s0ElectricityMeterNetworked = appliance.getS0ElectricityMeterNetworked();
             if(s0ElectricityMeterNetworked != null) {
                 String pulseReceiverId = s0ElectricityMeterNetworked.getIdref();
