@@ -33,8 +33,9 @@ public class ModbusSwitch extends ModbusSlave implements Control {
     @XmlAttribute
     private String registerAddress;
     @XmlTransient
-    RunningTimeController runningTimeController;    
+    RunningTimeController runningTimeController;
 
+    @Override
     public boolean on(boolean switchOn) {
         boolean result = false;
         try {
@@ -50,7 +51,7 @@ public class ModbusSwitch extends ModbusSlave implements Control {
         catch (Exception e) {
             logger.error("Error switching coil register " + registerAddress, e);
         }
-        return ! (switchOn ^ result);
+        return switchOn == result;
     }
 
     @Override
@@ -66,7 +67,8 @@ public class ModbusSwitch extends ModbusSlave implements Control {
         }
         return coil;
     }
-    
+
+    @Override
     public void setRunningTimeController(RunningTimeController runningTimeController) {
         this.runningTimeController = runningTimeController;
     }

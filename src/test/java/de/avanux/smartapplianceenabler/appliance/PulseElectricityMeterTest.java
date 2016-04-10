@@ -33,6 +33,17 @@ public class PulseElectricityMeterTest {
         pulseElectricityMeter.setMeasurementInterval(60);
     }
 
+    @Test
+    public void isOn_0ts() {
+        Assert.assertFalse(pulseElectricityMeter.isOn(currentTimeMillis));
+    }
+
+    @Test
+    public void isOn_0ts_powerOnAlways() {
+        pulseElectricityMeter.setPowerOnAlways(true);
+        Assert.assertTrue(pulseElectricityMeter.isOn(currentTimeMillis));
+    }
+
     /**
      * O----------O
      */
@@ -236,6 +247,17 @@ public class PulseElectricityMeterTest {
         pulseElectricityMeter.setMeasurementInterval(3600);
         addTimestamps(3599, 3598, 0);
         Assert.assertEquals(1, pulseElectricityMeter.getMinPower(currentTimeMillis));
+    }
+
+    /**
+     * Make sure that min power is not greater than average power
+     * O-O-O-------------(---
+     */
+    @Test
+    public void getMinPower_3ts_3tsi() {
+        addTimestamps(58, 50, 45);
+        Assert.assertEquals(180, pulseElectricityMeter.getMinPower(currentTimeMillis));
+        Assert.assertEquals(180, pulseElectricityMeter.getAveragePower(currentTimeMillis));
     }
 
     /**

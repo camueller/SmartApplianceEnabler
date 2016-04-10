@@ -46,7 +46,8 @@ public class Switch extends GpioControllable implements Control {
             logGpioAccessDisabled(logger);
         }
     }
-    
+
+    @Override
     public boolean on(boolean switchOn) {
         logger.info("Switching " + (switchOn ? "on" : "off") + " pin " + getPin());
         if(outputPin != null) {
@@ -61,6 +62,7 @@ public class Switch extends GpioControllable implements Control {
         return true;
     }
 
+    @Override
     public boolean isOn() {
         if(outputPin != null) {
             return adjustState(outputPin.getState()) == PinState.HIGH;
@@ -79,6 +81,7 @@ public class Switch extends GpioControllable implements Control {
         return pinState;
     }
 
+    @Override
     public void setRunningTimeController(RunningTimeController runningTimeController) {
         this.runningTimeController = runningTimeController;
     }

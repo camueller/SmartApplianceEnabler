@@ -73,6 +73,7 @@ class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
      * is less than double the interval between the most recent and the second most recent impulse.
      * @return true, if the device is considered to be switched on.
      */
+    @Override
     public boolean isOn() {
         return isOn(System.currentTimeMillis());
     }
@@ -84,7 +85,7 @@ class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
         else if(powerOnAlways) {
             return true;
         }
-        return ! isIntervalIncreaseAboveFactor(powerChangeFactor, referenceTimestamp);
+        return impulseTimestamps.size() > 1 && ! isIntervalIncreaseAboveFactor(powerChangeFactor, referenceTimestamp);
     }
 
     /**
@@ -134,11 +135,13 @@ class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
      *
      * @return the minimum power consumption in W
      */
+    @Override
     public int getMinPower() {
         return getMinPower(System.currentTimeMillis());
     }
 
     int getMinPower(long referenceTimestamp) {
+        int minPower = 0;
         // min power = longest interval between two timestamps
         List<Long> timestamps = getImpulsesInMeasurementInterval(referenceTimestamp);
         if(timestamps.size() > 1) {
@@ -149,15 +152,18 @@ class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
                     longestInterval = interval;
                 }
             }
-            int minPower = getPower(longestInterval);
+            minPower = getPower(longestInterval);
             log("Min power = " + minPower + "W (longestInterval=" + longestInterval + ")", Level.DEBUG);
-            return minPower;
         }
         else if (isOn(referenceTimestamp)) {
             // less than 2 timestamps in measurement interval
-            return getCurrentPower();
+            minPower = getCurrentPower();
         }
-        return 0;
+        int averagePower = getAveragePower(referenceTimestamp);
+        if(averagePower < minPower) {
+            minPower = averagePower;
+        }
+        return minPower;
     }
 
     /**
@@ -167,11 +173,13 @@ class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
      *
      * @return the minimum power consumption in W
      */
+    @Override
     public int getMaxPower() {
         return getMaxPower(System.currentTimeMillis());
     }
 
     int getMaxPower(long referenceTimestamp) {
+        int maxPower = 0;
         // max power = shortest interval between two timestamps
         List<Long> timestamps = getImpulsesInMeasurementInterval(referenceTimestamp);
         if(timestamps.size() > 1) {
@@ -182,15 +190,18 @@ class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
                     shortestInterval = interval;
                 }
             }
-            int maxPower = getPower(shortestInterval);
+            maxPower = getPower(shortestInterval);
             log("Max power = " + maxPower + "W (shortestInterval=" + shortestInterval + ")", Level.DEBUG);
-            return maxPower;
         }
         else if (isOn(referenceTimestamp)) {
             // less than 2 timestamps in measurement interval
-            return getCurrentPower();
+            maxPower = getCurrentPower();
         }
-        return 0;
+        int averagePower = getAveragePower(referenceTimestamp);
+        if(averagePower > maxPower) {
+            maxPower = averagePower;
+        }
+        return maxPower;
     }
 
     private int getCurrentPower() {

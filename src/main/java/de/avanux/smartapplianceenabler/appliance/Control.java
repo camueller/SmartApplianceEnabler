@@ -17,12 +17,18 @@
  */
 package de.avanux.smartapplianceenabler.appliance;
 
-public interface Control {
+/**
+ * A control can change the on/off state of an appliance.
+ */
+public interface Control extends ControlMonitor {
 
+    /**
+     * Set the the appliance state.
+     * @param switchOn true, if the appliance state should be "on"
+     * @return true, if the requested state was set; otherwise false
+     */
     boolean on(boolean switchOn);
 
-    boolean isOn();
-    
     public void setRunningTimeController(RunningTimeController runningTimeController);
     
 }

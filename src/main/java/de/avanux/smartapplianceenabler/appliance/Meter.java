@@ -17,7 +17,7 @@
  */
 package de.avanux.smartapplianceenabler.appliance;
 
-public interface Meter {
+public interface Meter extends ControlMonitor {
 
     /**
      * Average power consumption during measurement interval in watt.
@@ -42,5 +42,4 @@ public interface Meter {
      * @return
      */
     Integer getMeasurementInterval();
-
 }

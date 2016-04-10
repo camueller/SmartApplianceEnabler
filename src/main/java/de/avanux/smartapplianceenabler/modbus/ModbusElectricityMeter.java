@@ -93,6 +93,11 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter {
     }
 
     @Override
+    public boolean isOn() {
+        return getPower() > 0;
+    }
+
+    @Override
     public Integer getMeasurementInterval() {
         return measurementInterval;
     }

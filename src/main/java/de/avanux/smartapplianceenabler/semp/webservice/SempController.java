@@ -158,12 +158,7 @@ public class SempController {
             // there is no control for the appliance ...
             if(meter != null) {
                 // ... but we can derive the status from power consumption
-                if(meter.getAveragePower() > 0) {
-                    deviceStatus.setStatus(Status.On);
-                }
-                else {
-                    deviceStatus.setStatus(Status.Off);
-                }
+                deviceStatus.setStatus(meter.isOn() ? Status.On : Status.Off);
             }
             else {
                 // ... and no meter; we have to assume the appliance is switched off

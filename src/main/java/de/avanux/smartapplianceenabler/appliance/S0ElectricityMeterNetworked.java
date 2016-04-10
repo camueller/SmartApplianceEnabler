@@ -35,7 +35,7 @@ public class S0ElectricityMeterNetworked implements Meter, PulseReceiver.PulseLi
     @XmlAttribute
     private Integer measurementInterval = 60; // seconds
     @XmlAttribute
-    private Boolean powerOnAlways;
+    private boolean powerOnAlways;
     @XmlTransient
     private PulseElectricityMeter pulseElectricityMeter = new PulseElectricityMeter();
     @XmlTransient
@@ -76,11 +76,18 @@ public class S0ElectricityMeterNetworked implements Meter, PulseReceiver.PulseLi
     }
 
     @Override
+    public boolean isOn() {
+        return pulseElectricityMeter.isOn();
+    }
+
+    @Override
     public Integer getMeasurementInterval() {
         return measurementInterval;
     }
 
     public void start() {
+        logger.debug("Appliance " + applianceId + " start: impulsesPerKwh=" + impulsesPerKwh
+                + " measurementInterval=" + measurementInterval + " powerOnAlways=" + powerOnAlways);
         pulseElectricityMeter.setImpulsesPerKwh(impulsesPerKwh);
         pulseElectricityMeter.setMeasurementInterval(measurementInterval);
         pulseElectricityMeter.setPowerOnAlways(powerOnAlways);
