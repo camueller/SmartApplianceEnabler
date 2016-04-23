@@ -38,6 +38,12 @@ public class ControlFactory {
                 controls.add(zwitch);
             }
         }
+        if(appliance.getHttpSwitches() != null) {
+            for(HttpSwitch zwitch : appliance.getHttpSwitches()) {
+                zwitch.setRunningTimeController(runningTimeController);
+                controls.add(zwitch);
+            }
+        }
         return controls;
     }
 

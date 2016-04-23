@@ -45,6 +45,8 @@ public class Appliance {
     private List<Switch> switches;
     @XmlElement(name = "ModbusSwitch")
     private List<ModbusSwitch> modbusSwitches;
+    @XmlElement(name = "HttpSwitch")
+    private List<HttpSwitch> httpSwitches;
     @XmlElement(name = "Timeframe")
     private List<TimeFrame> timeFrames;
     @XmlTransient
@@ -72,6 +74,10 @@ public class Appliance {
 
     public List<ModbusSwitch> getModbusSwitches() {
         return modbusSwitches;
+    }
+
+    public List<HttpSwitch> getHttpSwitches() {
+        return httpSwitches;
     }
 
     public List<TimeFrame> getTimeFrames() {

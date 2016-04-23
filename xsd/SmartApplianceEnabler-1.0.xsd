@@ -44,6 +44,7 @@
 		<xs:sequence>
 			<xs:element name="Switch" type="SwitchType" minOccurs="0" maxOccurs="unbounded" />
 			<xs:element name="ModbusSwitch" type="ModbusSwitchType" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="HttpSwitch" type="HttpSwitchType" minOccurs="0" maxOccurs="unbounded" />
 			<xs:choice>
 				<xs:element name="S0ElectricityMeter" type="S0ElectricityMeterType" minOccurs="0" maxOccurs="1" />
 				<xs:element name="S0ElectricityMeterNetworked" type="S0ElectricityMeterNetworkedType" minOccurs="0" maxOccurs="1" />
@@ -63,6 +64,11 @@
 		<xs:attribute name="idref" type="xs:NCName" use="required" />
 		<xs:attribute name="slaveAddress" type="xs:int" use="required" />
 		<xs:attribute name="registerAddress" type="xs:string" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="HttpSwitchType">
+		<xs:attribute name="onUrl" type="xs:string" use="required" />
+		<xs:attribute name="offUrl" type="xs:string" use="required" />
 	</xs:complexType>
 
 	<xs:complexType name="S0ElectricityMeterType">
