@@ -63,9 +63,8 @@ public class SempDiscovery implements Runnable {
                 
                 @Override
                 public StreamClient createStreamClient() {
-                    return new org.fourthline.cling.transport.impl.apache.StreamClientImpl(
-                            new StreamClientConfigurationImpl(executorService)
-                            );
+                    // disable the client in order to avoid requesting descriptors from UPnP devices
+                    return null;
                 }
                 
                 @Override
@@ -73,7 +72,7 @@ public class SempDiscovery implements Runnable {
                     return new org.fourthline.cling.transport.impl.apache.StreamServerImpl(
                             new StreamServerConfigurationImpl()
                             );
-                }                
+                }
             });
 
             Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -85,6 +84,7 @@ public class SempDiscovery implements Runnable {
 
             // Add the bound local device to the registry
             upnpService.getRegistry().addDevice(createDevice());
+
         }
         catch (Exception ex) {
             System.err.println("Exception occured: " + ex);
