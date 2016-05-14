@@ -65,58 +65,108 @@ public class SempController {
     public String device2EM() {
         logger.debug("Device info/status/planning requested.");
         List<DeviceStatus> deviceStatuses = new ArrayList<DeviceStatus>();
+        List<PlanningRequest> planningRequests = new ArrayList<PlanningRequest>();
         List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
         for (Appliance appliance : appliances) {
             DeviceStatus deviceStatus = createDeviceStatus(appliance);
             deviceStatuses.add(deviceStatus);
+            PlanningRequest planningRequest = createPlanningRequest(appliance);
+            planningRequests.add(planningRequest);
         }
         device2EM.setDeviceStatus(deviceStatuses);
+        device2EM.setPlanningRequest(planningRequests);
         return marshall(device2EM);
     }
     
     @RequestMapping(value=BASE_URL + "/DeviceInfo", method=RequestMethod.GET, produces="application/xml")
     @ResponseBody
-    public String deviceInfo(@RequestParam(value="DeviceId") String deviceId) {
-        logger.debug("Device info requested for device id=" + deviceId);
-        DeviceInfo deviceInfo = findDeviceInfo(device2EM, deviceId);
-        
-        Appliance appliance = findAppliance(deviceId);
-        if(appliance.getMeter() != null) {
-            deviceInfo.getCapabilities().setCurrentPowerMethod(CurrentPowerMethod.Measurement);
+    public String deviceInfo(@RequestParam(value="DeviceId", required = false) String deviceId) {
+        List<DeviceInfo> deviceInfos = new ArrayList<DeviceInfo>();
+        if(deviceId != null) {
+            logger.debug("Device info requested of device id=" + deviceId);
+            DeviceInfo deviceInfo = findDeviceInfo(device2EM, deviceId);
+
+            Appliance appliance = findAppliance(deviceId);
+            if(appliance.getMeter() != null) {
+                deviceInfo.getCapabilities().setCurrentPowerMethod(CurrentPowerMethod.Measurement);
+            }
+            else {
+                deviceInfo.getCapabilities().setCurrentPowerMethod(CurrentPowerMethod.Estimation);
+            }
+
+            deviceInfo.getCapabilities().setOptionalEnergy(appliance.canConsumeOptionalEnergy());
+            deviceInfos.add(deviceInfo);
         }
         else {
-            deviceInfo.getCapabilities().setCurrentPowerMethod(CurrentPowerMethod.Estimation);
+            logger.debug("Device info requested of all devices");
+            List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
+            for (Appliance appliance : appliances) {
+                DeviceInfo deviceInfo = findDeviceInfo(device2EM, appliance.getId());
+                if(appliance.getMeter() != null) {
+                    deviceInfo.getCapabilities().setCurrentPowerMethod(CurrentPowerMethod.Measurement);
+                }
+                else {
+                    deviceInfo.getCapabilities().setCurrentPowerMethod(CurrentPowerMethod.Estimation);
+                }
+                deviceInfo.getCapabilities().setOptionalEnergy(appliance.canConsumeOptionalEnergy());
+                deviceInfos.add(deviceInfo);
+            }
         }
-        
-        deviceInfo.getCapabilities().setOptionalEnergy(appliance.canConsumeOptionalEnergy());
-        
         Device2EM device2EM = new Device2EM();
-        device2EM.setDeviceInfo(Collections.singletonList(deviceInfo));
+        device2EM.setDeviceInfo(deviceInfos);
         return marshall(device2EM);
     }
 
     @RequestMapping(value=BASE_URL + "/DeviceStatus", method=RequestMethod.GET, produces="application/xml")
     @ResponseBody
-    public String deviceStatus(@RequestParam(value="DeviceId") String deviceId) {
-        logger.debug("Device status requested for device id=" + deviceId);
-        Appliance appliance = findAppliance(deviceId);
-        DeviceStatus deviceStatus = createDeviceStatus(appliance);
+    public String deviceStatus(@RequestParam(value="DeviceId", required = false) String deviceId) {
+        List<DeviceStatus> deviceStatuses = new ArrayList<DeviceStatus>();
+        if(deviceId != null) {
+            logger.debug("Device status requested of device id=" + deviceId);
+            Appliance appliance = findAppliance(deviceId);
+            DeviceStatus deviceStatus = createDeviceStatus(appliance);
+            deviceStatuses.add(deviceStatus);
+        }
+        else {
+            logger.debug("Device status requested of all devices");
+            List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
+            for (Appliance appliance : appliances) {
+                DeviceStatus deviceStatus = createDeviceStatus(appliance);
+                deviceStatuses.add(deviceStatus);
+            }
+        }
         Device2EM device2EM = new Device2EM();
-        device2EM.setDeviceStatus(Collections.singletonList(deviceStatus));
+        device2EM.setDeviceStatus(deviceStatuses);
         return marshall(device2EM);
     }
     
     @RequestMapping(value=BASE_URL + "/PlanningRequest", method=RequestMethod.GET, produces="application/xml")
     @ResponseBody
-    public String planningRequest(@RequestParam(value="DeviceId") String deviceId) {
-        logger.debug("Planning request requested for device id=" + deviceId);
-        Appliance appliance = findAppliance(deviceId);
-        PlanningRequest planningRequest = createPlanningRequest(appliance);
-        Device2EM device2EM = new Device2EM();
-        if(planningRequest != null) {
-            device2EM.setPlanningRequest(Collections.singletonList(planningRequest));
+    public String planningRequest(@RequestParam(value="DeviceId", required = false) String deviceId) {
+        List<PlanningRequest> planningRequests = new ArrayList<PlanningRequest>();
+        if(deviceId != null) {
+            logger.debug("Planning request requested of device id=" + deviceId);
+            Appliance appliance = findAppliance(deviceId);
+            PlanningRequest planningRequest = createPlanningRequest(appliance);
+            addPlanningRequest(planningRequests, planningRequest);
         }
+        else {
+            logger.debug("Planning request requested of all devices");
+            List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
+            for (Appliance appliance : appliances) {
+                PlanningRequest planningRequest = createPlanningRequest(appliance);
+                addPlanningRequest(planningRequests, planningRequest);
+            }
+        }
+        Device2EM device2EM = new Device2EM();
+        device2EM.setPlanningRequest(planningRequests);
         return marshall(device2EM);
+    }
+
+    private void addPlanningRequest(List<PlanningRequest> planningRequests, PlanningRequest planningRequest) {
+        if(planningRequest != null) {
+            planningRequests.add(planningRequest);
+        }
     }
 
     @RequestMapping(value=BASE_URL, method=RequestMethod.POST, consumes="application/xml")
