@@ -98,6 +98,7 @@ public class Appliance {
 
     public void setRunningTimeMonitor(RunningTimeMonitor runningTimeMonitor) {
         this.runningTimeMonitor = runningTimeMonitor;
+        this.runningTimeMonitor.setApplianceId(id);
     }
     
     public Set<GpioControllable> getGpioControllables() {

@@ -36,6 +36,15 @@ public class TimeOfDay {
     @XmlAttribute
     private Integer second;
 
+    public TimeOfDay() {
+    }
+
+    public TimeOfDay(Integer hour, Integer minute, Integer second) {
+        this.hour = hour;
+        this.minute = minute;
+        this.second = second;
+    }
+
     public Integer getHour() {
         return hour;
     }

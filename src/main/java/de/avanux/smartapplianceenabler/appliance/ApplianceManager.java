@@ -99,8 +99,8 @@ public class ApplianceManager implements Runnable {
             RunningTimeMonitor runningTimeMonitor = null;
             if(appliance.getTimeFrames() != null) {
                 runningTimeMonitor = new RunningTimeMonitor();
-                runningTimeMonitor.setTimeFrames(appliance.getTimeFrames());
                 appliance.setRunningTimeMonitor(runningTimeMonitor);
+                runningTimeMonitor.setTimeFrames(appliance.getTimeFrames());
             }
             
             for(Control control : appliance.getControls()) {
@@ -155,7 +155,7 @@ public class ApplianceManager implements Runnable {
                     RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
                     if(runningTimeMonitor != null) {
                         runningTimeMonitor.update();
-                        logger.debug("Appliance " + appliance.getId() + ": Remaining running time " + runningTimeMonitor.getRemainingMinRunningTime() + " s (" + runningTimeMonitor.getCurrentTimeFrame() + ")");
+                        logger.debug("Appliance " + appliance.getId() + ": Remaining running time " + runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame() + " s (" + runningTimeMonitor.getCurrentTimeFrame() + ")");
                     }
                 }
             }

@@ -20,10 +20,13 @@ package de.avanux.smartapplianceenabler.appliance;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.avanux.smartapplianceenabler.log.ApplianceLogger;
 import org.joda.time.Instant;
 import org.joda.time.Interval;
+import org.slf4j.LoggerFactory;
 
-public class RunningTimeMonitor implements RunningTimeController {
+public class RunningTimeMonitor implements RunningTimeController, ApplianceIdConsumer {
+    private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(RunningTimeMonitor.class));
     private List<TimeFrame> timeFrames;
     private TimeFrame currentTimeFrame;
     private Instant intervalBeginn;
@@ -31,8 +34,18 @@ public class RunningTimeMonitor implements RunningTimeController {
     private Long remainingMinRunningTime;
     private boolean running;
 
+    @Override
+    public void setApplianceId(String applianceId) {
+        this.logger.setApplianceId(applianceId);
+    }
+
     public void setTimeFrames(List<TimeFrame> timeFrames) {
         this.timeFrames = timeFrames;
+        if(logger.isDebugEnabled()) {
+            for(TimeFrame timeFrame : timeFrames) {
+                logger.debug("Configured timeframe is " + timeFrame.toString());
+            }
+        }
     }
     
     public List<TimeFrame> getTimeFrames() {
@@ -40,14 +53,20 @@ public class RunningTimeMonitor implements RunningTimeController {
     }
 
     public void setRunning(boolean running) {
-        this.running = running;
-        statusChangedAt = new Instant();
+        setRunning(running, new Instant());
     }
 
-    public long getRemainingMinRunningTime() {
-        if(remainingMinRunningTime == null) {
-            update();
-        }
+    protected void setRunning(boolean running, Instant statusChangedAt) {
+        this.running = running;
+        this.statusChangedAt = statusChangedAt;
+    }
+
+    public long getRemainingMinRunningTimeOfCurrentTimeFrame() {
+        return getRemainingMinRunningTimeOfCurrentTimeFrame(new Instant());
+    }
+
+    protected long getRemainingMinRunningTimeOfCurrentTimeFrame(Instant now) {
+        update(now);
         return remainingMinRunningTime != null ? remainingMinRunningTime : 0;
     }
     
@@ -56,22 +75,20 @@ public class RunningTimeMonitor implements RunningTimeController {
     }
 
     public void update() {
-        Instant now = new Instant();
+        update(new Instant());
+    }
+
+    protected void update(Instant now) {
         TimeFrame timeFrameForInstant = findCurrentTimeFrame(now);
+        Interval interval = null;
+        boolean timeframeExpired = false;
         if(timeFrameForInstant != null) {
+            // timeframe found
             if(currentTimeFrame == null || ! timeFrameForInstant.equals(currentTimeFrame)) {
-                // timeframe changed
+                // new timeframe or timeframe changed
                 currentTimeFrame = timeFrameForInstant;
-                if(currentTimeFrame.getInterval().getStart().isBefore(now)) {
-                    // timeframe started in past; remaining time is less than MinRunningTime
-                    remainingMinRunningTime = Double.valueOf(new Interval(now, currentTimeFrame.getInterval().getEnd()).toDurationMillis() / 1000).longValue();
-                }
-                else {
-                    // timeframe starts in future
-                    remainingMinRunningTime = timeFrameForInstant.getMinRunningTime();
-                }
+                remainingMinRunningTime = timeFrameForInstant.getMinRunningTime();
             }
-            Interval interval = null;
             if(running) {
                 if(intervalBeginn == null) {
                     // running was set to true after interval begin
@@ -89,10 +106,28 @@ public class RunningTimeMonitor implements RunningTimeController {
                 intervalBeginn = null;
                 statusChangedAt = null;
             }
-            if(interval != null) {
-                remainingMinRunningTime = remainingMinRunningTime - Double.valueOf(interval.toDuration().getMillis() / 1000).longValue();
+        }
+        else if(currentTimeFrame != null) {
+            // timeframe not found anymore
+            interval = new Interval(intervalBeginn, now);
+            timeframeExpired = true;
+        }
+        if(interval != null) {
+            remainingMinRunningTime = remainingMinRunningTime - Double.valueOf(interval.toDuration().getMillis() / 1000).longValue();
+            long remainingIntervalSeconds = getRemainingSecondsOfCurrentTimeFrame(now);
+            if(remainingIntervalSeconds < remainingMinRunningTime) {
+                remainingMinRunningTime = remainingIntervalSeconds;
             }
         }
+        if(timeframeExpired) {
+            intervalBeginn = null;
+            statusChangedAt = null;
+            currentTimeFrame = null;
+        }
+    }
+
+    private long getRemainingSecondsOfCurrentTimeFrame(Instant now) {
+        return Double.valueOf(new Interval(now, currentTimeFrame.getInterval().getEnd()).toDurationMillis() / 1000).longValue();
     }
     
     public TimeFrame findCurrentTimeFrame(Instant instant) {

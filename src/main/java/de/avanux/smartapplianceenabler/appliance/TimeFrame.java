@@ -42,6 +42,16 @@ public class TimeFrame {
     @XmlTransient
     DateTimeFormatter formatter = ISODateTimeFormat.basicTTimeNoMillis();
 
+    public TimeFrame() {
+    }
+
+    public TimeFrame(long minRunningTime, long maxRunningTime, TimeOfDay earliestStart, TimeOfDay latestEnd) {
+        this.minRunningTime = minRunningTime;
+        this.maxRunningTime = maxRunningTime;
+        this.earliestStart = earliestStart;
+        this.latestEnd = latestEnd;
+    }
+
     public long getMinRunningTime() {
         return minRunningTime;
     }

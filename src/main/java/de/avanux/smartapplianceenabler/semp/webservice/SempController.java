@@ -264,7 +264,7 @@ public class SempController {
                 
                 TimeFrame currentTimeFrame = runningTimeMonitor.findCurrentTimeFrame(now);
                 if(currentTimeFrame != null) {
-                    sempTimeFrames.add(createSempTimeFrame(appliance.getId(), currentTimeFrame, runningTimeMonitor.getRemainingMinRunningTime(), now));
+                    sempTimeFrames.add(createSempTimeFrame(appliance.getId(), currentTimeFrame, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(), now));
                 }
                 
                 for(TimeFrame timeFrame : runningTimeMonitor.findFutureTimeFrames(now)) {
