@@ -20,7 +20,7 @@ package de.avanux.smartapplianceenabler.modbus;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.slf4j.Logger;
+import de.avanux.smartapplianceenabler.log.ApplianceLogger;
 import org.slf4j.LoggerFactory;
 
 import de.avanux.smartapplianceenabler.appliance.Control;
@@ -29,11 +29,17 @@ import de.avanux.smartapplianceenabler.appliance.RunningTimeController;
 public class ModbusSwitch extends ModbusSlave implements Control {
 
     @XmlTransient
-    private Logger logger = LoggerFactory.getLogger(ModbusSwitch.class);
+    private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(ModbusSwitch.class));
     @XmlAttribute
     private String registerAddress;
     @XmlTransient
     RunningTimeController runningTimeController;
+
+    @Override
+    public void setApplianceId(String applianceId) {
+        super.setApplianceId(applianceId);
+        this.logger.setApplianceId(applianceId);
+    }
 
     @Override
     public boolean on(boolean switchOn) {
@@ -41,6 +47,7 @@ public class ModbusSwitch extends ModbusSlave implements Control {
         try {
             logger.info("Switching " + (switchOn ? "on" : "off"));
             WriteCoilExecutor executor = new WriteCoilExecutor(registerAddress, switchOn);
+            executor.setApplianceId(getApplianceId());
             executeTransaction(executor, true);
             result = executor.getResult();
             
@@ -59,6 +66,7 @@ public class ModbusSwitch extends ModbusSlave implements Control {
         boolean coil = false;
         try {
             ReadCoilExecutor executor = new ReadCoilExecutor(registerAddress);
+            executor.setApplianceId(getApplianceId());
             executeTransaction(executor, true);
             coil = executor.getCoil();
         }

@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
+import de.avanux.smartapplianceenabler.log.ApplianceLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,15 +33,18 @@ import com.pi4j.io.gpio.RaspiPin;
 
 @XmlTransient
 @XmlAccessorType(XmlAccessType.FIELD)
-abstract public class GpioControllable {
+abstract public class GpioControllable implements ApplianceIdConsumer{
     @XmlTransient
-    private Logger logger = LoggerFactory.getLogger(GpioControllable.class);
+    private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(GpioControllable.class));
     @XmlAttribute
     private Integer pin;
     @XmlAttribute
     private String pinPullResistance;
     @XmlTransient
     private GpioController gpioController;
+    @XmlTransient
+    private String applianceId;
+
 
     protected GpioController getGpioController() {
         return gpioController;
@@ -71,5 +75,15 @@ abstract public class GpioControllable {
 
     protected void logGpioAccessDisabled(Logger logger) {
         logger.warn("Configured for pin " + getPin()+ ", but GPIO access disabled.");
+    }
+
+    @Override
+    public void setApplianceId(String applianceId) {
+        this.applianceId = applianceId;
+        this.logger.setApplianceId(applianceId);
+    }
+
+    protected String getApplianceId() {
+        return applianceId;
     }
 }

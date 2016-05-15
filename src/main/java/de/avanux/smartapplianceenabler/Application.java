@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.lang.management.ManagementFactory;
 
+import de.avanux.smartapplianceenabler.log.ApplianceLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -81,6 +82,7 @@ public class Application {
     
     private void configureLogging() {
         LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+        lc.getFrameworkPackages().add(ApplianceLogger.class.getPackage().getName());
         
         PatternLayoutEncoder ple = new PatternLayoutEncoder();
         ple.setPattern("%date %level [%thread] %logger{10} [%file:%line] %msg%n");

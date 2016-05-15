@@ -105,8 +105,18 @@ public class ApplianceManager implements Runnable {
             
             for(Control control : appliance.getControls()) {
                 control.setRunningTimeController(runningTimeMonitor);
+                if(control instanceof ApplianceIdConsumer) {
+                    ((ApplianceIdConsumer) control).setApplianceId(appliance.getId());
+                }
             }
-            
+
+            Meter meter = appliance.getMeter();
+            if(meter != null) {
+                if(meter instanceof ApplianceIdConsumer) {
+                    ((ApplianceIdConsumer) meter).setApplianceId(appliance.getId());
+                }
+            }
+
             for(GpioControllable gpioControllable : appliance.getGpioControllables()) {
                 gpioControllable.setGpioController(gpioController);
                 gpioControllable.start();
@@ -116,7 +126,6 @@ public class ApplianceManager implements Runnable {
 
             S0ElectricityMeter s0ElectricityMeter = appliance.getS0ElectricityMeter();
             if(s0ElectricityMeter != null) {
-                s0ElectricityMeter.setApplianceId(appliance.getId());
                 if(switches != null && switches.size() > 0) {
                     s0ElectricityMeter.setControl(switches.get(0));
                 }
@@ -126,12 +135,12 @@ public class ApplianceManager implements Runnable {
             if(s0ElectricityMeterNetworked != null) {
                 String pulseReceiverId = s0ElectricityMeterNetworked.getIdref();
                 PulseReceiver pulseReceiver = pulseReceiverIdWithPulseReceiver.get(pulseReceiverId);
-                s0ElectricityMeterNetworked.setApplianceId(appliance.getId());
                 s0ElectricityMeterNetworked.setPulseReceiver(pulseReceiver);
                 s0ElectricityMeterNetworked.start();
             }
 
             for(ModbusSlave modbusSlave : appliance.getModbusSlaves()) {
+                modbusSlave.setApplianceId(appliance.getId());
                 String modbusId = modbusSlave.getIdref();
                 ModbusTcp modbusTcp = modbusIdWithModbusTcp.get(modbusId);
                 modbusSlave.setModbusTcp(modbusTcp);

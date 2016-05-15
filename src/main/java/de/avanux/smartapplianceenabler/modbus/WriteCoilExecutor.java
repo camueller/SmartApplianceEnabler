@@ -17,7 +17,8 @@
  */
 package de.avanux.smartapplianceenabler.modbus;
 
-import org.slf4j.Logger;
+import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import de.avanux.smartapplianceenabler.log.ApplianceLogger;
 import org.slf4j.LoggerFactory;
 
 import com.ghgande.j2mod.modbus.ModbusException;
@@ -30,9 +31,9 @@ import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
  * A <tt>WriteCoilRequest</tt> writes a bit.
  * The implementation directly correlates with the class 0 function <i>write coil (FC 5)</i>.
  */
-public class WriteCoilExecutor implements ModbusTransactionExecutor {
+public class WriteCoilExecutor implements ModbusTransactionExecutor, ApplianceIdConsumer {
     
-    private Logger logger = LoggerFactory.getLogger(WriteCoilExecutor.class);
+    private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(WriteCoilExecutor.class));
     private String registerAddress;
     private boolean coil;
     private boolean result;
@@ -45,7 +46,12 @@ public class WriteCoilExecutor implements ModbusTransactionExecutor {
         this.registerAddress = registerAddress;
         this.coil = coil;
     }
-    
+
+    @Override
+    public void setApplianceId(String applianceId) {
+        this.logger.setApplianceId(applianceId);
+    }
+
     @Override
     public void execute(TCPMasterConnection con, int slaveAddress) throws ModbusException {
         WriteCoilRequest req = new WriteCoilRequest(Integer.parseInt(registerAddress, 16), coil);

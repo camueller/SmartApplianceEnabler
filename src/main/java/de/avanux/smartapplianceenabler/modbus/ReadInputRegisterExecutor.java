@@ -17,7 +17,8 @@
  */
 package de.avanux.smartapplianceenabler.modbus;
 
-import org.slf4j.Logger;
+import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import de.avanux.smartapplianceenabler.log.ApplianceLogger;
 import org.slf4j.LoggerFactory;
 
 import com.ghgande.j2mod.modbus.ModbusException;
@@ -30,8 +31,8 @@ import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
  * Implements a <tt>ReadInputRegistersRequest</tt>.
  * The implementation directly correlates with the class 0 function <i>read multiple registers (FC 4)</i>
  */
-public class ReadInputRegisterExecutor implements ModbusTransactionExecutor {
-    private Logger logger = LoggerFactory.getLogger(ReadInputRegisterExecutor.class);
+public class ReadInputRegisterExecutor implements ModbusTransactionExecutor, ApplianceIdConsumer {
+    private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(ReadInputRegisterExecutor.class));
     private String registerAddress;
     private Float registerValue;
     
@@ -41,7 +42,12 @@ public class ReadInputRegisterExecutor implements ModbusTransactionExecutor {
     public ReadInputRegisterExecutor(String registerAddress) {
         this.registerAddress = registerAddress;
     }
-    
+
+    @Override
+    public void setApplianceId(String applianceId) {
+        this.logger.setApplianceId(applianceId);
+    }
+
     @Override
     public void execute(TCPMasterConnection con, int slaveAddress) throws ModbusException {
         ReadInputRegistersRequest req = new ReadInputRegistersRequest(Integer.parseInt(registerAddress, 16), 2);

@@ -17,24 +17,24 @@
  */
 package de.avanux.smartapplianceenabler.appliance;
 
+import com.pi4j.io.gpio.GpioPinDigitalOutput;
+import com.pi4j.io.gpio.PinState;
+import de.avanux.smartapplianceenabler.log.ApplianceLogger;
+import org.slf4j.LoggerFactory;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.pi4j.io.gpio.GpioPinDigitalOutput;
-import com.pi4j.io.gpio.PinState;
-
-public class Switch extends GpioControllable implements Control {
+public class Switch extends GpioControllable implements Control, ApplianceIdConsumer {
     @XmlTransient
-    private Logger logger = LoggerFactory.getLogger(Switch.class);
+    private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(Switch.class));
     @XmlAttribute
     private boolean reverseStates;
     @XmlTransient
     GpioPinDigitalOutput outputPin;
     @XmlTransient
-    RunningTimeController runningTimeController;    
+    RunningTimeController runningTimeController;
+
 
     @Override
     public void start() {
@@ -84,5 +84,11 @@ public class Switch extends GpioControllable implements Control {
     @Override
     public void setRunningTimeController(RunningTimeController runningTimeController) {
         this.runningTimeController = runningTimeController;
+    }
+
+    @Override
+    public void setApplianceId(String applianceId) {
+        super.setApplianceId(applianceId);
+        this.logger.setApplianceId(applianceId);
     }
 }

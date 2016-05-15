@@ -17,8 +17,7 @@
  */
 package de.avanux.smartapplianceenabler.appliance;
 
-import ch.qos.logback.classic.Level;
-import org.slf4j.Logger;
+import de.avanux.smartapplianceenabler.log.ApplianceLogger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
@@ -29,6 +28,7 @@ import java.util.List;
  * A PulseElectricityMeter calculates power consumption by pulses received.
  */
 class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
+    private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(PulseElectricityMeter.class));
     private static final int MAX_AGE = 3600; // seconds
     private List<Long> impulseTimestamps = Collections.synchronizedList(new ArrayList<Long>());
     private Integer impulsesPerKwh;
@@ -38,7 +38,6 @@ class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
     private Integer powerBeforeIncrease;
     private boolean powerDecreaseDetected;
     private Control control;
-    private String applianceId;
 
     void setImpulsesPerKwh(Integer impulsesPerKwh) {
         this.impulsesPerKwh = impulsesPerKwh;
@@ -63,7 +62,7 @@ class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
 
     @Override
     public void setApplianceId(String applianceId) {
-        this.applianceId = applianceId;
+        this.logger.setApplianceId(applianceId);
     }
 
     /**
@@ -107,15 +106,15 @@ class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
              * of the low power period is received. Otherwise high power would be reported for a long time even though
              * low power was consumed.
              */
-            log("average power (as before increase) = " + powerBeforeIncrease + "W", Level.DEBUG);
+            logger.debug("average power (as before increase) = " + powerBeforeIncrease + "W");
             powerDecreaseDetected = true;
             return powerBeforeIncrease;
         }
         int timestampsInMeasurementInterval = getImpulsesInMeasurementInterval(referenceTimestamp).size();
         if(timestampsInMeasurementInterval > 1) {
-            log("impulses=" + timestampsInMeasurementInterval + ", impulsesPerKwh=" + impulsesPerKwh + ", measurementInterval=" + measurementInterval + ")", Level.DEBUG);
+            logger.debug("impulses=" + timestampsInMeasurementInterval + ", impulsesPerKwh=" + impulsesPerKwh + ", measurementInterval=" + measurementInterval + ")");
             int averagePower = (timestampsInMeasurementInterval * 1000/impulsesPerKwh) * (3600/measurementInterval);
-            log("average power = " + averagePower + "W", Level.DEBUG);
+            logger.debug("average power = " + averagePower + "W");
             return averagePower;
         }
         else if (isOn(referenceTimestamp)) {
@@ -123,7 +122,7 @@ class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
             return getCurrentPower();
         }
         else {
-            log("Not switched on.", Level.DEBUG);
+            logger.debug("Not switched on.");
         }
         return 0;
     }
@@ -153,7 +152,7 @@ class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
                 }
             }
             minPower = getPower(longestInterval);
-            log("Min power = " + minPower + "W (longestInterval=" + longestInterval + ")", Level.DEBUG);
+            logger.debug("Min power = " + minPower + "W (longestInterval=" + longestInterval + ")");
         }
         else if (isOn(referenceTimestamp)) {
             // less than 2 timestamps in measurement interval
@@ -191,7 +190,7 @@ class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
                 }
             }
             maxPower = getPower(shortestInterval);
-            log("Max power = " + maxPower + "W (shortestInterval=" + shortestInterval + ")", Level.DEBUG);
+            logger.debug("Max power = " + maxPower + "W (shortestInterval=" + shortestInterval + ")");
         }
         else if (isOn(referenceTimestamp)) {
             // less than 2 timestamps in measurement interval
@@ -206,7 +205,7 @@ class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
 
     private int getCurrentPower() {
         int currentPower = getCurrentPowerIgnoringMeasurementInterval();
-        log("Current power = " + currentPower + " W", Level.DEBUG);
+        logger.debug("Current power = " + currentPower + " W");
         return currentPower;
     }
 
@@ -217,7 +216,7 @@ class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
             return getPower(intervalBetweenTwoMostRecentImpulseTimestamps);
         }
         else {
-            log("No or less than 2 impulses cached.", Level.WARN);
+            logger.warn("No or less than 2 impulses cached.");
         }
         return 0;
     }
@@ -231,7 +230,7 @@ class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
                 }
             }
         }
-        log(timestamps.size() + " timestamps in measurement interval", Level.DEBUG);
+        logger.debug(timestamps.size() + " timestamps in measurement interval");
         return timestamps;
     }
 
@@ -304,11 +303,11 @@ class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
         if(powerBeforeIncrease == null && isIntervalDecreaseBelowFactor(powerChangeFactor, timestampMillis)) {
             // powerBeforeIncrease == null : avoid detecting intermediate values during ramp up
             powerBeforeIncrease = getCurrentPowerIgnoringMeasurementInterval();
-            log("Power increase detected. Power before: " + powerBeforeIncrease + " W", Level.DEBUG);
+            logger.debug("Power increase detected. Power before: " + powerBeforeIncrease + " W");
         }
         // check for power decrease
         if(powerDecreaseDetected) {
-            log("Reset 'power before increase' since power decrease has been detected", Level.DEBUG);
+            logger.debug("Reset 'power before increase' since power decrease has been detected");
             powerDecreaseDetected = false;
             powerBeforeIncrease = null;
         }
@@ -327,26 +326,15 @@ class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
         if(impulseTimestampsForRemoval.size() > 0) {
             impulseTimestamps.removeAll(impulseTimestampsForRemoval);
         }
-        log("timestamps added/removed/total: 1/" + impulseTimestampsForRemoval.size() + "/" + impulseTimestamps.size(), Level.DEBUG);
+        logger.debug("timestamps added/removed/total: 1/" + impulseTimestampsForRemoval.size() + "/" + impulseTimestamps.size());
     }
 
     private void checkMandatoryAttributes() {
         if(impulsesPerKwh == null) {
-            log("Configuration attributes impulsesPerKwh not set!", Level.WARN);
+            logger.warn("Configuration attributes impulsesPerKwh not set!");
         }
         if(measurementInterval == null) {
-            log("Configuration attributes measurementInterval not set!", Level.WARN);
+            logger.warn("Configuration attributes measurementInterval not set!");
         }
-    }
-
-    private void log(String message, Level level) {
-        final String logPrefix = applianceId + ": ";
-        Logger logger = LoggerFactory.getLogger(PulseElectricityMeter.class);
-        if(level != null) {
-            if(level.equals(Level.WARN)) {
-                logger.warn(logPrefix + message);
-            }
-        }
-        logger.debug(logPrefix + message);
     }
 }

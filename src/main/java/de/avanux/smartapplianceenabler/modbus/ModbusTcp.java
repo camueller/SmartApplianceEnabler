@@ -17,16 +17,11 @@
  */
 package de.avanux.smartapplianceenabler.modbus;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
 
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlTransient;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 /**
  * Represents a ModBus TCP and provides a connection to it.
@@ -34,8 +29,6 @@ import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
  */
 public class ModbusTcp {
     private static final int DEFAULT_PORT = 502;
-    @XmlTransient
-    private Logger logger = LoggerFactory.getLogger(ModbusTcp.class);
     @XmlAttribute
     private String id;
     @XmlAttribute

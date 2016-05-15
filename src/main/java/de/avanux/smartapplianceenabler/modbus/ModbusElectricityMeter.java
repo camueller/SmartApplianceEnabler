@@ -27,10 +27,9 @@ import java.util.TimerTask;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.slf4j.Logger;
+import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import de.avanux.smartapplianceenabler.log.ApplianceLogger;
 import org.slf4j.LoggerFactory;
-
-import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
 
 import de.avanux.smartapplianceenabler.appliance.Meter;
 
@@ -39,10 +38,10 @@ import de.avanux.smartapplianceenabler.appliance.Meter;
  * The device is polled according to poll interval in order to provide min/avg/max values of the measurement interval.
  * The TCP connection to the device remains established across the polls.
  */
-public class ModbusElectricityMeter extends ModbusSlave implements Meter {
+public class ModbusElectricityMeter extends ModbusSlave implements Meter, ApplianceIdConsumer {
 
     @XmlTransient
-    private Logger logger = LoggerFactory.getLogger(ModbusElectricityMeter.class); 
+    private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(ModbusElectricityMeter.class));
     @XmlAttribute
     private String registerAddress;
     @XmlAttribute
@@ -51,7 +50,13 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter {
     private Integer measurementInterval; // seconds
     @XmlTransient
     private Map<Long,Float> timestampWithPower = new HashMap<Long,Float>();
-    
+
+    @Override
+    public void setApplianceId(String applianceId) {
+        super.setApplianceId(applianceId);
+        this.logger.setApplianceId(applianceId);
+    }
+
     @Override
     public int getAveragePower() {
         double sum = 0.0f;
@@ -115,6 +120,7 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter {
     private float getPower() {
         try {
             ReadInputRegisterExecutor executor = new ReadInputRegisterExecutor(registerAddress);
+            executor.setApplianceId(getApplianceId());
             executeTransaction(executor, true);
             Float registerValue = executor.getRegisterValue();
             if(registerValue != null) {

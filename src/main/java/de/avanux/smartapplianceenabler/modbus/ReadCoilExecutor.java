@@ -17,7 +17,8 @@
  */
 package de.avanux.smartapplianceenabler.modbus;
 
-import org.slf4j.Logger;
+import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import de.avanux.smartapplianceenabler.log.ApplianceLogger;
 import org.slf4j.LoggerFactory;
 
 import com.ghgande.j2mod.modbus.ModbusException;
@@ -30,11 +31,12 @@ import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
  * A <tt>ReadCoilRequest</tt> reads a bit.
  * The implementation directly correlates with the class 1 function <i>read coils (FC 1)</i>. 
  */
-public class ReadCoilExecutor implements ModbusTransactionExecutor {
+public class ReadCoilExecutor implements ModbusTransactionExecutor, ApplianceIdConsumer {
     
-    private Logger logger = LoggerFactory.getLogger(ReadCoilExecutor.class);
+    private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(ReadCoilExecutor.class));
     private String registerAddress;
     private boolean coil;
+
     
     /**
      * @param registerAddress
@@ -42,7 +44,12 @@ public class ReadCoilExecutor implements ModbusTransactionExecutor {
     public ReadCoilExecutor(String registerAddress) {
         this.registerAddress = registerAddress;
     }
-    
+
+    @Override
+    public void setApplianceId(String applianceId) {
+        this.logger.setApplianceId(applianceId);
+    }
+
     @Override
     public void execute(TCPMasterConnection con, int slaveAddress) throws ModbusException {
         ReadCoilsRequest req = new ReadCoilsRequest(Integer.parseInt(registerAddress, 16), 1);

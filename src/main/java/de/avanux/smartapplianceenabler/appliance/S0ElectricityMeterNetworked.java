@@ -17,7 +17,7 @@
  */
 package de.avanux.smartapplianceenabler.appliance;
 
-import org.slf4j.Logger;
+import de.avanux.smartapplianceenabler.log.ApplianceLogger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 public class S0ElectricityMeterNetworked implements Meter, PulseReceiver.PulseListener, ApplianceIdConsumer {
     @XmlTransient
-    private Logger logger = LoggerFactory.getLogger(S0ElectricityMeterNetworked.class);
+    private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(S0ElectricityMeterNetworked.class));
     @XmlAttribute
     private String idref;
     @XmlAttribute
@@ -86,7 +86,7 @@ public class S0ElectricityMeterNetworked implements Meter, PulseReceiver.PulseLi
     }
 
     public void start() {
-        logger.debug("Appliance " + applianceId + " start: impulsesPerKwh=" + impulsesPerKwh
+        logger.debug("Appliance start: impulsesPerKwh=" + impulsesPerKwh
                 + " measurementInterval=" + measurementInterval + " powerOnAlways=" + powerOnAlways);
         pulseElectricityMeter.setImpulsesPerKwh(impulsesPerKwh);
         pulseElectricityMeter.setMeasurementInterval(measurementInterval);

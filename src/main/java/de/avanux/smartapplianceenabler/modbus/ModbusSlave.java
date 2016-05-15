@@ -24,7 +24,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.slf4j.Logger;
+import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import de.avanux.smartapplianceenabler.log.ApplianceLogger;
 import org.slf4j.LoggerFactory;
 
 import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
@@ -34,17 +35,29 @@ import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
  */
 @XmlTransient
 @XmlAccessorType(XmlAccessType.FIELD)
-abstract public class ModbusSlave {
+abstract public class ModbusSlave implements ApplianceIdConsumer {
     @XmlTransient
-    private Logger logger = LoggerFactory.getLogger(ModbusSlave.class);
+    private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(ModbusSlave.class));
     @XmlAttribute
     private String idref;
     @XmlAttribute
     private int slaveAddress;
     @XmlTransient
+    private String applianceId;
+    @XmlTransient
     private ModbusTcp modbusTcp;
     @XmlTransient
     private TCPMasterConnection connection;
+
+    @Override
+    public void setApplianceId(String applianceId) {
+        this.applianceId = applianceId;
+        this.logger.setApplianceId(applianceId);
+    }
+
+    protected String getApplianceId() {
+        return applianceId;
+    }
 
     protected ModbusTcp getModbusTcp() {
         return modbusTcp;

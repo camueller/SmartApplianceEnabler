@@ -1,12 +1,12 @@
 package de.avanux.smartapplianceenabler.appliance;
 
+import de.avanux.smartapplianceenabler.log.ApplianceLogger;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -18,9 +18,9 @@ import java.io.IOException;
  * Limitation: Currently the appliance state is not requested by from the appliance but
  * maintained internally.
  */
-public class HttpSwitch implements Control {
+public class HttpSwitch implements Control, ApplianceIdConsumer {
     @XmlTransient
-    private Logger logger = LoggerFactory.getLogger(HttpSwitch.class);
+    private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(HttpSwitch.class));
     @XmlAttribute
     private String onUrl;
     @XmlAttribute
@@ -52,6 +52,11 @@ public class HttpSwitch implements Control {
     @Override
     public void setRunningTimeController(RunningTimeController runningTimeController) {
         this.runningTimeController = runningTimeController;
+    }
+
+    @Override
+    public void setApplianceId(String applianceId) {
+        this.logger.setApplianceId(applianceId);
     }
 
     @Override
