@@ -25,6 +25,11 @@ import org.joda.time.Instant;
 import org.joda.time.Interval;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Monitors running time of an appliance.
+ * Make sure that the timezone is set correctly, otherwise remaining running time will be incorrect.
+ * Refer to http://www.gtkdb.de/index_36_2248.html
+ */
 public class RunningTimeMonitor implements RunningTimeController, ApplianceIdConsumer {
     private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(RunningTimeMonitor.class));
     private List<TimeFrame> timeFrames;
@@ -87,7 +92,15 @@ public class RunningTimeMonitor implements RunningTimeController, ApplianceIdCon
             if(currentTimeFrame == null || ! timeFrameForInstant.equals(currentTimeFrame)) {
                 // new timeframe or timeframe changed
                 currentTimeFrame = timeFrameForInstant;
-                remainingMinRunningTime = timeFrameForInstant.getMinRunningTime();
+                long remainingIntervalSeconds = getRemainingSecondsOfCurrentTimeFrame(currentTimeFrame, now);
+                if(currentTimeFrame.getInterval().getStart().isBefore(now) && currentTimeFrame.getMinRunningTime() > remainingIntervalSeconds) {
+                    // MinRunningTime does not fit into remainingIntervalSeconds - reduce running time to finish at LatestEnd
+                    remainingMinRunningTime = Double.valueOf(new Interval(now, currentTimeFrame.getInterval().getEnd()).toDuration().getMillis() / 1000).longValue();
+                }
+                else {
+                    // MinRunningTime fits into remainingIntervalSeconds - use it
+                    remainingMinRunningTime = timeFrameForInstant.getMinRunningTime();
+                }
             }
             if(running) {
                 if(intervalBeginn == null) {
@@ -114,7 +127,7 @@ public class RunningTimeMonitor implements RunningTimeController, ApplianceIdCon
         }
         if(interval != null) {
             remainingMinRunningTime = remainingMinRunningTime - Double.valueOf(interval.toDuration().getMillis() / 1000).longValue();
-            long remainingIntervalSeconds = getRemainingSecondsOfCurrentTimeFrame(now);
+            long remainingIntervalSeconds = getRemainingSecondsOfCurrentTimeFrame(currentTimeFrame, now);
             if(remainingIntervalSeconds < remainingMinRunningTime) {
                 remainingMinRunningTime = remainingIntervalSeconds;
             }
@@ -126,7 +139,7 @@ public class RunningTimeMonitor implements RunningTimeController, ApplianceIdCon
         }
     }
 
-    private long getRemainingSecondsOfCurrentTimeFrame(Instant now) {
+    private long getRemainingSecondsOfCurrentTimeFrame(TimeFrame currentTimeFrame, Instant now) {
         return Double.valueOf(new Interval(now, currentTimeFrame.getInterval().getEnd()).toDurationMillis() / 1000).longValue();
     }
     
