@@ -74,7 +74,9 @@ public class SempController {
             planningRequests.add(planningRequest);
         }
         device2EM.setDeviceStatus(deviceStatuses);
-        device2EM.setPlanningRequest(planningRequests);
+        if(planningRequests.size() > 0) {
+            device2EM.setPlanningRequest(planningRequests);
+        }
         return marshall(device2EM);
     }
     
@@ -159,7 +161,9 @@ public class SempController {
             }
         }
         Device2EM device2EM = new Device2EM();
-        device2EM.setPlanningRequest(planningRequests);
+        if(planningRequests.size() > 0) {
+            device2EM.setPlanningRequest(planningRequests);
+        }
         return marshall(device2EM);
     }
 
@@ -271,8 +275,14 @@ public class SempController {
                     Long remainingMinRunningTime = timeFrame.getMinRunningTime();
                     sempTimeFrames.add(createSempTimeFrame(appliance.getId(), timeFrame, remainingMinRunningTime, now));
                 }
-                planningRequest = new PlanningRequest();
-                planningRequest.setTimeframes(sempTimeFrames);
+                if(sempTimeFrames.size() > 0) {
+                    planningRequest = new PlanningRequest();
+                    planningRequest.setTimeframes(sempTimeFrames);
+                }
+                else {
+                    logger.debug("No timeframes found for appliance id " + appliance.getId());
+                    return null;
+                }
             }
             else {
                 logger.debug("No planning request configured for appliance id " + appliance.getId());
