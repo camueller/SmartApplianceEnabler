@@ -92,17 +92,9 @@ public class RunningTimeMonitor implements RunningTimeController, ApplianceIdCon
             if(currentTimeFrame == null || ! timeFrameForInstant.equals(currentTimeFrame)) {
                 // new timeframe or timeframe changed
                 currentTimeFrame = timeFrameForInstant;
-                long remainingIntervalSeconds = getRemainingSecondsOfCurrentTimeFrame(currentTimeFrame, now);
-                if(currentTimeFrame.getInterval().getStart().isBefore(now) && currentTimeFrame.getMinRunningTime() > remainingIntervalSeconds) {
-                    // MinRunningTime does not fit into remainingIntervalSeconds - reduce running time to finish at LatestEnd
-                    remainingMinRunningTime = Double.valueOf(new Interval(now, currentTimeFrame.getInterval().getEnd()).toDuration().getMillis() / 1000).longValue();
-                }
-                else {
-                    // MinRunningTime fits into remainingIntervalSeconds - use it
-                    remainingMinRunningTime = timeFrameForInstant.getMinRunningTime();
-                }
             }
             if(running) {
+                // running
                 if(intervalBeginn == null) {
                     // running was set to true after interval begin
                     interval = new Interval(statusChangedAt, now);
@@ -118,6 +110,18 @@ public class RunningTimeMonitor implements RunningTimeController, ApplianceIdCon
                 interval = new Interval(intervalBeginn, statusChangedAt);
                 intervalBeginn = null;
                 statusChangedAt = null;
+            }
+            else {
+                // not running
+                long remainingIntervalSeconds = getRemainingSecondsOfCurrentTimeFrame(currentTimeFrame, now);
+                if(currentTimeFrame.getInterval().getStart().isBefore(now) && currentTimeFrame.getMinRunningTime() > remainingIntervalSeconds) {
+                    // MinRunningTime does not fit into remainingIntervalSeconds - reduce running time to finish at LatestEnd
+                    remainingMinRunningTime = Double.valueOf(new Interval(now, currentTimeFrame.getInterval().getEnd()).toDuration().getMillis() / 1000).longValue();
+                }
+                else {
+                    // MinRunningTime fits into remainingIntervalSeconds - use it
+                    remainingMinRunningTime = timeFrameForInstant.getMinRunningTime();
+                }
             }
         }
         else if(currentTimeFrame != null) {
