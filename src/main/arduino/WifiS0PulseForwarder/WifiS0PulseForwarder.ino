@@ -37,14 +37,17 @@ extern const char* ssid;
  * const char* password = "myPassword";
  */
 extern const char* password;
+/* 4. Add the 2 lines below and update applianceId according setup
+ * // the ID of the appliance for which the S0ElectricityMeterNetworked is configured in SmartApplianceEnabler
+ * const char* applianceId = "F-00000001-000000000001-00";
+ */
+extern const char* applianceId;
 // the IP address of the SmartApplianceEnabler receiving the UDP packets
 IPAddress saeIpAddress(192, 168, 69, 5);
 // the UDP port of the SmartApplianceEnabler receiving the UDP packets
 unsigned int saePort = 9999;
 // the local port used for sending the UDP packets
 unsigned int localPort = 9999;
-// the ID of the appliance for which the S0ElectricityMeterNetworked is configured in SmartApplianceEnabler
-const char* applianceId = "F-00000001-000000000001-00";
 // the GPIO pin of the ESP8266-ESP01 used to read S0 pulses
 const int meterPin = 2;
 // the previous state of the GPIO pin
