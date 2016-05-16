@@ -74,7 +74,9 @@ public class TimeFrame {
         Interval interval = getInterval();
         if(interval != null) {
             return formatter.print(interval.getStart().toLocalTime())
-                    + "-" + formatter.print(interval.getEnd().toLocalTime()); 
+                    + "-" + formatter.print(interval.getEnd().toLocalTime())
+                    + ":" + minRunningTime
+                    + "s/" + maxRunningTime + "s";
         }
         return null;
     }

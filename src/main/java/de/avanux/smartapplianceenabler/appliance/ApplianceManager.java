@@ -36,7 +36,6 @@ import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
 
 public class ApplianceManager implements Runnable {
     public static final String SCHEMA_LOCATION = "http://github.com/camueller/SmartApplianceEnabler/v1.0";
-    private static final int RUNNING_TIME_UPDATE_INTERVAL_SECONDS = 60;
     private Logger logger = LoggerFactory.getLogger(ApplianceManager.class);
     private static ApplianceManager instance;
     private FileHandler fileHandler;
@@ -147,19 +146,6 @@ public class ApplianceManager implements Runnable {
                 modbusSlave.start(timer);
             }
         }
-        
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                for (Appliance appliance : getAppliances()) {
-                    RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
-                    if(runningTimeMonitor != null) {
-                        runningTimeMonitor.update();
-                        logger.debug("Appliance " + appliance.getId() + ": Remaining running time " + runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame() + " s (" + runningTimeMonitor.getCurrentTimeFrame() + ")");
-                    }
-                }
-            }
-        }, RUNNING_TIME_UPDATE_INTERVAL_SECONDS * 1000, RUNNING_TIME_UPDATE_INTERVAL_SECONDS * 1000);
     }
 
     public List<Appliance> getAppliances() {

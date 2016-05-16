@@ -268,12 +268,17 @@ public class SempController {
                 
                 TimeFrame currentTimeFrame = runningTimeMonitor.findCurrentTimeFrame(now);
                 if(currentTimeFrame != null) {
-                    sempTimeFrames.add(createSempTimeFrame(appliance.getId(), currentTimeFrame, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(), now));
+                    sempTimeFrames.add(createSempTimeFrame(appliance.getId(), currentTimeFrame,
+                            runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(),
+                            runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(),
+                            now));
                 }
                 
                 for(TimeFrame timeFrame : runningTimeMonitor.findFutureTimeFrames(now)) {
-                    Long remainingMinRunningTime = timeFrame.getMinRunningTime();
-                    sempTimeFrames.add(createSempTimeFrame(appliance.getId(), timeFrame, remainingMinRunningTime, now));
+                    sempTimeFrames.add(createSempTimeFrame(appliance.getId(), timeFrame,
+                            timeFrame.getMinRunningTime(),
+                            timeFrame.getMaxRunningTime(),
+                            now));
                 }
                 if(sempTimeFrames.size() > 0) {
                     planningRequest = new PlanningRequest();
@@ -291,14 +296,12 @@ public class SempController {
         return planningRequest;
     }
     
-    private de.avanux.smartapplianceenabler.semp.webservice.Timeframe createSempTimeFrame(String deviceId, TimeFrame timeFrame, Long remainingMinRunningTime, Instant now) {
+    private de.avanux.smartapplianceenabler.semp.webservice.Timeframe createSempTimeFrame(String deviceId, TimeFrame timeFrame, Long minRunningTime, Long maxRunningTime, Instant now) {
         Long earliestStart = 0l;
         if(timeFrame.getInterval().getStart().isAfter(now)) {
             earliestStart = Double.valueOf(new Interval(now, timeFrame.getInterval().getStart()).toDurationMillis() / 1000).longValue();
         }
         Long latestEnd = Double.valueOf(new Interval(now, timeFrame.getInterval().getEnd()).toDurationMillis() / 1000).longValue();
-        Long minRunningTime = remainingMinRunningTime;
-        Long maxRunningTime = remainingMinRunningTime + (timeFrame.getMaxRunningTime() - timeFrame.getMinRunningTime());
         return createSempTimeFrame(deviceId, earliestStart, latestEnd, minRunningTime, maxRunningTime);
     }
     

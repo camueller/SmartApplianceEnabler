@@ -43,6 +43,36 @@ public class RunningTimeMonitorTest {
                 0, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toInstant(17, 0, 0)));
     }
 
+    @Test
+    public void getRemainingMinRunningTimeOfCurrentTimeFrame_MinRunningTimeDifferentFromMaxRunningTime() {
+        TimeFrame timeFrame = new TimeFrame(300, 3600, new TimeOfDay(8, 0, 0), new TimeOfDay(22, 59, 59));
+        runningTimeMonitor.setTimeFrames(Collections.singletonList(timeFrame));
+        Assert.assertEquals("Timeframe not yet started should return 0",
+                0, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toInstant(7, 0, 0)));
+        runningTimeMonitor.setRunning(true, toInstant(9, 00, 0));
+        Assert.assertEquals("With timeframe started and device switched on one minute ago 4 minutes are left",
+                240, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toInstant(9, 1, 0)));
+        Assert.assertEquals("With timeframe started and device switched on 5 minutes ago no running time is left",
+                0, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toInstant(9, 5, 0)));
+        Assert.assertEquals("With timeframe started and device switched on 6 minutes ago no running time is left",
+                0, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toInstant(9, 6, 0)));
+    }
+
+    @Test
+    public void getRemainingMaxRunningTimeOfCurrentTimeFrame_MinRunningTimeDifferentFromMaxRunningTime() {
+        TimeFrame timeFrame = new TimeFrame(300, 3600, new TimeOfDay(8, 0, 0), new TimeOfDay(22, 59, 59));
+        runningTimeMonitor.setTimeFrames(Collections.singletonList(timeFrame));
+        Assert.assertEquals("Timeframe not yet started should return 0",
+                0, runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(toInstant(7, 0, 0)));
+        runningTimeMonitor.setRunning(true, toInstant(9, 00, 0));
+        Assert.assertEquals("With timeframe started and device switched on one minute ago 59 minutes are left",
+                3540, runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(toInstant(9, 1, 0)));
+        Assert.assertEquals("With timeframe started and device switched on one hour ago no running time is left",
+                0, runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(toInstant(10, 0, 0)));
+        Assert.assertEquals("With timeframe started and device switched on one hour plus one minute ago no running time is left",
+                0, runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(toInstant(10, 1, 0)));
+    }
+
     private Instant toInstant(Integer hour, Integer minute, Integer second) {
         return new TimeOfDay(hour, minute, second).toLocalTime().toDateTimeToday().toInstant();
     }
