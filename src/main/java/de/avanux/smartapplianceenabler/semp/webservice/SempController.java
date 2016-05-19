@@ -265,20 +265,14 @@ public class SempController {
             if(runningTimeMonitor.getTimeFrames() != null && runningTimeMonitor.getTimeFrames().size() > 0) {
                 Instant now = new Instant();
                 List<de.avanux.smartapplianceenabler.semp.webservice.Timeframe> sempTimeFrames = new ArrayList<de.avanux.smartapplianceenabler.semp.webservice.Timeframe>();
-                
                 TimeFrame currentTimeFrame = runningTimeMonitor.findCurrentTimeFrame(now);
                 if(currentTimeFrame != null) {
-                    sempTimeFrames.add(createSempTimeFrame(appliance.getId(), currentTimeFrame,
-                            runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(),
-                            runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(),
-                            now));
+                    addSempTimeFrame(appliance, sempTimeFrames, currentTimeFrame, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(),
+                            runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(), now);
                 }
-                
                 for(TimeFrame timeFrame : runningTimeMonitor.findFutureTimeFrames(now)) {
-                    sempTimeFrames.add(createSempTimeFrame(appliance.getId(), timeFrame,
-                            timeFrame.getMinRunningTime(),
-                            timeFrame.getMaxRunningTime(),
-                            now));
+                    addSempTimeFrame(appliance, sempTimeFrames, timeFrame, timeFrame.getMinRunningTime(),
+                            timeFrame.getMaxRunningTime(), now);
                 }
                 if(sempTimeFrames.size() > 0) {
                     planningRequest = new PlanningRequest();
@@ -294,6 +288,16 @@ public class SempController {
             }
         }
         return planningRequest;
+    }
+
+    private void addSempTimeFrame(Appliance appliance, List<de.avanux.smartapplianceenabler.semp.webservice.Timeframe> sempTimeFrames,
+                                  TimeFrame currentTimeFrame, long remainingMinRunningTime, long remainingMaxRunningTime, Instant now) {
+        if(remainingMinRunningTime > 0 || remainingMaxRunningTime > 0) {
+            sempTimeFrames.add(createSempTimeFrame(appliance.getId(), currentTimeFrame,
+                    remainingMinRunningTime,
+                    remainingMaxRunningTime,
+                    now));
+        }
     }
     
     private de.avanux.smartapplianceenabler.semp.webservice.Timeframe createSempTimeFrame(String deviceId, TimeFrame timeFrame, Long minRunningTime, Long maxRunningTime, Instant now) {
