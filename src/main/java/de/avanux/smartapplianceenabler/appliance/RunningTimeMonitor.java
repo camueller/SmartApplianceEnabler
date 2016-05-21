@@ -107,8 +107,6 @@ public class RunningTimeMonitor implements RunningTimeController, ApplianceIdCon
         // update not more than once per second in order to avoid spamming the log
         if(lastUpdate == null || new Interval(lastUpdate, now).toDurationMillis() > 1000) {
             TimeFrame timeFrameForInstant = findCurrentTimeFrame(now);
-            Interval interval = null;
-            boolean timeframeExpired = false;
             if(timeFrameForInstant != null) {
                 // timeframe found
                 if(currentTimeFrame == null || ! timeFrameForInstant.equals(currentTimeFrame)) {
@@ -117,6 +115,7 @@ public class RunningTimeMonitor implements RunningTimeController, ApplianceIdCon
                     remainingMinRunningTime = currentTimeFrame.getMinRunningTime();
                 }
                 logger.debug("timeframe=" + currentTimeFrame + " statusChangedAt=" + statusChangedAt + " intervalBeginn=" + intervalBeginn);
+                Interval interval = null;
                 if(running) {
                     // running
                     if(intervalBeginn == null) {
@@ -143,25 +142,25 @@ public class RunningTimeMonitor implements RunningTimeController, ApplianceIdCon
                         remainingMinRunningTime = Double.valueOf(new Interval(now, currentTimeFrame.getInterval().getEnd()).toDuration().getMillis() / 1000).longValue();
                     }
                 }
+                if(interval != null) {
+                    remainingMinRunningTime = remainingMinRunningTime - Double.valueOf(interval.toDuration().getMillis() / 1000).longValue();
+                    long remainingIntervalSeconds = getRemainingSecondsOfCurrentTimeFrame(currentTimeFrame, now);
+                    if(remainingIntervalSeconds < remainingMinRunningTime) {
+                        remainingMinRunningTime = remainingIntervalSeconds;
+                    }
+                }
             }
             else if(currentTimeFrame != null) {
                 // timeframe not found anymore
-                interval = new Interval(intervalBeginn, now);
-                timeframeExpired = true;
-            }
-            if(interval != null) {
-                remainingMinRunningTime = remainingMinRunningTime - Double.valueOf(interval.toDuration().getMillis() / 1000).longValue();
-                long remainingIntervalSeconds = getRemainingSecondsOfCurrentTimeFrame(currentTimeFrame, now);
-                if(remainingIntervalSeconds < remainingMinRunningTime) {
-                    remainingMinRunningTime = remainingIntervalSeconds;
-                }
-            }
-            if(timeframeExpired) {
+                remainingMinRunningTime = 0l;
                 intervalBeginn = null;
                 statusChangedAt = null;
                 currentTimeFrame = null;
+                lastUpdate = null;
             }
-            lastUpdate = now;
+            else {
+                lastUpdate = now;
+            }
         }
     }
 
