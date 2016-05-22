@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * Make sure that the timezone is set correctly, otherwise remaining running time will be incorrect.
  * Refer to http://www.gtkdb.de/index_36_2248.html
  */
-public class RunningTimeMonitor implements RunningTimeController, ApplianceIdConsumer {
+public class RunningTimeMonitor implements ApplianceIdConsumer {
     private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(RunningTimeMonitor.class));
     private List<TimeFrame> timeFrames;
     private TimeFrame currentTimeFrame;

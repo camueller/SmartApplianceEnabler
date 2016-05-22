@@ -95,56 +95,8 @@ public class ApplianceManager implements Runnable {
         }
 
         for (Appliance appliance : getAppliances()) {
-            RunningTimeMonitor runningTimeMonitor = null;
-            if(appliance.getTimeFrames() != null) {
-                runningTimeMonitor = new RunningTimeMonitor();
-                appliance.setRunningTimeMonitor(runningTimeMonitor);
-                runningTimeMonitor.setTimeFrames(appliance.getTimeFrames());
-            }
-            
-            for(Control control : appliance.getControls()) {
-                control.setRunningTimeController(runningTimeMonitor);
-                if(control instanceof ApplianceIdConsumer) {
-                    ((ApplianceIdConsumer) control).setApplianceId(appliance.getId());
-                }
-            }
-
-            Meter meter = appliance.getMeter();
-            if(meter != null) {
-                if(meter instanceof ApplianceIdConsumer) {
-                    ((ApplianceIdConsumer) meter).setApplianceId(appliance.getId());
-                }
-            }
-
-            for(GpioControllable gpioControllable : appliance.getGpioControllables()) {
-                gpioControllable.setGpioController(gpioController);
-                gpioControllable.start();
-            }
-
-            List<Switch> switches = appliance.getSwitches();
-
-            S0ElectricityMeter s0ElectricityMeter = appliance.getS0ElectricityMeter();
-            if(s0ElectricityMeter != null) {
-                if(switches != null && switches.size() > 0) {
-                    s0ElectricityMeter.setControl(switches.get(0));
-                }
-            }
-
-            S0ElectricityMeterNetworked s0ElectricityMeterNetworked = appliance.getS0ElectricityMeterNetworked();
-            if(s0ElectricityMeterNetworked != null) {
-                String pulseReceiverId = s0ElectricityMeterNetworked.getIdref();
-                PulseReceiver pulseReceiver = pulseReceiverIdWithPulseReceiver.get(pulseReceiverId);
-                s0ElectricityMeterNetworked.setPulseReceiver(pulseReceiver);
-                s0ElectricityMeterNetworked.start();
-            }
-
-            for(ModbusSlave modbusSlave : appliance.getModbusSlaves()) {
-                modbusSlave.setApplianceId(appliance.getId());
-                String modbusId = modbusSlave.getIdref();
-                ModbusTcp modbusTcp = modbusIdWithModbusTcp.get(modbusId);
-                modbusSlave.setModbusTcp(modbusTcp);
-                modbusSlave.start(timer);
-            }
+            appliance.init();
+            appliance.start(timer, gpioController, pulseReceiverIdWithPulseReceiver, modbusIdWithModbusTcp);
         }
     }
 

@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Changes the on/off state of an appliance by sending an HTTP request.
@@ -28,7 +30,7 @@ public class HttpSwitch implements Control, ApplianceIdConsumer {
     @XmlTransient
     private boolean on;
     @XmlTransient
-    RunningTimeController runningTimeController;
+    List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
 
     @Override
     public boolean on(boolean switchOn) {
@@ -42,16 +44,16 @@ public class HttpSwitch implements Control, ApplianceIdConsumer {
         boolean switchSuccessful = sendHttpRequest(url);
         if(switchSuccessful) {
             on = switchOn;
-            if(runningTimeController != null) {
-                runningTimeController.setRunning(switchOn);
+            for(ControlStateChangedListener listener : controlStateChangedListeners) {
+                listener.controlStateChanged(switchOn);
             }
         }
         return switchSuccessful;
     }
 
     @Override
-    public void setRunningTimeController(RunningTimeController runningTimeController) {
-        this.runningTimeController = runningTimeController;
+    public void addControlStateChangedListener(ControlStateChangedListener listener) {
+        this.controlStateChangedListeners.add(listener);
     }
 
     @Override

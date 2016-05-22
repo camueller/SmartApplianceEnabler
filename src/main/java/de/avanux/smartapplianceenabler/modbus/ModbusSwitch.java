@@ -20,11 +20,14 @@ package de.avanux.smartapplianceenabler.modbus;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
+import de.avanux.smartapplianceenabler.appliance.ControlStateChangedListener;
 import de.avanux.smartapplianceenabler.log.ApplianceLogger;
 import org.slf4j.LoggerFactory;
 
 import de.avanux.smartapplianceenabler.appliance.Control;
-import de.avanux.smartapplianceenabler.appliance.RunningTimeController;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ModbusSwitch extends ModbusSlave implements Control {
 
@@ -33,7 +36,7 @@ public class ModbusSwitch extends ModbusSlave implements Control {
     @XmlAttribute
     private String registerAddress;
     @XmlTransient
-    RunningTimeController runningTimeController;
+    List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
 
     @Override
     public void setApplianceId(String applianceId) {
@@ -50,9 +53,9 @@ public class ModbusSwitch extends ModbusSlave implements Control {
             executor.setApplianceId(getApplianceId());
             executeTransaction(executor, true);
             result = executor.getResult();
-            
-            if(runningTimeController != null) {
-                runningTimeController.setRunning(switchOn);
+
+            for(ControlStateChangedListener listener : controlStateChangedListeners) {
+                listener.controlStateChanged(switchOn);
             }
         }
         catch (Exception e) {
@@ -77,7 +80,7 @@ public class ModbusSwitch extends ModbusSlave implements Control {
     }
 
     @Override
-    public void setRunningTimeController(RunningTimeController runningTimeController) {
-        this.runningTimeController = runningTimeController;
+    public void addControlStateChangedListener(ControlStateChangedListener listener) {
+        this.controlStateChangedListeners.add(listener);
     }
 }

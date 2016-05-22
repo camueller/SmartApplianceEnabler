@@ -23,8 +23,12 @@ import de.avanux.smartapplianceenabler.log.ApplianceLogger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import java.util.ArrayList;
+import java.util.List;
 
+@XmlRootElement
 public class Switch extends GpioControllable implements Control, ApplianceIdConsumer {
     @XmlTransient
     private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(Switch.class));
@@ -33,7 +37,7 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
     @XmlTransient
     GpioPinDigitalOutput outputPin;
     @XmlTransient
-    RunningTimeController runningTimeController;
+    List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
 
 
     @Override
@@ -56,8 +60,8 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
         else {
             logGpioAccessDisabled(logger);
         }
-        if(runningTimeController != null) {
-            runningTimeController.setRunning(switchOn);
+        for(ControlStateChangedListener listener : controlStateChangedListeners) {
+            listener.controlStateChanged(switchOn);
         }
         return true;
     }
@@ -82,8 +86,8 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
     }
 
     @Override
-    public void setRunningTimeController(RunningTimeController runningTimeController) {
-        this.runningTimeController = runningTimeController;
+    public void addControlStateChangedListener(ControlStateChangedListener listener) {
+        this.controlStateChangedListeners.add(listener);
     }
 
     @Override

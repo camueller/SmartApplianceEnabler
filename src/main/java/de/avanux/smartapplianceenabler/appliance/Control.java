@@ -29,6 +29,6 @@ public interface Control extends ControlMonitor {
      */
     boolean on(boolean switchOn);
 
-    public void setRunningTimeController(RunningTimeController runningTimeController);
+    void addControlStateChangedListener(ControlStateChangedListener listener);
     
 }
