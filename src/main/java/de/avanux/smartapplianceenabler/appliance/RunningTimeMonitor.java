@@ -110,11 +110,11 @@ public class RunningTimeMonitor implements RunningTimeController, ApplianceIdCon
             if(timeFrameForInstant != null) {
                 // timeframe found
                 if(currentTimeFrame == null || ! timeFrameForInstant.equals(currentTimeFrame)) {
-                    // new timeframe or timeframe changed
                     currentTimeFrame = timeFrameForInstant;
                     remainingMinRunningTime = currentTimeFrame.getMinRunningTime();
+                    logger.debug("Timeframe changed. remainingMinRunningTime=" + remainingMinRunningTime);
                 }
-                logger.debug("timeframe=" + currentTimeFrame + " statusChangedAt=" + statusChangedAt + " intervalBeginn=" + intervalBeginn);
+                logger.debug("timeframe=" + currentTimeFrame + " statusChangedAt=" + statusChangedAt + " intervalBeginn=" + intervalBeginn + " running=" + running);
                 Interval interval = null;
                 if(running) {
                     // running
