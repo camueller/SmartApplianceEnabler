@@ -316,6 +316,7 @@ public class SempController {
         timeFrame.setLatestEnd(latestEnd);
         timeFrame.setMinRunningTime(minRunningTime);
         timeFrame.setMaxRunningTime(maxRunningTime);
+        logger.debug("Timeframe added to PlanningRequest: " + timeFrame.toString());
         return timeFrame;
     }
     
