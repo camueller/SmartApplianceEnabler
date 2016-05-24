@@ -283,6 +283,12 @@ pi@raspberrypi ~ $ sudo cat /var/log/smartapplianceenabler.log
 2016-01-09 16:27:10,130 INFO [cling-5] d.a.s.s.d.SempDeviceDescriptorBinderImpl [SempDeviceDescriptorBinderImpl.java:70] SEMP UPnP will redirect to http://192.168.69.5:8080
 ```
 
+Damit das Zeitangaben zum Schalten der Geräte richtig interpretiert werden, sollte die Zeitzone des Raspberry auf die lokale Zeit gesetzt sein (nicht UTC!). Das kann mit folgendende Befehlen erreicht werden:
+```
+sudo /bin/bash -c "echo 'Europe/Berlin' > /etc/timezone"
+sudo cp /usr/share/zoneinfo/Europe/Berlin /etc/localtime
+```
+
 ## Integration in den SMA Home Manager
 Der *SMA Home Manager* sollte jetzt den *Smart Appliance Enabler* finden und die von ihm verwalteten Geräte konfigurieren können. Falls das nicht so ist, sollen folgende Punkte geprüft werden:
 
