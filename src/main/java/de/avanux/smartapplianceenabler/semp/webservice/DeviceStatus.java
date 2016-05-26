@@ -44,7 +44,7 @@ public class DeviceStatus {
         this.deviceId = deviceId;
     }
 
-    public boolean iseMSignalsAccepted() {
+    public boolean isEMSignalsAccepted() {
         return eMSignalsAccepted;
     }
 
@@ -74,5 +74,14 @@ public class DeviceStatus {
 
     public void setPowerConsumption(List<PowerConsumption> powerConsumptions) {
         this.powerConsumptions = powerConsumptions;
+    }
+
+    @Override
+    public String toString() {
+        return "DeviceStatus{" +
+                "eMSignalsAccepted=" + eMSignalsAccepted +
+                ", status=" + status +
+                ", errorCode=" + errorCode +
+                '}';
     }
 }

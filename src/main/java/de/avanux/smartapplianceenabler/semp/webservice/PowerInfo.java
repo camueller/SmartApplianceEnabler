@@ -73,4 +73,15 @@ public class PowerInfo {
     public void setTimestamp(Integer timestamp) {
         this.timestamp = timestamp;
     }
+
+    @Override
+    public String toString() {
+        return "PowerInfo{" +
+                "averagePower=" + averagePower +
+                ", minPower=" + minPower +
+                ", maxPower=" + maxPower +
+                ", timestamp=" + timestamp +
+                ", averagingInterval=" + averagingInterval +
+                '}';
+    }
 }
