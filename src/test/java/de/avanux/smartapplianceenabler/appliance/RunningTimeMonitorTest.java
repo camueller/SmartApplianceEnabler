@@ -44,11 +44,13 @@ public class RunningTimeMonitorTest {
                     3600, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toInstant(13, 15, 0)));
 
             runningTimeMonitor.setRunning(true, toInstant(16, 10, 0));
-            Assert.assertEquals("If running time would exceed the timeframe it has to be truncated",
-                    2700, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toInstant(16, 15, 0)));
-            Assert.assertEquals("Running time has to be 0 at the end of the timeframe",
-                    0, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toInstant(17, 0, 0)));
+            Assert.assertEquals("Running time may exceed LatestEnd",
+                    3300, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toInstant(16, 15, 0)));
+            Assert.assertEquals("Running time left right before LatestEnd",
+                    601, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toInstant(16, 59, 59)));
             runningTimeMonitor.setRunning(false, toInstant(17, 0, 0));
+            Assert.assertEquals("Running time has to be 0 at the end of the timeframe",
+                    0, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toInstant(17, 0, 1)));
         }
     }
 

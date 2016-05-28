@@ -104,6 +104,7 @@ public class RunningTimeMonitor implements RunningTimeController, ApplianceIdCon
     protected void update(Instant now) {
         // update not more than once per second in order to avoid spamming the log
         if(lastUpdate == null || now.isBefore(lastUpdate) || new Interval(lastUpdate, now).toDurationMillis() > 1000) {
+
             TimeFrame timeFrameBefore = currentTimeFrame;
             TimeFrame timeFrameNow = findAndSetCurrentTimeFrame(now);
             if(timeFrameNow != null) {
@@ -136,39 +137,28 @@ public class RunningTimeMonitor implements RunningTimeController, ApplianceIdCon
                 }
                 else {
                     // not running
-                    long remainingIntervalSeconds = getRemainingSecondsOfTimeFrame(timeFrameNow, now);
                     if(timeFrameNow.getInterval().getStart().isBefore(now)) {
-                        remainingMinRunningTime = limitToRemainingIntervalSeconds(timeFrameNow.getMinRunningTime(), remainingIntervalSeconds);
-                        remainingMaxRunningTime = limitToRemainingIntervalSeconds(timeFrameNow.getMaxRunningTime(), remainingIntervalSeconds);
+                        remainingMinRunningTime = timeFrameNow.getMinRunningTime();
+                        remainingMaxRunningTime = timeFrameNow.getMaxRunningTime();
                     }
                 }
                 if(interval != null) {
                     long intervalSeconds = Double.valueOf(interval.toDuration().getMillis() / 1000).longValue();
-                    long remainingIntervalSeconds = getRemainingSecondsOfTimeFrame(timeFrameNow, now);
-                    remainingMinRunningTime = limitToRemainingIntervalSeconds(remainingMinRunningTime - intervalSeconds, remainingIntervalSeconds);
-                    remainingMaxRunningTime = limitToRemainingIntervalSeconds(remainingMaxRunningTime - intervalSeconds, remainingIntervalSeconds);
+                    remainingMinRunningTime = remainingMinRunningTime - intervalSeconds;
+                    remainingMaxRunningTime = remainingMaxRunningTime - intervalSeconds;
                 }
             }
-            else {
+            else if (timeFrameBefore != null) {
+                logger.debug("LatestEnd reached: remainingMinRunningTime=" + remainingMinRunningTime + " remainingMaxRunningTime=" + remainingMaxRunningTime);
                 remainingMinRunningTime = 0l;
+                remainingMaxRunningTime = 0l;
             }
             lastUpdate = now;
         }
     }
 
-    private long limitToRemainingIntervalSeconds(long runningTime, long remainingIntervalSeconds) {
-        if(runningTime > remainingIntervalSeconds) {
-            return remainingIntervalSeconds;
-        }
-        return runningTime;
-    }
-
-    private long getRemainingSecondsOfTimeFrame(TimeFrame timeFrame, Instant now) {
-        return Double.valueOf(new Interval(now, timeFrame.getInterval().getEnd()).toDurationMillis() / 1000).longValue();
-    }
-
     public TimeFrame findAndSetCurrentTimeFrame() {
-        return currentTimeFrame;
+        return findAndSetCurrentTimeFrame(new Instant());
     }
 
     public TimeFrame findAndSetCurrentTimeFrame(Instant instant) {
