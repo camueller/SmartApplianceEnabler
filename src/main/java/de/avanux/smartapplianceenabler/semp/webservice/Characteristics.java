@@ -26,9 +26,9 @@ public class Characteristics {
     @XmlElement(name = "MaxPowerConsumption")
     private int maxPowerConsumption;
     @XmlElement(name = "MinOnTime")
-    private int minOnTime;
+    private Integer minOnTime;
     @XmlElement(name = "MinOffTime")
-    private int minOffTime;
+    private Integer minOffTime;
 
     public int getMaxPowerConsumption() {
         return maxPowerConsumption;
@@ -39,7 +39,7 @@ public class Characteristics {
     }
 
     public int getMinOnTime() {
-        return minOnTime;
+        return (minOnTime != null ? minOnTime : 0);
     }
 
     public void setMinOnTime(int minOnTime) {
@@ -47,7 +47,7 @@ public class Characteristics {
     }
 
     public int getMinOffTime() {
-        return minOffTime;
+        return (minOffTime != null ? minOffTime : 0);
     }
 
     public void setMinOffTime(int minOffTime) {
