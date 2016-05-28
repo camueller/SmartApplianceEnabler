@@ -148,11 +148,6 @@ public class RunningTimeMonitor implements RunningTimeController, ApplianceIdCon
                     remainingMaxRunningTime = remainingMaxRunningTime - intervalSeconds;
                 }
             }
-            else if (timeFrameBefore != null) {
-                logger.debug("LatestEnd reached: remainingMinRunningTime=" + remainingMinRunningTime + " remainingMaxRunningTime=" + remainingMaxRunningTime);
-                remainingMinRunningTime = 0l;
-                remainingMaxRunningTime = 0l;
-            }
             lastUpdate = now;
         }
     }
@@ -170,6 +165,12 @@ public class RunningTimeMonitor implements RunningTimeController, ApplianceIdCon
                     break;
                 }
             }
+        }
+        if(timeFrameToBeSet == null && currentTimeFrame != null) {
+            logger.debug("Timeframe expired: " + currentTimeFrame);
+            logger.debug("Timeframe status: remainingMinRunningTime=" + remainingMinRunningTime + " remainingMaxRunningTime=" + remainingMaxRunningTime);
+            remainingMinRunningTime = 0l;
+            remainingMaxRunningTime = 0l;
         }
         currentTimeFrame = timeFrameToBeSet;
         return currentTimeFrame;
