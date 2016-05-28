@@ -78,7 +78,7 @@ public class Timeframe {
     public String toString() {
         return earliestStart
                 + "s-" + latestEnd
-                + "s:" + minRunningTime
+                + "s:" + (minRunningTime != null ? minRunningTime : "-")
                 + "s/" + maxRunningTime + "s";
     }
 }
