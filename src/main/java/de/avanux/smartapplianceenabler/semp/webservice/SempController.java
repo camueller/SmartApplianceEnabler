@@ -279,7 +279,7 @@ public class SempController {
             if(runningTimeMonitor.getTimeFrames() != null && runningTimeMonitor.getTimeFrames().size() > 0) {
                 Instant now = new Instant();
                 List<de.avanux.smartapplianceenabler.semp.webservice.Timeframe> sempTimeFrames = new ArrayList<de.avanux.smartapplianceenabler.semp.webservice.Timeframe>();
-                TimeFrame currentTimeFrame = runningTimeMonitor.findCurrentTimeFrame(now);
+                TimeFrame currentTimeFrame = runningTimeMonitor.findAndSetCurrentTimeFrame(now);
                 if(currentTimeFrame != null) {
                     addSempTimeFrame(applianceLogger, appliance, sempTimeFrames, currentTimeFrame, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(),
                             runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(), now);
