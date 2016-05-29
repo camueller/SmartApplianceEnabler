@@ -49,6 +49,7 @@ public class S0ElectricityMeterNetworked implements Meter, PulseReceiver.PulseLi
 
     @Override
     public void setApplianceId(String applianceId) {
+        this.logger.setApplianceId(applianceId);
         this.applianceId = applianceId;
         if(this.pulseElectricityMeter != null) {
             this.pulseElectricityMeter.setApplianceId(applianceId);
