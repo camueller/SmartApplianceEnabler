@@ -108,13 +108,6 @@ public class RunningTimeMonitor implements RunningTimeController, ApplianceIdCon
             TimeFrame timeFrameBefore = currentTimeFrame;
             TimeFrame timeFrameNow = findAndSetCurrentTimeFrame(now);
             if(timeFrameNow != null) {
-                // timeframe found
-                if(timeFrameBefore == null && timeFrameNow != null) {
-                    remainingMinRunningTime = timeFrameNow.getMinRunningTime();
-                    remainingMaxRunningTime = timeFrameNow.getMaxRunningTime();
-                    intervalBegin = null;
-                    logger.debug("Timeframe changed. remainingMinRunningTime=" + remainingMinRunningTime + " remainingMaxRunningTime=" + remainingMaxRunningTime);
-                }
                 logger.debug("timeFrameNow=" + timeFrameNow + " statusChangedAt=" + statusChangedAt + " intervalBegin=" + intervalBegin + " running=" + running);
                 Interval interval = null;
                 if(running) {
@@ -134,13 +127,6 @@ public class RunningTimeMonitor implements RunningTimeController, ApplianceIdCon
                     interval = new Interval(intervalBegin, statusChangedAt);
                     intervalBegin = null;
                     statusChangedAt = null;
-                }
-                else {
-                    // not running
-                    if(timeFrameNow.getInterval().getStart().isBefore(now)) {
-                        remainingMinRunningTime = timeFrameNow.getMinRunningTime();
-                        remainingMaxRunningTime = timeFrameNow.getMaxRunningTime();
-                    }
                 }
                 if(interval != null) {
                     long intervalSeconds = Double.valueOf(interval.toDuration().getMillis() / 1000).longValue();
@@ -166,12 +152,18 @@ public class RunningTimeMonitor implements RunningTimeController, ApplianceIdCon
                 }
             }
         }
-        if(timeFrameToBeSet == null && currentTimeFrame != null) {
+        if(timeFrameToBeSet != null && currentTimeFrame == null) {
+            remainingMinRunningTime = timeFrameToBeSet.getMinRunningTime();
+            remainingMaxRunningTime = timeFrameToBeSet.getMaxRunningTime();
+            intervalBegin = null;
+            logger.debug("Timeframe started: " + timeFrameToBeSet);
+        }
+        else if(timeFrameToBeSet == null && currentTimeFrame != null) {
             logger.debug("Timeframe expired: " + currentTimeFrame);
-            logger.debug("Timeframe status: remainingMinRunningTime=" + remainingMinRunningTime + " remainingMaxRunningTime=" + remainingMaxRunningTime);
             remainingMinRunningTime = 0l;
             remainingMaxRunningTime = 0l;
         }
+        logger.debug("Timeframe status: remainingMinRunningTime=" + remainingMinRunningTime + " remainingMaxRunningTime=" + remainingMaxRunningTime);
         currentTimeFrame = timeFrameToBeSet;
         return currentTimeFrame;
     }
