@@ -306,10 +306,7 @@ public class SempController {
 
     private void addSempTimeFrame(ApplianceLogger applianceLogger, Appliance appliance, List<de.avanux.smartapplianceenabler.semp.webservice.Timeframe> sempTimeFrames,
                                   TimeFrame currentTimeFrame, long remainingMinRunningTime, long remainingMaxRunningTime, Instant now) {
-        if(remainingMinRunningTime > 0 || remainingMaxRunningTime > 0) {
-            sempTimeFrames.add(createSempTimeFrame(applianceLogger, appliance.getId(),
-                    currentTimeFrame, remainingMinRunningTime, remainingMaxRunningTime, now));
-        }
+        sempTimeFrames.add(createSempTimeFrame(applianceLogger, appliance.getId(), currentTimeFrame, remainingMinRunningTime, remainingMaxRunningTime, now));
     }
     
     private de.avanux.smartapplianceenabler.semp.webservice.Timeframe createSempTimeFrame(ApplianceLogger applianceLogger, String deviceId, TimeFrame timeFrame, long minRunningTime, long maxRunningTime, Instant now) {
@@ -326,12 +323,25 @@ public class SempController {
         timeFrame.setDeviceId(deviceId);
         timeFrame.setEarliestStart(earliestStart);
         timeFrame.setLatestEnd(latestEnd);
-        if(minRunningTime != maxRunningTime) {
-            timeFrame.setMinRunningTime(minRunningTime);
+        if(minRunningTime == maxRunningTime) {
+            /** WORKAROUND:
+             * For unknown reason the SunnyPortal displays the scheduled times only
+             * if maxRunningTime AND minRunningTime are returned and are NOT EQUAL
+             */
+            long fixedMinRunningTime = minRunningTime - 1;
+            timeFrame.setMinRunningTime(atLeastZero(fixedMinRunningTime));
         }
-        timeFrame.setMaxRunningTime(maxRunningTime);
+        else {
+            // according to spec minRunningTime only has to be returned if different from maxRunningTime
+            timeFrame.setMinRunningTime(atLeastZero(minRunningTime));
+        }
+        timeFrame.setMaxRunningTime(atLeastZero(maxRunningTime));
         applianceLogger.debug("Timeframe added to PlanningRequest: " + timeFrame.toString());
         return timeFrame;
+    }
+
+    private long atLeastZero(long value) {
+        return value > 0 ? value : 0;
     }
     
     private Appliance findAppliance(String deviceId) {
