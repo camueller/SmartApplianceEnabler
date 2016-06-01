@@ -38,13 +38,11 @@ public class ApplianceManager implements Runnable {
     public static final String SCHEMA_LOCATION = "http://github.com/camueller/SmartApplianceEnabler/v1.0";
     private Logger logger = LoggerFactory.getLogger(ApplianceManager.class);
     private static ApplianceManager instance;
-    private FileHandler fileHandler;
     private Appliances appliances;
     private GpioController gpioController;
     private Timer timer;
     
     private ApplianceManager() {
-        fileHandler = new FileHandler();
         timer = new Timer();
         if(System.getProperty("os.arch").equals("arm")) {
             gpioController = GpioFactory.getInstance();
@@ -66,6 +64,7 @@ public class ApplianceManager implements Runnable {
     }
     
     public void startAppliances() {
+        FileHandler fileHandler = new FileHandler();
         appliances = fileHandler.load(Appliances.class);
         if(appliances == null) {
             logger.error("No valid appliance configuration found. Exiting ...");
@@ -153,5 +152,9 @@ public class ApplianceManager implements Runnable {
             return appliances.getAppliances();
         }
         return Collections.EMPTY_LIST;
+    }
+
+    public void setAppliances(Appliances appliances) {
+        this.appliances = appliances;
     }
 }

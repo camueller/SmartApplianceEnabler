@@ -36,6 +36,10 @@ public class Appliances {
         return appliances;
     }
 
+    public void setAppliances(List<Appliance> appliances) {
+        this.appliances = appliances;
+    }
+
     public Connectivity getConnectivity() {
         return connectivity;
     }

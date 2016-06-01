@@ -75,7 +75,7 @@ public class RunningTimeMonitor implements RunningTimeController, ApplianceIdCon
     protected long getRemainingMinRunningTimeOfCurrentTimeFrame(Instant now) {
         update(now);
         long remainingRunningTime = 0;
-        if(remainingMinRunningTime != null && remainingMinRunningTime >= 0) {
+        if(remainingMinRunningTime != null) {
             remainingRunningTime = remainingMinRunningTime;
         }
         logger.debug("remainingMinRunningTime=" + remainingRunningTime);
@@ -89,7 +89,7 @@ public class RunningTimeMonitor implements RunningTimeController, ApplianceIdCon
     protected long getRemainingMaxRunningTimeOfCurrentTimeFrame(Instant now) {
         update(now);
         long remainingRunningTime = 0;
-        if(remainingMaxRunningTime != null && remainingMaxRunningTime >= 0) {
+        if(remainingMaxRunningTime != null) {
             remainingRunningTime = remainingMaxRunningTime;
         }
         logger.debug("remainingMaxRunningTime=" + remainingRunningTime);
@@ -105,34 +105,32 @@ public class RunningTimeMonitor implements RunningTimeController, ApplianceIdCon
         // update not more than once per second in order to avoid spamming the log
         if(lastUpdate == null || now.isBefore(lastUpdate) || new Interval(lastUpdate, now).toDurationMillis() > 1000) {
 
-            TimeFrame timeFrameBefore = currentTimeFrame;
-            TimeFrame timeFrameNow = findAndSetCurrentTimeFrame(now);
-            if(timeFrameNow != null) {
-                logger.debug("timeFrameNow=" + timeFrameNow + " statusChangedAt=" + statusChangedAt + " intervalBegin=" + intervalBegin + " running=" + running);
-                Interval interval = null;
-                if(running) {
-                    // running
-                    if(intervalBegin == null) {
-                        // running was set to true after interval begin
-                        interval = new Interval(statusChangedAt, now);
-                    }
-                    else {
-                        // no status change in interval
-                        interval = new Interval(intervalBegin, now);
-                    }
-                    intervalBegin = now;
+            findAndSetCurrentTimeFrame(now);
+            logger.debug("currentTimeFrame=" + currentTimeFrame + " statusChangedAt=" + statusChangedAt + " intervalBegin=" + intervalBegin + " running=" + running);
+
+            Interval interval = null;
+            if(running) {
+                // running
+                if(intervalBegin == null) {
+                    // running was set to true after interval begin
+                    interval = new Interval(statusChangedAt, now);
                 }
-                else if (intervalBegin != null && statusChangedAt != null) {
-                    // running was set to false after interval begin
-                    interval = new Interval(intervalBegin, statusChangedAt);
-                    intervalBegin = null;
-                    statusChangedAt = null;
+                else {
+                    // no status change in interval
+                    interval = new Interval(intervalBegin, now);
                 }
-                if(interval != null) {
-                    long intervalSeconds = Double.valueOf(interval.toDuration().getMillis() / 1000).longValue();
-                    remainingMinRunningTime = remainingMinRunningTime - intervalSeconds;
-                    remainingMaxRunningTime = remainingMaxRunningTime - intervalSeconds;
-                }
+                intervalBegin = now;
+            }
+            else if (intervalBegin != null && statusChangedAt != null) {
+                // running was set to false after interval begin
+                interval = new Interval(intervalBegin, statusChangedAt);
+                intervalBegin = null;
+                statusChangedAt = null;
+            }
+            if(interval != null) {
+                long intervalSeconds = Double.valueOf(interval.toDuration().getMillis() / 1000).longValue();
+                remainingMinRunningTime = remainingMinRunningTime - intervalSeconds;
+                remainingMaxRunningTime = remainingMaxRunningTime - intervalSeconds;
             }
             lastUpdate = now;
         }
@@ -162,6 +160,7 @@ public class RunningTimeMonitor implements RunningTimeController, ApplianceIdCon
             logger.debug("Timeframe expired: " + currentTimeFrame);
             remainingMinRunningTime = 0l;
             remainingMaxRunningTime = 0l;
+            intervalBegin = null;
         }
         logger.debug("Timeframe status: remainingMinRunningTime=" + remainingMinRunningTime + " remainingMaxRunningTime=" + remainingMaxRunningTime);
         currentTimeFrame = timeFrameToBeSet;
