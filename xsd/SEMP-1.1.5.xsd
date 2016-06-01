@@ -302,8 +302,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="DeviceType" type="xs:string">
-        <!-- ref=DeviceTypeRefType -->
+      <xs:element name="DeviceType" type="DeviceTypeRefType">
         <xs:annotation>
           <xs:documentation>
             Human readable type of the device. See DeviceTypeRefType for well-known types.
