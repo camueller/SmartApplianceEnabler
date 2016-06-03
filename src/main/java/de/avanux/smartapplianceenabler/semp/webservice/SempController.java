@@ -298,11 +298,12 @@ public class SempController {
                  * Therefore we turn if off ourselves 5 minutes after minRunningTime became 0.
                  */
                 final int switchOffDelay = 300;
-                if(runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame() < -switchOffDelay) {
+                final long remainingMaxRunningTime = runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame();
+                if(remainingMaxRunningTime < -switchOffDelay) {
                     for(Control control : appliance.getControls()) {
                         if(control.isOn()) {
                             control.on(false);
-                            applianceLogger.warn("WORKAROUND: Switching off appliance due DeviceControl command from SHM being overdue for " + switchOffDelay + "s");
+                            applianceLogger.warn("WORKAROUND: Switching off appliance due DeviceControl command from SHM being overdue for " + -remainingMaxRunningTime + "s");
                         }
                     }
                 }
