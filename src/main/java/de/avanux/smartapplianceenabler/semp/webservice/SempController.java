@@ -26,6 +26,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
+import de.avanux.smartapplianceenabler.log.ApplianceLogger;
 import org.joda.time.Instant;
 import org.joda.time.Interval;
 import org.slf4j.Logger;
@@ -59,25 +60,34 @@ public class SempController {
         device2EM = fileHandler.load(Device2EM.class);
         logger.info("Controller ready to handle SEMP requests.");
     }
-    
+
+    protected SempController(Device2EM device2EM) {
+        this.device2EM = device2EM;
+    }
+
     @RequestMapping(value=BASE_URL, method=RequestMethod.GET, produces="application/xml")
     @ResponseBody
     public String device2EM() {
         logger.debug("Device info/status/planning requested.");
+        return marshall(createDevice2EM(new Instant()));
+    }
+
+    protected Device2EM createDevice2EM(Instant now) {
         List<DeviceStatus> deviceStatuses = new ArrayList<DeviceStatus>();
         List<PlanningRequest> planningRequests = new ArrayList<PlanningRequest>();
         List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
         for (Appliance appliance : appliances) {
-            DeviceStatus deviceStatus = createDeviceStatus(appliance);
+            ApplianceLogger applianceLogger = getApplianceLogger(appliance.getId());
+            DeviceStatus deviceStatus = createDeviceStatus(applianceLogger, appliance);
             deviceStatuses.add(deviceStatus);
-            PlanningRequest planningRequest = createPlanningRequest(appliance);
+            PlanningRequest planningRequest = createPlanningRequest(applianceLogger, now, appliance);
             planningRequests.add(planningRequest);
         }
         device2EM.setDeviceStatus(deviceStatuses);
         if(planningRequests.size() > 0) {
             device2EM.setPlanningRequest(planningRequests);
         }
-        return marshall(device2EM);
+        return device2EM;
     }
     
     @RequestMapping(value=BASE_URL + "/DeviceInfo", method=RequestMethod.GET, produces="application/xml")
@@ -124,16 +134,18 @@ public class SempController {
     public String deviceStatus(@RequestParam(value="DeviceId", required = false) String deviceId) {
         List<DeviceStatus> deviceStatuses = new ArrayList<DeviceStatus>();
         if(deviceId != null) {
-            logger.debug("Device status requested of device id=" + deviceId);
+            ApplianceLogger applianceLogger = getApplianceLogger(deviceId);
+            applianceLogger.debug("Device status requested");
             Appliance appliance = findAppliance(deviceId);
-            DeviceStatus deviceStatus = createDeviceStatus(appliance);
+            DeviceStatus deviceStatus = createDeviceStatus(applianceLogger, appliance);
             deviceStatuses.add(deviceStatus);
         }
         else {
             logger.debug("Device status requested of all devices");
             List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
             for (Appliance appliance : appliances) {
-                DeviceStatus deviceStatus = createDeviceStatus(appliance);
+                ApplianceLogger applianceLogger = getApplianceLogger(appliance.getId());
+                DeviceStatus deviceStatus = createDeviceStatus(applianceLogger, appliance);
                 deviceStatuses.add(deviceStatus);
             }
         }
@@ -145,18 +157,21 @@ public class SempController {
     @RequestMapping(value=BASE_URL + "/PlanningRequest", method=RequestMethod.GET, produces="application/xml")
     @ResponseBody
     public String planningRequest(@RequestParam(value="DeviceId", required = false) String deviceId) {
+        Instant now = new Instant();
         List<PlanningRequest> planningRequests = new ArrayList<PlanningRequest>();
         if(deviceId != null) {
-            logger.debug("Planning request requested of device id=" + deviceId);
+            ApplianceLogger applianceLogger = getApplianceLogger(deviceId);
+            applianceLogger.debug("Planning request requested");
             Appliance appliance = findAppliance(deviceId);
-            PlanningRequest planningRequest = createPlanningRequest(appliance);
+            PlanningRequest planningRequest = createPlanningRequest(applianceLogger, now, appliance);
             addPlanningRequest(planningRequests, planningRequest);
         }
         else {
             logger.debug("Planning request requested of all devices");
             List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
             for (Appliance appliance : appliances) {
-                PlanningRequest planningRequest = createPlanningRequest(appliance);
+                ApplianceLogger applianceLogger = getApplianceLogger(appliance.getId());
+                PlanningRequest planningRequest = createPlanningRequest(applianceLogger, now, appliance);
                 addPlanningRequest(planningRequests, planningRequest);
             }
         }
@@ -178,7 +193,8 @@ public class SempController {
     public void em2Device(@RequestBody EM2Device em2Device) {
         List<DeviceControl> deviceControls = em2Device.getDeviceControl();
         for(DeviceControl deviceControl : deviceControls) {
-            logger.debug("Received control request for device id=" + deviceControl.getDeviceId());
+            ApplianceLogger applianceLogger = getApplianceLogger(deviceControl.getDeviceId());
+            applianceLogger.debug("Received control request");
             Appliance appliance = findAppliance(deviceControl.getDeviceId());
             if(appliance != null) {
                 if(appliance.getControls() != null) {
@@ -187,16 +203,16 @@ public class SempController {
                     }
                 }
                 else {
-                    logger.warn("Appliance configuration does not contain control.");
+                    applianceLogger.warn("Appliance configuration does not contain control.");
                 }
             }
             else {
-                logger.warn("No appliance configured for device id " + deviceControl.getDeviceId());
+                applianceLogger.warn("No appliance configured for device id " + deviceControl.getDeviceId());
             }
         }
     }
     
-    private DeviceStatus createDeviceStatus(Appliance appliance) {
+    private DeviceStatus createDeviceStatus(ApplianceLogger applianceLogger, Appliance appliance) {
         DeviceStatus deviceStatus = new DeviceStatus();
         deviceStatus.setDeviceId(appliance.getId());
         Meter meter = appliance.getMeter();
@@ -205,6 +221,7 @@ public class SempController {
             for(Control control : appliance.getControls()) {
                 deviceStatus.setStatus(control.isOn() ? Status.On : Status.Off);
                 deviceStatus.setEMSignalsAccepted(true);
+                applianceLogger.debug("Reporting device status from control");
                 break;
             }
         }
@@ -213,24 +230,29 @@ public class SempController {
             if(meter != null) {
                 // ... but we can derive the status from power consumption
                 deviceStatus.setStatus(meter.isOn() ? Status.On : Status.Off);
+                applianceLogger.debug("Reporting device status based on power consumption");
             }
             else {
                 // ... and no meter; we have to assume the appliance is switched off
                 deviceStatus.setStatus(Status.Offline);
+                applianceLogger.debug("Appliance has neither control nor meter.");
             }
             
             // an appliance without control cannot be controlled ;-)
             deviceStatus.setEMSignalsAccepted(false);
         }
-        
+        applianceLogger.debug(deviceStatus.toString());
+
         PowerInfo powerInfo = new PowerInfo();
         if(meter != null) {
+            applianceLogger.debug("Reporting power info from meter.");
             powerInfo.setAveragePower(meter.getAveragePower());
             powerInfo.setMinPower(meter.getMinPower());
             powerInfo.setMaxPower(meter.getMaxPower());
             powerInfo.setAveragingInterval(60); // always report 60 for SEMP regardless of real averaging interval
         }
         else {
+            applianceLogger.debug("Reporting power info from device characteristics.");
             DeviceInfo deviceInfo = findDeviceInfo(device2EM, appliance.getId());
             if(deviceStatus.getStatus() == Status.On) {
                 powerInfo.setAveragePower(deviceInfo.getCharacteristics().getMaxPowerConsumption());
@@ -241,7 +263,8 @@ public class SempController {
             powerInfo.setAveragingInterval(60);
         }
         powerInfo.setTimestamp(0);
-        
+        applianceLogger.debug(powerInfo.toString());
+
         PowerConsumption powerConsumption = new PowerConsumption();
         powerConsumption.setPowerInfo(Collections.singletonList(powerInfo));
         
@@ -258,20 +281,35 @@ public class SempController {
         return null;
     }
 
-    private PlanningRequest createPlanningRequest(Appliance appliance) {
+    private PlanningRequest createPlanningRequest(ApplianceLogger applianceLogger, Instant now, Appliance appliance) {
         PlanningRequest planningRequest = null;
         RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
         if(runningTimeMonitor != null) {
             if(runningTimeMonitor.getTimeFrames() != null && runningTimeMonitor.getTimeFrames().size() > 0) {
-                Instant now = new Instant();
                 List<de.avanux.smartapplianceenabler.semp.webservice.Timeframe> sempTimeFrames = new ArrayList<de.avanux.smartapplianceenabler.semp.webservice.Timeframe>();
-                TimeFrame currentTimeFrame = runningTimeMonitor.findCurrentTimeFrame(now);
+                TimeFrame currentTimeFrame = runningTimeMonitor.findAndSetCurrentTimeFrame(now);
                 if(currentTimeFrame != null) {
-                    addSempTimeFrame(appliance, sempTimeFrames, currentTimeFrame, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(),
+                    addSempTimeFrame(applianceLogger, appliance, sempTimeFrames, currentTimeFrame, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(),
                             runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(), now);
                 }
+
+                /** WORKAROUND:
+                 * For unknown reason no device control command is received to turn the device off.
+                 * Therefore we turn if off ourselves 5 minutes after minRunningTime became 0.
+                 */
+                final int switchOffDelay = 300;
+                final long remainingMaxRunningTime = runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame();
+                if(remainingMaxRunningTime < -switchOffDelay) {
+                    for(Control control : appliance.getControls()) {
+                        if(control.isOn()) {
+                            control.on(false);
+                            applianceLogger.warn("WORKAROUND: Switching off appliance due DeviceControl command from SHM being overdue for " + -remainingMaxRunningTime + "s");
+                        }
+                    }
+                }
+
                 for(TimeFrame timeFrame : runningTimeMonitor.findFutureTimeFrames(now)) {
-                    addSempTimeFrame(appliance, sempTimeFrames, timeFrame, timeFrame.getMinRunningTime(),
+                    addSempTimeFrame(applianceLogger, appliance, sempTimeFrames, timeFrame, timeFrame.getMinRunningTime(),
                             timeFrame.getMaxRunningTime(), now);
                 }
                 if(sempTimeFrames.size() > 0) {
@@ -279,46 +317,53 @@ public class SempController {
                     planningRequest.setTimeframes(sempTimeFrames);
                 }
                 else {
-                    logger.debug("No timeframes found for appliance id " + appliance.getId());
+                    applianceLogger.debug("No planning requests created");
                     return null;
                 }
             }
             else {
-                logger.debug("No planning request configured for appliance id " + appliance.getId());
+                applianceLogger.debug("No timeframes found");
             }
         }
         return planningRequest;
     }
 
-    private void addSempTimeFrame(Appliance appliance, List<de.avanux.smartapplianceenabler.semp.webservice.Timeframe> sempTimeFrames,
+    private void addSempTimeFrame(ApplianceLogger applianceLogger, Appliance appliance, List<de.avanux.smartapplianceenabler.semp.webservice.Timeframe> sempTimeFrames,
                                   TimeFrame currentTimeFrame, long remainingMinRunningTime, long remainingMaxRunningTime, Instant now) {
-        if(remainingMinRunningTime > 0 || remainingMaxRunningTime > 0) {
-            sempTimeFrames.add(createSempTimeFrame(appliance.getId(), currentTimeFrame,
-                    remainingMinRunningTime,
-                    remainingMaxRunningTime,
-                    now));
-        }
+        sempTimeFrames.add(createSempTimeFrame(applianceLogger, appliance.getId(), currentTimeFrame, remainingMinRunningTime, remainingMaxRunningTime, now));
     }
     
-    private de.avanux.smartapplianceenabler.semp.webservice.Timeframe createSempTimeFrame(String deviceId, TimeFrame timeFrame, Long minRunningTime, Long maxRunningTime, Instant now) {
+    private de.avanux.smartapplianceenabler.semp.webservice.Timeframe createSempTimeFrame(ApplianceLogger applianceLogger, String deviceId, TimeFrame timeFrame, long minRunningTime, long maxRunningTime, Instant now) {
         Long earliestStart = 0l;
         if(timeFrame.getInterval().getStart().isAfter(now)) {
             earliestStart = Double.valueOf(new Interval(now, timeFrame.getInterval().getStart()).toDurationMillis() / 1000).longValue();
         }
         Long latestEnd = Double.valueOf(new Interval(now, timeFrame.getInterval().getEnd()).toDurationMillis() / 1000).longValue();
-        return createSempTimeFrame(deviceId, earliestStart, latestEnd, minRunningTime, maxRunningTime);
+        return createSempTimeFrame(applianceLogger, deviceId, earliestStart, latestEnd, minRunningTime, maxRunningTime);
     }
     
-    private de.avanux.smartapplianceenabler.semp.webservice.Timeframe createSempTimeFrame(String deviceId, Long earliestStart, Long latestEnd, Long minRunningTime, Long maxRunningTime) {
+    private de.avanux.smartapplianceenabler.semp.webservice.Timeframe createSempTimeFrame(ApplianceLogger applianceLogger, String deviceId, Long earliestStart, Long latestEnd, long minRunningTime, long maxRunningTime) {
         de.avanux.smartapplianceenabler.semp.webservice.Timeframe timeFrame = new de.avanux.smartapplianceenabler.semp.webservice.Timeframe();
         timeFrame.setDeviceId(deviceId);
         timeFrame.setEarliestStart(earliestStart);
         timeFrame.setLatestEnd(latestEnd);
-        timeFrame.setMinRunningTime(minRunningTime);
-        timeFrame.setMaxRunningTime(maxRunningTime);
+        if(minRunningTime == maxRunningTime) {
+            /** WORKAROUND:
+             * For unknown reason the SunnyPortal displays the scheduled times only
+             * if maxRunningTime AND minRunningTime are returned and are NOT EQUAL
+             * Therefore we ensure that they are not equal by reducing minRunningTime by 1 second
+             */
+            timeFrame.setMinRunningTime(minRunningTime >= 1 ? minRunningTime - 1 : 0);
+        }
+        else {
+            // according to spec minRunningTime only has to be returned if different from maxRunningTime
+            timeFrame.setMinRunningTime(minRunningTime >= 0 ? minRunningTime : 0);
+        }
+        timeFrame.setMaxRunningTime(maxRunningTime >= 0 ? maxRunningTime : 0);
+        applianceLogger.debug("Timeframe added to PlanningRequest: " + timeFrame.toString());
         return timeFrame;
     }
-    
+
     private Appliance findAppliance(String deviceId) {
         List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
         for (Appliance appliance : appliances) {
@@ -342,5 +387,11 @@ public class SempController {
             logger.error("Error marshalling", e);
         }
         return null;
+    }
+
+    private ApplianceLogger getApplianceLogger(String applianceId) {
+        ApplianceLogger logger = new ApplianceLogger(this.logger);
+        logger.setApplianceId(applianceId);
+        return logger;
     }
 }

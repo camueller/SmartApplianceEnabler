@@ -17,14 +17,16 @@
  */
 package de.avanux.smartapplianceenabler.appliance;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeFieldType;
+import org.joda.time.Instant;
+import org.joda.time.LocalTime;
+import org.joda.time.chrono.ISOChronology;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
-
-import org.joda.time.DateTimeZone;
-import org.joda.time.LocalTime;
-import org.joda.time.chrono.ISOChronology;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "hour", "minute", "second" })
@@ -43,6 +45,14 @@ public class TimeOfDay {
         this.hour = hour;
         this.minute = minute;
         this.second = second;
+    }
+
+    public TimeOfDay(Instant instant) {
+        LocalTime localtime = new LocalTime(instant, ISOChronology.getInstance());
+        DateTime dateTime = localtime.toDateTimeToday();
+        hour = dateTime.get(DateTimeFieldType.hourOfDay());
+        minute = dateTime.get(DateTimeFieldType.minuteOfHour());
+        second = dateTime.get(DateTimeFieldType.secondOfMinute());
     }
 
     public Integer getHour() {

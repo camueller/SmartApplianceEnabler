@@ -73,4 +73,12 @@ public class Timeframe {
     public void setMaxRunningTime(Long maxRunningTime) {
         this.maxRunningTime = maxRunningTime;
     }
+
+    @Override
+    public String toString() {
+        return earliestStart
+                + "s-" + latestEnd
+                + "s:" + (minRunningTime != null ? minRunningTime : "-")
+                + "s/" + maxRunningTime + "s";
+    }
 }

@@ -50,10 +50,16 @@ public class Application {
     }
     
     private void startSemp() {
-        logger.debug("Starting SEMP discovery ...");
-        Thread discoveryThread = new Thread(new SempDiscovery());
-        discoveryThread.start();
-        logger.debug("... SEMP discovery started");
+        boolean disableDiscovery = Boolean.parseBoolean(System.getProperty("sae.discovery.disable", "false"));
+        if(disableDiscovery) {
+            logger.warn("SEMP discovery disabled.");
+        }
+        else {
+            logger.debug("Starting SEMP discovery ...");
+            Thread discoveryThread = new Thread(new SempDiscovery());
+            discoveryThread.start();
+            logger.debug("... SEMP discovery started");
+        }
     }
     
     private void startApplianceManager() {
