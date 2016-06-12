@@ -52,10 +52,20 @@ public class TimeFrame {
     }
 
     public TimeFrame(long minRunningTime, long maxRunningTime, TimeOfDay earliestStart, TimeOfDay latestEnd) {
+        this(minRunningTime, maxRunningTime, earliestStart, latestEnd, null);
+    }
+
+    public TimeFrame(long minRunningTime, long maxRunningTime, TimeOfDay earliestStart, TimeOfDay latestEnd, List<Integer> daysOfWeekValues) {
         this.minRunningTime = minRunningTime;
         this.maxRunningTime = maxRunningTime;
         this.earliestStart = earliestStart;
         this.latestEnd = latestEnd;
+        if(daysOfWeekValues != null) {
+            this.daysOfWeek = new ArrayList<>();
+            for(Integer value : daysOfWeekValues) {
+                this.daysOfWeek.add(new DayOfWeek(value));
+            }
+        }
     }
 
     public long getMinRunningTime() {

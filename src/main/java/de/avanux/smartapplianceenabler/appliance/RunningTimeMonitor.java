@@ -21,9 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.avanux.smartapplianceenabler.log.ApplianceLogger;
-import org.joda.time.DateTimeFieldType;
-import org.joda.time.Instant;
-import org.joda.time.Interval;
+import org.joda.time.*;
+import org.joda.time.chrono.ISOChronology;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -35,9 +34,9 @@ public class RunningTimeMonitor implements RunningTimeController, ApplianceIdCon
     private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(RunningTimeMonitor.class));
     private List<TimeFrame> timeFrames;
     private TimeFrame currentTimeFrame;
-    private Instant intervalBegin;
-    private Instant statusChangedAt;
-    private Instant lastUpdate;
+    private ReadableInstant intervalBegin;
+    private ReadableInstant statusChangedAt;
+    private ReadableInstant lastUpdate;
     private Long remainingMinRunningTime;
     private Long remainingMaxRunningTime;
     private boolean running;
@@ -64,7 +63,7 @@ public class RunningTimeMonitor implements RunningTimeController, ApplianceIdCon
         setRunning(running, new Instant());
     }
 
-    protected void setRunning(boolean running, Instant statusChangedAt) {
+    protected void setRunning(boolean running, ReadableInstant statusChangedAt) {
         this.running = running;
         this.statusChangedAt = statusChangedAt;
     }
@@ -73,7 +72,7 @@ public class RunningTimeMonitor implements RunningTimeController, ApplianceIdCon
         return getRemainingMinRunningTimeOfCurrentTimeFrame(new Instant());
     }
 
-    protected long getRemainingMinRunningTimeOfCurrentTimeFrame(Instant now) {
+    protected long getRemainingMinRunningTimeOfCurrentTimeFrame(ReadableInstant now) {
         update(now);
         long remainingRunningTime = 0;
         if(remainingMinRunningTime != null) {
@@ -87,7 +86,7 @@ public class RunningTimeMonitor implements RunningTimeController, ApplianceIdCon
         return getRemainingMaxRunningTimeOfCurrentTimeFrame(new Instant());
     }
 
-    protected long getRemainingMaxRunningTimeOfCurrentTimeFrame(Instant now) {
+    protected long getRemainingMaxRunningTimeOfCurrentTimeFrame(ReadableInstant now) {
         update(now);
         long remainingRunningTime = 0;
         if(remainingMaxRunningTime != null) {
@@ -102,7 +101,7 @@ public class RunningTimeMonitor implements RunningTimeController, ApplianceIdCon
      * Subsequent calls to this method within one second are omitted.
      * @param now
      */
-    protected void update(Instant now) {
+    protected void update(ReadableInstant now) {
         // update not more than once per second in order to avoid spamming the log
         if(lastUpdate == null || now.isBefore(lastUpdate) || new Interval(lastUpdate, now).toDurationMillis() > 1000) {
 
@@ -141,13 +140,21 @@ public class RunningTimeMonitor implements RunningTimeController, ApplianceIdCon
         return findAndSetCurrentTimeFrame(new Instant());
     }
 
-    public TimeFrame findAndSetCurrentTimeFrame(Instant instant) {
+    /**
+     * Set the timeframe whose interval contains the given instant.
+     * If the timeframe has associated days of week the day of week of the given instant has to match as well.
+     * @param instant
+     * @return the timeframe set or null, if there is no matching timeframe
+     */
+    public TimeFrame findAndSetCurrentTimeFrame(ReadableInstant instant) {
         TimeFrame timeFrameToBeSet = null;
         if(timeFrames != null) {
-            int dowInstant = instant.get(DateTimeFieldType.dayOfWeek());
+            int dowOfInstant = instant.get(DateTimeFieldType.dayOfWeek());
             for(TimeFrame timeFrame : timeFrames) {
                 List<Integer> dowValues = timeFrame.getDaysOfWeekValues();
-                if((dowValues == null || dowValues.contains(dowInstant)) && timeFrame.getInterval().contains(instant)) {
+                // For testing instant may have a different DATE than today; therefore we have to transfer the time to today
+                DateTime instantToday = new LocalTime(instant, ISOChronology.getInstance()).toDateTimeToday();
+                if((dowValues == null || dowValues.contains(dowOfInstant)) && timeFrame.getInterval().contains(instantToday)) {
                     timeFrameToBeSet = timeFrame;
                     break;
                 }
@@ -169,14 +176,21 @@ public class RunningTimeMonitor implements RunningTimeController, ApplianceIdCon
         currentTimeFrame = timeFrameToBeSet;
         return currentTimeFrame;
     }
-    
+
+    /**
+     * Returns timeframes starting after the given instant.
+     * @param instant
+     * @return a (possibly empty) list of timeframes
+     */
     public List<TimeFrame> findFutureTimeFrames(Instant instant) {
         List<TimeFrame> futureTimeFrames = new ArrayList<TimeFrame>();
         int dowInstant = instant.get(DateTimeFieldType.dayOfWeek());
-        for(TimeFrame timeFrame : timeFrames) {
-            List<Integer> dowValues = timeFrame.getDaysOfWeekValues();
-            if((dowValues == null || dowValues.contains(dowInstant)) && timeFrame.getInterval().getStart().isAfter(instant)) {
-                futureTimeFrames.add(timeFrame);
+        if(timeFrames != null) {
+            for(TimeFrame timeFrame : timeFrames) {
+                List<Integer> dowValues = timeFrame.getDaysOfWeekValues();
+                if((dowValues == null || dowValues.contains(dowInstant)) && timeFrame.getInterval().getStart().isAfter(instant)) {
+                    futureTimeFrames.add(timeFrame);
+                }
             }
         }
         return futureTimeFrames;
