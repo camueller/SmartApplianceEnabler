@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import com.sun.deploy.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.Instant;
 import org.joda.time.Interval;
 import org.joda.time.chrono.ISOChronology;
