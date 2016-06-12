@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.avanux.smartapplianceenabler.log.ApplianceLogger;
+import org.joda.time.DateTimeFieldType;
 import org.joda.time.Instant;
 import org.joda.time.Interval;
 import org.slf4j.LoggerFactory;
@@ -143,8 +144,10 @@ public class RunningTimeMonitor implements RunningTimeController, ApplianceIdCon
     public TimeFrame findAndSetCurrentTimeFrame(Instant instant) {
         TimeFrame timeFrameToBeSet = null;
         if(timeFrames != null) {
+            int dowInstant = instant.get(DateTimeFieldType.dayOfWeek());
             for(TimeFrame timeFrame : timeFrames) {
-                if(timeFrame.getInterval().contains(instant)) {
+                List<Integer> dowValues = timeFrame.getDaysOfWeekValues();
+                if((dowValues == null || dowValues.contains(dowInstant)) && timeFrame.getInterval().contains(instant)) {
                     timeFrameToBeSet = timeFrame;
                     break;
                 }
@@ -169,8 +172,10 @@ public class RunningTimeMonitor implements RunningTimeController, ApplianceIdCon
     
     public List<TimeFrame> findFutureTimeFrames(Instant instant) {
         List<TimeFrame> futureTimeFrames = new ArrayList<TimeFrame>();
+        int dowInstant = instant.get(DateTimeFieldType.dayOfWeek());
         for(TimeFrame timeFrame : timeFrames) {
-            if(timeFrame.getInterval().getStart().isAfter(instant)) {
+            List<Integer> dowValues = timeFrame.getDaysOfWeekValues();
+            if((dowValues == null || dowValues.contains(dowInstant)) && timeFrame.getInterval().getStart().isAfter(instant)) {
                 futureTimeFrames.add(timeFrame);
             }
         }

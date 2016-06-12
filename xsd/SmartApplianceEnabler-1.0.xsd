@@ -105,6 +105,7 @@
 		<xs:sequence>
 			<xs:element name="EarliestStart" type="TimeOfDayType" minOccurs="1" maxOccurs="1" />
 			<xs:element name="LatestEnd" type="TimeOfDayType" minOccurs="1" maxOccurs="1" />
+			<xs:element name="DayOfWeek" type="xs:int" minOccurs="0" maxOccurs="7" />
 		</xs:sequence>
 		<xs:attribute name="minRunningTime" type="xs:long" use="required" />
 		<xs:attribute name="maxRunningTime" type="xs:long" use="optional" />
