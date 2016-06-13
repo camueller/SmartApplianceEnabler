@@ -18,7 +18,9 @@
 package de.avanux.smartapplianceenabler.appliance;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import de.avanux.smartapplianceenabler.log.ApplianceLogger;
 import org.joda.time.*;
@@ -32,7 +34,9 @@ import org.slf4j.LoggerFactory;
  */
 public class RunningTimeMonitor implements RunningTimeController, ApplianceIdConsumer {
     private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(RunningTimeMonitor.class));
+    private String applianceId;
     private List<TimeFrame> timeFrames;
+    private Set<TimeFrameChangedListener> timeFrameChangedListeners = new HashSet<>();
     private TimeFrame currentTimeFrame;
     private ReadableInstant intervalBegin;
     private ReadableInstant statusChangedAt;
@@ -43,6 +47,7 @@ public class RunningTimeMonitor implements RunningTimeController, ApplianceIdCon
 
     @Override
     public void setApplianceId(String applianceId) {
+        this.applianceId = applianceId;
         this.logger.setApplianceId(applianceId);
     }
 
@@ -50,13 +55,17 @@ public class RunningTimeMonitor implements RunningTimeController, ApplianceIdCon
         this.timeFrames = timeFrames;
         if(logger.isDebugEnabled()) {
             for(TimeFrame timeFrame : timeFrames) {
-                logger.debug("Configured timeframe is " + timeFrame.toString());
+                logger.debug("Configured time frame is " + timeFrame.toString());
             }
         }
     }
     
     public List<TimeFrame> getTimeFrames() {
         return timeFrames;
+    }
+
+    public void addTimeFrameChangedListener(TimeFrameChangedListener listener) {
+        this.timeFrameChangedListeners.add(listener);
     }
 
     public void setRunning(boolean running) {
@@ -160,10 +169,12 @@ public class RunningTimeMonitor implements RunningTimeController, ApplianceIdCon
                 }
             }
         }
+        boolean timeFrameChanged = false;
         if(timeFrameToBeSet != null && currentTimeFrame == null) {
             remainingMinRunningTime = timeFrameToBeSet.getMinRunningTime();
             remainingMaxRunningTime = timeFrameToBeSet.getMaxRunningTime();
             intervalBegin = null;
+            timeFrameChanged = true;
             logger.debug("Timeframe started: " + timeFrameToBeSet);
         }
         else if(timeFrameToBeSet == null && currentTimeFrame != null) {
@@ -171,9 +182,17 @@ public class RunningTimeMonitor implements RunningTimeController, ApplianceIdCon
             remainingMinRunningTime = 0l;
             remainingMaxRunningTime = 0l;
             intervalBegin = null;
+            timeFrameChanged = true;
         }
         logger.debug("Timeframe status: remainingMinRunningTime=" + remainingMinRunningTime + " remainingMaxRunningTime=" + remainingMaxRunningTime);
+        TimeFrame oldTimeFrame = currentTimeFrame;
         currentTimeFrame = timeFrameToBeSet;
+        if(timeFrameChanged) {
+            for(TimeFrameChangedListener listener : timeFrameChangedListeners) {
+                listener.timeFrameChanged(applianceId, oldTimeFrame, currentTimeFrame);
+            }
+        }
+
         return currentTimeFrame;
     }
 

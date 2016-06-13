@@ -45,15 +45,17 @@ import de.avanux.smartapplianceenabler.appliance.FileHandler;
 import de.avanux.smartapplianceenabler.appliance.Meter;
 import de.avanux.smartapplianceenabler.appliance.RunningTimeMonitor;
 import de.avanux.smartapplianceenabler.appliance.TimeFrame;
+import de.avanux.smartapplianceenabler.appliance.TimeFrameChangedListener;
 
 @RestController
-public class SempController {
+public class SempController implements TimeFrameChangedListener {
 
     private static final String BASE_URL = "/semp";
     public static final String SCHEMA_LOCATION = "http://www.sma.de/communication/schema/SEMP/v1";
     private Logger logger = LoggerFactory.getLogger(SempController.class);
     private FileHandler fileHandler;
     private Device2EM device2EM;
+    private boolean timeFrameChangedListenerRegistered;
     
     public SempController() {
         fileHandler = new FileHandler();
@@ -78,6 +80,10 @@ public class SempController {
         List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
         for (Appliance appliance : appliances) {
             ApplianceLogger applianceLogger = getApplianceLogger(appliance.getId());
+            if(!timeFrameChangedListenerRegistered) {
+                appliance.getRunningTimeMonitor().addTimeFrameChangedListener(this);
+                timeFrameChangedListenerRegistered = true;
+            }
             DeviceStatus deviceStatus = createDeviceStatus(applianceLogger, appliance);
             deviceStatuses.add(deviceStatus);
             PlanningRequest planningRequest = createPlanningRequest(applianceLogger, now, appliance);
@@ -197,21 +203,37 @@ public class SempController {
             applianceLogger.debug("Received control request");
             Appliance appliance = findAppliance(deviceControl.getDeviceId());
             if(appliance != null) {
-                if(appliance.getControls() != null) {
-                    for(Control control : appliance.getControls()) {
-                        control.on(deviceControl.isOn());
-                    }
-                }
-                else {
-                    applianceLogger.warn("Appliance configuration does not contain control.");
-                }
+                setApplianceState(applianceLogger, appliance, deviceControl.isOn());
             }
             else {
                 applianceLogger.warn("No appliance configured for device id " + deviceControl.getDeviceId());
             }
         }
     }
-    
+
+    private void setApplianceState(ApplianceLogger applianceLogger, Appliance appliance, boolean switchOn) {
+        if(appliance.getControls() != null) {
+            for(Control control : appliance.getControls()) {
+                // only change state if requested state differs from actual state
+                if(control.isOn() ^ switchOn) {
+                    control.on(switchOn);
+                }
+            }
+        }
+        else {
+            applianceLogger.warn("Appliance configuration does not contain control.");
+        }
+    }
+
+    @Override
+    public void timeFrameChanged(String applianceId, TimeFrame oldTimeFrame, TimeFrame newTimeFrame) {
+        if(newTimeFrame == null) {
+            Appliance appliance = findAppliance(applianceId);
+            ApplianceLogger applianceLogger = getApplianceLogger(applianceId);
+            setApplianceState(applianceLogger, appliance, false);
+        }
+    }
+
     private DeviceStatus createDeviceStatus(ApplianceLogger applianceLogger, Appliance appliance) {
         DeviceStatus deviceStatus = new DeviceStatus();
         deviceStatus.setDeviceId(appliance.getId());
@@ -289,22 +311,11 @@ public class SempController {
                 List<de.avanux.smartapplianceenabler.semp.webservice.Timeframe> sempTimeFrames = new ArrayList<de.avanux.smartapplianceenabler.semp.webservice.Timeframe>();
                 TimeFrame currentTimeFrame = runningTimeMonitor.findAndSetCurrentTimeFrame(now);
                 if(currentTimeFrame != null) {
+                    final long remainingMaxRunningTime = runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame();
                     addSempTimeFrame(applianceLogger, appliance, sempTimeFrames, currentTimeFrame, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(),
-                            runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(), now);
-                }
-
-                /** WORKAROUND:
-                 * For unknown reason no device control command is received to turn the device off.
-                 * Therefore we turn if off ourselves 5 minutes after minRunningTime became 0.
-                 */
-                final int switchOffDelay = 300;
-                final long remainingMaxRunningTime = runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame();
-                if(remainingMaxRunningTime < -switchOffDelay) {
-                    for(Control control : appliance.getControls()) {
-                        if(control.isOn()) {
-                            control.on(false);
-                            applianceLogger.warn("WORKAROUND: Switching off appliance due DeviceControl command from SHM being overdue for " + -remainingMaxRunningTime + "s");
-                        }
+                            remainingMaxRunningTime, now);
+                    if(remainingMaxRunningTime < 0) {
+                        setApplianceState(applianceLogger, appliance, false);
                     }
                 }
 
