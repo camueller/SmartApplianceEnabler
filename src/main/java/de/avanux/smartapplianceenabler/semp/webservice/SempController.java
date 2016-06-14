@@ -203,7 +203,7 @@ public class SempController implements TimeFrameChangedListener {
             applianceLogger.debug("Received control request");
             Appliance appliance = findAppliance(deviceControl.getDeviceId());
             if(appliance != null) {
-                setApplianceState(applianceLogger, appliance, deviceControl.isOn());
+                setApplianceState(applianceLogger, appliance, deviceControl.isOn(), "Setting appliance state to " + (deviceControl.isOn() ? "ON" : "OFF"));
             }
             else {
                 applianceLogger.warn("No appliance configured for device id " + deviceControl.getDeviceId());
@@ -211,13 +211,18 @@ public class SempController implements TimeFrameChangedListener {
         }
     }
 
-    private void setApplianceState(ApplianceLogger applianceLogger, Appliance appliance, boolean switchOn) {
+    private void setApplianceState(ApplianceLogger applianceLogger, Appliance appliance, boolean switchOn, String logMessage) {
         if(appliance.getControls() != null) {
+            boolean stateChanged = false;
             for(Control control : appliance.getControls()) {
                 // only change state if requested state differs from actual state
                 if(control.isOn() ^ switchOn) {
                     control.on(switchOn);
+                    stateChanged = true;
                 }
+            }
+            if(stateChanged) {
+                applianceLogger.debug(logMessage);
             }
         }
         else {
@@ -230,7 +235,7 @@ public class SempController implements TimeFrameChangedListener {
         if(newTimeFrame == null) {
             Appliance appliance = findAppliance(applianceId);
             ApplianceLogger applianceLogger = getApplianceLogger(applianceId);
-            setApplianceState(applianceLogger, appliance, false);
+            setApplianceState(applianceLogger, appliance, false, "Switching off due to end of time frame");
         }
     }
 
@@ -315,7 +320,7 @@ public class SempController implements TimeFrameChangedListener {
                     addSempTimeFrame(applianceLogger, appliance, sempTimeFrames, currentTimeFrame, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(),
                             remainingMaxRunningTime, now);
                     if(remainingMaxRunningTime < 0) {
-                        setApplianceState(applianceLogger, appliance, false);
+                        setApplianceState(applianceLogger, appliance, false, "Switching off due to maxRunningTime < 0");
                     }
                 }
 
