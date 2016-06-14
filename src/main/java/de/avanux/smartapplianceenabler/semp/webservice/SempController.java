@@ -80,7 +80,7 @@ public class SempController implements TimeFrameChangedListener {
         List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
         for (Appliance appliance : appliances) {
             ApplianceLogger applianceLogger = getApplianceLogger(appliance.getId());
-            if(!timeFrameChangedListenerRegistered) {
+            if(!timeFrameChangedListenerRegistered && appliance.getRunningTimeMonitor() != null) {
                 appliance.getRunningTimeMonitor().addTimeFrameChangedListener(this);
                 timeFrameChangedListenerRegistered = true;
             }
