@@ -17,15 +17,14 @@
  */
 package de.avanux.smartapplianceenabler.appliance;
 
+import de.avanux.smartapplianceenabler.log.ApplianceLogger;
+import org.joda.time.*;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import de.avanux.smartapplianceenabler.log.ApplianceLogger;
-import org.joda.time.*;
-import org.joda.time.chrono.ISOChronology;
-import org.slf4j.LoggerFactory;
 
 /**
  * Monitors running time of an appliance.
@@ -159,14 +158,18 @@ public class RunningTimeMonitor implements RunningTimeController, ApplianceIdCon
         TimeFrame timeFrameToBeSet = null;
         if(timeFrames != null) {
             int dowOfInstant = instant.get(DateTimeFieldType.dayOfWeek());
+            LocalTime instantTime = new LocalTime(instant, DateTimeZone.getDefault());
             for(TimeFrame timeFrame : timeFrames) {
                 List<Integer> dowValues = timeFrame.getDaysOfWeekValues();
-                // For testing instant may have a different DATE than today; therefore we have to transfer the time to today
-                DateTime instantToday = new LocalTime(instant, ISOChronology.getInstance()).toDateTimeToday();
-                if(timeFrame.isOverMidnight() && instantToday.get(DateTimeFieldType.hourOfDay()) < timeFrame.getInterval().getEnd().get(DateTimeFieldType.hourOfDay())) {
-                    instantToday = instantToday.plus(24 * 3600 * 1000);
-                }
-                if((dowValues == null || dowValues.contains(dowOfInstant)) && timeFrame.getInterval().contains(instantToday)) {
+                LocalTime startTimeToday = new LocalTime(timeFrame.getInterval().getStart());
+                LocalTime endTimeToday = new LocalTime(timeFrame.getInterval().getEnd());
+                if((dowValues == null || dowValues.contains(dowOfInstant))
+                        && (timeFrame.isOverMidnight()
+                            ? (instantTime.isAfter(startTimeToday)
+                                ? endTimeToday.isBefore(instantTime)
+                                : endTimeToday.isAfter(instantTime))
+                            : startTimeToday.isBefore(instantTime) && endTimeToday.isAfter(instantTime)
+                )) {
                     timeFrameToBeSet = timeFrame;
                     break;
                 }
@@ -206,11 +209,20 @@ public class RunningTimeMonitor implements RunningTimeController, ApplianceIdCon
      */
     public List<TimeFrame> findFutureTimeFrames(Instant instant) {
         List<TimeFrame> futureTimeFrames = new ArrayList<TimeFrame>();
-        int dowInstant = instant.get(DateTimeFieldType.dayOfWeek());
+        int dowOfInstant = instant.get(DateTimeFieldType.dayOfWeek());
         if(timeFrames != null) {
+            LocalTime instantTime = new LocalTime(instant, DateTimeZone.getDefault());
             for(TimeFrame timeFrame : timeFrames) {
                 List<Integer> dowValues = timeFrame.getDaysOfWeekValues();
-                if((dowValues == null || dowValues.contains(dowInstant)) && timeFrame.getInterval().getStart().isAfter(instant)) {
+                LocalTime startTimeToday = new LocalTime(timeFrame.getInterval().getStart());
+                LocalTime endTimeToday = new LocalTime(timeFrame.getInterval().getEnd());
+                if((dowValues == null || dowValues.contains(dowOfInstant))
+                        && (timeFrame.isOverMidnight()
+                        ? (instantTime.isAfter(startTimeToday)
+                            ? false
+                            : startTimeToday.isAfter(instantTime)) && endTimeToday.isBefore(instantTime)
+                        : startTimeToday.isAfter(instantTime)
+                )) {
                     futureTimeFrames.add(timeFrame);
                 }
             }

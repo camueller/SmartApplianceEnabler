@@ -43,8 +43,8 @@ public class RunningTimeMonitorTest {
         runningTimeMonitor.setTimeFrames(Collections.singletonList(timeFrame));
         Assert.assertNull(runningTimeMonitor.findAndSetCurrentTimeFrame(toInstant(22, 30, 0)));
         Assert.assertEquals(timeFrame, runningTimeMonitor.findAndSetCurrentTimeFrame(toInstant(23, 30, 0)));
-        Assert.assertEquals(timeFrame, runningTimeMonitor.findAndSetCurrentTimeFrame(toInstant(0, 30, 0)));
-        Assert.assertNull(runningTimeMonitor.findAndSetCurrentTimeFrame(toInstant(1, 30, 0)));
+        Assert.assertEquals(timeFrame, runningTimeMonitor.findAndSetCurrentTimeFrame(toInstantNextDay(0, 30, 0)));
+        Assert.assertNull(runningTimeMonitor.findAndSetCurrentTimeFrame(toInstantNextDay(1, 30, 0)));
     }
 
     @Test
@@ -104,6 +104,17 @@ public class RunningTimeMonitorTest {
         Assert.assertEquals(timeFrame, futureTimeFrames.get(0));
         Assert.assertEquals(0, runningTimeMonitor.findFutureTimeFrames(toInstant(11, 30, 0)).size());
         Assert.assertEquals(0, runningTimeMonitor.findFutureTimeFrames(toInstant(17, 30, 0)).size());
+    }
+
+    @Test
+    public void findFutureTimeFrames_oneTimeFrameOverMidnight() {
+        TimeFrame timeFrame = new TimeFrame(7200, 7200, new TimeOfDay(23, 0, 0), new TimeOfDay(1, 0, 0));
+        runningTimeMonitor.setTimeFrames(Collections.singletonList(timeFrame));
+        List<TimeFrame> futureTimeFrames = runningTimeMonitor.findFutureTimeFrames(toInstant(22, 30, 0));
+        Assert.assertEquals(1, futureTimeFrames.size());
+        Assert.assertEquals(timeFrame, futureTimeFrames.get(0));
+        Assert.assertEquals(0, runningTimeMonitor.findFutureTimeFrames(toInstant(23, 30, 0)).size());
+        Assert.assertEquals(0, runningTimeMonitor.findFutureTimeFrames(toInstant(0, 30, 0)).size());
     }
 
     @Test
@@ -238,6 +249,10 @@ public class RunningTimeMonitorTest {
 
     private Instant toInstant(Integer hour, Integer minute, Integer second) {
         return new TimeOfDay(hour, minute, second).toLocalTime().toDateTimeToday().toInstant();
+    }
+
+    private Instant toInstantNextDay(Integer hour, Integer minute, Integer second) {
+        return new TimeOfDay(hour, minute, second).toLocalTime().toDateTimeToday().toInstant().plus(24 * 3600 * 1000);
     }
 
     private ReadableInstant toInstant(int dayOfWeek, Integer hour, Integer minute, Integer second) {
