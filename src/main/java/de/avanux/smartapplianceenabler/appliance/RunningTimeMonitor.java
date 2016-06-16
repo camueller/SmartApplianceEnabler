@@ -163,6 +163,9 @@ public class RunningTimeMonitor implements RunningTimeController, ApplianceIdCon
                 List<Integer> dowValues = timeFrame.getDaysOfWeekValues();
                 // For testing instant may have a different DATE than today; therefore we have to transfer the time to today
                 DateTime instantToday = new LocalTime(instant, ISOChronology.getInstance()).toDateTimeToday();
+                if(timeFrame.isOverMidnight() && instantToday.get(DateTimeFieldType.hourOfDay()) < timeFrame.getInterval().getEnd().get(DateTimeFieldType.hourOfDay())) {
+                    instantToday = instantToday.plus(24 * 3600 * 1000);
+                }
                 if((dowValues == null || dowValues.contains(dowOfInstant)) && timeFrame.getInterval().contains(instantToday)) {
                     timeFrameToBeSet = timeFrame;
                     break;

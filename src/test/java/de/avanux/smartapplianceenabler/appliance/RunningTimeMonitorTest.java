@@ -38,6 +38,16 @@ public class RunningTimeMonitorTest {
     }
 
     @Test
+    public void findAndSetCurrentTimeFrame_oneTimeFrameOverMidnight() {
+        TimeFrame timeFrame = new TimeFrame(7200, 7200, new TimeOfDay(23, 0, 0), new TimeOfDay(1, 0, 0));
+        runningTimeMonitor.setTimeFrames(Collections.singletonList(timeFrame));
+        Assert.assertNull(runningTimeMonitor.findAndSetCurrentTimeFrame(toInstant(22, 30, 0)));
+        Assert.assertEquals(timeFrame, runningTimeMonitor.findAndSetCurrentTimeFrame(toInstant(23, 30, 0)));
+        Assert.assertEquals(timeFrame, runningTimeMonitor.findAndSetCurrentTimeFrame(toInstant(0, 30, 0)));
+        Assert.assertNull(runningTimeMonitor.findAndSetCurrentTimeFrame(toInstant(1, 30, 0)));
+    }
+
+    @Test
     public void findAndSetCurrentTimeFrame_twoTimeFrames() {
         List<TimeFrame> timeFrames = new ArrayList<TimeFrame>();
         TimeFrame timeFrame1 = new TimeFrame(600, 600, new TimeOfDay(11, 0, 0), new TimeOfDay(12, 0, 0));

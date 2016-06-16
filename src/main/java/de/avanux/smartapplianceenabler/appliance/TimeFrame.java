@@ -89,13 +89,24 @@ public class TimeFrame {
 
     public Interval getInterval() {
         if(earliestStart != null && latestEnd != null) {
-            return new Interval(new Instant(earliestStart.toLocalTime().toDateTimeToday()), 
-                    new Instant(latestEnd.toLocalTime().toDateTimeToday()))
-            .withChronology(ISOChronology.getInstance());
+            Instant earliestStartDateTime = new Instant(earliestStart.toLocalTime().toDateTimeToday());
+            Instant latestEndDateTime = new Instant(latestEnd.toLocalTime().toDateTimeToday());
+            if(isOverMidnight(earliestStartDateTime, latestEndDateTime)) {
+                latestEndDateTime = latestEndDateTime.plus(24 * 3600 * 1000);
+            }
+            return new Interval(earliestStartDateTime, latestEndDateTime).withChronology(ISOChronology.getInstance());
         }
         return null;
     }
-    
+
+    public boolean isOverMidnight() {
+        return isOverMidnight(new Instant(earliestStart.toLocalTime().toDateTimeToday()), new Instant(latestEnd.toLocalTime().toDateTimeToday()));
+    }
+
+    public boolean isOverMidnight(Instant earliestStartDateTime, Instant latestEndDateTime) {
+        return latestEndDateTime.isBefore(earliestStartDateTime);
+    }
+
     @Override
     public String toString() {
         String text = "";
