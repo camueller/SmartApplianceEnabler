@@ -218,9 +218,7 @@ public class RunningTimeMonitor implements RunningTimeController, ApplianceIdCon
                 LocalTime endTimeToday = new LocalTime(timeFrame.getInterval().getEnd());
                 if((dowValues == null || dowValues.contains(dowOfInstant))
                         && (timeFrame.isOverMidnight()
-                        ? (instantTime.isAfter(startTimeToday)
-                            ? false
-                            : startTimeToday.isAfter(instantTime)) && endTimeToday.isBefore(instantTime)
+                        ? (!instantTime.isAfter(startTimeToday) && startTimeToday.isAfter(instantTime)) && endTimeToday.isBefore(instantTime)
                         : startTimeToday.isAfter(instantTime)
                 )) {
                     futureTimeFrames.add(timeFrame);
