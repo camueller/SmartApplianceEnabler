@@ -23,11 +23,15 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.Instant;
 import org.joda.time.Interval;
 import org.joda.time.chrono.ISOChronology;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TimeFrame {
@@ -39,6 +43,8 @@ public class TimeFrame {
     private TimeOfDay earliestStart;
     @XmlElement(name = "LatestEnd")
     private TimeOfDay latestEnd;
+    @XmlElement(name = "DayOfWeek")
+    private List<DayOfWeek> daysOfWeek;
     @XmlTransient
     DateTimeFormatter formatter = ISODateTimeFormat.basicTTimeNoMillis();
 
@@ -46,10 +52,20 @@ public class TimeFrame {
     }
 
     public TimeFrame(long minRunningTime, long maxRunningTime, TimeOfDay earliestStart, TimeOfDay latestEnd) {
+        this(minRunningTime, maxRunningTime, earliestStart, latestEnd, null);
+    }
+
+    public TimeFrame(long minRunningTime, long maxRunningTime, TimeOfDay earliestStart, TimeOfDay latestEnd, List<Integer> daysOfWeekValues) {
         this.minRunningTime = minRunningTime;
         this.maxRunningTime = maxRunningTime;
         this.earliestStart = earliestStart;
         this.latestEnd = latestEnd;
+        if(daysOfWeekValues != null) {
+            this.daysOfWeek = new ArrayList<>();
+            for(Integer value : daysOfWeekValues) {
+                this.daysOfWeek.add(new DayOfWeek(value));
+            }
+        }
     }
 
     public long getMinRunningTime() {
@@ -60,24 +76,62 @@ public class TimeFrame {
         return maxRunningTime;
     }
 
+    public List<Integer> getDaysOfWeekValues() {
+        if(daysOfWeek == null) {
+            return null;
+        }
+        List<Integer> values = new ArrayList<>();
+        for(DayOfWeek dow : daysOfWeek) {
+            values.add(dow.getValue());
+        }
+        return values;
+    }
+
     public Interval getInterval() {
         if(earliestStart != null && latestEnd != null) {
-            return new Interval(new Instant(earliestStart.toLocalTime().toDateTimeToday()), 
-                    new Instant(latestEnd.toLocalTime().toDateTimeToday()))
-            .withChronology(ISOChronology.getInstance());
+            Instant earliestStartDateTime = new Instant(earliestStart.toLocalTime().toDateTimeToday());
+            Instant latestEndDateTime = new Instant(latestEnd.toLocalTime().toDateTimeToday());
+            if(isOverMidnight(earliestStartDateTime, latestEndDateTime)) {
+                latestEndDateTime = latestEndDateTime.plus(24 * 3600 * 1000);
+            }
+            return new Interval(earliestStartDateTime, latestEndDateTime).withChronology(ISOChronology.getInstance());
         }
         return null;
     }
-    
+
+    public boolean isOverMidnight() {
+        return isOverMidnight(new Instant(earliestStart.toLocalTime().toDateTimeToday()), new Instant(latestEnd.toLocalTime().toDateTimeToday()));
+    }
+
+    public boolean isOverMidnight(Instant earliestStartDateTime, Instant latestEndDateTime) {
+        return latestEndDateTime.isBefore(earliestStartDateTime);
+    }
+
     @Override
     public String toString() {
+        String text = "";
+
+        if(daysOfWeek != null) {
+            List<String> dowStrings = new ArrayList<>();
+            for(DayOfWeek dow : daysOfWeek) {
+                dowStrings.add("" + dow.getValue());
+            }
+            text += "[" + StringUtils.join(dowStrings, ",") + "]";
+        }
+
         Interval interval = getInterval();
         if(interval != null) {
-            return formatter.print(interval.getStart().toLocalTime())
-                    + "-" + formatter.print(interval.getEnd().toLocalTime())
-                    + ":" + minRunningTime
-                    + "s/" + maxRunningTime + "s";
+            if(text.length() > 0) {
+                text += ":";
+            }
+            text += formatter.print(interval.getStart().toLocalTime())
+                    + "-" + formatter.print(interval.getEnd().toLocalTime());
         }
-        return null;
+
+        if(text.length() > 0) {
+            text += ":";
+        }
+        text += minRunningTime + "s/" + maxRunningTime + "s";
+        return text;
     }
 }

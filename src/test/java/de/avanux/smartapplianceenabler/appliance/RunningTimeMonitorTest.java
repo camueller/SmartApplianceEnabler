@@ -1,12 +1,15 @@
 package de.avanux.smartapplianceenabler.appliance;
 
+import org.joda.time.DateTime;
 import org.joda.time.Instant;
+import org.joda.time.ReadableInstant;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -18,6 +21,124 @@ public class RunningTimeMonitorTest {
     public RunningTimeMonitorTest() {
         runningTimeMonitor = new RunningTimeMonitor();
         runningTimeMonitor.setApplianceId("F-00000001-000000000001-00");
+    }
+
+    @Test
+    public void findAndSetCurrentTimeFrame_noTimeFrames() {
+        Assert.assertNull(runningTimeMonitor.findAndSetCurrentTimeFrame(toInstant(12, 0, 0)));
+    }
+
+    @Test
+    public void findAndSetCurrentTimeFrame_oneTimeFrame() {
+        TimeFrame timeFrame = new TimeFrame(7200, 7200, new TimeOfDay(11, 0, 0), new TimeOfDay(17, 0, 0));
+        runningTimeMonitor.setTimeFrames(Collections.singletonList(timeFrame));
+        Assert.assertNull(runningTimeMonitor.findAndSetCurrentTimeFrame(toInstant(10, 0, 0)));
+        Assert.assertEquals(timeFrame, runningTimeMonitor.findAndSetCurrentTimeFrame(toInstant(12, 0, 0)));
+        Assert.assertNull(runningTimeMonitor.findAndSetCurrentTimeFrame(toInstant(18, 0, 0)));
+    }
+
+    @Test
+    public void findAndSetCurrentTimeFrame_oneTimeFrameOverMidnight() {
+        TimeFrame timeFrame = new TimeFrame(7200, 7200, new TimeOfDay(23, 0, 0), new TimeOfDay(1, 0, 0));
+        runningTimeMonitor.setTimeFrames(Collections.singletonList(timeFrame));
+        Assert.assertNull(runningTimeMonitor.findAndSetCurrentTimeFrame(toInstant(22, 30, 0)));
+        Assert.assertEquals(timeFrame, runningTimeMonitor.findAndSetCurrentTimeFrame(toInstant(23, 30, 0)));
+        Assert.assertEquals(timeFrame, runningTimeMonitor.findAndSetCurrentTimeFrame(toInstantNextDay(0, 30, 0)));
+        Assert.assertNull(runningTimeMonitor.findAndSetCurrentTimeFrame(toInstantNextDay(1, 30, 0)));
+    }
+
+    @Test
+    public void findAndSetCurrentTimeFrame_twoTimeFrames() {
+        List<TimeFrame> timeFrames = new ArrayList<TimeFrame>();
+        TimeFrame timeFrame1 = new TimeFrame(600, 600, new TimeOfDay(11, 0, 0), new TimeOfDay(12, 0, 0));
+        timeFrames.add(timeFrame1);
+        TimeFrame timeFrame2 = new TimeFrame(1200, 1200, new TimeOfDay(14, 0, 0), new TimeOfDay(15, 0, 0));
+        timeFrames.add(timeFrame2);
+        runningTimeMonitor.setTimeFrames(timeFrames);
+        Assert.assertNull(runningTimeMonitor.findAndSetCurrentTimeFrame(toInstant(10, 0, 0)));
+        Assert.assertEquals(timeFrame1, runningTimeMonitor.findAndSetCurrentTimeFrame(toInstant(11, 30, 0)));
+        Assert.assertNull(runningTimeMonitor.findAndSetCurrentTimeFrame(toInstant(12, 30, 0)));
+        Assert.assertEquals(timeFrame2, runningTimeMonitor.findAndSetCurrentTimeFrame(toInstant(14, 30, 0)));
+        Assert.assertNull(runningTimeMonitor.findAndSetCurrentTimeFrame(toInstant(15, 30, 0)));
+    }
+
+    @Test
+    public void findAndSetCurrentTimeFrame_multipleTimeFrames_differentDaysOfWeek() {
+        List<TimeFrame> timeFrames = new ArrayList<TimeFrame>();
+        TimeFrame timeFrame1 = new TimeFrame(3600, 3600, new TimeOfDay(11, 0, 0), new TimeOfDay(12, 0, 0), Arrays.asList(new Integer[]{1, 5}));
+        timeFrames.add(timeFrame1);
+        TimeFrame timeFrame2 = new TimeFrame(3600, 3600, new TimeOfDay(14, 0, 0), new TimeOfDay(15, 0, 0), Arrays.asList(new Integer[]{2, 3, 4}));
+        timeFrames.add(timeFrame2);
+        TimeFrame timeFrame3 = new TimeFrame(3600, 3600, new TimeOfDay(16, 0, 0), new TimeOfDay(17, 0, 0), Arrays.asList(new Integer[]{1, 5, 6, 7}));
+        timeFrames.add(timeFrame3);
+        runningTimeMonitor.setTimeFrames(timeFrames);
+        assert_findAndSetCurrentTimeFrame(1, null, timeFrame1, null, null, timeFrame3, null);
+        assert_findAndSetCurrentTimeFrame(2, null, null, null, timeFrame2, null, null);
+        assert_findAndSetCurrentTimeFrame(3, null, null, null, timeFrame2, null, null);
+        assert_findAndSetCurrentTimeFrame(4, null, null, null, timeFrame2, null, null);
+        assert_findAndSetCurrentTimeFrame(5, null, timeFrame1, null, null, timeFrame3, null);
+        assert_findAndSetCurrentTimeFrame(6, null, null, null, null, timeFrame3, null);
+        assert_findAndSetCurrentTimeFrame(7, null, null, null, null, timeFrame3, null);
+    }
+
+    private void assert_findAndSetCurrentTimeFrame(int dayOfWeek, TimeFrame timeFrameTime1, TimeFrame timeFrameTime2, TimeFrame timeFrameTime3, TimeFrame timeFrameTime4, TimeFrame timeFrameTime5, TimeFrame timeFrameTime6) {
+        Assert.assertEquals(timeFrameTime1, runningTimeMonitor.findAndSetCurrentTimeFrame(toInstant(dayOfWeek, 10, 30, 0)));
+        Assert.assertEquals(timeFrameTime2, runningTimeMonitor.findAndSetCurrentTimeFrame(toInstant(dayOfWeek, 11, 30, 0)));
+        Assert.assertEquals(timeFrameTime3, runningTimeMonitor.findAndSetCurrentTimeFrame(toInstant(dayOfWeek, 12, 30, 0)));
+        Assert.assertEquals(timeFrameTime4, runningTimeMonitor.findAndSetCurrentTimeFrame(toInstant(dayOfWeek, 14, 30, 0)));
+        Assert.assertEquals(timeFrameTime5, runningTimeMonitor.findAndSetCurrentTimeFrame(toInstant(dayOfWeek, 16, 30, 0)));
+        Assert.assertEquals(timeFrameTime6, runningTimeMonitor.findAndSetCurrentTimeFrame(toInstant(dayOfWeek, 17, 30, 0)));
+    }
+
+    @Test
+    public void findFutureTimeFrames_noTimeFrames() {
+        Assert.assertEquals(0, runningTimeMonitor.findFutureTimeFrames(toInstant(12, 0, 0)).size());
+    }
+
+    @Test
+    public void findFutureTimeFrames_oneTimeFrame() {
+        TimeFrame timeFrame = new TimeFrame(7200, 7200, new TimeOfDay(11, 0, 0), new TimeOfDay(17, 0, 0));
+        runningTimeMonitor.setTimeFrames(Collections.singletonList(timeFrame));
+        List<TimeFrame> futureTimeFrames = runningTimeMonitor.findFutureTimeFrames(toInstant(10, 30, 0));
+        Assert.assertEquals(1, futureTimeFrames.size());
+        Assert.assertEquals(timeFrame, futureTimeFrames.get(0));
+        Assert.assertEquals(0, runningTimeMonitor.findFutureTimeFrames(toInstant(11, 30, 0)).size());
+        Assert.assertEquals(0, runningTimeMonitor.findFutureTimeFrames(toInstant(17, 30, 0)).size());
+    }
+
+    @Test
+    public void findFutureTimeFrames_oneTimeFrameOverMidnight() {
+        TimeFrame timeFrame = new TimeFrame(7200, 7200, new TimeOfDay(23, 0, 0), new TimeOfDay(1, 0, 0));
+        runningTimeMonitor.setTimeFrames(Collections.singletonList(timeFrame));
+        List<TimeFrame> futureTimeFrames = runningTimeMonitor.findFutureTimeFrames(toInstant(22, 30, 0));
+        Assert.assertEquals(1, futureTimeFrames.size());
+        Assert.assertEquals(timeFrame, futureTimeFrames.get(0));
+        Assert.assertEquals(0, runningTimeMonitor.findFutureTimeFrames(toInstant(23, 30, 0)).size());
+        Assert.assertEquals(0, runningTimeMonitor.findFutureTimeFrames(toInstant(0, 30, 0)).size());
+    }
+
+    @Test
+    public void findFutureTimeFrames_twoTimeFrames() {
+        List<TimeFrame> timeFrames = new ArrayList<TimeFrame>();
+        TimeFrame timeFrame1 = new TimeFrame(600, 600, new TimeOfDay(11, 0, 0), new TimeOfDay(12, 0, 0));
+        timeFrames.add(timeFrame1);
+        TimeFrame timeFrame2 = new TimeFrame(1200, 1200, new TimeOfDay(14, 0, 0), new TimeOfDay(15, 0, 0));
+        timeFrames.add(timeFrame2);
+        runningTimeMonitor.setTimeFrames(timeFrames);
+        List<TimeFrame> futureTimeFrames = runningTimeMonitor.findFutureTimeFrames(toInstant(10, 30, 0));
+        Assert.assertEquals(2, futureTimeFrames.size());
+        Assert.assertEquals(timeFrame1, futureTimeFrames.get(0));
+        Assert.assertEquals(timeFrame2, futureTimeFrames.get(1));
+        futureTimeFrames = runningTimeMonitor.findFutureTimeFrames(toInstant(11, 30, 0));
+        Assert.assertEquals(1, futureTimeFrames.size());
+        Assert.assertEquals(timeFrame2, futureTimeFrames.get(0));
+        futureTimeFrames = runningTimeMonitor.findFutureTimeFrames(toInstant(12, 30, 0));
+        Assert.assertEquals(1, futureTimeFrames.size());
+        Assert.assertEquals(timeFrame2, futureTimeFrames.get(0));
+        futureTimeFrames = runningTimeMonitor.findFutureTimeFrames(toInstant(14, 30, 0));
+        Assert.assertEquals(0, futureTimeFrames.size());
+        futureTimeFrames = runningTimeMonitor.findFutureTimeFrames(toInstant(15, 30, 0));
+        Assert.assertEquals(0, futureTimeFrames.size());
     }
 
     @Test
@@ -129,4 +250,15 @@ public class RunningTimeMonitorTest {
     private Instant toInstant(Integer hour, Integer minute, Integer second) {
         return new TimeOfDay(hour, minute, second).toLocalTime().toDateTimeToday().toInstant();
     }
+
+    private Instant toInstantNextDay(Integer hour, Integer minute, Integer second) {
+        return new TimeOfDay(hour, minute, second).toLocalTime().toDateTimeToday().toInstant().plus(24 * 3600 * 1000);
+    }
+
+    private ReadableInstant toInstant(int dayOfWeek, Integer hour, Integer minute, Integer second) {
+        DateTime instant = new DateTime(2016, 6, 13, hour, minute, second);
+        instant = instant.plusHours((dayOfWeek - 1) * 24);
+        return instant;
+    }
+
 }

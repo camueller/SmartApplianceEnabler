@@ -17,13 +17,14 @@
  */
 package de.avanux.smartapplianceenabler.appliance;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.avanux.smartapplianceenabler.log.ApplianceLogger;
-import org.joda.time.Instant;
-import org.joda.time.Interval;
+import org.joda.time.*;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Monitors running time of an appliance.
@@ -32,17 +33,20 @@ import org.slf4j.LoggerFactory;
  */
 public class RunningTimeMonitor implements ApplianceIdConsumer {
     private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(RunningTimeMonitor.class));
+    private String applianceId;
     private List<TimeFrame> timeFrames;
+    private Set<TimeFrameChangedListener> timeFrameChangedListeners = new HashSet<>();
     private TimeFrame currentTimeFrame;
-    private Instant intervalBegin;
-    private Instant statusChangedAt;
-    private Instant lastUpdate;
+    private ReadableInstant intervalBegin;
+    private ReadableInstant statusChangedAt;
+    private ReadableInstant lastUpdate;
     private Long remainingMinRunningTime;
     private Long remainingMaxRunningTime;
     private boolean running;
 
     @Override
     public void setApplianceId(String applianceId) {
+        this.applianceId = applianceId;
         this.logger.setApplianceId(applianceId);
     }
 
@@ -50,7 +54,7 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         this.timeFrames = timeFrames;
         if(logger.isDebugEnabled()) {
             for(TimeFrame timeFrame : timeFrames) {
-                logger.debug("Configured timeframe is " + timeFrame.toString());
+                logger.debug("Configured time frame is " + timeFrame.toString());
             }
         }
     }
@@ -59,11 +63,15 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         return timeFrames;
     }
 
+    public void addTimeFrameChangedListener(TimeFrameChangedListener listener) {
+        this.timeFrameChangedListeners.add(listener);
+    }
+
     public void setRunning(boolean running) {
         setRunning(running, new Instant());
     }
 
-    protected void setRunning(boolean running, Instant statusChangedAt) {
+    protected void setRunning(boolean running, ReadableInstant statusChangedAt) {
         this.running = running;
         this.statusChangedAt = statusChangedAt;
     }
@@ -72,7 +80,7 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         return getRemainingMinRunningTimeOfCurrentTimeFrame(new Instant());
     }
 
-    protected long getRemainingMinRunningTimeOfCurrentTimeFrame(Instant now) {
+    protected long getRemainingMinRunningTimeOfCurrentTimeFrame(ReadableInstant now) {
         update(now);
         long remainingRunningTime = 0;
         if(remainingMinRunningTime != null) {
@@ -86,7 +94,7 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         return getRemainingMaxRunningTimeOfCurrentTimeFrame(new Instant());
     }
 
-    protected long getRemainingMaxRunningTimeOfCurrentTimeFrame(Instant now) {
+    protected long getRemainingMaxRunningTimeOfCurrentTimeFrame(ReadableInstant now) {
         update(now);
         long remainingRunningTime = 0;
         if(remainingMaxRunningTime != null) {
@@ -101,7 +109,7 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
      * Subsequent calls to this method within one second are omitted.
      * @param now
      */
-    protected void update(Instant now) {
+    protected void update(ReadableInstant now) {
         // update not more than once per second in order to avoid spamming the log
         if(lastUpdate == null || now.isBefore(lastUpdate) || new Interval(lastUpdate, now).toDurationMillis() > 1000) {
 
@@ -140,20 +148,39 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         return findAndSetCurrentTimeFrame(new Instant());
     }
 
-    public TimeFrame findAndSetCurrentTimeFrame(Instant instant) {
+    /**
+     * Set the timeframe whose interval contains the given instant.
+     * If the timeframe has associated days of week the day of week of the given instant has to match as well.
+     * @param instant
+     * @return the timeframe set or null, if there is no matching timeframe
+     */
+    public TimeFrame findAndSetCurrentTimeFrame(ReadableInstant instant) {
         TimeFrame timeFrameToBeSet = null;
         if(timeFrames != null) {
+            int dowOfInstant = instant.get(DateTimeFieldType.dayOfWeek());
+            LocalTime instantTime = new LocalTime(instant, DateTimeZone.getDefault());
             for(TimeFrame timeFrame : timeFrames) {
-                if(timeFrame.getInterval().contains(instant)) {
+                List<Integer> dowValues = timeFrame.getDaysOfWeekValues();
+                LocalTime startTimeToday = new LocalTime(timeFrame.getInterval().getStart());
+                LocalTime endTimeToday = new LocalTime(timeFrame.getInterval().getEnd());
+                if((dowValues == null || dowValues.contains(dowOfInstant))
+                        && (timeFrame.isOverMidnight()
+                            ? (instantTime.isAfter(startTimeToday)
+                                ? endTimeToday.isBefore(instantTime)
+                                : endTimeToday.isAfter(instantTime))
+                            : startTimeToday.isBefore(instantTime) && endTimeToday.isAfter(instantTime)
+                )) {
                     timeFrameToBeSet = timeFrame;
                     break;
                 }
             }
         }
+        boolean timeFrameChanged = false;
         if(timeFrameToBeSet != null && currentTimeFrame == null) {
             remainingMinRunningTime = timeFrameToBeSet.getMinRunningTime();
             remainingMaxRunningTime = timeFrameToBeSet.getMaxRunningTime();
             intervalBegin = null;
+            timeFrameChanged = true;
             logger.debug("Timeframe started: " + timeFrameToBeSet);
         }
         else if(timeFrameToBeSet == null && currentTimeFrame != null) {
@@ -161,17 +188,41 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
             remainingMinRunningTime = 0l;
             remainingMaxRunningTime = 0l;
             intervalBegin = null;
+            timeFrameChanged = true;
         }
         logger.debug("Timeframe status: remainingMinRunningTime=" + remainingMinRunningTime + " remainingMaxRunningTime=" + remainingMaxRunningTime);
+        TimeFrame oldTimeFrame = currentTimeFrame;
         currentTimeFrame = timeFrameToBeSet;
+        if(timeFrameChanged) {
+            for(TimeFrameChangedListener listener : timeFrameChangedListeners) {
+                listener.timeFrameChanged(applianceId, oldTimeFrame, currentTimeFrame);
+            }
+        }
+
         return currentTimeFrame;
     }
-    
+
+    /**
+     * Returns timeframes starting after the given instant.
+     * @param instant
+     * @return a (possibly empty) list of timeframes
+     */
     public List<TimeFrame> findFutureTimeFrames(Instant instant) {
         List<TimeFrame> futureTimeFrames = new ArrayList<TimeFrame>();
-        for(TimeFrame timeFrame : timeFrames) {
-            if(timeFrame.getInterval().getStart().isAfter(instant)) {
-                futureTimeFrames.add(timeFrame);
+        int dowOfInstant = instant.get(DateTimeFieldType.dayOfWeek());
+        if(timeFrames != null) {
+            LocalTime instantTime = new LocalTime(instant, DateTimeZone.getDefault());
+            for(TimeFrame timeFrame : timeFrames) {
+                List<Integer> dowValues = timeFrame.getDaysOfWeekValues();
+                LocalTime startTimeToday = new LocalTime(timeFrame.getInterval().getStart());
+                LocalTime endTimeToday = new LocalTime(timeFrame.getInterval().getEnd());
+                if((dowValues == null || dowValues.contains(dowOfInstant))
+                        && (timeFrame.isOverMidnight()
+                        ? (!instantTime.isAfter(startTimeToday) && startTimeToday.isAfter(instantTime)) && endTimeToday.isBefore(instantTime)
+                        : startTimeToday.isAfter(instantTime)
+                )) {
+                    futureTimeFrames.add(timeFrame);
+                }
             }
         }
         return futureTimeFrames;
