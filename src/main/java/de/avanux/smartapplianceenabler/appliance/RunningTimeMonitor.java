@@ -52,7 +52,9 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
 
     public void setTimeFrames(List<TimeFrame> timeFrames) {
         this.timeFrames = timeFrames;
-        if(logger.isDebugEnabled()) {
+        this.currentTimeFrame = null;
+        if(logger.isDebugEnabled() && timeFrames != null
+                ) {
             for(TimeFrame timeFrame : timeFrames) {
                 logger.debug("Configured time frame is " + timeFrame.toString());
             }

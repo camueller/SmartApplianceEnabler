@@ -62,6 +62,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
     }
 
     private boolean onInternal(boolean switchOn) {
+        logger.debug("Setting wrapped appliance switch to " + (switchOn ? "on" : "off"));
         boolean result = false;
         for(Control control : controls) {
             result = control.on(switchOn);
@@ -82,22 +83,22 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
     }
 
     public void start(Meter meter, Timer timer) {
+        logger.info("Starting current switch: powerThreshold=" + powerThreshold + "W / detectionDuration=" + detectionDuration + "s");
         onInternal(true);
         if(meter != null) {
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    if(!on && isOnInternal()) {
+                    boolean onInternal = isOnInternal();
+                    logger.debug("on=" + on + " onInternal=" + onInternal);
+                    if(!on && onInternal) {
                         int averagePower = meter.getAveragePower();
-                        if(lastAveragePower != null) {
-                            if(averagePower > powerThreshold && lastAveragePower > powerThreshold) {
-                                logger.debug("Starting current detected: averagePower=" + averagePower + " lastAveragePower=" + lastAveragePower);
-                                logger.debug("Switching appliance off.");
-                                onInternal(false);
-                                for(StartingCurrentSwitchListener listerner : startingCurrentSwitchListeners) {
-                                    listerner.startingCurrentDetected();
-                                }
-
+                        if(lastAveragePower != null && averagePower > powerThreshold && lastAveragePower > powerThreshold) {
+                            logger.debug("Starting current detected: averagePower=" + averagePower + " lastAveragePower=" + lastAveragePower);
+                            logger.debug("Switching appliance off.");
+                            onInternal(false);
+                            for(StartingCurrentSwitchListener listerner : startingCurrentSwitchListeners) {
+                                listerner.startingCurrentDetected();
                             }
                         }
                         lastAveragePower = averagePower;

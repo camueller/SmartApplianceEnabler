@@ -85,6 +85,10 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         return runningTimeMonitor;
     }
 
+    public void setRunningTimeMonitor(RunningTimeMonitor runningTimeMonitor) {
+        this.runningTimeMonitor = runningTimeMonitor;
+        this.runningTimeMonitor.setApplianceId(id);
+    }
 
     public void init() {
         this.logger.setApplianceId(id);
@@ -216,8 +220,10 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     }
 
     private boolean hasStartingCurrentDetection() {
-        if(controls != null && controls.size() > 0) {
-            return controls.get(0) instanceof StartingCurrentSwitch;
+        for(Control control : controls) {
+            if(control instanceof StartingCurrentSwitch) {
+                return true;
+            }
         }
         return false;
     }
