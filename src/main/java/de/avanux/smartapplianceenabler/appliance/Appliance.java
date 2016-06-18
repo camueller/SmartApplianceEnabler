@@ -100,12 +100,6 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                 // starting current was detected
                 runningTimeMonitor.setTimeFrames(timeFrames);
             }
-            for(Control control : controls) {
-                control.addControlStateChangedListener(this);
-                if(control instanceof  StartingCurrentSwitch) {
-                    ((StartingCurrentSwitch) control).addStartingCurrentSwitchListener(this);
-                }
-            }
         }
 
         if(controls != null) {
@@ -113,10 +107,12 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                 if(control instanceof ApplianceIdConsumer) {
                     ((ApplianceIdConsumer) control).setApplianceId(id);
                 }
+                control.addControlStateChangedListener(this);
                 if(control instanceof  StartingCurrentSwitch) {
                     for(Control wrappedControl : ((StartingCurrentSwitch) control).getControls()) {
                         ((ApplianceIdConsumer) wrappedControl).setApplianceId(id);
                     }
+                    ((StartingCurrentSwitch) control).addStartingCurrentSwitchListener(this);
                 }
             }
         }
