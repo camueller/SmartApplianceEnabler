@@ -108,13 +108,15 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             }
         }
 
-        for(Control control : controls) {
-            if(control instanceof ApplianceIdConsumer) {
-                ((ApplianceIdConsumer) control).setApplianceId(id);
-            }
-            if(control instanceof  StartingCurrentSwitch) {
-                for(Control wrappedControl : ((StartingCurrentSwitch) control).getControls()) {
-                    ((ApplianceIdConsumer) wrappedControl).setApplianceId(id);
+        if(controls != null) {
+            for(Control control : controls) {
+                if(control instanceof ApplianceIdConsumer) {
+                    ((ApplianceIdConsumer) control).setApplianceId(id);
+                }
+                if(control instanceof  StartingCurrentSwitch) {
+                    for(Control wrappedControl : ((StartingCurrentSwitch) control).getControls()) {
+                        ((ApplianceIdConsumer) wrappedControl).setApplianceId(id);
+                    }
                 }
             }
         }
@@ -156,9 +158,11 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             modbusSlave.start(timer);
         }
 
-        for(Control control : controls) {
-            if(control instanceof  StartingCurrentSwitch) {
-                ((StartingCurrentSwitch) control).start(getMeter(), timer);
+        if(controls != null) {
+            for(Control control : controls) {
+                if(control instanceof  StartingCurrentSwitch) {
+                    ((StartingCurrentSwitch) control).start(getMeter(), timer);
+                }
             }
         }
     }

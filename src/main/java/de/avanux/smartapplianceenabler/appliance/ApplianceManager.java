@@ -60,7 +60,12 @@ public class ApplianceManager implements Runnable {
     }
     
     public void run() {
-        startAppliances();
+        try {
+            startAppliances();
+        }
+        catch(Exception e) {
+            logger.error("Error starting appliances", e);
+        }
     }
     
     public void startAppliances() {
