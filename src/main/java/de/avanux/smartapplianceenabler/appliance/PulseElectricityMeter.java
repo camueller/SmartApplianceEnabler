@@ -74,11 +74,11 @@ class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
      */
     @Override
     public boolean isOn() {
-        return isOn(System.currentTimeMillis());
+        return isOn(System.currentTimeMillis(), true);
     }
 
-    boolean isOn(long referenceTimestamp) {
-        if(control != null) {
+    boolean isOn(long referenceTimestamp, boolean useControl) {
+        if(useControl && control != null) {
             return control.isOn();
         }
         else if(powerOnAlways) {
@@ -100,7 +100,7 @@ class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
 
     int getAveragePower(long referenceTimestamp) {
         checkMandatoryAttributes();
-        if(isOn(referenceTimestamp) && isIntervalIncreaseAboveFactor(powerChangeFactor, referenceTimestamp) && powerBeforeIncrease != null) {
+        if(isOn(referenceTimestamp, true) && isIntervalIncreaseAboveFactor(powerChangeFactor, referenceTimestamp) && powerBeforeIncrease != null) {
             /**
              * Make sure that after a period of high power normal power is reported even before the first impulse
              * of the low power period is received. Otherwise high power would be reported for a long time even though
@@ -117,7 +117,7 @@ class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
             logger.debug("average power = " + averagePower + "W");
             return averagePower;
         }
-        else if (isOn(referenceTimestamp)) {
+        else if (isOn(referenceTimestamp, false)) {
             // less than 2 timestamps in measurement interval
             return getCurrentPower();
         }
@@ -154,7 +154,7 @@ class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
             minPower = getPower(longestInterval);
             logger.debug("Min power = " + minPower + "W (longestInterval=" + longestInterval + ")");
         }
-        else if (isOn(referenceTimestamp)) {
+        else if (isOn(referenceTimestamp, false)) {
             // less than 2 timestamps in measurement interval
             minPower = getCurrentPower();
         }
@@ -192,7 +192,7 @@ class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
             maxPower = getPower(shortestInterval);
             logger.debug("Max power = " + maxPower + "W (shortestInterval=" + shortestInterval + ")");
         }
-        else if (isOn(referenceTimestamp)) {
+        else if (isOn(referenceTimestamp, false)) {
             // less than 2 timestamps in measurement interval
             maxPower = getCurrentPower();
         }

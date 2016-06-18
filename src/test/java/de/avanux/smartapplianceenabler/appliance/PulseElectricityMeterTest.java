@@ -2,6 +2,7 @@ package de.avanux.smartapplianceenabler.appliance;
 
 import org.junit.Assert;
 import org.junit.Test;
+import static org.mockito.Mockito.*;
 
 /**
  * Documentation of this class uses a specific notation to describe test cases:
@@ -35,13 +36,13 @@ public class PulseElectricityMeterTest {
 
     @Test
     public void isOn_0ts() {
-        Assert.assertFalse(pulseElectricityMeter.isOn(currentTimeMillis));
+        Assert.assertFalse(pulseElectricityMeter.isOn(currentTimeMillis, true));
     }
 
     @Test
     public void isOn_0ts_powerOnAlways() {
         pulseElectricityMeter.setPowerOnAlways(true);
-        Assert.assertTrue(pulseElectricityMeter.isOn(currentTimeMillis));
+        Assert.assertTrue(pulseElectricityMeter.isOn(currentTimeMillis, true));
     }
 
     /**
@@ -50,7 +51,7 @@ public class PulseElectricityMeterTest {
     @Test
     public void isOn_rightAfterPulse() {
         addTimestamps(600, 0);
-        Assert.assertTrue(pulseElectricityMeter.isOn(currentTimeMillis));
+        Assert.assertTrue(pulseElectricityMeter.isOn(currentTimeMillis, true));
     }
 
     /**
@@ -59,7 +60,7 @@ public class PulseElectricityMeterTest {
     @Test
     public void isOn_noIntervalIncreaseAboveFactor() {
         addTimestamps(700, 100);
-        Assert.assertTrue(pulseElectricityMeter.isOn(currentTimeMillis));
+        Assert.assertTrue(pulseElectricityMeter.isOn(currentTimeMillis, true));
     }
 
     /**
@@ -68,7 +69,7 @@ public class PulseElectricityMeterTest {
     @Test
     public void isOn_intervalIncreaseAboveFactor() {
         addTimestamps(1900, 1300);
-        Assert.assertFalse(pulseElectricityMeter.isOn(currentTimeMillis));
+        Assert.assertFalse(pulseElectricityMeter.isOn(currentTimeMillis, true));
     }
 
     /**
@@ -78,7 +79,7 @@ public class PulseElectricityMeterTest {
     public void isOn_powerOnAlways() {
         pulseElectricityMeter.setPowerOnAlways(true);
         addTimestamps(1900, 1300);
-        Assert.assertTrue(pulseElectricityMeter.isOn(currentTimeMillis));
+        Assert.assertTrue(pulseElectricityMeter.isOn(currentTimeMillis, true));
     }
 
     /**
@@ -163,6 +164,11 @@ public class PulseElectricityMeterTest {
     @Test
     public void getAveragePower_2ts_0tsi() {
         addTimestamps(911, 612);
+        Assert.assertEquals(0, pulseElectricityMeter.getAveragePower(currentTimeMillis));
+        // again with control added
+        Control control = mock(Control.class);
+        when(control.isOn()).thenReturn(true);
+        pulseElectricityMeter.setControl(control);
         Assert.assertEquals(0, pulseElectricityMeter.getAveragePower(currentTimeMillis));
     }
 
