@@ -11,11 +11,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * Allows to program the appliance while only little power is consumed.
- * Once the appliance starts the real work power consumption increases.
- * If it exceeds a threshold for a configured duration it will be switched off
- * and energy demand will be posted. When switched on from external the internal control
- * is switched on again to do the real work.
+ * Allows to prepare operation of an appliance while only little power is consumed.
+ * Once the appliance starts the main work power consumption increases.
+ * If it exceeds a threshold for a configured duration the wrapped control will be
+ * switched off and energy demand will be posted. When switched on from external
+ * the wrapped control of the appliance is switched on again to do continue the
+ * main work.
  */
 @XmlRootElement
 public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
@@ -55,13 +56,13 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
     public boolean on(boolean switchOn) {
         on = switchOn;
         if(switchOn) {
-            onInternal(switchOn);
+            applianceOn(switchOn);
         }
-        // don't switch off internal - otherwise appliance cannot be operated
+        // don't switch off appliance - otherwise it cannot be operated
         return on;
     }
 
-    private boolean onInternal(boolean switchOn) {
+    private boolean applianceOn(boolean switchOn) {
         logger.debug("Setting wrapped appliance switch to " + (switchOn ? "on" : "off"));
         boolean result = false;
         for(Control control : controls) {
@@ -75,7 +76,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
         return on;
     }
 
-    private boolean isOnInternal() {
+    private boolean isApplianceOn() {
         if(controls != null && controls.size() > 0) {
             return controls.get(0).isOn();
         }
@@ -84,19 +85,19 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
 
     public void start(Meter meter, Timer timer) {
         logger.info("Starting current switch: powerThreshold=" + powerThreshold + "W / detectionDuration=" + detectionDuration + "s");
-        onInternal(true);
+        applianceOn(true);
         if(meter != null) {
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    boolean onInternal = isOnInternal();
-                    logger.debug("on=" + on + " onInternal=" + onInternal);
-                    if(!on && onInternal) {
+                    boolean applianceOn = isApplianceOn();
+                    logger.debug("on=" + on + " applianceOn=" + applianceOn);
+                    if(!on && applianceOn) {
                         int averagePower = meter.getAveragePower();
                         if(lastAveragePower != null && averagePower > powerThreshold && lastAveragePower > powerThreshold) {
                             logger.debug("Starting current detected: averagePower=" + averagePower + " lastAveragePower=" + lastAveragePower);
                             logger.debug("Switching appliance off.");
-                            onInternal(false);
+                            applianceOn(false);
                             for(StartingCurrentSwitchListener listerner : startingCurrentSwitchListeners) {
                                 listerner.startingCurrentDetected();
                             }
