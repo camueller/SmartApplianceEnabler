@@ -93,13 +93,18 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     public void init() {
         this.logger.setApplianceId(id);
         if(timeFrames != null && timeFrames.size() > 0) {
+            logger.info("Time frames configured: " + timeFrames);
             runningTimeMonitor = new RunningTimeMonitor();
             runningTimeMonitor.setApplianceId(id);
             if(! hasStartingCurrentDetection()) {
                 // in case of starting current detection timeframes are added after
                 // starting current was detected
                 runningTimeMonitor.setTimeFrames(timeFrames);
+                logger.debug("Time frames passed to RunningTimeMonitor");
             }
+        }
+        else {
+            logger.info("No time frames configured");
         }
 
         if(controls != null) {
@@ -111,11 +116,14 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                     for(Control wrappedControl : ((StartingCurrentSwitch) control).getControls()) {
                         ((ApplianceIdConsumer) wrappedControl).setApplianceId(id);
                         wrappedControl.addControlStateChangedListener(this);
+                        logger.debug("Registered as " + ControlStateChangedListener.class.getSimpleName() + " with " + wrappedControl.getClass().getSimpleName());
                     }
                     ((StartingCurrentSwitch) control).addStartingCurrentSwitchListener(this);
+                    logger.debug("Registered as " + StartingCurrentSwitchListener.class.getSimpleName() + " with " + control.getClass().getSimpleName());
                 }
                 else {
                     control.addControlStateChangedListener(this);
+                    logger.debug("Registered as " + ControlStateChangedListener.class.getSimpleName() + " with " + control.getClass().getSimpleName());
                 }
             }
         }
@@ -128,7 +136,9 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
 
         if(s0ElectricityMeter != null) {
             if(controls != null) {
-                s0ElectricityMeter.setControl(controls.get(0));
+                Control control = controls.get(0);
+                s0ElectricityMeter.setControl(control);
+                logger.debug(S0ElectricityMeter.class.getSimpleName() + " uses " + control.getClass().getSimpleName());
             }
         }
     }
@@ -136,13 +146,16 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     public void start(Timer timer, GpioController gpioController,
                       Map<String, PulseReceiver> pulseReceiverIdWithPulseReceiver,
                       Map<String, ModbusTcp> modbusIdWithModbusTcp) {
+
         for(GpioControllable gpioControllable : getGpioControllables()) {
+            logger.info("Starting " + gpioControllable.getClass().getSimpleName());
             gpioControllable.setGpioController(gpioController);
             gpioControllable.start();
         }
 
         S0ElectricityMeterNetworked s0ElectricityMeterNetworked = getS0ElectricityMeterNetworked();
         if(s0ElectricityMeterNetworked != null) {
+            logger.info("Starting " + S0ElectricityMeterNetworked.class.getSimpleName());
             String pulseReceiverId = s0ElectricityMeterNetworked.getIdref();
             PulseReceiver pulseReceiver = pulseReceiverIdWithPulseReceiver.get(pulseReceiverId);
             s0ElectricityMeterNetworked.setPulseReceiver(pulseReceiver);
@@ -150,6 +163,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         }
 
         for(ModbusSlave modbusSlave : getModbusSlaves()) {
+            logger.info("Starting " + modbusSlave.getClass().getSimpleName());
             modbusSlave.setApplianceId(id);
             String modbusId = modbusSlave.getIdref();
             ModbusTcp modbusTcp = modbusIdWithModbusTcp.get(modbusId);
@@ -160,6 +174,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         if(controls != null) {
             for(Control control : controls) {
                 if(control instanceof  StartingCurrentSwitch) {
+                    logger.info("Starting " + StartingCurrentSwitch.class.getSimpleName());
                     ((StartingCurrentSwitch) control).start(getMeter(), timer);
                 }
             }
