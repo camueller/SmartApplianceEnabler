@@ -17,6 +17,8 @@ import java.io.IOException;
  * Changes the on/off state of an appliance by sending an HTTP request.
  * Limitation: Currently the appliance state is not requested by from the appliance but
  * maintained internally.
+ *
+ * IMPORTANT: The URLs in Appliance.xml have to be escaped (e.g. use "&amp;" instead of "&")
  */
 public class HttpSwitch implements Control, ApplianceIdConsumer {
     @XmlTransient
