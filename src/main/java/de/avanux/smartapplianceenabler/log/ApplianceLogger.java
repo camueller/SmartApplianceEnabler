@@ -16,6 +16,12 @@ public class ApplianceLogger implements Logger, ApplianceIdConsumer {
         this.logger = logger;
     }
 
+    public static ApplianceLogger createForAppliance(Logger logger, String applianceId) {
+        ApplianceLogger applianceLogger = new ApplianceLogger(logger);
+        applianceLogger.setApplianceId(applianceId);
+        return applianceLogger;
+    }
+
     @Override
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;

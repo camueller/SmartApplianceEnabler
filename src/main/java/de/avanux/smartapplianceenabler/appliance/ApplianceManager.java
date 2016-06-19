@@ -114,4 +114,14 @@ public class ApplianceManager implements Runnable {
     public void setAppliances(Appliances appliances) {
         this.appliances = appliances;
     }
+
+    public Appliance findAppliance(String applianceId) {
+        List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
+        for (Appliance appliance : appliances) {
+            if(appliance.getId().equals(applianceId)) {
+                return appliance;
+            }
+        }
+        return null;
+    }
 }

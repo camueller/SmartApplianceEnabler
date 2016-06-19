@@ -79,7 +79,7 @@ public class SempController implements TimeFrameChangedListener {
         List<PlanningRequest> planningRequests = new ArrayList<PlanningRequest>();
         List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
         for (Appliance appliance : appliances) {
-            ApplianceLogger applianceLogger = getApplianceLogger(appliance.getId());
+            ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, appliance.getId());
             if(!timeFrameChangedListenerRegistered && appliance.getRunningTimeMonitor() != null) {
                 appliance.getRunningTimeMonitor().addTimeFrameChangedListener(this);
                 timeFrameChangedListenerRegistered = true;
@@ -104,7 +104,7 @@ public class SempController implements TimeFrameChangedListener {
             logger.debug("Device info requested of device id=" + deviceId);
             DeviceInfo deviceInfo = findDeviceInfo(device2EM, deviceId);
 
-            Appliance appliance = findAppliance(deviceId);
+            Appliance appliance = ApplianceManager.getInstance().findAppliance(deviceId);
             if(appliance.getMeter() != null) {
                 deviceInfo.getCapabilities().setCurrentPowerMethod(CurrentPowerMethod.Measurement);
             }
@@ -140,9 +140,9 @@ public class SempController implements TimeFrameChangedListener {
     public String deviceStatus(@RequestParam(value="DeviceId", required = false) String deviceId) {
         List<DeviceStatus> deviceStatuses = new ArrayList<DeviceStatus>();
         if(deviceId != null) {
-            ApplianceLogger applianceLogger = getApplianceLogger(deviceId);
+            ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, deviceId);
             applianceLogger.debug("Device status requested");
-            Appliance appliance = findAppliance(deviceId);
+            Appliance appliance = ApplianceManager.getInstance().findAppliance(deviceId);
             DeviceStatus deviceStatus = createDeviceStatus(applianceLogger, appliance);
             deviceStatuses.add(deviceStatus);
         }
@@ -150,7 +150,7 @@ public class SempController implements TimeFrameChangedListener {
             logger.debug("Device status requested of all devices");
             List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
             for (Appliance appliance : appliances) {
-                ApplianceLogger applianceLogger = getApplianceLogger(appliance.getId());
+                ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, appliance.getId());
                 DeviceStatus deviceStatus = createDeviceStatus(applianceLogger, appliance);
                 deviceStatuses.add(deviceStatus);
             }
@@ -166,9 +166,9 @@ public class SempController implements TimeFrameChangedListener {
         Instant now = new Instant();
         List<PlanningRequest> planningRequests = new ArrayList<PlanningRequest>();
         if(deviceId != null) {
-            ApplianceLogger applianceLogger = getApplianceLogger(deviceId);
+            ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, deviceId);
             applianceLogger.debug("Planning request requested");
-            Appliance appliance = findAppliance(deviceId);
+            Appliance appliance = ApplianceManager.getInstance().findAppliance(deviceId);
             PlanningRequest planningRequest = createPlanningRequest(applianceLogger, now, appliance);
             addPlanningRequest(planningRequests, planningRequest);
         }
@@ -176,7 +176,7 @@ public class SempController implements TimeFrameChangedListener {
             logger.debug("Planning request requested of all devices");
             List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
             for (Appliance appliance : appliances) {
-                ApplianceLogger applianceLogger = getApplianceLogger(appliance.getId());
+                ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, appliance.getId());
                 PlanningRequest planningRequest = createPlanningRequest(applianceLogger, now, appliance);
                 addPlanningRequest(planningRequests, planningRequest);
             }
@@ -199,9 +199,9 @@ public class SempController implements TimeFrameChangedListener {
     public void em2Device(@RequestBody EM2Device em2Device) {
         List<DeviceControl> deviceControls = em2Device.getDeviceControl();
         for(DeviceControl deviceControl : deviceControls) {
-            ApplianceLogger applianceLogger = getApplianceLogger(deviceControl.getDeviceId());
+            ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, deviceControl.getDeviceId());
             applianceLogger.debug("Received control request");
-            Appliance appliance = findAppliance(deviceControl.getDeviceId());
+            Appliance appliance = ApplianceManager.getInstance().findAppliance(deviceControl.getDeviceId());
             if(appliance != null) {
                 setApplianceState(applianceLogger, appliance, deviceControl.isOn(), "Setting appliance state to " + (deviceControl.isOn() ? "ON" : "OFF"));
             }
@@ -233,8 +233,8 @@ public class SempController implements TimeFrameChangedListener {
     @Override
     public void timeFrameChanged(String applianceId, TimeFrame oldTimeFrame, TimeFrame newTimeFrame) {
         if(newTimeFrame == null) {
-            Appliance appliance = findAppliance(applianceId);
-            ApplianceLogger applianceLogger = getApplianceLogger(applianceId);
+            Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
+            ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
             setApplianceState(applianceLogger, appliance, false, "Switching off due to end of time frame");
         }
     }
@@ -380,16 +380,6 @@ public class SempController implements TimeFrameChangedListener {
         return timeFrame;
     }
 
-    private Appliance findAppliance(String deviceId) {
-        List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
-        for (Appliance appliance : appliances) {
-            if(appliance.getId().equals(deviceId)) {
-                return appliance;
-            }
-        }
-        return null;
-    }
-    
     private String marshall(Device2EM device2EM) {
         StringWriter writer = new StringWriter();
         try {
@@ -403,11 +393,5 @@ public class SempController implements TimeFrameChangedListener {
             logger.error("Error marshalling", e);
         }
         return null;
-    }
-
-    private ApplianceLogger getApplianceLogger(String applianceId) {
-        ApplianceLogger logger = new ApplianceLogger(this.logger);
-        logger.setApplianceId(applianceId);
-        return logger;
     }
 }

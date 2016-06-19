@@ -248,7 +248,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
 
     @Override
     public void controlStateChanged(boolean switchOn) {
-        logger.debug("Control state has changed to " + switchOn);
+        logger.debug("Control state has changed to " + (switchOn ? "on" : "off"));
         runningTimeMonitor.setRunning(switchOn);
         if (!switchOn && hasStartingCurrentDetection()) {
             logger.debug("Deactivating timeframes until starting current is detected again");
