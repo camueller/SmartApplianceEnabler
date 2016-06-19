@@ -17,9 +17,25 @@ An die GPIO-Pins des Raspberry können diverse Schalter und/oder Stromzähler an
 
 Die Nummerierung der Pins richtet sich nach [Pi4J](http://pi4j.com/images/gpio-control-example-large.png) und weicht von der offiziellen Nummerierung ab!
 
+TODO Bauanleitung mit Hutschienenhalter hinzufügen
+
+### Stromzähler
+
+- S0
+- Modbus
+- HTTP
+
 ### Stromzähler mit WLAN-Anbindung
 
 Für das Messen des Stromverbrauchs von Geräten, die nicht über eine eigene Zuleitung vom Verteiler verfügen, kann man sich einen [Stromzähler mit WLAN-Anbindung](doc/WifiS0PulseForwarder_DE.md) bauen.
+
+### Schalter
+
+- S0
+- Modbus
+- HTTP
+
+TODO Bauanleitung mit Hutschienenhalter für Solid-State-Relais hinzufügen
 
 ### Schaltbeispiele
 Die nachfolgenden Schaltbeispiele zeigen Schaltungen zum Schalten mittels **Solid-State-Relais** und zur Stromverbrauchsmessung mittels Stromzähler mit **S0-Schnittstelle**. Beides ist unabhängig voneinander, d.h. Solid-State-Relais oder Stromzähler können entfallen, falls nur geschaltet oder der Stromverbrauch ermittelt werden soll.
@@ -27,6 +43,8 @@ Die nachfolgenden Schaltbeispiele zeigen Schaltungen zum Schalten mittels **Soli
 In den Schaltbeispielen ist der für den Stromzähler notwendige **Pull-Down-Widerstand** nicht eingezeichnet, weil dafür die auf dem Raspberry Pi vorhandenen Pull-Down-Widerstände per Software-Konfiguration aktiviert werden.
 
 *Hinweis: Die Installation von steckerlosen 200/400V-Geräten sollte grundsätzlich durch einen autorisierten Fachbetrieb vorgenommen werden!*
+
+TODO: Schalter zum manuellen Schalten in Grafik aufnehmen
 
 #### Schaltbeispiel 1: 240V-Gerät mit Stromverbrauchsmessung
 Der Aufbau zum Schalten eines 240V-Gerätes (z.B. Pumpe) könnte wie folgt aussehen:
@@ -328,6 +346,9 @@ Wenn der Log-Level mindestens auf DEBUGgesetzt wurde, kann man in der Log-Datei 
 ```
 20:25:17.390 [http-nio-8080-exec-1] DEBUG d.a.s.semp.webservice.SempController - Device info/status/planning requested.
 ```
+### Analyse der Log Dateien des SEMP Moduls im Sunny Home Manager
+Siehe http://www.photovoltaikforum.com/geraete-mit-home-manager-koppeln-via-semp-ethernet-p1396300.html#p1396300
+
 ## Fragen / Fehler
 Bei Verdacht auf Fehler in der Software oder bei Fragen zur Verwendung des *Smart Appliance Enabler* sollte [Issue](https://github.com/camueller/SmartApplianceEnabler/issues) erstellt werden.
 
