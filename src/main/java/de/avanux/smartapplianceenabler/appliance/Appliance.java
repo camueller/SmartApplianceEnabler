@@ -107,12 +107,15 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                 if(control instanceof ApplianceIdConsumer) {
                     ((ApplianceIdConsumer) control).setApplianceId(id);
                 }
-                control.addControlStateChangedListener(this);
                 if(control instanceof  StartingCurrentSwitch) {
                     for(Control wrappedControl : ((StartingCurrentSwitch) control).getControls()) {
                         ((ApplianceIdConsumer) wrappedControl).setApplianceId(id);
+                        wrappedControl.addControlStateChangedListener(this);
                     }
                     ((StartingCurrentSwitch) control).addStartingCurrentSwitchListener(this);
+                }
+                else {
+                    control.addControlStateChangedListener(this);
                 }
             }
         }
