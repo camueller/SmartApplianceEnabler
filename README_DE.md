@@ -17,9 +17,25 @@ An die GPIO-Pins des Raspberry können diverse Schalter und/oder Stromzähler an
 
 Die Nummerierung der Pins richtet sich nach [Pi4J](http://pi4j.com/images/gpio-control-example-large.png) und weicht von der offiziellen Nummerierung ab!
 
+TODO Bauanleitung mit Hutschienenhalter hinzufügen
+
+### Stromzähler
+
+- S0
+- Modbus
+- HTTP
+
 ### Stromzähler mit WLAN-Anbindung
 
 Für das Messen des Stromverbrauchs von Geräten, die nicht über eine eigene Zuleitung vom Verteiler verfügen, kann man sich einen [Stromzähler mit WLAN-Anbindung](doc/WifiS0PulseForwarder_DE.md) bauen.
+
+### Schalter
+
+- S0
+- Modbus
+- HTTP
+
+TODO Bauanleitung mit Hutschienenhalter für Solid-State-Relais hinzufügen
 
 ### Schaltbeispiele
 Die nachfolgenden Schaltbeispiele zeigen Schaltungen zum Schalten mittels **Solid-State-Relais** und zur Stromverbrauchsmessung mittels Stromzähler mit **S0-Schnittstelle**. Beides ist unabhängig voneinander, d.h. Solid-State-Relais oder Stromzähler können entfallen, falls nur geschaltet oder der Stromverbrauch ermittelt werden soll.
