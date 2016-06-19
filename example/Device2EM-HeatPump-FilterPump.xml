@@ -15,8 +15,8 @@ Konfiguration für Wärmepumpe (nur Stromverbrauchsmessung) und Filterpumpe (nur
 			<DeviceId>F-00000001-000000000001-00</DeviceId>
 			<!-- Gerätemodell -->
 			<DeviceName>Vitocal 300 BW 116</DeviceName>
-			<!-- Geräteart -->
-			<DeviceType>Wärmepumpe</DeviceType>
+			<!-- Geräteart - muss einen Wert aus https://github.com/camueller/SmartApplianceEnabler/blob/master/xsd/SEMP-1.1.5.xsd#L266 enthalten -->
+			<DeviceType>HeatPump</DeviceType>
 			<!-- Gerätenummer, die sich auf dem Gerät befindet -->
 			<DeviceSerial>3004306400012108</DeviceSerial>
 			<!-- Gerätehersteller -->
@@ -54,7 +54,7 @@ Konfiguration für Wärmepumpe (nur Stromverbrauchsmessung) und Filterpumpe (nur
 	    <Identification>
 			<DeviceId>F-00000001-000000000002-00</DeviceId>
 			<DeviceName>Bettar 14</DeviceName>
-			<DeviceType>Filterpumpe</DeviceType>
+			<DeviceType>Pump</DeviceType>
 			<DeviceSerial>41589/34</DeviceSerial>
 			<DeviceVendor>Speck</DeviceVendor>
 		</Identification>
