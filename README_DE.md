@@ -124,6 +124,20 @@ Nachdem man einmalig ```mvn clean``` aufgerufen hat, kann man nachfolgend immer 
 
 Beim erstmaligen Aufruf von Maven werden dabei alle benötigten Bibliotheken aus dem offiziellen Maven-Repository heruntergeladen. Das Bauen war nur dann erfolgreich, wenn *BUILD SUCCESS* erscheint! In diesem Fall findet sich die Datei `SmartApplianceEnabler-*.jar` im Unterverzeichnis `target`.
 
+### Modbus/TCP zu Modbus/RTU Gateway bauen
+
+Dieses Kapitel ist nur relevant falls ein Gerät mit Modbus/RTU verwendet werden soll und kann ansonsten übersprungen werden!
+
+```
+wget https://sourceforge.net/projects/mbus/files/mbus/0.2.0/mbus-0.2.0.tar.gz/download -O mbus-0.2.0.tar.gz
+tar xvfz mbus-0.2.0.tar.gz
+cd mbus-0.2.0
+./configure
+make
+sudo make install
+sudo mbusd -d -p /dev/ttyUSB0 -s 9600 -v 9
+```
+
 ## Konfiguration
 Die Konfiguration besteht aus zwei [XML](https://de.wikipedia.org/wiki/Extensible_Markup_Language)-Dateien:
 * die Datei `Device2EM.xml` enthält Gerätebeschreibung für den EnergyManager
