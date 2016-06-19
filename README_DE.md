@@ -28,6 +28,8 @@ In den Schaltbeispielen ist der für den Stromzähler notwendige **Pull-Down-Wid
 
 *Hinweis: Die Installation von steckerlosen 200/400V-Geräten sollte grundsätzlich durch einen autorisierten Fachbetrieb vorgenommen werden!*
 
+TODO: Schalter zum manuellen Schalten in Grafik aufnehmen
+
 #### Schaltbeispiel 1: 240V-Gerät mit Stromverbrauchsmessung
 Der Aufbau zum Schalten eines 240V-Gerätes (z.B. Pumpe) könnte wie folgt aussehen:
 
