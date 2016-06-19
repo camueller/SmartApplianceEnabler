@@ -330,6 +330,9 @@ Wenn der Log-Level mindestens auf DEBUGgesetzt wurde, kann man in der Log-Datei 
 ```
 20:25:17.390 [http-nio-8080-exec-1] DEBUG d.a.s.semp.webservice.SempController - Device info/status/planning requested.
 ```
+### Analyse der Log Dateien des SEMP Moduls im Sunny Home Manager
+Siehe http://www.photovoltaikforum.com/geraete-mit-home-manager-koppeln-via-semp-ethernet-p1396300.html#p1396300
+
 ## Fragen / Fehler
 Bei Verdacht auf Fehler in der Software oder bei Fragen zur Verwendung des *Smart Appliance Enabler* sollte [Issue](https://github.com/camueller/SmartApplianceEnabler/issues) erstellt werden.
 
