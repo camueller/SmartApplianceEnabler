@@ -17,6 +17,10 @@ An die GPIO-Pins des Raspberry können diverse Schalter und/oder Stromzähler an
 
 Die Nummerierung der Pins richtet sich nach [Pi4J](http://pi4j.com/images/gpio-control-example-large.png) und weicht von der offiziellen Nummerierung ab!
 
+### Stromzähler mit WLAN-Anbindung
+
+Für das Messen des Stromverbrauchs von Geräten, die nicht über eine eigene Zuleitung vom Verteiler verfügen, kann man sich einen [Stromzähler mit WLAN-Anbindung](doc/WifiS0PulseForwarder_DE.md) bauen.
+
 ### Schaltbeispiele
 Die nachfolgenden Schaltbeispiele zeigen Schaltungen zum Schalten mittels **Solid-State-Relais** und zur Stromverbrauchsmessung mittels Stromzähler mit **S0-Schnittstelle**. Beides ist unabhängig voneinander, d.h. Solid-State-Relais oder Stromzähler können entfallen, falls nur geschaltet oder der Stromverbrauch ermittelt werden soll.
 
@@ -124,10 +128,33 @@ Nachdem man einmalig ```mvn clean``` aufgerufen hat, kann man nachfolgend immer 
 
 Beim erstmaligen Aufruf von Maven werden dabei alle benötigten Bibliotheken aus dem offiziellen Maven-Repository heruntergeladen. Das Bauen war nur dann erfolgreich, wenn *BUILD SUCCESS* erscheint! In diesem Fall findet sich die Datei `SmartApplianceEnabler-*.jar` im Unterverzeichnis `target`.
 
+### Modbus/TCP zu Modbus/RTU Gateway bauen
+
+Dieses Kapitel ist nur relevant falls ein Gerät mit Modbus/RTU verwendet werden soll und kann ansonsten übersprungen werden!
+
+```
+wget https://sourceforge.net/projects/mbus/files/mbus/0.2.0/mbus-0.2.0.tar.gz/download -O mbus-0.2.0.tar.gz
+tar xvfz mbus-0.2.0.tar.gz
+cd mbus-0.2.0
+./configure
+make
+sudo make install
+sudo mbusd -d -p /dev/ttyUSB0 -s 9600 -v 9
+```
+
 ## Konfiguration
 Die Konfiguration besteht aus zwei [XML](https://de.wikipedia.org/wiki/Extensible_Markup_Language)-Dateien:
 * die Datei `Device2EM.xml` enthält Gerätebeschreibung für den EnergyManager
 * die Datei `Appliances.xml` enthält die Gerätekonfiguration für den Raspberry Pi
+
+Die Verbindung zwischen den konfigurierten Geräten in der Datei `Device2EM.xml` und den Appliances in der Datei `Appliances.xml` ist die Appliance-ID (`<Appliance id="F-00000001-000000000001-00">`), die mit der Device-ID ( `<DeviceId>F-00000001-000000000001-00</DeviceId>`) des zugehörigen Gerätes übereinstimmen muss.
+
+Der Aufbau der Device-IDs ist in der SEMP-Spezifikation vorgegeben. Für den *Smart Appliance Enabler* bedeutet das:
+* F unverändert lassen ("local scope")
+* 00000001 ersetzen durch einen 8-stelligen Wert, der den eigenen Bereich definiert, z.B. das Geburtsdatum in der Form 25021964 für den 25. Februar 1964
+* 000000000001 für jedes verwaltete Gerät hochzählen bzw. eine individuelle 12-stellige Zahl verwenden
+* 00 unverändert lassen (sub device id)
+Die Device-IDs werden vom Sunny-Portal direkt verwendet, d.h. wenn jemand anderes bereits diese ID verwendet, kann das Gerät nicht im Sunny-Portal angelegt werden. Durch die Verwendung individueller Bestandteile wie Geburtsdatum sollte das Risiko dafür jedoch gering sein.
 
 Im Verzeichnis `example` finden sich Beispieldateien mit Kommentaren zu den einzelnen Angaben.
 Diese sollen dabei helfen, die für die eigenen Geräte passenden Dateien `Device2EM.xml` und `Appliances.xml` (mit genau diesen Namen und entsprechender Groß-/Kleinschreibung!) zu erstellen.
