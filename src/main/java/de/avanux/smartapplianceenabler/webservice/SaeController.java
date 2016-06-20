@@ -24,7 +24,7 @@ public class SaeController {
     public void setTimeFrames(@RequestParam(value="ApplianceId") String applianceId, @RequestBody TimeFrames timeFrames) {
         ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
         List<TimeFrame> timeFramesToSet = timeFrames.getTimeFrames();
-        applianceLogger.debug("Received request to set " + timeFramesToSet.size() + " time frame(s)");
+        applianceLogger.debug("Received request to set " + (timeFramesToSet != null ? timeFramesToSet.size() : "0") + " time frame(s)");
         Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
         appliance.getRunningTimeMonitor().setTimeFrames(timeFramesToSet);
     }
