@@ -1,8 +1,6 @@
 package de.avanux.smartapplianceenabler.appliance;
 
-import org.joda.time.DateTime;
-import org.joda.time.Instant;
-import org.joda.time.ReadableInstant;
+import de.avanux.smartapplianceenabler.TestBase;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -13,7 +11,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class RunningTimeMonitorTest {
+public class RunningTimeMonitorTest extends TestBase {
 
     private Logger logger = LoggerFactory.getLogger(RunningTimeMonitor.class);
     private RunningTimeMonitor runningTimeMonitor;
@@ -43,8 +41,8 @@ public class RunningTimeMonitorTest {
         runningTimeMonitor.setTimeFrames(Collections.singletonList(timeFrame));
         Assert.assertNull(runningTimeMonitor.findAndSetCurrentTimeFrame(toInstant(22, 30, 0)));
         Assert.assertEquals(timeFrame, runningTimeMonitor.findAndSetCurrentTimeFrame(toInstant(23, 30, 0)));
-        Assert.assertEquals(timeFrame, runningTimeMonitor.findAndSetCurrentTimeFrame(toInstantNextDay(0, 30, 0)));
-        Assert.assertNull(runningTimeMonitor.findAndSetCurrentTimeFrame(toInstantNextDay(1, 30, 0)));
+        Assert.assertEquals(timeFrame, runningTimeMonitor.findAndSetCurrentTimeFrame(toInstantTomorrow(0, 30, 0)));
+        Assert.assertNull(runningTimeMonitor.findAndSetCurrentTimeFrame(toInstantTomorrow(1, 30, 0)));
     }
 
     @Test
@@ -246,19 +244,4 @@ public class RunningTimeMonitorTest {
         Assert.assertEquals("With timeframe started and device switched on one hour plus one minute ago remaining max running time has become negative",
                 -60, runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(toInstant(10, 1, 0)));
     }
-
-    private Instant toInstant(Integer hour, Integer minute, Integer second) {
-        return new TimeOfDay(hour, minute, second).toLocalTime().toDateTimeToday().toInstant();
-    }
-
-    private Instant toInstantNextDay(Integer hour, Integer minute, Integer second) {
-        return new TimeOfDay(hour, minute, second).toLocalTime().toDateTimeToday().toInstant().plus(24 * 3600 * 1000);
-    }
-
-    private ReadableInstant toInstant(int dayOfWeek, Integer hour, Integer minute, Integer second) {
-        DateTime instant = new DateTime(2016, 6, 13, hour, minute, second);
-        instant = instant.plusHours((dayOfWeek - 1) * 24);
-        return instant;
-    }
-
 }

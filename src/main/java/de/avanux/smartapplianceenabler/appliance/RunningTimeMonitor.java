@@ -163,8 +163,8 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
             LocalTime instantTime = new LocalTime(instant, DateTimeZone.getDefault());
             for(TimeFrame timeFrame : timeFrames) {
                 List<Integer> dowValues = timeFrame.getDaysOfWeekValues();
-                LocalTime startTimeToday = new LocalTime(timeFrame.getInterval().getStart());
-                LocalTime endTimeToday = new LocalTime(timeFrame.getInterval().getEnd());
+                LocalTime startTimeToday = new LocalTime(timeFrame.getInterval(instant).getStart());
+                LocalTime endTimeToday = new LocalTime(timeFrame.getInterval(instant).getEnd());
                 if((dowValues == null || dowValues.contains(dowOfInstant))
                         && (timeFrame.isOverMidnight()
                             ? (instantTime.isAfter(startTimeToday)
@@ -218,8 +218,8 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
             LocalTime instantTime = new LocalTime(instant, DateTimeZone.getDefault());
             for(TimeFrame timeFrame : timeFrames) {
                 List<Integer> dowValues = timeFrame.getDaysOfWeekValues();
-                LocalTime startTimeToday = new LocalTime(timeFrame.getInterval().getStart());
-                LocalTime endTimeToday = new LocalTime(timeFrame.getInterval().getEnd());
+                LocalTime startTimeToday = new LocalTime(timeFrame.getInterval(instant).getStart());
+                LocalTime endTimeToday = new LocalTime(timeFrame.getInterval(instant).getEnd());
                 if((dowValues == null || dowValues.contains(dowOfInstant))
                         && (timeFrame.isOverMidnight()
                         ? (!instantTime.isAfter(startTimeToday) && startTimeToday.isAfter(instantTime)) && endTimeToday.isBefore(instantTime)

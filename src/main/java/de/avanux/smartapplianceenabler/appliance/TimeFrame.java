@@ -24,8 +24,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.lang3.StringUtils;
-import org.joda.time.Instant;
-import org.joda.time.Interval;
+import org.joda.time.*;
 import org.joda.time.chrono.ISOChronology;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
@@ -88,10 +87,14 @@ public class TimeFrame {
     }
 
     public Interval getInterval() {
+        return getInterval(new Instant());
+    }
+
+    public Interval getInterval(ReadableInstant instant) {
         if(earliestStart != null && latestEnd != null) {
-            Instant earliestStartDateTime = new Instant(earliestStart.toLocalTime().toDateTimeToday());
-            Instant latestEndDateTime = new Instant(latestEnd.toLocalTime().toDateTimeToday());
-            if(isOverMidnight(earliestStartDateTime, latestEndDateTime)) {
+            DateTime earliestStartDateTime = new LocalDate(instant).toLocalDateTime(earliestStart.toLocalTime()).toDateTime();
+            DateTime latestEndDateTime = new LocalDate(instant).toLocalDateTime(latestEnd.toLocalTime()).toDateTime();
+            if(isOverMidnight(earliestStartDateTime.toInstant(), latestEndDateTime.toInstant())) {
                 latestEndDateTime = latestEndDateTime.plus(24 * 3600 * 1000);
             }
             return new Interval(earliestStartDateTime, latestEndDateTime).withChronology(ISOChronology.getInstance());

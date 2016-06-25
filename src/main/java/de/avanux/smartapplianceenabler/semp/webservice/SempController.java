@@ -351,10 +351,10 @@ public class SempController implements TimeFrameChangedListener {
     
     private de.avanux.smartapplianceenabler.semp.webservice.Timeframe createSempTimeFrame(ApplianceLogger applianceLogger, String deviceId, TimeFrame timeFrame, long minRunningTime, long maxRunningTime, Instant now) {
         Long earliestStart = 0l;
-        if(timeFrame.getInterval().getStart().isAfter(now)) {
-            earliestStart = Double.valueOf(new Interval(now, timeFrame.getInterval().getStart()).toDurationMillis() / 1000).longValue();
+        if(timeFrame.getInterval(now).getStart().isAfter(now)) {
+            earliestStart = Double.valueOf(new Interval(now, timeFrame.getInterval(now).getStart()).toDurationMillis() / 1000).longValue();
         }
-        Long latestEnd = Double.valueOf(new Interval(now, timeFrame.getInterval().getEnd()).toDurationMillis() / 1000).longValue();
+        Long latestEnd = Double.valueOf(new Interval(now, timeFrame.getInterval(now).getEnd()).toDurationMillis() / 1000).longValue();
         return createSempTimeFrame(applianceLogger, deviceId, earliestStart, latestEnd, minRunningTime, maxRunningTime);
     }
     
