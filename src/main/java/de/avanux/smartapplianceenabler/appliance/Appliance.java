@@ -120,6 +120,8 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                     }
                     ((StartingCurrentSwitch) control).addStartingCurrentSwitchListener(this);
                     logger.debug("Registered as " + StartingCurrentSwitchListener.class.getSimpleName() + " with " + control.getClass().getSimpleName());
+                    runningTimeMonitor.addTimeFrameChangedListener((StartingCurrentSwitch) control);
+                    logger.debug("Registered " + control.getClass().getSimpleName() + " as " + TimeFrameChangedListener.class.getSimpleName());
                 }
                 else {
                     control.addControlStateChangedListener(this);
@@ -248,11 +250,9 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
 
     @Override
     public void controlStateChanged(boolean switchOn) {
-        logger.debug("Control state has changed to " + (switchOn ? "on" : "off"));
-        runningTimeMonitor.setRunning(switchOn);
-        if (!switchOn && hasStartingCurrentDetection()) {
-            logger.debug("Deactivating timeframes until starting current is detected again");
-            runningTimeMonitor.setTimeFrames(null);
+        logger.debug("Control state has changed to " + (switchOn ? "on" : "off") + ": runningTimeMonitor=" + (runningTimeMonitor != null ? "not null" : "null"));
+        if(runningTimeMonitor != null) {
+            runningTimeMonitor.setRunning(switchOn);
         }
     }
 
@@ -260,5 +260,13 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     public void startingCurrentDetected() {
         logger.debug("Activating timeframes after starting current has been detected");
         runningTimeMonitor.setTimeFrames(timeFrames);
+    }
+
+    @Override
+    public void timeFrameExpired() {
+        logger.debug("Deactivating timeframes until starting current is detected again: runningTimeMonitor=" + (runningTimeMonitor != null ? "not null" : "null"));
+        if(runningTimeMonitor != null) {
+            runningTimeMonitor.setTimeFrames(null);
+        }
     }
 }

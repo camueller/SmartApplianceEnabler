@@ -196,7 +196,9 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         TimeFrame oldTimeFrame = currentTimeFrame;
         currentTimeFrame = timeFrameToBeSet;
         if(timeFrameChanged) {
+            logger.debug("Time frame changed for appliance " + applianceId + " : oldTimeFrame=" + oldTimeFrame + " newTimeFrame=" + currentTimeFrame);
             for(TimeFrameChangedListener listener : timeFrameChangedListeners) {
+                logger.debug("Notifying " + listener.getClass().getSimpleName());
                 listener.timeFrameChanged(applianceId, oldTimeFrame, currentTimeFrame);
             }
         }

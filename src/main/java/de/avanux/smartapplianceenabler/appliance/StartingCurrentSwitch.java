@@ -19,7 +19,7 @@ import java.util.TimerTask;
  * main work.
  */
 @XmlRootElement
-public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
+public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, TimeFrameChangedListener {
     @XmlTransient
     private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(StartingCurrentSwitch.class));
     @XmlAttribute
@@ -37,14 +37,23 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
     @XmlTransient
     private boolean on;
     @XmlTransient
-    List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
+    private List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
     @XmlTransient
-    List<StartingCurrentSwitchListener> startingCurrentSwitchListeners = new ArrayList<>();
+    private List<StartingCurrentSwitchListener> startingCurrentSwitchListeners = new ArrayList<>();
+    @XmlTransient
+    private String applianceId;
+    @XmlTransient
+    private RunningTimeMonitor runningTimeMonitor;
 
 
     @Override
     public void setApplianceId(String applianceId) {
+        this.applianceId = applianceId;
         this.logger.setApplianceId(applianceId);
+    }
+
+    public void setRunningTimeMonitor(RunningTimeMonitor runningTimeMonitor) {
+        this.runningTimeMonitor = runningTimeMonitor;
     }
 
     public List<Control> getControls() {
@@ -92,14 +101,14 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
                 public void run() {
                     boolean applianceOn = isApplianceOn();
                     logger.debug("on=" + on + " applianceOn=" + applianceOn);
-                    if(!on && applianceOn) {
+                    if(applianceOn && !on) {
                         int averagePower = meter.getAveragePower();
                         if(lastAveragePower != null && averagePower > powerThreshold && lastAveragePower > powerThreshold) {
                             logger.debug("Starting current detected: averagePower=" + averagePower + " lastAveragePower=" + lastAveragePower);
                             logger.debug("Switching appliance off.");
                             applianceOn(false);
-                            for(StartingCurrentSwitchListener listerner : startingCurrentSwitchListeners) {
-                                listerner.startingCurrentDetected();
+                            for(StartingCurrentSwitchListener listener : startingCurrentSwitchListeners) {
+                                listener.startingCurrentDetected();
                             }
                         }
                         lastAveragePower = averagePower;
@@ -116,5 +125,16 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
 
     public void addStartingCurrentSwitchListener(StartingCurrentSwitchListener listener) {
         this.startingCurrentSwitchListeners.add(listener);
+    }
+
+    @Override
+    public void timeFrameChanged(String applianceId, TimeFrame oldTimeFrame, TimeFrame newTimeFrame) {
+        logger.debug("time frame changed: this.applianceId=" + this.applianceId);
+        if(applianceId.equals(this.applianceId) && newTimeFrame == null) {
+            for(StartingCurrentSwitchListener listener : startingCurrentSwitchListeners) {
+                logger.debug("Notifying " + listener.getClass().getSimpleName());
+                listener.timeFrameExpired();
+            }
+        }
     }
 }
