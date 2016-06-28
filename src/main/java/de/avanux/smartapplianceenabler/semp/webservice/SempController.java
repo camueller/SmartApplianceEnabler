@@ -27,6 +27,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import de.avanux.smartapplianceenabler.log.ApplianceLogger;
+import org.joda.time.DateTime;
 import org.joda.time.Instant;
 import org.joda.time.Interval;
 import org.slf4j.Logger;
@@ -349,12 +350,19 @@ public class SempController implements TimeFrameChangedListener {
         sempTimeFrames.add(createSempTimeFrame(applianceLogger, appliance.getId(), currentTimeFrame, remainingMinRunningTime, remainingMaxRunningTime, now));
     }
     
-    private de.avanux.smartapplianceenabler.semp.webservice.Timeframe createSempTimeFrame(ApplianceLogger applianceLogger, String deviceId, TimeFrame timeFrame, long minRunningTime, long maxRunningTime, Instant now) {
+    protected de.avanux.smartapplianceenabler.semp.webservice.Timeframe createSempTimeFrame(ApplianceLogger applianceLogger, String deviceId, TimeFrame timeFrame, long minRunningTime, long maxRunningTime, Instant now) {
         Long earliestStart = 0l;
-        if(timeFrame.getInterval(now).getStart().isAfter(now)) {
-            earliestStart = Double.valueOf(new Interval(now, timeFrame.getInterval(now).getStart()).toDurationMillis() / 1000).longValue();
+        Interval interval = timeFrame.getInterval(now);
+        DateTime start = interval.getStart();
+        DateTime end = interval.getEnd();
+        if(start.isAfter(now)) {
+            earliestStart = Double.valueOf(new Interval(now, start).toDurationMillis() / 1000).longValue();
         }
-        Long latestEnd = Double.valueOf(new Interval(now, timeFrame.getInterval(now).getEnd()).toDurationMillis() / 1000).longValue();
+        Instant nowBeforeEnd = new Instant(now);
+        if(now.isAfter(end)) {
+            nowBeforeEnd = now.minus(24 * 3600 * 1000);
+        }
+        Long latestEnd = Double.valueOf(new Interval(nowBeforeEnd, end).toDurationMillis() / 1000).longValue();
         return createSempTimeFrame(applianceLogger, deviceId, earliestStart, latestEnd, minRunningTime, maxRunningTime);
     }
     

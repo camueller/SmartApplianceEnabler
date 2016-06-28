@@ -16,8 +16,8 @@ public class TimeFrameTest extends TestBase {
         assertDateTime(earliestStart, timeFrame.getInterval(toInstant(19, 30, 0)).getStart());
         assertDateTime(latestEnd, timeFrame.getInterval(toInstant(19, 30, 0)).getEnd());
 
-        assertDateTime(earliestStart, timeFrame.getInterval(toInstantTomorrow(0, 30, 0)).getStart());
-        assertDateTime(latestEnd, timeFrame.getInterval(toInstantTomorrow(0, 30, 0)).getEnd());
+        assertDateTime(earliestStart, timeFrame.getInterval(toInstant(0, 30, 0)).getStart());
+        assertDateTime(latestEnd, timeFrame.getInterval(toInstant(0, 30, 0)).getEnd());
     }
 
     private void assertDateTime(DateTime dt1, DateTime dt2) {
