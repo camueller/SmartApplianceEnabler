@@ -17,36 +17,22 @@
  */
 package de.avanux.smartapplianceenabler.semp.webservice;
 
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import de.avanux.smartapplianceenabler.appliance.*;
+import de.avanux.smartapplianceenabler.log.ApplianceLogger;
+import org.joda.time.DateTime;
+import org.joda.time.Interval;
+import org.joda.time.LocalDateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.*;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-
-import de.avanux.smartapplianceenabler.log.ApplianceLogger;
-import org.joda.time.DateTime;
-import org.joda.time.Instant;
-import org.joda.time.Interval;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-
-import de.avanux.smartapplianceenabler.appliance.Appliance;
-import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
-import de.avanux.smartapplianceenabler.appliance.Control;
-import de.avanux.smartapplianceenabler.appliance.FileHandler;
-import de.avanux.smartapplianceenabler.appliance.Meter;
-import de.avanux.smartapplianceenabler.appliance.RunningTimeMonitor;
-import de.avanux.smartapplianceenabler.appliance.TimeFrame;
-import de.avanux.smartapplianceenabler.appliance.TimeFrameChangedListener;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @RestController
 public class SempController implements TimeFrameChangedListener {
@@ -72,10 +58,10 @@ public class SempController implements TimeFrameChangedListener {
     @ResponseBody
     public String device2EM() {
         logger.debug("Device info/status/planning requested.");
-        return marshall(createDevice2EM(new Instant()));
+        return marshall(createDevice2EM(new LocalDateTime()));
     }
 
-    protected Device2EM createDevice2EM(Instant now) {
+    protected Device2EM createDevice2EM(LocalDateTime now) {
         List<DeviceStatus> deviceStatuses = new ArrayList<DeviceStatus>();
         List<PlanningRequest> planningRequests = new ArrayList<PlanningRequest>();
         List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
@@ -164,7 +150,7 @@ public class SempController implements TimeFrameChangedListener {
     @RequestMapping(value=BASE_URL + "/PlanningRequest", method=RequestMethod.GET, produces="application/xml")
     @ResponseBody
     public String planningRequest(@RequestParam(value="DeviceId", required = false) String deviceId) {
-        Instant now = new Instant();
+        LocalDateTime now = new LocalDateTime();
         List<PlanningRequest> planningRequests = new ArrayList<PlanningRequest>();
         if(deviceId != null) {
             ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, deviceId);
@@ -309,7 +295,7 @@ public class SempController implements TimeFrameChangedListener {
         return null;
     }
 
-    private PlanningRequest createPlanningRequest(ApplianceLogger applianceLogger, Instant now, Appliance appliance) {
+    private PlanningRequest createPlanningRequest(ApplianceLogger applianceLogger, LocalDateTime now, Appliance appliance) {
         PlanningRequest planningRequest = null;
         RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
         if(runningTimeMonitor != null) {
@@ -346,23 +332,23 @@ public class SempController implements TimeFrameChangedListener {
     }
 
     private void addSempTimeFrame(ApplianceLogger applianceLogger, Appliance appliance, List<de.avanux.smartapplianceenabler.semp.webservice.Timeframe> sempTimeFrames,
-                                  TimeFrame currentTimeFrame, long remainingMinRunningTime, long remainingMaxRunningTime, Instant now) {
+                                  TimeFrame currentTimeFrame, long remainingMinRunningTime, long remainingMaxRunningTime, LocalDateTime now) {
         sempTimeFrames.add(createSempTimeFrame(applianceLogger, appliance.getId(), currentTimeFrame, remainingMinRunningTime, remainingMaxRunningTime, now));
     }
     
-    protected de.avanux.smartapplianceenabler.semp.webservice.Timeframe createSempTimeFrame(ApplianceLogger applianceLogger, String deviceId, TimeFrame timeFrame, long minRunningTime, long maxRunningTime, Instant now) {
+    protected de.avanux.smartapplianceenabler.semp.webservice.Timeframe createSempTimeFrame(ApplianceLogger applianceLogger, String deviceId, TimeFrame timeFrame, long minRunningTime, long maxRunningTime, LocalDateTime now) {
         Long earliestStart = 0l;
         Interval interval = timeFrame.getInterval(now);
         DateTime start = interval.getStart();
         DateTime end = interval.getEnd();
-        if(start.isAfter(now)) {
-            earliestStart = Double.valueOf(new Interval(now, start).toDurationMillis() / 1000).longValue();
+        if(start.isAfter(now.toDateTime())) {
+            earliestStart = Double.valueOf(new Interval(now.toDateTime(), start).toDurationMillis() / 1000).longValue();
         }
-        Instant nowBeforeEnd = new Instant(now);
-        if(now.isAfter(end)) {
-            nowBeforeEnd = now.minus(24 * 3600 * 1000);
+        LocalDateTime nowBeforeEnd = new LocalDateTime(now);
+        if(now.toDateTime().isAfter(end)) {
+            nowBeforeEnd = now.minusHours(24);
         }
-        Long latestEnd = Double.valueOf(new Interval(nowBeforeEnd, end).toDurationMillis() / 1000).longValue();
+        Long latestEnd = Double.valueOf(new Interval(nowBeforeEnd.toDateTime(), end).toDurationMillis() / 1000).longValue();
         return createSempTimeFrame(applianceLogger, deviceId, earliestStart, latestEnd, minRunningTime, maxRunningTime);
     }
     

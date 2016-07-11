@@ -17,10 +17,7 @@
  */
 package de.avanux.smartapplianceenabler.appliance;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeFieldType;
-import org.joda.time.Instant;
-import org.joda.time.LocalTime;
+import org.joda.time.*;
 import org.joda.time.chrono.ISOChronology;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -47,9 +44,7 @@ public class TimeOfDay {
         this.second = second;
     }
 
-    public TimeOfDay(Instant instant) {
-        LocalTime localtime = new LocalTime(instant, ISOChronology.getInstance());
-        DateTime dateTime = localtime.toDateTimeToday();
+    public TimeOfDay(LocalDateTime dateTime) {
         hour = dateTime.get(DateTimeFieldType.hourOfDay());
         minute = dateTime.get(DateTimeFieldType.minuteOfHour());
         second = dateTime.get(DateTimeFieldType.secondOfMinute());

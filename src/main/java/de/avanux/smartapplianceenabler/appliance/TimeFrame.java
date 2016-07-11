@@ -35,9 +35,9 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TimeFrame {
     @XmlAttribute
-    private long minRunningTime;
+    private int minRunningTime;
     @XmlAttribute
-    private long maxRunningTime;
+    private int maxRunningTime;
     @XmlElement(name = "EarliestStart")
     private TimeOfDay earliestStart;
     @XmlElement(name = "LatestEnd")
@@ -50,11 +50,11 @@ public class TimeFrame {
     public TimeFrame() {
     }
 
-    public TimeFrame(long minRunningTime, long maxRunningTime, TimeOfDay earliestStart, TimeOfDay latestEnd) {
+    public TimeFrame(int minRunningTime, int maxRunningTime, TimeOfDay earliestStart, TimeOfDay latestEnd) {
         this(minRunningTime, maxRunningTime, earliestStart, latestEnd, null);
     }
 
-    public TimeFrame(long minRunningTime, long maxRunningTime, TimeOfDay earliestStart, TimeOfDay latestEnd, List<Integer> daysOfWeekValues) {
+    public TimeFrame(int minRunningTime, int maxRunningTime, TimeOfDay earliestStart, TimeOfDay latestEnd, List<Integer> daysOfWeekValues) {
         this.minRunningTime = minRunningTime;
         this.maxRunningTime = maxRunningTime;
         this.earliestStart = earliestStart;
@@ -67,11 +67,11 @@ public class TimeFrame {
         }
     }
 
-    public long getMinRunningTime() {
+    public int getMinRunningTime() {
         return minRunningTime;
     }
 
-    public long getMaxRunningTime() {
+    public int getMaxRunningTime() {
         return maxRunningTime;
     }
 
@@ -87,27 +87,42 @@ public class TimeFrame {
     }
 
     public Interval getInterval() {
-        return getInterval(new Instant());
+        return getInterval(new LocalDateTime());
     }
 
-    public Interval getInterval(ReadableInstant instant) {
+    public Interval getInterval(LocalDateTime localDateTime) {
         if(earliestStart != null && latestEnd != null) {
-            DateTime earliestStartDateTime = new DateTime(instant, ISOChronology.getInstance()).toLocalDate().toLocalDateTime(earliestStart.toLocalTime()).toDateTime();
-            DateTime latestEndDateTime = new DateTime(instant, ISOChronology.getInstance()).toLocalDate().toLocalDateTime(latestEnd.toLocalTime()).toDateTime();
-            if(isOverMidnight(earliestStartDateTime.toInstant(), latestEndDateTime.toInstant())) {
-                latestEndDateTime = latestEndDateTime.plus(24 * 3600 * 1000);
+            LocalDateTime earliestStartDateTime = new LocalDate(localDateTime).toLocalDateTime(earliestStart.toLocalTime());
+            LocalDateTime latestEndDateTime = new LocalDate(localDateTime).toLocalDateTime(latestEnd.toLocalTime());
+            if(isOverMidnight(earliestStartDateTime, latestEndDateTime)) {
+                if(localDateTime.toLocalTime().isAfter(earliestStart.toLocalTime())) {
+                    // before midnight
+                    latestEndDateTime = latestEndDateTime.plusHours(24);
+                }
+                else if(localDateTime.toLocalTime().isBefore(latestEnd.toLocalTime())){
+                    // after midnight, before latestEnd
+                    earliestStartDateTime = earliestStartDateTime.minusHours(24);
+                }
+                else {
+                    // after midnight, after latestEnd
+                    latestEndDateTime = latestEndDateTime.plusHours(24);
+                }
             }
-            return new Interval(earliestStartDateTime, latestEndDateTime).withChronology(ISOChronology.getInstance());
+            return new Interval(earliestStartDateTime.toDateTime(), latestEndDateTime.toDateTime()).withChronology(ISOChronology.getInstance());
         }
         return null;
     }
 
     public boolean isOverMidnight() {
-        return isOverMidnight(new Instant(earliestStart.toLocalTime().toDateTimeToday()), new Instant(latestEnd.toLocalTime().toDateTimeToday()));
+        return isOverMidnight(toDateTimeToday(earliestStart), toDateTimeToday(latestEnd));
     }
 
-    public boolean isOverMidnight(Instant earliestStartDateTime, Instant latestEndDateTime) {
+    public boolean isOverMidnight(LocalDateTime earliestStartDateTime, LocalDateTime latestEndDateTime) {
         return latestEndDateTime.isBefore(earliestStartDateTime);
+    }
+
+    private LocalDateTime toDateTimeToday(TimeOfDay timeOfDay) {
+        return new LocalDate().toLocalDateTime(timeOfDay.toLocalTime());
     }
 
     @Override

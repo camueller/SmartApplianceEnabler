@@ -37,11 +37,11 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
     private List<TimeFrame> timeFrames;
     private Set<TimeFrameChangedListener> timeFrameChangedListeners = new HashSet<>();
     private TimeFrame currentTimeFrame;
-    private ReadableInstant intervalBegin;
-    private ReadableInstant statusChangedAt;
-    private ReadableInstant lastUpdate;
-    private Long remainingMinRunningTime;
-    private Long remainingMaxRunningTime;
+    private LocalDateTime intervalBegin;
+    private LocalDateTime statusChangedAt;
+    private LocalDateTime lastUpdate;
+    private Integer remainingMinRunningTime;
+    private Integer remainingMaxRunningTime;
     private boolean running;
 
     @Override
@@ -70,21 +70,21 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
     }
 
     public void setRunning(boolean running) {
-        setRunning(running, new Instant());
+        setRunning(running, new LocalDateTime());
     }
 
-    protected void setRunning(boolean running, ReadableInstant statusChangedAt) {
+    protected void setRunning(boolean running, LocalDateTime statusChangedAt) {
         this.running = running;
         this.statusChangedAt = statusChangedAt;
     }
 
-    public long getRemainingMinRunningTimeOfCurrentTimeFrame() {
-        return getRemainingMinRunningTimeOfCurrentTimeFrame(new Instant());
+    public int getRemainingMinRunningTimeOfCurrentTimeFrame() {
+        return getRemainingMinRunningTimeOfCurrentTimeFrame(new LocalDateTime());
     }
 
-    protected long getRemainingMinRunningTimeOfCurrentTimeFrame(ReadableInstant now) {
+    protected int getRemainingMinRunningTimeOfCurrentTimeFrame(LocalDateTime now) {
         update(now);
-        long remainingRunningTime = 0;
+        int remainingRunningTime = 0;
         if(remainingMinRunningTime != null) {
             remainingRunningTime = remainingMinRunningTime;
         }
@@ -92,13 +92,13 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         return remainingRunningTime;
     }
 
-    public long getRemainingMaxRunningTimeOfCurrentTimeFrame() {
-        return getRemainingMaxRunningTimeOfCurrentTimeFrame(new Instant());
+    public int getRemainingMaxRunningTimeOfCurrentTimeFrame() {
+        return getRemainingMaxRunningTimeOfCurrentTimeFrame(new LocalDateTime());
     }
 
-    protected long getRemainingMaxRunningTimeOfCurrentTimeFrame(ReadableInstant now) {
+    protected int getRemainingMaxRunningTimeOfCurrentTimeFrame(LocalDateTime now) {
         update(now);
-        long remainingRunningTime = 0;
+        int remainingRunningTime = 0;
         if(remainingMaxRunningTime != null) {
             remainingRunningTime = remainingMaxRunningTime;
         }
@@ -109,13 +109,13 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
     /**
      * Updates remainingMinRunningTime for the given instant. The value may become negative!
      * Subsequent calls to this method within one second are omitted.
-     * @param now
+     * @param dateTime
      */
-    protected void update(ReadableInstant now) {
+    protected void update(LocalDateTime dateTime) {
         // update not more than once per second in order to avoid spamming the log
-        if(lastUpdate == null || now.isBefore(lastUpdate) || new Interval(lastUpdate, now).toDurationMillis() > 1000) {
+        if(lastUpdate == null || dateTime.isBefore(lastUpdate) || new Interval(lastUpdate.toDateTime(), dateTime.toDateTime()).toDurationMillis() > 1000) {
 
-            findAndSetCurrentTimeFrame(now);
+            findAndSetCurrentTimeFrame(dateTime);
             logger.debug("currentTimeFrame=" + currentTimeFrame + " statusChangedAt=" + statusChangedAt + " intervalBegin=" + intervalBegin + " running=" + running);
 
             Interval interval = null;
@@ -123,48 +123,48 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
                 // running
                 if(intervalBegin == null) {
                     // running was set to true after interval begin
-                    interval = new Interval(statusChangedAt, now);
+                    interval = new Interval(statusChangedAt.toDateTime(), dateTime.toDateTime());
                 }
                 else {
                     // no status change in interval
-                    interval = new Interval(intervalBegin, now);
+                    interval = new Interval(intervalBegin.toDateTime(), dateTime.toDateTime());
                 }
-                intervalBegin = now;
+                intervalBegin = dateTime;
             }
             else if (intervalBegin != null && statusChangedAt != null) {
                 // running was set to false after interval begin
-                interval = new Interval(intervalBegin, statusChangedAt);
+                interval = new Interval(intervalBegin.toDateTime(), statusChangedAt.toDateTime());
                 intervalBegin = null;
                 statusChangedAt = null;
             }
             if(interval != null) {
-                long intervalSeconds = Double.valueOf(interval.toDuration().getMillis() / 1000).longValue();
+                int intervalSeconds = Double.valueOf(interval.toDuration().getMillis() / 1000).intValue();
                 remainingMinRunningTime = remainingMinRunningTime - intervalSeconds;
                 remainingMaxRunningTime = remainingMaxRunningTime - intervalSeconds;
             }
-            lastUpdate = now;
+            lastUpdate = dateTime;
         }
     }
 
     public TimeFrame findAndSetCurrentTimeFrame() {
-        return findAndSetCurrentTimeFrame(new Instant());
+        return findAndSetCurrentTimeFrame(new LocalDateTime());
     }
 
     /**
-     * Set the timeframe whose interval contains the given instant.
-     * If the timeframe has associated days of week the day of week of the given instant has to match as well.
-     * @param instant
+     * Set the timeframe whose interval contains the given dateTime.
+     * If the timeframe has associated days of week the day of week of the given dateTime has to match as well.
+     * @param dateTime
      * @return the timeframe set or null, if there is no matching timeframe
      */
-    public TimeFrame findAndSetCurrentTimeFrame(ReadableInstant instant) {
+    public TimeFrame findAndSetCurrentTimeFrame(LocalDateTime dateTime) {
         TimeFrame timeFrameToBeSet = null;
         if(timeFrames != null) {
-            int dowOfInstant = instant.get(DateTimeFieldType.dayOfWeek());
-            LocalTime instantTime = new LocalTime(instant, DateTimeZone.getDefault());
+            int dowOfInstant = dateTime.get(DateTimeFieldType.dayOfWeek());
+            LocalTime instantTime = new LocalTime(dateTime, DateTimeZone.getDefault());
             for(TimeFrame timeFrame : timeFrames) {
                 List<Integer> dowValues = timeFrame.getDaysOfWeekValues();
-                LocalTime startTimeToday = new LocalTime(timeFrame.getInterval(instant).getStart());
-                LocalTime endTimeToday = new LocalTime(timeFrame.getInterval(instant).getEnd());
+                LocalTime startTimeToday = new LocalTime(timeFrame.getInterval(dateTime).getStart());
+                LocalTime endTimeToday = new LocalTime(timeFrame.getInterval(dateTime).getEnd());
                 if((dowValues == null || dowValues.contains(dowOfInstant))
                         && (timeFrame.isOverMidnight()
                             ? (instantTime.isAfter(startTimeToday)
@@ -187,8 +187,8 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         }
         else if(timeFrameToBeSet == null && currentTimeFrame != null) {
             logger.debug("Timeframe expired: " + currentTimeFrame);
-            remainingMinRunningTime = 0l;
-            remainingMaxRunningTime = 0l;
+            remainingMinRunningTime = 0;
+            remainingMaxRunningTime = 0;
             intervalBegin = null;
             timeFrameChanged = true;
         }
@@ -207,19 +207,19 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
     }
 
     /**
-     * Returns timeframes starting after the given instant.
-     * @param instant
+     * Returns timeframes starting after the given dateTime.
+     * @param dateTime
      * @return a (possibly empty) list of timeframes
      */
-    public List<TimeFrame> findFutureTimeFrames(Instant instant) {
+    public List<TimeFrame> findFutureTimeFrames(LocalDateTime dateTime) {
         List<TimeFrame> futureTimeFrames = new ArrayList<TimeFrame>();
-        int dowOfInstant = instant.get(DateTimeFieldType.dayOfWeek());
+        int dowOfInstant = dateTime.get(DateTimeFieldType.dayOfWeek());
         if(timeFrames != null) {
-            LocalTime instantTime = new LocalTime(instant, DateTimeZone.getDefault());
+            LocalTime instantTime = new LocalTime(dateTime, DateTimeZone.getDefault());
             for(TimeFrame timeFrame : timeFrames) {
                 List<Integer> dowValues = timeFrame.getDaysOfWeekValues();
-                LocalTime startTimeToday = new LocalTime(timeFrame.getInterval(instant).getStart());
-                LocalTime endTimeToday = new LocalTime(timeFrame.getInterval(instant).getEnd());
+                LocalTime startTimeToday = new LocalTime(timeFrame.getInterval(dateTime).getStart());
+                LocalTime endTimeToday = new LocalTime(timeFrame.getInterval(dateTime).getEnd());
                 if((dowValues == null || dowValues.contains(dowOfInstant))
                         && (timeFrame.isOverMidnight()
                         ? (!instantTime.isAfter(startTimeToday) && startTimeToday.isAfter(instantTime)) && endTimeToday.isBefore(instantTime)

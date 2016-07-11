@@ -1,36 +1,30 @@
 package de.avanux.smartapplianceenabler;
 
 import de.avanux.smartapplianceenabler.appliance.TimeOfDay;
-import org.joda.time.DateTime;
-import org.joda.time.Instant;
-import org.joda.time.ReadableInstant;
+import org.joda.time.*;
 
 abstract public class TestBase {
 
-    protected DateTime toDateTimeToday(Integer hour, Integer minute, Integer second) {
-        return new TimeOfDay(hour, minute, second).toLocalTime().toDateTimeToday();
+    protected LocalDateTime toYesterday(Integer hour, Integer minute, Integer second) {
+        return toToday(hour, minute, second).minusHours(24);
     }
 
-    protected DateTime toDateTimeTomorrow(Integer hour, Integer minute, Integer second) {
-        return new TimeOfDay(hour, minute, second).toLocalTime().toDateTimeToday().plus(24 * 3600 * 1000);
+    protected LocalDateTime toToday(Integer hour, Integer minute, Integer second) {
+        return new LocalDate().toLocalDateTime(new TimeOfDay(hour, minute, second).toLocalTime()); //.withTime(hour, minute, second, 0);
     }
 
-    protected Instant toInstant(Integer hour, Integer minute, Integer second) {
-        return toDateTimeToday(hour, minute, second).toInstant();
+    protected LocalDateTime toTomorrow(Integer hour, Integer minute, Integer second) {
+        return toToday(hour, minute, second).plusHours(24);
     }
 
-    protected Instant toInstantYesterday(Integer hour, Integer minute, Integer second) {
-        return new TimeOfDay(hour, minute, second).toLocalTime().toDateTimeToday().toInstant().minus(24 * 3600 * 1000);
+    protected LocalDateTime toDayAfterTomorrow(Integer hour, Integer minute, Integer second) {
+        return toToday(hour, minute, second).plusHours(48);
     }
 
-    protected Instant toInstantTomorrow(Integer hour, Integer minute, Integer second) {
-        return new TimeOfDay(hour, minute, second).toLocalTime().toDateTimeToday().toInstant().plus(24 * 3600 * 1000);
-    }
-
-    protected ReadableInstant toInstant(int dayOfWeek, Integer hour, Integer minute, Integer second) {
-        DateTime instant = new DateTime(2016, 6, 13, hour, minute, second);
-        instant = instant.plusHours((dayOfWeek - 1) * 24);
-        return instant;
+    protected LocalDateTime toDayOfWeek(int dayOfWeek, Integer hour, Integer minute, Integer second) {
+        LocalDateTime dateTime = new LocalDateTime(2016, 6, 13, hour, minute, second);
+        dateTime = dateTime.plusDays(dayOfWeek - 1);
+        return dateTime;
     }
 
 }
