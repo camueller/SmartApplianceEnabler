@@ -17,28 +17,23 @@
  */
 package de.avanux.smartapplianceenabler.modbus;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlTransient;
-
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import de.avanux.smartapplianceenabler.appliance.Meter;
+import de.avanux.smartapplianceenabler.appliance.PollElectricityMeter;
+import de.avanux.smartapplianceenabler.appliance.PollPowerExecutor;
 import de.avanux.smartapplianceenabler.log.ApplianceLogger;
 import org.slf4j.LoggerFactory;
 
-import de.avanux.smartapplianceenabler.appliance.Meter;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlTransient;
+import java.util.Timer;
 
 /**
  * Represents a ModBus electricity meter device accessible by ModBus TCP.
  * The device is polled according to poll interval in order to provide min/avg/max values of the measurement interval.
  * The TCP connection to the device remains established across the polls.
  */
-public class ModbusElectricityMeter extends ModbusSlave implements Meter, ApplianceIdConsumer {
+public class ModbusElectricityMeter extends ModbusSlave implements Meter, ApplianceIdConsumer, PollPowerExecutor {
 
     @XmlTransient
     private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(ModbusElectricityMeter.class));
@@ -49,7 +44,7 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     @XmlAttribute
     private Integer measurementInterval; // seconds
     @XmlTransient
-    private Map<Long,Float> timestampWithPower = new HashMap<Long,Float>();
+    private PollElectricityMeter pollElectricityMeter = new PollElectricityMeter();
 
     @Override
     public void setApplianceId(String applianceId) {
@@ -59,42 +54,23 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
 
     @Override
     public int getAveragePower() {
-        double sum = 0.0f;
-        if(!timestampWithPower.isEmpty()) {
-          for (Float value : timestampWithPower.values()) {
-              sum += value;
-          }
-          return Double.valueOf(sum / timestampWithPower.size()).intValue();
-        }
-        return 0;
+        int power = pollElectricityMeter.getAveragePower();
+        logger.debug("average power = " + power + "W");
+        return power;
     }
 
     @Override
     public int getMinPower() {
-        float minValue = Float.MAX_VALUE;
-        if(!timestampWithPower.isEmpty()) {
-            for (Float value : timestampWithPower.values()) {
-                if(value < minValue) {
-                    minValue = value;
-                }
-            }
-            return Float.valueOf(minValue).intValue();
-        }
-        return 0;
+        int power = pollElectricityMeter.getMinPower();
+        logger.debug("min power = " + power + "W");
+        return power;
     }
 
     @Override
     public int getMaxPower() {
-        float maxValue = Float.MIN_VALUE;
-        if(!timestampWithPower.isEmpty()) {
-            for (Float value : timestampWithPower.values()) {
-                if(value > maxValue) {
-                    maxValue = value;
-                }
-            }
-            return Float.valueOf(maxValue).intValue();
-        }
-        return 0;
+        int power =  pollElectricityMeter.getMaxPower();
+        logger.debug("max power = " + power + "W");
+        return power;
     }
 
     @Override
@@ -107,17 +83,12 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
         return measurementInterval;
     }
 
-    @Override
     public void start(Timer timer) {
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                addValue(getPower());
-            }
-        }, 0, pollInterval * 1000);
+        pollElectricityMeter.start(timer, pollInterval, measurementInterval, this);
     }
-    
-    private float getPower() {
+
+    @Override
+    public float getPower() {
         try {
             ReadInputRegisterExecutor executor = new ReadInputRegisterExecutor(registerAddress);
             executor.setApplianceId(getApplianceId());
@@ -131,22 +102,5 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
             logger.error("Error reading input register " + registerAddress, e);
         }
         return 0;
-    }
-
-    private void addValue(float power) {
-        long currentTimestamp = System.currentTimeMillis();
-        // remove expired values
-        Set<Long> expiredTimestamps = new HashSet<Long>();
-        for(Long cachedTimeStamp : timestampWithPower.keySet()) {
-            if(cachedTimeStamp < currentTimestamp - measurementInterval * 1000) {
-                expiredTimestamps.add(cachedTimeStamp);
-            }
-        }
-        for(Long expiredTimestamp : expiredTimestamps) {
-            timestampWithPower.remove(expiredTimestamp);
-        }
-        // add new value
-        timestampWithPower.put(currentTimestamp, power);
-        logger.debug("timestamps added/removed/total: 1/" + expiredTimestamps.size() + "/" + timestampWithPower.size());
     }
 }

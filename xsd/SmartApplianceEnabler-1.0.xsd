@@ -50,6 +50,7 @@
 				<xs:element name="S0ElectricityMeter" type="S0ElectricityMeterType" minOccurs="0" maxOccurs="1" />
 				<xs:element name="S0ElectricityMeterNetworked" type="S0ElectricityMeterNetworkedType" minOccurs="0" maxOccurs="1" />
 				<xs:element name="ModbusElectricityMeter" type="ModbusElectricityMeterType" minOccurs="0" maxOccurs="1" />
+				<xs:element name="HttpElectricityMeter" type="HttpElectricityMeterType" minOccurs="0" maxOccurs="1" />
 			</xs:choice>
 			<xs:element name="Timeframe" type="TimeFrameType" minOccurs="0" maxOccurs="unbounded" />
 		</xs:sequence>
@@ -110,6 +111,13 @@
 		<xs:attribute name="registerAddress" type="xs:string" use="required" />
 		<xs:attribute name="pollInterval" type="xs:int" use="optional"/>
 		<xs:attribute name="measurementInterval" type="xs:int" use="required"/>
+	</xs:complexType>
+
+	<xs:complexType name="HttpElectricityMeterType">
+		<xs:attribute name="url" type="xs:string" use="required" />
+		<xs:attribute name="factorToWatt" type="xs:float" use="optional" />
+		<xs:attribute name="pollInterval" type="xs:int" use="optional"/>
+		<xs:attribute name="measurementInterval" type="xs:int" use="optional"/>
 	</xs:complexType>
 
 	<xs:complexType name="TimeFrameType">

@@ -22,7 +22,7 @@ import java.util.List;
  *
  * IMPORTANT: The URLs in Appliance.xml have to be escaped (e.g. use "&amp;" instead of "&")
  */
-public class HttpSwitch implements Control, ApplianceIdConsumer {
+public class HttpSwitch extends HttpTransactionExecutor implements Control, ApplianceIdConsumer {
     @XmlTransient
     private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(HttpSwitch.class));
     @XmlAttribute
@@ -43,14 +43,15 @@ public class HttpSwitch implements Control, ApplianceIdConsumer {
         else {
             url = offUrl;
         }
-        boolean switchSuccessful = sendHttpRequest(url);
-        if(switchSuccessful) {
+        HttpResponse response = sendHttpRequest(url);
+        if(response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
             on = switchOn;
             for(ControlStateChangedListener listener : controlStateChangedListeners) {
                 listener.controlStateChanged(switchOn);
             }
+            return true;
         }
-        return switchSuccessful;
+        return false;
     }
 
     @Override
@@ -66,22 +67,5 @@ public class HttpSwitch implements Control, ApplianceIdConsumer {
     @Override
     public boolean isOn() {
         return on;
-    }
-
-    private boolean sendHttpRequest(String url) {
-        CloseableHttpClient client = HttpClientBuilder.create().build();
-        logger.debug("Sending request " + url);
-        try {
-            HttpRequestBase request = new HttpGet(url);
-            HttpResponse response = client.execute(request);
-            int responseCode = response.getStatusLine().getStatusCode();
-            logger.debug("Response code is " + responseCode);
-            client.close();
-            return responseCode == HttpStatus.SC_OK;
-        }
-        catch(IOException e) {
-            logger.error("Error executing HTTP request.", e);
-            return false;
-        }
     }
 }

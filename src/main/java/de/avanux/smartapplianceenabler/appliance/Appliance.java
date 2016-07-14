@@ -36,12 +36,13 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(Appliance.class));
     @XmlAttribute
     private String id;
-    @XmlElement(name = "S0ElectricityMeter")
-    private S0ElectricityMeter s0ElectricityMeter;
-    @XmlElement(name = "S0ElectricityMeterNetworked")
-    private S0ElectricityMeterNetworked s0ElectricityMeterNetworked;
-    @XmlElement(name = "ModbusElectricityMeter")
-    private ModbusElectricityMeter modbusElectricityMeter;
+    @XmlElements({
+            @XmlElement(name = "S0ElectricityMeter", type = S0ElectricityMeter.class),
+            @XmlElement(name = "S0ElectricityMeterNetworked", type = S0ElectricityMeterNetworked.class),
+            @XmlElement(name = "ModbusElectricityMeter", type = ModbusElectricityMeter.class),
+            @XmlElement(name = "HttpElectricityMeter", type = HttpElectricityMeter.class),
+    })
+    private Meter meter;
     // Mapping interfaces in JAXB:
     // https://jaxb.java.net/guide/Mapping_interfaces.html
     // http://stackoverflow.com/questions/25374375/jaxb-wont-unmarshal-my-previously-marshalled-interface-impls
@@ -61,20 +62,8 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         return id;
     }
 
-    public S0ElectricityMeter getS0ElectricityMeter() {
-        return s0ElectricityMeter;
-    }
-
-    public S0ElectricityMeterNetworked getS0ElectricityMeterNetworked() {
-        return s0ElectricityMeterNetworked;
-    }
-
-    public ModbusElectricityMeter getModbusElectricityMeter() {
-        return modbusElectricityMeter;
-    }
-
     public Meter getMeter() {
-        return new MeterFactory().getMeter(this);
+        return this.meter;
     }
     
     public List<Control> getControls() {
@@ -112,7 +101,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                 if(control instanceof ApplianceIdConsumer) {
                     ((ApplianceIdConsumer) control).setApplianceId(id);
                 }
-                if(control instanceof  StartingCurrentSwitch) {
+                if(control instanceof StartingCurrentSwitch) {
                     for(Control wrappedControl : ((StartingCurrentSwitch) control).getControls()) {
                         ((ApplianceIdConsumer) wrappedControl).setApplianceId(id);
                         wrappedControl.addControlStateChangedListener(this);
@@ -136,10 +125,10 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             }
         }
 
-        if(s0ElectricityMeter != null) {
+        if(meter != null && meter instanceof S0ElectricityMeter) {
             if(controls != null) {
                 Control control = controls.get(0);
-                s0ElectricityMeter.setControl(control);
+                ((S0ElectricityMeter) meter).setControl(control);
                 logger.debug(S0ElectricityMeter.class.getSimpleName() + " uses " + control.getClass().getSimpleName());
             }
         }
@@ -155,13 +144,17 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             gpioControllable.start();
         }
 
-        S0ElectricityMeterNetworked s0ElectricityMeterNetworked = getS0ElectricityMeterNetworked();
-        if(s0ElectricityMeterNetworked != null) {
+        if(meter != null && meter instanceof S0ElectricityMeterNetworked) {
+            S0ElectricityMeterNetworked s0ElectricityMeterNetworked = (S0ElectricityMeterNetworked) meter;
             logger.info("Starting " + S0ElectricityMeterNetworked.class.getSimpleName());
             String pulseReceiverId = s0ElectricityMeterNetworked.getIdref();
             PulseReceiver pulseReceiver = pulseReceiverIdWithPulseReceiver.get(pulseReceiverId);
             s0ElectricityMeterNetworked.setPulseReceiver(pulseReceiver);
             s0ElectricityMeterNetworked.start();
+        }
+
+        if(meter != null && meter instanceof HttpElectricityMeter) {
+            ((HttpElectricityMeter) meter).start(timer);
         }
 
         for(ModbusSlave modbusSlave : getModbusSlaves()) {
@@ -170,7 +163,9 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             String modbusId = modbusSlave.getIdref();
             ModbusTcp modbusTcp = modbusIdWithModbusTcp.get(modbusId);
             modbusSlave.setModbusTcp(modbusTcp);
-            modbusSlave.start(timer);
+        }
+        if(meter != null && meter instanceof ModbusElectricityMeter) {
+            ((ModbusElectricityMeter) meter).start(timer);
         }
 
         if(controls != null) {
@@ -186,8 +181,8 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
 
     private Set<GpioControllable> getGpioControllables() {
         Set<GpioControllable> controllables = new HashSet<GpioControllable>();
-        if(s0ElectricityMeter != null) {
-            controllables.add(s0ElectricityMeter);
+        if(meter != null && meter instanceof S0ElectricityMeter) {
+            controllables.add((S0ElectricityMeter) meter);
         }
         if(controls != null) {
             for(Control control : controls) {
@@ -208,8 +203,8 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
 
     private Set<ModbusSlave> getModbusSlaves() {
         Set<ModbusSlave> slaves = new HashSet<ModbusSlave>();
-        if(modbusElectricityMeter != null) {
-            slaves.add(modbusElectricityMeter);
+        if(meter != null && meter instanceof  ModbusElectricityMeter) {
+            slaves.add((ModbusElectricityMeter) meter);
         }
         if(controls != null) {
             for(Control control : controls) {

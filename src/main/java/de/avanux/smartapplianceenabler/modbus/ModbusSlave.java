@@ -91,11 +91,4 @@ abstract public class ModbusSlave implements ApplianceIdConsumer {
             logger.error("Cannot connect to modbus " + modbusTcp.toString());
         }
     }
-    
-    /**
-     * Overwrite this method in order to perform actions during appliance start.
-     * @param timer
-     */
-    public void start(Timer timer) {
-    }
 }
