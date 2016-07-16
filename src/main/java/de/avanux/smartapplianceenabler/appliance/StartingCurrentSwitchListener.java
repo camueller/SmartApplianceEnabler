@@ -7,5 +7,5 @@ public interface StartingCurrentSwitchListener {
 
     void startingCurrentDetected();
 
-    void timeFrameExpired();
+    void timeFrameExpired(boolean wasSwitchedOn);
 }

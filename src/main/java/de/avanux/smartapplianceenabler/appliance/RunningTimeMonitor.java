@@ -159,19 +159,8 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
     public TimeFrame findAndSetCurrentTimeFrame(LocalDateTime dateTime) {
         TimeFrame timeFrameToBeSet = null;
         if(timeFrames != null) {
-            int dowOfInstant = dateTime.get(DateTimeFieldType.dayOfWeek());
-            LocalTime instantTime = new LocalTime(dateTime, DateTimeZone.getDefault());
             for(TimeFrame timeFrame : timeFrames) {
-                List<Integer> dowValues = timeFrame.getDaysOfWeekValues();
-                LocalTime startTimeToday = new LocalTime(timeFrame.getInterval(dateTime).getStart());
-                LocalTime endTimeToday = new LocalTime(timeFrame.getInterval(dateTime).getEnd());
-                if((dowValues == null || dowValues.contains(dowOfInstant))
-                        && (timeFrame.isOverMidnight()
-                            ? (instantTime.isAfter(startTimeToday)
-                                ? endTimeToday.isBefore(instantTime)
-                                : endTimeToday.isAfter(instantTime))
-                            : startTimeToday.isBefore(instantTime) && endTimeToday.isAfter(instantTime)
-                )) {
+                if(timeFrame.contains(dateTime)) {
                     timeFrameToBeSet = timeFrame;
                     break;
                 }

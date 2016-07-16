@@ -121,6 +121,26 @@ public class TimeFrame {
         return latestEndDateTime.isBefore(earliestStartDateTime);
     }
 
+    public boolean contains(LocalDateTime dateTime) {
+        int today = dateTime.get(DateTimeFieldType.dayOfWeek());
+        LocalTime time = new LocalTime(dateTime, DateTimeZone.getDefault());
+        List<Integer> dowValues = getDaysOfWeekValues();
+        LocalTime startTimeToday = new LocalTime(getInterval(dateTime).getStart());
+        LocalTime endTimeToday = new LocalTime(getInterval(dateTime).getEnd());
+        if(isOverMidnight()) {
+             if(time.isAfter(startTimeToday)) {
+                 return endTimeToday.isBefore(time) && (dowValues == null || (dowValues != null && dowValues.contains(today)));
+             }
+            else {
+                 int yesterday = new LocalDateTime(dateTime).minusDays(1).get(DateTimeFieldType.dayOfWeek());
+                 return endTimeToday.isAfter(time) && (dowValues == null || (dowValues != null && dowValues.contains(yesterday)));
+             }
+        }
+        else {
+            return startTimeToday.isBefore(time) && endTimeToday.isAfter(time) && (dowValues == null || (dowValues != null && dowValues.contains(today)));
+        }
+    }
+
     private LocalDateTime toDateTimeToday(TimeOfDay timeOfDay) {
         return new LocalDate().toLocalDateTime(timeOfDay.toLocalTime());
     }

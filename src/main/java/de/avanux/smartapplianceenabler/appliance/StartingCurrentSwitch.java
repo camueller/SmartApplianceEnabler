@@ -37,6 +37,8 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Time
     @XmlTransient
     private boolean on;
     @XmlTransient
+    private boolean wasSwitchedOn;
+    @XmlTransient
     private List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
     @XmlTransient
     private List<StartingCurrentSwitchListener> startingCurrentSwitchListeners = new ArrayList<>();
@@ -66,6 +68,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Time
         on = switchOn;
         if(switchOn) {
             applianceOn(switchOn);
+            wasSwitchedOn = true;
         }
         // don't switch off appliance - otherwise it cannot be operated
         return on;
@@ -133,7 +136,8 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Time
         if(applianceId.equals(this.applianceId) && newTimeFrame == null) {
             for(StartingCurrentSwitchListener listener : startingCurrentSwitchListeners) {
                 logger.debug("Notifying " + listener.getClass().getSimpleName());
-                listener.timeFrameExpired();
+                listener.timeFrameExpired(wasSwitchedOn);
+                wasSwitchedOn = false;
             }
         }
     }

@@ -7,7 +7,37 @@ import org.joda.time.LocalDateTime;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Collections;
+
 public class TimeFrameTest extends TestBase {
+
+    @Test
+    public void contains() {
+        TimeFrame timeFrame = new TimeFrame(7200, 7200, new TimeOfDay(15, 0, 0), new TimeOfDay(18, 0, 0),
+                Collections.singletonList(1));
+        Assert.assertFalse(timeFrame.contains(toDayOfWeek(1, 14, 0, 0)));
+        Assert.assertTrue(timeFrame.contains(toDayOfWeek(1, 16, 0, 0)));
+        Assert.assertFalse(timeFrame.contains(toDayOfWeek(1, 19, 0, 0)));
+
+        Assert.assertFalse(timeFrame.contains(toDayOfWeek(2, 14, 0, 0)));
+        Assert.assertFalse(timeFrame.contains(toDayOfWeek(2, 16, 0, 0)));
+        Assert.assertFalse(timeFrame.contains(toDayOfWeek(2, 19, 0, 0)));
+    }
+
+    @Test
+    public void contains_TimeFrameOverMidnight() {
+        TimeFrame timeFrame = new TimeFrame(7200, 7200, new TimeOfDay(23, 0, 0), new TimeOfDay(1, 0, 0),
+                Collections.singletonList(1));
+        Assert.assertFalse(timeFrame.contains(toDayOfWeek(1, 22, 0, 0)));
+        Assert.assertTrue(timeFrame.contains(toDayOfWeek(1, 23, 30, 0)));
+        Assert.assertTrue(timeFrame.contains(toDayOfWeek(2, 0, 30, 0)));
+        Assert.assertFalse(timeFrame.contains(toDayOfWeek(2, 2, 0, 0)));
+
+        Assert.assertFalse(timeFrame.contains(toDayOfWeek(2, 22, 0, 0)));
+        Assert.assertFalse(timeFrame.contains(toDayOfWeek(2, 23, 30, 0)));
+        Assert.assertFalse(timeFrame.contains(toDayOfWeek(3, 0, 30, 0)));
+        Assert.assertFalse(timeFrame.contains(toDayOfWeek(3, 2, 0, 0)));
+    }
 
     @Test
     public void getInterval_BeforeTimeFrameStart() {

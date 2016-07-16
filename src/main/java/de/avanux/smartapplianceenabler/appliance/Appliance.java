@@ -17,10 +17,6 @@
  */
 package de.avanux.smartapplianceenabler.appliance;
 
-import java.util.*;
-
-import javax.xml.bind.annotation.*;
-
 import com.pi4j.io.gpio.GpioController;
 import de.avanux.smartapplianceenabler.log.ApplianceLogger;
 import de.avanux.smartapplianceenabler.modbus.ModbusElectricityMeter;
@@ -28,6 +24,9 @@ import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
 import de.avanux.smartapplianceenabler.modbus.ModbusSwitch;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
 import org.slf4j.LoggerFactory;
+
+import javax.xml.bind.annotation.*;
+import java.util.*;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -258,10 +257,15 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     }
 
     @Override
-    public void timeFrameExpired() {
-        logger.debug("Deactivating timeframes until starting current is detected again: runningTimeMonitor=" + (runningTimeMonitor != null ? "not null" : "null"));
-        if(runningTimeMonitor != null) {
-            runningTimeMonitor.setTimeFrames(null);
+    public void timeFrameExpired(boolean wasSwitchedOn) {
+        if(wasSwitchedOn) {
+            logger.debug("Deactivating timeframes until starting current is detected again: runningTimeMonitor=" + (runningTimeMonitor != null ? "not null" : "null"));
+            if(runningTimeMonitor != null) {
+                runningTimeMonitor.setTimeFrames(null);
+            }
+        }
+        else {
+            logger.debug("Don't deactivate timeframes since appliance was not switched on until now");
         }
     }
 }
