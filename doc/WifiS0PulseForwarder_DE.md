@@ -71,15 +71,27 @@ Gehäuse geschlossen nach Umbau
 - Öffnungen neben Display und auf gegenüberliegender Seite kann man mit Kunststoffresten und Heisskleber verblenden
 
 ## Programmieren des ESP8266-ESP01
-Damit der **ESP8266-ESP01** die Impulse des Stromzählers zählt und über WLAN an den SAE weiterleitet, muss dieser entsprechend programmiert werden.  Zum Programmieren muss er an einen PC angeschlossen werden. Dazu ist ein **USB-auf-TTL Serienadapter** erforderlich, z.B. einer mit FT232RL-Chip von FTDI, das man bei Ebay für weniger als 5 Euro bekommt. Idealerweise unterstützt er neben 5V auch 3,3V (meist über einen Jumper), weil der **ESP8266-ESP01** mit 3,3V betrieben werden muss! Bei Verwendung unter Linux müssen zu dessen Verwendung keine weiteren Treiber installiert werden.
 
-Bild vom Adapter
+Damit der ESP8266-ESP01 die Impulse des Stromzählers zählt und über WLAN an den SAE weiterleitet, muss dieser entsprechend programmiert werden.  Zum Programmieren muss er an einen PC angeschlossen werden. Dazu ist ein **USB-auf-TTL Serienadapter** erforderlich, z.B. einer mit FT232RL-Chip von FTDI, das man bei Ebay für weniger als 5 Euro bekommt. Idealerweise unterstützt er neben 5V auch 3,3V (meist über einen Jumper), weil der **ESP8266-ESP01 mit 3,3V betrieben werden muss!** Bei Verwendung unter Linux müssen zu dessen Verwendung keine weiteren Treiber installiert werden.
 
-Bild von Breadboard mit Verkabelung
+![](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/FT232RLAdapter.png)  
+*USB-auf-TTL Serienadapter*
 
+Nachfolgendes Bild zeigt die Verkabelung. Zu beachten ist die unterbrechbare Leitung zwischen GND und GPIO_0.
+Zum Flashen muss diese Verbindung geschlossen sein und im Normalbetrieb offen.
 
+![](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/Schaltplan_ESP8266-01-FTDI.png)  
+*Schaltplan*
 
-Das geht am einfachsten mit der [Arduino IDE](https://www.arduino.cc/en/Main/Software), dem Programmier-Tool für Mikrokontroller der Arduino-Platform, die zunächst heruntergeladen werden muss und ausgepackt werden muss (zum Zeitpunkt des Schreibens dieser Seite war Version 1.6.11 aktuell). Der **ESP8266-ESP01** gehört eigentlich nicht zur Arduino-Familie, aber die Unterstützung kann dank [dieses Projektes](https://github.com/esp8266/Arduino) zur Arduino IDE hinzugefügt werden. Die Installation ist wirklich einfach:
+Zur Aufbau der Verkabelung eignet sich ein Breadboard mit entsprechenden Kabel-Steckbrücken. Für den ESP8266-ESP01 sind allerdings zwei sogenannte *Stacking Headers für Arduino* als Sockel erforderlich die am besten zusammengeklebt werden.
+
+![](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/FT232RLAdapter_mit_Breadboard.jpg)  
+*Breadboard mit USB-auf-TTL Serienadapter und Sockel*
+
+![](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/FT232RLAdapter_mit_ESP8266-01.jpg.jpg)  
+*Breadboard mit USB-auf-TTL Serienadapter und Sockel*
+
+Nachdem die Schaltung aufgebaut ist kann mit dem Programmieren des ESP8266-ESP01 begonnen werden. Das geht am einfachsten mit der [Arduino IDE](https://www.arduino.cc/en/Main/Software), dem Programmier-Tool für Mikrokontroller der Arduino-Platform, die zunächst heruntergeladen werden muss und ausgepackt werden muss (zum Zeitpunkt des Schreibens dieser Seite war Version 1.6.11 aktuell). Der ESP8266-ESP01 gehört eigentlich nicht zur Arduino-Familie, aber die Unterstützung kann dank [dieses Projektes](https://github.com/esp8266/Arduino) zur Arduino IDE hinzugefügt werden. Die Installation ist wirklich einfach:
 
 1. Starten der Arduino IDE
 2. ```Datei->Voreinstellungen``` 
