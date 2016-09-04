@@ -20,7 +20,7 @@ Also muss ein normaler, aber möglichst kleiner Stromzähler, irgendwie in das G
 Auf der Suche nach einem entsprechenden Gehäuse bin ich bei den Überspannungsschutz-Adaptern gelandet.
 Der **Universal Überspannungsschutz-Adapter 919.004 von Bachmann** hat ein relativ grosses Gehäuse.
 In dieses Gehäuse passt der Zähler **DRS155B von B+G E-Tech**, wenn man einige Anpassungen vornimmt.
-Glücklicherweise gibt es mit dem **ESP8266-ESP01** einen kleine Mikro-Controller-Platine (1x2cm !!!), die bereits WLAN an Bord hat.
+Glücklicherweise gibt es mit dem [**ESP8266-ESP01**](http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family#esp-01) einen kleine Mikro-Controller-Platine (1x2cm !!!), die bereits WLAN an Bord hat.
 Diese bnötigt 3,3V bei 80 mA maximalem Strom. Ein sehr kompaktes Schaltnetzteil ist das **SUNNY NE1000**, das allerdings 5V liefert.
 Also benötigt man zusätzlich noch einen **3,3V-Spannungsregler wie den LF33CV** (Gehäuseform TO-220).
 Ausserdem benötigt man:
@@ -28,7 +28,7 @@ Ausserdem benötigt man:
 - Kabelreste (TODO: genauer angeben) 
 - Kabelschuh-Ringösen (TODO: genauer angeben)
 - Schrauben zur Befestigung der Kabelschuhe den Zählerkontakten
-- PIN-Header als Sockel für ESP8266-ESP01 und zum Flaschen
+- *Stacking Headers für Arduino* als Sockel für ESP8266-ESP01 (2x4 für Zähler und 2x4 für Flash-Aufbau)
 - USB-auf-TTL Serienadapter
 
 ## Stichpunkte
@@ -72,7 +72,7 @@ Gehäuse geschlossen nach Umbau
 
 ## Programmieren des ESP8266-ESP01
 
-Damit der ESP8266-ESP01 die Impulse des Stromzählers zählt und über WLAN an den SAE weiterleitet, muss dieser entsprechend programmiert werden.  Zum Programmieren muss er an einen PC angeschlossen werden. Dazu ist ein **USB-auf-TTL Serienadapter** erforderlich, z.B. einer mit FT232RL-Chip von FTDI, das man bei Ebay für weniger als 5 Euro bekommt. Idealerweise unterstützt er neben 5V auch 3,3V (meist über einen Jumper), weil der **ESP8266-ESP01 mit 3,3V betrieben werden muss!** Bei Verwendung unter Linux müssen zu dessen Verwendung keine weiteren Treiber installiert werden.
+Damit der ESP8266-ESP01 die Impulse des Stromzählers zählt und über WLAN an den SAE weiterleitet, muss dieser entsprechend programmiert werden.  Zum Programmieren muss er an einen PC angeschlossen werden. Dazu ist ein **USB-auf-TTL Serienadapter** erforderlich, z.B. einer mit FT232RL-Chip von FTDI, das man bei Ebay für weniger als 5 Euro bekommt. Er solle neben 5V auch 3,3V per Jumper einstellbar sein, weil der **ESP8266-ESP01 mit 3,3V betrieben werden muss!**. Unter Linux müssen zu dessen Verwendung keine weiteren Treiber installiert werden.
 
 ![](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/FT232RLAdapter.png)  
 *USB-auf-TTL Serienadapter*
