@@ -29,13 +29,13 @@ Ausserdem benötigt man:
 - Kabelschuh-Ringösen (TODO: genauer angeben)
 - Schrauben zur Befestigung der Kabelschuhe den Zählerkontakten
 - PIN-Header als Sockel für ESP8266-ESP01 und zum Flaschen
-- FTDI USB-zu-Seriell Adapter (z.B. FT32RL)
+- USB-auf-TTL Serienadapter
 
 ## Stichpunkte
 - nicht am Zähler löten (Hitze) - Zähler geschrottet
 - Stromfluss im Zähler darf nicht modifiziert werden, sonst wird falsch/nicht gezählt  - Zähler geschrottet 
 
-## Bilder
+## Bauanleitung
 ![919004.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/919004.jpg)  
 Universal Überspannungsschutz-Adapter 919.004 von Bachmann
 - der Adapter wird von zwei kreuzschlitz-ähnlichen Schrauben, die 3 statt 4 Schlitze haben (dreieckig angeordnet)
@@ -69,3 +69,34 @@ Elektronik komplett und WLAN aktiv (siehe rote LED auf ESP8266)
 Gehäuse geschlossen nach Umbau
 - das Display ist leider defekt, nachdem mir die Zählerplatine einmal heruntergefallen ist (die S0-Impulse kommen aber) 
 - Öffnungen neben Display und auf gegenüberliegender Seite kann man mit Kunststoffresten und Heisskleber verblenden
+
+## Programmieren des ESP8266-ESP01
+Damit der **ESP8266-ESP01** die Impulse des Stromzählers zählt und über WLAN an den SAE weiterleitet, muss dieser entsprechend programmiert werden.  Zum Programmieren muss er an einen PC angeschlossen werden. Dazu ist ein **USB-auf-TTL Serienadapter** erforderlich, z.B. einer mit FT232RL-Chip von FTDI, das man bei Ebay für weniger als 5 Euro bekommt. Idealerweise unterstützt er neben 5V auch 3,3V (meist über einen Jumper), weil der **ESP8266-ESP01** mit 3,3V betrieben werden muss! Bei Verwendung unter Linux müssen zu dessen Verwendung keine weiteren Treiber installiert werden.
+
+Bild vom Adapter
+
+Bild von Breadboard mit Verkabelung
+
+
+
+Das geht am einfachsten mit der [Arduino IDE](https://www.arduino.cc/en/Main/Software), dem Programmier-Tool für Mikrokontroller der Arduino-Platform, die zunächst heruntergeladen werden muss und ausgepackt werden muss (zum Zeitpunkt des Schreibens dieser Seite war Version 1.6.11 aktuell). Der **ESP8266-ESP01** gehört eigentlich nicht zur Arduino-Familie, aber die Unterstützung kann dank [dieses Projektes](https://github.com/esp8266/Arduino) zur Arduino IDE hinzugefügt werden. Die Installation ist wirklich einfach:
+
+1. Starten der Arduino IDE
+2. ```Datei->Voreinstellungen``` 
+3. Unter *Zusätzliche Boardverwalter URLs* eintragen: ```http://arduino.esp8266.com/stable/package_esp8266com_index.json``` und mit ```OK``` bestätigen
+4. Die Liste der Boardverwalter über ```Werkzeuge->Board->Boardverwalter``` öffnen, den Eintrag *esp8266* auswählen (Version stand bei mir auf 2.3.0) und ```Installieren``` drücken. Nachdem alle Dateien heruntergeladen wurden, den Dialog mit ```Schließen``` beenden.
+5. Unter ```Werkzeuge->Board``` den Wert *Generic ESP8266 Module* auswählen
+6. Das Beispiel ```Datei->Beispiele->ESP8266->Blink``` laden
+7. Unter ```Werkzeuge->Port``` den Port einstellen, an dem der USB-auf-TTL Serienadapter angemeldet ist (kann unter Linux mit ```dmesg``` angezeigt werden)
+8. Zum Flashen muss ```GPIO_0``` mit GND verbuunden werden
+9. Mit ```Sketch->Hochladen``` das Beispiel flashen: dabei flackern die blaue LED des ESP8266-ESP01 sowie die beiden roten RX/TX-LEDs auf dem USB-auf-TTL Serienadapter. Auf der Konsole der Arduino IDE sollte etwa folgende Ausgabe stehen:
+
+```
+Der Sketch verwendet 222.125 Bytes (51%) des Programmspeicherplatzes. Das Maximum sind 434.160 Bytes.
+Globale Variablen verwenden 31.492 Bytes (38%) des dynamischen Speichers, 50.428 Bytes für lokale Variablen verbleiben. Das Maximum sind 81.920 Bytes.
+Uploading 226272 bytes from /tmp/buildac45c33e6729fe7f9a7166ce531b2259.tmp/Blink.ino.bin to flash at 0x00000000
+................................................................................ [ 36% ]
+................................................................................ [ 72% ]
+.............................................................                    [ 100% ]
+```
+Wenn danach die blaue LED auf dem ESP8266-ESP01 langsam blinkt (jeweils 1s an, 2s aus), ist die Funktionstüchtigkeit des ESP8266-ESP01 und der Verkabelung erwiesen.
