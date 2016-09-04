@@ -113,4 +113,20 @@ Uploading 226272 bytes from /tmp/buildac45c33e6729fe7f9a7166ce531b2259.tmp/Blink
 ................................................................................ [ 72% ]
 .............................................................                    [ 100% ]
 ```
-Wenn danach die blaue LED auf dem ESP8266-ESP01 langsam blinkt (jeweils 1s an, 2s aus), ist die Funktionstüchtigkeit des ESP8266-ESP01 und der Verkabelung erwiesen.
+Wenn danach die blaue LED auf dem ESP8266-ESP01 langsam blinkt (jeweils 1s an, 2s aus), ist die Funktionstüchtigkeit des ESP8266-ESP01 und der Verkabelung erwiesen. Jetzt kann die [Sketch zum Weiterleiten der Pulse über WLAN](https://github.com/camueller/SmartApplianceEnabler/blob/master/src/main/arduino/WifiS0PulseForwarder/WifiS0PulseForwarder.ino) in der Arduino IDE geöffnet werden. Am rechten Rand auf das Dreieck klicken und _Neuer Tab_ auswählen und als Name *Configuration* eingeben. In dem neu erzeugten Tab die Konfiguration des WLANs und des SAE eingeben:
+```
+// SSID of wifi network - !!! case sensitive !!!
+const char* ssid = "MySSID";
+// Password of wifi network - !!! case sensitive !!!
+const char* password = "myPassword";
+// the ID of the appliance for which the S0ElectricityMeterNetworked is configured in SmartApplianceEnabler
+const char* applianceId = "F-00000001-000000000001-00";
+const IPAddress saeIpAddress(192, 168, 1, 1);
+const unsigned int saePort = 9999;
+```
+Mit ```Sketch->Hochladen``` wird die Sketch auf den ESP8266-ESP01 geflasht. Er kann jetzt auf den Sockel neben den Stromzähler gesteckt werden. Der beiden Hälften des Stromzähler mit WLAN-Anbindung können jetzt wieder zusammengebaut werden. Nach dem Einstecken in die Steckdose und Einstecken des Verbrauchers werden die Impulse des Stromzählers über WLAN an den SAE weitergeleitet. Damit der SAE diese empfängt, muss ein ```PulseReceiver```-Element und ein ```S0ElectricityMeterNetworked```-Element konfiguriert sein. Wenn der SAE die über WLAN gesendeten Impulse des Stromzähler empfängt, finden sich folgende Zeilen in der Datei ```/var/log/smartapplianceenabler.log```:
+
+```
+2016-08-28 10:20:17,091 DEBUG [Thread-9] d.a.s.a.PulseReceiver [PulseReceiver.java:83] Received UDP packet: F-00000001-000000000001-00:1
+2016-08-28 10:20:17,092 DEBUG [Thread-9] d.a.s.a.S0ElectricityMeterNetworked [S0ElectricityMeterNetworked.java:122] F-00000001-000000000002-00: Adding timestamp 1472372417092 for packet counter 1
+```
