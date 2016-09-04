@@ -88,8 +88,10 @@ Zur Aufbau der Verkabelung eignet sich ein Breadboard mit entsprechenden Kabel-S
 ![](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/FT232RLAdapter_mit_Breadboard.jpg)  
 *Breadboard mit USB-auf-TTL Serienadapter und Sockel*
 
-![](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/FT232RLAdapter_mit_ESP8266-01.jpg.jpg)  
-*Breadboard mit USB-auf-TTL Serienadapter und Sockel*
+Auf dem folgenden Bild ist die Schalt im Normalbetrieb zu sehen: die beiden blauen Kabel links stecken nicht in derselben Reihe, d.h. die Verbindung zwischen GND und GPIO_0 ist offen. Zum Flashen müssen beide in dieselbe Reihe gesteckt werden.
+
+![](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/FT232RLAdapter_mit_ESP8266-01.jpg)  
+*Breadboard fertig aufgebaut*
 
 Nachdem die Schaltung aufgebaut ist kann mit dem Programmieren des ESP8266-ESP01 begonnen werden. Das geht am einfachsten mit der [Arduino IDE](https://www.arduino.cc/en/Main/Software), dem Programmier-Tool für Mikrokontroller der Arduino-Platform, die zunächst heruntergeladen werden muss und ausgepackt werden muss (zum Zeitpunkt des Schreibens dieser Seite war Version 1.6.11 aktuell). Der ESP8266-ESP01 gehört eigentlich nicht zur Arduino-Familie, aber die Unterstützung kann dank [dieses Projektes](https://github.com/esp8266/Arduino) zur Arduino IDE hinzugefügt werden. Die Installation ist wirklich einfach:
 
