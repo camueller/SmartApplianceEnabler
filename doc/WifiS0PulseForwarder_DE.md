@@ -121,7 +121,9 @@ const char* ssid = "MySSID";
 const char* password = "myPassword";
 // the ID of the appliance for which the S0ElectricityMeterNetworked is configured in SmartApplianceEnabler
 const char* applianceId = "F-00000001-000000000001-00";
+/ the IP address of the SmartApplianceEnabler receiving the UDP packets
 const IPAddress saeIpAddress(192, 168, 1, 1);
+// the UDP port of the SmartApplianceEnabler receiving the UDP packets
 const unsigned int saePort = 9999;
 ```
 Mit ```Sketch->Hochladen``` wird die Sketch auf den ESP8266-ESP01 geflasht. Er kann jetzt auf den Sockel neben den Stromzähler gesteckt werden. Der beiden Hälften des Stromzähler mit WLAN-Anbindung können jetzt wieder zusammengebaut werden. Nach dem Einstecken in die Steckdose und Einstecken des Verbrauchers werden die Impulse des Stromzählers über WLAN an den SAE weitergeleitet. Damit der SAE diese empfängt, muss ein ```PulseReceiver```-Element und ein ```S0ElectricityMeterNetworked```-Element konfiguriert sein. Wenn der SAE die über WLAN gesendeten Impulse des Stromzähler empfängt, finden sich folgende Zeilen in der Datei ```/var/log/smartapplianceenabler.log```:
