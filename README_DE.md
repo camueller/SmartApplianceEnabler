@@ -2,7 +2,8 @@
 
 [![Build Status](https://travis-ci.org/pubnub/java.svg?branch=master)](https://travis-ci.org/camueller/SmartApplianceEnabler)
 [![codecov.io](https://codecov.io/gh/camueller/SmartApplianceEnabler/coverage.svg)](https://codecov.io/gh/camueller/SmartApplianceEnabler)
-[![Download](https://api.bintray.com/packages/bintray/jcenter/com.pubnub%3Apubnub/images/download.svg)](https://bintray.com/bintray/jcenter/com.pubnub%3Apubnub/_latestVersion)
+[![Download](https://img.shields.io/badge/Download-1.0.0-brightgreen.svg)](https://github.com/camueller/SmartApplianceEnabler/releases/download/v1.0.0/SmartApplianceEnabler-1.0.0.jar)
+[![License](https://img.shields.io/badge/license-GPLv2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
 
 ## Wozu?
 Der *Smart Appliance Enabler* dient dazu, beliebige Geräte (Wärmepumpe, Waschmaschine, ...) in eine **(Smart-Home-) Steuerung** zu integrieren. Dazu kann der *Smart Appliance Enabler* von der Steuerung **Schalt-Empfehlungen** entgegen nehmen und die von ihm verwalteten Geräte ein- oder ausschalten. Falls für diese Geräte individuelle, **digitale Stromzähler** verwendet werden, können diese ausgelesen werden und der Stromverbrauch an die (Smart-Home-) Steuerung gemeldet werden, um der Steuerung künftig energieeffiziente Schaltempfehlungen zu ermöglichen.
