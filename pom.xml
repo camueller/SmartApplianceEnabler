@@ -46,15 +46,10 @@
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
 		</dependency>
-		<!--
-		Unfortunately the developer of J2Mod decided against publishing to a public Maven repository.
-		( Refer to https://sourceforge.net/p/j2mod/discussion/general/thread/9f6fc7f4 )
-		Therefore we have to install J2Mod into the local repository before build.
-		 -->
 		<dependency>
 			<groupId>com.ghgande</groupId>
 			<artifactId>j2mod</artifactId>
-			<version>1.06</version>
+			<version>2.3.0</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -89,25 +84,6 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
-			<plugin>
-			   <groupId>org.apache.maven.plugins</groupId>
-			   <artifactId>maven-install-plugin</artifactId>
-			   <executions>
-			     <execution>
-			       <phase>clean</phase>
-			       <configuration>
-						<groupId>com.ghgande</groupId>
-						<artifactId>j2mod</artifactId>
-						<version>1.06</version>
-						<packaging>jar</packaging>
-						<file>lib/j2mod-1.06.jar</file>
-			       </configuration>
-			       <goals>
-			         <goal>install-file</goal>
-			       </goals>
-			     </execution>
-			   </executions>
-			 </plugin>			
 		</plugins>
 	</build>
 
