@@ -1,6 +1,6 @@
 # Installation
 Die Installation des *Smart Appliance Enabler* besteht darin, folgende Dateien auf den Raspberry zu kopieren:
-* die beim Bauen erstellte Datei `SmartApplianceEnabler-*.jar`
+* die Datei `SmartApplianceEnabler-*.jar` mit dem eigentlichen Programmcode (heruntergeladenes Release oder aus Sourcen gebaut)
 * die Konfigurationsdatei `Device2EM.xml`
 * die Konfigurationsdatei `Appliances.xml`
 * das Startscript und die Konfigurationsdateien aus dem Verzeichnis `run` 
@@ -146,19 +146,3 @@ Damit das Zeitangaben zum Schalten der Geräte richtig interpretiert werden, sol
 sudo /bin/bash -c "echo 'Europe/Berlin' > /etc/timezone"
 sudo cp /usr/share/zoneinfo/Europe/Berlin /etc/localtime
 ```
-
-## Integration in den SMA Home Manager
-Der *SMA Home Manager* sollte jetzt den *Smart Appliance Enabler* finden und die von ihm verwalteten Geräte konfigurieren können. Falls das nicht so ist, sollen folgende Punkte geprüft werden:
-
-### Erhöhung des Log-Levels
-Standardmäßig ist der Log-Level auf INFO gesetzt. Zur Fehlersuche sollte dieser in der Datei `/etc/default/smartapplianceenabler` auf ALL gesetzt werden, damit in der Log-Datei alle verfügbaren Informationen in der Log-Datei `/var/log/smartapplianceenabler.log` protokolliert werden.
-
-### Verbindung zwischen Home Manager und Smart Appliance Enabler
-Home Manager auf den *Smart Appliance Enabler* müssen sich im gleichen Netz befinden!
-Wenn der Log-Level mindestens auf DEBUGgesetzt wurde, kann man in der Log-Datei sehen, wenn der Home Manager auf den *Smart Appliance Enabler* zugreift:
-```
-20:25:17.390 [http-nio-8080-exec-1] DEBUG d.a.s.semp.webservice.SempController - Device info/status/planning requested.
-```
-### Analyse der Log Dateien des SEMP Moduls im Sunny Home Manager
-Siehe http://www.photovoltaikforum.com/geraete-mit-home-manager-koppeln-via-semp-ethernet-p1396300.html#p1396300
-
