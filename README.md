@@ -57,8 +57,8 @@ Der *Smart Appliance Enabler* verwendet intern folgende Open-Source-Software:
 * [Spring Boot](http://projects.spring.io/spring-boot) für RESTful Web-Services (SEMP-Protokoll)
 * [Cling](http://4thline.org/projects/cling) für UPnP (SEMP-Protokoll)
 
-## Fragen / Fehler
-Bei Verdacht auf Fehler in der Software oder bei Fragen zur Verwendung des *Smart Appliance Enabler* sollte [Issue](https://github.com/camueller/SmartApplianceEnabler/issues) erstellt werden.
+## [Fragen / Probleme](doc/Troubleshooting_DE.md)
+Durch die Vielzahl von Hard- und Softwarekomponenten können bei der Verwendung des *Smart Appliance Enabler* naturgemäß Fragen oder Probleme auftreten. In diesem Fall sollten [diese Hinweise](doc/Troubleshooting_DE.md) beachtet werden. 
 
 ## Lizenz
 Die Inhalte in diesem Repository sind lizensiert unter der [GNU GENERAL PUBLIC LICENSE](LICENSE.txt), falls nicht anders angegeben.
