@@ -224,7 +224,7 @@ class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
     List<Long> getImpulsesInMeasurementInterval(long referenceTimestamp) {
         List<Long> timestamps = new ArrayList<Long>();
         if(measurementInterval != null) {
-            for(Long timestamp : impulseTimestamps) {
+            for(Long timestamp : new ArrayList<>(impulseTimestamps)) {
                 if(referenceTimestamp - timestamp < measurementInterval * 1000) {
                     timestamps.add(timestamp);
                 }
@@ -315,7 +315,7 @@ class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
         impulseTimestamps.add(timestampMillis);
         // remove timestamps older than MAX_AGE
         List<Long> impulseTimestampsForRemoval = new ArrayList<Long>();
-        for(Long impulseTimestamp : impulseTimestamps) {
+        for(Long impulseTimestamp : new ArrayList<>(impulseTimestamps)) {
             if(timestampMillis - impulseTimestamp > MAX_AGE * 1000) {
                 impulseTimestampsForRemoval.add(impulseTimestamp);
             }
