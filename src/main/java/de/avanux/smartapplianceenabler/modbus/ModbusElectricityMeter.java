@@ -49,6 +49,7 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     @Override
     public void setApplianceId(String applianceId) {
         super.setApplianceId(applianceId);
+        this.pollElectricityMeter.setApplianceId(applianceId);
         this.logger.setApplianceId(applianceId);
     }
 

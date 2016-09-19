@@ -8,11 +8,16 @@ import java.util.*;
 /**
  * A PollElectricityMeter calculates power consumption by polling.
  */
-public class PollElectricityMeter {
+public class PollElectricityMeter implements ApplianceIdConsumer {
 
     private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(PollElectricityMeter.class));
     private Map<Long,Float> timestampWithPower = new HashMap<Long,Float>();
     private Integer measurementInterval;
+
+    @Override
+    public void setApplianceId(String applianceId) {
+        this.logger.setApplianceId(applianceId);
+    }
 
     public void start(Timer timer, Integer pollInterval, Integer measurementInterval, PollPowerExecutor pollPowerExecutor) {
         this.measurementInterval = measurementInterval;

@@ -16,7 +16,7 @@ import java.util.Timer;
  * <p>
  * IMPORTANT: The URLs in Appliance.xml have to be escaped (e.g. use "&amp;" instead of "&")
  */
-public class HttpElectricityMeter extends HttpTransactionExecutor implements Meter, PollPowerExecutor {
+public class HttpElectricityMeter extends HttpTransactionExecutor implements Meter, PollPowerExecutor, ApplianceIdConsumer {
     @XmlTransient
     private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(HttpElectricityMeter.class));
     @XmlAttribute
@@ -29,6 +29,12 @@ public class HttpElectricityMeter extends HttpTransactionExecutor implements Met
     private Integer pollInterval = 10; // seconds
     @XmlTransient
     private PollElectricityMeter pollElectricityMeter = new PollElectricityMeter();
+
+    @Override
+    public void setApplianceId(String applianceId) {
+        this.pollElectricityMeter.setApplianceId(applianceId);
+        this.logger.setApplianceId(applianceId);
+    }
 
     @Override
     public int getAveragePower() {
