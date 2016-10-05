@@ -108,8 +108,6 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                     }
                     ((StartingCurrentSwitch) control).addStartingCurrentSwitchListener(this);
                     logger.debug("Registered as " + StartingCurrentSwitchListener.class.getSimpleName() + " with " + control.getClass().getSimpleName());
-                    runningTimeMonitor.addTimeFrameChangedListener((StartingCurrentSwitch) control);
-                    logger.debug("Registered " + control.getClass().getSimpleName() + " as " + TimeFrameChangedListener.class.getSimpleName());
                 }
                 else {
                     control.addControlStateChangedListener(this);
@@ -257,15 +255,10 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     }
 
     @Override
-    public void timeFrameExpired(boolean wasSwitchedOn) {
-        if(wasSwitchedOn) {
-            logger.debug("Deactivating timeframes until starting current is detected again: runningTimeMonitor=" + (runningTimeMonitor != null ? "not null" : "null"));
-            if(runningTimeMonitor != null) {
-                runningTimeMonitor.setTimeFrames(null);
-            }
-        }
-        else {
-            logger.debug("Don't deactivate timeframes since appliance was not switched on until now");
+    public void finishedCurrentDetected() {
+        logger.debug("Deactivating timeframes until starting current is detected again: runningTimeMonitor=" + (runningTimeMonitor != null ? "not null" : "null"));
+        if(runningTimeMonitor != null) {
+            runningTimeMonitor.setTimeFrames(null);
         }
     }
 }
