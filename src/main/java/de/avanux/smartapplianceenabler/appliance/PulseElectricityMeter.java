@@ -295,6 +295,9 @@ class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
      * @return
      */
     private int getPower(long intervalBetweenTwoImpulses) {
+        if(intervalBetweenTwoImpulses == 0 || impulsesPerKwh == null) {
+            return 0;
+        }
         return Double.valueOf(3600000 / (intervalBetweenTwoImpulses * 1000/impulsesPerKwh)).intValue();
     }
 
