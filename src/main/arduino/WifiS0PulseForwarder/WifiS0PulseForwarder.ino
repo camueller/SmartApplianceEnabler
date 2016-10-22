@@ -61,41 +61,43 @@ int previousStatus = HIGH;
 // the UDP packet counter allows detection of dropped packets by receiver
 unsigned long counter = 0;
 
+unsigned long ledEvent = 0;
+unsigned long ledStatusDuration = 0;
+unsigned int ledStatus = LOW;
+
 WiFiUDP udp;
 
 void setup() {
-  Serial.begin(115200);
-  delay(10);
-
+  pinMode(LED_BUILTIN, OUTPUT);
+  
   // This enables the internal pullup resistor so that the default state is high rather than floating.
   pinMode(meterPin, INPUT_PULLUP);
-  
-  // Connect to WiFi network
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
-  
+
+  // refer to https://github.com/esp8266/Arduino/issues/2186
+  //WiFi.setOutputPower(0);
+  WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
-  
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    Serial.print(".");
   }
-  Serial.println("");
-  Serial.println("WiFi connected");
   
-  // Print the IP address
-  Serial.println(WiFi.localIP());
-
-  Serial.println("Opening UDP port ...");
   udp.begin(localPort);
 }
 
 void loop() {
+  heartbeatBlink();
+
+  if(WiFi.status() != WL_CONNECTED) {
+    WiFi.reconnect();
+    delay(5000);
+    if (WiFi.status() != WL_CONNECTED) {
+      ESP.restart();
+    }    
+  }
+  
   int status = digitalRead(meterPin);
   // because of the pullup resistor, the pin state is reversed: button pressed = LOW, button released = HIGH
   if (status == LOW && previousStatus == HIGH) {
-    Serial.println("Sending packet...");
-    
     char buffer[10+1];
     ltoa(++counter, buffer, 10);
     
@@ -113,3 +115,20 @@ void loop() {
   }
   previousStatus = status;
 }
+
+void heartbeatBlink() {
+  unsigned long now = millis();
+  if(now - ledEvent > ledStatusDuration) {
+    if(ledStatus == LOW) {
+      ledStatus = HIGH;
+      ledStatusDuration = 3000;
+    }
+    else {
+      ledStatus = LOW;
+      ledStatusDuration = 20;
+    }
+    digitalWrite(LED_BUILTIN, ledStatus);
+    ledEvent = now;
+  }
+}
+
