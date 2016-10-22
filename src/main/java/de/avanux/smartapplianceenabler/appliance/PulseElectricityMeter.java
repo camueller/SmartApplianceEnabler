@@ -101,14 +101,19 @@ class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
     int getAveragePower(long referenceTimestamp) {
         checkMandatoryAttributes();
         if(isOn(referenceTimestamp, true) && isIntervalIncreaseAboveFactor(powerChangeFactor, referenceTimestamp) && powerBeforeIncrease != null) {
-            /**
-             * Make sure that after a period of high power normal power is reported even before the first impulse
-             * of the low power period is received. Otherwise high power would be reported for a long time even though
-             * low power was consumed.
-             */
-            logger.debug("average power (as before increase) = " + powerBeforeIncrease + "W");
+            long maxTimestampAge = Double.valueOf(getInterval(powerBeforeIncrease) * powerChangeFactor).longValue();
+            if(referenceTimestamp - getSecondMostRecentTimestamp() < maxTimestampAge) {
+                /**
+                 * Make sure that after a period of high power normal power is reported even before the first impulse
+                 * of the low power period is received. Otherwise high power would be reported for a long time even though
+                 * low power was consumed.
+                 */
+                logger.debug("average power (as before increase) = " + powerBeforeIncrease + "W");
+                return powerBeforeIncrease;
+            }
+            logger.debug("average power (timestamps before increase to old) = 0W");
             powerDecreaseDetected = true;
-            return powerBeforeIncrease;
+            return 0;
         }
         int timestampsInMeasurementInterval = getImpulsesInMeasurementInterval(referenceTimestamp).size();
         if(timestampsInMeasurementInterval > 1) {
@@ -246,7 +251,7 @@ class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
         Long intervalBetweenTwoMostRecentImpulses = getIntervalBetweenTwoMostRecentImpulses();
         if(intervalBetweenTwoMostRecentImpulses != null) {
             // at this point we can be sure that there are at least two timestamps cached
-            long mostRecentTimestamp = impulseTimestamps.get(impulseTimestamps.size() - 1);
+            long mostRecentTimestamp = getMostRecentTimestamp();
             long intervalSinceMostRecentTimestamp = referenceTimestamp - mostRecentTimestamp;
             if(intervalBetweenTwoMostRecentImpulses * factor < intervalSinceMostRecentTimestamp) {
                 return true;
@@ -281,12 +286,38 @@ class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
      * @return the interval in milliseconds or null; if there are less than 2 impulse timestamps cached
      */
     private Long getIntervalBetweenTwoMostRecentImpulses() {
-        if(impulseTimestamps.size() > 1) {
-            long mostRecentTimestamp = impulseTimestamps.get(impulseTimestamps.size() - 1);
-            long secondMostRecentTimestamp = impulseTimestamps.get(impulseTimestamps.size() - 2);
+        Long mostRecentTimestamp = getMostRecentTimestamp();
+        Long secondMostRecentTimestamp = getSecondMostRecentTimestamp();
+        if(mostRecentTimestamp != null && secondMostRecentTimestamp != null) {
             return mostRecentTimestamp - secondMostRecentTimestamp;
         }
         return null;
+    }
+
+    private Long getMostRecentTimestamp() {
+        if(impulseTimestamps.size() > 0) {
+            return impulseTimestamps.get(impulseTimestamps.size() - 1);
+        }
+        return null;
+    }
+
+    private Long getSecondMostRecentTimestamp() {
+        if(impulseTimestamps.size() > 1) {
+            return impulseTimestamps.get(impulseTimestamps.size() - 2);
+        }
+        return null;
+    }
+
+    /**
+     * Returns the interval between two timestamps for the given power.
+     * @param power the power in watts
+     * @return the interval in milliseconds
+     */
+    private long getInterval(int power) {
+        if(power == 0 || impulsesPerKwh == null) {
+            return 0;
+        }
+        return Double.valueOf(3600000 / (power * 1000/impulsesPerKwh)).intValue();
     }
 
     /**

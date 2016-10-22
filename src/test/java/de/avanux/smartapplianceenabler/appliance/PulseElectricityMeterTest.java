@@ -236,12 +236,29 @@ public class PulseElectricityMeterTest {
     /**
      * Make sure that some power value during ramp up is not reported as "before increase" value
      * after switch off.
-     * O-----O-----O---OOOO--------------------------------------------------------(---
+     * O-----O-----O---OOOO-(---
      */
     @Test
     public void getAveragePower_NHZ() {
-        //            02:01:24, 02:01:36, 02:01:47, 02:01:53, 02:01:54, 02:01:55, 02:01:56
-        addTimestamps(    1832,     1820,     1809,     1803,     1802,     1801,     1800);
+        addTimestamps(3000, 1800, 700, 100, 90, 80, 70);
+        Control control = mock(Control.class);
+        when(control.isOn()).thenReturn(true);
+        pulseElectricityMeter.setControl(control);
+        Assert.assertEquals(6, pulseElectricityMeter.getAveragePower(currentTimeMillis));
+    }
+
+    /**
+     * The power before a power increase should not be reported anymore if there has been no
+     * timestamp for the time calculated by multiplying the factor with the number of seconds after
+     * which a timestamp was to be expected (based on power before increase).
+     * O-----O-----O---OOOO------------------------(---
+     */
+    @Test
+    public void getAveragePower_NHZ_NoIntervalIncreaseAboveFactor_TimestampMaxAgeExceeded() {
+        addTimestamps(2085, 1535, 985, 685, 680, 675, 670);
+        Control control = mock(Control.class);
+        when(control.isOn()).thenReturn(true);
+        pulseElectricityMeter.setControl(control);
         Assert.assertEquals(0, pulseElectricityMeter.getAveragePower(currentTimeMillis));
     }
 
