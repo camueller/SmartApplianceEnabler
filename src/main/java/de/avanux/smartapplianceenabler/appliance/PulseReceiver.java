@@ -31,7 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A PulseReceiver listens for UDP packets representing pulses received from a electricity meter.
+ * A PulseReceiver listens for UDP packets representing pulses received from an electricity meter.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PulseReceiver implements Runnable {
@@ -88,27 +88,31 @@ public class PulseReceiver implements Runnable {
         }
     }
 
-    private void processReceivedPacket(String content) {
-        if(content.length() > 0) {
-            String[] contentParts = content.split(":");
-            if(contentParts.length > 1) {
-                // F-00000001-000000000001-00:143
-                String applianceId = contentParts[0];
-                int counter = Integer.valueOf(contentParts[1]);
-                PulseListener listener = applianceIdWithListener.get(applianceId);
-                if(listener != null) {
-                    listener.pulseReceived(counter);
-                }
-                else {
-                    logger.warn("No listener!");
-                }
+    private void processReceivedPacket(String packetContent) {
+        if (isPacketValid(packetContent)) {
+            PulseListener listener = applianceIdWithListener.get(parseApplianceId(packetContent));
+            if (listener != null) {
+                listener.pulseReceived(parseCounter(packetContent));
+            } else {
+                logger.warn("No listener!");
             }
-            else {
-                logger.error("UDP packet content has wrong format!");
-            }
+        } else {
+            logger.error("Invalid UDP packet received: " + packetContent);
         }
-        else {
-            logger.error("UDP packet content has length 0!");
-        }
+    }
+
+    protected boolean isPacketValid(String packetContent) {
+        // F-00000001-000000000001-00:00143
+        return packetContent != null && packetContent.length() == 32;
+    }
+
+    protected String parseApplianceId(String packetContent) {
+        String[] packetContentParts = packetContent.split(":");
+        return packetContentParts[0];
+    }
+
+    protected int parseCounter(String packetContent) {
+        String[] packetContentParts = packetContent.split(":");
+        return Integer.parseInt(packetContentParts[1]);
     }
 }

@@ -85,6 +85,7 @@ void setup() {
 }
 
 void loop() {
+  // enable visual verification that ESP8266 is running
   heartbeatBlink();
 
   if(WiFi.status() != WL_CONNECTED) {
@@ -98,19 +99,28 @@ void loop() {
   int status = digitalRead(meterPin);
   // because of the pullup resistor, the pin state is reversed: button pressed = LOW, button released = HIGH
   if (status == LOW && previousStatus == HIGH) {
-    char buffer[10+1];
-    ltoa(++counter, buffer, 10);
-    
+
+    // build message of the following format for Smart Appliance Enabler
+    // F-00000001-000000000001-00:00355
+    char buffer[40];
+    sprintf(buffer, "%s:%05d", applianceId, ++counter);
+    if(counter==100000) {
+      counter=0;
+    }
+
+    // send message to Smart Appliance Enabler
     udp.beginPacket(saeIpAddress, saePort);
-    udp.write(applianceId);
-    udp.write(":");
-    udp.write(buffer);
-    udp.endPacket();
+    udp.write(buffer, sizeof(buffer));
+    if(udp.endPacket() == 1) {
+      // long blink as packet sent confirmation
+      digitalWrite(LED_BUILTIN, LOW);
+      delay(500);
+    }
     
     // de-bouncing is required:
-    // 2016-03-28 16:28:26,367 DEBUG Received UDP packet: F-00000001-000000000001-00:355
-    // 2016-03-28 16:28:26,401 DEBUG Received UDP packet: F-00000001-000000000001-00:356
-    // delay has to be shorte than impuls duration (90ms for DRS155B)
+    // 2016-03-28 16:28:26,367 DEBUG Received UDP packet: F-00000001-000000000001-00:00355
+    // 2016-03-28 16:28:26,401 DEBUG Received UDP packet: F-00000001-000000000001-00:00356
+    // delay has to be shorter than impulse duration (90ms for DRS155B)
     delay(70);
   }
   previousStatus = status;
