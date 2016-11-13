@@ -102,7 +102,7 @@ void loop() {
 
     // build message of the following format for Smart Appliance Enabler
     // F-00000001-000000000001-00:00355
-    char buffer[40];
+    char buffer[32+1];
     sprintf(buffer, "%s:%05d", applianceId, ++counter);
     if(counter==100000) {
       counter=0;
@@ -115,6 +115,7 @@ void loop() {
       // long blink as packet sent confirmation
       digitalWrite(LED_BUILTIN, LOW);
       delay(500);
+      digitalWrite(LED_BUILTIN, HIGH);
     }
     
     // de-bouncing is required:

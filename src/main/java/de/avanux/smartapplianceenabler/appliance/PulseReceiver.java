@@ -27,6 +27,9 @@ import javax.xml.bind.annotation.XmlTransient;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,6 +48,8 @@ public class PulseReceiver implements Runnable {
     private Thread thread;
     @XmlTransient
     private Map<String, PulseListener> applianceIdWithListener = new HashMap<>();
+    @XmlTransient
+    private NumberFormat counterFormat = new DecimalFormat("00000");
 
 
     public interface PulseListener {
@@ -79,7 +84,7 @@ public class PulseReceiver implements Runnable {
             while(true)
             {
                 serverSocket.receive(receivePacket);
-                String content = new String(receivePacket.getData(), 0, receivePacket.getLength());
+                String content = new String(receivePacket.getData(), 0, receivePacket.getLength()).trim();
                 logger.debug("Received UDP packet: " + content);
                 processReceivedPacket(content);
             }
@@ -113,6 +118,11 @@ public class PulseReceiver implements Runnable {
 
     protected int parseCounter(String packetContent) {
         String[] packetContentParts = packetContent.split(":");
-        return Integer.parseInt(packetContentParts[1]);
+        try {
+            return counterFormat.parse(packetContentParts[1]).intValue();
+        }
+        catch(ParseException e) {
+            return 0;
+        }
     }
 }

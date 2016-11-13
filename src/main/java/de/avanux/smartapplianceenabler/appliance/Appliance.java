@@ -232,9 +232,11 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     }
 
     private boolean hasStartingCurrentDetection() {
-        for(Control control : controls) {
-            if(control instanceof StartingCurrentSwitch) {
-                return true;
+        if(controls != null) {
+            for(Control control : controls) {
+                if(control instanceof StartingCurrentSwitch) {
+                    return true;
+                }
             }
         }
         return false;
