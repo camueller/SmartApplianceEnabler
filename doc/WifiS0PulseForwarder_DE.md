@@ -24,54 +24,75 @@ Glücklicherweise gibt es mit dem [**ESP8266-ESP01**](http://www.esp8266.com/wik
 Diese bnötigt 3,3V bei 80 mA maximalem Strom. Ein sehr kompaktes Schaltnetzteil ist das **SUNNY NE1000**, das allerdings 5V liefert.
 Also benötigt man zusätzlich noch einen **3,3V-Spannungsregler wie den LF33CV** (Gehäuseform TO-220).
 Ausserdem benötigt man:
-- Lötkolben
-- Kabelreste (TODO: genauer angeben) 
-- Kabelschuh-Ringösen (TODO: genauer angeben)
-- Schrauben zur Befestigung der Kabelschuhe den Zählerkontakten
+- Kabelreste
+- Kabelschuh-Ringösen (und idealerweise eine passende Krimpzange)
+- Schrauben zur Befestigung der Ringösen den Zählerkontakten
 - *Stacking Headers für Arduino* als Sockel für ESP8266-ESP01 (2x4 für Zähler und 2x4 für Flash-Aufbau)
 - USB-auf-TTL Serienadapter
-
-## Stichpunkte
-- nicht am Zähler löten (Hitze) - Zähler geschrottet
-- Stromfluss im Zähler darf nicht modifiziert werden, sonst wird falsch/nicht gezählt  - Zähler geschrottet 
 
 ## Bauanleitung
 ![919004.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/919004.jpg)  
 Universal Überspannungsschutz-Adapter 919.004 von Bachmann
-- der Adapter wird von zwei kreuzschlitz-ähnlichen Schrauben, die 3 statt 4 Schlitze haben (dreieckig angeordnet)
-- Schrauben liessen sich mit kleinem Flachschraubendreher herausdrehen
+
+Manche dieser Adapter sind mit zwei kreuzschlitz-ähnlichen Schrauben, die 3 statt 4 Schlitze haben (dreieckig angeordnet), zugeschraubt. Es gelang mir allerdings, diese Schrauben mit einem kleinen Flachschraubendreher heruaszudrehen.
+
 ![919004_stecker.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/919004_stecker.jpg)  
 Stecker-Kontakte des Universal Überspannungsschutz-Adapter 919.004 von Bachmann  
+
+Die Kabel an den Stecker-Kontakten, die zur Überspannungschutz-Platine gehen, müssen entfernt werden. Das gilt auch für das Kabel vom Schutzkontakt.
+
 ![drs155b.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/drs155b.jpg)  
 Stromzähler DRS155B von B+G E-Tech ohne Gehäuse
-Die beiden "Zungen", an denen der Impuls anliegt, müssen ausgelötet werden. Aus einer der beiden Zungen wird der Flachstecker, der in den unterbrochenen Verbindungssteeg gesteckt wird.
+
+Das Bild zeigt den Zähler nach dem Entfernen des Plastik-Gehäuses. Die beiden "Zungen", an denen der Impuls anliegt, müssen ausgelötet werden. Aus einer der beiden Zungen wird der Flachstecker, der in den unterbrochenen Verbindungssteeg gesteckt wird.
+
+![919004_gehauese_angepasst.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/919004_gehauese_angepasst.jpg)  
+Gehäuseöffnungen angepasst
+
+Das Gehäuse des Überspannungsschutz-Adapter hat Öffnungen für Tel/Fax/Modem auf der rechten Seite und Network/ISDN auf der linken Seite. Erstere kann komplett verschlossen werden, letztere muss nach oben verlängert werden, damit das Zählerdisplay komplett sichtbar ist. Ausserdem kann rechts unten neben dem Zählerdisplay ein Loch eingefügt werden, damit man die Zähler-LED von außen sehen kann. Zu Veschließen der Öffnungen kann man die Reste des Zählergehäuses verwenden. Diese lassen sich gut mit einem Cutter-Messer schneiden, wenn man es mehrfach an einer Schiene entlang führt.
+
 ![919004_gehauserueckseite.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/919004_gehauserueckseite.jpg)  
-Gehäusehälfte (Platienenhalterungen mit grossem Bohrer weggebohrt, Seitenstege entfernt)  
+Untere Gehäusehälfte 
+
+Die Halterungen der Überspannungsschutz-Platine habe ich mit einem grossen Bohrer weggebohrt. Auch die kleinen Seitensteege in den Ecken habe ich mir einem Schraubendreher durch wegdrehen entfernt.
+
 ![steckerverbindung_hochgebogen.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/steckerverbindung_hochgebogen.jpg)  
-- Verbindungssteeg zwischen Stecker und Steckdose zwecks Unterbrechnung hochgebogen
-- Kabel mit Flachtecker (stammt aus Impulszunge des Zählers) zum Zählereingang  
+
+Zwecks Unterbrechung zwischen Stecker und Steckdose muss einer der beiden Verbindungssteege hochgebogen werden. 
+Das Kabel mir dem Flachstecker (stammt aus Impulszunge des Zählers) wird in diesen Verbindungssteeg gesteckt.
+
 ![steckerverbindung_isolation.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/steckerverbindung_isolation.jpg)  
-Isolation (hier rote Mantelleitung-Hälfte) zwischen Stecker und Steckdose  
+Isolation zwischen Stecker und Steckdose  
+
+Damit zwischen Stecker und Steckdose kein direkter Kontakt möglich ist, habe ich ein Stück Mantel von einer Mantelleitung als Isolierung verwendet (hier rot).
+
 ![zaehler_angeschlossen.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/zaehler_angeschlossen.jpg) 
 Zähler im Gehäuse
 
 Auf dem Bild sind die Kabel noch an die Zähler-Kupfer-Anschlüsse angelötet, was leicht zur Zerstörung des Zähler führen kann, stattdessen habe ich später die Kabel mit Kabelöse an den Kupfer-Anschluss des Zählers geschraubt. Das Bohren der Löcher für die Blechschrauben sollte unbedingt vor dem Begradigen der Kupfer-Anschlüsse erfolgen, damit man dabei nicht die Elektronik des Zähler mit dem Bohrer trifft und beschädigt.
 
 ![netzteil_mit_spannungsregler.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/netzteil_mit_spannungsregler.jpg)  
-Netzteil SUNNY NE1000 mit Spannungsregler wie den LF33CV  
+Netzteil SUNNY NE1000 mit Spannungsregler wie den LF33CV
+
+An den 5V-Ausgang des Netzteils SUNNY NE1000 habe ich direkt den Spannungsregler LF33V angelötet. Zur Stromversorgung des Netzteils werden 240V Kabel mit Ringöse verwendet, die an den Zähler-Kupfer-Anschlüssen (Zählereingang und Null) befestigt werden.
+
 ![netzteil_platzierung.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/netzteil_platzierung.jpg)  
-Platzierung des Netzteils  
+Platzierung des Netzteils
+
+Ein probeweise Platzierung des Netzteils hat gezeigt, dass es eigentlich nur die auf dem Foto gezeigte Möglichkeit gibt, das Netzteil einzubauen.
+
 ![netzteil_verkabelt.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/netzteil_verkabelt.jpg)  
-- Netzteils mit Heisskleber im Deckel befestigt
-- ESP8266-Sockel: 2 Pin-Header (4 Pins) mit Heisskleber zusammengeklebt, Pins hochgebogen, mit Heisskleber im Deckel befestigt  
+
+In dieser Position habe ich das Netzteil in der oberen Gehäusehälfte mit Heisskleber befestigt.
+Ebenso habe ich aus zwei zusammegeklebten Pin-Headern (gekürzt auf jeweils 4 Pins) einen Sockel für den ESP8266 gebaut und neben dem Netzteil befestigt. Die Pins habe ich hochgebogen, damit ich später die Kabel anlöten kann. Diese bestehen zunächst aus der Stromversorgung des ESP8266 mit 3,3V (orange und blau). Zu beachten ist, dass +3,3V an die Kontakte 1 und 3 der oberen Reihe auf dem Bild geführt wird. Zwischen +3,3V und Masse habe ich einen Elektrolykondensator mit 470uF/25V angeschlossen. Ohne diesen ist die Spannungsversorgung nicht ausreichend stabil und der ESP8266 bootet öfter neu.
+Bleibt noch das Kabel mit den Zählerimpulsen das an Masse und den daneben befindlichen Pin-Header angeschlossen wird.
+Jetzt kann der ESP8266 aufgesteckt werden.
+
 ![zaehler_kabelschuhe.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/zaehler_kabelschuhe.jpg)  
-Kabelschuhe an Zähleranschlüssen angeschraubt  
-![elektronik_komplett.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/elektronik_komplett.jpg)  
-Elektronik komplett und WLAN aktiv (siehe rote LED auf ESP8266)  
+Fertig montierter Zähler
+
 ![gehaeuse_geschlossen_nach_umbau.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/gehaeuse_geschlossen_nach_umbau.jpg)  
 Gehäuse geschlossen nach Umbau
-- das Display ist leider defekt, nachdem mir die Zählerplatine einmal heruntergefallen ist (die S0-Impulse kommen aber) 
-- Öffnungen neben Display und auf gegenüberliegender Seite kann man mit Kunststoffresten und Heisskleber verblenden
 
 ## Programmieren des ESP8266-ESP01
 
