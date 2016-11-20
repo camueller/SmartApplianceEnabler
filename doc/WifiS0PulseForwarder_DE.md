@@ -82,6 +82,7 @@ Platzierung des Netzteils
 Ein probeweise Platzierung des Netzteils hat gezeigt, dass es eigentlich nur die auf dem Foto gezeigte Möglichkeit gibt, das Netzteil einzubauen.
 
 ![netzteil_verkabelt.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/netzteil_verkabelt.jpg)  
+Fertig verkabeltes Netzteil
 
 In dieser Position habe ich das Netzteil in der oberen Gehäusehälfte mit Heisskleber befestigt.
 Ebenso habe ich aus zwei zusammegeklebten Pin-Headern (gekürzt auf jeweils 4 Pins) einen Sockel für den ESP8266 gebaut und neben dem Netzteil befestigt. Die Pins habe ich hochgebogen, damit ich später die Kabel anlöten kann. Diese bestehen zunächst aus der Stromversorgung des ESP8266 mit 3,3V (orange und blau). Zu beachten ist, dass +3,3V an die Kontakte 1 und 3 der oberen Reihe auf dem Bild geführt wird. Zwischen +3,3V und Masse habe ich einen Elektrolykondensator mit 470uF/25V angeschlossen. Ohne diesen ist die Spannungsversorgung nicht ausreichend stabil und der ESP8266 bootet öfter neu.
