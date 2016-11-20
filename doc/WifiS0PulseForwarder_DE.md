@@ -57,6 +57,7 @@ Untere Gehäusehälfte
 Die Halterungen der Überspannungsschutz-Platine habe ich mit einem grossen Bohrer weggebohrt. Auch die kleinen Seitensteege in den Ecken habe ich mir einem Schraubendreher durch wegdrehen entfernt.
 
 ![steckerverbindung_hochgebogen.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/steckerverbindung_hochgebogen.jpg)  
+Hochgebogener Verbindungssteeg
 
 Zwecks Unterbrechung zwischen Stecker und Steckdose muss einer der beiden Verbindungssteege hochgebogen werden. 
 Das Kabel mir dem Flachstecker (stammt aus Impulszunge des Zählers) wird in diesen Verbindungssteeg gesteckt.
