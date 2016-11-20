@@ -43,17 +43,20 @@ Universal Überspannungsschutz-Adapter 919.004 von Bachmann
 ![919004_stecker.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/919004_stecker.jpg)  
 Stecker-Kontakte des Universal Überspannungsschutz-Adapter 919.004 von Bachmann  
 ![drs155b.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/drs155b.jpg)  
-Stromzähler DRS155B von B+G E-Tech ohne Gehäuse  
+Stromzähler DRS155B von B+G E-Tech ohne Gehäuse
+Die beiden "Zungen", an denen der Impuls anliegt, müssen ausgelötet werden. Aus einer der beiden Zungen wird der Flachstecker, der in den unterbrochenen Verbindungssteeg gesteckt wird.
 ![919004_gehauserueckseite.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/919004_gehauserueckseite.jpg)  
 Gehäusehälfte (Platienenhalterungen mit grossem Bohrer weggebohrt, Seitenstege entfernt)  
 ![steckerverbindung_hochgebogen.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/steckerverbindung_hochgebogen.jpg)  
 - Verbindungssteeg zwischen Stecker und Steckdose zwecks Unterbrechnung hochgebogen
-- Kabel mit Flachtecker zum Zählereingang  
+- Kabel mit Flachtecker (stammt aus Impulszunge des Zählers) zum Zählereingang  
 ![steckerverbindung_isolation.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/steckerverbindung_isolation.jpg)  
 Isolation (hier rote Mantelleitung-Hälfte) zwischen Stecker und Steckdose  
-![zaehler_angeschlossen.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/zaehler_angeschlossen.jpg)   
+![zaehler_angeschlossen.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/zaehler_angeschlossen.jpg) 
 Zähler im Gehäuse
-- Zähler-Kupfer-Anschlüsse begradigt (auf dem Bild sind die Kabel noch angelötet - wurden bei Folgeversuch geschraubt)  
+
+Auf dem Bild sind die Kabel noch an die Zähler-Kupfer-Anschlüsse angelötet, was leicht zur Zerstörung des Zähler führen kann, stattdessen habe ich später die Kabel mit Kabelöse an den Kupfer-Anschluss des Zählers geschraubt. Das Bohren der Löcher für die Blechschrauben sollte unbedingt vor dem Begradigen der Kupfer-Anschlüsse erfolgen, damit man dabei nicht die Elektronik des Zähler mit dem Bohrer trifft und beschädigt.
+
 ![netzteil_mit_spannungsregler.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/netzteil_mit_spannungsregler.jpg)  
 Netzteil SUNNY NE1000 mit Spannungsregler wie den LF33CV  
 ![netzteil_platzierung.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/netzteil_platzierung.jpg)  
