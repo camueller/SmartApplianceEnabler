@@ -37,7 +37,7 @@ Zum Ein-/Ausschalten eines Gerätes unterstützt der *Smart Appliance Enabler* d
 - Modbus
 - HTTP
 
-Alle aufgeführten Schalter können mit einer [Anlaufstromerkennung](doc/Anlaufstromerkennung.md) verwendet werden, um die Programmierung des Gerätes zu ermöglichen.
+Alle aufgeführten Schalter können mit einer [Anlaufstromerkennung](doc/Anlaufstromerkennung_DE.md) verwendet werden, um die Programmierung des Gerätes zu ermöglichen.
 
 ## Software
 Zur Verwendung des *Smart Appliance Enabler* zusammen mit dem *SMA Sunny Home Manager* sind mindesten die in den 3 nachfolgenden Kapiteln (_Konfiguration_, _Installation_ und _Integration_) genannten Schritte erforderlich.
@@ -49,7 +49,7 @@ Damit der *Smart Appliance Enabler* die Geräte steuern und deren Stromverbrauch
 Der einfachste Weg zu einem lauffähigen *Smart Appliance Enabler* besteht in der [Installation](doc/Installation_DE.md) einer releasten Version.
 
 ### Integration in den SMA Sunny Home Manager
-TODO
+Damit der Sunny Home Manager das Gerät steuern und seinen Verbrauch messen kann, muss es im [Sunny Home Manager konfiguriert](doc/SunnyHomeMangerKonfiguration_DE.md) werden.
 
 ### [Bauen aus Sourcen](doc/Build_DE.md)
 Zur Nutzung von Features, die noch nicht in der releasten Version enthalten sind, muss der *Smart Appliance Enabler* [aus Sourcen gebaut werden](doc/Build_DE.md).
