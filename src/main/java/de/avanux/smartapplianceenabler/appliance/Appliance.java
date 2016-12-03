@@ -23,6 +23,7 @@ import de.avanux.smartapplianceenabler.modbus.ModbusElectricityMeter;
 import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
 import de.avanux.smartapplianceenabler.modbus.ModbusSwitch;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
+import org.joda.time.LocalDateTime;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.*;
@@ -253,7 +254,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     @Override
     public void startingCurrentDetected() {
         logger.debug("Activating timeframes after starting current has been detected");
-        runningTimeMonitor.setTimeFrames(timeFrames);
+        runningTimeMonitor.setTimeFrames(Collections.singletonList(TimeFrame.getNextTimeFrame(new LocalDateTime(), timeFrames)));
     }
 
     @Override

@@ -128,17 +128,62 @@ public class TimeFrame {
         LocalTime startTimeToday = new LocalTime(getInterval(dateTime).getStart());
         LocalTime endTimeToday = new LocalTime(getInterval(dateTime).getEnd());
         if(isOverMidnight()) {
-             if(time.isAfter(startTimeToday)) {
-                 return endTimeToday.isBefore(time) && (dowValues == null || (dowValues != null && dowValues.contains(today)));
-             }
+            if(time.isAfter(startTimeToday)) {
+                return endTimeToday.isBefore(time) && (dowValues == null || (dowValues != null && dowValues.contains(today)));
+            }
             else {
-                 int yesterday = new LocalDateTime(dateTime).minusDays(1).get(DateTimeFieldType.dayOfWeek());
-                 return endTimeToday.isAfter(time) && (dowValues == null || (dowValues != null && dowValues.contains(yesterday)));
-             }
+                int yesterday = new LocalDateTime(dateTime).minusDays(1).get(DateTimeFieldType.dayOfWeek());
+                return endTimeToday.isAfter(time) && (dowValues == null || (dowValues != null && dowValues.contains(yesterday)));
+            }
         }
         else {
             return startTimeToday.isBefore(time) && endTimeToday.isAfter(time) && (dowValues == null || (dowValues != null && dowValues.contains(today)));
         }
+    }
+
+    /**
+     * Returns the next timeframe becoming valid with respect to time of day and day of week.
+     * @param now the time reference
+     * @param timeFrames the list of timeframes to choose from
+     * @return the next timeframe becoming valid or null
+     */
+    public static TimeFrame getNextTimeFrame(LocalDateTime now, List<TimeFrame> timeFrames) {
+        if(timeFrames == null) {
+            return null;
+        }
+        TimeFrame nextTimeFrame = null;
+        Interval intervalUntilNextTimeFrameStart = null;
+        for (TimeFrame timeFrame : timeFrames) {
+            if(timeFrame.contains(now) && now.plusSeconds(timeFrame.getMaxRunningTime()).isBefore(new LocalDateTime(timeFrame.getInterval(now).getEnd()))) {
+                // timeframe already started with remaining running time sufficient
+                return timeFrame;
+            }
+            else {
+                // timeframe not yet started or remaining running time insufficient
+                List<Integer> dowValues = timeFrame.getDaysOfWeekValues();
+
+                DateTime timeFrameStart = timeFrame.getInterval(now).getStart();
+                int dow = timeFrameStart.get(DateTimeFieldType.dayOfWeek());
+                if(now.isAfter(new LocalDateTime(timeFrame.getInterval(now).getStart())) || (dowValues != null && !dowValues.contains(dow))) {
+                    // adjust timeframe according to valid days of week
+                    for(int i=1;i<7;i++) {
+                        timeFrameStart = timeFrameStart.plusDays(1);
+                        dow = timeFrameStart.get(DateTimeFieldType.dayOfWeek());
+                        if(dowValues == null || (dowValues != null && dowValues.contains(dow))) {
+                            break;
+                        }
+                    }
+                }
+
+                // find the timeframe starting next
+                Interval intervalUntilTimeFrameStart = new Interval(now.toDateTime(), timeFrameStart);
+                if((intervalUntilNextTimeFrameStart == null || intervalUntilTimeFrameStart.toDurationMillis() < intervalUntilNextTimeFrameStart.toDurationMillis())) {
+                    nextTimeFrame = timeFrame;
+                    intervalUntilNextTimeFrameStart = intervalUntilTimeFrameStart;
+                }
+            }
+        }
+        return nextTimeFrame;
     }
 
     private LocalDateTime toDateTimeToday(TimeOfDay timeOfDay) {

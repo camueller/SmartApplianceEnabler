@@ -7,7 +7,9 @@ import org.joda.time.LocalDateTime;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class TimeFrameTest extends TestBase {
 
@@ -92,6 +94,54 @@ public class TimeFrameTest extends TestBase {
         Interval interval = timeFrame.getInterval(toToday(5, 0, 0));
         assertDateTime(earliestStart, interval.getStart().toLocalDateTime());
         assertDateTime(latestEnd, interval.getEnd().toLocalDateTime());
+    }
+
+    @Test
+    public void getNextTimeFrame_noTimeFrames() {
+        Assert.assertNull(TimeFrame.getNextTimeFrame(toToday(20, 0, 0), null));
+    }
+
+    @Test
+    public void getNextTimeFrame_alreadyStarted_remainingRunningTimeSufficient() {
+        List<TimeFrame> timeFrames = new ArrayList<TimeFrame>();
+        timeFrames.add(new TimeFrame(7200, 7200, new TimeOfDay(10, 0, 0), new TimeOfDay(14, 0, 0)));
+        timeFrames.add(new TimeFrame(7200, 7200, new TimeOfDay(15, 0, 0), new TimeOfDay(18, 0, 0)));
+        Assert.assertEquals(timeFrames.get(0), TimeFrame.getNextTimeFrame(toToday(11, 0, 0), timeFrames));
+    }
+
+    @Test
+    public void getNextTimeFrame_alreadyStarted_remainingRunningTimeInsufficient_firstTimeFrameOfDay() {
+        List<TimeFrame> timeFrames = new ArrayList<TimeFrame>();
+        timeFrames.add(new TimeFrame(7200, 7200, new TimeOfDay(10, 0, 0), new TimeOfDay(14, 0, 0)));
+        timeFrames.add(new TimeFrame(7200, 7200, new TimeOfDay(15, 0, 0), new TimeOfDay(18, 0, 0)));
+        Assert.assertEquals(timeFrames.get(1), TimeFrame.getNextTimeFrame(toToday(13, 0, 0), timeFrames));
+    }
+
+    @Test
+    public void getNextTimeFrame_alreadyStarted_remainingRunningTimeInsufficient_secondTimeFrameOfDay() {
+        List<TimeFrame> timeFrames = new ArrayList<TimeFrame>();
+        timeFrames.add(new TimeFrame(7200, 7200, new TimeOfDay(10, 0, 0), new TimeOfDay(14, 0, 0)));
+        timeFrames.add(new TimeFrame(7200, 7200, new TimeOfDay(15, 0, 0), new TimeOfDay(18, 0, 0)));
+        Assert.assertEquals(timeFrames.get(0), TimeFrame.getNextTimeFrame(toToday(17, 0, 0), timeFrames));
+    }
+
+    @Test
+    public void getNextTimeFrame_notYetStarted_secondTimeFrameOfDay() {
+        List<TimeFrame> timeFrames = new ArrayList<TimeFrame>();
+        timeFrames.add(new TimeFrame(7200, 7200, new TimeOfDay(10, 0, 0), new TimeOfDay(14, 0, 0)));
+        timeFrames.add(new TimeFrame(7200, 7200, new TimeOfDay(15, 0, 0), new TimeOfDay(18, 0, 0)));
+        Assert.assertEquals(timeFrames.get(1), TimeFrame.getNextTimeFrame(toToday(14, 30, 0), timeFrames));
+    }
+
+    @Test
+    public void getNextTimeFrame_timeFrameNotValidForDow() {
+        LocalDateTime dateTime = toToday(9, 0, 0);
+        List<TimeFrame> timeFrames = new ArrayList<TimeFrame>();
+        // Timeframe only valid yesterday
+        timeFrames.add(new TimeFrame(7200, 7200, new TimeOfDay(10, 0, 0), new TimeOfDay(14, 0, 0), Collections.singletonList(dateTime.minusDays(1).get(DateTimeFieldType.dayOfWeek()))));
+        // Timeframe only valid tomorrow
+        timeFrames.add(new TimeFrame(7200, 7200, new TimeOfDay(15, 0, 0), new TimeOfDay(18, 0, 0), Collections.singletonList(dateTime.plusDays(1).get(DateTimeFieldType.dayOfWeek()))));
+        Assert.assertEquals(timeFrames.get(1), TimeFrame.getNextTimeFrame(dateTime, timeFrames));
     }
 
     private void assertDateTime(LocalDateTime dt1, LocalDateTime dt2) {
