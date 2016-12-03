@@ -46,15 +46,15 @@ Stromzähler DRS155B von B+G E-Tech ohne Gehäuse
 
 Das Bild zeigt den Zähler nach dem Entfernen des Plastik-Gehäuses. Die beiden "Zungen", an denen der Impuls anliegt, müssen ausgelötet werden. Aus einer der beiden Zungen wird der Flachstecker, der in den unterbrochenen Verbindungssteeg gesteckt wird.
 
-![919004_gehauese_angepasst.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/919004_gehauese_angepasst.jpg)  
-Gehäuseöffnungen angepasst
-
-Das Gehäuse des Überspannungsschutz-Adapter hat Öffnungen für Tel/Fax/Modem auf der rechten Seite und Network/ISDN auf der linken Seite. Erstere kann komplett verschlossen werden, letztere muss nach oben verlängert werden, damit das Zählerdisplay komplett sichtbar ist. Ausserdem kann rechts unten neben dem Zählerdisplay ein Loch eingefügt werden, damit man die Zähler-LED von außen sehen kann. Zu Veschließen der Öffnungen kann man die Reste des Zählergehäuses verwenden. Diese lassen sich gut mit einem Cutter-Messer schneiden, wenn man es mehrfach an einer Schiene entlang führt.
-
 ![919004_gehauserueckseite.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/919004_gehauserueckseite.jpg)  
 Untere Gehäusehälfte 
 
 Die Halterungen der Überspannungsschutz-Platine habe ich mit einem grossen Bohrer weggebohrt. Auch die kleinen Seitensteege in den Ecken habe ich mir einem Schraubendreher durch wegdrehen entfernt.
+
+![919004_gehauese_angepasst.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/919004_gehauese_angepasst.jpg)  
+Gehäuseöffnungen angepasst
+
+Das Gehäuse des Überspannungsschutz-Adapter hat Öffnungen für Tel/Fax/Modem auf der rechten Seite und Network/ISDN auf der linken Seite. Erstere kann komplett verschlossen werden, letztere muss nach oben verlängert werden, damit das Zählerdisplay komplett sichtbar ist. Ausserdem kann rechts unten neben dem Zählerdisplay ein Loch eingefügt werden, damit man die Zähler-LED von außen sehen kann. Zu Veschließen der Öffnungen kann man die Reste des Zählergehäuses verwenden. Diese lassen sich gut mit einem Cutter-Messer schneiden, wenn man es mehrfach an einer Schiene entlang führt.
 
 ![steckerverbindung_hochgebogen.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/steckerverbindung_hochgebogen.jpg)  
 Hochgebogener Verbindungssteeg
