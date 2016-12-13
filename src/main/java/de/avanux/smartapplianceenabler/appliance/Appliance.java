@@ -53,10 +53,15 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             @XmlElement(name = "HttpSwitch", type = HttpSwitch.class)
     })
     private List<Control> controls;
-    @XmlElement(name = "Timeframe")
-    private List<TimeFrame> timeFrames;
+    @XmlElement(name = "Schedule")
+    private List<Schedule> schedules;
     @XmlTransient
     private RunningTimeMonitor runningTimeMonitor;
+
+    public void setId(String id) {
+        this.id = id;
+        this.logger.setApplianceId(id);
+    }
 
     public String getId() {
         return id;
@@ -81,19 +86,19 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
 
     public void init() {
         this.logger.setApplianceId(id);
-        if(timeFrames != null && timeFrames.size() > 0) {
-            logger.info("Time frames configured: " + timeFrames);
+        if(schedules != null && schedules.size() > 0) {
+            logger.info("Schedules configured: " + schedules.size());
             runningTimeMonitor = new RunningTimeMonitor();
             runningTimeMonitor.setApplianceId(id);
             if(! hasStartingCurrentDetection()) {
                 // in case of starting current detection timeframes are added after
                 // starting current was detected
-                runningTimeMonitor.setTimeFrames(timeFrames);
-                logger.debug("Time frames passed to RunningTimeMonitor");
+                runningTimeMonitor.setSchedules(schedules);
+                logger.debug("Schedules passed to RunningTimeMonitor");
             }
         }
         else {
-            logger.info("No time frames configured");
+            logger.info("No schedules configured");
         }
 
         if(controls != null) {
@@ -128,6 +133,12 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                 Control control = controls.get(0);
                 ((S0ElectricityMeter) meter).setControl(control);
                 logger.debug(S0ElectricityMeter.class.getSimpleName() + " uses " + control.getClass().getSimpleName());
+            }
+        }
+
+        if(schedules != null) {
+            for(Schedule schedule : schedules) {
+                schedule.getTimeframe().setSchedule(schedule);
             }
         }
     }
@@ -176,7 +187,6 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         }
     }
 
-
     private Set<GpioControllable> getGpioControllables() {
         Set<GpioControllable> controllables = new HashSet<GpioControllable>();
         if(meter != null && meter instanceof S0ElectricityMeter) {
@@ -222,9 +232,9 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     }
 
     public boolean canConsumeOptionalEnergy() {
-        if(timeFrames != null) {
-            for(TimeFrame timeFrame : timeFrames) {
-                if(timeFrame.getMaxRunningTime() != timeFrame.getMinRunningTime()) {
+        if(schedules != null) {
+            for(Schedule schedule : schedules) {
+                if(schedule.getMaxRunningTime() != schedule.getMinRunningTime()) {
                     return true;
                 }
             }
@@ -253,15 +263,16 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
 
     @Override
     public void startingCurrentDetected() {
-        logger.debug("Activating timeframes after starting current has been detected");
-        runningTimeMonitor.setTimeFrames(Collections.singletonList(TimeFrame.getNextTimeFrame(new LocalDateTime(), timeFrames)));
+        logger.debug("Activating next sufficient timeframe interval after starting current has been detected");
+        LocalDateTime now = new LocalDateTime();
+        runningTimeMonitor.activateTimeframeInterval(now, Schedule.getCurrentOrNextTimeframeInterval(now, schedules, false, false));
     }
 
     @Override
     public void finishedCurrentDetected() {
-        logger.debug("Deactivating timeframes until starting current is detected again: runningTimeMonitor=" + (runningTimeMonitor != null ? "not null" : "null"));
+        logger.debug("Deactivating timeframe interval until starting current is detected again: runningTimeMonitor=" + (runningTimeMonitor != null ? "not null" : "null"));
         if(runningTimeMonitor != null) {
-            runningTimeMonitor.setTimeFrames(null);
+            runningTimeMonitor.activateTimeframeInterval(new LocalDateTime(), (TimeframeInterval) null);
         }
     }
 }

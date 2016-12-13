@@ -2,7 +2,7 @@ package de.avanux.smartapplianceenabler.webservice;
 
 import de.avanux.smartapplianceenabler.appliance.Appliance;
 import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
-import de.avanux.smartapplianceenabler.appliance.TimeFrame;
+import de.avanux.smartapplianceenabler.appliance.Schedule;
 import de.avanux.smartapplianceenabler.log.ApplianceLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,9 +23,9 @@ public class SaeController {
     @ResponseBody
     public void setTimeFrames(@RequestParam(value="ApplianceId") String applianceId, @RequestBody TimeFrames timeFrames) {
         ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
-        List<TimeFrame> timeFramesToSet = timeFrames.getTimeFrames();
+        List<Schedule> timeFramesToSet = timeFrames.getSchedules();
         applianceLogger.debug("Received request to set " + (timeFramesToSet != null ? timeFramesToSet.size() : "0") + " time frame(s)");
         Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
-        appliance.getRunningTimeMonitor().setTimeFrames(timeFramesToSet);
+        appliance.getRunningTimeMonitor().setSchedules(timeFramesToSet);
     }
 }

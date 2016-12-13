@@ -1,30 +1,44 @@
 package de.avanux.smartapplianceenabler;
 
 import de.avanux.smartapplianceenabler.appliance.TimeOfDay;
-import org.joda.time.*;
+import de.avanux.smartapplianceenabler.appliance.TimeOfDayOfWeek;
+import org.joda.time.DateTimeFieldType;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+import org.junit.Assert;
 
 abstract public class TestBase {
 
     protected LocalDateTime toYesterday(Integer hour, Integer minute, Integer second) {
-        return toToday(hour, minute, second).minusHours(24);
+        return toDay(-1, hour, minute, second);
     }
 
     protected LocalDateTime toToday(Integer hour, Integer minute, Integer second) {
-        return new LocalDate().toLocalDateTime(new TimeOfDay(hour, minute, second).toLocalTime()); //.withTime(hour, minute, second, 0);
+        return toDay(0, hour, minute, second);
+    }
+
+    protected LocalDateTime toDay(Integer dayOffset, Integer hour, Integer minute, Integer second) {
+        return new LocalDate().toLocalDateTime(new TimeOfDay(hour, minute, second).toLocalTime()).plusDays(dayOffset);
     }
 
     protected LocalDateTime toTomorrow(Integer hour, Integer minute, Integer second) {
-        return toToday(hour, minute, second).plusHours(24);
+        return toDay(1, hour, minute, second);
     }
 
     protected LocalDateTime toDayAfterTomorrow(Integer hour, Integer minute, Integer second) {
-        return toToday(hour, minute, second).plusHours(48);
+        return toDay(2, hour, minute, second);
     }
 
     protected LocalDateTime toDayOfWeek(int dayOfWeek, Integer hour, Integer minute, Integer second) {
-        LocalDateTime dateTime = new LocalDateTime(2016, 6, 13, hour, minute, second);
-        dateTime = dateTime.plusDays(dayOfWeek - 1);
-        return dateTime;
+        return toDayOfWeek(new LocalDateTime(), dayOfWeek, hour, minute, second);
     }
 
+    protected LocalDateTime toDayOfWeek(LocalDateTime now, int dayOfWeek, Integer hour, Integer minute, Integer second) {
+        TimeOfDayOfWeek timeOfDayOfWeek = new TimeOfDayOfWeek(dayOfWeek, hour, minute, second);
+        return timeOfDayOfWeek.toNextOccurrence(now);
+    }
+
+    protected void assertDateTime(LocalDateTime dt1, LocalDateTime dt2) {
+        Assert.assertEquals(dt1.get(DateTimeFieldType.dayOfMonth()), dt2.get(DateTimeFieldType.dayOfMonth()));
+    }
 }

@@ -1,6 +1,6 @@
 package de.avanux.smartapplianceenabler.webservice;
 
-import de.avanux.smartapplianceenabler.appliance.TimeFrame;
+import de.avanux.smartapplianceenabler.appliance.Schedule;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -12,13 +12,13 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TimeFrames {
     @XmlElement(name = "Timeframe")
-    private List<TimeFrame> timeFrames;
+    private List<Schedule> schedules;
 
-    public List<TimeFrame> getTimeFrames() {
-        return timeFrames;
+    public List<Schedule> getSchedules() {
+        return schedules;
     }
 
-    public void setTimeFrames(List<TimeFrame> timeFrames) {
-        this.timeFrames = timeFrames;
+    public void setSchedules(List<Schedule> schedules) {
+        this.schedules = schedules;
     }
 }

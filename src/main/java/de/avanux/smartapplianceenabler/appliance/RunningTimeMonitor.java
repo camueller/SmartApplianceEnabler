@@ -21,7 +21,6 @@ import de.avanux.smartapplianceenabler.log.ApplianceLogger;
 import org.joda.time.*;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -34,9 +33,9 @@ import java.util.Set;
 public class RunningTimeMonitor implements ApplianceIdConsumer {
     private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(RunningTimeMonitor.class));
     private String applianceId;
-    private List<TimeFrame> timeFrames;
-    private Set<TimeFrameChangedListener> timeFrameChangedListeners = new HashSet<>();
-    private TimeFrame currentTimeFrame;
+    private List<Schedule> schedules;
+    private Set<ActiveIntervalChangedListener> scheduleChangedListeners = new HashSet<>();
+    private TimeframeInterval activeTimeframeInterval;
     private LocalDateTime intervalBegin;
     private LocalDateTime statusChangedAt;
     private LocalDateTime lastUpdate;
@@ -50,23 +49,23 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         this.logger.setApplianceId(applianceId);
     }
 
-    public void setTimeFrames(List<TimeFrame> timeFrames) {
-        this.timeFrames = timeFrames;
-        this.currentTimeFrame = null;
-        if(logger.isDebugEnabled() && timeFrames != null
+    public void setSchedules(List<Schedule> schedules) {
+        this.schedules = schedules;
+        this.activeTimeframeInterval = null;
+        if(logger.isDebugEnabled() && schedules != null
                 ) {
-            for(TimeFrame timeFrame : timeFrames) {
-                logger.debug("Configured time frame is " + timeFrame.toString());
+            for(Schedule schedule : schedules) {
+                logger.debug("Configured time frame is " + schedule.toString());
             }
         }
     }
     
-    public List<TimeFrame> getTimeFrames() {
-        return timeFrames;
+    public List<Schedule> getSchedules() {
+        return schedules;
     }
 
-    public void addTimeFrameChangedListener(TimeFrameChangedListener listener) {
-        this.timeFrameChangedListeners.add(listener);
+    public void addTimeFrameChangedListener(ActiveIntervalChangedListener listener) {
+        this.scheduleChangedListeners.add(listener);
     }
 
     public void setRunning(boolean running) {
@@ -109,27 +108,26 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
     /**
      * Updates remainingMinRunningTime for the given instant. The value may become negative!
      * Subsequent calls to this method within one second are omitted.
-     * @param dateTime
+     * @param now
      */
-    protected void update(LocalDateTime dateTime) {
+    protected void update(LocalDateTime now) {
         // update not more than once per second in order to avoid spamming the log
-        if(lastUpdate == null || dateTime.isBefore(lastUpdate) || new Interval(lastUpdate.toDateTime(), dateTime.toDateTime()).toDurationMillis() > 1000) {
-
-            findAndSetCurrentTimeFrame(dateTime);
-            logger.debug("currentTimeFrame=" + currentTimeFrame + " statusChangedAt=" + statusChangedAt + " intervalBegin=" + intervalBegin + " running=" + running);
+        if(lastUpdate == null || now.isBefore(lastUpdate) || new Interval(lastUpdate.toDateTime(), now.toDateTime()).toDurationMillis() > 1000) {
+            activateTimeframeInterval(now, schedules);
+            logger.debug("activeTimeframeInterval=" + activeTimeframeInterval + " statusChangedAt=" + statusChangedAt + " intervalBegin=" + intervalBegin + " running=" + running);
 
             Interval interval = null;
             if(running) {
                 // running
                 if(intervalBegin == null) {
                     // running was set to true after interval begin
-                    interval = new Interval(statusChangedAt.toDateTime(), dateTime.toDateTime());
+                    interval = new Interval(statusChangedAt.toDateTime(), now.toDateTime());
                 }
                 else {
                     // no status change in interval
-                    interval = new Interval(intervalBegin.toDateTime(), dateTime.toDateTime());
+                    interval = new Interval(intervalBegin.toDateTime(), now.toDateTime());
                 }
-                intervalBegin = dateTime;
+                intervalBegin = now;
             }
             else if (intervalBegin != null && statusChangedAt != null) {
                 // running was set to false after interval begin
@@ -137,87 +135,67 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
                 intervalBegin = null;
                 statusChangedAt = null;
             }
-            if(interval != null) {
+            if(interval != null && remainingMinRunningTime != null && remainingMaxRunningTime != null) {
                 int intervalSeconds = Double.valueOf(interval.toDuration().getMillis() / 1000).intValue();
                 remainingMinRunningTime = remainingMinRunningTime - intervalSeconds;
                 remainingMaxRunningTime = remainingMaxRunningTime - intervalSeconds;
             }
-            lastUpdate = dateTime;
+            lastUpdate = now;
         }
-    }
-
-    public TimeFrame findAndSetCurrentTimeFrame() {
-        return findAndSetCurrentTimeFrame(new LocalDateTime());
     }
 
     /**
-     * Set the timeframe whose interval contains the given dateTime.
-     * If the timeframe has associated days of week the day of week of the given dateTime has to match as well.
-     * @param dateTime
-     * @return the timeframe set or null, if there is no matching timeframe
+     * Returns the active timeframe interval.
+     * @return
      */
-    public TimeFrame findAndSetCurrentTimeFrame(LocalDateTime dateTime) {
-        TimeFrame timeFrameToBeSet = null;
-        if(timeFrames != null) {
-            for(TimeFrame timeFrame : timeFrames) {
-                if(timeFrame.contains(dateTime)) {
-                    timeFrameToBeSet = timeFrame;
-                    break;
-                }
-            }
+    public TimeframeInterval getActiveTimeframeInterval() {
+        update(new LocalDateTime());
+        return activeTimeframeInterval;
+    }
+
+    /**
+     * Activate the current or next timeframe interval from one of the given schedules.
+     * @param now
+     * @param schedules
+     */
+    public void activateTimeframeInterval(LocalDateTime now, List<Schedule> schedules) {
+        if(schedules != null && schedules.size() > 0) {
+            TimeframeInterval nextSufficientTimeframeInterval = Schedule.getCurrentOrNextTimeframeInterval(now, schedules, true, false);
+            activateTimeframeInterval(now, nextSufficientTimeframeInterval);
         }
-        boolean timeFrameChanged = false;
-        if(timeFrameToBeSet != null && currentTimeFrame == null) {
-            remainingMinRunningTime = timeFrameToBeSet.getMinRunningTime();
-            remainingMaxRunningTime = timeFrameToBeSet.getMaxRunningTime();
+    }
+
+    /**
+     * Activate the given timeframe interval.
+     * @param now
+     * @param timeframeIntervalToBeActivated the timeframe interval or null
+     */
+    public void activateTimeframeInterval(LocalDateTime now, TimeframeInterval timeframeIntervalToBeActivated) {
+        boolean intervalChanged = false;
+        if(timeframeIntervalToBeActivated != null && activeTimeframeInterval == null) {
+            Schedule schedule = timeframeIntervalToBeActivated.getTimeframe().getSchedule();
+            remainingMinRunningTime = schedule.getMinRunningTime();
+            remainingMaxRunningTime = schedule.getMaxRunningTime();
             intervalBegin = null;
-            timeFrameChanged = true;
-            logger.debug("Timeframe started: " + timeFrameToBeSet);
+            intervalChanged = true;
+            logger.debug("Interval activated: " + timeframeIntervalToBeActivated);
         }
-        else if(timeFrameToBeSet == null && currentTimeFrame != null) {
-            logger.debug("Timeframe expired: " + currentTimeFrame);
+        else if(timeframeIntervalToBeActivated == null && activeTimeframeInterval != null) {
+            logger.debug("Interval expired: " + activeTimeframeInterval);
             remainingMinRunningTime = 0;
             remainingMaxRunningTime = 0;
             intervalBegin = null;
-            timeFrameChanged = true;
+            intervalChanged = true;
         }
-        logger.debug("Timeframe status: remainingMinRunningTime=" + remainingMinRunningTime + " remainingMaxRunningTime=" + remainingMaxRunningTime);
-        TimeFrame oldTimeFrame = currentTimeFrame;
-        currentTimeFrame = timeFrameToBeSet;
-        if(timeFrameChanged) {
-            logger.debug("Time frame changed for appliance " + applianceId + " : oldTimeFrame=" + oldTimeFrame + " newTimeFrame=" + currentTimeFrame);
-            for(TimeFrameChangedListener listener : timeFrameChangedListeners) {
+        logger.debug("Active interval status: remainingMinRunningTime=" + remainingMinRunningTime + " remainingMaxRunningTime=" + remainingMaxRunningTime);
+        TimeframeInterval deactivatedTimeframeInterval = activeTimeframeInterval;
+        activeTimeframeInterval = timeframeIntervalToBeActivated;
+        if(intervalChanged) {
+            logger.debug("Active interval changed for appliance " + applianceId + " : deactivatedTimeframeInterval=" + deactivatedTimeframeInterval + " activeTimeframeInterval=" + activeTimeframeInterval);
+            for(ActiveIntervalChangedListener listener : scheduleChangedListeners) {
                 logger.debug("Notifying " + listener.getClass().getSimpleName());
-                listener.timeFrameChanged(applianceId, oldTimeFrame, currentTimeFrame);
+                listener.activeIntervalChanged(applianceId, deactivatedTimeframeInterval, activeTimeframeInterval);
             }
         }
-
-        return currentTimeFrame;
-    }
-
-    /**
-     * Returns timeframes starting after the given dateTime.
-     * @param dateTime
-     * @return a (possibly empty) list of timeframes
-     */
-    public List<TimeFrame> findFutureTimeFrames(LocalDateTime dateTime) {
-        List<TimeFrame> futureTimeFrames = new ArrayList<TimeFrame>();
-        int dowOfInstant = dateTime.get(DateTimeFieldType.dayOfWeek());
-        if(timeFrames != null) {
-            LocalTime instantTime = new LocalTime(dateTime, DateTimeZone.getDefault());
-            for(TimeFrame timeFrame : timeFrames) {
-                List<Integer> dowValues = timeFrame.getDaysOfWeekValues();
-                LocalTime startTimeToday = new LocalTime(timeFrame.getInterval(dateTime).getStart());
-                LocalTime endTimeToday = new LocalTime(timeFrame.getInterval(dateTime).getEnd());
-                if((dowValues == null || dowValues.contains(dowOfInstant))
-                        && (timeFrame.isOverMidnight()
-                        ? (!instantTime.isAfter(startTimeToday) && startTimeToday.isAfter(instantTime)) && endTimeToday.isBefore(instantTime)
-                        : startTimeToday.isAfter(instantTime)
-                )) {
-                    futureTimeFrames.add(timeFrame);
-                }
-            }
-        }
-        return futureTimeFrames;
     }
 }
