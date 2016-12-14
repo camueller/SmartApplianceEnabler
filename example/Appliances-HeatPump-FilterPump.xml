@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.0">
+<Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.1">
 	<!-- id muss mit der <DeviceId> des zugehörigen Gerätes aus Device2EM.xml übereinstimmen -->
 	<Appliance id="F-00000001-000000000001-00">
 		<!-- 
@@ -35,12 +35,14 @@
 		minRunningTime : die minimale Zeitdauer in Sekunden, die das Gerät von EarliestStart bis LatestEnd laufen muss
 		maxRunningTime : die maximale Zeitdauer in Sekunden, die das Gerät von EarliestStart bis LatestEnd laufen darf
 		-->
-		<Timeframe minRunningTime="28800" maxRunningTime="28800">
-			<!-- hour : Einschaltzeit Stunde minute : Einschaltzeit Minute second : Einschaltzeit Sekunde -->
-			<EarliestStart hour="0" minute="0" second="0" />
-			<!-- hour : Ausschaltzeit Stunde minute : Ausschaltzeit Minute second : Ausschaltzeit Sekunde -->
-			<LatestEnd hour="23" minute="59" second="59" />
-		</Timeframe>
+		<Schedule minRunningTime="28800" maxRunningTime="28800">
+			<DayTimeframe>
+				<!-- hour : Einschaltzeit Stunde minute : Einschaltzeit Minute second : Einschaltzeit Sekunde -->
+				<Start hour="0" minute="0" second="0" />
+				<!-- hour : Ausschaltzeit Stunde minute : Ausschaltzeit Minute second : Ausschaltzeit Sekunde -->
+				<End hour="23" minute="59" second="59" />
+			</DayTimeframe>
+		</Schedule>
 	</Appliance>
 	<Connectivity>
         <!--
