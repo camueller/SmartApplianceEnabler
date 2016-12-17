@@ -63,5 +63,5 @@ Normalerweise werden die Schedules aus der Datei `Appliance.xml` gelesen. Es ist
 Im Log des SAE sollte sich danach folgendes finden:
 ```
 2016-12-17 15:27:49,802 DEBUG [http-nio-8080-exec-1] d.a.s.w.SaeController [SaeController.java:29] F-00000001-000000000001-00: Received request to set 1 schedule(s)
-2016-12-17 15:27:49,804 DEBUG [http-nio-8080-exec-1] d.a.s.a.RunningTimeMonitor [RunningTimeMonitor.java:58] F-00000001-000000000001-00: Configured time frame is 16:00:00.000[5]-20:00:00.000[7]36000s/43200s
+2016-12-17 15:27:49,804 DEBUG [http-nio-8080-exec-1] d.a.s.a.RunningTimeMonitor [RunningTimeMonitor.java:58] F-00000001-000000000001-00: Configured schedule: 16:00:00.000[5]-20:00:00.000[7]36000s/43200s
 ```
