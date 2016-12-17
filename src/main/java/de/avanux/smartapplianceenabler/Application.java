@@ -22,7 +22,10 @@ import java.io.IOException;
 import java.io.Writer;
 import java.lang.management.ManagementFactory;
 
+import de.avanux.smartapplianceenabler.appliance.FileHandler;
 import de.avanux.smartapplianceenabler.log.ApplianceLogger;
+import de.avanux.smartapplianceenabler.semp.webservice.Device2EM;
+import de.avanux.smartapplianceenabler.semp.webservice.SempController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -34,13 +37,15 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.FileAppender;
 import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
 import de.avanux.smartapplianceenabler.semp.discovery.SempDiscovery;
+import org.springframework.context.ConfigurableApplicationContext;
 
 @SpringBootApplication
 public class Application {
-    private static Logger logger = LoggerFactory.getLogger(Application.class); 
+    private static Logger logger = LoggerFactory.getLogger(Application.class);
+    private static ConfigurableApplicationContext applicationContext;
 
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+        applicationContext = SpringApplication.run(Application.class, args);
 
         Application application = new Application();
         application.configureLogging();
@@ -50,6 +55,11 @@ public class Application {
     }
     
     private void startSemp() {
+        FileHandler fileHandler = new FileHandler();
+        Device2EM device2EM = fileHandler.load(Device2EM.class);
+        SempController sempController = applicationContext.getBean(SempController.class);
+        sempController.setDevice2EM(device2EM);
+
         boolean disableDiscovery = Boolean.parseBoolean(System.getProperty("sae.discovery.disable", "false"));
         if(disableDiscovery) {
             logger.warn("SEMP discovery disabled.");
