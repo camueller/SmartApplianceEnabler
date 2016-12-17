@@ -139,6 +139,7 @@ public class Schedule {
 
         if(timeframe != null) {
             text += timeframe.toString();
+            text += "/";
         }
 
         text += minRunningTime + "s/" + maxRunningTime + "s";
