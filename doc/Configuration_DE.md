@@ -1,8 +1,9 @@
 # Konfiguration
 
+## Dateien
 Die Konfiguration besteht aus zwei [XML](https://de.wikipedia.org/wiki/Extensible_Markup_Language)-Dateien:
 * die Datei `Device2EM.xml` enthält Gerätebeschreibung für den EnergyManager
-* die Datei `Appliances.xml` enthält die Gerätekonfiguration für den Raspberry Pi
+* die Datei `Appliances.xml` enthält die Gerätekonfiguration für den *Smart Appliance Enabler*
 
 Die Verbindung zwischen den konfigurierten Geräten in der Datei `Device2EM.xml` und den Appliances in der Datei `Appliances.xml` ist die Appliance-ID (`<Appliance id="F-00000001-000000000001-00">`), die mit der Device-ID ( `<DeviceId>F-00000001-000000000001-00</DeviceId>`) des zugehörigen Gerätes übereinstimmen muss.
 
@@ -16,11 +17,40 @@ Die Device-IDs werden vom Sunny-Portal direkt verwendet, d.h. wenn jemand andere
 Im Verzeichnis `example` finden sich Beispieldateien mit Kommentaren zu den einzelnen Angaben.
 Diese sollen dabei helfen, die für die eigenen Geräte passenden Dateien `Device2EM.xml` und `Appliances.xml` (mit genau diesen Namen und entsprechender Groß-/Kleinschreibung!) zu erstellen.
 
+## Überprüfung der Dateien
 Die angepassten XML-Dateien sollten hinsichtlich ihrer Gültigkeit überprüft werden.
 Dazu ist die Seite http://www.freeformatter.com/xml-validator-xsd.html besonders geeignet:
 Der Inhalt der XML-Datei wird in das Fenster *XML Input* kopiert. Bei *XSD Input* muss nur *Option 2* eingegeben werden:
 * beim Prüfen von Device2EM.xml: https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/xsd/SEMP-1.1.5.xsd
-* beim Prüfen von Appliances.xml: https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/xsd/SmartApplianceEnabler-1.0.xsd
+* beim Prüfen von Appliances.xml: https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/xsd/SmartApplianceEnabler-1.1.xsd
 
 Ist die Prüfung erfolgreich, erscheint oberhalb des *XML Input* eine grün unterlegte Meldung *The XML document is fully valid.*. Bei Fehlern erscheint eine rot unterlegte Meldung mit entsprechender Fehlerbeschreibung.
 
+## Planung der Gerätelaufzeiten
+Zur Planung der Gerätelaufzeit können einem Gerät ein oder mehrere `schedule` zugewiesen werden, in denen jeweils die Mindest- und Maximallaufzeit in Sekunden für die zugehörigen Schaltvorgänge festgelegt ist.
+
+Zu jedem Schedule gehört entweder ein `DayTimeframe` oder ein `ConsecutiveDaysTimeframe`.
+
+Ein `DayTimeframe` enthält Ein- und Ausschaltzeiten, die sich auf ein 24-Stunden-Interval beziehen (z.B. 8:00-13:00 oder auch 22:00-2:00) und auf bestimmte Wochentage beschränkt werden können. Nachfolgendes Beispiel zeigt ein Laufzeit von 3 Stunden zwischen 6 Uhr und 14 Uhr montags, samstags und sonntags.
+```
+<Schedule minRunningTime="10800" maxRunningTime="10800">
+  <DayTimeframe>
+    <Start hour="6" minute="0" second="0"/>
+    <End hour="14" minute="0" second="0"/>
+    <DayOfWeek>1</DayOfWeek>
+    <DayOfWeek>6</DayOfWeek>
+    <DayOfWeek>7</DayOfWeek>
+  </DayTimeframe>
+</Schedule>
+```
+
+Ein `ConsecutiveDaysTimeframe` erlaubt die Festlegung eines Intervals, der länger als 24 Stunden ist (z.B. Freitag 16:00 bis Sonntag 18:00). Das nachfolgende Beispiel zeigt eine Laufzeit von mindestens 10 Stunden und maximal 12 Stunden zwischen Freitag 16:00 und Sonntag 20:00.
+```
+<Schedule minRunningTime="36000" maxRunningTime="43200">
+  <ConsecutiveDaysTimeframe>
+    <Start dayOfWeek="5" hour="16" minute="0" second="0" />
+    <End dayOfWeek="7" hour="20" minute="0" second="0" />
+  </ConsecutiveDaysTimeframe>
+</Schedule>
+```
+Der *Smart Appliance Enabler* meldet dem Sunny Home Manager den Geräte-Laufzeitbedarf für die nächsten 48 Stunden, damit er auf dieser Basis optimal planen kann.
