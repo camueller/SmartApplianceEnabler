@@ -55,7 +55,7 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         if(logger.isDebugEnabled() && schedules != null
                 ) {
             for(Schedule schedule : schedules) {
-                logger.debug("Configured time frame is " + schedule.toString());
+                logger.debug("Configured schedule: " + schedule.toString());
             }
         }
     }
