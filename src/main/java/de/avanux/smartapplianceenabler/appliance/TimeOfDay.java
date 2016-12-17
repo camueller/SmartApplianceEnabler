@@ -79,6 +79,30 @@ public class TimeOfDay {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TimeOfDay timeOfDay = (TimeOfDay) o;
+
+        return new org.apache.commons.lang3.builder.EqualsBuilder()
+                .append(hour, timeOfDay.hour)
+                .append(minute, timeOfDay.minute)
+                .append(second, timeOfDay.second)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new org.apache.commons.lang3.builder.HashCodeBuilder(17, 37)
+                .append(hour)
+                .append(minute)
+                .append(second)
+                .toHashCode();
+    }
+
+    @Override
     public String toString() {
         return toLocalTime().toString();
     }

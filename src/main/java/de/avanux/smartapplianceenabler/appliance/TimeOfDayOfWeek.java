@@ -1,5 +1,7 @@
 package de.avanux.smartapplianceenabler.appliance;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.joda.time.DateTimeFieldType;
 import org.joda.time.LocalDateTime;
 
@@ -50,6 +52,28 @@ public class TimeOfDayOfWeek extends TimeOfDay {
             dateTime = dateTime.minusDays(1);
         }
         return dateTime;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TimeOfDayOfWeek that = (TimeOfDayOfWeek) o;
+
+        return new EqualsBuilder()
+                .appendSuper(super.equals(o))
+                .append(dayOfWeek, that.dayOfWeek)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .appendSuper(super.hashCode())
+                .append(dayOfWeek)
+                .toHashCode();
     }
 
     @Override

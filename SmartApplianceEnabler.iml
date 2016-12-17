@@ -43,6 +43,7 @@
     <orderEntry type="library" name="Maven: org.springframework:spring-oxm:4.2.3.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-beans:4.2.3.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-core:4.2.3.RELEASE" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.springframework:spring-test:4.2.3.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.fourthline.cling:cling-core:2.0.0" level="project" />
     <orderEntry type="library" name="Maven: org.seamless:seamless-util:1.0.0" level="project" />
     <orderEntry type="library" name="Maven: org.seamless:seamless-http:1.0.0" level="project" />

@@ -12,20 +12,22 @@ import java.util.List;
 
 @RestController
 public class SaeController {
-    private static final String BASE_URL = "/sae";
+    protected static final String BASE_URL = "/sae";
+    protected static final String SCHEDULES_URL = BASE_URL + "/schedules";
+
     private Logger logger = LoggerFactory.getLogger(SaeController.class);
 
     public SaeController() {
-        logger.info("Controller ready to handle SAE requests.");
+        logger.info("SAE controller created.");
     }
 
-    @RequestMapping(value=BASE_URL + "/timeframes", method= RequestMethod.POST, consumes="application/xml")
+    @RequestMapping(value=SCHEDULES_URL, method= RequestMethod.POST, consumes="application/xml")
     @ResponseBody
-    public void setTimeFrames(@RequestParam(value="ApplianceId") String applianceId, @RequestBody TimeFrames timeFrames) {
+    public void setSchedules(@RequestParam(value="ApplianceId") String applianceId, @RequestBody Schedules schedules) {
         ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
-        List<Schedule> timeFramesToSet = timeFrames.getSchedules();
-        applianceLogger.debug("Received request to set " + (timeFramesToSet != null ? timeFramesToSet.size() : "0") + " time frame(s)");
+        List<Schedule> schedulesToSet = schedules.getSchedules();
+        applianceLogger.debug("Received request to set " + (schedulesToSet != null ? schedulesToSet.size() : "0") + " schedule(s)");
         Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
-        appliance.getRunningTimeMonitor().setSchedules(timeFramesToSet);
+        appliance.getRunningTimeMonitor().setSchedules(schedulesToSet);
     }
 }

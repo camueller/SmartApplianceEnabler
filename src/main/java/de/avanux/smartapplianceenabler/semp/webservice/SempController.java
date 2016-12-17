@@ -33,7 +33,6 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 public class SempController implements ActiveIntervalChangedListener {
@@ -41,18 +40,20 @@ public class SempController implements ActiveIntervalChangedListener {
     private static final String BASE_URL = "/semp";
     public static final String SCHEMA_LOCATION = "http://www.sma.de/communication/schema/SEMP/v1";
     private Logger logger = LoggerFactory.getLogger(SempController.class);
-    private FileHandler fileHandler;
     private Device2EM device2EM;
     private boolean timeFrameChangedListenerRegistered;
     
     public SempController() {
-        fileHandler = new FileHandler();
-        device2EM = fileHandler.load(Device2EM.class);
-        logger.info("Controller ready to handle SEMP requests.");
+        logger.info("SEMP controller created.");
     }
 
     protected SempController(Device2EM device2EM) {
+        setDevice2EM(device2EM);
+    }
+
+    public void setDevice2EM(Device2EM device2EM) {
         this.device2EM = device2EM;
+        logger.debug("Device2EM configured");
     }
 
     @RequestMapping(value=BASE_URL, method=RequestMethod.GET, produces="application/xml")

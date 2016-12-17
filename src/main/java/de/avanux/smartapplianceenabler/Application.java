@@ -86,42 +86,44 @@ public class Application {
         }
     }
     
-    private void configureLogging() {
+    public void configureLogging() {
+        ch.qos.logback.classic.Level level = ch.qos.logback.classic.Level.INFO;
+        String levelString = System.getProperty("sae.loglevel");
+        if(levelString != null) {
+            level = ch.qos.logback.classic.Level.valueOf(levelString);
+        }
+        configureLogging(level, System.getProperty("sae.logfile"), false);
+    }
+
+    public static void configureLogging(ch.qos.logback.classic.Level level, String file, boolean additive) {
         LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
         lc.getFrameworkPackages().add(ApplianceLogger.class.getPackage().getName());
-        
+
         PatternLayoutEncoder ple = new PatternLayoutEncoder();
         ple.setPattern("%date %level [%thread] %logger{10} [%file:%line] %msg%n");
         ple.setContext(lc);
         ple.start();
 
-        String logfileString = System.getProperty("sae.logfile");
         FileAppender<ILoggingEvent> fileAppender = null;
-        if(logfileString != null) {
+        if(file != null) {
             fileAppender = new FileAppender<ILoggingEvent>();
-            fileAppender.setFile(logfileString);
+            fileAppender.setFile(file);
             fileAppender.setEncoder(ple);
             fileAppender.setContext(lc);
             fileAppender.start();
         }
 
-        ch.qos.logback.classic.Level level = ch.qos.logback.classic.Level.INFO;
-        String levelString = System.getProperty("sae.loglevel");
-        if(levelString != null) {
-            level = ch.qos.logback.classic.Level.valueOf(levelString);    
-        }
-        logger.info("Logging configured with log level " + level);
-        
         ch.qos.logback.classic.Logger logger = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger("de.avanux");
         if(fileAppender != null) {
             logger.addAppender(fileAppender);
         }
         logger.setLevel(level);
-        logger.setAdditive(false); /* set to true if logging not already configured by Spring */
-        
+        logger.setAdditive(additive); /* set to true if logging not already configured by Spring */
+
         if(fileAppender != null) {
             ch.qos.logback.classic.Logger rootLogger = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
             rootLogger.addAppender(fileAppender);
         }
+        logger.info("Logging configured with log level " + level);
     }
 }

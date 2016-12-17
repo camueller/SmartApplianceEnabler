@@ -31,6 +31,14 @@ public class ConsecutiveDaysTimeframe implements Timeframe {
         this.end = end;
     }
 
+    public TimeOfDayOfWeek getStart() {
+        return start;
+    }
+
+    public TimeOfDayOfWeek getEnd() {
+        return end;
+    }
+
     public void setSchedule(Schedule schedule) {
         this.schedule = schedule;
     }

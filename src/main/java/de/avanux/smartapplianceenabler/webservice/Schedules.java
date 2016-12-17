@@ -8,10 +8,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 
-@XmlRootElement(name = "Timeframes")
+@XmlRootElement(name = "Schedules")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TimeFrames {
-    @XmlElement(name = "Timeframe")
+public class Schedules {
+    @XmlElement(name = "Schedule")
     private List<Schedule> schedules;
 
     public List<Schedule> getSchedules() {

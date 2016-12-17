@@ -69,8 +69,10 @@ public class ApplianceManager implements Runnable {
     }
     
     public void startAppliances() {
-        FileHandler fileHandler = new FileHandler();
-        appliances = fileHandler.load(Appliances.class);
+        if(appliances == null) {
+            FileHandler fileHandler = new FileHandler();
+            appliances = fileHandler.load(Appliances.class);
+        }
         if(appliances == null) {
             logger.error("No valid appliance configuration found. Exiting ...");
             System.exit(-1);

@@ -60,6 +60,14 @@ public class DayTimeframe implements Timeframe {
         }
     }
 
+    public TimeOfDay getStart() {
+        return start;
+    }
+
+    public TimeOfDay getEnd() {
+        return end;
+    }
+
     public List<Integer> getDaysOfWeekValues() {
         if(daysOfWeek == null) {
             return null;
