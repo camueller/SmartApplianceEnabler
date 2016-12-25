@@ -79,8 +79,9 @@
             <xs:element name="ModbusSwitch" type="ModbusSwitchType" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="HttpSwitch" type="HttpSwitchType" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
-        <xs:attribute name="powerThreshold" type="xs:int" use="required" />
-        <xs:attribute name="detectionDuration" type="xs:int" use="required" />
+        <xs:attribute name="powerThreshold" type="xs:int" use="optional" />
+        <xs:attribute name="startingCurrentDetectionDuration" type="xs:int" use="optional" />
+        <xs:attribute name="finishedCurrentDetectionDuration" type="xs:int" use="optional" />
     </xs:complexType>
 
     <xs:complexType name="S0ElectricityMeterType">

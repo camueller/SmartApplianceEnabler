@@ -55,7 +55,7 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         if(logger.isDebugEnabled() && schedules != null
                 ) {
             for(Schedule schedule : schedules) {
-                logger.debug("Configured schedule: " + schedule.toString());
+                logger.debug("Configured time frame is " + schedule.toString());
             }
         }
     }
@@ -114,6 +114,7 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         // update not more than once per second in order to avoid spamming the log
         if(lastUpdate == null || now.isBefore(lastUpdate) || new Interval(lastUpdate.toDateTime(), now.toDateTime()).toDurationMillis() > 1000) {
             activateTimeframeInterval(now, schedules);
+            deactivateExpiredTimeframeInterval(now);
             logger.debug("activeTimeframeInterval=" + activeTimeframeInterval + " statusChangedAt=" + statusChangedAt + " intervalBegin=" + intervalBegin + " running=" + running);
 
             Interval interval = null;
@@ -195,6 +196,18 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
             for(ActiveIntervalChangedListener listener : scheduleChangedListeners) {
                 logger.debug("Notifying " + listener.getClass().getSimpleName());
                 listener.activeIntervalChanged(applianceId, deactivatedTimeframeInterval, activeTimeframeInterval);
+            }
+        }
+    }
+
+    /**
+     * Deactivate the active timeframe interval if it is expired.
+     * @param now
+     */
+    protected void deactivateExpiredTimeframeInterval(LocalDateTime now) {
+        if(activeTimeframeInterval != null) {
+            if(now.toDateTime().isAfter(activeTimeframeInterval.getInterval().getEnd())) {
+                activateTimeframeInterval(now, (TimeframeInterval) null);
             }
         }
     }

@@ -28,9 +28,11 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
     @XmlTransient
     private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(StartingCurrentSwitch.class));
     @XmlAttribute
-    private Integer powerThreshold;
+    private Integer powerThreshold = 15;
     @XmlAttribute
-    private Integer detectionDuration = 30; // seconds
+    private Integer startingCurrentDetectionDuration = 30; // seconds
+    @XmlAttribute
+    private Integer finishedCurrentDetectionDuration = 300; // seconds
     @XmlAttribute
     private Integer minRunningTime = 600; // seconds
     @XmlElements({
@@ -40,7 +42,9 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
     })
     private List<Control> controls;
     @XmlTransient
-    private Integer lastAveragePower;
+    private Integer lastAveragePowerOfPowerOnDetection;
+    @XmlTransient
+    private Integer lastAveragePowerOfPowerOffDetection;
     @XmlTransient
     private boolean on;
     @XmlTransient
@@ -68,8 +72,12 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
         this.powerThreshold = powerThreshold;
     }
 
-    protected void setDetectionDuration(Integer detectionDuration) {
-        this.detectionDuration = detectionDuration;
+    protected void setStartingCurrentDetectionDuration(Integer startingCurrentDetectionDuration) {
+        this.startingCurrentDetectionDuration = startingCurrentDetectionDuration;
+    }
+
+    protected void setFinishedCurrentDetectionDuration(Integer finishedCurrentDetectionDuration) {
+        this.finishedCurrentDetectionDuration = finishedCurrentDetectionDuration;
     }
 
     protected void setMinRunningTime(Integer minRunningTime) {
@@ -110,44 +118,42 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
     }
 
     public void start(final Meter meter, Timer timer) {
-        logger.info("Starting current switch: powerThreshold=" + powerThreshold + "W / detectionDuration=" + detectionDuration + "s / minRunningTime=" + minRunningTime + "s");
+        logger.info("Starting current switch: powerThreshold=" + powerThreshold + "W"
+                + " / startingCurrentDetectionDuration=" + startingCurrentDetectionDuration + "s"
+                + " / finishedCurrentDetectionDuration=" + finishedCurrentDetectionDuration + "s"
+                + " / minRunningTime=" + minRunningTime + "s");
         applianceOn(true);
         if (timer != null) {
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    analyzePowerConsumption(meter);
+                    detectStartingCurrent(meter);
                 }
-            }, 0, detectionDuration * 1000);
+            }, 0, startingCurrentDetectionDuration * 1000);
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    detectFinishedCurrent(meter);
+                }
+            }, 0, finishedCurrentDetectionDuration * 1000);
         }
     }
 
     /**
-     * Analyzes current power consumption in order to detect starting current or finish current.
+     * Detect starting current by monitoring current power consumption.
      *
      * @param meter the meter providing current power consumption
      */
-    protected void analyzePowerConsumption(Meter meter) {
+    protected void detectStartingCurrent(Meter meter) {
         if (meter != null) {
             boolean applianceOn = isApplianceOn();
             logger.debug("on=" + on + " applianceOn=" + applianceOn);
             if (applianceOn) {
                 int averagePower = meter.getAveragePower();
-                logger.debug("averagePower=" + averagePower + " lastAveragePower=" + lastAveragePower);
-                if (lastAveragePower != null) {
-                    if (on) {
-                        // requiring minimum running time avoids finish current detection right after power on
-                        if (isMinRunningTimeExceeded() && averagePower < powerThreshold && lastAveragePower < powerThreshold) {
-                            logger.debug("Finished current detected.");
-                            for (StartingCurrentSwitchListener listener : startingCurrentSwitchListeners) {
-                                listener.finishedCurrentDetected();
-                            }
-                            on(false);
-                        } else {
-                            logger.debug("Finished current not detected.");
-                        }
-                    } else {
-                        if (averagePower > powerThreshold && lastAveragePower > powerThreshold) {
+                logger.debug("averagePower=" + averagePower + " lastAveragePowerOfPowerOnDetection=" + lastAveragePowerOfPowerOnDetection);
+                if (lastAveragePowerOfPowerOnDetection != null) {
+                    if (! on) {
+                        if (averagePower > powerThreshold && lastAveragePowerOfPowerOnDetection > powerThreshold) {
                             logger.debug("Starting current detected.");
                             applianceOn(false);
                             switchOnTime = null;
@@ -159,9 +165,46 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
                         }
                     }
                 } else {
-                    logger.debug("lastAveragePower has not been set yet");
+                    logger.debug("lastAveragePowerOfPowerOnDetection has not been set yet");
                 }
-                lastAveragePower = averagePower;
+                lastAveragePowerOfPowerOnDetection = averagePower;
+            } else {
+                logger.debug("Appliance not switched on.");
+            }
+        } else {
+            logger.debug("Meter not available");
+        }
+    }
+
+    /**
+     * Detect starting current by monitoring current power consumption.
+     *
+     * @param meter the meter providing current power consumption
+     */
+    protected void detectFinishedCurrent(Meter meter) {
+        if (meter != null) {
+            boolean applianceOn = isApplianceOn();
+            logger.debug("on=" + on + " applianceOn=" + applianceOn);
+            if (applianceOn) {
+                int averagePower = meter.getAveragePower();
+                logger.debug("averagePower=" + averagePower + " lastAveragePowerOfPowerOffDetection=" + lastAveragePowerOfPowerOffDetection);
+                if (lastAveragePowerOfPowerOffDetection != null) {
+                    if (on) {
+                        // requiring minimum running time avoids finish current detection right after power on
+                        if (isMinRunningTimeExceeded() && averagePower < powerThreshold && lastAveragePowerOfPowerOffDetection < powerThreshold) {
+                            logger.debug("Finished current detected.");
+                            for (StartingCurrentSwitchListener listener : startingCurrentSwitchListeners) {
+                                listener.finishedCurrentDetected();
+                            }
+                            on(false);
+                        } else {
+                            logger.debug("Finished current not detected.");
+                        }
+                    }
+                } else {
+                    logger.debug("lastAveragePowerOfPowerOnDetection has not been set yet");
+                }
+                lastAveragePowerOfPowerOffDetection = averagePower;
             } else {
                 logger.debug("Appliance not switched on.");
             }

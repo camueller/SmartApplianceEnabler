@@ -2,6 +2,7 @@ package de.avanux.smartapplianceenabler.appliance;
 
 import de.avanux.smartapplianceenabler.TestBase;
 import org.joda.time.DateTimeFieldType;
+import org.joda.time.Interval;
 import org.joda.time.LocalDateTime;
 import org.junit.Assert;
 import org.junit.Test;
@@ -22,7 +23,8 @@ public class ScheduleTest extends TestBase {
         List<Schedule> schedules = new ArrayList<Schedule>();
         schedules.add(new Schedule(7200, 7200, new TimeOfDay(10, 0, 0), new TimeOfDay(14, 0, 0)));
         schedules.add(new Schedule(7200, 7200, new TimeOfDay(15, 0, 0), new TimeOfDay(18, 0, 0)));
-        Assert.assertEquals(schedules.get(0), Schedule.getCurrentOrNextTimeframeInterval(toToday(11, 0, 0), schedules, false, true).getTimeframe().getSchedule());
+        Interval expectedInterval = new Interval(toToday(10, 0, 0).toDateTime(), toToday(14, 0, 0).toDateTime());
+        Assert.assertEquals(expectedInterval, Schedule.getCurrentOrNextTimeframeInterval(toToday(11, 0, 0), schedules, false, true).getInterval());
     }
 
     @Test
@@ -30,7 +32,8 @@ public class ScheduleTest extends TestBase {
         List<Schedule> schedules = new ArrayList<Schedule>();
         schedules.add(new Schedule(7200, 7200, new TimeOfDay(10, 0, 0), new TimeOfDay(14, 0, 0)));
         schedules.add(new Schedule(7200, 7200, new TimeOfDay(15, 0, 0), new TimeOfDay(18, 0, 0)));
-        Assert.assertEquals(schedules.get(1), Schedule.getCurrentOrNextTimeframeInterval(toToday(13, 0, 0), schedules, false, true).getTimeframe().getSchedule());
+        Interval expectedInterval = new Interval(toToday(15, 0, 0).toDateTime(), toToday(18, 0, 0).toDateTime());
+        Assert.assertEquals(expectedInterval, Schedule.getCurrentOrNextTimeframeInterval(toToday(12, 1, 0), schedules, false, true).getInterval());
     }
 
     @Test
@@ -38,7 +41,8 @@ public class ScheduleTest extends TestBase {
         List<Schedule> schedules = new ArrayList<Schedule>();
         schedules.add(new Schedule(7200, 7200, new TimeOfDay(10, 0, 0), new TimeOfDay(14, 0, 0)));
         schedules.add(new Schedule(7200, 7200, new TimeOfDay(15, 0, 0), new TimeOfDay(18, 0, 0)));
-        Assert.assertEquals(schedules.get(0), Schedule.getCurrentOrNextTimeframeInterval(toToday(17, 0, 0), schedules, false, true).getTimeframe().getSchedule());
+        Interval expectedInterval = new Interval(toDay(1, 10, 0, 0).toDateTime(), toDay(1, 14, 0, 0).toDateTime());
+        Assert.assertEquals(expectedInterval, Schedule.getCurrentOrNextTimeframeInterval(toToday(16, 1, 0), schedules, false, true).getInterval());
     }
 
     @Test
@@ -46,7 +50,8 @@ public class ScheduleTest extends TestBase {
         List<Schedule> schedules = new ArrayList<Schedule>();
         schedules.add(new Schedule(7200, 7200, new TimeOfDay(10, 0, 0), new TimeOfDay(14, 0, 0)));
         schedules.add(new Schedule(7200, 7200, new TimeOfDay(15, 0, 0), new TimeOfDay(18, 0, 0)));
-        Assert.assertEquals(schedules.get(1), Schedule.getCurrentOrNextTimeframeInterval(toToday(14, 30, 0), schedules, false, true).getTimeframe().getSchedule());
+        Interval expectedInterval = new Interval(toToday(15, 0, 0).toDateTime(), toToday(18, 0, 0).toDateTime());
+        Assert.assertEquals(expectedInterval, Schedule.getCurrentOrNextTimeframeInterval(toToday(14, 30, 0), schedules, false, true).getInterval());
     }
 
     @Test
@@ -57,6 +62,7 @@ public class ScheduleTest extends TestBase {
         schedules.add(new Schedule(7200, 7200, new TimeOfDay(10, 0, 0), new TimeOfDay(14, 0, 0), Collections.singletonList(now.minusDays(1).get(DateTimeFieldType.dayOfWeek()))));
         // Timeframe only valid tomorrow
         schedules.add(new Schedule(7200, 7200, new TimeOfDay(15, 0, 0), new TimeOfDay(18, 0, 0), Collections.singletonList(now.plusDays(1).get(DateTimeFieldType.dayOfWeek()))));
-        Assert.assertEquals(schedules.get(1), Schedule.getCurrentOrNextTimeframeInterval(now, schedules, false, true).getTimeframe().getSchedule());
+        Interval expectedInterval = new Interval(toDay(1, 15, 0, 0).toDateTime(), toDay(1, 18, 0, 0).toDateTime());
+        Assert.assertEquals(expectedInterval, Schedule.getCurrentOrNextTimeframeInterval(now, schedules, false, true).getInterval());
     }
 }
