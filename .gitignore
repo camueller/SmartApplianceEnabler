@@ -6,6 +6,8 @@ target
 /local.properties
 /.idea/workspace.xml
 /.idea/libraries
+/.idea/dictionaries
+/.idea/uiDesigner.xml
 .DS_Store
 /build
 /captures
