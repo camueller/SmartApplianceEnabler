@@ -265,7 +265,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     public void startingCurrentDetected() {
         logger.debug("Activating next sufficient timeframe interval after starting current has been detected");
         LocalDateTime now = new LocalDateTime();
-        runningTimeMonitor.activateTimeframeInterval(now, Schedule.getCurrentOrNextTimeframeInterval(now, schedules, false, false));
+        runningTimeMonitor.activateTimeframeInterval(now, Schedule.getCurrentOrNextTimeframeInterval(now, schedules, false, true));
     }
 
     @Override

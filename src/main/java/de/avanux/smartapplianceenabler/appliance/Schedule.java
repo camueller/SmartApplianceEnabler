@@ -17,6 +17,7 @@
  */
 package de.avanux.smartapplianceenabler.appliance;
 
+import de.avanux.smartapplianceenabler.Configuration;
 import org.joda.time.Interval;
 import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormatter;
@@ -72,7 +73,7 @@ public class Schedule {
      * @param now the time reference
      * @param schedules the list of timeframes to choose from (current timeframe has to be first)
      * @param onlyAlreadyStarted consider only timeframe intervals already started
-     * @param onlySufficient if true AND onlyAlreadyStarted=true: consider timeframe already started only if time to interval end exceeds min running time
+     * @param onlySufficient if true consider timeframe already started only if time to interval end exceeds min running time
      * @return the next timeframe becoming valid or null
      */
     public static TimeframeInterval getCurrentOrNextTimeframeInterval(LocalDateTime now, List<Schedule> schedules, boolean onlyAlreadyStarted, boolean onlySufficient) {
@@ -90,6 +91,7 @@ public class Schedule {
                     // interval already started ...
                     if(onlySufficient) {
                         if(now.plusSeconds(schedule.getMaxRunningTime())
+                                .plusSeconds(Configuration.getInstance().getTimeframeIntervalAdditionalRunningTime())
                                 .isBefore(new LocalDateTime(interval.getEnd()))) {
                             // ... with remaining running time sufficient
                             return timeframeInterval;
