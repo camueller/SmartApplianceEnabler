@@ -1,6 +1,6 @@
-# Modbus/RTU
+# Modbus-Unterstützung
 
-*Smart Appliance Enabler* unterstützt lediglich Modbus/TCP. Allerdings können Modbus/RTU-Geräte verwendet werden mittels eines Modbus/TCP zu Modbus/RTU Gateway wie z.B. des frei verfügbaren [mbusd](https://sourceforge.net/projects/mbus).
+*Smart Appliance Enabler* unterstützt das [Modbus](https://de.wikipedia.org/wiki/Modbus)-Protokoll lediglich in der Ausprägung  Modbus/TCP. Allerdings können Modbus/RTU-Geräte verwendet werden mittels eines Modbus/TCP zu Modbus/RTU Gateway wie z.B. des frei verfügbaren [mbusd](https://sourceforge.net/projects/mbus).
 
 Da ich selbst nur einen einzigen Modbus-Zähler habe und diesen ausschliesslich zum Testen verwende, findet sich nachfolgend lediglich eine Befehlssammlung zur Installation/Starten von mbusd, aber keine Runlevel-Startscripts etc..
 ```
