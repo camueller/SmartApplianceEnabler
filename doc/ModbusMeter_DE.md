@@ -1,6 +1,6 @@
 # Modbus-Stromzähler
 
-Für Modbus-Stromzähler gelten die allgemeinen Hinweise zur [Modbus-Unterstützung in *Smart Appliance Enabler*](doc/Modbus_DE.md).
+Für Modbus-Stromzähler gelten die allgemeinen Hinweise zur [Modbus-Unterstützung in *Smart Appliance Enabler*](Modbus_DE.md).
 
 Stromzähler mit [Modbus](https://de.wikipedia.org/wiki/Modbus)-Protokoll erlauben die Abfrage diverser Werte, wobei jeder Wert aus einem bestimmten Register gelesen werden muss. Für den *Smart Appliance Enabler* ist lediglich der Wert *aktuelle Leistung* bzw. *active power* interessant. Wird ein Modbus-Zähler verwendet, finden sich in der Log-Datei ```/var/log/smartapplianceenabler.log``` für jede Abfrage folgende Zeilen:
 ```
