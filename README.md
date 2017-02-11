@@ -29,7 +29,7 @@ Aktuell unterstützt der *Smart Appliance Enabler* folgende Möglichkeiten, den 
 
 - [S0](doc/S0Meter_DE.md)
 - [Modbus](doc/ModbusMeter_DE.md)
-- HTTP
+- [HTTP](doc/HttpMeter_DE.md)
 - [WLAN-Stromzähler selbst gebaut](doc/WifiS0PulseForwarder_DE.md)
 
 ### Schalter
