@@ -12,6 +12,8 @@ Der *Smart Appliance Enabler* dient dazu, beliebige Geräte (Wärmepumpe, Waschm
 
 Damit der *Smart Appliance Enabler* in die (Smart-Home-) Steuerung integriert werden kann, muss er deren Protokoll(e) unterstützen. Obwohl die Unterstützung diverser Steuerungen konzeptionell berücksichtigt wurde, wird aktuell nur das **SEMP**-Protokoll zur Integration mit dem [Sunny Home Manager](http://www.sma.de/produkte/monitoring-control/sunny-home-manager.html) von [SMA](http://www.sma.de) unterstützt.
 
+![SHM_Verbraucherbilanz_GuterTag](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/SHM_Verbraucherbilanz_GuterTag.png)
+
 ## Hardware
 
 *Hinweis: Die Installation von steckerlosen 200/400V-Geräten sollte grundsätzlich durch einen autorisierten Fachbetrieb vorgenommen werden!*
