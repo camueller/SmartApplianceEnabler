@@ -18,6 +18,8 @@ Damit der *Smart Appliance Enabler* in die (Smart-Home-) Steuerung integriert we
 
 *Hinweis: Die Installation von steckerlosen 200/400V-Geräten sollte grundsätzlich durch einen autorisierten Fachbetrieb vorgenommen werden!*
 
+![Schaltschrank](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/schaltschrank.jpg)
+
 ### [Raspberry Pi](doc/Raspberry_DE.md)
 Der *Smart Appliance Enabler* benötigt einen [Raspberry Pi als Hardware](doc/Raspberry_DE.md). 
 
