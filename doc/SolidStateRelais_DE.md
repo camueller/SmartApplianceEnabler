@@ -8,6 +8,18 @@ Der Aufbau zum Schalten eines 240V-Gerätes (z.B. Pumpe) mittels Solid-State-Rel
 
 Falls ein 400V-Gerät geschaltet werden soll, lässt sich dieses über ein Schütz schalten.
 
+Die Konfiguration für dieses Schaltbeispiel würde wie folgt aussehen:
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.1">
+    <Appliance id="F-00000001-000000000001-00">
+        <Switch gpio="4" reverseStates="true" />
+    </Appliance>
+</Appliances>
+```
+
+Allgemeine Hinweise zu diesem Thema finden sich im Kapitel [Konfiguration](Configuration_DE.md).
+
 Zur Montage des Solid-State-Relais verwende ich [DIN-Schienenhalter](DINSchienenhalter.md), wobei ich auf der PVC-Montageplatte Gummi-Durchführungsringe als Abstandshalter mit Heißkleber befestigt habe. Die Muttern der Nylon-Schrauben zur Befestigung des Solid-State-Relais habe ich (anders als auf dem Foto zu sehen) nicht mehr vorn auf der Kunststoffplatte mit Heißkleber angeklebt, sondern auf der Rückseite. Der Grund dafür ist die Erwärmung der Metallseite des Solid-State-Relais, wodurch sich die mit Heißkleber auf der PVC-Platte befestigte Mutter lösen kann.
 
 ![DINSchienenhalterSSR](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/DINSchienenhalterSSR.jpg)
