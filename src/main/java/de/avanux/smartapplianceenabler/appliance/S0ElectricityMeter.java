@@ -95,7 +95,7 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
                     }
                 }
             });
-            logger.info("Start metering using GPIO " + getGpio());
+            logger.info("Start metering using " + getGpio());
         }
         else { 
             logGpioAccessDisabled(logger);
