@@ -24,7 +24,7 @@ Wird ein Gerät über GPIO geschaltet via Solid State Relais, findet sich in der
 
 ```
 2017-02-25 10:45:03,400 INFO [http-nio-8080-exec-2] d.a.s.a.Switch [Switch.java:56] F-00000001-000000000001-00: Switching on GPIO 4
-´´`
+```
 
 Zur Montage des Solid-State-Relais verwende ich [DIN-Schienenhalter](DINSchienenhalter.md), wobei ich auf der PVC-Montageplatte Gummi-Durchführungsringe als Abstandshalter mit Heißkleber befestigt habe. Die Muttern der Nylon-Schrauben zur Befestigung des Solid-State-Relais habe ich (anders als auf dem Foto zu sehen) nicht mehr vorn auf der Kunststoffplatte mit Heißkleber angeklebt, sondern auf der Rückseite. Der Grund dafür ist die Erwärmung der Metallseite des Solid-State-Relais, wodurch sich die mit Heißkleber auf der PVC-Platte befestigte Mutter lösen kann.
 
