@@ -4,6 +4,11 @@ Für die Genauigkeit des Zählers ist die Anzahl der Impulse pro kWh wichtig. Di
 
 In den Schaltbeispielen ist der für den Stromzähler notwendige **Pull-Down-Widerstand** nicht eingezeichnet, weil dafür die auf dem Raspberry Pi vorhandenen Pull-Down-Widerstände per Software-Konfiguration aktiviert werden.
 
+Wird ein S0-Zähler verwendet, finden sich in der Log-Datei ```/var/log/smartapplianceenabler.log``` für jeden empfangenen Impuls folgende Zeile:
+```
+2017-02-19 06:25:43,944 DEBUG [pi4j-gpio-event-executor-895] d.a.s.a.S0ElectricityMeter [S0ElectricityMeter.java:92] F-00000001-000000000001-00: Pin "GPIO 1" <GPIO 1> changed to HIGH
+```
+
 ## Schaltbeispiel 1: 240V-Gerät mit Stromverbrauchsmessung
 Der Aufbau zum Messen des Stromverbrauchs eines 240V-Gerätes (z.B. Pumpe) könnte wie folgt aussehen, wobei diese Schaltung natürlich um einen [Schalter](https://github.com/camueller/SmartApplianceEnabler/blob/master/README.md#schalter) erweitert werden kann, wenn neben dem Messen auch geschaltet werden soll.
 
