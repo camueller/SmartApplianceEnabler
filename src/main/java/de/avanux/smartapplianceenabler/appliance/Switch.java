@@ -42,9 +42,9 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
 
     @Override
     public void start() {
-        logger.info("Switch uses pin " + getPin() + (reverseStates ? " (reversed states)" : ""));
+        logger.info("Switch uses GPIO " + getGpio() + (reverseStates ? " (reversed states)" : ""));
         if(getGpioController() != null) {
-            outputPin = getGpioController().provisionDigitalOutputPin(getPin(), adjustState(PinState.LOW));        
+            outputPin = getGpioController().provisionDigitalOutputPin(getGpio(), adjustState(PinState.LOW));
         }
         else {
             logGpioAccessDisabled(logger);
@@ -53,7 +53,7 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
 
     @Override
     public boolean on(boolean switchOn) {
-        logger.info("Switching " + (switchOn ? "on" : "off") + " pin " + getPin());
+        logger.info("Switching " + (switchOn ? "on" : "off") + " GPIO " + getGpio());
         if(outputPin != null) {
             outputPin.setState(adjustState(switchOn ? PinState.HIGH : PinState.LOW));
         }

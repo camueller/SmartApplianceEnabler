@@ -37,7 +37,7 @@ abstract public class GpioControllable implements ApplianceIdConsumer{
     @XmlTransient
     private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(GpioControllable.class));
     @XmlAttribute
-    private Integer pin;
+    private Integer gpio;
     @XmlAttribute
     private String pinPullResistance;
     @XmlTransient
@@ -54,8 +54,8 @@ abstract public class GpioControllable implements ApplianceIdConsumer{
         this.gpioController = gpioController;
     }
 
-    protected Pin getPin() {
-       return RaspiPin.getPinByName("GPIO " + pin);
+    protected Pin getGpio() {
+       return RaspiPin.getPinByName("GPIO " + gpio);
     }
     
     protected PinPullResistance getPinPullResistance() {
@@ -74,7 +74,7 @@ abstract public class GpioControllable implements ApplianceIdConsumer{
     abstract public void start();
 
     protected void logGpioAccessDisabled(Logger logger) {
-        logger.warn("Configured for pin " + getPin()+ ", but GPIO access disabled.");
+        logger.warn("Configured for " + getGpio()+ ", but GPIO access disabled.");
     }
 
     @Override

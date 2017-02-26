@@ -28,50 +28,10 @@ import com.pi4j.io.gpio.RaspiPin;
 import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 
-public class SmartApplianceEnabler implements Runnable {
+public class SmartApplianceEnabler {
     public static final String MANUFACTURER_NAME = "avanux.de";
     public static final String MANUFACTURER_URI = "http://www.avanux.de";
     public static final String VERSION = "0.1";
     public static final String DESCRIPTION = "Enable smart appliance behaviour of legacy devices";
     public static final String MODEL_URI = "http://www.avanux.de/SmartApplianceEnablerV1";
-    private Logger logger = LoggerFactory.getLogger(SmartApplianceEnabler.class); 
-
-    
-    public void run() {
-        logger.info("<--Pi4J--> GPIO Listen Example ... started.");
-
-        // create gpio controller
-        final GpioController gpio = GpioFactory.getInstance();
-
-        // provision gpio pin #02 as an input pin with its internal pull down resistor enabled
-        final GpioPinDigitalInput myButton = gpio.provisionDigitalInputPin(RaspiPin.GPIO_02,
-                PinPullResistance.PULL_DOWN);
-
-        // create and register gpio pin listener
-        myButton.addListener(new GpioPinListenerDigital() {
-            @Override
-            public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
-                // display pin state on console
-                logger.info(" --> GPIO PIN STATE CHANGE: " + event.getPin() + " = " + event.getState());
-            }
-
-        });
-
-        logger.info(" ... complete the GPIO #02 circuit and see the listener feedback here in the console.");
-
-        // keep program running until user aborts (CTRL-C)
-        for (;;) {
-            try {
-                Thread.sleep(500);
-            }
-            catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-
-        // stop all GPIO activity/threads by shutting down the GPIO controller
-        // (this method will forcefully shutdown all GPIO monitoring threads and scheduled tasks)
-        // gpio.shutdown(); <--- implement this method call if you wish to terminate the Pi4J GPIO controller
-    }
 }

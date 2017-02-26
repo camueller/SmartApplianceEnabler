@@ -58,7 +58,7 @@
     </xs:complexType>
 
     <xs:complexType name="SwitchType">
-        <xs:attribute name="pin" type="xs:int" use="required" />
+        <xs:attribute name="gpio" type="xs:int" use="required" />
         <xs:attribute name="reverseStates" type="xs:boolean" use="optional" />
     </xs:complexType>
 
@@ -85,7 +85,7 @@
     </xs:complexType>
 
     <xs:complexType name="S0ElectricityMeterType">
-        <xs:attribute name="pin" type="xs:int" use="required"/>
+        <xs:attribute name="gpio" type="xs:int" use="required"/>
         <xs:attribute name="pinPullResistance" type="PinPullResistanceType" use="optional"/>
         <xs:attribute name="impulsesPerKwh" type="xs:int" use="required"/>
         <xs:attribute name="measurementInterval" type="xs:int" use="optional"/>

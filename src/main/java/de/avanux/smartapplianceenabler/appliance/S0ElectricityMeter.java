@@ -29,7 +29,7 @@ import com.pi4j.io.gpio.PinState;
 import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 
-@XmlType(propOrder={"pin", "pinPullResistance", "impulsesPerKwh", "measurementInterval"})
+@XmlType(propOrder={"gpio", "pinPullResistance", "impulsesPerKwh", "measurementInterval"})
 public class S0ElectricityMeter extends GpioControllable implements Meter {
     @XmlTransient
     private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(S0ElectricityMeter.class));
@@ -85,17 +85,17 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
         pulseElectricityMeter.setPowerOnAlways(powerOnAlways);
 
         if(getGpioController() != null) {
-            final GpioPinDigitalInput input = getGpioController().provisionDigitalInputPin(getPin(), getPinPullResistance());
+            final GpioPinDigitalInput input = getGpioController().provisionDigitalInputPin(getGpio(), getPinPullResistance());
             input.addListener(new GpioPinListenerDigital() {
                 @Override
                 public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
-                    logger.debug("Pin " + event.getPin() + " changed to " + event.getState());
+                    logger.debug("GPIO " + event.getPin() + " changed to " + event.getState());
                     if(event.getState() == PinState.HIGH) {
                         pulseElectricityMeter.addTimestampAndMaintain(System.currentTimeMillis());
                     }
                 }
             });
-            logger.info("Start metering using pin " + getPin());
+            logger.info("Start metering using GPIO " + getGpio());
         }
         else { 
             logGpioAccessDisabled(logger);
