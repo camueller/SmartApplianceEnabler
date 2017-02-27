@@ -25,3 +25,5 @@ Die Konfiguration für dieses Schaltbeispiel würde wie folgt aussehen, wobei de
 ```
 
 Allgemeine Hinweise zu diesem Thema finden sich im Kapitel [Konfiguration](Configuration_DE.md).
+
+Die **Numerierung der GPIO-Ports** findet sich im Kapitel zum [Raspberry Pi](Raspberry_DE.md).
