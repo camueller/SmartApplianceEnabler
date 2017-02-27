@@ -20,6 +20,8 @@ Die Konfiguration für dieses Schaltbeispiel würde wie folgt aussehen:
 
 Allgemeine Hinweise zu diesem Thema finden sich im Kapitel [Konfiguration](Configuration_DE.md).
 
+Die **Numerierung der GPIO-Ports** findet sich im Kapitel zum [Raspberry Pi](Raspberry_DE.md).
+
 Wird ein Gerät über GPIO geschaltet via Solid State Relais, findet sich in der Log-Datei ```/var/log/smartapplianceenabler.log``` für jeden Schaltvorgang folgende Zeile:
 
 ```
