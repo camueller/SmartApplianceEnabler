@@ -5,6 +5,8 @@ Für den Raspberry Pi existieren verschiedene, darauf zugeschnittene, Betriebsys
 
 An die GPIO-Pins des Raspberry können diverse Schalter und/oder Stromzähler angeschlossen werden, d.h. ein einziger Raspberry Pi kann eine Vielzahl von Geräten verwalten. Dabei darf jedoch die **Stromstärke** am 5V-Pin den Wert von 300 mA (Model B) bzw. 500mA (Model A) und am 3,3V-Pin den Wert von 50mA nicht überschreiten ([Quelle](http://elinux.org/RPi_Low-level_peripherals#General_Purpose_Input.2FOutput_.28GPIO.29))!
 
-Die Nummerierung der Pins richtet sich nach [Pi4J](http://pi4j.com/images/gpio-control-example-large.png) und weicht von der offiziellen Nummerierung ab!
+Zum Schalten/Messen der an die GPIO-Ports des Raspberry angeschlossenen Schalter/Zähler ist ausschliesslich die **GPIO-Nummer relevant** und nicht die Pin-Nummer:
 
-TODO Bauanleitung mit Hutschienenhalter hinzufügen
+![PinHeader](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/RaspberryPi2ModelBHeader.png)
+
+TODO Bauanleitung für Hutschienenhalter hinzufügen
