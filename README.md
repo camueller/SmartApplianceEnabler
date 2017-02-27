@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/pubnub/java.svg?branch=master)](https://travis-ci.org/camueller/SmartApplianceEnabler)
 [![codecov.io](https://codecov.io/gh/camueller/SmartApplianceEnabler/coverage.svg)](https://codecov.io/gh/camueller/SmartApplianceEnabler)
-[![Download](https://img.shields.io/badge/Download-1.0.0-brightgreen.svg)](https://github.com/camueller/SmartApplianceEnabler/releases/download/v1.0.0/SmartApplianceEnabler-1.0.0.jar)
+[![Download](https://img.shields.io/badge/Download-1.1.0-brightgreen.svg)](https://github.com/camueller/SmartApplianceEnabler/releases/download/v1.1.0/SmartApplianceEnabler-1.1.0.jar)
 [![License](https://img.shields.io/badge/license-GPLv2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
 
 ## Wozu?
