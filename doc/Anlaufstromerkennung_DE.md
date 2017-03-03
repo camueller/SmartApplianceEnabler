@@ -11,7 +11,7 @@ Die Anlaufstromerkennung des SAE besteht aus einem *Softwere-Schalter*, in den d
 ## Beispiel mit Solid-State-Relais und S0-Zähler
 ```
     <Appliance id="F-00000001-000000000001-00">
-        <StartingCurrentSwitch>
+        <StartingCurrentSwitch startingCurrentDetectionDuration="15">
             <Switch gpio="1" reverseStates="true" />
         </StartingCurrentSwitch>
         <S0ElectricityMeter gpio="2" pinPullResistance="PULL_DOWN" impulsesPerKwh="1000" measurementInterval="300" />
