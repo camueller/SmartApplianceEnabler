@@ -6,7 +6,7 @@ Die **Anlaufstromerkennung** besteht darin, daß unterschieden wird zwischen dem
 
 Nach Erkennung des Abschaltstromes wird direkt wieder die Anlaufstromerkennung aktiviert. Dadurch ist es möglich das Gerät innerhalb eines [Schedule](https://github.com/camueller/SmartApplianceEnabler/blob/master/doc/Configuration_DE.md#planung-der-gerätelaufzeiten) mehrmals hintereinander laufen zu lassen.
 
-Die Anlaufstromerkennung des SAE besteht aus einem *Softwere-Schalter*, in den der eigentliche Schaltet eingebettet ist. Dadurch läßt sich die Anlaufstromerkennung mit allen physischen Schaltern nutzen, die der *Smart Appliance Enabler* unterstützt. Der *Software-Schalter* unterscheidet dazu zwischen dem Schaltzustand des Gerätes und dem Schaltzustand, wie er sich dem *Sunny Home Manager* darstellt.
+Die Anlaufstromerkennung des SAE besteht aus einem *Softwere-Schalter*, in den der eigentliche Schalter eingebettet ist. Dadurch läßt sich die Anlaufstromerkennung mit allen physischen Schaltern nutzen, die der *Smart Appliance Enabler* unterstützt. Der *Software-Schalter* unterscheidet dazu zwischen dem Schaltzustand des Gerätes und dem Schaltzustand, wie er sich dem *Sunny Home Manager* darstellt.
 
 ## Beispiel mit Solid-State-Relais und S0-Zähler
 ```
