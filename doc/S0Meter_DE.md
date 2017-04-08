@@ -19,7 +19,7 @@ Die Konfiguration für dieses Schaltbeispiel würde wie folgt aussehen, wobei de
 <?xml version="1.0" encoding="UTF-8"?>
 <Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.1">
     <Appliance id="F-00000001-000000000001-00">
-        <S0ElectricityMeter gpio="4" pinPullResistance="PULL_DOWN" impulsesPerKwh="1000" />
+        <S0ElectricityMeter gpio="0" pinPullResistance="PULL_DOWN" impulsesPerKwh="1000" />
     </Appliance>
 </Appliances>
 ```
@@ -30,7 +30,7 @@ Die **Numerierung der GPIO-Ports** findet sich im Kapitel zum [Raspberry Pi](Ras
 
 Für jeden Impuls, den der Raspberry vom S0-Ausgang des Stromzählers empfangen hat, sollten sich folgende Zeilen in der [Log-Datei](https://github.com/camueller/SmartApplianceEnabler/blob/master/doc/Troubleshooting_DE.md#erhöhung-des-log-levels) finden:
 ```
-2017-04-03 09:42:23,123 DEBUG [pi4j-gpio-event-executor-1358] d.a.s.a.S0ElectricityMeter [S0ElectricityMeter.java:92] F-00000001-000000000001-00: GPIO "GPIO 4" <GPIO 4> changed to HIGH
+2017-04-03 09:42:23,123 DEBUG [pi4j-gpio-event-executor-1358] d.a.s.a.S0ElectricityMeter [S0ElectricityMeter.java:92] F-00000001-000000000001-00: GPIO "GPIO 0" <GPIO 0> changed to HIGH
 2017-04-03 09:42:23,133 DEBUG [pi4j-gpio-event-executor-1358] d.a.s.a.PulseElectricityMeter [PulseElectricityMeter.java:363] F-00000001-000000000001-00: timestamps added/removed/total: 1/361/1
-2017-04-03 09:42:23,188 DEBUG [pi4j-gpio-event-executor-1358] d.a.s.a.S0ElectricityMeter [S0ElectricityMeter.java:92] F-00000001-000000000001-00: GPIO "GPIO 4" <GPIO 4> changed to LOW
+2017-04-03 09:42:23,188 DEBUG [pi4j-gpio-event-executor-1358] d.a.s.a.S0ElectricityMeter [S0ElectricityMeter.java:92] F-00000001-000000000001-00: GPIO "GPIO 0" <GPIO 0> changed to LOW
 ```
