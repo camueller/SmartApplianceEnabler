@@ -20,11 +20,12 @@ Diese sollen dabei helfen, die für die eigenen Geräte passenden Dateien `Devic
 ## Überprüfung der Dateien
 Die angepassten XML-Dateien sollten hinsichtlich ihrer Gültigkeit überprüft werden.
 Dazu ist die Seite http://www.freeformatter.com/xml-validator-xsd.html besonders geeignet:
-Der Inhalt der XML-Datei wird in das Fenster *XML Input* kopiert. Bei *XSD Input* muss nur *Option 2* eingegeben werden:
+Der Inhalt der XML-Datei wird in das Fenster *XML Input* kopiert. 
+In das Fenster *XSD Input* muss der Inhalt (nicht die URL selbst!) der nachfolgenden URL kopiert werden:
 * beim Prüfen von Device2EM.xml: https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/xsd/SEMP-1.1.5.xsd
 * beim Prüfen von Appliances.xml: https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/xsd/SmartApplianceEnabler-1.1.xsd
 
-Ist die Prüfung erfolgreich, erscheint oberhalb des *XML Input* eine grün unterlegte Meldung *The XML document is fully valid.*. Bei Fehlern erscheint eine rot unterlegte Meldung mit entsprechender Fehlerbeschreibung.
+Ist die Prüfung erfolgreich, erscheint oberhalb des *XML Input* eine grün unterlegte Meldung *The XML document is valid.*. Bei Fehlern erscheint eine rot unterlegte Meldung mit entsprechender Fehlerbeschreibung.
 
 ## Planung der Gerätelaufzeiten
 Zur Planung der Gerätelaufzeit können einem Gerät ein oder mehrere `schedule` zugewiesen werden, in denen jeweils die Mindest- und Maximallaufzeit in Sekunden für die zugehörigen Schaltvorgänge festgelegt ist.
