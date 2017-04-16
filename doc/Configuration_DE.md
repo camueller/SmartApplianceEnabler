@@ -28,31 +28,71 @@ In das Fenster *XSD Input* muss der Inhalt (nicht die URL selbst!) der nachfolge
 Ist die Prüfung erfolgreich, erscheint oberhalb des *XML Input* eine grün unterlegte Meldung *The XML document is valid.*. Bei Fehlern erscheint eine rot unterlegte Meldung mit entsprechender Fehlerbeschreibung.
 
 ## Planung der Gerätelaufzeiten
-Zur Planung der Gerätelaufzeit können einem Gerät ein oder mehrere `schedule` zugewiesen werden, in denen jeweils die Mindest- und Maximallaufzeit in Sekunden für die zugehörigen Schaltvorgänge festgelegt ist.
+Zur Planung der Gerätelaufzeit können einem Gerät ein oder mehrere `Schedule` zugewiesen werden, in denen jeweils die Mindest- und Maximallaufzeit in Sekunden für die zugehörigen Schaltvorgänge festgelegt ist. 
 
 Zu jedem Schedule gehört entweder ein `DayTimeframe` oder ein `ConsecutiveDaysTimeframe`.
 
-Ein `DayTimeframe` enthält Ein- und Ausschaltzeiten, die sich auf ein 24-Stunden-Interval beziehen (z.B. 8:00-13:00 oder auch 22:00-2:00) und auf bestimmte Wochentage beschränkt werden können. Nachfolgendes Beispiel zeigt ein Laufzeit von 3 Stunden zwischen 6 Uhr und 14 Uhr montags, samstags und sonntags.
+Wenn ein Timeframe bereits begonnen hat, spielt es eine Rolle, wie schnell der Sunny Home Manager auf die neue Anforderung reagiert. Damit eine realistische Chance besteht, dass noch eine Einschaltung vor Ende des Timeframe erfolgt, wird der Timeframe nur dann an den Sunny Home Manager gemeldet, wenn es bis zum Ende des Timeframe noch länger als Mindestlaufzeit plus einer zusätzlichen Verarbeitungszeit für den Sunny Home Manager (default: 900 Sekunden) dauert. Dieser Wert kann durch einen Konfigurationsparameter geändert werden:
 ```
-<Schedule minRunningTime="10800" maxRunningTime="10800">
-  <DayTimeframe>
-    <Start hour="6" minute="0" second="0"/>
-    <End hour="14" minute="0" second="0"/>
-    <DayOfWeek>1</DayOfWeek>
-    <DayOfWeek>6</DayOfWeek>
-    <DayOfWeek>7</DayOfWeek>
-  </DayTimeframe>
-</Schedule>
+<Appliances>
+  <Configuration param="TimeframeIntervalAdditionalRunningTime" value="600"/>
+  <Appliance>
+  ...
+  </Appliance>
+</Appliances>
 ```
 
+### DayTimeframe
+Ein `DayTimeframe` enthält Ein- und Ausschaltzeiten, die sich auf ein 24-Stunden-Interval beziehen (z.B. 8:00-13:00 oder auch 22:00-2:00) und auf bestimmte Wochentage beschränkt werden können. Nachfolgendes Beispiel zeigt ein Laufzeit von 3 Stunden zwischen 6 Uhr und 14 Uhr montags, samstags und sonntags.
+```
+<Appliances>
+  <Appliance>
+    <Schedule minRunningTime="10800" maxRunningTime="10800">
+      <DayTimeframe>
+        <Start hour="6" minute="0" second="0"/>
+        <End hour="14" minute="0" second="0"/>
+        <DayOfWeek>1</DayOfWeek>
+        <DayOfWeek>6</DayOfWeek>
+        <DayOfWeek>7</DayOfWeek>
+      </DayTimeframe>
+    </Schedule>
+  </Appliance>
+</Appliances>
+```
+Durch die Angabe von ```<DayOfWeek>8</DayOfWeek>``` wird angebenen, dass der DayTimeframe an Feiertagen gelten soll. Er hat Vorrang vor anderen ```DayTimeframe```, die entsprechend des Wochentages gelten würden.
+
+Die Feiertage werden aus der Datei ```Holidays-JJJJ.txt``` gelesen, wobei JJJJ durch die Jahreszahl ersetzt wird, d.h. die Feiertag für 2017 finden sich in der Datei ```Holidays-2017.txt```. Die Datei muss sich im gleichen Verzeichnis wie die Datei ```Appliances.xml``` befinden und ist wie folgt aufgebaut:
+```
+2017-01-01 Neujahrstag
+2017-04-14 Karfreitag
+2017-04-17 Ostermontag
+2017-05-01 Tag der Arbeit
+...
+```
+Sofern der Raspberry Zugang zum Internet hat, werden die Feiertage einmal jährlich im Internet abgefragt und in dieser Datei gespeichert. Wenn die Datei vorhanden ist (entweder von einem vorangegangenen Download oder weil sie manuell dort erstellt wurde), erfolgt keine Abfrage im Internet. Standardmäßig werden nur die bundesweiten Feiertage berücksichtigt. Durch Angabe des folgenden Konfigurationsparameters kann sowohl die URL des Dienstes geändert als auch bundeslandspezifische Feiertage berücksichtigt werden:
+```
+<Appliances>
+  <Configuration param="Holidays.Url" value="http://feiertage.jarmedia.de/api/?jahr={0}&#038;nur_land=HE"/>
+  <Appliance>
+  ...
+  </Appliance>
+</Appliances>
+```
+HE steht dabei für Hessen, die Abkürzung für andere Bundesländer und die vollständige API-Dokumentation findet sich auf http://feiertage.jarmedia.de. Anstelle der Jahreszahl muss "{0}" (ohne Anführungszeichen) verwendet werden, was zum Ausführungszeitpunkt durch die aktuelle Jahreszahl erstzt wird. Außerdem muss statt des "&"-Zeichens der Ausruck ```"&#038;"```  (ohne Anführungszeichen) verwendet werden.
+
+### ConsecutiveDaysTimeframe
 Ein `ConsecutiveDaysTimeframe` erlaubt die Festlegung eines Intervals, der länger als 24 Stunden ist (z.B. Freitag 16:00 bis Sonntag 18:00). Das nachfolgende Beispiel zeigt eine Laufzeit von mindestens 10 Stunden und maximal 12 Stunden zwischen Freitag 16:00 und Sonntag 20:00.
 ```
-<Schedule minRunningTime="36000" maxRunningTime="43200">
-  <ConsecutiveDaysTimeframe>
-    <Start dayOfWeek="5" hour="16" minute="0" second="0" />
-    <End dayOfWeek="7" hour="20" minute="0" second="0" />
-  </ConsecutiveDaysTimeframe>
-</Schedule>
+<Appliances>
+  <Appliance>
+    <Schedule minRunningTime="36000" maxRunningTime="43200">
+      <ConsecutiveDaysTimeframe>
+        <Start dayOfWeek="5" hour="16" minute="0" second="0" />
+        <End dayOfWeek="7" hour="20" minute="0" second="0" />
+      </ConsecutiveDaysTimeframe>
+    </Schedule>
+  </Appliance>
+</Appliances>
 ```
 Der *Smart Appliance Enabler* meldet dem Sunny Home Manager den Geräte-Laufzeitbedarf für die nächsten 48 Stunden, damit er auf dieser Basis optimal planen kann.
 
