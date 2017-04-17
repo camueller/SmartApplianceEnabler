@@ -34,9 +34,11 @@ public class Appliances {
     private Connectivity connectivity;
 
     public String getConfigurationValue(String param) {
-        for(Configuration configuration : configurationValues) {
-            if(configuration.getParam().equals(param)) {
-                return configuration.getValue();
+        if(configurationValues != null) {
+            for(Configuration configuration : configurationValues) {
+                if(configuration.getParam().equals(param)) {
+                    return configuration.getValue();
+                }
             }
         }
         return null;

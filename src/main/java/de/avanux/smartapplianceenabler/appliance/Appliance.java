@@ -203,12 +203,14 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     }
 
     public boolean hasTimeframeForHolidays() {
-        for (Schedule schedule : schedules) {
-            Timeframe timeframe = schedule.getTimeframe();
-            if(timeframe instanceof  DayTimeframe) {
-                List<Integer> daysOfWeekValues = ((DayTimeframe) timeframe).getDaysOfWeekValues();
-                if(daysOfWeekValues.contains(DayTimeframe.DOW_HOLIDAYS)) {
-                    return true;
+        if(schedules != null) {
+            for (Schedule schedule : schedules) {
+                Timeframe timeframe = schedule.getTimeframe();
+                if(timeframe instanceof  DayTimeframe) {
+                    List<Integer> daysOfWeekValues = ((DayTimeframe) timeframe).getDaysOfWeekValues();
+                    if(daysOfWeekValues.contains(DayTimeframe.DOW_HOLIDAYS)) {
+                        return true;
+                    }
                 }
             }
         }
