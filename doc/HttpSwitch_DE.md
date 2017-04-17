@@ -4,10 +4,19 @@ Richtige Schalter, die man per HTTP schalten kann, gibt es meines Wissens nicht.
 ```
 <Appliances ...>
     <Appliance ...>
-        <HttpSwitch onUrl="http://192.168.1.19:8083/fhem?cmd=set%20Aquarium%20on" offUrl="http://192.168.1.19:8083/fhem?cmd=set%20Aquarium%20off" />
+        <HttpSwitch onUrl="http://192.168.1.1/control?device=123&amp;cmd=on" offUrl="http://192.168.1.1/control?device=123&amp;cmd=off" />
     </Appliance>
 </Appliances>
 ```
 Zu beachten ist, dass in der URL anstatt des "&"-Zeichens der Ausruck ```"&amp;"``` (ohne Anführungszeichen) verwendet werden muss!
 
 Allgemeine Hinweise zu diesem Thema finden sich im Kapitel [Konfiguration](Configuration_DE.md).
+
+## Beispiel Schalten via FHEM
+```
+<Appliances ...>
+    <Appliance ...>
+        <HttpSwitch onUrl="http://192.168.1.19:8083/fhem?cmd=set%20Aquarium%20on" offUrl="http://192.168.1.19:8083/fhem?cmd=set%20Aquarium%20off" />
+    </Appliance>
+</Appliances>
+```
