@@ -8,6 +8,7 @@
     <xs:element name="Appliances">
         <xs:complexType>
             <xs:sequence>
+                <xs:element name="Configuration" type="ConfigurationType" minOccurs="0" maxOccurs="unbounded" />
                 <xs:element name="Appliance" type="ApplianceType" minOccurs="1" maxOccurs="unbounded" />
                 <xs:element name="Connectivity" type="ConnectivityType" minOccurs="0" maxOccurs="1" />
             </xs:sequence>
@@ -39,6 +40,11 @@
             <xs:field xpath="@idref" />
         </xs:keyref>
     </xs:element>
+
+    <xs:complexType name="ConfigurationType">
+        <xs:attribute name="param" type="xs:string" use="required" />
+        <xs:attribute name="value" type="xs:string" use="required" />
+    </xs:complexType>
 
     <xs:complexType name="ApplianceType">
         <xs:sequence>

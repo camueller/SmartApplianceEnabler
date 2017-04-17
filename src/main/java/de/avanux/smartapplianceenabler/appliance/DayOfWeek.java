@@ -37,6 +37,8 @@ public class DayOfWeek {
                 return "Saturday";
             case 7:
                 return "Sunday";
+            case 8:
+                return "Holiday";
             default:
                 return "Illegal value";
         }

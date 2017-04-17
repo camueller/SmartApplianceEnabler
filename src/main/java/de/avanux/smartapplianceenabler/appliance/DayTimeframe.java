@@ -33,6 +33,7 @@ import java.util.List;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DayTimeframe implements Timeframe {
+    public static final int DOW_HOLIDAYS = 8;
     @XmlElement(name = "Start")
     private TimeOfDay start;
     @XmlElement(name = "End")
@@ -41,6 +42,8 @@ public class DayTimeframe implements Timeframe {
     private List<DayOfWeek> daysOfWeek;
     @XmlTransient
     private Schedule schedule;
+    @XmlTransient
+    private List<LocalDate> holidays;
 
     public DayTimeframe() {
     }
@@ -123,6 +126,9 @@ public class DayTimeframe implements Timeframe {
                 DateTime timeFrameEnd = interval.getEnd().plusDays(i);
                 if(dowValues != null) {
                     int dow = timeFrameStart.getDayOfWeek();
+                    if(dowValues.contains(DOW_HOLIDAYS) && isHoliday(timeFrameStart.toLocalDate())) {
+                        dow = DOW_HOLIDAYS;
+                    }
                     if(dowValues.contains(dow)) {
                         intervals.add(new TimeframeInterval(this, new Interval(timeFrameStart, timeFrameEnd)));
                     }
@@ -143,6 +149,17 @@ public class DayTimeframe implements Timeframe {
      */
     private boolean isOverMidnight(LocalDateTime earliestStartDateTime, LocalDateTime latestEndDateTime) {
         return latestEndDateTime.isBefore(earliestStartDateTime);
+    }
+
+    public void setHolidays(List<LocalDate> holidays) {
+        this.holidays = holidays;
+    }
+
+    protected boolean isHoliday(LocalDate date) {
+        if(holidays != null && holidays.contains(date)) {
+            return true;
+        }
+        return false;
     }
 
     private LocalDateTime toDateTimeToday(TimeOfDay timeOfDay) {

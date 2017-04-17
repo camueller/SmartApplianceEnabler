@@ -17,22 +17,33 @@
  */
 package de.avanux.smartapplianceenabler.appliance;
 
-import java.io.File;
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 
 public class FileHandler {
 
     private static final String SAE_HOME = "sae.home";
     private static String FILE_DIR;
-    private static Logger logger = LoggerFactory.getLogger(FileHandler.class); 
-    
+    private static Logger logger = LoggerFactory.getLogger(FileHandler.class);
+    private static final DateTimeFormatter dateFormatter = DateTimeFormat.forPattern("yyyy-MM-dd");
+
     static {
         FILE_DIR=System.getProperty(SAE_HOME);
         if(FILE_DIR == null) {
@@ -57,6 +68,51 @@ public class FileHandler {
     
     private File getFile(Class<? extends Object> rootElementType) {
         return new File(FILE_DIR + System.getProperty("file.separator") + rootElementType.getSimpleName() + ".xml");
-    }    
-    
+    }
+
+    public void saveHolidays(Map<LocalDate, String> holidayWithName) {
+        File holidayFile = getHolidayFile();
+        try {
+            Writer writer = new FileWriter(holidayFile);
+            for(LocalDate date : holidayWithName.keySet()) {
+                String dateString = dateFormatter.print(date);
+                String name = holidayWithName.get(date);
+                writer.write(dateString + " " + name + "\n");
+            }
+            writer.close();
+            logger.debug(holidayWithName.size() + " holidays written to " + holidayFile.getAbsolutePath());
+        } catch (IOException e) {
+            logger.error("Error writing holidays file " + holidayFile.getAbsolutePath(), e);
+        }
+    }
+
+    public List<LocalDate> loadHolidays() {
+        File holidayFile = getHolidayFile();
+        if(holidayFile.exists()) {
+            logger.debug("Using holidays file " + holidayFile.getAbsolutePath());
+            List<LocalDate> holidays = new ArrayList<>();
+            try {
+                List<String> lines = Files.readAllLines(holidayFile.toPath(), StandardCharsets.UTF_8);
+                for(String line : lines) {
+                    final String[] lineSegments = line.split("\\s+");
+                    LocalDate holiday = dateFormatter.parseLocalDate(lineSegments[0]);
+                    holidays.add(holiday);
+                    logger.debug("Loaded holiday: " + holiday);
+                }
+            } catch (IOException e) {
+                logger.debug("Error reading holidays file " + holidayFile.getAbsolutePath(), e);
+            }
+            return holidays;
+        }
+        return null;
+    }
+
+    public boolean isHolidayFileAvailable() {
+        return getHolidayFile().exists();
+    }
+
+    private File getHolidayFile() {
+        int year = new LocalDate().getYear();
+        return new File(FILE_DIR, "Holidays-" + year + ".txt");
+    }
 }

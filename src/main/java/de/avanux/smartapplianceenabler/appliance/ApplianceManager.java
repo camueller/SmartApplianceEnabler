@@ -24,13 +24,14 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import de.avanux.smartapplianceenabler.HolidaysDownloader;
+import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.GpioFactory;
 
-import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
 
 
@@ -69,8 +70,8 @@ public class ApplianceManager implements Runnable {
     }
     
     public void startAppliances() {
+        FileHandler fileHandler = new FileHandler();
         if(appliances == null) {
-            FileHandler fileHandler = new FileHandler();
             appliances = fileHandler.load(Appliances.class);
         }
         if(appliances == null) {
@@ -100,9 +101,49 @@ public class ApplianceManager implements Runnable {
             }
         }
 
+        Integer additionRunningTime = null;
+        String additionRunningTimeString = appliances.getConfigurationValue("TimeframeIntervalAdditionalRunningTime");
+        if(additionRunningTimeString != null) {
+            additionRunningTime = Integer.valueOf(additionRunningTimeString);
+        }
+
+        boolean holidaysUsed = false;
         for (Appliance appliance : getAppliances()) {
-            appliance.init();
+            if(appliance.hasTimeframeForHolidays()) {
+                holidaysUsed = true;
+            }
+            appliance.init(additionRunningTime);
             appliance.start(timer, gpioController, pulseReceiverIdWithPulseReceiver, modbusIdWithModbusTcp);
+        }
+
+        if(holidaysUsed) {
+            logger.debug("Holidays are used.");
+            /**
+             * Once a day check availability of holidays file - the year might have changed!
+             * Download it if it is not available. If it is available (either downloaded or just placed there)
+             * load holidays from the file pass them on to all appliances.
+             */
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if(! fileHandler.isHolidayFileAvailable()) {
+                        HolidaysDownloader downloader = new HolidaysDownloader();
+                        downloader.setUrl(appliances.getConfigurationValue("Holidays.Url"));
+                        Map<LocalDate, String> holidayWithName = downloader.downloadHolidays();
+                        fileHandler.saveHolidays(holidayWithName);
+                    }
+
+                    List<LocalDate> holidays = fileHandler.loadHolidays();
+                    if(holidays != null) {
+                        for (Appliance appliance : getAppliances()) {
+                            appliance.setHolidays(holidays);
+                        }
+                    }
+                }
+            }, 0,24 * 60 * 60 * 1000);
+        }
+        else {
+            logger.debug("Holidays are NOT used.");
         }
     }
 

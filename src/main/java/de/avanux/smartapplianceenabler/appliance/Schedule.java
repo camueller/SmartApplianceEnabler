@@ -17,11 +17,11 @@
  */
 package de.avanux.smartapplianceenabler.appliance;
 
-import de.avanux.smartapplianceenabler.Configuration;
 import org.joda.time.Interval;
 import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
@@ -42,6 +42,13 @@ public class Schedule {
     private Timeframe timeframe;
     @XmlTransient
     DateTimeFormatter formatter = ISODateTimeFormat.basicTTimeNoMillis();
+    /**
+     * The number of seconds to be added to the maximum running time of the schedule during search for the next sufficient timeframe interval.
+     * This additional time is available to the Sunny Home Manager for processing while still being able to fit running time into the timeframe.
+     */
+    @XmlTransient
+    private static int additionalRunningTime = 900;
+
 
     public Schedule() {
     }
@@ -54,6 +61,11 @@ public class Schedule {
         this.minRunningTime = minRunningTime;
         this.maxRunningTime = maxRunningTime;
         this.timeframe = new DayTimeframe(earliestStart, latestEnd, daysOfWeekValues);
+    }
+
+    public static void setAdditionalRunningTime(int additionalRunningTime) {
+        Schedule.additionalRunningTime = additionalRunningTime;
+        LoggerFactory.getLogger(Schedule.class).debug("additional running time set to " + additionalRunningTime);
     }
 
     public int getMinRunningTime() {
@@ -91,7 +103,7 @@ public class Schedule {
                     // interval already started ...
                     if(onlySufficient) {
                         if(now.plusSeconds(schedule.getMaxRunningTime())
-                                .plusSeconds(Configuration.getInstance().getTimeframeIntervalAdditionalRunningTime())
+                                .plusSeconds(additionalRunningTime)
                                 .isBefore(new LocalDateTime(interval.getEnd()))) {
                             // ... with remaining running time sufficient
                             return timeframeInterval;

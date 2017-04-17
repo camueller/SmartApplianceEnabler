@@ -23,6 +23,7 @@ import de.avanux.smartapplianceenabler.modbus.ModbusElectricityMeter;
 import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
 import de.avanux.smartapplianceenabler.modbus.ModbusSwitch;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
+import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.slf4j.LoggerFactory;
 
@@ -84,7 +85,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         this.runningTimeMonitor.setApplianceId(id);
     }
 
-    public void init() {
+    public void init(Integer additionRunningTime) {
         this.logger.setApplianceId(id);
         if(schedules != null && schedules.size() > 0) {
             logger.info("Schedules configured: " + schedules.size());
@@ -137,6 +138,9 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         }
 
         if(schedules != null) {
+            if(additionRunningTime != null) {
+                Schedule.setAdditionalRunningTime(additionRunningTime);
+            }
             for(Schedule schedule : schedules) {
                 schedule.getTimeframe().setSchedule(schedule);
             }
@@ -185,6 +189,30 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                 }
             }
         }
+    }
+
+    public void setHolidays(List<LocalDate> holidays) {
+        if(schedules != null) {
+            for(Schedule schedule : schedules) {
+                final Timeframe timeframe = schedule.getTimeframe();
+                if(timeframe instanceof DayTimeframe) {
+                    ((DayTimeframe) timeframe).setHolidays(holidays);
+                }
+            }
+        }
+    }
+
+    public boolean hasTimeframeForHolidays() {
+        for (Schedule schedule : schedules) {
+            Timeframe timeframe = schedule.getTimeframe();
+            if(timeframe instanceof  DayTimeframe) {
+                List<Integer> daysOfWeekValues = ((DayTimeframe) timeframe).getDaysOfWeekValues();
+                if(daysOfWeekValues.contains(DayTimeframe.DOW_HOLIDAYS)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private Set<GpioControllable> getGpioControllables() {

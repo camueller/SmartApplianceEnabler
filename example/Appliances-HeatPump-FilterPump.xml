@@ -6,14 +6,14 @@
 		pin : Nummer des Raspberry-GPIO-Pins laut http://pi4j.com/images/gpio-control-example-large.png
 		reverseStates : invertiert das Signal für diesen Schalter
 		-->
-		<Switch pin="1" reverseStates="true" />
+		<Switch gpio="1" reverseStates="true" />
 		<!-- 
 		pin : Nummer des Raspberry-GPIO-Pins laut http://pi4j.com/images/gpio-control-example-large.png
 		pinPullResistance : PULL_UP aktiviert den Pull-Up-Widerstand an diesem Pin; PULL_DOWN aktiviert den Pull-Down-Widerstand an diesem Pin; sonst weglassen
 		impulsesPerKwh : Anzahl der Impulse, die der Zähler an der S0-Schnittstelle pro KWh sendet
 		measurementInterval : Anzahl der Sekunden, für die Min/Durchschnitt/Max-Werte berechnet werden (muss für SEMP immer auf 60 stehen)
 		-->
-		<S0ElectricityMeter pin="2" pinPullResistance="PULL_DOWN" impulsesPerKwh="1000"
+		<S0ElectricityMeter gpio="2" pinPullResistance="PULL_DOWN" impulsesPerKwh="1000"
 			measurementInterval="60" />
 	</Appliance>
 	<Appliance id="F-00000001-000000000002-00">

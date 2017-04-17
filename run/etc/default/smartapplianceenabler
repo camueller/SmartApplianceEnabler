@@ -27,8 +27,3 @@ JAVA_OPTS="-Djava.awt.headless=true -Xmx256m"
 #LOGFILE_DAYS=14
 # Whether to compress logfiles older than today's
 #LOGFILE_COMPRESS=1
-
-# The running time to be added to the maximum running time of the schedule during search for
-# the next sufficient timeframe interval. This additional time can be used for processing
-# by the Sunny Home Manager while still being able to fit running time into the timeframe.
-#TIMEFRAME_INTERVAL_ADDITIONAL_RUNNING_TIME=900;

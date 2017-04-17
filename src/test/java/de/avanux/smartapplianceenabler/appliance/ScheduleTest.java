@@ -1,6 +1,5 @@
 package de.avanux.smartapplianceenabler.appliance;
 
-import de.avanux.smartapplianceenabler.Configuration;
 import de.avanux.smartapplianceenabler.TestBase;
 import org.joda.time.DateTimeFieldType;
 import org.joda.time.Interval;
@@ -21,7 +20,7 @@ public class ScheduleTest extends TestBase {
 
     @Test
     public void getNextSufficientTimeframe_alreadyStarted_remainingRunningTimeSufficientWithAdditionalRunningTimeZero() {
-        Configuration.getInstance().setTimeframeIntervalAdditionalRunningTime(0);
+        Schedule.setAdditionalRunningTime(0);
         List<Schedule> schedules = new ArrayList<Schedule>();
         schedules.add(new Schedule(7200, 7200, new TimeOfDay(10, 0, 0), new TimeOfDay(14, 0, 0)));
         schedules.add(new Schedule(7200, 7200, new TimeOfDay(14, 0, 0), new TimeOfDay(18, 0, 0)));

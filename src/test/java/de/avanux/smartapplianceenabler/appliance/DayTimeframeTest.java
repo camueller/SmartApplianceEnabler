@@ -7,6 +7,7 @@ import org.joda.time.LocalDateTime;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -70,6 +71,45 @@ public class DayTimeframeTest extends TestBase {
         List<TimeframeInterval> intervals = timeframe.getIntervals(now);
         Assert.assertEquals(1, intervals.size());
         Assert.assertEquals(new Interval(toDayOfWeek(now, 3, 10, 0, 0).toDateTime(), toDayOfWeek(now, 3, 12, 0, 0).toDateTime()), intervals.get(0).getInterval());
+    }
+
+    @Test
+    public void getIntervals_ValidOnlyOnHoliday_HolidayNotSet() {
+        DayTimeframe timeframe = new DayTimeframe(new TimeOfDay(10, 0, 0), new TimeOfDay(12, 0, 0), Collections.singletonList(8));
+        LocalDateTime now = toDayOfWeek(1, 9, 0, 0);
+        List<TimeframeInterval> intervals = timeframe.getIntervals(now);
+        Assert.assertEquals(0, intervals.size());
+    }
+
+    @Test
+    public void getIntervals_ValidOnlyOnHoliday_HolidaySet() {
+        DayTimeframe timeframe = new DayTimeframe(new TimeOfDay(10, 0, 0), new TimeOfDay(12, 0, 0), Collections.singletonList(8));
+        LocalDateTime now = toDayOfWeek(1, 9, 0, 0);
+        timeframe.setHolidays(Collections.singletonList(now.toLocalDate()));
+        List<TimeframeInterval> intervals = timeframe.getIntervals(now);
+        Assert.assertEquals(1, intervals.size());
+        Assert.assertEquals(new Interval(toDayOfWeek(now, 1, 10, 0, 0).toDateTime(), toDayOfWeek(now, 1, 12, 0, 0).toDateTime()), intervals.get(0).getInterval());
+    }
+
+    @Test
+    public void getIntervals_ValidOnSundayAndHoliday_HolidayIsSunday() {
+        DayTimeframe timeframe = new DayTimeframe(new TimeOfDay(10, 0, 0), new TimeOfDay(12, 0, 0), Arrays.asList(7,8));
+        LocalDateTime now = toDayOfWeek(1, 9, 0, 0);
+        timeframe.setHolidays(Collections.singletonList(now.toLocalDate().plusDays(6)));
+        List<TimeframeInterval> intervals = timeframe.getIntervals(now);
+        Assert.assertEquals(1, intervals.size());
+        Assert.assertEquals(new Interval(toDayOfWeek(now, 7, 10, 0, 0).toDateTime(), toDayOfWeek(now, 7, 12, 0, 0).toDateTime()), intervals.get(0).getInterval());
+    }
+
+    @Test
+    public void getIntervals_ValidOnSundayAndHoliday_HolidayIsThursday() {
+        DayTimeframe timeframe = new DayTimeframe(new TimeOfDay(10, 0, 0), new TimeOfDay(12, 0, 0), Arrays.asList(7,8));
+        LocalDateTime now = toDayOfWeek(1, 9, 0, 0);
+        timeframe.setHolidays(Collections.singletonList(now.toLocalDate().plusDays(3)));
+        List<TimeframeInterval> intervals = timeframe.getIntervals(now);
+        Assert.assertEquals(2, intervals.size());
+        Assert.assertEquals(new Interval(toDayOfWeek(now, 4, 10, 0, 0).toDateTime(), toDayOfWeek(now, 4, 12, 0, 0).toDateTime()), intervals.get(0).getInterval());
+        Assert.assertEquals(new Interval(toDayOfWeek(now, 7, 10, 0, 0).toDateTime(), toDayOfWeek(now, 7, 12, 0, 0).toDateTime()), intervals.get(1).getInterval());
     }
 
     @Test
