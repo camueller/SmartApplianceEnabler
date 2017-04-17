@@ -17,8 +17,7 @@ Optional können folgende Parameter gesetzt werden:
 Allgemeine Hinweise zu diesem Thema finden sich im Kapitel [Konfiguration](Configuration_DE.md).
 
 ## Beispiel Stromverbrauchsmessung über Fritz!Box Home Automation
-Die Fritz!Box erlaubt die Abfrage der über eine Steckdose entnommenen Leistung via HTTP, wobei der Wert in mW geliefert wird (deshalb muss ```factorToWatt="1000"``` gesetzt werden, eil SAE eine Angabe in W erwartet).
-Die Konfiguration dafür würde wie folgt aussehen, wobei die Session ID (ain) über ein zwischengeschaltetes Script gesetzt werden müsste:
+Die Fritz!Box erlaubt die Abfrage der über eine Steckdose entnommenen Leistung via HTTP. Die Konfiguration dafür würde wie folgt aussehen, wobei die Session ID (ain) über ein zwischengeschaltetes Script gesetzt werden müsste:
 ```
 <Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.1">
     <Appliance id="F-00000001-000000000001-00">
