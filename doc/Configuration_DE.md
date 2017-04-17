@@ -59,7 +59,7 @@ Ein `DayTimeframe` enthält Ein- und Ausschaltzeiten, die sich auf ein 24-Stunde
   </Appliance>
 </Appliances>
 ```
-Durch die Angabe von ```<DayOfWeek>8</DayOfWeek>``` wird angebenen, dass der DayTimeframe an Feiertagen gelten soll. Er hat Vorrang vor anderen ```DayTimeframe```, die entsprechend des Wochentages gelten würden.
+Durch die Angabe von ```<DayOfWeek>8</DayOfWeek>``` wird angebenen, dass der DayTimeframe an Feiertagen gelten soll. Er hat Vorrang vor anderen DayTimeframe, die entsprechend des Wochentages gelten würden. Sobald mindestens ein DayTimeframe mit ```<DayOfWeek>8</DayOfWeek>``` konfiguriert ist, wird das nachfolgend beschriebene Feiertags-Handling aktiviert.
 
 Die Feiertage werden aus der Datei ```Holidays-JJJJ.txt``` gelesen, wobei JJJJ durch die Jahreszahl ersetzt wird, d.h. die Feiertag für 2017 finden sich in der Datei ```Holidays-2017.txt```. Die Datei muss sich im gleichen Verzeichnis wie die Datei ```Appliances.xml``` befinden und ist wie folgt aufgebaut:
 ```
