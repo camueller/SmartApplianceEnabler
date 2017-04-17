@@ -4,7 +4,7 @@ Richtige Stromzähler, deren Werte man per HTTP abfragen kann, gibt es meines Wi
 ```
 <Appliances ...>
     <Appliance ...>
-        <HttpElectricityMeter url="http://192.168.2.1/webservices/homeautoswitch.lua?ain=xxx&amp;switchcmd=getswitchpower" factorToWatt="1000" />
+        <HttpElectricityMeter url="http://192.168.1.1/control?device=123&amp;cmd=getpower" factorToWatt="1000" />
     </Appliance>
 </Appliances>
 ```
