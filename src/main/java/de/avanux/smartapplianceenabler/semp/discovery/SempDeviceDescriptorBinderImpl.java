@@ -45,9 +45,11 @@ public class SempDeviceDescriptorBinderImpl extends UDA10DeviceDescriptorBinderI
 
     private Logger logger = LoggerFactory.getLogger(SempDeviceDescriptorBinderImpl.class);
     private DefaultUpnpServiceConfiguration serviceConfiguration;
+    private String sempServerUrl;
     
-    public SempDeviceDescriptorBinderImpl(DefaultUpnpServiceConfiguration serviceConfiguration) {
+    public SempDeviceDescriptorBinderImpl(DefaultUpnpServiceConfiguration serviceConfiguration, String sempServerUrl) {
         this.serviceConfiguration = serviceConfiguration;
+        this.sempServerUrl = sempServerUrl;
     }
 
     @Override
@@ -65,23 +67,11 @@ public class SempDeviceDescriptorBinderImpl extends UDA10DeviceDescriptorBinderI
                     "", "urn:" + Semp.NAMESPACE + ":service-1-0"
             );
             
-            // FIXME make port configurable
-            String sempServerUrl = "http://" + findMyIpAddress() + ":8080";
-            logger.info("SEMP UPnP will redirect to " + sempServerUrl);
             appendNewElementIfNotNull(descriptor, sempServiceElement, Semp.prefixed(ELEMENT.server), sempServerUrl);
             appendNewElementIfNotNull(descriptor, sempServiceElement, Semp.prefixed(ELEMENT.basePath), "/semp");
             appendNewElementIfNotNull(descriptor, sempServiceElement, Semp.prefixed(ELEMENT.transport), "HTTP/Pull");
             appendNewElementIfNotNull(descriptor, sempServiceElement, Semp.prefixed(ELEMENT.exchangeFormat), "XML");
             appendNewElementIfNotNull(descriptor, sempServiceElement, Semp.prefixed(ELEMENT.wsVersion), Semp.XSD_VERSION);
         }
-    }
-    
-    private String findMyIpAddress() {
-        NetworkAddressFactory networkAddressFactory = this.serviceConfiguration.createNetworkAddressFactory();
-        Iterator<InetAddress> bindAddresses = networkAddressFactory.getBindAddresses();
-        while(bindAddresses.hasNext()) {
-            return bindAddresses.next().toString().substring(1); // strip leading /
-        }
-        return "127.0.0.1";
     }
 }

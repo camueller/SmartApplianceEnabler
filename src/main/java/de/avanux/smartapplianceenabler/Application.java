@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.lang.management.ManagementFactory;
 
+import ch.qos.logback.classic.Level;
 import de.avanux.smartapplianceenabler.appliance.FileHandler;
 import de.avanux.smartapplianceenabler.log.ApplianceLogger;
 import de.avanux.smartapplianceenabler.semp.webservice.Device2EM;
@@ -135,5 +136,9 @@ public class Application {
             rootLogger.addAppender(fileAppender);
         }
         logger.info("Logging configured with log level " + level);
+
+        // external classes
+        ch.qos.logback.classic.Logger loggerRetrieveRemoteDescriptors = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger("org.fourthline.cling.protocol.RetrieveRemoteDescriptors");
+        loggerRetrieveRemoteDescriptors.setLevel(Level.ERROR);
     }
 }

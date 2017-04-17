@@ -17,64 +17,48 @@
  */
 package de.avanux.smartapplianceenabler.semp.discovery;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-
-import javax.servlet.Servlet;
-
+import de.avanux.smartapplianceenabler.SmartApplianceEnabler;
 import org.fourthline.cling.DefaultUpnpServiceConfiguration;
 import org.fourthline.cling.UpnpService;
+import org.fourthline.cling.UpnpServiceConfiguration;
 import org.fourthline.cling.UpnpServiceImpl;
 import org.fourthline.cling.binding.LocalServiceBindingException;
 import org.fourthline.cling.binding.xml.DeviceDescriptorBinder;
 import org.fourthline.cling.model.ValidationException;
-import org.fourthline.cling.model.meta.DeviceDetails;
-import org.fourthline.cling.model.meta.DeviceIdentity;
-import org.fourthline.cling.model.meta.Icon;
-import org.fourthline.cling.model.meta.LocalDevice;
-import org.fourthline.cling.model.meta.LocalService;
-import org.fourthline.cling.model.meta.ManufacturerDetails;
-import org.fourthline.cling.model.meta.ModelDetails;
+import org.fourthline.cling.model.meta.*;
 import org.fourthline.cling.model.types.DeviceType;
 import org.fourthline.cling.model.types.UDN;
-import org.fourthline.cling.transport.impl.apache.StreamClientConfigurationImpl;
 import org.fourthline.cling.transport.impl.apache.StreamServerConfigurationImpl;
 import org.fourthline.cling.transport.spi.NetworkAddressFactory;
-import org.fourthline.cling.transport.spi.ServletContainerAdapter;
 import org.fourthline.cling.transport.spi.StreamClient;
 import org.fourthline.cling.transport.spi.StreamServer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import de.avanux.smartapplianceenabler.SmartApplianceEnabler;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.URI;
+import java.util.Iterator;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class SempDiscovery implements Runnable {
+
+    private Logger logger = LoggerFactory.getLogger(SempDiscovery.class);
+    private UpnpServiceConfiguration serviceConfiguration;
+    private String sempServerUrl;
+
+    public SempDiscovery() {
+        serviceConfiguration = createServiceConfiguration();
+        // FIXME make port configurable
+        sempServerUrl = "http://" + findMyIpAddress() + ":8080";
+        logger.info("SEMP UPnP will redirect to " + sempServerUrl);
+    }
 
     public void run() {
         try {
             final ExecutorService executorService = Executors.newSingleThreadExecutor();
-            
-            final UpnpService upnpService = new UpnpServiceImpl(new DefaultUpnpServiceConfiguration() {
-                @Override
-                public DeviceDescriptorBinder getDeviceDescriptorBinderUDA10() {
-                    return new SempDeviceDescriptorBinderImpl(this);
-                }
-                
-                @Override
-                public StreamClient createStreamClient() {
-                    // disable the client in order to avoid requesting descriptors from UPnP devices
-                    return null;
-                }
-                
-                @Override
-                public StreamServer createStreamServer(NetworkAddressFactory networkAddressFactory) {
-                    return new org.fourthline.cling.transport.impl.apache.StreamServerImpl(
-                            new StreamServerConfigurationImpl()
-                            );
-                }
-            });
-
+            final UpnpService upnpService = new UpnpServiceImpl(serviceConfiguration);
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 @Override
                 public void run() {
@@ -84,7 +68,6 @@ public class SempDiscovery implements Runnable {
 
             // Add the bound local device to the registry
             upnpService.getRegistry().addDevice(createDevice());
-
         }
         catch (Exception ex) {
             System.err.println("Exception occured: " + ex);
@@ -92,7 +75,28 @@ public class SempDiscovery implements Runnable {
             System.exit(1);
         }
     }
-    
+
+    private UpnpServiceConfiguration createServiceConfiguration() {
+        return new DefaultUpnpServiceConfiguration() {
+            @Override
+            public DeviceDescriptorBinder getDeviceDescriptorBinderUDA10() {
+                return new SempDeviceDescriptorBinderImpl(this, sempServerUrl);
+            }
+
+            @Override
+            public StreamClient createStreamClient() {
+                // disable the client in order to avoid requesting descriptors from UPnP devices
+                return null;
+            }
+
+            @Override
+            public StreamServer createStreamServer(NetworkAddressFactory networkAddressFactory) {
+                return new org.fourthline.cling.transport.impl.apache.StreamServerImpl(
+                        new StreamServerConfigurationImpl()
+                );
+            }
+        };
+    }
     
     private LocalDevice createDevice()
             throws ValidationException, LocalServiceBindingException, IOException {
@@ -117,5 +121,14 @@ public class SempDiscovery implements Runnable {
                 );
 
         return new LocalDevice(identity, type, details, (Icon) null, (LocalService) null);
-    }    
+    }
+
+    private String findMyIpAddress() {
+        NetworkAddressFactory networkAddressFactory = this.serviceConfiguration.createNetworkAddressFactory();
+        Iterator<InetAddress> bindAddresses = networkAddressFactory.getBindAddresses();
+        while(bindAddresses.hasNext()) {
+            return bindAddresses.next().toString().substring(1); // strip leading /
+        }
+        return "127.0.0.1";
+    }
 }
