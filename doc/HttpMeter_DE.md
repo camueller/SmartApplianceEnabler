@@ -9,7 +9,7 @@ Richtige Stromzähler, deren Werte man per HTTP abfragen kann, gibt es meines Wi
 </Appliances>
 ```
 Zu beachten ist, dass in der URL anstatt des "&"-Zeichens der Ausruck ```"&amp;"``` (ohne Anführungszeichen) verwendet werden muss!
-
+Falls der über HTTP geliefert Verbrauchswert nicht in Watt geliefert wird, muss über den Parameter ```factorToWatt``` der Faktor angegeben werden, mit dem der gelieferte Wert multipliziert werden muss, um den Verbrauch in Watt zu erhalten. Wird beispielsweise der Verbrauch in mW geliefert, muss ```factorToWatt="1000"``` angegeben werden.
 Optional können folgende Parameter gesetzt werden:
 - measurementInterval in Sekunden (default=60) : Zeitraum, für den der durchschnittliche Verbrauch berechnet wird
 - pollInterval in Sekunden (default=10) : die Zeit zwischen zwei Verbrauchsabfragen beim Zähler
