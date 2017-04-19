@@ -128,7 +128,10 @@ public class ApplianceManager implements Runnable {
                 public void run() {
                     if(! fileHandler.isHolidayFileAvailable()) {
                         HolidaysDownloader downloader = new HolidaysDownloader();
-                        downloader.setUrl(appliances.getConfigurationValue("Holidays.Url"));
+                        String downloadUrl = appliances.getConfigurationValue("Holidays.Url");
+                        if(downloadUrl != null) {
+                            downloader.setUrl(downloadUrl);
+                        }
                         Map<LocalDate, String> holidayWithName = downloader.downloadHolidays();
                         fileHandler.saveHolidays(holidayWithName);
                     }
