@@ -1,4 +1,8 @@
 # Installation
+## Betriebssystem
+Für den Raspberry Pi existieren verschiedene, darauf zugeschnittene, Linux-Distributionen (Images), wobei [Raspbian](https://www.raspberrypi.org/downloads/raspbian) vermutlich das geläufigste ist. Damit der *Smart Appliance Enabler* darauf lauffähig ist, muss bei der Wahl des Images ist darauf geachtet werden, dass dieses eine Java8-Runtime enthält oder dass diese nachinstallierbar ist.
+
+## Smart Appliance Enabler
 Die Installation des *Smart Appliance Enabler* besteht darin, folgende Dateien auf den Raspberry zu kopieren:
 * die Datei `SmartApplianceEnabler-*.jar` mit dem eigentlichen Programmcode (heruntergeladenes Release oder aus Sourcen gebaut)
 * die Konfigurationsdatei `Device2EM.xml`
