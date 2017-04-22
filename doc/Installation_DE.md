@@ -1,7 +1,7 @@
 # Installation
 ## Betriebssystem
 Für den Raspberry Pi existieren verschiedene, darauf zugeschnittene, Linux-Distributionen (Images), wobei [Raspbian](https://www.raspberrypi.org/downloads/raspbian) vermutlich das geläufigste ist (auf dieses beziehe ich mich nachfolgend). 
-Beim Raspbian-Image ist die Lite-Version ist ausreichend, was insbesondere bei Verwendung von 4GB-SD-Karten hilfreich ist. Damit der *Smart Appliance Enabler* darauf lauffähig ist, muss bei der Wahl des Images ist darauf geachtet werden, dass dieses eine Java8-Runtime enthält oder dass diese nachinstallierbar ist.
+Beim Raspbian-Image ist die Lite-Version ist ausreichend, was insbesondere bei Verwendung von 4GB-SD-Karten hilfreich ist. Damit der *Smart Appliance Enabler* darauf lauffähig ist, muss bei der Wahl des Images ist darauf geachtet werden, dass dieses eine Java 8-Runtime enthält oder dass diese nachinstallierbar ist.
 ```
 axel@tpw520:~/Downloads/raspberry$ sudo dd bs=4M if=2017-04-10-raspbian-jessie-lite.img of=/dev/mmcblk0
 [sudo] password for axel:
@@ -41,8 +41,8 @@ sudo /bin/bash -c "echo 'Europe/Berlin' > /etc/timezone"
 sudo cp /usr/share/zoneinfo/Europe/Berlin /etc/localtime
 ```
 
-### Java8 installieren
-Die Installation des vom *Smart Appliance Enabler* benötigten Java8 erfolgt ganz einfach mit
+### Java 8 installieren
+Die Installation des vom *Smart Appliance Enabler* benötigten Java 8 erfolgt ganz einfach mit
 ```
 sudo apt-get update
 sudo apt-get install oracle-java8-jdk
