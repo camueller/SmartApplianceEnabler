@@ -9,6 +9,8 @@ axel@tpw520:~/Downloads/raspberry$ sudo dd bs=4M if=2017-04-10-raspbian-jessie-l
 309+1 records out
 1297862656 bytes (1,3 GB, 1,2 GiB) copied, 216,029 s, 6,0 MB/s
 ```
+Sollte der Raspberry mit der SD-Karte nicht starten, kann es durchaus an der SD-Karte selbst liegen. In diesem Fall einfach einen anderen SD-Karten-Typ verwenden (gute Erfahrungen habe ich mit SanDisk gemacht). Einen erfolgreichen Start erkennt man leicht daran, dass die grüne LED flackert/leuchtet (= Zugriff auf die SD-Karte).
+
 ### SSH einrichten
 Auf neueren Images ist SSH aus Sicherheitsgründen standardmäßig deaktiviert. Zum Aktivieren gibt es verschiedene Möglichkeiten (siehe https://linuxundich.de/raspberry-pi/ssh-auf-dem-raspberry-pi-aktivieren-jetzt-unter-raspian-noetig oder 
 https://kofler.info/geaenderte-ssh-server-konfiguration-von-raspbian), wobei ich den nachfolgend beschriebenen Weg bevorzuge (geht nur unter Linux):
