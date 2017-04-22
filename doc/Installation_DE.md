@@ -26,12 +26,19 @@ axel@tpw520:~$ sudo umount /media/axel/tmp
 
 Nachdem der Raspberry Pi mit der so modifizierten SD-Karte gebootet wurde, sollte der Zugriff mit SSH funktionieren.
 
+### Hostnamen ändern
+Unabhängig von dem Hostnamen, über den der Raspberry im lokalen Netzwerk erreicht werden kann, ist sein Hostname standradmäig ```raspberry``` (auch sichtbar am Prompt: ```pi@raspberrypi:~ $```). Vor allem, wenn man mehrere Raspberries im Netz hat, will man auch am Prompt sehen, auf welchem Raspberry man gerade die Befehle eingibt. Zum Ändern des Hostnames kann nachfolgender Befehl verwendet werden:
+```
+sudo hostname -b raspi3
+```
+
 ### Zeitzone einstellen
 Damit Zeitangaben zum Schalten der Geräte richtig interpretiert werden, sollte die Zeitzone des Raspberry auf die lokale Zeit gesetzt sein (nicht UTC!). Das kann mit folgendende Befehlen erreicht werden:
 ```
 sudo /bin/bash -c "echo 'Europe/Berlin' > /etc/timezone"
 sudo cp /usr/share/zoneinfo/Europe/Berlin /etc/localtime
 ```
+
 ### Java8 installieren
 Die Installation des vom *Smart Appliance Enabler* benötigten Java8 erfolgt ganz einfach mit
 ```
@@ -45,6 +52,7 @@ java version "1.8.0_65"
 Java(TM) SE Runtime Environment (build 1.8.0_65-b17)
 Java HotSpot(TM) Client VM (build 25.65-b01, mixed mode)
 ```
+
 ## Smart Appliance Enabler
 Die Installation des *Smart Appliance Enabler* besteht darin, folgende Dateien auf den Raspberry zu kopieren:
 * die Datei `SmartApplianceEnabler-*.jar` mit dem eigentlichen Programmcode (heruntergeladenes Release oder aus Sourcen gebaut)
