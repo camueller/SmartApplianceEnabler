@@ -1,6 +1,25 @@
 # Installation
 ## Betriebssystem
-Für den Raspberry Pi existieren verschiedene, darauf zugeschnittene, Linux-Distributionen (Images), wobei [Raspbian](https://www.raspberrypi.org/downloads/raspbian) vermutlich das geläufigste ist. Damit der *Smart Appliance Enabler* darauf lauffähig ist, muss bei der Wahl des Images ist darauf geachtet werden, dass dieses eine Java8-Runtime enthält oder dass diese nachinstallierbar ist.
+Für den Raspberry Pi existieren verschiedene, darauf zugeschnittene, Linux-Distributionen (Images), wobei [Raspbian](https://www.raspberrypi.org/downloads/raspbian) vermutlich das geläufigste ist (auf dieses beziehe ). Damit der *Smart Appliance Enabler* darauf lauffähig ist, muss bei der Wahl des Images ist darauf geachtet werden, dass dieses eine Java8-Runtime enthält oder dass diese nachinstallierbar ist.
+
+```
+axel@tpw520:~/Downloads/raspberry$ sudo dd bs=4M if=2017-04-10-raspbian-jessie-lite.img of=/dev/mmcblk0
+[sudo] password for axel:
+309+1 records in      
+309+1 records out
+1297862656 bytes (1,3 GB, 1,2 GiB) copied, 216,029 s, 6,0 MB/s
+```
+
+
+
+
+
+Damit das Zeitangaben zum Schalten der Geräte richtig interpretiert werden, sollte die Zeitzone des Raspberry auf die lokale Zeit gesetzt sein (nicht UTC!). Das kann mit folgendende Befehlen erreicht werden:
+```
+sudo /bin/bash -c "echo 'Europe/Berlin' > /etc/timezone"
+sudo cp /usr/share/zoneinfo/Europe/Berlin /etc/localtime
+```
+
 
 ## Smart Appliance Enabler
 Die Installation des *Smart Appliance Enabler* besteht darin, folgende Dateien auf den Raspberry zu kopieren:
@@ -143,10 +162,4 @@ pi@raspberrypi ~ $ sudo cat /var/log/smartapplianceenabler.log
 2016-01-09 16:27:07,269 INFO [Thread-7] d.a.s.a.Switch [Switch.java:41] Switch uses pin GPIO 1 (reversed states)
 2016-01-09 16:27:07,610 INFO [Thread-4] o.f.c.UpnpServiceImpl [UpnpServiceImpl.java:94] <<< UPnP service started successfully
 2016-01-09 16:27:10,130 INFO [cling-5] d.a.s.s.d.SempDeviceDescriptorBinderImpl [SempDeviceDescriptorBinderImpl.java:70] SEMP UPnP will redirect to http://192.168.69.5:8080
-```
-
-Damit das Zeitangaben zum Schalten der Geräte richtig interpretiert werden, sollte die Zeitzone des Raspberry auf die lokale Zeit gesetzt sein (nicht UTC!). Das kann mit folgendende Befehlen erreicht werden:
-```
-sudo /bin/bash -c "echo 'Europe/Berlin' > /etc/timezone"
-sudo cp /usr/share/zoneinfo/Europe/Berlin /etc/localtime
 ```
