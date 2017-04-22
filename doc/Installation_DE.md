@@ -1,7 +1,7 @@
 # Installation
 ## Betriebssystem
-Für den Raspberry Pi existieren verschiedene, darauf zugeschnittene, Linux-Distributionen (Images), wobei [Raspbian](https://www.raspberrypi.org/downloads/raspbian) vermutlich das geläufigste ist (auf dieses beziehe ). Damit der *Smart Appliance Enabler* darauf lauffähig ist, muss bei der Wahl des Images ist darauf geachtet werden, dass dieses eine Java8-Runtime enthält oder dass diese nachinstallierbar ist.
-
+Für den Raspberry Pi existieren verschiedene, darauf zugeschnittene, Linux-Distributionen (Images), wobei [Raspbian](https://www.raspberrypi.org/downloads/raspbian) vermutlich das geläufigste ist (auf dieses beziehe ich mich nachfolgend). 
+Beim Raspbian-Image ist die Lite-Version ist ausreichend, was insbesondere bei Verwendung von 4GB-SD-Karten hilfreich ist. Damit der *Smart Appliance Enabler* darauf lauffähig ist, muss bei der Wahl des Images ist darauf geachtet werden, dass dieses eine Java8-Runtime enthält oder dass diese nachinstallierbar ist.
 ```
 axel@tpw520:~/Downloads/raspberry$ sudo dd bs=4M if=2017-04-10-raspbian-jessie-lite.img of=/dev/mmcblk0
 [sudo] password for axel:
@@ -9,18 +9,42 @@ axel@tpw520:~/Downloads/raspberry$ sudo dd bs=4M if=2017-04-10-raspbian-jessie-l
 309+1 records out
 1297862656 bytes (1,3 GB, 1,2 GiB) copied, 216,029 s, 6,0 MB/s
 ```
+### SSH einrichten
+Auf neueren Images ist SSH aus Sicherheitsgründen standardmäßig deaktiviert. Zum Aktivieren gibt es verschiedene Möglichkeiten (siehe https://linuxundich.de/raspberry-pi/ssh-auf-dem-raspberry-pi-aktivieren-jetzt-unter-raspian-noetig oder 
+https://kofler.info/geaenderte-ssh-server-konfiguration-von-raspbian), wobei ich den nachfolgend beschriebenen Weg bevorzuge (geht nur unter Linux):
 
+1. Mounten der Boot-Partition der SD-Karte
+```
+axel@tpw520:~$ sudo mount /dev/mmcblk0p1 /media/axel/tmp
+```
+2. Erzeugen einer leeren Datei mit dem Namen ```ssh```:
+```
+axel@tpw520:~$ touch /media/axel/tmp/ssh
+```
+3. Unmounten der gemounteten Partition der SD-Karte
+axel@tpw520:~$ sudo umount /media/axel/tmp
 
+Nachdem der Raspberry Pi mit der so modifizierten SD-Karte gebootet wurde, sollte der Zugriff mit SSH funktionieren.
 
-
-
-Damit das Zeitangaben zum Schalten der Geräte richtig interpretiert werden, sollte die Zeitzone des Raspberry auf die lokale Zeit gesetzt sein (nicht UTC!). Das kann mit folgendende Befehlen erreicht werden:
+### Zeitzone einstellen
+Damit Zeitangaben zum Schalten der Geräte richtig interpretiert werden, sollte die Zeitzone des Raspberry auf die lokale Zeit gesetzt sein (nicht UTC!). Das kann mit folgendende Befehlen erreicht werden:
 ```
 sudo /bin/bash -c "echo 'Europe/Berlin' > /etc/timezone"
 sudo cp /usr/share/zoneinfo/Europe/Berlin /etc/localtime
 ```
-
-
+### Java8 installieren
+Die Installation des vom *Smart Appliance Enabler* benötigten Java8 erfolgt ganz einfach mit
+```
+sudo apt-get update
+sudo apt-get install oracle-java8-jdk
+```
+Die Java-Version läßt sich mit folgendem Befehl überprüfen:
+```
+pi@raspberrypi:~ $ java -version
+java version "1.8.0_65"
+Java(TM) SE Runtime Environment (build 1.8.0_65-b17)
+Java HotSpot(TM) Client VM (build 25.65-b01, mixed mode)
+```
 ## Smart Appliance Enabler
 Die Installation des *Smart Appliance Enabler* besteht darin, folgende Dateien auf den Raspberry zu kopieren:
 * die Datei `SmartApplianceEnabler-*.jar` mit dem eigentlichen Programmcode (heruntergeladenes Release oder aus Sourcen gebaut)
