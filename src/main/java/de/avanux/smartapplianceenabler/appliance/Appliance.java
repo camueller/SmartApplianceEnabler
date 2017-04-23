@@ -208,7 +208,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                 Timeframe timeframe = schedule.getTimeframe();
                 if(timeframe instanceof  DayTimeframe) {
                     List<Integer> daysOfWeekValues = ((DayTimeframe) timeframe).getDaysOfWeekValues();
-                    if(daysOfWeekValues.contains(DayTimeframe.DOW_HOLIDAYS)) {
+                    if(daysOfWeekValues != null && daysOfWeekValues.contains(DayTimeframe.DOW_HOLIDAYS)) {
                         return true;
                     }
                 }
