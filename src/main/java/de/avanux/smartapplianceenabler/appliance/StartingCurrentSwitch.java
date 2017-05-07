@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2017 Axel Müller <axel.mueller@avanux.de>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
 package de.avanux.smartapplianceenabler.appliance;
 
 import de.avanux.smartapplianceenabler.log.ApplianceLogger;
@@ -23,7 +40,7 @@ import java.util.TimerTask;
  * separate from the power state of the wrapped control.
  * The latter is only powered off after the starting current has been detected until the "on" command is received.
  */
-@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
     @XmlTransient
     private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(StartingCurrentSwitch.class));
@@ -41,6 +58,8 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
             @XmlElement(name = "HttpSwitch", type = HttpSwitch.class)
     })
     private List<Control> controls;
+    @XmlElement(name = "ForceSchedule")
+    private DayTimeframeCondition dayTimeframeCondition;
     @XmlTransient
     private Integer lastAveragePowerOfPowerOnDetection;
     @XmlTransient
@@ -66,6 +85,14 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
 
     public List<Control> getControls() {
         return controls;
+    }
+
+    public DayTimeframeCondition getDayTimeframeCondition() {
+        return dayTimeframeCondition;
+    }
+
+    public void setDayTimeframeCondition(DayTimeframeCondition dayTimeframeCondition) {
+        this.dayTimeframeCondition = dayTimeframeCondition;
     }
 
     protected void setPowerThreshold(Integer powerThreshold) {

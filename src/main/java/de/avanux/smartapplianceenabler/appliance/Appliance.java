@@ -1,16 +1,16 @@
 /*
- * Copyright (C) 2015 Axel Müller <axel.mueller@avanux.de>
- * 
+ * Copyright (C) 2017 Axel Müller <axel.mueller@avanux.de>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -283,6 +283,36 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         return false;
     }
 
+    /**
+     * Returns a forced schedule if there is one.
+     * @param now
+     * @return
+     */
+    private Schedule getForcedSchedule(LocalDateTime now) {
+        String scheduleId = null;
+        if(controls != null) {
+            for(Control control : controls) {
+                if(control instanceof StartingCurrentSwitch) {
+                    DayTimeframeCondition dayTimeframeCondition = ((StartingCurrentSwitch) control).getDayTimeframeCondition();
+                    if(dayTimeframeCondition != null) {
+                        if(dayTimeframeCondition.isMet(now)) {
+                            scheduleId = dayTimeframeCondition.getIdref();
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        if(scheduleId != null) {
+            for(Schedule schedule : schedules) {
+                if(scheduleId.equals(schedule.getId())) {
+                    return schedule;
+                }
+            }
+        }
+        return null;
+    }
+
     @Override
     public void controlStateChanged(boolean switchOn) {
         logger.debug("Control state has changed to " + (switchOn ? "on" : "off") + ": runningTimeMonitor=" + (runningTimeMonitor != null ? "not null" : "null"));
@@ -295,7 +325,16 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     public void startingCurrentDetected() {
         logger.debug("Activating next sufficient timeframe interval after starting current has been detected");
         LocalDateTime now = new LocalDateTime();
-        runningTimeMonitor.activateTimeframeInterval(now, Schedule.getCurrentOrNextTimeframeInterval(now, schedules, false, true));
+        TimeframeInterval timeframeInterval;
+        Schedule forcedSchedule = getForcedSchedule(now);
+        if(forcedSchedule != null) {
+            logger.debug("Forcing schedule " + forcedSchedule);
+            timeframeInterval = Schedule.getCurrentOrNextTimeframeInterval(now, Collections.singletonList(forcedSchedule), false, true);
+        }
+        else {
+            timeframeInterval = Schedule.getCurrentOrNextTimeframeInterval(now, schedules, false, true);
+        }
+        runningTimeMonitor.activateTimeframeInterval(now, timeframeInterval);
     }
 
     @Override
