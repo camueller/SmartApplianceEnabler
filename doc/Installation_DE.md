@@ -1,7 +1,9 @@
 # Installation
 ## Betriebssystem
 Für den Raspberry Pi existieren verschiedene, darauf zugeschnittene, Linux-Distributionen (Images), wobei [Raspbian](https://www.raspberrypi.org/downloads/raspbian) vermutlich das geläufigste ist (auf dieses beziehe ich mich nachfolgend). 
-Beim Raspbian-Image ist die Lite-Version ausreichend, sodass eine 4GB-SD-Karte ausreichend ist. Damit der *Smart Appliance Enabler* darauf lauffähig ist, muss bei der Wahl des Images ist darauf geachtet werden, dass dieses eine Java 8-Runtime enthält oder dass diese nachinstallierbar ist.
+Damit der *Smart Appliance Enabler* lauffähig ist, muss bei der Wahl des Images ist darauf geachtet werden, dass dieses eine Java 8-Runtime enthält oder dass diese nachinstallierbar ist. Beim Raspbian-Image ist die Lite-Version ausreichend, sodass man eine 4GB-SD-Karte verwenden kann.
+
+Mit dem nachfolgenden Befehl kann man unter Linux ein Image auf eine SD-Karte schreiben:
 ```
 axel@tpw520:~/Downloads/raspberry$ sudo dd bs=4M if=2017-04-10-raspbian-jessie-lite.img of=/dev/mmcblk0
 [sudo] password for axel:
@@ -24,28 +26,29 @@ axel@tpw520:~$ sudo mount /dev/mmcblk0p1 /media/axel/tmp
 axel@tpw520:~$ touch /media/axel/tmp/ssh
 ```
 3. Unmounten der gemounteten Partition der SD-Karte
+```
 axel@tpw520:~$ sudo umount /media/axel/tmp
-
+```
 Nachdem der Raspberry Pi mit der so modifizierten SD-Karte gebootet wurde, sollte der Zugriff mit SSH funktionieren.
 
 ### Hostnamen ändern
-Unabhängig von dem Hostnamen, über den der Raspberry im lokalen Netzwerk erreicht werden kann, ist sein Hostname standradmäig ```raspberry``` (auch sichtbar am Prompt: ```pi@raspberrypi:~ $```). Vor allem, wenn man mehrere Raspberries im Netz hat, will man auch am Prompt sehen, auf welchem Raspberry man gerade die Befehle eingibt. Zum Ändern des Hostnames kann nachfolgender Befehl verwendet werden:
+Unabhängig von dem Hostnamen, über den der Raspberry im lokalen Netzwerk erreicht werden kann, ist sein Hostname standardmäßig ```raspberry``` (auch sichtbar am Prompt: ```pi@raspberrypi:~ $```). Vor allem, wenn man mehrere Raspberries im Netz hat, will man auch am Prompt sehen, auf welchem Raspberry man gerade die Befehle eingibt. Zum Ändern des Hostnames kann nachfolgender Befehl auf dem Raspberry verwendet werden:
 ```
-sudo hostname -b raspi3
+pi@raspberrypi ~ $ sudo hostname -b raspi3
 ```
 
 ### Zeitzone einstellen
 Damit Zeitangaben zum Schalten der Geräte richtig interpretiert werden, sollte die Zeitzone des Raspberry auf die lokale Zeit gesetzt sein (nicht UTC!). Das kann mit folgendende Befehlen erreicht werden:
 ```
-sudo /bin/bash -c "echo 'Europe/Berlin' > /etc/timezone"
-sudo cp /usr/share/zoneinfo/Europe/Berlin /etc/localtime
+pi@raspberrypi ~ $ sudo /bin/bash -c "echo 'Europe/Berlin' > /etc/timezone"
+pi@raspberrypi ~ $ sudo cp /usr/share/zoneinfo/Europe/Berlin /etc/localtime
 ```
 
 ### Java 8 installieren
 Die Installation des vom *Smart Appliance Enabler* benötigten Java 8 erfolgt ganz einfach mit
 ```
-sudo apt-get update
-sudo apt-get install oracle-java8-jdk
+pi@raspberrypi ~ $ sudo apt-get update
+pi@raspberrypi ~ $ sudo apt-get install oracle-java8-jdk
 ```
 Die Java-Version läßt sich mit folgendem Befehl überprüfen:
 ```
