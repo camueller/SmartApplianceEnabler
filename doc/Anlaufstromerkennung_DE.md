@@ -6,7 +6,7 @@ Die **Anlaufstromerkennung** besteht darin, daß unterschieden wird zwischen dem
 
 Nach Erkennung des Abschaltstromes wird direkt wieder die Anlaufstromerkennung aktiviert. Dadurch ist es möglich das Gerät innerhalb eines [Schedule](https://github.com/camueller/SmartApplianceEnabler/blob/master/doc/Configuration_DE.md#planung-der-gerätelaufzeiten) mehrmals hintereinander laufen zu lassen.
 
-Die Anlaufstromerkennung des SAE besteht aus einem *Softwere-Schalter*, in den der eigentliche Schalter eingebettet ist. Dadurch läßt sich die Anlaufstromerkennung mit allen physischen Schaltern nutzen, die der *Smart Appliance Enabler* unterstützt. Der *Software-Schalter* unterscheidet dazu zwischen dem Schaltzustand des Gerätes und dem Schaltzustand, wie er sich dem *Sunny Home Manager* darstellt.
+Die Anlaufstromerkennung des SAE besteht aus einem *Software-Schalter*, in den der eigentliche Schalter eingebettet ist. Dadurch läßt sich die Anlaufstromerkennung mit allen physischen Schaltern nutzen, die der *Smart Appliance Enabler* unterstützt. Der *Software-Schalter* unterscheidet dazu zwischen dem Schaltzustand des Gerätes und dem Schaltzustand, wie er sich dem *Sunny Home Manager* darstellt.
 
 ## Beispiel mit Solid-State-Relais und S0-Zähler
 ```
@@ -15,11 +15,30 @@ Die Anlaufstromerkennung des SAE besteht aus einem *Softwere-Schalter*, in den d
             <Switch gpio="1" reverseStates="true" />
         </StartingCurrentSwitch>
         <S0ElectricityMeter gpio="2" pinPullResistance="PULL_DOWN" impulsesPerKwh="1000" measurementInterval="300" />
-        <Schedule minRunningTime="10800" maxRunningTime="10800">
-            <DayTimeframe>
-                <Start hour="6" minute="0" second="0"/>
-                <End hour="16" minute="0" second="0"/>
-            </DayTimeframe>
+        <Schedule ...>
+    </Appliance>
+```
+
+Auch bei der Verwendung der Anlaufstromerkennung erfolgt die Planung der Gerätelaufzeiten über die Ermittlung des nächstmöglichen Schedule. Allerdings kann es wünschenswert sein, unterschiedliche Schedules zu verwenden in Abhängigkeit davon, ob man anwesend ist, oder nicht. Die Unterscheidung basiert auf dem Zeitpunkt des Anlaufstromes, da dieser direkt nach dem Einschalten erkannt wird und meist die Anwesenheit voraussetzt. Dazu kann dem StartingCurrentSwitch ein *ForceSchedule* mitgegeben werden, der eine Referenz auf einen bestimmten Schedule und einen Zeitbereich beinhaltet. Wird der Anlaufstrom innerhalb des angegebenen Zeitbereiches erkannt, wird der referenzierte Schedule verwendet. Das Attribut *id* des Schedule muss dabei mit dem Attribut *idref* des *ForceSchedule* übereinstimmen.
+
+
+## Beispiel mit Schedule abhänging vom Zeitpunkt des Anlaufstromes
+```
+    <Appliance id="F-00000001-000000000001-00">
+        <StartingCurrentSwitch>
+            <Switch gpio="1" reverseStates="true" />
+            <ForceSchedule idref="zuHause">
+                <Start hour="7" minute="0" second="0"/>
+                <End hour="18" minute="0" second="0"/>
+            </ForceSchedule>
+        </StartingCurrentSwitch>
+        <S0ElectricityMeter gpio="2" pinPullResistance="PULL_DOWN" impulsesPerKwh="1000" measurementInterval="300" />
+        <Schedule minRunningTime="3600" maxRunningTime="3600">
+            <DayTimeframe ...>
+        </Schedule>
+        <Schedule id="zuHause" minRunningTime="10800" maxRunningTime="10800">
+            <DayTimeframe ...>
         </Schedule>
     </Appliance>
 ```
+
