@@ -30,6 +30,7 @@ Aktuell unterstützt der *Smart Appliance Enabler* folgende Möglichkeiten, den 
 - [S0](doc/S0Meter_DE.md)
 - [Modbus](doc/ModbusMeter_DE.md)
 - [HTTP](doc/HttpMeter_DE.md)
+- [Sonoff Pow](doc/SonoffPow_DE.md)
 - [WLAN-Stromzähler selbst gebaut](doc/WifiS0PulseForwarder_DE.md)
 
 ### Schalter
@@ -39,6 +40,7 @@ Zum Ein-/Ausschalten eines Gerätes unterstützt der *Smart Appliance Enabler* d
 - [Solid-State-Relais](doc/SolidStateRelais_DE.md)
 - [Modbus](doc/ModbusSwitch_DE.md)
 - [HTTP](doc/HttpSwitch_DE.md)
+- [Sonoff Pow](doc/SonoffPow_DE.md)
 
 Alle aufgeführten Schalter können mit einer [Anlaufstromerkennung](doc/Anlaufstromerkennung_DE.md) verwendet werden, um die Programmierung des Gerätes zu ermöglichen.
 
