@@ -17,11 +17,11 @@ Die aktuelle Leistungsaufnahme des Sonoff Pow kann wie folgt abgefragt werden:
 curl http://192.168.1.1/cm?cmnd=Status%208
 STATUS8 = {"StatusPWR":{"Total":0.000, "Yesterday":0.000, "Today":0.000, "Power":27, "Factor":0.94, "Voltage":234, "Current":0.122}}
 ```
-Damit der *Smart Appliance Enabler* in dieser JSON-Antwort den eigentlichen Wert für die Leistungsaufnahme findet (hier: 27W), muss als Regulärer Ausdruck ```.*Power.:(\d*).*``` angegeben werden:
+Damit der *Smart Appliance Enabler* in dieser JSON-Antwort den eigentlichen Wert für die Leistungsaufnahme findet (hier: 27W), muss als Regulärer Ausdruck ```.*Power.:(\d+).*``` angegeben werden:
 ```
 <Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.1">
     <Appliance id="F-00000001-000000000001-00">
-        <HttpElectricityMeter url="http://192.168.1.1/cm?cmnd=Status%208" extractionRegex=".*Power.:(\d*).*" />
+        <HttpElectricityMeter url="http://192.168.1.1/cm?cmnd=Status%208" extractionRegex=".*Power.:(\d+).*" />
     </Appliance>
 </Appliances>
 ```
