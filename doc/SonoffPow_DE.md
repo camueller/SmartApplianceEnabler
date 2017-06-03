@@ -21,10 +21,22 @@ Damit der *Smart Appliance Enabler* in dieser JSON-Antwort den eigentlichen Wert
 ```
 <Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.1">
     <Appliance id="F-00000001-000000000001-00">
-        <HttpElectricityMeter url="http://192.168.1.1/cm?cmnd=Status%208" extractionRegex=".*Power.:(\d+).*" />
+        <HttpElectricityMeter url="http://192.168.1.1/cm?cmnd=Status%208" powerValueExtractionRegex=".*Power.:(\d+).*"/>
     </Appliance>
 </Appliances>
 ```
+In der Log-Datei /var/log/smartapplianceenabler.log sollten sich dann für jede Abfrage folgende Zeilen finden:
+```
+2017-06-03 18:39:55,125 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:101] F-00000001-000000000001-00: Sending HTTP request
+2017-06-03 18:39:55,125 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:102] F-00000001-000000000001-00: url=http://192.168.1.1/cm?cmnd=Status%208
+2017-06-03 18:39:55,126 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:103] F-00000001-000000000001-00: data=null
+2017-06-03 18:39:55,126 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:104] F-00000001-000000000001-00: contentType=null
+2017-06-03 18:39:55,126 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:105] F-00000001-000000000001-00: username=null
+2017-06-03 18:39:55,126 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:106] F-00000001-000000000001-00: password=null
+2017-06-03 18:39:55,146 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:118] F-00000001-000000000001-00: Response code is 200
+2017-06-03 18:39:55,153 DEBUG [Timer-0] d.a.s.a.HttpElectricityMeter [HttpElectricityMeter.java:119] F-00000001-000000000001-00: Power value extracted from HTTP response: 26
+```
+
 ## Sonoff Pow als Schalter
 Der Schaltzustand des Sonoff Pow kann wie folgt geändert werden:
 
@@ -42,7 +54,20 @@ Entsprechend sieht die Konfiguration für den *Smart Appliance Enabler* aus:
 ```
 <Appliances ...>
     <Appliance ...>
-        <HttpSwitch onUrl="http://192.168.1.1/cm?cmnd=Power%20On" offUrl="http://192.168.1.1/cm?cmnd=Power%20Off" />
+        <HttpSwitch onUrl="http://192.168.1.1/cm?cmnd=Power%20On" offUrl="http://192.168.1.1/cm?cmnd=Power%20Off"/>
     </Appliance>
 </Appliances>
+```
+In der Log-Datei /var/log/smartapplianceenabler.log sollten sich dann für jede Schaltvorgang folgende Zeilen finden:
+```
+2017-06-03 18:39:52,143 DEBUG [http-nio-8080-exec-1] d.a.s.s.w.SempController [SempController.java:192] F-00000001-000000000001-00: Received control request
+2017-06-03 18:39:52,145 DEBUG [http-nio-8080-exec-1] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:101] F-00000001-000000000001-00: Sending HTTP request
+2017-06-03 18:39:52,145 DEBUG [http-nio-8080-exec-1] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:102] F-00000001-000000000001-00: url=http://192.168.1.1/cm?cmnd=Power%20On
+2017-06-03 18:39:52,145 DEBUG [http-nio-8080-exec-1] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:103] F-00000001-000000000001-00: data=null
+2017-06-03 18:39:52,145 DEBUG [http-nio-8080-exec-1] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:104] F-00000001-000000000001-00: contentType=null
+2017-06-03 18:39:52,145 DEBUG [http-nio-8080-exec-1] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:105] F-00000001-000000000001-00: username=null
+2017-06-03 18:39:52,145 DEBUG [http-nio-8080-exec-1] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:106] F-00000001-000000000001-00: password=null
+2017-06-03 18:39:52,163 DEBUG [http-nio-8080-exec-1] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:118] F-00000001-000000000001-00: Response code is 200
+2017-06-03 18:39:52,163 DEBUG [http-nio-8080-exec-1] d.a.s.a.Appliance [Appliance.java:318] F-00000001-000000000001-00: Control state has changed to on: runningTimeMonitor=not null
+2017-06-03 18:39:52,165 DEBUG [http-nio-8080-exec-1] d.a.s.s.w.SempController [SempController.java:214] F-00000001-000000000001-00: Setting appliance state to ON
 ```
