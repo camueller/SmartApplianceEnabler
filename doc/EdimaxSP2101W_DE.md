@@ -29,6 +29,19 @@ Unter Berücksichtigung der genannten Punkte könnte die Konfiguration des SP-21
     </Appliance>
 </Appliances>
 ```
+In der Log-Datei /var/log/smartapplianceenabler.log sollten sich dann für jede Abfrage folgende Zeilen finden:
+```
+2017-06-03 18:53:37,627 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:101] F-00000001-000000000001-00: Sending HTTP request
+2017-06-03 18:53:37,627 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:102] F-00000001-000000000001-00: url=http://192.168.69.74:10000/smartplug.cgi
+2017-06-03 18:53:37,627 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:103] F-00000001-000000000001-00: data=<?xml version="1.0" encoding="UTF8"?><SMARTPLUG id="edimax"><CMD id="get"><NOW_POWER><Device.System.Power.NowCurrent></Device.System.Power.NowCurrent><Device.System.Power.NowPower></Device.System.Power.NowPower></NOW_POWER></CMD></SMARTPLUG>
+2017-06-03 18:53:37,628 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:104] F-00000001-000000000001-00: contentType=application/xml
+2017-06-03 18:53:37,628 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:105] F-00000001-000000000001-00: username=admin
+2017-06-03 18:53:37,628 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:106] F-00000001-000000000001-00: password=12345678
+2017-06-03 18:53:37,743 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:118] F-00000001-000000000001-00: Response code is 200
+2017-06-03 18:53:37,744 DEBUG [Timer-0] d.a.s.a.HttpElectricityMeter [HttpElectricityMeter.java:119] F-00000001-000000000001-00: Power value extracted from HTTP response: 56
+2017-06-03 18:53:37,745 DEBUG [Timer-0] d.a.s.a.PollElectricityMeter [PollElectricityMeter.java:63] F-00000001-000000000001-00: timestamps added/removed/total: 1/1/7
+```
+
 ## SP-2101W als Schalter
 Der Schaltzustand des SP-2101W kann wie folgt geändert werden (Passwort hier 12345678):
 
@@ -49,4 +62,18 @@ Entsprechend sieht die Konfiguration für den *Smart Appliance Enabler* aus:
         <HttpSwitch onUrl="http://192.168.1.1/cm?cmnd=Power%20On" onData="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF8&quot;?&gt;&lt;SMARTPLUG id=&quot;edimax&quot;&gt;&lt;CMD id=&quot;setup&quot;&gt;&lt;Device.System.Power.State&gt;ON&lt;/Device.System.Power.State&gt;&lt;/CMD&gt;&lt;/SMARTPLUG&gt;" offUrl="http://192.168.1.1/cm?cmnd=Power%20Off" offData="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF8&quot;?&gt;&lt;SMARTPLUG id=&quot;edimax&quot;&gt;&lt;CMD id=&quot;setup&quot;&gt;&lt;Device.System.Power.State&gt;OFF&lt;/Device.System.Power.State&gt;&lt;/CMD&gt;&lt;/SMARTPLUG&gt;"/>
     </Appliance>
 </Appliances>
+```
+In der Log-Datei /var/log/smartapplianceenabler.log sollten sich dann für jede Schaltvorgang folgende Zeilen finden:
+```
+2017-06-03 18:54:03,193 DEBUG [http-nio-8080-exec-5] d.a.s.s.w.SempController [SempController.java:192] F-00000001-000000000001-00: Received control request
+2017-06-03 18:54:03,197 DEBUG [http-nio-8080-exec-5] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:101] F-00000001-000000000001-00: Sending HTTP request
+2017-06-03 18:54:03,197 DEBUG [http-nio-8080-exec-5] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:102] F-00000001-000000000001-00: url=http://192.168.69.74:10000/smartplug.cgi
+2017-06-03 18:54:03,198 DEBUG [http-nio-8080-exec-5] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:103] F-00000001-000000000001-00: data=<?xml version="1.0" encoding="UTF8"?><SMARTPLUG id="edimax"><CMD id="setup"><Device.System.Power.State>ON</Device.System.Power.State></CMD></SMARTPLUG>
+2017-06-03 18:54:03,198 DEBUG [http-nio-8080-exec-5] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:104] F-00000001-000000000001-00: contentType=application/xml
+2017-06-03 18:54:03,199 DEBUG [http-nio-8080-exec-5] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:105] F-00000001-000000000001-00: username=admin
+2017-06-03 18:54:03,199 DEBUG [http-nio-8080-exec-5] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:106] F-00000001-000000000001-00: password=12345678
+2017-06-03 18:54:04,363 DEBUG [http-nio-8080-exec-5] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:118] F-00000001-000000000001-00: Response code is 200
+2017-06-03 18:54:04,364 DEBUG [http-nio-8080-exec-5] d.a.s.a.Appliance [Appliance.java:318] F-00000001-000000000001-00: Control state has changed to on: runningTimeMonitor=not null
+2017-06-03 18:54:04,370 DEBUG [http-nio-8080-exec-5] d.a.s.s.w.SempController [SempController.java:214] F-00000001-000000000001-00: Setting appliance state to ON
+
 ```
