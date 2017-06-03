@@ -86,6 +86,11 @@
     <xs:complexType name="HttpSwitchType">
         <xs:attribute name="onUrl" type="xs:string" use="required" />
         <xs:attribute name="offUrl" type="xs:string" use="required" />
+        <xs:attribute name="username" type="xs:string" use="optional" />
+        <xs:attribute name="password" type="xs:string" use="optional" />
+        <xs:attribute name="contentType" type="xs:string" use="optional" />
+        <xs:attribute name="onData" type="xs:string" use="optional" />
+        <xs:attribute name="offData" type="xs:string" use="optional" />
     </xs:complexType>
 
     <xs:complexType name="StartingCurrentSwitchType">
@@ -132,6 +137,11 @@
 
     <xs:complexType name="HttpElectricityMeterType">
         <xs:attribute name="url" type="xs:string" use="required" />
+        <xs:attribute name="username" type="xs:string" use="optional" />
+        <xs:attribute name="password" type="xs:string" use="optional" />
+        <xs:attribute name="contentType" type="xs:string" use="optional" />
+        <xs:attribute name="data" type="xs:string" use="optional" />
+        <xs:attribute name="powerValueExtractionRegex" type="xs:string" use="optional" />
         <xs:attribute name="factorToWatt" type="xs:float" use="optional" />
         <xs:attribute name="pollInterval" type="xs:int" use="optional"/>
         <xs:attribute name="measurementInterval" type="xs:int" use="optional"/>

@@ -20,15 +20,12 @@ package de.avanux.smartapplianceenabler.appliance;
 import de.avanux.smartapplianceenabler.log.ApplianceLogger;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +36,7 @@ import java.util.List;
  *
  * IMPORTANT: The URLs in Appliance.xml have to be escaped (e.g. use "&amp;" instead of "&")
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 public class HttpSwitch extends HttpTransactionExecutor implements Control, ApplianceIdConsumer {
     @XmlTransient
     private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(HttpSwitch.class));
@@ -46,21 +44,44 @@ public class HttpSwitch extends HttpTransactionExecutor implements Control, Appl
     private String onUrl;
     @XmlAttribute
     private String offUrl;
+    @XmlAttribute
+    private String onData;
+    @XmlAttribute
+    private String offData;
     @XmlTransient
     private boolean on;
     @XmlTransient
     List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
 
+    public void setOnUrl(String onUrl) {
+        this.onUrl = onUrl;
+    }
+
+    public void setOffUrl(String offUrl) {
+        this.offUrl = offUrl;
+    }
+
+    public void setOnData(String onData) {
+        this.onData = onData;
+    }
+
+    public void setOffData(String offData) {
+        this.offData = offData;
+    }
+
     @Override
     public boolean on(boolean switchOn) {
         String url;
+        String data;
         if(switchOn) {
             url = onUrl;
+            data = onData;
         }
         else {
             url = offUrl;
+            data = offData;
         }
-        HttpResponse response = sendHttpRequest(url);
+        HttpResponse response = sendHttpRequest(url, data, getContentType(), getUsername(), getPassword());
         if(response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
             on = switchOn;
             for(ControlStateChangedListener listener : controlStateChangedListeners) {
@@ -78,6 +99,7 @@ public class HttpSwitch extends HttpTransactionExecutor implements Control, Appl
 
     @Override
     public void setApplianceId(String applianceId) {
+        super.setApplianceId(applianceId);
         this.logger.setApplianceId(applianceId);
     }
 

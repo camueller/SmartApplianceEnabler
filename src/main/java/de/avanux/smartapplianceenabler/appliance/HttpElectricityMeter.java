@@ -23,6 +23,8 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import java.io.IOException;
@@ -33,6 +35,7 @@ import java.util.Timer;
  * <p>
  * IMPORTANT: The URLs in Appliance.xml have to be escaped (e.g. use "&amp;" instead of "&")
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 public class HttpElectricityMeter extends HttpTransactionExecutor implements Meter, PollPowerExecutor, ApplianceIdConsumer {
     @XmlTransient
     private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(HttpElectricityMeter.class));
@@ -44,11 +47,28 @@ public class HttpElectricityMeter extends HttpTransactionExecutor implements Met
     private Integer measurementInterval = 60; // seconds
     @XmlAttribute
     private Integer pollInterval = 10; // seconds
+    @XmlAttribute
+    private String data;
+    @XmlAttribute
+    private String powerValueExtractionRegex = "";
     @XmlTransient
     private PollElectricityMeter pollElectricityMeter = new PollElectricityMeter();
 
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public void setData(String data) {
+        this.data = data;
+    }
+
+    public void setPowerValueExtractionRegex(String powerValueExtractionRegex) {
+        this.powerValueExtractionRegex = powerValueExtractionRegex;
+    }
+
     @Override
     public void setApplianceId(String applianceId) {
+        super.setApplianceId(applianceId);
         this.pollElectricityMeter.setApplianceId(applianceId);
         this.logger.setApplianceId(applianceId);
     }
@@ -92,10 +112,12 @@ public class HttpElectricityMeter extends HttpTransactionExecutor implements Met
     public float getPower() {
         CloseableHttpResponse response = null;
         try {
-            response = sendHttpRequest(url);
+            response = sendHttpRequest(url, data, getContentType(), getUsername(), getPassword());
             if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 String responseString = EntityUtils.toString(response.getEntity());
-                return Float.parseFloat(responseString) * factorToWatt;
+                String valueString = extractPowerValueFromResponse(responseString, powerValueExtractionRegex);
+                logger.debug("Power value extracted from HTTP response: " + valueString);
+                return Float.parseFloat(valueString) * factorToWatt;
             }
         } catch (Exception e) {
             logger.error("Error reading HTTP response", e);
@@ -109,5 +131,12 @@ public class HttpElectricityMeter extends HttpTransactionExecutor implements Met
             }
         }
         return 0;
+    }
+
+    protected String extractPowerValueFromResponse(String response, String regex)  {
+        if(powerValueExtractionRegex == null) {
+            return response;
+        }
+        return response.replaceAll(regex, "$1");
     }
 }

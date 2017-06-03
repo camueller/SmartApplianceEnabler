@@ -22,13 +22,11 @@ import com.pi4j.io.gpio.PinState;
 import de.avanux.smartapplianceenabler.log.ApplianceLogger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Switch extends GpioControllable implements Control, ApplianceIdConsumer {
     @XmlTransient
     private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(Switch.class));
