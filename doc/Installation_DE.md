@@ -25,7 +25,7 @@ axel@tpw520:~$ sudo mount /dev/mmcblk0p1 /media/axel/tmp
 ```
 2. Erzeugen einer leeren Datei mit dem Namen ```ssh```:
 ```
-axel@tpw520:~$ touch /media/axel/tmp/ssh
+axel@tpw520:~$ sudo touch /media/axel/tmp/ssh
 ```
 3. Unmounten der gemounteten Partition der SD-Karte
 ```
