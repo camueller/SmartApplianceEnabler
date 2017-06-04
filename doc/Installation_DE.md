@@ -118,15 +118,15 @@ pi@raspberrypi ~ $ sudo systemctl daemon-reload
 Die erfolgreiche Reistrierung des Dienstes *smartapplianceenabler* kann wie folgt überprüft werden:
 ```
 pi@raspberrypi ~ $ systemctl list-units|grep smart
-smartapplianceenabler.service                                                                           loaded activating start     start LSB: Start Smart Appliance Enabler.
+smartapplianceenabler.service                                            loaded activating start     start LSB: Start Smart Appliance Enabler.
 ```
 Falls die zweite Zeile nicht angezeigt wird, sollte der Raspberry neu gestartet werden.
 
 Als nächstes wird die Datei ```SmartApplianceEnabler-*.jar``` mit dem eigentlichen Programmcode sowie die Konfigurationsdateien ```Appliances.xml``` und ```Device2EM.xml``` heruntergeladen:
 ```
 pi@raspberrypi ~ $ sudo mkdir /app
-pi@raspberrypi ~ $ sudo wget https://github.com/camueller/SmartApplianceEnabler/releases/download/v1.1.0/SmartApplianceEnabler-1.1.0.jar -P /app
 pi@raspberrypi ~ $ sudo chown -R pi.pi /app
+pi@raspberrypi ~ $ wget https://github.com/camueller/SmartApplianceEnabler/releases/download/v1.1.0/SmartApplianceEnabler-1.1.0.jar -P /app
 pi@raspberrypi ~ $ wget https://github.com/camueller/SmartApplianceEnabler/raw/master/example/Appliances.xml -P /app
 pi@raspberrypi ~ $ wget https://github.com/camueller/SmartApplianceEnabler/raw/master/example/Device2EM.xml -P /app
 ```
