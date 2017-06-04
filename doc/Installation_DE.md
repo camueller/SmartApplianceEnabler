@@ -98,7 +98,6 @@ pi@raspberrypi ~ $ sudo chmod 755 /etc/init.d/smartapplianceenabler
 
 pi@raspberrypi ~ $ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/etc/default/smartapplianceenabler -P /etc/default
 pi@raspberrypi ~ $ sudo chown root.root /etc/default/smartapplianceenabler
-143
 pi@raspberrypi ~ $ sudo chmod 644 /etc/default/smartapplianceenabler
 
 pi@raspberrypi ~ $ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/etc/logrotate.d/smartapplianceenabler -P /etc/logrotate.d
