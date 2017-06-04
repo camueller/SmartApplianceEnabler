@@ -74,14 +74,12 @@ Java HotSpot(TM) Client VM (build 25.65-b01, mixed mode)
 
 ## Smart Appliance Enabler
 Die Installation des *Smart Appliance Enabler* besteht darin, folgende Dateien auf den Raspberry zu kopieren:
-* die Datei `SmartApplianceEnabler-*.jar` mit dem eigentlichen Programmcode (heruntergeladenes Release oder aus Sourcen gebaut)
-* die Konfigurationsdatei `Device2EM.xml`
-* die Konfigurationsdatei `Appliances.xml`
-* das Startscript und die Konfigurationsdateien aus dem Verzeichnis `run` 
+* das Start-Script und zugehörige Konfigurationsdateien
+* die Datei ```SmartApplianceEnabler-*.jar``` mit dem eigentlichen Programmcode (heruntergeladenes Release oder aus Sourcen gebaut)
+* die Konfigurationsdatei ```Device2EM.xml```
+* die Konfigurationsdatei ```Appliances.xml```
 
-Dazu sollte entweder die IP-Adresse des Raspberry bekannt sein, oder der der Raspberry einen festen Hostnamen besitzen. Nachfolgend gehe ich von Letzterem aus, da er bei mir im Netz unter dem Namen `raspi` erreichbar ist.
-
-Zunächst sollte auf dem Raspberry ein eigenes Verzeichis für diese Dateien erstellt werden (z.B. `/app`) sowie einige temporäre Verzeichnisse (das Passwort für den User *pi* ist *raspberry*, wenn Ihr das noch nicht geändert habt):
+Zunächst werden Start-Script und zugehörige Konfigurationsdateien auf den Raspberry heruntergeladen und gleich die Berechtigungen für dieses Dateien gesetzt:
 ```
 axel@tpw520:/data/git/SmartApplianceEnabler$ ssh pi@raspi
 pi@raspi's password: 
@@ -93,66 +91,44 @@ individual files in /usr/share/doc/*/copyright.
 Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
 permitted by applicable law.
 Last login: Sun Dec  6 19:17:12 2015
-pi@raspberrypi ~ $ sudo mkdir /app
-pi@raspberrypi ~ $ sudo chown pi.pi /app
-pi@raspberrypi ~ $ mkdir /tmp/init.d
-pi@raspberrypi ~ $ mkdir /tmp/logrotate.d
-pi@raspberrypi ~ $ mkdir /tmp/default
-pi@raspberrypi ~ $ exit
-```
-Danach muss man die genannten Dateien auf den Raspberry kopieren:
-```
-axel@tpw520:/data/git/SmartApplianceEnabler$ scp target/SmartApplianceEnabler-0.1.0.jar pi@raspi:/app
-pi@raspi's password:
-SmartApplianceEnabler-0.1.0.jar                         100%   15MB   1.4MB/s   00:11
-axel@tpw520:/data/git/SmartApplianceEnabler$ scp run/Appliances.xml pi@raspi:/app
-pi@raspi's password:
-Appliances.xml                                          100%  590     0.6KB/s   00:00
-axel@tpw520:/data/git/SmartApplianceEnabler$ scp run/Device2EM.xml  pi@raspi:/app
-pi@raspi's password:
-Device2EM.xml                                           100% 1288     1.3KB/s   00:00
-axel@tpw520:/data/git/SmartApplianceEnabler$ scp run/etc/init.d/smartapplianceenabler pi@raspi:/tmp/init.d
-pi@raspi's password: 
-smartapplianceenabler                                   100% 6150     6.0KB/s   00:00    
-axel@tpw520:/data/git/SmartApplianceEnabler$ scp run/etc/default/smartapplianceenabler pi@raspi:/tmp/default
-pi@raspi's password: 
-smartapplianceenabler                                   100% 1472     1.4KB/s   00:00    
-axel@tpw520:/data/git/SmartApplianceEnabler$ scp run/etc/logrotate.d/smartapplianceenabler pi@raspi:/tmp/logrotate.d
-pi@raspi's password: 
-smartapplianceenabler                                   100%   98     0.1KB/s   00:00    
-axel@tpw520:/data/git/SmartApplianceEnabler$
-```
-Jetzt müssen die Scripte und Dateien aus dem temporären Verzeichnissen an die richtige Stelle geschoben und deren Rechte gesetzt werden:
-```
-axel@tpw520:/data/git/SmartApplianceEnabler$ ssh pi@raspi
-pi@raspi's password: 
 
-The programs included with the Debian GNU/Linux system are free software;
-the exact distribution terms for each program are described in the
-individual files in /usr/share/doc/*/copyright.
-
-Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
-permitted by applicable law.
-Last login: Sat Jan  9 07:01:59 2016 from axel-laptop-wlan.fritz.box
-pi@raspberrypi ~ $ sudo mv /tmp/init.d/smartapplianceenabler /etc/init.d
+pi@raspberrypi ~ $ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/etc/init.d/smartapplianceenabler -P /etc/init.d
 pi@raspberrypi ~ $ sudo chown root.root /etc/init.d/smartapplianceenabler
 pi@raspberrypi ~ $ sudo chmod 755 /etc/init.d/smartapplianceenabler
-pi@raspberrypi ~ $ sudo mv /tmp/default/smartapplianceenabler /etc/default
+
+pi@raspberrypi ~ $ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/etc/default/smartapplianceenabler -P /etc/default
 pi@raspberrypi ~ $ sudo chown root.root /etc/default/smartapplianceenabler
+143
 pi@raspberrypi ~ $ sudo chmod 644 /etc/default/smartapplianceenabler
-pi@raspberrypi ~ $ sudo mv /tmp/logrotate.d/smartapplianceenabler /etc/logrotate.d
+
+pi@raspberrypi ~ $ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/etc/logrotate.d/smartapplianceenabler -P /etc/logrotate.d
 pi@raspberrypi ~ $ sudo chown root.root /etc/logrotate.d/smartapplianceenabler
 pi@raspberrypi ~ $ sudo chmod 644 /etc/logrotate.d/smartapplianceenabler
 ```
-In der Datei `/etc/default/smartapplianceenabler` finden sich die Konfigurationseinstellungen für den Dienst *smartapplianceenabler*. Die darin befindlichen Parameter sind in der Datei selbst dokumentiert. Normalerweise sollte man die Datei unverändert lassen können.
+In der Datei ```/etc/default/smartapplianceenabler``` finden sich die Konfigurationseinstellungen für den Dienst *smartapplianceenabler*. Die darin befindlichen Parameter sind in der Datei selbst dokumentiert. Normalerweise sollte man die Datei unverändert lassen können.
 
 Damit der Dienst *smartapplianceenabler* beim Systemstart ebenfalls gestartet wird, muss folgender Befehl ausgeführt werden:
 ```
-pi@raspberrypi /etc/init.d $ sudo systemctl enable smartapplianceenabler.service
+pi@raspberrypi ~ $ sudo systemctl enable smartapplianceenabler.service
 ```
 Nach diesen Änderungen muss der [Systemd](https://de.wikipedia.org/wiki/Systemd) dazu gebracht werden, die Service-Konfigurationen neu zu lesen:
 ```
-pi@raspberrypi /etc/logrotate.d $ sudo systemctl daemon-reload
+pi@raspberrypi ~ $ sudo systemctl daemon-reload
+```
+Die erfolgreiche Reistrierung des Dienstes *smartapplianceenabler* kann wie folgt überprüft werden:
+```
+pi@raspberrypi ~ $ systemctl list-units|grep smart
+smartapplianceenabler.service                                                                           loaded activating start     start LSB: Start Smart Appliance Enabler.
+```
+Falls die zweite Zeile nicht angezeigt wird, sollte der Raspberry neu gestartet werden.
+
+Als nächstes wird die Datei ```SmartApplianceEnabler-*.jar``` mit dem eigentlichen Programmcode sowie die Konfigurationsdateien ```Appliances.xml``` und ```Device2EM.xml``` heruntergeladen:
+```
+pi@raspberrypi ~ $ sudo mkdir /app
+pi@raspberrypi ~ $ sudo wget https://github.com/camueller/SmartApplianceEnabler/releases/download/v1.1.0/SmartApplianceEnabler-1.1.0.jar -P /app
+pi@raspberrypi ~ $ sudo chown -R pi.pi /app
+pi@raspberrypi ~ $ wget https://github.com/camueller/SmartApplianceEnabler/raw/master/example/Appliances.xml -P /app
+pi@raspberrypi ~ $ wget https://github.com/camueller/SmartApplianceEnabler/raw/master/example/Device2EM.xml -P /app
 ```
 Jetzt sollte man den *Smart Appliance Enabler* starten können. Auf einem aktuellen Raspberry Pi dauert der Start ca. 30 Sekunden.  Dabei sollte man folgende Ausgaben zu sehen bekommen:
 ```
