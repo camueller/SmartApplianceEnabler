@@ -1,4 +1,6 @@
 # Installation
+Die nachfolgenden Kapitel sollten in der angegebenen Reihenfolge umgesetzt werden.
+
 ## Betriebssystem
 Für den Raspberry Pi existieren verschiedene, darauf zugeschnittene, Linux-Distributionen (Images), wobei [Raspbian](https://www.raspberrypi.org/downloads/raspbian) vermutlich das geläufigste ist (auf dieses beziehe ich mich nachfolgend). 
 Damit der *Smart Appliance Enabler* lauffähig ist, muss bei der Wahl des Images ist darauf geachtet werden, dass dieses eine Java 8-Runtime enthält oder dass diese nachinstallierbar ist. Beim Raspbian-Image ist die Lite-Version ausreichend, sodass man eine 4GB-SD-Karte verwenden kann.
@@ -13,7 +15,7 @@ axel@tpw520:~/Downloads/raspberry$ sudo dd bs=4M if=2017-04-10-raspbian-jessie-l
 ```
 Sollte der Raspberry mit der SD-Karte nicht starten, kann es durchaus an der SD-Karte selbst liegen (diese Situation hatte ich gerade selbst). In diesem Fall einfach einen anderen SD-Karten-Typ verwenden (gute Erfahrungen habe ich mit SanDisk gemacht). Einen erfolgreichen Start erkennt man leicht daran, dass die grüne LED flackert/leuchtet (= Zugriff auf die SD-Karte).
 
-### SSH einrichten
+### SSH-Zugriff ermöglichen
 Auf neueren Images ist SSH aus Sicherheitsgründen standardmäßig deaktiviert. Zum Aktivieren gibt es verschiedene Möglichkeiten (siehe https://linuxundich.de/raspberry-pi/ssh-auf-dem-raspberry-pi-aktivieren-jetzt-unter-raspian-noetig oder 
 https://kofler.info/geaenderte-ssh-server-konfiguration-von-raspbian), wobei ich den nachfolgend beschriebenen Weg bevorzuge (geht mit diesen Befehlen so nur unter Linux):
 
@@ -29,7 +31,14 @@ axel@tpw520:~$ touch /media/axel/tmp/ssh
 ```
 axel@tpw520:~$ sudo umount /media/axel/tmp
 ```
-Nachdem der Raspberry Pi mit der so modifizierten SD-Karte gebootet wurde, sollte der Zugriff mit SSH funktionieren.
+Nachdem der Raspberry Pi mit der so modifizierten SD-Karte gebootet wurde, sollte der Zugriff mit SSH möglich sein.
+
+### SSH-Client
+Die Interaktion mit dem Raspberry Pi erfolt über SSH (Secure Shell), d.h. über ein Fenster vergleichbar der Windows-Eingabeaufforderung. Während bei Linux ein SSH-Client zur Standardausrüstung gehört muss dieser unter Windows separat installiert werden. Eine Anleitung dafür findet sich im Artikel [SSH using Windows](https://www.raspberrypi.org/documentation/remote-access/ssh/windows.md).
+
+In den nachfolgenden Kapiteln sind diverse Befehle aufgeführt. Am Prompt ```pi@raspberrypi ~ $``` lässt sich leicht erkennen, dass der nachfolgende Befehl in der SSH-Shell auf dem Raspberry Pi einzugeben ist (```pi``` ist dabei der Username, der für die Anmeldung benutzt wurde und ```raspberrypi``` ist der Hostname. ```~``` symbolisiert das Home-Verzeichnis des Users - ansonsten wird das aktuelle Verzeichnis direkt angezeigt).
+
+Der eigentliche, einzugebende Befehl beginnt dabei erst nach dem ```$```-Zeichen!
 
 ### Hostnamen ändern
 Unabhängig von dem Hostnamen, über den der Raspberry im lokalen Netzwerk erreicht werden kann, ist sein Hostname standardmäßig ```raspberry``` (auch sichtbar am Prompt: ```pi@raspberrypi:~ $```). Vor allem, wenn man mehrere Raspberries im Netz hat, will man auch am Prompt sehen, auf welchem Raspberry man gerade die Befehle eingibt. Zum Ändern des Hostnames kann nachfolgender Befehl auf dem Raspberry verwendet werden:
