@@ -189,4 +189,4 @@ pi@raspberrypi ~ $ sudo cat /var/log/smartapplianceenabler.log
 2016-01-09 16:27:07,610 INFO [Thread-4] o.f.c.UpnpServiceImpl [UpnpServiceImpl.java:94] <<< UPnP service started successfully
 2016-01-09 16:27:10,130 INFO [cling-5] d.a.s.s.d.SempDeviceDescriptorBinderImpl [SempDeviceDescriptorBinderImpl.java:70] SEMP UPnP will redirect to http://192.168.69.5:8080
 ```
-Nachdem der *Smart Appliance Enabler* jetzt funktioniert, sollten die Konfigurationsdateien ```Appliances.xml``` und ```Device2EM.xml``` entsprechend der vorhandenen Geräte [konfiguriert](doc/Configuration_DE.md) werden.
+Nachdem der *Smart Appliance Enabler* jetzt funktioniert, sollten die Konfigurationsdateien ```Appliances.xml``` und ```Device2EM.xml``` entsprechend der vorhandenen Geräte [konfiguriert](Configuration_DE.md) werden.
