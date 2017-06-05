@@ -2,7 +2,7 @@
 <Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.1">
 	<Appliance id="F-00000001-000000000001-00">
 		<StartingCurrentSwitch>
-			<Switch gpio="2" reverseStates="true" />
+			<Switch gpio="1" reverseStates="true" />
 		</StartingCurrentSwitch>
 		<S0ElectricityMeter gpio="2" pinPullResistance="PULL_DOWN" impulsesPerKwh="1000" />
 		<Schedule minRunningTime="10800" maxRunningTime="10800">
