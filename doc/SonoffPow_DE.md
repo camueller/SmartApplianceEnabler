@@ -6,10 +6,14 @@ Der Sonoff Pow basiert auf einm ESP8266-Mikrocontroller, dessen Originial-Firmwa
 - Nach dem Flashen muss über die Web-Oberfläche der Typ des Sonoff-Gerätes (6 für Sonoff Pow) gesetzt werden, sonst wird die aktuelle Leistungsaufnahme falsch gemessen
 - Vor _jedem_ Flashen nach Änderungen an user_config.h muss der Wert für CFG_HOLDER geändert werden, sonst bleiben die Änderungen ohne Wirkung!
 
-TODO verwendete ArduinoIDE beschreiben
-TODO Foto vom Aufbau
+Ich konnte das Flashen der Tasmota-Firmware mit der Arduino-IDE 1.6.11 erfolgreich durchführen.
 
-TODO SmartConfig beschreiben mit Bildern
+## WLAN konfigurieren
+Zur Konfiguration des WLAN wird ein Android-Gerät benötigt, auf dem die App [ESP8266 SmartConfig](https://play.google.com/store/apps/details?id=com.cmmakerclub.iot.esptouch) installiert und das in dem gewünschten WLAN eingebucht ist. Nach dem Starten der App _ESP8266 SmartConfig_ sollte die SSID des WLAN angezeigt werden. In das Feld _Passwort_ muss das Passwort dieses WLANs eingegeben werden.
+
+Am Sonoff Pow muss der Taster dreimal hintereinander kurz gedrück werden, woraufhin die blaue LED schnell blinkt und damit anzeigt, dass der *Wifi SmartConfig-Modus* aktiv ist.
+
+In der App _ESP8266 SmartConfig_ sollte jetzt die Schaltfläche _Confirm_ betätigt werden. Die blaue LED sollte dann etwas länger ausgehen, einmal etwas länger angehen und dann noch zweimal kurz blinken, bevor sie dauerhaft ausgeht. Danach sollte man auf seinem Router nachsehen, um die IP-Adresse herauszufinden, unter dem der Sonoff Pow im WLAN erreichbar ist.
 
 ## Sonoff Pow als Stromzähler
 Die aktuelle Leistungsaufnahme des Sonoff Pow kann wie folgt abgefragt werden:
@@ -25,7 +29,7 @@ Damit der *Smart Appliance Enabler* in dieser JSON-Antwort den eigentlichen Wert
     </Appliance>
 </Appliances>
 ```
-In der Log-Datei /var/log/smartapplianceenabler.log sollten sich dann für jede Abfrage folgende Zeilen finden:
+In der Log-Datei ```/var/log/smartapplianceenabler.log``` sollten sich dann für jede Abfrage folgende Zeilen finden:
 ```
 2017-06-03 18:39:55,125 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:101] F-00000001-000000000001-00: Sending HTTP request
 2017-06-03 18:39:55,125 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:102] F-00000001-000000000001-00: url=http://192.168.1.1/cm?cmnd=Status%208
@@ -58,7 +62,7 @@ Entsprechend sieht die Konfiguration für den *Smart Appliance Enabler* aus:
     </Appliance>
 </Appliances>
 ```
-In der Log-Datei /var/log/smartapplianceenabler.log sollten sich dann für jede Schaltvorgang folgende Zeilen finden:
+In der Log-Datei ```/var/log/smartapplianceenabler.log``` sollten sich dann für jede Schaltvorgang folgende Zeilen finden:
 ```
 2017-06-03 18:39:52,143 DEBUG [http-nio-8080-exec-1] d.a.s.s.w.SempController [SempController.java:192] F-00000001-000000000001-00: Received control request
 2017-06-03 18:39:52,145 DEBUG [http-nio-8080-exec-1] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:101] F-00000001-000000000001-00: Sending HTTP request

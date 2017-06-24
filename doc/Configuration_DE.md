@@ -1,10 +1,14 @@
 # Konfiguration
 
-## Dateien
-Die Konfiguration besteht aus zwei [XML](https://de.wikipedia.org/wiki/Extensible_Markup_Language)-Dateien:
+## Vorgehensweise
+Die Konfiguration besteht aus zwei [XML](https://de.wikipedia.org/wiki/Extensible_Markup_Language)-Dateien, die sich im ```/app```-Verzeichnis befinden müssen:
 * die Datei `Device2EM.xml` enthält Gerätebeschreibung für den EnergyManager
 * die Datei `Appliances.xml` enthält die Gerätekonfiguration für den *Smart Appliance Enabler*
+Die Groß-/Kleinschreibung der Dateinamen muss genau so sein, wie hier angegeben!
 
+Die XML-Dateien kann man entweder auf dem Raspberry Pi bearbeiten oder man transferiert sie dazu auf den PC. Letzteres bietete sich insbesondere für größere Änderungen an, nach denen noch eine Überprüfung der Inhalte auf Gültigkeit erfolgen soll (siehe unten). Zum Transferieren der Dateien zwischen Raspberry Pi und PC kann man unter Linux ```scp``` verwenden, unter Windows gibt es ```WinSCP``` ([Video mit WinSCP Anleitung auf Deutsch](https://www.youtube.com/watch?v=z6yJDMjTdMg)).
+
+### Device-ID / Appliance-ID
 Die Verbindung zwischen den konfigurierten Geräten in der Datei `Device2EM.xml` und den Appliances in der Datei `Appliances.xml` ist die Appliance-ID (`<Appliance id="F-00000001-000000000001-00">`), die mit der Device-ID ( `<DeviceId>F-00000001-000000000001-00</DeviceId>`) des zugehörigen Gerätes übereinstimmen muss.
 
 Der Aufbau der Device-IDs ist in der SEMP-Spezifikation vorgegeben. Für den *Smart Appliance Enabler* bedeutet das:
@@ -14,10 +18,7 @@ Der Aufbau der Device-IDs ist in der SEMP-Spezifikation vorgegeben. Für den *Sm
 * 00 unverändert lassen (sub device id)
 Die Device-IDs werden vom Sunny-Portal direkt verwendet, d.h. wenn jemand anderes bereits diese ID verwendet, kann das Gerät nicht im Sunny-Portal angelegt werden. Durch die Verwendung individueller Bestandteile wie Geburtsdatum sollte das Risiko dafür jedoch gering sein.
 
-Im Verzeichnis `example` finden sich Beispieldateien mit Kommentaren zu den einzelnen Angaben.
-Diese sollen dabei helfen, die für die eigenen Geräte passenden Dateien `Device2EM.xml` und `Appliances.xml` (mit genau diesen Namen und entsprechender Groß-/Kleinschreibung!) zu erstellen.
-
-## Überprüfung der Dateien
+### Überprüfung der Dateien
 Die angepassten XML-Dateien sollten hinsichtlich ihrer Gültigkeit überprüft werden.
 Dazu ist die Seite http://www.freeformatter.com/xml-validator-xsd.html besonders geeignet:
 Der Inhalt der XML-Datei wird in das Fenster *XML Input* kopiert. 
