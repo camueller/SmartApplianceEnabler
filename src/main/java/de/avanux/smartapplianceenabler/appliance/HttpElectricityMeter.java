@@ -116,6 +116,7 @@ public class HttpElectricityMeter extends HttpTransactionExecutor implements Met
             if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 String responseString = EntityUtils.toString(response.getEntity());
                 logger.debug("HTTP response: " + responseString);
+                logger.debug("Power value extraction regex: " + powerValueExtractionRegex);
                 String valueString = extractPowerValueFromResponse(responseString, powerValueExtractionRegex);
                 logger.debug("Power value extracted from HTTP response: " + valueString);
                 return Float.parseFloat(valueString) * factorToWatt;
