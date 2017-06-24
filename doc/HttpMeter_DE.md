@@ -10,7 +10,7 @@ Richtige Stromzähler, deren Werte man per HTTP abfragen kann, gibt es meines Wi
 ```
 Zu beachten ist, dass in der URL anstatt des "&"-Zeichens der Ausruck ```"&amp;"``` (ohne Anführungszeichen) verwendet werden muss!
 
-Wenn nicht nur eine Zahl für den Verbrauchswert geliefert wird, sondern der Verbrauchswert irgendwo in einem Text (XML, JSON, ...) enthalten ist, muss im Parameter ```extractionRegex``` ein Regulärer Ausdruck angegeben werden. Dieser Reguläre Ausruck muss im Java-Style angegeben sein und als _Capture Group 1_ den Verbrauchswert liefern. Zum Testen des Regulären Ausdrucks eignet sich https://www.freeformatter.com/java-regex-tester.html, wobei als _Replace with_ $1 eingetragen werden muss.
+Wenn nicht nur eine Zahl für den Verbrauchswert geliefert wird, sondern der Verbrauchswert irgendwo in einem Text (XML, JSON, ...) enthalten ist, muss im Parameter ```extractionRegex``` ein Regulärer Ausdruck angegeben werden. Dieser Reguläre Ausruck muss im Java-Style angegeben sein und als _Capture Group 1_ den Verbrauchswert liefern. Zum Testen des Regulären Ausdrucks eignet sich https://www.freeformatter.com/java-regex-tester.html, wobei als _Replace with_ $1 eingetragen und danach der _Replace All_-Button gedrückt werden muss.
 
 Falls der über HTTP geliefert Verbrauchswert nicht in Watt geliefert wird, muss über den Parameter ```factorToWatt``` der Faktor angegeben werden, mit dem der gelieferte Wert multipliziert werden muss, um den Verbrauch in Watt zu erhalten. Wird beispielsweise der Verbrauch in mW geliefert, muss ```factorToWatt="1000"``` angegeben werden.
 
