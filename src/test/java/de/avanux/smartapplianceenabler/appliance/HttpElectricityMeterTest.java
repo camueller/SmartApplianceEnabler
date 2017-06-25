@@ -63,7 +63,7 @@ public class HttpElectricityMeterTest extends TestBase {
 
     @Test
     public void extractPowerValueFromResponse_EdimaxSP2101W() {
-        Assert.assertEquals("52", meter.extractPowerValueFromResponse("<?xml version=\"1.0\" encoding=\"UTF8\"?><SMARTPLUG id=\"edimax\"><CMD id=\"get\"><NOW_POWER><Device.System.Power.NowCurrent>0.2871</Device.System.Power.NowCurrent><Device.System.Power.NowPower>52.49</Device.System.Power.NowPower></NOW_POWER></CMD></SMARTPLUG>",
-                ".*NowPower.(\\d+).*"));
+        Assert.assertEquals("52.49", meter.extractPowerValueFromResponse("<?xml version=\"1.0\" encoding=\"UTF8\"?><SMARTPLUG id=\"edimax\"><CMD id=\"get\"><NOW_POWER><Device.System.Power.NowCurrent>0.2871</Device.System.Power.NowCurrent><Device.System.Power.NowPower>52.49</Device.System.Power.NowPower></NOW_POWER></CMD></SMARTPLUG>",
+                ".*NowPower>(\\d*.{0,1}\\d+).*"));
     }
 }

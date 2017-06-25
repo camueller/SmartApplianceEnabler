@@ -135,8 +135,15 @@ public class HttpElectricityMeter extends HttpTransactionExecutor implements Met
         return 0;
     }
 
+    /**
+     * Extract the power value from the the response using a regular expression.
+     * The regular expression has contain a capture group containing the power value.
+     * @param response the HTTP response containing a power value
+     * @param regex the regular expression to be used to extract the power value
+     * @return the power value extracted or the full response if the regular expression is null
+     */
     protected String extractPowerValueFromResponse(String response, String regex)  {
-        if(powerValueExtractionRegex == null) {
+        if(regex == null) {
             return response;
         }
         return response.replaceAll(regex, "$1");
