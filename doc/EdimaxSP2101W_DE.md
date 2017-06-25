@@ -19,13 +19,13 @@ curl -s -X POST -d '<?xml version="1.0" encoding="UTF8"?><SMARTPLUG id="edimax">
 ```
 Bei der Angabe der für die Abfrage notwendigen XML-Struktur im *Smart Appliance Enabler* ist zu beachten, dass diese _encoded_ ist. Dazu kann z.B. http://coderstoolbox.net/string/#!encoding=xml&action=encode&charset=us_ascii genutzt werden.
 
-Damit der *Smart Appliance Enabler* in dieser XML-Antwort den eigentlichen Wert für die Leistungsaufnahme findet (hier: 52.49W), muss als Regulärer Ausdruck ```.*NowPower.(\d+).*``` angegeben werden.
+Damit der *Smart Appliance Enabler* in dieser XML-Antwort den eigentlichen Wert für die Leistungsaufnahme findet (hier: 52.49W), muss als Regulärer Ausdruck ```.*NowPower>(\d*.{0,1}\d+).*``` angegeben werden.
 
 Unter Berücksichtigung der genannten Punkte könnte die Konfiguration des SP-2101W als Stromzähler wie folgt aussehen:
 ```
 <Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.1">
     <Appliance id="F-00000001-000000000001-00">
-        <HttpElectricityMeter url="http://192.168.1.1/cm?cmnd=Status%208" data="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF8&quot;?&gt;&lt;SMARTPLUG id=&quot;edimax&quot;&gt;&lt;CMD id=&quot;get&quot;&gt;&lt;NOW_POWER&gt;&lt;Device.System.Power.NowCurrent&gt;&lt;/Device.System.Power.NowCurrent&gt;&lt;Device.System.Power.NowPower&gt;&lt;/Device.System.Power.NowPower&gt;&lt;/NOW_POWER&gt;&lt;/CMD&gt;&lt;/SMARTPLUG&gt;" extractionRegex=".*NowPower.(\d+).*" />
+        <HttpElectricityMeter url="http://192.168.1.1/cm?cmnd=Status%208" data="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF8&quot;?&gt;&lt;SMARTPLUG id=&quot;edimax&quot;&gt;&lt;CMD id=&quot;get&quot;&gt;&lt;NOW_POWER&gt;&lt;Device.System.Power.NowCurrent&gt;&lt;/Device.System.Power.NowCurrent&gt;&lt;Device.System.Power.NowPower&gt;&lt;/Device.System.Power.NowPower&gt;&lt;/NOW_POWER&gt;&lt;/CMD&gt;&lt;/SMARTPLUG&gt;" extractionRegex=".*NowPower>(\d*.{0,1}\d+).*" />
     </Appliance>
 </Appliances>
 ```
@@ -38,7 +38,9 @@ In der Log-Datei /var/log/smartapplianceenabler.log sollten sich dann für jede 
 2017-06-03 18:53:37,628 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:105] F-00000001-000000000001-00: username=admin
 2017-06-03 18:53:37,628 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:106] F-00000001-000000000001-00: password=12345678
 2017-06-03 18:53:37,743 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:118] F-00000001-000000000001-00: Response code is 200
-2017-06-03 18:53:37,744 DEBUG [Timer-0] d.a.s.a.HttpElectricityMeter [HttpElectricityMeter.java:119] F-00000001-000000000001-00: Power value extracted from HTTP response: 56
+2017-06-03 18:53:37,744 DEBUG [Timer-0] d.a.s.a.HttpElectricityMeter [HttpElectricityMeter.java:119] F-00000001-000000000001-00: HTTP response: <?xml version="1.0" encoding="UTF8"?><SMARTPLUG id="edimax"><CMD id="get"><NOW_POWER><Device.System.Power.NowCurrent>0.2871</Device.System.Power.NowCurrent><Device.System.Power.NowPower>52.49</Device.System.Power.NowPower></NOW_POWER></CMD></SMARTPLUG>
+2017-06-03 18:53:37,744 DEBUG [Timer-0] d.a.s.a.HttpElectricityMeter [HttpElectricityMeter.java:120] F-00000001-000000000001-00: Power value extraction regex: .*NowPower>(\d*.{0,1}\d+).*
+2017-06-03 18:53:37,744 DEBUG [Timer-0] d.a.s.a.HttpElectricityMeter [HttpElectricityMeter.java:122] F-00000001-000000000001-00: Power value extracted from HTTP response: 52.49
 2017-06-03 18:53:37,745 DEBUG [Timer-0] d.a.s.a.PollElectricityMeter [PollElectricityMeter.java:63] F-00000001-000000000001-00: timestamps added/removed/total: 1/1/7
 ```
 
