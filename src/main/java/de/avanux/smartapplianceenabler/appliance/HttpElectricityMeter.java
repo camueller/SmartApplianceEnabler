@@ -50,7 +50,7 @@ public class HttpElectricityMeter extends HttpTransactionExecutor implements Met
     @XmlAttribute
     private String data;
     @XmlAttribute
-    private String powerValueExtractionRegex = "";
+    private String powerValueExtractionRegex;
     @XmlTransient
     private PollElectricityMeter pollElectricityMeter = new PollElectricityMeter();
 
