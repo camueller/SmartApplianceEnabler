@@ -104,9 +104,9 @@ if [ -f "$DEFAULT" ]; then
 	. "$DEFAULT"
 fi
 
-SAE_JAR=`/usr/bin/find $SAE_HOME -name SmartApplianceEnabler-*.jar`
+SAE_JAR=`/usr/bin/find $SAE_HOME -name SmartApplianceEnabler-*ar`
 if [ -z "$SAE_JAR" ]; then
-	log_failure_msg "$SAE_HOME/SmartApplianceEnabler-*.jar was not found"
+	log_failure_msg "$SAE_HOME/SmartApplianceEnabler-*ar was not found"
 	exit 1
 fi
 

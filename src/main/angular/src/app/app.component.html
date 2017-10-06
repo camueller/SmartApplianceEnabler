@@ -1,0 +1,47 @@
+<!--
+  ~ Copyright (C) 2017 Axel Müller <axel.mueller@avanux.de>
+  ~
+  ~ This program is free software; you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation; either version 2 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along
+  ~ with this program; if not, write to the Free Software Foundation, Inc.,
+  ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+  -->
+
+<div class="ui sidebar inverted vertical menu">
+  <div class="ui item">
+    <span class="ui inverted header">Geräte</span>
+    <a style="font-size: 1.4em" [routerLink]="['appliance']" routerLinkActive="active"><i class="icon green add"></i></a>
+  </div>
+
+  <div *ngFor="let appliance of appliances">
+    <a class="ui item" [routerLink]="['appliance', appliance.id]" routerLinkActive="active">{{appliance.name}}</a>
+    <div class="menu">
+      <a class="item" [routerLink]="['meter', appliance.id]" routerLinkActive="active">Zähler</a>
+      <a class="item" [routerLink]="['switch', appliance.id]" routerLinkActive="active">Schalter</a>
+      <a class="item" [routerLink]="['schedules', appliance.id]" routerLinkActive="active">Schaltzeiten</a>
+    </div>
+  </div>
+
+  <a class="item" [routerLink]="['settings']" routerLinkActive="active">Settings</a>
+
+</div>
+<div class="ui fixed inverted main menu">
+  <a (click)="toggleSidebar()" class="launch icon item">
+    <i class="content icon"></i>
+    <p style="padding-left:1em">Menu</p>
+  </a>
+</div>
+<div class="pusher">
+  <div class="segment ui vertical very padded">
+    <router-outlet></router-outlet>
+  </div>
+</div>

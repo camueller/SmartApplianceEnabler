@@ -1,0 +1,145 @@
+<!--
+  ~ Copyright (C) 2017 Axel Müller <axel.mueller@avanux.de>
+  ~
+  ~ This program is free software; you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation; either version 2 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along
+  ~ with this program; if not, write to the Free Software Foundation, Inc.,
+  ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+  -->
+
+<div class="ui segment">
+  <form class="ui form" (ngSubmit)="submitForm()">
+    <div class="four fields">
+      <div class="field">
+        <label>Type</label>
+        <select class="ui fluid dropdown" name="meterType" [(ngModel)]="appliance.meterType">
+          <option value="S0ElectricityMeter">S0 electricity meter</option>
+          <option value="S0ElectricityMeterNetworked">S0 electricity meter networked</option>
+          <option value="ModbusElectricityMeter">Modbus electricity meter</option>
+          <option value="HttpElectricityMeter">HTTP electricity meter</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="ui fields" *ngIf="appliance.meterType==='S0ElectricityMeter'">
+      <div class="field">
+        <label>GPIO</label>
+        <input type="text" name="meterGpio" [(ngModel)]="appliance.meterGpio">
+      </div>
+      <div class="field">
+        <label>Pin Pull Resistence</label>
+        <select class="ui fluid dropdown" name="meterPinPullResistance" [(ngModel)]="appliance.meterPinPullResistance">
+          <option value=""></option>
+          <option value="PULL_DOWN">pull down</option>
+          <option value="PULL_UP">pull up</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Impulses/kWh</label>
+        <input type="text" name="meterImpulsesPerKwh" [(ngModel)]="appliance.meterImpulsesPerKwh">
+      </div>
+      <div class="field">
+        <label>Measurement interval [s]</label>
+        <input type="text" name="meterMeasurementInterval" [(ngModel)]="appliance.meterMeasurementInterval">
+      </div>
+      <div class="ui checkbox">
+        <input type="checkbox" name="meterPowerOnAlways" [(ngModel)]="appliance.meterPowerOnAlways">
+        <label>Power on always</label>
+      </div>
+    </div>
+
+    <div class="ui fields" *ngIf="appliance.meterType==='S0ElectricityMeterNetworked'">
+      <div class="field">
+        <label>Pulse Receiver</label>
+        <select class="ui fluid dropdown" name="meterPulseReceiverID" [(ngModel)]="appliance.meterPulseReceiverID">
+          <option value="">TODO add</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Impulses/kWh</label>
+        <input type="text" name="meterImpulsesPerKwh" [(ngModel)]="appliance.meterImpulsesPerKwh">
+      </div>
+      <div class="field">
+        <label>Measurement interval [s]</label>
+        <input type="text" name="meterMeasurementInterval" [(ngModel)]="appliance.meterMeasurementInterval">
+      </div>
+      <div class="ui checkbox">
+        <input type="checkbox" name="meterPowerOnAlways" [(ngModel)]="appliance.meterPowerOnAlways">
+        <label>Power on always</label>
+      </div>
+    </div>
+
+    <div class="ui fields" *ngIf="appliance.meterType==='ModbusElectricityMeter'">
+      <div class="field">
+        <label>Slave address</label>
+        <input type="text" name="meterSlaveAddress" [(ngModel)]="appliance.meterSlaveAddress">
+      </div>
+      <div class="field">
+        <label>Register address</label>
+        <input type="text" name="meterRegisterAddress" [(ngModel)]="appliance.meterRegisterAddress">
+      </div>
+      <div class="field">
+        <label>Poll interval</label>
+        <input type="text" name="meterPollInterval" [(ngModel)]="appliance.meterPollInterval">
+      </div>
+      <div class="field">
+        <label>Measurement interval [s]</label>
+        <input type="text" name="meterMeasurementInterval" [(ngModel)]="appliance.meterMeasurementInterval">
+      </div>
+    </div>
+
+    <div *ngIf="appliance.meterType==='HttpElectricityMeter'">
+      <div class="field">
+        <label>URL</label>
+        <input type="text" name="meterUrl" [(ngModel)]="appliance.meterUrl">
+      </div>
+      <div class="field">
+        <label>Data</label>
+        <input type="text" name="meterData" [(ngModel)]="appliance.meterData">
+      </div>
+      <div class="ui fields">
+        <div class="field">
+          <label>Username</label>
+          <input type="text" name="meterUsername" [(ngModel)]="appliance.meterUsername">
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="text" name="meterPassword" [(ngModel)]="appliance.meterPassword">
+        </div>
+        <div class="field">
+          <label>Content type</label>
+          <input type="text" name="meterContentType" [(ngModel)]="appliance.meterContentType">
+        </div>
+      </div>
+      <div class="field">
+        <label>Power value extraction regex</label>
+        <input type="text" name="meterPowerValueExtractionRegex" [(ngModel)]="appliance.meterPowerValueExtractionRegex">
+      </div>
+      <div class="ui fields">
+        <div class="field">
+          <label>Factor to watt</label>
+          <input type="text" name="meterFactorToWatt" [(ngModel)]="appliance.meterFactorToWatt">
+        </div>
+        <div class="field">
+          <label>Poll interval</label>
+          <input type="text" name="meterPollInterval" [(ngModel)]="appliance.meterPollInterval">
+        </div>
+        <div class="field">
+          <label>Measurement interval [s]</label>
+          <input type="text" name="meterMeasurementInterval" [(ngModel)]="appliance.meterMeasurementInterval">
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="ui button">Speichern</button>
+  </form>
+</div>

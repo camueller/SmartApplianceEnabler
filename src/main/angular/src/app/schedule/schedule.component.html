@@ -1,0 +1,117 @@
+<!--
+  ~ Copyright (C) 2017 Axel Müller <axel.mueller@avanux.de>
+  ~
+  ~ This program is free software; you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation; either version 2 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along
+  ~ with this program; if not, write to the Free Software Foundation, Inc.,
+  ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+  -->
+
+<div class="ui segment">
+
+  <div class="ui fields">
+    <div class="ui header field" style="padding: 0.3em">
+      Schedule
+      <i (click)="remove()" class="icon red remove circle"></i>
+    </div>
+    <div class="ui checkbox" style="margin-top: 0.2em;margin-left: 0em;padding: 0.5em">
+      <input type="checkbox" name="enabled" [(ngModel)]="schedule.enabled">
+      <label>Enabled</label>
+    </div>
+    <div class="field">
+      <select class="ui fluid dropdown" name="timeframeType" [(ngModel)]="schedule.timeframeType">
+        <option value="DayTimeframe">Day timeframe</option>
+        <option value="ConsecutiveDaysTimeframe">Consecutive days timeframe</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="ui fields" *ngIf="schedule.timeframeType==='DayTimeframe'">
+    <div class="field">
+      <label>Days of week</label>
+      <select class="ui fluid dropdown select-dayOfWeek" multiple="" [(ngModel)]="schedule.dayTimeframe.days">
+        <option value="1" [selected]="schedule.dayTimeframe.days && schedule.dayTimeframe.days.indexOf('1') > -1">Monday</option>
+        <option value="2" [selected]="schedule.dayTimeframe.days && schedule.dayTimeframe.days.indexOf('2') > -1">Tuesday</option>
+        <option value="3" [selected]="schedule.dayTimeframe.days && schedule.dayTimeframe.days.indexOf('3') > -1">Wednesday</option>
+        <option value="4" [selected]="schedule.dayTimeframe.days && schedule.dayTimeframe.days.indexOf('4') > -1">Thursday</option>
+        <option value="5" [selected]="schedule.dayTimeframe.days && schedule.dayTimeframe.days.indexOf('5') > -1">Friday</option>
+        <option value="6" [selected]="schedule.dayTimeframe.days && schedule.dayTimeframe.days.indexOf('6') > -1">Saturday</option>
+        <option value="7" [selected]="schedule.dayTimeframe.days && schedule.dayTimeframe.days.indexOf('7') > -1">Sunday</option>
+        <option value="8" [selected]="schedule.dayTimeframe.days && schedule.dayTimeframe.days.indexOf('8') > -1">Holidays</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Start</label>
+      <input type="text" name="start" [(ngModel)]="schedule.dayTimeframe.start">
+    </div>
+    <div class="field">
+      <label>End</label>
+      <input type="text" name="end" [(ngModel)]="schedule.dayTimeframe.end">
+    </div>
+    <div class="field">
+      <label>Min. running time</label>
+      <input type="text" name="start" [(ngModel)]="schedule.minRunningTime">
+    </div>
+    <div class="field">
+      <label>Max. running time</label>
+      <input type="text" name="end" [(ngModel)]="schedule.maxRunningTime">
+    </div>
+  </div>
+
+  <div class="ui fields" *ngIf="schedule.timeframeType==='ConsecutiveDaysTimeframe'">
+    <div class="field">
+      <label>Start day of week</label>
+      <select class="ui fluid dropdown" [(ngModel)]="schedule.consecutiveDaysTimeframe.startDayOfWeek">
+        <option value="1" [selected]="schedule.consecutiveDaysTimeframe.startDayOfWeek==='1'">Monday</option>
+        <option value="2" [selected]="schedule.consecutiveDaysTimeframe.startDayOfWeek==='2'">Tuesday</option>
+        <option value="3" [selected]="schedule.consecutiveDaysTimeframe.startDayOfWeek==='3'">Wednesday</option>
+        <option value="4" [selected]="schedule.consecutiveDaysTimeframe.startDayOfWeek==='4'">Thursday</option>
+        <option value="5" [selected]="schedule.consecutiveDaysTimeframe.startDayOfWeek==='5'">Friday</option>
+        <option value="6" [selected]="schedule.consecutiveDaysTimeframe.startDayOfWeek==='6'">Saturday</option>
+        <option value="7" [selected]="schedule.consecutiveDaysTimeframe.startDayOfWeek==='7'">Sunday</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Start</label>
+      <input type="text" name="startTime" [(ngModel)]="schedule.consecutiveDaysTimeframe.startTime">
+    </div>
+    <div class="field">
+      <label>Start day of week</label>
+      <select class="ui fluid dropdown" [(ngModel)]="schedule.consecutiveDaysTimeframe.endDayOfWeek">
+        <option value="1" [selected]="schedule.consecutiveDaysTimeframe.endDayOfWeek==='1'">Monday</option>
+        <option value="2" [selected]="schedule.consecutiveDaysTimeframe.endDayOfWeek==='2'">Tuesday</option>
+        <option value="3" [selected]="schedule.consecutiveDaysTimeframe.endDayOfWeek==='3'">Wednesday</option>
+        <option value="4" [selected]="schedule.consecutiveDaysTimeframe.endDayOfWeek==='4'">Thursday</option>
+        <option value="5" [selected]="schedule.consecutiveDaysTimeframe.endDayOfWeek==='5'">Friday</option>
+        <option value="6" [selected]="schedule.consecutiveDaysTimeframe.endDayOfWeek==='6'">Saturday</option>
+        <option value="7" [selected]="schedule.consecutiveDaysTimeframe.endDayOfWeek==='7'">Sunday</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>End</label>
+      <input type="text" name="startTime" [(ngModel)]="schedule.consecutiveDaysTimeframe.endTime">
+    </div>
+    <div class="field">
+      <label>Min. running time</label>
+      <input type="text" name="start" [(ngModel)]="schedule.minRunningTime">
+    </div>
+    <div class="field">
+      <label>Max. running time</label>
+      <input type="text" name="end" [(ngModel)]="schedule.maxRunningTime">
+    </div>
+
+  </div>
+
+
+ </div>
+
+
