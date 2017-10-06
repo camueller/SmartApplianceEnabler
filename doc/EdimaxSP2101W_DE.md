@@ -12,7 +12,7 @@ Die aktuelle Firmware für den SP-2101W ist die Version 2.08. Diese unterstützt
 1. Nach Beendigung des Firmware-Updates den SP-2101W erneute in die Werkseinstellung zurückzusetzen und neu konfigurieren
 
 ## SP-2101W als Stromzähler
-Die aktuelle Leistungsaufnahme des SP-2101W kann wie folgt abgefragt werden:
+Die aktuelle Leistungsaufnahme des SP-2101W kann wie folgt abgefragt werden (Passwort hier 12345678):
 ```
 curl -s -X POST -d '<?xml version="1.0" encoding="UTF8"?><SMARTPLUG id="edimax"><CMD id="get"><NOW_POWER><Device.System.Power.NowCurrent></Device.System.Power.NowCurrent><Device.System.Power.NowPower></Device.System.Power.NowPower></NOW_POWER></CMD></SMARTPLUG>' http://admin:12345678@192.168.69.74:10000/smartplug.cgi
 <?xml version="1.0" encoding="UTF8"?><SMARTPLUG id="edimax"><CMD id="get"><NOW_POWER><Device.System.Power.NowCurrent>0.2871</Device.System.Power.NowCurrent><Device.System.Power.NowPower>52.49</Device.System.Power.NowPower></NOW_POWER></CMD></SMARTPLUG>
@@ -25,7 +25,7 @@ Unter Berücksichtigung der genannten Punkte könnte die Konfiguration des SP-21
 ```
 <Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.1">
     <Appliance id="F-00000001-000000000001-00">
-        <HttpElectricityMeter url="http://192.168.1.1/cm?cmnd=Status%208" data="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF8&quot;?&gt;&lt;SMARTPLUG id=&quot;edimax&quot;&gt;&lt;CMD id=&quot;get&quot;&gt;&lt;NOW_POWER&gt;&lt;Device.System.Power.NowCurrent&gt;&lt;/Device.System.Power.NowCurrent&gt;&lt;Device.System.Power.NowPower&gt;&lt;/Device.System.Power.NowPower&gt;&lt;/NOW_POWER&gt;&lt;/CMD&gt;&lt;/SMARTPLUG&gt;" powerValueExtractionRegex=".*NowPower>(\d*.{0,1}\d+).*" />
+        <HttpElectricityMeter url="http://192.168.1.1:10000/smartplug.cgi" data="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF8&quot;?&gt;&lt;SMARTPLUG id=&quot;edimax&quot;&gt;&lt;CMD id=&quot;get&quot;&gt;&lt;NOW_POWER&gt;&lt;Device.System.Power.NowCurrent&gt;&lt;/Device.System.Power.NowCurrent&gt;&lt;Device.System.Power.NowPower&gt;&lt;/Device.System.Power.NowPower&gt;&lt;/NOW_POWER&gt;&lt;/CMD&gt;&lt;/SMARTPLUG&gt;" powerValueExtractionRegex=".*NowPower>(\d*.{0,1}\d+).*" contentType="application/xml" username="admin" password="12345678" />
     </Appliance>
 </Appliances>
 ```
@@ -61,7 +61,7 @@ Entsprechend sieht die Konfiguration für den *Smart Appliance Enabler* aus:
 ```
 <Appliances ...>
     <Appliance ...>
-        <HttpSwitch onUrl="http://192.168.1.1/cm?cmnd=Power%20On" onData="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF8&quot;?&gt;&lt;SMARTPLUG id=&quot;edimax&quot;&gt;&lt;CMD id=&quot;setup&quot;&gt;&lt;Device.System.Power.State&gt;ON&lt;/Device.System.Power.State&gt;&lt;/CMD&gt;&lt;/SMARTPLUG&gt;" offUrl="http://192.168.1.1/cm?cmnd=Power%20Off" offData="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF8&quot;?&gt;&lt;SMARTPLUG id=&quot;edimax&quot;&gt;&lt;CMD id=&quot;setup&quot;&gt;&lt;Device.System.Power.State&gt;OFF&lt;/Device.System.Power.State&gt;&lt;/CMD&gt;&lt;/SMARTPLUG&gt;"/>
+        <HttpSwitch onUrl="http://192.168.1.1:10000/smartplug.cgi" onData="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF8&quot;?&gt;&lt;SMARTPLUG id=&quot;edimax&quot;&gt;&lt;CMD id=&quot;setup&quot;&gt;&lt;Device.System.Power.State&gt;ON&lt;/Device.System.Power.State&gt;&lt;/CMD&gt;&lt;/SMARTPLUG&gt;" offUrl="http://192.168.1.1:10000/smartplug.cgi" offData="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF8&quot;?&gt;&lt;SMARTPLUG id=&quot;edimax&quot;&gt;&lt;CMD id=&quot;setup&quot;&gt;&lt;Device.System.Power.State&gt;OFF&lt;/Device.System.Power.State&gt;&lt;/CMD&gt;&lt;/SMARTPLUG&gt; contentType="application/xml" "username="admin" password="12345678" />
     </Appliance>
 </Appliances>
 ```
