@@ -1,0 +1,51 @@
+<!--
+  ~ Copyright (C) 2017 Axel Müller <axel.mueller@avanux.de>
+  ~
+  ~ This program is free software; you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation; either version 2 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along
+  ~ with this program; if not, write to the Free Software Foundation, Inc.,
+  ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+  -->
+
+<div class="ui segment">
+  <form class="ui form" (ngSubmit)="submitForm()">
+    <h4 class="ui dividing header">Feiertage</h4>
+
+      <div class="field">
+        <label>Download URL</label>
+        <input type="text" name="holidayUrl" [(ngModel)]="settings.holidayUrl">
+      </div>
+
+    <h4 class="ui dividing header">Modbus</h4>
+    <div class="ui fields">
+      <div class="field">
+        <label>Host</label>
+        <input type="text" name="modbusTcpHost" [(ngModel)]="settings.modbusTcpHost">
+      </div>
+      <div class="field">
+        <label>Port</label>
+        <input type="text" name="modbusTcpPort" [(ngModel)]="settings.modbusTcpPort">
+      </div>
+
+    </div>
+
+    <h4 class="ui dividing header">Pulse receiver</h4>
+    <div class="ui fields">
+      <div class="field">
+        <label>Port</label>
+        <input type="text" name="pulseReceiverPort" [(ngModel)]="settings.pulseReceiverPort">
+      </div>
+    </div>
+
+    <button type="submit" class="ui button">Speichern</button>
+  </form>
+</div>

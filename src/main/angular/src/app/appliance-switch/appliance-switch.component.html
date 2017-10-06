@@ -1,0 +1,111 @@
+<!--
+  ~ Copyright (C) 2017 Axel Müller <axel.mueller@avanux.de>
+  ~
+  ~ This program is free software; you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation; either version 2 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along
+  ~ with this program; if not, write to the Free Software Foundation, Inc.,
+  ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+  -->
+
+<div class="ui segment">
+  <form class="ui form" (ngSubmit)="submitForm()">
+    <div class="fields">
+      <div class="field">
+        <label>Type</label>
+        <select class="ui fluid dropdown" name="switchType" [(ngModel)]="appliance.switchType">
+          <option value="Switch">Switch</option>
+          <option value="ModbusSwitch">Modbus switch</option>
+          <option value="HttpSwitch">HTTP switch</option>
+        </select>
+      </div>
+      <div class="ui checkbox">
+        <input type="checkbox" name="switchStartingCurrentSwitch" [(ngModel)]="appliance.switchStartingCurrentSwitch">
+        <label>Starting current detection</label>
+      </div>
+    </div>
+
+    <div class="ui fields" *ngIf="appliance.switchType==='Switch'">
+      <div class="field">
+        <label>GPIO</label>
+        <input type="text" name="switchGpio" [(ngModel)]="appliance.switchGpio">
+      </div>
+      <div class="ui checkbox">
+        <input type="checkbox" name="switchReverseStates" [(ngModel)]="appliance.switchReverseStates">
+        <label>Reverse states</label>
+      </div>
+    </div>
+
+    <div class="ui fields" *ngIf="appliance.switchType==='ModbusSwitch'">
+      <div class="field">
+        <label>Slave address</label>
+        <input type="text" name="switchSlaveAddress" [(ngModel)]="appliance.switchSlaveAddress">
+      </div>
+      <div class="field">
+        <label>Register address</label>
+        <input type="text" name="switchRegisterAddress" [(ngModel)]="appliance.switchRegisterAddress">
+      </div>
+    </div>
+
+    <div *ngIf="appliance.switchType==='HttpSwitch'">
+      <div class="field">
+        <label>On URL</label>
+        <input type="text" name="switchOnUrl" [(ngModel)]="appliance.switchOnUrl">
+      </div>
+      <div class="field">
+        <label>On Data</label>
+        <input type="text" name="switchOnData" [(ngModel)]="appliance.switchOnData">
+      </div>
+      <div class="field">
+        <label>Off URL</label>
+        <input type="text" name="switchOffUrl" [(ngModel)]="appliance.switchOffUrl">
+      </div>
+      <div class="field">
+        <label>Off Data</label>
+        <input type="text" name="switchOffData" [(ngModel)]="appliance.switchOffData">
+      </div>
+      <div class="ui fields">
+        <div class="field">
+          <label>Username</label>
+          <input type="text" name="switchUsername" [(ngModel)]="appliance.switchUsername">
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="text" name="switchPassword" [(ngModel)]="appliance.switchPassword">
+        </div>
+        <div class="field">
+          <label>Content type</label>
+          <input type="text" name="switchContentType" [(ngModel)]="appliance.switchContentType">
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="appliance.switchStartingCurrentSwitch">
+      <h4 class="ui dividing header">Starting current</h4>
+      <div class="ui fields">
+        <div class="field">
+          <label>Power threshold</label>
+          <input type="text" name="switchPowerThreshold" [(ngModel)]="appliance.switchPowerThreshold">
+        </div>
+        <div class="field">
+          <label>Starting current detection duration</label>
+          <input type="text" name="switchStartingCurrentDetectionDuration" [(ngModel)]="appliance.switchStartingCurrentDetectionDuration">
+        </div>
+        <div class="field">
+          <label>Finished current detection duration</label>
+          <input type="text" name="switchFinishedCurrentDetectionDuration" [(ngModel)]="appliance.switchFinishedCurrentDetectionDuration">
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="ui button">Speichern</button>
+  </form>
+</div>

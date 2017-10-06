@@ -13,3 +13,5 @@ target
 .DS_Store
 /build
 /captures
+/src/main/angular/node_modules
+/src/main/resources/static

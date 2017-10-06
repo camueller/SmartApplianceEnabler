@@ -1,0 +1,83 @@
+<!--
+  ~ Copyright (C) 2017 Axel Müller <axel.mueller@avanux.de>
+  ~
+  ~ This program is free software; you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation; either version 2 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along
+  ~ with this program; if not, write to the Free Software Foundation, Inc.,
+  ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+  -->
+
+<div class="ui segment">
+  <form class="ui form" (ngSubmit)="submitForm()">
+    <div class="three fields">
+      <div class="field">
+        <label>ID</label>
+        <input type="text" placeholder="F-00000000-000000000000-00" name="id" [(ngModel)]="appliance.id">
+      </div>
+    </div>
+    <h4 class="ui dividing header">General</h4>
+    <div class="fields">
+      <div class="field">
+        <label>Vendor</label>
+        <input type="text" name="vendor" [(ngModel)]="appliance.vendor">
+      </div>
+      <div class="field">
+        <label>Name</label>
+        <input type="text" name="name" [(ngModel)]="appliance.name">
+      </div>
+      <div class="field">
+        <label>Type</label>
+        <select class="ui fluid dropdown" name="type" [(ngModel)]="appliance.type">
+          <option value="AirConditioning">Air conditioning</option>
+          <option value="Charger">Charger</option>
+          <option value="DishWasher">Dish washer</option>
+          <option value="Dryer">Dryer</option>
+          <option value="ElectricVehicle">Electric vehicle</option>
+          <option value="EVCharger">EV charger</option>
+          <option value="Freezer">Freezer</option>
+          <option value="Fridge">Fridge</option>
+          <option value="Heater">Heater</option>
+          <option value="HeatPump">Heat pump</option>
+          <option value="Motor">Motor</option>
+          <option value="Pump">Pump</option>
+          <option value="WashingMachine">Washing machine</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Serial number</label>
+        <input type="text" name="serial" [(ngModel)]="appliance.serial">
+      </div>
+    </div>
+
+    <h4 class="ui dividing header">Characteristics</h4>
+    <div class="fields">
+      <div class="field">
+        <label>Max. power consumption [W]</label>
+        <input type="text" name="maxPowerConsumption" [(ngModel)]="appliance.maxPowerConsumption">
+      </div>
+      <div class="field">
+        <label>Current power method</label>
+        <select class="ui fluid dropdown" name="currentPowerMethod" [(ngModel)]="appliance.currentPowerMethod">
+          <option value="Measurement">Measurement</option>
+          <option value="Estimation">Estimation</option>
+        </select>
+      </div>
+      <div class="ui checkbox">
+        <input type="checkbox" name="interruptionsAllowed" [(ngModel)]="appliance.interruptionsAllowed">
+        <label>Interruptions allowed</label>
+      </div>
+    </div>
+
+    <button type="submit" class="ui button">Speichern</button>
+  </form>
+</div>
