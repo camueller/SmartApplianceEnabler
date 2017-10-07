@@ -16,7 +16,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
 import {Schedule} from '../shared/schedule';
 
 declare const $: any;
@@ -26,16 +26,25 @@ declare const $: any;
   templateUrl: './schedule.component.html',
   styles: []
 })
-export class ScheduleComponent implements OnInit {
+export class ScheduleComponent implements OnInit, AfterViewInit {
 
   @Input() schedule: Schedule;
   @Input() index: number;
   @Output() removeScheduleEvent = new EventEmitter<number>();
 
   ngOnInit() {
+    this.initializeDropdown();
+  }
+
+  ngAfterViewInit() {
+    this.initializeDropdown();
   }
 
   remove() {
     this.removeScheduleEvent.emit(this.index);
+  }
+
+  initializeDropdown() {
+    $('.ui.dropdown').dropdown();
   }
 }

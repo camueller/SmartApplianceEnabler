@@ -18,7 +18,7 @@
 
 <div class="ui segment">
   <form class="ui form" (ngSubmit)="submitForm()">
-    <div *ngFor="let schedule of schedules;let i = index;">
+    <div *ngFor="let schedule of schedules;let i = index">
       <app-schedule [schedule]="schedule" [index]="i" (removeScheduleEvent)="removeSchedule($event)"></app-schedule>
       <div class="ui hidden divider"></div>
     </div>

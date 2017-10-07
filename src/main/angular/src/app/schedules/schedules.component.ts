@@ -16,20 +16,18 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { Component, AfterViewChecked } from '@angular/core';
+import {Component, AfterViewChecked, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {Schedule} from '../shared/schedule';
 import {ApplianceService} from '../shared/appliance.service';
 import {DayTimeframe} from '../shared/day-timeframe';
-
-declare const $: any;
 
 @Component({
   selector: 'app-schedules',
   templateUrl: './schedules.component.html',
   styles: []
 })
-export class SchedulesComponent implements AfterViewChecked {
+export class SchedulesComponent implements OnInit {
   applianceId: string;
   schedules: Schedule[];
 
@@ -46,8 +44,7 @@ export class SchedulesComponent implements AfterViewChecked {
     });
   }
 
-  ngAfterViewChecked() {
-    $('.select-dayOfWeek').dropdown();
+  ngOnInit() {
   }
 
   addSchedule() {
