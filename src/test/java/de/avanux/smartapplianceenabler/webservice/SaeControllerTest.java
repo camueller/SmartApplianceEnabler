@@ -112,7 +112,7 @@ public class SaeControllerTest {
     private RunningTimeMonitor runTest(String url, String content) throws Exception {
         RunningTimeMonitor runningTimeMonitor = new RunningTimeMonitor();
 
-        String applianceId = "MyAppliance";
+        String applianceId = "F-00000001-000000000001-00";
         Appliance appliance = new Appliance();
         appliance.setId(applianceId);
         appliance.setRunningTimeMonitor(runningTimeMonitor);
