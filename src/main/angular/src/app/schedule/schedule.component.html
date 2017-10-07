@@ -23,11 +23,11 @@
       Schedule
       <i (click)="remove()" class="icon red remove circle"></i>
     </div>
-    <div class="ui checkbox" style="margin-top: 0.2em;margin-left: 0em;padding: 0.5em">
+    <div class="ui checkbox" style="margin-top: 0.7em;margin-left: 0em">
       <input type="checkbox" name="enabled" [(ngModel)]="schedule.enabled">
       <label>Enabled</label>
     </div>
-    <div class="field">
+    <div class="field" [class.disabled]="!schedule.enabled">
       <select class="ui fluid dropdown" name="timeframeType" [(ngModel)]="schedule.timeframeType">
         <option value="DayTimeframe">Day timeframe</option>
         <option value="ConsecutiveDaysTimeframe">Consecutive days timeframe</option>
@@ -35,7 +35,7 @@
     </div>
   </div>
 
-  <div class="ui fields" *ngIf="schedule.timeframeType==='DayTimeframe'">
+  <div class="ui fields" [class.disabled]="!schedule.enabled" *ngIf="schedule.timeframeType==='DayTimeframe'">
     <div class="field">
       <label>Days of week</label>
       <select class="ui fluid dropdown" multiple="" [(ngModel)]="schedule.dayTimeframe.days">
@@ -67,7 +67,7 @@
     </div>
   </div>
 
-  <div class="ui fields" *ngIf="schedule.timeframeType==='ConsecutiveDaysTimeframe'">
+  <div class="ui fields" [class.disabled]="!schedule.enabled" *ngIf="schedule.timeframeType==='ConsecutiveDaysTimeframe'">
     <div class="field">
       <label>Start day of week</label>
       <select class="ui fluid dropdown" [(ngModel)]="schedule.consecutiveDaysTimeframe.startDayOfWeek">
