@@ -32,7 +32,7 @@ export class ApplianceService {
 
   constructor() {
     const a1: Appliance = new Appliance();
-    a1.id = 'F-28091971-000000000011-00';
+    a1.id = 'F-00000001-000000000001-00';
     a1.name = 'SMI53M72EU';
     a1.type = 'DishWasher';
     a1.serial = '016120242942002153';
@@ -56,7 +56,7 @@ export class ApplianceService {
     a1.switchFinishedCurrentDetectionDuration = '300';
 
     const a2: Appliance = new Appliance();
-    a2.id = 'F-28091971-000000000013-00';
+    a2.id = 'F-00000001-000000000002-00';
     a2.name = 'WFO2842';
     a2.type = 'WashingMachine';
     a2.serial = '15FD8512701147';
@@ -86,7 +86,7 @@ export class ApplianceService {
     a2.switchOffData = '&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF8&quot;?&gt;&lt;SMARTPLUG id=&quot;edimax&quot;&gt;&lt;CMD id=&quot;setup&quot;&gt;&lt;Device.System.Power.State&gt;OFF&lt;/Device.System.Power.State&gt;&lt;/CMD&gt;&lt;/SMARTPLUG&gt;';
 
     const a3: Appliance = new Appliance();
-    a3.id = 'F-28091971-000000000015-00';
+    a3.id = 'F-00000001-000000000003-00';
     a3.name = 'Bettar 14';
     a3.type = 'Pump';
     a3.serial = '0123456789';
