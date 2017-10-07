@@ -5,7 +5,7 @@
 
 	<groupId>de.avanux.smartapplianceenabler</groupId>
 	<artifactId>SmartApplianceEnabler</artifactId>
-    <!--packaging>war</packaging -->
+    <packaging>war</packaging>
 	<version>1.2.0-SNAPSHOT</version>
 
 	<parent>
