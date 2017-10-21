@@ -35,16 +35,14 @@ import java.util.Timer;
  */
 public class ModbusElectricityMeter extends ModbusSlave implements Meter, ApplianceIdConsumer, PollPowerExecutor {
 
-    @XmlTransient
-    private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(ModbusElectricityMeter.class));
+    private transient ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(ModbusElectricityMeter.class));
     @XmlAttribute
     private String registerAddress;
     @XmlAttribute
     private Integer pollInterval = 10; // seconds
     @XmlAttribute
     private Integer measurementInterval; // seconds
-    @XmlTransient
-    private PollElectricityMeter pollElectricityMeter = new PollElectricityMeter();
+    private transient PollElectricityMeter pollElectricityMeter = new PollElectricityMeter();
 
     @Override
     public void setApplianceId(String applianceId) {

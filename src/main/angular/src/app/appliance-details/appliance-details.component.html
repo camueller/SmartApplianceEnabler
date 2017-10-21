@@ -72,12 +72,13 @@
           <option value="Estimation">Estimation</option>
         </select>
       </div>
-      <div class="ui checkbox">
+      <div class="ui checkbox" style="">
         <input type="checkbox" name="interruptionsAllowed" [(ngModel)]="appliance.interruptionsAllowed">
         <label>Interruptions allowed</label>
       </div>
     </div>
 
     <button type="submit" class="ui button">Speichern</button>
+    <button type="button" (click)="deleteAppliance()" class="ui button">Löschen</button>
   </form>
 </div>

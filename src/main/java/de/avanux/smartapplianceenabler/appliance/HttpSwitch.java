@@ -38,8 +38,7 @@ import java.util.List;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HttpSwitch extends HttpTransactionExecutor implements Control, ApplianceIdConsumer {
-    @XmlTransient
-    private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(HttpSwitch.class));
+    private transient ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(HttpSwitch.class));
     @XmlAttribute
     private String onUrl;
     @XmlAttribute
@@ -48,10 +47,8 @@ public class HttpSwitch extends HttpTransactionExecutor implements Control, Appl
     private String onData;
     @XmlAttribute
     private String offData;
-    @XmlTransient
-    private boolean on;
-    @XmlTransient
-    List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
+    private transient boolean on;
+    transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
 
     public void setOnUrl(String onUrl) {
         this.onUrl = onUrl;

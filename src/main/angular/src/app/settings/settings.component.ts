@@ -19,6 +19,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 import { Component, OnInit } from '@angular/core';
 import {ApplianceService} from '../shared/appliance.service';
 import {Settings} from '../shared/settings';
+import {ActivatedRoute} from '@angular/router';
+import {SettingsFactory} from '../shared/settings-factory';
 
 @Component({
   selector: 'app-settings',
@@ -27,13 +29,16 @@ import {Settings} from '../shared/settings';
 })
 export class SettingsComponent implements OnInit {
 
-  settings: Settings;
+  settings = SettingsFactory.createEmptySettings();
 
-  constructor(private applianceService: ApplianceService) {
-    this.settings = this.applianceService.getSettings();
+  constructor(private applianceService: ApplianceService, private route: ActivatedRoute) {
   }
 
   ngOnInit() {
+    this.route.params.subscribe(val => {
+        this.applianceService.getSettings().subscribe(settings => this.settings = settings);
+      }
+    );
   }
 
   submitForm() {

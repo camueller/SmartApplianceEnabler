@@ -34,16 +34,13 @@ import com.pi4j.io.gpio.RaspiPin;
 @XmlTransient
 @XmlAccessorType(XmlAccessType.FIELD)
 abstract public class GpioControllable implements ApplianceIdConsumer{
-    @XmlTransient
-    private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(GpioControllable.class));
+    private transient ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(GpioControllable.class));
     @XmlAttribute
     private Integer gpio;
     @XmlAttribute
     private String pinPullResistance;
-    @XmlTransient
-    private GpioController gpioController;
-    @XmlTransient
-    private String applianceId;
+    private transient GpioController gpioController;
+    private transient String applianceId;
 
 
     protected GpioController getGpioController() {

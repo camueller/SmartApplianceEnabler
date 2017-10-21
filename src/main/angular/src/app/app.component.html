@@ -23,10 +23,12 @@
   </div>
 
   <div *ngFor="let appliance of appliances">
-    <a class="ui item" [routerLink]="['appliance', appliance.id]" routerLinkActive="active">{{appliance.name}}</a>
+    <a class="ui item" [routerLink]="['appliance', appliance.id]" routerLinkActive="active">{{appliance.type}}<br>
+      <span style="font-size: 0.7em">{{appliance.vendor}} {{appliance.name}}</span>
+    </a>
     <div class="menu">
       <a class="item" [routerLink]="['meter', appliance.id]" routerLinkActive="active">Zähler</a>
-      <a class="item" [routerLink]="['switch', appliance.id]" routerLinkActive="active">Schalter</a>
+      <a class="item" [routerLink]="['control', appliance.id]" routerLinkActive="active">Schalter</a>
       <a class="item" [routerLink]="['schedules', appliance.id]" routerLinkActive="active">Schaltzeiten</a>
     </div>
   </div>

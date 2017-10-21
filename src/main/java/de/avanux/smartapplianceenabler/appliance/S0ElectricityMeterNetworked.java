@@ -24,8 +24,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
 public class S0ElectricityMeterNetworked implements Meter, PulseReceiver.PulseListener, ApplianceIdConsumer {
-    @XmlTransient
-    private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(S0ElectricityMeterNetworked.class));
+    private transient ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(S0ElectricityMeterNetworked.class));
     @XmlAttribute
     private String idref;
     @XmlAttribute
@@ -36,16 +35,11 @@ public class S0ElectricityMeterNetworked implements Meter, PulseReceiver.PulseLi
     private Integer measurementInterval = 60; // seconds
     @XmlAttribute
     private boolean powerOnAlways;
-    @XmlTransient
-    private PulseElectricityMeter pulseElectricityMeter = new PulseElectricityMeter();
-    @XmlTransient
-    private PulseReceiver pulseReceiver;
-    @XmlTransient
-    private String applianceId;
-    @XmlTransient
-    private Long previousPulseTimestamp;
-    @XmlTransient
-    private Long previousPulseCounter;
+    private transient PulseElectricityMeter pulseElectricityMeter = new PulseElectricityMeter();
+    private transient PulseReceiver pulseReceiver;
+    private transient String applianceId;
+    private transient Long previousPulseTimestamp;
+    private transient Long previousPulseCounter;
 
     @Override
     public void setApplianceId(String applianceId) {

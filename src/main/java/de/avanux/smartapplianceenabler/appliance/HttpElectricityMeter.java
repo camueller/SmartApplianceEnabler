@@ -37,8 +37,7 @@ import java.util.Timer;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HttpElectricityMeter extends HttpTransactionExecutor implements Meter, PollPowerExecutor, ApplianceIdConsumer {
-    @XmlTransient
-    private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(HttpElectricityMeter.class));
+    private transient ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(HttpElectricityMeter.class));
     @XmlAttribute
     private String url;
     @XmlAttribute
@@ -51,8 +50,7 @@ public class HttpElectricityMeter extends HttpTransactionExecutor implements Met
     private String data;
     @XmlAttribute
     private String powerValueExtractionRegex;
-    @XmlTransient
-    private PollElectricityMeter pollElectricityMeter = new PollElectricityMeter();
+    private transient PollElectricityMeter pollElectricityMeter = new PollElectricityMeter();
 
     public void setUrl(String url) {
         this.url = url;

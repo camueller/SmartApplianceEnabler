@@ -42,8 +42,7 @@ import java.util.TimerTask;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
-    @XmlTransient
-    private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(StartingCurrentSwitch.class));
+    private transient ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(StartingCurrentSwitch.class));
     @XmlAttribute
     private Integer powerThreshold = 15;
     @XmlAttribute
@@ -60,18 +59,12 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
     private List<Control> controls;
     @XmlElement(name = "ForceSchedule")
     private DayTimeframeCondition dayTimeframeCondition;
-    @XmlTransient
-    private Integer lastAveragePowerOfPowerOnDetection;
-    @XmlTransient
-    private Integer lastAveragePowerOfPowerOffDetection;
-    @XmlTransient
-    private boolean on;
-    @XmlTransient
-    private LocalDateTime switchOnTime;
-    @XmlTransient
-    private List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
-    @XmlTransient
-    private List<StartingCurrentSwitchListener> startingCurrentSwitchListeners = new ArrayList<>();
+    private transient Integer lastAveragePowerOfPowerOnDetection;
+    private transient Integer lastAveragePowerOfPowerOffDetection;
+    private transient boolean on;
+    private transient LocalDateTime switchOnTime;
+    private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
+    private transient List<StartingCurrentSwitchListener> startingCurrentSwitchListeners = new ArrayList<>();
 
 
     @Override

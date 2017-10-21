@@ -16,8 +16,20 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import {TimeOfDay} from './time-of-day';
+import {DayOfWeek} from './day-of-week';
+
 export class DayTimeframe {
-  start: string;
-  end: string;
-  days: string[];
+
+  static get TYPE(): string {
+    return 'de.avanux.smartapplianceenabler.appliance.DayTimeframe';
+  }
+
+  '@class' = DayTimeframe.TYPE;
+  start: TimeOfDay;
+  startTime: string;
+  end: TimeOfDay;
+  endTime: string;
+  daysOfWeek: DayOfWeek[];
+  daysOfWeekValues: number[];
 }

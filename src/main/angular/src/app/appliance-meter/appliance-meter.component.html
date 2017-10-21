@@ -21,23 +21,24 @@
     <div class="four fields">
       <div class="field">
         <label>Type</label>
-        <select class="ui fluid dropdown" name="meterType" [(ngModel)]="appliance.meterType">
-          <option value="S0ElectricityMeter">S0 electricity meter</option>
-          <option value="S0ElectricityMeterNetworked">S0 electricity meter networked</option>
-          <option value="ModbusElectricityMeter">Modbus electricity meter</option>
-          <option value="HttpElectricityMeter">HTTP electricity meter</option>
+        <select class="ui fluid dropdown" name="meterType" [(ngModel)]="meter.type" (ngModelChange)="typeChanged($event)">
+          <option value=""></option>
+          <option value="{{TYPE_S0_ELECTRICITY_METER}}">S0 electricity meter</option>
+          <option value="{{TYPE_S0_ELECTRICITY_METER_NETWORKED}}">S0 electricity meter networked</option>
+          <option value="{{TYPE_MODBUS_ELECTRICITY_METER}}">Modbus electricity meter</option>
+          <option value="{{TYPE_HTTP_ELECTRICITY_METER}}">HTTP electricity meter</option>
         </select>
       </div>
     </div>
 
-    <div class="ui fields" *ngIf="appliance.meterType==='S0ElectricityMeter'">
+    <div class="ui fields" *ngIf="meter.type===TYPE_S0_ELECTRICITY_METER">
       <div class="field">
         <label>GPIO</label>
-        <input type="text" name="meterGpio" [(ngModel)]="appliance.meterGpio">
+        <input type="text" name="meterGpio" [(ngModel)]="meter.s0ElectricityMeter.gpio">
       </div>
       <div class="field">
         <label>Pin Pull Resistence</label>
-        <select class="ui fluid dropdown" name="meterPinPullResistance" [(ngModel)]="appliance.meterPinPullResistance">
+        <select class="ui fluid dropdown" name="meterPinPullResistance" [(ngModel)]="meter.s0ElectricityMeter.pinPullResistance">
           <option value=""></option>
           <option value="PULL_DOWN">pull down</option>
           <option value="PULL_UP">pull up</option>
@@ -45,97 +46,91 @@
       </div>
       <div class="field">
         <label>Impulses/kWh</label>
-        <input type="text" name="meterImpulsesPerKwh" [(ngModel)]="appliance.meterImpulsesPerKwh">
+        <input type="text" name="meterImpulsesPerKwh" [(ngModel)]="meter.s0ElectricityMeter.impulsesPerKwh">
       </div>
       <div class="field">
         <label>Measurement interval [s]</label>
-        <input type="text" name="meterMeasurementInterval" [(ngModel)]="appliance.meterMeasurementInterval">
+        <input type="text" name="meterMeasurementInterval" [(ngModel)]="meter.s0ElectricityMeter.measurementInterval">
       </div>
       <div class="ui checkbox">
-        <input type="checkbox" name="meterPowerOnAlways" [(ngModel)]="appliance.meterPowerOnAlways">
+        <input type="checkbox" name="meterPowerOnAlways" [(ngModel)]="meter.s0ElectricityMeter.powerOnAlways">
         <label>Power on always</label>
       </div>
     </div>
 
-    <div class="ui fields" *ngIf="appliance.meterType==='S0ElectricityMeterNetworked'">
-      <div class="field">
-        <label>Pulse Receiver</label>
-        <select class="ui fluid dropdown" name="meterPulseReceiverID" [(ngModel)]="appliance.meterPulseReceiverID">
-          <option value="">TODO add</option>
-        </select>
-      </div>
+    <div class="ui fields" *ngIf="meter.type===TYPE_S0_ELECTRICITY_METER_NETWORKED">
       <div class="field">
         <label>Impulses/kWh</label>
-        <input type="text" name="meterImpulsesPerKwh" [(ngModel)]="appliance.meterImpulsesPerKwh">
+        <input type="text" name="meterImpulsesPerKwh" [(ngModel)]="meter.s0ElectricityMeterNetworked.impulsesPerKwh">
       </div>
       <div class="field">
         <label>Measurement interval [s]</label>
-        <input type="text" name="meterMeasurementInterval" [(ngModel)]="appliance.meterMeasurementInterval">
+        <input type="text" name="meterMeasurementInterval" [(ngModel)]="meter.s0ElectricityMeterNetworked.measurementInterval">
       </div>
       <div class="ui checkbox">
-        <input type="checkbox" name="meterPowerOnAlways" [(ngModel)]="appliance.meterPowerOnAlways">
+        <input type="checkbox" name="meterPowerOnAlways" [(ngModel)]="meter.s0ElectricityMeterNetworked.powerOnAlways">
         <label>Power on always</label>
       </div>
     </div>
 
-    <div class="ui fields" *ngIf="appliance.meterType==='ModbusElectricityMeter'">
+    <div class="ui fields" *ngIf="meter.type===TYPE_MODBUS_ELECTRICITY_METER">
       <div class="field">
         <label>Slave address</label>
-        <input type="text" name="meterSlaveAddress" [(ngModel)]="appliance.meterSlaveAddress">
+        <input type="text" name="meterSlaveAddress" [(ngModel)]="meter.modbusElectricityMeter.slaveAddress">
       </div>
       <div class="field">
         <label>Register address</label>
-        <input type="text" name="meterRegisterAddress" [(ngModel)]="appliance.meterRegisterAddress">
+        <input type="text" name="meterRegisterAddress" [(ngModel)]="meter.modbusElectricityMeter.registerAddress">
       </div>
       <div class="field">
         <label>Poll interval</label>
-        <input type="text" name="meterPollInterval" [(ngModel)]="appliance.meterPollInterval">
+        <input type="text" name="meterPollInterval" [(ngModel)]="meter.modbusElectricityMeter.pollInterval">
       </div>
       <div class="field">
         <label>Measurement interval [s]</label>
-        <input type="text" name="meterMeasurementInterval" [(ngModel)]="appliance.meterMeasurementInterval">
+        <input type="text" name="meterMeasurementInterval" [(ngModel)]="meter.modbusElectricityMeter.measurementInterval">
       </div>
     </div>
 
-    <div *ngIf="appliance.meterType==='HttpElectricityMeter'">
+    <div *ngIf="meter.type===TYPE_HTTP_ELECTRICITY_METER">
       <div class="field">
         <label>URL</label>
-        <input type="text" name="meterUrl" [(ngModel)]="appliance.meterUrl">
+        <input type="text" name="meterUrl" [(ngModel)]="meter.httpElectricityMeter.url">
       </div>
       <div class="field">
         <label>Data</label>
-        <input type="text" name="meterData" [(ngModel)]="appliance.meterData">
+        <input type="text" name="meterData" [(ngModel)]="meter.httpElectricityMeter.data">
       </div>
       <div class="ui fields">
         <div class="field">
           <label>Username</label>
-          <input type="text" name="meterUsername" [(ngModel)]="appliance.meterUsername">
+          <input type="text" name="meterUsername" [(ngModel)]="meter.httpElectricityMeter.username">
         </div>
         <div class="field">
           <label>Password</label>
-          <input type="text" name="meterPassword" [(ngModel)]="appliance.meterPassword">
+          <input type="text" name="meterPassword" [(ngModel)]="meter.httpElectricityMeter.password">
         </div>
         <div class="field">
           <label>Content type</label>
-          <input type="text" name="meterContentType" [(ngModel)]="appliance.meterContentType">
+          <input type="text" name="meterContentType" [(ngModel)]="meter.httpElectricityMeter.contentType">
         </div>
       </div>
       <div class="field">
         <label>Power value extraction regex</label>
-        <input type="text" name="meterPowerValueExtractionRegex" [(ngModel)]="appliance.meterPowerValueExtractionRegex">
+        <input type="text" name="meterPowerValueExtractionRegex" [(ngModel)]="meter.httpElectricityMeter.powerValueExtractionRegex">
       </div>
       <div class="ui fields">
         <div class="field">
           <label>Factor to watt</label>
-          <input type="text" name="meterFactorToWatt" [(ngModel)]="appliance.meterFactorToWatt">
+          <input type="text" name="meterFactorToWatt" [(ngModel)]="meter.httpElectricityMeter.factorToWatt">
         </div>
         <div class="field">
           <label>Poll interval</label>
-          <input type="text" name="meterPollInterval" [(ngModel)]="appliance.meterPollInterval">
+          <input type="text" name="meterPollInterval" [(ngModel)]="meter.httpElectricityMeter.pollInterval">
         </div>
         <div class="field">
           <label>Measurement interval [s]</label>
-          <input type="text" name="meterMeasurementInterval" [(ngModel)]="appliance.meterMeasurementInterval">
+          <input type="text" name="meterMeasurementInterval" [(ngModel)]="meter.httpElectricityMeter.measurementInterval">
         </div>
       </div>
     </div>

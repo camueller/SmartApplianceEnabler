@@ -33,8 +33,7 @@ import java.util.*;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Appliance implements ControlStateChangedListener, StartingCurrentSwitchListener {
-    @XmlTransient
-    private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(Appliance.class));
+    private transient ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(Appliance.class));
     @XmlAttribute
     private String id;
     @XmlElements({
@@ -56,8 +55,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     private List<Control> controls;
     @XmlElement(name = "Schedule")
     private List<Schedule> schedules;
-    @XmlTransient
-    private RunningTimeMonitor runningTimeMonitor;
+    private transient RunningTimeMonitor runningTimeMonitor;
 
     public void setId(String id) {
         this.id = id;
@@ -74,6 +72,10 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     
     public List<Control> getControls() {
         return controls;
+    }
+
+    public List<Schedule> getSchedules() {
+        return schedules;
     }
 
     public RunningTimeMonitor getRunningTimeMonitor() {

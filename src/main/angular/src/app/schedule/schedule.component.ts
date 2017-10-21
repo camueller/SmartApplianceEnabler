@@ -17,10 +17,13 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 import {
-  AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit,
+  AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit,
   Output
 } from '@angular/core';
 import {Schedule} from '../shared/schedule';
+import {DayTimeframe} from '../shared/day-timeframe';
+import {ConsecutiveDaysTimeframe} from '../shared/consecutive-days-timeframe';
+import {ScheduleFactory} from '../shared/schedule-factory';
 
 declare const $: any;
 
@@ -29,18 +32,24 @@ declare const $: any;
   templateUrl: './schedule.component.html',
   styles: []
 })
-export class ScheduleComponent implements OnInit, AfterViewInit {
+export class ScheduleComponent implements OnInit, AfterViewInit, OnChanges {
 
-  @Input() schedule: Schedule;
+  @Input() schedule: Schedule = ScheduleFactory.createEmptySchedule();
   @Input() index: number;
   @Output() removeScheduleEvent = new EventEmitter<number>();
+  DAY_TIMEFRAME = DayTimeframe.TYPE;
+  CONSECUTIVE_DAYS_TIMEFRAME = ConsecutiveDaysTimeframe.TYPE;
 
   ngOnInit() {
     this.initializeDropdown();
   }
 
   ngAfterViewInit() {
+    console.log('ngAfterViewInit timeframeType=' + this.schedule.timeframeType);
     this.initializeDropdown();
+  }
+
+  ngOnChanges() {
   }
 
   remove() {
@@ -49,5 +58,13 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
 
   initializeDropdown() {
     $('.ui.dropdown').dropdown();
+  }
+
+  isDaytimeFrame(): boolean {
+    return this.schedule.timeframeType === this.DAY_TIMEFRAME;
+  }
+
+  isConsecutiveDaysTimeframe(): boolean {
+    return this.schedule.timeframeType === this.CONSECUTIVE_DAYS_TIMEFRAME;
   }
 }

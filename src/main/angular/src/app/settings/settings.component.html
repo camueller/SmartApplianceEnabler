@@ -18,31 +18,45 @@
 
 <div class="ui segment">
   <form class="ui form" (ngSubmit)="submitForm()">
-    <h4 class="ui dividing header">Feiertage</h4>
 
-      <div class="field">
-        <label>Download URL</label>
-        <input type="text" name="holidayUrl" [(ngModel)]="settings.holidayUrl">
+    <h4 class="ui dividing header">Feiertage</h4>
+    <div class="ui fields">
+      <div class="ui checkbox">
+        <input type="checkbox" name="holidaysEnabled" [(ngModel)]="settings.holidaysEnabled">
+        <label>Enabled</label>
       </div>
+      <div class="six wide field" [class.disabled]="!settings.holidaysEnabled">
+        <label>Download URL</label>
+        <input type="text" name="holidayUrl" placeholder="{{settings.defaultHolidaysUrl}}" [(ngModel)]="settings.holidaysUrl">
+      </div>
+    </div>
 
     <h4 class="ui dividing header">Modbus</h4>
     <div class="ui fields">
-      <div class="field">
-        <label>Host</label>
-        <input type="text" name="modbusTcpHost" [(ngModel)]="settings.modbusTcpHost">
+      <div class="ui checkbox">
+        <input type="checkbox" name="modbusEnabled" [(ngModel)]="settings.modbusEnabled">
+        <label>Enabled</label>
       </div>
-      <div class="field">
+      <div class="field" [class.disabled]="!settings.modbusEnabled">
+        <label>Host</label>
+        <input type="text" name="modbusTcpHost" placeholder="{{settings.defaultModbusTcpHost}}" [(ngModel)]="settings.modbusTcpHost">
+      </div>
+      <div class="field" [class.disabled]="!settings.modbusEnabled">
         <label>Port</label>
-        <input type="text" name="modbusTcpPort" [(ngModel)]="settings.modbusTcpPort">
+        <input type="text" name="modbusTcpPort" placeholder="{{settings.defaultModbusTcpPort}}" [(ngModel)]="settings.modbusTcpPort">
       </div>
 
     </div>
 
     <h4 class="ui dividing header">Pulse receiver</h4>
     <div class="ui fields">
-      <div class="field">
+      <div class="ui checkbox">
+        <input type="checkbox" name="pulseReceiveEnabled" [(ngModel)]="settings.pulseReceiverEnabled">
+        <label>Enabled</label>
+      </div>
+      <div class="field" [class.disabled]="!settings.pulseReceiveEnabled">
         <label>Port</label>
-        <input type="text" name="pulseReceiverPort" [(ngModel)]="settings.pulseReceiverPort">
+        <input type="text" name="pulseReceiverPort" placeholder="{{settings.defaultPulseReceiverPort}}" [(ngModel)]="settings.pulseReceiverPort">
       </div>
     </div>
 

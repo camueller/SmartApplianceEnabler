@@ -21,14 +21,18 @@ import {ApplianceDetailsComponent} from './appliance-details/appliance-details.c
 import {NgModule} from '@angular/core';
 import {PageNotFoundComponent} from './not-found.component';
 import {ApplianceMeterComponent} from './appliance-meter/appliance-meter.component';
-import {ApplianceSwitchComponent} from './appliance-switch/appliance-switch.component';
+import {ApplianceControlComponent} from './appliance-control/appliance-control.component';
 import {SchedulesComponent} from './schedules/schedules.component';
 import {SettingsComponent} from './settings/settings.component';
+import {ApplianceResolver} from './shared/appliance-resolver.service';
 
 const routes: Routes = [
   {
     path: 'appliance/:id',
-    component: ApplianceDetailsComponent
+    component: ApplianceDetailsComponent,
+    resolve: {
+      appliance: ApplianceResolver
+    }
   },
   {
     path: 'appliance',
@@ -39,8 +43,8 @@ const routes: Routes = [
     component: ApplianceMeterComponent
   },
   {
-    path: 'switch/:id',
-    component: ApplianceSwitchComponent
+    path: 'control/:id',
+    component: ApplianceControlComponent
   },
   {
     path: 'schedules/:id',

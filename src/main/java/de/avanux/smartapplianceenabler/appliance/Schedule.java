@@ -42,14 +42,12 @@ public class Schedule {
             @XmlElement(name = "ConsecutiveDaysTimeframe", type = ConsecutiveDaysTimeframe.class)
     })
     private Timeframe timeframe;
-    @XmlTransient
-    DateTimeFormatter formatter = ISODateTimeFormat.basicTTimeNoMillis();
+    transient DateTimeFormatter formatter = ISODateTimeFormat.basicTTimeNoMillis();
     /**
      * The number of seconds to be added to the maximum running time of the schedule during search for the next sufficient timeframe interval.
      * This additional time is available to the Sunny Home Manager for processing while still being able to fit running time into the timeframe.
      */
-    @XmlTransient
-    private static int additionalRunningTime = 900;
+    private transient static int additionalRunningTime = 900;
 
 
     public Schedule() {

@@ -18,13 +18,15 @@
 package de.avanux.smartapplianceenabler.appliance;
 
 import org.apache.commons.lang3.StringUtils;
-import org.joda.time.*;
+import org.joda.time.DateTime;
+import org.joda.time.Interval;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 import org.joda.time.chrono.ISOChronology;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,10 +42,8 @@ public class DayTimeframe implements Timeframe {
     private TimeOfDay end;
     @XmlElement(name = "DayOfWeek")
     private List<DayOfWeek> daysOfWeek;
-    @XmlTransient
-    private Schedule schedule;
-    @XmlTransient
-    private List<LocalDate> holidays;
+    private transient Schedule schedule;
+    private transient List<LocalDate> holidays;
 
     public DayTimeframe() {
     }

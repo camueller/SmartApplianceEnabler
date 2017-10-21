@@ -38,18 +38,15 @@ import java.util.Map;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PulseReceiver implements Runnable {
-    @XmlTransient
-    private Logger logger = LoggerFactory.getLogger(PulseReceiver.class);
+    private transient Logger logger = LoggerFactory.getLogger(PulseReceiver.class);
+    public static final int DEFAULT_PORT = 9999;
     @XmlAttribute
     private String id;
     @XmlAttribute
-    private Integer port = 9999;
-    @XmlTransient
-    private Thread thread;
-    @XmlTransient
-    private Map<String, PulseListener> applianceIdWithListener = new HashMap<>();
-    @XmlTransient
-    private NumberFormat counterFormat = new DecimalFormat("00000");
+    private Integer port = DEFAULT_PORT;
+    private transient Thread thread;
+    private transient Map<String, PulseListener> applianceIdWithListener = new HashMap<>();
+    private transient NumberFormat counterFormat = new DecimalFormat("00000");
 
 
     public interface PulseListener {

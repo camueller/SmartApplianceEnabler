@@ -31,16 +31,14 @@ import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 
 @XmlType(propOrder={"gpio", "pinPullResistance", "impulsesPerKwh", "measurementInterval"})
 public class S0ElectricityMeter extends GpioControllable implements Meter {
-    @XmlTransient
-    private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(S0ElectricityMeter.class));
+    private transient ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(S0ElectricityMeter.class));
     @XmlAttribute
     private Integer impulsesPerKwh;
     @XmlAttribute
     private Integer measurementInterval = 60; // seconds
     @XmlAttribute
     private boolean powerOnAlways;
-    @XmlTransient
-    private PulseElectricityMeter pulseElectricityMeter = new PulseElectricityMeter();
+    private transient PulseElectricityMeter pulseElectricityMeter = new PulseElectricityMeter();
 
     
     public Integer getImpulsesPerKwh() {
