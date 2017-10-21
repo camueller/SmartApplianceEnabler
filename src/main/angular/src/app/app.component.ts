@@ -19,6 +19,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 import {Component, OnInit} from '@angular/core';
 import {ApplianceService} from './shared/appliance.service';
 import {Appliance} from './shared/appliance';
+import {AppliancesReloadService} from './shared/appliances-reload-service';
 
 declare const $: any;
 
@@ -30,7 +31,7 @@ export class AppComponent implements OnInit {
 
   appliances: Appliance[];
 
-  constructor(private applianceService: ApplianceService) {}
+  constructor(private applianceService: ApplianceService, private appliancesReloadService: AppliancesReloadService) {}
 
   toggleSidebar() {
     $('.ui.sidebar').sidebar({dimPage: false, closable: false});
@@ -38,6 +39,13 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit()  {
-    this.appliances = this.applianceService.getAppliances();
+    this.loadAppliances();
+    this.appliancesReloadService.triggered.subscribe(() => {
+      this.loadAppliances();
+    });
+  }
+
+  loadAppliances() {
+    this.applianceService.getAppliances().subscribe(appliances => this.appliances = appliances);
   }
 }

@@ -20,6 +20,13 @@ import { Component, OnInit } from '@angular/core';
 import {Appliance} from '../shared/appliance';
 import {ActivatedRoute} from '@angular/router';
 import {ApplianceService} from '../shared/appliance.service';
+import {Meter} from '../shared/meter';
+import {S0ElectricityMeter} from '../shared/s0-electricity-meter';
+import {ModbusElectricityMeter} from '../shared/modbus-electricity-meter';
+import {HttpElectricityMeter} from '../shared/http-electricity-meter';
+import {MeterFactory} from '../shared/meter-factory';
+import {until} from 'selenium-webdriver';
+import elementIsSelected = until.elementIsSelected;
 
 @Component({
   selector: 'app-appliance-meter',
@@ -27,26 +34,37 @@ import {ApplianceService} from '../shared/appliance.service';
   styles: []
 })
 export class ApplianceMeterComponent implements OnInit {
-
-  appliance: Appliance;
+  applianceId: string;
+  meter = MeterFactory.createEmptyMeter();
+  TYPE_S0_ELECTRICITY_METER = S0ElectricityMeter.TYPE;
+  TYPE_S0_ELECTRICITY_METER_NETWORKED = S0ElectricityMeter.TYPE_NETWORKED;
+  TYPE_MODBUS_ELECTRICITY_METER = ModbusElectricityMeter.TYPE;
+  TYPE_HTTP_ELECTRICITY_METER = HttpElectricityMeter.TYPE;
 
   constructor(private applianceService: ApplianceService, private route: ActivatedRoute) {
-    // TODO auf Observables umstellen - siehe Tour of Heroes (Routing)!
-    /*
-    this.appliance = this.route.paramMap.switchMap(
-      (params: ParamMap) => this.applianceService.getAppliance(params.get('id'))
-    );
-    */
-    route.params.subscribe(val => {
-      const id = this.route.snapshot.paramMap.get('id');
-      this.appliance = this.applianceService.getAppliance(id);
-    });
   }
 
   ngOnInit() {
+    this.route.params.subscribe(val => {
+        this.applianceId = this.route.snapshot.paramMap.get('id');
+        this.applianceService.getMeter(this.applianceId).subscribe(meter => this.meter = meter);
+      }
+    );
+  }
+
+  typeChanged(newType: string) {
+    if (newType === this.TYPE_S0_ELECTRICITY_METER && this.meter.s0ElectricityMeter == null) {
+      this.meter.s0ElectricityMeter = new S0ElectricityMeter();
+    } else if (newType === this.TYPE_S0_ELECTRICITY_METER_NETWORKED && this.meter.s0ElectricityMeterNetworked == null) {
+      this.meter.s0ElectricityMeterNetworked = new S0ElectricityMeter();
+    } else if (newType === this.TYPE_MODBUS_ELECTRICITY_METER && this.meter.modbusElectricityMeter == null) {
+      this.meter.modbusElectricityMeter = new ModbusElectricityMeter();
+    } else if (newType === this.TYPE_HTTP_ELECTRICITY_METER && this.meter.httpElectricityMeter == null) {
+      this.meter.httpElectricityMeter = MeterFactory.createHttpElectricityMeter(new Object());
+    }
   }
 
   submitForm() {
-    this.applianceService.updateAppliance(this.appliance);
+    this.applianceService.updateMeter(this.meter, this.applianceId);
   }
 }

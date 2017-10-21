@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "Configuration")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Configuration {
+    public static final String DEFAULT_HOLIDAYS_URL = "http://feiertage.jarmedia.de/api/?jahr={0}&#038;nur_land=HE";
     @XmlAttribute
     private String param;
     @XmlAttribute

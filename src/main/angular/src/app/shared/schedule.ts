@@ -20,10 +20,29 @@ import {DayTimeframe} from './day-timeframe';
 import {ConsecutiveDaysTimeframe} from './consecutive-days-timeframe';
 
 export class Schedule {
+  '@class' = 'de.avanux.smartapplianceenabler.appliance.Schedule';
   enabled = true;
+  minRunningTime: string;
+  maxRunningTime: string;
   timeframeType: string;
   dayTimeframe: DayTimeframe;
   consecutiveDaysTimeframe: ConsecutiveDaysTimeframe;
-  minRunningTime: string;
-  maxRunningTime: string;
+
+  /*
+  timeframe: DayTimeframe | ConsecutiveDaysTimeframe;
+
+  get timeframeType() {
+    if (this.dayTimeframe != null) {
+      return this.dayTimeframe['atclass'];
+    } else if (this.consecutiveDaysTimeframe != null) {
+      return this.consecutiveDaysTimeframe['atclass'];
+    }
+    return null;
+  }
+  set timeframeType(type: string) {
+    if (this.timeframe != null) {
+      this.timeframe['atclass'] = type;
+    }
+  }
+  */
 }

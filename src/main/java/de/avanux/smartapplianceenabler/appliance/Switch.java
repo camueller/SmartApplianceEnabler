@@ -28,14 +28,11 @@ import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Switch extends GpioControllable implements Control, ApplianceIdConsumer {
-    @XmlTransient
-    private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(Switch.class));
+    private transient ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(Switch.class));
     @XmlAttribute
     private boolean reverseStates;
-    @XmlTransient
-    GpioPinDigitalOutput outputPin;
-    @XmlTransient
-    List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
+    transient GpioPinDigitalOutput outputPin;
+    transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
 
 
     @Override

@@ -16,92 +16,97 @@
   ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
   -->
 
-<div class="ui segment">
+<div class="ui segment" xmlns="http://www.w3.org/1999/html">
   <form class="ui form" (ngSubmit)="submitForm()">
     <div class="fields">
       <div class="field">
         <label>Type</label>
-        <select class="ui fluid dropdown" name="switchType" [(ngModel)]="appliance.switchType">
-          <option value="Switch">Switch</option>
-          <option value="ModbusSwitch">Modbus switch</option>
-          <option value="HttpSwitch">HTTP switch</option>
+        <select class="ui fluid dropdown" name="controlType" [(ngModel)]="control.type" (ngModelChange)="typeChanged($event)">
+          <option value=""></option>
+          <option value="{{TYPE_SWITCH}}">Switch</option>
+          <option value="{{TYPE_MODBUS_SWITCH}}">Modbus</option>
+          <option value="{{TYPE_HTTP_SWITCH}}">HTTP</option>
         </select>
       </div>
       <div class="ui checkbox">
-        <input type="checkbox" name="switchStartingCurrentSwitch" [(ngModel)]="appliance.switchStartingCurrentSwitch">
+        <input type="checkbox" name="switchStartingCurrentSwitch" [(ngModel)]="control.startingCurrentDetection">
         <label>Starting current detection</label>
       </div>
     </div>
 
-    <div class="ui fields" *ngIf="appliance.switchType==='Switch'">
+    <div class="ui fields" *ngIf="control.type===TYPE_SWITCH">
       <div class="field">
         <label>GPIO</label>
-        <input type="text" name="switchGpio" [(ngModel)]="appliance.switchGpio">
+        <input type="text" name="switchGpio" [(ngModel)]="control.switch_.gpio">
       </div>
       <div class="ui checkbox">
-        <input type="checkbox" name="switchReverseStates" [(ngModel)]="appliance.switchReverseStates">
+        <input type="checkbox" name="switchReverseStates" [(ngModel)]="control.switch_.reverseStates">
         <label>Reverse states</label>
       </div>
     </div>
 
-    <div class="ui fields" *ngIf="appliance.switchType==='ModbusSwitch'">
+    <div class="ui fields" *ngIf="control.type===TYPE_MODBUS_SWITCH">
       <div class="field">
         <label>Slave address</label>
-        <input type="text" name="switchSlaveAddress" [(ngModel)]="appliance.switchSlaveAddress">
+        <input type="text" name="switchSlaveAddress" [(ngModel)]="control.modbusSwitch.slaveAddress">
       </div>
       <div class="field">
         <label>Register address</label>
-        <input type="text" name="switchRegisterAddress" [(ngModel)]="appliance.switchRegisterAddress">
+        <input type="text" name="switchRegisterAddress" [(ngModel)]="control.modbusSwitch.registerAddress">
       </div>
     </div>
 
-    <div *ngIf="appliance.switchType==='HttpSwitch'">
+    <div *ngIf="control.type===TYPE_HTTP_SWITCH">
       <div class="field">
         <label>On URL</label>
-        <input type="text" name="switchOnUrl" [(ngModel)]="appliance.switchOnUrl">
+        <input type="text" name="switchOnUrl" [(ngModel)]="control.httpSwitch.onUrl">
       </div>
       <div class="field">
         <label>On Data</label>
-        <input type="text" name="switchOnData" [(ngModel)]="appliance.switchOnData">
+        <input type="text" name="switchOnData" [(ngModel)]="control.httpSwitch.onData">
       </div>
       <div class="field">
         <label>Off URL</label>
-        <input type="text" name="switchOffUrl" [(ngModel)]="appliance.switchOffUrl">
+        <input type="text" name="switchOffUrl" [(ngModel)]="control.httpSwitch.offUrl">
       </div>
       <div class="field">
         <label>Off Data</label>
-        <input type="text" name="switchOffData" [(ngModel)]="appliance.switchOffData">
+        <input type="text" name="switchOffData" [(ngModel)]="control.httpSwitch.offData">
       </div>
       <div class="ui fields">
         <div class="field">
           <label>Username</label>
-          <input type="text" name="switchUsername" [(ngModel)]="appliance.switchUsername">
+          <input type="text" name="switchUsername" [(ngModel)]="control.httpSwitch.username">
         </div>
         <div class="field">
           <label>Password</label>
-          <input type="text" name="switchPassword" [(ngModel)]="appliance.switchPassword">
+          <input type="text" name="switchPassword" [(ngModel)]="control.httpSwitch.password">
         </div>
         <div class="field">
           <label>Content type</label>
-          <input type="text" name="switchContentType" [(ngModel)]="appliance.switchContentType">
+          <input type="text" name="switchContentType" [(ngModel)]="control.httpSwitch.contentType">
         </div>
       </div>
     </div>
 
-    <div *ngIf="appliance.switchStartingCurrentSwitch">
+    <div *ngIf="control.startingCurrentDetection">
       <h4 class="ui dividing header">Starting current</h4>
       <div class="ui fields">
         <div class="field">
           <label>Power threshold</label>
-          <input type="text" name="switchPowerThreshold" [(ngModel)]="appliance.switchPowerThreshold">
+          <input type="text" name="switchPowerThreshold" [(ngModel)]="control.startingCurrentSwitch.powerThreshold">
         </div>
         <div class="field">
           <label>Starting current detection duration</label>
-          <input type="text" name="switchStartingCurrentDetectionDuration" [(ngModel)]="appliance.switchStartingCurrentDetectionDuration">
+          <input type="text" name="switchStartingCurrentDetectionDuration" [(ngModel)]="control.startingCurrentSwitch.startingCurrentDetectionDuration">
         </div>
         <div class="field">
           <label>Finished current detection duration</label>
-          <input type="text" name="switchFinishedCurrentDetectionDuration" [(ngModel)]="appliance.switchFinishedCurrentDetectionDuration">
+          <input type="text" name="switchFinishedCurrentDetectionDuration" [(ngModel)]="control.startingCurrentSwitch.finishedCurrentDetectionDuration">
+        </div>
+        <div class="field">
+          <label>Min. running time</label>
+          <input type="text" name="minRunningTime" [(ngModel)]="control.startingCurrentSwitch.minRunningTime">
         </div>
       </div>
     </div>

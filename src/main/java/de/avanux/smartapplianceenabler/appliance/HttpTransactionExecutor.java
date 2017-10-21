@@ -44,8 +44,7 @@ import java.io.IOException;
 @XmlTransient
 @XmlAccessorType(XmlAccessType.FIELD)
 abstract public class HttpTransactionExecutor {
-    @XmlTransient
-    private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(HttpTransactionExecutor.class));
+    private transient ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(HttpTransactionExecutor.class));
     @XmlAttribute
     private String contentType;
     @XmlAttribute

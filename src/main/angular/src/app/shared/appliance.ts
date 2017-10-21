@@ -17,11 +17,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 export class Appliance {
-
-  meterType: string;
-  switchType: string;
-
-  // Device2EM
   id: string;
   name: string;
   type: string;
@@ -30,65 +25,4 @@ export class Appliance {
   maxPowerConsumption: string;
   currentPowerMethod: string;
   interruptionsAllowed: boolean;
-
-  // =============
-  // === Meter ===
-  // =============
-
-  // === S0ElectricityMeter ===
-  meterGpio: string;
-  meterPinPullResistance: string;
-  meterImpulsesPerKwh: string;
-  meterMeasurementInterval: string;
-  meterPowerOnAlways: boolean;
-
-  // === S0ElectricityMeterNetworked ===
-  meterPulseReceiverID: string;
-  // meterImpulsesPerKwh: string;
-  // meterMeasurementInterval: string;
-  // meterPowerOnAlways: boolean;
-
-  // === ModbusElectricityMeter ===
-  meterSlaveAddress: string;
-  meterRegisterAddress: string;
-  meterPollInterval: string;
-  // meterMeasurementInterval: string;
-
-  // === HttpElectricityMeter ===
-  meterUrl: string;
-  meterUsername: string;
-  meterPassword: string;
-  meterContentType: string;
-  meterData: string;
-  meterPowerValueExtractionRegex: string;
-  meterFactorToWatt: string;
-  // meterPollInterval: string;
-  // meterMeasurementInterval: string;
-
-  // ==============================================
-  // === Switch DON'T REUSE METER VARIABLES !!! ===
-  // ==============================================
-
-  // === StartingCurrentSwitch ===
-  switchStartingCurrentSwitch: boolean;
-  switchPowerThreshold: string;
-  switchStartingCurrentDetectionDuration: string;
-  switchFinishedCurrentDetectionDuration: string;
-
-  // === Switch ===
-  switchGpio: string;
-  switchReverseStates: boolean;
-
-  // === ModbusSwitch ===
-  switchSlaveAddress: string;
-  switchRegisterAddress: string;
-
-  // === HttpSwitch ===
-  switchOnUrl: string;
-  switchOffUrl: string;
-  switchUsername: string;
-  switchPassword: string;
-  switchContentType: string;
-  switchOnData: string;
-  switchOffData: string;
 }

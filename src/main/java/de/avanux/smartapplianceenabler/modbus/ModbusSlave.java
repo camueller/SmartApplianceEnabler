@@ -36,18 +36,14 @@ import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
 @XmlTransient
 @XmlAccessorType(XmlAccessType.FIELD)
 abstract public class ModbusSlave implements ApplianceIdConsumer {
-    @XmlTransient
-    private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(ModbusSlave.class));
+    private transient ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(ModbusSlave.class));
     @XmlAttribute
     private String idref;
     @XmlAttribute
     private int slaveAddress;
-    @XmlTransient
-    private String applianceId;
-    @XmlTransient
-    private ModbusTcp modbusTcp;
-    @XmlTransient
-    private TCPMasterConnection connection;
+    private transient String applianceId;
+    private transient ModbusTcp modbusTcp;
+    private transient TCPMasterConnection connection;
 
     @Override
     public void setApplianceId(String applianceId) {

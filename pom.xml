@@ -58,10 +58,16 @@
 			<version>2.3.0</version>
 		</dependency>
 		<dependency>
+			<!-- TODO: use genson in order to use only one JSON library -->
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
 			<version>2.8.0</version>
 			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.owlike</groupId>
+			<artifactId>genson</artifactId>
+			<version>1.4</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

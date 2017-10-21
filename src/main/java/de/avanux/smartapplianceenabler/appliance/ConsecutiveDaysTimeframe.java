@@ -37,8 +37,7 @@ public class ConsecutiveDaysTimeframe implements Timeframe {
     private TimeOfDayOfWeek start;
     @XmlElement(name = "End")
     private TimeOfDayOfWeek end;
-    @XmlTransient
-    private Schedule schedule;
+    private transient Schedule schedule;
 
     public ConsecutiveDaysTimeframe() {
     }

@@ -17,8 +17,14 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 export class ConsecutiveDaysTimeframe {
+
+  static get TYPE(): string {
+    return 'de.avanux.smartapplianceenabler.appliance.ConsecutiveDaysTimeframe';
+  }
+
+  '@class' = ConsecutiveDaysTimeframe.TYPE;
   startTime: string;
-  startDayOfWeek: string;
+  startDayOfWeek: number;
   endTime: string;
-  endDayOfWeek: string;
+  endDayOfWeek: number;
 }

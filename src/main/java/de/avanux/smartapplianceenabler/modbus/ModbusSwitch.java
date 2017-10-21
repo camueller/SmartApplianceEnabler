@@ -31,12 +31,10 @@ import java.util.List;
 
 public class ModbusSwitch extends ModbusSlave implements Control {
 
-    @XmlTransient
-    private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(ModbusSwitch.class));
+    private transient ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(ModbusSwitch.class));
     @XmlAttribute
     private String registerAddress;
-    @XmlTransient
-    List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
+    transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
 
     @Override
     public void setApplianceId(String applianceId) {

@@ -26,10 +26,13 @@ import {ApplianceDetailsComponent} from './appliance-details/appliance-details.c
 import {AppRoutingModule} from './app-routing.module';
 import {PageNotFoundComponent} from './not-found.component';
 import {ApplianceMeterComponent} from './appliance-meter/appliance-meter.component';
-import { ApplianceSwitchComponent } from './appliance-switch/appliance-switch.component';
+import { ApplianceControlComponent } from './appliance-control/appliance-control.component';
 import { ScheduleComponent } from './schedule/schedule.component';
 import { SchedulesComponent } from './schedules/schedules.component';
 import { SettingsComponent } from './settings/settings.component';
+import {HttpModule} from '@angular/http';
+import {ApplianceResolver} from './shared/appliance-resolver.service';
+import {AppliancesReloadService} from './shared/appliances-reload-service';
 
 @NgModule({
   declarations: [
@@ -37,7 +40,7 @@ import { SettingsComponent } from './settings/settings.component';
     ApplianceDetailsComponent,
     PageNotFoundComponent,
     ApplianceMeterComponent,
-    ApplianceSwitchComponent,
+    ApplianceControlComponent,
     ScheduleComponent,
     SchedulesComponent,
     SettingsComponent
@@ -45,10 +48,13 @@ import { SettingsComponent } from './settings/settings.component';
   imports: [
     BrowserModule,
     FormsModule,
-    AppRoutingModule
+    AppRoutingModule,
+    HttpModule
   ],
   providers: [
-    ApplianceService
+    ApplianceService,
+    AppliancesReloadService,
+    ApplianceResolver
   ],
   bootstrap: [AppComponent]
 })
