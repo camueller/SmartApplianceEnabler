@@ -25,7 +25,7 @@
         <input type="checkbox" name="holidaysEnabled" [(ngModel)]="settings.holidaysEnabled">
         <label>Enabled</label>
       </div>
-      <div class="six wide field" [class.disabled]="!settings.holidaysEnabled">
+      <div class="seven wide field" [class.disabled]="!settings.holidaysEnabled">
         <label>Download URL</label>
         <input type="text" name="holidayUrl" placeholder="{{settings.defaultHolidaysUrl}}" [(ngModel)]="settings.holidaysUrl">
       </div>
@@ -54,7 +54,7 @@
         <input type="checkbox" name="pulseReceiveEnabled" [(ngModel)]="settings.pulseReceiverEnabled">
         <label>Enabled</label>
       </div>
-      <div class="field" [class.disabled]="!settings.pulseReceiveEnabled">
+      <div class="field" [class.disabled]="!settings.pulseReceiverEnabled">
         <label>Port</label>
         <input type="text" name="pulseReceiverPort" placeholder="{{settings.defaultPulseReceiverPort}}" [(ngModel)]="settings.pulseReceiverPort">
       </div>
