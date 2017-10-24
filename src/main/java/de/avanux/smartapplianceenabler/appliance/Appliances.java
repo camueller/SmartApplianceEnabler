@@ -27,21 +27,25 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Appliances {
     @XmlElement(name = "Configuration")
-    private List<Configuration> configurationValues;
+    private List<Configuration> configurations;
     @XmlElement(name = "Appliance")
     private List<Appliance> appliances;
     @XmlElement(name = "Connectivity")
     private Connectivity connectivity;
 
     public String getConfigurationValue(String param) {
-        if(configurationValues != null) {
-            for(Configuration configuration : configurationValues) {
+        if(configurations != null) {
+            for(Configuration configuration : configurations) {
                 if(configuration.getParam().equals(param)) {
                     return configuration.getValue();
                 }
             }
         }
         return null;
+    }
+
+    public void setConfigurations(List<Configuration> configurations) {
+        this.configurations = configurations;
     }
 
     public List<Appliance> getAppliances() {
@@ -54,5 +58,9 @@ public class Appliances {
 
     public Connectivity getConnectivity() {
         return connectivity;
+    }
+
+    public void setConnectivity(Connectivity connectivity) {
+        this.connectivity = connectivity;
     }
 }

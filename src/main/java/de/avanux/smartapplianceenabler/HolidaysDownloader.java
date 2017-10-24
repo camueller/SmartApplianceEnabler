@@ -36,8 +36,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class HolidaysDownloader {
-
     private Logger logger = LoggerFactory.getLogger(HolidaysDownloader.class);
+    public static final String urlConfigurationParamName = "Holidays.Url";
     private String url = "http://feiertage.jarmedia.de/api/?jahr={0}&nur_land=NATIONAL";
     private static final DateTimeFormatter dateFormatter = DateTimeFormat.forPattern("yyyy-MM-dd");
 

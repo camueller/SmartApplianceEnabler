@@ -22,7 +22,7 @@
       <app-schedule [schedule]="schedule" [index]="i" (removeScheduleEvent)="removeSchedule($event)"></app-schedule>
       <div class="ui hidden divider"></div>
     </div>
-    <button (click)="addSchedule()" class="ui button">Neu</button>
+    <button type="button" (click)="addSchedule()" class="ui button">Neu</button>
     <button type="submit" class="ui button" *ngIf="schedules?.length > 0">Speichern</button>
   </form>
 </div>

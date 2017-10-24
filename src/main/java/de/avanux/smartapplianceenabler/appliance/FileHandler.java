@@ -55,13 +55,15 @@ public class FileHandler {
 
     public <R extends Object> R load(Class<R> rootElementType) {
         File file = getFile(rootElementType);
-        try {
-            JAXBContext context = JAXBContext.newInstance(rootElementType);
-            Unmarshaller unmarshaller = context.createUnmarshaller();
-            return (R) unmarshaller.unmarshal(file);
-        }
-        catch(JAXBException e) {
-            logger.error("Error unmarshalling file " + file, e);
+        if(file.exists()) {
+            try {
+                JAXBContext context = JAXBContext.newInstance(rootElementType);
+                Unmarshaller unmarshaller = context.createUnmarshaller();
+                return (R) unmarshaller.unmarshal(file);
+            }
+            catch(JAXBException e) {
+                logger.error("Error unmarshalling file " + file, e);
+            }
         }
         return null;
     }

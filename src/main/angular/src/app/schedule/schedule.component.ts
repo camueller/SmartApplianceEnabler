@@ -16,10 +16,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {
-  AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit,
-  Output
-} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
 import {Schedule} from '../shared/schedule';
 import {DayTimeframe} from '../shared/day-timeframe';
 import {ConsecutiveDaysTimeframe} from '../shared/consecutive-days-timeframe';
@@ -40,7 +37,9 @@ export class ScheduleComponent implements OnInit, AfterViewInit, OnChanges {
   DAY_TIMEFRAME = DayTimeframe.TYPE;
   CONSECUTIVE_DAYS_TIMEFRAME = ConsecutiveDaysTimeframe.TYPE;
 
+
   ngOnInit() {
+    this.timeframeTypeChanged(this.schedule.timeframeType);
     this.initializeDropdown();
   }
 
@@ -60,11 +59,11 @@ export class ScheduleComponent implements OnInit, AfterViewInit, OnChanges {
     $('.ui.dropdown').dropdown();
   }
 
-  isDaytimeFrame(): boolean {
-    return this.schedule.timeframeType === this.DAY_TIMEFRAME;
-  }
-
-  isConsecutiveDaysTimeframe(): boolean {
-    return this.schedule.timeframeType === this.CONSECUTIVE_DAYS_TIMEFRAME;
+  timeframeTypeChanged(newType: string) {
+    if (newType === this.DAY_TIMEFRAME && this.schedule.dayTimeframe == null) {
+      this.schedule.dayTimeframe = new DayTimeframe();
+    } else if (newType === this.CONSECUTIVE_DAYS_TIMEFRAME && this.schedule.consecutiveDaysTimeframe == null) {
+      this.schedule.consecutiveDaysTimeframe = new ConsecutiveDaysTimeframe();
+    }
   }
 }

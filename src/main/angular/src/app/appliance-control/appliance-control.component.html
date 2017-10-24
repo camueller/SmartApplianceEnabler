@@ -29,7 +29,7 @@
         </select>
       </div>
       <div class="ui checkbox">
-        <input type="checkbox" name="switchStartingCurrentSwitch" [(ngModel)]="control.startingCurrentDetection">
+        <input type="checkbox" name="switchStartingCurrentSwitch" [(ngModel)]="control.startingCurrentDetection" (ngModelChange)="startingCurrentDetectionChanged($event)">
         <label>Starting current detection</label>
       </div>
     </div>

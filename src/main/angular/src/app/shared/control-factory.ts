@@ -46,10 +46,10 @@ export class ControlFactory {
     console.log('Control (TYPE): ' + JSON.stringify(control));
     let rawControl: string;
     if (control.startingCurrentSwitch != null) {
-      control.startingCurrentSwitch['controls'] = [ this.toJSONbyType(control) ];
+      control.startingCurrentSwitch['controls'] = [ this.getControlByType(control) ];
       rawControl = JSON.stringify(control.startingCurrentSwitch);
     } else {
-      rawControl = JSON.stringify(control);
+      rawControl = JSON.stringify(this.getControlByType(control));
     }
     console.log('Control (TYPE): ' + JSON.stringify(rawControl));
     return rawControl;
@@ -66,7 +66,7 @@ export class ControlFactory {
     }
   }
 
-  static toJSONbyType(control: Control): any {
+  static getControlByType(control: Control): any {
     if (control.type === Switch.TYPE) {
       return control.switch_;
     } else if (control.type === ModbusSwitch.TYPE) {
