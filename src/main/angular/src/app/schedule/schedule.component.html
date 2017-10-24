@@ -28,18 +28,17 @@
       <label>Enabled</label>
     </div>
     <div class="field" [class.disabled]="!schedule.enabled">
-      <select class="ui fluid dropdown" name="timeframeType" [(ngModel)]="schedule.timeframeType">
-        <option value="`DAY_TIMEFRAME`" [selected]="schedule.timeframeType==DAY_TIMEFRAME">
-          Day timeframe
-        </option>
-        <option value="`CONSECUTIVE_DAYS_TIMEFRAME`" [selected]="schedule.timeframeType==CONSECUTIVE_DAYS_TIMEFRAME">
-          Consecutive days timeframe
-        </option>
+      <select class="ui fluid dropdown" name="timeframeType"
+              [(ngModel)]="schedule.timeframeType" (ngModelChange)="timeframeTypeChanged($event)">
+        <option value="de.avanux.smartapplianceenabler.appliance.DayTimeframe"
+                [selected]="schedule.timeframeType==DAY_TIMEFRAME">Day timeframe</option>
+        <option value="de.avanux.smartapplianceenabler.appliance.ConsecutiveDaysTimeframe"
+                [selected]="schedule.timeframeType==CONSECUTIVE_DAYS_TIMEFRAME">Consecutive days timeframe</option>
       </select>
     </div>
   </div>
 
-  <div class="ui fields" [class.disabled]="!schedule.enabled" *ngIf="isDaytimeFrame()">
+  <div class="ui fields" [class.disabled]="!schedule.enabled" *ngIf="schedule.timeframeType===DAY_TIMEFRAME">
     <div class="field">
       <label>Days of week</label>
       <select class="ui fluid dropdown" multiple="" [(ngModel)]="schedule.dayTimeframe.daysOfWeekValues">
@@ -71,7 +70,7 @@
     </div>
   </div>
 
-  <div class="ui fields" [class.disabled]="!schedule.enabled" *ngIf="isConsecutiveDaysTimeframe()">
+  <div class="ui fields" [class.disabled]="!schedule.enabled" *ngIf="schedule.timeframeType===CONSECUTIVE_DAYS_TIMEFRAME">
     <div class="field">
       <label>Start day of week</label>
       <select class="ui fluid dropdown" [(ngModel)]="schedule.consecutiveDaysTimeframe.startDayOfWeek">

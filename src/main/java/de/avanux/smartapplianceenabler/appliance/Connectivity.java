@@ -38,7 +38,16 @@ public class Connectivity {
         return pulseReceivers;
     }
 
+    public void setPulseReceivers(List<PulseReceiver> pulseReceivers) {
+        this.pulseReceivers = pulseReceivers;
+    }
+
     public List<ModbusTcp> getModbusTCPs() {
         return modbusTCPs;
     }
+
+    public void setModbusTCPs(List<ModbusTcp> modbusTCPs) {
+        this.modbusTCPs = modbusTCPs;
+    }
+
 }

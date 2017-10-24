@@ -57,8 +57,16 @@ public class PulseReceiver implements Runnable {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public Integer getPort() {
         return port;
+    }
+
+    public void setPort(Integer port) {
+        this.port = port;
     }
 
     public void addListener(String applianceId, PulseListener listener) {

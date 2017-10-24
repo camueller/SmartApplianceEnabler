@@ -74,12 +74,37 @@ public class ApplianceManager implements Runnable {
         if(appliances == null) {
             appliances = fileHandler.load(Appliances.class);
         }
-        if(appliances == null) {
-            logger.error("No valid appliance configuration found. Exiting ...");
-            System.exit(-1);
+        if(appliances != null) {
+            init();
+        }
+        else {
+            logger.warn("No valid appliance configuration found. Exiting ...");
         }
         logger.info(getAppliances().size() + " appliance(s) configured.");
+    }
 
+    public List<Appliance> getAppliances() {
+        if(appliances != null) {
+            return appliances.getAppliances();
+        }
+        return Collections.EMPTY_LIST;
+    }
+
+    public void setAppliances(Appliances appliances) {
+        this.appliances = appliances;
+    }
+
+    public Appliance findAppliance(String applianceId) {
+        List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
+        for (Appliance appliance : appliances) {
+            if(appliance.getId().equals(applianceId)) {
+                return appliance;
+            }
+        }
+        return null;
+    }
+
+    private void init() {
         Map<String,PulseReceiver> pulseReceiverIdWithPulseReceiver = new HashMap<String,PulseReceiver>();
         Map<String,ModbusTcp> modbusIdWithModbusTcp = new HashMap<String,ModbusTcp>();
         Connectivity connectivity = appliances.getConnectivity();
@@ -126,9 +151,10 @@ public class ApplianceManager implements Runnable {
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
+                    FileHandler fileHandler = new FileHandler();
                     if(! fileHandler.isHolidayFileAvailable()) {
                         HolidaysDownloader downloader = new HolidaysDownloader();
-                        String downloadUrl = appliances.getConfigurationValue("Holidays.Url");
+                        String downloadUrl = appliances.getConfigurationValue(HolidaysDownloader.urlConfigurationParamName);
                         if(downloadUrl != null) {
                             downloader.setUrl(downloadUrl);
                         }
@@ -148,26 +174,5 @@ public class ApplianceManager implements Runnable {
         else {
             logger.debug("Holidays are NOT used.");
         }
-    }
-
-    public List<Appliance> getAppliances() {
-        if(appliances != null) {
-            return appliances.getAppliances();
-        }
-        return Collections.EMPTY_LIST;
-    }
-
-    public void setAppliances(Appliances appliances) {
-        this.appliances = appliances;
-    }
-
-    public Appliance findAppliance(String applianceId) {
-        List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
-        for (Appliance appliance : appliances) {
-            if(appliance.getId().equals(applianceId)) {
-                return appliance;
-            }
-        }
-        return null;
     }
 }

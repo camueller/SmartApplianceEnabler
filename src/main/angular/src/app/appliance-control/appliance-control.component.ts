@@ -25,6 +25,7 @@ import {ControlFactory} from '../shared/control-factory';
 import {Switch} from '../shared/switch';
 import {ModbusSwitch} from '../shared/modbus-switch';
 import {HttpSwitch} from '../shared/http-switch';
+import {StartingCurrentSwitch} from '../shared/starting-current-switch';
 
 @Component({
   selector: 'app-appliance-switch',
@@ -56,6 +57,12 @@ export class ApplianceControlComponent implements OnInit {
       this.control.modbusSwitch = new ModbusSwitch();
     } else if (newType === this.TYPE_HTTP_SWITCH && this.control.httpSwitch == null) {
       this.control.httpSwitch = new HttpSwitch();
+    }
+  }
+
+  startingCurrentDetectionChanged(startingCurrentDetection: boolean) {
+    if (startingCurrentDetection) {
+      this.control.startingCurrentSwitch = new StartingCurrentSwitch();
     }
   }
 

@@ -69,13 +69,25 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     public Meter getMeter() {
         return this.meter;
     }
-    
+
+    public void setMeter(Meter meter) {
+        this.meter = meter;
+    }
+
     public List<Control> getControls() {
         return controls;
     }
 
+    public void setControls(List<Control> controls) {
+        this.controls = controls;
+    }
+
     public List<Schedule> getSchedules() {
         return schedules;
+    }
+
+    public void setSchedules(List<Schedule> schedules) {
+        this.schedules = schedules;
     }
 
     public RunningTimeMonitor getRunningTimeMonitor() {

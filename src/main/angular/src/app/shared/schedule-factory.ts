@@ -28,8 +28,8 @@ export class ScheduleFactory {
   static createEmptySchedule(): Schedule {
     const schedule: Schedule = new Schedule();
     schedule.timeframeType = DayTimeframe.TYPE;
-    schedule.dayTimeframe = new DayTimeframe();
-    schedule.consecutiveDaysTimeframe = new ConsecutiveDaysTimeframe();
+//    schedule.dayTimeframe = new DayTimeframe();
+//    schedule.consecutiveDaysTimeframe = new ConsecutiveDaysTimeframe();
     return schedule;
   }
 
@@ -38,19 +38,24 @@ export class ScheduleFactory {
       if (schedules[i].dayTimeframe != null) {
         const start = schedules[i].dayTimeframe.startTime;
         const end = schedules[i].dayTimeframe.endTime;
-        schedules[i].dayTimeframe.start = new TimeOfDay(
-          parseInt(start.substr(0, 2), 10),
-          parseInt(start.substr(3, 2), 10),
-          parseInt(start.substr(6, 2), 10));
-        schedules[i].dayTimeframe.end = new TimeOfDay(
-          parseInt(end.substr(0, 2), 10),
-          parseInt(end.substr(3, 2), 10),
-          parseInt(end.substr(6, 2), 10));
-
+        if (start != null) {
+          schedules[i].dayTimeframe.start = new TimeOfDay(
+            parseInt(start.substr(0, 2), 10),
+            parseInt(start.substr(3, 2), 10),
+            parseInt(start.substr(6, 2), 10));
+        }
+        if (end != null) {
+          schedules[i].dayTimeframe.end = new TimeOfDay(
+            parseInt(end.substr(0, 2), 10),
+            parseInt(end.substr(3, 2), 10),
+            parseInt(end.substr(6, 2), 10));
+        }
         schedules[i].dayTimeframe.daysOfWeek = new Array();
         const dowValues = schedules[i].dayTimeframe.daysOfWeekValues;
-        for (let j = 0; j < dowValues.length; j++) {
-          schedules[i].dayTimeframe.daysOfWeek.push(new DayOfWeek(dowValues[j]));
+        if (dowValues != null) {
+          for (let j = 0; j < dowValues.length; j++) {
+            schedules[i].dayTimeframe.daysOfWeek.push(new DayOfWeek(dowValues[j]));
+          }
         }
       } else if (schedules[i].consecutiveDaysTimeframe != null) {
         const start = schedules[i].consecutiveDaysTimeframe.startTime;
