@@ -1,4 +1,12 @@
-# Konfiguration
+# Konfiguration mittels Web-Browser
+Am einfachsten erfolgt die Konfiguration über das Web-Frontent des *Smart Appliance Enabler*. Dazu muss man im Web-Browser lediglich eingeben ```http://raspi:8080/```, wobei *raspi* durch den Hostnamen oder die IP-Adresses des Raspberry Pi ersetzt werden muss.
+Die Web-Oberfläche ist bewusst einfach und dennoch komfortabel gehalten, um diverse Endgeräte optimal zu unterstützen.
+
+<img src="https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/WebFrontend_Schaltzeiten.png" width="870">
+<img src="https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/WebFrontend_Schaltzeiten_Mobile.png" width="240">
+
+
+# Konfiguration mittels XML-Dateien
 
 ## Vorgehensweise
 Die Konfiguration besteht aus zwei [XML](https://de.wikipedia.org/wiki/Extensible_Markup_Language)-Dateien, die sich im ```/app```-Verzeichnis befinden müssen:
@@ -97,7 +105,13 @@ Ein `ConsecutiveDaysTimeframe` erlaubt die Festlegung eines Intervals, der läng
 ```
 Der *Smart Appliance Enabler* meldet dem Sunny Home Manager den Geräte-Laufzeitbedarf für die nächsten 48 Stunden, damit er auf dieser Basis optimal planen kann.
 
-## Setzen der Schedules via REST
+# Konfiguration mittels REST (JSON)
+Für die Konfiguration mittels Web-Frontend existieren entsprechend REST-Services, die auch unabhängig vom Web-Frontend verwendet werden können.
+
+TODO: REST-Services hier dokumentieren inkl. Beispiel mit curl
+
+
+## Setzen der Schedules mittels REST (XML)
 Normalerweise werden die Schedules aus der Datei `Appliance.xml` gelesen. Es ist jedoch möglich, die Schedules via REST an den SAE zu übergeben. Dazu müssen der/die Schedules in einem Root-Element `Schedules` zusammengefasst werden, das an SAE unter Angabe der Appliance-ID übergeben wird:
 ```
 /usr/bin/curl -s -X POST -d '<Schedules><Schedule minRunningTime="36000" maxRunningTime="43200"><ConsecutiveDaysTimeframe><Start dayOfWeek="5" hour="16" minute="0" second="0" /><End dayOfWeek="7" hour="20" minute="0" second="0" /></ConsecutiveDaysTimeframe></Schedule></Schedules>' --header 'Content-Type: application/xml' http://localhost:8080/sae/schedules?ApplianceId=F-00000001-000000000001-00
