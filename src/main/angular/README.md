@@ -28,4 +28,10 @@ $ npm i --save semantic-ui-css
 smartapplianceenabler@0.0.0
 └─┬ semantic-ui-css@2.2.12
   └── jquery@3.2.1
-
+```
+In order to make time entry easier a clock picker is used:
+```
+$ npm i --save clockpicker
+saeweb@0.0.0 /data/IdeaProjects/SmartApplianceEnabler/src/main/angular
+└── clockpicker@0.0.7
+```
