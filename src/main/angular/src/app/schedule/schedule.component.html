@@ -54,11 +54,11 @@
     </div>
     <div class="field">
       <label>Start</label>
-      <input type="text" name="start" [(ngModel)]="schedule.dayTimeframe.startTime">
+      <input class="clockpicker" #dayTimeframeStartTime type="text" name="start" [(ngModel)]="schedule.dayTimeframe.startTime">
     </div>
     <div class="field">
       <label>End</label>
-      <input type="text" name="end" [(ngModel)]="schedule.dayTimeframe.endTime">
+      <input class="clockpicker" #dayTimeframeEndTime type="text" name="end" [(ngModel)]="schedule.dayTimeframe.endTime">
     </div>
     <div class="field">
       <label>Min. running time</label>
@@ -85,7 +85,7 @@
     </div>
     <div class="field">
       <label>Start</label>
-      <input type="text" name="startTime" [(ngModel)]="schedule.consecutiveDaysTimeframe.startTime">
+      <input class="clockpicker" #consecutiveDaysTimeframeStartTime type="text" name="startTime" [(ngModel)]="schedule.consecutiveDaysTimeframe.startTime">
     </div>
     <div class="field">
       <label>Start day of week</label>
@@ -101,7 +101,7 @@
     </div>
     <div class="field">
       <label>End</label>
-      <input type="text" name="startTime" [(ngModel)]="schedule.consecutiveDaysTimeframe.endTime">
+      <input class="clockpicker" #consecutiveDaysTimeframeEndTime type="text" name="endTime" [(ngModel)]="schedule.consecutiveDaysTimeframe.endTime">
     </div>
     <div class="field">
       <label>Min. running time</label>

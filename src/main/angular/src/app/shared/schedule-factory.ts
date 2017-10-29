@@ -28,8 +28,6 @@ export class ScheduleFactory {
   static createEmptySchedule(): Schedule {
     const schedule: Schedule = new Schedule();
     schedule.timeframeType = DayTimeframe.TYPE;
-//    schedule.dayTimeframe = new DayTimeframe();
-//    schedule.consecutiveDaysTimeframe = new ConsecutiveDaysTimeframe();
     return schedule;
   }
 
@@ -41,14 +39,12 @@ export class ScheduleFactory {
         if (start != null) {
           schedules[i].dayTimeframe.start = new TimeOfDay(
             parseInt(start.substr(0, 2), 10),
-            parseInt(start.substr(3, 2), 10),
-            parseInt(start.substr(6, 2), 10));
+            parseInt(start.substr(3, 2), 10), 0);
         }
         if (end != null) {
           schedules[i].dayTimeframe.end = new TimeOfDay(
             parseInt(end.substr(0, 2), 10),
-            parseInt(end.substr(3, 2), 10),
-            parseInt(end.substr(6, 2), 10));
+            parseInt(end.substr(3, 2), 10), 0);
         }
         schedules[i].dayTimeframe.daysOfWeek = new Array();
         const dowValues = schedules[i].dayTimeframe.daysOfWeekValues;
@@ -63,13 +59,11 @@ export class ScheduleFactory {
         schedules[i].consecutiveDaysTimeframe['start'] = new TimeOfDayOfWeek(
           schedules[i].consecutiveDaysTimeframe.startDayOfWeek,
           parseInt(start.substr(0, 2), 10),
-          parseInt(start.substr(3, 2), 10),
-          parseInt(start.substr(6, 2), 10));
+          parseInt(start.substr(3, 2), 10), 0);
         schedules[i].consecutiveDaysTimeframe['end'] = new TimeOfDayOfWeek(
           schedules[i].consecutiveDaysTimeframe.endDayOfWeek,
           parseInt(end.substr(0, 2), 10),
-          parseInt(end.substr(3, 2), 10),
-          parseInt(end.substr(6, 2), 10));
+          parseInt(end.substr(3, 2), 10), 0);
       }
     }
 
@@ -102,8 +96,8 @@ export class ScheduleFactory {
     for (let i = 0; i < rawTimeframe.daysOfWeek.length; i++) {
       dayTimeframe.daysOfWeekValues.push(rawTimeframe.daysOfWeek[i].value);
     }
-    dayTimeframe.startTime = this.timestring(rawTimeframe.start.hour, rawTimeframe.start.minute, rawTimeframe.start.second);
-    dayTimeframe.endTime = this.timestring(rawTimeframe.end.hour, rawTimeframe.end.minute, rawTimeframe.end.second);
+    dayTimeframe.startTime = this.timestring(rawTimeframe.start.hour, rawTimeframe.start.minute);
+    dayTimeframe.endTime = this.timestring(rawTimeframe.end.hour, rawTimeframe.end.minute);
     return dayTimeframe;
   }
 
@@ -111,16 +105,14 @@ export class ScheduleFactory {
     console.log('createConsecutiveDaysTimeframe from ' + JSON.stringify(rawTimeframe));
     const consecutiveDaysTimeframe = new ConsecutiveDaysTimeframe();
     consecutiveDaysTimeframe.startDayOfWeek = rawTimeframe.start.dayOfWeek;
-    consecutiveDaysTimeframe.startTime = this.timestring(rawTimeframe.start.hour, rawTimeframe.start.minute,
-      rawTimeframe.start.second);
+    consecutiveDaysTimeframe.startTime = this.timestring(rawTimeframe.start.hour, rawTimeframe.start.minute);
     consecutiveDaysTimeframe.endDayOfWeek = rawTimeframe.end.dayOfWeek;
-    consecutiveDaysTimeframe.endTime = this.timestring(rawTimeframe.end.hour, rawTimeframe.end.minute,
-      rawTimeframe.end.second);
+    consecutiveDaysTimeframe.endTime = this.timestring(rawTimeframe.end.hour, rawTimeframe.end.minute);
     return consecutiveDaysTimeframe;
   }
 
-  static timestring(hour: number, minute: number, second: number): string {
-    return this.pad(hour, 2) + ':' + this.pad(minute, 2) + ':' + this.pad(second, 2);
+  static timestring(hour: number, minute: number): string {
+    return this.pad(hour, 2) + ':' + this.pad(minute, 2);
   }
 
   static pad(value: number, size: number): string {
