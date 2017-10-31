@@ -63,7 +63,6 @@ public class SaeControllerTest {
     @Before
     public void setup() throws Exception {
         this.mockMvc = webAppContextSetup(webApplicationContext).build();
-        Application.configureLogging(Level.DEBUG, null, true);
     }
 
     @Test
@@ -123,7 +122,7 @@ public class SaeControllerTest {
         ApplianceManager.getInstance().setAppliances(appliances);
 
         this.mockMvc.perform(post(url)
-                .param("ApplianceId", applianceId)
+                .param("id", applianceId)
                 .contentType(contentType)
                 .content(content))
                 .andExpect(status().isOk());
