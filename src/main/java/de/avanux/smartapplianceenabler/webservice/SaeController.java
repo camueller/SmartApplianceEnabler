@@ -299,7 +299,17 @@ public class SaeController {
         List<Schedule> schedulesToSet = schedules.getSchedules();
         applianceLogger.debug("Received request to set " + (schedulesToSet != null ? schedulesToSet.size() : "0") + " schedule(s)");
         Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
-        appliance.getRunningTimeMonitor().setSchedules(schedulesToSet);
+        if(appliance != null) {
+            if(appliance.getRunningTimeMonitor() != null) {
+                appliance.getRunningTimeMonitor().setSchedules(schedulesToSet);
+            }
+            else {
+                applianceLogger.error("Appliance has no RunningTimeMonitor");
+            }
+        }
+        else {
+            applianceLogger.error("Appliance not found");
+        }
     }
 
     @RequestMapping(value= SETTINGS_URL, method=RequestMethod.GET, produces="application/json")
