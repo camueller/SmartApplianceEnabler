@@ -64,6 +64,8 @@ Zur Nutzung von Features, die noch nicht in der releasten Version enthalten sind
 Der *Smart Appliance Enabler* verwendet intern folgende Open-Source-Software:
 * [Pi4J](http://pi4j.com) für den Zugriff auf die GPIO-Ports des Raspberry
 * [Spring Boot](http://projects.spring.io/spring-boot) für RESTful Web-Services (SEMP-Protokoll)
+* [Angular](https://angular.io) für das Web-Frontend
+* [Semantic UI](https://semantic-ui.com/) für das Web-Frontend
 * [Cling](http://4thline.org/projects/cling) für UPnP (SEMP-Protokoll)
 
 ## [Fragen / Probleme](doc/Troubleshooting_DE.md)
