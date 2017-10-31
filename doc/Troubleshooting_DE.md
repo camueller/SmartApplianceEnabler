@@ -3,7 +3,11 @@
 Wenn der *SMA Home Manager* die vom *Smart Appliance Enabler* verwalteten Geräte nicht finden kann, sollen folgende Punkte geprüft werden:
 
 ### Erhöhung des Log-Levels
-Standardmäßig ist der Log-Level auf INFO gesetzt. Zur Fehlersuche sollte dieser in der Datei `/etc/default/smartapplianceenabler` auf ALL gesetzt werden, damit in der Log-Datei alle verfügbaren Informationen in der Log-Datei `/var/log/smartapplianceenabler.log` protokolliert werden.
+Standardmäßig ist der Log-Level auf INFO gesetzt. Zur Fehlersuche sollte in der Datei `/etc/default/smartapplianceenabler` die alternative Logging-Konfiguration aktiviert werden, indem die Zeile
+```
+JAVA_OPTS="${JAVA_OPTS} -Dlogging.config=/app/logback-spring.xml"
+```
+nicht mehr auskommentiert ist. In dieser Datei ist der Log-Level bereits auf DEBUG gesetzt. Nach einem Neustart des *Smart Appliance Enabler* findet sich die Log-Datei im Verzeichnis ```/tmp``` als ```rolling-<datum>.log```, also z.B. ```rolling-2017-10-30.log```.
 
 ### Verbindung zwischen Home Manager und Smart Appliance Enabler
 Home Manager auf den *Smart Appliance Enabler* müssen sich im gleichen Netz befinden!

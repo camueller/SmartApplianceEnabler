@@ -18,28 +18,23 @@
 
 package de.avanux.smartapplianceenabler;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
-import java.lang.management.ManagementFactory;
-
-import ch.qos.logback.classic.Level;
+import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
 import de.avanux.smartapplianceenabler.appliance.FileHandler;
-import de.avanux.smartapplianceenabler.log.ApplianceLogger;
+import de.avanux.smartapplianceenabler.semp.discovery.SempDiscovery;
 import de.avanux.smartapplianceenabler.semp.webservice.Device2EM;
 import de.avanux.smartapplianceenabler.semp.webservice.SempController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.FileAppender;
-import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
-import de.avanux.smartapplianceenabler.semp.discovery.SempDiscovery;
 import org.springframework.context.ConfigurableApplicationContext;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Writer;
+import java.lang.management.ManagementFactory;
+import java.util.Properties;
 
 @SpringBootApplication
 public class Application {
@@ -50,10 +45,25 @@ public class Application {
         applicationContext = SpringApplication.run(Application.class, args);
 
         Application application = new Application();
-        application.configureLogging();
+        logger.info("Running version " + application.getVersionInfo());
         application.startSemp();
         application.startApplianceManager();
         application.writePidFile();
+    }
+
+    private String getVersionInfo() {
+        String versionInfo = "?";
+        final String versionFilename = "version.properties";
+        Properties props = new Properties();
+        InputStream is = getClass().getClassLoader().getResourceAsStream(versionFilename);
+        try {
+            props.load(is);
+            versionInfo = props.getProperty("version") + " " + props.getProperty("build.date");
+        }
+        catch(IOException e) {
+            logger.warn("Error reading version from " + versionFilename, e);
+        }
+        return versionInfo;
     }
     
     private void startSemp() {
@@ -96,50 +106,5 @@ public class Application {
                 logger.error("Error writing PID file " + pidFileName, e);
             }
         }
-    }
-    
-    public void configureLogging() {
-        ch.qos.logback.classic.Level level = ch.qos.logback.classic.Level.INFO;
-        String levelString = System.getProperty("sae.loglevel");
-        if(levelString != null) {
-            level = ch.qos.logback.classic.Level.valueOf(levelString);
-        }
-        configureLogging(level, System.getProperty("sae.logfile"), false);
-    }
-
-    public static void configureLogging(ch.qos.logback.classic.Level level, String file, boolean additive) {
-        LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-        lc.getFrameworkPackages().add(ApplianceLogger.class.getPackage().getName());
-
-        PatternLayoutEncoder ple = new PatternLayoutEncoder();
-        ple.setPattern("%date %level [%thread] %logger{10} [%file:%line] %msg%n");
-        ple.setContext(lc);
-        ple.start();
-
-        FileAppender<ILoggingEvent> fileAppender = null;
-        if(file != null) {
-            fileAppender = new FileAppender<ILoggingEvent>();
-            fileAppender.setFile(file);
-            fileAppender.setEncoder(ple);
-            fileAppender.setContext(lc);
-            fileAppender.start();
-        }
-
-        ch.qos.logback.classic.Logger logger = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger("de.avanux");
-        if(fileAppender != null) {
-            logger.addAppender(fileAppender);
-        }
-        logger.setLevel(level);
-        logger.setAdditive(additive); /* set to true if logging not already configured by Spring */
-
-        if(fileAppender != null) {
-            ch.qos.logback.classic.Logger rootLogger = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
-            rootLogger.addAppender(fileAppender);
-        }
-        logger.info("Logging configured with log level " + level);
-
-        // external classes
-        ch.qos.logback.classic.Logger loggerRetrieveRemoteDescriptors = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger("org.fourthline.cling.protocol.RetrieveRemoteDescriptors");
-        loggerRetrieveRemoteDescriptors.setLevel(Level.ERROR);
     }
 }

@@ -38,7 +38,8 @@ import {Subject} from 'rxjs/Subject';
 
 @Injectable()
 export class ApplianceService {
-  private api = 'http://localhost:8080/sae';
+  // private api = 'http://localhost:8080/sae';
+  private api = window.location.protocol + '//' + window.location.hostname + ':8080/sae';
   private headers: Headers = new Headers();
 
   constructor(private http: Http) {

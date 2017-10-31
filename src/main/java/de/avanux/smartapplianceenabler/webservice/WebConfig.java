@@ -20,21 +20,42 @@ package de.avanux.smartapplianceenabler.webservice;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.web.HttpMessageConverters;
+import org.springframework.boot.autoconfigure.web.ResourceProperties;
+import org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.WebMvcProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+import org.springframework.web.servlet.DispatcherServlet;
 
+import javax.servlet.Servlet;
 import java.util.List;
 
 @Configuration
-public class WebConfig extends WebMvcConfigurationSupport {
+@ConditionalOnClass({Servlet.class, DispatcherServlet.class, WebMvcAutoConfiguration.WebMvcAutoConfigurationAdapter.class})
+public class WebConfig extends WebMvcAutoConfiguration {
 
-    private Logger logger = LoggerFactory.getLogger(SaeController.class);
+    private Logger logger = LoggerFactory.getLogger(WebConfig.class);
 
-    @Override
-    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        converters.add(0, new GensonHttpMessageConverter());
-        logger.debug("Registered " + GensonHttpMessageConverter.class.getName());
-        addDefaultHttpMessageConverters(converters);
+    @Configuration
+    @Import({WebMvcAutoConfiguration.EnableWebMvcConfiguration.class})
+    @EnableConfigurationProperties({WebMvcProperties.class, ResourceProperties.class})
+    public static class SaeWebMvcAutoConfigurationAdapter extends WebMvcAutoConfigurationAdapter {
+
+        private Logger logger = LoggerFactory.getLogger(SaeWebMvcAutoConfigurationAdapter.class);
+
+        @Autowired
+        private HttpMessageConverters messageConverters;
+
+        @Override
+        public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+            converters.add(new GensonHttpMessageConverter());
+            logger.debug("Registered " + GensonHttpMessageConverter.class.getName());
+            converters.addAll(this.messageConverters.getConverters());
+        }
     }
 }
