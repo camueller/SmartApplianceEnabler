@@ -33,6 +33,9 @@ import { SettingsComponent } from './settings/settings.component';
 import {HttpModule} from '@angular/http';
 import {ApplianceResolver} from './shared/appliance-resolver.service';
 import {AppliancesReloadService} from './shared/appliances-reload-service';
+import {HttpClient, HttpClientModule} from '@angular/common/http';
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 @NgModule({
   declarations: [
@@ -49,7 +52,15 @@ import {AppliancesReloadService} from './shared/appliances-reload-service';
     BrowserModule,
     FormsModule,
     AppRoutingModule,
-    HttpModule
+    HttpModule,
+    HttpClientModule,
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: HttpLoaderFactory,
+        deps: [HttpClient]
+      }
+    })
   ],
   providers: [
     ApplianceService,
@@ -60,3 +71,8 @@ import {AppliancesReloadService} from './shared/appliances-reload-service';
 })
 export class AppModule {
 }
+
+export function HttpLoaderFactory(http: HttpClient) {
+  return new TranslateHttpLoader(http);
+}
+

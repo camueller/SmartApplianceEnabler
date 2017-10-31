@@ -20,6 +20,7 @@ import {Component, OnInit} from '@angular/core';
 import {ApplianceService} from './shared/appliance.service';
 import {Appliance} from './shared/appliance';
 import {AppliancesReloadService} from './shared/appliances-reload-service';
+import {TranslateService} from '@ngx-translate/core';
 
 declare const $: any;
 
@@ -30,8 +31,14 @@ declare const $: any;
 export class AppComponent implements OnInit {
 
   appliances: Appliance[];
+  typePrefix = 'ApplianceDetailsComponent.type.';
+  translatedTypes = new Object();
 
-  constructor(private applianceService: ApplianceService, private appliancesReloadService: AppliancesReloadService) {}
+  constructor(private applianceService: ApplianceService,
+              private appliancesReloadService: AppliancesReloadService,
+              private translate: TranslateService) {
+    translate.setDefaultLang('de');
+  }
 
   toggleSidebar() {
     $('.ui.sidebar').sidebar({dimPage: false, closable: false});
@@ -46,6 +53,21 @@ export class AppComponent implements OnInit {
   }
 
   loadAppliances() {
-    this.applianceService.getAppliances().subscribe(appliances => this.appliances = appliances);
+    this.applianceService.getAppliances().subscribe(appliances => {
+      this.appliances = appliances;
+
+      const types = [];
+      this.appliances.forEach(appliance => types.push(this.typePrefix + appliance.type));
+      if (types.length > 0) {
+        this.translate.get(types).subscribe(translatedTypes => this.translatedTypes = translatedTypes);
+      }
+    });
+  }
+
+  getTranslatedType(type: string): string {
+    if (this.translatedTypes != null) {
+      return this.translatedTypes[this.typePrefix + type];
+    }
+    return '';
   }
 }
