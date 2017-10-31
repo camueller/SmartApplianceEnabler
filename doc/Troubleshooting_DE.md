@@ -18,7 +18,10 @@ Wenn der Log-Level mindestens auf DEBUG gesetzt wurde, kann man in der Log-Datei
 ### Analyse der Log Dateien des SEMP Moduls im Sunny Home Manager
 Siehe http://www.photovoltaikforum.com/geraete-mit-home-manager-koppeln-via-semp-ethernet-p1396300.html#p1396300
 
-### Fehler melden
-Fragen zur Verwendung des *Smart Appliance Enabler* sollten im SEMP-Thread des photovoltaik-forums im SMA Herstellerbereich gestellt werden: https://www.photovoltaikforum.com/geraete-mit-home-manager-koppeln-via-semp-ethernet-t104060.html
+### Anwender-Forum
+Fragen zur Verwendung des *Smart Appliance Enabler* sollten im SEMP-Thread des *photovoltaik-forums* im SMA Herstellerbereich gestellt werden: https://www.photovoltaikforum.com/geraete-mit-home-manager-koppeln-via-semp-ethernet-t104060.html.
 
+Bitte keine Fragen direkt per Email an mich stellen! Wenn die Fragen im Forum gestellt werden, haben alle was davon und die Chance auf Antworten ist deutlich größer.
+
+### Fehler melden
 Bei Fehlern im *Smart Appliance Enabler* sollte ein [Issue](https://github.com/camueller/SmartApplianceEnabler/issues) erstellt werden.
