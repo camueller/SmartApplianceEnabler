@@ -17,68 +17,75 @@
   -->
 
 <div class="ui segment">
-  <form class="ui form" (ngSubmit)="submitForm()">
+  <form class="ui form" #detailsForm="ngForm" (ngSubmit)="submitForm()">
     <div class="three fields">
       <div class="field">
         <label>ID</label>
-        <input type="text" placeholder="F-00000000-000000000000-00" name="id" [(ngModel)]="appliance.id">
+        <input type="text" placeholder="F-00000000-000000000000-00" name="id" [(ngModel)]="appliance.id"
+               required pattern="F-\d{8}-\d{12}-\d{2}">
+        <div *ngIf="errors.id" class="ui negative message">{{errors.id}}</div>
       </div>
     </div>
-    <h4 class="ui dividing header">General</h4>
+    <h4 class="ui dividing header">{{'ApplianceDetailsComponent.general' | translate}}</h4>
     <div class="fields">
       <div class="field">
-        <label>Vendor</label>
-        <input type="text" name="vendor" [(ngModel)]="appliance.vendor">
+        <label>{{'ApplianceDetailsComponent.vendor' | translate}}</label>
+        <input type="text" name="vendor" [(ngModel)]="appliance.vendor" required>
+        <div *ngIf="errors.vendor" class="ui negative message">{{errors.vendor}}</div>
       </div>
       <div class="field">
-        <label>Name</label>
-        <input type="text" name="name" [(ngModel)]="appliance.name">
+        <label>{{'ApplianceDetailsComponent.name' | translate}}</label>
+        <input type="text" name="name" [(ngModel)]="appliance.name" required>
+        <div *ngIf="errors.name" class="ui negative message">{{errors.name}}</div>
       </div>
       <div class="field">
-        <label>Type</label>
-        <select class="ui fluid dropdown" name="type" [(ngModel)]="appliance.type">
-          <option value="AirConditioning">Air conditioning</option>
-          <option value="Charger">Charger</option>
-          <option value="DishWasher">Dish washer</option>
-          <option value="Dryer">Dryer</option>
-          <option value="ElectricVehicle">Electric vehicle</option>
-          <option value="EVCharger">EV charger</option>
-          <option value="Freezer">Freezer</option>
-          <option value="Fridge">Fridge</option>
-          <option value="Heater">Heater</option>
-          <option value="HeatPump">Heat pump</option>
-          <option value="Motor">Motor</option>
-          <option value="Pump">Pump</option>
-          <option value="WashingMachine">Washing machine</option>
-          <option value="Other">Other</option>
+        <label>{{'ApplianceDetailsComponent.type' | translate}}</label>
+        <select class="ui fluid dropdown" name="type" [(ngModel)]="appliance.type" required>
+          <option value="AirConditioning">{{'ApplianceDetailsComponent.type.AirConditioning' | translate}}</option>
+          <option value="Charger">{{'ApplianceDetailsComponent.type.Charger' | translate}}</option>
+          <option value="DishWasher">{{'ApplianceDetailsComponent.type.DishWasher' | translate}}</option>
+          <option value="Dryer">{{'ApplianceDetailsComponent.type.Dryer' | translate}}</option>
+          <option value="ElectricVehicle">{{'ApplianceDetailsComponent.type.ElectricVehicle' | translate}}</option>
+          <option value="EVCharger">{{'ApplianceDetailsComponent.type.EVCharger' | translate}}</option>
+          <option value="Freezer">{{'ApplianceDetailsComponent.type.Freezer' | translate}}</option>
+          <option value="Fridge">{{'ApplianceDetailsComponent.type.Fridge' | translate}}</option>
+          <option value="Heater">{{'ApplianceDetailsComponent.type.Heater' | translate}}</option>
+          <option value="HeatPump">{{'ApplianceDetailsComponent.type.HeatPump' | translate}}</option>
+          <option value="Motor">{{'ApplianceDetailsComponent.type.Motor' | translate}}</option>
+          <option value="Pump">{{'ApplianceDetailsComponent.type.Pump' | translate}}</option>
+          <option value="WashingMachine">{{'ApplianceDetailsComponent.type.WashingMachine' | translate}}</option>
+          <option value="Other">{{'ApplianceDetailsComponent.type.Other' | translate}}</option>
         </select>
       </div>
       <div class="field">
-        <label>Serial number</label>
-        <input type="text" name="serial" [(ngModel)]="appliance.serial">
+        <label>{{'ApplianceDetailsComponent.serial' | translate}}</label>
+        <input type="text" name="serial" [(ngModel)]="appliance.serial" required>
+        <div *ngIf="errors.serial" class="ui negative message">{{errors.serial}}</div>
       </div>
     </div>
 
-    <h4 class="ui dividing header">Characteristics</h4>
+    <h4 class="ui dividing header">{{'ApplianceDetailsComponent.characteristics' | translate}}</h4>
     <div class="fields">
       <div class="field">
-        <label>Max. power consumption [W]</label>
-        <input type="text" name="maxPowerConsumption" [(ngModel)]="appliance.maxPowerConsumption">
+        <label>{{'ApplianceDetailsComponent.maxPowerConsumption' | translate}}</label>
+        <input type="text" name="maxPowerConsumption" [(ngModel)]="appliance.maxPowerConsumption"
+               required pattern="\d*">
+        <div *ngIf="errors.maxPowerConsumption" class="ui negative message">{{errors.maxPowerConsumption}}</div>
       </div>
       <div class="field">
-        <label>Current power method</label>
-        <select class="ui fluid dropdown" name="currentPowerMethod" [(ngModel)]="appliance.currentPowerMethod">
-          <option value="Measurement">Measurement</option>
-          <option value="Estimation">Estimation</option>
+        <label>{{'ApplianceDetailsComponent.currentPowerMethod' | translate}}</label>
+        <select class="ui fluid dropdown" name="currentPowerMethod" [(ngModel)]="appliance.currentPowerMethod" required>
+          <option value="Measurement">{{'ApplianceDetailsComponent.currentPowerMethod.Measurement' | translate}}</option>
+          <option value="Estimation">{{'ApplianceDetailsComponent.currentPowerMethod.Estimation' | translate}}</option>
         </select>
       </div>
       <div class="ui checkbox" style="">
         <input type="checkbox" name="interruptionsAllowed" [(ngModel)]="appliance.interruptionsAllowed">
-        <label>Interruptions allowed</label>
+        <label>{{'ApplianceDetailsComponent.interruptionsAllowed' | translate}}</label>
       </div>
     </div>
 
-    <button type="submit" class="ui button">Speichern</button>
-    <button type="button" (click)="deleteAppliance()" class="ui button">Löschen</button>
+    <button type="submit" class="ui button" [disabled]="detailsForm.invalid">Speichern</button>
+    <button type="button" (click)="deleteAppliance()" class="ui button" [disabled]="isNew">Löschen</button>
   </form>
 </div>

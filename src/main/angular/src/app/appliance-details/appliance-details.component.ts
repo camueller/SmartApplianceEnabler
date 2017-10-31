@@ -16,13 +16,16 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {ApplianceService} from '../shared/appliance.service';
 import {ActivatedRoute} from '@angular/router';
 import 'rxjs/add/operator/switchMap';
 import {ApplianceFactory} from '../shared/appliance-factory';
 import {AppliancesReloadService} from '../shared/appliances-reload-service';
 import {Location} from '@angular/common';
+import {NgForm} from '@angular/forms';
+import {ErrorMessages} from './ErrorMessages';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-appliance-details',
@@ -30,11 +33,16 @@ import {Location} from '@angular/common';
   styles: []
 })
 export class ApplianceDetailsComponent implements OnInit {
+  @ViewChild('detailsForm') detailsForm: NgForm;
+  errors: { [key: string]: string } = {};
   appliance = ApplianceFactory.createEmptyAppliance();
   isNew = false;
 
-  constructor(private applianceService: ApplianceService, private appliancesReloadService: AppliancesReloadService,
-              private route: ActivatedRoute, private location: Location) {
+  constructor(private applianceService: ApplianceService,
+              private appliancesReloadService: AppliancesReloadService,
+              private route: ActivatedRoute,
+              private translate: TranslateService,
+              private location: Location) {
   }
 
   // TODO save/cancel verwenden  - siehe Tour of Heroes (Routing)!
@@ -49,6 +57,8 @@ export class ApplianceDetailsComponent implements OnInit {
         this.applianceService.getAppliance(id).subscribe(appliance => this.appliance = appliance);
       }
     });
+
+    this.detailsForm.statusChanges.subscribe(() => this.updateErrorMessages());
   }
 
   submitForm() {
@@ -60,4 +70,12 @@ export class ApplianceDetailsComponent implements OnInit {
     this.location.back();
   }
 
-}
+  updateErrorMessages() {
+    this.errors = {};
+    for (const message of ErrorMessages) {
+      const control = this.detailsForm.form.get(message.forControl);
+      if (control && control.dirty && control.invalid && control.errors[message.forValidator] && !this.errors[message.forControl]) {
+        this.errors[message.forControl] = message.text;
+      }
+    }
+  }}

@@ -21,6 +21,7 @@
     "@angular/platform-browser": "^4.2.4",
     "@angular/platform-browser-dynamic": "^4.2.4",
     "@angular/router": "^4.2.4",
+    "@ngx-translate/core": "^8.0.0",
     "clockpicker": "0.0.7",
     "core-js": "^2.4.1",
     "rxjs": "^5.4.2",

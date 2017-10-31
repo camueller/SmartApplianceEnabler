@@ -35,3 +35,9 @@ $ npm i --save clockpicker
 saeweb@0.0.0 /data/IdeaProjects/SmartApplianceEnabler/src/main/angular
 └── clockpicker@0.0.7
 ```
+
+In order to switch languages without compilation we use ```ngx-translate```:
+```
+npm install @ngx-translate/core --save
+npm install @ngx-translate/http-loader
+```

@@ -18,28 +18,28 @@
 
 <div class="ui sidebar inverted vertical menu">
   <div class="ui item">
-    <span class="ui inverted header">Geräte</span>
+    <span class="ui inverted header">{{'AppComponent.appliances' | translate}}</span>
     <a style="font-size: 1.4em" [routerLink]="['appliance']" routerLinkActive="active"><i class="icon green add"></i></a>
   </div>
 
   <div *ngFor="let appliance of appliances">
-    <a class="ui item" [routerLink]="['appliance', appliance.id]" routerLinkActive="active">{{appliance.type}}<br>
+    <a class="ui item" [routerLink]="['appliance', appliance.id]" routerLinkActive="active">{{getTranslatedType(appliance.type)}}<br>
       <span style="font-size: 0.7em">{{appliance.vendor}} {{appliance.name}}</span>
     </a>
     <div class="menu">
-      <a class="item" [routerLink]="['meter', appliance.id]" routerLinkActive="active">Zähler</a>
-      <a class="item" [routerLink]="['control', appliance.id]" routerLinkActive="active">Schalter</a>
-      <a class="item" [routerLink]="['schedules', appliance.id]" routerLinkActive="active">Schaltzeiten</a>
+      <a class="item" [routerLink]="['meter', appliance.id]" routerLinkActive="active">{{'AppComponent.meter' | translate}}</a>
+      <a class="item" [routerLink]="['control', appliance.id]" routerLinkActive="active">{{'AppComponent.control' | translate}}</a>
+      <a class="item" [routerLink]="['schedules', appliance.id]" routerLinkActive="active">{{'AppComponent.schedules' | translate}}</a>
     </div>
   </div>
 
-  <a class="item" [routerLink]="['settings']" routerLinkActive="active">Settings</a>
+  <a class="item" [routerLink]="['settings']" routerLinkActive="active">{{'AppComponent.settings' | translate}}</a>
 
 </div>
 <div class="ui fixed inverted main menu">
   <a (click)="toggleSidebar()" class="launch icon item">
     <i class="content icon"></i>
-    <p style="padding-left:1em">Menu</p>
+    <p style="padding-left:1em">{{'AppComponent.menu' | translate}}</p>
   </a>
 </div>
 <div class="pusher">
