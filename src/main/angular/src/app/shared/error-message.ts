@@ -16,15 +16,17 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {DayTimeframe} from './day-timeframe';
-import {ConsecutiveDaysTimeframe} from './consecutive-days-timeframe';
+export enum ValidatorType {
+  required,
+  pattern
+}
 
-export class Schedule {
-  '@class' = 'de.avanux.smartapplianceenabler.appliance.Schedule';
-  enabled = true;
-  minRunningTime: string;
-  maxRunningTime: string;
-  timeframeType: string;
-  dayTimeframe: DayTimeframe;
-  consecutiveDaysTimeframe: ConsecutiveDaysTimeframe;
+export class ErrorMessage {
+
+  public text: string;
+
+  constructor(
+    public forControl: string,
+    public forValidator: ValidatorType,
+  ) { }
 }

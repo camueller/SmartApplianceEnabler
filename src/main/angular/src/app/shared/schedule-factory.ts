@@ -28,6 +28,8 @@ export class ScheduleFactory {
   static createEmptySchedule(): Schedule {
     const schedule: Schedule = new Schedule();
     schedule.timeframeType = DayTimeframe.TYPE;
+//    schedule.consecutiveDaysTimeframe = new ConsecutiveDaysTimeframe();
+//    schedule.dayTimeframe = new DayTimeframe();
     return schedule;
   }
 
@@ -73,7 +75,7 @@ export class ScheduleFactory {
     return content;
   }
 
-  static fromObject(rawSchedule: any): Schedule {
+  static toSchedule(rawSchedule: any): Schedule {
     console.log('rawSchedule ' + JSON.stringify(rawSchedule));
     const schedule = new Schedule();
     schedule.minRunningTime = rawSchedule.minRunningTime;
@@ -81,12 +83,43 @@ export class ScheduleFactory {
     if (rawSchedule.timeframe['@class'] === DayTimeframe.TYPE) {
       schedule.timeframeType = DayTimeframe.TYPE;
       schedule.dayTimeframe = ScheduleFactory.createDayTimeframe(rawSchedule.timeframe);
+//      schedule.consecutiveDaysTimeframe = new ConsecutiveDaysTimeframe();
     } else if (rawSchedule.timeframe['@class'] === ConsecutiveDaysTimeframe.TYPE) {
       schedule.timeframeType = ConsecutiveDaysTimeframe.TYPE;
+//      schedule.dayTimeframe = new DayTimeframe();
       schedule.consecutiveDaysTimeframe = ScheduleFactory.createConsecutiveDaysTimeframe(rawSchedule.timeframe);
     }
     console.log('schedule ' + JSON.stringify(schedule));
     return schedule;
+  }
+
+  static fromForm(rawSchedules: any): Schedule[] {
+    console.log('FROM_FORM: ' + JSON.stringify(rawSchedules));
+    const schedules = new Array();
+    for (const rawSchedule of rawSchedules.schedules) {
+      const schedule = new Schedule();
+      schedule.enabled = rawSchedule.enabled;
+      schedule.timeframeType = rawSchedule.timeframeType;
+      if (rawSchedule.timeframeType === DayTimeframe.TYPE) {
+        schedule.dayTimeframe = new DayTimeframe();
+        schedule.dayTimeframe.daysOfWeekValues = rawSchedule.dayTimeframe.daysOfWeekValues;
+        schedule.dayTimeframe.startTime = rawSchedule.dayTimeframe.startTime;
+        schedule.dayTimeframe.endTime = rawSchedule.dayTimeframe.endTime;
+        schedule.minRunningTime = rawSchedule.dayTimeframe.minRunningTime;
+        schedule.maxRunningTime = rawSchedule.dayTimeframe.maxRunningTime;
+      } else if (rawSchedule.timeframeType === ConsecutiveDaysTimeframe.TYPE) {
+        schedule.consecutiveDaysTimeframe = new ConsecutiveDaysTimeframe();
+        schedule.consecutiveDaysTimeframe.startDayOfWeek = rawSchedule.consecutiveDaysTimeframe.startDayOfWeek;
+        schedule.consecutiveDaysTimeframe.startTime = rawSchedule.consecutiveDaysTimeframe.startTime;
+        schedule.consecutiveDaysTimeframe.endDayOfWeek = rawSchedule.consecutiveDaysTimeframe.endDayOfWeek;
+        schedule.consecutiveDaysTimeframe.endTime = rawSchedule.consecutiveDaysTimeframe.endTime;
+        schedule.minRunningTime = rawSchedule.consecutiveDaysTimeframe.minRunningTime;
+        schedule.maxRunningTime = rawSchedule.consecutiveDaysTimeframe.maxRunningTime;
+      }
+      schedules.push(schedule);
+    }
+    console.log('SCHEDULE: ' + JSON.stringify(schedules));
+    return schedules;
   }
 
   static createDayTimeframe(rawTimeframe: any): DayTimeframe {

@@ -17,124 +17,166 @@
   -->
 
 <div class="ui segment">
-  <form class="ui form" (ngSubmit)="submitForm()">
+  <form class="ui form" #meterForm="ngForm" (ngSubmit)="submitForm()">
     <div class="four fields">
       <div class="field">
-        <label>Type</label>
+        <label>{{'ApplianceMeterComponent.type' | translate}}</label>
         <select class="ui fluid dropdown" name="meterType" [(ngModel)]="meter.type" (ngModelChange)="typeChanged($event)">
           <option value=""></option>
-          <option value="{{TYPE_S0_ELECTRICITY_METER}}">S0 electricity meter</option>
-          <option value="{{TYPE_S0_ELECTRICITY_METER_NETWORKED}}">S0 electricity meter networked</option>
-          <option value="{{TYPE_MODBUS_ELECTRICITY_METER}}">Modbus electricity meter</option>
-          <option value="{{TYPE_HTTP_ELECTRICITY_METER}}">HTTP electricity meter</option>
+          <option value="{{TYPE_S0_ELECTRICITY_METER}}">{{TYPE_S0_ELECTRICITY_METER | translate}}</option>
+          <option value="{{TYPE_S0_ELECTRICITY_METER_NETWORKED}}">{{TYPE_S0_ELECTRICITY_METER_NETWORKED | translate}}</option>
+          <option value="{{TYPE_MODBUS_ELECTRICITY_METER}}">{{TYPE_MODBUS_ELECTRICITY_METER | translate}}</option>
+          <option value="{{TYPE_HTTP_ELECTRICITY_METER}}">{{TYPE_HTTP_ELECTRICITY_METER | translate}}</option>
         </select>
       </div>
     </div>
 
     <div class="ui fields" *ngIf="meter.type===TYPE_S0_ELECTRICITY_METER">
       <div class="field">
-        <label>GPIO</label>
-        <input type="text" name="meterGpio" [(ngModel)]="meter.s0ElectricityMeter.gpio">
+        <label>{{'ApplianceMeterComponent.s0ElectricityMeter_gpio' | translate}}</label>
+        <input type="text" name="s0ElectricityMeter_gpio" [(ngModel)]="meter.s0ElectricityMeter.gpio"
+               required pattern="{{VALIDATOR_PATTERN_INTEGER}}">
+        <div *ngIf="errors.s0ElectricityMeter_gpio" class="ui negative message">{{errors.s0ElectricityMeter_gpio}}</div>
       </div>
       <div class="field">
-        <label>Pin Pull Resistence</label>
-        <select class="ui fluid dropdown" name="meterPinPullResistance" [(ngModel)]="meter.s0ElectricityMeter.pinPullResistance">
+        <label>{{'ApplianceMeterComponent.s0ElectricityMeter_pinPullResistance' | translate}}</label>
+        <select class="ui fluid dropdown" name="s0ElectricityMeter_pinPullResistance"
+                [(ngModel)]="meter.s0ElectricityMeter.pinPullResistance">
           <option value=""></option>
-          <option value="PULL_DOWN">pull down</option>
-          <option value="PULL_UP">pull up</option>
+          <option value="PULL_DOWN">
+            {{'ApplianceMeterComponent.s0ElectricityMeter_pinPullResistance.PULL_DOWN' | translate}}</option>
+          <option value="PULL_UP">
+            {{'ApplianceMeterComponent.s0ElectricityMeter_pinPullResistance.PULL_UP' | translate}}</option>
         </select>
       </div>
       <div class="field">
-        <label>Impulses/kWh</label>
-        <input type="text" name="meterImpulsesPerKwh" [(ngModel)]="meter.s0ElectricityMeter.impulsesPerKwh">
+        <label>{{'ApplianceMeterComponent.s0ElectricityMeter_impulsesPerKwh' | translate}}</label>
+        <input type="text" name="s0ElectricityMeter_impulsesPerKwh"
+               [(ngModel)]="meter.s0ElectricityMeter.impulsesPerKwh" required pattern="{{VALIDATOR_PATTERN_INTEGER}}">
+        <div *ngIf="errors.s0ElectricityMeter_impulsesPerKwh" class="ui negative message">
+          {{errors.s0ElectricityMeter_impulsesPerKwh}}</div>
       </div>
       <div class="field">
-        <label>Measurement interval [s]</label>
-        <input type="text" name="meterMeasurementInterval" [(ngModel)]="meter.s0ElectricityMeter.measurementInterval">
+        <label>{{'ApplianceMeterComponent.s0ElectricityMeter_measurementInterval' | translate}}</label>
+        <input type="text" name="s0ElectricityMeter_measurementInterval"
+               [(ngModel)]="meter.s0ElectricityMeter.measurementInterval">
       </div>
       <div class="ui checkbox">
-        <input type="checkbox" name="meterPowerOnAlways" [(ngModel)]="meter.s0ElectricityMeter.powerOnAlways">
-        <label>Power on always</label>
+        <input type="checkbox" name="s0ElectricityMeter_powerOnAlways"
+               [(ngModel)]="meter.s0ElectricityMeter.powerOnAlways">
+        <label>{{'ApplianceMeterComponent.s0ElectricityMeter_powerOnAlways' | translate}}</label>
       </div>
     </div>
 
     <div class="ui fields" *ngIf="meter.type===TYPE_S0_ELECTRICITY_METER_NETWORKED">
       <div class="field">
-        <label>Impulses/kWh</label>
-        <input type="text" name="meterImpulsesPerKwh" [(ngModel)]="meter.s0ElectricityMeterNetworked.impulsesPerKwh">
+        <label>{{'ApplianceMeterComponent.s0ElectricityMeterNetworked_impulsesPerKwh' | translate}}</label>
+        <input type="text" name="s0ElectricityMeterNetworked_impulsesPerKwh"
+               [(ngModel)]="meter.s0ElectricityMeterNetworked.impulsesPerKwh"
+               required pattern="{{VALIDATOR_PATTERN_INTEGER}}">
+        <div *ngIf="errors.s0ElectricityMeterNetworked_impulsesPerKwh" class="ui negative message">
+          {{errors.s0ElectricityMeterNetworked_impulsesPerKwh}}</div>
       </div>
       <div class="field">
-        <label>Measurement interval [s]</label>
-        <input type="text" name="meterMeasurementInterval" [(ngModel)]="meter.s0ElectricityMeterNetworked.measurementInterval">
+        <label>{{'ApplianceMeterComponent.s0ElectricityMeterNetworked_measurementInterval' | translate}}</label>
+        <input type="text" name="s0ElectricityMeterNetworked_measurementInterval"
+               [(ngModel)]="meter.s0ElectricityMeterNetworked.measurementInterval">
       </div>
       <div class="ui checkbox">
-        <input type="checkbox" name="meterPowerOnAlways" [(ngModel)]="meter.s0ElectricityMeterNetworked.powerOnAlways">
-        <label>Power on always</label>
+        <input type="checkbox" name="s0ElectricityMeterNetworked_powerOnAlway"
+               [(ngModel)]="meter.s0ElectricityMeterNetworked.powerOnAlways">
+        <label>{{'ApplianceMeterComponent.s0ElectricityMeterNetworked_powerOnAlways' | translate}}</label>
       </div>
     </div>
 
     <div class="ui fields" *ngIf="meter.type===TYPE_MODBUS_ELECTRICITY_METER">
       <div class="field">
-        <label>Slave address</label>
-        <input type="text" name="meterSlaveAddress" [(ngModel)]="meter.modbusElectricityMeter.slaveAddress">
+        <label>{{'ApplianceMeterComponent.modbusElectricityMeter_slaveAddress' | translate}}</label>
+        <input type="text" name="modbusElectricityMeter_slaveAddress"
+               [(ngModel)]="meter.modbusElectricityMeter.slaveAddress" required pattern="{{VALIDATOR_PATTERN_INTEGER}}">
+        <div *ngIf="errors.modbusElectricityMeter_slaveAddress" class="ui negative message">
+          {{errors.modbusElectricityMeter_slaveAddress}}</div>
       </div>
       <div class="field">
-        <label>Register address</label>
-        <input type="text" name="meterRegisterAddress" [(ngModel)]="meter.modbusElectricityMeter.registerAddress">
+        <label>{{'ApplianceMeterComponent.modbusElectricityMeter_registerAddress' | translate}}</label>
+        <input type="text" name="modbusElectricityMeter_registerAddress"
+               [(ngModel)]="meter.modbusElectricityMeter.registerAddress" required>
+        <div *ngIf="errors.modbusElectricityMeter_registerAddress" class="ui negative message">
+          {{errors.modbusElectricityMeter_registerAddress}}</div>
       </div>
       <div class="field">
-        <label>Poll interval</label>
-        <input type="text" name="meterPollInterval" [(ngModel)]="meter.modbusElectricityMeter.pollInterval">
+        <label>{{'ApplianceMeterComponent.modbusElectricityMeter_pollInterval' | translate}}</label>
+        <input type="text" name="modbusElectricityMeter_pollInterval"
+               [(ngModel)]="meter.modbusElectricityMeter.pollInterval" pattern="{{VALIDATOR_PATTERN_INTEGER}}">
+        <div *ngIf="errors.modbusElectricityMeter_pollInterval" class="ui negative message">
+          {{errors.modbusElectricityMeter_pollInterval}}</div>
       </div>
       <div class="field">
-        <label>Measurement interval [s]</label>
-        <input type="text" name="meterMeasurementInterval" [(ngModel)]="meter.modbusElectricityMeter.measurementInterval">
+        <label>{{'ApplianceMeterComponent.modbusElectricityMeter_measurementInterval' | translate}}</label>
+        <input type="text" name="modbusElectricityMeter_measurementInterval"
+               [(ngModel)]="meter.modbusElectricityMeter.measurementInterval"
+               required pattern="{{VALIDATOR_PATTERN_INTEGER}}">
+        <div *ngIf="errors.modbusElectricityMeter_measurementInterval" class="ui negative message">
+          {{errors.modbusElectricityMeter_measurementInterval}}</div>
       </div>
     </div>
 
     <div *ngIf="meter.type===TYPE_HTTP_ELECTRICITY_METER">
       <div class="field">
-        <label>URL</label>
-        <input type="text" name="meterUrl" [(ngModel)]="meter.httpElectricityMeter.url">
+        <label>{{'ApplianceMeterComponent.httpElectricityMeter_url' | translate}}</label>
+        <input type="text" name="httpElectricityMeter_url" [(ngModel)]="meter.httpElectricityMeter.url"
+               required pattern="{{VALIDATOR_PATTERN_URL}}">
+        <div *ngIf="errors.httpElectricityMeter_url" class="ui negative message">
+          {{errors.httpElectricityMeter_url}}</div>
       </div>
       <div class="field">
-        <label>Data</label>
-        <input type="text" name="meterData" [(ngModel)]="meter.httpElectricityMeter.data">
+        <label>{{'ApplianceMeterComponent.httpElectricityMeter_data' | translate}}</label>
+        <input type="text" name="httpElectricityMeter_data" [(ngModel)]="meter.httpElectricityMeter.data">
       </div>
       <div class="ui fields">
         <div class="field">
-          <label>Username</label>
-          <input type="text" name="meterUsername" [(ngModel)]="meter.httpElectricityMeter.username">
+          <label>{{'ApplianceMeterComponent.httpElectricityMeter_username' | translate}}</label>
+          <input type="text" name="httpElectricityMeter_username" [(ngModel)]="meter.httpElectricityMeter.username">
         </div>
         <div class="field">
-          <label>Password</label>
-          <input type="text" name="meterPassword" [(ngModel)]="meter.httpElectricityMeter.password">
+          <label>{{'ApplianceMeterComponent.httpElectricityMeter_password' | translate}}</label>
+          <input type="text" name="httpElectricityMeter_password" [(ngModel)]="meter.httpElectricityMeter.password">
         </div>
         <div class="field">
-          <label>Content type</label>
-          <input type="text" name="meterContentType" [(ngModel)]="meter.httpElectricityMeter.contentType">
+          <label>{{'ApplianceMeterComponent.httpElectricityMeter_contentType' | translate}}</label>
+          <input type="text" name="httpElectricityMeter_contentType" [(ngModel)]="meter.httpElectricityMeter.contentType">
         </div>
       </div>
       <div class="field">
-        <label>Power value extraction regex</label>
-        <input type="text" name="meterPowerValueExtractionRegex" [(ngModel)]="meter.httpElectricityMeter.powerValueExtractionRegex">
+        <label>{{'ApplianceMeterComponent.httpElectricityMeter_powerValueExtractionRegex' | translate}}</label>
+        <input type="text" name="httpElectricityMeter_powerValueExtractionRegex"
+               [(ngModel)]="meter.httpElectricityMeter.powerValueExtractionRegex">
       </div>
       <div class="ui fields">
         <div class="field">
-          <label>Factor to watt</label>
-          <input type="text" name="meterFactorToWatt" [(ngModel)]="meter.httpElectricityMeter.factorToWatt">
+          <label>{{'ApplianceMeterComponent.httpElectricityMeter_factorToWatt' | translate}}</label>
+          <input type="text" name="httpElectricityMeter_factorToWatt"
+                 [(ngModel)]="meter.httpElectricityMeter.factorToWatt" pattern="{{VALIDATOR_PATTERN_FLOAT}}">
+          <div *ngIf="errors.httpElectricityMeter_factorToWatt" class="ui negative message">
+            {{errors.httpElectricityMeter_factorToWatt}}</div>
         </div>
         <div class="field">
-          <label>Poll interval</label>
-          <input type="text" name="meterPollInterval" [(ngModel)]="meter.httpElectricityMeter.pollInterval">
+          <label>{{'ApplianceMeterComponent.httpElectricityMeter_pollInterval' | translate}}</label>
+          <input type="text" name="httpElectricityMeter_pollInterval"
+                 [(ngModel)]="meter.httpElectricityMeter.pollInterval" pattern="{{VALIDATOR_PATTERN_INTEGER}}">
+          <div *ngIf="errors.httpElectricityMeter_pollInterval" class="ui negative message">
+            {{errors.httpElectricityMeter_pollInterval}}</div>
         </div>
         <div class="field">
-          <label>Measurement interval [s]</label>
-          <input type="text" name="meterMeasurementInterval" [(ngModel)]="meter.httpElectricityMeter.measurementInterval">
+          <label>{{'ApplianceMeterComponent.httpElectricityMeter_measurementInterval' | translate}}</label>
+          <input type="text" name="httpElectricityMeter_measurementInterval"
+                 [(ngModel)]="meter.httpElectricityMeter.measurementInterval" pattern="{{VALIDATOR_PATTERN_INTEGER}}">
+          <div *ngIf="errors.httpElectricityMeter_measurementInterval" class="ui negative message">
+            {{errors.httpElectricityMeter_measurementInterval}}</div>
         </div>
       </div>
     </div>
 
-    <button type="submit" class="ui button">Speichern</button>
+    <button type="submit" class="ui button" [disabled]="meterForm.invalid">{{'button.save' | translate}}</button>
   </form>
 </div>

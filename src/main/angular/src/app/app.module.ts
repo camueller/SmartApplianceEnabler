@@ -18,7 +18,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 import {AppComponent} from './app.component';
 import {ApplianceService} from './shared/appliance.service';
@@ -26,16 +26,15 @@ import {ApplianceDetailsComponent} from './appliance-details/appliance-details.c
 import {AppRoutingModule} from './app-routing.module';
 import {PageNotFoundComponent} from './not-found.component';
 import {ApplianceMeterComponent} from './appliance-meter/appliance-meter.component';
-import { ApplianceControlComponent } from './appliance-control/appliance-control.component';
-import { ScheduleComponent } from './schedule/schedule.component';
-import { SchedulesComponent } from './schedules/schedules.component';
-import { SettingsComponent } from './settings/settings.component';
+import {ApplianceControlComponent} from './appliance-control/appliance-control.component';
+import {SchedulesComponent} from './schedule/schedule.component';
+import {SettingsComponent} from './settings/settings.component';
 import {HttpModule} from '@angular/http';
 import {ApplianceResolver} from './shared/appliance-resolver.service';
 import {AppliancesReloadService} from './shared/appliances-reload-service';
 import {HttpClient, HttpClientModule} from '@angular/common/http';
-import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
+import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 
 @NgModule({
   declarations: [
@@ -44,13 +43,13 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
     PageNotFoundComponent,
     ApplianceMeterComponent,
     ApplianceControlComponent,
-    ScheduleComponent,
     SchedulesComponent,
     SettingsComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
+    ReactiveFormsModule,
     AppRoutingModule,
     HttpModule,
     HttpClientModule,

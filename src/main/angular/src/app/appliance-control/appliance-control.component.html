@@ -17,100 +17,118 @@
   -->
 
 <div class="ui segment" xmlns="http://www.w3.org/1999/html">
-  <form class="ui form" (ngSubmit)="submitForm()">
+  <form class="ui form" #controlForm="ngForm" (ngSubmit)="submitForm()">
     <div class="fields">
       <div class="field">
-        <label>Type</label>
-        <select class="ui fluid dropdown" name="controlType" [(ngModel)]="control.type" (ngModelChange)="typeChanged($event)">
+        <label>{{'ApplianceControlComponent.type' | translate}}</label>
+        <select class="ui fluid dropdown" name="controlType" [(ngModel)]="control.type"
+                (ngModelChange)="typeChanged($event)">
           <option value=""></option>
-          <option value="{{TYPE_SWITCH}}">Switch</option>
-          <option value="{{TYPE_MODBUS_SWITCH}}">Modbus</option>
-          <option value="{{TYPE_HTTP_SWITCH}}">HTTP</option>
+          <option value="{{TYPE_SWITCH}}">{{TYPE_SWITCH | translate}}</option>
+          <option value="{{TYPE_MODBUS_SWITCH}}">{{TYPE_MODBUS_SWITCH | translate}}</option>
+          <option value="{{TYPE_HTTP_SWITCH}}">{{TYPE_HTTP_SWITCH | translate}}</option>
         </select>
       </div>
       <div class="ui checkbox">
-        <input type="checkbox" name="switchStartingCurrentSwitch" [(ngModel)]="control.startingCurrentDetection" (ngModelChange)="startingCurrentDetectionChanged($event)">
-        <label>Starting current detection</label>
+        <input type="checkbox" name="startingCurrentDetection" [(ngModel)]="control.startingCurrentDetection"
+               (ngModelChange)="startingCurrentDetectionChanged($event)">
+        <label>{{'ApplianceControlComponent.startingCurrentDetection' | translate}}</label>
       </div>
     </div>
 
     <div class="ui fields" *ngIf="control.type===TYPE_SWITCH">
       <div class="field">
-        <label>GPIO</label>
-        <input type="text" name="switchGpio" [(ngModel)]="control.switch_.gpio">
+        <label>{{'ApplianceControlComponent.switch_gpio' | translate}}</label>
+        <input type="text" name="switch_gpio" [(ngModel)]="control.switch_.gpio"
+               required pattern="{{VALIDATOR_PATTERN_INTEGER}}">
+        <div *ngIf="errors.switch_gpio" class="ui negative message">{{errors.switch_gpio}}</div>
       </div>
       <div class="ui checkbox">
-        <input type="checkbox" name="switchReverseStates" [(ngModel)]="control.switch_.reverseStates">
-        <label>Reverse states</label>
+        <input type="checkbox" name="switch_reverseStates" [(ngModel)]="control.switch_.reverseStates">
+        <label>{{'ApplianceControlComponent.switch_reverseStates' | translate}}</label>
       </div>
     </div>
 
     <div class="ui fields" *ngIf="control.type===TYPE_MODBUS_SWITCH">
       <div class="field">
-        <label>Slave address</label>
-        <input type="text" name="switchSlaveAddress" [(ngModel)]="control.modbusSwitch.slaveAddress">
+        <label>{{'ApplianceControlComponent.modbusSwitch_slaveAddress' | translate}}</label>
+        <input type="text" name="modbusSwitch_slaveAddress" [(ngModel)]="control.modbusSwitch.slaveAddress"
+               required>
+        <div *ngIf="errors.modbusSwitch_slaveAddress" class="ui negative message">
+          {{errors.modbusSwitch_slaveAddress}}</div>
       </div>
       <div class="field">
-        <label>Register address</label>
-        <input type="text" name="switchRegisterAddress" [(ngModel)]="control.modbusSwitch.registerAddress">
+        <label>{{'ApplianceControlComponent.modbusSwitch_registerAddress' | translate}}</label>
+        <input type="text" name="modbusSwitch_registerAddress" [(ngModel)]="control.modbusSwitch.registerAddress"
+               required>
+        <div *ngIf="errors.modbusSwitch_registerAddress" class="ui negative message">
+          {{errors.modbusSwitch_registerAddress}}</div>
       </div>
     </div>
 
     <div *ngIf="control.type===TYPE_HTTP_SWITCH">
       <div class="field">
-        <label>On URL</label>
-        <input type="text" name="switchOnUrl" [(ngModel)]="control.httpSwitch.onUrl">
+        <label>{{'ApplianceControlComponent.httpSwitch_onUrl' | translate}}</label>
+        <input type="text" name="httpSwitch_onUrl" [(ngModel)]="control.httpSwitch.onUrl"
+               required pattern="{{VALIDATOR_PATTERN_URL}}">
+        <div *ngIf="errors.httpSwitch_onUrl" class="ui negative message">{{errors.httpSwitch_onUrl}}</div>
       </div>
       <div class="field">
-        <label>On Data</label>
-        <input type="text" name="switchOnData" [(ngModel)]="control.httpSwitch.onData">
+        <label>{{'ApplianceControlComponent.httpSwitch_onData' | translate}}</label>
+        <input type="text" name="httpSwitch_onData" [(ngModel)]="control.httpSwitch.onData">
       </div>
       <div class="field">
-        <label>Off URL</label>
-        <input type="text" name="switchOffUrl" [(ngModel)]="control.httpSwitch.offUrl">
+        <label>{{'ApplianceControlComponent.httpSwitch_offUrl' | translate}}</label>
+        <input type="text" name="httpSwitch_offUrl" [(ngModel)]="control.httpSwitch.offUrl"
+               required pattern="{{VALIDATOR_PATTERN_URL}}">
+        <div *ngIf="errors.httpSwitch_offUrl" class="ui negative message">{{errors.httpSwitch_offUrl}}</div>
       </div>
       <div class="field">
-        <label>Off Data</label>
-        <input type="text" name="switchOffData" [(ngModel)]="control.httpSwitch.offData">
+        <label>{{'ApplianceControlComponent.httpSwitch_offData' | translate}}</label>
+        <input type="text" name="httpSwitch_offData" [(ngModel)]="control.httpSwitch.offData">
       </div>
       <div class="ui fields">
         <div class="field">
-          <label>Username</label>
-          <input type="text" name="switchUsername" [(ngModel)]="control.httpSwitch.username">
+          <label>{{'ApplianceControlComponent.httpSwitch_username' | translate}}</label>
+          <input type="text" name="httpSwitch_username" [(ngModel)]="control.httpSwitch.username">
         </div>
         <div class="field">
-          <label>Password</label>
-          <input type="text" name="switchPassword" [(ngModel)]="control.httpSwitch.password">
+          <label>{{'ApplianceControlComponent.httpSwitch_password' | translate}}</label>
+          <input type="text" name="httpSwitch_password" [(ngModel)]="control.httpSwitch.password">
         </div>
         <div class="field">
-          <label>Content type</label>
-          <input type="text" name="switchContentType" [(ngModel)]="control.httpSwitch.contentType">
+          <label>{{'ApplianceControlComponent.httpSwitch_contentType' | translate}}</label>
+          <input type="text" name="httpSwitch_contentType" [(ngModel)]="control.httpSwitch.contentType">
         </div>
       </div>
     </div>
 
     <div *ngIf="control.startingCurrentDetection">
-      <h4 class="ui dividing header">Starting current</h4>
+      <h4 class="ui dividing header">{{'ApplianceControlComponent.startingCurrent' | translate}}</h4>
       <div class="ui fields">
         <div class="field">
-          <label>Power threshold</label>
-          <input type="text" name="switchPowerThreshold" [(ngModel)]="control.startingCurrentSwitch.powerThreshold">
+          <label>{{'ApplianceControlComponent.startingCurrentSwitch_powerThreshold' | translate}}</label>
+          <input type="text" name="startingCurrentSwitch_powerThreshold"
+                 [(ngModel)]="control.startingCurrentSwitch.powerThreshold">
         </div>
         <div class="field">
-          <label>Starting current detection duration</label>
-          <input type="text" name="switchStartingCurrentDetectionDuration" [(ngModel)]="control.startingCurrentSwitch.startingCurrentDetectionDuration">
+          <label>{{'ApplianceControlComponent.startingCurrentSwitch_startingCurrentDetectionDuration' | translate}}</label>
+          <input type="text" name="startingCurrentSwitch_startingCurrentDetectionDuration"
+                 [(ngModel)]="control.startingCurrentSwitch.startingCurrentDetectionDuration">
         </div>
         <div class="field">
-          <label>Finished current detection duration</label>
-          <input type="text" name="switchFinishedCurrentDetectionDuration" [(ngModel)]="control.startingCurrentSwitch.finishedCurrentDetectionDuration">
+          <label>{{'ApplianceControlComponent.startingCurrentSwitch_finishedCurrentDetectionDuration' | translate}}</label>
+          <input type="text" name="startingCurrentSwitch_finishedCurrentDetectionDuration"
+                 [(ngModel)]="control.startingCurrentSwitch.finishedCurrentDetectionDuration">
         </div>
         <div class="field">
-          <label>Min. running time</label>
-          <input type="text" name="minRunningTime" [(ngModel)]="control.startingCurrentSwitch.minRunningTime">
+          <label>{{'ApplianceControlComponent.startingCurrentSwitch_minRunningTime' | translate}}</label>
+          <input type="text" name="startingCurrentSwitch_minRunningTime"
+                 [(ngModel)]="control.startingCurrentSwitch.minRunningTime">
         </div>
       </div>
     </div>
 
-    <button type="submit" class="ui button">Speichern</button>
+    <button type="submit" class="ui button" [disabled]="controlForm.invalid">{{'button.save' | translate}}</button>
   </form>
 </div>
