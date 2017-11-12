@@ -16,15 +16,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {DayTimeframe} from './day-timeframe';
-import {ConsecutiveDaysTimeframe} from './consecutive-days-timeframe';
-
-export class Schedule {
-  '@class' = 'de.avanux.smartapplianceenabler.appliance.Schedule';
-  enabled = true;
-  minRunningTime: string;
-  maxRunningTime: string;
-  timeframeType: string;
-  dayTimeframe: DayTimeframe;
-  consecutiveDaysTimeframe: ConsecutiveDaysTimeframe;
+export class InputValidatorPatterns {
+  static INTEGER = '\\d*';
+  static FLOAT = '^\\d*(\\.\\d+)?$';
+  static URL = 'https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)';
 }

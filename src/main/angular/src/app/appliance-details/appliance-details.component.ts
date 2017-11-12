@@ -24,8 +24,11 @@ import {ApplianceFactory} from '../shared/appliance-factory';
 import {AppliancesReloadService} from '../shared/appliances-reload-service';
 import {Location} from '@angular/common';
 import {NgForm} from '@angular/forms';
-import {ErrorMessages} from './ErrorMessages';
+import {ApplianceDetailsErrorMessages} from './appliance-details-error-messages';
 import {TranslateService} from '@ngx-translate/core';
+import {ErrorMessageHandler} from '../shared/error-message-handler';
+import {InputValidatorPatterns} from '../shared/input-validator-patterns';
+import {ErrorMessages} from '../shared/error-messages';
 
 @Component({
   selector: 'app-appliance-details',
@@ -34,8 +37,11 @@ import {TranslateService} from '@ngx-translate/core';
 })
 export class ApplianceDetailsComponent implements OnInit {
   @ViewChild('detailsForm') detailsForm: NgForm;
-  errors: { [key: string]: string } = {};
   appliance = ApplianceFactory.createEmptyAppliance();
+  errors: { [key: string]: string } = {};
+  errorMessages: ErrorMessages;
+  VALIDATOR_PATTERN_INTEGER = InputValidatorPatterns.INTEGER;
+  VALIDATOR_PATTERN_ID = 'F-\\d{8}-\\d{12}-\\d{2}';
   isNew = false;
 
   constructor(private applianceService: ApplianceService,
@@ -43,10 +49,8 @@ export class ApplianceDetailsComponent implements OnInit {
               private route: ActivatedRoute,
               private translate: TranslateService,
               private location: Location) {
+    this.errorMessages =  new ApplianceDetailsErrorMessages(this.translate);
   }
-
-  // TODO save/cancel verwenden  - siehe Tour of Heroes (Routing)!
-  // TODO CanDeactivate guard verwenden, um nach Änderungen das Wegnavigieren zu verhindern - siehe Tour of Heroes (Routing)!
 
   ngOnInit() {
     this.route.params.subscribe(val => {
@@ -58,7 +62,8 @@ export class ApplianceDetailsComponent implements OnInit {
       }
     });
 
-    this.detailsForm.statusChanges.subscribe(() => this.updateErrorMessages());
+    this.detailsForm.statusChanges.subscribe(() =>
+      this.errors = ErrorMessageHandler.applyErrorMessages4TemplateDrivenForm(this.detailsForm, this.errorMessages));
   }
 
   submitForm() {
@@ -69,13 +74,4 @@ export class ApplianceDetailsComponent implements OnInit {
     this.applianceService.deleteAppliance(this.appliance.id).subscribe(() => this.appliancesReloadService.reload());
     this.location.back();
   }
-
-  updateErrorMessages() {
-    this.errors = {};
-    for (const message of ErrorMessages) {
-      const control = this.detailsForm.form.get(message.forControl);
-      if (control && control.dirty && control.invalid && control.errors[message.forValidator] && !this.errors[message.forControl]) {
-        this.errors[message.forControl] = message.text;
-      }
-    }
-  }}
+}

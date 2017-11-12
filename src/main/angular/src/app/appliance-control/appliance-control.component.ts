@@ -16,16 +16,20 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {ApplianceService} from '../shared/appliance.service';
-import {Appliance} from '../shared/appliance';
-import {Control} from '../shared/control';
 import {ControlFactory} from '../shared/control-factory';
 import {Switch} from '../shared/switch';
 import {ModbusSwitch} from '../shared/modbus-switch';
 import {HttpSwitch} from '../shared/http-switch';
 import {StartingCurrentSwitch} from '../shared/starting-current-switch';
+import {NgForm} from '@angular/forms';
+import {ApplianceControlErrorMessages} from './appliance-control-error-messages';
+import {ErrorMessageHandler} from '../shared/error-message-handler';
+import {TranslateService} from '@ngx-translate/core';
+import {ErrorMessages} from '../shared/error-messages';
+import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 
 @Component({
   selector: 'app-appliance-switch',
@@ -33,13 +37,21 @@ import {StartingCurrentSwitch} from '../shared/starting-current-switch';
   styles: []
 })
 export class ApplianceControlComponent implements OnInit {
+  @ViewChild('controlForm') controlForm: NgForm;
   applianceId: string;
   control = ControlFactory.createEmptyControl();
+  errors: { [key: string]: string } = {};
+  errorMessages: ErrorMessages;
   TYPE_SWITCH = Switch.TYPE;
   TYPE_MODBUS_SWITCH = ModbusSwitch.TYPE;
   TYPE_HTTP_SWITCH = HttpSwitch.TYPE;
+  VALIDATOR_PATTERN_INTEGER = InputValidatorPatterns.INTEGER;
+  VALIDATOR_PATTERN_URL = InputValidatorPatterns.URL;
 
-  constructor(private applianceService: ApplianceService, private route: ActivatedRoute) {
+  constructor(private applianceService: ApplianceService,
+              private route: ActivatedRoute,
+              private translate: TranslateService) {
+    this.errorMessages =  new ApplianceControlErrorMessages(this.translate);
   }
 
   ngOnInit() {
@@ -48,6 +60,9 @@ export class ApplianceControlComponent implements OnInit {
         this.applianceService.getControl(this.applianceId).subscribe(control => this.control = control);
       }
     );
+
+    this.controlForm.statusChanges.subscribe(() =>
+      this.errors = ErrorMessageHandler.applyErrorMessages4TemplateDrivenForm(this.controlForm, this.errorMessages));
   }
 
   typeChanged(newType: string) {
@@ -69,5 +84,4 @@ export class ApplianceControlComponent implements OnInit {
   submitForm() {
     this.applianceService.updateControl(this.control, this.applianceId);
   }
-
 }

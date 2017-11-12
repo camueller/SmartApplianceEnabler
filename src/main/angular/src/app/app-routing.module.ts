@@ -22,7 +22,7 @@ import {NgModule} from '@angular/core';
 import {PageNotFoundComponent} from './not-found.component';
 import {ApplianceMeterComponent} from './appliance-meter/appliance-meter.component';
 import {ApplianceControlComponent} from './appliance-control/appliance-control.component';
-import {SchedulesComponent} from './schedules/schedules.component';
+import {SchedulesComponent} from './schedule/schedule.component';
 import {SettingsComponent} from './settings/settings.component';
 import {ApplianceResolver} from './shared/appliance-resolver.service';
 
@@ -47,7 +47,7 @@ const routes: Routes = [
     component: ApplianceControlComponent
   },
   {
-    path: 'schedules/:id',
+    path: 'schedule/:id',
     component: SchedulesComponent
   },
   {
