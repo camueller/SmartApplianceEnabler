@@ -1,9 +1,21 @@
-# Smart Appliance Enabler
-
-[![Build Status](https://travis-ci.org/camueller/SmartApplianceEnabler.svg?branch=master)](https://travis-ci.org/camueller/SmartApplianceEnabler)
-[![codecov.io](https://codecov.io/gh/camueller/SmartApplianceEnabler/coverage.svg)](https://codecov.io/gh/camueller/SmartApplianceEnabler)
-[![Download](https://img.shields.io/badge/Download-1.1.0-brightgreen.svg)](https://github.com/camueller/SmartApplianceEnabler/releases/download/v1.1.0/SmartApplianceEnabler-1.1.0.jar)
-[![License](https://img.shields.io/badge/license-GPLv2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
+<p align="center">
+  <img src="https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/logo.png">
+  <h3 align="center">Smart Appliance Enabler</h3>
+  <p align="center">
+    <a href="https://travis-ci.org/camueller/SmartApplianceEnabler">
+      <img src="https://travis-ci.org/camueller/SmartApplianceEnabler.svg?branch=master">
+    </a>
+    <a href="https://codecov.io/gh/camueller/SmartApplianceEnabler">
+      <img src="https://codecov.io/gh/camueller/SmartApplianceEnabler/coverage.svg">
+    </a>
+    <a href="https://github.com/camueller/SmartApplianceEnabler/releases/download/v1.1.0/SmartApplianceEnabler-1.1.0.jar">
+      <img src="https://img.shields.io/badge/Download-1.1.0-brightgreen.svg">
+    </a>
+    <a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.html">
+      <img src="https://img.shields.io/badge/license-GPLv2-blue.svg">
+    </a>
+  </p>
+</p>
 
 ## Wozu?
 Der *Smart Appliance Enabler* dient dazu, beliebige Geräte (Wärmepumpe, Waschmaschine, ...) in eine **(Smart-Home-) Steuerung** zu integrieren. Dazu kann der *Smart Appliance Enabler* von der Steuerung **Schalt-Empfehlungen** entgegen nehmen und die von ihm verwalteten Geräte ein- oder ausschalten. Falls für diese Geräte individuelle, **digitale Stromzähler** verwendet werden, können diese ausgelesen werden und der Stromverbrauch an die (Smart-Home-) Steuerung gemeldet werden, um der Steuerung künftig energieeffiziente Schaltempfehlungen zu ermöglichen.
