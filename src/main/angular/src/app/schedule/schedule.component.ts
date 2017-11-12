@@ -25,7 +25,7 @@ import {ConsecutiveDaysTimeframe} from '../shared/consecutive-days-timeframe';
 import {DayTimeframe} from '../shared/day-timeframe';
 import {ErrorMessages} from '../shared/error-messages';
 import {TranslateService} from '@ngx-translate/core';
-import {SchedulesErrorMessages} from './schedule-error-messages';
+import {ScheduleErrorMessages} from './schedule-error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {ScheduleFactory} from '../shared/schedule-factory';
 
@@ -72,21 +72,16 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
               private applianceService: ApplianceService,
               private route: ActivatedRoute,
               private translate: TranslateService) {
-    this.errorMessages =  new SchedulesErrorMessages(this.translate);
+    this.errorMessages =  new ScheduleErrorMessages(this.translate);
   }
 
   ngOnInit() {
     this.initForm();
-
-    this.schedulesForm.statusChanges.subscribe(() =>
-      this.errors = ErrorMessageHandler.applyErrorMessages4ReactiveForm(this.schedulesForm, this.errorMessages, 'schedules.#.'));
-
     this.route.params.subscribe(val => {
         this.applianceId = this.route.snapshot.paramMap.get('id');
         this.loadSchedules();
       }
     );
-    // this.loadSchedules();
   }
 
   ngAfterViewInit() {
@@ -111,6 +106,9 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
 
   initForm() {
     this.schedulesForm = this.fb.group({schedules: new FormArray([])});
+    this.schedulesForm.statusChanges.subscribe(() =>
+      this.errors = ErrorMessageHandler.applyErrorMessages4ReactiveForm(this.schedulesForm,
+        this.errorMessages, 'schedules.#.'));
   }
 
   loadSchedules() {

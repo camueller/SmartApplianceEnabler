@@ -20,7 +20,7 @@ import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {ErrorMessages} from '../shared/error-messages';
 import {TranslateService} from '@ngx-translate/core';
 
-export class SchedulesErrorMessages extends ErrorMessages {
+export class ScheduleErrorMessages extends ErrorMessages {
 
   constructor(protected translate: TranslateService) {
     super('ScheduleComponent.error.',
