@@ -83,6 +83,12 @@ public class ApplianceManager implements Runnable {
         logger.info(getAppliances().size() + " appliance(s) configured.");
     }
 
+    public void restartAppliances() {
+        logger.info("Restarting appliances ...");
+        this.appliances = null;
+        startAppliances();
+    }
+
     public List<Appliance> getAppliances() {
         if(appliances != null) {
             return appliances.getAppliances();
