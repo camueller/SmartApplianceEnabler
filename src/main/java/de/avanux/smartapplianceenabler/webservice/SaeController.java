@@ -43,6 +43,7 @@ public class SaeController {
     // only required for development if running via "ng serve"
     public static final String CROSS_ORIGIN_URL = "http://localhost:4200";
     private Logger logger = LoggerFactory.getLogger(SaeController.class);
+    FileHandler fileHandler = new FileHandler();
     private Device2EM device2EM;
     private Appliances appliances;
 
@@ -52,7 +53,6 @@ public class SaeController {
 
     private Device2EM loadDevice2EMIfNeeded(boolean create) {
         if(this.device2EM == null) {
-            FileHandler fileHandler = new FileHandler();
             this.device2EM = fileHandler.load(Device2EM.class);
             if(device2EM == null && create) {
                 this.device2EM = new Device2EM();
@@ -63,13 +63,22 @@ public class SaeController {
 
     private Appliances loadAppliancesIfNeeded(boolean create) {
         if(this.appliances == null) {
-            FileHandler fileHandler = new FileHandler();
             this.appliances = fileHandler.load(Appliances.class);
             if(appliances == null) {
                 this.appliances = new Appliances();
             }
         }
         return this.appliances;
+    }
+
+    private void save(boolean writeDevice2EM, boolean writeAppliances) {
+        if(writeDevice2EM) {
+            fileHandler.save(this.device2EM);
+        }
+        if(writeAppliances) {
+            fileHandler.save(this.appliances);
+        }
+        ApplianceManager.getInstance().restartAppliances();
     }
 
     private Appliance getAppliance(String applianceId) {
@@ -191,6 +200,7 @@ public class SaeController {
                 device2EM.getDeviceInfo().add(replaceIndex, deviceInfo);
             }
         }
+        save(true, false);
     }
 
     @RequestMapping(value= APPLIANCE_URL, method=RequestMethod.DELETE, consumes="application/json")
@@ -213,6 +223,7 @@ public class SaeController {
         Appliances appliances = loadAppliancesIfNeeded(false);
         Appliance applianceToBeDeleted = getAppliance(applianceId);
         appliances.getAppliances().remove(applianceToBeDeleted);
+        save(true, true);
     }
 
     @RequestMapping(value=CONTROL_URL, method=RequestMethod.GET, produces="application/json")
@@ -245,6 +256,7 @@ public class SaeController {
         }
         controls.clear();
         controls.add(control);
+        save(false, true);
     }
 
     @RequestMapping(value=METER_URL, method=RequestMethod.GET, produces="application/json")
@@ -266,6 +278,7 @@ public class SaeController {
         ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
         applianceLogger.debug("Received request to set meter " + meter);
         getAppliance(applianceId).setMeter(meter);
+        save(false, true);
     }
 
     @RequestMapping(value=SCHEDULES_URL, method=RequestMethod.GET, produces="application/json")
@@ -290,6 +303,7 @@ public class SaeController {
         ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
         applianceLogger.debug("Received request to set " + schedules.size() + " schedules");
         getAppliance(applianceId).setSchedules(schedules);
+        save(false, true);
     }
 
     @RequestMapping(value=SCHEDULES_URL, method= RequestMethod.POST, consumes="application/xml")
@@ -392,5 +406,6 @@ public class SaeController {
             configurations = Collections.singletonList(configuration);
         }
         this.appliances.setConfigurations(configurations);
+        save(false, true);
     }
 }

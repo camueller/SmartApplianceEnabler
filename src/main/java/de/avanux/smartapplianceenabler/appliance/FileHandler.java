@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import java.io.File;
 import java.io.FileWriter;
@@ -66,6 +67,20 @@ public class FileHandler {
             }
         }
         return null;
+    }
+
+    public void save(Object object) {
+        File file = getFile(object.getClass());
+        try {
+            JAXBContext context = JAXBContext.newInstance(object.getClass());
+            Marshaller marshaller = context.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            marshaller.marshal(object, file);
+            logger.debug("File " + file.getAbsolutePath() + " written");
+        }
+        catch(JAXBException e) {
+            logger.error("Error unmarshalling file " + file, e);
+        }
     }
     
     private File getFile(Class<? extends Object> rootElementType) {
