@@ -25,8 +25,14 @@ import {ApplianceControlComponent} from './appliance-control/appliance-control.c
 import {SchedulesComponent} from './schedule/schedule.component';
 import {SettingsComponent} from './settings/settings.component';
 import {ApplianceResolver} from './shared/appliance-resolver.service';
+import {StatusComponent} from './status/status.component';
 
 const routes: Routes = [
+  {
+    path: '',
+    redirectTo: 'status',
+    pathMatch: 'full'
+  },
   {
     path: 'appliance/:id',
     component: ApplianceDetailsComponent,
@@ -37,6 +43,10 @@ const routes: Routes = [
   {
     path: 'appliance',
     component: ApplianceDetailsComponent
+  },
+  {
+    path: 'status',
+    component: StatusComponent
   },
   {
     path: 'meter/:id',
@@ -54,7 +64,10 @@ const routes: Routes = [
     path: 'settings',
     component: SettingsComponent
   },
-  { path: '**', component: PageNotFoundComponent }
+  {
+    path: '**',
+    component: PageNotFoundComponent
+  }
 ];
 
 @NgModule({
