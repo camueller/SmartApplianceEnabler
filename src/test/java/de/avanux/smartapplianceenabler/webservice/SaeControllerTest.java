@@ -62,6 +62,7 @@ public class SaeControllerTest {
 
     @Before
     public void setup() throws Exception {
+        System.setProperty(FileHandler.SAE_HOME, System.getProperty("java.io.tmpdir"));
         this.mockMvc = webAppContextSetup(webApplicationContext).build();
     }
 

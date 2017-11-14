@@ -40,18 +40,21 @@ import java.util.Map;
 
 public class FileHandler {
 
-    private static final String SAE_HOME = "sae.home";
-    private static String FILE_DIR;
     private static Logger logger = LoggerFactory.getLogger(FileHandler.class);
+    public static final String SAE_HOME = "sae.home";
+    private static String homeDir;
     private static final DateTimeFormatter dateFormatter = DateTimeFormat.forPattern("yyyy-MM-dd");
 
-    static {
-        FILE_DIR=System.getProperty(SAE_HOME);
-        if(FILE_DIR == null) {
-            logger.error("Property " + SAE_HOME + " not set.");
-            System.exit(-1);
+    private String getHomeDir() {
+        if(homeDir == null) {
+            homeDir=System.getProperty(SAE_HOME);
+            if(homeDir == null) {
+                logger.error("Property " + SAE_HOME + " not set.");
+                System.exit(-1);
+            }
+            logger.info("Using appliance directory " + homeDir);
         }
-        logger.info("Using appliance directory " + FILE_DIR);
+        return homeDir;
     }
 
     public <R extends Object> R load(Class<R> rootElementType) {
@@ -84,7 +87,7 @@ public class FileHandler {
     }
     
     private File getFile(Class<? extends Object> rootElementType) {
-        return new File(FILE_DIR + System.getProperty("file.separator") + rootElementType.getSimpleName() + ".xml");
+        return new File(getHomeDir() + System.getProperty("file.separator") + rootElementType.getSimpleName() + ".xml");
     }
 
     public void saveHolidays(Map<LocalDate, String> holidayWithName) {
@@ -130,6 +133,6 @@ public class FileHandler {
 
     private File getHolidayFile() {
         int year = new LocalDate().getYear();
-        return new File(FILE_DIR, "Holidays-" + year + ".txt");
+        return new File(getHomeDir(), "Holidays-" + year + ".txt");
     }
 }
