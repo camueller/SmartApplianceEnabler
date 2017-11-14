@@ -18,8 +18,11 @@
 
 <div class="ui sidebar inverted vertical menu">
   <div class="ui item">
-    <span class="ui inverted header">{{'AppComponent.appliances' | translate}}</span>
-    <a style="font-size: 1.4em" [routerLink]="['appliance']" routerLinkActive="active"><i class="icon green add"></i></a>
+
+    <a style="font-size: 1.4em" [routerLink]="['appliance']" routerLinkActive="active">
+      <span class="ui inverted">{{'AppComponent.appliance.new' | translate}}</span>
+      <i class="icon green add"></i>
+    </a>
   </div>
 
   <div *ngFor="let appliance of appliances">
@@ -32,15 +35,11 @@
       <a class="item" [routerLink]="['schedule', appliance.id]" routerLinkActive="active">{{'AppComponent.schedules' | translate}}</a>
     </div>
   </div>
-
-  <a class="item" [routerLink]="['settings']" routerLinkActive="active">{{'AppComponent.settings' | translate}}</a>
-
 </div>
 <div class="ui fixed inverted main menu">
-  <a (click)="toggleSidebar()" class="launch icon item">
-    <i class="content icon"></i>
-    <p style="padding-left:1em">{{'AppComponent.menu' | translate}}</p>
-  </a>
+  <a (click)="toggleSidebar()" class="launch icon item"><p style="padding-left:1em">{{'AppComponent.appliances' | translate}}</p></a>
+  <a class="launch icon item" [routerLink]="['status']" routerLinkActive="active">{{'AppComponent.status' | translate}}</a>
+  <a class="launch icon item" [routerLink]="['settings']" routerLinkActive="active">{{'AppComponent.settings' | translate}}</a>
 </div>
 <div class="pusher">
   <div class="segment ui vertical very padded">

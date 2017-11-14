@@ -35,6 +35,7 @@ import {AppliancesReloadService} from './shared/appliances-reload-service';
 import {HttpClient, HttpClientModule} from '@angular/common/http';
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
+import { StatusComponent } from './status/status.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import {TranslateHttpLoader} from '@ngx-translate/http-loader';
     ApplianceMeterComponent,
     ApplianceControlComponent,
     SchedulesComponent,
-    SettingsComponent
+    SettingsComponent,
+    StatusComponent
   ],
   imports: [
     BrowserModule,

@@ -1,10 +1,11 @@
 {
-  "AppComponent.menu": "Menü",
   "AppComponent.appliances": "Geräte",
+  "AppComponent.appliance.new": "Neues Gerät",
   "AppComponent.meter": "Zähler",
   "AppComponent.control": "Schalter",
   "AppComponent.schedules": "Schaltzeiten",
   "AppComponent.settings": "Einstellungen",
+  "AppComponent.status": "Status",
 
   "ApplianceDetailsComponent.general": "Allgemein",
   "ApplianceDetailsComponent.vendor": "Hersteller",
