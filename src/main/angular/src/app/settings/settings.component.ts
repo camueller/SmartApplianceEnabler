@@ -16,11 +16,12 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {ApplianceService} from '../shared/appliance.service';
 import {Settings} from '../shared/settings';
 import {ActivatedRoute} from '@angular/router';
 import {SettingsFactory} from '../shared/settings-factory';
+import {NgForm} from '@angular/forms';
 
 @Component({
   selector: 'app-settings',
@@ -28,7 +29,7 @@ import {SettingsFactory} from '../shared/settings-factory';
   styles: []
 })
 export class SettingsComponent implements OnInit {
-
+  @ViewChild('settingsForm') settingsForm: NgForm;
   settings = SettingsFactory.createEmptySettings();
 
   constructor(private applianceService: ApplianceService, private route: ActivatedRoute) {

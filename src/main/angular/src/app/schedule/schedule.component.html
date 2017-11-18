@@ -86,7 +86,8 @@
             </div>
           </div>
           <div class="ui fields" [class.disabled]="!schedule.controls.enabled.value"
-               *ngIf="schedule.controls.timeframeType.value===CONSECUTIVE_DAYS_TIMEFRAME" formGroupName="consecutiveDaysTimeframe">
+               *ngIf="schedule.controls.timeframeType.value===CONSECUTIVE_DAYS_TIMEFRAME"
+               formGroupName="consecutiveDaysTimeframe">
             <div class="field">
               <label>{{'ScheduleComponent.consecutiveDaysTimeframe_startDayOfWeek' | translate}}</label>
               <select class="ui fluid dropdown" formControlName="startDayOfWeek">
@@ -153,7 +154,8 @@
       </div>
     </div>
     <button type="button" (click)="addSchedule()" class="ui button">{{'button.new' | translate}}</button>
-    <button type="submit" class="ui button" [disabled]="schedulesForm.invalid">{{'button.save' | translate}}</button>
+    <button type="submit" class="ui button" [disabled]="schedulesForm.pristine||schedulesForm.invalid">
+      {{'button.save' | translate}}</button>
   </form>
   <!--
   <pre>{{schedulesForm.value | json}}</pre>

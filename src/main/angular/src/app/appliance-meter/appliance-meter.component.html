@@ -144,7 +144,8 @@
         </div>
         <div class="field">
           <label>{{'ApplianceMeterComponent.httpElectricityMeter_contentType' | translate}}</label>
-          <input type="text" name="httpElectricityMeter_contentType" [(ngModel)]="meter.httpElectricityMeter.contentType">
+          <input type="text" name="httpElectricityMeter_contentType"
+                 [(ngModel)]="meter.httpElectricityMeter.contentType">
         </div>
       </div>
       <div class="field">
@@ -177,6 +178,10 @@
       </div>
     </div>
 
-    <button type="submit" class="ui button" [disabled]="meterForm.invalid">{{'button.save' | translate}}</button>
+    <button type="submit" class="ui button" [disabled]="meterForm.pristine||meterForm.invalid">
+      {{'button.save' | translate}}</button>
   </form>
+  <!--
+  <pre>{{meterForm.value | json}}</pre>
+  -->
 </div>

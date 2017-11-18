@@ -41,7 +41,7 @@ export class ApplianceDetailsComponent implements OnInit {
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   VALIDATOR_PATTERN_INTEGER = InputValidatorPatterns.INTEGER;
-  VALIDATOR_PATTERN_ID = 'F-\\d{8}-\\d{12}-\\d{2}';
+  VALIDATOR_PATTERN_ID = InputValidatorPatterns.APPLIANCE_ID;
   isNew = false;
 
   constructor(private applianceService: ApplianceService,
@@ -58,7 +58,9 @@ export class ApplianceDetailsComponent implements OnInit {
       if (id == null) {
         this.isNew = true;
       } else {
-        this.applianceService.getAppliance(id).subscribe(appliance => this.appliance = appliance);
+        this.applianceService.getAppliance(id).subscribe(appliance => {
+          this.detailsForm.reset(appliance);
+        });
       }
     });
 
