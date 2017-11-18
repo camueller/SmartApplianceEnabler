@@ -84,6 +84,18 @@ public class ApplianceManager implements Runnable {
     }
 
     public void restartAppliances() {
+        Connectivity connectivity = this.appliances.getConnectivity();
+        if(connectivity != null) {
+            if(connectivity != null) {
+                // make PulseReceiver accessible by id
+                if (connectivity.getPulseReceivers() != null) {
+                    for (PulseReceiver pulseReceiver : connectivity.getPulseReceivers()) {
+                        logger.info("Stopping PulseReceiver (" + pulseReceiver.getId() + ") configured for port " + pulseReceiver.getPort());
+                        pulseReceiver.stop();
+                    }
+                }
+            }
+        }
         logger.info("Restarting appliances ...");
         this.appliances = null;
         startAppliances();
