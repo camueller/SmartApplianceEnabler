@@ -19,5 +19,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 export class InputValidatorPatterns {
   static INTEGER = '\\d*';
   static FLOAT = '^\\d*(\\.\\d+)?$';
-  static URL = 'https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)';
+  // https://regexr.com/3h7bc
+  static URL = '(https?|ftp):\\/\\/([-A-Za-z0-9:%_.]{3,}@)?((([-a-z0-9.]{2,256})(\\.[a-z]{2,4}){1})|((?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))(\\:[0-9]*)?(\\/[-a-zA-Z0-9\\(\\)@:%,_\\+.~#?&//=]*)?';
 }
