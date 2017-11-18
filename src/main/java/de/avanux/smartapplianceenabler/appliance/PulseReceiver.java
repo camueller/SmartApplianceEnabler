@@ -23,8 +23,6 @@ import org.slf4j.LoggerFactory;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlTransient;
-import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.text.DecimalFormat;
@@ -45,8 +43,10 @@ public class PulseReceiver implements Runnable {
     @XmlAttribute
     private Integer port = DEFAULT_PORT;
     private transient Thread thread;
+    private transient DatagramSocket serverSocket;
     private transient Map<String, PulseListener> applianceIdWithListener = new HashMap<>();
     private transient NumberFormat counterFormat = new DecimalFormat("00000");
+    private transient boolean stopping;
 
 
     public interface PulseListener {
@@ -75,15 +75,26 @@ public class PulseReceiver implements Runnable {
 
     public void start() {
         logger.debug("Starting ...");
+        this.stopping = false;
         thread = new Thread(this);
         thread.start();
+    }
+
+    public void stop() {
+        this.stopping = true;
+        if(this.thread != null) {
+            logger.debug("Stopping ...");
+            this.serverSocket.close();
+            thread.interrupt();
+        }
+        this.thread = null;
     }
 
     @Override
     public void run() {
         try {
             logger.debug("Listening on UDP port " + port);
-            DatagramSocket serverSocket = new DatagramSocket(port);
+            serverSocket = new DatagramSocket(port);
             byte[] receiveData = new byte[128];
             DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
             while(true)
@@ -93,8 +104,10 @@ public class PulseReceiver implements Runnable {
                 logger.debug("Received UDP packet: " + content);
                 processReceivedPacket(content);
             }
-        } catch (IOException e) {
-            logger.error("Error listening on UDP port " + port, e);
+        } catch (Exception e) {
+            if(! this.stopping) {
+                logger.error("Error listening on UDP port " + port, e);
+            }
         }
     }
 
