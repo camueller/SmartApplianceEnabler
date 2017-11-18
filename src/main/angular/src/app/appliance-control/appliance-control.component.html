@@ -112,12 +112,14 @@
                  [(ngModel)]="control.startingCurrentSwitch.powerThreshold">
         </div>
         <div class="field">
-          <label>{{'ApplianceControlComponent.startingCurrentSwitch_startingCurrentDetectionDuration' | translate}}</label>
+          <label>
+            {{'ApplianceControlComponent.startingCurrentSwitch_startingCurrentDetectionDuration' | translate}}</label>
           <input type="text" name="startingCurrentSwitch_startingCurrentDetectionDuration"
                  [(ngModel)]="control.startingCurrentSwitch.startingCurrentDetectionDuration">
         </div>
         <div class="field">
-          <label>{{'ApplianceControlComponent.startingCurrentSwitch_finishedCurrentDetectionDuration' | translate}}</label>
+          <label>
+            {{'ApplianceControlComponent.startingCurrentSwitch_finishedCurrentDetectionDuration' | translate}}</label>
           <input type="text" name="startingCurrentSwitch_finishedCurrentDetectionDuration"
                  [(ngModel)]="control.startingCurrentSwitch.finishedCurrentDetectionDuration">
         </div>
@@ -129,6 +131,10 @@
       </div>
     </div>
 
-    <button type="submit" class="ui button" [disabled]="controlForm.invalid">{{'button.save' | translate}}</button>
+    <button type="submit" class="ui button" [disabled]="controlForm.pristine||controlForm.invalid">
+      {{'button.save' | translate}}</button>
   </form>
+  <!--
+  <pre>{{controlForm.value | json}}</pre>
+  -->
 </div>

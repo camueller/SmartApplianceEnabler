@@ -85,7 +85,9 @@
       </div>
     </div>
 
-    <button type="submit" class="ui button" [disabled]="detailsForm.invalid">{{'button.save' | translate}}</button>
-    <button type="button" (click)="deleteAppliance()" class="ui button" [disabled]="isNew">{{'button.delete' | translate}}</button>
+    <button type="submit" class="ui button" [disabled]="detailsForm.pristine||detailsForm.invalid">
+      {{'button.save' | translate}}</button>
+    <button type="button" (click)="deleteAppliance()" class="ui button" [disabled]="isNew">
+      {{'button.delete' | translate}}</button>
   </form>
 </div>
