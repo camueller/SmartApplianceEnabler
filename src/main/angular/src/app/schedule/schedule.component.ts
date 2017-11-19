@@ -48,6 +48,7 @@ FormControlName.prototype.ngOnChanges = function () {
     if (classAttributeValues.indexOf('clockpicker') > -1) {
       $(this.valueAccessor._elementRef.nativeElement).on('change', (event) => {
         this._control.setValue(event.target.value);
+        this.control.markAsDirty();
       });
     }
   }
