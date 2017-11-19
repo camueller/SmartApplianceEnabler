@@ -79,8 +79,10 @@ export class ScheduleFactory {
     console.log('rawSchedule ' + JSON.stringify(rawSchedule));
     const schedule = new Schedule();
     schedule.enabled = rawSchedule.enabled;
-    schedule.minRunningTime = rawSchedule.minRunningTime;
-    schedule.maxRunningTime = rawSchedule.maxRunningTime;
+    schedule.minRunningTime = rawSchedule.minRunningTime
+    schedule.minRunningTimeHHMM = ScheduleFactory.toHourMinute(rawSchedule.minRunningTime);
+    schedule.maxRunningTime = rawSchedule.maxRunningTime
+    schedule.maxRunningTimeHHMM = ScheduleFactory.toHourMinute(rawSchedule.maxRunningTime);
     if (rawSchedule.timeframe['@class'] === DayTimeframe.TYPE) {
       schedule.timeframeType = DayTimeframe.TYPE;
       schedule.dayTimeframe = ScheduleFactory.createDayTimeframe(rawSchedule.timeframe);
@@ -106,16 +108,16 @@ export class ScheduleFactory {
         schedule.dayTimeframe.daysOfWeekValues = rawSchedule.dayTimeframe.daysOfWeekValues;
         schedule.dayTimeframe.startTime = rawSchedule.dayTimeframe.startTime;
         schedule.dayTimeframe.endTime = rawSchedule.dayTimeframe.endTime;
-        schedule.minRunningTime = rawSchedule.dayTimeframe.minRunningTime;
-        schedule.maxRunningTime = rawSchedule.dayTimeframe.maxRunningTime;
+        schedule.minRunningTime = this.toSeconds(rawSchedule.dayTimeframe.minRunningTime).toString();
+        schedule.maxRunningTime = this.toSeconds(rawSchedule.dayTimeframe.maxRunningTime).toString();
       } else if (rawSchedule.timeframeType === ConsecutiveDaysTimeframe.TYPE) {
         schedule.consecutiveDaysTimeframe = new ConsecutiveDaysTimeframe();
         schedule.consecutiveDaysTimeframe.startDayOfWeek = rawSchedule.consecutiveDaysTimeframe.startDayOfWeek;
         schedule.consecutiveDaysTimeframe.startTime = rawSchedule.consecutiveDaysTimeframe.startTime;
         schedule.consecutiveDaysTimeframe.endDayOfWeek = rawSchedule.consecutiveDaysTimeframe.endDayOfWeek;
         schedule.consecutiveDaysTimeframe.endTime = rawSchedule.consecutiveDaysTimeframe.endTime;
-        schedule.minRunningTime = rawSchedule.consecutiveDaysTimeframe.minRunningTime;
-        schedule.maxRunningTime = rawSchedule.consecutiveDaysTimeframe.maxRunningTime;
+        schedule.minRunningTime = this.toSeconds(rawSchedule.consecutiveDaysTimeframe.minRunningTime).toString();
+        schedule.maxRunningTime = this.toSeconds(rawSchedule.consecutiveDaysTimeframe.maxRunningTime).toString();
       }
       schedules.push(schedule);
     }
@@ -143,6 +145,18 @@ export class ScheduleFactory {
     consecutiveDaysTimeframe.endDayOfWeek = rawTimeframe.end.dayOfWeek;
     consecutiveDaysTimeframe.endTime = this.timestring(rawTimeframe.end.hour, rawTimeframe.end.minute);
     return consecutiveDaysTimeframe;
+  }
+
+  static toHourMinute(seconds: number): string {
+    return new Date(seconds * 1000).toISOString().substring(11, 16);
+  }
+
+  static toSeconds(hhmmString: string): number {
+    if (hhmmString != null) {
+      const hhmm = hhmmString.split(':');
+      return (+hhmm[0]) * 3600 + (+hhmm[1]) * 60;
+    }
+    return 0;
   }
 
   static timestring(hour: number, minute: number): string {
