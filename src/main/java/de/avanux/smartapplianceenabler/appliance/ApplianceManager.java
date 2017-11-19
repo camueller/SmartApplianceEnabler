@@ -78,7 +78,7 @@ public class ApplianceManager implements Runnable {
             init();
         }
         else {
-            logger.warn("No valid appliance configuration found. Exiting ...");
+            logger.warn("No valid appliance configuration found.");
         }
         logger.info(getAppliances().size() + " appliance(s) configured.");
     }
