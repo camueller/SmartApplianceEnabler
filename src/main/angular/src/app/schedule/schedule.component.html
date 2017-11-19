@@ -66,87 +66,95 @@
             </div>
             <div class="field">
               <label>{{'ScheduleComponent.dayTimeframe_startTime' | translate}}</label>
-              <input type="text" class="clockpicker" #dayTimeframeStartTime formControlName="startTime">
+              <input type="text" class="clockpicker" formControlName="startTime">
               <div *ngIf="errors.dayTimeframe_startTime" class="ui negative message">{{errors.dayTimeframe_startTime}}</div>
             </div>
             <div class="field">
               <label>{{'ScheduleComponent.dayTimeframe_endTime' | translate}}</label>
-              <input type="text" class="clockpicker" #dayTimeframeEndTime formControlName="endTime">
+              <input type="text" class="clockpicker" formControlName="endTime">
               <div *ngIf="errors.dayTimeframe_endTime" class="ui negative message">{{errors.dayTimeframe_endTime}}</div>
             </div>
             <div class="field">
               <label>{{'ScheduleComponent.dayTimeframe_minRunningTime' | translate}}</label>
-              <input type="text" formControlName="minRunningTime">
+              <input type="text" class="clockpicker" formControlName="minRunningTime">
               <div *ngIf="errors.dayTimeframe_minRunningTime" class="ui negative message">
                 {{errors.dayTimeframe_minRunningTime}}</div>
             </div>
             <div class="field">
               <label>{{'ScheduleComponent.dayTimeframe_maxRunningTime' | translate}}</label>
-              <input type="text" formControlName="maxRunningTime">
+              <input type="text" class="clockpicker" formControlName="maxRunningTime">
             </div>
           </div>
           <div class="ui fields" [class.disabled]="!schedule.controls.enabled.value"
                *ngIf="schedule.controls.timeframeType.value===CONSECUTIVE_DAYS_TIMEFRAME"
                formGroupName="consecutiveDaysTimeframe">
             <div class="field">
-              <label>{{'ScheduleComponent.consecutiveDaysTimeframe_startDayOfWeek' | translate}}</label>
-              <select class="ui fluid dropdown" formControlName="startDayOfWeek">
-                <option value="1" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.startDayOfWeek.value===1">
-                  {{'ScheduleComponent.daysOfWeek_monday' | translate}}</option>
-                <option value="2" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.startDayOfWeek.value===2">
-                  {{'ScheduleComponent.daysOfWeek_tuesday' | translate}}</option>
-                <option value="3" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.startDayOfWeek.value===3">
-                  {{'ScheduleComponent.daysOfWeek_wednesday' | translate}}</option>
-                <option value="4" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.startDayOfWeek.value===4">
-                  {{'ScheduleComponent.daysOfWeek_thursday' | translate}}</option>
-                <option value="5" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.startDayOfWeek.value===5">
-                  {{'ScheduleComponent.daysOfWeek_friday' | translate}}</option>
-                <option value="6" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.startDayOfWeek.value===6">
-                  {{'ScheduleComponent.daysOfWeek_saturday' | translate}}</option>
-                <option value="7" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.startDayOfWeek.value===7">
-                  {{'ScheduleComponent.daysOfWeek_sunday' | translate}}</option>
-              </select>
+              <div class="two fields">
+                <div class="field">
+                  <label>{{'ScheduleComponent.consecutiveDaysTimeframe_startDayOfWeek' | translate}}</label>
+                  <select class="ui fluid dropdown" formControlName="startDayOfWeek">
+                    <option value="1" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.startDayOfWeek.value===1">
+                      {{'ScheduleComponent.daysOfWeek_monday' | translate}}</option>
+                    <option value="2" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.startDayOfWeek.value===2">
+                      {{'ScheduleComponent.daysOfWeek_tuesday' | translate}}</option>
+                    <option value="3" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.startDayOfWeek.value===3">
+                      {{'ScheduleComponent.daysOfWeek_wednesday' | translate}}</option>
+                    <option value="4" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.startDayOfWeek.value===4">
+                      {{'ScheduleComponent.daysOfWeek_thursday' | translate}}</option>
+                    <option value="5" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.startDayOfWeek.value===5">
+                      {{'ScheduleComponent.daysOfWeek_friday' | translate}}</option>
+                    <option value="6" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.startDayOfWeek.value===6">
+                      {{'ScheduleComponent.daysOfWeek_saturday' | translate}}</option>
+                    <option value="7" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.startDayOfWeek.value===7">
+                      {{'ScheduleComponent.daysOfWeek_sunday' | translate}}</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>{{'ScheduleComponent.consecutiveDaysTimeframe_startTime' | translate}}</label>
+                  <input type="text" class="clockpicker" formControlName="startTime">
+                  <div *ngIf="errors.consecutiveDaysTimeframe_startTime" class="ui negative message">
+                    {{errors.consecutiveDaysTimeframe_startTime}}</div>
+                </div>
+              </div>
             </div>
             <div class="field">
-              <label>{{'ScheduleComponent.consecutiveDaysTimeframe_startTime' | translate}}</label>
-              <input type="text" class="clockpicker" #consecutiveDaysTimeframeStartTime formControlName="startTime">
-              <div *ngIf="errors.consecutiveDaysTimeframe_startTime" class="ui negative message">
-                {{errors.consecutiveDaysTimeframe_startTime}}</div>
-            </div>
-            <div class="field">
-              <label>{{'ScheduleComponent.consecutiveDaysTimeframe_endDayOfWeek' | translate}}</label>
-              <select class="ui fluid dropdown" formControlName="endDayOfWeek">
-                <option value="1" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.endDayOfWeek.value===1">
-                  {{'ScheduleComponent.daysOfWeek_monday' | translate}}</option>
-                <option value="2" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.endDayOfWeek.value===2">
-                  {{'ScheduleComponent.daysOfWeek_tuesday' | translate}}</option>
-                <option value="3" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.endDayOfWeek.value===3">
-                  {{'ScheduleComponent.daysOfWeek_wednesday' | translate}}</option>
-                <option value="4" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.endDayOfWeek.value===4">
-                  {{'ScheduleComponent.daysOfWeek_thursday' | translate}}</option>
-                <option value="5" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.endDayOfWeek.value===5">
-                  {{'ScheduleComponent.daysOfWeek_friday' | translate}}</option>
-                <option value="6" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.endDayOfWeek.value===6">
-                  {{'ScheduleComponent.daysOfWeek_saturday' | translate}}</option>
-                <option value="7" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.endDayOfWeek.value===7">
-                  {{'ScheduleComponent.daysOfWeek_sunday' | translate}}</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>{{'ScheduleComponent.consecutiveDaysTimeframe_endTime' | translate}}</label>
-              <input type="text" class="clockpicker" #consecutiveDaysTimeframeEndTime formControlName="endTime">
-              <div *ngIf="errors.consecutiveDaysTimeframe_endTime" class="ui negative message">
-                {{errors.consecutiveDaysTimeframe_endTime}}</div>
+              <div class="two fields">
+                <div class="field">
+                  <label>{{'ScheduleComponent.consecutiveDaysTimeframe_endDayOfWeek' | translate}}</label>
+                  <select class="ui fluid dropdown" formControlName="endDayOfWeek">
+                    <option value="1" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.endDayOfWeek.value===1">
+                      {{'ScheduleComponent.daysOfWeek_monday' | translate}}</option>
+                    <option value="2" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.endDayOfWeek.value===2">
+                      {{'ScheduleComponent.daysOfWeek_tuesday' | translate}}</option>
+                    <option value="3" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.endDayOfWeek.value===3">
+                      {{'ScheduleComponent.daysOfWeek_wednesday' | translate}}</option>
+                    <option value="4" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.endDayOfWeek.value===4">
+                      {{'ScheduleComponent.daysOfWeek_thursday' | translate}}</option>
+                    <option value="5" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.endDayOfWeek.value===5">
+                      {{'ScheduleComponent.daysOfWeek_friday' | translate}}</option>
+                    <option value="6" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.endDayOfWeek.value===6">
+                      {{'ScheduleComponent.daysOfWeek_saturday' | translate}}</option>
+                    <option value="7" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.endDayOfWeek.value===7">
+                      {{'ScheduleComponent.daysOfWeek_sunday' | translate}}</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>{{'ScheduleComponent.consecutiveDaysTimeframe_endTime' | translate}}</label>
+                  <input type="text" class="clockpicker" formControlName="endTime">
+                  <div *ngIf="errors.consecutiveDaysTimeframe_endTime" class="ui negative message">
+                    {{errors.consecutiveDaysTimeframe_endTime}}</div>
+                </div>
+              </div>
             </div>
             <div class="field">
               <label>{{'ScheduleComponent.consecutiveDaysTimeframe_minRunningTime' | translate}}</label>
-              <input type="text" formControlName="minRunningTime">
+              <input type="text" class="clockpicker" formControlName="minRunningTime">
               <div *ngIf="errors.consecutiveDaysTimeframe_minRunningTime" class="ui negative message">
                 {{errors.consecutiveDaysTimeframe_minRunningTime}}</div>
             </div>
             <div class="field">
               <label>{{'ScheduleComponent.consecutiveDaysTimeframe_maxRunningTime' | translate}}</label>
-              <input type="text" formControlName="maxRunningTime">
+              <input type="text" class="clockpicker" formControlName="maxRunningTime">
             </div>
           </div>
         </div>

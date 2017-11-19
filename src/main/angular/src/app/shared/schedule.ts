@@ -23,7 +23,9 @@ export class Schedule {
   '@class' = 'de.avanux.smartapplianceenabler.appliance.Schedule';
   enabled: boolean;
   minRunningTime: string;
+  minRunningTimeHHMM: string;
   maxRunningTime: string;
+  maxRunningTimeHHMM: string;
   timeframeType: string;
   dayTimeframe: DayTimeframe;
   consecutiveDaysTimeframe: ConsecutiveDaysTimeframe;

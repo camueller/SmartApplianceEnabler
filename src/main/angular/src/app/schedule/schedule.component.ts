@@ -162,10 +162,10 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
         this.hasDayTimeframe(schedule) ? schedule.dayTimeframe.endTime : null,
         Validators.required),
       minRunningTime: this.fb.control(
-        this.hasDayTimeframe(schedule) ? schedule.minRunningTime : null,
+        this.hasDayTimeframe(schedule) ? schedule.minRunningTimeHHMM : null,
         Validators.required),
       maxRunningTime: this.fb.control(
-        this.hasDayTimeframe(schedule) ? schedule.maxRunningTime : null),
+        this.hasDayTimeframe(schedule) ? schedule.maxRunningTimeHHMM : null),
     });
   }
 
@@ -188,10 +188,10 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
         this.hasConsecutiveDaysTimeframe(schedule) ? schedule.consecutiveDaysTimeframe.endTime : null,
         Validators.required),
       minRunningTime: this.fb.control(
-        this.hasConsecutiveDaysTimeframe(schedule) ? schedule.minRunningTime : null,
+        this.hasConsecutiveDaysTimeframe(schedule) ? schedule.minRunningTimeHHMM : null,
         Validators.required),
       maxRunningTime: this.fb.control(
-        this.hasConsecutiveDaysTimeframe(schedule) ? schedule.maxRunningTime : null)
+        this.hasConsecutiveDaysTimeframe(schedule) ? schedule.maxRunningTimeHHMM : null)
     });
   }
 
