@@ -222,8 +222,13 @@ public class SaeController {
 
         Appliances appliances = loadAppliancesIfNeeded(false);
         Appliance applianceToBeDeleted = getAppliance(applianceId);
-        appliances.getAppliances().remove(applianceToBeDeleted);
-        save(true, true);
+        if(applianceToBeDeleted != null) {
+            appliances.getAppliances().remove(applianceToBeDeleted);
+            save(true, true);
+        }
+        else {
+            applianceLogger.error("Appliance not found");
+        }
     }
 
     @RequestMapping(value=CONTROL_URL, method=RequestMethod.GET, produces="application/json")
@@ -233,11 +238,13 @@ public class SaeController {
         ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
         applianceLogger.debug("Received request for control");
         Appliance appliance = getAppliance(applianceId);
-        List<Control> controls = appliance.getControls();
-        if(controls != null && controls.size() > 0) {
-            Control control = controls.get(0);
+        if(appliance != null) {
+            Control control = appliance.getControl();
             applianceLogger.debug("Returning control " + control);
             return control;
+        }
+        else {
+            applianceLogger.error("Appliance not found");
         }
         return null;
     }
@@ -249,14 +256,13 @@ public class SaeController {
         ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
         applianceLogger.debug("Received request to set control " + control);
         Appliance appliance = getAppliance(applianceId);
-        List<Control> controls = appliance.getControls();
-        if(controls == null) {
-            controls = new ArrayList<>();
-            appliance.setControls(controls);
+        if(appliance != null) {
+            appliance.setControl(control);
+            save(false, true);
         }
-        controls.clear();
-        controls.add(control);
-        save(false, true);
+        else {
+            applianceLogger.error("Appliance not found");
+        }
     }
 
     @RequestMapping(value=METER_URL, method=RequestMethod.GET, produces="application/json")
@@ -266,9 +272,15 @@ public class SaeController {
         ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
         applianceLogger.debug("Received request for meter");
         Appliance appliance = getAppliance(applianceId);
-        Meter meter = appliance.getMeter();
-        applianceLogger.debug("Returning meter " + meter);
-        return meter;
+        if(appliance != null) {
+            Meter meter = appliance.getMeter();
+            applianceLogger.debug("Returning meter " + meter);
+            return meter;
+        }
+        else {
+            applianceLogger.error("Appliance not found");
+        }
+        return null;
     }
 
     @RequestMapping(value=METER_URL, method=RequestMethod.PUT, consumes="application/json")
@@ -277,8 +289,14 @@ public class SaeController {
     public void setMeter(@RequestParam(value="id") String applianceId, @RequestBody Meter meter) {
         ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
         applianceLogger.debug("Received request to set meter " + meter);
-        getAppliance(applianceId).setMeter(meter);
-        save(false, true);
+        Appliance appliance = getAppliance(applianceId);
+        if(appliance != null) {
+            appliance.setMeter(meter);
+            save(false, true);
+        }
+        else {
+            applianceLogger.error("Appliance not found");
+        }
     }
 
     @RequestMapping(value=SCHEDULES_URL, method=RequestMethod.GET, produces="application/json")
@@ -288,12 +306,18 @@ public class SaeController {
         ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
         applianceLogger.debug("Received request for schedules");
         Appliance appliance = getAppliance(applianceId);
-        List<Schedule> schedules = appliance.getSchedules();
-        if(schedules == null) {
-            schedules = new ArrayList<>();
+        if(appliance != null) {
+            List<Schedule> schedules = appliance.getSchedules();
+            if(schedules == null) {
+                schedules = new ArrayList<>();
+            }
+            applianceLogger.debug("Returning " + schedules.size() + " schedules");
+            return schedules;
         }
-        applianceLogger.debug("Returning " + schedules.size() + " schedules");
-        return schedules;
+        else {
+            applianceLogger.error("Appliance not found");
+        }
+        return null;
     }
 
     @RequestMapping(value=SCHEDULES_URL, method=RequestMethod.PUT, consumes="application/json")
@@ -302,8 +326,14 @@ public class SaeController {
     public void setSchedules(@RequestParam(value="id") String applianceId, @RequestBody List<Schedule> schedules) {
         ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
         applianceLogger.debug("Received request to set " + schedules.size() + " schedules");
-        getAppliance(applianceId).setSchedules(schedules);
-        save(false, true);
+        Appliance appliance = getAppliance(applianceId);
+        if(appliance != null) {
+            appliance.setSchedules(schedules);
+            save(false, true);
+        }
+        else {
+            applianceLogger.error("Appliance not found");
+        }
     }
 
     @RequestMapping(value=SCHEDULES_URL, method= RequestMethod.POST, consumes="application/xml")
@@ -311,7 +341,7 @@ public class SaeController {
     public void activateSchedules(@RequestParam(value="id") String applianceId, @RequestBody Schedules schedules) {
         ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
         List<Schedule> schedulesToSet = schedules.getSchedules();
-        applianceLogger.debug("Received request to set " + (schedulesToSet != null ? schedulesToSet.size() : "0") + " schedule(s)");
+        applianceLogger.debug("Received request to activate " + (schedulesToSet != null ? schedulesToSet.size() : "0") + " schedule(s)");
         Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
         if(appliance != null) {
             if(appliance.getRunningTimeMonitor() != null) {

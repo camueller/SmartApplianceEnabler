@@ -53,7 +53,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             @XmlElement(name = "ModbusSwitch", type = ModbusSwitch.class),
             @XmlElement(name = "HttpSwitch", type = HttpSwitch.class)
     })
-    private List<Control> controls;
+    private Control control;
     @XmlElement(name = "Schedule")
     private List<Schedule> schedules;
     private transient RunningTimeMonitor runningTimeMonitor;
@@ -75,12 +75,12 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         this.meter = meter;
     }
 
-    public List<Control> getControls() {
-        return controls;
+    public Control getControl() {
+        return control;
     }
 
-    public void setControls(List<Control> controls) {
-        this.controls = controls;
+    public void setControl(Control control) {
+        this.control = control;
     }
 
     public List<Schedule> getSchedules() {
@@ -117,24 +117,22 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             logger.info("No schedules configured");
         }
 
-        if(controls != null) {
-            for(Control control : controls) {
-                if(control instanceof ApplianceIdConsumer) {
-                    ((ApplianceIdConsumer) control).setApplianceId(id);
+        if(control != null) {
+            if(control instanceof ApplianceIdConsumer) {
+                ((ApplianceIdConsumer) control).setApplianceId(id);
+            }
+            if(control instanceof StartingCurrentSwitch) {
+                for(Control wrappedControl : ((StartingCurrentSwitch) control).getControls()) {
+                    ((ApplianceIdConsumer) wrappedControl).setApplianceId(id);
+                    wrappedControl.addControlStateChangedListener(this);
+                    logger.debug("Registered as " + ControlStateChangedListener.class.getSimpleName() + " with " + wrappedControl.getClass().getSimpleName());
                 }
-                if(control instanceof StartingCurrentSwitch) {
-                    for(Control wrappedControl : ((StartingCurrentSwitch) control).getControls()) {
-                        ((ApplianceIdConsumer) wrappedControl).setApplianceId(id);
-                        wrappedControl.addControlStateChangedListener(this);
-                        logger.debug("Registered as " + ControlStateChangedListener.class.getSimpleName() + " with " + wrappedControl.getClass().getSimpleName());
-                    }
-                    ((StartingCurrentSwitch) control).addStartingCurrentSwitchListener(this);
-                    logger.debug("Registered as " + StartingCurrentSwitchListener.class.getSimpleName() + " with " + control.getClass().getSimpleName());
-                }
-                else {
-                    control.addControlStateChangedListener(this);
-                    logger.debug("Registered as " + ControlStateChangedListener.class.getSimpleName() + " with " + control.getClass().getSimpleName());
-                }
+                ((StartingCurrentSwitch) control).addStartingCurrentSwitchListener(this);
+                logger.debug("Registered as " + StartingCurrentSwitchListener.class.getSimpleName() + " with " + control.getClass().getSimpleName());
+            }
+            else {
+                control.addControlStateChangedListener(this);
+                logger.debug("Registered as " + ControlStateChangedListener.class.getSimpleName() + " with " + control.getClass().getSimpleName());
             }
         }
         Meter meter = getMeter();
@@ -142,8 +140,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             if(meter instanceof ApplianceIdConsumer) {
                 ((ApplianceIdConsumer) meter).setApplianceId(id);
             }
-            if(controls != null) {
-                Control control = controls.get(0);
+            if(control != null) {
                 if(meter instanceof S0ElectricityMeter) {
                     ((S0ElectricityMeter) meter).setControl(control);
                 }
@@ -198,13 +195,9 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             ((ModbusElectricityMeter) meter).start(timer);
         }
 
-        if(controls != null) {
-            for(Control control : controls) {
-                if(control instanceof  StartingCurrentSwitch) {
-                    logger.info("Starting " + StartingCurrentSwitch.class.getSimpleName());
-                    ((StartingCurrentSwitch) control).start(getMeter(), timer);
-                }
-            }
+        if(control != null && control instanceof  StartingCurrentSwitch) {
+            logger.info("Starting " + StartingCurrentSwitch.class.getSimpleName());
+            ((StartingCurrentSwitch) control).start(getMeter(), timer);
         }
     }
 
@@ -239,16 +232,14 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         if(meter != null && meter instanceof S0ElectricityMeter) {
             controllables.add((S0ElectricityMeter) meter);
         }
-        if(controls != null) {
-            for(Control control : controls) {
-                if(control instanceof  GpioControllable) {
-                    controllables.add((GpioControllable) control);
-                }
-                else if(control instanceof  StartingCurrentSwitch) {
-                    for(Control wrappedControl : ((StartingCurrentSwitch) control).getControls()) {
-                        if(wrappedControl instanceof GpioControllable) {
-                            controllables.add((GpioControllable) wrappedControl);
-                        }
+        if(control != null) {
+            if(control instanceof  GpioControllable) {
+                controllables.add((GpioControllable) control);
+            }
+            else if(control instanceof  StartingCurrentSwitch) {
+                for(Control wrappedControl : ((StartingCurrentSwitch) control).getControls()) {
+                    if(wrappedControl instanceof GpioControllable) {
+                        controllables.add((GpioControllable) wrappedControl);
                     }
                 }
             }
@@ -261,19 +252,17 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         if(meter != null && meter instanceof  ModbusElectricityMeter) {
             slaves.add((ModbusElectricityMeter) meter);
         }
-        if(controls != null) {
-            for(Control control : controls) {
-                if(control instanceof  ModbusSwitch) {
-                    slaves.add((ModbusSwitch) control);
-                }
-                else if(control instanceof  StartingCurrentSwitch) {
-                    for(Control wrappedControl : ((StartingCurrentSwitch) control).getControls()) {
-                        if(wrappedControl instanceof ModbusSwitch) {
-                            slaves.add((ModbusSwitch) wrappedControl);
-                        }
-                    }
-                 }
+        if(control != null) {
+            if(control instanceof  ModbusSwitch) {
+                slaves.add((ModbusSwitch) control);
             }
+            else if(control instanceof  StartingCurrentSwitch) {
+                for(Control wrappedControl : ((StartingCurrentSwitch) control).getControls()) {
+                    if(wrappedControl instanceof ModbusSwitch) {
+                        slaves.add((ModbusSwitch) wrappedControl);
+                    }
+                }
+             }
         }
         return slaves;
     }
@@ -290,14 +279,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     }
 
     private boolean hasStartingCurrentDetection() {
-        if(controls != null) {
-            for(Control control : controls) {
-                if(control instanceof StartingCurrentSwitch) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return control != null && control instanceof StartingCurrentSwitch;
     }
 
     /**
@@ -307,15 +289,12 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
      */
     private Schedule getForcedSchedule(LocalDateTime now) {
         String scheduleId = null;
-        if(controls != null) {
-            for(Control control : controls) {
-                if(control instanceof StartingCurrentSwitch) {
-                    DayTimeframeCondition dayTimeframeCondition = ((StartingCurrentSwitch) control).getDayTimeframeCondition();
-                    if(dayTimeframeCondition != null) {
-                        if(dayTimeframeCondition.isMet(now)) {
-                            scheduleId = dayTimeframeCondition.getIdref();
-                            break;
-                        }
+        if(control != null) {
+            if(control instanceof StartingCurrentSwitch) {
+                DayTimeframeCondition dayTimeframeCondition = ((StartingCurrentSwitch) control).getDayTimeframeCondition();
+                if(dayTimeframeCondition != null) {
+                    if(dayTimeframeCondition.isMet(now)) {
+                        scheduleId = dayTimeframeCondition.getIdref();
                     }
                 }
             }
