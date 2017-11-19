@@ -34,6 +34,8 @@ public class Schedule {
     @XmlAttribute
     private String id;
     @XmlAttribute
+    private boolean enabled = true;
+    @XmlAttribute
     private int minRunningTime;
     @XmlAttribute
     private int maxRunningTime;
@@ -54,10 +56,15 @@ public class Schedule {
     }
 
     public Schedule(int minRunningTime, int maxRunningTime, TimeOfDay earliestStart, TimeOfDay latestEnd) {
-        this(minRunningTime, maxRunningTime, earliestStart, latestEnd, null);
+        this(true, minRunningTime, maxRunningTime, earliestStart, latestEnd);
     }
 
-    public Schedule(int minRunningTime, int maxRunningTime, TimeOfDay earliestStart, TimeOfDay latestEnd, List<Integer> daysOfWeekValues) {
+    public Schedule(boolean enabled, int minRunningTime, int maxRunningTime, TimeOfDay earliestStart, TimeOfDay latestEnd) {
+        this(enabled, minRunningTime, maxRunningTime, earliestStart, latestEnd, null);
+    }
+
+    public Schedule(boolean enabled, int minRunningTime, int maxRunningTime, TimeOfDay earliestStart, TimeOfDay latestEnd, List<Integer> daysOfWeekValues) {
+        this.enabled = enabled;
         this.minRunningTime = minRunningTime;
         this.maxRunningTime = maxRunningTime;
         this.timeframe = new DayTimeframe(earliestStart, latestEnd, daysOfWeekValues);
@@ -65,6 +72,14 @@ public class Schedule {
 
     public String getId() {
         return id;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
     }
 
     public static void setAdditionalRunningTime(int additionalRunningTime) {
@@ -98,28 +113,30 @@ public class Schedule {
         }
         Map<Long,TimeframeInterval> startDelayOfTimeframeInterval = new TreeMap<>();
         for(Schedule schedule : schedules) {
-            Timeframe timeframe = schedule.getTimeframe();
-            timeframe.setSchedule(schedule);
-            List<TimeframeInterval> timeframeIntervals = timeframe.getIntervals(now);
-            for(TimeframeInterval timeframeInterval : timeframeIntervals) {
-                Interval interval = timeframeInterval.getInterval();
-                if(interval.contains(now.toDateTime())) {
-                    // interval already started ...
-                    if(onlySufficient) {
-                        if(now.plusSeconds(schedule.getMaxRunningTime())
-                                .plusSeconds(additionalRunningTime)
-                                .isBefore(new LocalDateTime(interval.getEnd()))) {
-                            // ... with remaining running time sufficient
+            if(schedule.isEnabled()) {
+                Timeframe timeframe = schedule.getTimeframe();
+                timeframe.setSchedule(schedule);
+                List<TimeframeInterval> timeframeIntervals = timeframe.getIntervals(now);
+                for(TimeframeInterval timeframeInterval : timeframeIntervals) {
+                    Interval interval = timeframeInterval.getInterval();
+                    if(interval.contains(now.toDateTime())) {
+                        // interval already started ...
+                        if(onlySufficient) {
+                            if(now.plusSeconds(schedule.getMaxRunningTime())
+                                    .plusSeconds(additionalRunningTime)
+                                    .isBefore(new LocalDateTime(interval.getEnd()))) {
+                                // ... with remaining running time sufficient
+                                return timeframeInterval;
+                            }
+                        }
+                        else {
                             return timeframeInterval;
                         }
                     }
-                    else {
-                        return timeframeInterval;
+                    else if (! onlyAlreadyStarted) {
+                        // interval starts in future
+                        startDelayOfTimeframeInterval.put(interval.getStartMillis() - now.toDateTime().getMillis(), timeframeInterval);
                     }
-                }
-                else if (! onlyAlreadyStarted) {
-                    // interval starts in future
-                    startDelayOfTimeframeInterval.put(interval.getStartMillis() - now.toDateTime().getMillis(), timeframeInterval);
                 }
             }
         }

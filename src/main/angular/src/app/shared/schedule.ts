@@ -21,7 +21,7 @@ import {ConsecutiveDaysTimeframe} from './consecutive-days-timeframe';
 
 export class Schedule {
   '@class' = 'de.avanux.smartapplianceenabler.appliance.Schedule';
-  enabled = true;
+  enabled: boolean;
   minRunningTime: string;
   maxRunningTime: string;
   timeframeType: string;

@@ -78,6 +78,7 @@ export class ScheduleFactory {
   static toSchedule(rawSchedule: any): Schedule {
     console.log('rawSchedule ' + JSON.stringify(rawSchedule));
     const schedule = new Schedule();
+    schedule.enabled = rawSchedule.enabled;
     schedule.minRunningTime = rawSchedule.minRunningTime;
     schedule.maxRunningTime = rawSchedule.maxRunningTime;
     if (rawSchedule.timeframe['@class'] === DayTimeframe.TYPE) {
