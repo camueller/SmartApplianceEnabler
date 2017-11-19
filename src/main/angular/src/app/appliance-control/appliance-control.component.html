@@ -24,6 +24,7 @@
         <select class="ui fluid dropdown" name="controlType" [(ngModel)]="control.type"
                 (ngModelChange)="typeChanged($event)">
           <option value=""></option>
+          <option value="{{TYPE_ALWAYS_ON_SWITCH}}">{{TYPE_ALWAYS_ON_SWITCH | translate}}</option>
           <option value="{{TYPE_SWITCH}}">{{TYPE_SWITCH | translate}}</option>
           <option value="{{TYPE_MODBUS_SWITCH}}">{{TYPE_MODBUS_SWITCH | translate}}</option>
           <option value="{{TYPE_HTTP_SWITCH}}">{{TYPE_HTTP_SWITCH | translate}}</option>
@@ -31,7 +32,8 @@
       </div>
       <div class="ui checkbox">
         <input type="checkbox" name="startingCurrentDetection" [(ngModel)]="control.startingCurrentDetection"
-               (ngModelChange)="startingCurrentDetectionChanged($event)">
+               (ngModelChange)="startingCurrentDetectionChanged($event)"
+               [disabled]="isStartingCurrentDetectedDisabled()">
         <label>{{'ApplianceControlComponent.startingCurrentDetection' | translate}}</label>
       </div>
     </div>

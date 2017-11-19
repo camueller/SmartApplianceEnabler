@@ -36,13 +36,13 @@ public class PulseElectricityMeterTest {
 
     @Test
     public void isOn_0ts() {
-        Assert.assertFalse(pulseElectricityMeter.isOn(currentTimeMillis, true));
+        Assert.assertFalse(pulseElectricityMeter.isOn(currentTimeMillis));
     }
 
     @Test
     public void isOn_0ts_powerOnAlways() {
-        pulseElectricityMeter.setPowerOnAlways(true);
-        Assert.assertTrue(pulseElectricityMeter.isOn(currentTimeMillis, true));
+        pulseElectricityMeter.setControl(new AlwaysOnSwitch());
+        Assert.assertTrue(pulseElectricityMeter.isOn(currentTimeMillis));
     }
 
     /**
@@ -51,7 +51,7 @@ public class PulseElectricityMeterTest {
     @Test
     public void isOn_rightAfterPulse() {
         addTimestamps(600, 0);
-        Assert.assertTrue(pulseElectricityMeter.isOn(currentTimeMillis, true));
+        Assert.assertTrue(pulseElectricityMeter.isOn(currentTimeMillis));
     }
 
     /**
@@ -60,7 +60,7 @@ public class PulseElectricityMeterTest {
     @Test
     public void isOn_noIntervalIncreaseAboveFactor() {
         addTimestamps(700, 100);
-        Assert.assertTrue(pulseElectricityMeter.isOn(currentTimeMillis, true));
+        Assert.assertTrue(pulseElectricityMeter.isOn(currentTimeMillis));
     }
 
     /**
@@ -69,7 +69,7 @@ public class PulseElectricityMeterTest {
     @Test
     public void isOn_intervalIncreaseAboveFactor() {
         addTimestamps(1900, 1300);
-        Assert.assertFalse(pulseElectricityMeter.isOn(currentTimeMillis, true));
+        Assert.assertFalse(pulseElectricityMeter.isOn(currentTimeMillis));
     }
 
     /**
@@ -77,9 +77,9 @@ public class PulseElectricityMeterTest {
      */
     @Test
     public void isOn_powerOnAlways() {
-        pulseElectricityMeter.setPowerOnAlways(true);
+        pulseElectricityMeter.setControl(new AlwaysOnSwitch());
         addTimestamps(1900, 1300);
-        Assert.assertTrue(pulseElectricityMeter.isOn(currentTimeMillis, true));
+        Assert.assertTrue(pulseElectricityMeter.isOn(currentTimeMillis));
     }
 
     /**
@@ -165,11 +165,6 @@ public class PulseElectricityMeterTest {
     public void getAveragePower_2ts_0tsi() {
         addTimestamps(911, 612);
         Assert.assertEquals(0, pulseElectricityMeter.getAveragePower(currentTimeMillis));
-        // again with control added
-        Control control = mock(Control.class);
-        when(control.isOn()).thenReturn(true);
-        pulseElectricityMeter.setControl(control);
-        Assert.assertEquals(0, pulseElectricityMeter.getAveragePower(currentTimeMillis));
     }
 
     /**
@@ -177,7 +172,7 @@ public class PulseElectricityMeterTest {
      */
     @Test
     public void getAveragePower_2ts_0tsi_alwaysOn() {
-        pulseElectricityMeter.setPowerOnAlways(true);
+        pulseElectricityMeter.setControl(new AlwaysOnSwitch());
         addTimestamps(911, 612);
         Assert.assertEquals(12, pulseElectricityMeter.getAveragePower(currentTimeMillis));
     }
@@ -190,7 +185,7 @@ public class PulseElectricityMeterTest {
      */
     @Test
     public void getAveragePower_NH() {
-        pulseElectricityMeter.setPowerOnAlways(true);
+        pulseElectricityMeter.setControl(new AlwaysOnSwitch());
         addTimestamps(1200, 600, 36, 30, 24, 18);
         Assert.assertEquals(6, pulseElectricityMeter.getAveragePower(currentTimeMillis));
     }
@@ -202,7 +197,7 @@ public class PulseElectricityMeterTest {
      */
     @Test
     public void getAveragePower_NHN_8ts() {
-        pulseElectricityMeter.setPowerOnAlways(true);
+        pulseElectricityMeter.setControl(new AlwaysOnSwitch());
         // 1889s / 16:28:46 = 189s
         addTimestamps(1889, 189);
         Assert.assertEquals(2, pulseElectricityMeter.getAveragePower(currentTimeMillis - 180000));
