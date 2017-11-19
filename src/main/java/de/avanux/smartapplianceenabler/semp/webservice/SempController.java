@@ -201,14 +201,13 @@ public class SempController implements ActiveIntervalChangedListener {
     }
 
     private void setApplianceState(ApplianceLogger applianceLogger, Appliance appliance, boolean switchOn, String logMessage) {
-        if(appliance.getControls() != null) {
+        Control control = appliance.getControl();
+        if(control != null) {
             boolean stateChanged = false;
-            for(Control control : appliance.getControls()) {
-                // only change state if requested state differs from actual state
-                if(control.isOn() ^ switchOn) {
-                    control.on(switchOn);
-                    stateChanged = true;
-                }
+            // only change state if requested state differs from actual state
+            if(control.isOn() ^ switchOn) {
+                control.on(switchOn);
+                stateChanged = true;
             }
             if(stateChanged) {
                 applianceLogger.debug(logMessage);
@@ -233,13 +232,11 @@ public class SempController implements ActiveIntervalChangedListener {
         deviceStatus.setDeviceId(appliance.getId());
         Meter meter = appliance.getMeter();
 
-        if(appliance.getControls() != null && appliance.getControls().size() > 0) {
-            for(Control control : appliance.getControls()) {
-                deviceStatus.setStatus(control.isOn() ? Status.On : Status.Off);
-                deviceStatus.setEMSignalsAccepted(true);
-                applianceLogger.debug("Reporting device status from control");
-                break;
-            }
+        Control control = appliance.getControl();
+        if(control != null) {
+            deviceStatus.setStatus(control.isOn() ? Status.On : Status.Off);
+            deviceStatus.setEMSignalsAccepted(true);
+            applianceLogger.debug("Reporting device status from control");
         }
         else {
             // there is no control for the appliance ...
