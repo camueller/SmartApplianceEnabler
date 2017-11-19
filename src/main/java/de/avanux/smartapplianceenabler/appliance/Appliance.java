@@ -122,11 +122,10 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                 ((ApplianceIdConsumer) control).setApplianceId(id);
             }
             if(control instanceof StartingCurrentSwitch) {
-                for(Control wrappedControl : ((StartingCurrentSwitch) control).getControls()) {
-                    ((ApplianceIdConsumer) wrappedControl).setApplianceId(id);
-                    wrappedControl.addControlStateChangedListener(this);
-                    logger.debug("Registered as " + ControlStateChangedListener.class.getSimpleName() + " with " + wrappedControl.getClass().getSimpleName());
-                }
+                Control wrappedControl = ((StartingCurrentSwitch) control).getControl();
+                ((ApplianceIdConsumer) wrappedControl).setApplianceId(id);
+                wrappedControl.addControlStateChangedListener(this);
+                logger.debug("Registered as " + ControlStateChangedListener.class.getSimpleName() + " with " + wrappedControl.getClass().getSimpleName());
                 ((StartingCurrentSwitch) control).addStartingCurrentSwitchListener(this);
                 logger.debug("Registered as " + StartingCurrentSwitchListener.class.getSimpleName() + " with " + control.getClass().getSimpleName());
             }
@@ -237,10 +236,9 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                 controllables.add((GpioControllable) control);
             }
             else if(control instanceof  StartingCurrentSwitch) {
-                for(Control wrappedControl : ((StartingCurrentSwitch) control).getControls()) {
-                    if(wrappedControl instanceof GpioControllable) {
-                        controllables.add((GpioControllable) wrappedControl);
-                    }
+                Control wrappedControl = ((StartingCurrentSwitch) control).getControl();
+                if(wrappedControl instanceof GpioControllable) {
+                    controllables.add((GpioControllable) wrappedControl);
                 }
             }
         }
@@ -257,10 +255,9 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                 slaves.add((ModbusSwitch) control);
             }
             else if(control instanceof  StartingCurrentSwitch) {
-                for(Control wrappedControl : ((StartingCurrentSwitch) control).getControls()) {
-                    if(wrappedControl instanceof ModbusSwitch) {
-                        slaves.add((ModbusSwitch) wrappedControl);
-                    }
+                Control wrappedControl = ((StartingCurrentSwitch) control).getControl();
+                if(wrappedControl instanceof ModbusSwitch) {
+                    slaves.add((ModbusSwitch) wrappedControl);
                 }
              }
         }

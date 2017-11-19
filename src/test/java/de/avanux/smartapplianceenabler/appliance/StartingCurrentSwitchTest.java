@@ -20,7 +20,7 @@ public class StartingCurrentSwitchTest {
         meter = mock(Meter.class);
         control = mock(Control.class);
         startingCurrentSwitchListener = mock(StartingCurrentSwitchListener.class);
-        startingCurrentSwitch.setControls(Collections.singletonList(control));
+        startingCurrentSwitch.setControl(control);
         startingCurrentSwitch.addStartingCurrentSwitchListener(startingCurrentSwitchListener);
     }
 
