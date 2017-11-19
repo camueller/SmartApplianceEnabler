@@ -35,7 +35,7 @@ export class ControlFactory {
     if (rawControl['@class'] === StartingCurrentSwitch.TYPE) {
       control.startingCurrentDetection = true;
       control.startingCurrentSwitch = ControlFactory.createStartingCurrentSwitch(rawControl);
-      ControlFactory.fromJSONbyType(control, rawControl.controls[0]);
+      ControlFactory.fromJSONbyType(control, rawControl.control);
     } else {
       ControlFactory.fromJSONbyType(control, rawControl);
     }
@@ -58,7 +58,7 @@ export class ControlFactory {
 
   static fromJSONbyType(control: Control, rawControl: any) {
     control.type = rawControl['@class'];
-    if (control.type === Switch.TYPE) {
+    if (control.type === AlwaysOnSwitch.TYPE) {
       control.alwaysOnSwitch = ControlFactory.createAlwaysOnSwitch(rawControl);
     } else if (control.type === Switch.TYPE) {
       control.switch_ = ControlFactory.createSwitch(rawControl);
