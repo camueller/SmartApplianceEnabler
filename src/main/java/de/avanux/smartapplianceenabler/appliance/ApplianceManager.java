@@ -36,7 +36,7 @@ import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
 
 
 public class ApplianceManager implements Runnable {
-    public static final String SCHEMA_LOCATION = "http://github.com/camueller/SmartApplianceEnabler/v1.1";
+    public static final String SCHEMA_LOCATION = "http://github.com/camueller/SmartApplianceEnabler/v1.2";
     private Logger logger = LoggerFactory.getLogger(ApplianceManager.class);
     private static ApplianceManager instance;
     private Appliances appliances;
