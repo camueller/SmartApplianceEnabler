@@ -200,7 +200,7 @@ public class SaeController {
                 device2EM.getDeviceInfo().add(replaceIndex, deviceInfo);
             }
         }
-        save(true, false);
+        save(true, create);
     }
 
     @RequestMapping(value= APPLIANCE_URL, method=RequestMethod.DELETE, consumes="application/json")
