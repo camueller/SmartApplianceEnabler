@@ -56,7 +56,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
             @XmlElement(name = "ModbusSwitch", type = ModbusSwitch.class),
             @XmlElement(name = "HttpSwitch", type = HttpSwitch.class)
     })
-    private List<Control> controls;
+    private Control control;
     @XmlElement(name = "ForceSchedule")
     private DayTimeframeCondition dayTimeframeCondition;
     private transient Integer lastAveragePowerOfPowerOnDetection;
@@ -72,12 +72,12 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
         this.logger.setApplianceId(applianceId);
     }
 
-    protected void setControls(List<Control> controls) {
-        this.controls = controls;
+    protected void setControl(Control control) {
+        this.control = control;
     }
 
-    public List<Control> getControls() {
-        return controls;
+    public Control getControl() {
+        return control;
     }
 
     public DayTimeframeCondition getDayTimeframeCondition() {
@@ -118,11 +118,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
 
     private boolean applianceOn(boolean switchOn) {
         logger.debug("Setting wrapped appliance switch to " + (switchOn ? "on" : "off"));
-        boolean result = false;
-        for (Control control : controls) {
-            result = control.on(switchOn);
-        }
-        return result;
+        return control.on(switchOn);
     }
 
     @Override
@@ -131,8 +127,8 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
     }
 
     protected boolean isApplianceOn() {
-        if (controls != null && controls.size() > 0) {
-            return controls.get(0).isOn();
+        if (control != null) {
+            return control.isOn();
         }
         return false;
     }
