@@ -1,7 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xs:schema targetNamespace="http://github.com/camueller/SmartApplianceEnabler/v1.1"
-           xmlns:sae="http://github.com/camueller/SmartApplianceEnabler/v1.1"
-           xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.1"
+<!--
+  ~ Copyright (C) 2017 Axel Müller <axel.mueller@avanux.de>
+  ~
+  ~ This program is free software; you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation; either version 2 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along
+  ~ with this program; if not, write to the Free Software Foundation, Inc.,
+  ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+  -->
+
+<xs:schema targetNamespace="http://github.com/camueller/SmartApplianceEnabler/v1.2"
+           xmlns:sae="http://github.com/camueller/SmartApplianceEnabler/v1.2"
+           xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.2"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
            elementFormDefault="qualified">
 
@@ -57,6 +75,7 @@
 
     <xs:complexType name="ApplianceType">
         <xs:sequence>
+            <xs:element name="AlwaysOnSwitch" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="Switch" type="SwitchType" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="ModbusSwitch" type="ModbusSwitchType" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="HttpSwitch" type="HttpSwitchType" minOccurs="0" maxOccurs="unbounded" />
@@ -110,14 +129,12 @@
         <xs:attribute name="pinPullResistance" type="PinPullResistanceType" use="optional"/>
         <xs:attribute name="impulsesPerKwh" type="xs:int" use="required"/>
         <xs:attribute name="measurementInterval" type="xs:int" use="optional"/>
-        <xs:attribute name="powerOnAlways" type="xs:boolean" use="optional" />
     </xs:complexType>
 
     <xs:complexType name="S0ElectricityMeterNetworkedType">
         <xs:attribute name="idref" type="xs:NCName" use="required" />
         <xs:attribute name="impulsesPerKwh" type="xs:int" use="required"/>
         <xs:attribute name="measurementInterval" type="xs:int" use="optional"/>
-        <xs:attribute name="powerOnAlways" type="xs:boolean" use="optional" />
     </xs:complexType>
 
     <xs:simpleType name="PinPullResistanceType">
