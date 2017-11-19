@@ -60,10 +60,8 @@ export class ApplianceControlComponent implements OnInit {
     this.route.params.subscribe(val => {
         this.applianceId = this.route.snapshot.paramMap.get('id');
         this.applianceService.getControl(this.applianceId).subscribe(control => {
-          this.controlForm.reset(control);
           this.control = control;
-          // somehow the control type is not set after switching between controls of different appliances
-          this.controlForm.form.controls.controlType.setValue(this.control.type);
+          this.controlForm.form.markAsPristine();
         });
       }
     );

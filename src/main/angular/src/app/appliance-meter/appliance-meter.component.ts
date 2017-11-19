@@ -59,10 +59,8 @@ export class ApplianceMeterComponent implements OnInit {
     this.route.params.subscribe(val => {
         this.applianceId = this.route.snapshot.paramMap.get('id');
         this.applianceService.getMeter(this.applianceId).subscribe(meter => {
-          this.meterForm.reset(meter);
           this.meter = meter;
-          // somehow the meter type is not set after switching between meters of different appliances
-          this.meterForm.form.controls.meterType.setValue(this.meter.type);
+          this.meterForm.form.markAsPristine();
         });
       }
     );
