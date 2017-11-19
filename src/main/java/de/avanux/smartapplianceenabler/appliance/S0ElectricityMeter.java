@@ -36,8 +36,6 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
     private Integer impulsesPerKwh;
     @XmlAttribute
     private Integer measurementInterval = 60; // seconds
-    @XmlAttribute
-    private boolean powerOnAlways;
     private transient PulseElectricityMeter pulseElectricityMeter = new PulseElectricityMeter();
 
     
@@ -80,7 +78,6 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
     public void start() {
         pulseElectricityMeter.setImpulsesPerKwh(impulsesPerKwh);
         pulseElectricityMeter.setMeasurementInterval(measurementInterval);
-        pulseElectricityMeter.setPowerOnAlways(powerOnAlways);
 
         if(getGpioController() != null) {
             final GpioPinDigitalInput input = getGpioController().provisionDigitalInputPin(getGpio(), getPinPullResistance());

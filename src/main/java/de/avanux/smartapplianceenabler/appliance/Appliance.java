@@ -48,6 +48,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     // http://stackoverflow.com/questions/25374375/jaxb-wont-unmarshal-my-previously-marshalled-interface-impls
     @XmlElements({
             @XmlElement(name = "StartingCurrentSwitch", type = StartingCurrentSwitch.class),
+            @XmlElement(name = "AlwaysOnSwitch", type = AlwaysOnSwitch.class),
             @XmlElement(name = "Switch", type = Switch.class),
             @XmlElement(name = "ModbusSwitch", type = ModbusSwitch.class),
             @XmlElement(name = "HttpSwitch", type = HttpSwitch.class)
@@ -141,13 +142,15 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             if(meter instanceof ApplianceIdConsumer) {
                 ((ApplianceIdConsumer) meter).setApplianceId(id);
             }
-        }
-
-        if(meter != null && meter instanceof S0ElectricityMeter) {
             if(controls != null) {
                 Control control = controls.get(0);
-                ((S0ElectricityMeter) meter).setControl(control);
-                logger.debug(S0ElectricityMeter.class.getSimpleName() + " uses " + control.getClass().getSimpleName());
+                if(meter instanceof S0ElectricityMeter) {
+                    ((S0ElectricityMeter) meter).setControl(control);
+                }
+                if(meter instanceof S0ElectricityMeterNetworked) {
+                    ((S0ElectricityMeterNetworked) meter).setControl(control);
+                }
+                logger.debug(meter.getClass().getSimpleName() + " uses " + control.getClass().getSimpleName());
             }
         }
 

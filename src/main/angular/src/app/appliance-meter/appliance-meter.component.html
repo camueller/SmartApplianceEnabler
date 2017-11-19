@@ -61,11 +61,6 @@
         <input type="text" name="s0ElectricityMeter_measurementInterval"
                [(ngModel)]="meter.s0ElectricityMeter.measurementInterval">
       </div>
-      <div class="ui checkbox">
-        <input type="checkbox" name="s0ElectricityMeter_powerOnAlways"
-               [(ngModel)]="meter.s0ElectricityMeter.powerOnAlways">
-        <label>{{'ApplianceMeterComponent.s0ElectricityMeter_powerOnAlways' | translate}}</label>
-      </div>
     </div>
 
     <div class="ui fields" *ngIf="meter.type===TYPE_S0_ELECTRICITY_METER_NETWORKED">
@@ -81,11 +76,6 @@
         <label>{{'ApplianceMeterComponent.s0ElectricityMeterNetworked_measurementInterval' | translate}}</label>
         <input type="text" name="s0ElectricityMeterNetworked_measurementInterval"
                [(ngModel)]="meter.s0ElectricityMeterNetworked.measurementInterval">
-      </div>
-      <div class="ui checkbox">
-        <input type="checkbox" name="s0ElectricityMeterNetworked_powerOnAlway"
-               [(ngModel)]="meter.s0ElectricityMeterNetworked.powerOnAlways">
-        <label>{{'ApplianceMeterComponent.s0ElectricityMeterNetworked_powerOnAlways' | translate}}</label>
       </div>
     </div>
 

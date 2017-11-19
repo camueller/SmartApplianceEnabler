@@ -30,6 +30,7 @@ import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {TranslateService} from '@ngx-translate/core';
 import {ErrorMessages} from '../shared/error-messages';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
+import {AlwaysOnSwitch} from '../shared/always-on-switch';
 
 @Component({
   selector: 'app-appliance-switch',
@@ -42,6 +43,7 @@ export class ApplianceControlComponent implements OnInit {
   control = ControlFactory.createEmptyControl();
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
+  TYPE_ALWAYS_ON_SWITCH = AlwaysOnSwitch.TYPE;
   TYPE_SWITCH = Switch.TYPE;
   TYPE_MODBUS_SWITCH = ModbusSwitch.TYPE;
   TYPE_HTTP_SWITCH = HttpSwitch.TYPE;
@@ -71,7 +73,9 @@ export class ApplianceControlComponent implements OnInit {
   }
 
   typeChanged(newType: string) {
-    if (newType === this.TYPE_SWITCH && this.control.switch_ == null) {
+    if (newType === this.TYPE_ALWAYS_ON_SWITCH && this.control.alwaysOnSwitch == null) {
+      this.control.alwaysOnSwitch = new AlwaysOnSwitch();
+    } else if (newType === this.TYPE_SWITCH && this.control.switch_ == null) {
       this.control.switch_ = new Switch();
     } else if (newType === this.TYPE_MODBUS_SWITCH && this.control.modbusSwitch == null) {
       this.control.modbusSwitch = new ModbusSwitch();
@@ -84,6 +88,13 @@ export class ApplianceControlComponent implements OnInit {
     if (startingCurrentDetection) {
       this.control.startingCurrentSwitch = new StartingCurrentSwitch();
     }
+  }
+
+  isStartingCurrentDetectedDisabled(): boolean {
+    if (this.controlForm.form.contains('controlType')) {
+      return  this.controlForm.form.controls.controlType.value === this.TYPE_ALWAYS_ON_SWITCH;
+    }
+    return false;
   }
 
   submitForm() {

@@ -21,6 +21,7 @@ import {StartingCurrentSwitch} from './starting-current-switch';
 import {Switch} from './switch';
 import {ModbusSwitch} from './modbus-switch';
 import {HttpSwitch} from './http-switch';
+import {AlwaysOnSwitch} from './always-on-switch';
 
 export class ControlFactory {
 
@@ -51,13 +52,15 @@ export class ControlFactory {
     } else {
       rawControl = JSON.stringify(this.getControlByType(control));
     }
-    console.log('Control (TYPE): ' + JSON.stringify(rawControl));
+    console.log('Control (JSON): ' + JSON.stringify(rawControl));
     return rawControl;
   }
 
   static fromJSONbyType(control: Control, rawControl: any) {
     control.type = rawControl['@class'];
     if (control.type === Switch.TYPE) {
+      control.alwaysOnSwitch = ControlFactory.createAlwaysOnSwitch(rawControl);
+    } else if (control.type === Switch.TYPE) {
       control.switch_ = ControlFactory.createSwitch(rawControl);
     } else if (control.type === ModbusSwitch.TYPE) {
       control.modbusSwitch = ControlFactory.createModbusSwitch(rawControl);
@@ -67,7 +70,9 @@ export class ControlFactory {
   }
 
   static getControlByType(control: Control): any {
-    if (control.type === Switch.TYPE) {
+    if (control.type === AlwaysOnSwitch.TYPE) {
+      return control.alwaysOnSwitch;
+    } else if (control.type === Switch.TYPE) {
       return control.switch_;
     } else if (control.type === ModbusSwitch.TYPE) {
       return control.modbusSwitch;
@@ -75,6 +80,10 @@ export class ControlFactory {
       return control.httpSwitch;
     }
     return null;
+  }
+
+  static createAlwaysOnSwitch(rawAlwaysOnSwitch: any): AlwaysOnSwitch {
+    return new AlwaysOnSwitch();
   }
 
   static createStartingCurrentSwitch(rawStartingCurrentSwitch: any): StartingCurrentSwitch {

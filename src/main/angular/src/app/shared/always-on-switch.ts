@@ -16,18 +16,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {StartingCurrentSwitch} from './starting-current-switch';
-import {Switch} from './switch';
-import {ModbusSwitch} from './modbus-switch';
-import {HttpSwitch} from './http-switch';
-import {AlwaysOnSwitch} from './always-on-switch';
+export class AlwaysOnSwitch {
 
-export class Control {
-  type: string;
-  startingCurrentDetection: boolean;
-  startingCurrentSwitch: StartingCurrentSwitch;
-  alwaysOnSwitch: AlwaysOnSwitch;
-  switch_: Switch;
-  modbusSwitch: ModbusSwitch;
-  httpSwitch: HttpSwitch;
+  static get TYPE(): string {
+    return 'de.avanux.smartapplianceenabler.appliance.AlwaysOnSwitch';
+  }
+
+  '@class' = AlwaysOnSwitch.TYPE;
 }

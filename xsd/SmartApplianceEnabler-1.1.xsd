@@ -57,6 +57,7 @@
 
     <xs:complexType name="ApplianceType">
         <xs:sequence>
+            <xs:element name="AlwaysOnSwitch" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="Switch" type="SwitchType" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="ModbusSwitch" type="ModbusSwitchType" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="HttpSwitch" type="HttpSwitchType" minOccurs="0" maxOccurs="unbounded" />
