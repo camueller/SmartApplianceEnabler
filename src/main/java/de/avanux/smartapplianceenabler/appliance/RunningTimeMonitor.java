@@ -21,6 +21,7 @@ import de.avanux.smartapplianceenabler.log.ApplianceLogger;
 import org.joda.time.*;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -50,14 +51,18 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
     }
 
     public void setSchedules(List<Schedule> schedules) {
-        this.schedules = schedules;
-        this.activeTimeframeInterval = null;
-        if(logger.isDebugEnabled() && schedules != null
-                ) {
-            for(Schedule schedule : schedules) {
-                logger.debug("Configured time frame is " + schedule.toString());
+        List<Schedule> enabledSchedules = new ArrayList<>();
+        for(Schedule schedule : schedules) {
+            if(schedule.isEnabled()) {
+                logger.debug("Using enabled time frame " + schedule.toString());
+                enabledSchedules.add(schedule);
+            }
+            else {
+                logger.debug("Ignoring disabled time frame " + schedule.toString());
             }
         }
+        this.schedules = enabledSchedules;
+        this.activeTimeframeInterval = null;
     }
     
     public List<Schedule> getSchedules() {
