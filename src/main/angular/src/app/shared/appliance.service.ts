@@ -17,7 +17,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 import {Injectable} from '@angular/core';
-import {Appliance} from './appliance';
+import {ApplianceInfo} from './appliance-info';
 import {Schedule} from './schedule';
 import {Settings} from './settings';
 import {Headers, Http} from '@angular/http';
@@ -35,6 +35,7 @@ import {SettingsFactory} from './settings-factory';
 import {AppliancesReloadService} from './appliances-reload-service';
 import {observable} from 'rxjs/symbol/observable';
 import {Subject} from 'rxjs/Subject';
+import {ApplianceHeader} from './appliance-header';
 
 @Injectable()
 export class ApplianceService {
@@ -46,24 +47,24 @@ export class ApplianceService {
     this.headers.append('Content-Type', 'application/json');
   }
 
-  getAppliances(): Observable<Array<Appliance>> {
+  getApplianceHeaders(): Observable<Array<ApplianceHeader>> {
     return this.http.get(`${this.api}/appliances`)
       .map(response => response.json())
-      .map(applianceInfos => applianceInfos.map(applianceInfo => ApplianceFactory.fromApplianceInfo(applianceInfo)))
+      .map(applianceHeaders => applianceHeaders.map(applianceHeader => ApplianceFactory.toApplianceHeaderFromJSON(applianceHeader)))
       .catch(this.errorHandler);
   }
 
-  getAppliance(id: string): Observable<Appliance> {
+  getApplianceInfo(id: string): Observable<ApplianceInfo> {
     return this.http.get(`${this.api}/appliance?id=${id}`)
       .map(response => response.json())
-      .map(applianceInfo => ApplianceFactory.fromApplianceInfo(applianceInfo))
+      .map(applianceInfo => ApplianceFactory.toApplianceInfoFromJSON(applianceInfo))
       .catch(this.errorHandler);
   }
 
-  updateAppliance(appliance: Appliance, create: boolean): Observable<any> {
+  updateAppliance(appliance: ApplianceInfo, create: boolean): Observable<any> {
     const url = `${this.api}/appliance?id=${appliance.id}&create=${create}`;
-    const content = ApplianceFactory.toJSON(appliance);
-    console.log('Updating appliance using ' + url);
+    const content = ApplianceFactory.toJSONfromApplianceInfo(appliance);
+    console.log('Updating applianceHeader using ' + url);
     console.log('Content: ' + content);
     const observer = new Subject();
     this.http.put(url, content, {headers: this.headers})
@@ -77,7 +78,7 @@ export class ApplianceService {
 
   deleteAppliance(id: string): Observable<any> {
     const url = `${this.api}/appliance?id=${id}`;
-    console.log('Delete appliance using ' + url);
+    console.log('Delete applianceHeader using ' + url);
     const observer = new Subject();
     this.http.delete(url, {headers: this.headers})
       .catch(this.errorHandler)
@@ -99,14 +100,11 @@ export class ApplianceService {
       .catch(this.errorHandler);
   }
 
-  updateControl(control: Control, id: string) {
+  updateControl(control: Control, id: string): Observable<any> {
     const url = `${this.api}/control?id=${id}`;
     const content = ControlFactory.toJSON(control);
     console.log('Update control using ' + url);
-    console.log('Content: ' + content);
-    this.http.put(url, content, {headers: this.headers})
-      .catch(this.errorHandler)
-      .subscribe(res => console.log(res));
+    return this.httpPutOrDelete(url, content);
   }
 
   getMeter(id: string): Observable<Meter> {
@@ -120,14 +118,32 @@ export class ApplianceService {
       .catch(this.errorHandler);
   }
 
-  updateMeter(meter: Meter, id: string) {
+  updateMeter(meter: Meter, id: string): Observable<any> {
     const url = `${this.api}/meter?id=${id}`;
     const content = MeterFactory.toJSON(meter);
     console.log('Update meter using ' + url);
+    return this.httpPutOrDelete(url, content);
+  }
+
+  httpPutOrDelete(url: string, content: string): Observable<any> {
+    const observer = new Subject();
     console.log('Content: ' + content);
-    this.http.put(url, content, {headers: this.headers})
-      .catch(this.errorHandler)
-      .subscribe(res => console.log(res));
+    if (content != null) {
+      this.http.put(url, content, {headers: this.headers})
+        .catch(this.errorHandler)
+        .subscribe(res => {
+          console.log(res);
+          observer.next();
+        });
+    } else {
+      this.http.delete(url, {headers: this.headers})
+        .catch(this.errorHandler)
+        .subscribe(res => {
+          console.log(res);
+          observer.next();
+        });
+    }
+    return observer;
   }
 
   getSchedules(id: string): Observable<Array<Schedule>> {

@@ -25,14 +25,15 @@
     </a>
   </div>
 
-  <div *ngFor="let appliance of appliances">
-    <a class="ui item" [routerLink]="['appliance', appliance.id]" routerLinkActive="active">{{getTranslatedType(appliance.type)}}<br>
-      <span style="font-size: 0.7em">{{appliance.vendor}} {{appliance.name}}</span>
+  <div *ngFor="let applianceHeader of applianceHeaders">
+    <a class="ui item" [routerLink]="['appliance', applianceHeader.id]" routerLinkActive="active">{{getTranslatedType(applianceHeader.type)}}<br>
+      <span style="font-size: 0.7em">{{applianceHeader.vendor}} {{applianceHeader.name}}</span>
     </a>
     <div class="menu">
-      <a class="item" [routerLink]="['meter', appliance.id]" routerLinkActive="active">{{'AppComponent.meter' | translate}}</a>
-      <a class="item" [routerLink]="['control', appliance.id]" routerLinkActive="active">{{'AppComponent.control' | translate}}</a>
-      <a class="item" [routerLink]="['schedule', appliance.id]" routerLinkActive="active">{{'AppComponent.schedules' | translate}}</a>
+      <a class="item" [routerLink]="['meter', applianceHeader.id]" routerLinkActive="active">{{'AppComponent.meter' | translate}}</a>
+      <a class="item" [routerLink]="['control', applianceHeader.id]" routerLinkActive="active">{{'AppComponent.control' | translate}}</a>
+      <a *ngIf="applianceHeader.controllable" class="item" [routerLink]="['schedule', applianceHeader.id]" routerLinkActive="active">{{'AppComponent.schedules' | translate}}</a>
+      <span *ngIf="!applianceHeader.controllable" class="item disabled" style="color:rgba(225,225,225,0.3)">{{'AppComponent.schedules' | translate}}</span>
     </div>
   </div>
 </div>

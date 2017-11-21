@@ -18,7 +18,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 import {Component, OnInit} from '@angular/core';
 import {ApplianceService} from './shared/appliance.service';
-import {Appliance} from './shared/appliance';
+import {ApplianceHeader} from './shared/appliance-header';
 import {AppliancesReloadService} from './shared/appliances-reload-service';
 import {TranslateService} from '@ngx-translate/core';
 
@@ -30,7 +30,7 @@ declare const $: any;
 })
 export class AppComponent implements OnInit {
 
-  appliances: Appliance[];
+  applianceHeaders: ApplianceHeader[];
   typePrefix = 'ApplianceDetailsComponent.type.';
   translatedTypes = new Object();
 
@@ -53,11 +53,11 @@ export class AppComponent implements OnInit {
   }
 
   loadAppliances() {
-    this.applianceService.getAppliances().subscribe(appliances => {
-      this.appliances = appliances;
+    this.applianceService.getApplianceHeaders().subscribe(applianceHeaders => {
+      this.applianceHeaders = applianceHeaders;
 
       const types = [];
-      this.appliances.forEach(appliance => types.push(this.typePrefix + appliance.type));
+      this.applianceHeaders.forEach(applianceHeader => types.push(this.typePrefix + applianceHeader.type));
       if (types.length > 0) {
         this.translate.get(types).subscribe(translatedTypes => this.translatedTypes = translatedTypes);
       }

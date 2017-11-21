@@ -245,6 +245,16 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         return controllables;
     }
 
+    public boolean isControllable() {
+        return control != null &&
+            (
+                control instanceof Switch
+                || control instanceof HttpSwitch
+                || control instanceof ModbusSwitch
+                || control instanceof StartingCurrentSwitch
+            );
+    }
+
     private Set<ModbusSlave> getModbusSlaves() {
         Set<ModbusSlave> slaves = new HashSet<ModbusSlave>();
         if(meter != null && meter instanceof  ModbusElectricityMeter) {

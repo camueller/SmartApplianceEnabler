@@ -58,7 +58,7 @@ export class ApplianceDetailsComponent implements OnInit {
       if (id == null) {
         this.isNew = true;
       } else {
-        this.applianceService.getAppliance(id).subscribe(appliance => {
+        this.applianceService.getApplianceInfo(id).subscribe(appliance => {
           this.detailsForm.reset(appliance);
         });
       }

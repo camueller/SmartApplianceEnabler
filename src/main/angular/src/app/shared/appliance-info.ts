@@ -16,20 +16,13 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {ApplianceInfo} from './appliance-info';
-import {ActivatedRouteSnapshot, Resolve} from '@angular/router';
-import {Injectable} from '@angular/core';
-import {ApplianceService} from './appliance.service';
-import {Observable} from 'rxjs/Observable';
-
-@Injectable()
-export class ApplianceResolver implements Resolve<ApplianceInfo> {
-
-  constructor(private applianceService: ApplianceService) {
-  }
-
-  resolve(route: ActivatedRouteSnapshot): Observable<ApplianceInfo> {
-    return this.applianceService.getApplianceInfo(route.params['id']);
-  }
-
+export class ApplianceInfo {
+  id: string;
+  name: string;
+  type: string;
+  serial: string;
+  vendor: string;
+  maxPowerConsumption: string;
+  currentPowerMethod: string;
+  interruptionsAllowed: boolean;
 }

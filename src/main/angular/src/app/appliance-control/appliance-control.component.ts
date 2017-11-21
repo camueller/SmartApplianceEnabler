@@ -31,6 +31,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {ErrorMessages} from '../shared/error-messages';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {AlwaysOnSwitch} from '../shared/always-on-switch';
+import {AppliancesReloadService} from '../shared/appliances-reload-service';
 
 @Component({
   selector: 'app-appliance-switch',
@@ -51,6 +52,7 @@ export class ApplianceControlComponent implements OnInit {
   VALIDATOR_PATTERN_URL = InputValidatorPatterns.URL;
 
   constructor(private applianceService: ApplianceService,
+              private appliancesReloadService: AppliancesReloadService,
               private route: ActivatedRoute,
               private translate: TranslateService) {
     this.errorMessages =  new ApplianceControlErrorMessages(this.translate);
@@ -96,6 +98,6 @@ export class ApplianceControlComponent implements OnInit {
   }
 
   submitForm() {
-    this.applianceService.updateControl(this.control, this.applianceId);
+    this.applianceService.updateControl(this.control, this.applianceId).subscribe(() => this.appliancesReloadService.reload());
   }
 }

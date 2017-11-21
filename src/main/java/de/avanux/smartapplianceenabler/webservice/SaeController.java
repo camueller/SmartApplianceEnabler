@@ -90,6 +90,30 @@ public class SaeController {
         return null;
     }
 
+    /**
+     * Return the corresponding DeviceInfo for an appliance.
+     * @param applianceId
+     * @return
+     */
+    private DeviceInfo getDeviceInfo(String applianceId) {
+        for(DeviceInfo deviceInfo : device2EM.getDeviceInfo()) {
+            if(deviceInfo.getIdentification().getDeviceId().equals(applianceId)) {
+                return deviceInfo;
+            }
+        }
+        return null;
+    }
+
+    private ApplianceHeader toApplianceHeader(Appliance appliance, DeviceInfo deviceInfo) {
+        ApplianceHeader header = new ApplianceHeader();
+        header.setId(deviceInfo.getIdentification().getDeviceId());
+        header.setName(deviceInfo.getIdentification().getDeviceName());
+        header.setVendor(deviceInfo.getIdentification().getDeviceVendor());
+        header.setType(deviceInfo.getIdentification().getDeviceType());
+        header.setControllable(appliance.isControllable());
+        return header;
+    }
+
     private ApplianceInfo toApplianceInfo(DeviceInfo deviceInfo) {
         ApplianceInfo applianceInfo = new ApplianceInfo();
         applianceInfo.setId(deviceInfo.getIdentification().getDeviceId());
@@ -128,19 +152,23 @@ public class SaeController {
     @RequestMapping(value= APPLIANCES_URL, method=RequestMethod.GET, produces="application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     @ResponseBody
-    public List<ApplianceInfo> getAppliances() {
-        logger.debug("Received request for ApplianceInfos");
-        List<ApplianceInfo> applianceInfos = new ArrayList<>();
-        Device2EM device2EM = loadDevice2EMIfNeeded(false);
-        if(device2EM != null) {
-            for(DeviceInfo deviceInfo: device2EM.getDeviceInfo()) {
-                applianceInfos.add(toApplianceInfo(deviceInfo));
+    public List<ApplianceHeader> getAppliances() {
+        logger.debug("Received request for ApplianceHeaders");
+        List<ApplianceHeader> applianceHeaders = new ArrayList<>();
+        Appliances appliances = loadAppliancesIfNeeded(false);
+        if(appliances != null) {
+            List<Appliance> applianceList = appliances.getAppliances();
+            Device2EM device2EM = loadDevice2EMIfNeeded(false);
+            if(applianceList != null && device2EM != null) {
+                for(Appliance appliance: applianceList) {
+                    DeviceInfo deviceInfo = getDeviceInfo(appliance.getId());
+                    applianceHeaders.add(toApplianceHeader(appliance, deviceInfo));
+                }
             }
         }
-        logger.debug("Returning " + applianceInfos.size() + " ApplianceInfos");
-        return applianceInfos;
+        logger.debug("Returning " + applianceHeaders.size() + " ApplianceHeaders");
+        return applianceHeaders;
     }
-
 
     @RequestMapping(value= APPLIANCE_URL, method=RequestMethod.GET, produces="application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
@@ -211,13 +239,7 @@ public class SaeController {
         applianceLogger.debug("Received request to delete appliance with id=" + applianceId);
 
         Device2EM device2EM = loadDevice2EMIfNeeded(false);
-        DeviceInfo deviceInfoToBeDeleted = null;
-        for(DeviceInfo deviceInfo : device2EM.getDeviceInfo()) {
-            if(deviceInfo.getIdentification().getDeviceId().equals(applianceId)) {
-                deviceInfoToBeDeleted = deviceInfo;
-                break;
-            }
-        }
+        DeviceInfo deviceInfoToBeDeleted = getDeviceInfo(applianceId);
         device2EM.getDeviceInfo().remove(deviceInfoToBeDeleted);
 
         Appliances appliances = loadAppliancesIfNeeded(false);
@@ -265,6 +287,23 @@ public class SaeController {
         }
     }
 
+    @RequestMapping(value= CONTROL_URL, method=RequestMethod.DELETE, consumes="application/json")
+    @CrossOrigin(origins = CROSS_ORIGIN_URL)
+    @ResponseBody
+    public void deleteControl(@RequestParam(value="id") String applianceId) {
+        ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
+        applianceLogger.debug("Received request to delete control of appliance with id=" + applianceId);
+
+        Appliance appliance = getAppliance(applianceId);
+        if(appliance != null) {
+            appliance.setControl(null);
+            save(false, true);
+        }
+        else {
+            applianceLogger.error("Appliance not found");
+        }
+    }
+
     @RequestMapping(value=METER_URL, method=RequestMethod.GET, produces="application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     @ResponseBody
@@ -292,6 +331,23 @@ public class SaeController {
         Appliance appliance = getAppliance(applianceId);
         if(appliance != null) {
             appliance.setMeter(meter);
+            save(false, true);
+        }
+        else {
+            applianceLogger.error("Appliance not found");
+        }
+    }
+
+    @RequestMapping(value= METER_URL, method=RequestMethod.DELETE, consumes="application/json")
+    @CrossOrigin(origins = CROSS_ORIGIN_URL)
+    @ResponseBody
+    public void deleteMeter(@RequestParam(value="id") String applianceId) {
+        ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
+        applianceLogger.debug("Received request to delete meter of appliance with id=" + applianceId);
+
+        Appliance appliance = getAppliance(applianceId);
+        if(appliance != null) {
+            appliance.setMeter(null);
             save(false, true);
         }
         else {

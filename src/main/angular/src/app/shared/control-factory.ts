@@ -45,14 +45,18 @@ export class ControlFactory {
 
   static toJSON(control: Control): string {
     console.log('Control (TYPE): ' + JSON.stringify(control));
-    let rawControl: string;
+    let controlUsed: any;
     if (control.startingCurrentSwitch != null) {
       control.startingCurrentSwitch['controls'] = [ this.getControlByType(control) ];
-      rawControl = JSON.stringify(control.startingCurrentSwitch);
+      controlUsed = control.startingCurrentSwitch;
     } else {
-      rawControl = JSON.stringify(this.getControlByType(control));
+      controlUsed = this.getControlByType(control);
     }
-    console.log('Control (JSON): ' + JSON.stringify(rawControl));
+    let rawControl: string;
+    if (controlUsed != null) {
+      rawControl = JSON.stringify(controlUsed);
+    }
+    console.log('Control (JSON): ' + rawControl);
     return rawControl;
   }
 

@@ -16,17 +16,30 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {Appliance} from './appliance';
+import {ApplianceInfo} from './appliance-info';
+import {ApplianceHeader} from './appliance-header';
 
 export class ApplianceFactory {
 
-  static createEmptyAppliance(): Appliance {
-    return new Appliance();
+  static createEmptyAppliance(): ApplianceInfo {
+    return new ApplianceInfo();
   }
 
-  static fromApplianceInfo(applianceInfo: any): Appliance {
-    console.log('ApplianceInfo ' + JSON.stringify(applianceInfo));
-    const appliance = new Appliance();
+  static toApplianceHeaderFromJSON(rawApplianceHeader: any): ApplianceHeader {
+    console.log('ApplianceHeader (JSON)' + JSON.stringify(rawApplianceHeader));
+    const applianceHeader = new ApplianceHeader();
+    applianceHeader.id = rawApplianceHeader.id;
+    applianceHeader.name = rawApplianceHeader.name;
+    applianceHeader.vendor = rawApplianceHeader.vendor;
+    applianceHeader.type = rawApplianceHeader.type;
+    applianceHeader.controllable = rawApplianceHeader.controllable;
+    console.log('ApplianceHeader (TYPE)' + JSON.stringify(applianceHeader));
+    return applianceHeader;
+  }
+
+  static toApplianceInfoFromJSON(applianceInfo: any): ApplianceInfo {
+    console.log('ApplianceInfo (JSON)' + JSON.stringify(applianceInfo));
+    const appliance = new ApplianceInfo();
     appliance.id = applianceInfo.id;
     appliance.name = applianceInfo.name;
     appliance.vendor = applianceInfo.vendor;
@@ -37,11 +50,11 @@ export class ApplianceFactory {
     appliance.currentPowerMethod = applianceInfo.currentPowerMethod;
     appliance.interruptionsAllowed = applianceInfo.interruptionsAllowed;
 
-    console.log('Appliance ' + JSON.stringify(appliance));
+    console.log('ApplianceInfo (TYPE)' + JSON.stringify(appliance));
     return appliance;
   }
 
-  static toJSON(appliance: Appliance): String {
+  static toJSONfromApplianceInfo(appliance: ApplianceInfo): String {
     return JSON.stringify(appliance);
   }
 }
