@@ -44,6 +44,7 @@ export class SettingsComponent implements OnInit {
 
   submitForm() {
     this.applianceService.updateSettings(this.settings);
+    this.settingsForm.form.markAsPristine();
   }
 
 }
