@@ -44,7 +44,7 @@ export class MeterFactory {
     return meter;
   }
 
-  static toJSON(meter: Meter): String {
+  static toJSON(meter: Meter): string {
     console.log('Meter (TYPE): ' + JSON.stringify(meter));
     let meterUsed: any;
     if (meter.type === S0ElectricityMeter.TYPE) {
@@ -56,7 +56,10 @@ export class MeterFactory {
     } else if (meter.type === HttpElectricityMeter.TYPE) {
       meterUsed =  meter.httpElectricityMeter;
     }
-    const meterRaw = JSON.stringify(meterUsed);
+    let meterRaw: string;
+    if (meterUsed != null) {
+      meterRaw = JSON.stringify(meterUsed);
+    }
     console.log('Meter (JSON): ' + meterRaw);
     return meterRaw;
   }
