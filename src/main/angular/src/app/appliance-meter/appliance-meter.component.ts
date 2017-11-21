@@ -83,5 +83,6 @@ export class ApplianceMeterComponent implements OnInit {
 
   submitForm() {
     this.applianceService.updateMeter(this.meter, this.applianceId);
+    this.meterForm.form.markAsPristine();
   }
 }

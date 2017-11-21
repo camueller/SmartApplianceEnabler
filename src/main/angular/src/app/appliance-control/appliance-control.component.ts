@@ -99,5 +99,6 @@ export class ApplianceControlComponent implements OnInit {
 
   submitForm() {
     this.applianceService.updateControl(this.control, this.applianceId).subscribe(() => this.appliancesReloadService.reload());
+    this.controlForm.form.markAsPristine();
   }
 }

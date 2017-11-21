@@ -70,6 +70,7 @@ export class ApplianceDetailsComponent implements OnInit {
 
   submitForm() {
     this.applianceService.updateAppliance(this.appliance, this.isNew).subscribe(() => this.appliancesReloadService.reload());
+    this.detailsForm.form.markAsPristine();
   }
 
   deleteAppliance() {
