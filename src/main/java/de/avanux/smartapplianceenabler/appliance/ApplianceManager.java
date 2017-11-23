@@ -17,14 +17,13 @@
  */
 package de.avanux.smartapplianceenabler.appliance;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 import de.avanux.smartapplianceenabler.HolidaysDownloader;
+import de.avanux.smartapplianceenabler.log.ApplianceLogger;
+import de.avanux.smartapplianceenabler.semp.webservice.Device2EM;
+import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
+import de.avanux.smartapplianceenabler.semp.webservice.DeviceStatus;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,9 +35,11 @@ import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
 
 
 public class ApplianceManager implements Runnable {
-    public static final String SCHEMA_LOCATION = "http://github.com/camueller/SmartApplianceEnabler/v1.2";
+    static final String SCHEMA_LOCATION = "http://github.com/camueller/SmartApplianceEnabler/v1.2";
     private Logger logger = LoggerFactory.getLogger(ApplianceManager.class);
     private static ApplianceManager instance;
+    private FileHandler fileHandler = new FileHandler();
+    private Device2EM device2EM;
     private Appliances appliances;
     private GpioController gpioController;
     private Timer timer;
@@ -68,11 +69,25 @@ public class ApplianceManager implements Runnable {
             logger.error("Error starting appliances", e);
         }
     }
-    
-    public void startAppliances() {
-        FileHandler fileHandler = new FileHandler();
+
+    private void startAppliances() {
         if(appliances == null) {
             appliances = fileHandler.load(Appliances.class);
+            if(appliances == null) {
+                this.appliances = new Appliances();
+                this.appliances.setAppliances(new ArrayList<>());
+            }
+        }
+        if(this.device2EM == null) {
+            this.device2EM = fileHandler.load(Device2EM.class);
+            if(device2EM == null) {
+                this.device2EM = new Device2EM();
+            }
+        }
+        List<DeviceInfo> deviceInfos = device2EM.getDeviceInfo();
+        if(deviceInfos == null) {
+            deviceInfos = new ArrayList<>();
+            device2EM.setDeviceInfo(deviceInfos);
         }
         if(appliances != null) {
             init();
@@ -83,17 +98,15 @@ public class ApplianceManager implements Runnable {
         logger.info(getAppliances().size() + " appliance(s) configured.");
     }
 
-    public void restartAppliances() {
+    private void restartAppliances() {
         if(this.appliances != null) {
             Connectivity connectivity = this.appliances.getConnectivity();
             if(connectivity != null) {
-                if(connectivity != null) {
-                    // make PulseReceiver accessible by id
-                    if (connectivity.getPulseReceivers() != null) {
-                        for (PulseReceiver pulseReceiver : connectivity.getPulseReceivers()) {
-                            logger.info("Stopping PulseReceiver (" + pulseReceiver.getId() + ") configured for port " + pulseReceiver.getPort());
-                            pulseReceiver.stop();
-                        }
+                // make PulseReceiver accessible by id
+                if (connectivity.getPulseReceivers() != null) {
+                    for (PulseReceiver pulseReceiver : connectivity.getPulseReceivers()) {
+                        logger.info("Stopping PulseReceiver (" + pulseReceiver.getId() + ") configured for port " + pulseReceiver.getPort());
+                        pulseReceiver.stop();
                     }
                 }
             }
@@ -101,27 +114,6 @@ public class ApplianceManager implements Runnable {
         logger.info("Restarting appliances ...");
         this.appliances = null;
         startAppliances();
-    }
-
-    public List<Appliance> getAppliances() {
-        if(appliances != null) {
-            return appliances.getAppliances();
-        }
-        return Collections.EMPTY_LIST;
-    }
-
-    public void setAppliances(Appliances appliances) {
-        this.appliances = appliances;
-    }
-
-    public Appliance findAppliance(String applianceId) {
-        List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
-        for (Appliance appliance : appliances) {
-            if(appliance.getId().equals(applianceId)) {
-                return appliance;
-            }
-        }
-        return null;
     }
 
     private void init() {
@@ -194,5 +186,218 @@ public class ApplianceManager implements Runnable {
         else {
             logger.debug("Holidays are NOT used.");
         }
+    }
+
+    public void save(boolean writeDevice2EM, boolean writeAppliances) {
+        logger.debug("Saving to file: writeDevice2EM=" + writeDevice2EM + " writeAppliances=" + writeAppliances);
+        if(writeDevice2EM) {
+            fileHandler.save(this.device2EM);
+        }
+        if(writeAppliances) {
+            fileHandler.save(this.appliances);
+        }
+        if(writeDevice2EM || writeAppliances) {
+            restartAppliances();
+        }
+    }
+
+    public Device2EM getDevice2EM() {
+        return this.device2EM;
+    }
+
+    /**
+     * Should only be used for testing
+     * @param device2EM
+     */
+    public void setDevice2EM(Device2EM device2EM) {
+        this.device2EM = device2EM;
+    }
+
+    /**
+     * Return the corresponding DeviceInfo for an appliance.
+     * @param applianceId
+     * @return
+     */
+    public DeviceInfo getDeviceInfo(String applianceId) {
+        for(DeviceInfo deviceInfo : this.device2EM.getDeviceInfo()) {
+            if(deviceInfo.getIdentification().getDeviceId().equals(applianceId)) {
+                return deviceInfo;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Return the corresponding DeviceStatus for an appliance.
+     * @param applianceId
+     * @return
+     */
+    private DeviceStatus getDeviceStatus(String applianceId) {
+        for(DeviceStatus deviceStatus : this.device2EM.getDeviceStatus()) {
+            if(deviceStatus.getDeviceId().equals(applianceId)) {
+                return deviceStatus;
+            }
+        }
+        return null;
+    }
+
+    public Appliance getAppliance(String applianceId) {
+        for (Appliance appliance: this.appliances.getAppliances()) {
+            if(appliance.getId().equals(applianceId)) {
+                return appliance;
+            }
+        }
+        return null;
+    }
+
+    public List<Appliance> getAppliances() {
+        if(appliances != null) {
+            return appliances.getAppliances();
+        }
+        return Collections.EMPTY_LIST;
+    }
+
+    /**
+     * Should only be used for testing
+     * @param appliances
+     */
+    public void setAppliances(Appliances appliances) {
+        this.appliances = appliances;
+    }
+
+    public void addAppliance(Appliance appliance, DeviceInfo deviceInfo) {
+        ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, appliance.getId());
+        applianceLogger.debug("Add appliance");
+        List<DeviceInfo> deviceInfos = device2EM.getDeviceInfo();
+        deviceInfos.add(deviceInfo);
+        appliances.getAppliances().add(appliance);
+        save(true, true);
+    }
+
+    public void updateAppliance(DeviceInfo deviceInfo) {
+        ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, deviceInfo.getIdentification().getDeviceId());
+        applianceLogger.debug("Update appliance");
+        Integer replaceIndex = null;
+        for(int i=0;i<device2EM.getDeviceInfo().size();i++) {
+            if(deviceInfo.getIdentification().getDeviceId().equals(device2EM.getDeviceInfo().get(i).getIdentification().getDeviceId())) {
+                replaceIndex = i;
+                break;
+            }
+        }
+        if(replaceIndex != null) {
+            device2EM.getDeviceInfo().remove(replaceIndex.intValue());
+            device2EM.getDeviceInfo().add(replaceIndex, deviceInfo);
+        }
+    }
+
+    public void deleteAppliance(String applianceId) {
+        ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
+        applianceLogger.debug("Delete appliance");
+
+        DeviceInfo deviceInfoToBeDeleted = getDeviceInfo(applianceId);
+        device2EM.getDeviceInfo().remove(deviceInfoToBeDeleted);
+
+        DeviceStatus deviceStatus = getDeviceStatus(applianceId);
+        device2EM.getDeviceStatus().remove(deviceStatus);
+
+        Appliance applianceToBeDeleted = getAppliance(applianceId);
+        if(applianceToBeDeleted != null) {
+            appliances.getAppliances().remove(applianceToBeDeleted);
+            save(true, true);
+        }
+        else {
+            applianceLogger.error("Appliance not found");
+        }
+    }
+
+    public Appliance findAppliance(String applianceId) {
+        List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
+        for (Appliance appliance : appliances) {
+            if(appliance.getId().equals(applianceId)) {
+                return appliance;
+            }
+        }
+        return null;
+    }
+
+    public void setControl(String applianceId, Control control) {
+        ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
+        applianceLogger.debug("Set control");
+        Appliance appliance = getAppliance(applianceId);
+        if(appliance != null) {
+            appliance.setControl(control);
+            save(false, true);
+        }
+        else {
+            applianceLogger.error("Appliance not found");
+        }
+    }
+
+    public void deleteControl(String applianceId) {
+        ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
+        applianceLogger.debug("Delete control");
+        Appliance appliance = getAppliance(applianceId);
+        if(appliance != null) {
+            appliance.setControl(null);
+            save(false, true);
+        }
+        else {
+            applianceLogger.error("Appliance not found");
+        }
+    }
+
+    public void setMeter(String applianceId, Meter meter) {
+        ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
+        applianceLogger.debug("Set meter");
+        Appliance appliance = getAppliance(applianceId);
+        if(appliance != null) {
+            appliance.setMeter(meter);
+            save(false, true);
+        }
+        else {
+            applianceLogger.error("Appliance not found");
+        }
+    }
+
+    public void deleteMeter(String applianceId) {
+        ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
+        applianceLogger.debug("Delete meter");
+        Appliance appliance = getAppliance(applianceId);
+        if(appliance != null) {
+            appliance.setMeter(null);
+            save(false, true);
+        }
+        else {
+            applianceLogger.error("Appliance not found");
+        }
+    }
+
+    public void setSchedules(String applianceId, List<Schedule> schedules) {
+        ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
+        applianceLogger.debug("Set schedules");
+        Appliance appliance = getAppliance(applianceId);
+        if(appliance != null) {
+            appliance.setSchedules(schedules);
+            save(false, true);
+        }
+        else {
+            applianceLogger.error("Appliance not found");
+        }
+    }
+
+    public Appliances getAppliancesRoot() {
+        return this.appliances;
+    }
+
+    public void setConnectivity(Connectivity connectivity) {
+        logger.debug("Set connectivity");
+        this.appliances.setConnectivity(connectivity);
+        save(false, true);
+    }
+
+    public void setConfiguration(List<Configuration> configurations) {
+        logger.debug("Set configuration");
+        this.appliances.setConfigurations(configurations);
+        save(false, true);
     }
 }

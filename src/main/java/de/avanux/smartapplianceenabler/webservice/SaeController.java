@@ -33,56 +33,23 @@ import java.util.List;
 
 @RestController
 public class SaeController {
-    protected static final String BASE_URL = "/sae";
-    protected static final String APPLIANCES_URL = BASE_URL + "/appliances";
-    protected static final String APPLIANCE_URL = BASE_URL + "/appliance";
-    protected static final String CONTROL_URL = BASE_URL + "/control";
-    protected static final String METER_URL = BASE_URL + "/meter";
-    protected static final String SCHEDULES_URL = BASE_URL + "/schedules";
-    protected static final String SETTINGS_URL = BASE_URL + "/settings";
+    private static final String BASE_URL = "/sae";
+    private static final String APPLIANCES_URL = BASE_URL + "/appliances";
+    private static final String APPLIANCE_URL = BASE_URL + "/appliance";
+    private static final String CONTROL_URL = BASE_URL + "/control";
+    private static final String METER_URL = BASE_URL + "/meter";
+    public static final String SCHEDULES_URL = BASE_URL + "/schedules";
+    private static final String SETTINGS_URL = BASE_URL + "/settings";
     // only required for development if running via "ng serve"
-    public static final String CROSS_ORIGIN_URL = "http://localhost:4200";
+    private static final String CROSS_ORIGIN_URL = "http://localhost:4200";
     private Logger logger = LoggerFactory.getLogger(SaeController.class);
-    FileHandler fileHandler = new FileHandler();
-    private Device2EM device2EM;
-    private Appliances appliances;
 
     public SaeController() {
         logger.info("SAE controller created.");
     }
 
-    private Device2EM loadDevice2EMIfNeeded(boolean create) {
-        if(this.device2EM == null) {
-            this.device2EM = fileHandler.load(Device2EM.class);
-            if(device2EM == null && create) {
-                this.device2EM = new Device2EM();
-            }
-        }
-        return this.device2EM;
-    }
-
-    private Appliances loadAppliancesIfNeeded(boolean create) {
-        if(this.appliances == null) {
-            this.appliances = fileHandler.load(Appliances.class);
-            if(appliances == null) {
-                this.appliances = new Appliances();
-            }
-        }
-        return this.appliances;
-    }
-
-    private void save(boolean writeDevice2EM, boolean writeAppliances) {
-        if(writeDevice2EM) {
-            fileHandler.save(this.device2EM);
-        }
-        if(writeAppliances) {
-            fileHandler.save(this.appliances);
-        }
-        ApplianceManager.getInstance().restartAppliances();
-    }
-
     private Appliance getAppliance(String applianceId) {
-        for (Appliance appliance: loadAppliancesIfNeeded(false).getAppliances()) {
+        for (Appliance appliance: ApplianceManager.getInstance().getAppliances()) {
             if(appliance.getId().equals(applianceId)) {
                 return appliance;
             }
@@ -96,7 +63,7 @@ public class SaeController {
      * @return
      */
     private DeviceInfo getDeviceInfo(String applianceId) {
-        for(DeviceInfo deviceInfo : device2EM.getDeviceInfo()) {
+        for(DeviceInfo deviceInfo : ApplianceManager.getInstance().getDevice2EM().getDeviceInfo()) {
             if(deviceInfo.getIdentification().getDeviceId().equals(applianceId)) {
                 return deviceInfo;
             }
@@ -155,17 +122,14 @@ public class SaeController {
     public List<ApplianceHeader> getAppliances() {
         logger.debug("Received request for ApplianceHeaders");
         List<ApplianceHeader> applianceHeaders = new ArrayList<>();
-        Appliances appliances = loadAppliancesIfNeeded(false);
-        if(appliances != null) {
-            List<Appliance> applianceList = appliances.getAppliances();
-            Device2EM device2EM = loadDevice2EMIfNeeded(false);
+            List<Appliance> applianceList = ApplianceManager.getInstance().getAppliances();
+            Device2EM device2EM = ApplianceManager.getInstance().getDevice2EM();
             if(applianceList != null && device2EM != null) {
                 for(Appliance appliance: applianceList) {
                     DeviceInfo deviceInfo = getDeviceInfo(appliance.getId());
                     applianceHeaders.add(toApplianceHeader(appliance, deviceInfo));
                 }
             }
-        }
         logger.debug("Returning " + applianceHeaders.size() + " ApplianceHeaders");
         return applianceHeaders;
     }
@@ -176,7 +140,7 @@ public class SaeController {
     public ApplianceInfo getApplianceInfo(@RequestParam(value="id") String applianceId) {
         ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
         applianceLogger.debug("Received request for device info");
-        Device2EM device2EM = loadDevice2EMIfNeeded(false);
+        Device2EM device2EM = ApplianceManager.getInstance().getDevice2EM();
         for(DeviceInfo deviceInfo : device2EM.getDeviceInfo()) {
             if(deviceInfo.getIdentification().getDeviceId().equals(applianceId)) {
                 applianceLogger.debug("Returning device info " + deviceInfo);
@@ -195,62 +159,21 @@ public class SaeController {
         ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
         applianceLogger.debug("Received request to set ApplianceInfo (create=" + create + "): " + applianceInfo);
         DeviceInfo deviceInfo = toDeviceInfo(applianceInfo);
-        Device2EM device2EM = loadDevice2EMIfNeeded(true);
         if(create) {
-            List<DeviceInfo> deviceInfos = device2EM.getDeviceInfo();
-            if(deviceInfos == null) {
-                deviceInfos = new ArrayList<>();
-                device2EM.setDeviceInfo(deviceInfos);
-            }
-            deviceInfos.add(deviceInfo);
-
             Appliance appliance = new Appliance();
             appliance.setId(applianceId);
-
-            Appliances appliances = loadAppliancesIfNeeded(true);
-            List<Appliance> applianceList = appliances.getAppliances();
-            if(applianceList == null) {
-                applianceList = new ArrayList<>();
-                appliances.setAppliances(applianceList);
-            }
-            applianceList.add(appliance);
+            ApplianceManager.getInstance().addAppliance(appliance, deviceInfo);
         }
         else {
-            Integer replaceIndex = null;
-            for(int i=0;i<device2EM.getDeviceInfo().size();i++) {
-                if(deviceInfo.getIdentification().getDeviceId().equals(device2EM.getDeviceInfo().get(i).getIdentification().getDeviceId())) {
-                    replaceIndex = i;
-                    break;
-                }
-            }
-            if(replaceIndex != null) {
-                device2EM.getDeviceInfo().remove(replaceIndex.intValue());
-                device2EM.getDeviceInfo().add(replaceIndex, deviceInfo);
-            }
+            ApplianceManager.getInstance().updateAppliance(deviceInfo);
         }
-        save(true, create);
     }
 
     @RequestMapping(value= APPLIANCE_URL, method=RequestMethod.DELETE, consumes="application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     @ResponseBody
     public void deleteAppliance(@RequestParam(value="id") String applianceId) {
-        ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
-        applianceLogger.debug("Received request to delete appliance with id=" + applianceId);
-
-        Device2EM device2EM = loadDevice2EMIfNeeded(false);
-        DeviceInfo deviceInfoToBeDeleted = getDeviceInfo(applianceId);
-        device2EM.getDeviceInfo().remove(deviceInfoToBeDeleted);
-
-        Appliances appliances = loadAppliancesIfNeeded(false);
-        Appliance applianceToBeDeleted = getAppliance(applianceId);
-        if(applianceToBeDeleted != null) {
-            appliances.getAppliances().remove(applianceToBeDeleted);
-            save(true, true);
-        }
-        else {
-            applianceLogger.error("Appliance not found");
-        }
+        ApplianceManager.getInstance().deleteAppliance(applianceId);
     }
 
     @RequestMapping(value=CONTROL_URL, method=RequestMethod.GET, produces="application/json")
@@ -277,14 +200,7 @@ public class SaeController {
     public void setControl(@RequestParam(value="id") String applianceId, @RequestBody Control control) {
         ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
         applianceLogger.debug("Received request to set control " + control);
-        Appliance appliance = getAppliance(applianceId);
-        if(appliance != null) {
-            appliance.setControl(control);
-            save(false, true);
-        }
-        else {
-            applianceLogger.error("Appliance not found");
-        }
+        ApplianceManager.getInstance().setControl(applianceId, control);
     }
 
     @RequestMapping(value= CONTROL_URL, method=RequestMethod.DELETE, consumes="application/json")
@@ -292,16 +208,8 @@ public class SaeController {
     @ResponseBody
     public void deleteControl(@RequestParam(value="id") String applianceId) {
         ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
-        applianceLogger.debug("Received request to delete control of appliance with id=" + applianceId);
-
-        Appliance appliance = getAppliance(applianceId);
-        if(appliance != null) {
-            appliance.setControl(null);
-            save(false, true);
-        }
-        else {
-            applianceLogger.error("Appliance not found");
-        }
+        applianceLogger.debug("Received request to delete control");
+        ApplianceManager.getInstance().deleteControl(applianceId);
     }
 
     @RequestMapping(value=METER_URL, method=RequestMethod.GET, produces="application/json")
@@ -328,14 +236,7 @@ public class SaeController {
     public void setMeter(@RequestParam(value="id") String applianceId, @RequestBody Meter meter) {
         ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
         applianceLogger.debug("Received request to set meter " + meter);
-        Appliance appliance = getAppliance(applianceId);
-        if(appliance != null) {
-            appliance.setMeter(meter);
-            save(false, true);
-        }
-        else {
-            applianceLogger.error("Appliance not found");
-        }
+        ApplianceManager.getInstance().setMeter(applianceId, meter);
     }
 
     @RequestMapping(value= METER_URL, method=RequestMethod.DELETE, consumes="application/json")
@@ -343,16 +244,8 @@ public class SaeController {
     @ResponseBody
     public void deleteMeter(@RequestParam(value="id") String applianceId) {
         ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
-        applianceLogger.debug("Received request to delete meter of appliance with id=" + applianceId);
-
-        Appliance appliance = getAppliance(applianceId);
-        if(appliance != null) {
-            appliance.setMeter(null);
-            save(false, true);
-        }
-        else {
-            applianceLogger.error("Appliance not found");
-        }
+        applianceLogger.debug("Received request to delete meter");
+        ApplianceManager.getInstance().deleteMeter(applianceId);
     }
 
     @RequestMapping(value=SCHEDULES_URL, method=RequestMethod.GET, produces="application/json")
@@ -382,14 +275,7 @@ public class SaeController {
     public void setSchedules(@RequestParam(value="id") String applianceId, @RequestBody List<Schedule> schedules) {
         ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
         applianceLogger.debug("Received request to set " + schedules.size() + " schedules");
-        Appliance appliance = getAppliance(applianceId);
-        if(appliance != null) {
-            appliance.setSchedules(schedules);
-            save(false, true);
-        }
-        else {
-            applianceLogger.error("Appliance not found");
-        }
+        ApplianceManager.getInstance().setSchedules(applianceId, schedules);
     }
 
     @RequestMapping(value=SCHEDULES_URL, method= RequestMethod.POST, consumes="application/xml")
@@ -419,7 +305,7 @@ public class SaeController {
         logger.debug("Received request for Settings");
         Settings settings = new Settings();
 
-        Appliances appliances = loadAppliancesIfNeeded(false);
+        Appliances appliances = ApplianceManager.getInstance().getAppliancesRoot();
 
         settings.setDefaultPulseReceiverPort(PulseReceiver.DEFAULT_PORT);
         settings.setDefaultModbusTcpHost(ModbusTcp.DEFAULT_HOST);
@@ -475,13 +361,10 @@ public class SaeController {
         }
 
         if(pulseReceivers != null || modbusTCPs != null) {
-            Connectivity connectivity = loadAppliancesIfNeeded(true).getConnectivity();
-            if(connectivity == null) {
-                connectivity = new Connectivity();
-                appliances.setConnectivity(connectivity);
-            }
+            Connectivity connectivity = new Connectivity();
             connectivity.setPulseReceivers(pulseReceivers);
             connectivity.setModbusTCPs(modbusTCPs);
+            ApplianceManager.getInstance().setConnectivity(connectivity);
         }
 
         List<Configuration> configurations = null;
@@ -491,7 +374,6 @@ public class SaeController {
             configuration.setValue(settings.getHolidaysUrl());
             configurations = Collections.singletonList(configuration);
         }
-        this.appliances.setConfigurations(configurations);
-        save(false, true);
+        ApplianceManager.getInstance().setConfiguration(configurations);
     }
 }

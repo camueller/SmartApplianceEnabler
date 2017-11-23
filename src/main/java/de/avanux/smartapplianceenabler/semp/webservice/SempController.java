@@ -40,20 +40,10 @@ public class SempController implements ActiveIntervalChangedListener {
     private static final String BASE_URL = "/semp";
     public static final String SCHEMA_LOCATION = "http://www.sma.de/communication/schema/SEMP/v1";
     private Logger logger = LoggerFactory.getLogger(SempController.class);
-    private Device2EM device2EM;
     private boolean timeFrameChangedListenerRegistered;
     
     public SempController() {
         logger.info("SEMP controller created.");
-    }
-
-    protected SempController(Device2EM device2EM) {
-        setDevice2EM(device2EM);
-    }
-
-    public void setDevice2EM(Device2EM device2EM) {
-        this.device2EM = device2EM;
-        logger.debug("Device2EM configured");
     }
 
     @RequestMapping(value=BASE_URL, method=RequestMethod.GET, produces="application/xml")
@@ -80,6 +70,7 @@ public class SempController implements ActiveIntervalChangedListener {
                 planningRequests.add(planningRequest);
             }
         }
+        Device2EM device2EM = ApplianceManager.getInstance().getDevice2EM();
         device2EM.setDeviceStatus(deviceStatuses);
         device2EM.setPlanningRequest(planningRequests);
         return device2EM;
@@ -91,7 +82,7 @@ public class SempController implements ActiveIntervalChangedListener {
         List<DeviceInfo> deviceInfos = new ArrayList<DeviceInfo>();
         if(deviceId != null) {
             logger.debug("Device info requested of device id=" + deviceId);
-            DeviceInfo deviceInfo = findDeviceInfo(device2EM, deviceId);
+            DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(deviceId);
 
             Appliance appliance = ApplianceManager.getInstance().findAppliance(deviceId);
             if(appliance.getMeter() != null) {
@@ -108,7 +99,7 @@ public class SempController implements ActiveIntervalChangedListener {
             logger.debug("Device info requested of all devices");
             List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
             for (Appliance appliance : appliances) {
-                DeviceInfo deviceInfo = findDeviceInfo(device2EM, appliance.getId());
+                DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(appliance.getId());
                 if(appliance.getMeter() != null) {
                     deviceInfo.getCapabilities().setCurrentPowerMethod(CurrentPowerMethod.Measurement);
                 }
@@ -266,7 +257,7 @@ public class SempController implements ActiveIntervalChangedListener {
         }
         else {
             applianceLogger.debug("Reporting power info from device characteristics.");
-            DeviceInfo deviceInfo = findDeviceInfo(device2EM, appliance.getId());
+            DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(appliance.getId());
             if(deviceStatus.getStatus() == Status.On) {
                 powerInfo.setAveragePower(deviceInfo.getCharacteristics().getMaxPowerConsumption());
             }
@@ -283,15 +274,6 @@ public class SempController implements ActiveIntervalChangedListener {
         
         deviceStatus.setPowerConsumption(Collections.singletonList(powerConsumption));
         return deviceStatus;
-    }
-
-    private DeviceInfo findDeviceInfo(Device2EM device2EM, String deviceId) {
-        for(DeviceInfo deviceInfo : device2EM.getDeviceInfo()) {
-            if(deviceInfo.getIdentification().getDeviceId().equals(deviceId)) {
-                return deviceInfo;
-            }
-        }
-        return null;
     }
 
     private PlanningRequest createPlanningRequest(ApplianceLogger applianceLogger, LocalDateTime now, Appliance appliance) {

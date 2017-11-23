@@ -19,11 +19,9 @@ public class SempControllerTest extends TestBase {
 
     public static final String DEVICE_ID = "DeviceID1";
     private SempController sempController;
-    private Device2EM device2EM;
 
     public SempControllerTest() {
-        device2EM = new Device2EM();
-        sempController = new SempController(device2EM);
+        sempController = new SempController();
     }
 
     @Test
@@ -33,7 +31,7 @@ public class SempControllerTest extends TestBase {
 
         DeviceInfo deviceInfo = new DeviceInfo();
         deviceInfo.setIdentification(identification);
-        device2EM.setDeviceInfo(Collections.singletonList(deviceInfo));
+        setDeviceInfo(deviceInfo);
 
         Appliance appliance = new Appliance();
         appliance.setId(DEVICE_ID);
@@ -71,7 +69,7 @@ public class SempControllerTest extends TestBase {
 
         DeviceInfo deviceInfo = new DeviceInfo();
         deviceInfo.setIdentification(identification);
-        device2EM.setDeviceInfo(Collections.singletonList(deviceInfo));
+        setDeviceInfo(deviceInfo);
 
         Appliance appliance = new Appliance();
         appliance.setId(DEVICE_ID);
@@ -171,5 +169,11 @@ public class SempControllerTest extends TestBase {
         Assert.assertEquals(latestEnd, timeframe.getLatestEnd());
         Assert.assertEquals(minRuningTime, timeframe.getMinRunningTime());
         Assert.assertEquals(maxRunningTime, timeframe.getMaxRunningTime());
+    }
+
+    private void setDeviceInfo(DeviceInfo deviceInfo) {
+        Device2EM device2EM = new Device2EM();
+        device2EM.setDeviceInfo(Collections.singletonList(deviceInfo));
+        ApplianceManager.getInstance().setDevice2EM(device2EM);
     }
 }
