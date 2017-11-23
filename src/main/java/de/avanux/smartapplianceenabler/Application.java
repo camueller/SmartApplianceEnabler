@@ -67,11 +67,6 @@ public class Application {
     }
     
     private void startSemp() {
-        FileHandler fileHandler = new FileHandler();
-        Device2EM device2EM = fileHandler.load(Device2EM.class);
-        SempController sempController = applicationContext.getBean(SempController.class);
-        sempController.setDevice2EM(device2EM);
-
         boolean disableDiscovery = Boolean.parseBoolean(System.getProperty("sae.discovery.disable", "false"));
         if(disableDiscovery) {
             logger.warn("SEMP discovery disabled.");
