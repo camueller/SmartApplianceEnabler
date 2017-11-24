@@ -19,10 +19,7 @@
 package de.avanux.smartapplianceenabler;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
-import de.avanux.smartapplianceenabler.appliance.FileHandler;
 import de.avanux.smartapplianceenabler.semp.discovery.SempDiscovery;
-import de.avanux.smartapplianceenabler.semp.webservice.Device2EM;
-import de.avanux.smartapplianceenabler.semp.webservice.SempController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;

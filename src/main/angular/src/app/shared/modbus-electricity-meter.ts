@@ -19,7 +19,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 export class ModbusElectricityMeter {
 
   static get TYPE(): string {
-    return 'de.avanux.smartapplianceenabler.modbus.ModbusElectricityMeter';
+    return 'de.avanux.smartapplianceenabler.meter.ModbusElectricityMeter';
   }
 
   '@class' = ModbusElectricityMeter.TYPE;

@@ -18,7 +18,11 @@
 package de.avanux.smartapplianceenabler.semp.webservice;
 
 import de.avanux.smartapplianceenabler.appliance.*;
+import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.log.ApplianceLogger;
+import de.avanux.smartapplianceenabler.meter.Meter;
+import de.avanux.smartapplianceenabler.schedule.Schedule;
+import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.joda.time.LocalDateTime;

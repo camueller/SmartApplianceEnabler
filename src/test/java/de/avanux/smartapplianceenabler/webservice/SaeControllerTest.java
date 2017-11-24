@@ -1,8 +1,9 @@
 package de.avanux.smartapplianceenabler.webservice;
 
-import ch.qos.logback.classic.Level;
 import de.avanux.smartapplianceenabler.Application;
 import de.avanux.smartapplianceenabler.appliance.*;
+import de.avanux.smartapplianceenabler.schedule.*;
+import de.avanux.smartapplianceenabler.util.FileHandler;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

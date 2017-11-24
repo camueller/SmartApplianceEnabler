@@ -3,11 +3,12 @@ package de.avanux.smartapplianceenabler.semp.webservice;
 import de.avanux.smartapplianceenabler.TestBase;
 import de.avanux.smartapplianceenabler.appliance.*;
 import de.avanux.smartapplianceenabler.log.ApplianceLogger;
+import de.avanux.smartapplianceenabler.schedule.Schedule;
+import de.avanux.smartapplianceenabler.schedule.TimeOfDay;
 import org.joda.time.Interval;
 import org.joda.time.LocalDateTime;
 import org.junit.Assert;
 import org.junit.Test;
-import org.mockito.internal.matchers.Any;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
@@ -39,7 +40,7 @@ public class SempControllerTest extends TestBase {
         LocalDateTime now = toToday(9, 30, 0);
         int remainingMaxRunningTime = 1800;
         Schedule schedule = new Schedule(600, 600, new TimeOfDay(now.minusSeconds(1)), new TimeOfDay(now.plusSeconds(remainingMaxRunningTime)));
-        de.avanux.smartapplianceenabler.appliance.Timeframe timeframe = schedule.getTimeframe();
+        de.avanux.smartapplianceenabler.schedule.Timeframe timeframe = schedule.getTimeframe();
         timeframe.setSchedule(schedule);
         RunningTimeMonitor runningTimeMonitor = mock(RunningTimeMonitor.class);
         when(runningTimeMonitor.getSchedules()).thenReturn(Collections.singletonList(schedule));
@@ -76,7 +77,7 @@ public class SempControllerTest extends TestBase {
 
         LocalDateTime now = toToday(9, 0, 0);
         Schedule schedule = new Schedule(3600, 3600, new TimeOfDay(11, 0, 0), new TimeOfDay(13, 0, 0));
-        de.avanux.smartapplianceenabler.appliance.Timeframe timeframe = schedule.getTimeframe();
+        de.avanux.smartapplianceenabler.schedule.Timeframe timeframe = schedule.getTimeframe();
         timeframe.setSchedule(schedule);
         RunningTimeMonitor runningTimeMonitor = mock(RunningTimeMonitor.class);
         when(runningTimeMonitor.getActiveTimeframeInterval()).thenReturn(timeframe.getIntervals(now).get(0));

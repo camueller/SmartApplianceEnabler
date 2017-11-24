@@ -19,10 +19,10 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 export class S0ElectricityMeter {
 
   static get TYPE(): string {
-    return 'de.avanux.smartapplianceenabler.appliance.S0ElectricityMeter';
+    return 'de.avanux.smartapplianceenabler.meter.S0ElectricityMeter';
   }
   static get TYPE_NETWORKED(): string {
-    return 'de.avanux.smartapplianceenabler.appliance.S0ElectricityMeterNetworked';
+    return 'de.avanux.smartapplianceenabler.meter.S0ElectricityMeterNetworked';
   }
 
   '@class' = S0ElectricityMeter.TYPE;

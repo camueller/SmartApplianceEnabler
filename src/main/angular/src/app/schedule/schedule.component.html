@@ -32,10 +32,10 @@
             </div>
             <div class="field" [class.disabled]="!schedule.controls.enabled.value">
               <select class="ui fluid dropdown" formControlName="timeframeType">
-                <option value="de.avanux.smartapplianceenabler.appliance.DayTimeframe"
+                <option value="de.avanux.smartapplianceenabler.schedule.DayTimeframe"
                         [selected]="schedule.controls.timeframeType.value==DAY_TIMEFRAME">
                   {{'ScheduleComponent.timeframeType.DayTimeframe' | translate}}</option>
-                <option value="de.avanux.smartapplianceenabler.appliance.ConsecutiveDaysTimeframe"
+                <option value="de.avanux.smartapplianceenabler.schedule.ConsecutiveDaysTimeframe"
                         [selected]="schedule.controls.timeframeType.value==CONSECUTIVE_DAYS_TIMEFRAME">
                   {{'ScheduleComponent.timeframeType.ConsecutiveDaysTimeframe' | translate}}</option>
               </select>

@@ -22,7 +22,7 @@ import {DayOfWeek} from './day-of-week';
 export class DayTimeframe {
 
   static get TYPE(): string {
-    return 'de.avanux.smartapplianceenabler.appliance.DayTimeframe';
+    return 'de.avanux.smartapplianceenabler.schedule.DayTimeframe';
   }
 
   '@class' = DayTimeframe.TYPE;

@@ -18,11 +18,14 @@
 package de.avanux.smartapplianceenabler.appliance;
 
 import com.pi4j.io.gpio.GpioController;
+import de.avanux.smartapplianceenabler.control.*;
 import de.avanux.smartapplianceenabler.log.ApplianceLogger;
-import de.avanux.smartapplianceenabler.modbus.ModbusElectricityMeter;
+import de.avanux.smartapplianceenabler.meter.*;
+import de.avanux.smartapplianceenabler.meter.ModbusElectricityMeter;
 import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
-import de.avanux.smartapplianceenabler.modbus.ModbusSwitch;
+import de.avanux.smartapplianceenabler.control.ModbusSwitch;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
+import de.avanux.smartapplianceenabler.schedule.*;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.slf4j.LoggerFactory;

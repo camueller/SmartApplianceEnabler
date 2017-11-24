@@ -1,7 +1,7 @@
 package de.avanux.smartapplianceenabler;
 
-import de.avanux.smartapplianceenabler.appliance.TimeOfDay;
-import de.avanux.smartapplianceenabler.appliance.TimeOfDayOfWeek;
+import de.avanux.smartapplianceenabler.schedule.TimeOfDay;
+import de.avanux.smartapplianceenabler.schedule.TimeOfDayOfWeek;
 import org.joda.time.DateTimeFieldType;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;

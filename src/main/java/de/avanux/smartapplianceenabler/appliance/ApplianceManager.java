@@ -20,10 +20,17 @@ package de.avanux.smartapplianceenabler.appliance;
 import java.util.*;
 
 import de.avanux.smartapplianceenabler.HolidaysDownloader;
+import de.avanux.smartapplianceenabler.configuration.Configuration;
+import de.avanux.smartapplianceenabler.configuration.Connectivity;
+import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.log.ApplianceLogger;
+import de.avanux.smartapplianceenabler.meter.Meter;
+import de.avanux.smartapplianceenabler.meter.PulseReceiver;
+import de.avanux.smartapplianceenabler.schedule.Schedule;
 import de.avanux.smartapplianceenabler.semp.webservice.Device2EM;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceStatus;
+import de.avanux.smartapplianceenabler.util.FileHandler;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +42,7 @@ import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
 
 
 public class ApplianceManager implements Runnable {
-    static final String SCHEMA_LOCATION = "http://github.com/camueller/SmartApplianceEnabler/v1.2";
+    public static final String SCHEMA_LOCATION = "http://github.com/camueller/SmartApplianceEnabler/v1.2";
     private Logger logger = LoggerFactory.getLogger(ApplianceManager.class);
     private static ApplianceManager instance;
     private FileHandler fileHandler = new FileHandler();

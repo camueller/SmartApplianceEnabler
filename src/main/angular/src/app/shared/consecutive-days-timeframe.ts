@@ -19,7 +19,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 export class ConsecutiveDaysTimeframe {
 
   static get TYPE(): string {
-    return 'de.avanux.smartapplianceenabler.appliance.ConsecutiveDaysTimeframe';
+    return 'de.avanux.smartapplianceenabler.schedule.ConsecutiveDaysTimeframe';
   }
 
   '@class' = ConsecutiveDaysTimeframe.TYPE;
