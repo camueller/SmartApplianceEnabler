@@ -41,11 +41,11 @@ public class HttpElectricityMeter extends HttpTransactionExecutor implements Met
     @XmlAttribute
     private String url;
     @XmlAttribute
-    private Float factorToWatt = 1.0f;
+    private Float factorToWatt;
     @XmlAttribute
-    private Integer measurementInterval = 60; // seconds
+    private Integer measurementInterval; // seconds
     @XmlAttribute
-    private Integer pollInterval = 10; // seconds
+    private Integer pollInterval; // seconds
     @XmlAttribute
     private String data;
     @XmlAttribute
@@ -54,6 +54,19 @@ public class HttpElectricityMeter extends HttpTransactionExecutor implements Met
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public Float getFactorToWatt() {
+        return factorToWatt != null ? factorToWatt : HttpElectricityMeterDefaults.getFactorToWatt();
+    }
+
+    @Override
+    public Integer getMeasurementInterval() {
+        return measurementInterval != null ? measurementInterval : HttpElectricityMeterDefaults.getMeasurementInterval();
+    }
+
+    public Integer getPollInterval() {
+        return pollInterval != null ? pollInterval : HttpElectricityMeterDefaults.getPollInterval();
     }
 
     public void setData(String data) {
@@ -93,17 +106,12 @@ public class HttpElectricityMeter extends HttpTransactionExecutor implements Met
     }
 
     @Override
-    public Integer getMeasurementInterval() {
-        return measurementInterval;
-    }
-
-    @Override
     public boolean isOn() {
         return getPower() > 0;
     }
 
     public void start(Timer timer) {
-        pollElectricityMeter.start(timer, pollInterval, measurementInterval, this);
+        pollElectricityMeter.start(timer, getPollInterval(), getMeasurementInterval(), this);
     }
 
     @Override
@@ -117,7 +125,7 @@ public class HttpElectricityMeter extends HttpTransactionExecutor implements Met
                 logger.debug("Power value extraction regex: " + powerValueExtractionRegex);
                 String valueString = extractPowerValueFromResponse(responseString, powerValueExtractionRegex);
                 logger.debug("Power value extracted from HTTP response: " + valueString);
-                return Float.parseFloat(valueString) * factorToWatt;
+                return Float.parseFloat(valueString) * getFactorToWatt();
             }
         } catch (Exception e) {
             logger.error("Error reading HTTP response", e);

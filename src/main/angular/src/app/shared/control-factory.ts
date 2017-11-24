@@ -22,8 +22,24 @@ import {Switch} from './switch';
 import {ModbusSwitch} from './modbus-switch';
 import {HttpSwitch} from './http-switch';
 import {AlwaysOnSwitch} from './always-on-switch';
+import {ControlDefaults} from '../appliance-control/control-defaults';
 
 export class ControlFactory {
+
+  static defaultsFromJSON(rawControlDefaults: any): ControlDefaults {
+    console.log('ControlDefaults (JSON): ' + JSON.stringify(rawControlDefaults));
+    const controlDefaults = new ControlDefaults();
+    controlDefaults.startingCurrentSwitchDefaults_powerThreshold
+      = rawControlDefaults.startingCurrentSwitchDefaults.powerThreshold;
+    controlDefaults.startingCurrentSwitchDefaults_startingCurrentDetectionDuration
+      = rawControlDefaults.startingCurrentSwitchDefaults.startingCurrentDetectionDuration;
+    controlDefaults.startingCurrentSwitchDefaults_finishedCurrentDetectionDuration
+      = rawControlDefaults.startingCurrentSwitchDefaults.finishedCurrentDetectionDuration;
+    controlDefaults.startingCurrentSwitchDefaults_minRunningTime
+      = rawControlDefaults.startingCurrentSwitchDefaults.minRunningTime;
+    console.log('ControlDefaults (TYPE): ' + JSON.stringify(controlDefaults));
+    return controlDefaults;
+  }
 
   static createEmptyControl(): Control {
     return new Control();
@@ -47,8 +63,20 @@ export class ControlFactory {
     console.log('Control (TYPE): ' + JSON.stringify(control));
     let controlUsed: any;
     if (control.startingCurrentSwitch != null) {
-      control.startingCurrentSwitch['controls'] = [ this.getControlByType(control) ];
+      control.startingCurrentSwitch['control'] = this.getControlByType(control);
       controlUsed = control.startingCurrentSwitch;
+      if (controlUsed.powerThreshold === '') {
+        controlUsed.powerThreshold = null;
+      }
+      if (controlUsed.startingCurrentDetectionDuration === '') {
+        controlUsed.startingCurrentDetectionDuration = null;
+      }
+      if (controlUsed.finishedCurrentDetectionDuration === '') {
+        controlUsed.finishedCurrentDetectionDuration = null;
+      }
+      if (controlUsed.minRunningTime === '') {
+        controlUsed.minRunningTime = null;
+      }
     } else {
       controlUsed = this.getControlByType(control);
     }
@@ -61,15 +89,17 @@ export class ControlFactory {
   }
 
   static fromJSONbyType(control: Control, rawControl: any) {
-    control.type = rawControl['@class'];
-    if (control.type === AlwaysOnSwitch.TYPE) {
-      control.alwaysOnSwitch = ControlFactory.createAlwaysOnSwitch(rawControl);
-    } else if (control.type === Switch.TYPE) {
-      control.switch_ = ControlFactory.createSwitch(rawControl);
-    } else if (control.type === ModbusSwitch.TYPE) {
-      control.modbusSwitch = ControlFactory.createModbusSwitch(rawControl);
-    } else if (control.type === HttpSwitch.TYPE) {
-      control.httpSwitch = ControlFactory.createHttpSwitch(rawControl);
+    if (rawControl != null) {
+      control.type = rawControl['@class'];
+      if (control.type === AlwaysOnSwitch.TYPE) {
+        control.alwaysOnSwitch = ControlFactory.createAlwaysOnSwitch(rawControl);
+      } else if (control.type === Switch.TYPE) {
+        control.switch_ = ControlFactory.createSwitch(rawControl);
+      } else if (control.type === ModbusSwitch.TYPE) {
+        control.modbusSwitch = ControlFactory.createModbusSwitch(rawControl);
+      } else if (control.type === HttpSwitch.TYPE) {
+        control.httpSwitch = ControlFactory.createHttpSwitch(rawControl);
+      }
     }
   }
 

@@ -18,16 +18,12 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 export class Settings {
   holidaysEnabled: boolean;
-  defaultHolidaysUrl: string;
   holidaysUrl: string;
 
   modbusEnabled: boolean;
-  defaultModbusTcpHost: string;
   modbusTcpHost: string;
-  defaultModbusTcpPort: string;
   modbusTcpPort: string;
 
   pulseReceiverEnabled: boolean;
-  defaultPulseReceiverPort: string;
   pulseReceiverPort: string;
 }

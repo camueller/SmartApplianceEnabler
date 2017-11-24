@@ -39,7 +39,7 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     @XmlAttribute
     private String registerAddress;
     @XmlAttribute
-    private Integer pollInterval = 10; // seconds
+    private Integer pollInterval; // seconds
     @XmlAttribute
     private Integer measurementInterval; // seconds
     private transient PollElectricityMeter pollElectricityMeter = new PollElectricityMeter();
@@ -77,13 +77,17 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
         return getPower() > 0;
     }
 
+    public Integer getPollInterval() {
+        return pollInterval != null ? pollInterval : ModbusElectricityMeterDefaults.getPollInterval();
+    }
+
     @Override
     public Integer getMeasurementInterval() {
         return measurementInterval;
     }
 
     public void start(Timer timer) {
-        pollElectricityMeter.start(timer, pollInterval, measurementInterval, this);
+        pollElectricityMeter.start(timer, getPollInterval(), measurementInterval, this);
     }
 
     @Override

@@ -21,6 +21,7 @@ package de.avanux.smartapplianceenabler.webservice;
 import de.avanux.smartapplianceenabler.HolidaysDownloader;
 import de.avanux.smartapplianceenabler.appliance.*;
 import de.avanux.smartapplianceenabler.log.ApplianceLogger;
+import de.avanux.smartapplianceenabler.modbus.ModbusElectricityMeterDefaults;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
 import de.avanux.smartapplianceenabler.semp.webservice.*;
 import org.slf4j.Logger;
@@ -36,10 +37,13 @@ public class SaeController {
     private static final String BASE_URL = "/sae";
     private static final String APPLIANCES_URL = BASE_URL + "/appliances";
     private static final String APPLIANCE_URL = BASE_URL + "/appliance";
+    private static final String CONTROLDEFAULTS_URL = BASE_URL + "/controldefaults";
     private static final String CONTROL_URL = BASE_URL + "/control";
+    private static final String METERDEFAULTS_URL = BASE_URL + "/meterdefaults";
     private static final String METER_URL = BASE_URL + "/meter";
     public static final String SCHEDULES_URL = BASE_URL + "/schedules";
     private static final String SETTINGS_URL = BASE_URL + "/settings";
+    private static final String SETTINGSDEFAULTS_URL = BASE_URL + "/settingsdefaults";
     // only required for development if running via "ng serve"
     private static final String CROSS_ORIGIN_URL = "http://localhost:4200";
     private Logger logger = LoggerFactory.getLogger(SaeController.class);
@@ -176,6 +180,15 @@ public class SaeController {
         ApplianceManager.getInstance().deleteAppliance(applianceId);
     }
 
+    @RequestMapping(value=CONTROLDEFAULTS_URL, method=RequestMethod.GET, produces="application/json")
+    @CrossOrigin(origins = CROSS_ORIGIN_URL)
+    @ResponseBody
+    public ControlDefaults getControlDefaults() {
+        ControlDefaults defaults = new ControlDefaults();
+        defaults.setStartingCurrentSwitchDefaults(new StartingCurrentSwitchDefaults());
+        return defaults;
+    }
+
     @RequestMapping(value=CONTROL_URL, method=RequestMethod.GET, produces="application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     @ResponseBody
@@ -210,6 +223,17 @@ public class SaeController {
         ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
         applianceLogger.debug("Received request to delete control");
         ApplianceManager.getInstance().deleteControl(applianceId);
+    }
+
+    @RequestMapping(value=METERDEFAULTS_URL, method=RequestMethod.GET, produces="application/json")
+    @CrossOrigin(origins = CROSS_ORIGIN_URL)
+    @ResponseBody
+    public MeterDefaults getMeterDefaults() {
+        MeterDefaults defaults = new MeterDefaults();
+        defaults.setS0ElectricityMeter(new S0ElectricityMeterDefaults());
+        defaults.setHttpElectricityMeter(new HttpElectricityMeterDefaults());
+        defaults.setModbusElectricityMeter(new ModbusElectricityMeterDefaults());
+        return defaults;
     }
 
     @RequestMapping(value=METER_URL, method=RequestMethod.GET, produces="application/json")
@@ -298,6 +322,13 @@ public class SaeController {
         }
     }
 
+    @RequestMapping(value=SETTINGSDEFAULTS_URL, method=RequestMethod.GET, produces="application/json")
+    @CrossOrigin(origins = CROSS_ORIGIN_URL)
+    @ResponseBody
+    public SettingsDefaults getSettingsDefaults() {
+        return new SettingsDefaults();
+    }
+
     @RequestMapping(value= SETTINGS_URL, method=RequestMethod.GET, produces="application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     @ResponseBody
@@ -306,11 +337,6 @@ public class SaeController {
         Settings settings = new Settings();
 
         Appliances appliances = ApplianceManager.getInstance().getAppliancesRoot();
-
-        settings.setDefaultPulseReceiverPort(PulseReceiver.DEFAULT_PORT);
-        settings.setDefaultModbusTcpHost(ModbusTcp.DEFAULT_HOST);
-        settings.setDefaultModbusTcpPort(ModbusTcp.DEFAULT_PORT);
-        settings.setDefaultHolidaysUrl(Configuration.DEFAULT_HOLIDAYS_URL);
 
         Connectivity connectivity = appliances.getConnectivity();
         if(connectivity != null) {
