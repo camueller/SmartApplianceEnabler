@@ -20,9 +20,16 @@ package de.avanux.smartapplianceenabler.webservice;
 
 import de.avanux.smartapplianceenabler.HolidaysDownloader;
 import de.avanux.smartapplianceenabler.appliance.*;
+import de.avanux.smartapplianceenabler.configuration.Configuration;
+import de.avanux.smartapplianceenabler.configuration.Connectivity;
+import de.avanux.smartapplianceenabler.control.Control;
+import de.avanux.smartapplianceenabler.control.ControlDefaults;
+import de.avanux.smartapplianceenabler.control.StartingCurrentSwitchDefaults;
 import de.avanux.smartapplianceenabler.log.ApplianceLogger;
+import de.avanux.smartapplianceenabler.meter.*;
 import de.avanux.smartapplianceenabler.modbus.ModbusElectricityMeterDefaults;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
+import de.avanux.smartapplianceenabler.schedule.Schedule;
 import de.avanux.smartapplianceenabler.semp.webservice.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

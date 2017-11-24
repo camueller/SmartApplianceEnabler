@@ -17,7 +17,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 export class TimeOfDay {
-  '@class' = 'de.avanux.smartapplianceenabler.appliance.TimeOfDay';
+  '@class' = 'de.avanux.smartapplianceenabler.schedule.TimeOfDay';
   hour: number;
   minute: number;
   second: number;

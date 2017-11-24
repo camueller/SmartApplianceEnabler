@@ -19,7 +19,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 export class StartingCurrentSwitch {
 
   static get TYPE(): string {
-    return 'de.avanux.smartapplianceenabler.appliance.StartingCurrentSwitch';
+    return 'de.avanux.smartapplianceenabler.control.StartingCurrentSwitch';
   }
 
   '@class' = StartingCurrentSwitch.TYPE;

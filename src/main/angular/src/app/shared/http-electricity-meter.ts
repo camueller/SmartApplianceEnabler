@@ -19,7 +19,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 export class HttpElectricityMeter {
 
   static get TYPE(): string {
-    return 'de.avanux.smartapplianceenabler.appliance.HttpElectricityMeter';
+    return 'de.avanux.smartapplianceenabler.meter.HttpElectricityMeter';
   }
 
   '@class' = HttpElectricityMeter.TYPE;

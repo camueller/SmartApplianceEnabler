@@ -20,7 +20,7 @@ import {DayTimeframe} from './day-timeframe';
 import {ConsecutiveDaysTimeframe} from './consecutive-days-timeframe';
 
 export class Schedule {
-  '@class' = 'de.avanux.smartapplianceenabler.appliance.Schedule';
+  '@class' = 'de.avanux.smartapplianceenabler.schedule.Schedule';
   enabled: boolean;
   minRunningTime: string;
   minRunningTimeHHMM: string;

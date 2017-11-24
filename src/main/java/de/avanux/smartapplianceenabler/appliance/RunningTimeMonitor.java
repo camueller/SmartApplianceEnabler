@@ -18,6 +18,8 @@
 package de.avanux.smartapplianceenabler.appliance;
 
 import de.avanux.smartapplianceenabler.log.ApplianceLogger;
+import de.avanux.smartapplianceenabler.schedule.Schedule;
+import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
 import org.joda.time.*;
 import org.slf4j.LoggerFactory;
 

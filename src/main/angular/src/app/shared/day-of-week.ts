@@ -17,7 +17,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 export class DayOfWeek {
-  '@class' = 'de.avanux.smartapplianceenabler.appliance.DayOfWeek';
+  '@class' = 'de.avanux.smartapplianceenabler.schedule.DayOfWeek';
   value: number;
 
   constructor(value: number) {

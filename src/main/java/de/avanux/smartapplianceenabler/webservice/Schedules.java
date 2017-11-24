@@ -18,7 +18,7 @@
 
 package de.avanux.smartapplianceenabler.webservice;
 
-import de.avanux.smartapplianceenabler.appliance.Schedule;
+import de.avanux.smartapplianceenabler.schedule.Schedule;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

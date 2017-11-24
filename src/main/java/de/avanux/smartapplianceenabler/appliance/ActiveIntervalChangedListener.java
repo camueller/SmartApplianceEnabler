@@ -17,6 +17,8 @@
  */
 package de.avanux.smartapplianceenabler.appliance;
 
+import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
+
 /**
  * Implementors will be notified when the active interval has changed.
  */

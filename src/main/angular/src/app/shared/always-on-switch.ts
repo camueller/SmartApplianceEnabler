@@ -19,7 +19,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 export class AlwaysOnSwitch {
 
   static get TYPE(): string {
-    return 'de.avanux.smartapplianceenabler.appliance.AlwaysOnSwitch';
+    return 'de.avanux.smartapplianceenabler.control.AlwaysOnSwitch';
   }
 
   '@class' = AlwaysOnSwitch.TYPE;

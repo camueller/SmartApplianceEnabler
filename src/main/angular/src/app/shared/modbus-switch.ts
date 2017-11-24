@@ -19,7 +19,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 export class ModbusSwitch {
 
   static get TYPE(): string {
-    return 'de.avanux.smartapplianceenabler.modbus.ModbusSwitch';
+    return 'de.avanux.smartapplianceenabler.control.ModbusSwitch';
   }
 
   '@class' = ModbusSwitch.TYPE;

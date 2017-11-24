@@ -19,7 +19,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 export class HttpSwitch {
 
   static get TYPE(): string {
-    return 'de.avanux.smartapplianceenabler.appliance.HttpSwitch';
+    return 'de.avanux.smartapplianceenabler.control.HttpSwitch';
   }
 
   '@class' = HttpSwitch.TYPE;

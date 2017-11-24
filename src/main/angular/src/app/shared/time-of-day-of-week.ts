@@ -17,7 +17,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 export class TimeOfDayOfWeek {
-  '@class' = 'de.avanux.smartapplianceenabler.appliance.TimeOfDayOfWeek';
+  '@class' = 'de.avanux.smartapplianceenabler.schedule.TimeOfDayOfWeek';
   dayOfWeek: number;
   hour: number;
   minute: number;
