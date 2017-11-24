@@ -20,8 +20,22 @@ import {Meter} from './meter';
 import {S0ElectricityMeter} from './s0-electricity-meter';
 import {ModbusElectricityMeter} from './modbus-electricity-meter';
 import {HttpElectricityMeter} from './http-electricity-meter';
+import {MeterDefaults} from '../appliance-meter/meter-defaults';
 
 export class MeterFactory {
+
+  static defaultsFromJSON(rawMeterDefaults: any): MeterDefaults {
+    console.log('MeterDefaults (JSON): ' + JSON.stringify(rawMeterDefaults));
+    const meterDefaults = new MeterDefaults();
+    meterDefaults.s0ElectricityMeter_measurementInterval
+      = rawMeterDefaults.s0ElectricityMeter.measurementInterval;
+    meterDefaults.httpElectricityMeter_factorToWatt = rawMeterDefaults.httpElectricityMeter.factorToWatt;
+    meterDefaults.httpElectricityMeter_measurementInterval = rawMeterDefaults.httpElectricityMeter.measurementInterval;
+    meterDefaults.httpElectricityMeter_pollInterval = rawMeterDefaults.httpElectricityMeter.pollInterval;
+    meterDefaults.modbusElectricityMeter_pollInterval = rawMeterDefaults.modbusElectricityMeter.pollInterval;
+    console.log('MeterDefaults (TYPE): ' + JSON.stringify(meterDefaults));
+    return meterDefaults;
+  }
 
   static createEmptyMeter(): Meter {
     return new Meter();

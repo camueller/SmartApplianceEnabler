@@ -36,6 +36,9 @@ import {AppliancesReloadService} from './appliances-reload-service';
 import {observable} from 'rxjs/symbol/observable';
 import {Subject} from 'rxjs/Subject';
 import {ApplianceHeader} from './appliance-header';
+import {MeterDefaults} from '../appliance-meter/meter-defaults';
+import {ControlDefaults} from '../appliance-control/control-defaults';
+import {SettingsDefaults} from '../settings/settings-defaults';
 
 @Injectable()
 export class ApplianceService {
@@ -89,6 +92,14 @@ export class ApplianceService {
     return observer;
   }
 
+  getControlDefaults(): Observable<ControlDefaults> {
+    return this.http.get(`${this.api}/controldefaults`)
+      .map(response => {
+        return ControlFactory.defaultsFromJSON(response.json());
+      })
+      .catch(this.errorHandler);
+  }
+
   getControl(id: string): Observable<Control> {
     return this.http.get(`${this.api}/control?id=${id}`)
       .map(response => {
@@ -105,6 +116,14 @@ export class ApplianceService {
     const content = ControlFactory.toJSON(control);
     console.log('Update control using ' + url);
     return this.httpPutOrDelete(url, content);
+  }
+
+  getMeterDefaults(): Observable<MeterDefaults> {
+    return this.http.get(`${this.api}/meterdefaults`)
+      .map(response => {
+        return MeterFactory.defaultsFromJSON(response.json());
+      })
+      .catch(this.errorHandler);
   }
 
   getMeter(id: string): Observable<Meter> {
@@ -161,6 +180,14 @@ export class ApplianceService {
     this.http.put(url, content, {headers: this.headers})
       .catch(this.errorHandler)
       .subscribe(res => console.log(res));
+  }
+
+  getSettingsDefaults(): Observable<SettingsDefaults> {
+    return this.http.get(`${this.api}/settingsdefaults`)
+      .map(response => {
+        return SettingsFactory.defaultsFromJSON(response.json());
+      })
+      .catch(this.errorHandler);
   }
 
   getSettings(): Observable<Settings> {

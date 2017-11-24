@@ -17,8 +17,24 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 import {Settings} from './settings';
+import {SettingsDefaults} from '../settings/settings-defaults';
 
 export class SettingsFactory {
+
+  static createEmptySettingsDefaults(): SettingsDefaults {
+    return new SettingsDefaults();
+  }
+
+  static defaultsFromJSON(rawSettings: any): SettingsDefaults {
+    console.log('SettingsDefaults (JSON): ' + JSON.stringify(rawSettings));
+    const settings = new Settings();
+    settings.holidaysUrl = rawSettings.holidaysUrl;
+    settings.modbusTcpHost = rawSettings.modbusTcpHost;
+    settings.modbusTcpPort = rawSettings.modbusTcpPort;
+    settings.pulseReceiverPort = rawSettings.pulseReceiverPort;
+    console.log('SettingsDefaults (TYPE): ' + JSON.stringify(settings));
+    return settings;
+  }
 
   static createEmptySettings(): Settings {
     return new Settings();
@@ -28,17 +44,13 @@ export class SettingsFactory {
     console.log('Settings (JSON): ' + JSON.stringify(rawSettings));
     const settings = new Settings();
     settings.holidaysEnabled = rawSettings.holidaysEnabled;
-    settings.defaultHolidaysUrl = rawSettings.defaultHolidaysUrl;
     settings.holidaysUrl = rawSettings.holidaysUrl;
 
     settings.modbusEnabled = rawSettings.modbusEnabled;
-    settings.defaultModbusTcpHost = rawSettings.defaultModbusTcpHost;
     settings.modbusTcpHost = rawSettings.modbusTcpHost;
-    settings.defaultModbusTcpPort = rawSettings.defaultModbusTcpPort;
     settings.modbusTcpPort = rawSettings.modbusTcpPort;
 
     settings.pulseReceiverEnabled = rawSettings.pulseReceiverEnabled;
-    settings.defaultPulseReceiverPort = rawSettings.defaultPulseReceiverPort;
     settings.pulseReceiverPort = rawSettings.pulseReceiverPort;
 
     console.log('Settings (TYPE): ' + JSON.stringify(settings));

@@ -27,7 +27,7 @@
       </div>
       <div class="seven wide field" [class.disabled]="!settings.holidaysEnabled">
         <label>Download URL</label>
-        <input type="text" name="holidayUrl" placeholder="{{settings.defaultHolidaysUrl}}"
+        <input type="text" name="holidayUrl" placeholder="{{settingsDefaults.holidaysUrl}}"
                [(ngModel)]="settings.holidaysUrl">
       </div>
     </div>
@@ -40,12 +40,12 @@
       </div>
       <div class="field" [class.disabled]="!settings.modbusEnabled">
         <label>Host</label>
-        <input type="text" name="modbusTcpHost" placeholder="{{settings.defaultModbusTcpHost}}"
+        <input type="text" name="modbusTcpHost" placeholder="{{settingsDefaults.modbusTcpHost}}"
                [(ngModel)]="settings.modbusTcpHost">
       </div>
       <div class="field" [class.disabled]="!settings.modbusEnabled">
         <label>Port</label>
-        <input type="text" name="modbusTcpPort" placeholder="{{settings.defaultModbusTcpPort}}"
+        <input type="text" name="modbusTcpPort" placeholder="{{settingsDefaults.modbusTcpPort}}"
                [(ngModel)]="settings.modbusTcpPort">
       </div>
 
@@ -59,7 +59,7 @@
       </div>
       <div class="field" [class.disabled]="!settings.pulseReceiverEnabled">
         <label>Port</label>
-        <input type="text" name="pulseReceiverPort" placeholder="{{settings.defaultPulseReceiverPort}}"
+        <input type="text" name="pulseReceiverPort" placeholder="{{settingsDefaults.pulseReceiverPort}}"
                [(ngModel)]="settings.pulseReceiverPort">
       </div>
     </div>

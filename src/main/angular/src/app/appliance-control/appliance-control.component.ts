@@ -32,6 +32,7 @@ import {ErrorMessages} from '../shared/error-messages';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {AlwaysOnSwitch} from '../shared/always-on-switch';
 import {AppliancesReloadService} from '../shared/appliances-reload-service';
+import {ControlDefaults} from './control-defaults';
 
 @Component({
   selector: 'app-appliance-switch',
@@ -41,6 +42,7 @@ import {AppliancesReloadService} from '../shared/appliances-reload-service';
 export class ApplianceControlComponent implements OnInit {
   @ViewChild('controlForm') controlForm: NgForm;
   applianceId: string;
+  controlDefaults: ControlDefaults;
   control = ControlFactory.createEmptyControl();
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
@@ -60,11 +62,12 @@ export class ApplianceControlComponent implements OnInit {
 
   ngOnInit() {
     this.route.params.subscribe(val => {
-        this.applianceId = this.route.snapshot.paramMap.get('id');
-        this.applianceService.getControl(this.applianceId).subscribe(control => {
-          this.control = control;
-          this.controlForm.form.markAsPristine();
-        });
+      this.applianceId = this.route.snapshot.paramMap.get('id');
+      this.applianceService.getControlDefaults().subscribe(controlDefaults => this.controlDefaults = controlDefaults);
+      this.applianceService.getControl(this.applianceId).subscribe(control => {
+        this.control = control;
+        this.controlForm.form.markAsPristine();
+      });
       }
     );
 

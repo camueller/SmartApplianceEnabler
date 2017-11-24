@@ -111,23 +111,27 @@
         <div class="field">
           <label>{{'ApplianceControlComponent.startingCurrentSwitch_powerThreshold' | translate}}</label>
           <input type="text" name="startingCurrentSwitch_powerThreshold"
+                 placeholder="{{controlDefaults.startingCurrentSwitchDefaults_powerThreshold}}"
                  [(ngModel)]="control.startingCurrentSwitch.powerThreshold">
         </div>
         <div class="field">
           <label>
             {{'ApplianceControlComponent.startingCurrentSwitch_startingCurrentDetectionDuration' | translate}}</label>
           <input type="text" name="startingCurrentSwitch_startingCurrentDetectionDuration"
+                 placeholder="{{controlDefaults.startingCurrentSwitchDefaults_startingCurrentDetectionDuration}}"
                  [(ngModel)]="control.startingCurrentSwitch.startingCurrentDetectionDuration">
         </div>
         <div class="field">
           <label>
             {{'ApplianceControlComponent.startingCurrentSwitch_finishedCurrentDetectionDuration' | translate}}</label>
           <input type="text" name="startingCurrentSwitch_finishedCurrentDetectionDuration"
+                 placeholder="{{controlDefaults.startingCurrentSwitchDefaults_finishedCurrentDetectionDuration}}"
                  [(ngModel)]="control.startingCurrentSwitch.finishedCurrentDetectionDuration">
         </div>
         <div class="field">
           <label>{{'ApplianceControlComponent.startingCurrentSwitch_minRunningTime' | translate}}</label>
           <input type="text" name="startingCurrentSwitch_minRunningTime"
+                 placeholder="{{controlDefaults.startingCurrentSwitchDefaults_minRunningTime}}"
                  [(ngModel)]="control.startingCurrentSwitch.minRunningTime">
         </div>
       </div>

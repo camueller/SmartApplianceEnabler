@@ -29,6 +29,7 @@ import {NgForm} from '@angular/forms';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {ErrorMessages} from '../shared/error-messages';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
+import {MeterDefaults} from './meter-defaults';
 
 @Component({
   selector: 'app-appliance-meter',
@@ -38,6 +39,7 @@ import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 export class ApplianceMeterComponent implements OnInit {
   @ViewChild('meterForm') meterForm: NgForm;
   applianceId: string;
+  meterDefaults: MeterDefaults;
   meter = MeterFactory.createEmptyMeter();
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
@@ -58,6 +60,7 @@ export class ApplianceMeterComponent implements OnInit {
   ngOnInit() {
     this.route.params.subscribe(val => {
         this.applianceId = this.route.snapshot.paramMap.get('id');
+        this.applianceService.getMeterDefaults().subscribe(meterDefaults => this.meterDefaults = meterDefaults);
         this.applianceService.getMeter(this.applianceId).subscribe(meter => {
           this.meter = meter;
           this.meterForm.form.markAsPristine();

@@ -18,22 +18,15 @@
 
 package de.avanux.smartapplianceenabler.webservice;
 
-/**
- * Created by axel on 19.10.17.
- */
 public class Settings {
     boolean holidaysEnabled;
-    String defaultHolidaysUrl;
     String holidaysUrl;
 
     boolean modbusEnabled;
-    String defaultModbusTcpHost;
     String modbusTcpHost;
-    Integer defaultModbusTcpPort;
     Integer modbusTcpPort;
 
     boolean pulseReceiverEnabled;
-    Integer defaultPulseReceiverPort;
     Integer pulseReceiverPort;
 
     public boolean isHolidaysEnabled() {
@@ -42,14 +35,6 @@ public class Settings {
 
     public void setHolidaysEnabled(boolean holidaysEnabled) {
         this.holidaysEnabled = holidaysEnabled;
-    }
-
-    public String getDefaultHolidaysUrl() {
-        return defaultHolidaysUrl;
-    }
-
-    public void setDefaultHolidaysUrl(String defaultHolidaysUrl) {
-        this.defaultHolidaysUrl = defaultHolidaysUrl;
     }
 
     public String getHolidaysUrl() {
@@ -68,28 +53,12 @@ public class Settings {
         this.modbusEnabled = modbusEnabled;
     }
 
-    public String getDefaultModbusTcpHost() {
-        return defaultModbusTcpHost;
-    }
-
-    public void setDefaultModbusTcpHost(String defaultModbusTcpHost) {
-        this.defaultModbusTcpHost = defaultModbusTcpHost;
-    }
-
     public String getModbusTcpHost() {
         return modbusTcpHost;
     }
 
     public void setModbusTcpHost(String modbusTcpHost) {
         this.modbusTcpHost = modbusTcpHost;
-    }
-
-    public Integer getDefaultModbusTcpPort() {
-        return defaultModbusTcpPort;
-    }
-
-    public void setDefaultModbusTcpPort(Integer defaultModbusTcpPort) {
-        this.defaultModbusTcpPort = defaultModbusTcpPort;
     }
 
     public Integer getModbusTcpPort() {
@@ -108,14 +77,6 @@ public class Settings {
         this.pulseReceiverEnabled = pulseReceiverEnabled;
     }
 
-    public Integer getDefaultPulseReceiverPort() {
-        return defaultPulseReceiverPort;
-    }
-
-    public void setDefaultPulseReceiverPort(Integer defaultPulseReceiverPort) {
-        this.defaultPulseReceiverPort = defaultPulseReceiverPort;
-    }
-
     public Integer getPulseReceiverPort() {
         return pulseReceiverPort;
     }
@@ -128,15 +89,11 @@ public class Settings {
     public String toString() {
         return "Settings{" +
                 "holidaysEnabled=" + holidaysEnabled +
-                ", defaultHolidaysUrl='" + defaultHolidaysUrl + '\'' +
                 ", holidaysUrl='" + holidaysUrl + '\'' +
                 ", modbusEnabled=" + modbusEnabled +
-                ", defaultModbusTcpHost='" + defaultModbusTcpHost + '\'' +
                 ", modbusTcpHost='" + modbusTcpHost + '\'' +
-                ", defaultModbusTcpPort=" + defaultModbusTcpPort +
                 ", modbusTcpPort=" + modbusTcpPort +
                 ", pulseReceiverEnabled=" + pulseReceiverEnabled +
-                ", defaultPulseReceiverPort=" + defaultPulseReceiverPort +
                 ", pulseReceiverPort=" + pulseReceiverPort +
                 '}';
     }

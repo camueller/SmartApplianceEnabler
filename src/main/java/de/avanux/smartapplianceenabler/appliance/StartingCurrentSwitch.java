@@ -44,13 +44,13 @@ import java.util.TimerTask;
 public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
     private transient ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(StartingCurrentSwitch.class));
     @XmlAttribute
-    private Integer powerThreshold = 15;
+    private Integer powerThreshold;
     @XmlAttribute
-    private Integer startingCurrentDetectionDuration = 30; // seconds
+    private Integer startingCurrentDetectionDuration; // seconds
     @XmlAttribute
-    private Integer finishedCurrentDetectionDuration = 300; // seconds
+    private Integer finishedCurrentDetectionDuration; // seconds
     @XmlAttribute
-    private Integer minRunningTime = 600; // seconds
+    private Integer minRunningTime; // seconds
     @XmlElements({
             @XmlElement(name = "Switch", type = Switch.class),
             @XmlElement(name = "ModbusSwitch", type = ModbusSwitch.class),
@@ -88,16 +88,34 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
         this.dayTimeframeCondition = dayTimeframeCondition;
     }
 
+    public Integer getPowerThreshold() {
+        return powerThreshold != null ? powerThreshold : StartingCurrentSwitchDefaults.getPowerThreshold();
+    }
+
     protected void setPowerThreshold(Integer powerThreshold) {
         this.powerThreshold = powerThreshold;
+    }
+
+    public Integer getStartingCurrentDetectionDuration() {
+        return startingCurrentDetectionDuration != null ? startingCurrentDetectionDuration
+                : StartingCurrentSwitchDefaults.getStartingCurrentDetectionDuration();
     }
 
     protected void setStartingCurrentDetectionDuration(Integer startingCurrentDetectionDuration) {
         this.startingCurrentDetectionDuration = startingCurrentDetectionDuration;
     }
 
+    public Integer getFinishedCurrentDetectionDuration() {
+        return finishedCurrentDetectionDuration != null ? finishedCurrentDetectionDuration
+                : StartingCurrentSwitchDefaults.getFinishedCurrentDetectionDuration();
+    }
+
     protected void setFinishedCurrentDetectionDuration(Integer finishedCurrentDetectionDuration) {
         this.finishedCurrentDetectionDuration = finishedCurrentDetectionDuration;
+    }
+
+    public Integer getMinRunningTime() {
+        return minRunningTime != null ? minRunningTime : StartingCurrentSwitchDefaults.getMinRunningTime();
     }
 
     protected void setMinRunningTime(Integer minRunningTime) {
@@ -134,10 +152,10 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
     }
 
     public void start(final Meter meter, Timer timer) {
-        logger.info("Starting current switch: powerThreshold=" + powerThreshold + "W"
-                + " / startingCurrentDetectionDuration=" + startingCurrentDetectionDuration + "s"
-                + " / finishedCurrentDetectionDuration=" + finishedCurrentDetectionDuration + "s"
-                + " / minRunningTime=" + minRunningTime + "s");
+        logger.info("Starting current switch: powerThreshold=" + getPowerThreshold() + "W"
+                + " / startingCurrentDetectionDuration=" + getStartingCurrentDetectionDuration() + "s"
+                + " / finishedCurrentDetectionDuration=" + getFinishedCurrentDetectionDuration() + "s"
+                + " / minRunningTime=" + getMinRunningTime() + "s");
         applianceOn(true);
         if (timer != null) {
             timer.schedule(new TimerTask() {
@@ -145,13 +163,13 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
                 public void run() {
                     detectStartingCurrent(meter);
                 }
-            }, 0, startingCurrentDetectionDuration * 1000);
+            }, 0, getStartingCurrentDetectionDuration() * 1000);
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
                     detectFinishedCurrent(meter);
                 }
-            }, 0, finishedCurrentDetectionDuration * 1000);
+            }, 0, getFinishedCurrentDetectionDuration() * 1000);
         }
     }
 
@@ -169,7 +187,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
                 logger.debug("averagePower=" + averagePower + " lastAveragePowerOfPowerOnDetection=" + lastAveragePowerOfPowerOnDetection);
                 if (lastAveragePowerOfPowerOnDetection != null) {
                     if (! on) {
-                        if (averagePower > powerThreshold && lastAveragePowerOfPowerOnDetection > powerThreshold) {
+                        if (averagePower > getPowerThreshold() && lastAveragePowerOfPowerOnDetection > getPowerThreshold()) {
                             logger.debug("Starting current detected.");
                             applianceOn(false);
                             switchOnTime = null;
@@ -207,7 +225,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
                 if (lastAveragePowerOfPowerOffDetection != null) {
                     if (on) {
                         // requiring minimum running time avoids finish current detection right after power on
-                        if (isMinRunningTimeExceeded() && averagePower < powerThreshold && lastAveragePowerOfPowerOffDetection < powerThreshold) {
+                        if (isMinRunningTimeExceeded() && averagePower < getPowerThreshold() && lastAveragePowerOfPowerOffDetection < getPowerThreshold()) {
                             logger.debug("Finished current detected.");
                             for (StartingCurrentSwitchListener listener : startingCurrentSwitchListeners) {
                                 listener.finishedCurrentDetected();
@@ -235,7 +253,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
      * @return
      */
     protected boolean isMinRunningTimeExceeded() {
-        return switchOnTime.plusSeconds(minRunningTime).isBefore(new LocalDateTime());
+        return switchOnTime.plusSeconds(getMinRunningTime()).isBefore(new LocalDateTime());
     }
 
     @Override
