@@ -9,7 +9,7 @@
   ~ This program is distributed in the hope that it will be useful,
   ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
   ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~ GNU General Public License for more details.
+  ~ GNU General Public License for more appliance.
   ~
   ~ You should have received a copy of the GNU General Public License along
   ~ with this program; if not, write to the Free Software Foundation, Inc.,
@@ -26,62 +26,62 @@
         <div *ngIf="errors.id" class="ui negative message">{{errors.id}}</div>
       </div>
     </div>
-    <h4 class="ui dividing header">{{'ApplianceDetailsComponent.general' | translate}}</h4>
+    <h4 class="ui dividing header">{{'ApplianceComponent.general' | translate}}</h4>
     <div class="fields">
       <div class="field">
-        <label>{{'ApplianceDetailsComponent.vendor' | translate}}</label>
+        <label>{{'ApplianceComponent.vendor' | translate}}</label>
         <input type="text" name="vendor" [(ngModel)]="appliance.vendor" required>
         <div *ngIf="errors.vendor" class="ui negative message">{{errors.vendor}}</div>
       </div>
       <div class="field">
-        <label>{{'ApplianceDetailsComponent.name' | translate}}</label>
+        <label>{{'ApplianceComponent.name' | translate}}</label>
         <input type="text" name="name" [(ngModel)]="appliance.name" required>
         <div *ngIf="errors.name" class="ui negative message">{{errors.name}}</div>
       </div>
       <div class="field">
-        <label>{{'ApplianceDetailsComponent.type' | translate}}</label>
+        <label>{{'ApplianceComponent.type' | translate}}</label>
         <select class="ui fluid dropdown" name="type" [(ngModel)]="appliance.type" required>
-          <option value="AirConditioning">{{'ApplianceDetailsComponent.type.AirConditioning' | translate}}</option>
-          <option value="Charger">{{'ApplianceDetailsComponent.type.Charger' | translate}}</option>
-          <option value="DishWasher">{{'ApplianceDetailsComponent.type.DishWasher' | translate}}</option>
-          <option value="Dryer">{{'ApplianceDetailsComponent.type.Dryer' | translate}}</option>
-          <option value="ElectricVehicle">{{'ApplianceDetailsComponent.type.ElectricVehicle' | translate}}</option>
-          <option value="EVCharger">{{'ApplianceDetailsComponent.type.EVCharger' | translate}}</option>
-          <option value="Freezer">{{'ApplianceDetailsComponent.type.Freezer' | translate}}</option>
-          <option value="Fridge">{{'ApplianceDetailsComponent.type.Fridge' | translate}}</option>
-          <option value="Heater">{{'ApplianceDetailsComponent.type.Heater' | translate}}</option>
-          <option value="HeatPump">{{'ApplianceDetailsComponent.type.HeatPump' | translate}}</option>
-          <option value="Motor">{{'ApplianceDetailsComponent.type.Motor' | translate}}</option>
-          <option value="Pump">{{'ApplianceDetailsComponent.type.Pump' | translate}}</option>
-          <option value="WashingMachine">{{'ApplianceDetailsComponent.type.WashingMachine' | translate}}</option>
-          <option value="Other">{{'ApplianceDetailsComponent.type.Other' | translate}}</option>
+          <option value="AirConditioning">{{'ApplianceComponent.type.AirConditioning' | translate}}</option>
+          <option value="Charger">{{'ApplianceComponent.type.Charger' | translate}}</option>
+          <option value="DishWasher">{{'ApplianceComponent.type.DishWasher' | translate}}</option>
+          <option value="Dryer">{{'ApplianceComponent.type.Dryer' | translate}}</option>
+          <option value="ElectricVehicle">{{'ApplianceComponent.type.ElectricVehicle' | translate}}</option>
+          <option value="EVCharger">{{'ApplianceComponent.type.EVCharger' | translate}}</option>
+          <option value="Freezer">{{'ApplianceComponent.type.Freezer' | translate}}</option>
+          <option value="Fridge">{{'ApplianceComponent.type.Fridge' | translate}}</option>
+          <option value="Heater">{{'ApplianceComponent.type.Heater' | translate}}</option>
+          <option value="HeatPump">{{'ApplianceComponent.type.HeatPump' | translate}}</option>
+          <option value="Motor">{{'ApplianceComponent.type.Motor' | translate}}</option>
+          <option value="Pump">{{'ApplianceComponent.type.Pump' | translate}}</option>
+          <option value="WashingMachine">{{'ApplianceComponent.type.WashingMachine' | translate}}</option>
+          <option value="Other">{{'ApplianceComponent.type.Other' | translate}}</option>
         </select>
       </div>
       <div class="field">
-        <label>{{'ApplianceDetailsComponent.serial' | translate}}</label>
+        <label>{{'ApplianceComponent.serial' | translate}}</label>
         <input type="text" name="serial" [(ngModel)]="appliance.serial" required>
         <div *ngIf="errors.serial" class="ui negative message">{{errors.serial}}</div>
       </div>
     </div>
 
-    <h4 class="ui dividing header">{{'ApplianceDetailsComponent.characteristics' | translate}}</h4>
+    <h4 class="ui dividing header">{{'ApplianceComponent.characteristics' | translate}}</h4>
     <div class="fields">
       <div class="field">
-        <label>{{'ApplianceDetailsComponent.maxPowerConsumption' | translate}}</label>
+        <label>{{'ApplianceComponent.maxPowerConsumption' | translate}}</label>
         <input type="text" name="maxPowerConsumption" [(ngModel)]="appliance.maxPowerConsumption"
                required pattern="{{VALIDATOR_PATTERN_INTEGER}}">
         <div *ngIf="errors.maxPowerConsumption" class="ui negative message">{{errors.maxPowerConsumption}}</div>
       </div>
       <div class="field">
-        <label>{{'ApplianceDetailsComponent.currentPowerMethod' | translate}}</label>
+        <label>{{'ApplianceComponent.currentPowerMethod' | translate}}</label>
         <select class="ui fluid dropdown" name="currentPowerMethod" [(ngModel)]="appliance.currentPowerMethod" required>
-          <option value="Measurement">{{'ApplianceDetailsComponent.currentPowerMethod.Measurement' | translate}}</option>
-          <option value="Estimation">{{'ApplianceDetailsComponent.currentPowerMethod.Estimation' | translate}}</option>
+          <option value="Measurement">{{'ApplianceComponent.currentPowerMethod.Measurement' | translate}}</option>
+          <option value="Estimation">{{'ApplianceComponent.currentPowerMethod.Estimation' | translate}}</option>
         </select>
       </div>
       <div class="ui checkbox" style="">
         <input type="checkbox" name="interruptionsAllowed" [(ngModel)]="appliance.interruptionsAllowed">
-        <label>{{'ApplianceDetailsComponent.interruptionsAllowed' | translate}}</label>
+        <label>{{'ApplianceComponent.interruptionsAllowed' | translate}}</label>
       </div>
     </div>
 

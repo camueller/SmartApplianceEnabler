@@ -17,14 +17,14 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {ApplianceService} from '../shared/appliance.service';
+import {ApplianceService} from './appliance.service';
 import {ActivatedRoute} from '@angular/router';
 import 'rxjs/add/operator/switchMap';
-import {ApplianceFactory} from '../shared/appliance-factory';
-import {AppliancesReloadService} from '../shared/appliances-reload-service';
+import {ApplianceFactory} from './appliance-factory';
+import {AppliancesReloadService} from './appliances-reload-service';
 import {Location} from '@angular/common';
 import {NgForm} from '@angular/forms';
-import {ApplianceDetailsErrorMessages} from './appliance-details-error-messages';
+import {ApplianceErrorMessages} from './appliance-error-messages';
 import {TranslateService} from '@ngx-translate/core';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
@@ -32,10 +32,10 @@ import {ErrorMessages} from '../shared/error-messages';
 
 @Component({
   selector: 'app-appliance-details',
-  templateUrl: './appliance-details.component.html',
+  templateUrl: './appliance.component.html',
   styles: []
 })
-export class ApplianceDetailsComponent implements OnInit {
+export class ApplianceComponent implements OnInit {
   @ViewChild('detailsForm') detailsForm: NgForm;
   appliance = ApplianceFactory.createEmptyAppliance();
   errors: { [key: string]: string } = {};
@@ -49,7 +49,7 @@ export class ApplianceDetailsComponent implements OnInit {
               private route: ActivatedRoute,
               private translate: TranslateService,
               private location: Location) {
-    this.errorMessages =  new ApplianceDetailsErrorMessages(this.translate);
+    this.errorMessages =  new ApplianceErrorMessages(this.translate);
   }
 
   ngOnInit() {

@@ -17,12 +17,10 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {ApplianceService} from '../shared/appliance.service';
-import {Settings} from '../shared/settings';
 import {ActivatedRoute} from '@angular/router';
-import {SettingsFactory} from '../shared/settings-factory';
+import {SettingsFactory} from './settings-factory';
 import {NgForm} from '@angular/forms';
-import {SettingsDefaults} from './settings-defaults';
+import {SettingsService} from './settings-service';
 
 @Component({
   selector: 'app-settings',
@@ -34,19 +32,19 @@ export class SettingsComponent implements OnInit {
   settingsDefaults = SettingsFactory.createEmptySettingsDefaults();
   settings = SettingsFactory.createEmptySettings();
 
-  constructor(private applianceService: ApplianceService, private route: ActivatedRoute) {
+  constructor(private settingsService: SettingsService, private route: ActivatedRoute) {
   }
 
   ngOnInit() {
-    this.applianceService.getSettingsDefaults().subscribe(settingsDefaults => this.settingsDefaults = settingsDefaults);
+    this.settingsService.getSettingsDefaults().subscribe(settingsDefaults => this.settingsDefaults = settingsDefaults);
     this.route.params.subscribe(val => {
-        this.applianceService.getSettings().subscribe(settings => this.settings = settings);
+        this.settingsService.getSettings().subscribe(settings => this.settings = settings);
       }
     );
   }
 
   submitForm() {
-    this.applianceService.updateSettings(this.settings);
+    this.settingsService.updateSettings(this.settings);
     this.settingsForm.form.markAsPristine();
   }
 

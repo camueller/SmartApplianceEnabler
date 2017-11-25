@@ -18,28 +18,28 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {ApplianceService} from '../shared/appliance.service';
-import {ControlFactory} from '../shared/control-factory';
-import {Switch} from '../shared/switch';
-import {ModbusSwitch} from '../shared/modbus-switch';
-import {HttpSwitch} from '../shared/http-switch';
-import {StartingCurrentSwitch} from '../shared/starting-current-switch';
+import {ControlFactory} from './control-factory';
+import {Switch} from './switch';
+import {ModbusSwitch} from './modbus-switch';
+import {HttpSwitch} from './http-switch';
+import {StartingCurrentSwitch} from './starting-current-switch';
 import {NgForm} from '@angular/forms';
-import {ApplianceControlErrorMessages} from './appliance-control-error-messages';
+import {ControlErrorMessages} from './control-error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {TranslateService} from '@ngx-translate/core';
 import {ErrorMessages} from '../shared/error-messages';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
-import {AlwaysOnSwitch} from '../shared/always-on-switch';
-import {AppliancesReloadService} from '../shared/appliances-reload-service';
+import {AlwaysOnSwitch} from './always-on-switch';
+import {AppliancesReloadService} from '../appliance/appliances-reload-service';
 import {ControlDefaults} from './control-defaults';
+import {ControlService} from './control-service';
 
 @Component({
   selector: 'app-appliance-switch',
-  templateUrl: './appliance-control.component.html',
+  templateUrl: './control.component.html',
   styles: []
 })
-export class ApplianceControlComponent implements OnInit {
+export class ControlComponent implements OnInit {
   @ViewChild('controlForm') controlForm: NgForm;
   applianceId: string;
   controlDefaults: ControlDefaults;
@@ -53,18 +53,18 @@ export class ApplianceControlComponent implements OnInit {
   VALIDATOR_PATTERN_INTEGER = InputValidatorPatterns.INTEGER;
   VALIDATOR_PATTERN_URL = InputValidatorPatterns.URL;
 
-  constructor(private applianceService: ApplianceService,
+  constructor(private controlService: ControlService,
               private appliancesReloadService: AppliancesReloadService,
               private route: ActivatedRoute,
               private translate: TranslateService) {
-    this.errorMessages =  new ApplianceControlErrorMessages(this.translate);
+    this.errorMessages =  new ControlErrorMessages(this.translate);
   }
 
   ngOnInit() {
     this.route.params.subscribe(val => {
       this.applianceId = this.route.snapshot.paramMap.get('id');
-      this.applianceService.getControlDefaults().subscribe(controlDefaults => this.controlDefaults = controlDefaults);
-      this.applianceService.getControl(this.applianceId).subscribe(control => {
+      this.controlService.getControlDefaults().subscribe(controlDefaults => this.controlDefaults = controlDefaults);
+      this.controlService.getControl(this.applianceId).subscribe(control => {
         this.control = control;
         this.controlForm.form.markAsPristine();
       });
@@ -101,7 +101,7 @@ export class ApplianceControlComponent implements OnInit {
   }
 
   submitForm() {
-    this.applianceService.updateControl(this.control, this.applianceId).subscribe(() => this.appliancesReloadService.reload());
+    this.controlService.updateControl(this.control, this.applianceId).subscribe(() => this.appliancesReloadService.reload());
     this.controlForm.form.markAsPristine();
   }
 }

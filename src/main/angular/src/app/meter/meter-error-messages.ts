@@ -2,10 +2,10 @@ import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {ErrorMessages} from '../shared/error-messages';
 import {TranslateService} from '@ngx-translate/core';
 
-export class ApplianceMeterErrorMessages extends ErrorMessages {
+export class MeterErrorMessages extends ErrorMessages {
 
   constructor(protected translate: TranslateService) {
-    super('ApplianceMeterComponent.error.',
+    super('MeterComponent.error.',
       [
         new ErrorMessage('s0ElectricityMeter_gpio', ValidatorType.required),
         new ErrorMessage('s0ElectricityMeter_gpio', ValidatorType.pattern),

@@ -18,25 +18,25 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {ApplianceService} from '../shared/appliance.service';
-import {S0ElectricityMeter} from '../shared/s0-electricity-meter';
-import {ModbusElectricityMeter} from '../shared/modbus-electricity-meter';
-import {HttpElectricityMeter} from '../shared/http-electricity-meter';
-import {MeterFactory} from '../shared/meter-factory';
+import {S0ElectricityMeter} from './s0-electricity-meter';
+import {ModbusElectricityMeter} from './modbus-electricity-meter';
+import {HttpElectricityMeter} from './http-electricity-meter';
+import {MeterFactory} from './meter-factory';
 import {TranslateService} from '@ngx-translate/core';
-import {ApplianceMeterErrorMessages} from './appliance-meter-error-messages';
+import {MeterErrorMessages} from './meter-error-messages';
 import {NgForm} from '@angular/forms';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {ErrorMessages} from '../shared/error-messages';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {MeterDefaults} from './meter-defaults';
+import {MeterService} from './meter-service';
 
 @Component({
   selector: 'app-appliance-meter',
-  templateUrl: './appliance-meter.component.html',
+  templateUrl: './meter.component.html',
   styles: []
 })
-export class ApplianceMeterComponent implements OnInit {
+export class MeterComponent implements OnInit {
   @ViewChild('meterForm') meterForm: NgForm;
   applianceId: string;
   meterDefaults: MeterDefaults;
@@ -51,17 +51,17 @@ export class ApplianceMeterComponent implements OnInit {
   VALIDATOR_PATTERN_FLOAT = InputValidatorPatterns.FLOAT;
   VALIDATOR_PATTERN_URL = InputValidatorPatterns.URL;
 
-  constructor(private applianceService: ApplianceService,
+  constructor(private meterService: MeterService,
               private route: ActivatedRoute,
               private translate: TranslateService) {
-    this.errorMessages =  new ApplianceMeterErrorMessages(this.translate);
+    this.errorMessages =  new MeterErrorMessages(this.translate);
   }
 
   ngOnInit() {
     this.route.params.subscribe(val => {
         this.applianceId = this.route.snapshot.paramMap.get('id');
-        this.applianceService.getMeterDefaults().subscribe(meterDefaults => this.meterDefaults = meterDefaults);
-        this.applianceService.getMeter(this.applianceId).subscribe(meter => {
+        this.meterService.getMeterDefaults().subscribe(meterDefaults => this.meterDefaults = meterDefaults);
+        this.meterService.getMeter(this.applianceId).subscribe(meter => {
           this.meter = meter;
           this.meterForm.form.markAsPristine();
         });
@@ -85,7 +85,7 @@ export class ApplianceMeterComponent implements OnInit {
   }
 
   submitForm() {
-    this.applianceService.updateMeter(this.meter, this.applianceId);
+    this.meterService.updateMeter(this.meter, this.applianceId);
     this.meterForm.form.markAsPristine();
   }
 }

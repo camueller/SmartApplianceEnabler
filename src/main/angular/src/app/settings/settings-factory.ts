@@ -17,7 +17,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 import {Settings} from './settings';
-import {SettingsDefaults} from '../settings/settings-defaults';
+import {SettingsDefaults} from './settings-defaults';
 
 export class SettingsFactory {
 
