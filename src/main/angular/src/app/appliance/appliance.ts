@@ -16,7 +16,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export class ApplianceInfo {
+export class Appliance {
   id: string;
   name: string;
   type: string;

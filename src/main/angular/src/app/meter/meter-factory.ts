@@ -20,7 +20,7 @@ import {Meter} from './meter';
 import {S0ElectricityMeter} from './s0-electricity-meter';
 import {ModbusElectricityMeter} from './modbus-electricity-meter';
 import {HttpElectricityMeter} from './http-electricity-meter';
-import {MeterDefaults} from '../appliance-meter/meter-defaults';
+import {MeterDefaults} from './meter-defaults';
 
 export class MeterFactory {
 

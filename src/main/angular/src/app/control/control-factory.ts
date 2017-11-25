@@ -22,7 +22,7 @@ import {Switch} from './switch';
 import {ModbusSwitch} from './modbus-switch';
 import {HttpSwitch} from './http-switch';
 import {AlwaysOnSwitch} from './always-on-switch';
-import {ControlDefaults} from '../appliance-control/control-defaults';
+import {ControlDefaults} from './control-defaults';
 
 export class ControlFactory {
 

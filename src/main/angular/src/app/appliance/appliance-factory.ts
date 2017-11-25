@@ -16,13 +16,13 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {ApplianceInfo} from './appliance-info';
+import {Appliance} from './appliance';
 import {ApplianceHeader} from './appliance-header';
 
 export class ApplianceFactory {
 
-  static createEmptyAppliance(): ApplianceInfo {
-    return new ApplianceInfo();
+  static createEmptyAppliance(): Appliance {
+    return new Appliance();
   }
 
   static toApplianceHeaderFromJSON(rawApplianceHeader: any): ApplianceHeader {
@@ -37,9 +37,9 @@ export class ApplianceFactory {
     return applianceHeader;
   }
 
-  static toApplianceInfoFromJSON(applianceInfo: any): ApplianceInfo {
-    console.log('ApplianceInfo (JSON)' + JSON.stringify(applianceInfo));
-    const appliance = new ApplianceInfo();
+  static toApplianceInfoFromJSON(applianceInfo: any): Appliance {
+    console.log('Appliance (JSON)' + JSON.stringify(applianceInfo));
+    const appliance = new Appliance();
     appliance.id = applianceInfo.id;
     appliance.name = applianceInfo.name;
     appliance.vendor = applianceInfo.vendor;
@@ -50,11 +50,11 @@ export class ApplianceFactory {
     appliance.currentPowerMethod = applianceInfo.currentPowerMethod;
     appliance.interruptionsAllowed = applianceInfo.interruptionsAllowed;
 
-    console.log('ApplianceInfo (TYPE)' + JSON.stringify(appliance));
+    console.log('Appliance (TYPE)' + JSON.stringify(appliance));
     return appliance;
   }
 
-  static toJSONfromApplianceInfo(appliance: ApplianceInfo): String {
+  static toJSONfromApplianceInfo(appliance: Appliance): String {
     return JSON.stringify(appliance);
   }
 }

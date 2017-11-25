@@ -17,14 +17,14 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 import {RouterModule, Routes} from '@angular/router';
-import {ApplianceDetailsComponent} from './appliance-details/appliance-details.component';
+import {ApplianceComponent} from './appliance/appliance.component';
 import {NgModule} from '@angular/core';
 import {PageNotFoundComponent} from './not-found.component';
-import {ApplianceMeterComponent} from './appliance-meter/appliance-meter.component';
-import {ApplianceControlComponent} from './appliance-control/appliance-control.component';
+import {MeterComponent} from './meter/meter.component';
+import {ControlComponent} from './control/control.component';
 import {SchedulesComponent} from './schedule/schedule.component';
 import {SettingsComponent} from './settings/settings.component';
-import {ApplianceResolver} from './shared/appliance-resolver.service';
+import {ApplianceResolver} from './appliance/appliance-resolver.service';
 import {StatusComponent} from './status/status.component';
 
 const routes: Routes = [
@@ -35,14 +35,14 @@ const routes: Routes = [
   },
   {
     path: 'appliance/:id',
-    component: ApplianceDetailsComponent,
+    component: ApplianceComponent,
     resolve: {
       appliance: ApplianceResolver
     }
   },
   {
     path: 'appliance',
-    component: ApplianceDetailsComponent
+    component: ApplianceComponent
   },
   {
     path: 'status',
@@ -50,11 +50,11 @@ const routes: Routes = [
   },
   {
     path: 'meter/:id',
-    component: ApplianceMeterComponent
+    component: MeterComponent
   },
   {
     path: 'control/:id',
-    component: ApplianceControlComponent
+    component: ControlComponent
   },
   {
     path: 'schedule/:id',

@@ -18,16 +18,16 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 import {AfterViewChecked, AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {Schedule} from '../shared/schedule';
-import {ApplianceService} from '../shared/appliance.service';
+import {Schedule} from './schedule';
 import {FormArray, FormBuilder, FormControlName, FormGroup, Validators} from '@angular/forms';
-import {ConsecutiveDaysTimeframe} from '../shared/consecutive-days-timeframe';
-import {DayTimeframe} from '../shared/day-timeframe';
+import {ConsecutiveDaysTimeframe} from './consecutive-days-timeframe';
+import {DayTimeframe} from './day-timeframe';
 import {ErrorMessages} from '../shared/error-messages';
 import {TranslateService} from '@ngx-translate/core';
 import {ScheduleErrorMessages} from './schedule-error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
-import {ScheduleFactory} from '../shared/schedule-factory';
+import {ScheduleFactory} from './schedule-factory';
+import {ScheduleService} from './schedule-service';
 
 declare const $: any;
 
@@ -70,7 +70,7 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
   errorMessages: ErrorMessages;
 
   constructor(private fb: FormBuilder,
-              private applianceService: ApplianceService,
+              private scheduleService: ScheduleService,
               private route: ActivatedRoute,
               private translate: TranslateService) {
     this.errorMessages =  new ScheduleErrorMessages(this.translate);
@@ -113,7 +113,7 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
   }
 
   loadSchedules() {
-    this.applianceService.getSchedules(this.applianceId).subscribe(schedules => {
+    this.scheduleService.getSchedules(this.applianceId).subscribe(schedules => {
       this.initForm();
       const schedulesControl = <FormArray>this.schedulesForm.controls['schedules'];
       schedules.forEach(schedule => {
@@ -214,7 +214,7 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
 
   submitForm() {
     const schedules = ScheduleFactory.fromForm(this.schedulesForm.value);
-    this.applianceService.setSchedules(this.applianceId, schedules);
+    this.scheduleService.setSchedules(this.applianceId, schedules);
     this.schedulesForm.markAsPristine();
   }
 }

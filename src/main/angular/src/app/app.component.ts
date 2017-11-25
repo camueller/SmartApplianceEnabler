@@ -17,9 +17,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 import {Component, OnInit} from '@angular/core';
-import {ApplianceService} from './shared/appliance.service';
-import {ApplianceHeader} from './shared/appliance-header';
-import {AppliancesReloadService} from './shared/appliances-reload-service';
+import {ApplianceService} from './appliance/appliance.service';
+import {ApplianceHeader} from './appliance/appliance-header';
+import {AppliancesReloadService} from './appliance/appliances-reload-service';
 import {TranslateService} from '@ngx-translate/core';
 
 declare const $: any;
@@ -31,7 +31,7 @@ declare const $: any;
 export class AppComponent implements OnInit {
 
   applianceHeaders: ApplianceHeader[];
-  typePrefix = 'ApplianceDetailsComponent.type.';
+  typePrefix = 'ApplianceComponent.type.';
   translatedTypes = new Object();
 
   constructor(private applianceService: ApplianceService,

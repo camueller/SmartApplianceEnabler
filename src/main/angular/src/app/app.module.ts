@@ -21,29 +21,33 @@ import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 import {AppComponent} from './app.component';
-import {ApplianceService} from './shared/appliance.service';
-import {ApplianceDetailsComponent} from './appliance-details/appliance-details.component';
+import {ApplianceService} from './appliance/appliance.service';
+import {ApplianceComponent} from './appliance/appliance.component';
 import {AppRoutingModule} from './app-routing.module';
 import {PageNotFoundComponent} from './not-found.component';
-import {ApplianceMeterComponent} from './appliance-meter/appliance-meter.component';
-import {ApplianceControlComponent} from './appliance-control/appliance-control.component';
+import {MeterComponent} from './meter/meter.component';
+import {ControlComponent} from './control/control.component';
 import {SchedulesComponent} from './schedule/schedule.component';
 import {SettingsComponent} from './settings/settings.component';
 import {HttpModule} from '@angular/http';
-import {ApplianceResolver} from './shared/appliance-resolver.service';
-import {AppliancesReloadService} from './shared/appliances-reload-service';
+import {ApplianceResolver} from './appliance/appliance-resolver.service';
+import {AppliancesReloadService} from './appliance/appliances-reload-service';
 import {HttpClient, HttpClientModule} from '@angular/common/http';
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import { StatusComponent } from './status/status.component';
+import {ControlService} from './control/control-service';
+import {MeterService} from './meter/meter-service';
+import {ScheduleService} from './schedule/schedule-service';
+import {SettingsService} from './settings/settings-service';
 
 @NgModule({
   declarations: [
     AppComponent,
-    ApplianceDetailsComponent,
+    ApplianceComponent,
     PageNotFoundComponent,
-    ApplianceMeterComponent,
-    ApplianceControlComponent,
+    MeterComponent,
+    ControlComponent,
     SchedulesComponent,
     SettingsComponent,
     StatusComponent
@@ -66,7 +70,11 @@ import { StatusComponent } from './status/status.component';
   providers: [
     ApplianceService,
     AppliancesReloadService,
-    ApplianceResolver
+    ApplianceResolver,
+    ControlService,
+    MeterService,
+    ScheduleService,
+    SettingsService
   ],
   bootstrap: [AppComponent]
 })

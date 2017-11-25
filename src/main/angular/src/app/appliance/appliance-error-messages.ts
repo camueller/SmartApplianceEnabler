@@ -20,20 +20,19 @@ import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {ErrorMessages} from '../shared/error-messages';
 import {TranslateService} from '@ngx-translate/core';
 
-export class ApplianceControlErrorMessages extends ErrorMessages {
+export class ApplianceErrorMessages extends ErrorMessages {
 
   constructor(protected translate: TranslateService) {
-    super('ApplianceControlComponent.error.',
+    super('ApplianceComponent.error.',
       [
-        new ErrorMessage('switch_gpio', ValidatorType.required),
-        new ErrorMessage('switch_gpio', ValidatorType.pattern),
-        new ErrorMessage('modbusSwitch_slaveAddress', ValidatorType.required),
-        new ErrorMessage('modbusSwitch_registerAddress', ValidatorType.required),
-        new ErrorMessage('httpSwitch_onUrl', ValidatorType.required),
-        new ErrorMessage('httpSwitch_onUrl', ValidatorType.pattern),
-        new ErrorMessage('httpSwitch_offUrl', ValidatorType.required),
-        new ErrorMessage('httpSwitch_offUrl', ValidatorType.pattern),
+        new ErrorMessage('id', ValidatorType.required),
+        new ErrorMessage('id', ValidatorType.pattern),
+        new ErrorMessage('vendor', ValidatorType.required),
+        new ErrorMessage('name', ValidatorType.required),
+        new ErrorMessage('serial', ValidatorType.required),
+        new ErrorMessage('maxPowerConsumption', ValidatorType.required),
+        new ErrorMessage('maxPowerConsumption', ValidatorType.pattern)
       ], translate
-      );
+    );
   }
 }
