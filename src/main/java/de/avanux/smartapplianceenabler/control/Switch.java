@@ -17,13 +17,16 @@
  */
 package de.avanux.smartapplianceenabler.control;
 
+import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.GpioPinDigitalOutput;
 import com.pi4j.io.gpio.PinState;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.log.ApplianceLogger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,18 +35,32 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
     private transient ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(Switch.class));
     @XmlAttribute
     private boolean reverseStates;
-    transient GpioPinDigitalOutput outputPin;
-    transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
+    private transient GpioPinDigitalOutput outputPin;
+    private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
 
 
     @Override
     public void start() {
-        logger.info("Switch uses " + getGpio() + (reverseStates ? " (reversed states)" : ""));
-        if(getGpioController() != null) {
-            outputPin = getGpioController().provisionDigitalOutputPin(getGpio(), adjustState(PinState.LOW));
+        GpioController gpioController = getGpioController();
+        if(gpioController != null) {
+            try {
+                outputPin = gpioController.provisionDigitalOutputPin(getGpio(), adjustState(PinState.LOW));
+                logger.info("Switch uses " + getGpio() + (reverseStates ? " (reversed states)" : ""));
+            }
+            catch(Exception e) {
+                logger.error("Error starting " + getClass().getSimpleName() + " for " + getGpio(), e);
+            }
         }
         else {
             logGpioAccessDisabled(logger);
+        }
+    }
+
+    public void stop() {
+        super.stop();
+        GpioController gpioController = getGpioController();
+        if(gpioController != null) {
+            gpioController.unprovisionPin(outputPin);
         }
     }
 

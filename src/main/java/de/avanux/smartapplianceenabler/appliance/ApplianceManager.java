@@ -23,6 +23,7 @@ import de.avanux.smartapplianceenabler.HolidaysDownloader;
 import de.avanux.smartapplianceenabler.configuration.Configuration;
 import de.avanux.smartapplianceenabler.configuration.Connectivity;
 import de.avanux.smartapplianceenabler.control.Control;
+import de.avanux.smartapplianceenabler.control.GpioControllable;
 import de.avanux.smartapplianceenabler.log.ApplianceLogger;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.meter.PulseReceiver;
@@ -117,9 +118,16 @@ public class ApplianceManager implements Runnable {
                     }
                 }
             }
+            for(Appliance appliance : appliances.getAppliances()) {
+                Control control = appliance.getControl();
+                if(control instanceof GpioControllable) {
+                    ((GpioControllable) control).stop();
+                }
+            }
         }
         logger.info("Restarting appliances ...");
         this.appliances = null;
+        this.device2EM = null;
         startAppliances();
     }
 
