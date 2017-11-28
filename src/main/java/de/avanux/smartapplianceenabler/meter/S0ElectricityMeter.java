@@ -17,18 +17,18 @@
  */
 package de.avanux.smartapplianceenabler.meter;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlType;
-
+import com.pi4j.io.gpio.GpioController;
+import com.pi4j.io.gpio.GpioPinDigitalInput;
+import com.pi4j.io.gpio.PinState;
+import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
+import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.GpioControllable;
 import de.avanux.smartapplianceenabler.log.ApplianceLogger;
 import org.slf4j.LoggerFactory;
 
-import com.pi4j.io.gpio.GpioPinDigitalInput;
-import com.pi4j.io.gpio.PinState;
-import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
-import com.pi4j.io.gpio.event.GpioPinListenerDigital;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder={"gpio", "pinPullResistance", "impulsesPerKwh", "measurementInterval"})
 public class S0ElectricityMeter extends GpioControllable implements Meter {
@@ -37,6 +37,7 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
     private Integer impulsesPerKwh;
     @XmlAttribute
     private Integer measurementInterval; // seconds
+    private transient GpioPinDigitalInput inputPin;
     private transient PulseElectricityMeter pulseElectricityMeter = new PulseElectricityMeter();
 
     
@@ -76,25 +77,40 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
         return pulseElectricityMeter.isOn();
     }
 
+    @Override
     public void start() {
         pulseElectricityMeter.setImpulsesPerKwh(impulsesPerKwh);
         pulseElectricityMeter.setMeasurementInterval(getMeasurementInterval());
 
-        if(getGpioController() != null) {
-            final GpioPinDigitalInput input = getGpioController().provisionDigitalInputPin(getGpio(), getPinPullResistance());
-            input.addListener(new GpioPinListenerDigital() {
-                @Override
-                public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
-                    logger.debug("GPIO " + event.getPin() + " changed to " + event.getState());
-                    if(event.getState() == PinState.HIGH) {
-                        pulseElectricityMeter.addTimestampAndMaintain(System.currentTimeMillis());
+        GpioController gpioController = getGpioController();
+        if(gpioController != null) {
+            try {
+                inputPin = gpioController.provisionDigitalInputPin(getGpio(), getPinPullResistance());
+                inputPin.addListener(new GpioPinListenerDigital() {
+                    @Override
+                    public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
+                        logger.debug("GPIO " + event.getPin() + " changed to " + event.getState());
+                        if(event.getState() == PinState.HIGH) {
+                            pulseElectricityMeter.addTimestampAndMaintain(System.currentTimeMillis());
+                        }
                     }
-                }
-            });
-            logger.info("Start metering using " + getGpio());
+                });
+                logger.error("Error starting " + getClass().getSimpleName() + " for " + getGpio());
+            }
+            catch(Exception e) {
+                logger.error("Error start metering using " + getGpio(), e);
+            }
         }
         else { 
             logGpioAccessDisabled(logger);
+        }
+    }
+
+    public void stop() {
+        super.stop();
+        GpioController gpioController = getGpioController();
+        if(gpioController != null) {
+            gpioController.unprovisionPin(inputPin);
         }
     }
 }
