@@ -18,7 +18,7 @@
 package de.avanux.smartapplianceenabler.meter;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
-import de.avanux.smartapplianceenabler.log.ApplianceLogger;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
@@ -28,13 +28,14 @@ import java.util.*;
  */
 public class PollElectricityMeter implements ApplianceIdConsumer {
 
-    private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(PollElectricityMeter.class));
+    private Logger logger = LoggerFactory.getLogger(PollElectricityMeter.class);
     private Map<Long,Float> timestampWithPower = new HashMap<Long,Float>();
     private Integer measurementInterval;
+    private String applianceId;
 
     @Override
     public void setApplianceId(String applianceId) {
-        this.logger.setApplianceId(applianceId);
+        this.applianceId = applianceId;
     }
 
     public void start(Timer timer, Integer pollInterval, Integer measurementInterval, PollPowerExecutor pollPowerExecutor) {
@@ -61,7 +62,7 @@ public class PollElectricityMeter implements ApplianceIdConsumer {
         }
         // add new value
         timestampWithPower.put(currentTimestamp, power);
-        logger.debug("timestamps added/removed/total: 1/" + expiredTimestamps.size() + "/" + timestampWithPower.size());
+        logger.debug("{}: timestamps added/removed/total: 1/{}/{}", applianceId, expiredTimestamps.size(), timestampWithPower.size());
     }
 
     public int getAveragePower() {

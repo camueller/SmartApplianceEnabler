@@ -17,9 +17,11 @@
  */
 package de.avanux.smartapplianceenabler.semp.webservice;
 
-import de.avanux.smartapplianceenabler.appliance.*;
+import de.avanux.smartapplianceenabler.appliance.ActiveIntervalChangedListener;
+import de.avanux.smartapplianceenabler.appliance.Appliance;
+import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
+import de.avanux.smartapplianceenabler.appliance.RunningTimeMonitor;
 import de.avanux.smartapplianceenabler.control.Control;
-import de.avanux.smartapplianceenabler.log.ApplianceLogger;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.schedule.Schedule;
 import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
@@ -62,14 +64,13 @@ public class SempController implements ActiveIntervalChangedListener {
         List<PlanningRequest> planningRequests = new ArrayList<PlanningRequest>();
         List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
         for (Appliance appliance : appliances) {
-            ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, appliance.getId());
             if(!timeFrameChangedListenerRegistered && appliance.getRunningTimeMonitor() != null) {
                 appliance.getRunningTimeMonitor().addTimeFrameChangedListener(this);
                 timeFrameChangedListenerRegistered = true;
             }
-            DeviceStatus deviceStatus = createDeviceStatus(applianceLogger, appliance);
+            DeviceStatus deviceStatus = createDeviceStatus(appliance);
             deviceStatuses.add(deviceStatus);
-            PlanningRequest planningRequest = createPlanningRequest(applianceLogger, now, appliance);
+            PlanningRequest planningRequest = createPlanningRequest(now, appliance);
             if(planningRequest != null) {
                 planningRequests.add(planningRequest);
             }
@@ -124,18 +125,16 @@ public class SempController implements ActiveIntervalChangedListener {
     public String deviceStatus(@RequestParam(value="DeviceId", required = false) String deviceId) {
         List<DeviceStatus> deviceStatuses = new ArrayList<DeviceStatus>();
         if(deviceId != null) {
-            ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, deviceId);
-            applianceLogger.debug("Device status requested");
+            logger.debug("{}: Device status requested", deviceId);
             Appliance appliance = ApplianceManager.getInstance().findAppliance(deviceId);
-            DeviceStatus deviceStatus = createDeviceStatus(applianceLogger, appliance);
+            DeviceStatus deviceStatus = createDeviceStatus(appliance);
             deviceStatuses.add(deviceStatus);
         }
         else {
             logger.debug("Device status requested of all devices");
             List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
             for (Appliance appliance : appliances) {
-                ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, appliance.getId());
-                DeviceStatus deviceStatus = createDeviceStatus(applianceLogger, appliance);
+                DeviceStatus deviceStatus = createDeviceStatus(appliance);
                 deviceStatuses.add(deviceStatus);
             }
         }
@@ -150,18 +149,16 @@ public class SempController implements ActiveIntervalChangedListener {
         LocalDateTime now = new LocalDateTime();
         List<PlanningRequest> planningRequests = new ArrayList<PlanningRequest>();
         if(deviceId != null) {
-            ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, deviceId);
-            applianceLogger.debug("Planning request requested");
+            logger.debug("{}: Planning request requested", deviceId);
             Appliance appliance = ApplianceManager.getInstance().findAppliance(deviceId);
-            PlanningRequest planningRequest = createPlanningRequest(applianceLogger, now, appliance);
+            PlanningRequest planningRequest = createPlanningRequest(now, appliance);
             addPlanningRequest(planningRequests, planningRequest);
         }
         else {
             logger.debug("Planning request requested of all devices");
             List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
             for (Appliance appliance : appliances) {
-                ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, appliance.getId());
-                PlanningRequest planningRequest = createPlanningRequest(applianceLogger, now, appliance);
+                PlanningRequest planningRequest = createPlanningRequest(now, appliance);
                 addPlanningRequest(planningRequests, planningRequest);
             }
         }
@@ -183,19 +180,18 @@ public class SempController implements ActiveIntervalChangedListener {
     public void em2Device(@RequestBody EM2Device em2Device) {
         List<DeviceControl> deviceControls = em2Device.getDeviceControl();
         for(DeviceControl deviceControl : deviceControls) {
-            ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, deviceControl.getDeviceId());
-            applianceLogger.debug("Received control request");
+            logger.debug("{}: Received control request", deviceControl.getDeviceId());
             Appliance appliance = ApplianceManager.getInstance().findAppliance(deviceControl.getDeviceId());
             if(appliance != null) {
-                setApplianceState(applianceLogger, appliance, deviceControl.isOn(), "Setting appliance state to " + (deviceControl.isOn() ? "ON" : "OFF"));
+                setApplianceState(appliance, deviceControl.isOn(), "Setting appliance state to " + (deviceControl.isOn() ? "ON" : "OFF"));
             }
             else {
-                applianceLogger.warn("No appliance configured for device id " + deviceControl.getDeviceId());
+                logger.warn("{}: No appliance configured for device id", deviceControl.getDeviceId());
             }
         }
     }
 
-    private void setApplianceState(ApplianceLogger applianceLogger, Appliance appliance, boolean switchOn, String logMessage) {
+    private void setApplianceState(Appliance appliance, boolean switchOn, String logMessage) {
         Control control = appliance.getControl();
         if(control != null) {
             boolean stateChanged = false;
@@ -205,11 +201,11 @@ public class SempController implements ActiveIntervalChangedListener {
                 stateChanged = true;
             }
             if(stateChanged) {
-                applianceLogger.debug(logMessage);
+                logger.debug("{}: {}", appliance.getId(), logMessage);
             }
         }
         else {
-            applianceLogger.warn("Appliance configuration does not contain control.");
+            logger.warn("{}: Appliance configuration does not contain control.", appliance.getId());
         }
     }
 
@@ -217,12 +213,11 @@ public class SempController implements ActiveIntervalChangedListener {
     public void activeIntervalChanged(String applianceId, TimeframeInterval deactivatedInterval, TimeframeInterval activatedInterval) {
         if(activatedInterval == null) {
             Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
-            ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
-            setApplianceState(applianceLogger, appliance, false, "Switching off due to end of time frame");
+            setApplianceState(appliance, false, "Switching off due to end of time frame");
         }
     }
 
-    private DeviceStatus createDeviceStatus(ApplianceLogger applianceLogger, Appliance appliance) {
+    private DeviceStatus createDeviceStatus(Appliance appliance) {
         DeviceStatus deviceStatus = new DeviceStatus();
         deviceStatus.setDeviceId(appliance.getId());
         Meter meter = appliance.getMeter();
@@ -231,36 +226,36 @@ public class SempController implements ActiveIntervalChangedListener {
         if(control != null) {
             deviceStatus.setStatus(control.isOn() ? Status.On : Status.Off);
             deviceStatus.setEMSignalsAccepted(true);
-            applianceLogger.debug("Reporting device status from control");
+            logger.debug("{}: Reporting device status from control", appliance.getId());
         }
         else {
             // there is no control for the appliance ...
             if(meter != null) {
                 // ... but we can derive the status from power consumption
                 deviceStatus.setStatus(meter.isOn() ? Status.On : Status.Off);
-                applianceLogger.debug("Reporting device status based on power consumption");
+                logger.debug("{}: Reporting device status based on power consumption", appliance.getId());
             }
             else {
                 // ... and no meter; we have to assume the appliance is switched off
                 deviceStatus.setStatus(Status.Offline);
-                applianceLogger.debug("Appliance has neither control nor meter.");
+                logger.debug("{}: Appliance has neither control nor meter.", appliance.getId());
             }
             
             // an appliance without control cannot be controlled ;-)
             deviceStatus.setEMSignalsAccepted(false);
         }
-        applianceLogger.debug(deviceStatus.toString());
+        logger.debug("{}: {}", appliance.getId(), deviceStatus.toString());
 
         PowerInfo powerInfo = new PowerInfo();
         if(meter != null) {
-            applianceLogger.debug("Reporting power info from meter.");
+            logger.debug("{}: Reporting power info from meter.", appliance.getId());
             powerInfo.setAveragePower(meter.getAveragePower());
             powerInfo.setMinPower(meter.getMinPower());
             powerInfo.setMaxPower(meter.getMaxPower());
             powerInfo.setAveragingInterval(60); // always report 60 for SEMP regardless of real averaging interval
         }
         else {
-            applianceLogger.debug("Reporting power info from device characteristics.");
+            logger.debug("{}: Reporting power info from device characteristics.", appliance.getId());
             DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(appliance.getId());
             if(deviceStatus.getStatus() == Status.On) {
                 powerInfo.setAveragePower(deviceInfo.getCharacteristics().getMaxPowerConsumption());
@@ -271,7 +266,7 @@ public class SempController implements ActiveIntervalChangedListener {
             powerInfo.setAveragingInterval(60);
         }
         powerInfo.setTimestamp(0);
-        applianceLogger.debug(powerInfo.toString());
+        logger.debug("{}: {}", appliance.getId(), powerInfo.toString());
 
         PowerConsumption powerConsumption = new PowerConsumption();
         powerConsumption.setPowerInfo(Collections.singletonList(powerInfo));
@@ -280,7 +275,7 @@ public class SempController implements ActiveIntervalChangedListener {
         return deviceStatus;
     }
 
-    private PlanningRequest createPlanningRequest(ApplianceLogger applianceLogger, LocalDateTime now, Appliance appliance) {
+    private PlanningRequest createPlanningRequest(LocalDateTime now, Appliance appliance) {
         PlanningRequest planningRequest = null;
         RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
         if(runningTimeMonitor != null) {
@@ -288,24 +283,24 @@ public class SempController implements ActiveIntervalChangedListener {
             List<Schedule> schedules = runningTimeMonitor.getSchedules();
             TimeframeInterval timeframeInterval = runningTimeMonitor.getActiveTimeframeInterval();
             if(schedules != null && schedules.size() > 0) {
-                applianceLogger.debug("Active schedules: " + schedules.size());
+                logger.debug("{}: Active schedules: {}", appliance.getId(), schedules.size());
                 TimeframeInterval activeTimeframeInterval = runningTimeMonitor.getActiveTimeframeInterval();
-                addSempTimeFrame(applianceLogger, runningTimeMonitor, timeframeInterval, appliance, sempTimeFrames, now);
+                addSempTimeFrame(runningTimeMonitor, timeframeInterval, appliance, sempTimeFrames, now);
 
                 Interval considerationInterval = new Interval(now.toDateTime(), now.plusDays(2).toDateTime());
                 List<TimeframeInterval> timeFrameIntervals = Schedule.findTimeframeIntervals(now, considerationInterval, runningTimeMonitor.getSchedules());
                 for(TimeframeInterval timeframeIntervalOfSchedule : timeFrameIntervals) {
                     Schedule schedule = timeframeIntervalOfSchedule.getTimeframe().getSchedule();
-                    addSempTimeFrame(applianceLogger, appliance, sempTimeFrames, schedule, timeframeIntervalOfSchedule.getInterval(), schedule.getMinRunningTime(),
+                    addSempTimeFrame(appliance, sempTimeFrames, schedule, timeframeIntervalOfSchedule.getInterval(), schedule.getMinRunningTime(),
                             schedule.getMaxRunningTime(), now);
                 }
             }
             else if(timeframeInterval != null) {
-                applianceLogger.debug("Active timeframe interval found");
-                addSempTimeFrame(applianceLogger, runningTimeMonitor, timeframeInterval, appliance, sempTimeFrames, now);
+                logger.debug("{}: Active timeframe interval found", appliance.getId());
+                addSempTimeFrame(runningTimeMonitor, timeframeInterval, appliance, sempTimeFrames, now);
             }
             else {
-                applianceLogger.debug("No timeframes found");
+                logger.debug("{}: No timeframes found", appliance.getId());
             }
 
             if(sempTimeFrames.size() > 0) {
@@ -313,32 +308,32 @@ public class SempController implements ActiveIntervalChangedListener {
                 planningRequest.setTimeframes(sempTimeFrames);
             }
             else {
-                applianceLogger.debug("No planning requests created");
+                logger.debug("{}: No planning requests created", appliance.getId());
                 return null;
             }
         }
         return planningRequest;
     }
 
-    private void addSempTimeFrame(ApplianceLogger applianceLogger, RunningTimeMonitor runningTimeMonitor, TimeframeInterval timeframeInterval, Appliance appliance,
+    private void addSempTimeFrame(RunningTimeMonitor runningTimeMonitor, TimeframeInterval timeframeInterval, Appliance appliance,
                                   List<de.avanux.smartapplianceenabler.semp.webservice.Timeframe> sempTimeFrames, LocalDateTime now) {
         if(timeframeInterval != null) {
             final long remainingMaxRunningTime = runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame();
-            addSempTimeFrame(applianceLogger, appliance, sempTimeFrames,
+            addSempTimeFrame(appliance, sempTimeFrames,
                     timeframeInterval.getTimeframe().getSchedule(), timeframeInterval.getInterval(),
                     runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(), remainingMaxRunningTime, now);
             if(remainingMaxRunningTime < 0) {
-                setApplianceState(applianceLogger, appliance, false, "Switching off due to maxRunningTime < 0");
+                setApplianceState(appliance, false, "Switching off due to maxRunningTime < 0");
             }
         }
     }
 
-    private void addSempTimeFrame(ApplianceLogger applianceLogger, Appliance appliance, List<de.avanux.smartapplianceenabler.semp.webservice.Timeframe> sempTimeFrames,
+    private void addSempTimeFrame(Appliance appliance, List<de.avanux.smartapplianceenabler.semp.webservice.Timeframe> sempTimeFrames,
                                   Schedule currentSchedule, Interval interval, long remainingMinRunningTime, long remainingMaxRunningTime, LocalDateTime now) {
-        sempTimeFrames.add(createSempTimeFrame(applianceLogger, appliance.getId(), currentSchedule, interval, remainingMinRunningTime, remainingMaxRunningTime, now));
+        sempTimeFrames.add(createSempTimeFrame(appliance.getId(), currentSchedule, interval, remainingMinRunningTime, remainingMaxRunningTime, now));
     }
     
-    protected de.avanux.smartapplianceenabler.semp.webservice.Timeframe createSempTimeFrame(ApplianceLogger applianceLogger, String deviceId, Schedule schedule,
+    protected de.avanux.smartapplianceenabler.semp.webservice.Timeframe createSempTimeFrame(String deviceId, Schedule schedule,
                                                                                             Interval interval, long minRunningTime, long maxRunningTime, LocalDateTime now) {
         Long earliestStart = 0l;
         DateTime start = interval.getStart();
@@ -351,10 +346,10 @@ public class SempController implements ActiveIntervalChangedListener {
             nowBeforeEnd = now.minusHours(24);
         }
         Long latestEnd = Double.valueOf(new Interval(nowBeforeEnd.toDateTime(), end).toDurationMillis() / 1000).longValue();
-        return createSempTimeFrame(applianceLogger, deviceId, earliestStart, latestEnd, minRunningTime, maxRunningTime);
+        return createSempTimeFrame(deviceId, earliestStart, latestEnd, minRunningTime, maxRunningTime);
     }
     
-    protected de.avanux.smartapplianceenabler.semp.webservice.Timeframe createSempTimeFrame(ApplianceLogger applianceLogger, String deviceId,
+    protected de.avanux.smartapplianceenabler.semp.webservice.Timeframe createSempTimeFrame(String deviceId,
                                                                                             Long earliestStart, Long latestEnd, long minRunningTime, long maxRunningTime) {
         de.avanux.smartapplianceenabler.semp.webservice.Timeframe timeFrame = new de.avanux.smartapplianceenabler.semp.webservice.Timeframe();
         timeFrame.setDeviceId(deviceId);
@@ -373,7 +368,7 @@ public class SempController implements ActiveIntervalChangedListener {
             timeFrame.setMinRunningTime(minRunningTime >= 0 ? minRunningTime : 0);
         }
         timeFrame.setMaxRunningTime(maxRunningTime >= 0 ? maxRunningTime : 0);
-        applianceLogger.debug("Timeframe added to PlanningRequest: " + timeFrame.toString());
+        logger.debug("{}: Timeframe added to PlanningRequest: {}", deviceId, timeFrame.toString());
         return timeFrame;
     }
 

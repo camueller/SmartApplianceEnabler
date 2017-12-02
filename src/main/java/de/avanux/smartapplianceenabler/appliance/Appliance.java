@@ -19,15 +19,13 @@ package de.avanux.smartapplianceenabler.appliance;
 
 import com.pi4j.io.gpio.GpioController;
 import de.avanux.smartapplianceenabler.control.*;
-import de.avanux.smartapplianceenabler.log.ApplianceLogger;
 import de.avanux.smartapplianceenabler.meter.*;
-import de.avanux.smartapplianceenabler.meter.ModbusElectricityMeter;
 import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
-import de.avanux.smartapplianceenabler.control.ModbusSwitch;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
 import de.avanux.smartapplianceenabler.schedule.*;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.*;
@@ -36,7 +34,7 @@ import java.util.*;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Appliance implements ControlStateChangedListener, StartingCurrentSwitchListener {
-    private transient ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(Appliance.class));
+    private transient Logger logger = LoggerFactory.getLogger(Appliance.class);
     @XmlAttribute
     private String id;
     @XmlElements({
@@ -63,7 +61,6 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
 
     public void setId(String id) {
         this.id = id;
-        this.logger.setApplianceId(id);
     }
 
     public String getId() {
@@ -104,20 +101,19 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     }
 
     public void init(Integer additionRunningTime) {
-        this.logger.setApplianceId(id);
         if(schedules != null && schedules.size() > 0) {
-            logger.info("Schedules configured: " + schedules.size());
+            logger.info("{}: Schedules configured: {}", id, schedules.size());
             runningTimeMonitor = new RunningTimeMonitor();
             runningTimeMonitor.setApplianceId(id);
             if(! hasStartingCurrentDetection()) {
                 // in case of starting current detection timeframes are added after
                 // starting current was detected
                 runningTimeMonitor.setSchedules(schedules);
-                logger.debug("Schedules passed to RunningTimeMonitor");
+                logger.debug("{}: Schedules passed to RunningTimeMonitor", id);
             }
         }
         else {
-            logger.info("No schedules configured");
+            logger.info("{}: No schedules configured", id);
         }
 
         if(control != null) {
@@ -128,13 +124,13 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                 Control wrappedControl = ((StartingCurrentSwitch) control).getControl();
                 ((ApplianceIdConsumer) wrappedControl).setApplianceId(id);
                 wrappedControl.addControlStateChangedListener(this);
-                logger.debug("Registered as " + ControlStateChangedListener.class.getSimpleName() + " with " + wrappedControl.getClass().getSimpleName());
+                logger.debug("{}: Registered as {} with {}", id, ControlStateChangedListener.class.getSimpleName(), wrappedControl.getClass().getSimpleName());
                 ((StartingCurrentSwitch) control).addStartingCurrentSwitchListener(this);
-                logger.debug("Registered as " + StartingCurrentSwitchListener.class.getSimpleName() + " with " + control.getClass().getSimpleName());
+                logger.debug("{}: Registered as {} with {}", id, StartingCurrentSwitchListener.class.getSimpleName(), control.getClass().getSimpleName());
             }
             else {
                 control.addControlStateChangedListener(this);
-                logger.debug("Registered as " + ControlStateChangedListener.class.getSimpleName() + " with " + control.getClass().getSimpleName());
+                logger.debug("{}: Registered as {} with {}", id, ControlStateChangedListener.class.getSimpleName(), control.getClass().getSimpleName());
             }
         }
         Meter meter = getMeter();
@@ -149,7 +145,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                 if(meter instanceof S0ElectricityMeterNetworked) {
                     ((S0ElectricityMeterNetworked) meter).setControl(control);
                 }
-                logger.debug(meter.getClass().getSimpleName() + " uses " + control.getClass().getSimpleName());
+                logger.debug("{}: {} uses {}", id, meter.getClass().getSimpleName(), control.getClass().getSimpleName());
             }
         }
 
@@ -168,14 +164,14 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                       Map<String, ModbusTcp> modbusIdWithModbusTcp) {
 
         for(GpioControllable gpioControllable : getGpioControllables()) {
-            logger.info("Starting " + gpioControllable.getClass().getSimpleName());
+            logger.info("{}: Starting {}", id, gpioControllable.getClass().getSimpleName());
             gpioControllable.setGpioController(gpioController);
             gpioControllable.start();
         }
 
         if(meter != null && meter instanceof S0ElectricityMeterNetworked) {
             S0ElectricityMeterNetworked s0ElectricityMeterNetworked = (S0ElectricityMeterNetworked) meter;
-            logger.info("Starting " + S0ElectricityMeterNetworked.class.getSimpleName());
+            logger.info("{}: Starting {}", id, S0ElectricityMeterNetworked.class.getSimpleName());
             String pulseReceiverId = s0ElectricityMeterNetworked.getIdref();
             PulseReceiver pulseReceiver = pulseReceiverIdWithPulseReceiver.get(pulseReceiverId);
             s0ElectricityMeterNetworked.setPulseReceiver(pulseReceiver);
@@ -187,7 +183,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         }
 
         for(ModbusSlave modbusSlave : getModbusSlaves()) {
-            logger.info("Starting " + modbusSlave.getClass().getSimpleName());
+            logger.info("{}: Starting {}", id, modbusSlave.getClass().getSimpleName());
             modbusSlave.setApplianceId(id);
             String modbusId = modbusSlave.getIdref();
             ModbusTcp modbusTcp = modbusIdWithModbusTcp.get(modbusId);
@@ -198,7 +194,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         }
 
         if(control != null && control instanceof  StartingCurrentSwitch) {
-            logger.info("Starting " + StartingCurrentSwitch.class.getSimpleName());
+            logger.info("{}: Starting {}", id, StartingCurrentSwitch.class.getSimpleName());
             ((StartingCurrentSwitch) control).start(getMeter(), timer);
         }
     }
@@ -321,7 +317,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
 
     @Override
     public void controlStateChanged(boolean switchOn) {
-        logger.debug("Control state has changed to " + (switchOn ? "on" : "off") + ": runningTimeMonitor=" + (runningTimeMonitor != null ? "not null" : "null"));
+        logger.debug("{}: Control state has changed to {}", id, (switchOn ? "on" : "off"));
         if(runningTimeMonitor != null) {
             runningTimeMonitor.setRunning(switchOn);
         }
@@ -329,12 +325,12 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
 
     @Override
     public void startingCurrentDetected() {
-        logger.debug("Activating next sufficient timeframe interval after starting current has been detected");
+        logger.debug("{}: Activating next sufficient timeframe interval after starting current has been detected", id);
         LocalDateTime now = new LocalDateTime();
         TimeframeInterval timeframeInterval;
         Schedule forcedSchedule = getForcedSchedule(now);
         if(forcedSchedule != null) {
-            logger.debug("Forcing schedule " + forcedSchedule);
+            logger.debug("{}: Forcing schedule {}", id, forcedSchedule);
             timeframeInterval = Schedule.getCurrentOrNextTimeframeInterval(now, Collections.singletonList(forcedSchedule), false, true);
         }
         else {
@@ -345,7 +341,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
 
     @Override
     public void finishedCurrentDetected() {
-        logger.debug("Deactivating timeframe interval until starting current is detected again: runningTimeMonitor=" + (runningTimeMonitor != null ? "not null" : "null"));
+        logger.debug("{}: Deactivating timeframe interval until starting current is detected again", id);
         if(runningTimeMonitor != null) {
             runningTimeMonitor.activateTimeframeInterval(new LocalDateTime(), (TimeframeInterval) null);
         }

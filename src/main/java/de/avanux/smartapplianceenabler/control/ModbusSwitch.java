@@ -17,35 +17,28 @@
  */
 package de.avanux.smartapplianceenabler.control;
 
-import javax.xml.bind.annotation.XmlAttribute;
-
-import de.avanux.smartapplianceenabler.log.ApplianceLogger;
 import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
 import de.avanux.smartapplianceenabler.modbus.ReadCoilExecutor;
 import de.avanux.smartapplianceenabler.modbus.WriteCoilExecutor;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ModbusSwitch extends ModbusSlave implements Control {
 
-    private transient ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(ModbusSwitch.class));
+    private transient Logger logger = LoggerFactory.getLogger(ModbusSwitch.class);
     @XmlAttribute
     private String registerAddress;
     transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
 
     @Override
-    public void setApplianceId(String applianceId) {
-        super.setApplianceId(applianceId);
-        this.logger.setApplianceId(applianceId);
-    }
-
-    @Override
     public boolean on(boolean switchOn) {
         boolean result = false;
         try {
-            logger.info("Switching " + (switchOn ? "on" : "off"));
+            logger.info("{}: Switching {}", getApplianceId(), (switchOn ? "on" : "off"));
             WriteCoilExecutor executor = new WriteCoilExecutor(registerAddress, switchOn);
             executor.setApplianceId(getApplianceId());
             executeTransaction(executor, true);
@@ -56,7 +49,7 @@ public class ModbusSwitch extends ModbusSlave implements Control {
             }
         }
         catch (Exception e) {
-            logger.error("Error switching coil register " + registerAddress, e);
+            logger.error("{}: Error switching coil register {}", getApplianceId(), registerAddress, e);
         }
         return switchOn == result;
     }
@@ -71,7 +64,7 @@ public class ModbusSwitch extends ModbusSlave implements Control {
             coil = executor.getCoil();
         }
         catch (Exception e) {
-            logger.error("Error switching coil register " + registerAddress, e);
+            logger.error("{}: Error switching coil register {}", getApplianceId(), registerAddress, e);
         }
         return coil;
     }

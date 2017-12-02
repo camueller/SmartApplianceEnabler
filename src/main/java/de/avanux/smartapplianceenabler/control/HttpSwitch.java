@@ -19,9 +19,9 @@ package de.avanux.smartapplianceenabler.control;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.http.HttpTransactionExecutor;
-import de.avanux.smartapplianceenabler.log.ApplianceLogger;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -39,7 +39,7 @@ import java.util.List;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HttpSwitch extends HttpTransactionExecutor implements Control, ApplianceIdConsumer {
-    private transient ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(HttpSwitch.class));
+    private transient Logger logger = LoggerFactory.getLogger(HttpSwitch.class);
     @XmlAttribute
     private String onUrl;
     @XmlAttribute
@@ -98,7 +98,6 @@ public class HttpSwitch extends HttpTransactionExecutor implements Control, Appl
     @Override
     public void setApplianceId(String applianceId) {
         super.setApplianceId(applianceId);
-        this.logger.setApplianceId(applianceId);
     }
 
     @Override

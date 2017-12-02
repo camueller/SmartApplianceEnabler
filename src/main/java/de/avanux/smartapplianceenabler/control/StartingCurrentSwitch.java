@@ -18,10 +18,10 @@
 package de.avanux.smartapplianceenabler.control;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
-import de.avanux.smartapplianceenabler.schedule.DayTimeframeCondition;
 import de.avanux.smartapplianceenabler.meter.Meter;
-import de.avanux.smartapplianceenabler.log.ApplianceLogger;
+import de.avanux.smartapplianceenabler.schedule.DayTimeframeCondition;
 import org.joda.time.LocalDateTime;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.*;
@@ -44,7 +44,7 @@ import java.util.TimerTask;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
-    private transient ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(StartingCurrentSwitch.class));
+    private transient Logger logger = LoggerFactory.getLogger(StartingCurrentSwitch.class);
     @XmlAttribute
     private Integer powerThreshold;
     @XmlAttribute
@@ -61,6 +61,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
     private Control control;
     @XmlElement(name = "ForceSchedule")
     private DayTimeframeCondition dayTimeframeCondition;
+    private transient String applianceId;
     private transient Integer lastAveragePowerOfPowerOnDetection;
     private transient Integer lastAveragePowerOfPowerOffDetection;
     private transient boolean on;
@@ -71,7 +72,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
 
     @Override
     public void setApplianceId(String applianceId) {
-        this.logger.setApplianceId(applianceId);
+        this.applianceId = applianceId;
     }
 
     protected void setControl(Control control) {
@@ -126,7 +127,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
 
     @Override
     public boolean on(boolean switchOn) {
-        logger.debug("Setting appliance switch to " + (switchOn ? "on" : "off"));
+        logger.debug("{}: Setting appliance switch to {}", applianceId, (switchOn ? "on" : "off"));
         on = switchOn;
         if (switchOn) {
             applianceOn(true);
@@ -137,7 +138,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
     }
 
     private boolean applianceOn(boolean switchOn) {
-        logger.debug("Setting wrapped appliance switch to " + (switchOn ? "on" : "off"));
+        logger.debug("{}: Setting wrapped appliance switch to {}", applianceId, (switchOn ? "on" : "off"));
         return control.on(switchOn);
     }
 
@@ -154,10 +155,10 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
     }
 
     public void start(final Meter meter, Timer timer) {
-        logger.info("Starting current switch: powerThreshold=" + getPowerThreshold() + "W"
-                + " / startingCurrentDetectionDuration=" + getStartingCurrentDetectionDuration() + "s"
-                + " / finishedCurrentDetectionDuration=" + getFinishedCurrentDetectionDuration() + "s"
-                + " / minRunningTime=" + getMinRunningTime() + "s");
+        logger.info("{}: Starting current switch: powerThreshold={}W startingCurrentDetectionDuration={}s " +
+                        "finishedCurrentDetectionDuration={}s minRunningTime={}s",
+                applianceId, getPowerThreshold(), getStartingCurrentDetectionDuration(),
+                getFinishedCurrentDetectionDuration(), getMinRunningTime());
         applianceOn(true);
         if (timer != null) {
             timer.schedule(new TimerTask() {
@@ -183,32 +184,33 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
     protected void detectStartingCurrent(Meter meter) {
         if (meter != null) {
             boolean applianceOn = isApplianceOn();
-            logger.debug("on=" + on + " applianceOn=" + applianceOn);
+            logger.debug("{}: on={} applianceOn={}", applianceId, on, applianceOn);
             if (applianceOn) {
                 int averagePower = meter.getAveragePower();
-                logger.debug("averagePower=" + averagePower + " lastAveragePowerOfPowerOnDetection=" + lastAveragePowerOfPowerOnDetection);
+                logger.debug("{}: averagePower={} lastAveragePowerOfPowerOnDetection={}", applianceId, averagePower,
+                        lastAveragePowerOfPowerOnDetection);
                 if (lastAveragePowerOfPowerOnDetection != null) {
                     if (! on) {
                         if (averagePower > getPowerThreshold() && lastAveragePowerOfPowerOnDetection > getPowerThreshold()) {
-                            logger.debug("Starting current detected.");
+                            logger.debug("{}: Starting current detected.", applianceId);
                             applianceOn(false);
                             switchOnTime = null;
                             for (StartingCurrentSwitchListener listener : startingCurrentSwitchListeners) {
                                 listener.startingCurrentDetected();
                             }
                         } else {
-                            logger.debug("Starting current not detected.");
+                            logger.debug("{}: Starting current not detected.", applianceId);
                         }
                     }
                 } else {
-                    logger.debug("lastAveragePowerOfPowerOnDetection has not been set yet");
+                    logger.debug("{}: lastAveragePowerOfPowerOnDetection has not been set yet", applianceId);
                 }
                 lastAveragePowerOfPowerOnDetection = averagePower;
             } else {
-                logger.debug("Appliance not switched on.");
+                logger.debug("{}: Appliance not switched on.", applianceId);
             }
         } else {
-            logger.debug("Meter not available");
+            logger.debug("{}: Meter not available", applianceId);
         }
     }
 
@@ -220,32 +222,32 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
     protected void detectFinishedCurrent(Meter meter) {
         if (meter != null) {
             boolean applianceOn = isApplianceOn();
-            logger.debug("on=" + on + " applianceOn=" + applianceOn);
+            logger.debug("{}: on={} applianceOn={}", applianceId, on, applianceOn);
             if (applianceOn) {
                 int averagePower = meter.getAveragePower();
-                logger.debug("averagePower=" + averagePower + " lastAveragePowerOfPowerOffDetection=" + lastAveragePowerOfPowerOffDetection);
+                logger.debug("{}: averagePower={} lastAveragePowerOfPowerOffDetection={}", applianceId, averagePower, lastAveragePowerOfPowerOffDetection);
                 if (lastAveragePowerOfPowerOffDetection != null) {
                     if (on) {
                         // requiring minimum running time avoids finish current detection right after power on
                         if (isMinRunningTimeExceeded() && averagePower < getPowerThreshold() && lastAveragePowerOfPowerOffDetection < getPowerThreshold()) {
-                            logger.debug("Finished current detected.");
+                            logger.debug("{}: Finished current detected.", applianceId);
                             for (StartingCurrentSwitchListener listener : startingCurrentSwitchListeners) {
                                 listener.finishedCurrentDetected();
                             }
                             on(false);
                         } else {
-                            logger.debug("Finished current not detected.");
+                            logger.debug("{}: Finished current not detected.", applianceId);
                         }
                     }
                 } else {
-                    logger.debug("lastAveragePowerOfPowerOnDetection has not been set yet");
+                    logger.debug("{}: lastAveragePowerOfPowerOnDetection has not been set yet", applianceId);
                 }
                 lastAveragePowerOfPowerOffDetection = averagePower;
             } else {
-                logger.debug("Appliance not switched on.");
+                logger.debug("{}: Appliance not switched on.", applianceId);
             }
         } else {
-            logger.debug("Meter not available");
+            logger.debug("{}: Meter not available", applianceId);
         }
     }
 

@@ -17,18 +17,15 @@
  */
 package de.avanux.smartapplianceenabler.modbus;
 
-import java.util.Timer;
+import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
+import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
-
-import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
-import de.avanux.smartapplianceenabler.log.ApplianceLogger;
-import org.slf4j.LoggerFactory;
-
-import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
 
 /**
  * Base class for ModBus slaves.
@@ -36,7 +33,7 @@ import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
 @XmlTransient
 @XmlAccessorType(XmlAccessType.FIELD)
 abstract public class ModbusSlave implements ApplianceIdConsumer {
-    private transient ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(ModbusSlave.class));
+    private transient Logger logger = LoggerFactory.getLogger(ModbusSlave.class);
     @XmlAttribute
     private String idref;
     @XmlAttribute
@@ -48,7 +45,6 @@ abstract public class ModbusSlave implements ApplianceIdConsumer {
     @Override
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
-        this.logger.setApplianceId(applianceId);
     }
 
     protected String getApplianceId() {
@@ -70,7 +66,7 @@ abstract public class ModbusSlave implements ApplianceIdConsumer {
     protected void executeTransaction(ModbusTransactionExecutor modbusTransactionExecutor, boolean closeConnection) throws Exception {
         ModbusTcp modbusTcp = getModbusTcp();
         if(connection == null) {
-            logger.debug("Connecting to modbus " + modbusTcp.toString());
+            logger.debug("{}: Connecting to modbus {}", applianceId, modbusTcp.toString());
             connection = modbusTcp.getConnection();
         }
         if(! connection.isConnected()) {
@@ -84,7 +80,7 @@ abstract public class ModbusSlave implements ApplianceIdConsumer {
             }
         }
         else {
-            logger.error("Cannot connect to modbus " + modbusTcp.toString());
+            logger.error("{}: Cannot connect to modbus {}", applianceId, modbusTcp.toString());
         }
     }
 }

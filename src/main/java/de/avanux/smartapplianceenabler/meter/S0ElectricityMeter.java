@@ -24,7 +24,7 @@ import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.GpioControllable;
-import de.avanux.smartapplianceenabler.log.ApplianceLogger;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -32,7 +32,7 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder={"gpio", "pinPullResistance", "impulsesPerKwh", "measurementInterval"})
 public class S0ElectricityMeter extends GpioControllable implements Meter {
-    private transient ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(S0ElectricityMeter.class));
+    private transient Logger logger = LoggerFactory.getLogger(S0ElectricityMeter.class);
     @XmlAttribute
     private Integer impulsesPerKwh;
     @XmlAttribute
@@ -56,7 +56,6 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
     @Override
     public void setApplianceId(String applianceId) {
         super.setApplianceId(applianceId);
-        this.logger.setApplianceId(applianceId);
         this.pulseElectricityMeter.setApplianceId(applianceId);
     }
 
@@ -89,20 +88,20 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
                 inputPin.addListener(new GpioPinListenerDigital() {
                     @Override
                     public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
-                        logger.debug("GPIO " + event.getPin() + " changed to " + event.getState());
+                        logger.debug("{}: GPIO {} changed to {}", getApplianceId(), event.getPin(), event.getState());
                         if(event.getState() == PinState.HIGH) {
                             pulseElectricityMeter.addTimestampAndMaintain(System.currentTimeMillis());
                         }
                     }
                 });
-                logger.error("Error starting " + getClass().getSimpleName() + " for " + getGpio());
+                logger.error("{}: Error starting {} for {}", getApplianceId(), getClass().getSimpleName(), getGpio());
             }
             catch(Exception e) {
-                logger.error("Error start metering using " + getGpio(), e);
+                logger.error("{}: Error start metering using {}", getApplianceId(), getGpio(), e);
             }
         }
         else { 
-            logGpioAccessDisabled(logger);
+            logGpioAccessDisabled();
         }
     }
 

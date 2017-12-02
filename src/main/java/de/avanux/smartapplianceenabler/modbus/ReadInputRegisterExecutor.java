@@ -17,22 +17,22 @@
  */
 package de.avanux.smartapplianceenabler.modbus;
 
-import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
-import de.avanux.smartapplianceenabler.log.ApplianceLogger;
-import org.slf4j.LoggerFactory;
-
 import com.ghgande.j2mod.modbus.ModbusException;
 import com.ghgande.j2mod.modbus.io.ModbusTCPTransaction;
 import com.ghgande.j2mod.modbus.msg.ReadInputRegistersRequest;
 import com.ghgande.j2mod.modbus.msg.ReadInputRegistersResponse;
 import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
+import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implements a <tt>ReadInputRegistersRequest</tt>.
  * The implementation directly correlates with the class 0 function <i>read multiple registers (FC 4)</i>
  */
 public class ReadInputRegisterExecutor implements ModbusTransactionExecutor, ApplianceIdConsumer {
-    private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(ReadInputRegisterExecutor.class));
+    private Logger logger = LoggerFactory.getLogger(ReadInputRegisterExecutor.class);
+    private String applianceId;
     private String registerAddress;
     private Float registerValue;
     
@@ -45,7 +45,7 @@ public class ReadInputRegisterExecutor implements ModbusTransactionExecutor, App
 
     @Override
     public void setApplianceId(String applianceId) {
-        this.logger.setApplianceId(applianceId);
+        this.applianceId = applianceId;
     }
 
     @Override
@@ -60,10 +60,10 @@ public class ReadInputRegisterExecutor implements ModbusTransactionExecutor, App
         ReadInputRegistersResponse res = (ReadInputRegistersResponse) trans.getResponse();
         if(res != null) {
             registerValue = Float.intBitsToFloat(res.getRegisterValue(0) << 16 | res.getRegisterValue(1));
-            logger.debug("Input register " + registerAddress + ": value=" + registerValue);
+            logger.debug("{}: Input register={} value={}", applianceId, registerAddress, registerValue);
         }
         else {
-            logger.error("No response received.");
+            logger.error("{}: No response received.", applianceId);
         }
     }
     

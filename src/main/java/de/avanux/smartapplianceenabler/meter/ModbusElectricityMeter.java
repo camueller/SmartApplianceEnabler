@@ -18,10 +18,10 @@
 package de.avanux.smartapplianceenabler.meter;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
-import de.avanux.smartapplianceenabler.log.ApplianceLogger;
 import de.avanux.smartapplianceenabler.modbus.ModbusElectricityMeterDefaults;
 import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
 import de.avanux.smartapplianceenabler.modbus.ReadInputRegisterExecutor;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -34,7 +34,7 @@ import java.util.Timer;
  */
 public class ModbusElectricityMeter extends ModbusSlave implements Meter, ApplianceIdConsumer, PollPowerExecutor {
 
-    private transient ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(ModbusElectricityMeter.class));
+    private transient Logger logger = LoggerFactory.getLogger(ModbusElectricityMeter.class);
     @XmlAttribute
     private String registerAddress;
     @XmlAttribute
@@ -47,27 +47,26 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     public void setApplianceId(String applianceId) {
         super.setApplianceId(applianceId);
         this.pollElectricityMeter.setApplianceId(applianceId);
-        this.logger.setApplianceId(applianceId);
     }
 
     @Override
     public int getAveragePower() {
         int power = pollElectricityMeter.getAveragePower();
-        logger.debug("average power = " + power + "W");
+        logger.debug("{}: average power = {}W", getApplianceId(), power);
         return power;
     }
 
     @Override
     public int getMinPower() {
         int power = pollElectricityMeter.getMinPower();
-        logger.debug("min power = " + power + "W");
+        logger.debug("{}: min power = {}W", getApplianceId(), power);
         return power;
     }
 
     @Override
     public int getMaxPower() {
         int power =  pollElectricityMeter.getMaxPower();
-        logger.debug("max power = " + power + "W");
+        logger.debug("{}: max power = {}W", getApplianceId(), power);
         return power;
     }
 
@@ -101,7 +100,7 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
             }
         }
         catch(Exception e) {
-            logger.error("Error reading input register " + registerAddress, e);
+            logger.error("{}: Error reading input register {}", getApplianceId(), registerAddress, e);
         }
         return 0;
     }
