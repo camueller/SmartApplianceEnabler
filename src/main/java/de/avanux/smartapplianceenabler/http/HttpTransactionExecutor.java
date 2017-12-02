@@ -17,7 +17,6 @@
  */
 package de.avanux.smartapplianceenabler.http;
 
-import de.avanux.smartapplianceenabler.log.ApplianceLogger;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
@@ -30,6 +29,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -44,16 +44,21 @@ import java.io.IOException;
 @XmlTransient
 @XmlAccessorType(XmlAccessType.FIELD)
 abstract public class HttpTransactionExecutor {
-    private transient ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(HttpTransactionExecutor.class));
+    private transient Logger logger = LoggerFactory.getLogger(HttpTransactionExecutor.class);
     @XmlAttribute
     private String contentType;
     @XmlAttribute
     private String username;
     @XmlAttribute
     private String password;
+    private transient String applianceId;
 
     public void setApplianceId(String applianceId) {
-        this.logger.setApplianceId(applianceId);
+        this.applianceId = applianceId;
+    }
+
+    protected String getApplianceId() {
+        return applianceId;
     }
 
     protected ContentType getContentType() {
@@ -97,12 +102,12 @@ abstract public class HttpTransactionExecutor {
             httpClientBuilder.setDefaultCredentialsProvider(provider);
         }
         CloseableHttpClient client = httpClientBuilder.build();
-        logger.debug("Sending HTTP request");
-        logger.debug("url=" + url);
-        logger.debug("data=" + data);
-        logger.debug("contentType=" + contentType);
-        logger.debug("username=" + username);
-        logger.debug("password=" + password);
+        logger.debug("{}: Sending HTTP request", applianceId);
+        logger.debug("{}: url={}", applianceId, url);
+        logger.debug("{}: data={}", applianceId, data);
+        logger.debug("{}: contentType={}", applianceId, contentType);
+        logger.debug("{}: username={}", applianceId, username);
+        logger.debug("{}: password={}", applianceId, password);
         try {
             HttpRequestBase request = null;
             if(data != null) {
@@ -114,11 +119,11 @@ abstract public class HttpTransactionExecutor {
             }
             CloseableHttpResponse response = client.execute(request);
             int responseCode = response.getStatusLine().getStatusCode();
-            logger.debug("Response code is " + responseCode);
+            logger.debug("{}: Response code is {}", applianceId, responseCode);
             return response;
         }
         catch(IOException e) {
-            logger.error("Error executing HTTP request.", e);
+            logger.error("{}: Error executing HTTP request.", applianceId, e);
             return null;
         }
     }

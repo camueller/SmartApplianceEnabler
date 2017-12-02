@@ -1,20 +1,22 @@
 package de.avanux.smartapplianceenabler.semp.webservice;
 
 import de.avanux.smartapplianceenabler.TestBase;
-import de.avanux.smartapplianceenabler.appliance.*;
-import de.avanux.smartapplianceenabler.log.ApplianceLogger;
+import de.avanux.smartapplianceenabler.appliance.Appliance;
+import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
+import de.avanux.smartapplianceenabler.appliance.Appliances;
+import de.avanux.smartapplianceenabler.appliance.RunningTimeMonitor;
 import de.avanux.smartapplianceenabler.schedule.Schedule;
 import de.avanux.smartapplianceenabler.schedule.TimeOfDay;
 import org.joda.time.Interval;
 import org.joda.time.LocalDateTime;
 import org.junit.Assert;
 import org.junit.Test;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.List;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class SempControllerTest extends TestBase {
 
@@ -121,45 +123,36 @@ public class SempControllerTest extends TestBase {
 
     @Test
     public void createSempTimeFrame() {
-        ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(Appliance.class));
-        logger.setApplianceId(DEVICE_ID);
-
         LocalDateTime now = toToday(0, 30, 0);
         Schedule schedule = new Schedule(7200, 7200, new TimeOfDay(1, 0, 0), new TimeOfDay(9, 0, 0));
         Interval interval = schedule.getTimeframe().getIntervals(now).get(0).getInterval();
 
         de.avanux.smartapplianceenabler.semp.webservice.Timeframe sempTimeFrame = sempController
-                .createSempTimeFrame(logger, DEVICE_ID, schedule, interval, 0, 0, now);
+                .createSempTimeFrame(DEVICE_ID, schedule, interval, 0, 0, now);
         Assert.assertEquals(1800, (long) sempTimeFrame.getEarliestStart());
         Assert.assertEquals(30600, (long) sempTimeFrame.getLatestEnd());
     }
 
     @Test
     public void createSempTimeFrame_TimeFrameOverMidnight_BeforeMidnight() {
-        ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(Appliance.class));
-        logger.setApplianceId(DEVICE_ID);
-
         LocalDateTime now = toToday(23, 30, 0);
         Schedule schedule = new Schedule(7200, 7200, new TimeOfDay(20, 0, 0), new TimeOfDay(4, 0, 0));
         Interval interval = schedule.getTimeframe().getIntervals(now).get(0).getInterval();
 
         de.avanux.smartapplianceenabler.semp.webservice.Timeframe sempTimeFrame = sempController
-                .createSempTimeFrame(logger, DEVICE_ID, schedule, interval, 0, 0, now);
+                .createSempTimeFrame(DEVICE_ID, schedule, interval, 0, 0, now);
         Assert.assertEquals(0, (long) sempTimeFrame.getEarliestStart());
         Assert.assertEquals(16200, (long) sempTimeFrame.getLatestEnd());
     }
 
     @Test
     public void createSempTimeFrame_TimeFrameOverMidnight_AfterMidnight() {
-        ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(Appliance.class));
-        logger.setApplianceId(DEVICE_ID);
-
         LocalDateTime now = toToday(0, 30, 0);
         Schedule schedule = new Schedule(7200, 7200, new TimeOfDay(20, 0, 0), new TimeOfDay(4, 0, 0));
         Interval interval = schedule.getTimeframe().getIntervals(now).get(0).getInterval();
 
         de.avanux.smartapplianceenabler.semp.webservice.Timeframe sempTimeFrame = sempController
-                .createSempTimeFrame(logger, DEVICE_ID, schedule, interval, 0, 0, now);
+                .createSempTimeFrame(DEVICE_ID, schedule, interval, 0, 0, now);
         Assert.assertEquals(0, (long) sempTimeFrame.getEarliestStart());
         Assert.assertEquals(12600, (long) sempTimeFrame.getLatestEnd());
     }

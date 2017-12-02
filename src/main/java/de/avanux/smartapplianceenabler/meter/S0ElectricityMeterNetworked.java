@@ -19,13 +19,13 @@ package de.avanux.smartapplianceenabler.meter;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.control.Control;
-import de.avanux.smartapplianceenabler.log.ApplianceLogger;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlAttribute;
 
 public class S0ElectricityMeterNetworked implements Meter, PulseReceiver.PulseListener, ApplianceIdConsumer {
-    private transient ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(S0ElectricityMeterNetworked.class));
+    private transient Logger logger = LoggerFactory.getLogger(S0ElectricityMeterNetworked.class);
     @XmlAttribute
     private String idref;
     @XmlAttribute
@@ -42,7 +42,6 @@ public class S0ElectricityMeterNetworked implements Meter, PulseReceiver.PulseLi
 
     @Override
     public void setApplianceId(String applianceId) {
-        this.logger.setApplianceId(applianceId);
         this.applianceId = applianceId;
         if(this.pulseElectricityMeter != null) {
             this.pulseElectricityMeter.setApplianceId(applianceId);
@@ -84,8 +83,8 @@ public class S0ElectricityMeterNetworked implements Meter, PulseReceiver.PulseLi
     }
 
     public void start() {
-        logger.debug("Appliance start: impulsesPerKwh=" + impulsesPerKwh
-                + " measurementInterval=" + measurementInterval);
+        logger.debug("{}: Appliance start: impulsesPerKwh={} measurementInterval={}", applianceId, impulsesPerKwh,
+                measurementInterval);
         pulseElectricityMeter.setImpulsesPerKwh(impulsesPerKwh);
         pulseElectricityMeter.setMeasurementInterval(measurementInterval);
         if(pulseReceiver != null) {
@@ -98,24 +97,24 @@ public class S0ElectricityMeterNetworked implements Meter, PulseReceiver.PulseLi
         long timestamp = System.currentTimeMillis();
         if(previousPulseCounter != null) {
             if(counter < previousPulseCounter) {
-                logger.debug("Counter overflow - skipping detection of missing packets");
+                logger.debug("{}: Counter overflow - skipping detection of missing packets", applianceId);
             }
             else {
                 long counterDiff = counter - previousPulseCounter;
                 if(counterDiff > 1) {
                     long timestampDiff = timestamp - previousPulseTimestamp;
-                    logger.warn("Missing packet detected: counterDiff=" + counterDiff + " timestampDiff=" + timestampDiff);
+                    logger.warn("{}: Missing packet detected: counterDiff={} timestampDiff={}", applianceId, counterDiff, timestampDiff);
                     long timeDiffPerCounterIncrement = Double.valueOf(timestampDiff / counterDiff).longValue();
                     long assumedTimestamp = previousPulseTimestamp;
                     for (long assumedCounter = previousPulseCounter + 1; assumedCounter < counter; assumedCounter++) {
                         assumedTimestamp += timeDiffPerCounterIncrement;
-                        logger.warn("Assuming timestamp for missing packet " + assumedTimestamp);
+                        logger.warn("{}: Assuming timestamp for missing packet {}", applianceId, assumedTimestamp);
                         pulseElectricityMeter.addTimestampAndMaintain(assumedTimestamp);
                     }
                 }
             }
         }
-        logger.debug("Adding timestamp " + timestamp + " for packet counter " + counter);
+        logger.debug("{}: Adding timestamp {} for packet counter {}", applianceId, timestamp, counter);
         pulseElectricityMeter.addTimestampAndMaintain(timestamp);
         previousPulseCounter = counter;
         previousPulseTimestamp = timestamp;

@@ -17,15 +17,14 @@
  */
 package de.avanux.smartapplianceenabler.modbus;
 
-import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
-import de.avanux.smartapplianceenabler.log.ApplianceLogger;
-import org.slf4j.LoggerFactory;
-
 import com.ghgande.j2mod.modbus.ModbusException;
 import com.ghgande.j2mod.modbus.io.ModbusTCPTransaction;
 import com.ghgande.j2mod.modbus.msg.ReadCoilsRequest;
 import com.ghgande.j2mod.modbus.msg.ReadCoilsResponse;
 import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
+import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A <tt>ReadCoilRequest</tt> reads a bit.
@@ -33,7 +32,8 @@ import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
  */
 public class ReadCoilExecutor implements ModbusTransactionExecutor, ApplianceIdConsumer {
     
-    private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(ReadCoilExecutor.class));
+    private Logger logger = LoggerFactory.getLogger(ReadCoilExecutor.class);
+    private String applianceId;
     private String registerAddress;
     private boolean coil;
 
@@ -47,7 +47,7 @@ public class ReadCoilExecutor implements ModbusTransactionExecutor, ApplianceIdC
 
     @Override
     public void setApplianceId(String applianceId) {
-        this.logger.setApplianceId(applianceId);
+        this.applianceId = applianceId;
     }
 
     @Override
@@ -62,10 +62,10 @@ public class ReadCoilExecutor implements ModbusTransactionExecutor, ApplianceIdC
         ReadCoilsResponse res = (ReadCoilsResponse) trans.getResponse();
         if(res != null) {
             coil = res.getCoils().getBit(0);
-            logger.debug("Read coil register " + registerAddress + ": coil=" + coil);
+            logger.debug("{}: Read coil register={} coil={}", applianceId, registerAddress, coil);
         }
         else {
-            logger.error("No response received.");
+            logger.error("{}: No response received.", applianceId);
         }
     }
     

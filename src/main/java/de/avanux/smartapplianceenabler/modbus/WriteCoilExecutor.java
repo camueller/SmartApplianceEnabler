@@ -17,15 +17,14 @@
  */
 package de.avanux.smartapplianceenabler.modbus;
 
-import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
-import de.avanux.smartapplianceenabler.log.ApplianceLogger;
-import org.slf4j.LoggerFactory;
-
 import com.ghgande.j2mod.modbus.ModbusException;
 import com.ghgande.j2mod.modbus.io.ModbusTCPTransaction;
 import com.ghgande.j2mod.modbus.msg.WriteCoilRequest;
 import com.ghgande.j2mod.modbus.msg.WriteCoilResponse;
 import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
+import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A <tt>WriteCoilRequest</tt> writes a bit.
@@ -33,7 +32,8 @@ import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
  */
 public class WriteCoilExecutor implements ModbusTransactionExecutor, ApplianceIdConsumer {
     
-    private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(WriteCoilExecutor.class));
+    private Logger logger = LoggerFactory.getLogger(WriteCoilExecutor.class);
+    private String applianceId;
     private String registerAddress;
     private boolean coil;
     private boolean result;
@@ -49,7 +49,7 @@ public class WriteCoilExecutor implements ModbusTransactionExecutor, ApplianceId
 
     @Override
     public void setApplianceId(String applianceId) {
-        this.logger.setApplianceId(applianceId);
+        this.applianceId = applianceId;
     }
 
     @Override
@@ -64,10 +64,10 @@ public class WriteCoilExecutor implements ModbusTransactionExecutor, ApplianceId
         WriteCoilResponse res = (WriteCoilResponse) trans.getResponse();
         if(res != null) {
             result = res.getCoil();
-            logger.debug("Write coil register " + registerAddress + ": coil=" + coil + " result=" + result);
+            logger.debug("{}: Write coil register={} coil={} result={}", applianceId, registerAddress, coil, result);
         }
         else {
-            logger.error("No response received.");
+            logger.error("{}: No response received.", applianceId);
         }
     }
     

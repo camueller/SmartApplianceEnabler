@@ -19,13 +19,14 @@
 package de.avanux.smartapplianceenabler.webservice;
 
 import de.avanux.smartapplianceenabler.HolidaysDownloader;
-import de.avanux.smartapplianceenabler.appliance.*;
+import de.avanux.smartapplianceenabler.appliance.Appliance;
+import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
+import de.avanux.smartapplianceenabler.appliance.Appliances;
 import de.avanux.smartapplianceenabler.configuration.Configuration;
 import de.avanux.smartapplianceenabler.configuration.Connectivity;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.ControlDefaults;
 import de.avanux.smartapplianceenabler.control.StartingCurrentSwitchDefaults;
-import de.avanux.smartapplianceenabler.log.ApplianceLogger;
 import de.avanux.smartapplianceenabler.meter.*;
 import de.avanux.smartapplianceenabler.modbus.ModbusElectricityMeterDefaults;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
@@ -149,16 +150,15 @@ public class SaeController {
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     @ResponseBody
     public ApplianceInfo getApplianceInfo(@RequestParam(value="id") String applianceId) {
-        ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
-        applianceLogger.debug("Received request for device info");
+        logger.debug("{}: Received request for device info", applianceId);
         Device2EM device2EM = ApplianceManager.getInstance().getDevice2EM();
         for(DeviceInfo deviceInfo : device2EM.getDeviceInfo()) {
             if(deviceInfo.getIdentification().getDeviceId().equals(applianceId)) {
-                applianceLogger.debug("Returning device info " + deviceInfo);
+                logger.debug("{}: Returning device info {}", applianceId, deviceInfo);
                 return toApplianceInfo(deviceInfo);
             }
         }
-        applianceLogger.error("No device info found.");
+        logger.error("{}: No device info found.", applianceId);
         return null;
     }
 
@@ -167,8 +167,7 @@ public class SaeController {
     @ResponseBody
     public void setApplianceInfo(@RequestParam(value="id") String applianceId, @RequestParam(value="create")
             Boolean create, @RequestBody ApplianceInfo applianceInfo) {
-        ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
-        applianceLogger.debug("Received request to set ApplianceInfo (create=" + create + "): " + applianceInfo);
+        logger.debug("{}: Received request to set ApplianceInfo (create={}): {}", applianceId, create, applianceInfo);
         DeviceInfo deviceInfo = toDeviceInfo(applianceInfo);
         if(create) {
             Appliance appliance = new Appliance();
@@ -200,16 +199,15 @@ public class SaeController {
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     @ResponseBody
     public Control getControl(@RequestParam(value="id") String applianceId) {
-        ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
-        applianceLogger.debug("Received request for control");
+        logger.debug("{}: Received request for control", applianceId);
         Appliance appliance = getAppliance(applianceId);
         if(appliance != null) {
             Control control = appliance.getControl();
-            applianceLogger.debug("Returning control " + control);
+            logger.debug("{}: Returning control {}", applianceId, control);
             return control;
         }
         else {
-            applianceLogger.error("Appliance not found");
+            logger.error("{}: Appliance not found", applianceId);
         }
         return null;
     }
@@ -218,8 +216,7 @@ public class SaeController {
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     @ResponseBody
     public void setControl(@RequestParam(value="id") String applianceId, @RequestBody Control control) {
-        ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
-        applianceLogger.debug("Received request to set control " + control);
+        logger.debug("{}: Received request to set control {}", applianceId, control);
         ApplianceManager.getInstance().setControl(applianceId, control);
     }
 
@@ -227,8 +224,7 @@ public class SaeController {
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     @ResponseBody
     public void deleteControl(@RequestParam(value="id") String applianceId) {
-        ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
-        applianceLogger.debug("Received request to delete control");
+        logger.debug("{}: Received request to delete control", applianceId);
         ApplianceManager.getInstance().deleteControl(applianceId);
     }
 
@@ -247,16 +243,15 @@ public class SaeController {
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     @ResponseBody
     public Meter getMeter(@RequestParam(value="id") String applianceId) {
-        ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
-        applianceLogger.debug("Received request for meter");
+        logger.debug("{}: Received request for meter", applianceId);
         Appliance appliance = getAppliance(applianceId);
         if(appliance != null) {
             Meter meter = appliance.getMeter();
-            applianceLogger.debug("Returning meter " + meter);
+            logger.debug("{}: Returning meter {}", applianceId, meter);
             return meter;
         }
         else {
-            applianceLogger.error("Appliance not found");
+            logger.error("Appliance not found", applianceId);
         }
         return null;
     }
@@ -265,8 +260,7 @@ public class SaeController {
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     @ResponseBody
     public void setMeter(@RequestParam(value="id") String applianceId, @RequestBody Meter meter) {
-        ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
-        applianceLogger.debug("Received request to set meter " + meter);
+        logger.debug("{}: Received request to set meter {}", applianceId, meter);
         ApplianceManager.getInstance().setMeter(applianceId, meter);
     }
 
@@ -274,8 +268,7 @@ public class SaeController {
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     @ResponseBody
     public void deleteMeter(@RequestParam(value="id") String applianceId) {
-        ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
-        applianceLogger.debug("Received request to delete meter");
+        logger.debug("{}: Received request to delete meter", applianceId);
         ApplianceManager.getInstance().deleteMeter(applianceId);
     }
 
@@ -283,19 +276,18 @@ public class SaeController {
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     @ResponseBody
     public List<Schedule> getSchedules(@RequestParam(value="id") String applianceId) {
-        ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
-        applianceLogger.debug("Received request for schedules");
+        logger.debug("{}: Received request for schedules", applianceId);
         Appliance appliance = getAppliance(applianceId);
         if(appliance != null) {
             List<Schedule> schedules = appliance.getSchedules();
             if(schedules == null) {
                 schedules = new ArrayList<>();
             }
-            applianceLogger.debug("Returning " + schedules.size() + " schedules");
+            logger.debug("{}: Returning {} schedules", applianceId, schedules.size());
             return schedules;
         }
         else {
-            applianceLogger.error("Appliance not found");
+            logger.error("{}: Appliance not found", applianceId);
         }
         return null;
     }
@@ -304,28 +296,27 @@ public class SaeController {
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     @ResponseBody
     public void setSchedules(@RequestParam(value="id") String applianceId, @RequestBody List<Schedule> schedules) {
-        ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
-        applianceLogger.debug("Received request to set " + schedules.size() + " schedules");
+        logger.debug("{}: Received request to set {} schedules", applianceId, schedules.size());
         ApplianceManager.getInstance().setSchedules(applianceId, schedules);
     }
 
     @RequestMapping(value=SCHEDULES_URL, method= RequestMethod.POST, consumes="application/xml")
     @ResponseBody
     public void activateSchedules(@RequestParam(value="id") String applianceId, @RequestBody Schedules schedules) {
-        ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
         List<Schedule> schedulesToSet = schedules.getSchedules();
-        applianceLogger.debug("Received request to activate " + (schedulesToSet != null ? schedulesToSet.size() : "0") + " schedule(s)");
+        logger.debug("{}: Received request to activate {} schedule(s)", applianceId,
+                (schedulesToSet != null ? schedulesToSet.size() : "0"));
         Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
         if(appliance != null) {
             if(appliance.getRunningTimeMonitor() != null) {
                 appliance.getRunningTimeMonitor().setSchedules(schedulesToSet);
             }
             else {
-                applianceLogger.error("Appliance has no RunningTimeMonitor");
+                logger.error("{}: Appliance has no RunningTimeMonitor", applianceId);
             }
         }
         else {
-            applianceLogger.error("Appliance not found");
+            logger.error("{}: Appliance not found", applianceId);
         }
     }
 

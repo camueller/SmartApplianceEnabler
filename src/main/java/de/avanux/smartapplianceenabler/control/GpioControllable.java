@@ -17,21 +17,20 @@
  */
 package de.avanux.smartapplianceenabler.control;
 
+import com.pi4j.io.gpio.*;
+import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
-import com.pi4j.io.gpio.*;
-import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
-import de.avanux.smartapplianceenabler.log.ApplianceLogger;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 @XmlTransient
 @XmlAccessorType(XmlAccessType.FIELD)
 abstract public class GpioControllable implements ApplianceIdConsumer {
-    private transient ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(GpioControllable.class));
+    private transient Logger logger = LoggerFactory.getLogger(GpioControllable.class);
     @XmlAttribute
     private Integer gpio;
     @XmlAttribute
@@ -70,23 +69,22 @@ abstract public class GpioControllable implements ApplianceIdConsumer {
     public void stop() {
         GpioController gpioController = getGpioController();
         if(gpioController != null) {
-            logger.info("Shutting down " + getGpio());
+            logger.info("{}: Shutting down {}", applianceId, getGpio());
             gpioController.setShutdownOptions(true, PinState.LOW, PinPullResistance.OFF);
             gpioController.shutdown();
         }
         else {
-            logGpioAccessDisabled(logger);
+            logGpioAccessDisabled();
         }
     }
 
-    protected void logGpioAccessDisabled(Logger logger) {
-        logger.warn("Configured for " + getGpio()+ ", but GPIO access disabled.");
+    protected void logGpioAccessDisabled() {
+        logger.warn("{}: Configured for {}, but GPIO access disabled.", applianceId, getGpio());
     }
 
     @Override
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
-        this.logger.setApplianceId(applianceId);
     }
 
     protected String getApplianceId() {

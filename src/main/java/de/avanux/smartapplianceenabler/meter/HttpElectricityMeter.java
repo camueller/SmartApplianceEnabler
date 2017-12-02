@@ -19,10 +19,10 @@ package de.avanux.smartapplianceenabler.meter;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.http.HttpTransactionExecutor;
-import de.avanux.smartapplianceenabler.log.ApplianceLogger;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -38,7 +38,7 @@ import java.util.Timer;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HttpElectricityMeter extends HttpTransactionExecutor implements Meter, PollPowerExecutor, ApplianceIdConsumer {
-    private transient ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(HttpElectricityMeter.class));
+    private transient Logger logger = LoggerFactory.getLogger(HttpElectricityMeter.class);
     @XmlAttribute
     private String url;
     @XmlAttribute
@@ -82,27 +82,26 @@ public class HttpElectricityMeter extends HttpTransactionExecutor implements Met
     public void setApplianceId(String applianceId) {
         super.setApplianceId(applianceId);
         this.pollElectricityMeter.setApplianceId(applianceId);
-        this.logger.setApplianceId(applianceId);
     }
 
     @Override
     public int getAveragePower() {
         int power = pollElectricityMeter.getAveragePower();
-        logger.debug("average power = " + power + "W");
+        logger.debug("{}: average power = {}W", getApplianceId(), power);
         return power;
     }
 
     @Override
     public int getMinPower() {
         int power = pollElectricityMeter.getMinPower();
-        logger.debug("min power = " + power + "W");
+        logger.debug("{}: min power = {}W", getApplianceId(), power);
         return power;
     }
 
     @Override
     public int getMaxPower() {
         int power = pollElectricityMeter.getMaxPower();
-        logger.debug("max power = " + power + "W");
+        logger.debug("{}: max power = {}W", getApplianceId(), power);
         return power;
     }
 
@@ -122,21 +121,21 @@ public class HttpElectricityMeter extends HttpTransactionExecutor implements Met
             response = sendHttpRequest(url, data, getContentType(), getUsername(), getPassword());
             if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 String responseString = EntityUtils.toString(response.getEntity());
-                logger.debug("HTTP response: " + responseString);
-                logger.debug("Power value extraction regex: " + powerValueExtractionRegex);
+                logger.debug("{}: HTTP response: {}", getApplianceId(), responseString);
+                logger.debug("{}: Power value extraction regex: {}", getApplianceId(), powerValueExtractionRegex);
                 String valueString = extractPowerValueFromResponse(responseString, powerValueExtractionRegex);
-                logger.debug("Power value extracted from HTTP response: " + valueString);
+                logger.debug("{}: Power value extracted from HTTP response: {}", getApplianceId(), valueString);
                 return Float.parseFloat(valueString) * getFactorToWatt();
             }
         } catch (Exception e) {
-            logger.error("Error reading HTTP response", e);
+            logger.error("{}: Error reading HTTP response", getApplianceId(), e);
         } finally {
             try {
                 if(response != null) {
                     response.close();
                 }
             } catch (IOException e) {
-                logger.error("Error closing HTTP response", e);
+                logger.error("{}: Error closing HTTP response", getApplianceId(), e);
             }
         }
         return 0;

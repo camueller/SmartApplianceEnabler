@@ -17,16 +17,16 @@
  */
 package de.avanux.smartapplianceenabler.appliance;
 
-import java.util.*;
-
+import com.pi4j.io.gpio.GpioController;
+import com.pi4j.io.gpio.GpioFactory;
 import de.avanux.smartapplianceenabler.HolidaysDownloader;
 import de.avanux.smartapplianceenabler.configuration.Configuration;
 import de.avanux.smartapplianceenabler.configuration.Connectivity;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.GpioControllable;
-import de.avanux.smartapplianceenabler.log.ApplianceLogger;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.meter.PulseReceiver;
+import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
 import de.avanux.smartapplianceenabler.schedule.Schedule;
 import de.avanux.smartapplianceenabler.semp.webservice.Device2EM;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
@@ -36,10 +36,7 @@ import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.pi4j.io.gpio.GpioController;
-import com.pi4j.io.gpio.GpioFactory;
-
-import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
+import java.util.*;
 
 
 public class ApplianceManager implements Runnable {
@@ -281,8 +278,7 @@ public class ApplianceManager implements Runnable {
     }
 
     public void addAppliance(Appliance appliance, DeviceInfo deviceInfo) {
-        ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, appliance.getId());
-        applianceLogger.debug("Add appliance");
+        logger.debug("{}: Add appliance", appliance.getId());
         List<DeviceInfo> deviceInfos = device2EM.getDeviceInfo();
         deviceInfos.add(deviceInfo);
         appliances.getAppliances().add(appliance);
@@ -290,8 +286,7 @@ public class ApplianceManager implements Runnable {
     }
 
     public void updateAppliance(DeviceInfo deviceInfo) {
-        ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, deviceInfo.getIdentification().getDeviceId());
-        applianceLogger.debug("Update appliance");
+        logger.debug("{}: Update appliance", deviceInfo.getIdentification().getDeviceId());
         Integer replaceIndex = null;
         for(int i=0;i<device2EM.getDeviceInfo().size();i++) {
             if(deviceInfo.getIdentification().getDeviceId().equals(device2EM.getDeviceInfo().get(i).getIdentification().getDeviceId())) {
@@ -306,8 +301,7 @@ public class ApplianceManager implements Runnable {
     }
 
     public void deleteAppliance(String applianceId) {
-        ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
-        applianceLogger.debug("Delete appliance");
+        logger.debug("{}: Delete appliance", applianceId);
 
         DeviceInfo deviceInfoToBeDeleted = getDeviceInfo(applianceId);
         device2EM.getDeviceInfo().remove(deviceInfoToBeDeleted);
@@ -321,7 +315,7 @@ public class ApplianceManager implements Runnable {
             save(true, true);
         }
         else {
-            applianceLogger.error("Appliance not found");
+            logger.error("{}: Appliance not found", applianceId);
         }
     }
 
@@ -336,67 +330,62 @@ public class ApplianceManager implements Runnable {
     }
 
     public void setControl(String applianceId, Control control) {
-        ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
-        applianceLogger.debug("Set control");
+        logger.debug("{}: Set control", applianceId);
         Appliance appliance = getAppliance(applianceId);
         if(appliance != null) {
             appliance.setControl(control);
             save(false, true);
         }
         else {
-            applianceLogger.error("Appliance not found");
+            logger.error("{}: Appliance not found", applianceId);
         }
     }
 
     public void deleteControl(String applianceId) {
-        ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
-        applianceLogger.debug("Delete control");
+        logger.debug("{}: Delete control", applianceId);
         Appliance appliance = getAppliance(applianceId);
         if(appliance != null) {
             appliance.setControl(null);
             save(false, true);
         }
         else {
-            applianceLogger.error("Appliance not found");
+            logger.error("{}: Appliance not found", applianceId);
         }
     }
 
     public void setMeter(String applianceId, Meter meter) {
-        ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
-        applianceLogger.debug("Set meter");
+        logger.debug("{}: Set meter", applianceId);
         Appliance appliance = getAppliance(applianceId);
         if(appliance != null) {
             appliance.setMeter(meter);
             save(false, true);
         }
         else {
-            applianceLogger.error("Appliance not found");
+            logger.error("{}: Appliance not found", applianceId);
         }
     }
 
     public void deleteMeter(String applianceId) {
-        ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
-        applianceLogger.debug("Delete meter");
+        logger.debug("{}: Delete meter", applianceId);
         Appliance appliance = getAppliance(applianceId);
         if(appliance != null) {
             appliance.setMeter(null);
             save(false, true);
         }
         else {
-            applianceLogger.error("Appliance not found");
+            logger.error("{}: Appliance not found", applianceId);
         }
     }
 
     public void setSchedules(String applianceId, List<Schedule> schedules) {
-        ApplianceLogger applianceLogger = ApplianceLogger.createForAppliance(logger, applianceId);
-        applianceLogger.debug("Set schedules");
+        logger.debug("{}: Set schedules", applianceId);
         Appliance appliance = getAppliance(applianceId);
         if(appliance != null) {
             appliance.setSchedules(schedules);
             save(false, true);
         }
         else {
-            applianceLogger.error("Appliance not found");
+            logger.error("Appliance not found", applianceId);
         }
     }
 

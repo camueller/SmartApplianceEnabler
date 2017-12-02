@@ -17,10 +17,11 @@
  */
 package de.avanux.smartapplianceenabler.appliance;
 
-import de.avanux.smartapplianceenabler.log.ApplianceLogger;
 import de.avanux.smartapplianceenabler.schedule.Schedule;
 import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
-import org.joda.time.*;
+import org.joda.time.Interval;
+import org.joda.time.LocalDateTime;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ import java.util.Set;
  * Refer to http://www.gtkdb.de/index_36_2248.html
  */
 public class RunningTimeMonitor implements ApplianceIdConsumer {
-    private ApplianceLogger logger = new ApplianceLogger(LoggerFactory.getLogger(RunningTimeMonitor.class));
+    private Logger logger = LoggerFactory.getLogger(RunningTimeMonitor.class);
     private String applianceId;
     private List<Schedule> schedules;
     private Set<ActiveIntervalChangedListener> scheduleChangedListeners = new HashSet<>();
@@ -49,18 +50,17 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
     @Override
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
-        this.logger.setApplianceId(applianceId);
     }
 
     public void setSchedules(List<Schedule> schedules) {
         List<Schedule> enabledSchedules = new ArrayList<>();
         for(Schedule schedule : schedules) {
             if(schedule.isEnabled()) {
-                logger.debug("Using enabled time frame " + schedule.toString());
+                logger.debug("{}: Using enabled time frame {}", applianceId, schedule.toString());
                 enabledSchedules.add(schedule);
             }
             else {
-                logger.debug("Ignoring disabled time frame " + schedule.toString());
+                logger.debug("{}: Ignoring disabled time frame {}", applianceId, schedule.toString());
             }
         }
         this.schedules = enabledSchedules;
@@ -94,7 +94,7 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         if(remainingMinRunningTime != null) {
             remainingRunningTime = remainingMinRunningTime;
         }
-        logger.debug("remainingMinRunningTime=" + remainingRunningTime);
+        logger.debug("{}: remainingMinRunningTime={}", applianceId, remainingRunningTime);
         return remainingRunningTime;
     }
 
@@ -108,7 +108,7 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         if(remainingMaxRunningTime != null) {
             remainingRunningTime = remainingMaxRunningTime;
         }
-        logger.debug("remainingMaxRunningTime=" + remainingRunningTime);
+        logger.debug("{}: remainingMaxRunningTime={}", applianceId, remainingRunningTime);
         return remainingRunningTime;
     }
 
@@ -122,7 +122,7 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         if(lastUpdate == null || now.isBefore(lastUpdate) || new Interval(lastUpdate.toDateTime(), now.toDateTime()).toDurationMillis() > 1000) {
             activateTimeframeInterval(now, schedules);
             deactivateExpiredTimeframeInterval(now);
-            logger.debug("activeTimeframeInterval=" + activeTimeframeInterval + " statusChangedAt=" + statusChangedAt + " intervalBegin=" + intervalBegin + " running=" + running);
+            logger.debug("{}: activeTimeframeInterval={} statusChangedAt={} intervalBegin={} running={}", applianceId, activeTimeframeInterval, statusChangedAt, intervalBegin, running);
 
             Interval interval = null;
             if(running) {
@@ -186,22 +186,22 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
             remainingMaxRunningTime = schedule.getMaxRunningTime();
             intervalBegin = null;
             intervalChanged = true;
-            logger.debug("Interval activated: " + timeframeIntervalToBeActivated);
+            logger.debug("{}: Interval activated: ", applianceId, timeframeIntervalToBeActivated);
         }
         else if(timeframeIntervalToBeActivated == null && activeTimeframeInterval != null) {
-            logger.debug("Interval expired: " + activeTimeframeInterval);
+            logger.debug("{}: Interval expired: {}", applianceId, activeTimeframeInterval);
             remainingMinRunningTime = 0;
             remainingMaxRunningTime = 0;
             intervalBegin = null;
             intervalChanged = true;
         }
-        logger.debug("Active interval status: remainingMinRunningTime=" + remainingMinRunningTime + " remainingMaxRunningTime=" + remainingMaxRunningTime);
+        logger.debug("{}: Active interval status: remainingMinRunningTime={} remainingMaxRunningTime={}", applianceId, remainingMinRunningTime, remainingMaxRunningTime);
         TimeframeInterval deactivatedTimeframeInterval = activeTimeframeInterval;
         activeTimeframeInterval = timeframeIntervalToBeActivated;
         if(intervalChanged) {
-            logger.debug("Active interval changed for appliance " + applianceId + " : deactivatedTimeframeInterval=" + deactivatedTimeframeInterval + " activeTimeframeInterval=" + activeTimeframeInterval);
+            logger.debug("{}: Active interval changed. deactivatedTimeframeInterval={} activeTimeframeInterval={}", applianceId, deactivatedTimeframeInterval, activeTimeframeInterval);
             for(ActiveIntervalChangedListener listener : scheduleChangedListeners) {
-                logger.debug("Notifying " + listener.getClass().getSimpleName());
+                logger.debug("{}: Notifying {}", applianceId, listener.getClass().getSimpleName());
                 listener.activeIntervalChanged(applianceId, deactivatedTimeframeInterval, activeTimeframeInterval);
             }
         }
