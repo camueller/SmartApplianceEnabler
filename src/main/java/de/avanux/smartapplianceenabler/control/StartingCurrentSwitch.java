@@ -54,9 +54,10 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
     @XmlAttribute
     private Integer minRunningTime; // seconds
     @XmlElements({
-            @XmlElement(name = "Switch", type = Switch.class),
+            @XmlElement(name = "HttpSwitch", type = HttpSwitch.class),
+            @XmlElement(name = "MockSwitch", type = MockSwitch.class),
             @XmlElement(name = "ModbusSwitch", type = ModbusSwitch.class),
-            @XmlElement(name = "HttpSwitch", type = HttpSwitch.class)
+            @XmlElement(name = "Switch", type = Switch.class)
     })
     private Control control;
     @XmlElement(name = "ForceSchedule")
@@ -130,10 +131,13 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
         logger.debug("{}: Setting appliance switch to {}", applianceId, (switchOn ? "on" : "off"));
         on = switchOn;
         if (switchOn) {
+            // don't switch off appliance - otherwise it cannot be operated
             applianceOn(true);
             switchOnTime = new LocalDateTime();
         }
-        // don't switch off appliance - otherwise it cannot be operated
+        for(ControlStateChangedListener listener : controlStateChangedListeners) {
+            listener.controlStateChanged(switchOn);
+        }
         return on;
     }
 

@@ -23,6 +23,8 @@ import de.avanux.smartapplianceenabler.meter.*;
 import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
 import de.avanux.smartapplianceenabler.schedule.*;
+import org.joda.time.DateTime;
+import org.joda.time.Interval;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
@@ -38,21 +40,22 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     @XmlAttribute
     private String id;
     @XmlElements({
-            @XmlElement(name = "S0ElectricityMeter", type = S0ElectricityMeter.class),
-            @XmlElement(name = "S0ElectricityMeterNetworked", type = S0ElectricityMeterNetworked.class),
-            @XmlElement(name = "ModbusElectricityMeter", type = ModbusElectricityMeter.class),
             @XmlElement(name = "HttpElectricityMeter", type = HttpElectricityMeter.class),
+            @XmlElement(name = "ModbusElectricityMeter", type = ModbusElectricityMeter.class),
+            @XmlElement(name = "S0ElectricityMeter", type = S0ElectricityMeter.class),
+            @XmlElement(name = "S0ElectricityMeterNetworked", type = S0ElectricityMeterNetworked.class)
     })
     private Meter meter;
     // Mapping interfaces in JAXB:
     // https://jaxb.java.net/guide/Mapping_interfaces.html
     // http://stackoverflow.com/questions/25374375/jaxb-wont-unmarshal-my-previously-marshalled-interface-impls
     @XmlElements({
-            @XmlElement(name = "StartingCurrentSwitch", type = StartingCurrentSwitch.class),
             @XmlElement(name = "AlwaysOnSwitch", type = AlwaysOnSwitch.class),
-            @XmlElement(name = "Switch", type = Switch.class),
+            @XmlElement(name = "HttpSwitch", type = HttpSwitch.class),
+            @XmlElement(name = "MockSwitch", type = MockSwitch.class),
             @XmlElement(name = "ModbusSwitch", type = ModbusSwitch.class),
-            @XmlElement(name = "HttpSwitch", type = HttpSwitch.class)
+            @XmlElement(name = "StartingCurrentSwitch", type = StartingCurrentSwitch.class),
+            @XmlElement(name = "Switch", type = Switch.class)
     })
     private Control control;
     @XmlElement(name = "Schedule")
@@ -101,15 +104,19 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     }
 
     public void init(Integer additionRunningTime) {
-        if(schedules != null && schedules.size() > 0) {
-            logger.info("{}: Schedules configured: {}", id, schedules.size());
+        if(control != null) {
             runningTimeMonitor = new RunningTimeMonitor();
             runningTimeMonitor.setApplianceId(id);
+        }
+        if(schedules != null && schedules.size() > 0) {
+            logger.info("{}: Schedules configured: {}", id, schedules.size());
             if(! hasStartingCurrentDetection()) {
                 // in case of starting current detection timeframes are added after
                 // starting current was detected
-                runningTimeMonitor.setSchedules(schedules);
-                logger.debug("{}: Schedules passed to RunningTimeMonitor", id);
+                if(runningTimeMonitor != null) {
+                    runningTimeMonitor.setSchedules(schedules);
+                    logger.debug("{}: Schedules passed to RunningTimeMonitor", id);
+                }
             }
         }
         else {
@@ -124,13 +131,16 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                 Control wrappedControl = ((StartingCurrentSwitch) control).getControl();
                 ((ApplianceIdConsumer) wrappedControl).setApplianceId(id);
                 wrappedControl.addControlStateChangedListener(this);
-                logger.debug("{}: Registered as {} with {}", id, ControlStateChangedListener.class.getSimpleName(), wrappedControl.getClass().getSimpleName());
+                logger.debug("{}: Registered as {} with {}", id, ControlStateChangedListener.class.getSimpleName(),
+                        wrappedControl.getClass().getSimpleName());
                 ((StartingCurrentSwitch) control).addStartingCurrentSwitchListener(this);
-                logger.debug("{}: Registered as {} with {}", id, StartingCurrentSwitchListener.class.getSimpleName(), control.getClass().getSimpleName());
+                logger.debug("{}: Registered as {} with {}", id, StartingCurrentSwitchListener.class.getSimpleName(),
+                        control.getClass().getSimpleName());
             }
             else {
                 control.addControlStateChangedListener(this);
-                logger.debug("{}: Registered as {} with {}", id, ControlStateChangedListener.class.getSimpleName(), control.getClass().getSimpleName());
+                logger.debug("{}: Registered as {} with {}", id, ControlStateChangedListener.class.getSimpleName(),
+                        control.getClass().getSimpleName());
             }
         }
         Meter meter = getMeter();
@@ -162,6 +172,10 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     public void start(Timer timer, GpioController gpioController,
                       Map<String, PulseReceiver> pulseReceiverIdWithPulseReceiver,
                       Map<String, ModbusTcp> modbusIdWithModbusTcp) {
+
+        if(runningTimeMonitor != null) {
+            runningTimeMonitor.setTimer(timer);
+        }
 
         for(GpioControllable gpioControllable : getGpioControllables()) {
             logger.info("{}: Starting {}", id, gpioControllable.getClass().getSimpleName());
@@ -254,6 +268,23 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             );
     }
 
+    public void setApplianceState(boolean switchOn, String logMessage) {
+        if(control != null) {
+            boolean stateChanged = false;
+            // only change state if requested state differs from actual state
+            if(control.isOn() ^ switchOn) {
+                control.on(switchOn);
+                stateChanged = true;
+            }
+            if(stateChanged) {
+                logger.debug(logMessage);
+            }
+        }
+        else {
+            logger.warn("{}: Appliance configuration does not contain control.", id);
+        }
+    }
+
     private Set<ModbusSlave> getModbusSlaves() {
         Set<ModbusSlave> slaves = new HashSet<ModbusSlave>();
         if(meter != null && meter instanceof  ModbusElectricityMeter) {
@@ -313,6 +344,98 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             }
         }
         return null;
+    }
+
+    public List<RuntimeRequest> getRuntimeRequests(LocalDateTime now) {
+        List<RuntimeRequest> runtimeRequests = new ArrayList<>();
+        if(runningTimeMonitor != null) {
+            runtimeRequests = getRuntimeRequests(now,
+                    runningTimeMonitor.getSchedules(),
+                    runningTimeMonitor.getActiveTimeframeInterval(now),
+                    runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(now),
+                    runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(now));
+        }
+        return runtimeRequests;
+    }
+
+    protected List<RuntimeRequest> getRuntimeRequests(LocalDateTime now, List<Schedule> schedules,
+                                                      TimeframeInterval activeTimeframeInterval,
+                                                      int remainingMinRunningTime, int remainingMaxRunningTime) {
+        List<RuntimeRequest> runtimeRequests = new ArrayList<>();
+        if(schedules != null && schedules.size() > 0) {
+            logger.debug("Active schedules: " + schedules.size());
+            addRuntimeRequest(now, activeTimeframeInterval, runtimeRequests, remainingMinRunningTime, remainingMaxRunningTime);
+
+            Interval considerationInterval = new Interval(now.toDateTime(), now.plusDays(2).toDateTime());
+            List<TimeframeInterval> timeFrameIntervals = Schedule.findTimeframeIntervals(now, considerationInterval, schedules);
+            for(TimeframeInterval timeframeIntervalOfSchedule : timeFrameIntervals) {
+                Schedule schedule = timeframeIntervalOfSchedule.getTimeframe().getSchedule();
+                addRuntimeRequest(runtimeRequests, timeframeIntervalOfSchedule.getInterval(), schedule.getMinRunningTime(),
+                        schedule.getMaxRunningTime(), now);
+            }
+        }
+        else if(activeTimeframeInterval != null) {
+            logger.debug("Active timeframe interval found");
+            addRuntimeRequest(now, activeTimeframeInterval, runtimeRequests, remainingMinRunningTime, remainingMaxRunningTime);
+        }
+        else {
+            logger.debug("No timeframes found");
+        }
+        return runtimeRequests;
+    }
+
+    private void addRuntimeRequest(LocalDateTime now, TimeframeInterval timeframeInterval, List<RuntimeRequest> runtimeRequests,
+                                   int remainingMinRunningTime, int remainingMaxRunningTime) {
+        if(timeframeInterval != null) {
+            addRuntimeRequest(runtimeRequests, timeframeInterval.getInterval(),
+                    remainingMinRunningTime, remainingMaxRunningTime, now);
+            if(remainingMaxRunningTime < 0) {
+                setApplianceState(false, "Switching off due to maxRunningTime < 0");
+            }
+        }
+    }
+
+    private void addRuntimeRequest(List<RuntimeRequest> runtimeRequests, Interval interval, long remainingMinRunningTime,
+                                   long remainingMaxRunningTime, LocalDateTime now) {
+        runtimeRequests.add(createRuntimeRequest(interval, remainingMinRunningTime, remainingMaxRunningTime, now));
+    }
+
+    protected RuntimeRequest createRuntimeRequest(Interval interval, long minRunningTime,
+                                                  long maxRunningTime, LocalDateTime now) {
+        Long earliestStart = 0l;
+        DateTime start = interval.getStart();
+        DateTime end = interval.getEnd();
+        if(start.isAfter(now.toDateTime())) {
+            earliestStart = Double.valueOf(new Interval(now.toDateTime(), start).toDurationMillis() / 1000).longValue();
+        }
+        LocalDateTime nowBeforeEnd = new LocalDateTime(now);
+        if(now.toDateTime().isAfter(end)) {
+            nowBeforeEnd = now.minusHours(24);
+        }
+        Long latestEnd = Double.valueOf(new Interval(nowBeforeEnd.toDateTime(), end).toDurationMillis() / 1000).longValue();
+        return createRuntimeRequest(earliestStart, latestEnd, minRunningTime, maxRunningTime);
+    }
+
+    protected RuntimeRequest createRuntimeRequest(Long earliestStart, Long latestEnd, long minRunningTime,
+                                                  long maxRunningTime) {
+        RuntimeRequest runtimeRequest = new RuntimeRequest();
+        runtimeRequest.setEarliestStart(earliestStart);
+        runtimeRequest.setLatestEnd(latestEnd);
+        if(minRunningTime == maxRunningTime) {
+            /** WORKAROUND:
+             * For unknown reason the SunnyPortal displays the scheduled times only
+             * if maxRunningTime AND minRunningTime are returned and are NOT EQUAL
+             * Therefore we ensure that they are not equal by reducing minRunningTime by 1 second
+             */
+            runtimeRequest.setMinRunningTime(minRunningTime >= 1 ? minRunningTime - 1 : 0);
+        }
+        else {
+            // according to spec minRunningTime only has to be returned if different from maxRunningTime
+            runtimeRequest.setMinRunningTime(minRunningTime >= 0 ? minRunningTime : 0);
+        }
+        runtimeRequest.setMaxRunningTime(maxRunningTime >= 0 ? maxRunningTime : 0);
+        logger.debug("RuntimeRequest created: " + runtimeRequest);
+        return runtimeRequest;
     }
 
     @Override
