@@ -38,7 +38,7 @@ import java.util.Collections;
 import java.util.List;
 
 @RestController
-public class SempController implements ActiveIntervalChangedListener {
+public class SempController {
 
     private static final String BASE_URL = "/semp";
     private static final String CROSS_ORIGIN_URL = "http://localhost:4200";
@@ -63,7 +63,6 @@ public class SempController implements ActiveIntervalChangedListener {
         List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
         for (Appliance appliance : appliances) {
             if(!timeFrameChangedListenerRegistered && appliance.getRunningTimeMonitor() != null) {
-                appliance.getRunningTimeMonitor().addTimeFrameChangedListener(this);
                 timeFrameChangedListenerRegistered = true;
             }
             DeviceStatus deviceStatus = createDeviceStatus(appliance);
@@ -188,15 +187,6 @@ public class SempController implements ActiveIntervalChangedListener {
             else {
                 logger.warn("{}: No appliance configured for device id", deviceControl.getDeviceId());
             }
-        }
-    }
-
-    @Override
-    public void activeIntervalChanged(String applianceId, TimeframeInterval deactivatedInterval,
-                                      TimeframeInterval activatedInterval) {
-        if(activatedInterval == null) {
-            Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
-            appliance.setApplianceState(false, "Switching off due to end of time frame");
         }
     }
 

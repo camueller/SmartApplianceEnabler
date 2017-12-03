@@ -486,6 +486,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     public void activeIntervalChanged(String applianceId, TimeframeInterval deactivatedInterval,
                                       TimeframeInterval activatedInterval) {
         if(activatedInterval == null) {
+            setApplianceState(false, "Switching off due to end of time frame");
             acceptControlRecommendations = true;
             logger.debug("{}: Set acceptControlRecommendations={}", id, acceptControlRecommendations);
         }
