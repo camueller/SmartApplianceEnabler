@@ -17,6 +17,7 @@
  */
 package de.avanux.smartapplianceenabler.control;
 
+import de.avanux.smartapplianceenabler.appliance.ActiveIntervalChangedListener;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.schedule.DayTimeframeCondition;
@@ -136,6 +137,8 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
             switchOnTime = new LocalDateTime();
         }
         for(ControlStateChangedListener listener : controlStateChangedListeners) {
+            logger.debug("{}: Notifying {} {}", applianceId, ControlStateChangedListener.class.getSimpleName(),
+                    listener.getClass().getSimpleName());
             listener.controlStateChanged(switchOn);
         }
         return on;
@@ -200,6 +203,8 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
                             applianceOn(false);
                             switchOnTime = null;
                             for (StartingCurrentSwitchListener listener : startingCurrentSwitchListeners) {
+                                logger.debug("{}: Notifying {} {}", applianceId, StartingCurrentSwitchListener.class.getSimpleName(),
+                                        listener.getClass().getSimpleName());
                                 listener.startingCurrentDetected();
                             }
                         } else {
@@ -236,6 +241,8 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
                         if (isMinRunningTimeExceeded() && averagePower < getPowerThreshold() && lastAveragePowerOfPowerOffDetection < getPowerThreshold()) {
                             logger.debug("{}: Finished current detected.", applianceId);
                             for (StartingCurrentSwitchListener listener : startingCurrentSwitchListeners) {
+                                logger.debug("{}: Notifying {} {}", applianceId, StartingCurrentSwitchListener.class.getSimpleName(),
+                                        listener.getClass().getSimpleName());
                                 listener.finishedCurrentDetected();
                             }
                             on(false);
