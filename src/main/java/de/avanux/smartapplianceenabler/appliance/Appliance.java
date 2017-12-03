@@ -35,7 +35,8 @@ import java.util.*;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Appliance implements ControlStateChangedListener, StartingCurrentSwitchListener {
+public class Appliance implements ControlStateChangedListener, StartingCurrentSwitchListener,
+        ActiveIntervalChangedListener {
     private transient Logger logger = LoggerFactory.getLogger(Appliance.class);
     @XmlAttribute
     private String id;
@@ -61,6 +62,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     @XmlElement(name = "Schedule")
     private List<Schedule> schedules;
     private transient RunningTimeMonitor runningTimeMonitor;
+    private transient boolean acceptControlRecommendations = true;
 
     public void setId(String id) {
         this.id = id;
@@ -94,6 +96,15 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         this.schedules = schedules;
     }
 
+    public boolean isAcceptControlRecommendations() {
+        return acceptControlRecommendations;
+    }
+
+    public void setAcceptControlRecommendations(boolean acceptControlRecommendations) {
+        this.acceptControlRecommendations = acceptControlRecommendations;
+        logger.debug("{} Set acceptControlRecommendations={}", id, acceptControlRecommendations);
+    }
+
     public RunningTimeMonitor getRunningTimeMonitor() {
         return runningTimeMonitor;
     }
@@ -107,6 +118,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         if(control != null) {
             runningTimeMonitor = new RunningTimeMonitor();
             runningTimeMonitor.setApplianceId(id);
+            runningTimeMonitor.addTimeFrameChangedListener(this);
         }
         if(schedules != null && schedules.size() > 0) {
             logger.info("{}: Schedules configured: {}", id, schedules.size());
@@ -464,9 +476,18 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
 
     @Override
     public void finishedCurrentDetected() {
-        logger.debug("{}: Deactivating timeframe interval until starting current is detected again", id);
         if(runningTimeMonitor != null) {
+            logger.debug("{}: Deactivating timeframe interval until starting current is detected again", id);
             runningTimeMonitor.activateTimeframeInterval(new LocalDateTime(), (TimeframeInterval) null);
+        }
+    }
+
+    @Override
+    public void activeIntervalChanged(String applianceId, TimeframeInterval deactivatedInterval,
+                                      TimeframeInterval activatedInterval) {
+        if(activatedInterval == null) {
+            acceptControlRecommendations = true;
+            logger.debug("{}: Set acceptControlRecommendations={}", id, acceptControlRecommendations);
         }
     }
 }
