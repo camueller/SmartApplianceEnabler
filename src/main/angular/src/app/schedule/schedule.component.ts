@@ -16,7 +16,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {AfterViewChecked, AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {AfterViewChecked, AfterViewInit, Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {Schedule} from './schedule';
 import {FormArray, FormBuilder, FormControlName, FormGroup, Validators} from '@angular/forms';
@@ -28,6 +28,7 @@ import {ScheduleErrorMessages} from './schedule-error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {ScheduleFactory} from './schedule-factory';
 import {ScheduleService} from './schedule-service';
+import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 
 declare const $: any;
 
@@ -109,7 +110,7 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
     this.schedulesForm = this.fb.group({schedules: new FormArray([])});
     this.schedulesForm.statusChanges.subscribe(() =>
       this.errors = ErrorMessageHandler.applyErrorMessages4ReactiveForm(this.schedulesForm,
-        this.errorMessages, 'schedules.#.'));
+        this.errorMessages, true, 'schedules.#.'));
   }
 
   loadSchedules() {
@@ -158,15 +159,16 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
         this.hasDayTimeframe(schedule) ? schedule.dayTimeframe.daysOfWeekValues : []),
       startTime: this.fb.control(
         this.hasDayTimeframe(schedule) ? schedule.dayTimeframe.startTime : null,
-        Validators.required),
+        [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]),
       endTime: this.fb.control(
         this.hasDayTimeframe(schedule) ? schedule.dayTimeframe.endTime : null,
-        Validators.required),
+        [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]),
       minRunningTime: this.fb.control(
         this.hasDayTimeframe(schedule) ? schedule.minRunningTimeHHMM : null,
-        Validators.required),
+        [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]),
       maxRunningTime: this.fb.control(
-        this.hasDayTimeframe(schedule) ? schedule.maxRunningTimeHHMM : null),
+        this.hasDayTimeframe(schedule) ? schedule.maxRunningTimeHHMM : null,
+        Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)),
     });
   }
 
@@ -181,23 +183,29 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
         Validators.required),
       startTime: this.fb.control(
         this.hasConsecutiveDaysTimeframe(schedule) ? schedule.consecutiveDaysTimeframe.startTime : null,
-        Validators.required),
+        [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]),
       endDayOfWeek: this.fb.control(
         this.hasConsecutiveDaysTimeframe(schedule) ? schedule.consecutiveDaysTimeframe.endDayOfWeek : null,
         Validators.required),
       endTime: this.fb.control(
         this.hasConsecutiveDaysTimeframe(schedule) ? schedule.consecutiveDaysTimeframe.endTime : null,
-        Validators.required),
+        [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]),
       minRunningTime: this.fb.control(
         this.hasConsecutiveDaysTimeframe(schedule) ? schedule.minRunningTimeHHMM : null,
-        Validators.required),
+        [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]),
       maxRunningTime: this.fb.control(
-        this.hasConsecutiveDaysTimeframe(schedule) ? schedule.maxRunningTimeHHMM : null)
+        this.hasConsecutiveDaysTimeframe(schedule) ? schedule.maxRunningTimeHHMM : null,
+        Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H))
     });
   }
 
   hasConsecutiveDaysTimeframe(schedule: Schedule): boolean {
     return schedule != null && schedule.consecutiveDaysTimeframe != null;
+  }
+
+  getIndexedErrorMessage(key: string, index: number): string {
+    const indexedKey = key + '.' + index.toString();
+    return this.errors[indexedKey];
   }
 
   addSchedule() {
@@ -210,6 +218,7 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
     console.log('Remove ' + index);
     const schedulesControl = <FormArray>this.schedulesForm.controls['schedules'];
     schedulesControl.removeAt(index);
+    this.schedulesForm.markAsDirty();
   }
 
   submitForm() {

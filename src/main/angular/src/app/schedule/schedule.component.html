@@ -67,22 +67,26 @@
             <div class="field">
               <label>{{'ScheduleComponent.dayTimeframe_startTime' | translate}}</label>
               <input type="text" class="clockpicker" formControlName="startTime">
-              <div *ngIf="errors.dayTimeframe_startTime" class="ui negative message">{{errors.dayTimeframe_startTime}}</div>
+              <div *ngIf="getIndexedErrorMessage('dayTimeframe_startTime', i)" class="ui negative message">
+                {{getIndexedErrorMessage('dayTimeframe_startTime', i)}}</div>
             </div>
             <div class="field">
               <label>{{'ScheduleComponent.dayTimeframe_endTime' | translate}}</label>
               <input type="text" class="clockpicker" formControlName="endTime">
-              <div *ngIf="errors.dayTimeframe_endTime" class="ui negative message">{{errors.dayTimeframe_endTime}}</div>
+              <div *ngIf="getIndexedErrorMessage('dayTimeframe_endTime', i)" class="ui negative message">
+                {{getIndexedErrorMessage('dayTimeframe_endTime', i)}}</div>
             </div>
             <div class="field">
               <label>{{'ScheduleComponent.dayTimeframe_minRunningTime' | translate}}</label>
               <input type="text" class="clockpicker" formControlName="minRunningTime">
-              <div *ngIf="errors.dayTimeframe_minRunningTime" class="ui negative message">
-                {{errors.dayTimeframe_minRunningTime}}</div>
+              <div *ngIf="getIndexedErrorMessage('dayTimeframe_minRunningTime', i)" class="ui negative message">
+                {{getIndexedErrorMessage('dayTimeframe_minRunningTime', i)}}</div>
             </div>
             <div class="field">
               <label>{{'ScheduleComponent.dayTimeframe_maxRunningTime' | translate}}</label>
               <input type="text" class="clockpicker" formControlName="maxRunningTime">
+              <div *ngIf="getIndexedErrorMessage('dayTimeframe_maxRunningTime', i)" class="ui negative message">
+                {{getIndexedErrorMessage('dayTimeframe_maxRunningTime', i)}}</div>
             </div>
           </div>
           <div class="ui fields" [class.disabled]="!schedule.controls.enabled.value"
@@ -112,8 +116,8 @@
                 <div class="field">
                   <label>{{'ScheduleComponent.consecutiveDaysTimeframe_startTime' | translate}}</label>
                   <input type="text" class="clockpicker" formControlName="startTime">
-                  <div *ngIf="errors.consecutiveDaysTimeframe_startTime" class="ui negative message">
-                    {{errors.consecutiveDaysTimeframe_startTime}}</div>
+                  <div *ngIf="getIndexedErrorMessage('consecutiveDaysTimeframe_startTime', i)" class="ui negative message">
+                    {{getIndexedErrorMessage('consecutiveDaysTimeframe_startTime', i)}}</div>
                 </div>
               </div>
             </div>
@@ -141,20 +145,22 @@
                 <div class="field">
                   <label>{{'ScheduleComponent.consecutiveDaysTimeframe_endTime' | translate}}</label>
                   <input type="text" class="clockpicker" formControlName="endTime">
-                  <div *ngIf="errors.consecutiveDaysTimeframe_endTime" class="ui negative message">
-                    {{errors.consecutiveDaysTimeframe_endTime}}</div>
+                  <div *ngIf="getIndexedErrorMessage('consecutiveDaysTimeframe_endTime', i)" class="ui negative message">
+                    {{getIndexedErrorMessage('consecutiveDaysTimeframe_endTime', i)}}</div>
                 </div>
               </div>
             </div>
             <div class="field">
               <label>{{'ScheduleComponent.consecutiveDaysTimeframe_minRunningTime' | translate}}</label>
               <input type="text" class="clockpicker" formControlName="minRunningTime">
-              <div *ngIf="errors.consecutiveDaysTimeframe_minRunningTime" class="ui negative message">
-                {{errors.consecutiveDaysTimeframe_minRunningTime}}</div>
+              <div *ngIf="getIndexedErrorMessage('consecutiveDaysTimeframe_minRunningTime', i)" class="ui negative message">
+                {{getIndexedErrorMessage('consecutiveDaysTimeframe_minRunningTime', i)}}</div>
             </div>
             <div class="field">
               <label>{{'ScheduleComponent.consecutiveDaysTimeframe_maxRunningTime' | translate}}</label>
               <input type="text" class="clockpicker" formControlName="maxRunningTime">
+              <div *ngIf="getIndexedErrorMessage('consecutiveDaysTimeframe_maxRunningTime', i)" class="ui negative message">
+                {{getIndexedErrorMessage('consecutiveDaysTimeframe_maxRunningTime', i)}}</div>
             </div>
           </div>
         </div>
