@@ -27,6 +27,7 @@ import {ApplianceFactory} from './appliance-factory';
 import {Subject} from 'rxjs/Subject';
 import {ApplianceHeader} from './appliance-header';
 import {SaeService} from '../shared/sae-service';
+import {ApplianceStatus} from './appliance-status';
 
 @Injectable()
 export class ApplianceService extends SaeService {
@@ -42,10 +43,17 @@ export class ApplianceService extends SaeService {
       .catch(this.errorHandler);
   }
 
-  getApplianceInfo(id: string): Observable<Appliance> {
+  getApplianceStatus(): Observable<Array<ApplianceStatus>> {
+    return this.http.get(`${this.api}/status`)
+      .map(response => response.json())
+      .map(applianceStatuses => applianceStatuses.map(applianceStatus => ApplianceFactory.toApplianceStatusFromJSON(applianceStatus)))
+      .catch(this.errorHandler);
+  }
+
+  getAppliance(id: string): Observable<Appliance> {
     return this.http.get(`${this.api}/appliance?id=${id}`)
       .map(response => response.json())
-      .map(applianceInfo => ApplianceFactory.toApplianceInfoFromJSON(applianceInfo))
+      .map(applianceInfo => ApplianceFactory.toApplianceFromJSON(applianceInfo))
       .catch(this.errorHandler);
   }
 
@@ -69,6 +77,43 @@ export class ApplianceService extends SaeService {
     console.log('Delete applianceHeader using ' + url);
     const observer = new Subject();
     this.http.delete(url, {headers: this.headers})
+      .catch(this.errorHandler)
+      .subscribe(res => {
+        console.log(res);
+        observer.next();
+      });
+    return observer;
+  }
+
+  suggestRuntime(id: string): Observable<number> {
+    const url = `${this.api}/runtime?id=${id}`;
+    console.log('Get suggested runtime using ' + url);
+    return this.http.get(url, {headers: this.headers})
+      .map(response => response.json())
+      .catch(this.errorHandler);
+  }
+
+  setRuntime(id: string, runtime: number): Observable<any> {
+    const url = `${this.api}/runtime?id=${id}&runtime=${runtime}`;
+    console.log('Set runtime using ' + url);
+    const observer = new Subject();
+    this.http.put(url, {headers: this.headers})
+      .catch(this.errorHandler)
+      .subscribe(res => {
+        console.log(res);
+        observer.next();
+      });
+    return observer;
+  }
+
+  toggleAppliance(id: string, turnOn: boolean): Observable<any> {
+    const url = `${this.sempApi}`;
+    const content = '<EM2Device xmlns="http://www.sma.de/communication/schema/SEMP/v1"><DeviceControl>' +
+      '<DeviceId>' + id + '</DeviceId><On>' + turnOn + '</On></DeviceControl></EM2Device>';
+    console.log('Toggle appliance using ' + url);
+    console.log('Content: ' + content);
+    const observer = new Subject();
+    this.http.post(url, content, {headers: this.sempHeaders})
       .catch(this.errorHandler)
       .subscribe(res => {
         console.log(res);

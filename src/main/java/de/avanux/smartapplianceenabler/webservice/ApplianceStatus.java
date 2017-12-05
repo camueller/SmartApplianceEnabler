@@ -24,6 +24,7 @@ public class ApplianceStatus {
     private String name;
     private String type;
     private String vendor;
+    private String statusChangedAt;
     private Integer remainingMinRunningTime;
     private Integer remainingMaxRunningTime;
     private boolean planningRequested;
@@ -62,6 +63,14 @@ public class ApplianceStatus {
 
     public void setVendor(String vendor) {
         this.vendor = vendor;
+    }
+
+    public String getStatusChangedAt() {
+        return statusChangedAt;
+    }
+
+    public void setStatusChangedAt(String statusChangedAt) {
+        this.statusChangedAt = statusChangedAt;
     }
 
     public Integer getRemainingMinRunningTime() {

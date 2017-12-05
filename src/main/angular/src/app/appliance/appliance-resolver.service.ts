@@ -29,7 +29,7 @@ export class ApplianceResolver implements Resolve<Appliance> {
   }
 
   resolve(route: ActivatedRouteSnapshot): Observable<Appliance> {
-    return this.applianceService.getApplianceInfo(route.params['id']);
+    return this.applianceService.getAppliance(route.params['id']);
   }
 
 }

@@ -17,6 +17,7 @@
  */
 package de.avanux.smartapplianceenabler.schedule;
 
+import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormatter;
@@ -166,6 +167,26 @@ public class Schedule {
             }
         }
         return matchingTimeframeIntervals;
+    }
+
+    /**
+     * Returns timeframe intervals sorted by start time.
+     * @param now
+     * @param schedules
+     * @return a (possibly empty) list of timeframes sorted by start time
+     */
+    public static List<TimeframeInterval> getSortedTimeframeIntervals(LocalDateTime now, List<Schedule> schedules) {
+        Map<DateTime, TimeframeInterval> sortedTimeframeIntervals = new TreeMap<>();
+        if(schedules != null) {
+            for(Schedule schedule : schedules) {
+                Timeframe timeframe = schedule.getTimeframe();
+                List<TimeframeInterval> timeframeIntervals = timeframe.getIntervals(now);
+                for (TimeframeInterval timeframeInterval : timeframeIntervals) {
+                    sortedTimeframeIntervals.put(timeframeInterval.getInterval().getStart(), timeframeInterval);
+                }
+            }
+        }
+        return new ArrayList<>(sortedTimeframeIntervals.values());
     }
 
     @Override
