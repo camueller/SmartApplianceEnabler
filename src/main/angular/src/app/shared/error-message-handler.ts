@@ -19,7 +19,7 @@ export class ErrorMessageHandler {
     return errors;
   }
 
-  public static applyErrorMessages4ReactiveForm(form: FormGroup, errorMessages: ErrorMessages,
+  public static applyErrorMessages4ReactiveForm(form: FormGroup, errorMessages: ErrorMessages, indexed: boolean,
                                                 controlPrefix = ''): { [key: string]: string } {
     const errors: { [key: string]: string } = {};
     if ((<FormArray> form.controls.schedules).controls.length > 0) {
@@ -32,7 +32,11 @@ export class ErrorMessageHandler {
           const control = form.get(key);
           if (control && control.dirty && control.invalid
             && control.errors[ValidatorType[message.forValidator]] && !errors[message.forControl]) {
-            errors[message.forControl] = message.text;
+            if (indexed) {
+              errors[message.forControl + '.' + i.toString()] = message.text;
+            } else {
+              errors[message.forControl] = message.text;
+            }
           }
         }
       }

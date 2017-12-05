@@ -1,0 +1,71 @@
+.traffic-light {
+  height: 113px;
+  width: 40px;
+  float: left;
+  background-color: #333;
+  border-radius: 8px;
+  margin: 6px;
+  padding: 2px;
+}
+
+.bulb {
+  height: 30px;
+  width: 30px;
+  background-color: #111;
+  border-radius: 50%;
+  margin: 5px auto;
+  transition: background 500ms;
+}
+
+.stopLight {
+  background-color: red;
+}
+
+.slowLight {
+  background-color: yellow;
+}
+
+.goLight {
+  background-color: #14ff08;
+}
+
+.appliances {
+}
+
+.appliance {
+  height: 125px;
+  width: 350px;
+  margin: 5px;
+  border-radius: 8px;
+  border: 1px solid black;
+  font-family: "Lato", "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+
+.appliance-type {
+  font-weight: bold;
+  color: rgba(0,0,0,.6)
+}
+
+.appliance-name {
+  font-weight: bold;
+  font-size: 1.5em;
+}
+
+.appliance-status {
+  line-height: 1.4em;
+}
+
+.appliance-status-label {
+  color: rgba(0,0,0,.6);
+  display: inline-block;
+}
+
+.appliance-status-value {
+  line-height: 1.4em;
+  display: inline-block;
+}
+
+.appliance-switch-on {
+  margin-top: 50px;
+  display: inline-block;
+}

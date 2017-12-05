@@ -5,10 +5,13 @@ import {Subject} from 'rxjs/Subject';
 export class SaeService {
   // private api = 'http://localhost:8080/sae';
   protected api = window.location.protocol + '//' + window.location.hostname + ':8080/sae';
+  protected sempApi = window.location.protocol + '//' + window.location.hostname + ':8080/semp';
   protected headers: Headers = new Headers();
+  protected sempHeaders: Headers = new Headers();
 
   constructor(protected http: Http) {
     this.headers.append('Content-Type', 'application/json');
+    this.sempHeaders.append('Content-Type', 'application/xml');
   }
 
   protected errorHandler(error: Error | any): Observable<any> {

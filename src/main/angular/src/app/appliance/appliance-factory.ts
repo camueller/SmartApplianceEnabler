@@ -18,6 +18,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 import {Appliance} from './appliance';
 import {ApplianceHeader} from './appliance-header';
+import {ApplianceStatus} from './appliance-status';
 
 export class ApplianceFactory {
 
@@ -37,7 +38,25 @@ export class ApplianceFactory {
     return applianceHeader;
   }
 
-  static toApplianceInfoFromJSON(applianceInfo: any): Appliance {
+  static toApplianceStatusFromJSON(rawApplianceHeader: any): ApplianceStatus {
+    console.log('ApplianceStatus (JSON)' + JSON.stringify(rawApplianceHeader));
+    const applianceStatus = new ApplianceStatus();
+    applianceStatus.id = rawApplianceHeader.id;
+    applianceStatus.name = rawApplianceHeader.name;
+    applianceStatus.vendor = rawApplianceHeader.vendor;
+    applianceStatus.type = rawApplianceHeader.type;
+    applianceStatus.statusChangedAt = rawApplianceHeader.statusChangedAt;
+    applianceStatus.remainingMinRunningTime = rawApplianceHeader.remainingMinRunningTime;
+    applianceStatus.remainingMaxRunningTime = rawApplianceHeader.remainingMaxRunningTime;
+    applianceStatus.planningRequested = rawApplianceHeader.planningRequested;
+    applianceStatus.earliestStartPassed = rawApplianceHeader.earliestStartPassed;
+    applianceStatus.on = rawApplianceHeader.on;
+    applianceStatus.controllable = rawApplianceHeader.controllable;
+    console.log('ApplianceStatus (TYPE)' + JSON.stringify(applianceStatus));
+    return applianceStatus;
+  }
+
+  static toApplianceFromJSON(applianceInfo: any): Appliance {
     console.log('Appliance (JSON)' + JSON.stringify(applianceInfo));
     const appliance = new Appliance();
     appliance.id = applianceInfo.id;

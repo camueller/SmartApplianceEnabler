@@ -19,9 +19,7 @@
 package de.avanux.smartapplianceenabler.webservice;
 
 import de.avanux.smartapplianceenabler.HolidaysDownloader;
-import de.avanux.smartapplianceenabler.appliance.Appliance;
-import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
-import de.avanux.smartapplianceenabler.appliance.Appliances;
+import de.avanux.smartapplianceenabler.appliance.*;
 import de.avanux.smartapplianceenabler.configuration.Configuration;
 import de.avanux.smartapplianceenabler.configuration.Connectivity;
 import de.avanux.smartapplianceenabler.control.Control;
@@ -31,7 +29,11 @@ import de.avanux.smartapplianceenabler.meter.*;
 import de.avanux.smartapplianceenabler.modbus.ModbusElectricityMeterDefaults;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
 import de.avanux.smartapplianceenabler.schedule.Schedule;
+import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
 import de.avanux.smartapplianceenabler.semp.webservice.*;
+import org.joda.time.LocalDateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +41,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 public class SaeController {
@@ -52,12 +55,16 @@ public class SaeController {
     public static final String SCHEDULES_URL = BASE_URL + "/schedules";
     private static final String SETTINGS_URL = BASE_URL + "/settings";
     private static final String SETTINGSDEFAULTS_URL = BASE_URL + "/settingsdefaults";
+    private static final String STATUS_URL = BASE_URL + "/status";
+    private static final String RUNTIME_URL = BASE_URL + "/runtime";
     // only required for development if running via "ng serve"
     private static final String CROSS_ORIGIN_URL = "http://localhost:4200";
     private Logger logger = LoggerFactory.getLogger(SaeController.class);
+    private DateTimeFormatter dateTimeFormatter;
 
     public SaeController() {
         logger.info("SAE controller created.");
+        dateTimeFormatter = DateTimeFormat.mediumDateTime().withLocale(Locale.GERMAN);
     }
 
     private Appliance getAppliance(String applianceId) {
@@ -320,6 +327,43 @@ public class SaeController {
         }
     }
 
+    @RequestMapping(value=RUNTIME_URL, method=RequestMethod.GET, consumes="application/json")
+    @CrossOrigin(origins = CROSS_ORIGIN_URL)
+    @ResponseBody
+    public Integer suggestRuntime(@RequestParam(value="id") String applianceId) {
+        logger.debug("{}: Received request to suggest runtime", applianceId);
+        Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
+        if(appliance != null) {
+            LocalDateTime now = new LocalDateTime();
+            List<TimeframeInterval> sortedTimeframeIntervals = Schedule.getSortedTimeframeIntervals(now, appliance.getSchedules());
+            if(sortedTimeframeIntervals.size() > 0) {
+                return sortedTimeframeIntervals.get(0).getTimeframe().getSchedule().getMinRunningTime();
+            }
+        }
+        else {
+            logger.error("{}: Appliance not found", applianceId);
+        }
+        return 0;
+    }
+
+    @RequestMapping(value=RUNTIME_URL, method=RequestMethod.PUT, consumes="application/json")
+    @CrossOrigin(origins = CROSS_ORIGIN_URL)
+    @ResponseBody
+    public void setRuntime(@RequestParam(value="id") String applianceId, @RequestParam(value="runtime") Integer runtime) {
+        logger.debug("{}: Received request to set runtime to {}s", applianceId, runtime);
+        Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
+        if(appliance != null) {
+            RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
+            if(runningTimeMonitor != null) {
+                runningTimeMonitor.activateTimeframeInterval(new LocalDateTime(), runtime);
+            }
+            appliance.setAcceptControlRecommendations(false);
+        }
+        else {
+            logger.error("{}: Appliance not found", applianceId);
+        }
+    }
+
     @RequestMapping(value=SETTINGSDEFAULTS_URL, method=RequestMethod.GET, produces="application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     @ResponseBody
@@ -399,5 +443,45 @@ public class SaeController {
             configurations = Collections.singletonList(configuration);
         }
         ApplianceManager.getInstance().setConfiguration(configurations);
+    }
+
+    @RequestMapping(value= STATUS_URL, method=RequestMethod.GET, produces="application/json")
+    @CrossOrigin(origins = CROSS_ORIGIN_URL)
+    @ResponseBody
+    public List<ApplianceStatus> getApplianceStatus() {
+        logger.debug("Received request for ApplianceStatus");
+        LocalDateTime now = new LocalDateTime();
+        List<ApplianceStatus> applianceStatuses = new ArrayList<>();
+        for(Appliance appliance : ApplianceManager.getInstance().getAppliances()) {
+            DeviceInfo deviceInfo = getDeviceInfo(appliance.getId());
+
+            ApplianceStatus applianceStatus = new ApplianceStatus();
+            applianceStatus.setId(appliance.getId());
+            applianceStatus.setName(deviceInfo.getIdentification().getDeviceName());
+            applianceStatus.setVendor(deviceInfo.getIdentification().getDeviceVendor());
+            applianceStatus.setType(deviceInfo.getIdentification().getDeviceType());
+
+            List<RuntimeRequest> runtimeRequests = appliance.getRuntimeRequests(now);
+
+            applianceStatus.setControllable(appliance.isControllable());
+            applianceStatus.setPlanningRequested(runtimeRequests.size() > 0);
+            applianceStatus.setEarliestStartPassed(runtimeRequests.size() > 0
+                    && runtimeRequests.get(0).getEarliestStart() == 0);
+            if(appliance.isControllable()) {
+                applianceStatus.setOn(appliance.getControl().isOn());
+                RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
+                applianceStatus.setRemainingMinRunningTime(
+                        runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(now));
+                applianceStatus.setRemainingMaxRunningTime(
+                        runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(now));
+                LocalDateTime statusChangedAt = runningTimeMonitor.getStatusChangedAt();
+                if(statusChangedAt != null) {
+                    applianceStatus.setStatusChangedAt(dateTimeFormatter.print(statusChangedAt));
+                }
+            }
+
+            applianceStatuses.add(applianceStatus);
+        }
+        return applianceStatuses;
     }
 }
