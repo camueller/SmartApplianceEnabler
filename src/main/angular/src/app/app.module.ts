@@ -35,11 +35,18 @@ import {AppliancesReloadService} from './appliance/appliances-reload-service';
 import {HttpClient, HttpClientModule} from '@angular/common/http';
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
-import { StatusComponent } from './status/status.component';
+import {StatusComponent} from './status/status.component';
 import {ControlService} from './control/control-service';
 import {MeterService} from './meter/meter-service';
 import {ScheduleService} from './schedule/schedule-service';
 import {SettingsService} from './settings/settings-service';
+import {ControlResolver} from './control/control-resolver.service';
+import {MeterResolver} from './meter/meter-resolver.service';
+import {MeterDefaultsResolver} from './meter/meter-defaults-resolver.service';
+import {ControlDefaultsResolver} from './control/control-defaults-resolver.service';
+import {ScheduleResolver} from './schedule/schedule-resolver.service';
+import {SettingsResolver} from './settings/settings-resolver.service';
+import {SettingsDefaultsResolver} from './settings/settings-defaults-resolver.service';
 
 @NgModule({
   declarations: [
@@ -72,9 +79,16 @@ import {SettingsService} from './settings/settings-service';
     AppliancesReloadService,
     ApplianceResolver,
     ControlService,
+    ControlResolver,
+    ControlDefaultsResolver,
     MeterService,
+    MeterResolver,
+    MeterDefaultsResolver,
     ScheduleService,
-    SettingsService
+    ScheduleResolver,
+    SettingsService,
+    SettingsResolver,
+    SettingsDefaultsResolver,
   ],
   bootstrap: [AppComponent]
 })

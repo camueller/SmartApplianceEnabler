@@ -26,6 +26,13 @@ import {SchedulesComponent} from './schedule/schedule.component';
 import {SettingsComponent} from './settings/settings.component';
 import {ApplianceResolver} from './appliance/appliance-resolver.service';
 import {StatusComponent} from './status/status.component';
+import {ControlResolver} from './control/control-resolver.service';
+import {MeterResolver} from './meter/meter-resolver.service';
+import {MeterDefaultsResolver} from './meter/meter-defaults-resolver.service';
+import {ControlDefaultsResolver} from './control/control-defaults-resolver.service';
+import {ScheduleResolver} from './schedule/schedule-resolver.service';
+import {SettingsResolver} from './settings/settings-resolver.service';
+import {SettingsDefaultsResolver} from './settings/settings-defaults-resolver.service';
 
 const routes: Routes = [
   {
@@ -50,19 +57,34 @@ const routes: Routes = [
   },
   {
     path: 'meter/:id',
-    component: MeterComponent
+    component: MeterComponent,
+    resolve: {
+      meter: MeterResolver,
+      meterDefaults: MeterDefaultsResolver
+    }
   },
   {
     path: 'control/:id',
-    component: ControlComponent
+    component: ControlComponent,
+    resolve: {
+      control: ControlResolver,
+      controlDefaults: ControlDefaultsResolver
+    }
   },
   {
     path: 'schedule/:id',
-    component: SchedulesComponent
+    component: SchedulesComponent,
+    resolve: {
+      schedules: ScheduleResolver
+    }
   },
   {
     path: 'settings',
-    component: SettingsComponent
+    component: SettingsComponent,
+    resolve: {
+      settings: SettingsResolver,
+      settingsDefaults: SettingsDefaultsResolver
+    }
   },
   {
     path: '**',
