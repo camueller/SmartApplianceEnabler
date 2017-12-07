@@ -30,6 +30,7 @@ import {ErrorMessages} from '../shared/error-messages';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {MeterDefaults} from './meter-defaults';
 import {MeterService} from './meter-service';
+import {Meter} from './meter';
 
 @Component({
   selector: 'app-appliance-meter',
@@ -58,16 +59,12 @@ export class MeterComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.route.params.subscribe(val => {
-        this.applianceId = this.route.snapshot.paramMap.get('id');
-        this.meterService.getMeterDefaults().subscribe(meterDefaults => this.meterDefaults = meterDefaults);
-        this.meterService.getMeter(this.applianceId).subscribe(meter => {
-          this.meter = meter;
-          this.meterForm.form.markAsPristine();
-        });
-      }
-    );
-
+    this.route.paramMap.subscribe(() => this.applianceId = this.route.snapshot.paramMap.get('id'));
+    this.route.data.subscribe((data: {meter: Meter, meterDefaults: MeterDefaults}) => {
+      this.meter = data.meter;
+      this.meterDefaults = data.meterDefaults;
+      this.meterForm.form.markAsPristine();
+    });
     this.meterForm.statusChanges.subscribe(() =>
       this.errors = ErrorMessageHandler.applyErrorMessages4TemplateDrivenForm(this.meterForm, this.errorMessages));
   }

@@ -21,6 +21,8 @@ import {ActivatedRoute} from '@angular/router';
 import {SettingsFactory} from './settings-factory';
 import {NgForm} from '@angular/forms';
 import {SettingsService} from './settings-service';
+import {Settings} from './settings';
+import {SettingsDefaults} from './settings-defaults';
 
 @Component({
   selector: 'app-settings',
@@ -36,11 +38,10 @@ export class SettingsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.settingsService.getSettingsDefaults().subscribe(settingsDefaults => this.settingsDefaults = settingsDefaults);
-    this.route.params.subscribe(val => {
-        this.settingsService.getSettings().subscribe(settings => this.settings = settings);
-      }
-    );
+    this.route.data.subscribe((data: {settings: Settings, settingsDefaults: SettingsDefaults}) => {
+      this.settings = data.settings;
+      this.settingsDefaults = data.settingsDefaults;
+    });
   }
 
   submitForm() {

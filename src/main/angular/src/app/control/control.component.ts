@@ -33,6 +33,7 @@ import {AlwaysOnSwitch} from './always-on-switch';
 import {AppliancesReloadService} from '../appliance/appliances-reload-service';
 import {ControlDefaults} from './control-defaults';
 import {ControlService} from './control-service';
+import {Control} from './control';
 
 @Component({
   selector: 'app-appliance-switch',
@@ -61,16 +62,12 @@ export class ControlComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.route.params.subscribe(val => {
-      this.applianceId = this.route.snapshot.paramMap.get('id');
-      this.controlService.getControlDefaults().subscribe(controlDefaults => this.controlDefaults = controlDefaults);
-      this.controlService.getControl(this.applianceId).subscribe(control => {
-        this.control = control;
-        this.controlForm.form.markAsPristine();
-      });
-      }
-    );
-
+    this.route.paramMap.subscribe(() => this.applianceId = this.route.snapshot.paramMap.get('id'));
+    this.route.data.subscribe((data: {control: Control, controlDefaults: ControlDefaults}) => {
+      this.control = data.control;
+      this.controlDefaults = data.controlDefaults;
+      this.controlForm.form.markAsPristine();
+    });
     this.controlForm.statusChanges.subscribe(() =>
       this.errors = ErrorMessageHandler.applyErrorMessages4TemplateDrivenForm(this.controlForm, this.errorMessages));
   }

@@ -29,6 +29,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {ErrorMessages} from '../shared/error-messages';
+import {Appliance} from './appliance';
 
 @Component({
   selector: 'app-appliance-details',
@@ -53,17 +54,13 @@ export class ApplianceComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.route.params.subscribe(val => {
-      const id = this.route.snapshot.paramMap.get('id');
-      if (id == null) {
-        this.isNew = true;
-      } else {
-        this.applianceService.getAppliance(id).subscribe(appliance => {
-          this.detailsForm.reset(appliance);
-        });
+    this.route.paramMap.subscribe(() => this.isNew = this.route.snapshot.paramMap.get('id') == null);
+    this.route.data.subscribe((data: {appliance: Appliance}) => {
+      if (data.appliance != null) {
+        this.appliance = data.appliance;
+        this.detailsForm.reset(this.appliance);
       }
     });
-
     this.detailsForm.statusChanges.subscribe(() =>
       this.errors = ErrorMessageHandler.applyErrorMessages4TemplateDrivenForm(this.detailsForm, this.errorMessages));
   }

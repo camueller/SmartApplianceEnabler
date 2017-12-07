@@ -79,11 +79,16 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
 
   ngOnInit() {
     this.initForm();
-    this.route.params.subscribe(val => {
-        this.applianceId = this.route.snapshot.paramMap.get('id');
-        this.loadSchedules();
-      }
-    );
+    this.route.paramMap.subscribe(() => this.applianceId = this.route.snapshot.paramMap.get('id'));
+    this.route.data.subscribe((data: {schedules: Schedule[]}) => {
+      this.initForm();
+      const schedulesControl = <FormArray>this.schedulesForm.controls['schedules'];
+      data.schedules.forEach(schedule => {
+        const scheduleFormGroup = this.buildSchedule(schedule);
+        schedulesControl.push(scheduleFormGroup);
+      });
+      this.initializeOnceAfterViewChecked = true;
+    });
   }
 
   ngAfterViewInit() {
@@ -111,18 +116,6 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
     this.schedulesForm.statusChanges.subscribe(() =>
       this.errors = ErrorMessageHandler.applyErrorMessages4ReactiveForm(this.schedulesForm,
         this.errorMessages, true, 'schedules.#.'));
-  }
-
-  loadSchedules() {
-    this.scheduleService.getSchedules(this.applianceId).subscribe(schedules => {
-      this.initForm();
-      const schedulesControl = <FormArray>this.schedulesForm.controls['schedules'];
-      schedules.forEach(schedule => {
-        const scheduleFormGroup = this.buildSchedule(schedule);
-        schedulesControl.push(scheduleFormGroup);
-      });
-      this.initializeOnceAfterViewChecked = true;
-    });
   }
 
   buildSchedule(schedule: Schedule): FormGroup {
