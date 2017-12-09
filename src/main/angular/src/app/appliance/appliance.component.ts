@@ -18,7 +18,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {ApplianceService} from './appliance.service';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, CanDeactivate} from '@angular/router';
 import 'rxjs/add/operator/switchMap';
 import {ApplianceFactory} from './appliance-factory';
 import {AppliancesReloadService} from './appliances-reload-service';
@@ -30,13 +30,15 @@ import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {ErrorMessages} from '../shared/error-messages';
 import {Appliance} from './appliance';
+import {Observable} from 'rxjs/Observable';
+import {DialogService} from '../shared/dialog.service';
 
 @Component({
   selector: 'app-appliance-details',
   templateUrl: './appliance.component.html',
   styles: []
 })
-export class ApplianceComponent implements OnInit {
+export class ApplianceComponent implements OnInit, CanDeactivate<ApplianceComponent> {
   @ViewChild('detailsForm') detailsForm: NgForm;
   appliance = ApplianceFactory.createEmptyAppliance();
   errors: { [key: string]: string } = {};
@@ -44,16 +46,19 @@ export class ApplianceComponent implements OnInit {
   VALIDATOR_PATTERN_INTEGER = InputValidatorPatterns.INTEGER;
   VALIDATOR_PATTERN_ID = InputValidatorPatterns.APPLIANCE_ID;
   isNew = false;
+  discardChangesMessage: string;
 
   constructor(private applianceService: ApplianceService,
               private appliancesReloadService: AppliancesReloadService,
               private route: ActivatedRoute,
               private translate: TranslateService,
+              private dialogService: DialogService,
               private location: Location) {
-    this.errorMessages =  new ApplianceErrorMessages(this.translate);
   }
 
   ngOnInit() {
+    this.errorMessages =  new ApplianceErrorMessages(this.translate);
+    this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.route.paramMap.subscribe(() => this.isNew = this.route.snapshot.paramMap.get('id') == null);
     this.route.data.subscribe((data: {appliance: Appliance}) => {
       if (data.appliance != null) {
@@ -63,6 +68,13 @@ export class ApplianceComponent implements OnInit {
     });
     this.detailsForm.statusChanges.subscribe(() =>
       this.errors = ErrorMessageHandler.applyErrorMessages4TemplateDrivenForm(this.detailsForm, this.errorMessages));
+  }
+
+  canDeactivate(): Observable<boolean> | boolean {
+    if (this.detailsForm.form.pristine) {
+      return true;
+    }
+    return this.dialogService.confirm(this.discardChangesMessage);
   }
 
   submitForm() {

@@ -17,31 +17,46 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, CanDeactivate} from '@angular/router';
 import {SettingsFactory} from './settings-factory';
 import {NgForm} from '@angular/forms';
 import {SettingsService} from './settings-service';
 import {Settings} from './settings';
 import {SettingsDefaults} from './settings-defaults';
+import {DialogService} from '../shared/dialog.service';
+import {TranslateService} from '@ngx-translate/core';
+import {Observable} from 'rxjs/Observable';
 
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
   styles: []
 })
-export class SettingsComponent implements OnInit {
+export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponent> {
   @ViewChild('settingsForm') settingsForm: NgForm;
   settingsDefaults = SettingsFactory.createEmptySettingsDefaults();
   settings = SettingsFactory.createEmptySettings();
+  discardChangesMessage: string;
 
-  constructor(private settingsService: SettingsService, private route: ActivatedRoute) {
+  constructor(private settingsService: SettingsService,
+              private translate: TranslateService,
+              private dialogService: DialogService,
+              private route: ActivatedRoute) {
   }
 
   ngOnInit() {
+    this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.route.data.subscribe((data: {settings: Settings, settingsDefaults: SettingsDefaults}) => {
       this.settings = data.settings;
       this.settingsDefaults = data.settingsDefaults;
     });
+  }
+
+  canDeactivate(): Observable<boolean> | boolean {
+    if (this.settingsForm.form.pristine) {
+      return true;
+    }
+    return this.dialogService.confirm(this.discardChangesMessage);
   }
 
   submitForm() {

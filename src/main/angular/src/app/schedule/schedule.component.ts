@@ -17,7 +17,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 import {AfterViewChecked, AfterViewInit, Component, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, CanDeactivate} from '@angular/router';
 import {Schedule} from './schedule';
 import {FormArray, FormBuilder, FormControlName, FormGroup, Validators} from '@angular/forms';
 import {ConsecutiveDaysTimeframe} from './consecutive-days-timeframe';
@@ -29,6 +29,8 @@ import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {ScheduleFactory} from './schedule-factory';
 import {ScheduleService} from './schedule-service';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
+import {DialogService} from '../shared/dialog.service';
+import {Observable} from 'rxjs/Observable';
 
 declare const $: any;
 
@@ -61,7 +63,7 @@ FormControlName.prototype.ngOnChanges = function () {
   templateUrl: './schedule.component.html',
   styles: []
 })
-export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewChecked {
+export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewChecked, CanDeactivate<SchedulesComponent> {
   schedulesForm: FormGroup;
   applianceId: string;
   initializeOnceAfterViewChecked = false;
@@ -69,15 +71,18 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
   CONSECUTIVE_DAYS_TIMEFRAME = ConsecutiveDaysTimeframe.TYPE;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
+  discardChangesMessage: string;
 
   constructor(private fb: FormBuilder,
               private scheduleService: ScheduleService,
               private route: ActivatedRoute,
+              private dialogService: DialogService,
               private translate: TranslateService) {
-    this.errorMessages =  new ScheduleErrorMessages(this.translate);
   }
 
   ngOnInit() {
+    this.errorMessages =  new ScheduleErrorMessages(this.translate);
+    this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.initForm();
     this.route.paramMap.subscribe(() => this.applianceId = this.route.snapshot.paramMap.get('id'));
     this.route.data.subscribe((data: {schedules: Schedule[]}) => {
@@ -116,6 +121,13 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
     this.schedulesForm.statusChanges.subscribe(() =>
       this.errors = ErrorMessageHandler.applyErrorMessages4ReactiveForm(this.schedulesForm,
         this.errorMessages, true, 'schedules.#.'));
+  }
+
+  canDeactivate(): Observable<boolean> | boolean {
+    if (this.schedulesForm.pristine) {
+      return true;
+    }
+    return this.dialogService.confirm(this.discardChangesMessage);
   }
 
   buildSchedule(schedule: Schedule): FormGroup {
@@ -205,6 +217,7 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
     const schedulesControl = <FormArray>this.schedulesForm.controls['schedules'];
     schedulesControl.push(this.buildSchedule(null));
     this.initializeOnceAfterViewChecked = true;
+    this.schedulesForm.markAsDirty();
   }
 
   removeSchedule(index: number) {

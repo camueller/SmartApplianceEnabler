@@ -161,5 +161,6 @@
 
   "button.new": "Neu",
   "button.save": "Speichern",
-  "button.delete": "Löschen"
+  "button.delete": "Löschen",
+  "dialog.candeactivate": "Änderungen verwerfen?"
 }

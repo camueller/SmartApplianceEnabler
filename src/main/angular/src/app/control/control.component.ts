@@ -17,7 +17,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, CanDeactivate} from '@angular/router';
 import {ControlFactory} from './control-factory';
 import {Switch} from './switch';
 import {ModbusSwitch} from './modbus-switch';
@@ -34,19 +34,22 @@ import {AppliancesReloadService} from '../appliance/appliances-reload-service';
 import {ControlDefaults} from './control-defaults';
 import {ControlService} from './control-service';
 import {Control} from './control';
+import {Observable} from 'rxjs/Observable';
+import {DialogService} from '../shared/dialog.service';
 
 @Component({
   selector: 'app-appliance-switch',
   templateUrl: './control.component.html',
   styles: []
 })
-export class ControlComponent implements OnInit {
+export class ControlComponent implements OnInit, CanDeactivate<ControlComponent> {
   @ViewChild('controlForm') controlForm: NgForm;
   applianceId: string;
   controlDefaults: ControlDefaults;
   control = ControlFactory.createEmptyControl();
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
+  discardChangesMessage: string;
   TYPE_ALWAYS_ON_SWITCH = AlwaysOnSwitch.TYPE;
   TYPE_SWITCH = Switch.TYPE;
   TYPE_MODBUS_SWITCH = ModbusSwitch.TYPE;
@@ -57,11 +60,13 @@ export class ControlComponent implements OnInit {
   constructor(private controlService: ControlService,
               private appliancesReloadService: AppliancesReloadService,
               private route: ActivatedRoute,
+              private dialogService: DialogService,
               private translate: TranslateService) {
-    this.errorMessages =  new ControlErrorMessages(this.translate);
   }
 
   ngOnInit() {
+    this.errorMessages =  new ControlErrorMessages(this.translate);
+    this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.route.paramMap.subscribe(() => this.applianceId = this.route.snapshot.paramMap.get('id'));
     this.route.data.subscribe((data: {control: Control, controlDefaults: ControlDefaults}) => {
       this.control = data.control;
@@ -70,6 +75,13 @@ export class ControlComponent implements OnInit {
     });
     this.controlForm.statusChanges.subscribe(() =>
       this.errors = ErrorMessageHandler.applyErrorMessages4TemplateDrivenForm(this.controlForm, this.errorMessages));
+  }
+
+  canDeactivate(): Observable<boolean> | boolean {
+    if (this.controlForm.form.pristine) {
+      return true;
+    }
+    return this.dialogService.confirm(this.discardChangesMessage);
   }
 
   typeChanged(newType: string) {

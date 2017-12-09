@@ -17,7 +17,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, CanDeactivate} from '@angular/router';
 import {S0ElectricityMeter} from './s0-electricity-meter';
 import {ModbusElectricityMeter} from './modbus-electricity-meter';
 import {HttpElectricityMeter} from './http-electricity-meter';
@@ -31,19 +31,22 @@ import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {MeterDefaults} from './meter-defaults';
 import {MeterService} from './meter-service';
 import {Meter} from './meter';
+import {DialogService} from '../shared/dialog.service';
+import {Observable} from 'rxjs/Observable';
 
 @Component({
   selector: 'app-appliance-meter',
   templateUrl: './meter.component.html',
   styles: []
 })
-export class MeterComponent implements OnInit {
+export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
   @ViewChild('meterForm') meterForm: NgForm;
   applianceId: string;
   meterDefaults: MeterDefaults;
   meter = MeterFactory.createEmptyMeter();
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
+  discardChangesMessage: string;
   TYPE_S0_ELECTRICITY_METER = S0ElectricityMeter.TYPE;
   TYPE_S0_ELECTRICITY_METER_NETWORKED = S0ElectricityMeter.TYPE_NETWORKED;
   TYPE_MODBUS_ELECTRICITY_METER = ModbusElectricityMeter.TYPE;
@@ -54,11 +57,13 @@ export class MeterComponent implements OnInit {
 
   constructor(private meterService: MeterService,
               private route: ActivatedRoute,
+              private dialogService: DialogService,
               private translate: TranslateService) {
-    this.errorMessages =  new MeterErrorMessages(this.translate);
   }
 
   ngOnInit() {
+    this.errorMessages =  new MeterErrorMessages(this.translate);
+    this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.route.paramMap.subscribe(() => this.applianceId = this.route.snapshot.paramMap.get('id'));
     this.route.data.subscribe((data: {meter: Meter, meterDefaults: MeterDefaults}) => {
       this.meter = data.meter;
@@ -67,6 +72,13 @@ export class MeterComponent implements OnInit {
     });
     this.meterForm.statusChanges.subscribe(() =>
       this.errors = ErrorMessageHandler.applyErrorMessages4TemplateDrivenForm(this.meterForm, this.errorMessages));
+  }
+
+  canDeactivate(): Observable<boolean> | boolean {
+    if (this.meterForm.form.pristine) {
+      return true;
+    }
+    return this.dialogService.confirm(this.discardChangesMessage);
   }
 
   typeChanged(newType: string) {

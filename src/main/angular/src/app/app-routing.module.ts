@@ -33,6 +33,7 @@ import {ControlDefaultsResolver} from './control/control-defaults-resolver.servi
 import {ScheduleResolver} from './schedule/schedule-resolver.service';
 import {SettingsResolver} from './settings/settings-resolver.service';
 import {SettingsDefaultsResolver} from './settings/settings-defaults-resolver.service';
+import {CanDeactivateGuard} from './shared/can-deactivate-guard.service';
 
 const routes: Routes = [
   {
@@ -45,7 +46,8 @@ const routes: Routes = [
     component: ApplianceComponent,
     resolve: {
       appliance: ApplianceResolver
-    }
+    },
+    canDeactivate: [CanDeactivateGuard]
   },
   {
     path: 'appliance',
@@ -61,7 +63,8 @@ const routes: Routes = [
     resolve: {
       meter: MeterResolver,
       meterDefaults: MeterDefaultsResolver
-    }
+    },
+    canDeactivate: [CanDeactivateGuard]
   },
   {
     path: 'control/:id',
@@ -69,14 +72,16 @@ const routes: Routes = [
     resolve: {
       control: ControlResolver,
       controlDefaults: ControlDefaultsResolver
-    }
+    },
+    canDeactivate: [CanDeactivateGuard]
   },
   {
     path: 'schedule/:id',
     component: SchedulesComponent,
     resolve: {
       schedules: ScheduleResolver
-    }
+    },
+    canDeactivate: [CanDeactivateGuard]
   },
   {
     path: 'settings',
@@ -84,7 +89,8 @@ const routes: Routes = [
     resolve: {
       settings: SettingsResolver,
       settingsDefaults: SettingsDefaultsResolver
-    }
+    },
+    canDeactivate: [CanDeactivateGuard]
   },
   {
     path: '**',
