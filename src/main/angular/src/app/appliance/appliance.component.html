@@ -20,7 +20,7 @@
   <form class="ui form" #detailsForm="ngForm" (ngSubmit)="submitForm()">
     <div class="three fields">
       <div class="field">
-        <label>ID</label>
+        <label>{{'ApplianceComponent.id' | translate}}</label>
         <input type="text" placeholder="F-00000000-000000000000-00" name="id" [(ngModel)]="appliance.id"
                required pattern="{{VALIDATOR_PATTERN_ID}}">
         <div *ngIf="errors.id" class="ui negative message">{{errors.id}}</div>
