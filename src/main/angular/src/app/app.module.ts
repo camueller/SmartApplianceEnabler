@@ -47,6 +47,8 @@ import {ControlDefaultsResolver} from './control/control-defaults-resolver.servi
 import {ScheduleResolver} from './schedule/schedule-resolver.service';
 import {SettingsResolver} from './settings/settings-resolver.service';
 import {SettingsDefaultsResolver} from './settings/settings-defaults-resolver.service';
+import {DialogService} from './shared/dialog.service';
+import {CanDeactivateGuard} from './shared/can-deactivate-guard.service';
 
 @NgModule({
   declarations: [
@@ -78,9 +80,11 @@ import {SettingsDefaultsResolver} from './settings/settings-defaults-resolver.se
     ApplianceService,
     AppliancesReloadService,
     ApplianceResolver,
+    CanDeactivateGuard,
     ControlService,
     ControlResolver,
     ControlDefaultsResolver,
+    DialogService,
     MeterService,
     MeterResolver,
     MeterDefaultsResolver,
