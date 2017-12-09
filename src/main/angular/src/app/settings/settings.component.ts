@@ -26,6 +26,10 @@ import {SettingsDefaults} from './settings-defaults';
 import {DialogService} from '../shared/dialog.service';
 import {TranslateService} from '@ngx-translate/core';
 import {Observable} from 'rxjs/Observable';
+import {SettingsErrorMessages} from './settings-error-messages';
+import {ErrorMessages} from '../shared/error-messages';
+import {ErrorMessageHandler} from '../shared/error-message-handler';
+import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 
 @Component({
   selector: 'app-settings',
@@ -36,6 +40,11 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
   @ViewChild('settingsForm') settingsForm: NgForm;
   settingsDefaults = SettingsFactory.createEmptySettingsDefaults();
   settings = SettingsFactory.createEmptySettings();
+  errors: { [key: string]: string } = {};
+  errorMessages: ErrorMessages;
+  VALIDATOR_PATTERN_INTEGER = InputValidatorPatterns.INTEGER;
+  VALIDATOR_PATTERN_HOSTNAME = InputValidatorPatterns.HOSTNAME;
+  VALIDATOR_PATTERN_URL = InputValidatorPatterns.URL;
   discardChangesMessage: string;
 
   constructor(private settingsService: SettingsService,
@@ -45,11 +54,14 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
   }
 
   ngOnInit() {
+    this.errorMessages =  new SettingsErrorMessages(this.translate);
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.route.data.subscribe((data: {settings: Settings, settingsDefaults: SettingsDefaults}) => {
       this.settings = data.settings;
       this.settingsDefaults = data.settingsDefaults;
     });
+    this.settingsForm.statusChanges.subscribe(() =>
+      this.errors = ErrorMessageHandler.applyErrorMessages4TemplateDrivenForm(this.settingsForm, this.errorMessages));
   }
 
   canDeactivate(): Observable<boolean> | boolean {

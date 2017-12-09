@@ -19,34 +19,37 @@
 <div class="ui segment">
   <form class="ui form" #settingsForm="ngForm" (ngSubmit)="submitForm()">
 
-    <h4 class="ui dividing header">Feiertage</h4>
+    <h4 class="ui dividing header">{{'SettingsComponent.holidays' | translate}}</h4>
     <div class="ui fields">
       <div class="ui checkbox">
         <input type="checkbox" name="holidaysEnabled" [(ngModel)]="settings.holidaysEnabled">
-        <label>Enabled</label>
+        <label>{{'SettingsComponent.holidaysEnabled' | translate}}</label>
       </div>
       <div class="seven wide field" [class.disabled]="!settings.holidaysEnabled">
-        <label>Download URL</label>
-        <input type="text" name="holidayUrl" placeholder="{{settingsDefaults.holidaysUrl}}"
-               [(ngModel)]="settings.holidaysUrl">
+        <label>{{'SettingsComponent.holidaysUrl' | translate}}</label>
+        <input type="text" name="holidaysUrl" placeholder="{{settingsDefaults.holidaysUrl}}"
+               [(ngModel)]="settings.holidaysUrl" pattern="{{VALIDATOR_PATTERN_URL}}">
+        <div *ngIf="errors.holidaysUrl" class="ui negative message">{{errors.holidaysUrl}}</div>
       </div>
     </div>
 
-    <h4 class="ui dividing header">Modbus</h4>
+    <h4 class="ui dividing header">{{'SettingsComponent.modbus' | translate}}</h4>
     <div class="ui fields">
       <div class="ui checkbox">
         <input type="checkbox" name="modbusEnabled" [(ngModel)]="settings.modbusEnabled">
-        <label>Enabled</label>
+        <label>{{'SettingsComponent.modbusEnabled' | translate}}</label>
       </div>
       <div class="field" [class.disabled]="!settings.modbusEnabled">
-        <label>Host</label>
+        <label>{{'SettingsComponent.modbusTcpHost' | translate}}</label>
         <input type="text" name="modbusTcpHost" placeholder="{{settingsDefaults.modbusTcpHost}}"
-               [(ngModel)]="settings.modbusTcpHost">
+               [(ngModel)]="settings.modbusTcpHost" pattern="{{VALIDATOR_PATTERN_HOSTNAME}}">
+        <div *ngIf="errors.modbusTcpHost" class="ui negative message">{{errors.modbusTcpHost}}</div>
       </div>
       <div class="field" [class.disabled]="!settings.modbusEnabled">
-        <label>Port</label>
+        <label>{{'SettingsComponent.modbusTcpPort' | translate}}</label>
         <input type="text" name="modbusTcpPort" placeholder="{{settingsDefaults.modbusTcpPort}}"
-               [(ngModel)]="settings.modbusTcpPort">
+               [(ngModel)]="settings.modbusTcpPort" pattern="{{VALIDATOR_PATTERN_INTEGER}}">
+        <div *ngIf="errors.modbusTcpPort" class="ui negative message">{{errors.modbusTcpPort}}</div>
       </div>
 
     </div>
@@ -55,12 +58,13 @@
     <div class="ui fields">
       <div class="ui checkbox">
         <input type="checkbox" name="pulseReceiveEnabled" [(ngModel)]="settings.pulseReceiverEnabled">
-        <label>Enabled</label>
+        <label>{{'SettingsComponent.pulseReceiveEnabled' | translate}}</label>
       </div>
       <div class="field" [class.disabled]="!settings.pulseReceiverEnabled">
-        <label>Port</label>
+        <label>{{'SettingsComponent.pulseReceiverPort' | translate}}</label>
         <input type="text" name="pulseReceiverPort" placeholder="{{settingsDefaults.pulseReceiverPort}}"
-               [(ngModel)]="settings.pulseReceiverPort">
+               [(ngModel)]="settings.pulseReceiverPort" pattern="{{VALIDATOR_PATTERN_INTEGER}}">
+        <div *ngIf="errors.pulseReceiverPort" class="ui negative message">{{errors.pulseReceiverPort}}</div>
       </div>
     </div>
 
