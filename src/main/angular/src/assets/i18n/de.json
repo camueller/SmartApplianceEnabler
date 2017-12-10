@@ -159,6 +159,11 @@
   "StatusComponent.remainingMinRunningTime": "Verbleibende Laufzeit min:",
   "StatusComponent.remainingMaxRunningTime": "Verbleibende Laufzeit max:",
   "StatusComponent.buttonStart": "Starten",
+  "StatusComponent.explanation": "Hinweise",
+  "StatusComponent.explanationNoLight": "Das Gerät ist nicht eingeschaltet, weil keine Bedarfsanforderung vorliegt.",
+  "StatusComponent.explanationStopLight": "Das Gerät ist nicht eingeschaltet, weil zwar eine Bedarfsanforderung vorliegt, aber der frühestmögliche Einschaltzeitpunkt noch nicht erreicht ist.",
+  "StatusComponent.explanationSlowLight": "Das Gerät wird in Kürze (wieder) eingeschaltet, weil eine Bedarfsanforderung vorliegt und der frühestmögliche Einschaltzeitpunkt erreicht ist.",
+  "StatusComponent.explanationGoLight": "Das Gerät ist eingeschaltet.",
 
   "SettingsComponent.holidays": "Feiertage",
   "SettingsComponent.holidaysEnabled": "Aktiviert",
@@ -173,7 +178,6 @@
   "SettingsComponent.error.modbusTcpHost_pattern": "Der Wert muss als Hostname oder IP-Adresse eingegeben werden",
   "SettingsComponent.error.modbusTcpPort_pattern": "Die Portnummer muss gültig sein",
   "SettingsComponent.error.pulseReceiverPort_pattern": "Die Portnummer muss gültig sein",
-
 
   "button.new": "Neu",
   "button.save": "Speichern",
