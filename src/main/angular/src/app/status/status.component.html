@@ -1,5 +1,5 @@
 <div class="ui segment">
-  <div class="appliances" *ngFor="let applianceStatus of applianceStatuses" style="display: inline-block;">
+  <div class="appliances" *ngFor="let applianceStatus of applianceStatuses" style="display: inline-block;vertical-align: top">
     <div class="appliance">
       <div class="traffic-light">
         <div class="bulb stopLight" *ngIf="isStopLightOn(applianceStatus)"></div>
@@ -32,22 +32,21 @@
             <div class="ui basic label">Std:Min</div>
           </div>
           <button type="submit" class="ui button" style="float:right; margin-top: 2px; margin-right: 5px"
-                  [disabled]="switchOnForm.invalid">
-            {{'StatusComponent.buttonStart' | translate}}</button>
+                  [disabled]="switchOnForm.invalid">{{'StatusComponent.buttonStart' | translate}}</button>
         </form>
       </div>
       <div *ngIf="applianceStatus.id != switchOnApplianceId">
         <div class="appliance-status">
-          <div class="appliance-status-label">Status seit:</div>
-          <div class="appliance-status-value">{{applianceStatus.statusChangedAt}}</div>
+          <span class="appliance-status-label">Status seit:</span>
+          <span class="appliance-status-value">{{applianceStatus.statusChangedAt}}</span>
         </div>
         <div class="appliance-status">
-          <div class="appliance-status-label">{{'StatusComponent.remainingMinRunningTime' | translate}}</div>
-          <div class="appliance-status-value">{{getFormattedRuntime(applianceStatus.remainingMinRunningTime)}}</div>
+          <span class="appliance-status-label">{{'StatusComponent.remainingMinRunningTime' | translate}}</span>
+          <span class="appliance-status-value">{{getFormattedRuntime(applianceStatus.remainingMinRunningTime)}}</span>
         </div>
         <div class="appliance-status">
-          <div class="appliance-status-label">{{'StatusComponent.remainingMaxRunningTime' | translate}}</div>
-          <div class="appliance-status-value">{{getFormattedRuntime(applianceStatus.remainingMaxRunningTime)}}</div>
+          <span class="appliance-status-label">{{'StatusComponent.remainingMaxRunningTime' | translate}}</span>
+          <span class="appliance-status-value">{{getFormattedRuntime(applianceStatus.remainingMaxRunningTime)}}</span>
         </div>
       </div>
     </div>

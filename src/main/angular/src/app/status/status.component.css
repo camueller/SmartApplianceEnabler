@@ -21,7 +21,6 @@
 .traffic-light-explanation {
   min-height: 38px;
   margin: 5px;
-/*  background-color: yellow; */
   font-family: "Lato", "Helvetica Neue", Arial, Helvetica, sans-serif;
 }
 
@@ -83,15 +82,12 @@
 
 .appliance-status-label {
   color: rgba(0,0,0,.6);
-  display: inline-block;
 }
 
 .appliance-status-value {
   line-height: 1.4em;
-  display: inline-block;
 }
 
 .appliance-switch-on {
   margin-top: 50px;
-  display: inline-block;
 }
