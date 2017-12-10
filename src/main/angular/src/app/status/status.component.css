@@ -8,12 +8,38 @@
   padding: 2px;
 }
 
+.traffic-light-small {
+  height: 28px;
+  width: 10px;
+  float: left;
+  background-color: #333;
+  border-radius: 2px;
+  margin: 6px;
+  padding: 2px;
+}
+
+.traffic-light-explanation {
+  min-height: 38px;
+  margin: 5px;
+/*  background-color: yellow; */
+  font-family: "Lato", "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+
 .bulb {
   height: 30px;
   width: 30px;
   background-color: #111;
   border-radius: 50%;
   margin: 5px auto;
+  transition: background 500ms;
+}
+
+.bulb-small {
+  height: 7px;
+  width: 7px;
+  background-color: #111;
+  border-radius: 50%;
+  margin: 1px auto;
   transition: background 500ms;
 }
 
