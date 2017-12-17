@@ -94,7 +94,7 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
                         }
                     }
                 });
-                logger.error("{}: Error starting {} for {}", getApplianceId(), getClass().getSimpleName(), getGpio());
+                logger.debug("{}: Starting {} for {}", getApplianceId(), getClass().getSimpleName(), getGpio());
             }
             catch(Exception e) {
                 logger.error("{}: Error start metering using {}", getApplianceId(), getGpio(), e);
