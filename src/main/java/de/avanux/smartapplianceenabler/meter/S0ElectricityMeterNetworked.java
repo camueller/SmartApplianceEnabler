@@ -22,8 +22,11 @@ import de.avanux.smartapplianceenabler.control.Control;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class S0ElectricityMeterNetworked implements Meter, PulseReceiver.PulseListener, ApplianceIdConsumer {
     private transient Logger logger = LoggerFactory.getLogger(S0ElectricityMeterNetworked.class);
     @XmlAttribute
@@ -50,6 +53,10 @@ public class S0ElectricityMeterNetworked implements Meter, PulseReceiver.PulseLi
 
     public String getIdref() {
         return idref;
+    }
+
+    public void setIdref(String idref) {
+        this.idref = idref;
     }
 
     public void setPulseReceiver(PulseReceiver pulseReceiver) {

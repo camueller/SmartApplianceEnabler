@@ -58,9 +58,9 @@ public class SempControllerTest extends TestBase {
         Assert.assertEquals(1, planningRequests.size());
         List<Timeframe> timeframes = planningRequests.get(0).getTimeframes();
         Assert.assertEquals(3, timeframes.size());
-        assertTimeframe(timeframes.get(0), 0l, 1800l, 599l, 600l);
-        assertTimeframe(timeframes.get(1), 86399l, 88200l, 599l, 600l);
-        assertTimeframe(timeframes.get(2), 172799l, 174600l, 599l, 600l);
+        assertTimeframe(timeframes.get(0), 0, 1800, 599, 600);
+        assertTimeframe(timeframes.get(1), 86399, 88200, 599, 600);
+        assertTimeframe(timeframes.get(2), 172799, 174600, 599, 600);
     }
 
     @Test
@@ -120,7 +120,7 @@ public class SempControllerTest extends TestBase {
         Assert.assertEquals(0, planningRequests.size());
     }
 
-    private void assertTimeframe(Timeframe timeframe, Long earliestStart, Long latestEnd, Long minRuningTime, Long maxRunningTime) {
+    private void assertTimeframe(Timeframe timeframe, Integer earliestStart, Integer latestEnd, Integer minRuningTime, Integer maxRunningTime) {
         Assert.assertEquals(earliestStart, timeframe.getEarliestStart());
         Assert.assertEquals(latestEnd, timeframe.getLatestEnd());
         Assert.assertEquals(latestEnd, timeframe.getLatestEnd());

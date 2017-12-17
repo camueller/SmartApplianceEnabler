@@ -20,50 +20,50 @@ package de.avanux.smartapplianceenabler.appliance;
 
 public class RuntimeRequest {
     // private TimeframeInterval timeframeInterval;
-    private Long earliestStart;
-    private Long latestEnd;
-    private Long minRunningTime;
-    private Long maxRunningTime;
+    private Integer earliestStart;
+    private Integer latestEnd;
+    private Integer minRunningTime;
+    private Integer maxRunningTime;
 
     public RuntimeRequest() {
     }
 
-    public RuntimeRequest(Long earliestStart, Long latestEnd, Long minRunningTime, Long maxRunningTime) {
+    public RuntimeRequest(Integer earliestStart, Integer latestEnd, Integer minRunningTime, Integer maxRunningTime) {
         this.earliestStart = earliestStart;
         this.latestEnd = latestEnd;
         this.minRunningTime = minRunningTime;
         this.maxRunningTime = maxRunningTime;
     }
 
-    public Long getEarliestStart() {
+    public Integer getEarliestStart() {
         return earliestStart;
     }
 
-    public void setEarliestStart(Long earliestStart) {
+    public void setEarliestStart(Integer earliestStart) {
         this.earliestStart = earliestStart;
     }
 
-    public Long getLatestEnd() {
+    public Integer getLatestEnd() {
         return latestEnd;
     }
 
-    public void setLatestEnd(Long latestEnd) {
+    public void setLatestEnd(Integer latestEnd) {
         this.latestEnd = latestEnd;
     }
 
-    public Long getMinRunningTime() {
+    public Integer getMinRunningTime() {
         return minRunningTime;
     }
 
-    public void setMinRunningTime(Long minRunningTime) {
+    public void setMinRunningTime(Integer minRunningTime) {
         this.minRunningTime = minRunningTime;
     }
 
-    public Long getMaxRunningTime() {
+    public Integer getMaxRunningTime() {
         return maxRunningTime;
     }
 
-    public void setMaxRunningTime(Long maxRunningTime) {
+    public void setMaxRunningTime(Integer maxRunningTime) {
         this.maxRunningTime = maxRunningTime;
     }
 

@@ -4,10 +4,13 @@ export class ApplianceStatus {
   type: string;
   vendor: string;
   statusChangedAt: string;
-  remainingMinRunningTime: string;
-  remainingMaxRunningTime: string;
+  runningTime: number;
+  remainingMinRunningTime: number;
+  remainingMaxRunningTime: number;
   planningRequested: boolean;
-  earliestStartPassed: boolean;
+  earliestStart: number;
+  latestStart: number;
   on: boolean;
   controllable: boolean;
+  interruptedSince: number;
 }

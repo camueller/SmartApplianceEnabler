@@ -21,6 +21,7 @@ import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.http.HttpTransactionExecutor;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +69,7 @@ public class HttpSwitch extends HttpTransactionExecutor implements Control, Appl
     }
 
     @Override
-    public boolean on(boolean switchOn) {
+    public boolean on(LocalDateTime now, boolean switchOn) {
         String url;
         String data;
         if(switchOn) {
@@ -83,7 +84,7 @@ public class HttpSwitch extends HttpTransactionExecutor implements Control, Appl
         if(response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
             on = switchOn;
             for(ControlStateChangedListener listener : controlStateChangedListeners) {
-                listener.controlStateChanged(switchOn);
+                listener.controlStateChanged(now, switchOn);
             }
             return true;
         }

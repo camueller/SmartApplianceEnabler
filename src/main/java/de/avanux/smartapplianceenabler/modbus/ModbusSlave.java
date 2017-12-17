@@ -63,6 +63,10 @@ abstract public class ModbusSlave implements ApplianceIdConsumer {
         return idref;
     }
 
+    public void setIdref(String idref) {
+        this.idref = idref;
+    }
+
     protected void executeTransaction(ModbusTransactionExecutor modbusTransactionExecutor, boolean closeConnection) throws Exception {
         ModbusTcp modbusTcp = getModbusTcp();
         if(connection == null) {

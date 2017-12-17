@@ -17,6 +17,8 @@
  */
 package de.avanux.smartapplianceenabler.control;
 
+import org.joda.time.LocalDateTime;
+
 /**
  * A control can change the on/off state of an appliance.
  */
@@ -24,10 +26,11 @@ public interface Control extends ControlMonitor {
 
     /**
      * Set the the appliance state.
+     * @param now current time
      * @param switchOn true, if the appliance state should be "on"
      * @return true, if the requested state was set; otherwise false
      */
-    boolean on(boolean switchOn);
+    boolean on(LocalDateTime now, boolean switchOn);
 
     void addControlStateChangedListener(ControlStateChangedListener listener);
     

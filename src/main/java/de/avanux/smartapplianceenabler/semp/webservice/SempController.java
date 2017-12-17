@@ -181,7 +181,7 @@ public class SempController {
             logger.debug("{}: Received control request", deviceControl.getDeviceId());
             Appliance appliance = ApplianceManager.getInstance().findAppliance(deviceControl.getDeviceId());
             if(appliance != null) {
-                appliance.setApplianceState(deviceControl.isOn(),
+                appliance.setApplianceState(new LocalDateTime(), deviceControl.isOn(), false,
                         "Setting appliance state to " + (deviceControl.isOn() ? "ON" : "OFF"));
             }
             else {
@@ -250,7 +250,7 @@ public class SempController {
 
     private PlanningRequest createPlanningRequest(LocalDateTime now, Appliance appliance) {
         PlanningRequest planningRequest = null;
-        List<RuntimeRequest> runtimeRequests = appliance.getRuntimeRequests(now);
+        List<RuntimeRequest> runtimeRequests = appliance.getRuntimeRequests(now, false);
         if(runtimeRequests.size() > 0) {
             planningRequest = new PlanningRequest();
             List<de.avanux.smartapplianceenabler.semp.webservice.Timeframe> sempTimeFrames = new ArrayList<de.avanux.smartapplianceenabler.semp.webservice.Timeframe>();
@@ -270,13 +270,35 @@ public class SempController {
 
     protected de.avanux.smartapplianceenabler.semp.webservice.Timeframe
     createSempTimeFrame(String deviceId, RuntimeRequest runtimeRequest) {
+        Integer minRunningTime = runtimeRequest.getMinRunningTime();
+        Integer maxRunningTime = runtimeRequest.getMaxRunningTime();
+        if(minRunningTime == null) {
+            minRunningTime = 0;
+        }
+        if(maxRunningTime == null) {
+            maxRunningTime = minRunningTime;
+        }
+        if(minRunningTime.equals(maxRunningTime)) {
+            /** WORKAROUND:
+             * For unknown reason the SunnyPortal displays the scheduled times only
+             * if maxRunningTime AND minRunningTime are returned and are NOT EQUAL
+             * Therefore we ensure that they are not equal by reducing minRunningTime by 1 second
+             */
+            minRunningTime = minRunningTime >= 1 ? minRunningTime - 1 : 0;
+        }
+        else {
+            // according to spec minRunningTime only has to be returned if different from maxRunningTime
+            minRunningTime = minRunningTime >= 0 ? minRunningTime : 0;
+        }
+        maxRunningTime = maxRunningTime >= 0 ? maxRunningTime : 0;
+
         de.avanux.smartapplianceenabler.semp.webservice.Timeframe timeFrame
                 = new de.avanux.smartapplianceenabler.semp.webservice.Timeframe();
         timeFrame.setDeviceId(deviceId);
         timeFrame.setEarliestStart(runtimeRequest.getEarliestStart());
         timeFrame.setLatestEnd(runtimeRequest.getLatestEnd());
-        timeFrame.setMinRunningTime(runtimeRequest.getMinRunningTime());
-        timeFrame.setMaxRunningTime(runtimeRequest.getMaxRunningTime());
+        timeFrame.setMinRunningTime(minRunningTime);
+        timeFrame.setMaxRunningTime(maxRunningTime);
         logger.debug("{}: Timeframe created: {}", deviceId, timeFrame);
         return timeFrame;
     }

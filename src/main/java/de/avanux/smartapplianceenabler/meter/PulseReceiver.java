@@ -37,9 +37,10 @@ import java.util.Map;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PulseReceiver implements Runnable {
     private transient Logger logger = LoggerFactory.getLogger(PulseReceiver.class);
-    public static final int DEFAULT_PORT = 9999;
+    public transient static final String DEFAULT_ID = "default";
     @XmlAttribute
     private String id;
+    public transient static final int DEFAULT_PORT = 9999;
     @XmlAttribute
     private Integer port = DEFAULT_PORT;
     private transient Thread thread;
@@ -84,7 +85,9 @@ public class PulseReceiver implements Runnable {
         this.stopping = true;
         if(this.thread != null) {
             logger.debug("Stopping ...");
-            this.serverSocket.close();
+            if(this.serverSocket != null) {
+                this.serverSocket.close();
+            }
             thread.interrupt();
         }
         this.thread = null;

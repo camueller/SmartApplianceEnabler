@@ -81,16 +81,18 @@ export class ScheduleFactory {
     const schedule = new Schedule();
     schedule.enabled = rawSchedule.enabled;
     schedule.minRunningTime = rawSchedule.minRunningTime;
-    schedule.minRunningTimeHHMM = TimeUtil.toHourMinute(rawSchedule.minRunningTime);
+    if (schedule.minRunningTime != null) {
+      schedule.minRunningTimeHHMM = TimeUtil.toHourMinute(rawSchedule.minRunningTime);
+    }
     schedule.maxRunningTime = rawSchedule.maxRunningTime;
-    schedule.maxRunningTimeHHMM = TimeUtil.toHourMinute(rawSchedule.maxRunningTime);
+    if (schedule.maxRunningTime != null) {
+      schedule.maxRunningTimeHHMM = TimeUtil.toHourMinute(rawSchedule.maxRunningTime);
+    }
     if (rawSchedule.timeframe['@class'] === DayTimeframe.TYPE) {
       schedule.timeframeType = DayTimeframe.TYPE;
       schedule.dayTimeframe = ScheduleFactory.createDayTimeframe(rawSchedule.timeframe);
-//      schedule.consecutiveDaysTimeframe = new ConsecutiveDaysTimeframe();
     } else if (rawSchedule.timeframe['@class'] === ConsecutiveDaysTimeframe.TYPE) {
       schedule.timeframeType = ConsecutiveDaysTimeframe.TYPE;
-//      schedule.dayTimeframe = new DayTimeframe();
       schedule.consecutiveDaysTimeframe = ScheduleFactory.createConsecutiveDaysTimeframe(rawSchedule.timeframe);
     }
     console.log('schedule ' + JSON.stringify(schedule));
@@ -109,16 +111,24 @@ export class ScheduleFactory {
         schedule.dayTimeframe.daysOfWeekValues = rawSchedule.dayTimeframe.daysOfWeekValues;
         schedule.dayTimeframe.startTime = rawSchedule.dayTimeframe.startTime;
         schedule.dayTimeframe.endTime = rawSchedule.dayTimeframe.endTime;
-        schedule.minRunningTime = TimeUtil.toSeconds(rawSchedule.dayTimeframe.minRunningTime).toString();
-        schedule.maxRunningTime = TimeUtil.toSeconds(rawSchedule.dayTimeframe.maxRunningTime).toString();
+        if (rawSchedule.dayTimeframe.minRunningTime != null) {
+          schedule.minRunningTime = TimeUtil.toSeconds(rawSchedule.dayTimeframe.minRunningTime).toString();
+        }
+        if (rawSchedule.dayTimeframe.maxRunningTime != null) {
+          schedule.maxRunningTime = TimeUtil.toSeconds(rawSchedule.dayTimeframe.maxRunningTime).toString();
+        }
       } else if (rawSchedule.timeframeType === ConsecutiveDaysTimeframe.TYPE) {
         schedule.consecutiveDaysTimeframe = new ConsecutiveDaysTimeframe();
         schedule.consecutiveDaysTimeframe.startDayOfWeek = rawSchedule.consecutiveDaysTimeframe.startDayOfWeek;
         schedule.consecutiveDaysTimeframe.startTime = rawSchedule.consecutiveDaysTimeframe.startTime;
         schedule.consecutiveDaysTimeframe.endDayOfWeek = rawSchedule.consecutiveDaysTimeframe.endDayOfWeek;
         schedule.consecutiveDaysTimeframe.endTime = rawSchedule.consecutiveDaysTimeframe.endTime;
-        schedule.minRunningTime = TimeUtil.toSeconds(rawSchedule.consecutiveDaysTimeframe.minRunningTime).toString();
-        schedule.maxRunningTime = TimeUtil.toSeconds(rawSchedule.consecutiveDaysTimeframe.maxRunningTime).toString();
+        if (rawSchedule.consecutiveDaysTimeframe.minRunningTime != null) {
+          schedule.minRunningTime = TimeUtil.toSeconds(rawSchedule.consecutiveDaysTimeframe.minRunningTime).toString();
+        }
+        if (rawSchedule.consecutiveDaysTimeframe.maxRunningTime != null) {
+          schedule.maxRunningTime = TimeUtil.toSeconds(rawSchedule.consecutiveDaysTimeframe.maxRunningTime).toString();
+        }
       }
       schedules.push(schedule);
     }
@@ -130,8 +140,10 @@ export class ScheduleFactory {
     console.log('createDayTimeframe from ' + JSON.stringify(rawTimeframe));
     const dayTimeframe = new DayTimeframe();
     dayTimeframe.daysOfWeekValues = new Array();
-    for (let i = 0; i < rawTimeframe.daysOfWeek.length; i++) {
-      dayTimeframe.daysOfWeekValues.push(rawTimeframe.daysOfWeek[i].value);
+    if (rawTimeframe.daysOfWeek != null) {
+      for (let i = 0; i < rawTimeframe.daysOfWeek.length; i++) {
+        dayTimeframe.daysOfWeekValues.push(rawTimeframe.daysOfWeek[i].value);
+      }
     }
     dayTimeframe.startTime = TimeUtil.timestring(rawTimeframe.start.hour, rawTimeframe.start.minute);
     dayTimeframe.endTime = TimeUtil.timestring(rawTimeframe.end.hour, rawTimeframe.end.minute);

@@ -23,6 +23,7 @@ import {ModbusSwitch} from './modbus-switch';
 import {HttpSwitch} from './http-switch';
 import {AlwaysOnSwitch} from './always-on-switch';
 import {ControlDefaults} from './control-defaults';
+import {MockSwitch} from './mock-switch';
 
 export class ControlFactory {
 
@@ -93,6 +94,8 @@ export class ControlFactory {
       control.type = rawControl['@class'];
       if (control.type === AlwaysOnSwitch.TYPE) {
         control.alwaysOnSwitch = ControlFactory.createAlwaysOnSwitch(rawControl);
+      } else if (control.type === MockSwitch.TYPE) {
+        control.mockSwitch = ControlFactory.createMockSwitch(rawControl);
       } else if (control.type === Switch.TYPE) {
         control.switch_ = ControlFactory.createSwitch(rawControl);
       } else if (control.type === ModbusSwitch.TYPE) {
@@ -106,6 +109,8 @@ export class ControlFactory {
   static getControlByType(control: Control): any {
     if (control.type === AlwaysOnSwitch.TYPE) {
       return control.alwaysOnSwitch;
+    } else if (control.type === MockSwitch.TYPE) {
+      return control.mockSwitch;
     } else if (control.type === Switch.TYPE) {
       return control.switch_;
     } else if (control.type === ModbusSwitch.TYPE) {
@@ -118,6 +123,10 @@ export class ControlFactory {
 
   static createAlwaysOnSwitch(rawAlwaysOnSwitch: any): AlwaysOnSwitch {
     return new AlwaysOnSwitch();
+  }
+
+  static createMockSwitch(rawMockSwitch: any): MockSwitch {
+    return new MockSwitch();
   }
 
   static createStartingCurrentSwitch(rawStartingCurrentSwitch: any): StartingCurrentSwitch {

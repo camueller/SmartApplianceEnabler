@@ -94,11 +94,11 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   isStopLightOn(applianceStatus: ApplianceStatus): boolean {
-    return applianceStatus.planningRequested && !applianceStatus.earliestStartPassed && !applianceStatus.on;
+    return applianceStatus.planningRequested && applianceStatus.earliestStart > 0 && !applianceStatus.on;
   }
 
   isSlowLightOn(applianceStatus: ApplianceStatus): boolean {
-    return applianceStatus.earliestStartPassed && !applianceStatus.on;
+    return applianceStatus.earliestStart === 0 && !applianceStatus.on;
   }
 
   isGoLightOn(applianceStatus: ApplianceStatus): boolean {
@@ -133,6 +133,9 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   getFormattedRuntime(seconds: number): string {
+    if (seconds == null) {
+      return '';
+    }
     return TimeUtil.toHourMinuteWithUnits(seconds);
   }
 }

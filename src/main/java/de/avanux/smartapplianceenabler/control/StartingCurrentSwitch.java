@@ -128,25 +128,25 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
     }
 
     @Override
-    public boolean on(boolean switchOn) {
+    public boolean on(LocalDateTime now, boolean switchOn) {
         logger.debug("{}: Setting appliance switch to {}", applianceId, (switchOn ? "on" : "off"));
         on = switchOn;
         if (switchOn) {
             // don't switch off appliance - otherwise it cannot be operated
-            applianceOn(true);
+            applianceOn(now,true);
             switchOnTime = new LocalDateTime();
         }
         for(ControlStateChangedListener listener : controlStateChangedListeners) {
             logger.debug("{}: Notifying {} {}", applianceId, ControlStateChangedListener.class.getSimpleName(),
                     listener.getClass().getSimpleName());
-            listener.controlStateChanged(switchOn);
+            listener.controlStateChanged(now, switchOn);
         }
         return on;
     }
 
-    private boolean applianceOn(boolean switchOn) {
+    private boolean applianceOn(LocalDateTime now, boolean switchOn) {
         logger.debug("{}: Setting wrapped appliance switch to {}", applianceId, (switchOn ? "on" : "off"));
-        return control.on(switchOn);
+        return control.on(now, switchOn);
     }
 
     @Override
@@ -161,23 +161,23 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
         return false;
     }
 
-    public void start(final Meter meter, Timer timer) {
+    public void start(LocalDateTime now, final Meter meter, Timer timer) {
         logger.info("{}: Starting current switch: powerThreshold={}W startingCurrentDetectionDuration={}s " +
                         "finishedCurrentDetectionDuration={}s minRunningTime={}s",
                 applianceId, getPowerThreshold(), getStartingCurrentDetectionDuration(),
                 getFinishedCurrentDetectionDuration(), getMinRunningTime());
-        applianceOn(true);
+        applianceOn(now, true);
         if (timer != null) {
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    detectStartingCurrent(meter);
+                    detectStartingCurrent(new LocalDateTime(), meter);
                 }
             }, 0, getStartingCurrentDetectionDuration() * 1000);
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    detectFinishedCurrent(meter);
+                    detectFinishedCurrent(new LocalDateTime(), meter);
                 }
             }, 0, getFinishedCurrentDetectionDuration() * 1000);
         }
@@ -188,7 +188,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
      *
      * @param meter the meter providing current power consumption
      */
-    protected void detectStartingCurrent(Meter meter) {
+    protected void detectStartingCurrent(LocalDateTime now, Meter meter) {
         if (meter != null) {
             boolean applianceOn = isApplianceOn();
             logger.debug("{}: on={} applianceOn={}", applianceId, on, applianceOn);
@@ -200,7 +200,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
                     if (! on) {
                         if (averagePower > getPowerThreshold() && lastAveragePowerOfPowerOnDetection > getPowerThreshold()) {
                             logger.debug("{}: Starting current detected.", applianceId);
-                            applianceOn(false);
+                            applianceOn(now,false);
                             switchOnTime = null;
                             for (StartingCurrentSwitchListener listener : startingCurrentSwitchListeners) {
                                 logger.debug("{}: Notifying {} {}", applianceId, StartingCurrentSwitchListener.class.getSimpleName(),
@@ -228,7 +228,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
      *
      * @param meter the meter providing current power consumption
      */
-    protected void detectFinishedCurrent(Meter meter) {
+    protected void detectFinishedCurrent(LocalDateTime now, Meter meter) {
         if (meter != null) {
             boolean applianceOn = isApplianceOn();
             logger.debug("{}: on={} applianceOn={}", applianceId, on, applianceOn);
@@ -245,7 +245,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
                                         listener.getClass().getSimpleName());
                                 listener.finishedCurrentDetected();
                             }
-                            on(false);
+                            on(now, false);
                         } else {
                             logger.debug("{}: Finished current not detected.", applianceId);
                         }
