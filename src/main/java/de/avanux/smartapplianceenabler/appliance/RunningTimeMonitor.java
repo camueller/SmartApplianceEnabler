@@ -92,7 +92,7 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         this.scheduleChangedListeners.add(listener);
     }
 
-    protected void setRunning(boolean running, LocalDateTime now) {
+    public void setRunning(boolean running, LocalDateTime now) {
         if(! running) {
             int secondsSinceStatusChange = getSecondsSinceStatusChange(now);
             if(this.runningTime != null) {
@@ -234,7 +234,6 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
             runningTime = 0;
             remainingMinRunningTimeWhileNotRunning = schedule.getMinRunningTime();
             remainingMaxRunningTimeWhileNotRunning = schedule.getMaxRunningTime();
-            interrupted = false;
             intervalChanged = true;
             logger.debug("{}: Interval activated: ", applianceId, timeframeIntervalToBeActivated);
         }
@@ -243,7 +242,6 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
             runningTime = null;
             remainingMinRunningTimeWhileNotRunning = null;
             remainingMaxRunningTimeWhileNotRunning = null;
-            interrupted = false;
             intervalChanged = true;
         }
         TimeframeInterval deactivatedTimeframeInterval = activeTimeframeInterval;
@@ -251,6 +249,9 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         if(intervalChanged) {
             logger.debug("{}: Active interval changed. deactivatedTimeframeInterval={} activeTimeframeInterval={}",
                     applianceId, deactivatedTimeframeInterval, activeTimeframeInterval);
+            running = false;
+            interrupted = false;
+            statusChangedAt = null;
             for(ActiveIntervalChangedListener listener : scheduleChangedListeners) {
                 logger.debug("{}: Notifying {} {}", applianceId, ActiveIntervalChangedListener.class.getSimpleName(),
                         listener.getClass().getSimpleName());
