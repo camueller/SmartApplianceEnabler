@@ -155,6 +155,8 @@
   "ScheduleComponent.error.consecutiveDaysTimeframe_minRunningTime_pattern": "Die minimale Laufzeit muss in 'Stunden:Minuten' angegeben werden",
   "ScheduleComponent.error.consecutiveDaysTimeframe_maxRunningTime_pattern": "Die maximale Laufzeit muss in 'Stunden:Minuten' angegeben werden",
 
+  "StatusComponent.noControllableAppliances_title": "Keine steuerbaren Geräte",
+  "StatusComponent.noControllableAppliances_message": "In der Statusanzeige wird der Status aller steuerbaren Geräte angezeigt. Wenn keine Geräte konfiguriert sind oder diese nicht steuerbar sind, ist die Liste leer.",
   "StatusComponent.tooltipStopLight": "Klick für sofortigen Stop",
   "StatusComponent.tooltipGoLight": "Klick für sofortigen Start",
   "StatusComponent.earliestStart": "Start frühestens in ",

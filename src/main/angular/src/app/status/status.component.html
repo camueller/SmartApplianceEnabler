@@ -1,4 +1,8 @@
 <div class="ui segment">
+  <div *ngIf="applianceStatuses == null || applianceStatuses.length == 0" class="ui info message">
+    <div class="header">{{'StatusComponent.noControllableAppliances_title' | translate}}</div>
+    <p>{{'StatusComponent.noControllableAppliances_message' | translate}}</p>
+  </div>
   <div class="appliances" *ngFor="let applianceStatus of applianceStatuses" style="display: inline-block;vertical-align: top">
     <div class="appliance">
       <div class="traffic-light">
