@@ -17,8 +17,10 @@
  */
 package de.avanux.smartapplianceenabler.control;
 
+import org.joda.time.LocalDateTime;
+
 public interface ControlStateChangedListener {
 
-    void controlStateChanged(boolean switchOn);
+    void controlStateChanged(LocalDateTime now, boolean switchOn);
 
 }

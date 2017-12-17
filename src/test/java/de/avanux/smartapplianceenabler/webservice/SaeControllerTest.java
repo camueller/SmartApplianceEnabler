@@ -75,8 +75,8 @@ public class SaeControllerTest {
         Assert.assertEquals(1, schedules.size());
         Schedule schedule = schedules.get(0);
 
-        Assert.assertEquals(7200, schedule.getMinRunningTime());
-        Assert.assertEquals(10800, schedule.getMaxRunningTime());
+        Assert.assertEquals(7200, schedule.getMinRunningTime().intValue());
+        Assert.assertEquals(10800, schedule.getMaxRunningTime().intValue());
 
         Timeframe timeframe = schedule.getTimeframe();
         Assert.assertTrue(timeframe instanceof DayTimeframe);
@@ -99,8 +99,8 @@ public class SaeControllerTest {
         Assert.assertEquals(1, schedules.size());
         Schedule schedule = schedules.get(0);
 
-        Assert.assertEquals(36000, schedule.getMinRunningTime());
-        Assert.assertEquals(43200, schedule.getMaxRunningTime());
+        Assert.assertEquals(36000, schedule.getMinRunningTime().intValue());
+        Assert.assertEquals(43200, schedule.getMaxRunningTime().intValue());
 
         Timeframe timeframe = schedule.getTimeframe();
         Assert.assertTrue(timeframe instanceof ConsecutiveDaysTimeframe);

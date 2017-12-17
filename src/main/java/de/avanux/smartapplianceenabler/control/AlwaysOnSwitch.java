@@ -20,6 +20,7 @@ package de.avanux.smartapplianceenabler.control;
 
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.ControlStateChangedListener;
+import org.joda.time.LocalDateTime;
 
 /**
  * A switch which is always switched on.
@@ -27,7 +28,7 @@ import de.avanux.smartapplianceenabler.control.ControlStateChangedListener;
 public class AlwaysOnSwitch implements Control {
 
     @Override
-    public boolean on(boolean switchOn) {
+    public boolean on(LocalDateTime now, boolean switchOn) {
         return true;
     }
 

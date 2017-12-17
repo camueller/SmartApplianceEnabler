@@ -24,6 +24,7 @@ import de.avanux.smartapplianceenabler.configuration.Configuration;
 import de.avanux.smartapplianceenabler.configuration.Connectivity;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.ControlDefaults;
+import de.avanux.smartapplianceenabler.control.ModbusSwitch;
 import de.avanux.smartapplianceenabler.control.StartingCurrentSwitchDefaults;
 import de.avanux.smartapplianceenabler.meter.*;
 import de.avanux.smartapplianceenabler.modbus.ModbusElectricityMeterDefaults;
@@ -31,6 +32,7 @@ import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
 import de.avanux.smartapplianceenabler.schedule.Schedule;
 import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
 import de.avanux.smartapplianceenabler.semp.webservice.*;
+import org.joda.time.Interval;
 import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -60,11 +62,9 @@ public class SaeController {
     // only required for development if running via "ng serve"
     private static final String CROSS_ORIGIN_URL = "http://localhost:4200";
     private Logger logger = LoggerFactory.getLogger(SaeController.class);
-    private DateTimeFormatter dateTimeFormatter;
 
     public SaeController() {
         logger.info("SAE controller created.");
-        dateTimeFormatter = DateTimeFormat.mediumDateTime().withLocale(Locale.GERMAN);
     }
 
     private Appliance getAppliance(String applianceId) {
@@ -224,6 +224,9 @@ public class SaeController {
     @ResponseBody
     public void setControl(@RequestParam(value="id") String applianceId, @RequestBody Control control) {
         logger.debug("{}: Received request to set control {}", applianceId, control);
+        if(control instanceof ModbusSwitch) {
+            ((ModbusSwitch) control).setIdref(PulseReceiver.DEFAULT_ID);
+        }
         ApplianceManager.getInstance().setControl(applianceId, control);
     }
 
@@ -268,6 +271,12 @@ public class SaeController {
     @ResponseBody
     public void setMeter(@RequestParam(value="id") String applianceId, @RequestBody Meter meter) {
         logger.debug("{}: Received request to set meter {}", applianceId, meter);
+        if(meter instanceof S0ElectricityMeterNetworked) {
+            ((S0ElectricityMeterNetworked) meter).setIdref(PulseReceiver.DEFAULT_ID);
+        }
+        if(meter instanceof ModbusElectricityMeter) {
+            ((ModbusElectricityMeter) meter).setIdref(PulseReceiver.DEFAULT_ID);
+        }
         ApplianceManager.getInstance().setMeter(applianceId, meter);
     }
 
@@ -415,7 +424,7 @@ public class SaeController {
         List<PulseReceiver> pulseReceivers = null;
         if(settings.isPulseReceiverEnabled()) {
             PulseReceiver pulseReceiver = new PulseReceiver();
-            pulseReceiver.setId("default");
+            pulseReceiver.setId(PulseReceiver.DEFAULT_ID);
             pulseReceiver.setPort(settings.getPulseReceiverPort());
             pulseReceivers = Collections.singletonList(pulseReceiver);
         }
@@ -423,6 +432,7 @@ public class SaeController {
         List<ModbusTcp> modbusTCPs = null;
         if(settings.isModbusEnabled()) {
             ModbusTcp modbusTcp = new ModbusTcp();
+            modbusTcp.setId(ModbusTcp.DEFAULT_ID);
             modbusTcp.setHost(settings.getModbusTcpHost());
             modbusTcp.setPort(settings.getModbusTcpPort());
             modbusTCPs = Collections.singletonList(modbusTcp);
@@ -461,22 +471,40 @@ public class SaeController {
             applianceStatus.setVendor(deviceInfo.getIdentification().getDeviceVendor());
             applianceStatus.setType(deviceInfo.getIdentification().getDeviceType());
 
-            List<RuntimeRequest> runtimeRequests = appliance.getRuntimeRequests(now);
+            List<RuntimeRequest> runtimeRequests = appliance.getRuntimeRequests(now, true);
 
-            applianceStatus.setControllable(appliance.isControllable());
-            applianceStatus.setPlanningRequested(runtimeRequests.size() > 0);
-            applianceStatus.setEarliestStartPassed(runtimeRequests.size() > 0
-                    && runtimeRequests.get(0).getEarliestStart() == 0);
             if(appliance.isControllable()) {
+                applianceStatus.setControllable(true);
+                if(runtimeRequests.size() > 0) {
+                    RuntimeRequest nextRuntimeRequest= runtimeRequests.get(0);
+                    applianceStatus.setPlanningRequested(true);
+                    applianceStatus.setEarliestStart(nextRuntimeRequest.getEarliestStart());
+                    applianceStatus.setLatestStart(nextRuntimeRequest.getLatestEnd()
+                            - nextRuntimeRequest.getMinRunningTime() - Schedule.getAdditionalRunningTime());
+                    applianceStatus.setOn(appliance.getControl().isOn());
+                    RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
+                    if(runningTimeMonitor.getActiveTimeframeInterval(now) == null) {
+                        applianceStatus.setRunningTime(0);
+                        applianceStatus.setRemainingMinRunningTime(nextRuntimeRequest.getMinRunningTime());
+                        applianceStatus.setRemainingMaxRunningTime(nextRuntimeRequest.getMaxRunningTime());
+                    }
+                }
                 applianceStatus.setOn(appliance.getControl().isOn());
                 RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
-                applianceStatus.setRemainingMinRunningTime(
-                        runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(now));
-                applianceStatus.setRemainingMaxRunningTime(
-                        runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(now));
-                LocalDateTime statusChangedAt = runningTimeMonitor.getStatusChangedAt();
-                if(statusChangedAt != null) {
-                    applianceStatus.setStatusChangedAt(dateTimeFormatter.print(statusChangedAt));
+                if(runningTimeMonitor.getActiveTimeframeInterval(now) != null) {
+                    applianceStatus.setPlanningRequested(true);
+                    Integer runningTime = runningTimeMonitor.getRunningTimeOfCurrentTimeFrame(now);
+                    applianceStatus.setRunningTime(runningTime);
+                    Integer minRunningTime = runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(now);
+                    applianceStatus.setRemainingMinRunningTime(minRunningTime != null ? minRunningTime : 0);
+                    Integer maxRunningTime = runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(now);
+                    applianceStatus.setRemainingMaxRunningTime(maxRunningTime);
+                    if(runningTimeMonitor.isInterrupted()) {
+                        Interval interrupted = new Interval(runningTimeMonitor.getStatusChangedAt().toDateTime(),
+                                new LocalDateTime().toDateTime());
+                        applianceStatus.setInterruptedSince(
+                                new Double(interrupted.toDurationMillis() / 1000).intValue());
+                    }
                 }
             }
 

@@ -36,6 +36,7 @@ import {ControlService} from './control-service';
 import {Control} from './control';
 import {Observable} from 'rxjs/Observable';
 import {DialogService} from '../shared/dialog.service';
+import {MockSwitch} from './mock-switch';
 
 @Component({
   selector: 'app-appliance-switch',
@@ -53,6 +54,7 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   TYPE_ALWAYS_ON_SWITCH = AlwaysOnSwitch.TYPE;
   TYPE_SWITCH = Switch.TYPE;
   TYPE_MODBUS_SWITCH = ModbusSwitch.TYPE;
+  TYPE_MOCK_SWITCH = MockSwitch.TYPE;
   TYPE_HTTP_SWITCH = HttpSwitch.TYPE;
   VALIDATOR_PATTERN_INTEGER = InputValidatorPatterns.INTEGER;
   VALIDATOR_PATTERN_URL = InputValidatorPatterns.URL;
@@ -91,6 +93,8 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
       this.control.switch_ = new Switch();
     } else if (newType === this.TYPE_MODBUS_SWITCH && this.control.modbusSwitch == null) {
       this.control.modbusSwitch = new ModbusSwitch();
+    } else if (newType === this.TYPE_MOCK_SWITCH && this.control.mockSwitch == null) {
+      this.control.mockSwitch = new MockSwitch();
     } else if (newType === this.TYPE_HTTP_SWITCH && this.control.httpSwitch == null) {
       this.control.httpSwitch = new HttpSwitch();
     }

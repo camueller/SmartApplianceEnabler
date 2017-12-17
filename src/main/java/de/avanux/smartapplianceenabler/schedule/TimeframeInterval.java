@@ -18,6 +18,7 @@
 package de.avanux.smartapplianceenabler.schedule;
 
 import org.joda.time.Interval;
+import org.joda.time.LocalDateTime;
 
 /**
  * A TimeframeInterval associates a timeframe with an interval.
@@ -37,6 +38,16 @@ public class TimeframeInterval {
 
     public Interval getInterval() {
         return interval;
+    }
+
+    public boolean isIntervalSufficient(LocalDateTime now, Integer minRunningTime, Integer maxRunningTime) {
+        Integer runningTime = maxRunningTime;
+        if(runningTime == null) {
+            runningTime = minRunningTime;
+        }
+        return now.plusSeconds(runningTime)
+                .plusSeconds(Schedule.getAdditionalRunningTime())
+                .isBefore(new LocalDateTime(interval.getEnd()));
     }
 
     @Override

@@ -37,9 +37,9 @@ public class Schedule {
     @XmlAttribute
     private boolean enabled = true;
     @XmlAttribute
-    private int minRunningTime;
+    private Integer minRunningTime;
     @XmlAttribute
-    private int maxRunningTime;
+    private Integer maxRunningTime;
     @XmlElements({
             @XmlElement(name = "DayTimeframe", type = DayTimeframe.class),
             @XmlElement(name = "ConsecutiveDaysTimeframe", type = ConsecutiveDaysTimeframe.class)
@@ -56,15 +56,15 @@ public class Schedule {
     public Schedule() {
     }
 
-    public Schedule(int minRunningTime, int maxRunningTime, TimeOfDay earliestStart, TimeOfDay latestEnd) {
+    public Schedule(Integer minRunningTime, Integer maxRunningTime, TimeOfDay earliestStart, TimeOfDay latestEnd) {
         this(true, minRunningTime, maxRunningTime, earliestStart, latestEnd);
     }
 
-    public Schedule(boolean enabled, int minRunningTime, int maxRunningTime, TimeOfDay earliestStart, TimeOfDay latestEnd) {
+    public Schedule(boolean enabled, Integer minRunningTime, Integer maxRunningTime, TimeOfDay earliestStart, TimeOfDay latestEnd) {
         this(enabled, minRunningTime, maxRunningTime, earliestStart, latestEnd, null);
     }
 
-    public Schedule(boolean enabled, int minRunningTime, int maxRunningTime, TimeOfDay earliestStart, TimeOfDay latestEnd, List<Integer> daysOfWeekValues) {
+    public Schedule(boolean enabled, Integer minRunningTime, Integer maxRunningTime, TimeOfDay earliestStart, TimeOfDay latestEnd, List<Integer> daysOfWeekValues) {
         this.enabled = enabled;
         this.minRunningTime = minRunningTime;
         this.maxRunningTime = maxRunningTime;
@@ -88,11 +88,15 @@ public class Schedule {
         LoggerFactory.getLogger(Schedule.class).debug("additional running time set to " + additionalRunningTime);
     }
 
-    public int getMinRunningTime() {
+    public static int getAdditionalRunningTime() {
+        return additionalRunningTime;
+    }
+
+    public Integer getMinRunningTime() {
         return minRunningTime;
     }
 
-    public int getMaxRunningTime() {
+    public Integer getMaxRunningTime() {
         return maxRunningTime;
     }
 
@@ -123,10 +127,7 @@ public class Schedule {
                     if(interval.contains(now.toDateTime())) {
                         // interval already started ...
                         if(onlySufficient) {
-                            if(now.plusSeconds(schedule.getMaxRunningTime())
-                                    .plusSeconds(additionalRunningTime)
-                                    .isBefore(new LocalDateTime(interval.getEnd()))) {
-                                // ... with remaining running time sufficient
+                            if(timeframeInterval.isIntervalSufficient(now, schedule.getMinRunningTime(), schedule.getMaxRunningTime())) {
                                 return timeframeInterval;
                             }
                         }
@@ -153,15 +154,18 @@ public class Schedule {
      * @param considerationInterval
      * @return a (possibly empty) list of timeframes
      */
-    public static List<TimeframeInterval> findTimeframeIntervals(LocalDateTime now, Interval considerationInterval, List<Schedule> schedules) {
+    public static List<TimeframeInterval> findTimeframeIntervals(LocalDateTime now, Interval considerationInterval, List<Schedule> schedules, boolean onlySufficient) {
         List<TimeframeInterval> matchingTimeframeIntervals = new ArrayList<>();
         if(schedules != null) {
             for(Schedule schedule : schedules) {
-                Timeframe timeframe = schedule.getTimeframe();
-                List<TimeframeInterval> timeframeIntervals = timeframe.getIntervals(now);
-                for (TimeframeInterval timeframeInterval : timeframeIntervals) {
-                    if(considerationInterval.contains(timeframeInterval.getInterval().getStart())) {
-                        matchingTimeframeIntervals.add(timeframeInterval);
+                if(schedule.isEnabled()) {
+                    Timeframe timeframe = schedule.getTimeframe();
+                    List<TimeframeInterval> timeframeIntervals = timeframe.getIntervals(now);
+                    for (TimeframeInterval timeframeInterval : timeframeIntervals) {
+                        if (considerationInterval.contains(timeframeInterval.getInterval().getStart())
+                                && (!onlySufficient || timeframeInterval.isIntervalSufficient(now, schedule.getMinRunningTime(), schedule.getMaxRunningTime()))) {
+                            matchingTimeframeIntervals.add(timeframeInterval);
+                        }
                     }
                 }
             }
@@ -179,10 +183,12 @@ public class Schedule {
         Map<DateTime, TimeframeInterval> sortedTimeframeIntervals = new TreeMap<>();
         if(schedules != null) {
             for(Schedule schedule : schedules) {
-                Timeframe timeframe = schedule.getTimeframe();
-                List<TimeframeInterval> timeframeIntervals = timeframe.getIntervals(now);
-                for (TimeframeInterval timeframeInterval : timeframeIntervals) {
-                    sortedTimeframeIntervals.put(timeframeInterval.getInterval().getStart(), timeframeInterval);
+                if(schedule.isEnabled()) {
+                    Timeframe timeframe = schedule.getTimeframe();
+                    List<TimeframeInterval> timeframeIntervals = timeframe.getIntervals(now);
+                    for (TimeframeInterval timeframeInterval : timeframeIntervals) {
+                        sortedTimeframeIntervals.put(timeframeInterval.getInterval().getStart(), timeframeInterval);
+                    }
                 }
             }
         }

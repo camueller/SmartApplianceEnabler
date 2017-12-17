@@ -21,6 +21,7 @@ import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.GpioPinDigitalOutput;
 import com.pi4j.io.gpio.PinState;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +66,7 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
     }
 
     @Override
-    public boolean on(boolean switchOn) {
+    public boolean on(LocalDateTime now, boolean switchOn) {
         logger.info("{}: Switching {} {}", getApplianceId(), (switchOn ? "on" : "off"), getGpio());
         if(outputPin != null) {
             outputPin.setState(adjustState(switchOn ? PinState.HIGH : PinState.LOW));
@@ -74,7 +75,7 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
             logGpioAccessDisabled();
         }
         for(ControlStateChangedListener listener : controlStateChangedListeners) {
-            listener.controlStateChanged(switchOn);
+            listener.controlStateChanged(now, switchOn);
         }
         return true;
     }

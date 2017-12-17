@@ -19,6 +19,7 @@
 package de.avanux.smartapplianceenabler.control;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,11 +37,11 @@ public class MockSwitch implements Control, ApplianceIdConsumer {
     transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
 
     @Override
-    public boolean on(boolean switchOn) {
+    public boolean on(LocalDateTime now, boolean switchOn) {
         logger.info("{}: Switching {}", applianceId, (switchOn ? "on" : "off"));
         on = switchOn;
         for(ControlStateChangedListener listener : controlStateChangedListeners) {
-            listener.controlStateChanged(switchOn);
+            listener.controlStateChanged(now, switchOn);
         }
         return true;
     }

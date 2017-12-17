@@ -20,6 +20,7 @@ package de.avanux.smartapplianceenabler.control;
 import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
 import de.avanux.smartapplianceenabler.modbus.ReadCoilExecutor;
 import de.avanux.smartapplianceenabler.modbus.WriteCoilExecutor;
+import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +36,7 @@ public class ModbusSwitch extends ModbusSlave implements Control {
     transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
 
     @Override
-    public boolean on(boolean switchOn) {
+    public boolean on(LocalDateTime now, boolean switchOn) {
         boolean result = false;
         try {
             logger.info("{}: Switching {}", getApplianceId(), (switchOn ? "on" : "off"));
@@ -45,7 +46,7 @@ public class ModbusSwitch extends ModbusSlave implements Control {
             result = executor.getResult();
 
             for(ControlStateChangedListener listener : controlStateChangedListeners) {
-                listener.controlStateChanged(switchOn);
+                listener.controlStateChanged(now, switchOn);
             }
         }
         catch (Exception e) {

@@ -24,13 +24,15 @@ public class ApplianceStatus {
     private String name;
     private String type;
     private String vendor;
-    private String statusChangedAt;
+    private Integer runningTime;
     private Integer remainingMinRunningTime;
     private Integer remainingMaxRunningTime;
     private boolean planningRequested;
-    private boolean earliestStartPassed;
+    private Integer earliestStart;
+    private Integer latestStart;
     private boolean on;
     private boolean controllable;
+    private Integer interruptedSince;
 
 
     public String getId() {
@@ -65,12 +67,12 @@ public class ApplianceStatus {
         this.vendor = vendor;
     }
 
-    public String getStatusChangedAt() {
-        return statusChangedAt;
+    public Integer getRunningTime() {
+        return runningTime;
     }
 
-    public void setStatusChangedAt(String statusChangedAt) {
-        this.statusChangedAt = statusChangedAt;
+    public void setRunningTime(Integer runningTime) {
+        this.runningTime = runningTime;
     }
 
     public Integer getRemainingMinRunningTime() {
@@ -97,12 +99,20 @@ public class ApplianceStatus {
         this.planningRequested = planningRequested;
     }
 
-    public boolean isEarliestStartPassed() {
-        return earliestStartPassed;
+    public Integer getEarliestStart() {
+        return earliestStart;
     }
 
-    public void setEarliestStartPassed(boolean earliestStartPassed) {
-        this.earliestStartPassed = earliestStartPassed;
+    public void setEarliestStart(Integer earliestStart) {
+        this.earliestStart = earliestStart;
+    }
+
+    public Integer getLatestStart() {
+        return latestStart;
+    }
+
+    public void setLatestStart(Integer latestStart) {
+        this.latestStart = latestStart;
     }
 
     public boolean isOn() {
@@ -119,5 +129,13 @@ public class ApplianceStatus {
 
     public void setControllable(boolean controllable) {
         this.controllable = controllable;
+    }
+
+    public Integer getInterruptedSince() {
+        return interruptedSince;
+    }
+
+    public void setInterruptedSince(Integer interruptedSince) {
+        this.interruptedSince = interruptedSince;
     }
 }
