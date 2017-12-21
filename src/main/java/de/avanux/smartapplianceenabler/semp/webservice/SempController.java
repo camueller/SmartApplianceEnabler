@@ -57,7 +57,7 @@ public class SempController {
         return marshall(createDevice2EM(new LocalDateTime()));
     }
 
-    protected Device2EM createDevice2EM(LocalDateTime now) {
+    public Device2EM createDevice2EM(LocalDateTime now) {
         List<DeviceStatus> deviceStatuses = new ArrayList<DeviceStatus>();
         List<PlanningRequest> planningRequests = new ArrayList<PlanningRequest>();
         List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
@@ -176,12 +176,16 @@ public class SempController {
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     @ResponseBody
     public void em2Device(@RequestBody EM2Device em2Device) {
+        em2Device(new LocalDateTime(), em2Device);
+    }
+
+    public void em2Device(LocalDateTime now, EM2Device em2Device) {
         List<DeviceControl> deviceControls = em2Device.getDeviceControl();
         for(DeviceControl deviceControl : deviceControls) {
             logger.debug("{}: Received control request", deviceControl.getDeviceId());
             Appliance appliance = ApplianceManager.getInstance().findAppliance(deviceControl.getDeviceId());
             if(appliance != null) {
-                appliance.setApplianceState(new LocalDateTime(), deviceControl.isOn(), false,
+                appliance.setApplianceState(now, deviceControl.isOn(), false,
                         "Setting appliance state to " + (deviceControl.isOn() ? "ON" : "OFF"));
             }
             else {

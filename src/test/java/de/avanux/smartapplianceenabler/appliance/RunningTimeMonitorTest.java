@@ -38,38 +38,35 @@ public class RunningTimeMonitorTest extends TestBase {
         Schedule schedule = new Schedule(7200, null, new TimeOfDay(11, 0, 0),
                 new TimeOfDay(17, 0, 0));
         runningTimeMonitor.setSchedules(Collections.singletonList(schedule));
-        for(int day=1;day<3;day++) {
-            logger.debug("************ Day " + day + " ************");
-            Assert.assertNull("Timeframe not yet started should return NULL",
-                    runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame (
-                            toToday(10, 0, 0)));
-            runningTimeMonitor.updateActiveTimeframeInterval(toToday(11, 00, 0));
-            Assert.assertEquals("With timeframe started but device switched off max running time should be returned",
-                    7200, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(
-                            toToday(11, 30, 0)).intValue());
+        Assert.assertNull("Timeframe not yet started should return NULL",
+                runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame (
+                        toToday(10, 0, 0)));
+        runningTimeMonitor.updateActiveTimeframeInterval(toToday(11, 00, 0));
+        Assert.assertEquals("With timeframe started but device switched off max running time should be returned",
+                7200, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(
+                        toToday(11, 30, 0)).intValue());
 
-            runningTimeMonitor.setRunning(true, toToday(12, 10, 0));
-            Assert.assertEquals("With timeframe started and device switched on max running time should be reduced by 5 minutes",
-                    6900, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(
-                            toToday(12, 15, 0)).intValue());
-            runningTimeMonitor.setRunning(false, toToday(13, 10, 0));
-            Assert.assertEquals("With timeframe started and device switched off running time of one hour remains",
-                    3600, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(
-                            toToday(13, 15, 0)).intValue());
+        runningTimeMonitor.setRunning(true, toToday(12, 10, 0));
+        Assert.assertEquals("With timeframe started and device switched on max running time should be reduced by 5 minutes",
+                6900, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(
+                        toToday(12, 15, 0)).intValue());
+        runningTimeMonitor.setRunning(false, toToday(13, 10, 0));
+        Assert.assertEquals("With timeframe started and device switched off running time of one hour remains",
+                3600, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(
+                        toToday(13, 15, 0)).intValue());
 
-            runningTimeMonitor.setRunning(true, toToday(16, 10, 0));
-            Assert.assertEquals("Running time may exceed LatestEnd",
-                    3300, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(
-                            toToday(16, 15, 0)).intValue());
-            Assert.assertEquals("Running time left right before LatestEnd",
-                    601, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(
-                            toToday(16, 59, 59)).intValue());
-            runningTimeMonitor.setRunning(false, toToday(17, 0, 0));
-            runningTimeMonitor.updateActiveTimeframeInterval(toToday(17, 00, 0));
-            Assert.assertNull("With timeframe expired running time should return NULL",
-                    runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(
-                            toToday(17, 0, 0)));
-        }
+        runningTimeMonitor.setRunning(true, toToday(16, 10, 0));
+        Assert.assertEquals("Running time may exceed LatestEnd",
+                3300, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(
+                        toToday(16, 15, 0)).intValue());
+        Assert.assertEquals("Running time left right before LatestEnd",
+                601, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(
+                        toToday(16, 59, 59)).intValue());
+        runningTimeMonitor.setRunning(false, toToday(17, 0, 0));
+        runningTimeMonitor.updateActiveTimeframeInterval(toToday(17, 0, 1));
+        Assert.assertNull("With timeframe expired running time should return NULL",
+                runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(
+                        toToday(17, 0, 0)));
     }
 
     @Test
@@ -80,45 +77,44 @@ public class RunningTimeMonitorTest extends TestBase {
         schedules.add(new Schedule(1200, null, new TimeOfDay(14, 0, 0),
                 new TimeOfDay(15, 0, 0)));
         runningTimeMonitor.setSchedules(schedules);
-        for(int day=1;day<3;day++) {
-            logger.debug("************ Day " + day + " ************");
 
-            //
-            // 1. timeframe
-            //
-            Assert.assertNull("Timeframe not yet started should return NULL",
-                    runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toToday(10, 0, 0)));
-            runningTimeMonitor.updateActiveTimeframeInterval(toToday(11, 00, 0));
-            Assert.assertEquals("With timeframe started but device switched off max running time should be returned",
-                    600, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toToday(11, 20, 0)).intValue());
-            runningTimeMonitor.setRunning(true, toToday(11, 30, 0));
-            Assert.assertEquals("With timeframe started and device switched on max running time should be reduced by 5 minutes",
-                    300, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toToday(11, 35, 0)).intValue());
-            Assert.assertEquals("Running time has to be 0 at the end of the timeframe",
-                    0, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toToday(11, 40, 0)).intValue());
-            runningTimeMonitor.setRunning(false, toToday(11, 40, 0));
-            Assert.assertEquals("Running time has to be 0 at the end of running time",
-                    0, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toToday(11, 45, 0)).intValue());
-            runningTimeMonitor.updateActiveTimeframeInterval(toToday(12, 00, 0));
+        //
+        // 1. timeframe
+        //
+        runningTimeMonitor.updateActiveTimeframeInterval(toToday(10, 00, 0));
+        Assert.assertNull("Timeframe not yet started should return NULL",
+                runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toToday(10, 0, 0)));
+        runningTimeMonitor.updateActiveTimeframeInterval(toToday(11, 00, 0));
+        Assert.assertEquals("With timeframe started but device switched off max running time should be returned",
+                600, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toToday(11, 20, 0)).intValue());
+        runningTimeMonitor.setRunning(true, toToday(11, 30, 0));
+        Assert.assertEquals("With timeframe started and device switched on max running time should be reduced by 5 minutes",
+                300, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toToday(11, 35, 0)).intValue());
+        Assert.assertEquals("Running time has to be 0 at the end of the timeframe",
+                0, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toToday(11, 40, 0)).intValue());
+        runningTimeMonitor.setRunning(false, toToday(11, 40, 0));
+        Assert.assertEquals("Running time has to be 0 at the end of running time",
+                0, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toToday(11, 45, 0)).intValue());
+        runningTimeMonitor.updateActiveTimeframeInterval(toToday(12, 00, 0));
 
-            //
-            // 2. timeframe
-            //
-            Assert.assertNull("Timeframe not yet started should return NULL",
-                    runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toToday(13, 45, 0)));
-            runningTimeMonitor.updateActiveTimeframeInterval(toToday(14, 00, 0));
-            Assert.assertEquals("With timeframe started but device switched off max running time should be returned",
-                    1200, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toToday(14, 10, 0)).intValue());
-            runningTimeMonitor.setRunning(true, toToday(14, 15, 0));
-            Assert.assertEquals("With timeframe started and device switched on max running time should be reduced by 5 minutes",
-                    900, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toToday(14, 20, 0)).intValue());
-            Assert.assertEquals("Min running time has been exceeded by 10 minutes",
-                    -600, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toToday(14, 45, 0)).intValue());
-            runningTimeMonitor.setRunning(false, toToday(14, 45, 0));
-            Assert.assertEquals("Running time after power off is 0", 0,
-                    runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toToday(14, 45, 0)).intValue());
-            runningTimeMonitor.updateActiveTimeframeInterval(toToday(15, 00, 0));
-        }
+        //
+        // 2. timeframe
+        //
+        runningTimeMonitor.updateActiveTimeframeInterval(toToday(13, 00, 0));
+        Assert.assertNull("Timeframe not yet started should return NULL",
+                runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toToday(13, 45, 0)));
+        runningTimeMonitor.updateActiveTimeframeInterval(toToday(14, 00, 0));
+        Assert.assertEquals("With timeframe started but device switched off max running time should be returned",
+                1200, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toToday(14, 10, 0)).intValue());
+        runningTimeMonitor.setRunning(true, toToday(14, 15, 0));
+        Assert.assertEquals("With timeframe started and device switched on max running time should be reduced by 5 minutes",
+                900, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toToday(14, 20, 0)).intValue());
+        Assert.assertEquals("Min running time has been exceeded by 10 minutes",
+                -600, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toToday(14, 45, 0)).intValue());
+        runningTimeMonitor.setRunning(false, toToday(14, 45, 0));
+        Assert.assertEquals("Running time after power off is 0", 0,
+                runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toToday(14, 45, 0)).intValue());
+        runningTimeMonitor.updateActiveTimeframeInterval(toToday(15, 00, 0));
     }
 
     @Test

@@ -142,9 +142,9 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             if(control instanceof StartingCurrentSwitch) {
                 Control wrappedControl = ((StartingCurrentSwitch) control).getControl();
                 ((ApplianceIdConsumer) wrappedControl).setApplianceId(id);
-                wrappedControl.addControlStateChangedListener(this);
+                control.addControlStateChangedListener(this);
                 logger.debug("{}: Registered as {} with {}", id, ControlStateChangedListener.class.getSimpleName(),
-                        wrappedControl.getClass().getSimpleName());
+                        control.getClass().getSimpleName());
                 ((StartingCurrentSwitch) control).addStartingCurrentSwitchListener(this);
                 logger.debug("{}: Registered as {} with {}", id, StartingCurrentSwitchListener.class.getSimpleName(),
                         control.getClass().getSimpleName());
@@ -368,7 +368,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         if(runningTimeMonitor != null) {
             runtimeRequests = getRuntimeRequests(now,
                     runningTimeMonitor.getSchedules(),
-                    runningTimeMonitor.getActiveTimeframeInterval(now),
+                    runningTimeMonitor.getActiveTimeframeInterval(),
                     onlySufficient,
                     runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(now),
                     runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(now));
@@ -421,7 +421,10 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
 
     private void addRuntimeRequest(List<RuntimeRequest> runtimeRequests, Interval interval, Integer remainingMinRunningTime,
                                    Integer remainingMaxRunningTime, LocalDateTime now) {
-        runtimeRequests.add(createRuntimeRequest(interval, remainingMinRunningTime, remainingMaxRunningTime, now));
+        RuntimeRequest runtimeRequest = createRuntimeRequest(interval, remainingMinRunningTime, remainingMaxRunningTime, now);
+        if(runtimeRequest != null) {
+            runtimeRequests.add(runtimeRequest);
+        }
     }
 
     protected RuntimeRequest createRuntimeRequest(Interval interval, Integer minRunningTime,
@@ -442,19 +445,22 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
 
     protected RuntimeRequest createRuntimeRequest(Integer earliestStart, Integer latestEnd, Integer minRunningTime,
                                                   Integer maxRunningTime) {
-        RuntimeRequest runtimeRequest = new RuntimeRequest();
-        runtimeRequest.setEarliestStart(earliestStart);
-        runtimeRequest.setLatestEnd(latestEnd);
-        runtimeRequest.setMinRunningTime(minRunningTime);
-        runtimeRequest.setMaxRunningTime(maxRunningTime);
-        logger.debug("RuntimeRequest created: " + runtimeRequest);
-        return runtimeRequest;
+        if(minRunningTime != null && (minRunningTime > 0 || (maxRunningTime != null && maxRunningTime > 0))) {
+            RuntimeRequest runtimeRequest = new RuntimeRequest();
+            runtimeRequest.setEarliestStart(earliestStart);
+            runtimeRequest.setLatestEnd(latestEnd);
+            runtimeRequest.setMinRunningTime(minRunningTime);
+            runtimeRequest.setMaxRunningTime(maxRunningTime);
+            logger.debug("RuntimeRequest created: " + runtimeRequest);
+            return runtimeRequest;
+        }
+        return null;
     }
 
     @Override
     public void controlStateChanged(LocalDateTime now, boolean switchOn) {
         logger.debug("{}: Control state has changed to {}", id, (switchOn ? "on" : "off"));
-        if(runningTimeMonitor != null && runningTimeMonitor.getActiveTimeframeInterval(now) != null) {
+        if(runningTimeMonitor != null && runningTimeMonitor.getActiveTimeframeInterval() != null) {
             runningTimeMonitor.setRunning(switchOn, now);
         }
     }

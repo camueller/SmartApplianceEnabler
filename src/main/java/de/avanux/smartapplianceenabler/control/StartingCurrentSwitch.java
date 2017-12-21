@@ -77,7 +77,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
         this.applianceId = applianceId;
     }
 
-    protected void setControl(Control control) {
+    public void setControl(Control control) {
         this.control = control;
     }
 
@@ -154,7 +154,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
         return on;
     }
 
-    protected boolean isApplianceOn() {
+    public boolean isApplianceOn() {
         if (control != null) {
             return control.isOn();
         }
@@ -188,7 +188,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
      *
      * @param meter the meter providing current power consumption
      */
-    protected void detectStartingCurrent(LocalDateTime now, Meter meter) {
+    public void detectStartingCurrent(LocalDateTime now, Meter meter) {
         if (meter != null) {
             boolean applianceOn = isApplianceOn();
             logger.debug("{}: on={} applianceOn={}", applianceId, on, applianceOn);
