@@ -17,6 +17,9 @@
  */
 package de.avanux.smartapplianceenabler.semp.webservice;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -33,6 +36,17 @@ public class Timeframe {
     private Integer minRunningTime;
     @XmlElement(name = "MaxRunningTime")
     private Integer maxRunningTime;
+
+    public Timeframe() {
+    }
+
+    public Timeframe(String deviceId, Integer earliestStart, Integer latestEnd, Integer minRunningTime, Integer maxRunningTime) {
+        this.deviceId = deviceId;
+        this.earliestStart = earliestStart;
+        this.latestEnd = latestEnd;
+        this.minRunningTime = minRunningTime;
+        this.maxRunningTime = maxRunningTime;
+    }
 
     public String getDeviceId() {
         return deviceId;
@@ -72,6 +86,34 @@ public class Timeframe {
 
     public void setMaxRunningTime(Integer maxRunningTime) {
         this.maxRunningTime = maxRunningTime;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Timeframe timeframe = (Timeframe) o;
+
+        return new EqualsBuilder()
+                .append(deviceId, timeframe.deviceId)
+                .append(earliestStart, timeframe.earliestStart)
+                .append(latestEnd, timeframe.latestEnd)
+                .append(minRunningTime, timeframe.minRunningTime)
+                .append(maxRunningTime, timeframe.maxRunningTime)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(deviceId)
+                .append(earliestStart)
+                .append(latestEnd)
+                .append(minRunningTime)
+                .append(maxRunningTime)
+                .toHashCode();
     }
 
     @Override

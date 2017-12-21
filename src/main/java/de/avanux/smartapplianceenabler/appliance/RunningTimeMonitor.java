@@ -66,7 +66,9 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
                 updateActiveTimeframeInterval(new LocalDateTime());
             }
         };
-        this.timer.schedule(updateActiveTimeframeIntervalTimerTask, 0, 30000);
+        if(this.timer != null) {
+            this.timer.schedule(updateActiveTimeframeIntervalTimerTask, 0, 30000);
+        }
     }
 
     public void setSchedules(List<Schedule> schedules) {
@@ -178,6 +180,10 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         return remainingRunningTime;
     }
 
+    public boolean isRunning() {
+        return running;
+    }
+
     public boolean isInterrupted() {
         return interrupted;
     }
@@ -189,14 +195,14 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         logger.debug("{}: runningTime={} remainingMinRunningTime={} remainingMaxRunningTime={}",
                 applianceId, getRunningTimeOfCurrentTimeFrame(now), getRemainingMinRunningTimeOfCurrentTimeFrame(now),
                 getRemainingMaxRunningTimeOfCurrentTimeFrame(now));
-        logger.debug("{}: running={} statusChangedAt={} ", applianceId, running, statusChangedAt);
+        logger.debug("{}: running={} interrupted={} statusChangedAt={} ", applianceId, running, interrupted, statusChangedAt);
     }
 
     /**
      * Returns the active timeframe interval.
      * @return
      */
-    public TimeframeInterval getActiveTimeframeInterval(LocalDateTime now) {
+    public TimeframeInterval getActiveTimeframeInterval() {
         return activeTimeframeInterval;
     }
 
@@ -206,7 +212,7 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
      * @param schedules
      */
     public void activateTimeframeInterval(LocalDateTime now, List<Schedule> schedules) {
-        if(schedules != null && schedules.size() > 0) {
+        if(activeTimeframeInterval == null && schedules != null && schedules.size() > 0) {
             TimeframeInterval nextSufficientTimeframeInterval =
                     Schedule.getCurrentOrNextTimeframeInterval(now, schedules, true, false);
             activateTimeframeInterval(now, nextSufficientTimeframeInterval);

@@ -44,14 +44,14 @@ public class SempControllerTest extends TestBase {
         timeframe.setSchedule(schedule);
         RunningTimeMonitor runningTimeMonitor = mock(RunningTimeMonitor.class);
         when(runningTimeMonitor.getSchedules()).thenReturn(Collections.singletonList(schedule));
-        when(runningTimeMonitor.getActiveTimeframeInterval(now)).thenReturn(timeframe.getIntervals(now).get(0));
+        when(runningTimeMonitor.getActiveTimeframeInterval()).thenReturn(timeframe.getIntervals(now).get(0));
         when(runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(now)).thenReturn(schedule.getMinRunningTime());
         when(runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(now)).thenReturn(schedule.getMaxRunningTime());
         appliance.setRunningTimeMonitor(runningTimeMonitor);
 
         Appliances appliances = new Appliances();
         appliances.setAppliances(Collections.singletonList(appliance));
-        ApplianceManager.getInstance().setAppliances(appliances);
+        ApplianceManager.getInstanceWithoutTimer().setAppliances(appliances);
 
         Device2EM device2EM = sempController.createDevice2EM(now);
         List<PlanningRequest> planningRequests = device2EM.getPlanningRequest();
@@ -81,14 +81,14 @@ public class SempControllerTest extends TestBase {
         de.avanux.smartapplianceenabler.schedule.Timeframe timeframe = schedule.getTimeframe();
         timeframe.setSchedule(schedule);
         RunningTimeMonitor runningTimeMonitor = mock(RunningTimeMonitor.class);
-        when(runningTimeMonitor.getActiveTimeframeInterval(now)).thenReturn(timeframe.getIntervals(now).get(0));
+        when(runningTimeMonitor.getActiveTimeframeInterval()).thenReturn(timeframe.getIntervals(now).get(0));
         when(runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(now)).thenReturn(schedule.getMinRunningTime());
         when(runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(now)).thenReturn(schedule.getMaxRunningTime());
         appliance.setRunningTimeMonitor(runningTimeMonitor);
 
         Appliances appliances = new Appliances();
         appliances.setAppliances(Collections.singletonList(appliance));
-        ApplianceManager.getInstance().setAppliances(appliances);
+        ApplianceManager.getInstanceWithoutTimer().setAppliances(appliances);
 
         appliance.startingCurrentDetected();
 
@@ -107,7 +107,7 @@ public class SempControllerTest extends TestBase {
         Assert.assertEquals(1, timeframes.size());
 
         appliance.finishedCurrentDetected();
-        when(runningTimeMonitor.getActiveTimeframeInterval(now)).thenReturn(null);
+        when(runningTimeMonitor.getActiveTimeframeInterval()).thenReturn(null);
 
         // check timeframes for the first time after deactivation
         device2EM = sempController.createDevice2EM(now);
@@ -131,6 +131,6 @@ public class SempControllerTest extends TestBase {
     private void setDeviceInfo(DeviceInfo deviceInfo) {
         Device2EM device2EM = new Device2EM();
         device2EM.setDeviceInfo(Collections.singletonList(deviceInfo));
-        ApplianceManager.getInstance().setDevice2EM(device2EM);
+        ApplianceManager.getInstanceWithoutTimer().setDevice2EM(device2EM);
     }
 }

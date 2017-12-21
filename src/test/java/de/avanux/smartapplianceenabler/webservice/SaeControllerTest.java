@@ -121,7 +121,7 @@ public class SaeControllerTest {
         Appliances appliances = new Appliances();
         appliances.setAppliances(Collections.singletonList(appliance));
 
-        ApplianceManager.getInstance().setAppliances(appliances);
+        ApplianceManager.getInstanceWithoutTimer().setAppliances(appliances);
 
         this.mockMvc.perform(post(url)
                 .param("id", applianceId)

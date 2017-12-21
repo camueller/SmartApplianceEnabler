@@ -359,12 +359,16 @@ public class SaeController {
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     @ResponseBody
     public void setRuntime(@RequestParam(value="id") String applianceId, @RequestParam(value="runtime") Integer runtime) {
+        setRuntime(new LocalDateTime(), applianceId, runtime);
+    }
+
+    public void setRuntime(LocalDateTime now, String applianceId, Integer runtime) {
         logger.debug("{}: Received request to set runtime to {}s", applianceId, runtime);
         Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
         if(appliance != null) {
             RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
             if(runningTimeMonitor != null) {
-                runningTimeMonitor.activateTimeframeInterval(new LocalDateTime(), runtime);
+                runningTimeMonitor.activateTimeframeInterval(now, runtime);
             }
             appliance.setAcceptControlRecommendations(false);
         }
@@ -459,8 +463,11 @@ public class SaeController {
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     @ResponseBody
     public List<ApplianceStatus> getApplianceStatus() {
+        return getApplianceStatus(new LocalDateTime());
+    }
+
+    public List<ApplianceStatus> getApplianceStatus(LocalDateTime now) {
         logger.debug("Received request for ApplianceStatus");
-        LocalDateTime now = new LocalDateTime();
         List<ApplianceStatus> applianceStatuses = new ArrayList<>();
         for(Appliance appliance : ApplianceManager.getInstance().getAppliances()) {
             DeviceInfo deviceInfo = getDeviceInfo(appliance.getId());
@@ -483,7 +490,7 @@ public class SaeController {
                             - nextRuntimeRequest.getMinRunningTime() - Schedule.getAdditionalRunningTime());
                     applianceStatus.setOn(appliance.getControl().isOn());
                     RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
-                    if(runningTimeMonitor.getActiveTimeframeInterval(now) == null) {
+                    if(runningTimeMonitor.getActiveTimeframeInterval() == null) {
                         applianceStatus.setRunningTime(0);
                         applianceStatus.setRemainingMinRunningTime(nextRuntimeRequest.getMinRunningTime());
                         applianceStatus.setRemainingMaxRunningTime(nextRuntimeRequest.getMaxRunningTime());
@@ -491,7 +498,7 @@ public class SaeController {
                 }
                 applianceStatus.setOn(appliance.getControl().isOn());
                 RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
-                if(runningTimeMonitor.getActiveTimeframeInterval(now) != null) {
+                if(runningTimeMonitor.getActiveTimeframeInterval() != null) {
                     applianceStatus.setPlanningRequested(true);
                     Integer runningTime = runningTimeMonitor.getRunningTimeOfCurrentTimeFrame(now);
                     applianceStatus.setRunningTime(runningTime);
@@ -501,7 +508,7 @@ public class SaeController {
                     applianceStatus.setRemainingMaxRunningTime(maxRunningTime);
                     if(runningTimeMonitor.isInterrupted()) {
                         Interval interrupted = new Interval(runningTimeMonitor.getStatusChangedAt().toDateTime(),
-                                new LocalDateTime().toDateTime());
+                                now.toDateTime());
                         applianceStatus.setInterruptedSince(
                                 new Double(interrupted.toDurationMillis() / 1000).intValue());
                     }

@@ -50,7 +50,6 @@ public class ApplianceManager implements Runnable {
     private Timer timer;
     
     private ApplianceManager() {
-        timer = new Timer();
         if(System.getProperty("os.arch").equals("arm")) {
             gpioController = GpioFactory.getInstance();
         }
@@ -62,10 +61,19 @@ public class ApplianceManager implements Runnable {
     public static ApplianceManager getInstance() {
         if(instance == null) {
             instance = new ApplianceManager();
+            instance.timer = new Timer();
         }
         return instance;
     }
-    
+
+    public static ApplianceManager getInstanceWithoutTimer() {
+        if(instance == null) {
+            instance = new ApplianceManager();
+            instance.logger.warn("Timer disabled");
+        }
+        return instance;
+    }
+
     public void run() {
         try {
             startAppliances();
@@ -128,7 +136,7 @@ public class ApplianceManager implements Runnable {
         startAppliances();
     }
 
-    private void init() {
+    protected void init() {
         Map<String,PulseReceiver> pulseReceiverIdWithPulseReceiver = new HashMap<String,PulseReceiver>();
         Map<String,ModbusTcp> modbusIdWithModbusTcp = new HashMap<String,ModbusTcp>();
         Connectivity connectivity = appliances.getConnectivity();
