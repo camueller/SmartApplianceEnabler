@@ -105,6 +105,7 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
         }
     }
 
+    @Override
     public void stop() {
         super.stop();
         GpioController gpioController = getGpioController();

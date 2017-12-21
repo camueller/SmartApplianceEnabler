@@ -128,6 +128,10 @@ public class ApplianceManager implements Runnable {
                 if(control instanceof GpioControllable) {
                     ((GpioControllable) control).stop();
                 }
+                Meter meter = appliance.getMeter();
+                if(meter instanceof GpioControllable) {
+                    ((GpioControllable) control).stop();
+                }
             }
         }
         logger.info("Restarting appliances ...");

@@ -57,6 +57,7 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
         }
     }
 
+    @Override
     public void stop() {
         super.stop();
         GpioController gpioController = getGpioController();
