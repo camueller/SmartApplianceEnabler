@@ -124,14 +124,7 @@ public class ApplianceManager implements Runnable {
                 }
             }
             for(Appliance appliance : appliances.getAppliances()) {
-                Control control = appliance.getControl();
-                if(control instanceof GpioControllable) {
-                    ((GpioControllable) control).stop();
-                }
-                Meter meter = appliance.getMeter();
-                if(meter instanceof GpioControllable) {
-                    ((GpioControllable) meter).stop();
-                }
+                appliance.stop();
             }
         }
         logger.info("Restarting appliances ...");

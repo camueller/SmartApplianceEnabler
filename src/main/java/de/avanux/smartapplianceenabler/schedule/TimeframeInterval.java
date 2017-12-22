@@ -40,14 +40,23 @@ public class TimeframeInterval {
         return interval;
     }
 
-    public boolean isIntervalSufficient(LocalDateTime now, Integer minRunningTime, Integer maxRunningTime) {
-        Integer runningTime = maxRunningTime;
-        if(runningTime == null) {
-            runningTime = minRunningTime;
-        }
-        return now.plusSeconds(runningTime)
-                .plusSeconds(Schedule.getAdditionalRunningTime())
-                .isBefore(new LocalDateTime(interval.getEnd()));
+    public boolean isIntervalSufficient(LocalDateTime now, Integer minRunningTime, boolean considerAdditionalRunningTime) {
+        return now.isBefore(getLatestStart(now, new LocalDateTime(interval.getEnd()), minRunningTime,
+                considerAdditionalRunningTime));
+    }
+
+    public static LocalDateTime getLatestStart(LocalDateTime now, LocalDateTime intervalEnd, Integer minRunningTime,
+                                               boolean considerAdditionalRunningTime) {
+        return now.plusSeconds(getLatestStart(
+                Long.valueOf(new Interval(
+                                now.toDateTime(),
+                                intervalEnd.toDateTime()).toDuration().getStandardSeconds()
+                ).intValue(), minRunningTime, considerAdditionalRunningTime));
+    }
+
+    public static Integer getLatestStart(Integer intervalEnd, Integer minRunningTime, boolean considerAdditionalRunningTime) {
+        int additionalRunningTime = considerAdditionalRunningTime ? Schedule.getAdditionalRunningTime() : 0;
+        return intervalEnd - minRunningTime - additionalRunningTime;
     }
 
     @Override
