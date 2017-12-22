@@ -103,6 +103,10 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   startingCurrentDetectionChanged(startingCurrentDetection: boolean) {
     if (startingCurrentDetection) {
       this.control.startingCurrentSwitch = new StartingCurrentSwitch();
+      this.control.startingCurrentDetection = true;
+    } else {
+      this.control.startingCurrentSwitch = null;
+      this.control.startingCurrentDetection = false;
     }
   }
 
