@@ -111,10 +111,10 @@ export class ScheduleFactory {
         schedule.dayTimeframe.daysOfWeekValues = rawSchedule.dayTimeframe.daysOfWeekValues;
         schedule.dayTimeframe.startTime = rawSchedule.dayTimeframe.startTime;
         schedule.dayTimeframe.endTime = rawSchedule.dayTimeframe.endTime;
-        if (rawSchedule.dayTimeframe.minRunningTime != null) {
+        if (rawSchedule.dayTimeframe.minRunningTime != null && rawSchedule.dayTimeframe.minRunningTime !== '') {
           schedule.minRunningTime = TimeUtil.toSeconds(rawSchedule.dayTimeframe.minRunningTime).toString();
         }
-        if (rawSchedule.dayTimeframe.maxRunningTime != null) {
+        if (rawSchedule.dayTimeframe.maxRunningTime != null && rawSchedule.dayTimeframe.maxRunningTime !== '') {
           schedule.maxRunningTime = TimeUtil.toSeconds(rawSchedule.dayTimeframe.maxRunningTime).toString();
         }
       } else if (rawSchedule.timeframeType === ConsecutiveDaysTimeframe.TYPE) {
@@ -123,10 +123,12 @@ export class ScheduleFactory {
         schedule.consecutiveDaysTimeframe.startTime = rawSchedule.consecutiveDaysTimeframe.startTime;
         schedule.consecutiveDaysTimeframe.endDayOfWeek = rawSchedule.consecutiveDaysTimeframe.endDayOfWeek;
         schedule.consecutiveDaysTimeframe.endTime = rawSchedule.consecutiveDaysTimeframe.endTime;
-        if (rawSchedule.consecutiveDaysTimeframe.minRunningTime != null) {
+        if (rawSchedule.consecutiveDaysTimeframe.minRunningTime != null
+          && rawSchedule.consecutiveDaysTimeframe.minRunningTime !== '') {
           schedule.minRunningTime = TimeUtil.toSeconds(rawSchedule.consecutiveDaysTimeframe.minRunningTime).toString();
         }
-        if (rawSchedule.consecutiveDaysTimeframe.maxRunningTime != null) {
+        if (rawSchedule.consecutiveDaysTimeframe.maxRunningTime != null
+          && rawSchedule.consecutiveDaysTimeframe.maxRunningTime !== '') {
           schedule.maxRunningTime = TimeUtil.toSeconds(rawSchedule.consecutiveDaysTimeframe.maxRunningTime).toString();
         }
       }
