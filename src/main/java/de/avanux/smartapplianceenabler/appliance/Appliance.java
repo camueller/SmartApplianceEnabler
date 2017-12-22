@@ -331,7 +331,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     public boolean canConsumeOptionalEnergy() {
         if(schedules != null) {
             for(Schedule schedule : schedules) {
-                if(schedule.getMaxRunningTime() != schedule.getMinRunningTime()) {
+                if(schedule.getMaxRunningTime() != null && schedule.getMaxRunningTime() > schedule.getMinRunningTime()) {
                     return true;
                 }
             }

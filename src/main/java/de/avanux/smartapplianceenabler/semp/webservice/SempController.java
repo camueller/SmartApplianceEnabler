@@ -73,6 +73,7 @@ public class SempController {
             }
         }
         Device2EM device2EM = ApplianceManager.getInstance().getDevice2EM();
+        device2EM.setDeviceInfo(createDeviceInfo());
         device2EM.setDeviceStatus(deviceStatuses);
         device2EM.setPlanningRequest(planningRequests);
         return device2EM;
@@ -81,40 +82,49 @@ public class SempController {
     @RequestMapping(value=BASE_URL + "/DeviceInfo", method=RequestMethod.GET, produces="application/xml")
     @ResponseBody
     public String deviceInfo(@RequestParam(value="DeviceId", required = false) String deviceId) {
-        List<DeviceInfo> deviceInfos = new ArrayList<DeviceInfo>();
+        Device2EM device2EM = new Device2EM();
+        device2EM.setDeviceInfo(Collections.singletonList(createDeviceInfo(deviceId)));
+        return marshall(device2EM);
+    }
+
+    public DeviceInfo createDeviceInfo(String deviceId) {
         if(deviceId != null) {
             logger.debug("Device info requested of device id=" + deviceId);
             DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(deviceId);
-
             Appliance appliance = ApplianceManager.getInstance().findAppliance(deviceId);
-            if(appliance.getMeter() != null) {
-                deviceInfo.getCapabilities().setCurrentPowerMethod(CurrentPowerMethod.Measurement);
-            }
-            else {
-                deviceInfo.getCapabilities().setCurrentPowerMethod(CurrentPowerMethod.Estimation);
-            }
+            deviceInfo.setCapabilities(createCapabilities(deviceInfo, appliance.getMeter() != null,
+                    appliance.canConsumeOptionalEnergy()));
+            return deviceInfo;
+        }
+        return null;
+    }
 
-            deviceInfo.getCapabilities().setOptionalEnergy(appliance.canConsumeOptionalEnergy());
+    private List<DeviceInfo> createDeviceInfo() {
+        logger.debug("Device info requested of all devices");
+        List<DeviceInfo> deviceInfos = new ArrayList<DeviceInfo>();
+        List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
+        for (Appliance appliance : appliances) {
+            DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(appliance.getId());
+            deviceInfo.setCapabilities(createCapabilities(deviceInfo, appliance.getMeter() != null,
+                    appliance.canConsumeOptionalEnergy()));
             deviceInfos.add(deviceInfo);
         }
-        else {
-            logger.debug("Device info requested of all devices");
-            List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
-            for (Appliance appliance : appliances) {
-                DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(appliance.getId());
-                if(appliance.getMeter() != null) {
-                    deviceInfo.getCapabilities().setCurrentPowerMethod(CurrentPowerMethod.Measurement);
-                }
-                else {
-                    deviceInfo.getCapabilities().setCurrentPowerMethod(CurrentPowerMethod.Estimation);
-                }
-                deviceInfo.getCapabilities().setOptionalEnergy(appliance.canConsumeOptionalEnergy());
-                deviceInfos.add(deviceInfo);
-            }
+        return deviceInfos;
+    }
+
+    private Capabilities createCapabilities(DeviceInfo deviceInfo, boolean hasMeter, boolean canConsumeOptionalEnergy) {
+        Capabilities capabilities = deviceInfo.getCapabilities();
+        if(capabilities == null) {
+            capabilities = new Capabilities();
         }
-        Device2EM device2EM = new Device2EM();
-        device2EM.setDeviceInfo(deviceInfos);
-        return marshall(device2EM);
+        if(hasMeter) {
+            capabilities.setCurrentPowerMethod(CurrentPowerMethod.Measurement);
+        }
+        else {
+            capabilities.setCurrentPowerMethod(CurrentPowerMethod.Estimation);
+        }
+        capabilities.setOptionalEnergy(canConsumeOptionalEnergy);
+        return capabilities;
     }
 
     @RequestMapping(value=BASE_URL + "/DeviceStatus", method=RequestMethod.GET, produces="application/xml")

@@ -16,8 +16,11 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.avanux.smartapplianceenabler.appliance;
+package de.avanux.smartapplianceenabler.test;
 
+import de.avanux.smartapplianceenabler.appliance.Appliance;
+import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
+import de.avanux.smartapplianceenabler.appliance.Appliances;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.MockSwitch;
 import de.avanux.smartapplianceenabler.control.StartingCurrentSwitch;
@@ -34,15 +37,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Created by axel on 18.12.17.
- */
-public class IntegrationTestBuilder {
+public class TestBuilder {
 
     private Appliances appliances = new Appliances();
     private Device2EM device2EM = new Device2EM();
 
-    public IntegrationTestBuilder appliance(String applianceId) {
+    public TestBuilder appliance(String applianceId) {
         Appliance appliance = new Appliance();
         appliance.setId(applianceId);
         appliances.setAppliances(Collections.singletonList(appliance));
@@ -61,7 +61,7 @@ public class IntegrationTestBuilder {
         return this;
     }
 
-    public IntegrationTestBuilder withMockSwitch(boolean asStartingCurrentSwitch) {
+    public TestBuilder withMockSwitch(boolean asStartingCurrentSwitch) {
         Control control = new MockSwitch();
         if(asStartingCurrentSwitch) {
             StartingCurrentSwitch startingCurrentSwitch = new StartingCurrentSwitch();
@@ -73,14 +73,14 @@ public class IntegrationTestBuilder {
         return this;
     }
 
-    public IntegrationTestBuilder withMockMeter() {
+    public TestBuilder withMockMeter() {
         Meter meter = Mockito.mock(Meter.class);
         getAppliance().setMeter(meter);
         return this;
     }
 
-    public IntegrationTestBuilder withSchedule(int startHour, int startMinute, int endHour, int endMinute,
-                                               int minRunningTime, Integer maxRunningTime) {
+    public TestBuilder withSchedule(int startHour, int startMinute, int endHour, int endMinute,
+                                    int minRunningTime, Integer maxRunningTime) {
         List<Schedule> schedules = getAppliance().getSchedules();
         if(schedules == null) {
             schedules = new ArrayList<>();
@@ -91,7 +91,7 @@ public class IntegrationTestBuilder {
         return this;
     }
 
-    public IntegrationTestBuilder init() {
+    public TestBuilder init() {
         ApplianceManager.getInstanceWithoutTimer().setAppliances(appliances);
         ApplianceManager.getInstanceWithoutTimer().setDevice2EM(device2EM);
         ApplianceManager.getInstanceWithoutTimer().init();
