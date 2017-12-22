@@ -172,9 +172,6 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         }
 
         if(schedules != null) {
-            if(additionRunningTime != null) {
-                Schedule.setAdditionalRunningTime(additionRunningTime);
-            }
             for(Schedule schedule : schedules) {
                 schedule.getTimeframe().setSchedule(schedule);
             }
@@ -395,7 +392,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             if(activeTimeframeInterval != null) {
                 Schedule activeSchedule = activeTimeframeInterval.getTimeframe().getSchedule();
                 if(!onlySufficient || activeTimeframeInterval.isIntervalSufficient(now,
-                        activeSchedule.getMinRunningTime(), true)) {
+                        activeSchedule.getMinRunningTime())) {
                     addRuntimeRequest(now, activeTimeframeInterval, runtimeRequests,
                             remainingMinRunningTime, remainingMaxRunningTime);
                 }
