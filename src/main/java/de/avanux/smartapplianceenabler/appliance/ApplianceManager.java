@@ -130,7 +130,7 @@ public class ApplianceManager implements Runnable {
                 }
                 Meter meter = appliance.getMeter();
                 if(meter instanceof GpioControllable) {
-                    ((GpioControllable) control).stop();
+                    ((GpioControllable) meter).stop();
                 }
             }
         }
