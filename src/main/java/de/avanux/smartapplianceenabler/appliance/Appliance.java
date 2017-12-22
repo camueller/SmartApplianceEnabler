@@ -229,7 +229,9 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         if(meter instanceof GpioControllable) {
             ((GpioControllable) meter).stop();
         }
-        runningTimeMonitor.cancelTimer();
+        if(runningTimeMonitor != null) {
+            runningTimeMonitor.cancelTimer();
+        }
     }
 
     public void setHolidays(List<LocalDate> holidays) {
