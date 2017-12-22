@@ -47,7 +47,6 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
     private Integer remainingMaxRunningTimeWhileNotRunning;
     private boolean running;
     private boolean interrupted;
-    private Timer timer;
     private TimerTask updateActiveTimeframeIntervalTimerTask;
 
     public RunningTimeMonitor() {
@@ -59,16 +58,19 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
     }
 
     public void setTimer(Timer timer) {
-        this.timer = timer;
         this.updateActiveTimeframeIntervalTimerTask = new TimerTask() {
             @Override
             public void run() {
                 updateActiveTimeframeInterval(new LocalDateTime());
             }
         };
-        if(this.timer != null) {
-            this.timer.schedule(updateActiveTimeframeIntervalTimerTask, 0, 30000);
+        if(timer != null) {
+            timer.schedule(updateActiveTimeframeIntervalTimerTask, 0, 30000);
         }
+    }
+
+    public void cancelTimer() {
+        this.updateActiveTimeframeIntervalTimerTask.cancel();
     }
 
     public void setSchedules(List<Schedule> schedules) {

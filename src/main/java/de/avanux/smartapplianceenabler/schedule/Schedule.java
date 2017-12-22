@@ -127,7 +127,8 @@ public class Schedule {
                     if(interval.contains(now.toDateTime())) {
                         // interval already started ...
                         if(onlySufficient) {
-                            if(timeframeInterval.isIntervalSufficient(now, schedule.getMinRunningTime(), schedule.getMaxRunningTime())) {
+                            if(timeframeInterval.isIntervalSufficient(now,
+                                    schedule.getMinRunningTime(), true)) {
                                 return timeframeInterval;
                             }
                         }
@@ -137,7 +138,8 @@ public class Schedule {
                     }
                     else if (! onlyAlreadyStarted) {
                         // interval starts in future
-                        startDelayOfTimeframeInterval.put(interval.getStartMillis() - now.toDateTime().getMillis(), timeframeInterval);
+                        startDelayOfTimeframeInterval.put(interval.getStartMillis() - now.toDateTime().getMillis(),
+                                timeframeInterval);
                     }
                 }
             }
@@ -163,7 +165,8 @@ public class Schedule {
                     List<TimeframeInterval> timeframeIntervals = timeframe.getIntervals(now);
                     for (TimeframeInterval timeframeInterval : timeframeIntervals) {
                         if (considerationInterval.contains(timeframeInterval.getInterval().getStart())
-                                && (!onlySufficient || timeframeInterval.isIntervalSufficient(now, schedule.getMinRunningTime(), schedule.getMaxRunningTime()))) {
+                                && (!onlySufficient || timeframeInterval.isIntervalSufficient(now,
+                                schedule.getMinRunningTime(), true))) {
                             matchingTimeframeIntervals.add(timeframeInterval);
                         }
                     }

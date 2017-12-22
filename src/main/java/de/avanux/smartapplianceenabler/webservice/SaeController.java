@@ -486,8 +486,8 @@ public class SaeController {
                     RuntimeRequest nextRuntimeRequest= runtimeRequests.get(0);
                     applianceStatus.setPlanningRequested(true);
                     applianceStatus.setEarliestStart(nextRuntimeRequest.getEarliestStart());
-                    applianceStatus.setLatestStart(nextRuntimeRequest.getLatestEnd()
-                            - nextRuntimeRequest.getMinRunningTime() - Schedule.getAdditionalRunningTime());
+                    applianceStatus.setLatestStart(TimeframeInterval.getLatestStart(nextRuntimeRequest.getLatestEnd(),
+                            nextRuntimeRequest.getMinRunningTime(), false));
                     applianceStatus.setOn(appliance.getControl().isOn());
                     RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
                     if(runningTimeMonitor.getActiveTimeframeInterval() == null) {

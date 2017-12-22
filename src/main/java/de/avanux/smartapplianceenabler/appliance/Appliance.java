@@ -225,6 +225,16 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         }
     }
 
+    public void stop() {
+        if(control instanceof GpioControllable) {
+            ((GpioControllable) control).stop();
+        }
+        if(meter instanceof GpioControllable) {
+            ((GpioControllable) meter).stop();
+        }
+        runningTimeMonitor.cancelTimer();
+    }
+
     public void setHolidays(List<LocalDate> holidays) {
         if(schedules != null) {
             for(Schedule schedule : schedules) {
@@ -384,13 +394,16 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             logger.debug("Active schedules: " + schedules.size());
             if(activeTimeframeInterval != null) {
                 Schedule activeSchedule = activeTimeframeInterval.getTimeframe().getSchedule();
-                if(!onlySufficient || activeTimeframeInterval.isIntervalSufficient(now, activeSchedule.getMinRunningTime(), activeSchedule.getMaxRunningTime())) {
-                    addRuntimeRequest(now, activeTimeframeInterval, runtimeRequests, remainingMinRunningTime, remainingMaxRunningTime);
+                if(!onlySufficient || activeTimeframeInterval.isIntervalSufficient(now,
+                        activeSchedule.getMinRunningTime(), true)) {
+                    addRuntimeRequest(now, activeTimeframeInterval, runtimeRequests,
+                            remainingMinRunningTime, remainingMaxRunningTime);
                 }
             }
 
             Interval considerationInterval = new Interval(now.toDateTime(), now.plusDays(2).toDateTime());
-            List<TimeframeInterval> timeFrameIntervals = Schedule.findTimeframeIntervals(now, considerationInterval, schedules, onlySufficient);
+            List<TimeframeInterval> timeFrameIntervals = Schedule.findTimeframeIntervals(now, considerationInterval,
+                    schedules, onlySufficient);
             for(TimeframeInterval timeframeIntervalOfSchedule : timeFrameIntervals) {
                 Schedule schedule = timeframeIntervalOfSchedule.getTimeframe().getSchedule();
                 addRuntimeRequest(runtimeRequests, timeframeIntervalOfSchedule.getInterval(), schedule.getMinRunningTime(),
@@ -440,6 +453,9 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             nowBeforeEnd = now.minusHours(24);
         }
         Integer latestEnd = Double.valueOf(new Interval(nowBeforeEnd.toDateTime(), end).toDurationMillis() / 1000).intValue();
+        if(maxRunningTime != null && maxRunningTime > latestEnd) {
+            maxRunningTime = latestEnd;
+        }
         return createRuntimeRequest(earliestStart, latestEnd, minRunningTime, maxRunningTime);
     }
 

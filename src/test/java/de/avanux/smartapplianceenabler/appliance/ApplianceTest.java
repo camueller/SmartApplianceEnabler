@@ -28,7 +28,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 
 public class ApplianceTest extends TestBase {
-    private Logger logger;
     private Appliance appliance;
 
     public ApplianceTest() {
@@ -38,42 +37,80 @@ public class ApplianceTest extends TestBase {
     }
 
     @Test
-    public void createSempTimeFrame() {
+    public void createRuntimeRequest() {
         LocalDateTime now = toToday(0, 30, 0);
-        Schedule schedule = new Schedule(7200, 7200,
+        Schedule schedule = new Schedule(7200, null,
                 new TimeOfDay(1, 0, 0), new TimeOfDay(9, 0, 0));
         Interval interval = schedule.getTimeframe().getIntervals(now).get(0).getInterval();
         schedule.getTimeframe().setSchedule(schedule);
 
         RuntimeRequest runtimeRequest = this.appliance.createRuntimeRequest(interval, schedule.getMinRunningTime(),
                 null, now);
-        Assert.assertEquals(1800, (long) runtimeRequest.getEarliestStart());
-        Assert.assertEquals(30600, (long) runtimeRequest.getLatestEnd());
+        Assert.assertEquals(1800, (int) runtimeRequest.getEarliestStart());
+        Assert.assertEquals(30600, (int) runtimeRequest.getLatestEnd());
+        Assert.assertEquals(7200, (int) runtimeRequest.getMinRunningTime());
+        Assert.assertNull(runtimeRequest.getMaxRunningTime());
     }
 
     @Test
-    public void createSempTimeFrame_TimeFrameOverMidnight_BeforeMidnight() {
-        LocalDateTime now = toToday(23, 30, 0);
-        Schedule schedule = new Schedule(7200, 7200,
-                new TimeOfDay(20, 0, 0), new TimeOfDay(4, 0, 0));
-        Interval interval = schedule.getTimeframe().getIntervals(now).get(0).getInterval();
-
-        RuntimeRequest runtimeRequest = this.appliance.createRuntimeRequest(interval, schedule.getMinRunningTime(),
-                null, now);
-        Assert.assertEquals(0, (long) runtimeRequest.getEarliestStart());
-        Assert.assertEquals(16200, (long) runtimeRequest.getLatestEnd());
-    }
-
-    @Test
-    public void createSempTimeFrame_TimeFrameOverMidnight_AfterMidnight() {
+    public void createRuntimeRequest_MaxRunningTime() {
         LocalDateTime now = toToday(0, 30, 0);
-        Schedule schedule = new Schedule(7200, 7200,
+        Schedule schedule = new Schedule(3600, 7200,
+                new TimeOfDay(1, 0, 0), new TimeOfDay(9, 0, 0));
+        Interval interval = schedule.getTimeframe().getIntervals(now).get(0).getInterval();
+        schedule.getTimeframe().setSchedule(schedule);
+
+        RuntimeRequest runtimeRequest = this.appliance.createRuntimeRequest(interval, schedule.getMinRunningTime(),
+                schedule.getMaxRunningTime(), now);
+        Assert.assertEquals(1800, (int) runtimeRequest.getEarliestStart());
+        Assert.assertEquals(30600, (int) runtimeRequest.getLatestEnd());
+        Assert.assertEquals(3600, (int) runtimeRequest.getMinRunningTime());
+        Assert.assertEquals(7200, (int) runtimeRequest.getMaxRunningTime());
+    }
+
+    @Test
+    public void createRuntimeRequest_MaxRunningTimeExceedsLatestEnd() {
+        LocalDateTime now = toToday(8, 0, 0);
+        Schedule schedule = new Schedule(3600, 7200,
+                new TimeOfDay(1, 0, 0), new TimeOfDay(9, 0, 0));
+        Interval interval = schedule.getTimeframe().getIntervals(now).get(0).getInterval();
+        schedule.getTimeframe().setSchedule(schedule);
+
+        RuntimeRequest runtimeRequest = this.appliance.createRuntimeRequest(interval, schedule.getMinRunningTime(),
+                schedule.getMaxRunningTime(), now);
+        Assert.assertEquals(0, (int) runtimeRequest.getEarliestStart());
+        Assert.assertEquals(3600, (int) runtimeRequest.getLatestEnd());
+        Assert.assertEquals(3600, (int) runtimeRequest.getMinRunningTime());
+        Assert.assertEquals(3600, (int) runtimeRequest.getMaxRunningTime());
+    }
+
+    @Test
+    public void createRuntimeRequest_TimeFrameOverMidnight_BeforeMidnight() {
+        LocalDateTime now = toToday(23, 30, 0);
+        Schedule schedule = new Schedule(7200, null,
                 new TimeOfDay(20, 0, 0), new TimeOfDay(4, 0, 0));
         Interval interval = schedule.getTimeframe().getIntervals(now).get(0).getInterval();
 
         RuntimeRequest runtimeRequest = this.appliance.createRuntimeRequest(interval, schedule.getMinRunningTime(),
                 null, now);
-        Assert.assertEquals(0, (long) runtimeRequest.getEarliestStart());
-        Assert.assertEquals(12600, (long) runtimeRequest.getLatestEnd());
+        Assert.assertEquals(0, (int) runtimeRequest.getEarliestStart());
+        Assert.assertEquals(16200, (int) runtimeRequest.getLatestEnd());
+        Assert.assertEquals(7200, (int) runtimeRequest.getMinRunningTime());
+        Assert.assertNull(runtimeRequest.getMaxRunningTime());
+    }
+
+    @Test
+    public void createRuntimeRequest_TimeFrameOverMidnight_AfterMidnight() {
+        LocalDateTime now = toToday(0, 30, 0);
+        Schedule schedule = new Schedule(7200, null,
+                new TimeOfDay(20, 0, 0), new TimeOfDay(4, 0, 0));
+        Interval interval = schedule.getTimeframe().getIntervals(now).get(0).getInterval();
+
+        RuntimeRequest runtimeRequest = this.appliance.createRuntimeRequest(interval, schedule.getMinRunningTime(),
+                null, now);
+        Assert.assertEquals(0, (int) runtimeRequest.getEarliestStart());
+        Assert.assertEquals(12600, (int) runtimeRequest.getLatestEnd());
+        Assert.assertEquals(7200, (int) runtimeRequest.getMinRunningTime());
+        Assert.assertNull(runtimeRequest.getMaxRunningTime());
     }
 }
