@@ -40,6 +40,7 @@
   "ApplianceComponent.error.serial_required": "Die Seriennummer muss angegeben werden",
   "ApplianceComponent.error.maxPowerConsumption_required": "Die maximale Leistungsaufnahme muss angegeben werden",
   "ApplianceComponent.error.maxPowerConsumption_pattern": "Die maximale Leistungsaufnahme muss in Watt angegeben werden",
+  "ApplianceComponent.confirmDeletion": "Wirklich löschen?",
 
   "MeterComponent.type": "Typ",
   "MeterComponent.s0ElectricityMeter_gpio": "Raspberry GPIO-Anschluss",

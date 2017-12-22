@@ -47,6 +47,7 @@ export class ApplianceComponent implements OnInit, CanDeactivate<ApplianceCompon
   VALIDATOR_PATTERN_ID = InputValidatorPatterns.APPLIANCE_ID;
   isNew = false;
   discardChangesMessage: string;
+  confirmDeletionMessage: string;
 
   constructor(private applianceService: ApplianceService,
               private appliancesReloadService: AppliancesReloadService,
@@ -59,6 +60,7 @@ export class ApplianceComponent implements OnInit, CanDeactivate<ApplianceCompon
   ngOnInit() {
     this.errorMessages =  new ApplianceErrorMessages(this.translate);
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
+    this.translate.get('ApplianceComponent.confirmDeletion').subscribe(translated => this.confirmDeletionMessage = translated);
     this.route.paramMap.subscribe(() => this.isNew = this.route.snapshot.paramMap.get('id') == null);
     this.route.data.subscribe((data: {appliance: Appliance}) => {
       if (data.appliance != null) {
@@ -83,7 +85,11 @@ export class ApplianceComponent implements OnInit, CanDeactivate<ApplianceCompon
   }
 
   deleteAppliance() {
-    this.applianceService.deleteAppliance(this.appliance.id).subscribe(() => this.appliancesReloadService.reload());
-    this.location.back();
+    this.dialogService.confirm(this.confirmDeletionMessage).subscribe(confirmed => {
+      if (confirmed) {
+        this.applianceService.deleteAppliance(this.appliance.id).subscribe(() => this.appliancesReloadService.reload());
+        this.location.back();
+      }
+    });
   }
 }
