@@ -46,11 +46,6 @@ public class Schedule {
     })
     private Timeframe timeframe;
     transient DateTimeFormatter formatter = ISODateTimeFormat.basicTTimeNoMillis();
-    /**
-     * The number of seconds to be added to the maximum running time of the schedule during search for the next sufficient timeframe interval.
-     * This additional time is available to the Sunny Home Manager for processing while still being able to fit running time into the timeframe.
-     */
-    private transient static int additionalRunningTime = 900;
 
 
     public Schedule() {
@@ -81,15 +76,6 @@ public class Schedule {
 
     public boolean isEnabled() {
         return enabled;
-    }
-
-    public static void setAdditionalRunningTime(int additionalRunningTime) {
-        Schedule.additionalRunningTime = additionalRunningTime;
-        LoggerFactory.getLogger(Schedule.class).debug("additional running time set to " + additionalRunningTime);
-    }
-
-    public static int getAdditionalRunningTime() {
-        return additionalRunningTime;
     }
 
     public Integer getMinRunningTime() {
@@ -127,8 +113,7 @@ public class Schedule {
                     if(interval.contains(now.toDateTime())) {
                         // interval already started ...
                         if(onlySufficient) {
-                            if(timeframeInterval.isIntervalSufficient(now,
-                                    schedule.getMinRunningTime(), true)) {
+                            if(timeframeInterval.isIntervalSufficient(now, schedule.getMinRunningTime())) {
                                 return timeframeInterval;
                             }
                         }
@@ -166,7 +151,7 @@ public class Schedule {
                     for (TimeframeInterval timeframeInterval : timeframeIntervals) {
                         if (considerationInterval.contains(timeframeInterval.getInterval().getStart())
                                 && (!onlySufficient || timeframeInterval.isIntervalSufficient(now,
-                                schedule.getMinRunningTime(), true))) {
+                                schedule.getMinRunningTime()))) {
                             matchingTimeframeIntervals.add(timeframeInterval);
                         }
                     }
