@@ -4,7 +4,7 @@ import de.avanux.smartapplianceenabler.TestBase;
 import de.avanux.smartapplianceenabler.appliance.*;
 import de.avanux.smartapplianceenabler.schedule.Schedule;
 import de.avanux.smartapplianceenabler.schedule.TimeOfDay;
-import org.joda.time.Interval;
+import de.avanux.smartapplianceenabler.test.TestBuilder;
 import org.joda.time.LocalDateTime;
 import org.junit.Assert;
 import org.junit.Test;
@@ -25,6 +25,32 @@ public class SempControllerTest extends TestBase {
     }
 
     @Test
+    public void createDeviceInfo_noOptionalEnergy() {
+        String applianceId = "F-001";
+        TestBuilder builder = new TestBuilder()
+                .appliance(applianceId)
+                .withMockSwitch(false)
+                .withSchedule(10, 0, 18, 0, 3600, null)
+                .init();
+        DeviceInfo deviceInfo = sempController.createDeviceInfo(applianceId);
+        Assert.assertFalse("No value for maxRunningTime indicates no ability to consume optional energy",
+                deviceInfo.getCapabilities().getOptionalEnergy());
+    }
+
+    @Test
+    public void createDeviceInfo_optionalEnergy() {
+        String applianceId = "F-001";
+        TestBuilder builder = new TestBuilder()
+                .appliance(applianceId)
+                .withMockSwitch(false)
+                .withSchedule(10, 0, 18, 0, 3600, 7200)
+                .init();
+        DeviceInfo deviceInfo = sempController.createDeviceInfo(applianceId);
+        Assert.assertTrue("Different values for minRunningTime and maxRunningTime indicate consumption of " +
+                "optional energy", deviceInfo.getCapabilities().getOptionalEnergy());
+    }
+
+    @Test
     public void getPlanningRequest_intervalAlreadyActive() {
         Identification identification = new Identification();
         identification.setDeviceId(DEVICE_ID);
@@ -38,7 +64,7 @@ public class SempControllerTest extends TestBase {
 
         LocalDateTime now = toToday(9, 30, 0);
         int remainingMaxRunningTime = 1800;
-        Schedule schedule = new Schedule(600, 600, new TimeOfDay(now.minusSeconds(1)),
+        Schedule schedule = new Schedule(600, null, new TimeOfDay(now.minusSeconds(1)),
                 new TimeOfDay(now.plusSeconds(remainingMaxRunningTime)));
         de.avanux.smartapplianceenabler.schedule.Timeframe timeframe = schedule.getTimeframe();
         timeframe.setSchedule(schedule);
@@ -76,7 +102,7 @@ public class SempControllerTest extends TestBase {
         appliance.setId(DEVICE_ID);
 
         LocalDateTime now = toToday(9, 0, 0);
-        Schedule schedule = new Schedule(3600, 3600,
+        Schedule schedule = new Schedule(3600, null,
                 new TimeOfDay(11, 0, 0), new TimeOfDay(13, 0, 0));
         de.avanux.smartapplianceenabler.schedule.Timeframe timeframe = schedule.getTimeframe();
         timeframe.setSchedule(schedule);

@@ -133,7 +133,7 @@ public class ApplianceManager implements Runnable {
         startAppliances();
     }
 
-    protected void init() {
+    public void init() {
         Map<String,PulseReceiver> pulseReceiverIdWithPulseReceiver = new HashMap<String,PulseReceiver>();
         Map<String,ModbusTcp> modbusIdWithModbusTcp = new HashMap<String,ModbusTcp>();
         Connectivity connectivity = appliances.getConnectivity();

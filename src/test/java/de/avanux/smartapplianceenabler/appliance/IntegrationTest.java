@@ -24,6 +24,7 @@ import de.avanux.smartapplianceenabler.control.StartingCurrentSwitch;
 import de.avanux.smartapplianceenabler.control.StartingCurrentSwitchDefaults;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.semp.webservice.*;
+import de.avanux.smartapplianceenabler.test.TestBuilder;
 import de.avanux.smartapplianceenabler.webservice.ApplianceStatus;
 import de.avanux.smartapplianceenabler.webservice.SaeController;
 import org.joda.time.LocalDateTime;
@@ -50,7 +51,7 @@ public class IntegrationTest extends TestBase {
     @Test
     public void testSwitchOnAndOff() {
         String applianceId = "F-001";
-        IntegrationTestBuilder builder = new IntegrationTestBuilder()
+        TestBuilder builder = new TestBuilder()
                 .appliance(applianceId)
                 .withMockSwitch(false)
                 .withSchedule(10, 0, 18, 0, 7200, null)
@@ -150,7 +151,7 @@ public class IntegrationTest extends TestBase {
     @Test
     public void testClickGoLight() {
         String applianceId = "F-001";
-        IntegrationTestBuilder builder = new IntegrationTestBuilder()
+        TestBuilder builder = new TestBuilder()
                 .appliance(applianceId)
                 .withMockSwitch(false)
                 .withSchedule(10, 0, 18, 0, 3600, null)
@@ -203,7 +204,7 @@ public class IntegrationTest extends TestBase {
     @Test
     public void testSwitchOnAndOff_startingCurrentDetectedDuringTimeframeInterval() {
         String applianceId = "F-001";
-        IntegrationTestBuilder builder = new IntegrationTestBuilder()
+        TestBuilder builder = new TestBuilder()
                 .appliance(applianceId)
                 .withMockSwitch(true)
                 .withMockMeter()
