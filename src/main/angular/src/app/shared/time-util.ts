@@ -5,7 +5,13 @@ export class TimeUtil {
   }
 
   static toHourMinuteWithUnits(seconds: number): string {
-    return new Date(seconds * 1000).toISOString().substring(11, 16).replace(':', 'h ') + 'min';
+    let daysPrefix = '';
+    if (seconds > 24 * 3600) {
+      const date = new Date(seconds * 1000).toISOString();
+      const days = date.substring(8, 10);
+      daysPrefix = (Number.parseInt(days) - 1) + 'd ';
+    }
+    return daysPrefix + new Date(seconds * 1000).toISOString().substring(11, 16).replace(':', 'h ') + 'min';
   }
 
   static toSeconds(hhmmString: string): number {
