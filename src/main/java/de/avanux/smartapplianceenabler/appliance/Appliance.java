@@ -170,12 +170,6 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                 logger.debug("{}: {} uses {}", id, meter.getClass().getSimpleName(), control.getClass().getSimpleName());
             }
         }
-
-        if(schedules != null) {
-            for(Schedule schedule : schedules) {
-                schedule.getTimeframe().setSchedule(schedule);
-            }
-        }
     }
 
     public void start(Timer timer, GpioController gpioController,
@@ -390,7 +384,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                                                       Integer remainingMinRunningTime, Integer remainingMaxRunningTime) {
         List<RuntimeRequest> runtimeRequests = new ArrayList<>();
         if(schedules != null && schedules.size() > 0) {
-            logger.debug("Active schedules: " + schedules.size());
+            logger.debug("{}: Active schedules: {}", id, schedules.size());
             if(activeTimeframeInterval != null) {
                 Schedule activeSchedule = activeTimeframeInterval.getTimeframe().getSchedule();
                 if(!onlySufficient || activeTimeframeInterval.isIntervalSufficient(now,
@@ -402,7 +396,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
 
             Interval considerationInterval = new Interval(now.toDateTime(), now.plusDays(2).toDateTime());
             List<TimeframeInterval> timeFrameIntervals = Schedule.findTimeframeIntervals(now, considerationInterval,
-                    schedules, onlySufficient);
+                    schedules, false, onlySufficient);
             for(TimeframeInterval timeframeIntervalOfSchedule : timeFrameIntervals) {
                 Schedule schedule = timeframeIntervalOfSchedule.getTimeframe().getSchedule();
                 addRuntimeRequest(runtimeRequests, timeframeIntervalOfSchedule.getInterval(), schedule.getMinRunningTime(),
@@ -410,11 +404,11 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             }
         }
         else if(activeTimeframeInterval != null) {
-            logger.debug("Active timeframe interval found");
+            logger.debug("{}: Active timeframe interval found", id);
             addRuntimeRequest(now, activeTimeframeInterval, runtimeRequests, remainingMinRunningTime, remainingMaxRunningTime);
         }
         else {
-            logger.debug("No timeframes found");
+            logger.debug("{}: No timeframes found", id);
         }
         return runtimeRequests;
     }
@@ -466,7 +460,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             runtimeRequest.setLatestEnd(latestEnd);
             runtimeRequest.setMinRunningTime(minRunningTime);
             runtimeRequest.setMaxRunningTime(maxRunningTime);
-            logger.debug("RuntimeRequest created: " + runtimeRequest);
+            logger.debug("{}: RuntimeRequest created: {}", id, runtimeRequest);
             return runtimeRequest;
         }
         return null;
@@ -481,9 +475,8 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     }
 
     @Override
-    public void startingCurrentDetected() {
+    public void startingCurrentDetected(LocalDateTime now) {
         logger.debug("{}: Activating next sufficient timeframe interval after starting current has been detected", id);
-        LocalDateTime now = new LocalDateTime();
         TimeframeInterval timeframeInterval;
         Schedule forcedSchedule = getForcedSchedule(now);
         if(forcedSchedule != null) {
