@@ -59,21 +59,21 @@ public class StartingCurrentSwitchTest {
 
         // averagePower=0 lastAveragePowerOfPowerOnDetection=null
         startingCurrentSwitch.detectStartingCurrent(now, meter);
-        verify(startingCurrentSwitchListener, never()).startingCurrentDetected();
+        verify(startingCurrentSwitchListener, never()).startingCurrentDetected(now);
         // averagePower=0 lastAveragePowerOfPowerOnDetection=0
         startingCurrentSwitch.detectStartingCurrent(now, meter);
-        verify(startingCurrentSwitchListener, never()).startingCurrentDetected();
+        verify(startingCurrentSwitchListener, never()).startingCurrentDetected(now);
         // averagePower=10 lastAveragePowerOfPowerOnDetection=0
         when(meter.getAveragePower()).thenReturn(10);
         startingCurrentSwitch.detectStartingCurrent(now, meter);
-        verify(startingCurrentSwitchListener, never()).startingCurrentDetected();
+        verify(startingCurrentSwitchListener, never()).startingCurrentDetected(now);
         // averagePower=10 lastAveragePowerOfPowerOnDetection=10
         startingCurrentSwitch.detectStartingCurrent(now, meter);
-        verify(startingCurrentSwitchListener, never()).startingCurrentDetected();
+        verify(startingCurrentSwitchListener, never()).startingCurrentDetected(now);
         // averagePower=30 lastAveragePowerOfPowerOnDetection=0
         when(meter.getAveragePower()).thenReturn(30);
         startingCurrentSwitch.detectStartingCurrent(now, meter);
-        verify(startingCurrentSwitchListener, never()).startingCurrentDetected();
+        verify(startingCurrentSwitchListener, never()).startingCurrentDetected(now);
         // averagePower=30 lastAveragePowerOfPowerOnDetection=30
         startingCurrentSwitch.detectStartingCurrent(now, meter);
 
@@ -86,7 +86,7 @@ public class StartingCurrentSwitchTest {
         // ... and also from the outside perspective the control is switched off
         Assert.assertFalse(startingCurrentSwitch.isOn());
         // ... listeners are notified of starting current detection
-        verify(startingCurrentSwitchListener).startingCurrentDetected();
+        verify(startingCurrentSwitchListener).startingCurrentDetected(now);
 
         // power on recommendation received by energy manager
         reset(control);

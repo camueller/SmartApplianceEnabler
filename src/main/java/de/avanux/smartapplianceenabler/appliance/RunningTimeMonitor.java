@@ -226,7 +226,6 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         Schedule schedule = new Schedule(runtime, null, new TimeOfDay(now), new TimeOfDay(now));
         Interval interval = new Interval(now.toDateTime(), now.plusSeconds(runtime).toDateTime());
         Timeframe timeframe = schedule.getTimeframe();
-        timeframe.setSchedule(schedule);
         activateTimeframeInterval(now, new TimeframeInterval(timeframe, interval));
     }
 

@@ -17,12 +17,10 @@
  */
 package de.avanux.smartapplianceenabler.schedule;
 
-import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
-import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
@@ -87,6 +85,9 @@ public class Schedule {
     }
 
     public Timeframe getTimeframe() {
+        if(timeframe.getSchedule() == null) {
+            timeframe.setSchedule(this);
+        }
         return timeframe;
     }
 
@@ -99,49 +100,26 @@ public class Schedule {
      * @return the next timeframe becoming valid or null
      */
     public static TimeframeInterval getCurrentOrNextTimeframeInterval(LocalDateTime now, List<Schedule> schedules, boolean onlyAlreadyStarted, boolean onlySufficient) {
-        if(schedules == null || schedules.size() == 0) {
-            return null;
-        }
-        Map<Long,TimeframeInterval> startDelayOfTimeframeInterval = new TreeMap<>();
-        for(Schedule schedule : schedules) {
-            if(schedule.isEnabled()) {
-                Timeframe timeframe = schedule.getTimeframe();
-                timeframe.setSchedule(schedule);
-                List<TimeframeInterval> timeframeIntervals = timeframe.getIntervals(now);
-                for(TimeframeInterval timeframeInterval : timeframeIntervals) {
-                    Interval interval = timeframeInterval.getInterval();
-                    if(interval.contains(now.toDateTime())) {
-                        // interval already started ...
-                        if(onlySufficient) {
-                            if(timeframeInterval.isIntervalSufficient(now, schedule.getMinRunningTime())) {
-                                return timeframeInterval;
-                            }
-                        }
-                        else {
-                            return timeframeInterval;
-                        }
-                    }
-                    else if (! onlyAlreadyStarted) {
-                        // interval starts in future
-                        startDelayOfTimeframeInterval.put(interval.getStartMillis() - now.toDateTime().getMillis(),
-                                timeframeInterval);
-                    }
-                }
-            }
-        }
-        if(startDelayOfTimeframeInterval.size() > 0) {
-            Long startDelay = startDelayOfTimeframeInterval.keySet().iterator().next();
-            return startDelayOfTimeframeInterval.get(startDelay);
+        List<TimeframeInterval> timeframeIntervals = findTimeframeIntervals(now, null, schedules,
+                onlyAlreadyStarted, onlySufficient);
+        if(timeframeIntervals.size() > 0) {
+            return timeframeIntervals.get(0);
         }
         return null;
     }
 
     /**
-     * Returns schedules starting within the given interval.
-     * @param considerationInterval
-     * @return a (possibly empty) list of timeframes
+     * Returns timeframe intervals starting within a consideration interval.
+     * If not consideration interval is given, all timeframe intervals are returned.
+     * @param now
+     * @param considerationInterval timeframe intervals have to start within this interval
+     * @param schedules the schedules from which to create timeframe intervals
+     * @param onlyAlreadyStarted if true a timeframe interval in only considered if it has started already
+     * @param onlySufficient if true a timeframe interval in only considered if minRunningTime fits before latest end
+     * @return a (possibly empty) list of timeframes sorted by starting time
      */
-    public static List<TimeframeInterval> findTimeframeIntervals(LocalDateTime now, Interval considerationInterval, List<Schedule> schedules, boolean onlySufficient) {
+    public static List<TimeframeInterval> findTimeframeIntervals(LocalDateTime now, Interval considerationInterval,
+                                                                 List<Schedule> schedules, boolean onlyAlreadyStarted, boolean onlySufficient) {
         List<TimeframeInterval> matchingTimeframeIntervals = new ArrayList<>();
         if(schedules != null) {
             for(Schedule schedule : schedules) {
@@ -149,38 +127,27 @@ public class Schedule {
                     Timeframe timeframe = schedule.getTimeframe();
                     List<TimeframeInterval> timeframeIntervals = timeframe.getIntervals(now);
                     for (TimeframeInterval timeframeInterval : timeframeIntervals) {
-                        if (considerationInterval.contains(timeframeInterval.getInterval().getStart())
-                                && (!onlySufficient || timeframeInterval.isIntervalSufficient(now,
-                                schedule.getMinRunningTime()))) {
+                        boolean considerationIntervalOk = false;
+                        boolean alreadyStartedCheckOk = false;
+                        boolean sufficientCheckOk = false;
+                        if (considerationInterval == null || considerationInterval.contains(timeframeInterval.getInterval().getStart())) {
+                            considerationIntervalOk = true;
+                        }
+                        if(!onlyAlreadyStarted || timeframeInterval.getInterval().contains(now.toDateTime())) {
+                            alreadyStartedCheckOk = true;
+                        }
+                        if (!onlySufficient || timeframeInterval.isIntervalSufficient(now, schedule.getMinRunningTime())) {
+                            sufficientCheckOk = true;
+                        }
+                        if(considerationIntervalOk && alreadyStartedCheckOk && sufficientCheckOk) {
                             matchingTimeframeIntervals.add(timeframeInterval);
                         }
                     }
                 }
             }
         }
+        matchingTimeframeIntervals.sort(new TimeframeIntervalComparator());
         return matchingTimeframeIntervals;
-    }
-
-    /**
-     * Returns timeframe intervals sorted by start time.
-     * @param now
-     * @param schedules
-     * @return a (possibly empty) list of timeframes sorted by start time
-     */
-    public static List<TimeframeInterval> getSortedTimeframeIntervals(LocalDateTime now, List<Schedule> schedules) {
-        Map<DateTime, TimeframeInterval> sortedTimeframeIntervals = new TreeMap<>();
-        if(schedules != null) {
-            for(Schedule schedule : schedules) {
-                if(schedule.isEnabled()) {
-                    Timeframe timeframe = schedule.getTimeframe();
-                    List<TimeframeInterval> timeframeIntervals = timeframe.getIntervals(now);
-                    for (TimeframeInterval timeframeInterval : timeframeIntervals) {
-                        sortedTimeframeIntervals.put(timeframeInterval.getInterval().getStart(), timeframeInterval);
-                    }
-                }
-            }
-        }
-        return new ArrayList<>(sortedTimeframeIntervals.values());
     }
 
     @Override
