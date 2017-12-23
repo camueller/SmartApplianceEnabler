@@ -15,14 +15,26 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package de.avanux.smartapplianceenabler.control;
 
-import org.joda.time.LocalDateTime;
+package de.avanux.smartapplianceenabler.schedule;
 
-public interface StartingCurrentSwitchListener {
+import java.util.Comparator;
 
-    void startingCurrentDetected(LocalDateTime now);
+/**
+ * Compares timeframe intervals bei start time.
+ */
+public class TimeframeIntervalComparator implements Comparator<TimeframeInterval> {
 
-    void finishedCurrentDetected();
-
+    @Override
+    public int compare(TimeframeInterval interval1, TimeframeInterval interval2) {
+        if(interval1 != null && interval2 != null) {
+            if(interval1.getInterval().getStart().isBefore(interval2.getInterval().getStart())) {
+                return -1;
+            }
+            if(interval1.getInterval().getStart().isAfter(interval2.getInterval().getStart())) {
+                return 1;
+            }
+        }
+        return 0;
+    }
 }

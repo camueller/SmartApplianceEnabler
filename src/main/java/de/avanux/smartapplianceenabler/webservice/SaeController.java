@@ -344,9 +344,10 @@ public class SaeController {
         Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
         if(appliance != null) {
             LocalDateTime now = new LocalDateTime();
-            List<TimeframeInterval> sortedTimeframeIntervals = Schedule.getSortedTimeframeIntervals(now, appliance.getSchedules());
-            if(sortedTimeframeIntervals.size() > 0) {
-                return sortedTimeframeIntervals.get(0).getTimeframe().getSchedule().getMinRunningTime();
+            List<TimeframeInterval> timeframeIntervals = Schedule.findTimeframeIntervals(now,
+                    null, appliance.getSchedules(), false, false);
+            if(timeframeIntervals.size() > 0) {
+                return timeframeIntervals.get(0).getTimeframe().getSchedule().getMinRunningTime();
             }
         }
         else {

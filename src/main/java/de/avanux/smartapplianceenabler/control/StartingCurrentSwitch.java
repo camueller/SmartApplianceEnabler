@@ -205,7 +205,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
                             for (StartingCurrentSwitchListener listener : startingCurrentSwitchListeners) {
                                 logger.debug("{}: Notifying {} {}", applianceId, StartingCurrentSwitchListener.class.getSimpleName(),
                                         listener.getClass().getSimpleName());
-                                listener.startingCurrentDetected();
+                                listener.startingCurrentDetected(now);
                             }
                         } else {
                             logger.debug("{}: Starting current not detected.", applianceId);

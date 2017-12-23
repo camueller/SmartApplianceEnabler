@@ -116,7 +116,7 @@ public class SempControllerTest extends TestBase {
         appliances.setAppliances(Collections.singletonList(appliance));
         ApplianceManager.getInstanceWithoutTimer().setAppliances(appliances);
 
-        appliance.startingCurrentDetected();
+        appliance.startingCurrentDetected(now);
 
         // check timeframes for the first time after activation
         Device2EM device2EM = sempController.createDevice2EM(now);
