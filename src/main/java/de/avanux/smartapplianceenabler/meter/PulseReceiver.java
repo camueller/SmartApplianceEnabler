@@ -42,7 +42,7 @@ public class PulseReceiver implements Runnable {
     private String id;
     public transient static final int DEFAULT_PORT = 9999;
     @XmlAttribute
-    private Integer port = DEFAULT_PORT;
+    private Integer port;
     private transient Thread thread;
     private transient DatagramSocket serverSocket;
     private transient Map<String, PulseListener> applianceIdWithListener = new HashMap<>();
@@ -95,6 +95,7 @@ public class PulseReceiver implements Runnable {
 
     @Override
     public void run() {
+        int port = this.port != null ? this.port : DEFAULT_PORT;
         try {
             logger.debug("Listening on UDP port " + port);
             serverSocket = new DatagramSocket(port);
