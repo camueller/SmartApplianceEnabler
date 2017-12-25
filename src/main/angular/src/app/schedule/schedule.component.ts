@@ -229,7 +229,7 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
 
   submitForm() {
     const schedules = ScheduleFactory.fromForm(this.schedulesForm.value);
-    this.scheduleService.setSchedules(this.applianceId, schedules);
+    this.scheduleService.setSchedules(this.applianceId, schedules).subscribe();
     this.schedulesForm.markAsPristine();
   }
 }

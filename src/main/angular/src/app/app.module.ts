@@ -29,7 +29,6 @@ import {MeterComponent} from './meter/meter.component';
 import {ControlComponent} from './control/control.component';
 import {SchedulesComponent} from './schedule/schedule.component';
 import {SettingsComponent} from './settings/settings.component';
-import {HttpModule} from '@angular/http';
 import {ApplianceResolver} from './appliance/appliance-resolver.service';
 import {AppliancesReloadService} from './appliance/appliances-reload-service';
 import {HttpClient, HttpClientModule} from '@angular/common/http';
@@ -66,7 +65,6 @@ import {CanDeactivateGuard} from './shared/can-deactivate-guard.service';
     FormsModule,
     ReactiveFormsModule,
     AppRoutingModule,
-    HttpModule,
     HttpClientModule,
     TranslateModule.forRoot({
       loader: {

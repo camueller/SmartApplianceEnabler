@@ -28,7 +28,7 @@ export class ErrorMessageHandler {
           const keyWithPrefix = controlPrefix + message.forControl;
           const keyWithWithPeriods = keyWithPrefix.replace('_', '.');
           const key = keyWithWithPeriods.replace('#', i.toString());
-          console.log('KEY=' + key);
+//          console.log('KEY=' + key);
           const control = form.get(key);
           if (control && control.dirty && control.invalid
             && control.errors[ValidatorType[message.forValidator]] && !errors[message.forControl]) {

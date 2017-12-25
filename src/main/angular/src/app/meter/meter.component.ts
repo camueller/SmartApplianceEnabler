@@ -94,7 +94,7 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
   }
 
   submitForm() {
-    this.meterService.updateMeter(this.meter, this.applianceId);
+    this.meterService.updateMeter(this.meter, this.applianceId).subscribe();
     this.meterForm.form.markAsPristine();
   }
 }

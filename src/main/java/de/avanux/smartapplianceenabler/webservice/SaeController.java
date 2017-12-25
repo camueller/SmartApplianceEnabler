@@ -40,6 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -137,7 +138,6 @@ public class SaeController {
 
     @RequestMapping(value= APPLIANCES_URL, method=RequestMethod.GET, produces="application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    @ResponseBody
     public List<ApplianceHeader> getAppliances() {
         logger.debug("Received request for ApplianceHeaders");
         List<ApplianceHeader> applianceHeaders = new ArrayList<>();
@@ -155,7 +155,6 @@ public class SaeController {
 
     @RequestMapping(value= APPLIANCE_URL, method=RequestMethod.GET, produces="application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    @ResponseBody
     public ApplianceInfo getApplianceInfo(@RequestParam(value="id") String applianceId) {
         logger.debug("{}: Received request for device info", applianceId);
         Device2EM device2EM = ApplianceManager.getInstance().getDevice2EM();
@@ -171,7 +170,6 @@ public class SaeController {
 
     @RequestMapping(value= APPLIANCE_URL, method=RequestMethod.PUT, consumes="application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    @ResponseBody
     public void setApplianceInfo(@RequestParam(value="id") String applianceId, @RequestParam(value="create")
             Boolean create, @RequestBody ApplianceInfo applianceInfo) {
         logger.debug("{}: Received request to set ApplianceInfo (create={}): {}", applianceId, create, applianceInfo);
@@ -186,16 +184,14 @@ public class SaeController {
         }
     }
 
-    @RequestMapping(value= APPLIANCE_URL, method=RequestMethod.DELETE, consumes="application/json")
+    @RequestMapping(value= APPLIANCE_URL, method=RequestMethod.DELETE)
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    @ResponseBody
     public void deleteAppliance(@RequestParam(value="id") String applianceId) {
         ApplianceManager.getInstance().deleteAppliance(applianceId);
     }
 
     @RequestMapping(value=CONTROLDEFAULTS_URL, method=RequestMethod.GET, produces="application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    @ResponseBody
     public ControlDefaults getControlDefaults() {
         ControlDefaults defaults = new ControlDefaults();
         defaults.setStartingCurrentSwitchDefaults(new StartingCurrentSwitchDefaults());
@@ -204,13 +200,15 @@ public class SaeController {
 
     @RequestMapping(value=CONTROL_URL, method=RequestMethod.GET, produces="application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    @ResponseBody
-    public Control getControl(@RequestParam(value="id") String applianceId) {
+    public Control getControl(HttpServletResponse response, @RequestParam(value="id") String applianceId) {
         logger.debug("{}: Received request for control", applianceId);
         Appliance appliance = getAppliance(applianceId);
         if(appliance != null) {
             Control control = appliance.getControl();
             logger.debug("{}: Returning control {}", applianceId, control);
+            if(control == null) {
+                response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            }
             return control;
         }
         else {
@@ -221,7 +219,6 @@ public class SaeController {
 
     @RequestMapping(value=CONTROL_URL, method=RequestMethod.PUT, consumes="application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    @ResponseBody
     public void setControl(@RequestParam(value="id") String applianceId, @RequestBody Control control) {
         logger.debug("{}: Received request to set control {}", applianceId, control);
         if(control instanceof ModbusSwitch) {
@@ -232,7 +229,6 @@ public class SaeController {
 
     @RequestMapping(value= CONTROL_URL, method=RequestMethod.DELETE, consumes="application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    @ResponseBody
     public void deleteControl(@RequestParam(value="id") String applianceId) {
         logger.debug("{}: Received request to delete control", applianceId);
         ApplianceManager.getInstance().deleteControl(applianceId);
@@ -240,7 +236,6 @@ public class SaeController {
 
     @RequestMapping(value=METERDEFAULTS_URL, method=RequestMethod.GET, produces="application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    @ResponseBody
     public MeterDefaults getMeterDefaults() {
         MeterDefaults defaults = new MeterDefaults();
         defaults.setS0ElectricityMeter(new S0ElectricityMeterDefaults());
@@ -251,13 +246,15 @@ public class SaeController {
 
     @RequestMapping(value=METER_URL, method=RequestMethod.GET, produces="application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    @ResponseBody
-    public Meter getMeter(@RequestParam(value="id") String applianceId) {
+    public Meter getMeter(HttpServletResponse response, @RequestParam(value="id") String applianceId) {
         logger.debug("{}: Received request for meter", applianceId);
         Appliance appliance = getAppliance(applianceId);
         if(appliance != null) {
             Meter meter = appliance.getMeter();
             logger.debug("{}: Returning meter {}", applianceId, meter);
+            if(meter == null) {
+                response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            }
             return meter;
         }
         else {
@@ -268,7 +265,6 @@ public class SaeController {
 
     @RequestMapping(value=METER_URL, method=RequestMethod.PUT, consumes="application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    @ResponseBody
     public void setMeter(@RequestParam(value="id") String applianceId, @RequestBody Meter meter) {
         logger.debug("{}: Received request to set meter {}", applianceId, meter);
         if(meter instanceof S0ElectricityMeterNetworked) {
@@ -282,7 +278,6 @@ public class SaeController {
 
     @RequestMapping(value= METER_URL, method=RequestMethod.DELETE, consumes="application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    @ResponseBody
     public void deleteMeter(@RequestParam(value="id") String applianceId) {
         logger.debug("{}: Received request to delete meter", applianceId);
         ApplianceManager.getInstance().deleteMeter(applianceId);
@@ -290,7 +285,6 @@ public class SaeController {
 
     @RequestMapping(value=SCHEDULES_URL, method=RequestMethod.GET, produces="application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    @ResponseBody
     public List<Schedule> getSchedules(@RequestParam(value="id") String applianceId) {
         logger.debug("{}: Received request for schedules", applianceId);
         Appliance appliance = getAppliance(applianceId);
@@ -310,14 +304,13 @@ public class SaeController {
 
     @RequestMapping(value=SCHEDULES_URL, method=RequestMethod.PUT, consumes="application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    @ResponseBody
     public void setSchedules(@RequestParam(value="id") String applianceId, @RequestBody List<Schedule> schedules) {
         logger.debug("{}: Received request to set {} schedules", applianceId, schedules.size());
         ApplianceManager.getInstance().setSchedules(applianceId, schedules);
     }
 
     @RequestMapping(value=SCHEDULES_URL, method= RequestMethod.POST, consumes="application/xml")
-    @ResponseBody
+    @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public void activateSchedules(@RequestParam(value="id") String applianceId, @RequestBody Schedules schedules) {
         List<Schedule> schedulesToSet = schedules.getSchedules();
         logger.debug("{}: Received request to activate {} schedule(s)", applianceId,
@@ -336,9 +329,8 @@ public class SaeController {
         }
     }
 
-    @RequestMapping(value=RUNTIME_URL, method=RequestMethod.GET, consumes="application/json")
+    @RequestMapping(value=RUNTIME_URL, method=RequestMethod.GET)
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    @ResponseBody
     public Integer suggestRuntime(@RequestParam(value="id") String applianceId) {
         logger.debug("{}: Received request to suggest runtime", applianceId);
         Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
@@ -356,9 +348,8 @@ public class SaeController {
         return 0;
     }
 
-    @RequestMapping(value=RUNTIME_URL, method=RequestMethod.PUT, consumes="application/json")
+    @RequestMapping(value=RUNTIME_URL, method=RequestMethod.PUT)
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    @ResponseBody
     public void setRuntime(@RequestParam(value="id") String applianceId, @RequestParam(value="runtime") Integer runtime) {
         setRuntime(new LocalDateTime(), applianceId, runtime);
     }
@@ -380,14 +371,12 @@ public class SaeController {
 
     @RequestMapping(value=SETTINGSDEFAULTS_URL, method=RequestMethod.GET, produces="application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    @ResponseBody
     public SettingsDefaults getSettingsDefaults() {
         return new SettingsDefaults();
     }
 
     @RequestMapping(value= SETTINGS_URL, method=RequestMethod.GET, produces="application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    @ResponseBody
     public Settings getSettings() {
         logger.debug("Received request for Settings");
         Settings settings = new Settings();
@@ -422,7 +411,6 @@ public class SaeController {
 
     @RequestMapping(value=SETTINGS_URL, method=RequestMethod.PUT, consumes="application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    @ResponseBody
     public void setSettings(@RequestBody Settings settings) {
         logger.debug("Received request to set " + settings);
 
@@ -462,7 +450,6 @@ public class SaeController {
 
     @RequestMapping(value= STATUS_URL, method=RequestMethod.GET, produces="application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    @ResponseBody
     public List<ApplianceStatus> getApplianceStatus() {
         return getApplianceStatus(new LocalDateTime());
     }

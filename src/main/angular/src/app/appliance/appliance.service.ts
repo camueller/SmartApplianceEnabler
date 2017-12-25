@@ -18,7 +18,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 import {Injectable} from '@angular/core';
 import {Appliance} from './appliance';
-import {Http} from '@angular/http';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import {Observable} from 'rxjs/Observable';
@@ -28,82 +27,61 @@ import {Subject} from 'rxjs/Subject';
 import {ApplianceHeader} from './appliance-header';
 import {SaeService} from '../shared/sae-service';
 import {ApplianceStatus} from './appliance-status';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {observable} from 'rxjs/symbol/observable';
 
 @Injectable()
 export class ApplianceService extends SaeService {
 
-  constructor(protected http: Http) {
+  constructor(protected http: HttpClient) {
     super(http);
   }
 
   getApplianceHeaders(): Observable<Array<ApplianceHeader>> {
     return this.http.get(`${this.api}/appliances`)
-      .map(response => response.json())
-      .map(applianceHeaders => applianceHeaders.map(applianceHeader => ApplianceFactory.toApplianceHeaderFromJSON(applianceHeader)))
-      .catch(this.errorHandler);
+      .map((applianceHeaders: Array<ApplianceHeader>) => {
+        return applianceHeaders.map(
+          applianceHeader => ApplianceFactory.toApplianceHeaderFromJSON(applianceHeader));
+      });
   }
 
   getApplianceStatus(): Observable<Array<ApplianceStatus>> {
     return this.http.get(`${this.api}/status`)
-      .map(response => response.json())
-      .map(applianceStatuses => applianceStatuses.map(applianceStatus => ApplianceFactory.toApplianceStatusFromJSON(applianceStatus)))
-      .catch(this.errorHandler);
+      .map((applianceStatuses: Array<any>) => {
+        return applianceStatuses.map(
+          applianceStatus => ApplianceFactory.toApplianceStatusFromJSON(applianceStatus));
+      });
   }
 
   getAppliance(id: string): Observable<Appliance> {
     return this.http.get(`${this.api}/appliance?id=${id}`)
-      .map(response => response.json())
-      .map(applianceInfo => ApplianceFactory.toApplianceFromJSON(applianceInfo))
-      .catch(this.errorHandler);
+      .map(applianceInfo => ApplianceFactory.toApplianceFromJSON(applianceInfo));
   }
 
   updateAppliance(appliance: Appliance, create: boolean): Observable<any> {
     const url = `${this.api}/appliance?id=${appliance.id}&create=${create}`;
     const content = ApplianceFactory.toJSONfromApplianceInfo(appliance);
-    console.log('Updating applianceHeader using ' + url);
-    console.log('Content: ' + content);
-    const observer = new Subject();
-    this.http.put(url, content, {headers: this.headers})
-      .catch(this.errorHandler)
-      .subscribe(res => {
-        console.log(res);
-        observer.next();
-      });
-    return observer;
+    console.log('Updating appliance using ' + url);
+    return this.http.put(url, content,
+      {headers: this.headersContentTypeJson, responseType: 'text'});
   }
 
   deleteAppliance(id: string): Observable<any> {
     const url = `${this.api}/appliance?id=${id}`;
-    console.log('Delete applianceHeader using ' + url);
-    const observer = new Subject();
-    this.http.delete(url, {headers: this.headers})
-      .catch(this.errorHandler)
-      .subscribe(res => {
-        console.log(res);
-        observer.next();
-      });
-    return observer;
+    console.log('Delete appliance using ' + url);
+    return this.http.delete(url, {responseType: 'text'});
   }
 
-  suggestRuntime(id: string): Observable<number> {
+  suggestRuntime(id: string): Observable<string> {
     const url = `${this.api}/runtime?id=${id}`;
     console.log('Get suggested runtime using ' + url);
-    return this.http.get(url, {headers: this.headers})
-      .map(response => response.json())
-      .catch(this.errorHandler);
+    return this.http.get(url, {responseType: 'text'});
   }
 
   setRuntime(id: string, runtime: number): Observable<any> {
     const url = `${this.api}/runtime?id=${id}&runtime=${runtime}`;
     console.log('Set runtime using ' + url);
-    const observer = new Subject();
-    this.http.put(url, {headers: this.headers})
-      .catch(this.errorHandler)
-      .subscribe(res => {
-        console.log(res);
-        observer.next();
-      });
-    return observer;
+    return this.http.put(url, '', {responseType: 'text'});
   }
 
   toggleAppliance(id: string, turnOn: boolean): Observable<any> {
@@ -112,13 +90,7 @@ export class ApplianceService extends SaeService {
       '<DeviceId>' + id + '</DeviceId><On>' + turnOn + '</On></DeviceControl></EM2Device>';
     console.log('Toggle appliance using ' + url);
     console.log('Content: ' + content);
-    const observer = new Subject();
-    this.http.post(url, content, {headers: this.sempHeaders})
-      .catch(this.errorHandler)
-      .subscribe(res => {
-        console.log(res);
-        observer.next();
-      });
-    return observer;
+    return this.http.post(url, content,
+      {headers: this.headersContentTypeXml, responseType: 'text'});
   }
 }
