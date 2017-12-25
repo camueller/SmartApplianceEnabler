@@ -116,7 +116,7 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
   onClickGoLight(applianceId: string) {
     // console.log('CLICK GO=' + applianceId);
     this.applianceService.suggestRuntime(applianceId).subscribe(suggestedRuntime => {
-      const hourMinute = TimeUtil.toHourMinute(suggestedRuntime);
+      const hourMinute = TimeUtil.toHourMinute(Number.parseInt(suggestedRuntime));
       this.switchOnForm.controls['switchOnRunningTime'].setValue(hourMinute);
     });
     this.switchOnApplianceId = applianceId;

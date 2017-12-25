@@ -51,7 +51,6 @@ public class SempController {
     }
 
     @RequestMapping(value=BASE_URL, method=RequestMethod.GET, produces="application/xml")
-    @ResponseBody
     public String device2EM() {
         logger.debug("Device info/status/planning requested.");
         return marshall(createDevice2EM(new LocalDateTime()));
@@ -80,7 +79,6 @@ public class SempController {
     }
     
     @RequestMapping(value=BASE_URL + "/DeviceInfo", method=RequestMethod.GET, produces="application/xml")
-    @ResponseBody
     public String deviceInfo(@RequestParam(value="DeviceId", required = false) String deviceId) {
         Device2EM device2EM = new Device2EM();
         device2EM.setDeviceInfo(Collections.singletonList(createDeviceInfo(deviceId)));
@@ -128,7 +126,6 @@ public class SempController {
     }
 
     @RequestMapping(value=BASE_URL + "/DeviceStatus", method=RequestMethod.GET, produces="application/xml")
-    @ResponseBody
     public String deviceStatus(@RequestParam(value="DeviceId", required = false) String deviceId) {
         List<DeviceStatus> deviceStatuses = new ArrayList<DeviceStatus>();
         if(deviceId != null) {
@@ -151,7 +148,6 @@ public class SempController {
     }
     
     @RequestMapping(value=BASE_URL + "/PlanningRequest", method=RequestMethod.GET, produces="application/xml")
-    @ResponseBody
     public String planningRequest(@RequestParam(value="DeviceId", required = false) String deviceId) {
         LocalDateTime now = new LocalDateTime();
         List<PlanningRequest> planningRequests = new ArrayList<PlanningRequest>();
@@ -184,7 +180,6 @@ public class SempController {
 
     @RequestMapping(value=BASE_URL, method=RequestMethod.POST, consumes="application/xml")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    @ResponseBody
     public void em2Device(@RequestBody EM2Device em2Device) {
         em2Device(new LocalDateTime(), em2Device);
     }

@@ -25,7 +25,7 @@ export class ErrorMessages {
     const controlValidators = [];
     this.errorMessages.forEach(errorMessage => controlValidators.push(this.buildTextKey(errorMessage)));
     this.translate.get(controlValidators).subscribe(translatedTexts => {
-      console.log('TRANSLATED=' + JSON.stringify(translatedTexts));
+//      console.log('TRANSLATED=' + JSON.stringify(translatedTexts));
       this.errorMessages.forEach(errorMessage => {
         errorMessage.text = translatedTexts[this.buildTextKey(errorMessage)];
       });
@@ -34,7 +34,7 @@ export class ErrorMessages {
 
   buildTextKey(errorMessage: ErrorMessage) {
     const key = this.typePrefix + errorMessage.forControl + '_' + ValidatorType[errorMessage.forValidator];
-    console.log('KEY=' + key);
+//    console.log('KEY=' + key);
     return key;
   }
 

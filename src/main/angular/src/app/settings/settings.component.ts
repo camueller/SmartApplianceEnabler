@@ -72,7 +72,7 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
   }
 
   submitForm() {
-    this.settingsService.updateSettings(this.settings);
+    this.settingsService.updateSettings(this.settings).subscribe();
     this.settingsForm.form.markAsPristine();
   }
 
