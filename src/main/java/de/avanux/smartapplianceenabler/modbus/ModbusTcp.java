@@ -18,6 +18,7 @@
 package de.avanux.smartapplianceenabler.modbus;
 
 import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
+import de.avanux.smartapplianceenabler.webservice.SettingsDefaults;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -36,10 +37,10 @@ public class ModbusTcp {
     private String id;
     public transient static final String DEFAULT_HOST = "127.0.0.1";
     @XmlAttribute
-    private String host = DEFAULT_HOST;
+    private String host;
     public static final int DEFAULT_PORT = 502;
     @XmlAttribute
-    private int port = DEFAULT_PORT;
+    private Integer port;
 
 
     public String getId() {
@@ -58,18 +59,18 @@ public class ModbusTcp {
         this.host = host;
     }
 
-    public int getPort() {
+    public Integer getPort() {
         return port;
     }
 
-    public void setPort(int port) {
+    public void setPort(Integer port) {
         this.port = port;
     }
 
     public TCPMasterConnection getConnection() throws UnknownHostException {
-        InetAddress address = InetAddress.getByName(host);
+        InetAddress address = InetAddress.getByName(host != null ? host : DEFAULT_HOST);
         TCPMasterConnection connection = new TCPMasterConnection(address);
-        connection.setPort(port);
+        connection.setPort(port != null ? port : DEFAULT_PORT);
         return connection;
     }
 
