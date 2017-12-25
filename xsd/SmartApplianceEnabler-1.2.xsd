@@ -233,8 +233,8 @@
             </xs:element>
             <xs:element name="ModbusTCP" minOccurs="0" maxOccurs="unbounded">
                 <xs:complexType>
-                    <xs:attribute name="id" type="xs:NCName" use="required" />
-                    <xs:attribute name="host" type="xs:string" use="required" />
+                    <xs:attribute name="id" type="xs:NCName" />
+                    <xs:attribute name="host" type="xs:string" />
                     <xs:attribute name="port" type="xs:int" />
                 </xs:complexType>
             </xs:element>
