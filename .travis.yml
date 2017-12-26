@@ -4,10 +4,11 @@ jdk:
   - oraclejdk8
 node_js:
   - "8"
+addons:
+  apt:
+    packages:
+      - google-chrome-stable
 before_install:
-  - wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
-  - echo "deb http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
-  - apt-get update && apt-get -y install google-chrome-stable
   - wget https://archive.apache.org/dist/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.zip
   - unzip -qq apache-maven-3.3.9-bin.zip
   - export M2_HOME=$PWD/apache-maven-3.3.9
