@@ -256,10 +256,6 @@
                                     <goal>exec</goal>
                                 </goals>
                             </execution>
-
-
-
-
                             <execution>
                                 <id>ng-build</id>
                                 <phase>generate-sources</phase>
@@ -274,6 +270,20 @@
                                     <goal>exec</goal>
                                 </goals>
                             </execution>
+							<execution>
+								<id>ng-test</id>
+								<phase>test</phase>
+								<configuration>
+									<workingDirectory>${project.basedir}/src/main/angular</workingDirectory>
+									<executable>ng</executable>
+									<arguments>
+										<argument>test</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
                         </executions>
                     </plugin>
                 </plugins>
