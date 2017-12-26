@@ -109,19 +109,20 @@ public class ScheduleTest extends TestBase {
         addSchedule(schedules, 3600, 10, 0, 12, 0, dowList(3));
         addSchedule(schedules, 3600, 12, 0, 14, 0, dowList(2,4));
         addSchedule(schedules, 3600, 14, 0, 16, 0, dowList(1,5));
+        LocalDateTime now = toDayOfWeek(1, 9, 0);
         List<TimeframeInterval> timeframeIntervals = Schedule.findTimeframeIntervals(
-                toDayOfWeek(1,9, 0), null, schedules,
+                now, null, schedules,
                 false, true);
         Assert.assertEquals(5, timeframeIntervals.size());
-        Assert.assertEquals(toIntervalByDow(1,14,0,1, 16, 0),
+        Assert.assertEquals(toIntervalByDow(now,1,14,0,1, 16, 0),
                 timeframeIntervals.get(0).getInterval());
-        Assert.assertEquals(toIntervalByDow(2,12,0,2, 14, 0),
+        Assert.assertEquals(toIntervalByDow(now,2,12,0,2, 14, 0),
                 timeframeIntervals.get(1).getInterval());
-        Assert.assertEquals(toIntervalByDow(3,10,0,3, 12, 0),
+        Assert.assertEquals(toIntervalByDow(now,3,10,0,3, 12, 0),
                 timeframeIntervals.get(2).getInterval());
-        Assert.assertEquals(toIntervalByDow(4,12,0,4, 14, 0),
+        Assert.assertEquals(toIntervalByDow(now,4,12,0,4, 14, 0),
                 timeframeIntervals.get(3).getInterval());
-        Assert.assertEquals(toIntervalByDow(5,14,0,5, 16, 0),
+        Assert.assertEquals(toIntervalByDow(now,5,14,0,5, 16, 0),
                 timeframeIntervals.get(4).getInterval());
     }
 
