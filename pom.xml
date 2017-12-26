@@ -163,6 +163,22 @@
                         <artifactId>exec-maven-plugin</artifactId>
                         <executions>
 							<execution>
+								<id>npm-angular-cli</id>
+								<phase>generate-sources</phase>
+								<configuration>
+									<workingDirectory>${project.basedir}/src/main/angular</workingDirectory>
+									<executable>npm</executable>
+									<arguments>
+										<argument>install</argument>
+										<argument>@angular/cli@5.1.2</argument>
+										<argument>--save</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+							<execution>
 								<id>npm-install-semantic-ui</id>
 								<phase>generate-sources</phase>
 								<configuration>
