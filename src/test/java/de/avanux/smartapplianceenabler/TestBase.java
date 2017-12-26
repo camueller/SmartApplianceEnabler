@@ -69,15 +69,15 @@ abstract public class TestBase {
                 toDay(endDayOffset, endHour, endMinutes, endSeconds).toDateTime());
     }
 
-    protected Interval toIntervalByDow(Integer startDow, Integer startHour, Integer startMinutes,
+    protected Interval toIntervalByDow(LocalDateTime now, Integer startDow, Integer startHour, Integer startMinutes,
                                        Integer endDow, Integer endHour, Integer endMinutes) {
-        return toIntervalByDow(startDow, startHour, startMinutes, 0, endDow, endHour, endMinutes, 0);
+        return toIntervalByDow(now, startDow, startHour, startMinutes, 0, endDow, endHour, endMinutes, 0);
     }
 
-    protected Interval toIntervalByDow(Integer startDow, Integer startHour, Integer startMinutes, Integer startSeconds,
+    protected Interval toIntervalByDow(LocalDateTime now, Integer startDow, Integer startHour, Integer startMinutes, Integer startSeconds,
                                   Integer endDow, Integer endHour, Integer endMinutes, Integer endSeconds) {
-        return new Interval(toDayOfWeek(startDow, startHour, startMinutes, startSeconds).toDateTime(),
-                toDayOfWeek(endDow, endHour, endMinutes, endSeconds).toDateTime());
+        return new Interval(toDayOfWeek(now, startDow, startHour, startMinutes, startSeconds).toDateTime(),
+                toDayOfWeek(now, endDow, endHour, endMinutes, endSeconds).toDateTime());
     }
 
     protected void assertDateTime(LocalDateTime dt1, LocalDateTime dt2) {
