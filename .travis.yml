@@ -1,19 +1,16 @@
 language: java
-script: mvn test -B -Ptravis
+script: mvn test -B -Ptravis,web
 jdk:
   - oraclejdk8
 node_js:
   - "8"
 before_install:
+  - wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
+  - echo "deb http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
+  - apt-get update && apt-get -y install google-chrome-stable
   - wget https://archive.apache.org/dist/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.zip
   - unzip -qq apache-maven-3.3.9-bin.zip
   - export M2_HOME=$PWD/apache-maven-3.3.9
   - export PATH=$M2_HOME/bin:$PATH
-install:
-  - npm i --save semantic-ui-css
-  - npm i --save clockpicker
-  - npm install @ngx-translate/core --save
-  - npm install @ngx-translate/http-loader --save
-  - npm install
 after_success:
   - bash <(curl -s https://codecov.io/bash)

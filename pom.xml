@@ -162,8 +162,72 @@
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
                         <executions>
+							<execution>
+								<id>npm-install-semantic-ui</id>
+								<phase>generate-sources</phase>
+								<configuration>
+									<workingDirectory>${project.basedir}/src/main/angular</workingDirectory>
+									<executable>npm</executable>
+									<arguments>
+										<argument>install</argument>
+										<argument>semantic-ui-css</argument>
+										<argument>--save</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>npm-install-clockpicker</id>
+								<phase>generate-sources</phase>
+								<configuration>
+									<workingDirectory>${project.basedir}/src/main/angular</workingDirectory>
+									<executable>npm</executable>
+									<arguments>
+										<argument>install</argument>
+										<argument>clockpicker</argument>
+										<argument>--save</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>npm-install-ngx-translate-core</id>
+								<phase>generate-sources</phase>
+								<configuration>
+									<workingDirectory>${project.basedir}/src/main/angular</workingDirectory>
+									<executable>npm</executable>
+									<arguments>
+										<argument>install</argument>
+										<argument>@ngx-translate/core</argument>
+										<argument>--save</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>npm-install-ngx-translate-http-loader</id>
+								<phase>generate-sources</phase>
+								<configuration>
+									<workingDirectory>${project.basedir}/src/main/angular</workingDirectory>
+									<executable>npm</executable>
+									<arguments>
+										<argument>install</argument>
+										<argument>@ngx-translate/http-loader</argument>
+										<argument>--save</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
                             <execution>
-                                <id>exec-npm-install</id>
+                                <id>npm-install</id>
                                 <phase>generate-sources</phase>
                                 <configuration>
                                     <workingDirectory>${project.basedir}/src/main/angular</workingDirectory>
@@ -176,8 +240,12 @@
                                     <goal>exec</goal>
                                 </goals>
                             </execution>
+
+
+
+
                             <execution>
-                                <id>exec-ng-build</id>
+                                <id>ng-build</id>
                                 <phase>generate-sources</phase>
                                 <configuration>
                                     <workingDirectory>${project.basedir}/src/main/angular</workingDirectory>
