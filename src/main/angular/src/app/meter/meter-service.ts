@@ -14,12 +14,12 @@ export class MeterService extends SaeService {
   }
 
   getMeterDefaults(): Observable<MeterDefaults> {
-    return this.http.get(`${this.api}/meterdefaults`)
+    return this.http.get(`${SaeService.API}/meterdefaults`)
       .map(response => MeterFactory.defaultsFromJSON(response));
   }
 
   getMeter(id: string): Observable<Meter> {
-    return this.http.get(`${this.api}/meter?id=${id}`)
+    return this.http.get(`${SaeService.API}/meter?id=${id}`)
       .map(response => {
         if (response == null) {
           return MeterFactory.createEmptyMeter();
@@ -29,7 +29,7 @@ export class MeterService extends SaeService {
   }
 
   updateMeter(meter: Meter, id: string): Observable<any> {
-    const url = `${this.api}/meter?id=${id}`;
+    const url = `${SaeService.API}/meter?id=${id}`;
     const content = MeterFactory.toJSON(meter);
     console.log('Update meter using ' + url);
     if (content != null) {

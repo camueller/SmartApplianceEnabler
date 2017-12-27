@@ -36,7 +36,7 @@ export class ApplianceService extends SaeService {
   }
 
   getApplianceHeaders(): Observable<Array<ApplianceHeader>> {
-    return this.http.get(`${SaeService.api}/appliances`)
+    return this.http.get(`${SaeService.API}/appliances`)
       .map((applianceHeaders: Array<ApplianceHeader>) => {
         return applianceHeaders.map(
           applianceHeader => ApplianceFactory.toApplianceHeaderFromJSON(applianceHeader));
@@ -44,7 +44,7 @@ export class ApplianceService extends SaeService {
   }
 
   getApplianceStatus(): Observable<Array<ApplianceStatus>> {
-    return this.http.get(`${SaeService.api}/status`)
+    return this.http.get(`${SaeService.API}/status`)
       .map((applianceStatuses: Array<any>) => {
         return applianceStatuses.map(
           applianceStatus => ApplianceFactory.toApplianceStatusFromJSON(applianceStatus));
@@ -52,12 +52,12 @@ export class ApplianceService extends SaeService {
   }
 
   getAppliance(id: string): Observable<Appliance> {
-    return this.http.get(`${SaeService.api}/appliance?id=${id}`)
+    return this.http.get(`${SaeService.API}/appliance?id=${id}`)
       .map(applianceInfo => ApplianceFactory.toApplianceFromJSON(applianceInfo));
   }
 
   updateAppliance(appliance: Appliance, create: boolean): Observable<any> {
-    const url = `${SaeService.api}/appliance?id=${appliance.id}&create=${create}`;
+    const url = `${SaeService.API}/appliance?id=${appliance.id}&create=${create}`;
     const content = ApplianceFactory.toJSONfromApplianceInfo(appliance);
     console.log('Updating appliance using ' + url);
     return this.http.put(url, content,
@@ -65,25 +65,25 @@ export class ApplianceService extends SaeService {
   }
 
   deleteAppliance(id: string): Observable<any> {
-    const url = `${SaeService.api}/appliance?id=${id}`;
+    const url = `${SaeService.API}/appliance?id=${id}`;
     console.log('Delete appliance using ' + url);
     return this.http.delete(url, {responseType: 'text'});
   }
 
   suggestRuntime(id: string): Observable<string> {
-    const url = `${SaeService.api}/runtime?id=${id}`;
+    const url = `${SaeService.API}/runtime?id=${id}`;
     console.log('Get suggested runtime using ' + url);
     return this.http.get(url, {responseType: 'text'});
   }
 
   setRuntime(id: string, runtime: number): Observable<any> {
-    const url = `${SaeService.api}/runtime?id=${id}&runtime=${runtime}`;
+    const url = `${SaeService.API}/runtime?id=${id}&runtime=${runtime}`;
     console.log('Set runtime using ' + url);
     return this.http.put(url, '', {responseType: 'text'});
   }
 
   toggleAppliance(id: string, turnOn: boolean): Observable<any> {
-    const url = `${this.sempApi}`;
+    const url = `${SaeService.SEMP_API}`;
     const content = '<EM2Device xmlns="http://www.sma.de/communication/schema/SEMP/v1"><DeviceControl>' +
       '<DeviceId>' + id + '</DeviceId><On>' + turnOn + '</On></DeviceControl></EM2Device>';
     console.log('Toggle appliance using ' + url);

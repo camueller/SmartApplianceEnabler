@@ -14,17 +14,17 @@ export class SettingsService extends SaeService {
   }
 
   getSettingsDefaults(): Observable<SettingsDefaults> {
-    return this.http.get(`${this.api}/settingsdefaults`)
+    return this.http.get(`${SaeService.API}/settingsdefaults`)
       .map(response => SettingsFactory.defaultsFromJSON(response));
   }
 
   getSettings(): Observable<Settings> {
-    return this.http.get(`${this.api}/settings`)
+    return this.http.get(`${SaeService.API}/settings`)
       .map(settings => SettingsFactory.fromJSON(settings));
   }
 
   updateSettings(settings: Settings) {
-    const url = `${this.api}/settings`;
+    const url = `${SaeService.API}/settings`;
     const content = SettingsFactory.toJSON(settings);
     console.log('Update settings using ' + url);
     return this.http.put(url, content, {headers: this.headersContentTypeJson, responseType: 'text'});

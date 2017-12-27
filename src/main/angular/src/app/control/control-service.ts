@@ -14,12 +14,12 @@ export class ControlService extends SaeService {
   }
 
   getControlDefaults(): Observable<ControlDefaults> {
-    return this.http.get(`${this.api}/controldefaults`)
+    return this.http.get(`${SaeService.API}/controldefaults`)
       .map(response => ControlFactory.defaultsFromJSON(response));
   }
 
   getControl(id: string): Observable<Control> {
-    return this.http.get(`${this.api}/control?id=${id}`)
+    return this.http.get(`${SaeService.API}/control?id=${id}`)
       .map(response => {
         if (response == null) {
           return ControlFactory.createEmptyControl();
@@ -29,7 +29,7 @@ export class ControlService extends SaeService {
   }
 
   updateControl(control: Control, id: string): Observable<any> {
-    const url = `${this.api}/control?id=${id}`;
+    const url = `${SaeService.API}/control?id=${id}`;
     const content = ControlFactory.toJSON(control);
     console.log('Update control using ' + url);
     if (content != null) {
