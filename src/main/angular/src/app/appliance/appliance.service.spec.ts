@@ -3,6 +3,7 @@ import {HttpClientTestingModule, HttpTestingController} from '@angular/common/ht
 import {ApplianceService} from './appliance.service';
 import {ApplianceStatus} from './appliance-status';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
+import {SaeService} from '../shared/sae-service';
 
 describe('ApplianceService', () => {
 
@@ -12,47 +13,49 @@ describe('ApplianceService', () => {
     schemas: [NO_ERRORS_SCHEMA],
   }));
 
-  it('should return the appliance status', () => {
+  it('should return the status of more than one appliance', () => {
     const applianceService = TestBed.get(ApplianceService);
-    const http = TestBed.get(HttpTestingController);
+    const httpMock = TestBed.get(HttpTestingController);
 
-    const expectedStatus = new ApplianceStatus();
-    expectedStatus.id = 'F-00000001-000000000001-00';
-    expectedStatus.name = 'WFO2842';
-    expectedStatus.type = 'WashingMachine';
-    expectedStatus.vendor = 'Bosch';
-    expectedStatus.runningTime = 1800;
-    expectedStatus.remainingMinRunningTime = 3600;
-    expectedStatus.remainingMaxRunningTime = 7200;
-    expectedStatus.planningRequested = true;
-    expectedStatus.earliestStart = 0;
-    expectedStatus.latestStart = 123;
-    expectedStatus.on = false;
-    expectedStatus.controllable = true;
-    expectedStatus.interruptedSince = null;
+    const expectedStatuses = [
+      new ApplianceStatus({
+        id: 'F-00000001-000000000001-00',
+        name: 'WFO2842',
+        type: 'WashingMachine',
+        vendor: 'Bosch',
+        runningTime: 1800,
+        remainingMinRunningTime: 3600,
+        remainingMaxRunningTime: 7200,
+        planningRequested: true,
+        earliestStart: 0,
+        latestStart: 123,
+        on: false,
+        controllable: true,
+        interruptedSince: null
+      }),
+      new ApplianceStatus({
+        id: 'F-00000001-000000000002-00',
+        name: 'SMI53M72EU',
+        type: 'DishWasher',
+        vendor: 'Bosch',
+        runningTime: 1801,
+        remainingMinRunningTime: 3601,
+        remainingMaxRunningTime: 7201,
+        planningRequested: true,
+        earliestStart: 10,
+        latestStart: 124,
+        on: false,
+        controllable: false,
+        interruptedSince: 180
+      })
+    ];
 
-    const expectedStatus2 = new ApplianceStatus();
-    expectedStatus2.id = 'F-00000001-000000000002-00';
-    expectedStatus2.name = 'SMI53M72EU';
-    expectedStatus2.type = 'DishWasher';
-    expectedStatus2.vendor = 'Bosch';
-    expectedStatus2.runningTime = 1801;
-    expectedStatus2.remainingMinRunningTime = 3601;
-    expectedStatus2.remainingMaxRunningTime = 7201;
-    expectedStatus2.planningRequested = true;
-    expectedStatus2.earliestStart = 10;
-    expectedStatus2.latestStart = 124;
-    expectedStatus2.on = false;
-    expectedStatus2.controllable = false;
-    expectedStatus2.interruptedSince = 180;
+    applianceService.getApplianceStatus().subscribe(res => expect(res).toEqual(expectedStatuses));
 
-    const expectedStatuses = [ expectedStatus, expectedStatus2 ];
-
-    let actualStatus = [];
-    applianceService.getApplianceStatus().subscribe((status: Array<ApplianceStatus>) => {
-      actualStatus = status;
-    });
-    http.expectOne('http://localhost:8080/sae/status').flush(expectedStatuses);
-    expect(actualStatus).toEqual(expectedStatuses);
+    const req = httpMock.expectOne(`${SaeService.api}/status`);
+    expect(req).toBeDefined();
+    expect(req.request.method).toEqual('GET');
+    req.flush(expectedStatuses);
+    httpMock.verify();
   });
 });

@@ -36,7 +36,7 @@ export class ApplianceService extends SaeService {
   }
 
   getApplianceHeaders(): Observable<Array<ApplianceHeader>> {
-    return this.http.get(`${this.api}/appliances`)
+    return this.http.get(`${SaeService.api}/appliances`)
       .map((applianceHeaders: Array<ApplianceHeader>) => {
         return applianceHeaders.map(
           applianceHeader => ApplianceFactory.toApplianceHeaderFromJSON(applianceHeader));
@@ -44,7 +44,7 @@ export class ApplianceService extends SaeService {
   }
 
   getApplianceStatus(): Observable<Array<ApplianceStatus>> {
-    return this.http.get(`${this.api}/status`)
+    return this.http.get(`${SaeService.api}/status`)
       .map((applianceStatuses: Array<any>) => {
         return applianceStatuses.map(
           applianceStatus => ApplianceFactory.toApplianceStatusFromJSON(applianceStatus));
@@ -52,12 +52,12 @@ export class ApplianceService extends SaeService {
   }
 
   getAppliance(id: string): Observable<Appliance> {
-    return this.http.get(`${this.api}/appliance?id=${id}`)
+    return this.http.get(`${SaeService.api}/appliance?id=${id}`)
       .map(applianceInfo => ApplianceFactory.toApplianceFromJSON(applianceInfo));
   }
 
   updateAppliance(appliance: Appliance, create: boolean): Observable<any> {
-    const url = `${this.api}/appliance?id=${appliance.id}&create=${create}`;
+    const url = `${SaeService.api}/appliance?id=${appliance.id}&create=${create}`;
     const content = ApplianceFactory.toJSONfromApplianceInfo(appliance);
     console.log('Updating appliance using ' + url);
     return this.http.put(url, content,
@@ -65,19 +65,19 @@ export class ApplianceService extends SaeService {
   }
 
   deleteAppliance(id: string): Observable<any> {
-    const url = `${this.api}/appliance?id=${id}`;
+    const url = `${SaeService.api}/appliance?id=${id}`;
     console.log('Delete appliance using ' + url);
     return this.http.delete(url, {responseType: 'text'});
   }
 
   suggestRuntime(id: string): Observable<string> {
-    const url = `${this.api}/runtime?id=${id}`;
+    const url = `${SaeService.api}/runtime?id=${id}`;
     console.log('Get suggested runtime using ' + url);
     return this.http.get(url, {responseType: 'text'});
   }
 
   setRuntime(id: string, runtime: number): Observable<any> {
-    const url = `${this.api}/runtime?id=${id}&runtime=${runtime}`;
+    const url = `${SaeService.api}/runtime?id=${id}&runtime=${runtime}`;
     console.log('Set runtime using ' + url);
     return this.http.put(url, '', {responseType: 'text'});
   }
