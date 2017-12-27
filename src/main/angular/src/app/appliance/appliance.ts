@@ -25,4 +25,8 @@ export class Appliance {
   maxPowerConsumption: string;
   currentPowerMethod: string;
   interruptionsAllowed: boolean;
+
+  public constructor(init?: Partial<Appliance>) {
+    Object.assign(this, init);
+  }
 }

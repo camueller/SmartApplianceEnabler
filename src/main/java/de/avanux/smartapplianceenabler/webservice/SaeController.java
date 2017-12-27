@@ -155,16 +155,18 @@ public class SaeController {
 
     @RequestMapping(value= APPLIANCE_URL, method=RequestMethod.GET, produces="application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    public ApplianceInfo getApplianceInfo(@RequestParam(value="id") String applianceId) {
-        logger.debug("{}: Received request for device info", applianceId);
+    public ApplianceInfo getApplianceInfo(HttpServletResponse response, @RequestParam(value="id") String applianceId) {
+        logger.debug("{}: Received request for ApplianceInfo", applianceId);
         Device2EM device2EM = ApplianceManager.getInstance().getDevice2EM();
         for(DeviceInfo deviceInfo : device2EM.getDeviceInfo()) {
             if(deviceInfo.getIdentification().getDeviceId().equals(applianceId)) {
-                logger.debug("{}: Returning device info {}", applianceId, deviceInfo);
-                return toApplianceInfo(deviceInfo);
+                ApplianceInfo applianceInfo = toApplianceInfo(deviceInfo);
+                logger.debug("{}: Returning ApplianceInfo {}", applianceId, applianceInfo);
+                return applianceInfo;
             }
         }
-        logger.error("{}: No device info found.", applianceId);
+        logger.error("{}: Appliance not found.", applianceId);
+        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         return null;
     }
 
