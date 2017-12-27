@@ -45,7 +45,6 @@ export class ApplianceFactory {
     applianceStatus.name = rawApplianceHeader.name;
     applianceStatus.vendor = rawApplianceHeader.vendor;
     applianceStatus.type = rawApplianceHeader.type;
-    applianceStatus.statusChangedAt = rawApplianceHeader.statusChangedAt;
     applianceStatus.runningTime = rawApplianceHeader.runningTime;
     applianceStatus.remainingMinRunningTime = rawApplianceHeader.remainingMinRunningTime;
     applianceStatus.remainingMaxRunningTime = rawApplianceHeader.remainingMaxRunningTime;

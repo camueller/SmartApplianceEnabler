@@ -23,12 +23,10 @@ import 'rxjs/add/operator/catch';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/Rx';
 import {ApplianceFactory} from './appliance-factory';
-import {Subject} from 'rxjs/Subject';
 import {ApplianceHeader} from './appliance-header';
 import {SaeService} from '../shared/sae-service';
 import {ApplianceStatus} from './appliance-status';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {observable} from 'rxjs/symbol/observable';
+import {HttpClient} from '@angular/common/http';
 
 @Injectable()
 export class ApplianceService extends SaeService {
