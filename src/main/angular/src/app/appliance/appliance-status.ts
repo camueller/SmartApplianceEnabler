@@ -3,7 +3,6 @@ export class ApplianceStatus {
   name: string;
   type: string;
   vendor: string;
-  statusChangedAt: string;
   runningTime: number;
   remainingMinRunningTime: number;
   remainingMaxRunningTime: number;
