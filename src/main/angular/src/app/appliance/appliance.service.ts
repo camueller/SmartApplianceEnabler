@@ -26,7 +26,7 @@ import {ApplianceFactory} from './appliance-factory';
 import {ApplianceHeader} from './appliance-header';
 import {SaeService} from '../shared/sae-service';
 import {ApplianceStatus} from './appliance-status';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 
 @Injectable()
 export class ApplianceService extends SaeService {
@@ -53,7 +53,15 @@ export class ApplianceService extends SaeService {
 
   getAppliance(id: string): Observable<Appliance> {
     return this.http.get(`${SaeService.API}/appliance?id=${id}`)
-      .map(applianceInfo => ApplianceFactory.toApplianceFromJSON(applianceInfo));
+      .map(applianceInfo => ApplianceFactory.toApplianceFromJSON(applianceInfo))
+      .catch((err: HttpErrorResponse) => {
+        if (err.error instanceof Error) {
+          console.error('An client-side or network error occurred:', err.error.message);
+        } else {
+          console.error(`Backend error: code ${err.status}, error: ${err.error}, message: ${err.message}`);
+        }
+        return Observable.empty<Appliance>();
+      });
   }
 
   updateAppliance(appliance: Appliance, create: boolean): Observable<any> {
