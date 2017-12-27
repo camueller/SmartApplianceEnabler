@@ -12,4 +12,8 @@ export class ApplianceStatus {
   on: boolean;
   controllable: boolean;
   interruptedSince: number;
+
+  public constructor(init?: Partial<ApplianceStatus>) {
+    Object.assign(this, init);
+  }
 }
