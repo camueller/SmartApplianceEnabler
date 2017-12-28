@@ -63,7 +63,6 @@ describe('StatusService', () => {
     ];
     service.getStatus().subscribe(res => expect(res).toEqual(expectedStatuses));
     const req = httpMock.expectOne(`${SaeService.API}/status`);
-    expect(req).toBeDefined();
     expect(req.request.method).toEqual('GET');
     req.flush(expectedStatuses);
   });

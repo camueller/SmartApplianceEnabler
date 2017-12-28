@@ -1,10 +1,8 @@
 import {inject, TestBed} from '@angular/core/testing';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {ApplianceService} from './appliance.service';
-import {Status} from '../status/status';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {SaeService} from '../shared/sae-service';
-import {Appliance} from './appliance';
 import {ErrorInterceptor} from '../shared/http-error-interceptor';
 import {HTTP_INTERCEPTORS} from '@angular/common/http';
 import {ApplianceTestdata} from './appliance-testdata';
@@ -41,12 +39,12 @@ describe('ApplianceService', () => {
   it(`should return empty Observable if the appliance to be retrieved is not found`, (done: any) => {
     const service = TestBed.get(ApplianceService);
     const httpMock = TestBed.get(HttpTestingController);
-    const unknownApplianceId = 'unknown';
-    service.getAppliance(unknownApplianceId).subscribe(
+    const applianceId = ApplianceTestdata.getApplianceId();
+    service.getAppliance(applianceId).subscribe(
       (res) => expect(res).toBeFalsy(),
       () => {},
       () => { done(); });
-    const req = httpMock.expectOne(`${SaeService.API}/appliance?id=${unknownApplianceId}`);
+    const req = httpMock.expectOne(`${SaeService.API}/appliance?id=${applianceId}`);
     expect(req.request.method).toEqual('GET');
     req.flush(null, { status: 404, statusText: 'Not found' });
   });
@@ -59,6 +57,7 @@ describe('ApplianceService', () => {
     service.updateAppliance(appliance, createNewAppliance).subscribe(res => expect(res).toBeTruthy());
     const req = httpMock.expectOne(`${SaeService.API}/appliance?id=${appliance.id}&create=${createNewAppliance}`);
     expect(req.request.method).toEqual('PUT');
+    expect(req.request.body).toEqual(JSON.stringify(appliance));
   });
 
   it(`should return empty Observable if the appliance to be updated is not found`, (done: any) => {

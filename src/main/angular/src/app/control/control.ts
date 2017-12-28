@@ -32,4 +32,8 @@ export class Control {
   modbusSwitch: ModbusSwitch;
   mockSwitch: MockSwitch;
   httpSwitch: HttpSwitch;
+
+  public constructor(init?: Partial<Control>) {
+    Object.assign(this, init);
+  }
 }

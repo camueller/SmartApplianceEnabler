@@ -25,4 +25,8 @@ export class Switch {
   '@class' = Switch.TYPE;
   gpio: string;
   reverseStates: boolean;
+
+  public constructor(init?: Partial<Switch>) {
+    Object.assign(this, init);
+  }
 }
