@@ -172,8 +172,9 @@ public class SaeController {
 
     @RequestMapping(value= APPLIANCE_URL, method=RequestMethod.PUT, consumes="application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    public void setApplianceInfo(@RequestParam(value="id") String applianceId, @RequestParam(value="create")
-            Boolean create, @RequestBody ApplianceInfo applianceInfo) {
+    public void setApplianceInfo(HttpServletResponse response, @RequestParam(value="id") String applianceId,
+                                 @RequestParam(value="create") Boolean create,
+                                 @RequestBody ApplianceInfo applianceInfo) {
         logger.debug("{}: Received request to set ApplianceInfo (create={}): {}", applianceId, create, applianceInfo);
         DeviceInfo deviceInfo = toDeviceInfo(applianceInfo);
         if(create) {
@@ -182,14 +183,20 @@ public class SaeController {
             ApplianceManager.getInstance().addAppliance(appliance, deviceInfo);
         }
         else {
-            ApplianceManager.getInstance().updateAppliance(deviceInfo);
+            if(! ApplianceManager.getInstance().updateAppliance(deviceInfo)) {
+                logger.error("{}: Appliance not found.", applianceId);
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            }
         }
     }
 
     @RequestMapping(value= APPLIANCE_URL, method=RequestMethod.DELETE)
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    public void deleteAppliance(@RequestParam(value="id") String applianceId) {
-        ApplianceManager.getInstance().deleteAppliance(applianceId);
+    public void deleteAppliance(HttpServletResponse response, @RequestParam(value="id") String applianceId) {
+        if(! ApplianceManager.getInstance().deleteAppliance(applianceId)) {
+            logger.error("{}: Appliance not found.", applianceId);
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        }
     }
 
     @RequestMapping(value=CONTROLDEFAULTS_URL, method=RequestMethod.GET, produces="application/json")
@@ -260,7 +267,7 @@ public class SaeController {
             return meter;
         }
         else {
-            logger.error("Appliance not found", applianceId);
+            logger.error("{}: Appliance not found", applianceId);
         }
         return null;
     }

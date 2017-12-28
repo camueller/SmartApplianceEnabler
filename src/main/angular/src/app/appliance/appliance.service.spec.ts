@@ -7,6 +7,7 @@ import {SaeService} from '../shared/sae-service';
 import {Appliance} from './appliance';
 import {ErrorInterceptor} from '../shared/http-error-interceptor';
 import {HTTP_INTERCEPTORS} from '@angular/common/http';
+import {ApplianceTestdata} from './appliance-testdata';
 
 describe('ApplianceService', () => {
 
@@ -30,43 +31,78 @@ describe('ApplianceService', () => {
   it('should return an appliance', () => {
     const service = TestBed.get(ApplianceService);
     const httpMock = TestBed.get(HttpTestingController);
-
-    const expectedAppliance = new Appliance({
-      id: 'F-00000001-000000000001-00',
-      name: 'WFO2842',
-      type: 'WashingMachine',
-      serial: '12345678',
-      vendor: 'Bosch',
-      maxPowerConsumption: '4000',
-      currentPowerMethod: 'Measurement',
-      interruptionsAllowed: true
-    });
-
+    const expectedAppliance = ApplianceTestdata.create();
     service.getAppliance(expectedAppliance.id).subscribe(res => expect(res).toEqual(expectedAppliance));
-
     const req = httpMock.expectOne(`${SaeService.API}/appliance?id=${expectedAppliance.id}`);
-    expect(req).toBeDefined();
     expect(req.request.method).toEqual('GET');
     req.flush(expectedAppliance);
   });
 
-  it(`should return empty Observable for HTTP code 404 (Not found)`, (done: any) => {
+  it(`should return empty Observable if the appliance to be retrieved is not found`, (done: any) => {
     const service = TestBed.get(ApplianceService);
     const httpMock = TestBed.get(HttpTestingController);
-
     const unknownApplianceId = 'unknown';
     service.getAppliance(unknownApplianceId).subscribe(
       (res) => expect(res).toBeFalsy(),
       () => {},
       () => { done(); });
-    httpMock.expectOne(`${SaeService.API}/appliance?id=${unknownApplianceId}`).flush(null,
-      { status: 404, statusText: 'Not found' });
+    const req = httpMock.expectOne(`${SaeService.API}/appliance?id=${unknownApplianceId}`);
+    expect(req.request.method).toEqual('GET');
+    req.flush(null, { status: 404, statusText: 'Not found' });
   });
+
+  it('should update an appliance', () => {
+    const service = TestBed.get(ApplianceService);
+    const httpMock = TestBed.get(HttpTestingController);
+    const appliance = ApplianceTestdata.create();
+    const createNewAppliance = false;
+    service.updateAppliance(appliance, createNewAppliance).subscribe(res => expect(res).toBeTruthy());
+    const req = httpMock.expectOne(`${SaeService.API}/appliance?id=${appliance.id}&create=${createNewAppliance}`);
+    expect(req.request.method).toEqual('PUT');
+  });
+
+  it(`should return empty Observable if the appliance to be updated is not found`, (done: any) => {
+    const service = TestBed.get(ApplianceService);
+    const httpMock = TestBed.get(HttpTestingController);
+    const appliance = ApplianceTestdata.create();
+    const createNewAppliance = false;
+    service.updateAppliance(appliance, createNewAppliance).subscribe(
+      (res) => expect(res).toBeFalsy(),
+      () => {},
+      () => { done(); });
+    const req = httpMock.expectOne(`${SaeService.API}/appliance?id=${appliance.id}&create=${createNewAppliance}`);
+    expect(req.request.method).toEqual('PUT');
+    req.flush(null, { status: 404, statusText: 'Not found' });
+  });
+
+  it('should delete an appliance', () => {
+    const service = TestBed.get(ApplianceService);
+    const httpMock = TestBed.get(HttpTestingController);
+    const applianceId = ApplianceTestdata.getApplianceId();
+    service.deleteAppliance(applianceId).subscribe(res => expect(res).toBeTruthy());
+    const req = httpMock.expectOne(`${SaeService.API}/appliance?id=${applianceId}`);
+    expect(req.request.method).toEqual('DELETE');
+  });
+
+  it(`should return empty Observable if the appliance to be deleted is not found`, (done: any) => {
+    const service = TestBed.get(ApplianceService);
+    const httpMock = TestBed.get(HttpTestingController);
+    const applianceId = ApplianceTestdata.getApplianceId();
+    service.deleteAppliance(applianceId).subscribe(
+      (res) => expect(res).toBeFalsy(),
+      () => {},
+      () => { done(); });
+    const req = httpMock.expectOne(`${SaeService.API}/appliance?id=${applianceId}`);
+    expect(req.request.method).toEqual('DELETE');
+    req.flush(null, { status: 404, statusText: 'Not found' });
+  });
+
+
+
 
   it('should return the status of more than one appliance', () => {
     const service = TestBed.get(ApplianceService);
     const httpMock = TestBed.get(HttpTestingController);
-
     const expectedStatuses = [
       new ApplianceStatus({
         id: 'F-00000001-000000000001-00',
@@ -99,9 +135,7 @@ describe('ApplianceService', () => {
         interruptedSince: 180
       })
     ];
-
     service.getApplianceStatus().subscribe(res => expect(res).toEqual(expectedStatuses));
-
     const req = httpMock.expectOne(`${SaeService.API}/status`);
     expect(req).toBeDefined();
     expect(req.request.method).toEqual('GET');
