@@ -85,7 +85,18 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     }
 
     public void setControl(Control control) {
-        this.control = control;
+        if(control instanceof StartingCurrentSwitch) {
+            if(((StartingCurrentSwitch) control).getControl() != null) {
+                // only accept StartingCurrentSwitch with inner control
+                this.control = control;
+            }
+            else {
+                this.control = null;
+            }
+        }
+        else {
+            this.control = control;
+        }
     }
 
     public List<Schedule> getSchedules() {
