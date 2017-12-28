@@ -5,12 +5,21 @@ import {ApplianceStatus} from './appliance-status';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {SaeService} from '../shared/sae-service';
 import {Appliance} from './appliance';
+import {ErrorInterceptor} from '../shared/http-error-interceptor';
+import {HTTP_INTERCEPTORS} from '@angular/common/http';
 
 describe('ApplianceService', () => {
 
   beforeEach(() => TestBed.configureTestingModule({
     imports: [HttpClientTestingModule],
-    providers: [ApplianceService],
+    providers: [
+      ApplianceService,
+      {
+        provide: HTTP_INTERCEPTORS,
+        useClass: ErrorInterceptor,
+        multi: true,
+      }
+    ],
     schemas: [NO_ERRORS_SCHEMA],
   }));
 
