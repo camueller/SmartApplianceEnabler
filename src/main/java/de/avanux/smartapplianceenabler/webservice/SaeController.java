@@ -220,9 +220,8 @@ public class SaeController {
             }
             return control;
         }
-        else {
-            logger.error("{}: Appliance not found", applianceId);
-        }
+        logger.error("{}: Appliance not found", applianceId);
+        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         return null;
     }
 

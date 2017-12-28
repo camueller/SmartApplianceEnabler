@@ -27,4 +27,8 @@ export class StartingCurrentSwitch {
   startingCurrentDetectionDuration: number;
   finishedCurrentDetectionDuration: number;
   minRunningTime: number;
+
+  public constructor(init?: Partial<StartingCurrentSwitch>) {
+    Object.assign(this, init);
+  }
 }
