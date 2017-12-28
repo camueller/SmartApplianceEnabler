@@ -80,6 +80,15 @@ describe('ControlService', () => {
     expect(req.request.body).toEqual(JSON.stringify(ControlTestdata.switch_json()));
   });
 
+  it('should delete a control', () => {
+    const service = TestBed.get(ControlService);
+    const httpMock = TestBed.get(HttpTestingController);
+    const applianceId = ApplianceTestdata.getApplianceId();
+    service.updateControl(ControlTestdata.none_type(), applianceId).subscribe(res => expect(res).toBeTruthy());
+    const req = httpMock.expectOne(`${SaeService.API}/control?id=${applianceId}`);
+    expect(req.request.method).toEqual('DELETE');
+  });
+
   it('should return empty Observable if the control to be updated is not found', (done: any) => {
     const service = TestBed.get(ControlService);
     const httpMock = TestBed.get(HttpTestingController);

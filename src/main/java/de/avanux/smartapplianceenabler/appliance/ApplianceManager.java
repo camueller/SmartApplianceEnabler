@@ -345,28 +345,32 @@ public class ApplianceManager implements Runnable {
         return null;
     }
 
-    public void setControl(String applianceId, Control control) {
+    /**
+     * Set the control of an appliance.
+     * @param applianceId
+     * @param control
+     * @return true, if the control was set; false, if the appliance with the given id was not found
+     */
+    public boolean setControl(String applianceId, Control control) {
         logger.debug("{}: Set control", applianceId);
         Appliance appliance = getAppliance(applianceId);
         if(appliance != null) {
             appliance.setControl(control);
             save(false, true);
+            return true;
         }
-        else {
-            logger.error("{}: Appliance not found", applianceId);
-        }
+        return false;
     }
 
-    public void deleteControl(String applianceId) {
+    public boolean deleteControl(String applianceId) {
         logger.debug("{}: Delete control", applianceId);
         Appliance appliance = getAppliance(applianceId);
         if(appliance != null) {
             appliance.setControl(null);
             save(false, true);
+            return true;
         }
-        else {
-            logger.error("{}: Appliance not found", applianceId);
-        }
+        return false;
     }
 
     public void setMeter(String applianceId, Meter meter) {
