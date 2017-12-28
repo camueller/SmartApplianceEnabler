@@ -1,12 +1,12 @@
-import {AfterViewChecked, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {ApplianceService} from '../appliance/appliance.service';
+import {AfterViewChecked, Component, OnDestroy, OnInit} from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
-import {ApplianceStatus} from '../appliance/appliance-status';
+import {Status} from './status';
 import {TimeUtil} from '../shared/time-util';
-import {FormBuilder, FormControl, FormControlName, FormGroup, NgForm, Validators} from '@angular/forms';
+import {FormControl, FormControlName, FormGroup, Validators} from '@angular/forms';
 import {Observable} from 'rxjs/Observable';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {Subscription} from 'rxjs/Subscription';
+import {StatusService} from './status.service';
 
 declare const $: any;
 
@@ -40,7 +40,7 @@ FormControlName.prototype.ngOnChanges = function () {
   styleUrls: ['./status.component.css']
 })
 export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
-  applianceStatuses: ApplianceStatus[];
+  applianceStatuses: Status[];
   typePrefix = 'ApplianceComponent.type.';
   translatedTypes = new Object();
   switchOnForm: FormGroup;
@@ -48,7 +48,7 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
   initializeClockPicker: boolean;
   loadApplianceStatusesSubscription: Subscription;
 
-  constructor(private applianceService: ApplianceService,
+  constructor(private statusService: StatusService,
               private translate: TranslateService) {
   }
 
@@ -75,7 +75,7 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   loadApplianceStatuses() {
-    this.applianceService.getApplianceStatus().subscribe(applianceStatuses => {
+    this.statusService.getStatus().subscribe(applianceStatuses => {
       this.applianceStatuses = applianceStatuses.filter(applianceStatus => applianceStatus.controllable);
 
       const types = [];
@@ -93,15 +93,15 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
     return '';
   }
 
-  isStopLightOn(applianceStatus: ApplianceStatus): boolean {
+  isStopLightOn(applianceStatus: Status): boolean {
     return applianceStatus.planningRequested && applianceStatus.earliestStart > 0 && !applianceStatus.on;
   }
 
-  isSlowLightOn(applianceStatus: ApplianceStatus): boolean {
+  isSlowLightOn(applianceStatus: Status): boolean {
     return applianceStatus.earliestStart === 0 && !applianceStatus.on;
   }
 
-  isGoLightOn(applianceStatus: ApplianceStatus): boolean {
+  isGoLightOn(applianceStatus: Status): boolean {
     return applianceStatus.on;
   }
 
@@ -115,7 +115,7 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
    */
   onClickGoLight(applianceId: string) {
     // console.log('CLICK GO=' + applianceId);
-    this.applianceService.suggestRuntime(applianceId).subscribe(suggestedRuntime => {
+    this.statusService.suggestRuntime(applianceId).subscribe(suggestedRuntime => {
       const hourMinute = TimeUtil.toHourMinute(Number.parseInt(suggestedRuntime));
       this.switchOnForm.controls['switchOnRunningTime'].setValue(hourMinute);
     });
@@ -127,8 +127,8 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
     const switchOnRunningTime = this.switchOnForm.value.switchOnRunningTime;
     // console.log('SWITCH ON=' + this.switchOnForm.value.switchOnRunningTime);
     const seconds = TimeUtil.toSeconds(switchOnRunningTime);
-    this.applianceService.setRuntime(this.switchOnApplianceId, seconds);
-    this.applianceService.toggleAppliance(this.switchOnApplianceId, true).subscribe(() => this.loadApplianceStatuses());
+    this.statusService.setRuntime(this.switchOnApplianceId, seconds);
+    this.statusService.toggleAppliance(this.switchOnApplianceId, true).subscribe(() => this.loadApplianceStatuses());
     this.switchOnApplianceId = null;
   }
 

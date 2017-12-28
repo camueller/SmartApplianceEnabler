@@ -1,4 +1,4 @@
-export class ApplianceStatus {
+export class Status {
   id: string;
   name: string;
   type: string;
@@ -13,7 +13,7 @@ export class ApplianceStatus {
   controllable: boolean;
   interruptedSince: number;
 
-  public constructor(init?: Partial<ApplianceStatus>) {
+  public constructor(init?: Partial<Status>) {
     Object.assign(this, init);
   }
 }

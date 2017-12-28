@@ -49,6 +49,7 @@ import {SettingsDefaultsResolver} from './settings/settings-defaults-resolver.se
 import {DialogService} from './shared/dialog.service';
 import {CanDeactivateGuard} from './shared/can-deactivate-guard.service';
 import {ErrorInterceptor} from './shared/http-error-interceptor';
+import {StatusService} from './status/status.service';
 
 @NgModule({
   declarations: [
@@ -96,7 +97,8 @@ import {ErrorInterceptor} from './shared/http-error-interceptor';
     ScheduleResolver,
     SettingsService,
     SettingsResolver,
-    SettingsDefaultsResolver
+    SettingsDefaultsResolver,
+    StatusService
   ],
   bootstrap: [AppComponent]
 })

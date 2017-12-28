@@ -25,8 +25,7 @@ import 'rxjs/Rx';
 import {ApplianceFactory} from './appliance-factory';
 import {ApplianceHeader} from './appliance-header';
 import {SaeService} from '../shared/sae-service';
-import {ApplianceStatus} from './appliance-status';
-import {HttpClient, HttpErrorResponse} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 
 @Injectable()
 export class ApplianceService extends SaeService {
@@ -40,14 +39,6 @@ export class ApplianceService extends SaeService {
       .map((applianceHeaders: Array<ApplianceHeader>) => {
         return applianceHeaders.map(
           applianceHeader => ApplianceFactory.toApplianceHeaderFromJSON(applianceHeader));
-      });
-  }
-
-  getApplianceStatus(): Observable<Array<ApplianceStatus>> {
-    return this.http.get(`${SaeService.API}/status`)
-      .map((applianceStatuses: Array<any>) => {
-        return applianceStatuses.map(
-          applianceStatus => ApplianceFactory.toApplianceStatusFromJSON(applianceStatus));
       });
   }
 
@@ -68,27 +59,5 @@ export class ApplianceService extends SaeService {
     const url = `${SaeService.API}/appliance?id=${id}`;
     console.log('Delete appliance using ' + url);
     return this.http.delete(url, {responseType: 'text'});
-  }
-
-  suggestRuntime(id: string): Observable<string> {
-    const url = `${SaeService.API}/runtime?id=${id}`;
-    console.log('Get suggested runtime using ' + url);
-    return this.http.get(url, {responseType: 'text'});
-  }
-
-  setRuntime(id: string, runtime: number): Observable<any> {
-    const url = `${SaeService.API}/runtime?id=${id}&runtime=${runtime}`;
-    console.log('Set runtime using ' + url);
-    return this.http.put(url, '', {responseType: 'text'});
-  }
-
-  toggleAppliance(id: string, turnOn: boolean): Observable<any> {
-    const url = `${SaeService.SEMP_API}`;
-    const content = '<EM2Device xmlns="http://www.sma.de/communication/schema/SEMP/v1"><DeviceControl>' +
-      '<DeviceId>' + id + '</DeviceId><On>' + turnOn + '</On></DeviceControl></EM2Device>';
-    console.log('Toggle appliance using ' + url);
-    console.log('Content: ' + content);
-    return this.http.post(url, content,
-      {headers: this.headersContentTypeXml, responseType: 'text'});
   }
 }
