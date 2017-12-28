@@ -18,7 +18,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 import {Appliance} from './appliance';
 import {ApplianceHeader} from './appliance-header';
-import {ApplianceStatus} from './appliance-status';
+import {Status} from '../status/status';
 
 export class ApplianceFactory {
 
@@ -36,26 +36,6 @@ export class ApplianceFactory {
     applianceHeader.controllable = rawApplianceHeader.controllable;
     console.log('ApplianceHeader (TYPE)' + JSON.stringify(applianceHeader));
     return applianceHeader;
-  }
-
-  static toApplianceStatusFromJSON(rawApplianceHeader: any): ApplianceStatus {
-    console.log('ApplianceStatus (JSON)' + JSON.stringify(rawApplianceHeader));
-    const applianceStatus = new ApplianceStatus();
-    applianceStatus.id = rawApplianceHeader.id;
-    applianceStatus.name = rawApplianceHeader.name;
-    applianceStatus.vendor = rawApplianceHeader.vendor;
-    applianceStatus.type = rawApplianceHeader.type;
-    applianceStatus.runningTime = rawApplianceHeader.runningTime;
-    applianceStatus.remainingMinRunningTime = rawApplianceHeader.remainingMinRunningTime;
-    applianceStatus.remainingMaxRunningTime = rawApplianceHeader.remainingMaxRunningTime;
-    applianceStatus.earliestStart = rawApplianceHeader.earliestStart;
-    applianceStatus.latestStart = rawApplianceHeader.latestStart;
-    applianceStatus.planningRequested = rawApplianceHeader.planningRequested;
-    applianceStatus.on = rawApplianceHeader.on;
-    applianceStatus.controllable = rawApplianceHeader.controllable;
-    applianceStatus.interruptedSince = rawApplianceHeader.interruptedSince;
-    console.log('ApplianceStatus (TYPE)' + JSON.stringify(applianceStatus));
-    return applianceStatus;
   }
 
   static toApplianceFromJSON(applianceInfo: any): Appliance {
