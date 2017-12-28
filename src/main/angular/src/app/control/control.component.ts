@@ -87,7 +87,9 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   }
 
   typeChanged(newType: string) {
-    if (newType === this.TYPE_ALWAYS_ON_SWITCH && this.control.alwaysOnSwitch == null) {
+    if (newType === '') {
+      this.controlForm.form.controls.startingCurrentDetection.setValue(false);
+    } else if (newType === this.TYPE_ALWAYS_ON_SWITCH && this.control.alwaysOnSwitch == null) {
       this.control.alwaysOnSwitch = new AlwaysOnSwitch();
     } else if (newType === this.TYPE_SWITCH && this.control.switch_ == null) {
       this.control.switch_ = new Switch();
