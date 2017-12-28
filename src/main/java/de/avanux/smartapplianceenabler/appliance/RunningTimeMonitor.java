@@ -70,7 +70,9 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
     }
 
     public void cancelTimer() {
-        this.updateActiveTimeframeIntervalTimerTask.cancel();
+        if(this.updateActiveTimeframeIntervalTimerTask != null) {
+            this.updateActiveTimeframeIntervalTimerTask.cancel();
+        }
     }
 
     public void setSchedules(List<Schedule> schedules) {
