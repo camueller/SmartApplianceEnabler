@@ -290,7 +290,12 @@ public class ApplianceManager implements Runnable {
         save(true, true);
     }
 
-    public void updateAppliance(DeviceInfo deviceInfo) {
+    /**
+     * Update an appliance.
+     * @param deviceInfo
+     * @return true, if the update was successful; false, if the appliance with the given id was not found
+     */
+    public boolean updateAppliance(DeviceInfo deviceInfo) {
         logger.debug("{}: Update appliance", deviceInfo.getIdentification().getDeviceId());
         Integer replaceIndex = null;
         for(int i=0;i<device2EM.getDeviceInfo().size();i++) {
@@ -302,10 +307,17 @@ public class ApplianceManager implements Runnable {
         if(replaceIndex != null) {
             device2EM.getDeviceInfo().remove(replaceIndex.intValue());
             device2EM.getDeviceInfo().add(replaceIndex, deviceInfo);
+            return true;
         }
+        return false;
     }
 
-    public void deleteAppliance(String applianceId) {
+    /**
+     * Delete an appliance.
+     * @param applianceId
+     * @return true, if the deletion was successful; false, if the appliance with the given id was not found
+     */
+    public boolean deleteAppliance(String applianceId) {
         logger.debug("{}: Delete appliance", applianceId);
 
         DeviceInfo deviceInfoToBeDeleted = getDeviceInfo(applianceId);
@@ -318,10 +330,9 @@ public class ApplianceManager implements Runnable {
         if(applianceToBeDeleted != null) {
             appliances.getAppliances().remove(applianceToBeDeleted);
             save(true, true);
+            return true;
         }
-        else {
-            logger.error("{}: Appliance not found", applianceId);
-        }
+        return false;
     }
 
     public Appliance findAppliance(String applianceId) {
