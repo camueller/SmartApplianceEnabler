@@ -27,6 +27,10 @@ export class ControlTestdata {
     });
   }
 
+  public static none_type(): Control {
+    return new Control();
+  }
+
   public static switch_json(): any {
     return {
         '@class': 'de.avanux.smartapplianceenabler.control.Switch',

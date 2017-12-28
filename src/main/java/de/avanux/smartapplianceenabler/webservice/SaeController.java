@@ -227,19 +227,26 @@ public class SaeController {
 
     @RequestMapping(value=CONTROL_URL, method=RequestMethod.PUT, consumes="application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    public void setControl(@RequestParam(value="id") String applianceId, @RequestBody Control control) {
+    public void setControl(HttpServletResponse response, @RequestParam(value="id") String applianceId,
+                           @RequestBody Control control) {
         logger.debug("{}: Received request to set control {}", applianceId, control);
         if(control instanceof ModbusSwitch) {
             ((ModbusSwitch) control).setIdref(PulseReceiver.DEFAULT_ID);
         }
-        ApplianceManager.getInstance().setControl(applianceId, control);
+        if(! ApplianceManager.getInstance().setControl(applianceId, control)) {
+            logger.error("{}: Appliance not found", applianceId);
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        }
     }
 
     @RequestMapping(value= CONTROL_URL, method=RequestMethod.DELETE, consumes="application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    public void deleteControl(@RequestParam(value="id") String applianceId) {
+    public void deleteControl(HttpServletResponse response, @RequestParam(value="id") String applianceId) {
         logger.debug("{}: Received request to delete control", applianceId);
-        ApplianceManager.getInstance().deleteControl(applianceId);
+        if(! ApplianceManager.getInstance().deleteControl(applianceId)) {
+            logger.error("{}: Appliance not found", applianceId);
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        }
     }
 
     @RequestMapping(value=METERDEFAULTS_URL, method=RequestMethod.GET, produces="application/json")
