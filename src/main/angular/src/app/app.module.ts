@@ -31,7 +31,7 @@ import {SchedulesComponent} from './schedule/schedule.component';
 import {SettingsComponent} from './settings/settings.component';
 import {ApplianceResolver} from './appliance/appliance-resolver.service';
 import {AppliancesReloadService} from './appliance/appliances-reload-service';
-import {HttpClient, HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule} from '@angular/common/http';
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import {StatusComponent} from './status/status.component';
@@ -48,6 +48,7 @@ import {SettingsResolver} from './settings/settings-resolver.service';
 import {SettingsDefaultsResolver} from './settings/settings-defaults-resolver.service';
 import {DialogService} from './shared/dialog.service';
 import {CanDeactivateGuard} from './shared/can-deactivate-guard.service';
+import {ErrorInterceptor} from './shared/http-error-interceptor';
 
 @NgModule({
   declarations: [
@@ -75,6 +76,11 @@ import {CanDeactivateGuard} from './shared/can-deactivate-guard.service';
     })
   ],
   providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorInterceptor,
+      multi: true,
+    },
     ApplianceService,
     AppliancesReloadService,
     ApplianceResolver,
@@ -90,7 +96,7 @@ import {CanDeactivateGuard} from './shared/can-deactivate-guard.service';
     ScheduleResolver,
     SettingsService,
     SettingsResolver,
-    SettingsDefaultsResolver,
+    SettingsDefaultsResolver
   ],
   bootstrap: [AppComponent]
 })
