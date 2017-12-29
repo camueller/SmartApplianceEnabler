@@ -37,4 +37,4 @@ describe('ScheduleService', () => {
     req.flush([ScheduleTestdata.daytimeframe12345_json()]);
   });
 
-}
+})
