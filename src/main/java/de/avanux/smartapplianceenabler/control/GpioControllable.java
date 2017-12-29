@@ -66,17 +66,7 @@ abstract public class GpioControllable implements ApplianceIdConsumer {
 
     abstract public void start();
 
-    public void stop() {
-        GpioController gpioController = getGpioController();
-        if(gpioController != null) {
-            logger.info("{}: Shutting down {}", applianceId, getGpio());
-            gpioController.setShutdownOptions(true, PinState.LOW, PinPullResistance.OFF);
-            gpioController.shutdown();
-        }
-        else {
-            logGpioAccessDisabled();
-        }
-    }
+    abstract public void stop();
 
     protected void logGpioAccessDisabled() {
         logger.warn("{}: Configured for {}, but GPIO access disabled.", applianceId, getGpio());

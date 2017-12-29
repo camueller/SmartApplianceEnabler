@@ -107,10 +107,12 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
 
     @Override
     public void stop() {
-        super.stop();
         GpioController gpioController = getGpioController();
         if(gpioController != null) {
             gpioController.unprovisionPin(inputPin);
+        }
+        else {
+            logGpioAccessDisabled();
         }
     }
 }

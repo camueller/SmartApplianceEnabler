@@ -59,10 +59,12 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
 
     @Override
     public void stop() {
-        super.stop();
         GpioController gpioController = getGpioController();
         if(gpioController != null) {
             gpioController.unprovisionPin(outputPin);
+        }
+        else {
+            logGpioAccessDisabled();
         }
     }
 
