@@ -306,20 +306,19 @@ public class SaeController {
 
     @RequestMapping(value=SCHEDULES_URL, method=RequestMethod.GET, produces="application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    public List<Schedule> getSchedules(@RequestParam(value="id") String applianceId) {
+    public List<Schedule> getSchedules(HttpServletResponse response, @RequestParam(value="id") String applianceId) {
         logger.debug("{}: Received request for schedules", applianceId);
         Appliance appliance = getAppliance(applianceId);
         if(appliance != null) {
             List<Schedule> schedules = appliance.getSchedules();
             if(schedules == null) {
-                schedules = new ArrayList<>();
+                response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
-            logger.debug("{}: Returning {} schedules", applianceId, schedules.size());
+            logger.debug("{}: Returning {} schedules", applianceId, schedules != null ? schedules.size() : 0);
             return schedules;
         }
-        else {
-            logger.error("{}: Appliance not found", applianceId);
-        }
+        logger.error("{}: Appliance not found", applianceId);
+        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         return null;
     }
 

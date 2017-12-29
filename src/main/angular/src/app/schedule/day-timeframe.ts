@@ -32,4 +32,8 @@ export class DayTimeframe {
   endTime: string;
   daysOfWeek: DayOfWeek[];
   daysOfWeekValues: number[];
+
+  public constructor(init?: Partial<DayTimeframe>) {
+    Object.assign(this, init);
+  }
 }
