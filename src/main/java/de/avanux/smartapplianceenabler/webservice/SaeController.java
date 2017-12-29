@@ -272,15 +272,15 @@ public class SaeController {
             }
             return meter;
         }
-        else {
-            logger.error("{}: Appliance not found", applianceId);
-        }
+        logger.error("{}: Appliance not found", applianceId);
+        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         return null;
     }
 
     @RequestMapping(value=METER_URL, method=RequestMethod.PUT, consumes="application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    public void setMeter(@RequestParam(value="id") String applianceId, @RequestBody Meter meter) {
+    public void setMeter(HttpServletResponse response, @RequestParam(value="id") String applianceId,
+                         @RequestBody Meter meter) {
         logger.debug("{}: Received request to set meter {}", applianceId, meter);
         if(meter instanceof S0ElectricityMeterNetworked) {
             ((S0ElectricityMeterNetworked) meter).setIdref(PulseReceiver.DEFAULT_ID);
@@ -288,14 +288,20 @@ public class SaeController {
         if(meter instanceof ModbusElectricityMeter) {
             ((ModbusElectricityMeter) meter).setIdref(PulseReceiver.DEFAULT_ID);
         }
-        ApplianceManager.getInstance().setMeter(applianceId, meter);
+        if(! ApplianceManager.getInstance().setMeter(applianceId, meter)) {
+            logger.error("{}: Appliance not found", applianceId);
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        }
     }
 
     @RequestMapping(value= METER_URL, method=RequestMethod.DELETE, consumes="application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    public void deleteMeter(@RequestParam(value="id") String applianceId) {
+    public void deleteMeter(HttpServletResponse response, @RequestParam(value="id") String applianceId) {
         logger.debug("{}: Received request to delete meter", applianceId);
-        ApplianceManager.getInstance().deleteMeter(applianceId);
+        if(! ApplianceManager.getInstance().deleteMeter(applianceId)) {
+            logger.error("{}: Appliance not found", applianceId);
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        }
     }
 
     @RequestMapping(value=SCHEDULES_URL, method=RequestMethod.GET, produces="application/json")

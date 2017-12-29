@@ -362,6 +362,11 @@ public class ApplianceManager implements Runnable {
         return false;
     }
 
+    /**
+     * Delete the control of an appliance.
+     * @param applianceId
+     * @return true, if the control was set; false, if the appliance with the given id was not found
+     */
     public boolean deleteControl(String applianceId) {
         logger.debug("{}: Delete control", applianceId);
         Appliance appliance = getAppliance(applianceId);
@@ -373,28 +378,37 @@ public class ApplianceManager implements Runnable {
         return false;
     }
 
-    public void setMeter(String applianceId, Meter meter) {
+    /**
+     * Set the mether of an appliance.
+     * @param applianceId
+     * @param meter
+     * @return true, if the meter was set; false, if the appliance with the given id was not found
+     */
+    public boolean setMeter(String applianceId, Meter meter) {
         logger.debug("{}: Set meter", applianceId);
         Appliance appliance = getAppliance(applianceId);
         if(appliance != null) {
             appliance.setMeter(meter);
             save(false, true);
+            return true;
         }
-        else {
-            logger.error("{}: Appliance not found", applianceId);
-        }
+        return false;
     }
 
-    public void deleteMeter(String applianceId) {
+    /**
+     * Delete the meter of an appliance.
+     * @param applianceId
+     * @return true, if the meter was set; false, if the appliance with the given id was not found
+     */
+    public boolean deleteMeter(String applianceId) {
         logger.debug("{}: Delete meter", applianceId);
         Appliance appliance = getAppliance(applianceId);
         if(appliance != null) {
             appliance.setMeter(null);
             save(false, true);
+            return true;
         }
-        else {
-            logger.error("{}: Appliance not found", applianceId);
-        }
+        return false;
     }
 
     public void setSchedules(String applianceId, List<Schedule> schedules) {

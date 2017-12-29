@@ -26,4 +26,8 @@ export class Meter {
   s0ElectricityMeterNetworked: S0ElectricityMeter;
   modbusElectricityMeter: ModbusElectricityMeter;
   httpElectricityMeter: HttpElectricityMeter;
+
+  public constructor(init?: Partial<Meter>) {
+    Object.assign(this, init);
+  }
 }

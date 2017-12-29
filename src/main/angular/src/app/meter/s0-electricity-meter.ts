@@ -26,9 +26,13 @@ export class S0ElectricityMeter {
   }
 
   '@class' = S0ElectricityMeter.TYPE;
-  gpio: string;
+  gpio: number;
   pinPullResistance: string;
-  impulsesPerKwh: string;
-  measurementInterval: string;
+  impulsesPerKwh: number;
+  measurementInterval: number;
   powerOnAlways: boolean;
+
+  public constructor(init?: Partial<S0ElectricityMeter>) {
+    Object.assign(this, init);
+  }
 }
