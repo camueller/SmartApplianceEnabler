@@ -112,10 +112,10 @@ export class ScheduleFactory {
         schedule.dayTimeframe.startTime = rawSchedule.dayTimeframe.startTime;
         schedule.dayTimeframe.endTime = rawSchedule.dayTimeframe.endTime;
         if (rawSchedule.dayTimeframe.minRunningTime != null && rawSchedule.dayTimeframe.minRunningTime !== '') {
-          schedule.minRunningTime = TimeUtil.toSeconds(rawSchedule.dayTimeframe.minRunningTime).toString();
+          schedule.minRunningTime = TimeUtil.toSeconds(rawSchedule.dayTimeframe.minRunningTime);
         }
         if (rawSchedule.dayTimeframe.maxRunningTime != null && rawSchedule.dayTimeframe.maxRunningTime !== '') {
-          schedule.maxRunningTime = TimeUtil.toSeconds(rawSchedule.dayTimeframe.maxRunningTime).toString();
+          schedule.maxRunningTime = TimeUtil.toSeconds(rawSchedule.dayTimeframe.maxRunningTime);
         }
       } else if (rawSchedule.timeframeType === ConsecutiveDaysTimeframe.TYPE) {
         schedule.consecutiveDaysTimeframe = new ConsecutiveDaysTimeframe();
@@ -125,11 +125,11 @@ export class ScheduleFactory {
         schedule.consecutiveDaysTimeframe.endTime = rawSchedule.consecutiveDaysTimeframe.endTime;
         if (rawSchedule.consecutiveDaysTimeframe.minRunningTime != null
           && rawSchedule.consecutiveDaysTimeframe.minRunningTime !== '') {
-          schedule.minRunningTime = TimeUtil.toSeconds(rawSchedule.consecutiveDaysTimeframe.minRunningTime).toString();
+          schedule.minRunningTime = TimeUtil.toSeconds(rawSchedule.consecutiveDaysTimeframe.minRunningTime);
         }
         if (rawSchedule.consecutiveDaysTimeframe.maxRunningTime != null
           && rawSchedule.consecutiveDaysTimeframe.maxRunningTime !== '') {
-          schedule.maxRunningTime = TimeUtil.toSeconds(rawSchedule.consecutiveDaysTimeframe.maxRunningTime).toString();
+          schedule.maxRunningTime = TimeUtil.toSeconds(rawSchedule.consecutiveDaysTimeframe.maxRunningTime);
         }
       }
       schedules.push(schedule);
