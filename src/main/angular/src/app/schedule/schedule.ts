@@ -22,11 +22,15 @@ import {ConsecutiveDaysTimeframe} from './consecutive-days-timeframe';
 export class Schedule {
   '@class' = 'de.avanux.smartapplianceenabler.schedule.Schedule';
   enabled: boolean;
-  minRunningTime: string;
+  minRunningTime: number;
   minRunningTimeHHMM: string;
-  maxRunningTime: string;
+  maxRunningTime: number;
   maxRunningTimeHHMM: string;
   timeframeType: string;
   dayTimeframe: DayTimeframe;
   consecutiveDaysTimeframe: ConsecutiveDaysTimeframe;
+
+  public constructor(init?: Partial<Schedule>) {
+    Object.assign(this, init);
+  }
 }
