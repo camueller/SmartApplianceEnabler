@@ -446,12 +446,13 @@ public class SaeController {
             modbusTCPs = Collections.singletonList(modbusTcp);
         }
 
+        Connectivity connectivity = null;
         if(pulseReceivers != null || modbusTCPs != null) {
-            Connectivity connectivity = new Connectivity();
+            connectivity = new Connectivity();
             connectivity.setPulseReceivers(pulseReceivers);
             connectivity.setModbusTCPs(modbusTCPs);
-            ApplianceManager.getInstance().setConnectivity(connectivity);
         }
+        ApplianceManager.getInstance().setConnectivity(connectivity);
 
         List<Configuration> configurations = null;
         if(settings.isHolidaysEnabled()) {
