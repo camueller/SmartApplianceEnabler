@@ -31,10 +31,16 @@ export class ControlTestdata {
     return new Control();
   }
 
+  public static none_undefinedtype_type(): Control {
+    return new Control({
+      type: undefined
+    });
+  }
+
   public static switch_json(): any {
     return {
         '@class': 'de.avanux.smartapplianceenabler.control.Switch',
-        gpio: '1'
+        'gpio': '1'
       };
   }
 

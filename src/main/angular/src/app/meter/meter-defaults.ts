@@ -1,7 +1,11 @@
 export class MeterDefaults {
-  s0ElectricityMeter_measurementInterval: string;
-  modbusElectricityMeter_pollInterval: string;
-  httpElectricityMeter_factorToWatt: string;
-  httpElectricityMeter_measurementInterval: string;
-  httpElectricityMeter_pollInterval: string;
+  s0ElectricityMeter_measurementInterval: number;
+  modbusElectricityMeter_pollInterval: number;
+  httpElectricityMeter_factorToWatt: number;
+  httpElectricityMeter_measurementInterval: number;
+  httpElectricityMeter_pollInterval: number;
+
+  public constructor(init?: Partial<MeterDefaults>) {
+    Object.assign(this, init);
+  }
 }
