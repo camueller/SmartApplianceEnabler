@@ -15,8 +15,8 @@ export class ScheduleService extends SaeService {
   getSchedules(id: string): Observable<Array<Schedule>> {
     return this.http.get(`${SaeService.API}/schedules?id=${id}`)
       .map((schedules: Array<Schedule>) => {
-        if (schedules == null) {
-          return new Array();
+        if (schedules.toString() === '') {
+          return new Array<Schedule>();
         }
         return schedules.map(schedule => ScheduleFactory.toSchedule(schedule));
       });
