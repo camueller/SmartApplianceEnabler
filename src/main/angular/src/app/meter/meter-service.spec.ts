@@ -47,7 +47,7 @@ describe('MeterService', () => {
     );
     const req = httpMock.expectOne(`${SaeService.API}/meter?id=${applianceId}`);
     expect(req.request.method).toEqual('GET');
-    req.flush(null, { status: 204, statusText: 'Not content' });
+    req.flush('', { status: 204, statusText: 'Not content' });
   });
 
   it('should return the S0ElectricityMeter of an appliance', () => {
@@ -81,7 +81,7 @@ describe('MeterService', () => {
     );
     const req = httpMock.expectOne(`${SaeService.API}/meter?id=${applianceId}`);
     expect(req.request.method).toEqual('PUT');
-    req.flush(null, { status: 404, statusText: 'Not found' });
+    req.flush('', { status: 404, statusText: 'Not found' });
   });
 
   it('should delete a S0ElectricityMeter', () => {

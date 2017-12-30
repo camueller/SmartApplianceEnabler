@@ -27,4 +27,8 @@ export class ConsecutiveDaysTimeframe {
   startDayOfWeek: number;
   endTime: string;
   endDayOfWeek: number;
+
+  public constructor(init?: Partial<ConsecutiveDaysTimeframe>) {
+    Object.assign(this, init);
+  }
 }

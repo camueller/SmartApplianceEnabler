@@ -123,13 +123,12 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     public void setRunningTimeMonitor(RunningTimeMonitor runningTimeMonitor) {
         this.runningTimeMonitor = runningTimeMonitor;
         this.runningTimeMonitor.setApplianceId(id);
+        this.runningTimeMonitor.addTimeFrameChangedListener(this);
     }
 
     public void init(Integer additionRunningTime) {
         if(control != null) {
-            runningTimeMonitor = new RunningTimeMonitor();
-            runningTimeMonitor.setApplianceId(id);
-            runningTimeMonitor.addTimeFrameChangedListener(this);
+            setRunningTimeMonitor(new RunningTimeMonitor());
         }
         if(schedules != null && schedules.size() > 0) {
             logger.info("{}: Schedules configured: {}", id, schedules.size());

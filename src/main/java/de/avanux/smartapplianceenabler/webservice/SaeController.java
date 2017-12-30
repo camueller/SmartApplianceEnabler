@@ -331,27 +331,35 @@ public class SaeController {
 
     @RequestMapping(value=SCHEDULES_URL, method= RequestMethod.POST, consumes="application/xml")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    public void activateSchedules(@RequestParam(value="id") String applianceId, @RequestBody Schedules schedules) {
+    public void activateSchedules(HttpServletResponse response, @RequestParam(value="id") String applianceId,
+                                  @RequestBody Schedules schedules) {
         List<Schedule> schedulesToSet = schedules.getSchedules();
         logger.debug("{}: Received request to activate {} schedule(s)", applianceId,
                 (schedulesToSet != null ? schedulesToSet.size() : "0"));
         Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
         if(appliance != null) {
-            if(appliance.getRunningTimeMonitor() != null) {
-                appliance.getRunningTimeMonitor().setSchedules(schedulesToSet);
-            }
-            else {
-                logger.error("{}: Appliance has no RunningTimeMonitor", applianceId);
-            }
+            appliance.getRunningTimeMonitor().setSchedules(schedulesToSet);
         }
-        else {
-            logger.error("{}: Appliance not found", applianceId);
-        }
+        logger.error("{}: Appliance not found", applianceId);
+        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
     }
 
     @RequestMapping(value=RUNTIME_URL, method=RequestMethod.GET)
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    public Integer suggestRuntime(@RequestParam(value="id") String applianceId) {
+    public Integer suggestRuntime(HttpServletResponse response, @RequestParam(value="id") String applianceId) {
+        Integer suggestedRuntime = suggestRuntime(applianceId);
+        if(suggestedRuntime == null) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        }
+        return suggestedRuntime;
+    }
+
+    /**
+     * Suggest a runtime for immediate start.
+     * @param applianceId
+     * @return the suggested runtime in s; 0 if no timeframe interval was found; null if no appliance was found for the given id
+     */
+    public Integer suggestRuntime(String applianceId) {
         logger.debug("{}: Received request to suggest runtime", applianceId);
         Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
         if(appliance != null) {
@@ -364,17 +372,28 @@ public class SaeController {
         }
         else {
             logger.error("{}: Appliance not found", applianceId);
+            return null;
         }
         return 0;
     }
 
     @RequestMapping(value=RUNTIME_URL, method=RequestMethod.PUT)
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    public void setRuntime(@RequestParam(value="id") String applianceId, @RequestParam(value="runtime") Integer runtime) {
-        setRuntime(new LocalDateTime(), applianceId, runtime);
+    public void setRuntime(HttpServletResponse response, @RequestParam(value="id") String applianceId,
+                           @RequestParam(value="runtime") Integer runtime) {
+        if(! setRuntime(new LocalDateTime(), applianceId, runtime)) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        }
     }
 
-    public void setRuntime(LocalDateTime now, String applianceId, Integer runtime) {
+    /**
+     * Set the immediatly starting runtime of an appliance.
+     * @param now
+     * @param applianceId
+     * @param runtime
+     * @return true, if the appliance was found; false if no appliance with the given id was found
+     */
+    public boolean setRuntime(LocalDateTime now, String applianceId, Integer runtime) {
         logger.debug("{}: Received request to set runtime to {}s", applianceId, runtime);
         Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
         if(appliance != null) {
@@ -383,10 +402,10 @@ public class SaeController {
                 runningTimeMonitor.activateTimeframeInterval(now, runtime);
             }
             appliance.setAcceptControlRecommendations(false);
+            return true;
         }
-        else {
-            logger.error("{}: Appliance not found", applianceId);
-        }
+        logger.error("{}: Appliance not found", applianceId);
+        return false;
     }
 
     @RequestMapping(value=SETTINGSDEFAULTS_URL, method=RequestMethod.GET, produces="application/json")

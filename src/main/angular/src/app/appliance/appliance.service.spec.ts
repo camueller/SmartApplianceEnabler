@@ -46,7 +46,7 @@ describe('ApplianceService', () => {
       () => { done(); });
     const req = httpMock.expectOne(`${SaeService.API}/appliance?id=${applianceId}`);
     expect(req.request.method).toEqual('GET');
-    req.flush(null, { status: 404, statusText: 'Not found' });
+    req.flush('', { status: 404, statusText: 'Not found' });
   });
 
   it('should update an appliance', () => {
@@ -71,7 +71,7 @@ describe('ApplianceService', () => {
       () => { done(); });
     const req = httpMock.expectOne(`${SaeService.API}/appliance?id=${appliance.id}&create=${createNewAppliance}`);
     expect(req.request.method).toEqual('PUT');
-    req.flush(null, { status: 404, statusText: 'Not found' });
+    req.flush('', { status: 404, statusText: 'Not found' });
   });
 
   it('should delete an appliance', () => {
@@ -93,7 +93,7 @@ describe('ApplianceService', () => {
       () => { done(); });
     const req = httpMock.expectOne(`${SaeService.API}/appliance?id=${applianceId}`);
     expect(req.request.method).toEqual('DELETE');
-    req.flush(null, { status: 404, statusText: 'Not found' });
+    req.flush('', { status: 404, statusText: 'Not found' });
   });
 
 });
