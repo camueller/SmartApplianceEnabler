@@ -26,7 +26,7 @@ export class StatusService extends SaeService {
   suggestRuntime(id: string): Observable<string> {
     const url = `${SaeService.API}/runtime?id=${id}`;
     console.log('Get suggested runtime using ' + url);
-    return this.http.get(url, {responseType: 'text'});
+    return this.http.get(url, {responseType: 'text'}).do(next => console.log('Suggested runtime: ' + next));
   }
 
   setRuntime(id: string, runtime: number): Observable<any> {

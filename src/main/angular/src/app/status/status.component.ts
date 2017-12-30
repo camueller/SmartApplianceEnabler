@@ -127,7 +127,7 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
     const switchOnRunningTime = this.switchOnForm.value.switchOnRunningTime;
     // console.log('SWITCH ON=' + this.switchOnForm.value.switchOnRunningTime);
     const seconds = TimeUtil.toSeconds(switchOnRunningTime);
-    this.statusService.setRuntime(this.switchOnApplianceId, seconds);
+    this.statusService.setRuntime(this.switchOnApplianceId, seconds).subscribe();
     this.statusService.toggleAppliance(this.switchOnApplianceId, true).subscribe(() => this.loadApplianceStatuses());
     this.switchOnApplianceId = null;
   }
