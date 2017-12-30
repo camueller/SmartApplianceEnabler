@@ -26,13 +26,14 @@ FormControlName.prototype.ngOnChanges = function () {
     const classAttributeValues = classAttribute['nodeValue'];
     if (classAttributeValues.indexOf('clockpicker') > -1) {
       $(this.valueAccessor._elementRef.nativeElement).on('change', (event) => {
-        this._control.setValue(event.target.value);
+        this.control.setValue(event.target.value);
         this.control.markAsDirty();
       });
     }
   }
   return result;
 };
+
 
 @Component({
   selector: 'app-status',
