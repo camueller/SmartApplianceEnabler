@@ -278,6 +278,8 @@
 									<executable>ng</executable>
 									<arguments>
 										<argument>test</argument>
+										<argument>--code-coverage</argument>
+										<argument>--singleRun=true</argument>
 									</arguments>
 								</configuration>
 								<goals>
