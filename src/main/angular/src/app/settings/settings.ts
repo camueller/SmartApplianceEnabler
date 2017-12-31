@@ -22,8 +22,12 @@ export class Settings {
 
   modbusEnabled: boolean;
   modbusTcpHost: string;
-  modbusTcpPort: string;
+  modbusTcpPort: number;
 
   pulseReceiverEnabled: boolean;
-  pulseReceiverPort: string;
+  pulseReceiverPort: number;
+
+  public constructor(init?: Partial<Settings>) {
+    Object.assign(this, init);
+  }
 }
