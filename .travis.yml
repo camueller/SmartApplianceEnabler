@@ -15,12 +15,12 @@ before_install:
   - export PATH=$M2_HOME/bin:$PATH
 after_success:
   - bash <(curl -s https://codecov.io/bash)
-deploy:
-  provider: pages
-  repo: SmartApplianceEnabler-web-coverage
-  local_dir: src/main/angular/coverage
-  skip_cleanup: true
-  github_url: https://github.com/camueller
-  github_token: $GITHUB_TOKEN # Set in travis-ci.org dashboard
-  on:
-    branch: master
+#deploy:
+#  provider: pages
+#  repo: SmartApplianceEnabler-web-coverage
+#  local_dir: src/main/angular/coverage
+#  skip_cleanup: true
+#  github_url: https://github.com/camueller
+#  github_token: $GITHUB_TOKEN # Set in travis-ci.org dashboard
+#  on:
+#    branch: master

@@ -27,11 +27,11 @@ export class SettingsFactory {
 
   static defaultsFromJSON(rawSettings: any): SettingsDefaults {
     console.log('SettingsDefaults (JSON): ' + JSON.stringify(rawSettings));
-    const settings = new Settings();
+    const settings = new SettingsDefaults();
     settings.holidaysUrl = rawSettings.holidaysUrl;
     settings.modbusTcpHost = rawSettings.modbusTcpHost;
-    settings.modbusTcpPort = rawSettings.modbusTcpPort;
-    settings.pulseReceiverPort = rawSettings.pulseReceiverPort;
+    settings.modbusTcpPort = Number.parseInt(rawSettings.modbusTcpPort);
+    settings.pulseReceiverPort = Number.parseInt(rawSettings.pulseReceiverPort);
     console.log('SettingsDefaults (TYPE): ' + JSON.stringify(settings));
     return settings;
   }
