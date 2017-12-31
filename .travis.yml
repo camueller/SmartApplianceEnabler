@@ -20,6 +20,7 @@ deploy:
   repo: SmartApplianceEnabler-web-coverage
   local_dir: src/main/angular/coverage
   skip_cleanup: true
+  github_url: https://github.com/camueller/SmartApplianceEnabler-web-coverage
   github_token: $GITHUB_TOKEN # Set in travis-ci.org dashboard
   on:
     branch: master
