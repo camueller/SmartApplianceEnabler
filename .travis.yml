@@ -23,4 +23,3 @@ deploy:
   github_token: $GITHUB_TOKEN # Set in travis-ci.org dashboard
   on:
     branch: master
-    node: $TRAVIS_NODE_VERSION
