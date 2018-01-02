@@ -58,6 +58,7 @@ export class ApplianceComponent implements OnInit, CanDeactivate<ApplianceCompon
   }
 
   ngOnInit() {
+    console.log('ApplianceComponent.ngOnInit()');
     this.errorMessages =  new ApplianceErrorMessages(this.translate);
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.translate.get('ApplianceComponent.confirmDeletion').subscribe(translated => this.confirmDeletionMessage = translated);
