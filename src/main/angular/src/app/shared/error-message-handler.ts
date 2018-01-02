@@ -15,7 +15,10 @@ export class ErrorMessageHandler {
         errors[message.forControl] = message.text;
       }
     }
-    console.log('ERRORS=' + JSON.stringify(errors));
+    const errorsString = JSON.stringify(errors);
+    if (errorsString.length > 2) {
+      console.log('ERRORS=' + errorsString);
+    }
     return errors;
   }
 
@@ -41,7 +44,10 @@ export class ErrorMessageHandler {
         }
       }
     }
-    console.log('ERRORS=' + JSON.stringify(errors));
+    const errorsString = JSON.stringify(errors);
+    if (errorsString.length > 2) {
+      console.log('ERRORS=' + errorsString);
+    }
     return errors;
   }
 }

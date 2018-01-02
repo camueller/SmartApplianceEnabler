@@ -23,7 +23,7 @@
         <label>{{'ApplianceComponent.id' | translate}}</label>
         <input type="text" placeholder="F-00000000-000000000000-00" name="id" [(ngModel)]="appliance.id"
                required pattern="{{VALIDATOR_PATTERN_ID}}">
-        <div *ngIf="errors.id" class="ui negative message">{{errors.id}}</div>
+        <div *ngIf="errors['id']" class="ui negative message">{{errors['id']}}</div>
       </div>
     </div>
     <h4 class="ui dividing header">{{'ApplianceComponent.general' | translate}}</h4>
@@ -31,12 +31,12 @@
       <div class="field">
         <label>{{'ApplianceComponent.vendor' | translate}}</label>
         <input type="text" name="vendor" [(ngModel)]="appliance.vendor" required>
-        <div *ngIf="errors.vendor" class="ui negative message">{{errors.vendor}}</div>
+        <div *ngIf="errors['vendor']" class="ui negative message">{{errors['vendor']}}</div>
       </div>
       <div class="field">
         <label>{{'ApplianceComponent.name' | translate}}</label>
         <input type="text" name="name" [(ngModel)]="appliance.name" required>
-        <div *ngIf="errors.name" class="ui negative message">{{errors.name}}</div>
+        <div *ngIf="errors['name']" class="ui negative message">{{errors['name']}}</div>
       </div>
       <div class="field">
         <label>{{'ApplianceComponent.type' | translate}}</label>
@@ -60,7 +60,7 @@
       <div class="field">
         <label>{{'ApplianceComponent.serial' | translate}}</label>
         <input type="text" name="serial" [(ngModel)]="appliance.serial" required>
-        <div *ngIf="errors.serial" class="ui negative message">{{errors.serial}}</div>
+        <div *ngIf="errors['serial']" class="ui negative message">{{errors['serial']}}</div>
       </div>
     </div>
 
@@ -70,7 +70,7 @@
         <label>{{'ApplianceComponent.maxPowerConsumption' | translate}}</label>
         <input type="text" name="maxPowerConsumption" [(ngModel)]="appliance.maxPowerConsumption"
                required pattern="{{VALIDATOR_PATTERN_INTEGER}}">
-        <div *ngIf="errors.maxPowerConsumption" class="ui negative message">{{errors.maxPowerConsumption}}</div>
+        <div *ngIf="errors['maxPowerConsumption']" class="ui negative message">{{errors['maxPowerConsumption']}}</div>
       </div>
       <div class="field">
         <label>{{'ApplianceComponent.currentPowerMethod' | translate}}</label>
