@@ -23,10 +23,14 @@ import {TimeOfDayOfWeek} from './time-of-day-of-week';
 import {DayOfWeek} from './day-of-week';
 import {TimeOfDay} from './time-of-day';
 import {TimeUtil} from '../shared/time-util';
+import {Logger} from '../log/logger';
 
 export class ScheduleFactory {
 
-  static createEmptySchedule(): Schedule {
+  constructor(private logger: Logger) {
+  }
+
+  createEmptySchedule(): Schedule {
     const schedule: Schedule = new Schedule();
     schedule.timeframeType = DayTimeframe.TYPE;
 //    schedule.consecutiveDaysTimeframe = new ConsecutiveDaysTimeframe();
@@ -34,7 +38,7 @@ export class ScheduleFactory {
     return schedule;
   }
 
-  static toJSON(schedules: Schedule[]): String {
+  toJSON(schedules: Schedule[]): String {
     for (let i = 0; i < schedules.length; i++) {
       if (schedules[i].dayTimeframe != null) {
         const start = schedules[i].dayTimeframe.startTime;
@@ -76,8 +80,8 @@ export class ScheduleFactory {
     return content;
   }
 
-  static toSchedule(rawSchedule: any): Schedule {
-    console.log('rawSchedule ' + JSON.stringify(rawSchedule));
+  toSchedule(rawSchedule: any): Schedule {
+    this.logger.debug('rawSchedule ' + JSON.stringify(rawSchedule));
     const schedule = new Schedule();
     schedule.enabled = rawSchedule.enabled;
     schedule.minRunningTime = rawSchedule.minRunningTime;
@@ -90,17 +94,17 @@ export class ScheduleFactory {
     }
     if (rawSchedule.timeframe['@class'] === DayTimeframe.TYPE) {
       schedule.timeframeType = DayTimeframe.TYPE;
-      schedule.dayTimeframe = ScheduleFactory.createDayTimeframe(rawSchedule.timeframe);
+      schedule.dayTimeframe = this.createDayTimeframe(rawSchedule.timeframe);
     } else if (rawSchedule.timeframe['@class'] === ConsecutiveDaysTimeframe.TYPE) {
       schedule.timeframeType = ConsecutiveDaysTimeframe.TYPE;
-      schedule.consecutiveDaysTimeframe = ScheduleFactory.createConsecutiveDaysTimeframe(rawSchedule.timeframe);
+      schedule.consecutiveDaysTimeframe = this.createConsecutiveDaysTimeframe(rawSchedule.timeframe);
     }
-    console.log('schedule ' + JSON.stringify(schedule));
+    this.logger.debug('schedule ' + JSON.stringify(schedule));
     return schedule;
   }
 
-  static fromForm(rawSchedules: any): Schedule[] {
-    console.log('FROM_FORM: ' + JSON.stringify(rawSchedules));
+  fromForm(rawSchedules: any): Schedule[] {
+    this.logger.debug('FROM_FORM: ' + JSON.stringify(rawSchedules));
     const schedules = new Array();
     for (const rawSchedule of rawSchedules.schedules) {
       const schedule = new Schedule();
@@ -134,12 +138,12 @@ export class ScheduleFactory {
       }
       schedules.push(schedule);
     }
-    console.log('SCHEDULE: ' + JSON.stringify(schedules));
+    this.logger.debug('SCHEDULE: ' + JSON.stringify(schedules));
     return schedules;
   }
 
-  static createDayTimeframe(rawTimeframe: any): DayTimeframe {
-    console.log('createDayTimeframe from ' + JSON.stringify(rawTimeframe));
+  createDayTimeframe(rawTimeframe: any): DayTimeframe {
+    this.logger.debug('createDayTimeframe from ' + JSON.stringify(rawTimeframe));
     const dayTimeframe = new DayTimeframe();
     dayTimeframe.daysOfWeekValues = new Array();
     if (rawTimeframe.daysOfWeek != null) {
@@ -152,8 +156,8 @@ export class ScheduleFactory {
     return dayTimeframe;
   }
 
-  static createConsecutiveDaysTimeframe(rawTimeframe: any): ConsecutiveDaysTimeframe {
-    console.log('createConsecutiveDaysTimeframe from ' + JSON.stringify(rawTimeframe));
+  createConsecutiveDaysTimeframe(rawTimeframe: any): ConsecutiveDaysTimeframe {
+    this.logger.debug('createConsecutiveDaysTimeframe from ' + JSON.stringify(rawTimeframe));
     const consecutiveDaysTimeframe = new ConsecutiveDaysTimeframe();
     consecutiveDaysTimeframe.startDayOfWeek = rawTimeframe.start.dayOfWeek;
     consecutiveDaysTimeframe.startTime = TimeUtil.timestring(rawTimeframe.start.hour, rawTimeframe.start.minute);

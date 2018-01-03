@@ -26,38 +26,43 @@ import {ApplianceFactory} from './appliance-factory';
 import {ApplianceHeader} from './appliance-header';
 import {SaeService} from '../shared/sae-service';
 import {HttpClient} from '@angular/common/http';
+import {Logger} from '../log/logger';
 
 @Injectable()
 export class ApplianceService extends SaeService {
 
-  constructor(protected http: HttpClient) {
+  applianceFactory: ApplianceFactory;
+
+  constructor(private logger: Logger,
+              protected http: HttpClient) {
     super(http);
+    this.applianceFactory = new ApplianceFactory(logger);
   }
 
   getApplianceHeaders(): Observable<Array<ApplianceHeader>> {
     return this.http.get(`${SaeService.API}/appliances`)
       .map((applianceHeaders: Array<ApplianceHeader>) => {
         return applianceHeaders.map(
-          applianceHeader => ApplianceFactory.toApplianceHeaderFromJSON(applianceHeader));
+          applianceHeader => this.applianceFactory.toApplianceHeaderFromJSON(applianceHeader));
       });
   }
 
   getAppliance(id: string): Observable<Appliance> {
     return this.http.get(`${SaeService.API}/appliance?id=${id}`)
-      .map(applianceInfo => ApplianceFactory.toApplianceFromJSON(applianceInfo));
+      .map(applianceInfo => this.applianceFactory.toApplianceFromJSON(applianceInfo));
   }
 
   updateAppliance(appliance: Appliance, create: boolean): Observable<any> {
     const url = `${SaeService.API}/appliance?id=${appliance.id}&create=${create}`;
-    const content = ApplianceFactory.toJSONfromApplianceInfo(appliance);
-    console.log('Updating appliance using ' + url);
+    const content = this.applianceFactory.toJSONfromApplianceInfo(appliance);
+    this.logger.debug('Updating appliance using ' + url);
     return this.http.put(url, content,
       {headers: this.headersContentTypeJson, responseType: 'text'});
   }
 
   deleteAppliance(id: string): Observable<any> {
     const url = `${SaeService.API}/appliance?id=${id}`;
-    console.log('Delete appliance using ' + url);
+    this.logger.debug('Delete appliance using ' + url);
     return this.http.delete(url, {responseType: 'text'});
   }
 }

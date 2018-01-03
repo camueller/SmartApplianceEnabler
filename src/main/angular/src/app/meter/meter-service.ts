@@ -5,32 +5,37 @@ import {Observable} from 'rxjs/Observable';
 import {Meter} from './meter';
 import {MeterDefaults} from './meter-defaults';
 import {HttpClient} from '@angular/common/http';
+import {Logger} from '../log/logger';
 
 @Injectable()
 export class MeterService extends SaeService {
 
-  constructor(protected http: HttpClient) {
+  meterFactory: MeterFactory;
+
+  constructor(private logger: Logger,
+              protected http: HttpClient) {
     super(http);
+    this.meterFactory = new MeterFactory(logger);
   }
 
   getMeterDefaults(): Observable<MeterDefaults> {
     return this.http.get(`${SaeService.API}/meterdefaults`)
-      .map(response => MeterFactory.defaultsFromJSON(response));
+      .map(response => this.meterFactory.defaultsFromJSON(response));
   }
 
   getMeter(id: string): Observable<Meter> {
     return this.http.get(`${SaeService.API}/meter?id=${id}`)
       .map(response => {
         if (response == null) {
-          return MeterFactory.createEmptyMeter();
+          return this.meterFactory.createEmptyMeter();
         }
-        return MeterFactory.fromJSON(response);
+        return this.meterFactory.fromJSON(response);
       });
   }
 
   updateMeter(meter: Meter, id: string): Observable<any> {
     const url = `${SaeService.API}/meter?id=${id}`;
-    const content = MeterFactory.toJSON(meter);
+    const content = this.meterFactory.toJSON(meter);
     console.log('Update meter using ' + url);
     if (content != null) {
       return this.http.put(url, content, {headers: this.headersContentTypeJson, responseType: 'text'});

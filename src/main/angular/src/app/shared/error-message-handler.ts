@@ -1,10 +1,14 @@
 import {FormArray, FormGroup, NgForm} from '@angular/forms';
 import {ErrorMessages} from './error-messages';
 import {ValidatorType} from './error-message';
+import {Logger} from '../log/logger';
 
 export class ErrorMessageHandler {
 
-  public static applyErrorMessages4TemplateDrivenForm(formViewChild: NgForm,
+  constructor(private logger: Logger) {
+  }
+
+  public applyErrorMessages4TemplateDrivenForm(formViewChild: NgForm,
                                                       errorMessages: ErrorMessages,
                                                       controlSuffix = ''): { [key: string]: string } {
     const errors: { [key: string]: string } = {};
@@ -17,12 +21,12 @@ export class ErrorMessageHandler {
     }
     const errorsString = JSON.stringify(errors);
     if (errorsString.length > 2) {
-      console.log('ERRORS=' + errorsString);
+      this.logger.debug('ERRORS=' + errorsString);
     }
     return errors;
   }
 
-  public static applyErrorMessages4ReactiveForm(form: FormGroup, errorMessages: ErrorMessages, indexed: boolean,
+  public applyErrorMessages4ReactiveForm(form: FormGroup, errorMessages: ErrorMessages, indexed: boolean,
                                                 controlPrefix = ''): { [key: string]: string } {
     const errors: { [key: string]: string } = {};
     if ((<FormArray> form.controls.schedules).controls.length > 0) {
@@ -31,7 +35,7 @@ export class ErrorMessageHandler {
           const keyWithPrefix = controlPrefix + message.forControl;
           const keyWithWithPeriods = keyWithPrefix.replace('_', '.');
           const key = keyWithWithPeriods.replace('#', i.toString());
-//          console.log('KEY=' + key);
+//          this.logger.debug('KEY=' + key);
           const control = form.get(key);
           if (control && control.dirty && control.invalid
             && control.errors[ValidatorType[message.forValidator]] && !errors[message.forControl]) {
@@ -46,7 +50,7 @@ export class ErrorMessageHandler {
     }
     const errorsString = JSON.stringify(errors);
     if (errorsString.length > 2) {
-      console.log('ERRORS=' + errorsString);
+      this.logger.debug('ERRORS=' + errorsString);
     }
     return errors;
   }

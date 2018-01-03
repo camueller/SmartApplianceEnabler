@@ -18,28 +18,31 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 import {Appliance} from './appliance';
 import {ApplianceHeader} from './appliance-header';
-import {Status} from '../status/status';
+import {Logger} from '../log/logger';
 
 export class ApplianceFactory {
 
-  static createEmptyAppliance(): Appliance {
+  constructor(private logger: Logger) {
+  }
+
+  createEmptyAppliance(): Appliance {
     return new Appliance();
   }
 
-  static toApplianceHeaderFromJSON(rawApplianceHeader: any): ApplianceHeader {
-    console.log('ApplianceHeader (JSON)' + JSON.stringify(rawApplianceHeader));
+  toApplianceHeaderFromJSON(rawApplianceHeader: any): ApplianceHeader {
+    this.logger.debug('ApplianceHeader (JSON)' + JSON.stringify(rawApplianceHeader));
     const applianceHeader = new ApplianceHeader();
     applianceHeader.id = rawApplianceHeader.id;
     applianceHeader.name = rawApplianceHeader.name;
     applianceHeader.vendor = rawApplianceHeader.vendor;
     applianceHeader.type = rawApplianceHeader.type;
     applianceHeader.controllable = rawApplianceHeader.controllable;
-    console.log('ApplianceHeader (TYPE)' + JSON.stringify(applianceHeader));
+    this.logger.debug('ApplianceHeader (TYPE)' + JSON.stringify(applianceHeader));
     return applianceHeader;
   }
 
-  static toApplianceFromJSON(applianceInfo: any): Appliance {
-    console.log('Appliance (JSON)' + JSON.stringify(applianceInfo));
+  toApplianceFromJSON(applianceInfo: any): Appliance {
+    this.logger.debug('Appliance (JSON)' + JSON.stringify(applianceInfo));
     const appliance = new Appliance();
     appliance.id = applianceInfo.id;
     appliance.name = applianceInfo.name;
@@ -51,11 +54,11 @@ export class ApplianceFactory {
     appliance.currentPowerMethod = applianceInfo.currentPowerMethod;
     appliance.interruptionsAllowed = applianceInfo.interruptionsAllowed;
 
-    console.log('Appliance (TYPE)' + JSON.stringify(appliance));
+    this.logger.debug('Appliance (TYPE)' + JSON.stringify(appliance));
     return appliance;
   }
 
-  static toJSONfromApplianceInfo(appliance: Appliance): String {
+  toJSONfromApplianceInfo(appliance: Appliance): String {
     return JSON.stringify(appliance);
   }
 }

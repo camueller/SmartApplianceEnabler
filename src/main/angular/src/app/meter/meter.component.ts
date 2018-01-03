@@ -33,6 +33,7 @@ import {MeterService} from './meter-service';
 import {Meter} from './meter';
 import {DialogService} from '../shared/dialog.service';
 import {Observable} from 'rxjs/Observable';
+import {Logger} from '../log/logger';
 
 @Component({
   selector: 'app-appliance-meter',
@@ -43,9 +44,11 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
   @ViewChild('meterForm') meterForm: NgForm;
   applianceId: string;
   meterDefaults: MeterDefaults;
-  meter = MeterFactory.createEmptyMeter();
+  meterFactory: MeterFactory;
+  meter: Meter;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
+  errorMessageHandler: ErrorMessageHandler;
   discardChangesMessage: string;
   TYPE_S0_ELECTRICITY_METER = S0ElectricityMeter.TYPE;
   TYPE_S0_ELECTRICITY_METER_NETWORKED = S0ElectricityMeter.TYPE_NETWORKED;
@@ -55,10 +58,14 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
   VALIDATOR_PATTERN_FLOAT = InputValidatorPatterns.FLOAT;
   VALIDATOR_PATTERN_URL = InputValidatorPatterns.URL;
 
-  constructor(private meterService: MeterService,
+  constructor(private logger: Logger,
+              private meterService: MeterService,
               private route: ActivatedRoute,
               private dialogService: DialogService,
               private translate: TranslateService) {
+    this.meterFactory = new MeterFactory(logger);
+    this.meter = this.meterFactory.createEmptyMeter();
+    this.errorMessageHandler = new ErrorMessageHandler(logger);
   }
 
   ngOnInit() {
@@ -71,7 +78,7 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
       this.meterForm.form.markAsPristine();
     });
     this.meterForm.statusChanges.subscribe(() =>
-      this.errors = ErrorMessageHandler.applyErrorMessages4TemplateDrivenForm(this.meterForm, this.errorMessages));
+      this.errors = this.errorMessageHandler.applyErrorMessages4TemplateDrivenForm(this.meterForm, this.errorMessages));
   }
 
   canDeactivate(): Observable<boolean> | boolean {
@@ -89,7 +96,7 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
     } else if (newType === this.TYPE_MODBUS_ELECTRICITY_METER && this.meter.modbusElectricityMeter == null) {
       this.meter.modbusElectricityMeter = new ModbusElectricityMeter();
     } else if (newType === this.TYPE_HTTP_ELECTRICITY_METER && this.meter.httpElectricityMeter == null) {
-      this.meter.httpElectricityMeter = MeterFactory.createHttpElectricityMeter(new Object());
+      this.meter.httpElectricityMeter = this.meterFactory.createHttpElectricityMeter(new Object());
     }
   }
 

@@ -30,6 +30,7 @@ import {SettingsErrorMessages} from './settings-error-messages';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
+import {Logger} from '../log/logger';
 
 @Component({
   selector: 'app-settings',
@@ -38,19 +39,25 @@ import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 })
 export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponent> {
   @ViewChild('settingsForm') settingsForm: NgForm;
-  settingsDefaults = SettingsFactory.createEmptySettingsDefaults();
-  settings = SettingsFactory.createEmptySettings();
+  settingsDefaults: SettingsDefaults;
+  settings: Settings;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
+  errorMessageHandler: ErrorMessageHandler;
   VALIDATOR_PATTERN_INTEGER = InputValidatorPatterns.INTEGER;
   VALIDATOR_PATTERN_HOSTNAME = InputValidatorPatterns.HOSTNAME;
   VALIDATOR_PATTERN_URL = InputValidatorPatterns.URL;
   discardChangesMessage: string;
 
-  constructor(private settingsService: SettingsService,
+  constructor(private logger: Logger,
+              private settingsService: SettingsService,
               private translate: TranslateService,
               private dialogService: DialogService,
               private route: ActivatedRoute) {
+    const settingsFactory = new SettingsFactory(logger);
+    this.settingsDefaults = settingsFactory.createEmptySettingsDefaults();
+    this.settings = settingsFactory.createEmptySettings();
+    this.errorMessageHandler = new ErrorMessageHandler(logger);
   }
 
   ngOnInit() {
@@ -61,7 +68,7 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
       this.settingsDefaults = data.settingsDefaults;
     });
     this.settingsForm.statusChanges.subscribe(() =>
-      this.errors = ErrorMessageHandler.applyErrorMessages4TemplateDrivenForm(this.settingsForm, this.errorMessages));
+      this.errors = this.errorMessageHandler.applyErrorMessages4TemplateDrivenForm(this.settingsForm, this.errorMessages));
   }
 
   canDeactivate(): Observable<boolean> | boolean {

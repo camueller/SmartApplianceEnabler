@@ -24,11 +24,15 @@ import {HttpSwitch} from './http-switch';
 import {AlwaysOnSwitch} from './always-on-switch';
 import {ControlDefaults} from './control-defaults';
 import {MockSwitch} from './mock-switch';
+import {Logger} from '../log/logger';
 
 export class ControlFactory {
 
-  static defaultsFromJSON(rawControlDefaults: any): ControlDefaults {
-    console.log('ControlDefaults (JSON): ' + JSON.stringify(rawControlDefaults));
+  constructor(private logger: Logger) {
+  }
+
+  defaultsFromJSON(rawControlDefaults: any): ControlDefaults {
+    this.logger.debug('ControlDefaults (JSON): ' + JSON.stringify(rawControlDefaults));
     const controlDefaults = new ControlDefaults();
     controlDefaults.startingCurrentSwitchDefaults_powerThreshold
       = rawControlDefaults.startingCurrentSwitchDefaults.powerThreshold;
@@ -38,30 +42,30 @@ export class ControlFactory {
       = rawControlDefaults.startingCurrentSwitchDefaults.finishedCurrentDetectionDuration;
     controlDefaults.startingCurrentSwitchDefaults_minRunningTime
       = rawControlDefaults.startingCurrentSwitchDefaults.minRunningTime;
-    console.log('ControlDefaults (TYPE): ' + JSON.stringify(controlDefaults));
+    this.logger.debug('ControlDefaults (TYPE): ' + JSON.stringify(controlDefaults));
     return controlDefaults;
   }
 
-  static createEmptyControl(): Control {
+  createEmptyControl(): Control {
     return new Control();
   }
 
-  static fromJSON(rawControl: any): Control {
-    console.log('Control (JSON): ' + JSON.stringify(rawControl));
+  fromJSON(rawControl: any): Control {
+    this.logger.debug('Control (JSON): ' + JSON.stringify(rawControl));
     const control = new Control();
     if (rawControl['@class'] === StartingCurrentSwitch.TYPE) {
       control.startingCurrentDetection = true;
-      control.startingCurrentSwitch = ControlFactory.createStartingCurrentSwitch(rawControl);
-      ControlFactory.fromJSONbyType(control, rawControl.control);
+      control.startingCurrentSwitch = this.createStartingCurrentSwitch(rawControl);
+      this.fromJSONbyType(control, rawControl.control);
     } else {
-      ControlFactory.fromJSONbyType(control, rawControl);
+      this.fromJSONbyType(control, rawControl);
     }
-    console.log('Control (TYPE): ' + JSON.stringify(control));
+    this.logger.debug('Control (TYPE): ' + JSON.stringify(control));
     return control;
   }
 
-  static toJSON(control: Control): string {
-    console.log('Control (TYPE): ' + JSON.stringify(control));
+  toJSON(control: Control): string {
+    this.logger.debug('Control (TYPE): ' + JSON.stringify(control));
     let controlUsed: any;
     if (control.startingCurrentSwitch != null) {
       control.startingCurrentSwitch['control'] = this.getControlByType(control);
@@ -85,28 +89,28 @@ export class ControlFactory {
     if (controlUsed != null) {
       rawControl = JSON.stringify(controlUsed);
     }
-    console.log('Control (JSON): ' + rawControl);
+    this.logger.debug('Control (JSON): ' + rawControl);
     return rawControl;
   }
 
-  static fromJSONbyType(control: Control, rawControl: any) {
+  fromJSONbyType(control: Control, rawControl: any) {
     if (rawControl != null) {
       control.type = rawControl['@class'];
       if (control.type === AlwaysOnSwitch.TYPE) {
-        control.alwaysOnSwitch = ControlFactory.createAlwaysOnSwitch(rawControl);
+        control.alwaysOnSwitch = this.createAlwaysOnSwitch(rawControl);
       } else if (control.type === MockSwitch.TYPE) {
-        control.mockSwitch = ControlFactory.createMockSwitch(rawControl);
+        control.mockSwitch = this.createMockSwitch(rawControl);
       } else if (control.type === Switch.TYPE) {
-        control.switch_ = ControlFactory.createSwitch(rawControl);
+        control.switch_ = this.createSwitch(rawControl);
       } else if (control.type === ModbusSwitch.TYPE) {
-        control.modbusSwitch = ControlFactory.createModbusSwitch(rawControl);
+        control.modbusSwitch = this.createModbusSwitch(rawControl);
       } else if (control.type === HttpSwitch.TYPE) {
-        control.httpSwitch = ControlFactory.createHttpSwitch(rawControl);
+        control.httpSwitch = this.createHttpSwitch(rawControl);
       }
     }
   }
 
-  static getControlByType(control: Control): any {
+  getControlByType(control: Control): any {
     if (control.type === AlwaysOnSwitch.TYPE) {
       return control.alwaysOnSwitch;
     } else if (control.type === MockSwitch.TYPE) {
@@ -121,15 +125,15 @@ export class ControlFactory {
     return null;
   }
 
-  static createAlwaysOnSwitch(rawAlwaysOnSwitch: any): AlwaysOnSwitch {
+  createAlwaysOnSwitch(rawAlwaysOnSwitch: any): AlwaysOnSwitch {
     return new AlwaysOnSwitch();
   }
 
-  static createMockSwitch(rawMockSwitch: any): MockSwitch {
+  createMockSwitch(rawMockSwitch: any): MockSwitch {
     return new MockSwitch();
   }
 
-  static createStartingCurrentSwitch(rawStartingCurrentSwitch: any): StartingCurrentSwitch {
+  createStartingCurrentSwitch(rawStartingCurrentSwitch: any): StartingCurrentSwitch {
     const startingCurrentSwitch = new StartingCurrentSwitch();
     startingCurrentSwitch.powerThreshold = rawStartingCurrentSwitch.powerThreshold;
     startingCurrentSwitch.startingCurrentDetectionDuration = rawStartingCurrentSwitch.startingCurrentDetectionDuration;
@@ -138,21 +142,21 @@ export class ControlFactory {
     return startingCurrentSwitch;
   }
 
-  static createSwitch(rawSwitch: any): Switch {
+  createSwitch(rawSwitch: any): Switch {
     const switch_ = new Switch();
     switch_.gpio = rawSwitch.gpio;
     switch_.reverseStates = rawSwitch.reverseStates;
     return switch_;
   }
 
-  static createModbusSwitch(rawModbusSwitch: any): ModbusSwitch {
+  createModbusSwitch(rawModbusSwitch: any): ModbusSwitch {
     const modbusSwitch = new ModbusSwitch();
     modbusSwitch.slaveAddress = rawModbusSwitch.slaveAddress;
     modbusSwitch.registerAddress = rawModbusSwitch.registerAddress;
     return modbusSwitch;
   }
 
-  static createHttpSwitch(rawHttpSwitch: any): HttpSwitch {
+  createHttpSwitch(rawHttpSwitch: any): HttpSwitch {
     const httpSwitch = new HttpSwitch();
     httpSwitch.onUrl = rawHttpSwitch.onUrl;
     httpSwitch.offUrl = rawHttpSwitch.offUrl;

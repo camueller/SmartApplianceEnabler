@@ -1,9 +1,13 @@
 import {Status} from './status';
+import {Logger} from '../log/logger';
 
 export class StatusFactory {
 
-  static toStatusFromJSON(rawApplianceHeader: any): Status {
-    console.log('Status (JSON)' + JSON.stringify(rawApplianceHeader));
+  constructor(private logger: Logger) {
+  }
+
+  toStatusFromJSON(rawApplianceHeader: any): Status {
+    this.logger.debug('Status (JSON)' + JSON.stringify(rawApplianceHeader));
     const applianceStatus = new Status();
     applianceStatus.id = rawApplianceHeader.id;
     applianceStatus.name = rawApplianceHeader.name;
@@ -18,7 +22,7 @@ export class StatusFactory {
     applianceStatus.on = rawApplianceHeader.on;
     applianceStatus.controllable = rawApplianceHeader.controllable;
     applianceStatus.interruptedSince = rawApplianceHeader.interruptedSince;
-    console.log('Status (TYPE)' + JSON.stringify(applianceStatus));
+    this.logger.debug('Status (TYPE)' + JSON.stringify(applianceStatus));
     return applianceStatus;
   }
 

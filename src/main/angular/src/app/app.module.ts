@@ -50,6 +50,8 @@ import {DialogService} from './shared/dialog.service';
 import {CanDeactivateGuard} from './shared/can-deactivate-guard.service';
 import {ErrorInterceptor} from './shared/http-error-interceptor';
 import {StatusService} from './status/status.service';
+import {Logger, Options} from './log/logger';
+import {Level} from './log/level';
 
 @NgModule({
   declarations: [
@@ -90,6 +92,8 @@ import {StatusService} from './status/status.service';
     ControlResolver,
     ControlDefaultsResolver,
     DialogService,
+    Logger,
+    {provide: Options, useValue: {level: Level.DEBUG}},
     MeterService,
     MeterResolver,
     MeterDefaultsResolver,

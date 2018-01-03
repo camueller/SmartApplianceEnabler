@@ -13,6 +13,8 @@ import {ApplianceTestdata} from './appliance-testdata';
 import {RouterTestingModule} from '@angular/router/testing';
 import {Appliance} from './appliance';
 import {By} from '@angular/platform-browser';
+import {Level} from '../log/level';
+import {Logger, Options} from '../log/logger';
 
 const translations: any = {
   'dialog.candeactivate': 'Änderungen verwerfen?',
@@ -63,7 +65,9 @@ describe('ApplianceComponent', () => {
         {provide: Location, useValue: location},
         {provide: ApplianceService, useValue: applianceService},
         {provide: DialogService, useValue: dialogService},
-        AppliancesReloadService
+        AppliancesReloadService,
+        Logger,
+        {provide: Options, useValue: {level: Level.DEBUG}},
       ]
     });
 
