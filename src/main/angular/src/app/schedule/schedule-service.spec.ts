@@ -7,6 +7,8 @@ import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {SaeService} from '../shared/sae-service';
 import {ScheduleTestdata} from './schedule-testdata';
 import {ApplianceTestdata} from '../appliance/appliance-testdata';
+import {Logger, Options} from '../log/logger';
+import {Level} from '../log/level';
 
 describe('ScheduleService', () => {
 
@@ -18,7 +20,9 @@ describe('ScheduleService', () => {
         provide: HTTP_INTERCEPTORS,
         useClass: ErrorInterceptor,
         multi: true,
-      }
+      },
+      Logger,
+      {provide: Options, useValue: {level: Level.DEBUG}},
     ],
     schemas: [NO_ERRORS_SCHEMA],
   }));

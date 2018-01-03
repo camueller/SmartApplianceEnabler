@@ -7,6 +7,8 @@ import {HTTP_INTERCEPTORS} from '@angular/common/http';
 import {ControlService} from './control-service';
 import {ApplianceTestdata} from '../appliance/appliance-testdata';
 import {ControlTestdata} from './control-testdata';
+import {Logger, Options} from '../log/logger';
+import {Level} from '../log/level';
 
 describe('ControlService', () => {
 
@@ -18,7 +20,9 @@ describe('ControlService', () => {
         provide: HTTP_INTERCEPTORS,
         useClass: ErrorInterceptor,
         multi: true,
-      }
+      },
+      Logger,
+      {provide: Options, useValue: {level: Level.DEBUG}},
     ],
     schemas: [NO_ERRORS_SCHEMA],
   }));

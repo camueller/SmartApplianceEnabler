@@ -6,6 +6,8 @@ import {ErrorInterceptor} from '../shared/http-error-interceptor';
 import {HTTP_INTERCEPTORS} from '@angular/common/http';
 import {SettingsService} from './settings-service';
 import {SettingsTestdata} from './settings-testdata';
+import {Logger, Options} from '../log/logger';
+import {Level} from '../log/level';
 
 describe('SettingsService', () => {
 
@@ -17,7 +19,9 @@ describe('SettingsService', () => {
         provide: HTTP_INTERCEPTORS,
         useClass: ErrorInterceptor,
         multi: true,
-      }
+      },
+      Logger,
+      {provide: Options, useValue: {level: Level.DEBUG}},
     ],
     schemas: [NO_ERRORS_SCHEMA],
   }));
