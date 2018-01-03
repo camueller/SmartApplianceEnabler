@@ -37,6 +37,7 @@ import {Control} from './control';
 import {Observable} from 'rxjs/Observable';
 import {DialogService} from '../shared/dialog.service';
 import {MockSwitch} from './mock-switch';
+import {Logger} from '../log/logger';
 
 @Component({
   selector: 'app-appliance-switch',
@@ -47,9 +48,10 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   @ViewChild('controlForm') controlForm: NgForm;
   applianceId: string;
   controlDefaults: ControlDefaults;
-  control = ControlFactory.createEmptyControl();
+  control: Control;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
+  errorMessageHandler: ErrorMessageHandler;
   discardChangesMessage: string;
   TYPE_ALWAYS_ON_SWITCH = AlwaysOnSwitch.TYPE;
   TYPE_SWITCH = Switch.TYPE;
@@ -59,11 +61,15 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   VALIDATOR_PATTERN_INTEGER = InputValidatorPatterns.INTEGER;
   VALIDATOR_PATTERN_URL = InputValidatorPatterns.URL;
 
-  constructor(private controlService: ControlService,
+  constructor(private logger: Logger,
+              private controlService: ControlService,
               private appliancesReloadService: AppliancesReloadService,
               private route: ActivatedRoute,
               private dialogService: DialogService,
               private translate: TranslateService) {
+    const controlFactory = new ControlFactory(logger);
+    this.control = controlFactory.createEmptyControl();
+    this.errorMessageHandler = new ErrorMessageHandler(logger);
   }
 
   ngOnInit() {
@@ -76,7 +82,7 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
       this.controlForm.form.markAsPristine();
     });
     this.controlForm.statusChanges.subscribe(() =>
-      this.errors = ErrorMessageHandler.applyErrorMessages4TemplateDrivenForm(this.controlForm, this.errorMessages));
+      this.errors = this.errorMessageHandler.applyErrorMessages4TemplateDrivenForm(this.controlForm, this.errorMessages));
   }
 
   canDeactivate(): Observable<boolean> | boolean {

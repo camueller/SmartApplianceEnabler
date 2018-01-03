@@ -31,6 +31,8 @@ import {ScheduleService} from './schedule-service';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {DialogService} from '../shared/dialog.service';
 import {Observable} from 'rxjs/Observable';
+import {Logger} from '../log/logger';
+import {logger} from 'codelyzer/util/logger';
 
 declare const $: any;
 
@@ -71,13 +73,16 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
   CONSECUTIVE_DAYS_TIMEFRAME = ConsecutiveDaysTimeframe.TYPE;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
+  errorMessageHandler: ErrorMessageHandler;
   discardChangesMessage: string;
 
-  constructor(private fb: FormBuilder,
+  constructor(private logger: Logger,
+              private fb: FormBuilder,
               private scheduleService: ScheduleService,
               private route: ActivatedRoute,
               private dialogService: DialogService,
               private translate: TranslateService) {
+    this.errorMessageHandler = new ErrorMessageHandler(logger);
   }
 
   ngOnInit() {
@@ -100,7 +105,7 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
   }
 
   ngAfterViewChecked() {
-    console.log('ngAfterViewChecked initializeOnceAfterViewChecked=' + this.initializeOnceAfterViewChecked);
+    this.logger.debug('ngAfterViewChecked initializeOnceAfterViewChecked=' + this.initializeOnceAfterViewChecked);
     if (this.initializeOnceAfterViewChecked) {
       this.initializeOnceAfterViewChecked = false;
       this.initializeClockPicker();
@@ -119,7 +124,7 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
   initForm() {
     this.schedulesForm = this.fb.group({schedules: new FormArray([])});
     this.schedulesForm.statusChanges.subscribe(() =>
-      this.errors = ErrorMessageHandler.applyErrorMessages4ReactiveForm(this.schedulesForm,
+      this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.schedulesForm,
         this.errorMessages, true, 'schedules.#.'));
   }
 
@@ -140,7 +145,7 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
     });
     scheduleFormGroup.get('timeframeType').valueChanges.forEach(
       (newTimeframeType) => {
-        console.log('timeframeType changed to ' + newTimeframeType);
+        this.logger.debug('timeframeType changed to ' + newTimeframeType);
         if (newTimeframeType === this.DAY_TIMEFRAME) {
           scheduleFormGroup.removeControl('consecutiveDaysTimeframe');
           scheduleFormGroup.setControl(
@@ -221,14 +226,15 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
   }
 
   removeSchedule(index: number) {
-    console.log('Remove ' + index);
+    this.logger.debug('Remove ' + index);
     const schedulesControl = <FormArray>this.schedulesForm.controls['schedules'];
     schedulesControl.removeAt(index);
     this.schedulesForm.markAsDirty();
   }
 
   submitForm() {
-    const schedules = ScheduleFactory.fromForm(this.schedulesForm.value);
+    const scheduleFactory = new ScheduleFactory(this.logger);
+    const schedules = scheduleFactory.fromForm(this.schedulesForm.value);
     this.scheduleService.setSchedules(this.applianceId, schedules).subscribe();
     this.schedulesForm.markAsPristine();
   }

@@ -21,11 +21,15 @@ import {S0ElectricityMeter} from './s0-electricity-meter';
 import {ModbusElectricityMeter} from './modbus-electricity-meter';
 import {HttpElectricityMeter} from './http-electricity-meter';
 import {MeterDefaults} from './meter-defaults';
+import {Logger} from '../log/logger';
 
 export class MeterFactory {
 
-  static defaultsFromJSON(rawMeterDefaults: any): MeterDefaults {
-    console.log('MeterDefaults (JSON): ' + JSON.stringify(rawMeterDefaults));
+  constructor(private logger: Logger) {
+  }
+
+  defaultsFromJSON(rawMeterDefaults: any): MeterDefaults {
+    this.logger.debug('MeterDefaults (JSON): ' + JSON.stringify(rawMeterDefaults));
     const meterDefaults = new MeterDefaults();
     meterDefaults.s0ElectricityMeter_measurementInterval
       = rawMeterDefaults.s0ElectricityMeter.measurementInterval;
@@ -33,33 +37,33 @@ export class MeterFactory {
     meterDefaults.httpElectricityMeter_measurementInterval = rawMeterDefaults.httpElectricityMeter.measurementInterval;
     meterDefaults.httpElectricityMeter_pollInterval = rawMeterDefaults.httpElectricityMeter.pollInterval;
     meterDefaults.modbusElectricityMeter_pollInterval = rawMeterDefaults.modbusElectricityMeter.pollInterval;
-    console.log('MeterDefaults (TYPE): ' + JSON.stringify(meterDefaults));
+    this.logger.debug('MeterDefaults (TYPE): ' + JSON.stringify(meterDefaults));
     return meterDefaults;
   }
 
-  static createEmptyMeter(): Meter {
+  createEmptyMeter(): Meter {
     return new Meter();
   }
 
-  static fromJSON(rawMeter: any): Meter {
-    console.log('Meter (JSON): ' + JSON.stringify(rawMeter));
+  fromJSON(rawMeter: any): Meter {
+    this.logger.debug('Meter (JSON): ' + JSON.stringify(rawMeter));
     const meter = new Meter();
     meter.type = rawMeter['@class'];
     if (meter.type === S0ElectricityMeter.TYPE) {
-      meter.s0ElectricityMeter = MeterFactory.createS0ElectricityMeter(rawMeter, false);
+      meter.s0ElectricityMeter = this.createS0ElectricityMeter(rawMeter, false);
     } else if (meter.type === S0ElectricityMeter.TYPE_NETWORKED) {
-      meter.s0ElectricityMeterNetworked = MeterFactory.createS0ElectricityMeter(rawMeter, true);
+      meter.s0ElectricityMeterNetworked = this.createS0ElectricityMeter(rawMeter, true);
     } else if (meter.type === ModbusElectricityMeter.TYPE) {
-      meter.modbusElectricityMeter = MeterFactory.createModbusElectricityMeter(rawMeter);
+      meter.modbusElectricityMeter = this.createModbusElectricityMeter(rawMeter);
     } else if (meter.type === HttpElectricityMeter.TYPE) {
-      meter.httpElectricityMeter = MeterFactory.createHttpElectricityMeter(rawMeter);
+      meter.httpElectricityMeter = this.createHttpElectricityMeter(rawMeter);
     }
-    console.log('Meter (TYPE): ' + JSON.stringify(meter));
+    this.logger.debug('Meter (TYPE): ' + JSON.stringify(meter));
     return meter;
   }
 
-  static toJSON(meter: Meter): string {
-    console.log('Meter (TYPE): ' + JSON.stringify(meter));
+  toJSON(meter: Meter): string {
+    this.logger.debug('Meter (TYPE): ' + JSON.stringify(meter));
     let meterUsed: any;
     if (meter.type === S0ElectricityMeter.TYPE) {
       meterUsed =  meter.s0ElectricityMeter;
@@ -74,11 +78,11 @@ export class MeterFactory {
     if (meterUsed != null) {
       meterRaw = JSON.stringify(meterUsed);
     }
-    console.log('Meter (JSON): ' + meterRaw);
+    this.logger.debug('Meter (JSON): ' + meterRaw);
     return meterRaw;
   }
 
-  static createS0ElectricityMeter(rawMeter: any, networked: boolean): S0ElectricityMeter {
+  createS0ElectricityMeter(rawMeter: any, networked: boolean): S0ElectricityMeter {
     const s0ElectricityMeter = new S0ElectricityMeter();
     if (networked) {
       s0ElectricityMeter['@class'] = S0ElectricityMeter.TYPE_NETWORKED;
@@ -91,7 +95,7 @@ export class MeterFactory {
     return s0ElectricityMeter;
   }
 
-  static createModbusElectricityMeter(rawMeter: any): ModbusElectricityMeter {
+  createModbusElectricityMeter(rawMeter: any): ModbusElectricityMeter {
     const modbusElectricityMeter = new ModbusElectricityMeter();
     modbusElectricityMeter.slaveAddress = rawMeter.slaveAddress;
     modbusElectricityMeter.registerAddress = rawMeter.registerAddress;
@@ -100,7 +104,7 @@ export class MeterFactory {
     return modbusElectricityMeter;
   }
 
-  static createHttpElectricityMeter(rawMeter: any): HttpElectricityMeter {
+  createHttpElectricityMeter(rawMeter: any): HttpElectricityMeter {
     const httpElectricityMeter = new HttpElectricityMeter();
     httpElectricityMeter.url = rawMeter.url;
     httpElectricityMeter.username = rawMeter.username;

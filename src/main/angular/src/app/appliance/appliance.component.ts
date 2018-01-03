@@ -32,6 +32,7 @@ import {ErrorMessages} from '../shared/error-messages';
 import {Appliance} from './appliance';
 import {Observable} from 'rxjs/Observable';
 import {DialogService} from '../shared/dialog.service';
+import {Logger} from '../log/logger';
 
 @Component({
   selector: 'app-appliance-details',
@@ -40,25 +41,30 @@ import {DialogService} from '../shared/dialog.service';
 })
 export class ApplianceComponent implements OnInit, CanDeactivate<ApplianceComponent> {
   @ViewChild('detailsForm') detailsForm: NgForm;
-  appliance = ApplianceFactory.createEmptyAppliance();
+  appliance: Appliance;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
+  errorMessageHandler: ErrorMessageHandler;
   VALIDATOR_PATTERN_INTEGER = InputValidatorPatterns.INTEGER;
   VALIDATOR_PATTERN_ID = InputValidatorPatterns.APPLIANCE_ID;
   isNew = false;
   discardChangesMessage: string;
   confirmDeletionMessage: string;
 
-  constructor(private applianceService: ApplianceService,
+  constructor(private logger: Logger,
+              private applianceService: ApplianceService,
               private appliancesReloadService: AppliancesReloadService,
               private route: ActivatedRoute,
               private translate: TranslateService,
               private dialogService: DialogService,
               private location: Location) {
+    const applianceFactory = new ApplianceFactory(logger);
+    this.appliance = applianceFactory.createEmptyAppliance();
+    this.errorMessageHandler = new ErrorMessageHandler(logger);
   }
 
   ngOnInit() {
-    console.log('ApplianceComponent.ngOnInit()');
+    this.logger.debug('ApplianceComponent.ngOnInit()');
     this.errorMessages =  new ApplianceErrorMessages(this.translate);
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.translate.get('ApplianceComponent.confirmDeletion').subscribe(translated => this.confirmDeletionMessage = translated);
@@ -70,7 +76,7 @@ export class ApplianceComponent implements OnInit, CanDeactivate<ApplianceCompon
       }
     });
     this.detailsForm.statusChanges.subscribe(() =>
-      this.errors = ErrorMessageHandler.applyErrorMessages4TemplateDrivenForm(this.detailsForm, this.errorMessages));
+      this.errors = this.errorMessageHandler.applyErrorMessages4TemplateDrivenForm(this.detailsForm, this.errorMessages));
   }
 
   canDeactivate(): Observable<boolean> | boolean {
