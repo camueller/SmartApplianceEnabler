@@ -21,11 +21,15 @@ package de.avanux.smartapplianceenabler.appliance;
 import de.avanux.smartapplianceenabler.TestBase;
 import de.avanux.smartapplianceenabler.schedule.Schedule;
 import de.avanux.smartapplianceenabler.schedule.TimeOfDay;
+import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
 import org.joda.time.Interval;
 import org.joda.time.LocalDateTime;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
+
+import java.util.Collections;
+import java.util.List;
 
 public class ApplianceTest extends TestBase {
     private Appliance appliance;
@@ -112,5 +116,46 @@ public class ApplianceTest extends TestBase {
         Assert.assertEquals(12600, (int) runtimeRequest.getLatestEnd());
         Assert.assertEquals(7200, (int) runtimeRequest.getMinRunningTime());
         Assert.assertNull(runtimeRequest.getMaxRunningTime());
+    }
+
+    @Test
+    public void getRuntimeRequest_TimeFrameAlreadyStartedButNotYetActive() {
+        int nowSeconds = 10;
+        LocalDateTime now = toToday(8, 0, nowSeconds);
+        Schedule schedule = new Schedule(3600, null,
+                new TimeOfDay(8, 0, 0), new TimeOfDay(12, 0, 0));
+
+        List<RuntimeRequest> runtimeRequests = this.appliance.getRuntimeRequests(now,
+                Collections.singletonList(schedule), null, true,
+                3600 - nowSeconds, null);
+
+        Assert.assertEquals(3, runtimeRequests.size());
+        Assert.assertEquals(new RuntimeRequest(0, 14400-nowSeconds,
+                        3600-nowSeconds, null), runtimeRequests.get(0));
+        Assert.assertEquals(new RuntimeRequest(86400-nowSeconds, 100800-nowSeconds,
+                        3600, null), runtimeRequests.get(1));
+        Assert.assertEquals(new RuntimeRequest(172800-nowSeconds, 187200-nowSeconds,
+                3600, null), runtimeRequests.get(2));
+    }
+
+    @Test
+    public void getRuntimeRequest_TimeFrameAlreadyStartedAndActive() {
+        int nowSeconds = 10;
+        LocalDateTime now = toToday(8, 0, nowSeconds);
+        Schedule schedule = new Schedule(3600, null,
+                new TimeOfDay(8, 0, 0), new TimeOfDay(12, 0, 0));
+        TimeframeInterval activeTimeframeInterval = schedule.getTimeframe().getIntervals(now).get(0);
+
+        List<RuntimeRequest> runtimeRequests = this.appliance.getRuntimeRequests(now,
+                Collections.singletonList(schedule), activeTimeframeInterval, true,
+                3600 - nowSeconds, null);
+
+        Assert.assertEquals(3, runtimeRequests.size());
+        Assert.assertEquals(new RuntimeRequest(0, 14400-nowSeconds,
+                        3600-nowSeconds, null), runtimeRequests.get(0));
+        Assert.assertEquals(new RuntimeRequest(86400-nowSeconds, 100800-nowSeconds,
+                        3600, null), runtimeRequests.get(1));
+        Assert.assertEquals(new RuntimeRequest(172800-nowSeconds, 187200-nowSeconds,
+                        3600, null), runtimeRequests.get(2));
     }
 }

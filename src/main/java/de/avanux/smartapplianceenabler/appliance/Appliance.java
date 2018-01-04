@@ -409,8 +409,12 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                     schedules, false, onlySufficient);
             for(TimeframeInterval timeframeIntervalOfSchedule : timeFrameIntervals) {
                 Schedule schedule = timeframeIntervalOfSchedule.getTimeframe().getSchedule();
-                addRuntimeRequest(runtimeRequests, timeframeIntervalOfSchedule.getInterval(), schedule.getMinRunningTime(),
-                        schedule.getMaxRunningTime(), now);
+                Interval interval = timeframeIntervalOfSchedule.getInterval();
+                Integer minRunningTime = schedule.getMinRunningTime();
+                if(interval.contains(now.toDateTime()) && remainingMinRunningTime != null) {
+                    minRunningTime = remainingMinRunningTime;
+                }
+                addRuntimeRequest(runtimeRequests, interval, minRunningTime, schedule.getMaxRunningTime(), now);
             }
         }
         else if(activeTimeframeInterval != null) {
@@ -439,7 +443,26 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                                    Integer remainingMaxRunningTime, LocalDateTime now) {
         RuntimeRequest runtimeRequest = createRuntimeRequest(interval, remainingMinRunningTime, remainingMaxRunningTime, now);
         if(runtimeRequest != null) {
-            runtimeRequests.add(runtimeRequest);
+            // we already might have a runtime request obtained from RunningTimeMonitor which might have been added
+            // manually (setRuntime() aka click green traffic light). It would be not equal to any of the runtime requests
+            // derived from the schedule, e.g. (from IntegrationTest.testClickGoLight):
+            // RuntimeRequest created: 0s-1800s:1800s/nulls
+            // RuntimeRequest created: 0s-25200s:1800s/nulls <--- has to be excluded
+            // RuntimeRequest created: 82800s-111600s:3600s/nulls
+            // RuntimeRequest created: 169200s-198000s:3600s/nulls
+            boolean overlap = false;
+            for(RuntimeRequest existingRuntimeRequest : runtimeRequests) {
+                if(runtimeRequest.getEarliestStart()>=existingRuntimeRequest.getEarliestStart()
+                    && runtimeRequest.getEarliestStart() < existingRuntimeRequest.getLatestEnd()) {
+                    overlap = true;
+                }
+            }
+            if(! overlap) {
+                runtimeRequests.add(runtimeRequest);
+            }
+            else {
+                logger.debug("{} Ignore overlapping RuntimeRequest: {}", id, runtimeRequest);
+            }
         }
     }
 

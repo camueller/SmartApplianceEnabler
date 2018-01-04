@@ -130,7 +130,10 @@ public class Schedule {
                         boolean considerationIntervalOk = false;
                         boolean alreadyStartedCheckOk = false;
                         boolean sufficientCheckOk = false;
-                        if (considerationInterval == null || considerationInterval.contains(timeframeInterval.getInterval().getStart())) {
+                        if (considerationInterval == null
+                                || considerationInterval.contains(timeframeInterval.getInterval().getStart())
+                                || timeframeInterval.getInterval().contains(considerationInterval.getStart())
+                                ) {
                             considerationIntervalOk = true;
                         }
                         if(!onlyAlreadyStarted || timeframeInterval.getInterval().contains(now.toDateTime())) {
