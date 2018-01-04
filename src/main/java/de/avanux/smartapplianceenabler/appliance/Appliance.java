@@ -396,12 +396,9 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         if(schedules != null && schedules.size() > 0) {
             logger.debug("{}: Active schedules: {}", id, schedules.size());
             if(activeTimeframeInterval != null) {
-                Schedule activeSchedule = activeTimeframeInterval.getTimeframe().getSchedule();
-                if(!onlySufficient || activeTimeframeInterval.isIntervalSufficient(now,
-                        activeSchedule.getMinRunningTime())) {
-                    addRuntimeRequest(now, activeTimeframeInterval, runtimeRequests,
-                            remainingMinRunningTime, remainingMaxRunningTime);
-                }
+                // active timeframe interval has always to be added even if not sufficient
+                addRuntimeRequest(now, activeTimeframeInterval, runtimeRequests,
+                        remainingMinRunningTime, remainingMaxRunningTime);
             }
 
             Interval considerationInterval = new Interval(now.toDateTime(), now.plusDays(2).toDateTime());

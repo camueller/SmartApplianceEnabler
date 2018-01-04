@@ -44,6 +44,7 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
   applianceStatuses: Status[];
   typePrefix = 'ApplianceComponent.type.';
   translatedTypes = new Object();
+  translatedStrings: string[];
   switchOnForm: FormGroup;
   switchOnApplianceId: string;
   initializeClockPicker: boolean;
@@ -54,6 +55,14 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   ngOnInit()  {
+    this.translate.get([
+      'StatusComponent.plannedRunningTime',
+      'StatusComponent.plannedMinRunningTime',
+      'StatusComponent.plannedMaxRunningTime',
+      'StatusComponent.remainingRunningTime',
+      'StatusComponent.remainingMinRunningTime',
+      'StatusComponent.remainingMaxRunningTime'
+    ]).subscribe(translatedStrings => this.translatedStrings = translatedStrings);
     this.loadApplianceStatuses();
     this.loadApplianceStatusesSubscription = Observable.interval(60 * 1000)
       .subscribe(() => this.loadApplianceStatuses());
@@ -122,6 +131,27 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
     });
     this.switchOnApplianceId = applianceId;
     this.initializeClockPicker = true;
+  }
+
+  getRemainingRunningTimeLabel(applianceStatus: Status): string {
+    if (this.isGoLightOn(applianceStatus)) {
+      return this.translatedStrings['StatusComponent.remainingRunningTime'];
+    }
+    return this.translatedStrings['StatusComponent.plannedRunningTime'];
+  }
+
+  getRemainingMinRunningTimeLabel(applianceStatus: Status): string {
+    if (this.isGoLightOn(applianceStatus)) {
+      return this.translatedStrings['StatusComponent.remainingMinRunningTime'];
+    }
+    return this.translatedStrings['StatusComponent.plannedMinRunningTime'];
+  }
+
+  getRemainingMaxRunningTimeLabel(applianceStatus: Status): string {
+    if (this.isGoLightOn(applianceStatus)) {
+      return this.translatedStrings['StatusComponent.remainingMaxRunningTime'];
+    }
+    return this.translatedStrings['StatusComponent.plannedMaxRunningTime'];
   }
 
   submitSwitchOnForm() {
