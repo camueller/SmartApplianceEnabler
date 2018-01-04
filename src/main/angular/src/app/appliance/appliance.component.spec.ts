@@ -127,11 +127,17 @@ describe('ApplianceComponent', () => {
         currentPowerMethod: 'Measurement',
         interruptionsAllowed: true
       });
-      // expect(form.valid).toBeTruthy('because completed form is valid');
-      // expect(form.pristine).toBeFalsy('because completed form is not pristine');
+
+      // Programmatic changes to a control's value will not mark it dirty.
+      // (https://angular.io/api/forms/AbstractControl#pristine)
+      form.markAsDirty();
+      fixture.detectChanges();
+
+      expect(form.valid).toBeTruthy('because completed form is valid');
+      expect(form.pristine).toBeFalsy('because completed form is not pristine');
       expect(JSON.stringify(component.errors)).toEqual('{}');
-      // expect(fixture.debugElement.query(By.css('button[type=submit]')).nativeElement.disabled).toBeFalsy();
-      // expect(fixture.debugElement.query(By.css('button[type=button]')).nativeElement.disabled).toBeTruthy();
+      expect(fixture.debugElement.query(By.css('button[type=submit]')).nativeElement.disabled).toBeFalsy();
+      expect(fixture.debugElement.query(By.css('button[type=button]')).nativeElement.disabled).toBeTruthy();
     });
   }));
 
@@ -156,4 +162,65 @@ describe('ApplianceComponent', () => {
       expect(fixture.debugElement.query(By.css('button[type=button]')).nativeElement.disabled).toBeFalsy();
     });
   }));
+
+  it('should complain if required values are missing', (async() => {
+    activatedRoute.testParamMap = {};
+    activatedRoute.testData = {};
+    fixture = TestBed.createComponent(ApplianceComponent);
+    component = fixture.componentInstance;
+    fixture.autoDetectChanges();
+    fixture.whenStable().then(() => {
+      setInputValue('input[name=id]', 'F-00000000-000000000001-01');
+      expect(component.detailsForm.controls.id.valid).toBeTruthy();
+      expect(component.detailsForm.valid).toBeFalsy();
+      setInputValue('input[name=vendor]', 'Siemens');
+      expect(component.detailsForm.controls.vendor.valid).toBeTruthy();
+      expect(component.detailsForm.valid).toBeFalsy();
+      setInputValue('input[name=name]', 'SuperWash');
+      expect(component.detailsForm.controls.name.valid).toBeTruthy();
+      expect(component.detailsForm.valid).toBeFalsy();
+      selectOptionValue('select[name=type]', 'WashingMachine');
+      expect(component.detailsForm.controls.type.valid).toBeTruthy();
+      expect(component.detailsForm.valid).toBeFalsy();
+      setInputValue('input[name=serial]', '345678');
+      expect(component.detailsForm.controls.serial.valid).toBeTruthy();
+      expect(component.detailsForm.valid).toBeFalsy();
+      setInputValue('input[name=maxPowerConsumption]', '1800');
+      expect(component.detailsForm.controls.maxPowerConsumption.valid).toBeTruthy();
+      expect(component.detailsForm.valid).toBeFalsy();
+      selectOptionValue('select[name=currentPowerMethod]', 'Measurement');
+      expect(component.detailsForm.valid).toBeTruthy();
+    });
+  }));
+
+  it('should only accept valid id', (async() => {
+    activatedRoute.testParamMap = {};
+    activatedRoute.testData = {};
+    fixture = TestBed.createComponent(ApplianceComponent);
+    component = fixture.componentInstance;
+    fixture.autoDetectChanges();
+    fixture.whenStable().then(() => {
+      setInputValue('input[name=id]', 'F-00000000-000000000001-0');
+      expect(component.detailsForm.controls.id.valid).toBeFalsy();
+      expect(component.errors['id']).toEqual('ApplianceComponent.error.id_pattern');
+      setInputValue('input[name=id]', 'F-00000000-000000000001-01');
+      expect(component.detailsForm.controls.id.valid).toBeTruthy();
+      expect(JSON.stringify(component.errors)).toEqual('{}');
+    });
+  }));
+
+  function setInputValue(selector: string, value: string) {
+    fixture.detectChanges();
+    const input = fixture.debugElement.query(By.css(selector)).nativeElement;
+    input.value = value;
+    input.dispatchEvent(new Event('input'));
+  }
+
+  function selectOptionValue(selector: string, value: string) {
+    fixture.detectChanges();
+    const input = fixture.debugElement.query(By.css(selector)).nativeElement;
+    input.value = value;
+    input.dispatchEvent(new Event('change'));
+  }
+
 });
