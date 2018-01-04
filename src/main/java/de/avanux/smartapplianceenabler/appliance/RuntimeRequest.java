@@ -18,6 +18,9 @@
 
 package de.avanux.smartapplianceenabler.appliance;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 public class RuntimeRequest {
     // private TimeframeInterval timeframeInterval;
     private Integer earliestStart;
@@ -65,6 +68,32 @@ public class RuntimeRequest {
 
     public void setMaxRunningTime(Integer maxRunningTime) {
         this.maxRunningTime = maxRunningTime;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        RuntimeRequest that = (RuntimeRequest) o;
+
+        return new EqualsBuilder()
+                .append(earliestStart, that.earliestStart)
+                .append(latestEnd, that.latestEnd)
+                .append(minRunningTime, that.minRunningTime)
+                .append(maxRunningTime, that.maxRunningTime)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(earliestStart)
+                .append(latestEnd)
+                .append(minRunningTime)
+                .append(maxRunningTime)
+                .toHashCode();
     }
 
     @Override
