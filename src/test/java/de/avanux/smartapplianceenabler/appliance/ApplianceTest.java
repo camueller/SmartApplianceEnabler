@@ -139,7 +139,7 @@ public class ApplianceTest extends TestBase {
     }
 
     @Test
-    public void getRuntimeRequest_TimeFrameAlreadyStartedAndActive() {
+    public void getRuntimeRequest_TimeFrameAlreadyStartedAndActive_Sufficient() {
         int nowSeconds = 10;
         LocalDateTime now = toToday(8, 0, nowSeconds);
         Schedule schedule = new Schedule(3600, null,
@@ -157,5 +157,26 @@ public class ApplianceTest extends TestBase {
                         3600, null), runtimeRequests.get(1));
         Assert.assertEquals(new RuntimeRequest(172800-nowSeconds, 187200-nowSeconds,
                         3600, null), runtimeRequests.get(2));
+    }
+
+    @Test
+    public void getRuntimeRequest_TimeFrameAlreadyStartedAndActive_NotSufficient() {
+        int nowSeconds = 10;
+        LocalDateTime now = toToday(11, 0, nowSeconds);
+        Schedule schedule = new Schedule(3600, null,
+                new TimeOfDay(8, 0, 0), new TimeOfDay(12, 0, 0));
+        TimeframeInterval activeTimeframeInterval = schedule.getTimeframe().getIntervals(now).get(0);
+
+        List<RuntimeRequest> runtimeRequests = this.appliance.getRuntimeRequests(now,
+                Collections.singletonList(schedule), activeTimeframeInterval, true,
+                3600 - nowSeconds, null);
+
+        Assert.assertEquals(3, runtimeRequests.size());
+        Assert.assertEquals(new RuntimeRequest(0, 3600-nowSeconds,
+                3600-nowSeconds, null), runtimeRequests.get(0));
+        Assert.assertEquals(new RuntimeRequest(75600-nowSeconds, 90000-nowSeconds,
+                3600, null), runtimeRequests.get(1));
+        Assert.assertEquals(new RuntimeRequest(162000-nowSeconds, 176400-nowSeconds,
+                3600, null), runtimeRequests.get(2));
     }
 }

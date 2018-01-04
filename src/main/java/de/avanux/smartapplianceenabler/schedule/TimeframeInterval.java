@@ -45,15 +45,21 @@ public class TimeframeInterval {
     }
 
     public static LocalDateTime getLatestStart(LocalDateTime now, LocalDateTime intervalEnd, Integer minRunningTime) {
-        return now.plusSeconds(getLatestStart(
-                Long.valueOf(new Interval(
-                                now.toDateTime(),
-                                intervalEnd.toDateTime()).toDuration().getStandardSeconds()
-                ).intValue(), minRunningTime));
+        return intervalEnd.minusSeconds(minRunningTime);
     }
 
+    /**
+     * Returns the latest start.
+     * @param intervalEnd the interval end in seconds from now
+     * @param minRunningTime the minimum running time
+     * @return the latest start time in seconds from now or
+     * null if input values are null or latest start would be in the past
+     */
     public static Integer getLatestStart(Integer intervalEnd, Integer minRunningTime) {
-        return intervalEnd - minRunningTime;
+        if(intervalEnd != null && minRunningTime != null && intervalEnd > minRunningTime) {
+            return intervalEnd - minRunningTime;
+        }
+        return null;
     }
 
     @Override

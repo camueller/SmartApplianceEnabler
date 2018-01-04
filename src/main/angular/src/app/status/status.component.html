@@ -60,17 +60,17 @@
         </div>
         <div *ngIf="applianceStatus.remainingMaxRunningTime == null">
           <div class="appliance-status">
-            <span class="appliance-status-label">{{'StatusComponent.remainingRunningTime' | translate}}</span>
+            <span class="appliance-status-label">{{getRemainingRunningTimeLabel(applianceStatus)}}</span>
             <span class="appliance-status-value">{{toHourMinuteWithUnits(applianceStatus.remainingMinRunningTime)}}</span>
           </div>
         </div>
         <div *ngIf="applianceStatus.remainingMaxRunningTime != null">
           <div class="appliance-status">
-            <span class="appliance-status-label">{{'StatusComponent.remainingMinRunningTime' | translate}}</span>
+            <span class="appliance-status-label">{{getRemainingMinRunningTimeLabel(applianceStatus)}}</span>
             <span class="appliance-status-value">{{toHourMinuteWithUnits(applianceStatus.remainingMinRunningTime)}}</span>
           </div>
           <div class="appliance-status">
-            <span class="appliance-status-label">{{'StatusComponent.remainingMaxRunningTime' | translate}}</span>
+            <span class="appliance-status-label">{{getRemainingMaxRunningTimeLabel(applianceStatus)}}</span>
             <span class="appliance-status-value">{{toHourMinuteWithUnits(applianceStatus.remainingMaxRunningTime)}}</span>
           </div>
         </div>
