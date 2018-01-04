@@ -339,6 +339,7 @@ public class SaeController {
         Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
         if(appliance != null) {
             appliance.getRunningTimeMonitor().setSchedules(schedulesToSet);
+            return;
         }
         logger.error("{}: Appliance not found", applianceId);
         response.setStatus(HttpServletResponse.SC_NOT_FOUND);
