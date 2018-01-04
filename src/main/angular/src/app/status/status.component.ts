@@ -133,7 +133,7 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.switchOnApplianceId = null;
   }
 
-  getFormattedRuntime(seconds: number): string {
+  toHourMinuteWithUnits(seconds: number): string {
     if (seconds == null) {
       return '';
     }
