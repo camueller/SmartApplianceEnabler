@@ -242,6 +242,38 @@
 									<goal>exec</goal>
 								</goals>
 							</execution>
+							<execution>
+								<id>npm-install-karma-coverage-istanbul-reporter</id>
+								<phase>generate-sources</phase>
+								<configuration>
+									<workingDirectory>${project.basedir}/src/main/angular</workingDirectory>
+									<executable>npm</executable>
+									<arguments>
+										<argument>install</argument>
+										<argument>karma-coverage-istanbul-reporter</argument>
+										<argument>--save-dev</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>npm-install-istanbul-cobertura-badger</id>
+								<phase>generate-sources</phase>
+								<configuration>
+									<workingDirectory>${project.basedir}/src/main/angular</workingDirectory>
+									<executable>npm</executable>
+									<arguments>
+										<argument>install</argument>
+										<argument>istanbul-cobertura-badger</argument>
+										<argument>--save-dev</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
                             <execution>
                                 <id>npm-install</id>
                                 <phase>generate-sources</phase>
@@ -280,6 +312,26 @@
 										<argument>test</argument>
 										<argument>--code-coverage</argument>
 										<argument>--singleRun=true</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>ng-coverage-badge</id>
+								<phase>test</phase>
+								<configuration>
+									<workingDirectory>${project.basedir}/src/main/angular</workingDirectory>
+									<executable>node</executable>
+									<arguments>
+										<argument>node_modules/istanbul-cobertura-badger/lib/cli.js</argument>
+										<argument>-r</argument>
+										<argument>coverage/cobertura-coverage.xml</argument>
+										<argument>-d</argument>
+										<argument>coverage</argument>
+										<argument>-b</argument>
+										<argument>SmartApplianceEnabler-web-coverage</argument>
 									</arguments>
 								</configuration>
 								<goals>
