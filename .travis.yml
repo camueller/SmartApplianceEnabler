@@ -17,7 +17,7 @@ after_success:
   - bash <(curl -s https://codecov.io/bash)
 deploy:
   provider: pages
-  repo: SmartApplianceEnabler-web-coverage
+  repo: camueller/SmartApplianceEnabler-web-coverage
   local_dir: src/main/angular/coverage
   skip_cleanup: true
   github_token: $GITHUB_TOKEN # Set in travis-ci.org dashboard
