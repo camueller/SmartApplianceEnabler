@@ -13,6 +13,8 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {By} from '@angular/platform-browser';
 import {Level} from '../log/level';
 import {Logger, Options} from '../log/logger';
+import {Location} from '@angular/common';
+import {Appliance} from './appliance';
 
 const translations: any = {
   'dialog.candeactivate': 'Änderungen verwerfen?',
@@ -26,22 +28,42 @@ class FakeLoader implements TranslateLoader {
 }
 
 class ApplianceServiceMock {
+  updateAppliance(appliance: Appliance, create: boolean): Observable<any> {
+    console.log('ApplianceServiceMock.updateAppliance(' + JSON.stringify(appliance) + ',' + create + ')');
+    return Observable.of(true);
+  }
+
+  deleteAppliance(id: string): Observable<any> {
+    console.log('ApplianceServiceMock.deleteAppliance(' + id + ')');
+    return Observable.of(true);
+  }
+}
+
+class ApplianceReloadServiceMock {
+  reload() {}
+}
+
+class LocationMock {
+  back() {}
 }
 
 describe('ApplianceComponent', () => {
 
   let component: ApplianceComponent;
   let fixture: ComponentFixture<ApplianceComponent>;
-  let location: Location;
+  let location: LocationMock;
   let activatedRoute: ActivatedRouteStub;
   let applianceService: ApplianceServiceMock;
+  let applianceReloadService: ApplianceReloadServiceMock;
   let dialogService: DialogService;
   let translate: TranslateService;
 
   beforeEach((async() => {
     applianceService = new ApplianceServiceMock();
+    applianceReloadService = new ApplianceReloadServiceMock();
     activatedRoute = new ActivatedRouteStub();
     dialogService = new DialogService();
+    location = new LocationMock();
     spyOn(dialogService, 'confirm').and.returnValue(Observable.of(true));
 
     TestBed.configureTestingModule({
@@ -61,7 +83,7 @@ describe('ApplianceComponent', () => {
         {provide: Location, useValue: location},
         {provide: ApplianceService, useValue: applianceService},
         {provide: DialogService, useValue: dialogService},
-        AppliancesReloadService,
+        {provide: AppliancesReloadService, useValue: applianceReloadService},
         Logger,
         {provide: Options, useValue: {level: Level.DEBUG}},
       ]
@@ -69,8 +91,6 @@ describe('ApplianceComponent', () => {
 
     translate = TestBed.get(TranslateService);
     translate.use('de');
-
-    location = TestBed.get(Location);
   }));
 
   it('should be created', (async() => {
@@ -160,6 +180,50 @@ describe('ApplianceComponent', () => {
       expect(component.detailsForm.controls['interruptionsAllowed'].value).toEqual(appliance.interruptionsAllowed);
       expect(fixture.debugElement.query(By.css('button[type=submit]')).nativeElement.disabled).toBeTruthy();
       expect(fixture.debugElement.query(By.css('button[type=button]')).nativeElement.disabled).toBeFalsy();
+    });
+  }));
+
+  it('should allow to update an existing appliance', (async() => {
+    const appliance = ApplianceTestdata.create();
+    activatedRoute.testParamMap = { id: appliance.id };
+    activatedRoute.testData = { appliance: appliance };
+    fixture = TestBed.createComponent(ApplianceComponent);
+    component = fixture.componentInstance;
+    spyOn(applianceService, 'updateAppliance').and.callThrough();
+    spyOn(applianceReloadService, 'reload').and.callThrough();
+    fixture.autoDetectChanges();
+    fixture.whenStable().then(() => {
+      expect(component.appliance).toEqual(appliance);
+      const saveButtonElement = fixture.debugElement.query(By.css('button[type=submit]')).nativeElement;
+      expect(saveButtonElement.disabled).toBeTruthy();
+      appliance.name = 'MegaWash';
+      setInputValue('input[name=name]', appliance.name);
+      fixture.detectChanges();
+      expect(saveButtonElement.disabled).toBeFalsy();
+      saveButtonElement.click();
+      expect(applianceService.updateAppliance).toHaveBeenCalledWith(appliance, false);
+      expect(applianceReloadService.reload).toHaveBeenCalledTimes(1);
+    });
+  }));
+
+  it('should allow to delete an existing appliance', (async() => {
+    const appliance = ApplianceTestdata.create();
+    activatedRoute.testParamMap = { id: appliance.id };
+    activatedRoute.testData = { appliance: appliance };
+    fixture = TestBed.createComponent(ApplianceComponent);
+    component = fixture.componentInstance;
+    spyOn(applianceService, 'deleteAppliance').and.callThrough();
+    spyOn(applianceReloadService, 'reload').and.callThrough();
+    spyOn(location, 'back').and.callThrough();
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      expect(component.appliance).toEqual(appliance);
+      const deleteButtonElement = fixture.debugElement.query(By.css('button[type=button]')).nativeElement;
+      expect(deleteButtonElement.disabled).toBeFalsy();
+      deleteButtonElement.click();
+      expect(applianceService.deleteAppliance).toHaveBeenCalledWith(appliance.id);
+      expect(applianceReloadService.reload).toHaveBeenCalledTimes(1);
+      expect(location.back).toHaveBeenCalledTimes(1);
     });
   }));
 

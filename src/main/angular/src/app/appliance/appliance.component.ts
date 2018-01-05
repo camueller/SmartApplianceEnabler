@@ -87,11 +87,13 @@ export class ApplianceComponent implements OnInit, CanDeactivate<ApplianceCompon
   }
 
   submitForm() {
+    this.logger.debug('ApplianceComponent.submitForm()');
     this.applianceService.updateAppliance(this.appliance, this.isNew).subscribe(() => this.appliancesReloadService.reload());
     this.detailsForm.form.markAsPristine();
   }
 
   deleteAppliance() {
+    this.logger.debug('ApplianceComponent.deleteAppliance()');
     this.dialogService.confirm(this.confirmDeletionMessage).subscribe(confirmed => {
       if (confirmed) {
         this.applianceService.deleteAppliance(this.appliance.id).subscribe(() => this.appliancesReloadService.reload());
