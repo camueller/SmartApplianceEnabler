@@ -24,6 +24,10 @@
   font-family: "Lato", "Helvetica Neue", Arial, Helvetica, sans-serif;
 }
 
+.traffic-light-explanation-text {
+  margin-left: 22px
+}
+
 .bulb {
   height: 30px;
   width: 30px;
