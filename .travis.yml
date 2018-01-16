@@ -1,5 +1,6 @@
 language: java
 script: mvn test -B -Ptravis,web
+sudo: required
 jdk:
   - oraclejdk8
 node_js:
