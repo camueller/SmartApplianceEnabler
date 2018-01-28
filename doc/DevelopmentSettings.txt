@@ -1,2 +1,0 @@
-VM Params when starting SAE in IDE:
--Dsae.home=/home/axel/IdeaProjects/SmartApplianceEnabler/run -Dsae.loglevel=ALL -Dsae.logfile=/tmp/sae.log -Dsae.discovery.disable=true
