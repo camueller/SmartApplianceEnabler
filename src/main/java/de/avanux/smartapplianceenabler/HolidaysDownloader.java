@@ -38,7 +38,8 @@ import java.util.Scanner;
 public class HolidaysDownloader {
     private Logger logger = LoggerFactory.getLogger(HolidaysDownloader.class);
     public static final String urlConfigurationParamName = "Holidays.Url";
-    private String url = "https://feiertage-api.de/api/?jahr={0}&nur_land=NATIONAL";
+    public transient static final String DEFAULT_URL = "https://feiertage-api.de/api/?jahr={0}&nur_land=NATIONAL";
+    private String url;
 
     private static final DateTimeFormatter dateFormatter = DateTimeFormat.forPattern("yyyy-MM-dd");
 
@@ -53,7 +54,7 @@ public class HolidaysDownloader {
 
     private String getResolvedUrl() {
         int year = new LocalDate().getYear();
-        return MessageFormat.format(url, Integer.valueOf(year).toString());
+        return MessageFormat.format(url != null ? url : DEFAULT_URL, Integer.valueOf(year).toString());
     }
 
     public Map<LocalDate, String> downloadHolidays() {

@@ -18,12 +18,13 @@
 
 package de.avanux.smartapplianceenabler.webservice;
 
+import de.avanux.smartapplianceenabler.HolidaysDownloader;
 import de.avanux.smartapplianceenabler.meter.PulseReceiver;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
 
 public class SettingsDefaults {
     // static members won't be serialized but we need those values on the client
-    private String holidaysUrl = "http://feiertage.jarmedia.de/api/?jahr={0}&nur_land=HE";
+    private String holidaysUrl = HolidaysDownloader.DEFAULT_URL;
     private String modbusTcpHost = ModbusTcp.DEFAULT_HOST;
     private Integer modbusTcpPort = ModbusTcp.DEFAULT_PORT;
     private Integer pulseReceiverPort = PulseReceiver.DEFAULT_PORT;
