@@ -120,7 +120,9 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
                     this.remainingMaxRunningTimeWhileNotRunning = 0;
                 }
             }
-            this.interrupted = true;
+            if(this.activeTimeframeInterval != null) {
+                this.interrupted = true;
+            }
         }
         else {
             this.interrupted = false;
@@ -136,8 +138,10 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
 
     protected int getSecondsSinceStatusChange(LocalDateTime now) {
         try {
-            Interval runtimeSinceStatusChange = new Interval(statusChangedAt.toDateTime(), now.toDateTime());
-            return Double.valueOf(runtimeSinceStatusChange.toDuration().getMillis() / 1000).intValue();
+            if(statusChangedAt != null && now != null) {
+                Interval runtimeSinceStatusChange = new Interval(statusChangedAt.toDateTime(), now.toDateTime());
+                return Double.valueOf(runtimeSinceStatusChange.toDuration().getMillis() / 1000).intValue();
+            }
         }
         catch(IllegalArgumentException e) {
             logger.error("{} Invalid interval: start={} end={}", applianceId, statusChangedAt.toDateTime(), now.toDateTime());
@@ -248,7 +252,10 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         }
         else if(timeframeIntervalToBeActivated == null && activeTimeframeInterval != null) {
             logger.debug("{}: Interval expired: {}", applianceId, activeTimeframeInterval);
+            running = false;
             runningTime = null;
+            interrupted = false;
+            statusChangedAt = null;
             remainingMinRunningTimeWhileNotRunning = null;
             remainingMaxRunningTimeWhileNotRunning = null;
             intervalChanged = true;
@@ -258,9 +265,6 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         if(intervalChanged) {
             logger.debug("{}: Active interval changed. deactivatedTimeframeInterval={} activeTimeframeInterval={}",
                     applianceId, deactivatedTimeframeInterval, activeTimeframeInterval);
-            running = false;
-            interrupted = false;
-            statusChangedAt = null;
             for(ActiveIntervalChangedListener listener : scheduleChangedListeners) {
                 logger.debug("{}: Notifying {} {}", applianceId, ActiveIntervalChangedListener.class.getSimpleName(),
                         listener.getClass().getSimpleName());

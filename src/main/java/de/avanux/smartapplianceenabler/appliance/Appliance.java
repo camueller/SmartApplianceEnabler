@@ -499,7 +499,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     @Override
     public void controlStateChanged(LocalDateTime now, boolean switchOn) {
         logger.debug("{}: Control state has changed to {}", id, (switchOn ? "on" : "off"));
-        if(runningTimeMonitor != null && runningTimeMonitor.getActiveTimeframeInterval() != null) {
+        if(runningTimeMonitor != null) {
             runningTimeMonitor.setRunning(switchOn, now);
         }
     }
