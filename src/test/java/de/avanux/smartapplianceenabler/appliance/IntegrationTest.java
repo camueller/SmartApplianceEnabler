@@ -20,6 +20,7 @@ package de.avanux.smartapplianceenabler.appliance;
 
 import de.avanux.smartapplianceenabler.TestBase;
 import de.avanux.smartapplianceenabler.control.Control;
+import de.avanux.smartapplianceenabler.control.MockSwitch;
 import de.avanux.smartapplianceenabler.control.StartingCurrentSwitch;
 import de.avanux.smartapplianceenabler.control.StartingCurrentSwitchDefaults;
 import de.avanux.smartapplianceenabler.meter.Meter;
@@ -40,7 +41,6 @@ import java.util.List;
 public class IntegrationTest extends TestBase {
 
     private Logger logger = LoggerFactory.getLogger(SaeController.class);
-    private Appliance appliance;
     private SaeController saeController = new SaeController();
     private SempController sempController = new SempController();
 
@@ -261,6 +261,41 @@ public class IntegrationTest extends TestBase {
     public void testSwitchOnAndWaitForTimeframeEnd() {
     }
 
+    @Test
+    public void testSwitchOnBeforeTimeframeIntervalStart() {
+        String applianceId = "F-001";
+        TestBuilder builder = new TestBuilder()
+                .appliance(applianceId)
+                .withMockSwitch(false)
+                .withMockMeter()
+                .withSchedule(10, 0, 18, 0, 3600, null)
+                .init();
+        Appliance appliance = builder.getAppliance();
+        Control control = (MockSwitch) appliance.getControl();
+        RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
+
+        log("Switch on");
+        LocalDateTime timeSwitchOn = toToday(9, 59, 0);
+        sempController.em2Device(timeSwitchOn, createEM2Device(applianceId,true));
+        Assert.assertTrue("It should be possible to set appliance control state to running before " +
+                "the timeframe interval started", runningTimeMonitor.isRunning());
+
+        log("Check values right after switch on before interval start");
+        assertRunningTime(timeSwitchOn, control, runningTimeMonitor, true, true, false,
+                false, null, null, null);
+
+        log("Check values after switch on right before interval start");
+        LocalDateTime timeBeforeIntervalStart = toToday(9, 59, 59);
+        runningTimeMonitor.updateActiveTimeframeInterval(timeBeforeIntervalStart);
+        assertRunningTime(timeBeforeIntervalStart, control, runningTimeMonitor, true, true, false,
+                false, null, null, null);
+
+        log("Check values after switch on right after interval start");
+        LocalDateTime timeIntervalStart = toToday(10, 0, 0);
+        runningTimeMonitor.updateActiveTimeframeInterval(timeIntervalStart);
+        assertRunningTime(timeIntervalStart, control, runningTimeMonitor, true, true, false,
+                true, 60, 3540, null);
+    }
 
     private void log(String message) {
         logger.debug("*********** " + message);
