@@ -8,7 +8,7 @@ Die Groß-/Kleinschreibung der Dateinamen muss genau so sein, wie hier angegeben
 Diese beiden Dateien können manuell erstellt werden oder werden während der Konfiguration mittels Web-Browser automatisch erstellt.
 
 ## Konfiguration mittels Web-Browser
-Am einfachsten erfolgt die Konfiguration über das Web-Frontent des *Smart Appliance Enabler*. Dazu muss man im Web-Browser lediglich eingeben ```http://raspi:8080/```, wobei *raspi* durch den Hostnamen oder die IP-Adresses des Raspberry Pi ersetzt werden muss.
+Am einfachsten erfolgt die Konfiguration über das Web-Frontend des *Smart Appliance Enabler*. Dazu muss man im Web-Browser lediglich eingeben ```http://raspi:8080/```, wobei *raspi* durch den Hostnamen oder die IP-Adresses des Raspberry Pi ersetzt werden muss. Es öffnet sich die Status-Seite mit dem Hinweis, dass noch keine Geräte konfiguert sind.
 Die Web-Oberfläche ist bewusst einfach und dennoch komfortabel gehalten, um diverse Endgeräte optimal zu unterstützen.
 
 Grundsätzlich gilt, dass Eingaben/Änderungen erst nach dem Klicken der ```Speichern```-Schaltfläche gespeichert sind. Beim Wechsel auf ein andere Seite erfolgt eine Warnung, wenn nicht gespeicherte Eingaben/Änderungen vorhanden sind. Werden bei Eingabefeldern Inhalte mit grauer Schrift angezeigt, so handelt es sich um Voreinstellungen, d.h. wenn kein Wert eingegeben wird, gilt dieser Wert.
@@ -59,13 +59,13 @@ Die Schaltzeiten für einen Geschirrspüler, dessen Schaltzeiten sich am Wochene
 Durch Klick auf ```Status``` im oberen Menü der Seite gelangt man auf die Statusseite.
 Diese zeigt den Status jedes schaltbaren Gerätes in Form einer Ampel, damit man den Status sofort erkennen kann. In einem normale Web-Browser könnte die Status-Seite wie folgt aussehen:
 
-<img src="https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/WebFrontend_Status.png" width="870">
+<img src="https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/WebFrontend_Status.png">
 
 Die gleiche Seite im Web-Browser eines Smartphone würde wie folgt aussehen:
 
-<img src="https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/WebFrontend_Status_Mobile.png" width="870">
+<img src="https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/WebFrontend_Status_Mobile.png">
 
-Die Ampel dient nicht nur der Status-Anzeige, sondern auch zum Schalten des Gerätes. Durch einen Klick auf die grüne Lampe kann das Gerät unabhängig von den geplanten Schaltzeiten eingeschaltet werden:
+Die Ampel dient nicht nur der Status-Anzeige, sondern auch zum Schalten des Gerätes. Durch einen Klick auf die grüne Lampe kann das Gerät unabhängig von den konfigurierten Zeitplänen sofort eingeschaltet werden:
 
 <img src="https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/WebFrontend_Ampel_KlickFuerStart.png">
 
@@ -73,7 +73,7 @@ Damit der *Smart Appliance Enabler* dem *Sunny Home Manager* die geplante Laufze
 
 <img src="https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/WebFrontend_Ampel_LaufzeitEingeben.png">
 
-Durch Klick auf die ```Starten```-Schaltfläche wird das Gerät eingeschaltet.
+Durch Klick auf die ```Starten```-Schaltfläche wird das Gerät sofort eingeschaltet.
 
 ### Einstellungen
 
