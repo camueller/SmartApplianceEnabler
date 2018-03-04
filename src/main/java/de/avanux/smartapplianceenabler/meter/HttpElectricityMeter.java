@@ -30,6 +30,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import java.io.IOException;
 import java.util.Timer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Electricity meter reading power consumption from the response of a HTTP request.
@@ -51,6 +53,7 @@ public class HttpElectricityMeter extends HttpTransactionExecutor implements Met
     private String data;
     @XmlAttribute
     private String powerValueExtractionRegex;
+    private transient Pattern powerValueExtractionPattern;
     private transient PollElectricityMeter pollElectricityMeter = new PollElectricityMeter();
 
     public void setUrl(String url) {
@@ -125,7 +128,7 @@ public class HttpElectricityMeter extends HttpTransactionExecutor implements Met
                 logger.debug("{}: Power value extraction regex: {}", getApplianceId(), powerValueExtractionRegex);
                 String valueString = extractPowerValueFromResponse(responseString, powerValueExtractionRegex);
                 logger.debug("{}: Power value extracted from HTTP response: {}", getApplianceId(), valueString);
-                return Float.parseFloat(valueString) * getFactorToWatt();
+                return Float.parseFloat(valueString.replace(',', '.')) * getFactorToWatt();
             }
         } catch (Exception e) {
             logger.error("{}: Error reading HTTP response", getApplianceId(), e);
@@ -146,12 +149,19 @@ public class HttpElectricityMeter extends HttpTransactionExecutor implements Met
      * The regular expression has contain a capture group containing the power value.
      * @param response the HTTP response containing a power value
      * @param regex the regular expression to be used to extract the power value
-     * @return the power value extracted or the full response if the regular expression is null
+     * @return the power value extracted or the full response if the regular expression is null or could not be matched
      */
     protected String extractPowerValueFromResponse(String response, String regex)  {
         if(regex == null) {
             return response;
         }
-        return response.replaceAll(regex, "$1");
+        if( this.powerValueExtractionPattern == null) {
+            this.powerValueExtractionPattern = Pattern.compile(regex, Pattern.DOTALL);
+        }
+        Matcher regexMatcher = this.powerValueExtractionPattern.matcher(response);
+        if (regexMatcher.find()) {
+            return regexMatcher.group(1);
+        }
+        return response;
     }
 }
