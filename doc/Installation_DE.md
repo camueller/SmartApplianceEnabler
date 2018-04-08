@@ -152,7 +152,7 @@ Jetzt sollte man den *Smart Appliance Enabler* starten können. Auf einem Raspbe
 pi@raspberrypi ~ $ sudo /etc/init.d/smartapplianceenabler start
 [ ok ] Starting smartapplianceenabler (via systemctl): smartapplianceenabler.service.
 ```
-Sollten statt des ```ok``` andere Meldungen angezeigt werden, helfen [diese Hinweise](doc/Troubleshooting_DE.md) bei der Lokalisierung des Problems.
+Sollten statt des ```ok``` andere Meldungen angezeigt werden, helfen [diese Hinweise](Troubleshooting_DE.md) bei der Lokalisierung des Problems.
 
 Eigentlich lässt man Dienste wie *smartapplianceenabler* nicht unter dem Benutzer *root* laufen. Allerdings habe ich bisher keine Möglichkeit gefunden, die Rechte für den Zugriff auf die GPIO-Ports so zu setzen, dass diese auch für andere Benutzer möglich ist.
 
