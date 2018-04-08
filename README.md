@@ -61,16 +61,16 @@ Zum Ein-/Ausschalten eines Gerätes unterstützt der *Smart Appliance Enabler* d
 Alle aufgeführten Schalter können mit einer [Anlaufstromerkennung](doc/Anlaufstromerkennung_DE.md) verwendet werden, um die Programmierung des Gerätes zu ermöglichen.
 
 ## Software
-Zur Verwendung des *Smart Appliance Enabler* zusammen mit dem *SMA Sunny Home Manager* sind mindesten die in den 3 nachfolgenden Kapiteln (_Konfiguration_, _Installation_ und _Integration_) genannten Schritte erforderlich.
-
-### [Konfiguration](doc/Configuration_DE.md)
-Damit der *Smart Appliance Enabler* die Geräte steuern und deren Stromverbrauch messen kann, ist zusätzlich zur Installation der Software die Erstellung einer [Konfiguration](doc/Configuration_DE.md) erforderlich.
+Zur Verwendung des *Smart Appliance Enabler* zusammen mit dem *SMA Sunny Home Manager* sind mindesten die in den 3 nachfolgenden Kapiteln (_Installation_,_Konfiguration_ und _Integration_) genannten Schritte erforderlich.
 
 ### [Installation](doc/Installation_DE.md)
 Der einfachste Weg zu einem lauffähigen *Smart Appliance Enabler* besteht in der [Installation](doc/Installation_DE.md) einer releasten Version.
 
+### [Konfiguration](doc/Configuration_DE.md)
+Damit der *Smart Appliance Enabler* die Geräte steuern und deren Stromverbrauch messen kann, ist zusätzlich zur Installation der Software die Erstellung einer [Konfiguration](doc/Configuration_DE.md) erforderlich.
+
 ### Integration in den SMA Sunny Home Manager
-Damit der Sunny Home Manager das Gerät steuern und seinen Verbrauch messen kann, muss es im [Sunny Home Manager konfiguriert](doc/SunnyHomeMangerKonfiguration_DE.md) werden.
+Der Sunny Home Manager kann die Geräte erst dann steuern und deren Verbrauch messen, nachdem sie auch im [Sunny Home Manager konfiguriert](doc/SunnyHomeMangerKonfiguration_DE.md) worden sind.
 
 ### [Bauen aus Sourcen](doc/Build_DE.md)
 Zur Nutzung von Features, die noch nicht in der releasten Version enthalten sind, muss der *Smart Appliance Enabler* [aus Sourcen gebaut werden](doc/Build_DE.md).
