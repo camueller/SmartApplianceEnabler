@@ -41,10 +41,10 @@ axel@tpw520:~$ sudo umount /media/axel/tmp
 ```
 Nachdem der Raspberry Pi mit der so modifizierten SD-Karte gebootet wurde, sollte der Zugriff mit SSH möglich sein.
 Dabei nicht vergessen, den Raspberry Pi über ein Ethernet-Kabel mit dem Router zu verbinden!
-Für den zugriff benötigt man natürllich die IP-Adresse oder den Hostnamen, der dem Raspberry Pi vom Router zugewiesen wurde (in meinem Beispiel ist das ```raspi3```)
+Für den zugriff benötigt man natürllich die IP-Adresse oder den Hostnamen, der dem Raspberry Pi vom Router zugewiesen wurde (in meinem Beispiel ist das ```raspi```)
 ```
-axel@tpw520:~/Downloads/raspberry$ ssh pi@raspi3
-pi@raspi3's password: 
+axel@tpw520:~/Downloads/raspberry$ ssh pi@raspi
+pi@raspi's password: 
 Linux raspberrypi 4.9.80-v7+ #1098 SMP Fri Mar 9 19:11:42 GMT 2018 armv7l
 
 The programs included with the Debian GNU/Linux system are free software;
@@ -92,10 +92,8 @@ Java HotSpot(TM) Client VM (build 25.65-b01, mixed mode)
 
 ## Smart Appliance Enabler
 Die Installation des *Smart Appliance Enabler* besteht darin, folgende Dateien auf den Raspberry zu kopieren:
-* das Start-Script und zugehörige Konfigurationsdateien
-* die Datei ```SmartApplianceEnabler-*.jar``` mit dem eigentlichen Programmcode (heruntergeladenes Release oder aus Sourcen gebaut)
-* die Konfigurationsdatei ```Device2EM.xml```
-* die Konfigurationsdatei ```Appliances.xml```
+* das Start-Script
+* die Datei ```SmartApplianceEnabler-*.war``` mit dem eigentlichen Programmcode (heruntergeladenes Release oder aus Sourcen gebaut)
 
 Zunächst werden Start-Script und zugehörige Konfigurationsdateien auf den Raspberry heruntergeladen und gleich die Berechtigungen für dieses Dateien gesetzt:
 ```
@@ -117,10 +115,6 @@ pi@raspberrypi ~ $ sudo chmod 755 /etc/init.d/smartapplianceenabler
 pi@raspberrypi ~ $ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/etc/default/smartapplianceenabler -P /etc/default
 pi@raspberrypi ~ $ sudo chown root.root /etc/default/smartapplianceenabler
 pi@raspberrypi ~ $ sudo chmod 644 /etc/default/smartapplianceenabler
-
-pi@raspberrypi ~ $ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/etc/logrotate.d/smartapplianceenabler -P /etc/logrotate.d
-pi@raspberrypi ~ $ sudo chown root.root /etc/logrotate.d/smartapplianceenabler
-pi@raspberrypi ~ $ sudo chmod 644 /etc/logrotate.d/smartapplianceenabler
 ```
 In der Datei ```/etc/default/smartapplianceenabler``` finden sich die Konfigurationseinstellungen für den Dienst *smartapplianceenabler*. Die darin befindlichen Parameter sind in der Datei selbst dokumentiert. Normalerweise sollte man die Datei unverändert lassen können.
 
@@ -139,13 +133,11 @@ smartapplianceenabler.service                                            loaded 
 ```
 Falls die zweite Zeile nicht angezeigt wird, sollte der Raspberry neu gestartet werden.
 
-Als nächstes wird die Datei ```SmartApplianceEnabler-*.jar``` mit dem eigentlichen Programmcode sowie die Konfigurationsdateien ```Appliances.xml``` und ```Device2EM.xml``` mit einer Geschirrspüler-Konfiguration heruntergeladen:
+Als nächstes wird die Datei ```SmartApplianceEnabler-*.war``` mit dem eigentlichen Programmcode heruntergeladen:
 ```
 pi@raspberrypi ~ $ sudo mkdir /app
 pi@raspberrypi ~ $ sudo chown pi.pi /app
-pi@raspberrypi ~ $ wget https://github.com/camueller/SmartApplianceEnabler/releases/download/v1.1.0/SmartApplianceEnabler-1.1.0.jar -P /app
-pi@raspberrypi ~ $ wget https://github.com/camueller/SmartApplianceEnabler/raw/master/example/Appliances.xml -P /app
-pi@raspberrypi ~ $ wget https://github.com/camueller/SmartApplianceEnabler/raw/master/example/Device2EM.xml -P /app
+pi@raspberrypi ~ $ wget https://github.com/camueller/SmartApplianceEnabler/releases/download/v1.2.0/SmartApplianceEnabler-1.2.0.war -P /app
 ```
 Jetzt sollte man den *Smart Appliance Enabler* starten können. Auf einem aktuellen Raspberry Pi dauert der Start ca. 30 Sekunden.  Dabei sollte man folgende Ausgaben zu sehen bekommen:
 ```
