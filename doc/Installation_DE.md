@@ -147,64 +147,13 @@ Als nächstes wird die Datei ```SmartApplianceEnabler-*.war``` mit dem eigentlic
 ```
 pi@raspberrypi ~ $ wget https://github.com/camueller/SmartApplianceEnabler/releases/download/v1.2.0/SmartApplianceEnabler-1.2.0.war -P /app
 ```
-Jetzt sollte man den *Smart Appliance Enabler* starten können. Auf einem aktuellen Raspberry Pi dauert der Start ca. 30 Sekunden.  Dabei sollte man folgende Ausgaben zu sehen bekommen:
+Jetzt sollte man den *Smart Appliance Enabler* starten können. Auf einem Raspberry Pi 2 Model B dauert der Start ca. 30 Sekunden.  Dabei sollte man folgende Ausgaben zu sehen bekommen:
 ```
 pi@raspberrypi ~ $ sudo /etc/init.d/smartapplianceenabler start
 [ ok ] Starting smartapplianceenabler (via systemctl): smartapplianceenabler.service.
 ```
-Verwendet man `stop` anstelle von `start`, wird der Service *smartapplianceenabler* beendet.
-Mit dem Parameter `status` kann geprüft werden, ob der Service läuft:
-```
-pi@raspberrypi ~ $ sudo /etc/init.d/smartapplianceenabler status
-● smartapplianceenabler.service - LSB: Start Smart Appliance Enabler.
-   Loaded: loaded (/etc/init.d/smartapplianceenabler)
-   Active: active (running) since Sat 2016-01-09 16:27:07 UTC; 2min 49s ago
-  Process: 17288 ExecStart=/etc/init.d/smartapplianceenabler start (code=exited, status=0/SUCCESS)
-   CGroup: /system.slice/smartapplianceenabler.service
-           └─17300 /usr/lib/jvm/jdk-8-oracle-arm-vfp-hflt/bin/java -Djava.awt.headless=true -Xmx128m -XX:+UseConcMarkSweepGC -Dsae.pidfile=/var/run/smartapplianceenabler.pid -Dsae.logfile=/var/log/smartapplianceenabler.log -Dsae.loglevel=INFO -Dappliance.dir=/app -jar...
+Sollten statt des ```ok``` andere Meldungen angezeigt werden, helfen [diese Hinweise](doc/Troubleshooting_DE.md) bei der Lokalisierung des Problems.
 
-Jan 09 16:26:36 raspberrypi smartapplianceenabler[17288]: Starting smartapplianceenabler: smartapplianceenablertouch: cannot touch ‘’: No such file or directory
-Jan 09 16:27:07 raspberrypi smartapplianceenabler[17288]: .
-Jan 09 16:27:07 raspberrypi systemd[1]: Started LSB: Start Smart Appliance Enabler..
-```
 Eigentlich lässt man Dienste wie *smartapplianceenabler* nicht unter dem Benutzer *root* laufen. Allerdings habe ich bisher keine Möglichkeit gefunden, die Rechte für den Zugriff auf die GPIO-Ports so zu setzen, dass diese auch für andere Benutzer möglich ist.
 
-Falls beim Starten ein Fehler auftritt, kann man die Details mit `journalctl` anzeigen lassen (`sudo` nicht vergessen, sonst bekommt man nichts zu sehen!):
-```
-pi@raspberrypi /etc/logrotate.d $ sudo journalctl -xn
--- Logs begin at Sat 2016-01-09 06:17:01 UTC, end at Sat 2016-01-09 16:30:39 UTC. --
-Jan 09 16:27:07 raspberrypi systemd[1]: Started LSB: Start Smart Appliance Enabler..
--- Subject: Unit smartapplianceenabler.service has finished start-up
--- Defined-By: systemd
--- Support: http://lists.freedesktop.org/mailman/listinfo/systemd-devel
--- 
--- Unit smartapplianceenabler.service has finished starting up.
--- 
--- The start-up result is done.
-Jan 09 16:27:07 raspberrypi sudo[17271]: pam_unix(sudo:session): session closed for user root
-Jan 09 16:28:25 raspberrypi sudo[17422]: pi : TTY=pts/0 ; PWD=/home/pi ; USER=root ; COMMAND=/bin/cat /var/log/smartapplianceenabler.log
-Jan 09 16:28:25 raspberrypi sudo[17422]: pam_unix(sudo:session): session opened for user root by pi(uid=0)
-Jan 09 16:28:25 raspberrypi sudo[17422]: pam_unix(sudo:session): session closed for user root
-Jan 09 16:29:56 raspberrypi sudo[17437]: pi : TTY=pts/0 ; PWD=/home/pi ; USER=root ; COMMAND=/etc/init.d/smartapplianceenabler status
-Jan 09 16:29:56 raspberrypi sudo[17437]: pam_unix(sudo:session): session opened for user root by pi(uid=0)
-Jan 09 16:29:56 raspberrypi sudo[17437]: pam_unix(sudo:session): session closed for user root
-Jan 09 16:30:39 raspberrypi sudo[17457]: pi : TTY=pts/1 ; PWD=/etc/logrotate.d ; USER=root ; COMMAND=/bin/journalctl -xn
-Jan 09 16:30:39 raspberrypi sudo[17457]: pam_unix(sudo:session): session opened for user root by pi(uid=0)
-```
-Der *Smart Appliance Enabler* schreibt seine Log-Informationen in die Datei `/var/log/smartapplianceenabler.log`. Der Detaillierungsgrad wird durch den gewählten Log-Level in der Datei `/etc/default/smartapplianceenabler` bestimmt.
-Mit dem Log-Level INFO sind nach dem Start des *Smart Appliance Enabler* folgende Einträge zu sehen:
-```
-pi@raspberrypi ~ $ sudo cat /var/log/smartapplianceenabler.log 
-2016-01-09 16:27:06,864 INFO [Thread-4] o.f.c.UpnpServiceImpl [UpnpServiceImpl.java:71] >>> Starting UPnP service...
-2016-01-09 16:27:06,874 INFO [Thread-4] o.f.c.UpnpServiceImpl [UpnpServiceImpl.java:73] Using configuration: de.avanux.smartapplianceenabler.semp.discovery.SempDiscovery$1
-2016-01-09 16:27:07,078 INFO [Thread-4] o.f.c.t.Router [RouterImpl.java:94] Creating Router: org.fourthline.cling.transport.RouterImpl
-2016-01-09 16:27:07,135 INFO [Thread-4] o.f.c.t.s.MulticastReceiver [MulticastReceiverImpl.java:76] Creating wildcard socket (for receiving multicast datagrams) on port: 1900
-2016-01-09 16:27:07,153 INFO [Thread-4] o.f.c.t.s.MulticastReceiver [MulticastReceiverImpl.java:83] Joining multicast group: /239.255.255.250:1900 on network interface: eth0
-2016-01-09 16:27:07,240 INFO [Thread-7] d.a.s.a.ApplianceManager [ApplianceManager.java:65] 1 appliance(s) configured.
-2016-01-09 16:27:07,250 INFO [Thread-4] o.f.c.t.s.StreamServer [StreamServerImpl.java:80] Created socket (for receiving TCP streams) on: /192.168.69.5:47336
-2016-01-09 16:27:07,266 INFO [Thread-4] o.f.c.t.s.DatagramIO [DatagramIOImpl.java:84] Creating bound socket (for datagram input/output) on: /192.168.69.5
-2016-01-09 16:27:07,269 INFO [Thread-7] d.a.s.a.Switch [Switch.java:41] Switch uses pin GPIO 1 (reversed states)
-2016-01-09 16:27:07,610 INFO [Thread-4] o.f.c.UpnpServiceImpl [UpnpServiceImpl.java:94] <<< UPnP service started successfully
-2016-01-09 16:27:10,130 INFO [cling-5] d.a.s.s.d.SempDeviceDescriptorBinderImpl [SempDeviceDescriptorBinderImpl.java:70] SEMP UPnP will redirect to http://192.168.69.5:8080
-```
-Nachdem der *Smart Appliance Enabler* jetzt funktioniert, sollten die Konfigurationsdateien ```Appliances.xml``` und ```Device2EM.xml``` entsprechend der vorhandenen Geräte [konfiguriert](Configuration_DE.md) werden.
+Wenn der *Smart Appliance Enabler* jetzt läuft, müssen als Nächstes die [Konfiguration](Configuration_DE.md) vorgenommen werden.
