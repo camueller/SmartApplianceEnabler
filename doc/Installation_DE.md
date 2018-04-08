@@ -115,6 +115,7 @@ pi@raspberrypi ~ $ sudo chmod 755 /etc/init.d/smartapplianceenabler
 pi@raspberrypi ~ $ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/etc/default/smartapplianceenabler -P /etc/default
 pi@raspberrypi ~ $ sudo chown root.root /etc/default/smartapplianceenabler
 pi@raspberrypi ~ $ sudo chmod 644 /etc/default/smartapplianceenabler
+
 ```
 In der Datei ```/etc/default/smartapplianceenabler``` finden sich die Konfigurationseinstellungen für den Dienst *smartapplianceenabler*. Die darin befindlichen Parameter sind in der Datei selbst dokumentiert. Normalerweise sollte man die Datei unverändert lassen können.
 
@@ -133,10 +134,17 @@ smartapplianceenabler.service                                            loaded 
 ```
 Falls die zweite Zeile nicht angezeigt wird, sollte der Raspberry neu gestartet werden.
 
-Als nächstes wird die Datei ```SmartApplianceEnabler-*.war``` mit dem eigentlichen Programmcode heruntergeladen:
+Der *Smart Appliance Enabler* selbst und seine Konfigurationsdateien sollten im Verzeichnis ```/app``` abgelegt werden, das zunächst erstellt werden muss:
 ```
 pi@raspberrypi ~ $ sudo mkdir /app
 pi@raspberrypi ~ $ sudo chown pi.pi /app
+```
+Für die Konfiguration des Loggings wird die Datei ```logback-spring.xml``` benötigt, die einfach heruntergeladen werden kann:
+```
+wget https://github.com/camueller/SmartApplianceEnabler/raw/master/logback-spring.xml -P /app
+```
+Als nächstes wird die Datei ```SmartApplianceEnabler-*.war``` mit dem eigentlichen Programmcode heruntergeladen:
+```
 pi@raspberrypi ~ $ wget https://github.com/camueller/SmartApplianceEnabler/releases/download/v1.2.0/SmartApplianceEnabler-1.2.0.war -P /app
 ```
 Jetzt sollte man den *Smart Appliance Enabler* starten können. Auf einem aktuellen Raspberry Pi dauert der Start ca. 30 Sekunden.  Dabei sollte man folgende Ausgaben zu sehen bekommen:
