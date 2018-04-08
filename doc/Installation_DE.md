@@ -141,7 +141,7 @@ pi@raspberrypi ~ $ sudo chown pi.pi /app
 ```
 Für die Konfiguration des Loggings wird die Datei ```logback-spring.xml``` benötigt, die einfach heruntergeladen werden kann:
 ```
-wget https://github.com/camueller/SmartApplianceEnabler/raw/master/logback-spring.xml -P /app
+pi@raspberrypi ~ $ wget https://github.com/camueller/SmartApplianceEnabler/raw/master/logback-spring.xml -P /app
 ```
 Als nächstes wird die Datei ```SmartApplianceEnabler-*.war``` mit dem eigentlichen Programmcode heruntergeladen:
 ```
