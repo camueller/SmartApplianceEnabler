@@ -156,4 +156,4 @@ Sollten statt des ```ok``` andere Meldungen angezeigt werden, helfen [diese Hinw
 
 Eigentlich lässt man Dienste wie *smartapplianceenabler* nicht unter dem Benutzer *root* laufen. Allerdings habe ich bisher keine Möglichkeit gefunden, die Rechte für den Zugriff auf die GPIO-Ports so zu setzen, dass diese auch für andere Benutzer möglich ist.
 
-Wenn der *Smart Appliance Enabler* jetzt läuft, müssen als Nächstes die [Konfiguration](Configuration_DE.md) vorgenommen werden.
+Wenn der *Smart Appliance Enabler* jetzt läuft, muss als Nächstes die [Konfiguration](Configuration_DE.md) vorgenommen werden.
