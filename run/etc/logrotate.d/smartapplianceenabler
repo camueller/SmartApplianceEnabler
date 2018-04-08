@@ -1,7 +1,0 @@
-/var/log/smartapplianceenabler.log {
-  copytruncate
-  weekly
-  rotate 52
-  compress
-  missingok
-}
