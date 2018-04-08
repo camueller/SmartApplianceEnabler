@@ -3,15 +3,16 @@ Die nachfolgenden Kapitel sollten in der angegebenen Reihenfolge umgesetzt werde
 
 ## Betriebssystem
 Für den Raspberry Pi existieren verschiedene, darauf zugeschnittene, Linux-Distributionen (Images), wobei [Raspbian](https://www.raspberrypi.org/downloads/raspbian) vermutlich das geläufigste ist (auf dieses beziehe ich mich nachfolgend). 
-Damit der *Smart Appliance Enabler* lauffähig ist, muss bei der Wahl des Images ist darauf geachtet werden, dass dieses eine Java 8-Runtime enthält oder dass diese nachinstallierbar ist. Beim Raspbian-Image ist die Lite-Version ausreichend, sodass man eine 4GB-SD-Karte verwenden kann.
+Damit der *Smart Appliance Enabler* lauffähig ist, muss bei der Wahl des Images ist darauf geachtet werden, dass dieses eine Java 8-Runtime enthält oder dass diese nachinstallierbar ist. Beim Raspbian-Image ist die *Lite-Version ausreichend*, sodass man eine *4GB-SD-Karte* verwenden kann.
 
 Mit dem nachfolgenden Befehl kann man unter Linux ein Image auf eine SD-Karte schreiben:
 ```
-axel@tpw520:~/Downloads/raspberry$ sudo dd bs=4M if=2017-04-10-raspbian-jessie-lite.img of=/dev/mmcblk0
-[sudo] password for axel:
-309+1 records in      
-309+1 records out
-1297862656 bytes (1,3 GB, 1,2 GiB) copied, 216,029 s, 6,0 MB/s
+axel@tpw520:~/Downloads/raspberry$ sudo dd bs=4M if=2018-03-13-raspbian-stretch-lite.img of=/dev/mmcblk0 status=progress oflag=sync
+[sudo] password for axel: 
+1858076672 bytes (1.9 GB, 1.7 GiB) copied, 205.445 s, 9.0 MB/s 
+443+0 records in
+443+0 records out
+1858076672 bytes (1.9 GB, 1.7 GiB) copied, 205.598 s, 9.0 MB/s
 ```
 Sollte der Raspberry mit der SD-Karte nicht starten, kann es durchaus an der SD-Karte selbst liegen (diese Situation hatte ich gerade selbst). In diesem Fall einfach einen anderen SD-Karten-Typ verwenden (gute Erfahrungen habe ich mit SanDisk gemacht). Einen erfolgreichen Start erkennt man leicht daran, dass die grüne LED flackert/leuchtet (= Zugriff auf die SD-Karte).
 
