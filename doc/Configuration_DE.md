@@ -27,7 +27,7 @@ Durch Klick auf ```Neues Gerät``` wird die Konfiguration eines neuen Geräte be
 
 ### Gerätekonfiguration
 
-In der Gerätekonfiguration muß die Geräte-ID (entsprechend dem angezeigten Format) sowie allgemeine Angaben und Eigenschaften eingegeben werden. Wenn alle erforderlichen Eingaben erfolgt sind, wird die ```Speichern```-Schaltfläche freigegeben. Erst nach dem Drücken dieser Schaltfläche erscheinen im Seitenmenü die Unterpunkte ```Zähler```, ```Schalter``` und ```Schaltzeiten```.
+In der Gerätekonfiguration muß die Geräte-ID eingegeben werden, bei deren Festlegung [einige Punkte zu beachten sind](#device-id--appliance-id). Außerdem müssen allgemeine Angaben und Eigenschaften eingegeben werden. Wenn alle erforderlichen Eingaben erfolgt sind, wird die ```Speichern```-Schaltfläche freigegeben. Erst nach dem Drücken dieser Schaltfläche erscheinen im Seitenmenü die Unterpunkte ```Zähler```, ```Schalter``` und ```Schaltzeiten```.
 
 Wenn ein Gerät bereits angelegt wurde, gelangt man durch Klick auf den Geräte-Typ und -Namen im Seitenmenü auf die Seite mit der Gerätekonfiguration:
 
