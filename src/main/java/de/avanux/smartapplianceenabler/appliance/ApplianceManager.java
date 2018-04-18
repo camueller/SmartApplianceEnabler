@@ -307,6 +307,7 @@ public class ApplianceManager implements Runnable {
         if(replaceIndex != null) {
             device2EM.getDeviceInfo().remove(replaceIndex.intValue());
             device2EM.getDeviceInfo().add(replaceIndex, deviceInfo);
+            save(true, false);
             return true;
         }
         return false;
