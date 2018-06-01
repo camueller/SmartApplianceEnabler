@@ -192,10 +192,22 @@ public class PulseElectricityMeterTest {
      * (O-----O-----------(-
      */
     @Test
+    public void getAveragePower_2ts_0tsi_controlOn() {
+        Control control = mock(Control.class);
+        when(control.isOn()).thenReturn(true);
+        pulseElectricityMeter.setControl(control);
+        addTimestamps(911, 612);
+        Assert.assertEquals(0, pulseElectricityMeter.getAveragePower(currentTimeMillis));
+    }
+
+    /**
+     * (O-----O-----------(-
+     */
+    @Test
     public void getAveragePower_2ts_0tsi_alwaysOn() {
         pulseElectricityMeter.setControl(new AlwaysOnSwitch());
         addTimestamps(911, 612);
-        Assert.assertEquals(12, pulseElectricityMeter.getAveragePower(currentTimeMillis));
+        Assert.assertEquals(0, pulseElectricityMeter.getAveragePower(currentTimeMillis));
     }
 
     /**
