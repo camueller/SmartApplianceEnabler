@@ -106,7 +106,7 @@ class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
                 logger.debug("{}: average power (as before increase) = {}W", applianceId, powerBeforeIncrease);
                 return powerBeforeIncrease;
             }
-            logger.debug("{}: average power (timestamps before increase to old) = 0W", applianceId);
+            logger.debug("{}: average power (timestamps before increase too old) = 0W", applianceId);
             powerDecreaseDetected = true;
             return 0;
         }
@@ -119,7 +119,7 @@ class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
         }
         else if (isOn(referenceTimestamp)) {
             // less than 2 timestamps in measurement interval
-            return getCurrentPower();
+            return getCurrentPower(referenceTimestamp);
         }
         else {
             logger.debug("{}: Not switched on.", applianceId);
@@ -156,7 +156,7 @@ class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
         }
         else if (isOn(referenceTimestamp)) {
             // less than 2 timestamps in measurement interval
-            minPower = getCurrentPower();
+            minPower = getCurrentPower(referenceTimestamp);
         }
         int averagePower = getAveragePower(referenceTimestamp);
         if(averagePower < minPower) {
@@ -194,7 +194,7 @@ class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
         }
         else if (isOn(referenceTimestamp)) {
             // less than 2 timestamps in measurement interval
-            maxPower = getCurrentPower();
+            maxPower = getCurrentPower(referenceTimestamp);
         }
         int averagePower = getAveragePower(referenceTimestamp);
         if(averagePower > maxPower) {
@@ -203,22 +203,23 @@ class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
         return maxPower;
     }
 
-    private int getCurrentPower() {
-        int currentPower = getCurrentPowerIgnoringMeasurementInterval();
-        logger.debug("{}: currentPower={}W", applianceId, currentPower);
-        return currentPower;
-    }
-
-    private int getCurrentPowerIgnoringMeasurementInterval() {
-        // calculate power from 2 most recent timestamps
+    private int getCurrentPower(long referenceTimestamp) {
+        int currentPower = 0;
         Long intervalBetweenTwoMostRecentImpulseTimestamps = getIntervalBetweenTwoMostRecentImpulses();
         if(intervalBetweenTwoMostRecentImpulseTimestamps != null) {
-            return getPower(intervalBetweenTwoMostRecentImpulseTimestamps);
+            if(! isIntervalIncreaseAboveFactor(powerChangeFactor, referenceTimestamp)) {
+                // calculate power from 2 most recent timestamps
+                currentPower = getPower(intervalBetweenTwoMostRecentImpulseTimestamps);
+            }
+            else {
+                logger.warn("{}: More than 2 impulses cached but not recent enough.", applianceId);
+            }
         }
         else {
             logger.warn("{}: No or less than 2 impulses cached.", applianceId);
         }
-        return 0;
+        logger.debug("{}: currentPower={}W", applianceId, currentPower);
+        return currentPower;
     }
 
     List<Long> getImpulsesInMeasurementInterval(long referenceTimestamp) {
@@ -331,7 +332,7 @@ class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
         // check for power increase
         if(powerBeforeIncrease == null && isIntervalDecreaseBelowFactor(powerChangeFactor, timestampMillis)) {
             // powerBeforeIncrease == null : avoid detecting intermediate values during ramp up
-            powerBeforeIncrease = getCurrentPowerIgnoringMeasurementInterval();
+            powerBeforeIncrease = getCurrentPower(timestampMillis);
             logger.debug("{}: Power increase detected. Power before: {}W", applianceId, powerBeforeIncrease);
         }
         // check for power decrease
