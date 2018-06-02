@@ -84,9 +84,6 @@ export JAVA_HOME
 
 # Directory where the Smart Appliance Enabler configuration files are placed
 SAE_HOME=/usr/share/$NAME
-# Logging configuration
-SAE_LOGFILE=/var/log/$NAME.log
-SAE_LOGLEVEL=INFO
 
 # Default Java options
 # Set java.awt.headless=true if JAVA_OPTS is not set so the
@@ -121,8 +118,6 @@ run_sh() {
 	# Define the command to run as a daemon
         SAE_SH="$JAVA_HOME/bin/java $JAVA_OPTS \
 		-Dsae.pidfile=$SAE_PID \
-		-Dsae.logfile=$SAE_LOGFILE \
-		-Dsae.loglevel=$SAE_LOGLEVEL \
 		-Dsae.home=$SAE_HOME \
 		-jar $SAE_JAR"
 
