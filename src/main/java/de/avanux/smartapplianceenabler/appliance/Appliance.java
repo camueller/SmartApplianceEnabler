@@ -401,7 +401,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                         remainingMinRunningTime, remainingMaxRunningTime);
             }
 
-            Interval considerationInterval = new Interval(now.toDateTime(), now.toDateTime());
+            Interval considerationInterval = new Interval(now.toDateTime(), now.plusDays(2).toDateTime());
             List<TimeframeInterval> timeFrameIntervals = Schedule.findTimeframeIntervals(now, considerationInterval,
                     schedules, false, onlySufficient);
             for(TimeframeInterval timeframeIntervalOfSchedule : timeFrameIntervals) {
