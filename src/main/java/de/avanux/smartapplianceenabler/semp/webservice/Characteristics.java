@@ -23,12 +23,22 @@ import javax.xml.bind.annotation.XmlElement;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Characteristics {
+    @XmlElement(name = "MinPowerConsumption")
+    private int minPowerConsumption;
     @XmlElement(name = "MaxPowerConsumption")
     private int maxPowerConsumption;
     @XmlElement(name = "MinOnTime")
     private Integer minOnTime;
     @XmlElement(name = "MinOffTime")
     private Integer minOffTime;
+
+    public int getMinPowerConsumption() {
+        return minPowerConsumption;
+    }
+
+    public void setMinPowerConsumption(int minPowerConsumption) {
+        this.minPowerConsumption = minPowerConsumption;
+    }
 
     public int getMaxPowerConsumption() {
         return maxPowerConsumption;

@@ -339,6 +339,13 @@
       </xs:documentation>
     </xs:annotation>
     <xs:sequence>
+      <xs:element name="MinPowerConsumption" type="xs:int" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            Only for DeviceType=EVCharger: Minimum recommended power consumption if power can be regulated by EM
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
       <xs:element name="MaxPowerConsumption" type="xs:int">
         <xs:annotation>
           <xs:documentation>
