@@ -66,6 +66,10 @@ public class DeviceControl {
 
     @Override
     public String toString() {
-        return "on=" + on + ", recommendedPowerConsumption=" + recommendedPowerConsumption + "W";
+        String string = "on=" + on;
+        if(on) {
+            string += ", recommendedPowerConsumption=" + recommendedPowerConsumption + "W";
+        }
+        return string;
     }
 }
