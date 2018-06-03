@@ -17,6 +17,8 @@
  */
 package de.avanux.smartapplianceenabler.semp.webservice;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -27,45 +29,25 @@ public class DeviceControl {
     private String deviceId;
     @XmlElement(name = "On")
     private boolean on;
-    @XmlElement(name = "RecommendedPowerConsumption")
-    private Integer recommendedPowerConsumption;
     @XmlElement(name = "Timestamp")
     private Integer timestamp;
     
     public String getDeviceId() {
         return deviceId;
     }
-
     public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
     }
-
     public boolean isOn() {
         return on;
     }
-
     public void setOn(boolean on) {
         this.on = on;
     }
-
-    public Integer getRecommendedPowerConsumption() {
-        return recommendedPowerConsumption;
-    }
-
-    public void setRecommendedPowerConsumption(Integer recommendedPowerConsumption) {
-        this.recommendedPowerConsumption = recommendedPowerConsumption;
-    }
-
     public Integer getTimestamp() {
         return timestamp;
     }
-
     public void setTimestamp(Integer timestamp) {
         this.timestamp = timestamp;
-    }
-
-    @Override
-    public String toString() {
-        return "on=" + on + ", recommendedPowerConsumption=" + recommendedPowerConsumption + "W";
     }
 }
