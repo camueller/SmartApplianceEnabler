@@ -187,7 +187,7 @@ public class SempController {
     public void em2Device(LocalDateTime now, EM2Device em2Device) {
         List<DeviceControl> deviceControls = em2Device.getDeviceControl();
         for(DeviceControl deviceControl : deviceControls) {
-            logger.debug("{}: Received control request", deviceControl.getDeviceId());
+            logger.debug("{}: Received control request: ", deviceControl);
             Appliance appliance = ApplianceManager.getInstance().findAppliance(deviceControl.getDeviceId());
             if(appliance != null) {
                 appliance.setApplianceState(now, deviceControl.isOn(), false,
@@ -306,8 +306,8 @@ public class SempController {
         timeFrame.setDeviceId(deviceId);
         timeFrame.setEarliestStart(runtimeRequest.getEarliestStart());
         timeFrame.setLatestEnd(runtimeRequest.getLatestEnd());
-        timeFrame.setMinRunningTime(minRunningTime);
-        timeFrame.setMaxRunningTime(maxRunningTime);
+        timeFrame.setMinEnergy(0);
+        timeFrame.setMaxEnergy(9000);
         logger.debug("{}: Timeframe created: {}", deviceId, timeFrame);
         return timeFrame;
     }
