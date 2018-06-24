@@ -20,6 +20,7 @@ package de.avanux.smartapplianceenabler.semp.webservice;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Characteristics {
@@ -31,6 +32,8 @@ public class Characteristics {
     private Integer minOnTime;
     @XmlElement(name = "MinOffTime")
     private Integer minOffTime;
+    @XmlElement(name = "PowerLevels")
+    private PowerLevels powerLevels;
 
     public int getMinPowerConsumption() {
         return minPowerConsumption;
@@ -64,4 +67,11 @@ public class Characteristics {
         this.minOffTime = minOffTime;
     }
 
+    public PowerLevels getPowerLevels() {
+        return powerLevels;
+    }
+
+    public void setPowerLevels(PowerLevels powerLevels) {
+        this.powerLevels = powerLevels;
+    }
 }

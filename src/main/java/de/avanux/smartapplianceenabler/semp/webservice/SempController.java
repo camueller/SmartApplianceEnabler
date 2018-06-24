@@ -307,7 +307,7 @@ public class SempController {
         timeFrame.setEarliestStart(runtimeRequest.getEarliestStart());
         timeFrame.setLatestEnd(runtimeRequest.getLatestEnd());
         timeFrame.setMinEnergy(0);
-        timeFrame.setMaxEnergy(9000);
+        timeFrame.setMaxEnergy(40000);
         logger.debug("{}: Timeframe created: {}", deviceId, timeFrame);
         return timeFrame;
     }
