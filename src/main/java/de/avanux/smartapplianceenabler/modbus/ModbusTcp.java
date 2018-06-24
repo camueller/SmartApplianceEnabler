@@ -63,6 +63,10 @@ public class ModbusTcp {
         return port;
     }
 
+    private Integer getResolvedPort() {
+        return port != null ? port : DEFAULT_PORT;
+    }
+
     public void setPort(Integer port) {
         this.port = port;
     }
@@ -70,12 +74,12 @@ public class ModbusTcp {
     public TCPMasterConnection getConnection() throws UnknownHostException {
         InetAddress address = InetAddress.getByName(host != null ? host : DEFAULT_HOST);
         TCPMasterConnection connection = new TCPMasterConnection(address);
-        connection.setPort(port != null ? port : DEFAULT_PORT);
+        connection.setPort(getResolvedPort());
         return connection;
     }
 
     @Override
     public String toString() {
-        return id + "//" + host + ":" + port;
+        return id + "@" + host + ":" + getResolvedPort();
     }
 }
