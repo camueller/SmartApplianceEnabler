@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.2">
+    <Appliance id="F-28091971-000000000099-00">
+        <MockSwitch />
+        <S0ElectricityMeter gpio="3" pinPullResistance="PULL_DOWN" impulsesPerKwh="1000" />
+        <Schedule minRunningTime="0" maxRunningTime="7200">
+            <DayTimeframe>
+                <Start hour="1" minute="0" second="0" />
+                <End hour="23" minute="0" second="0" />
+            </DayTimeframe>
+        </Schedule>
+    </Appliance>
+</Appliances>
