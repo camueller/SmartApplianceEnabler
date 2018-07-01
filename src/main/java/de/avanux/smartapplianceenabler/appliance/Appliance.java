@@ -19,6 +19,9 @@ package de.avanux.smartapplianceenabler.appliance;
 
 import com.pi4j.io.gpio.GpioController;
 import de.avanux.smartapplianceenabler.control.*;
+import de.avanux.smartapplianceenabler.control.ev.EVControl;
+import de.avanux.smartapplianceenabler.control.ev.EVModbusControl;
+import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
 import de.avanux.smartapplianceenabler.meter.*;
 import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
@@ -49,7 +52,8 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             @XmlElement(name = "MockSwitch", type = MockSwitch.class),
             @XmlElement(name = "ModbusSwitch", type = ModbusSwitch.class),
             @XmlElement(name = "StartingCurrentSwitch", type = StartingCurrentSwitch.class),
-            @XmlElement(name = "Switch", type = Switch.class)
+            @XmlElement(name = "Switch", type = Switch.class),
+            @XmlElement(name = "ElectricVehicleCharger", type = ElectricVehicleCharger.class),
     })
     private Control control;
     @XmlElements({
@@ -149,6 +153,9 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             if(control instanceof ApplianceIdConsumer) {
                 ((ApplianceIdConsumer) control).setApplianceId(id);
             }
+            if(control instanceof ElectricVehicleCharger) {
+                ((ElectricVehicleCharger) control).init();
+            }
             if(control instanceof StartingCurrentSwitch) {
                 Control wrappedControl = ((StartingCurrentSwitch) control).getControl();
                 ((ApplianceIdConsumer) wrappedControl).setApplianceId(id);
@@ -196,7 +203,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             gpioControllable.start();
         }
 
-        if(meter != null && meter instanceof S0ElectricityMeterNetworked) {
+        if(meter instanceof S0ElectricityMeterNetworked) {
             S0ElectricityMeterNetworked s0ElectricityMeterNetworked = (S0ElectricityMeterNetworked) meter;
             logger.info("{}: Starting {}", id, S0ElectricityMeterNetworked.class.getSimpleName());
             String pulseReceiverId = s0ElectricityMeterNetworked.getIdref();
@@ -205,7 +212,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             s0ElectricityMeterNetworked.start();
         }
 
-        if(meter != null && meter instanceof HttpElectricityMeter) {
+        if(meter instanceof HttpElectricityMeter) {
             ((HttpElectricityMeter) meter).start(timer);
         }
 
@@ -216,11 +223,14 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             ModbusTcp modbusTcp = modbusIdWithModbusTcp.get(modbusId);
             modbusSlave.setModbusTcp(modbusTcp);
         }
-        if(meter != null && meter instanceof ModbusElectricityMeter) {
+        if(meter instanceof ModbusElectricityMeter) {
             ((ModbusElectricityMeter) meter).start(timer);
         }
+        if(control instanceof ElectricVehicleCharger) {
+            ((ElectricVehicleCharger) control).start(timer);
+        }
 
-        if(control != null && control instanceof  StartingCurrentSwitch) {
+        if(control instanceof  StartingCurrentSwitch) {
             logger.info("{}: Starting {}", id, StartingCurrentSwitch.class.getSimpleName());
             ((StartingCurrentSwitch) control).start(new LocalDateTime(), getMeter(), timer);
         }
@@ -329,7 +339,13 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                 if(wrappedControl instanceof ModbusSwitch) {
                     slaves.add((ModbusSwitch) wrappedControl);
                 }
-             }
+            }
+            else if(control instanceof  ElectricVehicleCharger) {
+                EVControl evControl = ((ElectricVehicleCharger) control).getEvControl();
+                if(evControl instanceof EVModbusControl) {
+                    slaves.add((EVModbusControl) evControl);
+                }
+            }
         }
         return slaves;
     }
