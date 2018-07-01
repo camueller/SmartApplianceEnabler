@@ -1,13 +1,38 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.2">
     <Appliance id="F-28091971-000000000099-00">
-        <MockSwitch />
-        <S0ElectricityMeter gpio="3" pinPullResistance="PULL_DOWN" impulsesPerKwh="1000" />
-        <Schedule minRunningTime="0" maxRunningTime="7200">
-            <DayTimeframe>
-                <Start hour="1" minute="0" second="0" />
-                <End hour="23" minute="0" second="0" />
-            </DayTimeframe>
-        </Schedule>
+        <ElectricVehicleCharger>
+            <EVModbusControl idref="wallbox" slaveAddress="180">
+                <ModbusRegisterRead address="100" type="Input" bytes="1">
+                    <ModbusRegisterReadValue name="VehicleConnected" extractionRegex="(B)" />
+                    <ModbusRegisterReadValue name="ChargingPossible" extractionRegex="(C|D)" />
+                    <ModbusRegisterReadValue name="ChargingCompleted" extractionRegex="(B)" />
+                </ModbusRegisterRead>
+                <ModbusRegisterWrite address="400">
+                    <ModbusRegisterWriteValue name="StartCharging" value="1" />
+                    <ModbusRegisterWriteValue name="StopCharging" value="0" />
+                </ModbusRegisterWrite>
+                <ModbusRegisterWrite address="300">
+                    <!-- Alternative, falls Ladestrom am Controller stufenlos eingestellt werden kann -->
+                    <PowerControl voltage="230" phases="1" />
+                    <!-- Alternative, falls Ladestrom am Controller nur auf feste Werte gesetzt werden kann
+                    <PowerLevels>
+                        <PowerLevel power="2000" value="1" />
+                        <PowerLevel power="4000" value="2" />
+                        <PowerLevel power="6000" value="3" />
+                    </PowerLevels>
+                    -->
+                </ModbusRegisterWrite>
+            </EVModbusControl>
+            <ElectricVehicle name="Nissan Leaf" capacity="40000">
+                <ChargeProfile name="10 kWh" energyRequested="10000" maxChargeDuration="86400" />
+                <ChargeProfile name="Vollmachen" energyRequested="40000" maxChargeDuration="86400" />
+            </ElectricVehicle>
+        </ElectricVehicleCharger>
+        <ModbusElectricityMeter idref="modbus" slaveAddress="1" address="0x0C" pollInterval="10" measurementInterval="60" />
     </Appliance>
+    <Connectivity>
+        <ModbusTCP id="modbus" host="127.0.0.1" />
+        <ModbusTCP id="wallbox" host="192.168.69.12" />
+    </Connectivity>
 </Appliances>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Axel Müller <axel.mueller@avanux.de>
+ * Copyright (C) 2018 Axel Müller <axel.mueller@avanux.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,24 +15,36 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
+
 package de.avanux.smartapplianceenabler.modbus;
 
-import com.ghgande.j2mod.modbus.ModbusException;
-import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 
-/**
- * Executor of a ModBus transaction.
- *
- */
-public interface ModbusTransactionExecutor extends ApplianceIdConsumer {
+abstract public class BaseReadTransactionExecutor implements ApplianceIdConsumer {
 
-    /**
-     * Execute a ModBus transaction with a slave using a TCP connection.
-     * @param con the TCP connection
-     * @param slaveAddress the address of the slave
-     * @throws ModbusException
-     */
-    void execute(TCPMasterConnection con, int slaveAddress) throws ModbusException;
-    
+    private String applianceId;
+    private Integer address;
+
+    public BaseReadTransactionExecutor(String address) {
+        if(address.startsWith("0x")) {
+            this.address = Integer.parseInt(address.substring(2), 16);
+        }
+        else {
+            this.address = Integer.parseInt(address);
+        }
+    }
+
+
+    @Override
+    public void setApplianceId(String applianceId) {
+        this.applianceId = applianceId;
+    }
+
+    protected String getApplianceId() {
+        return applianceId;
+    }
+
+    protected Integer getAddress() {
+        return address;
+    }
 }

@@ -36,7 +36,7 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
 
     private transient Logger logger = LoggerFactory.getLogger(ModbusElectricityMeter.class);
     @XmlAttribute
-    private String registerAddress;
+    private String address;
     @XmlAttribute
     private Integer pollInterval; // seconds
     @XmlAttribute
@@ -91,16 +91,17 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     @Override
     public float getPower() {
         try {
-            ReadInputRegisterExecutor executor = new ReadInputRegisterExecutor(registerAddress);
+            ReadInputRegisterExecutor executor = new ReadInputRegisterExecutor(address, 2);
             executor.setApplianceId(getApplianceId());
             executeTransaction(executor, true);
-            Float registerValue = executor.getRegisterValue();
+            Float registerValue = executor.getRegisterValueFloat();
             if(registerValue != null) {
+                logger.debug("{}: Float value={}", getApplianceId(), registerValue);
                 return registerValue;
             }
         }
         catch(Exception e) {
-            logger.error("{}: Error reading input register {}", getApplianceId(), registerAddress, e);
+            logger.error("{}: Error reading input register {}", getApplianceId(), address, e);
         }
         return 0;
     }
