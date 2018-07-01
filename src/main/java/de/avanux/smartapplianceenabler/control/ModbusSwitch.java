@@ -17,9 +17,8 @@
  */
 package de.avanux.smartapplianceenabler.control;
 
-import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
-import de.avanux.smartapplianceenabler.modbus.ReadCoilExecutor;
-import de.avanux.smartapplianceenabler.modbus.WriteCoilExecutor;
+import de.avanux.smartapplianceenabler.modbus.*;
+import de.avanux.smartapplianceenabler.modbus.executor.*;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,17 +32,19 @@ public class ModbusSwitch extends ModbusSlave implements Control {
     private transient Logger logger = LoggerFactory.getLogger(ModbusSwitch.class);
     @XmlAttribute
     private String registerAddress;
-    transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
+    private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
 
     @Override
     public boolean on(LocalDateTime now, boolean switchOn) {
         boolean result = false;
         try {
             logger.info("{}: Switching {}", getApplianceId(), (switchOn ? "on" : "off"));
-            WriteCoilExecutor executor = new WriteCoilExecutor(registerAddress, switchOn);
-            executor.setApplianceId(getApplianceId());
+            ModbusWriteTransactionExecutor executor = ModbusExecutorFactory.getWriteExecutor(getApplianceId(),
+                    ModbusRegisterType.Coil, registerAddress);
             executeTransaction(executor, true);
-            result = executor.getResult();
+            if(executor instanceof WriteCoilExecutor) {
+                result = ((WriteCoilExecutor) executor).getResult();
+            }
 
             for(ControlStateChangedListener listener : controlStateChangedListeners) {
                 listener.controlStateChanged(now, switchOn);
@@ -59,10 +60,12 @@ public class ModbusSwitch extends ModbusSlave implements Control {
     public boolean isOn() {
         boolean coil = false;
         try {
-            ReadCoilExecutor executor = new ReadCoilExecutor(registerAddress);
-            executor.setApplianceId(getApplianceId());
+            ModbusReadTransactionExecutor executor = ModbusExecutorFactory.getReadExecutor(getApplianceId(),
+                    ModbusRegisterType.Coil, registerAddress);
             executeTransaction(executor, true);
-            coil = executor.getCoil();
+            if(executor instanceof CoilExecutor) {
+                coil = ((CoilExecutor) executor).getValue();
+            }
         }
         catch (Exception e) {
             logger.error("{}: Error switching coil register {}", getApplianceId(), registerAddress, e);

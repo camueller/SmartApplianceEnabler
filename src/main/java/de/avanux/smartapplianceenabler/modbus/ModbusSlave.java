@@ -19,6 +19,7 @@ package de.avanux.smartapplianceenabler.modbus;
 
 import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import de.avanux.smartapplianceenabler.modbus.executor.ModbusTransactionExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

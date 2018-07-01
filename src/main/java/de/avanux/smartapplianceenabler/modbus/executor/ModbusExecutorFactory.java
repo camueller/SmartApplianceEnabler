@@ -16,15 +16,27 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.avanux.smartapplianceenabler.modbus;
+package de.avanux.smartapplianceenabler.modbus.executor;
+
+import de.avanux.smartapplianceenabler.modbus.ModbusRegisterType;
 
 public class ModbusExecutorFactory {
+
+    public static ModbusReadTransactionExecutor getReadExecutor(String applianceId, ModbusRegisterType type, String address) {
+        return getReadExecutor(applianceId, type, address, 1);
+    }
 
     public static ModbusReadTransactionExecutor getReadExecutor(String applianceId, ModbusRegisterType type, String address, int bytes) {
         ModbusReadTransactionExecutor executor;
         switch (type) {
-            case Input:
-                executor = new ReadInputRegisterExecutor(address, bytes);
+            case InputString:
+                executor = new StringInputRegisterExecutor(address, bytes);
+                break;
+            case InputFloat:
+                executor = new FloatInputRegisterExecutor(address, bytes);
+                break;
+            case Coil:
+                executor = new CoilExecutor(address);
                 break;
             default:
                 return null;
@@ -38,6 +50,9 @@ public class ModbusExecutorFactory {
         switch (type) {
             case Holding:
                 executor = new WriteHoldingRegisterExecutor(address);
+                break;
+            case Coil:
+                executor = new WriteCoilExecutor(address);
                 break;
             default:
                 return null;

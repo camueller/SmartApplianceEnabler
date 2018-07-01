@@ -16,14 +16,25 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.avanux.smartapplianceenabler.modbus;
+package de.avanux.smartapplianceenabler.modbus.executor;
 
-public interface ModbusReadTransactionExecutor extends ModbusTransactionExecutor {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-    Integer[] getRegisterValues();
+public class FloatInputRegisterExecutor extends InputRegisterExecutor<Float> {
+    private Logger logger = LoggerFactory.getLogger(FloatInputRegisterExecutor.class);
 
-    Float getRegisterValueFloat();
+    public FloatInputRegisterExecutor(String address, int bytes) {
+        super(address, bytes);
+    }
 
-    String getRegisterValueString();
-
+    @Override
+    public Float getValue() {
+        if(getBytes() == 2) {
+            Integer[] byteValues = getByteValues();
+            return Float.intBitsToFloat(byteValues[0] << 16 | byteValues[1]);
+        }
+        logger.error("{}: Float has to be composed of 2 bytes!", getApplianceId());
+        return null;
+    }
 }

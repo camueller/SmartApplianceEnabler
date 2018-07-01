@@ -3,7 +3,7 @@
     <Appliance id="F-28091971-000000000099-00">
         <ElectricVehicleCharger voltage="230" phases="1">
             <EVModbusControl idref="wallbox" slaveAddress="180">
-                <ModbusRegisterRead address="100" type="Input">
+                <ModbusRegisterRead address="100" type="InputString">
                     <ModbusRegisterReadValue name="VehicleConnected" extractionRegex="(B)" />
                     <ModbusRegisterReadValue name="ChargingPossible" extractionRegex="(C|D)" />
                     <ModbusRegisterReadValue name="ChargingCompleted" extractionRegex="(B)" />

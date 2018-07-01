@@ -16,7 +16,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.avanux.smartapplianceenabler.modbus;
+package de.avanux.smartapplianceenabler.modbus.executor;
 
 import com.ghgande.j2mod.modbus.ModbusException;
 import com.ghgande.j2mod.modbus.io.ModbusTCPTransaction;
@@ -26,10 +26,11 @@ import com.ghgande.j2mod.modbus.procimg.SimpleRegister;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WriteHoldingRegisterExecutor extends BaseReadTransactionExecutor implements ModbusWriteTransactionExecutor {
+public class WriteHoldingRegisterExecutor extends BaseTransactionExecutor implements ModbusWriteTransactionExecutor<Integer> {
 
-    private Logger logger = LoggerFactory.getLogger(ReadInputRegisterExecutor.class);
+    private Logger logger = LoggerFactory.getLogger(InputRegisterExecutor.class);
     private Integer value;
+    private Integer result;
 
     public WriteHoldingRegisterExecutor(String address) {
         super(address, 1);
@@ -38,6 +39,11 @@ public class WriteHoldingRegisterExecutor extends BaseReadTransactionExecutor im
     @Override
     public void setValue(Integer value) {
         this.value = value;
+    }
+
+    @Override
+    public Integer getResult() {
+        return result;
     }
 
     @Override
@@ -53,9 +59,9 @@ public class WriteHoldingRegisterExecutor extends BaseReadTransactionExecutor im
 
         WriteSingleRegisterResponse res = (WriteSingleRegisterResponse) trans.getResponse();
         if(res != null) {
-            int confirmedValue = res.getRegisterValue();
+            this.result = res.getRegisterValue();
             logger.debug("{}: Write holding register={} value={} confirmedValue={}", getApplianceId(), getAddress(),
-                    value, confirmedValue);
+                    value, this.result);
         }
         else {
             logger.error("{}: No response received.", getApplianceId());

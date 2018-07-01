@@ -18,9 +18,10 @@
 package de.avanux.smartapplianceenabler.meter;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
-import de.avanux.smartapplianceenabler.modbus.ModbusElectricityMeterDefaults;
-import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
-import de.avanux.smartapplianceenabler.modbus.ReadInputRegisterExecutor;
+import de.avanux.smartapplianceenabler.modbus.*;
+import de.avanux.smartapplianceenabler.modbus.executor.FloatInputRegisterExecutor;
+import de.avanux.smartapplianceenabler.modbus.executor.ModbusExecutorFactory;
+import de.avanux.smartapplianceenabler.modbus.executor.ModbusReadTransactionExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,13 +92,17 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     @Override
     public float getPower() {
         try {
-            ReadInputRegisterExecutor executor = new ReadInputRegisterExecutor(address, 2);
-            executor.setApplianceId(getApplianceId());
-            executeTransaction(executor, true);
-            Float registerValue = executor.getRegisterValueFloat();
-            if(registerValue != null) {
-                logger.debug("{}: Float value={}", getApplianceId(), registerValue);
-                return registerValue;
+            ModbusReadTransactionExecutor executor = ModbusExecutorFactory.getReadExecutor(getApplianceId(),
+                    ModbusRegisterType.InputFloat, address, 2);
+            if(executor != null) {
+                executeTransaction(executor, true);
+                if(executor instanceof FloatInputRegisterExecutor) {
+                    Float registerValue = ((FloatInputRegisterExecutor) executor).getValue();
+                    if(registerValue != null) {
+                        logger.debug("{}: Float value={}", getApplianceId(), registerValue);
+                        return registerValue;
+                    }
+                }
             }
         }
         catch(Exception e) {
