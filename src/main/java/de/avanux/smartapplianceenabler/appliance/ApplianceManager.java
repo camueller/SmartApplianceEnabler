@@ -149,7 +149,7 @@ public class ApplianceManager implements Runnable {
             // make ModbusTcp accessible by id
             if(connectivity.getModbusTCPs() != null) {
                 for(ModbusTcp modbusTCP : connectivity.getModbusTCPs()) {
-                    logger.info("ModBus (" + modbusTCP.getId() + ") configured for " + modbusTCP.toString());
+                    logger.info("ModBus " + modbusTCP.getId() + " configured for " + modbusTCP.toString());
                     modbusIdWithModbusTcp.put(modbusTCP.getId(), modbusTCP);
                 }
             }

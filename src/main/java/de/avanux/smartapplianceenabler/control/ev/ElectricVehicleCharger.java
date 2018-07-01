@@ -25,10 +25,7 @@ import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
+import javax.xml.bind.annotation.*;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -36,6 +33,10 @@ import java.util.TimerTask;
 public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
 
     private transient Logger logger = LoggerFactory.getLogger(ElectricVehicleCharger.class);
+    @XmlAttribute
+    private Integer voltage; // = 230;
+    @XmlAttribute
+    private Integer phases; // = 1;
     @XmlElements({
             @XmlElement(name = "EVModbusControl", type = EVModbusControl.class),
     })
@@ -53,7 +54,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     }
 
     public void init() {
-        logger.debug("{}: Initializing ...", this.applianceId);
+        logger.debug("{}: voltage={} phases={}", this.applianceId, this.voltage, this.phases);
         evControl.validate();
     }
 
@@ -65,6 +66,14 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
                 logger.debug("{}: vehicleConnected = {}", applianceId, vehicleConnected);
             }
         }, 0, evControl.getVehicleStatusPollInterval() * 1000);
+
+        // TODO remove
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                setChargePower(5500);
+            }
+        }, 3000);
     }
 
     @Override
@@ -83,5 +92,10 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     }
 
 
+    private void setChargePower(int power) {
+        int current = Float.valueOf(power / (this.voltage * this.phases)).intValue();
+        logger.debug("{}: Set charge power: {}W / {}A", applianceId, power, current);
+        evControl.setChargeCurrent(current);
+    }
 
 }

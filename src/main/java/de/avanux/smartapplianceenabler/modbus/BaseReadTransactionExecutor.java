@@ -24,14 +24,16 @@ abstract public class BaseReadTransactionExecutor implements ApplianceIdConsumer
 
     private String applianceId;
     private Integer address;
+    private int bytes = 1;
 
-    public BaseReadTransactionExecutor(String address) {
+    public BaseReadTransactionExecutor(String address, int bytes) {
         if(address.startsWith("0x")) {
             this.address = Integer.parseInt(address.substring(2), 16);
         }
         else {
             this.address = Integer.parseInt(address);
         }
+        this.bytes = bytes;
     }
 
 
@@ -46,5 +48,9 @@ abstract public class BaseReadTransactionExecutor implements ApplianceIdConsumer
 
     protected Integer getAddress() {
         return address;
+    }
+
+    protected int getBytes() {
+        return bytes;
     }
 }
