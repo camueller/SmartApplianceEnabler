@@ -30,8 +30,6 @@ public class ModbusRegisterWrite {
     private String address;
     @XmlAttribute
     private String type;
-    @XmlAttribute
-    private String coding; // ="Integer";
     @XmlElement(name = "ModbusRegisterWriteValue")
     private List<ModbusRegisterWriteValue> registerWriteValues;
     private transient ModbusRegisterWriteValue selectedRegisterWriteValue;
@@ -39,11 +37,10 @@ public class ModbusRegisterWrite {
     public ModbusRegisterWrite() {
     }
 
-    public ModbusRegisterWrite(String address, ModbusRegisterType type, ModbusRegisterCoding coding,
+    public ModbusRegisterWrite(String address, ModbusRegisterType type,
                                ModbusRegisterWriteValue selectedRegisterWriteValue) {
         this.address = address;
         this.type = type.name();
-        this.coding = coding != null ? coding.name() : null;
         this.selectedRegisterWriteValue = selectedRegisterWriteValue;
     }
 
@@ -53,10 +50,6 @@ public class ModbusRegisterWrite {
 
     public ModbusRegisterType getType() {
         return ModbusRegisterType.valueOf(this.type);
-    }
-
-    public ModbusRegisterCoding getCoding() {
-        return this.coding != null ? ModbusRegisterCoding.valueOf(this.coding) : null;
     }
 
     public List<ModbusRegisterWriteValue> getRegisterWriteValues() {

@@ -19,6 +19,10 @@
 package de.avanux.smartapplianceenabler.control.ev;
 
 import de.avanux.smartapplianceenabler.modbus.*;
+import de.avanux.smartapplianceenabler.modbus.executor.ModbusExecutorFactory;
+import de.avanux.smartapplianceenabler.modbus.executor.ModbusReadTransactionExecutor;
+import de.avanux.smartapplianceenabler.modbus.executor.ModbusWriteTransactionExecutor;
+import de.avanux.smartapplianceenabler.modbus.executor.StringInputRegisterExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,9 +93,11 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
                         registerRead.getType(), registerRead.getAddress(), registerRead.getBytes());
                 if(executor != null) {
                     executeTransaction(executor, false);
-                    String registerValue = executor.getRegisterValueString();
-                    logger.debug("{}: Vehicle status={}", getApplianceId(), registerValue);
-                    return registerValue.matches(registerRead.getSelectedRegisterReadValue().getExtractionRegex());
+                    if(executor instanceof StringInputRegisterExecutor) {
+                        String registerValue = ((StringInputRegisterExecutor) executor).getValue();
+                        logger.debug("{}: Vehicle status={}", getApplianceId(), registerValue);
+                        return registerValue.matches(registerRead.getSelectedRegisterReadValue().getExtractionRegex());
+                    }
                 }
             }
             catch(Exception e) {
@@ -146,7 +152,7 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
             for(ModbusRegisterWriteValue registerWriteValue: registerWrite.getRegisterWriteValues()) {
                 if(registerName.name().equals(registerWriteValue.getName())) {
                     return new ModbusRegisterWrite(registerWrite.getAddress(), registerWrite.getType(),
-                            registerWrite.getCoding(), registerWriteValue);
+                            registerWriteValue);
                 }
             }
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Axel Müller <axel.mueller@avanux.de>
+ * Copyright (C) 2018 Axel Müller <axel.mueller@avanux.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package de.avanux.smartapplianceenabler.modbus;
+package de.avanux.smartapplianceenabler.modbus.executor;
 
 import com.ghgande.j2mod.modbus.ModbusException;
 import com.ghgande.j2mod.modbus.io.ModbusTCPTransaction;
@@ -29,11 +29,11 @@ import org.slf4j.LoggerFactory;
  * Implements a <tt>ReadInputRegistersRequest</tt>.
  * The implementation directly correlates with the class 0 function <i>read multiple registers (FC 4)</i>
  */
-public class ReadInputRegisterExecutor extends BaseReadTransactionExecutor implements ModbusReadTransactionExecutor {
-    private Logger logger = LoggerFactory.getLogger(ReadInputRegisterExecutor.class);
+abstract public class InputRegisterExecutor<V> extends BaseTransactionExecutor implements ModbusReadTransactionExecutor<V> {
+    private Logger logger = LoggerFactory.getLogger(InputRegisterExecutor.class);
     private Integer[] byteValues;
-    
-    public ReadInputRegisterExecutor(String address, int bytes) {
+
+    public InputRegisterExecutor(String address, int bytes) {
         super(address, bytes);
     }
 
@@ -41,43 +41,25 @@ public class ReadInputRegisterExecutor extends BaseReadTransactionExecutor imple
     public void execute(TCPMasterConnection con, int slaveAddress) throws ModbusException {
         ReadInputRegistersRequest req = new ReadInputRegistersRequest(getAddress(), getBytes());
         req.setUnitID(slaveAddress);
-        
+
         ModbusTCPTransaction trans = new ModbusTCPTransaction(con);
         trans.setRequest(req);
         trans.execute();
-        
+
         ReadInputRegistersResponse res = (ReadInputRegistersResponse) trans.getResponse();
         this.byteValues = null;
-        if(res != null) {
+        if (res != null) {
             this.byteValues = new Integer[getBytes()];
-            for(int i = 0; i<getBytes(); i++) {
+            for (int i = 0; i < getBytes(); i++) {
                 this.byteValues[i] = res.getRegisterValue(i);
             }
             logger.debug("{}: Input register={} value={}", getApplianceId(), getAddress(), this.byteValues);
-        }
-        else {
+        } else {
             logger.error("{}: No response received.", getApplianceId());
         }
     }
-    
-    public Integer[] getRegisterValues() {
-        return this.byteValues;
-    }
 
-    public Float getRegisterValueFloat() {
-        if(getBytes() == 2) {
-            return Float.intBitsToFloat(this.byteValues[0] << 16 | this.byteValues[1]);
-        }
-        logger.error("{}: Float has to be composed of 2 bytes!", getApplianceId());
-        return null;
+    protected Integer[] getByteValues() {
+        return byteValues;
     }
-
-    public String getRegisterValueString() {
-        StringBuilder stringValue = new StringBuilder();
-        for(Integer byteValue : this.byteValues) {
-            stringValue.append(new Character((char) byteValue.intValue()));
-        }
-        return stringValue.toString();
-    }
-
 }

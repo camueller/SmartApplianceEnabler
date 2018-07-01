@@ -16,7 +16,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.avanux.smartapplianceenabler.modbus;
+package de.avanux.smartapplianceenabler.modbus.executor;
 
 import com.ghgande.j2mod.modbus.ModbusException;
 import com.ghgande.j2mod.modbus.io.ModbusTCPTransaction;
@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ReadHoldingRegisterExecutor implements ModbusTransactionExecutor, ApplianceIdConsumer {
-    private Logger logger = LoggerFactory.getLogger(ReadInputRegisterExecutor.class);
+    private Logger logger = LoggerFactory.getLogger(InputRegisterExecutor.class);
     private String applianceId;
     private String registerAddress;
     private Float registerValue;

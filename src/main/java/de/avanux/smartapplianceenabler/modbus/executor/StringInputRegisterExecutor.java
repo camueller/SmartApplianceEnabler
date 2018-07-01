@@ -16,11 +16,24 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.avanux.smartapplianceenabler.modbus;
+package de.avanux.smartapplianceenabler.modbus.executor;
 
-public enum ModbusRegisterType {
-    InputFloat,
-    InputString,
-    Holding,
-    Coil
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class StringInputRegisterExecutor extends InputRegisterExecutor<String> {
+    private Logger logger = LoggerFactory.getLogger(StringInputRegisterExecutor.class);
+
+    public StringInputRegisterExecutor(String address, int bytes) {
+        super(address, bytes);
+    }
+
+    @Override
+    public String getValue() {
+        StringBuilder stringValue = new StringBuilder();
+        for(Integer byteValue : getByteValues()) {
+            stringValue.append(new Character((char) byteValue.intValue()));
+        }
+        return stringValue.toString();
+    }
 }

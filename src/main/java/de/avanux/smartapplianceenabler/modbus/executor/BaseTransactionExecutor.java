@@ -16,17 +16,17 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.avanux.smartapplianceenabler.modbus;
+package de.avanux.smartapplianceenabler.modbus.executor;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 
-abstract public class BaseReadTransactionExecutor implements ApplianceIdConsumer {
+abstract public class BaseTransactionExecutor implements ApplianceIdConsumer {
 
     private String applianceId;
     private Integer address;
     private int bytes = 1;
 
-    public BaseReadTransactionExecutor(String address, int bytes) {
+    public BaseTransactionExecutor(String address, int bytes) {
         if(address.startsWith("0x")) {
             this.address = Integer.parseInt(address.substring(2), 16);
         }
