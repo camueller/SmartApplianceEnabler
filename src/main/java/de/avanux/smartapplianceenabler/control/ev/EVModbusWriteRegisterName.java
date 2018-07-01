@@ -18,14 +18,8 @@
 
 package de.avanux.smartapplianceenabler.control.ev;
 
-import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
-
-public interface EVControl extends ApplianceIdConsumer {
-    void validate();
-
-    boolean isVehicleConnected();
-
-    Integer getVehicleStatusPollInterval();
-
-    void setChargeCurrent(int current);
+public enum EVModbusWriteRegisterName {
+    StartCharging,
+    StopCharging,
+    ChargingCurrent
 }

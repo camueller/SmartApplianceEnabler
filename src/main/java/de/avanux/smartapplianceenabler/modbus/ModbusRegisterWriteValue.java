@@ -16,16 +16,24 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.avanux.smartapplianceenabler.control.ev;
+package de.avanux.smartapplianceenabler.modbus;
 
-import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 
-public interface EVControl extends ApplianceIdConsumer {
-    void validate();
+@XmlAccessorType(XmlAccessType.FIELD)
+public class ModbusRegisterWriteValue {
+    @XmlAttribute
+    private String name;
+    @XmlAttribute
+    private String value;
 
-    boolean isVehicleConnected();
+    public String getName() {
+        return name;
+    }
 
-    Integer getVehicleStatusPollInterval();
-
-    void setChargeCurrent(int current);
+    public String getValue() {
+        return value;
+    }
 }

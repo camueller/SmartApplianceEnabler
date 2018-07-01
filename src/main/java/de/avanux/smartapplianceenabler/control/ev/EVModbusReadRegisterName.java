@@ -18,11 +18,8 @@
 
 package de.avanux.smartapplianceenabler.control.ev;
 
-public enum EVModbusRegisterName {
+public enum EVModbusReadRegisterName {
     VehicleConnected,
     ChargingPossible,
-    ChargingCompleted,
-
-    StartCharging,
-    StopCharging
+    ChargingCompleted
 }

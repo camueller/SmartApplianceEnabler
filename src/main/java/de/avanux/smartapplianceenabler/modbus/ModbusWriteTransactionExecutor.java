@@ -16,16 +16,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.avanux.smartapplianceenabler.control.ev;
+package de.avanux.smartapplianceenabler.modbus;
 
-import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
-
-public interface EVControl extends ApplianceIdConsumer {
-    void validate();
-
-    boolean isVehicleConnected();
-
-    Integer getVehicleStatusPollInterval();
-
-    void setChargeCurrent(int current);
+public interface ModbusWriteTransactionExecutor extends ModbusTransactionExecutor {
+    void setValue(Integer value);
 }

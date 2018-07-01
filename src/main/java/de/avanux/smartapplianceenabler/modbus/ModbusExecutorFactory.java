@@ -32,4 +32,17 @@ public class ModbusExecutorFactory {
         executor.setApplianceId(applianceId);
         return executor;
     }
+
+    public static ModbusWriteTransactionExecutor getWriteExecutor(String applianceId, ModbusRegisterType type, String address) {
+        ModbusWriteTransactionExecutor executor;
+        switch (type) {
+            case Holding:
+                executor = new WriteHoldingRegisterExecutor(address);
+                break;
+            default:
+                return null;
+        }
+        executor.setApplianceId(applianceId);
+        return executor;
+    }
 }

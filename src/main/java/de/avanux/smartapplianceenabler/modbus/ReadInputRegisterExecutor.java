@@ -31,17 +31,15 @@ import org.slf4j.LoggerFactory;
  */
 public class ReadInputRegisterExecutor extends BaseReadTransactionExecutor implements ModbusReadTransactionExecutor {
     private Logger logger = LoggerFactory.getLogger(ReadInputRegisterExecutor.class);
-    private int bytes = 1;
     private Integer[] byteValues;
     
     public ReadInputRegisterExecutor(String address, int bytes) {
-        super(address);
-        this.bytes = bytes;
+        super(address, bytes);
     }
 
     @Override
     public void execute(TCPMasterConnection con, int slaveAddress) throws ModbusException {
-        ReadInputRegistersRequest req = new ReadInputRegistersRequest(getAddress(), this.bytes);
+        ReadInputRegistersRequest req = new ReadInputRegistersRequest(getAddress(), getBytes());
         req.setUnitID(slaveAddress);
         
         ModbusTCPTransaction trans = new ModbusTCPTransaction(con);
@@ -51,8 +49,8 @@ public class ReadInputRegisterExecutor extends BaseReadTransactionExecutor imple
         ReadInputRegistersResponse res = (ReadInputRegistersResponse) trans.getResponse();
         this.byteValues = null;
         if(res != null) {
-            this.byteValues = new Integer[this.bytes];
-            for(int i = 0; i<this.bytes; i++) {
+            this.byteValues = new Integer[getBytes()];
+            for(int i = 0; i<getBytes(); i++) {
                 this.byteValues[i] = res.getRegisterValue(i);
             }
             logger.debug("{}: Input register={} value={}", getApplianceId(), getAddress(), this.byteValues);
@@ -67,7 +65,7 @@ public class ReadInputRegisterExecutor extends BaseReadTransactionExecutor imple
     }
 
     public Float getRegisterValueFloat() {
-        if(this.bytes == 2) {
+        if(getBytes() == 2) {
             return Float.intBitsToFloat(this.byteValues[0] << 16 | this.byteValues[1]);
         }
         logger.error("{}: Float has to be composed of 2 bytes!", getApplianceId());

@@ -25,53 +25,45 @@ import javax.xml.bind.annotation.XmlElement;
 import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ModbusRegisterRead {
+public class ModbusRegisterWrite {
     @XmlAttribute
     private String address;
     @XmlAttribute
-    private Integer bytes = 1;
-    @XmlAttribute
     private String type;
     @XmlAttribute
-    private Integer pollInterval = 10; // seconds
-    @XmlElement(name = "ModbusRegisterReadValue")
-    private List<ModbusRegisterReadValue> registerReadValues;
-    private transient ModbusRegisterReadValue selectedRegisterReadValue;
+    private String coding; // ="Integer";
+    @XmlElement(name = "ModbusRegisterWriteValue")
+    private List<ModbusRegisterWriteValue> registerWriteValues;
+    private transient ModbusRegisterWriteValue selectedRegisterWriteValue;
 
-    public ModbusRegisterRead() {
+    public ModbusRegisterWrite() {
     }
 
-    public ModbusRegisterRead(String address, Integer bytes, ModbusRegisterType type, Integer pollInterval,
-                              ModbusRegisterReadValue selectedRegisterReadValue) {
+    public ModbusRegisterWrite(String address, ModbusRegisterType type, ModbusRegisterCoding coding,
+                               ModbusRegisterWriteValue selectedRegisterWriteValue) {
         this.address = address;
-        this.bytes = bytes;
         this.type = type.name();
-        this.pollInterval = pollInterval;
-        this.selectedRegisterReadValue = selectedRegisterReadValue;
+        this.coding = coding != null ? coding.name() : null;
+        this.selectedRegisterWriteValue = selectedRegisterWriteValue;
     }
 
     public String getAddress() {
         return address;
     }
 
-    public Integer getBytes() {
-        return bytes;
-    }
-
     public ModbusRegisterType getType() {
         return ModbusRegisterType.valueOf(this.type);
     }
 
-    public Integer getPollInterval() {
-        return pollInterval;
+    public ModbusRegisterCoding getCoding() {
+        return this.coding != null ? ModbusRegisterCoding.valueOf(this.coding) : null;
     }
 
-    public List<ModbusRegisterReadValue> getRegisterReadValues() {
-        return registerReadValues;
+    public List<ModbusRegisterWriteValue> getRegisterWriteValues() {
+        return registerWriteValues;
     }
 
-    public ModbusRegisterReadValue getSelectedRegisterReadValue() {
-        return selectedRegisterReadValue;
+    public ModbusRegisterWriteValue getSelectedRegisterWriteValue() {
+        return selectedRegisterWriteValue;
     }
-
 }
