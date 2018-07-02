@@ -43,6 +43,56 @@
 </Device2EM>
 
 
+<Device2EM xmlns="http://www.sma.de/communication/schema/SEMP/v1">
+  <DeviceInfo>
+    <Identification>
+      <DeviceId>F-28091971-000000000099-00</DeviceId>
+      <DeviceName>Elektroauto</DeviceName>
+      <DeviceType>EVCharger</DeviceType>
+      <DeviceSerial>EV-1438</DeviceSerial>
+      <DeviceVendor>EV Ltd.</DeviceVendor>
+    </Identification>
+    <Characteristics>
+      <MinPowerConsumption>1400</MinPowerConsumption>
+      <MaxPowerConsumption>22000</MaxPowerConsumption>
+    </Characteristics>
+    <Capabilities>
+      <CurrentPower>
+        <Method>Measurement</Method>
+      </CurrentPower>
+      <Interruptions>
+        <InterruptionsAllowed>true</InterruptionsAllowed>
+      </Interruptions>
+      <Requests>
+        <OptionalEnergy>true</OptionalEnergy>
+      </Requests>
+    </Capabilities>
+  </DeviceInfo>
+  <DeviceStatus>
+    <DeviceId>F-28091971-000000000099-00</DeviceId>
+    <EMSignalsAccepted>true</EMSignalsAccepted>
+    <Status>Off</Status>
+    <PowerConsumption>
+      <PowerInfo>
+        <AveragePower>0</AveragePower>
+        <MinPower>0</MinPower>
+        <MaxPower>0</MaxPower>
+        <Timestamp>0</Timestamp>
+        <AveragingInterval>60</AveragingInterval>
+      </PowerInfo>
+    </PowerConsumption>
+  </DeviceStatus>
+  <PlanningRequest>
+    <Timeframe>
+      <DeviceId>F-28091971-000000000099-00</DeviceId>
+      <EarliestStart>0</EarliestStart>
+      <LatestEnd>11707</LatestEnd>
+      <MinEnergy>0</MinEnergy>
+      <MaxEnergy>9000</MaxEnergy>
+    </Timeframe>
+  </PlanningRequest>
+</Device2EM>
+
 axel@p51:/tmp$ grep Received rolling-2018-06-07.log
 2018-06-07 07:56:04,152 DEBUG [http-nio-8080-exec-9] d.a.s.s.w.SempController [SempController.java:190] on=true, recommendedPowerConsumption=1400W: Received control request:
 2018-06-07 09:25:15,916 DEBUG [http-nio-8080-exec-9] d.a.s.s.w.SempController [SempController.java:190] on=true, recommendedPowerConsumption=3460W: Received control request:
