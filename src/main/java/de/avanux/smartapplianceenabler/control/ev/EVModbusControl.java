@@ -19,10 +19,7 @@
 package de.avanux.smartapplianceenabler.control.ev;
 
 import de.avanux.smartapplianceenabler.modbus.*;
-import de.avanux.smartapplianceenabler.modbus.executor.ModbusExecutorFactory;
-import de.avanux.smartapplianceenabler.modbus.executor.ModbusReadTransactionExecutor;
-import de.avanux.smartapplianceenabler.modbus.executor.ModbusWriteTransactionExecutor;
-import de.avanux.smartapplianceenabler.modbus.executor.StringInputRegisterExecutor;
+import de.avanux.smartapplianceenabler.modbus.executor.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,6 +81,8 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
         }
     }
 
+    // FIXME remove counter
+    int counter = 0;
     @Override
     public boolean isVehicleConnected() {
         ModbusRegisterRead registerRead = getRegisterRead(EVModbusReadRegisterName.VehicleConnected);
@@ -95,6 +94,13 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
                     executeTransaction(executor, false);
                     if(executor instanceof StringInputRegisterExecutor) {
                         String registerValue = ((StringInputRegisterExecutor) executor).getValue();
+
+                        // FIXME remove
+                        counter++;
+                        if(counter > 2) {
+                            registerValue = "B";
+                        }
+
                         logger.debug("{}: Vehicle status={}", getApplianceId(), registerValue);
                         return registerValue.matches(registerRead.getSelectedRegisterReadValue().getExtractionRegex());
                     }
@@ -130,7 +136,39 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
                 }
             }
             catch(Exception e) {
-                logger.error("{}: Error reading input register {}", getApplianceId(), registerWrite.getAddress(), e);
+                logger.error("{}: Error setting charge current in register {}", getApplianceId(), registerWrite.getAddress(), e);
+            }
+        }
+    }
+
+    @Override
+    public void startCharging() {
+        setCharging(EVModbusWriteRegisterName.StartCharging);
+    }
+
+    @Override
+    public void stopCharging() {
+        setCharging(EVModbusWriteRegisterName.StopCharging);
+    }
+
+    private void setCharging(EVModbusWriteRegisterName registerName) {
+        ModbusRegisterWrite registerWrite = getRegisterWrite(registerName);
+        if(registerWrite != null) {
+            try {
+                ModbusWriteTransactionExecutor executor = ModbusExecutorFactory.getWriteExecutor(getApplianceId(),
+                        registerWrite.getType(), registerWrite.getAddress());
+                if(executor != null) {
+                    String stringValue = registerWrite.getSelectedRegisterWriteValue().getValue();
+                    Object value = null;
+                    if(ModbusRegisterType.Coil.equals(registerWrite.getType())) {
+                        value = "1".equals(stringValue);
+                    }
+                    executor.setValue(value);
+                    executeTransaction(executor, true);
+                }
+            }
+            catch(Exception e) {
+                logger.error("{}: Error enable/disable charging process in register {}", getApplianceId(), registerWrite.getAddress(), e);
             }
         }
     }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.2">
     <Appliance id="F-28091971-000000000099-00">
-        <ElectricVehicleCharger voltage="230" phases="1">
+        <ElectricVehicleCharger>
             <EVModbusControl idref="wallbox" slaveAddress="180">
                 <ModbusRegisterRead address="100" type="InputString">
                     <ModbusRegisterReadValue name="VehicleConnected" extractionRegex="(B)" />

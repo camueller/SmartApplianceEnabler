@@ -34,14 +34,15 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
 
     private transient Logger logger = LoggerFactory.getLogger(ElectricVehicleCharger.class);
     @XmlAttribute
-    private Integer voltage; // = 230;
+    private Integer voltage = 230;
     @XmlAttribute
-    private Integer phases; // = 1;
+    private Integer phases = 1;
     @XmlElements({
             @XmlElement(name = "EVModbusControl", type = EVModbusControl.class),
     })
     private EVControl evControl;
     private transient String applianceId;
+    private transient boolean vehicleConnected = false;
 
     @Override
     public void setApplianceId(String applianceId) {
@@ -62,18 +63,20 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                boolean vehicleConnected = evControl.isVehicleConnected();
-                logger.debug("{}: vehicleConnected = {}", applianceId, vehicleConnected);
+                boolean currentVehicleConnectedState = evControl.isVehicleConnected();
+                if (vehicleConnected != currentVehicleConnectedState) {
+                    logger.debug("{}: State changed: vehicleConnected = {}", applianceId, currentVehicleConnectedState);
+                    if(currentVehicleConnectedState) {
+                        setChargePower(5500);
+                        startCharging();
+                    }
+                }
+                else {
+                    logger.debug("{}: vehicleConnected = {}", applianceId, currentVehicleConnectedState);
+                }
+                vehicleConnected = currentVehicleConnectedState;
             }
         }, 0, evControl.getVehicleStatusPollInterval() * 1000);
-
-        // TODO remove
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                setChargePower(5500);
-            }
-        }, 3000);
     }
 
     @Override
@@ -83,7 +86,6 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
 
     @Override
     public void addControlStateChangedListener(ControlStateChangedListener listener) {
-
     }
 
     @Override
@@ -94,8 +96,18 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
 
     private void setChargePower(int power) {
         int current = Float.valueOf(power / (this.voltage * this.phases)).intValue();
-        logger.debug("{}: Set charge power: {}W / {}A", applianceId, power, current);
+        logger.debug("{}: Set charge power: {}W corresponds to {}A", applianceId, power, current);
         evControl.setChargeCurrent(current);
+    }
+
+    private void startCharging() {
+        logger.debug("{}: Start charging process", applianceId);
+        evControl.startCharging();
+    }
+
+    private void stopCharging() {
+        logger.debug("{}: Stop charging process", applianceId);
+        evControl.stopCharging();
     }
 
 }
