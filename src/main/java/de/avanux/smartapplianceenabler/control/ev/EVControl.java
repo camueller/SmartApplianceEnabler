@@ -32,4 +32,6 @@ public interface EVControl extends ApplianceIdConsumer {
     void startCharging();
 
     void stopCharging();
+
+    boolean isCharging();
 }

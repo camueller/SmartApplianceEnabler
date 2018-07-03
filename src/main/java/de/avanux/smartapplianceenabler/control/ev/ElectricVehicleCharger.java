@@ -26,6 +26,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -43,6 +45,8 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     private EVControl evControl;
     private transient String applianceId;
     private transient boolean vehicleConnected = false;
+    private transient boolean useOptionalEnergy = true;
+    transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
 
     @Override
     public void setApplianceId(String applianceId) {
@@ -66,10 +70,6 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
                 boolean currentVehicleConnectedState = evControl.isVehicleConnected();
                 if (vehicleConnected != currentVehicleConnectedState) {
                     logger.debug("{}: State changed: vehicleConnected = {}", applianceId, currentVehicleConnectedState);
-                    if(currentVehicleConnectedState) {
-                        setChargePower(5500);
-                        startCharging();
-                    }
                 }
                 else {
                     logger.debug("{}: vehicleConnected = {}", applianceId, currentVehicleConnectedState);
@@ -81,31 +81,50 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
 
     @Override
     public boolean on(LocalDateTime now, boolean switchOn) {
-        return false;
-    }
-
-    @Override
-    public void addControlStateChangedListener(ControlStateChangedListener listener) {
+        if(switchOn) {
+            logger.info("{}: Switching on", applianceId);
+            startCharging();
+        }
+        else {
+            logger.info("{}: Switching off", applianceId);
+            stopCharging();
+        }
+        for(ControlStateChangedListener listener : controlStateChangedListeners) {
+            listener.controlStateChanged(now, switchOn);
+        }
+        return true;
     }
 
     @Override
     public boolean isOn() {
-        return false;
+        return evControl.isCharging();
     }
 
+    @Override
+    public void addControlStateChangedListener(ControlStateChangedListener listener) {
+        this.controlStateChangedListeners.add(listener);
+    }
 
-    private void setChargePower(int power) {
+    public boolean isVehicleConnected() {
+        return vehicleConnected;
+    }
+
+    public boolean isUseOptionalEnergy() {
+        return useOptionalEnergy;
+    }
+
+    public void setChargePower(int power) {
         int current = Float.valueOf(power / (this.voltage * this.phases)).intValue();
         logger.debug("{}: Set charge power: {}W corresponds to {}A", applianceId, power, current);
         evControl.setChargeCurrent(current);
     }
 
-    private void startCharging() {
+    public void startCharging() {
         logger.debug("{}: Start charging process", applianceId);
         evControl.startCharging();
     }
 
-    private void stopCharging() {
+    public void stopCharging() {
         logger.debug("{}: Stop charging process", applianceId);
         evControl.stopCharging();
     }

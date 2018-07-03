@@ -190,7 +190,8 @@ public class SempController {
             logger.debug("{}: Received control request: ", deviceControl);
             Appliance appliance = ApplianceManager.getInstance().findAppliance(deviceControl.getDeviceId());
             if(appliance != null) {
-                appliance.setApplianceState(now, deviceControl.isOn(), false,
+                appliance.setApplianceState(now, deviceControl.isOn(), deviceControl.getRecommendedPowerConsumption(),
+                        false,
                         "Setting appliance state to " + (deviceControl.isOn() ? "ON" : "OFF"));
             }
             else {
@@ -306,8 +307,14 @@ public class SempController {
         timeFrame.setDeviceId(deviceId);
         timeFrame.setEarliestStart(runtimeRequest.getEarliestStart());
         timeFrame.setLatestEnd(runtimeRequest.getLatestEnd());
-        timeFrame.setMinEnergy(0);
-        timeFrame.setMaxEnergy(40000);
+        if(runtimeRequest.getMinEnergy() != null) {
+            timeFrame.setMinEnergy(runtimeRequest.getMinEnergy());
+            timeFrame.setMaxEnergy(runtimeRequest.getMaxEnergy());
+        }
+        else {
+            timeFrame.setMinRunningTime(minRunningTime);
+            timeFrame.setMaxRunningTime(maxRunningTime);
+        }
         logger.debug("{}: Timeframe created: {}", deviceId, timeFrame);
         return timeFrame;
     }

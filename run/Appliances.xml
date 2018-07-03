@@ -8,6 +8,9 @@
                     <ModbusRegisterReadValue name="ChargingPossible" extractionRegex="(C|D)" />
                     <ModbusRegisterReadValue name="ChargingCompleted" extractionRegex="(B)" />
                 </ModbusRegisterRead>
+                <ModbusRegisterRead address="400" type="Coil">
+                    <ModbusRegisterReadValue name="Charging" />
+                </ModbusRegisterRead>
                 <ModbusRegisterWrite address="400" type="Coil">
                     <ModbusRegisterWriteValue name="StartCharging" value="1" />
                     <ModbusRegisterWriteValue name="StopCharging" value="0" />
