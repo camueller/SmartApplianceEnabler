@@ -11,13 +11,13 @@
         <Characteristics>
             <MinPowerConsumption>1400</MinPowerConsumption>
             <MaxPowerConsumption>22000</MaxPowerConsumption>
-            <PowerLevels>
+            <!--PowerLevels>
                 <PowerLevel>50</PowerLevel>
                 <PowerLevel>360</PowerLevel>
                 <PowerLevel>1220</PowerLevel>
                 <PowerLevel>2440</PowerLevel>
                 <PowerLevel>3660</PowerLevel>
-            </PowerLevels>
+            </PowerLevels -->
         </Characteristics>
         <Capabilities>
             <CurrentPower>

@@ -22,11 +22,12 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 public class RuntimeRequest {
-    // private TimeframeInterval timeframeInterval;
     private Integer earliestStart;
     private Integer latestEnd;
     private Integer minRunningTime;
     private Integer maxRunningTime;
+    private Integer minEnergy;
+    private Integer maxEnergy;
 
     public RuntimeRequest() {
     }
@@ -36,6 +37,13 @@ public class RuntimeRequest {
         this.latestEnd = latestEnd;
         this.minRunningTime = minRunningTime;
         this.maxRunningTime = maxRunningTime;
+    }
+
+    public RuntimeRequest(Integer earliestStart, Integer latestEnd, Integer minEnergy, Integer maxEnergy, boolean dummy) {
+        this.earliestStart = earliestStart;
+        this.latestEnd = latestEnd;
+        this.minEnergy = minEnergy;
+        this.maxEnergy = maxEnergy;
     }
 
     public Integer getEarliestStart() {
@@ -70,6 +78,22 @@ public class RuntimeRequest {
         this.maxRunningTime = maxRunningTime;
     }
 
+    public Integer getMinEnergy() {
+        return minEnergy;
+    }
+
+    public void setMinEnergy(Integer minEnergy) {
+        this.minEnergy = minEnergy;
+    }
+
+    public Integer getMaxEnergy() {
+        return maxEnergy;
+    }
+
+    public void setMaxEnergy(Integer maxEnergy) {
+        this.maxEnergy = maxEnergy;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -83,6 +107,8 @@ public class RuntimeRequest {
                 .append(latestEnd, that.latestEnd)
                 .append(minRunningTime, that.minRunningTime)
                 .append(maxRunningTime, that.maxRunningTime)
+                .append(minEnergy, that.minEnergy)
+                .append(maxEnergy, that.maxEnergy)
                 .isEquals();
     }
 
@@ -93,14 +119,43 @@ public class RuntimeRequest {
                 .append(latestEnd)
                 .append(minRunningTime)
                 .append(maxRunningTime)
+                .append(minEnergy)
+                .append(maxEnergy)
                 .toHashCode();
     }
 
     @Override
     public String toString() {
-        return earliestStart
-                + "s-" + latestEnd
-                + "s:" + (minRunningTime != null ? minRunningTime : "-")
-                + "s/" + maxRunningTime + "s";
+        StringBuilder sb = new StringBuilder();
+        sb.append(earliestStart);
+        sb.append("s-");
+        sb.append(latestEnd);
+        sb.append("s:");
+        if(minEnergy != null) {
+            sb.append(minEnergy);
+            sb.append("Wh");
+            if(maxEnergy != null) {
+                sb.append("-");
+                sb.append(maxEnergy);
+                sb.append("Wh");
+            }
+        }
+        else {
+            if(minRunningTime != null) {
+                sb.append(minRunningTime);
+            }
+            else {
+                sb.append("-");
+            }
+            sb.append("s/");
+            if(maxRunningTime != null) {
+                sb.append(maxRunningTime);
+            }
+            else {
+                sb.append("-");
+            }
+            sb.append("s");
+        }
+        return sb.toString();
     }
 }

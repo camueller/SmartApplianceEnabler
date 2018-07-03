@@ -304,8 +304,13 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             );
     }
 
-    public void setApplianceState(LocalDateTime now, boolean switchOn, boolean deactivateTimeframe, String logMessage) {
+    public void setApplianceState(LocalDateTime now, boolean switchOn, Integer recommendedPowerConsumption,
+                                  boolean deactivateTimeframe, String logMessage) {
         if(control != null) {
+            if(control instanceof ElectricVehicleCharger && recommendedPowerConsumption != null) {
+                ((ElectricVehicleCharger) control).setChargePower(recommendedPowerConsumption);
+            }
+
             boolean stateChanged = false;
             // only change state if requested state differs from actual state
             if(control.isOn() ^ switchOn) {
@@ -351,7 +356,10 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     }
 
     public boolean canConsumeOptionalEnergy() {
-        if(schedules != null) {
+        if(this.control instanceof ElectricVehicleCharger) {
+            return ((ElectricVehicleCharger) this.control).isUseOptionalEnergy();
+        }
+        else if(schedules != null) {
             for(Schedule schedule : schedules) {
                 if(schedule.getMaxRunningTime() != null && schedule.getMaxRunningTime() > schedule.getMinRunningTime()) {
                     return true;
@@ -372,13 +380,11 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
      */
     private Schedule getForcedSchedule(LocalDateTime now) {
         String scheduleId = null;
-        if(control != null) {
-            if(control instanceof StartingCurrentSwitch) {
-                DayTimeframeCondition dayTimeframeCondition = ((StartingCurrentSwitch) control).getDayTimeframeCondition();
-                if(dayTimeframeCondition != null) {
-                    if(dayTimeframeCondition.isMet(now)) {
-                        scheduleId = dayTimeframeCondition.getIdref();
-                    }
+        if(control instanceof StartingCurrentSwitch) {
+            DayTimeframeCondition dayTimeframeCondition = ((StartingCurrentSwitch) control).getDayTimeframeCondition();
+            if(dayTimeframeCondition != null) {
+                if(dayTimeframeCondition.isMet(now)) {
+                    scheduleId = dayTimeframeCondition.getIdref();
                 }
             }
         }
@@ -394,13 +400,27 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
 
     public List<RuntimeRequest> getRuntimeRequests(LocalDateTime now, boolean onlySufficient) {
         List<RuntimeRequest> runtimeRequests = new ArrayList<>();
-        if(runningTimeMonitor != null) {
-            runtimeRequests = getRuntimeRequests(now,
-                    runningTimeMonitor.getSchedules(),
-                    runningTimeMonitor.getActiveTimeframeInterval(),
-                    onlySufficient,
-                    runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(now),
-                    runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(now));
+        if(this.control instanceof ElectricVehicleCharger) {
+            if(((ElectricVehicleCharger) this.control).isVehicleConnected()) {
+                RuntimeRequest runtimeRequest = new RuntimeRequest();
+                runtimeRequest.setEarliestStart(0);
+                // FIXME 2 should be a constant used from the planning period
+                runtimeRequest.setLatestEnd(2 * 24 * 3600); // 2 days
+                runtimeRequest.setMinEnergy(0);
+                // FIXME use battery capacity and substract energy already charged
+                runtimeRequest.setMaxEnergy(10000);
+                runtimeRequests.add(runtimeRequest);
+            }
+        }
+        else {
+            if(runningTimeMonitor != null) {
+                runtimeRequests = getRuntimeRequests(now,
+                        runningTimeMonitor.getSchedules(),
+                        runningTimeMonitor.getActiveTimeframeInterval(),
+                        onlySufficient,
+                        runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(now),
+                        runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(now));
+            }
         }
         return runtimeRequests;
     }
@@ -445,10 +465,10 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         addRuntimeRequest(runtimeRequests, timeframeInterval.getInterval(),
                 remainingMinRunningTime, remainingMaxRunningTime, now);
         if((remainingMinRunningTime != null && remainingMaxRunningTime == null && remainingMinRunningTime < 0)) {
-            setApplianceState(now,false, true,"Switching off due to minRunningTime < 0");
+            setApplianceState(now,false, null, true,"Switching off due to minRunningTime < 0");
         }
         else if(remainingMaxRunningTime != null && remainingMaxRunningTime < 0) {
-            setApplianceState(now,false, true,"Switching off due to maxRunningTime < 0");
+            setApplianceState(now,false, null, true,"Switching off due to maxRunningTime < 0");
         }
     }
 
@@ -547,7 +567,8 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     public void activeIntervalChanged(LocalDateTime now, String applianceId, TimeframeInterval deactivatedInterval,
                                       TimeframeInterval activatedInterval) {
         if(activatedInterval == null) {
-            setApplianceState(now, false, true,"Switching off due to end of time frame");
+            setApplianceState(now, false, null,
+                    true,"Switching off due to end of time frame");
             acceptControlRecommendations = true;
             logger.debug("{}: Set acceptControlRecommendations={}", id, acceptControlRecommendations);
         }

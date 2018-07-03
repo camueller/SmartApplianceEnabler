@@ -173,6 +173,27 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
         }
     }
 
+    @Override
+    public boolean isCharging() {
+        boolean charging = false;
+        ModbusRegisterRead registerRead = getRegisterRead(EVModbusReadRegisterName.Charging);
+        if(registerRead != null) {
+            try {
+                ModbusReadTransactionExecutor executor = ModbusExecutorFactory.getReadExecutor(getApplianceId(),
+                        registerRead.getType(), registerRead.getAddress());
+                executeTransaction(executor, true);
+                if(executor instanceof CoilExecutor) {
+                    charging = ((CoilExecutor) executor).getValue();
+                }
+            }
+            catch (Exception e) {
+                logger.error("{}: Error reading {} register {}", getApplianceId(), registerRead.getType(),
+                        registerRead.getAddress(), e);
+            }
+        }
+        return charging;
+    }
+
     private ModbusRegisterRead getRegisterRead(EVModbusReadRegisterName registerName) {
         for(ModbusRegisterRead registerRead: this.registerReads) {
             for(ModbusRegisterReadValue registerReadValue: registerRead.getRegisterReadValues()) {
