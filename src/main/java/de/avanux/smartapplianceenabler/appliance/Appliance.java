@@ -67,6 +67,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     private List<Schedule> schedules;
     private transient RunningTimeMonitor runningTimeMonitor;
     private transient boolean acceptControlRecommendations = true;
+    private transient static final int CONSIDERATION_INTERVAL_DAYS = 2;
 
     public void setId(String id) {
         this.id = id;
@@ -404,8 +405,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             if(((ElectricVehicleCharger) this.control).isVehicleConnected()) {
                 RuntimeRequest runtimeRequest = new RuntimeRequest();
                 runtimeRequest.setEarliestStart(0);
-                // FIXME 2 should be a constant used from the planning period
-                runtimeRequest.setLatestEnd(2 * 24 * 3600); // 2 days
+                runtimeRequest.setLatestEnd(CONSIDERATION_INTERVAL_DAYS * 24 * 3600);
                 runtimeRequest.setMinEnergy(0);
                 // FIXME use battery capacity and substract energy already charged
                 runtimeRequest.setMaxEnergy(10000);
@@ -437,7 +437,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                         remainingMinRunningTime, remainingMaxRunningTime);
             }
 
-            Interval considerationInterval = new Interval(now.toDateTime(), now.toDateTime());
+            Interval considerationInterval = new Interval(now.toDateTime(), now.plusDays(CONSIDERATION_INTERVAL_DAYS).toDateTime());
             List<TimeframeInterval> timeFrameIntervals = Schedule.findTimeframeIntervals(now, considerationInterval,
                     schedules, false, onlySufficient);
             for(TimeframeInterval timeframeIntervalOfSchedule : timeFrameIntervals) {
