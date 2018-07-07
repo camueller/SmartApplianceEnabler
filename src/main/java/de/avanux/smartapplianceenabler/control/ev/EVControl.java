@@ -21,9 +21,16 @@ package de.avanux.smartapplianceenabler.control.ev;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 
 public interface EVControl extends ApplianceIdConsumer {
+
     void validate();
 
     boolean isVehicleConnected();
+
+    boolean isChargingPossible();
+
+    boolean isCharging();
+
+    boolean isChargingCompleted();
 
     Integer getVehicleStatusPollInterval();
 
@@ -33,5 +40,4 @@ public interface EVControl extends ApplianceIdConsumer {
 
     void stopCharging();
 
-    boolean isCharging();
 }

@@ -37,6 +37,13 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
     @XmlElement(name = "ModbusRegisterWrite")
     private List<ModbusRegisterWrite> registerWrites;
 
+    private enum State {
+        VEHICLE_CONNECTED,
+        CHARGING_POSSIBLE,
+        CHARGING_COMPLETED
+    }
+
+
     public void validate() {
         boolean valid = true;
         for(EVModbusReadRegisterName registerName: EVModbusReadRegisterName.values()) {
@@ -81,11 +88,33 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
         }
     }
 
-    // FIXME remove counter
+    // FIXME remove
     int counter = 0;
+
     @Override
     public boolean isVehicleConnected() {
-        ModbusRegisterRead registerRead = getRegisterRead(EVModbusReadRegisterName.VehicleConnected);
+        //return isMatchingVehicleStatus(EVModbusReadRegisterName.VehicleConnected);
+        // FIXME remove
+        counter++;
+        return counter > 3;
+    }
+
+    @Override
+    public boolean isChargingPossible() {
+        //return isMatchingVehicleStatus(EVModbusReadRegisterName.ChargingPossible);
+        // FIXME remove
+        return counter > 6;
+    }
+
+    @Override
+    public boolean isChargingCompleted() {
+        //return isMatchingVehicleStatus(EVModbusReadRegisterName.ChargingCompleted);
+        // FIXME remove
+        return counter > 800; // 720 pro Stunde
+    }
+
+    public boolean isMatchingVehicleStatus(EVModbusReadRegisterName registerName) {
+        ModbusRegisterRead registerRead = getRegisterRead(registerName);
         if(registerRead != null) {
             try {
                 ModbusReadTransactionExecutor executor = ModbusExecutorFactory.getReadExecutor(getApplianceId(),
@@ -94,13 +123,6 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
                     executeTransaction(executor, false);
                     if(executor instanceof StringInputRegisterExecutor) {
                         String registerValue = ((StringInputRegisterExecutor) executor).getValue();
-
-                        // FIXME remove
-                        counter++;
-                        if(counter > 2) {
-                            registerValue = "B";
-                        }
-
                         logger.debug("{}: Vehicle status={}", getApplianceId(), registerValue);
                         return registerValue.matches(registerRead.getSelectedRegisterReadValue().getExtractionRegex());
                     }
