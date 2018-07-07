@@ -44,9 +44,17 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     })
     private EVControl evControl;
     private transient String applianceId;
-    private transient boolean vehicleConnected = false;
+    private transient State state = State.VEHICLE_NOT_CONNECTED;
     private transient boolean useOptionalEnergy = true;
-    transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
+    private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
+
+    private enum State {
+        VEHICLE_NOT_CONNECTED,
+        VEHICLE_CONNECTED,
+        CHARGING_POSSIBLE,
+        CHARGING,
+        CHARGING_COMPLETED
+    }
 
     @Override
     public void setApplianceId(String applianceId) {
@@ -67,14 +75,33 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                boolean currentVehicleConnectedState = evControl.isVehicleConnected();
-                if (vehicleConnected != currentVehicleConnectedState) {
-                    logger.debug("{}: State changed: vehicleConnected = {}", applianceId, currentVehicleConnectedState);
+               State previousState = state;
+                if(evControl.isVehicleConnected()) {
+                    state = State.VEHICLE_CONNECTED;
+                }
+                if(state == State.VEHICLE_CONNECTED && evControl.isChargingPossible()) {
+                    state = State.CHARGING_POSSIBLE;
+                }
+                if(state == State.CHARGING_POSSIBLE && evControl.isCharging()) {
+                    state = State.CHARGING;
+                }
+                if(state == State.CHARGING) {
+                    if(evControl.isChargingPossible()) {
+                        state = State.CHARGING_POSSIBLE;
+                    }
+                    if(evControl.isChargingCompleted()) {
+                        state = State.CHARGING_COMPLETED;
+                    }
+                }
+                if(state == State.CHARGING_COMPLETED && !evControl.isVehicleConnected()) {
+                    state = State.VEHICLE_NOT_CONNECTED;
+                }
+                if(state != previousState) {
+                    onStateChanged(previousState, state);
                 }
                 else {
-                    logger.debug("{}: vehicleConnected = {}", applianceId, currentVehicleConnectedState);
+                    logger.debug("{}: Vehicle state: {}", applianceId, state);
                 }
-                vehicleConnected = currentVehicleConnectedState;
             }
         }, 0, evControl.getVehicleStatusPollInterval() * 1000);
     }
@@ -97,7 +124,11 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
 
     @Override
     public boolean isOn() {
-        return evControl.isCharging();
+        return isCharging();
+    }
+
+    private void onStateChanged(State previousState, State newState) {
+        logger.debug("{}: Vehicle state changed: previousState={} newState={}", applianceId, previousState, newState);
     }
 
     @Override
@@ -106,7 +137,19 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     }
 
     public boolean isVehicleConnected() {
-        return vehicleConnected;
+        return state == State.VEHICLE_CONNECTED;
+    }
+
+    public boolean isChargingPossible() {
+        return state == State.CHARGING_POSSIBLE;
+    }
+
+    public boolean isCharging() {
+        return state == State.CHARGING;
+    }
+
+    public boolean isChargingCompleted() {
+        return state == State.CHARGING_COMPLETED;
     }
 
     public boolean isUseOptionalEnergy() {
