@@ -37,13 +37,6 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
     @XmlElement(name = "ModbusRegisterWrite")
     private List<ModbusRegisterWrite> registerWrites;
 
-    private enum State {
-        VEHICLE_CONNECTED,
-        CHARGING_POSSIBLE,
-        CHARGING_COMPLETED
-    }
-
-
     public void validate() {
         boolean valid = true;
         for(EVModbusReadRegisterName registerName: EVModbusReadRegisterName.values()) {
@@ -88,29 +81,19 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
         }
     }
 
-    // FIXME remove
-    int counter = 0;
-
     @Override
     public boolean isVehicleConnected() {
-        //return isMatchingVehicleStatus(EVModbusReadRegisterName.VehicleConnected);
-        // FIXME remove
-        counter++;
-        return counter > 3;
+        return isMatchingVehicleStatus(EVModbusReadRegisterName.VehicleConnected);
     }
 
     @Override
     public boolean isChargingPossible() {
-        //return isMatchingVehicleStatus(EVModbusReadRegisterName.ChargingPossible);
-        // FIXME remove
-        return counter > 6;
+        return isMatchingVehicleStatus(EVModbusReadRegisterName.ChargingPossible);
     }
 
     @Override
     public boolean isChargingCompleted() {
-        //return isMatchingVehicleStatus(EVModbusReadRegisterName.ChargingCompleted);
-        // FIXME remove
-        return counter > 800; // 720 pro Stunde
+        return isMatchingVehicleStatus(EVModbusReadRegisterName.ChargingCompleted);
     }
 
     public boolean isMatchingVehicleStatus(EVModbusReadRegisterName registerName) {
