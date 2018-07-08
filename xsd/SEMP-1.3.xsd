@@ -7,9 +7,9 @@
 # SMA Solar Technology AG
 # 34266 Niestetal, Germany
 -->
-<xs:schema targetNamespace="http://www.sma.de/communication/schema/SEMP/v1"
+<xs:schema targetNamespace="http://www.sma.de/communication/schema/SEMP/v1.3"
     elementFormDefault="qualified"
-    xmlns="http://www.sma.de/communication/schema/SEMP/v1"
+    xmlns="http://www.sma.de/communication/schema/SEMP/v1.3"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
 >
   <xs:element name="Device2EM">
@@ -309,7 +309,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="DeviceType" type="xs:string">
+      <xs:element name="DeviceType" type="DeviceTypeRefType">
         <!-- ref=DeviceTypeRefType -->
         <xs:annotation>
           <xs:documentation>

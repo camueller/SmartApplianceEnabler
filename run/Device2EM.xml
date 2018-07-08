@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Device2EM xmlns="http://www.sma.de/communication/schema/SEMP/v1">
+<Device2EM xmlns="http://www.sma.de/communication/schema/SEMP/v1.3">
     <DeviceInfo>
         <Identification>
             <DeviceId>F-28091971-000000000099-00</DeviceId>
@@ -9,8 +9,8 @@
             <DeviceVendor>EV Ltd.</DeviceVendor>
         </Identification>
         <Characteristics>
-            <MinPowerConsumption>1400</MinPowerConsumption>
             <MaxPowerConsumption>22000</MaxPowerConsumption>
+            <MinPowerConsumption>1400</MinPowerConsumption>
             <!--PowerLevels>
                 <PowerLevel>50</PowerLevel>
                 <PowerLevel>360</PowerLevel>
