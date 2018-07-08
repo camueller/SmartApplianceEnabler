@@ -187,7 +187,7 @@ public class SempController {
     public void em2Device(LocalDateTime now, EM2Device em2Device) {
         List<DeviceControl> deviceControls = em2Device.getDeviceControl();
         for(DeviceControl deviceControl : deviceControls) {
-            logger.debug("{}: Received control request: ", deviceControl);
+            logger.debug("{}: Received control request: {}", deviceControl.getDeviceId(), deviceControl);
             Appliance appliance = ApplianceManager.getInstance().findAppliance(deviceControl.getDeviceId());
             if(appliance != null) {
                 appliance.setApplianceState(now, deviceControl.isOn(), deviceControl.getRecommendedPowerConsumption(),
