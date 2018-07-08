@@ -24,10 +24,10 @@ import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Characteristics {
-    @XmlElement(name = "MinPowerConsumption")
-    private int minPowerConsumption;
     @XmlElement(name = "MaxPowerConsumption")
     private int maxPowerConsumption;
+    @XmlElement(name = "MinPowerConsumption")
+    private int minPowerConsumption;
     @XmlElement(name = "MinOnTime")
     private Integer minOnTime;
     @XmlElement(name = "MinOffTime")
