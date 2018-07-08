@@ -40,7 +40,7 @@ import java.util.*;
 
 
 public class ApplianceManager implements Runnable {
-    public static final String SCHEMA_LOCATION = "http://github.com/camueller/SmartApplianceEnabler/v1.2";
+    public static final String SCHEMA_LOCATION = "http://github.com/camueller/SmartApplianceEnabler/v1.3";
     private Logger logger = LoggerFactory.getLogger(ApplianceManager.class);
     private static ApplianceManager instance;
     private FileHandler fileHandler = new FileHandler();
