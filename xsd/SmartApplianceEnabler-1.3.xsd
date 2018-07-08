@@ -129,10 +129,8 @@
 
     <xs:complexType name="EVModbusControlType">
         <xs:sequence>
-            <xs:choice>
-                <xs:element name="ModbusRegisterRead" type="ModbusRegisterReadType" minOccurs="0" />
-                <xs:element name="ModbusRegisterWrite" type="ModbusRegisterWriteType" minOccurs="0" />
-            </xs:choice>
+            <xs:element name="ModbusRegisterRead" type="ModbusRegisterReadType" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="ModbusRegisterWrite" type="ModbusRegisterWriteType" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
         <xs:attribute name="idref" type="xs:NCName" use="required" />
         <xs:attribute name="slaveAddress" type="xs:int" use="required" />
@@ -140,7 +138,7 @@
 
     <xs:complexType name="ModbusRegisterReadType">
         <xs:sequence>
-            <xs:element name="ModbusRegisterReadValue" type="ModbusRegisterReadValueType" />
+            <xs:element name="ModbusRegisterReadValue" type="ModbusRegisterReadValueType" maxOccurs="unbounded" />
         </xs:sequence>
         <xs:attribute name="address" type="xs:string" use="required" />
         <xs:attribute name="type" type="ModbusRegisterTypeType" use="required" />
@@ -162,7 +160,7 @@
 
     <xs:complexType name="ModbusRegisterWriteType">
         <xs:sequence>
-            <xs:element name="ModbusRegisterWriteValue" type="ModbusRegisterWriteValueType" />
+            <xs:element name="ModbusRegisterWriteValue" type="ModbusRegisterWriteValueType" maxOccurs="unbounded" />
         </xs:sequence>
         <xs:attribute name="address" type="xs:string" use="required" />
         <xs:attribute name="type" type="ModbusRegisterTypeType" use="required" />
