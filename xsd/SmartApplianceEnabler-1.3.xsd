@@ -224,7 +224,7 @@
     <xs:complexType name="ModbusElectricityMeterType">
         <xs:attribute name="idref" type="xs:NCName" use="required" />
         <xs:attribute name="slaveAddress" type="xs:int" use="required" />
-        <xs:attribute name="registerAddress" type="xs:string" use="required" />
+        <xs:attribute name="address" type="xs:string" use="required" />
         <xs:attribute name="pollInterval" type="xs:int" />
         <xs:attribute name="measurementInterval" type="xs:int" use="required"/>
     </xs:complexType>
