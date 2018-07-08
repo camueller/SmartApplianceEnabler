@@ -51,7 +51,13 @@ public class ApplianceManager implements Runnable {
     
     private ApplianceManager() {
         if(System.getProperty("os.arch").equals("arm")) {
-            gpioController = GpioFactory.getInstance();
+            try {
+                gpioController = GpioFactory.getInstance();
+            }
+            catch(Error e) {
+                logger.error("Error initializing pi4j. Most likely libwiringPi.so is missing. In order to install it use the following command: sudo apt-get install wiringpi", e);
+                System.exit(-1);
+            }
         }
         else {
             logger.error("GPIO access disabled - not running on Raspberry Pi.");
