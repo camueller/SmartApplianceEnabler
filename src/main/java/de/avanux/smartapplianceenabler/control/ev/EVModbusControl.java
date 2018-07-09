@@ -87,8 +87,8 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
     }
 
     @Override
-    public boolean isChargingPossible() {
-        return isMatchingVehicleStatus(EVModbusReadRegisterName.ChargingPossible);
+    public boolean isCharging() {
+        return isMatchingVehicleStatus(EVModbusReadRegisterName.Charging);
     }
 
     @Override
@@ -176,27 +176,6 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
                 logger.error("{}: Error enable/disable charging process in register {}", getApplianceId(), registerWrite.getAddress(), e);
             }
         }
-    }
-
-    @Override
-    public boolean isCharging() {
-        boolean charging = false;
-        ModbusRegisterRead registerRead = getRegisterRead(EVModbusReadRegisterName.Charging);
-        if(registerRead != null) {
-            try {
-                ModbusReadTransactionExecutor executor = ModbusExecutorFactory.getReadExecutor(getApplianceId(),
-                        registerRead.getType(), registerRead.getAddress());
-                executeTransaction(executor, true);
-                if(executor instanceof CoilExecutor) {
-                    charging = ((CoilExecutor) executor).getValue();
-                }
-            }
-            catch (Exception e) {
-                logger.error("{}: Error reading {} register {}", getApplianceId(), registerRead.getType(),
-                        registerRead.getAddress(), e);
-            }
-        }
-        return charging;
     }
 
     private ModbusRegisterRead getRegisterRead(EVModbusReadRegisterName registerName) {

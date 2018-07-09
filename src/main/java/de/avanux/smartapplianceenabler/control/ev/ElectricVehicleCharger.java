@@ -46,12 +46,12 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     private transient String applianceId;
     private transient State state = State.VEHICLE_NOT_CONNECTED;
     private transient boolean useOptionalEnergy = true;
+    private transient boolean waitForVehicleDisconnect;
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
 
     private enum State {
         VEHICLE_NOT_CONNECTED,
         VEHICLE_CONNECTED,
-        CHARGING_POSSIBLE,
         CHARGING,
         CHARGING_COMPLETED
     }
@@ -75,32 +75,31 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
+                /**
+                 * waitForVehicleDisconnect is required for controllers having the same state
+                 * before charging and after charging, e.g. PhonixContact UM EN EV Charge Control with status "B"
+                 */
                State previousState = state;
                 if(evControl.isVehicleConnected()) {
                     state = State.VEHICLE_CONNECTED;
                 }
-                if(state == State.VEHICLE_CONNECTED && evControl.isChargingPossible()) {
-                    state = State.CHARGING_POSSIBLE;
-                }
-                if(state == State.CHARGING_POSSIBLE && evControl.isCharging()) {
+                if(state == State.VEHICLE_CONNECTED && !waitForVehicleDisconnect && evControl.isCharging()) {
                     state = State.CHARGING;
                 }
-                if(state == State.CHARGING) {
-                    if(evControl.isChargingPossible()) {
-                        state = State.CHARGING_POSSIBLE;
-                    }
-                    if(evControl.isChargingCompleted()) {
-                        state = State.CHARGING_COMPLETED;
-                    }
+                if(state == State.CHARGING && evControl.isChargingCompleted()) {
+                    state = State.CHARGING_COMPLETED;
+                    waitForVehicleDisconnect = true;
                 }
                 if(state == State.CHARGING_COMPLETED && !evControl.isVehicleConnected()) {
                     state = State.VEHICLE_NOT_CONNECTED;
+                    waitForVehicleDisconnect = false;
                 }
                 if(state != previousState) {
                     onStateChanged(previousState, state);
                 }
                 else {
-                    logger.debug("{}: Vehicle state: {}", applianceId, state);
+                    logger.debug("{}: Vehicle state={} waitForVehicleDisconnect={}", applianceId, state,
+                            waitForVehicleDisconnect);
                 }
             }
         }, 0, evControl.getVehicleStatusPollInterval() * 1000);
@@ -138,10 +137,6 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
 
     public boolean isVehicleConnected() {
         return state == State.VEHICLE_CONNECTED;
-    }
-
-    public boolean isChargingPossible() {
-        return state == State.CHARGING_POSSIBLE;
     }
 
     public boolean isCharging() {

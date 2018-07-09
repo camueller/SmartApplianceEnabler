@@ -402,7 +402,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     public List<RuntimeRequest> getRuntimeRequests(LocalDateTime now, boolean onlySufficient) {
         List<RuntimeRequest> runtimeRequests = new ArrayList<>();
         if(this.control instanceof ElectricVehicleCharger) {
-            if(((ElectricVehicleCharger) this.control).isChargingPossible()) {
+            if(((ElectricVehicleCharger) this.control).isVehicleConnected()) {
                 RuntimeRequest runtimeRequest = new RuntimeRequest();
                 runtimeRequest.setEarliestStart(0);
                 runtimeRequest.setLatestEnd(CONSIDERATION_INTERVAL_DAYS * 24 * 3600);
