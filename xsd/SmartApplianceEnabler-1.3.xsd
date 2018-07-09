@@ -152,7 +152,6 @@
     <xs:simpleType name="EVModbusReadRegisterNameType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="VehicleConnected" />
-            <xs:enumeration value="ChargingPossible" />
             <xs:enumeration value="Charging" />
             <xs:enumeration value="ChargingCompleted" />
         </xs:restriction>
