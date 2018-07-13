@@ -46,7 +46,6 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     private transient String applianceId;
     private transient State state = State.VEHICLE_NOT_CONNECTED;
     private transient boolean useOptionalEnergy = true;
-    private transient boolean waitForVehicleDisconnect;
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
 
     private enum State {
@@ -75,31 +74,34 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                /**
-                 * waitForVehicleDisconnect is required for controllers having the same state
-                 * before charging and after charging, e.g. PhonixContact UM EN EV Charge Control with status "B"
-                 */
                State previousState = state;
                 if(evControl.isVehicleConnected()) {
                     state = State.VEHICLE_CONNECTED;
                 }
-                if(state == State.VEHICLE_CONNECTED && !waitForVehicleDisconnect && evControl.isCharging()) {
+                else if(state == State.VEHICLE_CONNECTED && evControl.isCharging()) {
                     state = State.CHARGING;
                 }
-                if(state == State.CHARGING && evControl.isChargingCompleted()) {
-                    state = State.CHARGING_COMPLETED;
-                    waitForVehicleDisconnect = true;
+                else if(state == State.CHARGING) {
+                    if(evControl.isChargingCompleted()) {
+                        state = State.CHARGING_COMPLETED;
+                    }
+                    else if(evControl.isVehicleConnected()) {
+                        state = State.VEHICLE_CONNECTED;
+                    }
                 }
-                if(state == State.CHARGING_COMPLETED && !evControl.isVehicleConnected()) {
-                    state = State.VEHICLE_NOT_CONNECTED;
-                    waitForVehicleDisconnect = false;
+                else if(state == State.CHARGING_COMPLETED) {
+                    if (evControl.isVehicleConnected()) {
+                        state = State.VEHICLE_CONNECTED;
+                    }
+                    else {
+                        state = State.VEHICLE_NOT_CONNECTED;
+                    }
                 }
                 if(state != previousState) {
                     onStateChanged(previousState, state);
                 }
                 else {
-                    logger.debug("{}: Vehicle state={} waitForVehicleDisconnect={}", applianceId, state,
-                            waitForVehicleDisconnect);
+                    logger.debug("{}: Vehicle state={}", applianceId, state);
                 }
             }
         }, 0, evControl.getVehicleStatusPollInterval() * 1000);
