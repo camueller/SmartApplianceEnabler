@@ -68,7 +68,7 @@ abstract public class ModbusSlave implements ApplianceIdConsumer {
         this.idref = idref;
     }
 
-    protected void executeTransaction(ModbusTransactionExecutor modbusTransactionExecutor, boolean closeConnection) throws Exception {
+    protected synchronized void executeTransaction(ModbusTransactionExecutor modbusTransactionExecutor, boolean closeConnection) throws Exception {
         ModbusTcp modbusTcp = getModbusTcp();
         if(connection == null) {
             logger.debug("{}: Connecting to modbus {}", applianceId, modbusTcp.toString());

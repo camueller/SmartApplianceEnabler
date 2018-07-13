@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 public class WriteHoldingRegisterExecutor extends BaseTransactionExecutor implements ModbusWriteTransactionExecutor<Integer> {
 
-    private Logger logger = LoggerFactory.getLogger(InputRegisterExecutor.class);
+    private Logger logger = LoggerFactory.getLogger(ReadInputRegisterExecutor.class);
     private Integer value;
     private Integer result;
 

@@ -167,7 +167,7 @@ public class IntegrationTest extends TestBase {
         log("Set runtime creates timeframe to be set");
         LocalDateTime timeSwitchOn = toToday(11, 0, 0);
         Assert.assertEquals(3600, saeController.suggestRuntime(applianceId).intValue());
-        saeController.setRuntime(timeSwitchOn, applianceId, 1800);
+        saeController.setRuntimeDemand(timeSwitchOn, applianceId, 1800);
         Assert.assertNotNull(runningTimeMonitor.getActiveTimeframeInterval());
 
         log("Switch on");

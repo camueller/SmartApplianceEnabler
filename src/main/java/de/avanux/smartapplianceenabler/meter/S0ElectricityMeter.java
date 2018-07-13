@@ -39,6 +39,7 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
     private Integer measurementInterval; // seconds
     private transient GpioPinDigitalInput inputPin;
     private transient PulseElectricityMeter pulseElectricityMeter = new PulseElectricityMeter();
+    private transient PulseEnergyMeter pulseEnergyMeter = new PulseEnergyMeter();
 
     
     public Integer getImpulsesPerKwh() {
@@ -57,18 +58,42 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
     public void setApplianceId(String applianceId) {
         super.setApplianceId(applianceId);
         this.pulseElectricityMeter.setApplianceId(applianceId);
+        this.pulseEnergyMeter.setApplianceId(applianceId);
     }
 
+    @Override
     public int getAveragePower() {
         return pulseElectricityMeter.getAveragePower();
     }
 
+    @Override
     public int getMinPower() {
         return pulseElectricityMeter.getMinPower();
     }
 
+    @Override
     public int getMaxPower() {
         return pulseElectricityMeter.getMaxPower();
+    }
+
+    @Override
+    public float getEnergy() {
+        return this.pulseEnergyMeter.getEnergy();
+    }
+
+    @Override
+    public void startEnergyMeter() {
+        this.pulseEnergyMeter.startEnergyCounter();
+    }
+
+    @Override
+    public void stopEnergyMeter() {
+        this.pulseEnergyMeter.stopEnergyCounter();
+    }
+
+    @Override
+    public void resetEnergyMeter() {
+        this.pulseEnergyMeter.resetEnergyCounter();
     }
 
     @Override
@@ -80,6 +105,7 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
     public void start() {
         pulseElectricityMeter.setImpulsesPerKwh(impulsesPerKwh);
         pulseElectricityMeter.setMeasurementInterval(getMeasurementInterval());
+        pulseEnergyMeter.setImpulsesPerKwh(impulsesPerKwh);
 
         GpioController gpioController = getGpioController();
         if(gpioController != null) {
@@ -91,6 +117,7 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
                         logger.debug("{}: GPIO {} changed to {}", getApplianceId(), event.getPin(), event.getState());
                         if(event.getState() == PinState.HIGH) {
                             pulseElectricityMeter.addTimestampAndMaintain(System.currentTimeMillis());
+                            pulseEnergyMeter.increasePulseCounter();
                         }
                     }
                 });

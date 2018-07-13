@@ -302,6 +302,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                 || control instanceof ModbusSwitch
                 || control instanceof MockSwitch
                 || control instanceof StartingCurrentSwitch
+                || control instanceof ElectricVehicleCharger
             );
     }
 
@@ -403,12 +404,15 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         List<RuntimeRequest> runtimeRequests = new ArrayList<>();
         if(this.control instanceof ElectricVehicleCharger) {
             if(((ElectricVehicleCharger) this.control).isVehicleConnected()) {
+                float energy = meter.getEnergy();
+                logger.debug("{}: energy metered: {} kWh", id, energy);
+
                 RuntimeRequest runtimeRequest = new RuntimeRequest();
                 runtimeRequest.setEarliestStart(0);
                 runtimeRequest.setLatestEnd(CONSIDERATION_INTERVAL_DAYS * 24 * 3600);
                 runtimeRequest.setMinEnergy(0);
-                // FIXME use battery capacity and substract energy already charged
-                runtimeRequest.setMaxEnergy(10000);
+                // FIXME use battery capacity
+                runtimeRequest.setMaxEnergy(10000 - Float.valueOf(energy * 1000).intValue());
                 runtimeRequests.add(runtimeRequest);
             }
         }
@@ -535,8 +539,15 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     @Override
     public void controlStateChanged(LocalDateTime now, boolean switchOn) {
         logger.debug("{}: Control state has changed to {}", id, (switchOn ? "on" : "off"));
-        if(runningTimeMonitor != null) {
+        if (runningTimeMonitor != null) {
             runningTimeMonitor.setRunning(switchOn, now);
+        }
+        if (meter != null) {
+            if (switchOn) {
+                meter.startEnergyMeter();
+            } else {
+                meter.stopEnergyMeter();
+            }
         }
     }
 
@@ -569,6 +580,9 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         if(activatedInterval == null) {
             setApplianceState(now, false, null,
                     true,"Switching off due to end of time frame");
+            if(meter != null) {
+                meter.resetEnergyMeter();
+            }
             acceptControlRecommendations = true;
             logger.debug("{}: Set acceptControlRecommendations={}", id, acceptControlRecommendations);
         }

@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ReadHoldingRegisterExecutor implements ModbusTransactionExecutor, ApplianceIdConsumer {
-    private Logger logger = LoggerFactory.getLogger(InputRegisterExecutor.class);
+    private Logger logger = LoggerFactory.getLogger(ReadInputRegisterExecutor.class);
     private String applianceId;
     private String registerAddress;
     private Float registerValue;

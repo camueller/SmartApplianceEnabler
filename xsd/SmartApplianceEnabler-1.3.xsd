@@ -104,9 +104,11 @@
     </xs:complexType>
 
     <xs:complexType name="ModbusSwitchType">
+        <xs:sequence>
+            <xs:element name="ModbusRegisterWrite" type="ModbusRegisterWriteType" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
         <xs:attribute name="idref" type="xs:NCName" use="required" />
         <xs:attribute name="slaveAddress" type="xs:int" use="required" />
-        <xs:attribute name="registerAddress" type="xs:string" use="required" />
     </xs:complexType>
 
     <xs:complexType name="HttpSwitchType">
@@ -145,15 +147,31 @@
     </xs:complexType>
 
     <xs:complexType name="ModbusRegisterReadValueType">
-        <xs:attribute name="name" type="EVModbusReadRegisterNameType" use="required" />
+        <xs:attribute name="name" type="ModbusReadRegisterNameType" use="required" />
         <xs:attribute name="extractionRegex" type="xs:string" />
     </xs:complexType>
 
-    <xs:simpleType name="EVModbusReadRegisterNameType">
+    <xs:simpleType name="ModbusReadRegisterNameType">
         <xs:restriction base="xs:string">
+            <!-- ModbusElectricityMeter -->
+            <xs:enumeration value="Power" />
+            <xs:enumeration value="Energy" />
+            <!-- EVModbusControl -->
             <xs:enumeration value="VehicleConnected" />
             <xs:enumeration value="Charging" />
             <xs:enumeration value="ChargingCompleted" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ModbusWriteRegisterNameType">
+        <xs:restriction base="xs:string">
+            <!-- ModbusSwitch -->
+            <xs:enumeration value="On" />
+            <xs:enumeration value="Off" />
+            <!-- EVModbusControl -->
+            <xs:enumeration value="StartCharging" />
+            <xs:enumeration value="StopCharging" />
+            <xs:enumeration value="ChargingCurrent" />
         </xs:restriction>
     </xs:simpleType>
 
@@ -166,17 +184,9 @@
     </xs:complexType>
 
     <xs:complexType name="ModbusRegisterWriteValueType">
-        <xs:attribute name="name" type="EVModbusWriteRegisterNameType" use="required" />
+        <xs:attribute name="name" type="ModbusWriteRegisterNameType" use="required" />
         <xs:attribute name="value" type="xs:string" use="required" />
     </xs:complexType>
-
-    <xs:simpleType name="EVModbusWriteRegisterNameType">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="StartCharging" />
-            <xs:enumeration value="StopCharging" />
-            <xs:enumeration value="ChargingCurrent" />
-        </xs:restriction>
-    </xs:simpleType>
 
     <xs:simpleType name="ModbusRegisterTypeType">
         <xs:restriction base="xs:string">
@@ -221,10 +231,11 @@
     </xs:simpleType>
 
     <xs:complexType name="ModbusElectricityMeterType">
+        <xs:sequence>
+            <xs:element name="ModbusRegisterRead" type="ModbusRegisterReadType" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
         <xs:attribute name="idref" type="xs:NCName" use="required" />
         <xs:attribute name="slaveAddress" type="xs:int" use="required" />
-        <xs:attribute name="address" type="xs:string" use="required" />
-        <xs:attribute name="pollInterval" type="xs:int" />
         <xs:attribute name="measurementInterval" type="xs:int" use="required"/>
     </xs:complexType>
 

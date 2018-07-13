@@ -16,10 +16,9 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.avanux.smartapplianceenabler.control.ev;
+package de.avanux.smartapplianceenabler.meter;
 
-public enum EVModbusReadRegisterName {
-    VehicleConnected,
-    Charging,
-    ChargingCompleted
+public interface PollEnergyExecutor {
+
+    float pollEnergy();
 }

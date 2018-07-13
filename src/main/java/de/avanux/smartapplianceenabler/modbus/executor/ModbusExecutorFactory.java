@@ -30,13 +30,13 @@ public class ModbusExecutorFactory {
         ModbusReadTransactionExecutor executor;
         switch (type) {
             case InputString:
-                executor = new StringInputRegisterExecutor(address, bytes);
+                executor = new ReadStringInputRegisterExecutor(address, bytes);
                 break;
             case InputFloat:
-                executor = new FloatInputRegisterExecutor(address, bytes);
+                executor = new ReadFloatInputRegisterExecutor(address, bytes);
                 break;
             case Coil:
-                executor = new CoilExecutor(address);
+                executor = new ReadCoilExecutor(address);
                 break;
             default:
                 return null;

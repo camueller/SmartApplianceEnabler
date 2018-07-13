@@ -38,6 +38,7 @@ public class S0ElectricityMeterNetworked implements Meter, PulseReceiver.PulseLi
     @XmlAttribute
     private Integer measurementInterval = 60; // seconds
     private transient PulseElectricityMeter pulseElectricityMeter = new PulseElectricityMeter();
+    private transient PulseEnergyMeter pulseEnergyMeter = new PulseEnergyMeter();
     private transient PulseReceiver pulseReceiver;
     private transient String applianceId;
     private transient Long previousPulseTimestamp;
@@ -46,9 +47,8 @@ public class S0ElectricityMeterNetworked implements Meter, PulseReceiver.PulseLi
     @Override
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
-        if(this.pulseElectricityMeter != null) {
-            this.pulseElectricityMeter.setApplianceId(applianceId);
-        }
+        this.pulseElectricityMeter.setApplianceId(applianceId);
+        this.pulseEnergyMeter.setApplianceId(applianceId);
     }
 
     public String getIdref() {
@@ -73,6 +73,26 @@ public class S0ElectricityMeterNetworked implements Meter, PulseReceiver.PulseLi
 
     public int getMaxPower() {
         return pulseElectricityMeter.getMaxPower();
+    }
+
+    @Override
+    public float getEnergy() {
+        return this.pulseEnergyMeter.getEnergy();
+    }
+
+    @Override
+    public void startEnergyMeter() {
+        this.pulseEnergyMeter.startEnergyCounter();
+    }
+
+    @Override
+    public void stopEnergyMeter() {
+        this.pulseEnergyMeter.stopEnergyCounter();
+    }
+
+    @Override
+    public void resetEnergyMeter() {
+        this.pulseEnergyMeter.resetEnergyCounter();
     }
 
     @Override
@@ -117,6 +137,7 @@ public class S0ElectricityMeterNetworked implements Meter, PulseReceiver.PulseLi
                         assumedTimestamp += timeDiffPerCounterIncrement;
                         logger.warn("{}: Assuming timestamp for missing packet {}", applianceId, assumedTimestamp);
                         pulseElectricityMeter.addTimestampAndMaintain(assumedTimestamp);
+                        pulseEnergyMeter.increasePulseCounter();
                     }
                 }
             }

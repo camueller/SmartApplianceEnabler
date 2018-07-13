@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.3">
     <Appliance id="F-28091971-000000000099-00">
-        <ElectricVehicleCharger>
+        <!--ElectricVehicleCharger>
             <EVModbusControl idref="wallbox" slaveAddress="180">
                 <ModbusRegisterRead address="100" type="InputString">
                     <ModbusRegisterReadValue name="VehicleConnected" extractionRegex="(B)" />
@@ -16,25 +16,31 @@
                     <ModbusRegisterWriteValue name="StopCharging" value="0" />
                 </ModbusRegisterWrite>
                 <ModbusRegisterWrite address="300" type="Holding">
-                    <!-- Alternative, falls Ladestrom am Controller stufenlos eingestellt werden kann;
-                    Wert des Attributes "value" ist egal -->
                     <ModbusRegisterWriteValue name="ChargingCurrent" value="0" />
-                    <!-- Alternative, falls Ladestrom am Controller nur auf feste Werte gesetzt werden kann
-                    <ModbusRegisterWriteValue name="ChargingCurrent" param="2000" value="1" />
-                    <ModbusRegisterWriteValue name="ChargingCurrent" param="4000" value="2" />
-                    <ModbusRegisterWriteValue name="ChargingCurrent" param="6000" value="3" />
-                    -->
                 </ModbusRegisterWrite>
             </EVModbusControl>
             <ElectricVehicle name="Nissan Leaf" capacity="40000">
                 <ChargeProfile name="10 kWh" energyRequested="10000" maxChargeDuration="86400" />
                 <ChargeProfile name="Vollmachen" energyRequested="40000" maxChargeDuration="86400" />
             </ElectricVehicle>
-        </ElectricVehicleCharger>
-        <!-- ModbusElectricityMeter idref="modbus" slaveAddress="1" address="0x0C" pollInterval="10" measurementInterval="60" /-->
+        </ElectricVehicleCharger-->
+        <ModbusSwitch idref="modbus" slaveAddress="1">
+            <ModbusRegisterWrite address="400" type="Coil">
+                <ModbusRegisterWriteValue name="On" value="1" />
+                <ModbusRegisterWriteValue name="Off" value="0" />
+            </ModbusRegisterWrite>
+        </ModbusSwitch>
+        <ModbusElectricityMeter idref="modbus" slaveAddress="1" measurementInterval="60">
+            <ModbusRegisterRead address="0x000C" type="InputFloat">
+                <ModbusRegisterReadValue name="Power" />
+            </ModbusRegisterRead>
+            <ModbusRegisterRead address="0x0156" type="InputFloat">
+                <ModbusRegisterReadValue name="Energy" />
+            </ModbusRegisterRead>
+        </ModbusElectricityMeter>
     </Appliance>
     <Connectivity>
-        <!-- ModbusTCP id="modbus" host="127.0.0.1" /-->
-        <ModbusTCP id="wallbox" host="192.168.69.12" />
+        <ModbusTCP id="modbus" host="127.0.0.1" />
+        <!-- ModbusTCP id="wallbox" host="192.168.69.12" /-->
     </Connectivity>
 </Appliances>
