@@ -19,47 +19,46 @@ package de.avanux.smartapplianceenabler.modbus.executor;
 
 import com.ghgande.j2mod.modbus.ModbusException;
 import com.ghgande.j2mod.modbus.io.ModbusTCPTransaction;
-import com.ghgande.j2mod.modbus.msg.ReadInputRegistersRequest;
-import com.ghgande.j2mod.modbus.msg.ReadInputRegistersResponse;
+import com.ghgande.j2mod.modbus.msg.ReadCoilsRequest;
+import com.ghgande.j2mod.modbus.msg.ReadCoilsResponse;
 import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Implements a <tt>ReadInputRegistersRequest</tt>.
- * The implementation directly correlates with the class 0 function <i>read multiple registers (FC 4)</i>
+ * A <tt>ReadCoilRequest</tt> reads a bit.
+ * The implementation directly correlates with the class 1 function <i>read coils (FC 1)</i>. 
  */
-abstract public class InputRegisterExecutor<V> extends BaseTransactionExecutor implements ModbusReadTransactionExecutor<V> {
-    private Logger logger = LoggerFactory.getLogger(InputRegisterExecutor.class);
-    private Integer[] byteValues;
+public class ReadCoilExecutor extends BaseTransactionExecutor implements ModbusReadTransactionExecutor<Boolean> {
+    
+    private Logger logger = LoggerFactory.getLogger(ReadCoilExecutor.class);
+    private boolean coil;
 
-    public InputRegisterExecutor(String address, int bytes) {
-        super(address, bytes);
+    public ReadCoilExecutor(String registerAddress) {
+        super(registerAddress, 1);
     }
 
     @Override
     public void execute(TCPMasterConnection con, int slaveAddress) throws ModbusException {
-        ReadInputRegistersRequest req = new ReadInputRegistersRequest(getAddress(), getBytes());
+        ReadCoilsRequest req = new ReadCoilsRequest(getAddress(), getBytes());
         req.setUnitID(slaveAddress);
-
+        
         ModbusTCPTransaction trans = new ModbusTCPTransaction(con);
         trans.setRequest(req);
         trans.execute();
-
-        ReadInputRegistersResponse res = (ReadInputRegistersResponse) trans.getResponse();
-        this.byteValues = null;
-        if (res != null) {
-            this.byteValues = new Integer[getBytes()];
-            for (int i = 0; i < getBytes(); i++) {
-                this.byteValues[i] = res.getRegisterValue(i);
-            }
-            logger.debug("{}: Input register={} value={}", getApplianceId(), getAddress(), this.byteValues);
-        } else {
+        
+        ReadCoilsResponse res = (ReadCoilsResponse) trans.getResponse();
+        if(res != null) {
+            coil = res.getCoils().getBit(0);
+            logger.debug("{}: Read coil register={} coil={}", getApplianceId(), getAddress(), coil);
+        }
+        else {
             logger.error("{}: No response received.", getApplianceId());
         }
     }
 
-    protected Integer[] getByteValues() {
-        return byteValues;
+    @Override
+    public Boolean getValue() {
+        return coil;
     }
 }

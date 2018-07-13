@@ -380,29 +380,47 @@ public class SaeController {
 
     @RequestMapping(value=RUNTIME_URL, method=RequestMethod.PUT)
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    public void setRuntime(HttpServletResponse response, @RequestParam(value="id") String applianceId,
+    public void setRuntimeDemand(HttpServletResponse response, @RequestParam(value="id") String applianceId,
                            @RequestParam(value="runtime") Integer runtime) {
-        if(! setRuntime(new LocalDateTime(), applianceId, runtime)) {
+        if(! setRuntimeDemand(new LocalDateTime(), applianceId, runtime)) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
     }
 
     /**
-     * Set the immediatly starting runtime of an appliance.
+     * Activate immediatly starting timeframe.
      * @param now
      * @param applianceId
      * @param runtime
      * @return true, if the appliance was found; false if no appliance with the given id was found
      */
-    public boolean setRuntime(LocalDateTime now, String applianceId, Integer runtime) {
+    public boolean setRuntimeDemand(LocalDateTime now, String applianceId, Integer runtime) {
         logger.debug("{}: Received request to set runtime to {}s", applianceId, runtime);
+        return activateTimeframe(now, applianceId, null, runtime, false);
+    }
+
+    /**
+     * Activate immediatly starting timeframe with energy demand.
+     * @param now
+     * @param applianceId
+     * @param energy
+     * @param runtime
+     * @return
+     */
+    public boolean setEnergyDemand(LocalDateTime now, String applianceId, Integer energy, Integer runtime) {
+        logger.debug("{}: Received request for {}Wh within {}s", applianceId, energy, runtime);
+        return activateTimeframe(now, applianceId, energy, runtime, true);
+    }
+
+    public boolean activateTimeframe(LocalDateTime now, String applianceId, Integer energy, Integer runtime,
+                                    boolean acceptControlRecommendations) {
         Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
         if(appliance != null) {
             RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
             if(runningTimeMonitor != null) {
                 runningTimeMonitor.activateTimeframeInterval(now, runtime);
             }
-            appliance.setAcceptControlRecommendations(false);
+            appliance.setAcceptControlRecommendations(acceptControlRecommendations);
             return true;
         }
         logger.error("{}: Appliance not found", applianceId);

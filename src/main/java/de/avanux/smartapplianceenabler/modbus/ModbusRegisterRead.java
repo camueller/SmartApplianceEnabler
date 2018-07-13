@@ -55,6 +55,9 @@ public class ModbusRegisterRead {
     }
 
     public Integer getBytes() {
+        if(getType() == ModbusRegisterType.InputFloat) {
+            return 2;
+        }
         return bytes;
     }
 
@@ -74,4 +77,15 @@ public class ModbusRegisterRead {
         return selectedRegisterReadValue;
     }
 
+    public static ModbusRegisterRead getRegisterRead(String registerName, List<ModbusRegisterRead> registerReads) {
+        for(ModbusRegisterRead registerRead: registerReads) {
+            for(ModbusRegisterReadValue registerReadValue: registerRead.getRegisterReadValues()) {
+                if(registerName.equals(registerReadValue.getName())) {
+                    return new ModbusRegisterRead(registerRead.getAddress(), registerRead.getBytes(),
+                            registerRead.getType(), registerRead.getPollInterval(), registerReadValue);
+                }
+            }
+        }
+        return null;
+    }
 }

@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * A PulseElectricityMeter calculates power consumption by pulses received.
  */
-class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
+class PulseElectricityMeter implements ApplianceIdConsumer {
     private Logger logger = LoggerFactory.getLogger(PulseElectricityMeter.class);
     private String applianceId;
     private static final int MAX_AGE = 3600; // seconds
@@ -49,7 +49,6 @@ class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
         this.measurementInterval = measurementInterval;
     }
 
-    @Override
     public Integer getMeasurementInterval() {
         return measurementInterval;
     }
@@ -70,7 +69,6 @@ class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
      * is less than double the interval between the most recent and the second most recent impulse.
      * @return true, if the device is considered to be switched on.
      */
-    @Override
     public boolean isOn() {
         return isOn(System.currentTimeMillis());
     }
@@ -134,7 +132,6 @@ class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
      *
      * @return the minimum power consumption in W
      */
-    @Override
     public int getMinPower() {
         return getMinPower(System.currentTimeMillis());
     }
@@ -172,7 +169,6 @@ class PulseElectricityMeter implements Meter, ApplianceIdConsumer {
      *
      * @return the minimum power consumption in W
      */
-    @Override
     public int getMaxPower() {
         return getMaxPower(System.currentTimeMillis());
     }

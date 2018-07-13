@@ -21,10 +21,10 @@ package de.avanux.smartapplianceenabler.modbus.executor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FloatInputRegisterExecutor extends InputRegisterExecutor<Float> {
-    private Logger logger = LoggerFactory.getLogger(FloatInputRegisterExecutor.class);
+public class ReadFloatInputRegisterExecutor extends ReadInputRegisterExecutor<Float> {
+    private Logger logger = LoggerFactory.getLogger(ReadFloatInputRegisterExecutor.class);
 
-    public FloatInputRegisterExecutor(String address, int bytes) {
+    public ReadFloatInputRegisterExecutor(String address, int bytes) {
         super(address, bytes);
     }
 

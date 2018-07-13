@@ -17,60 +17,105 @@
  */
 package de.avanux.smartapplianceenabler.control;
 
-import de.avanux.smartapplianceenabler.modbus.*;
+import de.avanux.smartapplianceenabler.modbus.ModbusRegisterWrite;
+import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
 import de.avanux.smartapplianceenabler.modbus.executor.*;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ModbusSwitch extends ModbusSlave implements Control {
 
     private transient Logger logger = LoggerFactory.getLogger(ModbusSwitch.class);
-    @XmlAttribute
-    private String registerAddress;
+    @XmlElement(name = "ModbusRegisterWrite")
+    private List<ModbusRegisterWrite> registerWrites;
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
+
+    public enum RegisterName {
+        On,
+        Off
+    }
+
+    public void validate() {
+        boolean valid = true;
+        for(RegisterName registerName: RegisterName.values()) {
+            ModbusRegisterWrite registerWrite = ModbusRegisterWrite.getRegisterWrite(registerName.name(),
+                    this.registerWrites);
+            if(registerWrite != null) {
+                logger.debug("{}: {} configured: write register={} / value={}",
+                        getApplianceId(),
+                        registerName.name(),
+                        registerWrite.getAddress(),
+                        registerWrite.getSelectedRegisterWriteValue().getValue());
+            }
+            else {
+                logger.error("{}: Missing register configuration for {}", getApplianceId(), registerName.name());
+                valid = false;
+            }
+        }
+        if(! valid) {
+            logger.error("{}: Terminating because of incorrect configuration", getApplianceId());
+            System.exit(-1);
+        }
+    }
 
     @Override
     public boolean on(LocalDateTime now, boolean switchOn) {
         boolean result = false;
-        try {
-            logger.info("{}: Switching {}", getApplianceId(), (switchOn ? "on" : "off"));
-            ModbusWriteTransactionExecutor executor = ModbusExecutorFactory.getWriteExecutor(getApplianceId(),
-                    ModbusRegisterType.Coil, registerAddress);
-            executeTransaction(executor, true);
-            if(executor instanceof WriteCoilExecutor) {
-                result = ((WriteCoilExecutor) executor).getResult();
-            }
+        logger.info("{}: Switching {}", getApplianceId(), (switchOn ? "on" : "off"));
+        ModbusRegisterWrite registerWrite = ModbusRegisterWrite.getRegisterWrite(getRegisterName(switchOn).name(),
+                this.registerWrites);
+        if (registerWrite != null) {
+            try {
+                ModbusWriteTransactionExecutor executor = ModbusExecutorFactory.getWriteExecutor(getApplianceId(),
+                        registerWrite.getType(), registerWrite.getAddress());
+                executeTransaction(executor, true);
+                if(executor instanceof WriteCoilExecutor) {
+                    result = switchOn == ((WriteCoilExecutor) executor).getResult();
+                }
+                else if(executor instanceof WriteHoldingRegisterExecutor) {
+                    result = 1 == ((WriteHoldingRegisterExecutor) executor).getResult();
+                }
 
-            for(ControlStateChangedListener listener : controlStateChangedListeners) {
-                listener.controlStateChanged(now, switchOn);
+                for(ControlStateChangedListener listener : controlStateChangedListeners) {
+                    listener.controlStateChanged(now, switchOn);
+                }
+            }
+            catch (Exception e) {
+                logger.error("{}: Error switching {} using register {}", getApplianceId(),  (switchOn ? "on" : "off"),
+                        registerWrite.getAddress(), e);
             }
         }
-        catch (Exception e) {
-            logger.error("{}: Error switching coil register {}", getApplianceId(), registerAddress, e);
-        }
-        return switchOn == result;
+        return result;
     }
 
     @Override
     public boolean isOn() {
-        boolean coil = false;
-        try {
-            ModbusReadTransactionExecutor executor = ModbusExecutorFactory.getReadExecutor(getApplianceId(),
-                    ModbusRegisterType.Coil, registerAddress);
-            executeTransaction(executor, true);
-            if(executor instanceof CoilExecutor) {
-                coil = ((CoilExecutor) executor).getValue();
+        boolean on = false;
+        ModbusRegisterWrite registerWrite = ModbusRegisterWrite.getRegisterWrite(RegisterName.On.name(),
+                this.registerWrites);
+        if(registerWrite != null) {
+            try {
+                ModbusReadTransactionExecutor executor = ModbusExecutorFactory.getReadExecutor(getApplianceId(),
+                        registerWrite.getType(), registerWrite.getAddress());
+                executeTransaction(executor, true);
+                if(executor instanceof ReadCoilExecutor) {
+                    on = ((ReadCoilExecutor) executor).getValue();
+                }
+            }
+            catch (Exception e) {
+                logger.error("{}: Error switching coil register {}", getApplianceId(), registerWrite.getAddress(), e);
             }
         }
-        catch (Exception e) {
-            logger.error("{}: Error switching coil register {}", getApplianceId(), registerAddress, e);
-        }
-        return coil;
+        return on;
+    }
+
+    private RegisterName getRegisterName(boolean switchOn) {
+        return switchOn ? RegisterName.On : RegisterName.Off;
     }
 
     @Override

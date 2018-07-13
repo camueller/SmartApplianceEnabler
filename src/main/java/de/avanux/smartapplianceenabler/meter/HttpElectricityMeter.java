@@ -109,6 +109,26 @@ public class HttpElectricityMeter extends HttpTransactionExecutor implements Met
     }
 
     @Override
+    public float getEnergy() {
+        return 0f;
+    }
+
+    @Override
+    public void startEnergyMeter() {
+        // TODO implement
+    }
+
+    @Override
+    public void stopEnergyMeter() {
+        // TODO implement
+    }
+
+    @Override
+    public void resetEnergyMeter() {
+        // TODO implement
+    }
+
+    @Override
     public boolean isOn() {
         return getPower() > 0;
     }

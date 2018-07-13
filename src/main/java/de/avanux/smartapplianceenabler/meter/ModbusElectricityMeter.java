@@ -18,14 +18,18 @@
 package de.avanux.smartapplianceenabler.meter;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
-import de.avanux.smartapplianceenabler.modbus.*;
-import de.avanux.smartapplianceenabler.modbus.executor.FloatInputRegisterExecutor;
+import de.avanux.smartapplianceenabler.modbus.ModbusRegisterRead;
+import de.avanux.smartapplianceenabler.modbus.ModbusRegisterType;
+import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
+import de.avanux.smartapplianceenabler.modbus.executor.ReadFloatInputRegisterExecutor;
 import de.avanux.smartapplianceenabler.modbus.executor.ModbusExecutorFactory;
 import de.avanux.smartapplianceenabler.modbus.executor.ModbusReadTransactionExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import java.util.List;
 import java.util.Timer;
 
 /**
@@ -33,21 +37,27 @@ import java.util.Timer;
  * The device is polled according to poll interval in order to provide min/avg/max values of the measurement interval.
  * The TCP connection to the device remains established across the polls.
  */
-public class ModbusElectricityMeter extends ModbusSlave implements Meter, ApplianceIdConsumer, PollPowerExecutor {
+public class ModbusElectricityMeter extends ModbusSlave implements Meter, ApplianceIdConsumer, PollPowerExecutor, PollEnergyExecutor {
 
     private transient Logger logger = LoggerFactory.getLogger(ModbusElectricityMeter.class);
-    @XmlAttribute
-    private String address;
-    @XmlAttribute
-    private Integer pollInterval; // seconds
+    @XmlElement(name = "ModbusRegisterRead")
+    private List<ModbusRegisterRead> registerReads;
     @XmlAttribute
     private Integer measurementInterval; // seconds
     private transient PollElectricityMeter pollElectricityMeter = new PollElectricityMeter();
+    private transient PollEnergyMeter pollEnergyMeter = new PollEnergyMeter();
+
+    public enum RegisterName {
+        Power,
+        Energy
+    }
 
     @Override
     public void setApplianceId(String applianceId) {
         super.setApplianceId(applianceId);
         this.pollElectricityMeter.setApplianceId(applianceId);
+        this.pollEnergyMeter.setApplianceId(applianceId);
+        this.pollEnergyMeter.setPollEnergyExecutor(this);
     }
 
     @Override
@@ -76,28 +86,48 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
         return getPower() > 0;
     }
 
-    public Integer getPollInterval() {
-        return pollInterval != null ? pollInterval : ModbusElectricityMeterDefaults.getPollInterval();
-    }
-
     @Override
     public Integer getMeasurementInterval() {
         return measurementInterval;
     }
 
+    public void validate() {
+        boolean valid = true;
+        for(RegisterName registerName: RegisterName.values()) {
+            ModbusRegisterRead registerRead = ModbusRegisterRead.getRegisterRead(registerName.name(), registerReads);
+            if(registerRead != null) {
+                logger.debug("{}: {} configured: read register={} / poll interval={}s / extraction regex={}",
+                        getApplianceId(),
+                        registerName.name(),
+                        registerRead.getAddress(), registerRead.getPollInterval(),
+                        registerRead.getSelectedRegisterReadValue().getExtractionRegex());
+            }
+            else {
+                logger.error("{}: Missing register configuration for {}", getApplianceId(), registerName.name());
+                valid = false;
+            }
+        }
+        if(! valid) {
+            logger.error("{}: Terminating because of incorrect configuration", getApplianceId());
+            System.exit(-1);
+        }
+    }
+
     public void start(Timer timer) {
-        pollElectricityMeter.start(timer, getPollInterval(), measurementInterval, this);
+        ModbusRegisterRead registerRead = ModbusRegisterRead.getRegisterRead(RegisterName.Power.name(), registerReads);
+        pollElectricityMeter.start(timer, registerRead.getPollInterval(), measurementInterval, this);
     }
 
     @Override
     public float getPower() {
+        ModbusRegisterRead registerRead = ModbusRegisterRead.getRegisterRead(RegisterName.Power.name(), registerReads);
         try {
             ModbusReadTransactionExecutor executor = ModbusExecutorFactory.getReadExecutor(getApplianceId(),
-                    ModbusRegisterType.InputFloat, address, 2);
+                    ModbusRegisterType.InputFloat, registerRead.getAddress(), registerRead.getBytes());
             if(executor != null) {
                 executeTransaction(executor, true);
-                if(executor instanceof FloatInputRegisterExecutor) {
-                    Float registerValue = ((FloatInputRegisterExecutor) executor).getValue();
+                if(executor instanceof ReadFloatInputRegisterExecutor) {
+                    Float registerValue = ((ReadFloatInputRegisterExecutor) executor).getValue();
                     if(registerValue != null) {
                         logger.debug("{}: Float value={}", getApplianceId(), registerValue);
                         return registerValue;
@@ -106,7 +136,50 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
             }
         }
         catch(Exception e) {
-            logger.error("{}: Error reading input register {}", getApplianceId(), address, e);
+            logger.error("{}: Error reading input register {}", getApplianceId(), registerRead.getAddress(), e);
+        }
+        return 0;
+    }
+
+    @Override
+    public float getEnergy() {
+        return this.pollEnergyMeter.getEnergy();
+    }
+
+    @Override
+    public void startEnergyMeter() {
+        this.pollEnergyMeter.startEnergyCounter();
+    }
+
+    @Override
+    public void stopEnergyMeter() {
+        this.pollEnergyMeter.stopEnergyCounter();
+    }
+
+    @Override
+    public void resetEnergyMeter() {
+        this.pollEnergyMeter.resetEnergyCounter();
+    }
+
+    @Override
+    public float pollEnergy() {
+        ModbusRegisterRead registerRead = ModbusRegisterRead.getRegisterRead(RegisterName.Energy.name(), registerReads);
+        try {
+            ModbusReadTransactionExecutor executor = ModbusExecutorFactory.getReadExecutor(getApplianceId(),
+                    ModbusRegisterType.InputFloat, registerRead.getAddress(), registerRead.getBytes());
+            if(executor != null) {
+                executeTransaction(executor, true);
+                if(executor instanceof ReadFloatInputRegisterExecutor) {
+                    Float registerValue = ((ReadFloatInputRegisterExecutor) executor).getValue();
+                    if(registerValue != null) {
+                        logger.debug("{}: Float value={}", getApplianceId(), registerValue);
+                        return registerValue;
+                    }
+                }
+            }
+        }
+        catch(Exception e) {
+            logger.error("{}: Error reading input register {}", getApplianceId(), registerRead.getAddress(), e);
         }
         return 0;
     }

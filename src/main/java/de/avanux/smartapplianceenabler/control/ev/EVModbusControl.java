@@ -37,10 +37,17 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
     @XmlElement(name = "ModbusRegisterWrite")
     private List<ModbusRegisterWrite> registerWrites;
 
+    public enum RegisterName {
+        VehicleConnected,
+        Charging,
+        ChargingCompleted
+    }
+
     public void validate() {
         boolean valid = true;
-        for(EVModbusReadRegisterName registerName: EVModbusReadRegisterName.values()) {
-            ModbusRegisterRead registerRead = getRegisterRead(registerName);
+        for(RegisterName registerName: RegisterName.values()) {
+            ModbusRegisterRead registerRead = ModbusRegisterRead.getRegisterRead(registerName.name(),
+                    this.registerReads);
             if(registerRead != null) {
                 logger.debug("{}: {} configured: read register={} / poll interval={}s / extraction regex={}",
                         getApplianceId(),
@@ -55,7 +62,8 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
         }
 
         for(EVModbusWriteRegisterName registerName: EVModbusWriteRegisterName.values()) {
-            ModbusRegisterWrite registerWrite = getRegisterWrite(registerName);
+            ModbusRegisterWrite registerWrite = ModbusRegisterWrite.getRegisterWrite(registerName.name(),
+                    this.registerWrites);
             if(registerWrite != null) {
                 logger.debug("{}: {} configured: write register={} / value={}",
                         getApplianceId(),
@@ -83,29 +91,29 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
 
     @Override
     public boolean isVehicleConnected() {
-        return isMatchingVehicleStatus(EVModbusReadRegisterName.VehicleConnected);
+        return isMatchingVehicleStatus(RegisterName.VehicleConnected);
     }
 
     @Override
     public boolean isCharging() {
-        return isMatchingVehicleStatus(EVModbusReadRegisterName.Charging);
+        return isMatchingVehicleStatus(RegisterName.Charging);
     }
 
     @Override
     public boolean isChargingCompleted() {
-        return isMatchingVehicleStatus(EVModbusReadRegisterName.ChargingCompleted);
+        return isMatchingVehicleStatus(RegisterName.ChargingCompleted);
     }
 
-    public boolean isMatchingVehicleStatus(EVModbusReadRegisterName registerName) {
-        ModbusRegisterRead registerRead = getRegisterRead(registerName);
+    public boolean isMatchingVehicleStatus(RegisterName registerName) {
+        ModbusRegisterRead registerRead = ModbusRegisterRead.getRegisterRead(registerName.name(), this.registerReads);
         if(registerRead != null) {
             try {
                 ModbusReadTransactionExecutor executor = ModbusExecutorFactory.getReadExecutor(getApplianceId(),
                         registerRead.getType(), registerRead.getAddress(), registerRead.getBytes());
                 if(executor != null) {
-                    executeTransaction(executor, false);
-                    if(executor instanceof StringInputRegisterExecutor) {
-                        String registerValue = ((StringInputRegisterExecutor) executor).getValue();
+                    executeTransaction(executor, true);
+                    if(executor instanceof ReadStringInputRegisterExecutor) {
+                        String registerValue = ((ReadStringInputRegisterExecutor) executor).getValue();
                         logger.debug("{}: Vehicle status={}", getApplianceId(), registerValue);
                         return registerValue.matches(registerRead.getSelectedRegisterReadValue().getExtractionRegex());
                     }
@@ -120,7 +128,8 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
 
     @Override
     public Integer getVehicleStatusPollInterval() {
-        ModbusRegisterRead registerRead = getRegisterRead(EVModbusReadRegisterName.VehicleConnected);
+        ModbusRegisterRead registerRead = ModbusRegisterRead.getRegisterRead(RegisterName.VehicleConnected.name(),
+                this.registerReads);
         if(registerRead != null) {
             return registerRead.getPollInterval();
         }
@@ -130,18 +139,20 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
     @Override
     public void setChargeCurrent(int current) {
         logger.debug("{}: Set charge current {}A", getApplianceId(), current);
-        ModbusRegisterWrite registerWrite = getRegisterWrite(EVModbusWriteRegisterName.ChargingCurrent);
+        ModbusRegisterWrite registerWrite = ModbusRegisterWrite.getRegisterWrite(
+                EVModbusWriteRegisterName.ChargingCurrent.name(), this.registerWrites);
         if(registerWrite != null) {
             try {
                 ModbusWriteTransactionExecutor executor = ModbusExecutorFactory.getWriteExecutor(getApplianceId(),
                         registerWrite.getType(), registerWrite.getAddress());
                 if(executor != null) {
                     executor.setValue(current);
-                    executeTransaction(executor, false);
+                    executeTransaction(executor, true);
                 }
             }
             catch(Exception e) {
-                logger.error("{}: Error setting charge current in register {}", getApplianceId(), registerWrite.getAddress(), e);
+                logger.error("{}: Error setting charge current in register {}", getApplianceId(),
+                        registerWrite.getAddress(), e);
             }
         }
     }
@@ -157,7 +168,7 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
     }
 
     private void setCharging(EVModbusWriteRegisterName registerName) {
-        ModbusRegisterWrite registerWrite = getRegisterWrite(registerName);
+        ModbusRegisterWrite registerWrite = ModbusRegisterWrite.getRegisterWrite(registerName.name(), this.registerWrites);
         if(registerWrite != null) {
             try {
                 ModbusWriteTransactionExecutor executor = ModbusExecutorFactory.getWriteExecutor(getApplianceId(),
@@ -176,29 +187,5 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
                 logger.error("{}: Error enable/disable charging process in register {}", getApplianceId(), registerWrite.getAddress(), e);
             }
         }
-    }
-
-    private ModbusRegisterRead getRegisterRead(EVModbusReadRegisterName registerName) {
-        for(ModbusRegisterRead registerRead: this.registerReads) {
-            for(ModbusRegisterReadValue registerReadValue: registerRead.getRegisterReadValues()) {
-                if(registerName.name().equals(registerReadValue.getName())) {
-                    return new ModbusRegisterRead(registerRead.getAddress(), registerRead.getBytes(),
-                            registerRead.getType(), registerRead.getPollInterval(), registerReadValue);
-                }
-            }
-        }
-        return null;
-    }
-
-    private ModbusRegisterWrite getRegisterWrite(EVModbusWriteRegisterName registerName) {
-        for(ModbusRegisterWrite registerWrite: this.registerWrites) {
-            for(ModbusRegisterWriteValue registerWriteValue: registerWrite.getRegisterWriteValues()) {
-                if(registerName.name().equals(registerWriteValue.getName())) {
-                    return new ModbusRegisterWrite(registerWrite.getAddress(), registerWrite.getType(),
-                            registerWriteValue);
-                }
-            }
-        }
-        return null;
     }
 }
