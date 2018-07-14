@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.3">
     <Appliance id="F-28091971-000000000099-00">
-        <!--ElectricVehicleCharger>
+        <ElectricVehicleCharger>
             <EVModbusControl idref="wallbox" slaveAddress="180">
                 <ModbusRegisterRead address="100" type="InputString">
                     <ModbusRegisterReadValue name="VehicleConnected" extractionRegex="(B)" />
@@ -23,13 +23,13 @@
                 <ChargeProfile name="10 kWh" energyRequested="10000" maxChargeDuration="86400" />
                 <ChargeProfile name="Vollmachen" energyRequested="40000" maxChargeDuration="86400" />
             </ElectricVehicle>
-        </ElectricVehicleCharger-->
-        <ModbusSwitch idref="modbus" slaveAddress="1">
+        </ElectricVehicleCharger>
+        <!--ModbusSwitch idref="modbus" slaveAddress="1">
             <ModbusRegisterWrite address="400" type="Coil">
                 <ModbusRegisterWriteValue name="On" value="1" />
                 <ModbusRegisterWriteValue name="Off" value="0" />
             </ModbusRegisterWrite>
-        </ModbusSwitch>
+        </ModbusSwitch-->
         <ModbusElectricityMeter idref="modbus" slaveAddress="1" measurementInterval="60">
             <ModbusRegisterRead address="0x000C" type="InputFloat">
                 <ModbusRegisterReadValue name="Power" />
@@ -41,6 +41,6 @@
     </Appliance>
     <Connectivity>
         <ModbusTCP id="modbus" host="127.0.0.1" />
-        <!-- ModbusTCP id="wallbox" host="192.168.69.12" /-->
+        <ModbusTCP id="wallbox" host="192.168.69.12" />
     </Connectivity>
 </Appliances>
