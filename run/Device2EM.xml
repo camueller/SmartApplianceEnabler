@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Device2EM xmlns="http://www.sma.de/communication/schema/SEMP/v1.3">
+<Device2EM xmlns="http://www.sma.de/communication/schema/SEMP/v1">
     <DeviceInfo>
         <Identification>
             <DeviceId>F-28091971-000000000099-00</DeviceId>
             <DeviceName>Elektroauto</DeviceName>
             <DeviceType>EVCharger</DeviceType>
-            <DeviceSerial>EV-1851</DeviceSerial>
+            <DeviceSerial>EV-914</DeviceSerial>
             <DeviceVendor>EV Ltd.</DeviceVendor>
         </Identification>
         <Characteristics>
             <MaxPowerConsumption>22000</MaxPowerConsumption>
-            <MinPowerConsumption>1400</MinPowerConsumption>
+            <MinPowerConsumption>460</MinPowerConsumption>
+            <!--MinOnTime>3600</MinOnTime>
+            <MinOffTime>1800</MinOffTime-->
             <!--PowerLevels>
                 <PowerLevel>50</PowerLevel>
                 <PowerLevel>360</PowerLevel>
