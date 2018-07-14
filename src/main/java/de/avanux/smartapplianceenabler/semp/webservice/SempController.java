@@ -42,7 +42,7 @@ public class SempController {
 
     private static final String BASE_URL = "/semp";
     private static final String CROSS_ORIGIN_URL = "http://localhost:4200";
-    public static final String SCHEMA_LOCATION = "http://www.sma.de/communication/schema/SEMP/v1.3";
+    public static final String SCHEMA_LOCATION = "http://www.sma.de/communication/schema/SEMP/v1";
     private Logger logger = LoggerFactory.getLogger(SempController.class);
     private boolean timeFrameChangedListenerRegistered;
     
