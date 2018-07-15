@@ -29,13 +29,12 @@ import de.avanux.smartapplianceenabler.control.StartingCurrentSwitchDefaults;
 import de.avanux.smartapplianceenabler.meter.*;
 import de.avanux.smartapplianceenabler.modbus.ModbusElectricityMeterDefaults;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
+import de.avanux.smartapplianceenabler.schedule.RuntimeRequest;
 import de.avanux.smartapplianceenabler.schedule.Schedule;
 import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
 import de.avanux.smartapplianceenabler.semp.webservice.*;
 import org.joda.time.Interval;
 import org.joda.time.LocalDateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -44,7 +43,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 @RestController
 public class SaeController {
@@ -369,7 +367,7 @@ public class SaeController {
                     null, appliance.getSchedules(), false, false);
             if(timeframeIntervals.size() > 0) {
                 Schedule schedule = timeframeIntervals.get(0).getTimeframe().getSchedule();
-                if(schedule.getRequest() instanceof de.avanux.smartapplianceenabler.schedule.RuntimeRequest) {
+                if(schedule.getRequest() instanceof RuntimeRequest) {
                     return schedule.getRequest().getMin();
                 }
             }
@@ -528,22 +526,22 @@ public class SaeController {
             applianceStatus.setVendor(deviceInfo.getIdentification().getDeviceVendor());
             applianceStatus.setType(deviceInfo.getIdentification().getDeviceType());
 
-            List<RuntimeRequest> runtimeRequests = appliance.getRuntimeRequests(now, true);
+            List<RuntimeInterval> runtimeIntervals = appliance.getRuntimeIntervals(now, true);
 
             if(appliance.isControllable()) {
                 applianceStatus.setControllable(true);
-                if(runtimeRequests.size() > 0) {
-                    RuntimeRequest nextRuntimeRequest= runtimeRequests.get(0);
+                if(runtimeIntervals.size() > 0) {
+                    RuntimeInterval nextRuntimeInterval = runtimeIntervals.get(0);
                     applianceStatus.setPlanningRequested(true);
-                    applianceStatus.setEarliestStart(nextRuntimeRequest.getEarliestStart());
-                    applianceStatus.setLatestStart(TimeframeInterval.getLatestStart(nextRuntimeRequest.getLatestEnd(),
-                            nextRuntimeRequest.getMinRunningTime()));
+                    applianceStatus.setEarliestStart(nextRuntimeInterval.getEarliestStart());
+                    applianceStatus.setLatestStart(TimeframeInterval.getLatestStart(nextRuntimeInterval.getLatestEnd(),
+                            nextRuntimeInterval.getMinRunningTime()));
                     applianceStatus.setOn(appliance.getControl().isOn());
                     RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
                     if(runningTimeMonitor.getActiveTimeframeInterval() == null) {
                         applianceStatus.setRunningTime(0);
-                        applianceStatus.setRemainingMinRunningTime(nextRuntimeRequest.getMinRunningTime());
-                        applianceStatus.setRemainingMaxRunningTime(nextRuntimeRequest.getMaxRunningTime());
+                        applianceStatus.setRemainingMinRunningTime(nextRuntimeInterval.getMinRunningTime());
+                        applianceStatus.setRemainingMaxRunningTime(nextRuntimeInterval.getMaxRunningTime());
                     }
                 }
                 applianceStatus.setOn(appliance.getControl().isOn());

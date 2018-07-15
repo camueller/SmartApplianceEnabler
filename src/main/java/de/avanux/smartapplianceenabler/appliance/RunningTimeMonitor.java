@@ -17,10 +17,7 @@
  */
 package de.avanux.smartapplianceenabler.appliance;
 
-import de.avanux.smartapplianceenabler.schedule.Schedule;
-import de.avanux.smartapplianceenabler.schedule.TimeOfDay;
-import de.avanux.smartapplianceenabler.schedule.Timeframe;
-import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
+import de.avanux.smartapplianceenabler.schedule.*;
 import org.joda.time.Interval;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
@@ -245,7 +242,7 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         if(timeframeIntervalToBeActivated != null && activeTimeframeInterval == null) {
             Schedule schedule = timeframeIntervalToBeActivated.getTimeframe().getSchedule();
             runningTime = 0;
-            if(schedule.getRequest() instanceof de.avanux.smartapplianceenabler.schedule.RuntimeRequest) {
+            if(schedule.getRequest() instanceof RuntimeRequest) {
                 remainingMinRunningTimeWhileNotRunning = schedule.getRequest().getMin();
                 remainingMaxRunningTimeWhileNotRunning = schedule.getRequest().getMax();
                 intervalChanged = true;

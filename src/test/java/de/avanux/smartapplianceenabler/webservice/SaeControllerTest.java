@@ -31,7 +31,7 @@ public class SaeControllerTest {
     private final static String SCHEDULE_DAY_TIMEFRAME =
             "<Schedules>\n" +
             "  <Schedule>\n" +
-            "    <RuntimeRequest min=\"7200\" max=\"10800\" />\n" +
+            "    <RuntimeInterval min=\"7200\" max=\"10800\" />\n" +
             "    <DayTimeframe>\n" +
             "      <Start hour=\"10\" minute=\"0\" second=\"0\"/>\n" +
             "      <End hour=\"14\" minute=\"0\" second=\"0\"/>\n" +
@@ -45,7 +45,7 @@ public class SaeControllerTest {
     private  final static String SCHEDULE_CONSECUTIVE_DAYS_TIMEFRAME =
             "<Schedules>\n" +
             "  <Schedule>\n" +
-            "    <RuntimeRequest min=\"36000\" max=\"43200\" />\n" +
+            "    <RuntimeInterval min=\"36000\" max=\"43200\" />\n" +
             "    <ConsecutiveDaysTimeframe>\n" +
             "      <Start dayOfWeek=\"5\" hour=\"16\" minute=\"0\" second=\"0\" />\n" +
             "      <End dayOfWeek=\"7\" hour=\"20\" minute=\"0\" second=\"0\" />\n" +
