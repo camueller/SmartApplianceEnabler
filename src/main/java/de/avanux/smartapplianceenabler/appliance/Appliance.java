@@ -404,28 +404,21 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
 
     public List<RuntimeInterval> getRuntimeIntervals(LocalDateTime now, boolean onlySufficient) {
         List<RuntimeInterval> runtimeIntervals = new ArrayList<>();
+        if(this.control instanceof ElectricVehicleCharger &&
+                (runningTimeMonitor == null || runningTimeMonitor.getActiveTimeframeInterval() == null)) {
+            if(((ElectricVehicleCharger) this.control).isVehicleConnected()) {
+                RuntimeInterval evOptionalEnergy = getRuntimeIntervalForEVUsingOptionalEnergy();
+                logger.debug("{}: requesting optional energy for electric vehicle: {}", id, evOptionalEnergy);
+                runtimeIntervals.add(evOptionalEnergy);
+            }
+        }
         if(runningTimeMonitor != null) {
-            runtimeIntervals = getRuntimeIntervals(now,
+            runtimeIntervals.addAll(getRuntimeIntervals(now,
                     runningTimeMonitor.getSchedules(),
                     runningTimeMonitor.getActiveTimeframeInterval(),
                     onlySufficient,
                     runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(now),
-                    runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(now));
-        }
-        if(this.control instanceof ElectricVehicleCharger &&
-                (runningTimeMonitor == null || runningTimeMonitor.getActiveTimeframeInterval() == null)) {
-            if(((ElectricVehicleCharger) this.control).isVehicleConnected()) {
-                float energy = meter.getEnergy();
-                logger.debug("{}: energy metered: {} kWh", id, energy);
-
-                RuntimeInterval runtimeInterval = new RuntimeInterval();
-                runtimeInterval.setEarliestStart(0);
-                runtimeInterval.setLatestEnd(CONSIDERATION_INTERVAL_DAYS * 24 * 3600);
-                runtimeInterval.setMinEnergy(0);
-                // FIXME use battery capacity
-                runtimeInterval.setMaxEnergy(10000 - Float.valueOf(energy * 1000).intValue());
-                runtimeIntervals.add(runtimeInterval);
-            }
+                    runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(now)));
         }
         return runtimeIntervals;
     }
@@ -465,6 +458,19 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             logger.debug("{}: No timeframes found", id);
         }
         return runtimeIntervals;
+    }
+
+    private RuntimeInterval getRuntimeIntervalForEVUsingOptionalEnergy() {
+        float energy = meter.getEnergy();
+        logger.debug("{}: energy metered: {} kWh", id, energy);
+
+        RuntimeInterval runtimeInterval = new RuntimeInterval();
+        runtimeInterval.setEarliestStart(0);
+        runtimeInterval.setLatestEnd(CONSIDERATION_INTERVAL_DAYS * 24 * 3600);
+        runtimeInterval.setMinEnergy(0);
+        // FIXME use battery capacity
+        runtimeInterval.setMaxEnergy(40000 - Float.valueOf(energy * 1000).intValue());
+        return runtimeInterval;
     }
 
     private void addRuntimeInterval(LocalDateTime now, TimeframeInterval timeframeInterval, List<RuntimeInterval> runtimeIntervals,
