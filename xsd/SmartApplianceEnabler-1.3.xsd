@@ -91,6 +91,7 @@
                 <xs:element name="HttpElectricityMeter" type="HttpElectricityMeterType" minOccurs="0" />
             </xs:choice>
             <xs:element name="Schedule" type="ScheduleType" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="EnergySchedule" type="EnergyScheduleType" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
         <xs:attribute name="id" type="xs:string" use="required" />
     </xs:complexType>
@@ -254,6 +255,15 @@
     <xs:complexType name="ScheduleType">
         <xs:choice minOccurs="1" maxOccurs="1">
             <xs:sequence>
+                <xs:element name="RuntimeRequest" type="RuntimeRequestType" minOccurs="1" />
+                <xs:element name="EnergyRequest" type="EnergyRequestType" minOccurs="0" />
+            </xs:sequence>
+            <xs:sequence>
+                <xs:element name="EnergyRequest" type="EnergyRequestType" minOccurs="1" />
+            </xs:sequence>
+        </xs:choice>
+        <xs:choice minOccurs="1" maxOccurs="1">
+            <xs:sequence>
                 <xs:element name="DayTimeframe" type="DayTimeframeType" minOccurs="1" />
                 <xs:element name="ConsecutiveDaysTimeframe" type="ConsecutiveDaysTimeframeType" minOccurs="0" />
             </xs:sequence>
@@ -263,8 +273,6 @@
         </xs:choice>
         <xs:attribute name="id" type="xs:NCName" />
         <xs:attribute name="enabled" type="xs:boolean" />
-        <xs:attribute name="minRunningTime" type="xs:long" use="required" />
-        <xs:attribute name="maxRunningTime" type="xs:long" />
     </xs:complexType>
 
     <xs:complexType name="DayTimeframeConditionType">
@@ -301,6 +309,16 @@
         <xs:attribute name="hour" type="xs:int" use="required"/>
         <xs:attribute name="minute" type="xs:int" use="required"/>
         <xs:attribute name="second" type="xs:int" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="RuntimeRequestType">
+        <xs:attribute name="min" type="xs:int" use="required"/>
+        <xs:attribute name="max" type="xs:int"/>
+    </xs:complexType>
+
+    <xs:complexType name="EnergyRequestType">
+        <xs:attribute name="min" type="xs:int" use="required"/>
+        <xs:attribute name="max" type="xs:int"/>
     </xs:complexType>
 
     <xs:complexType name="ConnectivityType">

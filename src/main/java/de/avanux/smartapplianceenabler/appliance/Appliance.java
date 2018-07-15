@@ -362,8 +362,10 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             return ((ElectricVehicleCharger) this.control).isUseOptionalEnergy();
         }
         else if(schedules != null) {
-            for(Schedule schedule : schedules) {
-                if(schedule.getMaxRunningTime() != null && schedule.getMaxRunningTime() > schedule.getMinRunningTime()) {
+            for (Schedule schedule : schedules) {
+                if (schedule.getRequest() != null
+                        && schedule.getRequest().getMax() != null
+                        && schedule.getRequest().getMax() > schedule.getRequest().getMin()) {
                     return true;
                 }
             }
@@ -447,11 +449,13 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             for(TimeframeInterval timeframeIntervalOfSchedule : timeFrameIntervals) {
                 Schedule schedule = timeframeIntervalOfSchedule.getTimeframe().getSchedule();
                 Interval interval = timeframeIntervalOfSchedule.getInterval();
-                Integer minRunningTime = schedule.getMinRunningTime();
-                if(interval.contains(now.toDateTime()) && remainingMinRunningTime != null) {
-                    minRunningTime = remainingMinRunningTime;
+                Integer minRunningTime = schedule.getRequest() instanceof de.avanux.smartapplianceenabler.schedule.RuntimeRequest ? schedule.getRequest().getMin() : null;
+                if(minRunningTime != null) {
+                    if(interval.contains(now.toDateTime()) && remainingMinRunningTime != null) {
+                        minRunningTime = remainingMinRunningTime;
+                    }
+                    addRuntimeRequest(runtimeRequests, interval, minRunningTime, schedule.getRequest().getMax(), now);
                 }
-                addRuntimeRequest(runtimeRequests, interval, minRunningTime, schedule.getMaxRunningTime(), now);
             }
         }
         else if(activeTimeframeInterval != null) {

@@ -20,8 +20,12 @@
                 </ModbusRegisterWrite>
             </EVModbusControl>
             <ElectricVehicle name="Nissan Leaf" capacity="40000">
-                <ChargeProfile name="10 kWh" energyRequested="10000" maxChargeDuration="86400" />
-                <ChargeProfile name="Vollmachen" energyRequested="40000" maxChargeDuration="86400" />
+                <ChargeProfile name="10 kWh" maxChargeDuration="86400">
+                    <EnergyRequest min="2000" max="4000" />
+                </ChargeProfile>
+                <ChargeProfile name="Vollmachen" maxChargeDuration="86400">
+                    <EnergyRequest min="40000" />
+                </ChargeProfile>
             </ElectricVehicle>
         </ElectricVehicleCharger>
         <!--ModbusSwitch idref="modbus" slaveAddress="1">
@@ -38,6 +42,25 @@
                 <ModbusRegisterReadValue name="Energy" />
             </ModbusRegisterRead>
         </ModbusElectricityMeter>
+        <!--
+
+        3-stufiges Verhaltensmodell
+
+        1. Fahrzeugstatus=B und kein Timeframe aktiv
+           => Überschussladen
+        2. Fahrzeugstatus=B und Timeframe aktiv
+           => Mussladen entsprechend Schedule
+        3. Fahrzeugstatus=B und Chargeprofile in Web-App selektiert
+           => Mussladen entsprechend Chargeprofile
+
+        -->
+        <Schedule>
+            <RuntimeRequest min="2000" max="4000" />
+            <DayTimeframe>
+                <Start hour="7" minute="0" second="0" />
+                <End hour="10" minute="0" second="0" />
+            </DayTimeframe>
+        </Schedule>
     </Appliance>
     <Connectivity>
         <ModbusTCP id="modbus" host="127.0.0.1" />

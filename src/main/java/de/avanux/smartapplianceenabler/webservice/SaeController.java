@@ -368,7 +368,10 @@ public class SaeController {
             List<TimeframeInterval> timeframeIntervals = Schedule.findTimeframeIntervals(now,
                     null, appliance.getSchedules(), false, false);
             if(timeframeIntervals.size() > 0) {
-                return timeframeIntervals.get(0).getTimeframe().getSchedule().getMinRunningTime();
+                Schedule schedule = timeframeIntervals.get(0).getTimeframe().getSchedule();
+                if(schedule.getRequest() instanceof de.avanux.smartapplianceenabler.schedule.RuntimeRequest) {
+                    return schedule.getRequest().getMin();
+                }
             }
         }
         else {
