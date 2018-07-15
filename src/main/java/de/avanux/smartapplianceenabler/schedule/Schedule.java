@@ -33,7 +33,7 @@ public class Schedule {
     @XmlAttribute
     private boolean enabled = true;
     @XmlElements({
-            @XmlElement(name = "RuntimeRequest", type = RuntimeRequest.class),
+            @XmlElement(name = "RuntimeInterval", type = RuntimeRequest.class),
             @XmlElement(name = "EnergyRequest", type = EnergyRequest.class)
     })
     private Request request;

@@ -17,13 +17,11 @@
  */
 package de.avanux.smartapplianceenabler.semp.webservice;
 
-import de.avanux.smartapplianceenabler.appliance.ActiveIntervalChangedListener;
 import de.avanux.smartapplianceenabler.appliance.Appliance;
 import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
-import de.avanux.smartapplianceenabler.appliance.RuntimeRequest;
+import de.avanux.smartapplianceenabler.appliance.RuntimeInterval;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.meter.Meter;
-import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -260,13 +258,13 @@ public class SempController {
 
     private PlanningRequest createPlanningRequest(LocalDateTime now, Appliance appliance) {
         PlanningRequest planningRequest = null;
-        List<RuntimeRequest> runtimeRequests = appliance.getRuntimeRequests(now, false);
-        if(runtimeRequests.size() > 0) {
+        List<RuntimeInterval> runtimeIntervals = appliance.getRuntimeIntervals(now, false);
+        if(runtimeIntervals.size() > 0) {
             planningRequest = new PlanningRequest();
             List<de.avanux.smartapplianceenabler.semp.webservice.Timeframe> sempTimeFrames = new ArrayList<de.avanux.smartapplianceenabler.semp.webservice.Timeframe>();
             planningRequest.setTimeframes(sempTimeFrames);
-            for(RuntimeRequest runtimeRequest : runtimeRequests) {
-                Timeframe sempTimeFrame = createSempTimeFrame(appliance.getId(), runtimeRequest);
+            for(RuntimeInterval runtimeInterval : runtimeIntervals) {
+                Timeframe sempTimeFrame = createSempTimeFrame(appliance.getId(), runtimeInterval);
                 sempTimeFrames.add(sempTimeFrame);
                 logger.debug("{}: Timeframe added to PlanningRequest: {}", appliance.getId(), sempTimeFrame);
             }
@@ -279,9 +277,9 @@ public class SempController {
     }
 
     protected de.avanux.smartapplianceenabler.semp.webservice.Timeframe
-    createSempTimeFrame(String deviceId, RuntimeRequest runtimeRequest) {
-        Integer minRunningTime = runtimeRequest.getMinRunningTime();
-        Integer maxRunningTime = runtimeRequest.getMaxRunningTime();
+    createSempTimeFrame(String deviceId, RuntimeInterval runtimeInterval) {
+        Integer minRunningTime = runtimeInterval.getMinRunningTime();
+        Integer maxRunningTime = runtimeInterval.getMaxRunningTime();
         if(minRunningTime == null) {
             minRunningTime = 0;
         }
@@ -305,11 +303,11 @@ public class SempController {
         de.avanux.smartapplianceenabler.semp.webservice.Timeframe timeFrame
                 = new de.avanux.smartapplianceenabler.semp.webservice.Timeframe();
         timeFrame.setDeviceId(deviceId);
-        timeFrame.setEarliestStart(runtimeRequest.getEarliestStart());
-        timeFrame.setLatestEnd(runtimeRequest.getLatestEnd());
-        if(runtimeRequest.getMinEnergy() != null) {
-            timeFrame.setMinEnergy(runtimeRequest.getMinEnergy());
-            timeFrame.setMaxEnergy(runtimeRequest.getMaxEnergy());
+        timeFrame.setEarliestStart(runtimeInterval.getEarliestStart());
+        timeFrame.setLatestEnd(runtimeInterval.getLatestEnd());
+        if(runtimeInterval.getMinEnergy() != null) {
+            timeFrame.setMinEnergy(runtimeInterval.getMinEnergy());
+            timeFrame.setMaxEnergy(runtimeInterval.getMaxEnergy());
         }
         else {
             timeFrame.setMinRunningTime(minRunningTime);

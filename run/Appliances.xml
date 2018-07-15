@@ -44,7 +44,7 @@
         </ModbusElectricityMeter>
         <!--
 
-        3-stufiges Verhaltensmodell
+        3 Szenarien
 
         1. Fahrzeugstatus=B und kein Timeframe aktiv
            => Überschussladen
@@ -57,8 +57,8 @@
         <Schedule>
             <RuntimeRequest min="2000" max="4000" />
             <DayTimeframe>
-                <Start hour="7" minute="0" second="0" />
-                <End hour="10" minute="0" second="0" />
+                <Start hour="11" minute="0" second="0" />
+                <End hour="18" minute="0" second="0" />
             </DayTimeframe>
         </Schedule>
     </Appliance>
