@@ -404,7 +404,16 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
 
     public List<RuntimeRequest> getRuntimeRequests(LocalDateTime now, boolean onlySufficient) {
         List<RuntimeRequest> runtimeRequests = new ArrayList<>();
-        if(this.control instanceof ElectricVehicleCharger) {
+        if(runningTimeMonitor != null) {
+            runtimeRequests = getRuntimeRequests(now,
+                    runningTimeMonitor.getSchedules(),
+                    runningTimeMonitor.getActiveTimeframeInterval(),
+                    onlySufficient,
+                    runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(now),
+                    runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(now));
+        }
+        if(this.control instanceof ElectricVehicleCharger &&
+                (runningTimeMonitor == null || runningTimeMonitor.getActiveTimeframeInterval() == null)) {
             if(((ElectricVehicleCharger) this.control).isVehicleConnected()) {
                 float energy = meter.getEnergy();
                 logger.debug("{}: energy metered: {} kWh", id, energy);
@@ -416,16 +425,6 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                 // FIXME use battery capacity
                 runtimeRequest.setMaxEnergy(10000 - Float.valueOf(energy * 1000).intValue());
                 runtimeRequests.add(runtimeRequest);
-            }
-        }
-        else {
-            if(runningTimeMonitor != null) {
-                runtimeRequests = getRuntimeRequests(now,
-                        runningTimeMonitor.getSchedules(),
-                        runningTimeMonitor.getActiveTimeframeInterval(),
-                        onlySufficient,
-                        runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(now),
-                        runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(now));
             }
         }
         return runtimeRequests;
