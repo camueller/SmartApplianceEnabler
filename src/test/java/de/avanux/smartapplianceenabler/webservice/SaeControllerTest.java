@@ -30,7 +30,8 @@ public class SaeControllerTest {
 
     private final static String SCHEDULE_DAY_TIMEFRAME =
             "<Schedules>\n" +
-            "  <Schedule minRunningTime=\"7200\" maxRunningTime=\"10800\">\n" +
+            "  <Schedule>\n" +
+            "    <RuntimeRequest min=\"7200\" max=\"10800\" />\n" +
             "    <DayTimeframe>\n" +
             "      <Start hour=\"10\" minute=\"0\" second=\"0\"/>\n" +
             "      <End hour=\"14\" minute=\"0\" second=\"0\"/>\n" +
@@ -43,7 +44,8 @@ public class SaeControllerTest {
 
     private  final static String SCHEDULE_CONSECUTIVE_DAYS_TIMEFRAME =
             "<Schedules>\n" +
-            "  <Schedule minRunningTime=\"36000\" maxRunningTime=\"43200\">\n" +
+            "  <Schedule>\n" +
+            "    <RuntimeRequest min=\"36000\" max=\"43200\" />\n" +
             "    <ConsecutiveDaysTimeframe>\n" +
             "      <Start dayOfWeek=\"5\" hour=\"16\" minute=\"0\" second=\"0\" />\n" +
             "      <End dayOfWeek=\"7\" hour=\"20\" minute=\"0\" second=\"0\" />\n" +
@@ -75,8 +77,8 @@ public class SaeControllerTest {
         Assert.assertEquals(1, schedules.size());
         Schedule schedule = schedules.get(0);
 
-        Assert.assertEquals(7200, schedule.getMinRunningTime().intValue());
-        Assert.assertEquals(10800, schedule.getMaxRunningTime().intValue());
+        Assert.assertEquals(7200, schedule.getRequest().getMin().intValue());
+        Assert.assertEquals(10800, schedule.getRequest().getMax().intValue());
 
         Timeframe timeframe = schedule.getTimeframe();
         Assert.assertTrue(timeframe instanceof DayTimeframe);
@@ -99,8 +101,8 @@ public class SaeControllerTest {
         Assert.assertEquals(1, schedules.size());
         Schedule schedule = schedules.get(0);
 
-        Assert.assertEquals(36000, schedule.getMinRunningTime().intValue());
-        Assert.assertEquals(43200, schedule.getMaxRunningTime().intValue());
+        Assert.assertEquals(36000, schedule.getRequest().getMin().intValue());
+        Assert.assertEquals(43200, schedule.getRequest().getMax().intValue());
 
         Timeframe timeframe = schedule.getTimeframe();
         Assert.assertTrue(timeframe instanceof ConsecutiveDaysTimeframe);

@@ -245,10 +245,12 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         if(timeframeIntervalToBeActivated != null && activeTimeframeInterval == null) {
             Schedule schedule = timeframeIntervalToBeActivated.getTimeframe().getSchedule();
             runningTime = 0;
-            remainingMinRunningTimeWhileNotRunning = schedule.getMinRunningTime();
-            remainingMaxRunningTimeWhileNotRunning = schedule.getMaxRunningTime();
-            intervalChanged = true;
-            logger.debug("{}: Interval activated: ", applianceId, timeframeIntervalToBeActivated);
+            if(schedule.getRequest() instanceof de.avanux.smartapplianceenabler.schedule.RuntimeRequest) {
+                remainingMinRunningTimeWhileNotRunning = schedule.getRequest().getMin();
+                remainingMaxRunningTimeWhileNotRunning = schedule.getRequest().getMax();
+                intervalChanged = true;
+                logger.debug("{}: Interval activated: ", applianceId, timeframeIntervalToBeActivated);
+            }
         }
         else if(timeframeIntervalToBeActivated == null && activeTimeframeInterval != null) {
             logger.debug("{}: Interval expired: {}", applianceId, activeTimeframeInterval);
