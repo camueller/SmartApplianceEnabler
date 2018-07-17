@@ -19,21 +19,7 @@
                     <ModbusRegisterWriteValue name="ChargingCurrent" value="0" />
                 </ModbusRegisterWrite>
             </EVModbusControl>
-            <ElectricVehicle name="Nissan Leaf" capacity="40000">
-                <ChargeProfile name="10 kWh" maxChargeDuration="86400">
-                    <EnergyRequest min="2000" max="4000" />
-                </ChargeProfile>
-                <ChargeProfile name="Vollmachen" maxChargeDuration="86400">
-                    <EnergyRequest min="40000" />
-                </ChargeProfile>
-            </ElectricVehicle>
         </ElectricVehicleCharger>
-        <!--ModbusSwitch idref="modbus" slaveAddress="1">
-            <ModbusRegisterWrite address="400" type="Coil">
-                <ModbusRegisterWriteValue name="On" value="1" />
-                <ModbusRegisterWriteValue name="Off" value="0" />
-            </ModbusRegisterWrite>
-        </ModbusSwitch-->
         <ModbusElectricityMeter idref="modbus" slaveAddress="1" measurementInterval="60">
             <ModbusRegisterRead address="0x000C" type="InputFloat">
                 <ModbusRegisterReadValue name="Power" />
@@ -42,26 +28,30 @@
                 <ModbusRegisterReadValue name="Energy" />
             </ModbusRegisterRead>
         </ModbusElectricityMeter>
-        <!--
-
-        3 Szenarien
-
-        1. Fahrzeugstatus=B und kein Timeframe aktiv
-           => Überschussladen
-        2. Fahrzeugstatus=B und Timeframe aktiv
-           => Mussladen entsprechend Schedule
-        3. Fahrzeugstatus=B und Chargeprofile in Web-App selektiert
-           => Mussladen entsprechend Chargeprofile
-
-        -->
-        <Schedule>
-            <RuntimeRequest min="2000" max="4000" />
+        <!-- Schedule>
+            <RuntimeRequest min="1800" max="1800" />
             <DayTimeframe>
-                <Start hour="11" minute="0" second="0" />
-                <End hour="18" minute="0" second="0" />
+                <Start hour="7" minute="15" second="0" />
+                <End hour="17" minute="45" second="0" />
+                <DayOfWeek>1</DayOfWeek>
+                <DayOfWeek>2</DayOfWeek>
+                <DayOfWeek>3</DayOfWeek>
+                <DayOfWeek>4</DayOfWeek>
+                <DayOfWeek>5</DayOfWeek>
             </DayTimeframe>
-        </Schedule>
-    </Appliance>
+        </Schedule-->
+        <Schedule>
+            <EnergyRequest min="12000" max="12000" />
+            <DayTimeframe>
+                <Start hour="12" minute="16" second="0" />
+                <End hour="17" minute="15" second="0" />
+                <DayOfWeek>1</DayOfWeek>
+                <DayOfWeek>2</DayOfWeek>
+                <DayOfWeek>3</DayOfWeek>
+                <DayOfWeek>4</DayOfWeek>
+                <DayOfWeek>5</DayOfWeek>
+            </DayTimeframe>
+        </Schedule>    </Appliance>
     <Connectivity>
         <ModbusTCP id="modbus" host="127.0.0.1" />
         <ModbusTCP id="wallbox" host="192.168.69.12" />
