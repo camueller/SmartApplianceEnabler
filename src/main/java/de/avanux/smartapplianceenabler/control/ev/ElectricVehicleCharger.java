@@ -18,6 +18,7 @@
 
 package de.avanux.smartapplianceenabler.control.ev;
 
+import de.avanux.smartapplianceenabler.appliance.Appliance;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.ControlStateChangedListener;
@@ -43,6 +44,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
             @XmlElement(name = "EVModbusControl", type = EVModbusControl.class),
     })
     private EVControl evControl;
+    private transient Appliance appliance;
     private transient String applianceId;
     private transient State state = State.VEHICLE_NOT_CONNECTED;
     private transient boolean useOptionalEnergy = true;
@@ -53,6 +55,10 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
         VEHICLE_CONNECTED,
         CHARGING,
         CHARGING_COMPLETED
+    }
+
+    public void setAppliance(Appliance appliance) {
+        this.appliance = appliance;
     }
 
     @Override
@@ -130,6 +136,12 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
 
     private void onStateChanged(State previousState, State newState) {
         logger.debug("{}: Vehicle state changed: previousState={} newState={}", applianceId, previousState, newState);
+        if(newState == State.VEHICLE_CONNECTED) {
+            this.appliance.activateSchedules();
+        }
+        if(newState == State.VEHICLE_NOT_CONNECTED) {
+            this.appliance.deactivateSchedules();
+        }
     }
 
     @Override

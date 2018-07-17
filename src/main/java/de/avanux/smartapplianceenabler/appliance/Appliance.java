@@ -137,13 +137,8 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         }
         if(schedules != null && schedules.size() > 0) {
             logger.info("{}: Schedules configured: {}", id, schedules.size());
-            if(! hasStartingCurrentDetection()) {
-                // in case of starting current detection timeframes are added after
-                // starting current was detected
-                if(runningTimeMonitor != null) {
-                    runningTimeMonitor.setSchedules(schedules);
-                    logger.debug("{}: Schedules passed to RunningTimeMonitor", id);
-                }
+            if(! hasScheduleHandling()) {
+                activateSchedules();
             }
         }
         else {
@@ -155,6 +150,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                 ((ApplianceIdConsumer) control).setApplianceId(id);
             }
             if(control instanceof ElectricVehicleCharger) {
+                ((ElectricVehicleCharger) control).setAppliance(this);
                 ((ElectricVehicleCharger) control).init();
             }
             if(control instanceof StartingCurrentSwitch) {
@@ -373,8 +369,34 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         return false;
     }
 
+    /**
+     * Returns true, if Schedules are handled.
+     * @return
+     */
+    private boolean hasScheduleHandling() {
+        // in case of starting current detection timeframes are added after
+        // starting current was detected
+        return hasStartingCurrentDetection()
+                || (control instanceof ElectricVehicleCharger);
+    }
+
     private boolean hasStartingCurrentDetection() {
         return control != null && control instanceof StartingCurrentSwitch;
+    }
+
+
+    public void activateSchedules() {
+        if(runningTimeMonitor != null) {
+            runningTimeMonitor.setSchedules(schedules);
+            logger.debug("{}: Schedules passed to RunningTimeMonitor", id);
+        }
+    }
+
+    public void deactivateSchedules() {
+        if(runningTimeMonitor != null) {
+            runningTimeMonitor.setSchedules(new ArrayList<>());
+            logger.debug("{}: All schedules removed from RunningTimeMonitor", id);
+        }
     }
 
     /**
