@@ -431,7 +431,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             logger.debug("{}: Active schedules: {}", id, schedules.size());
             if(activeTimeframeInterval != null) {
                 // active timeframe interval has always to be added even if not sufficient
-                addRuntimeInterval(now, activeTimeframeInterval, runtimeIntervals,
+                addRuntimeRequestInterval(now, activeTimeframeInterval, runtimeIntervals,
                         remainingMinRunningTime, remainingMaxRunningTime);
             }
 
@@ -441,18 +441,24 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             for(TimeframeInterval timeframeIntervalOfSchedule : timeFrameIntervals) {
                 Schedule schedule = timeframeIntervalOfSchedule.getTimeframe().getSchedule();
                 Interval interval = timeframeIntervalOfSchedule.getInterval();
-                Integer minRunningTime = schedule.getRequest() instanceof RuntimeRequest ? schedule.getRequest().getMin() : null;
-                if(minRunningTime != null) {
+
+
+                if(schedule.getRequest() instanceof RuntimeRequest) {
+                    Integer minRunningTime = schedule.getRequest().getMin();
                     if(interval.contains(now.toDateTime()) && remainingMinRunningTime != null) {
                         minRunningTime = remainingMinRunningTime;
                     }
-                    addRuntimeInterval(runtimeIntervals, interval, minRunningTime, schedule.getRequest().getMax(), now);
+                    addRuntimeRequestInterval(runtimeIntervals, interval, minRunningTime, schedule.getRequest().getMax(), now);
+                }
+                else if(schedule.getRequest() instanceof EnergyRequest) {
+                    addEnergyRequestInterval(runtimeIntervals, interval, schedule.getRequest().getMin(),
+                            schedule.getRequest().getMax(), now);
                 }
             }
         }
         else if(activeTimeframeInterval != null) {
             logger.debug("{}: Active timeframe interval found", id);
-            addRuntimeInterval(now, activeTimeframeInterval, runtimeIntervals, remainingMinRunningTime, remainingMaxRunningTime);
+            addRuntimeRequestInterval(now, activeTimeframeInterval, runtimeIntervals, remainingMinRunningTime, remainingMaxRunningTime);
         }
         else {
             logger.debug("{}: No timeframes found", id);
@@ -473,9 +479,9 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         return runtimeInterval;
     }
 
-    private void addRuntimeInterval(LocalDateTime now, TimeframeInterval timeframeInterval, List<RuntimeInterval> runtimeIntervals,
-                                    Integer remainingMinRunningTime, Integer remainingMaxRunningTime) {
-        addRuntimeInterval(runtimeIntervals, timeframeInterval.getInterval(),
+    private void addRuntimeRequestInterval(LocalDateTime now, TimeframeInterval timeframeInterval, List<RuntimeInterval> runtimeIntervals,
+                                           Integer remainingMinRunningTime, Integer remainingMaxRunningTime) {
+        addRuntimeRequestInterval(runtimeIntervals, timeframeInterval.getInterval(),
                 remainingMinRunningTime, remainingMaxRunningTime, now);
         if((remainingMinRunningTime != null && remainingMaxRunningTime == null && remainingMinRunningTime < 0)) {
             setApplianceState(now,false, null, true,"Switching off due to minRunningTime < 0");
@@ -485,25 +491,11 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         }
     }
 
-    private void addRuntimeInterval(List<RuntimeInterval> runtimeIntervals, Interval interval, Integer remainingMinRunningTime,
-                                    Integer remainingMaxRunningTime, LocalDateTime now) {
-        RuntimeInterval runtimeInterval = createRuntimeInterval(interval, remainingMinRunningTime, remainingMaxRunningTime, now);
+    private void addRuntimeRequestInterval(List<RuntimeInterval> runtimeIntervals, Interval interval, Integer remainingMinRunningTime,
+                                           Integer remainingMaxRunningTime, LocalDateTime now) {
+        RuntimeInterval runtimeInterval = createRuntimeRequestInterval(interval, remainingMinRunningTime, remainingMaxRunningTime, now);
         if(runtimeInterval != null) {
-            // we already might have a runtime request obtained from RunningTimeMonitor which might have been added
-            // manually (setRuntime() aka click green traffic light). It would be not equal to any of the runtime requests
-            // derived from the schedule, e.g. (from IntegrationTest.testClickGoLight):
-            // RuntimeInterval created: 0s-1800s:1800s/nulls
-            // RuntimeInterval created: 0s-25200s:1800s/nulls <--- has to be excluded
-            // RuntimeInterval created: 82800s-111600s:3600s/nulls
-            // RuntimeInterval created: 169200s-198000s:3600s/nulls
-            boolean overlap = false;
-            for(RuntimeInterval existingRuntimeInterval : runtimeIntervals) {
-                if(runtimeInterval.getEarliestStart()>= existingRuntimeInterval.getEarliestStart()
-                    && runtimeInterval.getEarliestStart() < existingRuntimeInterval.getLatestEnd()) {
-                    overlap = true;
-                }
-            }
-            if(! overlap) {
+            if(! isOverlappingRuntimeInterval(runtimeInterval, runtimeIntervals)) {
                 runtimeIntervals.add(runtimeInterval);
             }
             else {
@@ -512,27 +504,73 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         }
     }
 
-    protected RuntimeInterval createRuntimeInterval(Interval interval, Integer minRunningTime,
-                                                    Integer maxRunningTime, LocalDateTime now) {
+    private void addEnergyRequestInterval(List<RuntimeInterval> runtimeIntervals, Interval interval, Integer minEnergy,
+                                    Integer maxEnergy, LocalDateTime now) {
+        RuntimeInterval runtimeInterval = createEnergyRequestInterval(interval, minEnergy, maxEnergy, now);
+        if(runtimeInterval != null) {
+            if(! isOverlappingRuntimeInterval(runtimeInterval, runtimeIntervals)) {
+                runtimeIntervals.add(runtimeInterval);
+            }
+            else {
+                logger.debug("{} Ignore overlapping RuntimeInterval: {}", id, runtimeInterval);
+            }
+        }
+    }
+
+
+    protected boolean isOverlappingRuntimeInterval(RuntimeInterval runtimeInterval, List<RuntimeInterval> runtimeIntervals) {
+        // we already might have a runtime request obtained from RunningTimeMonitor which might have been added
+        // manually (setRuntime() aka click green traffic light). It would be not equal to any of the runtime requests
+        // derived from the schedule, e.g. (from IntegrationTest.testClickGoLight):
+        // RuntimeInterval created: 0s-1800s:1800s/nulls
+        // RuntimeInterval created: 0s-25200s:1800s/nulls <--- has to be excluded
+        // RuntimeInterval created: 82800s-111600s:3600s/nulls
+        // RuntimeInterval created: 169200s-198000s:3600s/nulls
+        for(RuntimeInterval existingRuntimeInterval : runtimeIntervals) {
+            if(runtimeInterval.getEarliestStart()>= existingRuntimeInterval.getEarliestStart()
+                    && runtimeInterval.getEarliestStart() < existingRuntimeInterval.getLatestEnd()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected RuntimeInterval createRuntimeRequestInterval(Interval interval, Integer minRunningTime,
+                                                           Integer maxRunningTime, LocalDateTime now) {
+        Integer earliestStart = calculateEarliestStart(now, interval.getStart());
+        Integer latestEnd = calculateLatestEnd(now, interval.getEnd());
+        if(maxRunningTime != null && maxRunningTime > latestEnd) {
+            maxRunningTime = latestEnd;
+        }
+        return createRuntimeRequestInterval(earliestStart, latestEnd, minRunningTime, maxRunningTime);
+    }
+
+    protected RuntimeInterval createEnergyRequestInterval(Interval interval, Integer minEnergy,
+                                                          Integer maxEnergy, LocalDateTime now) {
+        Integer earliestStart = calculateEarliestStart(now, interval.getStart());
+        Integer latestEnd = calculateLatestEnd(now, interval.getEnd());
+        return createEnergyRequestInterval(earliestStart, latestEnd, minEnergy, maxEnergy);
+    }
+
+    protected Integer calculateEarliestStart(LocalDateTime now, DateTime start) {
         Integer earliestStart = 0;
-        DateTime start = interval.getStart();
-        DateTime end = interval.getEnd();
         if(start.isAfter(now.toDateTime())) {
             earliestStart = Double.valueOf(new Interval(now.toDateTime(), start).toDurationMillis() / 1000).intValue();
         }
+        return earliestStart;
+    }
+
+    protected Integer calculateLatestEnd(LocalDateTime now, DateTime end) {
         LocalDateTime nowBeforeEnd = new LocalDateTime(now);
         if(now.toDateTime().isAfter(end)) {
             nowBeforeEnd = now.minusHours(24);
         }
-        Integer latestEnd = Double.valueOf(new Interval(nowBeforeEnd.toDateTime(), end).toDurationMillis() / 1000).intValue();
-        if(maxRunningTime != null && maxRunningTime > latestEnd) {
-            maxRunningTime = latestEnd;
-        }
-        return createRuntimeInterval(earliestStart, latestEnd, minRunningTime, maxRunningTime);
+        return Double.valueOf(new Interval(nowBeforeEnd.toDateTime(), end).toDurationMillis() / 1000).intValue();
     }
 
-    protected RuntimeInterval createRuntimeInterval(Integer earliestStart, Integer latestEnd, Integer minRunningTime,
-                                                    Integer maxRunningTime) {
+
+    protected RuntimeInterval createRuntimeRequestInterval(Integer earliestStart, Integer latestEnd, Integer minRunningTime,
+                                                           Integer maxRunningTime) {
         if(minRunningTime != null && (minRunningTime > 0 || (maxRunningTime != null && maxRunningTime > 0))) {
             RuntimeInterval runtimeInterval = new RuntimeInterval();
             runtimeInterval.setEarliestStart(earliestStart);
@@ -541,6 +579,20 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             runtimeInterval.setMaxRunningTime(maxRunningTime);
             logger.debug("{}: RuntimeInterval created: {}", id, runtimeInterval);
             return runtimeInterval;
+        }
+        return null;
+    }
+
+    protected RuntimeInterval createEnergyRequestInterval(Integer earliestStart, Integer latestEnd, Integer minEnergy,
+                                                          Integer maxEnergy) {
+        if(minEnergy != null && (minEnergy > 0 || (maxEnergy != null && maxEnergy > 0))) {
+            RuntimeInterval energyRequestInterval = new RuntimeInterval();
+            energyRequestInterval.setEarliestStart(earliestStart);
+            energyRequestInterval.setLatestEnd(latestEnd);
+            energyRequestInterval.setMinEnergy(minEnergy);
+            energyRequestInterval.setMaxEnergy(maxEnergy);
+            logger.debug("{}: Energy request created: {}", id, energyRequestInterval);
+            return energyRequestInterval;
         }
         return null;
     }
