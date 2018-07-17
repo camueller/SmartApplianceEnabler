@@ -387,15 +387,15 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
 
     public void activateSchedules() {
         if(runningTimeMonitor != null) {
+            logger.debug("{}: Activating schedules", id);
             runningTimeMonitor.setSchedules(schedules);
-            logger.debug("{}: Schedules passed to RunningTimeMonitor", id);
         }
     }
 
     public void deactivateSchedules() {
         if(runningTimeMonitor != null) {
             runningTimeMonitor.setSchedules(new ArrayList<>());
-            logger.debug("{}: All schedules removed from RunningTimeMonitor", id);
+            logger.debug("{}: Deactivating schedules", id);
         }
     }
 
