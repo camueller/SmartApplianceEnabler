@@ -45,8 +45,9 @@ public class PulseEnergyMeter implements ApplianceIdConsumer {
     public void increasePulseCounter() {
         if(started) {
             pulseCounter++;
-            logger.debug("{}: energy metered: {} kWh", applianceId, getEnergy());
         }
+        logger.debug("{}: energy metered: {} kWh / started={} / {} pulses / {} pulses/kWh", applianceId, getEnergy(),
+                started, pulseCounter, impulsesPerKwh);
     }
 
     public float getEnergy() {
