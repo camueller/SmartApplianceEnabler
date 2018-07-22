@@ -81,27 +81,27 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
             @Override
             public void run() {
                State previousState = state;
-                if(evControl.isVehicleConnected()) {
-                    state = State.VEHICLE_CONNECTED;
-                }
-                else if(state == State.VEHICLE_CONNECTED && evControl.isCharging()) {
-                    state = State.CHARGING;
-                }
-                else if(state == State.CHARGING) {
-                    if(evControl.isChargingCompleted()) {
-                        state = State.CHARGING_COMPLETED;
-                    }
-                    else if(evControl.isVehicleConnected()) {
-                        state = State.VEHICLE_CONNECTED;
-                    }
-                }
-                else if(state == State.CHARGING_COMPLETED) {
+                if(state == State.CHARGING_COMPLETED) {
                     if (evControl.isVehicleConnected()) {
                         state = State.VEHICLE_CONNECTED;
                     }
                     else {
                         state = State.VEHICLE_NOT_CONNECTED;
                     }
+                }
+                else if(state == State.CHARGING) {
+                    if(evControl.isChargingCompleted()) {
+                        state = State.CHARGING_COMPLETED;
+                    }
+                    else if(!evControl.isCharging() && evControl.isVehicleConnected()) {
+                        state = State.VEHICLE_CONNECTED;
+                    }
+                }
+                else if(state == State.VEHICLE_CONNECTED && evControl.isCharging()) {
+                    state = State.CHARGING;
+                }
+                else if(evControl.isVehicleConnected()) {
+                    state = State.VEHICLE_CONNECTED;
                 }
                 if(state != previousState) {
                     onStateChanged(previousState, state);
