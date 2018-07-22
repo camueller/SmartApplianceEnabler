@@ -49,15 +49,20 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
 
     public float getEnergy() {
         float stopEnergyCounter = this.pollEnergyExecutor.pollEnergy();
+        float energy = 0.0f;
         if(this.startEnergyCounter != null) {
             if(this.totalEnergyCounter != null) {
-                return this.totalEnergyCounter + stopEnergyCounter - this.startEnergyCounter;
+                energy = this.totalEnergyCounter + stopEnergyCounter - this.startEnergyCounter;
             }
             else {
-                return stopEnergyCounter - this.startEnergyCounter;
+                energy = stopEnergyCounter - this.startEnergyCounter;
             }
         }
-        return 0;
+
+        logger.debug("{}: energy={}kWh started={} totalEnergyCounter={} startEnergyCounter={} stopEnergyCounter={}",
+                applianceId, energy, started, totalEnergyCounter, startEnergyCounter, stopEnergyCounter);
+
+        return energy;
     }
 
     public void startEnergyCounter() {
