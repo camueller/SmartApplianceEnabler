@@ -428,7 +428,8 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         List<RuntimeInterval> runtimeIntervals = new ArrayList<>();
         if(this.control instanceof ElectricVehicleCharger &&
                 (runningTimeMonitor == null || runningTimeMonitor.getActiveTimeframeInterval() == null)) {
-            if(((ElectricVehicleCharger) this.control).isVehicleConnected()) {
+            ElectricVehicleCharger electricVehicleCharger = (ElectricVehicleCharger) this.control;
+            if(electricVehicleCharger.isVehicleConnected() || electricVehicleCharger.isCharging()) {
                 RuntimeInterval evOptionalEnergy = getRuntimeIntervalForEVUsingOptionalEnergy();
                 logger.debug("{}: requesting optional energy for electric vehicle: {}", id, evOptionalEnergy);
                 runtimeIntervals.add(evOptionalEnergy);
