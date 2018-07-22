@@ -561,6 +561,9 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                                                            Integer maxRunningTime, LocalDateTime now) {
         Integer earliestStart = calculateEarliestStart(now, interval.getStart());
         Integer latestEnd = calculateLatestEnd(now, interval.getEnd());
+        if(minRunningTime != null && minRunningTime > latestEnd) {
+            minRunningTime = latestEnd;
+        }
         if(maxRunningTime != null && maxRunningTime > latestEnd) {
             maxRunningTime = latestEnd;
         }
