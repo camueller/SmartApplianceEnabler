@@ -51,7 +51,7 @@ public class PulseEnergyMeter implements ApplianceIdConsumer {
     }
 
     public float getEnergy() {
-        return pulseCounter / impulsesPerKwh;
+        return Double.valueOf(pulseCounter / Double.valueOf(impulsesPerKwh)).floatValue();
     }
 
     public void startEnergyCounter() {
