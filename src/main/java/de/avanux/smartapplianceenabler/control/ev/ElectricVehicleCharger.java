@@ -103,6 +103,9 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
                 else if(evControl.isVehicleConnected()) {
                     state = State.VEHICLE_CONNECTED;
                 }
+                else {
+                    state = State.VEHICLE_NOT_CONNECTED;
+                }
                 if(state != previousState) {
                     onStateChanged(previousState, state);
                 }
