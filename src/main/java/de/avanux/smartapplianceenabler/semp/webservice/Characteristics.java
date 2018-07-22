@@ -27,7 +27,7 @@ public class Characteristics {
     @XmlElement(name = "MaxPowerConsumption")
     private int maxPowerConsumption;
     @XmlElement(name = "MinPowerConsumption")
-    private int minPowerConsumption;
+    private Integer minPowerConsumption;
     @XmlElement(name = "MinOnTime")
     private Integer minOnTime;
     @XmlElement(name = "MinOffTime")
@@ -35,11 +35,11 @@ public class Characteristics {
     @XmlElement(name = "PowerLevels")
     private PowerLevels powerLevels;
 
-    public int getMinPowerConsumption() {
+    public Integer getMinPowerConsumption() {
         return minPowerConsumption;
     }
 
-    public void setMinPowerConsumption(int minPowerConsumption) {
+    public void setMinPowerConsumption(Integer minPowerConsumption) {
         this.minPowerConsumption = minPowerConsumption;
     }
 
