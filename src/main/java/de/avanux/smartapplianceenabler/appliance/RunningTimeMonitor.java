@@ -74,14 +74,20 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
 
     public void setSchedules(List<Schedule> schedules) {
         List<Schedule> enabledSchedules = new ArrayList<>();
-        for(Schedule schedule : schedules) {
-            if(schedule.isEnabled()) {
-                logger.debug("{}: Using enabled time frame {}", applianceId, schedule.toString());
-                enabledSchedules.add(schedule);
+        if(schedules != null) {
+            for(Schedule schedule : schedules) {
+                if(schedule.isEnabled()) {
+                    logger.debug("{}: Using enabled time frame {}", applianceId, schedule.toString());
+                    enabledSchedules.add(schedule);
+                }
+                else {
+                    logger.debug("{}: Ignoring disabled time frame {}", applianceId, schedule.toString());
+                }
             }
-            else {
-                logger.debug("{}: Ignoring disabled time frame {}", applianceId, schedule.toString());
-            }
+
+        }
+        else {
+            logger.debug("{}: No schedules to set", applianceId);
         }
         this.schedules = enabledSchedules;
         this.activeTimeframeInterval = null;
