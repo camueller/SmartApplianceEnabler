@@ -474,8 +474,14 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                     addRuntimeRequestInterval(runtimeIntervals, interval, minRunningTime, schedule.getRequest().getMax(), now);
                 }
                 else if(schedule.getRequest() instanceof EnergyRequest) {
-                    addEnergyRequestInterval(runtimeIntervals, interval, schedule.getRequest().getMin(),
-                            schedule.getRequest().getMax(), now);
+                    Integer minEnergy = schedule.getRequest().getMin();
+                    Integer maxEnergy = schedule.getRequest().getMax();
+                    if(meter != null) {
+                        int alreadyCharged = Float.valueOf(meter.getEnergy()).intValue();
+                        minEnergy -= alreadyCharged;
+                        maxEnergy -= alreadyCharged;
+                    }
+                    addEnergyRequestInterval(runtimeIntervals, interval, minEnergy, maxEnergy, now);
                 }
             }
         }
