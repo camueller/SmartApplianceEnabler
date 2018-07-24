@@ -26,6 +26,7 @@ import de.avanux.smartapplianceenabler.meter.*;
 import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
 import de.avanux.smartapplianceenabler.schedule.*;
+import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.joda.time.LocalDate;
@@ -305,8 +306,20 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     public void setApplianceState(LocalDateTime now, boolean switchOn, Integer recommendedPowerConsumption,
                                   boolean deactivateTimeframe, String logMessage) {
         if(control != null) {
-            if(control instanceof ElectricVehicleCharger && recommendedPowerConsumption != null) {
-                ((ElectricVehicleCharger) control).setChargePower(recommendedPowerConsumption);
+            if(control instanceof ElectricVehicleCharger) {
+                int chargePower = 0;
+                if(this.runningTimeMonitor.getActiveTimeframeInterval() != null) {
+                    // if we receive a switch recommendation with an active timeframe interval
+                    // we are NOT using excess energy and should be charging with maximum power
+                    DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(this.id);
+                    chargePower = deviceInfo.getCharacteristics().getMaxPowerConsumption();
+                    logger.debug("{}: setting charge power to maximum: {}W", id, chargePower);
+                }
+                else if(recommendedPowerConsumption != null) {
+                    chargePower = recommendedPowerConsumption;
+                    logger.debug("{}: setting charge power to recommendation: {}W", id, chargePower);
+                }
+                ((ElectricVehicleCharger) control).setChargePower(chargePower);
             }
 
             boolean stateChanged = false;
