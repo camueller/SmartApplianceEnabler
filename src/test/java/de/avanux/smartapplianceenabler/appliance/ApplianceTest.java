@@ -19,6 +19,8 @@
 package de.avanux.smartapplianceenabler.appliance;
 
 import de.avanux.smartapplianceenabler.TestBase;
+import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
+import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.schedule.Schedule;
 import de.avanux.smartapplianceenabler.schedule.TimeOfDay;
 import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
@@ -26,7 +28,9 @@ import org.joda.time.Interval;
 import org.joda.time.LocalDateTime;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -138,7 +142,7 @@ public class ApplianceTest extends TestBase {
     }
 
     @Test
-    public void getRuntimeInterval_TimeFrameAlreadyStartedAndActive_Sufficient() {
+    public void getRuntimeIntervals_TimeFrameAlreadyStartedAndActive_Sufficient() {
         int nowSeconds = 10;
         LocalDateTime now = toToday(8, 0, nowSeconds);
         Schedule schedule = new Schedule(3600, null,
@@ -159,7 +163,7 @@ public class ApplianceTest extends TestBase {
     }
 
     @Test
-    public void getRuntimeInterval_TimeFrameAlreadyStartedAndActive_NotSufficient() {
+    public void getRuntimeIntervals_TimeFrameAlreadyStartedAndActive_NotSufficient() {
         int nowSeconds = 10;
         LocalDateTime now = toToday(11, 0, nowSeconds);
         Schedule schedule = new Schedule(3600, null,
@@ -177,5 +181,34 @@ public class ApplianceTest extends TestBase {
                 3600, null), runtimeIntervals.get(1));
         Assert.assertEquals(new RuntimeInterval(162000-nowSeconds, 176400-nowSeconds,
                 3600, null), runtimeIntervals.get(2));
+    }
+
+    @Test
+    public void getRuntimeIntervals_EV_vehicleConnected() {
+        LocalDateTime now = toToday(11, 0, 0);
+
+        RunningTimeMonitor runningTimeMonitor = new RunningTimeMonitor();
+        this.appliance.setRunningTimeMonitor(runningTimeMonitor);
+
+        Meter meter = Mockito.mock(Meter.class);
+        float energyAlreadyCharged = 10.0f;
+        Mockito.when(meter.getEnergy()).thenReturn(energyAlreadyCharged);
+        this.appliance.setMeter(meter);
+
+        ElectricVehicleCharger evCharger = Mockito.spy(new ElectricVehicleCharger());
+        this.appliance.setControl(evCharger);
+        Mockito.doReturn(true).when(evCharger).isVehicleConnected();
+
+        List<RuntimeInterval> nonEvOptionalEnergyIntervals = new ArrayList<>();
+        RuntimeInterval nonEvOptionalEnergyInterval = new RuntimeInterval(3600, 7200,
+                3600, null);
+        nonEvOptionalEnergyIntervals.add(nonEvOptionalEnergyInterval);
+
+        List<RuntimeInterval> runtimeIntervals = this.appliance.getRuntimeIntervals(nonEvOptionalEnergyIntervals);
+        Assert.assertEquals(2, runtimeIntervals.size());
+        RuntimeInterval evOptionalEnergyInterval = new RuntimeInterval(0, 3600,
+                0, 40000 - Float.valueOf(energyAlreadyCharged).intValue() * 1000, true);
+        Assert.assertEquals(runtimeIntervals.get(0), evOptionalEnergyInterval);
+        Assert.assertEquals(runtimeIntervals.get(1), nonEvOptionalEnergyInterval);
     }
 }
