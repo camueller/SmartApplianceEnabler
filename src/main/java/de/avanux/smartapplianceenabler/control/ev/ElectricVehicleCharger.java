@@ -161,6 +161,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
         }
         if(newState == State.VEHICLE_NOT_CONNECTED) {
             this.appliance.deactivateSchedules();
+            stopCharging();
         }
     }
 
