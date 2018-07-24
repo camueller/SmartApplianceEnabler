@@ -425,23 +425,37 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     }
 
     public List<RuntimeInterval> getRuntimeIntervals(LocalDateTime now, boolean onlySufficient) {
+        List<RuntimeInterval> nonEvOptionalEnergyRuntimeIntervals = null;
+        if(runningTimeMonitor != null) {
+            nonEvOptionalEnergyRuntimeIntervals = getRuntimeIntervals(now,
+                    runningTimeMonitor.getSchedules(),
+                    runningTimeMonitor.getActiveTimeframeInterval(),
+                    onlySufficient,
+                    runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(now),
+                    runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(now));
+        }
+        return getRuntimeIntervals(nonEvOptionalEnergyRuntimeIntervals);
+    }
+
+    public List<RuntimeInterval> getRuntimeIntervals(List<RuntimeInterval> nonEvOptionalEnergyRuntimeIntervals) {
         List<RuntimeInterval> runtimeIntervals = new ArrayList<>();
         if(this.control instanceof ElectricVehicleCharger &&
                 (runningTimeMonitor == null || runningTimeMonitor.getActiveTimeframeInterval() == null)) {
             ElectricVehicleCharger electricVehicleCharger = (ElectricVehicleCharger) this.control;
             if(electricVehicleCharger.isVehicleConnected() || electricVehicleCharger.isCharging()) {
                 RuntimeInterval evOptionalEnergy = getRuntimeIntervalForEVUsingOptionalEnergy();
+                if(nonEvOptionalEnergyRuntimeIntervals != null && nonEvOptionalEnergyRuntimeIntervals.size() > 0) {
+                    // evOptionalEnergy runtime interval must not overlap with other intervals
+                    Integer firstNonEvOptionalEnergyRuntimeIntervalEarliestStart
+                            = nonEvOptionalEnergyRuntimeIntervals.get(0).getEarliestStart();
+                    evOptionalEnergy.setLatestEnd(firstNonEvOptionalEnergyRuntimeIntervalEarliestStart);
+                }
                 logger.debug("{}: requesting optional energy for electric vehicle: {}", id, evOptionalEnergy);
                 runtimeIntervals.add(evOptionalEnergy);
             }
         }
-        if(runningTimeMonitor != null) {
-            runtimeIntervals.addAll(getRuntimeIntervals(now,
-                    runningTimeMonitor.getSchedules(),
-                    runningTimeMonitor.getActiveTimeframeInterval(),
-                    onlySufficient,
-                    runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(now),
-                    runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(now)));
+        if(nonEvOptionalEnergyRuntimeIntervals != null) {
+            runtimeIntervals.addAll(nonEvOptionalEnergyRuntimeIntervals);
         }
         return runtimeIntervals;
     }
