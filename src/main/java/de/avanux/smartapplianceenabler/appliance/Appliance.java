@@ -504,7 +504,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                     Integer minEnergy = schedule.getRequest().getMin();
                     Integer maxEnergy = schedule.getRequest().getMax();
                     if(meter != null) {
-                        int whAlreadyCharged = Float.valueOf(meter.getEnergy()).intValue() * 1000;
+                        int whAlreadyCharged = Float.valueOf(meter.getEnergy() * 1000.0f).intValue();
                         minEnergy -= whAlreadyCharged;
                         maxEnergy -= whAlreadyCharged;
                     }
