@@ -306,7 +306,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     public void setApplianceState(LocalDateTime now, boolean switchOn, Integer recommendedPowerConsumption,
                                   boolean deactivateTimeframe, String logMessage) {
         if(control != null) {
-            if(switchOn && control instanceof ElectricVehicleCharger) {
+            if(control instanceof ElectricVehicleCharger) {
                 int chargePower = 0;
                 if(this.runningTimeMonitor.getActiveTimeframeInterval() != null) {
                     // if we receive a switch recommendation with an active timeframe interval
