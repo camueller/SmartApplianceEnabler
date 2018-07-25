@@ -10,7 +10,7 @@
         </Identification>
         <Characteristics>
             <MaxPowerConsumption>22000</MaxPowerConsumption>
-            <MinPowerConsumption>460</MinPowerConsumption>
+            <MinPowerConsumption>1380</MinPowerConsumption>
             <!--MinOnTime>3600</MinOnTime>
             <MinOffTime>1800</MinOffTime-->
             <!--PowerLevels>
