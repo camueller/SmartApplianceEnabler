@@ -461,7 +461,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                     // evOptionalEnergy runtime interval must not overlap with other intervals
                     Integer firstNonEvOptionalEnergyRuntimeIntervalEarliestStart
                             = nonEvOptionalEnergyRuntimeIntervals.get(0).getEarliestStart();
-                    evOptionalEnergy.setLatestEnd(firstNonEvOptionalEnergyRuntimeIntervalEarliestStart);
+                    evOptionalEnergy.setLatestEnd(firstNonEvOptionalEnergyRuntimeIntervalEarliestStart - 1);
                 }
                 logger.debug("{}: requesting optional energy for electric vehicle: {}", id, evOptionalEnergy);
                 runtimeIntervals.add(evOptionalEnergy);
