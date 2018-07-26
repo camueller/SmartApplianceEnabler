@@ -81,6 +81,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     }
 
     public void start(Timer timer) {
+        stopCharging();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
