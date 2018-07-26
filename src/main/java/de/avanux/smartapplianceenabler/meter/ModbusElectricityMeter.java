@@ -44,7 +44,7 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     private List<ModbusRegisterRead> registerReads;
     @XmlAttribute
     private Integer measurementInterval; // seconds
-    private transient PollElectricityMeter pollElectricityMeter = new PollElectricityMeter();
+    private transient PollPowerMeter pollPowerMeter = new PollPowerMeter();
     private transient PollEnergyMeter pollEnergyMeter = new PollEnergyMeter();
 
     public enum RegisterName {
@@ -55,28 +55,28 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     @Override
     public void setApplianceId(String applianceId) {
         super.setApplianceId(applianceId);
-        this.pollElectricityMeter.setApplianceId(applianceId);
+        this.pollPowerMeter.setApplianceId(applianceId);
         this.pollEnergyMeter.setApplianceId(applianceId);
         this.pollEnergyMeter.setPollEnergyExecutor(this);
     }
 
     @Override
     public int getAveragePower() {
-        int power = pollElectricityMeter.getAveragePower();
+        int power = pollPowerMeter.getAveragePower();
         logger.debug("{}: average power = {}W", getApplianceId(), power);
         return power;
     }
 
     @Override
     public int getMinPower() {
-        int power = pollElectricityMeter.getMinPower();
+        int power = pollPowerMeter.getMinPower();
         logger.debug("{}: min power = {}W", getApplianceId(), power);
         return power;
     }
 
     @Override
     public int getMaxPower() {
-        int power =  pollElectricityMeter.getMaxPower();
+        int power =  pollPowerMeter.getMaxPower();
         logger.debug("{}: max power = {}W", getApplianceId(), power);
         return power;
     }
@@ -115,7 +115,7 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
 
     public void start(Timer timer) {
         ModbusRegisterRead registerRead = ModbusRegisterRead.getRegisterRead(RegisterName.Power.name(), registerReads);
-        pollElectricityMeter.start(timer, registerRead.getPollInterval(), measurementInterval, this);
+        pollPowerMeter.start(timer, registerRead.getPollInterval(), measurementInterval, this);
     }
 
     @Override

@@ -54,7 +54,7 @@ public class HttpElectricityMeter extends HttpTransactionExecutor implements Met
     @XmlAttribute
     private String powerValueExtractionRegex;
     private transient Pattern powerValueExtractionPattern;
-    private transient PollElectricityMeter pollElectricityMeter = new PollElectricityMeter();
+    private transient PollPowerMeter pollPowerMeter = new PollPowerMeter();
 
     public void setUrl(String url) {
         this.url = url;
@@ -84,26 +84,26 @@ public class HttpElectricityMeter extends HttpTransactionExecutor implements Met
     @Override
     public void setApplianceId(String applianceId) {
         super.setApplianceId(applianceId);
-        this.pollElectricityMeter.setApplianceId(applianceId);
+        this.pollPowerMeter.setApplianceId(applianceId);
     }
 
     @Override
     public int getAveragePower() {
-        int power = pollElectricityMeter.getAveragePower();
+        int power = pollPowerMeter.getAveragePower();
         logger.debug("{}: average power = {}W", getApplianceId(), power);
         return power;
     }
 
     @Override
     public int getMinPower() {
-        int power = pollElectricityMeter.getMinPower();
+        int power = pollPowerMeter.getMinPower();
         logger.debug("{}: min power = {}W", getApplianceId(), power);
         return power;
     }
 
     @Override
     public int getMaxPower() {
-        int power = pollElectricityMeter.getMaxPower();
+        int power = pollPowerMeter.getMaxPower();
         logger.debug("{}: max power = {}W", getApplianceId(), power);
         return power;
     }
@@ -134,7 +134,7 @@ public class HttpElectricityMeter extends HttpTransactionExecutor implements Met
     }
 
     public void start(Timer timer) {
-        pollElectricityMeter.start(timer, getPollInterval(), getMeasurementInterval(), this);
+        pollPowerMeter.start(timer, getPollInterval(), getMeasurementInterval(), this);
     }
 
     @Override

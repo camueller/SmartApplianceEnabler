@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
  */
 public class PulseEnergyMeter implements ApplianceIdConsumer {
 
-    private Logger logger = LoggerFactory.getLogger(PulseElectricityMeter.class);
+    private Logger logger = LoggerFactory.getLogger(PulseEnergyMeter.class);
     private String applianceId;
     private Integer impulsesPerKwh;
     private int pulseCounter;
