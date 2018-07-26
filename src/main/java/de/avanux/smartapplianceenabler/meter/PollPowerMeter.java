@@ -24,11 +24,11 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 /**
- * A PollElectricityMeter calculates power consumption by polling.
+ * A PollPowerMeter calculates power consumption by polling.
  */
-public class PollElectricityMeter implements ApplianceIdConsumer {
+public class PollPowerMeter implements ApplianceIdConsumer {
 
-    private Logger logger = LoggerFactory.getLogger(PollElectricityMeter.class);
+    private Logger logger = LoggerFactory.getLogger(PollPowerMeter.class);
     private Map<Long,Float> timestampWithPower = new HashMap<Long,Float>();
     private Integer measurementInterval;
     private String applianceId;

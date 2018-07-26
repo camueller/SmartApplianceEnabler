@@ -27,10 +27,10 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * A PulseElectricityMeter calculates power consumption by pulses received.
+ * A PulsePowerMeter calculates power consumption by pulses received.
  */
-class PulseElectricityMeter implements ApplianceIdConsumer {
-    private Logger logger = LoggerFactory.getLogger(PulseElectricityMeter.class);
+class PulsePowerMeter implements ApplianceIdConsumer {
+    private Logger logger = LoggerFactory.getLogger(PulsePowerMeter.class);
     private String applianceId;
     private static final int MAX_AGE = 3600; // seconds
     private List<Long> impulseTimestamps = Collections.synchronizedList(new ArrayList<Long>());
