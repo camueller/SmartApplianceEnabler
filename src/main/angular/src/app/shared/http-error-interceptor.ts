@@ -20,7 +20,7 @@ export class ErrorInterceptor implements HttpInterceptor {
         } else {
           this.logger.error(`Backend error: code ${err.status}, error: ${err.error}, message: ${err.message}`);
         }
-        return Observable.empty<HttpEvent<any>>();
+        return Observable.of<HttpEvent<any>>();
       });
   }
 }
