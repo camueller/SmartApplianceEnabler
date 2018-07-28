@@ -319,7 +319,7 @@
 									<arguments>
 										<argument>test</argument>
 										<argument>--code-coverage</argument>
-										<argument>--singleRun=true</argument>
+										<argument>--watch=false</argument>
 									</arguments>
 								</configuration>
 								<goals>
