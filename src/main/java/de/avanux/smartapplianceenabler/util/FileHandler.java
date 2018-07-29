@@ -27,10 +27,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -75,13 +72,22 @@ public class FileHandler {
     public void save(Object object) {
         File file = getFile(object.getClass());
         try {
+            Writer stringWriter = new StringWriter();
             JAXBContext context = JAXBContext.newInstance(object.getClass());
             Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            marshaller.marshal(object, file);
+            marshaller.marshal(object, stringWriter);
+
+            // this is a hack to remove default namespace ns2 but I did not find any other way that worked :-(
+            String xmlWithoutNs2 = stringWriter.toString()
+                    .replaceAll(":ns2", "")
+                    .replaceAll("ns2:", "");
+            Writer fileWriter = new FileWriter(file);
+            fileWriter.write(xmlWithoutNs2);
+            fileWriter.close();
             logger.debug("File " + file.getAbsolutePath() + " written");
         }
-        catch(JAXBException e) {
+        catch(Exception e) {
             logger.error("Error unmarshalling file " + file, e);
         }
     }
