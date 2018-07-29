@@ -128,12 +128,20 @@
   "ScheduleComponent.daysOfWeek_saturday": "Samstag",
   "ScheduleComponent.daysOfWeek_sunday": "Sonntag",
   "ScheduleComponent.daysOfWeek_holiday": "Feiertag",
+
+  "ScheduleComponent.runtimeRequest": "Laufzeitanforderung",
+  "ScheduleComponent.runtimeRequest_min": "Mindestlaufzeit [HH:MM]",
+  "ScheduleComponent.runtimeRequest_max": "Maximale Laufzeit [HH:MM]",
+
+  "ScheduleComponent.energyRequest": "Energiemengenanforderung",
+  "ScheduleComponent.energyRequest_min": "Min. Energiemenge [Wh]",
+  "ScheduleComponent.energyRequest_max": "Max. Energiemenge [Wh]",
+
+
   "ScheduleComponent.timeframeType.DayTimeframe": "Tagesplan",
   "ScheduleComponent.timeframeType.ConsecutiveDaysTimeframe": "Mehrtagesplan",
   "ScheduleComponent.dayTimeframe_startTime": "Startzeit [HH:MM]",
   "ScheduleComponent.dayTimeframe_endTime": "Endzeit [HH:MM]",
-  "ScheduleComponent.dayTimeframe_minRunningTime": "Mindestlaufzeit [HH:MM]",
-  "ScheduleComponent.dayTimeframe_maxRunningTime": "Maximale Laufzeit [HH:MM]",
   "ScheduleComponent.dayTimeframe_daysOfWeekValues": "Wochen-/Feiertag(e)",
   "ScheduleComponent.consecutiveDaysTimeframe_startDayOfWeek": "Von",
   "ScheduleComponent.consecutiveDaysTimeframe_startTime": "[HH:MM]",

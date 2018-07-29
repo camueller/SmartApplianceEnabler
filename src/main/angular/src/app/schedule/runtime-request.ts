@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2017 Axel Müller <axel.mueller@avanux.de>
+Copyright (C) 2018 Axel Müller <axel.mueller@avanux.de>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -16,22 +16,20 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {DayTimeframe} from './day-timeframe';
-import {ConsecutiveDaysTimeframe} from './consecutive-days-timeframe';
-import {RuntimeRequest} from './runtime-request';
-import {EnergyRequest} from './energy-request';
+export class RuntimeRequest {
 
-export class Schedule {
-  '@class' = 'de.avanux.smartapplianceenabler.schedule.Schedule';
-  enabled: boolean;
-  requestType: string;
-  runtimeRequest: RuntimeRequest;
-  energyRequest: EnergyRequest;
-  timeframeType: string;
-  dayTimeframe: DayTimeframe;
-  consecutiveDaysTimeframe: ConsecutiveDaysTimeframe;
+  static get TYPE(): string {
+    return 'de.avanux.smartapplianceenabler.schedule.RuntimeRequest';
+  }
 
-  public constructor(init?: Partial<Schedule>) {
+  '@class' = RuntimeRequest.TYPE;
+  min: number;
+  minHHMM: string;
+  max: number;
+  maxHHMM: string;
+
+  public constructor(init?: Partial<RuntimeRequest>) {
     Object.assign(this, init);
   }
 }
+

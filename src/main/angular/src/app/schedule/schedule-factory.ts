@@ -24,6 +24,9 @@ import {DayOfWeek} from './day-of-week';
 import {TimeOfDay} from './time-of-day';
 import {TimeUtil} from '../shared/time-util';
 import {Logger} from '../log/logger';
+import {RuntimeRequest} from './runtime-request';
+import {EnergyRequest} from './energy-request';
+import {run} from 'tslint/lib/runner';
 
 export class ScheduleFactory {
 
@@ -75,6 +78,9 @@ export class ScheduleFactory {
     }
 
     let content = JSON.stringify(schedules);
+    // replace typed attribute names with interface names
+    content = content.replace(/runtimeRequest/g, 'request');
+    content = content.replace(/energyRequest/g, 'request');
     content = content.replace(/dayTimeframe/g, 'timeframe');
     content = content.replace(/consecutiveDaysTimeframe/g, 'timeframe');
     return content;
@@ -84,13 +90,12 @@ export class ScheduleFactory {
     this.logger.debug('rawSchedule ' + JSON.stringify(rawSchedule));
     const schedule = new Schedule();
     schedule.enabled = rawSchedule.enabled;
-    schedule.minRunningTime = rawSchedule.minRunningTime;
-    if (schedule.minRunningTime != null) {
-      schedule.minRunningTimeHHMM = TimeUtil.toHourMinute(rawSchedule.minRunningTime);
-    }
-    schedule.maxRunningTime = rawSchedule.maxRunningTime;
-    if (schedule.maxRunningTime != null) {
-      schedule.maxRunningTimeHHMM = TimeUtil.toHourMinute(rawSchedule.maxRunningTime);
+    if (rawSchedule.request['@class'] === RuntimeRequest.TYPE) {
+      schedule.requestType = RuntimeRequest.TYPE;
+      schedule.runtimeRequest = this.createRuntimeRequest(rawSchedule.request);
+    } else if (rawSchedule.request['@class'] === EnergyRequest.TYPE) {
+      schedule.requestType = EnergyRequest.TYPE;
+      schedule.energyRequest = this.createEnergyRequest(rawSchedule.request);
     }
     if (rawSchedule.timeframe['@class'] === DayTimeframe.TYPE) {
       schedule.timeframeType = DayTimeframe.TYPE;
@@ -109,37 +114,66 @@ export class ScheduleFactory {
     for (const rawSchedule of rawSchedules.schedules) {
       const schedule = new Schedule();
       schedule.enabled = rawSchedule.enabled;
+
+      schedule.requestType = rawSchedule.requestType;
+      if (rawSchedule.requestType === RuntimeRequest.TYPE) {
+        schedule.runtimeRequest = new RuntimeRequest();
+        if (rawSchedule.runtimeRequest.min != null && rawSchedule.runtimeRequest.min !== '') {
+          schedule.runtimeRequest.min = TimeUtil.toSeconds(rawSchedule.runtimeRequest.min);
+        }
+        if (rawSchedule.runtimeRequest.max != null && rawSchedule.runtimeRequest.max !== '') {
+          schedule.runtimeRequest.max = TimeUtil.toSeconds(rawSchedule.runtimeRequest.max);
+        }
+      } else if (rawSchedule.requestType === EnergyRequest.TYPE) {
+        schedule.energyRequest = new EnergyRequest();
+        if (rawSchedule.energyRequest.min != null && rawSchedule.energyRequest.min !== '') {
+          schedule.energyRequest.min = rawSchedule.energyRequest.min;
+        }
+        if (rawSchedule.energyRequest.max != null && rawSchedule.energyRequest.max !== '') {
+          schedule.energyRequest.max = rawSchedule.energyRequest.max;
+        }
+      }
+
       schedule.timeframeType = rawSchedule.timeframeType;
       if (rawSchedule.timeframeType === DayTimeframe.TYPE) {
         schedule.dayTimeframe = new DayTimeframe();
         schedule.dayTimeframe.daysOfWeekValues = rawSchedule.dayTimeframe.daysOfWeekValues;
         schedule.dayTimeframe.startTime = rawSchedule.dayTimeframe.startTime;
         schedule.dayTimeframe.endTime = rawSchedule.dayTimeframe.endTime;
-        if (rawSchedule.dayTimeframe.minRunningTime != null && rawSchedule.dayTimeframe.minRunningTime !== '') {
-          schedule.minRunningTime = TimeUtil.toSeconds(rawSchedule.dayTimeframe.minRunningTime);
-        }
-        if (rawSchedule.dayTimeframe.maxRunningTime != null && rawSchedule.dayTimeframe.maxRunningTime !== '') {
-          schedule.maxRunningTime = TimeUtil.toSeconds(rawSchedule.dayTimeframe.maxRunningTime);
-        }
       } else if (rawSchedule.timeframeType === ConsecutiveDaysTimeframe.TYPE) {
         schedule.consecutiveDaysTimeframe = new ConsecutiveDaysTimeframe();
         schedule.consecutiveDaysTimeframe.startDayOfWeek = rawSchedule.consecutiveDaysTimeframe.startDayOfWeek;
         schedule.consecutiveDaysTimeframe.startTime = rawSchedule.consecutiveDaysTimeframe.startTime;
         schedule.consecutiveDaysTimeframe.endDayOfWeek = rawSchedule.consecutiveDaysTimeframe.endDayOfWeek;
         schedule.consecutiveDaysTimeframe.endTime = rawSchedule.consecutiveDaysTimeframe.endTime;
-        if (rawSchedule.consecutiveDaysTimeframe.minRunningTime != null
-          && rawSchedule.consecutiveDaysTimeframe.minRunningTime !== '') {
-          schedule.minRunningTime = TimeUtil.toSeconds(rawSchedule.consecutiveDaysTimeframe.minRunningTime);
-        }
-        if (rawSchedule.consecutiveDaysTimeframe.maxRunningTime != null
-          && rawSchedule.consecutiveDaysTimeframe.maxRunningTime !== '') {
-          schedule.maxRunningTime = TimeUtil.toSeconds(rawSchedule.consecutiveDaysTimeframe.maxRunningTime);
-        }
       }
       schedules.push(schedule);
     }
     this.logger.debug('SCHEDULE: ' + JSON.stringify(schedules));
     return schedules;
+  }
+
+  createRuntimeRequest(rawRuntimeRequest: any): RuntimeRequest {
+    this.logger.debug('createRuntimeRequest from ' + JSON.stringify(rawRuntimeRequest));
+    const runtimeRquest = new RuntimeRequest();
+
+    runtimeRquest.min = rawRuntimeRequest.min;
+    if (runtimeRquest.min != null) {
+      runtimeRquest.minHHMM = TimeUtil.toHourMinute(rawRuntimeRequest.min);
+    }
+    runtimeRquest.max = rawRuntimeRequest.max;
+    if (runtimeRquest.max != null) {
+      runtimeRquest.maxHHMM = TimeUtil.toHourMinute(rawRuntimeRequest.max);
+    }
+    return runtimeRquest;
+  }
+
+  createEnergyRequest(rawEnergyRequest: any): EnergyRequest {
+    this.logger.debug('createEnergyRequest from ' + JSON.stringify(rawEnergyRequest));
+    const energyRquest = new EnergyRequest();
+    energyRquest.min = rawEnergyRequest.min;
+    energyRquest.max = rawEnergyRequest.max;
+    return energyRquest;
   }
 
   createDayTimeframe(rawTimeframe: any): DayTimeframe {
