@@ -32,7 +32,8 @@ import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {DialogService} from '../shared/dialog.service';
 import {Observable} from 'rxjs/Observable';
 import {Logger} from '../log/logger';
-import {logger} from 'codelyzer/util/logger';
+import {RuntimeRequest} from './runtime-request';
+import {EnergyRequest} from './energy-request';
 
 declare const $: any;
 
@@ -69,6 +70,8 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
   schedulesForm: FormGroup;
   applianceId: string;
   initializeOnceAfterViewChecked = false;
+  RUNTIME_REQUEST = RuntimeRequest.TYPE;
+  ENERGY_REQUEST = EnergyRequest.TYPE;
   DAY_TIMEFRAME = DayTimeframe.TYPE;
   CONSECUTIVE_DAYS_TIMEFRAME = ConsecutiveDaysTimeframe.TYPE;
   errors: { [key: string]: string } = {};
@@ -136,13 +139,30 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
   }
 
   buildSchedule(schedule: Schedule): FormGroup {
+    const requestType = schedule != null ? schedule.requestType : this.RUNTIME_REQUEST;
     const timeframeType = schedule != null ? schedule.timeframeType : this.DAY_TIMEFRAME;
     const scheduleFormGroup = this.fb.group({
       enabled: this.fb.control(schedule != null ? schedule.enabled : true),
+      requestType: this.fb.control(requestType),
+      energyRequest: requestType === this.ENERGY_REQUEST ? this.buildEnergyRequest(schedule) : null,
+      runtimeRequest: requestType === this.RUNTIME_REQUEST ? this.buildRuntimeRequest(schedule) : null,
       timeframeType: this.fb.control(timeframeType),
       dayTimeframe: timeframeType === this.DAY_TIMEFRAME ? this.buildDayTimeframe(schedule) : null,
       consecutiveDaysTimeframe: timeframeType === this.CONSECUTIVE_DAYS_TIMEFRAME ? this.buildConsecutiveDaysTimeframe(schedule) : null
     });
+    scheduleFormGroup.get('requestType').valueChanges.forEach(
+      (newRequestType) => {
+        this.logger.debug('requestType changed to ' + newRequestType);
+        if (newRequestType === this.RUNTIME_REQUEST) {
+          scheduleFormGroup.removeControl('energyRequest');
+          scheduleFormGroup.setControl('runtimeRequest', this.buildRuntimeRequest(schedule));
+        } else if (newRequestType === this.ENERGY_REQUEST) {
+          scheduleFormGroup.removeControl('runtimeRequest');
+          scheduleFormGroup.setControl('energyRequest', this.buildEnergyRequest(schedule));
+        }
+        this.initializeOnceAfterViewChecked = true;
+      }
+    );
     scheduleFormGroup.get('timeframeType').valueChanges.forEach(
       (newTimeframeType) => {
         this.logger.debug('timeframeType changed to ' + newTimeframeType);
@@ -163,6 +183,32 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
     return scheduleFormGroup;
   }
 
+  buildRuntimeRequest(schedule: Schedule): FormGroup {
+    return this.fb.group({
+      min: this.fb.control(this.hasRuntimeRequest(schedule) ? schedule.runtimeRequest.minHHMM : null,
+        [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]),
+      max: this.fb.control(this.hasRuntimeRequest(schedule) ? schedule.runtimeRequest.maxHHMM : null,
+        Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)),
+    });
+  }
+
+  hasRuntimeRequest(schedule: Schedule): boolean {
+    return schedule != null && schedule.runtimeRequest != null;
+  }
+
+  buildEnergyRequest(schedule: Schedule): FormGroup {
+    return this.fb.group({
+      min: this.fb.control(this.hasEnergyRequest(schedule) ? schedule.energyRequest.min : null,
+        [Validators.pattern(InputValidatorPatterns.INTEGER)]),
+      max: this.fb.control(this.hasEnergyRequest(schedule) ? schedule.energyRequest.max : null,
+        [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)])
+    });
+  }
+
+  hasEnergyRequest(schedule: Schedule): boolean {
+    return schedule != null && schedule.energyRequest != null;
+  }
+
   buildDayTimeframe(schedule: Schedule): FormGroup {
     return this.fb.group({
       daysOfWeekValues: this.fb.control(
@@ -173,12 +219,6 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
       endTime: this.fb.control(
         this.hasDayTimeframe(schedule) ? schedule.dayTimeframe.endTime : null,
         [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]),
-      minRunningTime: this.fb.control(
-        this.hasDayTimeframe(schedule) ? schedule.minRunningTimeHHMM : null,
-        [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]),
-      maxRunningTime: this.fb.control(
-        this.hasDayTimeframe(schedule) ? schedule.maxRunningTimeHHMM : null,
-        Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)),
     });
   }
 
@@ -200,12 +240,6 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
       endTime: this.fb.control(
         this.hasConsecutiveDaysTimeframe(schedule) ? schedule.consecutiveDaysTimeframe.endTime : null,
         [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]),
-      minRunningTime: this.fb.control(
-        this.hasConsecutiveDaysTimeframe(schedule) ? schedule.minRunningTimeHHMM : null,
-        [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]),
-      maxRunningTime: this.fb.control(
-        this.hasConsecutiveDaysTimeframe(schedule) ? schedule.maxRunningTimeHHMM : null,
-        Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H))
     });
   }
 

@@ -52,7 +52,7 @@ describe('ScheduleService', () => {
     service.getSchedules(applianceId).subscribe(res => expect(res).toEqual([ScheduleTestdata.daytimeframe12345_type()]));
     const req = httpMock.expectOne(`${SaeService.API}/schedules?id=${applianceId}`);
     expect(req.request.method).toEqual('GET');
-    req.flush([ScheduleTestdata.daytimeframe12345_json()]);
+    req.flush([ScheduleTestdata.daytimeframe12345_json(true)]);
   });
 
   it('should return a consecutive days time frame schedule', () => {
@@ -62,7 +62,7 @@ describe('ScheduleService', () => {
     service.getSchedules(applianceId).subscribe(res => expect(res).toEqual([ScheduleTestdata.consecutiveDaysTimeframe567_type()]));
     const req = httpMock.expectOne(`${SaeService.API}/schedules?id=${applianceId}`);
     expect(req.request.method).toEqual('GET');
-    req.flush([ScheduleTestdata.consecutiveDaysTimeframe567_json()]);
+    req.flush([ScheduleTestdata.consecutiveDaysTimeframe567_json(true)]);
   });
 
   it('should update the schedules', () => {
@@ -72,7 +72,7 @@ describe('ScheduleService', () => {
     service.setSchedules(applianceId, [ScheduleTestdata.daytimeframe12345_type()]).subscribe(res => expect(res).toBeTruthy());
     const req = httpMock.expectOne(`${SaeService.API}/schedules?id=${applianceId}`);
     expect(req.request.method).toEqual('PUT');
-    expect(JSON.parse(req.request.body)).toEqual(jasmine.objectContaining([ScheduleTestdata.daytimeframe12345_json_put()]));
+    expect(JSON.parse(req.request.body)).toEqual(jasmine.objectContaining([ScheduleTestdata.daytimeframe12345_json(false)]));
   });
 
 })
