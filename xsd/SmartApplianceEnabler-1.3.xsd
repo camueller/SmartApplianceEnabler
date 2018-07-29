@@ -128,6 +128,8 @@
                 <xs:element name="EVModbusControl" type="EVModbusControlType" />
             </xs:choice>
         </xs:sequence>
+        <xs:attribute name="voltage" type="xs:int" />
+        <xs:attribute name="phases" type="xs:int" />
     </xs:complexType>
 
     <xs:complexType name="EVModbusControlType">
@@ -144,7 +146,9 @@
             <xs:element name="ModbusRegisterReadValue" type="ModbusRegisterReadValueType" maxOccurs="unbounded" />
         </xs:sequence>
         <xs:attribute name="address" type="xs:string" use="required" />
+        <xs:attribute name="bytes" type="xs:int" />
         <xs:attribute name="type" type="ModbusRegisterTypeType" use="required" />
+        <xs:attribute name="pollInterval" type="xs:int" />
     </xs:complexType>
 
     <xs:complexType name="ModbusRegisterReadValueType">
