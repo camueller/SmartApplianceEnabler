@@ -199,6 +199,7 @@
             <xs:enumeration value="InputString" />
             <xs:enumeration value="Holding" />
             <xs:enumeration value="Coil" />
+            <xs:enumeration value="Discrete" />
         </xs:restriction>
     </xs:simpleType>
 

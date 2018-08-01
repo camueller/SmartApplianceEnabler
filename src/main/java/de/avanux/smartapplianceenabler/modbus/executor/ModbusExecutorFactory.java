@@ -38,6 +38,9 @@ public class ModbusExecutorFactory {
             case Coil:
                 executor = new ReadCoilExecutor(address);
                 break;
+            case Discrete:
+                executor = new ReadDiscreteInputExecutor(address);
+                break;
             default:
                 return null;
         }
