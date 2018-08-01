@@ -22,5 +22,6 @@ public enum ModbusRegisterType {
     InputFloat,
     InputString,
     Holding,
-    Coil
+    Coil,
+    Discrete
 }

@@ -114,13 +114,19 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
                     executeTransaction(executor, true);
                     if(executor instanceof ReadStringInputRegisterExecutor) {
                         String registerValue = ((ReadStringInputRegisterExecutor) executor).getValue();
-                        logger.debug("{}: Vehicle status={}", getApplianceId(), registerValue);
+                        logger.debug("{}: Register value={}", getApplianceId(), registerValue);
                         return registerValue.matches(registerRead.getSelectedRegisterReadValue().getExtractionRegex());
+                    }
+                    else if(executor instanceof ReadCoilExecutor) {
+                        return ((ReadCoilExecutor) executor).getValue();
+                    }
+                    else if(executor instanceof ReadDiscreteInputExecutor) {
+                        return ((ReadDiscreteInputExecutor) executor).getValue();
                     }
                 }
             }
             catch(Exception e) {
-                logger.error("{}: Error reading input register {}", getApplianceId(), registerRead.getAddress(), e);
+                logger.error("{}: Error reading register {}", getApplianceId(), registerRead.getAddress(), e);
             }
         }
         return false;
