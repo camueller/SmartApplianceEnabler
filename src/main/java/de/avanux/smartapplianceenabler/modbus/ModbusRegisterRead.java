@@ -41,7 +41,7 @@ public class ModbusRegisterRead {
     public ModbusRegisterRead() {
     }
 
-    public ModbusRegisterRead(String address, Integer bytes, ModbusRegisterType type, Integer pollInterval,
+    public ModbusRegisterRead(String address, Integer bytes, ModbusReadRegisterType type, Integer pollInterval,
                               ModbusRegisterReadValue selectedRegisterReadValue) {
         this.address = address;
         this.bytes = bytes;
@@ -55,14 +55,14 @@ public class ModbusRegisterRead {
     }
 
     public Integer getBytes() {
-        if(getType() == ModbusRegisterType.InputFloat) {
+        if(getType() == ModbusReadRegisterType.InputFloat) {
             return 2;
         }
         return bytes;
     }
 
-    public ModbusRegisterType getType() {
-        return ModbusRegisterType.valueOf(this.type);
+    public ModbusReadRegisterType getType() {
+        return ModbusReadRegisterType.valueOf(this.type);
     }
 
     public Integer getPollInterval() {

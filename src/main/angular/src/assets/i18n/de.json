@@ -190,6 +190,7 @@
   "SettingsComponent.holidaysUrl": "Download URL",
   "SettingsComponent.modbus": "Modbus",
   "SettingsComponent.modbusEnabled": "Aktiviert",
+  "SettingsComponent.modbusTcpId": "ID (Name)",
   "SettingsComponent.modbusTcpHost": "Host",
   "SettingsComponent.modbusTcpPort": "Port",
   "SettingsComponent.pulseReceiveEnabled": "Aktiviert",

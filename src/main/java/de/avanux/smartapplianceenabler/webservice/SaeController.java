@@ -452,11 +452,16 @@ public class SaeController {
             }
 
             List<ModbusTcp> modbusTCPs = connectivity.getModbusTCPs();
-            if(modbusTCPs != null && modbusTCPs.size() > 0) {
-                settings.setModbusEnabled(true);
-                ModbusTcp modbusTcp = modbusTCPs.get(0);
-                settings.setModbusTcpHost(modbusTcp.getHost());
-                settings.setModbusTcpPort(modbusTcp.getPort());
+            if(modbusTCPs != null) {
+                List<ModbusSettings> modbusSettingsList = new ArrayList<>();
+                for(ModbusTcp modbusTcp: modbusTCPs) {
+                    ModbusSettings modbusSettings = new ModbusSettings();
+                    modbusSettings.setModbusTcpId(modbusTcp.getId());
+                    modbusSettings.setModbusTcpHost(modbusTcp.getHost());
+                    modbusSettings.setModbusTcpPort(modbusTcp.getPort());
+                    modbusSettingsList.add(modbusSettings);
+                }
+                settings.setModbusSettings(modbusSettingsList);
             }
         }
 
@@ -482,12 +487,16 @@ public class SaeController {
         }
 
         List<ModbusTcp> modbusTCPs = null;
-        if(settings.isModbusEnabled()) {
-            ModbusTcp modbusTcp = new ModbusTcp();
-            modbusTcp.setId(ModbusTcp.DEFAULT_ID);
-            modbusTcp.setHost(settings.getModbusTcpHost());
-            modbusTcp.setPort(settings.getModbusTcpPort());
-            modbusTCPs = Collections.singletonList(modbusTcp);
+        List<ModbusSettings> modbusSettingsList = settings.getModbusSettings();
+        if(modbusSettingsList != null) {
+            modbusTCPs = new ArrayList<>();
+            for(ModbusSettings modbusSettings: modbusSettingsList) {
+                ModbusTcp modbusTcp = new ModbusTcp();
+                modbusTcp.setId(modbusSettings.getModbusTcpId());
+                modbusTcp.setHost(modbusSettings.getModbusTcpHost());
+                modbusTcp.setPort(modbusSettings.getModbusTcpPort());
+                modbusTCPs.add(modbusTcp);
+            }
         }
 
         Connectivity connectivity = null;

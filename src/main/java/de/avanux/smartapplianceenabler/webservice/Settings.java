@@ -18,14 +18,12 @@
 
 package de.avanux.smartapplianceenabler.webservice;
 
+import java.util.List;
+
 public class Settings {
     boolean holidaysEnabled;
     String holidaysUrl;
-
-    boolean modbusEnabled;
-    String modbusTcpHost;
-    Integer modbusTcpPort;
-
+    List<ModbusSettings> modbusSettings;
     boolean pulseReceiverEnabled;
     Integer pulseReceiverPort;
 
@@ -45,28 +43,12 @@ public class Settings {
         this.holidaysUrl = holidaysUrl;
     }
 
-    public boolean isModbusEnabled() {
-        return modbusEnabled;
+    public List<ModbusSettings> getModbusSettings() {
+        return modbusSettings;
     }
 
-    public void setModbusEnabled(boolean modbusEnabled) {
-        this.modbusEnabled = modbusEnabled;
-    }
-
-    public String getModbusTcpHost() {
-        return modbusTcpHost;
-    }
-
-    public void setModbusTcpHost(String modbusTcpHost) {
-        this.modbusTcpHost = modbusTcpHost;
-    }
-
-    public Integer getModbusTcpPort() {
-        return modbusTcpPort;
-    }
-
-    public void setModbusTcpPort(Integer modbusTcpPort) {
-        this.modbusTcpPort = modbusTcpPort;
+    public void setModbusSettings(List<ModbusSettings> modbusSettings) {
+        this.modbusSettings = modbusSettings;
     }
 
     public boolean isPulseReceiverEnabled() {
@@ -90,9 +72,7 @@ public class Settings {
         return "Settings{" +
                 "holidaysEnabled=" + holidaysEnabled +
                 ", holidaysUrl='" + holidaysUrl + '\'' +
-                ", modbusEnabled=" + modbusEnabled +
-                ", modbusTcpHost='" + modbusTcpHost + '\'' +
-                ", modbusTcpPort=" + modbusTcpPort +
+                ", modbusSettings=" + modbusSettings +
                 ", pulseReceiverEnabled=" + pulseReceiverEnabled +
                 ", pulseReceiverPort=" + pulseReceiverPort +
                 '}';

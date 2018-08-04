@@ -18,10 +18,7 @@
 
 package de.avanux.smartapplianceenabler.modbus;
 
-public enum ModbusRegisterType {
-    InputFloat,
-    InputString,
+public enum ModbusWriteRegisterType {
     Holding,
-    Coil,
-    Discrete
+    Coil
 }

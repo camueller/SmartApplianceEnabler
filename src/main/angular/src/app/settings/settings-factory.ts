@@ -19,6 +19,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 import {Settings} from './settings';
 import {SettingsDefaults} from './settings-defaults';
 import {Logger} from '../log/logger';
+import {ModbusSettings} from './modbus-settings';
 
 export class SettingsFactory {
 
@@ -50,9 +51,16 @@ export class SettingsFactory {
     settings.holidaysEnabled = rawSettings.holidaysEnabled;
     settings.holidaysUrl = rawSettings.holidaysUrl;
 
-    settings.modbusEnabled = rawSettings.modbusEnabled;
-    settings.modbusTcpHost = rawSettings.modbusTcpHost;
-    settings.modbusTcpPort = rawSettings.modbusTcpPort;
+    settings.modbusSettings = [] as ModbusSettings[];
+    if (rawSettings.modbusSettings) {
+      (rawSettings.modbusSettings as any[]).forEach((rawModbusSettings) => {
+        const modbusSettings = new ModbusSettings();
+        modbusSettings.modbusTcpId = rawModbusSettings.modbusTcpId;
+        modbusSettings.modbusTcpHost = rawModbusSettings.modbusTcpHost;
+        modbusSettings.modbusTcpPort = rawModbusSettings.modbusTcpPort;
+        settings.modbusSettings.push(modbusSettings);
+      });
+    }
 
     settings.pulseReceiverEnabled = rawSettings.pulseReceiverEnabled;
     settings.pulseReceiverPort = rawSettings.pulseReceiverPort;

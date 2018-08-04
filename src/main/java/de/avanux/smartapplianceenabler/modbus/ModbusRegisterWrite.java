@@ -39,7 +39,7 @@ public class ModbusRegisterWrite {
     public ModbusRegisterWrite() {
     }
 
-    public ModbusRegisterWrite(String address, ModbusRegisterType type,
+    public ModbusRegisterWrite(String address, ModbusWriteRegisterType type,
                                ModbusRegisterWriteValue selectedRegisterWriteValue) {
         this.address = address;
         this.type = type.name();
@@ -50,8 +50,12 @@ public class ModbusRegisterWrite {
         return address;
     }
 
-    public ModbusRegisterType getType() {
-        return ModbusRegisterType.valueOf(this.type);
+    public ModbusWriteRegisterType getType() {
+        return ModbusWriteRegisterType.valueOf(this.type);
+    }
+
+    public ModbusReadRegisterType getReadRegisterType() {
+        return ModbusReadRegisterType.valueOf(this.type);
     }
 
     public List<ModbusRegisterWriteValue> getRegisterWriteValues() {
