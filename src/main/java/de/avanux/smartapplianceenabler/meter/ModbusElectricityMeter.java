@@ -18,12 +18,12 @@
 package de.avanux.smartapplianceenabler.meter;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import de.avanux.smartapplianceenabler.modbus.ModbusReadRegisterType;
 import de.avanux.smartapplianceenabler.modbus.ModbusRegisterRead;
-import de.avanux.smartapplianceenabler.modbus.ModbusRegisterType;
 import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
-import de.avanux.smartapplianceenabler.modbus.executor.ReadFloatInputRegisterExecutor;
 import de.avanux.smartapplianceenabler.modbus.executor.ModbusExecutorFactory;
 import de.avanux.smartapplianceenabler.modbus.executor.ModbusReadTransactionExecutor;
+import de.avanux.smartapplianceenabler.modbus.executor.ReadFloatInputRegisterExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -123,7 +123,7 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
         ModbusRegisterRead registerRead = ModbusRegisterRead.getRegisterRead(RegisterName.Power.name(), registerReads);
         try {
             ModbusReadTransactionExecutor executor = ModbusExecutorFactory.getReadExecutor(getApplianceId(),
-                    ModbusRegisterType.InputFloat, registerRead.getAddress(), registerRead.getBytes());
+                    ModbusReadRegisterType.InputFloat, registerRead.getAddress(), registerRead.getBytes());
             if(executor != null) {
                 executeTransaction(executor, true);
                 if(executor instanceof ReadFloatInputRegisterExecutor) {
@@ -166,7 +166,7 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
         ModbusRegisterRead registerRead = ModbusRegisterRead.getRegisterRead(RegisterName.Energy.name(), registerReads);
         try {
             ModbusReadTransactionExecutor executor = ModbusExecutorFactory.getReadExecutor(getApplianceId(),
-                    ModbusRegisterType.InputFloat, registerRead.getAddress(), registerRead.getBytes());
+                    ModbusReadRegisterType.InputFloat, registerRead.getAddress(), registerRead.getBytes());
             if(executor != null) {
                 executeTransaction(executor, true);
                 if(executor instanceof ReadFloatInputRegisterExecutor) {

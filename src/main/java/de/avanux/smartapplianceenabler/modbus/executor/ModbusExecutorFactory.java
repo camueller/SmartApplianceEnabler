@@ -18,15 +18,16 @@
 
 package de.avanux.smartapplianceenabler.modbus.executor;
 
-import de.avanux.smartapplianceenabler.modbus.ModbusRegisterType;
+import de.avanux.smartapplianceenabler.modbus.ModbusReadRegisterType;
+import de.avanux.smartapplianceenabler.modbus.ModbusWriteRegisterType;
 
 public class ModbusExecutorFactory {
 
-    public static ModbusReadTransactionExecutor getReadExecutor(String applianceId, ModbusRegisterType type, String address) {
+    public static ModbusReadTransactionExecutor getReadExecutor(String applianceId, ModbusReadRegisterType type, String address) {
         return getReadExecutor(applianceId, type, address, 1);
     }
 
-    public static ModbusReadTransactionExecutor getReadExecutor(String applianceId, ModbusRegisterType type, String address, int bytes) {
+    public static ModbusReadTransactionExecutor getReadExecutor(String applianceId, ModbusReadRegisterType type, String address, int bytes) {
         ModbusReadTransactionExecutor executor;
         switch (type) {
             case InputString:
@@ -48,7 +49,7 @@ public class ModbusExecutorFactory {
         return executor;
     }
 
-    public static ModbusWriteTransactionExecutor getWriteExecutor(String applianceId, ModbusRegisterType type, String address) {
+    public static ModbusWriteTransactionExecutor getWriteExecutor(String applianceId, ModbusWriteRegisterType type, String address) {
         ModbusWriteTransactionExecutor executor;
         switch (type) {
             case Holding:

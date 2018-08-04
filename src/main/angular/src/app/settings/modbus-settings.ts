@@ -16,18 +16,12 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {ModbusSettings} from './modbus-settings';
+export class ModbusSettings {
+  modbusTcpId: string;
+  modbusTcpHost: string;
+  modbusTcpPort: number;
 
-export class Settings {
-  holidaysEnabled: boolean;
-  holidaysUrl: string;
-
-  modbusSettings: ModbusSettings[];
-
-  pulseReceiverEnabled: boolean;
-  pulseReceiverPort: number;
-
-  public constructor(init?: Partial<Settings>) {
+  public constructor(init?: Partial<ModbusSettings>) {
     Object.assign(this, init);
   }
 }

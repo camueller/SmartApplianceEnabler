@@ -31,6 +31,7 @@ import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {Logger} from '../log/logger';
+import {ModbusSettings} from './modbus-settings';
 
 @Component({
   selector: 'app-settings',
@@ -65,10 +66,37 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.route.data.subscribe((data: {settings: Settings, settingsDefaults: SettingsDefaults}) => {
       this.settings = data.settings;
+
+      // const mbs1 = {
+      //   modbusId: 'modbus',
+      //   modbusTcpHost: '127.0.0.1',
+      //   modbusTcpPort: 502
+      // } as ModbusSettings;
+      //
+      // const mbs2 = {
+      //   modbusId: 'wallbox',
+      //   modbusTcpHost: '192.168.69.12',
+      //   modbusTcpPort: 502
+      // } as ModbusSettings;
+      //
+      // this.settings.modbusSettings = [mbs1, mbs2];
+
       this.settingsDefaults = data.settingsDefaults;
     });
     this.settingsForm.statusChanges.subscribe(() =>
       this.errors = this.errorMessageHandler.applyErrorMessages4TemplateDrivenForm(this.settingsForm, this.errorMessages));
+  }
+
+  addModbusSettings() {
+    this.settings.modbusSettings.push({
+      modbusId: '',
+      modbusTcpHost: '',
+      modbusTcpPort: undefined
+    });
+  }
+
+  removeModbusSettings(index: number) {
+    this.settings.modbusSettings.splice(index, 1);
   }
 
   canDeactivate(): Observable<boolean> | boolean {

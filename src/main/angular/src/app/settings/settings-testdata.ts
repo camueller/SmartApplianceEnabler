@@ -1,5 +1,6 @@
 import {Settings} from './settings';
 import {SettingsDefaults} from './settings-defaults';
+import {ModbusSettings} from './modbus-settings';
 
 export class SettingsTestdata {
 
@@ -27,9 +28,7 @@ export class SettingsTestdata {
       '@class': 'de.avanux.smartapplianceenabler.webservice.Settings',
       'holidaysEnabled': false,
       'holidaysUrl': null,
-      'modbusEnabled': false,
-      'modbusTcpHost': null,
-      'modbusTcpPort': null,
+      'modbusSettings': null,
       'pulseReceiverEnabled': false,
       'pulseReceiverPort': null
     };
@@ -39,9 +38,7 @@ export class SettingsTestdata {
     return new Settings({
       'holidaysEnabled': false,
       'holidaysUrl': null,
-      'modbusEnabled': false,
-      'modbusTcpHost': null,
-      'modbusTcpPort': null,
+      'modbusSettings': [] as ModbusSettings[],
       'pulseReceiverEnabled': false,
       'pulseReceiverPort': null
     });
@@ -52,9 +49,11 @@ export class SettingsTestdata {
       '@class': 'de.avanux.smartapplianceenabler.webservice.Settings',
       'holidaysEnabled': true,
       'holidaysUrl': 'http://service.domain.de/path',
-      'modbusEnabled': true,
-      'modbusTcpHost': 'modbushost',
-      'modbusTcpPort': 1234,
+      'modbusSettings': [{
+        'modbusTcpId': 'defaultID',
+        'modbusTcpHost': 'modbushost',
+        'modbusTcpPort': 1234,
+      }],
       'pulseReceiverEnabled': true,
       'pulseReceiverPort': 9876
     };
@@ -64,9 +63,11 @@ export class SettingsTestdata {
     return new Settings({
       'holidaysEnabled': true,
       'holidaysUrl': 'http://service.domain.de/path',
-      'modbusEnabled': true,
-      'modbusTcpHost': 'modbushost',
-      'modbusTcpPort': 1234,
+      'modbusSettings': [new ModbusSettings({
+        'modbusTcpId': 'defaultID',
+        'modbusTcpHost': 'modbushost',
+        'modbusTcpPort': 1234,
+      })],
       'pulseReceiverEnabled': true,
       'pulseReceiverPort': 9876
     });

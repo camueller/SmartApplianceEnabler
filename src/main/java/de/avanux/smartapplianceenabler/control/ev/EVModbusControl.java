@@ -182,7 +182,7 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
                 if(executor != null) {
                     String stringValue = registerWrite.getSelectedRegisterWriteValue().getValue();
                     Object value = null;
-                    if(ModbusRegisterType.Coil.equals(registerWrite.getType())) {
+                    if(ModbusWriteRegisterType.Coil.equals(registerWrite.getType())) {
                         value = "1".equals(stringValue);
                     }
                     executor.setValue(value);

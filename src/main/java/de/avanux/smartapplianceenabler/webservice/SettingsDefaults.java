@@ -20,15 +20,20 @@ package de.avanux.smartapplianceenabler.webservice;
 
 import de.avanux.smartapplianceenabler.HolidaysDownloader;
 import de.avanux.smartapplianceenabler.meter.PulseReceiver;
+import de.avanux.smartapplianceenabler.modbus.ModbusReadRegisterType;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
+import de.avanux.smartapplianceenabler.modbus.ModbusWriteRegisterType;
 
 public class SettingsDefaults {
+    private static SettingsDefaults instance = new SettingsDefaults();
+
     // static members won't be serialized but we need those values on the client
     private String holidaysUrl = HolidaysDownloader.DEFAULT_URL;
     private String modbusTcpHost = ModbusTcp.DEFAULT_HOST;
     private Integer modbusTcpPort = ModbusTcp.DEFAULT_PORT;
+    private ModbusReadRegisterType[] modbusReadRegisterTypes = ModbusReadRegisterType.values();
+    private ModbusWriteRegisterType[] modbusWriteRegisterTypes = ModbusWriteRegisterType.values();
     private Integer pulseReceiverPort = PulseReceiver.DEFAULT_PORT;
-    private static SettingsDefaults instance = new SettingsDefaults();
 
     public static String getHolidaysUrl() {
         return instance.holidaysUrl;
@@ -40,6 +45,14 @@ public class SettingsDefaults {
 
     public static Integer getModbusTcpPort() {
         return instance.modbusTcpPort;
+    }
+
+    public ModbusReadRegisterType[] getModbusReadRegisterTypes() {
+        return modbusReadRegisterTypes;
+    }
+
+    public ModbusWriteRegisterType[] getModbusWriteRegisterTypes() {
+        return modbusWriteRegisterTypes;
     }
 
     public static Integer getPulseReceiverPort() {
