@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import java.util.ArrayList;
 import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -66,15 +67,21 @@ public class ModbusRegisterWrite {
         return selectedRegisterWriteValue;
     }
 
-    public static ModbusRegisterWrite getRegisterWrite(String registerName, List<ModbusRegisterWrite> registerWrites) {
+    public static ModbusRegisterWrite getFirstRegisterWrite(String registerName, List<ModbusRegisterWrite> registerWrites) {
+        List<ModbusRegisterWrite> matches = getRegisterWrites(registerName, registerWrites);
+        return matches.size() > 0 ? matches.get(0) : null;
+    }
+
+    public static List<ModbusRegisterWrite> getRegisterWrites(String registerName, List<ModbusRegisterWrite> registerWrites) {
+        List<ModbusRegisterWrite> matches = new ArrayList<>();
         for(ModbusRegisterWrite registerWrite: registerWrites) {
             for(ModbusRegisterWriteValue registerWriteValue: registerWrite.getRegisterWriteValues()) {
                 if(registerName.equals(registerWriteValue.getName())) {
-                    return new ModbusRegisterWrite(registerWrite.getAddress(), registerWrite.getType(),
-                            registerWriteValue);
+                    matches.add(new ModbusRegisterWrite(registerWrite.getAddress(), registerWrite.getType(),
+                            registerWriteValue));
                 }
             }
         }
-        return null;
+        return matches;
     }
 }

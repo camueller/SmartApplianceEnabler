@@ -46,30 +46,33 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
     public void validate() {
         boolean valid = true;
         for(RegisterName registerName: RegisterName.values()) {
-            ModbusRegisterRead registerRead = ModbusRegisterRead.getRegisterRead(registerName.name(),
+            List<ModbusRegisterRead> registerReads = ModbusRegisterRead.getRegisterReads(registerName.name(),
                     this.registerReads);
-            if(registerRead != null) {
-                logger.debug("{}: {} configured: read register={} / poll interval={}s / extraction regex={}",
-                        getApplianceId(),
-                        registerName.name(),
-                        registerRead.getAddress(), registerRead.getPollInterval(),
-                        registerRead.getSelectedRegisterReadValue().getExtractionRegex());
-            }
-            else {
+            if(registerReads.size() > 0) {
+                for(ModbusRegisterRead registerRead: registerReads) {
+                    logger.debug("{}: {} configured: read register={} / poll interval={}s / extraction regex={}",
+                            getApplianceId(),
+                            registerName.name(),
+                            registerRead.getAddress(), registerRead.getPollInterval(),
+                            registerRead.getSelectedRegisterReadValue().getExtractionRegex());
+                }
+            } else {
                 logger.error("{}: Missing register configuration for {}", getApplianceId(), registerName.name());
                 valid = false;
             }
         }
 
         for(EVModbusWriteRegisterName registerName: EVModbusWriteRegisterName.values()) {
-            ModbusRegisterWrite registerWrite = ModbusRegisterWrite.getRegisterWrite(registerName.name(),
+            List<ModbusRegisterWrite> registerWrites = ModbusRegisterWrite.getRegisterWrites(registerName.name(),
                     this.registerWrites);
-            if(registerWrite != null) {
-                logger.debug("{}: {} configured: write register={} / value={}",
-                        getApplianceId(),
-                        registerName.name(),
-                        registerWrite.getAddress(),
-                        registerWrite.getSelectedRegisterWriteValue().getValue());
+            if(registerWrites.size() > 0) {
+                for(ModbusRegisterWrite registerWrite: registerWrites) {
+                    logger.debug("{}: {} configured: write register={} / value={}",
+                            getApplianceId(),
+                            registerName.name(),
+                            registerWrite.getAddress(),
+                            registerWrite.getSelectedRegisterWriteValue().getValue());
+                }
                 if(EVModbusWriteRegisterName.ChargingCurrent.equals(registerName)) {
                     /* Alternative, falls Ladestrom am Controller nur auf feste Werte gesetzt werden kann
                     <ModbusRegisterWriteValue name="ChargingCurrent" param="2000" value="1" />
@@ -91,7 +94,7 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
 
     @Override
     public boolean isVehicleConnected() {
-        return isMatchingVehicleStatus(RegisterName.VehicleConnected);
+        return isMatchingVehicleStatus(RegisterName.ChargingCompleted);
     }
 
     @Override
@@ -105,36 +108,43 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
     }
 
     public boolean isMatchingVehicleStatus(RegisterName registerName) {
-        ModbusRegisterRead registerRead = ModbusRegisterRead.getRegisterRead(registerName.name(), this.registerReads);
-        if(registerRead != null) {
-            try {
+        List<ModbusRegisterRead> registerReads = ModbusRegisterRead.getRegisterReads(registerName.name(),
+                this.registerReads);
+        if (registerReads.size() > 0) {
+            boolean result = true;
+            for (ModbusRegisterRead registerRead : registerReads) {
                 ModbusReadTransactionExecutor executor = ModbusExecutorFactory.getReadExecutor(getApplianceId(),
                         registerRead.getType(), registerRead.getAddress(), registerRead.getBytes());
-                if(executor != null) {
-                    executeTransaction(executor, true);
-                    if(executor instanceof ReadStringInputRegisterExecutor) {
-                        String registerValue = ((ReadStringInputRegisterExecutor) executor).getValue();
-                        logger.debug("{}: Register value={}", getApplianceId(), registerValue);
-                        return registerValue.matches(registerRead.getSelectedRegisterReadValue().getExtractionRegex());
+                if (result) {
+                    try {
+                        if (executor != null) {
+                            executeTransaction(executor, true);
+                            if (executor instanceof ReadStringInputRegisterExecutor) {
+                                String registerValue = ((ReadStringInputRegisterExecutor) executor).getValue();
+                                logger.debug("{}: Register value={}", getApplianceId(), registerValue);
+                                result &= registerValue.matches(
+                                        registerRead.getSelectedRegisterReadValue().getExtractionRegex());
+                            } else if (executor instanceof ReadCoilExecutor) {
+                                result &= ((ReadCoilExecutor) executor).getValue();
+                            } else if (executor instanceof ReadDiscreteInputExecutor) {
+                                result &= ((ReadDiscreteInputExecutor) executor).getValue();
+                            }
+                        }
+                    } catch (Exception e) {
+                        logger.error("{}: Error reading register {}", getApplianceId(), registerRead.getAddress(), e);
                     }
-                    else if(executor instanceof ReadCoilExecutor) {
-                        return ((ReadCoilExecutor) executor).getValue();
-                    }
-                    else if(executor instanceof ReadDiscreteInputExecutor) {
-                        return ((ReadDiscreteInputExecutor) executor).getValue();
-                    }
+                } else {
+                    logger.debug("{}: Skipping read register {}", getApplianceId(), registerRead.getAddress());
                 }
             }
-            catch(Exception e) {
-                logger.error("{}: Error reading register {}", getApplianceId(), registerRead.getAddress(), e);
-            }
+            return result;
         }
         return false;
     }
 
     @Override
     public Integer getVehicleStatusPollInterval() {
-        ModbusRegisterRead registerRead = ModbusRegisterRead.getRegisterRead(RegisterName.VehicleConnected.name(),
+        ModbusRegisterRead registerRead = ModbusRegisterRead.getFirstRegisterRead(RegisterName.VehicleConnected.name(),
                 this.registerReads);
         if(registerRead != null) {
             return registerRead.getPollInterval();
@@ -145,7 +155,7 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
     @Override
     public void setChargeCurrent(int current) {
         logger.debug("{}: Set charge current {}A", getApplianceId(), current);
-        ModbusRegisterWrite registerWrite = ModbusRegisterWrite.getRegisterWrite(
+        ModbusRegisterWrite registerWrite = ModbusRegisterWrite.getFirstRegisterWrite(
                 EVModbusWriteRegisterName.ChargingCurrent.name(), this.registerWrites);
         if(registerWrite != null) {
             try {
@@ -174,7 +184,7 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
     }
 
     private void setCharging(EVModbusWriteRegisterName registerName) {
-        ModbusRegisterWrite registerWrite = ModbusRegisterWrite.getRegisterWrite(registerName.name(), this.registerWrites);
+        ModbusRegisterWrite registerWrite = ModbusRegisterWrite.getFirstRegisterWrite(registerName.name(), this.registerWrites);
         if(registerWrite != null) {
             try {
                 ModbusWriteTransactionExecutor executor = ModbusExecutorFactory.getWriteExecutor(getApplianceId(),

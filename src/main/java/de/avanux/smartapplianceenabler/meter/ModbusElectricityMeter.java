@@ -94,7 +94,7 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     public void validate() {
         boolean valid = true;
         for(RegisterName registerName: RegisterName.values()) {
-            ModbusRegisterRead registerRead = ModbusRegisterRead.getRegisterRead(registerName.name(), registerReads);
+            ModbusRegisterRead registerRead = ModbusRegisterRead.getFirstRegisterRead(registerName.name(), registerReads);
             if(registerRead != null) {
                 logger.debug("{}: {} configured: read register={} / poll interval={}s / extraction regex={}",
                         getApplianceId(),
@@ -114,13 +114,13 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     }
 
     public void start(Timer timer) {
-        ModbusRegisterRead registerRead = ModbusRegisterRead.getRegisterRead(RegisterName.Power.name(), registerReads);
+        ModbusRegisterRead registerRead = ModbusRegisterRead.getFirstRegisterRead(RegisterName.Power.name(), registerReads);
         pollPowerMeter.start(timer, registerRead.getPollInterval(), measurementInterval, this);
     }
 
     @Override
     public float getPower() {
-        ModbusRegisterRead registerRead = ModbusRegisterRead.getRegisterRead(RegisterName.Power.name(), registerReads);
+        ModbusRegisterRead registerRead = ModbusRegisterRead.getFirstRegisterRead(RegisterName.Power.name(), registerReads);
         try {
             ModbusReadTransactionExecutor executor = ModbusExecutorFactory.getReadExecutor(getApplianceId(),
                     ModbusReadRegisterType.InputFloat, registerRead.getAddress(), registerRead.getBytes());
@@ -163,7 +163,7 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
 
     @Override
     public float pollEnergy() {
-        ModbusRegisterRead registerRead = ModbusRegisterRead.getRegisterRead(RegisterName.Energy.name(), registerReads);
+        ModbusRegisterRead registerRead = ModbusRegisterRead.getFirstRegisterRead(RegisterName.Energy.name(), registerReads);
         try {
             ModbusReadTransactionExecutor executor = ModbusExecutorFactory.getReadExecutor(getApplianceId(),
                     ModbusReadRegisterType.InputFloat, registerRead.getAddress(), registerRead.getBytes());

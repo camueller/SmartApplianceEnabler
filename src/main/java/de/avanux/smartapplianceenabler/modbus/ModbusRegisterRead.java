@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import java.util.ArrayList;
 import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -77,15 +78,21 @@ public class ModbusRegisterRead {
         return selectedRegisterReadValue;
     }
 
-    public static ModbusRegisterRead getRegisterRead(String registerName, List<ModbusRegisterRead> registerReads) {
+    public static ModbusRegisterRead getFirstRegisterRead(String registerName, List<ModbusRegisterRead> registerReads) {
+        List<ModbusRegisterRead> matches = getRegisterReads(registerName, registerReads);
+        return matches.size() > 0 ? matches.get(0) : null;
+    }
+
+    public static List<ModbusRegisterRead> getRegisterReads(String registerName, List<ModbusRegisterRead> registerReads) {
+        List<ModbusRegisterRead> matches = new ArrayList<>();
         for(ModbusRegisterRead registerRead: registerReads) {
             for(ModbusRegisterReadValue registerReadValue: registerRead.getRegisterReadValues()) {
                 if(registerName.equals(registerReadValue.getName())) {
-                    return new ModbusRegisterRead(registerRead.getAddress(), registerRead.getBytes(),
-                            registerRead.getType(), registerRead.getPollInterval(), registerReadValue);
+                    matches.add(new ModbusRegisterRead(registerRead.getAddress(), registerRead.getBytes(),
+                            registerRead.getType(), registerRead.getPollInterval(), registerReadValue));
                 }
             }
         }
-        return null;
+        return matches;
     }
 }
