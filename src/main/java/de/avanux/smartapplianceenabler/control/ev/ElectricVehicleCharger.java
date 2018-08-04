@@ -27,10 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
@@ -46,7 +43,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     private EVControl evControl;
     private transient Appliance appliance;
     private transient String applianceId;
-    private transient State state = State.VEHICLE_NOT_CONNECTED;
+    private transient Vector<State> stateHistory = new Vector<>();
     private transient boolean useOptionalEnergy = true;
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
 
@@ -77,6 +74,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
 
     public void init() {
         logger.debug("{}: voltage={} phases={}", this.applianceId, this.voltage, this.phases);
+        initStateHistory();
         evControl.validate();
     }
 
@@ -85,49 +83,71 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-               State previousState = state;
-               state = getNewState(state);
-                if(state != previousState) {
-                    onStateChanged(previousState, state);
-                }
-                else {
-                    logger.debug("{}: Vehicle state={}", applianceId, state);
-                }
-            }
+                updateState();            }
         }, 0, evControl.getVehicleStatusPollInterval() * 1000);
+    }
+
+    protected void updateState() {
+        State previousState = getState();
+        State currentState = getNewState(previousState);
+        if(currentState != previousState) {
+            stateHistory.add(currentState);
+            onStateChanged(previousState, currentState);
+        }
+        else {
+            logger.debug("{}: Vehicle state={}", applianceId, currentState);
+        }
+    }
+
+    public State getState() {
+        return stateHistory.lastElement();
+    }
+
+    public boolean wasInState(State state) {
+        return stateHistory.contains(state);
+    }
+
+    private void initStateHistory() {
+        this.stateHistory.clear();
+        stateHistory.add(State.VEHICLE_NOT_CONNECTED);
     }
 
     protected State getNewState(State currenState) {
         State newState = currenState;
-        if(currenState == State.CHARGING_COMPLETED) {
+        if(currenState == State.VEHICLE_NOT_CONNECTED) {
+            if (evControl.isVehicleConnected()) {
+                newState = State.VEHICLE_CONNECTED;
+            }
+        }
+        else if(currenState == State.VEHICLE_CONNECTED) {
+            if(evControl.isCharging()) {
+                newState = State.CHARGING;
+            }
+            else if(wasInState(State.CHARGING) && evControl.isChargingCompleted()) {
+                newState = State.CHARGING_COMPLETED;
+            }
+            else if(! evControl.isVehicleConnected()) {
+                newState = State.VEHICLE_NOT_CONNECTED;
+            }
+        }
+        else if(currenState == State.CHARGING) {
+            if(evControl.isChargingCompleted()) {
+                newState = State.CHARGING_COMPLETED;
+            }
+            else if(wasInState(State.VEHICLE_CONNECTED) && evControl.isVehicleConnected()) {
+                newState = State.VEHICLE_CONNECTED;
+            }
+            else {
+                newState = State.VEHICLE_NOT_CONNECTED;
+            }
+        }
+        else if(currenState == State.CHARGING_COMPLETED) {
             if (evControl.isVehicleConnected()) {
                 newState = State.VEHICLE_CONNECTED;
             }
             else {
                 newState = State.VEHICLE_NOT_CONNECTED;
             }
-        }
-        else if(currenState == State.CHARGING) {
-            if(evControl.isVehicleConnected()) {
-                newState = State.VEHICLE_CONNECTED;
-            }
-            else {
-                newState = State.VEHICLE_NOT_CONNECTED;
-            }
-        }
-        else if(currenState == State.VEHICLE_CONNECTED) {
-            if(evControl.isChargingCompleted()) {
-                newState = State.CHARGING_COMPLETED;
-            }
-            else if(evControl.isCharging()) {
-                newState = State.CHARGING;
-            }
-            else if(! evControl.isVehicleConnected()) {
-                newState = State.VEHICLE_NOT_CONNECTED;
-            }
-        }
-        else if(evControl.isVehicleConnected()) {
-            newState = State.VEHICLE_CONNECTED;
         }
         return newState;
     }
@@ -156,11 +176,16 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     private void onStateChanged(State previousState, State newState) {
         logger.debug("{}: Vehicle state changed: previousState={} newState={}", applianceId, previousState, newState);
         if(newState == State.VEHICLE_CONNECTED) {
-            this.appliance.activateSchedules();
+            if(this.appliance != null) {
+                this.appliance.activateSchedules();
+            }
         }
         if(newState == State.VEHICLE_NOT_CONNECTED) {
-            this.appliance.deactivateSchedules();
+            if(this.appliance != null) {
+                this.appliance.deactivateSchedules();
+            }
             stopCharging();
+            initStateHistory();
         }
     }
 
@@ -170,15 +195,15 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     }
 
     public boolean isVehicleConnected() {
-        return state == State.VEHICLE_CONNECTED;
+        return getState() == State.VEHICLE_CONNECTED;
     }
 
     public boolean isCharging() {
-        return state == State.CHARGING;
+        return getState() == State.CHARGING;
     }
 
     public boolean isChargingCompleted() {
-        return state == State.CHARGING_COMPLETED;
+        return getState() == State.CHARGING_COMPLETED;
     }
 
     public boolean isUseOptionalEnergy() {
