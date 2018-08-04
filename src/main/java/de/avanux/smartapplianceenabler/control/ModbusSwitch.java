@@ -43,7 +43,7 @@ public class ModbusSwitch extends ModbusSlave implements Control {
     public void validate() {
         boolean valid = true;
         for(RegisterName registerName: RegisterName.values()) {
-            ModbusRegisterWrite registerWrite = ModbusRegisterWrite.getRegisterWrite(registerName.name(),
+            ModbusRegisterWrite registerWrite = ModbusRegisterWrite.getFirstRegisterWrite(registerName.name(),
                     this.registerWrites);
             if(registerWrite != null) {
                 logger.debug("{}: {} configured: write register={} / value={}",
@@ -67,7 +67,7 @@ public class ModbusSwitch extends ModbusSlave implements Control {
     public boolean on(LocalDateTime now, boolean switchOn) {
         boolean result = false;
         logger.info("{}: Switching {}", getApplianceId(), (switchOn ? "on" : "off"));
-        ModbusRegisterWrite registerWrite = ModbusRegisterWrite.getRegisterWrite(getRegisterName(switchOn).name(),
+        ModbusRegisterWrite registerWrite = ModbusRegisterWrite.getFirstRegisterWrite(getRegisterName(switchOn).name(),
                 this.registerWrites);
         if (registerWrite != null) {
             try {
@@ -96,7 +96,7 @@ public class ModbusSwitch extends ModbusSlave implements Control {
     @Override
     public boolean isOn() {
         boolean on = false;
-        ModbusRegisterWrite registerWrite = ModbusRegisterWrite.getRegisterWrite(RegisterName.On.name(),
+        ModbusRegisterWrite registerWrite = ModbusRegisterWrite.getFirstRegisterWrite(RegisterName.On.name(),
                 this.registerWrites);
         if(registerWrite != null) {
             try {

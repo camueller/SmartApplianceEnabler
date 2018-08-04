@@ -6,6 +6,7 @@
                 <ModbusRegisterRead address="100" type="InputString">
                     <ModbusRegisterReadValue name="VehicleConnected" extractionRegex="(B)" />
                     <ModbusRegisterReadValue name="Charging" extractionRegex="(C|D)" />
+                    <ModbusRegisterReadValue name="ChargingCompleted" extractionRegex="(B)" />
                 </ModbusRegisterRead>
                 <ModbusRegisterRead address="204" type="Discrete">
                     <ModbusRegisterReadValue name="ChargingCompleted" />
