@@ -25,6 +25,8 @@ import {AlwaysOnSwitch} from './always-on-switch';
 import {ControlDefaults} from './control-defaults';
 import {MockSwitch} from './mock-switch';
 import {Logger} from '../log/logger';
+import {ModbusRegisterWrite} from '../shared/modbus-register-write';
+import {ModbusRegisterWriteValue} from '../shared/modbus-register-write-value';
 
 export class ControlFactory {
 
@@ -87,6 +89,23 @@ export class ControlFactory {
     }
     let rawControl: string;
     if (controlUsed != null) {
+      if (control.type === ModbusSwitch.TYPE) {
+        const registerWriteValueOn = new ModbusRegisterWriteValue({
+          name: 'On',
+          value: control.modbusSwitch.onValue
+        });
+        const registerWriteValueOff = new ModbusRegisterWriteValue({
+          name: 'Off',
+          value: control.modbusSwitch.offValue
+        });
+
+        const registerWrite = new ModbusRegisterWrite();
+        registerWrite.address = control.modbusSwitch.registerAddress;
+        registerWrite.type = control.modbusSwitch.registerType;
+        registerWrite.registerWriteValues = [registerWriteValueOn, registerWriteValueOff];
+        control.modbusSwitch.registerWrites = [registerWrite];
+
+      }
       rawControl = JSON.stringify(controlUsed);
     }
     this.logger.debug('Control (JSON): ' + rawControl);
@@ -151,8 +170,20 @@ export class ControlFactory {
 
   createModbusSwitch(rawModbusSwitch: any): ModbusSwitch {
     const modbusSwitch = new ModbusSwitch();
+    modbusSwitch.idref = rawModbusSwitch.idref;
     modbusSwitch.slaveAddress = rawModbusSwitch.slaveAddress;
-    modbusSwitch.registerAddress = rawModbusSwitch.registerAddress;
+    if (rawModbusSwitch.registerWrites != null) {
+      modbusSwitch.registerAddress = rawModbusSwitch.registerWrites[0].address;
+      modbusSwitch.registerType = rawModbusSwitch.registerWrites[0].type;
+      rawModbusSwitch.registerWrites[0].registerWriteValues.forEach((registerWrite) => {
+        if (registerWrite.name === 'On') {
+          modbusSwitch.onValue = registerWrite.value;
+        }
+        if (registerWrite.name === 'Off') {
+          modbusSwitch.offValue = registerWrite.value;
+        }
+      });
+    }
     return modbusSwitch;
   }
 

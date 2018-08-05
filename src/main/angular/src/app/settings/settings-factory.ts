@@ -36,6 +36,8 @@ export class SettingsFactory {
     settings.holidaysUrl = rawSettings.holidaysUrl;
     settings.modbusTcpHost = rawSettings.modbusTcpHost;
     settings.modbusTcpPort = Number.parseInt(rawSettings.modbusTcpPort);
+    settings.modbusReadRegisterTypes = rawSettings.modbusReadRegisterTypes;
+    settings.modbusWriteRegisterTypes = rawSettings.modbusWriteRegisterTypes;
     settings.pulseReceiverPort = Number.parseInt(rawSettings.pulseReceiverPort);
     this.logger.debug('SettingsDefaults (TYPE): ' + JSON.stringify(settings));
     return settings;
