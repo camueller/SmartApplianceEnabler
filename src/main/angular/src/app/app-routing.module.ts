@@ -62,7 +62,9 @@ const routes: Routes = [
     component: MeterComponent,
     resolve: {
       meter: MeterResolver,
-      meterDefaults: MeterDefaultsResolver
+      meterDefaults: MeterDefaultsResolver,
+      settings: SettingsResolver,
+      settingsDefaults: SettingsDefaultsResolver
     },
     canDeactivate: [CanDeactivateGuard]
   },

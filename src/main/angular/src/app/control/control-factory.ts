@@ -104,7 +104,6 @@ export class ControlFactory {
         registerWrite.type = control.modbusSwitch.registerType;
         registerWrite.registerWriteValues = [registerWriteValueOn, registerWriteValueOff];
         control.modbusSwitch.registerWrites = [registerWrite];
-
       }
       rawControl = JSON.stringify(controlUsed);
     }
