@@ -16,32 +16,33 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.avanux.smartapplianceenabler.modbus;
+package de.avanux.smartapplianceenabler.control.ev;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
+import com.ghgande.j2mod.modbus.ModbusException;
+import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
+import de.avanux.smartapplianceenabler.modbus.executor.ModbusReadTransactionExecutor;
+import de.avanux.smartapplianceenabler.modbus.executor.ModbusTestingExecutor;
+import de.avanux.smartapplianceenabler.modbus.executor.ReadStringInputRegisterExecutor;
 
-@XmlAccessorType(XmlAccessType.FIELD)
-public class ModbusRegisterWriteValue {
-    @XmlAttribute
-    private String name;
-    @XmlAttribute
+public class ModbusReadStringTestingExecutor implements ModbusReadTransactionExecutor<String>,
+        ReadStringInputRegisterExecutor, ModbusTestingExecutor {
+
     private String value;
 
-    public ModbusRegisterWriteValue() {
+    @Override
+    public String getValue() {
+        return value;
     }
 
-    public ModbusRegisterWriteValue(String name, String value) {
-        this.name = name;
+    public void setValue(String value) {
         this.value = value;
     }
 
-    public String getName() {
-        return name;
+    @Override
+    public void execute(TCPMasterConnection con, int slaveAddress) throws ModbusException {
     }
 
-    public String getValue() {
-        return value;
+    @Override
+    public void setApplianceId(String applianceId) {
     }
 }

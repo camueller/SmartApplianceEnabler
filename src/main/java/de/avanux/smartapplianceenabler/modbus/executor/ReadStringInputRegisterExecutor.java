@@ -18,22 +18,6 @@
 
 package de.avanux.smartapplianceenabler.modbus.executor;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-public class ReadStringInputRegisterExecutor extends ReadInputRegisterExecutor<String> {
-    private Logger logger = LoggerFactory.getLogger(ReadStringInputRegisterExecutor.class);
-
-    public ReadStringInputRegisterExecutor(String address, int bytes) {
-        super(address, bytes);
-    }
-
-    @Override
-    public String getValue() {
-        StringBuilder stringValue = new StringBuilder();
-        for(Integer byteValue : getByteValues()) {
-            stringValue.append(new Character((char) byteValue.intValue()));
-        }
-        return stringValue.toString();
-    }
+public interface ReadStringInputRegisterExecutor {
+    String getValue();
 }

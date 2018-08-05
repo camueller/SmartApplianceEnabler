@@ -103,8 +103,8 @@ public class ModbusSwitch extends ModbusSlave implements Control {
                 ModbusReadTransactionExecutor executor = ModbusExecutorFactory.getReadExecutor(getApplianceId(),
                         registerWrite.getReadRegisterType(), registerWrite.getAddress());
                 executeTransaction(executor, true);
-                if(executor instanceof ReadCoilExecutor) {
-                    on = ((ReadCoilExecutor) executor).getValue();
+                if(executor instanceof ReadCoilExecutorImpl) {
+                    on = ((ReadCoilExecutorImpl) executor).getValue();
                 }
             }
             catch (Exception e) {

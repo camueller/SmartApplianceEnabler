@@ -23,6 +23,32 @@ import de.avanux.smartapplianceenabler.modbus.ModbusWriteRegisterType;
 
 public class ModbusExecutorFactory {
 
+    private static ModbusReadTransactionExecutor testingReadStringExecutor;
+    private static ModbusReadTransactionExecutor testingReadBooleanExecutor;
+    private static ModbusReadTransactionExecutor testingReadFloatExecutor;
+    private static ModbusWriteTransactionExecutor testingWriteBooleanExecutor;
+    private static ModbusWriteTransactionExecutor testingWriteIntegerExecutor;
+
+    public static void setTestingReadStringExecutor(ModbusReadTransactionExecutor testingReadStringExecutor) {
+        ModbusExecutorFactory.testingReadStringExecutor = testingReadStringExecutor;
+    }
+
+    public static void setTestingReadBooleanExecutor(ModbusReadTransactionExecutor testingReadBooleanExecutor) {
+        ModbusExecutorFactory.testingReadBooleanExecutor = testingReadBooleanExecutor;
+    }
+
+    public static void setTestingReadFloatExecutor(ModbusReadTransactionExecutor testingReadFloatExecutor) {
+        ModbusExecutorFactory.testingReadFloatExecutor = testingReadFloatExecutor;
+    }
+
+    public static void setTestingWriteBooleanExecutor(ModbusWriteTransactionExecutor testingWriteBooleanExecutor) {
+        ModbusExecutorFactory.testingWriteBooleanExecutor = testingWriteBooleanExecutor;
+    }
+
+    public static void setTestingWriteIntegerExecutor(ModbusWriteTransactionExecutor testingWriteIntegerExecutor) {
+        ModbusExecutorFactory.testingWriteIntegerExecutor = testingWriteIntegerExecutor;
+    }
+
     public static ModbusReadTransactionExecutor getReadExecutor(String applianceId, ModbusReadRegisterType type, String address) {
         return getReadExecutor(applianceId, type, address, 1);
     }
@@ -31,16 +57,36 @@ public class ModbusExecutorFactory {
         ModbusReadTransactionExecutor executor;
         switch (type) {
             case InputString:
-                executor = new ReadStringInputRegisterExecutor(address, bytes);
+                if(testingReadStringExecutor != null) {
+                    executor = testingReadStringExecutor;
+                }
+                else {
+                    executor = new ReadStringInputRegisterExecutorImpl(address, bytes);
+                }
                 break;
             case InputFloat:
-                executor = new ReadFloatInputRegisterExecutor(address, bytes);
+                if(testingReadFloatExecutor != null) {
+                    executor = testingReadFloatExecutor;
+                }
+                else {
+                    executor = new ReadFloatInputRegisterExecutorImpl(address, bytes);
+                }
                 break;
             case Coil:
-                executor = new ReadCoilExecutor(address);
+                if(testingReadBooleanExecutor != null) {
+                    executor = testingReadBooleanExecutor;
+                }
+                else {
+                    executor = new ReadCoilExecutorImpl(address);
+                }
                 break;
             case Discrete:
-                executor = new ReadDiscreteInputExecutor(address);
+                if(testingReadBooleanExecutor != null) {
+                    executor = testingReadBooleanExecutor;
+                }
+                else {
+                    executor = new ReadDiscreteInputExecutorImpl(address);
+                }
                 break;
             default:
                 return null;
@@ -53,10 +99,20 @@ public class ModbusExecutorFactory {
         ModbusWriteTransactionExecutor executor;
         switch (type) {
             case Holding:
-                executor = new WriteHoldingRegisterExecutor(address);
+                if(testingWriteIntegerExecutor != null) {
+                    executor = testingWriteIntegerExecutor;
+                }
+                else {
+                    executor = new WriteHoldingRegisterExecutorImpl(address);
+                }
                 break;
             case Coil:
-                executor = new WriteCoilExecutor(address);
+                if(testingWriteBooleanExecutor != null) {
+                    executor = testingWriteBooleanExecutor;
+                }
+                else {
+                    executor = new WriteCoilExecutorImpl(address);
+                }
                 break;
             default:
                 return null;

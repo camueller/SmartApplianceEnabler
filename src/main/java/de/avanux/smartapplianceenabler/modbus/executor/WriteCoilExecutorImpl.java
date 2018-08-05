@@ -15,54 +15,57 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
 package de.avanux.smartapplianceenabler.modbus.executor;
 
 import com.ghgande.j2mod.modbus.ModbusException;
 import com.ghgande.j2mod.modbus.io.ModbusTCPTransaction;
-import com.ghgande.j2mod.modbus.msg.ReadMultipleRegistersRequest;
-import com.ghgande.j2mod.modbus.msg.ReadMultipleRegistersResponse;
+import com.ghgande.j2mod.modbus.msg.WriteCoilRequest;
+import com.ghgande.j2mod.modbus.msg.WriteCoilResponse;
 import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
-import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ReadHoldingRegisterExecutor implements ModbusTransactionExecutor, ApplianceIdConsumer {
-    private Logger logger = LoggerFactory.getLogger(ReadInputRegisterExecutor.class);
-    private String applianceId;
-    private String registerAddress;
-    private Float registerValue;
-
-    /**
-     * @param registerAddress
-     */
-    public ReadHoldingRegisterExecutor(String registerAddress) {
-        this.registerAddress = registerAddress;
+/**
+ * A <tt>WriteCoilRequest</tt> writes a bit.
+ * The implementation directly correlates with the class 0 function <i>write coil (FC 5)</i>.
+ */
+public class WriteCoilExecutorImpl extends BaseTransactionExecutor
+        implements ModbusWriteTransactionExecutor<Boolean>, WriteCoilExecutor {
+    
+    private Logger logger = LoggerFactory.getLogger(WriteCoilExecutorImpl.class);
+    private boolean value;
+    private Boolean result;
+    
+    public WriteCoilExecutorImpl(String address) {
+        super(address, 1);
     }
 
     @Override
-    public void setApplianceId(String applianceId) {
-        this.applianceId = applianceId;
+    public void setValue(Boolean value) {
+        this.value = value;
+    }
+
+    @Override
+    public Boolean getResult() {
+        return result;
     }
 
     @Override
     public void execute(TCPMasterConnection con, int slaveAddress) throws ModbusException {
-        ReadMultipleRegistersRequest req = new ReadMultipleRegistersRequest(Integer.parseInt(registerAddress, 16), 1);
+        WriteCoilRequest req = new WriteCoilRequest(getAddress(), value);
         req.setUnitID(slaveAddress);
-
+        
         ModbusTCPTransaction trans = new ModbusTCPTransaction(con);
         trans.setRequest(req);
         trans.execute();
-
-        ReadMultipleRegistersResponse res = (ReadMultipleRegistersResponse) trans.getResponse();
+        
+        WriteCoilResponse res = (WriteCoilResponse) trans.getResponse();
         if(res != null) {
-            logger.debug("{}: Register 0 = {}", applianceId, res.getRegisterValue(0));
-            //logger.debug("{}: Register 1 = {}", applianceId, res.getRegisterValue(1));
-            //registerValue = Float.intBitsToFloat(res.getRegisterValue(0) << 16 | res.getRegisterValue(1));
-            //logger.debug("{}: Input register={} value={}", applianceId, registerAddress, registerValue);
+            result = res.getCoil();
+            logger.debug("{}: Write coil register={} coil={} confirmedValue={}", getApplianceId(), getAddress(), value, result);
         }
         else {
-            logger.error("{}: No response received.", applianceId);
+            logger.error("{}: No response received.", getApplianceId());
         }
     }
 }

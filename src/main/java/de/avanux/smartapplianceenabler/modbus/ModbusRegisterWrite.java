@@ -55,12 +55,20 @@ public class ModbusRegisterWrite {
         return ModbusWriteRegisterType.valueOf(this.type);
     }
 
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public ModbusReadRegisterType getReadRegisterType() {
         return ModbusReadRegisterType.valueOf(this.type);
     }
 
     public List<ModbusRegisterWriteValue> getRegisterWriteValues() {
         return registerWriteValues;
+    }
+
+    public void setRegisterWriteValues(List<ModbusRegisterWriteValue> registerWriteValues) {
+        this.registerWriteValues = registerWriteValues;
     }
 
     public ModbusRegisterWriteValue getSelectedRegisterWriteValue() {

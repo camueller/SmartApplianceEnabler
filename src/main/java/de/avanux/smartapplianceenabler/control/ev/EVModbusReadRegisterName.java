@@ -16,32 +16,10 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.avanux.smartapplianceenabler.modbus;
+package de.avanux.smartapplianceenabler.control.ev;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-
-@XmlAccessorType(XmlAccessType.FIELD)
-public class ModbusRegisterReadValue {
-    @XmlAttribute
-    private String name;
-    @XmlAttribute
-    private String extractionRegex;
-
-    public ModbusRegisterReadValue() {
-    }
-
-    public ModbusRegisterReadValue(String name, String extractionRegex) {
-        this.name = name;
-        this.extractionRegex = extractionRegex;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getExtractionRegex() {
-        return extractionRegex;
-    }
+public enum EVModbusReadRegisterName {
+    VehicleConnected,
+    Charging,
+    ChargingCompleted
 }
