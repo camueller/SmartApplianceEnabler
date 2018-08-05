@@ -15,50 +15,9 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
+
 package de.avanux.smartapplianceenabler.modbus.executor;
 
-import com.ghgande.j2mod.modbus.ModbusException;
-import com.ghgande.j2mod.modbus.io.ModbusTCPTransaction;
-import com.ghgande.j2mod.modbus.msg.ReadCoilsRequest;
-import com.ghgande.j2mod.modbus.msg.ReadCoilsResponse;
-import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-/**
- * A <tt>ReadCoilRequest</tt> reads a bit.
- * The implementation directly correlates with the class 1 function <i>read coils (FC 1)</i>. 
- */
-public class ReadCoilExecutor extends BaseTransactionExecutor implements ModbusReadTransactionExecutor<Boolean> {
-    
-    private Logger logger = LoggerFactory.getLogger(ReadCoilExecutor.class);
-    private boolean coil;
-
-    public ReadCoilExecutor(String registerAddress) {
-        super(registerAddress, 1);
-    }
-
-    @Override
-    public void execute(TCPMasterConnection con, int slaveAddress) throws ModbusException {
-        ReadCoilsRequest req = new ReadCoilsRequest(getAddress(), getBytes());
-        req.setUnitID(slaveAddress);
-        
-        ModbusTCPTransaction trans = new ModbusTCPTransaction(con);
-        trans.setRequest(req);
-        trans.execute();
-        
-        ReadCoilsResponse res = (ReadCoilsResponse) trans.getResponse();
-        if(res != null) {
-            coil = res.getCoils().getBit(0);
-            logger.debug("{}: Read coil register={} coil={}", getApplianceId(), getAddress(), coil);
-        }
-        else {
-            logger.error("{}: No response received.", getApplianceId());
-        }
-    }
-
-    @Override
-    public Boolean getValue() {
-        return coil;
-    }
+public interface ReadCoilExecutor {
+    Boolean getValue();
 }

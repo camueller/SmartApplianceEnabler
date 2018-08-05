@@ -66,12 +66,20 @@ public class ModbusRegisterRead {
         return ModbusReadRegisterType.valueOf(this.type);
     }
 
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public Integer getPollInterval() {
         return pollInterval;
     }
 
     public List<ModbusRegisterReadValue> getRegisterReadValues() {
         return registerReadValues;
+    }
+
+    public void setRegisterReadValues(List<ModbusRegisterReadValue> registerReadValues) {
+        this.registerReadValues = registerReadValues;
     }
 
     public ModbusRegisterReadValue getSelectedRegisterReadValue() {

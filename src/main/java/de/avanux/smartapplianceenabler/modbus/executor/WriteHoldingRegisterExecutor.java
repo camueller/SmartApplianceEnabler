@@ -18,53 +18,7 @@
 
 package de.avanux.smartapplianceenabler.modbus.executor;
 
-import com.ghgande.j2mod.modbus.ModbusException;
-import com.ghgande.j2mod.modbus.io.ModbusTCPTransaction;
-import com.ghgande.j2mod.modbus.msg.*;
-import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
-import com.ghgande.j2mod.modbus.procimg.SimpleRegister;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-public class WriteHoldingRegisterExecutor extends BaseTransactionExecutor implements ModbusWriteTransactionExecutor<Integer> {
-
-    private Logger logger = LoggerFactory.getLogger(ReadInputRegisterExecutor.class);
-    private Integer value;
-    private Integer result;
-
-    public WriteHoldingRegisterExecutor(String address) {
-        super(address, 1);
-    }
-
-    @Override
-    public void setValue(Integer value) {
-        this.value = value;
-    }
-
-    @Override
-    public Integer getResult() {
-        return result;
-    }
-
-    @Override
-    public void execute(TCPMasterConnection con, int slaveAddress) throws ModbusException {
-        SimpleRegister register = new SimpleRegister(value);
-
-        WriteSingleRegisterRequest req = new WriteSingleRegisterRequest(getAddress(), register);
-        req.setUnitID(slaveAddress);
-
-        ModbusTCPTransaction trans = new ModbusTCPTransaction(con);
-        trans.setRequest(req);
-        trans.execute();
-
-        WriteSingleRegisterResponse res = (WriteSingleRegisterResponse) trans.getResponse();
-        if(res != null) {
-            this.result = res.getRegisterValue();
-            logger.debug("{}: Write holding register={} value={} confirmedValue={}", getApplianceId(), getAddress(),
-                    value, this.result);
-        }
-        else {
-            logger.error("{}: No response received.", getApplianceId());
-        }
-    }
+public interface WriteHoldingRegisterExecutor {
+    void setValue(Integer value);
+    Integer getResult();
 }

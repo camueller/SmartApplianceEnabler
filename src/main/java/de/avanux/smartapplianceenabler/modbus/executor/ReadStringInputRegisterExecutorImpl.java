@@ -16,32 +16,26 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.avanux.smartapplianceenabler.modbus;
+package de.avanux.smartapplianceenabler.modbus.executor;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@XmlAccessorType(XmlAccessType.FIELD)
-public class ModbusRegisterReadValue {
-    @XmlAttribute
-    private String name;
-    @XmlAttribute
-    private String extractionRegex;
+public class ReadStringInputRegisterExecutorImpl extends ReadInputRegisterExecutor<String>
+        implements ReadStringInputRegisterExecutor {
 
-    public ModbusRegisterReadValue() {
+    private Logger logger = LoggerFactory.getLogger(ReadStringInputRegisterExecutorImpl.class);
+
+    public ReadStringInputRegisterExecutorImpl(String address, int bytes) {
+        super(address, bytes);
     }
 
-    public ModbusRegisterReadValue(String name, String extractionRegex) {
-        this.name = name;
-        this.extractionRegex = extractionRegex;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getExtractionRegex() {
-        return extractionRegex;
+    @Override
+    public String getValue() {
+        StringBuilder stringValue = new StringBuilder();
+        for(Integer byteValue : getByteValues()) {
+            stringValue.append(new Character((char) byteValue.intValue()));
+        }
+        return stringValue.toString();
     }
 }

@@ -18,23 +18,6 @@
 
 package de.avanux.smartapplianceenabler.modbus.executor;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-public class ReadFloatInputRegisterExecutor extends ReadInputRegisterExecutor<Float> {
-    private Logger logger = LoggerFactory.getLogger(ReadFloatInputRegisterExecutor.class);
-
-    public ReadFloatInputRegisterExecutor(String address, int bytes) {
-        super(address, bytes);
-    }
-
-    @Override
-    public Float getValue() {
-        if(getBytes() == 2) {
-            Integer[] byteValues = getByteValues();
-            return Float.intBitsToFloat(byteValues[0] << 16 | byteValues[1]);
-        }
-        logger.error("{}: Float has to be composed of 2 bytes!", getApplianceId());
-        return null;
-    }
+public interface ReadFloatInputRegisterExecutor {
+    Float getValue();
 }

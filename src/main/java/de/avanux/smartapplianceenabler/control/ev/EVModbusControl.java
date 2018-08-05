@@ -37,15 +37,17 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
     @XmlElement(name = "ModbusRegisterWrite")
     private List<ModbusRegisterWrite> registerWrites;
 
-    public enum RegisterName {
-        VehicleConnected,
-        Charging,
-        ChargingCompleted
+    protected void setRegisterReads(List<ModbusRegisterRead> registerReads) {
+        this.registerReads = registerReads;
+    }
+
+    protected void setRegisterWrites(List<ModbusRegisterWrite> registerWrites) {
+        this.registerWrites = registerWrites;
     }
 
     public void validate() {
         boolean valid = true;
-        for(RegisterName registerName: RegisterName.values()) {
+        for(EVModbusReadRegisterName registerName: EVModbusReadRegisterName.values()) {
             List<ModbusRegisterRead> registerReads = ModbusRegisterRead.getRegisterReads(registerName.name(),
                     this.registerReads);
             if(registerReads.size() > 0) {
@@ -94,20 +96,20 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
 
     @Override
     public boolean isVehicleConnected() {
-        return isMatchingVehicleStatus(RegisterName.ChargingCompleted);
+        return isMatchingVehicleStatus(EVModbusReadRegisterName.ChargingCompleted);
     }
 
     @Override
     public boolean isCharging() {
-        return isMatchingVehicleStatus(RegisterName.Charging);
+        return isMatchingVehicleStatus(EVModbusReadRegisterName.Charging);
     }
 
     @Override
     public boolean isChargingCompleted() {
-        return isMatchingVehicleStatus(RegisterName.ChargingCompleted);
+        return isMatchingVehicleStatus(EVModbusReadRegisterName.ChargingCompleted);
     }
 
-    public boolean isMatchingVehicleStatus(RegisterName registerName) {
+    public boolean isMatchingVehicleStatus(EVModbusReadRegisterName registerName) {
         List<ModbusRegisterRead> registerReads = ModbusRegisterRead.getRegisterReads(registerName.name(),
                 this.registerReads);
         if (registerReads.size() > 0) {
@@ -144,8 +146,8 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
 
     @Override
     public Integer getVehicleStatusPollInterval() {
-        ModbusRegisterRead registerRead = ModbusRegisterRead.getFirstRegisterRead(RegisterName.VehicleConnected.name(),
-                this.registerReads);
+        ModbusRegisterRead registerRead = ModbusRegisterRead.getFirstRegisterRead(
+                EVModbusReadRegisterName.VehicleConnected.name(), this.registerReads);
         if(registerRead != null) {
             return registerRead.getPollInterval();
         }
@@ -175,16 +177,19 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
 
     @Override
     public void startCharging() {
+        logger.debug("{}: Start charging", getApplianceId());
         setCharging(EVModbusWriteRegisterName.StartCharging);
     }
 
     @Override
     public void stopCharging() {
+        logger.debug("{}: Stop charging", getApplianceId());
         setCharging(EVModbusWriteRegisterName.StopCharging);
     }
 
     private void setCharging(EVModbusWriteRegisterName registerName) {
-        ModbusRegisterWrite registerWrite = ModbusRegisterWrite.getFirstRegisterWrite(registerName.name(), this.registerWrites);
+        ModbusRegisterWrite registerWrite = ModbusRegisterWrite.getFirstRegisterWrite(registerName.name(),
+                this.registerWrites);
         if(registerWrite != null) {
             try {
                 ModbusWriteTransactionExecutor executor = ModbusExecutorFactory.getWriteExecutor(getApplianceId(),
@@ -200,7 +205,8 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
                 }
             }
             catch(Exception e) {
-                logger.error("{}: Error enable/disable charging process in register {}", getApplianceId(), registerWrite.getAddress(), e);
+                logger.error("{}: Error enable/disable charging process in register {}", getApplianceId(),
+                        registerWrite.getAddress(), e);
             }
         }
     }

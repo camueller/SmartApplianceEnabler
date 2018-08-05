@@ -19,6 +19,7 @@ package de.avanux.smartapplianceenabler.modbus;
 
 import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import de.avanux.smartapplianceenabler.modbus.executor.ModbusTestingExecutor;
 import de.avanux.smartapplianceenabler.modbus.executor.ModbusTransactionExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,23 +70,25 @@ abstract public class ModbusSlave implements ApplianceIdConsumer {
     }
 
     protected synchronized void executeTransaction(ModbusTransactionExecutor modbusTransactionExecutor, boolean closeConnection) throws Exception {
-        ModbusTcp modbusTcp = getModbusTcp();
-        if(connection == null) {
-            logger.debug("{}: Connecting to modbus {}", applianceId, modbusTcp.toString());
-            connection = modbusTcp.getConnection();
-        }
-        if(! connection.isConnected()) {
-            connection.connect();
-        }
-        if(connection.isConnected()) {
-            modbusTransactionExecutor.execute(connection, slaveAddress);
-            if(closeConnection) {
-                connection.close();
-                connection = null;
+        if(! (modbusTransactionExecutor instanceof ModbusTestingExecutor)) {
+            ModbusTcp modbusTcp = getModbusTcp();
+            if(connection == null) {
+                logger.debug("{}: Connecting to modbus {}", applianceId, modbusTcp.toString());
+                connection = modbusTcp.getConnection();
             }
-        }
-        else {
-            logger.error("{}: Cannot connect to modbus {}", applianceId, modbusTcp.toString());
+            if(! connection.isConnected()) {
+                connection.connect();
+            }
+            if(connection.isConnected()) {
+                modbusTransactionExecutor.execute(connection, slaveAddress);
+                if(closeConnection) {
+                    connection.close();
+                    connection = null;
+                }
+            }
+            else {
+                logger.error("{}: Cannot connect to modbus {}", applianceId, modbusTcp.toString());
+            }
         }
     }
 }
