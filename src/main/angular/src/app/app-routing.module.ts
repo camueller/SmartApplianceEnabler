@@ -71,7 +71,9 @@ const routes: Routes = [
     component: ControlComponent,
     resolve: {
       control: ControlResolver,
-      controlDefaults: ControlDefaultsResolver
+      controlDefaults: ControlDefaultsResolver,
+      settings: SettingsResolver,
+      settingsDefaults: SettingsDefaultsResolver
     },
     canDeactivate: [CanDeactivateGuard]
   },

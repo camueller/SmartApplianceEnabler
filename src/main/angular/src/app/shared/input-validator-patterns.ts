@@ -18,9 +18,10 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 export class InputValidatorPatterns {
   static INTEGER = '\\d*';
+  static INTEGER_OR_HEX = '\\b(0x[0-9a-fA-F]+|[0-9]+)\\b';
   static FLOAT = '^\\d*(\\.\\d+)?$';
   // https://regexr.com/3hpdh
-  static HOSTNAME = '((([-a-z0-9.]{2,256})(\\.[a-z]{2,4}){1})|((?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))';
+  static HOSTNAME = '((^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$)|((?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))';
   // https://regexr.com/3h7bc
   static URL = '(https?|ftp):\\/\\/([-A-Za-z0-9:%_.]{3,}@)?((([-a-z0-9.]{2,256})(\\.[a-z]{2,4}){1})|((?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))(\\:[0-9]*)?(\\/[-a-zA-Z0-9\\(\\)@:%,_\\+.~#?&//=]*)?';
   static APPLIANCE_ID = 'F-\\d{8}-\\d{12}-\\d{2}';

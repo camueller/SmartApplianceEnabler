@@ -22,11 +22,10 @@
       <div class="field">
         <label>{{'MeterComponent.type' | translate}}</label>
         <select class="ui fluid dropdown" name="meterType" [(ngModel)]="meter.type" (ngModelChange)="typeChanged($event)">
-          <option value=""></option>
-          <option value="{{TYPE_S0_ELECTRICITY_METER}}">{{TYPE_S0_ELECTRICITY_METER | translate}}</option>
-          <option value="{{TYPE_S0_ELECTRICITY_METER_NETWORKED}}">{{TYPE_S0_ELECTRICITY_METER_NETWORKED | translate}}</option>
-          <option value="{{TYPE_MODBUS_ELECTRICITY_METER}}">{{TYPE_MODBUS_ELECTRICITY_METER | translate}}</option>
-          <option value="{{TYPE_HTTP_ELECTRICITY_METER}}">{{TYPE_HTTP_ELECTRICITY_METER | translate}}</option>
+          <option [ngValue]="TYPE_S0_ELECTRICITY_METER">{{TYPE_S0_ELECTRICITY_METER | translate}}</option>
+          <option [ngValue]="TYPE_S0_ELECTRICITY_METER_NETWORKED">{{TYPE_S0_ELECTRICITY_METER_NETWORKED | translate}}</option>
+          <option [ngValue]="TYPE_MODBUS_ELECTRICITY_METER">{{TYPE_MODBUS_ELECTRICITY_METER | translate}}</option>
+          <option [ngValue]="TYPE_HTTP_ELECTRICITY_METER">{{TYPE_HTTP_ELECTRICITY_METER | translate}}</option>
         </select>
       </div>
     </div>

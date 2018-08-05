@@ -23,12 +23,11 @@
         <label>{{'ControlComponent.type' | translate}}</label>
         <select class="ui fluid dropdown" name="controlType" [(ngModel)]="control.type"
                 (ngModelChange)="typeChanged($event)">
-          <option value=""></option>
-          <option value="{{TYPE_ALWAYS_ON_SWITCH}}">{{TYPE_ALWAYS_ON_SWITCH | translate}}</option>
-          <option value="{{TYPE_SWITCH}}">{{TYPE_SWITCH | translate}}</option>
-          <option value="{{TYPE_MODBUS_SWITCH}}">{{TYPE_MODBUS_SWITCH | translate}}</option>
-          <option value="{{TYPE_HTTP_SWITCH}}">{{TYPE_HTTP_SWITCH | translate}}</option>
-          <option value="{{TYPE_MOCK_SWITCH}}">{{TYPE_MOCK_SWITCH | translate}}</option>
+          <option [ngValue]="TYPE_ALWAYS_ON_SWITCH">{{TYPE_ALWAYS_ON_SWITCH | translate}}</option>
+          <option [ngValue]="TYPE_SWITCH">{{TYPE_SWITCH | translate}}</option>
+          <option [ngValue]="TYPE_MODBUS_SWITCH">{{TYPE_MODBUS_SWITCH | translate}}</option>
+          <option [ngValue]="TYPE_HTTP_SWITCH">{{TYPE_HTTP_SWITCH | translate}}</option>
+          <option [ngValue]="TYPE_MOCK_SWITCH">{{TYPE_MOCK_SWITCH | translate}}</option>
         </select>
       </div>
       <div class="ui checkbox">
@@ -54,18 +53,49 @@
 
     <div class="ui fields" *ngIf="control.type===TYPE_MODBUS_SWITCH">
       <div class="field">
+        <label>{{'ControlComponent.modbusSwitch_idref' | translate}}</label>
+        <select class="ui fluid dropdown" name="modbusSwitch_modbusTcpId" [(ngModel)]="control.modbusSwitch.idref">
+          <option *ngFor="let modbusSettings of settings.modbusSettings" [ngValue]="modbusSettings.modbusTcpId"
+                  [selected]="modbusSettings.modbusTcpId==control.modbusSwitch.idref">
+            {{modbusSettings.modbusTcpId}}</option>
+        </select>
+      </div>
+      <div class="field">
         <label>{{'ControlComponent.modbusSwitch_slaveAddress' | translate}}</label>
         <input type="text" name="modbusSwitch_slaveAddress" [(ngModel)]="control.modbusSwitch.slaveAddress"
-               required>
+               required pattern="{{VALIDATOR_PATTERN_INTEGER}}">
         <div *ngIf="errors.modbusSwitch_slaveAddress" class="ui negative message">
           {{errors.modbusSwitch_slaveAddress}}</div>
       </div>
       <div class="field">
         <label>{{'ControlComponent.modbusSwitch_registerAddress' | translate}}</label>
         <input type="text" name="modbusSwitch_registerAddress" [(ngModel)]="control.modbusSwitch.registerAddress"
-               required>
+               required pattern="{{VALIDATOR_PATTERN_INTEGER_OR_HEX}}">
         <div *ngIf="errors.modbusSwitch_registerAddress" class="ui negative message">
           {{errors.modbusSwitch_registerAddress}}</div>
+      </div>
+      <div class="field">
+        <label>{{'ControlComponent.modbusSwitch_registerType' | translate}}</label>
+        <select class="ui fluid dropdown" name="registerType" [(ngModel)]="control.modbusSwitch.registerType">
+          <option *ngFor="let modbusReadRegisterType of settingsDefaults.modbusWriteRegisterTypes"
+                  [ngValue]="modbusReadRegisterType"
+                  [selected]="modbusReadRegisterType==control.modbusSwitch.registerType"
+          >{{modbusReadRegisterType}}</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>{{'ControlComponent.modbusSwitch_onValue' | translate}}</label>
+        <input type="text" name="modbusSwitch_onValue" [(ngModel)]="control.modbusSwitch.onValue"
+               required>
+        <div *ngIf="errors.modbusSwitch_onValue" class="ui negative message">
+          {{errors.modbusSwitch_onValue}}</div>
+      </div>
+      <div class="field">
+        <label>{{'ControlComponent.modbusSwitch_offValue' | translate}}</label>
+        <input type="text" name="modbusSwitch_offValue" [(ngModel)]="control.modbusSwitch.offValue"
+               required>
+        <div *ngIf="errors.modbusSwitch_offValue" class="ui negative message">
+          {{errors.modbusSwitch_offValue}}</div>
       </div>
     </div>
 

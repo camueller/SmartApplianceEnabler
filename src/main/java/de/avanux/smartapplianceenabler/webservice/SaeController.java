@@ -228,9 +228,6 @@ public class SaeController {
     public void setControl(HttpServletResponse response, @RequestParam(value="id") String applianceId,
                            @RequestBody Control control) {
         logger.debug("{}: Received request to set control {}", applianceId, control);
-        if(control instanceof ModbusSwitch) {
-            ((ModbusSwitch) control).setIdref(PulseReceiver.DEFAULT_ID);
-        }
         if(! ApplianceManager.getInstance().setControl(applianceId, control)) {
             logger.error("{}: Appliance not found", applianceId);
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);

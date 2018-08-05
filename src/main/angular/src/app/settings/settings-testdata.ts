@@ -8,6 +8,8 @@ export class SettingsTestdata {
     return {
       '@class': 'de.avanux.smartapplianceenabler.webservice.SettingsDefaults',
       'holidaysUrl': 'http://feiertage.jarmedia.de/api/?jahr={0}&nur_land=HE',
+      'modbusReadRegisterTypes': ['InputFloat', 'InputString', 'Holding', 'Coil', 'Discrete'],
+      'modbusWriteRegisterTypes': ['Holding', 'Coil'],
       'modbusTcpHost': '127.0.0.1',
       'modbusTcpPort': 502,
       'pulseReceiverPort': 9999
@@ -17,6 +19,8 @@ export class SettingsTestdata {
   public static settingsdefaults_type(): SettingsDefaults {
     return new SettingsDefaults({
       'holidaysUrl': 'http://feiertage.jarmedia.de/api/?jahr={0}&nur_land=HE',
+      'modbusReadRegisterTypes': ['InputFloat', 'InputString', 'Holding', 'Coil', 'Discrete'],
+      'modbusWriteRegisterTypes': ['Holding', 'Coil'],
       'modbusTcpHost': '127.0.0.1',
       'modbusTcpPort': 502,
       'pulseReceiverPort': 9999

@@ -38,6 +38,8 @@ import {Observable} from 'rxjs/Observable';
 import {DialogService} from '../shared/dialog.service';
 import {MockSwitch} from './mock-switch';
 import {Logger} from '../log/logger';
+import {Settings} from '../settings/settings';
+import {SettingsDefaults} from '../settings/settings-defaults';
 
 @Component({
   selector: 'app-appliance-switch',
@@ -49,6 +51,8 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   applianceId: string;
   controlDefaults: ControlDefaults;
   control: Control;
+  settingsDefaults: SettingsDefaults;
+  settings: Settings;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -59,6 +63,7 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   TYPE_MOCK_SWITCH = MockSwitch.TYPE;
   TYPE_HTTP_SWITCH = HttpSwitch.TYPE;
   VALIDATOR_PATTERN_INTEGER = InputValidatorPatterns.INTEGER;
+  VALIDATOR_PATTERN_INTEGER_OR_HEX = InputValidatorPatterns.INTEGER_OR_HEX;
   VALIDATOR_PATTERN_URL = InputValidatorPatterns.URL;
 
   constructor(private logger: Logger,
@@ -76,9 +81,12 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
     this.errorMessages =  new ControlErrorMessages(this.translate);
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.route.paramMap.subscribe(() => this.applianceId = this.route.snapshot.paramMap.get('id'));
-    this.route.data.subscribe((data: {control: Control, controlDefaults: ControlDefaults}) => {
+    this.route.data.subscribe((data: {control: Control, controlDefaults: ControlDefaults,
+      settings: Settings, settingsDefaults: SettingsDefaults}) => {
       this.control = data.control;
       this.controlDefaults = data.controlDefaults;
+      this.settings = data.settings;
+      this.settingsDefaults = data.settingsDefaults;
       this.controlForm.form.markAsPristine();
     });
     this.controlForm.statusChanges.subscribe(() =>
