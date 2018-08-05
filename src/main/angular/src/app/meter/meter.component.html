@@ -80,37 +80,104 @@
       </div>
     </div>
 
-    <div class="ui fields" *ngIf="meter.type===TYPE_MODBUS_ELECTRICITY_METER">
-      <div class="field">
-        <label>{{'MeterComponent.modbusElectricityMeter_slaveAddress' | translate}}</label>
-        <input type="text" name="modbusElectricityMeter_slaveAddress"
-               [(ngModel)]="meter.modbusElectricityMeter.slaveAddress" required pattern="{{VALIDATOR_PATTERN_INTEGER}}">
-        <div *ngIf="errors.modbusElectricityMeter_slaveAddress" class="ui negative message">
-          {{errors.modbusElectricityMeter_slaveAddress}}</div>
+    <div *ngIf="meter.type===TYPE_MODBUS_ELECTRICITY_METER">
+      <div class="ui fields">
+        <div class="field">
+          <label>{{'MeterComponent.modbusElectricityMeter_idref' | translate}}</label>
+          <select class="ui fluid dropdown" name="modbusElectricityMeter_modbusTcpId" [(ngModel)]="meter.modbusElectricityMeter.idref">
+            <option *ngFor="let modbusSettings of settings.modbusSettings" [ngValue]="modbusSettings.modbusTcpId"
+                    [selected]="modbusSettings.modbusTcpId==meter.modbusElectricityMeter.idref">
+              {{modbusSettings.modbusTcpId}}</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>{{'MeterComponent.modbusElectricityMeter_slaveAddress' | translate}}</label>
+          <input type="text" name="modbusElectricityMeter_slaveAddress"
+                 [(ngModel)]="meter.modbusElectricityMeter.slaveAddress" required pattern="{{VALIDATOR_PATTERN_INTEGER}}">
+          <div *ngIf="errors.modbusElectricityMeter_slaveAddress" class="ui negative message">
+            {{errors.modbusElectricityMeter_slaveAddress}}</div>
+        </div>
+        <div class="field">
+          <label>{{'MeterComponent.modbusElectricityMeter_measurementInterval' | translate}}</label>
+          <input type="text" name="modbusElectricityMeter_measurementInterval"
+                 [(ngModel)]="meter.modbusElectricityMeter.measurementInterval"
+                 required pattern="{{VALIDATOR_PATTERN_INTEGER}}">
+          <div *ngIf="errors.modbusElectricityMeter_measurementInterval" class="ui negative message">
+            {{errors.modbusElectricityMeter_measurementInterval}}</div>
+        </div>
       </div>
-      <div class="field">
-        <label>{{'MeterComponent.modbusElectricityMeter_registerAddress' | translate}}</label>
-        <input type="text" name="modbusElectricityMeter_registerAddress"
-               [(ngModel)]="meter.modbusElectricityMeter.registerAddress" required>
-        <div *ngIf="errors.modbusElectricityMeter_registerAddress" class="ui negative message">
-          {{errors.modbusElectricityMeter_registerAddress}}</div>
+      <h4 class="ui dividing header">{{'MeterComponent.modbusElectricityMeter_power' | translate}}</h4>
+      <div class="ui fields">
+        <div class="field">
+          <label>{{'MeterComponent.modbusElectricityMeter_registerAddress' | translate}}</label>
+          <input type="text" name="modbusElectricityMeter_powerRegisterAddress"
+                 [(ngModel)]="meter.modbusElectricityMeter.powerRegisterAddress" required>
+          <div *ngIf="errors.modbusElectricityMeter_registerAddress" class="ui negative message">
+            {{errors.modbusElectricityMeter_registerAddress}}</div>
+        </div>
+        <div class="field">
+          <label>{{'MeterComponent.modbusElectricityMeter_bytes' | translate}}</label>
+          <input type="text" name="modbusElectricityMeter_powerBytes" [(ngModel)]="meter.modbusElectricityMeter.powerBytes"
+                 required pattern="{{VALIDATOR_PATTERN_INTEGER}}">
+          <div *ngIf="errors.modbusElectricityMeter_registerAddress" class="ui negative message">
+            {{errors.modbusElectricityMeter_registerAddress}}</div>
+        </div>
+        <div class="field">
+          <label>{{'MeterComponent.modbusElectricityMeter_registerType' | translate}}</label>
+          <select class="ui fluid dropdown" name="modbusElectricityMeter_powerRegisterType"
+                  [(ngModel)]="meter.modbusElectricityMeter.powerRegisterType">
+            <option *ngFor="let modbusReadRegisterType of settingsDefaults.modbusReadRegisterTypes"
+                    [ngValue]="modbusReadRegisterType"
+                    [selected]="modbusReadRegisterType==meter.modbusElectricityMeter.registerType"
+            >{{modbusReadRegisterType}}</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>{{'MeterComponent.modbusElectricityMeter_pollInterval' | translate}}</label>
+          <input type="text" name="modbusElectricityMeter_powerPollInterval"
+                 [(ngModel)]="meter.modbusElectricityMeter.powerPollInterval"
+                 placeholder="{{meterDefaults.modbusElectricityMeter_pollInterval}}"
+                 pattern="{{VALIDATOR_PATTERN_INTEGER}}">
+          <div *ngIf="errors.modbusElectricityMeter_pollInterval" class="ui negative message">
+            {{errors.modbusElectricityMeter_pollInterval}}</div>
+        </div>
       </div>
-      <div class="field">
-        <label>{{'MeterComponent.modbusElectricityMeter_pollInterval' | translate}}</label>
-        <input type="text" name="modbusElectricityMeter_pollInterval"
-               [(ngModel)]="meter.modbusElectricityMeter.pollInterval"
-               placeholder="{{meterDefaults.modbusElectricityMeter_pollInterval}}"
-               pattern="{{VALIDATOR_PATTERN_INTEGER}}">
-        <div *ngIf="errors.modbusElectricityMeter_pollInterval" class="ui negative message">
-          {{errors.modbusElectricityMeter_pollInterval}}</div>
-      </div>
-      <div class="field">
-        <label>{{'MeterComponent.modbusElectricityMeter_measurementInterval' | translate}}</label>
-        <input type="text" name="modbusElectricityMeter_measurementInterval"
-               [(ngModel)]="meter.modbusElectricityMeter.measurementInterval"
-               required pattern="{{VALIDATOR_PATTERN_INTEGER}}">
-        <div *ngIf="errors.modbusElectricityMeter_measurementInterval" class="ui negative message">
-          {{errors.modbusElectricityMeter_measurementInterval}}</div>
+      <h4 class="ui dividing header">{{'MeterComponent.modbusElectricityMeter_energy' | translate}}</h4>
+      <div class="ui fields">
+        <div class="field">
+          <label>{{'MeterComponent.modbusElectricityMeter_registerAddress' | translate}}</label>
+          <input type="text" name="modbusElectricityMeter_energyRegisterAddress"
+                 [(ngModel)]="meter.modbusElectricityMeter.energyRegisterAddress" required>
+          <div *ngIf="errors.modbusElectricityMeter_registerAddress" class="ui negative message">
+            {{errors.modbusElectricityMeter_registerAddress}}</div>
+        </div>
+        <div class="field">
+          <label>{{'MeterComponent.modbusElectricityMeter_bytes' | translate}}</label>
+          <input type="text" name="modbusElectricityMeter_energyBytes"
+                 [(ngModel)]="meter.modbusElectricityMeter.energyBytes"
+                 required pattern="{{VALIDATOR_PATTERN_INTEGER}}">
+          <div *ngIf="errors.modbusElectricityMeter_registerAddress" class="ui negative message">
+            {{errors.modbusElectricityMeter_registerAddress}}</div>
+        </div>
+        <div class="field">
+          <label>{{'MeterComponent.modbusElectricityMeter_registerType' | translate}}</label>
+          <select class="ui fluid dropdown" name="registerType"
+                  [(ngModel)]="meter.modbusElectricityMeter.energyRegisterType">
+            <option *ngFor="let modbusReadRegisterType of settingsDefaults.modbusReadRegisterTypes"
+                    [ngValue]="modbusReadRegisterType"
+                    [selected]="modbusReadRegisterType==meter.modbusElectricityMeter.energyRegisterType"
+            >{{modbusReadRegisterType}}</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>{{'MeterComponent.modbusElectricityMeter_pollInterval' | translate}}</label>
+          <input type="text" name="modbusElectricityMeter_energyPollInterval"
+                 [(ngModel)]="meter.modbusElectricityMeter.energyPollInterval"
+                 placeholder="{{meterDefaults.modbusElectricityMeter_pollInterval}}"
+                 pattern="{{VALIDATOR_PATTERN_INTEGER}}">
+          <div *ngIf="errors.modbusElectricityMeter_pollInterval" class="ui negative message">
+            {{errors.modbusElectricityMeter_pollInterval}}</div>
+        </div>
       </div>
     </div>
 
@@ -180,6 +247,7 @@
     <button type="submit" class="ui button" [disabled]="meterForm.pristine||meterForm.invalid">
       {{'button.save' | translate}}</button>
   </form>
+  <pre>{{meter | json}}</pre>
   <!--
   <pre>{{meterForm.value | json}}</pre>
   -->

@@ -34,6 +34,8 @@ import {Meter} from './meter';
 import {DialogService} from '../shared/dialog.service';
 import {Observable} from 'rxjs/Observable';
 import {Logger} from '../log/logger';
+import {SettingsDefaults} from '../settings/settings-defaults';
+import {Settings} from '../settings/settings';
 
 @Component({
   selector: 'app-appliance-meter',
@@ -46,6 +48,8 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
   meterDefaults: MeterDefaults;
   meterFactory: MeterFactory;
   meter: Meter;
+  settingsDefaults: SettingsDefaults;
+  settings: Settings;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -72,9 +76,12 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
     this.errorMessages =  new MeterErrorMessages(this.translate);
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.route.paramMap.subscribe(() => this.applianceId = this.route.snapshot.paramMap.get('id'));
-    this.route.data.subscribe((data: {meter: Meter, meterDefaults: MeterDefaults}) => {
+    this.route.data.subscribe((data: {meter: Meter, meterDefaults: MeterDefaults,
+      settings: Settings, settingsDefaults: SettingsDefaults}) => {
       this.meter = data.meter;
       this.meterDefaults = data.meterDefaults;
+      this.settings = data.settings;
+      this.settingsDefaults = data.settingsDefaults;
       this.meterForm.form.markAsPristine();
     });
     this.meterForm.statusChanges.subscribe(() =>

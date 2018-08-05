@@ -277,12 +277,6 @@ public class SaeController {
     public void setMeter(HttpServletResponse response, @RequestParam(value="id") String applianceId,
                          @RequestBody Meter meter) {
         logger.debug("{}: Received request to set meter {}", applianceId, meter);
-        if(meter instanceof S0ElectricityMeterNetworked) {
-            ((S0ElectricityMeterNetworked) meter).setIdref(PulseReceiver.DEFAULT_ID);
-        }
-        if(meter instanceof ModbusElectricityMeter) {
-            ((ModbusElectricityMeter) meter).setIdref(PulseReceiver.DEFAULT_ID);
-        }
         if(! ApplianceManager.getInstance().setMeter(applianceId, meter)) {
             logger.error("{}: Appliance not found", applianceId);
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);

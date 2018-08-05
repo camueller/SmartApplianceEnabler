@@ -77,10 +77,10 @@
       <div class="field">
         <label>{{'ControlComponent.modbusSwitch_registerType' | translate}}</label>
         <select class="ui fluid dropdown" name="registerType" [(ngModel)]="control.modbusSwitch.registerType">
-          <option *ngFor="let modbusReadRegisterType of settingsDefaults.modbusWriteRegisterTypes"
-                  [ngValue]="modbusReadRegisterType"
-                  [selected]="modbusReadRegisterType==control.modbusSwitch.registerType"
-          >{{modbusReadRegisterType}}</option>
+          <option *ngFor="let modbusWriteRegisterType of settingsDefaults.modbusWriteRegisterTypes"
+                  [ngValue]="modbusWriteRegisterType"
+                  [selected]="modbusWriteRegisterType==control.modbusSwitch.registerType"
+          >{{modbusWriteRegisterType}}</option>
         </select>
       </div>
       <div class="field">
