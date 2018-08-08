@@ -24,6 +24,8 @@ public interface EVControl extends ApplianceIdConsumer {
 
     void validate();
 
+    boolean isVehicleNotConnected();
+
     boolean isVehicleConnected();
 
     boolean isCharging();

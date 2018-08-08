@@ -44,6 +44,7 @@ public class EVModbusControlPhoenixContactTest {
         ModbusRegisterRead register100 = new ModbusRegisterRead();
         register100.setType(ModbusReadRegisterType.InputString.name());
         List<ModbusRegisterReadValue> register100ReadValues = new ArrayList<>();
+        register100ReadValues.add(new ModbusRegisterReadValue("VehicleNotConnected", "(A)"));
         register100ReadValues.add(new ModbusRegisterReadValue("VehicleConnected", "(B)"));
         register100ReadValues.add(new ModbusRegisterReadValue("Charging", "(C|D)"));
         register100ReadValues.add(new ModbusRegisterReadValue("ChargingCompleted", "(B)"));
@@ -86,11 +87,28 @@ public class EVModbusControlPhoenixContactTest {
     }
 
 
+    @Test
+    public void isVehicleNotConnected_A() {
+        this.readStringTestingExecutor.setValue("A");
+        Assert.assertTrue(this.evModbusControl.isVehicleNotConnected());
+    }
 
     @Test
-    public void isVehicleConnected_B() {
+    public void isVehicleNotConnected_B() {
         this.readStringTestingExecutor.setValue("B");
-        Assert.assertTrue(this.evModbusControl.isVehicleConnected());
+        Assert.assertFalse(this.evModbusControl.isVehicleNotConnected());
+    }
+
+    @Test
+    public void isVehicleNotConnected_C() {
+        this.readStringTestingExecutor.setValue("C");
+        Assert.assertFalse(this.evModbusControl.isVehicleNotConnected());
+    }
+
+    @Test
+    public void isVehicleNotConnected_D() {
+        this.readStringTestingExecutor.setValue("D");
+        Assert.assertFalse(this.evModbusControl.isVehicleNotConnected());
     }
 
     @Test
@@ -100,8 +118,20 @@ public class EVModbusControlPhoenixContactTest {
     }
 
     @Test
+    public void isVehicleConnected_B() {
+        this.readStringTestingExecutor.setValue("B");
+        Assert.assertTrue(this.evModbusControl.isVehicleConnected());
+    }
+
+    @Test
     public void isVehicleConnected_C() {
         this.readStringTestingExecutor.setValue("C");
+        Assert.assertFalse(this.evModbusControl.isVehicleConnected());
+    }
+
+    @Test
+    public void isVehicleConnected_D() {
+        this.readStringTestingExecutor.setValue("D");
         Assert.assertFalse(this.evModbusControl.isVehicleConnected());
     }
 
