@@ -162,6 +162,7 @@
             <xs:enumeration value="Power" />
             <xs:enumeration value="Energy" />
             <!-- EVModbusControl -->
+            <xs:enumeration value="VehicleNotConnected" />
             <xs:enumeration value="VehicleConnected" />
             <xs:enumeration value="Charging" />
             <xs:enumeration value="ChargingCompleted" />

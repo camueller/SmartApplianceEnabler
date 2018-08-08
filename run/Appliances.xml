@@ -4,6 +4,7 @@
         <ElectricVehicleCharger>
             <EVModbusControl idref="wallbox" slaveAddress="180">
                 <ModbusRegisterRead address="100" type="InputString">
+                    <ModbusRegisterReadValue name="VehicleNotConnected" extractionRegex="(A)" />
                     <ModbusRegisterReadValue name="VehicleConnected" extractionRegex="(B)" />
                     <ModbusRegisterReadValue name="Charging" extractionRegex="(C|D)" />
                     <ModbusRegisterReadValue name="ChargingCompleted" extractionRegex="(B)" />

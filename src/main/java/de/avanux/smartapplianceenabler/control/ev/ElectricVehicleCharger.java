@@ -91,6 +91,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
         State previousState = getState();
         State currentState = getNewState(previousState);
         if(currentState != previousState) {
+            logger.debug("{}: Vehicle state changed: previousState={} newState={}", applianceId, previousState, currentState);
             stateHistory.add(currentState);
             onStateChanged(previousState, currentState);
         }
@@ -126,26 +127,28 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
             else if(wasInState(State.CHARGING) && evControl.isChargingCompleted()) {
                 newState = State.CHARGING_COMPLETED;
             }
-            else if(! evControl.isVehicleConnected()) {
+            else if(evControl.isVehicleNotConnected()) {
                 newState = State.VEHICLE_NOT_CONNECTED;
             }
         }
         else if(currenState == State.CHARGING) {
-            if(evControl.isChargingCompleted()) {
-                newState = State.CHARGING_COMPLETED;
-            }
-            else if(wasInState(State.VEHICLE_CONNECTED) && evControl.isVehicleConnected()) {
-                newState = State.VEHICLE_CONNECTED;
-            }
-            else {
-                newState = State.VEHICLE_NOT_CONNECTED;
+            if(! evControl.isCharging()) {
+                if(evControl.isChargingCompleted()) {
+                    newState = State.CHARGING_COMPLETED;
+                }
+                if(evControl.isVehicleConnected()) {
+                    newState = State.VEHICLE_CONNECTED;
+                }
+                else if(evControl.isVehicleNotConnected()) {
+                    newState = State.VEHICLE_NOT_CONNECTED;
+                }
             }
         }
         else if(currenState == State.CHARGING_COMPLETED) {
             if (evControl.isVehicleConnected()) {
                 newState = State.VEHICLE_CONNECTED;
             }
-            else {
+            else if (evControl.isVehicleNotConnected()) {
                 newState = State.VEHICLE_NOT_CONNECTED;
             }
         }
@@ -174,7 +177,6 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     }
 
     private void onStateChanged(State previousState, State newState) {
-        logger.debug("{}: Vehicle state changed: previousState={} newState={}", applianceId, previousState, newState);
         if(newState == State.VEHICLE_CONNECTED) {
             if(this.appliance != null) {
                 this.appliance.activateSchedules();

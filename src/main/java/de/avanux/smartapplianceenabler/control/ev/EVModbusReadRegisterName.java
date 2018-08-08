@@ -19,6 +19,7 @@
 package de.avanux.smartapplianceenabler.control.ev;
 
 public enum EVModbusReadRegisterName {
+    VehicleNotConnected,
     VehicleConnected,
     Charging,
     ChargingCompleted
