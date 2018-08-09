@@ -37,6 +37,8 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     private Integer voltage = 230;
     @XmlAttribute
     private Integer phases = 1;
+    @XmlAttribute
+    protected Integer startChargingStateDetectionDelay = 300;
     @XmlElements({
             @XmlElement(name = "EVModbusControl", type = EVModbusControl.class),
     })
@@ -46,6 +48,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     private transient Vector<State> stateHistory = new Vector<>();
     private transient boolean useOptionalEnergy = true;
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
+    private transient Long startChargingTimestamp;
 
     protected enum State {
         VEHICLE_NOT_CONNECTED,
@@ -87,7 +90,16 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
         }, 0, evControl.getVehicleStatusPollInterval() * 1000);
     }
 
-    protected void updateState() {
+    /**
+     * Returns true, if the state update was performed. This does not necessarily mean that the state has changed!
+     * @return
+     */
+    protected boolean updateState() {
+        if(this.startChargingTimestamp != null
+                && System.currentTimeMillis() - this.startChargingTimestamp < this.startChargingStateDetectionDelay * 1000) {
+            logger.debug("{}: Skipping state detection for {}s after switched on.", applianceId, this.startChargingStateDetectionDelay);
+            return false;
+        }
         State previousState = getState();
         State currentState = getNewState(previousState);
         if(currentState != previousState) {
@@ -98,6 +110,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
         else {
             logger.debug("{}: Vehicle state={}", applianceId, currentState);
         }
+        return true;
     }
 
     public State getState() {
@@ -145,10 +158,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
             }
         }
         else if(currenState == State.CHARGING_COMPLETED) {
-            if (evControl.isVehicleConnected()) {
-                newState = State.VEHICLE_CONNECTED;
-            }
-            else if (evControl.isVehicleNotConnected()) {
+            if (evControl.isVehicleNotConnected()) {
                 newState = State.VEHICLE_NOT_CONNECTED;
             }
         }
@@ -221,11 +231,13 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     public void startCharging() {
         logger.debug("{}: Start charging process", applianceId);
         evControl.startCharging();
+        this.startChargingTimestamp = System.currentTimeMillis();
     }
 
     public void stopCharging() {
         logger.debug("{}: Stop charging process", applianceId);
         evControl.stopCharging();
+        this.startChargingTimestamp = null;
     }
 
 }
