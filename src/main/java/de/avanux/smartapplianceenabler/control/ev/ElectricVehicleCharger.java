@@ -95,8 +95,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
      * @return
      */
     protected boolean updateState() {
-        if(this.startChargingTimestamp != null
-                && System.currentTimeMillis() - this.startChargingTimestamp < this.startChargingStateDetectionDelay * 1000) {
+        if(isWithinStartChargingStateDetectionDelay()) {
             logger.debug("{}: Skipping state detection for {}s after switched on.", applianceId, this.startChargingStateDetectionDelay);
             return false;
         }
@@ -115,6 +114,10 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
 
     public State getState() {
         return stateHistory.lastElement();
+    }
+
+    protected void setState(State state) {
+        this.stateHistory.add(state);
     }
 
     public boolean wasInState(State state) {
@@ -183,6 +186,16 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
 
     @Override
     public boolean isOn() {
+        return isOn(this.startChargingStateDetectionDelay,
+                System.currentTimeMillis(), this.startChargingTimestamp);
+    }
+
+    protected boolean isOn(Integer startChargingStateDetectionDelay,
+                        long currentMillis, Long startChargingTimestamp) {
+        if(isWithinStartChargingStateDetectionDelay(startChargingStateDetectionDelay, currentMillis,
+                startChargingTimestamp)) {
+            return true;
+        }
         return isCharging();
     }
 
@@ -204,6 +217,17 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     @Override
     public void addControlStateChangedListener(ControlStateChangedListener listener) {
         this.controlStateChangedListeners.add(listener);
+    }
+
+    protected boolean isWithinStartChargingStateDetectionDelay() {
+        return isWithinStartChargingStateDetectionDelay(this.startChargingStateDetectionDelay,
+                System.currentTimeMillis(), this.startChargingTimestamp);
+    }
+
+    protected boolean isWithinStartChargingStateDetectionDelay(Integer startChargingStateDetectionDelay,
+                                                               long currentMillis, Long startChargingTimestamp) {
+        return (startChargingTimestamp != null
+                && currentMillis - startChargingTimestamp < startChargingStateDetectionDelay * 1000);
     }
 
     public boolean isVehicleConnected() {
