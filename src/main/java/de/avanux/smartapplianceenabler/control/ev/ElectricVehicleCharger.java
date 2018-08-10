@@ -76,7 +76,8 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     }
 
     public void init() {
-        logger.debug("{}: voltage={} phases={}", this.applianceId, this.voltage, this.phases);
+        logger.debug("{}: voltage={} phases={} startChargingStateDetectionDelay={}",
+                this.applianceId, this.voltage, this.phases, this.startChargingStateDetectionDelay);
         initStateHistory();
         evControl.validate();
     }
