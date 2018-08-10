@@ -205,4 +205,43 @@ public class ElectricVehicleChargerTest {
         evCharger.updateState();
         Assert.assertEquals(ElectricVehicleCharger.State.VEHICLE_NOT_CONNECTED, evCharger.getState());
     }
+
+    @Test
+    public void isWithinStartChargingStateDetectionDelay() {
+        int startChargingStateDetectionDelay = 300;
+        long currentMillis = 1000000;
+        Assert.assertFalse(evCharger.isWithinStartChargingStateDetectionDelay(
+                startChargingStateDetectionDelay, currentMillis, null));
+        Assert.assertTrue(evCharger.isWithinStartChargingStateDetectionDelay(startChargingStateDetectionDelay, currentMillis, currentMillis - (startChargingStateDetectionDelay - 1) * 1000));
+        Assert.assertFalse(evCharger.isWithinStartChargingStateDetectionDelay(startChargingStateDetectionDelay, currentMillis, currentMillis - (startChargingStateDetectionDelay + 1) * 1000));
+    }
+
+    @Test
+    public void isOn() {
+        int startChargingStateDetectionDelay = 300;
+        long currentMillis = 1000000;
+        // initial state != CHARGING
+        Assert.assertFalse(evCharger.isOn(
+                startChargingStateDetectionDelay, currentMillis, null));
+        Assert.assertTrue(evCharger.isOn(
+                startChargingStateDetectionDelay,
+                currentMillis,
+                currentMillis - (startChargingStateDetectionDelay - 1) * 1000));
+        Assert.assertFalse(evCharger.isOn(
+                startChargingStateDetectionDelay,
+                currentMillis,
+                currentMillis - (startChargingStateDetectionDelay + 1) * 1000));
+        // state = CHARGING
+        evCharger.setState(ElectricVehicleCharger.State.CHARGING);
+        Assert.assertTrue(evCharger.isOn(
+                startChargingStateDetectionDelay, 0, null));
+        Assert.assertTrue(evCharger.isOn(
+                startChargingStateDetectionDelay,
+                currentMillis,
+                currentMillis - (startChargingStateDetectionDelay - 1) * 1000));
+        Assert.assertTrue(evCharger.isOn(
+                startChargingStateDetectionDelay,
+                currentMillis,
+                currentMillis - (startChargingStateDetectionDelay + 1) * 1000));
+    }
 }
