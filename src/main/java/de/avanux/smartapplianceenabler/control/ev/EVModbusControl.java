@@ -150,16 +150,6 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
     }
 
     @Override
-    public Integer getVehicleStatusPollInterval() {
-        ModbusRegisterRead registerRead = ModbusRegisterRead.getFirstRegisterRead(
-                EVModbusReadRegisterName.VehicleConnected.name(), this.registerReads);
-        if(registerRead != null) {
-            return registerRead.getPollInterval();
-        }
-        return null;
-    }
-
-    @Override
     public void setChargeCurrent(int current) {
         logger.debug("{}: Set charge current {}A", getApplianceId(), current);
         ModbusRegisterWrite registerWrite = ModbusRegisterWrite.getFirstRegisterWrite(

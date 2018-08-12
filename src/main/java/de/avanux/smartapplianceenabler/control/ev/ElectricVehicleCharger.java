@@ -90,7 +90,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
             @Override
             public void run() {
                 updateState();            }
-        }, 0, control.getVehicleStatusPollInterval() * 1000);
+        }, 0, this.pollInterval * 1000);
     }
 
     /**
