@@ -38,11 +38,13 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     @XmlAttribute
     private Integer phases = 1;
     @XmlAttribute
+    private Integer pollInterval = 10; // seconds
+    @XmlAttribute
     protected Integer startChargingStateDetectionDelay = 300;
     @XmlElements({
             @XmlElement(name = "EVModbusControl", type = EVModbusControl.class),
     })
-    private EVControl evControl;
+    private EVControl control;
     private transient Appliance appliance;
     private transient String applianceId;
     private transient Vector<State> stateHistory = new Vector<>();
@@ -64,22 +66,22 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     @Override
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
-        evControl.setApplianceId(applianceId);
+        control.setApplianceId(applianceId);
     }
 
-    public EVControl getEvControl() {
-        return evControl;
+    public EVControl getControl() {
+        return control;
     }
 
-    protected void setEvControl(EVControl evControl) {
-        this.evControl = evControl;
+    protected void setControl(EVControl control) {
+        this.control = control;
     }
 
     public void init() {
         logger.debug("{}: voltage={} phases={} startChargingStateDetectionDelay={}",
                 this.applianceId, this.voltage, this.phases, this.startChargingStateDetectionDelay);
         initStateHistory();
-        evControl.validate();
+        control.validate();
     }
 
     public void start(Timer timer) {
@@ -88,7 +90,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
             @Override
             public void run() {
                 updateState();            }
-        }, 0, evControl.getVehicleStatusPollInterval() * 1000);
+        }, 0, control.getVehicleStatusPollInterval() * 1000);
     }
 
     /**
@@ -133,36 +135,36 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     protected State getNewState(State currenState) {
         State newState = currenState;
         if(currenState == State.VEHICLE_NOT_CONNECTED) {
-            if (evControl.isVehicleConnected()) {
+            if (control.isVehicleConnected()) {
                 newState = State.VEHICLE_CONNECTED;
             }
         }
         else if(currenState == State.VEHICLE_CONNECTED) {
-            if(evControl.isCharging()) {
+            if(control.isCharging()) {
                 newState = State.CHARGING;
             }
-            else if(wasInState(State.CHARGING) && evControl.isChargingCompleted()) {
+            else if(wasInState(State.CHARGING) && control.isChargingCompleted()) {
                 newState = State.CHARGING_COMPLETED;
             }
-            else if(evControl.isVehicleNotConnected()) {
+            else if(control.isVehicleNotConnected()) {
                 newState = State.VEHICLE_NOT_CONNECTED;
             }
         }
         else if(currenState == State.CHARGING) {
-            if(! evControl.isCharging()) {
-                if(evControl.isChargingCompleted()) {
+            if(! control.isCharging()) {
+                if(control.isChargingCompleted()) {
                     newState = State.CHARGING_COMPLETED;
                 }
-                if(evControl.isVehicleConnected()) {
+                if(control.isVehicleConnected()) {
                     newState = State.VEHICLE_CONNECTED;
                 }
-                else if(evControl.isVehicleNotConnected()) {
+                else if(control.isVehicleNotConnected()) {
                     newState = State.VEHICLE_NOT_CONNECTED;
                 }
             }
         }
         else if(currenState == State.CHARGING_COMPLETED) {
-            if (evControl.isVehicleNotConnected()) {
+            if (control.isVehicleNotConnected()) {
                 newState = State.VEHICLE_NOT_CONNECTED;
             }
         }
@@ -250,18 +252,18 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     public void setChargePower(int power) {
         int current = Float.valueOf(power / (this.voltage * this.phases)).intValue();
         logger.debug("{}: Set charge power: {}W corresponds to {}A", applianceId, power, current);
-        evControl.setChargeCurrent(current);
+        control.setChargeCurrent(current);
     }
 
     public void startCharging() {
         logger.debug("{}: Start charging process", applianceId);
-        evControl.startCharging();
+        control.startCharging();
         this.startChargingTimestamp = System.currentTimeMillis();
     }
 
     public void stopCharging() {
         logger.debug("{}: Stop charging process", applianceId);
-        evControl.stopCharging();
+        control.stopCharging();
         this.startChargingTimestamp = null;
     }
 
