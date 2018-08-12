@@ -91,7 +91,6 @@
                 <xs:element name="HttpElectricityMeter" type="HttpElectricityMeterType" minOccurs="0" />
             </xs:choice>
             <xs:element name="Schedule" type="ScheduleType" minOccurs="0" maxOccurs="unbounded" />
-            <xs:element name="EnergySchedule" type="EnergyScheduleType" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
         <xs:attribute name="id" type="xs:string" use="required" />
     </xs:complexType>
@@ -130,6 +129,8 @@
         </xs:sequence>
         <xs:attribute name="voltage" type="xs:int" />
         <xs:attribute name="phases" type="xs:int" />
+        <xs:attribute name="pollInterval" type="xs:int" />
+        <xs:attribute name="startChargingStateDetectionDelay" type="xs:int" />
     </xs:complexType>
 
     <xs:complexType name="EVModbusControlType">
@@ -148,7 +149,6 @@
         <xs:attribute name="address" type="xs:string" use="required" />
         <xs:attribute name="bytes" type="xs:int" />
         <xs:attribute name="type" type="ModbusRegisterTypeType" use="required" />
-        <xs:attribute name="pollInterval" type="xs:int" />
     </xs:complexType>
 
     <xs:complexType name="ModbusRegisterReadValueType">
@@ -243,6 +243,7 @@
         </xs:sequence>
         <xs:attribute name="idref" type="xs:NCName" use="required" />
         <xs:attribute name="slaveAddress" type="xs:int" use="required" />
+        <xs:attribute name="pollInterval" type="xs:int" />
         <xs:attribute name="measurementInterval" type="xs:int" use="required"/>
     </xs:complexType>
 
