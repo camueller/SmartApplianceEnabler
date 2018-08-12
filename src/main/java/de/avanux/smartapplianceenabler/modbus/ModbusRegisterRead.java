@@ -33,8 +33,6 @@ public class ModbusRegisterRead {
     private Integer bytes = 1;
     @XmlAttribute
     private String type;
-    @XmlAttribute
-    private Integer pollInterval = 10; // seconds
     @XmlElement(name = "ModbusRegisterReadValue")
     private List<ModbusRegisterReadValue> registerReadValues;
     private transient ModbusRegisterReadValue selectedRegisterReadValue;
@@ -42,12 +40,11 @@ public class ModbusRegisterRead {
     public ModbusRegisterRead() {
     }
 
-    public ModbusRegisterRead(String address, Integer bytes, ModbusReadRegisterType type, Integer pollInterval,
+    public ModbusRegisterRead(String address, Integer bytes, ModbusReadRegisterType type,
                               ModbusRegisterReadValue selectedRegisterReadValue) {
         this.address = address;
         this.bytes = bytes;
         this.type = type.name();
-        this.pollInterval = pollInterval;
         this.selectedRegisterReadValue = selectedRegisterReadValue;
     }
 
@@ -68,10 +65,6 @@ public class ModbusRegisterRead {
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    public Integer getPollInterval() {
-        return pollInterval;
     }
 
     public List<ModbusRegisterReadValue> getRegisterReadValues() {
@@ -97,7 +90,7 @@ public class ModbusRegisterRead {
             for(ModbusRegisterReadValue registerReadValue: registerRead.getRegisterReadValues()) {
                 if(registerName.equals(registerReadValue.getName())) {
                     matches.add(new ModbusRegisterRead(registerRead.getAddress(), registerRead.getBytes(),
-                            registerRead.getType(), registerRead.getPollInterval(), registerReadValue));
+                            registerRead.getType(), registerReadValue));
                 }
             }
         }
