@@ -171,8 +171,8 @@ export class ControlFactory {
       registerRead => (registerRead.registerReadValues as any[]).map(registerReadValue => {
         const configuration = new ModbusRegisterConfguration({
           name: registerReadValue.name,
-          registerAddress: registerRead.address,
-          registerType: registerRead.type,
+          address: registerRead.address,
+          type: registerRead.type,
           extractionRegex: registerReadValue.extractionRegex,
           write: false
         });
@@ -183,8 +183,8 @@ export class ControlFactory {
       registerWrite => (registerWrite.registerWriteValues as any[]).map(registerWriteValue => {
         const configuration = new ModbusRegisterConfguration({
           name: registerWriteValue.name,
-          registerAddress: registerWrite.address,
-          registerType: registerWrite.type,
+          address: registerWrite.address,
+          type: registerWrite.type,
           value: registerWriteValue.value,
           write: true
         });
@@ -264,12 +264,12 @@ export class ControlFactory {
       .filter(configuration => configuration.write === false)
       .forEach(configuration => {
         let matchinRegisterRead: ModbusRegisterRead = registerReads.find(
-          item => item.address === configuration.registerAddress
+          item => item.address === configuration.address
         );
         if (matchinRegisterRead === undefined) {
           matchinRegisterRead = new ModbusRegisterRead({
-            address: configuration.registerAddress,
-            type: configuration.registerType,
+            address: configuration.address,
+            type: configuration.type,
             registerReadValues: []
           });
           registerReads.push(matchinRegisterRead);
@@ -287,12 +287,12 @@ export class ControlFactory {
       .filter(configuration => configuration.write)
       .forEach(configuration => {
         let matchingRegisterWrite: ModbusRegisterWrite = registerWrites.find(
-          item => item.address === configuration.registerAddress
+          item => item.address === configuration.address
         );
         if (matchingRegisterWrite === undefined) {
           matchingRegisterWrite = new ModbusRegisterWrite({
-            address: configuration.registerAddress,
-            type: configuration.registerType,
+            address: configuration.address,
+            type: configuration.type,
             registerWriteValues: []
           });
           registerWrites.push(matchingRegisterWrite);

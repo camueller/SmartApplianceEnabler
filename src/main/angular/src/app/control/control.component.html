@@ -78,9 +78,9 @@
         <label>{{'ControlComponent.modbusSwitch_registerType' | translate}}</label>
         <select class="ui fluid dropdown" name="registerType" [(ngModel)]="control.modbusSwitch.registerType">
           <option *ngFor="let modbusWriteRegisterType of settingsDefaults.modbusWriteRegisterTypes"
-                  [ngValue]="modbusRegisterType"
-                  [selected]="modbusRegisterType==control.modbusSwitch.registerType"
-          >{{modbusRegisterType}}</option>
+                  [ngValue]="modbusWriteRegisterType"
+                  [selected]="modbusWriteRegisterType==control.modbusSwitch.registerType"
+          >{{modbusWriteRegisterType}}</option>
         </select>
       </div>
       <div class="field">
@@ -217,7 +217,7 @@
           <div class="field">
             <label>{{'ControlComponent.evchargerModbus_registerAddress' | translate}}</label>
             <input type="text" name="evCharger_registerAddress{{i}}"
-                   [(ngModel)]="modbusConfiguration.registerAddress"
+                   [(ngModel)]="modbusConfiguration.address"
                    required pattern="{{VALIDATOR_PATTERN_INTEGER_OR_HEX}}">
             <div *ngIf="errors.evCharger_registerAddress" class="ui negative message">
               {{errors.evCharger_registerAddress}}</div>
@@ -230,10 +230,10 @@
           <div class="field">
             <label>{{'ControlComponent.evchargerModbus_registerType' | translate}}</label>
             <select class="ui fluid dropdown" name="registerType{{i}}"
-                    [(ngModel)]="modbusConfiguration.registerType">
+                    [(ngModel)]="modbusConfiguration.type">
               <option *ngFor="let modbusRegisterType of getModbusRegisterTypes(modbusConfiguration.write)"
                       [ngValue]="modbusRegisterType"
-                      [selected]="modbusRegisterType==modbusConfiguration.registerType"
+                      [selected]="modbusRegisterType==modbusConfiguration.type"
               >{{modbusRegisterType}}</option>
             </select>
           </div>
