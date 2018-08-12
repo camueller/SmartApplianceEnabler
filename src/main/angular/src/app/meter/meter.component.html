@@ -120,7 +120,7 @@
         <div class="field">
           <label>{{'MeterComponent.modbusElectricityMeter_registerAddress' | translate}}</label>
           <input type="text" name="modbusElectricityMeter_powerRegisterAddress"
-                 [(ngModel)]="meter.modbusElectricityMeter.powerConfiguration.registerAddress" required>
+                 [(ngModel)]="meter.modbusElectricityMeter.powerConfiguration.address" required>
           <div *ngIf="errors.modbusElectricityMeter_registerAddress" class="ui negative message">
             {{errors.modbusElectricityMeter_registerAddress}}</div>
         </div>
@@ -135,7 +135,7 @@
         <div class="field">
           <label>{{'MeterComponent.modbusElectricityMeter_registerType' | translate}}</label>
           <select class="ui fluid dropdown" name="modbusElectricityMeter_powerRegisterType"
-                  [(ngModel)]="meter.modbusElectricityMeter.powerConfiguration.registerType">
+                  [(ngModel)]="meter.modbusElectricityMeter.powerConfiguration.type">
             <option *ngFor="let modbusReadRegisterType of settingsDefaults.modbusReadRegisterTypes"
                     [ngValue]="modbusReadRegisterType"
                     [selected]="modbusReadRegisterType==meter.modbusElectricityMeter.registerType"
@@ -148,7 +148,7 @@
         <div class="field">
           <label>{{'MeterComponent.modbusElectricityMeter_registerAddress' | translate}}</label>
           <input type="text" name="modbusElectricityMeter_energyRegisterAddress"
-                 [(ngModel)]="meter.modbusElectricityMeter.energyConfiguration.registerAddress" required>
+                 [(ngModel)]="meter.modbusElectricityMeter.energyConfiguration.address" required>
           <div *ngIf="errors.modbusElectricityMeter_registerAddress" class="ui negative message">
             {{errors.modbusElectricityMeter_registerAddress}}</div>
         </div>
@@ -163,7 +163,7 @@
         <div class="field">
           <label>{{'MeterComponent.modbusElectricityMeter_registerType' | translate}}</label>
           <select class="ui fluid dropdown" name="registerType"
-                  [(ngModel)]="meter.modbusElectricityMeter.energyConfiguration.registerType">
+                  [(ngModel)]="meter.modbusElectricityMeter.energyConfiguration.type">
             <option *ngFor="let modbusReadRegisterType of settingsDefaults.modbusReadRegisterTypes"
                     [ngValue]="modbusReadRegisterType"
                     [selected]="modbusReadRegisterType==meter.modbusElectricityMeter.energyRegisterType"

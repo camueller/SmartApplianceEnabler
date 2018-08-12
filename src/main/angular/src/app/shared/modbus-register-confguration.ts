@@ -1,9 +1,9 @@
 export class ModbusRegisterConfguration {
   name: string;
   value: any;
-  registerAddress: string;
+  address: string;
   bytes: number;
-  registerType: string;
+  type: string;
   write: boolean;
   extractionRegex: string;
 

@@ -92,16 +92,16 @@ export class MeterFactory {
   toJSONModbusElectricityMeter(modbusElectricityMeter: ModbusElectricityMeter) {
     const powerConfiguration = modbusElectricityMeter.powerConfiguration;
     const powerRegisterRead = new ModbusRegisterRead({
-      address: powerConfiguration.registerAddress,
+      address: powerConfiguration.address,
       bytes: powerConfiguration.bytes,
-      type: powerConfiguration.registerType,
+      type: powerConfiguration.type,
       registerReadValues: [new ModbusRegisterReadValue({name: 'Power'})]
     });
     const energyConfiguration = modbusElectricityMeter.energyConfiguration;
     const energyRegisterRead = new ModbusRegisterRead({
-      address: energyConfiguration.registerAddress,
+      address: energyConfiguration.address,
       bytes: energyConfiguration.bytes,
-      type: energyConfiguration.registerType,
+      type: energyConfiguration.type,
       registerReadValues: [new ModbusRegisterReadValue({name: 'Energy'})]
     });
     modbusElectricityMeter.registerReads = [powerRegisterRead, energyRegisterRead];
@@ -131,16 +131,16 @@ export class MeterFactory {
         const name = registerRead.registerReadValues[0].name;
         if (name === 'Power') {
           modbusElectricityMeter.powerConfiguration = new ModbusRegisterConfguration({
-            registerAddress: registerRead.address,
+            address: registerRead.address,
             bytes: registerRead.bytes,
-            registerType: registerRead.type
+            type: registerRead.type
           });
         }
         if (name === 'Energy') {
           modbusElectricityMeter.energyConfiguration = new ModbusRegisterConfguration({
-            registerAddress: registerRead.address,
+            address: registerRead.address,
             bytes: registerRead.bytes,
-            registerType: registerRead.type
+            type: registerRead.type
           });
         }
       });
