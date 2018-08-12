@@ -11,4 +11,7 @@ export class ModbusRegisterWrite {
   type: string;
   registerWriteValues: ModbusRegisterWriteValue[];
 
+  public constructor(init?: Partial<ModbusRegisterWrite>) {
+    Object.assign(this, init);
+  }
 }

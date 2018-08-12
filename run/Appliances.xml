@@ -1,27 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.3">
     <Appliance id="F-28091971-000000000099-00">
-        <ElectricVehicleCharger voltage="230" phases="1" pollInterval="300" startChargingStateDetectionDelay="600">
-            <EVModbusControl idref="wallbox" slaveAddress="180">
-                <ModbusRegisterRead address="100" type="InputString">
-                    <ModbusRegisterReadValue name="VehicleNotConnected" extractionRegex="(A)" />
-                    <ModbusRegisterReadValue name="VehicleConnected" extractionRegex="(B)" />
-                    <ModbusRegisterReadValue name="Charging" extractionRegex="(C|D)" />
-                    <ModbusRegisterReadValue name="ChargingCompleted" extractionRegex="(B)" />
-                </ModbusRegisterRead>
-                <ModbusRegisterRead address="204" type="Discrete">
-                    <ModbusRegisterReadValue name="ChargingCompleted" />
-                </ModbusRegisterRead>
-                <ModbusRegisterWrite address="400" type="Coil">
-                    <ModbusRegisterWriteValue name="StartCharging" value="1" />
-                    <ModbusRegisterWriteValue name="StopCharging" value="0" />
-                </ModbusRegisterWrite>
-                <ModbusRegisterWrite address="300" type="Holding">
-                    <ModbusRegisterWriteValue name="ChargingCurrent" value="0" />
-                </ModbusRegisterWrite>
-            </EVModbusControl>
-        </ElectricVehicleCharger>
-        <S0ElectricityMeter gpio="3" pinPullResistance="PULL_DOWN" impulsesPerKwh="1000" measurementInterval="60"/>
+        <ModbusSwitch idref="wallbox" slaveAddress="180">
+            <ModbusRegisterWrite address="400" type="Coil">
+                <ModbusRegisterWriteValue name="On" value="1"/>
+                <ModbusRegisterWriteValue name="Off" value="0"/>
+            </ModbusRegisterWrite>
+        </ModbusSwitch>
+        <ModbusElectricityMeter idref="modbus" slaveAddress="1" measurementInterval="60">
+            <ModbusRegisterRead address="0x000C" bytes="1" type="InputFloat" pollInterval="10">
+                <ModbusRegisterReadValue name="Power"/>
+            </ModbusRegisterRead>
+            <ModbusRegisterRead address="0x0156" bytes="1" type="InputFloat" pollInterval="10">
+                <ModbusRegisterReadValue name="Energy"/>
+            </ModbusRegisterRead>
+        </ModbusElectricityMeter>
     </Appliance>
     <Connectivity>
         <ModbusTCP id="modbus" host="127.0.0.1" />

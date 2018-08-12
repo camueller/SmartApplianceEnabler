@@ -40,6 +40,9 @@ import {MockSwitch} from './mock-switch';
 import {Logger} from '../log/logger';
 import {Settings} from '../settings/settings';
 import {SettingsDefaults} from '../settings/settings-defaults';
+import {ModbusRegisterConfguration} from '../shared/modbus-register-confguration';
+import {EvCharger} from './ev-charger';
+import {Appliance} from '../appliance/appliance';
 
 @Component({
   selector: 'app-appliance-switch',
@@ -51,17 +54,21 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   applianceId: string;
   controlDefaults: ControlDefaults;
   control: Control;
+  appliance: Appliance;
   settingsDefaults: SettingsDefaults;
   settings: Settings;
+  translatedStrings: string[];
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
   discardChangesMessage: string;
+  APPLIANCE_TYPE_EVCHARGER = 'EVCharger';
   TYPE_ALWAYS_ON_SWITCH = AlwaysOnSwitch.TYPE;
   TYPE_SWITCH = Switch.TYPE;
   TYPE_MODBUS_SWITCH = ModbusSwitch.TYPE;
   TYPE_MOCK_SWITCH = MockSwitch.TYPE;
   TYPE_HTTP_SWITCH = HttpSwitch.TYPE;
+  TYPE_EVCHARGER = EvCharger.TYPE;
   VALIDATOR_PATTERN_INTEGER = InputValidatorPatterns.INTEGER;
   VALIDATOR_PATTERN_INTEGER_OR_HEX = InputValidatorPatterns.INTEGER_OR_HEX;
   VALIDATOR_PATTERN_URL = InputValidatorPatterns.URL;
@@ -78,13 +85,23 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   }
 
   ngOnInit() {
+    this.translate.get([
+      'ControlComponent.evcharger_VehicleNotConnected',
+      'ControlComponent.evcharger_VehicleConnected',
+      'ControlComponent.evcharger_Charging',
+      'ControlComponent.evcharger_ChargingCompleted',
+      'ControlComponent.evcharger_StartCharging',
+      'ControlComponent.evcharger_StopCharging',
+      'ControlComponent.evcharger_ChargingCurrent'
+    ]).subscribe(translatedStrings => this.translatedStrings = translatedStrings);
     this.errorMessages =  new ControlErrorMessages(this.translate);
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.route.paramMap.subscribe(() => this.applianceId = this.route.snapshot.paramMap.get('id'));
-    this.route.data.subscribe((data: {control: Control, controlDefaults: ControlDefaults,
+    this.route.data.subscribe((data: {control: Control, controlDefaults: ControlDefaults, appliance: Appliance,
       settings: Settings, settingsDefaults: SettingsDefaults}) => {
       this.control = data.control;
       this.controlDefaults = data.controlDefaults;
+      this.appliance = data.appliance;
       this.settings = data.settings;
       this.settingsDefaults = data.settingsDefaults;
       this.controlForm.form.markAsPristine();
@@ -131,6 +148,33 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
       return  this.controlForm.form.controls.controlType.value === this.TYPE_ALWAYS_ON_SWITCH;
     }
     return false;
+  }
+
+  addModbusConfiguration() {
+    this.control.evCharger.control.configuration.push({} as ModbusRegisterConfguration);
+  }
+
+  removeModbusConfiguration(index: number) {
+    this.control.evCharger.control.configuration.splice(index, 1);
+  }
+
+  getModbusRegisterNames(): string[] {
+    return this.control.evCharger.control.configuration.map(configuration => configuration.name);
+  }
+
+  getTranslatedModbusRegisterName(name: string) {
+    return this.translatedStrings[this.toTextKeyModbusRegisterName(name)];
+  }
+
+  toTextKeyModbusRegisterName(name: string) {
+    return 'ControlComponent.evcharger_' + name;
+  }
+
+  getModbusRegisterTypes(write: boolean): string[] {
+    if (write) {
+      return this.settingsDefaults.modbusWriteRegisterTypes;
+    }
+    return this.settingsDefaults.modbusReadRegisterTypes;
   }
 
   submitForm() {

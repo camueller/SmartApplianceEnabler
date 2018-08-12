@@ -27,6 +27,11 @@ import {MockSwitch} from './mock-switch';
 import {Logger} from '../log/logger';
 import {ModbusRegisterWrite} from '../shared/modbus-register-write';
 import {ModbusRegisterWriteValue} from '../shared/modbus-register-write-value';
+import {EvCharger} from './ev-charger';
+import {ModbusRegisterConfguration} from '../shared/modbus-register-confguration';
+import {EvModbusControl} from './ev-modbus-control';
+import {ModbusRegisterRead} from '../shared/modbus-register-read';
+import {ModbusRegisterReadValue} from '../shared/modbus-register-read-value';
 
 export class ControlFactory {
 
@@ -66,51 +71,6 @@ export class ControlFactory {
     return control;
   }
 
-  toJSON(control: Control): string {
-    this.logger.debug('Control (TYPE): ' + JSON.stringify(control));
-    let controlUsed: any;
-    if (control.startingCurrentSwitch != null) {
-      control.startingCurrentSwitch['control'] = this.getControlByType(control);
-      controlUsed = control.startingCurrentSwitch;
-      if (controlUsed.powerThreshold === '') {
-        controlUsed.powerThreshold = null;
-      }
-      if (controlUsed.startingCurrentDetectionDuration === '') {
-        controlUsed.startingCurrentDetectionDuration = null;
-      }
-      if (controlUsed.finishedCurrentDetectionDuration === '') {
-        controlUsed.finishedCurrentDetectionDuration = null;
-      }
-      if (controlUsed.minRunningTime === '') {
-        controlUsed.minRunningTime = null;
-      }
-    } else {
-      controlUsed = this.getControlByType(control);
-    }
-    let rawControl: string;
-    if (controlUsed != null) {
-      if (control.type === ModbusSwitch.TYPE) {
-        const registerWriteValueOn = new ModbusRegisterWriteValue({
-          name: 'On',
-          value: control.modbusSwitch.onValue
-        });
-        const registerWriteValueOff = new ModbusRegisterWriteValue({
-          name: 'Off',
-          value: control.modbusSwitch.offValue
-        });
-
-        const registerWrite = new ModbusRegisterWrite();
-        registerWrite.address = control.modbusSwitch.registerAddress;
-        registerWrite.type = control.modbusSwitch.registerType;
-        registerWrite.registerWriteValues = [registerWriteValueOn, registerWriteValueOff];
-        control.modbusSwitch.registerWrites = [registerWrite];
-      }
-      rawControl = JSON.stringify(controlUsed);
-    }
-    this.logger.debug('Control (JSON): ' + rawControl);
-    return rawControl;
-  }
-
   fromJSONbyType(control: Control, rawControl: any) {
     if (rawControl != null) {
       control.type = rawControl['@class'];
@@ -122,6 +82,8 @@ export class ControlFactory {
         control.switch_ = this.createSwitch(rawControl);
       } else if (control.type === ModbusSwitch.TYPE) {
         control.modbusSwitch = this.createModbusSwitch(rawControl);
+      } else if (control.type === EvCharger.TYPE) {
+        control.evCharger = this.createEvCharger(rawControl);
       } else if (control.type === HttpSwitch.TYPE) {
         control.httpSwitch = this.createHttpSwitch(rawControl);
       }
@@ -137,6 +99,8 @@ export class ControlFactory {
       return control.switch_;
     } else if (control.type === ModbusSwitch.TYPE) {
       return control.modbusSwitch;
+    } else if (control.type === EvCharger.TYPE) {
+      return control.evCharger;
     } else if (control.type === HttpSwitch.TYPE) {
       return control.httpSwitch;
     }
@@ -196,5 +160,151 @@ export class ControlFactory {
     httpSwitch.onData = rawHttpSwitch.onData;
     httpSwitch.offData = rawHttpSwitch.offData;
     return httpSwitch;
+  }
+
+  createEvCharger(rawEvCharger: any): EvCharger {
+    const rawModbusControl = rawEvCharger.control;
+
+    const configurations: ModbusRegisterConfguration[] = [];
+
+    (rawModbusControl.registerReads as any[]).map(
+      registerRead => (registerRead.registerReadValues as any[]).map(registerReadValue => {
+        const configuration = new ModbusRegisterConfguration({
+          name: registerReadValue.name,
+          registerAddress: registerRead.address,
+          registerType: registerRead.type,
+          extractionRegex: registerReadValue.extractionRegex,
+          write: false
+        });
+        configurations.push(configuration);
+      }));
+
+    (rawModbusControl.registerWrites as any[]).map(
+      registerWrite => (registerWrite.registerWriteValues as any[]).map(registerWriteValue => {
+        const configuration = new ModbusRegisterConfguration({
+          name: registerWriteValue.name,
+          registerAddress: registerWrite.address,
+          registerType: registerWrite.type,
+          value: registerWriteValue.value,
+          write: true
+        });
+        configurations.push(configuration);
+      }));
+
+    const evModbusControl = new EvModbusControl({
+      idref: rawModbusControl.idref,
+      slaveAddress: rawModbusControl.slaveAddress,
+      configuration: configurations
+    });
+
+    const evCharger = new EvCharger({
+      voltage: rawEvCharger.voltage,
+      phases: rawEvCharger.phases,
+      pollInterval: rawEvCharger.pollInterval,
+      control: evModbusControl
+    });
+    return evCharger;
+  }
+
+  toJSON(control: Control): string {
+    this.logger.debug('Control (TYPE): ' + JSON.stringify(control));
+    let controlUsed: any;
+    if (control.startingCurrentSwitch != null) {
+      control.startingCurrentSwitch['control'] = this.getControlByType(control);
+      controlUsed = control.startingCurrentSwitch;
+      if (controlUsed.powerThreshold === '') {
+        controlUsed.powerThreshold = null;
+      }
+      if (controlUsed.startingCurrentDetectionDuration === '') {
+        controlUsed.startingCurrentDetectionDuration = null;
+      }
+      if (controlUsed.finishedCurrentDetectionDuration === '') {
+        controlUsed.finishedCurrentDetectionDuration = null;
+      }
+      if (controlUsed.minRunningTime === '') {
+        controlUsed.minRunningTime = null;
+      }
+    } else {
+      controlUsed = this.getControlByType(control);
+    }
+    let rawControl: string;
+    if (controlUsed != null) {
+      if (control.type === ModbusSwitch.TYPE) {
+        this.toJSONModbusSwitch(control);
+      }
+      if (control.type === EvCharger.TYPE) {
+        this.toJSONEvCharger(control);
+      }
+      rawControl = JSON.stringify(controlUsed);
+    }
+    this.logger.debug('Control (JSON): ' + rawControl);
+    return rawControl;
+  }
+
+  toJSONModbusSwitch(control: Control) {
+    const registerWriteValueOn = new ModbusRegisterWriteValue({
+      name: 'On',
+      value: control.modbusSwitch.onValue
+    });
+    const registerWriteValueOff = new ModbusRegisterWriteValue({
+      name: 'Off',
+      value: control.modbusSwitch.offValue
+    });
+
+    const registerWrite = new ModbusRegisterWrite();
+    registerWrite.address = control.modbusSwitch.registerAddress;
+    registerWrite.type = control.modbusSwitch.registerType;
+    registerWrite.registerWriteValues = [registerWriteValueOn, registerWriteValueOff];
+    control.modbusSwitch.registerWrites = [registerWrite];
+  }
+
+  toJSONEvCharger(control: Control) {
+    const registerReads: ModbusRegisterRead[] = [];
+    control.evCharger.control.configuration
+      .filter(configuration => configuration.write === false)
+      .forEach(configuration => {
+        let matchinRegisterRead: ModbusRegisterRead = registerReads.find(
+          item => item.address === configuration.registerAddress
+        );
+        if (matchinRegisterRead === undefined) {
+          matchinRegisterRead = new ModbusRegisterRead({
+            address: configuration.registerAddress,
+            type: configuration.registerType,
+            registerReadValues: []
+          });
+          registerReads.push(matchinRegisterRead);
+        }
+        const registerReadValue = new ModbusRegisterReadValue({
+          name: configuration.name,
+          extractionRegex: configuration.extractionRegex
+        });
+        matchinRegisterRead.registerReadValues.push(registerReadValue);
+      });
+    control.evCharger.control.registerReads = registerReads;
+
+    const registerWrites: ModbusRegisterWrite[] = [];
+    control.evCharger.control.configuration
+      .filter(configuration => configuration.write)
+      .forEach(configuration => {
+        let matchingRegisterWrite: ModbusRegisterWrite = registerWrites.find(
+          item => item.address === configuration.registerAddress
+        );
+        if (matchingRegisterWrite === undefined) {
+          matchingRegisterWrite = new ModbusRegisterWrite({
+            address: configuration.registerAddress,
+            type: configuration.registerType,
+            registerWriteValues: []
+          });
+          registerWrites.push(matchingRegisterWrite);
+        }
+        const registerWriteValue = new ModbusRegisterWriteValue({
+          name: configuration.name,
+          value: configuration.value
+        });
+        matchingRegisterWrite.registerWriteValues.push(registerWriteValue);
+      });
+    control.evCharger.control.registerWrites = registerWrites;
+
+    console.log('JSON:', control.evCharger.control.configuration);
   }
 }

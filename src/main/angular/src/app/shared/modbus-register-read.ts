@@ -11,4 +11,8 @@ export class ModbusRegisterRead {
   bytes: number;
   pollInterval: number;
   registerReadValues: ModbusRegisterReadValue[];
+
+  public constructor(init?: Partial<ModbusRegisterRead>) {
+    Object.assign(this, init);
+  }
 }

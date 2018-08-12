@@ -22,6 +22,7 @@ import {ModbusSwitch} from './modbus-switch';
 import {HttpSwitch} from './http-switch';
 import {AlwaysOnSwitch} from './always-on-switch';
 import {MockSwitch} from './mock-switch';
+import {EvCharger} from './ev-charger';
 
 export class Control {
   type: string;
@@ -32,6 +33,7 @@ export class Control {
   modbusSwitch: ModbusSwitch;
   mockSwitch: MockSwitch;
   httpSwitch: HttpSwitch;
+  evCharger: EvCharger;
 
   public constructor(init?: Partial<Control>) {
     Object.assign(this, init);
