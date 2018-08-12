@@ -304,7 +304,5 @@ export class ControlFactory {
         matchingRegisterWrite.registerWriteValues.push(registerWriteValue);
       });
     control.evCharger.control.registerWrites = registerWrites;
-
-    console.log('JSON:', control.evCharger.control.configuration);
   }
 }
