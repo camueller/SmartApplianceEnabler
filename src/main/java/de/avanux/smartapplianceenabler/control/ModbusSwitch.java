@@ -108,7 +108,7 @@ public class ModbusSwitch extends ModbusSlave implements Control {
                 }
             }
             catch (Exception e) {
-                logger.error("{}: Error switching coil register {}", getApplianceId(), registerWrite.getAddress(), e);
+                logger.error("{}: Error reading coil register {}", getApplianceId(), registerWrite.getAddress(), e);
             }
         }
         return on;

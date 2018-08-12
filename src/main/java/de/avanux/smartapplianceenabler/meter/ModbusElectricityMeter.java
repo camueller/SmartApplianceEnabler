@@ -43,6 +43,8 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     @XmlElement(name = "ModbusRegisterRead")
     private List<ModbusRegisterRead> registerReads;
     @XmlAttribute
+    private Integer pollInterval = 10; // seconds
+    @XmlAttribute
     private Integer measurementInterval; // seconds
     private transient PollPowerMeter pollPowerMeter = new PollPowerMeter();
     private transient PollEnergyMeter pollEnergyMeter = new PollEnergyMeter();
@@ -99,7 +101,8 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
                 logger.debug("{}: {} configured: read register={} / poll interval={}s / extraction regex={}",
                         getApplianceId(),
                         registerName.name(),
-                        registerRead.getAddress(), registerRead.getPollInterval(),
+                        registerRead.getAddress(),
+                        this.pollInterval,
                         registerRead.getSelectedRegisterReadValue().getExtractionRegex());
             }
             else {
@@ -115,7 +118,7 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
 
     public void start(Timer timer) {
         ModbusRegisterRead registerRead = ModbusRegisterRead.getFirstRegisterRead(RegisterName.Power.name(), registerReads);
-        pollPowerMeter.start(timer, registerRead.getPollInterval(), measurementInterval, this);
+        pollPowerMeter.start(timer, this.pollInterval, measurementInterval, this);
     }
 
     @Override

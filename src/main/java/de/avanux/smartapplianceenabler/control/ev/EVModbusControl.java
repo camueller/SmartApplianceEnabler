@@ -52,10 +52,10 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
                     this.registerReads);
             if(registerReads.size() > 0) {
                 for(ModbusRegisterRead registerRead: registerReads) {
-                    logger.debug("{}: {} configured: read register={} / poll interval={}s / extraction regex={}",
+                    logger.debug("{}: {} configured: read register={} / extraction regex={}",
                             getApplianceId(),
                             registerName.name(),
-                            registerRead.getAddress(), registerRead.getPollInterval(),
+                            registerRead.getAddress(),
                             registerRead.getSelectedRegisterReadValue().getExtractionRegex());
                 }
             } else {
