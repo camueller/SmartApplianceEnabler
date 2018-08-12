@@ -32,8 +32,6 @@ public interface EVControl extends ApplianceIdConsumer {
 
     boolean isChargingCompleted();
 
-    Integer getVehicleStatusPollInterval();
-
     void setChargeCurrent(int current);
 
     void startCharging();
