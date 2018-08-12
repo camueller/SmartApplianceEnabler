@@ -357,7 +357,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                 }
             }
             else if(control instanceof  ElectricVehicleCharger) {
-                EVControl evControl = ((ElectricVehicleCharger) control).getEvControl();
+                EVControl evControl = ((ElectricVehicleCharger) control).getControl();
                 if(evControl instanceof EVModbusControl) {
                     slaves.add((EVModbusControl) evControl);
                 }

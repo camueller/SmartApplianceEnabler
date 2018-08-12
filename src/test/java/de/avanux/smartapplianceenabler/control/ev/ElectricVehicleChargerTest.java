@@ -28,7 +28,7 @@ public class ElectricVehicleChargerTest {
     private EVControl evControl = Mockito.mock(EVControl.class);
 
     public ElectricVehicleChargerTest() {
-        evCharger.setEvControl(evControl);
+        evCharger.setControl(evControl);
         evCharger.init();
     }
 
