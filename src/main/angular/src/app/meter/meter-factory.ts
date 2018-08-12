@@ -25,6 +25,7 @@ import {Logger} from '../log/logger';
 import {ModbusSwitch} from '../control/modbus-switch';
 import {ModbusRegisterRead} from '../shared/modbus-register-read';
 import {ModbusRegisterReadValue} from '../shared/modbus-register-read-value';
+import {ModbusRegisterConfguration} from '../shared/modbus-register-confguration';
 
 export class MeterFactory {
 
@@ -80,24 +81,30 @@ export class MeterFactory {
     let meterRaw: string;
     if (meterUsed != null) {
       if (meter.type === ModbusElectricityMeter.TYPE) {
-        const powerRegisterRead = new ModbusRegisterRead();
-        powerRegisterRead.address = meter.modbusElectricityMeter.powerRegisterAddress;
-        powerRegisterRead.bytes = meter.modbusElectricityMeter.powerBytes;
-        powerRegisterRead.type = meter.modbusElectricityMeter.powerRegisterType;
-        powerRegisterRead.pollInterval = meter.modbusElectricityMeter.powerPollInterval;
-        powerRegisterRead.registerReadValues = [new ModbusRegisterReadValue({name: 'Power'})];
-        const energyRegisterRead = new ModbusRegisterRead();
-        energyRegisterRead.address = meter.modbusElectricityMeter.energyRegisterAddress;
-        energyRegisterRead.bytes = meter.modbusElectricityMeter.energyBytes;
-        energyRegisterRead.type = meter.modbusElectricityMeter.energyRegisterType;
-        energyRegisterRead.pollInterval = meter.modbusElectricityMeter.energyPollInterval;
-        energyRegisterRead.registerReadValues = [new ModbusRegisterReadValue({name: 'Energy'})];
-        meter.modbusElectricityMeter.registerReads = [powerRegisterRead, energyRegisterRead];
+        this.toJSONModbusElectricityMeter(meter.modbusElectricityMeter);
       }
       meterRaw = JSON.stringify(meterUsed);
     }
     this.logger.debug('Meter (JSON): ' + meterRaw);
     return meterRaw;
+  }
+
+  toJSONModbusElectricityMeter(modbusElectricityMeter: ModbusElectricityMeter) {
+    const powerConfiguration = modbusElectricityMeter.powerConfiguration;
+    const powerRegisterRead = new ModbusRegisterRead({
+      address: powerConfiguration.registerAddress,
+      bytes: powerConfiguration.bytes,
+      type: powerConfiguration.registerType,
+      registerReadValues: [new ModbusRegisterReadValue({name: 'Power'})]
+    });
+    const energyConfiguration = modbusElectricityMeter.energyConfiguration;
+    const energyRegisterRead = new ModbusRegisterRead({
+      address: energyConfiguration.registerAddress,
+      bytes: energyConfiguration.bytes,
+      type: energyConfiguration.registerType,
+      registerReadValues: [new ModbusRegisterReadValue({name: 'Energy'})]
+    });
+    modbusElectricityMeter.registerReads = [powerRegisterRead, energyRegisterRead];
   }
 
   createS0ElectricityMeter(rawMeter: any, networked: boolean): S0ElectricityMeter {
@@ -117,21 +124,24 @@ export class MeterFactory {
     const modbusElectricityMeter = new ModbusElectricityMeter();
     modbusElectricityMeter.idref = rawMeter.idref;
     modbusElectricityMeter.slaveAddress = rawMeter.slaveAddress;
+    modbusElectricityMeter.pollInterval = rawMeter.pollInterval;
     modbusElectricityMeter.measurementInterval = rawMeter.measurementInterval;
     if (rawMeter.registerReads != null) {
       rawMeter.registerReads.forEach((registerRead) => {
         const name = registerRead.registerReadValues[0].name;
         if (name === 'Power') {
-          modbusElectricityMeter.powerRegisterAddress = registerRead.address;
-          modbusElectricityMeter.powerBytes = registerRead.bytes;
-          modbusElectricityMeter.powerRegisterType = registerRead.type;
-          modbusElectricityMeter.powerPollInterval = registerRead.pollInterval;
+          modbusElectricityMeter.powerConfiguration = new ModbusRegisterConfguration({
+            registerAddress: registerRead.address,
+            bytes: registerRead.bytes,
+            registerType: registerRead.type
+          });
         }
         if (name === 'Energy') {
-          modbusElectricityMeter.energyRegisterAddress = registerRead.address;
-          modbusElectricityMeter.energyBytes = registerRead.bytes;
-          modbusElectricityMeter.energyRegisterType = registerRead.type;
-          modbusElectricityMeter.energyPollInterval = registerRead.pollInterval;
+          modbusElectricityMeter.energyConfiguration = new ModbusRegisterConfguration({
+            registerAddress: registerRead.address,
+            bytes: registerRead.bytes,
+            registerType: registerRead.type
+          });
         }
       });
     }

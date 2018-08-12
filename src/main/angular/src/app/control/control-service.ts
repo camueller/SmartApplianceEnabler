@@ -42,5 +42,6 @@ export class ControlService extends SaeService {
     } else {
       return this.http.delete(url, {headers: this.headersContentTypeJson, responseType: 'text'});
     }
+    // return Observable.empty();
   }
 }

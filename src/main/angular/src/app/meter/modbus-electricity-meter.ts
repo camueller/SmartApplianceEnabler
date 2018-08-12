@@ -17,6 +17,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 import {ModbusRegisterRead} from '../shared/modbus-register-read';
+import {ModbusRegisterConfguration} from '../shared/modbus-register-confguration';
 
 export class ModbusElectricityMeter {
 
@@ -28,13 +29,8 @@ export class ModbusElectricityMeter {
   idref: string;
   slaveAddress: string;
   registerReads?: ModbusRegisterRead[];
-  measurementInterval: string;
-  powerRegisterAddress: string;
-  powerBytes: number;
-  powerRegisterType: string;
-  powerPollInterval: number;
-  energyRegisterAddress: string;
-  energyBytes: number;
-  energyRegisterType: string;
-  energyPollInterval: number;
+  pollInterval: number;
+  measurementInterval: number;
+  powerConfiguration: ModbusRegisterConfguration;
+  energyConfiguration: ModbusRegisterConfguration;
 }
