@@ -202,6 +202,7 @@ export class ControlFactory {
       phases: rawEvCharger.phases,
       pollInterval: rawEvCharger.pollInterval,
       startChargingStateDetectionDelay: rawEvCharger.startChargingStateDetectionDelay,
+      forceInitialCharging: rawEvCharger.forceInitialCharging,
       control: evModbusControl
     });
     return evCharger;

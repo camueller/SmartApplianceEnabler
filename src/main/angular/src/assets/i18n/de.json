@@ -110,6 +110,7 @@
   "ControlComponent.evcharger_phases": "Phasen",
   "ControlComponent.evcharger_pollInterval": "Abfrage-Interval [s]",
   "ControlComponent.evcharger_startChargingStateDetectionDelay": "Statuserkennung-Unterbrechnung nach Einschalten [s]",
+  "ControlComponent.evcharger_forceInitialCharging": "Laden nach Einstecken bis Ladestatus erreicht",
   "ControlComponent.evchargerModbus_name": "Zustand / Aktion",
   "ControlComponent.evchargerModbus_idref": "Modbus",
   "ControlComponent.evchargerModbus_slaveAddress": "Slave-Adresse",

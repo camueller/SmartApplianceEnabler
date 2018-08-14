@@ -13,6 +13,7 @@ export class EvCharger {
   phases: number;
   pollInterval: number;
   startChargingStateDetectionDelay: number;
+  forceInitialCharging: boolean;
 
   public constructor(init?: Partial<EvCharger>) {
     Object.assign(this, init);

@@ -41,6 +41,8 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     private Integer pollInterval = 10; // seconds
     @XmlAttribute
     protected Integer startChargingStateDetectionDelay = 300;
+    @XmlAttribute
+    protected Boolean forceInitialCharging = false;
     @XmlElements({
             @XmlElement(name = "EVModbusControl", type = EVModbusControl.class),
     })
@@ -127,6 +129,16 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
         return stateHistory.contains(state);
     }
 
+    public boolean wasInStateOneTime(State state) {
+        int times = 0;
+        for (State historyState: stateHistory) {
+            if(historyState == state) {
+                times++;
+            }
+        }
+        return times == 1;
+    }
+
     private void initStateHistory() {
         this.stateHistory.clear();
         stateHistory.add(State.VEHICLE_NOT_CONNECTED);
@@ -204,8 +216,16 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
 
     private void onStateChanged(State previousState, State newState) {
         if(newState == State.VEHICLE_CONNECTED) {
+            if(this.forceInitialCharging && wasInStateOneTime(State.VEHICLE_CONNECTED)) {
+                startCharging();
+            }
             if(this.appliance != null) {
                 this.appliance.activateSchedules();
+            }
+        }
+        if(newState == State.CHARGING) {
+            if(this.forceInitialCharging && wasInStateOneTime(State.CHARGING)) {
+                stopCharging();
             }
         }
         if(newState == State.VEHICLE_NOT_CONNECTED) {

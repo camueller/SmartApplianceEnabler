@@ -190,6 +190,11 @@
           <input type="text" name="evCharger_startChargingStateDetectionDelay"
                  [(ngModel)]="control.evCharger.startChargingStateDetectionDelay">
         </div>
+        <div class="field">
+          <label>{{'ControlComponent.evcharger_forceInitialCharging' | translate}}</label>
+          <input class="ui checkbox" type="checkbox" name="evCharger_forceInitialCharging"
+                 [(ngModel)]="control.evCharger.forceInitialCharging">
+        </div>
       </div>
       <div class="ui fields">
         <div class="field">
