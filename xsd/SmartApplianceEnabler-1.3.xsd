@@ -131,6 +131,7 @@
         <xs:attribute name="phases" type="xs:int" />
         <xs:attribute name="pollInterval" type="xs:int" />
         <xs:attribute name="startChargingStateDetectionDelay" type="xs:int" />
+        <xs:attribute name="forceInitialCharging" type="xs:boolean" />
     </xs:complexType>
 
     <xs:complexType name="EVModbusControlType">

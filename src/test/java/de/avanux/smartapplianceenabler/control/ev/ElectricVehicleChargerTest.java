@@ -77,6 +77,30 @@ public class ElectricVehicleChargerTest {
     }
 
     @Test
+    public void wasInState() {
+        Assert.assertFalse(evCharger.wasInState(ElectricVehicleCharger.State.VEHICLE_CONNECTED));
+        evCharger.setState(ElectricVehicleCharger.State.CHARGING);
+        Assert.assertFalse(evCharger.wasInState(ElectricVehicleCharger.State.VEHICLE_CONNECTED));
+        evCharger.setState(ElectricVehicleCharger.State.VEHICLE_CONNECTED);
+        Assert.assertTrue(evCharger.wasInState(ElectricVehicleCharger.State.VEHICLE_CONNECTED));
+        evCharger.setState(ElectricVehicleCharger.State.CHARGING);
+        Assert.assertTrue(evCharger.wasInState(ElectricVehicleCharger.State.VEHICLE_CONNECTED));
+    }
+
+    @Test
+    public void wasInStateOneTime() {
+        Assert.assertFalse(evCharger.wasInStateOneTime(ElectricVehicleCharger.State.VEHICLE_CONNECTED));
+        evCharger.setState(ElectricVehicleCharger.State.CHARGING);
+        Assert.assertFalse(evCharger.wasInStateOneTime(ElectricVehicleCharger.State.VEHICLE_CONNECTED));
+        evCharger.setState(ElectricVehicleCharger.State.VEHICLE_CONNECTED);
+        Assert.assertTrue(evCharger.wasInStateOneTime(ElectricVehicleCharger.State.VEHICLE_CONNECTED));
+        evCharger.setState(ElectricVehicleCharger.State.CHARGING);
+        Assert.assertTrue(evCharger.wasInStateOneTime(ElectricVehicleCharger.State.VEHICLE_CONNECTED));
+        evCharger.setState(ElectricVehicleCharger.State.VEHICLE_CONNECTED);
+        Assert.assertFalse(evCharger.wasInStateOneTime(ElectricVehicleCharger.State.VEHICLE_CONNECTED));
+    }
+
+    @Test
     public void updateState_noInterruption() {
         // VEHICLE_NOT_CONNECTED
         configureMocks(true, false, false, false);

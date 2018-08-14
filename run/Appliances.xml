@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.3">
     <Appliance id="F-28091971-000000000099-00">
-        <ElectricVehicleCharger voltage="230" phases="1" pollInterval="10" startChargingStateDetectionDelay="300">
+        <ElectricVehicleCharger
+                voltage="230"
+                phases="1"
+                pollInterval="10"
+                startChargingStateDetectionDelay="300"
+                forceInitialCharging="false">
             <EVModbusControl idref="wallbox" slaveAddress="180">
                 <ModbusRegisterRead address="100" type="InputString">
                     <ModbusRegisterReadValue name="VehicleNotConnected" extractionRegex="(A)" />
