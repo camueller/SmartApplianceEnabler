@@ -90,10 +90,14 @@ Java(TM) SE Runtime Environment (build 1.8.0_65-b17)
 Java HotSpot(TM) Client VM (build 25.65-b01, mixed mode)
 ```
 
+## Wiring-Pi installieren
+Falls der *Smart Appliance Enabler* auf die GPIO-Anschlüsse des Raspberry Pi zugreifen soll, muss die Biliothek [Wiring Pi](http://wiringpi.com/) installiert sein. Das lässt sich mit folgendem Befehl erreichen:
+```
+sudo apt-get install wiringpi
+```
+
 ## Smart Appliance Enabler
-Die Installation des *Smart Appliance Enabler* besteht darin, folgende Dateien auf den Raspberry zu kopieren:
-* das Start-Script
-* die Datei ```SmartApplianceEnabler-*.war``` mit dem eigentlichen Programmcode (heruntergeladenes Release oder aus Sourcen gebaut)
+Die Installation des *Smart Appliance Enabler* besteht darin, einige Dateien auf den Raspberry zu kopieren.
 
 Zunächst werden Start-Script und zugehörige Konfigurationsdateien auf den Raspberry heruntergeladen und gleich die Berechtigungen für dieses Dateien gesetzt:
 ```
@@ -143,9 +147,9 @@ Für die Konfiguration des Loggings wird die Datei ```logback-spring.xml``` ben�
 ```
 pi@raspberrypi ~ $ wget https://github.com/camueller/SmartApplianceEnabler/raw/master/logback-spring.xml -P /app
 ```
-Als nächstes wird die Datei ```SmartApplianceEnabler-*.war``` mit dem eigentlichen Programmcode heruntergeladen:
+Als nächstes wird die Datei ```SmartApplianceEnabler-X.Y.Z.war``` mit dem eigentlichen Programmcode heruntergeladen. *X.Y.Z* steht dabei für die aktuelle Versionsnummer (z.B. 1.2.1), die [hinter dem Download-Button](https://github.com/camueller/SmartApplianceEnabler#smart-appliance-enabler) angezeigt wird. Entsprechend dieser Hinweise muss die Version im nachfolgenden Befehl angepasst werden an 2 Stellen (*v1.2.1* und *SmartApplianceEnabler-1.2.1.war*):
 ```
-pi@raspberrypi ~ $ wget https://github.com/camueller/SmartApplianceEnabler/releases/download/v1.2.0/SmartApplianceEnabler-1.2.0.war -P /app
+pi@raspberrypi ~ $ wget https://github.com/camueller/SmartApplianceEnabler/releases/download/v1.2.1/SmartApplianceEnabler-1.2.1.war -P /app
 ```
 Jetzt sollte man den *Smart Appliance Enabler* starten können. Auf einem Raspberry Pi 2 Model B dauert der Start ca. 30 Sekunden.  Dabei sollte man folgende Ausgaben zu sehen bekommen:
 ```
