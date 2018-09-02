@@ -18,6 +18,7 @@
 
 package de.avanux.smartapplianceenabler.webservice;
 
+import de.avanux.smartapplianceenabler.Application;
 import de.avanux.smartapplianceenabler.HolidaysDownloader;
 import de.avanux.smartapplianceenabler.appliance.*;
 import de.avanux.smartapplianceenabler.configuration.Configuration;
@@ -58,6 +59,7 @@ public class SaeController {
     private static final String SETTINGSDEFAULTS_URL = BASE_URL + "/settingsdefaults";
     private static final String STATUS_URL = BASE_URL + "/status";
     private static final String RUNTIME_URL = BASE_URL + "/runtime";
+    private static final String INFO_URL = BASE_URL + "/info";
     // only required for development if running via "ng serve"
     private static final String CROSS_ORIGIN_URL = "http://localhost:4200";
     private Logger logger = LoggerFactory.getLogger(SaeController.class);
@@ -566,5 +568,15 @@ public class SaeController {
             applianceStatuses.add(applianceStatus);
         }
         return applianceStatuses;
+    }
+
+    @RequestMapping(value=INFO_URL, method=RequestMethod.GET, produces="application/json")
+    @CrossOrigin(origins=CROSS_ORIGIN_URL)
+    public Info getInfo() {
+        logger.debug("Received request for Info");
+        Info info = new Info();
+        info.setVersion(Application.getVersion());
+        info.setBuildDate(Application.getBuildDate());
+        return info;
     }
 }

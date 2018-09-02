@@ -20,6 +20,7 @@ import {Settings} from './settings';
 import {SettingsDefaults} from './settings-defaults';
 import {Logger} from '../log/logger';
 import {ModbusSettings} from './modbus-settings';
+import {Info} from './info';
 
 export class SettingsFactory {
 
@@ -28,6 +29,15 @@ export class SettingsFactory {
 
   createEmptySettingsDefaults(): SettingsDefaults {
     return new SettingsDefaults();
+  }
+
+  infoFromJSON(rawInfo: any): Info {
+    this.logger.debug('Info (JSON): ' + JSON.stringify(rawInfo));
+    const info = new Info();
+    info.version = rawInfo.version;
+    info.buildDate = rawInfo.buildDate;
+    this.logger.debug('Info (TYPE): ' + JSON.stringify(info));
+    return info;
   }
 
   defaultsFromJSON(rawSettings: any): SettingsDefaults {

@@ -15,7 +15,7 @@
   ~ with this program; if not, write to the Free Software Foundation, Inc.,
   ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
   -->
-
+<div class="sae-title">Smart Appliance Enabler <span class="sae-version">{{version}}</span></div>
 <div class="ui sidebar inverted vertical menu">
   <div class="ui item">
 
@@ -37,7 +37,7 @@
     </div>
   </div>
 </div>
-<div class="ui fixed inverted main menu">
+<div class="ui inverted menu">
   <a (click)="toggleSidebar()" class="launch icon item"><p style="padding-left:1em">{{'AppComponent.appliances' | translate}}</p></a>
   <a class="launch icon item" [routerLink]="['status']" routerLinkActive="active">{{'AppComponent.status' | translate}}</a>
   <a class="launch icon item" [routerLink]="['settings']" routerLinkActive="active">{{'AppComponent.settings' | translate}}</a>
