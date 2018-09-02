@@ -21,21 +21,25 @@ import {ApplianceService} from './appliance/appliance.service';
 import {ApplianceHeader} from './appliance/appliance-header';
 import {AppliancesReloadService} from './appliance/appliances-reload-service';
 import {TranslateService} from '@ngx-translate/core';
+import {SettingsService} from './settings/settings-service';
 
 declare const $: any;
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html'
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
 
   applianceHeaders: ApplianceHeader[];
+  version: string;
   typePrefix = 'ApplianceComponent.type.';
   translatedTypes = new Object();
 
   constructor(private applianceService: ApplianceService,
               private appliancesReloadService: AppliancesReloadService,
+              private settingsService: SettingsService,
               private translate: TranslateService) {
     translate.setDefaultLang('de');
   }
@@ -46,6 +50,7 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit()  {
+    this.settingsService.getInfo().subscribe(info => this.version = info.version);
     this.loadAppliances();
     this.appliancesReloadService.triggered.subscribe(() => {
       this.loadAppliances();
