@@ -214,6 +214,7 @@
         </div>
       </div>
       <div *ngFor="let modbusConfiguration of control.evCharger.control.configuration; index as i; last as l">
+        <div class="ui hidden divider"></div>
         <div class="ui fields">
           <div class="field">
             <label>{{'ControlComponent.evchargerModbus_name' | translate}}</label>
@@ -270,8 +271,7 @@
       </div>
     </div>
 
-
-
+    <div class="ui hidden divider"></div>
     <button type="submit" class="ui button" [disabled]="controlForm.pristine||controlForm.invalid">
       {{'button.save' | translate}}</button>
   </form>

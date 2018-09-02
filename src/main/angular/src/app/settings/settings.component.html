@@ -35,6 +35,7 @@
 
     <h4 class="ui dividing header">{{'SettingsComponent.modbus' | translate}}</h4>
     <div *ngFor="let modbusSettingsEntry of settings.modbusSettings; index as i; last as l">
+      <div class="ui hidden divider"></div>
       <div class="ui fields">
         <div class="field">
           <label>{{'SettingsComponent.modbusTcpId' | translate}}</label>
@@ -77,6 +78,7 @@
       </div>
     </div>
 
+    <div class="ui hidden divider"></div>
     <button type="submit" class="ui button" [disabled]="settingsForm.pristine||settingsForm.invalid">
       {{'button.save' | translate}}</button>
   </form>
