@@ -97,8 +97,10 @@ sudo apt-get install wiringpi
 ```
 
 ## Smart Appliance Enabler
+### Erstinstallation
 Die Installation des *Smart Appliance Enabler* besteht darin, einige Dateien auf den Raspberry zu kopieren.
 
+#### Start-Script und Konfigurationsdateien
 Zunächst werden Start-Script und zugehörige Konfigurationsdateien auf den Raspberry heruntergeladen und gleich die Berechtigungen für dieses Dateien gesetzt:
 ```
 axel@tpw520:/data/git/SmartApplianceEnabler$ ssh pi@raspi
@@ -147,10 +149,13 @@ Für die Konfiguration des Loggings wird die Datei ```logback-spring.xml``` ben�
 ```
 pi@raspberrypi ~ $ wget https://github.com/camueller/SmartApplianceEnabler/raw/master/logback-spring.xml -P /app
 ```
+#### Programm-Download
 Als nächstes wird die Datei ```SmartApplianceEnabler-X.Y.Z.war``` mit dem eigentlichen Programmcode heruntergeladen. *X.Y.Z* steht dabei für die aktuelle Versionsnummer (z.B. 1.2.1), die [hinter dem Download-Button](https://github.com/camueller/SmartApplianceEnabler#smart-appliance-enabler) angezeigt wird. Entsprechend dieser Hinweise muss die Version im nachfolgenden Befehl angepasst werden an 2 Stellen (*v1.2.1* und *SmartApplianceEnabler-1.2.1.war*):
 ```
 pi@raspberrypi ~ $ wget https://github.com/camueller/SmartApplianceEnabler/releases/download/v1.2.1/SmartApplianceEnabler-1.2.1.war -P /app
 ```
+
+#### Start
 Jetzt sollte man den *Smart Appliance Enabler* starten können. Auf einem Raspberry Pi 2 Model B dauert der Start ca. 30 Sekunden.  Dabei sollte man folgende Ausgaben zu sehen bekommen:
 ```
 pi@raspberrypi ~ $ sudo /etc/init.d/smartapplianceenabler start
@@ -161,3 +166,16 @@ Sollten statt des ```ok``` andere Meldungen angezeigt werden, helfen [diese Hinw
 Eigentlich lässt man Dienste wie *smartapplianceenabler* nicht unter dem Benutzer *root* laufen. Allerdings habe ich bisher keine Möglichkeit gefunden, die Rechte für den Zugriff auf die GPIO-Ports so zu setzen, dass diese auch für andere Benutzer möglich ist.
 
 Wenn der *Smart Appliance Enabler* jetzt läuft, muss als Nächstes die [Konfiguration](Configuration_DE.md) vorgenommen werden.
+
+### Update
+Das Update einer vorhandenen Version besteht darin, zunächst das alte Programm zu löschen:
+```
+pi@raspberrypi ~ $ rm /app/*.war
+```
+Jetzt kann die gewünschte Version des Programms heruntergeladen werden, wie im Erstinstallations-Kapitel [Programm-Download](#Programm-Download) beschrieben.
+Falls das Format der Konfigurationsdatei ```Appliances.xml``` in der neuen Programmversion nicht mehr kompatibel zur alten Version ist oder man sich diesbezüglich unsicher ist, müssen die alten Konfigurationsdateien gelöscht werden:
+```
+pi@raspberrypi ~ $ rm /app/Appliances.xml
+pi@raspberrypi ~ $ rm /app/Device2EM.xml
+```
+Nach dem Löschen dieser beiden Datei muss die Konfiguration neu erstellt werden, wie im Kapitel [Konfiguration](Configuration_DE.md) beschrieben.
