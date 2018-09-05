@@ -274,7 +274,7 @@ public class ApplianceManager implements Runnable {
     }
 
     public List<Appliance> getAppliances() {
-        if(appliances != null) {
+        if(appliances != null && appliances.getAppliances() != null) {
             return appliances.getAppliances();
         }
         return Collections.EMPTY_LIST;

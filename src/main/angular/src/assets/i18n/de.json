@@ -106,6 +106,8 @@
   "ControlComponent.modbusSwitch_registerType": "Register-Typ",
   "ControlComponent.modbusSwitch_onValue": "Wert für On",
   "ControlComponent.modbusSwitch_offValue": "Wert für Off",
+  "ControlComponent.evcharger_template": "Vorlage",
+  "ControlComponent.evcharger_templateButton": "Verwenden",
   "ControlComponent.evcharger_voltage": "Spannung [V]",
   "ControlComponent.evcharger_phases": "Phasen",
   "ControlComponent.evcharger_pollInterval": "Abfrage-Interval [s]",
