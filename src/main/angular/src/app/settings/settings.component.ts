@@ -74,8 +74,8 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
 
   addModbusSettings() {
     this.settings.modbusSettings.push({
-      modbusTcpId: '',
-      modbusTcpHost: '',
+      modbusTcpId: undefined,
+      modbusTcpHost: undefined,
       modbusTcpPort: undefined
     });
   }

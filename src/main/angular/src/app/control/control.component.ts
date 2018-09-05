@@ -43,6 +43,8 @@ import {SettingsDefaults} from '../settings/settings-defaults';
 import {ModbusRegisterConfguration} from '../shared/modbus-register-confguration';
 import {EvCharger} from './ev-charger';
 import {Appliance} from '../appliance/appliance';
+import {EvChargerTemplates} from './ev-charger-templates';
+import {EvModbusControl} from './ev-modbus-control';
 
 @Component({
   selector: 'app-appliance-switch',
@@ -62,6 +64,8 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
   discardChangesMessage: string;
+  evChargerTemplates: { [name: string]: EvCharger };
+  evChargerTemplateNameSelected: string;
   APPLIANCE_TYPE_EVCHARGER = 'EVCharger';
   TYPE_ALWAYS_ON_SWITCH = AlwaysOnSwitch.TYPE;
   TYPE_SWITCH = Switch.TYPE;
@@ -82,6 +86,7 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
     const controlFactory = new ControlFactory(logger);
     this.control = controlFactory.createEmptyControl();
     this.errorMessageHandler = new ErrorMessageHandler(logger);
+    this.evChargerTemplates = EvChargerTemplates.getTemplates();
   }
 
   ngOnInit() {
@@ -104,6 +109,11 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
       this.appliance = data.appliance;
       this.settings = data.settings;
       this.settingsDefaults = data.settingsDefaults;
+      if (this.isEvCharger() && this.control.evCharger === undefined) {
+        this.control.type = this.TYPE_EVCHARGER;
+        this.control.evCharger = new EvCharger();
+        this.control.evCharger.control = new EvModbusControl();
+      }
       this.controlForm.form.markAsPristine();
     });
     this.controlForm.statusChanges.subscribe(() =>
@@ -150,6 +160,10 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
     return false;
   }
 
+  isEvCharger(): boolean {
+    return this.appliance.type === this.APPLIANCE_TYPE_EVCHARGER;
+  }
+
   addModbusConfiguration() {
     this.control.evCharger.control.configuration.push({} as ModbusRegisterConfguration);
   }
@@ -175,6 +189,14 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
       return this.settingsDefaults.modbusWriteRegisterTypes;
     }
     return this.settingsDefaults.modbusReadRegisterTypes;
+  }
+
+  getEvChargerTemplateNames(): string[] {
+    return Object.keys(this.evChargerTemplates);
+  }
+
+  useEvChargerTemplate() {
+    this.control.evCharger = this.evChargerTemplates[this.evChargerTemplateNameSelected];
   }
 
   submitForm() {

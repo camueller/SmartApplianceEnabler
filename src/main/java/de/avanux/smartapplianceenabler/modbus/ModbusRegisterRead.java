@@ -30,7 +30,7 @@ public class ModbusRegisterRead {
     @XmlAttribute
     private String address;
     @XmlAttribute
-    private Integer bytes = 1;
+    private Integer bytes;
     @XmlAttribute
     private String type;
     @XmlElement(name = "ModbusRegisterReadValue")
@@ -56,7 +56,7 @@ public class ModbusRegisterRead {
         if(getType() == ModbusReadRegisterType.InputFloat) {
             return 2;
         }
-        return bytes;
+        return bytes != null ? bytes : 1;
     }
 
     public ModbusReadRegisterType getType() {
