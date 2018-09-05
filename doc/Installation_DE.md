@@ -172,7 +172,7 @@ Das Update einer vorhandenen Version besteht darin, zunächst das alte Programm 
 ```
 pi@raspberrypi ~ $ rm /app/*.war
 ```
-Jetzt kann die gewünschte Version des Programms heruntergeladen werden, wie im Erstinstallations-Kapitel [Programm-Download](#Programm-Download) beschrieben.
+Jetzt kann die gewünschte Version des Programms heruntergeladen werden, wie im Erstinstallations-Kapitel [Programm-Download](#programm-download) beschrieben.
 Falls das Format der Konfigurationsdatei ```Appliances.xml``` in der neuen Programmversion nicht mehr kompatibel zur alten Version ist oder man sich diesbezüglich unsicher ist, müssen die alten Konfigurationsdateien gelöscht werden:
 ```
 pi@raspberrypi ~ $ rm /app/Appliances.xml
