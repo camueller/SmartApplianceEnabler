@@ -24,7 +24,7 @@ Apr 08 09:55:52 raspi3 systemd[1]: Started LSB: Start Smart Appliance Enabler..
 
 Der *Smart Appliance Enabler* schreibt seine Log-Informationen in das Verzeichnis ```/tmp```, wobei die Dateinamen mit ```rolling``` beginnen gefolgt vom jeweilgen Datum:
 ```
-pi@raspi ~ $ cat /tmp/rolling-2018-04-08.log
+pi@raspi ~ $ tail -f /tmp/rolling-2018-04-08.log
 2018-04-08 10:17:01,072 INFO [main] d.a.s.Application [StartupInfoLogger.java:48] Starting Application on raspi with PID 23914 (started by root in /)
 2018-04-08 10:17:01,106 DEBUG [main] d.a.s.Application [StartupInfoLogger.java:51] Running with Spring Boot v1.3.0.RELEASE, Spring v4.2.3.RELEASE
 2018-04-08 10:17:01,108 INFO [main] d.a.s.Application [SpringApplication.java:653] No profiles are active
@@ -41,13 +41,6 @@ pi@raspi ~ $ cat /tmp/rolling-2018-04-08.log
 2018-04-08 10:17:30,576 INFO [Thread-7] d.a.s.u.FileHandler [FileHandler.java:55] Using appliance directory /app
 2018-04-08 10:17:30,583 INFO [main] d.a.s.Application [Application.java:95] PID 23914 written to /var/run/smartapplianceenabler.pid
 ```
-
-### Erhöhung des Log-Levels
-Standardmäßig ist der Log-Level auf INFO gesetzt. Zur Fehlersuche sollte in der Datei `/etc/default/smartapplianceenabler` die alternative Logging-Konfiguration aktiviert werden, indem die Zeile
-```
-JAVA_OPTS="${JAVA_OPTS} -Dlogging.config=/app/logback-spring.xml"
-```
-nicht mehr auskommentiert ist. In dieser Datei ist der Log-Level bereits auf DEBUG gesetzt. Nach einem Neustart des *Smart Appliance Enabler* findet sich die Log-Datei im Verzeichnis ```/tmp``` als ```rolling-<datum>.log```, also z.B. ```rolling-2017-10-30.log```.
 
 ### Version des Smart Appliance Enabler
 Direkt nach dem Start schreibt der *Smart Appliance Enabler* die Version in die Log-Datei:
