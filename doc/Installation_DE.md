@@ -155,10 +155,10 @@ Als nächstes wird die Datei ```SmartApplianceEnabler-X.Y.Z.war``` mit dem eigen
 pi@raspberrypi ~ $ wget https://github.com/camueller/SmartApplianceEnabler/releases/download/v1.2.1/SmartApplianceEnabler-1.2.1.war -P /app
 ```
 
-Nach dem Download sollte geprüft werden, dass die heruntergeladene Programm-Datei ca. 20 MB gross ist - andernfalls wurde möglicherweise iene inkorrekte URL verwendet:
+Nach dem Download sollte geprüft werden, dass die heruntergeladene Programm-Datei ca. 20 MB gross ist - andernfalls wurde möglicherweise eine inkorrekte URL verwendet:
 ```
-pi@raspi ~ $ ls -al /app/*.war
--rw-r--r-- 1 pi pi 21356533 Jun  1 20:42 /app/SmartApplianceEnabler-1.2.2-SNAPSHOT.war
+pi@raspberrypi ~ $ ls -al /app/*.war
+-rw-r--r-- 1 pi pi 21356486 May  2 19:13 /app/SmartApplianceEnabler-1.2.1-SNAPSHOT.war
 ```
 
 #### Start
