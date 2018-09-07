@@ -33,4 +33,9 @@ export class ModbusElectricityMeter {
   measurementInterval: number;
   powerConfiguration: ModbusRegisterConfguration;
   energyConfiguration: ModbusRegisterConfguration;
+
+  constructor() {
+    this.powerConfiguration = new ModbusRegisterConfguration();
+    this.energyConfiguration = new ModbusRegisterConfguration();
+  }
 }
