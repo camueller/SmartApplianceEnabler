@@ -128,7 +128,7 @@
           <label>{{'MeterComponent.modbusElectricityMeter_bytes' | translate}}</label>
           <input type="text" name="modbusElectricityMeter_powerBytes"
                  [(ngModel)]="meter.modbusElectricityMeter.powerConfiguration.bytes"
-                 required pattern="{{VALIDATOR_PATTERN_INTEGER}}">
+                 pattern="{{VALIDATOR_PATTERN_INTEGER}}">
           <div *ngIf="errors.modbusElectricityMeter_registerAddress" class="ui negative message">
             {{errors.modbusElectricityMeter_registerAddress}}</div>
         </div>
@@ -156,7 +156,7 @@
           <label>{{'MeterComponent.modbusElectricityMeter_bytes' | translate}}</label>
           <input type="text" name="modbusElectricityMeter_energyBytes"
                  [(ngModel)]="meter.modbusElectricityMeter.energyConfiguration.bytes"
-                 required pattern="{{VALIDATOR_PATTERN_INTEGER}}">
+                 pattern="{{VALIDATOR_PATTERN_INTEGER}}">
           <div *ngIf="errors.modbusElectricityMeter_registerAddress" class="ui negative message">
             {{errors.modbusElectricityMeter_registerAddress}}</div>
         </div>
