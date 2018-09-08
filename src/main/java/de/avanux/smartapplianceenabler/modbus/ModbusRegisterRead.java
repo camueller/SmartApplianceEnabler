@@ -53,10 +53,13 @@ public class ModbusRegisterRead {
     }
 
     public Integer getBytes() {
-        if(getType() == ModbusReadRegisterType.InputFloat) {
-            return 2;
+        if(bytes == null) {
+            if(getType() == ModbusReadRegisterType.InputFloat) {
+                return 2;
+            }
+            return 1;
         }
-        return bytes != null ? bytes : 1;
+        return bytes;
     }
 
     public ModbusReadRegisterType getType() {
