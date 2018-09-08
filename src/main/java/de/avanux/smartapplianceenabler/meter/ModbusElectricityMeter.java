@@ -93,16 +93,22 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
         return measurementInterval;
     }
 
+    public void init() {
+        validate();
+    }
+
     public void validate() {
+        logger.debug("{}: configured: poll interval={}s / measurement interval={}s",
+                getApplianceId(), this.pollInterval, this.measurementInterval);
         boolean valid = true;
         for(RegisterName registerName: RegisterName.values()) {
             ModbusRegisterRead registerRead = ModbusRegisterRead.getFirstRegisterRead(registerName.name(), registerReads);
             if(registerRead != null) {
-                logger.debug("{}: {} configured: read register={} / poll interval={}s / extraction regex={}",
+                logger.debug("{}: {} configured: read register={} / bytes={} / extraction regex={}",
                         getApplianceId(),
                         registerName.name(),
                         registerRead.getAddress(),
-                        this.pollInterval,
+                        registerRead.getBytes(),
                         registerRead.getSelectedRegisterReadValue().getExtractionRegex());
             }
             else {

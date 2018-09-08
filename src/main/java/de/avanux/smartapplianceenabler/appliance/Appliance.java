@@ -175,6 +175,9 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             if(meter instanceof ApplianceIdConsumer) {
                 ((ApplianceIdConsumer) meter).setApplianceId(id);
             }
+            if(meter instanceof ModbusElectricityMeter) {
+                ((ModbusElectricityMeter) meter).init();
+            }
             if(control != null) {
                 if(meter instanceof S0ElectricityMeter) {
                     ((S0ElectricityMeter) meter).setControl(control);
