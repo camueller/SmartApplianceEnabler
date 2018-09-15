@@ -67,6 +67,12 @@
     <h4 class="ui dividing header">{{'ApplianceComponent.characteristics' | translate}}</h4>
     <div class="fields">
       <div class="field">
+        <label>{{'ApplianceComponent.minPowerConsumption' | translate}}</label>
+        <input type="text" name="minPowerConsumption" [(ngModel)]="appliance.minPowerConsumption"
+               pattern="{{VALIDATOR_PATTERN_INTEGER}}">
+        <div *ngIf="errors['minPowerConsumption']" class="ui negative message">{{errors['minPowerConsumption']}}</div>
+      </div>
+      <div class="field">
         <label>{{'ApplianceComponent.maxPowerConsumption' | translate}}</label>
         <input type="text" name="maxPowerConsumption" [(ngModel)]="appliance.maxPowerConsumption"
                required pattern="{{VALIDATOR_PATTERN_INTEGER}}">

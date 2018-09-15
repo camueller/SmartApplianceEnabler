@@ -22,6 +22,7 @@ export class Appliance {
   type: string;
   serial: string;
   vendor: string;
+  minPowerConsumption: string;
   maxPowerConsumption: string;
   currentPowerMethod: string;
   interruptionsAllowed: boolean;

@@ -22,4 +22,8 @@ export class ApplianceHeader {
   type: string;
   vendor: string;
   controllable: boolean;
+
+  public constructor(init?: Partial<ApplianceHeader>) {
+    Object.assign(this, init);
+  }
 }
