@@ -108,6 +108,7 @@ public class SaeController {
         applianceInfo.setVendor(deviceInfo.getIdentification().getDeviceVendor());
         applianceInfo.setSerial(deviceInfo.getIdentification().getDeviceSerial());
         applianceInfo.setType(deviceInfo.getIdentification().getDeviceType());
+        applianceInfo.setMinPowerConsumption(deviceInfo.getCharacteristics().getMinPowerConsumption());
         applianceInfo.setMaxPowerConsumption(deviceInfo.getCharacteristics().getMaxPowerConsumption());
         applianceInfo.setCurrentPowerMethod(deviceInfo.getCapabilities().getCurrentPowerMethod().name());
         applianceInfo.setInterruptionsAllowed(deviceInfo.getCapabilities().getInterruptionsAllowed());
@@ -123,6 +124,7 @@ public class SaeController {
         identification.setDeviceSerial(applianceInfo.getSerial());
 
         Characteristics characteristics = new Characteristics();
+        characteristics.setMinPowerConsumption(applianceInfo.getMinPowerConsumption());
         characteristics.setMaxPowerConsumption(applianceInfo.getMaxPowerConsumption());
 
         Capabilities capabilities = new Capabilities();

@@ -27,6 +27,7 @@ public class ApplianceInfo {
     private String serial;
     private String type;
     private String vendor;
+    private Integer minPowerConsumption;
     private Integer maxPowerConsumption;
     private String currentPowerMethod;
     private boolean interruptionsAllowed;
@@ -69,6 +70,14 @@ public class ApplianceInfo {
 
     public void setVendor(String vendor) {
         this.vendor = vendor;
+    }
+
+    public Integer getMinPowerConsumption() {
+        return minPowerConsumption;
+    }
+
+    public void setMinPowerConsumption(Integer minPowerConsumption) {
+        this.minPowerConsumption = minPowerConsumption;
     }
 
     public Integer getMaxPowerConsumption() {
