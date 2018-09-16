@@ -32,7 +32,11 @@ public class ModbusRegisterRead {
     @XmlAttribute
     private Integer bytes;
     @XmlAttribute
+    private String byteOrder;
+    @XmlAttribute
     private String type;
+    @XmlAttribute
+    private Double factorToValue;
     @XmlElement(name = "ModbusRegisterReadValue")
     private List<ModbusRegisterReadValue> registerReadValues;
     private transient ModbusRegisterReadValue selectedRegisterReadValue;
@@ -40,11 +44,13 @@ public class ModbusRegisterRead {
     public ModbusRegisterRead() {
     }
 
-    public ModbusRegisterRead(String address, Integer bytes, ModbusReadRegisterType type,
-                              ModbusRegisterReadValue selectedRegisterReadValue) {
+    public ModbusRegisterRead(String address, Integer bytes, ByteOrder byteOrder, ModbusReadRegisterType type,
+                              Double factorToValue, ModbusRegisterReadValue selectedRegisterReadValue) {
         this.address = address;
         this.bytes = bytes;
+        this.byteOrder = byteOrder != null ? byteOrder.name() : null;
         this.type = type.name();
+        this.factorToValue = factorToValue;
         this.selectedRegisterReadValue = selectedRegisterReadValue;
     }
 
@@ -62,12 +68,28 @@ public class ModbusRegisterRead {
         return bytes;
     }
 
+    public ByteOrder getByteOrder() {
+        return this.byteOrder != null ? ByteOrder.valueOf(this.byteOrder) : null;
+    }
+
+    public void setByteOrder(String byteOrder) {
+        this.byteOrder = byteOrder;
+    }
+
     public ModbusReadRegisterType getType() {
         return ModbusReadRegisterType.valueOf(this.type);
     }
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public Double getFactorToValue() {
+        return factorToValue;
+    }
+
+    public void setFactorToValue(Double factorToValue) {
+        this.factorToValue = factorToValue;
     }
 
     public List<ModbusRegisterReadValue> getRegisterReadValues() {
@@ -93,7 +115,8 @@ public class ModbusRegisterRead {
             for(ModbusRegisterReadValue registerReadValue: registerRead.getRegisterReadValues()) {
                 if(registerName.equals(registerReadValue.getName())) {
                     matches.add(new ModbusRegisterRead(registerRead.getAddress(), registerRead.getBytes(),
-                            registerRead.getType(), registerReadValue));
+                            registerRead.getByteOrder(), registerRead.getType(), registerRead.getFactorToValue(),
+                            registerReadValue));
                 }
             }
         }

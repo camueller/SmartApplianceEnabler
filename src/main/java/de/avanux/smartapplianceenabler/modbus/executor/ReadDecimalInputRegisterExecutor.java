@@ -16,13 +16,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.avanux.smartapplianceenabler.modbus;
+package de.avanux.smartapplianceenabler.modbus.executor;
 
-public enum ModbusReadRegisterType {
-    InputFloat,
-    InputDecimal,
-    InputString,
-    Holding,
-    Coil,
-    Discrete
+public interface ReadDecimalInputRegisterExecutor {
+    Double getValue();
 }

@@ -31,6 +31,11 @@ public class ReadStringInputRegisterExecutorImpl extends ReadInputRegisterExecut
     }
 
     @Override
+    public Logger getLogger() {
+        return logger;
+    }
+
+    @Override
     public String getValue() {
         StringBuilder stringValue = new StringBuilder();
         for(Integer byteValue : getByteValues()) {

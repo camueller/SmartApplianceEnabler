@@ -138,9 +138,27 @@
                   [(ngModel)]="meter.modbusElectricityMeter.powerConfiguration.type">
             <option *ngFor="let modbusReadRegisterType of settingsDefaults.modbusReadRegisterTypes"
                     [ngValue]="modbusReadRegisterType"
-                    [selected]="modbusReadRegisterType==meter.modbusElectricityMeter.registerType"
+                    [selected]="modbusReadRegisterType==meter.modbusElectricityMeter.powerConfiguration.type"
             >{{modbusReadRegisterType}}</option>
           </select>
+        </div>
+        <div class="field" *ngIf="meter.modbusElectricityMeter.powerConfiguration.type==='InputDecimal'">
+          <label>{{'MeterComponent.modbusElectricityMeter_byteOrder' | translate}}</label>
+          <select class="ui fluid dropdown" name="modbusElectricityMeter_powerByteOrder"
+                  [(ngModel)]="meter.modbusElectricityMeter.powerConfiguration.byteOrder">
+            <option *ngFor="let byteOrder of settingsDefaults.byteOrders"
+                    [ngValue]="byteOrder"
+                    [selected]="byteOrder==meter.modbusElectricityMeter.powerConfiguration.byteOrder"
+            >{{byteOrder}}</option>
+          </select>
+        </div>
+        <div class="field" *ngIf="meter.modbusElectricityMeter.powerConfiguration.type==='InputDecimal'">
+          <label>{{'MeterComponent.modbusElectricityMeter_factorToValue' | translate}}</label>
+          <input type="text" name="modbusElectricityMeter_powerFactorToValue"
+                 [(ngModel)]="meter.modbusElectricityMeter.powerConfiguration.factorToValue"
+                 pattern="{{VALIDATOR_PATTERN_FLOAT}}">
+          <div *ngIf="errors.modbusElectricityMeter_factorToValue" class="ui negative message">
+            {{errors.modbusElectricityMeter_factorToValue}}</div>
         </div>
       </div>
       <h4 class="ui dividing header">{{'MeterComponent.modbusElectricityMeter_energy' | translate}}</h4>
@@ -155,20 +173,37 @@
         <div class="field">
           <label>{{'MeterComponent.modbusElectricityMeter_bytes' | translate}}</label>
           <input type="text" name="modbusElectricityMeter_energyBytes"
-                 [(ngModel)]="meter.modbusElectricityMeter.energyConfiguration.bytes"
-                 pattern="{{VALIDATOR_PATTERN_INTEGER}}">
+                 [(ngModel)]="meter.modbusElectricityMeter.energyConfiguration.bytes">
           <div *ngIf="errors.modbusElectricityMeter_registerAddress" class="ui negative message">
             {{errors.modbusElectricityMeter_registerAddress}}</div>
         </div>
         <div class="field">
           <label>{{'MeterComponent.modbusElectricityMeter_registerType' | translate}}</label>
-          <select class="ui fluid dropdown" name="registerType"
+          <select class="ui fluid dropdown" name="modbusElectricityMeter_energyRegisterType"
                   [(ngModel)]="meter.modbusElectricityMeter.energyConfiguration.type">
             <option *ngFor="let modbusReadRegisterType of settingsDefaults.modbusReadRegisterTypes"
                     [ngValue]="modbusReadRegisterType"
-                    [selected]="modbusReadRegisterType==meter.modbusElectricityMeter.energyRegisterType"
+                    [selected]="modbusReadRegisterType==meter.modbusElectricityMeter.energyConfiguration.type"
             >{{modbusReadRegisterType}}</option>
           </select>
+        </div>
+        <div class="field" *ngIf="meter.modbusElectricityMeter.energyConfiguration.type==='InputDecimal'">
+          <label>{{'MeterComponent.modbusElectricityMeter_byteOrder' | translate}}</label>
+          <select class="ui fluid dropdown" name="modbusElectricityMeter_energyByteOrder"
+                  [(ngModel)]="meter.modbusElectricityMeter.energyConfiguration.byteOrder">
+            <option *ngFor="let byteOrder of settingsDefaults.byteOrders"
+                    [ngValue]="byteOrder"
+                    [selected]="byteOrder==meter.modbusElectricityMeter.energyConfiguration.byteOrder"
+            >{{byteOrder}}</option>
+          </select>
+        </div>
+        <div class="field" *ngIf="meter.modbusElectricityMeter.energyConfiguration.type==='InputDecimal'">
+          <label>{{'MeterComponent.modbusElectricityMeter_factorToValue' | translate}}</label>
+          <input type="text" name="modbusElectricityMeter_energyFactorToValue"
+                 [(ngModel)]="meter.modbusElectricityMeter.energyConfiguration.factorToValue"
+                 pattern="{{VALIDATOR_PATTERN_FLOAT}}">
+          <div *ngIf="errors.modbusElectricityMeter_factorToValue" class="ui negative message">
+            {{errors.modbusElectricityMeter_factorToValue}}</div>
         </div>
       </div>
     </div>

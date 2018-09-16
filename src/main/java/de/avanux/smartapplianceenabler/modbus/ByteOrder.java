@@ -18,11 +18,7 @@
 
 package de.avanux.smartapplianceenabler.modbus;
 
-public enum ModbusReadRegisterType {
-    InputFloat,
-    InputDecimal,
-    InputString,
-    Holding,
-    Coil,
-    Discrete
+public enum ByteOrder {
+    BigEndian,  /* most significant byte comes first */
+    LittleEndian /* most significant byte comes last */
 }

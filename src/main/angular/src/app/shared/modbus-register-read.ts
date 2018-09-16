@@ -9,6 +9,8 @@ export class ModbusRegisterRead {
   address: string;
   type: string;
   bytes: number;
+  byteOrder: string;
+  factorToValue: string;
   pollInterval: number;
   registerReadValues: ModbusRegisterReadValue[];
 

@@ -18,6 +18,7 @@
 
 package de.avanux.smartapplianceenabler.modbus.executor;
 
+import de.avanux.smartapplianceenabler.modbus.ByteOrder;
 import de.avanux.smartapplianceenabler.modbus.ModbusReadRegisterType;
 import de.avanux.smartapplianceenabler.modbus.ModbusWriteRegisterType;
 
@@ -49,11 +50,20 @@ public class ModbusExecutorFactory {
         ModbusExecutorFactory.testingWriteIntegerExecutor = testingWriteIntegerExecutor;
     }
 
-    public static ModbusReadTransactionExecutor getReadExecutor(String applianceId, ModbusReadRegisterType type, String address) {
-        return getReadExecutor(applianceId, type, address, 1);
+
+    public static ModbusReadTransactionExecutor getReadExecutor(String applianceId, ModbusReadRegisterType type,
+                                                                String address) {
+        return getReadExecutor(applianceId, type, address, 1, ByteOrder.BigEndian, 1.0);
     }
 
-    public static ModbusReadTransactionExecutor getReadExecutor(String applianceId, ModbusReadRegisterType type, String address, int bytes) {
+    public static ModbusReadTransactionExecutor getReadExecutor(String applianceId, ModbusReadRegisterType type,
+                                                                String address, int bytes) {
+        return getReadExecutor(applianceId, type, address, bytes, ByteOrder.BigEndian, 1.0);
+    }
+
+    public static ModbusReadTransactionExecutor getReadExecutor(String applianceId, ModbusReadRegisterType type,
+                                                                String address, int bytes, ByteOrder byteOrder,
+                                                                Double factorToValue) {
         ModbusReadTransactionExecutor executor;
         switch (type) {
             case InputString:
@@ -70,6 +80,14 @@ public class ModbusExecutorFactory {
                 }
                 else {
                     executor = new ReadFloatInputRegisterExecutorImpl(address, bytes);
+                }
+                break;
+            case InputDecimal:
+                if(testingReadFloatExecutor != null) {
+                    executor = testingReadFloatExecutor;
+                }
+                else {
+                    executor = new ReadDecimalInputRegisterExecutorImpl(address, bytes, byteOrder, factorToValue);
                 }
                 break;
             case Coil:
