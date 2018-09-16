@@ -130,6 +130,7 @@ public class SaeController {
         Capabilities capabilities = new Capabilities();
         capabilities.setCurrentPowerMethod(CurrentPowerMethod.valueOf(applianceInfo.getCurrentPowerMethod()));
         capabilities.setInterruptionsAllowed(applianceInfo.isInterruptionsAllowed());
+        capabilities.setOptionalEnergy(false);
 
         DeviceInfo deviceInfo = new DeviceInfo();
         deviceInfo.setIdentification(identification);
@@ -185,6 +186,10 @@ public class SaeController {
             ApplianceManager.getInstance().addAppliance(appliance, deviceInfo);
         }
         else {
+            Appliance appliance = getAppliance(applianceId);
+            if(appliance != null) {
+                deviceInfo.getCapabilities().setOptionalEnergy(appliance.canConsumeOptionalEnergy());
+            }
             if(! ApplianceManager.getInstance().updateAppliance(deviceInfo)) {
                 logger.error("{}: Appliance not found.", applianceId);
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
