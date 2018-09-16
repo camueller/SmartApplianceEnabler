@@ -10,6 +10,7 @@ export class SettingsTestdata {
       'holidaysUrl': 'http://feiertage.jarmedia.de/api/?jahr={0}&nur_land=HE',
       'modbusReadRegisterTypes': ['InputFloat', 'InputString', 'Holding', 'Coil', 'Discrete'],
       'modbusWriteRegisterTypes': ['Holding', 'Coil'],
+      'byteOrders': ['BigEndian', 'LitteEndian'],
       'modbusTcpHost': '127.0.0.1',
       'modbusTcpPort': 502,
       'pulseReceiverPort': 9999
@@ -21,6 +22,7 @@ export class SettingsTestdata {
       'holidaysUrl': 'http://feiertage.jarmedia.de/api/?jahr={0}&nur_land=HE',
       'modbusReadRegisterTypes': ['InputFloat', 'InputString', 'Holding', 'Coil', 'Discrete'],
       'modbusWriteRegisterTypes': ['Holding', 'Coil'],
+      'byteOrders': ['BigEndian', 'LitteEndian'],
       'modbusTcpHost': '127.0.0.1',
       'modbusTcpPort': 502,
       'pulseReceiverPort': 9999
