@@ -22,9 +22,6 @@ import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 /**
  * A PollEnergyMeter meters energy by polling the energy count.
  */
@@ -34,7 +31,7 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
     private String applianceId;
     private PollEnergyExecutor pollEnergyExecutor;
     private transient Float startEnergyCounter;
-    private transient Float totalEnergyCounter;
+    private transient Float totalEnergy;
     private boolean started;
 
 
@@ -48,19 +45,22 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
     }
 
     public float getEnergy() {
-        float stopEnergyCounter = this.pollEnergyExecutor.pollEnergy();
+        float currentEnergyCounter = this.pollEnergyExecutor.pollEnergy();
         float energy = 0.0f;
         if(this.startEnergyCounter != null) {
-            if(this.totalEnergyCounter != null) {
-                energy = this.totalEnergyCounter + stopEnergyCounter - this.startEnergyCounter;
+            if(this.totalEnergy != null) {
+                energy = this.totalEnergy + currentEnergyCounter - this.startEnergyCounter;
             }
             else {
-                energy = stopEnergyCounter - this.startEnergyCounter;
+                energy = currentEnergyCounter - this.startEnergyCounter;
             }
         }
+        else if (this.totalEnergy != null) {
+            energy = this.totalEnergy;
+        }
 
-        logger.debug("{}: energy={}kWh started={} totalEnergyCounter={} startEnergyCounter={} stopEnergyCounter={}",
-                applianceId, energy, started, totalEnergyCounter, startEnergyCounter, stopEnergyCounter);
+        logger.debug("{}: energy={}kWh totalEnergy={} startEnergyCounter={} currentEnergyCounter={} started={}",
+                applianceId, energy, totalEnergy, startEnergyCounter, currentEnergyCounter, started);
 
         return energy;
     }
@@ -73,19 +73,20 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
     public void stopEnergyCounter() {
         float stopEnergyCounter = this.pollEnergyExecutor.pollEnergy();
         if(this.startEnergyCounter != null) {
-            if(this.totalEnergyCounter != null) {
-                this.totalEnergyCounter += stopEnergyCounter - this.startEnergyCounter;
+            if(this.totalEnergy != null) {
+                this.totalEnergy += stopEnergyCounter - this.startEnergyCounter;
             }
             else {
-                this.totalEnergyCounter = stopEnergyCounter - this.startEnergyCounter;
+                this.totalEnergy = stopEnergyCounter - this.startEnergyCounter;
             }
         }
         this.started = false;
+        this.startEnergyCounter = null;
     }
 
     public void resetEnergyCounter() {
         this.startEnergyCounter = null;
-        this.totalEnergyCounter = null;
+        this.totalEnergy = null;
     }
 
     public boolean isStarted() {
