@@ -52,9 +52,12 @@ public class PollEnergyMeterTest {
 
     @Test
     public void getEnergy_started_pollValueIncreases_stopped_started_pollValueIncreases() {
+        Assert.assertEquals(0.0f, this.pollEnergyMeter.getEnergy(), 0.01f);
         this.pollEnergyMeter.startEnergyCounter();
+        Assert.assertEquals(0.0f, this.pollEnergyMeter.getEnergy(), 0.01f);
         this.testPollEnergyExecutor.addEnergy(10.0f);
         this.pollEnergyMeter.stopEnergyCounter();
+        Assert.assertEquals(10.0f, this.pollEnergyMeter.getEnergy(), 0.01f);
         this.pollEnergyMeter.startEnergyCounter();
         this.testPollEnergyExecutor.addEnergy(5.0f);
         Assert.assertEquals(15.0f, this.pollEnergyMeter.getEnergy(), 0.01f);
