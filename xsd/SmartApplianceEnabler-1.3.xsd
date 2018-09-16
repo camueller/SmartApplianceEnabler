@@ -149,7 +149,9 @@
         </xs:sequence>
         <xs:attribute name="address" type="xs:string" use="required" />
         <xs:attribute name="bytes" type="xs:int" />
+        <xs:attribute name="byteOrder" type="ByteOrderType" />
         <xs:attribute name="type" type="ModbusRegisterTypeType" use="required" />
+        <xs:attribute name="factorToValue" type="xs:double" />
     </xs:complexType>
 
     <xs:complexType name="ModbusRegisterReadValueType">
@@ -198,10 +200,18 @@
     <xs:simpleType name="ModbusRegisterTypeType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="InputFloat" />
+            <xs:enumeration value="InputDecimal" />
             <xs:enumeration value="InputString" />
             <xs:enumeration value="Holding" />
             <xs:enumeration value="Coil" />
             <xs:enumeration value="Discrete" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ByteOrderType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="BigEndian" />
+            <xs:enumeration value="LittleEndian" />
         </xs:restriction>
     </xs:simpleType>
 

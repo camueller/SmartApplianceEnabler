@@ -18,11 +18,10 @@
 
 package de.avanux.smartapplianceenabler.modbus;
 
-public enum ModbusReadRegisterType {
-    InputFloat,
-    InputDecimal,
-    InputString,
-    Holding,
-    Coil,
-    Discrete
+/**
+ * https://stackoverflow.com/questions/5167079/lsb-msb-handling-in-java
+ */
+public enum BitNumbering {
+    LeastSignificantBit, /* bit 0 has the lowest value */
+    MostSignificantBit /* bit 0 has the highest value */
 }

@@ -20,6 +20,7 @@ package de.avanux.smartapplianceenabler.webservice;
 
 import de.avanux.smartapplianceenabler.HolidaysDownloader;
 import de.avanux.smartapplianceenabler.meter.PulseReceiver;
+import de.avanux.smartapplianceenabler.modbus.ByteOrder;
 import de.avanux.smartapplianceenabler.modbus.ModbusReadRegisterType;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
 import de.avanux.smartapplianceenabler.modbus.ModbusWriteRegisterType;
@@ -33,6 +34,7 @@ public class SettingsDefaults {
     private Integer modbusTcpPort = ModbusTcp.DEFAULT_PORT;
     private ModbusReadRegisterType[] modbusReadRegisterTypes = ModbusReadRegisterType.values();
     private ModbusWriteRegisterType[] modbusWriteRegisterTypes = ModbusWriteRegisterType.values();
+    private ByteOrder[] byteOrders = ByteOrder.values();
     private Integer pulseReceiverPort = PulseReceiver.DEFAULT_PORT;
 
     public static String getHolidaysUrl() {
@@ -53,6 +55,10 @@ public class SettingsDefaults {
 
     public ModbusWriteRegisterType[] getModbusWriteRegisterTypes() {
         return modbusWriteRegisterTypes;
+    }
+
+    public ByteOrder[] getByteOrders() {
+        return byteOrders;
     }
 
     public static Integer getPulseReceiverPort() {

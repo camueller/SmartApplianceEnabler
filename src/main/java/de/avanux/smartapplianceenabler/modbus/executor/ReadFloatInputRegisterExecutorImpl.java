@@ -31,6 +31,11 @@ public class ReadFloatInputRegisterExecutorImpl extends ReadInputRegisterExecuto
     }
 
     @Override
+    public Logger getLogger() {
+        return logger;
+    }
+
+    @Override
     public Float getValue() {
         Integer[] byteValues = getByteValues();
         if(getBytes() == 2) {

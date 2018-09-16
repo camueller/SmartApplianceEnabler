@@ -4,6 +4,7 @@ export class SettingsDefaults {
   modbusTcpPort: number;
   modbusReadRegisterTypes: string[];
   modbusWriteRegisterTypes: string[];
+  byteOrders: string[];
   pulseReceiverPort: number;
 
   public constructor(init?: Partial<SettingsDefaults>) {

@@ -30,12 +30,13 @@ import org.slf4j.LoggerFactory;
  * The implementation directly correlates with the class 0 function <i>read multiple registers (FC 4)</i>
  */
 abstract public class ReadInputRegisterExecutor<V> extends BaseTransactionExecutor implements ModbusReadTransactionExecutor<V> {
-    private Logger logger = LoggerFactory.getLogger(ReadInputRegisterExecutor.class);
     private Integer[] byteValues;
 
     public ReadInputRegisterExecutor(String address, int bytes) {
         super(address, bytes);
     }
+
+    abstract Logger getLogger();
 
     @Override
     public void execute(TCPMasterConnection con, int slaveAddress) throws ModbusException {
@@ -53,13 +54,18 @@ abstract public class ReadInputRegisterExecutor<V> extends BaseTransactionExecut
             for (int i = 0; i < getBytes(); i++) {
                 this.byteValues[i] = res.getRegisterValue(i);
             }
-            logger.debug("{}: Input register={} value={}", getApplianceId(), getAddress(), this.byteValues);
+            getLogger().debug("{}: Input register={} value={}", getApplianceId(), getAddress(), this.byteValues);
         } else {
-            logger.error("{}: No response received.", getApplianceId());
+            getLogger().error("{}: No response received.", getApplianceId());
         }
     }
 
     protected Integer[] getByteValues() {
         return byteValues;
+    }
+
+    // Should only be used for testing.
+    public void setByteValues(Integer[] byteValues) {
+        this.byteValues = byteValues;
     }
 }

@@ -90,21 +90,22 @@ export class MeterFactory {
   }
 
   toJSONModbusElectricityMeter(modbusElectricityMeter: ModbusElectricityMeter) {
-    const powerConfiguration = modbusElectricityMeter.powerConfiguration;
-    const powerRegisterRead = new ModbusRegisterRead({
-      address: powerConfiguration.address,
-      bytes: powerConfiguration.bytes,
-      type: powerConfiguration.type,
-      registerReadValues: [new ModbusRegisterReadValue({name: 'Power'})]
-    });
-    const energyConfiguration = modbusElectricityMeter.energyConfiguration;
-    const energyRegisterRead = new ModbusRegisterRead({
-      address: energyConfiguration.address,
-      bytes: energyConfiguration.bytes,
-      type: energyConfiguration.type,
-      registerReadValues: [new ModbusRegisterReadValue({name: 'Energy'})]
-    });
+    const powerRegisterRead = this.toJSONModbusRegisterRead(
+      'Power', modbusElectricityMeter.powerConfiguration);
+    const energyRegisterRead = this.toJSONModbusRegisterRead(
+      'Energy', modbusElectricityMeter.energyConfiguration);
     modbusElectricityMeter.registerReads = [powerRegisterRead, energyRegisterRead];
+  }
+
+  toJSONModbusRegisterRead(registerReadValueName: string, configuration: ModbusRegisterConfguration): ModbusRegisterRead {
+    return new ModbusRegisterRead({
+      address: configuration.address,
+      bytes: configuration.bytes,
+      byteOrder: configuration.byteOrder,
+      type: configuration.type,
+      factorToValue: configuration.factorToValue,
+      registerReadValues: [new ModbusRegisterReadValue({name: registerReadValueName})]
+    });
   }
 
   createS0ElectricityMeter(rawMeter: any, networked: boolean): S0ElectricityMeter {
@@ -133,14 +134,18 @@ export class MeterFactory {
           modbusElectricityMeter.powerConfiguration = new ModbusRegisterConfguration({
             address: registerRead.address,
             bytes: registerRead.bytes,
-            type: registerRead.type
+            byteOrder: registerRead.byteOrder,
+            type: registerRead.type,
+            factorToValue: registerRead.factorToValue
           });
         }
         if (name === 'Energy') {
           modbusElectricityMeter.energyConfiguration = new ModbusRegisterConfguration({
             address: registerRead.address,
             bytes: registerRead.bytes,
-            type: registerRead.type
+            byteOrder: registerRead.byteOrder,
+            type: registerRead.type,
+            factorToValue: registerRead.factorToValue
           });
         }
       });

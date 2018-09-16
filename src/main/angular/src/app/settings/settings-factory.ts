@@ -48,6 +48,7 @@ export class SettingsFactory {
     settings.modbusTcpPort = Number.parseInt(rawSettings.modbusTcpPort);
     settings.modbusReadRegisterTypes = rawSettings.modbusReadRegisterTypes;
     settings.modbusWriteRegisterTypes = rawSettings.modbusWriteRegisterTypes;
+    settings.byteOrders = rawSettings.byteOrders;
     settings.pulseReceiverPort = Number.parseInt(rawSettings.pulseReceiverPort);
     this.logger.debug('SettingsDefaults (TYPE): ' + JSON.stringify(settings));
     return settings;
