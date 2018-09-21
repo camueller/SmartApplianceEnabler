@@ -336,6 +336,9 @@ public class SaeController {
                 (schedulesToSet != null ? schedulesToSet.size() : "0"));
         Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
         if(appliance != null) {
+            if(appliance.getMeter() != null) {
+                appliance.getMeter().resetEnergyMeter();
+            }
             appliance.getRunningTimeMonitor().setSchedules(schedulesToSet);
             return;
         }
