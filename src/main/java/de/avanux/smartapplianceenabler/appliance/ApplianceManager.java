@@ -129,8 +129,10 @@ public class ApplianceManager implements Runnable {
                     }
                 }
             }
-            for(Appliance appliance : appliances.getAppliances()) {
-                appliance.stop();
+            if(appliances.getAppliances() != null) {
+                for(Appliance appliance : appliances.getAppliances()) {
+                    appliance.stop();
+                }
             }
         }
         logger.info("Restarting appliances ...");
@@ -292,7 +294,12 @@ public class ApplianceManager implements Runnable {
         logger.debug("{}: Add appliance", appliance.getId());
         List<DeviceInfo> deviceInfos = device2EM.getDeviceInfo();
         deviceInfos.add(deviceInfo);
-        appliances.getAppliances().add(appliance);
+        List<Appliance> appliances = this.appliances.getAppliances();
+        if(appliances == null) {
+            appliances = new ArrayList<>();
+            this.appliances.setAppliances(appliances);
+        }
+        appliances.add(appliance);
         save(true, true);
     }
 
