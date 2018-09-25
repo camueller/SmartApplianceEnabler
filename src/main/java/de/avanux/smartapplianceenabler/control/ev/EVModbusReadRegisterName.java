@@ -22,5 +22,6 @@ public enum EVModbusReadRegisterName {
     VehicleNotConnected,
     VehicleConnected,
     Charging,
-    ChargingCompleted
+    ChargingCompleted,
+    Error
 }

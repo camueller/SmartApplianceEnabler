@@ -95,6 +95,7 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
       'ControlComponent.evcharger_VehicleConnected',
       'ControlComponent.evcharger_Charging',
       'ControlComponent.evcharger_ChargingCompleted',
+      'ControlComponent.evcharger_Error',
       'ControlComponent.evcharger_StartCharging',
       'ControlComponent.evcharger_StopCharging',
       'ControlComponent.evcharger_ChargingCurrent'
@@ -173,7 +174,9 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   }
 
   getModbusRegisterNames(): string[] {
-    return this.control.evCharger.control.configuration.map(configuration => configuration.name);
+    return this.control.evCharger.control.configuration
+      .map(configuration => configuration.name)
+      .filter((v, i, a) => a.indexOf(v) === i);
   }
 
   getTranslatedModbusRegisterName(name: string) {

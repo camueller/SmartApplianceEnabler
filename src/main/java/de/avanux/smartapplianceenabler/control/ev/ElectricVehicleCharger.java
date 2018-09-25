@@ -58,7 +58,8 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
         VEHICLE_NOT_CONNECTED,
         VEHICLE_CONNECTED,
         CHARGING,
-        CHARGING_COMPLETED
+        CHARGING_COMPLETED,
+        ERROR
     }
 
     public void setAppliance(Appliance appliance) {
@@ -146,7 +147,24 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
 
     protected State getNewState(State currenState) {
         State newState = currenState;
-        if(currenState == State.VEHICLE_NOT_CONNECTED) {
+        if(control.isInErrorState()) {
+            return State.ERROR;
+        }
+        if(currenState == State.ERROR) {
+            if(control.isVehicleConnected()) {
+                newState = State.VEHICLE_CONNECTED;
+            }
+            else if(control.isCharging()) {
+                newState = State.CHARGING;
+            }
+            else if(control.isChargingCompleted()) {
+                newState = State.CHARGING_COMPLETED;
+            }
+            else if(control.isVehicleNotConnected()) {
+                newState = State.VEHICLE_NOT_CONNECTED;
+            }
+        }
+        else if(currenState == State.VEHICLE_NOT_CONNECTED) {
             if (control.isVehicleConnected()) {
                 newState = State.VEHICLE_CONNECTED;
             }
@@ -263,6 +281,10 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
 
     public boolean isChargingCompleted() {
         return getState() == State.CHARGING_COMPLETED;
+    }
+
+    public boolean isInErrorState() {
+        return getState() == State.ERROR;
     }
 
     public boolean isUseOptionalEnergy() {

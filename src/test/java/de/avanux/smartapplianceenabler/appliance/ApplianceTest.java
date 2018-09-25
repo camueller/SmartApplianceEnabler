@@ -198,6 +198,7 @@ public class ApplianceTest extends TestBase {
         ElectricVehicleCharger evCharger = Mockito.spy(new ElectricVehicleCharger());
         this.appliance.setControl(evCharger);
         Mockito.doReturn(true).when(evCharger).isVehicleConnected();
+        Mockito.doReturn(false).when(evCharger).isInErrorState();
 
         List<RuntimeInterval> nonEvOptionalEnergyIntervals = new ArrayList<>();
         RuntimeInterval nonEvOptionalEnergyInterval = new RuntimeInterval(3600, 7200,
@@ -210,5 +211,20 @@ public class ApplianceTest extends TestBase {
                 0, 40000 - Float.valueOf(energyAlreadyCharged).intValue() * 1000, true);
         Assert.assertEquals(runtimeIntervals.get(0), evOptionalEnergyInterval);
         Assert.assertEquals(runtimeIntervals.get(1), nonEvOptionalEnergyInterval);
+    }
+
+    @Test
+    public void getRuntimeIntervals_EV_error() {
+        ElectricVehicleCharger evCharger = Mockito.spy(new ElectricVehicleCharger());
+        this.appliance.setControl(evCharger);
+        Mockito.doReturn(true).when(evCharger).isInErrorState();
+
+        List<RuntimeInterval> nonEvOptionalEnergyIntervals = new ArrayList<>();
+        RuntimeInterval nonEvOptionalEnergyInterval = new RuntimeInterval(3600, 7200,
+                3600, null);
+        nonEvOptionalEnergyIntervals.add(nonEvOptionalEnergyInterval);
+
+        List<RuntimeInterval> runtimeIntervals = this.appliance.getRuntimeIntervals(nonEvOptionalEnergyIntervals);
+        Assert.assertEquals(0, runtimeIntervals.size());
     }
 }
