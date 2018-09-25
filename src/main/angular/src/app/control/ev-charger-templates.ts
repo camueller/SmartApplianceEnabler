@@ -4,7 +4,83 @@ export class EvChargerTemplates {
 
   static getTemplates(): { [name: string]: EvCharger } {
     const templates: { [name: string]: EvCharger } = {};
-    templates['PhoenixContact'] = JSON.parse('{"@class":"de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger","voltage":230,"phases":1,"pollInterval":10,"startChargingStateDetectionDelay":300,"forceInitialCharging":false,"control":{"@class":"de.avanux.smartapplianceenabler.control.ev.EVModbusControl","slaveAddress":180,"configuration":[{"name":"VehicleNotConnected","address":"100","type":"InputString","extractionRegex":"(A)","write":false},{"name":"VehicleConnected","address":"100","type":"InputString","extractionRegex":"(B)","write":false},{"name":"Charging","address":"100","type":"InputString","extractionRegex":"(C|D)","write":false},{"name":"ChargingCompleted","address":"100","type":"InputString","extractionRegex":"(B)","write":false},{"name":"ChargingCompleted","address":"204","type":"Discrete","extractionRegex":null,"write":false},{"name":"StartCharging","address":"400","type":"Coil","value":"1","write":true},{"name":"StopCharging","address":"400","type":"Coil","value":"0","write":true},{"name":"ChargingCurrent","address":"300","type":"Holding","value":"0","write":true}]}}');
+    templates['PhoenixContact'] = JSON.parse('{\n' +
+      '  "@class": "de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger",\n' +
+      '  "voltage": 230,\n' +
+      '  "phases": 1,\n' +
+      '  "pollInterval": 10,\n' +
+      '  "startChargingStateDetectionDelay": 300,\n' +
+      '  "forceInitialCharging": false,\n' +
+      '  "control": {\n' +
+      '    "@class": "de.avanux.smartapplianceenabler.control.ev.EVModbusControl",\n' +
+      '    "slaveAddress": 180,\n' +
+      '    "configuration": [\n' +
+      '      {\n' +
+      '        "name": "VehicleNotConnected",\n' +
+      '        "address": "100",\n' +
+      '        "type": "InputString",\n' +
+      '        "extractionRegex": "(A)",\n' +
+      '        "write": false\n' +
+      '      },\n' +
+      '      {\n' +
+      '        "name": "VehicleConnected",\n' +
+      '        "address": "100",\n' +
+      '        "type": "InputString",\n' +
+      '        "extractionRegex": "(B)",\n' +
+      '        "write": false\n' +
+      '      },\n' +
+      '      {\n' +
+      '        "name": "Charging",\n' +
+      '        "address": "100",\n' +
+      '        "type": "InputString",\n' +
+      '        "extractionRegex": "(C|D)",\n' +
+      '        "write": false\n' +
+      '      },\n' +
+      '      {\n' +
+      '        "name": "ChargingCompleted",\n' +
+      '        "address": "100",\n' +
+      '        "type": "InputString",\n' +
+      '        "extractionRegex": "(B)",\n' +
+      '        "write": false\n' +
+      '      },\n' +
+      '      {\n' +
+      '        "name": "Error",\n' +
+      '        "address": "100",\n' +
+      '        "type": "InputString",\n' +
+      '        "extractionRegex": "(E|F)",\n' +
+      '        "write": false\n' +
+      '      },\n' +
+      '      {\n' +
+      '        "name": "ChargingCompleted",\n' +
+      '        "address": "204",\n' +
+      '        "type": "Discrete",\n' +
+      '        "extractionRegex": null,\n' +
+      '        "write": false\n' +
+      '      },\n' +
+      '      {\n' +
+      '        "name": "StartCharging",\n' +
+      '        "address": "400",\n' +
+      '        "type": "Coil",\n' +
+      '        "value": "1",\n' +
+      '        "write": true\n' +
+      '      },\n' +
+      '      {\n' +
+      '        "name": "StopCharging",\n' +
+      '        "address": "400",\n' +
+      '        "type": "Coil",\n' +
+      '        "value": "0",\n' +
+      '        "write": true\n' +
+      '      },\n' +
+      '      {\n' +
+      '        "name": "ChargingCurrent",\n' +
+      '        "address": "300",\n' +
+      '        "type": "Holding",\n' +
+      '        "value": "0",\n' +
+      '        "write": true\n' +
+      '      }\n' +
+      '    ]\n' +
+      '  }\n' +
+      '}');
     return templates;
   }
 }

@@ -133,6 +133,7 @@
   "ControlComponent.evcharger_ChargingCompleted": "Ladevorgang beendet",
   "ControlComponent.evcharger_StartCharging": "Ladevorgang beginnen",
   "ControlComponent.evcharger_StopCharging": "Ladevorgang beenden",
+  "ControlComponent.evcharger_Error": "Ladegerät meldet Fehler",
   "ControlComponent.evcharger_ChargingCurrent": "Ladestromstärke setzen",
   "ControlComponent.httpSwitch_onUrl": "URL zum Einschalten",
   "ControlComponent.httpSwitch_onData": "Daten zum Einschalten",

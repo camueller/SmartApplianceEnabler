@@ -169,6 +169,7 @@
             <xs:enumeration value="VehicleConnected" />
             <xs:enumeration value="Charging" />
             <xs:enumeration value="ChargingCompleted" />
+            <xs:enumeration value="Error" />
         </xs:restriction>
     </xs:simpleType>
 

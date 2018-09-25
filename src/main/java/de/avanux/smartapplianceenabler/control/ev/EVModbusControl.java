@@ -114,6 +114,11 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
         return isMatchingVehicleStatus(EVModbusReadRegisterName.ChargingCompleted);
     }
 
+    @Override
+    public boolean isInErrorState()  {
+        return isMatchingVehicleStatus(EVModbusReadRegisterName.Error);
+    }
+
     public boolean isMatchingVehicleStatus(EVModbusReadRegisterName registerName) {
         List<ModbusRegisterRead> registerReads = ModbusRegisterRead.getRegisterReads(registerName.name(),
                 this.registerReads);

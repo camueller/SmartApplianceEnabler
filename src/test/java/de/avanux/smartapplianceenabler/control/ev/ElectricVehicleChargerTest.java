@@ -29,6 +29,7 @@ public class ElectricVehicleChargerTest {
 
     public ElectricVehicleChargerTest() {
         evCharger.setControl(evControl);
+        evCharger.setApplianceId("TEST");
         evCharger.init();
     }
 
@@ -228,6 +229,22 @@ public class ElectricVehicleChargerTest {
         evCharger.updateState();
         evCharger.updateState();
         Assert.assertEquals(ElectricVehicleCharger.State.VEHICLE_NOT_CONNECTED, evCharger.getState());
+    }
+
+    @Test
+    public void updateState_error() {
+        // CHARGING
+        configureMocks(false, true, true, false);
+        evCharger.updateState();
+        evCharger.updateState();
+        Mockito.when(evControl.isInErrorState()).thenReturn(true);
+        evCharger.updateState();
+        evCharger.updateState();
+        Assert.assertEquals(ElectricVehicleCharger.State.ERROR, evCharger.getState());
+        Mockito.when(evControl.isInErrorState()).thenReturn(false);
+        evCharger.updateState();
+        evCharger.updateState();
+        Assert.assertEquals(ElectricVehicleCharger.State.CHARGING, evCharger.getState());
     }
 
     @Test
