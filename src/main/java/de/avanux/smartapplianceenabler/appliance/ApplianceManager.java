@@ -46,22 +46,9 @@ public class ApplianceManager implements Runnable {
     private FileHandler fileHandler = new FileHandler();
     private Device2EM device2EM;
     private Appliances appliances;
-    private GpioController gpioController;
     private Timer timer;
     
     private ApplianceManager() {
-        if(System.getProperty("os.arch").equals("arm")) {
-            try {
-                gpioController = GpioFactory.getInstance();
-            }
-            catch(Error e) {
-                logger.error("Error initializing pi4j. Most likely libwiringPi.so is missing. In order to install it use the following command: sudo apt-get install wiringpi", e);
-                System.exit(-1);
-            }
-        }
-        else {
-            logger.error("GPIO access disabled - not running on Raspberry Pi.");
-        }
     }
     
     public static ApplianceManager getInstance() {
@@ -78,6 +65,21 @@ public class ApplianceManager implements Runnable {
             instance.logger.warn("Timer disabled");
         }
         return instance;
+    }
+
+    private GpioController getGpioController() {
+        if(System.getProperty("os.arch").equals("arm")) {
+            try {
+                return GpioFactory.getInstance();
+            }
+            catch(Error e) {
+                // warning will be logged later on only if GPIO access is required
+            }
+        }
+        else {
+            logger.warn("GPIO access disabled - not running on Raspberry Pi.");
+        }
+        return null;
     }
 
     public void run() {
@@ -175,7 +177,7 @@ public class ApplianceManager implements Runnable {
                 holidaysUsed = true;
             }
             appliance.init(additionRunningTime);
-            appliance.start(timer, gpioController, pulseReceiverIdWithPulseReceiver, modbusIdWithModbusTcp);
+            appliance.start(timer, getGpioController(), pulseReceiverIdWithPulseReceiver, modbusIdWithModbusTcp);
         }
 
         if(holidaysUsed) {

@@ -198,10 +198,17 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             runningTimeMonitor.setTimer(timer);
         }
 
-        for(GpioControllable gpioControllable : getGpioControllables()) {
-            logger.info("{}: Starting {}", id, gpioControllable.getClass().getSimpleName());
-            gpioControllable.setGpioController(gpioController);
-            gpioControllable.start();
+        if(getGpioControllables().size() > 0) {
+            if(gpioController != null) {
+                for(GpioControllable gpioControllable : getGpioControllables()) {
+                    logger.info("{}: Starting {}", id, gpioControllable.getClass().getSimpleName());
+                    gpioControllable.setGpioController(gpioController);
+                    gpioControllable.start();
+                }
+            }
+            else {
+                logger.error("Error initializing pi4j. Most likely libwiringPi.so is missing. In order to install it use the following command: sudo apt-get install wiringpi");
+            }
         }
 
         if(meter instanceof S0ElectricityMeterNetworked) {
