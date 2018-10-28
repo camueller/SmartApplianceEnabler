@@ -25,7 +25,7 @@ import {Settings} from './settings';
 import {SettingsDefaults} from './settings-defaults';
 import {DialogService} from '../shared/dialog.service';
 import {TranslateService} from '@ngx-translate/core';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {SettingsErrorMessages} from './settings-error-messages';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';

@@ -32,7 +32,7 @@ import {MeterDefaults} from './meter-defaults';
 import {MeterService} from './meter-service';
 import {Meter} from './meter';
 import {DialogService} from '../shared/dialog.service';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {Logger} from '../log/logger';
 import {SettingsDefaults} from '../settings/settings-defaults';
 import {Settings} from '../settings/settings';

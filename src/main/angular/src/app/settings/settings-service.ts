@@ -1,12 +1,13 @@
 import {Injectable} from '@angular/core';
 import {SaeService} from '../shared/sae-service';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {SettingsDefaults} from './settings-defaults';
 import {SettingsFactory} from './settings-factory';
 import {Settings} from './settings';
 import {HttpClient} from '@angular/common/http';
 import {Logger} from '../log/logger';
 import {Info} from './info';
+import {map} from 'rxjs/operators';
 
 @Injectable()
 export class SettingsService extends SaeService {
@@ -21,12 +22,12 @@ export class SettingsService extends SaeService {
 
   getSettingsDefaults(): Observable<SettingsDefaults> {
     return this.http.get(`${SaeService.API}/settingsdefaults`)
-      .map(response => this.settingsFactory.defaultsFromJSON(response));
+      .pipe(map(response => this.settingsFactory.defaultsFromJSON(response)));
   }
 
   getSettings(): Observable<Settings> {
     return this.http.get(`${SaeService.API}/settings`)
-      .map(settings => this.settingsFactory.fromJSON(settings));
+      .pipe(map(settings => this.settingsFactory.fromJSON(settings)));
   }
 
   updateSettings(settings: Settings) {
@@ -38,6 +39,6 @@ export class SettingsService extends SaeService {
 
   getInfo(): Observable<Info> {
     return this.http.get(`${SaeService.API}/info`)
-      .map(info => this.settingsFactory.infoFromJSON(info));
+      .pipe(map(info => this.settingsFactory.infoFromJSON(info)));
   }
 }

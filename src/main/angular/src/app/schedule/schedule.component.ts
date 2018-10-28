@@ -30,7 +30,7 @@ import {ScheduleFactory} from './schedule-factory';
 import {ScheduleService} from './schedule-service';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {DialogService} from '../shared/dialog.service';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {Logger} from '../log/logger';
 import {RuntimeRequest} from './runtime-request';
 import {EnergyRequest} from './energy-request';

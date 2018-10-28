@@ -1,13 +1,11 @@
 import {Injectable} from '@angular/core';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/catch';
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/Rx';
+import {Observable} from 'rxjs';
 import {SaeService} from '../shared/sae-service';
 import {HttpClient} from '@angular/common/http';
 import {Status} from './status';
 import {StatusFactory} from './status-factory';
 import {Logger} from '../log/logger';
+import {map, tap} from 'rxjs/operators';
 
 @Injectable()
 export class StatusService extends SaeService {
@@ -22,16 +20,17 @@ export class StatusService extends SaeService {
 
   getStatus(): Observable<Array<Status>> {
     return this.http.get(`${SaeService.API}/status`)
-      .map((statuses: Array<Status>) => {
+      .pipe(map((statuses: Array<Status>) => {
         return statuses.map(
           status => this.statusFactory.toStatusFromJSON(status));
-      });
+      }));
   }
 
   suggestRuntime(id: string): Observable<string> {
     const url = `${SaeService.API}/runtime?id=${id}`;
     this.logger.debug('Get suggested runtime using ' + url);
-    return this.http.get(url, {responseType: 'text'}).do(next => this.logger.debug('Suggested runtime: ' + next));
+    return this.http.get(url, {responseType: 'text'})
+      .pipe(tap(next => this.logger.debug('Suggested runtime: ' + next)));
   }
 
   setRuntime(id: string, runtime: number): Observable<any> {
