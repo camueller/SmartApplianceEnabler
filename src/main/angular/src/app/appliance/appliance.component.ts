@@ -19,7 +19,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {ApplianceService} from './appliance.service';
 import {ActivatedRoute, CanDeactivate} from '@angular/router';
-import 'rxjs/add/operator/switchMap';
 import {ApplianceFactory} from './appliance-factory';
 import {AppliancesReloadService} from './appliances-reload-service';
 import {Location} from '@angular/common';
@@ -30,7 +29,7 @@ import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {ErrorMessages} from '../shared/error-messages';
 import {Appliance} from './appliance';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {DialogService} from '../shared/dialog.service';
 import {Logger} from '../log/logger';
 

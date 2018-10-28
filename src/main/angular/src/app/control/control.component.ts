@@ -34,7 +34,7 @@ import {AppliancesReloadService} from '../appliance/appliances-reload-service';
 import {ControlDefaults} from './control-defaults';
 import {ControlService} from './control-service';
 import {Control} from './control';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {DialogService} from '../shared/dialog.service';
 import {MockSwitch} from './mock-switch';
 import {Logger} from '../log/logger';

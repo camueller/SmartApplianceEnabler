@@ -3,9 +3,8 @@ import {TranslateService} from '@ngx-translate/core';
 import {Status} from './status';
 import {TimeUtil} from '../shared/time-util';
 import {FormControl, FormControlName, FormGroup, Validators} from '@angular/forms';
-import {Observable} from 'rxjs/Observable';
+import {interval, Subscription} from 'rxjs';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
-import {Subscription} from 'rxjs/Subscription';
 import {StatusService} from './status.service';
 
 declare const $: any;
@@ -64,7 +63,7 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
       'StatusComponent.remainingMaxRunningTime'
     ]).subscribe(translatedStrings => this.translatedStrings = translatedStrings);
     this.loadApplianceStatuses();
-    this.loadApplianceStatusesSubscription = Observable.interval(60 * 1000)
+    this.loadApplianceStatusesSubscription = interval(60 * 1000)
       .subscribe(() => this.loadApplianceStatuses());
     this.switchOnForm = new FormGroup( {
       switchOnRunningTime: new FormControl(null, [

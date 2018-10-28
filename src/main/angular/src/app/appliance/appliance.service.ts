@@ -18,15 +18,13 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 import {Injectable} from '@angular/core';
 import {Appliance} from './appliance';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/catch';
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/Rx';
+import {Observable} from 'rxjs';
 import {ApplianceFactory} from './appliance-factory';
 import {ApplianceHeader} from './appliance-header';
 import {SaeService} from '../shared/sae-service';
 import {HttpClient} from '@angular/common/http';
 import {Logger} from '../log/logger';
+import {map} from 'rxjs/operators';
 
 @Injectable()
 export class ApplianceService extends SaeService {
@@ -41,15 +39,15 @@ export class ApplianceService extends SaeService {
 
   getApplianceHeaders(): Observable<Array<ApplianceHeader>> {
     return this.http.get(`${SaeService.API}/appliances`)
-      .map((applianceHeaders: Array<ApplianceHeader>) => {
+      .pipe(map((applianceHeaders: Array<ApplianceHeader>) => {
         return applianceHeaders.map(
           applianceHeader => this.applianceFactory.toApplianceHeaderFromJSON(applianceHeader));
-      });
+      }));
   }
 
   getAppliance(id: string): Observable<Appliance> {
     return this.http.get(`${SaeService.API}/appliance?id=${id}`)
-      .map(applianceInfo => this.applianceFactory.toApplianceFromJSON(applianceInfo));
+      .pipe(map(applianceInfo => this.applianceFactory.toApplianceFromJSON(applianceInfo)));
   }
 
   updateAppliance(appliance: Appliance, create: boolean): Observable<any> {

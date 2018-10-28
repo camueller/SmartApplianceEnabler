@@ -1,11 +1,12 @@
 import {Injectable} from '@angular/core';
 import {ControlFactory} from './control-factory';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {Control} from './control';
 import {ControlDefaults} from './control-defaults';
 import {SaeService} from '../shared/sae-service';
 import {HttpClient} from '@angular/common/http';
 import {Logger} from '../log/logger';
+import {map} from 'rxjs/operators';
 
 @Injectable()
 export class ControlService extends SaeService {
@@ -20,17 +21,17 @@ export class ControlService extends SaeService {
 
   getControlDefaults(): Observable<ControlDefaults> {
     return this.http.get(`${SaeService.API}/controldefaults`)
-      .map(response => this.controlFactory.defaultsFromJSON(response));
+      .pipe(map(response => this.controlFactory.defaultsFromJSON(response)));
   }
 
   getControl(id: string): Observable<Control> {
     return this.http.get(`${SaeService.API}/control?id=${id}`)
-      .map(response => {
+      .pipe(map(response => {
         if (response == null) {
           return this.controlFactory.createEmptyControl();
         }
         return this.controlFactory.fromJSON(response);
-      });
+      }));
   }
 
   updateControl(control: Control, id: string): Observable<any> {

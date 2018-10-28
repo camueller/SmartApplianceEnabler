@@ -2,7 +2,7 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {ApplianceComponent} from './appliance.component';
 import {TranslateLoader, TranslateModule, TranslateService} from '@ngx-translate/core';
 import {FormsModule} from '@angular/forms';
-import {Observable} from 'rxjs/Observable';
+import {Observable, of} from 'rxjs';
 import {ApplianceService} from './appliance.service';
 import {DialogService} from '../shared/dialog.service';
 import {AppliancesReloadService} from './appliances-reload-service';
@@ -23,19 +23,19 @@ const translations: any = {
 
 class FakeLoader implements TranslateLoader {
   getTranslation(lang: string): Observable<any> {
-    return Observable.of(translations);
+    return of(translations);
   }
 }
 
 class ApplianceServiceMock {
   updateAppliance(appliance: Appliance, create: boolean): Observable<any> {
     console.log('ApplianceServiceMock.updateAppliance(' + JSON.stringify(appliance) + ',' + create + ')');
-    return Observable.of(true);
+    return of(true);
   }
 
   deleteAppliance(id: string): Observable<any> {
     console.log('ApplianceServiceMock.deleteAppliance(' + id + ')');
-    return Observable.of(true);
+    return of(true);
   }
 }
 
@@ -64,7 +64,7 @@ describe('ApplianceComponent', () => {
     activatedRoute = new ActivatedRouteStub();
     dialogService = new DialogService();
     location = new LocationMock();
-    spyOn(dialogService, 'confirm').and.returnValue(Observable.of(true));
+    spyOn(dialogService, 'confirm').and.returnValue(of(true));
 
     TestBed.configureTestingModule({
       declarations: [ ApplianceComponent ],
