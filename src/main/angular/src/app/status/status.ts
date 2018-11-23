@@ -12,6 +12,7 @@ export class Status {
   on: boolean;
   controllable: boolean;
   interruptedSince: number;
+  optionalEnergy: boolean;
 
   public constructor(init?: Partial<Status>) {
     Object.assign(this, init);

@@ -27,6 +27,7 @@ import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.ControlDefaults;
 import de.avanux.smartapplianceenabler.control.ModbusSwitch;
 import de.avanux.smartapplianceenabler.control.StartingCurrentSwitchDefaults;
+import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
 import de.avanux.smartapplianceenabler.meter.*;
 import de.avanux.smartapplianceenabler.modbus.ModbusElectricityMeterDefaults;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
@@ -531,16 +532,23 @@ public class SaeController {
         List<ApplianceStatus> applianceStatuses = new ArrayList<>();
         for(Appliance appliance : ApplianceManager.getInstance().getAppliances()) {
             DeviceInfo deviceInfo = getDeviceInfo(appliance.getId());
+            Identification identification = null;
+            if(deviceInfo!= null) {
+                identification = deviceInfo.getIdentification();
+            }
 
             ApplianceStatus applianceStatus = new ApplianceStatus();
             applianceStatus.setId(appliance.getId());
-            applianceStatus.setName(deviceInfo.getIdentification().getDeviceName());
-            applianceStatus.setVendor(deviceInfo.getIdentification().getDeviceVendor());
-            applianceStatus.setType(deviceInfo.getIdentification().getDeviceType());
+            if(identification != null) {
+                applianceStatus.setName(identification.getDeviceName());
+                applianceStatus.setVendor(identification.getDeviceVendor());
+                applianceStatus.setType(identification.getDeviceType());
+            }
 
             List<RuntimeInterval> runtimeIntervals = appliance.getRuntimeIntervals(now, true);
 
             if(appliance.isControllable()) {
+                RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
                 applianceStatus.setControllable(true);
                 if(runtimeIntervals.size() > 0) {
                     RuntimeInterval nextRuntimeInterval = runtimeIntervals.get(0);
@@ -548,8 +556,9 @@ public class SaeController {
                     applianceStatus.setEarliestStart(nextRuntimeInterval.getEarliestStart());
                     applianceStatus.setLatestStart(TimeframeInterval.getLatestStart(nextRuntimeInterval.getLatestEnd(),
                             nextRuntimeInterval.getMinRunningTime()));
-                    applianceStatus.setOn(appliance.getControl().isOn());
-                    RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
+                    if(appliance.getControl().isOn()) {
+                        applianceStatus.setOptionalEnergy(nextRuntimeInterval.getMinRunningTime() == 0);
+                    }
                     if(runningTimeMonitor.getActiveTimeframeInterval() == null) {
                         applianceStatus.setRunningTime(0);
                         applianceStatus.setRemainingMinRunningTime(nextRuntimeInterval.getMinRunningTime());
@@ -557,7 +566,6 @@ public class SaeController {
                     }
                 }
                 applianceStatus.setOn(appliance.getControl().isOn());
-                RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
                 if(runningTimeMonitor.getActiveTimeframeInterval() != null) {
                     applianceStatus.setPlanningRequested(true);
                     Integer runningTime = runningTimeMonitor.getRunningTimeOfCurrentTimeFrame(now);
