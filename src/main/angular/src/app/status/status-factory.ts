@@ -22,6 +22,7 @@ export class StatusFactory {
     applianceStatus.on = rawApplianceHeader.on;
     applianceStatus.controllable = rawApplianceHeader.controllable;
     applianceStatus.interruptedSince = rawApplianceHeader.interruptedSince;
+    applianceStatus.optionalEnergy = rawApplianceHeader.optionalEnergy;
     this.logger.debug('Status (TYPE)' + JSON.stringify(applianceStatus));
     return applianceStatus;
   }

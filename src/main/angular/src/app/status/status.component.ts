@@ -114,6 +114,10 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
     return applianceStatus.on;
   }
 
+  isUsingOptionalEnergy(applianceStatus: Status): boolean {
+    return applianceStatus.optionalEnergy;
+  }
+
   onClickStopLight(applianceId: string) {
     // console.log('CLICK STOP=' + applianceId);
   }

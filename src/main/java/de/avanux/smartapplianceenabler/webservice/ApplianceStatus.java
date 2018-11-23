@@ -33,6 +33,7 @@ public class ApplianceStatus {
     private boolean on;
     private boolean controllable;
     private Integer interruptedSince;
+    private boolean optionalEnergy;
 
 
     public String getId() {
@@ -137,5 +138,13 @@ public class ApplianceStatus {
 
     public void setInterruptedSince(Integer interruptedSince) {
         this.interruptedSince = interruptedSince;
+    }
+
+    public boolean isOptionalEnergy() {
+        return optionalEnergy;
+    }
+
+    public void setOptionalEnergy(boolean optionalEnergy) {
+        this.optionalEnergy = optionalEnergy;
     }
 }

@@ -224,7 +224,7 @@
   "StatusComponent.explanationNoLight": "Das Gerät ist nicht eingeschaltet, weil keine Bedarfsanforderung vorliegt.",
   "StatusComponent.explanationStopLight": "Das Gerät ist nicht eingeschaltet, weil zwar eine Bedarfsanforderung vorliegt, aber der frühestmögliche Einschaltzeitpunkt noch nicht erreicht ist.",
   "StatusComponent.explanationSlowLight": "Das Gerät wird in Kürze (wieder) eingeschaltet, weil eine Bedarfsanforderung vorliegt und der frühestmögliche Einschaltzeitpunkt erreicht ist.",
-  "StatusComponent.explanationGoLight": "Das Gerät ist eingeschaltet.",
+  "StatusComponent.explanationGoLight": "Das Gerät ist eingeschaltet. Falls die Ampel blinkt, wird optionale Energie verwendet.",
 
   "SettingsComponent.holidays": "Feiertage",
   "SettingsComponent.holidaysEnabled": "Aktiviert",

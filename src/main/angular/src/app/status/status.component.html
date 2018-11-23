@@ -17,7 +17,7 @@
 
         <div class="bulb" [class.slowLight]="isSlowLightOn(applianceStatus)"></div>
 
-        <div class="bulb goLight" *ngIf="isGoLightOn(applianceStatus)"></div>
+        <div class="bulb goLight" [class.goLight-blink]="isUsingOptionalEnergy(applianceStatus)" *ngIf="isGoLightOn(applianceStatus)"></div>
         <div class="bulb" *ngIf="!isGoLightOn(applianceStatus) && applianceStatus.id === switchOnApplianceId"></div>
         <div class="bulb" *ngIf="!isGoLightOn(applianceStatus) && applianceStatus.id != switchOnApplianceId"
              (click)="onClickGoLight(applianceStatus.id)"
