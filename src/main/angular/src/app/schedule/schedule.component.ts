@@ -138,6 +138,10 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
     return this.dialogService.confirm(this.discardChangesMessage);
   }
 
+  get schedulesFormGroup(): FormGroup {
+    return this.schedulesForm.controls.schedules as FormGroup;
+  }
+
   buildSchedule(schedule: Schedule): FormGroup {
     const requestType = schedule != null ? schedule.requestType : this.RUNTIME_REQUEST;
     const timeframeType = schedule != null ? schedule.timeframeType : this.DAY_TIMEFRAME;
