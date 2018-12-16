@@ -19,7 +19,7 @@
 <div class="ui segment">
   <form class="ui form" [formGroup]="schedulesForm" (ngSubmit)="submitForm()">
     <div formArrayName="schedules">
-      <div *ngFor="let schedule of schedulesForm.controls.schedules.controls;let i = index" [formGroupName]="i">
+      <div *ngFor="let schedule of schedulesFormGroup.controls;let i = index" [formGroupName]="i">
         <div class="ui segment">
           <div class="ui fields">
             <div class="ui header field" style="padding: 0.3em">
