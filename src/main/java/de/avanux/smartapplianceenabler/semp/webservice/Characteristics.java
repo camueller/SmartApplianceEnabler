@@ -30,8 +30,12 @@ public class Characteristics {
     private Integer minPowerConsumption;
     @XmlElement(name = "MinOnTime")
     private Integer minOnTime;
+    @XmlElement(name = "MaxOnTime")
+    private Integer maxOnTime;
     @XmlElement(name = "MinOffTime")
     private Integer minOffTime;
+    @XmlElement(name = "MaxOffTime")
+    private Integer maxOffTime;
     @XmlElement(name = "PowerLevels")
     private PowerLevels powerLevels;
 
@@ -51,20 +55,36 @@ public class Characteristics {
         this.maxPowerConsumption = maxPowerConsumption;
     }
 
-    public int getMinOnTime() {
-        return (minOnTime != null ? minOnTime : 0);
+    public Integer getMinOnTime() {
+        return minOnTime;
     }
 
     public void setMinOnTime(int minOnTime) {
         this.minOnTime = minOnTime;
     }
 
-    public int getMinOffTime() {
-        return (minOffTime != null ? minOffTime : 0);
+    public Integer getMaxOnTime() {
+        return maxOnTime;
+    }
+
+    public void setMaxOnTime(int maxOnTime) {
+        this.maxOnTime = maxOnTime;
+    }
+
+    public Integer getMinOffTime() {
+        return minOffTime;
     }
 
     public void setMinOffTime(int minOffTime) {
         this.minOffTime = minOffTime;
+    }
+
+    public Integer getMaxOffTime() {
+        return maxOffTime;
+    }
+
+    public void setMaxOffTime(int maxOffTime) {
+        this.maxOffTime = maxOffTime;
     }
 
     public PowerLevels getPowerLevels() {

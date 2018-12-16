@@ -78,6 +78,30 @@
                required pattern="{{VALIDATOR_PATTERN_INTEGER}}">
         <div *ngIf="errors['maxPowerConsumption']" class="ui negative message">{{errors['maxPowerConsumption']}}</div>
       </div>
+      <div class="field" [attr.data-tooltip]="'ApplianceComponent.minOnTime.tooltip' | translate">
+        <label>{{'ApplianceComponent.minOnTime' | translate}}</label>
+        <input type="text" name="minOnTime" [(ngModel)]="appliance.minOnTime"
+               required pattern="{{VALIDATOR_PATTERN_INTEGER}}">
+        <div *ngIf="errors['minOnTime']" class="ui negative message">{{errors['minOnTime']}}</div>
+      </div>
+      <div class="field" [attr.data-tooltip]="'ApplianceComponent.maxOnTime.tooltip' | translate">
+        <label>{{'ApplianceComponent.maxOnTime' | translate}}</label>
+        <input type="text" name="maxOnTime" [(ngModel)]="appliance.maxOnTime"
+               required pattern="{{VALIDATOR_PATTERN_INTEGER}}">
+        <div *ngIf="errors['maxOnTime']" class="ui negative message">{{errors['maxOnTime']}}</div>
+      </div>
+      <div class="field" [attr.data-tooltip]="'ApplianceComponent.minOffTime.tooltip' | translate">
+        <label>{{'ApplianceComponent.minOffTime' | translate}}</label>
+        <input type="text" name="minOffTime" [(ngModel)]="appliance.minOffTime"
+               required pattern="{{VALIDATOR_PATTERN_INTEGER}}">
+        <div *ngIf="errors['minOffTime']" class="ui negative message">{{errors['minOffTime']}}</div>
+      </div>
+      <div class="field" [attr.data-tooltip]="'ApplianceComponent.maxOffTime.tooltip' | translate">
+        <label>{{'ApplianceComponent.maxOffTime' | translate}}</label>
+        <input type="text" name="maxOffTime" [(ngModel)]="appliance.maxOffTime"
+               required pattern="{{VALIDATOR_PATTERN_INTEGER}}">
+        <div *ngIf="errors['maxOffTime']" class="ui negative message">{{errors['maxOffTime']}}</div>
+      </div>
       <div class="field">
         <label>{{'ApplianceComponent.currentPowerMethod' | translate}}</label>
         <select class="ui fluid dropdown" name="currentPowerMethod" [(ngModel)]="appliance.currentPowerMethod" required>

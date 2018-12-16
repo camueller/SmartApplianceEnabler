@@ -24,6 +24,10 @@ export class Appliance {
   vendor: string;
   minPowerConsumption: string;
   maxPowerConsumption: string;
+  minOnTime: string;
+  maxOnTime: string;
+  minOffTime: string;
+  maxOffTime: string;
   currentPowerMethod: string;
   interruptionsAllowed: boolean;
 
