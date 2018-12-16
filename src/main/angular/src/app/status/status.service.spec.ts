@@ -47,7 +47,8 @@ describe('StatusService', () => {
         latestStart: 123,
         on: false,
         controllable: true,
-        interruptedSince: null
+        interruptedSince: null,
+        optionalEnergy: false
       }),
       new Status({
         id: 'F-00000001-000000000002-00',
@@ -62,7 +63,8 @@ describe('StatusService', () => {
         latestStart: 124,
         on: false,
         controllable: false,
-        interruptedSince: 180
+        interruptedSince: 180,
+        optionalEnergy: true
       })
     ];
     service.getStatus().subscribe(res => expect(res).toEqual(expectedStatuses));
