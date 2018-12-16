@@ -304,6 +304,7 @@
                                     <executable>ng</executable>
                                     <arguments>
                                         <argument>build</argument>
+										<argument>--configuration=production</argument>
                                     </arguments>
                                 </configuration>
                                 <goals>
