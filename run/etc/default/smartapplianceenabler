@@ -4,6 +4,9 @@ SAE_HOME=/app
 # Set alternate logging configuration
 JAVA_OPTS="${JAVA_OPTS} -Dlogging.config=/app/logback-spring.xml"
 
+# Change port from default port 8080
+#JAVA_OPTS="${JAVA_OPTS} -Dserver.port=8888"
+
 # The home directory of the Java development kit (JDK). You need at least
 # JDK version 7. If JAVA_HOME is not set, some common directories for
 # OpenJDK and the Oracle JDK are tried.
