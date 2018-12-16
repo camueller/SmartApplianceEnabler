@@ -111,6 +111,10 @@ public class SaeController {
         applianceInfo.setType(deviceInfo.getIdentification().getDeviceType());
         applianceInfo.setMinPowerConsumption(deviceInfo.getCharacteristics().getMinPowerConsumption());
         applianceInfo.setMaxPowerConsumption(deviceInfo.getCharacteristics().getMaxPowerConsumption());
+        applianceInfo.setMinOnTime(deviceInfo.getCharacteristics().getMinOnTime());
+        applianceInfo.setMaxOnTime(deviceInfo.getCharacteristics().getMaxOnTime());
+        applianceInfo.setMinOffTime(deviceInfo.getCharacteristics().getMinOffTime());
+        applianceInfo.setMaxOffTime(deviceInfo.getCharacteristics().getMaxOffTime());
         applianceInfo.setCurrentPowerMethod(deviceInfo.getCapabilities().getCurrentPowerMethod().name());
         applianceInfo.setInterruptionsAllowed(deviceInfo.getCapabilities().getInterruptionsAllowed());
         return applianceInfo;
@@ -127,6 +131,10 @@ public class SaeController {
         Characteristics characteristics = new Characteristics();
         characteristics.setMinPowerConsumption(applianceInfo.getMinPowerConsumption());
         characteristics.setMaxPowerConsumption(applianceInfo.getMaxPowerConsumption());
+        characteristics.setMinOnTime(applianceInfo.getMinOnTime());
+        characteristics.setMaxOnTime(applianceInfo.getMaxOnTime());
+        characteristics.setMinOffTime(applianceInfo.getMinOffTime());
+        characteristics.setMaxOffTime(applianceInfo.getMaxOffTime());
 
         Capabilities capabilities = new Capabilities();
         capabilities.setCurrentPowerMethod(CurrentPowerMethod.valueOf(applianceInfo.getCurrentPowerMethod()));
