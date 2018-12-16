@@ -27,7 +27,7 @@
                 </ModbusRegisterWrite>
             </EVModbusControl>
         </ElectricVehicleCharger>
-        <ModbusElectricityMeter idref="wallbox" slaveAddress="1" pollInterval="10" measurementInterval="60">
+        <ModbusElectricityMeter idref="modbus" slaveAddress="1" pollInterval="10" measurementInterval="60">
             <ModbusRegisterRead address="0x000C" type="InputFloat">
                 <ModbusRegisterReadValue name="Power"/>
             </ModbusRegisterRead>
@@ -38,6 +38,6 @@
     </Appliance>
     <Connectivity>
         <ModbusTCP id="modbus" host="127.0.0.1" />
-        <ModbusTCP id="wallbox" host="192.168.69.12" />
+        <ModbusTCP id="wallbox" host="192.168.178.39" />
     </Connectivity>
 </Appliances>
