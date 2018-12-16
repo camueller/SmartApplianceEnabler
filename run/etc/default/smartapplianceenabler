@@ -4,6 +4,9 @@ SAE_HOME=/app
 # Set alternate logging configuration
 JAVA_OPTS="${JAVA_OPTS} -Dlogging.config=/app/logback-spring.xml"
 
+# Bind to specific network address
+#JAVA_OPTS="${JAVA_OPTS} -Dserver.address=192.168.178.33"
+
 # Change port from default port 8080
 #JAVA_OPTS="${JAVA_OPTS} -Dserver.port=8888"
 
