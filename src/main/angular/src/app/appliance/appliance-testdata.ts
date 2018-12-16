@@ -13,7 +13,12 @@ export class ApplianceTestdata {
       type: 'WashingMachine',
       serial: '12345678',
       vendor: 'Bosch',
+      maxPowerConsumption: '1200',
       maxPowerConsumption: '4000',
+      minOnTime: '600',
+      maxOnTime: '3600',
+      minOffTime: '900',
+      maxOffTime: '960',
       currentPowerMethod: 'Measurement',
       interruptionsAllowed: true
     });

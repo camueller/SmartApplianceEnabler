@@ -175,7 +175,12 @@ describe('ApplianceComponent', () => {
       expect(component.detailsForm.controls['name'].value).toEqual(appliance.name);
       expect(component.detailsForm.controls['type'].value).toEqual(appliance.type);
       expect(component.detailsForm.controls['serial'].value).toEqual(appliance.serial);
+      expect(component.detailsForm.controls['minPowerConsumption'].value).toEqual(appliance.minPowerConsumption);
       expect(component.detailsForm.controls['maxPowerConsumption'].value).toEqual(appliance.maxPowerConsumption);
+      expect(component.detailsForm.controls['minOnTime'].value).toEqual(appliance.minOnTime);
+      expect(component.detailsForm.controls['maxOnTime'].value).toEqual(appliance.maxOnTime);
+      expect(component.detailsForm.controls['minOffTime'].value).toEqual(appliance.minOffTime);
+      expect(component.detailsForm.controls['maxOffTime'].value).toEqual(appliance.maxOffTime);
       expect(component.detailsForm.controls['currentPowerMethod'].value).toEqual(appliance.currentPowerMethod);
       expect(component.detailsForm.controls['interruptionsAllowed'].value).toEqual(appliance.interruptionsAllowed);
       expect(fixture.debugElement.query(By.css('button[type=submit]')).nativeElement.disabled).toBeTruthy();
