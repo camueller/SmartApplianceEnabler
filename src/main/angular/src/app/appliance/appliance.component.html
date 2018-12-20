@@ -18,8 +18,8 @@
 
 <div class="ui segment">
   <form class="ui form" #detailsForm="ngForm" (ngSubmit)="submitForm()">
-    <div class="three fields">
-      <div class="field">
+    <div class="three fields appliance-row">
+      <div class="field" [attr.data-tooltip]="'ApplianceComponent.id.tooltip' | translate">
         <label>{{'ApplianceComponent.id' | translate}}</label>
         <input type="text" placeholder="F-00000000-000000000000-00" name="id" [(ngModel)]="appliance.id"
                required pattern="{{VALIDATOR_PATTERN_ID}}">
@@ -27,13 +27,13 @@
       </div>
     </div>
     <h4 class="ui dividing header">{{'ApplianceComponent.general' | translate}}</h4>
-    <div class="fields">
-      <div class="field">
+    <div class="fields appliance-row">
+      <div class="field" [attr.data-tooltip]="'ApplianceComponent.vendor.tooltip' | translate">
         <label>{{'ApplianceComponent.vendor' | translate}}</label>
         <input type="text" name="vendor" [(ngModel)]="appliance.vendor" required>
         <div *ngIf="errors['vendor']" class="ui negative message">{{errors['vendor']}}</div>
       </div>
-      <div class="field">
+      <div class="field" [attr.data-tooltip]="'ApplianceComponent.name.tooltip' | translate">
         <label>{{'ApplianceComponent.name' | translate}}</label>
         <input type="text" name="name" [(ngModel)]="appliance.name" required>
         <div *ngIf="errors['name']" class="ui negative message">{{errors['name']}}</div>
@@ -57,7 +57,7 @@
           <option value="Other">{{'ApplianceComponent.type.Other' | translate}}</option>
         </select>
       </div>
-      <div class="field">
+      <div class="field" [attr.data-tooltip]="'ApplianceComponent.serial.tooltip' | translate">
         <label>{{'ApplianceComponent.serial' | translate}}</label>
         <input type="text" name="serial" [(ngModel)]="appliance.serial" required>
         <div *ngIf="errors['serial']" class="ui negative message">{{errors['serial']}}</div>
@@ -65,14 +65,14 @@
     </div>
 
     <h4 class="ui dividing header">{{'ApplianceComponent.characteristics' | translate}}</h4>
-    <div class="fields">
-      <div class="field">
+    <div class="fields appliance-row">
+      <div class="field axel" [attr.data-tooltip]="'ApplianceComponent.minPowerConsumption.tooltip' | translate" data-position="top left">
         <label>{{'ApplianceComponent.minPowerConsumption' | translate}}</label>
         <input type="text" name="minPowerConsumption" [(ngModel)]="appliance.minPowerConsumption"
                pattern="{{VALIDATOR_PATTERN_INTEGER}}">
         <div *ngIf="errors['minPowerConsumption']" class="ui negative message">{{errors['minPowerConsumption']}}</div>
       </div>
-      <div class="field">
+      <div class="field" [attr.data-tooltip]="'ApplianceComponent.maxPowerConsumption.tooltip' | translate">
         <label>{{'ApplianceComponent.maxPowerConsumption' | translate}}</label>
         <input type="text" name="maxPowerConsumption" [(ngModel)]="appliance.maxPowerConsumption"
                required pattern="{{VALIDATOR_PATTERN_INTEGER}}">
@@ -109,7 +109,7 @@
           <option value="Estimation">{{'ApplianceComponent.currentPowerMethod.Estimation' | translate}}</option>
         </select>
       </div>
-      <div class="ui checkbox" style="">
+      <div class="ui checkbox" style="align-self: center">
         <input type="checkbox" name="interruptionsAllowed" [(ngModel)]="appliance.interruptionsAllowed">
         <label>{{'ApplianceComponent.interruptionsAllowed' | translate}}</label>
       </div>
