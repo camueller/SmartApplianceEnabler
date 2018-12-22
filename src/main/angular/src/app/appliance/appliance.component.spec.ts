@@ -122,7 +122,6 @@ describe('ApplianceComponent', () => {
       expect(component.detailsForm.controls['type'].value).toBeFalsy();
       expect(component.detailsForm.controls['serial'].value).toBeFalsy();
       expect(component.detailsForm.controls['maxPowerConsumption'].value).toBeFalsy();
-      expect(component.detailsForm.controls['currentPowerMethod'].value).toBeFalsy();
       expect(component.detailsForm.controls['interruptionsAllowed'].value).toBeFalsy();
       expect(fixture.debugElement.query(By.css('button[type=submit]')).nativeElement.disabled).toBeTruthy();
       expect(fixture.debugElement.query(By.css('button[type=button]')).nativeElement.disabled).toBeTruthy();
@@ -144,7 +143,6 @@ describe('ApplianceComponent', () => {
         type: 'WashingMachine',
         serial: '345678',
         maxPowerConsumption: 1800,
-        currentPowerMethod: 'Measurement',
         interruptionsAllowed: true
       });
 
@@ -181,7 +179,6 @@ describe('ApplianceComponent', () => {
       expect(component.detailsForm.controls['maxOnTime'].value).toEqual(appliance.maxOnTime);
       expect(component.detailsForm.controls['minOffTime'].value).toEqual(appliance.minOffTime);
       expect(component.detailsForm.controls['maxOffTime'].value).toEqual(appliance.maxOffTime);
-      expect(component.detailsForm.controls['currentPowerMethod'].value).toEqual(appliance.currentPowerMethod);
       expect(component.detailsForm.controls['interruptionsAllowed'].value).toEqual(appliance.interruptionsAllowed);
       expect(fixture.debugElement.query(By.css('button[type=submit]')).nativeElement.disabled).toBeTruthy();
       expect(fixture.debugElement.query(By.css('button[type=button]')).nativeElement.disabled).toBeFalsy();
@@ -256,9 +253,6 @@ describe('ApplianceComponent', () => {
       expect(component.detailsForm.valid).toBeFalsy();
       setInputValue('input[name=maxPowerConsumption]', '1800');
       expect(component.detailsForm.controls.maxPowerConsumption.valid).toBeTruthy();
-      expect(component.detailsForm.valid).toBeFalsy();
-      selectOptionValue('select[name=currentPowerMethod]', 'Measurement');
-      expect(component.detailsForm.valid).toBeTruthy();
     });
   }));
 

@@ -19,8 +19,13 @@
 <div class="ui segment">
   <form class="ui form" #detailsForm="ngForm" (ngSubmit)="submitForm()">
     <div class="three fields appliance-row">
-      <div class="field" [attr.data-tooltip]="'ApplianceComponent.id.tooltip' | translate">
-        <label>{{'ApplianceComponent.id' | translate}}</label>
+      <div class="field">
+        <label>{{'ApplianceComponent.id' | translate}}
+          <i class="icon blue info circle tooltip">
+            <span class="tooltiptext" style="margin-left: -20px;"
+            >{{'ApplianceComponent.id.tooltip' | translate}}</span>
+          </i>
+        </label>
         <input type="text" placeholder="F-00000000-000000000000-00" name="id" [(ngModel)]="appliance.id"
                required pattern="{{VALIDATOR_PATTERN_ID}}">
         <div *ngIf="errors['id']" class="ui negative message">{{errors['id']}}</div>
@@ -28,12 +33,12 @@
     </div>
     <h4 class="ui dividing header">{{'ApplianceComponent.general' | translate}}</h4>
     <div class="fields appliance-row">
-      <div class="field" [attr.data-tooltip]="'ApplianceComponent.vendor.tooltip' | translate">
+      <div class="field">
         <label>{{'ApplianceComponent.vendor' | translate}}</label>
         <input type="text" name="vendor" [(ngModel)]="appliance.vendor" required>
         <div *ngIf="errors['vendor']" class="ui negative message">{{errors['vendor']}}</div>
       </div>
-      <div class="field" [attr.data-tooltip]="'ApplianceComponent.name.tooltip' | translate">
+      <div class="field">
         <label>{{'ApplianceComponent.name' | translate}}</label>
         <input type="text" name="name" [(ngModel)]="appliance.name" required>
         <div *ngIf="errors['name']" class="ui negative message">{{errors['name']}}</div>
@@ -57,7 +62,7 @@
           <option value="Other">{{'ApplianceComponent.type.Other' | translate}}</option>
         </select>
       </div>
-      <div class="field" [attr.data-tooltip]="'ApplianceComponent.serial.tooltip' | translate">
+      <div class="field">
         <label>{{'ApplianceComponent.serial' | translate}}</label>
         <input type="text" name="serial" [(ngModel)]="appliance.serial" required>
         <div *ngIf="errors['serial']" class="ui negative message">{{errors['serial']}}</div>
@@ -66,52 +71,80 @@
 
     <h4 class="ui dividing header">{{'ApplianceComponent.characteristics' | translate}}</h4>
     <div class="fields appliance-row">
-      <div class="field axel" [attr.data-tooltip]="'ApplianceComponent.minPowerConsumption.tooltip' | translate" data-position="top left">
-        <label>{{'ApplianceComponent.minPowerConsumption' | translate}}</label>
+      <div class="field">
+        <label class="">{{'ApplianceComponent.minPowerConsumption' | translate}}
+          <i class="icon blue info circle tooltip">
+            <span class="tooltiptext" style="margin-left: -180px;"
+            >{{'ApplianceComponent.minPowerConsumption.tooltip' | translate}}</span>
+          </i>
+        </label>
         <input type="text" name="minPowerConsumption" [(ngModel)]="appliance.minPowerConsumption"
                pattern="{{VALIDATOR_PATTERN_INTEGER}}">
         <div *ngIf="errors['minPowerConsumption']" class="ui negative message">{{errors['minPowerConsumption']}}</div>
       </div>
-      <div class="field" [attr.data-tooltip]="'ApplianceComponent.maxPowerConsumption.tooltip' | translate">
-        <label>{{'ApplianceComponent.maxPowerConsumption' | translate}}</label>
+      <div class="field">
+        <label>{{'ApplianceComponent.maxPowerConsumption' | translate}}
+          <i class="icon blue info circle tooltip">
+            <span class="tooltiptext" style="margin-left: -180px;"
+            >{{'ApplianceComponent.maxPowerConsumption.tooltip' | translate}}</span>
+          </i>
+        </label>
         <input type="text" name="maxPowerConsumption" [(ngModel)]="appliance.maxPowerConsumption"
                required pattern="{{VALIDATOR_PATTERN_INTEGER}}">
         <div *ngIf="errors['maxPowerConsumption']" class="ui negative message">{{errors['maxPowerConsumption']}}</div>
       </div>
-      <div class="field" [attr.data-tooltip]="'ApplianceComponent.minOnTime.tooltip' | translate">
-        <label>{{'ApplianceComponent.minOnTime' | translate}}</label>
+      <div class="field">
+        <label>{{'ApplianceComponent.minOnTime' | translate}}
+          <i class="icon blue info circle tooltip">
+            <span class="tooltiptext" style="margin-left: -130px;"
+            >{{'ApplianceComponent.minOnTime.tooltip' | translate}}</span>
+          </i>
+        </label>
         <input type="text" name="minOnTime" [(ngModel)]="appliance.minOnTime"
                pattern="{{VALIDATOR_PATTERN_INTEGER}}">
         <div *ngIf="errors['minOnTime']" class="ui negative message">{{errors['minOnTime']}}</div>
       </div>
-      <div class="field" [attr.data-tooltip]="'ApplianceComponent.maxOnTime.tooltip' | translate">
-        <label>{{'ApplianceComponent.maxOnTime' | translate}}</label>
+      <div class="field">
+        <label>{{'ApplianceComponent.maxOnTime' | translate}}
+          <i class="icon blue info circle tooltip">
+            <span class="tooltiptext" style="margin-left: -130px;"
+            >{{'ApplianceComponent.maxOnTime.tooltip' | translate}}</span>
+          </i>
+        </label>
         <input type="text" name="maxOnTime" [(ngModel)]="appliance.maxOnTime"
                pattern="{{VALIDATOR_PATTERN_INTEGER}}">
         <div *ngIf="errors['maxOnTime']" class="ui negative message">{{errors['maxOnTime']}}</div>
       </div>
-      <div class="field" [attr.data-tooltip]="'ApplianceComponent.minOffTime.tooltip' | translate">
-        <label>{{'ApplianceComponent.minOffTime' | translate}}</label>
+      <div class="field">
+        <label>{{'ApplianceComponent.minOffTime' | translate}}
+          <i class="icon blue info circle tooltip">
+            <span class="tooltiptext" style="margin-left: -130px;"
+            >{{'ApplianceComponent.minOffTime.tooltip' | translate}}</span>
+          </i>
+        </label>
         <input type="text" name="minOffTime" [(ngModel)]="appliance.minOffTime"
                pattern="{{VALIDATOR_PATTERN_INTEGER}}">
         <div *ngIf="errors['minOffTime']" class="ui negative message">{{errors['minOffTime']}}</div>
       </div>
-      <div class="field" [attr.data-tooltip]="'ApplianceComponent.maxOffTime.tooltip' | translate">
-        <label>{{'ApplianceComponent.maxOffTime' | translate}}</label>
+      <div class="field">
+        <label>{{'ApplianceComponent.maxOffTime' | translate}}
+          <i class="icon blue info circle tooltip">
+            <span class="tooltiptext" style="margin-left: -130px;"
+            >{{'ApplianceComponent.maxOffTime.tooltip' | translate}}</span>
+          </i>
+        </label>
         <input type="text" name="maxOffTime" [(ngModel)]="appliance.maxOffTime"
                pattern="{{VALIDATOR_PATTERN_INTEGER}}">
         <div *ngIf="errors['maxOffTime']" class="ui negative message">{{errors['maxOffTime']}}</div>
       </div>
-      <div class="field">
-        <label>{{'ApplianceComponent.currentPowerMethod' | translate}}</label>
-        <select class="ui fluid dropdown" name="currentPowerMethod" [(ngModel)]="appliance.currentPowerMethod" required>
-          <option value="Measurement">{{'ApplianceComponent.currentPowerMethod.Measurement' | translate}}</option>
-          <option value="Estimation">{{'ApplianceComponent.currentPowerMethod.Estimation' | translate}}</option>
-        </select>
-      </div>
       <div class="ui checkbox" style="align-self: center">
         <input type="checkbox" name="interruptionsAllowed" [(ngModel)]="appliance.interruptionsAllowed">
-        <label>{{'ApplianceComponent.interruptionsAllowed' | translate}}</label>
+        <label>{{'ApplianceComponent.interruptionsAllowed' | translate}}
+          <i class="icon blue info circle tooltip">
+            <span class="tooltiptext" style="margin-left: -300px;"
+            >{{'ApplianceComponent.interruptionsAllowed.tooltip' | translate}}</span>
+          </i>
+        </label>
       </div>
     </div>
 
