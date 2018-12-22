@@ -28,7 +28,6 @@ export class Appliance {
   maxOnTime: string;
   minOffTime: string;
   maxOffTime: string;
-  currentPowerMethod: string;
   interruptionsAllowed: boolean;
 
   public constructor(init?: Partial<Appliance>) {

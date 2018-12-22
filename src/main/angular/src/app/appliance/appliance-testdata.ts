@@ -19,7 +19,6 @@ export class ApplianceTestdata {
       maxOnTime: '3600',
       minOffTime: '900',
       maxOffTime: '960',
-      currentPowerMethod: 'Measurement',
       interruptionsAllowed: true
     });
   }
