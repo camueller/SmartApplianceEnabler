@@ -4,6 +4,7 @@
         <ElectricVehicleCharger
                 voltage="230"
                 phases="1"
+                maxChargePower="22000"
                 pollInterval="10"
                 startChargingStateDetectionDelay="300"
                 forceInitialCharging="false">
@@ -26,6 +27,9 @@
                     <ModbusRegisterWriteValue name="ChargingCurrent" value="0" />
                 </ModbusRegisterWrite>
             </EVModbusControl>
+            <ElectricVehicle name="Nissan Leaf" batteryCapacity="40000">
+                <SocScript script="/bin/run.sh" extractionRegex="(C|D)"/>
+            </ElectricVehicle>
         </ElectricVehicleCharger>
         <ModbusElectricityMeter idref="modbus" slaveAddress="1" pollInterval="10" measurementInterval="60">
             <ModbusRegisterRead address="0x000C" type="InputFloat">

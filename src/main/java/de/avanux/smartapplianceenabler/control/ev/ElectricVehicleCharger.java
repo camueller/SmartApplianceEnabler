@@ -44,9 +44,13 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     @XmlAttribute
     protected Boolean forceInitialCharging = false;
     @XmlElements({
-            @XmlElement(name = "EVModbusControl", type = EVModbusControl.class),
+        @XmlElement(name = "EVModbusControl", type = EVModbusControl.class),
     })
     private EVControl control;
+    @XmlElements({
+            @XmlElement(name = "ElectricVehicle", type = ElectricVehicle.class),
+    })
+    private List<ElectricVehicle> vehicles;
     private transient Appliance appliance;
     private transient String applianceId;
     private transient Vector<State> stateHistory = new Vector<>();
@@ -78,6 +82,14 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
 
     protected void setControl(EVControl control) {
         this.control = control;
+    }
+
+    public List<ElectricVehicle> getVehicles() {
+        return vehicles;
+    }
+
+    protected void setVehicles(List<ElectricVehicle> vehicles) {
+        this.vehicles = vehicles;
     }
 
     public void init() {
