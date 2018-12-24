@@ -565,7 +565,8 @@ public class SaeController {
                     applianceStatus.setLatestStart(TimeframeInterval.getLatestStart(nextRuntimeInterval.getLatestEnd(),
                             nextRuntimeInterval.getMinRunningTime()));
                     if(appliance.getControl().isOn()) {
-                        applianceStatus.setOptionalEnergy(nextRuntimeInterval.getMinRunningTime() == 0);
+                        applianceStatus.setOptionalEnergy(nextRuntimeInterval.getMinEnergy() != null
+                                && nextRuntimeInterval.getMinEnergy() == 0);
                     }
                     if(runningTimeMonitor.getActiveTimeframeInterval() == null) {
                         applianceStatus.setRunningTime(0);
