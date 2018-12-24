@@ -540,9 +540,14 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     }
 
     private RuntimeInterval getRuntimeIntervalForEVUsingOptionalEnergy() {
-        float energy = meter.getEnergy();
-        logger.debug("{}: energy metered: {} kWh", id, energy);
-
+        float energy = 0.0f;
+        if(meter != null) {
+            energy = meter.getEnergy();
+            logger.debug("{}: energy metered: {} kWh", id, energy);
+        }
+        else {
+            logger.debug("{}: No energy meter configured - cannot calculate maxEnergy", id);
+        }
         RuntimeInterval runtimeInterval = new RuntimeInterval();
         runtimeInterval.setEarliestStart(0);
         runtimeInterval.setLatestEnd(CONSIDERATION_INTERVAL_DAYS * 24 * 3600);
