@@ -101,11 +101,14 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
         return pulsePowerMeter.isOn();
     }
 
-    @Override
-    public void start() {
+    public void init() {
         pulsePowerMeter.setImpulsesPerKwh(impulsesPerKwh);
         pulsePowerMeter.setMeasurementInterval(getMeasurementInterval());
         pulseEnergyMeter.setImpulsesPerKwh(impulsesPerKwh);
+    }
+
+    @Override
+    public void start() {
 
         GpioController gpioController = getGpioController();
         if(gpioController != null) {
