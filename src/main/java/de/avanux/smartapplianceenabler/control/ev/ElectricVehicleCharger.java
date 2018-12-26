@@ -22,6 +22,7 @@ import de.avanux.smartapplianceenabler.appliance.Appliance;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.ControlStateChangedListener;
+import de.avanux.smartapplianceenabler.meter.Meter;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,6 +94,12 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     }
 
     public void init() {
+        boolean useEvControlMock = Boolean.parseBoolean(System.getProperty("sae.evcontrol.mock", "false"));
+        if(useEvControlMock) {
+            logger.info("##### using EvControl Mock #####");
+            this.control= new EvControlMock();
+            this.appliance.setMeter((Meter) this.control);
+        }
         logger.debug("{}: voltage={} phases={} startChargingStateDetectionDelay={}",
                 this.applianceId, this.voltage, this.phases, this.startChargingStateDetectionDelay);
         initStateHistory();
