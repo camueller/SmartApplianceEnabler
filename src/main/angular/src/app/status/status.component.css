@@ -4,7 +4,6 @@
   float: left;
   background-color: #333;
   border-radius: 8px;
-  margin: 6px;
   padding: 2px;
 }
 
@@ -75,15 +74,36 @@
 }
 
 .appliances {
+  display: flex;
+  flex-direction: row;
 }
 
 .appliance {
-  height: 125px;
-  width: 350px;
+  display: flex;
+  flex-direction: row;
+  height: fit-content;
+  width: fit-content;
+  padding: 6px;
   margin: 5px;
   border-radius: 8px;
   border: 1px solid black;
   font-family: "Lato", "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+
+.appliance-details {
+  display: flex;
+  flex-direction: column;
+  margin-left: 6px;
+}
+
+.appliance-details-row {
+  display: flex;
+  align-items: center;
+  padding: 3px 0;
+}
+
+.appliance-button-row {
+  justify-content: center;
 }
 
 .appliance-type {
@@ -101,6 +121,7 @@
 }
 
 .appliance-status-label {
+  padding: 0 3px;
   color: rgba(0,0,0,.6);
 }
 
@@ -110,4 +131,17 @@
 
 .appliance-switch-on {
   margin-top: 50px;
+}
+
+.appliance-number-input {
+  padding-left: 4px !important;
+  padding-right: 4px !important;
+}
+
+.ui.selection.dropdown {
+  min-width: 0;
+}
+
+.ui.grid > .column {
+  padding: 0;
 }

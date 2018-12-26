@@ -13,6 +13,9 @@ export class Status {
   controllable: boolean;
   interruptedSince: number;
   optionalEnergy: boolean;
+  evCharger: boolean;
+  electricVehicle: string;
+  stateOfCharge: number;
 
   public constructor(init?: Partial<Status>) {
     Object.assign(this, init);

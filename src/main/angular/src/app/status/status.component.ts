@@ -1,4 +1,12 @@
-import {AfterViewChecked, Component, OnDestroy, OnInit} from '@angular/core';
+import {
+  AfterContentChecked,
+  AfterContentInit,
+  AfterViewChecked,
+  AfterViewInit,
+  Component,
+  OnDestroy,
+  OnInit
+} from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
 import {Status} from './status';
 import {TimeUtil} from '../shared/time-util';
@@ -18,21 +26,23 @@ declare const $: any;
 const originFormControlNameNgOnChanges = FormControlName.prototype.ngOnChanges;
 FormControlName.prototype.ngOnChanges = function () {
   const result = originFormControlNameNgOnChanges.apply(this, arguments);
-  this.control.nativeElement = this.valueAccessor._elementRef.nativeElement;
+  this.control.nativeElement = this.valueAccessor._elementRef;
 
-  const classAttribute: string = this.valueAccessor._elementRef.nativeElement.attributes.getNamedItem('class');
-  if (classAttribute != null) {
-    const classAttributeValues = classAttribute['nodeValue'];
-    if (classAttributeValues.indexOf('clockpicker') > -1) {
-      $(this.valueAccessor._elementRef.nativeElement).on('change', (event) => {
-        this.control.setValue(event.target.value);
-        this.control.markAsDirty();
-      });
+  const elementRef = this.valueAccessor._elementRef;
+  if (elementRef) {
+    const classAttribute: string = elementRef.nativeElement.attributes.getNamedItem('class');
+    if (classAttribute != null) {
+      const classAttributeValues = classAttribute['nodeValue'];
+      if (classAttributeValues.indexOf('clockpicker') > -1) {
+        $(this.valueAccessor._elementRef.nativeElement).on('change', (event) => {
+          this.control.setValue(event.target.value);
+          this.control.markAsDirty();
+        });
+      }
     }
   }
   return result;
 };
-
 
 @Component({
   selector: 'app-status',
@@ -45,8 +55,11 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
   translatedTypes = new Object();
   translatedStrings: string[];
   switchOnForm: FormGroup;
+  startChargeForm: FormGroup;
   switchOnApplianceId: string;
-  initializeClockPicker: boolean;
+  electricVehicles = ['Nissan Leaf'];
+  dows = ['Sonntag'];
+  initializeOnceAfterViewChecked = false;
   loadApplianceStatusesSubscription: Subscription;
 
   constructor(private statusService: StatusService,
@@ -70,17 +83,31 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
         Validators.required,
         Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)])
     });
+    this.startChargeForm = new FormGroup({
+      electricVehicle: new FormControl(this.electricVehicles[0]),
+      stateOfCharge: new FormControl(27),
+      chargeAmount: new FormControl(10),
+      chargeEndDow: new FormControl('Sonntag'),
+      chargeEndTime: new FormControl('18:00'),
+    });
+    this.switchOnApplianceId = 'F-28091971-000000000099-00';
+    this.initializeOnceAfterViewChecked = true;
   }
 
   ngAfterViewChecked() {
-    if (this.initializeClockPicker) {
-      $('.clockpicker').clockpicker({ autoclose: true });
-      this.initializeClockPicker = false;
+    console.log('ngAfterViewChecked initializeOnceAfterViewChecked=' + this.initializeOnceAfterViewChecked);
+    if (this.initializeOnceAfterViewChecked) {
+      this.initializeOnceAfterViewChecked = false;
+      this.initializeClockPicker();
     }
   }
 
   ngOnDestroy() {
     this.loadApplianceStatusesSubscription.unsubscribe();
+  }
+
+  initializeClockPicker() {
+    $('.clockpicker').clockpicker({ autoclose: true });
   }
 
   loadApplianceStatuses() {
@@ -133,7 +160,7 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.switchOnForm.controls['switchOnRunningTime'].setValue(hourMinute);
     });
     this.switchOnApplianceId = applianceId;
-    this.initializeClockPicker = true;
+    this.initializeOnceAfterViewChecked = true;
   }
 
   getRemainingRunningTimeLabel(applianceStatus: Status): string {
@@ -164,6 +191,10 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.statusService.setRuntime(this.switchOnApplianceId, seconds).subscribe();
     this.statusService.toggleAppliance(this.switchOnApplianceId, true).subscribe(() => this.loadApplianceStatuses());
     this.switchOnApplianceId = null;
+  }
+
+  submitStartChargeForm() {
+    console.log('START=', this.startChargeForm);
   }
 
   toHourMinuteWithUnits(seconds: number): string {
