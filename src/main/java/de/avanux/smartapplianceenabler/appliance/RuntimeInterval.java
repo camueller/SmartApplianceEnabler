@@ -94,6 +94,11 @@ public class RuntimeInterval {
         this.maxEnergy = maxEnergy;
     }
 
+    public boolean isUsingOptionalEnergy() {
+        return (this.minEnergy != null && this.maxEnergy != null && this.minEnergy < this.maxEnergy)
+                || (this.minRunningTime != null && this.maxRunningTime != null && this.minRunningTime < this.maxRunningTime);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
