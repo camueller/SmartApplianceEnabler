@@ -23,6 +23,13 @@ export class StatusFactory {
     applianceStatus.controllable = rawApplianceHeader.controllable;
     applianceStatus.interruptedSince = rawApplianceHeader.interruptedSince;
     applianceStatus.optionalEnergy = rawApplianceHeader.optionalEnergy;
+
+    if (applianceStatus.id === 'F-28091971-000000000099-00') {
+      applianceStatus.evCharger = true;
+      applianceStatus.electricVehicle = 'Nissan Leaf';
+      applianceStatus.stateOfCharge = 40;
+    }
+
     this.logger.debug('Status (TYPE)' + JSON.stringify(applianceStatus));
     return applianceStatus;
   }
