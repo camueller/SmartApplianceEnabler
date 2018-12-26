@@ -30,6 +30,7 @@
     "core-js": "^2.5.4",
     "rxjs": "^6.3.3",
     "semantic-ui-css": "^2.4.0",
+    "ng2-semantic-ui": "^0.9.7",
     "zone.js": "~0.8.26"
   },
   "devDependencies": {
