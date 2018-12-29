@@ -27,9 +27,10 @@
     </div>
     <div class="appliance-details">
       <div class="appliance-type">{{getTranslatedType(applianceStatus.type)}}</div>
-      <div *ngIf="!applianceStatus.evCharger" class="appliance-name">{{applianceStatus.name}}</div>
-      <div *ngIf="applianceStatus.evCharger && applianceStatus.id != switchOnApplianceId" class="appliance-name">{{applianceStatus.electricVehicle}}</div>
-      <div *ngIf="applianceStatus.id === switchOnApplianceId && !applianceStatus.evCharger">
+      <div *ngIf="!isEvCharger(applianceStatus)" class="appliance-name">{{applianceStatus.name}}</div>
+      <div *ngIf="isEvCharger(applianceStatus) && applianceStatus.id != switchOnApplianceId" class="appliance-name"
+      >{{applianceStatus.electricVehicle}}</div>
+      <div *ngIf="applianceStatus.id === switchOnApplianceId && !isEvCharger(applianceStatus)">
         <form class="ui form" [formGroup]="switchOnForm" (ngSubmit)="submitSwitchOnForm()">
           <div class="appliance-details-row">
             <span class="appliance-status-label">{{'StatusComponent.plannedRunningTime' | translate}}</span>
@@ -41,15 +42,17 @@
           </div>
         </form>
       </div>
-      <div *ngIf="applianceStatus.id === switchOnApplianceId && applianceStatus.evCharger">
+      <div *ngIf="applianceStatus.id === switchOnApplianceId && isEvCharger(applianceStatus)">
         <form class="ui form" [formGroup]="startChargeForm" (ngSubmit)="submitStartChargeForm()">
           <div class="appliance-details-row">
               <sui-select class="selection form-control"
-                        [options]="electricVehicles"
+                        [options]="applianceStatus.evStatuses"
+                        labelField="name"
+                        valueField="name"
                         formControlName="electricVehicle"
                         #selectElectricVehicle
             >
-              <sui-select-option *ngFor="let option of selectElectricVehicle.filteredOptions" [value]="option"></sui-select-option>
+              <sui-select-option *ngFor="let option of selectElectricVehicle.filteredOptions" class="dropdown-item" [value]="option"></sui-select-option>
             </sui-select>
           </div>
           <div class="appliance-details-row">
@@ -75,7 +78,7 @@
           </div>
         </form>
       </div>
-      <div *ngIf="applianceStatus.id != switchOnApplianceId && applianceStatus.planningRequested && !applianceStatus.evCharger">
+      <div *ngIf="applianceStatus.id != switchOnApplianceId && applianceStatus.planningRequested && !isEvCharger(applianceStatus)">
         <div class="appliance-status">
           <div *ngIf="isStopLightOn(applianceStatus)">
             <span class="appliance-status-label">{{'StatusComponent.earliestStart' | translate}}</span>
@@ -111,7 +114,7 @@
           </div>
         </div>
       </div>
-      <div *ngIf="applianceStatus.id != switchOnApplianceId && applianceStatus.planningRequested && applianceStatus.evCharger">
+      <div *ngIf="applianceStatus.id != switchOnApplianceId && applianceStatus.planningRequested && isEvCharger(applianceStatus)">
         <div class="appliance-status">
           <span class="appliance-status-label">{{'StatusComponent.energyPlanned' | translate}}</span>
           <span class="appliance-status-value">10 kWh</span>

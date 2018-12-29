@@ -1,12 +1,4 @@
-import {
-  AfterContentChecked,
-  AfterContentInit,
-  AfterViewChecked,
-  AfterViewInit,
-  Component,
-  OnDestroy,
-  OnInit
-} from '@angular/core';
+import {AfterViewChecked, Component, OnDestroy, OnInit} from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
 import {Status} from './status';
 import {TimeUtil} from '../shared/time-util';
@@ -14,6 +6,7 @@ import {FormControl, FormControlName, FormGroup, Validators} from '@angular/form
 import {interval, Subscription} from 'rxjs';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {StatusService} from './status.service';
+import {EvStatus} from './ev-status';
 
 declare const $: any;
 
@@ -57,7 +50,6 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
   switchOnForm: FormGroup;
   startChargeForm: FormGroup;
   switchOnApplianceId: string;
-  electricVehicles = ['Nissan Leaf'];
   dows = ['Sonntag'];
   initializeOnceAfterViewChecked = false;
   loadApplianceStatusesSubscription: Subscription;
@@ -83,15 +75,24 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
         Validators.required,
         Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)])
     });
-    this.startChargeForm = new FormGroup({
-      electricVehicle: new FormControl(this.electricVehicles[0]),
-      stateOfCharge: new FormControl(27),
-      chargeAmount: new FormControl(10),
-      chargeEndDow: new FormControl('Sonntag'),
-      chargeEndTime: new FormControl('18:00'),
-    });
-    this.switchOnApplianceId = 'F-28091971-000000000099-00';
     this.initializeOnceAfterViewChecked = true;
+  }
+
+  updateStartChargeForm(applianceId: string, evStatus: EvStatus) {
+    if (evStatus) {
+      const electicVehicleControl = new FormControl(evStatus.name);
+      electicVehicleControl.valueChanges.subscribe(electricVehicleSelected => {
+        this.updateStartChargeForm(applianceId, this.getEvStatus(this.getStatus(applianceId), electricVehicleSelected));
+      });
+      this.startChargeForm = new FormGroup({
+        electricVehicle: electicVehicleControl,
+        stateOfCharge: new FormControl(),
+        chargeAmount: new FormControl(this.toKWh(evStatus.defaultEnergyCharge)),
+        chargeEndDow: new FormControl('Sonntag'),
+        chargeEndTime: new FormControl('18:00'),
+      });
+      this.initializeOnceAfterViewChecked = true;
+    }
   }
 
   ngAfterViewChecked() {
@@ -122,11 +123,26 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
     });
   }
 
+  getStatus(id: string): Status {
+    return this.applianceStatuses.filter(status => status.id === id)[0];
+  }
+
+  getEvStatus(status: Status, name: string): EvStatus {
+    if (status && name) {
+      return status.evStatuses.filter(evStatus => evStatus.name === name)[0];
+    }
+    return undefined;
+  }
+
   getTranslatedType(type: string): string {
     if (this.translatedTypes != null) {
       return this.translatedTypes[this.typePrefix + type];
     }
     return '';
+  }
+
+  isEvCharger(applianceStatus: Status): boolean {
+    return applianceStatus.evStatuses ? true : false;
   }
 
   isStopLightOn(applianceStatus: Status): boolean {
@@ -154,11 +170,15 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
    * @param {string} applianceId
    */
   onClickGoLight(applianceId: string) {
-    // console.log('CLICK GO=' + applianceId);
-    this.statusService.suggestRuntime(applianceId).subscribe(suggestedRuntime => {
-      const hourMinute = TimeUtil.toHourMinute(Number.parseInt(suggestedRuntime));
-      this.switchOnForm.controls['switchOnRunningTime'].setValue(hourMinute);
-    });
+    const status = this.getStatus(applianceId);
+    if (this.isEvCharger(status)) {
+      this.updateStartChargeForm(applianceId, status.evStatuses[0]);
+    } else {
+      this.statusService.suggestRuntime(applianceId).subscribe(suggestedRuntime => {
+        const hourMinute = TimeUtil.toHourMinute(Number.parseInt(suggestedRuntime));
+        this.switchOnForm.controls['switchOnRunningTime'].setValue(hourMinute);
+      });
+    }
     this.switchOnApplianceId = applianceId;
     this.initializeOnceAfterViewChecked = true;
   }
@@ -202,5 +222,12 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
       return '';
     }
     return TimeUtil.toHourMinuteWithUnits(seconds);
+  }
+
+  toKWh(wh: number): number {
+    if (wh) {
+      return wh / 1000;
+    }
+    return undefined;
   }
 }

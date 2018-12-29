@@ -19,6 +19,8 @@
 package de.avanux.smartapplianceenabler.webservice;
 
 
+import java.util.List;
+
 public class ApplianceStatus {
     private String id;
     private String name;
@@ -34,6 +36,7 @@ public class ApplianceStatus {
     private boolean controllable;
     private Integer interruptedSince;
     private boolean optionalEnergy;
+    private List<EVStatus> evStatus;
 
 
     public String getId() {
@@ -146,5 +149,13 @@ public class ApplianceStatus {
 
     public void setOptionalEnergy(boolean optionalEnergy) {
         this.optionalEnergy = optionalEnergy;
+    }
+
+    public List<EVStatus> getEvStatus() {
+        return evStatus;
+    }
+
+    public void setEvStatus(List<EVStatus> evStatus) {
+        this.evStatus = evStatus;
     }
 }

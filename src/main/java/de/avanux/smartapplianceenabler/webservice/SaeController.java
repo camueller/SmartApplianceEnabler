@@ -27,6 +27,7 @@ import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.ControlDefaults;
 import de.avanux.smartapplianceenabler.control.ModbusSwitch;
 import de.avanux.smartapplianceenabler.control.StartingCurrentSwitchDefaults;
+import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
 import de.avanux.smartapplianceenabler.meter.*;
 import de.avanux.smartapplianceenabler.modbus.ModbusElectricityMeterDefaults;
@@ -556,6 +557,7 @@ public class SaeController {
             List<RuntimeInterval> runtimeIntervals = appliance.getRuntimeIntervals(now, true);
 
             if(appliance.isControllable()) {
+                Control control = appliance.getControl();
                 RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
                 applianceStatus.setControllable(true);
                 if(runtimeIntervals.size() > 0) {
@@ -564,7 +566,7 @@ public class SaeController {
                     applianceStatus.setEarliestStart(nextRuntimeInterval.getEarliestStart());
                     applianceStatus.setLatestStart(TimeframeInterval.getLatestStart(nextRuntimeInterval.getLatestEnd(),
                             nextRuntimeInterval.getMinRunningTime()));
-                    if(appliance.getControl().isOn()) {
+                    if(control.isOn()) {
                         applianceStatus.setOptionalEnergy(nextRuntimeInterval.isUsingOptionalEnergy());
                     }
                     if(runningTimeMonitor.getActiveTimeframeInterval() == null) {
@@ -573,7 +575,19 @@ public class SaeController {
                         applianceStatus.setRemainingMaxRunningTime(nextRuntimeInterval.getMaxRunningTime());
                     }
                 }
-                applianceStatus.setOn(appliance.getControl().isOn());
+                applianceStatus.setOn(control.isOn());
+                if(control instanceof ElectricVehicleCharger) {
+                    ElectricVehicleCharger evCharger = (ElectricVehicleCharger) control;
+                    List<EVStatus> evStatuses = new ArrayList<>();
+                    for(ElectricVehicle electricVehicle: evCharger.getVehicles()) {
+                        EVStatus evStatus = new EVStatus();
+                        evStatus.setName(electricVehicle.getName());
+                        evStatus.setBatteryCapacity(electricVehicle.getBatteryCapacity());
+                        evStatus.setDefaultEnergyCharge(electricVehicle.getDefaultEnergyCharge());
+                        evStatuses.add(evStatus);
+                    }
+                    applianceStatus.setEvStatus(evStatuses);
+                }
                 if(runningTimeMonitor.getActiveTimeframeInterval() != null) {
                     applianceStatus.setPlanningRequested(true);
                     Integer runningTime = runningTimeMonitor.getRunningTimeOfCurrentTimeFrame(now);

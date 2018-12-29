@@ -1,5 +1,7 @@
 import {Status} from './status';
 import {Logger} from '../log/logger';
+import {EvStatus} from './ev-status';
+import {noUndefined} from '@angular/compiler/src/util';
 
 export class StatusFactory {
 
@@ -23,15 +25,21 @@ export class StatusFactory {
     applianceStatus.controllable = rawApplianceHeader.controllable;
     applianceStatus.interruptedSince = rawApplianceHeader.interruptedSince;
     applianceStatus.optionalEnergy = rawApplianceHeader.optionalEnergy;
-
-    if (applianceStatus.id === 'F-28091971-000000000099-00') {
-      applianceStatus.evCharger = true;
-      applianceStatus.electricVehicle = 'Nissan Leaf';
-      applianceStatus.stateOfCharge = 40;
-    }
-
+    applianceStatus.evStatuses = this.toEvStatuses(rawApplianceHeader.evStatus)
     this.logger.debug('Status (TYPE)' + JSON.stringify(applianceStatus));
     return applianceStatus;
+  }
+
+  toEvStatuses(rawEVStatuses: any[]): EvStatus[] {
+    if (rawEVStatuses) {
+      return rawEVStatuses.map((rawEVStatus: any) => this.toEvStatusFromJSON(rawEVStatus));
+    }
+    return undefined;
+  }
+
+  toEvStatusFromJSON(rawEVStatus: any): EvStatus {
+    const evStatus = new EvStatus(... rawEVStatus);
+    return evStatus;
   }
 
 }
