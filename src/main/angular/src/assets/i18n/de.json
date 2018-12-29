@@ -258,6 +258,16 @@
   "SettingsComponent.error.modbusTcpPort_pattern": "Die Portnummer muss gültig sein",
   "SettingsComponent.error.pulseReceiverPort_pattern": "Die Portnummer muss gültig sein",
 
+  "dayOfWeek": "Wochentag",
+  "daysOfWeek_monday": "Montag",
+  "daysOfWeek_tuesday": "Dienstag",
+  "daysOfWeek_wednesday": "Mittwoch",
+  "daysOfWeek_thursday": "Donnerstag",
+  "daysOfWeek_friday": "Freitag",
+  "daysOfWeek_saturday": "Samstag",
+  "daysOfWeek_sunday": "Sonntag",
+  "daysOfWeek_holiday": "Feiertag",
+
   "button.new": "Neu",
   "button.save": "Speichern",
   "button.delete": "Löschen",

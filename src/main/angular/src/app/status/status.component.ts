@@ -7,6 +7,7 @@ import {interval, Subscription} from 'rxjs';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {StatusService} from './status.service';
 import {EvStatus} from './ev-status';
+import {DayOfWeek, DaysOfWeek} from '../shared/days-of-week';
 
 declare const $: any;
 
@@ -50,7 +51,7 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
   switchOnForm: FormGroup;
   startChargeForm: FormGroup;
   switchOnApplianceId: string;
-  dows = ['Sonntag'];
+  dows: DayOfWeek[] = [];
   initializeOnceAfterViewChecked = false;
   loadApplianceStatusesSubscription: Subscription;
 
@@ -67,6 +68,7 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
       'StatusComponent.remainingMinRunningTime',
       'StatusComponent.remainingMaxRunningTime'
     ]).subscribe(translatedStrings => this.translatedStrings = translatedStrings);
+    DaysOfWeek.getDows(this.translate).subscribe(dows => this.dows = dows);
     this.loadApplianceStatuses();
     this.loadApplianceStatusesSubscription = interval(60 * 1000)
       .subscribe(() => this.loadApplianceStatuses());
@@ -87,9 +89,9 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.startChargeForm = new FormGroup({
         electricVehicle: electicVehicleControl,
         stateOfCharge: new FormControl(),
-        chargeAmount: new FormControl(this.toKWh(evStatus.defaultEnergyCharge)),
-        chargeEndDow: new FormControl('Sonntag'),
-        chargeEndTime: new FormControl('18:00'),
+        chargeAmount: new FormControl(this.toKWh(evStatus.defaultEnergyCharge), Validators.required),
+        chargeEndDow: new FormControl(undefined, Validators.required),
+        chargeEndTime: new FormControl(undefined, Validators.required),
       });
       this.initializeOnceAfterViewChecked = true;
     }

@@ -65,12 +65,16 @@
             <span class="appliance-status-label">{{'StatusComponent.charge' | translate}}</span>
             <sui-select class="selection form-control"
                         [options]="dows"
+                        labelField="name"
+                        valueField="id"
                         formControlName="chargeEndDow"
+                        placeholder="{{'dayOfWeek' | translate}}"
                         #selectChargeEndDow
             >
-              <sui-select-option *ngFor="let option of selectChargeEndDow.filteredOptions" [value]="option"></sui-select-option>
+              <sui-select-option *ngFor="let option of selectChargeEndDow.filteredOptions" class="dropdown-item" [value]="option"></sui-select-option>
             </sui-select>
-            <input type="text" class="appliance-number-input clockpicker" name="chargeEndTime" style="width: 4em" formControlName="chargeEndTime">
+            <input type="text" class="appliance-number-input clockpicker" style="width: 4em" name="chargeEndTime"
+                   formControlName="chargeEndTime" placeholder="00:00">
           </div>
           <div class="appliance-details-row appliance-button-row">
             <button type="submit" class="ui button"
