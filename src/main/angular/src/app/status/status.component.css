@@ -139,7 +139,11 @@
 }
 
 .ui.selection.dropdown {
-  min-width: 0;
+  min-width: 0px;
+}
+
+.dropdown-item {
+  white-space: nowrap !important;
 }
 
 .ui.grid > .column {

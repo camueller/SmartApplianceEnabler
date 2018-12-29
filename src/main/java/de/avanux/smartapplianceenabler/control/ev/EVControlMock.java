@@ -20,7 +20,7 @@ package de.avanux.smartapplianceenabler.control.ev;
 
 import de.avanux.smartapplianceenabler.meter.Meter;
 
-public class EvControlMock implements EVControl, Meter {
+public class EVControlMock implements EVControl, Meter {
 
     @Override
     public void validate() {

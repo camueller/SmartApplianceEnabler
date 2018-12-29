@@ -16,23 +16,12 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.avanux.smartapplianceenabler.control.ev;
+package de.avanux.smartapplianceenabler.webservice;
 
-import javax.xml.bind.annotation.*;
-
-@XmlAccessorType(XmlAccessType.FIELD)
-public class ElectricVehicle {
-    @XmlAttribute
+public class EVStatus {
     private String name;
-    @XmlAttribute
     private Integer batteryCapacity;
-    @XmlAttribute
     private Integer defaultEnergyCharge;
-    @XmlElements({
-            @XmlElement(name = "SocScript", type = SocScript.class),
-    })
-    private SocScript socScript;
-
 
     public String getName() {
         return name;
@@ -56,13 +45,5 @@ public class ElectricVehicle {
 
     public void setDefaultEnergyCharge(Integer defaultEnergyCharge) {
         this.defaultEnergyCharge = defaultEnergyCharge;
-    }
-
-    public SocScript getSocScript() {
-        return socScript;
-    }
-
-    public void setSocScript(SocScript socScript) {
-        this.socScript = socScript;
     }
 }

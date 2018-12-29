@@ -97,7 +97,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
         boolean useEvControlMock = Boolean.parseBoolean(System.getProperty("sae.evcontrol.mock", "false"));
         if(useEvControlMock) {
             logger.info("##### using EvControl Mock #####");
-            this.control= new EvControlMock();
+            this.control= new EVControlMock();
             this.appliance.setMeter((Meter) this.control);
         }
         logger.debug("{}: voltage={} phases={} startChargingStateDetectionDelay={}",
