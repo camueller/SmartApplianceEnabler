@@ -39,6 +39,8 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     @XmlAttribute
     private Integer phases = 1;
     @XmlAttribute
+    private Integer maxChargePower;
+    @XmlAttribute
     private Integer pollInterval = 10; // seconds
     @XmlAttribute
     protected Integer startChargingStateDetectionDelay = 300;
@@ -83,6 +85,10 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
 
     protected void setControl(EVControl control) {
         this.control = control;
+    }
+
+    public Integer getMaxChargePower() {
+        return maxChargePower;
     }
 
     public List<ElectricVehicle> getVehicles() {
