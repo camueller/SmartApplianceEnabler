@@ -23,6 +23,8 @@ import javax.xml.bind.annotation.*;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ElectricVehicle {
     @XmlAttribute
+    private String id;
+    @XmlAttribute
     private String name;
     @XmlAttribute
     private Integer batteryCapacity;
@@ -33,6 +35,14 @@ public class ElectricVehicle {
     })
     private SocScript socScript;
 
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
