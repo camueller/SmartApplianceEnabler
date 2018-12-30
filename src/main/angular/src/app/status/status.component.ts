@@ -98,7 +98,6 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   ngAfterViewChecked() {
-    console.log('ngAfterViewChecked initializeOnceAfterViewChecked=' + this.initializeOnceAfterViewChecked);
     if (this.initializeOnceAfterViewChecked) {
       this.initializeOnceAfterViewChecked = false;
       this.initializeClockPicker();
@@ -208,7 +207,6 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   submitSwitchOnForm() {
     const switchOnRunningTime = this.switchOnForm.value.switchOnRunningTime;
-    // console.log('SWITCH ON=' + this.switchOnForm.value.switchOnRunningTime);
     const seconds = TimeUtil.toSeconds(switchOnRunningTime);
     this.statusService.setRuntime(this.switchOnApplianceId, seconds).subscribe();
     this.statusService.toggleAppliance(this.switchOnApplianceId, true).subscribe(() => this.loadApplianceStatuses());
@@ -216,7 +214,14 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   submitStartChargeForm() {
-    console.log('START=', this.startChargeForm);
+    const evid = this.startChargeForm.value.electricVehicle;
+    const energy = this.startChargeForm.value.chargeAmount * 1000;
+    const chargeEnd = TimeUtil.timestringOfNextMatchingDow(
+      this.startChargeForm.value.chargeEndDow,
+      this.startChargeForm.value.chargeEndTime);
+    const soc = this.startChargeForm.value.stateOfCharge;
+    this.statusService.requestEvCharge(this.switchOnApplianceId, evid, energy, chargeEnd, soc).subscribe();
+    this.switchOnApplianceId = null;
   }
 
   toHourMinuteWithUnits(seconds: number): string {
