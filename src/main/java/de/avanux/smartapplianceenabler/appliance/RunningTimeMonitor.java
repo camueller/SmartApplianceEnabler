@@ -238,6 +238,17 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         activateTimeframeInterval(now, new TimeframeInterval(timeframe, interval));
     }
 
+    public void activateTimeframeInterval(LocalDateTime now, Integer energy, LocalDateTime chargeEnd, Integer soc) {
+        logger.debug("{}: Activate timeframe interval: energy={}Wh chargeEnd={} soc={}",
+                applianceId, energy, chargeEnd, soc);
+        // FIXME: TimeOfDay sollte null sein können
+        Schedule schedule = Schedule.withEnergyRequest(energy, energy, new TimeOfDay(now), new TimeOfDay(now));
+        Interval interval = new Interval(now.toDateTime(), chargeEnd.toDateTime());
+        // FIXME: geht das nicht besser?
+        Timeframe timeframe = schedule.getTimeframe();
+        activateTimeframeInterval(now, new TimeframeInterval(timeframe, interval));
+    }
+
     /**
      * Activate the given timeframe interval.
      * @param now

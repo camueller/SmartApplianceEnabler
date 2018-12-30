@@ -31,6 +31,14 @@ public class EnergyRequest implements Request {
     @XmlAttribute
     private Integer max;
 
+    public EnergyRequest() {
+    }
+
+    public EnergyRequest(Integer min, Integer max) {
+        this.min = min;
+        this.max = max;
+    }
+
     public Integer getMin() {
         return min;
     }

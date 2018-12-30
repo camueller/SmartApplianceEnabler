@@ -62,6 +62,14 @@ public class Schedule {
         this.timeframe = new DayTimeframe(earliestStart, latestEnd, daysOfWeekValues);
     }
 
+    public static Schedule withEnergyRequest(Integer minEnergy, Integer maxEnergy, TimeOfDay earliestStart, TimeOfDay latestEnd) {
+        Schedule schedule = new Schedule();
+        schedule.enabled = true;
+        schedule.request = new EnergyRequest(minEnergy, maxEnergy);
+        schedule.timeframe = new DayTimeframe(earliestStart, latestEnd);
+        return schedule;
+    }
+
     public String getId() {
         return id;
     }

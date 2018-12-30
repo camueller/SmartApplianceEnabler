@@ -36,8 +36,10 @@ import de.avanux.smartapplianceenabler.schedule.RuntimeRequest;
 import de.avanux.smartapplianceenabler.schedule.Schedule;
 import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
 import de.avanux.smartapplianceenabler.semp.webservice.*;
+import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.joda.time.LocalDateTime;
+import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -61,6 +63,7 @@ public class SaeController {
     private static final String SETTINGSDEFAULTS_URL = BASE_URL + "/settingsdefaults";
     private static final String STATUS_URL = BASE_URL + "/status";
     private static final String RUNTIME_URL = BASE_URL + "/runtime";
+    private static final String EVCHARGE_URL = BASE_URL + "/evcharge";
     private static final String INFO_URL = BASE_URL + "/info";
     // only required for development if running via "ng serve"
     private static final String CROSS_ORIGIN_URL = "http://localhost:4200";
@@ -394,8 +397,9 @@ public class SaeController {
 
     @RequestMapping(value=RUNTIME_URL, method=RequestMethod.PUT)
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    public void setRuntimeDemand(HttpServletResponse response, @RequestParam(value="id") String applianceId,
-                           @RequestParam(value="runtime") Integer runtime) {
+    public void setRuntimeDemand(HttpServletResponse response,
+                                 @RequestParam(value="id") String applianceId,
+                                 @RequestParam(value="runtime") Integer runtime) {
         if(! setRuntimeDemand(new LocalDateTime(), applianceId, runtime)) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
@@ -411,6 +415,32 @@ public class SaeController {
     public boolean setRuntimeDemand(LocalDateTime now, String applianceId, Integer runtime) {
         logger.debug("{}: Received request to set runtime to {}s", applianceId, runtime);
         return activateTimeframe(now, applianceId, null, runtime, false);
+    }
+
+    @RequestMapping(value=EVCHARGE_URL, method=RequestMethod.PUT)
+    @CrossOrigin(origins = CROSS_ORIGIN_URL)
+    public void setEnergyDemand(HttpServletResponse response,
+                                @RequestParam(value="applianceid") String applianceId,
+                                @RequestParam(value="evid") String evId,
+                                @RequestParam(value="energy") Integer energy,
+                                @RequestParam(value="chargeEnd") String chargeEndString,
+                                @RequestParam(value="soc") Integer soc
+    ) {
+        LocalDateTime chargeEnd = DateTime.parse(chargeEndString, ISODateTimeFormat.dateTimeParser()).toLocalDateTime();
+        logger.debug("{}: Received energy request: evId={} energy={}Wh chargeEnd={} soc={}",
+                applianceId, evId, energy, chargeEnd, soc);
+        Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
+        if(appliance != null) {
+            RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
+            if(runningTimeMonitor != null) {
+                runningTimeMonitor.activateTimeframeInterval(new LocalDateTime(), energy, chargeEnd, soc);
+            }
+            appliance.setAcceptControlRecommendations(true);
+        }
+        else {
+            logger.error("{}: Appliance not found", applianceId);
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        }
     }
 
     /**
@@ -581,6 +611,7 @@ public class SaeController {
                     List<EVStatus> evStatuses = new ArrayList<>();
                     for(ElectricVehicle electricVehicle: evCharger.getVehicles()) {
                         EVStatus evStatus = new EVStatus();
+                        evStatus.setId(electricVehicle.getId());
                         evStatus.setName(electricVehicle.getName());
                         evStatus.setBatteryCapacity(electricVehicle.getBatteryCapacity());
                         evStatus.setDefaultEnergyCharge(electricVehicle.getDefaultEnergyCharge());
