@@ -520,14 +520,8 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                     addRuntimeRequestInterval(runtimeIntervals, interval, minRunningTime, schedule.getRequest().getMax(), now);
                 }
                 else if(schedule.getRequest() instanceof EnergyRequest) {
-                    Integer minEnergy = schedule.getRequest().getMin();
-                    Integer maxEnergy = schedule.getRequest().getMax();
-                    if(meter != null) {
-                        int whAlreadyCharged = Float.valueOf(meter.getEnergy() * 1000.0f).intValue();
-                        minEnergy -= whAlreadyCharged;
-                        maxEnergy -= whAlreadyCharged;
-                    }
-                    addEnergyRequestInterval(runtimeIntervals, interval, minEnergy, maxEnergy, now);
+                    EnergyRequest remainingEnergy = calculateRemainingEnergy(schedule);
+                    addEnergyRequestInterval(runtimeIntervals, interval, remainingEnergy.getMin(), remainingEnergy.getMax(), now);
                 }
             }
         }
@@ -546,6 +540,18 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             logger.debug("{}: No timeframes found", id);
         }
         return runtimeIntervals;
+    }
+
+    public EnergyRequest calculateRemainingEnergy(Schedule schedule) {
+        EnergyRequest remainingEnergy = new EnergyRequest();
+        remainingEnergy.setMin(schedule.getRequest().getMin());
+        remainingEnergy.setMax(schedule.getRequest().getMax());
+        if(meter != null) {
+            int whAlreadyCharged = Float.valueOf(meter.getEnergy() * 1000.0f).intValue();
+            remainingEnergy.setMin(remainingEnergy.getMin() - whAlreadyCharged);
+            remainingEnergy.setMax(remainingEnergy.getMax() - whAlreadyCharged);
+        }
+        return remainingEnergy;
     }
 
     private RuntimeInterval getRuntimeIntervalForEVUsingOptionalEnergy() {
