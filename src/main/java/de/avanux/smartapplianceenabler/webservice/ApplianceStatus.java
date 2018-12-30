@@ -29,6 +29,10 @@ public class ApplianceStatus {
     private Integer runningTime;
     private Integer remainingMinRunningTime;
     private Integer remainingMaxRunningTime;
+    private Integer plannedEnergyAmount;
+    private Integer remainingMinEnergyAmount;
+    private Integer remainingMaxEnergyAmount;
+    private Integer currentChargePower;
     private boolean planningRequested;
     private Integer earliestStart;
     private Integer latestStart;
@@ -94,6 +98,38 @@ public class ApplianceStatus {
 
     public void setRemainingMaxRunningTime(Integer remainingMaxRunningTime) {
         this.remainingMaxRunningTime = remainingMaxRunningTime;
+    }
+
+    public Integer getPlannedEnergyAmount() {
+        return plannedEnergyAmount;
+    }
+
+    public void setPlannedEnergyAmount(Integer plannedEnergyAmount) {
+        this.plannedEnergyAmount = plannedEnergyAmount;
+    }
+
+    public Integer getRemainingMinEnergyAmount() {
+        return remainingMinEnergyAmount;
+    }
+
+    public void setRemainingMinEnergyAmount(Integer remainingMinEnergyAmount) {
+        this.remainingMinEnergyAmount = remainingMinEnergyAmount;
+    }
+
+    public Integer getRemainingMaxEnergyAmount() {
+        return remainingMaxEnergyAmount;
+    }
+
+    public void setRemainingMaxEnergyAmount(Integer remainingMaxEnergyAmount) {
+        this.remainingMaxEnergyAmount = remainingMaxEnergyAmount;
+    }
+
+    public Integer getCurrentChargePower() {
+        return currentChargePower;
+    }
+
+    public void setCurrentChargePower(Integer currentChargePower) {
+        this.currentChargePower = currentChargePower;
     }
 
     public boolean isPlanningRequested() {

@@ -38,7 +38,7 @@ public class EVControlMock implements EVControl, Meter {
 
     @Override
     public boolean isCharging() {
-        return false;
+        return true;
     }
 
     @Override
@@ -75,7 +75,7 @@ public class EVControlMock implements EVControl, Meter {
 
     @Override
     public boolean isOn() {
-        return false;
+        return true;
     }
 
     @Override

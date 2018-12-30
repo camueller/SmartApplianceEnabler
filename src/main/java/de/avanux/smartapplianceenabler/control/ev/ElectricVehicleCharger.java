@@ -62,6 +62,8 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     private transient Integer stateOfCharge;
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
     private transient Long startChargingTimestamp;
+    private transient Integer chargeAmount;
+    private transient Integer chargePower;
 
     protected enum State {
         VEHICLE_NOT_CONNECTED,
@@ -99,6 +101,14 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
 
     public void setStateOfCharge(Integer stateOfCharge) {
         this.stateOfCharge = stateOfCharge;
+    }
+
+    public Integer getChargeAmount() {
+        return chargeAmount;
+    }
+
+    public void setChargeAmount(Integer chargeAmount) {
+        this.chargeAmount = chargeAmount;
     }
 
     public Integer getChargingVehicleId() {
@@ -337,7 +347,12 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     public void setChargePower(int power) {
         int current = Float.valueOf(power / (this.voltage * this.phases)).intValue();
         logger.debug("{}: Set charge power: {}W corresponds to {}A", applianceId, power, current);
+        this.chargePower = power;
         control.setChargeCurrent(current);
+    }
+
+    public Integer getChargePower() {
+        return chargePower;
     }
 
     public void startCharging() {
@@ -351,6 +366,8 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
         control.stopCharging();
         this.startChargingTimestamp = null;
         this.chargingVehicleId = null;
+        this.chargeAmount = null;
+        this.chargePower = null;
     }
 
 }

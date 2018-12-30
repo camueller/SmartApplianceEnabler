@@ -17,13 +17,19 @@
 
       <div class="bulb" [class.slowLight]="isSlowLightOn(applianceStatus)"></div>
 
-      <div class="bulb goLight" [class.goLight-blink]="isUsingOptionalEnergy(applianceStatus)" *ngIf="isGoLightOn(applianceStatus)"></div>
+      <div class="bulb goLight"
+           [class.goLight-blink]="isUsingOptionalEnergy(applianceStatus)"
+           *ngIf="isGoLightOn(applianceStatus)"
+           (click)="onClickGoLight(applianceStatus.id)"
+           [attr.data-tooltip]="'StatusComponent.tooltipGoLight' | translate"
+           data-position="right center"
+      ></div>
       <div class="bulb" *ngIf="!isGoLightOn(applianceStatus) && applianceStatus.id === switchOnApplianceId"></div>
       <div class="bulb" *ngIf="!isGoLightOn(applianceStatus) && applianceStatus.id != switchOnApplianceId"
            (click)="onClickGoLight(applianceStatus.id)"
            [attr.data-tooltip]="'StatusComponent.tooltipGoLight' | translate"
-           data-position="right center"></div>
-
+           data-position="right center"
+      ></div>
     </div>
     <div class="appliance-details">
       <div class="appliance-type">{{getTranslatedType(applianceStatus.type)}}</div>

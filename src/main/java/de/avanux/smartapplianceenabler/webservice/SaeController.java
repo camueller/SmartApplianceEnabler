@@ -31,6 +31,7 @@ import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
 import de.avanux.smartapplianceenabler.meter.*;
 import de.avanux.smartapplianceenabler.modbus.ModbusElectricityMeterDefaults;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
+import de.avanux.smartapplianceenabler.schedule.EnergyRequest;
 import de.avanux.smartapplianceenabler.schedule.RuntimeRequest;
 import de.avanux.smartapplianceenabler.schedule.Schedule;
 import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
@@ -439,6 +440,7 @@ public class SaeController {
                 ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
                 evCharger.setChargingVehicleId(evId);
                 evCharger.setStateOfCharge(soc);
+                evCharger.setChargeAmount(energy);
             }
         } else {
             logger.error("{}: Appliance not found", applianceId);
@@ -592,6 +594,7 @@ public class SaeController {
             if(appliance.isControllable()) {
                 Control control = appliance.getControl();
                 RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
+                TimeframeInterval activeTimeframeInterval = runningTimeMonitor.getActiveTimeframeInterval();
                 applianceStatus.setControllable(true);
                 if(runtimeIntervals.size() > 0) {
                     RuntimeInterval nextRuntimeInterval = runtimeIntervals.get(0);
@@ -602,7 +605,7 @@ public class SaeController {
                     if(control.isOn()) {
                         applianceStatus.setOptionalEnergy(nextRuntimeInterval.isUsingOptionalEnergy());
                     }
-                    if(runningTimeMonitor.getActiveTimeframeInterval() == null) {
+                    if(activeTimeframeInterval == null) {
                         applianceStatus.setRunningTime(0);
                         applianceStatus.setRemainingMinRunningTime(nextRuntimeInterval.getMinRunningTime());
                         applianceStatus.setRemainingMaxRunningTime(nextRuntimeInterval.getMaxRunningTime());
@@ -622,8 +625,16 @@ public class SaeController {
                     }
                     applianceStatus.setEvStatuses(evStatuses);
                     applianceStatus.setEvIdCharging(evCharger.getChargingVehicleId());
+                    applianceStatus.setPlannedEnergyAmount(evCharger.getChargeAmount());
+                    applianceStatus.setCurrentChargePower(evCharger.getChargePower());
+                    if(activeTimeframeInterval != null) {
+                        Schedule schedule = activeTimeframeInterval.getTimeframe().getSchedule();
+                        EnergyRequest remainingEnergy = appliance.calculateRemainingEnergy(schedule);
+                        applianceStatus.setRemainingMinEnergyAmount(remainingEnergy.getMin());
+                        applianceStatus.setRemainingMaxEnergyAmount(remainingEnergy.getMax());
+                    }
                 }
-                if(runningTimeMonitor.getActiveTimeframeInterval() != null) {
+                if(activeTimeframeInterval != null) {
                     applianceStatus.setPlanningRequested(true);
                     Integer runningTime = runningTimeMonitor.getRunningTimeOfCurrentTimeFrame(now);
                     applianceStatus.setRunningTime(runningTime);
