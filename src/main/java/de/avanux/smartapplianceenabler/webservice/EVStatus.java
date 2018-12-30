@@ -19,16 +19,16 @@
 package de.avanux.smartapplianceenabler.webservice;
 
 public class EVStatus {
-    private String id;
+    private Integer id;
     private String name;
     private Integer batteryCapacity;
     private Integer defaultEnergyCharge;
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
