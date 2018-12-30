@@ -25,7 +25,6 @@ import de.avanux.smartapplianceenabler.configuration.Configuration;
 import de.avanux.smartapplianceenabler.configuration.Connectivity;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.ControlDefaults;
-import de.avanux.smartapplianceenabler.control.ModbusSwitch;
 import de.avanux.smartapplianceenabler.control.StartingCurrentSwitchDefaults;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
@@ -421,7 +420,7 @@ public class SaeController {
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public void setEnergyDemand(HttpServletResponse response,
                                 @RequestParam(value="applianceid") String applianceId,
-                                @RequestParam(value="evid") String evId,
+                                @RequestParam(value="evid") Integer evId,
                                 @RequestParam(value="energy") Integer energy,
                                 @RequestParam(value="chargeEnd") String chargeEndString,
                                 @RequestParam(value="soc") Integer soc
@@ -430,14 +429,18 @@ public class SaeController {
         logger.debug("{}: Received energy request: evId={} energy={}Wh chargeEnd={} soc={}",
                 applianceId, evId, energy, chargeEnd, soc);
         Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
-        if(appliance != null) {
+        if (appliance != null) {
             RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
-            if(runningTimeMonitor != null) {
+            if (runningTimeMonitor != null) {
                 runningTimeMonitor.activateTimeframeInterval(new LocalDateTime(), energy, chargeEnd, soc);
             }
             appliance.setAcceptControlRecommendations(true);
-        }
-        else {
+            if (appliance.getControl() instanceof ElectricVehicleCharger) {
+                ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
+                evCharger.setChargingVehicleId(evId);
+                evCharger.setStateOfCharge(soc);
+            }
+        } else {
             logger.error("{}: Appliance not found", applianceId);
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
@@ -617,7 +620,8 @@ public class SaeController {
                         evStatus.setDefaultEnergyCharge(electricVehicle.getDefaultEnergyCharge());
                         evStatuses.add(evStatus);
                     }
-                    applianceStatus.setEvStatus(evStatuses);
+                    applianceStatus.setEvStatuses(evStatuses);
+                    applianceStatus.setEvIdCharging(evCharger.getChargingVehicleId());
                 }
                 if(runningTimeMonitor.getActiveTimeframeInterval() != null) {
                     applianceStatus.setPlanningRequested(true);

@@ -54,10 +54,12 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
             @XmlElement(name = "ElectricVehicle", type = ElectricVehicle.class),
     })
     private List<ElectricVehicle> vehicles;
+    private transient Integer chargingVehicleId;
     private transient Appliance appliance;
     private transient String applianceId;
     private transient Vector<State> stateHistory = new Vector<>();
     private transient boolean useOptionalEnergy = true;
+    private transient Integer stateOfCharge;
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
     private transient Long startChargingTimestamp;
 
@@ -89,6 +91,22 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
 
     public Integer getMaxChargePower() {
         return maxChargePower;
+    }
+
+    public Integer getStateOfCharge() {
+        return stateOfCharge;
+    }
+
+    public void setStateOfCharge(Integer stateOfCharge) {
+        this.stateOfCharge = stateOfCharge;
+    }
+
+    public Integer getChargingVehicleId() {
+        return chargingVehicleId;
+    }
+
+    public void setChargingVehicleId(Integer chargingVehicleId) {
+        this.chargingVehicleId = chargingVehicleId;
     }
 
     public List<ElectricVehicle> getVehicles() {
@@ -332,6 +350,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
         logger.debug("{}: Stop charging process", applianceId);
         control.stopCharging();
         this.startChargingTimestamp = null;
+        this.chargingVehicleId = null;
     }
 
 }

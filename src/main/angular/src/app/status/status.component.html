@@ -29,7 +29,7 @@
       <div class="appliance-type">{{getTranslatedType(applianceStatus.type)}}</div>
       <div *ngIf="!isEvCharger(applianceStatus)" class="appliance-name">{{applianceStatus.name}}</div>
       <div *ngIf="isEvCharger(applianceStatus) && applianceStatus.id != switchOnApplianceId" class="appliance-name"
-      >{{applianceStatus.electricVehicle}}</div>
+      >{{getEvNameCharging(applianceStatus)}}</div>
       <div *ngIf="applianceStatus.id === switchOnApplianceId && !isEvCharger(applianceStatus)">
         <form class="ui form" [formGroup]="switchOnForm" (ngSubmit)="submitSwitchOnForm()">
           <div class="appliance-details-row">

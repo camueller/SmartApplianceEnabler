@@ -11,7 +11,7 @@ export class StatusFactory {
   toStatusFromJSON(rawApplianceStatus: any): Status {
     this.logger.debug('Status (JSON)' + JSON.stringify(rawApplianceStatus));
     const applianceStatus = new Status(... rawApplianceStatus);
-    applianceStatus.evStatuses = this.toEvStatuses(rawApplianceStatus.evStatus);
+    applianceStatus.evStatuses = this.toEvStatuses(rawApplianceStatus.evStatuses);
     this.logger.debug('Status (TYPE)' + JSON.stringify(applianceStatus));
     return applianceStatus;
   }

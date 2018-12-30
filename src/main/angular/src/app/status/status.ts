@@ -15,6 +15,7 @@ export class Status {
   controllable: boolean;
   interruptedSince: number;
   optionalEnergy: boolean;
+  evIdCharging: number;
   evStatuses: EvStatus[];
 
   public constructor(init?: Partial<Status>) {

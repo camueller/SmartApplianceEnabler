@@ -1,7 +1,6 @@
 export class EvStatus {
-  id: string;
+  id: number;
   name: string;
-  batteryCapacity: number;
   defaultEnergyCharge: number;
   stateOfCharge: number;
 
