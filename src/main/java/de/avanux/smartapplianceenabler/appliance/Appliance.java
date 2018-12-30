@@ -512,7 +512,6 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                 Schedule schedule = timeframeIntervalOfSchedule.getTimeframe().getSchedule();
                 Interval interval = timeframeIntervalOfSchedule.getInterval();
 
-
                 if(schedule.getRequest() instanceof RuntimeRequest) {
                     Integer minRunningTime = schedule.getRequest().getMin();
                     if(interval.contains(now.toDateTime()) && remainingMinRunningTime != null) {
@@ -534,7 +533,14 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         }
         else if(activeTimeframeInterval != null) {
             logger.debug("{}: Active timeframe interval found", id);
-            addRuntimeRequestInterval(now, activeTimeframeInterval, runtimeIntervals, remainingMinRunningTime, remainingMaxRunningTime);
+            Schedule schedule = activeTimeframeInterval.getTimeframe().getSchedule();
+            Request request = schedule.getRequest();
+            if(request instanceof RuntimeRequest) {
+                addRuntimeRequestInterval(now, activeTimeframeInterval, runtimeIntervals, remainingMinRunningTime, remainingMaxRunningTime);
+            }
+            else if(request instanceof EnergyRequest) {
+                addEnergyRequestInterval(runtimeIntervals, activeTimeframeInterval.getInterval(), request.getMin(), request.getMax(), now);
+            }
         }
         else {
             logger.debug("{}: No timeframes found", id);
