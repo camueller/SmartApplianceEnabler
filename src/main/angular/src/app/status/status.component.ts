@@ -82,7 +82,7 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   updateStartChargeForm(applianceId: string, evStatus: EvStatus) {
     if (evStatus) {
-      const electicVehicleControl = new FormControl(evStatus.name);
+      const electicVehicleControl = new FormControl(evStatus.id);
       electicVehicleControl.valueChanges.subscribe(electricVehicleSelected => {
         this.updateStartChargeForm(applianceId, this.getEvStatus(this.getStatus(applianceId), electricVehicleSelected));
       });
