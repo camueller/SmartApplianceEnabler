@@ -28,9 +28,10 @@
     "@ngx-translate/http-loader": "^3.0.1",
     "clockpicker": "0.0.7",
     "core-js": "^2.5.4",
+    "moment": "^2.23.0",
+    "ng2-semantic-ui": "^0.9.7",
     "rxjs": "^6.3.3",
     "semantic-ui-css": "^2.4.0",
-    "ng2-semantic-ui": "^0.9.7",
     "zone.js": "~0.8.26"
   },
   "devDependencies": {
