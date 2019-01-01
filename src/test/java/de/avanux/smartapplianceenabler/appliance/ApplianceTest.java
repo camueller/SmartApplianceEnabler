@@ -19,6 +19,7 @@
 package de.avanux.smartapplianceenabler.appliance;
 
 import de.avanux.smartapplianceenabler.TestBase;
+import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.schedule.Schedule;
@@ -197,8 +198,11 @@ public class ApplianceTest extends TestBase {
 
         ElectricVehicleCharger evCharger = Mockito.spy(new ElectricVehicleCharger());
         this.appliance.setControl(evCharger);
+        ElectricVehicle vehicle = new ElectricVehicle();
+        vehicle.setBatteryCapacity(40000);
         Mockito.doReturn(true).when(evCharger).isVehicleConnected();
         Mockito.doReturn(false).when(evCharger).isInErrorState();
+        Mockito.doReturn(Collections.singletonList(vehicle)).when(evCharger).getVehicles();
 
         List<RuntimeInterval> nonEvOptionalEnergyIntervals = new ArrayList<>();
         RuntimeInterval nonEvOptionalEnergyInterval = new RuntimeInterval(3600, 7200,

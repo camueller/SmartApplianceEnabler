@@ -1,4 +1,5 @@
 import * as moment from 'moment';
+import {Moment} from 'moment';
 
 export class TimeUtil {
 
@@ -42,11 +43,20 @@ export class TimeUtil {
     return this.padLeadingZero(hour, 2) + ':' + this.padLeadingZero(minute, 2);
   }
 
+  static timestringFromDelta(seconds: number): string {
+    return TimeUtil.timestringFromDelta_(moment(), seconds);
+  }
+
+  static timestringFromDelta_(m: Moment, seconds: number): string {
+    m.add(seconds, 'second');
+    return m.format('H:mm');
+  }
+
   static timestringOfNextMatchingDow(dow: number, timeOfDay: string): string {
     return TimeUtil.timestringOfNextMatchingDow_(moment(), dow, timeOfDay);
   }
 
-  static timestringOfNextMatchingDow_(m: any, dow: number, timeOfDay: string): string {
+  static timestringOfNextMatchingDow_(m: Moment, dow: number, timeOfDay: string): string {
     while (m.isoWeekday() !== dow) {
       m.add(1, 'day');
     }
@@ -56,6 +66,15 @@ export class TimeUtil {
     m.second(0);
     m.millisecond(0);
     return m.toISOString();
+  }
+
+  static toWeekdayFromDelta(seconds: number): number {
+    return TimeUtil.toWeekdayFromDelta_(moment(), seconds);
+  }
+
+  static toWeekdayFromDelta_(m: Moment, seconds: number): number {
+    m.add(seconds, 'second');
+    return m.weekday();
   }
 
   static padLeadingZero(value: number, size: number): string {

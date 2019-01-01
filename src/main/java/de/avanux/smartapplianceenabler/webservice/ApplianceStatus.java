@@ -36,6 +36,7 @@ public class ApplianceStatus {
     private boolean planningRequested;
     private Integer earliestStart;
     private Integer latestStart;
+    private Integer latestEnd;
     private boolean on;
     private boolean controllable;
     private Integer interruptedSince;
@@ -154,6 +155,14 @@ public class ApplianceStatus {
 
     public void setLatestStart(Integer latestStart) {
         this.latestStart = latestStart;
+    }
+
+    public Integer getLatestEnd() {
+        return latestEnd;
+    }
+
+    public void setLatestEnd(Integer latestEnd) {
+        this.latestEnd = latestEnd;
     }
 
     public boolean isOn() {

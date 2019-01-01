@@ -19,8 +19,29 @@
 package de.avanux.smartapplianceenabler.control.ev;
 
 import de.avanux.smartapplianceenabler.meter.Meter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class EVControlMock implements EVControl, Meter {
+
+    private Logger logger = LoggerFactory.getLogger(EVControlMock.class);
+    private boolean charging;
+    private Timer timer = new Timer();
+    private float energyCounter = 0.0f;
+    private TimerTask energyCounterTimerTask = new TimerTask() {
+        @Override
+        public void run() {
+            energyCounter += 0.01f;
+            logDebug("energyCounter=" + energyCounter);
+        }
+    };
+
+    public EVControlMock() {
+        logDebug("using EvControl Mock");
+    }
 
     @Override
     public void validate() {
@@ -38,7 +59,7 @@ public class EVControlMock implements EVControl, Meter {
 
     @Override
     public boolean isCharging() {
-        return true;
+        return this.charging;
     }
 
     @Override
@@ -58,12 +79,14 @@ public class EVControlMock implements EVControl, Meter {
 
     @Override
     public void startCharging() {
-
+        logDebug("startCharging");
+        this.charging = true;
     }
 
     @Override
     public void stopCharging() {
-
+        logDebug("stopCharging");
+        this.charging = false;
     }
 
     @Override
@@ -75,7 +98,7 @@ public class EVControlMock implements EVControl, Meter {
 
     @Override
     public boolean isOn() {
-        return true;
+        return false;
     }
 
     @Override
@@ -100,21 +123,28 @@ public class EVControlMock implements EVControl, Meter {
 
     @Override
     public float getEnergy() {
-        return 0;
+        return energyCounter;
     }
 
     @Override
     public void startEnergyMeter() {
-
+        logDebug("startEnergyMeter");
+        this.timer.schedule(energyCounterTimerTask, 0, 1000);
     }
 
     @Override
     public void stopEnergyMeter() {
-
+        logDebug("stopEnergyMeter");
+        this.energyCounterTimerTask.cancel();
     }
 
     @Override
     public void resetEnergyMeter() {
+        logDebug("resetEnergyMeter");
+        energyCounter = 0.0f;
+    }
 
+    private void logDebug(String message) {
+        logger.debug("##### " + message);
     }
 }

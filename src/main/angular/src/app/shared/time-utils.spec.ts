@@ -49,7 +49,21 @@ describe('TimeUtil', () => {
     it('Should find a day in the next year', () => {
       m = moment('2019-12-31T09:01:02.003Z');
       expect(TimeUtil.timestringOfNextMatchingDow_(m, 1, '08:00'))
-        .toEqual('2020-01-07T07:00:00.000Z');
+        .toEqual('2020-01-06T07:00:00.000Z');
+    });
+  });
+
+  describe('timestringFromDelta', () => {
+    const m = moment('2019-01-01T19:01:02.003Z');
+    it('should add a duration and return formatted time', () => {
+      expect(TimeUtil.timestringFromDelta_(m, 158400)).toEqual('16:01');
+    });
+  });
+
+  describe('toWeekdayFromDelta', () => {
+    const m = moment('2019-01-01T09:01:02.003Z');
+    it('Should find the weekday', () => {
+      expect(TimeUtil.toWeekdayFromDelta_(m, 172800)).toEqual(4);
     });
   });
 });
