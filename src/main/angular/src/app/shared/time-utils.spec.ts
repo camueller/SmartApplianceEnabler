@@ -37,31 +37,31 @@ describe('TimeUtil', () => {
   });
 
   describe('timestringOfNextMatchingDow', () => {
-    let m = moment('2019-01-01T09:01:02.003Z');
+    let m = moment('2019-01-01T09:01:02.003Z').utc();
     it('Should find a day in the same week', () => {
       expect(TimeUtil.timestringOfNextMatchingDow_(m, 5, '08:00'))
-        .toEqual('2019-01-04T07:00:00.000Z');
+        .toEqual('2019-01-04T08:00:00.000Z');
     });
     it('Should find a day in the next week', () => {
       expect(TimeUtil.timestringOfNextMatchingDow_(m, 1, '08:00'))
-        .toEqual('2019-01-07T07:00:00.000Z');
+        .toEqual('2019-01-07T08:00:00.000Z');
     });
     it('Should find a day in the next year', () => {
-      m = moment('2019-12-31T09:01:02.003Z');
+      m = moment('2019-12-31T09:01:02.003Z').utc();
       expect(TimeUtil.timestringOfNextMatchingDow_(m, 1, '08:00'))
-        .toEqual('2020-01-06T07:00:00.000Z');
+        .toEqual('2020-01-06T08:00:00.000Z');
     });
   });
 
   describe('timestringFromDelta', () => {
-    const m = moment('2019-01-01T19:01:02.003Z');
+    const m = moment('2019-01-01T19:01:02.003Z').utc();
     it('should add a duration and return formatted time', () => {
-      expect(TimeUtil.timestringFromDelta_(m, 158400)).toEqual('16:01');
+      expect(TimeUtil.timestringFromDelta_(m, 158400)).toEqual('15:01');
     });
   });
 
   describe('toWeekdayFromDelta', () => {
-    const m = moment('2019-01-01T09:01:02.003Z');
+    const m = moment('2019-01-01T09:01:02.003Z').utc();
     it('Should find the weekday', () => {
       expect(TimeUtil.toWeekdayFromDelta_(m, 172800)).toEqual(4);
     });
