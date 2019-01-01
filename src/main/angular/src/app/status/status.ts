@@ -8,9 +8,14 @@ export class Status {
   runningTime: number;
   remainingMinRunningTime: number;
   remainingMaxRunningTime: number;
+  plannedEnergyAmount: number;
+  remainingMinEnergyAmount: number;
+  remainingMaxEnergyAmount: number;
+  currentChargePower: number;
   planningRequested: boolean;
   earliestStart: number;
   latestStart: number;
+  latestEnd: number;
   on: boolean;
   controllable: boolean;
   interruptedSince: number;

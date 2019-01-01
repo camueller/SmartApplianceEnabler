@@ -1,6 +1,6 @@
 import {inject, TestBed} from '@angular/core/testing';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
-import {Status} from '../status/status';
+import {Status} from './status';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {SaeService} from '../shared/sae-service';
 import {ErrorInterceptor} from '../shared/http-error-interceptor';
@@ -8,6 +8,7 @@ import {HTTP_INTERCEPTORS} from '@angular/common/http';
 import {StatusService} from './status.service';
 import {Logger, Options} from '../log/logger';
 import {Level} from '../log/level';
+import {EvStatus} from './ev-status';
 
 describe('StatusService', () => {
 
@@ -36,19 +37,38 @@ describe('StatusService', () => {
     const expectedStatuses = [
       new Status({
         id: 'F-00000001-000000000001-00',
-        name: 'WFO2842',
-        type: 'WashingMachine',
-        vendor: 'Bosch',
+        name: 'Walli Light',
+        type: 'EVCharger',
+        vendor: 'ESL',
         runningTime: 1800,
         remainingMinRunningTime: 3600,
         remainingMaxRunningTime: 7200,
+        plannedEnergyAmount: 10000,
+        remainingMinEnergyAmount: 8765,
+        remainingMaxEnergyAmount: 8765,
+        currentChargePower: 4000,
         planningRequested: true,
         earliestStart: 0,
         latestStart: 123,
+        latestEnd: 456,
         on: false,
         controllable: true,
         interruptedSince: null,
-        optionalEnergy: false
+        optionalEnergy: true,
+        evStatuses: [
+          new EvStatus({
+            id: 1,
+            name: 'Nissan Leaf',
+            defaultEnergyCharge: 10000,
+            stateOfCharge: 23
+          }),
+          new EvStatus({
+            id: 2,
+            name: 'Tesla Model S',
+            defaultEnergyCharge: undefined,
+            stateOfCharge: 23
+          })
+        ],
       }),
       new Status({
         id: 'F-00000001-000000000002-00',
@@ -58,13 +78,19 @@ describe('StatusService', () => {
         runningTime: 1801,
         remainingMinRunningTime: 3601,
         remainingMaxRunningTime: 7201,
+        plannedEnergyAmount: undefined,
+        remainingMinEnergyAmount: undefined,
+        remainingMaxEnergyAmount: undefined,
+        currentChargePower: undefined,
         planningRequested: true,
         earliestStart: 10,
         latestStart: 124,
+        latestEnd: undefined,
         on: false,
         controllable: false,
         interruptedSince: 180,
-        optionalEnergy: true
+        optionalEnergy: false,
+        evStatuses: undefined
       })
     ];
     service.getStatus().subscribe(res => expect(res).toEqual(expectedStatuses));

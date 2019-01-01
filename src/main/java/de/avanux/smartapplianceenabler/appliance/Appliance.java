@@ -21,6 +21,7 @@ import com.pi4j.io.gpio.GpioController;
 import de.avanux.smartapplianceenabler.control.*;
 import de.avanux.smartapplianceenabler.control.ev.EVControl;
 import de.avanux.smartapplianceenabler.control.ev.EVModbusControl;
+import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
 import de.avanux.smartapplianceenabler.meter.*;
 import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
@@ -321,16 +322,22 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         if(control != null) {
             if(switchOn && control instanceof ElectricVehicleCharger) {
                 int chargePower = 0;
-                if(this.runningTimeMonitor.getActiveTimeframeInterval() != null) {
-                    // if we receive a switch recommendation with an active timeframe interval
-                    // we are NOT using excess energy and should be charging with maximum power
+//                if(this.runningTimeMonitor.getActiveTimeframeInterval() != null) {
+//                    // if we receive a switch recommendation with an active timeframe interval
+//                    // we are NOT using excess energy and should be charging with maximum power
+//                    DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(this.id);
+//                    chargePower = deviceInfo.getCharacteristics().getMaxPowerConsumption();
+//                    logger.debug("{}: setting charge power to maximum: {}W", id, chargePower);
+//                }
+//                else
+                if(recommendedPowerConsumption != null) {
+                    chargePower = recommendedPowerConsumption;
+                    logger.debug("{}: setting charge power to recommendation: {}W", id, chargePower);
+                }
+                else {
                     DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(this.id);
                     chargePower = deviceInfo.getCharacteristics().getMaxPowerConsumption();
                     logger.debug("{}: setting charge power to maximum: {}W", id, chargePower);
-                }
-                else if(recommendedPowerConsumption != null) {
-                    chargePower = recommendedPowerConsumption;
-                    logger.debug("{}: setting charge power to recommendation: {}W", id, chargePower);
                 }
                 ((ElectricVehicleCharger) control).setChargePower(chargePower);
             }
@@ -475,15 +482,17 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             }
             else {
                 if(electricVehicleCharger.isVehicleConnected() || electricVehicleCharger.isCharging()) {
-                    RuntimeInterval evOptionalEnergy = getRuntimeIntervalForEVUsingOptionalEnergy();
-                    if(nonEvOptionalEnergyRuntimeIntervals != null && nonEvOptionalEnergyRuntimeIntervals.size() > 0) {
-                        // evOptionalEnergy runtime interval must not overlap with other intervals
-                        Integer firstNonEvOptionalEnergyRuntimeIntervalEarliestStart
-                                = nonEvOptionalEnergyRuntimeIntervals.get(0).getEarliestStart();
-                        evOptionalEnergy.setLatestEnd(firstNonEvOptionalEnergyRuntimeIntervalEarliestStart - 1);
+                    RuntimeInterval evOptionalEnergy = getRuntimeIntervalForEVUsingOptionalEnergy(electricVehicleCharger);
+                    if(evOptionalEnergy != null) {
+                        if(nonEvOptionalEnergyRuntimeIntervals != null && nonEvOptionalEnergyRuntimeIntervals.size() > 0) {
+                            // evOptionalEnergy runtime interval must not overlap with other intervals
+                            Integer firstNonEvOptionalEnergyRuntimeIntervalEarliestStart
+                                    = nonEvOptionalEnergyRuntimeIntervals.get(0).getEarliestStart();
+                            evOptionalEnergy.setLatestEnd(firstNonEvOptionalEnergyRuntimeIntervalEarliestStart - 1);
+                        }
+                        logger.debug("{}: requesting optional energy for electric vehicle: {}", id, evOptionalEnergy);
+                        runtimeIntervals.add(evOptionalEnergy);
                     }
-                    logger.debug("{}: requesting optional energy for electric vehicle: {}", id, evOptionalEnergy);
-                    runtimeIntervals.add(evOptionalEnergy);
                 }
             }
         }
@@ -533,7 +542,9 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                 addRuntimeRequestInterval(now, activeTimeframeInterval, runtimeIntervals, remainingMinRunningTime, remainingMaxRunningTime);
             }
             else if(request instanceof EnergyRequest) {
-                addEnergyRequestInterval(runtimeIntervals, activeTimeframeInterval.getInterval(), request.getMin(), request.getMax(), now);
+                EnergyRequest remainingEnergy = calculateRemainingEnergy(schedule);
+                addEnergyRequestInterval(runtimeIntervals, activeTimeframeInterval.getInterval(),
+                        remainingEnergy.getMin(), remainingEnergy.getMax(), now);
             }
         }
         else {
@@ -554,7 +565,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         return remainingEnergy;
     }
 
-    private RuntimeInterval getRuntimeIntervalForEVUsingOptionalEnergy() {
+    private RuntimeInterval getRuntimeIntervalForEVUsingOptionalEnergy(ElectricVehicleCharger evCharger) {
         float energy = 0.0f;
         if(meter != null) {
             energy = meter.getEnergy();
@@ -563,12 +574,23 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         else {
             logger.debug("{}: No energy meter configured - cannot calculate maxEnergy", id);
         }
-        RuntimeInterval runtimeInterval = new RuntimeInterval();
-        runtimeInterval.setEarliestStart(0);
-        runtimeInterval.setLatestEnd(CONSIDERATION_INTERVAL_DAYS * 24 * 3600);
-        runtimeInterval.setMinEnergy(0);
-        // FIXME use battery capacity
-        runtimeInterval.setMaxEnergy(40000 - Float.valueOf(energy * 1000).intValue());
+        RuntimeInterval runtimeInterval = null;
+        if(evCharger.getVehicles() != null && evCharger.getVehicles().size() > 0) {
+            Integer evId = evCharger.getChargingVehicleId();
+            ElectricVehicle vehicle = null;
+            if(evId != null) {
+                vehicle = evCharger.getVehicle(evId);
+            }
+            if(vehicle == null) {
+                vehicle = evCharger.getVehicles().get(0);
+            }
+            logger.debug("{}: optional energy calculated for vehicle={} batteryCapactiy={}", id, vehicle.getName(), vehicle.getBatteryCapacity());
+            runtimeInterval = new RuntimeInterval();
+            runtimeInterval.setEarliestStart(0);
+            runtimeInterval.setLatestEnd(CONSIDERATION_INTERVAL_DAYS * 24 * 3600);
+            runtimeInterval.setMinEnergy(0);
+            runtimeInterval.setMaxEnergy(vehicle.getBatteryCapacity() - Float.valueOf(energy * 1000).intValue());
+        }
         return runtimeInterval;
     }
 

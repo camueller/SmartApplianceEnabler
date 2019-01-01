@@ -592,12 +592,14 @@ public class SaeController {
             List<RuntimeInterval> runtimeIntervals = appliance.getRuntimeIntervals(now, true);
 
             if(appliance.isControllable()) {
+                applianceStatus.setControllable(true);
                 Control control = appliance.getControl();
+                applianceStatus.setOn(control.isOn());
                 RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
                 TimeframeInterval activeTimeframeInterval = runningTimeMonitor.getActiveTimeframeInterval();
-                applianceStatus.setControllable(true);
+                RuntimeInterval nextRuntimeInterval = null;
                 if(runtimeIntervals.size() > 0) {
-                    RuntimeInterval nextRuntimeInterval = runtimeIntervals.get(0);
+                    nextRuntimeInterval = runtimeIntervals.get(0);
                     applianceStatus.setPlanningRequested(true);
                     applianceStatus.setEarliestStart(nextRuntimeInterval.getEarliestStart());
                     applianceStatus.setLatestStart(TimeframeInterval.getLatestStart(nextRuntimeInterval.getLatestEnd(),
@@ -611,7 +613,6 @@ public class SaeController {
                         applianceStatus.setRemainingMaxRunningTime(nextRuntimeInterval.getMaxRunningTime());
                     }
                 }
-                applianceStatus.setOn(control.isOn());
                 if(control instanceof ElectricVehicleCharger) {
                     ElectricVehicleCharger evCharger = (ElectricVehicleCharger) control;
                     List<EVStatus> evStatuses = new ArrayList<>();
@@ -632,6 +633,7 @@ public class SaeController {
                         EnergyRequest remainingEnergy = appliance.calculateRemainingEnergy(schedule);
                         applianceStatus.setRemainingMinEnergyAmount(remainingEnergy.getMin());
                         applianceStatus.setRemainingMaxEnergyAmount(remainingEnergy.getMax());
+                        applianceStatus.setLatestEnd(nextRuntimeInterval != null ? nextRuntimeInterval.getLatestEnd() : null);
                     }
                 }
                 if(activeTimeframeInterval != null) {

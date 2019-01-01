@@ -149,6 +149,13 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
     return undefined;
   }
 
+  getCurrentChargePower(applianceStatus: Status): number {
+    if (applianceStatus.currentChargePower != null) {
+      return this.toKWh(applianceStatus.currentChargePower);
+    }
+    return 0;
+  }
+
   isEvCharger(applianceStatus: Status): boolean {
     return applianceStatus.evStatuses ? true : false;
   }
@@ -237,6 +244,19 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
       return '';
     }
     return TimeUtil.toHourMinuteWithUnits(seconds);
+  }
+
+  toHHmm(seconds: number): string {
+    return TimeUtil.timestringFromDelta(seconds);
+  }
+
+  toWeekday(seconds: number): number {
+    return TimeUtil.toWeekdayFromDelta(seconds);
+  }
+
+  toWeekdayString(seconds: number): string {
+    const weekday = this.toWeekday(seconds);
+    return this.dows.filter(dow => dow.id === weekday)[0].name;
   }
 
   toKWh(wh: number): number {

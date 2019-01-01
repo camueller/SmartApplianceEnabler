@@ -125,21 +125,21 @@
         </div>
       </div>
       <div *ngIf="applianceStatus.id != switchOnApplianceId && applianceStatus.planningRequested && isEvCharger(applianceStatus)">
-        <div class="appliance-status">
+        <div *ngIf="applianceStatus.plannedEnergyAmount != null" class="appliance-status">
           <span class="appliance-status-label">{{'StatusComponent.energyPlanned' | translate}}</span>
-          <span class="appliance-status-value">10 kWh</span>
+          <span class="appliance-status-value">{{toKWh(applianceStatus.plannedEnergyAmount)}} kWh</span>
         </div>
-        <div class="appliance-status">
+        <div *ngIf="applianceStatus.remainingMinEnergyAmount != null" class="appliance-status">
           <span class="appliance-status-label">{{'StatusComponent.energyRemaining' | translate}}</span>
-          <span class="appliance-status-value">5.1 kWh</span>
+          <span class="appliance-status-value">{{toKWh(applianceStatus.remainingMinEnergyAmount)}} kWh</span>
         </div>
-        <div class="appliance-status">
+        <div *ngIf="applianceStatus.currentChargePower != null" class="appliance-status">
           <span class="appliance-status-label">{{'StatusComponent.energyChargePower' | translate}}</span>
-          <span class="appliance-status-value">4.0 kW</span>
+          <span class="appliance-status-value">{{getCurrentChargePower(applianceStatus)}} kW</span>
         </div>
-        <div class="appliance-status">
+        <div *ngIf="applianceStatus.latestEnd != null" class="appliance-status">
           <span class="appliance-status-label">{{'StatusComponent.energyLatestEnd' | translate}}</span>
-          <span class="appliance-status-value">Sonntag 18:00 Uhr</span>
+          <span class="appliance-status-value">{{toWeekdayString(applianceStatus.latestEnd)}} {{toHHmm(applianceStatus.latestEnd)}} Uhr</span>
         </div>
       </div>
     </div>
@@ -186,5 +186,5 @@
       <p>{{'StatusComponent.explanationGoLight' | translate}}</p>
     </div>
   </div>
-  <!-- pre>{{applianceStatuses | json}}</pre -->
+  <pre>{{applianceStatuses | json}}</pre>
 </div>

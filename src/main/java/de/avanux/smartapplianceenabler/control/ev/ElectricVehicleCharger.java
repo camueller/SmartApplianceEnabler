@@ -39,8 +39,6 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     @XmlAttribute
     private Integer phases = 1;
     @XmlAttribute
-    private Integer maxChargePower;
-    @XmlAttribute
     private Integer pollInterval = 10; // seconds
     @XmlAttribute
     protected Integer startChargingStateDetectionDelay = 300;
@@ -91,10 +89,6 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
         this.control = control;
     }
 
-    public Integer getMaxChargePower() {
-        return maxChargePower;
-    }
-
     public Integer getStateOfCharge() {
         return stateOfCharge;
     }
@@ -119,6 +113,15 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
         this.chargingVehicleId = chargingVehicleId;
     }
 
+    public ElectricVehicle getVehicle(int evId) {
+        for(ElectricVehicle electricVehicle : this.vehicles) {
+            if(electricVehicle.getId() == evId) {
+                return electricVehicle;
+            }
+        }
+        return null;
+    }
+
     public List<ElectricVehicle> getVehicles() {
         return vehicles;
     }
@@ -130,7 +133,6 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     public void init() {
         boolean useEvControlMock = Boolean.parseBoolean(System.getProperty("sae.evcontrol.mock", "false"));
         if(useEvControlMock) {
-            logger.info("##### using EvControl Mock #####");
             this.control= new EVControlMock();
             this.appliance.setMeter((Meter) this.control);
         }
