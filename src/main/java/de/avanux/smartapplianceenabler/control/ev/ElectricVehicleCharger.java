@@ -105,6 +105,14 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
         this.chargeAmount = chargeAmount;
     }
 
+    public ElectricVehicle getChargingVehicle() {
+        Integer evId = getChargingVehicleId();
+        if(evId != null) {
+            return getVehicle(evId);
+        }
+        return null;
+    }
+
     public Integer getChargingVehicleId() {
         return chargingVehicleId;
     }
@@ -138,6 +146,11 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
         }
         logger.debug("{}: voltage={} phases={} startChargingStateDetectionDelay={}",
                 this.applianceId, this.voltage, this.phases, this.startChargingStateDetectionDelay);
+        if(this.vehicles != null) {
+            for(ElectricVehicle vehicle: this.vehicles) {
+                logger.debug("{}: {}", this.applianceId, vehicle);
+            }
+        }
         initStateHistory();
         control.validate();
     }
@@ -347,7 +360,12 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     }
 
     public void setChargePower(int power) {
-        int current = Float.valueOf(power / (this.voltage * this.phases)).intValue();
+        int phases = this.phases;
+        ElectricVehicle chargingVehicle = getChargingVehicle();
+        if(chargingVehicle != null && chargingVehicle.getPhases() != null) {
+            phases = chargingVehicle.getPhases();
+        }
+        int current = Float.valueOf((float) power / this.voltage * phases).intValue();
         logger.debug("{}: Set charge power: {}W corresponds to {}A", applianceId, power, current);
         this.chargePower = power;
         control.setChargeCurrent(current);

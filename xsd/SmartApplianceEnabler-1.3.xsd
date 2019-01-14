@@ -126,6 +126,7 @@
             <xs:choice>
                 <xs:element name="EVModbusControl" type="EVModbusControlType" />
             </xs:choice>
+            <xs:element name="ElectricVehicle" type="ElectricVehicleType" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
         <xs:attribute name="voltage" type="xs:int" />
         <xs:attribute name="phases" type="xs:int" />
@@ -141,6 +142,22 @@
         </xs:sequence>
         <xs:attribute name="idref" type="xs:NCName" use="required" />
         <xs:attribute name="slaveAddress" type="xs:int" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="ElectricVehicleType">
+        <xs:sequence>
+            <xs:element name="SocScript" type="SocScriptType" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:int" />
+        <xs:attribute name="name" type="xs:string" />
+        <xs:attribute name="batteryCapacity" type="xs:int" />
+        <xs:attribute name="phases" type="xs:int" />
+        <xs:attribute name="defaultEnergyCharge" type="xs:int" />
+    </xs:complexType>
+
+    <xs:complexType name="SocScriptType">
+        <xs:attribute name="script" type="xs:string" />
+        <xs:attribute name="extractionRegex" type="xs:string" />
     </xs:complexType>
 
     <xs:complexType name="ModbusRegisterReadType">
