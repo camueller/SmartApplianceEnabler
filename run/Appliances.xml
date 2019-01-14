@@ -5,7 +5,7 @@
                 voltage="230"
                 phases="1"
                 pollInterval="10"
-                startChargingStateDetectionDelay="300"
+                startChargingStateDetectionDelay="0"
                 forceInitialCharging="false">
             <EVModbusControl idref="wallbox" slaveAddress="180">
                 <ModbusRegisterRead address="100" type="InputString">
@@ -26,19 +26,26 @@
                     <ModbusRegisterWriteValue name="ChargingCurrent" value="0" />
                 </ModbusRegisterWrite>
             </EVModbusControl>
-            <ElectricVehicle id="1" name="Nissan Leaf" batteryCapacity="30000" defaultEnergyCharge="10000">
+            <ElectricVehicle id="1" name="Nissan Leaf"
+                             batteryCapacity="30000"
+                             phases="1"
+                             defaultEnergyCharge="10000"
+            >
                 <SocScript script="/bin/run.sh" extractionRegex="(C|D)"/>
             </ElectricVehicle>
-            <ElectricVehicle id="2" name="Tesla Model S" batteryCapacity="80000" defaultEnergyCharge="25000" />
+            <ElectricVehicle id="2" name="Tesla Model S"
+                             batteryCapacity="80000"
+                             defaultEnergyCharge="25000"
+            />
         </ElectricVehicleCharger>
-        <ModbusElectricityMeter idref="modbus" slaveAddress="1" pollInterval="10" measurementInterval="60">
+        <!-- ModbusElectricityMeter idref="modbus" slaveAddress="1" pollInterval="10" measurementInterval="60">
             <ModbusRegisterRead address="0x000C" type="InputFloat">
                 <ModbusRegisterReadValue name="Power"/>
             </ModbusRegisterRead>
             <ModbusRegisterRead address="0x0156" type="InputFloat">
                 <ModbusRegisterReadValue name="Energy"/>
             </ModbusRegisterRead>
-        </ModbusElectricityMeter>
+        </ModbusElectricityMeter -->
     </Appliance>
     <!--Appliance id="F-28091971-000000000003-00">
         <Switch gpio="2" reverseStates="true"/>

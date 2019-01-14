@@ -29,6 +29,8 @@ public class ElectricVehicle {
     @XmlAttribute
     private Integer batteryCapacity;
     @XmlAttribute
+    private Integer phases;
+    @XmlAttribute
     private Integer defaultEnergyCharge;
     @XmlElements({
             @XmlElement(name = "SocScript", type = SocScript.class),
@@ -60,6 +62,14 @@ public class ElectricVehicle {
         this.batteryCapacity = batteryCapacity;
     }
 
+    public Integer getPhases() {
+        return phases;
+    }
+
+    public void setPhases(Integer phases) {
+        this.phases = phases;
+    }
+
     public Integer getDefaultEnergyCharge() {
         return defaultEnergyCharge;
     }
@@ -74,5 +84,17 @@ public class ElectricVehicle {
 
     public void setSocScript(SocScript socScript) {
         this.socScript = socScript;
+    }
+
+    @Override
+    public String toString() {
+        return "ElectricVehicle {" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", batteryCapacity=" + batteryCapacity +
+                ", phases=" + phases +
+                ", defaultEnergyCharge=" + defaultEnergyCharge +
+                ", socScript=" + socScript +
+                '}';
     }
 }

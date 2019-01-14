@@ -109,4 +109,12 @@ public class SocScript {
         }
         return text;
     }
+
+    @Override
+    public String toString() {
+        return "SocScript {" +
+                "script='" + script + '\'' +
+                ", extractionRegex='" + extractionRegex + '\'' +
+                '}';
+    }
 }
