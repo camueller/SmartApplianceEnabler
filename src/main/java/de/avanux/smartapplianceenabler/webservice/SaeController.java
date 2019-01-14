@@ -602,6 +602,7 @@ public class SaeController {
             if(appliance.isControllable()) {
                 applianceStatus.setControllable(true);
                 Control control = appliance.getControl();
+                Meter meter = appliance.getMeter();
                 applianceStatus.setOn(control.isOn());
                 RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
                 TimeframeInterval activeTimeframeInterval = runningTimeMonitor.getActiveTimeframeInterval();
@@ -636,12 +637,14 @@ public class SaeController {
                     applianceStatus.setEvIdCharging(evCharger.getChargingVehicleId());
                     applianceStatus.setPlannedEnergyAmount(evCharger.getChargeAmount());
                     applianceStatus.setCurrentChargePower(evCharger.getChargePower());
-                    if(activeTimeframeInterval != null) {
-                        Schedule schedule = activeTimeframeInterval.getTimeframe().getSchedule();
-                        EnergyRequest remainingEnergy = appliance.calculateRemainingEnergy(schedule);
-                        applianceStatus.setRemainingMinEnergyAmount(remainingEnergy.getMin());
-                        applianceStatus.setRemainingMaxEnergyAmount(remainingEnergy.getMax());
-                        applianceStatus.setLatestEnd(nextRuntimeInterval != null ? nextRuntimeInterval.getLatestEnd() : null);
+
+                    int whAlreadyCharged = 0;
+                    if(meter != null) {
+                        whAlreadyCharged = Float.valueOf(meter.getEnergy() * 1000.0f).intValue();
+                    }
+                    applianceStatus.setChargedEnergyAmount(whAlreadyCharged);
+                    if(nextRuntimeInterval != null && ! nextRuntimeInterval.isUsingOptionalEnergy()) {
+                        applianceStatus.setLatestEnd(nextRuntimeInterval.getLatestEnd());
                     }
                 }
                 if(activeTimeframeInterval != null) {
