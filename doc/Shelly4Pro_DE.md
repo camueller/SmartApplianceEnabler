@@ -29,31 +29,47 @@ Zum Schalten der angeschlossenen Geräte müssen folgende URLs verwendet werden:
 ### Ausgang 1
 
 _Einschalten_
-```http://192.168.1.xxx/relay/0?turn=on```
+```
+http://192.168.1.xxx/relay/0?turn=on
+```
 
 _Ausschalten_
-```http://192.168.1.xxx/relay/0?turn=off```
+```
+http://192.168.1.xxx/relay/0?turn=off
+```
 
 ### Ausgang 2
 
 _Einschalten_
-```http://192.168.1.xxx/relay/1?turn=on```
+```
+http://192.168.1.xxx/relay/1?turn=on
+```
 
 _Ausschalten_
-```http://192.168.1.xxx/relay/1?turn=off```
+```
+http://192.168.1.xxx/relay/1?turn=off
+```
 
 ### Ausgang 3
 
 _Einschalten_
-```http://192.168.1.xxx/relay/2?turn=on```
+```
+http://192.168.1.xxx/relay/2?turn=on
+```
 
 _Ausschalten_
-```http://192.168.1.xxx/relay/2?turn=off```
+```
+http://192.168.1.xxx/relay/2?turn=off
+```
 
 ### Ausgang 4
 
 _Einschalten_
-```http://192.168.1.xxx/relay/3?turn=on```
+```
+http://192.168.1.xxx/relay/3?turn=on
+```
 
 _Ausschalten_
-```http://192.168.1.xxx/relay/3?turn=off```
+```
+http://192.168.1.xxx/relay/3?turn=off
+```
