@@ -88,10 +88,10 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
       });
       this.startChargeForm = new FormGroup({
         electricVehicle: electicVehicleControl,
-        stateOfCharge: new FormControl(),
-        chargeAmount: new FormControl(this.toKWh(evStatuses.defaultEnergyCharge), Validators.required),
-        chargeEndDow: new FormControl(undefined, Validators.required),
-        chargeEndTime: new FormControl(undefined, Validators.required),
+        stateOfChargeCurrent: new FormControl(),
+        stateOfChargeRequested: new FormControl(),
+        chargeEndDow: new FormControl(),
+        chargeEndTime: new FormControl(),
       });
       this.initializeOnceAfterViewChecked = true;
     }
@@ -229,12 +229,12 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   submitStartChargeForm() {
     const evid = this.startChargeForm.value.electricVehicle;
-    const energy = this.startChargeForm.value.chargeAmount * 1000;
+    const socCurrent = this.startChargeForm.value.stateOfChargeCurrent;
+    const socRequested = this.startChargeForm.value.stateOfChargeRequested;
     const chargeEnd = TimeUtil.timestringOfNextMatchingDow(
       this.startChargeForm.value.chargeEndDow,
       this.startChargeForm.value.chargeEndTime);
-    const soc = this.startChargeForm.value.stateOfCharge;
-    this.statusService.requestEvCharge(this.switchOnApplianceId, evid, energy, chargeEnd, soc)
+    this.statusService.requestEvCharge(this.switchOnApplianceId, evid, socCurrent, socRequested, chargeEnd)
       .subscribe(() => this.loadApplianceStatuses());
     this.switchOnApplianceId = null;
   }

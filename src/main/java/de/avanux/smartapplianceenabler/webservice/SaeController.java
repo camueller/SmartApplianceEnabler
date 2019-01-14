@@ -422,25 +422,33 @@ public class SaeController {
     public void setEnergyDemand(HttpServletResponse response,
                                 @RequestParam(value="applianceid") String applianceId,
                                 @RequestParam(value="evid") Integer evId,
-                                @RequestParam(value="energy") Integer energy,
-                                @RequestParam(value="chargeEnd") String chargeEndString,
-                                @RequestParam(value="soc") Integer soc
+                                @RequestParam(value="socCurrent", required = false) Integer socCurrent,
+                                @RequestParam(value="socRequested", required = false) Integer socRequested,
+                                @RequestParam(value="chargeEnd", required = false) String chargeEndString
     ) {
-        LocalDateTime chargeEnd = DateTime.parse(chargeEndString, ISODateTimeFormat.dateTimeParser()).toLocalDateTime();
-        logger.debug("{}: Received energy request: evId={} energy={}Wh chargeEnd={} soc={}",
-                applianceId, evId, energy, chargeEnd, soc);
+        LocalDateTime chargeEnd = null;
+        if(chargeEndString != null) {
+            chargeEnd = DateTime.parse(chargeEndString, ISODateTimeFormat.dateTimeParser()).toLocalDateTime();
+        }
+        logger.debug("{}: Received energy request: evId={} socCurrent={} socRequested={} chargeEnd={}",
+                applianceId, evId, socCurrent, socRequested, chargeEnd);
         Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
         if (appliance != null) {
-            RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
-            if (runningTimeMonitor != null) {
-                runningTimeMonitor.activateTimeframeInterval(new LocalDateTime(), energy, chargeEnd, soc);
-            }
-            appliance.setAcceptControlRecommendations(true);
             if (appliance.getControl() instanceof ElectricVehicleCharger) {
                 ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
-                evCharger.setChargingVehicleId(evId);
-                evCharger.setStateOfCharge(soc);
-                evCharger.setChargeAmount(energy);
+                evCharger.setEnergyDemand(evId, socCurrent, socRequested, chargeEnd);
+
+                if(chargeEnd == null) {
+                    // if no charge end is provided we switch on immediatly with full power and don't accept
+                    // any control recommendations
+                    appliance.setApplianceState(new LocalDateTime(), true, null,
+                            false,
+                            "Switching on charger");
+                    appliance.setAcceptControlRecommendations(false);
+                }
+                else {
+                    appliance.setAcceptControlRecommendations(true);
+                }
             }
         } else {
             logger.error("{}: Appliance not found", applianceId);

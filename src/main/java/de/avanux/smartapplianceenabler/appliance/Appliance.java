@@ -576,7 +576,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         }
         RuntimeInterval runtimeInterval = null;
         if(evCharger.getVehicles() != null && evCharger.getVehicles().size() > 0) {
-            int batteryCapacity = 20000; // default if no ev is configured
+            int batteryCapacity = ElectricVehicle.DEFAULT_BATTERY_CAPACITY;
             ElectricVehicle vehicle = evCharger.getChargingVehicle();
             if(vehicle == null && evCharger.getVehicles().size() > 0) {
                 vehicle = evCharger.getVehicles().get(0);
