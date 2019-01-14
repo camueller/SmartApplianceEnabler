@@ -51,6 +51,10 @@ describe('TimeUtil', () => {
       expect(TimeUtil.timestringOfNextMatchingDow_(m, 1, '08:00'))
         .toEqual('2020-01-06T08:00:00.000Z');
     });
+    it('Should be able to cope with dow/time not set', () => {
+      expect(TimeUtil.timestringOfNextMatchingDow_(m, undefined, undefined))
+        .toEqual(undefined);
+    });
   });
 
   describe('timestringFromDelta', () => {

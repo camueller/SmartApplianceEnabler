@@ -39,9 +39,18 @@ export class StatusService extends SaeService {
     return this.http.put(url, '', {responseType: 'text'});
   }
 
-  requestEvCharge(applianceid: string, evid: string, energy: number, chargeEnd: string, soc: number): Observable<any> {
-    const url = `${SaeService.API}/evcharge?applianceid=${applianceid}&evid=${evid}`
-      + `&energy=${energy}&chargeEnd=${chargeEnd}&soc=${soc}`;
+  requestEvCharge(applianceid: string, evid: string, socCurrent: number|undefined,
+                  socRequested: number|undefined, chargeEnd: string|undefined): Observable<any> {
+    let url = `${SaeService.API}/evcharge?applianceid=${applianceid}&evid=${evid}`;
+    if (socCurrent) {
+      url += `&socCurrent=${socCurrent}`;
+    }
+    if (socRequested) {
+      url += `&socRequested=${socRequested}`;
+    }
+    if (chargeEnd) {
+      url += `&chargeEnd=${chargeEnd}`;
+    }
     this.logger.debug('Request ev charge using ' + url);
     return this.http.put(url, '', {responseType: 'text'});
   }

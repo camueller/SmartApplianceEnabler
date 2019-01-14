@@ -20,9 +20,12 @@ package de.avanux.smartapplianceenabler.control.ev;
 
 import de.avanux.smartapplianceenabler.appliance.Appliance;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
+import de.avanux.smartapplianceenabler.appliance.RunningTimeMonitor;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.ControlStateChangedListener;
 import de.avanux.smartapplianceenabler.meter.Meter;
+import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,8 +59,8 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     private transient Appliance appliance;
     private transient String applianceId;
     private transient Vector<State> stateHistory = new Vector<>();
+    private static final float CHARGE_LOSS_FACTOR = 1.1f;
     private transient boolean useOptionalEnergy = true;
-    private transient Integer stateOfCharge;
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
     private transient Long startChargingTimestamp;
     private transient Integer chargeAmount;
@@ -87,14 +90,6 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
 
     protected void setControl(EVControl control) {
         this.control = control;
-    }
-
-    public Integer getStateOfCharge() {
-        return stateOfCharge;
-    }
-
-    public void setStateOfCharge(Integer stateOfCharge) {
-        this.stateOfCharge = stateOfCharge;
     }
 
     public Integer getChargeAmount() {
@@ -357,6 +352,36 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
 
     public boolean isUseOptionalEnergy() {
         return useOptionalEnergy;
+    }
+
+    public  void setEnergyDemand(Integer evId, Integer socCurrent, Integer socRequested, LocalDateTime chargeEnd) {
+        logger.debug("{}: Energy demand: evId={} socCurrent={} socCurrent={} chargeEnd={}",
+                applianceId, evId, socCurrent, socRequested, chargeEnd);
+        setChargingVehicleId(evId);
+
+        int batteryCapacity = ElectricVehicle.DEFAULT_BATTERY_CAPACITY;
+        ElectricVehicle vehicle = getVehicle(evId);
+        if(vehicle != null) {
+            batteryCapacity = vehicle.getBatteryCapacity();
+        }
+
+        int energy = ((socRequested != null ? socRequested : 100) - (socCurrent != null ? socCurrent : 0))/100 * batteryCapacity;
+        setChargeAmount(energy);
+        logger.debug("{}: Calculated energy={}Wh batteryCapacity={}Wh", applianceId, energy, batteryCapacity);
+
+        if(chargeEnd == null) {
+            DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(appliance.getId());
+            int maxPowerConsumption = deviceInfo.getCharacteristics().getMaxPowerConsumption();
+            int chargeMinutes = Float.valueOf((float) energy / maxPowerConsumption * CHARGE_LOSS_FACTOR * 60).intValue();
+            chargeEnd = new LocalDateTime().plusMinutes(chargeMinutes);
+            logger.debug("{}: Calculated charge end={} chargeMinutes={} maxPowerConsumption={} chargeLossFactor={}",
+                    applianceId, chargeEnd, chargeMinutes, maxPowerConsumption, CHARGE_LOSS_FACTOR);
+        }
+
+        RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
+        if (runningTimeMonitor != null) {
+            runningTimeMonitor.activateTimeframeInterval(new LocalDateTime(), energy, chargeEnd);
+        }
     }
 
     public void setChargePower(int power) {

@@ -63,12 +63,15 @@
           </div>
           <div class="appliance-details-row">
             <span class="appliance-status-label">{{'StatusComponent.stateOfCharge' | translate}}</span>
-            <input type="text" class="appliance-number-input" name="stateOfCharge" style="width: 2em" formControlName="stateOfCharge">
-            <span class="appliance-status-label">{{'StatusComponent.stateOfCharge2' | translate}}{{applianceStatus.stateOfCharge}} kWh</span>
+            <span class="appliance-status-label">{{'StatusComponent.stateOfChargeCurrent' | translate}}</span>
+            <input type="text" class="appliance-number-input" name="stateOfChargeCurrent" style="width: 2em" formControlName="stateOfChargeCurrent">
+            <span class="appliance-status-label">{{'StatusComponent.stateOfChargeUnit' | translate}}</span>
+            <span class="appliance-status-label">{{'StatusComponent.stateOfChargeRequested' | translate}}</span>
+            <input type="text" class="appliance-number-input" name="stateOfChargeRequested" style="width: 2em" formControlName="stateOfChargeRequested">
+            <span class="appliance-status-label">{{'StatusComponent.stateOfChargeUnit' | translate}}</span>
           </div>
           <div class="appliance-details-row">
-            <input type="text" class="appliance-number-input" name="chargeAmount" style="width: 2em" formControlName="chargeAmount">
-            <span class="appliance-status-label">{{'StatusComponent.charge' | translate}}</span>
+            <span class="appliance-status-label">{{'StatusComponent.chargeLatestEndRequested' | translate}}</span>
             <sui-select class="selection form-control"
                         [options]="dows"
                         labelField="name"

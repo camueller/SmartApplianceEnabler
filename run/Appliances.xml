@@ -27,7 +27,7 @@
                 </ModbusRegisterWrite>
             </EVModbusControl>
             <ElectricVehicle id="1" name="Nissan Leaf"
-                             batteryCapacity="30000"
+                             batteryCapacity="40000"
                              phases="1"
                              defaultEnergyCharge="10000"
             >

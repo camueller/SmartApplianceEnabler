@@ -57,6 +57,9 @@ export class TimeUtil {
   }
 
   static timestringOfNextMatchingDow_(m: Moment, dow: number, timeOfDay: string): string {
+    if (!dow || !timeOfDay) {
+      return undefined;
+    }
     while (m.isoWeekday() !== dow) {
       m.add(1, 'day');
     }
