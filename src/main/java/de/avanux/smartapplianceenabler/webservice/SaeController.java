@@ -28,6 +28,7 @@ import de.avanux.smartapplianceenabler.control.ControlDefaults;
 import de.avanux.smartapplianceenabler.control.StartingCurrentSwitchDefaults;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
+import de.avanux.smartapplianceenabler.control.ev.SocScript;
 import de.avanux.smartapplianceenabler.meter.*;
 import de.avanux.smartapplianceenabler.modbus.ModbusElectricityMeterDefaults;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
@@ -629,8 +630,12 @@ public class SaeController {
                         EVStatus evStatus = new EVStatus();
                         evStatus.setId(electricVehicle.getId());
                         evStatus.setName(electricVehicle.getName());
-                        evStatus.setBatteryCapacity(electricVehicle.getBatteryCapacity());
-                        evStatus.setDefaultEnergyCharge(electricVehicle.getDefaultEnergyCharge());
+
+                        SocScript socScript = electricVehicle.getSocScript();
+                        if(socScript != null) {
+                            evStatus.setStateOfCharge(socScript.getStateOfCharge());
+                        }
+
                         evStatuses.add(evStatus);
                     }
                     applianceStatus.setEvStatuses(evStatuses);

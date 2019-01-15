@@ -44,8 +44,7 @@ describe('StatusService', () => {
         remainingMinRunningTime: 3600,
         remainingMaxRunningTime: 7200,
         plannedEnergyAmount: 10000,
-        remainingMinEnergyAmount: 8765,
-        remainingMaxEnergyAmount: 8765,
+        chargedEnergyAmount: 8765,
         currentChargePower: 4000,
         planningRequested: true,
         earliestStart: 0,
@@ -59,13 +58,11 @@ describe('StatusService', () => {
           new EvStatus({
             id: 1,
             name: 'Nissan Leaf',
-            defaultEnergyCharge: 10000,
             stateOfCharge: 23
           }),
           new EvStatus({
             id: 2,
             name: 'Tesla Model S',
-            defaultEnergyCharge: undefined,
             stateOfCharge: 23
           })
         ],
@@ -79,8 +76,7 @@ describe('StatusService', () => {
         remainingMinRunningTime: 3601,
         remainingMaxRunningTime: 7201,
         plannedEnergyAmount: undefined,
-        remainingMinEnergyAmount: undefined,
-        remainingMaxEnergyAmount: undefined,
+        chargedEnergyAmount: undefined,
         currentChargePower: undefined,
         planningRequested: true,
         earliestStart: 10,
