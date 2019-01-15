@@ -80,15 +80,15 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.initializeOnceAfterViewChecked = true;
   }
 
-  updateStartChargeForm(applianceId: string, evStatuses: EvStatus) {
-    if (evStatuses) {
-      const electicVehicleControl = new FormControl(evStatuses.id);
-      electicVehicleControl.valueChanges.subscribe(electricVehicleSelected => {
-        this.updateStartChargeForm(applianceId, this.getEvStatus(this.getStatus(applianceId), electricVehicleSelected));
+  updateStartChargeForm(applianceId: string, evStatus: EvStatus) {
+    if (evStatus) {
+      const electicVehicleControl = new FormControl(evStatus.id);
+      electicVehicleControl.valueChanges.subscribe(evIdSelected => {
+        this.updateStartChargeForm(applianceId, this.getEvStatus(this.getStatus(applianceId), evIdSelected));
       });
       this.startChargeForm = new FormGroup({
         electricVehicle: electicVehicleControl,
-        stateOfChargeCurrent: new FormControl(),
+        stateOfChargeCurrent: new FormControl(evStatus.stateOfCharge ? evStatus.stateOfCharge.toFixed() : ''),
         stateOfChargeRequested: new FormControl(),
         chargeEndDow: new FormControl(),
         chargeEndTime: new FormControl(),
@@ -128,9 +128,9 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
     return this.applianceStatuses.filter(status => status.id === id)[0];
   }
 
-  getEvStatus(status: Status, name: string): EvStatus {
-    if (status && name) {
-      return status.evStatuses.filter(evStatuses => evStatuses.name === name)[0];
+  getEvStatus(status: Status, id: number): EvStatus {
+    if (status && id) {
+      return status.evStatuses.filter(evStatuses => evStatuses.id === id)[0];
     }
     return undefined;
   }

@@ -21,8 +21,7 @@ package de.avanux.smartapplianceenabler.webservice;
 public class EVStatus {
     private Integer id;
     private String name;
-    private Integer batteryCapacity;
-    private Integer defaultEnergyCharge;
+    private Float stateOfCharge;
 
     public Integer getId() {
         return id;
@@ -40,19 +39,11 @@ public class EVStatus {
         this.name = name;
     }
 
-    public Integer getBatteryCapacity() {
-        return batteryCapacity;
+    public Float getStateOfCharge() {
+        return stateOfCharge;
     }
 
-    public void setBatteryCapacity(Integer batteryCapacity) {
-        this.batteryCapacity = batteryCapacity;
-    }
-
-    public Integer getDefaultEnergyCharge() {
-        return defaultEnergyCharge;
-    }
-
-    public void setDefaultEnergyCharge(Integer defaultEnergyCharge) {
-        this.defaultEnergyCharge = defaultEnergyCharge;
+    public void setStateOfCharge(Float stateOfCharge) {
+        this.stateOfCharge = stateOfCharge;
     }
 }
