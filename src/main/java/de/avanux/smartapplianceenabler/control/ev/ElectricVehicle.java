@@ -32,7 +32,7 @@ public class ElectricVehicle {
     @XmlAttribute
     private Integer phases;
     @XmlAttribute
-    private Integer defaultEnergyCharge;
+    private Integer maxChargePower;
     @XmlElements({
             @XmlElement(name = "SocScript", type = SocScript.class),
     })
@@ -71,12 +71,12 @@ public class ElectricVehicle {
         this.phases = phases;
     }
 
-    public Integer getDefaultEnergyCharge() {
-        return defaultEnergyCharge;
+    public Integer getMaxChargePower() {
+        return maxChargePower;
     }
 
-    public void setDefaultEnergyCharge(Integer defaultEnergyCharge) {
-        this.defaultEnergyCharge = defaultEnergyCharge;
+    public void setMaxChargePower(Integer maxChargePower) {
+        this.maxChargePower = maxChargePower;
     }
 
     public SocScript getSocScript() {
@@ -94,7 +94,7 @@ public class ElectricVehicle {
                 ", name='" + name + '\'' +
                 ", batteryCapacity=" + batteryCapacity +
                 ", phases=" + phases +
-                ", defaultEnergyCharge=" + defaultEnergyCharge +
+                ", maxChargePower=" + maxChargePower +
                 ", socScript=" + socScript +
                 '}';
     }

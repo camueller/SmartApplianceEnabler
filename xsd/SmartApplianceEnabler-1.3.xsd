@@ -152,7 +152,7 @@
         <xs:attribute name="name" type="xs:string" />
         <xs:attribute name="batteryCapacity" type="xs:int" />
         <xs:attribute name="phases" type="xs:int" />
-        <xs:attribute name="defaultEnergyCharge" type="xs:int" />
+        <xs:attribute name="maxChargePower" type="xs:int" />
     </xs:complexType>
 
     <xs:complexType name="SocScriptType">

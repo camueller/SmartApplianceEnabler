@@ -29,13 +29,12 @@
             <ElectricVehicle id="1" name="Nissan Leaf"
                              batteryCapacity="40000"
                              phases="1"
-                             defaultEnergyCharge="10000"
+                             maxChargePower="10000"
             >
                 <SocScript script="/tmp/soc.sh"/>
             </ElectricVehicle>
             <ElectricVehicle id="2" name="Tesla Model S"
                              batteryCapacity="80000"
-                             defaultEnergyCharge="25000"
             />
         </ElectricVehicleCharger>
         <!-- ModbusElectricityMeter idref="modbus" slaveAddress="1" pollInterval="10" measurementInterval="60">
