@@ -359,10 +359,17 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
                 applianceId, evId, socCurrent, socRequested, chargeEnd);
         setChargingVehicleId(evId);
 
+        DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(appliance.getId());
+        int maxChargePower = deviceInfo.getCharacteristics().getMaxPowerConsumption();
+
         int batteryCapacity = ElectricVehicle.DEFAULT_BATTERY_CAPACITY;
         ElectricVehicle vehicle = getVehicle(evId);
         if(vehicle != null) {
             batteryCapacity = vehicle.getBatteryCapacity();
+            Integer maxVehicleChargePower = vehicle.getMaxChargePower();
+            if(maxVehicleChargePower != null && maxVehicleChargePower < maxChargePower) {
+                maxChargePower = maxVehicleChargePower;
+            }
         }
 
         int energy = ((socRequested != null ? socRequested : 100) - (socCurrent != null ? socCurrent : 0))/100 * batteryCapacity;
@@ -370,12 +377,10 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
         logger.debug("{}: Calculated energy={}Wh batteryCapacity={}Wh", applianceId, energy, batteryCapacity);
 
         if(chargeEnd == null) {
-            DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(appliance.getId());
-            int maxPowerConsumption = deviceInfo.getCharacteristics().getMaxPowerConsumption();
-            int chargeMinutes = Float.valueOf((float) energy / maxPowerConsumption * CHARGE_LOSS_FACTOR * 60).intValue();
+            int chargeMinutes = Float.valueOf((float) energy / maxChargePower * CHARGE_LOSS_FACTOR * 60).intValue();
             chargeEnd = new LocalDateTime().plusMinutes(chargeMinutes);
             logger.debug("{}: Calculated charge end={} chargeMinutes={} maxPowerConsumption={} chargeLossFactor={}",
-                    applianceId, chargeEnd, chargeMinutes, maxPowerConsumption, CHARGE_LOSS_FACTOR);
+                    applianceId, chargeEnd, chargeMinutes, maxChargePower, CHARGE_LOSS_FACTOR);
         }
 
         RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
