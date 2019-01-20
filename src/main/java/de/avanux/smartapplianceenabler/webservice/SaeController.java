@@ -633,7 +633,8 @@ public class SaeController {
 
                         SocScript socScript = electricVehicle.getSocScript();
                         if(socScript != null) {
-                            evStatus.setStateOfCharge(socScript.getStateOfCharge());
+                            Float soc = socScript.getStateOfCharge();
+                            evStatus.setStateOfCharge(soc != null ? soc : 0.0f);
                         }
 
                         evStatuses.add(evStatus);
