@@ -372,7 +372,9 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
             }
         }
 
-        int energy = ((socRequested != null ? socRequested : 100) - (socCurrent != null ? socCurrent : 0))/100 * batteryCapacity;
+        int resolvedSocRequested = (socRequested != null ? socRequested : 100);
+        int resolvedSocCurrent = (socCurrent != null ? socCurrent : 0);
+        int energy = Float.valueOf(((float) resolvedSocRequested - resolvedSocCurrent)/100.0f * batteryCapacity).intValue();
         setChargeAmount(energy);
         logger.debug("{}: Calculated energy={}Wh batteryCapacity={}Wh", applianceId, energy, batteryCapacity);
 
