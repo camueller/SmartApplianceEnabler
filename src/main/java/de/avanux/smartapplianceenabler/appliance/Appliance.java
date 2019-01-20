@@ -560,7 +560,9 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         if(meter != null) {
             int whAlreadyCharged = Float.valueOf(meter.getEnergy() * 1000.0f).intValue();
             remainingEnergy.setMin(remainingEnergy.getMin() - whAlreadyCharged);
-            remainingEnergy.setMax(remainingEnergy.getMax() - whAlreadyCharged);
+            if(remainingEnergy.getMax() != null) {
+                remainingEnergy.setMax(remainingEnergy.getMax() - whAlreadyCharged);
+            }
         }
         return remainingEnergy;
     }
