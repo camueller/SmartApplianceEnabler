@@ -31,7 +31,8 @@
                              phases="1"
                              maxChargePower="10000"
             >
-                <SocScript script="/tmp/soc.sh"/>
+                <SocScript script="/home/axel/IdeaProjects/SmartApplianceEnabler/src/test/soc.sh"
+                           extractionRegex=".*is (\d*.{0,1}\d+).*"/>
             </ElectricVehicle>
             <ElectricVehicle id="2" name="Tesla Model S"
                              batteryCapacity="80000"
@@ -45,6 +46,13 @@
                 <ModbusRegisterReadValue name="Energy"/>
             </ModbusRegisterRead>
         </ModbusElectricityMeter -->
+        <!--Schedule enabled="true">
+            <EnergyRequest min="5000"/>
+            <DayTimeframe>
+                <Start hour="13" minute="0" second="0"/>
+                <End hour="15" minute="0" second="0"/>
+            </DayTimeframe>
+        </Schedule-->
     </Appliance>
     <!--Appliance id="F-28091971-000000000003-00">
         <Switch gpio="2" reverseStates="true"/>
