@@ -598,7 +598,7 @@ public class SaeController {
                 applianceStatus.setType(identification.getDeviceType());
             }
 
-            List<RuntimeInterval> runtimeIntervals = appliance.getRuntimeIntervals(now, true);
+            List<RuntimeInterval> runtimeIntervals = appliance.getRuntimeIntervals(now, false);
 
             if(appliance.isControllable()) {
                 applianceStatus.setControllable(true);
@@ -641,7 +641,6 @@ public class SaeController {
                     }
                     applianceStatus.setEvStatuses(evStatuses);
                     applianceStatus.setEvIdCharging(evCharger.getChargingVehicleId());
-                    applianceStatus.setPlannedEnergyAmount(evCharger.getChargeAmount());
                     applianceStatus.setCurrentChargePower(evCharger.getChargePower());
 
                     int whAlreadyCharged = 0;
@@ -650,7 +649,11 @@ public class SaeController {
                     }
                     applianceStatus.setChargedEnergyAmount(whAlreadyCharged);
                     if(nextRuntimeInterval != null && ! nextRuntimeInterval.isUsingOptionalEnergy()) {
+                        applianceStatus.setPlannedEnergyAmount(nextRuntimeInterval.getMinEnergy());
                         applianceStatus.setLatestEnd(nextRuntimeInterval.getLatestEnd());
+                    }
+                    else {
+                        applianceStatus.setPlannedEnergyAmount(evCharger.getChargeAmount());
                     }
                 }
                 if(activeTimeframeInterval != null) {
