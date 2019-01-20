@@ -254,12 +254,16 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
     return TimeUtil.toWeekdayFromDelta(seconds);
   }
 
-  toWeekdayString(seconds: number): string | undefined{
+  toWeekdayString(seconds: number): string | undefined {
     if (! seconds) {
       return undefined;
     }
     const weekday = this.toWeekday(seconds);
-    return this.dows.filter(dow => dow.id === weekday)[0].name;
+    const dowMatches = this.dows.filter(dow => dow.id === weekday);
+    if (dowMatches && dowMatches.length > 0) {
+      return dowMatches[0].name;
+    }
+    return undefined;
   }
 
   toKWh(wh: number): number {
