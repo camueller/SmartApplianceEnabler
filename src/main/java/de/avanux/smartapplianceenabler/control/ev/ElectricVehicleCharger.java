@@ -248,7 +248,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
                 if(control.isChargingCompleted()) {
                     newState = State.CHARGING_COMPLETED;
                 }
-                if(control.isVehicleConnected()) {
+                else if(control.isVehicleConnected()) {
                     newState = State.VEHICLE_CONNECTED;
                 }
                 else if(control.isVehicleNotConnected()) {
@@ -307,6 +307,12 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
         if(newState == State.CHARGING) {
             if(this.forceInitialCharging && wasInStateOneTime(State.CHARGING)) {
                 stopCharging();
+            }
+        }
+        if(newState == State.CHARGING_COMPLETED) {
+            if(this.appliance != null) {
+//                this.appliance.deactivateSchedules();
+                this.appliance.resetActiveTimeframInterval();
             }
         }
         if(newState == State.VEHICLE_NOT_CONNECTED) {
