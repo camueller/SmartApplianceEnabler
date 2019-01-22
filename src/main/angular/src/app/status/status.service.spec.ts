@@ -57,13 +57,11 @@ describe('StatusService', () => {
         evStatuses: [
           new EvStatus({
             id: 1,
-            name: 'Nissan Leaf',
-            stateOfCharge: 23
+            name: 'Nissan Leaf'
           }),
           new EvStatus({
             id: 2,
-            name: 'Tesla Model S',
-            stateOfCharge: 23
+            name: 'Tesla Model S'
           })
         ],
       }),
