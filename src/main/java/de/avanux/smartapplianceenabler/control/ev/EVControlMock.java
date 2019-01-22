@@ -29,6 +29,7 @@ public class EVControlMock implements EVControl, Meter {
 
     private Logger logger = LoggerFactory.getLogger(EVControlMock.class);
     private boolean charging;
+    private boolean chargingCompleted;
     private Timer timer = new Timer();
     private float energyCounter = 0.0f;
     private TimerTask energyCounterTimerTask = new TimerTask() {
@@ -36,6 +37,15 @@ public class EVControlMock implements EVControl, Meter {
         public void run() {
             energyCounter += 0.01f;
             logDebug("energyCounter=" + energyCounter);
+        }
+    };
+    private TimerTask chargingCompletedTimerTask = new TimerTask() {
+        @Override
+        public void run() {
+            logDebug("chargingCompleted");
+            charging = false;
+            chargingCompleted = true;
+            energyCounterTimerTask.cancel();
         }
     };
 
@@ -64,7 +74,7 @@ public class EVControlMock implements EVControl, Meter {
 
     @Override
     public boolean isChargingCompleted() {
-        return false;
+        return this.chargingCompleted;
     }
 
     @Override
@@ -130,6 +140,7 @@ public class EVControlMock implements EVControl, Meter {
     public void startEnergyMeter() {
         logDebug("startEnergyMeter");
         this.timer.schedule(energyCounterTimerTask, 0, 1000);
+        this.timer.schedule(chargingCompletedTimerTask, 30000);
     }
 
     @Override

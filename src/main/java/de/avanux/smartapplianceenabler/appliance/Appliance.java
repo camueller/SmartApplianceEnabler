@@ -427,8 +427,8 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
 
     public void deactivateSchedules() {
         if(runningTimeMonitor != null) {
-            runningTimeMonitor.setSchedules(new ArrayList<>());
             logger.debug("{}: Deactivating schedules", id);
+            runningTimeMonitor.setSchedules(new ArrayList<>());
         }
     }
 
@@ -715,6 +715,13 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         return null;
     }
 
+    public void resetActiveTimeframInterval() {
+        if(runningTimeMonitor != null) {
+            logger.debug("{}: Reset active timeframe interval", id);
+            runningTimeMonitor.activateTimeframeInterval(new LocalDateTime(), (TimeframeInterval) null);
+        }
+    }
+
     @Override
     public void controlStateChanged(LocalDateTime now, boolean switchOn) {
         logger.debug("{}: Control state has changed to {}", id, (switchOn ? "on" : "off"));
@@ -747,10 +754,8 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
 
     @Override
     public void finishedCurrentDetected() {
-        if(runningTimeMonitor != null) {
-            logger.debug("{}: Deactivating timeframe interval until starting current is detected again", id);
-            runningTimeMonitor.activateTimeframeInterval(new LocalDateTime(), (TimeframeInterval) null);
-        }
+        logger.debug("{}: Deactivating timeframe interval until starting current is detected again", id);
+        resetActiveTimeframInterval();
     }
 
     @Override
