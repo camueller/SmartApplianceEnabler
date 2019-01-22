@@ -649,7 +649,7 @@ public class SaeController {
                 if(control instanceof ElectricVehicleCharger) {
                     ElectricVehicleCharger evCharger = (ElectricVehicleCharger) control;
                     List<EVStatus> evStatuses = new ArrayList<>();
-                    for(ElectricVehicle electricVehicle: evCharger.getVehicles()) {
+                    for (ElectricVehicle electricVehicle : evCharger.getVehicles()) {
                         EVStatus evStatus = new EVStatus();
                         evStatus.setId(electricVehicle.getId());
                         evStatus.setName(electricVehicle.getName());
@@ -660,16 +660,18 @@ public class SaeController {
                     applianceStatus.setCurrentChargePower(evCharger.getChargePower());
 
                     int whAlreadyCharged = 0;
-                    if(meter != null) {
+                    if (meter != null) {
                         whAlreadyCharged = Float.valueOf(meter.getEnergy() * 1000.0f).intValue();
                     }
                     applianceStatus.setChargedEnergyAmount(whAlreadyCharged);
-                    if(nextRuntimeInterval != null && ! nextRuntimeInterval.isUsingOptionalEnergy()) {
-                        applianceStatus.setPlannedEnergyAmount(nextRuntimeInterval.getMinEnergy());
+                    if (nextRuntimeInterval != null && !nextRuntimeInterval.isUsingOptionalEnergy()) {
                         applianceStatus.setLatestEnd(nextRuntimeInterval.getLatestEnd());
-                    }
-                    else {
+                    } else {
                         applianceStatus.setPlannedEnergyAmount(evCharger.getChargeAmount());
+                    }
+                    if (activeTimeframeInterval != null) {
+                        applianceStatus.setPlannedEnergyAmount(
+                                activeTimeframeInterval.getTimeframe().getSchedule().getRequest().getMin());
                     }
                 }
                 if(activeTimeframeInterval != null) {
