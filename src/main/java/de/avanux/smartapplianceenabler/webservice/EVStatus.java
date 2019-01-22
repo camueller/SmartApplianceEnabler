@@ -21,7 +21,6 @@ package de.avanux.smartapplianceenabler.webservice;
 public class EVStatus {
     private Integer id;
     private String name;
-    private Float stateOfCharge;
 
     public Integer getId() {
         return id;
@@ -37,13 +36,5 @@ public class EVStatus {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Float getStateOfCharge() {
-        return stateOfCharge;
-    }
-
-    public void setStateOfCharge(Float stateOfCharge) {
-        this.stateOfCharge = stateOfCharge;
     }
 }
