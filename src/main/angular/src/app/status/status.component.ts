@@ -88,10 +88,13 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
       });
       this.startChargeForm = new FormGroup({
         electricVehicle: electicVehicleControl,
-        stateOfChargeCurrent: new FormControl(evStatus.stateOfCharge ? evStatus.stateOfCharge.toFixed() : ''),
+        stateOfChargeCurrent: new FormControl(),
         stateOfChargeRequested: new FormControl(),
         chargeEndDow: new FormControl(),
         chargeEndTime: new FormControl(),
+      });
+      this.statusService.getSoc(applianceId, evStatus.id).subscribe(soc => {
+        this.startChargeForm.setControl('stateOfChargeCurrent', new FormControl(Number.parseFloat(soc).toFixed()));
       });
       this.initializeOnceAfterViewChecked = true;
     }
@@ -197,6 +200,8 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.switchOnApplianceId = applianceId;
     this.initializeOnceAfterViewChecked = true;
   }
+
+
 
   getRemainingRunningTimeLabel(applianceStatus: Status): string {
     if (this.isGoLightOn(applianceStatus)) {

@@ -457,17 +457,40 @@ public class SaeController {
         }
     }
 
-    /**
-     * Activate immediatly starting timeframe with energy demand.
-     * @param now
-     * @param applianceId
-     * @param energy
-     * @param runtime
-     * @return
-     */
-    public boolean setEnergyDemand(LocalDateTime now, String applianceId, Integer energy, Integer runtime) {
-        logger.debug("{}: Received request for {}Wh within {}s", applianceId, energy, runtime);
-        return activateTimeframe(now, applianceId, energy, runtime, true);
+    @RequestMapping(value=EVCHARGE_URL, method=RequestMethod.GET)
+    @CrossOrigin(origins = CROSS_ORIGIN_URL)
+    public Float getSoc(
+            HttpServletResponse response,
+            @RequestParam(value="applianceid") String applianceId,
+            @RequestParam(value="evid") Integer evId) {
+        logger.debug("{}: Received SOC request: evId={}", applianceId, evId);
+        Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
+        if (appliance != null) {
+            if (appliance.getControl() instanceof ElectricVehicleCharger) {
+                ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
+                ElectricVehicle electricVehicle = evCharger.getVehicle(evId);
+                if(electricVehicle != null) {
+                    SocScript socScript = electricVehicle.getSocScript();
+                    if(socScript != null) {
+                        Float soc = socScript.getStateOfCharge();
+                        logger.debug("{}: Return SOC={}", applianceId, soc);
+                        return soc;
+                    }
+                }
+                else {
+                    logger.error("{}: EV-Id {} not found", applianceId, evId);
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                }
+            }
+            else {
+                logger.error("{}: Appliance has no electric vehicle charger", applianceId);
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            }
+        } else {
+            logger.error("{}: Appliance not found", applianceId);
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        }
+        return 0.0f;
     }
 
     public boolean activateTimeframe(LocalDateTime now, String applianceId, Integer energy, Integer runtime,
@@ -630,13 +653,6 @@ public class SaeController {
                         EVStatus evStatus = new EVStatus();
                         evStatus.setId(electricVehicle.getId());
                         evStatus.setName(electricVehicle.getName());
-
-                        SocScript socScript = electricVehicle.getSocScript();
-                        if(socScript != null) {
-                            Float soc = socScript.getStateOfCharge();
-                            evStatus.setStateOfCharge(soc != null ? soc : 0.0f);
-                        }
-
                         evStatuses.add(evStatus);
                     }
                     applianceStatus.setEvStatuses(evStatuses);

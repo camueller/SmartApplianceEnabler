@@ -39,6 +39,13 @@ export class StatusService extends SaeService {
     return this.http.put(url, '', {responseType: 'text'});
   }
 
+  getSoc(id: string, evId: number): Observable<string> {
+    const url = `${SaeService.API}/evcharge?applianceid=${id}&evid=${evId}`;
+    this.logger.debug('Get SOC using ' + url);
+    return this.http.get(url, {responseType: 'text'})
+      .pipe(tap(next => this.logger.debug('SOC: ' + next)));
+  }
+
   requestEvCharge(applianceid: string, evid: string, socCurrent: number|undefined,
                   socRequested: number|undefined, chargeEnd: string|undefined): Observable<any> {
     let url = `${SaeService.API}/evcharge?applianceid=${applianceid}&evid=${evid}`;
