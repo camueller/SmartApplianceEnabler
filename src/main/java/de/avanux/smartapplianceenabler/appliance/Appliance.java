@@ -510,8 +510,15 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             logger.debug("{}: Active schedules: {}", id, schedules.size());
             if(activeTimeframeInterval != null) {
                 // active timeframe interval has always to be added even if not sufficient
-                addRuntimeRequestInterval(now, activeTimeframeInterval, runtimeIntervals,
-                        remainingMinRunningTime, remainingMaxRunningTime);
+                Request request = activeTimeframeInterval.getTimeframe().getSchedule().getRequest();
+                if(request instanceof RuntimeRequest) {
+                    addRuntimeRequestInterval(now, activeTimeframeInterval, runtimeIntervals,
+                            remainingMinRunningTime, remainingMaxRunningTime);
+                }
+                else if(request instanceof EnergyRequest) {
+                    addEnergyRequestInterval(runtimeIntervals, activeTimeframeInterval.getInterval(),
+                            request.getMin(), request.getMax(), now);
+                }
             }
 
             Interval considerationInterval = new Interval(now.toDateTime(), now.plusDays(CONSIDERATION_INTERVAL_DAYS).toDateTime());
