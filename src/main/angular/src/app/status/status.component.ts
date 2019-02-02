@@ -2,7 +2,7 @@ import {AfterViewChecked, Component, OnDestroy, OnInit} from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
 import {Status} from './status';
 import {TimeUtil} from '../shared/time-util';
-import {FormControl, FormControlName, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, FormControl, FormControlName, FormGroup, Validators} from '@angular/forms';
 import {interval, Subscription} from 'rxjs';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {StatusService} from './status.service';
@@ -36,6 +36,17 @@ FormControlName.prototype.ngOnChanges = function () {
     }
   }
   return result;
+};
+
+const socValidator = (control: AbstractControl): { [key: string]: boolean } => {
+  const stateOfChargeCurrent = control.get('stateOfChargeCurrent');
+  const stateOfChargeRequested = control.get('stateOfChargeRequested');
+  if (!stateOfChargeCurrent || !stateOfChargeRequested
+    || !stateOfChargeCurrent.value || !stateOfChargeRequested.value) {
+    return null;
+  }
+  return Number.parseInt(stateOfChargeCurrent.value)
+  < Number.parseInt(stateOfChargeRequested.value) ? null : {nomatch: true};
 };
 
 @Component({
@@ -88,11 +99,11 @@ export class StatusComponent implements OnInit, AfterViewChecked, OnDestroy {
       });
       this.startChargeForm = new FormGroup({
         electricVehicle: electicVehicleControl,
-        stateOfChargeCurrent: new FormControl(),
-        stateOfChargeRequested: new FormControl(),
+        stateOfChargeCurrent: new FormControl(null, Validators.pattern(InputValidatorPatterns.PERCENTAGE)),
+        stateOfChargeRequested: new FormControl(null, Validators.pattern(InputValidatorPatterns.PERCENTAGE)),
         chargeEndDow: new FormControl(),
         chargeEndTime: new FormControl(),
-      });
+      }, socValidator);
       this.statusService.getSoc(applianceId, evStatus.id).subscribe(soc => {
         this.startChargeForm.setControl('stateOfChargeCurrent', new FormControl(Number.parseFloat(soc).toFixed()));
       });
