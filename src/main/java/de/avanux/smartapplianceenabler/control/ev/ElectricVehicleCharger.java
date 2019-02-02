@@ -403,8 +403,8 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
         if(chargingVehicle != null && chargingVehicle.getPhases() != null) {
             phases = chargingVehicle.getPhases();
         }
-        int current = Float.valueOf((float) power / this.voltage * phases).intValue();
-        logger.debug("{}: Set charge power: {}W corresponds to {}A", applianceId, power, current);
+        int current = Float.valueOf((float) power / (this.voltage * phases)).intValue();
+        logger.debug("{}: Set charge power: {}W corresponds to {}A using {} phases", applianceId, power, current, phases);
         this.chargePower = power;
         control.setChargeCurrent(current);
     }
