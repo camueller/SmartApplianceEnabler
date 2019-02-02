@@ -510,14 +510,16 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             logger.debug("{}: Active schedules: {}", id, schedules.size());
             if(activeTimeframeInterval != null) {
                 // active timeframe interval has always to be added even if not sufficient
-                Request request = activeTimeframeInterval.getTimeframe().getSchedule().getRequest();
+                Schedule schedule = activeTimeframeInterval.getTimeframe().getSchedule();
+                Request request = schedule.getRequest();
                 if(request instanceof RuntimeRequest) {
                     addRuntimeRequestInterval(now, activeTimeframeInterval, runtimeIntervals,
                             remainingMinRunningTime, remainingMaxRunningTime);
                 }
                 else if(request instanceof EnergyRequest) {
+                    EnergyRequest remainingEnergy = calculateRemainingEnergy(schedule);
                     addEnergyRequestInterval(runtimeIntervals, activeTimeframeInterval.getInterval(),
-                            request.getMin(), request.getMax(), now);
+                            remainingEnergy.getMin(), remainingEnergy.getMax(), now);
                 }
             }
 
@@ -527,17 +529,16 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             for(TimeframeInterval timeframeIntervalOfSchedule : timeFrameIntervals) {
                 Schedule schedule = timeframeIntervalOfSchedule.getTimeframe().getSchedule();
                 Interval interval = timeframeIntervalOfSchedule.getInterval();
-
-                if(schedule.getRequest() instanceof RuntimeRequest) {
-                    Integer minRunningTime = schedule.getRequest().getMin();
+                Request request = schedule.getRequest();
+                if(request instanceof RuntimeRequest) {
+                    Integer minRunningTime = request.getMin();
                     if(interval.contains(now.toDateTime()) && remainingMinRunningTime != null) {
                         minRunningTime = remainingMinRunningTime;
                     }
-                    addRuntimeRequestInterval(runtimeIntervals, interval, minRunningTime, schedule.getRequest().getMax(), now);
+                    addRuntimeRequestInterval(runtimeIntervals, interval, minRunningTime, request.getMax(), now);
                 }
-                else if(schedule.getRequest() instanceof EnergyRequest) {
-                    EnergyRequest remainingEnergy = calculateRemainingEnergy(schedule);
-                    addEnergyRequestInterval(runtimeIntervals, interval, remainingEnergy.getMin(), remainingEnergy.getMax(), now);
+                else if(request instanceof EnergyRequest) {
+                    addEnergyRequestInterval(runtimeIntervals, interval, request.getMin(), request.getMax(), now);
                 }
             }
         }
@@ -570,6 +571,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             if(remainingEnergy.getMax() != null) {
                 remainingEnergy.setMax(remainingEnergy.getMax() - whAlreadyCharged);
             }
+            logger.debug("{}: Remaining energy calculated: {}", id, remainingEnergy);
         }
         return remainingEnergy;
     }
