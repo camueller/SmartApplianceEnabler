@@ -156,8 +156,8 @@ public class Timeframe {
             string += "/" + maxRunningTime + "s";
         }
         if(maxEnergy != null) {
-            string += (minEnergy != null ? minEnergy + "W": "-");
-            string += "/" + maxEnergy + "W";
+            string += (minEnergy != null ? minEnergy + "Wh": "-");
+            string += "/" + maxEnergy + "Wh";
         }
         return string;
     }
