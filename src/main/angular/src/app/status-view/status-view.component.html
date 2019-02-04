@@ -1,0 +1,37 @@
+<div class="appliance-name">{{status.name}}</div>
+<div *ngIf="status.planningRequested">
+  <div class="appliance-status">
+    <div *ngIf="isTrafficLightRed()">
+      <span class="appliance-status-label">{{'StatusComponent.earliestStart' | translate}}</span>
+      <span class="appliance-status-value">{{toHourMinuteWithUnits(status.earliestStart)}}</span>
+    </div>
+    <div *ngIf="isTrafficLightYellow()">
+      <div *ngIf="status.interruptedSince != null">
+        <span class="appliance-status-label">{{'StatusComponent.interruptedSince' | translate}}</span>
+        <span class="appliance-status-value">{{toHourMinuteWithUnits(status.interruptedSince)}}</span>
+      </div>
+      <span class="appliance-status-label">{{'StatusComponent.latestStart' | translate}}</span>
+      <span class="appliance-status-value">{{toHourMinuteWithUnits(status.latestStart)}}</span>
+    </div>
+    <div *ngIf="isTrafficLightGreen()">
+      <span class="appliance-status-label">{{'StatusComponent.runningTimeCompleted' | translate}}</span>
+      <span class="appliance-status-value">{{toHourMinuteWithUnits(status.runningTime)}}</span>
+    </div>
+  </div>
+  <div *ngIf="status.remainingMaxRunningTime == null">
+    <div class="appliance-status">
+      <span class="appliance-status-label">{{getRemainingRunningTimeLabel(status)}}</span>
+      <span class="appliance-status-value">{{toHourMinuteWithUnits(status.remainingMinRunningTime)}}</span>
+    </div>
+  </div>
+  <div *ngIf="status.remainingMaxRunningTime != null">
+    <div class="appliance-status">
+      <span class="appliance-status-label">{{getRemainingMinRunningTimeLabel(status)}}</span>
+      <span class="appliance-status-value">{{toHourMinuteWithUnits(status.remainingMinRunningTime)}}</span>
+    </div>
+    <div class="appliance-status">
+      <span class="appliance-status-label">{{getRemainingMaxRunningTimeLabel(status)}}</span>
+      <span class="appliance-status-value">{{toHourMinuteWithUnits(status.remainingMaxRunningTime)}}</span>
+    </div>
+  </div>
+</div>

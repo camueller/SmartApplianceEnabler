@@ -1,0 +1,41 @@
+<form class="ui form" [formGroup]="startChargeForm" (ngSubmit)="submitForm()">
+  <div class="appliance-details-row">
+    <sui-select class="selection form-control"
+                [options]="status.evStatuses"
+                labelField="name"
+                valueField="id"
+                formControlName="electricVehicle"
+                #selectElectricVehicle
+    >
+      <sui-select-option *ngFor="let option of selectElectricVehicle.filteredOptions" class="dropdown-item" [value]="option"></sui-select-option>
+    </sui-select>
+  </div>
+  <div class="appliance-details-row">
+    <span class="appliance-status-label">{{'StatusComponent.stateOfCharge' | translate}}</span>
+    <span class="appliance-status-label">{{'StatusComponent.stateOfChargeCurrent' | translate}}</span>
+    <input type="text" class="appliance-percentage-input" name="stateOfChargeCurrent" formControlName="stateOfChargeCurrent">
+    <span class="appliance-status-label">{{'StatusComponent.stateOfChargeUnit' | translate}}</span>
+    <span class="appliance-status-label">{{'StatusComponent.stateOfChargeRequested' | translate}}</span>
+    <input type="text" class="appliance-percentage-input" name="stateOfChargeRequested" formControlName="stateOfChargeRequested">
+    <span class="appliance-status-label">{{'StatusComponent.stateOfChargeUnit' | translate}}</span>
+  </div>
+  <div class="appliance-details-row">
+    <span class="appliance-status-label">{{'StatusComponent.chargeLatestEndRequested' | translate}}</span>
+    <sui-select class="selection form-control"
+                [options]="dows"
+                labelField="name"
+                valueField="id"
+                formControlName="chargeEndDow"
+                placeholder="{{'dayOfWeek' | translate}}"
+                #selectChargeEndDow
+    >
+      <sui-select-option *ngFor="let option of selectChargeEndDow.filteredOptions" class="dropdown-item" [value]="option"></sui-select-option>
+    </sui-select>
+    <input type="text" class="appliance-number-input clockpicker" style="width: 4em" name="chargeEndTime"
+           formControlName="chargeEndTime" placeholder="00:00">
+  </div>
+  <div class="appliance-details-row appliance-button-row">
+    <button type="submit" class="ui button"
+            [disabled]="startChargeForm.invalid">{{'StatusComponent.buttonStart' | translate}}</button>
+  </div>
+</form>
