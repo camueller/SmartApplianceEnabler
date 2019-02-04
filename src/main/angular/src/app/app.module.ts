@@ -35,6 +35,8 @@ import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule} from '@angular/common/h
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import {StatusComponent} from './status/status.component';
+import {StatusEditComponent} from './status-edit/status-edit.component';
+import {StatusEvchargerEditComponent} from './status-evcharger-edit/status-evcharger-edit.component';
 import {ControlService} from './control/control-service';
 import {MeterService} from './meter/meter-service';
 import {ScheduleService} from './schedule/schedule-service';
@@ -53,6 +55,8 @@ import {ErrorInterceptor} from './shared/http-error-interceptor';
 import {StatusService} from './status/status.service';
 import {Logger, Options} from './log/logger';
 import {Level} from './log/level';
+import { StatusEvchargerViewComponent } from './status-evcharger-view/status-evcharger-view.component';
+import { StatusViewComponent } from './status-view/status-view.component';
 
 @NgModule({
   declarations: [
@@ -63,7 +67,11 @@ import {Level} from './log/level';
     ControlComponent,
     SchedulesComponent,
     SettingsComponent,
-    StatusComponent
+    StatusComponent,
+    StatusEditComponent,
+    StatusEvchargerEditComponent,
+    StatusEvchargerViewComponent,
+    StatusViewComponent
   ],
   imports: [
     BrowserModule,
