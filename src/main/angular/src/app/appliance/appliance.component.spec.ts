@@ -15,6 +15,7 @@ import {Level} from '../log/level';
 import {Logger, Options} from '../log/logger';
 import {Location} from '@angular/common';
 import {Appliance} from './appliance';
+import {FormUtil} from '../testing/form-util';
 
 const translations: any = {
   'dialog.candeactivate': 'Änderungen verwerfen?',
@@ -199,7 +200,7 @@ describe('ApplianceComponent', () => {
       const saveButtonElement = fixture.debugElement.query(By.css('button[type=submit]')).nativeElement;
       expect(saveButtonElement.disabled).toBeTruthy();
       appliance.name = 'MegaWash';
-      setInputValue('input[name=name]', appliance.name);
+      FormUtil.setInputValue(fixture, 'input[name=name]', appliance.name);
       fixture.detectChanges();
       expect(saveButtonElement.disabled).toBeFalsy();
       saveButtonElement.click();
@@ -236,22 +237,22 @@ describe('ApplianceComponent', () => {
     component = fixture.componentInstance;
     fixture.autoDetectChanges();
     fixture.whenStable().then(() => {
-      setInputValue('input[name=id]', 'F-00000000-000000000001-01');
+      FormUtil.setInputValue(fixture, 'input[name=id]', 'F-00000000-000000000001-01');
       expect(component.detailsForm.controls.id.valid).toBeTruthy();
       expect(component.detailsForm.valid).toBeFalsy();
-      setInputValue('input[name=vendor]', 'Siemens');
+      FormUtil.setInputValue(fixture, 'input[name=vendor]', 'Siemens');
       expect(component.detailsForm.controls.vendor.valid).toBeTruthy();
       expect(component.detailsForm.valid).toBeFalsy();
-      setInputValue('input[name=name]', 'SuperWash');
+      FormUtil.setInputValue(fixture, 'input[name=name]', 'SuperWash');
       expect(component.detailsForm.controls.name.valid).toBeTruthy();
       expect(component.detailsForm.valid).toBeFalsy();
       selectOptionValue('select[name=type]', 'WashingMachine');
       expect(component.detailsForm.controls.type.valid).toBeTruthy();
       expect(component.detailsForm.valid).toBeFalsy();
-      setInputValue('input[name=serial]', '345678');
+      FormUtil.setInputValue(fixture, 'input[name=serial]', '345678');
       expect(component.detailsForm.controls.serial.valid).toBeTruthy();
       expect(component.detailsForm.valid).toBeFalsy();
-      setInputValue('input[name=maxPowerConsumption]', '1800');
+      FormUtil.setInputValue(fixture, 'input[name=maxPowerConsumption]', '1800');
       expect(component.detailsForm.controls.maxPowerConsumption.valid).toBeTruthy();
     });
   }));
@@ -263,21 +264,14 @@ describe('ApplianceComponent', () => {
     component = fixture.componentInstance;
     fixture.autoDetectChanges();
     fixture.whenStable().then(() => {
-      setInputValue('input[name=id]', 'F-00000000-000000000001-0');
+      FormUtil.setInputValue(fixture, 'input[name=id]', 'F-00000000-000000000001-0');
       expect(component.detailsForm.controls.id.valid).toBeFalsy();
       expect(component.errors['id']).toEqual('ApplianceComponent.error.id_pattern');
-      setInputValue('input[name=id]', 'F-00000000-000000000001-01');
+      FormUtil.setInputValue(fixture, 'input[name=id]', 'F-00000000-000000000001-01');
       expect(component.detailsForm.controls.id.valid).toBeTruthy();
       expect(JSON.stringify(component.errors)).toEqual('{}');
     });
   }));
-
-  function setInputValue(selector: string, value: string) {
-    fixture.detectChanges();
-    const input = fixture.debugElement.query(By.css(selector)).nativeElement;
-    input.value = value;
-    input.dispatchEvent(new Event('input'));
-  }
 
   function selectOptionValue(selector: string, value: string) {
     fixture.detectChanges();
