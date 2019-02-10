@@ -33,4 +33,31 @@
             </Requests>
         </Capabilities>
     </DeviceInfo>
+    <DeviceInfo>
+        <Identification>
+            <DeviceId>F-28091971-000000000003-00</DeviceId>
+            <DeviceName>Gerät 1</DeviceName>
+            <DeviceType>HeatPump</DeviceType>
+            <DeviceSerial>4158934</DeviceSerial>
+            <DeviceVendor>Speck</DeviceVendor>
+        </Identification>
+        <Characteristics>
+            <MaxPowerConsumption>960</MaxPowerConsumption>
+            <MinOnTime>900</MinOnTime>
+        </Characteristics>
+        <Capabilities>
+            <CurrentPower>
+                <Method>Measurement</Method>
+            </CurrentPower>
+            <Timestamps>
+                <AbsoluteTimestamps>false</AbsoluteTimestamps>
+            </Timestamps>
+            <Interruptions>
+                <InterruptionsAllowed>true</InterruptionsAllowed>
+            </Interruptions>
+            <Requests>
+                <OptionalEnergy>false</OptionalEnergy>
+            </Requests>
+        </Capabilities>
+    </DeviceInfo>
 </Device2EM>

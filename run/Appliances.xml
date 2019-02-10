@@ -54,7 +54,7 @@
             </DayTimeframe>
         </Schedule-->
     </Appliance>
-    <!--Appliance id="F-28091971-000000000003-00">
+    <Appliance id="F-28091971-000000000003-00">
         <Switch gpio="2" reverseStates="true"/>
         <S0ElectricityMeter gpio="3" pinPullResistance="PULL_DOWN" impulsesPerKwh="1000"/>
         <Schedule enabled="true">
@@ -69,7 +69,7 @@
                 <DayOfWeek>5</DayOfWeek>
             </DayTimeframe>
         </Schedule>
-    </Appliance-->
+    </Appliance>
     <!--Appliance id="F-28091971-000000000004-00">
         <Switch gpio="2" reverseStates="true"/>
         <S0ElectricityMeter gpio="3" pinPullResistance="PULL_DOWN" impulsesPerKwh="1000"/>
