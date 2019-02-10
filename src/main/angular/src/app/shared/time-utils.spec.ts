@@ -37,7 +37,10 @@ describe('TimeUtil', () => {
   });
 
   describe('timestringOfNextMatchingDow', () => {
-    let m = moment('2019-01-01T09:01:02.003Z').utc();
+    let m;
+    beforeEach(() => {
+      m = moment('2019-01-01T09:01:02.003Z').utc();
+    });
     it('Should find a day in the same week', () => {
       expect(TimeUtil.timestringOfNextMatchingDow_(m, 5, '08:00'))
         .toEqual('2019-01-04T08:00:00.000Z');
