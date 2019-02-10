@@ -72,7 +72,7 @@ export class StatusEditComponent implements OnInit, AfterViewChecked {
     $('.clockpicker').clockpicker({ autoclose: true });
   }
 
-  submitSwitchOnForm() {
+  submitForm() {
     const switchOnRunningTime = this.switchOnForm.value.switchOnRunningTime;
     const seconds = TimeUtil.toSeconds(switchOnRunningTime);
     this.statusService.setRuntime(this.applianceId, seconds).subscribe();
