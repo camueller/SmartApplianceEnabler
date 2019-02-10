@@ -27,8 +27,6 @@ const translations: any = {
   'dayOfWeek': 'Day of week',
 };
 
-class StatusServiceMock extends StatusService {}
-
 describe('StatusEvchargerEditComponent', () => {
   let component: StatusEvchargerEditComponent;
   let fixture: ComponentFixture<StatusEvchargerEditComponent>;

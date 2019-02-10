@@ -10,22 +10,22 @@ import {Level} from '../log/level';
 import {By} from '@angular/platform-browser';
 import {FormUtil} from '../testing/form-util';
 import {FakeTranslateLoader} from '../testing/fake-translate-loader';
+import SpyObj = jasmine.SpyObj;
+import createSpyObj = jasmine.createSpyObj;
 
 const translations: any = {
   'dialog.candeactivate': 'Änderungen verwerfen?',
   'ApplianceComponent.confirmDeletion': 'Wirklich löschen?'
 };
 
-class StatusServiceMock extends StatusService {}
-
 describe('StatusEditComponent', () => {
   let component: StatusEditComponent;
   let fixture: ComponentFixture<StatusEditComponent>;
   let translate: TranslateService;
-  let statusService: StatusServiceMock;
+  let statusService: SpyObj<any>;
 
   beforeEach(async(() => {
-    statusService = new StatusServiceMock(undefined, undefined);
+    statusService = createSpyObj(['suggestRuntime']);
 
     TestBed.configureTestingModule({
       declarations: [ StatusEditComponent ],
@@ -50,7 +50,7 @@ describe('StatusEditComponent', () => {
   }));
 
   beforeEach(() => {
-    spyOn(statusService, 'suggestRuntime').and.returnValue(of('1800'));
+    statusService.suggestRuntime.and.returnValue(of(1800));
     fixture = TestBed.createComponent(StatusEditComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
