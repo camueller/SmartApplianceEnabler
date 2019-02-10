@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { StatusEvchargerEditComponent } from './status-evcharger-edit.component';
+import {StatusEvchargerEditComponent} from './status-evcharger-edit.component';
 import {TranslateLoader, TranslateModule, TranslateService} from '@ngx-translate/core';
-import {Observable, of} from 'rxjs';
+import {of} from 'rxjs';
 import {ReactiveFormsModule} from '@angular/forms';
 import {StatusService} from '../status/status.service';
 import {Logger, Options} from '../log/logger';
@@ -18,20 +18,13 @@ import SpyObj = jasmine.SpyObj;
 import {TimeUtil} from '../shared/time-util';
 
 const translations: any = {
-  'StatusComponent.stateOfCharge': 'Ladezustand: ',
-  'StatusComponent.stateOfChargeCurrent': 'Ist ',
-  'StatusComponent.stateOfChargeRequested': 'Soll ',
+  'StatusComponent.stateOfCharge': 'State of charge: ',
+  'StatusComponent.stateOfChargeCurrent': 'Current ',
+  'StatusComponent.stateOfChargeRequested': 'Requested ',
   'StatusComponent.stateOfChargeUnit': '%',
-  'StatusComponent.chargeLatestEndRequested': 'bis ',
-  'StatusComponent.buttonStart': 'Starten',
-// 'daysOfWeek_monday': 'Montag',
-  // 'daysOfWeek_tuesday': 'Dienstag',
-  // 'daysOfWeek_wednesday': 'Mittwoch',
-  // 'daysOfWeek_thursday': 'Donnerstag',
-  // 'daysOfWeek_friday': 'Freitag',
-  // 'daysOfWeek_saturday': 'Samstag',
-  // 'daysOfWeek_sunday': 'Sonntag',
-  // 'daysOfWeek_holiday': 'Feiertag',
+  'StatusComponent.chargeLatestEndRequested': 'until ',
+  'StatusComponent.buttonStart': 'Start',
+  'dayOfWeek': 'Day of week',
 };
 
 class StatusServiceMock extends StatusService {}
@@ -84,21 +77,25 @@ describe('StatusEvchargerEditComponent', () => {
     ];
     component.applianceId = 'myApplianceId';
     component.status = {
-      evStatuses: [{id: 1, name: 'Nissan Leaf'} as EvStatus]
+      evStatuses: [
+        {id: 1, name: 'Nissan Leaf'} as EvStatus,
+        {id: 2, name: 'Tesla Model 3'} as EvStatus
+      ]
     } as Status;
   });
 
-  it('should create', () => {
+  it('should create', (done: any) => {
     statusService.getSoc.and.returnValue(of(undefined));
     fixture.detectChanges();
     expect(component).toBeTruthy();
     fixture.whenStable().then(() => {
-      expect(component.startChargeForm.controls['stateOfChargeCurrent'].value).toEqual('');
+      expect(component.startChargeForm.controls['stateOfChargeCurrent'].value).toEqual(null);
       expect(fixture.debugElement.query(By.css('button[type=submit]')).nativeElement.disabled).toBeFalsy();
+      done();
     });
   });
 
-  it('should submit the form with current SOC', () => {
+  it('should submit the form with current SOC', (done: any) => {
     statusService.getSoc.and.returnValue(of(defaultSoc));
     statusService.requestEvCharge.and.returnValue( of(true));
     fixture.detectChanges();
@@ -108,11 +105,12 @@ describe('StatusEvchargerEditComponent', () => {
       const startButtonElement = fixture.debugElement.query(By.css('button[type=submit]')).nativeElement;
       startButtonElement.click();
       expect(statusService.requestEvCharge)
-        .toHaveBeenCalledWith(component.applianceId, component.status.evStatuses[0].id, socCurrent, undefined, undefined);
+        .toHaveBeenCalledWith(component.applianceId, component.status.evStatuses[0].id, socCurrent, null, undefined);
+      done();
     });
   });
 
-  it('should submit the form with requested SOC', () => {
+  it('should submit the form with requested SOC', (done: any) => {
     statusService.getSoc.and.returnValue(of(''));
     statusService.requestEvCharge.and.returnValue( of(true));
     fixture.detectChanges();
@@ -123,6 +121,7 @@ describe('StatusEvchargerEditComponent', () => {
       startButtonElement.click();
       expect(statusService.requestEvCharge)
         .toHaveBeenCalledWith(component.applianceId, component.status.evStatuses[0].id, null, socRequested, undefined);
+      done();
     });
   });
 
@@ -146,6 +145,34 @@ describe('StatusEvchargerEditComponent', () => {
         startButtonElement.click();
         expect(statusService.requestEvCharge)
           .toHaveBeenCalledWith(component.applianceId, component.status.evStatuses[0].id, null, null, chargeEnd);
+        done();
+      });
+    });
+  });
+
+  it('should submit the fully filled form', (done: any) => {
+    statusService.getSoc.and.returnValue(of(''));
+    statusService.requestEvCharge.and.returnValue( of(true));
+    fixture.autoDetectChanges();
+
+    const socCurrent = '33';
+    const socRequested = '55';
+    const chargeEndDow = 4; // Thursday
+    const chargeEndTime = '15:00';
+    const chargeEnd = TimeUtil.timestringOfNextMatchingDow(chargeEndDow, chargeEndTime);
+
+    fixture.whenStable().then(() => {
+      FormUtil.setInputValue(fixture, 'input[name=stateOfChargeCurrent]', socCurrent);
+      FormUtil.setInputValue(fixture, 'input[name=stateOfChargeRequested]', socRequested);
+      FormUtil.selectOption(fixture, 'chargeEndDow', 'Thursday');
+      FormUtil.setInputValue(fixture, 'input[name=chargeEndTime]', chargeEndTime);
+
+      fixture.whenStable().then(() => {
+        // sui-select[formControlName='chargeEndDow']>div.text>span:nth-child(2)
+        const startButtonElement = fixture.debugElement.query(By.css('button[type=submit]')).nativeElement;
+        startButtonElement.click();
+        expect(statusService.requestEvCharge)
+          .toHaveBeenCalledWith(component.applianceId, component.status.evStatuses[0].id, socCurrent, socRequested, chargeEnd);
         done();
       });
     });
