@@ -122,11 +122,11 @@ describe('StatusEvchargerEditComponent', () => {
       const startButtonElement = fixture.debugElement.query(By.css('button[type=submit]')).nativeElement;
       startButtonElement.click();
       expect(statusService.requestEvCharge)
-        .toHaveBeenCalledWith(component.applianceId, component.status.evStatuses[0].id, undefined, socRequested, undefined);
+        .toHaveBeenCalledWith(component.applianceId, component.status.evStatuses[0].id, null, socRequested, undefined);
     });
   });
 
-  it('should submit the form with charge end', () => {
+  it('should submit the form with charge end', (done: any) => {
     statusService.getSoc.and.returnValue(of(''));
     statusService.requestEvCharge.and.returnValue( of(true));
     fixture.autoDetectChanges();
@@ -139,13 +139,15 @@ describe('StatusEvchargerEditComponent', () => {
     fixture.whenStable().then(() => {
       FormUtil.selectOption(fixture, 'chargeEndDow', 'Thursday');
       FormUtil.setInputValue(fixture, 'input[name=chargeEndTime]', chargeEndTime);
-      fixture.detectChanges();
 
-      // sui-select[formControlName='chargeEndDow']>div.text>span:nth-child(2)
-      const startButtonElement = fixture.debugElement.query(By.css('button[type=submit]')).nativeElement;
-      startButtonElement.click();
-      expect(statusService.requestEvCharge)
-        .toHaveBeenCalledWith(component.applianceId, component.status.evStatuses[0].id, undefined, undefined, chargeEnd);
+      fixture.whenStable().then(() => {
+        // sui-select[formControlName='chargeEndDow']>div.text>span:nth-child(2)
+        const startButtonElement = fixture.debugElement.query(By.css('button[type=submit]')).nativeElement;
+        startButtonElement.click();
+        expect(statusService.requestEvCharge)
+          .toHaveBeenCalledWith(component.applianceId, component.status.evStatuses[0].id, null, null, chargeEnd);
+        done();
+      });
     });
   });
 });
