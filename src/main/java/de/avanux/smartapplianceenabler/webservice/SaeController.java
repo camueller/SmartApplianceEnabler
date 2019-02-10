@@ -436,6 +436,10 @@ public class SaeController {
         Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
         if (appliance != null) {
             if (appliance.getControl() instanceof ElectricVehicleCharger) {
+                if(appliance.getMeter() != null) {
+                    appliance.getMeter().resetEnergyMeter();
+                }
+
                 ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
                 evCharger.setEnergyDemand(evId, socCurrent, socRequested, chargeEnd);
 
