@@ -40,10 +40,8 @@ import {MockSwitch} from './mock-switch';
 import {Logger} from '../log/logger';
 import {Settings} from '../settings/settings';
 import {SettingsDefaults} from '../settings/settings-defaults';
-import {ModbusRegisterConfguration} from '../shared/modbus-register-confguration';
 import {EvCharger} from './ev-charger';
 import {Appliance} from '../appliance/appliance';
-import {EvChargerTemplates} from './ev-charger-templates';
 import {EvModbusControl} from './ev-modbus-control';
 
 @Component({
@@ -63,9 +61,8 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
+  childFormDirty = false;
   discardChangesMessage: string;
-  evChargerTemplates: { [name: string]: EvCharger };
-  evChargerTemplateNameSelected: string;
   APPLIANCE_TYPE_EVCHARGER = 'EVCharger';
   TYPE_ALWAYS_ON_SWITCH = AlwaysOnSwitch.TYPE;
   TYPE_SWITCH = Switch.TYPE;
@@ -86,20 +83,9 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
     const controlFactory = new ControlFactory(logger);
     this.control = controlFactory.createEmptyControl();
     this.errorMessageHandler = new ErrorMessageHandler(logger);
-    this.evChargerTemplates = EvChargerTemplates.getTemplates();
   }
 
   ngOnInit() {
-    this.translate.get([
-      'ControlComponent.evcharger_VehicleNotConnected',
-      'ControlComponent.evcharger_VehicleConnected',
-      'ControlComponent.evcharger_Charging',
-      'ControlComponent.evcharger_ChargingCompleted',
-      'ControlComponent.evcharger_Error',
-      'ControlComponent.evcharger_StartCharging',
-      'ControlComponent.evcharger_StopCharging',
-      'ControlComponent.evcharger_ChargingCurrent'
-    ]).subscribe(translatedStrings => this.translatedStrings = translatedStrings);
     this.errorMessages =  new ControlErrorMessages(this.translate);
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.route.paramMap.subscribe(() => this.applianceId = this.route.snapshot.paramMap.get('id'));
@@ -115,17 +101,21 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
         this.control.evCharger = new EvCharger();
         this.control.evCharger.control = new EvModbusControl();
       }
-      this.controlForm.form.markAsPristine();
+      // this.controlForm.form.markAsPristine();
     });
-    this.controlForm.statusChanges.subscribe(() =>
-      this.errors = this.errorMessageHandler.applyErrorMessages4TemplateDrivenForm(this.controlForm, this.errorMessages));
+    // this.controlForm.statusChanges.subscribe(() =>
+    //   this.errors = this.errorMessageHandler.applyErrorMessages4TemplateDrivenForm(this.controlForm, this.errorMessages));
   }
 
   canDeactivate(): Observable<boolean> | boolean {
-    if (this.controlForm.form.pristine) {
+    if (this.controlForm && this.controlForm.form.pristine && ! this.childFormDirty) {
       return true;
     }
     return this.dialogService.confirm(this.discardChangesMessage);
+  }
+
+  onChildFormChanged(event: boolean) {
+    this.childFormDirty = event;
   }
 
   typeChanged(newType: string) {
@@ -155,7 +145,7 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   }
 
   isStartingCurrentDetectedDisabled(): boolean {
-    if (this.controlForm.form.contains('controlType')) {
+    if (this.controlForm && this.controlForm.form.contains('controlType')) {
       return  this.controlForm.form.controls.controlType.value === this.TYPE_ALWAYS_ON_SWITCH;
     }
     return false;
@@ -163,43 +153,6 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
 
   isEvCharger(): boolean {
     return this.appliance.type === this.APPLIANCE_TYPE_EVCHARGER;
-  }
-
-  addModbusConfiguration() {
-    this.control.evCharger.control.configuration.push({} as ModbusRegisterConfguration);
-  }
-
-  removeModbusConfiguration(index: number) {
-    this.control.evCharger.control.configuration.splice(index, 1);
-  }
-
-  getModbusRegisterNames(): string[] {
-    return this.control.evCharger.control.configuration
-      .map(configuration => configuration.name)
-      .filter((v, i, a) => a.indexOf(v) === i);
-  }
-
-  getTranslatedModbusRegisterName(name: string) {
-    return this.translatedStrings[this.toTextKeyModbusRegisterName(name)];
-  }
-
-  toTextKeyModbusRegisterName(name: string) {
-    return 'ControlComponent.evcharger_' + name;
-  }
-
-  getModbusRegisterTypes(write: boolean): string[] {
-    if (write) {
-      return this.settingsDefaults.modbusWriteRegisterTypes;
-    }
-    return this.settingsDefaults.modbusReadRegisterTypes;
-  }
-
-  getEvChargerTemplateNames(): string[] {
-    return Object.keys(this.evChargerTemplates);
-  }
-
-  useEvChargerTemplate() {
-    this.control.evCharger = this.evChargerTemplates[this.evChargerTemplateNameSelected];
   }
 
   submitForm() {

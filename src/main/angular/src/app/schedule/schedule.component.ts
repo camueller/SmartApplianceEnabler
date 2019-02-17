@@ -130,8 +130,7 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
   initForm() {
     this.schedulesForm = this.fb.group({schedules: new FormArray([])});
     this.schedulesForm.statusChanges.subscribe(() =>
-      this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.schedulesForm,
-        this.errorMessages, true, 'schedules.#.'));
+      this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.schedulesForm, this.errorMessages));
   }
 
   canDeactivate(): Observable<boolean> | boolean {

@@ -18,282 +18,166 @@
 
 <div class="ui segment" xmlns="http://www.w3.org/1999/html">
 
-
-  <form class="ui form" #controlForm="ngForm" (ngSubmit)="submitForm()">
-
-    <div *ngIf="! isEvCharger()" class="fields">
-      <div class="field">
-        <label>{{'ControlComponent.type' | translate}}</label>
-        <select class="ui fluid dropdown" name="controlType" [(ngModel)]="control.type"
-                (ngModelChange)="typeChanged($event)">
-          <option [ngValue]="TYPE_ALWAYS_ON_SWITCH">{{TYPE_ALWAYS_ON_SWITCH | translate}}</option>
-          <option [ngValue]="TYPE_SWITCH">{{TYPE_SWITCH | translate}}</option>
-          <option [ngValue]="TYPE_MODBUS_SWITCH">{{TYPE_MODBUS_SWITCH | translate}}</option>
-          <option [ngValue]="TYPE_HTTP_SWITCH">{{TYPE_HTTP_SWITCH | translate}}</option>
-          <option [ngValue]="TYPE_MOCK_SWITCH">{{TYPE_MOCK_SWITCH | translate}}</option>
-        </select>
-      </div>
-      <div class="ui checkbox">
-        <input type="checkbox" name="startingCurrentDetection" [(ngModel)]="control.startingCurrentDetection"
-               (ngModelChange)="startingCurrentDetectionChanged($event)"
-               [disabled]="isStartingCurrentDetectedDisabled()">
-        <label>{{'ControlComponent.startingCurrentDetection' | translate}}</label>
-      </div>
-    </div>
-
-    <div class="ui fields" *ngIf="control.type===TYPE_SWITCH">
-      <div class="field">
-        <label>{{'ControlComponent.switch_gpio' | translate}}</label>
-        <input type="text" name="switch_gpio" [(ngModel)]="control.switch_.gpio"
-               required pattern="{{VALIDATOR_PATTERN_INTEGER}}">
-        <div *ngIf="errors.switch_gpio" class="ui negative message">{{errors.switch_gpio}}</div>
-      </div>
-      <div class="ui checkbox">
-        <input type="checkbox" name="switch_reverseStates" [(ngModel)]="control.switch_.reverseStates">
-        <label>{{'ControlComponent.switch_reverseStates' | translate}}</label>
-      </div>
-    </div>
-
-    <div class="ui fields" *ngIf="control.type===TYPE_MODBUS_SWITCH">
-      <div class="field">
-        <label>{{'ControlComponent.modbusSwitch_idref' | translate}}</label>
-        <select class="ui fluid dropdown" name="modbusSwitch_modbusTcpId" [(ngModel)]="control.modbusSwitch.idref">
-          <option *ngFor="let modbusSettings of settings.modbusSettings" [ngValue]="modbusSettings.modbusTcpId"
-                  [selected]="modbusSettings.modbusTcpId==control.modbusSwitch.idref">
-            {{modbusSettings.modbusTcpId}}</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>{{'ControlComponent.modbusSwitch_slaveAddress' | translate}}</label>
-        <input type="text" name="modbusSwitch_slaveAddress" [(ngModel)]="control.modbusSwitch.slaveAddress"
-               required pattern="{{VALIDATOR_PATTERN_INTEGER}}">
-        <div *ngIf="errors.modbusSwitch_slaveAddress" class="ui negative message">
-          {{errors.modbusSwitch_slaveAddress}}</div>
-      </div>
-      <div class="field">
-        <label>{{'ControlComponent.modbusSwitch_registerAddress' | translate}}</label>
-        <input type="text" name="modbusSwitch_registerAddress" [(ngModel)]="control.modbusSwitch.registerAddress"
-               required pattern="{{VALIDATOR_PATTERN_INTEGER_OR_HEX}}">
-        <div *ngIf="errors.modbusSwitch_registerAddress" class="ui negative message">
-          {{errors.modbusSwitch_registerAddress}}</div>
-      </div>
-      <div class="field">
-        <label>{{'ControlComponent.modbusSwitch_registerType' | translate}}</label>
-        <select class="ui fluid dropdown" name="registerType" [(ngModel)]="control.modbusSwitch.registerType">
-          <option *ngFor="let modbusWriteRegisterType of settingsDefaults.modbusWriteRegisterTypes"
-                  [ngValue]="modbusWriteRegisterType"
-                  [selected]="modbusWriteRegisterType==control.modbusSwitch.registerType"
-          >{{modbusWriteRegisterType}}</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>{{'ControlComponent.modbusSwitch_onValue' | translate}}</label>
-        <input type="text" name="modbusSwitch_onValue" [(ngModel)]="control.modbusSwitch.onValue"
-               required>
-        <div *ngIf="errors.modbusSwitch_onValue" class="ui negative message">
-          {{errors.modbusSwitch_onValue}}</div>
-      </div>
-      <div class="field">
-        <label>{{'ControlComponent.modbusSwitch_offValue' | translate}}</label>
-        <input type="text" name="modbusSwitch_offValue" [(ngModel)]="control.modbusSwitch.offValue"
-               required>
-        <div *ngIf="errors.modbusSwitch_offValue" class="ui negative message">
-          {{errors.modbusSwitch_offValue}}</div>
-      </div>
-    </div>
-
-    <div *ngIf="control.type===TYPE_HTTP_SWITCH">
-      <div class="field">
-        <label>{{'ControlComponent.httpSwitch_onUrl' | translate}}</label>
-        <input type="text" name="httpSwitch_onUrl" [(ngModel)]="control.httpSwitch.onUrl"
-               required pattern="{{VALIDATOR_PATTERN_URL}}">
-        <div *ngIf="errors.httpSwitch_onUrl" class="ui negative message">{{errors.httpSwitch_onUrl}}</div>
-      </div>
-      <div class="field">
-        <label>{{'ControlComponent.httpSwitch_onData' | translate}}</label>
-        <input type="text" name="httpSwitch_onData" [(ngModel)]="control.httpSwitch.onData">
-      </div>
-      <div class="field">
-        <label>{{'ControlComponent.httpSwitch_offUrl' | translate}}</label>
-        <input type="text" name="httpSwitch_offUrl" [(ngModel)]="control.httpSwitch.offUrl"
-               required pattern="{{VALIDATOR_PATTERN_URL}}">
-        <div *ngIf="errors.httpSwitch_offUrl" class="ui negative message">{{errors.httpSwitch_offUrl}}</div>
-      </div>
-      <div class="field">
-        <label>{{'ControlComponent.httpSwitch_offData' | translate}}</label>
-        <input type="text" name="httpSwitch_offData" [(ngModel)]="control.httpSwitch.offData">
-      </div>
-      <div class="ui fields">
+  <app-control-evcharger *ngIf="isEvCharger(); else notEvCharger"
+                         [control]="control"
+                         [applianceId]="applianceId"
+                         [settings]="settings"
+                         [settingsDefaults]="settingsDefaults"
+                         (childFormChanged)="onChildFormChanged($event)"
+  >
+  </app-control-evcharger>
+  <ng-template #notEvCharger>
+    <form class="ui form" #controlForm="ngForm" (ngSubmit)="submitForm()">
+      <div class="fields">
         <div class="field">
-          <label>{{'ControlComponent.httpSwitch_username' | translate}}</label>
-          <input type="text" name="httpSwitch_username" [(ngModel)]="control.httpSwitch.username">
-        </div>
-        <div class="field">
-          <label>{{'ControlComponent.httpSwitch_password' | translate}}</label>
-          <input type="text" name="httpSwitch_password" [(ngModel)]="control.httpSwitch.password">
-        </div>
-        <div class="field">
-          <label>{{'ControlComponent.httpSwitch_contentType' | translate}}</label>
-          <input type="text" name="httpSwitch_contentType" [(ngModel)]="control.httpSwitch.contentType">
-        </div>
-      </div>
-    </div>
-
-    <div *ngIf="control.startingCurrentDetection">
-      <h4 class="ui dividing header">{{'ControlComponent.startingCurrent' | translate}}</h4>
-      <div class="ui fields">
-        <div class="field">
-          <label>{{'ControlComponent.startingCurrentSwitch_powerThreshold' | translate}}</label>
-          <input type="text" name="startingCurrentSwitch_powerThreshold"
-                 placeholder="{{controlDefaults.startingCurrentSwitchDefaults_powerThreshold}}"
-                 [(ngModel)]="control.startingCurrentSwitch.powerThreshold">
-        </div>
-        <div class="field">
-          <label>
-            {{'ControlComponent.startingCurrentSwitch_startingCurrentDetectionDuration' | translate}}</label>
-          <input type="text" name="startingCurrentSwitch_startingCurrentDetectionDuration"
-                 placeholder="{{controlDefaults.startingCurrentSwitchDefaults_startingCurrentDetectionDuration}}"
-                 [(ngModel)]="control.startingCurrentSwitch.startingCurrentDetectionDuration">
-        </div>
-        <div class="field">
-          <label>
-            {{'ControlComponent.startingCurrentSwitch_finishedCurrentDetectionDuration' | translate}}</label>
-          <input type="text" name="startingCurrentSwitch_finishedCurrentDetectionDuration"
-                 placeholder="{{controlDefaults.startingCurrentSwitchDefaults_finishedCurrentDetectionDuration}}"
-                 [(ngModel)]="control.startingCurrentSwitch.finishedCurrentDetectionDuration">
-        </div>
-        <div class="field">
-          <label>{{'ControlComponent.startingCurrentSwitch_minRunningTime' | translate}}</label>
-          <input type="text" name="startingCurrentSwitch_minRunningTime"
-                 placeholder="{{controlDefaults.startingCurrentSwitchDefaults_minRunningTime}}"
-                 [(ngModel)]="control.startingCurrentSwitch.minRunningTime">
-        </div>
-      </div>
-    </div>
-
-    <div *ngIf="isEvCharger()">
-
-      <div class="ui fields">
-        <div class="field" style="font-weight: bold; padding: 0.78571429em 0.5em 0em">
-          {{'ControlComponent.evcharger_template' | translate}}
-        </div>
-        <div class="field">
-          <select class="ui fluid dropdown" name="evChargerTemplateName" [(ngModel)]="evChargerTemplateNameSelected">
-            <option *ngFor="let name of getEvChargerTemplateNames()">{{name}}</option>
+          <label>{{'ControlComponent.type' | translate}}</label>
+          <select class="ui fluid dropdown" name="controlType" [(ngModel)]="control.type"
+                  (ngModelChange)="typeChanged($event)">
+            <option [ngValue]="TYPE_ALWAYS_ON_SWITCH">{{TYPE_ALWAYS_ON_SWITCH | translate}}</option>
+            <option [ngValue]="TYPE_SWITCH">{{TYPE_SWITCH | translate}}</option>
+            <option [ngValue]="TYPE_MODBUS_SWITCH">{{TYPE_MODBUS_SWITCH | translate}}</option>
+            <option [ngValue]="TYPE_HTTP_SWITCH">{{TYPE_HTTP_SWITCH | translate}}</option>
+            <option [ngValue]="TYPE_MOCK_SWITCH">{{TYPE_MOCK_SWITCH | translate}}</option>
           </select>
         </div>
-        <div class="field">
-          <button type="button" class="ui button" (click)="useEvChargerTemplate()">{{'ControlComponent.evcharger_templateButton' | translate}}</button>
+        <div class="ui checkbox">
+          <input type="checkbox" name="startingCurrentDetection" [(ngModel)]="control.startingCurrentDetection"
+                 (ngModelChange)="startingCurrentDetectionChanged($event)"
+                 [disabled]="isStartingCurrentDetectedDisabled()">
+          <label>{{'ControlComponent.startingCurrentDetection' | translate}}</label>
         </div>
       </div>
-      <div class="ui hidden divider"></div>
-
-      <div class="ui fields">
+      <div class="ui fields" *ngIf="control.type===TYPE_SWITCH">
         <div class="field">
-          <label>{{'ControlComponent.evcharger_voltage' | translate}}</label>
-          <input type="text" name="evCharger_voltage"
-                 [(ngModel)]="control.evCharger.voltage">
+          <label>{{'ControlComponent.switch_gpio' | translate}}</label>
+          <input type="text" name="switch_gpio" [(ngModel)]="control.switch_.gpio"
+                 required pattern="{{VALIDATOR_PATTERN_INTEGER}}">
+          <div *ngIf="errors.switch_gpio" class="ui negative message">{{errors.switch_gpio}}</div>
         </div>
-        <div class="field">
-          <label>{{'ControlComponent.evcharger_phases' | translate}}</label>
-          <input type="text" name="evCharger_phases"
-                 [(ngModel)]="control.evCharger.phases">
-        </div>
-        <div class="field">
-          <label>{{'ControlComponent.evcharger_pollInterval' | translate}}</label>
-          <input type="text" name="evCharger_pollInterval"
-                 [(ngModel)]="control.evCharger.pollInterval">
-        </div>
-        <div class="field">
-          <label>{{'ControlComponent.evcharger_startChargingStateDetectionDelay' | translate}}</label>
-          <input type="text" name="evCharger_startChargingStateDetectionDelay"
-                 [(ngModel)]="control.evCharger.startChargingStateDetectionDelay">
-        </div>
-        <div class="field">
-          <label>{{'ControlComponent.evcharger_forceInitialCharging' | translate}}</label>
-          <input class="ui checkbox" type="checkbox" name="evCharger_forceInitialCharging"
-                 [(ngModel)]="control.evCharger.forceInitialCharging">
+        <div class="ui checkbox">
+          <input type="checkbox" name="switch_reverseStates" [(ngModel)]="control.switch_.reverseStates">
+          <label>{{'ControlComponent.switch_reverseStates' | translate}}</label>
         </div>
       </div>
-      <div class="ui fields">
+      <div class="ui fields" *ngIf="control.type===TYPE_MODBUS_SWITCH">
         <div class="field">
-          <label>{{'ControlComponent.evchargerModbus_idref' | translate}}</label>
-          <select class="ui fluid dropdown" name="evChargerModbus_idref" [(ngModel)]="control.evCharger.control.idref">
+          <label>{{'ControlComponent.modbusSwitch_idref' | translate}}</label>
+          <select class="ui fluid dropdown" name="modbusSwitch_modbusTcpId" [(ngModel)]="control.modbusSwitch.idref">
             <option *ngFor="let modbusSettings of settings.modbusSettings" [ngValue]="modbusSettings.modbusTcpId"
-                    [selected]="modbusSettings.modbusTcpId==control.evCharger.control.idref">
+                    [selected]="modbusSettings.modbusTcpId==control.modbusSwitch.idref">
               {{modbusSettings.modbusTcpId}}</option>
           </select>
         </div>
         <div class="field">
-          <label>{{'ControlComponent.evchargerModbus_slaveAddress' | translate}}</label>
-          <input type="text" name="evChargerModbus_slaveAddress"
-                 [(ngModel)]="control.evCharger.control.slaveAddress" required pattern="{{VALIDATOR_PATTERN_INTEGER}}">
-          <div *ngIf="errors.evChargerModbus_slaveAddress" class="ui negative message">
-            {{errors.evChargerModbus_slaveAddress}}</div>
+          <label>{{'ControlComponent.modbusSwitch_slaveAddress' | translate}}</label>
+          <input type="text" name="modbusSwitch_slaveAddress" [(ngModel)]="control.modbusSwitch.slaveAddress"
+                 required pattern="{{VALIDATOR_PATTERN_INTEGER}}">
+          <div *ngIf="errors.modbusSwitch_slaveAddress" class="ui negative message">
+            {{errors.modbusSwitch_slaveAddress}}</div>
+        </div>
+        <div class="field">
+          <label>{{'ControlComponent.modbusSwitch_registerAddress' | translate}}</label>
+          <input type="text" name="modbusSwitch_registerAddress" [(ngModel)]="control.modbusSwitch.registerAddress"
+                 required pattern="{{VALIDATOR_PATTERN_INTEGER_OR_HEX}}">
+          <div *ngIf="errors.modbusSwitch_registerAddress" class="ui negative message">
+            {{errors.modbusSwitch_registerAddress}}</div>
+        </div>
+        <div class="field">
+          <label>{{'ControlComponent.modbusSwitch_registerType' | translate}}</label>
+          <select class="ui fluid dropdown" name="registerType" [(ngModel)]="control.modbusSwitch.registerType">
+            <option *ngFor="let modbusWriteRegisterType of settingsDefaults.modbusWriteRegisterTypes"
+                    [ngValue]="modbusWriteRegisterType"
+                    [selected]="modbusWriteRegisterType==control.modbusSwitch.registerType"
+            >{{modbusWriteRegisterType}}</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>{{'ControlComponent.modbusSwitch_onValue' | translate}}</label>
+          <input type="text" name="modbusSwitch_onValue" [(ngModel)]="control.modbusSwitch.onValue"
+                 required>
+          <div *ngIf="errors.modbusSwitch_onValue" class="ui negative message">
+            {{errors.modbusSwitch_onValue}}</div>
+        </div>
+        <div class="field">
+          <label>{{'ControlComponent.modbusSwitch_offValue' | translate}}</label>
+          <input type="text" name="modbusSwitch_offValue" [(ngModel)]="control.modbusSwitch.offValue"
+                 required>
+          <div *ngIf="errors.modbusSwitch_offValue" class="ui negative message">
+            {{errors.modbusSwitch_offValue}}</div>
         </div>
       </div>
-      <div *ngFor="let modbusConfiguration of control.evCharger.control.configuration; index as i; last as l">
-        <div class="ui hidden divider"></div>
+      <div *ngIf="control.type===TYPE_HTTP_SWITCH">
+        <div class="field">
+          <label>{{'ControlComponent.httpSwitch_onUrl' | translate}}</label>
+          <input type="text" name="httpSwitch_onUrl" [(ngModel)]="control.httpSwitch.onUrl"
+                 required pattern="{{VALIDATOR_PATTERN_URL}}">
+          <div *ngIf="errors.httpSwitch_onUrl" class="ui negative message">{{errors.httpSwitch_onUrl}}</div>
+        </div>
+        <div class="field">
+          <label>{{'ControlComponent.httpSwitch_onData' | translate}}</label>
+          <input type="text" name="httpSwitch_onData" [(ngModel)]="control.httpSwitch.onData">
+        </div>
+        <div class="field">
+          <label>{{'ControlComponent.httpSwitch_offUrl' | translate}}</label>
+          <input type="text" name="httpSwitch_offUrl" [(ngModel)]="control.httpSwitch.offUrl"
+                 required pattern="{{VALIDATOR_PATTERN_URL}}">
+          <div *ngIf="errors.httpSwitch_offUrl" class="ui negative message">{{errors.httpSwitch_offUrl}}</div>
+        </div>
+        <div class="field">
+          <label>{{'ControlComponent.httpSwitch_offData' | translate}}</label>
+          <input type="text" name="httpSwitch_offData" [(ngModel)]="control.httpSwitch.offData">
+        </div>
         <div class="ui fields">
           <div class="field">
-            <label>{{'ControlComponent.evchargerModbus_name' | translate}}</label>
-            <select class="ui fluid dropdown" name="evCharger_name{{i}}"
-                    [(ngModel)]="modbusConfiguration.name">
-              <option *ngFor="let modbusRegisterName of getModbusRegisterNames()"
-                      [ngValue]="modbusRegisterName"
-              >{{getTranslatedModbusRegisterName(modbusRegisterName)}}</option>
-            </select>
+            <label>{{'ControlComponent.httpSwitch_username' | translate}}</label>
+            <input type="text" name="httpSwitch_username" [(ngModel)]="control.httpSwitch.username">
           </div>
           <div class="field">
-            <label>{{'ControlComponent.evchargerModbus_registerAddress' | translate}}</label>
-            <input type="text" name="evCharger_registerAddress{{i}}"
-                   [(ngModel)]="modbusConfiguration.address"
-                   required pattern="{{VALIDATOR_PATTERN_INTEGER_OR_HEX}}">
-            <div *ngIf="errors.evCharger_registerAddress" class="ui negative message">
-              {{errors.evCharger_registerAddress}}</div>
+            <label>{{'ControlComponent.httpSwitch_password' | translate}}</label>
+            <input type="text" name="httpSwitch_password" [(ngModel)]="control.httpSwitch.password">
           </div>
           <div class="field">
-            <label>{{'ControlComponent.evchargerModbus_write' | translate}}</label>
-            <input class="ui checkbox" type="checkbox" name="evCharger_write{{i}}"
-                   [(ngModel)]="modbusConfiguration.write">
-          </div>
-          <div class="field">
-            <label>{{'ControlComponent.evchargerModbus_registerType' | translate}}</label>
-            <select class="ui fluid dropdown" name="registerType{{i}}"
-                    [(ngModel)]="modbusConfiguration.type">
-              <option *ngFor="let modbusRegisterType of getModbusRegisterTypes(modbusConfiguration.write)"
-                      [ngValue]="modbusRegisterType"
-                      [selected]="modbusRegisterType==modbusConfiguration.type"
-              >{{modbusRegisterType}}</option>
-            </select>
-          </div>
-          <div class="field" *ngIf="!modbusConfiguration.write">
-            <label>{{'ControlComponent.evchargerModbus_bytes' | translate}}</label>
-            <input type="text" name="evCharger_bytes{{i}}"
-                   [(ngModel)]="modbusConfiguration.bytes">
-          </div>
-          <div class="field" *ngIf="!modbusConfiguration.write">
-            <label>{{'ControlComponent.evchargerModbus_extractionRegex' | translate}}</label>
-            <input type="text" name="evCharger_extractionRegex{{i}}"
-                   [(ngModel)]="modbusConfiguration.extractionRegex">
-          </div>
-          <div class="field" *ngIf="modbusConfiguration.write">
-            <label>{{'ControlComponent.evchargerModbus_value' | translate}}</label>
-            <input type="text" name="evCharger_value{{i}}"
-                   [(ngModel)]="modbusConfiguration.value">
-          </div>
-          <div class="field" style="padding-top: 2.0em">
-            <i (click)="removeModbusConfiguration(i)" class="icon big red remove circle"></i>
-            <i *ngIf="l" (click)="addModbusConfiguration()" class="icon big green add circle"></i>
+            <label>{{'ControlComponent.httpSwitch_contentType' | translate}}</label>
+            <input type="text" name="httpSwitch_contentType" [(ngModel)]="control.httpSwitch.contentType">
           </div>
         </div>
       </div>
-    </div>
-
-    <div class="ui hidden divider"></div>
-    <button type="submit" class="ui button" [disabled]="controlForm.pristine||controlForm.invalid">
-      {{'button.save' | translate}}</button>
-  </form>
+      <div *ngIf="control.startingCurrentDetection">
+        <h4 class="ui dividing header">{{'ControlComponent.startingCurrent' | translate}}</h4>
+        <div class="ui fields">
+          <div class="field">
+            <label>{{'ControlComponent.startingCurrentSwitch_powerThreshold' | translate}}</label>
+            <input type="text" name="startingCurrentSwitch_powerThreshold"
+                   placeholder="{{controlDefaults.startingCurrentSwitchDefaults_powerThreshold}}"
+                   [(ngModel)]="control.startingCurrentSwitch.powerThreshold">
+          </div>
+          <div class="field">
+            <label>
+              {{'ControlComponent.startingCurrentSwitch_startingCurrentDetectionDuration' | translate}}</label>
+            <input type="text" name="startingCurrentSwitch_startingCurrentDetectionDuration"
+                   placeholder="{{controlDefaults.startingCurrentSwitchDefaults_startingCurrentDetectionDuration}}"
+                   [(ngModel)]="control.startingCurrentSwitch.startingCurrentDetectionDuration">
+          </div>
+          <div class="field">
+            <label>
+              {{'ControlComponent.startingCurrentSwitch_finishedCurrentDetectionDuration' | translate}}</label>
+            <input type="text" name="startingCurrentSwitch_finishedCurrentDetectionDuration"
+                   placeholder="{{controlDefaults.startingCurrentSwitchDefaults_finishedCurrentDetectionDuration}}"
+                   [(ngModel)]="control.startingCurrentSwitch.finishedCurrentDetectionDuration">
+          </div>
+          <div class="field">
+            <label>{{'ControlComponent.startingCurrentSwitch_minRunningTime' | translate}}</label>
+            <input type="text" name="startingCurrentSwitch_minRunningTime"
+                   placeholder="{{controlDefaults.startingCurrentSwitchDefaults_minRunningTime}}"
+                   [(ngModel)]="control.startingCurrentSwitch.minRunningTime">
+          </div>
+        </div>
+      </div>
+      <div class="ui hidden divider"></div>
+      <button type="submit" class="ui button" [disabled]="controlForm.pristine||controlForm.invalid">
+        {{'button.save' | translate}}</button>
+    </form>
+  </ng-template>
   <!--
   <pre>{{control | json}}</pre>
   <pre>{{controlForm.value | json}}</pre>
