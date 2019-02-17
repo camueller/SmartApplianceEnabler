@@ -96,11 +96,6 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
       this.appliance = data.appliance;
       this.settings = data.settings;
       this.settingsDefaults = data.settingsDefaults;
-      if (this.isEvCharger() && this.control.evCharger === undefined) {
-        this.control.type = this.TYPE_EVCHARGER;
-        this.control.evCharger = new EvCharger();
-        this.control.evCharger.control = new EvModbusControl();
-      }
       // this.controlForm.form.markAsPristine();
     });
     // this.controlForm.statusChanges.subscribe(() =>
