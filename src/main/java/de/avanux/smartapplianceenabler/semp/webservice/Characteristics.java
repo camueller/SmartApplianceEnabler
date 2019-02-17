@@ -59,7 +59,7 @@ public class Characteristics {
         return minOnTime;
     }
 
-    public void setMinOnTime(int minOnTime) {
+    public void setMinOnTime(Integer minOnTime) {
         this.minOnTime = minOnTime;
     }
 
@@ -67,7 +67,7 @@ public class Characteristics {
         return maxOnTime;
     }
 
-    public void setMaxOnTime(int maxOnTime) {
+    public void setMaxOnTime(Integer maxOnTime) {
         this.maxOnTime = maxOnTime;
     }
 
@@ -75,7 +75,7 @@ public class Characteristics {
         return minOffTime;
     }
 
-    public void setMinOffTime(int minOffTime) {
+    public void setMinOffTime(Integer minOffTime) {
         this.minOffTime = minOffTime;
     }
 
@@ -83,7 +83,7 @@ public class Characteristics {
         return maxOffTime;
     }
 
-    public void setMaxOffTime(int maxOffTime) {
+    public void setMaxOffTime(Integer maxOffTime) {
         this.maxOffTime = maxOffTime;
     }
 
