@@ -57,6 +57,7 @@ import {Logger, Options} from './log/logger';
 import {Level} from './log/level';
 import { StatusEvchargerViewComponent } from './status-evcharger-view/status-evcharger-view.component';
 import { StatusViewComponent } from './status-view/status-view.component';
+import { ControlEvchargerComponent } from './control-evcharger/control-evcharger.component';
 
 @NgModule({
   declarations: [
@@ -65,6 +66,7 @@ import { StatusViewComponent } from './status-view/status-view.component';
     PageNotFoundComponent,
     MeterComponent,
     ControlComponent,
+    ControlEvchargerComponent,
     SchedulesComponent,
     SettingsComponent,
     StatusComponent,

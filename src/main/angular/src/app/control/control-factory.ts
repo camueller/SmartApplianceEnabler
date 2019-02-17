@@ -173,6 +173,8 @@ export class ControlFactory {
           name: registerReadValue.name,
           address: registerRead.address,
           type: registerRead.type,
+          bytes: registerRead.bytes,
+          byteOrder: registerRead.byteOrder,
           extractionRegex: registerReadValue.extractionRegex,
           write: false
         });

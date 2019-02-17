@@ -135,6 +135,7 @@
   "ControlComponent.evchargerModbus_write": "Schreibzugriff",
   "ControlComponent.evchargerModbus_registerType": "Register-Typ",
   "ControlComponent.evchargerModbus_bytes": "Bytes",
+  "ControlComponent.evchargerModbus_byteOrder": "Byte Reihenfolge",
   "ControlComponent.evchargerModbus_extractionRegex": "Regex für Extraktion",
   "ControlComponent.evchargerModbus_value": "Wert",
   "ControlComponent.evcharger_VehicleNotConnected": "Ladestecker nicht angeschlossen",
@@ -167,6 +168,10 @@
   "ControlComponent.error.httpSwitch_onUrl_pattern": "Die URL zum Einschalten muss gültig sein",
   "ControlComponent.error.httpSwitch_offUrl_required": "Die URL zum Ausschalten muss angegeben werden",
   "ControlComponent.error.httpSwitch_offUrl_pattern": "Die URL zum Ausschalten muss gültig sein",
+  "ControlEvchargerComponent.error.slaveAddress_required": "Die Slave-Adresse muss angegeben werden",
+  "ControlEvchargerComponent.error.slaveAddress_pattern": "Die Slave-Adresse muss eine Zahl sein",
+  "ControlEvchargerComponent.error.registerAddress_required": "Die Register-Adresse muss angegeben werden",
+  "ControlEvchargerComponent.error.registerAddress_pattern": "Die Register-Adresse muss als Zahl (z.B. 13) oder Hex-Zahl (z.B. 0x0A) angegeben werden",
 
   "ScheduleComponent.schedule": "Zeitplan",
   "ScheduleComponent.enabled": "aktiviert",

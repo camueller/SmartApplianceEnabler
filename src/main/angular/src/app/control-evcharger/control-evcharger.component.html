@@ -1,0 +1,118 @@
+<form class="ui form" [formGroup]="evChargerForm" (ngSubmit)="submitForm()">
+
+  <div class="ui fields">
+    <div class="field" style="font-weight: bold; padding: 0.78571429em 0.5em 0em">
+      {{'ControlComponent.evcharger_template' | translate}}
+    </div>
+    <div class="field">
+      <select class="ui fluid dropdown" formControlName="template">
+        <option *ngFor="let name of getTemplateNames()">{{name}}</option>
+      </select>
+    </div>
+    <div class="field">
+      <button type="button" class="ui button" (click)="useEvChargerTemplate()">{{'ControlComponent.evcharger_templateButton' | translate}}</button>
+    </div>
+  </div>
+  <div class="ui hidden divider"></div>
+
+  <div class="ui fields">
+    <div class="field">
+      <label>{{'ControlComponent.evcharger_voltage' | translate}}</label>
+      <input type="text" formControlName="voltage">
+    </div>
+    <div class="field">
+      <label>{{'ControlComponent.evcharger_phases' | translate}}</label>
+      <input type="text" formControlName="phases">
+    </div>
+    <div class="field">
+      <label>{{'ControlComponent.evcharger_pollInterval' | translate}}</label>
+      <input type="text" formControlName="pollInterval">
+    </div>
+    <div class="field">
+      <label>{{'ControlComponent.evcharger_startChargingStateDetectionDelay' | translate}}</label>
+      <input type="text" formControlName="startChargingStateDetectionDelay">
+    </div>
+    <div class="field">
+      <label>{{'ControlComponent.evcharger_forceInitialCharging' | translate}}</label>
+      <input class="ui checkbox" type="checkbox" formControlName="forceInitialCharging">
+    </div>
+  </div>
+  <div class="ui fields">
+    <div class="field">
+      <label>{{'ControlComponent.evchargerModbus_idref' | translate}}</label>
+      <select class="ui fluid dropdown" formControlName="modbusIdref">
+        <option *ngFor="let modbusSettings of settings.modbusSettings" value="modbusSettings.modbusTcpId"
+                [selected]="modbusSettings.modbusTcpId==control.evCharger.control.idref">
+          {{modbusSettings.modbusTcpId}}</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>{{'ControlComponent.evchargerModbus_slaveAddress' | translate}}</label>
+      <input type="text" formControlName="modbusSlaveAddress">
+      <div *ngIf="errors.slaveAddress" class="ui negative message">
+        {{errors.slaveAddress}}</div>
+    </div>
+  </div>
+  <div formArrayName="modbusConfigurations">
+    <div *ngFor="let modbusConfiguration of modbusConfigurations.controls; index as i; last as l" [formGroupName]="i">
+      <div class="ui hidden divider"></div>
+      <div class="ui fields">
+        <div class="field">
+          <label>{{'ControlComponent.evchargerModbus_name' | translate}}</label>
+          <select class="ui fluid dropdown" formControlName="name">
+            <option *ngFor="let modbusRegisterName of getModbusRegisterNames()"
+                    [ngValue]="modbusRegisterName"
+            >{{getTranslatedModbusRegisterName(modbusRegisterName)}}</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>{{'ControlComponent.evchargerModbus_registerAddress' | translate}}</label>
+          <input type="text" formControlName="registerAddress">
+          <div *ngIf="getIndexedErrorMessage('registerAddress', i)" class="ui negative message">
+            {{getIndexedErrorMessage('registerAddress', i)}}</div>
+        </div>
+        <div class="field">
+          <label>{{'ControlComponent.evchargerModbus_write' | translate}}</label>
+          <input class="ui checkbox" type="checkbox" formControlName="write">
+        </div>
+        <div class="field">
+          <label>{{'ControlComponent.evchargerModbus_registerType' | translate}}</label>
+          <select class="ui fluid dropdown" formControlName="registerType">
+            <option *ngFor="let modbusRegisterType of getModbusRegisterTypes(isModbusWriteRegister(modbusConfiguration))"
+                    [ngValue]="modbusRegisterType"
+                    [selected]="modbusRegisterType==getRegisterType(modbusConfiguration)"
+            >{{modbusRegisterType}}</option>
+          </select>
+        </div>
+        <div class="field" *ngIf="!isModbusWriteRegister(modbusConfiguration)">
+          <label>{{'ControlComponent.evchargerModbus_bytes' | translate}}</label>
+          <input type="text" formControlName="bytes">
+        </div>
+        <div class="field" *ngIf="!isModbusWriteRegister(modbusConfiguration)">
+          <label>{{'ControlComponent.evchargerModbus_byteOrder' | translate}}</label>
+          <select class="ui fluid dropdown" formControlName="byteOrder">
+            <option *ngFor="let byteOrder of getByteOrders()"
+                    [ngValue]="byteOrder"
+                    [selected]="byteOrder==getRegisterType(modbusConfiguration)"
+            >{{byteOrder}}</option>
+          </select>
+        </div>
+        <div class="field" *ngIf="!isModbusWriteRegister(modbusConfiguration)">
+          <label>{{'ControlComponent.evchargerModbus_extractionRegex' | translate}}</label>
+          <input type="text" formControlName="extractionRegex">
+        </div>
+        <div class="field" *ngIf="isModbusWriteRegister(modbusConfiguration)">
+          <label>{{'ControlComponent.evchargerModbus_value' | translate}}</label>
+          <input type="text" formControlName="value">
+        </div>
+        <div class="field" style="padding-top: 2.0em">
+          <i (click)="removeModbusConfiguration(i)" class="icon big red remove circle"></i>
+          <i *ngIf="l" (click)="addModbusConfiguration()" class="icon big green add circle"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ui hidden divider"></div>
+  <button type="submit" class="ui button" [disabled]="evChargerForm.pristine||evChargerForm.invalid">
+    {{'button.save' | translate}}</button>
+</form>
