@@ -10,7 +10,8 @@
       </select>
     </div>
     <div class="field">
-      <button type="button" class="ui button" [disabled]="!!getTemplateNameSelected() === false" (click)="useTemplate()">{{'ControlComponent.evcharger_templateButton' | translate}}</button>
+      <button type="button" class="ui button" [disabled]="!!getTemplateNameSelected() === false"
+              (click)="useTemplate()">{{'ControlComponent.evcharger_templateButton' | translate}}</button>
     </div>
   </div>
   <div class="ui hidden divider"></div>
@@ -41,7 +42,7 @@
       <div class="field">
         <label>{{'ControlComponent.evchargerModbus_idref' | translate}}</label>
         <select class="ui fluid dropdown" formControlName="modbusIdref">
-          <option *ngFor="let modbusSettings of settings.modbusSettings" value="modbusSettings.modbusTcpId"
+          <option *ngFor="let modbusSettings of settings.modbusSettings" [ngValue]="modbusSettings.modbusTcpId"
                   [selected]="modbusSettings.modbusTcpId==control.evCharger.control.idref">
             {{modbusSettings.modbusTcpId}}</option>
         </select>
