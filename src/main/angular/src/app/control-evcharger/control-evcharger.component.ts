@@ -13,6 +13,7 @@ import {SettingsDefaults} from '../settings/settings-defaults';
 import {ModbusRegisterConfguration} from '../shared/modbus-register-confguration';
 import {ControlService} from '../control/control-service';
 import {Control} from '../control/control';
+import {EvModbusControl} from '../control/ev-modbus-control';
 
 @Component({
   selector: 'app-control-evcharger',
@@ -33,7 +34,6 @@ export class ControlEvchargerComponent implements OnInit {
   evChargerForm: FormGroup;
   modbusConfigurations: FormArray;
   templates: { [name: string]: EvCharger };
-  evChargerTemplateNameSelected: string;
   translatedStrings: string[];
   discardChangesMessage: string;
   errors: { [key: string]: string } = {};
@@ -48,6 +48,7 @@ export class ControlEvchargerComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log('control=', this.control);
     this.errorMessages =  new ControlEvchargerErrorMessages(this.translate);
     this.translate.get([
       'ControlComponent.evcharger_VehicleNotConnected',
@@ -61,7 +62,21 @@ export class ControlEvchargerComponent implements OnInit {
     ]).subscribe(translatedStrings => this.translatedStrings = translatedStrings);
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.templates = EvChargerTemplates.getTemplates();
-    this.evChargerForm = this.buildEvChargerFormGroup(this.control.evCharger);
+    if (this.control.evCharger) {
+      // this.evChargerForm = this.buildEvChargerFormGroup(this.control.evCharger);
+      // this.evChargerForm.markAsPristine();
+      // this.evChargerForm.statusChanges.subscribe(() => {
+      //   this.childFormChanged.emit(this.evChargerForm.valid);
+      //   this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.evChargerForm, this.errorMessages);
+      // });
+      this.initForm(this.control.evCharger);
+    } else {
+      this.evChargerForm = new FormGroup({template: new FormControl()});
+    }
+  }
+
+  initForm(evCharger: EvCharger) {
+    this.evChargerForm = this.buildEvChargerFormGroup(evCharger);
     this.evChargerForm.markAsPristine();
     this.evChargerForm.statusChanges.subscribe(() => {
       this.childFormChanged.emit(this.evChargerForm.valid);
@@ -140,8 +155,18 @@ export class ControlEvchargerComponent implements OnInit {
     return Object.keys(this.templates);
   }
 
-  useEvChargerTemplate() {
-    this.control.evCharger = this.templates[this.evChargerTemplateNameSelected];
+  getTemplateNameSelected(): string {
+    return this.evChargerForm.controls.template.value;
+  }
+
+  useTemplate() {
+    const templateName = this.getTemplateNameSelected();
+    this.control.evCharger = this.templates[templateName];
+    this.initForm(this.control.evCharger);
+  }
+
+  isConfigured(): boolean {
+    return this.control.evCharger !== undefined;
   }
 
   getTranslatedModbusRegisterName(name: string) {
