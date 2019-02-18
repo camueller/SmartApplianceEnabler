@@ -69,7 +69,6 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   TYPE_MODBUS_SWITCH = ModbusSwitch.TYPE;
   TYPE_MOCK_SWITCH = MockSwitch.TYPE;
   TYPE_HTTP_SWITCH = HttpSwitch.TYPE;
-  TYPE_EVCHARGER = EvCharger.TYPE;
   VALIDATOR_PATTERN_INTEGER = InputValidatorPatterns.INTEGER;
   VALIDATOR_PATTERN_INTEGER_OR_HEX = InputValidatorPatterns.INTEGER_OR_HEX;
   VALIDATOR_PATTERN_URL = InputValidatorPatterns.URL;
