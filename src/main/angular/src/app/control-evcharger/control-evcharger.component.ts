@@ -48,7 +48,6 @@ export class ControlEvchargerComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log('control=', this.control);
     this.errorMessages =  new ControlEvchargerErrorMessages(this.translate);
     this.translate.get([
       'ControlComponent.evcharger_VehicleNotConnected',
