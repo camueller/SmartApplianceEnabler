@@ -40,9 +40,7 @@ import {MockSwitch} from './mock-switch';
 import {Logger} from '../log/logger';
 import {Settings} from '../settings/settings';
 import {SettingsDefaults} from '../settings/settings-defaults';
-import {EvCharger} from './ev-charger';
 import {Appliance} from '../appliance/appliance';
-import {EvModbusControl} from './ev-modbus-control';
 
 @Component({
   selector: 'app-appliance-switch',
@@ -102,7 +100,8 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   }
 
   canDeactivate(): Observable<boolean> | boolean {
-    if (this.controlForm && this.controlForm.form.pristine && ! this.childFormDirty) {
+//    if (this.controlForm && this.controlForm.form.pristine && ! this.childFormDirty) {
+    if (! this.childFormDirty) {
       return true;
     }
     return this.dialogService.confirm(this.discardChangesMessage);
@@ -143,10 +142,6 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
       return  this.controlForm.form.controls.controlType.value === this.TYPE_ALWAYS_ON_SWITCH;
     }
     return false;
-  }
-
-  isEvCharger(): boolean {
-    return this.appliance.type === this.APPLIANCE_TYPE_EVCHARGER;
   }
 
   submitForm() {

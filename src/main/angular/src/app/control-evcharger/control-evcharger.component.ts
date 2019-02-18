@@ -4,7 +4,7 @@ import {EvChargerTemplates} from '../control/ev-charger-templates';
 import {Settings} from '../settings/settings';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {TranslateService} from '@ngx-translate/core';
-import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ControlEvchargerErrorMessages} from './control-evcharger-error-messages';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
@@ -34,13 +34,11 @@ export class ControlEvchargerComponent implements OnInit {
   modbusConfigurations: FormArray;
   templates: { [name: string]: EvCharger };
   translatedStrings: string[];
-  discardChangesMessage: string;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
 
   constructor(private logger: Logger,
-              private formbuilder: FormBuilder,
               private controlService: ControlService,
               private translate: TranslateService) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
@@ -58,7 +56,6 @@ export class ControlEvchargerComponent implements OnInit {
       'ControlComponent.evcharger_StopCharging',
       'ControlComponent.evcharger_ChargingCurrent'
     ]).subscribe(translatedStrings => this.translatedStrings = translatedStrings);
-    this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.templates = EvChargerTemplates.getTemplates();
     if (this.control.evCharger) {
       this.initForm(this.control.evCharger);
@@ -83,7 +80,7 @@ export class ControlEvchargerComponent implements OnInit {
   }
 
   buildEvChargerFormGroup(evCharger: EvCharger): FormGroup {
-    this.modbusConfigurations = this.formbuilder.array(
+    this.modbusConfigurations = new FormArray(
       this.control.evCharger.control.configuration.map(
         configuration => this.buildModbusConfigurationFormGroup(configuration))
     );
@@ -121,7 +118,7 @@ export class ControlEvchargerComponent implements OnInit {
   }
 
   buildModbusConfigurationFormGroup(configuration: ModbusRegisterConfguration): FormGroup {
-    const modbusConfiguration = new FormGroup({
+    return new FormGroup({
       name: new FormControl(configuration.name, [Validators.required]),
       registerAddress: new FormControl(configuration.address,
         [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER_OR_HEX)]),
@@ -132,7 +129,6 @@ export class ControlEvchargerComponent implements OnInit {
       extractionRegex: new FormControl(configuration.extractionRegex),
       value: new FormControl(configuration.value),
     });
-    return modbusConfiguration;
   }
 
   buildModbusRegisterConfguration(modbusConfigurationFormControl: FormGroup): ModbusRegisterConfguration {

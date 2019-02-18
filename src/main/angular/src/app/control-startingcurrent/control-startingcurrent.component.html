@@ -1,0 +1,25 @@
+<h4 class="ui dividing header">{{'ControlComponent.startingCurrent' | translate}}</h4>
+<div class="ui fields" [formGroup]="parentForm">
+  <div class="field">
+    <label>{{'ControlComponent.startingCurrentSwitch_powerThreshold' | translate}}</label>
+    <input type="text" formControlName="powerThreshold"
+           placeholder="{{controlDefaults.startingCurrentSwitchDefaults_powerThreshold}}">
+  </div>
+  <div class="field">
+    <label>
+      {{'ControlComponent.startingCurrentSwitch_startingCurrentDetectionDuration' | translate}}</label>
+    <input type="text" formControlName="startingCurrentDetectionDuration"
+           placeholder="{{controlDefaults.startingCurrentSwitchDefaults_startingCurrentDetectionDuration}}">
+  </div>
+  <div class="field">
+    <label>
+      {{'ControlComponent.startingCurrentSwitch_finishedCurrentDetectionDuration' | translate}}</label>
+    <input type="text" formControlName="finishedCurrentDetectionDuration"
+           placeholder="{{controlDefaults.startingCurrentSwitchDefaults_finishedCurrentDetectionDuration}}">
+  </div>
+  <div class="field">
+    <label>{{'ControlComponent.startingCurrentSwitch_minRunningTime' | translate}}</label>
+    <input type="text" formControlName="minRunningTime"
+           placeholder="{{controlDefaults.startingCurrentSwitchDefaults_minRunningTime}}">
+  </div>
+</div>
