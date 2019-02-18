@@ -1,0 +1,22 @@
+<form class="ui form" [formGroup]="switchForm" (ngSubmit)="submitForm()">
+  <div class="ui fields">
+    <div class="field">
+      <label>{{'ControlComponent.switch_gpio' | translate}}</label>
+      <input type="text" formControlName="gpio"
+             required pattern="{{VALIDATOR_PATTERN_INTEGER}}">
+      <div *ngIf="errors.switch_gpio" class="ui negative message">{{errors.switch_gpio}}</div>
+    </div>
+    <div class="ui checkbox">
+      <input type="checkbox" formControlName="reverseStates">
+      <label>{{'ControlComponent.switch_reverseStates' | translate}}</label>
+    </div>
+  </div>
+  <app-control-startingcurrent *ngIf="control.startingCurrentDetection"
+    [startingCurrentSwitch]="control.startingCurrentSwitch"
+    [controlDefaults]="controlDefaults"
+    [parentForm]="switchForm"
+  ></app-control-startingcurrent>
+  <div class="ui hidden divider"></div>
+  <button type="submit" class="ui button" [disabled]="switchForm.pristine||switchForm.invalid">
+    {{'button.save' | translate}}</button>
+</form>
