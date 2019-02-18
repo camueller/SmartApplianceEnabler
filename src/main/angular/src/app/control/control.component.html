@@ -43,7 +43,7 @@
           <input type="checkbox" name="startingCurrentDetection" [(ngModel)]="control.startingCurrentDetection"
                  (ngModelChange)="startingCurrentDetectionChanged($event)"
                  [disabled]="isStartingCurrentDetectedDisabled()">
-          <label>{{'ControlComponent.startingCurrentDetection' | translate}}</label>
+          <label>{{'ControlStartingcurrentComponent.startingCurrentDetection' | translate}}</label>
         </div>
       </div>
       <app-control-switch *ngIf="control.type===TYPE_SWITCH"
