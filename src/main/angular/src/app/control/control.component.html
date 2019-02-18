@@ -17,8 +17,7 @@
   -->
 
 <div class="ui segment" xmlns="http://www.w3.org/1999/html">
-
-  <app-control-evcharger *ngIf="isEvCharger(); else notEvCharger"
+  <app-control-evcharger *ngIf="appliance.type === APPLIANCE_TYPE_EVCHARGER; else notEvCharger"
                          [control]="control"
                          [applianceId]="applianceId"
                          [settings]="settings"
@@ -47,7 +46,12 @@
           <label>{{'ControlComponent.startingCurrentDetection' | translate}}</label>
         </div>
       </div>
-      <div class="ui fields" *ngIf="control.type===TYPE_SWITCH">
+      <app-control-switch *ngIf="control.type===TYPE_SWITCH"
+                          [control]="control"
+                          [applianceId]="applianceId"
+                          [controlDefaults]="controlDefaults"
+      ></app-control-switch>
+      <!--div class="ui fields" *ngIf="control.type===TYPE_SWITCH">
         <div class="field">
           <label>{{'ControlComponent.switch_gpio' | translate}}</label>
           <input type="text" name="switch_gpio" [(ngModel)]="control.switch_.gpio"
@@ -58,8 +62,8 @@
           <input type="checkbox" name="switch_reverseStates" [(ngModel)]="control.switch_.reverseStates">
           <label>{{'ControlComponent.switch_reverseStates' | translate}}</label>
         </div>
-      </div>
-      <div class="ui fields" *ngIf="control.type===TYPE_MODBUS_SWITCH">
+      </div-->
+      <!--div class="ui fields" *ngIf="control.type===TYPE_MODBUS_SWITCH">
         <div class="field">
           <label>{{'ControlComponent.modbusSwitch_idref' | translate}}</label>
           <select class="ui fluid dropdown" name="modbusSwitch_modbusTcpId" [(ngModel)]="control.modbusSwitch.idref">
@@ -175,7 +179,7 @@
       </div>
       <div class="ui hidden divider"></div>
       <button type="submit" class="ui button" [disabled]="controlForm.pristine||controlForm.invalid">
-        {{'button.save' | translate}}</button>
+        {{'button.save' | translate}}</button-->
     </form>
   </ng-template>
   <!--

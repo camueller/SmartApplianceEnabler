@@ -55,9 +55,11 @@ import {ErrorInterceptor} from './shared/http-error-interceptor';
 import {StatusService} from './status/status.service';
 import {Logger, Options} from './log/logger';
 import {Level} from './log/level';
-import { StatusEvchargerViewComponent } from './status-evcharger-view/status-evcharger-view.component';
-import { StatusViewComponent } from './status-view/status-view.component';
-import { ControlEvchargerComponent } from './control-evcharger/control-evcharger.component';
+import {StatusEvchargerViewComponent} from './status-evcharger-view/status-evcharger-view.component';
+import {StatusViewComponent} from './status-view/status-view.component';
+import {ControlEvchargerComponent} from './control-evcharger/control-evcharger.component';
+import {ControlSwitchComponent} from './control-switch/control-switch.component';
+import {ControlStartingcurrentComponent} from './control-startingcurrent/control-startingcurrent.component';
 
 @NgModule({
   declarations: [
@@ -67,13 +69,15 @@ import { ControlEvchargerComponent } from './control-evcharger/control-evcharger
     MeterComponent,
     ControlComponent,
     ControlEvchargerComponent,
+    ControlSwitchComponent,
+    ControlStartingcurrentComponent,
     SchedulesComponent,
     SettingsComponent,
     StatusComponent,
     StatusEditComponent,
     StatusEvchargerEditComponent,
     StatusEvchargerViewComponent,
-    StatusViewComponent
+    StatusViewComponent,
   ],
   imports: [
     BrowserModule,
