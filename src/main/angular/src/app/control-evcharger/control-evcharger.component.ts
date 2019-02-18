@@ -160,6 +160,7 @@ export class ControlEvchargerComponent implements OnInit {
   }
 
   useTemplate() {
+    this.control.type = EvCharger.TYPE;
     const templateName = this.getTemplateNameSelected();
     this.control.evCharger = this.templates[templateName];
     this.initForm(this.control.evCharger);
