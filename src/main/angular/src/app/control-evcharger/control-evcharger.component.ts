@@ -13,7 +13,6 @@ import {SettingsDefaults} from '../settings/settings-defaults';
 import {ModbusRegisterConfguration} from '../shared/modbus-register-confguration';
 import {ControlService} from '../control/control-service';
 import {Control} from '../control/control';
-import {EvModbusControl} from '../control/ev-modbus-control';
 
 @Component({
   selector: 'app-control-evcharger',
@@ -62,15 +61,9 @@ export class ControlEvchargerComponent implements OnInit {
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.templates = EvChargerTemplates.getTemplates();
     if (this.control.evCharger) {
-      // this.evChargerForm = this.buildEvChargerFormGroup(this.control.evCharger);
-      // this.evChargerForm.markAsPristine();
-      // this.evChargerForm.statusChanges.subscribe(() => {
-      //   this.childFormChanged.emit(this.evChargerForm.valid);
-      //   this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.evChargerForm, this.errorMessages);
-      // });
       this.initForm(this.control.evCharger);
     } else {
-      this.evChargerForm = new FormGroup({template: new FormControl()});
+      this.evChargerForm = this.buildEmptyEvChargerFormGroup();
     }
   }
 
@@ -80,6 +73,12 @@ export class ControlEvchargerComponent implements OnInit {
     this.evChargerForm.statusChanges.subscribe(() => {
       this.childFormChanged.emit(this.evChargerForm.valid);
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.evChargerForm, this.errorMessages);
+    });
+  }
+
+  buildEmptyEvChargerFormGroup(): FormGroup {
+    return new FormGroup({
+      template: new FormControl()
     });
   }
 
