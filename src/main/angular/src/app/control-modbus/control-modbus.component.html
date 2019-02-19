@@ -1,0 +1,53 @@
+<form class="ui form" [formGroup]="modbusForm" (ngSubmit)="submitForm()">
+  <div class="ui fields">
+    <div class="field">
+      <label>{{'ControlModbusComponent.idref' | translate}}</label>
+      <select class="ui fluid dropdown" formControlName="modbusTcpId">
+        <option *ngFor="let modbusSetting of modbusSettings" [ngValue]="modbusSetting.modbusTcpId"
+                [selected]="modbusSetting.modbusTcpId==control.modbusSwitch.idref">
+          {{modbusSetting.modbusTcpId}}</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>{{'ControlModbusComponent.slaveAddress' | translate}}</label>
+      <input type="text" formControlName="slaveAddress">
+      <div *ngIf="errors.slaveAddress" class="ui negative message">
+        {{errors.slaveAddress}}</div>
+    </div>
+    <div class="field">
+      <label>{{'ControlModbusComponent.registerAddress' | translate}}</label>
+      <input type="text" formControlName="registerAddress">
+      <div *ngIf="errors.registerAddress" class="ui negative message">
+        {{errors.registerAddress}}</div>
+    </div>
+    <div class="field">
+      <label>{{'ControlModbusComponent.registerType' | translate}}</label>
+      <select class="ui fluid dropdown" formControlName="registerType">
+        <option *ngFor="let modbusWriteRegisterType of settingsDefaults.modbusWriteRegisterTypes"
+                [ngValue]="modbusWriteRegisterType"
+                [selected]="modbusWriteRegisterType==control.modbusSwitch.registerType"
+        >{{modbusWriteRegisterType}}</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>{{'ControlModbusComponent.onValue' | translate}}</label>
+      <input type="text" formControlName="onValue">
+      <div *ngIf="errors.onValue" class="ui negative message">
+        {{errors.onValue}}</div>
+    </div>
+    <div class="field">
+      <label>{{'ControlModbusComponent.offValue' | translate}}</label>
+      <input type="text" formControlName="offValue">
+      <div *ngIf="errors.offValue" class="ui negative message">
+        {{errors.offValue}}</div>
+    </div>
+  </div>
+  <app-control-startingcurrent *ngIf="control.startingCurrentDetection"
+                               [startingCurrentSwitch]="control.startingCurrentSwitch"
+                               [controlDefaults]="controlDefaults"
+                               [parentForm]="modbusForm"
+  ></app-control-startingcurrent>
+  <div class="ui hidden divider"></div>
+  <button type="submit" class="ui button" [disabled]="modbusForm.pristine||modbusForm.invalid">
+    {{'button.save' | translate}}</button>
+</form>

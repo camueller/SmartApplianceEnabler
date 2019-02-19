@@ -60,6 +60,7 @@ import {StatusViewComponent} from './status-view/status-view.component';
 import {ControlEvchargerComponent} from './control-evcharger/control-evcharger.component';
 import {ControlSwitchComponent} from './control-switch/control-switch.component';
 import {ControlStartingcurrentComponent} from './control-startingcurrent/control-startingcurrent.component';
+import { ControlModbusComponent } from './control-modbus/control-modbus.component';
 
 @NgModule({
   declarations: [
@@ -69,6 +70,7 @@ import {ControlStartingcurrentComponent} from './control-startingcurrent/control
     MeterComponent,
     ControlComponent,
     ControlEvchargerComponent,
+    ControlModbusComponent,
     ControlSwitchComponent,
     ControlStartingcurrentComponent,
     SchedulesComponent,
