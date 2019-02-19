@@ -51,18 +51,16 @@ export class ErrorMessageHandler {
         }
       } else {
         for (const message of errorMessages.getErrorMessages()) {
-          this.validateControl(
-            control,
-            ValidatorType[message.forValidator],
-            message.forControl,
-            message.text,
-            errors);
+          if (message.forControl === formControlKey) {
+            this.validateControl(
+              control,
+              ValidatorType[message.forValidator],
+              message.forControl,
+              message.text,
+              errors);
+          }
         }
       }
-    }
-    const errorsString = JSON.stringify(errors);
-    if (errorsString.length > 2) {
-      this.logger.debug('ERRORS=' + errorsString);
     }
     return errors;
   }
