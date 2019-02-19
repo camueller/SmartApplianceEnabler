@@ -51,6 +51,13 @@
                           [applianceId]="applianceId"
                           [controlDefaults]="controlDefaults"
       ></app-control-switch>
+      <app-control-modbus *ngIf="control.type===TYPE_MODBUS_SWITCH"
+                          [control]="control"
+                          [applianceId]="applianceId"
+                          [controlDefaults]="controlDefaults"
+                          [modbusSettings]="settings.modbusSettings"
+                          [settingsDefaults]="settingsDefaults"
+      ></app-control-modbus>
       <!--div class="ui fields" *ngIf="control.type===TYPE_SWITCH">
         <div class="field">
           <label>{{'ControlComponent.switch_gpio' | translate}}</label>
