@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2017 Axel Müller <axel.mueller@avanux.de>
+Copyright (C) 2019 Axel Müller <axel.mueller@avanux.de>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -20,16 +20,16 @@ import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {ErrorMessages} from '../shared/error-messages';
 import {TranslateService} from '@ngx-translate/core';
 
-export class ControlErrorMessages extends ErrorMessages {
+export class ControlHttpErrorMessages extends ErrorMessages {
 
   constructor(protected translate: TranslateService) {
-    super('ControlComponent.error.',
+    super('ControlHttpComponent.error.',
       [
-        new ErrorMessage('httpSwitch_onUrl', ValidatorType.required),
-        new ErrorMessage('httpSwitch_onUrl', ValidatorType.pattern),
-        new ErrorMessage('httpSwitch_offUrl', ValidatorType.required),
-        new ErrorMessage('httpSwitch_offUrl', ValidatorType.pattern),
+        new ErrorMessage('onUrl', ValidatorType.required),
+        new ErrorMessage('onUrl', ValidatorType.pattern),
+        new ErrorMessage('offUrl', ValidatorType.required),
+        new ErrorMessage('offUrl', ValidatorType.pattern),
       ], translate
-      );
+    );
   }
 }

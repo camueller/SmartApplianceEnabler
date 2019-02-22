@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright (C) 2017 Axel Müller <axel.mueller@avanux.de>
+  ~ Copyright (C) 2019 Axel Müller <axel.mueller@avanux.de>
   ~
   ~ This program is free software; you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
@@ -58,135 +58,11 @@
                           [modbusSettings]="settings.modbusSettings"
                           [settingsDefaults]="settingsDefaults"
       ></app-control-modbus>
-      <!--div class="ui fields" *ngIf="control.type===TYPE_SWITCH">
-        <div class="field">
-          <label>{{'ControlComponent.switch_gpio' | translate}}</label>
-          <input type="text" name="switch_gpio" [(ngModel)]="control.switch_.gpio"
-                 required pattern="{{VALIDATOR_PATTERN_INTEGER}}">
-          <div *ngIf="errors.switch_gpio" class="ui negative message">{{errors.switch_gpio}}</div>
-        </div>
-        <div class="ui checkbox">
-          <input type="checkbox" name="switch_reverseStates" [(ngModel)]="control.switch_.reverseStates">
-          <label>{{'ControlComponent.switch_reverseStates' | translate}}</label>
-        </div>
-      </div-->
-      <!--div class="ui fields" *ngIf="control.type===TYPE_MODBUS_SWITCH">
-        <div class="field">
-          <label>{{'ControlComponent.modbusSwitch_idref' | translate}}</label>
-          <select class="ui fluid dropdown" name="modbusSwitch_modbusTcpId" [(ngModel)]="control.modbusSwitch.idref">
-            <option *ngFor="let modbusSettings of settings.modbusSettings" [ngValue]="modbusSettings.modbusTcpId"
-                    [selected]="modbusSettings.modbusTcpId==control.modbusSwitch.idref">
-              {{modbusSettings.modbusTcpId}}</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>{{'ControlComponent.modbusSwitch_slaveAddress' | translate}}</label>
-          <input type="text" name="modbusSwitch_slaveAddress" [(ngModel)]="control.modbusSwitch.slaveAddress"
-                 required pattern="{{VALIDATOR_PATTERN_INTEGER}}">
-          <div *ngIf="errors.modbusSwitch_slaveAddress" class="ui negative message">
-            {{errors.modbusSwitch_slaveAddress}}</div>
-        </div>
-        <div class="field">
-          <label>{{'ControlComponent.modbusSwitch_registerAddress' | translate}}</label>
-          <input type="text" name="modbusSwitch_registerAddress" [(ngModel)]="control.modbusSwitch.registerAddress"
-                 required pattern="{{VALIDATOR_PATTERN_INTEGER_OR_HEX}}">
-          <div *ngIf="errors.modbusSwitch_registerAddress" class="ui negative message">
-            {{errors.modbusSwitch_registerAddress}}</div>
-        </div>
-        <div class="field">
-          <label>{{'ControlComponent.modbusSwitch_registerType' | translate}}</label>
-          <select class="ui fluid dropdown" name="registerType" [(ngModel)]="control.modbusSwitch.registerType">
-            <option *ngFor="let modbusWriteRegisterType of settingsDefaults.modbusWriteRegisterTypes"
-                    [ngValue]="modbusWriteRegisterType"
-                    [selected]="modbusWriteRegisterType==control.modbusSwitch.registerType"
-            >{{modbusWriteRegisterType}}</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>{{'ControlComponent.modbusSwitch_onValue' | translate}}</label>
-          <input type="text" name="modbusSwitch_onValue" [(ngModel)]="control.modbusSwitch.onValue"
-                 required>
-          <div *ngIf="errors.modbusSwitch_onValue" class="ui negative message">
-            {{errors.modbusSwitch_onValue}}</div>
-        </div>
-        <div class="field">
-          <label>{{'ControlComponent.modbusSwitch_offValue' | translate}}</label>
-          <input type="text" name="modbusSwitch_offValue" [(ngModel)]="control.modbusSwitch.offValue"
-                 required>
-          <div *ngIf="errors.modbusSwitch_offValue" class="ui negative message">
-            {{errors.modbusSwitch_offValue}}</div>
-        </div>
-      </div>
-      <div *ngIf="control.type===TYPE_HTTP_SWITCH">
-        <div class="field">
-          <label>{{'ControlComponent.httpSwitch_onUrl' | translate}}</label>
-          <input type="text" name="httpSwitch_onUrl" [(ngModel)]="control.httpSwitch.onUrl"
-                 required pattern="{{VALIDATOR_PATTERN_URL}}">
-          <div *ngIf="errors.httpSwitch_onUrl" class="ui negative message">{{errors.httpSwitch_onUrl}}</div>
-        </div>
-        <div class="field">
-          <label>{{'ControlComponent.httpSwitch_onData' | translate}}</label>
-          <input type="text" name="httpSwitch_onData" [(ngModel)]="control.httpSwitch.onData">
-        </div>
-        <div class="field">
-          <label>{{'ControlComponent.httpSwitch_offUrl' | translate}}</label>
-          <input type="text" name="httpSwitch_offUrl" [(ngModel)]="control.httpSwitch.offUrl"
-                 required pattern="{{VALIDATOR_PATTERN_URL}}">
-          <div *ngIf="errors.httpSwitch_offUrl" class="ui negative message">{{errors.httpSwitch_offUrl}}</div>
-        </div>
-        <div class="field">
-          <label>{{'ControlComponent.httpSwitch_offData' | translate}}</label>
-          <input type="text" name="httpSwitch_offData" [(ngModel)]="control.httpSwitch.offData">
-        </div>
-        <div class="ui fields">
-          <div class="field">
-            <label>{{'ControlComponent.httpSwitch_username' | translate}}</label>
-            <input type="text" name="httpSwitch_username" [(ngModel)]="control.httpSwitch.username">
-          </div>
-          <div class="field">
-            <label>{{'ControlComponent.httpSwitch_password' | translate}}</label>
-            <input type="text" name="httpSwitch_password" [(ngModel)]="control.httpSwitch.password">
-          </div>
-          <div class="field">
-            <label>{{'ControlComponent.httpSwitch_contentType' | translate}}</label>
-            <input type="text" name="httpSwitch_contentType" [(ngModel)]="control.httpSwitch.contentType">
-          </div>
-        </div>
-      </div>
-      <div *ngIf="control.startingCurrentDetection">
-        <h4 class="ui dividing header">{{'ControlComponent.startingCurrent' | translate}}</h4>
-        <div class="ui fields">
-          <div class="field">
-            <label>{{'ControlComponent.startingCurrentSwitch_powerThreshold' | translate}}</label>
-            <input type="text" name="startingCurrentSwitch_powerThreshold"
-                   placeholder="{{controlDefaults.startingCurrentSwitchDefaults_powerThreshold}}"
-                   [(ngModel)]="control.startingCurrentSwitch.powerThreshold">
-          </div>
-          <div class="field">
-            <label>
-              {{'ControlComponent.startingCurrentSwitch_startingCurrentDetectionDuration' | translate}}</label>
-            <input type="text" name="startingCurrentSwitch_startingCurrentDetectionDuration"
-                   placeholder="{{controlDefaults.startingCurrentSwitchDefaults_startingCurrentDetectionDuration}}"
-                   [(ngModel)]="control.startingCurrentSwitch.startingCurrentDetectionDuration">
-          </div>
-          <div class="field">
-            <label>
-              {{'ControlComponent.startingCurrentSwitch_finishedCurrentDetectionDuration' | translate}}</label>
-            <input type="text" name="startingCurrentSwitch_finishedCurrentDetectionDuration"
-                   placeholder="{{controlDefaults.startingCurrentSwitchDefaults_finishedCurrentDetectionDuration}}"
-                   [(ngModel)]="control.startingCurrentSwitch.finishedCurrentDetectionDuration">
-          </div>
-          <div class="field">
-            <label>{{'ControlComponent.startingCurrentSwitch_minRunningTime' | translate}}</label>
-            <input type="text" name="startingCurrentSwitch_minRunningTime"
-                   placeholder="{{controlDefaults.startingCurrentSwitchDefaults_minRunningTime}}"
-                   [(ngModel)]="control.startingCurrentSwitch.minRunningTime">
-          </div>
-        </div>
-      </div>
-      <div class="ui hidden divider"></div>
-      <button type="submit" class="ui button" [disabled]="controlForm.pristine||controlForm.invalid">
-        {{'button.save' | translate}}</button-->
+      <app-control-http *ngIf="control.type===TYPE_HTTP_SWITCH"
+                        [control]="control"
+                        [applianceId]="applianceId"
+                        [controlDefaults]="controlDefaults"
+      ></app-control-http>
     </form>
   </ng-template>
   <!--

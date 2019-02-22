@@ -24,11 +24,7 @@ import {ModbusSwitch} from './modbus-switch';
 import {HttpSwitch} from './http-switch';
 import {StartingCurrentSwitch} from './starting-current-switch';
 import {NgForm} from '@angular/forms';
-import {ControlErrorMessages} from './control-error-messages';
-import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {TranslateService} from '@ngx-translate/core';
-import {ErrorMessages} from '../shared/error-messages';
-import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {AlwaysOnSwitch} from './always-on-switch';
 import {AppliancesReloadService} from '../appliance/appliances-reload-service';
 import {ControlDefaults} from './control-defaults';
@@ -56,9 +52,6 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   settingsDefaults: SettingsDefaults;
   settings: Settings;
   translatedStrings: string[];
-  errors: { [key: string]: string } = {};
-  errorMessages: ErrorMessages;
-  errorMessageHandler: ErrorMessageHandler;
   childFormDirty = false;
   discardChangesMessage: string;
   APPLIANCE_TYPE_EVCHARGER = 'EVCharger';
@@ -67,9 +60,6 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   TYPE_MODBUS_SWITCH = ModbusSwitch.TYPE;
   TYPE_MOCK_SWITCH = MockSwitch.TYPE;
   TYPE_HTTP_SWITCH = HttpSwitch.TYPE;
-  VALIDATOR_PATTERN_INTEGER = InputValidatorPatterns.INTEGER;
-  VALIDATOR_PATTERN_INTEGER_OR_HEX = InputValidatorPatterns.INTEGER_OR_HEX;
-  VALIDATOR_PATTERN_URL = InputValidatorPatterns.URL;
 
   constructor(private logger: Logger,
               private controlService: ControlService,
@@ -79,11 +69,9 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
               private translate: TranslateService) {
     const controlFactory = new ControlFactory(logger);
     this.control = controlFactory.createEmptyControl();
-    this.errorMessageHandler = new ErrorMessageHandler(logger);
   }
 
   ngOnInit() {
-    this.errorMessages =  new ControlErrorMessages(this.translate);
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.route.paramMap.subscribe(() => this.applianceId = this.route.snapshot.paramMap.get('id'));
     this.route.data.subscribe((data: {control: Control, controlDefaults: ControlDefaults, appliance: Appliance,
@@ -95,8 +83,6 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
       this.settingsDefaults = data.settingsDefaults;
       // this.controlForm.form.markAsPristine();
     });
-    // this.controlForm.statusChanges.subscribe(() =>
-    //   this.errors = this.errorMessageHandler.applyErrorMessages4TemplateDrivenForm(this.controlForm, this.errorMessages));
   }
 
   canDeactivate(): Observable<boolean> | boolean {

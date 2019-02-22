@@ -1,0 +1,45 @@
+<form class="ui form" [formGroup]="httpForm" (ngSubmit)="submitForm()">
+  <div class="ui fields">
+    <div class="field">
+      <label>{{'ControlHttpComponent.onUrl' | translate}}</label>
+      <input type="text" formControlName="onUrl">
+      <div *ngIf="errors.onUrl" class="ui negative message">{{errors.onUrl}}</div>
+    </div>
+    <div class="field">
+      <label>{{'ControlHttpComponent.onData' | translate}}</label>
+      <input type="text" formControlName="onData">
+    </div>
+    <div class="field">
+      <label>{{'ControlHttpComponent.offUrl' | translate}}</label>
+      <input type="text" formControlName="offUrl" required>
+      <div *ngIf="errors.offUrl" class="ui negative message">{{errors.offUrl}}</div>
+    </div>
+    <div class="field">
+      <label>{{'ControlHttpComponent.offData' | translate}}</label>
+      <input type="text" formControlName="offData">
+    </div>
+    <div class="ui fields">
+      <div class="field">
+        <label>{{'ControlHttpComponent.username' | translate}}</label>
+        <input type="text" formControlName="username">
+      </div>
+      <div class="field">
+        <label>{{'ControlHttpComponent.password' | translate}}</label>
+        <input type="text" formControlName="password">
+      </div>
+      <div class="field">
+        <label>{{'ControlHttpComponent.contentType' | translate}}</label>
+        <input type="text" formControlName="contentType">
+      </div>
+    </div>
+  </div>
+  <app-control-startingcurrent *ngIf="control.startingCurrentDetection"
+                               [startingCurrentSwitch]="control.startingCurrentSwitch"
+                               [controlDefaults]="controlDefaults"
+                               [parentForm]="httpForm"
+  ></app-control-startingcurrent>
+  <div>{{'dialog.mandatoryfields'|translate}}</div>
+  <div class="ui hidden divider"></div>
+  <button type="submit" class="ui button" [disabled]="httpForm.pristine||httpForm.invalid">
+    {{'button.save' | translate}}</button>
+</form>

@@ -49,7 +49,6 @@ export class ControlModbusComponent implements OnInit {
     this.modbusForm.statusChanges.subscribe(() => {
       this.childFormChanged.emit(this.modbusForm.valid);
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.modbusForm, this.errorMessages);
-      console.log('ERRORS=', this.errors);
     });
   }
 

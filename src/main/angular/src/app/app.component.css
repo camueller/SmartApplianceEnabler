@@ -17,3 +17,7 @@
   margin-top: 0px;
   border-radius: 0px;
 }
+
+label.required::after {
+  content: " (*)";
+}
