@@ -107,22 +107,11 @@
   "MeterComponent.error.httpElectricityMeter_measurementInterval_pattern": "Das Messinterval muss eine Zahl sein",
 
   "ControlComponent.type": "Typ",
-  "ControlComponent.httpSwitch_onUrl": "URL zum Einschalten",
-  "ControlComponent.httpSwitch_onData": "Daten zum Einschalten",
-  "ControlComponent.httpSwitch_offUrl": "URL zum Ausschalten",
-  "ControlComponent.httpSwitch_offData": "Daten zum Ausschalten",
-  "ControlComponent.httpSwitch_username": "Benutzername",
-  "ControlComponent.httpSwitch_password": "Passwort",
-  "ControlComponent.httpSwitch_contentType": "Content-Type",
   "de.avanux.smartapplianceenabler.control.AlwaysOnSwitch": "Immer eingeschaltet",
   "de.avanux.smartapplianceenabler.control.Switch": "Schalter",
   "de.avanux.smartapplianceenabler.control.MockSwitch": "(Testschalter)",
   "de.avanux.smartapplianceenabler.control.ModbusSwitch": "Schalter mit Modbus-Schnittstelle",
   "de.avanux.smartapplianceenabler.control.HttpSwitch": "Schalter mit HTTP-Protokoll",
-  "ControlComponent.error.httpSwitch_onUrl_required": "Die URL zum Einschalten muss angegeben werden",
-  "ControlComponent.error.httpSwitch_onUrl_pattern": "Die URL zum Einschalten muss gültig sein",
-  "ControlComponent.error.httpSwitch_offUrl_required": "Die URL zum Ausschalten muss angegeben werden",
-  "ControlComponent.error.httpSwitch_offUrl_pattern": "Die URL zum Ausschalten muss gültig sein",
 
   "ControlStartingcurrentComponent.startingCurrent": "Anlaufstrom",
   "ControlStartingcurrentComponent.startingCurrentDetection": "Anlaufstromerkennung",
@@ -135,6 +124,18 @@
   "ControlSwitchComponent.reverseStates": "GPIO-Status invers",
   "ControlSwitchComponent.error.gpio_required": "Der GPIO-Anschluss muss angegeben werden",
   "ControlSwitchComponent.error.gpio_pattern": "Der GPIO-Anschluss muss eine Zahl sein",
+
+  "ControlHttpComponent.onUrl": "URL zum Einschalten",
+  "ControlHttpComponent.onData": "Daten zum Einschalten",
+  "ControlHttpComponent.offUrl": "URL zum Ausschalten",
+  "ControlHttpComponent.offData": "Daten zum Ausschalten",
+  "ControlHttpComponent.username": "Benutzername",
+  "ControlHttpComponent.password": "Passwort",
+  "ControlHttpComponent.contentType": "Content-Type",
+  "ControlHttpComponent.error.onUrl_required": "Die URL zum Einschalten muss angegeben werden",
+  "ControlHttpComponent.error.onUrl_pattern": "Die URL zum Einschalten muss gültig sein",
+  "ControlHttpComponent.error.offUrl_required": "Die URL zum Ausschalten muss angegeben werden",
+  "ControlHttpComponent.error.offUrl_pattern": "Die URL zum Ausschalten muss gültig sein",
 
   "ControlModbusComponent.idref": "Modbus",
   "ControlModbusComponent.slaveAddress": "Slave-Adresse",
@@ -282,5 +283,6 @@
   "button.new": "Neu",
   "button.save": "Speichern",
   "button.delete": "Löschen",
+  "dialog.mandatoryfields": "Die mit einem Stern (*) gekennzeichneten Felder sind Pflichtfelder.",
   "dialog.candeactivate": "Änderungen verwerfen?"
 }
