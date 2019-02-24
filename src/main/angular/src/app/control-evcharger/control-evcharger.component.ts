@@ -30,7 +30,7 @@ export class ControlEvchargerComponent implements OnInit {
   settingsDefaults: SettingsDefaults;
   @Output()
   childFormChanged = new EventEmitter<boolean>();
-  evChargerForm: FormGroup;
+  form: FormGroup;
   modbusConfigurations: FormArray;
   templates: { [name: string]: EvCharger };
   translatedStrings: string[];
@@ -60,16 +60,16 @@ export class ControlEvchargerComponent implements OnInit {
     if (this.control.evCharger) {
       this.initForm(this.control.evCharger);
     } else {
-      this.evChargerForm = this.buildEmptyEvChargerFormGroup();
+      this.form = this.buildEmptyEvChargerFormGroup();
     }
   }
 
   initForm(evCharger: EvCharger) {
-    this.evChargerForm = this.buildEvChargerFormGroup(evCharger);
-    this.evChargerForm.markAsPristine();
-    this.evChargerForm.statusChanges.subscribe(() => {
-      this.childFormChanged.emit(this.evChargerForm.valid);
-      this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.evChargerForm, this.errorMessages);
+    this.form = this.buildEvChargerFormGroup(evCharger);
+    this.form.markAsPristine();
+    this.form.statusChanges.subscribe(() => {
+      this.childFormChanged.emit(this.form.valid);
+      this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
   }
 
@@ -98,7 +98,7 @@ export class ControlEvchargerComponent implements OnInit {
     });
   }
 
-  public buildEvCharger(form: FormGroup, evCharger: EvCharger): EvCharger {
+  public updateEvCharger(form: FormGroup, evCharger: EvCharger) {
     evCharger.voltage = form.controls.voltage.value;
     evCharger.phases = form.controls.phases.value;
     evCharger.pollInterval = form.controls.pollInterval.value;
@@ -114,7 +114,6 @@ export class ControlEvchargerComponent implements OnInit {
       configurations.push(this.buildModbusRegisterConfguration(modbusConfigurationFormControl));
     }
     evCharger.control.configuration = configurations;
-    return evCharger;
   }
 
   buildModbusConfigurationFormGroup(configuration: ModbusRegisterConfguration): FormGroup {
@@ -150,7 +149,7 @@ export class ControlEvchargerComponent implements OnInit {
   }
 
   getTemplateNameSelected(): string {
-    return this.evChargerForm.controls.template.value;
+    return this.form.controls.template.value;
   }
 
   useTemplate() {
@@ -197,12 +196,12 @@ export class ControlEvchargerComponent implements OnInit {
 
   addModbusConfiguration() {
     this.modbusConfigurations.push(this.buildModbusConfigurationFormGroup({} as ModbusRegisterConfguration));
-    this.evChargerForm.markAsDirty();
+    this.form.markAsDirty();
   }
 
   removeModbusConfiguration(index: number) {
     this.modbusConfigurations.removeAt(index);
-    this.evChargerForm.markAsDirty();
+    this.form.markAsDirty();
   }
 
   getByteOrders(): string[] {
@@ -215,8 +214,8 @@ export class ControlEvchargerComponent implements OnInit {
   }
 
   submitForm() {
-    this.control.evCharger = this.buildEvCharger(this.evChargerForm, this.control.evCharger);
+    this.updateEvCharger(this.form, this.control.evCharger);
     this.controlService.updateControl(this.control, this.applianceId).subscribe();
-    this.evChargerForm.markAsPristine();
+    this.form.markAsPristine();
   }
 }

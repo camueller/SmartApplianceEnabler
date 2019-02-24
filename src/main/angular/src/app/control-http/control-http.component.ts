@@ -26,7 +26,7 @@ export class ControlHttpComponent implements OnInit {
   controlDefaults: ControlDefaults;
   @Output()
   childFormChanged = new EventEmitter<boolean>();
-  httpForm: FormGroup;
+  form: FormGroup;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -40,10 +40,10 @@ export class ControlHttpComponent implements OnInit {
 
   ngOnInit() {
     this.errorMessages =  new ControlHttpErrorMessages(this.translate);
-    this.httpForm = this.buildHttpFormGroup(this.control.httpSwitch);
-    this.httpForm.statusChanges.subscribe(() => {
-      this.childFormChanged.emit(this.httpForm.valid);
-      this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.httpForm, this.errorMessages);
+    this.form = this.buildHttpFormGroup(this.control.httpSwitch);
+    this.form.statusChanges.subscribe(() => {
+      this.childFormChanged.emit(this.form.valid);
+      this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
   }
 
@@ -59,5 +59,21 @@ export class ControlHttpComponent implements OnInit {
     FormUtil.addFormControl(fg, 'password', httpSwitch ? httpSwitch.password : undefined);
     FormUtil.addFormControl(fg, 'contentType', httpSwitch ? httpSwitch.contentType : undefined);
     return fg;
+  }
+
+  updateHttpSwitch(form: FormGroup, httpSwitch: HttpSwitch) {
+    httpSwitch.onUrl = form.controls.onUrl.value;
+    httpSwitch.onData = form.controls.onData.value;
+    httpSwitch.offUrl = form.controls.offUrl.value;
+    httpSwitch.offData = form.controls.offData.value;
+    httpSwitch.username = form.controls.username.value;
+    httpSwitch.password = form.controls.password.value;
+    httpSwitch.contentType = form.controls.contentType.value;
+  }
+
+  submitForm() {
+    this.updateHttpSwitch(this.form, this.control.httpSwitch);
+    this.controlService.updateControl(this.control, this.applianceId).subscribe();
+    this.form.markAsPristine();
   }
 }
