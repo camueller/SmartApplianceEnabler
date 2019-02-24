@@ -12,6 +12,7 @@ import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {ModbusSwitch} from '../control/modbus-switch';
 import {ModbusSettings} from '../settings/modbus-settings';
 import {SettingsDefaults} from '../settings/settings-defaults';
+import {FormMarkerService} from '../shared/form-marker-service';
 
 @Component({
   selector: 'app-control-modbus',
@@ -38,6 +39,7 @@ export class ControlModbusComponent implements OnInit {
 
   constructor(private logger: Logger,
               private controlService: ControlService,
+              private formMarkerService: FormMarkerService,
               private translate: TranslateService
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
@@ -50,6 +52,7 @@ export class ControlModbusComponent implements OnInit {
       this.childFormChanged.emit(this.form.valid);
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
+    this.formMarkerService.dirty.subscribe(() => this.form.markAsDirty());
   }
 
   buildModbusFormGroup(modbusSwitch: ModbusSwitch): FormGroup {

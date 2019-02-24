@@ -10,6 +10,7 @@ import {ControlDefaults} from '../control/control-defaults';
 import {ControlSwitchErrorMessages} from './control-switch-error-messages';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {Logger} from '../log/logger';
+import {FormMarkerService} from '../shared/form-marker-service';
 
 @Component({
   selector: 'app-control-switch',
@@ -32,6 +33,7 @@ export class ControlSwitchComponent implements OnInit {
 
   constructor(private logger: Logger,
               private controlService: ControlService,
+              private formMarkerService: FormMarkerService,
               private translate: TranslateService
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
@@ -44,6 +46,7 @@ export class ControlSwitchComponent implements OnInit {
       this.childFormChanged.emit(this.form.valid);
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
+    this.formMarkerService.dirty.subscribe(() => this.form.markAsDirty());
   }
 
   buildSwitchFormGroup(switch_: Switch): FormGroup {
