@@ -38,6 +38,7 @@ import {SettingsDefaults} from '../settings/settings-defaults';
 import {Appliance} from '../appliance/appliance';
 import {NgForm} from '@angular/forms';
 import {FormMarkerService} from '../shared/form-marker-service';
+import {EvCharger} from '../control-evcharger/ev-charger';
 
 @Component({
   selector: 'app-appliance-switch',
@@ -50,18 +51,18 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   applianceId: string;
   controlDefaults: ControlDefaults;
   control: Control;
+  controlFactory: ControlFactory;
   appliance: Appliance;
   settingsDefaults: SettingsDefaults;
   settings: Settings;
-  translatedStrings: string[];
   childFormDirty = false;
   discardChangesMessage: string;
-  APPLIANCE_TYPE_EVCHARGER = 'EVCharger';
   TYPE_ALWAYS_ON_SWITCH = AlwaysOnSwitch.TYPE;
   TYPE_SWITCH = Switch.TYPE;
   TYPE_MODBUS_SWITCH = ModbusSwitch.TYPE;
   TYPE_MOCK_SWITCH = MockSwitch.TYPE;
   TYPE_HTTP_SWITCH = HttpSwitch.TYPE;
+  TYPE_EVCHARGER = EvCharger.TYPE;
 
   constructor(private logger: Logger,
               private controlService: ControlService,
@@ -70,8 +71,8 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
               private route: ActivatedRoute,
               private dialogService: DialogService,
               private translate: TranslateService) {
-    const controlFactory = new ControlFactory(logger);
-    this.control = controlFactory.createEmptyControl();
+    this.controlFactory = new ControlFactory(logger);
+    this.control = this.controlFactory.createEmptyControl();
   }
 
   ngOnInit() {
@@ -85,6 +86,10 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
       this.settings = data.settings;
       this.settingsDefaults = data.settingsDefaults;
     });
+    if (this.appliance.type === 'EVCharger') {
+      // there is not type change for ev charger since it is determined by appliance type
+      this.typeChanged(EvCharger.TYPE);
+    }
   }
 
   canDeactivate(): Observable<boolean> | boolean {
@@ -99,18 +104,31 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   }
 
   typeChanged(newType: string) {
+    let newControl;
     if (newType === '') {
       this.control.startingCurrentDetection = false;
-    } else if (newType === this.TYPE_ALWAYS_ON_SWITCH && this.control.alwaysOnSwitch == null) {
-      this.control.alwaysOnSwitch = new AlwaysOnSwitch();
-    } else if (newType === this.TYPE_SWITCH && this.control.switch_ == null) {
-      this.control.switch_ = new Switch();
-    } else if (newType === this.TYPE_MODBUS_SWITCH && this.control.modbusSwitch == null) {
-      this.control.modbusSwitch = new ModbusSwitch();
-    } else if (newType === this.TYPE_MOCK_SWITCH && this.control.mockSwitch == null) {
-      this.control.mockSwitch = new MockSwitch();
-    } else if (newType === this.TYPE_HTTP_SWITCH && this.control.httpSwitch == null) {
-      this.control.httpSwitch = new HttpSwitch();
+    } else if (newType === this.TYPE_ALWAYS_ON_SWITCH) {
+      this.control.type = AlwaysOnSwitch.TYPE;
+      newControl = this.control.alwaysOnSwitch;
+    } else if (newType === this.TYPE_SWITCH) {
+      this.control.type = Switch.TYPE;
+      newControl = this.control.switch_;
+    } else if (newType === this.TYPE_MODBUS_SWITCH) {
+      this.control.type = ModbusSwitch.TYPE;
+      newControl = this.control.modbusSwitch;
+    } else if (newType === this.TYPE_MOCK_SWITCH) {
+      this.control.type = MockSwitch.TYPE;
+      newControl = this.control.mockSwitch;
+    } else if (newType === this.TYPE_HTTP_SWITCH) {
+      this.control.type = HttpSwitch.TYPE;
+      newControl = this.control.httpSwitch;
+    } else if (newType === EvCharger.TYPE) {
+      this.control.type = EvCharger.TYPE;
+      newControl = this.control.evCharger;
+      this.control.startingCurrentDetection = false;
+    }
+    if (newControl) {
+      this.controlFactory.initializeByType(this.control, newControl, newType);
     }
   }
 
