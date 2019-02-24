@@ -31,7 +31,7 @@ export class ControlModbusComponent implements OnInit {
   settingsDefaults: SettingsDefaults;
   @Output()
   childFormChanged = new EventEmitter<boolean>();
-  modbusForm: FormGroup;
+  form: FormGroup;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -45,10 +45,10 @@ export class ControlModbusComponent implements OnInit {
 
   ngOnInit() {
     this.errorMessages =  new ControlModbusErrorMessages(this.translate);
-    this.modbusForm = this.buildModbusFormGroup(this.control.modbusSwitch);
-    this.modbusForm.statusChanges.subscribe(() => {
-      this.childFormChanged.emit(this.modbusForm.valid);
-      this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.modbusForm, this.errorMessages);
+    this.form = this.buildModbusFormGroup(this.control.modbusSwitch);
+    this.form.statusChanges.subscribe(() => {
+      this.childFormChanged.emit(this.form.valid);
+      this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
   }
 
@@ -67,5 +67,20 @@ export class ControlModbusComponent implements OnInit {
       offValue: new FormControl(modbusSwitch ? modbusSwitch.offValue : undefined,
         [Validators.required]),
     });
+  }
+
+  updateModbusSwitch(form: FormGroup, modbusSwitch: ModbusSwitch) {
+    modbusSwitch.idref = form.controls.modbusTcpId.value;
+    modbusSwitch.slaveAddress = form.controls.slaveAddress.value;
+    modbusSwitch.registerAddress = form.controls.registerAddress.value;
+    modbusSwitch.registerType = form.controls.registerType.value;
+    modbusSwitch.onValue = form.controls.onValue.value;
+    modbusSwitch.offValue = form.controls.offValue.value;
+  }
+
+  submitForm() {
+    this.updateModbusSwitch(this.form, this.control.modbusSwitch);
+    this.controlService.updateControl(this.control, this.applianceId).subscribe();
+    this.form.markAsPristine();
   }
 }

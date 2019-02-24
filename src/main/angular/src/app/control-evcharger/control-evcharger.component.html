@@ -1,4 +1,4 @@
-<form class="ui form" [formGroup]="evChargerForm" (ngSubmit)="submitForm()">
+<form class="ui form" [formGroup]="form" (ngSubmit)="submitForm()">
 
   <div class="ui fields">
     <div class="field" style="font-weight: bold; padding: 0.78571429em 0.5em 0em">
@@ -114,7 +114,7 @@
       </div>
     </div>
     <div class="ui hidden divider"></div>
-    <button type="submit" class="ui button" [disabled]="evChargerForm.pristine||evChargerForm.invalid">
+    <button type="submit" class="ui button" [disabled]="form.pristine||form.invalid">
       {{'button.save' | translate}}</button>
   </div>
 </form>

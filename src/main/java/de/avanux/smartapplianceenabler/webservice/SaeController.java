@@ -656,11 +656,13 @@ public class SaeController {
                 if(control instanceof ElectricVehicleCharger) {
                     ElectricVehicleCharger evCharger = (ElectricVehicleCharger) control;
                     List<EVStatus> evStatuses = new ArrayList<>();
-                    for (ElectricVehicle electricVehicle : evCharger.getVehicles()) {
-                        EVStatus evStatus = new EVStatus();
-                        evStatus.setId(electricVehicle.getId());
-                        evStatus.setName(electricVehicle.getName());
-                        evStatuses.add(evStatus);
+                    if(evCharger.getVehicles() != null) {
+                        for (ElectricVehicle electricVehicle : evCharger.getVehicles()) {
+                            EVStatus evStatus = new EVStatus();
+                            evStatus.setId(electricVehicle.getId());
+                            evStatus.setName(electricVehicle.getName());
+                            evStatuses.add(evStatus);
+                        }
                     }
                     applianceStatus.setEvStatuses(evStatuses);
                     applianceStatus.setEvIdCharging(evCharger.getChargingVehicleId());

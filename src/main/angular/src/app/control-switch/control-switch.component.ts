@@ -25,7 +25,7 @@ export class ControlSwitchComponent implements OnInit {
   controlDefaults: ControlDefaults;
   @Output()
   childFormChanged = new EventEmitter<boolean>();
-  switchForm: FormGroup;
+  form: FormGroup;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -39,10 +39,10 @@ export class ControlSwitchComponent implements OnInit {
 
   ngOnInit() {
     this.errorMessages =  new ControlSwitchErrorMessages(this.translate);
-    this.switchForm = this.buildSwitchFormGroup(this.control.switch_);
-    this.switchForm.statusChanges.subscribe(() => {
-      this.childFormChanged.emit(this.switchForm.valid);
-      this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.switchForm, this.errorMessages);
+    this.form = this.buildSwitchFormGroup(this.control.switch_);
+    this.form.statusChanges.subscribe(() => {
+      this.childFormChanged.emit(this.form.valid);
+      this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
   }
 
@@ -54,4 +54,14 @@ export class ControlSwitchComponent implements OnInit {
     });
   }
 
+  updateSwitch(form: FormGroup, switch_: Switch) {
+    switch_.gpio = form.controls.gpio.value;
+    switch_.reverseStates = form.controls.reverseStates.value;
+  }
+
+  submitForm() {
+    this.updateSwitch(this.form, this.control.switch_);
+    this.controlService.updateControl(this.control, this.applianceId).subscribe();
+    this.form.markAsPristine();
+  }
 }
