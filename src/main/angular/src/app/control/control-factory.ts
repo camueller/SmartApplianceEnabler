@@ -17,19 +17,19 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 import {Control} from './control';
-import {StartingCurrentSwitch} from './starting-current-switch';
-import {Switch} from './switch';
-import {ModbusSwitch} from './modbus-switch';
-import {HttpSwitch} from './http-switch';
+import {StartingCurrentSwitch} from '../control-startingcurrent/starting-current-switch';
+import {Switch} from '../control-switch/switch';
+import {ModbusSwitch} from '../control-modbus/modbus-switch';
+import {HttpSwitch} from '../control-http/http-switch';
 import {AlwaysOnSwitch} from './always-on-switch';
 import {ControlDefaults} from './control-defaults';
 import {MockSwitch} from './mock-switch';
 import {Logger} from '../log/logger';
 import {ModbusRegisterWrite} from '../shared/modbus-register-write';
 import {ModbusRegisterWriteValue} from '../shared/modbus-register-write-value';
-import {EvCharger} from './ev-charger';
+import {EvCharger} from '../control-evcharger/ev-charger';
 import {ModbusRegisterConfguration} from '../shared/modbus-register-confguration';
-import {EvModbusControl} from './ev-modbus-control';
+import {EvModbusControl} from '../control-evcharger/ev-modbus-control';
 import {ModbusRegisterRead} from '../shared/modbus-register-read';
 import {ModbusRegisterReadValue} from '../shared/modbus-register-read-value';
 

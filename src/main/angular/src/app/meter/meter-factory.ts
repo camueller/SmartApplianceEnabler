@@ -22,7 +22,6 @@ import {ModbusElectricityMeter} from './modbus-electricity-meter';
 import {HttpElectricityMeter} from './http-electricity-meter';
 import {MeterDefaults} from './meter-defaults';
 import {Logger} from '../log/logger';
-import {ModbusSwitch} from '../control/modbus-switch';
 import {ModbusRegisterRead} from '../shared/modbus-register-read';
 import {ModbusRegisterReadValue} from '../shared/modbus-register-read-value';
 import {ModbusRegisterConfguration} from '../shared/modbus-register-confguration';

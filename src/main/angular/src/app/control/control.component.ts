@@ -19,10 +19,10 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, CanDeactivate} from '@angular/router';
 import {ControlFactory} from './control-factory';
-import {Switch} from './switch';
-import {ModbusSwitch} from './modbus-switch';
-import {HttpSwitch} from './http-switch';
-import {StartingCurrentSwitch} from './starting-current-switch';
+import {Switch} from '../control-switch/switch';
+import {ModbusSwitch} from '../control-modbus/modbus-switch';
+import {HttpSwitch} from '../control-http/http-switch';
+import {StartingCurrentSwitch} from '../control-startingcurrent/starting-current-switch';
 import {TranslateService} from '@ngx-translate/core';
 import {AlwaysOnSwitch} from './always-on-switch';
 import {AppliancesReloadService} from '../appliance/appliances-reload-service';

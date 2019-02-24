@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ControlDefaults} from '../control/control-defaults';
 import {FormControl, FormGroup} from '@angular/forms';
-import {StartingCurrentSwitch} from '../control/starting-current-switch';
+import {StartingCurrentSwitch} from './starting-current-switch';
 
 @Component({
   selector: 'app-control-startingcurrent',
