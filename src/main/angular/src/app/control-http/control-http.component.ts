@@ -8,7 +8,7 @@ import {Logger} from '../log/logger';
 import {ControlService} from '../control/control-service';
 import {TranslateService} from '@ngx-translate/core';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
-import {HttpSwitch} from '../control/http-switch';
+import {HttpSwitch} from './http-switch';
 import {ControlHttpErrorMessages} from './control-http-error-messages';
 import {FormUtil} from '../shared/form-util';
 import {FormMarkerService} from '../shared/form-marker-service';

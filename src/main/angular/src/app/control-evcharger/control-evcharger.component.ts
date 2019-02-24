@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {EvCharger} from '../control/ev-charger';
-import {EvChargerTemplates} from '../control/ev-charger-templates';
+import {EvCharger} from './ev-charger';
+import {EvChargerTemplates} from './ev-charger-templates';
 import {Settings} from '../settings/settings';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {TranslateService} from '@ngx-translate/core';

@@ -9,7 +9,7 @@ import {ControlService} from '../control/control-service';
 import {TranslateService} from '@ngx-translate/core';
 import {ControlModbusErrorMessages} from './control-modbus-error-messages';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
-import {ModbusSwitch} from '../control/modbus-switch';
+import {ModbusSwitch} from './modbus-switch';
 import {ModbusSettings} from '../settings/modbus-settings';
 import {SettingsDefaults} from '../settings/settings-defaults';
 import {FormMarkerService} from '../shared/form-marker-service';
