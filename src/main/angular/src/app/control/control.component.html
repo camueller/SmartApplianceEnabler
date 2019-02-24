@@ -17,7 +17,7 @@
   -->
 
 <div class="ui segment" xmlns="http://www.w3.org/1999/html">
-  <app-control-evcharger *ngIf="appliance.type === APPLIANCE_TYPE_EVCHARGER; else notEvCharger"
+  <app-control-evcharger *ngIf="control.type === TYPE_EVCHARGER; else notEvCharger"
                          [control]="control"
                          [applianceId]="applianceId"
                          [settings]="settings"

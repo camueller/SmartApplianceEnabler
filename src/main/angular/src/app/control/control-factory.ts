@@ -73,7 +73,13 @@ export class ControlFactory {
 
   fromJSONbyType(control: Control, rawControl: any) {
     if (rawControl != null) {
-      control.type = rawControl['@class'];
+      this.initializeByType(control, rawControl, rawControl['@class']);
+    }
+  }
+
+  initializeByType(control: Control, rawControl: any, type: string) {
+    if (rawControl != null) {
+      control.type = type;
       if (control.type === AlwaysOnSwitch.TYPE) {
         control.alwaysOnSwitch = this.createAlwaysOnSwitch(rawControl);
       } else if (control.type === MockSwitch.TYPE) {
@@ -167,31 +173,35 @@ export class ControlFactory {
 
     const configurations: ModbusRegisterConfguration[] = [];
 
-    (rawModbusControl.registerReads as any[]).map(
-      registerRead => (registerRead.registerReadValues as any[]).map(registerReadValue => {
-        const configuration = new ModbusRegisterConfguration({
-          name: registerReadValue.name,
-          address: registerRead.address,
-          type: registerRead.type,
-          bytes: registerRead.bytes,
-          byteOrder: registerRead.byteOrder,
-          extractionRegex: registerReadValue.extractionRegex,
-          write: false
-        });
-        configurations.push(configuration);
-      }));
+    if (rawModbusControl.registerReads) {
+      (rawModbusControl.registerReads as any[]).map(
+        registerRead => (registerRead.registerReadValues as any[]).map(registerReadValue => {
+          const configuration = new ModbusRegisterConfguration({
+            name: registerReadValue.name,
+            address: registerRead.address,
+            type: registerRead.type,
+            bytes: registerRead.bytes,
+            byteOrder: registerRead.byteOrder,
+            extractionRegex: registerReadValue.extractionRegex,
+            write: false
+          });
+          configurations.push(configuration);
+        }));
+    }
 
-    (rawModbusControl.registerWrites as any[]).map(
-      registerWrite => (registerWrite.registerWriteValues as any[]).map(registerWriteValue => {
-        const configuration = new ModbusRegisterConfguration({
-          name: registerWriteValue.name,
-          address: registerWrite.address,
-          type: registerWrite.type,
-          value: registerWriteValue.value,
-          write: true
-        });
-        configurations.push(configuration);
-      }));
+    if (rawModbusControl.registerWrites) {
+      (rawModbusControl.registerWrites as any[]).map(
+        registerWrite => (registerWrite.registerWriteValues as any[]).map(registerWriteValue => {
+          const configuration = new ModbusRegisterConfguration({
+            name: registerWriteValue.name,
+            address: registerWrite.address,
+            type: registerWrite.type,
+            value: registerWriteValue.value,
+            write: true
+          });
+          configurations.push(configuration);
+        }));
+    }
 
     const evModbusControl = new EvModbusControl({
       idref: rawModbusControl.idref,
@@ -213,7 +223,7 @@ export class ControlFactory {
   toJSON(control: Control): string {
     this.logger.debug('Control (TYPE): ' + JSON.stringify(control));
     let controlUsed: any;
-    if (control.startingCurrentSwitch != null) {
+    if (control.startingCurrentDetection) {
       control.startingCurrentSwitch['control'] = this.getControlByType(control);
       controlUsed = control.startingCurrentSwitch;
       if (controlUsed.powerThreshold === '') {
