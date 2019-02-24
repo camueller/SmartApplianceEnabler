@@ -78,21 +78,19 @@ export class ControlFactory {
   }
 
   initializeByType(control: Control, rawControl: any, type: string) {
-    if (rawControl != null) {
-      control.type = type;
-      if (control.type === AlwaysOnSwitch.TYPE) {
-        control.alwaysOnSwitch = this.createAlwaysOnSwitch(rawControl);
-      } else if (control.type === MockSwitch.TYPE) {
-        control.mockSwitch = this.createMockSwitch(rawControl);
-      } else if (control.type === Switch.TYPE) {
-        control.switch_ = this.createSwitch(rawControl);
-      } else if (control.type === ModbusSwitch.TYPE) {
-        control.modbusSwitch = this.createModbusSwitch(rawControl);
-      } else if (control.type === EvCharger.TYPE) {
-        control.evCharger = this.createEvCharger(rawControl);
-      } else if (control.type === HttpSwitch.TYPE) {
-        control.httpSwitch = this.createHttpSwitch(rawControl);
-      }
+    control.type = type;
+    if (control.type === AlwaysOnSwitch.TYPE) {
+      control.alwaysOnSwitch = this.createAlwaysOnSwitch(rawControl);
+    } else if (control.type === MockSwitch.TYPE) {
+      control.mockSwitch = this.createMockSwitch(rawControl);
+    } else if (control.type === Switch.TYPE) {
+      control.switch_ = this.createSwitch(rawControl);
+    } else if (control.type === ModbusSwitch.TYPE) {
+      control.modbusSwitch = this.createModbusSwitch(rawControl);
+    } else if (control.type === EvCharger.TYPE) {
+      control.evCharger = this.createEvCharger(rawControl);
+    } else if (control.type === HttpSwitch.TYPE) {
+      control.httpSwitch = this.createHttpSwitch(rawControl);
     }
   }
 
@@ -132,91 +130,102 @@ export class ControlFactory {
 
   createSwitch(rawSwitch: any): Switch {
     const switch_ = new Switch();
-    switch_.gpio = rawSwitch.gpio;
-    switch_.reverseStates = rawSwitch.reverseStates;
+    if (rawSwitch) {
+      switch_.gpio = rawSwitch.gpio;
+      switch_.reverseStates = rawSwitch.reverseStates;
+    }
     return switch_;
   }
 
   createModbusSwitch(rawModbusSwitch: any): ModbusSwitch {
     const modbusSwitch = new ModbusSwitch();
-    modbusSwitch.idref = rawModbusSwitch.idref;
-    modbusSwitch.slaveAddress = rawModbusSwitch.slaveAddress;
-    if (rawModbusSwitch.registerWrites != null) {
-      modbusSwitch.registerAddress = rawModbusSwitch.registerWrites[0].address;
-      modbusSwitch.registerType = rawModbusSwitch.registerWrites[0].type;
-      rawModbusSwitch.registerWrites[0].registerWriteValues.forEach((registerWrite) => {
-        if (registerWrite.name === 'On') {
-          modbusSwitch.onValue = registerWrite.value;
-        }
-        if (registerWrite.name === 'Off') {
-          modbusSwitch.offValue = registerWrite.value;
-        }
-      });
+    if (rawModbusSwitch) {
+      modbusSwitch.idref = rawModbusSwitch.idref;
+      modbusSwitch.slaveAddress = rawModbusSwitch.slaveAddress;
+      if (rawModbusSwitch.registerWrites != null) {
+        modbusSwitch.registerAddress = rawModbusSwitch.registerWrites[0].address;
+        modbusSwitch.registerType = rawModbusSwitch.registerWrites[0].type;
+        rawModbusSwitch.registerWrites[0].registerWriteValues.forEach((registerWrite) => {
+          if (registerWrite.name === 'On') {
+            modbusSwitch.onValue = registerWrite.value;
+          }
+          if (registerWrite.name === 'Off') {
+            modbusSwitch.offValue = registerWrite.value;
+          }
+        });
+      }
     }
     return modbusSwitch;
   }
 
   createHttpSwitch(rawHttpSwitch: any): HttpSwitch {
     const httpSwitch = new HttpSwitch();
-    httpSwitch.onUrl = rawHttpSwitch.onUrl;
-    httpSwitch.offUrl = rawHttpSwitch.offUrl;
-    httpSwitch.username = rawHttpSwitch.username;
-    httpSwitch.password = rawHttpSwitch.password;
-    httpSwitch.contentType = rawHttpSwitch.contentType;
-    httpSwitch.onData = rawHttpSwitch.onData;
-    httpSwitch.offData = rawHttpSwitch.offData;
+    if (rawHttpSwitch) {
+      httpSwitch.onUrl = rawHttpSwitch.onUrl;
+      httpSwitch.offUrl = rawHttpSwitch.offUrl;
+      httpSwitch.username = rawHttpSwitch.username;
+      httpSwitch.password = rawHttpSwitch.password;
+      httpSwitch.contentType = rawHttpSwitch.contentType;
+      httpSwitch.onData = rawHttpSwitch.onData;
+      httpSwitch.offData = rawHttpSwitch.offData;
+    }
     return httpSwitch;
   }
 
   createEvCharger(rawEvCharger: any): EvCharger {
-    const rawModbusControl = rawEvCharger.control;
+    let evCharger = new EvCharger();
+    if (rawEvCharger) {
+      const rawModbusControl = rawEvCharger.control;
+      const configurations: ModbusRegisterConfguration[] = [];
 
-    const configurations: ModbusRegisterConfguration[] = [];
+      if (rawEvCharger.control) {
 
-    if (rawModbusControl.registerReads) {
-      (rawModbusControl.registerReads as any[]).map(
-        registerRead => (registerRead.registerReadValues as any[]).map(registerReadValue => {
-          const configuration = new ModbusRegisterConfguration({
-            name: registerReadValue.name,
-            address: registerRead.address,
-            type: registerRead.type,
-            bytes: registerRead.bytes,
-            byteOrder: registerRead.byteOrder,
-            extractionRegex: registerReadValue.extractionRegex,
-            write: false
-          });
-          configurations.push(configuration);
-        }));
+        if (rawModbusControl.registerReads) {
+          (rawModbusControl.registerReads as any[]).map(
+            registerRead => (registerRead.registerReadValues as any[]).map(registerReadValue => {
+              const configuration = new ModbusRegisterConfguration({
+                name: registerReadValue.name,
+                address: registerRead.address,
+                type: registerRead.type,
+                bytes: registerRead.bytes,
+                byteOrder: registerRead.byteOrder,
+                extractionRegex: registerReadValue.extractionRegex,
+                write: false
+              });
+              configurations.push(configuration);
+            }));
+        }
+
+        if (rawModbusControl.registerWrites) {
+          (rawModbusControl.registerWrites as any[]).map(
+            registerWrite => (registerWrite.registerWriteValues as any[]).map(registerWriteValue => {
+              const configuration = new ModbusRegisterConfguration({
+                name: registerWriteValue.name,
+                address: registerWrite.address,
+                type: registerWrite.type,
+                value: registerWriteValue.value,
+                write: true
+              });
+              configurations.push(configuration);
+            }));
+        }
+      }
+
+      const evModbusControl = new EvModbusControl({
+        idref: rawModbusControl.idref,
+        slaveAddress: rawModbusControl.slaveAddress,
+        configuration: configurations
+      });
+
+      evCharger = new EvCharger({
+        voltage: rawEvCharger.voltage,
+        phases: rawEvCharger.phases,
+        pollInterval: rawEvCharger.pollInterval,
+        startChargingStateDetectionDelay: rawEvCharger.startChargingStateDetectionDelay,
+        forceInitialCharging: rawEvCharger.forceInitialCharging,
+        control: evModbusControl
+      });
     }
-
-    if (rawModbusControl.registerWrites) {
-      (rawModbusControl.registerWrites as any[]).map(
-        registerWrite => (registerWrite.registerWriteValues as any[]).map(registerWriteValue => {
-          const configuration = new ModbusRegisterConfguration({
-            name: registerWriteValue.name,
-            address: registerWrite.address,
-            type: registerWrite.type,
-            value: registerWriteValue.value,
-            write: true
-          });
-          configurations.push(configuration);
-        }));
-    }
-
-    const evModbusControl = new EvModbusControl({
-      idref: rawModbusControl.idref,
-      slaveAddress: rawModbusControl.slaveAddress,
-      configuration: configurations
-    });
-
-    const evCharger = new EvCharger({
-      voltage: rawEvCharger.voltage,
-      phases: rawEvCharger.phases,
-      pollInterval: rawEvCharger.pollInterval,
-      startChargingStateDetectionDelay: rawEvCharger.startChargingStateDetectionDelay,
-      forceInitialCharging: rawEvCharger.forceInitialCharging,
-      control: evModbusControl
-    });
     return evCharger;
   }
 
