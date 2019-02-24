@@ -86,7 +86,7 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
       this.settings = data.settings;
       this.settingsDefaults = data.settingsDefaults;
     });
-    if (this.appliance.type === 'EVCharger') {
+    if (!this.control.evCharger && this.appliance.type === 'EVCharger') {
       // there is not type change for ev charger since it is determined by appliance type
       this.typeChanged(EvCharger.TYPE);
     }
@@ -127,9 +127,7 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
       newControl = this.control.evCharger;
       this.control.startingCurrentDetection = false;
     }
-    if (newControl) {
-      this.controlFactory.initializeByType(this.control, newControl, newType);
-    }
+    this.controlFactory.initializeByType(this.control, newControl, newType);
   }
 
   startingCurrentDetectionChanged(startingCurrentDetection: boolean) {

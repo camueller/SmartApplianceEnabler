@@ -57,7 +57,7 @@ export class ControlEvchargerComponent implements OnInit {
       'ControlComponent.evcharger_ChargingCurrent'
     ]).subscribe(translatedStrings => this.translatedStrings = translatedStrings);
     this.templates = EvChargerTemplates.getTemplates();
-    if (this.control.evCharger) {
+    if (this.isConfigured()) {
       this.initForm(this.control.evCharger);
     } else {
       this.form = this.buildEmptyEvChargerFormGroup();
@@ -159,7 +159,7 @@ export class ControlEvchargerComponent implements OnInit {
   }
 
   isConfigured(): boolean {
-    return this.control.evCharger !== undefined;
+    return this.control.evCharger.control !== undefined;
   }
 
   getTranslatedModbusRegisterName(name: string) {
