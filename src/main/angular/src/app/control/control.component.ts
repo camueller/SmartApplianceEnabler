@@ -23,7 +23,6 @@ import {Switch} from './switch';
 import {ModbusSwitch} from './modbus-switch';
 import {HttpSwitch} from './http-switch';
 import {StartingCurrentSwitch} from './starting-current-switch';
-import {NgForm} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {AlwaysOnSwitch} from './always-on-switch';
 import {AppliancesReloadService} from '../appliance/appliances-reload-service';
@@ -37,6 +36,8 @@ import {Logger} from '../log/logger';
 import {Settings} from '../settings/settings';
 import {SettingsDefaults} from '../settings/settings-defaults';
 import {Appliance} from '../appliance/appliance';
+import {NgForm} from '@angular/forms';
+import {FormMarkerService} from '../shared/form-marker-service';
 
 @Component({
   selector: 'app-appliance-switch',
@@ -44,7 +45,8 @@ import {Appliance} from '../appliance/appliance';
   styles: []
 })
 export class ControlComponent implements OnInit, CanDeactivate<ControlComponent> {
-  @ViewChild('controlForm') controlForm: NgForm;
+  @ViewChild('controlForm')
+  controlForm: NgForm;
   applianceId: string;
   controlDefaults: ControlDefaults;
   control: Control;
@@ -64,6 +66,7 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   constructor(private logger: Logger,
               private controlService: ControlService,
               private appliancesReloadService: AppliancesReloadService,
+              private formMarkerService: FormMarkerService,
               private route: ActivatedRoute,
               private dialogService: DialogService,
               private translate: TranslateService) {
@@ -81,13 +84,11 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
       this.appliance = data.appliance;
       this.settings = data.settings;
       this.settingsDefaults = data.settingsDefaults;
-      // this.controlForm.form.markAsPristine();
     });
   }
 
   canDeactivate(): Observable<boolean> | boolean {
-//    if (this.controlForm && this.controlForm.form.pristine && ! this.childFormDirty) {
-    if (! this.childFormDirty) {
+    if (this.controlForm && this.controlForm.form.pristine && ! this.childFormDirty) {
       return true;
     }
     return this.dialogService.confirm(this.discardChangesMessage);
@@ -99,7 +100,7 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
 
   typeChanged(newType: string) {
     if (newType === '') {
-      this.controlForm.form.controls.startingCurrentDetection.setValue(false);
+      this.control.startingCurrentDetection = false;
     } else if (newType === this.TYPE_ALWAYS_ON_SWITCH && this.control.alwaysOnSwitch == null) {
       this.control.alwaysOnSwitch = new AlwaysOnSwitch();
     } else if (newType === this.TYPE_SWITCH && this.control.switch_ == null) {
@@ -121,17 +122,6 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
       this.control.startingCurrentSwitch = null;
       this.control.startingCurrentDetection = false;
     }
-  }
-
-  isStartingCurrentDetectedDisabled(): boolean {
-    if (this.controlForm && this.controlForm.form.contains('controlType')) {
-      return  this.controlForm.form.controls.controlType.value === this.TYPE_ALWAYS_ON_SWITCH;
-    }
-    return false;
-  }
-
-  submitForm() {
-    this.controlService.updateControl(this.control, this.applianceId).subscribe(() => this.appliancesReloadService.reload());
-    this.controlForm.form.markAsPristine();
+    this.formMarkerService.markDirty();
   }
 }

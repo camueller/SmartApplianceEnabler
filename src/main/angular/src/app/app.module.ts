@@ -62,6 +62,7 @@ import {ControlSwitchComponent} from './control-switch/control-switch.component'
 import {ControlStartingcurrentComponent} from './control-startingcurrent/control-startingcurrent.component';
 import { ControlModbusComponent } from './control-modbus/control-modbus.component';
 import { ControlHttpComponent } from './control-http/control-http.component';
+import {FormMarkerService} from './shared/form-marker-service';
 
 @NgModule({
   declarations: [
@@ -112,6 +113,7 @@ import { ControlHttpComponent } from './control-http/control-http.component';
     ControlResolver,
     ControlDefaultsResolver,
     DialogService,
+    FormMarkerService,
     Logger,
     {provide: Options, useValue: {level: Level.DEBUG}},
     MeterService,

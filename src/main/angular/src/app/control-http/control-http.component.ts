@@ -11,6 +11,7 @@ import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {HttpSwitch} from '../control/http-switch';
 import {ControlHttpErrorMessages} from './control-http-error-messages';
 import {FormUtil} from '../shared/form-util';
+import {FormMarkerService} from '../shared/form-marker-service';
 
 @Component({
   selector: 'app-control-http',
@@ -33,6 +34,7 @@ export class ControlHttpComponent implements OnInit {
 
   constructor(private logger: Logger,
               private controlService: ControlService,
+              private formMarkerService: FormMarkerService,
               private translate: TranslateService
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
@@ -45,6 +47,7 @@ export class ControlHttpComponent implements OnInit {
       this.childFormChanged.emit(this.form.valid);
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
+    this.formMarkerService.dirty.subscribe(() => this.form.markAsDirty());
   }
 
   buildHttpFormGroup(httpSwitch: HttpSwitch): FormGroup {

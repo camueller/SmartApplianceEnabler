@@ -26,7 +26,7 @@
   >
   </app-control-evcharger>
   <ng-template #notEvCharger>
-    <form class="ui form" #controlForm="ngForm" (ngSubmit)="submitForm()">
+    <form class="ui form" #controlForm="ngForm">
       <div class="fields">
         <div class="field">
           <label>{{'ControlComponent.type' | translate}}</label>
@@ -41,8 +41,7 @@
         </div>
         <div class="ui checkbox">
           <input type="checkbox" name="startingCurrentDetection" [(ngModel)]="control.startingCurrentDetection"
-                 (ngModelChange)="startingCurrentDetectionChanged($event)"
-                 [disabled]="isStartingCurrentDetectedDisabled()">
+                 (ngModelChange)="startingCurrentDetectionChanged($event)">
           <label>{{'ControlStartingcurrentComponent.startingCurrentDetection' | translate}}</label>
         </div>
       </div>
