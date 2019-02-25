@@ -93,12 +93,12 @@ export class StatusEvchargerEditComponent implements OnInit, AfterViewChecked {
       this.startChargeForm = new FormGroup({
         electricVehicle: electicVehicleControl,
         stateOfChargeCurrent: new FormControl(null, Validators.pattern(InputValidatorPatterns.PERCENTAGE)),
-        stateOfChargeRequested: new FormControl(null, Validators.pattern(InputValidatorPatterns.PERCENTAGE)),
+        stateOfChargeRequested: new FormControl(evStatus.socManual, Validators.pattern(InputValidatorPatterns.PERCENTAGE)),
         chargeEndDow: new FormControl(),
         chargeEndTime: new FormControl(),
       }, socValidator);
       this.statusService.getSoc(this.applianceId, evStatus.id).subscribe(soc => {
-        if (! Number.isNaN(Number.parseInt(soc))) {
+        if (! Number.isNaN(Number.parseInt(soc, 10))) {
           this.startChargeForm.setControl('stateOfChargeCurrent', new FormControl(Number.parseFloat(soc).toFixed()));
         }
       });

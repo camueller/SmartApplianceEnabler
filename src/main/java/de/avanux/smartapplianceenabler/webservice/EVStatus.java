@@ -21,6 +21,7 @@ package de.avanux.smartapplianceenabler.webservice;
 public class EVStatus {
     private Integer id;
     private String name;
+    private Integer socManual;
 
     public Integer getId() {
         return id;
@@ -36,5 +37,13 @@ public class EVStatus {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Integer getSocManual() {
+        return socManual;
+    }
+
+    public void setSocManual(Integer socManual) {
+        this.socManual = socManual;
     }
 }

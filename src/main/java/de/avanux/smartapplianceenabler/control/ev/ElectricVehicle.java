@@ -33,6 +33,12 @@ public class ElectricVehicle {
     private Integer phases;
     @XmlAttribute
     private Integer maxChargePower;
+    @XmlAttribute
+    private Integer defaultSocManual;
+    @XmlAttribute
+    private Integer defaultSocSchedule;
+    @XmlAttribute
+    private Integer defaultSocOptionalEnergy;
     @XmlElements({
             @XmlElement(name = "SocScript", type = SocScript.class),
     })
@@ -77,6 +83,30 @@ public class ElectricVehicle {
 
     public void setMaxChargePower(Integer maxChargePower) {
         this.maxChargePower = maxChargePower;
+    }
+
+    public Integer getDefaultSocManual() {
+        return defaultSocManual;
+    }
+
+    public void setDefaultSocManual(Integer defaultSocManual) {
+        this.defaultSocManual = defaultSocManual;
+    }
+
+    public Integer getDefaultSocSchedule() {
+        return defaultSocSchedule;
+    }
+
+    public void setDefaultSocSchedule(Integer defaultSocSchedule) {
+        this.defaultSocSchedule = defaultSocSchedule;
+    }
+
+    public Integer getDefaultSocOptionalEnergy() {
+        return defaultSocOptionalEnergy;
+    }
+
+    public void setDefaultSocOptionalEnergy(Integer defaultSocOptionalEnergy) {
+        this.defaultSocOptionalEnergy = defaultSocOptionalEnergy;
     }
 
     public SocScript getSocScript() {

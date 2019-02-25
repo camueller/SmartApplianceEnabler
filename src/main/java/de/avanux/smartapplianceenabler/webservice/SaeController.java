@@ -661,6 +661,7 @@ public class SaeController {
                             EVStatus evStatus = new EVStatus();
                             evStatus.setId(electricVehicle.getId());
                             evStatus.setName(electricVehicle.getName());
+                            evStatus.setSocManual(electricVehicle.getDefaultSocManual());
                             evStatuses.add(evStatus);
                         }
                     }
