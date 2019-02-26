@@ -15,181 +15,178 @@
   ~ with this program; if not, write to the Free Software Foundation, Inc.,
   ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
   -->
-
-<div class="ui segment">
-  <form class="ui form" [formGroup]="schedulesForm" (ngSubmit)="submitForm()">
-    <div formArrayName="schedules">
-      <div *ngFor="let schedule of schedulesFormGroup.controls;let i = index" [formGroupName]="i">
-        <div class="ui segment">
-          <div class="ui fields">
-            <div class="ui header field" style="padding: 0.3em">
-              {{'ScheduleComponent.schedule' | translate}}
-              <i (click)="removeSchedule(i)" class="icon red remove circle"></i>
-            </div>
-            <div class="ui checkbox" style="transform: translateY(+30%);">
-              <input type="checkbox" formControlName="enabled">
-              <label>{{'ScheduleComponent.enabled' | translate}}</label>
-            </div>
-            <div class="field" [class.disabled]="!schedule.controls.enabled.value">
-              <select class="ui fluid dropdown" formControlName="timeframeType">
-                <option value="de.avanux.smartapplianceenabler.schedule.DayTimeframe"
-                        [selected]="schedule.controls.timeframeType.value==DAY_TIMEFRAME">
-                  {{'ScheduleComponent.timeframeType.DayTimeframe' | translate}}</option>
-                <option value="de.avanux.smartapplianceenabler.schedule.ConsecutiveDaysTimeframe"
-                        [selected]="schedule.controls.timeframeType.value==CONSECUTIVE_DAYS_TIMEFRAME">
-                  {{'ScheduleComponent.timeframeType.ConsecutiveDaysTimeframe' | translate}}</option>
-              </select>
-            </div>
-            <div class="field" [class.disabled]="!schedule.controls.enabled.value">
-              <select class="ui fluid dropdown" formControlName="requestType">
-                <option value="de.avanux.smartapplianceenabler.schedule.RuntimeRequest"
-                        [selected]="schedule.controls.requestType.value==RUNTIME_REQUEST">
-                  {{'ScheduleComponent.runtimeRequest' | translate}}</option>
-                <option value="de.avanux.smartapplianceenabler.schedule.EnergyRequest"
-                        [selected]="schedule.controls.requestType.value==ENERGY_REQUEST">
-                  {{'ScheduleComponent.energyRequest' | translate}}</option>
-              </select>
-            </div>
+<form class="ui form" [formGroup]="schedulesForm" (ngSubmit)="submitForm()">
+  <div formArrayName="schedules">
+    <div *ngFor="let schedule of schedulesFormGroup.controls;let i = index" [formGroupName]="i">
+      <div class="ui segment">
+        <div class="ui fields">
+          <div class="ui header field" style="padding: 0.3em">
+            {{'ScheduleComponent.schedule' | translate}}
+            <i (click)="removeSchedule(i)" class="icon red remove circle"></i>
           </div>
-          <div class="ui fields" [class.disabled]="!schedule.controls.enabled.value"
-               *ngIf="schedule.controls.timeframeType.value===DAY_TIMEFRAME" formGroupName="dayTimeframe">
-            <div class="field">
-              <label>{{'ScheduleComponent.dayTimeframe_daysOfWeekValues' | translate}}</label>
-              <select class="ui fluid dropdown" formControlName="daysOfWeekValues" multiple="">
-                <option value="1" [selected]="schedule.controls.dayTimeframe.controls.daysOfWeekValues.value.indexOf(1) > -1">
-                  {{'ScheduleComponent.daysOfWeek_monday' | translate}}</option>
-                <option value="2" [selected]="schedule.controls.dayTimeframe.controls.daysOfWeekValues.value.indexOf(2) > -1">
-                  {{'ScheduleComponent.daysOfWeek_tuesday' | translate}}</option>
-                <option value="3" [selected]="schedule.controls.dayTimeframe.controls.daysOfWeekValues.value.indexOf(3) > -1">
-                  {{'ScheduleComponent.daysOfWeek_wednesday' | translate}}</option>
-                <option value="4" [selected]="schedule.controls.dayTimeframe.controls.daysOfWeekValues.value.indexOf(4) > -1">
-                  {{'ScheduleComponent.daysOfWeek_thursday' | translate}}</option>
-                <option value="5" [selected]="schedule.controls.dayTimeframe.controls.daysOfWeekValues.value.indexOf(5) > -1">
-                  {{'ScheduleComponent.daysOfWeek_friday' | translate}}</option>
-                <option value="6" [selected]="schedule.controls.dayTimeframe.controls.daysOfWeekValues.value.indexOf(6) > -1">
-                  {{'ScheduleComponent.daysOfWeek_saturday' | translate}}</option>
-                <option value="7" [selected]="schedule.controls.dayTimeframe.controls.daysOfWeekValues.value.indexOf(7) > -1">
-                  {{'ScheduleComponent.daysOfWeek_sunday' | translate}}</option>
-                <option value="8" [selected]="schedule.controls.dayTimeframe.controls.daysOfWeekValues.value.indexOf(8) > -1">
-                  {{'ScheduleComponent.daysOfWeek_holiday' | translate}}</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>{{'ScheduleComponent.dayTimeframe_startTime' | translate}}</label>
-              <input type="text" class="clockpicker" formControlName="startTime">
-              <div *ngIf="getIndexedErrorMessage('dayTimeframe_startTime', i)" class="ui negative message">
-                {{getIndexedErrorMessage('dayTimeframe_startTime', i)}}</div>
-            </div>
-            <div class="field">
-              <label>{{'ScheduleComponent.dayTimeframe_endTime' | translate}}</label>
-              <input type="text" class="clockpicker" formControlName="endTime">
-              <div *ngIf="getIndexedErrorMessage('dayTimeframe_endTime', i)" class="ui negative message">
-                {{getIndexedErrorMessage('dayTimeframe_endTime', i)}}</div>
-            </div>
+          <div class="ui checkbox" style="transform: translateY(+30%);">
+            <input type="checkbox" formControlName="enabled">
+            <label>{{'ScheduleComponent.enabled' | translate}}</label>
           </div>
-          <div class="ui fields" [class.disabled]="!schedule.controls.enabled.value"
-               *ngIf="schedule.controls.timeframeType.value===CONSECUTIVE_DAYS_TIMEFRAME"
-               formGroupName="consecutiveDaysTimeframe">
-            <div class="field">
-              <div class="two fields">
-                <div class="field">
-                  <label>{{'ScheduleComponent.consecutiveDaysTimeframe_startDayOfWeek' | translate}}</label>
-                  <select class="ui fluid dropdown" formControlName="startDayOfWeek">
-                    <option value="1" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.startDayOfWeek.value===1">
-                      {{'ScheduleComponent.daysOfWeek_monday' | translate}}</option>
-                    <option value="2" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.startDayOfWeek.value===2">
-                      {{'ScheduleComponent.daysOfWeek_tuesday' | translate}}</option>
-                    <option value="3" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.startDayOfWeek.value===3">
-                      {{'ScheduleComponent.daysOfWeek_wednesday' | translate}}</option>
-                    <option value="4" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.startDayOfWeek.value===4">
-                      {{'ScheduleComponent.daysOfWeek_thursday' | translate}}</option>
-                    <option value="5" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.startDayOfWeek.value===5">
-                      {{'ScheduleComponent.daysOfWeek_friday' | translate}}</option>
-                    <option value="6" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.startDayOfWeek.value===6">
-                      {{'ScheduleComponent.daysOfWeek_saturday' | translate}}</option>
-                    <option value="7" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.startDayOfWeek.value===7">
-                      {{'ScheduleComponent.daysOfWeek_sunday' | translate}}</option>
-                  </select>
-                </div>
-                <div class="field">
-                  <label>{{'ScheduleComponent.consecutiveDaysTimeframe_startTime' | translate}}</label>
-                  <input type="text" class="clockpicker" formControlName="startTime">
-                  <div *ngIf="getIndexedErrorMessage('consecutiveDaysTimeframe_startTime', i)" class="ui negative message">
-                    {{getIndexedErrorMessage('consecutiveDaysTimeframe_startTime', i)}}</div>
-                </div>
+          <div class="field" [class.disabled]="!schedule.controls.enabled.value">
+            <select class="ui fluid dropdown" formControlName="timeframeType">
+              <option value="de.avanux.smartapplianceenabler.schedule.DayTimeframe"
+                      [selected]="schedule.controls.timeframeType.value==DAY_TIMEFRAME">
+                {{'ScheduleComponent.timeframeType.DayTimeframe' | translate}}</option>
+              <option value="de.avanux.smartapplianceenabler.schedule.ConsecutiveDaysTimeframe"
+                      [selected]="schedule.controls.timeframeType.value==CONSECUTIVE_DAYS_TIMEFRAME">
+                {{'ScheduleComponent.timeframeType.ConsecutiveDaysTimeframe' | translate}}</option>
+            </select>
+          </div>
+          <div class="field" [class.disabled]="!schedule.controls.enabled.value">
+            <select class="ui fluid dropdown" formControlName="requestType">
+              <option value="de.avanux.smartapplianceenabler.schedule.RuntimeRequest"
+                      [selected]="schedule.controls.requestType.value==RUNTIME_REQUEST">
+                {{'ScheduleComponent.runtimeRequest' | translate}}</option>
+              <option value="de.avanux.smartapplianceenabler.schedule.EnergyRequest"
+                      [selected]="schedule.controls.requestType.value==ENERGY_REQUEST">
+                {{'ScheduleComponent.energyRequest' | translate}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="ui fields" [class.disabled]="!schedule.controls.enabled.value"
+             *ngIf="schedule.controls.timeframeType.value===DAY_TIMEFRAME" formGroupName="dayTimeframe">
+          <div class="field">
+            <label>{{'ScheduleComponent.dayTimeframe_daysOfWeekValues' | translate}}</label>
+            <select class="ui fluid dropdown" formControlName="daysOfWeekValues" multiple="">
+              <option value="1" [selected]="schedule.controls.dayTimeframe.controls.daysOfWeekValues.value.indexOf(1) > -1">
+                {{'ScheduleComponent.daysOfWeek_monday' | translate}}</option>
+              <option value="2" [selected]="schedule.controls.dayTimeframe.controls.daysOfWeekValues.value.indexOf(2) > -1">
+                {{'ScheduleComponent.daysOfWeek_tuesday' | translate}}</option>
+              <option value="3" [selected]="schedule.controls.dayTimeframe.controls.daysOfWeekValues.value.indexOf(3) > -1">
+                {{'ScheduleComponent.daysOfWeek_wednesday' | translate}}</option>
+              <option value="4" [selected]="schedule.controls.dayTimeframe.controls.daysOfWeekValues.value.indexOf(4) > -1">
+                {{'ScheduleComponent.daysOfWeek_thursday' | translate}}</option>
+              <option value="5" [selected]="schedule.controls.dayTimeframe.controls.daysOfWeekValues.value.indexOf(5) > -1">
+                {{'ScheduleComponent.daysOfWeek_friday' | translate}}</option>
+              <option value="6" [selected]="schedule.controls.dayTimeframe.controls.daysOfWeekValues.value.indexOf(6) > -1">
+                {{'ScheduleComponent.daysOfWeek_saturday' | translate}}</option>
+              <option value="7" [selected]="schedule.controls.dayTimeframe.controls.daysOfWeekValues.value.indexOf(7) > -1">
+                {{'ScheduleComponent.daysOfWeek_sunday' | translate}}</option>
+              <option value="8" [selected]="schedule.controls.dayTimeframe.controls.daysOfWeekValues.value.indexOf(8) > -1">
+                {{'ScheduleComponent.daysOfWeek_holiday' | translate}}</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>{{'ScheduleComponent.dayTimeframe_startTime' | translate}}</label>
+            <input type="text" class="clockpicker" formControlName="startTime">
+            <div *ngIf="getIndexedErrorMessage('dayTimeframe_startTime', i)" class="ui negative message">
+              {{getIndexedErrorMessage('dayTimeframe_startTime', i)}}</div>
+          </div>
+          <div class="field">
+            <label>{{'ScheduleComponent.dayTimeframe_endTime' | translate}}</label>
+            <input type="text" class="clockpicker" formControlName="endTime">
+            <div *ngIf="getIndexedErrorMessage('dayTimeframe_endTime', i)" class="ui negative message">
+              {{getIndexedErrorMessage('dayTimeframe_endTime', i)}}</div>
+          </div>
+        </div>
+        <div class="ui fields" [class.disabled]="!schedule.controls.enabled.value"
+             *ngIf="schedule.controls.timeframeType.value===CONSECUTIVE_DAYS_TIMEFRAME"
+             formGroupName="consecutiveDaysTimeframe">
+          <div class="field">
+            <div class="two fields">
+              <div class="field">
+                <label>{{'ScheduleComponent.consecutiveDaysTimeframe_startDayOfWeek' | translate}}</label>
+                <select class="ui fluid dropdown" formControlName="startDayOfWeek">
+                  <option value="1" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.startDayOfWeek.value===1">
+                    {{'ScheduleComponent.daysOfWeek_monday' | translate}}</option>
+                  <option value="2" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.startDayOfWeek.value===2">
+                    {{'ScheduleComponent.daysOfWeek_tuesday' | translate}}</option>
+                  <option value="3" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.startDayOfWeek.value===3">
+                    {{'ScheduleComponent.daysOfWeek_wednesday' | translate}}</option>
+                  <option value="4" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.startDayOfWeek.value===4">
+                    {{'ScheduleComponent.daysOfWeek_thursday' | translate}}</option>
+                  <option value="5" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.startDayOfWeek.value===5">
+                    {{'ScheduleComponent.daysOfWeek_friday' | translate}}</option>
+                  <option value="6" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.startDayOfWeek.value===6">
+                    {{'ScheduleComponent.daysOfWeek_saturday' | translate}}</option>
+                  <option value="7" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.startDayOfWeek.value===7">
+                    {{'ScheduleComponent.daysOfWeek_sunday' | translate}}</option>
+                </select>
               </div>
-            </div>
-            <div class="field">
-              <div class="two fields">
-                <div class="field">
-                  <label>{{'ScheduleComponent.consecutiveDaysTimeframe_endDayOfWeek' | translate}}</label>
-                  <select class="ui fluid dropdown" formControlName="endDayOfWeek">
-                    <option value="1" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.endDayOfWeek.value===1">
-                      {{'ScheduleComponent.daysOfWeek_monday' | translate}}</option>
-                    <option value="2" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.endDayOfWeek.value===2">
-                      {{'ScheduleComponent.daysOfWeek_tuesday' | translate}}</option>
-                    <option value="3" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.endDayOfWeek.value===3">
-                      {{'ScheduleComponent.daysOfWeek_wednesday' | translate}}</option>
-                    <option value="4" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.endDayOfWeek.value===4">
-                      {{'ScheduleComponent.daysOfWeek_thursday' | translate}}</option>
-                    <option value="5" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.endDayOfWeek.value===5">
-                      {{'ScheduleComponent.daysOfWeek_friday' | translate}}</option>
-                    <option value="6" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.endDayOfWeek.value===6">
-                      {{'ScheduleComponent.daysOfWeek_saturday' | translate}}</option>
-                    <option value="7" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.endDayOfWeek.value===7">
-                      {{'ScheduleComponent.daysOfWeek_sunday' | translate}}</option>
-                  </select>
-                </div>
-                <div class="field">
-                  <label>{{'ScheduleComponent.consecutiveDaysTimeframe_endTime' | translate}}</label>
-                  <input type="text" class="clockpicker" formControlName="endTime">
-                  <div *ngIf="getIndexedErrorMessage('consecutiveDaysTimeframe_endTime', i)" class="ui negative message">
-                    {{getIndexedErrorMessage('consecutiveDaysTimeframe_endTime', i)}}</div>
-                </div>
+              <div class="field">
+                <label>{{'ScheduleComponent.consecutiveDaysTimeframe_startTime' | translate}}</label>
+                <input type="text" class="clockpicker" formControlName="startTime">
+                <div *ngIf="getIndexedErrorMessage('consecutiveDaysTimeframe_startTime', i)" class="ui negative message">
+                  {{getIndexedErrorMessage('consecutiveDaysTimeframe_startTime', i)}}</div>
               </div>
             </div>
           </div>
-          <div class="ui fields" [class.disabled]="!schedule.controls.enabled.value"
-               *ngIf="schedule.controls.requestType.value===RUNTIME_REQUEST" formGroupName="runtimeRequest">
-            <div class="field">
-              <label>{{'ScheduleComponent.runtimeRequest_min' | translate}}</label>
-              <input class="clockpicker" type="text" formControlName="min">
-              <div *ngIf="getIndexedErrorMessage('dayTimeframe_minRunningTime', i)" class="ui negative message">
-                {{getIndexedErrorMessage('dayTimeframe_minRunningTime', i)}}</div>
-            </div>
-            <div class="field">
-              <label>{{'ScheduleComponent.runtimeRequest_max' | translate}}</label>
-              <input class="clockpicker" type="text" formControlName="max">
-              <div *ngIf="getIndexedErrorMessage('dayTimeframe_maxRunningTime', i)" class="ui negative message">
-                {{getIndexedErrorMessage('dayTimeframe_maxRunningTime', i)}}</div>
-            </div>
-          </div>
-          <div class="ui fields" [class.disabled]="!schedule.controls.enabled.value"
-               *ngIf="schedule.controls.requestType.value===ENERGY_REQUEST" formGroupName="energyRequest">
-            <div class="field">
-              <label>{{'ScheduleComponent.energyRequest_min' | translate}}</label>
-              <input type="text" formControlName="min">
-              <div *ngIf="getIndexedErrorMessage('dayTimeframe_minRunningTime', i)" class="ui negative message">
-                {{getIndexedErrorMessage('dayTimeframe_minRunningTime', i)}}</div>
-            </div>
-            <div class="field">
-              <label>{{'ScheduleComponent.energyRequest_max' | translate}}</label>
-              <input type="text" formControlName="max">
-              <div *ngIf="getIndexedErrorMessage('dayTimeframe_maxRunningTime', i)" class="ui negative message">
-                {{getIndexedErrorMessage('dayTimeframe_maxRunningTime', i)}}</div>
+          <div class="field">
+            <div class="two fields">
+              <div class="field">
+                <label>{{'ScheduleComponent.consecutiveDaysTimeframe_endDayOfWeek' | translate}}</label>
+                <select class="ui fluid dropdown" formControlName="endDayOfWeek">
+                  <option value="1" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.endDayOfWeek.value===1">
+                    {{'ScheduleComponent.daysOfWeek_monday' | translate}}</option>
+                  <option value="2" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.endDayOfWeek.value===2">
+                    {{'ScheduleComponent.daysOfWeek_tuesday' | translate}}</option>
+                  <option value="3" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.endDayOfWeek.value===3">
+                    {{'ScheduleComponent.daysOfWeek_wednesday' | translate}}</option>
+                  <option value="4" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.endDayOfWeek.value===4">
+                    {{'ScheduleComponent.daysOfWeek_thursday' | translate}}</option>
+                  <option value="5" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.endDayOfWeek.value===5">
+                    {{'ScheduleComponent.daysOfWeek_friday' | translate}}</option>
+                  <option value="6" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.endDayOfWeek.value===6">
+                    {{'ScheduleComponent.daysOfWeek_saturday' | translate}}</option>
+                  <option value="7" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.endDayOfWeek.value===7">
+                    {{'ScheduleComponent.daysOfWeek_sunday' | translate}}</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>{{'ScheduleComponent.consecutiveDaysTimeframe_endTime' | translate}}</label>
+                <input type="text" class="clockpicker" formControlName="endTime">
+                <div *ngIf="getIndexedErrorMessage('consecutiveDaysTimeframe_endTime', i)" class="ui negative message">
+                  {{getIndexedErrorMessage('consecutiveDaysTimeframe_endTime', i)}}</div>
+              </div>
             </div>
           </div>
         </div>
-        <div class="ui hidden divider"></div>
+        <div class="ui fields" [class.disabled]="!schedule.controls.enabled.value"
+             *ngIf="schedule.controls.requestType.value===RUNTIME_REQUEST" formGroupName="runtimeRequest">
+          <div class="field">
+            <label>{{'ScheduleComponent.runtimeRequest_min' | translate}}</label>
+            <input class="clockpicker" type="text" formControlName="min">
+            <div *ngIf="getIndexedErrorMessage('dayTimeframe_minRunningTime', i)" class="ui negative message">
+              {{getIndexedErrorMessage('dayTimeframe_minRunningTime', i)}}</div>
+          </div>
+          <div class="field">
+            <label>{{'ScheduleComponent.runtimeRequest_max' | translate}}</label>
+            <input class="clockpicker" type="text" formControlName="max">
+            <div *ngIf="getIndexedErrorMessage('dayTimeframe_maxRunningTime', i)" class="ui negative message">
+              {{getIndexedErrorMessage('dayTimeframe_maxRunningTime', i)}}</div>
+          </div>
+        </div>
+        <div class="ui fields" [class.disabled]="!schedule.controls.enabled.value"
+             *ngIf="schedule.controls.requestType.value===ENERGY_REQUEST" formGroupName="energyRequest">
+          <div class="field">
+            <label>{{'ScheduleComponent.energyRequest_min' | translate}}</label>
+            <input type="text" formControlName="min">
+            <div *ngIf="getIndexedErrorMessage('dayTimeframe_minRunningTime', i)" class="ui negative message">
+              {{getIndexedErrorMessage('dayTimeframe_minRunningTime', i)}}</div>
+          </div>
+          <div class="field">
+            <label>{{'ScheduleComponent.energyRequest_max' | translate}}</label>
+            <input type="text" formControlName="max">
+            <div *ngIf="getIndexedErrorMessage('dayTimeframe_maxRunningTime', i)" class="ui negative message">
+              {{getIndexedErrorMessage('dayTimeframe_maxRunningTime', i)}}</div>
+          </div>
+        </div>
       </div>
+      <div class="ui hidden divider"></div>
     </div>
-    <button type="button" (click)="addSchedule()" class="ui button">{{'button.new' | translate}}</button>
-    <button type="submit" class="ui button" [disabled]="schedulesForm.pristine||schedulesForm.invalid">
-      {{'button.save' | translate}}</button>
-  </form>
-  <!--
-  <pre>pristine={{schedulesForm.pristine}}</pre>
-  <pre>invalid={{schedulesForm.invalid}}</pre>
-  <pre>{{schedulesForm.value | json}}</pre>
-  -->
-</div>
+  </div>
+  <button type="button" (click)="addSchedule()" class="ui button">{{'button.new' | translate}}</button>
+  <button type="submit" class="ui button" [disabled]="schedulesForm.pristine||schedulesForm.invalid">
+    {{'button.save' | translate}}</button>
+</form>
+<!--
+<pre>pristine={{schedulesForm.pristine}}</pre>
+<pre>invalid={{schedulesForm.invalid}}</pre>
+<pre>{{schedulesForm.value | json}}</pre>
+-->
