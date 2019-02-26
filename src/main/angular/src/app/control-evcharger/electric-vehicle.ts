@@ -7,7 +7,7 @@ export class ElectricVehicle {
   }
   '@class' = ElectricVehicle.TYPE;
 
-  id: string;
+  id: number;
   name: string;
   batteryCapacity: number;
   phases: number;

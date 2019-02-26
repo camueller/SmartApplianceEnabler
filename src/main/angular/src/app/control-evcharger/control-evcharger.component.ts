@@ -104,8 +104,9 @@ export class ControlEvchargerComponent implements OnInit {
     });
   }
 
-  buildElectricVehicleFormGroup(ev: ElectricVehicle): FormGroup {
+  buildElectricVehicleFormGroup(ev: ElectricVehicle, newId?: number): FormGroup {
     return new FormGroup({
+      id: new FormControl(ev && ev.id || newId),
       name: new FormControl(ev && ev.name, [Validators.required]),
       batteryCapacity: new FormControl(ev && ev.batteryCapacity, [Validators.required]),
       phases: new FormControl(ev && ev.phases),
@@ -162,6 +163,20 @@ export class ControlEvchargerComponent implements OnInit {
       factorToValue: undefined,
       value: modbusConfigurationFormControl.controls.value.value,
     };
+  }
+
+  findNextEvId(evs: FormArray): number {
+    const ids: number[] = [];
+    for (let i = 0; i < evs.length; i++) {
+      const ev = evs.at(i) as FormGroup;
+      ids.push(ev.controls.id.value);
+    }
+    for (let i = 1; i < 100; i++) {
+      if (ids.indexOf(i) < 0) {
+        return i;
+      }
+    }
+    return 0;
   }
 
   getTemplateNames(): string[] {
@@ -233,7 +248,8 @@ export class ControlEvchargerComponent implements OnInit {
   }
 
   addElectricVehicle() {
-    const newEv = this.buildElectricVehicleFormGroup(undefined);
+    const newEvId = this.findNextEvId(this.electricVehicles);
+    const newEv = this.buildElectricVehicleFormGroup(undefined, newEvId);
     this.electricVehicles.push(newEv);
     this.form.markAsDirty();
   }
