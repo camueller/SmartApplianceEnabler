@@ -1,5 +1,5 @@
 <form class="ui form" [formGroup]="form" (ngSubmit)="submitForm()">
-
+  <h4 class="ui dividing header">{{'ControlEvchargerComponent.heading' | translate}}</h4>
   <div class="ui fields">
     <div class="field" style="font-weight: bold; padding: 0.78571429em 0.5em 0em">
       {{'ControlEvchargerComponent.template' | translate}}
@@ -113,8 +113,68 @@
         </div>
       </div>
     </div>
+    <h4 class="ui dividing header">{{'ControlEvchargerComponent.ev.heading' | translate}}</h4>
+    <div formArrayName="electricVehicles">
+      <div *ngFor="let electricVehicle of electricVehicles.controls; index as i; last as l" [formGroupName]="i">
+        <div class="ui hidden divider"></div>
+        <div class="ui fields">
+          <div class="field">
+            <label>{{'ControlEvchargerComponent.ev.name' | translate}}</label>
+            <input type="text" formControlName="name">
+          </div>
+          <div class="field" style="padding-top: 2.0em">
+            <i (click)="removeElectricVehicle(i)" class="icon big red remove circle"></i>
+          </div>
+        </div>
+        <h5 class="ui header">{{'ControlEvchargerComponent.ev.general' | translate}}</h5>
+        <div class="ui fields">
+          <div class="field">
+            <label>{{'ControlEvchargerComponent.ev.batteryCapacity' | translate}}</label>
+            <input type="text" formControlName="batteryCapacity">
+          </div>
+          <div class="field">
+            <label>{{'ControlEvchargerComponent.ev.phases' | translate}}</label>
+            <input type="text" formControlName="phases">
+          </div>
+          <div class="field">
+            <label>{{'ControlEvchargerComponent.ev.maxChargePower' | translate}}</label>
+            <input type="text" formControlName="maxChargePower">
+          </div>
+        </div>
+        <h5 class="ui header">{{'ControlEvchargerComponent.ev.soc' | translate}}</h5>
+        <div class="ui fields">
+          <div class="field">
+            <label>{{'ControlEvchargerComponent.ev.defaultSocManual' | translate}}</label>
+            <input type="text" formControlName="defaultSocManual">
+          </div>
+          <div class="field">
+            <label>{{'ControlEvchargerComponent.ev.defaultSocSchedule' | translate}}</label>
+            <input type="text" formControlName="defaultSocSchedule">
+          </div>
+          <div class="field">
+            <label>{{'ControlEvchargerComponent.ev.defaultSocOptionalEnergy' | translate}}</label>
+            <input type="text" formControlName="defaultSocOptionalEnergy">
+          </div>
+        </div>
+        <h5 class="ui header">{{'ControlEvchargerComponent.ev.script' | translate}}</h5>
+        <div class="fields">
+          <div class="six wide field">
+            <label>{{'ControlEvchargerComponent.ev.scriptFilename' | translate}}</label>
+            <input type="text" formControlName="scriptFilename">
+          </div>
+          <div class="field">
+            <label>{{'ControlEvchargerComponent.ev.scriptExtractionRegex' | translate}}</label>
+            <input type="text" formControlName="scriptExtractionRegex">
+          </div>
+        </div>
+        <div *ngIf="!l" class="ui dividing header"></div>
+      </div>
+    </div>
     <div class="ui hidden divider"></div>
     <button type="submit" class="ui button" [disabled]="form.pristine||form.invalid">
       {{'button.save' | translate}}</button>
+    <button type="button" (click)="addElectricVehicle()" class="ui button">
+      {{'ControlEvchargerComponent.ev.button.new' | translate}}</button>
   </div>
 </form>
+<!--pre>{{control.evCharger | json}}</pre-->

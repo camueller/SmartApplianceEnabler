@@ -1,4 +1,5 @@
 import {EvModbusControl} from './ev-modbus-control';
+import {ElectricVehicle} from './electric-vehicle';
 
 export class EvCharger {
 
@@ -14,6 +15,7 @@ export class EvCharger {
   pollInterval: number;
   startChargingStateDetectionDelay: number;
   forceInitialCharging: boolean;
+  vehicles: ElectricVehicle[];
 
   public constructor(init?: Partial<EvCharger>) {
     Object.assign(this, init);

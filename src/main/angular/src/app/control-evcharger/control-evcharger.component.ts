@@ -13,6 +13,7 @@ import {SettingsDefaults} from '../settings/settings-defaults';
 import {ModbusRegisterConfguration} from '../shared/modbus-register-confguration';
 import {ControlService} from '../control/control-service';
 import {Control} from '../control/control';
+import {ElectricVehicle} from './electric-vehicle';
 
 @Component({
   selector: 'app-control-evcharger',
@@ -32,6 +33,7 @@ export class ControlEvchargerComponent implements OnInit {
   childFormChanged = new EventEmitter<boolean>();
   form: FormGroup;
   modbusConfigurations: FormArray;
+  electricVehicles: FormArray;
   templates: { [name: string]: EvCharger };
   translatedStrings: string[];
   errors: { [key: string]: string } = {};
@@ -47,14 +49,14 @@ export class ControlEvchargerComponent implements OnInit {
   ngOnInit() {
     this.errorMessages =  new ControlEvchargerErrorMessages(this.translate);
     this.translate.get([
-      'ControlComponent.evcharger_VehicleNotConnected',
-      'ControlComponent.evcharger_VehicleConnected',
-      'ControlComponent.evcharger_Charging',
-      'ControlComponent.evcharger_ChargingCompleted',
-      'ControlComponent.evcharger_Error',
-      'ControlComponent.evcharger_StartCharging',
-      'ControlComponent.evcharger_StopCharging',
-      'ControlComponent.evcharger_ChargingCurrent'
+      'ControlEvchargerComponent.VehicleNotConnected',
+      'ControlEvchargerComponent.VehicleConnected',
+      'ControlEvchargerComponent.Charging',
+      'ControlEvchargerComponent.ChargingCompleted',
+      'ControlEvchargerComponent.Error',
+      'ControlEvchargerComponent.StartCharging',
+      'ControlEvchargerComponent.StopCharging',
+      'ControlEvchargerComponent.ChargingCurrent'
     ]).subscribe(translatedStrings => this.translatedStrings = translatedStrings);
     this.templates = EvChargerTemplates.getTemplates();
     if (this.isConfigured()) {
@@ -84,6 +86,9 @@ export class ControlEvchargerComponent implements OnInit {
       this.control.evCharger.control.configuration.map(
         configuration => this.buildModbusConfigurationFormGroup(configuration))
     );
+    this.electricVehicles = new FormArray(
+      this.control.evCharger.vehicles.map(ev => this.buildElectricVehicleFormGroup(ev))
+    );
     return new FormGroup({
       template: new FormControl(),
       voltage: new FormControl(evCharger.voltage),
@@ -94,8 +99,23 @@ export class ControlEvchargerComponent implements OnInit {
       modbusIdref: new FormControl(evCharger.control.idref),
       modbusSlaveAddress: new FormControl(evCharger.control.slaveAddress,
         [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]),
-      modbusConfigurations: this.modbusConfigurations
+      modbusConfigurations: this.modbusConfigurations,
+      electricVehicles: this.electricVehicles
     });
+  }
+
+  buildElectricVehicleFormGroup(ev: ElectricVehicle): FormGroup {
+    return new FormGroup({
+      name: new FormControl(ev && ev.name, [Validators.required]),
+      batteryCapacity: new FormControl(ev && ev.batteryCapacity, [Validators.required]),
+      phases: new FormControl(ev && ev.phases),
+      maxChargePower: new FormControl(ev && ev.maxChargePower),
+      defaultSocManual: new FormControl(ev && ev.defaultSocManual),
+      defaultSocSchedule: new FormControl(ev && ev.defaultSocSchedule),
+      defaultSocOptionalEnergy: new FormControl(ev && ev.defaultSocOptionalEnergy),
+      scriptFilename: new FormControl(ev && ev.socScript && ev.socScript.script),
+      scriptExtractionRegex: new FormControl(ev && ev.socScript && ev.socScript.extractionRegex),
+  });
   }
 
   public updateEvCharger(form: FormGroup, evCharger: EvCharger) {
@@ -167,7 +187,7 @@ export class ControlEvchargerComponent implements OnInit {
   }
 
   toTextKeyModbusRegisterName(name: string) {
-    return 'ControlComponent.evcharger_' + name;
+    return 'ControlEvchargerComponent.' + name;
   }
 
   isModbusWriteRegister(modbusConfiguration: FormGroup): boolean {
@@ -210,6 +230,17 @@ export class ControlEvchargerComponent implements OnInit {
   getIndexedErrorMessage(key: string, index: number): string {
     const indexedKey = key + '.' + index.toString();
     return this.errors[indexedKey];
+  }
+
+  addElectricVehicle() {
+    const newEv = this.buildElectricVehicleFormGroup(undefined);
+    this.electricVehicles.push(newEv);
+    this.form.markAsDirty();
+  }
+
+  removeElectricVehicle(index: number) {
+    this.electricVehicles.removeAt(index);
+    this.form.markAsDirty();
   }
 
   submitForm() {

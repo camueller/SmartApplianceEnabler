@@ -85,11 +85,11 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
       this.appliance = data.appliance;
       this.settings = data.settings;
       this.settingsDefaults = data.settingsDefaults;
+      if (!this.control.evCharger && this.appliance.type === 'EVCharger') {
+        // there is not type change for ev charger since it is determined by appliance type
+        this.typeChanged(EvCharger.TYPE);
+      }
     });
-    if (!this.control.evCharger && this.appliance.type === 'EVCharger') {
-      // there is not type change for ev charger since it is determined by appliance type
-      this.typeChanged(EvCharger.TYPE);
-    }
   }
 
   canDeactivate(): Observable<boolean> | boolean {
