@@ -1,112 +1,110 @@
-<div class="ui segment">
-  <div *ngIf="applianceStatuses == null || applianceStatuses.length == 0" class="ui info message">
-    <div class="header">{{'StatusComponent.noControllableAppliances_title' | translate}}</div>
-    <p>{{'StatusComponent.noControllableAppliances_message' | translate}}</p>
-  </div>
-  <div class="appliances">
-    <div class="appliance" *ngFor="let applianceStatus of applianceStatuses">
-      <div class="traffic-light">
-        <div class="bulb stopLight" *ngIf="isTrafficLightRed(applianceStatus)"></div>
-        <div class="bulb" *ngIf="!isTrafficLightRed(applianceStatus)"></div>
-        <!--
-        <div class="bulb" *ngIf="!isTrafficLightRed(applianceStatus) && isTrafficLightGreen(applianceStatus)"
-             (click)="onClickStopLight(applianceStatus.id)"
-             [attr.data-tooltip]="'StatusComponent.tooltipStopLight' | translate"
-             data-position="right center"></div>
-        -->
+<div *ngIf="applianceStatuses == null || applianceStatuses.length == 0" class="ui info message">
+  <div class="header">{{'StatusComponent.noControllableAppliances_title' | translate}}</div>
+  <p>{{'StatusComponent.noControllableAppliances_message' | translate}}</p>
+</div>
+<div class="appliances">
+  <div class="appliance" *ngFor="let applianceStatus of applianceStatuses">
+    <div class="traffic-light">
+      <div class="bulb stopLight" *ngIf="isTrafficLightRed(applianceStatus)"></div>
+      <div class="bulb" *ngIf="!isTrafficLightRed(applianceStatus)"></div>
+      <!--
+      <div class="bulb" *ngIf="!isTrafficLightRed(applianceStatus) && isTrafficLightGreen(applianceStatus)"
+           (click)="onClickStopLight(applianceStatus.id)"
+           [attr.data-tooltip]="'StatusComponent.tooltipStopLight' | translate"
+           data-position="right center"></div>
+      -->
 
-        <div class="bulb" [class.slowLight]="isTrafficLightYellow(applianceStatus)"></div>
+      <div class="bulb" [class.slowLight]="isTrafficLightYellow(applianceStatus)"></div>
 
-        <div class="bulb goLight"
-             [class.goLight-blink]="isTrafficLightGreenBlink(applianceStatus)"
-             *ngIf="isTrafficLightGreen(applianceStatus)"
-             (click)="onClickGoLight(applianceStatus.id)"
-             [attr.data-tooltip]="'StatusComponent.tooltipGoLight' | translate"
-             data-position="right center"
-        ></div>
-        <div class="bulb"
-             *ngIf="!isTrafficLightGreen(applianceStatus) && applianceStatus.id === applianceIdClicked"></div>
-        <div class="bulb" *ngIf="!isTrafficLightGreen(applianceStatus) && applianceStatus.id != applianceIdClicked"
-             (click)="onClickGoLight(applianceStatus.id)"
-             [attr.data-tooltip]="'StatusComponent.tooltipGoLight' | translate"
-             data-position="right center"
-        ></div>
-      </div>
-      <div class="appliance-details">
-        <div class="appliance-type">{{getTranslatedType(applianceStatus.type)}}</div>
-        <div *ngIf="isEvCharger(applianceStatus); else notEvCharger">
-          <app-status-charger-edit *ngIf="isTrafficLightGreenClicked(applianceStatus); else goLightNotClickedCharger"
-                                   [applianceId]="applianceIdClicked"
-                                   [status]="applianceStatus"
-                                   [dows]="dows"
-                                   (formSubmitted)="onFormSubmitted()"
+      <div class="bulb goLight"
+           [class.goLight-blink]="isTrafficLightGreenBlink(applianceStatus)"
+           *ngIf="isTrafficLightGreen(applianceStatus)"
+           (click)="onClickGoLight(applianceStatus.id)"
+           [attr.data-tooltip]="'StatusComponent.tooltipGoLight' | translate"
+           data-position="right center"
+      ></div>
+      <div class="bulb"
+           *ngIf="!isTrafficLightGreen(applianceStatus) && applianceStatus.id === applianceIdClicked"></div>
+      <div class="bulb" *ngIf="!isTrafficLightGreen(applianceStatus) && applianceStatus.id != applianceIdClicked"
+           (click)="onClickGoLight(applianceStatus.id)"
+           [attr.data-tooltip]="'StatusComponent.tooltipGoLight' | translate"
+           data-position="right center"
+      ></div>
+    </div>
+    <div class="appliance-details">
+      <div class="appliance-type">{{getTranslatedType(applianceStatus.type)}}</div>
+      <div *ngIf="isEvCharger(applianceStatus); else notEvCharger">
+        <app-status-charger-edit *ngIf="isTrafficLightGreenClicked(applianceStatus); else goLightNotClickedCharger"
+                                 [applianceId]="applianceIdClicked"
+                                 [status]="applianceStatus"
+                                 [dows]="dows"
+                                 (formSubmitted)="onFormSubmitted()"
+        >
+        </app-status-charger-edit>
+        <ng-template #goLightNotClickedCharger>
+          <app-status-charger-view
+            [status]="applianceStatus"
+            [dows]="dows"
           >
-          </app-status-charger-edit>
-          <ng-template #goLightNotClickedCharger>
-            <app-status-charger-view
-              [status]="applianceStatus"
-              [dows]="dows"
-            >
-            </app-status-charger-view>
-          </ng-template>
-        </div>
-        <ng-template #notEvCharger>
-          <app-status-edit *ngIf="isTrafficLightGreenClicked(applianceStatus); else goLightNotClicked"
-                           [applianceId]="applianceIdClicked"
-                           (formSubmitted)="onFormSubmitted()"
-          >
-          </app-status-edit>
-          <ng-template #goLightNotClicked>
-            <app-status-view
-              [status]="applianceStatus"
-              [trafficLight]="getTrafficLightState(applianceStatus)"
-            >
-            </app-status-view>
-          </ng-template>
+          </app-status-charger-view>
         </ng-template>
       </div>
+      <ng-template #notEvCharger>
+        <app-status-edit *ngIf="isTrafficLightGreenClicked(applianceStatus); else goLightNotClicked"
+                         [applianceId]="applianceIdClicked"
+                         (formSubmitted)="onFormSubmitted()"
+        >
+        </app-status-edit>
+        <ng-template #goLightNotClicked>
+          <app-status-view
+            [status]="applianceStatus"
+            [trafficLight]="getTrafficLightState(applianceStatus)"
+          >
+          </app-status-view>
+        </ng-template>
+      </ng-template>
     </div>
   </div>
-  <h4 class="ui dividing header">{{'StatusComponent.explanation' | translate}}</h4>
-  <div class="traffic-light-explanation">
-    <div class="traffic-light-small">
-      <div class="bulb-small"></div>
-      <div class="bulb-small"></div>
-      <div class="bulb-small"></div>
-    </div>
-    <div class="traffic-light-explanation-text">
-      <p>{{'StatusComponent.explanationNoLight' | translate}}</p>
-    </div>
-  </div>
-  <div class="traffic-light-explanation">
-    <div class="traffic-light-small">
-      <div class="bulb-small stopLight"></div>
-      <div class="bulb-small"></div>
-      <div class="bulb-small"></div>
-    </div>
-    <div class="traffic-light-explanation-text">
-      <p>{{'StatusComponent.explanationStopLight' | translate}}</p>
-    </div>
-  </div>
-  <div class="traffic-light-explanation">
-    <div class="traffic-light-small">
-      <div class="bulb-small"></div>
-      <div class="bulb-small slowLight"></div>
-      <div class="bulb-small"></div>
-    </div>
-    <div class="traffic-light-explanation-text">
-      <p>{{'StatusComponent.explanationSlowLight' | translate}}</p>
-    </div>
-  </div>
-  <div class="traffic-light-explanation">
-    <div class="traffic-light-small">
-      <div class="bulb-small"></div>
-      <div class="bulb-small"></div>
-      <div class="bulb-small goLight"></div>
-    </div>
-    <div class="traffic-light-explanation-text">
-      <p>{{'StatusComponent.explanationGoLight' | translate}}</p>
-    </div>
-  </div>
-  <!--pre>{{applianceStatuses | json}}</pre-->
 </div>
+<h4 class="ui dividing header">{{'StatusComponent.explanation' | translate}}</h4>
+<div class="traffic-light-explanation">
+  <div class="traffic-light-small">
+    <div class="bulb-small"></div>
+    <div class="bulb-small"></div>
+    <div class="bulb-small"></div>
+  </div>
+  <div class="traffic-light-explanation-text">
+    <p>{{'StatusComponent.explanationNoLight' | translate}}</p>
+  </div>
+</div>
+<div class="traffic-light-explanation">
+  <div class="traffic-light-small">
+    <div class="bulb-small stopLight"></div>
+    <div class="bulb-small"></div>
+    <div class="bulb-small"></div>
+  </div>
+  <div class="traffic-light-explanation-text">
+    <p>{{'StatusComponent.explanationStopLight' | translate}}</p>
+  </div>
+</div>
+<div class="traffic-light-explanation">
+  <div class="traffic-light-small">
+    <div class="bulb-small"></div>
+    <div class="bulb-small slowLight"></div>
+    <div class="bulb-small"></div>
+  </div>
+  <div class="traffic-light-explanation-text">
+    <p>{{'StatusComponent.explanationSlowLight' | translate}}</p>
+  </div>
+</div>
+<div class="traffic-light-explanation">
+  <div class="traffic-light-small">
+    <div class="bulb-small"></div>
+    <div class="bulb-small"></div>
+    <div class="bulb-small goLight"></div>
+  </div>
+  <div class="traffic-light-explanation-text">
+    <p>{{'StatusComponent.explanationGoLight' | translate}}</p>
+  </div>
+</div>
+<!--pre>{{applianceStatuses | json}}</pre-->

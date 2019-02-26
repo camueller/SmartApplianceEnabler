@@ -18,6 +18,11 @@
   border-radius: 0px;
 }
 
+.ui.segment {
+  padding-top: 0;
+  border: 0;
+}
+
 label.required::after {
   content: " (*)";
 }
