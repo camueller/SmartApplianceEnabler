@@ -32,6 +32,7 @@ import {ModbusRegisterConfguration} from '../shared/modbus-register-confguration
 import {EvModbusControl} from '../control-evcharger/ev-modbus-control';
 import {ModbusRegisterRead} from '../shared/modbus-register-read';
 import {ModbusRegisterReadValue} from '../shared/modbus-register-read-value';
+import {ElectricVehicle} from '../control-evcharger/electric-vehicle';
 
 export class ControlFactory {
 
@@ -217,13 +218,22 @@ export class ControlFactory {
         configuration: configurations
       });
 
+      const evs: ElectricVehicle[] = [];
+      if (rawEvCharger.vehicles) {
+        (rawEvCharger.vehicles as any[]).map(rawEv => {
+          const ev: ElectricVehicle = {... rawEv};
+          evs.push(ev);
+        });
+      }
+
       evCharger = new EvCharger({
         voltage: rawEvCharger.voltage,
         phases: rawEvCharger.phases,
         pollInterval: rawEvCharger.pollInterval,
         startChargingStateDetectionDelay: rawEvCharger.startChargingStateDetectionDelay,
         forceInitialCharging: rawEvCharger.forceInitialCharging,
-        control: evModbusControl
+        control: evModbusControl,
+        vehicles: evs
       });
     }
     return evCharger;
