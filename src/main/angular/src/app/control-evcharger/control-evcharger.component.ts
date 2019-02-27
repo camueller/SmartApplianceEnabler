@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {AfterViewChecked, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {EvCharger} from './ev-charger';
 import {EvChargerTemplates} from './ev-charger-templates';
 import {Settings} from '../settings/settings';
@@ -14,13 +14,16 @@ import {ModbusRegisterConfguration} from '../shared/modbus-register-confguration
 import {ControlService} from '../control/control-service';
 import {Control} from '../control/control';
 import {ElectricVehicle} from './electric-vehicle';
+import {FormHandler} from '../shared/form-handler';
+
+declare const $: any;
 
 @Component({
   selector: 'app-control-evcharger',
   templateUrl: './control-evcharger.component.html',
-  styles: []
+  styleUrls: ['../global.css']
 })
-export class ControlEvchargerComponent implements OnInit {
+export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
   @Input()
   control: Control;
   @Input()
@@ -34,6 +37,7 @@ export class ControlEvchargerComponent implements OnInit {
   form: FormGroup;
   modbusConfigurations: FormArray;
   electricVehicles: FormArray;
+  formHandler: FormHandler;
   templates: { [name: string]: EvCharger };
   translatedStrings: string[];
   errors: { [key: string]: string } = {};
@@ -44,6 +48,7 @@ export class ControlEvchargerComponent implements OnInit {
               private controlService: ControlService,
               private translate: TranslateService) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
+    this.formHandler = new FormHandler();
   }
 
   ngOnInit() {
@@ -64,6 +69,10 @@ export class ControlEvchargerComponent implements OnInit {
     } else {
       this.form = this.buildEmptyEvChargerFormGroup();
     }
+  }
+
+  ngAfterViewChecked() {
+    this.formHandler.markLabelsRequired();
   }
 
   initForm(evCharger: EvCharger) {
@@ -89,34 +98,51 @@ export class ControlEvchargerComponent implements OnInit {
     this.electricVehicles = new FormArray(
       this.control.evCharger.vehicles.map(ev => this.buildElectricVehicleFormGroup(ev))
     );
-    return new FormGroup({
-      template: new FormControl(),
-      voltage: new FormControl(evCharger.voltage),
-      phases: new FormControl(evCharger.phases),
-      pollInterval: new FormControl(evCharger.pollInterval),
-      startChargingStateDetectionDelay: new FormControl(evCharger.startChargingStateDetectionDelay),
-      forceInitialCharging: new FormControl(evCharger.forceInitialCharging),
-      modbusIdref: new FormControl(evCharger.control.idref),
-      modbusSlaveAddress: new FormControl(evCharger.control.slaveAddress,
-        [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]),
-      modbusConfigurations: this.modbusConfigurations,
-      electricVehicles: this.electricVehicles
-    });
+    const fg =  new FormGroup({});
+    this.formHandler.addFormControl(fg, 'template', undefined, [Validators.required]);
+    this.formHandler.addFormControl(fg, 'voltage', evCharger.voltage);
+    this.formHandler.addFormControl(fg, 'voltage', evCharger.voltage);
+    this.formHandler.addFormControl(fg, 'phases', evCharger.phases);
+    this.formHandler.addFormControl(fg, 'pollInterval', evCharger.pollInterval);
+    this.formHandler.addFormControl(fg, 'startChargingStateDetectionDelay', evCharger.startChargingStateDetectionDelay);
+    this.formHandler.addFormControl(fg, 'forceInitialCharging', evCharger.forceInitialCharging);
+    this.formHandler.addFormControl(fg, 'modbusIdref', evCharger.control.idref, [Validators.required]);
+    this.formHandler.addFormControl(fg, 'modbusSlaveAddress', evCharger.control.slaveAddress,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
+    fg.addControl('modbusConfigurations', this.modbusConfigurations);
+    fg.addControl('electricVehicles', this.electricVehicles);
+    return fg;
   }
 
   buildElectricVehicleFormGroup(ev: ElectricVehicle, newId?: number): FormGroup {
-    return new FormGroup({
-      id: new FormControl(ev && ev.id || newId),
-      name: new FormControl(ev && ev.name, [Validators.required]),
-      batteryCapacity: new FormControl(ev && ev.batteryCapacity, [Validators.required]),
-      phases: new FormControl(ev && ev.phases),
-      maxChargePower: new FormControl(ev && ev.maxChargePower),
-      defaultSocManual: new FormControl(ev && ev.defaultSocManual),
-      defaultSocSchedule: new FormControl(ev && ev.defaultSocSchedule),
-      defaultSocOptionalEnergy: new FormControl(ev && ev.defaultSocOptionalEnergy),
-      scriptFilename: new FormControl(ev && ev.socScript && ev.socScript.script),
-      scriptExtractionRegex: new FormControl(ev && ev.socScript && ev.socScript.extractionRegex),
-  });
+    const fg =  new FormGroup({});
+    this.formHandler.addFormControl(fg, 'id', ev && ev.id || newId);
+    this.formHandler.addFormControl(fg, 'name', ev && ev.name, [Validators.required]);
+    this.formHandler.addFormControl(fg, 'batteryCapacity', ev && ev.batteryCapacity,
+      [Validators.required]);
+    this.formHandler.addFormControl(fg, 'phases', ev && ev.phases);
+    this.formHandler.addFormControl(fg, 'maxChargePower', ev && ev.maxChargePower);
+    this.formHandler.addFormControl(fg, 'defaultSocManual', ev && ev.defaultSocManual);
+    this.formHandler.addFormControl(fg, 'defaultSocSchedule', ev && ev.defaultSocSchedule);
+    this.formHandler.addFormControl(fg, 'defaultSocOptionalEnergy', ev && ev.defaultSocOptionalEnergy);
+    this.formHandler.addFormControl(fg, 'scriptFilename', ev && ev.socScript && ev.socScript.script);
+    this.formHandler.addFormControl(fg, 'scriptExtractionRegex',
+      ev && ev.socScript && ev.socScript.extractionRegex);
+    return fg;
+  }
+
+  buildModbusConfigurationFormGroup(configuration: ModbusRegisterConfguration): FormGroup {
+    const fg =  new FormGroup({});
+    this.formHandler.addFormControl(fg, 'name', configuration.name, [Validators.required]);
+    this.formHandler.addFormControl(fg, 'registerAddress', configuration.address,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER_OR_HEX)]);
+    this.formHandler.addFormControl(fg, 'write', configuration.write);
+    this.formHandler.addFormControl(fg, 'registerType', configuration.type, [Validators.required]);
+    this.formHandler.addFormControl(fg, 'bytes', configuration.bytes);
+    this.formHandler.addFormControl(fg, 'byteOrder', configuration.byteOrder);
+    this.formHandler.addFormControl(fg, 'extractionRegex', configuration.extractionRegex);
+    this.formHandler.addFormControl(fg, 'value', configuration.value);
+    return fg;
   }
 
   public updateEvCharger(form: FormGroup, evCharger: EvCharger) {
@@ -135,20 +161,6 @@ export class ControlEvchargerComponent implements OnInit {
       configurations.push(this.buildModbusRegisterConfguration(modbusConfigurationFormControl));
     }
     evCharger.control.configuration = configurations;
-  }
-
-  buildModbusConfigurationFormGroup(configuration: ModbusRegisterConfguration): FormGroup {
-    return new FormGroup({
-      name: new FormControl(configuration.name, [Validators.required]),
-      registerAddress: new FormControl(configuration.address,
-        [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER_OR_HEX)]),
-      write: new FormControl(configuration.write),
-      registerType: new FormControl(configuration.type, [Validators.required]),
-      bytes: new FormControl(configuration.bytes),
-      byteOrder: new FormControl(configuration.byteOrder),
-      extractionRegex: new FormControl(configuration.extractionRegex),
-      value: new FormControl(configuration.value),
-    });
   }
 
   buildModbusRegisterConfguration(modbusConfigurationFormControl: FormGroup): ModbusRegisterConfguration {
