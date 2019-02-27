@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {AfterViewChecked, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Control} from '../control/control';
 import {ControlDefaults} from '../control/control-defaults';
 import {FormGroup, Validators} from '@angular/forms';
@@ -10,15 +10,15 @@ import {TranslateService} from '@ngx-translate/core';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {HttpSwitch} from './http-switch';
 import {ControlHttpErrorMessages} from './control-http-error-messages';
-import {FormUtil} from '../shared/form-util';
 import {FormMarkerService} from '../shared/form-marker-service';
+import {FormHandler} from '../shared/form-handler';
 
 @Component({
   selector: 'app-control-http',
   templateUrl: './control-http.component.html',
-  styleUrls: ['../app.component.css']
+  styleUrls: ['../global.css']
 })
-export class ControlHttpComponent implements OnInit {
+export class ControlHttpComponent implements OnInit, AfterViewChecked {
   @Input()
   control: Control;
   @Input()
@@ -28,6 +28,7 @@ export class ControlHttpComponent implements OnInit {
   @Output()
   childFormChanged = new EventEmitter<boolean>();
   form: FormGroup;
+  formHandler: FormHandler;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -38,6 +39,7 @@ export class ControlHttpComponent implements OnInit {
               private translate: TranslateService
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
+    this.formHandler = new FormHandler();
   }
 
   ngOnInit() {
@@ -50,17 +52,21 @@ export class ControlHttpComponent implements OnInit {
     this.formMarkerService.dirty.subscribe(() => this.form.markAsDirty());
   }
 
+  ngAfterViewChecked() {
+    this.formHandler.markLabelsRequired();
+  }
+
   buildHttpFormGroup(httpSwitch: HttpSwitch): FormGroup {
     const fg =  new FormGroup({});
-    FormUtil.addFormControl(fg, 'onUrl', httpSwitch ? httpSwitch.onUrl : undefined,
+    this.formHandler.addFormControl(fg, 'onUrl', httpSwitch ? httpSwitch.onUrl : undefined,
       [Validators.required, Validators.pattern(InputValidatorPatterns.URL)]);
-    FormUtil.addFormControl(fg, 'onData', httpSwitch ? httpSwitch.onData : undefined);
-    FormUtil.addFormControl(fg, 'offUrl', httpSwitch ? httpSwitch.offUrl : undefined,
+    this.formHandler.addFormControl(fg, 'onData', httpSwitch ? httpSwitch.onData : undefined);
+    this.formHandler.addFormControl(fg, 'offUrl', httpSwitch ? httpSwitch.offUrl : undefined,
       [Validators.required, Validators.pattern(InputValidatorPatterns.URL)]);
-    FormUtil.addFormControl(fg, 'offData', httpSwitch ? httpSwitch.offData : undefined);
-    FormUtil.addFormControl(fg, 'username', httpSwitch ? httpSwitch.username : undefined);
-    FormUtil.addFormControl(fg, 'password', httpSwitch ? httpSwitch.password : undefined);
-    FormUtil.addFormControl(fg, 'contentType', httpSwitch ? httpSwitch.contentType : undefined);
+    this.formHandler.addFormControl(fg, 'offData', httpSwitch ? httpSwitch.offData : undefined);
+    this.formHandler.addFormControl(fg, 'username', httpSwitch ? httpSwitch.username : undefined);
+    this.formHandler.addFormControl(fg, 'password', httpSwitch ? httpSwitch.password : undefined);
+    this.formHandler.addFormControl(fg, 'contentType', httpSwitch ? httpSwitch.contentType : undefined);
     return fg;
   }
 

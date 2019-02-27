@@ -22,7 +22,3 @@
   padding-top: 0;
   border: 0;
 }
-
-label.required::after {
-  content: " (*)";
-}
