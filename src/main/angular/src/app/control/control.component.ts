@@ -39,6 +39,7 @@ import {Appliance} from '../appliance/appliance';
 import {NgForm} from '@angular/forms';
 import {FormMarkerService} from '../shared/form-marker-service';
 import {EvCharger} from '../control-evcharger/ev-charger';
+import {Mock} from 'protractor/built/driverProviders';
 
 @Component({
   selector: 'app-appliance-switch',
@@ -128,6 +129,11 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
       this.control.startingCurrentDetection = false;
     }
     this.controlFactory.initializeByType(this.control, newControl, newType);
+  }
+
+  get canHaveStartingCurrentDetection(): boolean {
+    return this.control.type !== AlwaysOnSwitch.TYPE
+    && this.control.type !== MockSwitch.TYPE;
   }
 
   startingCurrentDetectionChanged(startingCurrentDetection: boolean) {
