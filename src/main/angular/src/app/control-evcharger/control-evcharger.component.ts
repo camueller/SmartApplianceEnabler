@@ -127,7 +127,8 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
     this.formHandler.addFormControl(fg, 'defaultSocOptionalEnergy', ev && ev.defaultSocOptionalEnergy);
     const scriptEnabled: boolean = ev && ev.socScript && (ev.socScript.script !== undefined);
     this.formHandler.addFormControl(fg, 'scriptEnabled', scriptEnabled);
-    this.formHandler.addFormControl(fg, 'scriptFilename', scriptEnabled, [Validators.required]);
+    this.formHandler.addFormControl(fg, 'scriptFilename', ev && ev.socScript && ev.socScript.script,
+      [Validators.required]);
     this.formHandler.addFormControl(fg, 'scriptExtractionRegex',
       ev && ev.socScript && ev.socScript.extractionRegex);
     this.setScriptEnabled(fg, scriptEnabled);
