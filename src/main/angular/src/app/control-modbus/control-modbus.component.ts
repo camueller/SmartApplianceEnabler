@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {AfterViewChecked, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Control} from '../control/control';
 import {ControlDefaults} from '../control/control-defaults';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
@@ -13,13 +13,14 @@ import {ModbusSwitch} from './modbus-switch';
 import {ModbusSettings} from '../settings/modbus-settings';
 import {SettingsDefaults} from '../settings/settings-defaults';
 import {FormMarkerService} from '../shared/form-marker-service';
+import {FormHandler} from '../shared/form-handler';
 
 @Component({
   selector: 'app-control-modbus',
   templateUrl: './control-modbus.component.html',
-  styles: []
+  styleUrls: ['../global.css']
 })
-export class ControlModbusComponent implements OnInit {
+export class ControlModbusComponent implements OnInit, AfterViewChecked {
   @Input()
   control: Control;
   @Input()
@@ -33,6 +34,7 @@ export class ControlModbusComponent implements OnInit {
   @Output()
   childFormChanged = new EventEmitter<boolean>();
   form: FormGroup;
+  formHandler: FormHandler;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -43,6 +45,7 @@ export class ControlModbusComponent implements OnInit {
               private translate: TranslateService
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
+    this.formHandler = new FormHandler();
   }
 
   ngOnInit() {
@@ -55,21 +58,25 @@ export class ControlModbusComponent implements OnInit {
     this.formMarkerService.dirty.subscribe(() => this.form.markAsDirty());
   }
 
+  ngAfterViewChecked() {
+    this.formHandler.markLabelsRequired();
+  }
+
   buildModbusFormGroup(modbusSwitch: ModbusSwitch): FormGroup {
-    return new FormGroup({
-      modbusTcpId: new FormControl(modbusSwitch ? modbusSwitch.idref : undefined,
-        [Validators.required]),
-      slaveAddress: new FormControl(modbusSwitch ? modbusSwitch.slaveAddress : undefined,
-        [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]),
-      registerAddress: new FormControl(modbusSwitch ? modbusSwitch.registerAddress : undefined,
-        [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER_OR_HEX)]),
-      registerType: new FormControl(modbusSwitch ? modbusSwitch.registerType : undefined,
-        [Validators.required]),
-      onValue: new FormControl(modbusSwitch ? modbusSwitch.onValue : undefined,
-        [Validators.required]),
-      offValue: new FormControl(modbusSwitch ? modbusSwitch.offValue : undefined,
-        [Validators.required]),
-    });
+    const fg =  new FormGroup({});
+    this.formHandler.addFormControl(fg, 'modbusTcpId', modbusSwitch && modbusSwitch.idref,
+      [Validators.required]);
+    this.formHandler.addFormControl(fg, 'slaveAddress', modbusSwitch && modbusSwitch.slaveAddress,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
+    this.formHandler.addFormControl(fg, 'registerAddress', modbusSwitch && modbusSwitch.registerAddress,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER_OR_HEX)]);
+    this.formHandler.addFormControl(fg, 'registerType', modbusSwitch && modbusSwitch.registerType,
+      [Validators.required]);
+    this.formHandler.addFormControl(fg, 'onValue', modbusSwitch && modbusSwitch.onValue,
+      [Validators.required]);
+    this.formHandler.addFormControl(fg, 'offValue', modbusSwitch && modbusSwitch.offValue,
+      [Validators.required]);
+    return fg;
   }
 
   updateModbusSwitch(form: FormGroup, modbusSwitch: ModbusSwitch) {

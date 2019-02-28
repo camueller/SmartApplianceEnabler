@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {AfterViewChecked, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Control} from '../control/control';
 import {Switch} from './switch';
@@ -11,13 +11,14 @@ import {ControlSwitchErrorMessages} from './control-switch-error-messages';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {Logger} from '../log/logger';
 import {FormMarkerService} from '../shared/form-marker-service';
+import {FormHandler} from '../shared/form-handler';
 
 @Component({
   selector: 'app-control-switch',
   templateUrl: './control-switch.component.html',
-  styles: []
+  styleUrls: ['../global.css']
 })
-export class ControlSwitchComponent implements OnInit {
+export class ControlSwitchComponent implements OnInit, AfterViewChecked {
   @Input()
   control: Control;
   @Input()
@@ -27,6 +28,7 @@ export class ControlSwitchComponent implements OnInit {
   @Output()
   childFormChanged = new EventEmitter<boolean>();
   form: FormGroup;
+  formHandler: FormHandler;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -37,6 +39,7 @@ export class ControlSwitchComponent implements OnInit {
               private translate: TranslateService
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
+    this.formHandler = new FormHandler();
   }
 
   ngOnInit() {
@@ -49,12 +52,16 @@ export class ControlSwitchComponent implements OnInit {
     this.formMarkerService.dirty.subscribe(() => this.form.markAsDirty());
   }
 
+  ngAfterViewChecked() {
+    this.formHandler.markLabelsRequired();
+  }
+
   buildSwitchFormGroup(switch_: Switch): FormGroup {
-    return new FormGroup({
-      gpio: new FormControl(switch_ ? switch_.gpio : undefined,
-        [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]),
-      reverseStates: new FormControl(switch_ ? switch_.reverseStates : undefined)
-    });
+    const fg =  new FormGroup({});
+    this.formHandler.addFormControl(fg, 'gpio', switch_ ? switch_.gpio : undefined,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
+    this.formHandler.addFormControl(fg, 'reverseStates', switch_ && switch_.reverseStates );
+    return fg;
   }
 
   updateSwitch(form: FormGroup, switch_: Switch) {
