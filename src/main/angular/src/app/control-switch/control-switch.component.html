@@ -15,6 +15,7 @@
     [controlDefaults]="controlDefaults"
     [parentForm]="form"
   ></app-control-startingcurrent>
+  <div>{{'dialog.mandatoryfields'|translate}}</div>
   <div class="ui hidden divider"></div>
   <button type="submit" class="ui button" [disabled]="form.pristine||form.invalid">
     {{'button.save' | translate}}</button>
