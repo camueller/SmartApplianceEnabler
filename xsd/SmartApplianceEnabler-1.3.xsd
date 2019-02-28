@@ -148,9 +148,9 @@
         <xs:sequence>
             <xs:element name="SocScript" type="SocScriptType" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
-        <xs:attribute name="id" type="xs:int" />
-        <xs:attribute name="name" type="xs:string" />
-        <xs:attribute name="batteryCapacity" type="xs:int" />
+        <xs:attribute name="id" type="xs:int" use="required" />
+        <xs:attribute name="name" type="xs:string" use="required" />
+        <xs:attribute name="batteryCapacity" type="xs:int" use="required" />
         <xs:attribute name="phases" type="xs:int" />
         <xs:attribute name="maxChargePower" type="xs:int" />
         <xs:attribute name="defaultSocOptionalEnergy" type="xs:int" />
