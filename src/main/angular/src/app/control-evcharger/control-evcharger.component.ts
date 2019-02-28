@@ -99,7 +99,7 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
       this.control.evCharger.vehicles.map(ev => this.buildElectricVehicleFormGroup(ev))
     );
     const fg =  new FormGroup({});
-    this.formHandler.addFormControl(fg, 'template', undefined, [Validators.required]);
+    this.formHandler.addFormControl(fg, 'template', undefined);
     this.formHandler.addFormControl(fg, 'voltage', evCharger.voltage);
     this.formHandler.addFormControl(fg, 'voltage', evCharger.voltage);
     this.formHandler.addFormControl(fg, 'phases', evCharger.phases);
@@ -125,10 +125,12 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
     this.formHandler.addFormControl(fg, 'defaultSocManual', ev && ev.defaultSocManual);
     this.formHandler.addFormControl(fg, 'defaultSocSchedule', ev && ev.defaultSocSchedule);
     this.formHandler.addFormControl(fg, 'defaultSocOptionalEnergy', ev && ev.defaultSocOptionalEnergy);
-    this.formHandler.addFormControl(fg, 'scriptEnabled', ev && ev.socScript && ev.socScript.script);
-    this.formHandler.addFormControl(fg, 'scriptFilename', ev && ev.socScript && ev.socScript.script);
+    const scriptEnabled: boolean = ev && ev.socScript && (ev.socScript.script !== undefined);
+    this.formHandler.addFormControl(fg, 'scriptEnabled', scriptEnabled);
+    this.formHandler.addFormControl(fg, 'scriptFilename', scriptEnabled, [Validators.required]);
     this.formHandler.addFormControl(fg, 'scriptExtractionRegex',
       ev && ev.socScript && ev.socScript.extractionRegex);
+    this.setScriptEnabled(fg, scriptEnabled);
     return fg;
   }
 
@@ -274,6 +276,10 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
 
   onScriptEnabledToggle(index: number, enabled: boolean) {
     const ev = this.electricVehicles.at(index) as FormGroup;
+    this.setScriptEnabled(ev, enabled);
+  }
+
+  setScriptEnabled(ev: FormGroup, enabled: boolean) {
     if (enabled) {
       ev.controls.scriptFilename.enable();
       ev.controls.scriptExtractionRegex.enable();
