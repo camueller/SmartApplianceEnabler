@@ -125,6 +125,7 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
     this.formHandler.addFormControl(fg, 'defaultSocManual', ev && ev.defaultSocManual);
     this.formHandler.addFormControl(fg, 'defaultSocSchedule', ev && ev.defaultSocSchedule);
     this.formHandler.addFormControl(fg, 'defaultSocOptionalEnergy', ev && ev.defaultSocOptionalEnergy);
+    this.formHandler.addFormControl(fg, 'scriptEnabled', ev && ev.socScript && ev.socScript.script);
     this.formHandler.addFormControl(fg, 'scriptFilename', ev && ev.socScript && ev.socScript.script);
     this.formHandler.addFormControl(fg, 'scriptExtractionRegex',
       ev && ev.socScript && ev.socScript.extractionRegex);
@@ -269,6 +270,22 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
   removeElectricVehicle(index: number) {
     this.electricVehicles.removeAt(index);
     this.form.markAsDirty();
+  }
+
+  onScriptEnabledToggle(index: number, enabled: boolean) {
+    const ev = this.electricVehicles.at(index) as FormGroup;
+    if (enabled) {
+      ev.controls.scriptFilename.enable();
+      ev.controls.scriptExtractionRegex.enable();
+    } else {
+      ev.controls.scriptFilename.disable();
+      ev.controls.scriptExtractionRegex.disable();
+    }
+  }
+
+  isScriptEnabled(index: number) {
+    const ev = this.electricVehicles.at(index) as FormGroup;
+    return ev.enabled;
   }
 
   submitForm() {

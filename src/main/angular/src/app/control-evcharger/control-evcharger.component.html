@@ -156,14 +156,18 @@
             <input type="text" formControlName="defaultSocOptionalEnergy">
           </div>
         </div>
-        <h5 class="ui header">{{'ControlEvchargerComponent.ev.script' | translate}}</h5>
+        <h5 class="ui header">{{'ControlEvchargerComponent.ev.script.heading' | translate}}</h5>
         <div class="fields">
-          <div class="six wide field">
-            <label>{{'ControlEvchargerComponent.ev.scriptFilename' | translate}}</label>
+          <div class="ui checkbox" style="transform: translateY(+30%);">
+            <input type="checkbox" formControlName="scriptEnabled" (ngModelChange)="onScriptEnabledToggle(i, $event)">
+            <label>{{'ControlEvchargerComponent.ev.script.enabled' | translate}}</label>
+          </div>
+          <div class="six wide field" [class.disabled]="!isScriptEnabled(i)">
+            <label>{{'ControlEvchargerComponent.ev.script.filename' | translate}}</label>
             <input type="text" formControlName="scriptFilename">
           </div>
-          <div class="field">
-            <label>{{'ControlEvchargerComponent.ev.scriptExtractionRegex' | translate}}</label>
+          <div class="field" [class.disabled]="!isScriptEnabled(i)">
+            <label>{{'ControlEvchargerComponent.ev.script.extractionRegex' | translate}}</label>
             <input type="text" formControlName="scriptExtractionRegex">
           </div>
         </div>
