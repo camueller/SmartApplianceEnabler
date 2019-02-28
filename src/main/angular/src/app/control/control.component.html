@@ -39,7 +39,7 @@
             <option [ngValue]="TYPE_MOCK_SWITCH">{{TYPE_MOCK_SWITCH | translate}}</option>
           </select>
         </div>
-        <div class="ui checkbox">
+        <div class="ui checkbox" *ngIf="canHaveStartingCurrentDetection">
           <input type="checkbox" name="startingCurrentDetection" [(ngModel)]="control.startingCurrentDetection"
                  (ngModelChange)="startingCurrentDetectionChanged($event)">
           <label>{{'ControlStartingcurrentComponent.startingCurrentDetection' | translate}}</label>
