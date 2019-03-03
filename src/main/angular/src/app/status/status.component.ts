@@ -9,7 +9,7 @@ import {TrafficLight} from './traffic-light';
 @Component({
   selector: 'app-status',
   templateUrl: './status.component.html',
-  styleUrls: ['./status.component.css']
+  styleUrls: ['./status.component.css', '../global.css']
 })
 export class StatusComponent implements OnInit, OnDestroy {
   applianceStatuses: Status[];

@@ -7,6 +7,18 @@ label.required::after {
   bottom: 1.2857rem;
 }
 
+.ui.selection.dropdown {
+  min-width: 0px;
+}
+
+.dropdown-item {
+  white-space: nowrap !important;
+}
+
+.ui.grid > .column {
+  padding: 0;
+}
+
 .icon-field {
   padding-top: 2.0em;
 }
@@ -14,4 +26,22 @@ label.required::after {
 .standalone-label {
   min-height: 2.5rem;
   line-height: 2.5rem
+}
+
+.clockpicker {
+  width: 4em;
+}
+
+.dow-select {
+  min-width: 8.5rem !important;
+}
+
+.time-of-day {
+  width: 5rem !important;
+}
+
+.percentage-input {
+  padding-left: 4px !important;
+  padding-right: 4px !important;
+  width: 2.5em !important;
 }
