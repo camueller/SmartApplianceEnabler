@@ -36,7 +36,7 @@ import {ModbusSettings} from './modbus-settings';
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
-  styles: []
+  styleUrls: ['../global.css']
 })
 export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponent> {
   @ViewChild('settingsForm') settingsForm: NgForm;

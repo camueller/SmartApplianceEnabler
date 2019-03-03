@@ -19,9 +19,9 @@
 
   <h4 class="ui dividing header">{{'SettingsComponent.holidays' | translate}}</h4>
   <div class="ui fields">
-    <div class="ui checkbox">
-      <input type="checkbox" name="holidaysEnabled" [(ngModel)]="settings.holidaysEnabled">
+    <div class="field">
       <label>{{'SettingsComponent.holidaysEnabled' | translate}}</label>
+      <input class="ui checkbox" type="checkbox" name="holidaysEnabled" [(ngModel)]="settings.holidaysEnabled">
     </div>
     <div class="seven wide field" [class.disabled]="!settings.holidaysEnabled">
       <label>{{'SettingsComponent.holidaysUrl' | translate}}</label>
@@ -64,9 +64,9 @@
 
   <h4 class="ui dividing header">Pulse receiver</h4>
   <div class="ui fields">
-    <div class="ui checkbox">
-      <input type="checkbox" name="pulseReceiveEnabled" [(ngModel)]="settings.pulseReceiverEnabled">
+    <div class="field">
       <label>{{'SettingsComponent.pulseReceiveEnabled' | translate}}</label>
+      <input class="ui checkbox" type="checkbox" name="pulseReceiveEnabled" [(ngModel)]="settings.pulseReceiverEnabled">
     </div>
     <div class="field" [class.disabled]="!settings.pulseReceiverEnabled">
       <label>{{'SettingsComponent.pulseReceiverPort' | translate}}</label>
