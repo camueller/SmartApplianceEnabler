@@ -6,3 +6,7 @@ label.required::after {
   min-height: 2.5rem;
   bottom: 1.2857rem;
 }
+
+.icon-field {
+  padding-top: 2.0em;
+}

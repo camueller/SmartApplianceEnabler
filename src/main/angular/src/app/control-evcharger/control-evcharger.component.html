@@ -106,7 +106,7 @@
             <label>{{'ControlEvchargerComponent.value' | translate}}</label>
             <input type="text" formControlName="value">
           </div>
-          <div class="field" style="padding-top: 2.0em">
+          <div class="field icon-field">
             <i (click)="removeModbusConfiguration(i)" class="icon big red remove circle"></i>
             <i *ngIf="l" (click)="addModbusConfiguration()" class="icon big green add circle"></i>
           </div>
@@ -122,7 +122,7 @@
             <label>{{'ControlEvchargerComponent.ev.name' | translate}}</label>
             <input type="text" formControlName="name">
           </div>
-          <div class="field" style="padding-top: 2.0em">
+          <div class="field icon-field">
             <i (click)="removeElectricVehicle(i)" class="icon big red remove circle"></i>
           </div>
         </div>
