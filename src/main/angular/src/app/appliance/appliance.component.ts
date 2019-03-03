@@ -36,7 +36,7 @@ import {Logger} from '../log/logger';
 @Component({
   selector: 'app-appliance-details',
   templateUrl: './appliance.component.html',
-  styleUrls: ['./appliance.component.css']
+  styleUrls: ['./appliance.component.css', '../global.css']
 })
 export class ApplianceComponent implements OnInit, CanDeactivate<ApplianceComponent> {
   @ViewChild('detailsForm') detailsForm: NgForm;
