@@ -6,7 +6,7 @@ import {StartingCurrentSwitch} from './starting-current-switch';
 @Component({
   selector: 'app-control-startingcurrent',
   templateUrl: './control-startingcurrent.component.html',
-  styles: []
+  styleUrls: ['../global.css']
 })
 export class ControlStartingcurrentComponent implements OnInit {
 

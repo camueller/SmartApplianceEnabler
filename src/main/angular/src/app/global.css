@@ -1,3 +1,8 @@
 label.required::after {
   content: " (*)";
 }
+
+.ui.checkbox {
+  min-height: 36px;
+  bottom: 18px;
+}
