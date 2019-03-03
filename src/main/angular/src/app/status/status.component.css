@@ -133,15 +133,3 @@
   padding-left: 4px !important;
   padding-right: 4px !important;
 }
-
-.ui.selection.dropdown {
-  min-width: 0px;
-}
-
-.dropdown-item {
-  white-space: nowrap !important;
-}
-
-.ui.grid > .column {
-  padding: 0;
-}

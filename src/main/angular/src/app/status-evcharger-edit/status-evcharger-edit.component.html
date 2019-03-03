@@ -13,15 +13,15 @@
   <div class="appliance-details-row">
     <span class="appliance-status-label">{{'StatusComponent.stateOfCharge' | translate}}</span>
     <span class="appliance-status-label">{{'StatusComponent.stateOfChargeCurrent' | translate}}</span>
-    <input type="text" class="appliance-percentage-input" name="stateOfChargeCurrent" formControlName="stateOfChargeCurrent">
+    <input type="text" class="percentage-input" name="stateOfChargeCurrent" formControlName="stateOfChargeCurrent">
     <span class="appliance-status-label">{{'StatusComponent.stateOfChargeUnit' | translate}}</span>
     <span class="appliance-status-label">{{'StatusComponent.stateOfChargeRequested' | translate}}</span>
-    <input type="text" class="appliance-percentage-input" name="stateOfChargeRequested" formControlName="stateOfChargeRequested">
+    <input type="text" class="percentage-input" name="stateOfChargeRequested" formControlName="stateOfChargeRequested">
     <span class="appliance-status-label">{{'StatusComponent.stateOfChargeUnit' | translate}}</span>
   </div>
   <div class="appliance-details-row">
     <span class="appliance-status-label">{{'StatusComponent.chargeLatestEndRequested' | translate}}</span>
-    <sui-select class="selection form-control"
+    <sui-select class="selection form-control dow-select"
                 [options]="dows"
                 labelField="name"
                 valueField="id"
@@ -31,7 +31,7 @@
     >
       <sui-select-option *ngFor="let option of selectChargeEndDow.filteredOptions" class="dropdown-item" [value]="option"></sui-select-option>
     </sui-select>
-    <input type="text" class="appliance-number-input clockpicker" style="width: 4em" name="chargeEndTime"
+    <input type="text" class="time-of-day clockpicker" name="chargeEndTime"
            formControlName="chargeEndTime" placeholder="00:00">
   </div>
   <div class="appliance-details-row appliance-button-row">
