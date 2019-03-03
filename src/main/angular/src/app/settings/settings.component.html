@@ -52,7 +52,7 @@
                [(ngModel)]="modbusSettingsEntry.modbusTcpPort" pattern="{{VALIDATOR_PATTERN_INTEGER}}">
         <div *ngIf="errors.modbusTcpPort" class="ui negative message">{{errors.modbusTcpPort}}</div>
       </div>
-      <div class="field" style="padding-top: 2.0em">
+      <div class="field icon-field">
         <i (click)="removeModbusSettings(i)" class="icon big red remove circle"></i>
         <i *ngIf="l" (click)="addModbusSettings()" class="icon big green add circle"></i>
       </div>
