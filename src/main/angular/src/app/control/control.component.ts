@@ -39,12 +39,11 @@ import {Appliance} from '../appliance/appliance';
 import {NgForm} from '@angular/forms';
 import {FormMarkerService} from '../shared/form-marker-service';
 import {EvCharger} from '../control-evcharger/ev-charger';
-import {Mock} from 'protractor/built/driverProviders';
 
 @Component({
   selector: 'app-appliance-switch',
   templateUrl: './control.component.html',
-  styles: []
+  styleUrls: ['../global.css']
 })
 export class ControlComponent implements OnInit, CanDeactivate<ControlComponent> {
   @ViewChild('controlForm')
