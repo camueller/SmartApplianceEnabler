@@ -1,8 +1,8 @@
 <form class="ui form" [formGroup]="form" (ngSubmit)="submitForm()">
   <h4 class="ui dividing header">{{'ControlEvchargerComponent.heading' | translate}}</h4>
   <div class="ui fields">
-    <div class="field" style="font-weight: bold; padding: 0.78571429em 0.5em 0em">
-      {{'ControlEvchargerComponent.template' | translate}}
+    <div class="field">
+      <label class="standalone-label">{{'ControlEvchargerComponent.template' | translate}}</label>
     </div>
     <div class="field">
       <select class="ui fluid dropdown" formControlName="template">

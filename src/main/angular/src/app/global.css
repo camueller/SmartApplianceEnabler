@@ -10,3 +10,8 @@ label.required::after {
 .icon-field {
   padding-top: 2.0em;
 }
+
+.standalone-label {
+  min-height: 2.5rem;
+  line-height: 2.5rem
+}
