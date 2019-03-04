@@ -15,6 +15,7 @@ import {ControlService} from '../control/control-service';
 import {Control} from '../control/control';
 import {ElectricVehicle} from './electric-vehicle';
 import {FormHandler} from '../shared/form-handler';
+import {SocScript} from './soc-script';
 
 declare const $: any;
 
@@ -95,8 +96,8 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
       this.control.evCharger.control.configuration.map(
         configuration => this.buildModbusConfigurationFormGroup(configuration))
     );
-    this.electricVehicles = new FormArray(
-      this.control.evCharger.vehicles.map(ev => this.buildElectricVehicleFormGroup(ev))
+    this.electricVehicles = new FormArray(this.control.evCharger.vehicles ?
+      this.control.evCharger.vehicles.map(ev => this.buildElectricVehicleFormGroup(ev)) : []
     );
     const fg =  new FormGroup({});
     this.formHandler.addFormControl(fg, 'template', undefined);
@@ -157,14 +158,21 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
     evCharger.forceInitialCharging = form.controls.forceInitialCharging.value;
     evCharger.control.idref = form.controls.modbusIdref.value;
     evCharger.control.slaveAddress = form.controls.modbusSlaveAddress.value;
-    const configurations: Array<ModbusRegisterConfguration> = [];
 
+    const configurations: Array<ModbusRegisterConfguration> = [];
     const configurationsFormArray = (form.controls.modbusConfigurations as FormArray);
-    for (let i = 0; i < configurationsFormArray.getRawValue().length ; i++) {
+    for (let i = 0; i < configurationsFormArray.getRawValue().length; i++) {
       const modbusConfigurationFormControl = configurationsFormArray.at(i) as FormGroup;
       configurations.push(this.buildModbusRegisterConfguration(modbusConfigurationFormControl));
     }
     evCharger.control.configuration = configurations;
+
+    const evs: Array<ElectricVehicle> = [];
+    for (let i = 0; i < this.electricVehicles.length; i++) {
+      const evControl = this.electricVehicles.at(i) as FormGroup;
+      evs.push(this.buildElectricVehicle(evControl));
+    }
+    evCharger.vehicles = evs;
   }
 
   buildModbusRegisterConfguration(modbusConfigurationFormControl: FormGroup): ModbusRegisterConfguration {
@@ -179,6 +187,27 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
       factorToValue: undefined,
       value: modbusConfigurationFormControl.controls.value.value,
     };
+  }
+
+ buildElectricVehicle(evFormControl: FormGroup): ElectricVehicle {
+    let newSocScript: SocScript
+    if (evFormControl.controls.scriptEnabled.value) {
+      newSocScript = new SocScript({
+        script: evFormControl.controls.scriptFilename.value,
+        extractionRegex: evFormControl.controls.scriptExtractionRegex.value
+      });
+    }
+    return new ElectricVehicle({
+      id: evFormControl.controls.id.value,
+      name: evFormControl.controls.name.value,
+      batteryCapacity: evFormControl.controls.batteryCapacity.value,
+      phases: evFormControl.controls.phases.value,
+      maxChargePower: evFormControl.controls.maxChargePower.value,
+      defaultSocManual: evFormControl.controls.defaultSocManual.value,
+      defaultSocSchedule: evFormControl.controls.defaultSocSchedule.value,
+      defaultSocOptionalEnergy: evFormControl.controls.defaultSocOptionalEnergy.value,
+      socScript: newSocScript
+    });
   }
 
   findNextEvId(evs: FormArray): number {
