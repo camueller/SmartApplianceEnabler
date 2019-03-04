@@ -17,7 +17,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 import {TranslateService} from '@ngx-translate/core';
-import {Observable, Subject} from 'rxjs';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
 
 export interface DayOfWeek {
   id: number;
@@ -36,12 +36,11 @@ export class DaysOfWeek {
     {id: 7, name: 'daysOfWeek_sunday'},
     {id: 8, name: 'daysOfWeek_holiday'},
   ];
-  private static initialized = false;
-  private static subject: Subject<DayOfWeek[]> = new Subject();
+  private static subject: Subject<DayOfWeek[]>;
 
   public static getDows(translate: TranslateService): Observable<DayOfWeek[]> {
-    if (! DaysOfWeek.initialized) {
-      DaysOfWeek.initialized = true;
+    if (! DaysOfWeek.subject) {
+      DaysOfWeek.subject = new BehaviorSubject(DaysOfWeek.daysOfWeek);
       const keys = DaysOfWeek.daysOfWeek.map(dayOfWeek => dayOfWeek.name);
       translate.get(keys).subscribe(
         translatedKeys => {
