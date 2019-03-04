@@ -5,9 +5,9 @@
       <input type="text" formControlName="gpio">
       <div *ngIf="errors.gpio" class="ui negative message">{{errors.gpio}}</div>
     </div>
-    <div class="ui checkbox">
-      <input type="checkbox" formControlName="reverseStates">
+    <div class="field">
       <label>{{'ControlSwitchComponent.reverseStates' | translate}}</label>
+      <input class="ui checkbox" type="checkbox" formControlName="reverseStates">
     </div>
   </div>
   <app-control-startingcurrent *ngIf="control.startingCurrentDetection"
