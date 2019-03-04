@@ -93,7 +93,7 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   }
 
   canDeactivate(): Observable<boolean> | boolean {
-    if (this.controlForm && this.controlForm.form.pristine && ! this.childFormDirty) {
+    if ((!this.controlForm || this.controlForm.form.pristine) && ! this.childFormDirty) {
       return true;
     }
     return this.dialogService.confirm(this.discardChangesMessage);
