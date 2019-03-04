@@ -34,13 +34,13 @@
     <div class="appliance-details">
       <div class="appliance-type">{{getTranslatedType(applianceStatus.type)}}</div>
       <div *ngIf="isEvCharger(applianceStatus); else notEvCharger">
-        <app-status-charger-edit *ngIf="isTrafficLightGreenClicked(applianceStatus); else goLightNotClickedCharger"
+        <app-status-evcharger-edit *ngIf="isTrafficLightGreenClicked(applianceStatus); else goLightNotClickedCharger"
                                  [applianceId]="applianceIdClicked"
                                  [status]="applianceStatus"
                                  [dows]="dows"
                                  (formSubmitted)="onFormSubmitted()"
         >
-        </app-status-charger-edit>
+        </app-status-evcharger-edit>
         <ng-template #goLightNotClickedCharger>
           <app-status-charger-view
             [status]="applianceStatus"

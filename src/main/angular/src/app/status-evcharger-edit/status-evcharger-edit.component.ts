@@ -50,7 +50,7 @@ FormControlName.prototype.ngOnChanges = function () {
 };
 
 @Component({
-  selector: 'app-status-charger-edit',
+  selector: 'app-status-evcharger-edit',
   templateUrl: './status-evcharger-edit.component.html',
   styleUrls: ['./status-evcharger-edit.component.css', '../status/status.component.css', '../global.css']
 })
