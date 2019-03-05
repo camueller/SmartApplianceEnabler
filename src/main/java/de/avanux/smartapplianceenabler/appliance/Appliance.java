@@ -588,17 +588,24 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         RuntimeInterval runtimeInterval = null;
         if(evCharger.getVehicles() != null && evCharger.getVehicles().size() > 0) {
             int batteryCapacity = ElectricVehicle.DEFAULT_BATTERY_CAPACITY;
+            Integer targetSoc = null;
             ElectricVehicle vehicle = evCharger.getChargingVehicle();
             if(vehicle == null && evCharger.getVehicles().size() > 0) {
                 vehicle = evCharger.getVehicles().get(0);
-                logger.debug("{}: optional energy calculated for vehicle={} batteryCapactiy={}", id, vehicle.getName(), vehicle.getBatteryCapacity());
                 batteryCapacity = vehicle.getBatteryCapacity();
+                targetSoc = vehicle.getDefaultSocOptionalEnergy();
+                logger.debug("{}: optional energy calculated for vehicle={} batteryCapactiy={} targetSoc={}",
+                        id, vehicle.getName(), batteryCapacity, targetSoc);
+            }
+            if(targetSoc == null) {
+                targetSoc = 100;
             }
             runtimeInterval = new RuntimeInterval();
             runtimeInterval.setEarliestStart(0);
             runtimeInterval.setLatestEnd(CONSIDERATION_INTERVAL_DAYS * 24 * 3600);
             runtimeInterval.setMinEnergy(0);
-            runtimeInterval.setMaxEnergy(batteryCapacity - Float.valueOf(energy * 1000).intValue());
+            runtimeInterval.setMaxEnergy(Float.valueOf(targetSoc/100.0f * batteryCapacity).intValue()
+                    - Float.valueOf(energy * 1000).intValue());
         }
         return runtimeInterval;
     }
