@@ -146,7 +146,7 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
     this.formHandler.addFormControl(fg, 'bytes', configuration.bytes);
     this.formHandler.addFormControl(fg, 'byteOrder', configuration.byteOrder);
     this.formHandler.addFormControl(fg, 'extractionRegex', configuration.extractionRegex);
-    this.formHandler.addFormControl(fg, 'value', configuration.value);
+    this.formHandler.addFormControl(fg, 'value', configuration.value, [Validators.required]);
     return fg;
   }
 
