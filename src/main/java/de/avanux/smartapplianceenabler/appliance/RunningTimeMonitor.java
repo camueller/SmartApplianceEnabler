@@ -36,6 +36,7 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
     private List<Schedule> schedules;
     private Set<ActiveIntervalChangedListener> scheduleChangedListeners = new HashSet<>();
     private TimeframeInterval activeTimeframeInterval;
+    private Request activeRequest;
     private LocalDateTime statusChangedAt;
     private Integer runningTime;
     // remaining min running time while not running or when running started
@@ -217,6 +218,10 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         return activeTimeframeInterval;
     }
 
+    public Request getActiveRequest() {
+        return activeRequest;
+    }
+
     /**
      * Activate the current or next timeframe interval from one of the given schedules.
      * @param now
@@ -258,9 +263,12 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         if(timeframeIntervalToBeActivated != null && activeTimeframeInterval == null) {
             Schedule schedule = timeframeIntervalToBeActivated.getTimeframe().getSchedule();
             runningTime = 0;
-            if(schedule.getRequest() instanceof RuntimeRequest) {
-                remainingMinRunningTimeWhileNotRunning = schedule.getRequest().getMin();
-                remainingMaxRunningTimeWhileNotRunning = schedule.getRequest().getMax();
+            activeRequest = schedule.getRequest();
+            if(schedule.getRequest() instanceof RuntimeRequest || schedule.getRequest() instanceof SocRequest) {
+                if(schedule.getRequest() instanceof RuntimeRequest) {
+                    remainingMinRunningTimeWhileNotRunning = schedule.getRequest().getMin();
+                    remainingMaxRunningTimeWhileNotRunning = schedule.getRequest().getMax();
+                }
                 intervalChanged = true;
                 logger.debug("{}: Interval activated: ", applianceId, timeframeIntervalToBeActivated);
             }
@@ -273,6 +281,7 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
             statusChangedAt = null;
             remainingMinRunningTimeWhileNotRunning = null;
             remainingMaxRunningTimeWhileNotRunning = null;
+            activeRequest = null;
             intervalChanged = true;
         }
         TimeframeInterval deactivatedTimeframeInterval = activeTimeframeInterval;

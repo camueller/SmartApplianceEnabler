@@ -338,4 +338,11 @@ export class ControlFactory {
       });
     control.evCharger.control.registerWrites = registerWrites;
   }
+
+  toElectricVehicle(rawEv: any): ElectricVehicle {
+    this.logger.debug('ElectricVehicle (JSON): ' + JSON.stringify(rawEv));
+    const ev = new ElectricVehicle(... rawEv);
+    this.logger.debug('ElectricVehicle (TYPE): ' + JSON.stringify(ev));
+    return ev;
+  }
 }

@@ -63,6 +63,7 @@ import {ControlStartingcurrentComponent} from './control-startingcurrent/control
 import { ControlModbusComponent } from './control-modbus/control-modbus.component';
 import { ControlHttpComponent } from './control-http/control-http.component';
 import {FormMarkerService} from './shared/form-marker-service';
+import {ElectricVehicleResolver} from './control-evcharger/electric-vehicle-resolver.service';
 
 @NgModule({
   declarations: [
@@ -113,6 +114,7 @@ import {FormMarkerService} from './shared/form-marker-service';
     ControlResolver,
     ControlDefaultsResolver,
     DialogService,
+    ElectricVehicleResolver,
     FormMarkerService,
     Logger,
     {provide: Options, useValue: {level: Level.DEBUG}},

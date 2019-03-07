@@ -117,6 +117,13 @@ public class ElectricVehicle {
         this.socScript = socScript;
     }
 
+    public Float getStateOfCharge() {
+        if(socScript != null) {
+            return socScript.getStateOfCharge();
+        }
+        return null;
+    }
+
     @Override
     public String toString() {
         return "ElectricVehicle {" +

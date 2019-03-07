@@ -24,11 +24,12 @@
             {{'ScheduleComponent.schedule' | translate}}
             <i (click)="removeSchedule(i)" class="icon red remove circle"></i>
           </div>
-          <div class="ui checkbox" style="transform: translateY(+30%);">
-            <input type="checkbox" formControlName="enabled">
+          <div class="field">
             <label>{{'ScheduleComponent.enabled' | translate}}</label>
+            <input class="ui checkbox" type="checkbox" formControlName="enabled">
           </div>
-          <div class="field" [class.disabled]="!schedule.controls.enabled.value">
+          <div class="two wide field" [class.disabled]="!schedule.controls.enabled.value">
+            <label>{{'ScheduleComponent.timeframeType' | translate}}</label>
             <select class="ui fluid dropdown" formControlName="timeframeType">
               <option value="de.avanux.smartapplianceenabler.schedule.DayTimeframe"
                       [selected]="schedule.controls.timeframeType.value==DAY_TIMEFRAME">
@@ -38,14 +39,20 @@
                 {{'ScheduleComponent.timeframeType.ConsecutiveDaysTimeframe' | translate}}</option>
             </select>
           </div>
-          <div class="field" [class.disabled]="!schedule.controls.enabled.value">
+          <div class="two wide field" [class.disabled]="!schedule.controls.enabled.value">
+            <label>{{'ScheduleComponent.requestType' | translate}}</label>
             <select class="ui fluid dropdown" formControlName="requestType">
               <option value="de.avanux.smartapplianceenabler.schedule.RuntimeRequest"
                       [selected]="schedule.controls.requestType.value==RUNTIME_REQUEST">
                 {{'ScheduleComponent.runtimeRequest' | translate}}</option>
               <option value="de.avanux.smartapplianceenabler.schedule.EnergyRequest"
-                      [selected]="schedule.controls.requestType.value==ENERGY_REQUEST">
-                {{'ScheduleComponent.energyRequest' | translate}}</option>
+                      [selected]="schedule.controls.requestType.value==ENERGY_REQUEST"
+                      [disabled]="! hasElectricVehicles"
+              >{{'ScheduleComponent.energyRequest' | translate}}</option>
+              <option value="de.avanux.smartapplianceenabler.schedule.SocRequest"
+                      [selected]="schedule.controls.requestType.value==SOC_REQUEST"
+                      [disabled]="! hasElectricVehicles"
+              >{{'ScheduleComponent.socRequest' | translate}}</option>
             </select>
           </div>
         </div>
@@ -167,14 +174,30 @@
           <div class="field">
             <label>{{'ScheduleComponent.energyRequest_min' | translate}}</label>
             <input type="text" formControlName="min">
-            <div *ngIf="getIndexedErrorMessage('dayTimeframe_minRunningTime', i)" class="ui negative message">
-              {{getIndexedErrorMessage('dayTimeframe_minRunningTime', i)}}</div>
           </div>
           <div class="field">
             <label>{{'ScheduleComponent.energyRequest_max' | translate}}</label>
             <input type="text" formControlName="max">
-            <div *ngIf="getIndexedErrorMessage('dayTimeframe_maxRunningTime', i)" class="ui negative message">
-              {{getIndexedErrorMessage('dayTimeframe_maxRunningTime', i)}}</div>
+          </div>
+        </div>
+        <div class="ui fields" [class.disabled]="!schedule.controls.enabled.value"
+             *ngIf="schedule.controls.requestType.value===SOC_REQUEST" formGroupName="socRequest">
+          <div class="field">
+            <label>{{'ScheduleComponent.socRequest_evId' | translate}}</label>
+            <sui-select class="selection form-control"
+                        [options]="electricVehicles"
+                        labelField="name"
+                        valueField="id"
+                        formControlName="evId"
+                        placeholder=" "
+                        #selectElectricVehicle
+            >
+              <sui-select-option *ngFor="let option of selectElectricVehicle.filteredOptions" class="dropdown-item" [value]="option"></sui-select-option>
+            </sui-select>
+          </div>
+          <div class="field">
+            <label>{{'ScheduleComponent.socRequest_soc' | translate}}</label>
+            <input type="text" formControlName="soc">
           </div>
         </div>
       </div>
