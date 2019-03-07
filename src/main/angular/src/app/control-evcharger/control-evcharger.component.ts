@@ -124,7 +124,6 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
     this.formHandler.addFormControl(fg, 'phases', ev && ev.phases);
     this.formHandler.addFormControl(fg, 'maxChargePower', ev && ev.maxChargePower);
     this.formHandler.addFormControl(fg, 'defaultSocManual', ev && ev.defaultSocManual);
-    this.formHandler.addFormControl(fg, 'defaultSocSchedule', ev && ev.defaultSocSchedule);
     this.formHandler.addFormControl(fg, 'defaultSocOptionalEnergy', ev && ev.defaultSocOptionalEnergy);
     const scriptEnabled: boolean = ev && ev.socScript && (ev.socScript.script !== undefined);
     this.formHandler.addFormControl(fg, 'scriptEnabled', scriptEnabled);
@@ -204,7 +203,6 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
       phases: evFormControl.controls.phases.value,
       maxChargePower: evFormControl.controls.maxChargePower.value,
       defaultSocManual: evFormControl.controls.defaultSocManual.value,
-      defaultSocSchedule: evFormControl.controls.defaultSocSchedule.value,
       defaultSocOptionalEnergy: evFormControl.controls.defaultSocOptionalEnergy.value,
       socScript: newSocScript
     });

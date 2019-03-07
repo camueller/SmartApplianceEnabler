@@ -182,7 +182,6 @@
   "ControlEvchargerComponent.ev.maxChargePower": "Max. Ladeleistung [W]",
   "ControlEvchargerComponent.ev.soc": "Standardwerte für Sollwert des State of Charge (SOC)",
   "ControlEvchargerComponent.ev.defaultSocManual": "Manuell",
-  "ControlEvchargerComponent.ev.defaultSocSchedule": "Schaltzeiten",
   "ControlEvchargerComponent.ev.defaultSocOptionalEnergy": "Optionale Energie",
   "ControlEvchargerComponent.ev.script.heading": "Script zum Auslesen des State of Charge (SOC)",
   "ControlEvchargerComponent.ev.script.enabled": "Verwenden",
