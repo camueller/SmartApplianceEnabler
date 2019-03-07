@@ -36,8 +36,6 @@ public class ElectricVehicle {
     @XmlAttribute
     private Integer defaultSocManual;
     @XmlAttribute
-    private Integer defaultSocSchedule;
-    @XmlAttribute
     private Integer defaultSocOptionalEnergy;
     @XmlElements({
             @XmlElement(name = "SocScript", type = SocScript.class),
@@ -91,14 +89,6 @@ public class ElectricVehicle {
 
     public void setDefaultSocManual(Integer defaultSocManual) {
         this.defaultSocManual = defaultSocManual;
-    }
-
-    public Integer getDefaultSocSchedule() {
-        return defaultSocSchedule;
-    }
-
-    public void setDefaultSocSchedule(Integer defaultSocSchedule) {
-        this.defaultSocSchedule = defaultSocSchedule;
     }
 
     public Integer getDefaultSocOptionalEnergy() {

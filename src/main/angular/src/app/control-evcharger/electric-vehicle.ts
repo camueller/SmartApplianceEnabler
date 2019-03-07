@@ -13,7 +13,6 @@ export class ElectricVehicle {
   phases: number;
   maxChargePower: number;
   defaultSocManual: number;
-  defaultSocSchedule: number;
   defaultSocOptionalEnergy: number;
   socScript: SocScript;
 
