@@ -62,6 +62,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     private static final float CHARGE_LOSS_FACTOR = 1.1f;
     private transient boolean useOptionalEnergy = true;
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
+    private transient Integer startChargingSoc;
     private transient Long startChargingTimestamp;
     private transient Integer chargeAmount;
     private transient Integer chargePower;
@@ -98,6 +99,15 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
 
     public void setChargeAmount(Integer chargeAmount) {
         this.chargeAmount = chargeAmount;
+    }
+
+    public Integer getStartChargingSoc() {
+        return startChargingSoc;
+    }
+
+    public void setStartChargingSoc(Integer startChargingSoc) {
+        logger.debug("{}: Start charging SoC={}%", applianceId, startChargingSoc);
+        this.startChargingSoc = startChargingSoc;
     }
 
     public ElectricVehicle getChargingVehicle() {

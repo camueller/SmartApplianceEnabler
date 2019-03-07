@@ -7,6 +7,8 @@ import {SaeService} from '../shared/sae-service';
 import {HttpClient} from '@angular/common/http';
 import {Logger} from '../log/logger';
 import {map} from 'rxjs/operators';
+import {ElectricVehicle} from '../control-evcharger/electric-vehicle';
+import {Schedule} from '../schedule/schedule';
 
 @Injectable()
 export class ControlService extends SaeService {
@@ -31,6 +33,16 @@ export class ControlService extends SaeService {
           return this.controlFactory.createEmptyControl();
         }
         return this.controlFactory.fromJSON(response);
+      }));
+  }
+
+  getElectricVehicles(id: string): Observable<Array<ElectricVehicle>> {
+    return this.http.get(`${SaeService.API}/ev?id=${id}`)
+      .pipe(map((schedules: Array<ElectricVehicle>) => {
+        if (!schedules) {
+          return new Array<ElectricVehicle>();
+        }
+        return schedules.map(ev => this.controlFactory.toElectricVehicle(ev));
       }));
   }
 

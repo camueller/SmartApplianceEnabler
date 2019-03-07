@@ -27,6 +27,7 @@ import {Logger} from '../log/logger';
 import {RuntimeRequest} from './runtime-request';
 import {EnergyRequest} from './energy-request';
 import {run} from 'tslint/lib/runner';
+import {SocRequest} from './soc-request';
 
 export class ScheduleFactory {
 
@@ -81,6 +82,7 @@ export class ScheduleFactory {
     // replace typed attribute names with interface names
     content = content.replace(/runtimeRequest/g, 'request');
     content = content.replace(/energyRequest/g, 'request');
+    content = content.replace(/socRequest/g, 'request');
     content = content.replace(/dayTimeframe/g, 'timeframe');
     content = content.replace(/consecutiveDaysTimeframe/g, 'timeframe');
     return content;
@@ -96,6 +98,9 @@ export class ScheduleFactory {
     } else if (rawSchedule.request['@class'] === EnergyRequest.TYPE) {
       schedule.requestType = EnergyRequest.TYPE;
       schedule.energyRequest = this.createEnergyRequest(rawSchedule.request);
+    } else if (rawSchedule.request['@class'] === SocRequest.TYPE) {
+      schedule.requestType = SocRequest.TYPE;
+      schedule.socRequest = this.createSocRequest(rawSchedule.request);
     }
     if (rawSchedule.timeframe['@class'] === DayTimeframe.TYPE) {
       schedule.timeframeType = DayTimeframe.TYPE;
@@ -131,6 +136,14 @@ export class ScheduleFactory {
         }
         if (rawSchedule.energyRequest.max != null && rawSchedule.energyRequest.max !== '') {
           schedule.energyRequest.max = rawSchedule.energyRequest.max;
+        }
+      } else if (rawSchedule.requestType === SocRequest.TYPE) {
+        schedule.socRequest = new SocRequest();
+        if (rawSchedule.socRequest.evId != null && rawSchedule.socRequest.evId !== '') {
+          schedule.socRequest.evId = rawSchedule.socRequest.evId;
+        }
+        if (rawSchedule.socRequest.soc != null && rawSchedule.socRequest.soc !== '') {
+          schedule.socRequest.soc = rawSchedule.socRequest.soc;
         }
       }
 
@@ -170,10 +183,12 @@ export class ScheduleFactory {
 
   createEnergyRequest(rawEnergyRequest: any): EnergyRequest {
     this.logger.debug('createEnergyRequest from ' + JSON.stringify(rawEnergyRequest));
-    const energyRquest = new EnergyRequest();
-    energyRquest.min = rawEnergyRequest.min;
-    energyRquest.max = rawEnergyRequest.max;
-    return energyRquest;
+    return new EnergyRequest(... rawEnergyRequest);
+  }
+
+  createSocRequest(rawSocRequest: any): SocRequest {
+    this.logger.debug('createSocRequest from ' + JSON.stringify(rawSocRequest));
+    return new SocRequest(... rawSocRequest);
   }
 
   createDayTimeframe(rawTimeframe: any): DayTimeframe {

@@ -64,6 +64,7 @@ public class SaeController {
     private static final String SETTINGSDEFAULTS_URL = BASE_URL + "/settingsdefaults";
     private static final String STATUS_URL = BASE_URL + "/status";
     private static final String RUNTIME_URL = BASE_URL + "/runtime";
+    private static final String EV_URL = BASE_URL + "/ev";
     private static final String EVCHARGE_URL = BASE_URL + "/evcharge";
     private static final String INFO_URL = BASE_URL + "/info";
     // only required for development if running via "ng serve"
@@ -421,6 +422,27 @@ public class SaeController {
         return activateTimeframe(now, applianceId, null, runtime, false);
     }
 
+    @RequestMapping(value=EV_URL, method=RequestMethod.GET, produces="application/json")
+    @CrossOrigin(origins = CROSS_ORIGIN_URL)
+    public List<ElectricVehicle> getElectricVehicles(HttpServletResponse response, @RequestParam(value="id") String applianceId) {
+        logger.debug("{}: Received request for electric vehicles", applianceId);
+        Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
+        if (appliance != null) {
+            if (appliance.getControl() instanceof ElectricVehicleCharger) {
+                ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
+                return evCharger.getVehicles();
+            } else {
+                logger.error("{}: Appliance has no electric vehicle charger", applianceId);
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            }
+        }
+        else {
+            logger.error("{}: Appliance not found", applianceId);
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        }
+        return null;
+    }
+
     @RequestMapping(value=EVCHARGE_URL, method=RequestMethod.PUT)
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public void setEnergyDemand(HttpServletResponse response,
@@ -477,12 +499,9 @@ public class SaeController {
                 ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
                 ElectricVehicle electricVehicle = evCharger.getVehicle(evId);
                 if(electricVehicle != null) {
-                    SocScript socScript = electricVehicle.getSocScript();
-                    if(socScript != null) {
-                        Float soc = socScript.getStateOfCharge();
-                        logger.debug("{}: Return SOC={}", applianceId, soc);
-                        return soc;
-                    }
+                    Float soc = electricVehicle.getStateOfCharge();
+                    logger.debug("{}: Return SOC={}", applianceId, soc);
+                    return soc;
                 }
                 else {
                     logger.error("{}: EV-Id {} not found", applianceId, evId);

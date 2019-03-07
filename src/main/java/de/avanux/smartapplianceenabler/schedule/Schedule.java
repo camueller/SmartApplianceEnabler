@@ -34,7 +34,8 @@ public class Schedule {
     private boolean enabled = true;
     @XmlElements({
             @XmlElement(name = "RuntimeRequest", type = RuntimeRequest.class),
-            @XmlElement(name = "EnergyRequest", type = EnergyRequest.class)
+            @XmlElement(name = "EnergyRequest", type = EnergyRequest.class),
+            @XmlElement(name = "SocRequest", type = SocRequest.class)
     })
     private Request request;
     @XmlElements({

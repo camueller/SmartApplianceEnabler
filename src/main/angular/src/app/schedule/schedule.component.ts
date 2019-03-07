@@ -34,6 +34,8 @@ import {Observable} from 'rxjs';
 import {Logger} from '../log/logger';
 import {RuntimeRequest} from './runtime-request';
 import {EnergyRequest} from './energy-request';
+import {SocRequest} from './soc-request';
+import {ElectricVehicle} from '../control-evcharger/electric-vehicle';
 
 declare const $: any;
 
@@ -72,9 +74,11 @@ FormControlName.prototype.ngOnChanges = function () {
 export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewChecked, CanDeactivate<SchedulesComponent> {
   schedulesForm: FormGroup;
   applianceId: string;
+  electricVehicles: ElectricVehicle[];
   initializeOnceAfterViewChecked = false;
   RUNTIME_REQUEST = RuntimeRequest.TYPE;
   ENERGY_REQUEST = EnergyRequest.TYPE;
+  SOC_REQUEST = SocRequest.TYPE;
   DAY_TIMEFRAME = DayTimeframe.TYPE;
   CONSECUTIVE_DAYS_TIMEFRAME = ConsecutiveDaysTimeframe.TYPE;
   errors: { [key: string]: string } = {};
@@ -96,8 +100,9 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.initForm();
     this.route.paramMap.subscribe(() => this.applianceId = this.route.snapshot.paramMap.get('id'));
-    this.route.data.subscribe((data: {schedules: Schedule[]}) => {
+    this.route.data.subscribe((data: {schedules: Schedule[], electricVehicles: ElectricVehicle[]}) => {
       this.initForm();
+      this.electricVehicles = data.electricVehicles;
       const schedulesControl = <FormArray>this.schedulesForm.controls['schedules'];
       data.schedules.forEach(schedule => {
         const scheduleFormGroup = this.buildSchedule(schedule);
@@ -150,8 +155,9 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
     const scheduleFormGroup = this.fb.group({
       enabled: this.fb.control(schedule != null ? schedule.enabled : true),
       requestType: this.fb.control(requestType),
-      energyRequest: requestType === this.ENERGY_REQUEST ? this.buildEnergyRequest(schedule) : null,
-      runtimeRequest: requestType === this.RUNTIME_REQUEST ? this.buildRuntimeRequest(schedule) : null,
+      runtimeRequest: requestType === this.RUNTIME_REQUEST && this.buildRuntimeRequest(schedule),
+      energyRequest: requestType === this.ENERGY_REQUEST && this.buildEnergyRequest(schedule),
+      socRequest: requestType === this.SOC_REQUEST && this.buildSocRequest(schedule),
       timeframeType: this.fb.control(timeframeType),
       dayTimeframe: timeframeType === this.DAY_TIMEFRAME ? this.buildDayTimeframe(schedule) : null,
       consecutiveDaysTimeframe: timeframeType === this.CONSECUTIVE_DAYS_TIMEFRAME ? this.buildConsecutiveDaysTimeframe(schedule) : null
@@ -161,10 +167,16 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
         this.logger.debug('requestType changed to ' + newRequestType);
         if (newRequestType === this.RUNTIME_REQUEST) {
           scheduleFormGroup.removeControl('energyRequest');
+          scheduleFormGroup.removeControl('socRequest');
           scheduleFormGroup.setControl('runtimeRequest', this.buildRuntimeRequest(schedule));
         } else if (newRequestType === this.ENERGY_REQUEST) {
           scheduleFormGroup.removeControl('runtimeRequest');
+          scheduleFormGroup.removeControl('socRequest');
           scheduleFormGroup.setControl('energyRequest', this.buildEnergyRequest(schedule));
+        } else if (newRequestType === this.SOC_REQUEST) {
+          scheduleFormGroup.removeControl('runtimeRequest');
+          scheduleFormGroup.removeControl('energyRequest');
+          scheduleFormGroup.setControl('socRequest', this.buildSocRequest(schedule));
         }
         this.initializeOnceAfterViewChecked = true;
       }
@@ -213,6 +225,23 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
 
   hasEnergyRequest(schedule: Schedule): boolean {
     return schedule != null && schedule.energyRequest != null;
+  }
+
+  buildSocRequest(schedule: Schedule): FormGroup {
+    return this.fb.group({
+      evId: this.fb.control(this.hasSocRequest(schedule) ? schedule.socRequest.evId : undefined,
+        [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]),
+      soc: this.fb.control(this.hasSocRequest(schedule) ? schedule.socRequest.soc : undefined,
+        [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]),
+    });
+  }
+
+  hasSocRequest(schedule: Schedule): boolean {
+    return schedule != null && schedule.socRequest != null;
+  }
+
+  get hasElectricVehicles(): boolean {
+    return this.electricVehicles.length > 0;
   }
 
   buildDayTimeframe(schedule: Schedule): FormGroup {

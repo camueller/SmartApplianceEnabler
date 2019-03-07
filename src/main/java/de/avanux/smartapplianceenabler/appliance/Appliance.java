@@ -409,8 +409,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     private boolean hasScheduleHandling() {
         // in case of starting current detection timeframes are added after
         // starting current was detected
-        return hasStartingCurrentDetection()
-                || (control instanceof ElectricVehicleCharger);
+        return hasStartingCurrentDetection();
     }
 
     private boolean hasStartingCurrentDetection() {
@@ -521,6 +520,11 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                     addEnergyRequestInterval(runtimeIntervals, activeTimeframeInterval.getInterval(),
                             remainingEnergy.getMin(), remainingEnergy.getMax(), now);
                 }
+                else if(request instanceof SocRequest) {
+                    EnergyRequest remainingEnergy = calculateRemainingEnergy((SocRequest) request, true);
+                    addEnergyRequestInterval(runtimeIntervals, activeTimeframeInterval.getInterval(),
+                            remainingEnergy.getMin(), remainingEnergy.getMax(), now);
+                }
             }
 
             Interval considerationInterval = new Interval(now.toDateTime(), now.plusDays(CONSIDERATION_INTERVAL_DAYS).toDateTime());
@@ -539,6 +543,11 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                 }
                 else if(request instanceof EnergyRequest) {
                     addEnergyRequestInterval(runtimeIntervals, interval, request.getMin(), request.getMax(), now);
+                }
+                else if(request instanceof SocRequest) {
+                    EnergyRequest remainingEnergy = calculateRemainingEnergy((SocRequest) request, false);
+                    addEnergyRequestInterval(runtimeIntervals, interval,
+                            remainingEnergy.getMin(), remainingEnergy.getMax(), now);
                 }
             }
         }
@@ -562,18 +571,44 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     }
 
     public EnergyRequest calculateRemainingEnergy(Schedule schedule) {
-        EnergyRequest remainingEnergy = new EnergyRequest();
-        remainingEnergy.setMin(schedule.getRequest().getMin());
-        remainingEnergy.setMax(schedule.getRequest().getMax());
+        return buildEnergyRequestConsideringEnergyAlreadyCharged(
+                schedule.getRequest().getMin(), schedule.getRequest().getMax());
+    }
+
+    public EnergyRequest calculateRemainingEnergy(SocRequest socRequest, boolean considerEnergyAlreadyCharged) {
+        if(this.control instanceof ElectricVehicleCharger) {
+            ElectricVehicleCharger charger = (ElectricVehicleCharger) this.control;
+            ElectricVehicle ev = charger.getVehicle(socRequest.getEvId());
+            Integer socStart = charger.getStartChargingSoc() != null ? charger.getStartChargingSoc() : 0;
+            int energyToBeCharged = Float.valueOf((socRequest.getSoc() - socStart)/100.0f * ev.getBatteryCapacity())
+                    .intValue();
+            logger.debug("{}: Energy to be charged: {} Wh", id, energyToBeCharged);
+            if(considerEnergyAlreadyCharged) {
+                return buildEnergyRequestConsideringEnergyAlreadyCharged(energyToBeCharged, energyToBeCharged);
+            }
+            return buildEnergyRequest(energyToBeCharged, energyToBeCharged);
+        }
+        return null;
+    }
+
+    private EnergyRequest buildEnergyRequestConsideringEnergyAlreadyCharged(int min, int max) {
+        EnergyRequest remainingEnergy = buildEnergyRequest(min, max);
         if(meter != null) {
             int whAlreadyCharged = Float.valueOf(meter.getEnergy() * 1000.0f).intValue();
-            remainingEnergy.setMin(remainingEnergy.getMin() - whAlreadyCharged);
+            remainingEnergy.setMin(min - whAlreadyCharged);
             if(remainingEnergy.getMax() != null) {
-                remainingEnergy.setMax(remainingEnergy.getMax() - whAlreadyCharged);
+                remainingEnergy.setMax(max - whAlreadyCharged);
             }
-            logger.debug("{}: Remaining energy calculated: {}", id, remainingEnergy);
         }
+        logger.debug("{}: Remaining energy calculated: {} Wh", id, remainingEnergy);
         return remainingEnergy;
+    }
+
+    private EnergyRequest buildEnergyRequest(int min, int max) {
+        EnergyRequest request = new EnergyRequest();
+        request.setMin(min);
+        request.setMax(max);
+        return request;
     }
 
     private RuntimeInterval getRuntimeIntervalForEVUsingOptionalEnergy(ElectricVehicleCharger evCharger) {
@@ -777,7 +812,27 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     @Override
     public void activeIntervalChanged(LocalDateTime now, String applianceId, TimeframeInterval deactivatedInterval,
                                       TimeframeInterval activatedInterval) {
-        if(activatedInterval == null) {
+        if(activatedInterval != null) {
+            Request request = runningTimeMonitor.getActiveRequest();
+            if(request instanceof SocRequest) {
+                SocRequest socRequest = (SocRequest) request;
+                if (this.control instanceof ElectricVehicleCharger) {
+                    ElectricVehicleCharger evCharger = (ElectricVehicleCharger) this.control;
+                    ElectricVehicle electricVehicle = evCharger.getVehicle(socRequest.getEvId());
+                    if(electricVehicle != null) {
+                        Float soc = electricVehicle.getStateOfCharge();
+                        if(soc != null) {
+                            evCharger.setChargingVehicleId(socRequest.getEvId());
+                            evCharger.setStartChargingSoc(Float.valueOf(soc).intValue());
+                        }
+                    }
+                    else {
+                        logger.error("{}: EV-Id {} not found", applianceId, socRequest.getEvId());
+                    }
+                }
+            }
+        }
+        else {
             setApplianceState(now, false, null,
                     true,"Switching off due to end of time frame");
             if(meter != null) {
