@@ -48,13 +48,13 @@
                 <ModbusRegisterReadValue name="Energy"/>
             </ModbusRegisterRead>
         </ModbusElectricityMeter -->
-        <!--Schedule enabled="true">
-            <EnergyRequest min="5000"/>
+        <Schedule enabled="true">
+            <SocRequest evId="1" soc="52"/>
             <DayTimeframe>
                 <Start hour="13" minute="0" second="0"/>
-                <End hour="15" minute="0" second="0"/>
+                <End hour="18" minute="0" second="0"/>
             </DayTimeframe>
-        </Schedule-->
+        </Schedule>
     </Appliance>
     <Appliance id="F-28091971-000000000003-00">
         <Switch gpio="2" reverseStates="true"/>
