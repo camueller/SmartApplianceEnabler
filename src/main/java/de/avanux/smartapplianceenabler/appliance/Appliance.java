@@ -471,32 +471,36 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
 
     public List<RuntimeInterval> getRuntimeIntervals(List<RuntimeInterval> nonEvOptionalEnergyRuntimeIntervals) {
         List<RuntimeInterval> runtimeIntervals = new ArrayList<>();
-        boolean evChargerInErrorState = false;
-        if(this.control instanceof ElectricVehicleCharger &&
-                (runningTimeMonitor == null || runningTimeMonitor.getActiveTimeframeInterval() == null)) {
+        if (this.control instanceof ElectricVehicleCharger) {
             ElectricVehicleCharger electricVehicleCharger = (ElectricVehicleCharger) this.control;
-            if(electricVehicleCharger.isInErrorState()) {
-                evChargerInErrorState = true;
+            if (electricVehicleCharger.isInErrorState()) {
                 logger.warn("{}: skipping runtime intervals because of charger error state", id);
-            }
-            else {
-                if(electricVehicleCharger.isVehicleConnected() || electricVehicleCharger.isCharging()) {
-                    RuntimeInterval evOptionalEnergy = getRuntimeIntervalForEVUsingOptionalEnergy(electricVehicleCharger);
-                    if(evOptionalEnergy != null) {
-                        if(nonEvOptionalEnergyRuntimeIntervals != null && nonEvOptionalEnergyRuntimeIntervals.size() > 0) {
-                            // evOptionalEnergy runtime interval must not overlap with other intervals
-                            Integer firstNonEvOptionalEnergyRuntimeIntervalEarliestStart
-                                    = nonEvOptionalEnergyRuntimeIntervals.get(0).getEarliestStart();
-                            evOptionalEnergy.setLatestEnd(firstNonEvOptionalEnergyRuntimeIntervalEarliestStart - 1);
+            } else {
+                if (electricVehicleCharger.isVehicleConnected() || electricVehicleCharger.isCharging()) {
+                    if (runningTimeMonitor == null || runningTimeMonitor.getActiveTimeframeInterval() == null) {
+                        RuntimeInterval evOptionalEnergy = getRuntimeIntervalForEVUsingOptionalEnergy(electricVehicleCharger);
+                        if (evOptionalEnergy != null) {
+                            if (nonEvOptionalEnergyRuntimeIntervals != null && nonEvOptionalEnergyRuntimeIntervals.size() > 0) {
+                                // evOptionalEnergy runtime interval must not overlap with other intervals
+                                Integer firstNonEvOptionalEnergyRuntimeIntervalEarliestStart
+                                        = nonEvOptionalEnergyRuntimeIntervals.get(0).getEarliestStart();
+                                evOptionalEnergy.setLatestEnd(firstNonEvOptionalEnergyRuntimeIntervalEarliestStart - 1);
+                            }
+                            logger.debug("{}: requesting optional energy for electric vehicle: {}", id, evOptionalEnergy);
+                            runtimeIntervals.add(evOptionalEnergy);
                         }
-                        logger.debug("{}: requesting optional energy for electric vehicle: {}", id, evOptionalEnergy);
-                        runtimeIntervals.add(evOptionalEnergy);
+                    } else {
+                        if (nonEvOptionalEnergyRuntimeIntervals != null && nonEvOptionalEnergyRuntimeIntervals.size() > 0) {
+                            runtimeIntervals.addAll(nonEvOptionalEnergyRuntimeIntervals);
+                        }
                     }
                 }
             }
         }
-        if(!evChargerInErrorState && nonEvOptionalEnergyRuntimeIntervals != null) {
-            runtimeIntervals.addAll(nonEvOptionalEnergyRuntimeIntervals);
+        else {
+            if (nonEvOptionalEnergyRuntimeIntervals != null && nonEvOptionalEnergyRuntimeIntervals.size() > 0) {
+                runtimeIntervals.addAll(nonEvOptionalEnergyRuntimeIntervals);
+            }
         }
         return runtimeIntervals;
     }
