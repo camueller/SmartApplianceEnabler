@@ -432,8 +432,8 @@ public class SaeController {
                 ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
                 return evCharger.getVehicles();
             } else {
-                logger.error("{}: Appliance has no electric vehicle charger", applianceId);
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                logger.debug("{}: Appliance has no electric vehicle charger", applianceId);
+                return new ArrayList<>();
             }
         }
         else {
