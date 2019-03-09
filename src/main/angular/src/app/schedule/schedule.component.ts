@@ -88,11 +88,6 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
     { key: SocRequest.TYPE },
   ];
   initializeOnceAfterViewChecked = false;
-  RUNTIME_REQUEST = RuntimeRequest.TYPE;
-  ENERGY_REQUEST = EnergyRequest.TYPE;
-  SOC_REQUEST = SocRequest.TYPE;
-  DAY_TIMEFRAME = DayTimeframe.TYPE;
-  CONSECUTIVE_DAYS_TIMEFRAME = ConsecutiveDaysTimeframe.TYPE;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -175,23 +170,23 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
     const fg = new FormGroup({});
     this.formHandler.addFormControl(fg, 'enabled', schedule != null ? schedule.enabled : true);
 
-    const requestType = schedule != null ? schedule.requestType : this.RUNTIME_REQUEST;
-    if (requestType === this.RUNTIME_REQUEST) {
+    const requestType = schedule != null ? schedule.requestType : RuntimeRequest.TYPE;
+    if (requestType === RuntimeRequest.TYPE) {
       fg.addControl('runtimeRequest', this.buildRuntimeRequest(schedule));
     }
-    if (requestType === this.ENERGY_REQUEST) {
+    if (requestType === EnergyRequest.TYPE) {
       fg.addControl('energyRequest', this.buildEnergyRequest(schedule));
     }
-    if (requestType === this.SOC_REQUEST) {
+    if (requestType === SocRequest.TYPE) {
       fg.addControl('socRequest', this.buildSocRequest(schedule));
     }
     this.formHandler.addFormControl(fg, 'requestType',  requestType, Validators.required);
 
-    const timeframeType = schedule != null ? schedule.timeframeType : this.DAY_TIMEFRAME;
-    if (timeframeType === this.DAY_TIMEFRAME) {
+    const timeframeType = schedule != null ? schedule.timeframeType : DayTimeframe.TYPE;
+    if (timeframeType === DayTimeframe.TYPE) {
       fg.addControl('dayTimeframe', this.buildDayTimeframe(schedule));
     }
-    if (timeframeType === this.CONSECUTIVE_DAYS_TIMEFRAME) {
+    if (timeframeType === ConsecutiveDaysTimeframe.TYPE) {
       fg.addControl('consecutiveDaysTimeframe',  this.buildConsecutiveDaysTimeframe(schedule));
     }
     this.formHandler.addFormControl(fg, 'timeframeType', timeframeType, Validators.required);
@@ -199,15 +194,15 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
     fg.get('requestType').valueChanges.forEach(
       (newRequestType) => {
         this.logger.debug('requestType changed to ' + newRequestType);
-        if (newRequestType === this.RUNTIME_REQUEST) {
+        if (newRequestType === RuntimeRequest.TYPE) {
           fg.removeControl('energyRequest');
           fg.removeControl('socRequest');
           fg.setControl('runtimeRequest', this.buildRuntimeRequest(schedule));
-        } else if (newRequestType === this.ENERGY_REQUEST) {
+        } else if (newRequestType === EnergyRequest.TYPE) {
           fg.removeControl('runtimeRequest');
           fg.removeControl('socRequest');
           fg.setControl('energyRequest', this.buildEnergyRequest(schedule));
-        } else if (newRequestType === this.SOC_REQUEST) {
+        } else if (newRequestType === SocRequest.TYPE) {
           fg.removeControl('runtimeRequest');
           fg.removeControl('energyRequest');
           fg.setControl('socRequest', this.buildSocRequest(schedule));
@@ -218,12 +213,12 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
     fg.get('timeframeType').valueChanges.forEach(
       (newTimeframeType) => {
         this.logger.debug('timeframeType changed to ' + newTimeframeType);
-        if (newTimeframeType === this.DAY_TIMEFRAME) {
+        if (newTimeframeType === DayTimeframe.TYPE) {
           fg.removeControl('consecutiveDaysTimeframe');
           fg.setControl(
             'dayTimeframe', this.buildDayTimeframe(schedule)
           );
-        } else if (newTimeframeType === this.CONSECUTIVE_DAYS_TIMEFRAME) {
+        } else if (newTimeframeType === ConsecutiveDaysTimeframe.TYPE) {
           fg.removeControl('dayTimeframe');
           fg.setControl(
             'consecutiveDaysTimeframe', this.buildConsecutiveDaysTimeframe(schedule)
