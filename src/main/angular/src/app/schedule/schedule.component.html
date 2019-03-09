@@ -154,7 +154,7 @@
           </div>
         </div>
         <div class="ui fields" [class.disabled]="!schedule.controls.enabled.value"
-             *ngIf="schedule.controls.requestType.value===RUNTIME_REQUEST" formGroupName="runtimeRequest">
+             *ngIf="hasRuntimeRequest(schedule.value)" formGroupName="runtimeRequest">
           <div class="field">
             <label>{{'ScheduleComponent.runtimeRequest_min' | translate}}</label>
             <input class="clockpicker" type="text" formControlName="min">
@@ -169,7 +169,7 @@
           </div>
         </div>
         <div class="ui fields" [class.disabled]="!schedule.controls.enabled.value"
-             *ngIf="schedule.controls.requestType.value===ENERGY_REQUEST" formGroupName="energyRequest">
+             *ngIf="hasEnergyRequest(schedule.value)" formGroupName="energyRequest">
           <div class="field">
             <label>{{'ScheduleComponent.energyRequest_min' | translate}}</label>
             <input type="text" formControlName="min">
@@ -180,7 +180,7 @@
           </div>
         </div>
         <div class="ui fields" [class.disabled]="!schedule.controls.enabled.value"
-             *ngIf="schedule.controls.requestType.value===SOC_REQUEST" formGroupName="socRequest">
+             *ngIf="hasSocRequest(schedule.value)" formGroupName="socRequest">
           <div class="field">
             <label>{{'ScheduleComponent.socRequest_evId' | translate}}</label>
             <sui-select class="selection form-control"
