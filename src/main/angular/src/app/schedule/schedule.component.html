@@ -15,9 +15,9 @@
   ~ with this program; if not, write to the Free Software Foundation, Inc.,
   ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
   -->
-<form class="ui form" [formGroup]="schedulesForm" (ngSubmit)="submitForm()">
+<form class="ui form" [formGroup]="form" (ngSubmit)="submitForm()">
   <div formArrayName="schedules">
-    <div *ngFor="let schedule of schedulesFormGroup.controls;let i = index" [formGroupName]="i">
+    <div *ngFor="let schedule of schedules.controls;let i = index" [formGroupName]="i">
       <div class="ui segment">
         <div class="ui fields">
           <div class="ui header field" style="padding: 0.3em">
@@ -204,12 +204,14 @@
       <div class="ui hidden divider"></div>
     </div>
   </div>
+  <div>{{'dialog.mandatoryfields'|translate}}</div>
+  <div class="ui hidden divider"></div>
   <button type="button" (click)="addSchedule()" class="ui button">{{'button.new' | translate}}</button>
-  <button type="submit" class="ui button" [disabled]="schedulesForm.pristine||schedulesForm.invalid">
+  <button type="submit" class="ui button" [disabled]="form.pristine||form.invalid">
     {{'button.save' | translate}}</button>
 </form>
 <!--
-<pre>pristine={{schedulesForm.pristine}}</pre>
-<pre>invalid={{schedulesForm.invalid}}</pre>
-<pre>{{schedulesForm.value | json}}</pre>
+<pre>pristine={{form.pristine}}</pre>
+<pre>invalid={{form.invalid}}</pre>
+<pre>{{form.value | json}}</pre>
 -->
