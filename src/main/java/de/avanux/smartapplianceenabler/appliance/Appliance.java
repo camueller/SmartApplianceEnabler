@@ -583,7 +583,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         if(this.control instanceof ElectricVehicleCharger) {
             ElectricVehicleCharger charger = (ElectricVehicleCharger) this.control;
             ElectricVehicle ev = charger.getVehicle(socRequest.getEvId());
-            Integer socStart = charger.getStartChargingSoc() != null ? charger.getStartChargingSoc() : 0;
+            Integer socStart = charger.getConnectedVehicleSoc() != null ? charger.getConnectedVehicleSoc() : 0;
             int energyToBeCharged = Float.valueOf((socRequest.getSoc() - socStart)/100.0f * ev.getBatteryCapacity())
                     .intValue();
             logger.debug("{}: Energy to be charged: {} Wh", id, energyToBeCharged);
@@ -627,24 +627,30 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         RuntimeInterval runtimeInterval = null;
         if(evCharger.getVehicles() != null && evCharger.getVehicles().size() > 0) {
             int batteryCapacity = ElectricVehicle.DEFAULT_BATTERY_CAPACITY;
+            // TODO the following call might return an updated SOC in a future release
+            Integer initialSoc = evCharger.getConnectedVehicleSoc();
             Integer targetSoc = null;
-            ElectricVehicle vehicle = evCharger.getChargingVehicle();
-            if(vehicle == null && evCharger.getVehicles().size() > 0) {
-                vehicle = evCharger.getVehicles().get(0);
+            ElectricVehicle vehicle = evCharger.getConnectedVehicle();
+            if(vehicle != null) {
                 batteryCapacity = vehicle.getBatteryCapacity();
                 targetSoc = vehicle.getDefaultSocOptionalEnergy();
-                logger.debug("{}: optional energy calculated for vehicle={} batteryCapactiy={} targetSoc={}",
-                        id, vehicle.getName(), batteryCapacity, targetSoc);
+                logger.debug("{}: calculating optional energy for vehicle={} batteryCapactiy={} initialSoc={} targetSoc={}",
+                        id, vehicle.getName(), batteryCapacity, initialSoc, targetSoc);
+            }
+            if(initialSoc == null) {
+                initialSoc = 0;
             }
             if(targetSoc == null) {
                 targetSoc = 100;
             }
+            Integer maxEnergy = Float.valueOf((targetSoc - initialSoc)/100.0f * batteryCapacity).intValue()
+                    - Float.valueOf(energy * 1000).intValue();
+            logger.debug("{}: optional energy calculated={}Wh", id, maxEnergy);
             runtimeInterval = new RuntimeInterval();
             runtimeInterval.setEarliestStart(0);
             runtimeInterval.setLatestEnd(CONSIDERATION_INTERVAL_DAYS * 24 * 3600);
             runtimeInterval.setMinEnergy(0);
-            runtimeInterval.setMaxEnergy(Float.valueOf(targetSoc/100.0f * batteryCapacity).intValue()
-                    - Float.valueOf(energy * 1000).intValue());
+            runtimeInterval.setMaxEnergy(maxEnergy);
         }
         return runtimeInterval;
     }
@@ -816,27 +822,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     @Override
     public void activeIntervalChanged(LocalDateTime now, String applianceId, TimeframeInterval deactivatedInterval,
                                       TimeframeInterval activatedInterval) {
-        if(activatedInterval != null) {
-            Request request = runningTimeMonitor.getActiveRequest();
-            if(request instanceof SocRequest) {
-                SocRequest socRequest = (SocRequest) request;
-                if (this.control instanceof ElectricVehicleCharger) {
-                    ElectricVehicleCharger evCharger = (ElectricVehicleCharger) this.control;
-                    ElectricVehicle electricVehicle = evCharger.getVehicle(socRequest.getEvId());
-                    if(electricVehicle != null) {
-                        Float soc = electricVehicle.getStateOfCharge();
-                        if(soc != null) {
-                            evCharger.setChargingVehicleId(socRequest.getEvId());
-                            evCharger.setStartChargingSoc(Float.valueOf(soc).intValue());
-                        }
-                    }
-                    else {
-                        logger.error("{}: EV-Id {} not found", applianceId, socRequest.getEvId());
-                    }
-                }
-            }
-        }
-        else {
+        if(activatedInterval == null) {
             setApplianceState(now, false, null,
                     true,"Switching off due to end of time frame");
             if(meter != null) {

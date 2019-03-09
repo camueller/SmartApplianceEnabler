@@ -55,14 +55,14 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
             @XmlElement(name = "ElectricVehicle", type = ElectricVehicle.class),
     })
     private List<ElectricVehicle> vehicles;
-    private transient Integer chargingVehicleId;
+    private transient Integer connectedVehicleId;
+    private transient Integer connectedVehicleSoc;
     private transient Appliance appliance;
     private transient String applianceId;
     private transient Vector<State> stateHistory = new Vector<>();
     private static final float CHARGE_LOSS_FACTOR = 1.1f;
     private transient boolean useOptionalEnergy = true;
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
-    private transient Integer startChargingSoc;
     private transient Long startChargingTimestamp;
     private transient Integer chargeAmount;
     private transient Integer chargePower;
@@ -101,29 +101,24 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
         this.chargeAmount = chargeAmount;
     }
 
-    public Integer getStartChargingSoc() {
-        return startChargingSoc;
+    public Integer getConnectedVehicleSoc() {
+        return connectedVehicleSoc;
     }
 
-    public void setStartChargingSoc(Integer startChargingSoc) {
-        logger.debug("{}: Start charging SoC={}%", applianceId, startChargingSoc);
-        this.startChargingSoc = startChargingSoc;
-    }
-
-    public ElectricVehicle getChargingVehicle() {
-        Integer evId = getChargingVehicleId();
+    public ElectricVehicle getConnectedVehicle() {
+        Integer evId = getConnectedVehicleId();
         if(evId != null) {
             return getVehicle(evId);
         }
         return null;
     }
 
-    public Integer getChargingVehicleId() {
-        return chargingVehicleId;
+    public Integer getConnectedVehicleId() {
+        return connectedVehicleId;
     }
 
-    public void setChargingVehicleId(Integer chargingVehicleId) {
-        this.chargingVehicleId = chargingVehicleId;
+    public void setConnectedVehicleId(Integer connectedVehicleId) {
+        this.connectedVehicleId = connectedVehicleId;
     }
 
     public ElectricVehicle getVehicle(int evId) {
@@ -307,6 +302,10 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
 
     private void onStateChanged(State previousState, State newState) {
         if(newState == State.VEHICLE_CONNECTED) {
+            // sadly, we don't know, which ev has been connected, so we will assume the first one if any
+            if(this.vehicles != null && this.vehicles.size() > 0) {
+                retrieveSoc(this.vehicles.get(0));
+            }
             if(this.forceInitialCharging && wasInStateOneTime(State.VEHICLE_CONNECTED)) {
                 startCharging();
             }
@@ -373,7 +372,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     public  void setEnergyDemand(Integer evId, Integer socCurrent, Integer socRequested, LocalDateTime chargeEnd) {
         logger.debug("{}: Energy demand: evId={} socCurrent={} socCurrent={} chargeEnd={}",
                 applianceId, evId, socCurrent, socRequested, chargeEnd);
-        setChargingVehicleId(evId);
+        setConnectedVehicleId(evId);
 
         DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(appliance.getId());
         int maxChargePower = deviceInfo.getCharacteristics().getMaxPowerConsumption();
@@ -409,7 +408,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
 
     public void setChargePower(int power) {
         int phases = this.phases;
-        ElectricVehicle chargingVehicle = getChargingVehicle();
+        ElectricVehicle chargingVehicle = getConnectedVehicle();
         if(chargingVehicle != null && chargingVehicle.getPhases() != null) {
             phases = chargingVehicle.getPhases();
         }
@@ -433,9 +432,19 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
         logger.debug("{}: Stop charging process", applianceId);
         control.stopCharging();
         this.startChargingTimestamp = null;
-        this.chargingVehicleId = null;
+        this.connectedVehicleId = null;
         this.chargeAmount = null;
         this.chargePower = null;
     }
 
+    private void retrieveSoc(ElectricVehicle electricVehicle) {
+        if(electricVehicle != null) {
+            Float soc = electricVehicle.getStateOfCharge();
+            if(soc != null) {
+                setConnectedVehicleId(electricVehicle.getId());
+                this.connectedVehicleSoc = Float.valueOf(soc).intValue();
+                logger.debug("{}: Start charging SoC={}%", applianceId, connectedVehicleSoc);
+            }
+        }
+    }
 }
