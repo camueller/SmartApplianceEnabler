@@ -36,6 +36,7 @@ import {RuntimeRequest} from './runtime-request';
 import {EnergyRequest} from './energy-request';
 import {SocRequest} from './soc-request';
 import {ElectricVehicle} from '../control-evcharger/electric-vehicle';
+import {FormHandler} from '../shared/form-handler';
 
 declare const $: any;
 
@@ -69,10 +70,12 @@ FormControlName.prototype.ngOnChanges = function () {
 @Component({
   selector: 'app-schedules',
   templateUrl: './schedule.component.html',
-  styles: []
+  styleUrls: ['../global.css']
 })
 export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewChecked, CanDeactivate<SchedulesComponent> {
-  schedulesForm: FormGroup;
+  form: FormGroup;
+  formHandler: FormHandler;
+  schedules: FormArray;
   applianceId: string;
   electricVehicles: ElectricVehicle[];
   initializeOnceAfterViewChecked = false;
@@ -93,6 +96,7 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
               private dialogService: DialogService,
               private translate: TranslateService) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
+    this.formHandler = new FormHandler();
   }
 
   ngOnInit() {
@@ -103,10 +107,9 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
     this.route.data.subscribe((data: {schedules: Schedule[], electricVehicles: ElectricVehicle[]}) => {
       this.initForm();
       this.electricVehicles = data.electricVehicles;
-      const schedulesControl = <FormArray>this.schedulesForm.controls['schedules'];
       data.schedules.forEach(schedule => {
-        const scheduleFormGroup = this.buildSchedule(schedule);
-        schedulesControl.push(scheduleFormGroup);
+        const scheduleFormGroup = this.buildScheduleFormGroup(schedule);
+        this.schedules.push(scheduleFormGroup);
       });
       this.initializeOnceAfterViewChecked = true;
     });
@@ -117,6 +120,7 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
 
   ngAfterViewChecked() {
     this.logger.debug('ngAfterViewChecked initializeOnceAfterViewChecked=' + this.initializeOnceAfterViewChecked);
+    this.formHandler.markLabelsRequired();
     if (this.initializeOnceAfterViewChecked) {
       this.initializeOnceAfterViewChecked = false;
       this.initializeClockPicker();
@@ -133,81 +137,94 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
   }
 
   initForm() {
-    this.schedulesForm = this.fb.group({schedules: new FormArray([])});
-    this.schedulesForm.statusChanges.subscribe(() =>
-      this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.schedulesForm, this.errorMessages));
+    this.schedules = new FormArray([]);
+    this.form = this.fb.group({
+      schedules: this.schedules
+    });
+    this.form.statusChanges.subscribe(() =>
+      this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages));
   }
 
   canDeactivate(): Observable<boolean> | boolean {
-    if (this.schedulesForm.pristine) {
+    if (this.form.pristine) {
       return true;
     }
     return this.dialogService.confirm(this.discardChangesMessage);
   }
 
-  get schedulesFormGroup(): FormGroup {
-    return this.schedulesForm.controls.schedules as FormGroup;
-  }
+  buildScheduleFormGroup(schedule: Schedule): FormGroup {
+    const fg = new FormGroup({});
+    this.formHandler.addFormControl(fg, 'enabled', schedule != null ? schedule.enabled : true);
 
-  buildSchedule(schedule: Schedule): FormGroup {
     const requestType = schedule != null ? schedule.requestType : this.RUNTIME_REQUEST;
+    if (requestType === this.RUNTIME_REQUEST) {
+      fg.addControl('runtimeRequest', this.buildRuntimeRequest(schedule));
+    }
+    if (requestType === this.ENERGY_REQUEST) {
+      fg.addControl('energyRequest', this.buildEnergyRequest(schedule));
+    }
+    if (requestType === this.SOC_REQUEST) {
+      fg.addControl('socRequest', this.buildSocRequest(schedule));
+    }
+    this.formHandler.addFormControl(fg, 'requestType',  requestType, Validators.required);
+
     const timeframeType = schedule != null ? schedule.timeframeType : this.DAY_TIMEFRAME;
-    const scheduleFormGroup = this.fb.group({
-      enabled: this.fb.control(schedule != null ? schedule.enabled : true),
-      requestType: this.fb.control(requestType),
-      runtimeRequest: requestType === this.RUNTIME_REQUEST && this.buildRuntimeRequest(schedule),
-      energyRequest: requestType === this.ENERGY_REQUEST && this.buildEnergyRequest(schedule),
-      socRequest: requestType === this.SOC_REQUEST && this.buildSocRequest(schedule),
-      timeframeType: this.fb.control(timeframeType),
-      dayTimeframe: timeframeType === this.DAY_TIMEFRAME ? this.buildDayTimeframe(schedule) : null,
-      consecutiveDaysTimeframe: timeframeType === this.CONSECUTIVE_DAYS_TIMEFRAME ? this.buildConsecutiveDaysTimeframe(schedule) : null
-    });
-    scheduleFormGroup.get('requestType').valueChanges.forEach(
+    if (timeframeType === this.DAY_TIMEFRAME) {
+      fg.addControl('dayTimeframe', this.buildDayTimeframe(schedule));
+    }
+    if (timeframeType === this.CONSECUTIVE_DAYS_TIMEFRAME) {
+      fg.addControl('consecutiveDaysTimeframe',  this.buildConsecutiveDaysTimeframe(schedule));
+    }
+    this.formHandler.addFormControl(fg, 'timeframeType', timeframeType, Validators.required);
+
+    fg.get('requestType').valueChanges.forEach(
       (newRequestType) => {
         this.logger.debug('requestType changed to ' + newRequestType);
         if (newRequestType === this.RUNTIME_REQUEST) {
-          scheduleFormGroup.removeControl('energyRequest');
-          scheduleFormGroup.removeControl('socRequest');
-          scheduleFormGroup.setControl('runtimeRequest', this.buildRuntimeRequest(schedule));
+          fg.removeControl('energyRequest');
+          fg.removeControl('socRequest');
+          fg.setControl('runtimeRequest', this.buildRuntimeRequest(schedule));
         } else if (newRequestType === this.ENERGY_REQUEST) {
-          scheduleFormGroup.removeControl('runtimeRequest');
-          scheduleFormGroup.removeControl('socRequest');
-          scheduleFormGroup.setControl('energyRequest', this.buildEnergyRequest(schedule));
+          fg.removeControl('runtimeRequest');
+          fg.removeControl('socRequest');
+          fg.setControl('energyRequest', this.buildEnergyRequest(schedule));
         } else if (newRequestType === this.SOC_REQUEST) {
-          scheduleFormGroup.removeControl('runtimeRequest');
-          scheduleFormGroup.removeControl('energyRequest');
-          scheduleFormGroup.setControl('socRequest', this.buildSocRequest(schedule));
+          fg.removeControl('runtimeRequest');
+          fg.removeControl('energyRequest');
+          fg.setControl('socRequest', this.buildSocRequest(schedule));
         }
         this.initializeOnceAfterViewChecked = true;
       }
     );
-    scheduleFormGroup.get('timeframeType').valueChanges.forEach(
+    fg.get('timeframeType').valueChanges.forEach(
       (newTimeframeType) => {
         this.logger.debug('timeframeType changed to ' + newTimeframeType);
         if (newTimeframeType === this.DAY_TIMEFRAME) {
-          scheduleFormGroup.removeControl('consecutiveDaysTimeframe');
-          scheduleFormGroup.setControl(
+          fg.removeControl('consecutiveDaysTimeframe');
+          fg.setControl(
             'dayTimeframe', this.buildDayTimeframe(schedule)
           );
         } else if (newTimeframeType === this.CONSECUTIVE_DAYS_TIMEFRAME) {
-          scheduleFormGroup.removeControl('dayTimeframe');
-          scheduleFormGroup.setControl(
+          fg.removeControl('dayTimeframe');
+          fg.setControl(
             'consecutiveDaysTimeframe', this.buildConsecutiveDaysTimeframe(schedule)
           );
         }
         this.initializeOnceAfterViewChecked = true;
       }
     );
-    return scheduleFormGroup;
+    return fg;
   }
 
   buildRuntimeRequest(schedule: Schedule): FormGroup {
-    return this.fb.group({
-      min: this.fb.control(this.hasRuntimeRequest(schedule) ? schedule.runtimeRequest.minHHMM : null,
-        [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]),
-      max: this.fb.control(this.hasRuntimeRequest(schedule) ? schedule.runtimeRequest.maxHHMM : null,
-        Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)),
-    });
+    const fg = new FormGroup({});
+    this.formHandler.addFormControl(fg, 'min',
+      this.hasRuntimeRequest(schedule) ? schedule.runtimeRequest.minHHMM : undefined,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]);
+    this.formHandler.addFormControl(fg, 'max',
+      this.hasRuntimeRequest(schedule) ? schedule.runtimeRequest.maxHHMM : undefined,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]);
+    return fg;
   }
 
   hasRuntimeRequest(schedule: Schedule): boolean {
@@ -215,12 +232,14 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
   }
 
   buildEnergyRequest(schedule: Schedule): FormGroup {
-    return this.fb.group({
-      min: this.fb.control(this.hasEnergyRequest(schedule) ? schedule.energyRequest.min : null,
-        [Validators.pattern(InputValidatorPatterns.INTEGER)]),
-      max: this.fb.control(this.hasEnergyRequest(schedule) ? schedule.energyRequest.max : null,
-        [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)])
-    });
+    const fg = new FormGroup({});
+    this.formHandler.addFormControl(fg, 'min',
+      this.hasRuntimeRequest(schedule) ? schedule.energyRequest.min : undefined,
+      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
+    this.formHandler.addFormControl(fg, 'max',
+      this.hasRuntimeRequest(schedule) ? schedule.energyRequest.max : undefined,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
+    return fg;
   }
 
   hasEnergyRequest(schedule: Schedule): boolean {
@@ -228,12 +247,14 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
   }
 
   buildSocRequest(schedule: Schedule): FormGroup {
-    return this.fb.group({
-      evId: this.fb.control(this.hasSocRequest(schedule) ? schedule.socRequest.evId : undefined,
-        [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]),
-      soc: this.fb.control(this.hasSocRequest(schedule) ? schedule.socRequest.soc : undefined,
-        [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]),
-    });
+    const fg = new FormGroup({});
+    this.formHandler.addFormControl(fg, 'evId',
+      this.hasSocRequest(schedule) ? schedule.socRequest.evId : undefined,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
+    this.formHandler.addFormControl(fg, 'soc',
+      this.hasSocRequest(schedule) ? schedule.socRequest.soc : undefined,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
+    return fg;
   }
 
   hasSocRequest(schedule: Schedule): boolean {
@@ -245,16 +266,16 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
   }
 
   buildDayTimeframe(schedule: Schedule): FormGroup {
-    return this.fb.group({
-      daysOfWeekValues: this.fb.control(
-        this.hasDayTimeframe(schedule) ? schedule.dayTimeframe.daysOfWeekValues : []),
-      startTime: this.fb.control(
-        this.hasDayTimeframe(schedule) ? schedule.dayTimeframe.startTime : null,
-        [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]),
-      endTime: this.fb.control(
-        this.hasDayTimeframe(schedule) ? schedule.dayTimeframe.endTime : null,
-        [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]),
-    });
+    const fg = new FormGroup({});
+    this.formHandler.addFormControl(fg, 'daysOfWeekValues',
+      this.hasDayTimeframe(schedule) ? schedule.dayTimeframe.daysOfWeekValues : []);
+    this.formHandler.addFormControl(fg, 'startTime',
+      this.hasDayTimeframe(schedule) ? schedule.dayTimeframe.startTime : null,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]);
+    this.formHandler.addFormControl(fg, 'endTime',
+      this.hasDayTimeframe(schedule) ? schedule.dayTimeframe.endTime : null,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]);
+    return fg;
   }
 
   hasDayTimeframe(schedule: Schedule): boolean {
@@ -262,20 +283,20 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
   }
 
   buildConsecutiveDaysTimeframe(schedule: Schedule): FormGroup {
-    return this.fb.group({
-      startDayOfWeek: this.fb.control(
-        this.hasConsecutiveDaysTimeframe(schedule) ? schedule.consecutiveDaysTimeframe.startDayOfWeek : null,
-        Validators.required),
-      startTime: this.fb.control(
-        this.hasConsecutiveDaysTimeframe(schedule) ? schedule.consecutiveDaysTimeframe.startTime : null,
-        [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]),
-      endDayOfWeek: this.fb.control(
-        this.hasConsecutiveDaysTimeframe(schedule) ? schedule.consecutiveDaysTimeframe.endDayOfWeek : null,
-        Validators.required),
-      endTime: this.fb.control(
-        this.hasConsecutiveDaysTimeframe(schedule) ? schedule.consecutiveDaysTimeframe.endTime : null,
-        [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]),
-    });
+    const fg = new FormGroup({});
+    this.formHandler.addFormControl(fg, 'startDayOfWeek',
+      this.hasConsecutiveDaysTimeframe(schedule) ? schedule.consecutiveDaysTimeframe.startDayOfWeek : null,
+      Validators.required);
+    this.formHandler.addFormControl(fg, 'startTime',
+      this.hasConsecutiveDaysTimeframe(schedule) ? schedule.consecutiveDaysTimeframe.startTime : null,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]);
+    this.formHandler.addFormControl(fg, 'endDayOfWeek',
+      this.hasConsecutiveDaysTimeframe(schedule) ? schedule.consecutiveDaysTimeframe.endDayOfWeek : null,
+      Validators.required);
+    this.formHandler.addFormControl(fg, 'endTime',
+      this.hasConsecutiveDaysTimeframe(schedule) ? schedule.consecutiveDaysTimeframe.endTime : null,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]);
+    return fg;
   }
 
   hasConsecutiveDaysTimeframe(schedule: Schedule): boolean {
@@ -288,23 +309,23 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
   }
 
   addSchedule() {
-    const schedulesControl = <FormArray>this.schedulesForm.controls['schedules'];
-    schedulesControl.push(this.buildSchedule(null));
+    const schedulesControl = <FormArray>this.form.controls['schedules'];
+    schedulesControl.push(this.buildScheduleFormGroup(null));
     this.initializeOnceAfterViewChecked = true;
-    this.schedulesForm.markAsDirty();
+    this.form.markAsDirty();
   }
 
   removeSchedule(index: number) {
     this.logger.debug('Remove ' + index);
-    const schedulesControl = <FormArray>this.schedulesForm.controls['schedules'];
+    const schedulesControl = <FormArray>this.form.controls['schedules'];
     schedulesControl.removeAt(index);
-    this.schedulesForm.markAsDirty();
+    this.form.markAsDirty();
   }
 
   submitForm() {
     const scheduleFactory = new ScheduleFactory(this.logger);
-    const schedules = scheduleFactory.fromForm(this.schedulesForm.value);
+    const schedules = scheduleFactory.fromForm(this.form.value);
     this.scheduleService.setSchedules(this.applianceId, schedules).subscribe();
-    this.schedulesForm.markAsPristine();
+    this.form.markAsPristine();
   }
 }

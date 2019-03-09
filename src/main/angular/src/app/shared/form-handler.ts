@@ -31,6 +31,7 @@ export class FormHandler {
     this.formControlNamesRequired.forEach(formControlName => {
       $(`input[formControlName=${formControlName}]`).parent().children('label').addClass('required');
       $(`select[formControlName=${formControlName}]`).parent().children('label').addClass('required');
+      $(`sui-select[formControlName=${formControlName}]`).parent().children('label').addClass('required');
     });
   }
 }
