@@ -13,18 +13,24 @@ export class FormHandler {
 
   formControlNamesRequired: string[] = [];
 
-  public addFormControl(formGroup: FormGroup, name: string, formState?: any,
+  public addFormControl(formGroup: FormGroup, formControlName: string, formState?: any,
                                validatorOrOpts?: ValidatorFn | ValidatorFn[] | AbstractControlOptions | null,
                                asyncValidator?: AsyncValidatorFn | AsyncValidatorFn[] | null) {
     if (Array.isArray(validatorOrOpts)) {
-      (validatorOrOpts as []).forEach((validator: ValidatorFn) => {
-        if (validator === Validators.required) {
-          this.formControlNamesRequired.push(name);
-        }
+      (validatorOrOpts as []).forEach((validatorFn: ValidatorFn) => {
+        this.registerRequiredValidator(validatorFn, formControlName);
       });
+    } else {
+      this.registerRequiredValidator(validatorOrOpts, formControlName);
     }
     const control = new FormControl(formState, validatorOrOpts, asyncValidator);
-    formGroup.addControl(name, control);
+    formGroup.addControl(formControlName, control);
+  }
+
+  registerRequiredValidator(validatorFn: any, formControlName: string) {
+    if (validatorFn === Validators.required) {
+      this.formControlNamesRequired.push(formControlName);
+    }
   }
 
   public markLabelsRequired() {

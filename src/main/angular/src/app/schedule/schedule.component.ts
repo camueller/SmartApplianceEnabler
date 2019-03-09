@@ -78,6 +78,15 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
   schedules: FormArray;
   applianceId: string;
   electricVehicles: ElectricVehicle[];
+  timeframeTypes: {key: string, value?: string}[] = [
+    { key: DayTimeframe.TYPE },
+    { key: ConsecutiveDaysTimeframe.TYPE },
+  ];
+  requestTypes: {key: string, value?: string}[] = [
+    { key: RuntimeRequest.TYPE },
+    { key: EnergyRequest.TYPE },
+    { key: SocRequest.TYPE },
+  ];
   initializeOnceAfterViewChecked = false;
   RUNTIME_REQUEST = RuntimeRequest.TYPE;
   ENERGY_REQUEST = EnergyRequest.TYPE;
@@ -102,6 +111,16 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
   ngOnInit() {
     this.errorMessages =  new ScheduleErrorMessages(this.translate);
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
+    const timeframeTypeKeys = this.timeframeTypes.map(timeframeType => timeframeType.key);
+    this.translate.get(timeframeTypeKeys).subscribe(
+      translatedKeys => {
+        this.timeframeTypes.forEach(timeframeType => timeframeType.value = translatedKeys[timeframeType.key]);
+      });
+    const requestTypeKeys = this.requestTypes.map(requestType => requestType.key);
+    this.translate.get(requestTypeKeys).subscribe(
+      translatedKeys => {
+        this.requestTypes.forEach(requestType => requestType.value = translatedKeys[requestType.key]);
+      });
     this.initForm();
     this.route.paramMap.subscribe(() => this.applianceId = this.route.snapshot.paramMap.get('id'));
     this.route.data.subscribe((data: {schedules: Schedule[], electricVehicles: ElectricVehicle[]}) => {
