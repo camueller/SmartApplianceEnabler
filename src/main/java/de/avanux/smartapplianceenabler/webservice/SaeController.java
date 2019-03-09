@@ -655,7 +655,8 @@ public class SaeController {
                 Meter meter = appliance.getMeter();
                 applianceStatus.setOn(control.isOn());
                 RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
-                TimeframeInterval activeTimeframeInterval = runningTimeMonitor.getActiveTimeframeInterval();
+                TimeframeInterval activeTimeframeInterval =
+                        runningTimeMonitor != null ? runningTimeMonitor.getActiveTimeframeInterval() : null;
                 RuntimeInterval nextRuntimeInterval = null;
                 if(runtimeIntervals.size() > 0) {
                     nextRuntimeInterval = runtimeIntervals.get(0);
