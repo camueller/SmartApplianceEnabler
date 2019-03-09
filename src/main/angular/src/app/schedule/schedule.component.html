@@ -45,7 +45,7 @@
           <div class="two wide field" [class.disabled]="!schedule.controls.enabled.value">
             <label>{{'ScheduleComponent.requestType' | translate}}</label>
             <sui-select class="selection form-control"
-                        [options]="requestTypes"
+                        [options]="validRequestTypes"
                         labelField="value"
                         valueField="key"
                         formControlName="requestType"

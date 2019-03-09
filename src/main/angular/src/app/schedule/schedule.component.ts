@@ -276,6 +276,12 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
   get hasElectricVehicles(): boolean {
     return this.electricVehicles.length > 0;
   }
+  get validRequestTypes() {
+    if (this.hasElectricVehicles) {
+      return this.requestTypes;
+    }
+    return this.requestTypes.filter(requestType => requestType.key === RuntimeRequest.TYPE);
+  }
 
   buildDayTimeframe(schedule: Schedule): FormGroup {
     const fg = new FormGroup({});
