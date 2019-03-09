@@ -37,6 +37,7 @@ import {EnergyRequest} from './energy-request';
 import {SocRequest} from './soc-request';
 import {ElectricVehicle} from '../control-evcharger/electric-vehicle';
 import {FormHandler} from '../shared/form-handler';
+import {DayOfWeek, DaysOfWeek} from '../shared/days-of-week';
 
 declare const $: any;
 
@@ -87,6 +88,7 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
     { key: EnergyRequest.TYPE },
     { key: SocRequest.TYPE },
   ];
+  daysOfWeek: DayOfWeek[];
   initializeOnceAfterViewChecked = false;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
@@ -106,6 +108,7 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
   ngOnInit() {
     this.errorMessages =  new ScheduleErrorMessages(this.translate);
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
+    DaysOfWeek.getDows(this.translate).subscribe(daysOfWeek => this.daysOfWeek = daysOfWeek);
     const timeframeTypeKeys = this.timeframeTypes.map(timeframeType => timeframeType.key);
     this.translate.get(timeframeTypeKeys).subscribe(
       translatedKeys => {
@@ -138,12 +141,7 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
     if (this.initializeOnceAfterViewChecked) {
       this.initializeOnceAfterViewChecked = false;
       this.initializeClockPicker();
-      this.initializeDropdown();
     }
-  }
-
-  initializeDropdown() {
-    $('.ui.dropdown').dropdown();
   }
 
   initializeClockPicker() {
@@ -237,7 +235,7 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
       [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]);
     this.formHandler.addFormControl(fg, 'max',
       this.hasRuntimeRequest(schedule) ? schedule.runtimeRequest.maxHHMM : undefined,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]);
+      [Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]);
     return fg;
   }
 
