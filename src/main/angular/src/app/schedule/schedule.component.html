@@ -38,7 +38,8 @@
                         placeholder=" "
                         #selectTimeframeType
             >
-              <sui-select-option *ngFor="let option of selectTimeframeType.filteredOptions" class="dropdown-item" [value]="option"></sui-select-option>
+              <sui-select-option *ngFor="let option of selectTimeframeType.filteredOptions"
+                                 class="dropdown-item" [value]="option"></sui-select-option>
             </sui-select>
           </div>
           <div class="two wide field" [class.disabled]="!schedule.controls.enabled.value">
@@ -51,32 +52,26 @@
                         placeholder=" "
                         #selectRequestType
             >
-              <sui-select-option *ngFor="let option of selectRequestType.filteredOptions" class="dropdown-item" [value]="option"></sui-select-option>
+              <sui-select-option *ngFor="let option of selectRequestType.filteredOptions"
+                                 class="dropdown-item" [value]="option"></sui-select-option>
             </sui-select>
           </div>
         </div>
         <div class="ui fields" [class.disabled]="!schedule.controls.enabled.value"
-             *ngIf="schedule.controls.timeframeType.value===DAY_TIMEFRAME" formGroupName="dayTimeframe">
+             *ngIf="hasDayTimeframe(schedule.value)" formGroupName="dayTimeframe">
           <div class="field">
             <label>{{'ScheduleComponent.dayTimeframe_daysOfWeekValues' | translate}}</label>
-            <select class="ui fluid dropdown" formControlName="daysOfWeekValues" multiple="">
-              <option value="1" [selected]="schedule.controls.dayTimeframe.controls.daysOfWeekValues.value.indexOf(1) > -1">
-                {{'ScheduleComponent.daysOfWeek_monday' | translate}}</option>
-              <option value="2" [selected]="schedule.controls.dayTimeframe.controls.daysOfWeekValues.value.indexOf(2) > -1">
-                {{'ScheduleComponent.daysOfWeek_tuesday' | translate}}</option>
-              <option value="3" [selected]="schedule.controls.dayTimeframe.controls.daysOfWeekValues.value.indexOf(3) > -1">
-                {{'ScheduleComponent.daysOfWeek_wednesday' | translate}}</option>
-              <option value="4" [selected]="schedule.controls.dayTimeframe.controls.daysOfWeekValues.value.indexOf(4) > -1">
-                {{'ScheduleComponent.daysOfWeek_thursday' | translate}}</option>
-              <option value="5" [selected]="schedule.controls.dayTimeframe.controls.daysOfWeekValues.value.indexOf(5) > -1">
-                {{'ScheduleComponent.daysOfWeek_friday' | translate}}</option>
-              <option value="6" [selected]="schedule.controls.dayTimeframe.controls.daysOfWeekValues.value.indexOf(6) > -1">
-                {{'ScheduleComponent.daysOfWeek_saturday' | translate}}</option>
-              <option value="7" [selected]="schedule.controls.dayTimeframe.controls.daysOfWeekValues.value.indexOf(7) > -1">
-                {{'ScheduleComponent.daysOfWeek_sunday' | translate}}</option>
-              <option value="8" [selected]="schedule.controls.dayTimeframe.controls.daysOfWeekValues.value.indexOf(8) > -1">
-                {{'ScheduleComponent.daysOfWeek_holiday' | translate}}</option>
-            </select>
+            <sui-multi-select class="selection form-control"
+                        [options]="daysOfWeek"
+                        labelField="name"
+                        valueField="id"
+                        formControlName="daysOfWeekValues"
+                        placeholder=" "
+                        #selectDaysOfWeek
+            >
+              <sui-select-option *ngFor="let option of selectDaysOfWeek.filteredOptions"
+                                 class="dropdown-item" [value]="option"></sui-select-option>
+            </sui-multi-select>
           </div>
           <div class="field">
             <label>{{'ScheduleComponent.dayTimeframe_startTime' | translate}}</label>
@@ -92,28 +87,22 @@
           </div>
         </div>
         <div class="ui fields" [class.disabled]="!schedule.controls.enabled.value"
-             *ngIf="schedule.controls.timeframeType.value===CONSECUTIVE_DAYS_TIMEFRAME"
-             formGroupName="consecutiveDaysTimeframe">
+             *ngIf="hasConsecutiveDaysTimeframe(schedule.value)" formGroupName="consecutiveDaysTimeframe">
           <div class="field">
             <div class="two fields">
               <div class="field">
                 <label>{{'ScheduleComponent.consecutiveDaysTimeframe_startDayOfWeek' | translate}}</label>
-                <select class="ui fluid dropdown" formControlName="startDayOfWeek">
-                  <option value="1" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.startDayOfWeek.value===1">
-                    {{'ScheduleComponent.daysOfWeek_monday' | translate}}</option>
-                  <option value="2" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.startDayOfWeek.value===2">
-                    {{'ScheduleComponent.daysOfWeek_tuesday' | translate}}</option>
-                  <option value="3" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.startDayOfWeek.value===3">
-                    {{'ScheduleComponent.daysOfWeek_wednesday' | translate}}</option>
-                  <option value="4" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.startDayOfWeek.value===4">
-                    {{'ScheduleComponent.daysOfWeek_thursday' | translate}}</option>
-                  <option value="5" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.startDayOfWeek.value===5">
-                    {{'ScheduleComponent.daysOfWeek_friday' | translate}}</option>
-                  <option value="6" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.startDayOfWeek.value===6">
-                    {{'ScheduleComponent.daysOfWeek_saturday' | translate}}</option>
-                  <option value="7" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.startDayOfWeek.value===7">
-                    {{'ScheduleComponent.daysOfWeek_sunday' | translate}}</option>
-                </select>
+                <sui-select class="selection form-control"
+                            [options]="daysOfWeek"
+                            labelField="name"
+                            valueField="id"
+                            formControlName="startDayOfWeek"
+                            placeholder=" "
+                            #selectStartDayOfWeek
+                >
+                  <sui-select-option *ngFor="let option of selectStartDayOfWeek.filteredOptions"
+                                     class="dropdown-item" [value]="option"></sui-select-option>
+                </sui-select>
               </div>
               <div class="field">
                 <label>{{'ScheduleComponent.consecutiveDaysTimeframe_startTime' | translate}}</label>
@@ -127,22 +116,17 @@
             <div class="two fields">
               <div class="field">
                 <label>{{'ScheduleComponent.consecutiveDaysTimeframe_endDayOfWeek' | translate}}</label>
-                <select class="ui fluid dropdown" formControlName="endDayOfWeek">
-                  <option value="1" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.endDayOfWeek.value===1">
-                    {{'ScheduleComponent.daysOfWeek_monday' | translate}}</option>
-                  <option value="2" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.endDayOfWeek.value===2">
-                    {{'ScheduleComponent.daysOfWeek_tuesday' | translate}}</option>
-                  <option value="3" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.endDayOfWeek.value===3">
-                    {{'ScheduleComponent.daysOfWeek_wednesday' | translate}}</option>
-                  <option value="4" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.endDayOfWeek.value===4">
-                    {{'ScheduleComponent.daysOfWeek_thursday' | translate}}</option>
-                  <option value="5" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.endDayOfWeek.value===5">
-                    {{'ScheduleComponent.daysOfWeek_friday' | translate}}</option>
-                  <option value="6" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.endDayOfWeek.value===6">
-                    {{'ScheduleComponent.daysOfWeek_saturday' | translate}}</option>
-                  <option value="7" [selected]="schedule.controls.consecutiveDaysTimeframe.controls.endDayOfWeek.value===7">
-                    {{'ScheduleComponent.daysOfWeek_sunday' | translate}}</option>
-                </select>
+                <sui-select class="selection form-control"
+                            [options]="daysOfWeek"
+                            labelField="name"
+                            valueField="id"
+                            formControlName="endDayOfWeek"
+                            placeholder=" "
+                            #selectEndDayOfWeek
+                >
+                  <sui-select-option *ngFor="let option of selectEndDayOfWeek.filteredOptions"
+                                     class="dropdown-item" [value]="option"></sui-select-option>
+                </sui-select>
               </div>
               <div class="field">
                 <label>{{'ScheduleComponent.consecutiveDaysTimeframe_endTime' | translate}}</label>
@@ -191,7 +175,8 @@
                         placeholder=" "
                         #selectElectricVehicle
             >
-              <sui-select-option *ngFor="let option of selectElectricVehicle.filteredOptions" class="dropdown-item" [value]="option"></sui-select-option>
+              <sui-select-option *ngFor="let option of selectElectricVehicle.filteredOptions"
+                                 class="dropdown-item" [value]="option"></sui-select-option>
             </sui-select>
           </div>
           <div class="field">
