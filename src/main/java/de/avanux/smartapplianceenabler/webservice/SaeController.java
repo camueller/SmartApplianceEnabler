@@ -28,11 +28,9 @@ import de.avanux.smartapplianceenabler.control.ControlDefaults;
 import de.avanux.smartapplianceenabler.control.StartingCurrentSwitchDefaults;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
-import de.avanux.smartapplianceenabler.control.ev.SocScript;
 import de.avanux.smartapplianceenabler.meter.*;
 import de.avanux.smartapplianceenabler.modbus.ModbusElectricityMeterDefaults;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
-import de.avanux.smartapplianceenabler.schedule.EnergyRequest;
 import de.avanux.smartapplianceenabler.schedule.RuntimeRequest;
 import de.avanux.smartapplianceenabler.schedule.Schedule;
 import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
@@ -686,7 +684,7 @@ public class SaeController {
                         }
                     }
                     applianceStatus.setEvStatuses(evStatuses);
-                    applianceStatus.setEvIdCharging(evCharger.getChargingVehicleId());
+                    applianceStatus.setEvIdCharging(evCharger.getConnectedVehicleId());
                     applianceStatus.setCurrentChargePower(evCharger.getChargePower());
 
                     int whAlreadyCharged = 0;
