@@ -205,21 +205,21 @@
   "ScheduleComponent.daysOfWeek_holiday": "Feiertag",
 
   "ScheduleComponent.requestType": "Anforderungsart",
-  "ScheduleComponent.runtimeRequest": "Laufzeit",
+  "de.avanux.smartapplianceenabler.schedule.RuntimeRequest": "Laufzeit",
   "ScheduleComponent.runtimeRequest_min": "Mindestlaufzeit [HH:MM]",
   "ScheduleComponent.runtimeRequest_max": "Maximale Laufzeit [HH:MM]",
 
-  "ScheduleComponent.energyRequest": "Energiemenge",
+  "de.avanux.smartapplianceenabler.schedule.EnergyRequest": "Energiemenge",
   "ScheduleComponent.energyRequest_min": "Min. Energiemenge [Wh]",
   "ScheduleComponent.energyRequest_max": "Max. Energiemenge [Wh]",
 
-  "ScheduleComponent.socRequest": "Laden bis SOC",
+  "de.avanux.smartapplianceenabler.schedule.SocRequest": "Laden bis SOC",
   "ScheduleComponent.socRequest_evId": "Fahrzeug",
   "ScheduleComponent.socRequest_soc": "State of Charge (SOC)",
 
   "ScheduleComponent.timeframeType": "Zeitrahmen",
-  "ScheduleComponent.timeframeType.DayTimeframe": "Tagesplan",
-  "ScheduleComponent.timeframeType.ConsecutiveDaysTimeframe": "Mehrtagesplan",
+  "de.avanux.smartapplianceenabler.schedule.DayTimeframe": "Tagesplan",
+  "de.avanux.smartapplianceenabler.schedule.ConsecutiveDaysTimeframe": "Mehrtagesplan",
   "ScheduleComponent.dayTimeframe_startTime": "Startzeit [HH:MM]",
   "ScheduleComponent.dayTimeframe_endTime": "Endzeit [HH:MM]",
   "ScheduleComponent.dayTimeframe_daysOfWeekValues": "Wochen-/Feiertag(e)",

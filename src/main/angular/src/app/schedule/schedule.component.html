@@ -30,30 +30,29 @@
           </div>
           <div class="two wide field" [class.disabled]="!schedule.controls.enabled.value">
             <label>{{'ScheduleComponent.timeframeType' | translate}}</label>
-            <select class="ui fluid dropdown" formControlName="timeframeType">
-              <option value="de.avanux.smartapplianceenabler.schedule.DayTimeframe"
-                      [selected]="schedule.controls.timeframeType.value==DAY_TIMEFRAME">
-                {{'ScheduleComponent.timeframeType.DayTimeframe' | translate}}</option>
-              <option value="de.avanux.smartapplianceenabler.schedule.ConsecutiveDaysTimeframe"
-                      [selected]="schedule.controls.timeframeType.value==CONSECUTIVE_DAYS_TIMEFRAME">
-                {{'ScheduleComponent.timeframeType.ConsecutiveDaysTimeframe' | translate}}</option>
-            </select>
+            <sui-select class="selection form-control"
+                        [options]="timeframeTypes"
+                        labelField="value"
+                        valueField="key"
+                        formControlName="timeframeType"
+                        placeholder=" "
+                        #selectTimeframeType
+            >
+              <sui-select-option *ngFor="let option of selectTimeframeType.filteredOptions" class="dropdown-item" [value]="option"></sui-select-option>
+            </sui-select>
           </div>
           <div class="two wide field" [class.disabled]="!schedule.controls.enabled.value">
             <label>{{'ScheduleComponent.requestType' | translate}}</label>
-            <select class="ui fluid dropdown" formControlName="requestType">
-              <option value="de.avanux.smartapplianceenabler.schedule.RuntimeRequest"
-                      [selected]="schedule.controls.requestType.value==RUNTIME_REQUEST">
-                {{'ScheduleComponent.runtimeRequest' | translate}}</option>
-              <option value="de.avanux.smartapplianceenabler.schedule.EnergyRequest"
-                      [selected]="schedule.controls.requestType.value==ENERGY_REQUEST"
-                      [disabled]="! hasElectricVehicles"
-              >{{'ScheduleComponent.energyRequest' | translate}}</option>
-              <option value="de.avanux.smartapplianceenabler.schedule.SocRequest"
-                      [selected]="schedule.controls.requestType.value==SOC_REQUEST"
-                      [disabled]="! hasElectricVehicles"
-              >{{'ScheduleComponent.socRequest' | translate}}</option>
-            </select>
+            <sui-select class="selection form-control"
+                        [options]="requestTypes"
+                        labelField="value"
+                        valueField="key"
+                        formControlName="requestType"
+                        placeholder=" "
+                        #selectRequestType
+            >
+              <sui-select-option *ngFor="let option of selectRequestType.filteredOptions" class="dropdown-item" [value]="option"></sui-select-option>
+            </sui-select>
           </div>
         </div>
         <div class="ui fields" [class.disabled]="!schedule.controls.enabled.value"
