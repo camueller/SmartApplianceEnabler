@@ -139,8 +139,12 @@ public class EVControlMock implements EVControl, Meter {
     @Override
     public void startEnergyMeter() {
         logDebug("startEnergyMeter");
-        this.timer.schedule(energyCounterTimerTask, 0, 1000);
-        this.timer.schedule(chargingCompletedTimerTask, 30000);
+        if(energyCounterTimerTask.scheduledExecutionTime() == 0) {
+            this.timer.schedule(energyCounterTimerTask, 0, 1000);
+        }
+        if(chargingCompletedTimerTask.scheduledExecutionTime() == 0) {
+            this.timer.schedule(chargingCompletedTimerTask, 600000);
+        }
     }
 
     @Override
