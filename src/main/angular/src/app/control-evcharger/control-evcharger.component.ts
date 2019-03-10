@@ -17,6 +17,9 @@ import {ElectricVehicle} from './electric-vehicle';
 import {FormHandler} from '../shared/form-handler';
 import {SocScript} from './soc-script';
 import {ControlDefaults} from '../control/control-defaults';
+import {RuntimeRequest} from '../schedule/runtime-request';
+import {EnergyRequest} from '../schedule/energy-request';
+import {SocRequest} from '../schedule/soc-request';
 
 declare const $: any;
 
@@ -148,8 +151,20 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
     this.formHandler.addFormControl(fg, 'bytes', configuration.bytes);
     this.formHandler.addFormControl(fg, 'byteOrder', configuration.byteOrder);
     this.formHandler.addFormControl(fg, 'extractionRegex', configuration.extractionRegex);
-    this.formHandler.addFormControl(fg, 'value', configuration.value, [Validators.required]);
+    this.formHandler.addFormControl(fg, 'value', configuration.value);
+    this.updateModbusConfigurationValueValidator(fg, configuration.write);
+    fg.get('write').valueChanges.forEach(write => this.updateModbusConfigurationValueValidator(fg, write));
     return fg;
+  }
+
+  private updateModbusConfigurationValueValidator(fg: FormGroup, writeEnabled: boolean) {
+    // FIXME FormHandler cannot handle Validators on FormArrays within form
+    // if (writeEnabled) {
+    //   this.formHandler.setValidators(fg, 'value', [Validators.required]);
+    // } else {
+    //   this.formHandler.clearValidators(fg, 'value');
+    // }
+    // this.formHandler.markLabelsRequired();
   }
 
   public updateEvCharger(form: FormGroup, evCharger: EvCharger) {
