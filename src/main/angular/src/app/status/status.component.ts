@@ -5,6 +5,8 @@ import {interval, Subscription} from 'rxjs';
 import {StatusService} from './status.service';
 import {DayOfWeek, DaysOfWeek} from '../shared/days-of-week';
 import {TrafficLight} from './traffic-light';
+import {ElectricVehicle} from '../control-evcharger/electric-vehicle';
+import {ControlService} from '../control/control-service';
 
 @Component({
   selector: 'app-status',
@@ -13,6 +15,7 @@ import {TrafficLight} from './traffic-light';
 })
 export class StatusComponent implements OnInit, OnDestroy {
   applianceStatuses: Status[];
+  electricVehicles: ElectricVehicle[];
   typePrefix = 'ApplianceComponent.type.';
   translatedTypes = {};
   dows: DayOfWeek[] = [];
@@ -21,6 +24,7 @@ export class StatusComponent implements OnInit, OnDestroy {
   trafficLightClicked: TrafficLight;
 
   constructor(private statusService: StatusService,
+              private controlService: ControlService,
               private translate: TranslateService) {
   }
 
@@ -39,6 +43,13 @@ export class StatusComponent implements OnInit, OnDestroy {
     this.statusService.getStatus().subscribe(applianceStatuses => {
       this.applianceStatuses = applianceStatuses.filter(applianceStatus => applianceStatus.controllable);
 
+      const evChargerApplianceStatuses = this.applianceStatuses.filter(
+        applianceStatus => this.isEvCharger(applianceStatus));
+      if (evChargerApplianceStatuses && evChargerApplianceStatuses.length > 0 && ! this.electricVehicles) {
+        this.controlService.getElectricVehicles(evChargerApplianceStatuses[0].id).subscribe(electricVehicles => {
+          this.electricVehicles = electricVehicles;
+        });
+      }
       const types = [];
       this.applianceStatuses.forEach(applianceStatus => types.push(this.typePrefix + applianceStatus.type));
       if (types.length > 0) {
@@ -55,7 +66,7 @@ export class StatusComponent implements OnInit, OnDestroy {
   }
 
   isEvCharger(applianceStatus: Status): boolean {
-    return applianceStatus.evStatuses ? true : false;
+    return applianceStatus.type === 'EVCharger';
   }
 
   getTrafficLightState(applianceStatus: Status): TrafficLight {

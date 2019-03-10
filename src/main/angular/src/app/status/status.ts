@@ -1,5 +1,3 @@
-import {EvStatus} from './ev-status';
-
 export class Status {
   id: string;
   name: string;
@@ -20,7 +18,6 @@ export class Status {
   interruptedSince: number;
   optionalEnergy: boolean;
   evIdCharging: number;
-  evStatuses: EvStatus[];
 
   public constructor(init?: Partial<Status>) {
     Object.assign(this, init);

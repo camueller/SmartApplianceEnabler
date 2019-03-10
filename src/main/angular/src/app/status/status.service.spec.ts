@@ -8,7 +8,6 @@ import {HTTP_INTERCEPTORS} from '@angular/common/http';
 import {StatusService} from './status.service';
 import {Logger, Options} from '../log/logger';
 import {Level} from '../log/level';
-import {EvStatus} from './ev-status';
 
 describe('StatusService', () => {
 
@@ -54,16 +53,6 @@ describe('StatusService', () => {
         controllable: true,
         interruptedSince: null,
         optionalEnergy: true,
-        evStatuses: [
-          new EvStatus({
-            id: 1,
-            name: 'Nissan Leaf'
-          }),
-          new EvStatus({
-            id: 2,
-            name: 'Tesla Model S'
-          })
-        ],
       }),
       new Status({
         id: 'F-00000001-000000000002-00',
@@ -84,7 +73,6 @@ describe('StatusService', () => {
         controllable: false,
         interruptedSince: 180,
         optionalEnergy: false,
-        evStatuses: undefined
       })
     ];
     service.getStatus().subscribe(res => expect(res).toEqual(expectedStatuses));

@@ -1,7 +1,7 @@
 <form class="ui form" [formGroup]="startChargeForm" (ngSubmit)="submitForm()">
   <div class="appliance-details-row">
     <sui-select class="selection form-control"
-                [options]="status.evStatuses"
+                [options]="electricVehicles"
                 labelField="name"
                 valueField="id"
                 formControlName="electricVehicle"

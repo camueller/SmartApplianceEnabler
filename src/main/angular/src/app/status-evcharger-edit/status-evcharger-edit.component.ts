@@ -1,13 +1,12 @@
-
 import {AfterViewChecked, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {AbstractControl, FormControl, FormControlName, FormGroup, Validators} from '@angular/forms';
-import {EvStatus} from '../status/ev-status';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {TimeUtil} from '../shared/time-util';
 import {Status} from '../status/status';
 import {StatusService} from '../status/status.service';
-import {DayOfWeek, DaysOfWeek} from '../shared/days-of-week';
-import {TranslateService} from '@ngx-translate/core';
+import {DayOfWeek} from '../shared/days-of-week';
+import {ElectricVehicle} from '../control-evcharger/electric-vehicle';
+import {ControlService} from '../control/control-service';
 
 const socValidator = (control: AbstractControl): { [key: string]: boolean } => {
   const stateOfChargeCurrent = control.get('stateOfChargeCurrent');
@@ -16,8 +15,8 @@ const socValidator = (control: AbstractControl): { [key: string]: boolean } => {
     || !stateOfChargeCurrent.value || !stateOfChargeRequested.value) {
     return null;
   }
-  return Number.parseInt(stateOfChargeCurrent.value)
-  < Number.parseInt(stateOfChargeRequested.value) ? null : {nomatch: true};
+  return Number.parseInt(stateOfChargeCurrent.value, 10)
+  < Number.parseInt(stateOfChargeRequested.value, 10) ? null : {nomatch: true};
 };
 
 declare const $: any;
@@ -60,6 +59,8 @@ export class StatusEvchargerEditComponent implements OnInit, AfterViewChecked {
   @Input()
   status: Status;
   @Input()
+  electricVehicles: ElectricVehicle[];
+  @Input()
   dows: DayOfWeek[] = [];
   @Output()
   formSubmitted = new EventEmitter<any>();
@@ -69,7 +70,9 @@ export class StatusEvchargerEditComponent implements OnInit, AfterViewChecked {
   constructor(private statusService: StatusService) { }
 
   ngOnInit() {
-    this.updateStartChargeForm(this.status.evStatuses[0]);
+    if (this.electricVehicles.length > 0) {
+      this.updateStartChargeForm(this.electricVehicles[0]);
+    }
     this.initializeOnceAfterViewChecked = true;
   }
 
@@ -84,20 +87,21 @@ export class StatusEvchargerEditComponent implements OnInit, AfterViewChecked {
     $('.clockpicker').clockpicker({ autoclose: true });
   }
 
-  updateStartChargeForm(evStatus: EvStatus) {
-    if (evStatus) {
-      const electicVehicleControl = new FormControl(evStatus.id);
+  updateStartChargeForm(ev: ElectricVehicle) {
+    if (ev) {
+      const electicVehicleControl = new FormControl(ev.id);
       electicVehicleControl.valueChanges.subscribe(evIdSelected => {
-        this.updateStartChargeForm(this.getEvStatus(this.status, evIdSelected));
+        const selectedElectricVehicle = this.getElectricVehicle(evIdSelected);
+        this.updateStartChargeForm(selectedElectricVehicle);
       });
       this.startChargeForm = new FormGroup({
         electricVehicle: electicVehicleControl,
         stateOfChargeCurrent: new FormControl(null, Validators.pattern(InputValidatorPatterns.PERCENTAGE)),
-        stateOfChargeRequested: new FormControl(evStatus.socManual, Validators.pattern(InputValidatorPatterns.PERCENTAGE)),
+        stateOfChargeRequested: new FormControl(ev.defaultSocManual, Validators.pattern(InputValidatorPatterns.PERCENTAGE)),
         chargeEndDow: new FormControl(),
         chargeEndTime: new FormControl(),
       }, socValidator);
-      this.statusService.getSoc(this.applianceId, evStatus.id).subscribe(soc => {
+      this.statusService.getSoc(this.applianceId, ev.id).subscribe(soc => {
         if (! Number.isNaN(Number.parseInt(soc, 10))) {
           this.startChargeForm.setControl('stateOfChargeCurrent', new FormControl(Number.parseFloat(soc).toFixed()));
         }
@@ -106,15 +110,8 @@ export class StatusEvchargerEditComponent implements OnInit, AfterViewChecked {
     }
   }
 
-  isEvCharger(applianceStatus: Status): boolean {
-    return applianceStatus.evStatuses ? true : false;
-  }
-
-  getEvStatus(status: Status, id: number): EvStatus {
-    if (status && id) {
-      return status.evStatuses.filter(evStatuses => evStatuses.id === id)[0];
-    }
-    return undefined;
+  getElectricVehicle(id: number): ElectricVehicle {
+    return id && this.electricVehicles.filter(ev => ev.id === id)[0];
   }
 
   submitForm() {
