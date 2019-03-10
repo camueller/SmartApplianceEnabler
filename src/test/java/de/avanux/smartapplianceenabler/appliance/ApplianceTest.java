@@ -200,9 +200,13 @@ public class ApplianceTest extends TestBase {
         this.appliance.setControl(evCharger);
         ElectricVehicle vehicle = new ElectricVehicle();
         vehicle.setBatteryCapacity(40000);
+        vehicle.setDefaultSocOptionalEnergy(60);
         Mockito.doReturn(true).when(evCharger).isVehicleConnected();
         Mockito.doReturn(false).when(evCharger).isInErrorState();
-        Mockito.doReturn(Collections.singletonList(vehicle)).when(evCharger).getVehicles();
+        //Mockito.doReturn(Collections.singletonList(vehicle)).when(evCharger).getVehicles();
+        Mockito.doReturn(vehicle).when(evCharger).getConnectedVehicle();
+        int connectedVehicleSoc = 10;
+        Mockito.doReturn(connectedVehicleSoc).when(evCharger).getConnectedVehicleSoc();
 
         List<RuntimeInterval> nonEvOptionalEnergyIntervals = new ArrayList<>();
         RuntimeInterval nonEvOptionalEnergyInterval = new RuntimeInterval(3600, 7200,
@@ -211,8 +215,11 @@ public class ApplianceTest extends TestBase {
 
         List<RuntimeInterval> runtimeIntervals = this.appliance.getRuntimeIntervals(nonEvOptionalEnergyIntervals);
         Assert.assertEquals(2, runtimeIntervals.size());
+        Integer maxEnergy = Float.valueOf((vehicle.getDefaultSocOptionalEnergy() - connectedVehicleSoc)/100.0f
+                * vehicle.getBatteryCapacity()).intValue()
+                - Float.valueOf(energyAlreadyCharged).intValue() * 1000;
         RuntimeInterval evOptionalEnergyInterval = new RuntimeInterval(0, 3599,
-                0, 40000 - Float.valueOf(energyAlreadyCharged).intValue() * 1000, true);
+                0, maxEnergy, true);
         Assert.assertEquals(runtimeIntervals.get(0), evOptionalEnergyInterval);
         Assert.assertEquals(runtimeIntervals.get(1), nonEvOptionalEnergyInterval);
     }

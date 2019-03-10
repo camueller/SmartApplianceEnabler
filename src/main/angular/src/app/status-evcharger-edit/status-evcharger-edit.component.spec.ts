@@ -9,13 +9,13 @@ import {Logger, Options} from '../log/logger';
 import {Level} from '../log/level';
 import {SuiModule} from 'ng2-semantic-ui';
 import {Status} from '../status/status';
-import {EvStatus} from '../status/ev-status';
 import {FakeTranslateLoader} from '../testing/fake-translate-loader';
 import {FormUtil} from '../testing/form-util';
 import {By} from '@angular/platform-browser';
 import createSpyObj = jasmine.createSpyObj;
 import SpyObj = jasmine.SpyObj;
 import {TimeUtil} from '../shared/time-util';
+import {ElectricVehicle} from '../control-evcharger/electric-vehicle';
 
 const translations: any = {
   'StatusComponent.stateOfCharge': 'State of charge: ',
@@ -74,12 +74,10 @@ describe('StatusEvchargerEditComponent', () => {
       {id: 8, name: 'Holiday'},
     ];
     component.applianceId = 'myApplianceId';
-    component.status = {
-      evStatuses: [
-        {id: 1, name: 'Nissan Leaf'} as EvStatus,
-        {id: 2, name: 'Tesla Model 3'} as EvStatus
-      ]
-    } as Status;
+    component.electricVehicles = [
+        {id: 1, name: 'Nissan Leaf'} as ElectricVehicle,
+        {id: 2, name: 'Tesla Model 3'} as ElectricVehicle
+    ];
   });
 
   it('should create', (done: any) => {
@@ -103,7 +101,7 @@ describe('StatusEvchargerEditComponent', () => {
       const startButtonElement = fixture.debugElement.query(By.css('button[type=submit]')).nativeElement;
       startButtonElement.click();
       expect(statusService.requestEvCharge)
-        .toHaveBeenCalledWith(component.applianceId, component.status.evStatuses[0].id, socCurrent, null, undefined);
+        .toHaveBeenCalledWith(component.applianceId, component.electricVehicles[0].id, socCurrent, null, undefined);
       done();
     });
   });
@@ -118,7 +116,7 @@ describe('StatusEvchargerEditComponent', () => {
       const startButtonElement = fixture.debugElement.query(By.css('button[type=submit]')).nativeElement;
       startButtonElement.click();
       expect(statusService.requestEvCharge)
-        .toHaveBeenCalledWith(component.applianceId, component.status.evStatuses[0].id, null, socRequested, undefined);
+        .toHaveBeenCalledWith(component.applianceId, component.electricVehicles[0].id, null, socRequested, undefined);
       done();
     });
   });
@@ -142,7 +140,7 @@ describe('StatusEvchargerEditComponent', () => {
         const startButtonElement = fixture.debugElement.query(By.css('button[type=submit]')).nativeElement;
         startButtonElement.click();
         expect(statusService.requestEvCharge)
-          .toHaveBeenCalledWith(component.applianceId, component.status.evStatuses[0].id, null, null, chargeEnd);
+          .toHaveBeenCalledWith(component.applianceId, component.electricVehicles[0].id, null, null, chargeEnd);
         done();
       });
     });
@@ -170,7 +168,7 @@ describe('StatusEvchargerEditComponent', () => {
         const startButtonElement = fixture.debugElement.query(By.css('button[type=submit]')).nativeElement;
         startButtonElement.click();
         expect(statusService.requestEvCharge)
-          .toHaveBeenCalledWith(component.applianceId, component.status.evStatuses[0].id, socCurrent, socRequested, chargeEnd);
+          .toHaveBeenCalledWith(component.applianceId, component.electricVehicles[0].id, socCurrent, socRequested, chargeEnd);
         done();
       });
     });
