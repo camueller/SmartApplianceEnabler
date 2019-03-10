@@ -17,15 +17,21 @@
       <div class="bulb" [class.slowLight]="isTrafficLightYellow(applianceStatus)"></div>
 
       <div class="bulb goLight"
-           [class.goLight-blink]="isTrafficLightGreenBlink(applianceStatus)"
            *ngIf="isTrafficLightGreen(applianceStatus)"
+           data-position="right center"
+      ></div>
+      <div class="bulb goLight"
+           [class.goLight-blink]="isTrafficLightGreenBlink(applianceStatus)"
+           *ngIf="isTrafficLightGreenBlink(applianceStatus)"
            (click)="onClickGoLight(applianceStatus.id)"
            [attr.data-tooltip]="'StatusComponent.tooltipGoLight' | translate"
            data-position="right center"
       ></div>
       <div class="bulb"
            *ngIf="!isTrafficLightGreen(applianceStatus) && applianceStatus.id === applianceIdClicked"></div>
-      <div class="bulb" *ngIf="!isTrafficLightGreen(applianceStatus) && applianceStatus.id != applianceIdClicked"
+      <div class="bulb"
+           *ngIf="!(isTrafficLightGreen(applianceStatus) || isTrafficLightGreenBlink(applianceStatus))
+                  && applianceStatus.id != applianceIdClicked"
            (click)="onClickGoLight(applianceStatus.id)"
            [attr.data-tooltip]="'StatusComponent.tooltipGoLight' | translate"
            data-position="right center"
