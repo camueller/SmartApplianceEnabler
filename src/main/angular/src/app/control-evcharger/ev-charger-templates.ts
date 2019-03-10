@@ -6,11 +6,6 @@ export class EvChargerTemplates {
     const templates: { [name: string]: EvCharger } = {};
     templates['PhoenixContact'] = JSON.parse('{\n' +
       '  "@class": "de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger",\n' +
-      '  "voltage": 230,\n' +
-      '  "phases": 1,\n' +
-      '  "pollInterval": 10,\n' +
-      '  "startChargingStateDetectionDelay": 300,\n' +
-      '  "forceInitialCharging": false,\n' +
       '  "control": {\n' +
       '    "@class": "de.avanux.smartapplianceenabler.control.ev.EVModbusControl",\n' +
       '    "slaveAddress": 180,\n' +
