@@ -22,7 +22,6 @@ import javax.xml.bind.annotation.*;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ElectricVehicle {
-    public static transient int DEFAULT_BATTERY_CAPACITY = 20000;
     @XmlAttribute
     private Integer id;
     @XmlAttribute
