@@ -28,7 +28,8 @@
            data-position="right center"
       ></div>
       <div class="bulb"
-           *ngIf="!isTrafficLightGreen(applianceStatus) && applianceStatus.id === applianceIdClicked"></div>
+           *ngIf="!(isTrafficLightGreen(applianceStatus) || isTrafficLightGreenBlink(applianceStatus))
+                  && applianceStatus.id === applianceIdClicked"></div>
       <div class="bulb"
            *ngIf="!(isTrafficLightGreen(applianceStatus) || isTrafficLightGreenBlink(applianceStatus))
                   && applianceStatus.id != applianceIdClicked"
