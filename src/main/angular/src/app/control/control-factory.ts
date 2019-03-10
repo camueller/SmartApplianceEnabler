@@ -50,6 +50,16 @@ export class ControlFactory {
       = rawControlDefaults.startingCurrentSwitchDefaults.finishedCurrentDetectionDuration;
     controlDefaults.startingCurrentSwitchDefaults_minRunningTime
       = rawControlDefaults.startingCurrentSwitchDefaults.minRunningTime;
+    const electricVehicleChargerDefaults = rawControlDefaults.electricVehicleChargerDefaults;
+    controlDefaults.electricVehicleChargerDefaults_voltage = electricVehicleChargerDefaults.voltage;
+    controlDefaults.electricVehicleChargerDefaults_phases = electricVehicleChargerDefaults.phases;
+    controlDefaults.electricVehicleChargerDefaults_pollInterval = electricVehicleChargerDefaults.pollInterval;
+    controlDefaults.electricVehicleChargerDefaults_startChargingStateDetectionDelay =
+      electricVehicleChargerDefaults.startChargingStateDetectionDelay;
+    controlDefaults.electricVehicleChargerDefaults_forceInitialCharging =
+      electricVehicleChargerDefaults.forceInitialCharging;
+
+
     this.logger.debug('ControlDefaults (TYPE): ' + JSON.stringify(controlDefaults));
     return controlDefaults;
   }

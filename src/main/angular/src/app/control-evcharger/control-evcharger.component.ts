@@ -16,6 +16,7 @@ import {Control} from '../control/control';
 import {ElectricVehicle} from './electric-vehicle';
 import {FormHandler} from '../shared/form-handler';
 import {SocScript} from './soc-script';
+import {ControlDefaults} from '../control/control-defaults';
 
 declare const $: any;
 
@@ -27,6 +28,8 @@ declare const $: any;
 export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
   @Input()
   control: Control;
+  @Input()
+  controlDefaults: ControlDefaults;
   @Input()
   applianceId: string;
   @Input()
