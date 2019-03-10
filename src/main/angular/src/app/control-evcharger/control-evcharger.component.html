@@ -30,11 +30,21 @@
         <input type="text" formControlName="pollInterval">
       </div>
       <div class="field">
-        <label>{{'ControlEvchargerComponent.startChargingStateDetectionDelay' | translate}}</label>
+        <label>{{'ControlEvchargerComponent.startChargingStateDetectionDelay' | translate}}
+          <i class="icon blue info circle tooltip">
+          <span class="tooltiptext" style="margin-left: -180px;"
+          >{{'ControlEvchargerComponent.startChargingStateDetectionDelay.tooltip' | translate}}</span>
+          </i>
+        </label>
         <input type="text" formControlName="startChargingStateDetectionDelay">
       </div>
       <div class="field">
-        <label>{{'ControlEvchargerComponent.forceInitialCharging' | translate}}</label>
+        <label>{{'ControlEvchargerComponent.forceInitialCharging' | translate}}
+          <i class="icon blue info circle tooltip">
+          <span class="tooltiptext" style="margin-left: -180px;"
+          >{{'ControlEvchargerComponent.forceInitialCharging.tooltip' | translate}}</span>
+          </i>
+        </label>
         <input class="ui checkbox" type="checkbox" formControlName="forceInitialCharging">
       </div>
     </div>
