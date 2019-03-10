@@ -20,7 +20,7 @@
     <div *ngFor="let schedule of schedules.controls;let i = index" [formGroupName]="i">
       <div class="ui segment">
         <div class="ui fields">
-          <div class="ui header field" style="padding: 0.3em">
+          <div class="ui header field">
             {{'ScheduleComponent.schedule' | translate}}
             <i (click)="removeSchedule(i)" class="icon red remove circle"></i>
           </div>
@@ -28,7 +28,7 @@
             <label>{{'ScheduleComponent.enabled' | translate}}</label>
             <input class="ui checkbox" type="checkbox" formControlName="enabled">
           </div>
-          <div class="two wide field" [class.disabled]="!schedule.controls.enabled.value">
+          <div class="three wide field" [class.disabled]="!schedule.controls.enabled.value">
             <label>{{'ScheduleComponent.timeframeType' | translate}}</label>
             <sui-select class="selection form-control"
                         [options]="timeframeTypes"
@@ -42,7 +42,7 @@
                                  class="dropdown-item" [value]="option"></sui-select-option>
             </sui-select>
           </div>
-          <div class="two wide field" [class.disabled]="!schedule.controls.enabled.value">
+          <div class="three wide field" [class.disabled]="!schedule.controls.enabled.value">
             <label>{{'ScheduleComponent.requestType' | translate}}</label>
             <sui-select class="selection form-control"
                         [options]="validRequestTypes"

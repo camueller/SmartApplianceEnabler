@@ -76,6 +76,7 @@
 .appliances {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
 }
 
 .appliance {
@@ -118,6 +119,7 @@
 
 .appliance-status {
   line-height: 1.4em;
+  white-space: nowrap;
 }
 
 .appliance-status-label {

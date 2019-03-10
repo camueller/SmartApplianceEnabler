@@ -23,7 +23,7 @@ declare const $: any;
 @Component({
   selector: 'app-control-evcharger',
   templateUrl: './control-evcharger.component.html',
-  styleUrls: ['../global.css']
+  styleUrls: ['./control-evcharger.component.css', '../global.css']
 })
 export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
   @Input()
