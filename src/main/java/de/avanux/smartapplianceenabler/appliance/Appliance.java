@@ -489,10 +489,9 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                             logger.debug("{}: requesting optional energy for electric vehicle: {}", id, evOptionalEnergy);
                             runtimeIntervals.add(evOptionalEnergy);
                         }
-                    } else {
-                        if (nonEvOptionalEnergyRuntimeIntervals != null && nonEvOptionalEnergyRuntimeIntervals.size() > 0) {
-                            runtimeIntervals.addAll(nonEvOptionalEnergyRuntimeIntervals);
-                        }
+                    }
+                    if (nonEvOptionalEnergyRuntimeIntervals != null && nonEvOptionalEnergyRuntimeIntervals.size() > 0) {
+                        runtimeIntervals.addAll(nonEvOptionalEnergyRuntimeIntervals);
                     }
                 }
             }
@@ -625,18 +624,14 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             logger.debug("{}: No energy meter configured - cannot calculate maxEnergy", id);
         }
         RuntimeInterval runtimeInterval = null;
-        if(evCharger.getVehicles() != null && evCharger.getVehicles().size() > 0) {
-            int batteryCapacity = ElectricVehicle.DEFAULT_BATTERY_CAPACITY;
+        ElectricVehicle vehicle = evCharger.getConnectedVehicle();
+        if(vehicle != null) {
+            int batteryCapacity = vehicle.getBatteryCapacity();
             // TODO the following call might return an updated SOC in a future release
             Integer initialSoc = evCharger.getConnectedVehicleSoc();
-            Integer targetSoc = null;
-            ElectricVehicle vehicle = evCharger.getConnectedVehicle();
-            if(vehicle != null) {
-                batteryCapacity = vehicle.getBatteryCapacity();
-                targetSoc = vehicle.getDefaultSocOptionalEnergy();
-                logger.debug("{}: calculating optional energy for vehicle={} batteryCapactiy={} initialSoc={} targetSoc={}",
-                        id, vehicle.getName(), batteryCapacity, initialSoc, targetSoc);
-            }
+            Integer targetSoc = vehicle.getDefaultSocOptionalEnergy();
+            logger.debug("{}: calculating optional energy for vehicle={} batteryCapactiy={} initialSoc={} targetSoc={}",
+                    id, vehicle.getName(), batteryCapacity, initialSoc, targetSoc);
             if(initialSoc == null) {
                 initialSoc = 0;
             }
