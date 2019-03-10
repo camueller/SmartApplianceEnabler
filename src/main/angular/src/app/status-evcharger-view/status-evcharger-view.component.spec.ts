@@ -4,7 +4,6 @@ import {StatusEvchargerViewComponent} from './status-evcharger-view.component';
 import {TranslateLoader, TranslateModule, TranslateService} from '@ngx-translate/core';
 import {FakeTranslateLoader} from '../testing/fake-translate-loader';
 import {Status} from '../status/status';
-import {EvStatus} from '../status/ev-status';
 
 const translations: any = {
   'dialog.candeactivate': 'Änderungen verwerfen?',
@@ -18,9 +17,6 @@ describe('StatusEvchargerViewComponent', () => {
   const defaultStatus = {
     planningRequested: true,
     evIdCharging: 1,
-    evStatuses: [
-      {id: 1, name: 'Nissan Leaf'} as EvStatus
-    ]
   } as Status;
 
   beforeEach(async(() => {

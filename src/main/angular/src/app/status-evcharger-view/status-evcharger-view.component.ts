@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {Status} from '../status/status';
 import {TimeUtil} from '../shared/time-util';
 import {DayOfWeek} from '../shared/days-of-week';
+import {ElectricVehicle} from '../control-evcharger/electric-vehicle';
 
 @Component({
   selector: 'app-status-charger-view',
@@ -13,6 +14,8 @@ export class StatusEvchargerViewComponent implements OnInit {
   @Input()
   status: Status;
   @Input()
+  electricVehicles: ElectricVehicle[];
+  @Input()
   dows: DayOfWeek[] = [];
 
   constructor() { }
@@ -20,9 +23,9 @@ export class StatusEvchargerViewComponent implements OnInit {
   ngOnInit() {
   }
 
-  getEvNameCharging(status: Status): string {
-    if (status && status.evIdCharging !== null) {
-      return status.evStatuses.filter(evStatus => evStatus.id === status.evIdCharging)[0].name;
+  getEvNameCharging(evId: number): string {
+    if (this.electricVehicles && evId) {
+      return this.electricVehicles.filter(ev => ev.id === evId)[0].name;
     }
     return undefined;
   }

@@ -671,17 +671,6 @@ public class SaeController {
                 }
                 if(control instanceof ElectricVehicleCharger) {
                     ElectricVehicleCharger evCharger = (ElectricVehicleCharger) control;
-                    List<EVStatus> evStatuses = new ArrayList<>();
-                    if(evCharger.getVehicles() != null) {
-                        for (ElectricVehicle electricVehicle : evCharger.getVehicles()) {
-                            EVStatus evStatus = new EVStatus();
-                            evStatus.setId(electricVehicle.getId());
-                            evStatus.setName(electricVehicle.getName());
-                            evStatus.setSocManual(electricVehicle.getDefaultSocManual());
-                            evStatuses.add(evStatus);
-                        }
-                    }
-                    applianceStatus.setEvStatuses(evStatuses);
                     applianceStatus.setEvIdCharging(evCharger.getConnectedVehicleId());
                     applianceStatus.setCurrentChargePower(evCharger.getChargePower());
 

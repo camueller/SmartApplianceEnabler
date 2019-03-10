@@ -1,4 +1,4 @@
-<div class="appliance-name">{{getEvNameCharging(status)}}</div>
+<div class="appliance-name">{{getEvNameCharging(status.evIdCharging)}}</div>
 <div *ngIf="status.planningRequested">
   <div *ngIf="status.plannedEnergyAmount != null" class="appliance-status">
     <span class="appliance-status-label">{{'StatusComponent.energyPlanned' | translate}}</span>
