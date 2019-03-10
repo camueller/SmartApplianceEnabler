@@ -1,5 +1,5 @@
 import {AfterViewChecked, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormGroup, Validators} from '@angular/forms';
 import {Control} from '../control/control';
 import {Switch} from './switch';
 import {ErrorMessages} from '../shared/error-messages';
@@ -22,9 +22,9 @@ export class ControlSwitchComponent implements OnInit, AfterViewChecked {
   @Input()
   control: Control;
   @Input()
-  applianceId: string;
-  @Input()
   controlDefaults: ControlDefaults;
+  @Input()
+  applianceId: string;
   @Output()
   childFormChanged = new EventEmitter<boolean>();
   form: FormGroup;

@@ -225,9 +225,7 @@ public class SaeController {
     @RequestMapping(value=CONTROLDEFAULTS_URL, method=RequestMethod.GET, produces="application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public ControlDefaults getControlDefaults() {
-        ControlDefaults defaults = new ControlDefaults();
-        defaults.setStartingCurrentSwitchDefaults(new StartingCurrentSwitchDefaults());
-        return defaults;
+        return new ControlDefaults();
     }
 
     @RequestMapping(value=CONTROL_URL, method=RequestMethod.GET, produces="application/json")

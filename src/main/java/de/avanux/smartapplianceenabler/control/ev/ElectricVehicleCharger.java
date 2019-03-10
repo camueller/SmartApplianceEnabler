@@ -38,15 +38,15 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
 
     private transient Logger logger = LoggerFactory.getLogger(ElectricVehicleCharger.class);
     @XmlAttribute
-    private Integer voltage = 230;
+    private Integer voltage;
     @XmlAttribute
-    private Integer phases = 1;
+    private Integer phases;
     @XmlAttribute
-    private Integer pollInterval = 10; // seconds
+    private Integer pollInterval; // seconds
     @XmlAttribute
-    protected Integer startChargingStateDetectionDelay = 300;
+    protected Integer startChargingStateDetectionDelay;
     @XmlAttribute
-    protected Boolean forceInitialCharging = false;
+    protected Boolean forceInitialCharging;
     @XmlElements({
         @XmlElement(name = "EVModbusControl", type = EVModbusControl.class),
     })
@@ -91,6 +91,28 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
 
     protected void setControl(EVControl control) {
         this.control = control;
+    }
+
+    public Integer getVoltage() {
+        return voltage != null ? voltage : ElectricVehicleChargerDefaults.getVoltage();
+    }
+
+    public Integer getPhases() {
+        return phases != null ? phases : ElectricVehicleChargerDefaults.getPhases();
+    }
+
+    public Integer getPollInterval() {
+        return pollInterval != null ? pollInterval : ElectricVehicleChargerDefaults.getPollInterval();
+    }
+
+    public Integer getStartChargingStateDetectionDelay() {
+        return startChargingStateDetectionDelay != null ? startChargingStateDetectionDelay :
+                ElectricVehicleChargerDefaults.getStartChargingStateDetectionDelay();
+    }
+
+    public Boolean getForceInitialCharging() {
+        return forceInitialCharging != null ? forceInitialCharging :
+                ElectricVehicleChargerDefaults.getForceInitialCharging();
     }
 
     public Integer getChargeAmount() {
@@ -145,7 +167,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
             this.appliance.setMeter((Meter) this.control);
         }
         logger.debug("{}: voltage={} phases={} startChargingStateDetectionDelay={}",
-                this.applianceId, this.voltage, this.phases, this.startChargingStateDetectionDelay);
+                this.applianceId, getVoltage(), getPhases(), getStartChargingStateDetectionDelay());
         if(this.vehicles != null) {
             for(ElectricVehicle vehicle: this.vehicles) {
                 logger.debug("{}: {}", this.applianceId, vehicle);
@@ -161,7 +183,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
             @Override
             public void run() {
                 updateState();            }
-        }, 0, this.pollInterval * 1000);
+        }, 0, getPollInterval() * 1000);
     }
 
     /**
@@ -170,7 +192,8 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
      */
     protected boolean updateState() {
         if(isWithinStartChargingStateDetectionDelay()) {
-            logger.debug("{}: Skipping state detection for {}s after switched on.", applianceId, this.startChargingStateDetectionDelay);
+            logger.debug("{}: Skipping state detection for {}s after switched on.", applianceId,
+                    getStartChargingStateDetectionDelay());
             return false;
         }
         State previousState = getState();
@@ -287,7 +310,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
 
     @Override
     public boolean isOn() {
-        return isOn(this.startChargingStateDetectionDelay,
+        return isOn(getStartChargingStateDetectionDelay(),
                 System.currentTimeMillis(), this.startChargingTimestamp);
     }
 
@@ -306,7 +329,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
             if(this.vehicles != null && this.vehicles.size() > 0) {
                 retrieveSoc(this.vehicles.get(0));
             }
-            if(this.forceInitialCharging && wasInStateOneTime(State.VEHICLE_CONNECTED)) {
+            if(getForceInitialCharging() && wasInStateOneTime(State.VEHICLE_CONNECTED)) {
                 startCharging();
             }
             if(this.appliance != null) {
@@ -314,7 +337,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
             }
         }
         if(newState == State.CHARGING) {
-            if(this.forceInitialCharging && wasInStateOneTime(State.CHARGING)) {
+            if(getForceInitialCharging() && wasInStateOneTime(State.CHARGING)) {
                 stopCharging();
             }
         }
@@ -339,7 +362,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     }
 
     protected boolean isWithinStartChargingStateDetectionDelay() {
-        return isWithinStartChargingStateDetectionDelay(this.startChargingStateDetectionDelay,
+        return isWithinStartChargingStateDetectionDelay(getStartChargingStateDetectionDelay(),
                 System.currentTimeMillis(), this.startChargingTimestamp);
     }
 
@@ -407,12 +430,12 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     }
 
     public void setChargePower(int power) {
-        int phases = this.phases;
+        int phases = getPhases();
         ElectricVehicle chargingVehicle = getConnectedVehicle();
         if(chargingVehicle != null && chargingVehicle.getPhases() != null) {
             phases = chargingVehicle.getPhases();
         }
-        int current = Float.valueOf((float) power / (this.voltage * phases)).intValue();
+        int current = Float.valueOf((float) power / (getVoltage() * phases)).intValue();
         logger.debug("{}: Set charge power: {}W corresponds to {}A using {} phases", applianceId, power, current, phases);
         this.chargePower = power;
         control.setChargeCurrent(current);

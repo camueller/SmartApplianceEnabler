@@ -19,15 +19,18 @@
     <div class="ui fields">
       <div class="field">
         <label>{{'ControlEvchargerComponent.voltage' | translate}}</label>
-        <input type="text" formControlName="voltage">
+        <input type="text" formControlName="voltage"
+               placeholder="{{controlDefaults.electricVehicleChargerDefaults_voltage}}">
       </div>
       <div class="field">
         <label>{{'ControlEvchargerComponent.phases' | translate}}</label>
-        <input type="text" formControlName="phases">
+        <input type="text" formControlName="phases"
+               placeholder="{{controlDefaults.electricVehicleChargerDefaults_phases}}">
       </div>
       <div class="field">
         <label>{{'ControlEvchargerComponent.pollInterval' | translate}}</label>
-        <input type="text" formControlName="pollInterval">
+        <input type="text" formControlName="pollInterval"
+               placeholder="{{controlDefaults.electricVehicleChargerDefaults_pollInterval}}">
       </div>
       <div class="field">
         <label>{{'ControlEvchargerComponent.startChargingStateDetectionDelay' | translate}}
@@ -36,7 +39,8 @@
           >{{'ControlEvchargerComponent.startChargingStateDetectionDelay.tooltip' | translate}}</span>
           </i>
         </label>
-        <input type="text" formControlName="startChargingStateDetectionDelay">
+        <input type="text" formControlName="startChargingStateDetectionDelay"
+               placeholder="{{controlDefaults.electricVehicleChargerDefaults_startChargingStateDetectionDelay}}">
       </div>
       <div class="field">
         <label>{{'ControlEvchargerComponent.forceInitialCharging' | translate}}
@@ -45,7 +49,8 @@
           >{{'ControlEvchargerComponent.forceInitialCharging.tooltip' | translate}}</span>
           </i>
         </label>
-        <input class="ui checkbox" type="checkbox" formControlName="forceInitialCharging">
+        <input class="ui checkbox" type="checkbox" formControlName="forceInitialCharging"
+               placeholder="{{controlDefaults.electricVehicleChargerDefaults_forceInitialCharging}}">
       </div>
     </div>
     <div class="ui fields">
@@ -189,4 +194,4 @@
       {{'ControlEvchargerComponent.ev.button.new' | translate}}</button>
   </div>
 </form>
-<!--pre>{{control.evCharger | json}}</pre-->
+<pre>{{controlDefaults | json}}</pre>
