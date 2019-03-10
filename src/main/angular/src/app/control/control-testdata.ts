@@ -14,6 +14,13 @@ export class ControlTestdata {
         'minRunningTime': 600,
         'powerThreshold': 15,
         'startingCurrentDetectionDuration': 30
+      },
+      'electricVehicleChargerDefaults': {
+        'voltage': 230,
+        'phases': 1,
+        'pollInterval': 10,
+        'startChargingStateDetectionDelay': 300,
+        'forceInitialCharging': false,
       }
     };
   }
@@ -23,8 +30,13 @@ export class ControlTestdata {
       startingCurrentSwitchDefaults_powerThreshold: 15,
       startingCurrentSwitchDefaults_startingCurrentDetectionDuration: 30,
       startingCurrentSwitchDefaults_finishedCurrentDetectionDuration: 300,
-      startingCurrentSwitchDefaults_minRunningTime: 600
-    });
+      startingCurrentSwitchDefaults_minRunningTime: 600,
+      electricVehicleChargerDefaults_voltage: 230,
+      electricVehicleChargerDefaults_phases: 1,
+      electricVehicleChargerDefaults_pollInterval: 10,
+      electricVehicleChargerDefaults_startChargingStateDetectionDelay: 300,
+      electricVehicleChargerDefaults_forceInitialCharging: false,
+  });
   }
 
   public static none_type(): Control {
