@@ -141,6 +141,7 @@ public class IntegrationTest extends TestBase {
         assertRunningTime(timeSwitchOff, control, runningTimeMonitor, false,false, true,
                 7200, 0, null);
         assertPlanningRequest(timeSwitchOff,
+                new Timeframe(applianceId, 0, 3600,0, 0),
                 new Timeframe(applianceId, add24h(-25200), add24h(3600),7199, 7200),
                 new Timeframe(applianceId, add48h(-25200), add48h(3600),7199, 7200)
         );
@@ -252,7 +253,7 @@ public class IntegrationTest extends TestBase {
         log("Check values after switch off");
         assertRunningTime(timeSwitchOff, control, runningTimeMonitor, false, true,false, true,
                 true, 3600, 0, null);
-        Assert.assertEquals(0, sempController.createDevice2EM(timeSwitchOff).getPlanningRequest().size());
+        assertPlanningRequest(timeStartingCurrent, new Timeframe(applianceId,0, 23400,0, 0));
 
         // TODO nochmal an/aus schalten
     }
