@@ -110,7 +110,7 @@ public class RunningTimeMonitorTest extends TestBase {
         Assert.assertEquals("With timeframe started and device switched on max running time should be reduced by 5 minutes",
                 900, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toToday(14, 20, 0)).intValue());
         Assert.assertEquals("Min running time has been exceeded by 10 minutes",
-                -600, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toToday(14, 45, 0)).intValue());
+                0, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toToday(14, 45, 0)).intValue());
         runningTimeMonitor.setRunning(false, toToday(14, 45, 0));
         Assert.assertEquals("Running time after power off is 0", 0,
                 runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toToday(14, 45, 0)).intValue());
@@ -131,7 +131,7 @@ public class RunningTimeMonitorTest extends TestBase {
         Assert.assertEquals("With timeframe started and device switched on 5 minutes ago no running time is left",
                 0, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toToday(9, 5, 0)).intValue());
         Assert.assertEquals("With timeframe started and device switched on 6 minutes ago remaining min running time has become negative",
-                -60, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toToday(9, 6, 0)).intValue());
+                0, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toToday(9, 6, 0)).intValue());
     }
 
     @Test
@@ -148,6 +148,6 @@ public class RunningTimeMonitorTest extends TestBase {
         Assert.assertEquals("With timeframe started and device switched on one hour ago no running time is left",
                 0, runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(toToday(10, 0, 0)).intValue());
         Assert.assertEquals("With timeframe started and device switched on one hour plus one minute ago remaining max running time has become negative",
-                -60, runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(toToday(10, 1, 0)).intValue());
+                0, runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(toToday(10, 1, 0)).intValue());
     }
 }
