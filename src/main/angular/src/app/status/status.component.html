@@ -16,15 +16,20 @@
 
       <div class="bulb" [class.slowLight]="isTrafficLightYellow(applianceStatus)"></div>
 
-      <div class="bulb goLight" *ngIf="isTrafficLightGreen(applianceStatus) || isTrafficLightGreenClicked(applianceStatus)"
+      <div class="bulb goLight" *ngIf="isTrafficLightGreen(applianceStatus)"
            data-position="right center"
       ></div>
-      <div class="bulb goLight" *ngIf="isTrafficLightGreenBlink(applianceStatus) && !isTrafficLightGreenClicked(applianceStatus)"
-           [class.goLight-blink]="isTrafficLightGreenBlink(applianceStatus)"
-           (click)="onClickGoLight(applianceStatus.id)"
-           [attr.data-tooltip]="'StatusComponent.tooltipGoLight' | translate"
-           data-position="right center"
-      ></div>
+      <div *ngIf="isTrafficLightGreenBlink(applianceStatus)">
+        <div class="bulb goLight" *ngIf="!isTrafficLightGreenClicked(applianceStatus)"
+             [class.goLight-blink]="isTrafficLightGreenBlink(applianceStatus)"
+             (click)="onClickGoLight(applianceStatus.id)"
+             [attr.data-tooltip]="'StatusComponent.tooltipGoLight' | translate"
+             data-position="right center"
+        ></div>
+        <div class="bulb goLight-blink" *ngIf="isTrafficLightGreenClicked(applianceStatus)"
+             data-position="right center"
+        ></div>
+      </div>
       <div *ngIf="!(isTrafficLightGreen(applianceStatus) || isTrafficLightGreenBlink(applianceStatus))">
         <div class="bulb" *ngIf="applianceStatus.id === applianceIdClicked"></div>
         <div class="bulb" *ngIf="applianceStatus.id != applianceIdClicked"
