@@ -47,10 +47,13 @@ Der Inhalt der Schalter-Konfigurationsseite hängt vom ausgewählten Typ des Sch
 
 <img src="https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/WebFrontend_Schalter.png" width="870">
 
-### Schaltzeiten
+Wenn als Gerätetyp ```Elektroauto-Ladegerät``` angegeben ist, kann auf dieser Seite die [Konfiguration des Lade-Controllers sowie die Verwaltung der Fahrzeuge](doc/EVCharger_DE.md) FIXME-Kapitel-Link !!!!!!!!!!!!  vorgenommen werden.
 
-Wenn ein Gerät schaltbar ist, können Schaltzeiten konfiguriert werden, die aus einem oder mehreren Zeitplänen bestehen. Ein Zeitplan ist entweder ein ```Tagesplan``` (bezieht sich auf Kalendertag) oder ein ```Mehrtagesplan``` (dauert länger als 24 Stunden).
-Die Schaltzeiten für einen Geschirrspüler, dessen Schaltzeiten sich am Wochenende von denen an den anderen Wochentagen unterscheiden, könnte wie folgt aussehen:
+### Zeitpläne
+
+Wenn ein Gerät schaltbar ist, können Zeitpläne konfiguriert werden. Ein Zeitplan hat einen Zeitrahmen, auf den er sich bezieht. Das kann entweder ein ```Tagesplan``` (bezieht sich auf Kalendertag) oder ein ```Mehrtagesplan``` (dauert länger als 24 Stunden) sein.
+Neben dem Zeitrahmen hat ein Zeitplan auch eine ```Anforderungsart```, die (abhängig vom Geräte-Typ) meist ```Laufzeit``` ist. In diesem Fall bringt der Zeitplan eine bestimme minimale und/oder maximale gewünschte Laufzeit zum Ausdruck. Wenn die minimale Laufzeit auf ```0``` gesetzt wird und die maximale Laufzeit auf einen größeren Wert, wird damit zum Ausdruck gebracht, dass dieses Gerät *Überschussenenergie* aufnehmen kann bzw. soll.
+Die Schaltzeiten für einen Geschirrspüler, dessen Schaltzeiten sich am Wochenende von denen an den anderen Wochentagen unterscheiden und dessen Programmlaufzeit FIXME Minuten ist, könnte wie folgt aussehen:
 
 <img src="https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/WebFrontend_Schaltzeiten.png" width="870">
 
