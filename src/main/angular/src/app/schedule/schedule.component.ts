@@ -246,10 +246,10 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
   buildEnergyRequest(schedule: Schedule): FormGroup {
     const fg = new FormGroup({});
     this.formHandler.addFormControl(fg, 'min',
-      this.hasRuntimeRequest(schedule) ? schedule.energyRequest.min : undefined,
+      this.hasEnergyRequest(schedule) ? schedule.energyRequest.min : undefined,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
     this.formHandler.addFormControl(fg, 'max',
-      this.hasRuntimeRequest(schedule) ? schedule.energyRequest.max : undefined,
+      this.hasEnergyRequest(schedule) ? schedule.energyRequest.max : undefined,
       [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
     return fg;
   }
