@@ -18,6 +18,7 @@ export class ControlTestdata {
       'electricVehicleChargerDefaults': {
         'voltage': 230,
         'phases': 1,
+        'chargeLoss': 10,
         'pollInterval': 10,
         'startChargingStateDetectionDelay': 300,
         'forceInitialCharging': false,
@@ -33,6 +34,7 @@ export class ControlTestdata {
       startingCurrentSwitchDefaults_minRunningTime: 600,
       electricVehicleChargerDefaults_voltage: 230,
       electricVehicleChargerDefaults_phases: 1,
+      electricVehicleChargerDefaults_chargeLoss: 10,
       electricVehicleChargerDefaults_pollInterval: 10,
       electricVehicleChargerDefaults_startChargingStateDetectionDelay: 300,
       electricVehicleChargerDefaults_forceInitialCharging: false,
