@@ -47,7 +47,7 @@ Der Inhalt der Schalter-Konfigurationsseite hängt vom ausgewählten Typ des Sch
 
 <img src="https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/WebFrontend_Schalter.png" width="870">
 
-Wenn als Gerätetyp ```Elektroauto-Ladegerät``` angegeben ist, kann auf dieser Seite die [Konfiguration des Lade-Controllers sowie die Verwaltung der Fahrzeuge](doc/EVCharger_DE.md) FIXME-Kapitel-Link !!!!!!!!!!!!  vorgenommen werden.
+Wenn als Gerätetyp ```Elektroauto-Ladegerät``` angegeben ist, kann auf dieser Seite die [Konfiguration des Lade-Controllers sowie die Verwaltung der Fahrzeuge](EVCharger_DE.md) FIXME-Kapitel-Link !!!!!!!!!!!!  vorgenommen werden.
 
 ### Zeitpläne
 
