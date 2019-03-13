@@ -12,6 +12,7 @@ export class ElectricVehicle {
   batteryCapacity: number;
   phases: number;
   maxChargePower: number;
+  chargeLoss: number;
   defaultSocManual: number;
   defaultSocOptionalEnergy: number;
   socScript: SocScript;

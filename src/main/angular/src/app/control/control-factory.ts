@@ -53,6 +53,7 @@ export class ControlFactory {
     const electricVehicleChargerDefaults = rawControlDefaults.electricVehicleChargerDefaults;
     controlDefaults.electricVehicleChargerDefaults_voltage = electricVehicleChargerDefaults.voltage;
     controlDefaults.electricVehicleChargerDefaults_phases = electricVehicleChargerDefaults.phases;
+    controlDefaults.electricVehicleChargerDefaults_chargeLoss = electricVehicleChargerDefaults.chargeLoss;
     controlDefaults.electricVehicleChargerDefaults_pollInterval = electricVehicleChargerDefaults.pollInterval;
     controlDefaults.electricVehicleChargerDefaults_startChargingStateDetectionDelay =
       electricVehicleChargerDefaults.startChargingStateDetectionDelay;

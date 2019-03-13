@@ -22,9 +22,10 @@ public class ElectricVehicleChargerDefaults {
     // static members won't be serialized but we need those values on the client
     private Integer voltage = 230;
     private Integer phases = 1;
+    private Integer chargeLoss = 10;
     private Integer pollInterval = 10; // seconds
-    protected Integer startChargingStateDetectionDelay = 300;
-    protected Boolean forceInitialCharging = false;
+    private Integer startChargingStateDetectionDelay = 300;
+    private Boolean forceInitialCharging = false;
     private static ElectricVehicleChargerDefaults instance = new ElectricVehicleChargerDefaults();
 
     public static Integer getVoltage() {
@@ -33,6 +34,10 @@ public class ElectricVehicleChargerDefaults {
 
     public static Integer getPhases() {
         return instance.phases;
+    }
+
+    public static Integer getChargeLoss() {
+        return instance.chargeLoss;
     }
 
     public static Integer getPollInterval() {

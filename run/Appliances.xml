@@ -4,47 +4,30 @@
         <ElectricVehicleCharger startChargingStateDetectionDelay="0">
             <EVModbusControl idref="wallbox" slaveAddress="180">
                 <ModbusRegisterRead address="100" type="InputString">
-                    <ModbusRegisterReadValue name="VehicleNotConnected" extractionRegex="(A)" />
-                    <ModbusRegisterReadValue name="VehicleConnected" extractionRegex="(B)" />
-                    <ModbusRegisterReadValue name="Charging" extractionRegex="(C|D)" />
-                    <ModbusRegisterReadValue name="ChargingCompleted" extractionRegex="(B)" />
-                    <ModbusRegisterReadValue name="Error" extractionRegex="(E|F)" />
+                    <ModbusRegisterReadValue name="VehicleNotConnected" extractionRegex="(A)"/>
+                    <ModbusRegisterReadValue name="VehicleConnected" extractionRegex="(B)"/>
+                    <ModbusRegisterReadValue name="Charging" extractionRegex="(C|D)"/>
+                    <ModbusRegisterReadValue name="ChargingCompleted" extractionRegex="(B)"/>
+                    <ModbusRegisterReadValue name="Error" extractionRegex="(E|F)"/>
                 </ModbusRegisterRead>
                 <ModbusRegisterRead address="204" type="Discrete">
-                    <ModbusRegisterReadValue name="ChargingCompleted" />
+                    <ModbusRegisterReadValue name="ChargingCompleted"/>
                 </ModbusRegisterRead>
                 <ModbusRegisterWrite address="400" type="Coil">
-                    <ModbusRegisterWriteValue name="StartCharging" value="1" />
-                    <ModbusRegisterWriteValue name="StopCharging" value="0" />
+                    <ModbusRegisterWriteValue name="StartCharging" value="1"/>
+                    <ModbusRegisterWriteValue name="StopCharging" value="0"/>
                 </ModbusRegisterWrite>
                 <ModbusRegisterWrite address="300" type="Holding">
-                    <ModbusRegisterWriteValue name="ChargingCurrent" value="0" />
+                    <ModbusRegisterWriteValue name="ChargingCurrent" value="0"/>
                 </ModbusRegisterWrite>
             </EVModbusControl>
-            <ElectricVehicle id="1" name="Nissan Leaf"
-                             batteryCapacity="40000"
-                             phases="1"
-                             maxChargePower="10000"
-                             defaultSocManual="100"
-                             defaultSocOptionalEnergy="90"
-            >
-                <SocScript script="/home/axel/IdeaProjects/SmartApplianceEnabler/src/test/soc.sh"
-                           extractionRegex=".*is (\d*.{0,1}\d+).*"/>
+            <ElectricVehicle id="1" name="Nissan Leaf" batteryCapacity="40000" phases="1" maxChargePower="10000" chargeLoss="20" defaultSocManual="100" defaultSocOptionalEnergy="90">
+                <SocScript script="/home/axel/IdeaProjects/SmartApplianceEnabler/src/test/soc.sh" extractionRegex=".*is (\d*.{0,1}\d+).*"/>
             </ElectricVehicle>
-            <ElectricVehicle id="2" name="Tesla Model S"
-                             batteryCapacity="80000"
-            />
+            <ElectricVehicle id="2" name="Tesla Model S" batteryCapacity="80000"/>
         </ElectricVehicleCharger>
-        <!-- ModbusElectricityMeter idref="modbus" slaveAddress="1" pollInterval="10" measurementInterval="60">
-            <ModbusRegisterRead address="0x000C" type="InputFloat">
-                <ModbusRegisterReadValue name="Power"/>
-            </ModbusRegisterRead>
-            <ModbusRegisterRead address="0x0156" type="InputFloat">
-                <ModbusRegisterReadValue name="Energy"/>
-            </ModbusRegisterRead>
-        </ModbusElectricityMeter -->
         <Schedule enabled="true">
-            <SocRequest evId="1" soc="52"/>
+            <SocRequest soc="52" evId="1"/>
             <DayTimeframe>
                 <Start hour="13" minute="0" second="0"/>
                 <End hour="18" minute="0" second="0"/>
@@ -67,12 +50,8 @@
             </DayTimeframe>
         </Schedule>
     </Appliance>
-    <!--Appliance id="F-28091971-000000000004-00">
-        <Switch gpio="2" reverseStates="true"/>
-        <S0ElectricityMeter gpio="3" pinPullResistance="PULL_DOWN" impulsesPerKwh="1000"/>
-    </Appliance-->
     <Connectivity>
-        <ModbusTCP id="modbus" host="127.0.0.1" />
-        <ModbusTCP id="wallbox" host="192.168.178.39" />
+        <ModbusTCP id="modbus" host="127.0.0.1"/>
+        <ModbusTCP id="wallbox" host="192.168.178.39"/>
     </Connectivity>
 </Appliances>
