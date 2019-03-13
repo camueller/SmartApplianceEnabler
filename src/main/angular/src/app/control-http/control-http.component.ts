@@ -12,6 +12,7 @@ import {HttpSwitch} from './http-switch';
 import {ControlHttpErrorMessages} from './control-http-error-messages';
 import {FormMarkerService} from '../shared/form-marker-service';
 import {FormHandler} from '../shared/form-handler';
+import {AppliancesReloadService} from '../appliance/appliances-reload-service';
 
 @Component({
   selector: 'app-control-http',
@@ -36,6 +37,7 @@ export class ControlHttpComponent implements OnInit, AfterViewChecked {
   constructor(private logger: Logger,
               private controlService: ControlService,
               private formMarkerService: FormMarkerService,
+              private appliancesReloadService: AppliancesReloadService,
               private translate: TranslateService
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
@@ -82,7 +84,7 @@ export class ControlHttpComponent implements OnInit, AfterViewChecked {
 
   submitForm() {
     this.updateHttpSwitch(this.form, this.control.httpSwitch);
-    this.controlService.updateControl(this.control, this.applianceId).subscribe();
+    this.controlService.updateControl(this.control, this.applianceId).subscribe(() => this.appliancesReloadService.reload());
     this.form.markAsPristine();
   }
 }
