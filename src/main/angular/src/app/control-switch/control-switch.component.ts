@@ -12,6 +12,7 @@ import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {Logger} from '../log/logger';
 import {FormMarkerService} from '../shared/form-marker-service';
 import {FormHandler} from '../shared/form-handler';
+import {AppliancesReloadService} from '../appliance/appliances-reload-service';
 
 @Component({
   selector: 'app-control-switch',
@@ -36,6 +37,7 @@ export class ControlSwitchComponent implements OnInit, AfterViewChecked {
   constructor(private logger: Logger,
               private controlService: ControlService,
               private formMarkerService: FormMarkerService,
+              private appliancesReloadService: AppliancesReloadService,
               private translate: TranslateService
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
@@ -71,7 +73,7 @@ export class ControlSwitchComponent implements OnInit, AfterViewChecked {
 
   submitForm() {
     this.updateSwitch(this.form, this.control.switch_);
-    this.controlService.updateControl(this.control, this.applianceId).subscribe();
+    this.controlService.updateControl(this.control, this.applianceId).subscribe(() => this.appliancesReloadService.reload());
     this.form.markAsPristine();
   }
 }

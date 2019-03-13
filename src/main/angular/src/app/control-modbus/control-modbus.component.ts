@@ -14,6 +14,7 @@ import {ModbusSettings} from '../settings/modbus-settings';
 import {SettingsDefaults} from '../settings/settings-defaults';
 import {FormMarkerService} from '../shared/form-marker-service';
 import {FormHandler} from '../shared/form-handler';
+import {AppliancesReloadService} from '../appliance/appliances-reload-service';
 
 @Component({
   selector: 'app-control-modbus',
@@ -41,6 +42,7 @@ export class ControlModbusComponent implements OnInit, AfterViewChecked {
 
   constructor(private logger: Logger,
               private controlService: ControlService,
+              private appliancesReloadService: AppliancesReloadService,
               private formMarkerService: FormMarkerService,
               private translate: TranslateService
   ) {
@@ -90,7 +92,7 @@ export class ControlModbusComponent implements OnInit, AfterViewChecked {
 
   submitForm() {
     this.updateModbusSwitch(this.form, this.control.modbusSwitch);
-    this.controlService.updateControl(this.control, this.applianceId).subscribe();
+    this.controlService.updateControl(this.control, this.applianceId).subscribe(() => this.appliancesReloadService.reload());
     this.form.markAsPristine();
   }
 }
