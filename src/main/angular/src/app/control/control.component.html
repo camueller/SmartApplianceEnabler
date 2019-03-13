@@ -27,7 +27,7 @@
   >
   </app-control-evcharger>
   <ng-template #notEvCharger>
-    <form class="ui form" #controlForm="ngForm">
+    <form class="ui form" #form="ngForm">
       <div class="fields">
         <div class="field">
           <label>{{'ControlComponent.type' | translate}}</label>
@@ -68,6 +68,6 @@
   </ng-template>
   <!--
   <pre>{{control | json}}</pre>
-  <pre>{{controlForm.value | json}}</pre>
+  <pre>{{form.value | json}}</pre>
   -->
 </div>

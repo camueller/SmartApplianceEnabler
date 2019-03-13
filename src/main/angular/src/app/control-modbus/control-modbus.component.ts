@@ -92,7 +92,9 @@ export class ControlModbusComponent implements OnInit, AfterViewChecked {
 
   submitForm() {
     this.updateModbusSwitch(this.form, this.control.modbusSwitch);
-    this.controlService.updateControl(this.control, this.applianceId).subscribe(() => this.appliancesReloadService.reload());
+    this.controlService.updateControl(this.control, this.applianceId).subscribe(
+      () => this.appliancesReloadService.reload());
     this.form.markAsPristine();
+    this.childFormChanged.emit(this.form.valid);
   }
 }

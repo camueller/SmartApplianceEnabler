@@ -73,7 +73,9 @@ export class ControlSwitchComponent implements OnInit, AfterViewChecked {
 
   submitForm() {
     this.updateSwitch(this.form, this.control.switch_);
-    this.controlService.updateControl(this.control, this.applianceId).subscribe(() => this.appliancesReloadService.reload());
+    this.controlService.updateControl(this.control, this.applianceId).subscribe(
+      () => this.appliancesReloadService.reload());
     this.form.markAsPristine();
+    this.childFormChanged.emit(this.form.valid);
   }
 }

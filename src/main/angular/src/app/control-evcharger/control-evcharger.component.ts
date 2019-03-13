@@ -17,9 +17,6 @@ import {ElectricVehicle} from './electric-vehicle';
 import {FormHandler} from '../shared/form-handler';
 import {SocScript} from './soc-script';
 import {ControlDefaults} from '../control/control-defaults';
-import {RuntimeRequest} from '../schedule/runtime-request';
-import {EnergyRequest} from '../schedule/energy-request';
-import {SocRequest} from '../schedule/soc-request';
 import {AppliancesReloadService} from '../appliance/appliances-reload-service';
 
 declare const $: any;
@@ -357,7 +354,9 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
 
   submitForm() {
     this.updateEvCharger(this.form, this.control.evCharger);
-    this.controlService.updateControl(this.control, this.applianceId).subscribe(() => this.appliancesReloadService.reload());
+    this.controlService.updateControl(this.control, this.applianceId).subscribe(
+      () => this.appliancesReloadService.reload());
     this.form.markAsPristine();
+    this.childFormChanged.emit(this.form.valid);
   }
 }

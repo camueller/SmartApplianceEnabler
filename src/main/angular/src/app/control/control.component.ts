@@ -47,7 +47,7 @@ import {EvCharger} from '../control-evcharger/ev-charger';
 })
 export class ControlComponent implements OnInit, CanDeactivate<ControlComponent> {
   @ViewChild('controlForm')
-  controlForm: NgForm;
+  form: NgForm;
   applianceId: string;
   controlDefaults: ControlDefaults;
   control: Control;
@@ -55,7 +55,7 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   appliance: Appliance;
   settingsDefaults: SettingsDefaults;
   settings: Settings;
-  childFormDirty = false;
+  childFormValid = false;
   discardChangesMessage: string;
   TYPE_ALWAYS_ON_SWITCH = AlwaysOnSwitch.TYPE;
   TYPE_SWITCH = Switch.TYPE;
@@ -93,14 +93,14 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   }
 
   canDeactivate(): Observable<boolean> | boolean {
-    if ((!this.controlForm || this.controlForm.form.pristine) && ! this.childFormDirty) {
+    if ((!this.form || this.form.form.pristine) && this.childFormValid) {
       return true;
     }
     return this.dialogService.confirm(this.discardChangesMessage);
   }
 
   onChildFormChanged(event: boolean) {
-    this.childFormDirty = event;
+    this.childFormValid = event;
   }
 
   typeChanged(newType: string) {
