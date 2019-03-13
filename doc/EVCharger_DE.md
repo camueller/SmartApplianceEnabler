@@ -18,14 +18,14 @@ Ein [Script zum automatisierten Abfragen des State of Charge (SOC)](SOC_DE.md) l
 
 ### Zeitpläne
 Die grundsätzlich Konfiguration der Zeitpläne ist [hier](Configuration_DE.md#zeitpläne) beschrieben.
-Abweichend davon existiet bei E-Auto-Ladegeräten nicht nur die ```Anforderungenart``` mit dem Wert ```Laufzeit```, sondern zwei weitere Optionen:
+Abweichend davon existiet bei E-Auto-Ladegeräten nicht nur die **Anforderungenart** mit dem Wert ```Laufzeit```, sondern zwei weitere Optionen:
 
-Mit der Anforderungsart ```Energiemenge``` kann eine bestimmte minimale und/oder maximale Energiemenge (in Wh) zum Ausdruck gebracht werden. Wenn die minimale Energiemenge auf ```0``` gesetzt wird und die maximale Energiemenge auf einen größeren Wert, wird damit zum Ausdruck gebracht, dass dieses Gerät *Überschussenenergie* aufnehmen kann bzw. soll.
+Mit der **Anforderungsart** ```Energiemenge``` kann eine bestimmte minimale und/oder maximale Energiemenge (in Wh) zum Ausdruck gebracht werden. Wenn die minimale Energiemenge auf ```0``` gesetzt wird und die maximale Energiemenge auf einen größeren Wert, wird damit zum Ausdruck gebracht, dass dieses Gerät *Überschussenenergie* aufnehmen kann bzw. soll.
 
-Mit der Anforderungsart ```Laden bis SOC``` wird genau die Energiemenge angefordert, die notwendig ist, um einen bestimmten SOC zu erreichen. Zur Berechnung dieser Energiemenge wird die Batteriekapazität und der SOC des Fahrzeugs bei Ladebeginn herangezogen. Für letzteres ist es notwendig, dass der SOC des Fahrzeugs via Script abgefragt werden kann.
+Mit der **Anforderungsart** ```Laden bis SOC``` wird genau die Energiemenge angefordert, die notwendig ist, um einen bestimmten SOC zu erreichen. Zur Berechnung dieser Energiemenge wird die Batteriekapazität und der SOC des Fahrzeugs bei Ladebeginn herangezogen. Für letzteres ist es notwendig, dass der SOC des Fahrzeugs via Script abgefragt werden kann.
 
 ## Ampel-Steuerung
-Der Ist-SOC wird bei Konfiguration eines SOC-Scripts vorbelegt mit dem aktuellen Wert zu diesem Zeitpunkt, ansonsten kann er im Auto angelesen und eingegeben werden, wenn man dem SHM eine gute Planung ermöglichen will (ansonsten wird 0 angenommen).
+Wenn ein SOC-Script für das ausgewählte Fahrzeug angegeben wurde, wird der Ist-SOC vorbelegt mit dem aktuellen Wert zu diesem Zeitpunkt. Ansonsten kann er im Auto abgelesen und eingegeben werden, wenn man dem SHM eine gute Planung ermöglichen will (ansonsten wird 0 angenommen).
 
 Wird kein Soll-SOC eingegeben, wird 100% angenommen.
 
