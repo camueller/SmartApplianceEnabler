@@ -586,9 +586,10 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             ElectricVehicleCharger charger = (ElectricVehicleCharger) this.control;
             ElectricVehicle ev = charger.getVehicle(socRequest.getEvId());
             Integer socStart = charger.getConnectedVehicleSoc() != null ? charger.getConnectedVehicleSoc() : 0;
-            int energyToBeCharged = Float.valueOf((socRequest.getSoc() - socStart)/100.0f * ev.getBatteryCapacity())
-                    .intValue();
-            logger.debug("{}: Energy to be charged: {} Wh", id, energyToBeCharged);
+            int energyToBeCharged = Float.valueOf((socRequest.getSoc() - socStart)/100.0f
+                    * (100 + ev.getChargeLoss())/100.0f * ev.getBatteryCapacity()).intValue();
+            logger.debug("{}: Energy to be charged: {} Wh (batteryCapacity={}Wh chargeLoss={}% socStart={} socRequested={})",
+                    id, energyToBeCharged, socStart, socRequest.getSoc());
             if(considerEnergyAlreadyCharged) {
                 return buildEnergyRequestConsideringEnergyAlreadyCharged(energyToBeCharged, energyToBeCharged);
             }
@@ -633,15 +634,16 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             // TODO the following call might return an updated SOC in a future release
             Integer initialSoc = evCharger.getConnectedVehicleSoc();
             Integer targetSoc = vehicle.getDefaultSocOptionalEnergy();
-            logger.debug("{}: calculating optional energy for vehicle={} batteryCapactiy={} initialSoc={} targetSoc={}",
-                    id, vehicle.getName(), batteryCapacity, initialSoc, targetSoc);
+            logger.debug("{}: calculating optional energy evId={} batteryCapactiy={} chargeLoss={} initialSoc={} targetSoc={}",
+                    id, vehicle.getId(), batteryCapacity, vehicle.getChargeLoss(), initialSoc, targetSoc);
             if(initialSoc == null) {
                 initialSoc = 0;
             }
             if(targetSoc == null) {
                 targetSoc = 100;
             }
-            Integer maxEnergy = Float.valueOf((targetSoc - initialSoc)/100.0f * batteryCapacity).intValue()
+            Integer maxEnergy = Float.valueOf((targetSoc - initialSoc)/100.0f
+                    * (100 + vehicle.getChargeLoss())/100.0f * batteryCapacity).intValue()
                     - Float.valueOf(energy * 1000).intValue();
             logger.debug("{}: optional energy calculated={}Wh", id, maxEnergy);
             runtimeInterval = new RuntimeInterval();

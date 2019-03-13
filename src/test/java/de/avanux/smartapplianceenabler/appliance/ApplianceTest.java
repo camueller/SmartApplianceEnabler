@@ -215,11 +215,8 @@ public class ApplianceTest extends TestBase {
 
         List<RuntimeInterval> runtimeIntervals = this.appliance.getRuntimeIntervals(nonEvOptionalEnergyIntervals);
         Assert.assertEquals(2, runtimeIntervals.size());
-        Integer maxEnergy = Float.valueOf((vehicle.getDefaultSocOptionalEnergy() - connectedVehicleSoc)/100.0f
-                * vehicle.getBatteryCapacity()).intValue()
-                - Float.valueOf(energyAlreadyCharged).intValue() * 1000;
         RuntimeInterval evOptionalEnergyInterval = new RuntimeInterval(0, 3599,
-                0, maxEnergy, true);
+                0, 12000, true);
         Assert.assertEquals(runtimeIntervals.get(0), evOptionalEnergyInterval);
         Assert.assertEquals(runtimeIntervals.get(1), nonEvOptionalEnergyInterval);
     }

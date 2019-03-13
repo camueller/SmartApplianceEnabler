@@ -107,11 +107,16 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
     );
     const fg =  new FormGroup({});
     this.formHandler.addFormControl(fg, 'template', undefined);
-    this.formHandler.addFormControl(fg, 'voltage', evCharger.voltage);
-    this.formHandler.addFormControl(fg, 'voltage', evCharger.voltage);
-    this.formHandler.addFormControl(fg, 'phases', evCharger.phases);
-    this.formHandler.addFormControl(fg, 'pollInterval', evCharger.pollInterval);
-    this.formHandler.addFormControl(fg, 'startChargingStateDetectionDelay', evCharger.startChargingStateDetectionDelay);
+    this.formHandler.addFormControl(fg, 'voltage', evCharger.voltage,
+      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
+    this.formHandler.addFormControl(fg, 'voltage', evCharger.voltage,
+      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
+    this.formHandler.addFormControl(fg, 'phases', evCharger.phases,
+      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
+    this.formHandler.addFormControl(fg, 'pollInterval', evCharger.pollInterval,
+      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
+    this.formHandler.addFormControl(fg, 'startChargingStateDetectionDelay',
+      evCharger.startChargingStateDetectionDelay, [Validators.pattern(InputValidatorPatterns.INTEGER)]);
     this.formHandler.addFormControl(fg, 'forceInitialCharging', evCharger.forceInitialCharging);
     this.formHandler.addFormControl(fg, 'modbusIdref', evCharger.control.idref, [Validators.required]);
     this.formHandler.addFormControl(fg, 'modbusSlaveAddress', evCharger.control.slaveAddress,
@@ -126,11 +131,17 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
     this.formHandler.addFormControl(fg, 'id', ev && ev.id || newId);
     this.formHandler.addFormControl(fg, 'name', ev && ev.name, [Validators.required]);
     this.formHandler.addFormControl(fg, 'batteryCapacity', ev && ev.batteryCapacity,
-      [Validators.required]);
-    this.formHandler.addFormControl(fg, 'phases', ev && ev.phases);
-    this.formHandler.addFormControl(fg, 'maxChargePower', ev && ev.maxChargePower);
-    this.formHandler.addFormControl(fg, 'defaultSocManual', ev && ev.defaultSocManual);
-    this.formHandler.addFormControl(fg, 'defaultSocOptionalEnergy', ev && ev.defaultSocOptionalEnergy);
+      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
+    this.formHandler.addFormControl(fg, 'phases', ev && ev.phases,
+      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
+    this.formHandler.addFormControl(fg, 'maxChargePower', ev && ev.maxChargePower,
+      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
+    this.formHandler.addFormControl(fg, 'chargeLoss', ev && ev.chargeLoss,
+      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
+    this.formHandler.addFormControl(fg, 'defaultSocManual', ev && ev.defaultSocManual,
+      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
+    this.formHandler.addFormControl(fg, 'defaultSocOptionalEnergy',
+      ev && ev.defaultSocOptionalEnergy, [Validators.pattern(InputValidatorPatterns.INTEGER)]);
     const scriptEnabled: boolean = ev && ev.socScript && (ev.socScript.script !== undefined);
     this.formHandler.addFormControl(fg, 'scriptEnabled', scriptEnabled);
     this.formHandler.addFormControl(fg, 'scriptFilename', ev && ev.socScript && ev.socScript.script,
@@ -148,7 +159,8 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
       [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER_OR_HEX)]);
     this.formHandler.addFormControl(fg, 'write', configuration.write);
     this.formHandler.addFormControl(fg, 'registerType', configuration.type, [Validators.required]);
-    this.formHandler.addFormControl(fg, 'bytes', configuration.bytes);
+    this.formHandler.addFormControl(fg, 'bytes', configuration.bytes,
+      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
     this.formHandler.addFormControl(fg, 'byteOrder', configuration.byteOrder);
     this.formHandler.addFormControl(fg, 'extractionRegex', configuration.extractionRegex);
     this.formHandler.addFormControl(fg, 'value', configuration.value);
@@ -220,6 +232,7 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
       batteryCapacity: evFormControl.controls.batteryCapacity.value,
       phases: evFormControl.controls.phases.value,
       maxChargePower: evFormControl.controls.maxChargePower.value,
+      chargeLoss: evFormControl.controls.chargeLoss.value,
       defaultSocManual: evFormControl.controls.defaultSocManual.value,
       defaultSocOptionalEnergy: evFormControl.controls.defaultSocOptionalEnergy.value,
       socScript: newSocScript

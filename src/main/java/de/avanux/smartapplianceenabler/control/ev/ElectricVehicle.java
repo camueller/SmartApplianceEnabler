@@ -33,6 +33,8 @@ public class ElectricVehicle {
     @XmlAttribute
     private Integer maxChargePower;
     @XmlAttribute
+    private Integer chargeLoss;
+    @XmlAttribute
     private Integer defaultSocManual;
     @XmlAttribute
     private Integer defaultSocOptionalEnergy;
@@ -82,6 +84,14 @@ public class ElectricVehicle {
         this.maxChargePower = maxChargePower;
     }
 
+    public Integer getChargeLoss() {
+        return chargeLoss != null ? chargeLoss : ElectricVehicleChargerDefaults.getChargeLoss();
+    }
+
+    public void setChargeLoss(Integer chargeLoss) {
+        this.chargeLoss = chargeLoss;
+    }
+
     public Integer getDefaultSocManual() {
         return defaultSocManual;
     }
@@ -115,12 +125,15 @@ public class ElectricVehicle {
 
     @Override
     public String toString() {
-        return "ElectricVehicle {" +
+        return "ElectricVehicle{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", batteryCapacity=" + batteryCapacity +
                 ", phases=" + phases +
                 ", maxChargePower=" + maxChargePower +
+                ", chargeLoss=" + chargeLoss +
+                ", defaultSocManual=" + defaultSocManual +
+                ", defaultSocOptionalEnergy=" + defaultSocOptionalEnergy +
                 ", socScript=" + socScript +
                 '}';
     }

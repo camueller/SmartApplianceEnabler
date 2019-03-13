@@ -409,15 +409,17 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
             }
             int resolvedSocRequested = (socRequested != null ? socRequested : 100);
             int resolvedSocCurrent = (socCurrent != null ? socCurrent : 0);
-            int energy = Float.valueOf(((float) resolvedSocRequested - resolvedSocCurrent)/100.0f * batteryCapacity).intValue();
+            int energy = Float.valueOf(((float) resolvedSocRequested - resolvedSocCurrent)/100.0f
+                    * (100 + vehicle.getChargeLoss())/100.0f * batteryCapacity).intValue();
             setChargeAmount(energy);
-            logger.debug("{}: Calculated energy={}Wh batteryCapacity={}Wh", applianceId, energy, batteryCapacity);
+            logger.debug("{}: Calculated energy={}Wh (batteryCapacity={}Wh chargeLoss={}%)", applianceId, energy,
+                    batteryCapacity, vehicle.getChargeLoss());
 
             if(chargeEnd == null) {
-                int chargeMinutes = Float.valueOf((float) energy / maxChargePower * CHARGE_LOSS_FACTOR * 60).intValue();
+                int chargeMinutes = Float.valueOf((float) energy / maxChargePower * 60).intValue();
                 chargeEnd = new LocalDateTime().plusMinutes(chargeMinutes);
-                logger.debug("{}: Calculated charge end={} chargeMinutes={} maxPowerConsumption={} chargeLossFactor={}",
-                        applianceId, chargeEnd, chargeMinutes, maxChargePower, CHARGE_LOSS_FACTOR);
+                logger.debug("{}: Calculated charge end={} chargeMinutes={} maxPowerConsumption={} chargeLoss={}",
+                        applianceId, chargeEnd, chargeMinutes, maxChargePower, vehicle.getChargeLoss());
             }
 
             RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();

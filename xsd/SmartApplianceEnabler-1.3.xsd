@@ -153,6 +153,7 @@
         <xs:attribute name="batteryCapacity" type="xs:int" use="required" />
         <xs:attribute name="phases" type="xs:int" />
         <xs:attribute name="maxChargePower" type="xs:int" />
+        <xs:attribute name="chargeLoss" type="xs:int" />
         <xs:attribute name="defaultSocOptionalEnergy" type="xs:int" />
         <xs:attribute name="defaultSocManual" type="xs:int" />
     </xs:complexType>

@@ -5,6 +5,7 @@ export class ControlDefaults {
   startingCurrentSwitchDefaults_minRunningTime: number;
   electricVehicleChargerDefaults_voltage: number;
   electricVehicleChargerDefaults_phases: number;
+  electricVehicleChargerDefaults_chargeLoss: number;
   electricVehicleChargerDefaults_pollInterval: number;
   electricVehicleChargerDefaults_startChargingStateDetectionDelay: number;
   electricVehicleChargerDefaults_forceInitialCharging: boolean;

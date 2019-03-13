@@ -182,6 +182,7 @@
   "ControlEvchargerComponent.ev.batteryCapacity": "Batteriekapazität [Wh]",
   "ControlEvchargerComponent.ev.phases": "Phasen",
   "ControlEvchargerComponent.ev.maxChargePower": "Max. Ladeleistung [W]",
+  "ControlEvchargerComponent.ev.chargeLoss": "Ladeverluste [%]",
   "ControlEvchargerComponent.ev.soc": "Standardwerte für Sollwert des State of Charge (SOC)",
   "ControlEvchargerComponent.ev.defaultSocManual": "Manuell",
   "ControlEvchargerComponent.ev.defaultSocOptionalEnergy": "Optionale Energie",
