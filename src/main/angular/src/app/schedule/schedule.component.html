@@ -142,14 +142,14 @@
           <div class="field">
             <label>{{'ScheduleComponent.runtimeRequest_min' | translate}}</label>
             <input class="clockpicker" type="text" formControlName="min">
-            <div *ngIf="getIndexedErrorMessage('dayTimeframe_minRunningTime', i)" class="ui negative message">
-              {{getIndexedErrorMessage('dayTimeframe_minRunningTime', i)}}</div>
+            <div *ngIf="getIndexedErrorMessage('runtimeRequest_min', i)" class="ui negative message">
+              {{getIndexedErrorMessage('runtimeRequest_min', i)}}</div>
           </div>
           <div class="field">
             <label>{{'ScheduleComponent.runtimeRequest_max' | translate}}</label>
             <input class="clockpicker" type="text" formControlName="max">
-            <div *ngIf="getIndexedErrorMessage('dayTimeframe_maxRunningTime', i)" class="ui negative message">
-              {{getIndexedErrorMessage('dayTimeframe_maxRunningTime', i)}}</div>
+            <div *ngIf="getIndexedErrorMessage('runtimeRequest_max', i)" class="ui negative message">
+              {{getIndexedErrorMessage('runtimeRequest_max', i)}}</div>
           </div>
         </div>
         <div class="ui fields" [class.disabled]="!schedule.controls.enabled.value"
@@ -157,10 +157,14 @@
           <div class="field">
             <label>{{'ScheduleComponent.energyRequest_min' | translate}}</label>
             <input type="text" formControlName="min">
+            <div *ngIf="getIndexedErrorMessage('energyRequest_min', i)" class="ui negative message">
+              {{getIndexedErrorMessage('energyRequest_min', i)}}</div>
           </div>
           <div class="field">
             <label>{{'ScheduleComponent.energyRequest_max' | translate}}</label>
             <input type="text" formControlName="max">
+            <div *ngIf="getIndexedErrorMessage('energyRequest_max', i)" class="ui negative message">
+              {{getIndexedErrorMessage('energyRequest_max', i)}}</div>
           </div>
         </div>
         <div class="ui fields" [class.disabled]="!schedule.controls.enabled.value"

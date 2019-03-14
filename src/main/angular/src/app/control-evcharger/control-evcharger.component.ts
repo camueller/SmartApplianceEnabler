@@ -108,8 +108,6 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
     this.formHandler.addFormControl(fg, 'template', undefined);
     this.formHandler.addFormControl(fg, 'voltage', evCharger.voltage,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(fg, 'voltage', evCharger.voltage,
-      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
     this.formHandler.addFormControl(fg, 'phases', evCharger.phases,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
     this.formHandler.addFormControl(fg, 'pollInterval', evCharger.pollInterval,
@@ -118,7 +116,7 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
       evCharger.startChargingStateDetectionDelay, [Validators.pattern(InputValidatorPatterns.INTEGER)]);
     this.formHandler.addFormControl(fg, 'forceInitialCharging', evCharger.forceInitialCharging);
     this.formHandler.addFormControl(fg, 'modbusIdref', evCharger.control.idref, [Validators.required]);
-    this.formHandler.addFormControl(fg, 'modbusSlaveAddress', evCharger.control.slaveAddress,
+    this.formHandler.addFormControl(fg, 'slaveAddress', evCharger.control.slaveAddress,
       [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
     fg.addControl('modbusConfigurations', this.modbusConfigurations);
     fg.addControl('electricVehicles', this.electricVehicles);
