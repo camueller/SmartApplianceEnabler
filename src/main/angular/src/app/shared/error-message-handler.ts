@@ -37,7 +37,7 @@ export class ErrorMessageHandler {
           for (const message of errorMessages.getErrorMessages()) {
             for (let i = 0; i < formArrayControl.controls.length; i++) {
               const key = (formControlKey + '.#.' + message.forControl)
-                .replace('_', '.')
+                .replace(/_/g, '.')
                 .replace('#', i.toString());
               const controlWithinArray = form.get(key);
               this.validateControl(

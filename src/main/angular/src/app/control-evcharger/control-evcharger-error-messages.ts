@@ -25,6 +25,10 @@ export class ControlEvchargerErrorMessages extends ErrorMessages {
   constructor(protected translate: TranslateService) {
     super('ControlEvchargerComponent.error.',
       [
+        new ErrorMessage('voltage', ValidatorType.pattern),
+        new ErrorMessage('phases', ValidatorType.pattern),
+        new ErrorMessage('pollInterval', ValidatorType.pattern),
+        new ErrorMessage('startChargingStateDetectionDelay', ValidatorType.pattern),
         new ErrorMessage('slaveAddress', ValidatorType.required),
         new ErrorMessage('slaveAddress', ValidatorType.pattern),
         new ErrorMessage('registerAddress', ValidatorType.required),

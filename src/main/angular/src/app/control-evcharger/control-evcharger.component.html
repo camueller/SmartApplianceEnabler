@@ -21,16 +21,19 @@
         <label>{{'ControlEvchargerComponent.voltage' | translate}}</label>
         <input type="text" formControlName="voltage"
                placeholder="{{controlDefaults.electricVehicleChargerDefaults_voltage}}">
+        <div *ngIf="errors['voltage']" class="ui negative message">{{errors['voltage']}}</div>
       </div>
       <div class="field">
         <label>{{'ControlEvchargerComponent.phases' | translate}}</label>
         <input type="text" formControlName="phases"
                placeholder="{{controlDefaults.electricVehicleChargerDefaults_phases}}">
+        <div *ngIf="errors['phases']" class="ui negative message">{{errors['phases']}}</div>
       </div>
       <div class="field">
         <label>{{'ControlEvchargerComponent.pollInterval' | translate}}</label>
         <input type="text" formControlName="pollInterval"
                placeholder="{{controlDefaults.electricVehicleChargerDefaults_pollInterval}}">
+        <div *ngIf="errors['pollInterval']" class="ui negative message">{{errors['pollInterval']}}</div>
       </div>
       <div class="field">
         <label>{{'ControlEvchargerComponent.startChargingStateDetectionDelay' | translate}}
@@ -41,6 +44,8 @@
         </label>
         <input type="text" formControlName="startChargingStateDetectionDelay"
                placeholder="{{controlDefaults.electricVehicleChargerDefaults_startChargingStateDetectionDelay}}">
+        <div *ngIf="errors['startChargingStateDetectionDelay']"
+             class="ui negative message">{{errors['startChargingStateDetectionDelay']}}</div>
       </div>
       <div class="field">
         <label>{{'ControlEvchargerComponent.forceInitialCharging' | translate}}
@@ -64,9 +69,9 @@
       </div>
       <div class="field">
         <label>{{'ControlEvchargerComponent.slaveAddress' | translate}}</label>
-        <input type="text" formControlName="modbusSlaveAddress">
-        <div *ngIf="errors.slaveAddress" class="ui negative message">
-          {{errors.slaveAddress}}</div>
+        <input type="text" formControlName="slaveAddress">
+        <div *ngIf="errors['slaveAddress']"
+             class="ui negative message">{{errors['slaveAddress']}}</div>
       </div>
     </div>
     <div formArrayName="modbusConfigurations">
