@@ -33,12 +33,12 @@ export class ScheduleErrorMessages extends ErrorMessages {
         new ErrorMessage('consecutiveDaysTimeframe_startTime', ValidatorType.pattern),
         new ErrorMessage('consecutiveDaysTimeframe_endTime', ValidatorType.required),
         new ErrorMessage('consecutiveDaysTimeframe_endTime', ValidatorType.pattern),
-        new ErrorMessage('runtimeRequest_min', ValidatorType.pattern),
-        new ErrorMessage('runtimeRequest_max', ValidatorType.required),
-        new ErrorMessage('runtimeRequest_max', ValidatorType.pattern),
-        new ErrorMessage('energyRequest_min', ValidatorType.pattern),
-        new ErrorMessage('energyRequest_max', ValidatorType.required),
-        new ErrorMessage('energyRequest_max', ValidatorType.pattern),
+        new ErrorMessage('runtimeRequest_minRuntime', ValidatorType.pattern),
+        new ErrorMessage('runtimeRequest_maxRuntime', ValidatorType.required),
+        new ErrorMessage('runtimeRequest_maxRuntime', ValidatorType.pattern),
+        new ErrorMessage('energyRequest_minEnergy', ValidatorType.pattern),
+        new ErrorMessage('energyRequest_maxEnergy', ValidatorType.required),
+        new ErrorMessage('energyRequest_maxEnergy', ValidatorType.pattern),
       ], translate
     );
   }

@@ -230,10 +230,10 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
 
   buildRuntimeRequest(schedule: Schedule): FormGroup {
     const fg = new FormGroup({});
-    this.formHandler.addFormControl(fg, 'min',
+    this.formHandler.addFormControl(fg, 'minRuntime',
       this.hasRuntimeRequest(schedule) ? schedule.runtimeRequest.minHHMM : undefined,
       [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]);
-    this.formHandler.addFormControl(fg, 'max',
+    this.formHandler.addFormControl(fg, 'maxRuntime',
       this.hasRuntimeRequest(schedule) ? schedule.runtimeRequest.maxHHMM : undefined,
       [Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]);
     return fg;
@@ -245,10 +245,10 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
 
   buildEnergyRequest(schedule: Schedule): FormGroup {
     const fg = new FormGroup({});
-    this.formHandler.addFormControl(fg, 'min',
+    this.formHandler.addFormControl(fg, 'minEnergy',
       this.hasEnergyRequest(schedule) ? schedule.energyRequest.min : undefined,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(fg, 'max',
+    this.formHandler.addFormControl(fg, 'maxEnergy',
       this.hasEnergyRequest(schedule) ? schedule.energyRequest.max : undefined,
       [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
     return fg;
