@@ -183,7 +183,7 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
     evCharger.startChargingStateDetectionDelay = form.controls.startChargingStateDetectionDelay.value;
     evCharger.forceInitialCharging = form.controls.forceInitialCharging.value;
     evCharger.control.idref = form.controls.modbusIdref.value;
-    evCharger.control.slaveAddress = form.controls.modbusSlaveAddress.value;
+    evCharger.control.slaveAddress = form.controls.slaveAddress.value;
 
     const configurations: Array<ModbusRegisterConfguration> = [];
     const configurationsFormArray = (form.controls.modbusConfigurations as FormArray);
