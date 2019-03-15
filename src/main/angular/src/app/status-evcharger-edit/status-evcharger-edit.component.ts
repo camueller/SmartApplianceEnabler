@@ -6,7 +6,6 @@ import {Status} from '../status/status';
 import {StatusService} from '../status/status.service';
 import {DayOfWeek} from '../shared/days-of-week';
 import {ElectricVehicle} from '../control-evcharger/electric-vehicle';
-import {ControlService} from '../control/control-service';
 
 const socValidator = (control: AbstractControl): { [key: string]: boolean } => {
   const stateOfChargeCurrent = control.get('stateOfChargeCurrent');
@@ -72,6 +71,8 @@ export class StatusEvchargerEditComponent implements OnInit, AfterViewChecked {
   ngOnInit() {
     if (this.electricVehicles.length > 0) {
       this.updateStartChargeForm(this.electricVehicles[0]);
+    } else {
+      this.updateStartChargeForm();
     }
     this.initializeOnceAfterViewChecked = true;
   }
@@ -87,27 +88,27 @@ export class StatusEvchargerEditComponent implements OnInit, AfterViewChecked {
     $('.clockpicker').clockpicker({ autoclose: true });
   }
 
-  updateStartChargeForm(ev: ElectricVehicle) {
+  updateStartChargeForm(ev?: ElectricVehicle) {
+    const electicVehicleControl = new FormControl(ev && ev.id);
+    electicVehicleControl.valueChanges.subscribe(evIdSelected => {
+      const selectedElectricVehicle = this.getElectricVehicle(evIdSelected);
+      this.updateStartChargeForm(selectedElectricVehicle);
+    });
+    this.startChargeForm = new FormGroup({
+      electricVehicle: electicVehicleControl,
+      stateOfChargeCurrent: new FormControl(undefined, Validators.pattern(InputValidatorPatterns.PERCENTAGE)),
+      stateOfChargeRequested: new FormControl(ev && ev.defaultSocManual, Validators.pattern(InputValidatorPatterns.PERCENTAGE)),
+      chargeEndDow: new FormControl(),
+      chargeEndTime: new FormControl(),
+    }, socValidator);
     if (ev) {
-      const electicVehicleControl = new FormControl(ev.id);
-      electicVehicleControl.valueChanges.subscribe(evIdSelected => {
-        const selectedElectricVehicle = this.getElectricVehicle(evIdSelected);
-        this.updateStartChargeForm(selectedElectricVehicle);
-      });
-      this.startChargeForm = new FormGroup({
-        electricVehicle: electicVehicleControl,
-        stateOfChargeCurrent: new FormControl(null, Validators.pattern(InputValidatorPatterns.PERCENTAGE)),
-        stateOfChargeRequested: new FormControl(ev.defaultSocManual, Validators.pattern(InputValidatorPatterns.PERCENTAGE)),
-        chargeEndDow: new FormControl(),
-        chargeEndTime: new FormControl(),
-      }, socValidator);
       this.statusService.getSoc(this.applianceId, ev.id).subscribe(soc => {
         if (! Number.isNaN(Number.parseInt(soc, 10))) {
           this.startChargeForm.setControl('stateOfChargeCurrent', new FormControl(Number.parseFloat(soc).toFixed()));
         }
       });
-      this.initializeOnceAfterViewChecked = true;
     }
+    this.initializeOnceAfterViewChecked = true;
   }
 
   getElectricVehicle(id: number): ElectricVehicle {

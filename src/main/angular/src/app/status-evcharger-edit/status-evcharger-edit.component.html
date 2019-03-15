@@ -5,6 +5,7 @@
                 labelField="name"
                 valueField="id"
                 formControlName="electricVehicle"
+                placeholder="{{'StatusComponent.ev' | translate}}"
                 #selectElectricVehicle
     >
       <sui-select-option *ngFor="let option of selectElectricVehicle.filteredOptions" class="dropdown-item" [value]="option"></sui-select-option>
