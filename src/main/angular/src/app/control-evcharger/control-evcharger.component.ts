@@ -85,7 +85,7 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
     this.form = this.buildEvChargerFormGroup(evCharger);
     this.form.markAsPristine();
     this.form.statusChanges.subscribe(() => {
-      this.childFormChanged.emit(this.form.valid);
+      this.childFormChanged.emit(this.form.pristine);
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
   }
@@ -355,6 +355,6 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
     this.controlService.updateControl(this.control, this.applianceId).subscribe(
       () => this.appliancesReloadService.reload());
     this.form.markAsPristine();
-    this.childFormChanged.emit(this.form.valid);
+    this.childFormChanged.emit(this.form.pristine);
   }
 }
