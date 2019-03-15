@@ -140,31 +140,31 @@
         <div class="ui fields" [class.disabled]="!schedule.controls.enabled.value"
              *ngIf="hasRuntimeRequest(schedule.value)" formGroupName="runtimeRequest">
           <div class="field">
-            <label>{{'ScheduleComponent.runtimeRequest_min' | translate}}</label>
-            <input class="clockpicker" type="text" formControlName="min">
-            <div *ngIf="getIndexedErrorMessage('runtimeRequest_min', i)" class="ui negative message">
-              {{getIndexedErrorMessage('runtimeRequest_min', i)}}</div>
+            <label>{{'ScheduleComponent.runtimeRequest_minRuntime' | translate}}</label>
+            <input class="clockpicker" type="text" formControlName="minRuntime">
+            <div *ngIf="getIndexedErrorMessage('runtimeRequest_minRuntime', i)" class="ui negative message">
+              {{getIndexedErrorMessage('runtimeRequest_minRuntime', i)}}</div>
           </div>
           <div class="field">
-            <label>{{'ScheduleComponent.runtimeRequest_max' | translate}}</label>
-            <input class="clockpicker" type="text" formControlName="max">
-            <div *ngIf="getIndexedErrorMessage('runtimeRequest_max', i)" class="ui negative message">
-              {{getIndexedErrorMessage('runtimeRequest_max', i)}}</div>
+            <label>{{'ScheduleComponent.runtimeRequest_maxRuntime' | translate}}</label>
+            <input class="clockpicker" type="text" formControlName="maxRuntime">
+            <div *ngIf="getIndexedErrorMessage('runtimeRequest_maxRuntime', i)" class="ui negative message">
+              {{getIndexedErrorMessage('runtimeRequest_maxRuntime', i)}}</div>
           </div>
         </div>
         <div class="ui fields" [class.disabled]="!schedule.controls.enabled.value"
              *ngIf="hasEnergyRequest(schedule.value)" formGroupName="energyRequest">
           <div class="field">
-            <label>{{'ScheduleComponent.energyRequest_min' | translate}}</label>
-            <input type="text" formControlName="min">
-            <div *ngIf="getIndexedErrorMessage('energyRequest_min', i)" class="ui negative message">
-              {{getIndexedErrorMessage('energyRequest_min', i)}}</div>
+            <label>{{'ScheduleComponent.energyRequest_minEnergy' | translate}}</label>
+            <input type="text" formControlName="minEnergy">
+            <div *ngIf="getIndexedErrorMessage('energyRequest_minEnergy', i)" class="ui negative message">
+              {{getIndexedErrorMessage('energyRequest_minEnergy', i)}}</div>
           </div>
           <div class="field">
-            <label>{{'ScheduleComponent.energyRequest_max' | translate}}</label>
-            <input type="text" formControlName="max">
-            <div *ngIf="getIndexedErrorMessage('energyRequest_max', i)" class="ui negative message">
-              {{getIndexedErrorMessage('energyRequest_max', i)}}</div>
+            <label>{{'ScheduleComponent.energyRequest_maxEnergy' | translate}}</label>
+            <input type="text" formControlName="maxEnergy">
+            <div *ngIf="getIndexedErrorMessage('energyRequest_maxEnergy', i)" class="ui negative message">
+              {{getIndexedErrorMessage('energyRequest_maxEnergy', i)}}</div>
           </div>
         </div>
         <div class="ui fields" [class.disabled]="!schedule.controls.enabled.value"
