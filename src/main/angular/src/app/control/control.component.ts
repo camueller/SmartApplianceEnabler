@@ -55,7 +55,7 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   appliance: Appliance;
   settingsDefaults: SettingsDefaults;
   settings: Settings;
-  childFormValid = false;
+  childFormPristine = true;
   discardChangesMessage: string;
   TYPE_ALWAYS_ON_SWITCH = AlwaysOnSwitch.TYPE;
   TYPE_SWITCH = Switch.TYPE;
@@ -93,14 +93,14 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   }
 
   canDeactivate(): Observable<boolean> | boolean {
-    if ((!this.form || this.form.form.pristine) && this.childFormValid) {
+    if ((!this.form || this.form.form.pristine) && this.childFormPristine) {
       return true;
     }
     return this.dialogService.confirm(this.discardChangesMessage);
   }
 
   onChildFormChanged(event: boolean) {
-    this.childFormValid = event;
+    this.childFormPristine = event;
   }
 
   typeChanged(newType: string) {
