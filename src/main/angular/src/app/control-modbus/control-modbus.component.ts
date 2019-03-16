@@ -1,7 +1,7 @@
 import {AfterViewChecked, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Control} from '../control/control';
 import {ControlDefaults} from '../control/control-defaults';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormGroup, Validators} from '@angular/forms';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {Logger} from '../log/logger';
@@ -15,6 +15,8 @@ import {SettingsDefaults} from '../settings/settings-defaults';
 import {FormMarkerService} from '../shared/form-marker-service';
 import {FormHandler} from '../shared/form-handler';
 import {AppliancesReloadService} from '../appliance/appliances-reload-service';
+import {StartingCurrentSwitch} from '../control-startingcurrent/starting-current-switch';
+import {ControlStartingcurrentComponent} from '../control-startingcurrent/control-startingcurrent.component';
 
 @Component({
   selector: 'app-control-modbus',
@@ -81,17 +83,20 @@ export class ControlModbusComponent implements OnInit, AfterViewChecked {
     return fg;
   }
 
-  updateModbusSwitch(form: FormGroup, modbusSwitch: ModbusSwitch) {
+  updateModbusSwitch(form: FormGroup, modbusSwitch: ModbusSwitch, startingCurrentSwitch: StartingCurrentSwitch) {
     modbusSwitch.idref = form.controls.modbusTcpId.value;
     modbusSwitch.slaveAddress = form.controls.slaveAddress.value;
     modbusSwitch.registerAddress = form.controls.registerAddress.value;
     modbusSwitch.registerType = form.controls.registerType.value;
     modbusSwitch.onValue = form.controls.onValue.value;
     modbusSwitch.offValue = form.controls.offValue.value;
+    if (this.control.startingCurrentDetection) {
+      ControlStartingcurrentComponent.updateStartingCurrentSwitch(form, startingCurrentSwitch);
+    }
   }
 
   submitForm() {
-    this.updateModbusSwitch(this.form, this.control.modbusSwitch);
+    this.updateModbusSwitch(this.form, this.control.modbusSwitch, this.control.startingCurrentSwitch);
     this.controlService.updateControl(this.control, this.applianceId).subscribe(
       () => this.appliancesReloadService.reload());
     this.form.markAsPristine();
