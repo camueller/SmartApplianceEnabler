@@ -431,13 +431,22 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
 
     public void setChargePower(int power) {
         int phases = getPhases();
+        int adjustedPower = power;
         ElectricVehicle chargingVehicle = getConnectedVehicle();
-        if(chargingVehicle != null && chargingVehicle.getPhases() != null) {
-            phases = chargingVehicle.getPhases();
+        if(chargingVehicle != null) {
+            if(chargingVehicle.getPhases() != null) {
+                phases = chargingVehicle.getPhases();
+            }
+            if(chargingVehicle.getMaxChargePower() != null && power > chargingVehicle.getMaxChargePower()) {
+                adjustedPower = chargingVehicle.getMaxChargePower();
+                logger.debug("{}: Limiting charge power to vehicle maximum of {}W",
+                        applianceId, chargingVehicle.getMaxChargePower());
+            }
         }
-        int current = Float.valueOf((float) power / (getVoltage() * phases)).intValue();
-        logger.debug("{}: Set charge power: {}W corresponds to {}A using {} phases", applianceId, power, current, phases);
-        this.chargePower = power;
+        int current = Float.valueOf((float) adjustedPower / (getVoltage() * phases)).intValue();
+        logger.debug("{}: Set charge power: {}W corresponds to {}A using {} phases",
+                applianceId, adjustedPower, current, phases);
+        this.chargePower = adjustedPower;
         control.setChargeCurrent(current);
     }
 
