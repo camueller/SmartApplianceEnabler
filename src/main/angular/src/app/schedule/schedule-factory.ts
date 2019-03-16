@@ -123,19 +123,19 @@ export class ScheduleFactory {
       schedule.requestType = rawSchedule.requestType;
       if (rawSchedule.requestType === RuntimeRequest.TYPE) {
         schedule.runtimeRequest = new RuntimeRequest();
-        if (rawSchedule.runtimeRequest.min != null && rawSchedule.runtimeRequest.min !== '') {
-          schedule.runtimeRequest.min = TimeUtil.toSeconds(rawSchedule.runtimeRequest.min);
+        if (rawSchedule.runtimeRequest.minRuntime != null && rawSchedule.runtimeRequest.minRuntime !== '') {
+          schedule.runtimeRequest.min = TimeUtil.toSeconds(rawSchedule.runtimeRequest.minRuntime);
         }
-        if (rawSchedule.runtimeRequest.max != null && rawSchedule.runtimeRequest.max !== '') {
-          schedule.runtimeRequest.max = TimeUtil.toSeconds(rawSchedule.runtimeRequest.max);
+        if (rawSchedule.runtimeRequest.maxRuntime != null && rawSchedule.runtimeRequest.maxRuntime !== '') {
+          schedule.runtimeRequest.max = TimeUtil.toSeconds(rawSchedule.runtimeRequest.maxRuntime);
         }
       } else if (rawSchedule.requestType === EnergyRequest.TYPE) {
         schedule.energyRequest = new EnergyRequest();
-        if (rawSchedule.energyRequest.min != null && rawSchedule.energyRequest.min !== '') {
-          schedule.energyRequest.min = rawSchedule.energyRequest.min;
+        if (rawSchedule.energyRequest.minEnergy != null && rawSchedule.energyRequest.minEnergy !== '') {
+          schedule.energyRequest.min = rawSchedule.energyRequest.minEnergy;
         }
-        if (rawSchedule.energyRequest.max != null && rawSchedule.energyRequest.max !== '') {
-          schedule.energyRequest.max = rawSchedule.energyRequest.max;
+        if (rawSchedule.energyRequest.maxEnergy != null && rawSchedule.energyRequest.maxEnergy !== '') {
+          schedule.energyRequest.max = rawSchedule.energyRequest.maxEnergy;
         }
       } else if (rawSchedule.requestType === SocRequest.TYPE) {
         schedule.socRequest = new SocRequest();
