@@ -13,6 +13,8 @@ import {Logger} from '../log/logger';
 import {FormMarkerService} from '../shared/form-marker-service';
 import {FormHandler} from '../shared/form-handler';
 import {AppliancesReloadService} from '../appliance/appliances-reload-service';
+import {ControlStartingcurrentComponent} from '../control-startingcurrent/control-startingcurrent.component';
+import {StartingCurrentSwitch} from '../control-startingcurrent/starting-current-switch';
 
 @Component({
   selector: 'app-control-switch',
@@ -66,13 +68,16 @@ export class ControlSwitchComponent implements OnInit, AfterViewChecked {
     return fg;
   }
 
-  updateSwitch(form: FormGroup, switch_: Switch) {
+  updateSwitch(form: FormGroup, switch_: Switch, startingCurrentSwitch: StartingCurrentSwitch) {
     switch_.gpio = form.controls.gpio.value;
     switch_.reverseStates = form.controls.reverseStates.value;
+    if (this.control.startingCurrentDetection) {
+      ControlStartingcurrentComponent.updateStartingCurrentSwitch(form, startingCurrentSwitch);
+    }
   }
 
   submitForm() {
-    this.updateSwitch(this.form, this.control.switch_);
+    this.updateSwitch(this.form, this.control.switch_, this.control.startingCurrentSwitch);
     this.controlService.updateControl(this.control, this.applianceId).subscribe(
       () => this.appliancesReloadService.reload());
     this.form.markAsPristine();

@@ -247,6 +247,7 @@
         <xs:attribute name="powerThreshold" type="xs:int" />
         <xs:attribute name="startingCurrentDetectionDuration" type="xs:int" />
         <xs:attribute name="finishedCurrentDetectionDuration" type="xs:int" />
+        <xs:attribute name="minRunningTime" type="xs:int" />
     </xs:complexType>
 
     <xs:complexType name="S0ElectricityMeterType">

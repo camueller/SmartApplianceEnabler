@@ -13,6 +13,8 @@ import {ControlHttpErrorMessages} from './control-http-error-messages';
 import {FormMarkerService} from '../shared/form-marker-service';
 import {FormHandler} from '../shared/form-handler';
 import {AppliancesReloadService} from '../appliance/appliances-reload-service';
+import {StartingCurrentSwitch} from '../control-startingcurrent/starting-current-switch';
+import {ControlStartingcurrentComponent} from '../control-startingcurrent/control-startingcurrent.component';
 
 @Component({
   selector: 'app-control-http',
@@ -72,7 +74,7 @@ export class ControlHttpComponent implements OnInit, AfterViewChecked {
     return fg;
   }
 
-  updateHttpSwitch(form: FormGroup, httpSwitch: HttpSwitch) {
+  updateHttpSwitch(form: FormGroup, httpSwitch: HttpSwitch, startingCurrentSwitch: StartingCurrentSwitch) {
     httpSwitch.onUrl = form.controls.onUrl.value;
     httpSwitch.onData = form.controls.onData.value;
     httpSwitch.offUrl = form.controls.offUrl.value;
@@ -80,10 +82,13 @@ export class ControlHttpComponent implements OnInit, AfterViewChecked {
     httpSwitch.username = form.controls.username.value;
     httpSwitch.password = form.controls.password.value;
     httpSwitch.contentType = form.controls.contentType.value;
+    if (this.control.startingCurrentDetection) {
+      ControlStartingcurrentComponent.updateStartingCurrentSwitch(form, startingCurrentSwitch);
+    }
   }
 
   submitForm() {
-    this.updateHttpSwitch(this.form, this.control.httpSwitch);
+    this.updateHttpSwitch(this.form, this.control.httpSwitch, this.control.startingCurrentSwitch);
     this.controlService.updateControl(this.control, this.applianceId).subscribe(
       () => this.appliancesReloadService.reload());
     this.form.markAsPristine();
