@@ -1,9 +1,8 @@
-# State of charge (SOC) mit Script auslesen
-## Nissan Leaf
+# Nissan Leaf
 Nissan stellt ein API names Carwings bereit. Für dieses existieren Implementierungen u.a. für Python und Dart. Letzteres stammt vom Entwickler der "My Leaf"-Android-App und wird auch dort verwendet. Die Python-Implementierung ist einfacher zu installieren und sollte im Zweifel gewählt werden.
 
-### Python-Implementierung
-#### Installation
+## Python-Implementierung
+### Installation
 Zunächst muss der Python-Package-Manager installiert werden:
 ```
 sudo apt install python-pip
@@ -65,7 +64,7 @@ leaf_info = l.get_latest_battery_status()
 print "leaf_info.state_of_charge %s" % leaf_info.state_of_charge
 ```
 
-#### Ausführung
+### Ausführung
 ```
 cd /app/soc
 $ ./soc.py
@@ -76,8 +75,8 @@ leaf_info.state_of_charge 76
 $
 ```
 
-### Dart-Implementierung
-#### Installation
+## Dart-Implementierung
+### Installation
 Zunächst muss Dart installiert werden, wie auf https://www.dartlang.org/tools/sdk#install beschrieben:
 ```
 $ sudo sh -c 'curl https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -'
