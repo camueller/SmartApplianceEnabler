@@ -27,17 +27,17 @@
 ## Wozu?
 Der *Smart Appliance Enabler* dient dazu, beliebige Geräte ([Ladegeräte/Wallboxen für E-Autos](doc/EVCharger_DE.md), Wärmepumpe, Waschmaschine, Geschirrspüler, ...) in eine **(Smart-Home-) Steuerung** zu integrieren. Dazu kann der *Smart Appliance Enabler* von der Steuerung **Schalt-Empfehlungen** entgegen nehmen und die von ihm verwalteten Geräte ein- oder ausschalten. Falls für diese Geräte individuelle, **digitale Stromzähler** verwendet werden, können diese ausgelesen werden und der Stromverbrauch an die (Smart-Home-) Steuerung gemeldet werden, um der Steuerung künftig energieeffiziente Schaltempfehlungen zu ermöglichen.
 
-![SmartHomeEnablerSchema](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/SmartApplianceEnabler.png)
+![SmartHomeEnablerSchema](pics/SmartApplianceEnabler.png)
 
 Damit der *Smart Appliance Enabler* in die (Smart-Home-) Steuerung integriert werden kann, muss er deren Protokoll(e) unterstützen. Obwohl die Unterstützung diverser Steuerungen konzeptionell berücksichtigt wurde, wird aktuell nur das **SEMP**-Protokoll zur Integration mit dem [Sunny Home Manager](http://www.sma.de/produkte/monitoring-control/sunny-home-manager.html) von [SMA](http://www.sma.de) unterstützt.
 
-![SHM_Verbraucherbilanz_GuterTag](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/SHM_Verbraucherbilanz_GuterTag.png)
+![SHM_Verbraucherbilanz_GuterTag](pics/SHM_Verbraucherbilanz_GuterTag.png)
 
 ## Hardware
 
 *Hinweis: Die Installation von steckerlosen 200/400V-Geräten sollte grundsätzlich durch einen autorisierten Fachbetrieb vorgenommen werden!*
 
-![Schaltschrank](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/schaltschrank.jpg)
+![Schaltschrank](pics/schaltschrank.jpg)
 
 ### [Raspberry Pi](doc/Raspberry_DE.md)
 Der *Smart Appliance Enabler* benötigt einen [Raspberry Pi als Hardware](doc/Raspberry_DE.md). 
