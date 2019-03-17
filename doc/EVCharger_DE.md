@@ -14,11 +14,11 @@ Damit die Konfigurationsparameter nicht manuell eingegeben werden müssen, exist
 
 #### Fahrzeuge
 Die Konfiguration von Fahrzeugen beinhaltet Parameter zur Steuerung des Ladevorgangs und Standardwerte für Dialoge.
-Ein [Script zum automatisierten Abfragen des State of Charge (SOC)](SOC_DE.md) läßt sich für jedes Fahrzeug konfigurieren.
+Für eine möglichst genaue Ermittlung des Energiebedarfs muss der Ladezustand (State of Charge bzw. SOC) beim Verbinden des Fahrzeugs mit dem Ladegerät bekannt sein. Während dieser Wert beim [manuellen Start des Ladevorganges](#Ampel-Steuerung) auch eingegeben werden kann, kann dieser Wert bei Verwendung von [Zeitplänen](#Zeitpläne) nur durch ein [Script zum automatisierten Abfragen des SOC](soc/SOC_DE.md) ermittelt werden. Wird kein solches Script konfiguriert, wird beim Verbinden des Fahrzeugs mit dem Ladegerät der SOC mit 0 angenommen und ein entsprechend großer Energiebedarf gemeldet.
 
 ### Zeitpläne
 Die grundsätzlich Konfiguration der Zeitpläne ist [hier](Configuration_DE.md#zeitpläne) beschrieben.
-Abweichend davon existiet bei E-Auto-Ladegeräten nicht nur die **Anforderungenart** mit dem Wert ```Laufzeit```, sondern zwei weitere Optionen:
+Abweichend davon existiert bei E-Auto-Ladegeräten nicht nur die **Anforderungenart** mit dem Wert ```Laufzeit```, sondern zwei weitere Optionen:
 
 Mit der **Anforderungsart** ```Energiemenge``` kann eine bestimmte minimale und/oder maximale Energiemenge (in Wh) zum Ausdruck gebracht werden. Wenn die minimale Energiemenge auf ```0``` gesetzt wird und die maximale Energiemenge auf einen größeren Wert, wird damit zum Ausdruck gebracht, dass dieses Gerät *Überschussenenergie* aufnehmen kann bzw. soll.
 
