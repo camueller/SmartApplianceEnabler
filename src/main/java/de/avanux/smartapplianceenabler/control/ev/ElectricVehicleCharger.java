@@ -325,9 +325,13 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
 
     private void onStateChanged(State previousState, State newState) {
         if(newState == State.VEHICLE_CONNECTED) {
-            // sadly, we don't know, which ev has been connected, so we will assume the first one if any
-            if(this.vehicles != null && this.vehicles.size() > 0) {
-                retrieveSoc(this.vehicles.get(0));
+            if (this.vehicles != null && this.vehicles.size() > 0) {
+                // sadly, we don't know, which ev has been connected, so we will assume the first one if any
+                ElectricVehicle firstVehicle = this.vehicles.get(0);
+                if (previousState == State.VEHICLE_NOT_CONNECTED) {
+                    setConnectedVehicleId(firstVehicle.getId());
+                }
+                retrieveSoc(firstVehicle);
             }
             if(getForceInitialCharging() && wasInStateOneTime(State.VEHICLE_CONNECTED)) {
                 startCharging();
@@ -352,6 +356,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
                 this.appliance.deactivateSchedules();
             }
             stopCharging();
+            setConnectedVehicleId(null);
             initStateHistory();
         }
     }
@@ -464,7 +469,6 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
         logger.debug("{}: Stop charging process", applianceId);
         control.stopCharging();
         this.startChargingTimestamp = null;
-        this.connectedVehicleId = null;
         this.chargeAmount = null;
         this.chargePower = null;
     }
@@ -473,7 +477,6 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
         if(electricVehicle != null) {
             Float soc = electricVehicle.getStateOfCharge();
             if(soc != null) {
-                setConnectedVehicleId(electricVehicle.getId());
                 this.connectedVehicleSoc = Float.valueOf(soc).intValue();
                 logger.debug("{}: Start charging SoC={}%", applianceId, connectedVehicleSoc);
             }
