@@ -586,10 +586,13 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             ElectricVehicleCharger charger = (ElectricVehicleCharger) this.control;
             ElectricVehicle ev = charger.getVehicle(socRequest.getEvId());
             Integer socStart = charger.getConnectedVehicleSoc() != null ? charger.getConnectedVehicleSoc() : 0;
-            int energyToBeCharged = Float.valueOf((socRequest.getSoc() - socStart)/100.0f
-                    * (100 + ev.getChargeLoss())/100.0f * ev.getBatteryCapacity()).intValue();
+            int energyToBeCharged = 0;
+            if(socRequest.getSoc() > socStart) {
+                energyToBeCharged = Float.valueOf((socRequest.getSoc() - socStart)/100.0f
+                        * (100 + ev.getChargeLoss())/100.0f * ev.getBatteryCapacity()).intValue();
+            }
             logger.debug("{}: Energy to be charged: {} Wh (batteryCapacity={}Wh chargeLoss={}% socStart={} socRequested={})",
-                    id, energyToBeCharged, socStart, socRequest.getSoc());
+                    id, energyToBeCharged, ev.getBatteryCapacity(), ev.getChargeLoss(), socStart, socRequest.getSoc());
             if(considerEnergyAlreadyCharged) {
                 return buildEnergyRequestConsideringEnergyAlreadyCharged(energyToBeCharged, energyToBeCharged);
             }
