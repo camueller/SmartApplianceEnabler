@@ -2,7 +2,24 @@
 Die nachfolgenden Kapitel sollten in der angegebenen Reihenfolge umgesetzt werden.
 
 ## Betriebssystem
-Für den Raspberry Pi existieren verschiedene, darauf zugeschnittene, Linux-Distributionen (Images), wobei [Raspbian](https://www.raspberrypi.org/downloads/raspbian) vermutlich das geläufigste ist (auf dieses beziehe ich mich nachfolgend). 
+### Allgemeine Hinweise
+Das Betriebssystem für den Raspberry ist Linux. Die Interaktion mit Linux erfolgt dabei über die sogenannte Shell (vergleichbar der DOS-Box bzw. cmd.exe unter Windows). Eine deutschsprachige Einführung dazu findet sich [hier](https://wiki.ubuntuusers.de/Shell/Einf%C3%BChrung/).
+In der Dokumentation zum *Smart Appliance Enabler* finden sich immer wieder Shell-Befehle und die dazu korrespondieren Ausgaben. Zur besseren Lesbarkeit bietet Github ein Farbschema an, das verschiedene Farben für die einzelnen Elemente verwendet:
+* violett: Eingabeaufforderung bzw. Prompt (endet mit dem $-Zeichen)
+* schwarz: einzugebender Befehl (Dollar-Zeichen und Leerzeichen zu Beginn gehören nicht dazu!)
+* blau: Ausgabe bzw. Antwort auf den eingegebenen Befehl
+
+Die genannten Elemente finden sich alle in dem nachfolgenden Beispiel:
+```console
+pi@raspberrypi:~ $ java -version
+java version "1.8.0_65"
+Java(TM) SE Runtime Environment (build 1.8.0_65-b17)
+Java HotSpot(TM) Client VM (build 25.65-b01, mixed mode)
+```
+
+### Raspbian
+Für den Raspberry Pi existieren verschiedene, darauf zugeschnittene, Linux-Distributionen (Images), wobei [Raspbian](https://www.raspberrypi.org/downloads/raspbian) vermutlich das geläufigste ist (auf dieses beziehe ich mich nachfolgend).
+
 Damit der *Smart Appliance Enabler* lauffähig ist, muss bei der Wahl des Images ist darauf geachtet werden, dass dieses eine Java 8-Runtime enthält oder dass diese nachinstallierbar ist. Beim Raspbian-Image ist die *Lite-Version ausreichend*, sodass man eine *4GB-SD-Karte* verwenden kann.
 
 Mit dem nachfolgenden Befehl kann man unter Linux ein Image auf eine SD-Karte schreiben:
