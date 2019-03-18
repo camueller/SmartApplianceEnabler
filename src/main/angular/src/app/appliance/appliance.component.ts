@@ -18,7 +18,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {ApplianceService} from './appliance.service';
-import {ActivatedRoute, CanDeactivate} from '@angular/router';
+import {ActivatedRoute, CanDeactivate, Router} from '@angular/router';
 import {ApplianceFactory} from './appliance-factory';
 import {AppliancesReloadService} from './appliances-reload-service';
 import {Location} from '@angular/common';
@@ -56,7 +56,9 @@ export class ApplianceComponent implements OnInit, CanDeactivate<ApplianceCompon
               private route: ActivatedRoute,
               private translate: TranslateService,
               private dialogService: DialogService,
-              private location: Location) {
+              private location: Location,
+              private router: Router
+  ) {
     const applianceFactory = new ApplianceFactory(logger);
     this.appliance = applianceFactory.createEmptyAppliance();
     this.errorMessageHandler = new ErrorMessageHandler(logger);
@@ -69,7 +71,7 @@ export class ApplianceComponent implements OnInit, CanDeactivate<ApplianceCompon
     this.translate.get('ApplianceComponent.confirmDeletion').subscribe(translated => this.confirmDeletionMessage = translated);
     this.route.paramMap.subscribe(() => this.isNew = this.route.snapshot.paramMap.get('id') == null);
     this.route.data.subscribe((data: {appliance: Appliance}) => {
-      if (data.appliance != null) {
+      if (data.appliance) {
         this.appliance = data.appliance;
         this.detailsForm.reset(this.appliance);
       }
@@ -87,9 +89,11 @@ export class ApplianceComponent implements OnInit, CanDeactivate<ApplianceCompon
 
   submitForm() {
     this.logger.debug('ApplianceComponent.submitForm()');
-    this.applianceService.updateAppliance(this.appliance, this.isNew).subscribe(() => this.appliancesReloadService.reload());
+    this.applianceService.updateAppliance(this.appliance, this.isNew).subscribe(() => {
+      this.appliancesReloadService.reload();
+      this.router.navigateByUrl(`appliance/${this.appliance.id}`);
+    });
     this.detailsForm.form.markAsPristine();
-    this.isNew = false;
   }
 
   deleteAppliance() {
