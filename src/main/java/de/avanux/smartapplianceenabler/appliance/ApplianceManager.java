@@ -260,9 +260,12 @@ public class ApplianceManager implements Runnable {
      * @return
      */
     private DeviceStatus getDeviceStatus(String applianceId) {
-        for(DeviceStatus deviceStatus : this.device2EM.getDeviceStatus()) {
-            if(deviceStatus.getDeviceId().equals(applianceId)) {
-                return deviceStatus;
+        List<DeviceStatus> deviceStatuses = this.device2EM.getDeviceStatus();
+        if(deviceStatuses != null) {
+            for(DeviceStatus deviceStatus : deviceStatuses) {
+                if(deviceStatus.getDeviceId().equals(applianceId)) {
+                    return deviceStatus;
+                }
             }
         }
         return null;
@@ -340,7 +343,9 @@ public class ApplianceManager implements Runnable {
         device2EM.getDeviceInfo().remove(deviceInfoToBeDeleted);
 
         DeviceStatus deviceStatus = getDeviceStatus(applianceId);
-        device2EM.getDeviceStatus().remove(deviceStatus);
+        if(device2EM.getDeviceStatus() != null) {
+            device2EM.getDeviceStatus().remove(deviceStatus);
+        }
 
         Appliance applianceToBeDeleted = getAppliance(applianceId);
         if(applianceToBeDeleted != null) {
