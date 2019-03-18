@@ -1,23 +1,27 @@
 <form class="ui form" [formGroup]="form" (ngSubmit)="submitForm()">
   <div class="ui fields">
-    <div class="field">
+    <div class="six wide field">
       <label>{{'ControlHttpComponent.onUrl' | translate}}</label>
       <input type="text" formControlName="onUrl">
       <div *ngIf="errors.onUrl" class="ui negative message">{{errors.onUrl}}</div>
     </div>
-    <div class="field">
+    <div class="four wide field">
       <label>{{'ControlHttpComponent.onData' | translate}}</label>
       <input type="text" formControlName="onData">
     </div>
-    <div class="field">
+  </div>
+  <div class="ui fields">
+    <div class="six wide field">
       <label>{{'ControlHttpComponent.offUrl' | translate}}</label>
       <input type="text" formControlName="offUrl">
       <div *ngIf="errors.offUrl" class="ui negative message">{{errors.offUrl}}</div>
     </div>
-    <div class="field">
+    <div class="four wide field">
       <label>{{'ControlHttpComponent.offData' | translate}}</label>
       <input type="text" formControlName="offData">
     </div>
+  </div>
+  <div class="ui fields">
     <div class="ui fields">
       <div class="field">
         <label>{{'ControlHttpComponent.username' | translate}}</label>
