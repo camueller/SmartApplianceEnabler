@@ -807,7 +807,22 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     @Override
     public void activeIntervalChanged(LocalDateTime now, String applianceId, TimeframeInterval deactivatedInterval,
                                       TimeframeInterval activatedInterval) {
-        if(activatedInterval == null) {
+        if(activatedInterval != null) {
+            if(this.control instanceof ElectricVehicleCharger) {
+                ElectricVehicleCharger charger = (ElectricVehicleCharger) this.control;
+                if(charger.isVehicleConnected()) {
+                    Request request = activatedInterval.getTimeframe().getSchedule().getRequest();
+                    if(request instanceof EnergyRequest) {
+                        charger.setChargeAmount(request.getMin());
+                    }
+                    else if(request instanceof SocRequest) {
+                        EnergyRequest remainingEnergy = calculateRemainingEnergy((SocRequest) request, false);
+                        charger.setChargeAmount(remainingEnergy.getMin());
+                    }
+                }
+            }
+        }
+        else {
             setApplianceState(now, false, null,
                     true,"Switching off due to end of time frame");
             if(meter != null) {
