@@ -679,14 +679,9 @@ public class SaeController {
                         whAlreadyCharged = Float.valueOf(meter.getEnergy() * 1000.0f).intValue();
                     }
                     applianceStatus.setChargedEnergyAmount(whAlreadyCharged);
+                    applianceStatus.setPlannedEnergyAmount(evCharger.getChargeAmount());
                     if (nextRuntimeInterval != null && !nextRuntimeInterval.isUsingOptionalEnergy()) {
                         applianceStatus.setLatestEnd(nextRuntimeInterval.getLatestEnd());
-                    } else {
-                        applianceStatus.setPlannedEnergyAmount(evCharger.getChargeAmount());
-                    }
-                    if (activeTimeframeInterval != null) {
-                        applianceStatus.setPlannedEnergyAmount(
-                                activeTimeframeInterval.getTimeframe().getSchedule().getRequest().getMin());
                     }
                 }
                 if(activeTimeframeInterval != null) {
