@@ -92,6 +92,17 @@
              required pattern="{{VALIDATOR_PATTERN_INTEGER}}">
       <div *ngIf="errors['maxPowerConsumption']" class="ui negative message">{{errors['maxPowerConsumption']}}</div>
     </div>
+    <div class="field" style="align-self: center">
+      <label>{{'ApplianceComponent.interruptionsAllowed' | translate}}
+        <i class="icon blue info circle tooltip">
+          <span class="tooltiptext" style="margin-left: -300px;"
+          >{{'ApplianceComponent.interruptionsAllowed.tooltip' | translate}}</span>
+        </i>
+      </label>
+      <input class="ui checkbox" type="checkbox" name="interruptionsAllowed" [(ngModel)]="appliance.interruptionsAllowed">
+    </div>
+  </div>
+  <div class="fields appliance-row">
     <div class="field">
       <label>{{'ApplianceComponent.minOnTime' | translate}}
         <i class="icon blue info circle tooltip">
@@ -135,15 +146,6 @@
       <input type="text" name="maxOffTime" [(ngModel)]="appliance.maxOffTime"
              pattern="{{VALIDATOR_PATTERN_INTEGER}}">
       <div *ngIf="errors['maxOffTime']" class="ui negative message">{{errors['maxOffTime']}}</div>
-    </div>
-    <div class="field" style="align-self: center">
-      <label>{{'ApplianceComponent.interruptionsAllowed' | translate}}
-        <i class="icon blue info circle tooltip">
-          <span class="tooltiptext" style="margin-left: -300px;"
-          >{{'ApplianceComponent.interruptionsAllowed.tooltip' | translate}}</span>
-        </i>
-      </label>
-      <input class="ui checkbox" type="checkbox" name="interruptionsAllowed" [(ngModel)]="appliance.interruptionsAllowed">
     </div>
   </div>
 
