@@ -33,10 +33,10 @@
           <label>{{'ControlComponent.type' | translate}}</label>
           <select class="ui fluid dropdown" name="controlType" [(ngModel)]="control.type"
                   (ngModelChange)="typeChanged($event)">
-            <option [ngValue]="TYPE_ALWAYS_ON_SWITCH">{{TYPE_ALWAYS_ON_SWITCH | translate}}</option>
             <option [ngValue]="TYPE_SWITCH">{{TYPE_SWITCH | translate}}</option>
             <option [ngValue]="TYPE_MODBUS_SWITCH">{{TYPE_MODBUS_SWITCH | translate}}</option>
             <option [ngValue]="TYPE_HTTP_SWITCH">{{TYPE_HTTP_SWITCH | translate}}</option>
+            <option [ngValue]="TYPE_ALWAYS_ON_SWITCH">{{TYPE_ALWAYS_ON_SWITCH | translate}}</option>
             <option [ngValue]="TYPE_MOCK_SWITCH">{{TYPE_MOCK_SWITCH | translate}}</option>
           </select>
         </div>

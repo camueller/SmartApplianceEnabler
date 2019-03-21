@@ -16,14 +16,14 @@
   ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
   -->
 <form class="ui form" #meterForm="ngForm" (ngSubmit)="submitForm()">
-  <div class="four fields">
+  <div class="fields">
     <div class="field">
       <label>{{'MeterComponent.type' | translate}}</label>
       <select class="ui fluid dropdown" name="meterType" [(ngModel)]="meter.type" (ngModelChange)="typeChanged($event)">
         <option [ngValue]="TYPE_S0_ELECTRICITY_METER">{{TYPE_S0_ELECTRICITY_METER | translate}}</option>
-        <option [ngValue]="TYPE_S0_ELECTRICITY_METER_NETWORKED">{{TYPE_S0_ELECTRICITY_METER_NETWORKED | translate}}</option>
         <option [ngValue]="TYPE_MODBUS_ELECTRICITY_METER">{{TYPE_MODBUS_ELECTRICITY_METER | translate}}</option>
         <option [ngValue]="TYPE_HTTP_ELECTRICITY_METER">{{TYPE_HTTP_ELECTRICITY_METER | translate}}</option>
+        <option [ngValue]="TYPE_S0_ELECTRICITY_METER_NETWORKED">{{TYPE_S0_ELECTRICITY_METER_NETWORKED | translate}}</option>
       </select>
     </div>
   </div>
