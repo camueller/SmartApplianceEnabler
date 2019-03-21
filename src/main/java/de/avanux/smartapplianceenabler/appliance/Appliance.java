@@ -472,14 +472,20 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     public List<RuntimeInterval> getRuntimeIntervals(List<RuntimeInterval> nonEvOptionalEnergyRuntimeIntervals) {
         List<RuntimeInterval> runtimeIntervals = new ArrayList<>();
         if (this.control instanceof ElectricVehicleCharger) {
+            logger.debug("{}: control is ev charger", id);
             ElectricVehicleCharger electricVehicleCharger = (ElectricVehicleCharger) this.control;
             if (electricVehicleCharger.isInErrorState()) {
                 logger.warn("{}: skipping runtime intervals because of charger error state", id);
             } else {
+                logger.debug("{}: checking ev charger state", id);
                 if (electricVehicleCharger.isVehicleConnected() || electricVehicleCharger.isCharging()) {
+                    logger.debug("{}: connected={} charging={}", id,
+                            electricVehicleCharger.isVehicleConnected(), electricVehicleCharger.isCharging());
                     if (runningTimeMonitor == null || runningTimeMonitor.getActiveTimeframeInterval() == null) {
+                        logger.debug("{}: no active timeframe interval found", id);
                         RuntimeInterval evOptionalEnergy = getRuntimeIntervalForEVUsingOptionalEnergy(electricVehicleCharger);
                         if (evOptionalEnergy != null) {
+                            logger.warn("{}: request for optional energy was created", id);
                             if (nonEvOptionalEnergyRuntimeIntervals != null && nonEvOptionalEnergyRuntimeIntervals.size() > 0) {
                                 // evOptionalEnergy runtime interval must not overlap with other intervals
                                 Integer firstNonEvOptionalEnergyRuntimeIntervalEarliestStart
@@ -491,6 +497,12 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                             logger.debug("{}: requesting optional energy for electric vehicle: {}", id, evOptionalEnergy);
                             runtimeIntervals.add(evOptionalEnergy);
                         }
+                        else {
+                            logger.warn("{}: no request for optional energy was created", id);
+                        }
+                    }
+                    else {
+                        logger.debug("{}: active timeframe interval found - not requesting optional energy", id);
                     }
                     if (nonEvOptionalEnergyRuntimeIntervals != null && nonEvOptionalEnergyRuntimeIntervals.size() > 0) {
                         runtimeIntervals.addAll(nonEvOptionalEnergyRuntimeIntervals);
@@ -633,6 +645,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         RuntimeInterval runtimeInterval = null;
         ElectricVehicle vehicle = evCharger.getConnectedVehicle();
         if(vehicle != null) {
+            logger.warn("{}: creating optional energy request for vehicleId={}", id, vehicle.getId());
             int batteryCapacity = vehicle.getBatteryCapacity();
             // TODO the following call might return an updated SOC in a future release
             Integer initialSoc = evCharger.getConnectedVehicleSoc();
@@ -654,6 +667,9 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             runtimeInterval.setLatestEnd(CONSIDERATION_INTERVAL_DAYS * 24 * 3600);
             runtimeInterval.setMinEnergy(0);
             runtimeInterval.setMaxEnergy(maxEnergy);
+        }
+        else {
+            logger.warn("{}: no connected vehicle was found", id);
         }
         return runtimeInterval;
     }
