@@ -9,7 +9,8 @@ Um ein Gerät zum Laden von Elektroautos konfigurieren zu können, muss als Typ 
 Im *Smart Appliance Enabler* wird ein Ladegerät für Elektro-Autos als komplexer Schalter mit diversen Konfigurationsparametern für den Controller und Fahrzeuge repräsentiert.
 #### Controller
 Die Konfigurationsparameter richten sich dabei vor allem nach dem im Ladegerät verbauten Controller. Momentan unterstützt der *Smart Appliance Enabler* folgende Controller:
-* [Phoenix Contact EM-CP-PP-ETH](https://www.phoenixcontact.com/online/portal/de?uri=pxc-oc-itemdetail:pid=2902802)
+*  [Phoenix Contact EM-CP-PP-ETH](https://www.phoenixcontact.com/online/portal/de?uri=pxc-oc-itemdetail:pid=2902802)
+  * DIP-Schalter: DIP-Schalter 10 an, alle anderen DIP-Schalter aus
 
 Damit die Konfigurationsparameter nicht manuell eingegeben werden müssen, existieren für die unterstützten Controller **Vorlagen**, aus denen die benötigte Konfiguration geladen werden kann.
 
