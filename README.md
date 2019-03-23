@@ -62,10 +62,10 @@ Zum Ein-/Ausschalten eines Gerätes unterstützt der *Smart Appliance Enabler* d
 
 Alle aufgeführten Schalter können mit einer [Anlaufstromerkennung](doc/Anlaufstromerkennung_DE.md) verwendet werden, um die Programmierung des Gerätes zu ermöglichen.
 
-Ein Schalter, der neben dem Schaltzustand auch eine vorgegebene Leistungsaufnahme ermöglicht, existiert für [Ladegeräte von Elektro-Autos](EVCHarger_DE.md).
+Ein Schalter, der neben dem Schaltzustand auch eine vorgegebene Leistungsaufnahme ermöglicht, existiert für [Ladegeräte von Elektro-Autos](doc/EVCharger_DE.md).
 
 ### Montage
-Für den reibungslosen Einsatz des *Smart Appliance Enabler* sollten die [Montage-Hinweise](Montage_DE.md) beachtet werden.
+Für den reibungslosen Einsatz des *Smart Appliance Enabler* sollten die [Montage-Hinweise](doc/Montage_DE.md) beachtet werden.
 
 ## Software
 Zur Verwendung des *Smart Appliance Enabler* zusammen mit dem *SMA Sunny Home Manager* sind mindesten die in den 3 nachfolgenden Kapiteln (_Installation_,_Konfiguration_ und _Integration_) genannten Schritte erforderlich.
