@@ -202,6 +202,7 @@ public class ApplianceTest extends TestBase {
         vehicle.setBatteryCapacity(40000);
         vehicle.setDefaultSocOptionalEnergy(60);
         Mockito.doReturn(true).when(evCharger).isVehicleConnected();
+        Mockito.doReturn(false).when(evCharger).isCharging();
         Mockito.doReturn(false).when(evCharger).isInErrorState();
         //Mockito.doReturn(Collections.singletonList(vehicle)).when(evCharger).getVehicles();
         Mockito.doReturn(vehicle).when(evCharger).getConnectedVehicle();
