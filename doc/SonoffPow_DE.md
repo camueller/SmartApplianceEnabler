@@ -21,15 +21,15 @@ Die aktuelle Leistungsaufnahme des Sonoff Pow kann wie folgt abgefragt werden:
 curl http://192.168.1.1/cm?cmnd=Status%208
 STATUS8 = {"StatusPWR":{"Total":0.000, "Yesterday":0.000, "Today":0.000, "Power":27, "Factor":0.94, "Voltage":234, "Current":0.122}}
 ```
-Damit der *Smart Appliance Enabler* in dieser JSON-Antwort den eigentlichen Wert für die Leistungsaufnahme findet (hier: 27W), muss als Regulärer Ausdruck ```.*Power.:(\d+).*``` angegeben werden:
-```
-<Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.1">
-    <Appliance id="F-00000001-000000000001-00">
-        <HttpElectricityMeter url="http://192.168.1.1/cm?cmnd=Status%208" powerValueExtractionRegex=".*Power.:(\d+).*"/>
-    </Appliance>
-</Appliances>
-```
-In der Log-Datei ```/var/log/smartapplianceenabler.log``` sollten sich dann für jede Abfrage folgende Zeilen finden:
+
+Aus obigem Beispiel ergeben sich folgende Feld-Inhalte im *Smart Appliance Enabler*:
+
+| Feld         | Wert |
+| ----         | ---- |
+| URL          | http://192.168.1.1/cm?cmnd=Status%208 |
+| Regulärer Ausdruck zum Extrahieren der Leistung | .*Power.:(\d+).* |
+
+Wird ein Sonoff Pow abgefragt, finden sich in der [Log-Datei](Support.md#Log) für jede Abfrage folgende Zeilen:
 ```
 2017-06-03 18:39:55,125 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:101] F-00000001-000000000001-00: Sending HTTP request
 2017-06-03 18:39:55,125 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:102] F-00000001-000000000001-00: url=http://192.168.1.1/cm?cmnd=Status%208
@@ -56,15 +56,14 @@ _Ausschalten_
 curl http://192.168.1.1/cm?cmnd=Power%20Off
 ```
 
-Entsprechend sieht die Konfiguration für den *Smart Appliance Enabler* aus:
-```
-<Appliances ...>
-    <Appliance ...>
-        <HttpSwitch onUrl="http://192.168.1.1/cm?cmnd=Power%20On" offUrl="http://192.168.1.1/cm?cmnd=Power%20Off"/>
-    </Appliance>
-</Appliances>
-```
-In der Log-Datei ```/var/log/smartapplianceenabler.log``` sollten sich dann für jede Schaltvorgang folgende Zeilen finden:
+Aus obigem Beispiel ergeben sich folgende Feld-Inhalte im *Smart Appliance Enabler*:
+
+| Feld                  | Wert |
+| ----                  | ---- |
+| URL zum Einschalten   | http://192.168.1.1/cm?cmnd=Power%20On |
+| URL zum Ausschalten   | http://192.168.1.1/cm?cmnd=Power%20Off |
+
+Wird ein Sonoff Pow geschaltet, finden sich in der [Log-Datei](Support.md#Log) für jeden Schaltvorgang folgende Zeilen:
 ```
 2017-06-03 18:39:52,143 DEBUG [http-nio-8080-exec-1] d.a.s.s.w.SempController [SempController.java:192] F-00000001-000000000001-00: Received control request
 2017-06-03 18:39:52,145 DEBUG [http-nio-8080-exec-1] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:101] F-00000001-000000000001-00: Sending HTTP request
