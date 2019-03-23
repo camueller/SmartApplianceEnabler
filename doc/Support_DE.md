@@ -2,7 +2,7 @@
 
 Wenn sich der *Smart Appliance Enabler* nicht starten lässt oder der *SMA Home Manager* die vom *Smart Appliance Enabler* verwalteten Geräte nicht finden kann, sollen folgende Punkte geprüft werden:
 
-### Läuft der Smart Appliance Enabler?
+## Läuft der Smart Appliance Enabler?
 Ruft man das Start-Script *smartapplianceenabler* mit dem Parameter `status` auf, kann geprüft werden, ob der Service läuft:
 ```
 pi@raspberrypi ~ $ sudo /etc/init.d/smartapplianceenabler status
@@ -20,9 +20,9 @@ Apr 08 09:55:52 raspi3 smartapplianceenabler[2191]: Starting smartapplianceenabl
 Apr 08 09:55:52 raspi3 systemd[1]: Started LSB: Start Smart Appliance Enabler..
 ```
 
-### Log-Datei
+## Log
 
-Der *Smart Appliance Enabler* schreibt seine Log-Informationen in das Verzeichnis ```/tmp```, wobei die Dateinamen mit ```rolling``` beginnen gefolgt vom jeweilgen Datum:
+Der *Smart Appliance Enabler* schreibt seine Log-Daten in das Verzeichnis ```/tmp```, wobei die Dateinamen mit ```rolling``` beginnen gefolgt vom jeweilgen Datum:
 ```
 pi@raspi ~ $ tail -f /tmp/rolling-2018-04-08.log
 2018-04-08 10:17:01,072 INFO [main] d.a.s.Application [StartupInfoLogger.java:48] Starting Application on raspi with PID 23914 (started by root in /)
@@ -42,25 +42,25 @@ pi@raspi ~ $ tail -f /tmp/rolling-2018-04-08.log
 2018-04-08 10:17:30,583 INFO [main] d.a.s.Application [Application.java:95] PID 23914 written to /var/run/smartapplianceenabler.pid
 ```
 
-### Version des Smart Appliance Enabler
+## Version des Smart Appliance Enabler
 Direkt nach dem Start schreibt der *Smart Appliance Enabler* die Version in die Log-Datei:
 ```
 2018-04-08 10:17:29,973 INFO [main] d.a.s.Application [Application.java:45] Running version 1.2.0-SNAPSHOT 2017-12-23 19:16
 ```
 
-### Verbindung zwischen Home Manager und Smart Appliance Enabler
+## Verbindung zwischen Home Manager und Smart Appliance Enabler
 Home Manager auf den *Smart Appliance Enabler* müssen sich im gleichen Netz befinden!
 Wenn der Log-Level mindestens auf DEBUG gesetzt wurde, kann man in der Log-Datei sehen, wenn der Home Manager auf den *Smart Appliance Enabler* zugreift:
 ```
 20:25:17.390 [http-nio-8080-exec-1] DEBUG d.a.s.semp.webservice.SempController - Device info/status/planning requested.
 ```
-### Analyse der Log Dateien des SEMP Moduls im Sunny Home Manager
+## Analyse der Log Dateien des SEMP Moduls im Sunny Home Manager
 Siehe http://www.photovoltaikforum.com/geraete-mit-home-manager-koppeln-via-semp-ethernet-p1396300.html#p1396300
 
-### Anwender-Forum
+## Anwender-Forum
 Fragen zur Verwendung des *Smart Appliance Enabler* sollten im SEMP-Thread des *photovoltaik-forums* im SMA Herstellerbereich gestellt werden: https://www.photovoltaikforum.com/geraete-mit-home-manager-koppeln-via-semp-ethernet-t104060.html.
 
 Bitte keine Fragen direkt per Email an mich stellen! Wenn die Fragen im Forum gestellt werden, haben alle was davon und die Chance auf Antworten ist deutlich größer.
 
-### Fehler melden
+## Fehler melden
 Bei Fehlern im *Smart Appliance Enabler* sollte ein [Issue](https://github.com/camueller/SmartApplianceEnabler/issues) erstellt werden.

@@ -20,7 +20,7 @@
   </p>
 </p>
 
-![Donate](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/donate.jpeg)
+![Donate](pics/donate.jpeg)
 
 **Seit mehreren Jahren habe ich einen Grossteil meiner Freizeit in Entwicklung, Dokumentation und Support dieses Open-Source-Projektes gesteckt. Ich habe mich bewusst dazu entschieden, diese Software kostenfrei zur Verfügung zu stellen und kontinuierlich um Features zu erweitern, die für möglichst viele Nutzer von Interesse sein könnten. Durch die Nutzung dieser Software lassen sich die Stromkosten signifikant senken, indem die Nutzung des selbst erzeugten Stroms maximiert wird. Ich würde es als Anerkennung meiner Arbeit betrachten, wenn ein Teil dieser Ersparnis als Beitrag zur Förderung dieses Projekts verwendet werden würde. Das geht ganz einfach per [Paypal](https://paypal.me/CarlAxelMueller) oder als klassische Banküberweisung (Kontoinhaber: Axel Müller, IBAN: DE83 5185 0079 1140 0764 37, BIC: HELADEF1FRI, Verwendungszweck: Förderbeitrag Smart Appliance Enabler)**
 
@@ -33,7 +33,7 @@ Dazu meldet der *Smart Appliance Enabler* dem SHM **Bedarfsanforderungen** diese
 
 Ein Wintertag mit hohem Energiebedarf für die Heizungswärmepumpe und zusätzlichen Verbrauchern in Fom von Waschmaschine, Geschirrspüler und Herd kann so aussehen:
 
-![SHM_Verbraucherbilanz_GuterTag](pics/SHM_Verbraucherbilanz_GuterTag.png)
+![SHM_Verbraucherbilanz_GuterTag](pics/shm/Verbraucherbilanz_GuterTag.png)
 
 ## Hardware
 
@@ -56,7 +56,7 @@ Zum Ein-/Ausschalten eines Gerätes unterstützt der *Smart Appliance Enabler* d
 
 | Protokolle    | Produkte      |
 | ------------- | ------------- |
-| GPIO          | [Solid-State-Relais](doc/SolidStateRelais_DE.md) |
+| GPIO          | [GPIO-basierte Schalter](doc/GPIOSwitch_DE.md) |
 | [Modbus](doc/ModbusSwitch_DE.md) | |
 | [HTTP](doc/HttpSwitch_DE.md) | [Sonoff Pow](doc/SonoffPow_DE.md) <br> [Edimax SP-2101W](doc/EdimaxSP2101W_DE.md)  <br> [Shelly 4 Pro](doc/Shelly4Pro_DE.md)|
 
@@ -76,7 +76,10 @@ Der einfachste Weg zu einem lauffähigen *Smart Appliance Enabler* besteht in de
 ### [Konfiguration](doc/Configuration_DE.md)
 Damit der *Smart Appliance Enabler* die Geräte steuern und deren Stromverbrauch messen kann, ist zusätzlich zur Installation der Software die Erstellung einer [Konfiguration](doc/Configuration_DE.md) erforderlich.
 
-### Integration in den SMA Sunny Home Manager
+### [Status-Anzeige](doc/Status_DE.md)
+Der Status aller Geräte wird in der [Status-Anzeige](doc/Status_DE.md) übersichtlich dargestellt, wobei der Status jedes Gerätes durch eine **Ampel** visualisiert wird. Die Ampel kann auch zur **manuellen Steuerung** verwendet werden.
+
+### Integration in den Sunny Home Manager
 Der Sunny Home Manager kann die Geräte erst dann steuern und deren Verbrauch messen, nachdem sie auch im [Sunny Home Manager konfiguriert](doc/SunnyHomeMangerKonfiguration_DE.md) worden sind.
 
 ### [Bauen aus Sourcen](doc/Build_DE.md)
@@ -91,7 +94,7 @@ Der *Smart Appliance Enabler* verwendet intern folgende Open-Source-Software:
 * [Cling](http://4thline.org/projects/cling) für UPnP (SEMP-Protokoll)
 
 ## [Fragen / Probleme](doc/Troubleshooting_DE.md)
-Durch die Vielzahl von Hard- und Softwarekomponenten können bei der Verwendung des *Smart Appliance Enabler* naturgemäß Fragen oder Probleme auftreten. In diesem Fall sollten [diese Hinweise](doc/Troubleshooting_DE.md) beachtet werden. 
+Durch die Vielzahl von Hard- und Softwarekomponenten können bei der Verwendung des *Smart Appliance Enabler* naturgemäß Fragen oder Probleme auftreten. In diesem Fall sollten [diese Hinweise](doc/Support_DE.md) beachtet werden.
 
 ## Lizenz
 Die Inhalte in diesem Repository sind lizensiert unter der [GNU GENERAL PUBLIC LICENSE](LICENSE.txt), falls nicht anders angegeben.
