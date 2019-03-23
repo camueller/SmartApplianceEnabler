@@ -37,9 +37,10 @@ export class MeterFactory {
     meterDefaults.s0ElectricityMeter_measurementInterval
       = rawMeterDefaults.s0ElectricityMeter.measurementInterval;
     meterDefaults.httpElectricityMeter_factorToWatt = rawMeterDefaults.httpElectricityMeter.factorToWatt;
-    meterDefaults.httpElectricityMeter_measurementInterval = rawMeterDefaults.httpElectricityMeter.measurementInterval;
     meterDefaults.httpElectricityMeter_pollInterval = rawMeterDefaults.httpElectricityMeter.pollInterval;
+    meterDefaults.httpElectricityMeter_measurementInterval = rawMeterDefaults.httpElectricityMeter.measurementInterval;
     meterDefaults.modbusElectricityMeter_pollInterval = rawMeterDefaults.modbusElectricityMeter.pollInterval;
+    meterDefaults.modbusElectricityMeter_measurementInterval = rawMeterDefaults.modbusElectricityMeter.measurementInterval;
     this.logger.debug('MeterDefaults (TYPE): ' + JSON.stringify(meterDefaults));
     return meterDefaults;
   }
