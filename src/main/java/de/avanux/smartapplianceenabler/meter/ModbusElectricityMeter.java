@@ -18,6 +18,7 @@
 package de.avanux.smartapplianceenabler.meter;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import de.avanux.smartapplianceenabler.modbus.ModbusElectricityMeterDefaults;
 import de.avanux.smartapplianceenabler.modbus.ModbusRegisterRead;
 import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
 import de.avanux.smartapplianceenabler.modbus.executor.ModbusExecutorFactory;
@@ -43,7 +44,7 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     @XmlElement(name = "ModbusRegisterRead")
     private List<ModbusRegisterRead> registerReads;
     @XmlAttribute
-    private Integer pollInterval = 10; // seconds
+    private Integer pollInterval; // seconds
     @XmlAttribute
     private Integer measurementInterval; // seconds
     private transient PollPowerMeter pollPowerMeter = new PollPowerMeter();
@@ -88,9 +89,13 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
         return getPower() > 0;
     }
 
+    public Integer getPollInterval() {
+        return pollInterval != null ? pollInterval : HttpElectricityMeterDefaults.getPollInterval();
+    }
+
     @Override
     public Integer getMeasurementInterval() {
-        return measurementInterval;
+        return measurementInterval != null ? measurementInterval : ModbusElectricityMeterDefaults.getMeasurementInterval();
     }
 
     public void init() {
@@ -99,7 +104,7 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
 
     public void validate() {
         logger.debug("{}: configured: poll interval={}s / measurement interval={}s",
-                getApplianceId(), this.pollInterval, this.measurementInterval);
+                getApplianceId(), getPollInterval(), getMeasurementInterval());
         boolean valid = true;
         for(RegisterName registerName: RegisterName.values()) {
             ModbusRegisterRead registerRead = ModbusRegisterRead.getFirstRegisterRead(registerName.name(), registerReads);
@@ -127,7 +132,7 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
 
     public void start(Timer timer) {
         ModbusRegisterRead registerRead = ModbusRegisterRead.getFirstRegisterRead(RegisterName.Power.name(), registerReads);
-        pollPowerMeter.start(timer, this.pollInterval, measurementInterval, this);
+        pollPowerMeter.start(timer, getPollInterval(), getMeasurementInterval(), this);
     }
 
     @Override

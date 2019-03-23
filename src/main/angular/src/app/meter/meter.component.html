@@ -108,7 +108,8 @@
         <label>{{'MeterComponent.modbusElectricityMeter_measurementInterval' | translate}}</label>
         <input type="text" name="modbusElectricityMeter_measurementInterval"
                [(ngModel)]="meter.modbusElectricityMeter.measurementInterval"
-               required pattern="{{VALIDATOR_PATTERN_INTEGER}}">
+               placeholder="{{meterDefaults.httpElectricityMeter_measurementInterval}}"
+               pattern="{{VALIDATOR_PATTERN_INTEGER}}">
         <div *ngIf="errors.modbusElectricityMeter_measurementInterval" class="ui negative message">
           {{errors.modbusElectricityMeter_measurementInterval}}</div>
       </div>
@@ -133,7 +134,8 @@
       <div class="field">
         <label>{{'MeterComponent.modbusElectricityMeter_registerType' | translate}}</label>
         <select class="ui fluid dropdown" name="modbusElectricityMeter_powerRegisterType"
-                [(ngModel)]="meter.modbusElectricityMeter.powerConfiguration.type">
+                [(ngModel)]="meter.modbusElectricityMeter.powerConfiguration.type"
+                required>
           <option *ngFor="let modbusReadRegisterType of settingsDefaults.modbusReadRegisterTypes"
                   [ngValue]="modbusReadRegisterType"
                   [selected]="modbusReadRegisterType==meter.modbusElectricityMeter.powerConfiguration.type"
@@ -178,7 +180,8 @@
       <div class="field">
         <label>{{'MeterComponent.modbusElectricityMeter_registerType' | translate}}</label>
         <select class="ui fluid dropdown" name="modbusElectricityMeter_energyRegisterType"
-                [(ngModel)]="meter.modbusElectricityMeter.energyConfiguration.type">
+                [(ngModel)]="meter.modbusElectricityMeter.energyConfiguration.type"
+                required>
           <option *ngFor="let modbusReadRegisterType of settingsDefaults.modbusReadRegisterTypes"
                   [ngValue]="modbusReadRegisterType"
                   [selected]="modbusReadRegisterType==meter.modbusElectricityMeter.energyConfiguration.type"
