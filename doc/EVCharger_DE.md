@@ -9,7 +9,7 @@ Um ein Gerät zum Laden von Elektroautos konfigurieren zu können, muss als Typ 
 Im *Smart Appliance Enabler* wird ein Ladegerät für Elektro-Autos als komplexer Schalter mit diversen Konfigurationsparametern für den Controller und Fahrzeuge repräsentiert.
 #### Controller
 Die Konfigurationsparameter richten sich dabei vor allem nach dem im Ladegerät verbauten Controller. Momentan unterstützt der *Smart Appliance Enabler* folgende Controller:
-*  [Phoenix Contact EM-CP-PP-ETH](https://www.phoenixcontact.com/online/portal/de?uri=pxc-oc-itemdetail:pid=2902802)
+* [Phoenix Contact EM-CP-PP-ETH](https://www.phoenixcontact.com/online/portal/de?uri=pxc-oc-itemdetail:pid=2902802)
   * DIP-Schalter: DIP-Schalter 10 an, alle anderen DIP-Schalter aus
 
 Damit die Konfigurationsparameter nicht manuell eingegeben werden müssen, existieren für die unterstützten Controller **Vorlagen**, aus denen die benötigte Konfiguration geladen werden kann.
@@ -21,7 +21,7 @@ Grundsätzlich sollte auch die Verwendung von Controllern möglich sein, die nic
 
 #### Fahrzeuge
 Die Konfiguration von Fahrzeugen beinhaltet Parameter zur Steuerung des Ladevorgangs und Standardwerte für Dialoge.
-Für eine möglichst genaue Ermittlung des Energiebedarfs muss der Ladezustand (State of Charge bzw. SOC) beim Verbinden des Fahrzeugs mit dem Ladegerät bekannt sein. Während dieser Wert beim [manuellen Start des Ladevorganges](#Ampel-Steuerung) auch eingegeben werden kann, kann dieser Wert bei Verwendung von [Zeitplänen](#Zeitpläne) nur durch ein [Script zum automatisierten Abfragen des SOC](soc/SOC_DE.md) ermittelt werden. Wird kein solches Script konfiguriert, wird beim Verbinden des Fahrzeugs mit dem Ladegerät der SOC mit 0 angenommen und ein entsprechend großer Energiebedarf gemeldet.
+Für eine möglichst genaue Ermittlung des Energiebedarfs muss der Ladezustand (State of Charge bzw. SOC) beim Verbinden des Fahrzeugs mit dem Ladegerät bekannt sein. Während dieser Wert beim [manuellen Start des Ladevorganges](#status-anzeige-und-manuelle-steuerung) auch eingegeben werden kann, kann dieser Wert bei Verwendung von [Zeitplänen](#Zeitpläne) nur durch ein [Script zum automatisierten Abfragen des SOC](soc/SOC_DE.md) ermittelt werden. Wird kein solches Script konfiguriert, wird beim Verbinden des Fahrzeugs mit dem Ladegerät der SOC mit 0 angenommen und ein entsprechend großer Energiebedarf gemeldet.
 
 ![Fahrzeugkonfiguration](../pics/fe/EV.png)
 
