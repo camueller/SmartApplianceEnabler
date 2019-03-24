@@ -140,7 +140,7 @@ pi@raspberrypi ~ $ sudo chown root.root /etc/default/smartapplianceenabler
 pi@raspberrypi ~ $ sudo chmod 644 /etc/default/smartapplianceenabler
 
 ```
-In der Datei ```/etc/default/smartapplianceenabler``` finden sich die Konfigurationseinstellungen für den Dienst *smartapplianceenabler*. Die darin befindlichen Parameter sind in der Datei selbst dokumentiert. Normalerweise sollte man die Datei unverändert lassen können.
+In der Datei ```/etc/default/smartapplianceenabler``` finden sich die Konfigurationseinstellungen für den Dienst *smartapplianceenabler*. Die darin befindlichen Parameter (z.B. Netzwerk-Adresse, Port, Java-Einstellungen, ...) sind in der Datei selbst dokumentiert. Normalerweise sollte man die Datei unverändert lassen können.
 
 Damit der Dienst *smartapplianceenabler* beim Systemstart ebenfalls gestartet wird, muss folgender Befehl ausgeführt werden:
 ```console
