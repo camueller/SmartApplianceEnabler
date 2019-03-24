@@ -78,7 +78,9 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
     this.route.paramMap.subscribe(() => this.applianceId = this.route.snapshot.paramMap.get('id'));
     this.route.data.subscribe((data: {meter: Meter, meterDefaults: MeterDefaults,
       settings: Settings, settingsDefaults: SettingsDefaults}) => {
-      this.meter = data.meter;
+      if (data.meter) {
+        this.meter = data.meter;
+      }
       this.meterDefaults = data.meterDefaults;
       this.settings = data.settings;
       this.settingsDefaults = data.settingsDefaults;
