@@ -2,7 +2,7 @@
 <Device2EM xmlns="http://www.sma.de/communication/schema/SEMP/v1">
     <DeviceInfo>
         <Identification>
-            <DeviceId>F-28091971-000000000099-00</DeviceId>
+            <DeviceId>F-00000001-000000000099-00</DeviceId>
             <DeviceName>Elektroauto</DeviceName>
             <DeviceType>EVCharger</DeviceType>
             <DeviceSerial>EV-914</DeviceSerial>
@@ -35,7 +35,7 @@
     </DeviceInfo>
     <DeviceInfo>
         <Identification>
-            <DeviceId>F-28091971-000000000003-00</DeviceId>
+            <DeviceId>F-00000001-000000000003-00</DeviceId>
             <DeviceName>Gerät 1</DeviceName>
             <DeviceType>HeatPump</DeviceType>
             <DeviceSerial>4158934</DeviceSerial>
