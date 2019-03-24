@@ -50,8 +50,7 @@ public class SempDiscovery implements Runnable {
 
     public SempDiscovery() {
         serviceConfiguration = createServiceConfiguration();
-        // FIXME make port configurable
-        sempServerUrl = "http://" + findMyIpAddress() + ":8080";
+        sempServerUrl = "http://" + resolveListenAddress() + ":" + resolveListenPort();
         logger.info("SEMP UPnP will redirect to " + sempServerUrl);
     }
 
@@ -97,7 +96,7 @@ public class SempDiscovery implements Runnable {
             }
         };
     }
-    
+
     private LocalDevice createDevice()
             throws ValidationException, LocalServiceBindingException, IOException {
 
@@ -123,12 +122,16 @@ public class SempDiscovery implements Runnable {
         return new LocalDevice(identity, type, details, (Icon) null, (LocalService) null);
     }
 
-    private String findMyIpAddress() {
+    private String resolveListenAddress() {
         NetworkAddressFactory networkAddressFactory = this.serviceConfiguration.createNetworkAddressFactory();
         Iterator<InetAddress> bindAddresses = networkAddressFactory.getBindAddresses();
         while(bindAddresses.hasNext()) {
             return bindAddresses.next().toString().substring(1); // strip leading /
         }
         return "127.0.0.1";
+    }
+
+    private String resolveListenPort() {
+        return System.getProperty("server.port", "8080");
     }
 }
