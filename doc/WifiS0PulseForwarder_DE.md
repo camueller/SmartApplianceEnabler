@@ -31,58 +31,58 @@ Ausserdem benötigt man:
 - USB-auf-TTL Serienadapter
 
 ## Bauanleitung
-![919004.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/919004.jpg)  
+![919004.jpg](../pics/919004.jpg)
 Universal Überspannungsschutz-Adapter 919.004 von Bachmann
 
 Manche dieser Adapter sind mit zwei kreuzschlitz-ähnlichen Schrauben, die 3 statt 4 Schlitze haben (dreieckig angeordnet), zugeschraubt. Es gelang mir allerdings, diese Schrauben mit einem kleinen Flachschraubendreher heruaszudrehen.
 
-![919004_stecker.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/919004_stecker.jpg)  
+![919004_stecker.jpg](../pics/919004_stecker.jpg)
 Stecker-Kontakte des Universal Überspannungsschutz-Adapter 919.004 von Bachmann  
 
 Die Kabel an den Stecker-Kontakten, die zur Überspannungschutz-Platine gehen, müssen entfernt werden. Das gilt auch für das Kabel vom Schutzkontakt.
 
-![drs155b.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/drs155b.jpg)  
+![drs155b.jpg](../pics/drs155b.jpg)
 Stromzähler DRS155B von B+G E-Tech ohne Gehäuse
 
 Das Bild zeigt den Zähler nach dem Entfernen des Plastik-Gehäuses. Die beiden "Zungen", an denen der Impuls anliegt, müssen ausgelötet werden. Aus einer der beiden Zungen wird der Flachstecker, der in den unterbrochenen Verbindungssteeg gesteckt wird.
 
-![919004_gehauserueckseite.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/919004_gehauserueckseite.jpg)  
+![919004_gehauserueckseite.jpg](../pics/919004_gehauserueckseite.jpg)
 Untere Gehäusehälfte 
 
 Die Halterungen der Überspannungsschutz-Platine habe ich mit einem grossen Bohrer weggebohrt. Auch die kleinen Seitensteege in den Ecken habe ich mir einem Schraubendreher durch wegdrehen entfernt.
 
-![919004_gehauese_angepasst.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/919004_gehauese_angepasst.jpg)  
+![919004_gehauese_angepasst.jpg](../pics/919004_gehauese_angepasst.jpg)
 Gehäuseöffnungen angepasst
 
 Das Gehäuse des Überspannungsschutz-Adapter hat Öffnungen für Tel/Fax/Modem auf der rechten Seite und Network/ISDN auf der linken Seite. Erstere kann komplett verschlossen werden, letztere muss nach oben verlängert werden, damit das Zählerdisplay komplett sichtbar ist. Ausserdem kann rechts unten neben dem Zählerdisplay ein Loch eingefügt werden, damit man die Zähler-LED von außen sehen kann. Zu Veschließen der Öffnungen kann man die Reste des Zählergehäuses verwenden. Diese lassen sich gut mit einem Cutter-Messer schneiden, wenn man es mehrfach an einer Schiene entlang führt.
 
-![steckerverbindung_hochgebogen.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/steckerverbindung_hochgebogen.jpg)  
+![steckerverbindung_hochgebogen.jpg](../pics/steckerverbindung_hochgebogen.jpg)
 Hochgebogener Verbindungssteeg
 
 Zwecks Unterbrechung zwischen Stecker und Steckdose muss einer der beiden Verbindungssteege hochgebogen werden. 
 Das Kabel mir dem Flachstecker (stammt aus Impulszunge des Zählers) wird in diesen Verbindungssteeg gesteckt.
 
-![steckerverbindung_isolation.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/steckerverbindung_isolation.jpg)  
+![steckerverbindung_isolation.jpg](../pics/steckerverbindung_isolation.jpg)
 Isolation zwischen Stecker und Steckdose  
 
 Damit zwischen Stecker und Steckdose kein direkter Kontakt möglich ist, habe ich ein Stück Mantel von einer Mantelleitung als Isolierung verwendet (hier rot).
 
-![zaehler_angeschlossen.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/zaehler_angeschlossen.jpg) 
+![zaehler_angeschlossen.jpg](../pics/zaehler_angeschlossen.jpg)
 Zähler im Gehäuse
 
 Auf dem Bild sind die Kabel noch an die Zähler-Kupfer-Anschlüsse angelötet, was leicht zur Zerstörung des Zähler führen kann, stattdessen habe ich später die Kabel mit Kabelöse an den Kupfer-Anschluss des Zählers geschraubt. Das Bohren der Löcher für die Blechschrauben sollte unbedingt vor dem Begradigen der Kupfer-Anschlüsse erfolgen, damit man dabei nicht die Elektronik des Zähler mit dem Bohrer trifft und beschädigt.
 
-![netzteil_mit_spannungsregler.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/netzteil_mit_spannungsregler.jpg)  
+![netzteil_mit_spannungsregler.jpg](../pics/netzteil_mit_spannungsregler.jpg)
 Netzteil SUNNY NE1000 mit Spannungsregler wie den LF33CV
 
 An den 5V-Ausgang des Netzteils SUNNY NE1000 habe ich direkt den Spannungsregler LF33V angelötet. Zur Stromversorgung des Netzteils werden 240V Kabel mit Ringöse verwendet, die an den Zähler-Kupfer-Anschlüssen (Zählereingang und Null) befestigt werden.
 
-![netzteil_platzierung.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/netzteil_platzierung.jpg)  
+![netzteil_platzierung.jpg](../pics/netzteil_platzierung.jpg)
 Platzierung des Netzteils
 
 Ein probeweise Platzierung des Netzteils hat gezeigt, dass es eigentlich nur die auf dem Foto gezeigte Möglichkeit gibt, das Netzteil einzubauen.
 
-![netzteil_verkabelt.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/netzteil_verkabelt.jpg)  
+![netzteil_verkabelt.jpg](../pics/netzteil_verkabelt.jpg)
 Fertig verkabeltes Netzteil
 
 In dieser Position habe ich das Netzteil in der oberen Gehäusehälfte mit Heisskleber befestigt.
@@ -90,33 +90,33 @@ Ebenso habe ich aus zwei zusammegeklebten Pin-Headern (gekürzt auf jeweils 4 Pi
 Bleibt noch das Kabel mit den Zählerimpulsen das an Masse und den daneben befindlichen Pin-Header angeschlossen wird.
 Jetzt kann der ESP8266 aufgesteckt werden.
 
-![zaehler_kabelschuhe.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/zaehler_kabelschuhe.jpg)  
+![zaehler_kabelschuhe.jpg](../pics/zaehler_kabelschuhe.jpg)
 Fertig montierter Zähler
 
-![gehaeuse_geschlossen_nach_umbau.jpg](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/gehaeuse_geschlossen_nach_umbau.jpg)  
+![gehaeuse_geschlossen_nach_umbau.jpg](../pics/gehaeuse_geschlossen_nach_umbau.jpg)
 Gehäuse geschlossen nach Umbau
 
 ## Programmieren des ESP8266-ESP01
 
 Damit der ESP8266-ESP01 die Impulse des Stromzählers zählt und über WLAN an den SAE weiterleitet, muss dieser entsprechend programmiert werden.  Zum Programmieren muss er an einen PC angeschlossen werden. Dazu ist ein **USB-auf-TTL Serienadapter** erforderlich, z.B. einer mit FT232RL-Chip von FTDI, das man bei Ebay für weniger als 5 Euro bekommt. Er solle neben 5V auch 3,3V per Jumper einstellbar sein, weil der **ESP8266-ESP01 mit 3,3V betrieben werden muss!**. Unter Linux müssen zu dessen Verwendung keine weiteren Treiber installiert werden.
 
-![](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/FT232RLAdapter.png)  
+![FT 232 Adapter](../pics/FT232RLAdapter.png)
 *USB-auf-TTL Serienadapter*
 
 Nachfolgendes Bild zeigt die Verkabelung. Zu beachten ist die unterbrechbare Leitung zwischen GND und GPIO_0.
 Zum Flashen muss diese Verbindung geschlossen sein und im Normalbetrieb offen.
 
-![](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/Schaltplan_ESP8266-01-FTDI.png)  
+![Schaltplan](../pics/Schaltplan_ESP8266-01-FTDI.png)
 *Schaltplan*
 
 Zur Aufbau der Verkabelung eignet sich ein Breadboard mit entsprechenden Kabel-Steckbrücken. Für den ESP8266-ESP01 sind allerdings zwei sogenannte *Stacking Headers für Arduino* als Sockel erforderlich die am besten zusammengeklebt werden.
 
-![](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/FT232RLAdapter_mit_Breadboard.jpg)  
+![FT232RL-Adapter mit Breadboard](../pics/FT232RLAdapter_mit_Breadboard.jpg)
 *Breadboard mit USB-auf-TTL Serienadapter und Sockel*
 
 Auf dem folgenden Bild ist die Schalt im Normalbetrieb zu sehen: die beiden blauen Kabel links stecken nicht in derselben Reihe, d.h. die Verbindung zwischen GND und GPIO_0 ist offen. Zum Flashen müssen beide in dieselbe Reihe gesteckt werden.
 
-![](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/FT232RLAdapter_mit_ESP8266-01.jpg)  
+![FT232RL-Adapter mit ESP8266-01](../pics/FT232RLAdapter_mit_ESP8266-01.jpg)
 *Breadboard fertig aufgebaut*
 
 Nachdem die Schaltung aufgebaut ist kann mit dem Programmieren des ESP8266-ESP01 begonnen werden. Das geht am einfachsten mit der [Arduino IDE](https://www.arduino.cc/en/Main/Software), dem Programmier-Tool für Mikrokontroller der Arduino-Platform, die zunächst heruntergeladen werden muss und ausgepackt werden muss (zum Zeitpunkt des Schreibens dieser Seite war Version 1.6.11 aktuell). Der ESP8266-ESP01 gehört eigentlich nicht zur Arduino-Familie, aber die Unterstützung kann dank [dieses Projektes](https://github.com/esp8266/Arduino) zur Arduino IDE hinzugefügt werden. Die Installation ist wirklich einfach:

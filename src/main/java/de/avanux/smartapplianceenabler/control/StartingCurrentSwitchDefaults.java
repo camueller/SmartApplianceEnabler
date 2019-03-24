@@ -19,7 +19,7 @@
 package de.avanux.smartapplianceenabler.control;
 
 public class StartingCurrentSwitchDefaults {
-    // static members won't be serialized but we need those valus on the client
+    // static members won't be serialized but we need those values on the client
     private Integer powerThreshold = 15;
     private Integer startingCurrentDetectionDuration = 30; // seconds
     private Integer finishedCurrentDetectionDuration = 300; // seconds

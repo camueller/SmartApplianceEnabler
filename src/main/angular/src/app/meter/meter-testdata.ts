@@ -15,6 +15,7 @@ export class MeterTestdata {
       },
       'modbusElectricityMeter': {
         '@class': 'de.avanux.smartapplianceenabler.modbus.ModbusElectricityMeterDefaults',
+        'measurementInterval': 60,
         'pollInterval': 10
       },
       's0ElectricityMeter': {
@@ -30,7 +31,8 @@ export class MeterTestdata {
       httpElectricityMeter_factorToWatt: 1,
       httpElectricityMeter_measurementInterval: 60,
       httpElectricityMeter_pollInterval: 10,
-      modbusElectricityMeter_pollInterval: 10
+      modbusElectricityMeter_pollInterval: 10,
+      modbusElectricityMeter_measurementInterval: 60,
     });
   }
 

@@ -38,7 +38,8 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
     @XmlAttribute
     private Integer measurementInterval; // seconds
     private transient GpioPinDigitalInput inputPin;
-    private transient PulseElectricityMeter pulseElectricityMeter = new PulseElectricityMeter();
+    private transient PulsePowerMeter pulsePowerMeter = new PulsePowerMeter();
+    private transient PulseEnergyMeter pulseEnergyMeter = new PulseEnergyMeter();
 
     
     public Integer getImpulsesPerKwh() {
@@ -50,36 +51,64 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
     }
 
     public void setControl(Control control) {
-        this.pulseElectricityMeter.setControl(control);
+        this.pulsePowerMeter.setControl(control);
     }
 
     @Override
     public void setApplianceId(String applianceId) {
         super.setApplianceId(applianceId);
-        this.pulseElectricityMeter.setApplianceId(applianceId);
+        this.pulsePowerMeter.setApplianceId(applianceId);
+        this.pulseEnergyMeter.setApplianceId(applianceId);
     }
 
+    @Override
     public int getAveragePower() {
-        return pulseElectricityMeter.getAveragePower();
+        return pulsePowerMeter.getAveragePower();
     }
 
+    @Override
     public int getMinPower() {
-        return pulseElectricityMeter.getMinPower();
+        return pulsePowerMeter.getMinPower();
     }
 
+    @Override
     public int getMaxPower() {
-        return pulseElectricityMeter.getMaxPower();
+        return pulsePowerMeter.getMaxPower();
+    }
+
+    @Override
+    public float getEnergy() {
+        return this.pulseEnergyMeter.getEnergy();
+    }
+
+    @Override
+    public void startEnergyMeter() {
+        this.pulseEnergyMeter.startEnergyCounter();
+    }
+
+    @Override
+    public void stopEnergyMeter() {
+        this.pulseEnergyMeter.stopEnergyCounter();
+    }
+
+    @Override
+    public void resetEnergyMeter() {
+        this.pulseEnergyMeter.resetEnergyCounter();
     }
 
     @Override
     public boolean isOn() {
-        return pulseElectricityMeter.isOn();
+        return pulsePowerMeter.isOn();
+    }
+
+    public void init() {
+        pulsePowerMeter.setImpulsesPerKwh(impulsesPerKwh);
+        pulsePowerMeter.setMeasurementInterval(getMeasurementInterval());
+        pulseEnergyMeter.setImpulsesPerKwh(impulsesPerKwh);
     }
 
     @Override
     public void start() {
-        pulseElectricityMeter.setImpulsesPerKwh(impulsesPerKwh);
-        pulseElectricityMeter.setMeasurementInterval(getMeasurementInterval());
 
         GpioController gpioController = getGpioController();
         if(gpioController != null) {
@@ -90,7 +119,8 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
                     public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
                         logger.debug("{}: GPIO {} changed to {}", getApplianceId(), event.getPin(), event.getState());
                         if(event.getState() == PinState.HIGH) {
-                            pulseElectricityMeter.addTimestampAndMaintain(System.currentTimeMillis());
+                            pulsePowerMeter.addTimestampAndMaintain(System.currentTimeMillis());
+                            pulseEnergyMeter.increasePulseCounter();
                         }
                     }
                 });

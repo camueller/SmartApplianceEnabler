@@ -6,12 +6,18 @@ export class Status {
   runningTime: number;
   remainingMinRunningTime: number;
   remainingMaxRunningTime: number;
+  plannedEnergyAmount: number;
+  chargedEnergyAmount: number;
+  currentChargePower: number;
   planningRequested: boolean;
   earliestStart: number;
   latestStart: number;
+  latestEnd: number;
   on: boolean;
   controllable: boolean;
   interruptedSince: number;
+  optionalEnergy: boolean;
+  evIdCharging: number;
 
   public constructor(init?: Partial<Status>) {
     Object.assign(this, init);

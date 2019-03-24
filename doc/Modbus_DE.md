@@ -1,6 +1,9 @@
 # Modbus-Unterstützung
 
-*Smart Appliance Enabler* unterstützt das [Modbus](https://de.wikipedia.org/wiki/Modbus)-Protokoll lediglich in der Ausprägung  Modbus/TCP. Allerdings können Modbus/RTU-Geräte verwendet werden mittels eines Modbus/TCP zu Modbus/RTU Gateway wie z.B. des frei verfügbaren [mbusd](https://sourceforge.net/projects/mbus).
+## Modbus/RTU
+*Smart Appliance Enabler* unterstützt das [Modbus](https://de.wikipedia.org/wiki/Modbus)-Protokoll lediglich in der Ausprägung Modbus/TCP. Allerdings können Modbus/RTU-Geräte verwendet werden mittels eines Modbus/TCP zu Modbus/RTU Gateway wie z.B. des frei verfügbaren [mbusd](https://sourceforge.net/projects/mbus).
+
+**FIXME aktualisieren mit Link zum Repo und Start-Script**
 
 Da ich selbst nur einen einzigen Modbus-Zähler habe und diesen ausschliesslich zum Testen verwende, findet sich nachfolgend lediglich eine Befehlssammlung zur Installation/Starten von mbusd, aber keine Runlevel-Startscripts etc..
 ```
@@ -12,3 +15,6 @@ make
 sudo make install
 sudo mbusd -d -p /dev/ttyUSB0 -s 9600 -v 9
 ```
+
+## Modbus/TCP
+Die Konfiguration von Modbus/TCP erfolgt in den [Einstellungen](Settings_DE.md#Modbus).

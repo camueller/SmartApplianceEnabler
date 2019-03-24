@@ -19,6 +19,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 import {Settings} from './settings';
 import {SettingsDefaults} from './settings-defaults';
 import {Logger} from '../log/logger';
+import {ModbusSettings} from './modbus-settings';
+import {Info} from './info';
 
 export class SettingsFactory {
 
@@ -29,12 +31,24 @@ export class SettingsFactory {
     return new SettingsDefaults();
   }
 
+  infoFromJSON(rawInfo: any): Info {
+    this.logger.debug('Info (JSON): ' + JSON.stringify(rawInfo));
+    const info = new Info();
+    info.version = rawInfo.version;
+    info.buildDate = rawInfo.buildDate;
+    this.logger.debug('Info (TYPE): ' + JSON.stringify(info));
+    return info;
+  }
+
   defaultsFromJSON(rawSettings: any): SettingsDefaults {
     this.logger.debug('SettingsDefaults (JSON): ' + JSON.stringify(rawSettings));
     const settings = new SettingsDefaults();
     settings.holidaysUrl = rawSettings.holidaysUrl;
     settings.modbusTcpHost = rawSettings.modbusTcpHost;
     settings.modbusTcpPort = Number.parseInt(rawSettings.modbusTcpPort);
+    settings.modbusReadRegisterTypes = rawSettings.modbusReadRegisterTypes;
+    settings.modbusWriteRegisterTypes = rawSettings.modbusWriteRegisterTypes;
+    settings.byteOrders = rawSettings.byteOrders;
     settings.pulseReceiverPort = Number.parseInt(rawSettings.pulseReceiverPort);
     this.logger.debug('SettingsDefaults (TYPE): ' + JSON.stringify(settings));
     return settings;
@@ -50,9 +64,16 @@ export class SettingsFactory {
     settings.holidaysEnabled = rawSettings.holidaysEnabled;
     settings.holidaysUrl = rawSettings.holidaysUrl;
 
-    settings.modbusEnabled = rawSettings.modbusEnabled;
-    settings.modbusTcpHost = rawSettings.modbusTcpHost;
-    settings.modbusTcpPort = rawSettings.modbusTcpPort;
+    settings.modbusSettings = [] as ModbusSettings[];
+    if (rawSettings.modbusSettings) {
+      (rawSettings.modbusSettings as any[]).forEach((rawModbusSettings) => {
+        const modbusSettings = new ModbusSettings();
+        modbusSettings.modbusTcpId = rawModbusSettings.modbusTcpId;
+        modbusSettings.modbusTcpHost = rawModbusSettings.modbusTcpHost;
+        modbusSettings.modbusTcpPort = rawModbusSettings.modbusTcpPort;
+        settings.modbusSettings.push(modbusSettings);
+      });
+    }
 
     settings.pulseReceiverEnabled = rawSettings.pulseReceiverEnabled;
     settings.pulseReceiverPort = rawSettings.pulseReceiverPort;

@@ -16,6 +16,7 @@ export class MeterErrorMessages extends ErrorMessages {
         new ErrorMessage('modbusElectricityMeter_slaveAddress', ValidatorType.required),
         new ErrorMessage('modbusElectricityMeter_slaveAddress', ValidatorType.pattern),
         new ErrorMessage('modbusElectricityMeter_registerAddress', ValidatorType.required),
+        new ErrorMessage('modbusElectricityMeter_factorToValue', ValidatorType.pattern),
         new ErrorMessage('modbusElectricityMeter_pollInterval', ValidatorType.pattern),
         new ErrorMessage('modbusElectricityMeter_measurementInterval', ValidatorType.required),
         new ErrorMessage('modbusElectricityMeter_measurementInterval', ValidatorType.pattern),

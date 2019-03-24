@@ -31,29 +31,14 @@ export class ApplianceFactory {
 
   toApplianceHeaderFromJSON(rawApplianceHeader: any): ApplianceHeader {
     this.logger.debug('ApplianceHeader (JSON)' + JSON.stringify(rawApplianceHeader));
-    const applianceHeader = new ApplianceHeader();
-    applianceHeader.id = rawApplianceHeader.id;
-    applianceHeader.name = rawApplianceHeader.name;
-    applianceHeader.vendor = rawApplianceHeader.vendor;
-    applianceHeader.type = rawApplianceHeader.type;
-    applianceHeader.controllable = rawApplianceHeader.controllable;
+    const applianceHeader = new ApplianceHeader(...rawApplianceHeader);
     this.logger.debug('ApplianceHeader (TYPE)' + JSON.stringify(applianceHeader));
     return applianceHeader;
   }
 
   toApplianceFromJSON(applianceInfo: any): Appliance {
     this.logger.debug('Appliance (JSON)' + JSON.stringify(applianceInfo));
-    const appliance = new Appliance();
-    appliance.id = applianceInfo.id;
-    appliance.name = applianceInfo.name;
-    appliance.vendor = applianceInfo.vendor;
-    appliance.serial = applianceInfo.serial;
-    appliance.type = applianceInfo.type;
-
-    appliance.maxPowerConsumption = applianceInfo.maxPowerConsumption;
-    appliance.currentPowerMethod = applianceInfo.currentPowerMethod;
-    appliance.interruptionsAllowed = applianceInfo.interruptionsAllowed;
-
+    const appliance = new Appliance(...applianceInfo);
     this.logger.debug('Appliance (TYPE)' + JSON.stringify(appliance));
     return appliance;
   }

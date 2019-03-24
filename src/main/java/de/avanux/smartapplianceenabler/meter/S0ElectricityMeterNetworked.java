@@ -37,7 +37,8 @@ public class S0ElectricityMeterNetworked implements Meter, PulseReceiver.PulseLi
     private Integer impulsesPerKwh;
     @XmlAttribute
     private Integer measurementInterval = 60; // seconds
-    private transient PulseElectricityMeter pulseElectricityMeter = new PulseElectricityMeter();
+    private transient PulsePowerMeter pulsePowerMeter = new PulsePowerMeter();
+    private transient PulseEnergyMeter pulseEnergyMeter = new PulseEnergyMeter();
     private transient PulseReceiver pulseReceiver;
     private transient String applianceId;
     private transient Long previousPulseTimestamp;
@@ -46,9 +47,8 @@ public class S0ElectricityMeterNetworked implements Meter, PulseReceiver.PulseLi
     @Override
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
-        if(this.pulseElectricityMeter != null) {
-            this.pulseElectricityMeter.setApplianceId(applianceId);
-        }
+        this.pulsePowerMeter.setApplianceId(applianceId);
+        this.pulseEnergyMeter.setApplianceId(applianceId);
     }
 
     public String getIdref() {
@@ -64,20 +64,40 @@ public class S0ElectricityMeterNetworked implements Meter, PulseReceiver.PulseLi
     }
 
     public int getAveragePower() {
-        return pulseElectricityMeter.getAveragePower();
+        return pulsePowerMeter.getAveragePower();
     }
 
     public int getMinPower() {
-        return pulseElectricityMeter.getMinPower();
+        return pulsePowerMeter.getMinPower();
     }
 
     public int getMaxPower() {
-        return pulseElectricityMeter.getMaxPower();
+        return pulsePowerMeter.getMaxPower();
+    }
+
+    @Override
+    public float getEnergy() {
+        return this.pulseEnergyMeter.getEnergy();
+    }
+
+    @Override
+    public void startEnergyMeter() {
+        this.pulseEnergyMeter.startEnergyCounter();
+    }
+
+    @Override
+    public void stopEnergyMeter() {
+        this.pulseEnergyMeter.stopEnergyCounter();
+    }
+
+    @Override
+    public void resetEnergyMeter() {
+        this.pulseEnergyMeter.resetEnergyCounter();
     }
 
     @Override
     public boolean isOn() {
-        return pulseElectricityMeter.isOn();
+        return pulsePowerMeter.isOn();
     }
 
     @Override
@@ -86,14 +106,14 @@ public class S0ElectricityMeterNetworked implements Meter, PulseReceiver.PulseLi
     }
 
     public void setControl(Control control) {
-        this.pulseElectricityMeter.setControl(control);
+        this.pulsePowerMeter.setControl(control);
     }
 
     public void start() {
         logger.debug("{}: Appliance start: impulsesPerKwh={} measurementInterval={}", applianceId, impulsesPerKwh,
                 measurementInterval);
-        pulseElectricityMeter.setImpulsesPerKwh(impulsesPerKwh);
-        pulseElectricityMeter.setMeasurementInterval(measurementInterval);
+        pulsePowerMeter.setImpulsesPerKwh(impulsesPerKwh);
+        pulsePowerMeter.setMeasurementInterval(measurementInterval);
         if(pulseReceiver != null) {
             pulseReceiver.addListener(applianceId, this);
         }
@@ -116,13 +136,14 @@ public class S0ElectricityMeterNetworked implements Meter, PulseReceiver.PulseLi
                     for (long assumedCounter = previousPulseCounter + 1; assumedCounter < counter; assumedCounter++) {
                         assumedTimestamp += timeDiffPerCounterIncrement;
                         logger.warn("{}: Assuming timestamp for missing packet {}", applianceId, assumedTimestamp);
-                        pulseElectricityMeter.addTimestampAndMaintain(assumedTimestamp);
+                        pulsePowerMeter.addTimestampAndMaintain(assumedTimestamp);
+                        pulseEnergyMeter.increasePulseCounter();
                     }
                 }
             }
         }
         logger.debug("{}: Adding timestamp {} for packet counter {}", applianceId, timestamp, counter);
-        pulseElectricityMeter.addTimestampAndMaintain(timestamp);
+        pulsePowerMeter.addTimestampAndMaintain(timestamp);
         previousPulseCounter = counter;
         previousPulseTimestamp = timestamp;
     }

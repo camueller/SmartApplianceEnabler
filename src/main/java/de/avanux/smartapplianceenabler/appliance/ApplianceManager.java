@@ -40,22 +40,15 @@ import java.util.*;
 
 
 public class ApplianceManager implements Runnable {
-    public static final String SCHEMA_LOCATION = "http://github.com/camueller/SmartApplianceEnabler/v1.2";
+    public static final String SCHEMA_LOCATION = "http://github.com/camueller/SmartApplianceEnabler/v1.3";
     private Logger logger = LoggerFactory.getLogger(ApplianceManager.class);
     private static ApplianceManager instance;
     private FileHandler fileHandler = new FileHandler();
     private Device2EM device2EM;
     private Appliances appliances;
-    private GpioController gpioController;
     private Timer timer;
     
     private ApplianceManager() {
-        if(System.getProperty("os.arch").equals("arm")) {
-            gpioController = GpioFactory.getInstance();
-        }
-        else {
-            logger.error("GPIO access disabled - not running on Raspberry Pi.");
-        }
     }
     
     public static ApplianceManager getInstance() {
@@ -72,6 +65,21 @@ public class ApplianceManager implements Runnable {
             instance.logger.warn("Timer disabled");
         }
         return instance;
+    }
+
+    private GpioController getGpioController() {
+        if(System.getProperty("os.arch").equals("arm")) {
+            try {
+                return GpioFactory.getInstance();
+            }
+            catch(Error e) {
+                // warning will be logged later on only if GPIO access is required
+            }
+        }
+        else {
+            logger.warn("GPIO access disabled - not running on Raspberry Pi.");
+        }
+        return null;
     }
 
     public void run() {
@@ -123,8 +131,10 @@ public class ApplianceManager implements Runnable {
                     }
                 }
             }
-            for(Appliance appliance : appliances.getAppliances()) {
-                appliance.stop();
+            if(appliances.getAppliances() != null) {
+                for(Appliance appliance : appliances.getAppliances()) {
+                    appliance.stop();
+                }
             }
         }
         logger.info("Restarting appliances ...");
@@ -149,7 +159,7 @@ public class ApplianceManager implements Runnable {
             // make ModbusTcp accessible by id
             if(connectivity.getModbusTCPs() != null) {
                 for(ModbusTcp modbusTCP : connectivity.getModbusTCPs()) {
-                    logger.info("ModBus (" + modbusTCP.getId() + ") configured for " + modbusTCP.toString());
+                    logger.info("ModBus " + modbusTCP.getId() + " configured for " + modbusTCP.toString());
                     modbusIdWithModbusTcp.put(modbusTCP.getId(), modbusTCP);
                 }
             }
@@ -167,7 +177,7 @@ public class ApplianceManager implements Runnable {
                 holidaysUsed = true;
             }
             appliance.init(additionRunningTime);
-            appliance.start(timer, gpioController, pulseReceiverIdWithPulseReceiver, modbusIdWithModbusTcp);
+            appliance.start(timer, getGpioController(), pulseReceiverIdWithPulseReceiver, modbusIdWithModbusTcp);
         }
 
         if(holidaysUsed) {
@@ -250,9 +260,12 @@ public class ApplianceManager implements Runnable {
      * @return
      */
     private DeviceStatus getDeviceStatus(String applianceId) {
-        for(DeviceStatus deviceStatus : this.device2EM.getDeviceStatus()) {
-            if(deviceStatus.getDeviceId().equals(applianceId)) {
-                return deviceStatus;
+        List<DeviceStatus> deviceStatuses = this.device2EM.getDeviceStatus();
+        if(deviceStatuses != null) {
+            for(DeviceStatus deviceStatus : deviceStatuses) {
+                if(deviceStatus.getDeviceId().equals(applianceId)) {
+                    return deviceStatus;
+                }
             }
         }
         return null;
@@ -268,7 +281,7 @@ public class ApplianceManager implements Runnable {
     }
 
     public List<Appliance> getAppliances() {
-        if(appliances != null) {
+        if(appliances != null && appliances.getAppliances() != null) {
             return appliances.getAppliances();
         }
         return Collections.EMPTY_LIST;
@@ -286,7 +299,12 @@ public class ApplianceManager implements Runnable {
         logger.debug("{}: Add appliance", appliance.getId());
         List<DeviceInfo> deviceInfos = device2EM.getDeviceInfo();
         deviceInfos.add(deviceInfo);
-        appliances.getAppliances().add(appliance);
+        List<Appliance> appliances = this.appliances.getAppliances();
+        if(appliances == null) {
+            appliances = new ArrayList<>();
+            this.appliances.setAppliances(appliances);
+        }
+        appliances.add(appliance);
         save(true, true);
     }
 
@@ -325,7 +343,9 @@ public class ApplianceManager implements Runnable {
         device2EM.getDeviceInfo().remove(deviceInfoToBeDeleted);
 
         DeviceStatus deviceStatus = getDeviceStatus(applianceId);
-        device2EM.getDeviceStatus().remove(deviceStatus);
+        if(device2EM.getDeviceStatus() != null) {
+            device2EM.getDeviceStatus().remove(deviceStatus);
+        }
 
         Appliance applianceToBeDeleted = getAppliance(applianceId);
         if(applianceToBeDeleted != null) {

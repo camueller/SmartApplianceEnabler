@@ -16,6 +16,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import {ModbusRegisterRead} from '../shared/modbus-register-read';
+import {ModbusRegisterConfguration} from '../shared/modbus-register-confguration';
+
 export class ModbusElectricityMeter {
 
   static get TYPE(): string {
@@ -23,8 +26,16 @@ export class ModbusElectricityMeter {
   }
 
   '@class' = ModbusElectricityMeter.TYPE;
+  idref: string;
   slaveAddress: string;
-  registerAddress: string;
-  pollInterval: string;
-  measurementInterval: string;
+  registerReads?: ModbusRegisterRead[];
+  pollInterval: number;
+  measurementInterval: number;
+  powerConfiguration: ModbusRegisterConfguration;
+  energyConfiguration: ModbusRegisterConfguration;
+
+  constructor() {
+    this.powerConfiguration = new ModbusRegisterConfguration();
+    this.energyConfiguration = new ModbusRegisterConfguration();
+  }
 }

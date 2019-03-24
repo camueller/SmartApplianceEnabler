@@ -21,10 +21,11 @@ import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
 import org.joda.time.LocalDateTime;
 
 /**
- * Implementors will be notified when the active interval has changed.
+ * Implementors will be notified when the active interval is checked or has changed.
  */
 public interface ActiveIntervalChangedListener {
 
     void activeIntervalChanged(LocalDateTime now, String applianceId, TimeframeInterval deactivatedInterval, TimeframeInterval activatedInterval);
 
+    void activeIntervalChecked(LocalDateTime now, String applianceId, TimeframeInterval activeInterval);
 }

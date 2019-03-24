@@ -35,10 +35,13 @@ import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule} from '@angular/common/h
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import {StatusComponent} from './status/status.component';
+import {StatusEditComponent} from './status-edit/status-edit.component';
+import {StatusEvchargerEditComponent} from './status-evcharger-edit/status-evcharger-edit.component';
 import {ControlService} from './control/control-service';
 import {MeterService} from './meter/meter-service';
 import {ScheduleService} from './schedule/schedule-service';
 import {SettingsService} from './settings/settings-service';
+import {SuiModule} from 'ng2-semantic-ui';
 import {ControlResolver} from './control/control-resolver.service';
 import {MeterResolver} from './meter/meter-resolver.service';
 import {MeterDefaultsResolver} from './meter/meter-defaults-resolver.service';
@@ -52,6 +55,15 @@ import {ErrorInterceptor} from './shared/http-error-interceptor';
 import {StatusService} from './status/status.service';
 import {Logger, Options} from './log/logger';
 import {Level} from './log/level';
+import {StatusEvchargerViewComponent} from './status-evcharger-view/status-evcharger-view.component';
+import {StatusViewComponent} from './status-view/status-view.component';
+import {ControlEvchargerComponent} from './control-evcharger/control-evcharger.component';
+import {ControlSwitchComponent} from './control-switch/control-switch.component';
+import {ControlStartingcurrentComponent} from './control-startingcurrent/control-startingcurrent.component';
+import { ControlModbusComponent } from './control-modbus/control-modbus.component';
+import { ControlHttpComponent } from './control-http/control-http.component';
+import {FormMarkerService} from './shared/form-marker-service';
+import {ElectricVehicleResolver} from './control-evcharger/electric-vehicle-resolver.service';
 
 @NgModule({
   declarations: [
@@ -60,14 +72,24 @@ import {Level} from './log/level';
     PageNotFoundComponent,
     MeterComponent,
     ControlComponent,
+    ControlEvchargerComponent,
+    ControlHttpComponent,
+    ControlModbusComponent,
+    ControlSwitchComponent,
+    ControlStartingcurrentComponent,
     SchedulesComponent,
     SettingsComponent,
-    StatusComponent
+    StatusComponent,
+    StatusEditComponent,
+    StatusEvchargerEditComponent,
+    StatusEvchargerViewComponent,
+    StatusViewComponent,
   ],
   imports: [
     BrowserModule,
     FormsModule,
     ReactiveFormsModule,
+    SuiModule,
     AppRoutingModule,
     HttpClientModule,
     TranslateModule.forRoot({
@@ -92,6 +114,8 @@ import {Level} from './log/level';
     ControlResolver,
     ControlDefaultsResolver,
     DialogService,
+    ElectricVehicleResolver,
+    FormMarkerService,
     Logger,
     {provide: Options, useValue: {level: Level.DEBUG}},
     MeterService,

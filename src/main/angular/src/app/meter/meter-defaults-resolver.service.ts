@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, Resolve} from '@angular/router';
 import {MeterService} from './meter-service';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {MeterDefaults} from './meter-defaults';
 
 @Injectable()

@@ -37,9 +37,12 @@ import java.util.Properties;
 public class Application {
     private static Logger logger = LoggerFactory.getLogger(Application.class);
     private static ConfigurableApplicationContext applicationContext;
+    private static Properties versionProperties;
 
     public static void main(String[] args) {
         applicationContext = SpringApplication.run(Application.class, args);
+
+        loadVersionProperties();
 
         Application application = new Application();
         logger.info("Running version " + application.getVersionInfo());
@@ -48,21 +51,42 @@ public class Application {
         application.writePidFile();
     }
 
-    private String getVersionInfo() {
-        String versionInfo = "?";
+    private static void loadVersionProperties() {
         final String versionFilename = "version.properties";
-        Properties props = new Properties();
-        InputStream is = getClass().getClassLoader().getResourceAsStream(versionFilename);
+        versionProperties = new Properties();
+        InputStream is = Application.class.getClassLoader().getResourceAsStream(versionFilename);
         try {
-            props.load(is);
-            versionInfo = props.getProperty("version") + " " + props.getProperty("build.date");
+            versionProperties.load(is);
         }
         catch(IOException e) {
             logger.warn("Error reading version from " + versionFilename, e);
         }
+    }
+
+    private String getVersionInfo() {
+        String versionInfo = "?";
+        if(versionProperties != null && versionProperties.size() > 0) {
+            versionInfo = versionProperties.getProperty("version") + " " + versionProperties.getProperty("build.date");
+        }
         return versionInfo;
     }
-    
+
+    public static String getVersion() {
+        String version = "";
+        if(versionProperties != null && versionProperties.size() > 0) {
+            version = versionProperties.getProperty("version");
+        }
+        return version;
+    }
+
+    public static String getBuildDate() {
+        String buildDate = "";
+        if(versionProperties != null && versionProperties.size() > 0) {
+            buildDate = versionProperties.getProperty("build.date");
+        }
+        return buildDate;
+    }
+
     private void startSemp() {
         boolean disableDiscovery = Boolean.parseBoolean(System.getProperty("sae.discovery.disable", "false"));
         if(disableDiscovery) {

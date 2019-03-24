@@ -18,11 +18,9 @@
 
 package de.avanux.smartapplianceenabler.control;
 
+import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleChargerDefaults;
+
 public class ControlDefaults {
-
-    StartingCurrentSwitchDefaults startingCurrentSwitchDefaults;
-
-    public void setStartingCurrentSwitchDefaults(StartingCurrentSwitchDefaults startingCurrentSwitchDefaults) {
-        this.startingCurrentSwitchDefaults = startingCurrentSwitchDefaults;
-    }
+    StartingCurrentSwitchDefaults startingCurrentSwitchDefaults = new StartingCurrentSwitchDefaults();
+    ElectricVehicleChargerDefaults electricVehicleChargerDefaults = new ElectricVehicleChargerDefaults();
 }

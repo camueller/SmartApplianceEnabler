@@ -34,6 +34,8 @@ import {ScheduleResolver} from './schedule/schedule-resolver.service';
 import {SettingsResolver} from './settings/settings-resolver.service';
 import {SettingsDefaultsResolver} from './settings/settings-defaults-resolver.service';
 import {CanDeactivateGuard} from './shared/can-deactivate-guard.service';
+import {ElectricVehicle} from './control-evcharger/electric-vehicle';
+import {ElectricVehicleResolver} from './control-evcharger/electric-vehicle-resolver.service';
 
 const routes: Routes = [
   {
@@ -54,6 +56,7 @@ const routes: Routes = [
     component: ApplianceComponent
   },
   {
+    /* FIXME: Resolver verwenden */
     path: 'status',
     component: StatusComponent
   },
@@ -62,7 +65,9 @@ const routes: Routes = [
     component: MeterComponent,
     resolve: {
       meter: MeterResolver,
-      meterDefaults: MeterDefaultsResolver
+      meterDefaults: MeterDefaultsResolver,
+      settings: SettingsResolver,
+      settingsDefaults: SettingsDefaultsResolver
     },
     canDeactivate: [CanDeactivateGuard]
   },
@@ -71,7 +76,10 @@ const routes: Routes = [
     component: ControlComponent,
     resolve: {
       control: ControlResolver,
-      controlDefaults: ControlDefaultsResolver
+      controlDefaults: ControlDefaultsResolver,
+      appliance: ApplianceResolver,
+      settings: SettingsResolver,
+      settingsDefaults: SettingsDefaultsResolver
     },
     canDeactivate: [CanDeactivateGuard]
   },
@@ -79,7 +87,8 @@ const routes: Routes = [
     path: 'schedule/:id',
     component: SchedulesComponent,
     resolve: {
-      schedules: ScheduleResolver
+      schedules: ScheduleResolver,
+      electricVehicles: ElectricVehicleResolver
     },
     canDeactivate: [CanDeactivateGuard]
   },

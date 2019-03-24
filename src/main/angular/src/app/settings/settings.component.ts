@@ -25,17 +25,18 @@ import {Settings} from './settings';
 import {SettingsDefaults} from './settings-defaults';
 import {DialogService} from '../shared/dialog.service';
 import {TranslateService} from '@ngx-translate/core';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {SettingsErrorMessages} from './settings-error-messages';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {Logger} from '../log/logger';
+import {ModbusSettings} from './modbus-settings';
 
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
-  styles: []
+  styleUrls: ['../global.css']
 })
 export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponent> {
   @ViewChild('settingsForm') settingsForm: NgForm;
@@ -69,6 +70,18 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
     });
     this.settingsForm.statusChanges.subscribe(() =>
       this.errors = this.errorMessageHandler.applyErrorMessages4TemplateDrivenForm(this.settingsForm, this.errorMessages));
+  }
+
+  addModbusSettings() {
+    this.settings.modbusSettings.push({
+      modbusTcpId: undefined,
+      modbusTcpHost: undefined,
+      modbusTcpPort: undefined
+    });
+  }
+
+  removeModbusSettings(index: number) {
+    this.settings.modbusSettings.splice(index, 1);
   }
 
   canDeactivate(): Observable<boolean> | boolean {

@@ -44,4 +44,26 @@ public interface Meter extends ControlMonitor {
      * @return
      */
     Integer getMeasurementInterval();
+
+    /**
+     * Returns the energy metered since energy counter was started.
+     * @return energy in kWh
+     */
+    float getEnergy();
+
+    /**
+     * Start counting energy.
+     */
+    void startEnergyMeter();
+
+    /**
+     * Stop counting energy. The energy counter is not being reset so that count may continue
+     * if {@link #startEnergyMeter()} is called.
+     */
+    void stopEnergyMeter();
+
+    /**
+     * Reset energy counter to 0.
+     */
+    void resetEnergyMeter();
 }
