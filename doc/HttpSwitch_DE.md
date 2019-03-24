@@ -1,10 +1,10 @@
 # HTTP-basierte Schalter
 
-Für HTTP-basierte Schalter kann eine URL zum Einschalten und eine weitere URL zum Ausschalten angegeben werden. Für beiden URLs lassen sich Daten angeben, die mit der Anfrage gesendet werden. Wenn Daten angegeben werden, sollte auch der Content-Type dieser Daten in dem entsprechenden Eingabefeld angegeben werden.
+Für HTTP-basierte Schalter kann eine URL zum Einschalten und eine weitere URL zum Ausschalten angegeben werden. Für beide URLs lassen sich Daten angeben, die mit der Anfrage gesendet werden. Wenn Daten angegeben werden, sollte auch der Content-Type dieser Daten in dem entsprechenden Eingabefeld angegeben werden.
 
 Falls erforderlich, können Benutzername und Passwort für eine __Basic Authentication__ angegeben werden.
 
-Bei der Eingabe einer URL ist zu beachten, dass bei Angabe der URL bestimmte Sonderzeichen "encoded" angegeben werden müssen. Zum Beispiel muss anstatt des "&"-Zeichens der Ausruck ```"&amp;"``` (ohne Anführungszeichen) verwendet werden! Zum "encoden" von URLs kann man den Service [URL Encode online](https://www.urlencoder.io) verwenden.
+Bei der Eingabe einer URL ist zu beachten, dass bei Angabe der URL bestimmte Sonderzeichen "encoded" angegeben werden müssen. Zum Beispiel muss anstatt des "&"-Zeichens der Ausruck ```"&amp;"``` (ohne Anführungszeichen) verwendet werden! Zum "encoden" von URLs kann https://coderstoolbox.net/string/#!encoding=url&action=encode&charset=us_ascii verwendet werden.
 
 ![HTTP Switch](../pics/fe/HttpSwitch.png)
 
