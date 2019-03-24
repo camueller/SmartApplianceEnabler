@@ -1,8 +1,13 @@
 # Modbus-Stromzähler
 
+Stromzähler mit [Modbus](https://de.wikipedia.org/wiki/Modbus)-Protokoll erlauben die Abfrage diverser Werte, wobei jeder Wert aus einem bestimmten Register gelesen werden muss. Für den *Smart Appliance Enabler* ist lediglich der Wert *aktuelle Leistung* bzw. *active power* interessant.
+
 Für Modbus-Schalter gelten die allgemeinen Hinweise zur Verwendung von [Modbus im SmartApplianceEnabler](Modbus_DE.md).
 
-Stromzähler mit [Modbus](https://de.wikipedia.org/wiki/Modbus)-Protokoll erlauben die Abfrage diverser Werte, wobei jeder Wert aus einem bestimmten Register gelesen werden muss. Für den *Smart Appliance Enabler* ist lediglich der Wert *aktuelle Leistung* bzw. *active power* interessant.
+Bevor ein Modbus-basierter Zähler konfiguriert werden kann, muss ein [Modbus/TCP](Settings_DE.md#Modbus) konfiguriert werden, der dann in der Konfiguration des Modbus-Stromzählers ausgewählt wird. Auch Slave-Adresse muss angegeben werden.
+Ausserdem kann ein ```Messinterval``` angegeben werden für die Durchschnittsberechnung der Leistungsaufnahme.
+
+Der *Smart Appliance Enabler* verwendet den Modbus-Zähler sowohl zur Bestimmung der aktuellen Leistungsaufnahme als auch zum Messen von Energiemengen. Dafür muß jeweils die Register-Adresse und der Register-Typ eingegeben werden. Die restlichen Felder sind optional.
 
 ![Modbus-basierter Zähler](../pics/fe/ModbusMeter.png)
 

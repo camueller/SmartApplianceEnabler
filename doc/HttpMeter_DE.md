@@ -1,6 +1,6 @@
 # HTTP-basierte Stromzähler
 
-Für HTTP-basierte Stromzähler muss eine URL angegeben. Bei der Eingabe einer URL ist zu beachten, dass bei Angabe der URL bestimmte Sonderzeichen "encoded" angegeben werden müssen. Zum Beispiel muss anstatt des "&"-Zeichens der Ausruck ```"&amp;"``` (ohne Anführungszeichen) verwendet werden! Zum "encoden" von URLs kann man den Service [URL Encode online](https://www.urlencoder.io) verwenden.
+Für HTTP-basierte Stromzähler muss eine URL angegeben. Bei der Eingabe einer URL ist zu beachten, dass bei Angabe der URL bestimmte Sonderzeichen "encoded" angegeben werden müssen. Zum Beispiel muss anstatt des "&"-Zeichens der Ausruck ```"&amp;"``` (ohne Anführungszeichen) verwendet werden! Zum "encoden" von URLs kann https://coderstoolbox.net/string/#!encoding=url&action=encode&charset=us_ascii verwendet werden.
 
 Falls erforderlich, können Benutzername und Passwort für eine __Basic Authentication__ angegeben werden.
 
@@ -8,9 +8,9 @@ Wenn nicht nur eine Zahl für den Verbrauchswert geliefert wird, sondern der Ver
 
 Falls der über HTTP gelieferte Verbrauchswert nicht in Watt geliefert wird, muss ein ```Faktor zur Umrechnung in Watt``` angegeben werden, mit dem der gelieferte Wert multipliziert werden muss, um den Verbrauch in Watt zu erhalten. Wird beispielsweise der Verbrauch in mW geliefert, muss dieser Faktor mit dem Wert ```1000``` angegeben werden.
 
-Der ```Abfrage-Intervall``` legt fest, in welchen Abständen die aktuelle Leistungsaufnahme bei der Datenquelle abgefragt wird.
+Mit dem ```Abfrage-Intervall``` kann festgelegt werden, in welchen Abständen die aktuelle Leistungsaufnahme bei der Datenquelle abgefragt wird.
 
-Der ```Messinterval``` wird verwendet, um die durchschnittliche Leistungsaufnahme berechnen.
+Ausserdem kann ein ```Messinterval``` angegeben werden für die Durchschnittsberechnung der Leistungsaufnahme.
 
 ![HTTP-basierter Zähler](../pics/fe/HttpMeter.png)
 

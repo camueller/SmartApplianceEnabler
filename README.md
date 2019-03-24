@@ -56,25 +56,28 @@ Zum Ein-/Ausschalten eines Gerätes unterstützt der *Smart Appliance Enabler* d
 
 | Protokolle    | Produkte      |
 | ------------- | ------------- |
-| GPIO          | [GPIO-basierte Schalter](doc/GPIOSwitch_DE.md) |
+| [GPIO](doc/GPIOSwitch_DE.md) | [GPIO-basierte Schalter](doc/GPIOSwitch_DE.md) |
 | [Modbus](doc/ModbusSwitch_DE.md) | |
 | [HTTP](doc/HttpSwitch_DE.md) | [Sonoff Pow](doc/SonoffPow_DE.md) <br> [Edimax SP-2101W](doc/EdimaxSP2101W_DE.md)  <br> [Shelly 4 Pro](doc/Shelly4Pro_DE.md)|
 
 Alle aufgeführten Schalter können mit einer [Anlaufstromerkennung](doc/Anlaufstromerkennung_DE.md) verwendet werden, um die Programmierung des Gerätes zu ermöglichen.
 
-Ein Schalter, der neben dem Schaltzustand auch eine vorgegebene Leistungsaufnahme ermöglicht, existiert für [Ladegeräte von Elektro-Autos](doc/EVCharger_DE.md).
+Ein Schaltem, der neben dem Schaltzustand auch die Leistungsaufnahme vorgegeben werden kann, existiert für [Ladegeräte von Elektro-Autos](doc/EVCharger_DE.md).
 
-### Montage
+### [Montage](doc/Montage_DE.md)
 Für den reibungslosen Einsatz des *Smart Appliance Enabler* sollten die [Montage-Hinweise](doc/Montage_DE.md) beachtet werden.
 
 ## Software
-Zur Verwendung des *Smart Appliance Enabler* zusammen mit dem *SMA Sunny Home Manager* sind mindesten die in den 3 nachfolgenden Kapiteln (_Installation_,_Konfiguration_ und _Integration_) genannten Schritte erforderlich.
+In den nachfolgenden Kapiteln ist Installation und Konfiguration des *Smart Appliance Enabler* beschrieben. Gegebenenfalls sollte auch das Kapitel [Fragen / Probleme](doc/Troubleshooting_DE.md) konsultiert werden.
 
 ### [Installation](doc/Installation_DE.md)
 Der einfachste Weg zu einem lauffähigen *Smart Appliance Enabler* besteht in der [Installation](doc/Installation_DE.md) einer releasten Version.
 
 ### [Konfiguration](doc/Configuration_DE.md)
 Damit der *Smart Appliance Enabler* die Geräte steuern und deren Stromverbrauch messen kann, ist zusätzlich zur Installation der Software die Erstellung einer [Konfiguration](doc/Configuration_DE.md) erforderlich.
+
+### [Einstellungen](doc/Settings_DE.md)
+Im oberen Bereich der Seite findet sich der Menüpunkt zur Verwaltung der zentralen [Einstellungen](Settings_DE.md).
 
 ### [Status-Anzeige](doc/Status_DE.md)
 Der Status aller Geräte wird in der [Status-Anzeige](doc/Status_DE.md) übersichtlich dargestellt, wobei der Status jedes Gerätes durch eine **Ampel** visualisiert wird. Die Ampel kann auch zur **manuellen Steuerung** verwendet werden.
@@ -85,16 +88,16 @@ Der Sunny Home Manager kann die Geräte erst dann steuern und deren Verbrauch me
 ### [Bauen aus Sourcen](doc/Build_DE.md)
 Zur Nutzung von Features, die noch nicht in der releasten Version enthalten sind, muss der *Smart Appliance Enabler* [aus Sourcen gebaut werden](doc/Build_DE.md).
 
-### Dank und Anerkennung
+### [Fragen / Probleme](doc/Troubleshooting_DE.md)
+Durch die Vielzahl von Hard- und Softwarekomponenten können bei der Verwendung des *Smart Appliance Enabler* naturgemäß Fragen oder Probleme auftreten. In diesem Fall sollten [diese Hinweise](doc/Support_DE.md) beachtet werden.
+
+## Dank und Anerkennung
 Der *Smart Appliance Enabler* verwendet intern folgende Open-Source-Software:
 * [Pi4J](http://pi4j.com) für den Zugriff auf die GPIO-Ports des Raspberry
 * [Spring Boot](http://projects.spring.io/spring-boot) für RESTful Web-Services (SEMP-Protokoll)
 * [Angular](https://angular.io) für das Web-Frontend
 * [Semantic UI](https://semantic-ui.com/) für das Web-Frontend
 * [Cling](http://4thline.org/projects/cling) für UPnP (SEMP-Protokoll)
-
-## [Fragen / Probleme](doc/Troubleshooting_DE.md)
-Durch die Vielzahl von Hard- und Softwarekomponenten können bei der Verwendung des *Smart Appliance Enabler* naturgemäß Fragen oder Probleme auftreten. In diesem Fall sollten [diese Hinweise](doc/Support_DE.md) beachtet werden.
 
 ## Lizenz
 Die Inhalte in diesem Repository sind lizensiert unter der [GNU GENERAL PUBLIC LICENSE](LICENSE.txt), falls nicht anders angegeben.

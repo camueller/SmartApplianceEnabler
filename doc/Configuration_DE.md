@@ -6,7 +6,7 @@ Die Web-Oberfläche ist bewusst einfach und dennoch komfortabel gehalten, um Bro
 
 Grundsätzlich gilt, dass Eingaben/Änderungen erst nach dem Klicken der ```Speichern```-Schaltfläche gespeichert sind. Beim Wechsel auf ein andere Seite erfolgt eine Warnung, wenn nicht gespeicherte Eingaben/Änderungen vorhanden sind. Werden bei Eingabefeldern Inhalte mit grauer Schrift angezeigt, so handelt es sich um Voreinstellungen, d.h. wenn kein Wert eingegeben wird, gilt dieser Wert.
 
-Beim Speichern werden die Daten in zwei [XML](https://de.wikipedia.org/wiki/Extensible_Markup_Language)-Dateien geschrieben, die sich im ```/app```-Verzeichnis befinden müssen:
+Beim Speichern werden die Daten in zwei [XML](https://de.wikipedia.org/wiki/Extensible_Markup_Language)-Dateien geschrieben, die sich in dem Verzeichnis befinden, auf das die Variable SAE_HOME verweist (normalerweise ```/app```):
 * die Datei `Device2EM.xml` enthält Gerätebeschreibung für den EnergyManager
 * die Datei `Appliances.xml` enthält die Gerätekonfiguration für den *Smart Appliance Enabler*
 Die Groß-/Kleinschreibung der Dateinamen muss genau so sein, wie hier angegeben!
@@ -48,9 +48,13 @@ Sobald Änderungen vorgenommen wurden und die Korrektheit der Eingaben überprü
 
 Um einen Zähler zu konfigurieren muss in der ```Typ```-Auswahlbox der Typ des Zählers ausgewählt werden. Entsprechend dieser Auswahl werden die für den gewählten Zähler-Typ konfigurierbaren Felder eingeblendet.
 
+Derzeit unterstützt der *Smart Appliance Enabler* Zähler mit folgenden Protokollen:
+
 * [S0](SOMeter_DE.md)
 * [Modbus](ModbusMeter_DE.md)
 * [HTTP](HttpMeter_DE.md)
+
+Nachdem alle erforderlichen Eingaben erfolgt sind, wird die ```Speichern```-Schaltfläche freigegeben.
 
 ## Schalter
 
@@ -65,13 +69,13 @@ Derzeit unterstützt der *Smart Appliance Enabler* Schalter mit folgenden Protok
 
 Ein besonderer Schalter-Typ ist ```Immer eingeschaltet```. Dieser eignet sich für Geräte, die immer eingeschaltet sind (z.B. Kühlschrank) und bei denen lediglich der Verbrauch überwacht werden soll. Die Konfiguration dieses Schalters ist erforderlich, weil nur Verbräuche eingeschalteter Geräte berücksichtigt werden.
 
-Wenn alle erforderlichen Eingaben erfolgt sind, wird die ```Speichern```-Schaltfläche freigegeben. Wenn ein Schalter konfiguriert wurden, erscheint nach dem Drücken dieser Schaltfläche erscheinen im Seitenmenü der Unterpunkt ```Schaltzeiten```.
+Nachdem alle erforderlichen Eingaben erfolgt sind, wird die ```Speichern```-Schaltfläche freigegeben. Falls ein Schalter konfiguriert wurden, erscheint nach dem Drücken dieser Schaltfläche erscheinen im Seitenmenü der Unterpunkt ```Schaltzeiten```.
 
 Wenn als Gerätetyp ```Elektroauto-Ladegerät``` angegeben ist, kann auf dieser Seite die [Konfiguration des Lade-Controllers sowie die Verwaltung der Fahrzeuge](EVCharger_DE.md) vorgenommen werden.
 
 ## Zeitpläne
 
-Wenn ein Gerät schaltbar ist, können Zeitpläne konfiguriert werden. Ein Zeitplan hat einen Zeitrahmen, auf den er sich bezieht. Das kann entweder ein ```Tagesplan``` (bezieht sich auf Kalendertag) oder ein ```Mehrtagesplan``` (dauert länger als 24 Stunden) sein.
+Wenn ein Gerät schaltbar ist, können Zeitpläne konfiguriert werden. Ein Zeitplan hat einen Zeitrahmen, auf den er sich bezieht. Das kann entweder ein ```Tagesplan``` (bezieht sich auf Kalendertag) oder ein ```Mehrtagesplan``` (dauert länger als 24 Stunden aber höchstens eine Woche) sein.
 
 Für einen Tagesplan kann angegeben werden, dass dieser an Feiertagen gelten soll.
 Diese hat Vorrang vor anderen Tagesplänen, die entsprechend des Wochentages gelten würden. Voraussetzung dafür ist, dass das [Feiertagshandling in der Konfiguration aktiviert](Settings_DE.md#Feiertage) wurde.
@@ -98,7 +102,7 @@ Dazu ist die Seite http://www.freeformatter.com/xml-validator-xsd.html besonders
 Der Inhalt der XML-Datei wird in das Fenster *XML Input* kopiert. 
 In das Fenster *XSD Input* muss der Inhalt (nicht die URL selbst!) der nachfolgenden URL kopiert werden:
 * beim Prüfen von Device2EM.xml: https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/xsd/SEMP-1.1.5.xsd
-* beim Prüfen von Appliances.xml: https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/xsd/SmartApplianceEnabler-1.1.xsd
+* beim Prüfen von Appliances.xml: https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/xsd/SmartApplianceEnabler-1.3.xsd
 
 Ist die Prüfung erfolgreich, erscheint oberhalb des *XML Input* eine grün unterlegte Meldung *The XML document is valid.*. Bei Fehlern erscheint eine rot unterlegte Meldung mit entsprechender Fehlerbeschreibung.
 

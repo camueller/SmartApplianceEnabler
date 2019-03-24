@@ -9,7 +9,7 @@ der Button ```Geräte aktualisieren``` gedrückt werden. Danach sollte das neu k
 ![Neues Geraet erkannt](../pics/shm/NeuesGeraetErkannt.png)
 
 Durch Drücken des ```[+]```-Buttons wird das Gerät hinzugefügt.
-Im ersten Schritt kann der Gerätename festgelegt werden - die Vorgabe kommt aus der SAE-Konfiguration:
+Im ersten Schritt kann der Gerätename festgelegt werden - die Vorgabe kommt aus der Konfiguration des Gerätes im *Smart Appliance Enabler*:
 
 ![Neues Geraet Geraetename](../pics/shm/NeuesGeraet_Geraetename.png)
 
