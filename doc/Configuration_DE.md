@@ -106,12 +106,17 @@ In das Fenster *XSD Input* muss der Inhalt (nicht die URL selbst!) der nachfolge
 
 Ist die Prüfung erfolgreich, erscheint oberhalb des *XML Input* eine grün unterlegte Meldung *The XML document is valid.*. Bei Fehlern erscheint eine rot unterlegte Meldung mit entsprechender Fehlerbeschreibung.
 
-## Konfiguration mittels REST (JSON)
-Für die Konfiguration mittels Web-Frontend existieren entsprechend REST-Services, die auch unabhängig vom Web-Frontend verwendet werden können.
+## Konfiguration mittels REST
+Für die Konfiguration mittels Web-Frontend existieren entsprechende REST-Services. Diese können, wie die SEMP-Schnittstelle selbst, auch unabhängig vom Web-Frontend verwendet werden.
 
-TODO: REST-Services hier dokumentieren inkl. Beispiel mit curl
+### Schalten eines Gerätes
+Zum Einschalten eines Gerätes kann folgender Befehl verwendet werden, wobei die URL un die Device-ID (identisch mit Appliance-ID) anzupassen ist:
+```
+curl -X POST -d '<EM2Device xmlns="http://www.sma.de/communication/schema/SEMP/v1"><DeviceControl><DeviceId>F-00000001-000000000002-00</DeviceId><On>true</On></DeviceControl></EM2Device>' --header 'Content-Type: application/xml' http://127.0.0.1:8080/semp
+```
+Zum Ausschalten muss lediglilch ```<On>false</On>``` statt ```<On>true</On>``` gesetzt werden.
 
-### Setzen der Schedules mittels REST (XML)
+### Setzen der Schedules
 Normalerweise werden die Schedules aus der Datei `Appliance.xml` gelesen. Es ist jedoch möglich, die Schedules via REST an den SAE zu übergeben. Dazu müssen der/die Schedules in einem Root-Element `Schedules` zusammengefasst werden, das an SAE unter Angabe der Appliance-ID übergeben wird:
 ```
 /usr/bin/curl -s -X POST -d '<Schedules><Schedule minRunningTime="36000" maxRunningTime="43200"><ConsecutiveDaysTimeframe><Start dayOfWeek="5" hour="16" minute="0" second="0" /><End dayOfWeek="7" hour="20" minute="0" second="0" /></ConsecutiveDaysTimeframe></Schedule></Schedules>' --header 'Content-Type: application/xml' http://localhost:8080/sae/schedules?ApplianceId=F-00000001-000000000001-00

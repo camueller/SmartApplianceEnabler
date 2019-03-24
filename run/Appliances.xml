@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.3">
-    <Appliance id="F-28091971-000000000099-00">
+    <Appliance id="F-00000001-000000000099-00">
         <ElectricVehicleCharger startChargingStateDetectionDelay="0">
             <EVModbusControl idref="wallbox" slaveAddress="180">
                 <ModbusRegisterRead address="100" type="InputString">
@@ -34,7 +34,7 @@
             </DayTimeframe>
         </Schedule>
     </Appliance>
-    <Appliance id="F-28091971-000000000003-00">
+    <Appliance id="F-00000001-000000000003-00">
         <Switch gpio="2" reverseStates="true"/>
         <S0ElectricityMeter gpio="3" pinPullResistance="PULL_DOWN" impulsesPerKwh="1000"/>
         <Schedule enabled="true">
