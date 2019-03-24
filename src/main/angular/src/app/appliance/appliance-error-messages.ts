@@ -30,6 +30,7 @@ export class ApplianceErrorMessages extends ErrorMessages {
         new ErrorMessage('vendor', ValidatorType.required),
         new ErrorMessage('name', ValidatorType.required),
         new ErrorMessage('serial', ValidatorType.required),
+        new ErrorMessage('minPowerConsumption', ValidatorType.pattern),
         new ErrorMessage('maxPowerConsumption', ValidatorType.required),
         new ErrorMessage('maxPowerConsumption', ValidatorType.pattern)
       ], translate

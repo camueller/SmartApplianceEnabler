@@ -17,10 +17,7 @@
  */
 package de.avanux.smartapplianceenabler.appliance;
 
-import de.avanux.smartapplianceenabler.schedule.Schedule;
-import de.avanux.smartapplianceenabler.schedule.TimeOfDay;
-import de.avanux.smartapplianceenabler.schedule.Timeframe;
-import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
+import de.avanux.smartapplianceenabler.schedule.*;
 import org.joda.time.Interval;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
@@ -39,6 +36,7 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
     private List<Schedule> schedules;
     private Set<ActiveIntervalChangedListener> scheduleChangedListeners = new HashSet<>();
     private TimeframeInterval activeTimeframeInterval;
+    private Request activeRequest;
     private LocalDateTime statusChangedAt;
     private Integer runningTime;
     // remaining min running time while not running or when running started
@@ -77,14 +75,20 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
 
     public void setSchedules(List<Schedule> schedules) {
         List<Schedule> enabledSchedules = new ArrayList<>();
-        for(Schedule schedule : schedules) {
-            if(schedule.isEnabled()) {
-                logger.debug("{}: Using enabled time frame {}", applianceId, schedule.toString());
-                enabledSchedules.add(schedule);
+        if(schedules != null) {
+            for(Schedule schedule : schedules) {
+                if(schedule.isEnabled()) {
+                    logger.debug("{}: Using enabled time frame {}", applianceId, schedule.toString());
+                    enabledSchedules.add(schedule);
+                }
+                else {
+                    logger.debug("{}: Ignoring disabled time frame {}", applianceId, schedule.toString());
+                }
             }
-            else {
-                logger.debug("{}: Ignoring disabled time frame {}", applianceId, schedule.toString());
-            }
+
+        }
+        else {
+            logger.debug("{}: No schedules to set", applianceId);
         }
         this.schedules = enabledSchedules;
         this.activeTimeframeInterval = null;
@@ -166,7 +170,9 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         Integer remainingRunningTime = null;
         if(remainingMinRunningTimeWhileNotRunning != null) {
             if(running) {
-                remainingRunningTime = remainingMinRunningTimeWhileNotRunning - getSecondsSinceStatusChange(now);
+                int calculatedRemainingRunningTime
+                        = remainingMinRunningTimeWhileNotRunning - getSecondsSinceStatusChange(now);
+                remainingRunningTime = calculatedRemainingRunningTime > 0 ? calculatedRemainingRunningTime : 0;
             }
             else {
                 remainingRunningTime = remainingMinRunningTimeWhileNotRunning;
@@ -179,7 +185,9 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         Integer remainingRunningTime = null;
         if(remainingMaxRunningTimeWhileNotRunning != null) {
             if(running) {
-                remainingRunningTime = this.remainingMaxRunningTimeWhileNotRunning - getSecondsSinceStatusChange(now);
+                int calculatedRemainingRunningTime
+                        = this.remainingMaxRunningTimeWhileNotRunning - getSecondsSinceStatusChange(now);
+                remainingRunningTime = calculatedRemainingRunningTime > 0 ? calculatedRemainingRunningTime : 0;
             }
             else {
                 remainingRunningTime = remainingMaxRunningTimeWhileNotRunning;
@@ -214,6 +222,10 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         return activeTimeframeInterval;
     }
 
+    public Request getActiveRequest() {
+        return activeRequest;
+    }
+
     /**
      * Activate the current or next timeframe interval from one of the given schedules.
      * @param now
@@ -225,12 +237,29 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
                     Schedule.getCurrentOrNextTimeframeInterval(now, schedules, true, false);
             activateTimeframeInterval(now, nextSufficientTimeframeInterval);
         }
+        else {
+            for(ActiveIntervalChangedListener listener : scheduleChangedListeners) {
+                logger.debug("{}: Timeframe interval activation check: notifying {} {}", applianceId, ActiveIntervalChangedListener.class.getSimpleName(),
+                        listener.getClass().getSimpleName());
+                listener.activeIntervalChecked(now, applianceId, activeTimeframeInterval);
+            }
+        }
     }
 
     public void activateTimeframeInterval(LocalDateTime now, Integer runtime) {
         activeTimeframeInterval = null;
         Schedule schedule = new Schedule(runtime, null, new TimeOfDay(now), new TimeOfDay(now));
         Interval interval = new Interval(now.toDateTime(), now.plusSeconds(runtime).toDateTime());
+        Timeframe timeframe = schedule.getTimeframe();
+        activateTimeframeInterval(now, new TimeframeInterval(timeframe, interval));
+    }
+
+    public void activateTimeframeInterval(LocalDateTime now, Integer energy, LocalDateTime chargeEnd) {
+        logger.debug("{}: Activate timeframe interval: energy={}Wh chargeEnd={}",
+                applianceId, energy, chargeEnd);
+        Schedule schedule = Schedule.withEnergyRequest(energy, energy, new TimeOfDay(now), new TimeOfDay(now));
+        Interval interval = new Interval(now.toDateTime(), chargeEnd.toDateTime());
+        // FIXME: geht das nicht besser?
         Timeframe timeframe = schedule.getTimeframe();
         activateTimeframeInterval(now, new TimeframeInterval(timeframe, interval));
     }
@@ -245,10 +274,15 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         if(timeframeIntervalToBeActivated != null && activeTimeframeInterval == null) {
             Schedule schedule = timeframeIntervalToBeActivated.getTimeframe().getSchedule();
             runningTime = 0;
-            remainingMinRunningTimeWhileNotRunning = schedule.getMinRunningTime();
-            remainingMaxRunningTimeWhileNotRunning = schedule.getMaxRunningTime();
-            intervalChanged = true;
-            logger.debug("{}: Interval activated: ", applianceId, timeframeIntervalToBeActivated);
+            activeRequest = schedule.getRequest();
+            if(schedule.getRequest() instanceof RuntimeRequest || schedule.getRequest() instanceof SocRequest) {
+                if(schedule.getRequest() instanceof RuntimeRequest) {
+                    remainingMinRunningTimeWhileNotRunning = schedule.getRequest().getMin();
+                    remainingMaxRunningTimeWhileNotRunning = schedule.getRequest().getMax();
+                }
+                intervalChanged = true;
+                logger.debug("{}: Interval activated: {}", applianceId, timeframeIntervalToBeActivated);
+            }
         }
         else if(timeframeIntervalToBeActivated == null && activeTimeframeInterval != null) {
             logger.debug("{}: Interval expired: {}", applianceId, activeTimeframeInterval);
@@ -258,6 +292,7 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
             statusChangedAt = null;
             remainingMinRunningTimeWhileNotRunning = null;
             remainingMaxRunningTimeWhileNotRunning = null;
+            activeRequest = null;
             intervalChanged = true;
         }
         TimeframeInterval deactivatedTimeframeInterval = activeTimeframeInterval;

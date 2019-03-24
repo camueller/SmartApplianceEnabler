@@ -27,12 +27,18 @@ public class ApplianceStatus {
     private Integer runningTime;
     private Integer remainingMinRunningTime;
     private Integer remainingMaxRunningTime;
+    private Integer plannedEnergyAmount;
+    private Integer chargedEnergyAmount;
+    private Integer currentChargePower;
     private boolean planningRequested;
     private Integer earliestStart;
     private Integer latestStart;
+    private Integer latestEnd;
     private boolean on;
     private boolean controllable;
     private Integer interruptedSince;
+    private boolean optionalEnergy;
+    private Integer evIdCharging;
 
 
     public String getId() {
@@ -91,6 +97,30 @@ public class ApplianceStatus {
         this.remainingMaxRunningTime = remainingMaxRunningTime;
     }
 
+    public Integer getPlannedEnergyAmount() {
+        return plannedEnergyAmount;
+    }
+
+    public void setPlannedEnergyAmount(Integer plannedEnergyAmount) {
+        this.plannedEnergyAmount = plannedEnergyAmount;
+    }
+
+    public Integer getChargedEnergyAmount() {
+        return chargedEnergyAmount;
+    }
+
+    public void setChargedEnergyAmount(Integer chargedEnergyAmount) {
+        this.chargedEnergyAmount = chargedEnergyAmount;
+    }
+
+    public Integer getCurrentChargePower() {
+        return currentChargePower;
+    }
+
+    public void setCurrentChargePower(Integer currentChargePower) {
+        this.currentChargePower = currentChargePower;
+    }
+
     public boolean isPlanningRequested() {
         return planningRequested;
     }
@@ -115,6 +145,14 @@ public class ApplianceStatus {
         this.latestStart = latestStart;
     }
 
+    public Integer getLatestEnd() {
+        return latestEnd;
+    }
+
+    public void setLatestEnd(Integer latestEnd) {
+        this.latestEnd = latestEnd;
+    }
+
     public boolean isOn() {
         return on;
     }
@@ -137,5 +175,21 @@ public class ApplianceStatus {
 
     public void setInterruptedSince(Integer interruptedSince) {
         this.interruptedSince = interruptedSince;
+    }
+
+    public boolean isOptionalEnergy() {
+        return optionalEnergy;
+    }
+
+    public void setOptionalEnergy(boolean optionalEnergy) {
+        this.optionalEnergy = optionalEnergy;
+    }
+
+    public Integer getEvIdCharging() {
+        return evIdCharging;
+    }
+
+    public void setEvIdCharging(Integer evIdCharging) {
+        this.evIdCharging = evIdCharging;
     }
 }

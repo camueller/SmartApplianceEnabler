@@ -1,3 +1,6 @@
+import * as moment from 'moment';
+import {Moment} from 'moment';
+
 export class TimeUtil {
 
   static toHourMinute(seconds: number): string {
@@ -40,9 +43,47 @@ export class TimeUtil {
     return this.padLeadingZero(hour, 2) + ':' + this.padLeadingZero(minute, 2);
   }
 
+  static timestringFromDelta(seconds: number): string {
+    return TimeUtil.timestringFromDelta_(moment(), seconds);
+  }
+
+  static timestringFromDelta_(m: Moment, seconds: number): string {
+    m.add(seconds, 'second');
+    return m.format('H:mm');
+  }
+
+  static timestringOfNextMatchingDow(dow: number, timeOfDay: string): string {
+    return TimeUtil.timestringOfNextMatchingDow_(moment(), dow, timeOfDay);
+  }
+
+  static timestringOfNextMatchingDow_(m: Moment, dow: number, timeOfDay: string): string {
+    if (!dow || !timeOfDay) {
+      return undefined;
+    }
+    while (m.isoWeekday() !== dow) {
+      m.add(1, 'day');
+    }
+    const timeOfDaySplit = timeOfDay.split(':');
+    m.hour(Number.parseInt(timeOfDaySplit[0]));
+    m.minute(Number.parseInt(timeOfDaySplit[1]));
+    m.second(0);
+    m.millisecond(0);
+    return m.toISOString();
+  }
+
+  static toWeekdayFromDelta(seconds: number): number {
+    return TimeUtil.toWeekdayFromDelta_(moment(), seconds);
+  }
+
+  static toWeekdayFromDelta_(m: Moment, seconds: number): number {
+    m.add(seconds, 'second');
+    return m.weekday();
+  }
+
   static padLeadingZero(value: number, size: number): string {
     let s = String(value);
     while (s.length < (size || 2)) { s = '0' + s; }
     return s;
   }
+
 }

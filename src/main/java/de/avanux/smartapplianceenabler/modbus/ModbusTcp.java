@@ -32,13 +32,12 @@ import java.net.UnknownHostException;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ModbusTcp {
-    public transient static final String DEFAULT_ID = "default";
     @XmlAttribute
     private String id;
     public transient static final String DEFAULT_HOST = "127.0.0.1";
     @XmlAttribute
     private String host;
-    public static final int DEFAULT_PORT = 502;
+    public transient static final int DEFAULT_PORT = 502;
     @XmlAttribute
     private Integer port;
 

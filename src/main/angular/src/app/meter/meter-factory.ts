@@ -22,6 +22,9 @@ import {ModbusElectricityMeter} from './modbus-electricity-meter';
 import {HttpElectricityMeter} from './http-electricity-meter';
 import {MeterDefaults} from './meter-defaults';
 import {Logger} from '../log/logger';
+import {ModbusRegisterRead} from '../shared/modbus-register-read';
+import {ModbusRegisterReadValue} from '../shared/modbus-register-read-value';
+import {ModbusRegisterConfguration} from '../shared/modbus-register-confguration';
 
 export class MeterFactory {
 
@@ -34,9 +37,10 @@ export class MeterFactory {
     meterDefaults.s0ElectricityMeter_measurementInterval
       = rawMeterDefaults.s0ElectricityMeter.measurementInterval;
     meterDefaults.httpElectricityMeter_factorToWatt = rawMeterDefaults.httpElectricityMeter.factorToWatt;
-    meterDefaults.httpElectricityMeter_measurementInterval = rawMeterDefaults.httpElectricityMeter.measurementInterval;
     meterDefaults.httpElectricityMeter_pollInterval = rawMeterDefaults.httpElectricityMeter.pollInterval;
+    meterDefaults.httpElectricityMeter_measurementInterval = rawMeterDefaults.httpElectricityMeter.measurementInterval;
     meterDefaults.modbusElectricityMeter_pollInterval = rawMeterDefaults.modbusElectricityMeter.pollInterval;
+    meterDefaults.modbusElectricityMeter_measurementInterval = rawMeterDefaults.modbusElectricityMeter.measurementInterval;
     this.logger.debug('MeterDefaults (TYPE): ' + JSON.stringify(meterDefaults));
     return meterDefaults;
   }
@@ -76,10 +80,32 @@ export class MeterFactory {
     }
     let meterRaw: string;
     if (meterUsed != null) {
+      if (meter.type === ModbusElectricityMeter.TYPE) {
+        this.toJSONModbusElectricityMeter(meter.modbusElectricityMeter);
+      }
       meterRaw = JSON.stringify(meterUsed);
     }
     this.logger.debug('Meter (JSON): ' + meterRaw);
     return meterRaw;
+  }
+
+  toJSONModbusElectricityMeter(modbusElectricityMeter: ModbusElectricityMeter) {
+    const powerRegisterRead = this.toJSONModbusRegisterRead(
+      'Power', modbusElectricityMeter.powerConfiguration);
+    const energyRegisterRead = this.toJSONModbusRegisterRead(
+      'Energy', modbusElectricityMeter.energyConfiguration);
+    modbusElectricityMeter.registerReads = [powerRegisterRead, energyRegisterRead];
+  }
+
+  toJSONModbusRegisterRead(registerReadValueName: string, configuration: ModbusRegisterConfguration): ModbusRegisterRead {
+    return new ModbusRegisterRead({
+      address: configuration.address,
+      bytes: configuration.bytes,
+      byteOrder: configuration.byteOrder,
+      type: configuration.type,
+      factorToValue: configuration.factorToValue,
+      registerReadValues: [new ModbusRegisterReadValue({name: registerReadValueName})]
+    });
   }
 
   createS0ElectricityMeter(rawMeter: any, networked: boolean): S0ElectricityMeter {
@@ -97,10 +123,33 @@ export class MeterFactory {
 
   createModbusElectricityMeter(rawMeter: any): ModbusElectricityMeter {
     const modbusElectricityMeter = new ModbusElectricityMeter();
+    modbusElectricityMeter.idref = rawMeter.idref;
     modbusElectricityMeter.slaveAddress = rawMeter.slaveAddress;
-    modbusElectricityMeter.registerAddress = rawMeter.registerAddress;
     modbusElectricityMeter.pollInterval = rawMeter.pollInterval;
     modbusElectricityMeter.measurementInterval = rawMeter.measurementInterval;
+    if (rawMeter.registerReads != null) {
+      rawMeter.registerReads.forEach((registerRead) => {
+        const name = registerRead.registerReadValues[0].name;
+        if (name === 'Power') {
+          modbusElectricityMeter.powerConfiguration = new ModbusRegisterConfguration({
+            address: registerRead.address,
+            bytes: registerRead.bytes,
+            byteOrder: registerRead.byteOrder,
+            type: registerRead.type,
+            factorToValue: registerRead.factorToValue
+          });
+        }
+        if (name === 'Energy') {
+          modbusElectricityMeter.energyConfiguration = new ModbusRegisterConfguration({
+            address: registerRead.address,
+            bytes: registerRead.bytes,
+            byteOrder: registerRead.byteOrder,
+            type: registerRead.type,
+            factorToValue: registerRead.factorToValue
+          });
+        }
+      });
+    }
     return modbusElectricityMeter;
   }
 

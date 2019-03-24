@@ -20,15 +20,32 @@ package de.avanux.smartapplianceenabler.semp.webservice;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Characteristics {
     @XmlElement(name = "MaxPowerConsumption")
     private int maxPowerConsumption;
+    @XmlElement(name = "MinPowerConsumption")
+    private Integer minPowerConsumption;
     @XmlElement(name = "MinOnTime")
     private Integer minOnTime;
+    @XmlElement(name = "MaxOnTime")
+    private Integer maxOnTime;
     @XmlElement(name = "MinOffTime")
     private Integer minOffTime;
+    @XmlElement(name = "MaxOffTime")
+    private Integer maxOffTime;
+    @XmlElement(name = "PowerLevels")
+    private PowerLevels powerLevels;
+
+    public Integer getMinPowerConsumption() {
+        return minPowerConsumption;
+    }
+
+    public void setMinPowerConsumption(Integer minPowerConsumption) {
+        this.minPowerConsumption = minPowerConsumption;
+    }
 
     public int getMaxPowerConsumption() {
         return maxPowerConsumption;
@@ -38,20 +55,43 @@ public class Characteristics {
         this.maxPowerConsumption = maxPowerConsumption;
     }
 
-    public int getMinOnTime() {
-        return (minOnTime != null ? minOnTime : 0);
+    public Integer getMinOnTime() {
+        return minOnTime;
     }
 
-    public void setMinOnTime(int minOnTime) {
+    public void setMinOnTime(Integer minOnTime) {
         this.minOnTime = minOnTime;
     }
 
-    public int getMinOffTime() {
-        return (minOffTime != null ? minOffTime : 0);
+    public Integer getMaxOnTime() {
+        return maxOnTime;
     }
 
-    public void setMinOffTime(int minOffTime) {
+    public void setMaxOnTime(Integer maxOnTime) {
+        this.maxOnTime = maxOnTime;
+    }
+
+    public Integer getMinOffTime() {
+        return minOffTime;
+    }
+
+    public void setMinOffTime(Integer minOffTime) {
         this.minOffTime = minOffTime;
     }
 
+    public Integer getMaxOffTime() {
+        return maxOffTime;
+    }
+
+    public void setMaxOffTime(Integer maxOffTime) {
+        this.maxOffTime = maxOffTime;
+    }
+
+    public PowerLevels getPowerLevels() {
+        return powerLevels;
+    }
+
+    public void setPowerLevels(PowerLevels powerLevels) {
+        this.powerLevels = powerLevels;
+    }
 }

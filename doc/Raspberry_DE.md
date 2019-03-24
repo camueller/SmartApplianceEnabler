@@ -6,5 +6,3 @@ An die GPIO-Pins des Raspberry können diverse Schalter und/oder Stromzähler an
 Zum Schalten/Messen der an die GPIO-Ports des Raspberry angeschlossenen Schalter/Zähler ist ausschliesslich die **GPIO-Nummer relevant** und nicht die Pin-Nummer:
 
 ![PinHeader](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/RaspberryPi2ModelBHeader.png)
-
-TODO Bauanleitung für Hutschienenhalter hinzufügen

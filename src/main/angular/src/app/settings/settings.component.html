@@ -15,60 +15,68 @@
   ~ with this program; if not, write to the Free Software Foundation, Inc.,
   ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
   -->
+<form class="ui form" #settingsForm="ngForm" (ngSubmit)="submitForm()">
 
-<div class="ui segment">
-  <form class="ui form" #settingsForm="ngForm" (ngSubmit)="submitForm()">
-
-    <h4 class="ui dividing header">{{'SettingsComponent.holidays' | translate}}</h4>
-    <div class="ui fields">
-      <div class="ui checkbox">
-        <input type="checkbox" name="holidaysEnabled" [(ngModel)]="settings.holidaysEnabled">
-        <label>{{'SettingsComponent.holidaysEnabled' | translate}}</label>
-      </div>
-      <div class="seven wide field" [class.disabled]="!settings.holidaysEnabled">
-        <label>{{'SettingsComponent.holidaysUrl' | translate}}</label>
-        <input type="text" name="holidaysUrl" placeholder="{{settingsDefaults.holidaysUrl}}"
-               [(ngModel)]="settings.holidaysUrl" pattern="{{VALIDATOR_PATTERN_URL}}">
-        <div *ngIf="errors.holidaysUrl" class="ui negative message">{{errors.holidaysUrl}}</div>
-      </div>
+  <h4 class="ui dividing header">{{'SettingsComponent.holidays' | translate}}</h4>
+  <div class="ui fields">
+    <div class="field">
+      <label>{{'SettingsComponent.holidaysEnabled' | translate}}</label>
+      <input class="ui checkbox" type="checkbox" name="holidaysEnabled" [(ngModel)]="settings.holidaysEnabled">
     </div>
+    <div class="seven wide field" [class.disabled]="!settings.holidaysEnabled">
+      <label>{{'SettingsComponent.holidaysUrl' | translate}}</label>
+      <input type="text" name="holidaysUrl" placeholder="{{settingsDefaults.holidaysUrl}}"
+             [(ngModel)]="settings.holidaysUrl" pattern="{{VALIDATOR_PATTERN_URL}}">
+      <div *ngIf="errors.holidaysUrl" class="ui negative message">{{errors.holidaysUrl}}</div>
+    </div>
+  </div>
 
-    <h4 class="ui dividing header">{{'SettingsComponent.modbus' | translate}}</h4>
+  <h4 class="ui dividing header">{{'SettingsComponent.modbus' | translate}}</h4>
+  <div *ngFor="let modbusSettingsEntry of settings.modbusSettings; index as i; last as l">
+    <div class="ui hidden divider"></div>
     <div class="ui fields">
-      <div class="ui checkbox">
-        <input type="checkbox" name="modbusEnabled" [(ngModel)]="settings.modbusEnabled">
-        <label>{{'SettingsComponent.modbusEnabled' | translate}}</label>
+      <div class="field">
+        <label>{{'SettingsComponent.modbusTcpId' | translate}}</label>
+        <input type="text" name="modbusTcpId{{i}}"
+               [(ngModel)]="modbusSettingsEntry.modbusTcpId">
       </div>
-      <div class="field" [class.disabled]="!settings.modbusEnabled">
+      <div class="field">
         <label>{{'SettingsComponent.modbusTcpHost' | translate}}</label>
-        <input type="text" name="modbusTcpHost" placeholder="{{settingsDefaults.modbusTcpHost}}"
-               [(ngModel)]="settings.modbusTcpHost" pattern="{{VALIDATOR_PATTERN_HOSTNAME}}">
+        <input type="text" name="modbusTcpHost{{i}}" placeholder="{{settingsDefaults.modbusTcpHost}}"
+               [(ngModel)]="modbusSettingsEntry.modbusTcpHost" pattern="{{VALIDATOR_PATTERN_HOSTNAME}}">
         <div *ngIf="errors.modbusTcpHost" class="ui negative message">{{errors.modbusTcpHost}}</div>
       </div>
-      <div class="field" [class.disabled]="!settings.modbusEnabled">
+      <div class="field">
         <label>{{'SettingsComponent.modbusTcpPort' | translate}}</label>
-        <input type="text" name="modbusTcpPort" placeholder="{{settingsDefaults.modbusTcpPort}}"
-               [(ngModel)]="settings.modbusTcpPort" pattern="{{VALIDATOR_PATTERN_INTEGER}}">
+        <input type="text" name="modbusTcpPort{{i}}" placeholder="{{settingsDefaults.modbusTcpPort}}"
+               [(ngModel)]="modbusSettingsEntry.modbusTcpPort" pattern="{{VALIDATOR_PATTERN_INTEGER}}">
         <div *ngIf="errors.modbusTcpPort" class="ui negative message">{{errors.modbusTcpPort}}</div>
       </div>
-
-    </div>
-
-    <h4 class="ui dividing header">Pulse receiver</h4>
-    <div class="ui fields">
-      <div class="ui checkbox">
-        <input type="checkbox" name="pulseReceiveEnabled" [(ngModel)]="settings.pulseReceiverEnabled">
-        <label>{{'SettingsComponent.pulseReceiveEnabled' | translate}}</label>
-      </div>
-      <div class="field" [class.disabled]="!settings.pulseReceiverEnabled">
-        <label>{{'SettingsComponent.pulseReceiverPort' | translate}}</label>
-        <input type="text" name="pulseReceiverPort" placeholder="{{settingsDefaults.pulseReceiverPort}}"
-               [(ngModel)]="settings.pulseReceiverPort" pattern="{{VALIDATOR_PATTERN_INTEGER}}">
-        <div *ngIf="errors.pulseReceiverPort" class="ui negative message">{{errors.pulseReceiverPort}}</div>
+      <div class="field icon-field">
+        <i (click)="removeModbusSettings(i)" class="icon big red remove circle"></i>
+        <i *ngIf="l" (click)="addModbusSettings()" class="icon big green add circle"></i>
       </div>
     </div>
+  </div>
+  <div *ngIf="settings.modbusSettings.length === 0">
+    <i (click)="addModbusSettings()" class="icon big green add circle"></i>
+  </div>
 
-    <button type="submit" class="ui button" [disabled]="settingsForm.pristine||settingsForm.invalid">
-      {{'button.save' | translate}}</button>
-  </form>
-</div>
+  <h4 class="ui dividing header">Pulse receiver</h4>
+  <div class="ui fields">
+    <div class="field">
+      <label>{{'SettingsComponent.pulseReceiveEnabled' | translate}}</label>
+      <input class="ui checkbox" type="checkbox" name="pulseReceiveEnabled" [(ngModel)]="settings.pulseReceiverEnabled">
+    </div>
+    <div class="field" [class.disabled]="!settings.pulseReceiverEnabled">
+      <label>{{'SettingsComponent.pulseReceiverPort' | translate}}</label>
+      <input type="text" name="pulseReceiverPort" placeholder="{{settingsDefaults.pulseReceiverPort}}"
+             [(ngModel)]="settings.pulseReceiverPort" pattern="{{VALIDATOR_PATTERN_INTEGER}}">
+      <div *ngIf="errors.pulseReceiverPort" class="ui negative message">{{errors.pulseReceiverPort}}</div>
+    </div>
+  </div>
+
+  <div class="ui hidden divider"></div>
+  <button type="submit" class="ui button" [disabled]="settingsForm.pristine||settingsForm.invalid">
+    {{'button.save' | translate}}</button>
+</form>

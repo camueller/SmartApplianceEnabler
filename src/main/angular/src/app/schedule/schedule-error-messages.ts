@@ -25,21 +25,20 @@ export class ScheduleErrorMessages extends ErrorMessages {
   constructor(protected translate: TranslateService) {
     super('ScheduleComponent.error.',
       [
-//        new ErrorMessage('schedule.0.dayTimeframe.startTime', ValidatorType.required),
         new ErrorMessage('dayTimeframe_startTime', ValidatorType.required),
         new ErrorMessage('dayTimeframe_startTime', ValidatorType.pattern),
         new ErrorMessage('dayTimeframe_endTime', ValidatorType.required),
         new ErrorMessage('dayTimeframe_endTime', ValidatorType.pattern),
-        new ErrorMessage('dayTimeframe_minRunningTime', ValidatorType.required),
-        new ErrorMessage('dayTimeframe_minRunningTime', ValidatorType.pattern),
-        new ErrorMessage('dayTimeframe_maxRunningTime', ValidatorType.pattern),
         new ErrorMessage('consecutiveDaysTimeframe_startTime', ValidatorType.required),
         new ErrorMessage('consecutiveDaysTimeframe_startTime', ValidatorType.pattern),
         new ErrorMessage('consecutiveDaysTimeframe_endTime', ValidatorType.required),
         new ErrorMessage('consecutiveDaysTimeframe_endTime', ValidatorType.pattern),
-        new ErrorMessage('consecutiveDaysTimeframe_minRunningTime', ValidatorType.required),
-        new ErrorMessage('consecutiveDaysTimeframe_minRunningTime', ValidatorType.pattern),
-        new ErrorMessage('consecutiveDaysTimeframe_maxRunningTime', ValidatorType.pattern)
+        new ErrorMessage('runtimeRequest_minRuntime', ValidatorType.pattern),
+        new ErrorMessage('runtimeRequest_maxRuntime', ValidatorType.required),
+        new ErrorMessage('runtimeRequest_maxRuntime', ValidatorType.pattern),
+        new ErrorMessage('energyRequest_minEnergy', ValidatorType.pattern),
+        new ErrorMessage('energyRequest_maxEnergy', ValidatorType.required),
+        new ErrorMessage('energyRequest_maxEnergy', ValidatorType.pattern),
       ], translate
     );
   }

@@ -1,5 +1,5 @@
 import {ActivatedRouteSnapshot, Resolve} from '@angular/router';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {SettingsService} from './settings-service';
 import {SettingsDefaults} from './settings-defaults';

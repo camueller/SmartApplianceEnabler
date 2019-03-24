@@ -1,0 +1,10 @@
+<form class="ui form" [formGroup]="switchOnForm" (ngSubmit)="submitForm()">
+  <div class="appliance-details-row">
+    <span class="appliance-status-label">{{'StatusComponent.plannedRunningTime' | translate}}</span>
+    <input class="appliance-number-input clockpicker" type="text" name="minRunningTime" style="width: 4em" formControlName="switchOnRunningTime">
+  </div>
+  <div class="appliance-details-row appliance-button-row">
+    <button type="submit" class="ui button"
+            [disabled]="switchOnForm.invalid">{{'StatusComponent.buttonStart' | translate}}</button>
+  </div>
+</form>

@@ -36,6 +36,10 @@ public class Timeframe {
     private Integer minRunningTime;
     @XmlElement(name = "MaxRunningTime")
     private Integer maxRunningTime;
+    @XmlElement(name = "MinEnergy")
+    private Integer minEnergy;
+    @XmlElement(name = "MaxEnergy")
+    private Integer maxEnergy;
 
     public Timeframe() {
     }
@@ -46,6 +50,14 @@ public class Timeframe {
         this.latestEnd = latestEnd;
         this.minRunningTime = minRunningTime;
         this.maxRunningTime = maxRunningTime;
+    }
+
+    public Timeframe(String deviceId, Integer earliestStart, Integer latestEnd, Integer minEnergy, Integer maxEnergy, boolean dummy) {
+        this.deviceId = deviceId;
+        this.earliestStart = earliestStart;
+        this.latestEnd = latestEnd;
+        this.minEnergy = minEnergy;
+        this.maxEnergy = maxEnergy;
     }
 
     public String getDeviceId() {
@@ -88,6 +100,22 @@ public class Timeframe {
         this.maxRunningTime = maxRunningTime;
     }
 
+    public Integer getMinEnergy() {
+        return minEnergy;
+    }
+
+    public void setMinEnergy(Integer minEnergy) {
+        this.minEnergy = minEnergy;
+    }
+
+    public Integer getMaxEnergy() {
+        return maxEnergy;
+    }
+
+    public void setMaxEnergy(Integer maxEnergy) {
+        this.maxEnergy = maxEnergy;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -102,6 +130,8 @@ public class Timeframe {
                 .append(latestEnd, timeframe.latestEnd)
                 .append(minRunningTime, timeframe.minRunningTime)
                 .append(maxRunningTime, timeframe.maxRunningTime)
+                .append(minEnergy, timeframe.minEnergy)
+                .append(maxEnergy, timeframe.maxEnergy)
                 .isEquals();
     }
 
@@ -113,14 +143,22 @@ public class Timeframe {
                 .append(latestEnd)
                 .append(minRunningTime)
                 .append(maxRunningTime)
+                .append(minEnergy)
+                .append(maxEnergy)
                 .toHashCode();
     }
 
     @Override
     public String toString() {
-        return earliestStart
-                + "s-" + latestEnd
-                + "s:" + (minRunningTime != null ? minRunningTime : "-")
-                + "s/" + maxRunningTime + "s";
+        String string = earliestStart + "s-" + latestEnd + "s:";
+        if(maxRunningTime != null) {
+            string += (minRunningTime != null ? minRunningTime + "s" : "-");
+            string += "/" + maxRunningTime + "s";
+        }
+        if(maxEnergy != null) {
+            string += (minEnergy != null ? minEnergy + "Wh": "-");
+            string += "/" + maxEnergy + "Wh";
+        }
+        return string;
     }
 }

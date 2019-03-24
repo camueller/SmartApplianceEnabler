@@ -18,14 +18,17 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 import {DayTimeframe} from './day-timeframe';
 import {ConsecutiveDaysTimeframe} from './consecutive-days-timeframe';
+import {RuntimeRequest} from './runtime-request';
+import {EnergyRequest} from './energy-request';
+import {SocRequest} from './soc-request';
 
 export class Schedule {
   '@class' = 'de.avanux.smartapplianceenabler.schedule.Schedule';
   enabled: boolean;
-  minRunningTime: number;
-  minRunningTimeHHMM: string;
-  maxRunningTime: number;
-  maxRunningTimeHHMM: string;
+  requestType: string;
+  runtimeRequest: RuntimeRequest;
+  energyRequest: EnergyRequest;
+  socRequest: SocRequest;
   timeframeType: string;
   dayTimeframe: DayTimeframe;
   consecutiveDaysTimeframe: ConsecutiveDaysTimeframe;

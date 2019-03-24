@@ -20,7 +20,7 @@ import {Appliance} from './appliance';
 import {ActivatedRouteSnapshot, Resolve} from '@angular/router';
 import {Injectable} from '@angular/core';
 import {ApplianceService} from './appliance.service';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 
 @Injectable()
 export class ApplianceResolver implements Resolve<Appliance> {

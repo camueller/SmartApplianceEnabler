@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.3">
+    <Appliance id="F-28091971-000000000099-00">
+        <ElectricVehicleCharger startChargingStateDetectionDelay="0">
+            <EVModbusControl idref="wallbox" slaveAddress="180">
+                <ModbusRegisterRead address="100" type="InputString">
+                    <ModbusRegisterReadValue name="VehicleNotConnected" extractionRegex="(A)"/>
+                    <ModbusRegisterReadValue name="VehicleConnected" extractionRegex="(B)"/>
+                    <ModbusRegisterReadValue name="Charging" extractionRegex="(C|D)"/>
+                    <ModbusRegisterReadValue name="ChargingCompleted" extractionRegex="(B)"/>
+                    <ModbusRegisterReadValue name="Error" extractionRegex="(E|F)"/>
+                </ModbusRegisterRead>
+                <ModbusRegisterRead address="204" type="Discrete">
+                    <ModbusRegisterReadValue name="ChargingCompleted"/>
+                </ModbusRegisterRead>
+                <ModbusRegisterWrite address="400" type="Coil">
+                    <ModbusRegisterWriteValue name="StartCharging" value="1"/>
+                    <ModbusRegisterWriteValue name="StopCharging" value="0"/>
+                </ModbusRegisterWrite>
+                <ModbusRegisterWrite address="300" type="Holding">
+                    <ModbusRegisterWriteValue name="ChargingCurrent" value="0"/>
+                </ModbusRegisterWrite>
+            </EVModbusControl>
+            <ElectricVehicle id="1" name="Nissan Leaf" batteryCapacity="40000" phases="1" maxChargePower="10000" chargeLoss="20" defaultSocManual="100" defaultSocOptionalEnergy="90">
+                <SocScript script="/home/axel/IdeaProjects/SmartApplianceEnabler/src/test/soc.sh" extractionRegex=".*is (\d*.{0,1}\d+).*"/>
+            </ElectricVehicle>
+            <ElectricVehicle id="2" name="Tesla Model S" batteryCapacity="80000"/>
+        </ElectricVehicleCharger>
+        <Schedule enabled="true">
+            <SocRequest soc="52" evId="1"/>
+            <DayTimeframe>
+                <Start hour="13" minute="0" second="0"/>
+                <End hour="18" minute="0" second="0"/>
+            </DayTimeframe>
+        </Schedule>
+    </Appliance>
+    <Appliance id="F-28091971-000000000003-00">
+        <Switch gpio="2" reverseStates="true"/>
+        <S0ElectricityMeter gpio="3" pinPullResistance="PULL_DOWN" impulsesPerKwh="1000"/>
+        <Schedule enabled="true">
+            <RuntimeRequest min="4800"/>
+            <DayTimeframe>
+                <Start hour="7" minute="0" second="0"/>
+                <End hour="18" minute="0" second="0"/>
+                <DayOfWeek>1</DayOfWeek>
+                <DayOfWeek>2</DayOfWeek>
+                <DayOfWeek>3</DayOfWeek>
+                <DayOfWeek>4</DayOfWeek>
+                <DayOfWeek>5</DayOfWeek>
+            </DayTimeframe>
+        </Schedule>
+    </Appliance>
+    <Connectivity>
+        <ModbusTCP id="modbus" host="127.0.0.1"/>
+        <ModbusTCP id="wallbox" host="192.168.178.39"/>
+    </Connectivity>
+</Appliances>

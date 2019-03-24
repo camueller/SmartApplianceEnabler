@@ -17,14 +17,22 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 import {Control} from './control';
-import {StartingCurrentSwitch} from './starting-current-switch';
-import {Switch} from './switch';
-import {ModbusSwitch} from './modbus-switch';
-import {HttpSwitch} from './http-switch';
+import {StartingCurrentSwitch} from '../control-startingcurrent/starting-current-switch';
+import {Switch} from '../control-switch/switch';
+import {ModbusSwitch} from '../control-modbus/modbus-switch';
+import {HttpSwitch} from '../control-http/http-switch';
 import {AlwaysOnSwitch} from './always-on-switch';
 import {ControlDefaults} from './control-defaults';
 import {MockSwitch} from './mock-switch';
 import {Logger} from '../log/logger';
+import {ModbusRegisterWrite} from '../shared/modbus-register-write';
+import {ModbusRegisterWriteValue} from '../shared/modbus-register-write-value';
+import {EvCharger} from '../control-evcharger/ev-charger';
+import {ModbusRegisterConfguration} from '../shared/modbus-register-confguration';
+import {EvModbusControl} from '../control-evcharger/ev-modbus-control';
+import {ModbusRegisterRead} from '../shared/modbus-register-read';
+import {ModbusRegisterReadValue} from '../shared/modbus-register-read-value';
+import {ElectricVehicle} from '../control-evcharger/electric-vehicle';
 
 export class ControlFactory {
 
@@ -42,6 +50,17 @@ export class ControlFactory {
       = rawControlDefaults.startingCurrentSwitchDefaults.finishedCurrentDetectionDuration;
     controlDefaults.startingCurrentSwitchDefaults_minRunningTime
       = rawControlDefaults.startingCurrentSwitchDefaults.minRunningTime;
+    const electricVehicleChargerDefaults = rawControlDefaults.electricVehicleChargerDefaults;
+    controlDefaults.electricVehicleChargerDefaults_voltage = electricVehicleChargerDefaults.voltage;
+    controlDefaults.electricVehicleChargerDefaults_phases = electricVehicleChargerDefaults.phases;
+    controlDefaults.electricVehicleChargerDefaults_chargeLoss = electricVehicleChargerDefaults.chargeLoss;
+    controlDefaults.electricVehicleChargerDefaults_pollInterval = electricVehicleChargerDefaults.pollInterval;
+    controlDefaults.electricVehicleChargerDefaults_startChargingStateDetectionDelay =
+      electricVehicleChargerDefaults.startChargingStateDetectionDelay;
+    controlDefaults.electricVehicleChargerDefaults_forceInitialCharging =
+      electricVehicleChargerDefaults.forceInitialCharging;
+
+
     this.logger.debug('ControlDefaults (TYPE): ' + JSON.stringify(controlDefaults));
     return controlDefaults;
   }
@@ -64,49 +83,26 @@ export class ControlFactory {
     return control;
   }
 
-  toJSON(control: Control): string {
-    this.logger.debug('Control (TYPE): ' + JSON.stringify(control));
-    let controlUsed: any;
-    if (control.startingCurrentSwitch != null) {
-      control.startingCurrentSwitch['control'] = this.getControlByType(control);
-      controlUsed = control.startingCurrentSwitch;
-      if (controlUsed.powerThreshold === '') {
-        controlUsed.powerThreshold = null;
-      }
-      if (controlUsed.startingCurrentDetectionDuration === '') {
-        controlUsed.startingCurrentDetectionDuration = null;
-      }
-      if (controlUsed.finishedCurrentDetectionDuration === '') {
-        controlUsed.finishedCurrentDetectionDuration = null;
-      }
-      if (controlUsed.minRunningTime === '') {
-        controlUsed.minRunningTime = null;
-      }
-    } else {
-      controlUsed = this.getControlByType(control);
-    }
-    let rawControl: string;
-    if (controlUsed != null) {
-      rawControl = JSON.stringify(controlUsed);
-    }
-    this.logger.debug('Control (JSON): ' + rawControl);
-    return rawControl;
-  }
-
   fromJSONbyType(control: Control, rawControl: any) {
     if (rawControl != null) {
-      control.type = rawControl['@class'];
-      if (control.type === AlwaysOnSwitch.TYPE) {
-        control.alwaysOnSwitch = this.createAlwaysOnSwitch(rawControl);
-      } else if (control.type === MockSwitch.TYPE) {
-        control.mockSwitch = this.createMockSwitch(rawControl);
-      } else if (control.type === Switch.TYPE) {
-        control.switch_ = this.createSwitch(rawControl);
-      } else if (control.type === ModbusSwitch.TYPE) {
-        control.modbusSwitch = this.createModbusSwitch(rawControl);
-      } else if (control.type === HttpSwitch.TYPE) {
-        control.httpSwitch = this.createHttpSwitch(rawControl);
-      }
+      this.initializeByType(control, rawControl, rawControl['@class']);
+    }
+  }
+
+  initializeByType(control: Control, rawControl: any, type: string) {
+    control.type = type;
+    if (control.type === AlwaysOnSwitch.TYPE) {
+      control.alwaysOnSwitch = this.createAlwaysOnSwitch(rawControl);
+    } else if (control.type === MockSwitch.TYPE) {
+      control.mockSwitch = this.createMockSwitch(rawControl);
+    } else if (control.type === Switch.TYPE) {
+      control.switch_ = this.createSwitch(rawControl);
+    } else if (control.type === ModbusSwitch.TYPE) {
+      control.modbusSwitch = this.createModbusSwitch(rawControl);
+    } else if (control.type === EvCharger.TYPE) {
+      control.evCharger = this.createEvCharger(rawControl);
+    } else if (control.type === HttpSwitch.TYPE) {
+      control.httpSwitch = this.createHttpSwitch(rawControl);
     }
   }
 
@@ -119,6 +115,8 @@ export class ControlFactory {
       return control.switch_;
     } else if (control.type === ModbusSwitch.TYPE) {
       return control.modbusSwitch;
+    } else if (control.type === EvCharger.TYPE) {
+      return control.evCharger;
     } else if (control.type === HttpSwitch.TYPE) {
       return control.httpSwitch;
     }
@@ -144,27 +142,218 @@ export class ControlFactory {
 
   createSwitch(rawSwitch: any): Switch {
     const switch_ = new Switch();
-    switch_.gpio = rawSwitch.gpio;
-    switch_.reverseStates = rawSwitch.reverseStates;
+    if (rawSwitch) {
+      switch_.gpio = rawSwitch.gpio;
+      switch_.reverseStates = rawSwitch.reverseStates;
+    }
     return switch_;
   }
 
   createModbusSwitch(rawModbusSwitch: any): ModbusSwitch {
     const modbusSwitch = new ModbusSwitch();
-    modbusSwitch.slaveAddress = rawModbusSwitch.slaveAddress;
-    modbusSwitch.registerAddress = rawModbusSwitch.registerAddress;
+    if (rawModbusSwitch) {
+      modbusSwitch.idref = rawModbusSwitch.idref;
+      modbusSwitch.slaveAddress = rawModbusSwitch.slaveAddress;
+      if (rawModbusSwitch.registerWrites != null) {
+        modbusSwitch.registerAddress = rawModbusSwitch.registerWrites[0].address;
+        modbusSwitch.registerType = rawModbusSwitch.registerWrites[0].type;
+        rawModbusSwitch.registerWrites[0].registerWriteValues.forEach((registerWrite) => {
+          if (registerWrite.name === 'On') {
+            modbusSwitch.onValue = registerWrite.value;
+          }
+          if (registerWrite.name === 'Off') {
+            modbusSwitch.offValue = registerWrite.value;
+          }
+        });
+      }
+    }
     return modbusSwitch;
   }
 
   createHttpSwitch(rawHttpSwitch: any): HttpSwitch {
     const httpSwitch = new HttpSwitch();
-    httpSwitch.onUrl = rawHttpSwitch.onUrl;
-    httpSwitch.offUrl = rawHttpSwitch.offUrl;
-    httpSwitch.username = rawHttpSwitch.username;
-    httpSwitch.password = rawHttpSwitch.password;
-    httpSwitch.contentType = rawHttpSwitch.contentType;
-    httpSwitch.onData = rawHttpSwitch.onData;
-    httpSwitch.offData = rawHttpSwitch.offData;
+    if (rawHttpSwitch) {
+      httpSwitch.onUrl = rawHttpSwitch.onUrl;
+      httpSwitch.offUrl = rawHttpSwitch.offUrl;
+      httpSwitch.username = rawHttpSwitch.username;
+      httpSwitch.password = rawHttpSwitch.password;
+      httpSwitch.contentType = rawHttpSwitch.contentType;
+      httpSwitch.onData = rawHttpSwitch.onData;
+      httpSwitch.offData = rawHttpSwitch.offData;
+    }
     return httpSwitch;
+  }
+
+  createEvCharger(rawEvCharger: any): EvCharger {
+    let evCharger = new EvCharger();
+    if (rawEvCharger) {
+      const rawModbusControl = rawEvCharger.control;
+      const configurations: ModbusRegisterConfguration[] = [];
+
+      if (rawEvCharger.control) {
+
+        if (rawModbusControl.registerReads) {
+          (rawModbusControl.registerReads as any[]).map(
+            registerRead => (registerRead.registerReadValues as any[]).map(registerReadValue => {
+              const configuration = new ModbusRegisterConfguration({
+                name: registerReadValue.name,
+                address: registerRead.address,
+                type: registerRead.type,
+                bytes: registerRead.bytes,
+                byteOrder: registerRead.byteOrder,
+                extractionRegex: registerReadValue.extractionRegex,
+                write: false
+              });
+              configurations.push(configuration);
+            }));
+        }
+
+        if (rawModbusControl.registerWrites) {
+          (rawModbusControl.registerWrites as any[]).map(
+            registerWrite => (registerWrite.registerWriteValues as any[]).map(registerWriteValue => {
+              const configuration = new ModbusRegisterConfguration({
+                name: registerWriteValue.name,
+                address: registerWrite.address,
+                type: registerWrite.type,
+                value: registerWriteValue.value,
+                write: true
+              });
+              configurations.push(configuration);
+            }));
+        }
+      }
+
+      const evModbusControl = new EvModbusControl({
+        idref: rawModbusControl.idref,
+        slaveAddress: rawModbusControl.slaveAddress,
+        configuration: configurations
+      });
+
+      const evs: ElectricVehicle[] = [];
+      if (rawEvCharger.vehicles) {
+        (rawEvCharger.vehicles as any[]).map(rawEv => {
+          const ev: ElectricVehicle = {... rawEv};
+          evs.push(ev);
+        });
+      }
+
+      evCharger = new EvCharger({
+        voltage: rawEvCharger.voltage,
+        phases: rawEvCharger.phases,
+        pollInterval: rawEvCharger.pollInterval,
+        startChargingStateDetectionDelay: rawEvCharger.startChargingStateDetectionDelay,
+        forceInitialCharging: rawEvCharger.forceInitialCharging,
+        control: evModbusControl,
+        vehicles: evs
+      });
+    }
+    return evCharger;
+  }
+
+  toJSON(control: Control): string {
+    this.logger.debug('Control (TYPE): ' + JSON.stringify(control));
+    let controlUsed: any;
+    if (control.startingCurrentDetection) {
+      control.startingCurrentSwitch['control'] = this.getControlByType(control);
+      controlUsed = control.startingCurrentSwitch;
+      if (controlUsed.powerThreshold === '') {
+        controlUsed.powerThreshold = null;
+      }
+      if (controlUsed.startingCurrentDetectionDuration === '') {
+        controlUsed.startingCurrentDetectionDuration = null;
+      }
+      if (controlUsed.finishedCurrentDetectionDuration === '') {
+        controlUsed.finishedCurrentDetectionDuration = null;
+      }
+      if (controlUsed.minRunningTime === '') {
+        controlUsed.minRunningTime = null;
+      }
+    } else {
+      controlUsed = this.getControlByType(control);
+    }
+    let rawControl: string;
+    if (controlUsed != null) {
+      if (control.type === ModbusSwitch.TYPE) {
+        this.toJSONModbusSwitch(control);
+      }
+      if (control.type === EvCharger.TYPE) {
+        this.toJSONEvCharger(control);
+      }
+      rawControl = JSON.stringify(controlUsed);
+    }
+    this.logger.debug('Control (JSON): ' + rawControl);
+    return rawControl;
+  }
+
+  toJSONModbusSwitch(control: Control) {
+    const registerWriteValueOn = new ModbusRegisterWriteValue({
+      name: 'On',
+      value: control.modbusSwitch.onValue
+    });
+    const registerWriteValueOff = new ModbusRegisterWriteValue({
+      name: 'Off',
+      value: control.modbusSwitch.offValue
+    });
+
+    const registerWrite = new ModbusRegisterWrite();
+    registerWrite.address = control.modbusSwitch.registerAddress;
+    registerWrite.type = control.modbusSwitch.registerType;
+    registerWrite.registerWriteValues = [registerWriteValueOn, registerWriteValueOff];
+    control.modbusSwitch.registerWrites = [registerWrite];
+  }
+
+  toJSONEvCharger(control: Control) {
+    const registerReads: ModbusRegisterRead[] = [];
+    control.evCharger.control.configuration
+      .filter(configuration => configuration.write === false)
+      .forEach(configuration => {
+        let matchinRegisterRead: ModbusRegisterRead = registerReads.find(
+          item => item.address === configuration.address
+        );
+        if (matchinRegisterRead === undefined) {
+          matchinRegisterRead = new ModbusRegisterRead({
+            address: configuration.address,
+            type: configuration.type,
+            registerReadValues: []
+          });
+          registerReads.push(matchinRegisterRead);
+        }
+        const registerReadValue = new ModbusRegisterReadValue({
+          name: configuration.name,
+          extractionRegex: configuration.extractionRegex
+        });
+        matchinRegisterRead.registerReadValues.push(registerReadValue);
+      });
+    control.evCharger.control.registerReads = registerReads;
+
+    const registerWrites: ModbusRegisterWrite[] = [];
+    control.evCharger.control.configuration
+      .filter(configuration => configuration.write)
+      .forEach(configuration => {
+        let matchingRegisterWrite: ModbusRegisterWrite = registerWrites.find(
+          item => item.address === configuration.address
+        );
+        if (matchingRegisterWrite === undefined) {
+          matchingRegisterWrite = new ModbusRegisterWrite({
+            address: configuration.address,
+            type: configuration.type,
+            registerWriteValues: []
+          });
+          registerWrites.push(matchingRegisterWrite);
+        }
+        const registerWriteValue = new ModbusRegisterWriteValue({
+          name: configuration.name,
+          value: configuration.value
+        });
+        matchingRegisterWrite.registerWriteValues.push(registerWriteValue);
+      });
+    control.evCharger.control.registerWrites = registerWrites;
+  }
+
+  toElectricVehicle(rawEv: any): ElectricVehicle {
+    this.logger.debug('ElectricVehicle (JSON): ' + JSON.stringify(rawEv));
+    const ev = new ElectricVehicle(... rawEv);
+    this.logger.debug('ElectricVehicle (TYPE): ' + JSON.stringify(ev));
+    return ev;
   }
 }

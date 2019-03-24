@@ -25,8 +25,6 @@ import org.joda.time.format.ISODateTimeFormat;
 import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Schedule {
@@ -34,10 +32,12 @@ public class Schedule {
     private String id;
     @XmlAttribute
     private boolean enabled = true;
-    @XmlAttribute
-    private Integer minRunningTime;
-    @XmlAttribute
-    private Integer maxRunningTime;
+    @XmlElements({
+            @XmlElement(name = "RuntimeRequest", type = RuntimeRequest.class),
+            @XmlElement(name = "EnergyRequest", type = EnergyRequest.class),
+            @XmlElement(name = "SocRequest", type = SocRequest.class)
+    })
+    private Request request;
     @XmlElements({
             @XmlElement(name = "DayTimeframe", type = DayTimeframe.class),
             @XmlElement(name = "ConsecutiveDaysTimeframe", type = ConsecutiveDaysTimeframe.class)
@@ -59,9 +59,16 @@ public class Schedule {
 
     public Schedule(boolean enabled, Integer minRunningTime, Integer maxRunningTime, TimeOfDay earliestStart, TimeOfDay latestEnd, List<Integer> daysOfWeekValues) {
         this.enabled = enabled;
-        this.minRunningTime = minRunningTime;
-        this.maxRunningTime = maxRunningTime;
+        this.request = new RuntimeRequest(minRunningTime, maxRunningTime);
         this.timeframe = new DayTimeframe(earliestStart, latestEnd, daysOfWeekValues);
+    }
+
+    public static Schedule withEnergyRequest(Integer minEnergy, Integer maxEnergy, TimeOfDay earliestStart, TimeOfDay latestEnd) {
+        Schedule schedule = new Schedule();
+        schedule.enabled = true;
+        schedule.request = new EnergyRequest(minEnergy, maxEnergy);
+        schedule.timeframe = new DayTimeframe(earliestStart, latestEnd);
+        return schedule;
     }
 
     public String getId() {
@@ -76,12 +83,8 @@ public class Schedule {
         return enabled;
     }
 
-    public Integer getMinRunningTime() {
-        return minRunningTime;
-    }
-
-    public Integer getMaxRunningTime() {
-        return maxRunningTime;
+    public Request getRequest() {
+        return request;
     }
 
     public Timeframe getTimeframe() {
@@ -124,6 +127,7 @@ public class Schedule {
         if(schedules != null) {
             for(Schedule schedule : schedules) {
                 if(schedule.isEnabled()) {
+                    Integer minRuntime = schedule.getRequest() instanceof RuntimeRequest ? schedule.getRequest().getMin() : null;
                     Timeframe timeframe = schedule.getTimeframe();
                     List<TimeframeInterval> timeframeIntervals = timeframe.getIntervals(now);
                     for (TimeframeInterval timeframeInterval : timeframeIntervals) {
@@ -139,7 +143,7 @@ public class Schedule {
                         if(!onlyAlreadyStarted || timeframeInterval.getInterval().contains(now.toDateTime())) {
                             alreadyStartedCheckOk = true;
                         }
-                        if (!onlySufficient || timeframeInterval.isIntervalSufficient(now, schedule.getMinRunningTime())) {
+                        if (!onlySufficient || (minRuntime != null && timeframeInterval.isIntervalSufficient(now, minRuntime))) {
                             sufficientCheckOk = true;
                         }
                         if(considerationIntervalOk && alreadyStartedCheckOk && sufficientCheckOk) {
@@ -161,8 +165,10 @@ public class Schedule {
             text += timeframe.toString();
             text += "/";
         }
+        if(request != null) {
+            text += request.toString();
 
-        text += minRunningTime + "s/" + maxRunningTime + "s";
+        }
         return text;
     }
 }

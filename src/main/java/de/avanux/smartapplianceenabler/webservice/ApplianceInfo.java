@@ -27,7 +27,12 @@ public class ApplianceInfo {
     private String serial;
     private String type;
     private String vendor;
+    private Integer minPowerConsumption;
     private Integer maxPowerConsumption;
+    private Integer minOnTime;
+    private Integer maxOnTime;
+    private Integer minOffTime;
+    private Integer maxOffTime;
     private String currentPowerMethod;
     private boolean interruptionsAllowed;
 
@@ -71,12 +76,52 @@ public class ApplianceInfo {
         this.vendor = vendor;
     }
 
+    public Integer getMinPowerConsumption() {
+        return minPowerConsumption;
+    }
+
+    public void setMinPowerConsumption(Integer minPowerConsumption) {
+        this.minPowerConsumption = minPowerConsumption;
+    }
+
     public Integer getMaxPowerConsumption() {
         return maxPowerConsumption;
     }
 
     public void setMaxPowerConsumption(Integer maxPowerConsumption) {
         this.maxPowerConsumption = maxPowerConsumption;
+    }
+
+    public Integer getMinOnTime() {
+        return minOnTime;
+    }
+
+    public void setMinOnTime(Integer minOnTime) {
+        this.minOnTime = minOnTime;
+    }
+
+    public Integer getMaxOnTime() {
+        return maxOnTime;
+    }
+
+    public void setMaxOnTime(Integer maxOnTime) {
+        this.maxOnTime = maxOnTime;
+    }
+
+    public Integer getMinOffTime() {
+        return minOffTime;
+    }
+
+    public void setMinOffTime(Integer minOffTime) {
+        this.minOffTime = minOffTime;
+    }
+
+    public Integer getMaxOffTime() {
+        return maxOffTime;
+    }
+
+    public void setMaxOffTime(Integer maxOffTime) {
+        this.maxOffTime = maxOffTime;
     }
 
     public String getCurrentPowerMethod() {
@@ -103,7 +148,12 @@ public class ApplianceInfo {
                 ", serial='" + serial + '\'' +
                 ", type='" + type + '\'' +
                 ", vendor='" + vendor + '\'' +
+                ", minPowerConsumption=" + minPowerConsumption +
                 ", maxPowerConsumption=" + maxPowerConsumption +
+                ", minOnTime=" + minOnTime +
+                ", maxOnTime=" + maxOnTime +
+                ", minOffTime=" + minOffTime +
+                ", maxOffTime=" + maxOffTime +
                 ", currentPowerMethod='" + currentPowerMethod + '\'' +
                 ", interruptionsAllowed=" + interruptionsAllowed +
                 '}';
