@@ -24,7 +24,7 @@ import {ModbusSwitch} from '../control-modbus/modbus-switch';
 import {HttpSwitch} from '../control-http/http-switch';
 import {StartingCurrentSwitch} from '../control-startingcurrent/starting-current-switch';
 import {TranslateService} from '@ngx-translate/core';
-import {AlwaysOnSwitch} from './always-on-switch';
+import {AlwaysOnSwitch} from '../control-alwayson/always-on-switch';
 import {AppliancesReloadService} from '../appliance/appliances-reload-service';
 import {ControlDefaults} from './control-defaults';
 import {ControlService} from './control-service';

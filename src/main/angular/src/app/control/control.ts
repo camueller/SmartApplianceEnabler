@@ -20,7 +20,7 @@ import {StartingCurrentSwitch} from '../control-startingcurrent/starting-current
 import {Switch} from '../control-switch/switch';
 import {ModbusSwitch} from '../control-modbus/modbus-switch';
 import {HttpSwitch} from '../control-http/http-switch';
-import {AlwaysOnSwitch} from './always-on-switch';
+import {AlwaysOnSwitch} from '../control-alwayson/always-on-switch';
 import {MockSwitch} from './mock-switch';
 import {EvCharger} from '../control-evcharger/ev-charger';
 

@@ -64,6 +64,7 @@ import { ControlModbusComponent } from './control-modbus/control-modbus.componen
 import { ControlHttpComponent } from './control-http/control-http.component';
 import {FormMarkerService} from './shared/form-marker-service';
 import {ElectricVehicleResolver} from './control-evcharger/electric-vehicle-resolver.service';
+import { ControlAlwaysonComponent } from './control-alwayson/control-alwayson.component';
 
 @NgModule({
   declarations: [
@@ -84,6 +85,7 @@ import {ElectricVehicleResolver} from './control-evcharger/electric-vehicle-reso
     StatusEvchargerEditComponent,
     StatusEvchargerViewComponent,
     StatusViewComponent,
+    ControlAlwaysonComponent,
   ],
   imports: [
     BrowserModule,

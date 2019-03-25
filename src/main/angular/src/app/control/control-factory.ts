@@ -21,7 +21,7 @@ import {StartingCurrentSwitch} from '../control-startingcurrent/starting-current
 import {Switch} from '../control-switch/switch';
 import {ModbusSwitch} from '../control-modbus/modbus-switch';
 import {HttpSwitch} from '../control-http/http-switch';
-import {AlwaysOnSwitch} from './always-on-switch';
+import {AlwaysOnSwitch} from '../control-alwayson/always-on-switch';
 import {ControlDefaults} from './control-defaults';
 import {MockSwitch} from './mock-switch';
 import {Logger} from '../log/logger';
