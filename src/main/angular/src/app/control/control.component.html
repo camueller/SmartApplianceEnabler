@@ -37,7 +37,6 @@
             <option [ngValue]="TYPE_MODBUS_SWITCH">{{TYPE_MODBUS_SWITCH | translate}}</option>
             <option [ngValue]="TYPE_HTTP_SWITCH">{{TYPE_HTTP_SWITCH | translate}}</option>
             <option [ngValue]="TYPE_ALWAYS_ON_SWITCH">{{TYPE_ALWAYS_ON_SWITCH | translate}}</option>
-            <option [ngValue]="TYPE_MOCK_SWITCH">{{TYPE_MOCK_SWITCH | translate}}</option>
           </select>
         </div>
         <div class="field" *ngIf="canHaveStartingCurrentDetection">
@@ -64,6 +63,10 @@
                         [applianceId]="applianceId"
                         [controlDefaults]="controlDefaults"
       ></app-control-http>
+      <app-control-alwayson *ngIf="control.type===TYPE_ALWAYS_ON_SWITCH"
+                            [control]="control"
+                            [applianceId]="applianceId"
+      ></app-control-alwayson>
     </form>
   </ng-template>
   <!--
