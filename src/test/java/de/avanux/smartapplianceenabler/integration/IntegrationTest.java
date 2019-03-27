@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Axel Müller <axel.mueller@avanux.de>
+ * Copyright (C) 2019 Axel Müller <axel.mueller@avanux.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,12 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.avanux.smartapplianceenabler.appliance;
+package de.avanux.smartapplianceenabler.integration;
 
 import de.avanux.smartapplianceenabler.TestBase;
+import de.avanux.smartapplianceenabler.appliance.Appliance;
+import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
+import de.avanux.smartapplianceenabler.appliance.RunningTimeMonitor;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.MockSwitch;
 import de.avanux.smartapplianceenabler.control.StartingCurrentSwitch;

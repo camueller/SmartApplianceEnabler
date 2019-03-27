@@ -89,7 +89,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
         return control;
     }
 
-    protected void setControl(EVControl control) {
+    public void setControl(EVControl control) {
         this.control = control;
     }
 
@@ -108,6 +108,10 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     public Integer getStartChargingStateDetectionDelay() {
         return startChargingStateDetectionDelay != null ? startChargingStateDetectionDelay :
                 ElectricVehicleChargerDefaults.getStartChargingStateDetectionDelay();
+    }
+
+    public void setStartChargingStateDetectionDelay(Integer startChargingStateDetectionDelay) {
+        this.startChargingStateDetectionDelay = startChargingStateDetectionDelay;
     }
 
     public Boolean getForceInitialCharging() {
@@ -156,7 +160,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
         return vehicles;
     }
 
-    protected void setVehicles(List<ElectricVehicle> vehicles) {
+    public void setVehicles(List<ElectricVehicle> vehicles) {
         this.vehicles = vehicles;
     }
 
@@ -179,18 +183,20 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
 
     public void start(Timer timer) {
         stopCharging();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                updateState();            }
-        }, 0, getPollInterval() * 1000);
+        if(timer != null) {
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    updateState();            }
+            }, 0, getPollInterval() * 1000);
+        }
     }
 
     /**
      * Returns true, if the state update was performed. This does not necessarily mean that the state has changed!
      * @return
      */
-    protected boolean updateState() {
+    public boolean updateState() {
         if(isWithinStartChargingStateDetectionDelay()) {
             logger.debug("{}: Skipping state detection for {}s after switched on.", applianceId,
                     getStartChargingStateDetectionDelay());
@@ -399,7 +405,8 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
         return useOptionalEnergy;
     }
 
-    public  void setEnergyDemand(Integer evId, Integer socCurrent, Integer socRequested, LocalDateTime chargeEnd) {
+    public  void setEnergyDemand(LocalDateTime now, Integer evId, Integer socCurrent, Integer socRequested,
+                                 LocalDateTime chargeEnd) {
         logger.debug("{}: Energy demand: evId={} socCurrent={} socCurrent={} chargeEnd={}",
                 applianceId, evId, socCurrent, socRequested, chargeEnd);
         setConnectedVehicleId(evId);
@@ -424,14 +431,14 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
 
             if(chargeEnd == null) {
                 int chargeMinutes = Float.valueOf((float) energy / maxChargePower * 60).intValue();
-                chargeEnd = new LocalDateTime().plusMinutes(chargeMinutes);
+                chargeEnd = now.plusMinutes(chargeMinutes);
                 logger.debug("{}: Calculated charge end={} chargeMinutes={} maxPowerConsumption={} chargeLoss={}",
                         applianceId, chargeEnd, chargeMinutes, maxChargePower, vehicle.getChargeLoss());
             }
 
             RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
             if (runningTimeMonitor != null) {
-                runningTimeMonitor.activateTimeframeInterval(new LocalDateTime(), energy, chargeEnd);
+                runningTimeMonitor.activateTimeframeInterval(now, energy, chargeEnd);
             }
         }
     }

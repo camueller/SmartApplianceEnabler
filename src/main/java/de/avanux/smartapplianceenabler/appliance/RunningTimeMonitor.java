@@ -204,7 +204,7 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         return interrupted;
     }
 
-    protected void updateActiveTimeframeInterval(LocalDateTime now) {
+    public void updateActiveTimeframeInterval(LocalDateTime now) {
         activateTimeframeInterval(now, schedules);
         deactivateExpiredTimeframeInterval(now);
         logger.debug("{}: activeTimeframeInterval={}", applianceId, activeTimeframeInterval);

@@ -188,7 +188,8 @@ public class SempController {
             logger.debug("{}: Received control request: {}", deviceControl.getDeviceId(), deviceControl);
             Appliance appliance = ApplianceManager.getInstance().findAppliance(deviceControl.getDeviceId());
             if(appliance != null) {
-                appliance.setApplianceState(now, deviceControl.isOn(), deviceControl.getRecommendedPowerConsumption(),
+                appliance.setApplianceState(now, deviceControl.isOn(),
+                        deviceControl.getRecommendedPowerConsumption(),
                         false,
                         "Setting appliance state to " + (deviceControl.isOn() ? "ON" : "OFF"));
             }

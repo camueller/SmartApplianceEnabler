@@ -361,6 +361,30 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         }
     }
 
+    public void setEnergyDemand(LocalDateTime now, Integer evId, Integer socCurrent, Integer socRequested, LocalDateTime chargeEnd) {
+        if (this.control instanceof ElectricVehicleCharger) {
+            Meter meter = getMeter();
+            if(meter != null) {
+                meter.resetEnergyMeter();
+            }
+
+            ElectricVehicleCharger evCharger = (ElectricVehicleCharger) this.control;
+            evCharger.setEnergyDemand(now, evId, socCurrent, socRequested, chargeEnd);
+
+            if(chargeEnd == null) {
+                // if no charge end is provided we switch on immediatly with full power and don't accept
+                // any control recommendations
+                setApplianceState(now, true, null,
+                        false,
+                        "Switching on charger");
+                setAcceptControlRecommendations(false);
+            }
+            else {
+                setAcceptControlRecommendations(true);
+            }
+        }
+    }
+
     private Set<ModbusSlave> getModbusSlaves() {
         Set<ModbusSlave> slaves = new HashSet<ModbusSlave>();
         if(meter != null && meter instanceof  ModbusElectricityMeter) {
@@ -508,6 +532,9 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                         runtimeIntervals.addAll(nonEvOptionalEnergyRuntimeIntervals);
                     }
                 }
+                else {
+                    logger.debug("{}: ignoring runtime intervals due to vehicle state {}", id, electricVehicleCharger.getState());
+                }
             }
         }
         else {
@@ -622,7 +649,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                 remainingEnergy.setMax(max - whAlreadyCharged);
             }
         }
-        logger.debug("{}: Remaining energy calculated: {} Wh", id, remainingEnergy);
+        logger.debug("{}: Remaining energy calculated: {}", id, remainingEnergy);
         return remainingEnergy;
     }
 
@@ -650,7 +677,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             // TODO the following call might return an updated SOC in a future release
             Integer initialSoc = evCharger.getConnectedVehicleSoc();
             Integer targetSoc = vehicle.getDefaultSocOptionalEnergy();
-            logger.debug("{}: calculating optional energy evId={} batteryCapactiy={} chargeLoss={} initialSoc={} targetSoc={}",
+            logger.debug("{}: calculating optional energy evId={} batteryCapactiy={} chargeLoss={}% initialSoc={} targetSoc={}",
                     id, vehicle.getId(), batteryCapacity, vehicle.getChargeLoss(), initialSoc, targetSoc);
             if(initialSoc == null) {
                 initialSoc = 0;

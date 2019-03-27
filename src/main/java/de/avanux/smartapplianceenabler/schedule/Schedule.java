@@ -63,6 +63,12 @@ public class Schedule {
         this.timeframe = new DayTimeframe(earliestStart, latestEnd, daysOfWeekValues);
     }
 
+    public Schedule(boolean enabled, Timeframe timeframe, Request request) {
+        this.enabled = enabled;
+        this.timeframe = timeframe;
+        this.request = request;
+    }
+
     public static Schedule withEnergyRequest(Integer minEnergy, Integer maxEnergy, TimeOfDay earliestStart, TimeOfDay latestEnd) {
         Schedule schedule = new Schedule();
         schedule.enabled = true;
@@ -85,6 +91,10 @@ public class Schedule {
 
     public Request getRequest() {
         return request;
+    }
+
+    public void setRequest(Request request) {
+        this.request = request;
     }
 
     public Timeframe getTimeframe() {

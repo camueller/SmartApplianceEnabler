@@ -24,9 +24,11 @@ import de.avanux.smartapplianceenabler.appliance.Appliances;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.MockSwitch;
 import de.avanux.smartapplianceenabler.control.StartingCurrentSwitch;
+import de.avanux.smartapplianceenabler.control.ev.EVControl;
+import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
+import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
 import de.avanux.smartapplianceenabler.meter.Meter;
-import de.avanux.smartapplianceenabler.schedule.Schedule;
-import de.avanux.smartapplianceenabler.schedule.TimeOfDay;
+import de.avanux.smartapplianceenabler.schedule.*;
 import de.avanux.smartapplianceenabler.semp.webservice.Characteristics;
 import de.avanux.smartapplianceenabler.semp.webservice.Device2EM;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
@@ -36,6 +38,7 @@ import org.mockito.Mockito;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Vector;
 
 public class TestBuilder {
 
@@ -73,6 +76,28 @@ public class TestBuilder {
         return this;
     }
 
+    public TestBuilder withEvCharger(EVControl evControl) {
+        ElectricVehicleCharger evCharger = new ElectricVehicleCharger();
+        evCharger.setStartChargingStateDetectionDelay(0);
+        evCharger.setControl(evControl);
+        getAppliance().setControl(evCharger);
+        return this;
+    }
+
+    public TestBuilder withElectricVehicle(Integer evId, Integer batteryCapacity) {
+        ElectricVehicleCharger evCharger = (ElectricVehicleCharger) getAppliance().getControl();
+        List<ElectricVehicle> vehicles = evCharger.getVehicles();
+        if(vehicles == null) {
+            vehicles = new ArrayList<>();
+            evCharger.setVehicles(vehicles);
+        }
+        ElectricVehicle vehicle = new ElectricVehicle();
+        vehicle.setId(evId);
+        vehicle.setBatteryCapacity(batteryCapacity);
+        vehicles.add(vehicle);
+        return this;
+    }
+
     public TestBuilder withMockMeter() {
         Meter meter = Mockito.mock(Meter.class);
         getAppliance().setMeter(meter);
@@ -81,14 +106,48 @@ public class TestBuilder {
 
     public TestBuilder withSchedule(int startHour, int startMinute, int endHour, int endMinute,
                                     int minRunningTime, Integer maxRunningTime) {
+        addSchedule(new Schedule(minRunningTime, maxRunningTime, new TimeOfDay(startHour, startMinute, 0),
+                new TimeOfDay(endHour, endMinute, 0)));
+        return this;
+    }
+
+    public TestBuilder withSchedule(int startHour, int startMinute, int endHour, int endMinute) {
+        Schedule schedule = new Schedule(true, new DayTimeframe(
+                new TimeOfDay(startHour, startMinute, 0),
+                new TimeOfDay(endHour, endMinute, 0)),
+                null);
+        addSchedule(schedule);
+        return this;
+    }
+
+    private void addSchedule(Schedule schedule) {
         List<Schedule> schedules = getAppliance().getSchedules();
         if(schedules == null) {
             schedules = new ArrayList<>();
             getAppliance().setSchedules(schedules);
         }
-        schedules.add(new Schedule(minRunningTime, maxRunningTime, new TimeOfDay(startHour, startMinute, 0),
-                new TimeOfDay(endHour, endMinute, 0)));
+        schedules.add(schedule);
+    }
+
+    public TestBuilder withRuntimeRequest(Integer min, Integer max) {
+        RuntimeRequest request = new RuntimeRequest();
+        request.setMin(min);
+        request.setMax(max);
+        addRequest(request);
         return this;
+    }
+
+    public TestBuilder withSocRequest(Integer evId, Integer soc) {
+        SocRequest request = new SocRequest();
+        request.setEvId(evId);
+        request.setSoc(soc);
+        addRequest(request);
+        return this;
+    }
+
+    private void addRequest(Request request) {
+        Vector<Schedule> schedules = new Vector(getAppliance().getSchedules());
+        schedules.lastElement().setRequest(request);
     }
 
     public TestBuilder init() {
