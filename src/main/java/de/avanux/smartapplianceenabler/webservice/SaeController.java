@@ -456,26 +456,7 @@ public class SaeController {
                 applianceId, evId, socCurrent, socRequested, chargeEnd);
         Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
         if (appliance != null) {
-            if (appliance.getControl() instanceof ElectricVehicleCharger) {
-                if(appliance.getMeter() != null) {
-                    appliance.getMeter().resetEnergyMeter();
-                }
-
-                ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
-                evCharger.setEnergyDemand(evId, socCurrent, socRequested, chargeEnd);
-
-                if(chargeEnd == null) {
-                    // if no charge end is provided we switch on immediatly with full power and don't accept
-                    // any control recommendations
-                    appliance.setApplianceState(new LocalDateTime(), true, null,
-                            false,
-                            "Switching on charger");
-                    appliance.setAcceptControlRecommendations(false);
-                }
-                else {
-                    appliance.setAcceptControlRecommendations(true);
-                }
-            }
+            appliance.setEnergyDemand(new LocalDateTime(), evId, socCurrent, socRequested, chargeEnd);
         } else {
             logger.error("{}: Appliance not found", applianceId);
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
