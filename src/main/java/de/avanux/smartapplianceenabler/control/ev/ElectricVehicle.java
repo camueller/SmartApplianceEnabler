@@ -18,10 +18,12 @@
 
 package de.avanux.smartapplianceenabler.control.ev;
 
+import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+
 import javax.xml.bind.annotation.*;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ElectricVehicle {
+public class ElectricVehicle implements ApplianceIdConsumer {
     @XmlAttribute
     private Integer id;
     @XmlAttribute
@@ -42,7 +44,12 @@ public class ElectricVehicle {
             @XmlElement(name = "SocScript", type = SocScript.class),
     })
     private SocScript socScript;
+    private transient String applianceId;
 
+    @Override
+    public void setApplianceId(String applianceId) {
+        this.applianceId = applianceId;
+    }
 
     public Integer getId() {
         return id;
@@ -118,6 +125,7 @@ public class ElectricVehicle {
 
     public Float getStateOfCharge() {
         if(socScript != null) {
+            socScript.setApplianceId(this.applianceId);
             return socScript.getStateOfCharge();
         }
         return null;
