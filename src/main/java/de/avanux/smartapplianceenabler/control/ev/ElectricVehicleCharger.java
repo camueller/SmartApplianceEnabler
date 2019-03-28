@@ -60,7 +60,6 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     private transient Appliance appliance;
     private transient String applianceId;
     private transient Vector<State> stateHistory = new Vector<>();
-    private static final float CHARGE_LOSS_FACTOR = 1.1f;
     private transient boolean useOptionalEnergy = true;
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
     private transient Long startChargingTimestamp;
@@ -83,6 +82,11 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
         control.setApplianceId(applianceId);
+        if(this.vehicles != null) {
+            for(ElectricVehicle vehicle: this.vehicles) {
+                vehicle.setApplianceId(applianceId);
+            }
+        }
     }
 
     public EVControl getControl() {
@@ -148,9 +152,11 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     }
 
     public ElectricVehicle getVehicle(int evId) {
-        for(ElectricVehicle electricVehicle : this.vehicles) {
-            if(electricVehicle.getId() == evId) {
-                return electricVehicle;
+        if(this.vehicles != null) {
+            for(ElectricVehicle electricVehicle : this.vehicles) {
+                if(electricVehicle.getId() == evId) {
+                    return electricVehicle;
+                }
             }
         }
         return null;

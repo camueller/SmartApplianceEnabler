@@ -18,6 +18,7 @@
 
 package de.avanux.smartapplianceenabler.control.ev;
 
+import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +32,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SocScript {
+public class SocScript implements ApplianceIdConsumer {
 
     private transient Logger logger = LoggerFactory.getLogger(SocScript.class);
     @XmlAttribute
@@ -39,6 +40,7 @@ public class SocScript {
     @XmlAttribute
     private String extractionRegex;
     private transient Pattern socValueExtractionPattern;
+    private transient String applianceId;
 
 
     public void setScript(String script) {
@@ -49,25 +51,30 @@ public class SocScript {
         this.extractionRegex = extractionRegex;
     }
 
+    @Override
+    public void setApplianceId(String applianceId) {
+        this.applianceId = applianceId;
+    }
+
     public Float getStateOfCharge() {
         if(this.script != null) {
             String output = getScriptOutput(this.script);
             if(output != null) {
                 String socValueString = extractSoCValue(output, this.extractionRegex);
                 Float soc = Float.parseFloat(socValueString.replace(',', '.'));
-                logger.debug("SoC: " + soc);
+                logger.debug("{}: SoC: {}", applianceId, soc);
                 return soc;
             }
         }
         else {
-            logger.warn("No SoC script configured.");
+            logger.warn("{}: No SoC script configured.", applianceId);
         }
         return null;
     }
 
     private String getScriptOutput(String scriptToExecute) {
         try {
-            logger.debug("Executing SoC script: " + scriptToExecute);
+            logger.debug("{}: Executing SoC script: {}", applianceId, scriptToExecute);
             ProcessBuilder builder = new ProcessBuilder(scriptToExecute);
             builder.redirectErrorStream(true);
             Process p = builder.start();
@@ -80,10 +87,10 @@ public class SocScript {
                 }
                 scriptOutput = scriptOutput.append(line);
             }
-            logger.debug("SoC script output: " + scriptOutput.toString());
+            logger.debug("{}: SoC script output: {}", applianceId, scriptOutput.toString());
             return scriptOutput.toString();
         } catch (IOException e) {
-            logger.error("Error executing SoC script " + scriptToExecute, e);
+            logger.error("{}: Error executing SoC script {}", applianceId, scriptToExecute, e);
         }
         return null;
     }
@@ -99,7 +106,7 @@ public class SocScript {
         if(regex == null) {
             return text;
         }
-        logger.debug("SoC extraction regex: " + regex);
+        logger.debug("{}: SoC extraction regex: {}", applianceId, regex);
         if( this.socValueExtractionPattern == null) {
             this.socValueExtractionPattern = Pattern.compile(regex, Pattern.DOTALL);
         }
