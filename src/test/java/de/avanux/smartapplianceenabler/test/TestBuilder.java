@@ -99,7 +99,10 @@ public class TestBuilder {
     }
 
     public TestBuilder withMockMeter() {
-        Meter meter = Mockito.mock(Meter.class);
+        return this.withMeter(Mockito.mock(Meter.class));
+    }
+
+    public TestBuilder withMeter(Meter meter) {
         getAppliance().setMeter(meter);
         return this;
     }
