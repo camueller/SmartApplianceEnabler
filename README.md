@@ -91,6 +91,11 @@ Zur Nutzung von Features, die noch nicht in der releasten Version enthalten sind
 ### [Fragen / Probleme](doc/Troubleshooting_DE.md)
 Durch die Vielzahl von Hard- und Softwarekomponenten können bei der Verwendung des *Smart Appliance Enabler* naturgemäß Fragen oder Probleme auftreten. In diesem Fall sollten [diese Hinweise](doc/Support_DE.md) beachtet werden.
 
+## Mitmachen
+![I want you](pics/IWantYou.png) Zum Mitmachen muss man *kein Programmierer* sein! Auch die *Dokumentation* oder *Support von anderen Anwendern* im [Forum](https://www.photovoltaikforum.com/geraete-mit-home-manager-koppeln-via-semp-ethernet-t104060.html) sind Bereiche, in denen man helfen kann, den *Smart Appliance Enabler* besser zu machen. Der *Smart Appliance Enabler* ist für einige Einsatzzwecke "Out-of-the-box" geeignet. Viel interessanter sind aber oft Ideen, an die bei der Entwicklung des *Smart Appliance Enabler* gar nicht gedacht wurde, die ihr aber damit umgesetzt habt. Es wäre doch schön, wenn andere *von Euren Ideen auch profitieren* würden oder vielleicht sogar dazu beitragen könnten, sie noch besser zu machen.
+
+Wenn Ihr zum *Smart Appliance Enabler* inkl. Dokumenation beitragen wollt, solltet Ihr das *Smart Appliance Enabler*-Repository *clonen*. Ihr könnte dann in Eurer Kopie z.B. die Dokumentation erweitern oder korrigieren und mir dann einen *Pull-Request* schicken, mit dem ich Eure Änderungen direkt in das *Smart Appliance Enabler*-Repository übernehmen kann.
+
 ## Dank und Anerkennung
 Der *Smart Appliance Enabler* verwendet intern folgende Open-Source-Software:
 * [Pi4J](http://pi4j.com) für den Zugriff auf die GPIO-Ports des Raspberry
