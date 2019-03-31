@@ -16,7 +16,8 @@ In groben Zügen braucht es eine python Installation mit dem Python Modul "Reque
 
 ## Script
 
-Hier das Script für Copy&Paste. Einfach nur Username und Passwort eintragen und in einer ```soc.py``` Datei o.ä. speichern.
+Hier das Script für Copy&Paste oder als [Download](VW_soc.py)
+Einfach nur Username und Passwort eintragen und in einer ```VW_soc.py``` Datei o.ä. speichern.
 
 ```
 #!/usr/bin/python
@@ -70,12 +71,12 @@ VIN = retrieveVehicles()
 retrieveSOC(VIN)
 ``` 
 
-Nach dem Speichern der Datei ein ```chmod +x soc.py``` machen. Danach kann man das Script mit ./soc.py testen.
+Nach dem Speichern der Datei ein ```chmod +x VW_soc.py``` machen. Danach kann man das Script mit ./soc.py testen.
 Es wird ein ganzzahliger Wert zurück geliefert, der direkt vom SAE verarbeitet werden kann.
 
 ## Anbindung an SAE
 
-Im SAE kann man das Script direkt in der jeweiligen Fahrzeugkonfiguration eintragen, z.b. /home/pi/soc.py
+Im SAE kann man das Script direkt in der jeweiligen Fahrzeugkonfiguration eintragen, z.b. /home/pi/VW_soc.py
 
 ## Anmerkungen / Einschränkungen
 
