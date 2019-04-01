@@ -87,6 +87,14 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         this.meter = meter;
     }
 
+    public void deleteMeter() {
+        logger.debug("{}: Delete meter", id);
+        if(meter != null) {
+            meter.stop();
+        }
+        setMeter(null);
+    }
+
     public Control getControl() {
         return control;
     }
@@ -104,6 +112,14 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         else {
             this.control = control;
         }
+    }
+
+    public void deleteControl() {
+        logger.debug("{}: Delete control", id);
+        if(control instanceof GpioControllable) {
+            ((GpioControllable) control).stop();
+        }
+        setControl(null);
     }
 
     public List<Schedule> getSchedules() {
@@ -134,6 +150,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     }
 
     public void init(Integer additionRunningTime) {
+        logger.debug("{}: Initializing appliance additionRunningTime={}", id, additionRunningTime);
         if(control != null) {
             setRunningTimeMonitor(new RunningTimeMonitor());
         }
@@ -198,6 +215,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                       Map<String, PulseReceiver> pulseReceiverIdWithPulseReceiver,
                       Map<String, ModbusTcp> modbusIdWithModbusTcp) {
 
+        logger.info("{}: Starting appliance", id);
         if(runningTimeMonitor != null) {
             runningTimeMonitor.setTimer(timer);
         }
@@ -205,9 +223,13 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         if(getGpioControllables().size() > 0) {
             if(gpioController != null) {
                 for(GpioControllable gpioControllable : getGpioControllables()) {
-                    logger.info("{}: Starting {}", id, gpioControllable.getClass().getSimpleName());
+                    logger.info("{}: Configuring {}", id, gpioControllable.getClass().getSimpleName());
                     gpioControllable.setGpioController(gpioController);
-                    gpioControllable.start();
+                    if(gpioControllable != meter) {
+                        // Meter instances will be started later anyway and should not be started twice
+                        logger.info("{}: Starting {}", id, gpioControllable.getClass().getSimpleName());
+                        gpioControllable.start(timer);
+                    }
                 }
             }
             else {
@@ -215,30 +237,29 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             }
         }
 
-        if(meter instanceof S0ElectricityMeterNetworked) {
-            S0ElectricityMeterNetworked s0ElectricityMeterNetworked = (S0ElectricityMeterNetworked) meter;
-            logger.info("{}: Starting {}", id, S0ElectricityMeterNetworked.class.getSimpleName());
-            String pulseReceiverId = s0ElectricityMeterNetworked.getIdref();
-            PulseReceiver pulseReceiver = pulseReceiverIdWithPulseReceiver.get(pulseReceiverId);
-            s0ElectricityMeterNetworked.setPulseReceiver(pulseReceiver);
-            s0ElectricityMeterNetworked.start();
-        }
-
-        if(meter instanceof HttpElectricityMeter) {
-            ((HttpElectricityMeter) meter).start(timer);
-        }
-
         for(ModbusSlave modbusSlave : getModbusSlaves()) {
-            logger.info("{}: Starting {}", id, modbusSlave.getClass().getSimpleName());
+            logger.info("{}: Configuring {}", id, modbusSlave.getClass().getSimpleName());
             modbusSlave.setApplianceId(id);
             String modbusId = modbusSlave.getIdref();
             ModbusTcp modbusTcp = modbusIdWithModbusTcp.get(modbusId);
             modbusSlave.setModbusTcp(modbusTcp);
         }
-        if(meter instanceof ModbusElectricityMeter) {
-            ((ModbusElectricityMeter) meter).start(timer);
+
+        if(meter instanceof S0ElectricityMeterNetworked) {
+            S0ElectricityMeterNetworked s0ElectricityMeterNetworked = (S0ElectricityMeterNetworked) meter;
+            logger.info("{}: Configuring {}", id, S0ElectricityMeterNetworked.class.getSimpleName());
+            String pulseReceiverId = s0ElectricityMeterNetworked.getIdref();
+            PulseReceiver pulseReceiver = pulseReceiverIdWithPulseReceiver.get(pulseReceiverId);
+            s0ElectricityMeterNetworked.setPulseReceiver(pulseReceiver);
         }
+
+        if(meter != null) {
+            logger.info("{}: Starting {}", id, meter.getClass().getSimpleName());
+            meter.start(timer);
+        }
+
         if(control instanceof ElectricVehicleCharger) {
+            logger.info("{}: Starting {}", id, ElectricVehicleCharger.class.getSimpleName());
             ((ElectricVehicleCharger) control).start(timer);
         }
 
@@ -249,13 +270,17 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     }
 
     public void stop() {
+        logger.info("{}: Stopping appliance ...", id);
         if(control instanceof GpioControllable) {
+            logger.info("{}: Stopping control {}", id, control.getClass().getSimpleName());
             ((GpioControllable) control).stop();
         }
-        if(meter instanceof GpioControllable) {
-            ((GpioControllable) meter).stop();
+        if(meter != null) {
+            logger.info("{}: Stopping meter {}", id, meter.getClass().getSimpleName());
+            meter.stop();
         }
         if(runningTimeMonitor != null) {
+            logger.info("{}: Cancel runningTimeMonitor timer", id);
             runningTimeMonitor.cancelTimer();
         }
     }

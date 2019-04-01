@@ -32,6 +32,7 @@ public class PollPowerMeter implements ApplianceIdConsumer {
     private Map<Long,Float> timestampWithPower = new HashMap<Long,Float>();
     private Integer measurementInterval;
     private String applianceId;
+    private TimerTask pollTimerTask;
 
     @Override
     public void setApplianceId(String applianceId) {
@@ -40,12 +41,21 @@ public class PollPowerMeter implements ApplianceIdConsumer {
 
     public void start(Timer timer, Integer pollInterval, Integer measurementInterval, PollPowerExecutor pollPowerExecutor) {
         this.measurementInterval = measurementInterval;
-        timer.schedule(new TimerTask() {
+        logger.debug("{}: Creating timer task pollInterval={}s", applianceId, pollInterval);
+        this.pollTimerTask = new TimerTask() {
             @Override
             public void run() {
                 addValue(pollPowerExecutor.getPower());
             }
-        }, 0, pollInterval * 1000);
+        };
+        timer.schedule(this.pollTimerTask, 0, pollInterval * 1000);
+    }
+
+    public void cancelTimer() {
+        if(this.pollTimerTask != null) {
+            logger.debug("{}: Cancel timer task", applianceId);
+            this.pollTimerTask.cancel();
+        }
     }
 
     public void addValue(float power) {

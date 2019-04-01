@@ -130,9 +130,17 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
         }
     }
 
+    @Override
     public void start(Timer timer) {
+        logger.debug("{}: Starting ...", getApplianceId());
         ModbusRegisterRead registerRead = ModbusRegisterRead.getFirstRegisterRead(RegisterName.Power.name(), registerReads);
         pollPowerMeter.start(timer, getPollInterval(), getMeasurementInterval(), this);
+    }
+
+    @Override
+    public void stop() {
+        logger.debug("{}: Stopping ...", getApplianceId());
+        pollPowerMeter.cancelTimer();
     }
 
     @Override

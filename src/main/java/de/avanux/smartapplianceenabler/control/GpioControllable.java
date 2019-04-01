@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
+import java.util.Timer;
 
 @XmlTransient
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -64,7 +65,7 @@ abstract public class GpioControllable implements ApplianceIdConsumer {
         return null;
     }
 
-    abstract public void start();
+    abstract public void start(Timer timer);
 
     abstract public void stop();
 

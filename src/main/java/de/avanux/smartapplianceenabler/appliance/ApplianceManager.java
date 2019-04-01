@@ -92,7 +92,9 @@ public class ApplianceManager implements Runnable {
     }
 
     private void startAppliances() {
+        logger.info("Starting appliances ...");
         if(appliances == null) {
+            logger.debug("Loading Appliances.xml ...");
             appliances = fileHandler.load(Appliances.class);
             if(appliances == null) {
                 this.appliances = new Appliances();
@@ -100,6 +102,7 @@ public class ApplianceManager implements Runnable {
             }
         }
         if(this.device2EM == null) {
+            logger.debug("Loading Appliances.xml ...");
             this.device2EM = fileHandler.load(Device2EM.class);
             if(device2EM == null) {
                 this.device2EM = new Device2EM();
@@ -120,6 +123,7 @@ public class ApplianceManager implements Runnable {
     }
 
     private void restartAppliances() {
+        logger.debug("Restarting ...");
         if(this.appliances != null) {
             Connectivity connectivity = this.appliances.getConnectivity();
             if(connectivity != null) {
@@ -133,6 +137,7 @@ public class ApplianceManager implements Runnable {
             }
             if(appliances.getAppliances() != null) {
                 for(Appliance appliance : appliances.getAppliances()) {
+                    logger.info("{}: Stopping appliance ...", appliance.getId());
                     appliance.stop();
                 }
             }
@@ -144,6 +149,7 @@ public class ApplianceManager implements Runnable {
     }
 
     public void init() {
+        logger.debug("Initializing ...");
         Map<String,PulseReceiver> pulseReceiverIdWithPulseReceiver = new HashMap<String,PulseReceiver>();
         Map<String,ModbusTcp> modbusIdWithModbusTcp = new HashMap<String,ModbusTcp>();
         Connectivity connectivity = appliances.getConnectivity();
@@ -176,7 +182,9 @@ public class ApplianceManager implements Runnable {
             if(appliance.hasTimeframeForHolidays()) {
                 holidaysUsed = true;
             }
+            logger.debug("{}: Initializing appliance ...", appliance.getId());
             appliance.init(additionRunningTime);
+            logger.debug("{}: Starting appliance ...", appliance.getId());
             appliance.start(timer, getGpioController(), pulseReceiverIdWithPulseReceiver, modbusIdWithModbusTcp);
         }
 
@@ -392,7 +400,7 @@ public class ApplianceManager implements Runnable {
         logger.debug("{}: Delete control", applianceId);
         Appliance appliance = getAppliance(applianceId);
         if(appliance != null) {
-            appliance.setControl(null);
+            appliance.deleteControl();
             save(false, true);
             return true;
         }
@@ -409,6 +417,13 @@ public class ApplianceManager implements Runnable {
         logger.debug("{}: Set meter", applianceId);
         Appliance appliance = getAppliance(applianceId);
         if(appliance != null) {
+            Meter oldMeter = appliance.getMeter();
+            if(oldMeter != null) {
+                oldMeter.stop();
+            }
+            if(meter instanceof ApplianceIdConsumer) {
+                ((ApplianceIdConsumer) meter).setApplianceId(applianceId);
+            }
             appliance.setMeter(meter);
             save(false, true);
             return true;
@@ -425,7 +440,7 @@ public class ApplianceManager implements Runnable {
         logger.debug("{}: Delete meter", applianceId);
         Appliance appliance = getAppliance(applianceId);
         if(appliance != null) {
-            appliance.setMeter(null);
+            appliance.deleteMeter();
             save(false, true);
             return true;
         }

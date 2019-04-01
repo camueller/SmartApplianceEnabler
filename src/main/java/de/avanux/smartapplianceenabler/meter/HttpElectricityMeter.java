@@ -133,8 +133,16 @@ public class HttpElectricityMeter extends HttpTransactionExecutor implements Met
         return getPower() > 0;
     }
 
+    @Override
     public void start(Timer timer) {
+        logger.debug("{}: Starting ...", getApplianceId());
         pollPowerMeter.start(timer, getPollInterval(), getMeasurementInterval(), this);
+    }
+
+    @Override
+    public void stop() {
+        logger.debug("{}: Stopping ...", getApplianceId());
+        pollPowerMeter.cancelTimer();
     }
 
     @Override
