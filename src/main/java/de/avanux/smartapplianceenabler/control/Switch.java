@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Switch extends GpioControllable implements Control, ApplianceIdConsumer {
@@ -41,7 +42,7 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
 
 
     @Override
-    public void start() {
+    public void start(Timer timer) {
         GpioController gpioController = getGpioController();
         if(gpioController != null) {
             try {

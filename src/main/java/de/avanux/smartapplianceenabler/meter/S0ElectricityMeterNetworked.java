@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import java.util.Timer;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class S0ElectricityMeterNetworked implements Meter, PulseReceiver.PulseListener, ApplianceIdConsumer {
@@ -109,7 +110,7 @@ public class S0ElectricityMeterNetworked implements Meter, PulseReceiver.PulseLi
         this.pulsePowerMeter.setControl(control);
     }
 
-    public void start() {
+    public void start(Timer timer) {
         logger.debug("{}: Appliance start: impulsesPerKwh={} measurementInterval={}", applianceId, impulsesPerKwh,
                 measurementInterval);
         pulsePowerMeter.setImpulsesPerKwh(impulsesPerKwh);
@@ -117,6 +118,10 @@ public class S0ElectricityMeterNetworked implements Meter, PulseReceiver.PulseLi
         if(pulseReceiver != null) {
             pulseReceiver.addListener(applianceId, this);
         }
+    }
+
+    @Override
+    public void stop() {
     }
 
     @Override

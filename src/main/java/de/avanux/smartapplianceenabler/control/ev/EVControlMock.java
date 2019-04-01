@@ -107,6 +107,14 @@ public class EVControlMock implements EVControl, Meter {
     // --------- Meter ------------------------------------------------------
 
     @Override
+    public void start(Timer timer) {
+    }
+
+    @Override
+    public void stop() {
+    }
+
+    @Override
     public boolean isOn() {
         return false;
     }

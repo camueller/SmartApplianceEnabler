@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import java.util.Timer;
 
 @XmlType(propOrder={"gpio", "pinPullResistance", "impulsesPerKwh", "measurementInterval"})
 public class S0ElectricityMeter extends GpioControllable implements Meter {
@@ -108,7 +109,7 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
     }
 
     @Override
-    public void start() {
+    public void start(Timer timer) {
 
         GpioController gpioController = getGpioController();
         if(gpioController != null) {
