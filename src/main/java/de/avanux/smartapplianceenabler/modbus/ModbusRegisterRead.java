@@ -18,6 +18,9 @@
 
 package de.avanux.smartapplianceenabler.modbus;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -121,5 +124,33 @@ public class ModbusRegisterRead {
             }
         }
         return matches;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ModbusRegisterRead that = (ModbusRegisterRead) o;
+
+        return new EqualsBuilder()
+                .append(address, that.address)
+                .append(bytes, that.bytes)
+                .append(byteOrder, that.byteOrder)
+                .append(type, that.type)
+                .append(factorToValue, that.factorToValue)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(address)
+                .append(bytes)
+                .append(byteOrder)
+                .append(type)
+                .append(factorToValue)
+                .toHashCode();
     }
 }
