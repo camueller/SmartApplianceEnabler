@@ -82,11 +82,13 @@ public class ModbusRegisterWrite {
 
     public static List<ModbusRegisterWrite> getRegisterWrites(String registerName, List<ModbusRegisterWrite> registerWrites) {
         List<ModbusRegisterWrite> matches = new ArrayList<>();
-        for(ModbusRegisterWrite registerWrite: registerWrites) {
-            for(ModbusRegisterWriteValue registerWriteValue: registerWrite.getRegisterWriteValues()) {
-                if(registerName.equals(registerWriteValue.getName())) {
-                    matches.add(new ModbusRegisterWrite(registerWrite.getAddress(), registerWrite.getType(),
-                            registerWriteValue));
+        if(registerWrites != null) {
+            for(ModbusRegisterWrite registerWrite: registerWrites) {
+                for(ModbusRegisterWriteValue registerWriteValue: registerWrite.getRegisterWriteValues()) {
+                    if(registerName.equals(registerWriteValue.getName())) {
+                        matches.add(new ModbusRegisterWrite(registerWrite.getAddress(), registerWrite.getType(),
+                                registerWriteValue));
+                    }
                 }
             }
         }
