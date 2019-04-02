@@ -22,7 +22,9 @@ import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 
 public interface EVControl extends ApplianceIdConsumer {
 
-    void validate();
+    void setPollInterval(Integer pollInterval);
+
+    void init();
 
     boolean isVehicleNotConnected();
 

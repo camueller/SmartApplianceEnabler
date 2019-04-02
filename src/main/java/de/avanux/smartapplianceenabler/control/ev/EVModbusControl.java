@@ -20,6 +20,7 @@ package de.avanux.smartapplianceenabler.control.ev;
 
 import de.avanux.smartapplianceenabler.modbus.*;
 import de.avanux.smartapplianceenabler.modbus.executor.*;
+import de.avanux.smartapplianceenabler.util.RequestCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +37,8 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
     private List<ModbusRegisterRead> registerReads;
     @XmlElement(name = "ModbusRegisterWrite")
     private List<ModbusRegisterWrite> registerWrites;
+    private transient Integer pollInterval; // seconds
+    private transient RequestCache<ModbusRegisterRead, ModbusReadTransactionExecutor> requestCache;
 
     protected void setRegisterReads(List<ModbusRegisterRead> registerReads) {
         this.registerReads = registerReads;
@@ -45,7 +48,14 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
         this.registerWrites = registerWrites;
     }
 
-    public void validate() {
+    public void setPollInterval(Integer pollInterval) {
+        this.pollInterval = pollInterval;
+    }
+
+    public void init() {
+        int cacheMaxAgeSeconds = this.pollInterval - 1;
+        this.requestCache = new RequestCache<>(getApplianceId(), cacheMaxAgeSeconds);
+
         boolean valid = true;
         for(EVModbusReadRegisterName registerName: EVModbusReadRegisterName.values()) {
             List<ModbusRegisterRead> registerReads = ModbusRegisterRead.getRegisterReads(registerName.name(),
@@ -125,8 +135,12 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
         if (registerReads.size() > 0) {
             boolean result = true;
             for (ModbusRegisterRead registerRead : registerReads) {
-                ModbusReadTransactionExecutor executor = ModbusExecutorFactory.getReadExecutor(getApplianceId(),
-                        registerRead.getType(), registerRead.getAddress(), registerRead.getBytes());
+                ModbusReadTransactionExecutor executor = this.requestCache.get(registerRead);
+                if(executor == null) {
+                    executor = ModbusExecutorFactory.getReadExecutor(getApplianceId(),
+                            registerRead.getType(), registerRead.getAddress(), registerRead.getBytes());
+                    this.requestCache.put(registerRead, executor);
+                }
                 if (result) {
                     try {
                         if (executor != null) {

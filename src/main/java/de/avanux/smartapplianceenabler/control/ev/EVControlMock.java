@@ -54,7 +54,11 @@ public class EVControlMock implements EVControl, Meter {
     }
 
     @Override
-    public void validate() {
+    public void setPollInterval(Integer pollInterval) {
+    }
+
+    @Override
+    public void init() {
     }
 
     @Override
