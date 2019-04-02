@@ -114,12 +114,14 @@ public class ModbusRegisterRead {
 
     public static List<ModbusRegisterRead> getRegisterReads(String registerName, List<ModbusRegisterRead> registerReads) {
         List<ModbusRegisterRead> matches = new ArrayList<>();
-        for(ModbusRegisterRead registerRead: registerReads) {
-            for(ModbusRegisterReadValue registerReadValue: registerRead.getRegisterReadValues()) {
-                if(registerName.equals(registerReadValue.getName())) {
-                    matches.add(new ModbusRegisterRead(registerRead.getAddress(), registerRead.getBytes(),
-                            registerRead.getByteOrder(), registerRead.getType(), registerRead.getFactorToValue(),
-                            registerReadValue));
+        if(registerReads != null) {
+            for(ModbusRegisterRead registerRead: registerReads) {
+                for(ModbusRegisterReadValue registerReadValue: registerRead.getRegisterReadValues()) {
+                    if(registerName.equals(registerReadValue.getName())) {
+                        matches.add(new ModbusRegisterRead(registerRead.getAddress(), registerRead.getBytes(),
+                                registerRead.getByteOrder(), registerRead.getType(), registerRead.getFactorToValue(),
+                                registerReadValue));
+                    }
                 }
             }
         }

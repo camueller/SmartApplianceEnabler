@@ -40,6 +40,7 @@ public class EVModbusControlPhoenixContactTest {
     public EVModbusControlPhoenixContactTest() {
         this.evModbusControl = new EVModbusControl();
         this.evModbusControl.setApplianceId("F-001-01");
+        this.evModbusControl.setPollInterval(10);
 
         ModbusRegisterRead register100 = new ModbusRegisterRead();
         register100.setType(ModbusReadRegisterType.InputString.name());
@@ -48,6 +49,7 @@ public class EVModbusControlPhoenixContactTest {
         register100ReadValues.add(new ModbusRegisterReadValue("VehicleConnected", "(B)"));
         register100ReadValues.add(new ModbusRegisterReadValue("Charging", "(C|D)"));
         register100ReadValues.add(new ModbusRegisterReadValue("ChargingCompleted", "(B)"));
+        register100ReadValues.add(new ModbusRegisterReadValue("Error", "(E|F)"));
         register100.setRegisterReadValues(register100ReadValues);
 
         ModbusRegisterRead register204 = new ModbusRegisterRead();
@@ -67,8 +69,9 @@ public class EVModbusControlPhoenixContactTest {
         register300.setRegisterWriteValues(Collections.singletonList(
                 new ModbusRegisterWriteValue("ChargingCurrent", "0")));
 
-        evModbusControl.setRegisterReads(Arrays.asList(register100, register204));
-        evModbusControl.setRegisterWrites(Arrays.asList(register400, register300));
+        this.evModbusControl.setRegisterReads(Arrays.asList(register100, register204));
+        this.evModbusControl.setRegisterWrites(Arrays.asList(register400, register300));
+        this.evModbusControl.init();
 
         this.readStringTestingExecutor = new ModbusReadStringTestingExecutor();
         ModbusExecutorFactory.setTestingReadStringExecutor(this.readStringTestingExecutor);
