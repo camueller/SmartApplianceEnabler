@@ -122,10 +122,18 @@
             <label>{{'ControlEvchargerComponent.extractionRegex' | translate}}</label>
             <input type="text" formControlName="extractionRegex">
           </div>
-          <div class="field" *ngIf="isModbusWriteRegister(modbusConfiguration)">
+
+          <div class="field"
+               *ngIf="isModbusWriteRegister(modbusConfiguration) && ! isChargingCurrentRegister(modbusConfiguration)">
             <label>{{'ControlEvchargerComponent.value' | translate}}</label>
             <input type="text" formControlName="value">
           </div>
+          <div class="field"
+               *ngIf="isModbusWriteRegister(modbusConfiguration) && isChargingCurrentRegister(modbusConfiguration)">
+            <label>{{'ControlEvchargerComponent.factorToValue' | translate}}</label>
+            <input type="text" formControlName="factorToValue">
+          </div>
+
           <div class="field icon-field">
             <i (click)="removeModbusConfiguration(i)" class="icon big red remove circle"></i>
             <i *ngIf="l" (click)="addModbusConfiguration()" class="icon big green add circle"></i>

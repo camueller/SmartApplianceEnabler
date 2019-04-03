@@ -176,6 +176,7 @@
   "ControlEvchargerComponent.byteOrder": "Byte Reihenfolge",
   "ControlEvchargerComponent.extractionRegex": "Regex für Extraktion",
   "ControlEvchargerComponent.value": "Wert",
+  "ControlEvchargerComponent.factorToValue": "Umrechnungsfaktor",
   "ControlEvchargerComponent.VehicleNotConnected": "Ladestecker nicht angeschlossen",
   "ControlEvchargerComponent.VehicleConnected": "Ladestecker angeschlossen",
   "ControlEvchargerComponent.Charging": "Ladevorgang läuft",

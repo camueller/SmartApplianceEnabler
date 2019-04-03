@@ -211,6 +211,7 @@
         </xs:sequence>
         <xs:attribute name="address" type="xs:string" use="required" />
         <xs:attribute name="type" type="ModbusRegisterTypeType" use="required" />
+        <xs:attribute name="factorToValue" type="xs:double" />
     </xs:complexType>
 
     <xs:complexType name="ModbusRegisterWriteValueType">

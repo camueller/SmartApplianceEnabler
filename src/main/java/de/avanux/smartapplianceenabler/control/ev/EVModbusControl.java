@@ -62,7 +62,7 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
                     this.registerReads);
             if(registerReads.size() > 0) {
                 for(ModbusRegisterRead registerRead: registerReads) {
-                    logger.debug("{}: {} configured: read register={} / extraction regex={}",
+                    logger.debug("{}: {} configured: read register={} extraction regex={}",
                             getApplianceId(),
                             registerName.name(),
                             registerRead.getAddress(),
@@ -79,11 +79,12 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
                     this.registerWrites);
             if(registerWrites.size() > 0) {
                 for(ModbusRegisterWrite registerWrite: registerWrites) {
-                    logger.debug("{}: {} configured: write register={} / value={}",
+                    logger.debug("{}: {} configured: write register={} value={} factorToValue={}",
                             getApplianceId(),
                             registerName.name(),
                             registerWrite.getAddress(),
-                            registerWrite.getSelectedRegisterWriteValue().getValue());
+                            registerWrite.getSelectedRegisterWriteValue().getValue(),
+                            registerWrite.getFactorToValue());
                 }
                 if(EVModbusWriteRegisterName.ChargingCurrent.equals(registerName)) {
                     /* Alternative, falls Ladestrom am Controller nur auf feste Werte gesetzt werden kann
@@ -176,7 +177,7 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
         if(registerWrite != null) {
             try {
                 ModbusWriteTransactionExecutor executor = ModbusExecutorFactory.getWriteExecutor(getApplianceId(),
-                        registerWrite.getType(), registerWrite.getAddress());
+                        registerWrite.getType(), registerWrite.getAddress(), registerWrite.getFactorToValue());
                 if(executor != null) {
                     executor.setValue(current);
                     executeTransaction(executor, true);
@@ -207,7 +208,7 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
         if(registerWrite != null) {
             try {
                 ModbusWriteTransactionExecutor executor = ModbusExecutorFactory.getWriteExecutor(getApplianceId(),
-                        registerWrite.getType(), registerWrite.getAddress());
+                        registerWrite.getType(), registerWrite.getAddress(), registerWrite.getFactorToValue());
                 if(executor != null) {
                     String stringValue = registerWrite.getSelectedRegisterWriteValue().getValue();
                     Object value = null;

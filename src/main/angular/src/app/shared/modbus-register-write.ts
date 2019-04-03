@@ -9,6 +9,7 @@ export class ModbusRegisterWrite {
   '@class' = ModbusRegisterWrite.TYPE;
   address: string;
   type: string;
+  factorToValue: number;
   registerWriteValues: ModbusRegisterWriteValue[];
 
   public constructor(init?: Partial<ModbusRegisterWrite>) {

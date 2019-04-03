@@ -33,6 +33,8 @@ public class ModbusRegisterWrite {
     private String address;
     @XmlAttribute
     private String type;
+    @XmlAttribute
+    private Double factorToValue;
     @XmlElement(name = "ModbusRegisterWriteValue")
     private List<ModbusRegisterWriteValue> registerWriteValues;
     private transient ModbusRegisterWriteValue selectedRegisterWriteValue;
@@ -40,10 +42,11 @@ public class ModbusRegisterWrite {
     public ModbusRegisterWrite() {
     }
 
-    public ModbusRegisterWrite(String address, ModbusWriteRegisterType type,
+    public ModbusRegisterWrite(String address, ModbusWriteRegisterType type, Double factorToValue,
                                ModbusRegisterWriteValue selectedRegisterWriteValue) {
         this.address = address;
         this.type = type.name();
+        this.factorToValue = factorToValue;
         this.selectedRegisterWriteValue = selectedRegisterWriteValue;
     }
 
@@ -57,6 +60,14 @@ public class ModbusRegisterWrite {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public Double getFactorToValue() {
+        return factorToValue;
+    }
+
+    public void setFactorToValue(Double factorToValue) {
+        this.factorToValue = factorToValue;
     }
 
     public ModbusReadRegisterType getReadRegisterType() {
@@ -87,7 +98,7 @@ public class ModbusRegisterWrite {
                 for(ModbusRegisterWriteValue registerWriteValue: registerWrite.getRegisterWriteValues()) {
                     if(registerName.equals(registerWriteValue.getName())) {
                         matches.add(new ModbusRegisterWrite(registerWrite.getAddress(), registerWrite.getType(),
-                                registerWriteValue));
+                                registerWrite.getFactorToValue(), registerWriteValue));
                     }
                 }
             }

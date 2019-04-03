@@ -113,7 +113,8 @@ public class ModbusExecutorFactory {
         return executor;
     }
 
-    public static ModbusWriteTransactionExecutor getWriteExecutor(String applianceId, ModbusWriteRegisterType type, String address) {
+    public static ModbusWriteTransactionExecutor getWriteExecutor(String applianceId, ModbusWriteRegisterType type,
+                                                                  String address, Double factorToValue) {
         ModbusWriteTransactionExecutor executor;
         switch (type) {
             case Holding:
@@ -121,7 +122,7 @@ public class ModbusExecutorFactory {
                     executor = testingWriteIntegerExecutor;
                 }
                 else {
-                    executor = new WriteHoldingRegisterExecutorImpl(address);
+                    executor = new WriteHoldingRegisterExecutorImpl(address, factorToValue);
                 }
                 break;
             case Coil:
