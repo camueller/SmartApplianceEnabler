@@ -92,6 +92,7 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         }
         this.schedules = enabledSchedules;
         this.activeTimeframeInterval = null;
+        updateActiveTimeframeInterval(new LocalDateTime());
     }
     
     public List<Schedule> getSchedules() {
