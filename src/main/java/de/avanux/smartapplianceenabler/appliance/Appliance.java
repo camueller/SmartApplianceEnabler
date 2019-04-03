@@ -153,18 +153,6 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         logger.debug("{}: Initializing appliance additionRunningTime={}", id, additionRunningTime);
         if(control != null) {
             setRunningTimeMonitor(new RunningTimeMonitor());
-        }
-        if(schedules != null && schedules.size() > 0) {
-            logger.info("{}: Schedules configured: {}", id, schedules.size());
-            if(! hasScheduleHandling()) {
-                activateSchedules();
-            }
-        }
-        else {
-            logger.info("{}: No schedules configured", id);
-        }
-
-        if(control != null) {
             if(control instanceof ApplianceIdConsumer) {
                 ((ApplianceIdConsumer) control).setApplianceId(id);
             }
@@ -208,6 +196,16 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                 }
                 logger.debug("{}: {} uses {}", id, meter.getClass().getSimpleName(), control.getClass().getSimpleName());
             }
+        }
+
+        if(schedules != null && schedules.size() > 0) {
+            logger.info("{}: Schedules configured: {}", id, schedules.size());
+            if(! hasScheduleHandling()) {
+                activateSchedules();
+            }
+        }
+        else {
+            logger.info("{}: No schedules configured", id);
         }
     }
 
@@ -586,13 +584,13 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                 }
                 else if(request instanceof EnergyRequest) {
                     EnergyRequest remainingEnergy = calculateRemainingEnergy(schedule);
-                    addEnergyRequestInterval(runtimeIntervals, activeTimeframeInterval.getInterval(),
-                            remainingEnergy.getMin(), remainingEnergy.getMax(), now);
+                    addEnergyRequestInterval(now, runtimeIntervals, activeTimeframeInterval.getInterval(),
+                            remainingEnergy.getMin(), remainingEnergy.getMax());
                 }
                 else if(request instanceof SocRequest) {
                     EnergyRequest remainingEnergy = calculateRemainingEnergy((SocRequest) request, true);
-                    addEnergyRequestInterval(runtimeIntervals, activeTimeframeInterval.getInterval(),
-                            remainingEnergy.getMin(), remainingEnergy.getMax(), now);
+                    addEnergyRequestInterval(now, runtimeIntervals, activeTimeframeInterval.getInterval(),
+                            remainingEnergy.getMin(), remainingEnergy.getMax());
                 }
             }
 
@@ -611,12 +609,12 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                     addRuntimeRequestInterval(now, interval, runtimeIntervals, minRunningTime, request.getMax());
                 }
                 else if(request instanceof EnergyRequest) {
-                    addEnergyRequestInterval(runtimeIntervals, interval, request.getMin(), request.getMax(), now);
+                    addEnergyRequestInterval(now, runtimeIntervals, interval, request.getMin(), request.getMax());
                 }
                 else if(request instanceof SocRequest) {
                     EnergyRequest remainingEnergy = calculateRemainingEnergy((SocRequest) request, false);
-                    addEnergyRequestInterval(runtimeIntervals, interval,
-                            remainingEnergy.getMin(), remainingEnergy.getMax(), now);
+                    addEnergyRequestInterval(now, runtimeIntervals, interval,
+                            remainingEnergy.getMin(), remainingEnergy.getMax());
                 }
             }
         }
@@ -630,8 +628,8 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             }
             else if(request instanceof EnergyRequest) {
                 EnergyRequest remainingEnergy = calculateRemainingEnergy(schedule);
-                addEnergyRequestInterval(runtimeIntervals, activeTimeframeInterval.getInterval(),
-                        remainingEnergy.getMin(), remainingEnergy.getMax(), now);
+                addEnergyRequestInterval(now, runtimeIntervals, activeTimeframeInterval.getInterval(),
+                        remainingEnergy.getMin(), remainingEnergy.getMax());
             }
         }
         else {
@@ -739,11 +737,12 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         }
     }
 
-    private void addEnergyRequestInterval(List<RuntimeInterval> runtimeIntervals, Interval interval, Integer minEnergy,
-                                    Integer maxEnergy, LocalDateTime now) {
+    private void addEnergyRequestInterval(LocalDateTime now, List<RuntimeInterval> runtimeIntervals, Interval interval, Integer minEnergy,
+                                          Integer maxEnergy) {
         RuntimeInterval runtimeInterval = createEnergyRequestInterval(interval, minEnergy, maxEnergy, now);
         if(runtimeInterval != null) {
-            if(! isOverlappingRuntimeInterval(runtimeInterval, runtimeIntervals)) {
+            if(!isFutureEmptyEnergyRequestInterval(runtimeInterval)
+                    && ! isOverlappingRuntimeInterval(runtimeInterval, runtimeIntervals)) {
                 runtimeIntervals.add(runtimeInterval);
             }
             else {
@@ -752,6 +751,11 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         }
     }
 
+    protected boolean isFutureEmptyEnergyRequestInterval(RuntimeInterval runtimeInterval) {
+        return runtimeInterval.getEarliestStart() > 0
+                && runtimeInterval.getMinEnergy() == 0
+                && runtimeInterval.getMaxEnergy() == 0;
+    }
 
     protected boolean isOverlappingRuntimeInterval(RuntimeInterval runtimeInterval, List<RuntimeInterval> runtimeIntervals) {
         // we already might have a runtime request obtained from RunningTimeMonitor which might have been added
