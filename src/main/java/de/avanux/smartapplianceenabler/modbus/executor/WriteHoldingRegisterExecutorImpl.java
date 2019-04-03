@@ -32,9 +32,11 @@ public class WriteHoldingRegisterExecutorImpl extends BaseTransactionExecutor
     private Logger logger = LoggerFactory.getLogger(ReadInputRegisterExecutor.class);
     private Integer value;
     private Integer result;
+    private Double factorToValue;
 
-    public WriteHoldingRegisterExecutorImpl(String address) {
+    public WriteHoldingRegisterExecutorImpl(String address, Double factorToValue) {
         super(address, 1);
+        this.factorToValue = factorToValue;
     }
 
     @Override
@@ -49,7 +51,8 @@ public class WriteHoldingRegisterExecutorImpl extends BaseTransactionExecutor
 
     @Override
     public void execute(TCPMasterConnection con, int slaveAddress) throws ModbusException {
-        SimpleRegister register = new SimpleRegister(value);
+        Integer factoredValue = Double.valueOf(value * getInitializedFactorToValue()).intValue();
+        SimpleRegister register = new SimpleRegister(factoredValue);
 
         WriteSingleRegisterRequest req = new WriteSingleRegisterRequest(getAddress(), register);
         req.setUnitID(slaveAddress);
@@ -62,10 +65,18 @@ public class WriteHoldingRegisterExecutorImpl extends BaseTransactionExecutor
         if(res != null) {
             this.result = res.getRegisterValue();
             logger.debug("{}: Write holding register={} value={} confirmedValue={}", getApplianceId(), getAddress(),
-                    value, this.result);
+                    factoredValue, this.result);
         }
         else {
-            logger.error("{}: No response received.", getApplianceId());
+            logger.error("{}: No response received: register={} value={} ", getApplianceId(), getAddress(),
+                    factoredValue);
         }
+    }
+
+    private Double getInitializedFactorToValue() {
+        if(this.factorToValue == null) {
+            return 1.0;
+        }
+        return this.factorToValue;
     }
 }

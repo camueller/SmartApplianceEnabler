@@ -7,7 +7,7 @@ export class ModbusRegisterConfguration {
   type: string;
   write: boolean;
   extractionRegex: string;
-  factorToValue: string;
+  factorToValue: number;
 
   public constructor(init?: Partial<ModbusRegisterConfguration>) {
     Object.assign(this, init);

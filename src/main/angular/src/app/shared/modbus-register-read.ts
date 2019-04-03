@@ -10,7 +10,7 @@ export class ModbusRegisterRead {
   type: string;
   bytes: number;
   byteOrder: string;
-  factorToValue: string;
+  factorToValue: number;
   pollInterval: number;
   registerReadValues: ModbusRegisterReadValue[];
 

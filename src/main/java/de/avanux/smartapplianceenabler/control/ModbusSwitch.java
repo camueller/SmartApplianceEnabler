@@ -72,7 +72,7 @@ public class ModbusSwitch extends ModbusSlave implements Control {
         if (registerWrite != null) {
             try {
                 ModbusWriteTransactionExecutor executor = ModbusExecutorFactory.getWriteExecutor(getApplianceId(),
-                        registerWrite.getType(), registerWrite.getAddress());
+                        registerWrite.getType(), registerWrite.getAddress(),registerWrite.getFactorToValue());
                 executeTransaction(executor, true);
                 if(executor instanceof WriteCoilExecutor) {
                     result = switchOn == ((WriteCoilExecutor) executor).getResult();

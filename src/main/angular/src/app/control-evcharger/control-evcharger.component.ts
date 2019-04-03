@@ -161,6 +161,7 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
     this.formHandler.addFormControl(fg, 'byteOrder', configuration.byteOrder);
     this.formHandler.addFormControl(fg, 'extractionRegex', configuration.extractionRegex);
     this.formHandler.addFormControl(fg, 'value', configuration.value);
+    this.formHandler.addFormControl(fg, 'factorToValue', configuration.factorToValue);
     this.updateModbusConfigurationValueValidator(fg, configuration.write);
     fg.get('write').valueChanges.forEach(write => this.updateModbusConfigurationValueValidator(fg, write));
     return fg;
@@ -202,6 +203,11 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
   }
 
   buildModbusRegisterConfguration(modbusConfigurationFormControl: FormGroup): ModbusRegisterConfguration {
+    const factorToValueControlValue = modbusConfigurationFormControl.controls.factorToValue.value;
+    let factorToValue;
+    if (factorToValueControlValue !== null) {
+      factorToValue = factorToValueControlValue.toString().length > 0 ? factorToValueControlValue : undefined;
+    }
     return {
       name: modbusConfigurationFormControl.controls.name.value,
       address: modbusConfigurationFormControl.controls.registerAddress.value,
@@ -210,7 +216,7 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
       bytes: modbusConfigurationFormControl.controls.bytes.value,
       byteOrder: modbusConfigurationFormControl.controls.byteOrder.value,
       extractionRegex: modbusConfigurationFormControl.controls.extractionRegex.value,
-      factorToValue: undefined,
+      factorToValue,
       value: modbusConfigurationFormControl.controls.value.value,
     };
   }
@@ -279,6 +285,11 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
   isModbusWriteRegister(modbusConfiguration: FormGroup): boolean {
     const writeControl = modbusConfiguration.controls['write'];
     return (writeControl ? writeControl.value : false);
+  }
+
+  isChargingCurrentRegister(modbusConfiguration: FormGroup): boolean {
+    const control = modbusConfiguration.controls['name'];
+    return control.value === 'ChargingCurrent';
   }
 
   getRegisterType(modbusConfiguration: FormGroup): string {

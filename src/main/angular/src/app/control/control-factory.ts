@@ -216,6 +216,7 @@ export class ControlFactory {
                 address: registerWrite.address,
                 type: registerWrite.type,
                 value: registerWriteValue.value,
+                factorToValue: registerWrite.factorToValue,
                 write: true
               });
               configurations.push(configuration);
@@ -337,6 +338,7 @@ export class ControlFactory {
           matchingRegisterWrite = new ModbusRegisterWrite({
             address: configuration.address,
             type: configuration.type,
+            factorToValue: configuration.factorToValue,
             registerWriteValues: []
           });
           registerWrites.push(matchingRegisterWrite);
