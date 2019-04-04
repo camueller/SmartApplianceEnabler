@@ -712,11 +712,13 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                     * (100 + vehicle.getChargeLoss())/100.0f * batteryCapacity).intValue()
                     - Float.valueOf(energy * 1000).intValue();
             logger.debug("{}: optional energy calculated={}Wh", id, maxEnergy);
-            runtimeInterval = new RuntimeInterval();
-            runtimeInterval.setEarliestStart(0);
-            runtimeInterval.setLatestEnd(CONSIDERATION_INTERVAL_DAYS * 24 * 3600);
-            runtimeInterval.setMinEnergy(0);
-            runtimeInterval.setMaxEnergy(maxEnergy);
+            if (maxEnergy > 0) {
+                runtimeInterval = new RuntimeInterval();
+                runtimeInterval.setEarliestStart(0);
+                runtimeInterval.setLatestEnd(CONSIDERATION_INTERVAL_DAYS * 24 * 3600);
+                runtimeInterval.setMinEnergy(0);
+                runtimeInterval.setMaxEnergy(maxEnergy);
+            }
         }
         else {
             logger.warn("{}: no connected vehicle was found", id);

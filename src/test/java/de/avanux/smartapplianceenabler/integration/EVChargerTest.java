@@ -24,6 +24,7 @@ import de.avanux.smartapplianceenabler.appliance.RunningTimeMonitor;
 import de.avanux.smartapplianceenabler.appliance.RuntimeInterval;
 import de.avanux.smartapplianceenabler.control.ev.EVControl;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
+import de.avanux.smartapplianceenabler.control.ev.SocScript;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.test.TestBuilder;
 import org.joda.time.LocalDateTime;
@@ -42,12 +43,13 @@ public class EVChargerTest extends TestBase {
     private Logger logger = LoggerFactory.getLogger(EVChargerTest.class);
     private EVControl evControl = Mockito.mock(EVControl.class);
     private Meter meter = Mockito.mock(Meter.class);
+    private SocScript socScript = Mockito.mock(SocScript.class);
+    private String applianceId = "F-001";
+    private Integer evId = 1;
+    private Integer batteryCapacity = 40000;
 
     @Test
     public void optionalEnergyRequest() {
-        String applianceId = "F-001";
-        Integer evId = 1;
-        Integer batteryCapacity = 40000;
         TestBuilder builder = new TestBuilder()
                 .appliance(applianceId)
                 .withEvCharger(evControl)
@@ -139,10 +141,61 @@ public class EVChargerTest extends TestBase {
     }
 
     @Test
+    public void optionalEnergyRequest_SocScript_MaxSocGTInitialSoc() {
+        TestBuilder builder = new TestBuilder()
+                .appliance(applianceId)
+                .withEvCharger(evControl)
+                .withElectricVehicle(evId, batteryCapacity, 80, socScript)
+                .withMeter(meter)
+                .init();
+        Appliance appliance = builder.getAppliance();
+        ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
+
+        log("Vehicle not connected");
+        LocalDateTime timeInitial = toToday(9, 50, 0);
+        tick(appliance, timeInitial, false, false, false);
+        List<RuntimeInterval> runtimeIntervalsNotConnected = appliance.getRuntimeIntervals(timeInitial, false);
+        Assert.assertEquals(0, runtimeIntervalsNotConnected.size());
+
+        log("Vehicle connected");
+        LocalDateTime timeVehicleConnected = toToday(9, 55, 0);
+        Mockito.when(socScript.getStateOfCharge()).thenReturn(70.0f);
+        tick(appliance, timeInitial, true, false, false);
+        List<RuntimeInterval> runtimeIntervalsConnected = appliance.getRuntimeIntervals(timeVehicleConnected, false);
+        Assert.assertEquals(
+                Collections.singletonList(
+                        new RuntimeInterval(0, 172800, 0, 4400, true)
+                ),
+                runtimeIntervalsConnected);
+    }
+
+    @Test
+    public void optionalEnergyRequest_SocScript_MaxSocLTInitialSoc() {
+        TestBuilder builder = new TestBuilder()
+                .appliance(applianceId)
+                .withEvCharger(evControl)
+                .withElectricVehicle(evId, batteryCapacity, 80, socScript)
+                .withMeter(meter)
+                .init();
+        Appliance appliance = builder.getAppliance();
+        ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
+
+        log("Vehicle not connected");
+        LocalDateTime timeInitial = toToday(9, 50, 0);
+        tick(appliance, timeInitial, false, false, false);
+        List<RuntimeInterval> runtimeIntervalsNotConnected = appliance.getRuntimeIntervals(timeInitial, false);
+        Assert.assertEquals(0, runtimeIntervalsNotConnected.size());
+
+        log("Vehicle connected");
+        LocalDateTime timeVehicleConnected = toToday(9, 55, 0);
+        Mockito.when(socScript.getStateOfCharge()).thenReturn(84.5f);
+        tick(appliance, timeInitial, true, false, false);
+        List<RuntimeInterval> runtimeIntervalsConnected = appliance.getRuntimeIntervals(timeVehicleConnected, false);
+        Assert.assertEquals(0, runtimeIntervalsNotConnected.size());
+    }
+
+    @Test
     public void daytimeframeSocRequest() {
-        String applianceId = "F-001";
-        Integer evId = 1;
-        Integer batteryCapacity = 40000;
         TestBuilder builder = new TestBuilder()
                 .appliance(applianceId)
                 .withEvCharger(evControl)
@@ -174,10 +227,70 @@ public class EVChargerTest extends TestBase {
     }
 
     @Test
+    public void daytimeframeSocRequest_SocScript_RequestedSocGTInitialSoc() {
+        TestBuilder builder = new TestBuilder()
+                .appliance(applianceId)
+                .withEvCharger(evControl)
+                .withElectricVehicle(evId, batteryCapacity, null, socScript)
+                .withMockMeter()
+                .withSchedule(10,0, 16, 0)
+                .withSocRequest(evId, 50)
+                .init();
+        Appliance appliance = builder.getAppliance();
+        ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
+
+        log("Vehicle not connected");
+        LocalDateTime timeInitial = toToday(9, 50, 0);
+        List<RuntimeInterval> runtimeIntervalsNotConnected = appliance.getRuntimeIntervals(timeInitial, false);
+        Assert.assertEquals(0, runtimeIntervalsNotConnected.size());
+
+        log("After vehicle has been connected");
+        LocalDateTime timeVehicleConnected = toToday(9, 55, 0);
+        Mockito.when(evControl.isVehicleConnected()).thenReturn(true);
+        Mockito.when(socScript.getStateOfCharge()).thenReturn(42.7f);
+        evCharger.updateState();
+        List<RuntimeInterval> runtimeIntervalsConnected = appliance.getRuntimeIntervals(timeVehicleConnected, false);
+        Assert.assertEquals(
+                Arrays.asList(
+                        new RuntimeInterval(0, 299, 0, 25520, true),
+                        new RuntimeInterval(300, 21900, 3520, 3520, true),
+                        new RuntimeInterval(86700, 108300, 3520, 3520, true)
+                ),
+                runtimeIntervalsConnected);
+    }
+
+    @Test
+    public void daytimeframeSocRequest_SocScript_RequestedSocLTInitialSoc() {
+        TestBuilder builder = new TestBuilder()
+                .appliance(applianceId)
+                .withEvCharger(evControl)
+                .withElectricVehicle(evId, batteryCapacity, null, socScript)
+                .withMockMeter()
+                .withSchedule(10,0, 16, 0)
+                .withSocRequest(evId, 50)
+                .init();
+        Appliance appliance = builder.getAppliance();
+        ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
+
+        log("Vehicle not connected");
+        LocalDateTime timeInitial = toToday(9, 50, 0);
+        List<RuntimeInterval> runtimeIntervalsNotConnected = appliance.getRuntimeIntervals(timeInitial, false);
+        Assert.assertEquals(0, runtimeIntervalsNotConnected.size());
+
+        log("After connected");
+        LocalDateTime timeVehicleConnected = toToday(9, 55, 0);
+        Mockito.when(socScript.getStateOfCharge()).thenReturn(72.7f);
+        evCharger.updateState();
+        List<RuntimeInterval> runtimeIntervalsConnected = appliance.getRuntimeIntervals(timeVehicleConnected, false);
+        Assert.assertEquals(
+                Arrays.asList(
+                        new RuntimeInterval(0, 172800, 0, 12320, true)
+                ),
+                runtimeIntervalsConnected);
+    }
+
+    @Test
     public void manualStartFollowedByDaytimeframeRuntimeRequest() {
-        String applianceId = "F-001";
-        Integer evId = 1;
-        Integer batteryCapacity = 40000;
         TestBuilder builder = new TestBuilder()
                 .appliance(applianceId)
                 .withEvCharger(evControl)
@@ -195,7 +308,7 @@ public class EVChargerTest extends TestBase {
         List<RuntimeInterval> runtimeIntervalsNotConnected = appliance.getRuntimeIntervals(timeInitial, false);
         Assert.assertEquals(0, runtimeIntervalsNotConnected.size());
 
-        log("After vehicle has been connected");
+        log("Vehicle connected");
         LocalDateTime timeVehicleConnected = toToday(10, 0, 0);
         tick(appliance, timeVehicleConnected, true, false, false);
         List<RuntimeInterval> runtimeIntervalsConnected = appliance.getRuntimeIntervals(timeVehicleConnected, false);

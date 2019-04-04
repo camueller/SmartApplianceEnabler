@@ -27,6 +27,7 @@ import de.avanux.smartapplianceenabler.control.StartingCurrentSwitch;
 import de.avanux.smartapplianceenabler.control.ev.EVControl;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
+import de.avanux.smartapplianceenabler.control.ev.SocScript;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.schedule.*;
 import de.avanux.smartapplianceenabler.semp.webservice.Characteristics;
@@ -85,17 +86,31 @@ public class TestBuilder {
     }
 
     public TestBuilder withElectricVehicle(Integer evId, Integer batteryCapacity) {
+        ElectricVehicle vehicle = new ElectricVehicle();
+        vehicle.setId(evId);
+        vehicle.setBatteryCapacity(batteryCapacity);
+        addVehicle(vehicle);
+        return this;
+    }
+
+    public TestBuilder withElectricVehicle(Integer evId, Integer batteryCapacity, Integer defaultSocOptionalEnergy, SocScript socScript) {
+        ElectricVehicle vehicle = new ElectricVehicle();
+        vehicle.setId(evId);
+        vehicle.setBatteryCapacity(batteryCapacity);
+        vehicle.setDefaultSocOptionalEnergy(defaultSocOptionalEnergy);
+        vehicle.setSocScript(socScript);
+        addVehicle(vehicle);
+        return this;
+    }
+
+    private void addVehicle(ElectricVehicle vehicle) {
         ElectricVehicleCharger evCharger = (ElectricVehicleCharger) getAppliance().getControl();
         List<ElectricVehicle> vehicles = evCharger.getVehicles();
         if(vehicles == null) {
             vehicles = new ArrayList<>();
             evCharger.setVehicles(vehicles);
         }
-        ElectricVehicle vehicle = new ElectricVehicle();
-        vehicle.setId(evId);
-        vehicle.setBatteryCapacity(batteryCapacity);
         vehicles.add(vehicle);
-        return this;
     }
 
     public TestBuilder withMockMeter() {
