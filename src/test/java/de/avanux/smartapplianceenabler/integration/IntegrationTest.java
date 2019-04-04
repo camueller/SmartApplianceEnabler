@@ -29,6 +29,7 @@ import de.avanux.smartapplianceenabler.control.StartingCurrentSwitchDefaults;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.semp.webservice.*;
 import de.avanux.smartapplianceenabler.test.TestBuilder;
+import de.avanux.smartapplianceenabler.util.DateTimeProvider;
 import de.avanux.smartapplianceenabler.webservice.ApplianceStatus;
 import de.avanux.smartapplianceenabler.webservice.SaeController;
 import org.joda.time.LocalDateTime;
@@ -44,8 +45,10 @@ import java.util.List;
 public class IntegrationTest extends TestBase {
 
     private Logger logger = LoggerFactory.getLogger(SaeController.class);
+    private DateTimeProvider dateTimeProvider = Mockito.mock(DateTimeProvider.class);
     private SaeController saeController = new SaeController();
     private SempController sempController = new SempController();
+    String applianceId = "F-001";
 
     public IntegrationTest() {
         ApplianceManager.getInstanceWithoutTimer();
@@ -53,9 +56,9 @@ public class IntegrationTest extends TestBase {
 
     @Test
     public void testSwitchOnAndOff() {
-        String applianceId = "F-001";
+        LocalDateTime timeInitial = toToday(10, 0, 0);
         TestBuilder builder = new TestBuilder()
-                .appliance(applianceId)
+                .appliance(applianceId, dateTimeProvider, timeInitial)
                 .withMockSwitch(false)
                 .withSchedule(10, 0, 18, 0, 7200, null)
                 .init();
@@ -64,10 +67,8 @@ public class IntegrationTest extends TestBase {
         RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
 
         log("Check initial values");
-        LocalDateTime timeTimeframeStart = toToday(10, 0, 0);
         Assert.assertFalse(control.isOn());
-        Assert.assertNull(runningTimeMonitor.getActiveTimeframeInterval());
-        assertPlanningRequest(timeTimeframeStart,
+        assertPlanningRequest(timeInitial,
                 new Timeframe(applianceId,0, 28800,7199, 7200),
                 new Timeframe(applianceId, add24h(0), add24h(28800),7199, 7200));
 
@@ -154,9 +155,9 @@ public class IntegrationTest extends TestBase {
 
     @Test
     public void testClickGoLight() {
-        String applianceId = "F-001";
+        LocalDateTime timeInitial = toToday(11, 0, 0);
         TestBuilder builder = new TestBuilder()
-                .appliance(applianceId)
+                .appliance(applianceId, dateTimeProvider, timeInitial)
                 .withMockSwitch(false)
                 .withSchedule(10, 0, 18, 0, 3600, null)
                 .init();
@@ -166,26 +167,24 @@ public class IntegrationTest extends TestBase {
 
         log("Check initial values");
         Assert.assertFalse(control.isOn());
-        Assert.assertNull(runningTimeMonitor.getActiveTimeframeInterval());
 
         log("Set runtime creates timeframe to be set");
-        LocalDateTime timeSwitchOn = toToday(11, 0, 0);
         Assert.assertEquals(3600, saeController.suggestRuntime(applianceId).intValue());
-        saeController.setRuntimeDemand(timeSwitchOn, applianceId, 1800);
+        saeController.setRuntimeDemand(timeInitial, applianceId, 1800);
         Assert.assertNotNull(runningTimeMonitor.getActiveTimeframeInterval());
 
         log("Switch on");
-        sempController.em2Device(timeSwitchOn, createEM2Device(applianceId,true));
+        sempController.em2Device(timeInitial, createEM2Device(applianceId,true));
 
         log("Check values after switch on");
-        assertRunningTime(timeSwitchOn, control, runningTimeMonitor, true, true, false,
+        assertRunningTime(timeInitial, control, runningTimeMonitor, true, true, false,
                 0, 1800, null);
-        assertPlanningRequest(timeSwitchOn,
+        assertPlanningRequest(timeInitial,
                 new Timeframe(applianceId,0, 1800,1799, 1800),
                 new Timeframe(applianceId, add24h(-3600), add24h(25200),3599, 3600),
                 new Timeframe(applianceId, add48h(-3600), add48h(25200),3599, 3600)
         );
-        ApplianceStatus applianceStatusAfterSwitchOn = getApplianceStatus(timeSwitchOn);
+        ApplianceStatus applianceStatusAfterSwitchOn = getApplianceStatus(timeInitial);
         Assert.assertTrue(applianceStatusAfterSwitchOn.isOn());
 
         log("Update timeframe intervals right after min running time is reached");
@@ -207,9 +206,9 @@ public class IntegrationTest extends TestBase {
 
     @Test
     public void testSwitchOnAndOff_startingCurrentDetectedDuringTimeframeInterval() {
-        String applianceId = "F-001";
+        LocalDateTime timeInitial = toToday(11, 29, 0);
         TestBuilder builder = new TestBuilder()
-                .appliance(applianceId)
+                .appliance(applianceId, dateTimeProvider, timeInitial)
                 .withMockSwitch(true)
                 .withMockMeter()
                 .withSchedule(10, 0, 18, 0, 3600, null)
@@ -225,12 +224,11 @@ public class IntegrationTest extends TestBase {
                 false, null, null, null);
 
         log("Detect starting current");
-        LocalDateTime timeBeforeStartingCurrent = toToday(11, 29, 0);
         Mockito.when(meter.getAveragePower()).thenReturn(StartingCurrentSwitchDefaults.getPowerThreshold() + 1);
-        control.detectStartingCurrent(timeBeforeStartingCurrent, meter);
-        assertRunningTime(timeBeforeStartingCurrent, control, runningTimeMonitor, false, true, false, false,
+        control.detectStartingCurrent(timeInitial, meter);
+        assertRunningTime(timeInitial, control, runningTimeMonitor, false, true, false, false,
                 false, null, null, null);
-        Assert.assertEquals(0, sempController.createDevice2EM(timeBeforeStartingCurrent).getPlanningRequest().size());
+        Assert.assertEquals(0, sempController.createDevice2EM(timeInitial).getPlanningRequest().size());
 
         LocalDateTime timeStartingCurrent = toToday(11, 30, 0);
         control.detectStartingCurrent(toToday(11, 30, 0), meter);
@@ -267,9 +265,9 @@ public class IntegrationTest extends TestBase {
 
     @Test
     public void testSwitchOnBeforeTimeframeIntervalStart() {
-        String applianceId = "F-001";
+        LocalDateTime timeInitial = toToday(9, 59, 0);
         TestBuilder builder = new TestBuilder()
-                .appliance(applianceId)
+                .appliance(applianceId, dateTimeProvider, timeInitial)
                 .withMockSwitch(false)
                 .withMockMeter()
                 .withSchedule(10, 0, 18, 0, 3600, null)
@@ -279,13 +277,12 @@ public class IntegrationTest extends TestBase {
         RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
 
         log("Switch on");
-        LocalDateTime timeSwitchOn = toToday(9, 59, 0);
-        sempController.em2Device(timeSwitchOn, createEM2Device(applianceId,true));
+        sempController.em2Device(timeInitial, createEM2Device(applianceId,true));
         Assert.assertTrue("It should be possible to set appliance control state to running before " +
                 "the timeframe interval started", runningTimeMonitor.isRunning());
 
         log("Check values right after switch on before interval start");
-        assertRunningTime(timeSwitchOn, control, runningTimeMonitor, true, true, false,
+        assertRunningTime(timeInitial, control, runningTimeMonitor, true, true, false,
                 false, null, null, null);
 
         log("Check values after switch on right before interval start");
