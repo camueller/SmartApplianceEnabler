@@ -73,7 +73,7 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         }
     }
 
-    public void setSchedules(List<Schedule> schedules) {
+    public void setSchedules(List<Schedule> schedules, LocalDateTime now) {
         List<Schedule> enabledSchedules = new ArrayList<>();
         if(schedules != null) {
             for(Schedule schedule : schedules) {
@@ -92,7 +92,7 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         }
         this.schedules = enabledSchedules;
         this.activeTimeframeInterval = null;
-        updateActiveTimeframeInterval(new LocalDateTime());
+        updateActiveTimeframeInterval(now);
     }
     
     public List<Schedule> getSchedules() {

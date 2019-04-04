@@ -28,6 +28,8 @@ import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
 import de.avanux.smartapplianceenabler.schedule.*;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
+import de.avanux.smartapplianceenabler.util.DateTimeProvider;
+import de.avanux.smartapplianceenabler.util.DateTimeProviderImpl;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.joda.time.LocalDate;
@@ -67,9 +69,14 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     private Meter meter;
     @XmlElement(name = "Schedule")
     private List<Schedule> schedules;
+    private transient DateTimeProvider dateTimeProvider = new DateTimeProviderImpl();
     private transient RunningTimeMonitor runningTimeMonitor;
     private transient boolean acceptControlRecommendations = true;
     private transient static final int CONSIDERATION_INTERVAL_DAYS = 2;
+
+    public void setDateTimeProvider(DateTimeProvider dateTimeProvider) {
+        this.dateTimeProvider = dateTimeProvider;
+    }
 
     public void setId(String id) {
         this.id = id;
@@ -467,14 +474,14 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     public void activateSchedules() {
         if(runningTimeMonitor != null) {
             logger.debug("{}: Activating schedules", id);
-            runningTimeMonitor.setSchedules(schedules);
+            runningTimeMonitor.setSchedules(schedules, this.dateTimeProvider.now());
         }
     }
 
     public void deactivateSchedules() {
         if(runningTimeMonitor != null) {
             logger.debug("{}: Deactivating schedules", id);
-            runningTimeMonitor.setSchedules(new ArrayList<>());
+            runningTimeMonitor.setSchedules(new ArrayList<>(), this.dateTimeProvider.now());
         }
     }
 

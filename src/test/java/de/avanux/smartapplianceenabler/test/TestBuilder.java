@@ -34,6 +34,8 @@ import de.avanux.smartapplianceenabler.semp.webservice.Characteristics;
 import de.avanux.smartapplianceenabler.semp.webservice.Device2EM;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
 import de.avanux.smartapplianceenabler.semp.webservice.Identification;
+import de.avanux.smartapplianceenabler.util.DateTimeProvider;
+import org.joda.time.LocalDateTime;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
@@ -46,8 +48,13 @@ public class TestBuilder {
     private Appliances appliances = new Appliances();
     private Device2EM device2EM = new Device2EM();
 
-    public TestBuilder appliance(String applianceId) {
+    public TestBuilder appliance(String applianceId, DateTimeProvider dateTimeProvider, LocalDateTime now) {
         Appliance appliance = new Appliance();
+        appliance.setDateTimeProvider(dateTimeProvider);
+        if(dateTimeProvider != null && now != null) {
+            Mockito.when(dateTimeProvider.now()).thenReturn(now);
+        }
+
         appliance.setId(applianceId);
         appliances.setAppliances(Collections.singletonList(appliance));
 

@@ -353,7 +353,7 @@ public class SaeController {
             if(appliance.getMeter() != null) {
                 appliance.getMeter().resetEnergyMeter();
             }
-            appliance.getRunningTimeMonitor().setSchedules(schedulesToSet);
+            appliance.getRunningTimeMonitor().setSchedules(schedulesToSet, new LocalDateTime());
             return;
         }
         logger.error("{}: Appliance not found", applianceId);

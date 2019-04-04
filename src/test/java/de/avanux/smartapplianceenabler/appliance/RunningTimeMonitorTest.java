@@ -37,7 +37,7 @@ public class RunningTimeMonitorTest extends TestBase {
     public void getRemainingMinRunningTimeOfCurrentTimeFrame() {
         Schedule schedule = new Schedule(7200, null, new TimeOfDay(11, 0, 0),
                 new TimeOfDay(17, 0, 0));
-        runningTimeMonitor.setSchedules(Collections.singletonList(schedule));
+        runningTimeMonitor.setSchedules(Collections.singletonList(schedule), new LocalDateTime());
         Assert.assertNull("Timeframe not yet started should return NULL",
                 runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame (
                         toToday(10, 0, 0)));
@@ -76,7 +76,7 @@ public class RunningTimeMonitorTest extends TestBase {
                 new TimeOfDay(12, 0, 0)));
         schedules.add(new Schedule(1200, null, new TimeOfDay(14, 0, 0),
                 new TimeOfDay(15, 0, 0)));
-        runningTimeMonitor.setSchedules(schedules);
+        runningTimeMonitor.setSchedules(schedules, new LocalDateTime());
 
         //
         // 1. timeframe
@@ -119,11 +119,12 @@ public class RunningTimeMonitorTest extends TestBase {
 
     @Test
     public void getRemainingMinRunningTimeOfCurrentTimeFrame_MinRunningTimeDifferentFromMaxRunningTime() {
+        LocalDateTime timeInitial = toToday(7, 0, 0);
         Schedule schedule = new Schedule(300, 3600, new TimeOfDay(8, 0, 0),
                 new TimeOfDay(22, 59, 59));
-        runningTimeMonitor.setSchedules(Collections.singletonList(schedule));
+        runningTimeMonitor.setSchedules(Collections.singletonList(schedule), timeInitial);
         Assert.assertNull("Timeframe not yet started should return NULL",
-                runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toToday(7, 0, 0)));
+                runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(timeInitial));
         runningTimeMonitor.updateActiveTimeframeInterval(toToday(8, 00, 0));
         runningTimeMonitor.setRunning(true, toToday(9, 00, 0));
         Assert.assertEquals("With timeframe started and device switched on one minute ago 4 minutes are left",
@@ -136,13 +137,15 @@ public class RunningTimeMonitorTest extends TestBase {
 
     @Test
     public void getRemainingMaxRunningTimeOfCurrentTimeFrame_MinRunningTimeDifferentFromMaxRunningTime() {
+        LocalDateTime timeInitial = toToday(7, 0, 0);
         Schedule schedule = new Schedule(300, 3600, new TimeOfDay(8, 0, 0),
                 new TimeOfDay(22, 59, 59));
-        runningTimeMonitor.setSchedules(Collections.singletonList(schedule));
+        runningTimeMonitor.setSchedules(Collections.singletonList(schedule), timeInitial);
         Assert.assertNull("Timeframe not yet started should return NULL",
                 runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(toToday(7, 0, 0)));
-        runningTimeMonitor.updateActiveTimeframeInterval(toToday(9, 00, 0));
-        runningTimeMonitor.setRunning(true, toToday(9, 00, 0));
+        LocalDateTime timeAfterTimeframeStart = toToday(9, 0, 0);
+        runningTimeMonitor.updateActiveTimeframeInterval(timeAfterTimeframeStart);
+        runningTimeMonitor.setRunning(true, timeAfterTimeframeStart);
         Assert.assertEquals("With timeframe started and device switched on one minute ago 59 minutes are left",
                 3540, runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(toToday(9, 1, 0)).intValue());
         Assert.assertEquals("With timeframe started and device switched on one hour ago no running time is left",

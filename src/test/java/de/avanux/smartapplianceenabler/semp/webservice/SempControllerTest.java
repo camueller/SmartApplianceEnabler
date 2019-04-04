@@ -5,9 +5,11 @@ import de.avanux.smartapplianceenabler.appliance.*;
 import de.avanux.smartapplianceenabler.schedule.Schedule;
 import de.avanux.smartapplianceenabler.schedule.TimeOfDay;
 import de.avanux.smartapplianceenabler.test.TestBuilder;
+import de.avanux.smartapplianceenabler.util.DateTimeProvider;
 import org.joda.time.LocalDateTime;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.util.Collections;
 import java.util.List;
@@ -18,7 +20,9 @@ import static org.mockito.Mockito.when;
 public class SempControllerTest extends TestBase {
 
     public static final String DEVICE_ID = "DeviceID1";
+    String applianceId = "F-001";
     private SempController sempController;
+    private DateTimeProvider dateTimeProvider = Mockito.mock(DateTimeProvider.class);
 
     public SempControllerTest() {
         sempController = new SempController();
@@ -26,9 +30,9 @@ public class SempControllerTest extends TestBase {
 
     @Test
     public void createDeviceInfo_noOptionalEnergy() {
-        String applianceId = "F-001";
+        LocalDateTime now = toToday(9, 30, 0);
         TestBuilder builder = new TestBuilder()
-                .appliance(applianceId)
+                .appliance(applianceId, dateTimeProvider, now)
                 .withMockSwitch(false)
                 .withSchedule(10, 0, 18, 0, 3600, null)
                 .init();
@@ -39,9 +43,9 @@ public class SempControllerTest extends TestBase {
 
     @Test
     public void createDeviceInfo_optionalEnergy() {
-        String applianceId = "F-001";
+        LocalDateTime now = toToday(9, 30, 0);
         TestBuilder builder = new TestBuilder()
-                .appliance(applianceId)
+                .appliance(applianceId, dateTimeProvider, now)
                 .withMockSwitch(false)
                 .withSchedule(10, 0, 18, 0, 3600, 7200)
                 .init();

@@ -27,6 +27,7 @@ import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
 import de.avanux.smartapplianceenabler.control.ev.SocScript;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.test.TestBuilder;
+import de.avanux.smartapplianceenabler.util.DateTimeProvider;
 import org.joda.time.LocalDateTime;
 import org.junit.Assert;
 import org.junit.Test;
@@ -41,6 +42,7 @@ import java.util.List;
 public class EVChargerTest extends TestBase {
 
     private Logger logger = LoggerFactory.getLogger(EVChargerTest.class);
+    private DateTimeProvider dateTimeProvider = Mockito.mock(DateTimeProvider.class);
     private EVControl evControl = Mockito.mock(EVControl.class);
     private Meter meter = Mockito.mock(Meter.class);
     private SocScript socScript = Mockito.mock(SocScript.class);
@@ -50,8 +52,9 @@ public class EVChargerTest extends TestBase {
 
     @Test
     public void optionalEnergyRequest() {
+        LocalDateTime timeInitial = toToday(9, 50, 0);
         TestBuilder builder = new TestBuilder()
-                .appliance(applianceId)
+                .appliance(applianceId, dateTimeProvider, timeInitial)
                 .withEvCharger(evControl)
                 .withElectricVehicle(evId, batteryCapacity)
                 .withMeter(meter)
@@ -60,7 +63,6 @@ public class EVChargerTest extends TestBase {
         ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
 
         log("Vehicle not connected");
-        LocalDateTime timeInitial = toToday(9, 50, 0);
         tick(appliance, timeInitial, false, false, false);
         List<RuntimeInterval> runtimeIntervalsNotConnected = appliance.getRuntimeIntervals(timeInitial, false);
         Assert.assertEquals(0, runtimeIntervalsNotConnected.size());
@@ -142,8 +144,9 @@ public class EVChargerTest extends TestBase {
 
     @Test
     public void optionalEnergyRequest_SocScript_MaxSocGTInitialSoc() {
+        LocalDateTime timeInitial = toToday(9, 50, 0);
         TestBuilder builder = new TestBuilder()
-                .appliance(applianceId)
+                .appliance(applianceId, dateTimeProvider, timeInitial)
                 .withEvCharger(evControl)
                 .withElectricVehicle(evId, batteryCapacity, 80, socScript)
                 .withMeter(meter)
@@ -152,7 +155,6 @@ public class EVChargerTest extends TestBase {
         ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
 
         log("Vehicle not connected");
-        LocalDateTime timeInitial = toToday(9, 50, 0);
         tick(appliance, timeInitial, false, false, false);
         List<RuntimeInterval> runtimeIntervalsNotConnected = appliance.getRuntimeIntervals(timeInitial, false);
         Assert.assertEquals(0, runtimeIntervalsNotConnected.size());
@@ -171,8 +173,9 @@ public class EVChargerTest extends TestBase {
 
     @Test
     public void optionalEnergyRequest_SocScript_MaxSocLTInitialSoc() {
+        LocalDateTime timeInitial = toToday(9, 50, 0);
         TestBuilder builder = new TestBuilder()
-                .appliance(applianceId)
+                .appliance(applianceId, dateTimeProvider, timeInitial)
                 .withEvCharger(evControl)
                 .withElectricVehicle(evId, batteryCapacity, 80, socScript)
                 .withMeter(meter)
@@ -181,7 +184,6 @@ public class EVChargerTest extends TestBase {
         ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
 
         log("Vehicle not connected");
-        LocalDateTime timeInitial = toToday(9, 50, 0);
         tick(appliance, timeInitial, false, false, false);
         List<RuntimeInterval> runtimeIntervalsNotConnected = appliance.getRuntimeIntervals(timeInitial, false);
         Assert.assertEquals(0, runtimeIntervalsNotConnected.size());
@@ -196,8 +198,9 @@ public class EVChargerTest extends TestBase {
 
     @Test
     public void daytimeframeSocRequest() {
+        LocalDateTime timeInitial = toToday(9, 50, 0);
         TestBuilder builder = new TestBuilder()
-                .appliance(applianceId)
+                .appliance(applianceId, dateTimeProvider, timeInitial)
                 .withEvCharger(evControl)
                 .withElectricVehicle(evId, batteryCapacity)
                 .withMockMeter()
@@ -208,7 +211,6 @@ public class EVChargerTest extends TestBase {
         ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
 
         log("Vehicle not connected");
-        LocalDateTime timeInitial = toToday(9, 50, 0);
         List<RuntimeInterval> runtimeIntervalsNotConnected = appliance.getRuntimeIntervals(timeInitial, false);
         Assert.assertEquals(0, runtimeIntervalsNotConnected.size());
 
@@ -228,8 +230,9 @@ public class EVChargerTest extends TestBase {
 
     @Test
     public void daytimeframeSocRequest_SocScript_RequestedSocGTInitialSoc() {
+        LocalDateTime timeInitial = toToday(9, 50, 0);
         TestBuilder builder = new TestBuilder()
-                .appliance(applianceId)
+                .appliance(applianceId, dateTimeProvider, timeInitial)
                 .withEvCharger(evControl)
                 .withElectricVehicle(evId, batteryCapacity, null, socScript)
                 .withMockMeter()
@@ -240,7 +243,6 @@ public class EVChargerTest extends TestBase {
         ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
 
         log("Vehicle not connected");
-        LocalDateTime timeInitial = toToday(9, 50, 0);
         List<RuntimeInterval> runtimeIntervalsNotConnected = appliance.getRuntimeIntervals(timeInitial, false);
         Assert.assertEquals(0, runtimeIntervalsNotConnected.size());
 
@@ -261,8 +263,9 @@ public class EVChargerTest extends TestBase {
 
     @Test
     public void daytimeframeSocRequest_SocScript_RequestedSocLTInitialSoc() {
+        LocalDateTime timeInitial = toToday(9, 50, 0);
         TestBuilder builder = new TestBuilder()
-                .appliance(applianceId)
+                .appliance(applianceId, dateTimeProvider, timeInitial)
                 .withEvCharger(evControl)
                 .withElectricVehicle(evId, batteryCapacity, null, socScript)
                 .withMockMeter()
@@ -273,7 +276,6 @@ public class EVChargerTest extends TestBase {
         ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
 
         log("Vehicle not connected");
-        LocalDateTime timeInitial = toToday(9, 50, 0);
         List<RuntimeInterval> runtimeIntervalsNotConnected = appliance.getRuntimeIntervals(timeInitial, false);
         Assert.assertEquals(0, runtimeIntervalsNotConnected.size());
 
@@ -282,17 +284,14 @@ public class EVChargerTest extends TestBase {
         Mockito.when(socScript.getStateOfCharge()).thenReturn(72.7f);
         evCharger.updateState();
         List<RuntimeInterval> runtimeIntervalsConnected = appliance.getRuntimeIntervals(timeVehicleConnected, false);
-        Assert.assertEquals(
-                Arrays.asList(
-                        new RuntimeInterval(0, 172800, 0, 12320, true)
-                ),
-                runtimeIntervalsConnected);
+        Assert.assertEquals(0, runtimeIntervalsNotConnected.size());
     }
 
     @Test
     public void manualStartFollowedByDaytimeframeRuntimeRequest() {
+        LocalDateTime timeInitial = toToday(9, 50, 0);
         TestBuilder builder = new TestBuilder()
-                .appliance(applianceId)
+                .appliance(applianceId, dateTimeProvider, timeInitial)
                 .withEvCharger(evControl)
                 .withElectricVehicle(evId, batteryCapacity)
                 .withMockMeter()
@@ -304,7 +303,6 @@ public class EVChargerTest extends TestBase {
         RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
 
         log("Vehicle not connected");
-        LocalDateTime timeInitial = toToday(9, 50, 0);
         List<RuntimeInterval> runtimeIntervalsNotConnected = appliance.getRuntimeIntervals(timeInitial, false);
         Assert.assertEquals(0, runtimeIntervalsNotConnected.size());
 
@@ -351,6 +349,7 @@ public class EVChargerTest extends TestBase {
 
     private void tick(Appliance appliance, LocalDateTime now,
                       boolean connected, boolean charging, boolean chargingCompleted, Float energyMetered) {
+        Mockito.when(dateTimeProvider.now()).thenReturn(now);
         Mockito.when(evControl.isVehicleConnected()).thenReturn(connected);
         Mockito.when(evControl.isCharging()).thenReturn(charging);
         Mockito.when(evControl.isChargingCompleted()).thenReturn(chargingCompleted);
