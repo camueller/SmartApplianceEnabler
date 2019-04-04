@@ -741,12 +741,16 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                                           Integer maxEnergy) {
         RuntimeInterval runtimeInterval = createEnergyRequestInterval(interval, minEnergy, maxEnergy, now);
         if(runtimeInterval != null) {
-            if(!isFutureEmptyEnergyRequestInterval(runtimeInterval)
-                    && ! isOverlappingRuntimeInterval(runtimeInterval, runtimeIntervals)) {
-                runtimeIntervals.add(runtimeInterval);
+            if(!isFutureEmptyEnergyRequestInterval(runtimeInterval)) {
+                if(! isOverlappingRuntimeInterval(runtimeInterval, runtimeIntervals)) {
+                    runtimeIntervals.add(runtimeInterval);
+                }
+                else {
+                    logger.debug("{} Ignore overlapping request Interval: {}", id, runtimeInterval);
+                }
             }
             else {
-                logger.debug("{} Ignore overlapping RuntimeInterval: {}", id, runtimeInterval);
+                logger.debug("{} Ignore future empty energy request Interval: {}", id, runtimeInterval);
             }
         }
     }
