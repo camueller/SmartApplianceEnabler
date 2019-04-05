@@ -70,7 +70,6 @@ export class EvChargerTemplates {
       '        "name": "ChargingCurrent",\n' +
       '        "address": "300",\n' +
       '        "type": "Holding",\n' +
-      '        "value": "0",\n' +
       '        "write": true\n' +
       '      }\n' +
       '    ]\n' +

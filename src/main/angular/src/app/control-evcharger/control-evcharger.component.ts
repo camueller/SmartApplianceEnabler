@@ -18,6 +18,7 @@ import {FormHandler} from '../shared/form-handler';
 import {SocScript} from './soc-script';
 import {ControlDefaults} from '../control/control-defaults';
 import {AppliancesReloadService} from '../appliance/appliances-reload-service';
+import {EvModbusWriteRegisterName} from './ev-modbus-write-register-name';
 
 declare const $: any;
 
@@ -203,13 +204,21 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
   }
 
   buildModbusRegisterConfguration(modbusConfigurationFormControl: FormGroup): ModbusRegisterConfguration {
+    const name = modbusConfigurationFormControl.controls.name.value;
+
+    let value = modbusConfigurationFormControl.controls.value.value;
+    if (name === EvModbusWriteRegisterName.ChargingCurrent && ! value) {
+      value = '0';
+    }
+
     const factorToValueControlValue = modbusConfigurationFormControl.controls.factorToValue.value;
     let factorToValue;
     if (factorToValueControlValue !== null) {
       factorToValue = factorToValueControlValue.toString().length > 0 ? factorToValueControlValue : undefined;
     }
+
     return {
-      name: modbusConfigurationFormControl.controls.name.value,
+      name,
       address: modbusConfigurationFormControl.controls.registerAddress.value,
       write: modbusConfigurationFormControl.controls.write.value,
       type: modbusConfigurationFormControl.controls.registerType.value,
@@ -217,7 +226,7 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
       byteOrder: modbusConfigurationFormControl.controls.byteOrder.value,
       extractionRegex: modbusConfigurationFormControl.controls.extractionRegex.value,
       factorToValue,
-      value: modbusConfigurationFormControl.controls.value.value,
+      value,
     };
   }
 
@@ -289,7 +298,7 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
 
   isChargingCurrentRegister(modbusConfiguration: FormGroup): boolean {
     const control = modbusConfiguration.controls['name'];
-    return control.value === 'ChargingCurrent';
+    return control.value === EvModbusWriteRegisterName.ChargingCurrent;
   }
 
   getRegisterType(modbusConfiguration: FormGroup): string {
