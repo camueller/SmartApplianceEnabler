@@ -35,12 +35,12 @@ public class RunningTimeMonitorTest extends TestBase {
 
     @Test
     public void getRemainingMinRunningTimeOfCurrentTimeFrame() {
+        LocalDateTime timeInitial = toToday(10, 0, 0);
         Schedule schedule = new Schedule(7200, null, new TimeOfDay(11, 0, 0),
                 new TimeOfDay(17, 0, 0));
-        runningTimeMonitor.setSchedules(Collections.singletonList(schedule), new LocalDateTime());
+        runningTimeMonitor.setSchedules(Collections.singletonList(schedule), timeInitial);
         Assert.assertNull("Timeframe not yet started should return NULL",
-                runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame (
-                        toToday(10, 0, 0)));
+                runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame (timeInitial));
         runningTimeMonitor.updateActiveTimeframeInterval(toToday(11, 00, 0));
         Assert.assertEquals("With timeframe started but device switched off max running time should be returned",
                 7200, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(
@@ -71,17 +71,18 @@ public class RunningTimeMonitorTest extends TestBase {
 
     @Test
     public void getRemainingMinRunningTimeOfCurrentTimeFrame_2TimeFrames() {
+        LocalDateTime timeInitial = toToday(10, 0, 0);
         List<Schedule> schedules = new ArrayList<Schedule>();
         schedules.add(new Schedule(600, null, new TimeOfDay(11, 0, 0),
                 new TimeOfDay(12, 0, 0)));
         schedules.add(new Schedule(1200, null, new TimeOfDay(14, 0, 0),
                 new TimeOfDay(15, 0, 0)));
-        runningTimeMonitor.setSchedules(schedules, new LocalDateTime());
+        runningTimeMonitor.setSchedules(schedules, timeInitial);
 
         //
         // 1. timeframe
         //
-        runningTimeMonitor.updateActiveTimeframeInterval(toToday(10, 00, 0));
+        runningTimeMonitor.updateActiveTimeframeInterval(timeInitial);
         Assert.assertNull("Timeframe not yet started should return NULL",
                 runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(toToday(10, 0, 0)));
         runningTimeMonitor.updateActiveTimeframeInterval(toToday(11, 00, 0));
