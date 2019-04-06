@@ -44,6 +44,9 @@ Das Ändern der ```ID``` führt alledings dazu, dass der SHM das Gerät als Neug
 
 Sobald Änderungen vorgenommen wurden und die Korrektheit der Eingaben überprüft wurde, wird wiederum die ```Speichern```-Schaltfläche freigegeben und die Änderungen können gespeichert werden. Außerdem kann das Gerät durch Klicken der ```Löschen```-Schaltfläche gelöscht werden.
 
+Aktuell unterstützt der Sunny Home Manager maximal 12 Geräte. Zur Gesamtzahl zählen neben den Geräten, die mit dem SEMP Protokoll angesprochen werden, auch z.B. SMA Bluetooth Funksteckdosen - also alle Geräte, die im Sunny Portal in der Verbraucherübersicht angezeigt werden. Wird die zulässige Höchstzahl überschritten, wird das neu angelegte Gerät im Sunny Portal angezeigt, kann jedoch nicht hinzugefügt werden (gelbes Ausrufezeichen, Fehlermeldung "Weder eine Erweiterung noch ein Austausch ist in dieser Geräteklasse möglich").
+Geräte die zu viel oder falsch im SAE hinzugefügt wurden verschwinden nach dem Löschen im SAE erst nach ein paar Wochen automatisch aus dem Sunny Portal. Es ist aktuell keine Möglichkeit bekannt diesen Vorgang zu beschleunigen.
+
 ## Zähler
 
 Um einen Zähler zu konfigurieren muss in der ```Typ```-Auswahlbox der Typ des Zählers ausgewählt werden. Entsprechend dieser Auswahl werden die für den gewählten Zähler-Typ konfigurierbaren Felder eingeblendet.
