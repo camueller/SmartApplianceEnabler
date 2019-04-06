@@ -80,7 +80,7 @@ Wenn ein Gerät schaltbar ist, können Zeitpläne konfiguriert werden. Ein Zeitp
 Für einen Tagesplan kann angegeben werden, dass dieser an Feiertagen gelten soll.
 Diese hat Vorrang vor anderen Tagesplänen, die entsprechend des Wochentages gelten würden. Voraussetzung dafür ist, dass das [Feiertagshandling in der Konfiguration aktiviert](Settings_DE.md#Feiertage) wurde.
 
-Neben dem Zeitrahmen hat ein Zeitplan auch eine ```Anforderungsart```, die (abhängig vom Geräte-Typ) meist ```Laufzeit``` ist. In diesem Fall bringt der Zeitplan eine bestimme minimale und/oder maximale gewünschte Laufzeit zum Ausdruck. Wenn die minimale Laufzeit auf ```0``` gesetzt wird und die maximale Laufzeit auf einen größeren Wert, wird damit zum Ausdruck gebracht, dass dieses Gerät *Überschussenenergie* aufnehmen kann bzw. soll.
+Neben dem Zeitrahmen hat ein Zeitplan auch eine ```Anforderungsart```, die (abhängig vom Geräte-Typ) meist ```Laufzeit``` ist. In diesem Fall bringt der Zeitplan eine bestimme minimale und/oder maximale gewünschte Laufzeit zum Ausdruck. Wenn die minimale Laufzeit auf ```0``` gesetzt wird und die maximale Laufzeit auf einen größeren Wert, wird damit zum Ausdruck gebracht, dass dieses Gerät *Überschussenenergie* aufnehmen kann bzw. soll. Wenn die minimale Laufzeit auf ```0``` gesetzt wird muss die maximale Laufzeit auf einen Wert größer ```0``` gesetzt werden, ansonsten ignoriert der Sunny Home Manager diesen Zeitplan.
 
 ![Schaltzeiten Tagesplan](../pics/fe/SchaltzeitenTagesplanLaufzeit.png)
 Schaltzeiten mit Tagesplan
