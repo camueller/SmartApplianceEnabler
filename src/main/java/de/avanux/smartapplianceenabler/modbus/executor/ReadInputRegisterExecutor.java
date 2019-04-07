@@ -60,7 +60,7 @@ abstract public class ReadInputRegisterExecutor<V> extends BaseTransactionExecut
         }
     }
 
-    protected Integer[] getByteValues() {
+    public Integer[] getByteValues() {
         return byteValues;
     }
 

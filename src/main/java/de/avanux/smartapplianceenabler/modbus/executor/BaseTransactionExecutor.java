@@ -46,7 +46,7 @@ abstract public class BaseTransactionExecutor implements ApplianceIdConsumer {
         return applianceId;
     }
 
-    protected Integer getAddress() {
+    public Integer getAddress() {
         return address;
     }
 
