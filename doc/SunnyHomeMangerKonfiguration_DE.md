@@ -1,5 +1,4 @@
 # Integration in den Sunny Home Manager (SHM)
-Falls das Gerät im SAE konfiguriert wurde, ohne dass danach der SAE neu gestartet wurde, ist jetzt zwingend ein Neustart erforderlich!
 Zum Hinzufügen neuer Geräte in den Sunny Home Manager muss auf der Seite
 ```
 Konfiguration -> Geräteübersicht -> Tab: Übersicht Neugeräte
@@ -18,7 +17,7 @@ Im zweiten Schritt wird lediglich eine Zusammenfassung angezeigt:
 
 Nach Drücken von ```Fertigstellen``` wird noch eine Bestätigung angezeigt, dass das Gerät hinzugefügt wurde.
 
-Der SHM fragt den SAE alle 60 Sekunden nach dem Status der verwaltenden Geräte zugehörigen Schaltzeiten. In der [Log-Datei](Support.md#Log) sollten für jede Abfrage in etwa folgende Zeilen stehen: 
+Der SHM fragt den *Smart Appliance Enabler* alle 60 Sekunden nach dem Status der verwaltenden Geräte zugehörigen Schaltzeiten. In der [Log-Datei](Support.md#Log) sollten für jede Abfrage in etwa folgende Zeilen stehen: 
 ```
 2019-03-30 00:00:55,154 DEBUG [http-nio-8080-exec-5] d.a.s.s.w.SempController [SempController.java:55] Device info/status/planning requested.
 2019-03-30 00:00:55,156 DEBUG [http-nio-8080-exec-5] d.a.s.s.w.SempController [SempController.java:218] F-00000001-000000000001-00: Reporting device status based on power consumption
@@ -33,3 +32,5 @@ Der SHM fragt den SAE alle 60 Sekunden nach dem Status der verwaltenden Geräte 
 In der Verbraucherbilanz sollte ab jetzt das neue Gerät aufgeführt werden mit seinem Verbrauch:
 
 ![Verbraucherbilanz](../pics/shm/Verbraucherbilanz.png)
+
+Aktuell unterstützt der Sunny Home Manager maximal 12 Geräte. Zur Gesamtzahl zählen neben den Geräten, die mit dem SEMP Protokoll angesprochen werden, auch z.B. SMA Bluetooth Funksteckdosen - also alle Geräte, die im Sunny Portal in der Verbraucherübersicht angezeigt werden. Wird die zulässige Höchstzahl überschritten, wird das neu angelegte Gerät im Sunny Portal angezeigt, kann jedoch nicht hinzugefügt werden (gelbes Ausrufezeichen, Fehlermeldung "Weder eine Erweiterung noch ein Austausch ist in dieser Geräteklasse möglich").
