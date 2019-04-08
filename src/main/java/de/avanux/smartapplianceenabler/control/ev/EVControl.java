@@ -24,7 +24,7 @@ public interface EVControl extends ApplianceIdConsumer {
 
     void setPollInterval(Integer pollInterval);
 
-    void init();
+    void init(boolean checkRegisterConfiguration);
 
     boolean isVehicleNotConnected();
 

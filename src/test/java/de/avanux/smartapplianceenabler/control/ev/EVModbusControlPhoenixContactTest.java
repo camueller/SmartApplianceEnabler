@@ -71,7 +71,7 @@ public class EVModbusControlPhoenixContactTest {
 
         this.evModbusControl.setRegisterReads(Arrays.asList(register100, register204));
         this.evModbusControl.setRegisterWrites(Arrays.asList(register400, register300));
-        this.evModbusControl.init();
+        this.evModbusControl.init(true);
 
         this.readStringTestingExecutor = new ModbusReadStringTestingExecutor();
         ModbusExecutorFactory.setTestingReadStringExecutor(this.readStringTestingExecutor);

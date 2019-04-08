@@ -52,56 +52,66 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
         this.pollInterval = pollInterval;
     }
 
-    public void init() {
+    public RequestCache<ModbusRegisterRead, ModbusReadTransactionExecutor> getRequestCache() {
+        return requestCache;
+    }
+
+    public void setRequestCache(RequestCache<ModbusRegisterRead, ModbusReadTransactionExecutor> requestCache) {
+        this.requestCache = requestCache;
+    }
+
+    public void init(boolean checkRegisterConfiguration) {
         int cacheMaxAgeSeconds = this.pollInterval - 1;
         this.requestCache = new RequestCache<>(getApplianceId(), cacheMaxAgeSeconds);
 
-        boolean valid = true;
-        for(EVModbusReadRegisterName registerName: EVModbusReadRegisterName.values()) {
-            List<ModbusRegisterRead> registerReads = ModbusRegisterRead.getRegisterReads(registerName.name(),
-                    this.registerReads);
-            if(registerReads.size() > 0) {
-                for(ModbusRegisterRead registerRead: registerReads) {
-                    logger.debug("{}: {} configured: read register={} extraction regex={}",
-                            getApplianceId(),
-                            registerName.name(),
-                            registerRead.getAddress(),
-                            registerRead.getSelectedRegisterReadValue().getExtractionRegex());
+        if(checkRegisterConfiguration) {
+            boolean valid = true;
+            for(EVModbusReadRegisterName registerName: EVModbusReadRegisterName.values()) {
+                List<ModbusRegisterRead> registerReads = ModbusRegisterRead.getRegisterReads(registerName.name(),
+                        this.registerReads);
+                if(registerReads.size() > 0) {
+                    for(ModbusRegisterRead registerRead: registerReads) {
+                        logger.debug("{}: {} configured: read register={} extraction regex={}",
+                                getApplianceId(),
+                                registerName.name(),
+                                registerRead.getAddress(),
+                                registerRead.getSelectedRegisterReadValue().getExtractionRegex());
+                    }
+                } else {
+                    logger.error("{}: Missing register configuration for {}", getApplianceId(), registerName.name());
+                    valid = false;
                 }
-            } else {
-                logger.error("{}: Missing register configuration for {}", getApplianceId(), registerName.name());
-                valid = false;
             }
-        }
 
-        for(EVModbusWriteRegisterName registerName: EVModbusWriteRegisterName.values()) {
-            List<ModbusRegisterWrite> registerWrites = ModbusRegisterWrite.getRegisterWrites(registerName.name(),
-                    this.registerWrites);
-            if(registerWrites.size() > 0) {
-                for(ModbusRegisterWrite registerWrite: registerWrites) {
-                    logger.debug("{}: {} configured: write register={} value={} factorToValue={}",
-                            getApplianceId(),
-                            registerName.name(),
-                            registerWrite.getAddress(),
-                            registerWrite.getSelectedRegisterWriteValue().getValue(),
-                            registerWrite.getFactorToValue());
-                }
-                if(EVModbusWriteRegisterName.ChargingCurrent.equals(registerName)) {
+            for(EVModbusWriteRegisterName registerName: EVModbusWriteRegisterName.values()) {
+                List<ModbusRegisterWrite> registerWrites = ModbusRegisterWrite.getRegisterWrites(registerName.name(),
+                        this.registerWrites);
+                if(registerWrites.size() > 0) {
+                    for(ModbusRegisterWrite registerWrite: registerWrites) {
+                        logger.debug("{}: {} configured: write register={} value={} factorToValue={}",
+                                getApplianceId(),
+                                registerName.name(),
+                                registerWrite.getAddress(),
+                                registerWrite.getSelectedRegisterWriteValue().getValue(),
+                                registerWrite.getFactorToValue());
+                    }
+                    if(EVModbusWriteRegisterName.ChargingCurrent.equals(registerName)) {
                     /* Alternative, falls Ladestrom am Controller nur auf feste Werte gesetzt werden kann
                     <ModbusRegisterWriteValue name="ChargingCurrent" param="2000" value="1" />
                     <ModbusRegisterWriteValue name="ChargingCurrent" param="4000" value="2" />
                     <ModbusRegisterWriteValue name="ChargingCurrent" param="6000" value="3" />
                     */
+                    }
+                }
+                else {
+                    logger.error("{}: Missing register configuration for {}", getApplianceId(), registerName.name());
+                    valid = false;
                 }
             }
-            else {
-                logger.error("{}: Missing register configuration for {}", getApplianceId(), registerName.name());
-                valid = false;
+            if(! valid) {
+                logger.error("{}: Terminating because of incorrect configuration", getApplianceId());
+                System.exit(-1);
             }
-        }
-        if(! valid) {
-            logger.error("{}: Terminating because of incorrect configuration", getApplianceId());
-            System.exit(-1);
         }
     }
 
