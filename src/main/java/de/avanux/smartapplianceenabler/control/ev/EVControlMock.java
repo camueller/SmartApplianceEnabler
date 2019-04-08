@@ -58,7 +58,7 @@ public class EVControlMock implements EVControl, Meter {
     }
 
     @Override
-    public void init() {
+    public void init(boolean checkRegisterConfiguration) {
     }
 
     @Override

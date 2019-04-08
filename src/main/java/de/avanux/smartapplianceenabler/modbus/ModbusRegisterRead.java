@@ -61,6 +61,10 @@ public class ModbusRegisterRead {
         return address;
     }
 
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
     public Integer getBytes() {
         if(bytes == null) {
             if(getType() == ModbusReadRegisterType.InputFloat) {
@@ -69,6 +73,10 @@ public class ModbusRegisterRead {
             return 1;
         }
         return bytes;
+    }
+
+    public void setBytes(Integer bytes) {
+        this.bytes = bytes;
     }
 
     public ByteOrder getByteOrder() {
