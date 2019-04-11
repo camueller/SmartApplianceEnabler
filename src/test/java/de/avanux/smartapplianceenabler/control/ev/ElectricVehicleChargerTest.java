@@ -258,7 +258,7 @@ public class ElectricVehicleChargerTest {
     }
 
     @Test
-    public void isOn() {
+    public void isOn_startChargingStateDetectionDelay() {
         int startChargingStateDetectionDelay = 300;
         long currentMillis = 1000000;
         // initial state != CHARGING

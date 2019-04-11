@@ -30,28 +30,31 @@ import java.util.Collections;
 
 public class EVModbusControlTest {
     private EVModbusControl evModbusControl;
-
+    private ModbusWriteIntegerTestingExecutor writeIntegerTestingExecutor;
 
     public EVModbusControlTest() {
         this.evModbusControl = new EVModbusControl();
         this.evModbusControl.setApplianceId("F-001");
         this.evModbusControl.setPollInterval(10);
+
+        this.writeIntegerTestingExecutor = new ModbusWriteIntegerTestingExecutor();
+        ModbusExecutorFactory.setTestingWriteIntegerExecutor(this.writeIntegerTestingExecutor);
     }
 
     @Test
-    public void isMatchingVehicleStatus_true() {
-        isMatchingVehicleStatus(true, EVModbusReadRegisterName.VehicleConnected,
+    public void isMatchingVehicleStatus_trueUsingCache() {
+        isMatchingVehicleStatusUsingCache(true, EVModbusReadRegisterName.VehicleConnected,
                 "(B)", new Integer[]{66});
     }
 
     @Test
-    public void isMatchingVehicleStatus_false() {
-        isMatchingVehicleStatus(false, EVModbusReadRegisterName.VehicleConnected,
+    public void isMatchingVehicleStatus_falseUsingCache() {
+        isMatchingVehicleStatusUsingCache(false, EVModbusReadRegisterName.VehicleConnected,
                 "(B)", new Integer[]{65});
     }
 
-    private void isMatchingVehicleStatus(boolean expectedResult, EVModbusReadRegisterName registerName,
-                                         String extractionRegex, Integer[] byteValues) {
+    private void isMatchingVehicleStatusUsingCache(boolean expectedResult, EVModbusReadRegisterName registerName,
+                                                   String extractionRegex, Integer[] byteValues) {
         ModbusRegisterRead registerRead = new ModbusRegisterRead();
         registerRead.setAddress("42");
         registerRead.setType(ModbusReadRegisterType.InputString.name());
@@ -70,15 +73,4 @@ public class EVModbusControlTest {
 
         Assert.assertEquals(expectedResult, this.evModbusControl.isMatchingVehicleStatus(registerName));
     }
-
-//    @Test
-//    public void setChargeCurrent() {
-//        ModbusRegisterWriteValue registerWriteValue = new ModbusRegisterWriteValue(
-//                EVModbusWriteRegisterName.ChargingCurrent.name(), null);
-//        ModbusRegisterWrite registerWrite = new ModbusRegisterWrite(
-//                "42", ModbusWriteRegisterType.Holding, null, registerWriteValue);
-//
-//        int chargeCurrent = 8;
-//        this.evModbusControl.setChargeCurrent(chargeCurrent);
-//    }
 }

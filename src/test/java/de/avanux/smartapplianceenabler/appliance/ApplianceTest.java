@@ -19,12 +19,15 @@
 package de.avanux.smartapplianceenabler.appliance;
 
 import de.avanux.smartapplianceenabler.TestBase;
+import de.avanux.smartapplianceenabler.control.ev.EVControl;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.schedule.Schedule;
 import de.avanux.smartapplianceenabler.schedule.TimeOfDay;
 import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
+import de.avanux.smartapplianceenabler.test.TestBuilder;
+import de.avanux.smartapplianceenabler.util.DateTimeProvider;
 import org.joda.time.Interval;
 import org.joda.time.LocalDateTime;
 import org.junit.Assert;
@@ -37,6 +40,13 @@ import java.util.List;
 
 public class ApplianceTest extends TestBase {
     private Appliance appliance;
+    private String applianceId = "F-001";
+    private Integer evId = 1;
+    private Integer batteryCapacity = 40000;
+    private DateTimeProvider dateTimeProvider = Mockito.mock(DateTimeProvider.class);
+    private ElectricVehicleCharger evChargerSpy = Mockito.spy(new ElectricVehicleCharger());
+    private EVControl evControl = Mockito.mock(EVControl.class);
+    private Meter meter = Mockito.mock(Meter.class);
 
     public ApplianceTest() {
         String applianceId = "F-001";
@@ -123,7 +133,7 @@ public class ApplianceTest extends TestBase {
     }
 
     @Test
-    public void getRuntimeInterval_TimeFrameAlreadyStartedButNotYetActive() {
+    public void getRuntimeIntervals_TimeFrameAlreadyStartedButNotYetActive() {
         int nowSeconds = 10;
         LocalDateTime now = toToday(8, 0, nowSeconds);
         Schedule schedule = new Schedule(3600, null,
@@ -143,7 +153,7 @@ public class ApplianceTest extends TestBase {
     }
 
     @Test
-    public void getRuntimeIntervals_TimeFrameAlreadyStartedAndActive_Sufficient() {
+    public void getRuntimeIntervals_RuntimeRequest_TimeFrameOfScheduleAlreadyStartedAndActive_Sufficient() {
         int nowSeconds = 10;
         LocalDateTime now = toToday(8, 0, nowSeconds);
         Schedule schedule = new Schedule(3600, null,
@@ -164,7 +174,7 @@ public class ApplianceTest extends TestBase {
     }
 
     @Test
-    public void getRuntimeIntervals_TimeFrameAlreadyStartedAndActive_NotSufficient() {
+    public void getRuntimeIntervals_RuntimeRequest_TimeFrameOfScheduleAlreadyStartedAndActive_NotSufficient() {
         int nowSeconds = 10;
         LocalDateTime now = toToday(11, 0, nowSeconds);
         Schedule schedule = new Schedule(3600, null,
@@ -182,6 +192,177 @@ public class ApplianceTest extends TestBase {
                 3600, null), runtimeIntervals.get(1));
         Assert.assertEquals(new RuntimeInterval(162000-nowSeconds, 176400-nowSeconds,
                 3600, null), runtimeIntervals.get(2));
+    }
+
+    @Test
+    public void getRuntimeIntervals_RuntimeRequest_TimeFrameAlreadyStarted() {
+        LocalDateTime timeInitial = toToday(11, 0, 0);
+        Integer runtime = 1200;
+        TestBuilder builder = new TestBuilder()
+                .appliance(applianceId, dateTimeProvider, timeInitial)
+                .withMockSwitch(false)
+                .withActivatedTimeframeInterval(timeInitial, runtime)
+                .init();
+        Appliance appliance = builder.getAppliance();
+        RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
+        TimeframeInterval activeTimeframeInterval = runningTimeMonitor.getActiveTimeframeInterval();
+
+        List<RuntimeInterval> runtimeIntervals = appliance.getRuntimeIntervals(timeInitial,
+                appliance.getSchedules(), activeTimeframeInterval, true,
+                3600, null);
+
+        Assert.assertEquals(1, runtimeIntervals.size());
+        Assert.assertEquals(new RuntimeInterval(0, runtime, runtime, null), runtimeIntervals.get(0));
+    }
+
+    @Test
+    public void getRuntimeIntervals_EnergyRequest_TimeFrameOfScheduleAlreadyStarted() {
+        LocalDateTime timeInitial = toToday(11, 0, 0);
+        TestBuilder builder = new TestBuilder()
+                .appliance(applianceId, dateTimeProvider, timeInitial)
+                .withSchedule(10,0, 16, 0)
+                .withEnergyRequest(5000, 5000)
+                .init();
+        Appliance appliance = builder.getAppliance();
+        TimeframeInterval activeTimeframeInterval = appliance.getSchedules().get(0)
+                .getTimeframe().getIntervals(timeInitial).get(0);
+
+        List<RuntimeInterval> runtimeIntervals = appliance.getRuntimeIntervals(timeInitial,
+                appliance.getSchedules(), activeTimeframeInterval, true,
+                3600, null);
+
+        Assert.assertEquals(3, runtimeIntervals.size());
+        Assert.assertEquals(new RuntimeInterval(0, 18000, 5000, 5000,
+                true), runtimeIntervals.get(0));
+        Assert.assertEquals(new RuntimeInterval(82800, 104400,5000, 5000,
+                true), runtimeIntervals.get(1));
+        Assert.assertEquals(new RuntimeInterval(169200, 190800,5000, 5000,
+                true), runtimeIntervals.get(2));
+    }
+
+    @Test
+    public void getRuntimeIntervals_EnergyRequest_TimeFrameAlreadyStarted_NoMeter() {
+        LocalDateTime timeInitial = toToday(11, 0, 0);
+        LocalDateTime timeChargeEnd = toToday(13, 0, 0);
+        Integer energy = 20000;
+        TestBuilder builder = new TestBuilder()
+                .appliance(applianceId, dateTimeProvider, timeInitial)
+                .withMockSwitch(false)
+                .withActivatedTimeframeInterval(timeInitial, energy, timeChargeEnd)
+                .init();
+        Appliance appliance = builder.getAppliance();
+        RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
+        TimeframeInterval activeTimeframeInterval = runningTimeMonitor.getActiveTimeframeInterval();
+
+        List<RuntimeInterval> runtimeIntervals = appliance.getRuntimeIntervals(timeInitial,
+                appliance.getSchedules(), activeTimeframeInterval, true,
+                3600, null);
+
+        Assert.assertEquals(1, runtimeIntervals.size());
+        Assert.assertEquals(new RuntimeInterval(0, 7200, energy, energy, true),
+                runtimeIntervals.get(0));
+    }
+
+    @Test
+    public void getRuntimeIntervals_EnergyRequest_TimeFrameAlreadyStarted_Meter() {
+        LocalDateTime timeInitial = toToday(11, 0, 0);
+        LocalDateTime timeChargeEnd = toToday(13, 0, 0);
+        Integer energy = 20000;
+        TestBuilder builder = new TestBuilder()
+                .appliance(applianceId, dateTimeProvider, timeInitial)
+                .withMeter(meter)
+                .withMockSwitch(false)
+                .withActivatedTimeframeInterval(timeInitial, energy, timeChargeEnd)
+                .init();
+        Appliance appliance = builder.getAppliance();
+        RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
+        TimeframeInterval activeTimeframeInterval = runningTimeMonitor.getActiveTimeframeInterval();
+        Mockito.when(meter.getEnergy()).thenReturn(5.0f);
+
+        List<RuntimeInterval> runtimeIntervals = appliance.getRuntimeIntervals(timeInitial,
+                appliance.getSchedules(), activeTimeframeInterval, true,
+                3600, null);
+
+        Assert.assertEquals(1, runtimeIntervals.size());
+        Assert.assertEquals(new RuntimeInterval(0, 7200, 15000, 15000, true),
+                runtimeIntervals.get(0));
+    }
+
+    @Test
+    public void getRuntimeIntervals_EnergyRequest_TimeFrameOfScheduleNotYetStarted() {
+        LocalDateTime timeInitial = toToday(9, 0, 0);
+        TestBuilder builder = new TestBuilder()
+                .appliance(applianceId, dateTimeProvider, timeInitial)
+                .withSchedule(10,0, 16, 0)
+                .withEnergyRequest(5000, 5000)
+                .init();
+        Appliance appliance = builder.getAppliance();
+        TimeframeInterval activeTimeframeInterval = appliance.getSchedules().get(0)
+                .getTimeframe().getIntervals(timeInitial).get(0);
+
+        List<RuntimeInterval> runtimeIntervals = appliance.getRuntimeIntervals(timeInitial,
+                appliance.getSchedules(), activeTimeframeInterval, true,
+                3600, null);
+
+        Assert.assertEquals(2, runtimeIntervals.size());
+        Assert.assertEquals(new RuntimeInterval(3600, 25200, 5000, 5000,
+                true), runtimeIntervals.get(0));
+        Assert.assertEquals(new RuntimeInterval(90000, 111600,5000, 5000,
+                true), runtimeIntervals.get(1));
+    }
+
+    @Test
+    public void getRuntimeIntervals_SocRequest_TimeFrameOfScheduleAlreadyStarted() {
+        LocalDateTime timeInitial = toToday(11, 0, 0);
+        TestBuilder builder = new TestBuilder()
+                .appliance(applianceId, dateTimeProvider, timeInitial)
+                .withEvCharger(evChargerSpy, evControl)
+                .withElectricVehicle(evId, batteryCapacity, 80, null)
+                .withSchedule(10,0, 16, 0)
+                .withSocRequest(evId, 80)
+                .init();
+        Appliance appliance = builder.getAppliance();
+        Mockito.doReturn(60).when(evChargerSpy).getConnectedVehicleSoc();
+        TimeframeInterval activeTimeframeInterval = appliance.getSchedules().get(0)
+                .getTimeframe().getIntervals(timeInitial).get(0);
+
+        List<RuntimeInterval> runtimeIntervals = appliance.getRuntimeIntervals(timeInitial,
+                appliance.getSchedules(), activeTimeframeInterval, true,
+                3600, null);
+
+        Assert.assertEquals(3, runtimeIntervals.size());
+        Assert.assertEquals(new RuntimeInterval(0, 18000, 8800, 8800,
+                true), runtimeIntervals.get(0));
+        Assert.assertEquals(new RuntimeInterval(82800, 104400, 8800, 8800,
+                true), runtimeIntervals.get(1));
+        Assert.assertEquals(new RuntimeInterval(169200, 190800, 8800, 8800,
+                true), runtimeIntervals.get(2));
+    }
+
+    @Test
+    public void getRuntimeIntervals_SocRequest_TimeFrameOfScheduleNotYetStarted() {
+        LocalDateTime timeInitial = toToday(9, 0, 0);
+        TestBuilder builder = new TestBuilder()
+                .appliance(applianceId, dateTimeProvider, timeInitial)
+                .withEvCharger(evChargerSpy, evControl)
+                .withElectricVehicle(evId, batteryCapacity, 80, null)
+                .withSchedule(10,0, 16, 0)
+                .withSocRequest(evId, 80)
+                .init();
+        Appliance appliance = builder.getAppliance();
+        Mockito.doReturn(60).when(evChargerSpy).getConnectedVehicleSoc();
+        TimeframeInterval activeTimeframeInterval = appliance.getSchedules().get(0)
+                .getTimeframe().getIntervals(timeInitial).get(0);
+
+        List<RuntimeInterval> runtimeIntervals = appliance.getRuntimeIntervals(timeInitial,
+                appliance.getSchedules(), activeTimeframeInterval, true,
+                3600, null);
+
+        Assert.assertEquals(2, runtimeIntervals.size());
+        Assert.assertEquals(new RuntimeInterval(3600, 25200, 8800, 8800,
+                true), runtimeIntervals.get(0));
+        Assert.assertEquals(new RuntimeInterval(90000, 111600, 8800, 8800,
+                true), runtimeIntervals.get(1));
     }
 
     @Test

@@ -240,8 +240,8 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         }
         else {
             for(ActiveIntervalChangedListener listener : scheduleChangedListeners) {
-                logger.debug("{}: Timeframe interval activation check: notifying {} {}", applianceId, ActiveIntervalChangedListener.class.getSimpleName(),
-                        listener.getClass().getSimpleName());
+                logger.debug("{}: Timeframe interval activation check: notifying {} {}", applianceId,
+                        ActiveIntervalChangedListener.class.getSimpleName(), listener.getClass().getSimpleName());
                 listener.activeIntervalChecked(now, applianceId, activeTimeframeInterval);
             }
         }
