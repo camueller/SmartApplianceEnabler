@@ -61,16 +61,20 @@ public class SempDiscovery implements Runnable {
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 @Override
                 public void run() {
-                    upnpService.shutdown();
+                    try {
+                        upnpService.shutdown();
+                    }
+                    catch(Throwable e) {
+                        logger.error("Error shutting down SEMP discovery", e);
+                    }
                 }
             });
 
             // Add the bound local device to the registry
             upnpService.getRegistry().addDevice(createDevice());
         }
-        catch (Exception ex) {
-            System.err.println("Exception occured: " + ex);
-            ex.printStackTrace(System.err);
+        catch (Throwable e) {
+            logger.error("Error running SEMP discovery", e);
             System.exit(1);
         }
     }

@@ -108,7 +108,7 @@ public class PulseReceiver implements Runnable {
                 logger.debug("Received UDP packet: " + content);
                 processReceivedPacket(content);
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             if(! this.stopping) {
                 logger.error("Error listening on UDP port " + port, e);
             }

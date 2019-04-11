@@ -41,14 +41,21 @@ public class PollPowerMeter implements ApplianceIdConsumer {
 
     public void start(Timer timer, Integer pollInterval, Integer measurementInterval, PollPowerExecutor pollPowerExecutor) {
         this.measurementInterval = measurementInterval;
-        logger.debug("{}: Creating timer task pollInterval={}s", applianceId, pollInterval);
+        String taskName = "PollPowerMeter";
+        long period = pollInterval * 1000;
+        logger.debug("{}: Starting timer task name={} period={}ms", applianceId, taskName, period);
         this.pollTimerTask = new TimerTask() {
             @Override
             public void run() {
-                addValue(pollPowerExecutor.getPower());
+                try {
+                    addValue(pollPowerExecutor.getPower());
+                }
+                catch(Throwable e) {
+                    logger.error(applianceId + ": Error executing timer task name=" + taskName, e);
+                }
             }
         };
-        timer.schedule(this.pollTimerTask, 0, pollInterval * 1000);
+        timer.schedule(this.pollTimerTask, 0, period);
     }
 
     public void cancelTimer() {

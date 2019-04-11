@@ -40,15 +40,20 @@ public class Application {
     private static Properties versionProperties;
 
     public static void main(String[] args) {
-        applicationContext = SpringApplication.run(Application.class, args);
+        try {
+            applicationContext = SpringApplication.run(Application.class, args);
 
-        loadVersionProperties();
+            loadVersionProperties();
 
-        Application application = new Application();
-        logger.info("Running version " + application.getVersionInfo());
-        application.startSemp();
-        application.startApplianceManager();
-        application.writePidFile();
+            Application application = new Application();
+            logger.info("Running version " + application.getVersionInfo());
+            application.startSemp();
+            application.startApplianceManager();
+            application.writePidFile();
+        }
+        catch(Throwable e) {
+            logger.error("Fatal error", e);
+        }
     }
 
     private static void loadVersionProperties() {

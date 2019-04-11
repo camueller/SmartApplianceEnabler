@@ -86,7 +86,7 @@ public class ApplianceManager implements Runnable {
         try {
             startAppliances();
         }
-        catch(Exception e) {
+        catch(Throwable e) {
             logger.error("Error starting appliances", e);
         }
     }
@@ -190,33 +190,41 @@ public class ApplianceManager implements Runnable {
 
         if(holidaysUsed) {
             logger.debug("Holidays are used.");
-            /**
-             * Once a day check availability of holidays file - the year might have changed!
-             * Download it if it is not available. If it is available (either downloaded or just placed there)
-             * load holidays from the file pass them on to all appliances.
-             */
+            String taskName = "HolidaysDownloader";
+            long period = 24 * 60 * 60 * 1000;
+            logger.debug("Starting timer task name={} period={}ms", taskName, period);
             timer.schedule(new TimerTask() {
+                /**
+                 * Once a day check availability of holidays file - the year might have changed!
+                 * Download it if it is not available. If it is available (either downloaded or just placed there)
+                 * load holidays from the file pass them on to all appliances.
+                 */
                 @Override
                 public void run() {
-                    FileHandler fileHandler = new FileHandler();
-                    if(! fileHandler.isHolidayFileAvailable()) {
-                        HolidaysDownloader downloader = new HolidaysDownloader();
-                        String downloadUrl = appliances.getConfigurationValue(HolidaysDownloader.urlConfigurationParamName);
-                        if(downloadUrl != null) {
-                            downloader.setUrl(downloadUrl);
+                    try {
+                        FileHandler fileHandler = new FileHandler();
+                        if(! fileHandler.isHolidayFileAvailable()) {
+                            HolidaysDownloader downloader = new HolidaysDownloader();
+                            String downloadUrl = appliances.getConfigurationValue(HolidaysDownloader.urlConfigurationParamName);
+                            if(downloadUrl != null) {
+                                downloader.setUrl(downloadUrl);
+                            }
+                            Map<LocalDate, String> holidayWithName = downloader.downloadHolidays();
+                            fileHandler.saveHolidays(holidayWithName);
                         }
-                        Map<LocalDate, String> holidayWithName = downloader.downloadHolidays();
-                        fileHandler.saveHolidays(holidayWithName);
-                    }
 
-                    List<LocalDate> holidays = fileHandler.loadHolidays();
-                    if(holidays != null) {
-                        for (Appliance appliance : getAppliances()) {
-                            appliance.setHolidays(holidays);
+                        List<LocalDate> holidays = fileHandler.loadHolidays();
+                        if(holidays != null) {
+                            for (Appliance appliance : getAppliances()) {
+                                appliance.setHolidays(holidays);
+                            }
                         }
+                    }
+                    catch(Throwable e) {
+                        logger.error("Error executing timer task name=" + taskName, e);
                     }
                 }
-            }, 0,24 * 60 * 60 * 1000);
+            }, 0, period);
         }
         else {
             logger.debug("Holidays are NOT used.");
