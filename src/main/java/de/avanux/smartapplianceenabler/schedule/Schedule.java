@@ -137,7 +137,7 @@ public class Schedule {
         if(schedules != null) {
             for(Schedule schedule : schedules) {
                 if(schedule.isEnabled()) {
-                    Integer minRuntime = schedule.getRequest() instanceof RuntimeRequest ? schedule.getRequest().getMin() : null;
+                    Request request = schedule.getRequest();
                     Timeframe timeframe = schedule.getTimeframe();
                     List<TimeframeInterval> timeframeIntervals = timeframe.getIntervals(now);
                     for (TimeframeInterval timeframeInterval : timeframeIntervals) {
@@ -153,7 +153,12 @@ public class Schedule {
                         if(!onlyAlreadyStarted || timeframeInterval.getInterval().contains(now.toDateTime())) {
                             alreadyStartedCheckOk = true;
                         }
-                        if (!onlySufficient || (minRuntime != null && timeframeInterval.isIntervalSufficient(now, minRuntime))) {
+                        if (!onlySufficient
+                                || (request instanceof RuntimeRequest
+                                    && timeframeInterval.isIntervalSufficient(now, request.getMin()))
+                                || (request instanceof EnergyRequest)
+                                || (request instanceof SocRequest)
+                        ) {
                             sufficientCheckOk = true;
                         }
                         if(considerationIntervalOk && alreadyStartedCheckOk && sufficientCheckOk) {
