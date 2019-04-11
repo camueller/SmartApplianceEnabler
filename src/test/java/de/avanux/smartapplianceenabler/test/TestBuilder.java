@@ -21,6 +21,7 @@ package de.avanux.smartapplianceenabler.test;
 import de.avanux.smartapplianceenabler.appliance.Appliance;
 import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
 import de.avanux.smartapplianceenabler.appliance.Appliances;
+import de.avanux.smartapplianceenabler.appliance.RunningTimeMonitor;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.MockSwitch;
 import de.avanux.smartapplianceenabler.control.StartingCurrentSwitch;
@@ -47,6 +48,10 @@ public class TestBuilder {
 
     private Appliances appliances = new Appliances();
     private Device2EM device2EM = new Device2EM();
+    private Integer runtime;
+    private Integer energy;
+    private LocalDateTime timeTimeframeIntervalActivation;
+    private LocalDateTime timeTimeframeIntervalChargeEnd;
 
     public TestBuilder appliance(String applianceId, DateTimeProvider dateTimeProvider, LocalDateTime now) {
         Appliance appliance = new Appliance();
@@ -86,6 +91,10 @@ public class TestBuilder {
 
     public TestBuilder withEvCharger(EVControl evControl) {
         ElectricVehicleCharger evCharger = new ElectricVehicleCharger();
+        return withEvCharger(evCharger, evControl);
+    }
+
+    public TestBuilder withEvCharger(ElectricVehicleCharger evCharger, EVControl evControl) {
         evCharger.setStartChargingStateDetectionDelay(0);
         evCharger.setControl(evControl);
         getAppliance().setControl(evCharger);
@@ -162,6 +171,14 @@ public class TestBuilder {
         return this;
     }
 
+    public TestBuilder withEnergyRequest(Integer min, Integer max) {
+        EnergyRequest request = new EnergyRequest();
+        request.setMin(min);
+        request.setMax(max);
+        addRequest(request);
+        return this;
+    }
+
     public TestBuilder withSocRequest(Integer evId, Integer soc) {
         SocRequest request = new SocRequest();
         request.setEvId(evId);
@@ -175,10 +192,37 @@ public class TestBuilder {
         schedules.lastElement().setRequest(request);
     }
 
+    public TestBuilder withActivatedTimeframeInterval(LocalDateTime now, Integer runtime) {
+        this.runtime = runtime;
+        this.timeTimeframeIntervalActivation = now;
+        return this;
+    }
+
+    public TestBuilder withActivatedTimeframeInterval(LocalDateTime now, Integer energy,
+                                                      LocalDateTime timeTimeframeIntervalChargeEnd) {
+        this.energy = energy;
+        this.timeTimeframeIntervalActivation = now;
+        this.timeTimeframeIntervalChargeEnd = timeTimeframeIntervalChargeEnd;
+        return this;
+    }
+
     public TestBuilder init() {
         ApplianceManager.getInstanceWithoutTimer().setAppliances(appliances);
         ApplianceManager.getInstanceWithoutTimer().setDevice2EM(device2EM);
+
         ApplianceManager.getInstanceWithoutTimer().init();
+
+        Appliance appliance = getAppliance();
+        RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
+        if(runningTimeMonitor != null && this.timeTimeframeIntervalActivation != null) {
+            if(this.runtime != null) {
+                runningTimeMonitor.activateTimeframeInterval(this.timeTimeframeIntervalActivation, this.runtime);
+            }
+            if(this.energy != null && this.timeTimeframeIntervalChargeEnd != null) {
+                runningTimeMonitor.activateTimeframeInterval(this.timeTimeframeIntervalActivation, this.energy,
+                        this.timeTimeframeIntervalChargeEnd);
+            }
+        }
         return this;
     }
 
