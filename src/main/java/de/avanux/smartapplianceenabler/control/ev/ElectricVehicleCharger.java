@@ -191,11 +191,20 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     public void start(Timer timer) {
         stopCharging();
         if(timer != null) {
+            String taskName = "UpdateState";
+            long period = getPollInterval() * 1000;
+            logger.debug("{}: Starting timer task name={} period={}ms", applianceId, taskName, period);
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    updateState();            }
-            }, 0, getPollInterval() * 1000);
+                    try {
+                        updateState();
+                    }
+                    catch(Throwable e) {
+                        logger.error(applianceId + ": Error executing timer task name=" + taskName, e);
+                    }
+                }
+            }, 0, period);
         }
     }
 

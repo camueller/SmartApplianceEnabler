@@ -56,14 +56,22 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
     }
 
     public void setTimer(Timer timer) {
+        String taskName = "UpdateActiveTimeframeInterval";
+        long period = 30000;
+        logger.debug("{}: Starting timer task name={} period={}ms", applianceId, taskName, period);
         this.updateActiveTimeframeIntervalTimerTask = new TimerTask() {
             @Override
             public void run() {
-                updateActiveTimeframeInterval(new LocalDateTime());
+                try  {
+                    updateActiveTimeframeInterval(new LocalDateTime());
+                }
+                catch(Throwable e) {
+                    logger.error(applianceId + ": Error executing timer task name=" + taskName, e);
+                }
             }
         };
         if(timer != null) {
-            timer.schedule(updateActiveTimeframeIntervalTimerTask, 0, 30000);
+            timer.schedule(updateActiveTimeframeIntervalTimerTask, 0, period);
         }
     }
 

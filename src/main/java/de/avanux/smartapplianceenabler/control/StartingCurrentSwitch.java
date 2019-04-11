@@ -168,18 +168,37 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
                 getFinishedCurrentDetectionDuration(), getMinRunningTime());
         applianceOn(now, true);
         if (timer != null) {
+            String detectStartingCurrentTaskName = "DetectStartingCurrent";
+            long detectStartingCurrentPeriod = getStartingCurrentDetectionDuration() * 1000;
+            logger.debug("{}: Starting timer task name={} period={}ms", applianceId, detectStartingCurrentTaskName,
+                    detectStartingCurrentPeriod);
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    detectStartingCurrent(new LocalDateTime(), meter);
+                    try {
+                        detectStartingCurrent(new LocalDateTime(), meter);
+                    }
+                    catch(Throwable e) {
+                        logger.error(applianceId + ": Error executing timer task name=" + detectStartingCurrentTaskName, e);
+                    }
                 }
-            }, 0, getStartingCurrentDetectionDuration() * 1000);
+            }, 0, detectStartingCurrentPeriod);
+
+            String detectFinishedCurrentTaskName = "DetectFinishedCurrent";
+            long detectFinishedCurrentPeriod = getFinishedCurrentDetectionDuration() * 1000;
+            logger.debug("{}: Starting timer task name={} period={}ms", applianceId, detectFinishedCurrentTaskName,
+                    detectFinishedCurrentPeriod);
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    detectFinishedCurrent(new LocalDateTime(), meter);
+                    try {
+                        detectFinishedCurrent(new LocalDateTime(), meter);
+                    }
+                    catch(Throwable e) {
+                        logger.error(applianceId + ": Error executing timer task name=" + detectFinishedCurrentTaskName, e);
+                    }
                 }
-            }, 0, getFinishedCurrentDetectionDuration() * 1000);
+            }, 0, detectFinishedCurrentPeriod);
         }
     }
 
