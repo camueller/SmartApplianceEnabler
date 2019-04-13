@@ -54,41 +54,56 @@ public class EVControlMock implements EVControl, Meter {
     }
 
     @Override
+    public void setApplianceId(String applianceId) {
+        logDebug("setApplianceId=" + applianceId);
+    }
+
+    @Override
     public void setPollInterval(Integer pollInterval) {
+        logDebug("setPollInterval=" + pollInterval);
     }
 
     @Override
     public void init(boolean checkRegisterConfiguration) {
+        logDebug("init checkRegisterConfiguration=" + checkRegisterConfiguration);
     }
 
     @Override
     public boolean isVehicleNotConnected() {
-        return false;
+        boolean notConnected = false;
+        logDebug("isVehicleNotConnected=" + notConnected);
+        return notConnected;
     }
 
     @Override
     public boolean isVehicleConnected() {
-        return true;
+        boolean connected = true;
+        logDebug("isVehicleNotConnected=" + connected);
+        return connected;
     }
 
     @Override
     public boolean isCharging() {
+        logDebug("isCharging=" + this.charging);
         return this.charging;
     }
 
     @Override
     public boolean isChargingCompleted() {
+        logDebug("isChargingCompleted=" + this.chargingCompleted);
         return this.chargingCompleted;
     }
 
     @Override
     public boolean isInErrorState() {
-        return false;
+        boolean errorState = false;
+        logDebug("isInErrorState=" + errorState);
+        return errorState;
     }
 
     @Override
     public void setChargeCurrent(int current) {
-
+        logDebug("setChargeCurrent=" + current);
     }
 
     @Override
@@ -103,19 +118,16 @@ public class EVControlMock implements EVControl, Meter {
         this.charging = false;
     }
 
-    @Override
-    public void setApplianceId(String applianceId) {
-
-    }
-
     // --------- Meter ------------------------------------------------------
 
     @Override
     public void start(Timer timer) {
+        logDebug("start");
     }
 
     @Override
     public void stop() {
+        logDebug("stop");
     }
 
     @Override
