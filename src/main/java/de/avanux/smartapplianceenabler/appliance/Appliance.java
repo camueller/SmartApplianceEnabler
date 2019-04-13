@@ -350,6 +350,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     public void setApplianceState(LocalDateTime now, boolean switchOn, Integer recommendedPowerConsumption,
                                   boolean deactivateTimeframe, String logMessage) {
         if(control != null) {
+            logger.debug("{}: {}", id, logMessage);
             if(switchOn && control instanceof ElectricVehicleCharger) {
                 int chargePower = 0;
 //                if(this.runningTimeMonitor.getActiveTimeframeInterval() != null) {
@@ -372,18 +373,16 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                 ((ElectricVehicleCharger) control).setChargePower(chargePower);
             }
 
-            boolean stateChanged = false;
             // only change state if requested state differs from actual state
             if(control.isOn() ^ switchOn) {
                 control.on(now, switchOn);
                 if(! switchOn && deactivateTimeframe) {
                     this.runningTimeMonitor.activateTimeframeInterval(now, (TimeframeInterval) null);
                 }
-                stateChanged = true;
                 this.runningTimeMonitor.updateActiveTimeframeInterval(now);
             }
-            if(stateChanged) {
-                logger.debug("{}: {}", id, logMessage);
+            else {
+                logger.debug("{}: Requested appliance state already set.", id);
             }
         }
         else {
