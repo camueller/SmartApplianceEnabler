@@ -26,6 +26,7 @@ import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.ControlStateChangedListener;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
+import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,6 +66,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     private transient Long startChargingTimestamp;
     private transient Integer chargeAmount;
     private transient Integer chargePower;
+    private transient GuardedTimerTask updateStateTimerTask;
 
     protected enum State {
         VEHICLE_NOT_CONNECTED,
@@ -189,22 +191,24 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     }
 
     public void start(Timer timer) {
+        logger.debug("{}: Starting ...", this.applianceId);
         stopCharging();
         if(timer != null) {
-            String taskName = "UpdateState";
-            long period = getPollInterval() * 1000;
-            logger.debug("{}: Starting timer task name={} period={}ms", applianceId, taskName, period);
-            timer.schedule(new TimerTask() {
+            this.updateStateTimerTask = new GuardedTimerTask(this.applianceId,"UpdateState",
+                    getPollInterval() * 1000) {
                 @Override
-                public void run() {
-                    try {
-                        updateState();
-                    }
-                    catch(Throwable e) {
-                        logger.error(applianceId + ": Error executing timer task name=" + taskName, e);
-                    }
+                public void runTask() {
+                    updateState();
                 }
-            }, 0, period);
+            };
+            timer.schedule(this.updateStateTimerTask, 0, this.updateStateTimerTask.getPeriod());
+        }
+    }
+
+    public void stop() {
+        logger.debug("{}: Stopping ...", this.applianceId);
+        if(this.updateStateTimerTask != null) {
+            this.updateStateTimerTask.cancel();
         }
     }
 

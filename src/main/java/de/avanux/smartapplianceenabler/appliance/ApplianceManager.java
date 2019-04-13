@@ -23,7 +23,6 @@ import de.avanux.smartapplianceenabler.HolidaysDownloader;
 import de.avanux.smartapplianceenabler.configuration.Configuration;
 import de.avanux.smartapplianceenabler.configuration.Connectivity;
 import de.avanux.smartapplianceenabler.control.Control;
-import de.avanux.smartapplianceenabler.control.GpioControllable;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.meter.PulseReceiver;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
@@ -31,6 +30,7 @@ import de.avanux.smartapplianceenabler.schedule.Schedule;
 import de.avanux.smartapplianceenabler.semp.webservice.Device2EM;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceStatus;
+import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
 import de.avanux.smartapplianceenabler.util.FileHandler;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
@@ -47,6 +47,7 @@ public class ApplianceManager implements Runnable {
     private Device2EM device2EM;
     private Appliances appliances;
     private Timer timer;
+    private GuardedTimerTask holidaysDownloaderTimerTask;
     
     private ApplianceManager() {
     }
@@ -190,41 +191,35 @@ public class ApplianceManager implements Runnable {
 
         if(holidaysUsed) {
             logger.debug("Holidays are used.");
-            String taskName = "HolidaysDownloader";
-            long period = 24 * 60 * 60 * 1000;
-            logger.debug("Starting timer task name={} period={}ms", taskName, period);
-            timer.schedule(new TimerTask() {
-                /**
-                 * Once a day check availability of holidays file - the year might have changed!
-                 * Download it if it is not available. If it is available (either downloaded or just placed there)
-                 * load holidays from the file pass them on to all appliances.
-                 */
+            /**
+             * Once a day check availability of holidays file - the year might have changed!
+             * Download it if it is not available. If it is available (either downloaded or just placed there)
+             * load holidays from the file pass them on to all appliances.
+             */
+            this.holidaysDownloaderTimerTask = new GuardedTimerTask(null,
+                    "HolidaysDownloader", 24 * 60 * 60 * 1000) {
                 @Override
-                public void run() {
-                    try {
-                        FileHandler fileHandler = new FileHandler();
-                        if(! fileHandler.isHolidayFileAvailable()) {
-                            HolidaysDownloader downloader = new HolidaysDownloader();
-                            String downloadUrl = appliances.getConfigurationValue(HolidaysDownloader.urlConfigurationParamName);
-                            if(downloadUrl != null) {
-                                downloader.setUrl(downloadUrl);
-                            }
-                            Map<LocalDate, String> holidayWithName = downloader.downloadHolidays();
-                            fileHandler.saveHolidays(holidayWithName);
+                public void runTask() {
+                    FileHandler fileHandler = new FileHandler();
+                    if(! fileHandler.isHolidayFileAvailable()) {
+                        HolidaysDownloader downloader = new HolidaysDownloader();
+                        String downloadUrl = appliances.getConfigurationValue(HolidaysDownloader.urlConfigurationParamName);
+                        if(downloadUrl != null) {
+                            downloader.setUrl(downloadUrl);
                         }
-
-                        List<LocalDate> holidays = fileHandler.loadHolidays();
-                        if(holidays != null) {
-                            for (Appliance appliance : getAppliances()) {
-                                appliance.setHolidays(holidays);
-                            }
-                        }
+                        Map<LocalDate, String> holidayWithName = downloader.downloadHolidays();
+                        fileHandler.saveHolidays(holidayWithName);
                     }
-                    catch(Throwable e) {
-                        logger.error("Error executing timer task name=" + taskName, e);
+
+                    List<LocalDate> holidays = fileHandler.loadHolidays();
+                    if(holidays != null) {
+                        for (Appliance appliance : getAppliances()) {
+                            appliance.setHolidays(holidays);
+                        }
                     }
                 }
-            }, 0, period);
+            };
+            timer.schedule(this.holidaysDownloaderTimerTask, 0, this.holidaysDownloaderTimerTask.getPeriod());
         }
         else {
             logger.debug("Holidays are NOT used.");
