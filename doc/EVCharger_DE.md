@@ -1,4 +1,7 @@
-# Ladegeräte für Elektro-Autos (Wallboxen)
+# Ladegeräte für Elektro-Fahrzeuge (Wallboxen)
+
+Damit der Sunny Home Manager die Leistung von Ladegeräten für Elekto-Fahrzeuge steuern kann, **muss zur Bestimmung der aktuellen Leistungsaufnahme ein Stromzähler verwendet und im Smart Appliance Enabler konfiguriert werden**!
+
 ## Konfiguration
 ### Appliance
 Um ein Gerät zum Laden von Elektroautos konfigurieren zu können, muss als Typ des Gerätes ```Elektroauto-Ladegerät``` eingestellt werden.
