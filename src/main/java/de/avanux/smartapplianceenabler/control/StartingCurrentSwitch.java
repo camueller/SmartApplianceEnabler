@@ -17,10 +17,10 @@
  */
 package de.avanux.smartapplianceenabler.control;
 
-import de.avanux.smartapplianceenabler.appliance.ActiveIntervalChangedListener;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.schedule.DayTimeframeCondition;
+import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +29,6 @@ import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * Allows to prepare operation of an appliance while only little power is consumed.
@@ -70,6 +69,8 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
     private transient LocalDateTime switchOnTime;
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
     private transient List<StartingCurrentSwitchListener> startingCurrentSwitchListeners = new ArrayList<>();
+    private transient GuardedTimerTask detectStartingCurrentTimerTask;
+    private transient GuardedTimerTask detectFinishedCurrentTimerTask;
 
 
     @Override
@@ -168,37 +169,32 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
                 getFinishedCurrentDetectionDuration(), getMinRunningTime());
         applianceOn(now, true);
         if (timer != null) {
-            String detectStartingCurrentTaskName = "DetectStartingCurrent";
-            long detectStartingCurrentPeriod = getStartingCurrentDetectionDuration() * 1000;
-            logger.debug("{}: Starting timer task name={} period={}ms", applianceId, detectStartingCurrentTaskName,
-                    detectStartingCurrentPeriod);
-            timer.schedule(new TimerTask() {
+            this.detectStartingCurrentTimerTask = new GuardedTimerTask(applianceId, "DetectStartingCurrent",
+                    getStartingCurrentDetectionDuration() * 1000) {
                 @Override
-                public void run() {
-                    try {
-                        detectStartingCurrent(new LocalDateTime(), meter);
-                    }
-                    catch(Throwable e) {
-                        logger.error(applianceId + ": Error executing timer task name=" + detectStartingCurrentTaskName, e);
-                    }
+                public void runTask() {
+                    detectStartingCurrent(new LocalDateTime(), meter);
                 }
-            }, 0, detectStartingCurrentPeriod);
+            };
+            timer.schedule(this.detectStartingCurrentTimerTask, 0, this.detectStartingCurrentTimerTask.getPeriod());
 
-            String detectFinishedCurrentTaskName = "DetectFinishedCurrent";
-            long detectFinishedCurrentPeriod = getFinishedCurrentDetectionDuration() * 1000;
-            logger.debug("{}: Starting timer task name={} period={}ms", applianceId, detectFinishedCurrentTaskName,
-                    detectFinishedCurrentPeriod);
-            timer.schedule(new TimerTask() {
+            this.detectFinishedCurrentTimerTask = new GuardedTimerTask(applianceId, "DetectFinishedCurrent", getFinishedCurrentDetectionDuration() * 1000) {
                 @Override
-                public void run() {
-                    try {
-                        detectFinishedCurrent(new LocalDateTime(), meter);
-                    }
-                    catch(Throwable e) {
-                        logger.error(applianceId + ": Error executing timer task name=" + detectFinishedCurrentTaskName, e);
-                    }
+                public void runTask() {
+                    detectFinishedCurrent(new LocalDateTime(), meter);
                 }
-            }, 0, detectFinishedCurrentPeriod);
+            };
+            timer.schedule(this.detectFinishedCurrentTimerTask, 0, this.detectFinishedCurrentTimerTask.getPeriod());
+        }
+    }
+
+    public void stop() {
+        logger.debug("{}: Stopping ...", this.applianceId);
+        if(this.detectStartingCurrentTimerTask != null) {
+            this.detectStartingCurrentTimerTask.cancel();
+        }
+        if(this.detectFinishedCurrentTimerTask != null) {
+            this.detectFinishedCurrentTimerTask.cancel();
         }
     }
 

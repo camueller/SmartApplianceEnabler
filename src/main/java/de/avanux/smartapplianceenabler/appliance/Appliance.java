@@ -280,6 +280,14 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             logger.info("{}: Stopping control {}", id, control.getClass().getSimpleName());
             ((GpioControllable) control).stop();
         }
+        else if(control instanceof ElectricVehicleCharger) {
+            logger.info("{}: Stopping control {}", id, control.getClass().getSimpleName());
+            ((ElectricVehicleCharger) control).stop();
+        }
+        else if(control instanceof  StartingCurrentSwitch) {
+            logger.info("{}: Stopping control {}", id, control.getClass().getSimpleName());
+            ((StartingCurrentSwitch) control).stop();
+        }
         if(meter != null) {
             logger.info("{}: Stopping meter {}", id, meter.getClass().getSimpleName());
             meter.stop();

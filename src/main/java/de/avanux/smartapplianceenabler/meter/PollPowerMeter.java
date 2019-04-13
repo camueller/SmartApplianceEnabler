@@ -18,6 +18,7 @@
 package de.avanux.smartapplianceenabler.meter;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +33,7 @@ public class PollPowerMeter implements ApplianceIdConsumer {
     private Map<Long,Float> timestampWithPower = new HashMap<Long,Float>();
     private Integer measurementInterval;
     private String applianceId;
-    private TimerTask pollTimerTask;
+    private GuardedTimerTask pollTimerTask;
 
     @Override
     public void setApplianceId(String applianceId) {
@@ -41,26 +42,17 @@ public class PollPowerMeter implements ApplianceIdConsumer {
 
     public void start(Timer timer, Integer pollInterval, Integer measurementInterval, PollPowerExecutor pollPowerExecutor) {
         this.measurementInterval = measurementInterval;
-        String taskName = "PollPowerMeter";
-        long period = pollInterval * 1000;
-        logger.debug("{}: Starting timer task name={} period={}ms", applianceId, taskName, period);
-        this.pollTimerTask = new TimerTask() {
+        this.pollTimerTask = new GuardedTimerTask(this.applianceId, "PollPowerMeter", pollInterval * 1000) {
             @Override
-            public void run() {
-                try {
-                    addValue(pollPowerExecutor.getPower());
-                }
-                catch(Throwable e) {
-                    logger.error(applianceId + ": Error executing timer task name=" + taskName, e);
-                }
+            public void runTask() {
+                addValue(pollPowerExecutor.getPower());
             }
         };
-        timer.schedule(this.pollTimerTask, 0, period);
+        timer.schedule(this.pollTimerTask, 0, this.pollTimerTask.getPeriod());
     }
 
     public void cancelTimer() {
         if(this.pollTimerTask != null) {
-            logger.debug("{}: Cancel timer task", applianceId);
             this.pollTimerTask.cancel();
         }
     }

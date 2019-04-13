@@ -18,6 +18,7 @@
 package de.avanux.smartapplianceenabler.appliance;
 
 import de.avanux.smartapplianceenabler.schedule.*;
+import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
 import org.joda.time.Interval;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
@@ -45,7 +46,7 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
     private Integer remainingMaxRunningTimeWhileNotRunning;
     private boolean running;
     private boolean interrupted;
-    private TimerTask updateActiveTimeframeIntervalTimerTask;
+    private GuardedTimerTask updateActiveTimeframeIntervalTimerTask;
 
     public RunningTimeMonitor() {
     }
@@ -56,22 +57,16 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
     }
 
     public void setTimer(Timer timer) {
-        String taskName = "UpdateActiveTimeframeInterval";
-        long period = 30000;
-        logger.debug("{}: Starting timer task name={} period={}ms", applianceId, taskName, period);
-        this.updateActiveTimeframeIntervalTimerTask = new TimerTask() {
+        this.updateActiveTimeframeIntervalTimerTask = new GuardedTimerTask(this.applianceId,
+                "UpdateActiveTimeframeInterval", 30000) {
             @Override
-            public void run() {
-                try  {
-                    updateActiveTimeframeInterval(new LocalDateTime());
-                }
-                catch(Throwable e) {
-                    logger.error(applianceId + ": Error executing timer task name=" + taskName, e);
-                }
+            public void runTask() {
+                updateActiveTimeframeInterval(new LocalDateTime());
             }
         };
         if(timer != null) {
-            timer.schedule(updateActiveTimeframeIntervalTimerTask, 0, period);
+            timer.schedule(updateActiveTimeframeIntervalTimerTask, 0,
+                    updateActiveTimeframeIntervalTimerTask.getPeriod());
         }
     }
 
