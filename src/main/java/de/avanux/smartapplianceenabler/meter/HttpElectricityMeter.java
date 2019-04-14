@@ -155,7 +155,8 @@ public class HttpElectricityMeter extends HttpTransactionExecutor implements Met
                 logger.debug("{}: HTTP response: {}", getApplianceId(), responseString);
                 logger.debug("{}: Power value extraction regex: {}", getApplianceId(), powerValueExtractionRegex);
                 String valueString = extractPowerValueFromResponse(responseString, powerValueExtractionRegex);
-                logger.debug("{}: Power value extracted from HTTP response: {}", getApplianceId(), valueString);
+                logger.debug("{}: Power value extracted from HTTP response: {} factorToWatt={}",
+                        getApplianceId(), valueString, getFactorToWatt());
                 return Float.parseFloat(valueString.replace(',', '.')) * getFactorToWatt();
             }
         } catch (Exception e) {
