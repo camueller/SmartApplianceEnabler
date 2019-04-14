@@ -37,6 +37,7 @@
     <Appliance id="F-00000001-000000000003-00">
         <Switch gpio="2" reverseStates="true"/>
         <S0ElectricityMeter gpio="3" pinPullResistance="PULL_DOWN" impulsesPerKwh="1000"/>
+        <!-- HttpElectricityMeter url="http://localhost:8999"/ -->
         <Schedule enabled="true">
             <RuntimeRequest min="4800"/>
             <DayTimeframe>
