@@ -19,6 +19,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 import {Appliance} from './appliance';
 import {ApplianceHeader} from './appliance-header';
 import {Logger} from '../log/logger';
+import {stringyfyWithoutFalsyNumbers} from '../shared/json-util';
 
 export class ApplianceFactory {
 
@@ -44,6 +45,17 @@ export class ApplianceFactory {
   }
 
   toJSONfromApplianceInfo(appliance: Appliance): String {
-    return JSON.stringify(appliance);
+    this.logger.debug('Appliance (TYPE)' + JSON.stringify(appliance));
+    // const clone = JSON.parse(JSON.stringify(appliance));
+    // Object.keys(clone).forEach((key) => {
+    //   this.logger.debug(`key=${key} clone.key=${clone[key]}`);
+    //   if(clone[key] === null || clone[key] === '') {
+    //     delete clone[key];
+    //   }
+    // });
+    // const json = JSON.stringify(clone);
+    const json = stringyfyWithoutFalsyNumbers(appliance);
+    this.logger.debug('Appliance (JSON)' + json);
+    return json;
   }
 }

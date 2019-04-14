@@ -22,12 +22,12 @@ export class Appliance {
   type: string;
   serial: string;
   vendor: string;
-  minPowerConsumption: string;
-  maxPowerConsumption: string;
-  minOnTime: string;
-  maxOnTime: string;
-  minOffTime: string;
-  maxOffTime: string;
+  minPowerConsumption: number;
+  maxPowerConsumption: number;
+  minOnTime: number;
+  maxOnTime: number;
+  minOffTime: number;
+  maxOffTime: number;
   interruptionsAllowed: boolean;
 
   public constructor(init?: Partial<Appliance>) {
