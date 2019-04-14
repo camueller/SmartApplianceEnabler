@@ -89,6 +89,19 @@ export class ApplianceComponent implements OnInit, CanDeactivate<ApplianceCompon
 
   submitForm() {
     this.logger.debug('ApplianceComponent.submitForm()');
+
+    // FIXME use form model in order to avoid empty strings being assigned to properties of type number
+    this.appliance.minPowerConsumption = this.appliance.minPowerConsumption
+    && this.appliance.minPowerConsumption.toString() !== '' ? this.appliance.minPowerConsumption : undefined;
+    this.appliance.minOnTime = this.appliance.minOnTime
+    && this.appliance.minOnTime.toString() !== '' ? this.appliance.minOnTime : undefined;
+    this.appliance.maxOnTime = this.appliance.maxOnTime
+    && this.appliance.maxOnTime.toString() !== '' ? this.appliance.maxOnTime : undefined;
+    this.appliance.minOffTime = this.appliance.minOffTime
+    && this.appliance.minOffTime.toString() !== '' ? this.appliance.minOffTime : undefined;
+    this.appliance.maxOffTime = this.appliance.maxOffTime
+    && this.appliance.maxOffTime.toString() !== '' ? this.appliance.maxOffTime : undefined;
+
     this.applianceService.updateAppliance(this.appliance, this.isNew).subscribe(() => {
       this.appliancesReloadService.reload();
       this.router.navigateByUrl(`appliance/${this.appliance.id}`);
