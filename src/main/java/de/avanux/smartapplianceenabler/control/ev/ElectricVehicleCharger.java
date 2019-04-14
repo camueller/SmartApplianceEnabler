@@ -370,6 +370,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
         }
         if(newState == State.CHARGING) {
             if(getForceInitialCharging() && wasInStateOneTime(State.CHARGING)) {
+                logger.debug("{}: Stopping forced initial charging", applianceId);
                 stopCharging();
             }
         }
