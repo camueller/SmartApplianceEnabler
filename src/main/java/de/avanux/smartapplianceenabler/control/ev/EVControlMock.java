@@ -137,7 +137,7 @@ public class EVControlMock implements EVControl, Meter {
 
     @Override
     public int getAveragePower() {
-        return 0;
+        return 6800;
     }
 
     @Override
