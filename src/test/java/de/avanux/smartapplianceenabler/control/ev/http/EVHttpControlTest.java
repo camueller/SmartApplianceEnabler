@@ -18,9 +18,14 @@
 
 package de.avanux.smartapplianceenabler.control.ev.http;
 
+import de.avanux.smartapplianceenabler.control.ev.EVModbusReadRegisterName;
+import de.avanux.smartapplianceenabler.control.ev.EVModbusWriteRegisterName;
 import de.avanux.smartapplianceenabler.protocol.JsonProtocol;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EVHttpControlTest {
 
@@ -28,12 +33,27 @@ public class EVHttpControlTest {
 
     public EVHttpControlTest() {
         this.control = new EVHttpControl(new JsonProtocol());
-    }
+        List<HttpRead> reads = new ArrayList<>();
+        this.control.setReads(reads);
 
-    @Test
-    public void getCarState() {
-        this.control.parse("{ \"car\": \"9\" }");
-        Assert.assertEquals(9, this.control.getCarState().intValue());
+        HttpRead statusRead = new HttpRead("http://192.168.1.1/status", HttpMethod.GET);
+        reads.add(statusRead);
+        List<HttpReadValue> readValues = new ArrayList<>();
+        statusRead.setReadValues(readValues);
+        readValues.add(new HttpReadValue(EVModbusReadRegisterName.VehicleNotConnected.name(), "$.car", "(1)"));
+        readValues.add(new HttpReadValue(EVModbusReadRegisterName.VehicleConnected.name(), "$.car", "(3)"));
+        readValues.add(new HttpReadValue(EVModbusReadRegisterName.Charging.name(), "$.car", "(2)"));
+        readValues.add(new HttpReadValue(EVModbusReadRegisterName.ChargingCompleted.name(), "$.car", "(4)"));
+        readValues.add(new HttpReadValue(EVModbusReadRegisterName.Error.name(), "$.err", "([^0])"));
+
+        List<HttpWrite> writes = new ArrayList<>();
+        this.control.setWrites(writes);
+        HttpWrite cmdWrite = new HttpWrite("http://192.168.1.1/mqtt=", HttpMethod.GET);
+        List<HttpWriteValue> writeValues = new ArrayList<>();
+        cmdWrite.setWriteValues(writeValues);
+        writeValues.add(new HttpWriteValue(EVModbusWriteRegisterName.ChargingCurrent.name(), "amp={}", HttpWriteValueType.QueryParameter));
+        writeValues.add(new HttpWriteValue(EVModbusWriteRegisterName.StartCharging.name(), "alw=1", HttpWriteValueType.QueryParameter));
+        writeValues.add(new HttpWriteValue(EVModbusWriteRegisterName.StopCharging.name(), "alw=0", HttpWriteValueType.QueryParameter));
     }
 
     @Test
@@ -70,5 +90,12 @@ public class EVHttpControlTest {
     public void isInErrorState_False() {
         this.control.parse("{ \"err\": \"0\" }");
         Assert.assertFalse(this.control.isInErrorState());
+    }
+
+    @Test
+    public void setChargeCurrent() {
+
+        Assert.assertEquals(HttpMethod.GET.name(), this.control.httpMethod);
+        Assert.assertEquals("http://192.168.1.1/mqtt=amp=6", this.control.url);
     }
 }

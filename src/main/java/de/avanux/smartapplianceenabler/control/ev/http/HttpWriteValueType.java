@@ -16,13 +16,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.avanux.smartapplianceenabler.protocol;
+package de.avanux.smartapplianceenabler.control.ev.http;
 
-public interface Protocol {
-
-    void parse(String content);
-
-    String readValue(String selector);
-
-    Integer readIntegerValue(String selector);
+public enum HttpWriteValueType {
+    QueryParameter
 }

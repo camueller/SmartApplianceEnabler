@@ -42,12 +42,12 @@
                     <HttpReadValue name="VehicleConnected" path="$.car" extractionRegex="(3)"/>
                     <HttpReadValue name="Charging" path="$.car" extractionRegex="(2)"/>
                     <HttpReadValue name="ChargingCompleted" path="$.car" extractionRegex="(4)"/>
-                    <HttpReadValue name="Error" path="$.car" extractionRegex="(!0)"/>
+                    <HttpReadValue name="Error" path="$.err" extractionRegex="([^0])"/>
                 </HttpRead>
-                <HttpRead url="http://192.168.1.1/mqtt" method="POST">
-                    <HttpWriteValue name="ChargingCurrent" value="amp={}" type="FORM" />
-                    <HttpWriteValue name="StartCharging" value="alw=1" type="FORM" />
-                    <HttpWriteValue name="StopCharging" value="alw=0" type="FORM" />
+                <HttpRead url="http://192.168.1.1/mqtt=" method="GET">
+                    <HttpWriteValue name="ChargingCurrent" value="amp={}" type="QueryParameter" />
+                    <HttpWriteValue name="StartCharging" value="alw=1" type="QueryParameter" />
+                    <HttpWriteValue name="StopCharging" value="alw=0" type="QueryParameter" />
                 </HttpRead>
             </EVHttpControl>
             <ElectricVehicle id="1" name="Nissan Leaf" batteryCapacity="40000" phases="1" maxChargePower="10000" chargeLoss="20" defaultSocManual="100" defaultSocOptionalEnergy="90">
