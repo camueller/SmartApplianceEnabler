@@ -383,6 +383,10 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
         if(newState == State.VEHICLE_NOT_CONNECTED) {
             if(this.appliance != null) {
                 this.appliance.deactivateSchedules();
+                Meter meter = this.appliance.getMeter();
+                if(meter != null) {
+                    meter.resetEnergyMeter();
+                }
             }
             stopCharging();
             setConnectedVehicleId(null);
