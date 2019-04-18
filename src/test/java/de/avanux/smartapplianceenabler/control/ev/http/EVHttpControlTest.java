@@ -36,7 +36,7 @@ public class EVHttpControlTest {
         List<HttpRead> reads = new ArrayList<>();
         this.control.setReads(reads);
 
-        HttpRead statusRead = new HttpRead("http://192.168.1.1/status", HttpMethod.GET);
+        HttpRead statusRead = new HttpRead("http://192.168.1.1/status");
         reads.add(statusRead);
         List<HttpReadValue> readValues = new ArrayList<>();
         statusRead.setReadValues(readValues);
@@ -48,12 +48,25 @@ public class EVHttpControlTest {
 
         List<HttpWrite> writes = new ArrayList<>();
         this.control.setWrites(writes);
-        HttpWrite cmdWrite = new HttpWrite("http://192.168.1.1/mqtt=", HttpMethod.GET);
+        HttpWrite cmdWrite = new HttpWrite("http://192.168.1.1/mqtt=");
+        writes.add(cmdWrite);
         List<HttpWriteValue> writeValues = new ArrayList<>();
         cmdWrite.setWriteValues(writeValues);
-        writeValues.add(new HttpWriteValue(EVModbusWriteRegisterName.ChargingCurrent.name(), "amp={}", HttpWriteValueType.QueryParameter));
-        writeValues.add(new HttpWriteValue(EVModbusWriteRegisterName.StartCharging.name(), "alw=1", HttpWriteValueType.QueryParameter));
-        writeValues.add(new HttpWriteValue(EVModbusWriteRegisterName.StopCharging.name(), "alw=0", HttpWriteValueType.QueryParameter));
+        writeValues.add(new HttpWriteValue(
+                EVModbusWriteRegisterName.ChargingCurrent.name(),
+                "amp={0}",
+                HttpWriteValueType.QueryParameter,
+                HttpMethod.GET));
+        writeValues.add(new HttpWriteValue(
+                EVModbusWriteRegisterName.StartCharging.name(),
+                "alw=1",
+                HttpWriteValueType.QueryParameter,
+                HttpMethod.GET));
+        writeValues.add(new HttpWriteValue(
+                EVModbusWriteRegisterName.StopCharging.name(),
+                "alw=0",
+                HttpWriteValueType.QueryParameter,
+                HttpMethod.GET));
     }
 
     @Test
@@ -93,9 +106,23 @@ public class EVHttpControlTest {
     }
 
     @Test
-    public void setChargeCurrent() {
+    public void startCharging() {
+        this.control.startCharging();
+        Assert.assertEquals(HttpMethod.GET, this.control.httpMethod);
+        Assert.assertEquals("http://192.168.1.1/mqtt=alw=1", this.control.url);
+    }
 
-        Assert.assertEquals(HttpMethod.GET.name(), this.control.httpMethod);
+    @Test
+    public void stopCharging() {
+        this.control.stopCharging();
+        Assert.assertEquals(HttpMethod.GET, this.control.httpMethod);
+        Assert.assertEquals("http://192.168.1.1/mqtt=alw=0", this.control.url);
+    }
+
+    @Test
+    public void setChargeCurrent() {
+        this.control.setChargeCurrent(6);;
+        Assert.assertEquals(HttpMethod.GET, this.control.httpMethod);
         Assert.assertEquals("http://192.168.1.1/mqtt=amp=6", this.control.url);
     }
 }

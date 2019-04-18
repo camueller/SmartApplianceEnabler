@@ -30,14 +30,17 @@ public class HttpWriteValue {
     private String value;
     @XmlAttribute
     private String type;
+    @XmlAttribute
+    private String method;
 
     public HttpWriteValue() {
     }
 
-    public HttpWriteValue(String name, String value, HttpWriteValueType type) {
+    public HttpWriteValue(String name, String value, HttpWriteValueType type, HttpMethod method) {
         this.name = name;
         this.value = value;
         setType(type);
+        setMethod(method);
     }
 
     public String getName() {
@@ -62,5 +65,13 @@ public class HttpWriteValue {
 
     public void setType(HttpWriteValueType type) {
         this.type = type.name();
+    }
+
+    public HttpMethod getMethod() {
+        return HttpMethod.valueOf(method);
+    }
+
+    public void setMethod(HttpMethod method) {
+        this.method = method.name();
     }
 }

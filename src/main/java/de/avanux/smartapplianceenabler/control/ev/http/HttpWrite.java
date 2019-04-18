@@ -28,25 +28,18 @@ import java.util.List;
 public class HttpWrite {
     @XmlAttribute
     private String url;
-    @XmlAttribute
-    private String method;
     @XmlElement(name = "HttpWriteValue")
     private List<HttpWriteValue> writeValues;
 
     public HttpWrite() {
     }
 
-    public HttpWrite(String url, HttpMethod method) {
+    public HttpWrite(String url) {
         this.url = url;
-        setMethod(method);
     }
 
-    public HttpMethod getMethod() {
-        return HttpMethod.valueOf(method);
-    }
-
-    public void setMethod(HttpMethod method) {
-        this.method = method.name();
+    public String getUrl() {
+        return url;
     }
 
     public List<HttpWriteValue> getWriteValues() {
