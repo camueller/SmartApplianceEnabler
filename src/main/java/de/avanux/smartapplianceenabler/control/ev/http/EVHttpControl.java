@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlElement;
+import java.text.MessageFormat;
 import java.util.List;
 
 public class EVHttpControl implements EVControl {
@@ -122,17 +123,13 @@ public class EVHttpControl implements EVControl {
         return null;
     }
 
-    public String httpMethod;
+    public HttpMethod httpMethod;
     public String url;
-    protected void writeValue(EVModbusWriteRegisterName valueName) {
-
-    }
-
-    public HttpWriteWithValue getWriteValue(String name) {
+    public HttpWriteWithValue getWriteValue(EVModbusWriteRegisterName name) {
         if(this.writes != null) {
             for(HttpWrite write : this.writes) {
                 for(HttpWriteValue writeValue : write.getWriteValues()) {
-                    if(writeValue.getName().equals(name)) {
+                    if(writeValue.getName().equals(name.name())) {
                         return new HttpWriteWithValue(write, writeValue);
                     }
                 }
@@ -143,21 +140,37 @@ public class EVHttpControl implements EVControl {
 
     @Override
     public void setChargeCurrent(int current) {
-
+        HttpWriteWithValue writeWithValueValue = getWriteValue(EVModbusWriteRegisterName.ChargingCurrent);
+        String urlWithPlaceholder = buildUrl(writeWithValueValue);
+        this.url = MessageFormat.format(urlWithPlaceholder, current);
+        this.httpMethod = writeWithValueValue.writeValue.getMethod();
     }
 
     @Override
     public void startCharging() {
-
+        HttpWriteWithValue writeWithValueValue = getWriteValue(EVModbusWriteRegisterName.StartCharging);
+        this.url = buildUrl(writeWithValueValue);
+        this.httpMethod = writeWithValueValue.writeValue.getMethod();
     }
 
     @Override
     public void stopCharging() {
-
+        HttpWriteWithValue writeWithValueValue = getWriteValue(EVModbusWriteRegisterName.StopCharging);
+        this.url = buildUrl(writeWithValueValue);
+        this.httpMethod = writeWithValueValue.writeValue.getMethod();
     }
 
     @Override
     public void setApplianceId(String applianceId) {
 
+    }
+
+    protected String buildUrl(HttpWriteWithValue writeWithValueValue) {
+        StringBuilder builder = new StringBuilder(writeWithValueValue.write.getUrl());
+        HttpWriteValue writeValue = writeWithValueValue.writeValue;
+        if(writeValue.getType().equals(HttpWriteValueType.QueryParameter)) {
+            builder.append(writeValue.getValue());
+        }
+        return builder.toString();
     }
 }

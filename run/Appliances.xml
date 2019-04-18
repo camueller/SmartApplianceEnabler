@@ -37,17 +37,17 @@
     <Appliance id="F-00000001-000000000003-00">
         <ElectricVehicleCharger startChargingStateDetectionDelay="0">
             <EVHttpControl contentType="json">
-                <HttpRead url="http://192.168.1.1/status" method="GET">
+                <HttpRead url="http://192.168.1.1/status">
                     <HttpReadValue name="VehicleNotConnected" path="$.car" extractionRegex="(1)"/>
                     <HttpReadValue name="VehicleConnected" path="$.car" extractionRegex="(3)"/>
                     <HttpReadValue name="Charging" path="$.car" extractionRegex="(2)"/>
                     <HttpReadValue name="ChargingCompleted" path="$.car" extractionRegex="(4)"/>
                     <HttpReadValue name="Error" path="$.err" extractionRegex="([^0])"/>
                 </HttpRead>
-                <HttpRead url="http://192.168.1.1/mqtt=" method="GET">
-                    <HttpWriteValue name="ChargingCurrent" value="amp={}" type="QueryParameter" />
-                    <HttpWriteValue name="StartCharging" value="alw=1" type="QueryParameter" />
-                    <HttpWriteValue name="StopCharging" value="alw=0" type="QueryParameter" />
+                <HttpRead url="http://192.168.1.1/mqtt=">
+                    <HttpWriteValue name="ChargingCurrent" value="amp={}" type="QueryParameter" method="GET"/>
+                    <HttpWriteValue name="StartCharging" value="alw=1" type="QueryParameter" method="GET"/>
+                    <HttpWriteValue name="StopCharging" value="alw=0" type="QueryParameter" method="GET"/>
                 </HttpRead>
             </EVHttpControl>
             <ElectricVehicle id="1" name="Nissan Leaf" batteryCapacity="40000" phases="1" maxChargePower="10000" chargeLoss="20" defaultSocManual="100" defaultSocOptionalEnergy="90">

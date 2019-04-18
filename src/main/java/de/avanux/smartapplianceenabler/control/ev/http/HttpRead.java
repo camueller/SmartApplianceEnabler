@@ -28,25 +28,14 @@ import java.util.List;
 public class HttpRead {
     @XmlAttribute
     private String url;
-    @XmlAttribute
-    private String method;
     @XmlElement(name = "HttpReadValue")
     private List<HttpReadValue> readValues;
 
     public HttpRead() {
     }
 
-    public HttpRead(String url, HttpMethod method) {
+    public HttpRead(String url) {
         this.url = url;
-        this.method = method.name();
-    }
-
-    public HttpMethod getMethod() {
-        return HttpMethod.valueOf(method);
-    }
-
-    public void setMethod(HttpMethod method) {
-        this.method = method.name();
     }
 
     public List<HttpReadValue> getReadValues() {
