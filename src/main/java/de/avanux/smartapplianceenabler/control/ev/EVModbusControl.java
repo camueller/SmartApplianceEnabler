@@ -155,9 +155,11 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
                         this.requestCache.put(registerRead, executor);
                     }
                     else {
-                        ReadInputRegisterExecutor readInputRegisterExecutor = (ReadInputRegisterExecutor) executor;
-                        logger.debug("{}: Input register={} value={}", getApplianceId(),
-                                readInputRegisterExecutor.getAddress(), readInputRegisterExecutor.getByteValues());
+                        if(executor instanceof BaseTransactionExecutor) {
+                            BaseTransactionExecutor readInputRegisterExecutor = (BaseTransactionExecutor) executor;
+                            logger.debug("{}: Using cached input register={}", getApplianceId(),
+                                    readInputRegisterExecutor.getAddress());
+                        }
                     }
                     if (result) {
                         if (executor != null) {
@@ -167,9 +169,13 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
                                 result &= registerValue.matches(
                                         registerRead.getSelectedRegisterReadValue().getExtractionRegex());
                             } else if (executor instanceof ReadCoilExecutor) {
-                                result &= ((ReadCoilExecutor) executor).getValue();
+                                Boolean registerValue = ((ReadCoilExecutor) executor).getValue();
+                                logger.debug("{}: Register value={}", getApplianceId(), registerValue);
+                                result &= registerValue;
                             } else if (executor instanceof ReadDiscreteInputExecutor) {
-                                result &= ((ReadDiscreteInputExecutor) executor).getValue();
+                                Boolean registerValue = ((ReadDiscreteInputExecutor) executor).getValue();
+                                logger.debug("{}: Register value={}", getApplianceId(), registerValue);
+                                result &= registerValue;
                             }
                         }
                         else {
