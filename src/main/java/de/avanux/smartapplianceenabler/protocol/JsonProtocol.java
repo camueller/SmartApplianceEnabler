@@ -33,6 +33,14 @@ public class JsonProtocol implements Protocol {
     }
 
     @Override
+    public String readValue(String selector) {
+        if(this.context != null) {
+            return this.context.read(selector);
+        }
+        return null;
+    }
+
+    @Override
     public Integer readIntegerValue(String selector) {
         if(this.context != null) {
             String valueString = this.context.read(selector);

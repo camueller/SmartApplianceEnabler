@@ -19,14 +19,44 @@
 package de.avanux.smartapplianceenabler.control.ev.http;
 
 import de.avanux.smartapplianceenabler.control.ev.EVControl;
+import de.avanux.smartapplianceenabler.control.ev.EVModbusReadRegisterName;
+import de.avanux.smartapplianceenabler.control.ev.EVModbusWriteRegisterName;
 import de.avanux.smartapplianceenabler.protocol.Protocol;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.xml.bind.annotation.XmlElement;
+import java.util.List;
 
 public class EVHttpControl implements EVControl {
 
+    private transient Logger logger = LoggerFactory.getLogger(EVHttpControl.class);
     private Protocol protocol;
+    @XmlElement(name = "HttpRead")
+    private List<HttpRead> reads;
+    @XmlElement(name = "HttpWrite")
+    private List<HttpWrite> writes;
+
+    private class HttpWriteWithValue {
+        public HttpWrite write;
+        public HttpWriteValue writeValue;
+
+        public HttpWriteWithValue(HttpWrite write, HttpWriteValue writeValue) {
+            this.write = write;
+            this.writeValue = writeValue;
+        }
+    }
 
     public EVHttpControl(Protocol protocol) {
         this.protocol = protocol;
+    }
+
+    public void setReads(List<HttpRead> reads) {
+        this.reads = reads;
+    }
+
+    public void setWrites(List<HttpWrite> writes) {
+        this.writes = writes;
     }
 
     public void parse(String response) {
@@ -44,35 +74,71 @@ public class EVHttpControl implements EVControl {
 
     @Override
     public boolean isVehicleNotConnected() {
-        return getCarState() == 1;
+        // FIXME rename to ValueName
+        return readValue(EVModbusReadRegisterName.VehicleNotConnected);
     }
 
     @Override
     public boolean isVehicleConnected() {
-        return getCarState() == 3;
+        return readValue(EVModbusReadRegisterName.VehicleConnected);
     }
 
     @Override
     public boolean isCharging() {
-        return getCarState() == 2;
+        return readValue(EVModbusReadRegisterName.Charging);
     }
 
     @Override
     public boolean isChargingCompleted() {
-        return getCarState() == 4;
+        return readValue(EVModbusReadRegisterName.ChargingCompleted);
     }
 
     @Override
     public boolean isInErrorState() {
-        return getErrState() != 0;
+        return readValue(EVModbusReadRegisterName.Error);
     }
 
-    protected Integer getCarState() {
-        return this.protocol.readIntegerValue("$.car");
+    protected boolean readValue(EVModbusReadRegisterName valueName) {
+        HttpReadValue readValue = getReadValue(valueName);
+        if(readValue != null) {
+            String value = this.protocol.readValue(readValue.getPath());
+            boolean match = value.matches(readValue.getExtractionRegex());
+            logger.debug("value={} match={}", value, match);
+            return match;
+        }
+        return false;
     }
 
-    protected Integer getErrState() {
-        return this.protocol.readIntegerValue("$.err");
+    public HttpReadValue getReadValue(EVModbusReadRegisterName name) {
+        if(this.reads != null) {
+            for(HttpRead read : this.reads) {
+                for(HttpReadValue readValue : read.getReadValues()) {
+                    if(readValue.getName().equals(name.name())) {
+                        return readValue;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public String httpMethod;
+    public String url;
+    protected void writeValue(EVModbusWriteRegisterName valueName) {
+
+    }
+
+    public HttpWriteWithValue getWriteValue(String name) {
+        if(this.writes != null) {
+            for(HttpWrite write : this.writes) {
+                for(HttpWriteValue writeValue : write.getWriteValues()) {
+                    if(writeValue.getName().equals(name)) {
+                        return new HttpWriteWithValue(write, writeValue);
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     @Override
