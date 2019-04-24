@@ -18,6 +18,8 @@
 
 package de.avanux.smartapplianceenabler.control.ev.http;
 
+import de.avanux.smartapplianceenabler.http.HttpTransactionExecutor;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,7 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
 import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class HttpWrite {
+public class HttpWrite extends HttpTransactionExecutor {
     @XmlAttribute
     private String url;
     @XmlElement(name = "HttpWriteValue")
