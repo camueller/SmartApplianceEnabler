@@ -36,6 +36,7 @@
     </Appliance>
     <Appliance id="F-00000001-000000000003-00">
         <Switch gpio="2" reverseStates="true"/>
+        <!--HttpSwitch onUrl="http://localhost:8999" offUrl="http://localhost:8999" /-->
         <S0ElectricityMeter gpio="3" pinPullResistance="PULL_DOWN" impulsesPerKwh="1000"/>
         <!-- HttpElectricityMeter url="http://localhost:8999"/ -->
         <!-- ModbusElectricityMeter idref="modbus" slaveAddress="1" pollInterval="10" measurementInterval="60">
