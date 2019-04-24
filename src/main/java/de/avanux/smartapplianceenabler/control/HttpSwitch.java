@@ -21,6 +21,8 @@ import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.http.HttpTransactionExecutor;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.util.EntityUtils;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,23 +73,36 @@ public class HttpSwitch extends HttpTransactionExecutor implements Control, Appl
 
     @Override
     public boolean on(LocalDateTime now, boolean switchOn) {
-        String url;
-        String data;
-        if(switchOn) {
-            url = onUrl;
-            data = onData;
-        }
-        else {
-            url = offUrl;
-            data = offData;
-        }
-        HttpResponse response = sendHttpRequest(url, data, getContentType(), getUsername(), getPassword());
-        if(response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-            on = switchOn;
-            for(ControlStateChangedListener listener : controlStateChangedListeners) {
-                listener.controlStateChanged(now, switchOn);
+        CloseableHttpResponse response = null;
+        try {
+            String url;
+            String data;
+            if(switchOn) {
+                url = onUrl;
+                data = onData;
             }
-            return true;
+            else {
+                url = offUrl;
+                data = offData;
+            }
+            response = sendHttpRequest(url, data, getContentType(), getUsername(), getPassword());
+            if(response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                on = switchOn;
+                for(ControlStateChangedListener listener : controlStateChangedListeners) {
+                    listener.controlStateChanged(now, switchOn);
+                }
+                return true;
+            }
+        } catch (Exception e) {
+            logger.error("{}: Error executing HTTP request", getApplianceId(), e);
+        } finally {
+            try {
+                if(response != null) {
+                    response.close();
+                }
+            } catch (IOException e) {
+                logger.error("{}: Error closing HTTP response", getApplianceId(), e);
+            }
         }
         return false;
     }
