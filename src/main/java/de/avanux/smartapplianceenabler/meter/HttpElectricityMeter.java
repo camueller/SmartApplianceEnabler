@@ -18,17 +18,14 @@
 package de.avanux.smartapplianceenabler.meter;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import de.avanux.smartapplianceenabler.control.ev.http.HttpMethod;
 import de.avanux.smartapplianceenabler.http.HttpTransactionExecutor;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import java.io.IOException;
 import java.util.Timer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -147,28 +144,14 @@ public class HttpElectricityMeter extends HttpTransactionExecutor implements Met
 
     @Override
     public float getPower() {
-        CloseableHttpResponse response = null;
-        try {
-            response = sendHttpRequest(url, data, getContentType(), getUsername(), getPassword());
-            if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                String responseString = EntityUtils.toString(response.getEntity());
-                logger.debug("{}: HTTP response: {}", getApplianceId(), responseString);
-                logger.debug("{}: Power value extraction regex: {}", getApplianceId(), powerValueExtractionRegex);
-                String valueString = extractPowerValueFromResponse(responseString, powerValueExtractionRegex);
-                logger.debug("{}: Power value extracted from HTTP response: {} factorToWatt={}",
-                        getApplianceId(), valueString, getFactorToWatt());
-                return Float.parseFloat(valueString.replace(',', '.')) * getFactorToWatt();
-            }
-        } catch (Exception e) {
-            logger.error("{}: Error reading HTTP response", getApplianceId(), e);
-        } finally {
-            try {
-                if(response != null) {
-                    response.close();
-                }
-            } catch (IOException e) {
-                logger.error("{}: Error closing HTTP response", getApplianceId(), e);
-            }
+        HttpMethod httpMethod = data != null ? HttpMethod.POST : HttpMethod.GET;
+        String response = execute(httpMethod, url, data);
+        if(response != null) {
+            logger.debug("{}: Power value extraction regex: {}", getApplianceId(), powerValueExtractionRegex);
+            String valueString = extractPowerValueFromResponse(response, powerValueExtractionRegex);
+            logger.debug("{}: Power value extracted from HTTP response: {} factorToWatt={}",
+                    getApplianceId(), valueString, getFactorToWatt());
+            return Float.parseFloat(valueString.replace(',', '.')) * getFactorToWatt();
         }
         return 0;
     }

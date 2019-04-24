@@ -38,6 +38,16 @@ public class EVHttpControl implements EVControl {
     @XmlElement(name = "HttpWrite")
     private List<HttpWrite> writes;
 
+    private class HttpReadWithValue {
+        public HttpRead read;
+        public HttpReadValue readValue;
+
+        public HttpReadWithValue(HttpRead read, HttpReadValue readValue) {
+            this.read = read;
+            this.readValue = readValue;
+        }
+    }
+
     private class HttpWriteWithValue {
         public HttpWrite write;
         public HttpWriteValue writeValue;
@@ -58,10 +68,6 @@ public class EVHttpControl implements EVControl {
 
     public void setWrites(List<HttpWrite> writes) {
         this.writes = writes;
-    }
-
-    public void parse(String response) {
-        this.protocol.parse(response);
     }
 
     @Override
@@ -100,22 +106,24 @@ public class EVHttpControl implements EVControl {
     }
 
     protected boolean readValue(EVModbusReadRegisterName valueName) {
-        HttpReadValue readValue = getReadValue(valueName);
-        if(readValue != null) {
-            String value = this.protocol.readValue(readValue.getPath());
-            boolean match = value.matches(readValue.getExtractionRegex());
+        HttpReadWithValue readWithValue = getReadValue(valueName);
+        if(readWithValue != null) {
+            String response = readWithValue.read.executeGet(readWithValue.read.getUrl());
+            this.protocol.parse(response);
+            String value = this.protocol.readValue(readWithValue.readValue.getPath());
+            boolean match = value.matches(readWithValue.readValue.getExtractionRegex());
             logger.debug("value={} match={}", value, match);
             return match;
         }
         return false;
     }
 
-    public HttpReadValue getReadValue(EVModbusReadRegisterName name) {
+    public HttpReadWithValue getReadValue(EVModbusReadRegisterName name) {
         if(this.reads != null) {
             for(HttpRead read : this.reads) {
                 for(HttpReadValue readValue : read.getReadValues()) {
                     if(readValue.getName().equals(name.name())) {
-                        return readValue;
+                        return new HttpReadWithValue(read, readValue);
                     }
                 }
             }
@@ -123,8 +131,6 @@ public class EVHttpControl implements EVControl {
         return null;
     }
 
-    public HttpMethod httpMethod;
-    public String url;
     public HttpWriteWithValue getWriteValue(EVModbusWriteRegisterName name) {
         if(this.writes != null) {
             for(HttpWrite write : this.writes) {
@@ -138,31 +144,46 @@ public class EVHttpControl implements EVControl {
         return null;
     }
 
+    protected void writeValue(HttpWriteWithValue writeWithValueValue, String url) {
+        if(writeWithValueValue.writeValue.getMethod() == HttpMethod.GET) {
+            String response = writeWithValueValue.write.executeGet(url);
+        }
+    }
+
     @Override
     public void setChargeCurrent(int current) {
         HttpWriteWithValue writeWithValueValue = getWriteValue(EVModbusWriteRegisterName.ChargingCurrent);
         String urlWithPlaceholder = buildUrl(writeWithValueValue);
-        this.url = MessageFormat.format(urlWithPlaceholder, current);
-        this.httpMethod = writeWithValueValue.writeValue.getMethod();
+        String url = MessageFormat.format(urlWithPlaceholder, current);
+        writeValue(writeWithValueValue, url);
     }
 
     @Override
     public void startCharging() {
         HttpWriteWithValue writeWithValueValue = getWriteValue(EVModbusWriteRegisterName.StartCharging);
-        this.url = buildUrl(writeWithValueValue);
-        this.httpMethod = writeWithValueValue.writeValue.getMethod();
+        String url = buildUrl(writeWithValueValue);
+        writeValue(writeWithValueValue, url);
     }
 
     @Override
     public void stopCharging() {
         HttpWriteWithValue writeWithValueValue = getWriteValue(EVModbusWriteRegisterName.StopCharging);
-        this.url = buildUrl(writeWithValueValue);
-        this.httpMethod = writeWithValueValue.writeValue.getMethod();
+        String url = buildUrl(writeWithValueValue);
+        writeValue(writeWithValueValue, url);
     }
 
     @Override
     public void setApplianceId(String applianceId) {
-
+        if(this.reads != null) {
+            for(HttpRead read: this.reads) {
+                read.setApplianceId(applianceId);
+            }
+        }
+        if(this.writes != null) {
+            for(HttpWrite write: this.writes) {
+                write.setApplianceId(applianceId);
+            }
+        }
     }
 
     protected String buildUrl(HttpWriteWithValue writeWithValueValue) {

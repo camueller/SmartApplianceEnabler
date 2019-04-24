@@ -23,23 +23,27 @@ import de.avanux.smartapplianceenabler.control.ev.EVModbusWriteRegisterName;
 import de.avanux.smartapplianceenabler.protocol.JsonProtocol;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class EVHttpControlTest {
 
+    private static String BASE_URL = "http://127.0.0.1:8999";
     private EVHttpControl control;
+    private HttpRead statusReadSpy;
+    private HttpWrite cmdWriteSpy;
 
     public EVHttpControlTest() {
         this.control = new EVHttpControl(new JsonProtocol());
         List<HttpRead> reads = new ArrayList<>();
         this.control.setReads(reads);
 
-        HttpRead statusRead = new HttpRead("http://192.168.1.1/status");
-        reads.add(statusRead);
+        statusReadSpy = Mockito.spy(new HttpRead(BASE_URL + "/status"));
+        reads.add(statusReadSpy);
         List<HttpReadValue> readValues = new ArrayList<>();
-        statusRead.setReadValues(readValues);
+        statusReadSpy.setReadValues(readValues);
         readValues.add(new HttpReadValue(EVModbusReadRegisterName.VehicleNotConnected.name(), "$.car", "(1)"));
         readValues.add(new HttpReadValue(EVModbusReadRegisterName.VehicleConnected.name(), "$.car", "(3)"));
         readValues.add(new HttpReadValue(EVModbusReadRegisterName.Charging.name(), "$.car", "(2)"));
@@ -48,10 +52,10 @@ public class EVHttpControlTest {
 
         List<HttpWrite> writes = new ArrayList<>();
         this.control.setWrites(writes);
-        HttpWrite cmdWrite = new HttpWrite("http://192.168.1.1/mqtt=");
-        writes.add(cmdWrite);
+        cmdWriteSpy =  Mockito.spy(new HttpWrite(BASE_URL + "/mqtt="));
+        writes.add(cmdWriteSpy);
         List<HttpWriteValue> writeValues = new ArrayList<>();
-        cmdWrite.setWriteValues(writeValues);
+        cmdWriteSpy.setWriteValues(writeValues);
         writeValues.add(new HttpWriteValue(
                 EVModbusWriteRegisterName.ChargingCurrent.name(),
                 "amp={0}",
@@ -67,62 +71,64 @@ public class EVHttpControlTest {
                 "alw=0",
                 HttpWriteValueType.QueryParameter,
                 HttpMethod.GET));
+
+        this.control.setApplianceId("F-001");
     }
 
     @Test
     public void isVehicleNotConnected() {
-        this.control.parse("{ \"car\": \"1\" }");
+        Mockito.doReturn("{ \"car\": \"1\" }").when(statusReadSpy).executeGet(Mockito.any());
         Assert.assertTrue(this.control.isVehicleNotConnected());
     }
 
     @Test
     public void isVehicleConnected() {
-        this.control.parse("{ \"car\": \"3\" }");
+        Mockito.doReturn("{ \"car\": \"3\" }").when(statusReadSpy).executeGet(Mockito.any());
         Assert.assertTrue(this.control.isVehicleConnected());
     }
 
     @Test
     public void isCharging() {
-        this.control.parse("{ \"car\": \"2\" }");
+        Mockito.doReturn("{ \"car\": \"2\" }").when(statusReadSpy).executeGet(Mockito.any());
         Assert.assertTrue(this.control.isCharging());
     }
 
     @Test
     public void isChargingCompleted() {
-        this.control.parse("{ \"car\": \"4\" }");
+        Mockito.doReturn("{ \"car\": \"4\" }").when(statusReadSpy).executeGet(Mockito.any());
         Assert.assertTrue(this.control.isChargingCompleted());
     }
 
     @Test
     public void isInErrorState_True() {
-        this.control.parse("{ \"err\": \"1\" }");
+        Mockito.doReturn("{ \"err\": \"1\" }").when(statusReadSpy).executeGet(Mockito.any());
         Assert.assertTrue(this.control.isInErrorState());
     }
 
     @Test
     public void isInErrorState_False() {
-        this.control.parse("{ \"err\": \"0\" }");
+        Mockito.doReturn("{ \"err\": \"0\" }").when(statusReadSpy).executeGet(Mockito.any());
         Assert.assertFalse(this.control.isInErrorState());
     }
 
     @Test
     public void startCharging() {
+        Mockito.doReturn("this is the START CHARGING response").when(cmdWriteSpy).executeGet(Mockito.any());
         this.control.startCharging();
-        Assert.assertEquals(HttpMethod.GET, this.control.httpMethod);
-        Assert.assertEquals("http://192.168.1.1/mqtt=alw=1", this.control.url);
+        Mockito.verify(cmdWriteSpy).executeGet(BASE_URL + "/mqtt=alw=1");
     }
 
     @Test
     public void stopCharging() {
+        Mockito.doReturn("this is the STOP CHARGING response").when(cmdWriteSpy).executeGet(Mockito.any());
         this.control.stopCharging();
-        Assert.assertEquals(HttpMethod.GET, this.control.httpMethod);
-        Assert.assertEquals("http://192.168.1.1/mqtt=alw=0", this.control.url);
+        Mockito.verify(cmdWriteSpy).executeGet(BASE_URL + "/mqtt=alw=0");
     }
 
     @Test
     public void setChargeCurrent() {
+        Mockito.doReturn("this is the SET CHARGE CURRENT response").when(cmdWriteSpy).executeGet(Mockito.any());
         this.control.setChargeCurrent(6);;
-        Assert.assertEquals(HttpMethod.GET, this.control.httpMethod);
-        Assert.assertEquals("http://192.168.1.1/mqtt=amp=6", this.control.url);
+        Mockito.verify(cmdWriteSpy).executeGet(BASE_URL + "/mqtt=amp=6");
     }
 }

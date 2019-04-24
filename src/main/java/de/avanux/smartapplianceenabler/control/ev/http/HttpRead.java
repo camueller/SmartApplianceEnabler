@@ -18,6 +18,10 @@
 
 package de.avanux.smartapplianceenabler.control.ev.http;
 
+import de.avanux.smartapplianceenabler.http.HttpTransactionExecutor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,7 +29,8 @@ import javax.xml.bind.annotation.XmlElement;
 import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class HttpRead {
+public class HttpRead extends HttpTransactionExecutor {
+    private transient Logger logger = LoggerFactory.getLogger(HttpRead.class);
     @XmlAttribute
     private String url;
     @XmlElement(name = "HttpReadValue")
@@ -36,6 +41,10 @@ public class HttpRead {
 
     public HttpRead(String url) {
         this.url = url;
+    }
+
+    public String getUrl() {
+        return url;
     }
 
     public List<HttpReadValue> getReadValues() {

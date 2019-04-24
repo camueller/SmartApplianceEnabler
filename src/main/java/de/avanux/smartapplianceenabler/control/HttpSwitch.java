@@ -18,9 +18,10 @@
 package de.avanux.smartapplianceenabler.control;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import de.avanux.smartapplianceenabler.control.ev.http.HttpMethod;
 import de.avanux.smartapplianceenabler.http.HttpTransactionExecutor;
-import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,13 +81,18 @@ public class HttpSwitch extends HttpTransactionExecutor implements Control, Appl
             url = offUrl;
             data = offData;
         }
-        HttpResponse response = sendHttpRequest(url, data, getContentType(), getUsername(), getPassword());
-        if(response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-            on = switchOn;
-            for(ControlStateChangedListener listener : controlStateChangedListeners) {
-                listener.controlStateChanged(now, switchOn);
+        HttpMethod httpMethod = data != null ? HttpMethod.POST : HttpMethod.GET;
+        CloseableHttpResponse response = executeLeaveOpen(httpMethod, url, data);
+        if(response != null) {
+            int statusCode = response.getStatusLine().getStatusCode();
+            closeResponse(response);
+            if(statusCode == HttpStatus.SC_OK) {
+                on = switchOn;
+                for(ControlStateChangedListener listener : controlStateChangedListeners) {
+                    listener.controlStateChanged(now, switchOn);
+                }
+                return true;
             }
-            return true;
         }
         return false;
     }

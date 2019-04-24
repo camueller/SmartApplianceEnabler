@@ -17,6 +17,8 @@
  */
 package de.avanux.smartapplianceenabler.http;
 
+import de.avanux.smartapplianceenabler.control.ev.http.HttpMethod;
+import org.apache.http.HttpStatus;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
@@ -29,6 +31,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,43 +91,105 @@ abstract public class HttpTransactionExecutor {
         this.password = password;
     }
 
-    /**
-     * Send a HTTP request whose response has to be closed by the caller!
-     * @param url
-     * @return
-     */
-    protected CloseableHttpResponse sendHttpRequest(String url, String data, ContentType contentType, String username, String password) {
+    public String executeGet(String url) {
+        return execute(HttpMethod.GET, url, null);
+    }
+
+    public String executePost(String url, String data) {
+        return execute(HttpMethod.POST, url, data);
+    }
+
+    public String execute(HttpMethod httpMethod, String url, String data) {
+        CloseableHttpResponse response = null;
+        try {
+            response = executeLeaveOpen(httpMethod, url, data);
+            if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                String responseString = EntityUtils.toString(response.getEntity());
+                logger.debug("{}: HTTP response: {}", getApplianceId(), responseString);
+                return responseString;
+            }
+        } catch (Exception e) {
+            logger.error("{}: Error reading HTTP response", getApplianceId(), e);
+        } finally {
+            closeResponse(response);
+        }
+        return null;
+    }
+
+    public CloseableHttpResponse executeLeaveOpen(HttpMethod httpMethod, String url, String data) {
+        CloseableHttpResponse response = null;
+        try {
+            if(httpMethod == HttpMethod.GET) {
+                response = get(url, getUsername(), getPassword());
+            }
+            if(httpMethod == HttpMethod.POST) {
+                response = post(url, getContentType(), data, getUsername(), getPassword());
+            }
+            return response;
+        } catch (Exception e) {
+            logger.error("{}: Error reading HTTP response", getApplianceId(), e);
+        }
+        return null;
+    }
+
+
+    protected CloseableHttpResponse get(String url, String username, String password) {
+        logger.debug("{}: Sending GET request url={}", applianceId, url);
         HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+        withUsernameAndPassword(httpClientBuilder, username, password);
+        CloseableHttpClient client = httpClientBuilder.build();
+        try {
+            HttpRequestBase request = new HttpGet(url);
+            CloseableHttpResponse response = client.execute(request);
+            return logResponse(response);
+        }
+        catch(IOException e) {
+            logger.error("{}: Error executing GET request.", applianceId, e);
+            return null;
+        }
+    }
+
+    protected CloseableHttpResponse post(String url, ContentType contentType, String data, String username, String password) {
+        logger.debug("{}: Sending POST request url={} contentType={} data={}", applianceId, url, contentType, data);
+        HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+        withUsernameAndPassword(httpClientBuilder, username, password);
+        CloseableHttpClient client = httpClientBuilder.build();
+        try {
+            HttpPost request = new HttpPost(url);
+            request.setEntity(new StringEntity(data, contentType));
+            CloseableHttpResponse response = client.execute(request);
+            return logResponse(response);
+        }
+        catch(IOException e) {
+            logger.error("{}: Error executing POST", applianceId, e);
+            return null;
+        }
+    }
+
+    protected HttpClientBuilder withUsernameAndPassword(HttpClientBuilder httpClientBuilder, String username, String password) {
         if(username != null && password != null) {
+            logger.debug("{}: username={} password={}", applianceId, username, password);
             CredentialsProvider provider = new BasicCredentialsProvider();
             UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
             provider.setCredentials(AuthScope.ANY, credentials);
             httpClientBuilder.setDefaultCredentialsProvider(provider);
         }
-        CloseableHttpClient client = httpClientBuilder.build();
-        logger.debug("{}: Sending HTTP request", applianceId);
-        logger.debug("{}: url={}", applianceId, url);
-        logger.debug("{}: data={}", applianceId, data);
-        logger.debug("{}: contentType={}", applianceId, contentType);
-        logger.debug("{}: username={}", applianceId, username);
-        logger.debug("{}: password={}", applianceId, password);
+        return httpClientBuilder;
+    }
+
+    protected void closeResponse(CloseableHttpResponse response) {
         try {
-            HttpRequestBase request = null;
-            if(data != null) {
-                request = new HttpPost(url);
-                ((HttpPost) request).setEntity(new StringEntity(data, contentType));
+            if(response != null) {
+                response.close();
             }
-            else {
-                request = new HttpGet(url);
-            }
-            CloseableHttpResponse response = client.execute(request);
-            int responseCode = response.getStatusLine().getStatusCode();
-            logger.debug("{}: Response code is {}", applianceId, responseCode);
-            return response;
+        } catch (IOException e) {
+            logger.error("{}: Error closing HTTP response", getApplianceId(), e);
         }
-        catch(IOException e) {
-            logger.error("{}: Error executing HTTP request.", applianceId, e);
-            return null;
-        }
+    }
+
+    private CloseableHttpResponse logResponse(CloseableHttpResponse response) {
+        int responseCode = response.getStatusLine().getStatusCode();
+        logger.debug("{}: Response code is {}", applianceId, responseCode);
+        return response;
     }
 }
