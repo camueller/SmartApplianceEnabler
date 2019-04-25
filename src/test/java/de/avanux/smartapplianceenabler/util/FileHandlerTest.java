@@ -47,7 +47,7 @@ public class FileHandlerTest {
         List<HttpRead> reads = httpControl.getReads();
         Assert.assertEquals(1, reads.size());
         HttpRead read = reads.get(0);
-        assertRead(read, "http://192.168.1.1/status");
+        assertRead(read, "http://127.0.0.1:8999/status");
         List<HttpReadValue> readValues = read.getReadValues();
         Assert.assertEquals(5, readValues.size());
         assertReadValue(readValues.get(0), EVModbusReadRegisterName.VehicleNotConnected, "$.car", "(1)");
@@ -59,7 +59,7 @@ public class FileHandlerTest {
         List<HttpWrite> writes = httpControl.getWrites();
         Assert.assertEquals(1, writes.size());
         HttpWrite write = writes.get(0);
-        assertWrite(write, "http://192.168.1.1/mqtt=");
+        assertWrite(write, "http://127.0.0.1:8999/mqtt=");
         List<HttpWriteValue> writeValues = write.getWriteValues();
         Assert.assertEquals(3, writeValues.size());
         assertWriteValue(writeValues.get(0), EVModbusWriteRegisterName.ChargingCurrent.name(),"amp={}",
