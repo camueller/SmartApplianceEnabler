@@ -24,6 +24,7 @@ import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
 import de.avanux.smartapplianceenabler.appliance.RunningTimeMonitor;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.ControlStateChangedListener;
+import de.avanux.smartapplianceenabler.control.ev.http.EVHttpControl;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
 import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
@@ -50,6 +51,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     protected Boolean forceInitialCharging;
     @XmlElements({
         @XmlElement(name = "EVModbusControl", type = EVModbusControl.class),
+        @XmlElement(name = "EVHttpControl", type = EVHttpControl.class),
     })
     private EVControl control;
     @XmlElements({

@@ -57,14 +57,33 @@ public class FileHandler {
     public <R extends Object> R load(Class<R> rootElementType) {
         File file = getFile(rootElementType);
         if(file.exists()) {
+            InputStream is = null;
             try {
-                JAXBContext context = JAXBContext.newInstance(rootElementType);
-                Unmarshaller unmarshaller = context.createUnmarshaller();
-                return (R) unmarshaller.unmarshal(file);
+                is = new FileInputStream(file);
+                return load(rootElementType, is);
             }
-            catch(JAXBException e) {
+            catch(Exception e) {
                 logger.error("Error unmarshalling file " + file, e);
             }
+            finally {
+                if(is != null) {
+                    try {
+                        is.close();
+                    }
+                    catch(IOException e) {
+                        logger.error("Error closing stream of file " + file, e);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public <R extends Object> R load(Class<R> rootElementType, InputStream is) throws JAXBException, IOException {
+        if(is.available() > 0) {
+            JAXBContext context = JAXBContext.newInstance(rootElementType);
+            Unmarshaller unmarshaller = context.createUnmarshaller();
+            return (R) unmarshaller.unmarshal(is);
         }
         return null;
     }
