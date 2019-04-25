@@ -36,13 +36,14 @@ public class FileHandlerTest {
 
     @Test
     public void load_GoECharger() throws Exception {
-        InputStream is = getClass().getClassLoader().getResourceAsStream("GoECharger.xml");
-        Assert.assertTrue(is.available() > 0);
-        Appliances appliances = fileHandler.load(Appliances.class, is);
+        Appliances appliances = loadAppliances("GoECharger.xml");
         Assert.assertNotNull(appliances);
         Appliance appliance = appliances.getAppliances().get(0);
+        Assert.assertNotNull(appliance);
         ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
+        Assert.assertNotNull(evCharger);
         EVHttpControl httpControl = (EVHttpControl) evCharger.getControl();
+        Assert.assertNotNull(httpControl);
 
         List<HttpRead> reads = httpControl.getReads();
         Assert.assertEquals(1, reads.size());
@@ -68,6 +69,14 @@ public class FileHandlerTest {
                 HttpWriteValueType.QueryParameter, HttpMethod.GET);
         assertWriteValue(writeValues.get(2), EVModbusWriteRegisterName.StopCharging.name(),"alw=0",
                 HttpWriteValueType.QueryParameter, HttpMethod.GET);
+    }
+
+    private Appliances loadAppliances(String filename) throws Exception {
+        InputStream is = getClass().getClassLoader().getResourceAsStream(filename);
+        Assert.assertTrue(is.available() > 0);
+        Appliances appliances = fileHandler.load(Appliances.class, is);
+        is.close();
+        return appliances;
     }
 
     private void assertRead(HttpRead read, String url) {
