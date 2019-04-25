@@ -21,22 +21,29 @@ package de.avanux.smartapplianceenabler.control.ev.http;
 import de.avanux.smartapplianceenabler.control.ev.EVControl;
 import de.avanux.smartapplianceenabler.control.ev.EVModbusReadRegisterName;
 import de.avanux.smartapplianceenabler.control.ev.EVModbusWriteRegisterName;
+import de.avanux.smartapplianceenabler.protocol.JsonProtocol;
 import de.avanux.smartapplianceenabler.protocol.Protocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import java.text.MessageFormat;
 import java.util.List;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class EVHttpControl implements EVControl {
 
     private transient Logger logger = LoggerFactory.getLogger(EVHttpControl.class);
-    private Protocol protocol;
+    @XmlAttribute
+    private String contentType;
     @XmlElement(name = "HttpRead")
     private List<HttpRead> reads;
     @XmlElement(name = "HttpWrite")
     private List<HttpWrite> writes;
+    private transient Protocol protocol;
 
     private class HttpReadWithValue {
         public HttpRead read;
@@ -58,12 +65,32 @@ public class EVHttpControl implements EVControl {
         }
     }
 
+    public EVHttpControl() {
+    }
+
     public EVHttpControl(Protocol protocol) {
         this.protocol = protocol;
     }
 
+    public Protocol getProtocol() {
+        if(this.protocol == null) {
+            if(HttpContentType.json.name().equals(this.contentType)) {
+                this.protocol = new JsonProtocol();
+            }
+        }
+        return this.protocol;
+    }
+
+    public List<HttpRead> getReads() {
+        return reads;
+    }
+
     public void setReads(List<HttpRead> reads) {
         this.reads = reads;
+    }
+
+    public List<HttpWrite> getWrites() {
+        return writes;
     }
 
     public void setWrites(List<HttpWrite> writes) {
@@ -109,8 +136,8 @@ public class EVHttpControl implements EVControl {
         HttpReadWithValue readWithValue = getReadValue(valueName);
         if(readWithValue != null) {
             String response = readWithValue.read.executeGet(readWithValue.read.getUrl());
-            this.protocol.parse(response);
-            String value = this.protocol.readValue(readWithValue.readValue.getPath());
+            getProtocol().parse(response);
+            String value = getProtocol().readValue(readWithValue.readValue.getPath());
             boolean match = value.matches(readWithValue.readValue.getExtractionRegex());
             logger.debug("value={} match={}", value, match);
             return match;
