@@ -40,8 +40,16 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
     private transient Integer pollInterval; // seconds
     private transient RequestCache<ModbusRegisterRead, ModbusReadTransactionExecutor> requestCache;
 
+    public List<ModbusRegisterRead> getRegisterReads() {
+        return registerReads;
+    }
+
     protected void setRegisterReads(List<ModbusRegisterRead> registerReads) {
         this.registerReads = registerReads;
+    }
+
+    public List<ModbusRegisterWrite> getRegisterWrites() {
+        return registerWrites;
     }
 
     protected void setRegisterWrites(List<ModbusRegisterWrite> registerWrites) {

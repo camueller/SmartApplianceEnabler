@@ -20,10 +20,12 @@ package de.avanux.smartapplianceenabler.util;
 
 import de.avanux.smartapplianceenabler.appliance.Appliance;
 import de.avanux.smartapplianceenabler.appliance.Appliances;
+import de.avanux.smartapplianceenabler.control.ev.EVModbusControl;
 import de.avanux.smartapplianceenabler.control.ev.EVModbusReadRegisterName;
 import de.avanux.smartapplianceenabler.control.ev.EVModbusWriteRegisterName;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
 import de.avanux.smartapplianceenabler.control.ev.http.*;
+import de.avanux.smartapplianceenabler.modbus.*;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -33,6 +35,51 @@ import java.util.List;
 public class FileHandlerTest {
 
     private FileHandler fileHandler = new FileHandler();
+
+    @Test
+    public void load_PhoenixContact() throws Exception {
+        Appliances appliances = loadAppliances("PhoenixContact.xml");
+        Assert.assertNotNull(appliances);
+        Appliance appliance = appliances.getAppliances().get(0);
+        Assert.assertNotNull(appliance);
+        ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
+        Assert.assertNotNull(evCharger);
+        EVModbusControl modbusControl = (EVModbusControl) evCharger.getControl();
+        Assert.assertNotNull(modbusControl);
+
+        List<ModbusRegisterRead> registerReads = modbusControl.getRegisterReads();
+        Assert.assertEquals(2, registerReads.size());
+
+        ModbusRegisterRead r100 = registerReads.get(0);
+        assertModbusRegisterRead(r100, "100", ModbusReadRegisterType.InputString);
+        List<ModbusRegisterReadValue> r100Values = r100.getRegisterReadValues();
+        Assert.assertEquals(5, r100Values.size());
+        assertModbusRegisterReadValue(r100Values.get(0), EVModbusReadRegisterName.VehicleNotConnected, "(A)");
+        assertModbusRegisterReadValue(r100Values.get(1), EVModbusReadRegisterName.VehicleConnected, "(B)");
+        assertModbusRegisterReadValue(r100Values.get(2), EVModbusReadRegisterName.Charging, "(C|D)");
+        assertModbusRegisterReadValue(r100Values.get(3), EVModbusReadRegisterName.ChargingCompleted, "(B)");
+        assertModbusRegisterReadValue(r100Values.get(4), EVModbusReadRegisterName.Error, "(E|F)");
+
+        ModbusRegisterRead r204 = registerReads.get(1);
+        assertModbusRegisterRead(r204, "204", ModbusReadRegisterType.Discrete);
+        List<ModbusRegisterReadValue> r204Values = r204.getRegisterReadValues();
+        Assert.assertEquals(1, r204Values.size());
+        assertModbusRegisterReadValue(r204Values.get(0), EVModbusReadRegisterName.ChargingCompleted, null);
+
+        List<ModbusRegisterWrite> registerWrites = modbusControl.getRegisterWrites();
+        ModbusRegisterWrite r400 = registerWrites.get(0);
+        assertModbusRegisterWrite(r400, "400", ModbusWriteRegisterType.Coil);
+        List<ModbusRegisterWriteValue> r400Values = r400.getRegisterWriteValues();
+        Assert.assertEquals(2, r400Values.size());
+        assertModbusRegisterWriteValue(r400Values.get(0), EVModbusWriteRegisterName.StartCharging, "1");
+        assertModbusRegisterWriteValue(r400Values.get(1), EVModbusWriteRegisterName.StopCharging, "0");
+
+        ModbusRegisterWrite r300 = registerWrites.get(1);
+        assertModbusRegisterWrite(r300, "300", ModbusWriteRegisterType.Holding);
+        List<ModbusRegisterWriteValue> r300Values = r300.getRegisterWriteValues();
+        Assert.assertEquals(1, r300Values.size());
+        assertModbusRegisterWriteValue(r300Values.get(0), EVModbusWriteRegisterName.ChargingCurrent, "0");
+    }
 
     @Test
     public void load_GoECharger() throws Exception {
@@ -100,4 +147,27 @@ public class FileHandlerTest {
         Assert.assertEquals(method, writeValue.getMethod());
     }
 
+    private void assertModbusRegisterRead(ModbusRegisterRead registerRead, String address, ModbusReadRegisterType registerType) {
+        Assert.assertEquals(address, registerRead.getAddress());
+        Assert.assertEquals(registerType, registerRead.getType());
+    }
+
+    private void assertModbusRegisterReadValue(ModbusRegisterReadValue registerReadValue, EVModbusReadRegisterName name, String extractionRegex) {
+        Assert.assertEquals(name.name(), registerReadValue.getName());
+        if(extractionRegex != null) {
+            Assert.assertEquals(extractionRegex, registerReadValue.getExtractionRegex());
+        }
+    }
+
+    private void assertModbusRegisterWrite(ModbusRegisterWrite registerWrite, String address, ModbusWriteRegisterType registerType) {
+        Assert.assertEquals(address, registerWrite.getAddress());
+        Assert.assertEquals(registerType, registerWrite.getType());
+    }
+
+    private void assertModbusRegisterWriteValue(ModbusRegisterWriteValue registerWriteValue, EVModbusWriteRegisterName name, String value) {
+        Assert.assertEquals(name.name(), registerWriteValue.getName());
+        if(value != null) {
+            Assert.assertEquals(value, registerWriteValue.getValue());
+        }
+    }
 }
