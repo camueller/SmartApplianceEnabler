@@ -43,8 +43,16 @@ public class SocScript implements ApplianceIdConsumer {
     private transient String applianceId;
 
 
+    public String getScript() {
+        return script;
+    }
+
     public void setScript(String script) {
         this.script = script;
+    }
+
+    public String getExtractionRegex() {
+        return extractionRegex;
     }
 
     public void setExtractionRegex(String extractionRegex) {
