@@ -18,8 +18,6 @@
 
 package de.avanux.smartapplianceenabler.modbus;
 
-import de.avanux.smartapplianceenabler.control.ev.EVModbusWriteRegisterName;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;

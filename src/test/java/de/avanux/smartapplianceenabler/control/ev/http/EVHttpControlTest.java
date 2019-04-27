@@ -18,8 +18,8 @@
 
 package de.avanux.smartapplianceenabler.control.ev.http;
 
-import de.avanux.smartapplianceenabler.control.ev.EVModbusReadRegisterName;
-import de.avanux.smartapplianceenabler.control.ev.EVModbusWriteRegisterName;
+import de.avanux.smartapplianceenabler.control.ev.EVReadValueName;
+import de.avanux.smartapplianceenabler.control.ev.EVWriteValueName;
 import de.avanux.smartapplianceenabler.protocol.JsonProtocol;
 import org.junit.Assert;
 import org.junit.Test;
@@ -44,11 +44,11 @@ public class EVHttpControlTest {
         reads.add(statusReadSpy);
         List<HttpReadValue> readValues = new ArrayList<>();
         statusReadSpy.setReadValues(readValues);
-        readValues.add(new HttpReadValue(EVModbusReadRegisterName.VehicleNotConnected.name(), "$.car", "(1)"));
-        readValues.add(new HttpReadValue(EVModbusReadRegisterName.VehicleConnected.name(), "$.car", "(3)"));
-        readValues.add(new HttpReadValue(EVModbusReadRegisterName.Charging.name(), "$.car", "(2)"));
-        readValues.add(new HttpReadValue(EVModbusReadRegisterName.ChargingCompleted.name(), "$.car", "(4)"));
-        readValues.add(new HttpReadValue(EVModbusReadRegisterName.Error.name(), "$.err", "([^0])"));
+        readValues.add(new HttpReadValue(EVReadValueName.VehicleNotConnected.name(), "$.car", "(1)"));
+        readValues.add(new HttpReadValue(EVReadValueName.VehicleConnected.name(), "$.car", "(3)"));
+        readValues.add(new HttpReadValue(EVReadValueName.Charging.name(), "$.car", "(2)"));
+        readValues.add(new HttpReadValue(EVReadValueName.ChargingCompleted.name(), "$.car", "(4)"));
+        readValues.add(new HttpReadValue(EVReadValueName.Error.name(), "$.err", "([^0])"));
 
         List<HttpWrite> writes = new ArrayList<>();
         this.control.setWrites(writes);
@@ -57,17 +57,17 @@ public class EVHttpControlTest {
         List<HttpWriteValue> writeValues = new ArrayList<>();
         cmdWriteSpy.setWriteValues(writeValues);
         writeValues.add(new HttpWriteValue(
-                EVModbusWriteRegisterName.ChargingCurrent.name(),
+                EVWriteValueName.ChargingCurrent.name(),
                 "amp={0}",
                 HttpWriteValueType.QueryParameter,
                 HttpMethod.GET));
         writeValues.add(new HttpWriteValue(
-                EVModbusWriteRegisterName.StartCharging.name(),
+                EVWriteValueName.StartCharging.name(),
                 "alw=1",
                 HttpWriteValueType.QueryParameter,
                 HttpMethod.GET));
         writeValues.add(new HttpWriteValue(
-                EVModbusWriteRegisterName.StopCharging.name(),
+                EVWriteValueName.StopCharging.name(),
                 "alw=0",
                 HttpWriteValueType.QueryParameter,
                 HttpMethod.GET));

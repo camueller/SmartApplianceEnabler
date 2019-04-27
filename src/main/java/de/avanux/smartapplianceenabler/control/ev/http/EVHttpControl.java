@@ -19,8 +19,8 @@
 package de.avanux.smartapplianceenabler.control.ev.http;
 
 import de.avanux.smartapplianceenabler.control.ev.EVControl;
-import de.avanux.smartapplianceenabler.control.ev.EVModbusReadRegisterName;
-import de.avanux.smartapplianceenabler.control.ev.EVModbusWriteRegisterName;
+import de.avanux.smartapplianceenabler.control.ev.EVReadValueName;
+import de.avanux.smartapplianceenabler.control.ev.EVWriteValueName;
 import de.avanux.smartapplianceenabler.protocol.JsonProtocol;
 import de.avanux.smartapplianceenabler.protocol.Protocol;
 import org.slf4j.Logger;
@@ -74,7 +74,7 @@ public class EVHttpControl implements EVControl {
 
     public Protocol getProtocol() {
         if(this.protocol == null) {
-            if(HttpContentType.json.name().equals(this.contentType)) {
+            if(ContentProtocol.JSON.name().equals(this.contentType)) {
                 this.protocol = new JsonProtocol();
             }
         }
@@ -109,30 +109,30 @@ public class EVHttpControl implements EVControl {
     @Override
     public boolean isVehicleNotConnected() {
         // FIXME rename to ValueName
-        return readValue(EVModbusReadRegisterName.VehicleNotConnected);
+        return readValue(EVReadValueName.VehicleNotConnected);
     }
 
     @Override
     public boolean isVehicleConnected() {
-        return readValue(EVModbusReadRegisterName.VehicleConnected);
+        return readValue(EVReadValueName.VehicleConnected);
     }
 
     @Override
     public boolean isCharging() {
-        return readValue(EVModbusReadRegisterName.Charging);
+        return readValue(EVReadValueName.Charging);
     }
 
     @Override
     public boolean isChargingCompleted() {
-        return readValue(EVModbusReadRegisterName.ChargingCompleted);
+        return readValue(EVReadValueName.ChargingCompleted);
     }
 
     @Override
     public boolean isInErrorState() {
-        return readValue(EVModbusReadRegisterName.Error);
+        return readValue(EVReadValueName.Error);
     }
 
-    protected boolean readValue(EVModbusReadRegisterName valueName) {
+    protected boolean readValue(EVReadValueName valueName) {
         HttpReadWithValue readWithValue = getReadValue(valueName);
         if(readWithValue != null) {
             String response = readWithValue.read.executeGet(readWithValue.read.getUrl());
@@ -145,7 +145,7 @@ public class EVHttpControl implements EVControl {
         return false;
     }
 
-    public HttpReadWithValue getReadValue(EVModbusReadRegisterName name) {
+    public HttpReadWithValue getReadValue(EVReadValueName name) {
         if(this.reads != null) {
             for(HttpRead read : this.reads) {
                 for(HttpReadValue readValue : read.getReadValues()) {
@@ -158,7 +158,7 @@ public class EVHttpControl implements EVControl {
         return null;
     }
 
-    public HttpWriteWithValue getWriteValue(EVModbusWriteRegisterName name) {
+    public HttpWriteWithValue getWriteValue(EVWriteValueName name) {
         if(this.writes != null) {
             for(HttpWrite write : this.writes) {
                 for(HttpWriteValue writeValue : write.getWriteValues()) {
@@ -179,7 +179,7 @@ public class EVHttpControl implements EVControl {
 
     @Override
     public void setChargeCurrent(int current) {
-        HttpWriteWithValue writeWithValueValue = getWriteValue(EVModbusWriteRegisterName.ChargingCurrent);
+        HttpWriteWithValue writeWithValueValue = getWriteValue(EVWriteValueName.ChargingCurrent);
         String urlWithPlaceholder = buildUrl(writeWithValueValue);
         String url = MessageFormat.format(urlWithPlaceholder, current);
         writeValue(writeWithValueValue, url);
@@ -187,14 +187,14 @@ public class EVHttpControl implements EVControl {
 
     @Override
     public void startCharging() {
-        HttpWriteWithValue writeWithValueValue = getWriteValue(EVModbusWriteRegisterName.StartCharging);
+        HttpWriteWithValue writeWithValueValue = getWriteValue(EVWriteValueName.StartCharging);
         String url = buildUrl(writeWithValueValue);
         writeValue(writeWithValueValue, url);
     }
 
     @Override
     public void stopCharging() {
-        HttpWriteWithValue writeWithValueValue = getWriteValue(EVModbusWriteRegisterName.StopCharging);
+        HttpWriteWithValue writeWithValueValue = getWriteValue(EVWriteValueName.StopCharging);
         String url = buildUrl(writeWithValueValue);
         writeValue(writeWithValueValue, url);
     }

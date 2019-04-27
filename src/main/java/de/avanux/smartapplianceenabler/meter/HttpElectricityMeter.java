@@ -18,7 +18,7 @@
 package de.avanux.smartapplianceenabler.meter;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
-import de.avanux.smartapplianceenabler.control.ev.http.HttpContentType;
+import de.avanux.smartapplianceenabler.control.ev.http.ContentProtocol;
 import de.avanux.smartapplianceenabler.control.ev.http.HttpMethod;
 import de.avanux.smartapplianceenabler.control.ev.http.HttpRead;
 import de.avanux.smartapplianceenabler.control.ev.http.HttpReadValue;
@@ -68,7 +68,7 @@ public class HttpElectricityMeter implements Meter, PollPowerExecutor, PollEnerg
         this.httpReads = httpReads;
     }
 
-    public void setContentProtocol(HttpContentType contentProtocol) {
+    public void setContentProtocol(ContentProtocol contentProtocol) {
         this.contentProtocol = contentProtocol != null ? contentProtocol.name() : null;
     }
 
@@ -249,7 +249,7 @@ public class HttpElectricityMeter implements Meter, PollPowerExecutor, PollEnerg
 
     public Protocol getContentProtocolHandler() {
         if(this.contentProtocolHandler == null) {
-            if(HttpContentType.json.name().equals(this.contentProtocol)) {
+            if(ContentProtocol.JSON.name().equals(this.contentProtocol)) {
                 this.contentProtocolHandler = new JsonProtocol();
             }
         }
