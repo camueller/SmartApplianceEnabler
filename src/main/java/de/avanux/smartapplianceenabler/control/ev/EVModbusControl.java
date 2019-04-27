@@ -74,7 +74,7 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
 
         if(checkRegisterConfiguration) {
             boolean valid = true;
-            for(EVModbusReadRegisterName registerName: EVModbusReadRegisterName.values()) {
+            for(EVReadValueName registerName: EVReadValueName.values()) {
                 List<ModbusRegisterRead> registerReads = ModbusRegisterRead.getRegisterReads(registerName.name(),
                         this.registerReads);
                 if(registerReads.size() > 0) {
@@ -91,7 +91,7 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
                 }
             }
 
-            for(EVModbusWriteRegisterName registerName: EVModbusWriteRegisterName.values()) {
+            for(EVWriteValueName registerName: EVWriteValueName.values()) {
                 List<ModbusRegisterWrite> registerWrites = ModbusRegisterWrite.getRegisterWrites(registerName.name(),
                         this.registerWrites);
                 if(registerWrites.size() > 0) {
@@ -103,7 +103,7 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
                                 registerWrite.getSelectedRegisterWriteValue().getValue(),
                                 registerWrite.getFactorToValue());
                     }
-                    if(EVModbusWriteRegisterName.ChargingCurrent.equals(registerName)) {
+                    if(EVWriteValueName.ChargingCurrent.equals(registerName)) {
                     /* Alternative, falls Ladestrom am Controller nur auf feste Werte gesetzt werden kann
                     <ModbusRegisterWriteValue name="ChargingCurrent" param="2000" value="1" />
                     <ModbusRegisterWriteValue name="ChargingCurrent" param="4000" value="2" />
@@ -125,30 +125,30 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
 
     @Override
     public boolean isVehicleNotConnected() {
-        return isMatchingVehicleStatus(EVModbusReadRegisterName.VehicleNotConnected);
+        return isMatchingVehicleStatus(EVReadValueName.VehicleNotConnected);
     }
 
     @Override
     public boolean isVehicleConnected() {
-        return isMatchingVehicleStatus(EVModbusReadRegisterName.VehicleConnected);
+        return isMatchingVehicleStatus(EVReadValueName.VehicleConnected);
     }
 
     @Override
     public boolean isCharging() {
-        return isMatchingVehicleStatus(EVModbusReadRegisterName.Charging);
+        return isMatchingVehicleStatus(EVReadValueName.Charging);
     }
 
     @Override
     public boolean isChargingCompleted() {
-        return isMatchingVehicleStatus(EVModbusReadRegisterName.ChargingCompleted);
+        return isMatchingVehicleStatus(EVReadValueName.ChargingCompleted);
     }
 
     @Override
     public boolean isInErrorState()  {
-        return isMatchingVehicleStatus(EVModbusReadRegisterName.Error);
+        return isMatchingVehicleStatus(EVReadValueName.Error);
     }
 
-    public boolean isMatchingVehicleStatus(EVModbusReadRegisterName registerName) {
+    public boolean isMatchingVehicleStatus(EVReadValueName registerName) {
         List<ModbusRegisterRead> registerReads = ModbusRegisterRead.getRegisterReads(registerName.name(),
                 this.registerReads);
         if (registerReads.size() > 0) {
@@ -205,7 +205,7 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
     public void setChargeCurrent(int current) {
         logger.debug("{}: Set charge current {}A", getApplianceId(), current);
         ModbusRegisterWrite registerWrite = ModbusRegisterWrite.getFirstRegisterWrite(
-                EVModbusWriteRegisterName.ChargingCurrent.name(), this.registerWrites);
+                EVWriteValueName.ChargingCurrent.name(), this.registerWrites);
         if(registerWrite != null) {
             try {
                 ModbusWriteTransactionExecutor executor = ModbusExecutorFactory.getWriteExecutor(getApplianceId(),
@@ -225,16 +225,16 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
     @Override
     public void startCharging() {
         logger.debug("{}: Start charging", getApplianceId());
-        setCharging(EVModbusWriteRegisterName.StartCharging);
+        setCharging(EVWriteValueName.StartCharging);
     }
 
     @Override
     public void stopCharging() {
         logger.debug("{}: Stop charging", getApplianceId());
-        setCharging(EVModbusWriteRegisterName.StopCharging);
+        setCharging(EVWriteValueName.StopCharging);
     }
 
-    private void setCharging(EVModbusWriteRegisterName registerName) {
+    private void setCharging(EVWriteValueName registerName) {
         ModbusRegisterWrite registerWrite = ModbusRegisterWrite.getFirstRegisterWrite(registerName.name(),
                 this.registerWrites);
         if(registerWrite != null) {

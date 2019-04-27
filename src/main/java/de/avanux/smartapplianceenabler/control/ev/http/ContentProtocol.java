@@ -18,6 +18,6 @@
 
 package de.avanux.smartapplianceenabler.control.ev.http;
 
-public enum HttpContentType {
-    json
+public enum ContentProtocol {
+    JSON
 }

@@ -43,17 +43,17 @@ public class EVModbusControlTest {
 
     @Test
     public void isMatchingVehicleStatus_trueUsingCache() {
-        isMatchingVehicleStatusUsingCache(true, EVModbusReadRegisterName.VehicleConnected,
+        isMatchingVehicleStatusUsingCache(true, EVReadValueName.VehicleConnected,
                 "(B)", new Integer[]{66});
     }
 
     @Test
     public void isMatchingVehicleStatus_falseUsingCache() {
-        isMatchingVehicleStatusUsingCache(false, EVModbusReadRegisterName.VehicleConnected,
+        isMatchingVehicleStatusUsingCache(false, EVReadValueName.VehicleConnected,
                 "(B)", new Integer[]{65});
     }
 
-    private void isMatchingVehicleStatusUsingCache(boolean expectedResult, EVModbusReadRegisterName registerName,
+    private void isMatchingVehicleStatusUsingCache(boolean expectedResult, EVReadValueName registerName,
                                                    String extractionRegex, Integer[] byteValues) {
         ModbusRegisterRead registerRead = new ModbusRegisterRead();
         registerRead.setAddress("42");
