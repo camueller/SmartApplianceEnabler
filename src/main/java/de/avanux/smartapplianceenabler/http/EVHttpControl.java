@@ -24,6 +24,7 @@ import de.avanux.smartapplianceenabler.control.ev.EVWriteValueName;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolType;
 import de.avanux.smartapplianceenabler.protocol.JsonContentProtocol;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocol;
+import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,25 +47,6 @@ public class EVHttpControl implements EVControl {
     private List<HttpWrite> writes;
     private transient ContentProtocol contentProtocol;
 
-    private class HttpReadWithValue {
-        public HttpRead read;
-        public HttpReadValue readValue;
-
-        public HttpReadWithValue(HttpRead read, HttpReadValue readValue) {
-            this.read = read;
-            this.readValue = readValue;
-        }
-    }
-
-    private class HttpWriteWithValue {
-        public HttpWrite write;
-        public HttpWriteValue writeValue;
-
-        public HttpWriteWithValue(HttpWrite write, HttpWriteValue writeValue) {
-            this.write = write;
-            this.writeValue = writeValue;
-        }
-    }
 
     public EVHttpControl() {
     }
@@ -134,24 +116,24 @@ public class EVHttpControl implements EVControl {
     }
 
     protected boolean readValue(EVReadValueName valueName) {
-        HttpReadWithValue readWithValue = getReadValue(valueName);
-        if(readWithValue != null) {
-            String response = readWithValue.read.executeGet(readWithValue.read.getUrl());
+        ParentWithChild<HttpRead, HttpReadValue> read = getReadValue(valueName);
+        if(read != null) {
+            String response = read.parent().executeGet(read.parent().getUrl());
             getContentProtocol().parse(response);
-            String value = getContentProtocol().readValue(readWithValue.readValue.getPath());
-            boolean match = value.matches(readWithValue.readValue.getExtractionRegex());
+            String value = getContentProtocol().readValue(read.child().getPath());
+            boolean match = value.matches(read.child().getExtractionRegex());
             logger.debug("value={} match={}", value, match);
             return match;
         }
         return false;
     }
 
-    public HttpReadWithValue getReadValue(EVReadValueName name) {
+    public ParentWithChild<HttpRead, HttpReadValue> getReadValue(EVReadValueName name) {
         if(this.reads != null) {
             for(HttpRead read : this.reads) {
                 for(HttpReadValue readValue : read.getReadValues()) {
                     if(readValue.getName().equals(name.name())) {
-                        return new HttpReadWithValue(read, readValue);
+                        return new ParentWithChild(read, readValue);
                     }
                 }
             }
@@ -159,12 +141,12 @@ public class EVHttpControl implements EVControl {
         return null;
     }
 
-    public HttpWriteWithValue getWriteValue(EVWriteValueName name) {
+    public ParentWithChild<HttpWrite, HttpWriteValue> getWriteValue(EVWriteValueName name) {
         if(this.writes != null) {
             for(HttpWrite write : this.writes) {
                 for(HttpWriteValue writeValue : write.getWriteValues()) {
                     if(writeValue.getName().equals(name.name())) {
-                        return new HttpWriteWithValue(write, writeValue);
+                        return new ParentWithChild(write, writeValue);
                     }
                 }
             }
@@ -172,32 +154,32 @@ public class EVHttpControl implements EVControl {
         return null;
     }
 
-    protected void writeValue(HttpWriteWithValue writeWithValueValue, String url) {
-        if(writeWithValueValue.writeValue.getMethod() == HttpMethod.GET) {
-            String response = writeWithValueValue.write.executeGet(url);
+    protected void writeValue(ParentWithChild<HttpWrite, HttpWriteValue> write, String url) {
+        if(write.child().getMethod() == HttpMethod.GET) {
+            String response = write.parent().executeGet(url);
         }
     }
 
     @Override
     public void setChargeCurrent(int current) {
-        HttpWriteWithValue writeWithValueValue = getWriteValue(EVWriteValueName.ChargingCurrent);
-        String urlWithPlaceholder = buildUrl(writeWithValueValue);
+        ParentWithChild<HttpWrite, HttpWriteValue> write = getWriteValue(EVWriteValueName.ChargingCurrent);
+        String urlWithPlaceholder = buildUrl(write);
         String url = MessageFormat.format(urlWithPlaceholder, current);
-        writeValue(writeWithValueValue, url);
+        writeValue(write, url);
     }
 
     @Override
     public void startCharging() {
-        HttpWriteWithValue writeWithValueValue = getWriteValue(EVWriteValueName.StartCharging);
-        String url = buildUrl(writeWithValueValue);
-        writeValue(writeWithValueValue, url);
+        ParentWithChild<HttpWrite, HttpWriteValue> write = getWriteValue(EVWriteValueName.StartCharging);
+        String url = buildUrl(write);
+        writeValue(write, url);
     }
 
     @Override
     public void stopCharging() {
-        HttpWriteWithValue writeWithValueValue = getWriteValue(EVWriteValueName.StopCharging);
-        String url = buildUrl(writeWithValueValue);
-        writeValue(writeWithValueValue, url);
+        ParentWithChild<HttpWrite, HttpWriteValue> write = getWriteValue(EVWriteValueName.StopCharging);
+        String url = buildUrl(write);
+        writeValue(write, url);
     }
 
     @Override
@@ -214,11 +196,10 @@ public class EVHttpControl implements EVControl {
         }
     }
 
-    protected String buildUrl(HttpWriteWithValue writeWithValueValue) {
-        StringBuilder builder = new StringBuilder(writeWithValueValue.write.getUrl());
-        HttpWriteValue writeValue = writeWithValueValue.writeValue;
-        if(writeValue.getType().equals(HttpWriteValueType.QueryParameter)) {
-            builder.append(writeValue.getValue());
+    protected String buildUrl(ParentWithChild<HttpWrite, HttpWriteValue> write) {
+        StringBuilder builder = new StringBuilder(write.parent().getUrl());
+        if(write.child().getType().equals(HttpWriteValueType.QueryParameter)) {
+            builder.append(write.child().getValue());
         }
         return builder.toString();
     }
