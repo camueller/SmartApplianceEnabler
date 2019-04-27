@@ -18,7 +18,7 @@
 package de.avanux.smartapplianceenabler.control;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
-import de.avanux.smartapplianceenabler.control.ev.http.HttpMethod;
+import de.avanux.smartapplianceenabler.http.HttpMethod;
 import de.avanux.smartapplianceenabler.http.HttpTransactionExecutor;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;

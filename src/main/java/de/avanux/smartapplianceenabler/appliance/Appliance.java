@@ -20,7 +20,7 @@ package de.avanux.smartapplianceenabler.appliance;
 import com.pi4j.io.gpio.GpioController;
 import de.avanux.smartapplianceenabler.control.*;
 import de.avanux.smartapplianceenabler.control.ev.EVControl;
-import de.avanux.smartapplianceenabler.control.ev.EVModbusControl;
+import de.avanux.smartapplianceenabler.modbus.EVModbusControl;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
 import de.avanux.smartapplianceenabler.meter.*;

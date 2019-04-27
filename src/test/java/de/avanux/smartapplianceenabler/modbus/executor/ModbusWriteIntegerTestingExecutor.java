@@ -16,8 +16,37 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.avanux.smartapplianceenabler.control.ev.http;
+package de.avanux.smartapplianceenabler.modbus.executor;
 
-public enum HttpWriteValueType {
-    QueryParameter
+import com.ghgande.j2mod.modbus.ModbusException;
+import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
+
+public class ModbusWriteIntegerTestingExecutor implements ModbusWriteTransactionExecutor<Integer>,
+        WriteHoldingRegisterExecutor, ModbusTestingExecutor {
+
+    private Integer value;
+
+    public Integer getValue() {
+        return value;
+    }
+
+    @Override
+    public void setValue(Integer value) {
+        this.value = value;
+    }
+
+    @Override
+    public Integer getResult() {
+        return null;
+    }
+
+    @Override
+    public void execute(TCPMasterConnection con, int slaveAddress) throws ModbusException {
+
+    }
+
+    @Override
+    public void setApplianceId(String applianceId) {
+
+    }
 }

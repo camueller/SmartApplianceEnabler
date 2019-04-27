@@ -16,33 +16,24 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.avanux.smartapplianceenabler.control.ev.http;
+package de.avanux.smartapplianceenabler.modbus.executor;
 
-import de.avanux.smartapplianceenabler.http.HttpTransactionExecutor;
+import com.ghgande.j2mod.modbus.ModbusException;
+import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import java.util.List;
-
-@XmlAccessorType(XmlAccessType.FIELD)
-public class HttpWrite extends HttpTransactionExecutor {
-    @XmlElement(name = "HttpWriteValue")
-    private List<HttpWriteValue> writeValues;
-
-    public HttpWrite() {
+public class ModbusReadFloatTestingExecutor implements ModbusReadTransactionExecutor<Float>, ModbusTestingExecutor {
+    @Override
+    public Float getValue() {
+        return null;
     }
 
-    public HttpWrite(String url) {
-        super(url);
+    @Override
+    public void execute(TCPMasterConnection con, int slaveAddress) throws ModbusException {
+
     }
 
-    public List<HttpWriteValue> getWriteValues() {
-        return writeValues;
-    }
+    @Override
+    public void setApplianceId(String applianceId) {
 
-    public void setWriteValues(List<HttpWriteValue> writeValues) {
-        this.writeValues = writeValues;
     }
 }

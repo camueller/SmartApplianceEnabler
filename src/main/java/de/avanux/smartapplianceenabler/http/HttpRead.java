@@ -16,9 +16,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.avanux.smartapplianceenabler.control.ev.http;
+package de.avanux.smartapplianceenabler.http;
 
-import de.avanux.smartapplianceenabler.http.HttpTransactionExecutor;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

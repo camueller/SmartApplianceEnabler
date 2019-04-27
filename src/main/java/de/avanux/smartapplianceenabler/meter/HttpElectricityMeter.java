@@ -18,12 +18,12 @@
 package de.avanux.smartapplianceenabler.meter;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
-import de.avanux.smartapplianceenabler.control.ev.http.ContentProtocol;
-import de.avanux.smartapplianceenabler.control.ev.http.HttpMethod;
-import de.avanux.smartapplianceenabler.control.ev.http.HttpRead;
-import de.avanux.smartapplianceenabler.control.ev.http.HttpReadValue;
-import de.avanux.smartapplianceenabler.protocol.JsonProtocol;
-import de.avanux.smartapplianceenabler.protocol.Protocol;
+import de.avanux.smartapplianceenabler.protocol.ContentProtocol;
+import de.avanux.smartapplianceenabler.protocol.ContentProtocolType;
+import de.avanux.smartapplianceenabler.http.HttpMethod;
+import de.avanux.smartapplianceenabler.http.HttpRead;
+import de.avanux.smartapplianceenabler.http.HttpReadValue;
+import de.avanux.smartapplianceenabler.protocol.JsonContentProtocol;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import de.avanux.smartapplianceenabler.util.ValueExtractor;
 import org.joda.time.LocalDateTime;
@@ -57,7 +57,7 @@ public class HttpElectricityMeter implements Meter, PollPowerExecutor, PollEnerg
     private transient PollPowerMeter pollPowerMeter = new PollPowerMeter();
     private transient PollEnergyMeter pollEnergyMeter = new PollEnergyMeter();
     private transient ValueExtractor valueExtractor = new ValueExtractor();
-    private transient Protocol contentProtocolHandler;
+    private transient ContentProtocol contentContentProtocolHandler;
 
 
     public List<HttpRead> getHttpReads() {
@@ -68,8 +68,8 @@ public class HttpElectricityMeter implements Meter, PollPowerExecutor, PollEnerg
         this.httpReads = httpReads;
     }
 
-    public void setContentProtocol(ContentProtocol contentProtocol) {
-        this.contentProtocol = contentProtocol != null ? contentProtocol.name() : null;
+    public void setContentProtocol(ContentProtocolType contentProtocolType) {
+        this.contentProtocol = contentProtocolType != null ? contentProtocolType.name() : null;
     }
 
     @Override
@@ -230,13 +230,13 @@ public class HttpElectricityMeter implements Meter, PollPowerExecutor, PollEnerg
             if(response != null) {
                 logger.debug("{}: Response: {}", applianceId, response);
                 String protocolHandlerValue = response;
-                Protocol protocolHandler = getContentProtocolHandler();
-                if(protocolHandler != null) {
-                    protocolHandler.parse(response);
-                    protocolHandlerValue = protocolHandler.readValue(path);
+                ContentProtocol contentProtocolHandler = getContentContentProtocolHandler();
+                if(contentProtocolHandler != null) {
+                    contentProtocolHandler.parse(response);
+                    protocolHandlerValue = contentProtocolHandler.readValue(path);
                 }
                 String extractedValue = valueExtractor.extractValue(protocolHandlerValue, valueExtractionRegex);
-                logger.debug("{}: Value: protocolHandler={} extracted={}", applianceId, protocolHandlerValue,extractedValue);
+                logger.debug("{}: Value: contentProtocolHandler={} extracted={}", applianceId, protocolHandlerValue,extractedValue);
                 String parsableString = extractedValue.replace(',', '.');
                 if(factorToValue != null) {
                     return Double.valueOf(Double.parseDouble(parsableString) * factorToValue).floatValue();
@@ -247,12 +247,12 @@ public class HttpElectricityMeter implements Meter, PollPowerExecutor, PollEnerg
         return 0.0f;
     }
 
-    public Protocol getContentProtocolHandler() {
-        if(this.contentProtocolHandler == null) {
-            if(ContentProtocol.JSON.name().equals(this.contentProtocol)) {
-                this.contentProtocolHandler = new JsonProtocol();
+    public ContentProtocol getContentContentProtocolHandler() {
+        if(this.contentContentProtocolHandler == null) {
+            if(ContentProtocolType.JSON.name().equals(this.contentProtocol)) {
+                this.contentContentProtocolHandler = new JsonContentProtocol();
             }
         }
-        return this.contentProtocolHandler;
+        return this.contentContentProtocolHandler;
     }
 }

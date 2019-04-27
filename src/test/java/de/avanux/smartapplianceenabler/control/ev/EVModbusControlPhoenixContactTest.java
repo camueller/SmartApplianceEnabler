@@ -19,7 +19,7 @@
 package de.avanux.smartapplianceenabler.control.ev;
 
 import de.avanux.smartapplianceenabler.modbus.*;
-import de.avanux.smartapplianceenabler.modbus.executor.ModbusExecutorFactory;
+import de.avanux.smartapplianceenabler.modbus.executor.*;
 import org.junit.Assert;
 import org.junit.Test;
 

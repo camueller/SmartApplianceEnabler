@@ -16,8 +16,30 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.avanux.smartapplianceenabler.control.ev.http;
+package de.avanux.smartapplianceenabler.http;
 
-public enum ContentProtocol {
-    JSON
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import java.util.List;
+
+@XmlAccessorType(XmlAccessType.FIELD)
+public class HttpWrite extends HttpTransactionExecutor {
+    @XmlElement(name = "HttpWriteValue")
+    private List<HttpWriteValue> writeValues;
+
+    public HttpWrite() {
+    }
+
+    public HttpWrite(String url) {
+        super(url);
+    }
+
+    public List<HttpWriteValue> getWriteValues() {
+        return writeValues;
+    }
+
+    public void setWriteValues(List<HttpWriteValue> writeValues) {
+        this.writeValues = writeValues;
+    }
 }
