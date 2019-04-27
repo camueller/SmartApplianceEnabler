@@ -28,8 +28,6 @@ import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HttpWrite extends HttpTransactionExecutor {
-    @XmlAttribute
-    private String url;
     @XmlElement(name = "HttpWriteValue")
     private List<HttpWriteValue> writeValues;
 
@@ -37,11 +35,7 @@ public class HttpWrite extends HttpTransactionExecutor {
     }
 
     public HttpWrite(String url) {
-        this.url = url;
-    }
-
-    public String getUrl() {
-        return url;
+        super(url);
     }
 
     public List<HttpWriteValue> getWriteValues() {

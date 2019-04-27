@@ -25,6 +25,7 @@ import de.avanux.smartapplianceenabler.modbus.executor.ModbusExecutorFactory;
 import de.avanux.smartapplianceenabler.modbus.executor.ModbusReadTransactionExecutor;
 import de.avanux.smartapplianceenabler.modbus.executor.ReadDecimalInputRegisterExecutor;
 import de.avanux.smartapplianceenabler.modbus.executor.ReadFloatInputRegisterExecutor;
+import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,17 +51,11 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     private transient PollPowerMeter pollPowerMeter = new PollPowerMeter();
     private transient PollEnergyMeter pollEnergyMeter = new PollEnergyMeter();
 
-    public enum RegisterName {
-        Power,
-        Energy
-    }
-
     @Override
     public void setApplianceId(String applianceId) {
         super.setApplianceId(applianceId);
         this.pollPowerMeter.setApplianceId(applianceId);
         this.pollEnergyMeter.setApplianceId(applianceId);
-        this.pollEnergyMeter.setPollEnergyExecutor(this);
     }
 
     @Override
@@ -86,7 +81,7 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
 
     @Override
     public boolean isOn() {
-        return getPower() > 0;
+        return pollPower() > 0;
     }
 
     public Integer getPollInterval() {
@@ -99,6 +94,7 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     }
 
     public void init() {
+        this.pollEnergyMeter.setPollEnergyExecutor(this);
         validate();
     }
 
@@ -106,7 +102,7 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
         logger.debug("{}: configured: poll interval={}s / measurement interval={}s",
                 getApplianceId(), getPollInterval(), getMeasurementInterval());
         boolean valid = true;
-        for(RegisterName registerName: RegisterName.values()) {
+        for(MeterValueName registerName: MeterValueName.values()) {
             ModbusRegisterRead registerRead = ModbusRegisterRead.getFirstRegisterRead(registerName.name(), registerReads);
             if(registerRead != null) {
                 logger.debug("{}: {} configured: read register={} / bytes={} / byte order={} / type={} / extraction regex={} / factorToValue={}",
@@ -133,7 +129,7 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     @Override
     public void start(Timer timer) {
         logger.debug("{}: Starting ...", getApplianceId());
-        ModbusRegisterRead registerRead = ModbusRegisterRead.getFirstRegisterRead(RegisterName.Power.name(), registerReads);
+        ModbusRegisterRead registerRead = ModbusRegisterRead.getFirstRegisterRead(MeterValueName.Power.name(), registerReads);
         pollPowerMeter.start(timer, getPollInterval(), getMeasurementInterval(), this);
     }
 
@@ -144,8 +140,8 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     }
 
     @Override
-    public float getPower() {
-        ModbusRegisterRead registerRead = ModbusRegisterRead.getFirstRegisterRead(RegisterName.Power.name(), registerReads);
+    public Float pollPower() {
+        ModbusRegisterRead registerRead = ModbusRegisterRead.getFirstRegisterRead(MeterValueName.Power.name(), registerReads);
         return readRegister(registerRead);
     }
 
@@ -173,8 +169,8 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     }
 
     @Override
-    public float pollEnergy() {
-        ModbusRegisterRead registerRead = ModbusRegisterRead.getFirstRegisterRead(RegisterName.Energy.name(), registerReads);
+    public Float pollEnergy(LocalDateTime now) {
+        ModbusRegisterRead registerRead = ModbusRegisterRead.getFirstRegisterRead(MeterValueName.Energy.name(), registerReads);
         return readRegister(registerRead);
     }
 

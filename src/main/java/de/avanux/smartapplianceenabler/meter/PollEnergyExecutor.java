@@ -18,7 +18,9 @@
 
 package de.avanux.smartapplianceenabler.meter;
 
+import org.joda.time.LocalDateTime;
+
 public interface PollEnergyExecutor {
 
-    float pollEnergy();
+    Float pollEnergy(LocalDateTime now);
 }

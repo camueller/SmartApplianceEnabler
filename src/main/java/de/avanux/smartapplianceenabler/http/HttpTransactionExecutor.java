@@ -49,6 +49,8 @@ import java.io.IOException;
 abstract public class HttpTransactionExecutor {
     private transient Logger logger = LoggerFactory.getLogger(HttpTransactionExecutor.class);
     @XmlAttribute
+    private String url;
+    @XmlAttribute
     private String contentType;
     @XmlAttribute
     private String username;
@@ -62,6 +64,24 @@ abstract public class HttpTransactionExecutor {
 
     protected String getApplianceId() {
         return applianceId;
+    }
+
+    public HttpTransactionExecutor() {
+    }
+
+    public HttpTransactionExecutor(String url) {
+        this.url = url;
+    }
+
+    public HttpTransactionExecutor(String url, String contentType, String username, String password) {
+        this.url = url;
+        this.contentType = contentType;
+        this.username = username;
+        this.password = password;
+    }
+
+    public String getUrl() {
+        return url;
     }
 
     protected ContentType getContentType() {
@@ -102,7 +122,7 @@ abstract public class HttpTransactionExecutor {
     public String execute(HttpMethod httpMethod, String url, String data) {
         CloseableHttpResponse response = null;
         try {
-            response = executeLeaveOpen(httpMethod, url, data);
+            response = logResponse(executeLeaveOpen(httpMethod, url, data));
             if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 String responseString = EntityUtils.toString(response.getEntity());
                 logger.debug("{}: HTTP response: {}", getApplianceId(), responseString);
