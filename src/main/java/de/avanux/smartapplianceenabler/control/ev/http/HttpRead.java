@@ -19,20 +19,18 @@
 package de.avanux.smartapplianceenabler.control.ev.http;
 
 import de.avanux.smartapplianceenabler.http.HttpTransactionExecutor;
+import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HttpRead extends HttpTransactionExecutor {
     private transient Logger logger = LoggerFactory.getLogger(HttpRead.class);
-    @XmlAttribute
-    private String url;
     @XmlElement(name = "HttpReadValue")
     private List<HttpReadValue> readValues;
 
@@ -40,11 +38,11 @@ public class HttpRead extends HttpTransactionExecutor {
     }
 
     public HttpRead(String url) {
-        this.url = url;
+        super(url);
     }
 
-    public String getUrl() {
-        return url;
+    public HttpRead(String url, String contentType, String username, String password) {
+        super(url, contentType, username, password);
     }
 
     public List<HttpReadValue> getReadValues() {
@@ -53,5 +51,18 @@ public class HttpRead extends HttpTransactionExecutor {
 
     public void setReadValues(List<HttpReadValue> readValues) {
         this.readValues = readValues;
+    }
+
+    public static ParentWithChild<HttpRead,HttpReadValue> getFirstHttpRead(String valueName, List<HttpRead> httpReads) {
+        if(httpReads != null) {
+            for(HttpRead read: httpReads) {
+                for(HttpReadValue readValue: read.getReadValues()) {
+                    if(readValue.getName().equals(valueName)) {
+                        return new ParentWithChild<>(read, readValue);
+                    }
+                }
+            }
+        }
+        return null;
     }
 }

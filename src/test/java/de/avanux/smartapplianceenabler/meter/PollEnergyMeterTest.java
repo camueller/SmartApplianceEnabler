@@ -18,6 +18,7 @@
 
 package de.avanux.smartapplianceenabler.meter;
 
+import org.joda.time.LocalDateTime;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -75,7 +76,7 @@ public class PollEnergyMeterTest {
         }
 
         @Override
-        public float pollEnergy() {
+        public Float pollEnergy(LocalDateTime now) {
             return this.value;
         }
     }

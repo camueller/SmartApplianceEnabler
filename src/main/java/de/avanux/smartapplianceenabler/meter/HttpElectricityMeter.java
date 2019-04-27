@@ -18,47 +18,58 @@
 package de.avanux.smartapplianceenabler.meter;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import de.avanux.smartapplianceenabler.control.ev.http.HttpContentType;
 import de.avanux.smartapplianceenabler.control.ev.http.HttpMethod;
-import de.avanux.smartapplianceenabler.http.HttpTransactionExecutor;
+import de.avanux.smartapplianceenabler.control.ev.http.HttpRead;
+import de.avanux.smartapplianceenabler.control.ev.http.HttpReadValue;
+import de.avanux.smartapplianceenabler.protocol.JsonProtocol;
+import de.avanux.smartapplianceenabler.protocol.Protocol;
+import de.avanux.smartapplianceenabler.util.ParentWithChild;
+import de.avanux.smartapplianceenabler.util.ValueExtractor;
+import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import java.util.Timer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import javax.xml.bind.annotation.XmlElement;
+import java.util.*;
 
 /**
- * Electricity meter reading power consumption from the response of a HTTP request.
+ * Electricity meter reading current power and energy from the response of a HTTP request.
  * <p>
- * IMPORTANT: The URLs in Appliance.xml have to be escaped (e.g. use "&amp;" instead of "&")
+ * IMPORTANT: URLs have to be escaped (e.g. use "&amp;" instead of "&")
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class HttpElectricityMeter extends HttpTransactionExecutor implements Meter, PollPowerExecutor, ApplianceIdConsumer {
+public class HttpElectricityMeter implements Meter, PollPowerExecutor, PollEnergyExecutor, ApplianceIdConsumer {
+
     private transient Logger logger = LoggerFactory.getLogger(HttpElectricityMeter.class);
-    @XmlAttribute
-    private String url;
-    @XmlAttribute
-    private Float factorToWatt;
     @XmlAttribute
     private Integer measurementInterval; // seconds
     @XmlAttribute
     private Integer pollInterval; // seconds
     @XmlAttribute
-    private String data;
-    @XmlAttribute
-    private String powerValueExtractionRegex;
-    private transient Pattern powerValueExtractionPattern;
+    private String contentProtocol;
+    @XmlElement(name = "HttpRead")
+    private List<HttpRead> httpReads;
+    private String applianceId;
     private transient PollPowerMeter pollPowerMeter = new PollPowerMeter();
+    private transient PollEnergyMeter pollEnergyMeter = new PollEnergyMeter();
+    private transient ValueExtractor valueExtractor = new ValueExtractor();
+    private transient Protocol contentProtocolHandler;
 
-    public void setUrl(String url) {
-        this.url = url;
+
+    public List<HttpRead> getHttpReads() {
+        return httpReads;
     }
 
-    public Float getFactorToWatt() {
-        return factorToWatt != null ? factorToWatt : HttpElectricityMeterDefaults.getFactorToWatt();
+    public void setHttpReads(List<HttpRead> httpReads) {
+        this.httpReads = httpReads;
+    }
+
+    public void setContentProtocol(HttpContentType contentProtocol) {
+        this.contentProtocol = contentProtocol != null ? contentProtocol.name() : null;
     }
 
     @Override
@@ -66,114 +77,182 @@ public class HttpElectricityMeter extends HttpTransactionExecutor implements Met
         return measurementInterval != null ? measurementInterval : HttpElectricityMeterDefaults.getMeasurementInterval();
     }
 
+    public void setMeasurementInterval(Integer measurementInterval) {
+        this.measurementInterval = measurementInterval;
+    }
+
     public Integer getPollInterval() {
         return pollInterval != null ? pollInterval : HttpElectricityMeterDefaults.getPollInterval();
     }
 
-    public void setData(String data) {
-        this.data = data;
+    protected PollPowerMeter getPollPowerMeter() {
+        return pollPowerMeter;
     }
 
-    public void setPowerValueExtractionRegex(String powerValueExtractionRegex) {
-        this.powerValueExtractionRegex = powerValueExtractionRegex;
+    protected PollEnergyMeter getPollEnergyMeter() {
+        return pollEnergyMeter;
     }
 
     @Override
     public void setApplianceId(String applianceId) {
-        super.setApplianceId(applianceId);
+        this.applianceId = applianceId;
         this.pollPowerMeter.setApplianceId(applianceId);
+        this.pollEnergyMeter.setApplianceId(applianceId);
     }
 
     @Override
     public int getAveragePower() {
         int power = pollPowerMeter.getAveragePower();
-        logger.debug("{}: average power = {}W", getApplianceId(), power);
+        logger.debug("{}: average power = {}W", applianceId, power);
         return power;
     }
 
     @Override
     public int getMinPower() {
         int power = pollPowerMeter.getMinPower();
-        logger.debug("{}: min power = {}W", getApplianceId(), power);
+        logger.debug("{}: min power = {}W", applianceId, power);
         return power;
     }
 
     @Override
     public int getMaxPower() {
         int power = pollPowerMeter.getMaxPower();
-        logger.debug("{}: max power = {}W", getApplianceId(), power);
+        logger.debug("{}: max power = {}W", applianceId, power);
         return power;
     }
 
     @Override
     public float getEnergy() {
-        return 0f;
+        return this.pollEnergyMeter.getEnergy();
     }
 
     @Override
     public void startEnergyMeter() {
-        // TODO implement
+        logger.debug("{}: Start energy meter ...", applianceId);
+        Float energy = this.pollEnergyMeter.startEnergyCounter();
+        logger.debug("{}: Current energy meter value: {} kWh", applianceId, energy);
     }
 
     @Override
     public void stopEnergyMeter() {
-        // TODO implement
+        logger.debug("{}: Stop energy meter ...", applianceId);
+        Float energy = this.pollEnergyMeter.stopEnergyCounter();
+        logger.debug("{}: Current energy meter value: {} kWh", applianceId, energy);
     }
 
     @Override
     public void resetEnergyMeter() {
-        // TODO implement
+        logger.debug("{}: Reset energy meter ...", applianceId);
+        this.pollEnergyMeter.resetEnergyCounter();
     }
 
     @Override
     public boolean isOn() {
-        return getPower() > 0;
+        return pollPower() > 0;
+    }
+
+    public void init() {
+        this.pollEnergyMeter.setPollEnergyExecutor(this);
     }
 
     @Override
     public void start(Timer timer) {
-        logger.debug("{}: Starting ...", getApplianceId());
+        logger.debug("{}: Starting ...", applianceId);
+        pollEnergyMeter.start(timer, getPollInterval(), getMeasurementInterval(), this);
         pollPowerMeter.start(timer, getPollInterval(), getMeasurementInterval(), this);
     }
 
     @Override
     public void stop() {
-        logger.debug("{}: Stopping ...", getApplianceId());
+        logger.debug("{}: Stopping ...", applianceId);
         pollPowerMeter.cancelTimer();
     }
 
-    @Override
-    public float getPower() {
-        HttpMethod httpMethod = data != null ? HttpMethod.POST : HttpMethod.GET;
-        String response = execute(httpMethod, url, data);
-        if(response != null) {
-            logger.debug("{}: Power value extraction regex: {}", getApplianceId(), powerValueExtractionRegex);
-            String valueString = extractPowerValueFromResponse(response, powerValueExtractionRegex);
-            logger.debug("{}: Power value extracted from HTTP response: {} factorToWatt={}",
-                    getApplianceId(), valueString, getFactorToWatt());
-            return Float.parseFloat(valueString.replace(',', '.')) * getFactorToWatt();
-        }
-        return 0;
+    private boolean isCalculatePowerFromEnergy() {
+        return HttpRead.getFirstHttpRead(MeterValueName.Power.name(), this.httpReads) == null;
     }
 
     /**
-     * Extract the power value from the the response using a regular expression.
-     * The regular expression has contain a capture group containing the power value.
-     * @param response the HTTP response containing a power value
-     * @param regex the regular expression to be used to extract the power value
-     * @return the power value extracted or the full response if the regular expression is null or could not be matched
+     * Calculates power values from energy differences and time differences.
+     * @param timestampWithEnergyValue a collection of timestamp with energy value
+     * @return the power values in W
      */
-    protected String extractPowerValueFromResponse(String response, String regex)  {
-        if(regex == null) {
-            return response;
+    protected Vector<Float> calculatePower(TreeMap<Long, Float> timestampWithEnergyValue) {
+        Vector<Float> powerValues = new Vector<>();
+        Long previousTimestamp = null;
+        Float previousEnergy = null;
+        for(Long timestamp: timestampWithEnergyValue.keySet()) {
+            Float energy = timestampWithEnergyValue.get(timestamp);
+            if(previousTimestamp != null && previousEnergy != null) {
+                long diffTime = timestamp - previousTimestamp;
+                Float diffEnergy =  energy - previousEnergy;
+                // diffEnergy kW/h * 1000W/kW * diffTime ms * 1h / 3600000ms
+                powerValues.add(diffEnergy * diffTime / 3600);
+            }
+            previousTimestamp = timestamp;
+            previousEnergy = energy;
         }
-        if( this.powerValueExtractionPattern == null) {
-            this.powerValueExtractionPattern = Pattern.compile(regex, Pattern.DOTALL);
+        return powerValues;
+    }
+
+    @Override
+    public Float pollPower() {
+        // this method should only be called if isCalculatePowerFromEnergy == false !
+        ParentWithChild<HttpRead, HttpReadValue> powerRead = HttpRead.getFirstHttpRead(MeterValueName.Power.name(), this.httpReads);
+        if(powerRead != null) {
+            return getValue(powerRead);
         }
-        Matcher regexMatcher = this.powerValueExtractionPattern.matcher(response);
-        if (regexMatcher.find()) {
-            return regexMatcher.group(1);
+        Vector<Float> powerValues = calculatePower(this.pollEnergyMeter.getValuesInMeasurementInterval());
+        return powerValues.size() > 0 ? powerValues.lastElement() : null;
+    }
+
+    @Override
+    public Float pollEnergy(LocalDateTime now) {
+        return pollEnergy(now.toDateTime().getMillis());
+    }
+
+    protected float pollEnergy(long timestamp) {
+        ParentWithChild<HttpRead, HttpReadValue> energyRead = HttpRead.getFirstHttpRead(MeterValueName.Energy.name(), this.httpReads);
+        return getValue(energyRead);
+    }
+
+    private float getValue(ParentWithChild<HttpRead, HttpReadValue> read) {
+        if(read != null) {
+            String url = read.parent().getUrl();
+            String data = read.child().getData();
+            HttpMethod httpMethod = data != null ? HttpMethod.POST : HttpMethod.GET;
+            String path = read.child().getPath();
+            String valueExtractionRegex = read.child().getExtractionRegex();
+            Double factorToValue = read.child().getFactorToValue();
+            String response = read.parent().execute(httpMethod, url, data);
+            logger.debug("{}: url={} httpMethod={} data={} path={} valueExtractionRegex={} factorToValue={}",
+                    applianceId, url, httpMethod, data, path, valueExtractionRegex, factorToValue);
+            if(response != null) {
+                logger.debug("{}: Response: {}", applianceId, response);
+                String protocolHandlerValue = response;
+                Protocol protocolHandler = getContentProtocolHandler();
+                if(protocolHandler != null) {
+                    protocolHandler.parse(response);
+                    protocolHandlerValue = protocolHandler.readValue(path);
+                }
+                String extractedValue = valueExtractor.extractValue(protocolHandlerValue, valueExtractionRegex);
+                logger.debug("{}: Value: protocolHandler={} extracted={}", applianceId, protocolHandlerValue,extractedValue);
+                String parsableString = extractedValue.replace(',', '.');
+                if(factorToValue != null) {
+                    return Double.valueOf(Double.parseDouble(parsableString) * factorToValue).floatValue();
+                }
+                return Double.valueOf(Double.parseDouble(parsableString)).floatValue();
+            }
         }
-        return response;
+        return 0.0f;
+    }
+
+    public Protocol getContentProtocolHandler() {
+        if(this.contentProtocolHandler == null) {
+            if(HttpContentType.json.name().equals(this.contentProtocol)) {
+                this.contentProtocolHandler = new JsonProtocol();
+            }
+        }
+        return this.contentProtocolHandler;
     }
 }

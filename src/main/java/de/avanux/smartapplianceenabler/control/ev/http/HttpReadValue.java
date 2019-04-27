@@ -27,17 +27,27 @@ public class HttpReadValue {
     @XmlAttribute
     private String name;
     @XmlAttribute
+    private String data;
+    @XmlAttribute
     private String path;
     @XmlAttribute
     private String extractionRegex;
+    @XmlAttribute
+    private Double factorToValue;
 
     public HttpReadValue() {
     }
 
     public HttpReadValue(String name, String path, String extractionRegex) {
+        this(name, path, null, extractionRegex,null);
+    }
+
+    public HttpReadValue(String name, String path, String data, String extractionRegex, Double factorToValue) {
         this.name = name;
         this.path = path;
+        this.data = data;
         this.extractionRegex = extractionRegex;
+        this.factorToValue = factorToValue;
     }
 
     public String getName() {
@@ -48,7 +58,15 @@ public class HttpReadValue {
         return path;
     }
 
+    public String getData() {
+        return data;
+    }
+
     public String getExtractionRegex() {
         return extractionRegex;
+    }
+
+    public Double getFactorToValue() {
+        return factorToValue;
     }
 }

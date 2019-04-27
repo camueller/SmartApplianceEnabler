@@ -21,13 +21,22 @@
             </ElectricVehicle>
             <ElectricVehicle id="2" name="Tesla Model S" batteryCapacity="80000"/>
         </ElectricVehicleCharger>
-        <Schedule enabled="true">
-            <SocRequest soc="52" evId="1"/>
-            <DayTimeframe>
-                <Start hour="13" minute="0" second="0"/>
-                <End hour="18" minute="0" second="0"/>
-            </DayTimeframe>
-        </Schedule>
+        <HttpElectricityMeter>
+            <!--HttpRead url="http://127.0.0.1:8999/status">
+                <HttpReadValue name="Power" path="$.car"/>
+            </HttpRead-->
+            <HttpRead url="http://127.0.0.1:8999/status">
+                <HttpReadValue name="Energy" path="$.dws"/>
+            </HttpRead>
+        </HttpElectricityMeter>
+        <!-- ModbusElectricityMeter idref="modbus" slaveAddress="1" pollInterval="10" measurementInterval="60">
+            <ModbusRegisterRead address="0x000C" type="InputFloat">
+                <ModbusRegisterReadValue name="Power"/>
+            </ModbusRegisterRead>
+            <ModbusRegisterRead address="0x0156" type="InputFloat">
+                <ModbusRegisterReadValue name="Energy"/>
+            </ModbusRegisterRead>
+        </ModbusElectricityMeter -->
     </Appliance>
     <Connectivity>
         <ModbusTCP id="modbus" host="127.0.0.1"/>
