@@ -20,11 +20,13 @@ package de.avanux.smartapplianceenabler.meter;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.modbus.ModbusElectricityMeterDefaults;
 import de.avanux.smartapplianceenabler.modbus.ModbusRegisterRead;
+import de.avanux.smartapplianceenabler.modbus.ModbusRegisterReadValue;
 import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
 import de.avanux.smartapplianceenabler.modbus.executor.ModbusExecutorFactory;
 import de.avanux.smartapplianceenabler.modbus.executor.ModbusReadTransactionExecutor;
 import de.avanux.smartapplianceenabler.modbus.executor.ReadDecimalInputRegisterExecutor;
 import de.avanux.smartapplianceenabler.modbus.executor.ReadFloatInputRegisterExecutor;
+import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,8 +105,10 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
                 getApplianceId(), getPollInterval(), getMeasurementInterval());
         boolean valid = true;
         for(MeterValueName registerName: MeterValueName.values()) {
-            ModbusRegisterRead registerRead = ModbusRegisterRead.getFirstRegisterRead(registerName.name(), registerReads);
-            if(registerRead != null) {
+            ParentWithChild<ModbusRegisterRead, ModbusRegisterReadValue> read
+                    = ModbusRegisterRead.getFirstRegisterRead(registerName.name(), registerReads);
+            if(read != null) {
+                ModbusRegisterRead registerRead = read.parent();
                 logger.debug("{}: {} configured: read register={} / bytes={} / byte order={} / type={} / extraction regex={} / factorToValue={}",
                         getApplianceId(),
                         registerName.name(),
@@ -112,7 +116,7 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
                         registerRead.getBytes(),
                         registerRead.getByteOrder(),
                         registerRead.getType(),
-                        registerRead.getSelectedRegisterReadValue().getExtractionRegex(),
+                        read.child().getExtractionRegex(),
                         registerRead.getFactorToValue());
             }
             else {
@@ -129,7 +133,6 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     @Override
     public void start(Timer timer) {
         logger.debug("{}: Starting ...", getApplianceId());
-        ModbusRegisterRead registerRead = ModbusRegisterRead.getFirstRegisterRead(MeterValueName.Power.name(), registerReads);
         pollPowerMeter.start(timer, getPollInterval(), getMeasurementInterval(), this);
     }
 
@@ -141,8 +144,9 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
 
     @Override
     public Float pollPower() {
-        ModbusRegisterRead registerRead = ModbusRegisterRead.getFirstRegisterRead(MeterValueName.Power.name(), registerReads);
-        return readRegister(registerRead);
+        ParentWithChild<ModbusRegisterRead, ModbusRegisterReadValue> read
+                = ModbusRegisterRead.getFirstRegisterRead(MeterValueName.Power.name(), registerReads);
+        return readRegister(read.parent());
     }
 
     @Override
@@ -170,8 +174,9 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
 
     @Override
     public Float pollEnergy(LocalDateTime now) {
-        ModbusRegisterRead registerRead = ModbusRegisterRead.getFirstRegisterRead(MeterValueName.Energy.name(), registerReads);
-        return readRegister(registerRead);
+        ParentWithChild<ModbusRegisterRead, ModbusRegisterReadValue> read
+                = ModbusRegisterRead.getFirstRegisterRead(MeterValueName.Energy.name(), registerReads);
+        return readRegister(read.parent());
     }
 
     private float readRegister(ModbusRegisterRead registerRead) {

@@ -18,8 +18,10 @@
 package de.avanux.smartapplianceenabler.control;
 
 import de.avanux.smartapplianceenabler.modbus.ModbusRegisterWrite;
+import de.avanux.smartapplianceenabler.modbus.ModbusRegisterWriteValue;
 import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
 import de.avanux.smartapplianceenabler.modbus.executor.*;
+import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,14 +45,14 @@ public class ModbusSwitch extends ModbusSlave implements Control {
     public void validate() {
         boolean valid = true;
         for(RegisterName registerName: RegisterName.values()) {
-            ModbusRegisterWrite registerWrite = ModbusRegisterWrite.getFirstRegisterWrite(registerName.name(),
-                    this.registerWrites);
-            if(registerWrite != null) {
+            ParentWithChild<ModbusRegisterWrite, ModbusRegisterWriteValue> write
+                    = ModbusRegisterWrite.getFirstRegisterWrite(registerName.name(), this.registerWrites);
+            if(write != null) {
                 logger.debug("{}: {} configured: write register={} / value={}",
                         getApplianceId(),
                         registerName.name(),
-                        registerWrite.getAddress(),
-                        registerWrite.getSelectedRegisterWriteValue().getValue());
+                        write.parent().getAddress(),
+                        write.child().getValue());
             }
             else {
                 logger.error("{}: Missing register configuration for {}", getApplianceId(), registerName.name());
@@ -67,9 +69,10 @@ public class ModbusSwitch extends ModbusSlave implements Control {
     public boolean on(LocalDateTime now, boolean switchOn) {
         boolean result = false;
         logger.info("{}: Switching {}", getApplianceId(), (switchOn ? "on" : "off"));
-        ModbusRegisterWrite registerWrite = ModbusRegisterWrite.getFirstRegisterWrite(getRegisterName(switchOn).name(),
-                this.registerWrites);
-        if (registerWrite != null) {
+        ParentWithChild<ModbusRegisterWrite, ModbusRegisterWriteValue> write
+                = ModbusRegisterWrite.getFirstRegisterWrite(getRegisterName(switchOn).name(), this.registerWrites);
+        if (write != null) {
+            ModbusRegisterWrite registerWrite = write.parent();
             try {
                 ModbusWriteTransactionExecutor executor = ModbusExecutorFactory.getWriteExecutor(getApplianceId(),
                         registerWrite.getType(), registerWrite.getAddress(),registerWrite.getFactorToValue());
@@ -96,9 +99,10 @@ public class ModbusSwitch extends ModbusSlave implements Control {
     @Override
     public boolean isOn() {
         boolean on = false;
-        ModbusRegisterWrite registerWrite = ModbusRegisterWrite.getFirstRegisterWrite(RegisterName.On.name(),
-                this.registerWrites);
-        if(registerWrite != null) {
+        ParentWithChild<ModbusRegisterWrite, ModbusRegisterWriteValue> write
+                = ModbusRegisterWrite.getFirstRegisterWrite(RegisterName.On.name(), this.registerWrites);
+        if(write != null) {
+            ModbusRegisterWrite registerWrite = write.parent();
             try {
                 ModbusReadTransactionExecutor executor = ModbusExecutorFactory.getReadExecutor(getApplianceId(),
                         registerWrite.getReadRegisterType(), registerWrite.getAddress());
