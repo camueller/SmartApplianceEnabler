@@ -7,7 +7,7 @@ export class EvChargerTemplates {
     templates['PhoenixContact'] = JSON.parse('{\n' +
       '  "@class": "de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger",\n' +
       '  "control": {\n' +
-      '    "@class": "de.avanux.smartapplianceenabler.control.ev.EVModbusControl",\n' +
+      '    "@class": "de.avanux.smartapplianceenabler.modbus.EVModbusControl",\n' +
       '    "slaveAddress": 180,\n' +
       '    "configuration": [\n' +
       '      {\n' +
@@ -78,7 +78,7 @@ export class EvChargerTemplates {
     templates['wallbe (neuer Controller)'] = JSON.parse('{\n' +
       '  "@class": "de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger",\n' +
       '  "control": {\n' +
-      '    "@class": "de.avanux.smartapplianceenabler.control.ev.EVModbusControl",\n' +
+      '    "@class": "de.avanux.smartapplianceenabler.modbus.EVModbusControl",\n' +
       '    "slaveAddress": 255,\n' +
       '    "configuration": [\n' +
       '      {\n' +

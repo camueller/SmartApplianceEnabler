@@ -5,7 +5,7 @@ import {ModbusRegisterWrite} from '../shared/modbus-register-write';
 export class EvModbusControl {
 
   static get TYPE(): string {
-    return 'de.avanux.smartapplianceenabler.control.ev.EVModbusControl';
+    return 'de.avanux.smartapplianceenabler.modbus.EVModbusControl';
   }
 
   '@class' = EvModbusControl.TYPE;

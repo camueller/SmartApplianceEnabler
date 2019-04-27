@@ -16,11 +16,11 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.avanux.smartapplianceenabler.control.ev.http;
+package de.avanux.smartapplianceenabler.http;
 
 import de.avanux.smartapplianceenabler.control.ev.EVReadValueName;
 import de.avanux.smartapplianceenabler.control.ev.EVWriteValueName;
-import de.avanux.smartapplianceenabler.protocol.JsonProtocol;
+import de.avanux.smartapplianceenabler.protocol.JsonContentProtocol;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -36,7 +36,7 @@ public class EVHttpControlTest {
     private HttpWrite cmdWriteSpy;
 
     public EVHttpControlTest() {
-        this.control = new EVHttpControl(new JsonProtocol());
+        this.control = new EVHttpControl(new JsonContentProtocol());
         List<HttpRead> reads = new ArrayList<>();
         this.control.setReads(reads);
 

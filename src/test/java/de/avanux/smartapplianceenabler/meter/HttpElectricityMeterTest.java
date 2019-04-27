@@ -19,9 +19,9 @@
 package de.avanux.smartapplianceenabler.meter;
 
 import de.avanux.smartapplianceenabler.TestBase;
-import de.avanux.smartapplianceenabler.control.ev.http.ContentProtocol;
-import de.avanux.smartapplianceenabler.control.ev.http.HttpRead;
-import de.avanux.smartapplianceenabler.control.ev.http.HttpReadValue;
+import de.avanux.smartapplianceenabler.protocol.ContentProtocolType;
+import de.avanux.smartapplianceenabler.http.HttpRead;
+import de.avanux.smartapplianceenabler.http.HttpReadValue;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -70,7 +70,7 @@ public class HttpElectricityMeterTest extends TestBase {
 
     @Test
     public void getPower_goECharger() {
-        meter.setContentProtocol(ContentProtocol.JSON);
+        meter.setContentProtocol(ContentProtocolType.JSON);
         meter.setMeasurementInterval(7200);
 
         HttpRead energyReadSpy = Mockito.spy(new HttpRead("http://127.0.0.1:8999"));
@@ -104,7 +104,7 @@ public class HttpElectricityMeterTest extends TestBase {
 
     @Test
     public void getEnergy_goECharger() {
-        this.meter.setContentProtocol(ContentProtocol.JSON);
+        this.meter.setContentProtocol(ContentProtocolType.JSON);
         HttpRead energyReadSpy = Mockito.spy(new HttpRead("http://127.0.0.1:8999"));
         HttpReadValue powerReadValue = new HttpReadValue(MeterValueName.Energy.name(), "$.dws", null, null, 0.001);
         energyReadSpy.setReadValues(Collections.singletonList(powerReadValue));

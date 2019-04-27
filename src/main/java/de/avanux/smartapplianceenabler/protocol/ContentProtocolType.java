@@ -18,11 +18,6 @@
 
 package de.avanux.smartapplianceenabler.protocol;
 
-public interface Protocol {
-
-    void parse(String content);
-
-    String readValue(String selector);
-
-    Integer readIntegerValue(String selector);
+public enum ContentProtocolType {
+    JSON
 }

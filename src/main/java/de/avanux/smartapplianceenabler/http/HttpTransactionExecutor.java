@@ -17,7 +17,6 @@
  */
 package de.avanux.smartapplianceenabler.http;
 
-import de.avanux.smartapplianceenabler.control.ev.http.HttpMethod;
 import org.apache.http.HttpStatus;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;

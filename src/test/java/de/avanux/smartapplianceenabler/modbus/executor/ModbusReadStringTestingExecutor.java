@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Axel Müller <axel.mueller@avanux.de>
+ * Copyright (C) 2019 Axel Müller <axel.mueller@avanux.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,13 +16,10 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.avanux.smartapplianceenabler.control.ev;
+package de.avanux.smartapplianceenabler.modbus.executor;
 
 import com.ghgande.j2mod.modbus.ModbusException;
 import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
-import de.avanux.smartapplianceenabler.modbus.executor.ModbusReadTransactionExecutor;
-import de.avanux.smartapplianceenabler.modbus.executor.ModbusTestingExecutor;
-import de.avanux.smartapplianceenabler.modbus.executor.ReadStringInputRegisterExecutor;
 
 public class ModbusReadStringTestingExecutor implements ModbusReadTransactionExecutor<String>,
         ReadStringInputRegisterExecutor, ModbusTestingExecutor {

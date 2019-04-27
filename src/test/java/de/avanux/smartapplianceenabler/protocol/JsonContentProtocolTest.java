@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Axel Müller <axel.mueller@avanux.de>
+ * Copyright (C) 2019 Axel Müller <axel.mueller@avanux.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,26 +16,23 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.avanux.smartapplianceenabler.control.ev;
+package de.avanux.smartapplianceenabler.protocol;
 
-import com.ghgande.j2mod.modbus.ModbusException;
-import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
-import de.avanux.smartapplianceenabler.modbus.executor.ModbusReadTransactionExecutor;
-import de.avanux.smartapplianceenabler.modbus.executor.ModbusTestingExecutor;
+import org.junit.Assert;
+import org.junit.Test;
 
-public class ModbusReadFloatTestingExecutor implements ModbusReadTransactionExecutor<Float>, ModbusTestingExecutor {
-    @Override
-    public Float getValue() {
-        return null;
+public class JsonContentProtocolTest {
+    private ContentProtocol contentProtocol;
+
+    public JsonContentProtocolTest() {
+        this.contentProtocol = new JsonContentProtocol();
     }
 
-    @Override
-    public void execute(TCPMasterConnection con, int slaveAddress) throws ModbusException {
-
-    }
-
-    @Override
-    public void setApplianceId(String applianceId) {
-
+    @Test
+    public void readIntegerValue() {
+        String content = "{ \"car\": \"3\" }";
+        String selector = "$.car";
+        this.contentProtocol.parse(content);
+        Assert.assertEquals(3, this.contentProtocol.readIntegerValue(selector).intValue());
     }
 }

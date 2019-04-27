@@ -22,7 +22,7 @@ import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 
-public class JsonProtocol implements Protocol {
+public class JsonContentProtocol implements ContentProtocol {
 
     private DocumentContext context;
 

@@ -16,9 +16,10 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.avanux.smartapplianceenabler.control.ev;
+package de.avanux.smartapplianceenabler.modbus;
 
-import de.avanux.smartapplianceenabler.modbus.*;
+import de.avanux.smartapplianceenabler.control.ev.EVReadValueName;
+import de.avanux.smartapplianceenabler.modbus.executor.ModbusWriteIntegerTestingExecutor;
 import de.avanux.smartapplianceenabler.modbus.executor.ModbusExecutorFactory;
 import de.avanux.smartapplianceenabler.modbus.executor.ModbusReadTransactionExecutor;
 import de.avanux.smartapplianceenabler.modbus.executor.ReadInputRegisterExecutor;

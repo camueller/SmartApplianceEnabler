@@ -21,7 +21,7 @@ package de.avanux.smartapplianceenabler.util;
 import de.avanux.smartapplianceenabler.appliance.Appliance;
 import de.avanux.smartapplianceenabler.appliance.Appliances;
 import de.avanux.smartapplianceenabler.control.ev.*;
-import de.avanux.smartapplianceenabler.control.ev.http.*;
+import de.avanux.smartapplianceenabler.http.*;
 import de.avanux.smartapplianceenabler.modbus.*;
 import org.junit.Assert;
 import org.junit.Test;

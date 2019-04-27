@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Axel Müller <axel.mueller@avanux.de>
+ * Copyright (C) 2019 Axel Müller <axel.mueller@avanux.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,11 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.avanux.smartapplianceenabler.control.ev;
+package de.avanux.smartapplianceenabler.modbus;
 
-import de.avanux.smartapplianceenabler.modbus.*;
+import de.avanux.smartapplianceenabler.control.ev.EVControl;
+import de.avanux.smartapplianceenabler.control.ev.EVReadValueName;
+import de.avanux.smartapplianceenabler.control.ev.EVWriteValueName;
 import de.avanux.smartapplianceenabler.modbus.executor.*;
 import de.avanux.smartapplianceenabler.util.RequestCache;
 import org.slf4j.Logger;
@@ -44,7 +46,7 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
         return registerReads;
     }
 
-    protected void setRegisterReads(List<ModbusRegisterRead> registerReads) {
+    public void setRegisterReads(List<ModbusRegisterRead> registerReads) {
         this.registerReads = registerReads;
     }
 
@@ -52,7 +54,7 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
         return registerWrites;
     }
 
-    protected void setRegisterWrites(List<ModbusRegisterWrite> registerWrites) {
+    public void setRegisterWrites(List<ModbusRegisterWrite> registerWrites) {
         this.registerWrites = registerWrites;
     }
 
