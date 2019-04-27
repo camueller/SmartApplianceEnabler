@@ -22,6 +22,7 @@ import de.avanux.smartapplianceenabler.control.ev.EVControl;
 import de.avanux.smartapplianceenabler.control.ev.EVReadValueName;
 import de.avanux.smartapplianceenabler.control.ev.EVWriteValueName;
 import de.avanux.smartapplianceenabler.modbus.executor.*;
+import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import de.avanux.smartapplianceenabler.util.RequestCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,15 +78,15 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
         if(checkRegisterConfiguration) {
             boolean valid = true;
             for(EVReadValueName registerName: EVReadValueName.values()) {
-                List<ModbusRegisterRead> registerReads = ModbusRegisterRead.getRegisterReads(registerName.name(),
-                        this.registerReads);
-                if(registerReads.size() > 0) {
-                    for(ModbusRegisterRead registerRead: registerReads) {
+                List<ParentWithChild<ModbusRegisterRead, ModbusRegisterReadValue>> reads
+                        = ModbusRegisterRead.getRegisterReads(registerName.name(), this.registerReads);
+                if(reads.size() > 0) {
+                    for(ParentWithChild<ModbusRegisterRead, ModbusRegisterReadValue> read: reads) {
                         logger.debug("{}: {} configured: read register={} extraction regex={}",
                                 getApplianceId(),
                                 registerName.name(),
-                                registerRead.getAddress(),
-                                registerRead.getSelectedRegisterReadValue().getExtractionRegex());
+                                read.parent().getAddress(),
+                                read.child().getExtractionRegex());
                     }
                 } else {
                     logger.error("{}: Missing register configuration for {}", getApplianceId(), registerName.name());
@@ -94,16 +95,16 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
             }
 
             for(EVWriteValueName registerName: EVWriteValueName.values()) {
-                List<ModbusRegisterWrite> registerWrites = ModbusRegisterWrite.getRegisterWrites(registerName.name(),
-                        this.registerWrites);
-                if(registerWrites.size() > 0) {
-                    for(ModbusRegisterWrite registerWrite: registerWrites) {
+                List<ParentWithChild<ModbusRegisterWrite, ModbusRegisterWriteValue>> writes
+                        = ModbusRegisterWrite.getRegisterWrites(registerName.name(), this.registerWrites);
+                if(writes.size() > 0) {
+                    for(ParentWithChild<ModbusRegisterWrite, ModbusRegisterWriteValue> write: writes) {
                         logger.debug("{}: {} configured: write register={} value={} factorToValue={}",
                                 getApplianceId(),
                                 registerName.name(),
-                                registerWrite.getAddress(),
-                                registerWrite.getSelectedRegisterWriteValue().getValue(),
-                                registerWrite.getFactorToValue());
+                                write.parent().getAddress(),
+                                write.child().getValue(),
+                                write.parent().getFactorToValue());
                     }
                     if(EVWriteValueName.ChargingCurrent.equals(registerName)) {
                     /* Alternative, falls Ladestrom am Controller nur auf feste Werte gesetzt werden kann
@@ -151,11 +152,12 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
     }
 
     public boolean isMatchingVehicleStatus(EVReadValueName registerName) {
-        List<ModbusRegisterRead> registerReads = ModbusRegisterRead.getRegisterReads(registerName.name(),
-                this.registerReads);
-        if (registerReads.size() > 0) {
+        List<ParentWithChild<ModbusRegisterRead, ModbusRegisterReadValue>> reads
+                = ModbusRegisterRead.getRegisterReads(registerName.name(), this.registerReads);
+        if (reads.size() > 0) {
             boolean result = true;
-            for (ModbusRegisterRead registerRead : registerReads) {
+            for (ParentWithChild<ModbusRegisterRead, ModbusRegisterReadValue> read : reads) {
+                ModbusRegisterRead registerRead = read.parent();
                 try {
                     ModbusReadTransactionExecutor executor = this.requestCache.get(registerRead);
                     if (executor == null) {
@@ -176,8 +178,7 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
                             if (executor instanceof ReadStringInputRegisterExecutor) {
                                 String registerValue = ((ReadStringInputRegisterExecutor) executor).getValue();
                                 logger.debug("{}: Register value={}", getApplianceId(), registerValue);
-                                result &= registerValue.matches(
-                                        registerRead.getSelectedRegisterReadValue().getExtractionRegex());
+                                result &= registerValue.matches(read.child().getExtractionRegex());
                             } else if (executor instanceof ReadCoilExecutor) {
                                 Boolean registerValue = ((ReadCoilExecutor) executor).getValue();
                                 logger.debug("{}: Register value={}", getApplianceId(), registerValue);
@@ -206,9 +207,10 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
     @Override
     public void setChargeCurrent(int current) {
         logger.debug("{}: Set charge current {}A", getApplianceId(), current);
-        ModbusRegisterWrite registerWrite = ModbusRegisterWrite.getFirstRegisterWrite(
+        ParentWithChild<ModbusRegisterWrite, ModbusRegisterWriteValue> write = ModbusRegisterWrite.getFirstRegisterWrite(
                 EVWriteValueName.ChargingCurrent.name(), this.registerWrites);
-        if(registerWrite != null) {
+        if(write != null) {
+            ModbusRegisterWrite registerWrite = write.parent();
             try {
                 ModbusWriteTransactionExecutor executor = ModbusExecutorFactory.getWriteExecutor(getApplianceId(),
                         registerWrite.getType(), registerWrite.getAddress(), registerWrite.getFactorToValue());
@@ -237,14 +239,15 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
     }
 
     private void setCharging(EVWriteValueName registerName) {
-        ModbusRegisterWrite registerWrite = ModbusRegisterWrite.getFirstRegisterWrite(registerName.name(),
-                this.registerWrites);
-        if(registerWrite != null) {
+        ParentWithChild<ModbusRegisterWrite, ModbusRegisterWriteValue> write
+                = ModbusRegisterWrite.getFirstRegisterWrite(registerName.name(), this.registerWrites);
+        if(write != null) {
+            ModbusRegisterWrite registerWrite = write.parent();
             try {
                 ModbusWriteTransactionExecutor executor = ModbusExecutorFactory.getWriteExecutor(getApplianceId(),
                         registerWrite.getType(), registerWrite.getAddress(), registerWrite.getFactorToValue());
                 if(executor != null) {
-                    String stringValue = registerWrite.getSelectedRegisterWriteValue().getValue();
+                    String stringValue = write.child().getValue();
                     Object value = null;
                     if(ModbusWriteRegisterType.Coil.equals(registerWrite.getType())) {
                         value = "1".equals(stringValue);

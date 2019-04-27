@@ -18,6 +18,7 @@
 
 package de.avanux.smartapplianceenabler.modbus;
 
+import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -42,19 +43,8 @@ public class ModbusRegisterRead {
     private Double factorToValue;
     @XmlElement(name = "ModbusRegisterReadValue")
     private List<ModbusRegisterReadValue> registerReadValues;
-    private transient ModbusRegisterReadValue selectedRegisterReadValue;
 
     public ModbusRegisterRead() {
-    }
-
-    public ModbusRegisterRead(String address, Integer bytes, ByteOrder byteOrder, ModbusReadRegisterType type,
-                              Double factorToValue, ModbusRegisterReadValue selectedRegisterReadValue) {
-        this.address = address;
-        this.bytes = bytes;
-        this.byteOrder = byteOrder != null ? byteOrder.name() : null;
-        this.type = type.name();
-        this.factorToValue = factorToValue;
-        this.selectedRegisterReadValue = selectedRegisterReadValue;
     }
 
     public String getAddress() {
@@ -111,24 +101,21 @@ public class ModbusRegisterRead {
         this.registerReadValues = registerReadValues;
     }
 
-    public ModbusRegisterReadValue getSelectedRegisterReadValue() {
-        return selectedRegisterReadValue;
-    }
-
-    public static ModbusRegisterRead getFirstRegisterRead(String registerName, List<ModbusRegisterRead> registerReads) {
-        List<ModbusRegisterRead> matches = getRegisterReads(registerName, registerReads);
+    public static ParentWithChild<ModbusRegisterRead, ModbusRegisterReadValue> getFirstRegisterRead(
+            String registerName, List<ModbusRegisterRead> registerReads) {
+        List<ParentWithChild<ModbusRegisterRead, ModbusRegisterReadValue>> matches = getRegisterReads(
+                registerName, registerReads);
         return matches.size() > 0 ? matches.get(0) : null;
     }
 
-    public static List<ModbusRegisterRead> getRegisterReads(String registerName, List<ModbusRegisterRead> registerReads) {
-        List<ModbusRegisterRead> matches = new ArrayList<>();
+    public static List<ParentWithChild<ModbusRegisterRead, ModbusRegisterReadValue>> getRegisterReads(
+            String registerName, List<ModbusRegisterRead> registerReads) {
+        List<ParentWithChild<ModbusRegisterRead, ModbusRegisterReadValue>> matches = new ArrayList<>();
         if(registerReads != null) {
             for(ModbusRegisterRead registerRead: registerReads) {
                 for(ModbusRegisterReadValue registerReadValue: registerRead.getRegisterReadValues()) {
                     if(registerName.equals(registerReadValue.getName())) {
-                        matches.add(new ModbusRegisterRead(registerRead.getAddress(), registerRead.getBytes(),
-                                registerRead.getByteOrder(), registerRead.getType(), registerRead.getFactorToValue(),
-                                registerReadValue));
+                        matches.add(new ParentWithChild<>(registerRead, registerReadValue));
                     }
                 }
             }
