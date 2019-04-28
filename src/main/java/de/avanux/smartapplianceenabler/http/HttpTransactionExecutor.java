@@ -136,11 +136,11 @@ abstract public class HttpTransactionExecutor {
     public CloseableHttpResponse executeLeaveOpen(HttpMethod httpMethod, String url, String data) {
         CloseableHttpResponse response = null;
         try {
-            if(httpMethod == HttpMethod.GET) {
-                response = get(url, getUsername(), getPassword());
-            }
             if(httpMethod == HttpMethod.POST) {
                 response = post(url, getContentType(), data, getUsername(), getPassword());
+            }
+            else {
+                response = get(url, getUsername(), getPassword());
             }
             return response;
         } catch (Exception e) {
