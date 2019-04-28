@@ -39,7 +39,7 @@ public class EVHttpControlTest {
         this.control = new EVHttpControl();
         this.control.setContentProtocol(ContentProtocolType.json);
         List<HttpRead> reads = new ArrayList<>();
-        this.control.setReads(reads);
+        this.control.setHttpReads(reads);
 
         statusReadSpy = Mockito.spy(new HttpRead(BASE_URL + "/status"));
         reads.add(statusReadSpy);
@@ -52,7 +52,7 @@ public class EVHttpControlTest {
         readValues.add(new HttpReadValue(EVReadValueName.Error.name(), "$.err", "([^0])"));
 
         List<HttpWrite> writes = new ArrayList<>();
-        this.control.setWrites(writes);
+        this.control.setHttpWrites(writes);
         cmdWriteSpy =  Mockito.spy(new HttpWrite(BASE_URL + "/mqtt="));
         writes.add(cmdWriteSpy);
         List<HttpWriteValue> writeValues = new ArrayList<>();

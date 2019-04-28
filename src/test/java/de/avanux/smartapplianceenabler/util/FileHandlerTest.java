@@ -102,7 +102,7 @@ public class FileHandlerTest {
 //        EVHttpControl httpControl = (EVHttpControl) evCharger.getControl();
 //        Assert.assertNotNull(httpControl);
 //
-//        List<HttpRead> reads = httpControl.getReads();
+//        List<HttpRead> reads = httpControl.getHttpReads();
 //        Assert.assertEquals(1, reads.size());
 //        HttpRead read = reads.get(0);
 //        assertRead(read, "http://127.0.0.1:8999/status");
@@ -114,7 +114,7 @@ public class FileHandlerTest {
 //        assertReadValue(readValues.get(3), EVReadValueName.ChargingCompleted, "$.car", "(4)");
 //        assertReadValue(readValues.get(4), EVReadValueName.Error, "$.err", "([^0])");
 //
-//        List<HttpWrite> writes = httpControl.getWrites();
+//        List<HttpWrite> writes = httpControl.getHttpWrites();
 //        Assert.assertEquals(1, writes.size());
 //        HttpWrite write = writes.get(0);
 //        assertWrite(write, "http://127.0.0.1:8999/mqtt=");
