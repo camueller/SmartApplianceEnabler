@@ -3,14 +3,14 @@
     <Appliance id="F-00000001-000000000099-00">
         <ElectricVehicleCharger startChargingStateDetectionDelay="0">
             <EVHttpControl contentProtocol="json">
-                <HttpRead url="http://127.0.0.1:8999/status">
+                <HttpRead url="http://192.168.178.48/status">
                     <HttpReadValue name="VehicleNotConnected" path="$.car" extractionRegex="(1)"/>
                     <HttpReadValue name="VehicleConnected" path="$.car" extractionRegex="(3)"/>
                     <HttpReadValue name="Charging" path="$.car" extractionRegex="(2)"/>
                     <HttpReadValue name="ChargingCompleted" path="$.car" extractionRegex="(4)"/>
                     <HttpReadValue name="Error" path="$.err" extractionRegex="([^0])"/>
                 </HttpRead>
-                <HttpWrite url="http://127.0.0.1:8999/mqtt=">
+                <HttpWrite url="http://192.168.178.48/mqtt=">
                     <HttpWriteValue name="ChargingCurrent" value="amp={}" type="QueryParameter" method="GET"/>
                     <HttpWriteValue name="StartCharging" value="alw=1" type="QueryParameter" method="GET"/>
                     <HttpWriteValue name="StopCharging" value="alw=0" type="QueryParameter" method="GET"/>
@@ -22,10 +22,7 @@
             <ElectricVehicle id="2" name="Tesla Model S" batteryCapacity="80000"/>
         </ElectricVehicleCharger>
         <HttpElectricityMeter contentProtocol="json">
-            <!-- HttpRead url="http://127.0.0.1:8999/status">
-                <HttpReadValue name="Power" path="$.car"/>
-            </HttpRead-->
-            <HttpRead url="http://127.0.0.1:8999/status">
+            <HttpRead url="http://192.168.178.48/status">
                 <HttpReadValue name="Energy" path="$.dws"/>
             </HttpRead>
         </HttpElectricityMeter>
