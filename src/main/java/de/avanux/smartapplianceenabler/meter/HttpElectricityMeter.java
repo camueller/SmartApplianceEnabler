@@ -65,6 +65,11 @@ public class HttpElectricityMeter implements Meter, PollPowerExecutor, PollEnerg
         this.applianceId = applianceId;
         this.pollPowerMeter.setApplianceId(applianceId);
         this.pollEnergyMeter.setApplianceId(applianceId);
+        if(this.httpReads != null) {
+            for(HttpRead httpRead: this.httpReads) {
+                httpRead.setApplianceId(applianceId);
+            }
+        }
     }
 
     public List<HttpRead> getHttpReads() {

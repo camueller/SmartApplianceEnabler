@@ -42,13 +42,27 @@ public class EVHttpControl implements EVControl {
     @XmlAttribute
     private String contentProtocol;
     @XmlElement(name = "HttpRead")
-    private List<HttpRead> reads;
+    private List<HttpRead> httpReads;
     @XmlElement(name = "HttpWrite")
-    private List<HttpWrite> writes;
+    private List<HttpWrite> httpWrites;
     private transient ContentProtocolHandler contentProtocolHandler;
 
 
     public EVHttpControl() {
+    }
+
+    @Override
+    public void setApplianceId(String applianceId) {
+        if(this.httpReads != null) {
+            for(HttpRead read: this.httpReads) {
+                read.setApplianceId(applianceId);
+            }
+        }
+        if(this.httpWrites != null) {
+            for(HttpWrite write: this.httpWrites) {
+                write.setApplianceId(applianceId);
+            }
+        }
     }
 
     public void setContentProtocol(ContentProtocolType contentProtocol) {
@@ -64,20 +78,20 @@ public class EVHttpControl implements EVControl {
         return this.contentProtocolHandler;
     }
 
-    public List<HttpRead> getReads() {
-        return reads;
+    public List<HttpRead> getHttpReads() {
+        return httpReads;
     }
 
-    public void setReads(List<HttpRead> reads) {
-        this.reads = reads;
+    public void setHttpReads(List<HttpRead> httpReads) {
+        this.httpReads = httpReads;
     }
 
-    public List<HttpWrite> getWrites() {
-        return writes;
+    public List<HttpWrite> getHttpWrites() {
+        return httpWrites;
     }
 
-    public void setWrites(List<HttpWrite> writes) {
-        this.writes = writes;
+    public void setHttpWrites(List<HttpWrite> httpWrites) {
+        this.httpWrites = httpWrites;
     }
 
     @Override
@@ -129,8 +143,8 @@ public class EVHttpControl implements EVControl {
     }
 
     public ParentWithChild<HttpRead, HttpReadValue> getReadValue(EVReadValueName name) {
-        if(this.reads != null) {
-            for(HttpRead read : this.reads) {
+        if(this.httpReads != null) {
+            for(HttpRead read : this.httpReads) {
                 for(HttpReadValue readValue : read.getReadValues()) {
                     if(readValue.getName().equals(name.name())) {
                         return new ParentWithChild(read, readValue);
@@ -142,8 +156,8 @@ public class EVHttpControl implements EVControl {
     }
 
     public ParentWithChild<HttpWrite, HttpWriteValue> getWriteValue(EVWriteValueName name) {
-        if(this.writes != null) {
-            for(HttpWrite write : this.writes) {
+        if(this.httpWrites != null) {
+            for(HttpWrite write : this.httpWrites) {
                 for(HttpWriteValue writeValue : write.getWriteValues()) {
                     if(writeValue.getName().equals(name.name())) {
                         return new ParentWithChild(write, writeValue);
@@ -180,20 +194,6 @@ public class EVHttpControl implements EVControl {
         ParentWithChild<HttpWrite, HttpWriteValue> write = getWriteValue(EVWriteValueName.StopCharging);
         String url = buildUrl(write);
         writeValue(write, url);
-    }
-
-    @Override
-    public void setApplianceId(String applianceId) {
-        if(this.reads != null) {
-            for(HttpRead read: this.reads) {
-                read.setApplianceId(applianceId);
-            }
-        }
-        if(this.writes != null) {
-            for(HttpWrite write: this.writes) {
-                write.setApplianceId(applianceId);
-            }
-        }
     }
 
     protected String buildUrl(ParentWithChild<HttpWrite, HttpWriteValue> write) {
