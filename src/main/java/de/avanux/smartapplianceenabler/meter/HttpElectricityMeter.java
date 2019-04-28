@@ -194,9 +194,10 @@ public class HttpElectricityMeter implements Meter, PollPowerExecutor, PollEnerg
             Float energy = timestampWithEnergyValue.get(timestamp);
             if(previousTimestamp != null && previousEnergy != null) {
                 long diffTime = timestamp - previousTimestamp;
-                Float diffEnergy =  energy - previousEnergy;
-                // diffEnergy kW/h * 1000W/kW * diffTime ms * 1h / 3600000ms
-                powerValues.add(diffEnergy * diffTime / 3600);
+                Float diffEnergy = energy - previousEnergy;
+                // diffEnergy kWh * 1000W/kW * 3600000ms/1h / diffTime ms
+                float power = diffEnergy * 1000.0f * 3600000.0f / diffTime;
+                powerValues.add(power);
             }
             previousTimestamp = timestamp;
             previousEnergy = energy;
@@ -211,7 +212,12 @@ public class HttpElectricityMeter implements Meter, PollPowerExecutor, PollEnerg
             return getValue(powerRead);
         }
         Vector<Float> powerValues = calculatePower(this.pollEnergyMeter.getValuesInMeasurementInterval());
-        return powerValues.size() > 0 ? powerValues.lastElement() : null;
+        if(powerValues.size() > 0) {
+            Float power = powerValues.lastElement();
+            logger.debug("{}: Calculated power from energy: {}W", applianceId, power);
+            return power;
+        }
+        return null;
     }
 
     @Override
@@ -244,12 +250,17 @@ public class HttpElectricityMeter implements Meter, PollPowerExecutor, PollEnerg
                     protocolHandlerValue = contentProtocolHandler.readValue(path);
                 }
                 String extractedValue = valueExtractor.extractValue(protocolHandlerValue, valueExtractionRegex);
-                logger.debug("{}: Value: contentProtocolHandler={} extracted={}", applianceId, protocolHandlerValue,extractedValue);
                 String parsableString = extractedValue.replace(',', '.');
+                Float value = null;
                 if(factorToValue != null) {
-                    return Double.valueOf(Double.parseDouble(parsableString) * factorToValue).floatValue();
+                    value = Double.valueOf(Double.parseDouble(parsableString) * factorToValue).floatValue();
                 }
-                return Double.valueOf(Double.parseDouble(parsableString)).floatValue();
+                else {
+                    value = Double.valueOf(Double.parseDouble(parsableString)).floatValue();
+                }
+                logger.debug("{}: value={} contentProtocolHandler={} extracted={}",
+                        applianceId, value, protocolHandlerValue, extractedValue);
+                return value;
             }
         }
         return 0.0f;
