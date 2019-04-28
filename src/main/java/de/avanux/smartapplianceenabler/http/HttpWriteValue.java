@@ -27,7 +27,7 @@ public class HttpWriteValue {
     @XmlAttribute
     private String name;
     @XmlAttribute
-    private String value;
+    private String value; // can be query parameter or data
     @XmlAttribute
     private String type;
     @XmlAttribute

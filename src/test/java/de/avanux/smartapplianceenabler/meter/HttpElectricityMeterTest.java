@@ -70,7 +70,7 @@ public class HttpElectricityMeterTest extends TestBase {
 
     @Test
     public void getPower_goECharger() {
-        meter.setContentProtocol(ContentProtocolType.JSON);
+        meter.setContentProtocol(ContentProtocolType.json);
         meter.setMeasurementInterval(7200);
 
         HttpRead energyReadSpy = Mockito.spy(new HttpRead("http://127.0.0.1:8999"));
@@ -104,7 +104,7 @@ public class HttpElectricityMeterTest extends TestBase {
 
     @Test
     public void getEnergy_goECharger() {
-        this.meter.setContentProtocol(ContentProtocolType.JSON);
+        this.meter.setContentProtocol(ContentProtocolType.json);
         HttpRead energyReadSpy = Mockito.spy(new HttpRead("http://127.0.0.1:8999"));
         HttpReadValue powerReadValue = new HttpReadValue(MeterValueName.Energy.name(), "$.dws", null, null, 0.001);
         energyReadSpy.setReadValues(Collections.singletonList(powerReadValue));

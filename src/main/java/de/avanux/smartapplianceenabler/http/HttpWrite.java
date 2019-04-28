@@ -18,6 +18,8 @@
 
 package de.avanux.smartapplianceenabler.http;
 
+import de.avanux.smartapplianceenabler.util.ParentWithChild;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -41,5 +43,18 @@ public class HttpWrite extends HttpTransactionExecutor {
 
     public void setWriteValues(List<HttpWriteValue> writeValues) {
         this.writeValues = writeValues;
+    }
+
+    public static ParentWithChild<HttpWrite,HttpWriteValue> getFirstHttpWrite(String valueName, List<HttpWrite> writes) {
+        if(writes != null) {
+            for(HttpWrite write: writes) {
+                for(HttpWriteValue writeValue: write.getWriteValues()) {
+                    if(writeValue.getName().equals(valueName)) {
+                        return new ParentWithChild<>(write, writeValue);
+                    }
+                }
+            }
+        }
+        return null;
     }
 }

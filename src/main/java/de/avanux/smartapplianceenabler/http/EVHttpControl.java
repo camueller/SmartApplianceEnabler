@@ -40,7 +40,7 @@ public class EVHttpControl implements EVControl {
 
     private transient Logger logger = LoggerFactory.getLogger(EVHttpControl.class);
     @XmlAttribute
-    private String contentType;
+    private String contentProtocolType;
     @XmlElement(name = "HttpRead")
     private List<HttpRead> reads;
     @XmlElement(name = "HttpWrite")
@@ -51,13 +51,13 @@ public class EVHttpControl implements EVControl {
     public EVHttpControl() {
     }
 
-    public EVHttpControl(ContentProtocol contentProtocol) {
-        this.contentProtocol = contentProtocol;
+    public void setContentProtocolType(ContentProtocolType contentProtocolType) {
+        this.contentProtocolType = contentProtocolType.name();
     }
 
     public ContentProtocol getContentProtocol() {
         if(this.contentProtocol == null) {
-            if(ContentProtocolType.JSON.name().equals(this.contentType)) {
+            if(ContentProtocolType.json.name().equals(this.contentProtocolType)) {
                 this.contentProtocol = new JsonContentProtocol();
             }
         }
