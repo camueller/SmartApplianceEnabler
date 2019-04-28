@@ -20,6 +20,7 @@ package de.avanux.smartapplianceenabler.http;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -52,6 +53,7 @@ abstract public class HttpTransactionExecutor {
     @XmlAttribute
     private String password;
     private transient String applianceId;
+    private transient RequestConfig requestConfig;
 
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
@@ -101,7 +103,7 @@ abstract public class HttpTransactionExecutor {
             provider.setCredentials(AuthScope.ANY, credentials);
             httpClientBuilder.setDefaultCredentialsProvider(provider);
         }
-        CloseableHttpClient client = httpClientBuilder.build();
+        CloseableHttpClient client = httpClientBuilder.setDefaultRequestConfig(getRequestConfig()).build();
         logger.debug("{}: Sending HTTP request", applianceId);
         logger.debug("{}: url={}", applianceId, url);
         logger.debug("{}: data={}", applianceId, data);
@@ -126,5 +128,17 @@ abstract public class HttpTransactionExecutor {
             logger.error("{}: Error executing HTTP request.", applianceId, e);
             return null;
         }
+    }
+
+    private RequestConfig getRequestConfig() {
+        if(this.requestConfig == null) {
+            int timeout = 5; // seconds
+            this.requestConfig = RequestConfig.custom()
+                    .setConnectTimeout(timeout * 1000)
+                    .setConnectionRequestTimeout(timeout * 1000)
+                    .setSocketTimeout(timeout * 1000).build();
+
+        }
+        return this.requestConfig;
     }
 }
