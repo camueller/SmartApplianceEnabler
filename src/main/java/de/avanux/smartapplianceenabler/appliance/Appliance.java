@@ -188,11 +188,15 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             if(meter instanceof ApplianceIdConsumer) {
                 ((ApplianceIdConsumer) meter).setApplianceId(id);
             }
+            // FIXME add init() to Meter interface?
             if(meter instanceof ModbusElectricityMeter) {
                 ((ModbusElectricityMeter) meter).init();
             }
             if(meter instanceof S0ElectricityMeter) {
                 ((S0ElectricityMeter) meter).init();
+            }
+            if(meter instanceof HttpElectricityMeter) {
+                ((HttpElectricityMeter) meter).init();
             }
             if(control != null) {
                 if(meter instanceof S0ElectricityMeter) {
