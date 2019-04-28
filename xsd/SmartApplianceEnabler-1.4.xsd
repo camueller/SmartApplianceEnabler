@@ -261,8 +261,10 @@
 
     <xs:complexType name="HttpReadValueType">
         <xs:attribute name="name" type="ModbusReadRegisterNameType" use="required" />
+        <xs:attribute name="data" type="xs:string" />
         <xs:attribute name="path" type="xs:string" />
         <xs:attribute name="extractionRegex" type="xs:string" />
+        <xs:attribute name="factorToValue" type="xs:double" />
     </xs:complexType>
 
     <xs:complexType name="HttpWriteType">
