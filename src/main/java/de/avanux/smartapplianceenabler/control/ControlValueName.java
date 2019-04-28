@@ -16,8 +16,9 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.avanux.smartapplianceenabler.protocol;
+package de.avanux.smartapplianceenabler.control;
 
-public enum ContentProtocolType {
-    json
+public enum ControlValueName {
+    On,
+    Off
 }

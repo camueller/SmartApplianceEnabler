@@ -37,14 +37,9 @@ public class ModbusSwitch extends ModbusSlave implements Control {
     private List<ModbusRegisterWrite> registerWrites;
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
 
-    public enum RegisterName {
-        On,
-        Off
-    }
-
     public void validate() {
         boolean valid = true;
-        for(RegisterName registerName: RegisterName.values()) {
+        for(ControlValueName registerName: ControlValueName.values()) {
             ParentWithChild<ModbusRegisterWrite, ModbusRegisterWriteValue> write
                     = ModbusRegisterWrite.getFirstRegisterWrite(registerName.name(), this.registerWrites);
             if(write != null) {
@@ -70,7 +65,7 @@ public class ModbusSwitch extends ModbusSlave implements Control {
         boolean result = false;
         logger.info("{}: Switching {}", getApplianceId(), (switchOn ? "on" : "off"));
         ParentWithChild<ModbusRegisterWrite, ModbusRegisterWriteValue> write
-                = ModbusRegisterWrite.getFirstRegisterWrite(getRegisterName(switchOn).name(), this.registerWrites);
+                = ModbusRegisterWrite.getFirstRegisterWrite(getValueName(switchOn).name(), this.registerWrites);
         if (write != null) {
             ModbusRegisterWrite registerWrite = write.parent();
             try {
@@ -100,7 +95,7 @@ public class ModbusSwitch extends ModbusSlave implements Control {
     public boolean isOn() {
         boolean on = false;
         ParentWithChild<ModbusRegisterWrite, ModbusRegisterWriteValue> write
-                = ModbusRegisterWrite.getFirstRegisterWrite(RegisterName.On.name(), this.registerWrites);
+                = ModbusRegisterWrite.getFirstRegisterWrite(ControlValueName.On.name(), this.registerWrites);
         if(write != null) {
             ModbusRegisterWrite registerWrite = write.parent();
             try {
@@ -118,8 +113,8 @@ public class ModbusSwitch extends ModbusSlave implements Control {
         return on;
     }
 
-    private RegisterName getRegisterName(boolean switchOn) {
-        return switchOn ? RegisterName.On : RegisterName.Off;
+    private ControlValueName getValueName(boolean switchOn) {
+        return switchOn ? ControlValueName.On : ControlValueName.Off;
     }
 
     @Override

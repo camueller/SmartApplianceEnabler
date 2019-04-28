@@ -60,6 +60,13 @@ public class HttpElectricityMeter implements Meter, PollPowerExecutor, PollEnerg
     private transient ContentProtocol contentContentProtocolHandler;
 
 
+    @Override
+    public void setApplianceId(String applianceId) {
+        this.applianceId = applianceId;
+        this.pollPowerMeter.setApplianceId(applianceId);
+        this.pollEnergyMeter.setApplianceId(applianceId);
+    }
+
     public List<HttpRead> getHttpReads() {
         return httpReads;
     }
@@ -93,11 +100,8 @@ public class HttpElectricityMeter implements Meter, PollPowerExecutor, PollEnerg
         return pollEnergyMeter;
     }
 
-    @Override
-    public void setApplianceId(String applianceId) {
-        this.applianceId = applianceId;
-        this.pollPowerMeter.setApplianceId(applianceId);
-        this.pollEnergyMeter.setApplianceId(applianceId);
+    public void validate() {
+        // FIXME implementieren
     }
 
     @Override
@@ -197,7 +201,6 @@ public class HttpElectricityMeter implements Meter, PollPowerExecutor, PollEnerg
 
     @Override
     public Float pollPower() {
-        // this method should only be called if isCalculatePowerFromEnergy == false !
         ParentWithChild<HttpRead, HttpReadValue> powerRead = HttpRead.getFirstHttpRead(MeterValueName.Power.name(), this.httpReads);
         if(powerRead != null) {
             return getValue(powerRead);
@@ -249,7 +252,7 @@ public class HttpElectricityMeter implements Meter, PollPowerExecutor, PollEnerg
 
     public ContentProtocol getContentContentProtocolHandler() {
         if(this.contentContentProtocolHandler == null) {
-            if(ContentProtocolType.JSON.name().equals(this.contentProtocol)) {
+            if(ContentProtocolType.json.name().equals(this.contentProtocol)) {
                 this.contentContentProtocolHandler = new JsonContentProtocol();
             }
         }

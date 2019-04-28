@@ -52,9 +52,9 @@ public class HttpRead extends HttpTransactionExecutor {
         this.readValues = readValues;
     }
 
-    public static ParentWithChild<HttpRead,HttpReadValue> getFirstHttpRead(String valueName, List<HttpRead> httpReads) {
-        if(httpReads != null) {
-            for(HttpRead read: httpReads) {
+    public static ParentWithChild<HttpRead,HttpReadValue> getFirstHttpRead(String valueName, List<HttpRead> reads) {
+        if(reads != null) {
+            for(HttpRead read: reads) {
                 for(HttpReadValue readValue: read.getReadValues()) {
                     if(readValue.getName().equals(valueName)) {
                         return new ParentWithChild<>(read, readValue);

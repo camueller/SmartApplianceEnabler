@@ -20,7 +20,7 @@ package de.avanux.smartapplianceenabler.http;
 
 import de.avanux.smartapplianceenabler.control.ev.EVReadValueName;
 import de.avanux.smartapplianceenabler.control.ev.EVWriteValueName;
-import de.avanux.smartapplianceenabler.protocol.JsonContentProtocol;
+import de.avanux.smartapplianceenabler.protocol.ContentProtocolType;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -36,7 +36,8 @@ public class EVHttpControlTest {
     private HttpWrite cmdWriteSpy;
 
     public EVHttpControlTest() {
-        this.control = new EVHttpControl(new JsonContentProtocol());
+        this.control = new EVHttpControl();
+        this.control.setContentProtocolType(ContentProtocolType.json);
         List<HttpRead> reads = new ArrayList<>();
         this.control.setReads(reads);
 

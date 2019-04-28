@@ -18,8 +18,9 @@
 package de.avanux.smartapplianceenabler.control;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
-import de.avanux.smartapplianceenabler.http.HttpMethod;
-import de.avanux.smartapplianceenabler.http.HttpTransactionExecutor;
+import de.avanux.smartapplianceenabler.http.*;
+import de.avanux.smartapplianceenabler.meter.MeterValueName;
+import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.joda.time.LocalDateTime;
@@ -29,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,73 +44,53 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HttpSwitch extends HttpTransactionExecutor implements Control, ApplianceIdConsumer {
     private transient Logger logger = LoggerFactory.getLogger(HttpSwitch.class);
-    @XmlAttribute
-    private String onUrl;
-    @XmlAttribute
-    private String offUrl;
-    @XmlAttribute
-    private String onData;
-    @XmlAttribute
-    private String offData;
+    @XmlElement(name = "HttpWrite")
+    private List<HttpWrite> httpWrites;
     private transient boolean on;
     transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
-
-    public void setOnUrl(String onUrl) {
-        this.onUrl = onUrl;
-    }
-
-    public void setOffUrl(String offUrl) {
-        this.offUrl = offUrl;
-    }
-
-    public void setOnData(String onData) {
-        this.onData = onData;
-    }
-
-    public void setOffData(String offData) {
-        this.offData = offData;
-    }
-
-    @Override
-    public boolean on(LocalDateTime now, boolean switchOn) {
-        String url;
-        String data;
-        if(switchOn) {
-            url = onUrl;
-            data = onData;
-        }
-        else {
-            url = offUrl;
-            data = offData;
-        }
-        HttpMethod httpMethod = data != null ? HttpMethod.POST : HttpMethod.GET;
-        CloseableHttpResponse response = executeLeaveOpen(httpMethod, url, data);
-        if(response != null) {
-            int statusCode = response.getStatusLine().getStatusCode();
-            closeResponse(response);
-            if(statusCode == HttpStatus.SC_OK) {
-                on = switchOn;
-                for(ControlStateChangedListener listener : controlStateChangedListeners) {
-                    listener.controlStateChanged(now, switchOn);
-                }
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public void addControlStateChangedListener(ControlStateChangedListener listener) {
-        this.controlStateChangedListeners.add(listener);
-    }
 
     @Override
     public void setApplianceId(String applianceId) {
         super.setApplianceId(applianceId);
     }
 
+    public void validate() {
+        // FIXME implementieren
+    }
+
     @Override
     public boolean isOn() {
         return on;
+    }
+
+    @Override
+    public boolean on(LocalDateTime now, boolean switchOn) {
+        ParentWithChild<HttpWrite, HttpWriteValue> write = HttpWrite.getFirstHttpWrite(getValueName(switchOn).name(), this.httpWrites);
+        if(write != null) {
+            HttpMethod httpMethod = write.child().getMethod();
+            String data = httpMethod == HttpMethod.POST ? write.child().getValue() : null;
+            CloseableHttpResponse response = executeLeaveOpen(write.child().getMethod(), write.parent().getUrl(), data);
+            if(response != null) {
+                int statusCode = response.getStatusLine().getStatusCode();
+                closeResponse(response);
+                if(statusCode == HttpStatus.SC_OK) {
+                    on = switchOn;
+                    for(ControlStateChangedListener listener : controlStateChangedListeners) {
+                        listener.controlStateChanged(now, switchOn);
+                    }
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private ControlValueName getValueName(boolean switchOn) {
+        return switchOn ? ControlValueName.On : ControlValueName.Off;
+    }
+
+    @Override
+    public void addControlStateChangedListener(ControlStateChangedListener listener) {
+        this.controlStateChangedListeners.add(listener);
     }
 }
