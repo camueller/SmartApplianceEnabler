@@ -121,11 +121,9 @@ abstract public class HttpTransactionExecutor {
     public String execute(HttpMethod httpMethod, String url, String data) {
         CloseableHttpResponse response = null;
         try {
-            response = logResponse(executeLeaveOpen(httpMethod, url, data));
+            response = executeLeaveOpen(httpMethod, url, data);
             if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                String responseString = EntityUtils.toString(response.getEntity());
-                logger.debug("{}: HTTP response: {}", getApplianceId(), responseString);
-                return responseString;
+                return EntityUtils.toString(response.getEntity());
             }
         } catch (Exception e) {
             logger.error("{}: Error reading HTTP response", getApplianceId(), e);
