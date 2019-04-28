@@ -174,6 +174,7 @@ public class HttpElectricityMeter implements Meter, PollPowerExecutor, PollEnerg
     @Override
     public void stop() {
         logger.debug("{}: Stopping ...", applianceId);
+        pollEnergyMeter.cancelTimer();
         pollPowerMeter.cancelTimer();
     }
 
