@@ -18,21 +18,11 @@
 
 package de.avanux.smartapplianceenabler.protocol;
 
-import org.junit.Assert;
-import org.junit.Test;
+public interface ContentProtocolHandler {
 
-public class JsonContentProtocolTest {
-    private ContentProtocol contentProtocol;
+    void parse(String content);
 
-    public JsonContentProtocolTest() {
-        this.contentProtocol = new JsonContentProtocol();
-    }
+    String readValue(String selector);
 
-    @Test
-    public void readIntegerValue() {
-        String content = "{ \"car\": \"3\" }";
-        String selector = "$.car";
-        this.contentProtocol.parse(content);
-        Assert.assertEquals(3, this.contentProtocol.readIntegerValue(selector).intValue());
-    }
+    Integer readIntegerValue(String selector);
 }

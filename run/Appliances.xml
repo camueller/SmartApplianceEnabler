@@ -2,7 +2,7 @@
 <Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.4">
     <Appliance id="F-00000001-000000000099-00">
         <ElectricVehicleCharger startChargingStateDetectionDelay="0">
-            <EVHttpControl contentType="json">
+            <EVHttpControl contentProtocol="json">
                 <HttpRead url="http://127.0.0.1:8999/status">
                     <HttpReadValue name="VehicleNotConnected" path="$.car" extractionRegex="(1)"/>
                     <HttpReadValue name="VehicleConnected" path="$.car" extractionRegex="(3)"/>

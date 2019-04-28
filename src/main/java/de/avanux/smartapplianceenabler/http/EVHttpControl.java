@@ -22,8 +22,8 @@ import de.avanux.smartapplianceenabler.control.ev.EVControl;
 import de.avanux.smartapplianceenabler.control.ev.EVReadValueName;
 import de.avanux.smartapplianceenabler.control.ev.EVWriteValueName;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolType;
-import de.avanux.smartapplianceenabler.protocol.JsonContentProtocol;
-import de.avanux.smartapplianceenabler.protocol.ContentProtocol;
+import de.avanux.smartapplianceenabler.protocol.JsonContentProtocolHandler;
+import de.avanux.smartapplianceenabler.protocol.ContentProtocolHandler;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,28 +40,28 @@ public class EVHttpControl implements EVControl {
 
     private transient Logger logger = LoggerFactory.getLogger(EVHttpControl.class);
     @XmlAttribute
-    private String contentProtocolType;
+    private String contentProtocol;
     @XmlElement(name = "HttpRead")
     private List<HttpRead> reads;
     @XmlElement(name = "HttpWrite")
     private List<HttpWrite> writes;
-    private transient ContentProtocol contentProtocol;
+    private transient ContentProtocolHandler contentProtocolHandler;
 
 
     public EVHttpControl() {
     }
 
-    public void setContentProtocolType(ContentProtocolType contentProtocolType) {
-        this.contentProtocolType = contentProtocolType.name();
+    public void setContentProtocol(ContentProtocolType contentProtocol) {
+        this.contentProtocol = contentProtocol.name();
     }
 
-    public ContentProtocol getContentProtocol() {
-        if(this.contentProtocol == null) {
-            if(ContentProtocolType.json.name().equals(this.contentProtocolType)) {
-                this.contentProtocol = new JsonContentProtocol();
+    public ContentProtocolHandler getContentProtocolHandler() {
+        if(this.contentProtocolHandler == null) {
+            if(ContentProtocolType.json.name().equals(this.contentProtocol)) {
+                this.contentProtocolHandler = new JsonContentProtocolHandler();
             }
         }
-        return this.contentProtocol;
+        return this.contentProtocolHandler;
     }
 
     public List<HttpRead> getReads() {
@@ -119,8 +119,8 @@ public class EVHttpControl implements EVControl {
         ParentWithChild<HttpRead, HttpReadValue> read = getReadValue(valueName);
         if(read != null) {
             String response = read.parent().executeGet(read.parent().getUrl());
-            getContentProtocol().parse(response);
-            String value = getContentProtocol().readValue(read.child().getPath());
+            getContentProtocolHandler().parse(response);
+            String value = getContentProtocolHandler().readValue(read.child().getPath());
             boolean match = value.matches(read.child().getExtractionRegex());
             logger.debug("value={} match={}", value, match);
             return match;
