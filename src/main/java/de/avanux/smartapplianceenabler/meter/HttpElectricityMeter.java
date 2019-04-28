@@ -18,12 +18,12 @@
 package de.avanux.smartapplianceenabler.meter;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
-import de.avanux.smartapplianceenabler.protocol.ContentProtocol;
+import de.avanux.smartapplianceenabler.protocol.ContentProtocolHandler;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolType;
 import de.avanux.smartapplianceenabler.http.HttpMethod;
 import de.avanux.smartapplianceenabler.http.HttpRead;
 import de.avanux.smartapplianceenabler.http.HttpReadValue;
-import de.avanux.smartapplianceenabler.protocol.JsonContentProtocol;
+import de.avanux.smartapplianceenabler.protocol.JsonContentProtocolHandler;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import de.avanux.smartapplianceenabler.util.ValueExtractor;
 import org.joda.time.LocalDateTime;
@@ -57,7 +57,7 @@ public class HttpElectricityMeter implements Meter, PollPowerExecutor, PollEnerg
     private transient PollPowerMeter pollPowerMeter = new PollPowerMeter();
     private transient PollEnergyMeter pollEnergyMeter = new PollEnergyMeter();
     private transient ValueExtractor valueExtractor = new ValueExtractor();
-    private transient ContentProtocol contentContentProtocolHandler;
+    private transient ContentProtocolHandler contentContentProtocolHandler;
 
 
     @Override
@@ -233,7 +233,7 @@ public class HttpElectricityMeter implements Meter, PollPowerExecutor, PollEnerg
             if(response != null) {
                 logger.debug("{}: Response: {}", applianceId, response);
                 String protocolHandlerValue = response;
-                ContentProtocol contentProtocolHandler = getContentContentProtocolHandler();
+                ContentProtocolHandler contentProtocolHandler = getContentContentProtocolHandler();
                 if(contentProtocolHandler != null) {
                     contentProtocolHandler.parse(response);
                     protocolHandlerValue = contentProtocolHandler.readValue(path);
@@ -250,10 +250,10 @@ public class HttpElectricityMeter implements Meter, PollPowerExecutor, PollEnerg
         return 0.0f;
     }
 
-    public ContentProtocol getContentContentProtocolHandler() {
+    public ContentProtocolHandler getContentContentProtocolHandler() {
         if(this.contentContentProtocolHandler == null) {
             if(ContentProtocolType.json.name().equals(this.contentProtocol)) {
-                this.contentContentProtocolHandler = new JsonContentProtocol();
+                this.contentContentProtocolHandler = new JsonContentProtocolHandler();
             }
         }
         return this.contentContentProtocolHandler;

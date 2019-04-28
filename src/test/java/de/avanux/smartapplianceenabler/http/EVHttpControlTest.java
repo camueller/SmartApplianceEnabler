@@ -37,7 +37,7 @@ public class EVHttpControlTest {
 
     public EVHttpControlTest() {
         this.control = new EVHttpControl();
-        this.control.setContentProtocolType(ContentProtocolType.json);
+        this.control.setContentProtocol(ContentProtocolType.json);
         List<HttpRead> reads = new ArrayList<>();
         this.control.setReads(reads);
 
