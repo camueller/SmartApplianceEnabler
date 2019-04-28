@@ -150,10 +150,10 @@
             <xs:element name="HttpRead" type="HttpReadType" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="HttpWrite" type="HttpWriteType" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
-        <xs:attribute name="contentType" type="HttpContentType" use="required" />
+        <xs:attribute name="contentProtocol" type="ContentProtcolType" use="required" />
     </xs:complexType>
 
-    <xs:simpleType name="HttpContentType">
+    <xs:simpleType name="ContentProtcolType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="json" />
         </xs:restriction>
@@ -331,13 +331,10 @@
     </xs:complexType>
 
     <xs:complexType name="HttpElectricityMeterType">
-        <xs:attribute name="url" type="xs:string" use="required" />
-        <xs:attribute name="username" type="xs:string" />
-        <xs:attribute name="password" type="xs:string" />
-        <xs:attribute name="contentType" type="xs:string" />
-        <xs:attribute name="data" type="xs:string" />
-        <xs:attribute name="powerValueExtractionRegex" type="xs:string" />
-        <xs:attribute name="factorToWatt" type="xs:float" />
+        <xs:sequence>
+            <xs:element name="HttpRead" type="HttpReadType" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="contentProtocol" type="ContentProtcolType" use="required" />
         <xs:attribute name="pollInterval" type="xs:int" />
         <xs:attribute name="measurementInterval" type="xs:int" />
     </xs:complexType>
