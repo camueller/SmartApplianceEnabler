@@ -135,8 +135,9 @@ public class EVHttpControl implements EVControl {
             String response = read.parent().executeGet(read.parent().getUrl());
             getContentProtocolHandler().parse(response);
             String value = getContentProtocolHandler().readValue(read.child().getPath());
-            boolean match = value.matches(read.child().getExtractionRegex());
-            logger.debug("value={} match={}", value, match);
+            String regex = read.child().getExtractionRegex();
+            boolean match = value.matches(regex);
+            logger.debug("value={} regex={} match={}", value, regex, match);
             return match;
         }
         return false;
