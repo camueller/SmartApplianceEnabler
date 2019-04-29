@@ -20,13 +20,17 @@ package de.avanux.smartapplianceenabler.util;
 
 import de.avanux.smartapplianceenabler.appliance.Appliance;
 import de.avanux.smartapplianceenabler.appliance.Appliances;
-import de.avanux.smartapplianceenabler.control.ev.*;
+import de.avanux.smartapplianceenabler.control.ev.EVReadValueName;
+import de.avanux.smartapplianceenabler.control.ev.EVWriteValueName;
+import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
+import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
 import de.avanux.smartapplianceenabler.http.*;
 import de.avanux.smartapplianceenabler.modbus.*;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.InputStream;
+import java.util.List;
 
 public class FileHandlerTest {
 
@@ -41,9 +45,7 @@ public class FileHandlerTest {
         ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
         Assert.assertNotNull(evCharger);
 
-// FIXME enabling the code below causes NPE on JDK 1.8.151 used by Travis-CI
-
-
+        // FIXME enabling the code below causes NPE on JDK 1.8.151 used by Travis-CI
 //        EVModbusControl modbusControl = (EVModbusControl) evCharger.getControl();
 //        Assert.assertNotNull(modbusControl);
 //
@@ -99,6 +101,8 @@ public class FileHandlerTest {
         Assert.assertNotNull(appliance);
         ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
         Assert.assertNotNull(evCharger);
+
+        // FIXME enabling the code below causes NPE on JDK 1.8.151 used by Travis-CI
 //        EVHttpControl httpControl = (EVHttpControl) evCharger.getControl();
 //        Assert.assertNotNull(httpControl);
 //
@@ -120,12 +124,9 @@ public class FileHandlerTest {
 //        assertWrite(write, "http://127.0.0.1:8999/mqtt=");
 //        List<HttpWriteValue> writeValues = write.getWriteValues();
 //        Assert.assertEquals(3, writeValues.size());
-//        assertWriteValue(writeValues.get(0), EVWriteValueName.ChargingCurrent.name(),"amp={}",
-//                HttpWriteValueType.QueryParameter, HttpMethod.GET);
-//        assertWriteValue(writeValues.get(1), EVWriteValueName.StartCharging.name(),"alw=1",
-//                HttpWriteValueType.QueryParameter, HttpMethod.GET);
-//        assertWriteValue(writeValues.get(2), EVWriteValueName.StopCharging.name(),"alw=0",
-//                HttpWriteValueType.QueryParameter, HttpMethod.GET);
+//        assertWriteValue(writeValues.get(0), EVWriteValueName.ChargingCurrent.name(),"amp={}", HttpMethod.GET);
+//        assertWriteValue(writeValues.get(1), EVWriteValueName.StartCharging.name(),"alw=1", HttpMethod.GET);
+//        assertWriteValue(writeValues.get(2), EVWriteValueName.StopCharging.name(),"alw=0", HttpMethod.GET);
 //
 //        List<ElectricVehicle> vehicles = evCharger.getVehicles();
 //        assertElectricVehicle(vehicles.get(0), 1, "Nissan Leaf", 40000, 1,
@@ -160,10 +161,9 @@ public class FileHandlerTest {
         Assert.assertEquals(url, write.getUrl());
     }
 
-    private void assertWriteValue(HttpWriteValue writeValue, String name, String value, HttpWriteValueType type, HttpMethod method) {
+    private void assertWriteValue(HttpWriteValue writeValue, String name, String value, HttpMethod method) {
         Assert.assertEquals(name, writeValue.getName());
         Assert.assertEquals(value, writeValue.getValue());
-        Assert.assertEquals(type, writeValue.getType());
         Assert.assertEquals(method, writeValue.getMethod());
     }
 

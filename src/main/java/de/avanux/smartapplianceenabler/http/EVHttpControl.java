@@ -213,7 +213,7 @@ public class EVHttpControl implements EVControl {
 
     protected String buildUrl(ParentWithChild<HttpWrite, HttpWriteValue> write) {
         StringBuilder builder = new StringBuilder(write.parent().getUrl());
-        if(write.child().getType().equals(HttpWriteValueType.QueryParameter)) {
+        if(write.child().getMethod() == HttpMethod.GET) {
             builder.append(write.child().getValue());
         }
         return builder.toString();

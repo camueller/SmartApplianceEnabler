@@ -29,17 +29,14 @@ public class HttpWriteValue {
     @XmlAttribute
     private String value; // can be query parameter or data
     @XmlAttribute
-    private String type;
-    @XmlAttribute
     private String method;
 
     public HttpWriteValue() {
     }
 
-    public HttpWriteValue(String name, String value, HttpWriteValueType type, HttpMethod method) {
+    public HttpWriteValue(String name, String value, HttpMethod method) {
         this.name = name;
         this.value = value;
-        setType(type);
         setMethod(method);
     }
 
@@ -57,14 +54,6 @@ public class HttpWriteValue {
 
     public void setValue(String value) {
         this.value = value;
-    }
-
-    public HttpWriteValueType getType() {
-        return HttpWriteValueType.valueOf(type);
-    }
-
-    public void setType(HttpWriteValueType type) {
-        this.type = type.name();
     }
 
     public HttpMethod getMethod() {

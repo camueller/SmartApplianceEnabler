@@ -60,20 +60,19 @@ public class EVHttpControlTest {
         writeValues.add(new HttpWriteValue(
                 EVWriteValueName.ChargingCurrent.name(),
                 "amp={0}",
-                HttpWriteValueType.QueryParameter,
                 HttpMethod.GET));
         writeValues.add(new HttpWriteValue(
                 EVWriteValueName.StartCharging.name(),
                 "alw=1",
-                HttpWriteValueType.QueryParameter,
                 HttpMethod.GET));
         writeValues.add(new HttpWriteValue(
                 EVWriteValueName.StopCharging.name(),
                 "alw=0",
-                HttpWriteValueType.QueryParameter,
                 HttpMethod.GET));
 
         this.control.setApplianceId("F-001");
+        this.control.setPollInterval(10);
+        this.control.init(true);
     }
 
     @Test
