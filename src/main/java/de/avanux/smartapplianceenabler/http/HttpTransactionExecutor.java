@@ -154,7 +154,7 @@ abstract public class HttpTransactionExecutor {
     }
 
 
-    protected CloseableHttpResponse get(String url, String username, String password) {
+    public CloseableHttpResponse get(String url, String username, String password) {
         logger.debug("{}: Sending GET request url={}", applianceId, url);
         HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
         withUsernameAndPassword(httpClientBuilder, username, password);
@@ -170,7 +170,7 @@ abstract public class HttpTransactionExecutor {
         }
     }
 
-    protected CloseableHttpResponse post(String url, ContentType contentType, String data, String username, String password) {
+    public CloseableHttpResponse post(String url, ContentType contentType, String data, String username, String password) {
         logger.debug("{}: Sending POST request url={} contentType={} data={}", applianceId, url, contentType, data);
         HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
         withUsernameAndPassword(httpClientBuilder, username, password);
@@ -198,7 +198,7 @@ abstract public class HttpTransactionExecutor {
         return httpClientBuilder;
     }
 
-    protected void closeResponse(CloseableHttpResponse response) {
+    public void closeResponse(CloseableHttpResponse response) {
         try {
             if(response != null) {
                 response.close();

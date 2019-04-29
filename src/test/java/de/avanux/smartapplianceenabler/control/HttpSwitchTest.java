@@ -19,26 +19,51 @@
 package de.avanux.smartapplianceenabler.control;
 
 import de.avanux.smartapplianceenabler.TestBase;
-import de.avanux.smartapplianceenabler.control.HttpSwitch;
+import de.avanux.smartapplianceenabler.http.HttpMethod;
+import de.avanux.smartapplianceenabler.http.HttpWrite;
+import de.avanux.smartapplianceenabler.http.HttpWriteValue;
+import de.avanux.smartapplianceenabler.http.HttpWriteValueType;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.joda.time.LocalDateTime;
-import org.junit.Ignore;
+import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
+
+import java.util.Collections;
 
 public class HttpSwitchTest extends TestBase {
 
-    private HttpSwitch zwitch = new HttpSwitch();
+    private HttpSwitch httpSwitch;
+    private CloseableHttpResponse responseMock = Mockito.mock(CloseableHttpResponse.class);
+    private StatusLine statusLineMock = Mockito.mock(StatusLine.class);
 
-//    @Ignore
-//    @Test
-//    public void on_EdimaxSP2101W() {
-//        zwitch.setOnUrl("http://192.168.69.74:10000/smartplug.cgi");
-//        zwitch.setUsername("admin");
-//        zwitch.setPassword("12345678");
-//        zwitch.setContentType("application/xml");
-//        zwitch.setOnData("<?xml version=\"1.0\" encoding=\"UTF8\"?><SMARTPLUG id=\"edimax\"><CMD id=\"setup\"><Device.System.Power.State>ON</Device.System.Power.State></CMD></SMARTPLUG>");
-//        zwitch.on(new LocalDateTime(), true);
-//    }
-//
+    public HttpSwitchTest() {
+        this.httpSwitch = new HttpSwitch();
+        this.httpSwitch.setApplianceId("F-001");
+        // this.httpSwitch.init();
+
+        Mockito.when(responseMock.getStatusLine()).thenReturn(statusLineMock);
+        Mockito.when(statusLineMock.getStatusCode()).thenReturn(HttpStatus.SC_OK);
+    }
+
+    @Test
+    public void on_EdimaxSP2101W() {
+        String url = "http://192.168.69.74:10000/smartplug.cgi";
+        HttpWrite writeSpy = Mockito.spy(new HttpWrite(url, "application/xml", "admin", "12345678"));
+        String data = "<?xml version=\"1.0\" encoding=\"UTF8\"?><SMARTPLUG id=\"edimax\"><CMD id=\"setup\"><Device.System.Power.State>ON</Device.System.Power.State></CMD></SMARTPLUG>";
+        HttpWriteValue writeValue = new HttpWriteValue(ControlValueName.On.name(), data, HttpWriteValueType.Body, HttpMethod.POST);
+        writeSpy.setWriteValues(Collections.singletonList(writeValue));
+        this.httpSwitch.setHttpWrites(Collections.singletonList(writeSpy));
+        Mockito.doReturn(responseMock).when(writeSpy).executeLeaveOpen(Mockito.any(), Mockito.any(), Mockito.any());
+
+        Assert.assertFalse(this.httpSwitch.isOn());
+        this.httpSwitch.on(new LocalDateTime(), true);
+        Assert.assertTrue(this.httpSwitch.isOn());
+        Mockito.verify(writeSpy).executeLeaveOpen(HttpMethod.POST, url, data);
+    }
+
 //    @Ignore
 //    @Test
 //    public void off_EdimaxSP2101W() {

@@ -37,6 +37,10 @@ public class HttpWrite extends HttpTransactionExecutor {
         super(url);
     }
 
+    public HttpWrite(String url, String contentType, String username, String password) {
+        super(url, contentType, username, password);
+    }
+
     public List<HttpWriteValue> getWriteValues() {
         return writeValues;
     }
