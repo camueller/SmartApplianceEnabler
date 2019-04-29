@@ -21,6 +21,7 @@ import org.apache.http.HttpStatus;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -56,6 +57,7 @@ abstract public class HttpTransactionExecutor {
     @XmlAttribute
     private String password;
     private transient String applianceId;
+    private transient RequestConfig requestConfig;
 
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
@@ -154,7 +156,7 @@ abstract public class HttpTransactionExecutor {
         logger.debug("{}: Sending GET request url={}", applianceId, url);
         HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
         withUsernameAndPassword(httpClientBuilder, username, password);
-        CloseableHttpClient client = httpClientBuilder.build();
+        CloseableHttpClient client = httpClientBuilder.setDefaultRequestConfig(getRequestConfig()).build();
         try {
             HttpRequestBase request = new HttpGet(url);
             CloseableHttpResponse response = client.execute(request);
@@ -170,7 +172,7 @@ abstract public class HttpTransactionExecutor {
         logger.debug("{}: Sending POST request url={} contentType={} data={}", applianceId, url, contentType, data);
         HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
         withUsernameAndPassword(httpClientBuilder, username, password);
-        CloseableHttpClient client = httpClientBuilder.build();
+        CloseableHttpClient client = httpClientBuilder.setDefaultRequestConfig(getRequestConfig()).build();
         try {
             HttpPost request = new HttpPost(url);
             request.setEntity(new StringEntity(data, contentType));
@@ -208,5 +210,17 @@ abstract public class HttpTransactionExecutor {
         int responseCode = response.getStatusLine().getStatusCode();
         logger.debug("{}: Response code is {}", applianceId, responseCode);
         return response;
+    }
+
+    private RequestConfig getRequestConfig() {
+        if(this.requestConfig == null) {
+            int timeout = 5; // seconds
+            this.requestConfig = RequestConfig.custom()
+                    .setConnectTimeout(timeout * 1000)
+                    .setConnectionRequestTimeout(timeout * 1000)
+                    .setSocketTimeout(timeout * 1000).build();
+
+        }
+        return this.requestConfig;
     }
 }
