@@ -19,6 +19,8 @@
 package de.avanux.smartapplianceenabler.http;
 
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,5 +65,25 @@ public class HttpRead extends HttpTransactionExecutor {
             }
         }
         return null;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        HttpRead httpRead = (HttpRead) o;
+
+        return new EqualsBuilder()
+                .append(readValues, httpRead.readValues)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(readValues)
+                .toHashCode();
     }
 }

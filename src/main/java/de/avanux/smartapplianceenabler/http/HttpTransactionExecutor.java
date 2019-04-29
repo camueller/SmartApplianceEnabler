@@ -17,6 +17,8 @@
  */
 package de.avanux.smartapplianceenabler.http;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.http.HttpStatus;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -222,5 +224,25 @@ abstract public class HttpTransactionExecutor {
 
         }
         return this.requestConfig;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        HttpTransactionExecutor that = (HttpTransactionExecutor) o;
+
+        return new EqualsBuilder()
+                .append(url, that.url)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(url)
+                .toHashCode();
     }
 }

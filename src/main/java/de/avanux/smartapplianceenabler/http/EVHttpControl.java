@@ -25,6 +25,7 @@ import de.avanux.smartapplianceenabler.protocol.ContentProtocolType;
 import de.avanux.smartapplianceenabler.protocol.JsonContentProtocolHandler;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolHandler;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
+import de.avanux.smartapplianceenabler.util.RequestCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +46,10 @@ public class EVHttpControl implements EVControl {
     private List<HttpRead> httpReads;
     @XmlElement(name = "HttpWrite")
     private List<HttpWrite> httpWrites;
+    private transient String applianceId;
     private transient ContentProtocolHandler contentProtocolHandler;
+    private transient RequestCache<ParentWithChild<HttpRead, HttpReadValue>, String> requestCache;
+    private transient Integer pollInterval; // seconds
 
 
     public EVHttpControl() {
@@ -53,6 +57,7 @@ public class EVHttpControl implements EVControl {
 
     @Override
     public void setApplianceId(String applianceId) {
+        this.applianceId = applianceId;
         if(this.httpReads != null) {
             for(HttpRead read: this.httpReads) {
                 read.setApplianceId(applianceId);
@@ -96,11 +101,13 @@ public class EVHttpControl implements EVControl {
 
     @Override
     public void setPollInterval(Integer pollInterval) {
+        this.pollInterval = pollInterval;
     }
 
     @Override
     public void init(boolean checkRegisterConfiguration) {
-
+        int cacheMaxAgeSeconds = this.pollInterval - 1;
+        this.requestCache = new RequestCache<ParentWithChild<HttpRead, HttpReadValue>, String>(applianceId, cacheMaxAgeSeconds);
     }
 
     @Override
@@ -132,7 +139,14 @@ public class EVHttpControl implements EVControl {
     protected boolean readValue(EVReadValueName valueName) {
         ParentWithChild<HttpRead, HttpReadValue> read = getReadValue(valueName);
         if(read != null) {
-            String response = read.parent().executeGet(read.parent().getUrl());
+            String response = this.requestCache.get(read);
+            if(response == null) {
+                response = read.parent().executeGet(read.parent().getUrl());
+                this.requestCache.put(read, response);
+            }
+            else {
+                logger.debug("{}: Cached response: {}", applianceId, response);
+            }
             getContentProtocolHandler().parse(response);
             String value = getContentProtocolHandler().readValue(read.child().getPath());
             String regex = read.child().getExtractionRegex();

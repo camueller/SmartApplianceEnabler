@@ -18,6 +18,9 @@
 
 package de.avanux.smartapplianceenabler.util;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 public class ParentWithChild<P,C> {
     P parent;
     C child;
@@ -33,5 +36,25 @@ public class ParentWithChild<P,C> {
 
     public C child() {
         return  this.child;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ParentWithChild<?, ?> that = (ParentWithChild<?, ?>) o;
+
+        return new EqualsBuilder()
+                .append(parent, that.parent)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(parent)
+                .toHashCode();
     }
 }
