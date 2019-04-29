@@ -19,5 +19,6 @@
 package de.avanux.smartapplianceenabler.http;
 
 public enum HttpWriteValueType {
-    QueryParameter
+    QueryParameter,
+    Body
 }

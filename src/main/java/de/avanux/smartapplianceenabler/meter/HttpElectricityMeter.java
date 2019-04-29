@@ -53,7 +53,7 @@ public class HttpElectricityMeter implements Meter, PollPowerExecutor, PollEnerg
     private String contentProtocol;
     @XmlElement(name = "HttpRead")
     private List<HttpRead> httpReads;
-    private String applianceId;
+    private transient String applianceId;
     private transient PollPowerMeter pollPowerMeter = new PollPowerMeter();
     private transient PollEnergyMeter pollEnergyMeter = new PollEnergyMeter();
     private transient ValueExtractor valueExtractor = new ValueExtractor();

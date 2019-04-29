@@ -42,16 +42,21 @@ import java.util.List;
  * IMPORTANT: The URLs in Appliance.xml have to be escaped (e.g. use "&amp;" instead of "&")
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class HttpSwitch extends HttpTransactionExecutor implements Control, ApplianceIdConsumer {
+public class HttpSwitch implements Control, ApplianceIdConsumer {
     private transient Logger logger = LoggerFactory.getLogger(HttpSwitch.class);
     @XmlElement(name = "HttpWrite")
     private List<HttpWrite> httpWrites;
+    private transient String applianceId;
     private transient boolean on;
     transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
 
     @Override
     public void setApplianceId(String applianceId) {
-        super.setApplianceId(applianceId);
+        this.applianceId = applianceId;
+    }
+
+    public void setHttpWrites(List<HttpWrite> httpWrites) {
+        this.httpWrites = httpWrites;
     }
 
     public void validate() {
@@ -65,14 +70,15 @@ public class HttpSwitch extends HttpTransactionExecutor implements Control, Appl
 
     @Override
     public boolean on(LocalDateTime now, boolean switchOn) {
+        logger.info("{}: Switching {}", applianceId, (switchOn ? "on" : "off"));
         ParentWithChild<HttpWrite, HttpWriteValue> write = HttpWrite.getFirstHttpWrite(getValueName(switchOn).name(), this.httpWrites);
         if(write != null) {
             HttpMethod httpMethod = write.child().getMethod();
             String data = httpMethod == HttpMethod.POST ? write.child().getValue() : null;
-            CloseableHttpResponse response = executeLeaveOpen(write.child().getMethod(), write.parent().getUrl(), data);
+            CloseableHttpResponse response = write.parent().executeLeaveOpen(write.child().getMethod(), write.parent().getUrl(), data);
             if(response != null) {
                 int statusCode = response.getStatusLine().getStatusCode();
-                closeResponse(response);
+                write.parent().closeResponse(response);
                 if(statusCode == HttpStatus.SC_OK) {
                     on = switchOn;
                     for(ControlStateChangedListener listener : controlStateChangedListeners) {
