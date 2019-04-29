@@ -41,15 +41,15 @@ public class RequestCache<K, V> {
         if(cacheValue != null) {
             long ageMillis = System.currentTimeMillis() - cacheValue.timestamp;
             if(ageMillis < this.maxAgeMillis) {
-                logger.debug("{}: Cache hit. ageMillis={}", this.applianceId, ageMillis);
+                logger.debug("{}: Cache hit. size={} ageMillis={}", this.applianceId, this.cache.size(), ageMillis);
                 return cacheValue.value;
             }
             else {
-                logger.debug("{}: Cache entry expired. ageMillis={}", this.applianceId, ageMillis);
+                logger.debug("{}: Cache entry expired. size={} ageMillis={}", this.applianceId, this.cache.size(), ageMillis);
             }
         }
         else {
-            logger.debug("{}: Cache miss.", this.applianceId);
+            logger.debug("{}: Cache miss. size={}", this.applianceId, this.cache.size());
         }
         return null;
     }
