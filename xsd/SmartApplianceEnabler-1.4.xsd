@@ -277,7 +277,6 @@
     <xs:complexType name="HttpWriteValueType">
         <xs:attribute name="name" type="ModbusWriteRegisterNameType" use="required" />
         <xs:attribute name="value" type="xs:string" />
-        <xs:attribute name="type" type="xs:string" />
         <xs:attribute name="method" type="HttpMethodType" />
     </xs:complexType>
 

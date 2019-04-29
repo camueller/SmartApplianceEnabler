@@ -22,7 +22,6 @@ import de.avanux.smartapplianceenabler.TestBase;
 import de.avanux.smartapplianceenabler.http.HttpMethod;
 import de.avanux.smartapplianceenabler.http.HttpWrite;
 import de.avanux.smartapplianceenabler.http.HttpWriteValue;
-import de.avanux.smartapplianceenabler.http.HttpWriteValueType;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -53,7 +52,7 @@ public class HttpSwitchTest extends TestBase {
         String url = "http://192.168.69.74:10000/smartplug.cgi";
         HttpWrite writeSpy = Mockito.spy(new HttpWrite(url, "application/xml", "admin", "12345678"));
         String data = "<?xml version=\"1.0\" encoding=\"UTF8\"?><SMARTPLUG id=\"edimax\"><CMD id=\"setup\"><Device.System.Power.State>ON</Device.System.Power.State></CMD></SMARTPLUG>";
-        HttpWriteValue writeValue = new HttpWriteValue(ControlValueName.On.name(), data, HttpWriteValueType.Body, HttpMethod.POST);
+        HttpWriteValue writeValue = new HttpWriteValue(ControlValueName.On.name(), data, HttpMethod.POST);
         writeSpy.setWriteValues(Collections.singletonList(writeValue));
         this.httpSwitch.setHttpWrites(Collections.singletonList(writeSpy));
         Mockito.doReturn(responseMock).when(writeSpy).executeLeaveOpen(Mockito.any(), Mockito.any(), Mockito.any());
