@@ -47,7 +47,7 @@ public class HttpSwitch implements Control, ApplianceIdConsumer {
     @XmlElement(name = "HttpWrite")
     private List<HttpWrite> httpWrites;
     private transient String applianceId;
-    private transient boolean on;
+    protected transient boolean on;
     transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
 
     @Override
