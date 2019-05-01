@@ -147,6 +147,17 @@ public class HttpElectricityMeterTest extends TestBase {
         Assert.assertEquals(5000, powerValues.get(2).floatValue(), 0.01);
     }
 
+    @Test
+    public void calculatePower_afterReset() {
+        TreeMap<Long, Float> energyValues = new TreeMap<>();
+        energyValues.put(Long.valueOf(1 * 60 * 60 * 1000), 5.0f); // after 1h: 5 kWh
+        energyValues.put(Long.valueOf(1 * 60 * 60 * 1000 + 10), 0.0f); // after 1h and 10s: 0 kWh
+
+        List<Float> powerValues = this.meter.calculatePower(energyValues);
+        Assert.assertEquals(1, powerValues.size());
+        Assert.assertEquals(0, powerValues.get(0).floatValue(), 0.01);
+    }
+
     private final static String goEChargerStatus = "{\"version\":\"B\",\"rbc\":\"251\",\"rbt\":\"2208867\",\"car\":\"1\",\"amp\":\"10\",\"err\":\"0\",\"ast\"\n" +
             ":\"0\",\"alw\":\"1\",\"stp\":\"0\",\"cbl\":\"0\",\"pha\":\"8\",\"tmp\":\"30\",\"dws\":\"0\",\"dwo\":\"0\",\"ad\n" +
             "i\":\"1\",\"uby\":\"0\",\"eto\":\"120\",\"wst\":\"3\",\"nrg\":[2,0,0,235,0,0,0,0,0,0,0,0,0,0,0,0\n" +
