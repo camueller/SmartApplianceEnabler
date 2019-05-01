@@ -198,7 +198,7 @@ public class HttpElectricityMeter implements Meter, PollPowerExecutor, PollEnerg
                 Float diffEnergy = energy - previousEnergy;
                 // diffEnergy kWh * 1000W/kW * 3600000ms/1h / diffTime ms
                 float power = diffEnergy * 1000.0f * 3600000.0f / diffTime;
-                powerValues.add(power);
+                powerValues.add(power > 0 ? power : 0.0f);
             }
             previousTimestamp = timestamp;
             previousEnergy = energy;
