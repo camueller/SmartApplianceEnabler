@@ -59,7 +59,12 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
             @Override
             public void runTask() {
                 LocalDateTime now = new LocalDateTime();
-                addValue(now.toDateTime().getMillis(), pollEnergyExecutor.pollEnergy(now));
+                Float energy = pollEnergyExecutor.pollEnergy(now);
+                if(energy != null && energy.floatValue() > 0.0f) {
+                    // the energy counter we poll might already have been reset and we don't want to add 0 to the cache
+                    // except we reset the counter outselves
+                    addValue(now.toDateTime().getMillis(), energy);
+                }
             }
         };
         if(timer != null) {
@@ -114,6 +119,11 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
 
     public Float stopEnergyCounter() {
         float stopEnergyCounter = this.pollEnergyExecutor.pollEnergy(new LocalDateTime());
+        if(stopEnergyCounter == 0.0f) {
+            // the event causing the the counter to stop may have already reset the counter we poll
+            // in this cae we use the last value from cache
+            stopEnergyCounter = this.cache.getLastValue();
+        }
         if(this.startEnergyCounter != null) {
             if(this.totalEnergy != null) {
                 this.totalEnergy += stopEnergyCounter - this.startEnergyCounter;
