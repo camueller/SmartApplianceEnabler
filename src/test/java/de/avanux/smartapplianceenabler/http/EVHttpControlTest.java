@@ -72,7 +72,8 @@ public class EVHttpControlTest {
 
         this.control.setApplianceId("F-001");
         this.control.setPollInterval(10);
-        this.control.init(true);
+        this.control.init();
+        this.control.validate();
     }
 
     @Test

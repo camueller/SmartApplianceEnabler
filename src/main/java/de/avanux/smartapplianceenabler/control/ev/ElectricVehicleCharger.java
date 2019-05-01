@@ -190,7 +190,8 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
         }
         initStateHistory();
         control.setPollInterval(getPollInterval());
-        control.init(true);
+        control.init();
+        control.validate();
     }
 
     public void start(Timer timer) {

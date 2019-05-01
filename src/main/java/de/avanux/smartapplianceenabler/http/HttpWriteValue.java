@@ -29,6 +29,8 @@ public class HttpWriteValue {
     @XmlAttribute
     private String value; // can be query parameter or data
     @XmlAttribute
+    private Double factorToValue;
+    @XmlAttribute
     private String method;
 
     public HttpWriteValue() {
@@ -54,6 +56,14 @@ public class HttpWriteValue {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public Double getFactorToValue() {
+        return factorToValue;
+    }
+
+    public void setFactorToValue(Double factorToValue) {
+        this.factorToValue = factorToValue;
     }
 
     public HttpMethod getMethod() {

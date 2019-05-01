@@ -64,8 +64,13 @@ public class EVControlMock implements EVControl, Meter {
     }
 
     @Override
-    public void init(boolean checkRegisterConfiguration) {
-        logDebug("init checkRegisterConfiguration=" + checkRegisterConfiguration);
+    public void init() {
+        logDebug("init");
+    }
+
+    @Override
+    public void validate() {
+        logDebug("validate");
     }
 
     @Override

@@ -65,7 +65,7 @@ public class EVModbusControlTest {
         registerRead.setRegisterReadValues(Collections.singletonList(registerReadValue));
 
         this.evModbusControl.setRegisterReads(Collections.singletonList(registerRead));
-        this.evModbusControl.init(false);
+        this.evModbusControl.init();
 
         ModbusReadTransactionExecutor executor
                 = new ReadStringInputRegisterExecutorImpl(registerRead.getAddress(), byteValues.length);

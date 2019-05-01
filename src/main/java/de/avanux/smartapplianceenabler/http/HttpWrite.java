@@ -23,6 +23,7 @@ import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import java.text.MessageFormat;
 import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -60,5 +61,21 @@ public class HttpWrite extends HttpTransactionExecutor {
             }
         }
         return null;
+    }
+
+    public void writeValue(HttpWriteValue value, Object ... arguments) {
+        String urlWithPlaceholder = buildUrl(getUrl(), value.getValue(), value.getMethod());
+        String resolvedUrl = MessageFormat.format(urlWithPlaceholder, arguments);
+        if(value.getMethod() == HttpMethod.GET) {
+            String response = executeGet(resolvedUrl);
+        }
+    }
+
+    protected String buildUrl(String url, String value, HttpMethod httpMethod) {
+        StringBuilder builder = new StringBuilder(url);
+        if(httpMethod == HttpMethod.GET) {
+            builder.append(value);
+        }
+        return builder.toString();
     }
 }

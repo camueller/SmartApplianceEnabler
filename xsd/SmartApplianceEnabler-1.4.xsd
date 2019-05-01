@@ -112,13 +112,9 @@
     </xs:complexType>
 
     <xs:complexType name="HttpSwitchType">
-        <xs:attribute name="onUrl" type="xs:string" use="required" />
-        <xs:attribute name="offUrl" type="xs:string" use="required" />
-        <xs:attribute name="username" type="xs:string" />
-        <xs:attribute name="password" type="xs:string" />
-        <xs:attribute name="contentType" type="xs:string" />
-        <xs:attribute name="onData" type="xs:string" />
-        <xs:attribute name="offData" type="xs:string" />
+        <xs:sequence>
+            <xs:element name="HttpWrite" type="HttpWriteType" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="ElectricVehicleChargerType">
@@ -257,6 +253,9 @@
             <xs:element name="HttpReadValue" type="HttpReadValueType" maxOccurs="unbounded" />
         </xs:sequence>
         <xs:attribute name="url" type="xs:string" use="required" />
+        <xs:attribute name="contentType" type="xs:string" />
+        <xs:attribute name="username" type="xs:string" />
+        <xs:attribute name="password" type="xs:string" />
     </xs:complexType>
 
     <xs:complexType name="HttpReadValueType">
@@ -272,11 +271,15 @@
             <xs:element name="HttpWriteValue" type="HttpWriteValueType" maxOccurs="unbounded" />
         </xs:sequence>
         <xs:attribute name="url" type="xs:string" use="required" />
+        <xs:attribute name="contentType" type="xs:string" />
+        <xs:attribute name="username" type="xs:string" />
+        <xs:attribute name="password" type="xs:string" />
     </xs:complexType>
 
     <xs:complexType name="HttpWriteValueType">
         <xs:attribute name="name" type="ModbusWriteRegisterNameType" use="required" />
         <xs:attribute name="value" type="xs:string" />
+        <xs:attribute name="factorToValue" type="xs:double" />
         <xs:attribute name="method" type="HttpMethodType" />
     </xs:complexType>
 
