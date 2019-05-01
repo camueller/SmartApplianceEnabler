@@ -202,7 +202,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
                     getPollInterval() * 1000) {
                 @Override
                 public void runTask() {
-                    updateState();
+                    updateState(new LocalDateTime());
                 }
             };
             timer.schedule(this.updateStateTimerTask, 0, this.updateStateTimerTask.getPeriod());
@@ -220,7 +220,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
      * Returns true, if the state update was performed. This does not necessarily mean that the state has changed!
      * @return
      */
-    public boolean updateState() {
+    public boolean updateState(LocalDateTime now) {
         if(isWithinStartChargingStateDetectionDelay()) {
             logger.debug("{}: Skipping state detection for {}s after switched on.", applianceId,
                     getStartChargingStateDetectionDelay());
@@ -231,7 +231,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
         if(currentState != previousState) {
             logger.debug("{}: Vehicle state changed: previousState={} newState={}", applianceId, previousState, currentState);
             stateHistory.add(currentState);
-            onStateChanged(previousState, currentState);
+            onStateChanged(now, previousState, currentState);
         }
         else {
             logger.debug("{}: Vehicle state={}", applianceId, currentState);
@@ -353,7 +353,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
         return isCharging();
     }
 
-    private void onStateChanged(State previousState, State newState) {
+    private void onStateChanged(LocalDateTime now, State previousState, State newState) {
         if(newState == State.VEHICLE_CONNECTED) {
             if (this.vehicles != null && this.vehicles.size() > 0) {
                 // sadly, we don't know, which ev has been connected, so we will assume the first one if any
@@ -385,6 +385,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
             }
         }
         if(newState == State.VEHICLE_NOT_CONNECTED) {
+            on(now, false);
             if(this.appliance != null) {
                 this.appliance.deactivateSchedules();
                 Meter meter = this.appliance.getMeter();
@@ -392,7 +393,6 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
                     meter.resetEnergyMeter();
                 }
             }
-            stopCharging();
             setConnectedVehicleId(null);
             initStateHistory();
         }

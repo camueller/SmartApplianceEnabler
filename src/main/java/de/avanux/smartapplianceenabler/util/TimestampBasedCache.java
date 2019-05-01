@@ -73,6 +73,14 @@ public class TimestampBasedCache<T> implements ApplianceIdConsumer {
         return values;
     }
 
+    public T getLastValue() {
+        if(size() == 0) {
+            return null;
+        }
+        Vector<Long> keys = new Vector<>(this.timestampWithValue.keySet());
+        return this.timestampWithValue.get(keys.lastElement());
+    }
+
     public TreeMap<Long, T> getTimestampWithValue() {
         return timestampWithValue;
     }
