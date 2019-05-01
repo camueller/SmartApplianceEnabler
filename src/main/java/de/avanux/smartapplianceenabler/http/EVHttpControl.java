@@ -21,9 +21,9 @@ package de.avanux.smartapplianceenabler.http;
 import de.avanux.smartapplianceenabler.control.ev.EVControl;
 import de.avanux.smartapplianceenabler.control.ev.EVReadValueName;
 import de.avanux.smartapplianceenabler.control.ev.EVWriteValueName;
+import de.avanux.smartapplianceenabler.protocol.ContentProtocolHandler;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolType;
 import de.avanux.smartapplianceenabler.protocol.JsonContentProtocolHandler;
-import de.avanux.smartapplianceenabler.protocol.ContentProtocolHandler;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import de.avanux.smartapplianceenabler.util.RequestCache;
 import org.slf4j.Logger;
@@ -33,7 +33,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import java.text.MessageFormat;
 import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -105,9 +104,50 @@ public class EVHttpControl implements EVControl {
     }
 
     @Override
-    public void init(boolean checkRegisterConfiguration) {
+    public void init() {
         int cacheMaxAgeSeconds = this.pollInterval - 1;
         this.requestCache = new RequestCache<ParentWithChild<HttpRead, HttpReadValue>, String>(applianceId, cacheMaxAgeSeconds);
+    }
+
+    @Override
+    public void validate() {
+        boolean valid = true;
+        for(EVReadValueName valueName: EVReadValueName.values()) {
+            ParentWithChild<HttpRead, HttpReadValue> read = HttpRead.getFirstHttpRead(valueName.name(), this.httpReads);
+            if(read != null) {
+                logger.debug("{}: {} configured: read url={} data={} path={} extractionRegex={} factorToValue={}",
+                        applianceId,
+                        valueName.name(),
+                        read.parent().getUrl(),
+                        read.child().getData(),
+                        read.child().getPath(),
+                        read.child().getExtractionRegex(),
+                        read.child().getFactorToValue());
+            } else {
+                logger.error("{}: Missing configuration for {}", applianceId, valueName.name());
+                valid = false;
+            }
+        }
+
+        for(EVWriteValueName valueName: EVWriteValueName.values()) {
+            ParentWithChild<HttpWrite, HttpWriteValue> write = HttpWrite.getFirstHttpWrite(valueName.name(), this.httpWrites);
+            if(write != null) {
+                logger.debug("{}: {} configured: write url={} value={} factorToValue={}",
+                        applianceId,
+                        valueName.name(),
+                        write.parent().getUrl(),
+                        write.child().getValue(),
+                        write.child().getFactorToValue());
+            }
+            else {
+                logger.error("{}: Missing configuration for {}", applianceId, valueName.name());
+                valid = false;
+            }
+        }
+        if(! valid) {
+            logger.error("{}: Terminating because of incorrect configuration", applianceId);
+            System.exit(-1);
+        }
     }
 
     @Override
@@ -183,39 +223,24 @@ public class EVHttpControl implements EVControl {
         return null;
     }
 
-    protected void writeValue(ParentWithChild<HttpWrite, HttpWriteValue> write, String url) {
-        if(write.child().getMethod() == HttpMethod.GET) {
-            String response = write.parent().executeGet(url);
-        }
-    }
-
     @Override
     public void setChargeCurrent(int current) {
         ParentWithChild<HttpWrite, HttpWriteValue> write = getWriteValue(EVWriteValueName.ChargingCurrent);
-        String urlWithPlaceholder = buildUrl(write);
-        String url = MessageFormat.format(urlWithPlaceholder, current);
-        writeValue(write, url);
+        Double factorToValue = write.child().getFactorToValue();
+        logger.debug("{}: Set charge current {}A", applianceId, current);
+        Integer factoredCurrent = factorToValue != null ? Double.valueOf(current * factorToValue).intValue() : current;
+        write.parent().writeValue(write.child(), factoredCurrent);
     }
 
     @Override
     public void startCharging() {
         ParentWithChild<HttpWrite, HttpWriteValue> write = getWriteValue(EVWriteValueName.StartCharging);
-        String url = buildUrl(write);
-        writeValue(write, url);
+        write.parent().writeValue(write.child());
     }
 
     @Override
     public void stopCharging() {
         ParentWithChild<HttpWrite, HttpWriteValue> write = getWriteValue(EVWriteValueName.StopCharging);
-        String url = buildUrl(write);
-        writeValue(write, url);
-    }
-
-    protected String buildUrl(ParentWithChild<HttpWrite, HttpWriteValue> write) {
-        StringBuilder builder = new StringBuilder(write.parent().getUrl());
-        if(write.child().getMethod() == HttpMethod.GET) {
-            builder.append(write.child().getValue());
-        }
-        return builder.toString();
+        write.parent().writeValue(write.child());
     }
 }
