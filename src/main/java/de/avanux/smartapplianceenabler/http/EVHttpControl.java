@@ -152,7 +152,6 @@ public class EVHttpControl implements EVControl {
 
     @Override
     public boolean isVehicleNotConnected() {
-        // FIXME rename to ValueName
         return readValue(EVReadValueName.VehicleNotConnected);
     }
 
@@ -191,7 +190,7 @@ public class EVHttpControl implements EVControl {
             String value = getContentProtocolHandler().readValue(read.child().getPath());
             String regex = read.child().getExtractionRegex();
             boolean match = value.matches(regex);
-            logger.debug("value={} regex={} match={}", value, regex, match);
+            logger.debug("test={} value={} regex={} match={}", valueName.name(), value, regex, match);
             return match;
         }
         return false;
