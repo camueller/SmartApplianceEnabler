@@ -30,6 +30,8 @@ import de.avanux.smartapplianceenabler.schedule.*;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
 import de.avanux.smartapplianceenabler.util.DateTimeProvider;
 import de.avanux.smartapplianceenabler.util.DateTimeProviderImpl;
+import de.avanux.smartapplianceenabler.util.Initializable;
+import de.avanux.smartapplianceenabler.util.Validateable;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.joda.time.LocalDate;
@@ -42,8 +44,9 @@ import java.util.*;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Appliance implements ControlStateChangedListener, StartingCurrentSwitchListener,
-        ActiveIntervalChangedListener {
+public class Appliance implements Initializable, Validateable, ControlStateChangedListener,
+        StartingCurrentSwitchListener, ActiveIntervalChangedListener {
+
     private transient Logger logger = LoggerFactory.getLogger(Appliance.class);
     @XmlAttribute
     private String id;
@@ -156,8 +159,9 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         this.runningTimeMonitor.addTimeFrameChangedListener(this);
     }
 
-    public void init(Integer additionRunningTime) {
-        logger.debug("{}: Initializing appliance additionRunningTime={}", id, additionRunningTime);
+    @Override
+    public void init() {
+        logger.debug("{}: Initializing appliance", id);
         if(control != null) {
             setRunningTimeMonitor(new RunningTimeMonitor());
             if(control instanceof ApplianceIdConsumer) {
@@ -165,7 +169,6 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             }
             if(control instanceof ElectricVehicleCharger) {
                 ((ElectricVehicleCharger) control).setAppliance(this);
-                ((ElectricVehicleCharger) control).init();
             }
             if(control instanceof StartingCurrentSwitch) {
                 Control wrappedControl = ((StartingCurrentSwitch) control).getControl();
@@ -182,21 +185,17 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                 logger.debug("{}: Registered as {} with {}", id, ControlStateChangedListener.class.getSimpleName(),
                         control.getClass().getSimpleName());
             }
+            if(control instanceof Initializable) {
+                ((Initializable) control).init();
+            }
         }
         Meter meter = getMeter();
         if(meter != null) {
             if(meter instanceof ApplianceIdConsumer) {
                 ((ApplianceIdConsumer) meter).setApplianceId(id);
             }
-            // FIXME add init() to Meter interface?
-            if(meter instanceof ModbusElectricityMeter) {
-                ((ModbusElectricityMeter) meter).init();
-            }
-            if(meter instanceof S0ElectricityMeter) {
-                ((S0ElectricityMeter) meter).init();
-            }
-            if(meter instanceof HttpElectricityMeter) {
-                ((HttpElectricityMeter) meter).init();
+            if(meter instanceof Initializable) {
+                ((Initializable) meter).init();
             }
             if(control != null) {
                 if(meter instanceof S0ElectricityMeter) {
@@ -217,6 +216,17 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         }
         else {
             logger.info("{}: No schedules configured", id);
+        }
+    }
+
+    @Override
+    public void validate() {
+        logger.info("{}: Validating appliance configuration", id);
+        if(control instanceof Validateable) {
+            ((Validateable) control).validate();
+        }
+        if(meter instanceof Validateable) {
+            ((Validateable) meter).validate();
         }
     }
 

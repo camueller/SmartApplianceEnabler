@@ -24,7 +24,9 @@ import de.avanux.smartapplianceenabler.http.HttpMethod;
 import de.avanux.smartapplianceenabler.http.HttpRead;
 import de.avanux.smartapplianceenabler.http.HttpReadValue;
 import de.avanux.smartapplianceenabler.protocol.JsonContentProtocolHandler;
+import de.avanux.smartapplianceenabler.util.Initializable;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
+import de.avanux.smartapplianceenabler.util.Validateable;
 import de.avanux.smartapplianceenabler.util.ValueExtractor;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
@@ -42,7 +44,8 @@ import java.util.*;
  * IMPORTANT: URLs have to be escaped (e.g. use "&amp;" instead of "&")
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class HttpElectricityMeter implements Meter, PollPowerExecutor, PollEnergyExecutor, ApplianceIdConsumer {
+public class HttpElectricityMeter implements Meter, Initializable, Validateable, PollPowerExecutor, PollEnergyExecutor,
+        ApplianceIdConsumer {
 
     private transient Logger logger = LoggerFactory.getLogger(HttpElectricityMeter.class);
     @XmlAttribute
@@ -105,6 +108,7 @@ public class HttpElectricityMeter implements Meter, PollPowerExecutor, PollEnerg
         return pollEnergyMeter;
     }
 
+    @Override
     public void validate() {
         // FIXME implementieren
     }
@@ -160,6 +164,7 @@ public class HttpElectricityMeter implements Meter, PollPowerExecutor, PollEnerg
         return pollPower() > 0;
     }
 
+    @Override
     public void init() {
         this.pollEnergyMeter.setPollEnergyExecutor(this);
     }

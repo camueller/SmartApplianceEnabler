@@ -26,6 +26,7 @@ import de.avanux.smartapplianceenabler.protocol.ContentProtocolType;
 import de.avanux.smartapplianceenabler.protocol.JsonContentProtocolHandler;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import de.avanux.smartapplianceenabler.util.RequestCache;
+import de.avanux.smartapplianceenabler.util.Validateable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

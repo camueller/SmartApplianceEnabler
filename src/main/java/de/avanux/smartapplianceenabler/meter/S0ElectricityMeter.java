@@ -24,6 +24,7 @@ import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.GpioControllable;
+import de.avanux.smartapplianceenabler.util.Initializable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +33,8 @@ import javax.xml.bind.annotation.XmlType;
 import java.util.Timer;
 
 @XmlType(propOrder={"gpio", "pinPullResistance", "impulsesPerKwh", "measurementInterval"})
-public class S0ElectricityMeter extends GpioControllable implements Meter {
+public class S0ElectricityMeter extends GpioControllable implements Meter, Initializable {
+
     private transient Logger logger = LoggerFactory.getLogger(S0ElectricityMeter.class);
     @XmlAttribute
     private Integer impulsesPerKwh;
@@ -102,6 +104,7 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
         return pulsePowerMeter.isOn();
     }
 
+    @Override
     public void init() {
         pulsePowerMeter.setImpulsesPerKwh(impulsesPerKwh);
         pulsePowerMeter.setMeasurementInterval(getMeasurementInterval());

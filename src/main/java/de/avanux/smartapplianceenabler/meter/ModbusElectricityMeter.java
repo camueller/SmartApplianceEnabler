@@ -26,7 +26,9 @@ import de.avanux.smartapplianceenabler.modbus.executor.ModbusExecutorFactory;
 import de.avanux.smartapplianceenabler.modbus.executor.ModbusReadTransactionExecutor;
 import de.avanux.smartapplianceenabler.modbus.executor.ReadDecimalInputRegisterExecutor;
 import de.avanux.smartapplianceenabler.modbus.executor.ReadFloatInputRegisterExecutor;
+import de.avanux.smartapplianceenabler.util.Initializable;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
+import de.avanux.smartapplianceenabler.util.Validateable;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +43,8 @@ import java.util.Timer;
  * The device is polled according to poll interval in order to provide min/avg/max values of the measurement interval.
  * The TCP connection to the device remains established across the polls.
  */
-public class ModbusElectricityMeter extends ModbusSlave implements Meter, ApplianceIdConsumer, PollPowerExecutor, PollEnergyExecutor {
+public class ModbusElectricityMeter extends ModbusSlave implements Meter, ApplianceIdConsumer, Initializable,
+        Validateable, PollPowerExecutor, PollEnergyExecutor {
 
     private transient Logger logger = LoggerFactory.getLogger(ModbusElectricityMeter.class);
     @XmlElement(name = "ModbusRegisterRead")
@@ -95,9 +98,9 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
         return measurementInterval != null ? measurementInterval : ModbusElectricityMeterDefaults.getMeasurementInterval();
     }
 
+    @Override
     public void init() {
         this.pollEnergyMeter.setPollEnergyExecutor(this);
-        validate();
     }
 
     public void validate() {

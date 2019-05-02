@@ -18,9 +18,11 @@
 package de.avanux.smartapplianceenabler.control;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
-import de.avanux.smartapplianceenabler.http.*;
-import de.avanux.smartapplianceenabler.meter.MeterValueName;
+import de.avanux.smartapplianceenabler.http.HttpMethod;
+import de.avanux.smartapplianceenabler.http.HttpWrite;
+import de.avanux.smartapplianceenabler.http.HttpWriteValue;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
+import de.avanux.smartapplianceenabler.util.Validateable;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.joda.time.LocalDateTime;
@@ -29,7 +31,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +43,8 @@ import java.util.List;
  * IMPORTANT: The URLs in Appliance.xml have to be escaped (e.g. use "&amp;" instead of "&")
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class HttpSwitch implements Control, ApplianceIdConsumer {
+public class HttpSwitch implements Control, Validateable, ApplianceIdConsumer {
+
     private transient Logger logger = LoggerFactory.getLogger(HttpSwitch.class);
     @XmlElement(name = "HttpWrite")
     private List<HttpWrite> httpWrites;
