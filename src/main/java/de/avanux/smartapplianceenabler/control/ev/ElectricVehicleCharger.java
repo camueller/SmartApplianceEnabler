@@ -29,6 +29,8 @@ import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.modbus.EVModbusControl;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
 import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
+import de.avanux.smartapplianceenabler.util.Initializable;
+import de.avanux.smartapplianceenabler.util.Validateable;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +39,7 @@ import javax.xml.bind.annotation.*;
 import java.util.*;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
+public class ElectricVehicleCharger implements Control, Initializable, Validateable, ApplianceIdConsumer {
 
     private transient Logger logger = LoggerFactory.getLogger(ElectricVehicleCharger.class);
     @XmlAttribute
@@ -175,6 +177,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
         this.vehicles = vehicles;
     }
 
+    @Override
     public void init() {
         boolean useEvControlMock = Boolean.parseBoolean(System.getProperty("sae.evcontrol.mock", "false"));
         if(useEvControlMock) {
@@ -191,6 +194,10 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
         initStateHistory();
         control.setPollInterval(getPollInterval());
         control.init();
+    }
+
+    @Override
+    public void validate() {
         control.validate();
     }
 

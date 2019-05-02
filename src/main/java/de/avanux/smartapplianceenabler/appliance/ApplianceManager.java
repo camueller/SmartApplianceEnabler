@@ -32,6 +32,7 @@ import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceStatus;
 import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
 import de.avanux.smartapplianceenabler.util.FileHandler;
+import de.avanux.smartapplianceenabler.util.Initializable;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 
-public class ApplianceManager implements Runnable {
+public class ApplianceManager implements Initializable, Runnable {
     public static final String SCHEMA_LOCATION = "http://github.com/camueller/SmartApplianceEnabler/v1.4";
     private Logger logger = LoggerFactory.getLogger(ApplianceManager.class);
     private static ApplianceManager instance;
@@ -149,6 +150,7 @@ public class ApplianceManager implements Runnable {
         startAppliances();
     }
 
+    @Override
     public void init() {
         logger.debug("Initializing ...");
         Map<String,PulseReceiver> pulseReceiverIdWithPulseReceiver = new HashMap<String,PulseReceiver>();
@@ -172,11 +174,11 @@ public class ApplianceManager implements Runnable {
             }
         }
 
-        Integer additionRunningTime = null;
-        String additionRunningTimeString = appliances.getConfigurationValue("TimeframeIntervalAdditionalRunningTime");
-        if(additionRunningTimeString != null) {
-            additionRunningTime = Integer.valueOf(additionRunningTimeString);
-        }
+//        Integer additionRunningTime = null;
+//        String additionRunningTimeString = appliances.getConfigurationValue("TimeframeIntervalAdditionalRunningTime");
+//        if(additionRunningTimeString != null) {
+//            additionRunningTime = Integer.valueOf(additionRunningTimeString);
+//        }
 
         boolean holidaysUsed = false;
         for (Appliance appliance : getAppliances()) {
@@ -184,7 +186,9 @@ public class ApplianceManager implements Runnable {
                 holidaysUsed = true;
             }
             logger.debug("{}: Initializing appliance ...", appliance.getId());
-            appliance.init(additionRunningTime);
+            appliance.init();
+            logger.debug("{}: Validating appliance ...", appliance.getId());
+            appliance.validate();
             logger.debug("{}: Starting appliance ...", appliance.getId());
             appliance.start(timer, getGpioController(), pulseReceiverIdWithPulseReceiver, modbusIdWithModbusTcp);
         }
