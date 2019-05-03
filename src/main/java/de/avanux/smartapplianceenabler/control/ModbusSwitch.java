@@ -20,6 +20,7 @@ package de.avanux.smartapplianceenabler.control;
 import de.avanux.smartapplianceenabler.modbus.ModbusRegisterWrite;
 import de.avanux.smartapplianceenabler.modbus.ModbusRegisterWriteValue;
 import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
+import de.avanux.smartapplianceenabler.modbus.ModbusValidator;
 import de.avanux.smartapplianceenabler.modbus.executor.*;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import de.avanux.smartapplianceenabler.util.Validateable;
@@ -29,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ModbusSwitch extends ModbusSlave implements Control, Validateable {
@@ -41,20 +43,11 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable {
     @Override
     public void validate() {
         boolean valid = true;
-        for(ControlValueName registerName: ControlValueName.values()) {
+        ModbusValidator validator = new ModbusValidator(getApplianceId());
+        for(ControlValueName valueName: ControlValueName.values()) {
             ParentWithChild<ModbusRegisterWrite, ModbusRegisterWriteValue> write
-                    = ModbusRegisterWrite.getFirstRegisterWrite(registerName.name(), this.registerWrites);
-            if(write != null) {
-                logger.debug("{}: {} configured: write register={} / value={}",
-                        getApplianceId(),
-                        registerName.name(),
-                        write.parent().getAddress(),
-                        write.child().getValue());
-            }
-            else {
-                logger.error("{}: Missing register configuration for {}", getApplianceId(), registerName.name());
-                valid = false;
-            }
+                    = ModbusRegisterWrite.getFirstRegisterWrite(valueName.name(), this.registerWrites);
+            valid = validator.validateWrites(valueName.name(), Collections.singletonList(write));
         }
         if(! valid) {
             logger.error("{}: Terminating because of incorrect configuration", getApplianceId());
