@@ -18,11 +18,12 @@
 package de.avanux.smartapplianceenabler.meter;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
-import de.avanux.smartapplianceenabler.protocol.ContentProtocolHandler;
-import de.avanux.smartapplianceenabler.protocol.ContentProtocolType;
 import de.avanux.smartapplianceenabler.http.HttpMethod;
 import de.avanux.smartapplianceenabler.http.HttpRead;
 import de.avanux.smartapplianceenabler.http.HttpReadValue;
+import de.avanux.smartapplianceenabler.http.HttpValidator;
+import de.avanux.smartapplianceenabler.protocol.ContentProtocolHandler;
+import de.avanux.smartapplianceenabler.protocol.ContentProtocolType;
 import de.avanux.smartapplianceenabler.protocol.JsonContentProtocolHandler;
 import de.avanux.smartapplianceenabler.util.Initializable;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
@@ -37,6 +38,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Electricity meter reading current power and energy from the response of a HTTP request.
@@ -110,7 +112,15 @@ public class HttpElectricityMeter implements Meter, Initializable, Validateable,
 
     @Override
     public void validate() {
-        // FIXME implementieren
+        HttpValidator validator = new HttpValidator(applianceId);
+
+        // Meter should meter either Power or Energy or both
+        boolean powerValid = validator.validateReads(Collections.singletonList(MeterValueName.Power.name()), this.httpReads);
+        boolean energyValid = validator.validateReads(Collections.singletonList(MeterValueName.Energy.name()), this.httpReads);
+        if(! (powerValid || energyValid)) {
+            logger.error("{}: Terminating because of incorrect configuration", applianceId);
+            System.exit(-1);
+        }
     }
 
     @Override

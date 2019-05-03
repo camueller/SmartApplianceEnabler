@@ -26,7 +26,6 @@ import de.avanux.smartapplianceenabler.protocol.ContentProtocolType;
 import de.avanux.smartapplianceenabler.protocol.JsonContentProtocolHandler;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import de.avanux.smartapplianceenabler.util.RequestCache;
-import de.avanux.smartapplianceenabler.util.Validateable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +33,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class EVHttpControl implements EVControl {
@@ -112,39 +113,17 @@ public class EVHttpControl implements EVControl {
 
     @Override
     public void validate() {
-        boolean valid = true;
-        for(EVReadValueName valueName: EVReadValueName.values()) {
-            ParentWithChild<HttpRead, HttpReadValue> read = HttpRead.getFirstHttpRead(valueName.name(), this.httpReads);
-            if(read != null) {
-                logger.debug("{}: {} configured: read url={} data={} path={} extractionRegex={} factorToValue={}",
-                        applianceId,
-                        valueName.name(),
-                        read.parent().getUrl(),
-                        read.child().getData(),
-                        read.child().getPath(),
-                        read.child().getExtractionRegex(),
-                        read.child().getFactorToValue());
-            } else {
-                logger.error("{}: Missing configuration for {}", applianceId, valueName.name());
-                valid = false;
-            }
-        }
+        boolean valid;
+        HttpValidator validator = new HttpValidator(applianceId);
 
-        for(EVWriteValueName valueName: EVWriteValueName.values()) {
-            ParentWithChild<HttpWrite, HttpWriteValue> write = HttpWrite.getFirstHttpWrite(valueName.name(), this.httpWrites);
-            if(write != null) {
-                logger.debug("{}: {} configured: write url={} value={} factorToValue={}",
-                        applianceId,
-                        valueName.name(),
-                        write.parent().getUrl(),
-                        write.child().getValue(),
-                        write.child().getFactorToValue());
-            }
-            else {
-                logger.error("{}: Missing configuration for {}", applianceId, valueName.name());
-                valid = false;
-            }
-        }
+        List<String> readValueNames = Arrays.stream(EVReadValueName.values())
+                .map(valueName -> valueName.name()).collect(Collectors.toList());
+        valid = validator.validateReads(readValueNames, this.httpReads);
+
+        List<String> writeValueNames = Arrays.stream(EVWriteValueName.values())
+                .map(valueName -> valueName.name()).collect(Collectors.toList());
+        valid = valid && validator.validateWrites(writeValueNames, this.httpWrites);
+
         if(! valid) {
             logger.error("{}: Terminating because of incorrect configuration", applianceId);
             System.exit(-1);

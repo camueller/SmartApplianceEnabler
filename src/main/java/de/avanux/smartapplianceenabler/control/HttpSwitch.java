@@ -19,6 +19,7 @@ package de.avanux.smartapplianceenabler.control;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.http.HttpMethod;
+import de.avanux.smartapplianceenabler.http.HttpValidator;
 import de.avanux.smartapplianceenabler.http.HttpWrite;
 import de.avanux.smartapplianceenabler.http.HttpWriteValue;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
@@ -33,7 +34,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Changes the on/off state of an appliance by sending an HTTP request.
@@ -62,7 +65,15 @@ public class HttpSwitch implements Control, Validateable, ApplianceIdConsumer {
     }
 
     public void validate() {
-        // FIXME implementieren
+        HttpValidator validator = new HttpValidator(applianceId);
+
+        List<String> writeValueNames = Arrays.stream(ControlValueName.values())
+                .map(valueName -> valueName.name()).collect(Collectors.toList());
+        boolean valid = validator.validateWrites(writeValueNames, this.httpWrites);
+        if(! valid) {
+            logger.error("{}: Terminating because of incorrect configuration", applianceId);
+            System.exit(-1);
+        }
     }
 
     @Override

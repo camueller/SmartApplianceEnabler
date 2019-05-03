@@ -18,10 +18,7 @@
 package de.avanux.smartapplianceenabler.meter;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
-import de.avanux.smartapplianceenabler.modbus.ModbusElectricityMeterDefaults;
-import de.avanux.smartapplianceenabler.modbus.ModbusRegisterRead;
-import de.avanux.smartapplianceenabler.modbus.ModbusRegisterReadValue;
-import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
+import de.avanux.smartapplianceenabler.modbus.*;
 import de.avanux.smartapplianceenabler.modbus.executor.ModbusExecutorFactory;
 import de.avanux.smartapplianceenabler.modbus.executor.ModbusReadTransactionExecutor;
 import de.avanux.smartapplianceenabler.modbus.executor.ReadDecimalInputRegisterExecutor;
@@ -35,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import java.util.Collections;
 import java.util.List;
 import java.util.Timer;
 
@@ -107,25 +105,11 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
         logger.debug("{}: configured: poll interval={}s / measurement interval={}s",
                 getApplianceId(), getPollInterval(), getMeasurementInterval());
         boolean valid = true;
-        for(MeterValueName registerName: MeterValueName.values()) {
+        ModbusValidator validator = new ModbusValidator(getApplianceId());
+        for(MeterValueName valueName: MeterValueName.values()) {
             ParentWithChild<ModbusRegisterRead, ModbusRegisterReadValue> read
-                    = ModbusRegisterRead.getFirstRegisterRead(registerName.name(), registerReads);
-            if(read != null) {
-                ModbusRegisterRead registerRead = read.parent();
-                logger.debug("{}: {} configured: read register={} / bytes={} / byte order={} / type={} / extraction regex={} / factorToValue={}",
-                        getApplianceId(),
-                        registerName.name(),
-                        registerRead.getAddress(),
-                        registerRead.getBytes(),
-                        registerRead.getByteOrder(),
-                        registerRead.getType(),
-                        read.child().getExtractionRegex(),
-                        registerRead.getFactorToValue());
-            }
-            else {
-                logger.error("{}: Missing register configuration for {}", getApplianceId(), registerName.name());
-                valid = false;
-            }
+                    = ModbusRegisterRead.getFirstRegisterRead(valueName.name(), registerReads);
+            valid = validator.validateReads(valueName.name(), Collections.singletonList(read));
         }
         if(! valid) {
             logger.error("{}: Terminating because of incorrect configuration", getApplianceId());
