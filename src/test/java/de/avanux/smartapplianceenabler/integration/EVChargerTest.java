@@ -103,7 +103,7 @@ public class EVChargerTest extends TestBase {
         LocalDateTime timeInterruptCharging = toToday(12, 0, 0);
         appliance.setApplianceState(timeInterruptCharging,
                 false, null, false, "Switch off");
-        tick(appliance, timeInitial,  true, false, false, 8.0f);
+        tick(appliance, timeInitial,  true, false, true, 8.0f);
         List<RuntimeInterval> runtimeIntervalsAfterInterrupCharging = appliance.getRuntimeIntervals(timeAfterStartCharging, false);
         Assert.assertEquals(
                 Collections.singletonList(
@@ -135,7 +135,7 @@ public class EVChargerTest extends TestBase {
 
         log("Charging completed");
         LocalDateTime timeManualStartChargingCompleted = toToday(15, 0, 0);
-        tick(appliance, timeManualStartChargingCompleted, true, false, true);
+        tick(appliance, timeManualStartChargingCompleted, true, false, false);
         Assert.assertTrue(evCharger.isChargingCompleted());
         List<RuntimeInterval> runtimeIntervalsManualStartChargingCompleted
                 = appliance.getRuntimeIntervals(timeManualStartChargingCompleted, false);
@@ -335,7 +335,7 @@ public class EVChargerTest extends TestBase {
 
         log("Manual start - charging completed");
         LocalDateTime timeManualStartChargingCompleted = toToday(13, 0, 0);
-        tick(appliance, timeManualStartChargingCompleted, true, false, true);
+        tick(appliance, timeManualStartChargingCompleted, true, false, false);
         Assert.assertTrue(evCharger.isChargingCompleted());
         List<RuntimeInterval> runtimeIntervalsManualStartChargingCompleted
                 = appliance.getRuntimeIntervals(timeManualStartChargingCompleted, false);
@@ -343,21 +343,21 @@ public class EVChargerTest extends TestBase {
     }
 
     private void tick(Appliance appliance, LocalDateTime now,
-                      boolean connected, boolean charging, boolean chargingCompleted) {
-        tick(appliance, now, connected, charging, chargingCompleted, null);
+                      boolean connected, boolean charging, boolean stopChargingRequested) {
+        tick(appliance, now, connected, charging, stopChargingRequested, null);
     }
 
     private void tick(Appliance appliance, LocalDateTime now,
-                      boolean connected, boolean charging, boolean chargingCompleted, Float energyMetered) {
+                      boolean connected, boolean charging, boolean stopChargingRequested, Float energyMetered) {
         Mockito.when(dateTimeProvider.now()).thenReturn(now);
         Mockito.when(evControl.isVehicleConnected()).thenReturn(connected);
         Mockito.when(evControl.isCharging()).thenReturn(charging);
-        Mockito.when(evControl.isChargingCompleted()).thenReturn(chargingCompleted);
         if(energyMetered != null) {
             Mockito.when(meter.getEnergy()).thenReturn(energyMetered);
         }
 
         ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
+        evCharger.setStopChargingRequested(stopChargingRequested);
         evCharger.updateState(now);
 
         RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();

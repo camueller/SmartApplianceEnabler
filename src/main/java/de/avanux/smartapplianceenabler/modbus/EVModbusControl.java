@@ -115,11 +115,6 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
     }
 
     @Override
-    public boolean isChargingCompleted() {
-        return isMatchingVehicleStatus(EVReadValueName.ChargingCompleted);
-    }
-
-    @Override
     public boolean isInErrorState()  {
         return isMatchingVehicleStatus(EVReadValueName.Error);
     }

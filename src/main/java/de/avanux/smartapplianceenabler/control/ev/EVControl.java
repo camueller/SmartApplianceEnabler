@@ -32,8 +32,6 @@ public interface EVControl extends ApplianceIdConsumer, Initializable, Validatea
 
     boolean isCharging();
 
-    boolean isChargingCompleted();
-
     boolean isInErrorState();
 
     void setChargeCurrent(int current);

@@ -186,11 +186,11 @@
     </xs:complexType>
 
     <xs:complexType name="ModbusRegisterReadValueType">
-        <xs:attribute name="name" type="ModbusReadRegisterNameType" use="required" />
+        <xs:attribute name="name" type="ReadValueNameType" use="required" />
         <xs:attribute name="extractionRegex" type="xs:string" />
     </xs:complexType>
 
-    <xs:simpleType name="ModbusReadRegisterNameType">
+    <xs:simpleType name="ReadValueNameType">
         <xs:restriction base="xs:string">
             <!-- ModbusElectricityMeter -->
             <xs:enumeration value="Power" />
@@ -199,12 +199,11 @@
             <xs:enumeration value="VehicleNotConnected" />
             <xs:enumeration value="VehicleConnected" />
             <xs:enumeration value="Charging" />
-            <xs:enumeration value="ChargingCompleted" />
             <xs:enumeration value="Error" />
         </xs:restriction>
     </xs:simpleType>
 
-    <xs:simpleType name="ModbusWriteRegisterNameType">
+    <xs:simpleType name="WriteValueNameType">
         <xs:restriction base="xs:string">
             <!-- ModbusSwitch -->
             <xs:enumeration value="On" />
@@ -226,7 +225,7 @@
     </xs:complexType>
 
     <xs:complexType name="ModbusRegisterWriteValueType">
-        <xs:attribute name="name" type="ModbusWriteRegisterNameType" use="required" />
+        <xs:attribute name="name" type="WriteValueNameType" use="required" />
         <xs:attribute name="value" type="xs:string" use="required" />
     </xs:complexType>
 
@@ -259,7 +258,7 @@
     </xs:complexType>
 
     <xs:complexType name="HttpReadValueType">
-        <xs:attribute name="name" type="ModbusReadRegisterNameType" use="required" />
+        <xs:attribute name="name" type="ReadValueNameType" use="required" />
         <xs:attribute name="data" type="xs:string" />
         <xs:attribute name="path" type="xs:string" />
         <xs:attribute name="extractionRegex" type="xs:string" />
@@ -277,7 +276,7 @@
     </xs:complexType>
 
     <xs:complexType name="HttpWriteValueType">
-        <xs:attribute name="name" type="ModbusWriteRegisterNameType" use="required" />
+        <xs:attribute name="name" type="WriteValueNameType" use="required" />
         <xs:attribute name="value" type="xs:string" />
         <xs:attribute name="factorToValue" type="xs:double" />
         <xs:attribute name="method" type="HttpMethodType" />

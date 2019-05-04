@@ -94,12 +94,6 @@ public class EVControlMock implements EVControl, Meter {
     }
 
     @Override
-    public boolean isChargingCompleted() {
-        logDebug("isChargingCompleted=" + this.chargingCompleted);
-        return this.chargingCompleted;
-    }
-
-    @Override
     public boolean isInErrorState() {
         boolean errorState = false;
         logDebug("isInErrorState=" + errorState);
