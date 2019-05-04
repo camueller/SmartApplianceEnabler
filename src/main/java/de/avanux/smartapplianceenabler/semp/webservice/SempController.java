@@ -78,14 +78,25 @@ public class SempController {
     
     @RequestMapping(value=BASE_URL + "/DeviceInfo", method=RequestMethod.GET, produces="application/xml")
     public String deviceInfo(@RequestParam(value="DeviceId", required = false) String deviceId) {
+        List<DeviceInfo> deviceInfos = new ArrayList<>();
+        if(deviceId != null) {
+            logger.debug("{}: Device info requested", deviceId);
+            deviceInfos.add(createDeviceInfo(deviceId));
+        }
+        else {
+            logger.debug("Device info requested of all devices");
+            List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
+            for (Appliance appliance : appliances) {
+                deviceInfos.add(createDeviceInfo(appliance.getId()));
+            }
+        }
         Device2EM device2EM = new Device2EM();
-        device2EM.setDeviceInfo(Collections.singletonList(createDeviceInfo(deviceId)));
+        device2EM.setDeviceInfo(deviceInfos);
         return marshall(device2EM);
     }
 
-    public DeviceInfo createDeviceInfo(String deviceId) {
+    protected DeviceInfo createDeviceInfo(String deviceId) {
         if(deviceId != null) {
-            logger.debug("Device info requested of device id=" + deviceId);
             DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(deviceId);
             Appliance appliance = ApplianceManager.getInstance().findAppliance(deviceId);
             deviceInfo.setCapabilities(createCapabilities(deviceInfo, appliance.getMeter() != null,
