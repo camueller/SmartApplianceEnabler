@@ -46,7 +46,7 @@ public class EVHttpControlTest {
         List<HttpReadValue> readValues = new ArrayList<>();
         statusReadSpy.setReadValues(readValues);
         readValues.add(new HttpReadValue(EVReadValueName.VehicleNotConnected.name(), "$.car", "(1)"));
-        readValues.add(new HttpReadValue(EVReadValueName.VehicleConnected.name(), "$.car", "(3)"));
+        readValues.add(new HttpReadValue(EVReadValueName.VehicleConnected.name(), "$.car", "(3|4)"));
         readValues.add(new HttpReadValue(EVReadValueName.Charging.name(), "$.car", "(2)"));
         readValues.add(new HttpReadValue(EVReadValueName.Error.name(), "$.err", "([^0])"));
 

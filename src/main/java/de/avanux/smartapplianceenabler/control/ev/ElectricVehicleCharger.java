@@ -270,6 +270,21 @@ public class ElectricVehicleCharger implements Control, Initializable, Validatea
         return times == 1;
     }
 
+    /**
+     * Returns true, if inState occurs after last occurance of afterLastState in state history.
+     * @param inState
+     * @param afterLastState
+     * @return
+     */
+    public boolean wasInStateAfterLastState(State inState, State afterLastState) {
+        int indexLastAfterState = stateHistory.lastIndexOf(afterLastState);
+        if(indexLastAfterState > -1) {
+            List<State> afterStates = stateHistory.subList(indexLastAfterState, stateHistory.size() - 1);
+            return afterStates.contains(afterLastState);
+        }
+        return false;
+    }
+
     private void initStateHistory() {
         this.stateHistory.clear();
         stateHistory.add(State.VEHICLE_NOT_CONNECTED);
@@ -280,65 +295,31 @@ public class ElectricVehicleCharger implements Control, Initializable, Validatea
         if(control.isInErrorState()) {
             return State.ERROR;
         }
-        if(currenState == State.ERROR) {
+        if(this.startChargingRequested && control.isVehicleConnected()) {
             if(control.isCharging()) {
                 newState = State.CHARGING;
             }
-            else if(control.isVehicleConnected()) {
+            else {
+                newState = State.CHARGING_COMPLETED;
+            }
+        }
+        else if(this.stopChargingRequested && control.isVehicleConnected()) {
+            newState = State.VEHICLE_CONNECTED;
+        }
+        else if(control.isCharging()) {
+            newState = State.CHARGING;
+        }
+        else if(control.isVehicleConnected()) {
+            if(wasInStateAfterLastState(ElectricVehicleCharger.State.CHARGING, ElectricVehicleCharger.State.VEHICLE_CONNECTED)) {
+                newState = State.CHARGING_COMPLETED;
+            }
+            else {
                 newState = State.VEHICLE_CONNECTED;
             }
-            else if(control.isVehicleNotConnected()) {
-                newState = State.VEHICLE_NOT_CONNECTED;
-            }
         }
-        else if(currenState == State.VEHICLE_NOT_CONNECTED) {
-            if(this.startChargingRequested) {
-                if(control.isCharging()) {
-                    newState = State.CHARGING;
-                }
-                else {
-                    newState = State.CHARGING_COMPLETED;
-                }
-            }
-            else if (control.isVehicleConnected()) {
-                newState = State.VEHICLE_CONNECTED;
-            }
+        else if(control.isVehicleNotConnected()) {
+            newState = State.VEHICLE_NOT_CONNECTED;
         }
-        else if(currenState == State.VEHICLE_CONNECTED) {
-            if(this.startChargingRequested) {
-                if(control.isCharging()) {
-                    newState = State.CHARGING;
-                }
-                else {
-                    newState = State.CHARGING_COMPLETED;
-                }
-            }
-            else if(control.isVehicleNotConnected()) {
-                newState = State.VEHICLE_NOT_CONNECTED;
-            }
-        }
-        else if(currenState == State.CHARGING) {
-            if(! control.isCharging()) {
-                if(control.isVehicleConnected()) {
-                    if(this.stopChargingRequested) {
-                        newState = State.VEHICLE_CONNECTED;
-                    }
-                    else {
-                        newState = State.CHARGING_COMPLETED;
-                    }
-                }
-                else if(control.isVehicleNotConnected()) {
-                    newState = State.VEHICLE_NOT_CONNECTED;
-                }
-            }
-        }
-        else if(currenState == State.CHARGING_COMPLETED) {
-            if (control.isVehicleNotConnected()) {
-                newState = State.VEHICLE_NOT_CONNECTED;
-            }
-        }
-        this.startChargingRequested = false;
-        this.stopChargingRequested = false;
         return newState;
     }
 
@@ -374,6 +355,8 @@ public class ElectricVehicleCharger implements Control, Initializable, Validatea
     }
 
     private void onStateChanged(LocalDateTime now, State previousState, State newState) {
+        this.startChargingRequested = false;
+        this.stopChargingRequested = false;
         if(newState == State.VEHICLE_CONNECTED) {
             if (this.vehicles != null && this.vehicles.size() > 0) {
                 // sadly, we don't know, which ev has been connected, so we will assume the first one if any
@@ -535,6 +518,7 @@ public class ElectricVehicleCharger implements Control, Initializable, Validatea
         this.chargeAmount = null;
         this.chargePower = null;
         this.startChargingRequested = false;
+        this.stopChargingRequested = true;
     }
 
     public void setStopChargingRequested(boolean stopChargingRequested) {
