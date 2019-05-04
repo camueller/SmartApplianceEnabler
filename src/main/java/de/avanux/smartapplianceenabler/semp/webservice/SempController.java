@@ -21,6 +21,7 @@ import de.avanux.smartapplianceenabler.appliance.Appliance;
 import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
 import de.avanux.smartapplianceenabler.appliance.RuntimeInterval;
 import de.avanux.smartapplianceenabler.control.Control;
+import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
@@ -100,7 +101,7 @@ public class SempController {
             DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(deviceId);
             Appliance appliance = ApplianceManager.getInstance().findAppliance(deviceId);
             deviceInfo.setCapabilities(createCapabilities(deviceInfo, appliance.getMeter() != null,
-                    appliance.canConsumeOptionalEnergy()));
+                    appliance.canConsumeOptionalEnergy(), appliance.getControl() instanceof ElectricVehicleCharger));
             return deviceInfo;
         }
         return null;
@@ -113,18 +114,19 @@ public class SempController {
         for (Appliance appliance : appliances) {
             DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(appliance.getId());
             deviceInfo.setCapabilities(createCapabilities(deviceInfo, appliance.getMeter() != null,
-                    appliance.canConsumeOptionalEnergy()));
+                    appliance.canConsumeOptionalEnergy(), appliance.getControl() instanceof ElectricVehicleCharger));
             deviceInfos.add(deviceInfo);
         }
         return deviceInfos;
     }
 
-    private Capabilities createCapabilities(DeviceInfo deviceInfo, boolean hasMeter, boolean canConsumeOptionalEnergy) {
+    private Capabilities createCapabilities(DeviceInfo deviceInfo, boolean hasMeter, boolean canConsumeOptionalEnergy, boolean isEvCharger) {
         Capabilities capabilities = deviceInfo.getCapabilities();
         if(capabilities == null) {
             capabilities = new Capabilities();
         }
-        if(hasMeter) {
+        capabilities.setAbsoluteTimestamps(false);
+        if(hasMeter && !isEvCharger) {
             capabilities.setCurrentPowerMethod(CurrentPowerMethod.Measurement);
         }
         else {
@@ -243,8 +245,8 @@ public class SempController {
         if(meter != null) {
             logger.debug("{}: Reporting power info from meter.", appliance.getId());
             powerInfo.setAveragePower(meter.getAveragePower());
-            powerInfo.setMinPower(meter.getMinPower());
-            powerInfo.setMaxPower(meter.getMaxPower());
+//            powerInfo.setMinPower(meter.getMinPower());
+//            powerInfo.setMaxPower(meter.getMaxPower());
             powerInfo.setAveragingInterval(60); // always report 60 for SEMP regardless of real averaging interval
         }
         else {
