@@ -44,7 +44,7 @@ import java.util.List;
 
 public class IntegrationTest extends TestBase {
 
-    private Logger logger = LoggerFactory.getLogger(SaeController.class);
+    private Logger logger = LoggerFactory.getLogger(IntegrationTest.class);
     private DateTimeProvider dateTimeProvider = Mockito.mock(DateTimeProvider.class);
     private SaeController saeController = new SaeController();
     private SempController sempController = new SempController();
