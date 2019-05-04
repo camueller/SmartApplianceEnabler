@@ -343,32 +343,17 @@
     </xs:complexType>
 
     <xs:complexType name="ScheduleType">
-        <xs:choice minOccurs="1" maxOccurs="1">
-            <xs:sequence>
-                <xs:element name="RuntimeRequest" type="RuntimeRequestType" minOccurs="1" />
-                <xs:element name="EnergyRequest" type="EnergyRequestType" minOccurs="0" />
-                <xs:element name="SocRequest" type="SocRequestType" minOccurs="0" />
-            </xs:sequence>
-            <xs:sequence>
-                <xs:element name="RuntimeRequest" type="RuntimeRequestType" minOccurs="0" />
-                <xs:element name="EnergyRequest" type="EnergyRequestType" minOccurs="1" />
-                <xs:element name="SocRequest" type="SocRequestType" minOccurs="0" />
-            </xs:sequence>
-            <xs:sequence>
-                <xs:element name="RuntimeRequest" type="RuntimeRequestType" minOccurs="0" />
-                <xs:element name="EnergyRequest" type="EnergyRequestType" minOccurs="0" />
-                <xs:element name="SocRequest" type="SocRequestType" minOccurs="1" />
-            </xs:sequence>
-        </xs:choice>
-        <xs:choice minOccurs="1" maxOccurs="1">
-            <xs:sequence>
-                <xs:element name="DayTimeframe" type="DayTimeframeType" minOccurs="1" />
-                <xs:element name="ConsecutiveDaysTimeframe" type="ConsecutiveDaysTimeframeType" minOccurs="0" />
-            </xs:sequence>
-            <xs:sequence>
-                <xs:element name="ConsecutiveDaysTimeframe" type="ConsecutiveDaysTimeframeType" minOccurs="1" />
-            </xs:sequence>
-        </xs:choice>
+        <xs:sequence>
+            <xs:choice minOccurs="1" maxOccurs="1">
+                <xs:element name="RuntimeRequest" type="RuntimeRequestType" />
+                <xs:element name="EnergyRequest" type="EnergyRequestType" />
+                <xs:element name="SocRequest" type="SocRequestType" />
+            </xs:choice>
+            <xs:choice minOccurs="1" maxOccurs="1">
+                <xs:element name="DayTimeframe" type="DayTimeframeType" />
+                <xs:element name="ConsecutiveDaysTimeframe" type="ConsecutiveDaysTimeframeType" />
+            </xs:choice>
+        </xs:sequence>
         <xs:attribute name="id" type="xs:NCName" />
         <xs:attribute name="enabled" type="xs:boolean" />
     </xs:complexType>
