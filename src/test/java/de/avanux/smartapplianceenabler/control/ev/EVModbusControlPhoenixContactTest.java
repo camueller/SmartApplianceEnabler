@@ -164,34 +164,6 @@ public class EVModbusControlPhoenixContactTest {
     }
 
     @Test
-    public void isChargingCompleted_B_ChargingCompleted1() {
-        this.readStringTestingExecutor.setValue("B");
-        this.readBooleanTestingExecutor.setValue(true);
-        Assert.assertTrue(this.evModbusControl.isChargingCompleted());
-    }
-
-    @Test
-    public void isChargingCompleted_C_ChargingCompleted1() {
-        this.readStringTestingExecutor.setValue("C");
-        this.readBooleanTestingExecutor.setValue(true);
-        Assert.assertFalse(this.evModbusControl.isChargingCompleted());
-    }
-
-    @Test
-    public void isChargingCompleted_A_ChargingCompleted1() {
-        this.readStringTestingExecutor.setValue("A");
-        this.readBooleanTestingExecutor.setValue(true);
-        Assert.assertFalse(this.evModbusControl.isChargingCompleted());
-    }
-
-    @Test
-    public void isChargingCompleted_B_ChargingCompleted0() {
-        this.readStringTestingExecutor.setValue("B");
-        this.readBooleanTestingExecutor.setValue(false);
-        Assert.assertFalse(this.evModbusControl.isChargingCompleted());
-    }
-
-    @Test
     public void setChargeCurrent() {
         int chargeCurrent = 13;
         this.evModbusControl.setChargeCurrent(chargeCurrent);

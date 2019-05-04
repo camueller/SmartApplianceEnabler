@@ -146,11 +146,6 @@ public class EVHttpControl implements EVControl {
     }
 
     @Override
-    public boolean isChargingCompleted() {
-        return readValue(EVReadValueName.ChargingCompleted);
-    }
-
-    @Override
     public boolean isInErrorState() {
         return readValue(EVReadValueName.Error);
     }

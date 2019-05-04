@@ -48,7 +48,6 @@ public class EVHttpControlTest {
         readValues.add(new HttpReadValue(EVReadValueName.VehicleNotConnected.name(), "$.car", "(1)"));
         readValues.add(new HttpReadValue(EVReadValueName.VehicleConnected.name(), "$.car", "(3)"));
         readValues.add(new HttpReadValue(EVReadValueName.Charging.name(), "$.car", "(2)"));
-        readValues.add(new HttpReadValue(EVReadValueName.ChargingCompleted.name(), "$.car", "(4)"));
         readValues.add(new HttpReadValue(EVReadValueName.Error.name(), "$.err", "([^0])"));
 
         List<HttpWrite> writes = new ArrayList<>();
@@ -92,12 +91,6 @@ public class EVHttpControlTest {
     public void isCharging() {
         Mockito.doReturn("{ \"car\": \"2\" }").when(statusReadSpy).executeGet(Mockito.any());
         Assert.assertTrue(this.control.isCharging());
-    }
-
-    @Test
-    public void isChargingCompleted() {
-        Mockito.doReturn("{ \"car\": \"4\" }").when(statusReadSpy).executeGet(Mockito.any());
-        Assert.assertTrue(this.control.isChargingCompleted());
     }
 
     @Test

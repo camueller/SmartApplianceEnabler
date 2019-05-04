@@ -72,6 +72,8 @@ public class ElectricVehicleCharger implements Control, Initializable, Validatea
     private transient Integer chargeAmount;
     private transient Integer chargePower;
     private transient GuardedTimerTask updateStateTimerTask;
+    private transient boolean startChargingRequested;
+    private transient boolean stopChargingRequested;
 
     protected enum State {
         VEHICLE_NOT_CONNECTED,
@@ -279,30 +281,37 @@ public class ElectricVehicleCharger implements Control, Initializable, Validatea
             return State.ERROR;
         }
         if(currenState == State.ERROR) {
-            if(control.isVehicleConnected()) {
-                newState = State.VEHICLE_CONNECTED;
-            }
-            else if(control.isCharging()) {
+            if(control.isCharging()) {
                 newState = State.CHARGING;
             }
-            else if(control.isChargingCompleted()) {
-                newState = State.CHARGING_COMPLETED;
+            else if(control.isVehicleConnected()) {
+                newState = State.VEHICLE_CONNECTED;
             }
             else if(control.isVehicleNotConnected()) {
                 newState = State.VEHICLE_NOT_CONNECTED;
             }
         }
         else if(currenState == State.VEHICLE_NOT_CONNECTED) {
-            if (control.isVehicleConnected()) {
+            if(this.startChargingRequested) {
+                if(control.isCharging()) {
+                    newState = State.CHARGING;
+                }
+                else {
+                    newState = State.CHARGING_COMPLETED;
+                }
+            }
+            else if (control.isVehicleConnected()) {
                 newState = State.VEHICLE_CONNECTED;
             }
         }
         else if(currenState == State.VEHICLE_CONNECTED) {
-            if(control.isCharging()) {
-                newState = State.CHARGING;
-            }
-            else if(control.isChargingCompleted()) {
-                newState = State.CHARGING_COMPLETED;
+            if(this.startChargingRequested) {
+                if(control.isCharging()) {
+                    newState = State.CHARGING;
+                }
+                else {
+                    newState = State.CHARGING_COMPLETED;
+                }
             }
             else if(control.isVehicleNotConnected()) {
                 newState = State.VEHICLE_NOT_CONNECTED;
@@ -310,11 +319,13 @@ public class ElectricVehicleCharger implements Control, Initializable, Validatea
         }
         else if(currenState == State.CHARGING) {
             if(! control.isCharging()) {
-                if(control.isChargingCompleted()) {
-                    newState = State.CHARGING_COMPLETED;
-                }
-                else if(control.isVehicleConnected()) {
-                    newState = State.VEHICLE_CONNECTED;
+                if(control.isVehicleConnected()) {
+                    if(this.stopChargingRequested) {
+                        newState = State.VEHICLE_CONNECTED;
+                    }
+                    else {
+                        newState = State.CHARGING_COMPLETED;
+                    }
                 }
                 else if(control.isVehicleNotConnected()) {
                     newState = State.VEHICLE_NOT_CONNECTED;
@@ -326,6 +337,8 @@ public class ElectricVehicleCharger implements Control, Initializable, Validatea
                 newState = State.VEHICLE_NOT_CONNECTED;
             }
         }
+        this.startChargingRequested = false;
+        this.stopChargingRequested = false;
         return newState;
     }
 
@@ -506,8 +519,13 @@ public class ElectricVehicleCharger implements Control, Initializable, Validatea
 
     public void startCharging() {
         logger.debug("{}: Start charging process", applianceId);
+        this.startChargingRequested = true;
         control.startCharging();
         this.startChargingTimestamp = System.currentTimeMillis();
+    }
+
+    public void setStartChargingRequested(boolean startChargingRequested) {
+        this.startChargingRequested = startChargingRequested;
     }
 
     public void stopCharging() {
@@ -516,6 +534,11 @@ public class ElectricVehicleCharger implements Control, Initializable, Validatea
         this.startChargingTimestamp = null;
         this.chargeAmount = null;
         this.chargePower = null;
+        this.startChargingRequested = false;
+    }
+
+    public void setStopChargingRequested(boolean stopChargingRequested) {
+        this.stopChargingRequested = stopChargingRequested;
     }
 
     private void retrieveSoc(ElectricVehicle electricVehicle) {

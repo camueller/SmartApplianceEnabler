@@ -22,6 +22,5 @@ public enum EVReadValueName {
     VehicleNotConnected,
     VehicleConnected,
     Charging,
-    ChargingCompleted,
     Error
 }
