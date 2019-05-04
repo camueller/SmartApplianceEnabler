@@ -21,6 +21,7 @@ import de.avanux.smartapplianceenabler.appliance.Appliance;
 import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
 import de.avanux.smartapplianceenabler.appliance.RuntimeInterval;
 import de.avanux.smartapplianceenabler.control.Control;
+import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
@@ -78,18 +79,29 @@ public class SempController {
     
     @RequestMapping(value=BASE_URL + "/DeviceInfo", method=RequestMethod.GET, produces="application/xml")
     public String deviceInfo(@RequestParam(value="DeviceId", required = false) String deviceId) {
+        List<DeviceInfo> deviceInfos = new ArrayList<>();
+        if(deviceId != null) {
+            logger.debug("{}: Device info requested", deviceId);
+            deviceInfos.add(createDeviceInfo(deviceId));
+        }
+        else {
+            logger.debug("Device info requested of all devices");
+            List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
+            for (Appliance appliance : appliances) {
+                deviceInfos.add(createDeviceInfo(appliance.getId()));
+            }
+        }
         Device2EM device2EM = new Device2EM();
-        device2EM.setDeviceInfo(Collections.singletonList(createDeviceInfo(deviceId)));
+        device2EM.setDeviceInfo(deviceInfos);
         return marshall(device2EM);
     }
 
-    public DeviceInfo createDeviceInfo(String deviceId) {
+    protected DeviceInfo createDeviceInfo(String deviceId) {
         if(deviceId != null) {
-            logger.debug("Device info requested of device id=" + deviceId);
             DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(deviceId);
             Appliance appliance = ApplianceManager.getInstance().findAppliance(deviceId);
             deviceInfo.setCapabilities(createCapabilities(deviceInfo, appliance.getMeter() != null,
-                    appliance.canConsumeOptionalEnergy()));
+                    appliance.canConsumeOptionalEnergy(), appliance.getControl() instanceof ElectricVehicleCharger));
             return deviceInfo;
         }
         return null;
@@ -102,18 +114,19 @@ public class SempController {
         for (Appliance appliance : appliances) {
             DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(appliance.getId());
             deviceInfo.setCapabilities(createCapabilities(deviceInfo, appliance.getMeter() != null,
-                    appliance.canConsumeOptionalEnergy()));
+                    appliance.canConsumeOptionalEnergy(), appliance.getControl() instanceof ElectricVehicleCharger));
             deviceInfos.add(deviceInfo);
         }
         return deviceInfos;
     }
 
-    private Capabilities createCapabilities(DeviceInfo deviceInfo, boolean hasMeter, boolean canConsumeOptionalEnergy) {
+    private Capabilities createCapabilities(DeviceInfo deviceInfo, boolean hasMeter, boolean canConsumeOptionalEnergy, boolean isEvCharger) {
         Capabilities capabilities = deviceInfo.getCapabilities();
         if(capabilities == null) {
             capabilities = new Capabilities();
         }
-        if(hasMeter) {
+        capabilities.setAbsoluteTimestamps(false);
+        if(hasMeter && !isEvCharger) {
             capabilities.setCurrentPowerMethod(CurrentPowerMethod.Measurement);
         }
         else {
@@ -232,8 +245,8 @@ public class SempController {
         if(meter != null) {
             logger.debug("{}: Reporting power info from meter.", appliance.getId());
             powerInfo.setAveragePower(meter.getAveragePower());
-            powerInfo.setMinPower(meter.getMinPower());
-            powerInfo.setMaxPower(meter.getMaxPower());
+//            powerInfo.setMinPower(meter.getMinPower());
+//            powerInfo.setMaxPower(meter.getMaxPower());
             powerInfo.setAveragingInterval(60); // always report 60 for SEMP regardless of real averaging interval
         }
         else {
