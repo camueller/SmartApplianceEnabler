@@ -295,7 +295,13 @@ public class ElectricVehicleCharger implements Control, Initializable, Validatea
         if(control.isInErrorState()) {
             return State.ERROR;
         }
-        if(this.startChargingRequested && control.isVehicleConnected()) {
+        if(control.isVehicleNotConnected()) {
+            newState = State.VEHICLE_NOT_CONNECTED;
+        }
+        else if(currenState == State.CHARGING_COMPLETED) {
+            newState = State.CHARGING_COMPLETED;
+        }
+        else if(this.startChargingRequested && control.isVehicleConnected()) {
             if(control.isCharging()) {
                 newState = State.CHARGING;
             }
@@ -316,9 +322,6 @@ public class ElectricVehicleCharger implements Control, Initializable, Validatea
             else {
                 newState = State.VEHICLE_CONNECTED;
             }
-        }
-        else if(control.isVehicleNotConnected()) {
-            newState = State.VEHICLE_NOT_CONNECTED;
         }
         return newState;
     }
