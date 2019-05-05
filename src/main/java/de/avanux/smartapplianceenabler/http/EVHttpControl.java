@@ -203,18 +203,26 @@ public class EVHttpControl implements EVControl {
         Double factorToValue = write.child().getFactorToValue();
         logger.debug("{}: Set charge current {}A", applianceId, current);
         Integer factoredCurrent = factorToValue != null ? Double.valueOf(current * factorToValue).intValue() : current;
-        write.parent().writeValue(write.child(), factoredCurrent);
+        writeValue(write, factoredCurrent);
     }
 
     @Override
     public void startCharging() {
         ParentWithChild<HttpWrite, HttpWriteValue> write = getWriteValue(EVWriteValueName.StartCharging);
-        write.parent().writeValue(write.child());
+        writeValue(write);
     }
 
     @Override
     public void stopCharging() {
         ParentWithChild<HttpWrite, HttpWriteValue> write = getWriteValue(EVWriteValueName.StopCharging);
-        write.parent().writeValue(write.child());
+        writeValue(write);
+    }
+
+    private void writeValue(ParentWithChild<HttpWrite, HttpWriteValue> write, Object ... arguments) {
+        if(this.requestCache != null) {
+            // the next poll after write should return a fresh response from charger
+            this.requestCache.clear();
+        }
+        write.parent().writeValue(write.child(), arguments);
     }
 }
