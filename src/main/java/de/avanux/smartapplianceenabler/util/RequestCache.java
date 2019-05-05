@@ -61,6 +61,11 @@ public class RequestCache<K, V> {
         this.cache.put(key, cacheValue);
     }
 
+    public void clear() {
+        this.cache.clear();
+        logger.debug("{}: Cache cleared", this.applianceId);
+    }
+
     private class CacheValue {
         public long timestamp;
         public V value;

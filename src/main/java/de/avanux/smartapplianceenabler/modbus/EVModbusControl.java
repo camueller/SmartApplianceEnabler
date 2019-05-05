@@ -178,6 +178,10 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
         ParentWithChild<ModbusRegisterWrite, ModbusRegisterWriteValue> write = ModbusRegisterWrite.getFirstRegisterWrite(
                 EVWriteValueName.ChargingCurrent.name(), this.registerWrites);
         if(write != null) {
+            if(this.requestCache != null) {
+                // the next poll after write should return a fresh response from charger
+                this.requestCache.clear();
+            }
             ModbusRegisterWrite registerWrite = write.parent();
             try {
                 ModbusWriteTransactionExecutor executor = ModbusExecutorFactory.getWriteExecutor(getApplianceId(),
@@ -210,6 +214,10 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
         ParentWithChild<ModbusRegisterWrite, ModbusRegisterWriteValue> write
                 = ModbusRegisterWrite.getFirstRegisterWrite(registerName.name(), this.registerWrites);
         if(write != null) {
+            if(this.requestCache != null) {
+                // the next poll after write should return a fresh response from charger
+                this.requestCache.clear();
+            }
             ModbusRegisterWrite registerWrite = write.parent();
             try {
                 ModbusWriteTransactionExecutor executor = ModbusExecutorFactory.getWriteExecutor(getApplianceId(),
