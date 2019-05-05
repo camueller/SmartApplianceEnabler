@@ -382,10 +382,7 @@ public class ElectricVehicleCharger implements Control, Initializable, Validatea
             }
         }
         if(newState == State.CHARGING_COMPLETED) {
-            if(this.appliance != null) {
-//                this.appliance.deactivateSchedules();
-                this.appliance.resetActiveTimeframInterval();
-            }
+            stopCharging();
         }
         if(newState == State.VEHICLE_NOT_CONNECTED) {
             on(now, false);
