@@ -35,7 +35,7 @@ public class HttpValidator {
         this.applianceId = applianceId;
     }
 
-    public boolean validateReads(Collection<String> valueNames, List<HttpRead> httpReads) {
+    public boolean validateReads(Collection<String> valueNames, List<HttpRead> httpReads, boolean logError) {
         for(String valueName: valueNames) {
             ParentWithChild<HttpRead, HttpReadValue> read = HttpRead.getFirstHttpRead(valueName, httpReads);
             if(read != null) {
@@ -48,7 +48,9 @@ public class HttpValidator {
                         read.child().getExtractionRegex(),
                         read.child().getFactorToValue());
             } else {
-                logger.error("{}: Missing configuration for {}", applianceId, valueName);
+                if(logError) {
+                    logger.error("{}: Missing configuration for {}", applianceId, valueName);
+                }
                 return false;
             }
         }

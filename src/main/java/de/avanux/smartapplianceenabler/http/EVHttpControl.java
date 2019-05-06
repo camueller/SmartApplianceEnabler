@@ -113,12 +113,13 @@ public class EVHttpControl implements EVControl {
 
     @Override
     public void validate() {
+        logger.debug("{}: Validating configuration", applianceId);
         boolean valid;
         HttpValidator validator = new HttpValidator(applianceId);
 
         List<String> readValueNames = Arrays.stream(EVReadValueName.values())
                 .map(valueName -> valueName.name()).collect(Collectors.toList());
-        valid = validator.validateReads(readValueNames, this.httpReads);
+        valid = validator.validateReads(readValueNames, this.httpReads, true);
 
         List<String> writeValueNames = Arrays.stream(EVWriteValueName.values())
                 .map(valueName -> valueName.name()).collect(Collectors.toList());

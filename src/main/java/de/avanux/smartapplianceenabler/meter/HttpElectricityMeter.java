@@ -112,12 +112,20 @@ public class HttpElectricityMeter implements Meter, Initializable, Validateable,
 
     @Override
     public void validate() {
+        logger.debug("{}: Validating configuration", applianceId);
+        logger.debug("{}: configured: poll interval={}s / measurement interval={}s",
+                applianceId, getPollInterval(), getMeasurementInterval());
         HttpValidator validator = new HttpValidator(applianceId);
 
         // Meter should meter either Power or Energy or both
-        boolean powerValid = validator.validateReads(Collections.singletonList(MeterValueName.Power.name()), this.httpReads);
-        boolean energyValid = validator.validateReads(Collections.singletonList(MeterValueName.Energy.name()), this.httpReads);
+        boolean powerValid = validator.validateReads(
+                Collections.singletonList(MeterValueName.Power.name()), this.httpReads, false);
+        boolean energyValid = validator.validateReads(
+                Collections.singletonList(MeterValueName.Energy.name()), this.httpReads, false);
         if(! (powerValid || energyValid)) {
+            logger.error("{}: Missing configuration for either {} or {}",
+                    applianceId, MeterValueName.Power.name(), MeterValueName.Energy.name());
+
             logger.error("{}: Terminating because of incorrect configuration", applianceId);
             System.exit(-1);
         }

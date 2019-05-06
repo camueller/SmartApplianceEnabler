@@ -102,6 +102,7 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     }
 
     public void validate() {
+        logger.debug("{}: Validating configuration", getApplianceId());
         logger.debug("{}: configured: poll interval={}s / measurement interval={}s",
                 getApplianceId(), getPollInterval(), getMeasurementInterval());
         boolean valid = true;
