@@ -42,6 +42,7 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable {
 
     @Override
     public void validate() {
+        logger.debug("{}: Validating configuration", getApplianceId());
         boolean valid = true;
         ModbusValidator validator = new ModbusValidator(getApplianceId());
         for(ControlValueName valueName: ControlValueName.values()) {

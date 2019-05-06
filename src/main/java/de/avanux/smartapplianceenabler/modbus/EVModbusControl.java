@@ -80,6 +80,7 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
 
     @Override
     public void validate() {
+        logger.debug("{}: Validating configuration", getApplianceId());
         boolean valid = true;
         ModbusValidator validator = new ModbusValidator(getApplianceId());
         for(EVReadValueName valueName: EVReadValueName.values()) {
