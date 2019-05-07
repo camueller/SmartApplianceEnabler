@@ -291,32 +291,45 @@ public class ElectricVehicleCharger implements Control, Initializable, Validatea
     }
 
     protected State getNewState(State currenState) {
+        boolean vehicleNotConnected = control.isVehicleNotConnected();
+        boolean vehicleConnected = control.isVehicleConnected();
+        boolean charging = control.isCharging();
+        boolean errorState = control.isInErrorState();
+        boolean wasInChargingAfterLastVehicleConnected
+                = wasInStateAfterLastState(ElectricVehicleCharger.State.CHARGING,
+                ElectricVehicleCharger.State.VEHICLE_CONNECTED);
+        logger.debug("{}: currenState={} startChargingRequested={} stopChargingRequested={} vehicleNotConnected={} " +
+                        "vehicleConnected={} charging={} errorState={} wasInChargingAfterLastVehicleConnected={}",
+                applianceId, currenState, startChargingRequested, stopChargingRequested, vehicleNotConnected,
+                vehicleConnected, charging, errorState, wasInChargingAfterLastVehicleConnected);
+
+        // only use variables logged above
         State newState = currenState;
-        if(control.isInErrorState()) {
+        if(errorState) {
             return State.ERROR;
         }
-        if(control.isVehicleNotConnected()) {
+        if(vehicleNotConnected) {
             newState = State.VEHICLE_NOT_CONNECTED;
         }
         else if(currenState == State.CHARGING_COMPLETED) {
             newState = State.CHARGING_COMPLETED;
         }
-        else if(this.startChargingRequested && control.isVehicleConnected()) {
-            if(control.isCharging()) {
+        else if(this.startChargingRequested && vehicleConnected) {
+            if(charging) {
                 newState = State.CHARGING;
             }
             else {
                 newState = State.CHARGING_COMPLETED;
             }
         }
-        else if(this.stopChargingRequested && control.isVehicleConnected()) {
+        else if(this.stopChargingRequested && vehicleConnected) {
             newState = State.VEHICLE_CONNECTED;
         }
-        else if(control.isCharging()) {
+        else if(charging) {
             newState = State.CHARGING;
         }
-        else if(control.isVehicleConnected()) {
-            if(wasInStateAfterLastState(ElectricVehicleCharger.State.CHARGING, ElectricVehicleCharger.State.VEHICLE_CONNECTED)) {
+        else if(vehicleConnected) {
+            if(wasInChargingAfterLastVehicleConnected) {
                 newState = State.CHARGING_COMPLETED;
             }
             else {
