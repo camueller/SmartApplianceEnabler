@@ -725,7 +725,6 @@ public class Appliance implements Initializable, Validateable, ControlStateChang
         if(vehicle != null) {
             logger.warn("{}: creating optional energy request for vehicleId={}", id, vehicle.getId());
             int batteryCapacity = vehicle.getBatteryCapacity();
-            // TODO the following call might return an updated SOC in a future release
             Integer initialSoc = evCharger.getConnectedVehicleSoc();
             Integer targetSoc = vehicle.getDefaultSocOptionalEnergy();
             logger.debug("{}: calculating optional energy evId={} batteryCapactiy={} chargeLoss={}% initialSoc={} targetSoc={}",
