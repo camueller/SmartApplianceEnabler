@@ -1,0 +1,62 @@
+<form class="ui form" [formGroup]="form" (ngSubmit)="submitForm()">
+  <div class="field">
+    <label>{{'MeterComponent.httpElectricityMeter_url' | translate}}</label>
+    <input type="text" name="httpElectricityMeter_url" [(ngModel)]="meter.httpElectricityMeter.url"
+           required pattern="{{VALIDATOR_PATTERN_URL}}">
+    <div *ngIf="errors.httpElectricityMeter_url" class="ui negative message">
+      {{errors.httpElectricityMeter_url}}</div>
+  </div>
+  <div class="field">
+    <label>{{'MeterComponent.httpElectricityMeter_data' | translate}}</label>
+    <input type="text" name="httpElectricityMeter_data" [(ngModel)]="meter.httpElectricityMeter.data">
+  </div>
+  <div class="ui fields">
+    <div class="field">
+      <label>{{'MeterComponent.httpElectricityMeter_username' | translate}}</label>
+      <input type="text" name="httpElectricityMeter_username" [(ngModel)]="meter.httpElectricityMeter.username">
+    </div>
+    <div class="field">
+      <label>{{'MeterComponent.httpElectricityMeter_password' | translate}}</label>
+      <input type="text" name="httpElectricityMeter_password" [(ngModel)]="meter.httpElectricityMeter.password">
+    </div>
+    <div class="field">
+      <label>{{'MeterComponent.httpElectricityMeter_contentType' | translate}}</label>
+      <input type="text" name="httpElectricityMeter_contentType"
+             [(ngModel)]="meter.httpElectricityMeter.contentType">
+    </div>
+  </div>
+  <div class="field">
+    <label>{{'MeterComponent.httpElectricityMeter_powerValueExtractionRegex' | translate}}</label>
+    <input type="text" name="httpElectricityMeter_powerValueExtractionRegex"
+           [(ngModel)]="meter.httpElectricityMeter.powerValueExtractionRegex">
+  </div>
+  <div class="ui fields">
+    <div class="field">
+      <label>{{'MeterComponent.httpElectricityMeter_factorToWatt' | translate}}</label>
+      <input type="text" name="httpElectricityMeter_factorToWatt"
+             [(ngModel)]="meter.httpElectricityMeter.factorToWatt"
+             placeholder="{{meterDefaults.httpElectricityMeter_factorToWatt}}"
+             pattern="{{VALIDATOR_PATTERN_FLOAT}}">
+      <div *ngIf="errors.httpElectricityMeter_factorToWatt" class="ui negative message">
+        {{errors.httpElectricityMeter_factorToWatt}}</div>
+    </div>
+    <div class="field">
+      <label>{{'MeterComponent.httpElectricityMeter_pollInterval' | translate}}</label>
+      <input type="text" name="httpElectricityMeter_pollInterval"
+             [(ngModel)]="meter.httpElectricityMeter.pollInterval"
+             placeholder="{{meterDefaults.httpElectricityMeter_pollInterval}}"
+             pattern="{{VALIDATOR_PATTERN_INTEGER}}">
+      <div *ngIf="errors.httpElectricityMeter_pollInterval" class="ui negative message">
+        {{errors.httpElectricityMeter_pollInterval}}</div>
+    </div>
+    <div class="field">
+      <label>{{'MeterComponent.httpElectricityMeter_measurementInterval' | translate}}</label>
+      <input type="text" name="httpElectricityMeter_measurementInterval"
+             [(ngModel)]="meter.httpElectricityMeter.measurementInterval"
+             placeholder="{{meterDefaults.httpElectricityMeter_measurementInterval}}"
+             pattern="{{VALIDATOR_PATTERN_INTEGER}}">
+      <div *ngIf="errors.httpElectricityMeter_measurementInterval" class="ui negative message">
+        {{errors.httpElectricityMeter_measurementInterval}}</div>
+    </div>
+  </div>
+</form>

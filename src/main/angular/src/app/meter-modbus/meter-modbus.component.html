@@ -1,0 +1,42 @@
+<form class="ui form" [formGroup]="form" (ngSubmit)="submitForm()">
+  <div class="ui fields">
+    <div class="field">
+      <label>{{'MeterModbusComponent.idref' | translate}}</label>
+      <select class="ui fluid dropdown" formControlName="idref">
+        <option *ngFor="let modbusSetting of modbusSettings" [ngValue]="modbusSetting.modbusTcpId"
+                [selected]="modbusSetting.modbusTcpId==meter.modbusElectricityMeter.idref">
+          {{modbusSetting.modbusTcpId}}</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>{{'MeterModbusComponent.slaveAddress' | translate}}</label>
+      <input type="text" formControlName="slaveAddress">
+      <div *ngIf="errors.slaveAddress" class="ui negative message">{{errors.slaveAddress}}</div>
+    </div>
+    <div class="field">
+      <label>{{'MeterModbusComponent.pollInterval' | translate}}</label>
+      <input type="text" formControlName="pollInterval"
+             placeholder="{{meterDefaults.modbusElectricityMeter_pollInterval}}">
+      <div *ngIf="errors.pollInterval" class="ui negative message">{{errors.pollInterval}}</div>
+    </div>
+    <div class="field">
+      <label>{{'MeterModbusComponent.measurementInterval' | translate}}</label>
+      <input type="text" formControlName="measurementInterval"
+             placeholder="{{meterDefaults.httpElectricityMeter_measurementInterval}}">
+      <div *ngIf="errors.measurementInterval" class="ui negative message">{{errors.measurementInterval}}</div>
+    </div>
+  </div>
+  <h4 class="ui dividing header">{{'MeterModbusComponent.power' | translate}}</h4>
+  <div class="ui fields">
+    <app-modbus-register
+      [register]="powerConfiguration"
+      [valueNames]="powerValueNames"
+      [readRegisterTypes]="readRegisterTypes"
+      [writeRegisterTypes]="writeRegisterTypes"
+      [formHandler]="formHandler"
+    ></app-modbus-register>
+  </div>
+  <h4 class="ui dividing header">{{'MeterModbusComponent.energy' | translate}}</h4>
+  <div class="ui fields">
+  </div>
+</form>

@@ -1,0 +1,30 @@
+<form class="ui form" [formGroup]="form" (ngSubmit)="submitForm()">
+  <div class="field">
+    <label>{{'MeterS0Component.gpio' | translate}}</label>
+    <input type="text" formControlName="gpio">
+    <div *ngIf="errors.gpio" class="ui negative message">{{errors.gpio}}</div>
+  </div>
+  <div class="field">
+    <label>{{'MeterS0Component.pinPullResistance' | translate}}</label>
+    <select class="ui fluid dropdown" formControlName="pinPullResistance">
+      <option value=""></option>
+      <option value="PULL_DOWN">{{'MeterS0Component.pinPullResistance.PULL_DOWN' | translate}}</option>
+      <option value="PULL_UP">{{'MeterS0Component.pinPullResistance.PULL_UP' | translate}}</option>
+    </select>
+  </div>
+  <div class="field">
+    <label>{{'MeterS0Component.impulsesPerKwh' | translate}}</label>
+    <input type="text" formControlName="impulsesPerKwh">
+    <div *ngIf="errors.impulsesPerKwh" class="ui negative message">{{errors.impulsesPerKwh}}</div>
+  </div>
+  <div class="field">
+    <label>{{'MeterS0Component.measurementInterval' | translate}}</label>
+    <input type="text" formControlName="measurementInterval"
+           placeholder="{{meterDefaults.s0ElectricityMeter_measurementInterval}}">
+    <div *ngIf="errors.gpio" class="ui negative message">{{errors.measurementInterval}}</div>
+  </div>
+  <div>{{'dialog.mandatoryfields'|translate}}</div>
+  <div class="ui hidden divider"></div>
+  <button type="submit" class="ui button" [disabled]="form.pristine||form.invalid">
+    {{'button.save' | translate}}</button>
+</form>
