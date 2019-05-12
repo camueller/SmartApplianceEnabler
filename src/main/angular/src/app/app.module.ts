@@ -65,6 +65,11 @@ import { ControlHttpComponent } from './control-http/control-http.component';
 import {FormMarkerService} from './shared/form-marker-service';
 import {ElectricVehicleResolver} from './control-evcharger/electric-vehicle-resolver.service';
 import { ControlAlwaysonComponent } from './control-alwayson/control-alwayson.component';
+import { MeterModbusComponent } from './meter-modbus/meter-modbus.component';
+import { MeterHttpComponent } from './meter-http/meter-http.component';
+import { MeterS0Component } from './meter-s0/meter-s0.component';
+import { MeterS0NetworkedComponent } from './meter-s0-networked/meter-s0-networked.component';
+import { ModbusRegisterComponent } from './modbus-register/modbus-register.component';
 
 @NgModule({
   declarations: [
@@ -86,6 +91,11 @@ import { ControlAlwaysonComponent } from './control-alwayson/control-alwayson.co
     StatusEvchargerViewComponent,
     StatusViewComponent,
     ControlAlwaysonComponent,
+    MeterModbusComponent,
+    MeterHttpComponent,
+    MeterS0Component,
+    MeterS0NetworkedComponent,
+    ModbusRegisterComponent,
   ],
   imports: [
     BrowserModule,

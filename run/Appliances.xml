@@ -25,5 +25,16 @@
                 <HttpReadValue name="Energy" path="$.dws" factorToValue="0.0000027778"/>
             </HttpRead>
         </HttpElectricityMeter>
+        <!--ModbusElectricityMeter idref="modbus" slaveAddress="1" pollInterval="10" measurementInterval="60">
+            <ModbusRegisterRead address="0x000C" type="InputFloat">
+                <ModbusRegisterReadValue name="Power"/>
+            </ModbusRegisterRead>
+            <ModbusRegisterRead address="0x0156" type="InputFloat">
+                <ModbusRegisterReadValue name="Energy"/>
+            </ModbusRegisterRead>
+        </ModbusElectricityMeter-->
     </Appliance>
+    <Connectivity>
+        <ModbusTCP id="modbus" host="127.0.0.1"/>
+    </Connectivity>
 </Appliances>
