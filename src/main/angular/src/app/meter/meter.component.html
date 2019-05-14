@@ -15,11 +15,11 @@
   ~ with this program; if not, write to the Free Software Foundation, Inc.,
   ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
   -->
-<form class="ui form" #meterForm="ngForm" (ngSubmit)="submitForm()">
+<form class="ui form" [formGroup]="form" (ngSubmit)="submitForm()">
   <div class="fields">
     <div class="field">
       <label>{{'MeterComponent.type' | translate}}</label>
-      <select class="ui fluid dropdown" name="meterType" [(ngModel)]="meter.type" (ngModelChange)="typeChanged($event)">
+      <select class="ui fluid dropdown" name="meterType" formControlName="meterType" (ngModelChange)="typeChanged($event)">
         <option [ngValue]="TYPE_S0_ELECTRICITY_METER">{{TYPE_S0_ELECTRICITY_METER | translate}}</option>
         <option [ngValue]="TYPE_MODBUS_ELECTRICITY_METER">{{TYPE_MODBUS_ELECTRICITY_METER | translate}}</option>
         <option [ngValue]="TYPE_HTTP_ELECTRICITY_METER">{{TYPE_HTTP_ELECTRICITY_METER | translate}}</option>
@@ -30,8 +30,9 @@
   <app-meter-s0 *ngIf="meter.type===TYPE_S0_ELECTRICITY_METER"
   ></app-meter-s0>
   <app-meter-modbus *ngIf="meter.type===TYPE_MODBUS_ELECTRICITY_METER"
-                    [meter]="meter"
+                    [modbusElectricityMeter]="meter.modbusElectricityMeter"
                     [meterDefaults]="meterDefaults"
+                    [settingsDefaults]="settingsDefaults"
                     [modbusSettings]="settings.modbusSettings"
                     [applianceId]="applianceId"
   ></app-meter-modbus>
@@ -40,6 +41,10 @@
   <app-meter-s0-networked *ngIf="meter.type===TYPE_S0_ELECTRICITY_METER_NETWORKED"
   ></app-meter-s0-networked>
 
+  <div>{{'dialog.mandatoryfields'|translate}}</div>
+  <div class="ui hidden divider"></div>
+  <!--button type="submit" class="ui button" [disabled]="form.pristine||form.invalid">{{'button.save' | translate}}</button-->
+  <button type="submit" class="ui button">{{'button.save' | translate}}</button>
 </form>
 <!--
 <pre>{{meter | json}}</pre>

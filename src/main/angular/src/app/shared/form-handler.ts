@@ -47,9 +47,9 @@ export class FormHandler {
 
   public markLabelsRequired() {
     this.formControlNamesRequired.forEach(formControlName => {
-      $(`input[formControlName=${formControlName}]`).parent().children('label').addClass('required');
-      $(`select[formControlName=${formControlName}]`).parent().children('label').addClass('required');
-      $(`sui-select[formControlName=${formControlName}]`).parent().children('label').addClass('required');
+      $(`input[ng-reflect-name=${formControlName}]`).parent().children('label').addClass('required');
+      $(`select[ng-reflect-name=${formControlName}]`).parent().children('label').addClass('required');
+      $(`sui-select[ng-reflect-name=${formControlName}]`).parent().children('label').addClass('required');
     });
   }
 }

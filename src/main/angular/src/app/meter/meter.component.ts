@@ -24,7 +24,7 @@ import {HttpElectricityMeter} from './http-electricity-meter';
 import {MeterFactory} from './meter-factory';
 import {TranslateService} from '@ngx-translate/core';
 import {MeterErrorMessages} from './meter-error-messages';
-import {NgForm} from '@angular/forms';
+import {FormControl, FormGroup, NgForm} from '@angular/forms';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {ErrorMessages} from '../shared/error-messages';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
@@ -36,6 +36,7 @@ import {Observable} from 'rxjs';
 import {Logger} from '../log/logger';
 import {SettingsDefaults} from '../settings/settings-defaults';
 import {Settings} from '../settings/settings';
+import {NestedFormService} from '../shared/nested-form-service';
 
 @Component({
   selector: 'app-appliance-meter',
@@ -43,7 +44,7 @@ import {Settings} from '../settings/settings';
   styles: []
 })
 export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
-  @ViewChild('meterForm') meterForm: NgForm;
+  form: FormGroup;
   applianceId: string;
   meterDefaults: MeterDefaults;
   meterFactory: MeterFactory;
@@ -65,6 +66,7 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
   constructor(private logger: Logger,
               private meterService: MeterService,
               private route: ActivatedRoute,
+              private nestedFormService: NestedFormService,
               private dialogService: DialogService,
               private translate: TranslateService) {
     this.meterFactory = new MeterFactory(logger);
@@ -73,6 +75,7 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
   }
 
   ngOnInit() {
+    this.form = this.buildFormGroup();
     this.errorMessages =  new MeterErrorMessages(this.translate);
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.route.paramMap.subscribe(() => this.applianceId = this.route.snapshot.paramMap.get('id'));
@@ -84,14 +87,20 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
       this.meterDefaults = data.meterDefaults;
       this.settings = data.settings;
       this.settingsDefaults = data.settingsDefaults;
-      this.meterForm.form.markAsPristine();
+      this.form.markAsPristine();
     });
-    this.meterForm.statusChanges.subscribe(() =>
-      this.errors = this.errorMessageHandler.applyErrorMessages4TemplateDrivenForm(this.meterForm, this.errorMessages));
+    // this.form.statusChanges.subscribe(() =>
+    //   this.errors = this.errorMessageHandler.applyErrorMessages4TemplateDrivenForm(this.form, this.errorMessages));
+  }
+
+  buildFormGroup(): FormGroup {
+    const fg = new FormGroup({});
+    fg.addControl('meterType', new FormControl());
+    return fg;
   }
 
   canDeactivate(): Observable<boolean> | boolean {
-    if (this.meterForm.form.pristine) {
+    if (this.form.pristine) {
       return true;
     }
     return this.dialogService.confirm(this.discardChangesMessage);
@@ -110,7 +119,11 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
   }
 
   submitForm() {
-    this.meterService.updateMeter(this.meter, this.applianceId).subscribe();
-    this.meterForm.form.markAsPristine();
+    this.nestedFormService.completed.subscribe(() => {
+      this.nestedFormService.completed.unsubscribe();
+      this.meterService.updateMeter(this.meter, this.applianceId).subscribe();
+      this.form.markAsPristine();
+    });
+    this.nestedFormService.submit();
   }
 }
