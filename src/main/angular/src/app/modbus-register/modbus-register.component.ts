@@ -1,80 +1,119 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {ControlContainer, FormControl, FormGroup, FormGroupDirective} from '@angular/forms';
-import {EvModbusWriteRegisterName} from '../control-evcharger/ev-modbus-write-register-name';
+import {AfterViewChecked, Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {ControlContainer, FormControl, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {FormHandler} from '../shared/form-handler';
 import {Logger} from '../log/logger';
-import {StartingCurrentSwitch} from '../control-startingcurrent/starting-current-switch';
 import {ModbusRegisterConfguration} from '../shared/modbus-register-confguration';
+import {TranslateService} from '@ngx-translate/core';
+import {NestedFormService} from '../shared/nested-form-service';
+import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 
 @Component({
   selector: 'app-modbus-register',
   templateUrl: './modbus-register.component.html',
-  styles: [],
+  styleUrls: ['../global.css'],
   viewProviders: [
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
 })
-export class ModbusRegisterComponent implements OnInit {
+export class ModbusRegisterComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   @Input()
   register: ModbusRegisterConfguration;
   @Input()
   valueNames: string[];
   @Input()
+  valueNameTextKeys: string[];
+  @Input()
   readRegisterTypes: string[];
   @Input()
   writeRegisterTypes: string[];
   @Input()
+  hideValueField: boolean;
+  @Input()
+  translationPrefix: string;
+  @Input()
+  translationKeys: string[];
   translatedStrings: string[];
   errors: { [key: string]: string } = {};
   // @Input()
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
   @Input()
+  formControlNamePrefix = '';
   formHandler: FormHandler;
-  modbusConfiguration: FormGroup;
+  form: FormGroup;
 
   constructor(private logger: Logger,
-              private parent: FormGroupDirective
+              private parent: FormGroupDirective,
+              private nestedFormService: NestedFormService,
+              private translate: TranslateService
   ) {
+    this.formHandler = new FormHandler();
     this.errorMessageHandler = new ErrorMessageHandler(logger);
   }
 
   ngOnInit() {
-    this.modbusConfiguration = this.parent.form;
+    this.form = this.parent.form;
     this.expandParentForm(this.register);
+    this.nestedFormService.submitted.subscribe(() => this.updateModbusRegisterConfiguration());
+    this.translate.get(this.translationKeys).subscribe(translatedStrings => {
+      this.translatedStrings = translatedStrings;
+    });
+  }
+
+  ngAfterViewChecked() {
+    this.formHandler.markLabelsRequired();
+  }
+
+  ngOnDestroy() {
+    this.nestedFormService.submitted.unsubscribe();
   }
 
   expandParentForm(register: ModbusRegisterConfguration) {
-    this.modbusConfiguration.addControl('name',
-      new FormControl(register ? register.name : undefined));
-    this.modbusConfiguration.addControl('registerAddress',
-      new FormControl(register ? register.address : undefined));
-    this.modbusConfiguration.addControl('write',
-      new FormControl(register ? register.write : undefined));
-    this.modbusConfiguration.addControl('registerType',
-      new FormControl(register ? register.type : undefined));
-    this.modbusConfiguration.addControl('bytes',
-      new FormControl(register ? register.bytes : undefined));
-    this.modbusConfiguration.addControl('byteOrder',
-      new FormControl(register ? register.byteOrder : undefined));
-    this.modbusConfiguration.addControl('extractionRegex',
-      new FormControl(register ? register.extractionRegex : undefined));
-    this.modbusConfiguration.addControl('value',
-      new FormControl(register ? register.value : undefined));
-    this.modbusConfiguration.addControl('factorToValue',
-      new FormControl(register ? register.factorToValue : undefined));
+    this.formHandler.addFormControl(this.form, this.getFormControlName('name'),
+      register ? register.name : undefined);
+    this.formHandler.addFormControl(this.form, this.getFormControlName('registerAddress'),
+      register ? register.address : undefined,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER_OR_HEX)]);
+    this.formHandler.addFormControl(this.form, this.getFormControlName('write'),
+      register ? register.write : undefined);
+    this.formHandler.addFormControl(this.form, this.getFormControlName('registerType'),
+      register ? register.type : undefined);
+    this.formHandler.addFormControl(this.form, this.getFormControlName('bytes'),
+      register ? register.bytes : undefined);
+    this.formHandler.addFormControl(this.form, this.getFormControlName('byteOrder'),
+      register ? register.byteOrder : undefined);
+    this.formHandler.addFormControl(this.form, this.getFormControlName('extractionRegex'),
+      register ? register.extractionRegex : undefined);
+    this.formHandler.addFormControl(this.form, this.getFormControlName('value'),
+      register ? register.value : undefined);
+    this.formHandler.addFormControl(this.form, this.getFormControlName('factorToValue'),
+      register ? register.factorToValue : undefined);
   }
 
-  // FIXME valueNames direkt verwenden
-  getModbusRegisterNames(): string[] {
-    return this.valueNames;
+  updateModbusRegisterConfiguration() {
+    this.register.name = this.form.controls[this.getFormControlName('name')].value;
+    this.register.address = this.form.controls[this.getFormControlName('registerAddress')].value;
+    this.register.write = this.form.controls[this.getFormControlName('write')].value;
+    this.register.type = this.form.controls[this.getFormControlName('registerType')].value;
+    this.register.bytes = this.form.controls[this.getFormControlName('bytes')].value;
+    this.register.byteOrder = this.form.controls[this.getFormControlName('byteOrder')].value;
+    this.register.extractionRegex = this.form.controls[this.getFormControlName('extractionRegex')].value;
+    this.register.value = this.form.controls[this.getFormControlName('value')].value;
+    this.register.factorToValue = this.form.controls[this.getFormControlName('factorToValue')].value;
+    console.log('ModbusRegister=', this.register);
+    this.nestedFormService.complete();
   }
 
-  getTranslatedModbusRegisterName(name: string) {
-    return 'name'; // this.translatedStrings[this.toTextKeyModbusRegisterName(name)];
+  getFormControlName(formControlName: string): string {
+    return `${this.formControlNamePrefix}${formControlName.charAt(0).toUpperCase()}${formControlName.slice(1)}`;
+  }
+
+  getTranslatedValueName(valueName: string) {
+    const textKey = `${this.translationPrefix}${valueName.toLowerCase()}`;
+    return this.translatedStrings[textKey];
   }
 
   getIndexedErrorMessage(key: string, index: number): string {
@@ -82,33 +121,29 @@ export class ModbusRegisterComponent implements OnInit {
     return this.errors[indexedKey];
   }
 
-  getModbusRegisterTypes(write: boolean): string[] {
+  get selectedValueName() {
+    return this.valueNames.length === 1 && this.valueNames[0];
+  }
+
+  getRegisterTypes(write: boolean): string[] {
     if (write) {
       return this.writeRegisterTypes;
     }
     return this.readRegisterTypes;
   }
 
-  getRegisterType(modbusConfiguration: FormGroup): string {
-    const typeControl = modbusConfiguration.controls['registerType'];
+  get registerType(): string {
+    const typeControl = this.form.controls[this.getFormControlName('registerType')];
     return (typeControl ? typeControl.value : '');
   }
 
-  isModbusWriteRegister(modbusConfiguration: FormGroup): boolean {
-    const writeControl = modbusConfiguration.controls['write'];
+  get isWriteRegister(): boolean {
+    const writeControl = this.form.controls[this.getFormControlName('write')];
     return (writeControl ? writeControl.value : false);
-  }
-
-  isChargingCurrentRegister(modbusConfiguration: FormGroup): boolean {
-    const control = modbusConfiguration.controls['name'];
-    return control.value === EvModbusWriteRegisterName.ChargingCurrent;
   }
 
   getByteOrders(): string[] {
     return ['BigEndian', 'LittleEndian'];
   }
 
-  toTextKeyModbusRegisterName(name: string) {
-    return 'ControlEvchargerComponent.' + name;
-  }
 }

@@ -70,6 +70,7 @@ import { MeterHttpComponent } from './meter-http/meter-http.component';
 import { MeterS0Component } from './meter-s0/meter-s0.component';
 import { MeterS0NetworkedComponent } from './meter-s0-networked/meter-s0-networked.component';
 import { ModbusRegisterComponent } from './modbus-register/modbus-register.component';
+import {NestedFormService} from './shared/nested-form-service';
 
 @NgModule({
   declarations: [
@@ -77,6 +78,10 @@ import { ModbusRegisterComponent } from './modbus-register/modbus-register.compo
     ApplianceComponent,
     PageNotFoundComponent,
     MeterComponent,
+    MeterModbusComponent,
+    MeterHttpComponent,
+    MeterS0Component,
+    MeterS0NetworkedComponent,
     ControlComponent,
     ControlEvchargerComponent,
     ControlHttpComponent,
@@ -91,10 +96,6 @@ import { ModbusRegisterComponent } from './modbus-register/modbus-register.compo
     StatusEvchargerViewComponent,
     StatusViewComponent,
     ControlAlwaysonComponent,
-    MeterModbusComponent,
-    MeterHttpComponent,
-    MeterS0Component,
-    MeterS0NetworkedComponent,
     ModbusRegisterComponent,
   ],
   imports: [
@@ -133,6 +134,7 @@ import { ModbusRegisterComponent } from './modbus-register/modbus-register.compo
     MeterService,
     MeterResolver,
     MeterDefaultsResolver,
+    NestedFormService,
     ScheduleService,
     ScheduleResolver,
     SettingsService,

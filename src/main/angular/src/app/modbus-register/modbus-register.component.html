@@ -1,54 +1,57 @@
-<div class="field">
-  <label>{{'ModbusRegisterComponent.name' | translate}}</label>
-  <select class="ui fluid dropdown" formControlName="name">
-    <option *ngFor="let modbusRegisterName of getModbusRegisterNames()"
-            [ngValue]="modbusRegisterName"
-    >{{getTranslatedModbusRegisterName(modbusRegisterName)}}</option>
-  </select>
-</div>
-<div class="field">
-  <label>{{'ModbusRegisterComponent.address' | translate}}</label>
-  <input type="text" formControlName="registerAddress">
-  <div *ngIf="errors['registerAddress']" class="ui negative message">{{errors['registerAddress']}}</div>
-</div>
-<div class="field">
-  <label>{{'ModbusRegisterComponent.write' | translate}}</label>
-  <input class="ui checkbox" type="checkbox" formControlName="write">
-</div>
-<div class="field">
-  <label>{{'ModbusRegisterComponent.registerType' | translate}}</label>
-  <select class="ui fluid dropdown" formControlName="registerType">
-    <option *ngFor="let modbusRegisterType of getModbusRegisterTypes(isModbusWriteRegister(modbusConfiguration))"
-            [ngValue]="modbusRegisterType"
-            [selected]="modbusRegisterType==getRegisterType(modbusConfiguration)"
-    >{{modbusRegisterType}}</option>
-  </select>
-</div>
-<div class="field" *ngIf="!isModbusWriteRegister(modbusConfiguration)">
-  <label>{{'ModbusRegisterComponent.bytes' | translate}}</label>
-  <input type="text" formControlName="bytes">
-</div>
-<div class="field" *ngIf="!isModbusWriteRegister(modbusConfiguration)">
-  <label>{{'ModbusRegisterComponent.byteOrder' | translate}}</label>
-  <select class="ui fluid dropdown" formControlName="byteOrder">
-    <option *ngFor="let byteOrder of getByteOrders()"
-            [ngValue]="byteOrder"
-            [selected]="byteOrder==getRegisterType(modbusConfiguration)"
-    >{{byteOrder}}</option>
-  </select>
-</div>
-<div class="field" *ngIf="!isModbusWriteRegister(modbusConfiguration)">
-  <label>{{'ModbusRegisterComponent.extractionRegex' | translate}}</label>
-  <input type="text" formControlName="extractionRegex">
-</div>
+<div class="ui fields">
+  <div class="field">
+    <label>{{'ModbusRegisterComponent.name' | translate}}</label>
+    <select class="ui fluid dropdown" formControlName="{{this.getFormControlName('name')}}">
+      <option *ngFor="let valueName of valueNames"
+              [ngValue]="valueName"
+              [selected]="valueName==selectedValueName"
+      >{{getTranslatedValueName(valueName)}}</option>
+    </select>
+  </div>
+  <div class="field">
+    <label>{{'ModbusRegisterComponent.address' | translate}}</label>
+    <input type="text" formControlName="{{this.getFormControlName('registerAddress')}}">
+    <div *ngIf="errors['registerAddress']" class="ui negative message">{{errors['registerAddress']}}</div>
+  </div>
+  <div class="field">
+    <label>{{'ModbusRegisterComponent.write' | translate}}</label>
+    <input class="ui checkbox" type="checkbox" formControlName="{{this.getFormControlName('write')}}">
+  </div>
+  <div class="field">
+    <label>{{'ModbusRegisterComponent.registerType' | translate}}</label>
+    <select class="ui fluid dropdown" formControlName="{{this.getFormControlName('registerType')}}">
+      <option *ngFor="let modbusRegisterType of getRegisterTypes(isWriteRegister)"
+              [ngValue]="modbusRegisterType"
+              [selected]="modbusRegisterType==registerType"
+      >{{modbusRegisterType}}</option>
+    </select>
+  </div>
+  <div class="field" *ngIf="!isWriteRegister">
+    <label>{{'ModbusRegisterComponent.bytes' | translate}}</label>
+    <input type="text" formControlName="{{this.getFormControlName('bytes')}}">
+  </div>
+  <div class="field" *ngIf="!isWriteRegister">
+    <label>{{'ModbusRegisterComponent.byteOrder' | translate}}</label>
+    <select class="ui fluid dropdown" formControlName="{{this.getFormControlName('byteOrder')}}">
+      <option *ngFor="let byteOrder of getByteOrders()"
+              [ngValue]="byteOrder"
+              [selected]="byteOrder==registerType"
+      >{{byteOrder}}</option>
+    </select>
+  </div>
+  <div class="field" *ngIf="!isWriteRegister">
+    <label>{{'ModbusRegisterComponent.extractionRegex' | translate}}</label>
+    <input type="text" formControlName="{{this.getFormControlName('extractionRegex')}}">
+  </div>
 
-<div class="field"
-     *ngIf="isModbusWriteRegister(modbusConfiguration) && ! isChargingCurrentRegister(modbusConfiguration)">
-  <label>{{'ModbusRegisterComponent.value' | translate}}</label>
-  <input type="text" formControlName="value">
-</div>
-<div class="field"
-     *ngIf="isModbusWriteRegister(modbusConfiguration) && isChargingCurrentRegister(modbusConfiguration)">
-  <label>{{'ModbusRegisterComponent.factorToValue' | translate}}</label>
-  <input type="text" formControlName="factorToValue">
+  <div class="field"
+       *ngIf="isWriteRegister && ! hideValueField">
+    <label>{{'ModbusRegisterComponent.value' | translate}}</label>
+    <input type="text" formControlName="{{this.getFormControlName('value')}}">
+  </div>
+  <div class="field"
+       *ngIf="isWriteRegister">
+    <label>{{'ModbusRegisterComponent.factorToValue' | translate}}</label>
+    <input type="text" formControlName="{{this.getFormControlName('factorToValue')}}">
+  </div>
 </div>
