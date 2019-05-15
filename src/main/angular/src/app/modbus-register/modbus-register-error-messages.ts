@@ -25,8 +25,10 @@ export class ModbusRegisterErrorMessages extends ErrorMessages {
   constructor(protected translate: TranslateService) {
     super('ModbusRegisterComponent.error.',
       [
-        new ErrorMessage('powerRegisterAddress', ValidatorType.required),
-        new ErrorMessage('powerRegisterAddress', ValidatorType.pattern),
+        new ErrorMessage('powerRegisterAddress', ValidatorType.required, 'registerAddress'),
+        new ErrorMessage('powerRegisterAddress', ValidatorType.pattern, 'registerAddress'),
+        new ErrorMessage('energyRegisterAddress', ValidatorType.required, 'registerAddress'),
+        new ErrorMessage('energyRegisterAddress', ValidatorType.pattern, 'registerAddress'),
       ], translate
     );
   }
