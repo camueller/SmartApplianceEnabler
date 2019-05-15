@@ -1,5 +1,5 @@
 import {AfterViewChecked, Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {ControlContainer, FormControl, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {FormHandler} from '../shared/form-handler';
@@ -32,6 +32,8 @@ export class ModbusRegisterComponent implements OnInit, AfterViewChecked, OnDest
   @Input()
   hideValueField: boolean;
   @Input()
+  isReadOnly: boolean;
+  @Input()
   translationPrefix: string;
   @Input()
   translationKeys: string[];
@@ -57,6 +59,7 @@ export class ModbusRegisterComponent implements OnInit, AfterViewChecked, OnDest
   ngOnInit() {
     this.form = this.parent.form;
     this.expandParentForm(this.register);
+    console.log('Modbus-Register subsribe');
     this.nestedFormService.submitted.subscribe(() => this.updateModbusRegisterConfiguration());
     this.translate.get(this.translationKeys).subscribe(translatedStrings => {
       this.translatedStrings = translatedStrings;
@@ -68,10 +71,13 @@ export class ModbusRegisterComponent implements OnInit, AfterViewChecked, OnDest
   }
 
   ngOnDestroy() {
-    this.nestedFormService.submitted.unsubscribe();
+    // FIXME: erzeugt Fehler bei Wechsel des Zählertypes
+    // this.nestedFormService.submitted.unsubscribe();
   }
 
   expandParentForm(register: ModbusRegisterConfguration) {
+    this.formHandler.addFormControl(this.form, this.getFormControlName('enabled'),
+      register !== undefined ? true : false);
     this.formHandler.addFormControl(this.form, this.getFormControlName('name'),
       register ? register.name : undefined);
     this.formHandler.addFormControl(this.form, this.getFormControlName('registerAddress'),
@@ -103,7 +109,6 @@ export class ModbusRegisterComponent implements OnInit, AfterViewChecked, OnDest
     this.register.extractionRegex = this.form.controls[this.getFormControlName('extractionRegex')].value;
     this.register.value = this.form.controls[this.getFormControlName('value')].value;
     this.register.factorToValue = this.form.controls[this.getFormControlName('factorToValue')].value;
-    console.log('ModbusRegister=', this.register);
     this.nestedFormService.complete();
   }
 
@@ -119,6 +124,10 @@ export class ModbusRegisterComponent implements OnInit, AfterViewChecked, OnDest
   getIndexedErrorMessage(key: string, index: number): string {
     const indexedKey = key + '.' + index.toString();
     return this.errors[indexedKey];
+  }
+
+  get disabled() {
+    return ! this.form.controls[this.getFormControlName('enabled')].value;
   }
 
   get selectedValueName() {
@@ -145,5 +154,4 @@ export class ModbusRegisterComponent implements OnInit, AfterViewChecked, OnDest
   getByteOrders(): string[] {
     return ['BigEndian', 'LittleEndian'];
   }
-
 }

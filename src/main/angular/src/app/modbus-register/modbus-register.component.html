@@ -1,5 +1,9 @@
 <div class="ui fields">
   <div class="field">
+    <label>{{'ModbusRegisterComponent.enabled' | translate}}</label>
+    <input class="ui checkbox" type="checkbox" formControlName="{{this.getFormControlName('enabled')}}">
+  </div>
+  <div class="three wide field" [class.disabled]="disabled">
     <label>{{'ModbusRegisterComponent.name' | translate}}</label>
     <select class="ui fluid dropdown" formControlName="{{this.getFormControlName('name')}}">
       <option *ngFor="let valueName of valueNames"
@@ -8,16 +12,16 @@
       >{{getTranslatedValueName(valueName)}}</option>
     </select>
   </div>
-  <div class="field">
+  <div class="field" [class.disabled]="disabled">
     <label>{{'ModbusRegisterComponent.address' | translate}}</label>
     <input type="text" formControlName="{{this.getFormControlName('registerAddress')}}">
     <div *ngIf="errors['registerAddress']" class="ui negative message">{{errors['registerAddress']}}</div>
   </div>
-  <div class="field">
+  <div class="field" [class.disabled]="disabled" *ngIf="! isReadOnly">
     <label>{{'ModbusRegisterComponent.write' | translate}}</label>
     <input class="ui checkbox" type="checkbox" formControlName="{{this.getFormControlName('write')}}">
   </div>
-  <div class="field">
+  <div class="field" [class.disabled]="disabled">
     <label>{{'ModbusRegisterComponent.registerType' | translate}}</label>
     <select class="ui fluid dropdown" formControlName="{{this.getFormControlName('registerType')}}">
       <option *ngFor="let modbusRegisterType of getRegisterTypes(isWriteRegister)"
@@ -26,11 +30,11 @@
       >{{modbusRegisterType}}</option>
     </select>
   </div>
-  <div class="field" *ngIf="!isWriteRegister">
+  <div class="field" [class.disabled]="disabled" *ngIf="!isWriteRegister">
     <label>{{'ModbusRegisterComponent.bytes' | translate}}</label>
     <input type="text" formControlName="{{this.getFormControlName('bytes')}}">
   </div>
-  <div class="field" *ngIf="!isWriteRegister">
+  <div class="field" [class.disabled]="disabled" *ngIf="!isWriteRegister">
     <label>{{'ModbusRegisterComponent.byteOrder' | translate}}</label>
     <select class="ui fluid dropdown" formControlName="{{this.getFormControlName('byteOrder')}}">
       <option *ngFor="let byteOrder of getByteOrders()"
@@ -39,18 +43,16 @@
       >{{byteOrder}}</option>
     </select>
   </div>
-  <div class="field" *ngIf="!isWriteRegister">
+  <div class="field" [class.disabled]="disabled" *ngIf="!isWriteRegister">
     <label>{{'ModbusRegisterComponent.extractionRegex' | translate}}</label>
     <input type="text" formControlName="{{this.getFormControlName('extractionRegex')}}">
   </div>
 
-  <div class="field"
-       *ngIf="isWriteRegister && ! hideValueField">
+  <div class="field" [class.disabled]="disabled" *ngIf="isWriteRegister && ! hideValueField" >
     <label>{{'ModbusRegisterComponent.value' | translate}}</label>
     <input type="text" formControlName="{{this.getFormControlName('value')}}">
   </div>
-  <div class="field"
-       *ngIf="isWriteRegister">
+  <div class="field" [class.disabled]="disabled" *ngIf="isWriteRegister">
     <label>{{'ModbusRegisterComponent.factorToValue' | translate}}</label>
     <input type="text" formControlName="{{this.getFormControlName('factorToValue')}}">
   </div>

@@ -83,6 +83,8 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
       settings: Settings, settingsDefaults: SettingsDefaults}) => {
       if (data.meter) {
         this.meter = data.meter;
+        console.log('meter=', this.meter);
+        this.form.setControl('meterType', new FormControl(this.meter && this.meter.type));
       }
       this.meterDefaults = data.meterDefaults;
       this.settings = data.settings;
@@ -95,8 +97,12 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
 
   buildFormGroup(): FormGroup {
     const fg = new FormGroup({});
-    fg.addControl('meterType', new FormControl());
+    fg.addControl('meterType', new FormControl(this.meter && this.meter.type));
     return fg;
+  }
+
+  get meterType() {
+    return this.form.controls['meterType'].value;
   }
 
   canDeactivate(): Observable<boolean> | boolean {

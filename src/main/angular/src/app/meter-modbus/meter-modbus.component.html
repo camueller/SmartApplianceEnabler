@@ -25,24 +25,22 @@
     <div *ngIf="errors.measurementInterval" class="ui negative message">{{errors.measurementInterval}}</div>
   </div>
 </div>
-<h4 class="ui dividing header">{{'MeterModbusComponent.power' | translate}}</h4>
   <app-modbus-register
     [register]="powerConfiguration"
     [valueNames]="powerValueNames"
     [valueNameTextKeys]="powerValueNameTextKeys"
     [readRegisterTypes]="readRegisterTypes"
-    [writeRegisterTypes]="writeRegisterTypes"
+    [isReadOnly]="true"
     [formControlNamePrefix]="'power'"
     [translationPrefix]="'MeterModbusComponent.'"
     [translationKeys]="translationKeys"
   ></app-modbus-register>
-<h4 class="ui dividing header">{{'MeterModbusComponent.energy' | translate}}</h4>
 <app-modbus-register
   [register]="energyConfiguration"
   [valueNames]="energyValueNames"
   [valueNameTextKeys]="energyValueNameTextKeys"
   [readRegisterTypes]="readRegisterTypes"
-  [writeRegisterTypes]="writeRegisterTypes"
+  [isReadOnly]="true"
   [formControlNamePrefix]="'energy'"
   [translationPrefix]="'MeterModbusComponent.'"
   [translationKeys]="translationKeys"
