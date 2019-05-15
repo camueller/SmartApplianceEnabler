@@ -15,7 +15,8 @@
   <div class="field" [class.disabled]="disabled">
     <label>{{'ModbusRegisterComponent.address' | translate}}</label>
     <input type="text" formControlName="{{this.getFormControlName('registerAddress')}}">
-    <div *ngIf="errors['registerAddress']" class="ui negative message">{{errors['registerAddress']}}</div>
+    <div *ngIf="errors[this.getFormControlName('registerAddress')]"
+         class="ui negative message">{{errors[this.getFormControlName('registerAddress')]}}</div>
   </div>
   <div class="field" [class.disabled]="disabled" *ngIf="! isReadOnly">
     <label>{{'ModbusRegisterComponent.write' | translate}}</label>
