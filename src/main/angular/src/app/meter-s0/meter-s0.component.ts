@@ -5,7 +5,7 @@ import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {Meter} from '../meter/meter';
 import {MeterDefaults} from '../meter/meter-defaults';
-import {S0ElectricityMeter} from '../meter/s0-electricity-meter';
+import {S0ElectricityMeter} from './s0-electricity-meter';
 import {Logger} from '../log/logger';
 import {MeterService} from '../meter/meter-service';
 import {FormMarkerService} from '../shared/form-marker-service';

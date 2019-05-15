@@ -18,9 +18,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, CanDeactivate} from '@angular/router';
-import {S0ElectricityMeter} from './s0-electricity-meter';
-import {ModbusElectricityMeter} from './modbus-electricity-meter';
-import {HttpElectricityMeter} from './http-electricity-meter';
+import {S0ElectricityMeter} from '../meter-s0/s0-electricity-meter';
+import {ModbusElectricityMeter} from '../meter-modbus/modbus-electricity-meter';
+import {HttpElectricityMeter} from '../meter-http/http-electricity-meter';
 import {MeterFactory} from './meter-factory';
 import {TranslateService} from '@ngx-translate/core';
 import {MeterErrorMessages} from './meter-error-messages';

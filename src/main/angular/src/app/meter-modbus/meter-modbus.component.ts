@@ -11,7 +11,7 @@ import {AppliancesReloadService} from '../appliance/appliances-reload-service';
 import {TranslateService} from '@ngx-translate/core';
 import {MeterS0NetworkedErrorMessages} from '../meter-s0-networked/meter-s0-networked-error-messages';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
-import {ModbusElectricityMeter} from '../meter/modbus-electricity-meter';
+import {ModbusElectricityMeter} from './modbus-electricity-meter';
 import {ModbusSettings} from '../settings/modbus-settings';
 import {SettingsDefaults} from '../settings/settings-defaults';
 import {NestedFormService} from '../shared/nested-form-service';
