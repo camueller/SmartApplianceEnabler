@@ -8,6 +8,7 @@ import {ModbusRegisterConfguration} from '../shared/modbus-register-confguration
 import {TranslateService} from '@ngx-translate/core';
 import {NestedFormService} from '../shared/nested-form-service';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
+import {ModbusRegisterErrorMessages} from './modbus-register-error-messages';
 
 @Component({
   selector: 'app-modbus-register',
@@ -39,7 +40,6 @@ export class ModbusRegisterComponent implements OnInit, AfterViewChecked, OnDest
   translationKeys: string[];
   translatedStrings: string[];
   errors: { [key: string]: string } = {};
-  // @Input()
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
   @Input()
@@ -52,17 +52,22 @@ export class ModbusRegisterComponent implements OnInit, AfterViewChecked, OnDest
               private nestedFormService: NestedFormService,
               private translate: TranslateService
   ) {
-    this.formHandler = new FormHandler();
     this.errorMessageHandler = new ErrorMessageHandler(logger);
+    this.formHandler = new FormHandler();
   }
 
   ngOnInit() {
+    this.errorMessages = new ModbusRegisterErrorMessages(this.translate);
     this.form = this.parent.form;
     this.expandParentForm(this.register);
-    console.log('Modbus-Register subsribe');
     this.nestedFormService.submitted.subscribe(() => this.updateModbusRegisterConfiguration());
     this.translate.get(this.translationKeys).subscribe(translatedStrings => {
       this.translatedStrings = translatedStrings;
+    });
+    this.form.statusChanges.subscribe(() => {
+      // this.childFormChanged.emit(this.form.valid);
+      console.log('statusChanges errors=', this.errors);
+      this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
   }
 

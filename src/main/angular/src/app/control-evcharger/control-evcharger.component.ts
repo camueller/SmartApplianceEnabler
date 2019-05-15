@@ -218,6 +218,7 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
     }
 
     return {
+      enabled: true,
       name,
       address: modbusConfigurationFormControl.controls.registerAddress.value,
       write: modbusConfigurationFormControl.controls.write.value,
@@ -231,7 +232,7 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
   }
 
  buildElectricVehicle(evFormControl: FormGroup): ElectricVehicle {
-    let newSocScript: SocScript
+    let newSocScript: SocScript;
     if (evFormControl.controls.scriptEnabled.value) {
       newSocScript = new SocScript({
         script: evFormControl.controls.scriptFilename.value,
