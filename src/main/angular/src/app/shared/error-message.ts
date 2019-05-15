@@ -25,8 +25,15 @@ export class ErrorMessage {
 
   public text: string;
 
+  /**
+   * Creates a new error message.
+   * @param forControl
+   * @param forValidator
+   * @param key By default forControl is used to look up the message if no key is specified.
+   */
   constructor(
     public forControl: string,
     public forValidator: ValidatorType,
+    public key?: string,
   ) { }
 }

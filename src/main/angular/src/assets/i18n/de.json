@@ -210,8 +210,8 @@
   "ModbusRegisterComponent.extractionRegex": "Regex für Extraktion",
   "ModbusRegisterComponent.value": "Wert",
   "ModbusRegisterComponent.factorToValue": "Umrechnungsfaktor",
-  "ModbusRegisterComponent.error.powerRegisterAddress_required": "Die Register-Adresse muss angegeben werden",
-  "ModbusRegisterComponent.error.powerRegisterAddress_pattern": "Die Register-Adresse muss als Zahl (z.B. 13) oder Hex-Zahl (z.B. 0x0A) angegeben werden",
+  "ModbusRegisterComponent.error.registerAddress_required": "Die Register-Adresse muss angegeben werden",
+  "ModbusRegisterComponent.error.registerAddress_pattern": "Die Register-Adresse muss als Zahl (z.B. 13) oder Hex-Zahl (z.B. 0x0A) angegeben werden",
 
 
   "ScheduleComponent.schedule": "Zeitplan",
