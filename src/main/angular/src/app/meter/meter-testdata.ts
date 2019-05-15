@@ -1,6 +1,6 @@
 import {MeterDefaults} from './meter-defaults';
 import {Meter} from './meter';
-import {S0ElectricityMeter} from './s0-electricity-meter';
+import {S0ElectricityMeter} from '../meter-s0/s0-electricity-meter';
 
 export class MeterTestdata {
 

@@ -11,7 +11,7 @@ import {FormMarkerService} from '../shared/form-marker-service';
 import {AppliancesReloadService} from '../appliance/appliances-reload-service';
 import {TranslateService} from '@ngx-translate/core';
 import {MeterS0ErrorMessages} from '../meter-s0/meter-s0-error-messages';
-import {S0ElectricityMeter} from '../meter/s0-electricity-meter';
+import {S0ElectricityMeter} from '../meter-s0/s0-electricity-meter';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 
 @Component({
