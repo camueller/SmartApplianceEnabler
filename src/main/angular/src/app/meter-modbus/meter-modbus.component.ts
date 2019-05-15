@@ -66,7 +66,6 @@ export class MeterModbusComponent implements OnInit, AfterViewChecked, OnDestroy
       this.childFormChanged.emit(this.form.valid);
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
-    console.log('Meter-Modbus subsribe');
     this.nestedFormService.submitted.subscribe(() => this.updateModbusElectricityMeter());
     this.formMarkerService.dirty.subscribe(() => this.form.markAsDirty());
   }
