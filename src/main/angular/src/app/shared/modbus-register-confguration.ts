@@ -1,4 +1,5 @@
 export class ModbusRegisterConfguration {
+  enabled: boolean;
   name: string;
   value: any;
   address: string;

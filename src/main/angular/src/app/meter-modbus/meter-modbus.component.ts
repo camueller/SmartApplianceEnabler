@@ -15,6 +15,7 @@ import {ModbusElectricityMeter} from '../meter/modbus-electricity-meter';
 import {ModbusSettings} from '../settings/modbus-settings';
 import {SettingsDefaults} from '../settings/settings-defaults';
 import {NestedFormService} from '../shared/nested-form-service';
+import {MeterModbusErrorMessages} from './meter-modbus-error-messages';
 
 @Component({
   selector: 'app-meter-modbus',
@@ -59,15 +60,16 @@ export class MeterModbusComponent implements OnInit, AfterViewChecked, OnDestroy
   }
 
   ngOnInit() {
+    this.errorMessages = new MeterModbusErrorMessages(this.translate);
     this.form = this.parent.form;
     this.expandParentForm(this.modbusElectricityMeter);
     this.form.statusChanges.subscribe(() => {
       this.childFormChanged.emit(this.form.valid);
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
+    console.log('Meter-Modbus subsribe');
     this.nestedFormService.submitted.subscribe(() => this.updateModbusElectricityMeter());
     this.formMarkerService.dirty.subscribe(() => this.form.markAsDirty());
-    this.errorMessages = new MeterS0NetworkedErrorMessages(this.translate);
   }
 
   ngAfterViewChecked() {
@@ -75,7 +77,8 @@ export class MeterModbusComponent implements OnInit, AfterViewChecked, OnDestroy
   }
 
   ngOnDestroy() {
-    this.nestedFormService.submitted.unsubscribe();
+     // FIXME: erzeugt Fehler bei Wechsel des Zählertypes
+    // this.nestedFormService.submitted.unsubscribe();
   }
 
   get powerValueNames() {
@@ -105,11 +108,6 @@ export class MeterModbusComponent implements OnInit, AfterViewChecked, OnDestroy
   get readRegisterTypes() {
     return this.settingsDefaults.modbusReadRegisterTypes;
   }
-
-  get writeRegisterTypes() {
-    return this.settingsDefaults.modbusWriteRegisterTypes;
-  }
-
 
   expandParentForm(modbusElectricityMeter: ModbusElectricityMeter) {
     this.formHandler.addFormControl(this.form, 'idref',

@@ -199,6 +199,7 @@
   "ControlEvchargerComponent.ev.script.extractionRegex": "Regex für Extraktion",
   "ControlEvchargerComponent.ev.button.new": "Neues Fahrzeug",
 
+  "ModbusRegisterComponent.enabled": "Aktiv",
   "ModbusRegisterComponent.name": "Zustand / Aktion",
   "ModbusRegisterComponent.idref": "Modbus",
   "ModbusRegisterComponent.address": "Register-Adresse",
