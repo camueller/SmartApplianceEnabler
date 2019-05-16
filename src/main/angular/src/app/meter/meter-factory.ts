@@ -117,7 +117,6 @@ export class MeterFactory {
     s0ElectricityMeter.pinPullResistance = rawMeter.pinPullResistance;
     s0ElectricityMeter.impulsesPerKwh = rawMeter.impulsesPerKwh;
     s0ElectricityMeter.measurementInterval = rawMeter.measurementInterval;
-    s0ElectricityMeter.powerOnAlways = rawMeter.powerOnAlways;
     return s0ElectricityMeter;
   }
 
