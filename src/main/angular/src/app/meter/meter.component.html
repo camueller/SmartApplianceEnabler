@@ -31,8 +31,10 @@
       </select>
     </div>
   </div>
-  <!--app-meter-s0 *ngIf="meterType===TYPE_S0_ELECTRICITY_METER"
-  ></app-meter-s0-->
+  <app-meter-s0 *ngIf="meterType===TYPE_S0_ELECTRICITY_METER"
+                [s0ElectricityMeter]="meter.s0ElectricityMeter"
+                [meterDefaults]="meterDefaults"
+  ></app-meter-s0>
   <app-meter-modbus *ngIf="meterType===TYPE_MODBUS_ELECTRICITY_METER"
                     [modbusElectricityMeter]="meter.modbusElectricityMeter"
                     [meterDefaults]="meterDefaults"
