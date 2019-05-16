@@ -37,7 +37,7 @@ public class S0ElectricityMeterNetworked implements Meter, PulseReceiver.PulseLi
     @XmlAttribute
     private Integer impulsesPerKwh;
     @XmlAttribute
-    private Integer measurementInterval = 60; // seconds
+    private Integer measurementInterval; // seconds
     private transient PulsePowerMeter pulsePowerMeter = new PulsePowerMeter();
     private transient PulseEnergyMeter pulseEnergyMeter = new PulseEnergyMeter();
     private transient PulseReceiver pulseReceiver;
@@ -103,7 +103,7 @@ public class S0ElectricityMeterNetworked implements Meter, PulseReceiver.PulseLi
 
     @Override
     public Integer getMeasurementInterval() {
-        return measurementInterval;
+        return measurementInterval != null ? measurementInterval : S0ElectricityMeterDefaults.getMeasurementInterval();
     }
 
     public void setControl(Control control) {
@@ -112,9 +112,9 @@ public class S0ElectricityMeterNetworked implements Meter, PulseReceiver.PulseLi
 
     public void start(Timer timer) {
         logger.debug("{}: Appliance start: impulsesPerKwh={} measurementInterval={}", applianceId, impulsesPerKwh,
-                measurementInterval);
+                getMeasurementInterval());
         pulsePowerMeter.setImpulsesPerKwh(impulsesPerKwh);
-        pulsePowerMeter.setMeasurementInterval(measurementInterval);
+        pulsePowerMeter.setMeasurementInterval(getMeasurementInterval());
         if(pulseReceiver != null) {
             pulseReceiver.addListener(applianceId, this);
         }
