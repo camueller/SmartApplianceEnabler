@@ -1,0 +1,22 @@
+<div class="ui fields">
+  <div class="field">
+    <label>{{'MeterComponent.httpElectricityMeter_url' | translate}}</label>
+    <input type="text" name="httpElectricityMeter_url" [(ngModel)]="meter.httpElectricityMeter.url"
+           required pattern="{{VALIDATOR_PATTERN_URL}}">
+    <div *ngIf="errors.httpElectricityMeter_url" class="ui negative message">
+      {{errors.httpElectricityMeter_url}}</div>
+  </div>
+  <div class="field">
+    <label>{{'MeterComponent.httpElectricityMeter_contentType' | translate}}</label>
+    <input type="text" name="httpElectricityMeter_contentType"
+           [(ngModel)]="meter.httpElectricityMeter.contentType">
+  </div>
+  <div class="field">
+    <label>{{'MeterComponent.httpElectricityMeter_username' | translate}}</label>
+    <input type="text" name="httpElectricityMeter_username" [(ngModel)]="meter.httpElectricityMeter.username">
+  </div>
+  <div class="field">
+    <label>{{'MeterComponent.httpElectricityMeter_password' | translate}}</label>
+    <input type="text" name="httpElectricityMeter_password" [(ngModel)]="meter.httpElectricityMeter.password">
+  </div>
+</div>
