@@ -55,7 +55,7 @@
 
   "MeterComponent.type": "Typ",
 
-  "MeterS0Component.gpio": "Raspberry GPIO-Anschluss",
+  "MeterS0Component.gpio": "GPIO-Anschluss",
   "MeterS0Component.pinPullResistance": "Interner Widerstand",
   "MeterS0Component.pinPullResistance.PULL_DOWN": "Pull-Down",
   "MeterS0Component.pinPullResistance.PULL_UP": "Pull-Up",
@@ -118,7 +118,7 @@
   "ControlStartingcurrentComponent.finishedCurrentDetectionDuration": "Unterschreitungsdauer beim Ausschalten [s]",
   "ControlStartingcurrentComponent.minRunningTime": "Mindestlaufzeit [s]",
 
-  "ControlSwitchComponent.gpio": "Raspberry GPIO-Anschluss",
+  "ControlSwitchComponent.gpio": "GPIO-Anschluss",
   "ControlSwitchComponent.reverseStates": "GPIO-Status invers",
   "ControlSwitchComponent.error.gpio_required": "Der GPIO-Anschluss muss angegeben werden",
   "ControlSwitchComponent.error.gpio_pattern": "Der GPIO-Anschluss muss eine Zahl sein",

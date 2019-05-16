@@ -1,4 +1,4 @@
-<form class="ui form" [formGroup]="form" (ngSubmit)="submitForm()">
+<div class="ui fields">
   <div class="field">
     <label>{{'MeterS0NetworkedComponent.impulsesPerKwh' | translate}}</label>
     <input type="text" formControlName="impulsesPerKwh">
@@ -9,4 +9,4 @@
     <input type="text" formControlName="measurementInterval"
            placeholder="{{meterDefaults.s0ElectricityMeter_measurementInterval}}">
   </div>
-</form>
+</div>

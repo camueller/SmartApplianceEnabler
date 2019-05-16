@@ -20,7 +20,8 @@
             </ElectricVehicle>
             <ElectricVehicle id="2" name="Tesla Model S" batteryCapacity="80000"/>
         </ElectricVehicleCharger>
-        <S0ElectricityMeter gpio="3" pinPullResistance="PULL_DOWN" impulsesPerKwh="1000"/>
+        <!--S0ElectricityMeter gpio="3" pinPullResistance="PULL_DOWN" impulsesPerKwh="1000"/-->
+        <S0ElectricityMeterNetworked idref="pulsereceiver" impulsesPerKwh="1000"/>
         <!--HttpElectricityMeter contentProtocol="json">
             <HttpRead url="http://192.168.178.48/status">
                 <HttpReadValue name="Energy" path="$.dws" factorToValue="0.0000027778"/>
@@ -36,6 +37,7 @@
         </ModbusElectricityMeter-->
     </Appliance>
     <Connectivity>
+        <PulseReceiver id="pulsereceiver" port="9999"/>
         <ModbusTCP id="modbus" host="127.0.0.1"/>
     </Connectivity>
 </Appliances>
