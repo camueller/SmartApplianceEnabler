@@ -65,7 +65,6 @@ export class MeterTestdata {
         pinPullResistance: 'PULL_DOWN',
         impulsesPerKwh: 1000,
         measurementInterval: 60,
-        powerOnAlways: undefined
       })
     });
   }

@@ -68,9 +68,6 @@ export class MeterS0Component implements OnInit, AfterViewChecked {
     formHandler.addFormControl(form, 'impulsesPerKwh',
       s0ElectricityMeter ? s0ElectricityMeter.impulsesPerKwh : undefined,
       [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    // FIXME brauchen wir das noch?
-    formHandler.addFormControl(form, 'powerOnAlways',
-      s0ElectricityMeter && s0ElectricityMeter.powerOnAlways );
     formHandler.addFormControl(form, 'measurementInterval',
       s0ElectricityMeter ? s0ElectricityMeter.measurementInterval : undefined,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
@@ -80,7 +77,6 @@ export class MeterS0Component implements OnInit, AfterViewChecked {
     s0ElectricityMeter.gpio = form.controls.gpio.value;
     s0ElectricityMeter.pinPullResistance = form.controls.pinPullResistance.value;
     s0ElectricityMeter.impulsesPerKwh = form.controls.impulsesPerKwh.value;
-    s0ElectricityMeter.powerOnAlways = form.controls.powerOnAlways.value;
     s0ElectricityMeter.measurementInterval = form.controls.measurementInterval.value;
     this.nestedFormService.complete();
   }

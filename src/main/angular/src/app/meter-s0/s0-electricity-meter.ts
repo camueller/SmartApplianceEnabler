@@ -30,7 +30,6 @@ export class S0ElectricityMeter {
   pinPullResistance: string;
   impulsesPerKwh: number;
   measurementInterval: number;
-  powerOnAlways: boolean;
 
   public constructor(init?: Partial<S0ElectricityMeter>) {
     Object.assign(this, init);
