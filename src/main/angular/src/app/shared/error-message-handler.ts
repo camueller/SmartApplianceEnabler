@@ -51,6 +51,7 @@ export class ErrorMessageHandler {
         }
       } else {
         for (const message of errorMessages.getErrorMessages()) {
+          console.log(`forControl=${message.forControl} formControlKey=${formControlKey}`)
           if (message.forControl === formControlKey) {
             this.validateControl(
               control,
@@ -67,6 +68,7 @@ export class ErrorMessageHandler {
 
   private validateControl(control: AbstractControl, validatorType: string,
                           errorKey: string, errorMessage: string, errors: { [key: string]: string }) {
+    //console.log(`errorKey=${errorKey}`)
     if (control && control.dirty && control.invalid
       && control.errors[validatorType] && !errors[errorKey]) {
       errors[errorKey] = errorMessage;

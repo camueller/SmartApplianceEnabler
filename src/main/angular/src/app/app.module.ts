@@ -71,23 +71,29 @@ import { MeterS0Component } from './meter-s0/meter-s0.component';
 import { MeterS0NetworkedComponent } from './meter-s0-networked/meter-s0-networked.component';
 import { ModbusRegisterComponent } from './modbus-register/modbus-register.component';
 import {NestedFormService} from './shared/nested-form-service';
+import { HttpReadComponent } from './http-read/http-read.component';
+import { HttpReadValueComponent } from './http-read-value/http-read-value.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ApplianceComponent,
-    PageNotFoundComponent,
-    MeterComponent,
-    MeterModbusComponent,
-    MeterHttpComponent,
-    MeterS0Component,
-    MeterS0NetworkedComponent,
+    ControlAlwaysonComponent,
     ControlComponent,
     ControlEvchargerComponent,
     ControlHttpComponent,
     ControlModbusComponent,
     ControlSwitchComponent,
     ControlStartingcurrentComponent,
+    HttpReadComponent,
+    HttpReadValueComponent,
+    MeterComponent,
+    MeterModbusComponent,
+    MeterHttpComponent,
+    MeterS0Component,
+    MeterS0NetworkedComponent,
+    ModbusRegisterComponent,
+    PageNotFoundComponent,
     SchedulesComponent,
     SettingsComponent,
     StatusComponent,
@@ -95,8 +101,6 @@ import {NestedFormService} from './shared/nested-form-service';
     StatusEvchargerEditComponent,
     StatusEvchargerViewComponent,
     StatusViewComponent,
-    ControlAlwaysonComponent,
-    ModbusRegisterComponent,
   ],
   imports: [
     BrowserModule,

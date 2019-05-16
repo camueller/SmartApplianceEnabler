@@ -33,8 +33,6 @@ export class MeterModbusComponent implements OnInit, AfterViewChecked, OnDestroy
   modbusSettings: ModbusSettings[];
   @Input()
   applianceId: string;
-  @Output()
-  childFormChanged = new EventEmitter<boolean>();
   form: FormGroup;
   formHandler: FormHandler;
   translatedStrings: string[];
@@ -59,7 +57,6 @@ export class MeterModbusComponent implements OnInit, AfterViewChecked, OnDestroy
     this.form = this.parent.form;
     this.expandParentForm(this.form, this.modbusElectricityMeter, this.formHandler);
     this.form.statusChanges.subscribe(() => {
-      this.childFormChanged.emit(this.form.valid);
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
     this.nestedFormService.submitted.subscribe(

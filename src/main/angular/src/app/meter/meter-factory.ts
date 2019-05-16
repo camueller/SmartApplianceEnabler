@@ -25,6 +25,9 @@ import {Logger} from '../log/logger';
 import {ModbusRegisterRead} from '../shared/modbus-register-read';
 import {ModbusRegisterReadValue} from '../shared/modbus-register-read-value';
 import {ModbusRegisterConfguration} from '../shared/modbus-register-confguration';
+import {HttpReadValue} from '../http-read-value/http-read-value';
+import {MeterValueName} from './meter-value-name';
+import {HttpRead} from '../http-read/http-read';
 
 export class MeterFactory {
 
@@ -50,7 +53,7 @@ export class MeterFactory {
   }
 
   fromJSON(rawMeter: any): Meter {
-    this.logger.debug('Meter (JSON): ' + JSON.stringify(rawMeter));
+    console.log('Meter (JSON): ', rawMeter);
     const meter = new Meter();
     meter.type = rawMeter['@class'];
     if (meter.type === S0ElectricityMeter.TYPE) {
@@ -62,7 +65,7 @@ export class MeterFactory {
     } else if (meter.type === HttpElectricityMeter.TYPE) {
       meter.httpElectricityMeter = this.createHttpElectricityMeter(rawMeter);
     }
-    this.logger.debug('Meter (TYPE): ' + JSON.stringify(meter));
+    console.log('Meter (TYPE): ', meter);
     return meter;
   }
 
@@ -70,13 +73,13 @@ export class MeterFactory {
     this.logger.debug('Meter (TYPE): ' + JSON.stringify(meter));
     let meterUsed: any;
     if (meter.type === S0ElectricityMeter.TYPE) {
-      meterUsed =  meter.s0ElectricityMeter;
+      meterUsed = meter.s0ElectricityMeter;
     } else if (meter.type === S0ElectricityMeter.TYPE_NETWORKED) {
-      meterUsed =  meter.s0ElectricityMeterNetworked;
+      meterUsed = meter.s0ElectricityMeterNetworked;
     } else if (meter.type === ModbusElectricityMeter.TYPE) {
-      meterUsed =  meter.modbusElectricityMeter;
+      meterUsed = meter.modbusElectricityMeter;
     } else if (meter.type === HttpElectricityMeter.TYPE) {
-      meterUsed =  meter.httpElectricityMeter;
+      meterUsed = meter.httpElectricityMeter;
     }
     let meterRaw: string;
     if (meterUsed != null) {
@@ -153,16 +156,20 @@ export class MeterFactory {
   }
 
   createHttpElectricityMeter(rawMeter: any): HttpElectricityMeter {
-    const httpElectricityMeter = new HttpElectricityMeter();
-    httpElectricityMeter.url = rawMeter.url;
-    httpElectricityMeter.username = rawMeter.username;
-    httpElectricityMeter.password = rawMeter.password;
-    httpElectricityMeter.contentType = rawMeter.contentType;
-    httpElectricityMeter.data = rawMeter.data;
-    httpElectricityMeter.powerValueExtractionRegex = rawMeter.powerValueExtractionRegex;
-    httpElectricityMeter.factorToWatt = rawMeter.factorToWatt;
-    httpElectricityMeter.pollInterval = rawMeter.pollInterval;
-    httpElectricityMeter.measurementInterval = rawMeter.measurementInterval;
+    const httpElectricityMeter = {...rawMeter};
+    if (!!rawMeter.httpReads) {
+      rawMeter.httpReads.forEach((rawHttpRead) => {
+        if (!!rawHttpRead.readValues && rawHttpRead.readValues.length > 0) {
+          if (rawHttpRead.readValues[0].name === MeterValueName.Power) {
+            httpElectricityMeter.powerConfiguration = {...rawHttpRead};
+          }
+          if (rawHttpRead.readValues[0].name === MeterValueName.Energy) {
+            httpElectricityMeter.energyConfiguration = {...rawHttpRead};
+          }
+        }
+      });
+    }
+    delete httpElectricityMeter.httpReads;
     return httpElectricityMeter;
   }
 }

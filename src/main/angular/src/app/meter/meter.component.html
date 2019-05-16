@@ -42,8 +42,10 @@
                     [modbusSettings]="settings.modbusSettings"
                     [applianceId]="applianceId"
   ></app-meter-modbus>
-  <!--app-meter-http *ngIf="meterType===TYPE_HTTP_ELECTRICITY_METER"
-  ></app-meter-http-->
+  <app-meter-http *ngIf="meterType===TYPE_HTTP_ELECTRICITY_METER"
+                  [httpElectricityMeter]="meter.httpElectricityMeter"
+                  [meterDefaults]="meterDefaults"
+  ></app-meter-http>
   <app-meter-s0-networked *ngIf="meterType===TYPE_S0_ELECTRICITY_METER_NETWORKED"
                           [s0ElectricityMeterNetworked]="meter.s0ElectricityMeterNetworked"
                           [meterDefaults]="meterDefaults"

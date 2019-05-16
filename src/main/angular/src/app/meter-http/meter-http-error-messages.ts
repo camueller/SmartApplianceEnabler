@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2017 Axel Müller <axel.mueller@avanux.de>
+Copyright (C) 2019 Axel Müller <axel.mueller@avanux.de>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -16,24 +16,18 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {HttpRead} from '../http-read/http-read';
+import {ErrorMessage, ValidatorType} from '../shared/error-message';
+import {ErrorMessages} from '../shared/error-messages';
+import {TranslateService} from '@ngx-translate/core';
 
-export class HttpElectricityMeter {
+export class MeterHttpErrorMessages extends ErrorMessages {
 
-  static get TYPE(): string {
-    return 'de.avanux.smartapplianceenabler.meter.HttpElectricityMeter';
-  }
-
-  '@class' = HttpElectricityMeter.TYPE;
-  measurementInterval: number;
-  pollInterval: number;
-  contentProtocol: string;
-  powerConfiguration: HttpRead;
-  energyConfiguration: HttpRead;
-
-
-  constructor() {
-    this.powerConfiguration = new HttpRead();
-    this.energyConfiguration = new HttpRead();
+  constructor(protected translate: TranslateService) {
+    super('MeterHttpComponent.error.',
+      [
+        new ErrorMessage('pollInterval', ValidatorType.pattern),
+        new ErrorMessage('measurementInterval', ValidatorType.pattern),
+      ], translate
+    );
   }
 }

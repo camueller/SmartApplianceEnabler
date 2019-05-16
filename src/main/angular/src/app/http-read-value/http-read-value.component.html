@@ -1,0 +1,26 @@
+<div class="ui fields">
+  <div class="field">
+    <label>{{'MeterComponent.name' | translate}}</label>
+    <input type="text" formControlName="name">
+  </div>
+  <div class="field">
+    <label>{{'MeterComponent.httpElectricityMeter_data' | translate}}</label>
+    <input type="text" formControlName="data">
+  </div>
+  <div class="field">
+    <label>{{'MeterComponent.httpElectricityMeter_path' | translate}}</label>
+    <input type="text" formControlName="path">
+  </div>
+  <div class="field">
+    <label>{{'MeterComponent.httpElectricityMeter_powerValueExtractionRegex' | translate}}</label>
+    <input type="text" formControlName="extractionRegex">
+  </div>
+  <div class="field">
+    <label>{{'MeterComponent.httpElectricityMeter_factorToWatt' | translate}}</label>
+    <input type="text" formControlName="factorToValue"
+           placeholder="{{meterDefaults.httpElectricityMeter_factorToWatt}}"
+           pattern="{{VALIDATOR_PATTERN_FLOAT}}">
+    <div *ngIf="errors.httpElectricityMeter_factorToWatt" class="ui negative message">
+      {{errors.httpElectricityMeter_factorToWatt}}</div>
+  </div>
+</div>
