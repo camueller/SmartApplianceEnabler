@@ -16,7 +16,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, CanDeactivate} from '@angular/router';
 import {S0ElectricityMeter} from '../meter-s0/s0-electricity-meter';
 import {ModbusElectricityMeter} from '../meter-modbus/modbus-electricity-meter';
@@ -24,7 +24,7 @@ import {HttpElectricityMeter} from '../meter-http/http-electricity-meter';
 import {MeterFactory} from './meter-factory';
 import {TranslateService} from '@ngx-translate/core';
 import {MeterErrorMessages} from './meter-error-messages';
-import {FormControl, FormGroup, NgForm} from '@angular/forms';
+import {FormControl, FormGroup} from '@angular/forms';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {ErrorMessages} from '../shared/error-messages';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
