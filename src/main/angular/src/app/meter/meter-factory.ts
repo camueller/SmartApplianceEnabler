@@ -53,7 +53,7 @@ export class MeterFactory {
   }
 
   fromJSON(rawMeter: any): Meter {
-    console.log('Meter (JSON): ', rawMeter);
+    this.logger.debug('Meter (JSON): ', rawMeter);
     const meter = new Meter();
     meter.type = rawMeter['@class'];
     if (meter.type === S0ElectricityMeter.TYPE) {
@@ -65,7 +65,7 @@ export class MeterFactory {
     } else if (meter.type === HttpElectricityMeter.TYPE) {
       meter.httpElectricityMeter = this.createHttpElectricityMeter(rawMeter);
     }
-    console.log('Meter (TYPE): ', meter);
+    this.logger.debug('Meter (TYPE): ', meter);
     return meter;
   }
 

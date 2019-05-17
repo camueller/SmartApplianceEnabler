@@ -51,7 +51,7 @@ export class ErrorMessageHandler {
         }
       } else {
         for (const message of errorMessages.getErrorMessages()) {
-          console.log(`forControl=${message.forControl} formControlKey=${formControlKey}`)
+          // console.log(`forControl=${message.forControl} formControlKey=${formControlKey}`)
           if (message.forControl === formControlKey) {
             this.validateControl(
               control,
