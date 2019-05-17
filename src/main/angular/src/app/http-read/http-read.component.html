@@ -1,22 +1,28 @@
+<h4 class="ui dividing header sae-header" *ngIf="valueName">{{valueName}}</h4>
 <div class="ui fields">
-  <div class="field">
-    <label>{{'MeterComponent.httpElectricityMeter_url' | translate}}</label>
-    <input type="text" name="httpElectricityMeter_url" [(ngModel)]="meter.httpElectricityMeter.url"
-           required pattern="{{VALIDATOR_PATTERN_URL}}">
-    <div *ngIf="errors.httpElectricityMeter_url" class="ui negative message">
-      {{errors.httpElectricityMeter_url}}</div>
+  <div class="six wide field">
+    <label>{{'HttpReadComponent.url' | translate}}</label>
+    <input type="text" formControlName="{{this.getFormControlName('url')}}">
+    <div *ngIf="errors[this.getFormControlName('url')]"
+         class="ui negative message">{{errors[this.getFormControlName('url')]}}</div>
   </div>
   <div class="field">
-    <label>{{'MeterComponent.httpElectricityMeter_contentType' | translate}}</label>
-    <input type="text" name="httpElectricityMeter_contentType"
-           [(ngModel)]="meter.httpElectricityMeter.contentType">
+    <label>{{'HttpReadComponent.contentType' | translate}}</label>
+    <input type="text" formControlName="{{this.getFormControlName('contentType')}}">
   </div>
   <div class="field">
-    <label>{{'MeterComponent.httpElectricityMeter_username' | translate}}</label>
-    <input type="text" name="httpElectricityMeter_username" [(ngModel)]="meter.httpElectricityMeter.username">
+    <label>{{'HttpReadComponent.username' | translate}}</label>
+    <input type="text" formControlName="{{this.getFormControlName('username')}}">
   </div>
   <div class="field">
-    <label>{{'MeterComponent.httpElectricityMeter_password' | translate}}</label>
-    <input type="text" name="httpElectricityMeter_password" [(ngModel)]="meter.httpElectricityMeter.password">
+    <label>{{'HttpReadComponent.password' | translate}}</label>
+    <input type="text" formControlName="{{this.getFormControlName('password')}}">
   </div>
 </div>
+<app-http-read-value *ngFor="let httpReadValue of httpRead.readValues"
+                     [httpReadValue]="httpReadValue"
+                     [formControlNamePrefix]="formControlNamePrefix"
+                     [valueNames]="valueNames"
+                     [translationPrefix]="translationPrefix"
+                     [translationKeys]="translationKeys"
+></app-http-read-value>

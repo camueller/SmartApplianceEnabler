@@ -11,4 +11,27 @@
            placeholder="{{meterDefaults.httpElectricityMeter_measurementInterval}}">
     <div *ngIf="errors.measurementInterval" class="ui negative message">{{errors.measurementInterval}}</div>
   </div>
+  <div class="field">
+    <label>{{'MeterHttpComponent.contentProtocol' | translate}}</label>
+    <select class="ui fluid dropdown" formControlName="contentProtocol">
+      <option *ngFor="let aContentProtocol of contentProtocols"
+              [ngValue]="aContentProtocol"
+              [selected]="aContentProtocol==contentProtocol"
+      >{{aContentProtocol}}</option>
+    </select>
+  </div>
 </div>
+<app-http-read
+  [httpRead]="httpElectricityMeter.powerConfiguration"
+  [formControlNamePrefix]="'power'"
+  [valueNames]="powerValueNames"
+  [translationPrefix]="'MeterHttpComponent.'"
+  [translationKeys]="powerValueNameTextKeys"
+></app-http-read>
+<app-http-read
+  [httpRead]="httpElectricityMeter.energyConfiguration"
+  [formControlNamePrefix]="'energy'"
+  [valueNames]="energyValueNames"
+  [translationPrefix]="'MeterHttpComponent.'"
+  [translationKeys]="energyValueNameTextKeys"
+></app-http-read>

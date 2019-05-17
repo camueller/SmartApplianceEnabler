@@ -11,6 +11,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {MeterHttpErrorMessages} from './meter-http-error-messages';
+import {ContentProtocol} from '../shared/content-protocol';
 
 @Component({
   selector: 'app-meter-http',
@@ -25,6 +26,7 @@ export class MeterHttpComponent implements OnInit, AfterViewChecked, OnDestroy {
   httpElectricityMeter: HttpElectricityMeter;
   @Input()
   meterDefaults: MeterDefaults;
+  contentProtocols = [ContentProtocol.JSON.toUpperCase()];
   form: FormGroup;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};
@@ -39,7 +41,6 @@ export class MeterHttpComponent implements OnInit, AfterViewChecked, OnDestroy {
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
     this.formHandler = new FormHandler();
-    // this.translationKeys = [].concat(this.powerValueNameTextKeys, this.energyValueNameTextKeys);
   }
 
   ngOnInit() {
@@ -48,7 +49,6 @@ export class MeterHttpComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.expandParentForm(this.form, this.httpElectricityMeter, this.formHandler);
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
-      console.log('errors=', this.errors);
     });
     this.nestedFormService.submitted.subscribe(
       () => this.updateHttpElectricityMeter(this.httpElectricityMeter, this.form));
@@ -64,6 +64,27 @@ export class MeterHttpComponent implements OnInit, AfterViewChecked, OnDestroy {
     // this.nestedFormService.submitted.unsubscribe();
   }
 
+  get powerValueNames() {
+    return ['Power'];
+  }
+
+  get powerValueNameTextKeys() {
+    return ['MeterHttpComponent.power'];
+  }
+
+  get energyValueNames() {
+    return ['Energy'];
+  }
+
+  get energyValueNameTextKeys() {
+    return ['MeterHttpComponent.energy'];
+  }
+
+  get contentProtocol(): string {
+    const contentProtocolControl = this.form.controls['contentProtocol'];
+    return (contentProtocolControl ? contentProtocolControl.value.toUpperCase() : '');
+  }
+
   expandParentForm(form: FormGroup, httpElectricityMeter: HttpElectricityMeter, formHandler: FormHandler) {
     formHandler.addFormControl(form, 'pollInterval',
       httpElectricityMeter ? httpElectricityMeter.pollInterval : undefined,
@@ -71,13 +92,14 @@ export class MeterHttpComponent implements OnInit, AfterViewChecked, OnDestroy {
     formHandler.addFormControl(form, 'measurementInterval',
       httpElectricityMeter ? httpElectricityMeter.measurementInterval : undefined,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
+    formHandler.addFormControl(form, 'contentProtocol',
+      httpElectricityMeter ? httpElectricityMeter.contentProtocol : undefined);
   }
 
   updateHttpElectricityMeter(httpElectricityMeter: HttpElectricityMeter, form: FormGroup) {
-    // modbusElectricityMeter.idref = form.controls.idref.value;
-    // modbusElectricityMeter.slaveAddress = form.controls.slaveAddress.value;
-    // modbusElectricityMeter.pollInterval = form.controls.pollInterval.value;
-    // modbusElectricityMeter.measurementInterval = form.controls.measurementInterval.value;
+    httpElectricityMeter.pollInterval = form.controls.pollInterval.value;
+    httpElectricityMeter.measurementInterval = form.controls.measurementInterval.value;
+    httpElectricityMeter.contentProtocol = form.controls.contentProtocol.value;
     this.nestedFormService.complete();
   }
 }

@@ -65,7 +65,6 @@ export class ModbusRegisterComponent implements OnInit, AfterViewChecked, OnDest
       this.translatedStrings = translatedStrings;
     });
     this.form.statusChanges.subscribe(() => {
-      // this.childFormChanged.emit(this.form.valid);
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
   }

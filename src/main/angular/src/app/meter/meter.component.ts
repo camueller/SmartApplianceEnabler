@@ -59,9 +59,6 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
   TYPE_S0_ELECTRICITY_METER_NETWORKED = S0ElectricityMeter.TYPE_NETWORKED;
   TYPE_MODBUS_ELECTRICITY_METER = ModbusElectricityMeter.TYPE;
   TYPE_HTTP_ELECTRICITY_METER = HttpElectricityMeter.TYPE;
-  VALIDATOR_PATTERN_INTEGER = InputValidatorPatterns.INTEGER;
-  VALIDATOR_PATTERN_FLOAT = InputValidatorPatterns.FLOAT;
-  VALIDATOR_PATTERN_URL = InputValidatorPatterns.URL;
 
   constructor(private logger: Logger,
               private meterService: MeterService,
@@ -83,7 +80,6 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
       settings: Settings, settingsDefaults: SettingsDefaults}) => {
       if (data.meter) {
         this.meter = data.meter;
-        console.log('meter=', this.meter);
         this.form.setControl('meterType', new FormControl(this.meter && this.meter.type));
       }
       this.meterDefaults = data.meterDefaults;
@@ -127,7 +123,8 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
   submitForm() {
     this.nestedFormService.completed.subscribe(() => {
       this.nestedFormService.completed.unsubscribe();
-      this.meterService.updateMeter(this.meter, this.applianceId).subscribe();
+      console.log('meter=', this.meter);
+      // this.meterService.updateMeter(this.meter, this.applianceId).subscribe();
       this.form.markAsPristine();
     });
     this.nestedFormService.submit();

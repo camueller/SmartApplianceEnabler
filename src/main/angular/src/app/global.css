@@ -19,8 +19,12 @@ label.required::after {
   padding: 0;
 }
 
-sae-fields {
+.sae-fields {
   flex-wrap: wrap;
+}
+
+.sae-header {
+  padding-top: 1.5rem;
 }
 
 .icon-field {
