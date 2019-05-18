@@ -661,6 +661,9 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         if(this.control instanceof ElectricVehicleCharger) {
             ElectricVehicleCharger charger = (ElectricVehicleCharger) this.control;
             ElectricVehicle ev = charger.getVehicle(socRequest.getEvId());
+            if(ev == null) {
+                return buildEnergyRequest(0, 0);
+            }
             Integer socStart = charger.getConnectedVehicleSoc() != null ? charger.getConnectedVehicleSoc() : 0;
             int energyToBeCharged = 0;
             if(socRequest.getSoc() > socStart) {
