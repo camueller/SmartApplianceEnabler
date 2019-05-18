@@ -655,12 +655,13 @@ public class SaeController {
                     applianceStatus.setEvIdCharging(evCharger.getConnectedVehicleId());
 
                     int whAlreadyCharged = 0;
+                    Integer chargePower = evCharger.getChargePower();
                     if (meter != null) {
                         whAlreadyCharged = Float.valueOf(meter.getEnergy() * 1000.0f).intValue();
-                        applianceStatus.setCurrentChargePower(meter.getAveragePower());
+                        chargePower = meter.getAveragePower();
                     }
-                    else {
-                        applianceStatus.setCurrentChargePower(evCharger.getChargePower());
+                    if(control.isOn()) {
+                        applianceStatus.setCurrentChargePower(chargePower);
                     }
                     applianceStatus.setChargedEnergyAmount(whAlreadyCharged);
                     applianceStatus.setPlannedEnergyAmount(evCharger.getChargeAmount());
