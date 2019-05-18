@@ -23,6 +23,10 @@ export class StatusEvchargerViewComponent implements OnInit {
   ngOnInit() {
   }
 
+  get stateKey() {
+    return `StatusComponent.state.${this.status.state}`;
+  }
+
   getEvNameCharging(evId: number): string {
     if (this.electricVehicles && evId) {
       return this.electricVehicles.filter(ev => ev.id === evId)[0].name;
@@ -60,7 +64,8 @@ export class StatusEvchargerViewComponent implements OnInit {
 
   toKWh(wh: number): number {
     if (wh) {
-      return wh / 1000;
+      // limit to 1 decimal digit
+      return Math.round(wh / 1000 * 10) / 10;
     }
     return 0;
   }
