@@ -58,6 +58,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     private List<ElectricVehicle> vehicles;
     private transient Integer connectedVehicleId;
     private transient Integer connectedVehicleSoc;
+    private transient Long connectedVehicleSocTimestamp;
     private transient Appliance appliance;
     private transient String applianceId;
     private transient Vector<State> stateHistory = new Vector<>();
@@ -135,6 +136,10 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
 
     public Integer getConnectedVehicleSoc() {
         return connectedVehicleSoc;
+    }
+
+    public Long getConnectedVehicleSocTimestamp() {
+        return connectedVehicleSocTimestamp;
     }
 
     public ElectricVehicle getConnectedVehicle() {
@@ -512,6 +517,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
             Float soc = electricVehicle.getStateOfCharge();
             if(soc != null) {
                 this.connectedVehicleSoc = Float.valueOf(soc).intValue();
+                this.connectedVehicleSocTimestamp = System.currentTimeMillis();
                 logger.debug("{}: Start charging SoC={}%", applianceId, connectedVehicleSoc);
             }
         }
