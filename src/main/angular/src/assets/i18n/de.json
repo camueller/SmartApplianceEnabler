@@ -272,7 +272,7 @@
   "StatusComponent.energyChargePower": "Aktuelle Ladeleistung: ",
   "StatusComponent.energyLatestEnd": "Ende spätestens: ",
   "StatusComponent.ev": "Fahrzeug wählen",
-  "StatusComponent.stateOfCharge": "Ladezustand: ",
+  "StatusComponent.stateOfCharge": "Ladezustand",
   "StatusComponent.stateOfChargeCurrent": "Ist ",
   "StatusComponent.stateOfChargeRequested": "Soll ",
   "StatusComponent.stateOfChargeUnit": "%",

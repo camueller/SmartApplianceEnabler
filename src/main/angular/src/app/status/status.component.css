@@ -131,6 +131,10 @@
   line-height: 1.4em;
 }
 
+.appliance-status-value-indented {
+  padding-left: 1rem;
+}
+
 .appliance-number-input {
   padding-left: 4px !important;
   padding-right: 4px !important;

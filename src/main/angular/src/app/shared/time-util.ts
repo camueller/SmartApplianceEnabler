@@ -71,12 +71,22 @@ export class TimeUtil {
     return m.toISOString();
   }
 
+  static timestringFromTimestamp(timestamp: number): string {
+    const m = moment(timestamp);
+    return m.format('H:mm');
+  }
+
   static toWeekdayFromDelta(seconds: number): number {
     return TimeUtil.toWeekdayFromDelta_(moment(), seconds);
   }
 
   static toWeekdayFromDelta_(m: Moment, seconds: number): number {
     m.add(seconds, 'second');
+    return m.weekday();
+  }
+
+  static toWeekdayFromTimestamp(timestamp: number): number {
+    const m = moment(timestamp);
     return m.weekday();
   }
 

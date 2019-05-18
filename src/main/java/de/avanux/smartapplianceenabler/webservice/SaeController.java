@@ -653,6 +653,7 @@ public class SaeController {
                 if(control instanceof ElectricVehicleCharger) {
                     ElectricVehicleCharger evCharger = (ElectricVehicleCharger) control;
                     applianceStatus.setEvIdCharging(evCharger.getConnectedVehicleId());
+                    ElectricVehicle vehicle = evCharger.getConnectedVehicle();
 
                     int whAlreadyCharged = 0;
                     Integer chargePower = evCharger.getChargePower();
@@ -660,6 +661,17 @@ public class SaeController {
                         whAlreadyCharged = Float.valueOf(meter.getEnergy() * 1000.0f).intValue();
                         chargePower = meter.getAveragePower();
                     }
+
+                    // TODO until we retrieve SOC periodically we calculate the current SOC here
+                    applianceStatus.setSocInitial(evCharger.getConnectedVehicleSoc());
+                    applianceStatus.setSocInitialTimestamp(evCharger.getConnectedVehicleSocTimestamp());
+                    if(vehicle != null) {
+                        Integer currentSoc = Float.valueOf(evCharger.getConnectedVehicleSoc()
+                                + whAlreadyCharged/Float.valueOf(vehicle.getBatteryCapacity())
+                                * (100 - vehicle.getChargeLoss())).intValue();
+                        applianceStatus.setSoc(currentSoc > 100 ? 100 : currentSoc);
+                    }
+
                     if(control.isOn()) {
                         applianceStatus.setCurrentChargePower(chargePower);
                     }
