@@ -38,7 +38,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Electricity meter reading current power and energy from the response of a HTTP request.
