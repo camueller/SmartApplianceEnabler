@@ -18,6 +18,8 @@ export class Status {
   interruptedSince: number;
   optionalEnergy: boolean;
   evIdCharging: number;
+  state: string;
+  stateLastChangedTimestamp: number
   soc: number;
   socInitial: number;
   socInitialTimestamp: number;

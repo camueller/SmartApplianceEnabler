@@ -653,6 +653,9 @@ public class SaeController {
                 if(control instanceof ElectricVehicleCharger) {
                     ElectricVehicleCharger evCharger = (ElectricVehicleCharger) control;
                     applianceStatus.setEvIdCharging(evCharger.getConnectedVehicleId());
+                    applianceStatus.setState(evCharger.getState().name());
+                    applianceStatus.setStateLastChangedTimestamp(evCharger.getStateLastChangedTimestamp());
+
                     ElectricVehicle vehicle = evCharger.getConnectedVehicle();
 
                     int whAlreadyCharged = 0;

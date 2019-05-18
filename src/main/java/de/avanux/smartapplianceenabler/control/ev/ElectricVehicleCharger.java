@@ -62,20 +62,13 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
     private transient Appliance appliance;
     private transient String applianceId;
     private transient Vector<State> stateHistory = new Vector<>();
+    private transient Long stateLastChangedTimestamp;
     private transient boolean useOptionalEnergy = true;
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
     private transient Long startChargingTimestamp;
     private transient Integer chargeAmount;
     private transient Integer chargePower;
     private transient GuardedTimerTask updateStateTimerTask;
-
-    protected enum State {
-        VEHICLE_NOT_CONNECTED,
-        VEHICLE_CONNECTED,
-        CHARGING,
-        CHARGING_COMPLETED,
-        ERROR
-    }
 
     public void setAppliance(Appliance appliance) {
         this.appliance = appliance;
@@ -203,7 +196,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
                     getPollInterval() * 1000) {
                 @Override
                 public void runTask() {
-                    updateState();
+                    updateState(System.currentTimeMillis());
                 }
             };
             timer.schedule(this.updateStateTimerTask, 0, this.updateStateTimerTask.getPeriod());
@@ -221,7 +214,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
      * Returns true, if the state update was performed. This does not necessarily mean that the state has changed!
      * @return
      */
-    public boolean updateState() {
+    public boolean updateState(Long now) {
         if(isWithinStartChargingStateDetectionDelay()) {
             logger.debug("{}: Skipping state detection for {}s after switched on.", applianceId,
                     getStartChargingStateDetectionDelay());
@@ -232,6 +225,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
         if(currentState != previousState) {
             logger.debug("{}: Vehicle state changed: previousState={} newState={}", applianceId, previousState, currentState);
             stateHistory.add(currentState);
+            stateLastChangedTimestamp = now;
             onStateChanged(previousState, currentState);
         }
         else {
@@ -260,6 +254,10 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
             }
         }
         return times == 1;
+    }
+
+    public Long getStateLastChangedTimestamp() {
+        return stateLastChangedTimestamp;
     }
 
     private void initStateHistory() {

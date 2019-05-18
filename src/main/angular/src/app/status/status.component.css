@@ -115,6 +115,7 @@
 .appliance-name {
   font-weight: bold;
   font-size: 1.5em;
+  padding-bottom: 0.5rem;
 }
 
 .appliance-status {
