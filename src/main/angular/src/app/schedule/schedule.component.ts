@@ -83,11 +83,12 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
     { key: DayTimeframe.TYPE },
     { key: ConsecutiveDaysTimeframe.TYPE },
   ];
-  requestTypes: {key: string, value?: string}[] = [
+  evRequestTypes: {key: string, value?: string}[] = [
     { key: RuntimeRequest.TYPE },
     { key: EnergyRequest.TYPE },
     { key: SocRequest.TYPE },
   ];
+  nonEvRequestTypes: {key: string, value?: string}[] = [];
   daysOfWeek: DayOfWeek[];
   initializeOnceAfterViewChecked = false;
   errors: { [key: string]: string } = {};
@@ -114,10 +115,11 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
       translatedKeys => {
         this.timeframeTypes.forEach(timeframeType => timeframeType.value = translatedKeys[timeframeType.key]);
       });
-    const requestTypeKeys = this.requestTypes.map(requestType => requestType.key);
+    const requestTypeKeys = this.evRequestTypes.map(requestType => requestType.key);
     this.translate.get(requestTypeKeys).subscribe(
       translatedKeys => {
-        this.requestTypes.forEach(requestType => requestType.value = translatedKeys[requestType.key]);
+        this.evRequestTypes.forEach(requestType => requestType.value = translatedKeys[requestType.key]);
+        this.nonEvRequestTypes = this.evRequestTypes.filter(requestType => requestType.key === RuntimeRequest.TYPE);
       });
     this.initForm();
     this.route.paramMap.subscribe(() => this.applianceId = this.route.snapshot.paramMap.get('id'));
@@ -136,9 +138,9 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
   }
 
   ngAfterViewChecked() {
-    this.logger.debug('ngAfterViewChecked initializeOnceAfterViewChecked=' + this.initializeOnceAfterViewChecked);
-    this.formHandler.markLabelsRequired();
     if (this.initializeOnceAfterViewChecked) {
+      this.logger.debug('ngAfterViewChecked initializeOnceAfterViewChecked=' + this.initializeOnceAfterViewChecked);
+      this.formHandler.markLabelsRequired();
       this.initializeOnceAfterViewChecked = false;
       this.initializeClockPicker();
     }
@@ -278,9 +280,9 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
   }
   get validRequestTypes() {
     if (this.hasElectricVehicles) {
-      return this.requestTypes;
+      return this.evRequestTypes;
     }
-    return [{ key: RuntimeRequest.TYPE }];
+    return this.nonEvRequestTypes;
   }
 
   buildDayTimeframe(schedule: Schedule): FormGroup {
