@@ -31,7 +31,7 @@ export class StatusEvchargerViewComponent implements OnInit {
   }
 
   getCurrentChargePower(applianceStatus: Status): number {
-    if (applianceStatus.currentChargePower != null) {
+    if (applianceStatus.currentChargePower) {
       return this.toKWh(applianceStatus.currentChargePower);
     }
     return 0;
@@ -53,7 +53,7 @@ export class StatusEvchargerViewComponent implements OnInit {
     if (wh) {
       return wh / 1000;
     }
-    return undefined;
+    return 0;
   }
 
   toHHmm(seconds: number): string {
