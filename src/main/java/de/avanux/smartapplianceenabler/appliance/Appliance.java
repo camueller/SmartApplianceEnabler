@@ -895,7 +895,9 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         else {
             timeframeInterval = Schedule.getCurrentOrNextTimeframeInterval(now, schedules, false, true);
         }
-        timeframeInterval.setTriggeredByStartingCurrent(true);
+        if(timeframeInterval != null) {
+            timeframeInterval.setTriggeredByStartingCurrent(true);
+        }
         runningTimeMonitor.activateTimeframeInterval(now, timeframeInterval);
     }
 
