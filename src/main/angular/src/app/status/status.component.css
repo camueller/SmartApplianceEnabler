@@ -115,6 +115,7 @@
 .appliance-name {
   font-weight: bold;
   font-size: 1.5em;
+  padding-bottom: 0.5rem;
 }
 
 .appliance-status {
@@ -129,6 +130,10 @@
 
 .appliance-status-value {
   line-height: 1.4em;
+}
+
+.appliance-status-value-indented {
+  padding-left: 1rem;
 }
 
 .appliance-number-input {

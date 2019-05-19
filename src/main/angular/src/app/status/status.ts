@@ -18,6 +18,12 @@ export class Status {
   interruptedSince: number;
   optionalEnergy: boolean;
   evIdCharging: number;
+  state: string;
+  stateLastChangedTimestamp: number
+  soc: number;
+  socInitial: number;
+  socInitialTimestamp: number;
+
 
   public constructor(init?: Partial<Status>) {
     Object.assign(this, init);

@@ -26,6 +26,7 @@ import org.joda.time.LocalDateTime;
 public class TimeframeInterval {
     private Timeframe timeframe;
     private Interval interval;
+    private boolean triggeredByStartingCurrent;
 
     public TimeframeInterval(Timeframe timeframe, Interval interval) {
         this.timeframe = timeframe;
@@ -60,6 +61,14 @@ public class TimeframeInterval {
             return intervalEnd - minRunningTime;
         }
         return null;
+    }
+
+    public boolean isTriggeredByStartingCurrent() {
+        return triggeredByStartingCurrent;
+    }
+
+    public void setTriggeredByStartingCurrent(boolean triggeredByStartingCurrent) {
+        this.triggeredByStartingCurrent = triggeredByStartingCurrent;
     }
 
     @Override
