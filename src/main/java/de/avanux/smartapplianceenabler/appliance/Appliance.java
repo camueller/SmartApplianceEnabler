@@ -885,7 +885,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
 
     @Override
     public void startingCurrentDetected(LocalDateTime now) {
-        logger.debug("{}: Activating next sufficient timeframe interval after starting current has been detected", id);
+        logger.debug("{}: Activating next sufficient timeframe interval for starting current controlled appliance", id);
         TimeframeInterval timeframeInterval;
         Schedule forcedSchedule = getForcedSchedule(now);
         if(forcedSchedule != null) {
@@ -895,6 +895,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         else {
             timeframeInterval = Schedule.getCurrentOrNextTimeframeInterval(now, schedules, false, true);
         }
+        timeframeInterval.setTriggeredByStartingCurrent(true);
         runningTimeMonitor.activateTimeframeInterval(now, timeframeInterval);
     }
 
@@ -925,6 +926,12 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
         else {
             setApplianceState(now, false, null,
                     true,"Switching off due to end of time frame");
+            if(deactivatedInterval.isTriggeredByStartingCurrent()) {
+                if(runningTimeMonitor.getRunningTimeOfCurrentTimeFrame(now) == null) {
+                    logger.debug("{}: Rescheduling timeframe interval for starting current controlled appliance with no running time", id);
+                    startingCurrentDetected(now);
+                }
+            }
             if(meter != null) {
                 meter.resetEnergyMeter();
             }
