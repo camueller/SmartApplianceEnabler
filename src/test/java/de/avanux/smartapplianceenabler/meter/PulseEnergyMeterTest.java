@@ -52,27 +52,38 @@ public class PulseEnergyMeterTest {
     @Test
     public void getEnergy_started_500pulse() {
         this.pulseEnergyMeter.startEnergyCounter();
-        for(int i=0; i<500; i++) {
-            this.pulseEnergyMeter.increasePulseCounter();
-        }
+        increasePulseCounter(500);
         Assert.assertEquals(0.5f, this.pulseEnergyMeter.getEnergy(), 0.0001f);
     }
 
     @Test
-    public void getEnergy_started_1pulse_stop_1pulse() {
+    public void getEnergy_with_interruptions() {
         this.pulseEnergyMeter.startEnergyCounter();
-        this.pulseEnergyMeter.increasePulseCounter();
+        increasePulseCounter(1000);
         this.pulseEnergyMeter.stopEnergyCounter();
-        this.pulseEnergyMeter.increasePulseCounter();
-        Assert.assertEquals(0.001f, this.pulseEnergyMeter.getEnergy(), 0.0001f);
+        Assert.assertEquals(1.0f, this.pulseEnergyMeter.getEnergy(), 0.0001f);
+        this.pulseEnergyMeter.startEnergyCounter();
+        increasePulseCounter(1000);
+        this.pulseEnergyMeter.stopEnergyCounter();
+        Assert.assertEquals(2.0f, this.pulseEnergyMeter.getEnergy(), 0.0001f);
     }
 
     @Test
-    public void getEnergy_started_1pulse_stop_reset() {
+    public void getEnergy_with_reset() {
         this.pulseEnergyMeter.startEnergyCounter();
-        this.pulseEnergyMeter.increasePulseCounter();
+        increasePulseCounter(1000);
         this.pulseEnergyMeter.stopEnergyCounter();
+        Assert.assertEquals(1.0f, this.pulseEnergyMeter.getEnergy(), 0.0001f);
         this.pulseEnergyMeter.resetEnergyCounter();
-        Assert.assertEquals(0.0f, this.pulseEnergyMeter.getEnergy(), 0.01f);
+        this.pulseEnergyMeter.startEnergyCounter();
+        increasePulseCounter(1000);
+        this.pulseEnergyMeter.stopEnergyCounter();
+        Assert.assertEquals(1.0f, this.pulseEnergyMeter.getEnergy(), 0.0001f);
+    }
+
+    void increasePulseCounter(int pulseCount) {
+        for(int i=0; i<pulseCount; i++) {
+            this.pulseEnergyMeter.increasePulseCounter();
+        }
     }
 }

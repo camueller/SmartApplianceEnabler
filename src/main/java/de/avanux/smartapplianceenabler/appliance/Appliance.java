@@ -277,6 +277,11 @@ public class Appliance implements Initializable, Validateable, ControlStateChang
             meter.start(timer);
         }
 
+        if(control != null) {
+            logger.info("{}: Switch off appliance initially", id);
+            control.on(new LocalDateTime(), false);
+        }
+
         if(control instanceof ElectricVehicleCharger) {
             logger.info("{}: Starting {}", id, ElectricVehicleCharger.class.getSimpleName());
             ((ElectricVehicleCharger) control).start(timer);
@@ -675,6 +680,9 @@ public class Appliance implements Initializable, Validateable, ControlStateChang
         if(this.control instanceof ElectricVehicleCharger) {
             ElectricVehicleCharger charger = (ElectricVehicleCharger) this.control;
             ElectricVehicle ev = charger.getVehicle(socRequest.getEvId());
+            if(ev == null) {
+                return buildEnergyRequest(0, 0);
+            }
             Integer socStart = charger.getConnectedVehicleSoc() != null ? charger.getConnectedVehicleSoc() : 0;
             int energyToBeCharged = 0;
             if(socRequest.getSoc() > socStart) {
@@ -890,7 +898,7 @@ public class Appliance implements Initializable, Validateable, ControlStateChang
 
     @Override
     public void startingCurrentDetected(LocalDateTime now) {
-        logger.debug("{}: Activating next sufficient timeframe interval after starting current has been detected", id);
+        logger.debug("{}: Activating next sufficient timeframe interval for starting current controlled appliance", id);
         TimeframeInterval timeframeInterval;
         Schedule forcedSchedule = getForcedSchedule(now);
         if(forcedSchedule != null) {
@@ -900,6 +908,7 @@ public class Appliance implements Initializable, Validateable, ControlStateChang
         else {
             timeframeInterval = Schedule.getCurrentOrNextTimeframeInterval(now, schedules, false, true);
         }
+        timeframeInterval.setTriggeredByStartingCurrent(true);
         runningTimeMonitor.activateTimeframeInterval(now, timeframeInterval);
     }
 
@@ -930,6 +939,12 @@ public class Appliance implements Initializable, Validateable, ControlStateChang
         else {
             setApplianceState(now, false, null,
                     true,"Switching off due to end of time frame");
+            if(deactivatedInterval.isTriggeredByStartingCurrent()) {
+                if(runningTimeMonitor.getRunningTimeOfCurrentTimeFrame(now) == null) {
+                    logger.debug("{}: Rescheduling timeframe interval for starting current controlled appliance with no running time", id);
+                    startingCurrentDetected(now);
+                }
+            }
             if(meter != null) {
                 meter.resetEnergyMeter();
             }

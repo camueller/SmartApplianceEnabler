@@ -63,9 +63,11 @@ public class ElectricVehicleCharger implements Control, Initializable, Validatea
     private List<ElectricVehicle> vehicles;
     private transient Integer connectedVehicleId;
     private transient Integer connectedVehicleSoc;
+    private transient Long connectedVehicleSocTimestamp;
     private transient Appliance appliance;
     private transient String applianceId;
     private transient Vector<State> stateHistory = new Vector<>();
+    private transient Long stateLastChangedTimestamp;
     private transient boolean useOptionalEnergy = true;
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
     private transient Long startChargingTimestamp;
@@ -74,14 +76,6 @@ public class ElectricVehicleCharger implements Control, Initializable, Validatea
     private transient GuardedTimerTask updateStateTimerTask;
     private transient boolean startChargingRequested;
     private transient boolean stopChargingRequested;
-
-    protected enum State {
-        VEHICLE_NOT_CONNECTED,
-        VEHICLE_CONNECTED,
-        CHARGING,
-        CHARGING_COMPLETED,
-        ERROR
-    }
 
     public void setAppliance(Appliance appliance) {
         this.appliance = appliance;
@@ -142,6 +136,10 @@ public class ElectricVehicleCharger implements Control, Initializable, Validatea
 
     public Integer getConnectedVehicleSoc() {
         return connectedVehicleSoc;
+    }
+
+    public Long getConnectedVehicleSocTimestamp() {
+        return connectedVehicleSocTimestamp;
     }
 
     public ElectricVehicle getConnectedVehicle() {
@@ -205,7 +203,6 @@ public class ElectricVehicleCharger implements Control, Initializable, Validatea
 
     public void start(Timer timer) {
         logger.debug("{}: Starting ...", this.applianceId);
-        stopCharging();
         if(timer != null) {
             this.updateStateTimerTask = new GuardedTimerTask(this.applianceId,"UpdateState",
                     getPollInterval() * 1000) {
@@ -240,6 +237,7 @@ public class ElectricVehicleCharger implements Control, Initializable, Validatea
         if(currentState != previousState) {
             logger.debug("{}: Vehicle state changed: previousState={} newState={}", applianceId, previousState, currentState);
             stateHistory.add(currentState);
+            stateLastChangedTimestamp = now;
             onStateChanged(now, previousState, currentState);
         }
         else {
@@ -283,6 +281,10 @@ public class ElectricVehicleCharger implements Control, Initializable, Validatea
             return afterStates.contains(afterLastState);
         }
         return false;
+    }
+
+    public Long getStateLastChangedTimestamp() {
+        return stateLastChangedTimestamp;
     }
 
     private void initStateHistory() {
@@ -543,6 +545,7 @@ public class ElectricVehicleCharger implements Control, Initializable, Validatea
             Float soc = electricVehicle.getStateOfCharge();
             if(soc != null) {
                 this.connectedVehicleSoc = Float.valueOf(soc).intValue();
+                this.connectedVehicleSocTimestamp = System.currentTimeMillis();
                 logger.debug("{}: Start charging SoC={}%", applianceId, connectedVehicleSoc);
             }
         }

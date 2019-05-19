@@ -37,7 +37,7 @@ public class EVControlMock implements EVControl, Meter {
         @Override
         public void run() {
             if(energyMeterStarted) {
-                energyCounter += 0.01f;
+                energyCounter += 0.05f;
                 logDebug("energyCounter=" + energyCounter);
             }
         }

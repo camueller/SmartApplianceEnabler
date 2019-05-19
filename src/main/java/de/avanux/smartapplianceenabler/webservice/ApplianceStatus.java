@@ -39,6 +39,12 @@ public class ApplianceStatus {
     private Integer interruptedSince;
     private boolean optionalEnergy;
     private Integer evIdCharging;
+    private String state;
+    private Long stateLastChangedTimestamp;
+    private Integer soc;
+    private Long socTimestamp;
+    private Integer socInitial;
+    private Long socInitialTimestamp;
 
 
     public String getId() {
@@ -191,5 +197,53 @@ public class ApplianceStatus {
 
     public void setEvIdCharging(Integer evIdCharging) {
         this.evIdCharging = evIdCharging;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public Long getStateLastChangedTimestamp() {
+        return stateLastChangedTimestamp;
+    }
+
+    public void setStateLastChangedTimestamp(Long stateLastChangedTimestamp) {
+        this.stateLastChangedTimestamp = stateLastChangedTimestamp;
+    }
+
+    public Integer getSoc() {
+        return soc;
+    }
+
+    public void setSoc(Integer soc) {
+        this.soc = soc;
+    }
+
+    public Long getSocTimestamp() {
+        return socTimestamp;
+    }
+
+    public void setSocTimestamp(Long socTimestamp) {
+        this.socTimestamp = socTimestamp;
+    }
+
+    public Integer getSocInitial() {
+        return socInitial;
+    }
+
+    public void setSocInitial(Integer socInitial) {
+        this.socInitial = socInitial;
+    }
+
+    public Long getSocInitialTimestamp() {
+        return socInitialTimestamp;
+    }
+
+    public void setSocInitialTimestamp(Long socInitialTimestamp) {
+        this.socInitialTimestamp = socInitialTimestamp;
     }
 }
