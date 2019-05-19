@@ -190,7 +190,6 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
 
     public void start(Timer timer) {
         logger.debug("{}: Starting ...", this.applianceId);
-        stopCharging();
         if(timer != null) {
             this.updateStateTimerTask = new GuardedTimerTask(this.applianceId,"UpdateState",
                     getPollInterval() * 1000) {
