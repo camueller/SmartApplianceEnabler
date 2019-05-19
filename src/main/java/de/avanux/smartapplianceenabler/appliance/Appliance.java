@@ -908,7 +908,9 @@ public class Appliance implements Initializable, Validateable, ControlStateChang
         else {
             timeframeInterval = Schedule.getCurrentOrNextTimeframeInterval(now, schedules, false, true);
         }
-        timeframeInterval.setTriggeredByStartingCurrent(true);
+        if(timeframeInterval != null) {
+            timeframeInterval.setTriggeredByStartingCurrent(true);
+        }
         runningTimeMonitor.activateTimeframeInterval(now, timeframeInterval);
     }
 
