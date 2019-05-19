@@ -263,6 +263,11 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             meter.start(timer);
         }
 
+        if(control != null) {
+            logger.info("{}: Switch off appliance initially", id);
+            control.on(new LocalDateTime(), false);
+        }
+
         if(control instanceof ElectricVehicleCharger) {
             logger.info("{}: Starting {}", id, ElectricVehicleCharger.class.getSimpleName());
             ((ElectricVehicleCharger) control).start(timer);
