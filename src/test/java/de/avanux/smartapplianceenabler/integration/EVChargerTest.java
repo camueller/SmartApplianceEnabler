@@ -71,6 +71,7 @@ public class EVChargerTest extends TestBase {
                 .init();
         Appliance appliance = builder.getAppliance();
         ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
+        Mockito.reset(mockMeter);
 
         log("Vehicle not connected");
         tick(appliance, timeInitial, false, false);
