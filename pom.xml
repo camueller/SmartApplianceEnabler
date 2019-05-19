@@ -6,7 +6,7 @@
 	<groupId>de.avanux.smartapplianceenabler</groupId>
 	<artifactId>SmartApplianceEnabler</artifactId>
     <packaging>war</packaging>
-	<version>1.4.5-SNAPSHOT</version>
+	<version>1.4.6-SNAPSHOT</version>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -318,42 +318,6 @@
                                     <goal>exec</goal>
                                 </goals>
                             </execution>
-							<execution>
-								<id>ng-test</id>
-								<phase>test</phase>
-								<configuration>
-									<workingDirectory>${project.basedir}/src/main/angular</workingDirectory>
-									<executable>ng</executable>
-									<arguments>
-										<argument>test</argument>
-										<argument>--code-coverage</argument>
-										<argument>--watch=false</argument>
-									</arguments>
-								</configuration>
-								<goals>
-									<goal>exec</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>ng-coverage-badge</id>
-								<phase>test</phase>
-								<configuration>
-									<workingDirectory>${project.basedir}/src/main/angular</workingDirectory>
-									<executable>node</executable>
-									<arguments>
-										<argument>node_modules/istanbul-cobertura-badger/lib/cli.js</argument>
-										<argument>-r</argument>
-										<argument>coverage/cobertura-coverage.xml</argument>
-										<argument>-d</argument>
-										<argument>coverage</argument>
-										<argument>-b</argument>
-										<argument>SmartApplianceEnabler-web-coverage</argument>
-									</arguments>
-								</configuration>
-								<goals>
-									<goal>exec</goal>
-								</goals>
-							</execution>
                         </executions>
                     </plugin>
                 </plugins>
