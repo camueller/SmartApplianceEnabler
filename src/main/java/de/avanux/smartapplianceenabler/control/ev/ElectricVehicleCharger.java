@@ -237,7 +237,7 @@ public class ElectricVehicleCharger implements Control, Initializable, Validatea
         if(currentState != previousState) {
             logger.debug("{}: Vehicle state changed: previousState={} newState={}", applianceId, previousState, currentState);
             stateHistory.add(currentState);
-            stateLastChangedTimestamp = now;
+            stateLastChangedTimestamp = now.toDateTime().getMillis();
             onStateChanged(now, previousState, currentState);
         }
         else {
@@ -297,9 +297,7 @@ public class ElectricVehicleCharger implements Control, Initializable, Validatea
         boolean vehicleConnected = control.isVehicleConnected();
         boolean charging = control.isCharging();
         boolean errorState = control.isInErrorState();
-        boolean wasInChargingAfterLastVehicleConnected
-                = wasInStateAfterLastState(ElectricVehicleCharger.State.CHARGING,
-                ElectricVehicleCharger.State.VEHICLE_CONNECTED);
+        boolean wasInChargingAfterLastVehicleConnected = wasInStateAfterLastState(State.CHARGING, State.VEHICLE_CONNECTED);
         logger.debug("{}: currenState={} startChargingRequested={} stopChargingRequested={} vehicleNotConnected={} " +
                         "vehicleConnected={} charging={} errorState={} wasInChargingAfterLastVehicleConnected={}",
                 applianceId, currenState, startChargingRequested, stopChargingRequested, vehicleNotConnected,
