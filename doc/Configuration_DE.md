@@ -11,6 +11,9 @@ Beim Speichern werden die Daten in zwei [XML](https://de.wikipedia.org/wiki/Exte
 * die Datei `Appliances.xml` enthält die Gerätekonfiguration für den *Smart Appliance Enabler*
 Die Groß-/Kleinschreibung der Dateinamen muss genau so sein, wie hier angegeben!
 
+Beim Speichern wird außerdem der *Smart Appliance Enabler* intern neu gestartet, damit die geänderte Konfiguration wirksam wird. Aktuell laufende Geräte werden in diesem Moment immer gestoppt/ausgeschalten um einen definierten Zustand zu erhalten. Auch werden bereits in Anspruch genommene Energiemengen/Laufzeiten von Geräten zurück gesetzt und neu eingeplant.
+Ist dies nicht gewünscht, empfiehlt es sich Konfigurationsänderungen außerhalb der üblichen Zeitfenster vorzunehmen, zB Abends.
+
 Beim ersten Start ohne vorhandene Konfigurationsdateien wird folgende Seite angezeigt:
 
 ![Ohne Konfiguration](../pics/fe/OhneKonfiguration.png)
