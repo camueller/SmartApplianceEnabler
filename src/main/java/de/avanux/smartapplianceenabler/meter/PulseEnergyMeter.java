@@ -55,7 +55,6 @@ public class PulseEnergyMeter implements ApplianceIdConsumer {
     }
 
     public void startEnergyCounter() {
-        resetEnergyCounter();
         started = true;
     }
 

@@ -23,6 +23,10 @@ export class StatusEvchargerViewComponent implements OnInit {
   ngOnInit() {
   }
 
+  get stateKey() {
+    return `StatusComponent.state.${this.status.state}`;
+  }
+
   getEvNameCharging(evId: number): string {
     if (this.electricVehicles && evId) {
       return this.electricVehicles.filter(ev => ev.id === evId)[0].name;
@@ -31,17 +35,26 @@ export class StatusEvchargerViewComponent implements OnInit {
   }
 
   getCurrentChargePower(applianceStatus: Status): number {
-    if (applianceStatus.currentChargePower != null) {
+    if (applianceStatus.currentChargePower) {
       return this.toKWh(applianceStatus.currentChargePower);
     }
     return 0;
   }
 
-  toWeekdayString(seconds: number): string | undefined {
+  toWeekdayStringFromDelta(seconds: number): string | undefined {
     if (! seconds) {
       return undefined;
     }
-    const weekday = this.toWeekday(seconds);
+    const dow = this.toWeekdayFromDelta(seconds);
+    return this.toWeekdayString(dow);
+  }
+
+  toWeekdayStringFromTimestamp(timestamp: number): string | undefined {
+    const dow = TimeUtil.toWeekdayFromTimestamp(timestamp);
+    return this.toWeekdayString(dow);
+  }
+
+  toWeekdayString(weekday: number): string | undefined {
     const dowMatches = this.dows.filter(dow => dow.id === weekday);
     if (dowMatches && dowMatches.length > 0) {
       return dowMatches[0].name;
@@ -51,16 +64,21 @@ export class StatusEvchargerViewComponent implements OnInit {
 
   toKWh(wh: number): number {
     if (wh) {
-      return wh / 1000;
+      // limit to 1 decimal digit
+      return Math.round(wh / 1000 * 10) / 10;
     }
-    return undefined;
+    return 0;
   }
 
-  toHHmm(seconds: number): string {
+  toHHmmFromDelta(seconds: number): string {
     return TimeUtil.timestringFromDelta(seconds);
   }
 
-  toWeekday(seconds: number): number {
+  toHHmmFromTimestamp(timestamp: number): string {
+    return TimeUtil.timestringFromTimestamp(timestamp);
+  }
+
+  toWeekdayFromDelta(seconds: number): number {
     return TimeUtil.toWeekdayFromDelta(seconds);
   }
 }
