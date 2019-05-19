@@ -121,8 +121,11 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
         float stopEnergyCounter = this.pollEnergyExecutor.pollEnergy(new LocalDateTime());
         if(stopEnergyCounter == 0.0f) {
             // the event causing the the counter to stop may have already reset the counter we poll
-            // in this cae we use the last value from cache
-            stopEnergyCounter = this.cache.getLastValue();
+            // in this case we use the last value from cache
+            Float lastValue = this.cache.getLastValue();
+            if(lastValue != null) {
+                stopEnergyCounter = lastValue;
+            }
         }
         if(this.startEnergyCounter != null) {
             if(this.totalEnergy != null) {
