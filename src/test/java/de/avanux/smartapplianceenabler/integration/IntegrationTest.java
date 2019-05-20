@@ -259,6 +259,44 @@ public class IntegrationTest extends TestBase {
         // TODO nochmal an/aus schalten
     }
 
+    @Test
+    public void testNoSwitchOn_startingCurrentDetectedDuringTimeframeInterval() {
+        LocalDateTime timeInitial = toToday(11, 29, 0);
+        TestBuilder builder = new TestBuilder()
+                .appliance(applianceId, dateTimeProvider, timeInitial)
+                .withMockSwitch(true)
+                .withMockMeter()
+                .withSchedule(10, 0, 13, 0, 3600, null)
+                .init();
+
+        Appliance appliance = builder.getAppliance();
+        StartingCurrentSwitch control = (StartingCurrentSwitch) appliance.getControl();
+        Meter meter = appliance.getMeter();
+        RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
+
+        log("Check initial values");
+        assertRunningTime(null, control, runningTimeMonitor, false, true, false, false,
+                false, null, null, null);
+
+        log("Detect starting current");
+        Mockito.when(meter.getAveragePower()).thenReturn(StartingCurrentSwitchDefaults.getPowerThreshold() + 1);
+        control.detectStartingCurrent(timeInitial, meter);
+        assertRunningTime(timeInitial, control, runningTimeMonitor, false, true, false, false,
+                false, null, null, null);
+        Assert.assertEquals(0, sempController.createDevice2EM(timeInitial).getPlanningRequest().size());
+
+        LocalDateTime timeStartingCurrent = toToday(11, 30, 0);
+        control.detectStartingCurrent(toToday(11, 30, 0), meter);
+        assertRunningTime(timeStartingCurrent, control, runningTimeMonitor, false, false, false, false,
+                true, 0, 3600, null);
+        assertPlanningRequest(timeStartingCurrent, new Timeframe(applianceId,0, 5400,3599, 3600));
+
+        log("If not switched on during timeframe a new timeframe should exist after timeframe end");
+        LocalDateTime timeAfterTimeframeEnd = toToday(13, 1, 0);
+        runningTimeMonitor.updateActiveTimeframeInterval(timeAfterTimeframeEnd);
+        assertPlanningRequest(timeStartingCurrent, new Timeframe(applianceId,81000, 91800,3599, 3600));
+    }
+
     // @Test
     public void testSwitchOnAndWaitForTimeframeEnd() {
     }
