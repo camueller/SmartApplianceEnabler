@@ -26,7 +26,7 @@ export class MeterHttpComponent implements OnInit, AfterViewChecked, OnDestroy {
   httpElectricityMeter: HttpElectricityMeter;
   @Input()
   meterDefaults: MeterDefaults;
-  contentProtocols = [ContentProtocol.JSON.toUpperCase()];
+  contentProtocols = [undefined, ContentProtocol.JSON.toUpperCase()];
   form: FormGroup;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};
@@ -82,7 +82,7 @@ export class MeterHttpComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   get contentProtocol(): string {
     const contentProtocolControl = this.form.controls['contentProtocol'];
-    return (contentProtocolControl ? contentProtocolControl.value.toUpperCase() : '');
+    return (contentProtocolControl.value ? contentProtocolControl.value.toUpperCase() : '');
   }
 
   expandParentForm(form: FormGroup, httpElectricityMeter: HttpElectricityMeter, formHandler: FormHandler) {

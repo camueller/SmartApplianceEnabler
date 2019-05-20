@@ -337,7 +337,7 @@
         <xs:sequence>
             <xs:element name="HttpRead" type="HttpReadType" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
-        <xs:attribute name="contentProtocol" type="ContentProtcolType" use="required" />
+        <xs:attribute name="contentProtocol" type="ContentProtcolType" />
         <xs:attribute name="pollInterval" type="xs:int" />
         <xs:attribute name="measurementInterval" type="xs:int" />
     </xs:complexType>
