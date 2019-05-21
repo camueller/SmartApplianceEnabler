@@ -669,9 +669,12 @@ public class SaeController {
                     applianceStatus.setSocInitial(evCharger.getConnectedVehicleSoc());
                     applianceStatus.setSocInitialTimestamp(evCharger.getConnectedVehicleSocTimestamp());
                     if(vehicle != null) {
-                        Integer currentSoc = Float.valueOf(evCharger.getConnectedVehicleSoc()
+                        Integer initialSoc = evCharger.getConnectedVehicleSoc() != null
+                                ? evCharger.getConnectedVehicleSoc() : 0;
+                        Integer chargeLoss = vehicle.getChargeLoss() != null ? vehicle.getChargeLoss() : 0;
+                        Integer currentSoc = Float.valueOf(initialSoc
                                 + whAlreadyCharged/Float.valueOf(vehicle.getBatteryCapacity())
-                                * (100 - vehicle.getChargeLoss())).intValue();
+                                * (100 - chargeLoss)).intValue();
                         applianceStatus.setSoc(currentSoc > 100 ? 100 : currentSoc);
                     }
 
