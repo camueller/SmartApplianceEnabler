@@ -2,7 +2,22 @@
 <Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.4">
     <Appliance id="F-00000001-000000000099-00">
         <ElectricVehicleCharger startChargingStateDetectionDelay="15">
-            <EVHttpControl contentProtocol="json">
+            <EVModbusControl idref="wallbox" slaveAddress="180">
+                <ModbusRegisterRead address="100" type="InputString">
+                    <ModbusRegisterReadValue name="VehicleNotConnected" extractionRegex="(A)"/>
+                    <ModbusRegisterReadValue name="VehicleConnected" extractionRegex="(B)"/>
+                    <ModbusRegisterReadValue name="Charging" extractionRegex="(C|D)"/>
+                    <ModbusRegisterReadValue name="Error" extractionRegex="(E|F)"/>
+                </ModbusRegisterRead>
+                <ModbusRegisterWrite address="400" type="Coil">
+                    <ModbusRegisterWriteValue name="StartCharging" value="1"/>
+                    <ModbusRegisterWriteValue name="StopCharging" value="0"/>
+                </ModbusRegisterWrite>
+                <ModbusRegisterWrite address="300" type="Holding">
+                    <ModbusRegisterWriteValue name="ChargingCurrent" value="0"/>
+                </ModbusRegisterWrite>
+            </EVModbusControl>
+            <!--EVHttpControl contentProtocol="json">
                 <HttpRead url="http://192.168.178.48/status">
                     <HttpReadValue name="VehicleNotConnected" path="$.car" extractionRegex="(1)"/>
                     <HttpReadValue name="VehicleConnected" path="$.car" extractionRegex="(3|4)"/>
@@ -14,7 +29,7 @@
                     <HttpWriteValue name="StartCharging" value="alw=1" method="GET"/>
                     <HttpWriteValue name="StopCharging" value="alw=0" method="GET"/>
                 </HttpWrite>
-            </EVHttpControl>
+            </EVHttpControl-->
             <ElectricVehicle id="1" name="Nissan Leaf" batteryCapacity="40000" phases="1" maxChargePower="10000" chargeLoss="20" defaultSocManual="100" defaultSocOptionalEnergy="90">
                 <SocScript script="/home/axel/IdeaProjects/SmartApplianceEnabler/src/test/soc.sh" extractionRegex=".*is (\d*.{0,1}\d+).*"/>
             </ElectricVehicle>
@@ -42,5 +57,6 @@
     <Connectivity>
         <PulseReceiver id="pulsereceiver" port="9999"/>
         <ModbusTCP id="modbus" host="127.0.0.1"/>
+        <ModbusTCP id="wallbox" host="192.168.178.39"/>
     </Connectivity>
 </Appliances>

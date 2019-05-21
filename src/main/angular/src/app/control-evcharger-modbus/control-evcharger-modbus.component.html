@@ -1,0 +1,83 @@
+<div class="ui fields sae-fields">
+  <div class="field">
+    <label>{{'ControlEvchargerComponent.idref' | translate}}</label>
+    <select class="ui fluid dropdown" formControlName="modbusIdref">
+      <option *ngFor="let modbusSettings of settings.modbusSettings" [ngValue]="modbusSettings.modbusTcpId"
+              [selected]="modbusSettings.modbusTcpId==evModbusControl.idref">
+        {{modbusSettings.modbusTcpId}}</option>
+    </select>
+  </div>
+  <div class="field">
+    <label>{{'ControlEvchargerComponent.slaveAddress' | translate}}</label>
+    <input type="text" formControlName="slaveAddress">
+    <div *ngIf="errors['slaveAddress']"
+         class="ui negative message">{{errors['slaveAddress']}}</div>
+  </div>
+</div>
+<div formArrayName="modbusConfigurations">
+  <div *ngFor="let modbusConfiguration of modbusConfigurations.controls; index as i; last as l" [formGroupName]="i">
+    <div class="ui hidden divider"></div>
+    <div class="ui fields  sae-fields">
+      <div class="field">
+        <label>{{'ControlEvchargerComponent.name' | translate}}</label>
+        <select class="ui fluid dropdown" formControlName="name">
+          <option *ngFor="let modbusRegisterName of getModbusRegisterNames()"
+                  [ngValue]="modbusRegisterName"
+          >{{getTranslatedModbusRegisterName(modbusRegisterName)}}</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>{{'ControlEvchargerComponent.registerAddress' | translate}}</label>
+        <input type="text" formControlName="registerAddress">
+        <div *ngIf="getIndexedErrorMessage('registerAddress', i)" class="ui negative message">
+          {{getIndexedErrorMessage('registerAddress', i)}}</div>
+      </div>
+      <div class="field">
+        <label>{{'ControlEvchargerComponent.write' | translate}}</label>
+        <input class="ui checkbox" type="checkbox" formControlName="write">
+      </div>
+      <div class="field">
+        <label>{{'ControlEvchargerComponent.registerType' | translate}}</label>
+        <select class="ui fluid dropdown" formControlName="registerType">
+          <option *ngFor="let modbusRegisterType of getModbusRegisterTypes(isModbusWriteRegister(modbusConfiguration))"
+                  [ngValue]="modbusRegisterType"
+                  [selected]="modbusRegisterType==getRegisterType(modbusConfiguration)"
+          >{{modbusRegisterType}}</option>
+        </select>
+      </div>
+      <div class="field" *ngIf="!isModbusWriteRegister(modbusConfiguration)">
+        <label>{{'ControlEvchargerComponent.bytes' | translate}}</label>
+        <input type="text" formControlName="bytes">
+      </div>
+      <div class="field" *ngIf="!isModbusWriteRegister(modbusConfiguration)">
+        <label>{{'ControlEvchargerComponent.byteOrder' | translate}}</label>
+        <select class="ui fluid dropdown" formControlName="byteOrder">
+          <option *ngFor="let byteOrder of getByteOrders()"
+                  [ngValue]="byteOrder"
+                  [selected]="byteOrder==getRegisterType(modbusConfiguration)"
+          >{{byteOrder}}</option>
+        </select>
+      </div>
+      <div class="field" *ngIf="!isModbusWriteRegister(modbusConfiguration)">
+        <label>{{'ControlEvchargerComponent.extractionRegex' | translate}}</label>
+        <input type="text" formControlName="extractionRegex">
+      </div>
+
+      <div class="field"
+           *ngIf="isModbusWriteRegister(modbusConfiguration) && ! isChargingCurrentRegister(modbusConfiguration)">
+        <label>{{'ControlEvchargerComponent.value' | translate}}</label>
+        <input type="text" formControlName="value">
+      </div>
+      <div class="field"
+           *ngIf="isModbusWriteRegister(modbusConfiguration) && isChargingCurrentRegister(modbusConfiguration)">
+        <label>{{'ControlEvchargerComponent.factorToValue' | translate}}</label>
+        <input type="text" formControlName="factorToValue">
+      </div>
+
+      <div class="field icon-field">
+        <i (click)="removeModbusConfiguration(i)" class="icon big red remove circle"></i>
+        <i *ngIf="l" (click)="addModbusConfiguration()" class="icon big green add circle"></i>
+      </div>
+    </div>
+  </div>
+</div>

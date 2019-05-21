@@ -73,6 +73,7 @@ import { ModbusRegisterComponent } from './modbus-register/modbus-register.compo
 import {NestedFormService} from './shared/nested-form-service';
 import { HttpReadComponent } from './http-read/http-read.component';
 import { HttpReadValueComponent } from './http-read-value/http-read-value.component';
+import { ControlEvchargerModbusComponent } from './control-evcharger-modbus/control-evcharger-modbus.component';
 
 @NgModule({
   declarations: [
@@ -101,6 +102,7 @@ import { HttpReadValueComponent } from './http-read-value/http-read-value.compon
     StatusEvchargerEditComponent,
     StatusEvchargerViewComponent,
     StatusViewComponent,
+    ControlEvchargerModbusComponent,
   ],
   imports: [
     BrowserModule,
