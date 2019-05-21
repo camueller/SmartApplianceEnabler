@@ -16,7 +16,7 @@
                 </HttpWrite>
             </EVHttpControl>
             <ElectricVehicle id="1" name="Nissan Leaf" batteryCapacity="40000" phases="1" maxChargePower="10000" chargeLoss="20" defaultSocManual="100" defaultSocOptionalEnergy="90">
-                <SocScript script="/home/axel/IdeaProjects/SmartApplianceEnabler/src/test/soc.sh" extractionRegex=".*is (\d*.{0,1}\d+).*"/>
+                <!--SocScript script="/home/axel/IdeaProjects/SmartApplianceEnabler/src/test/soc.sh" extractionRegex=".*is (\d*.{0,1}\d+).*"/-->
             </ElectricVehicle>
             <ElectricVehicle id="2" name="Tesla Model S" batteryCapacity="80000"/>
         </ElectricVehicleCharger>
