@@ -58,6 +58,7 @@
                placeholder="{{controlDefaults.electricVehicleChargerDefaults_forceInitialCharging}}">
       </div>
     </div>
+    <!--
     <div class="ui fields sae-fields">
       <div class="field">
         <label>{{'ControlEvchargerComponent.idref' | translate}}</label>
@@ -141,6 +142,13 @@
         </div>
       </div>
     </div>
+    -->
+    <app-control-evcharger-modbus
+      [evModbusControl]="control.evCharger.control"
+      [settings]="settings"
+      [settingsDefaults]="settingsDefaults"
+      [translationKeys]="modbusTranslationKeys"
+    ></app-control-evcharger-modbus>
     <h4 class="ui dividing header">{{'ControlEvchargerComponent.ev.heading' | translate}}</h4>
     <div formArrayName="electricVehicles">
       <div *ngFor="let electricVehicle of electricVehicles.controls; index as i; last as l" [formGroupName]="i">
