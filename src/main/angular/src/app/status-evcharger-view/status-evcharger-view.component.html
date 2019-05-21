@@ -9,7 +9,7 @@
     <div class="appliance-status-value-indented">
       <span class="appliance-status-value">{{status.soc}}{{'StatusComponent.stateOfChargeUnit' | translate}} (aktuell)</span>
     </div>
-    <div class="appliance-status-value-indented">
+    <div class="appliance-status-value-indented" *ngIf="status.socInitial">
       <span class="appliance-status-value">{{status.socInitial}}{{'StatusComponent.stateOfChargeUnit' | translate
         }} ({{toWeekdayStringFromTimestamp(status.socInitialTimestamp)}} {{toHHmmFromTimestamp(status.socInitialTimestamp)}} Uhr)</span>
     </div>
