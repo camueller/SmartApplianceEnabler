@@ -449,8 +449,8 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
                 maxChargePower = maxVehicleChargePower;
             }
             int resolvedSocRequested = (socRequested != null ? socRequested : 100);
-            int resolvedSocCurrent = (socCurrent != null ? socCurrent : 0);
-            int energy = Float.valueOf(((float) resolvedSocRequested - resolvedSocCurrent)/100.0f
+            updateSoc(Integer.valueOf(socCurrent != null ? socCurrent : 0).floatValue());
+            int energy = Float.valueOf(((float) resolvedSocRequested - getConnectedVehicleSoc())/100.0f
                     * (100 + vehicle.getChargeLoss())/100.0f * batteryCapacity).intValue();
             setChargeAmount(energy);
             logger.debug("{}: Calculated energy={}Wh (batteryCapacity={}Wh chargeLoss={}%)", applianceId, energy,
@@ -513,10 +513,14 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
         if(electricVehicle != null) {
             Float soc = electricVehicle.getStateOfCharge();
             if(soc != null) {
-                this.connectedVehicleSoc = Float.valueOf(soc).intValue();
-                this.connectedVehicleSocTimestamp = System.currentTimeMillis();
-                logger.debug("{}: Start charging SoC={}%", applianceId, connectedVehicleSoc);
+                updateSoc(soc);
             }
         }
+    }
+
+    private void updateSoc(Float soc) {
+        this.connectedVehicleSoc = Float.valueOf(soc).intValue();
+        this.connectedVehicleSocTimestamp = System.currentTimeMillis();
+        logger.debug("{}: Current SoC={}%", applianceId, connectedVehicleSoc);
     }
 }
