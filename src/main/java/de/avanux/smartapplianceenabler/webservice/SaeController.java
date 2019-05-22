@@ -74,8 +74,8 @@ public class SaeController {
     }
 
     private Appliance getAppliance(String applianceId) {
-        for (Appliance appliance: ApplianceManager.getInstance().getAppliances()) {
-            if(appliance.getId().equals(applianceId)) {
+        for (Appliance appliance : ApplianceManager.getInstance().getAppliances()) {
+            if (appliance.getId().equals(applianceId)) {
                 return appliance;
             }
         }
@@ -84,12 +84,13 @@ public class SaeController {
 
     /**
      * Return the corresponding DeviceInfo for an appliance.
+     *
      * @param applianceId
      * @return
      */
     private DeviceInfo getDeviceInfo(String applianceId) {
-        for(DeviceInfo deviceInfo : ApplianceManager.getInstance().getDevice2EM().getDeviceInfo()) {
-            if(deviceInfo.getIdentification().getDeviceId().equals(applianceId)) {
+        for (DeviceInfo deviceInfo : ApplianceManager.getInstance().getDevice2EM().getDeviceInfo()) {
+            if (deviceInfo.getIdentification().getDeviceId().equals(applianceId)) {
                 return deviceInfo;
             }
         }
@@ -119,7 +120,7 @@ public class SaeController {
         applianceInfo.setMaxOnTime(deviceInfo.getCharacteristics().getMaxOnTime());
         applianceInfo.setMinOffTime(deviceInfo.getCharacteristics().getMinOffTime());
         applianceInfo.setMaxOffTime(deviceInfo.getCharacteristics().getMaxOffTime());
-        if(deviceInfo.getCapabilities().getCurrentPowerMethod() != null) {
+        if (deviceInfo.getCapabilities().getCurrentPowerMethod() != null) {
             applianceInfo.setCurrentPowerMethod(deviceInfo.getCapabilities().getCurrentPowerMethod().name());
         }
         applianceInfo.setInterruptionsAllowed(deviceInfo.getCapabilities().getInterruptionsAllowed());
@@ -155,259 +156,336 @@ public class SaeController {
         return deviceInfo;
     }
 
-    @RequestMapping(value= APPLIANCES_URL, method=RequestMethod.GET, produces="application/json")
+    @RequestMapping(value = APPLIANCES_URL, method = RequestMethod.GET, produces = "application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public List<ApplianceHeader> getAppliances() {
-        logger.debug("Received request for ApplianceHeaders");
-        List<ApplianceHeader> applianceHeaders = new ArrayList<>();
+        try {
+            logger.debug("Received request for ApplianceHeaders");
+            List<ApplianceHeader> applianceHeaders = new ArrayList<>();
             List<Appliance> applianceList = ApplianceManager.getInstance().getAppliances();
             Device2EM device2EM = ApplianceManager.getInstance().getDevice2EM();
-            if(applianceList != null && device2EM != null) {
-                for(Appliance appliance: applianceList) {
+            if (applianceList != null && device2EM != null) {
+                for (Appliance appliance : applianceList) {
                     DeviceInfo deviceInfo = getDeviceInfo(appliance.getId());
                     applianceHeaders.add(toApplianceHeader(appliance, deviceInfo));
                 }
             }
-        logger.debug("Returning " + applianceHeaders.size() + " ApplianceHeaders");
-        return applianceHeaders;
-    }
-
-    @RequestMapping(value= APPLIANCE_URL, method=RequestMethod.GET, produces="application/json")
-    @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    public ApplianceInfo getApplianceInfo(HttpServletResponse response, @RequestParam(value="id") String applianceId) {
-        logger.debug("{}: Received request for ApplianceInfo", applianceId);
-        Device2EM device2EM = ApplianceManager.getInstance().getDevice2EM();
-        for(DeviceInfo deviceInfo : device2EM.getDeviceInfo()) {
-            if(deviceInfo.getIdentification().getDeviceId().equals(applianceId)) {
-                ApplianceInfo applianceInfo = toApplianceInfo(deviceInfo);
-                logger.debug("{}: Returning ApplianceInfo {}", applianceId, applianceInfo);
-                return applianceInfo;
-            }
+            logger.debug("Returning " + applianceHeaders.size() + " ApplianceHeaders");
+            return applianceHeaders;
+        } catch (Throwable e) {
+            logger.error("Error in " + getClass().getSimpleName(), e);
         }
-        logger.error("{}: Appliance not found.", applianceId);
-        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         return null;
     }
 
-    @RequestMapping(value= APPLIANCE_URL, method=RequestMethod.PUT, consumes="application/json")
+    @RequestMapping(value = APPLIANCE_URL, method = RequestMethod.GET, produces = "application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    public void setApplianceInfo(HttpServletResponse response, @RequestParam(value="id") String applianceId,
-                                 @RequestParam(value="create") Boolean create,
-                                 @RequestBody ApplianceInfo applianceInfo) {
-        logger.debug("{}: Received request to set ApplianceInfo (create={}): {}", applianceId, create, applianceInfo);
-        DeviceInfo deviceInfo = toDeviceInfo(applianceInfo);
-        if(create) {
-            Appliance appliance = new Appliance();
-            appliance.setId(applianceId);
-            ApplianceManager.getInstance().addAppliance(appliance, deviceInfo);
-        }
-        else {
-            Appliance appliance = getAppliance(applianceId);
-            if(appliance != null) {
-                deviceInfo.getCapabilities().setOptionalEnergy(appliance.canConsumeOptionalEnergy());
+    public ApplianceInfo getApplianceInfo(HttpServletResponse response, @RequestParam(value = "id") String applianceId) {
+        try {
+            logger.debug("{}: Received request for ApplianceInfo", applianceId);
+            Device2EM device2EM = ApplianceManager.getInstance().getDevice2EM();
+            for (DeviceInfo deviceInfo : device2EM.getDeviceInfo()) {
+                if (deviceInfo.getIdentification().getDeviceId().equals(applianceId)) {
+                    ApplianceInfo applianceInfo = toApplianceInfo(deviceInfo);
+                    logger.debug("{}: Returning ApplianceInfo {}", applianceId, applianceInfo);
+                    return applianceInfo;
+                }
             }
-            if(! ApplianceManager.getInstance().updateAppliance(deviceInfo)) {
+            logger.error("{}: Appliance not found.", applianceId);
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        } catch (Throwable e) {
+            logger.error("Error in " + getClass().getSimpleName(), e);
+        }
+        return null;
+    }
+
+    @RequestMapping(value = APPLIANCE_URL, method = RequestMethod.PUT, consumes = "application/json")
+    @CrossOrigin(origins = CROSS_ORIGIN_URL)
+    public void setApplianceInfo(HttpServletResponse response, @RequestParam(value = "id") String applianceId,
+                                 @RequestParam(value = "create") Boolean create,
+                                 @RequestBody ApplianceInfo applianceInfo) {
+        try {
+            logger.debug("{}: Received request to set ApplianceInfo (create={}): {}", applianceId, create, applianceInfo);
+            DeviceInfo deviceInfo = toDeviceInfo(applianceInfo);
+            if (create) {
+                Appliance appliance = new Appliance();
+                appliance.setId(applianceId);
+                ApplianceManager.getInstance().addAppliance(appliance, deviceInfo);
+            } else {
+                Appliance appliance = getAppliance(applianceId);
+                if (appliance != null) {
+                    deviceInfo.getCapabilities().setOptionalEnergy(appliance.canConsumeOptionalEnergy());
+                }
+                if (!ApplianceManager.getInstance().updateAppliance(deviceInfo)) {
+                    logger.error("{}: Appliance not found.", applianceId);
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                }
+            }
+        } catch (Throwable e) {
+            logger.error("Error in " + getClass().getSimpleName(), e);
+        }
+    }
+
+    @RequestMapping(value = APPLIANCE_URL, method = RequestMethod.DELETE)
+    @CrossOrigin(origins = CROSS_ORIGIN_URL)
+    public void deleteAppliance(HttpServletResponse response, @RequestParam(value = "id") String applianceId) {
+        try {
+            if (!ApplianceManager.getInstance().deleteAppliance(applianceId)) {
                 logger.error("{}: Appliance not found.", applianceId);
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             }
+        } catch (Throwable e) {
+            logger.error("Error in " + getClass().getSimpleName(), e);
         }
     }
 
-    @RequestMapping(value= APPLIANCE_URL, method=RequestMethod.DELETE)
-    @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    public void deleteAppliance(HttpServletResponse response, @RequestParam(value="id") String applianceId) {
-        if(! ApplianceManager.getInstance().deleteAppliance(applianceId)) {
-            logger.error("{}: Appliance not found.", applianceId);
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        }
-    }
-
-    @RequestMapping(value=CONTROLDEFAULTS_URL, method=RequestMethod.GET, produces="application/json")
+    @RequestMapping(value = CONTROLDEFAULTS_URL, method = RequestMethod.GET, produces = "application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public ControlDefaults getControlDefaults() {
-        return new ControlDefaults();
-    }
-
-    @RequestMapping(value=CONTROL_URL, method=RequestMethod.GET, produces="application/json")
-    @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    public Control getControl(HttpServletResponse response, @RequestParam(value="id") String applianceId) {
-        logger.debug("{}: Received request for control", applianceId);
-        Appliance appliance = getAppliance(applianceId);
-        if(appliance != null) {
-            Control control = appliance.getControl();
-            logger.debug("{}: Returning control {}", applianceId, control);
-            if(control == null) {
-                response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-            }
-            return control;
+        try {
+            return new ControlDefaults();
+        } catch (Throwable e) {
+            logger.error("Error in " + getClass().getSimpleName(), e);
         }
-        logger.error("{}: Appliance not found", applianceId);
-        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         return null;
     }
 
-    @RequestMapping(value=CONTROL_URL, method=RequestMethod.PUT, consumes="application/json")
+    @RequestMapping(value = CONTROL_URL, method = RequestMethod.GET, produces = "application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    public void setControl(HttpServletResponse response, @RequestParam(value="id") String applianceId,
+    public Control getControl(HttpServletResponse response, @RequestParam(value = "id") String applianceId) {
+        try {
+            logger.debug("{}: Received request for control", applianceId);
+            Appliance appliance = getAppliance(applianceId);
+            if (appliance != null) {
+                Control control = appliance.getControl();
+                logger.debug("{}: Returning control {}", applianceId, control);
+                if (control == null) {
+                    response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+                }
+                return control;
+            }
+            logger.error("{}: Appliance not found", applianceId);
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        } catch (Throwable e) {
+            logger.error("Error in " + getClass().getSimpleName(), e);
+        }
+        return null;
+    }
+
+    @RequestMapping(value = CONTROL_URL, method = RequestMethod.PUT, consumes = "application/json")
+    @CrossOrigin(origins = CROSS_ORIGIN_URL)
+    public void setControl(HttpServletResponse response, @RequestParam(value = "id") String applianceId,
                            @RequestBody Control control) {
-        logger.debug("{}: Received request to set control {}", applianceId, control);
-        if(! ApplianceManager.getInstance().setControl(applianceId, control)) {
-            logger.error("{}: Appliance not found", applianceId);
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        try {
+            logger.debug("{}: Received request to set control {}", applianceId, control);
+            if (!ApplianceManager.getInstance().setControl(applianceId, control)) {
+                logger.error("{}: Appliance not found", applianceId);
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            }
+        } catch (Throwable e) {
+            logger.error("Error in " + getClass().getSimpleName(), e);
         }
     }
 
-    @RequestMapping(value= CONTROL_URL, method=RequestMethod.DELETE, consumes="application/json")
+    @RequestMapping(value = CONTROL_URL, method = RequestMethod.DELETE, consumes = "application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    public void deleteControl(HttpServletResponse response, @RequestParam(value="id") String applianceId) {
-        logger.debug("{}: Received request to delete control", applianceId);
-        if(! ApplianceManager.getInstance().deleteControl(applianceId)) {
-            logger.error("{}: Appliance not found", applianceId);
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+    public void deleteControl(HttpServletResponse response, @RequestParam(value = "id") String applianceId) {
+        try {
+            logger.debug("{}: Received request to delete control", applianceId);
+            if (!ApplianceManager.getInstance().deleteControl(applianceId)) {
+                logger.error("{}: Appliance not found", applianceId);
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            }
+        } catch (Throwable e) {
+            logger.error("Error in " + getClass().getSimpleName(), e);
         }
     }
 
-    @RequestMapping(value=METERDEFAULTS_URL, method=RequestMethod.GET, produces="application/json")
+    @RequestMapping(value = METERDEFAULTS_URL, method = RequestMethod.GET, produces = "application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public MeterDefaults getMeterDefaults() {
-        MeterDefaults defaults = new MeterDefaults();
-        defaults.setS0ElectricityMeter(new S0ElectricityMeterDefaults());
-        defaults.setHttpElectricityMeter(new HttpElectricityMeterDefaults());
-        defaults.setModbusElectricityMeter(new ModbusElectricityMeterDefaults());
-        return defaults;
-    }
-
-    @RequestMapping(value=METER_URL, method=RequestMethod.GET, produces="application/json")
-    @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    public Meter getMeter(HttpServletResponse response, @RequestParam(value="id") String applianceId) {
-        logger.debug("{}: Received request for meter", applianceId);
-        Appliance appliance = getAppliance(applianceId);
-        if(appliance != null) {
-            Meter meter = appliance.getMeter();
-            logger.debug("{}: Returning meter {}", applianceId, meter);
-            if(meter == null) {
-                response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-            }
-            return meter;
+        try {
+            MeterDefaults defaults = new MeterDefaults();
+            defaults.setS0ElectricityMeter(new S0ElectricityMeterDefaults());
+            defaults.setHttpElectricityMeter(new HttpElectricityMeterDefaults());
+            defaults.setModbusElectricityMeter(new ModbusElectricityMeterDefaults());
+            return defaults;
+        } catch (Throwable e) {
+            logger.error("Error in " + getClass().getSimpleName(), e);
         }
-        logger.error("{}: Appliance not found", applianceId);
-        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         return null;
     }
 
-    @RequestMapping(value=METER_URL, method=RequestMethod.PUT, consumes="application/json")
+    @RequestMapping(value = METER_URL, method = RequestMethod.GET, produces = "application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    public void setMeter(HttpServletResponse response, @RequestParam(value="id") String applianceId,
+    public Meter getMeter(HttpServletResponse response, @RequestParam(value = "id") String applianceId) {
+        try {
+            logger.debug("{}: Received request for meter", applianceId);
+            Appliance appliance = getAppliance(applianceId);
+            if (appliance != null) {
+                Meter meter = appliance.getMeter();
+                logger.debug("{}: Returning meter {}", applianceId, meter);
+                if (meter == null) {
+                    response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+                }
+                return meter;
+            }
+            logger.error("{}: Appliance not found", applianceId);
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        } catch (Throwable e) {
+            logger.error("Error in " + getClass().getSimpleName(), e);
+        }
+        return null;
+    }
+
+    @RequestMapping(value = METER_URL, method = RequestMethod.PUT, consumes = "application/json")
+    @CrossOrigin(origins = CROSS_ORIGIN_URL)
+    public void setMeter(HttpServletResponse response, @RequestParam(value = "id") String applianceId,
                          @RequestBody Meter meter) {
-        logger.debug("{}: Received request to set meter {}", applianceId, meter);
-        if(! ApplianceManager.getInstance().setMeter(applianceId, meter)) {
-            logger.error("{}: Appliance not found", applianceId);
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        }
-    }
-
-    @RequestMapping(value= METER_URL, method=RequestMethod.DELETE, consumes="application/json")
-    @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    public void deleteMeter(HttpServletResponse response, @RequestParam(value="id") String applianceId) {
-        logger.debug("{}: Received request to delete meter", applianceId);
-        if(! ApplianceManager.getInstance().deleteMeter(applianceId)) {
-            logger.error("{}: Appliance not found", applianceId);
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        }
-    }
-
-    @RequestMapping(value=SCHEDULES_URL, method=RequestMethod.GET, produces="application/json")
-    @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    public List<Schedule> getSchedules(HttpServletResponse response, @RequestParam(value="id") String applianceId) {
-        logger.debug("{}: Received request for schedules", applianceId);
-        Appliance appliance = getAppliance(applianceId);
-        if(appliance != null) {
-            List<Schedule> schedules = appliance.getSchedules();
-            if(schedules == null) {
-                response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+        try {
+            logger.debug("{}: Received request to set meter {}", applianceId, meter);
+            if (!ApplianceManager.getInstance().setMeter(applianceId, meter)) {
+                logger.error("{}: Appliance not found", applianceId);
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             }
-            logger.debug("{}: Returning {} schedules", applianceId, schedules != null ? schedules.size() : 0);
-            return schedules;
+        } catch (Throwable e) {
+            logger.error("Error in " + getClass().getSimpleName(), e);
         }
-        logger.error("{}: Appliance not found", applianceId);
-        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+    }
+
+    @RequestMapping(value = METER_URL, method = RequestMethod.DELETE, consumes = "application/json")
+    @CrossOrigin(origins = CROSS_ORIGIN_URL)
+    public void deleteMeter(HttpServletResponse response, @RequestParam(value = "id") String applianceId) {
+        try {
+            logger.debug("{}: Received request to delete meter", applianceId);
+            if (!ApplianceManager.getInstance().deleteMeter(applianceId)) {
+                logger.error("{}: Appliance not found", applianceId);
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            }
+        } catch (Throwable e) {
+            logger.error("Error in " + getClass().getSimpleName(), e);
+        }
+    }
+
+    @RequestMapping(value = SCHEDULES_URL, method = RequestMethod.GET, produces = "application/json")
+    @CrossOrigin(origins = CROSS_ORIGIN_URL)
+    public List<Schedule> getSchedules(HttpServletResponse response, @RequestParam(value = "id") String applianceId) {
+        try {
+            logger.debug("{}: Received request for schedules", applianceId);
+            Appliance appliance = getAppliance(applianceId);
+            if (appliance != null) {
+                List<Schedule> schedules = appliance.getSchedules();
+                if (schedules == null) {
+                    response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+                }
+                logger.debug("{}: Returning {} schedules", applianceId, schedules != null ? schedules.size() : 0);
+                return schedules;
+            }
+            logger.error("{}: Appliance not found", applianceId);
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        } catch (Throwable e) {
+            logger.error("Error in " + getClass().getSimpleName(), e);
+        }
         return null;
     }
 
-    @RequestMapping(value=SCHEDULES_URL, method=RequestMethod.PUT, consumes="application/json")
+    @RequestMapping(value = SCHEDULES_URL, method = RequestMethod.PUT, consumes = "application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    public void setSchedules(@RequestParam(value="id") String applianceId, @RequestBody List<Schedule> schedules) {
-        logger.debug("{}: Received request to set {} schedules", applianceId, schedules.size());
-        ApplianceManager.getInstance().setSchedules(applianceId, schedules);
+    public void setSchedules(@RequestParam(value = "id") String applianceId, @RequestBody List<Schedule> schedules) {
+        try {
+            logger.debug("{}: Received request to set {} schedules", applianceId, schedules.size());
+            ApplianceManager.getInstance().setSchedules(applianceId, schedules);
+        } catch (Throwable e) {
+            logger.error("Error in " + getClass().getSimpleName(), e);
+        }
     }
 
-    @RequestMapping(value=SCHEDULES_URL, method= RequestMethod.POST, consumes="application/xml")
+    @RequestMapping(value = SCHEDULES_URL, method = RequestMethod.POST, consumes = "application/xml")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    public void activateSchedules(HttpServletResponse response, @RequestParam(value="id") String applianceId,
+    public void activateSchedules(HttpServletResponse response, @RequestParam(value = "id") String applianceId,
                                   @RequestBody Schedules schedules) {
-        List<Schedule> schedulesToSet = schedules.getSchedules();
-        logger.debug("{}: Received request to activate {} schedule(s)", applianceId,
-                (schedulesToSet != null ? schedulesToSet.size() : "0"));
-        Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
-        if(appliance != null) {
-            if(appliance.getMeter() != null) {
-                appliance.getMeter().resetEnergyMeter();
+        try {
+            List<Schedule> schedulesToSet = schedules.getSchedules();
+            logger.debug("{}: Received request to activate {} schedule(s)", applianceId,
+                    (schedulesToSet != null ? schedulesToSet.size() : "0"));
+            Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
+            if (appliance != null) {
+                if (appliance.getMeter() != null) {
+                    appliance.getMeter().resetEnergyMeter();
+                }
+                appliance.getRunningTimeMonitor().setSchedules(schedulesToSet, new LocalDateTime());
+                return;
             }
-            appliance.getRunningTimeMonitor().setSchedules(schedulesToSet, new LocalDateTime());
-            return;
+            logger.error("{}: Appliance not found", applianceId);
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        } catch (Throwable e) {
+            logger.error("Error in " + getClass().getSimpleName(), e);
         }
-        logger.error("{}: Appliance not found", applianceId);
-        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
     }
 
-    @RequestMapping(value=RUNTIME_URL, method=RequestMethod.GET)
+    @RequestMapping(value = RUNTIME_URL, method = RequestMethod.GET)
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    public Integer suggestRuntime(HttpServletResponse response, @RequestParam(value="id") String applianceId) {
-        Integer suggestedRuntime = suggestRuntime(applianceId);
-        if(suggestedRuntime == null) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+    public Integer suggestRuntime(HttpServletResponse response, @RequestParam(value = "id") String applianceId) {
+        try {
+            Integer suggestedRuntime = suggestRuntime(applianceId);
+            if (suggestedRuntime == null) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            }
+            return suggestedRuntime;
+        } catch (Throwable e) {
+            logger.error("Error in " + getClass().getSimpleName(), e);
         }
-        return suggestedRuntime;
+        return null;
     }
 
     /**
      * Suggest a runtime for immediate start.
+     *
      * @param applianceId
      * @return the suggested runtime in s; 0 if no timeframe interval was found; null if no appliance was found for the given id
      */
     public Integer suggestRuntime(String applianceId) {
-        logger.debug("{}: Received request to suggest runtime", applianceId);
-        Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
-        if(appliance != null) {
-            LocalDateTime now = new LocalDateTime();
-            List<TimeframeInterval> timeframeIntervals = Schedule.findTimeframeIntervals(now,
-                    null, appliance.getSchedules(), false, false);
-            if(timeframeIntervals.size() > 0) {
-                Schedule schedule = timeframeIntervals.get(0).getTimeframe().getSchedule();
-                if(schedule.getRequest() instanceof RuntimeRequest) {
-                    return schedule.getRequest().getMin();
+        try {
+            logger.debug("{}: Received request to suggest runtime", applianceId);
+            Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
+            if (appliance != null) {
+                LocalDateTime now = new LocalDateTime();
+                List<TimeframeInterval> timeframeIntervals = Schedule.findTimeframeIntervals(now,
+                        null, appliance.getSchedules(), false, false);
+                if (timeframeIntervals.size() > 0) {
+                    Schedule schedule = timeframeIntervals.get(0).getTimeframe().getSchedule();
+                    if (schedule.getRequest() instanceof RuntimeRequest) {
+                        return schedule.getRequest().getMin();
+                    }
                 }
+            } else {
+                logger.error("{}: Appliance not found", applianceId);
+                return null;
             }
+            return 0;
+        } catch (Throwable e) {
+            logger.error("Error in " + getClass().getSimpleName(), e);
         }
-        else {
-            logger.error("{}: Appliance not found", applianceId);
-            return null;
-        }
-        return 0;
+        return null;
     }
 
-    @RequestMapping(value=RUNTIME_URL, method=RequestMethod.PUT)
+    @RequestMapping(value = RUNTIME_URL, method = RequestMethod.PUT)
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public void setRuntimeDemand(HttpServletResponse response,
-                                 @RequestParam(value="id") String applianceId,
-                                 @RequestParam(value="runtime") Integer runtime) {
-        if(! setRuntimeDemand(new LocalDateTime(), applianceId, runtime)) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                                 @RequestParam(value = "id") String applianceId,
+                                 @RequestParam(value = "runtime") Integer runtime) {
+        try {
+            if (!setRuntimeDemand(new LocalDateTime(), applianceId, runtime)) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            }
+        } catch (Throwable e) {
+            logger.error("Error in " + getClass().getSimpleName(), e);
         }
     }
 
     /**
      * Activate immediatly starting timeframe.
+     *
      * @param now
      * @param applianceId
      * @param runtime
@@ -418,90 +496,100 @@ public class SaeController {
         return activateTimeframe(now, applianceId, null, runtime, false);
     }
 
-    @RequestMapping(value=EV_URL, method=RequestMethod.GET, produces="application/json")
+    @RequestMapping(value = EV_URL, method = RequestMethod.GET, produces = "application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    public List<ElectricVehicle> getElectricVehicles(HttpServletResponse response, @RequestParam(value="id") String applianceId) {
-        logger.debug("{}: Received request for electric vehicles", applianceId);
-        Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
-        if (appliance != null) {
-            if (appliance.getControl() instanceof ElectricVehicleCharger) {
-                ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
-                return evCharger.getVehicles();
+    public List<ElectricVehicle> getElectricVehicles(HttpServletResponse response, @RequestParam(value = "id") String applianceId) {
+        try {
+            logger.debug("{}: Received request for electric vehicles", applianceId);
+            Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
+            if (appliance != null) {
+                if (appliance.getControl() instanceof ElectricVehicleCharger) {
+                    ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
+                    return evCharger.getVehicles();
+                } else {
+                    logger.debug("{}: Appliance has no electric vehicle charger", applianceId);
+                    return new ArrayList<>();
+                }
             } else {
-                logger.debug("{}: Appliance has no electric vehicle charger", applianceId);
-                return new ArrayList<>();
+                logger.error("{}: Appliance not found", applianceId);
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             }
-        }
-        else {
-            logger.error("{}: Appliance not found", applianceId);
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        } catch (Throwable e) {
+            logger.error("Error in " + getClass().getSimpleName(), e);
         }
         return null;
     }
 
-    @RequestMapping(value=EVCHARGE_URL, method=RequestMethod.PUT)
+    @RequestMapping(value = EVCHARGE_URL, method = RequestMethod.PUT)
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public void setEnergyDemand(HttpServletResponse response,
-                                @RequestParam(value="applianceid") String applianceId,
-                                @RequestParam(value="evid") Integer evId,
-                                @RequestParam(value="socCurrent", required = false) Integer socCurrent,
-                                @RequestParam(value="socRequested", required = false) Integer socRequested,
-                                @RequestParam(value="chargeEnd", required = false) String chargeEndString
+                                @RequestParam(value = "applianceid") String applianceId,
+                                @RequestParam(value = "evid") Integer evId,
+                                @RequestParam(value = "socCurrent", required = false) Integer socCurrent,
+                                @RequestParam(value = "socRequested", required = false) Integer socRequested,
+                                @RequestParam(value = "chargeEnd", required = false) String chargeEndString
     ) {
-        LocalDateTime chargeEnd = null;
-        if(chargeEndString != null) {
-            chargeEnd = DateTime.parse(chargeEndString, ISODateTimeFormat.dateTimeParser()).toLocalDateTime();
-        }
-        logger.debug("{}: Received energy request: evId={} socCurrent={} socRequested={} chargeEnd={}",
-                applianceId, evId, socCurrent, socRequested, chargeEnd);
-        Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
-        if (appliance != null) {
-            appliance.setEnergyDemand(new LocalDateTime(), evId, socCurrent, socRequested, chargeEnd);
-        } else {
-            logger.error("{}: Appliance not found", applianceId);
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        try {
+            LocalDateTime chargeEnd = null;
+            if (chargeEndString != null) {
+                chargeEnd = DateTime.parse(chargeEndString, ISODateTimeFormat.dateTimeParser()).toLocalDateTime();
+            }
+            logger.debug("{}: Received energy request: evId={} socCurrent={} socRequested={} chargeEnd={}",
+                    applianceId, evId, socCurrent, socRequested, chargeEnd);
+            Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
+            if (appliance != null) {
+                appliance.setEnergyDemand(new LocalDateTime(), evId, socCurrent, socRequested, chargeEnd);
+            } else {
+                logger.error("{}: Appliance not found", applianceId);
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            }
+        } catch (Throwable e) {
+            logger.error("Error in " + getClass().getSimpleName(), e);
         }
     }
 
-    @RequestMapping(value=EVCHARGE_URL, method=RequestMethod.GET)
+    @RequestMapping(value = EVCHARGE_URL, method = RequestMethod.GET)
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public Float getSoc(
             HttpServletResponse response,
-            @RequestParam(value="applianceid") String applianceId,
-            @RequestParam(value="evid") Integer evId) {
-        logger.debug("{}: Received SOC request: evId={}", applianceId, evId);
-        Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
-        if (appliance != null) {
-            if (appliance.getControl() instanceof ElectricVehicleCharger) {
-                ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
-                ElectricVehicle electricVehicle = evCharger.getVehicle(evId);
-                if(electricVehicle != null) {
-                    Float soc = electricVehicle.getStateOfCharge();
-                    logger.debug("{}: Return SOC={}", applianceId, soc);
-                    return soc;
-                }
-                else {
-                    logger.error("{}: EV-Id {} not found", applianceId, evId);
+            @RequestParam(value = "applianceid") String applianceId,
+            @RequestParam(value = "evid") Integer evId) {
+        try {
+            logger.debug("{}: Received SOC request: evId={}", applianceId, evId);
+            Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
+            if (appliance != null) {
+                if (appliance.getControl() instanceof ElectricVehicleCharger) {
+                    ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
+                    ElectricVehicle electricVehicle = evCharger.getVehicle(evId);
+                    if (electricVehicle != null) {
+                        Float soc = electricVehicle.getStateOfCharge();
+                        logger.debug("{}: Return SOC={}", applianceId, soc);
+                        return soc;
+                    } else {
+                        logger.error("{}: EV-Id {} not found", applianceId, evId);
+                        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    }
+                } else {
+                    logger.error("{}: Appliance has no electric vehicle charger", applianceId);
                     response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 }
-            }
-            else {
-                logger.error("{}: Appliance has no electric vehicle charger", applianceId);
+            } else {
+                logger.error("{}: Appliance not found", applianceId);
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             }
-        } else {
-            logger.error("{}: Appliance not found", applianceId);
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return 0.0f;
+        } catch (Throwable e) {
+            logger.error("Error in " + getClass().getSimpleName(), e);
         }
-        return 0.0f;
+        return null;
     }
 
     public boolean activateTimeframe(LocalDateTime now, String applianceId, Integer energy, Integer runtime,
-                                    boolean acceptControlRecommendations) {
+                                     boolean acceptControlRecommendations) {
         Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
-        if(appliance != null) {
+        if (appliance != null) {
             RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
-            if(runningTimeMonitor != null) {
+            if (runningTimeMonitor != null) {
                 runningTimeMonitor.activateTimeframeInterval(now, runtime);
             }
             appliance.setAcceptControlRecommendations(acceptControlRecommendations);
@@ -511,114 +599,133 @@ public class SaeController {
         return false;
     }
 
-    @RequestMapping(value=SETTINGSDEFAULTS_URL, method=RequestMethod.GET, produces="application/json")
+    @RequestMapping(value = SETTINGSDEFAULTS_URL, method = RequestMethod.GET, produces = "application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public SettingsDefaults getSettingsDefaults() {
-        return new SettingsDefaults();
+        try {
+            return new SettingsDefaults();
+        } catch (Throwable e) {
+            logger.error("Error in " + getClass().getSimpleName(), e);
+        }
+        return null;
     }
 
-    @RequestMapping(value= SETTINGS_URL, method=RequestMethod.GET, produces="application/json")
+    @RequestMapping(value = SETTINGS_URL, method = RequestMethod.GET, produces = "application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public Settings getSettings() {
-        logger.debug("Received request for Settings");
-        Settings settings = new Settings();
+        try {
+            logger.debug("Received request for Settings");
+            Settings settings = new Settings();
 
-        Appliances appliances = ApplianceManager.getInstance().getAppliancesRoot();
+            Appliances appliances = ApplianceManager.getInstance().getAppliancesRoot();
 
-        Connectivity connectivity = appliances.getConnectivity();
-        if(connectivity != null) {
-            List<PulseReceiver> pulseReceivers = connectivity.getPulseReceivers();
-            if(pulseReceivers != null && pulseReceivers.size() > 0) {
-                settings.setPulseReceiverEnabled(true);
-                PulseReceiver pulseReceiver = pulseReceivers.get(0);
-                settings.setPulseReceiverPort(pulseReceiver.getPort());
-            }
-
-            List<ModbusTcp> modbusTCPs = connectivity.getModbusTCPs();
-            if(modbusTCPs != null) {
-                List<ModbusSettings> modbusSettingsList = new ArrayList<>();
-                for(ModbusTcp modbusTcp: modbusTCPs) {
-                    ModbusSettings modbusSettings = new ModbusSettings();
-                    modbusSettings.setModbusTcpId(modbusTcp.getId());
-                    modbusSettings.setModbusTcpHost(modbusTcp.getHost());
-                    modbusSettings.setModbusTcpPort(modbusTcp.getPort());
-                    modbusSettingsList.add(modbusSettings);
+            Connectivity connectivity = appliances.getConnectivity();
+            if (connectivity != null) {
+                List<PulseReceiver> pulseReceivers = connectivity.getPulseReceivers();
+                if (pulseReceivers != null && pulseReceivers.size() > 0) {
+                    settings.setPulseReceiverEnabled(true);
+                    PulseReceiver pulseReceiver = pulseReceivers.get(0);
+                    settings.setPulseReceiverPort(pulseReceiver.getPort());
                 }
-                settings.setModbusSettings(modbusSettingsList);
+
+                List<ModbusTcp> modbusTCPs = connectivity.getModbusTCPs();
+                if (modbusTCPs != null) {
+                    List<ModbusSettings> modbusSettingsList = new ArrayList<>();
+                    for (ModbusTcp modbusTcp : modbusTCPs) {
+                        ModbusSettings modbusSettings = new ModbusSettings();
+                        modbusSettings.setModbusTcpId(modbusTcp.getId());
+                        modbusSettings.setModbusTcpHost(modbusTcp.getHost());
+                        modbusSettings.setModbusTcpPort(modbusTcp.getPort());
+                        modbusSettingsList.add(modbusSettings);
+                    }
+                    settings.setModbusSettings(modbusSettingsList);
+                }
             }
+
+            String holidaysUrl = appliances.getConfigurationValue(HolidaysDownloader.urlConfigurationParamName);
+            settings.setHolidaysEnabled(holidaysUrl != null);
+            settings.setHolidaysUrl(holidaysUrl);
+
+            logger.debug("Returning Settings " + settings);
+            return settings;
+        } catch (Throwable e) {
+            logger.error("Error in " + getClass().getSimpleName(), e);
         }
-
-        String holidaysUrl = appliances.getConfigurationValue(HolidaysDownloader.urlConfigurationParamName);
-        settings.setHolidaysEnabled(holidaysUrl != null);
-        settings.setHolidaysUrl(holidaysUrl);
-
-        logger.debug("Returning Settings " + settings);
-        return settings;
+        return null;
     }
 
-    @RequestMapping(value=SETTINGS_URL, method=RequestMethod.PUT, consumes="application/json")
+    @RequestMapping(value = SETTINGS_URL, method = RequestMethod.PUT, consumes = "application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public void setSettings(@RequestBody Settings settings) {
-        logger.debug("Received request to set " + settings);
+        try {
+            logger.debug("Received request to set " + settings);
 
-        List<PulseReceiver> pulseReceivers = null;
-        if(settings.isPulseReceiverEnabled()) {
-            PulseReceiver pulseReceiver = new PulseReceiver();
-            pulseReceiver.setId(PulseReceiver.DEFAULT_ID);
-            pulseReceiver.setPort(settings.getPulseReceiverPort());
-            pulseReceivers = Collections.singletonList(pulseReceiver);
-        }
-
-        List<ModbusTcp> modbusTCPs = null;
-        List<ModbusSettings> modbusSettingsList = settings.getModbusSettings();
-        if(modbusSettingsList != null) {
-            modbusTCPs = new ArrayList<>();
-            for(ModbusSettings modbusSettings: modbusSettingsList) {
-                ModbusTcp modbusTcp = new ModbusTcp();
-                modbusTcp.setId(modbusSettings.getModbusTcpId());
-                modbusTcp.setHost(modbusSettings.getModbusTcpHost());
-                modbusTcp.setPort(modbusSettings.getModbusTcpPort());
-                modbusTCPs.add(modbusTcp);
+            List<PulseReceiver> pulseReceivers = null;
+            if (settings.isPulseReceiverEnabled()) {
+                PulseReceiver pulseReceiver = new PulseReceiver();
+                pulseReceiver.setId(PulseReceiver.DEFAULT_ID);
+                pulseReceiver.setPort(settings.getPulseReceiverPort());
+                pulseReceivers = Collections.singletonList(pulseReceiver);
             }
-        }
 
-        Connectivity connectivity = null;
-        if(pulseReceivers != null || modbusTCPs != null) {
-            connectivity = new Connectivity();
-            connectivity.setPulseReceivers(pulseReceivers);
-            connectivity.setModbusTCPs(modbusTCPs);
-        }
-        ApplianceManager.getInstance().setConnectivity(connectivity);
+            List<ModbusTcp> modbusTCPs = null;
+            List<ModbusSettings> modbusSettingsList = settings.getModbusSettings();
+            if (modbusSettingsList != null) {
+                modbusTCPs = new ArrayList<>();
+                for (ModbusSettings modbusSettings : modbusSettingsList) {
+                    ModbusTcp modbusTcp = new ModbusTcp();
+                    modbusTcp.setId(modbusSettings.getModbusTcpId());
+                    modbusTcp.setHost(modbusSettings.getModbusTcpHost());
+                    modbusTcp.setPort(modbusSettings.getModbusTcpPort());
+                    modbusTCPs.add(modbusTcp);
+                }
+            }
 
-        List<Configuration> configurations = null;
-        if(settings.isHolidaysEnabled()) {
-            Configuration configuration = new Configuration();
-            configuration.setParam(HolidaysDownloader.urlConfigurationParamName);
-            configuration.setValue(settings.getHolidaysUrl());
-            configurations = Collections.singletonList(configuration);
+            Connectivity connectivity = null;
+            if (pulseReceivers != null || modbusTCPs != null) {
+                connectivity = new Connectivity();
+                connectivity.setPulseReceivers(pulseReceivers);
+                connectivity.setModbusTCPs(modbusTCPs);
+            }
+            ApplianceManager.getInstance().setConnectivity(connectivity);
+
+            List<Configuration> configurations = null;
+            if (settings.isHolidaysEnabled()) {
+                Configuration configuration = new Configuration();
+                configuration.setParam(HolidaysDownloader.urlConfigurationParamName);
+                configuration.setValue(settings.getHolidaysUrl());
+                configurations = Collections.singletonList(configuration);
+            }
+            ApplianceManager.getInstance().setConfiguration(configurations);
+        } catch (Throwable e) {
+            logger.error("Error in " + getClass().getSimpleName(), e);
         }
-        ApplianceManager.getInstance().setConfiguration(configurations);
     }
 
-    @RequestMapping(value= STATUS_URL, method=RequestMethod.GET, produces="application/json")
+    @RequestMapping(value = STATUS_URL, method = RequestMethod.GET, produces = "application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public List<ApplianceStatus> getApplianceStatus() {
-        return getApplianceStatus(new LocalDateTime());
+        try {
+            return getApplianceStatus(new LocalDateTime());
+        } catch (Throwable e) {
+            logger.error("Error in " + getClass().getSimpleName(), e);
+        }
+        return null;
     }
 
     public List<ApplianceStatus> getApplianceStatus(LocalDateTime now) {
         logger.debug("Received request for ApplianceStatus");
         List<ApplianceStatus> applianceStatuses = new ArrayList<>();
-        for(Appliance appliance : ApplianceManager.getInstance().getAppliances()) {
+        for (Appliance appliance : ApplianceManager.getInstance().getAppliances()) {
             DeviceInfo deviceInfo = getDeviceInfo(appliance.getId());
             Identification identification = null;
-            if(deviceInfo!= null) {
+            if (deviceInfo != null) {
                 identification = deviceInfo.getIdentification();
             }
 
             ApplianceStatus applianceStatus = new ApplianceStatus();
             applianceStatus.setId(appliance.getId());
-            if(identification != null) {
+            if (identification != null) {
                 applianceStatus.setName(identification.getDeviceName());
                 applianceStatus.setVendor(identification.getDeviceVendor());
                 applianceStatus.setType(identification.getDeviceType());
@@ -626,7 +733,7 @@ public class SaeController {
 
             List<RuntimeInterval> runtimeIntervals = appliance.getRuntimeIntervals(now, false);
 
-            if(appliance.isControllable()) {
+            if (appliance.isControllable()) {
                 applianceStatus.setControllable(true);
                 Control control = appliance.getControl();
                 Meter meter = appliance.getMeter();
@@ -635,22 +742,22 @@ public class SaeController {
                 TimeframeInterval activeTimeframeInterval =
                         runningTimeMonitor != null ? runningTimeMonitor.getActiveTimeframeInterval() : null;
                 RuntimeInterval nextRuntimeInterval = null;
-                if(runtimeIntervals.size() > 0) {
+                if (runtimeIntervals.size() > 0) {
                     nextRuntimeInterval = runtimeIntervals.get(0);
                     applianceStatus.setPlanningRequested(true);
                     applianceStatus.setEarliestStart(nextRuntimeInterval.getEarliestStart());
                     applianceStatus.setLatestStart(TimeframeInterval.getLatestStart(nextRuntimeInterval.getLatestEnd(),
                             nextRuntimeInterval.getMinRunningTime()));
-                    if(control.isOn()) {
+                    if (control.isOn()) {
                         applianceStatus.setOptionalEnergy(nextRuntimeInterval.isUsingOptionalEnergy());
                     }
-                    if(activeTimeframeInterval == null) {
+                    if (activeTimeframeInterval == null) {
                         applianceStatus.setRunningTime(0);
                         applianceStatus.setRemainingMinRunningTime(nextRuntimeInterval.getMinRunningTime());
                         applianceStatus.setRemainingMaxRunningTime(nextRuntimeInterval.getMaxRunningTime());
                     }
                 }
-                if(control instanceof ElectricVehicleCharger) {
+                if (control instanceof ElectricVehicleCharger) {
                     ElectricVehicleCharger evCharger = (ElectricVehicleCharger) control;
                     applianceStatus.setEvIdCharging(evCharger.getConnectedVehicleId());
                     applianceStatus.setState(evCharger.getState().name());
@@ -668,17 +775,17 @@ public class SaeController {
                     // TODO until we retrieve SOC periodically we calculate the current SOC here
                     applianceStatus.setSocInitial(evCharger.getConnectedVehicleSoc());
                     applianceStatus.setSocInitialTimestamp(evCharger.getConnectedVehicleSocTimestamp());
-                    if(vehicle != null) {
+                    if (vehicle != null) {
                         Integer initialSoc = evCharger.getConnectedVehicleSoc() != null
                                 ? evCharger.getConnectedVehicleSoc() : 0;
                         Integer chargeLoss = vehicle.getChargeLoss() != null ? vehicle.getChargeLoss() : 0;
                         Integer currentSoc = Float.valueOf(initialSoc
-                                + whAlreadyCharged/Float.valueOf(vehicle.getBatteryCapacity())
+                                + whAlreadyCharged / Float.valueOf(vehicle.getBatteryCapacity())
                                 * (100 - chargeLoss)).intValue();
                         applianceStatus.setSoc(currentSoc > 100 ? 100 : currentSoc);
                     }
 
-                    if(control.isOn()) {
+                    if (control.isOn()) {
                         applianceStatus.setCurrentChargePower(chargePower);
                     }
                     applianceStatus.setChargedEnergyAmount(whAlreadyCharged);
@@ -687,7 +794,7 @@ public class SaeController {
                         applianceStatus.setLatestEnd(nextRuntimeInterval.getLatestEnd());
                     }
                 }
-                if(activeTimeframeInterval != null) {
+                if (activeTimeframeInterval != null) {
                     applianceStatus.setPlanningRequested(true);
                     Integer runningTime = runningTimeMonitor.getRunningTimeOfCurrentTimeFrame(now);
                     applianceStatus.setRunningTime(runningTime);
@@ -695,7 +802,7 @@ public class SaeController {
                     applianceStatus.setRemainingMinRunningTime(minRunningTime != null ? minRunningTime : 0);
                     Integer maxRunningTime = runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(now);
                     applianceStatus.setRemainingMaxRunningTime(maxRunningTime);
-                    if(runningTimeMonitor.isInterrupted()) {
+                    if (runningTimeMonitor.isInterrupted()) {
                         Interval interrupted = new Interval(runningTimeMonitor.getStatusChangedAt().toDateTime(),
                                 now.toDateTime());
                         applianceStatus.setInterruptedSince(
@@ -709,13 +816,18 @@ public class SaeController {
         return applianceStatuses;
     }
 
-    @RequestMapping(value=INFO_URL, method=RequestMethod.GET, produces="application/json")
-    @CrossOrigin(origins=CROSS_ORIGIN_URL)
+    @RequestMapping(value = INFO_URL, method = RequestMethod.GET, produces = "application/json")
+    @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public Info getInfo() {
-        logger.debug("Received request for Info");
-        Info info = new Info();
-        info.setVersion(Application.getVersion());
-        info.setBuildDate(Application.getBuildDate());
-        return info;
+        try {
+            logger.debug("Received request for Info");
+            Info info = new Info();
+            info.setVersion(Application.getVersion());
+            info.setBuildDate(Application.getBuildDate());
+            return info;
+        } catch (Throwable e) {
+            logger.error("Error in " + getClass().getSimpleName(), e);
+        }
+        return null;
     }
 }
