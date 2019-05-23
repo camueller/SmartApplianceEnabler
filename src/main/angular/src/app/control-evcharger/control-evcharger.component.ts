@@ -10,7 +10,6 @@ import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {Logger} from '../log/logger';
 import {SettingsDefaults} from '../settings/settings-defaults';
-import {ModbusRegisterConfguration} from '../shared/modbus-register-confguration';
 import {ControlService} from '../control/control-service';
 import {Control} from '../control/control';
 import {ElectricVehicle} from './electric-vehicle';
@@ -18,7 +17,8 @@ import {FormHandler} from '../shared/form-handler';
 import {SocScript} from './soc-script';
 import {ControlDefaults} from '../control/control-defaults';
 import {AppliancesReloadService} from '../appliance/appliances-reload-service';
-import {EvModbusWriteRegisterName} from './ev-modbus-write-register-name';
+import {EvChargerProtocol} from './ev-charger-protocol';
+import {EvModbusControl} from './ev-modbus-control';
 
 declare const $: any;
 
@@ -41,7 +41,6 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
   @Output()
   childFormChanged = new EventEmitter<boolean>();
   form: FormGroup;
-  // modbusConfigurations: FormArray;
   electricVehicles: FormArray;
   formHandler: FormHandler;
   templates: { [name: string]: EvCharger };
@@ -49,6 +48,8 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
+  PROTOCOL_MODBUS = EvChargerProtocol.MODBUS;
+  PROTOCOL_HTTP = EvChargerProtocol.HTTP;
 
   constructor(private logger: Logger,
               private controlService: ControlService,
@@ -60,16 +61,10 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
 
   ngOnInit() {
     this.errorMessages =  new ControlEvchargerErrorMessages(this.translate);
-    // this.translate.get([
-    //   'ControlEvchargerComponent.VehicleNotConnected',
-    //   'ControlEvchargerComponent.VehicleConnected',
-    //   'ControlEvchargerComponent.Charging',
-    //   'ControlEvchargerComponent.ChargingCompleted',
-    //   'ControlEvchargerComponent.Error',
-    //   'ControlEvchargerComponent.StartCharging',
-    //   'ControlEvchargerComponent.StopCharging',
-    //   'ControlEvchargerComponent.ChargingCurrent'
-    // ]).subscribe(translatedStrings => this.translatedStrings = translatedStrings);
+    this.translate.get([
+      'ControlEvchargerComponent.protocol.HTTP',
+      'ControlEvchargerComponent.protocol.MODBUS',
+    ]).subscribe(translatedStrings => this.translatedStrings = translatedStrings);
     this.templates = EvChargerTemplates.getTemplates();
     if (this.isConfigured()) {
       this.initForm(this.control.evCharger);
@@ -91,6 +86,7 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
     });
   }
 
+  // FIXME: alle Enums indirect liefern
   get modbusTranslationKeys() {
     return [
       'ControlEvchargerComponent.VehicleNotConnected',
@@ -111,15 +107,12 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
   }
 
   buildEvChargerFormGroup(evCharger: EvCharger): FormGroup {
-    // this.modbusConfigurations = new FormArray(
-    //   this.control.evCharger.control.configuration.map(
-    //     configuration => this.buildModbusConfigurationFormGroup(configuration))
-    // );
     this.electricVehicles = new FormArray(this.control.evCharger.vehicles ?
       this.control.evCharger.vehicles.map(ev => this.buildElectricVehicleFormGroup(ev)) : []
     );
     const fg =  new FormGroup({});
     this.formHandler.addFormControl(fg, 'template', undefined);
+    this.formHandler.addFormControl(fg, 'protocol', this.evChargerProtocol);
     this.formHandler.addFormControl(fg, 'voltage', evCharger.voltage,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
     this.formHandler.addFormControl(fg, 'phases', evCharger.phases,
@@ -129,10 +122,6 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
     this.formHandler.addFormControl(fg, 'startChargingStateDetectionDelay',
       evCharger.startChargingStateDetectionDelay, [Validators.pattern(InputValidatorPatterns.INTEGER)]);
     this.formHandler.addFormControl(fg, 'forceInitialCharging', evCharger.forceInitialCharging);
-    // this.formHandler.addFormControl(fg, 'modbusIdref', evCharger.control.idref, [Validators.required]);
-    // this.formHandler.addFormControl(fg, 'slaveAddress', evCharger.control.slaveAddress,
-    //   [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    // fg.addControl('modbusConfigurations', this.modbusConfigurations);
     fg.addControl('electricVehicles', this.electricVehicles);
     return fg;
   }
@@ -163,34 +152,6 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
     return fg;
   }
 
-  // buildModbusConfigurationFormGroup(configuration: ModbusRegisterConfguration): FormGroup {
-  //   const fg =  new FormGroup({});
-  //   this.formHandler.addFormControl(fg, 'name', configuration.name, [Validators.required]);
-  //   this.formHandler.addFormControl(fg, 'registerAddress', configuration.address,
-  //     [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER_OR_HEX)]);
-  //   this.formHandler.addFormControl(fg, 'write', configuration.write);
-  //   this.formHandler.addFormControl(fg, 'registerType', configuration.type, [Validators.required]);
-  //   this.formHandler.addFormControl(fg, 'bytes', configuration.bytes,
-  //     [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-  //   this.formHandler.addFormControl(fg, 'byteOrder', configuration.byteOrder);
-  //   this.formHandler.addFormControl(fg, 'extractionRegex', configuration.extractionRegex);
-  //   this.formHandler.addFormControl(fg, 'value', configuration.value);
-  //   this.formHandler.addFormControl(fg, 'factorToValue', configuration.factorToValue);
-  //   this.updateModbusConfigurationValueValidator(fg, configuration.write);
-  //   fg.get('write').valueChanges.forEach(write => this.updateModbusConfigurationValueValidator(fg, write));
-  //   return fg;
-  // }
-
-  // private updateModbusConfigurationValueValidator(fg: FormGroup, writeEnabled: boolean) {
-  //   // FIXME FormHandler cannot handle Validators on FormArrays within form
-  //   // if (writeEnabled) {
-  //   //   this.formHandler.setValidators(fg, 'value', [Validators.required]);
-  //   // } else {
-  //   //   this.formHandler.clearValidators(fg, 'value');
-  //   // }
-  //   // this.formHandler.markLabelsRequired();
-  // }
-
   public updateEvCharger(form: FormGroup, evCharger: EvCharger) {
     evCharger.voltage = form.controls.voltage.value;
     evCharger.phases = form.controls.phases.value;
@@ -200,14 +161,6 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
     evCharger.control.idref = form.controls.modbusIdref.value;
     evCharger.control.slaveAddress = form.controls.slaveAddress.value;
 
-    // const configurations: Array<ModbusRegisterConfguration> = [];
-    // const configurationsFormArray = (form.controls.modbusConfigurations as FormArray);
-    // for (let i = 0; i < configurationsFormArray.getRawValue().length; i++) {
-    //   const modbusConfigurationFormControl = configurationsFormArray.at(i) as FormGroup;
-    //   configurations.push(this.buildModbusRegisterConfguration(modbusConfigurationFormControl));
-    // }
-    // evCharger.control.configuration = configurations;
-
     const evs: Array<ElectricVehicle> = [];
     for (let i = 0; i < this.electricVehicles.length; i++) {
       const evControl = this.electricVehicles.at(i) as FormGroup;
@@ -215,34 +168,6 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
     }
     evCharger.vehicles = evs;
   }
-
-  // buildModbusRegisterConfguration(modbusConfigurationFormControl: FormGroup): ModbusRegisterConfguration {
-  //   const name = modbusConfigurationFormControl.controls.name.value;
-  //
-  //   let value = modbusConfigurationFormControl.controls.value.value;
-  //   if (name === EvModbusWriteRegisterName.ChargingCurrent && ! value) {
-  //     value = '0';
-  //   }
-  //
-  //   const factorToValueControlValue = modbusConfigurationFormControl.controls.factorToValue.value;
-  //   let factorToValue;
-  //   if (factorToValueControlValue !== null) {
-  //     factorToValue = factorToValueControlValue.toString().length > 0 ? factorToValueControlValue : undefined;
-  //   }
-  //
-  //   return {
-  //     enabled: true,
-  //     name,
-  //     address: modbusConfigurationFormControl.controls.registerAddress.value,
-  //     write: modbusConfigurationFormControl.controls.write.value,
-  //     type: modbusConfigurationFormControl.controls.registerType.value,
-  //     bytes: modbusConfigurationFormControl.controls.bytes.value,
-  //     byteOrder: modbusConfigurationFormControl.controls.byteOrder.value,
-  //     extractionRegex: modbusConfigurationFormControl.controls.extractionRegex.value,
-  //     factorToValue,
-  //     value,
-  //   };
-  // }
 
  buildElectricVehicle(evFormControl: FormGroup): ElectricVehicle {
     let newSocScript: SocScript;
@@ -297,60 +222,24 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
     return this.control.evCharger.control !== undefined;
   }
 
-  // getTranslatedModbusRegisterName(name: string) {
-  //   return this.translatedStrings[this.toTextKeyModbusRegisterName(name)];
-  // }
-  //
-  // toTextKeyModbusRegisterName(name: string) {
-  //   return 'ControlEvchargerComponent.' + name;
-  // }
-  //
-  // isModbusWriteRegister(modbusConfiguration: FormGroup): boolean {
-  //   const writeControl = modbusConfiguration.controls['write'];
-  //   return (writeControl ? writeControl.value : false);
-  // }
-  //
-  // isChargingCurrentRegister(modbusConfiguration: FormGroup): boolean {
-  //   const control = modbusConfiguration.controls['name'];
-  //   return control.value === EvModbusWriteRegisterName.ChargingCurrent;
-  // }
-  //
-  // getRegisterType(modbusConfiguration: FormGroup): string {
-  //   const typeControl = modbusConfiguration.controls['registerType'];
-  //   return (typeControl ? typeControl.value : '');
-  // }
-  //
-  // getModbusRegisterTypes(write: boolean): string[] {
-  //   if (write) {
-  //     return this.settingsDefaults.modbusWriteRegisterTypes;
-  //   }
-  //   return this.settingsDefaults.modbusReadRegisterTypes;
-  // }
-  //
-  // getModbusRegisterNames(): string[] {
-  //   return this.control.evCharger.control.configuration
-  //     .map(configuration => configuration.name)
-  //     .filter((v, i, a) => a.indexOf(v) === i);
-  // }
-  //
-  // addModbusConfiguration() {
-  //   this.modbusConfigurations.push(this.buildModbusConfigurationFormGroup({} as ModbusRegisterConfguration));
-  //   this.form.markAsDirty();
-  // }
-  //
-  // removeModbusConfiguration(index: number) {
-  //   this.modbusConfigurations.removeAt(index);
-  //   this.form.markAsDirty();
-  // }
-  //
-  // getByteOrders(): string[] {
-  //   return ['BigEndian', 'LittleEndian'];
-  // }
-  //
-  // getIndexedErrorMessage(key: string, index: number): string {
-  //   const indexedKey = key + '.' + index.toString();
-  //   return this.errors[indexedKey];
-  // }
+  get evChargerProtocol() {
+    if (this.control.evCharger.control['@class'] === EvModbusControl.TYPE) {
+      return EvChargerProtocol.MODBUS;
+    }
+    return undefined;
+  }
+
+  get protocol() {
+    return this.form.controls.protocol.value;
+  }
+
+  get protocols() {
+    return Object.keys(EvChargerProtocol);
+  }
+
+  getProtocolTranslationKey(protocol: string) {
+    return `ControlEvchargerComponent.protocol.${protocol}`;
+  }
 
   addElectricVehicle() {
     const newEvId = this.findNextEvId(this.electricVehicles);
