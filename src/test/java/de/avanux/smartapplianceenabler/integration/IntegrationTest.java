@@ -251,12 +251,18 @@ public class IntegrationTest extends TestBase {
         LocalDateTime timeSwitchOff = toToday(13, 0, 0);
         sempController.em2Device(timeSwitchOff, createEM2Device(applianceId,false));
 
+        // TODO nochmal an/aus schalten
+
         log("Check values after switch off");
         assertRunningTime(timeSwitchOff, control, runningTimeMonitor, false, true,false, true,
                 true, 3600, 0, null);
         assertPlanningRequest(timeStartingCurrent, new Timeframe(applianceId,0, 23400,0, 0));
 
-        // TODO nochmal an/aus schalten
+        log("No timeframe should exist after timeframe end");
+        LocalDateTime timeAfterTimeframeEnd = toToday(18, 1, 0);
+        runningTimeMonitor.updateActiveTimeframeInterval(timeAfterTimeframeEnd);
+        assertRunningTime(timeAfterTimeframeEnd, control, runningTimeMonitor, false, true,false, false,
+                false, null, null, null);
     }
 
     @Test
@@ -294,7 +300,7 @@ public class IntegrationTest extends TestBase {
         log("If not switched on during timeframe a new timeframe should exist after timeframe end");
         LocalDateTime timeAfterTimeframeEnd = toToday(13, 1, 0);
         runningTimeMonitor.updateActiveTimeframeInterval(timeAfterTimeframeEnd);
-        assertPlanningRequest(timeStartingCurrent, new Timeframe(applianceId,81000, 91800,3599, 3600));
+        assertPlanningRequest(timeAfterTimeframeEnd, new Timeframe(applianceId,75540, 86340,3599, 3600));
     }
 
     // @Test
