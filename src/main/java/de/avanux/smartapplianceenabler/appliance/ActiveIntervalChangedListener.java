@@ -25,7 +25,7 @@ import org.joda.time.LocalDateTime;
  */
 public interface ActiveIntervalChangedListener {
 
-    void activeIntervalChanged(LocalDateTime now, String applianceId, TimeframeInterval deactivatedInterval, TimeframeInterval activatedInterval);
+    void activeIntervalChanged(LocalDateTime now, String applianceId, TimeframeInterval deactivatedInterval, TimeframeInterval activatedInterval, boolean wasRunning);
 
     void activeIntervalChecked(LocalDateTime now, String applianceId, TimeframeInterval activeInterval);
 }
