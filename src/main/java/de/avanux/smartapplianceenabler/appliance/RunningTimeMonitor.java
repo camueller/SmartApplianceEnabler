@@ -135,9 +135,9 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         }
         else {
             this.interrupted = false;
+            this.wasRunning = true;
         }
         this.running = running;
-        this.wasRunning = true;
         this.statusChangedAt = now;
         logger.debug("{}: Set running={} statusChangedAt={} ", applianceId, running, statusChangedAt);
     }
