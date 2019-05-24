@@ -45,6 +45,7 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
     // remaining max running time while not running or when running started
     private Integer remainingMaxRunningTimeWhileNotRunning;
     private boolean running;
+    private boolean wasRunning;
     private boolean interrupted;
     private GuardedTimerTask updateActiveTimeframeIntervalTimerTask;
 
@@ -136,6 +137,7 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
             this.interrupted = false;
         }
         this.running = running;
+        this.wasRunning = true;
         this.statusChangedAt = now;
         logger.debug("{}: Set running={} statusChangedAt={} ", applianceId, running, statusChangedAt);
     }
@@ -275,6 +277,7 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
      */
     public void activateTimeframeInterval(LocalDateTime now, TimeframeInterval timeframeIntervalToBeActivated) {
         boolean intervalChanged = false;
+        boolean wasRunning = this.wasRunning;
         if(timeframeIntervalToBeActivated != null && activeTimeframeInterval == null) {
             Schedule schedule = timeframeIntervalToBeActivated.getTimeframe().getSchedule();
             runningTime = 0;
@@ -291,6 +294,7 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         else if(timeframeIntervalToBeActivated == null && activeTimeframeInterval != null) {
             logger.debug("{}: Interval expired: {}", applianceId, activeTimeframeInterval);
             running = false;
+            this.wasRunning = false;
             runningTime = null;
             interrupted = false;
             statusChangedAt = null;
@@ -307,7 +311,7 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
             for(ActiveIntervalChangedListener listener : scheduleChangedListeners) {
                 logger.debug("{}: Notifying {} {}", applianceId, ActiveIntervalChangedListener.class.getSimpleName(),
                         listener.getClass().getSimpleName());
-                listener.activeIntervalChanged(now, applianceId, deactivatedTimeframeInterval, activeTimeframeInterval);
+                listener.activeIntervalChanged(now, applianceId, deactivatedTimeframeInterval, activeTimeframeInterval, wasRunning);
             }
         }
     }
