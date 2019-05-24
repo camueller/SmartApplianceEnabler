@@ -19,9 +19,9 @@
     <input type="text" formControlName="{{this.getFormControlName('password')}}">
   </div>
 </div>
-<app-http-read-value *ngFor="let httpReadValue of httpRead.readValues"
+<app-http-read-value *ngFor="let httpReadValue of httpRead.readValues; index as i"
                      [httpReadValue]="httpReadValue"
-                     [formControlNamePrefix]="formControlNamePrefix"
+                     [formControlNamePrefix]="getReadValueFormControlPrefix(i)"
                      [valueNames]="valueNames"
                      [translationPrefix]="translationPrefix"
                      [translationKeys]="translationKeys"

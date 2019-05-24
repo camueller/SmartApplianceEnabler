@@ -29,10 +29,12 @@ import {ModbusRegisterWrite} from '../shared/modbus-register-write';
 import {ModbusRegisterWriteValue} from '../shared/modbus-register-write-value';
 import {EvCharger} from '../control-evcharger/ev-charger';
 import {ModbusRegisterConfguration} from '../shared/modbus-register-confguration';
-import {EvModbusControl} from '../control-evcharger/ev-modbus-control';
+import {EvModbusControl} from '../control-evcharger-modbus/ev-modbus-control';
 import {ModbusRegisterRead} from '../shared/modbus-register-read';
 import {ModbusRegisterReadValue} from '../shared/modbus-register-read-value';
 import {ElectricVehicle} from '../control-evcharger/electric-vehicle';
+import {EvHttpControl} from '../control-evcharger-http/ev-http-control';
+import {MeterValueName} from '../meter/meter-value-name';
 
 export class ControlFactory {
 
@@ -75,7 +77,7 @@ export class ControlFactory {
     if (rawControl['@class'] === StartingCurrentSwitch.TYPE) {
       control.startingCurrentDetection = true;
       control.startingCurrentSwitch = this.createStartingCurrentSwitch(rawControl);
-      this.fromJSONbyType(control, rawControl.control);
+      this.fromJSONbyType(control, rawControl.modbusControl);
     } else {
       this.fromJSONbyType(control, rawControl);
     }
@@ -187,49 +189,6 @@ export class ControlFactory {
   createEvCharger(rawEvCharger: any): EvCharger {
     let evCharger = new EvCharger();
     if (rawEvCharger) {
-      const rawModbusControl = rawEvCharger.control;
-      const configurations: ModbusRegisterConfguration[] = [];
-
-      if (rawEvCharger.control) {
-
-        if (rawModbusControl.registerReads) {
-          (rawModbusControl.registerReads as any[]).map(
-            registerRead => (registerRead.registerReadValues as any[]).map(registerReadValue => {
-              const configuration = new ModbusRegisterConfguration({
-                name: registerReadValue.name,
-                address: registerRead.address,
-                type: registerRead.type,
-                bytes: registerRead.bytes,
-                byteOrder: registerRead.byteOrder,
-                extractionRegex: registerReadValue.extractionRegex,
-                write: false
-              });
-              configurations.push(configuration);
-            }));
-        }
-
-        if (rawModbusControl.registerWrites) {
-          (rawModbusControl.registerWrites as any[]).map(
-            registerWrite => (registerWrite.registerWriteValues as any[]).map(registerWriteValue => {
-              const configuration = new ModbusRegisterConfguration({
-                name: registerWriteValue.name,
-                address: registerWrite.address,
-                type: registerWrite.type,
-                value: registerWriteValue.value,
-                factorToValue: registerWrite.factorToValue,
-                write: true
-              });
-              configurations.push(configuration);
-            }));
-        }
-      }
-
-      const evModbusControl = new EvModbusControl({
-        idref: rawModbusControl.idref,
-        slaveAddress: rawModbusControl.slaveAddress,
-        configuration: configurations
-      });
-
       const evs: ElectricVehicle[] = [];
       if (rawEvCharger.vehicles) {
         (rawEvCharger.vehicles as any[]).map(rawEv => {
@@ -244,11 +203,74 @@ export class ControlFactory {
         pollInterval: rawEvCharger.pollInterval,
         startChargingStateDetectionDelay: rawEvCharger.startChargingStateDetectionDelay,
         forceInitialCharging: rawEvCharger.forceInitialCharging,
-        control: evModbusControl,
         vehicles: evs
       });
+
+      if (rawEvCharger.control['@class'] === EvModbusControl.TYPE) {
+        evCharger.modbusControl = this.createEvModbusControl(rawEvCharger.control);
+      } else if (rawEvCharger.control['@class'] === EvHttpControl.TYPE) {
+        evCharger.httpControl = this.createEvHttpControl(rawEvCharger.control);
+      }
     }
     return evCharger;
+  }
+
+  createEvModbusControl(rawModbusControl: any): EvModbusControl {
+    const configurations: ModbusRegisterConfguration[] = [];
+
+    if (rawModbusControl) {
+
+      if (rawModbusControl.registerReads) {
+        (rawModbusControl.registerReads as any[]).map(
+          registerRead => (registerRead.registerReadValues as any[]).map(registerReadValue => {
+            const configuration = new ModbusRegisterConfguration({
+              name: registerReadValue.name,
+              address: registerRead.address,
+              type: registerRead.type,
+              bytes: registerRead.bytes,
+              byteOrder: registerRead.byteOrder,
+              extractionRegex: registerReadValue.extractionRegex,
+              write: false
+            });
+            configurations.push(configuration);
+          }));
+      }
+
+      if (rawModbusControl.registerWrites) {
+        (rawModbusControl.registerWrites as any[]).map(
+          registerWrite => (registerWrite.registerWriteValues as any[]).map(registerWriteValue => {
+            const configuration = new ModbusRegisterConfguration({
+              name: registerWriteValue.name,
+              address: registerWrite.address,
+              type: registerWrite.type,
+              value: registerWriteValue.value,
+              factorToValue: registerWrite.factorToValue,
+              write: true
+            });
+            configurations.push(configuration);
+          }));
+      }
+    }
+
+    const evModbusControl = new EvModbusControl({
+      idref: rawModbusControl.idref,
+      slaveAddress: rawModbusControl.slaveAddress,
+      configuration: configurations
+    });
+    return evModbusControl;
+  }
+
+  createEvHttpControl(rawHttpControl: any): EvHttpControl {
+    const evHttpControl = new EvHttpControl();
+    if (!!rawHttpControl.httpReads) {
+      evHttpControl.httpReads = [];
+      rawHttpControl.httpReads.forEach((rawHttpRead) => {
+        if (!!rawHttpRead.readValues && rawHttpRead.readValues.length > 0) {
+          evHttpControl.httpReads.push({...rawHttpRead});
+        }
+      });
+    }
+    return evHttpControl;
   }
 
   toJSON(control: Control): string {
@@ -305,7 +327,7 @@ export class ControlFactory {
 
   toJSONEvCharger(control: Control) {
     const registerReads: ModbusRegisterRead[] = [];
-    control.evCharger.control.configuration
+    control.evCharger.modbusControl.configuration
       .filter(configuration => configuration.write === false)
       .forEach(configuration => {
         let matchinRegisterRead: ModbusRegisterRead = registerReads.find(
@@ -325,10 +347,10 @@ export class ControlFactory {
         });
         matchinRegisterRead.registerReadValues.push(registerReadValue);
       });
-    control.evCharger.control.registerReads = registerReads;
+    control.evCharger.modbusControl.registerReads = registerReads;
 
     const registerWrites: ModbusRegisterWrite[] = [];
-    control.evCharger.control.configuration
+    control.evCharger.modbusControl.configuration
       .filter(configuration => configuration.write)
       .forEach(configuration => {
         let matchingRegisterWrite: ModbusRegisterWrite = registerWrites.find(
@@ -349,7 +371,7 @@ export class ControlFactory {
         });
         matchingRegisterWrite.registerWriteValues.push(registerWriteValue);
       });
-    control.evCharger.control.registerWrites = registerWrites;
+    control.evCharger.modbusControl.registerWrites = registerWrites;
   }
 
   toElectricVehicle(rawEv: any): ElectricVehicle {
