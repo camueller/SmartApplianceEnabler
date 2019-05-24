@@ -49,6 +49,8 @@ export class HttpReadValueComponent implements OnInit, AfterViewChecked, OnDestr
   }
 
   ngOnInit() {
+    console.log('formControlNamePrefix=', this.formControlNamePrefix);
+    console.log('httpReadValue=', this.httpReadValue);
     this.errorMessages = new HttpReadValueErrorMessages(this.translate);
     this.form = this.parent.form;
     this.expandParentForm(this.form, this.httpReadValue, this.formHandler);
@@ -64,7 +66,7 @@ export class HttpReadValueComponent implements OnInit, AfterViewChecked, OnDestr
   }
 
   ngAfterViewChecked() {
-    this.formHandler.markLabelsRequired();
+    // this.formHandler.markLabelsRequired();
   }
 
   ngOnDestroy() {

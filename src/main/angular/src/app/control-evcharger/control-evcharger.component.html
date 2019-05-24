@@ -66,11 +66,14 @@
       </div>
     </div>
     <app-control-evcharger-modbus *ngIf="protocol === PROTOCOL_MODBUS"
-      [evModbusControl]="control.evCharger.control"
+      [evModbusControl]="control.evCharger.modbusControl"
       [settings]="settings"
       [settingsDefaults]="settingsDefaults"
       [translationKeys]="modbusTranslationKeys"
     ></app-control-evcharger-modbus>
+    <app-control-evcharger-http
+      [evHttpControl]="control.evCharger.httpControl"
+    ></app-control-evcharger-http>
     <h4 class="ui dividing header">{{'ControlEvchargerComponent.ev.heading' | translate}}</h4>
     <div formArrayName="electricVehicles">
       <div *ngFor="let electricVehicle of electricVehicles.controls; index as i; last as l" [formGroupName]="i">
@@ -142,6 +145,7 @@
       {{'ControlEvchargerComponent.ev.button.new' | translate}}</button>
   </div>
 </form>
+<pre>{{control.evCharger | json}}</pre>
 <!--
 <pre>pristine={{form.pristine}}</pre>
 <pre>invalid={{form.invalid}}</pre>

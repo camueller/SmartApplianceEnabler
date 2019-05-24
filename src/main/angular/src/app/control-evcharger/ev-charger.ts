@@ -1,5 +1,6 @@
-import {EvModbusControl} from './ev-modbus-control';
+import {EvModbusControl} from '../control-evcharger-modbus/ev-modbus-control';
 import {ElectricVehicle} from './electric-vehicle';
+import {EvHttpControl} from '../control-evcharger-http/ev-http-control';
 
 export class EvCharger {
 
@@ -9,7 +10,8 @@ export class EvCharger {
 
   '@class' = EvCharger.TYPE;
   type: string;
-  control: EvModbusControl;
+  modbusControl: EvModbusControl;
+  httpControl: EvHttpControl;
   voltage: number;
   phases: number;
   pollInterval: number;

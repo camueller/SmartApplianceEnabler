@@ -63,12 +63,16 @@ export class HttpReadComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   ngAfterViewChecked() {
-    this.formHandler.markLabelsRequired();
+    // this.formHandler.markLabelsRequired();
   }
 
   ngOnDestroy() {
     // FIXME: erzeugt Fehler bei Wechsel des Zählertypes
     // this.nestedFormService.submitted.unsubscribe();
+  }
+
+  getReadValueFormControlPrefix(index: number) {
+    return `${this.formControlNamePrefix}readValue${index}.`;
   }
 
   getFormControlName(formControlName: string): string {

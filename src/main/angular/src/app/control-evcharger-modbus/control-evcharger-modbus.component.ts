@@ -9,9 +9,9 @@ import {NestedFormService} from '../shared/nested-form-service';
 import {MeterHttpErrorMessages} from '../meter-http/meter-http-error-messages';
 import {FormMarkerService} from '../shared/form-marker-service';
 import {Settings} from '../settings/settings';
-import {EvModbusControl} from '../control-evcharger/ev-modbus-control';
+import {EvModbusControl} from './ev-modbus-control';
 import {SettingsDefaults} from '../settings/settings-defaults';
-import {EvModbusWriteRegisterName} from '../control-evcharger/ev-modbus-write-register-name';
+import {EvModbusWriteRegisterName} from './ev-modbus-write-register-name';
 import {ModbusRegisterConfguration} from '../shared/modbus-register-confguration';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 

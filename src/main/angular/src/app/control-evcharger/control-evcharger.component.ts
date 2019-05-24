@@ -18,7 +18,8 @@ import {SocScript} from './soc-script';
 import {ControlDefaults} from '../control/control-defaults';
 import {AppliancesReloadService} from '../appliance/appliances-reload-service';
 import {EvChargerProtocol} from './ev-charger-protocol';
-import {EvModbusControl} from './ev-modbus-control';
+import {EvModbusControl} from '../control-evcharger-modbus/ev-modbus-control';
+import {EvHttpControl} from '../control-evcharger-http/ev-http-control';
 
 declare const $: any;
 
@@ -158,8 +159,8 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
     evCharger.pollInterval = form.controls.pollInterval.value;
     evCharger.startChargingStateDetectionDelay = form.controls.startChargingStateDetectionDelay.value;
     evCharger.forceInitialCharging = form.controls.forceInitialCharging.value;
-    evCharger.control.idref = form.controls.modbusIdref.value;
-    evCharger.control.slaveAddress = form.controls.slaveAddress.value;
+    evCharger.modbusControl.idref = form.controls.modbusIdref.value;
+    evCharger.modbusControl.slaveAddress = form.controls.slaveAddress.value;
 
     const evs: Array<ElectricVehicle> = [];
     for (let i = 0; i < this.electricVehicles.length; i++) {
@@ -219,12 +220,15 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
   }
 
   isConfigured(): boolean {
-    return this.control.evCharger.control !== undefined;
+    return this.control.evCharger.modbusControl !== undefined
+      || this.control.evCharger.httpControl !== undefined;
   }
 
   get evChargerProtocol() {
-    if (this.control.evCharger.control['@class'] === EvModbusControl.TYPE) {
+    if (this.control.evCharger.modbusControl && this.control.evCharger.modbusControl['@class'] === EvModbusControl.TYPE) {
       return EvChargerProtocol.MODBUS;
+    } else if (this.control.evCharger.httpControl && this.control.evCharger.httpControl['@class'] === EvHttpControl.TYPE) {
+      return EvChargerProtocol.HTTP;
     }
     return undefined;
   }
