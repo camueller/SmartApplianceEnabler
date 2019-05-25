@@ -7,6 +7,7 @@ import {NestedFormService} from '../shared/nested-form-service';
 import {FormMarkerService} from '../shared/form-marker-service';
 import {TranslateService} from '@ngx-translate/core';
 import {EvHttpControl} from './ev-http-control';
+import {EvModbusReadRegisterName} from '../control-evcharger-modbus/ev-modbus-read-register-name';
 
 @Component({
   selector: 'app-control-evcharger-http',
@@ -70,10 +71,10 @@ export class ControlEvchargerHttpComponent implements  OnInit, AfterViewChecked,
   }
 
   get valueNames() {
-    return ['Power'];
+    return Object.keys(EvModbusReadRegisterName);
   }
 
   get valueNameTextKeys() {
-    return ['MeterHttpComponent.power'];
+    return Object.keys(EvModbusReadRegisterName).map(key => `ControlEvchargerComponent.${key}`);
   }
 }
