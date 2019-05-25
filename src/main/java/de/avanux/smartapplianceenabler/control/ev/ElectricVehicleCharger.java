@@ -380,7 +380,7 @@ public class ElectricVehicleCharger implements Control, Initializable, Validatea
                 if (getConnectedVehicleId() == null) {
                     setConnectedVehicleId(firstVehicle.getId());
                 }
-                if(previousState == State.VEHICLE_NOT_CONNECTED) {
+                if(getConnectedVehicleSoc() == null) {
                     retrieveSoc(firstVehicle);
                 }
             }
