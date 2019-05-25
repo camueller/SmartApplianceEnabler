@@ -359,7 +359,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
                 if (getConnectedVehicleId() == null) {
                     setConnectedVehicleId(firstVehicle.getId());
                 }
-                if(previousState == State.VEHICLE_NOT_CONNECTED) {
+                if(getConnectedVehicleSoc() == null) {
                     retrieveSoc(firstVehicle);
                 }
             }
