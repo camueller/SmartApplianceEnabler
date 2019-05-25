@@ -26,6 +26,8 @@ export class HttpReadValueComponent implements OnInit, AfterViewChecked, OnDestr
   @Input()
   valueNames: string[];
   @Input()
+  disableFactorToValue = false;
+  @Input()
   formControlNamePrefix = '';
   form: FormGroup;
   formHandler: FormHandler;
@@ -91,7 +93,7 @@ export class HttpReadValueComponent implements OnInit, AfterViewChecked, OnDestr
   }
 
   get disabled() {
-    return ! this.form.controls[this.getFormControlName('enabled')].value;
+    return !this.form.controls[this.getFormControlName('enabled')].value;
   }
 
   expandParentForm(form: FormGroup, httpReadValue: HttpReadValue, formHandler: FormHandler) {
@@ -104,9 +106,11 @@ export class HttpReadValueComponent implements OnInit, AfterViewChecked, OnDestr
       httpReadValue ? httpReadValue.path : undefined);
     formHandler.addFormControl(form, this.getFormControlName('extractionRegex'),
       httpReadValue ? httpReadValue.extractionRegex : undefined);
-    formHandler.addFormControl(form, this.getFormControlName('factorToValue'),
-      httpReadValue ? httpReadValue.factorToValue : undefined,
-    [Validators.pattern(InputValidatorPatterns.FLOAT)]);
+    if (!this.disableFactorToValue) {
+      formHandler.addFormControl(form, this.getFormControlName('factorToValue'),
+        httpReadValue ? httpReadValue.factorToValue : undefined,
+        [Validators.pattern(InputValidatorPatterns.FLOAT)]);
+    }
   }
 
   updateHttpReadValue(httpReadValue: HttpReadValue, form: FormGroup) {
