@@ -21,29 +21,34 @@ Usage: java ... -Dlogging.config=/path/logback-spring.xml
 -->
 <configuration debug="true" scan="true" scanPeriod="30 seconds">
 
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <layout class="ch.qos.logback.classic.PatternLayout">
-            <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
-        </layout>
-    </appender>
+        <appender name="STDOUT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <append>true</append>
+                <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                        <fileNamePattern>./log/stdout-%d{yyyy-MM-dd}.log</fileNamePattern>
+                        <maxHistory>7</maxHistory>
+                </rollingPolicy>
+                <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                        <Pattern>%date %level [%thread] %logger{10} [%file:%line] %msg%n</Pattern>
+                </encoder>
+        </appender>
 
-    <appender name="FILEROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <append>true</append>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>/tmp/rolling-%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>7</maxHistory>
-        </rollingPolicy>
-        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <Pattern>%date %level [%thread] %logger{10} [%file:%line] %msg%n</Pattern>
-        </encoder>
-    </appender>
+        <appender name="FILEROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <append>true</append>
+                <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                        <fileNamePattern>./log/rolling-%d{yyyy-MM-dd}.log</fileNamePattern>
+                        <maxHistory>7</maxHistory>
+                </rollingPolicy>
+                <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                        <Pattern>%date %level [%thread] %logger{10} [%file:%line] %msg%n</Pattern>
+                </encoder>
+        </appender>
 
-    <logger name="de.avanux" level="debug" additivity="false">
-        <appender-ref ref="FILEROLLING" />
-    </logger>
+        <logger name="de.avanux" level="debug" additivity="false">
+                <appender-ref ref="FILEROLLING" />
+        </logger>
 
-    <root level="info">
-        <appender-ref ref="STDOUT" />
-    </root>
+        <root level="info">
+                <appender-ref ref="STDOUT" />
+        </root>
 
 </configuration>
