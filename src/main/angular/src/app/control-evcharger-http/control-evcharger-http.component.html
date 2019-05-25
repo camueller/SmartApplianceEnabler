@@ -1,10 +1,10 @@
 <div class="ui hidden divider"></div>
 <app-http-read *ngFor="let httpRead of evHttpControl.httpReads; index as i; last as l"
-  [httpRead]="httpRead"
-  [formControlNamePrefix]="getFormControlPrefix(i)"
-  [valueNames]="valueNames"
-  [translationPrefix]="'ControlEvchargerComponent.'"
-  [translationKeys]="valueNameTextKeys"
+               [httpRead]="httpRead"
+               [formControlNamePrefix]="getFormControlPrefix(i)"
+               [valueNames]="valueNames"
+               [translationPrefix]="'ControlEvchargerComponent.'"
+               [translationKeys]="valueNameTextKeys"
 ></app-http-read>
 <button type="button" (click)="addHttpRead()" class="ui button">
   {{'ControlEvchargerHttpComponent.button.addHttpRead' | translate}}</button>

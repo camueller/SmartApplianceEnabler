@@ -26,6 +26,8 @@ export class HttpReadComponent implements OnInit, AfterViewChecked, OnDestroy {
   @Input()
   valueNames: string[];
   @Input()
+  singleValue = false;
+  @Input()
   formControlNamePrefix = '';
   form: FormGroup;
   formHandler: FormHandler;
@@ -49,6 +51,7 @@ export class HttpReadComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   ngOnInit() {
+    console.log('singleValue=', this.singleValue);
     this.errorMessages = new HttpReadErrorMessages(this.translate);
     this.form = this.parent.form;
     this.expandParentForm(this.form, this.httpRead, this.formHandler);

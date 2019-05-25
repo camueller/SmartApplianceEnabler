@@ -23,6 +23,7 @@
 </div>
 <app-http-read
   [httpRead]="httpElectricityMeter.powerConfiguration"
+  [singleValue]="true"
   [formControlNamePrefix]="'power'"
   [valueNames]="powerValueNames"
   [translationPrefix]="'MeterHttpComponent.'"
@@ -30,6 +31,7 @@
 ></app-http-read>
 <app-http-read
   [httpRead]="httpElectricityMeter.energyConfiguration"
+  [singleValue]="true"
   [formControlNamePrefix]="'energy'"
   [valueNames]="energyValueNames"
   [translationPrefix]="'MeterHttpComponent.'"

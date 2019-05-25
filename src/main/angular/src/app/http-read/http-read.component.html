@@ -28,10 +28,10 @@
       [translationPrefix]="translationPrefix"
       [translationKeys]="translationKeys"
     ></app-http-read-value>
-    <div class="field icon-field">
+    <div class="field icon-field" *ngIf="! singleValue">
       <i (click)="removeValue(i)" class="icon big red remove circle"></i>
     </div>
   </div>
 </div>
-<button type="button" (click)="addValue()" class="ui button">
+<button type="button" (click)="addValue()" class="ui button" *ngIf="! singleValue">
   {{'HttpReadComponent.button.addValue' | translate}}</button>
