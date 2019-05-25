@@ -103,6 +103,7 @@
   "HttpReadComponent.password": "Passwort",
   "HttpReadComponent.error.url_required": "Die URL muss angegeben werden",
   "HttpReadComponent.error.url_pattern": "Die URL muss gültig sein",
+  "HttpReadComponent.button.addValue": "Weiterer Wert",
 
   "HttpReadValueComponent.enabled": "Aktiv",
   "HttpReadValueComponent.name": "Zustand / Aktion",
@@ -209,6 +210,9 @@
   "ControlEvchargerComponent.ev.script.filename": "Dateiname mit Pfad",
   "ControlEvchargerComponent.ev.script.extractionRegex": "Regex für Extraktion",
   "ControlEvchargerComponent.ev.button.new": "Neues Fahrzeug",
+
+  "ControlEvchargerHttpComponent.button.addHttpRead": "Weitere URL (Lesen)",
+  "ControlEvchargerHttpComponent.button.addHttpWrite": "Weitere URL (Schreiben)",
 
   "ModbusRegisterComponent.enabled": "Aktiv",
   "ModbusRegisterComponent.name": "Zustand / Aktion",

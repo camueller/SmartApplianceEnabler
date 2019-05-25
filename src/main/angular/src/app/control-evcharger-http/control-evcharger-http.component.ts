@@ -77,4 +77,8 @@ export class ControlEvchargerHttpComponent implements  OnInit, AfterViewChecked,
   get valueNameTextKeys() {
     return Object.keys(EvModbusReadRegisterName).map(key => `ControlEvchargerComponent.${key}`);
   }
+
+  addHttpRead() {
+
+  }
 }

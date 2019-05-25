@@ -49,10 +49,10 @@ export class HttpReadValueComponent implements OnInit, AfterViewChecked, OnDestr
   }
 
   ngOnInit() {
-    console.log('formControlNamePrefix=', this.formControlNamePrefix);
-    console.log('httpReadValue=', this.httpReadValue);
-    console.log('valueNames=', this.valueNames);
-    console.log('translationKeys=', this.translationKeys);
+    // console.log('formControlNamePrefix=', this.formControlNamePrefix);
+    // console.log('httpReadValue=', this.httpReadValue);
+    // console.log('valueNames=', this.valueNames);
+    // console.log('translationKeys=', this.translationKeys);
     this.errorMessages = new HttpReadValueErrorMessages(this.translate);
     this.form = this.parent.form;
     this.expandParentForm(this.form, this.httpReadValue, this.formHandler);
@@ -61,7 +61,7 @@ export class HttpReadValueComponent implements OnInit, AfterViewChecked, OnDestr
     });
     this.translate.get(this.translationKeys).subscribe(translatedStrings => {
       this.translatedStrings = translatedStrings;
-      console.log('translatedStrings=', this.translatedStrings);
+      // console.log('translatedStrings=', this.translatedStrings);
     });
     this.nestedFormService.submitted.subscribe(
       () => this.updateHttpReadValue(this.httpReadValue, this.form));
@@ -86,8 +86,8 @@ export class HttpReadValueComponent implements OnInit, AfterViewChecked, OnDestr
     return this.translatedStrings[textKey];
   }
 
-  get selectedValueName() {
-    return this.valueNames.length === 1 && this.valueNames[0];
+  get readValueName() {
+    return this.valueNames.length === 1 ? this.valueNames[0] : this.httpReadValue.name;
   }
 
   get disabled() {
