@@ -19,10 +19,19 @@
     <input type="text" formControlName="{{this.getFormControlName('password')}}">
   </div>
 </div>
-<app-http-read-value *ngFor="let httpReadValue of httpRead.readValues; index as i"
-                     [httpReadValue]="httpReadValue"
-                     [formControlNamePrefix]="getReadValueFormControlPrefix(i)"
-                     [valueNames]="valueNames"
-                     [translationPrefix]="translationPrefix"
-                     [translationKeys]="translationKeys"
-></app-http-read-value>
+<div *ngFor="let httpReadValue of httpRead.readValues; index as i">
+  <div class="ui fields">
+    <app-http-read-value
+      [httpReadValue]="httpReadValue"
+      [formControlNamePrefix]="getReadValueFormControlPrefix(i)"
+      [valueNames]="valueNames"
+      [translationPrefix]="translationPrefix"
+      [translationKeys]="translationKeys"
+    ></app-http-read-value>
+    <div class="field icon-field">
+      <i (click)="removeValue(i)" class="icon big red remove circle"></i>
+    </div>
+  </div>
+</div>
+<button type="button" (click)="addValue()" class="ui button">
+  {{'HttpReadComponent.button.addValue' | translate}}</button>

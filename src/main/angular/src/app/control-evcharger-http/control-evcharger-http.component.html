@@ -1,11 +1,4 @@
 <div class="ui hidden divider"></div>
-<!--
-(Text-) Buttons über Transclution (Slots) injecten???
-https://www.youtube.com/watch?v=L7aUACC0xXE
-https://scotch.io/tutorials/angular-2-transclusion-using-ng-content
-
-... aber eigentlich kann das ngFor in ein div hochgezgen werden und an dessen Ende (nach dem app-http-read) kommt der Button
--->
 <app-http-read *ngFor="let httpRead of evHttpControl.httpReads; index as i; last as l"
   [httpRead]="httpRead"
   [formControlNamePrefix]="getFormControlPrefix(i)"
@@ -13,3 +6,7 @@ https://scotch.io/tutorials/angular-2-transclusion-using-ng-content
   [translationPrefix]="'ControlEvchargerComponent.'"
   [translationKeys]="valueNameTextKeys"
 ></app-http-read>
+<button type="button" (click)="addHttpRead()" class="ui button">
+  {{'ControlEvchargerHttpComponent.button.addHttpRead' | translate}}</button>
+<button type="button" (click)="addHttpRead()" class="ui button">
+  {{'ControlEvchargerHttpComponent.button.addHttpWrite' | translate}}</button>

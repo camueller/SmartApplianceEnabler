@@ -10,6 +10,7 @@ import {FormMarkerService} from '../shared/form-marker-service';
 import {TranslateService} from '@ngx-translate/core';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {HttpReadErrorMessages} from './http-read-error-messages';
+import {HttpReadValue} from '../http-read-value/http-read-value';
 
 @Component({
   selector: 'app-http-read',
@@ -94,6 +95,19 @@ export class HttpReadComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   get disabled() {
     return ! this.form.controls[this.getFormControlName('enabled')].value;
+  }
+
+  addValue() {
+    // const newEv = this.buildElectricVehicleFormGroup(undefined, newEvId);
+    // this.electricVehicles.push(newEv);
+    const newReadValue = new HttpReadValue();
+    this.httpRead.readValues.push(newReadValue);
+    this.form.markAsDirty();
+  }
+
+  removeValue(index: number) {
+    this.httpRead.readValues.splice(index, 1);
+    this.form.markAsDirty();
   }
 
   expandParentForm(form: FormGroup, httpRead: HttpRead, formHandler: FormHandler) {
