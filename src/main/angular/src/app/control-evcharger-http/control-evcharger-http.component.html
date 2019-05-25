@@ -1,4 +1,5 @@
 <div class="ui hidden divider"></div>
+<h4 class="ui dividing header">{{'ControlEvchargerHttpComponent.heading.httpRead' | translate}}</h4>
 <app-http-read *ngFor="let httpRead of evHttpControl.httpReads; index as i; last as l"
                [httpRead]="httpRead"
                [formControlNamePrefix]="getFormControlPrefix(i)"
@@ -8,5 +9,6 @@
 ></app-http-read>
 <button type="button" (click)="addHttpRead()" class="ui button">
   {{'ControlEvchargerHttpComponent.button.addHttpRead' | translate}}</button>
+<h4 class="ui dividing header">{{'ControlEvchargerHttpComponent.heading.httpWrite' | translate}}</h4>
 <button type="button" (click)="addHttpRead()" class="ui button">
   {{'ControlEvchargerHttpComponent.button.addHttpWrite' | translate}}</button>

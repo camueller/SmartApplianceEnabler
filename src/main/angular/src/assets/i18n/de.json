@@ -211,8 +211,10 @@
   "ControlEvchargerComponent.ev.script.extractionRegex": "Regex für Extraktion",
   "ControlEvchargerComponent.ev.button.new": "Neues Fahrzeug",
 
-  "ControlEvchargerHttpComponent.button.addHttpRead": "Weitere URL (Lesen)",
-  "ControlEvchargerHttpComponent.button.addHttpWrite": "Weitere URL (Schreiben)",
+  "ControlEvchargerHttpComponent.heading.httpRead": "Lesezugriff",
+  "ControlEvchargerHttpComponent.heading.httpWrite": "Schreibzugriff",
+  "ControlEvchargerHttpComponent.button.addHttpRead": "Weitere URL",
+  "ControlEvchargerHttpComponent.button.addHttpWrite": "Weitere URL",
 
   "ModbusRegisterComponent.enabled": "Aktiv",
   "ModbusRegisterComponent.name": "Zustand / Aktion",
