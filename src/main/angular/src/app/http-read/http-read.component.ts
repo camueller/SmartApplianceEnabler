@@ -28,6 +28,8 @@ export class HttpReadComponent implements OnInit, AfterViewChecked, OnDestroy {
   @Input()
   singleValue = false;
   @Input()
+  disableFactorToValue = false;
+  @Input()
   formControlNamePrefix = '';
   form: FormGroup;
   formHandler: FormHandler;

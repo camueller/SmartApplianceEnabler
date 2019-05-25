@@ -2,6 +2,7 @@
 <h4 class="ui dividing header">{{'ControlEvchargerHttpComponent.heading.httpRead' | translate}}</h4>
 <app-http-read *ngFor="let httpRead of evHttpControl.httpReads; index as i; last as l"
                [httpRead]="httpRead"
+               [disableFactorToValue]="true"
                [formControlNamePrefix]="getFormControlPrefix(i)"
                [valueNames]="valueNames"
                [translationPrefix]="'ControlEvchargerComponent.'"
