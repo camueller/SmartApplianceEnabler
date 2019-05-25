@@ -69,7 +69,7 @@ export class MeterHttpComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   get powerValueNameTextKeys() {
-    return ['MeterHttpComponent.power'];
+    return ['MeterHttpComponent.Power'];
   }
 
   get energyValueNames() {
@@ -77,7 +77,7 @@ export class MeterHttpComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   get energyValueNameTextKeys() {
-    return ['MeterHttpComponent.energy'];
+    return ['MeterHttpComponent.Energy'];
   }
 
   get contentProtocol(): string {

@@ -89,8 +89,8 @@
   "MeterModbusComponent.error.measurementInterval_required": "Das Messinterval muss angegeben werden",
   "MeterModbusComponent.error.measurementInterval_pattern": "Das Messinterval muss eine Zahl sein",
 
-  "MeterHttpComponent.power": "Leistung",
-  "MeterHttpComponent.energy": "Energiemenge",
+  "MeterHttpComponent.Power": "Leistung",
+  "MeterHttpComponent.Energy": "Energiemenge",
   "MeterHttpComponent.pollInterval": "Abfrage-Interval [s]",
   "MeterHttpComponent.measurementInterval": "Messinterval [s]",
   "MeterHttpComponent.contentProtocol": "Format",
