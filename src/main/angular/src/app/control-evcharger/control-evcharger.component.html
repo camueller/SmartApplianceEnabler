@@ -1,5 +1,5 @@
 <form class="ui form" [formGroup]="form" (ngSubmit)="submitForm()">
-  <h4 class="ui dividing header">{{'ControlEvchargerComponent.heading' | translate}}</h4>
+  <h3 class="ui dividing header">{{'ControlEvchargerComponent.heading' | translate}}</h3>
   <div class="ui fields sae-fields">
     <div class="field">
       <label class="standalone-label">{{'ControlEvchargerComponent.template' | translate}}</label>
@@ -74,7 +74,7 @@
     <app-control-evcharger-http
       [evHttpControl]="control.evCharger.httpControl"
     ></app-control-evcharger-http>
-    <h4 class="ui dividing header">{{'ControlEvchargerComponent.ev.heading' | translate}}</h4>
+    <h3 class="ui dividing header">{{'ControlEvchargerComponent.ev.heading' | translate}}</h3>
     <div formArrayName="electricVehicles">
       <div *ngFor="let electricVehicle of electricVehicles.controls; index as i; last as l" [formGroupName]="i">
         <div class="ui hidden divider"></div>
