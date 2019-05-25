@@ -356,7 +356,7 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
             if (this.vehicles != null && this.vehicles.size() > 0) {
                 // sadly, we don't know, which ev has been connected, so we will assume the first one if any
                 ElectricVehicle firstVehicle = this.vehicles.get(0);
-                if (previousState == State.VEHICLE_NOT_CONNECTED) {
+                if (getConnectedVehicleId() == null) {
                     setConnectedVehicleId(firstVehicle.getId());
                 }
                 if(previousState == State.VEHICLE_NOT_CONNECTED) {
