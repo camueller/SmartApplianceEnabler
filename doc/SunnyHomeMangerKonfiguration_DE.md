@@ -33,4 +33,19 @@ In der Verbraucherbilanz sollte ab jetzt das neue Gerät aufgeführt werden mit 
 
 ![Verbraucherbilanz](../pics/shm/Verbraucherbilanz.png)
 
-Aktuell unterstützt der Sunny Home Manager maximal 12 Geräte. Zur Gesamtzahl zählen neben den Geräten, die mit dem SEMP Protokoll angesprochen werden, auch z.B. SMA Bluetooth Funksteckdosen - also alle Geräte, die im Sunny Portal in der Verbraucherübersicht angezeigt werden. Wird die zulässige Höchstzahl überschritten, wird das neu angelegte Gerät im Sunny Portal angezeigt, kann jedoch nicht hinzugefügt werden (gelbes Ausrufezeichen, Fehlermeldung "Weder eine Erweiterung noch ein Austausch ist in dieser Geräteklasse möglich").
+Aktuell unterstützt der Sunny Home Manager maximal 24 Geräte die gemessen werden (kein Schalter konfiguriert), davon dürfen maximal 12 Geräte mit aktivem Energiemanagement sein (Schalter ist konfiguriert). Zur Gesamtzahl zählen neben den Geräten, die mit dem SEMP Protokoll angesprochen werden, auch z.B. SMA Bluetooth Funksteckdosen - also alle Geräte, die im Sunny Portal in der Verbraucherübersicht angezeigt werden. Wird die zulässige Höchstzahl überschritten, wird das neu angelegte Gerät im Sunny Portal angezeigt, kann jedoch nicht hinzugefügt werden (gelbes Ausrufezeichen, Fehlermeldung "Weder eine Erweiterung noch ein Austausch ist in dieser Geräteklasse möglich").
+Aktuell ist es nicht möglich im Portal mehr als 12 Geräte anzulegen, wenn diese "nach und nach" einzeln angelegt werden. Es ist dabei unerheblich, ob die Geräte nur messen oder auch schalten. Es handelt sich hierbei vermutlich um einen Bug in der Weboberfläche.
+
+Folgender Workaround funktioniert jedoch:
+Zuerst müsst ihr unter die 12 Geräte kommen, das ist möglicherweise mit Datenverlust verbunden (wenn ihr schon 12 Geräte habt und eines löschen müsst). Anschließend die gewünschte Anzahl von Geräten im SAE anlegen. Plant hierbei unbedingt spätere Erweiterungen gleich mit ein, denn nachträglich müsstet ihr erst wieder unter die 12 Geräte kommen um neue anlegen zu können. Ein bereits angelegtes aber noch nicht benutztes Gerät kann nachträglich noch umbenannt werden - es wird über die eindeutige ID identifiziert.
+
+Wenn im *Smart Appliance Enabler* alle Geräte angelegt sind können diese in einem Rutsch mit dem Pluszeichen hinzugefügt werden, dazu bei jedem Gerät den Haken setzen:
+
+
+![Mehrere neue Geräte](../pics/shm/mehrere_devices_hinzufuegen.png)
+
+Achtung: Danach darf kein Gerät über das Portal inaktiv geschaltet werden, es lässt sich nicht mehr aktivieren. Soll ein Gerät temporär nicht geschalten werden im *Smart Appliance Enabler* einfach das Zeitfenster ausschalten.
+
+Übersicht einer Anlage mit 22 Verbrauchern, für spätere Erweiterungen wurden Dummys angelegt:
+
+![Anlage mit 22 Geräten](../pics/shm/Verbraucheruebersicht.PNG)
