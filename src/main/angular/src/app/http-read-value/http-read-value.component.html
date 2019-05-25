@@ -3,7 +3,7 @@
     <label>{{'HttpReadValueComponent.enabled' | translate}}</label>
     <input class="ui checkbox" type="checkbox" formControlName="{{this.getFormControlName('enabled')}}">
   </div>
-  <div class="four wide field" [class.disabled]="disabled">
+  <div class="five wide field" [class.disabled]="disabled">
     <label>{{'HttpReadValueComponent.name' | translate}}</label>
     <select class="ui fluid dropdown" formControlName="{{this.getFormControlName('name')}}">
       <option *ngFor="let aValueName of valueNames"
