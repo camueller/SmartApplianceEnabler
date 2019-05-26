@@ -75,6 +75,8 @@ import { HttpReadComponent } from './http-read/http-read.component';
 import { HttpReadValueComponent } from './http-read-value/http-read-value.component';
 import { ControlEvchargerModbusComponent } from './control-evcharger-modbus/control-evcharger-modbus.component';
 import { ControlEvchargerHttpComponent } from './control-evcharger-http/control-evcharger-http.component';
+import { HttpWriteComponent } from './http-write/http-write.component';
+import { HttpWriteValueComponent } from './http-write-value/http-write-value.component';
 
 @NgModule({
   declarations: [
@@ -89,6 +91,8 @@ import { ControlEvchargerHttpComponent } from './control-evcharger-http/control-
     ControlStartingcurrentComponent,
     HttpReadComponent,
     HttpReadValueComponent,
+    HttpWriteComponent,
+    HttpWriteValueComponent,
     MeterComponent,
     MeterModbusComponent,
     MeterHttpComponent,

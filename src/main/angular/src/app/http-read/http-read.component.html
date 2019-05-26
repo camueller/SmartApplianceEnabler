@@ -1,21 +1,21 @@
 <h4 class="ui dividing header sae-header" *ngIf="valueName">{{valueName}}</h4>
 <div class="ui fields">
   <div class="six wide field">
-    <label>{{'HttpReadComponent.url' | translate}}</label>
+    <label class="sae-label">{{'HttpReadComponent.url' | translate}}</label>
     <input type="text" formControlName="{{this.getFormControlName('url')}}">
     <div *ngIf="errors[this.getFormControlName('url')]"
          class="ui negative message">{{errors[this.getFormControlName('url')]}}</div>
   </div>
   <div class="field">
-    <label>{{'HttpReadComponent.contentType' | translate}}</label>
+    <label class="sae-label">{{'HttpReadComponent.contentType' | translate}}</label>
     <input type="text" formControlName="{{this.getFormControlName('contentType')}}">
   </div>
   <div class="field">
-    <label>{{'HttpReadComponent.username' | translate}}</label>
+    <label class="sae-label">{{'HttpReadComponent.username' | translate}}</label>
     <input type="text" formControlName="{{this.getFormControlName('username')}}">
   </div>
   <div class="field">
-    <label>{{'HttpReadComponent.password' | translate}}</label>
+    <label class="sae-label">{{'HttpReadComponent.password' | translate}}</label>
     <input type="text" formControlName="{{this.getFormControlName('password')}}">
   </div>
 </div>

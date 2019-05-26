@@ -3,13 +3,20 @@
 <app-http-read *ngFor="let httpRead of evHttpControl.httpReads; index as i; last as l"
                [httpRead]="httpRead"
                [disableFactorToValue]="true"
-               [formControlNamePrefix]="getFormControlPrefix(i)"
-               [valueNames]="valueNames"
+               [formControlNamePrefix]="getReadFormControlPrefix(i)"
+               [valueNames]="readValueNames"
                [translationPrefix]="'ControlEvchargerComponent.'"
-               [translationKeys]="valueNameTextKeys"
+               [translationKeys]="readValueNameTextKeys"
 ></app-http-read>
 <button type="button" (click)="addHttpRead()" class="ui button">
   {{'ControlEvchargerHttpComponent.button.addHttpRead' | translate}}</button>
 <h4 class="ui dividing header">{{'ControlEvchargerHttpComponent.heading.httpWrite' | translate}}</h4>
+<app-http-write *ngFor="let httpWrite of evHttpControl.httpWrites; index as i; last as l"
+                [httpWrite]="httpWrite"
+                [formControlNamePrefix]="getWriteFormControlPrefix(i)"
+                [valueNames]="writeValueNames"
+                [translationPrefix]="'ControlEvchargerComponent.'"
+                [translationKeys]="writeValueNameTextKeys"
+></app-http-write>
 <button type="button" (click)="addHttpRead()" class="ui button">
   {{'ControlEvchargerHttpComponent.button.addHttpWrite' | translate}}</button>

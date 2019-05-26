@@ -1,10 +1,10 @@
 <div class="ui fields">
   <div class="field">
-    <label>{{'HttpReadValueComponent.enabled' | translate}}</label>
+    <label class="sae-label">{{'HttpReadValueComponent.enabled' | translate}}</label>
     <input class="ui checkbox" type="checkbox" formControlName="{{this.getFormControlName('enabled')}}">
   </div>
   <div class="five wide field" [class.disabled]="disabled">
-    <label>{{'HttpReadValueComponent.name' | translate}}</label>
+    <label class="sae-label">{{'HttpReadValueComponent.name' | translate}}</label>
     <select class="ui fluid dropdown" formControlName="{{this.getFormControlName('name')}}">
       <option *ngFor="let aValueName of valueNames"
               [ngValue]="aValueName"
@@ -13,19 +13,19 @@
     </select>
   </div>
   <div class="field" [class.disabled]="disabled">
-    <label>{{'HttpReadValueComponent.data' | translate}}</label>
+    <label class="sae-label">{{'HttpReadValueComponent.data' | translate}}</label>
     <input type="text" formControlName="{{this.getFormControlName('data')}}">
   </div>
   <div class="field" [class.disabled]="disabled">
-    <label>{{'HttpReadValueComponent.path' | translate}}</label>
+    <label class="sae-label">{{'HttpReadValueComponent.path' | translate}}</label>
     <input type="text" formControlName="{{this.getFormControlName('path')}}">
   </div>
   <div class="field" [class.disabled]="disabled">
-    <label>{{'HttpReadValueComponent.extractionRegex' | translate}}</label>
+    <label class="sae-label">{{'HttpReadValueComponent.extractionRegex' | translate}}</label>
     <input type="text" formControlName="{{this.getFormControlName('extractionRegex')}}">
   </div>
   <div class="two wide field" [class.disabled]="disabled" *ngIf="! disableFactorToValue">
-    <label>{{'HttpReadValueComponent.factorToValue' | translate}}</label>
+    <label class="sae-label">{{'HttpReadValueComponent.factorToValue' | translate}}</label>
     <input type="text" formControlName="{{this.getFormControlName('factorToValue')}}">
     <div *ngIf="errors[this.getFormControlName('factorToValue')]"
          class="ui negative message">{{errors[this.getFormControlName('factorToValue')]}}</div>
