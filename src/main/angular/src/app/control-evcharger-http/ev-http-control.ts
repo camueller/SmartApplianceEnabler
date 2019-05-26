@@ -1,4 +1,5 @@
 import {HttpRead} from '../http-read/http-read';
+import {HttpWrite} from '../http-write/http-write';
 
 export class EvHttpControl {
 
@@ -8,6 +9,7 @@ export class EvHttpControl {
 
   '@class' = EvHttpControl.TYPE;
   httpReads: HttpRead[];
+  httpWrites: HttpWrite[];
 
   public constructor(init?: Partial<EvHttpControl>) {
     Object.assign(this, init);

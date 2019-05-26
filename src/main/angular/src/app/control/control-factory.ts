@@ -192,7 +192,7 @@ export class ControlFactory {
       const evs: ElectricVehicle[] = [];
       if (rawEvCharger.vehicles) {
         (rawEvCharger.vehicles as any[]).map(rawEv => {
-          const ev: ElectricVehicle = {... rawEv};
+          const ev: ElectricVehicle = {...rawEv};
           evs.push(ev);
         });
       }
@@ -267,6 +267,14 @@ export class ControlFactory {
       rawHttpControl.httpReads.forEach((rawHttpRead) => {
         if (!!rawHttpRead.readValues && rawHttpRead.readValues.length > 0) {
           evHttpControl.httpReads.push({...rawHttpRead});
+        }
+      });
+    }
+    if (!!rawHttpControl.httpWrites) {
+      evHttpControl.httpWrites = [];
+      rawHttpControl.httpWrites.forEach((rawHttpWrite) => {
+        if (!!rawHttpWrite.writeValues && rawHttpWrite.writeValues.length > 0) {
+          evHttpControl.httpWrites.push({... rawHttpWrite});
         }
       });
     }
@@ -376,7 +384,7 @@ export class ControlFactory {
 
   toElectricVehicle(rawEv: any): ElectricVehicle {
     this.logger.debug('ElectricVehicle (JSON): ' + JSON.stringify(rawEv));
-    const ev = new ElectricVehicle(... rawEv);
+    const ev = new ElectricVehicle(...rawEv);
     this.logger.debug('ElectricVehicle (TYPE): ' + JSON.stringify(ev));
     return ev;
   }

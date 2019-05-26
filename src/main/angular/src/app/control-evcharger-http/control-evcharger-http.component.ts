@@ -8,13 +8,14 @@ import {FormMarkerService} from '../shared/form-marker-service';
 import {TranslateService} from '@ngx-translate/core';
 import {EvHttpControl} from './ev-http-control';
 import {EvModbusReadRegisterName} from '../control-evcharger-modbus/ev-modbus-read-register-name';
+import {EvModbusWriteRegisterName} from '../control-evcharger-modbus/ev-modbus-write-register-name';
 
 @Component({
   selector: 'app-control-evcharger-http',
   templateUrl: './control-evcharger-http.component.html',
   styles: []
 })
-export class ControlEvchargerHttpComponent implements  OnInit, AfterViewChecked, OnDestroy {
+export class ControlEvchargerHttpComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   @Input()
   evHttpControl: EvHttpControl;
@@ -66,16 +67,28 @@ export class ControlEvchargerHttpComponent implements  OnInit, AfterViewChecked,
     // this.nestedFormService.submitted.unsubscribe();
   }
 
-  getFormControlPrefix(index: number) {
+  getReadFormControlPrefix(index: number) {
     return `read${index}.`;
   }
 
-  get valueNames() {
+  getWriteFormControlPrefix(index: number) {
+    return `write${index}.`;
+  }
+
+  get readValueNames() {
     return Object.keys(EvModbusReadRegisterName);
   }
 
-  get valueNameTextKeys() {
+  get writeValueNames() {
+    return Object.keys(EvModbusWriteRegisterName);
+  }
+
+  get readValueNameTextKeys() {
     return Object.keys(EvModbusReadRegisterName).map(key => `ControlEvchargerComponent.${key}`);
+  }
+
+  get writeValueNameTextKeys() {
+    return Object.keys(EvModbusWriteRegisterName).map(key => `ControlEvchargerComponent.${key}`);
   }
 
   addHttpRead() {
