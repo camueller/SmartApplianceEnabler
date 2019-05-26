@@ -226,6 +226,7 @@
   "ControlEvchargerComponent.ev.script.extractionRegex": "Regex für Extraktion",
   "ControlEvchargerComponent.ev.button.new": "Neues Fahrzeug",
 
+  "ControlEvchargerHttpComponent.contentProtocol": "Format",
   "ControlEvchargerHttpComponent.heading.httpRead": "Lesezugriff",
   "ControlEvchargerHttpComponent.heading.httpWrite": "Schreibzugriff",
   "ControlEvchargerHttpComponent.button.addHttpRead": "Weitere URL",
