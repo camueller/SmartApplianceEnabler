@@ -1,0 +1,32 @@
+<div class="ui fields">
+  <div class="field">
+    <label class="sae-label">{{'HttpReadValueComponent.enabled' | translate}}</label>
+    <input class="ui checkbox" type="checkbox" formControlName="{{this.getFormControlName('enabled')}}">
+  </div>
+  <div class="five wide field" [class.disabled]="disabled">
+    <label class="sae-label">{{'HttpReadValueComponent.name' | translate}}</label>
+    <select class="ui fluid dropdown" formControlName="{{this.getFormControlName('name')}}">
+      <option *ngFor="let aValueName of valueNames"
+              [ngValue]="aValueName"
+              [selected]="aValueName==readValueName"
+      >{{getTranslatedValueName(aValueName)}}</option>
+    </select>
+  </div>
+  <div class="field" [class.disabled]="disabled">
+    <label class="sae-label">{{'HttpWriteValueComponent.value' | translate}}</label>
+    <input type="text" formControlName="{{this.getFormControlName('value')}}">
+  </div>
+  <div class="field" [class.disabled]="disabled" *ngIf="! disableFactorToValue">
+    <label class="sae-label">{{'HttpWriteValueComponent.factorToValue' | translate}}</label>
+    <input type="text" formControlName="{{this.getFormControlName('factorToValue')}}">
+    <div *ngIf="errors[this.getFormControlName('factorToValue')]"
+         class="ui negative message">{{errors[this.getFormControlName('factorToValue')]}}</div>
+  </div>
+  <div class="field" [class.disabled]="disabled">
+    <label class="sae-label">{{'HttpMethod' | translate}}</label>
+    <select class="ui fluid dropdown" formControlName="{{this.getFormControlName('method')}}">
+      <option *ngFor="let aMethod of methods" [ngValue]="aMethod" [selected]="aMethod === method"
+      >{{getMethodTranslationKey(aMethod)| translate}}</option>
+    </select>
+  </div>
+</div>
