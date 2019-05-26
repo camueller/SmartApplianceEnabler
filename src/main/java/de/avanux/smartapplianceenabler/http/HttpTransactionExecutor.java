@@ -46,72 +46,18 @@ import java.io.IOException;
 /**
  * Executor of a HTTP transaction.
  */
-@XmlTransient
-@XmlAccessorType(XmlAccessType.FIELD)
-abstract public class HttpTransactionExecutor {
-    private transient Logger logger = LoggerFactory.getLogger(HttpTransactionExecutor.class);
-    @XmlAttribute
-    private String url;
-    @XmlAttribute
-    private String contentType;
-    @XmlAttribute
-    private String username;
-    @XmlAttribute
-    private String password;
-    private transient String applianceId;
-    private transient RequestConfig requestConfig;
+public class HttpTransactionExecutor {
+    private Logger logger = LoggerFactory.getLogger(HttpTransactionExecutor.class);
+    private String applianceId;
+    private RequestConfig requestConfig;
+    private HttpConfiguration configuration = new HttpConfiguration();
 
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
     }
 
-    protected String getApplianceId() {
-        return applianceId;
-    }
-
-    public HttpTransactionExecutor() {
-    }
-
-    public HttpTransactionExecutor(String url) {
-        this.url = url;
-    }
-
-    public HttpTransactionExecutor(String url, String contentType, String username, String password) {
-        this.url = url;
-        this.contentType = contentType;
-        this.username = username;
-        this.password = password;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    protected ContentType getContentType() {
-        if(contentType != null) {
-            return ContentType.create(contentType);
-        }
-        return null;
-    }
-
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
-    }
-
-    protected String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    protected String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+    public void setConfiguration(HttpConfiguration configuration) {
+        this.configuration = configuration;
     }
 
     public String executeGet(String url) {
@@ -130,7 +76,7 @@ abstract public class HttpTransactionExecutor {
                 return EntityUtils.toString(response.getEntity());
             }
         } catch (Exception e) {
-            logger.error("{}: Error reading HTTP response", getApplianceId(), e);
+            logger.error("{}: Error reading HTTP response", applianceId, e);
         } finally {
             closeResponse(response);
         }
@@ -141,14 +87,15 @@ abstract public class HttpTransactionExecutor {
         CloseableHttpResponse response = null;
         try {
             if(httpMethod == HttpMethod.POST) {
-                response = post(url, getContentType(), data, getUsername(), getPassword());
+                response = post(url, configuration.getContentType(), data, configuration.getUsername(),
+                        configuration.getPassword());
             }
             else {
-                response = get(url, getUsername(), getPassword());
+                response = get(url, configuration.getUsername(), configuration.getPassword());
             }
             return response;
         } catch (Exception e) {
-            logger.error("{}: Error reading HTTP response", getApplianceId(), e);
+            logger.error("{}: Error reading HTTP response", applianceId, e);
         }
         return null;
     }
@@ -204,7 +151,7 @@ abstract public class HttpTransactionExecutor {
                 response.close();
             }
         } catch (IOException e) {
-            logger.error("{}: Error closing HTTP response", getApplianceId(), e);
+            logger.error("{}: Error closing HTTP response", applianceId, e);
         }
     }
 
@@ -224,25 +171,5 @@ abstract public class HttpTransactionExecutor {
 
         }
         return this.requestConfig;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-
-        if (o == null || getClass() != o.getClass()) return false;
-
-        HttpTransactionExecutor that = (HttpTransactionExecutor) o;
-
-        return new EqualsBuilder()
-                .append(url, that.url)
-                .isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(17, 37)
-                .append(url)
-                .toHashCode();
     }
 }

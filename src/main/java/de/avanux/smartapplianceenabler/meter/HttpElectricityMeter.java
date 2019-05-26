@@ -18,10 +18,7 @@
 package de.avanux.smartapplianceenabler.meter;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
-import de.avanux.smartapplianceenabler.http.HttpMethod;
-import de.avanux.smartapplianceenabler.http.HttpRead;
-import de.avanux.smartapplianceenabler.http.HttpReadValue;
-import de.avanux.smartapplianceenabler.http.HttpValidator;
+import de.avanux.smartapplianceenabler.http.*;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolHandler;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolType;
 import de.avanux.smartapplianceenabler.protocol.JsonContentProtocolHandler;
@@ -56,9 +53,12 @@ public class HttpElectricityMeter implements Meter, Initializable, Validateable,
     private Integer pollInterval; // seconds
     @XmlAttribute
     private String contentProtocol;
+    @XmlElement(name = "HttpConfiguration")
+    private HttpConfiguration httpConfiguration;
     @XmlElement(name = "HttpRead")
     private List<HttpRead> httpReads;
     private transient String applianceId;
+    private transient HttpTransactionExecutor httpTransactionExecutor = new HttpTransactionExecutor();
     private transient PollPowerMeter pollPowerMeter = new PollPowerMeter();
     private transient PollEnergyMeter pollEnergyMeter = new PollEnergyMeter();
     private transient ValueExtractor valueExtractor = new ValueExtractor();
@@ -70,15 +70,7 @@ public class HttpElectricityMeter implements Meter, Initializable, Validateable,
         this.applianceId = applianceId;
         this.pollPowerMeter.setApplianceId(applianceId);
         this.pollEnergyMeter.setApplianceId(applianceId);
-        if(this.httpReads != null) {
-            for(HttpRead httpRead: this.httpReads) {
-                httpRead.setApplianceId(applianceId);
-            }
-        }
-    }
-
-    public List<HttpRead> getHttpReads() {
-        return httpReads;
+        this.httpTransactionExecutor.setApplianceId(applianceId);
     }
 
     public void setHttpReads(List<HttpRead> httpReads) {
@@ -185,6 +177,9 @@ public class HttpElectricityMeter implements Meter, Initializable, Validateable,
     @Override
     public void init() {
         this.pollEnergyMeter.setPollEnergyExecutor(this);
+        if(this.httpConfiguration != null) {
+            this.httpTransactionExecutor.setConfiguration(this.httpConfiguration);
+        }
     }
 
     @Override
@@ -262,7 +257,7 @@ public class HttpElectricityMeter implements Meter, Initializable, Validateable,
             String path = read.child().getPath();
             String valueExtractionRegex = read.child().getExtractionRegex();
             Double factorToValue = read.child().getFactorToValue();
-            String response = read.parent().execute(httpMethod, url, data);
+            String response = this.httpTransactionExecutor.execute(httpMethod, url, data);
             logger.debug("{}: url={} httpMethod={} data={} path={} valueExtractionRegex={} factorToValue={}",
                     applianceId, url, httpMethod, data, path, valueExtractionRegex, factorToValue);
             if(response != null) {
