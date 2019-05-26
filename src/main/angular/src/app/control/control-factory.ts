@@ -261,7 +261,7 @@ export class ControlFactory {
   }
 
   createEvHttpControl(rawHttpControl: any): EvHttpControl {
-    const evHttpControl = new EvHttpControl();
+    const evHttpControl = new EvHttpControl(...rawHttpControl);
     if (!!rawHttpControl.httpReads) {
       evHttpControl.httpReads = [];
       rawHttpControl.httpReads.forEach((rawHttpRead) => {

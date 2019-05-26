@@ -1,3 +1,14 @@
+<div class="ui fields">
+  <div class="field">
+    <label>{{'ControlEvchargerHttpComponent.contentProtocol' | translate}}</label>
+    <select class="ui fluid dropdown" formControlName="contentProtocol">
+      <option *ngFor="let aContentProtocol of contentProtocols"
+              [ngValue]="aContentProtocol"
+              [selected]="aContentProtocol==contentProtocol"
+      >{{aContentProtocol}}</option>
+    </select>
+  </div>
+</div>
 <div class="ui hidden divider"></div>
 <h4 class="ui dividing header">{{'ControlEvchargerHttpComponent.heading.httpRead' | translate}}</h4>
 <app-http-read *ngFor="let httpRead of evHttpControl.httpReads; index as i; last as l"

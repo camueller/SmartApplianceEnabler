@@ -8,6 +8,7 @@ export class EvHttpControl {
   }
 
   '@class' = EvHttpControl.TYPE;
+  contentProtocol: string;
   httpReads: HttpRead[];
   httpWrites: HttpWrite[];
 
