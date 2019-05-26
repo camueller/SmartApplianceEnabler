@@ -1,0 +1,38 @@
+<h4 class="ui dividing header sae-header" *ngIf="valueName">{{valueName}}</h4>
+<div class="ui fields">
+  <div class="six wide field">
+    <label class="sae-label">{{'HttpWriteComponent.url' | translate}}</label>
+    <input type="text" formControlName="{{this.getFormControlName('url')}}">
+    <div *ngIf="errors[this.getFormControlName('url')]"
+         class="ui negative message">{{errors[this.getFormControlName('url')]}}</div>
+  </div>
+  <div class="field">
+    <label class="sae-label">{{'HttpWriteComponent.contentType' | translate}}</label>
+    <input type="text" formControlName="{{this.getFormControlName('contentType')}}">
+  </div>
+  <div class="field">
+    <label class="sae-label">{{'HttpWriteComponent.username' | translate}}</label>
+    <input type="text" formControlName="{{this.getFormControlName('username')}}">
+  </div>
+  <div class="field">
+    <label class="sae-label">{{'HttpWriteComponent.password' | translate}}</label>
+    <input type="text" formControlName="{{this.getFormControlName('password')}}">
+  </div>
+</div>
+<div *ngFor="let httpWriteValue of httpWrite.writeValues; index as i">
+  <div class="ui fields">
+    <app-http-write-value
+      [httpWriteValue]="httpWriteValue"
+      [disableFactorToValue]="disableFactorToValue"
+      [formControlNamePrefix]="getWriteValueFormControlPrefix(i)"
+      [valueNames]="valueNames"
+      [translationPrefix]="translationPrefix"
+      [translationKeys]="translationKeys"
+    ></app-http-write-value>
+    <div class="field icon-field" *ngIf="! singleValue">
+      <i (click)="removeValue(i)" class="icon big red remove circle"></i>
+    </div>
+  </div>
+</div>
+<button type="button" (click)="addValue()" class="ui button" *ngIf="! singleValue">
+  {{'HttpReadComponent.button.addValue' | translate}}</button>
