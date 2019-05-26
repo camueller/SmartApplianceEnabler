@@ -26,12 +26,15 @@ import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class HttpRead extends HttpTransactionExecutor {
+public class HttpRead {
     private transient Logger logger = LoggerFactory.getLogger(HttpRead.class);
+    @XmlAttribute
+    private String url;
     @XmlElement(name = "HttpReadValue")
     private List<HttpReadValue> readValues;
 
@@ -39,11 +42,11 @@ public class HttpRead extends HttpTransactionExecutor {
     }
 
     public HttpRead(String url) {
-        super(url);
+        this.url = url;
     }
 
-    public HttpRead(String url, String contentType, String username, String password) {
-        super(url, contentType, username, password);
+    public String getUrl() {
+        return url;
     }
 
     public List<HttpReadValue> getReadValues() {

@@ -18,10 +18,8 @@
 package de.avanux.smartapplianceenabler.control;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
-import de.avanux.smartapplianceenabler.http.HttpMethod;
-import de.avanux.smartapplianceenabler.http.HttpValidator;
-import de.avanux.smartapplianceenabler.http.HttpWrite;
-import de.avanux.smartapplianceenabler.http.HttpWriteValue;
+import de.avanux.smartapplianceenabler.http.*;
+import de.avanux.smartapplianceenabler.util.Initializable;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import de.avanux.smartapplianceenabler.util.Validateable;
 import org.apache.http.HttpStatus;
@@ -46,22 +44,33 @@ import java.util.stream.Collectors;
  * IMPORTANT: The URLs in Appliance.xml have to be escaped (e.g. use "&amp;" instead of "&")
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class HttpSwitch implements Control, Validateable, ApplianceIdConsumer {
+public class HttpSwitch implements Control, Initializable, Validateable, ApplianceIdConsumer {
 
     private transient Logger logger = LoggerFactory.getLogger(HttpSwitch.class);
+    @XmlElement(name = "HttpConfiguration")
+    private HttpConfiguration httpConfiguration;
     @XmlElement(name = "HttpWrite")
     private List<HttpWrite> httpWrites;
     private transient String applianceId;
+    private transient HttpTransactionExecutor httpTransactionExecutor = new HttpTransactionExecutor();
     protected transient boolean on;
     transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
 
     @Override
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
+        this.httpTransactionExecutor.setApplianceId(applianceId);
     }
 
     public void setHttpWrites(List<HttpWrite> httpWrites) {
         this.httpWrites = httpWrites;
+    }
+
+    @Override
+    public void init() {
+        if(this.httpConfiguration != null) {
+            this.httpTransactionExecutor.setConfiguration(this.httpConfiguration);
+        }
     }
 
     public void validate() {
@@ -84,14 +93,16 @@ public class HttpSwitch implements Control, Validateable, ApplianceIdConsumer {
     @Override
     public boolean on(LocalDateTime now, boolean switchOn) {
         logger.info("{}: Switching {}", applianceId, (switchOn ? "on" : "off"));
-        ParentWithChild<HttpWrite, HttpWriteValue> write = HttpWrite.getFirstHttpWrite(getValueName(switchOn).name(), this.httpWrites);
+        ParentWithChild<HttpWrite, HttpWriteValue> write
+                = HttpWrite.getFirstHttpWrite(getValueName(switchOn).name(), this.httpWrites);
         if(write != null) {
             HttpMethod httpMethod = write.child().getMethod();
             String data = httpMethod == HttpMethod.POST ? write.child().getValue() : null;
-            CloseableHttpResponse response = write.parent().executeLeaveOpen(write.child().getMethod(), write.parent().getUrl(), data);
+            CloseableHttpResponse response = this.httpTransactionExecutor.executeLeaveOpen(write.child().getMethod(),
+                    write.parent().getUrl(), data);
             if(response != null) {
                 int statusCode = response.getStatusLine().getStatusCode();
-                write.parent().closeResponse(response);
+                this.httpTransactionExecutor.closeResponse(response);
                 if(statusCode == HttpStatus.SC_OK) {
                     on = switchOn;
                     for(ControlStateChangedListener listener : controlStateChangedListeners) {

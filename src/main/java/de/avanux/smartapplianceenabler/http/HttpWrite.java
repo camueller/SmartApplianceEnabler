@@ -22,12 +22,15 @@ import de.avanux.smartapplianceenabler.util.ParentWithChild;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import java.text.MessageFormat;
 import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class HttpWrite extends HttpTransactionExecutor {
+public class HttpWrite {
+    @XmlAttribute
+    private String url;
     @XmlElement(name = "HttpWriteValue")
     private List<HttpWriteValue> writeValues;
 
@@ -35,11 +38,11 @@ public class HttpWrite extends HttpTransactionExecutor {
     }
 
     public HttpWrite(String url) {
-        super(url);
+        this.url = url;
     }
 
-    public HttpWrite(String url, String contentType, String username, String password) {
-        super(url, contentType, username, password);
+    public String getUrl() {
+        return url;
     }
 
     public List<HttpWriteValue> getWriteValues() {
@@ -63,11 +66,11 @@ public class HttpWrite extends HttpTransactionExecutor {
         return null;
     }
 
-    public void writeValue(HttpWriteValue value, Object ... arguments) {
-        String urlWithPlaceholder = buildUrl(getUrl(), value.getValue(), value.getMethod());
+    public void writeValue(HttpTransactionExecutor executor, HttpWriteValue value, Object ... arguments) {
+        String urlWithPlaceholder = buildUrl(this.url, value.getValue(), value.getMethod());
         String resolvedUrl = MessageFormat.format(urlWithPlaceholder, arguments);
         if(value.getMethod() == HttpMethod.GET) {
-            String response = executeGet(resolvedUrl);
+            String response = executor.executeGet(resolvedUrl);
         }
     }
 
