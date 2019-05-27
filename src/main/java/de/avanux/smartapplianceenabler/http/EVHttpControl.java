@@ -65,6 +65,10 @@ public class EVHttpControl implements EVControl {
         this.httpTransactionExecutor.setApplianceId(applianceId);
     }
 
+    public void setHttpTransactionExecutor(HttpTransactionExecutor httpTransactionExecutor) {
+        this.httpTransactionExecutor = httpTransactionExecutor;
+    }
+
     public void setContentProtocol(ContentProtocolType contentProtocol) {
         this.contentProtocol = contentProtocol.name();
     }

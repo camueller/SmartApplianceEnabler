@@ -73,6 +73,14 @@ public class HttpElectricityMeter implements Meter, Initializable, Validateable,
         this.httpTransactionExecutor.setApplianceId(applianceId);
     }
 
+    public void setHttpTransactionExecutor(HttpTransactionExecutor httpTransactionExecutor) {
+        this.httpTransactionExecutor = httpTransactionExecutor;
+    }
+
+    public void setHttpConfiguration(HttpConfiguration httpConfiguration) {
+        this.httpConfiguration = httpConfiguration;
+    }
+
     public void setHttpReads(List<HttpRead> httpReads) {
         this.httpReads = httpReads;
     }
