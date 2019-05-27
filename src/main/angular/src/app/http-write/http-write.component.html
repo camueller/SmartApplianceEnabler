@@ -6,18 +6,6 @@
     <div *ngIf="errors[this.getFormControlName('url')]"
          class="ui negative message">{{errors[this.getFormControlName('url')]}}</div>
   </div>
-  <div class="field">
-    <label class="sae-label">{{'HttpWriteComponent.contentType' | translate}}</label>
-    <input type="text" formControlName="{{this.getFormControlName('contentType')}}">
-  </div>
-  <div class="field">
-    <label class="sae-label">{{'HttpWriteComponent.username' | translate}}</label>
-    <input type="text" formControlName="{{this.getFormControlName('username')}}">
-  </div>
-  <div class="field">
-    <label class="sae-label">{{'HttpWriteComponent.password' | translate}}</label>
-    <input type="text" formControlName="{{this.getFormControlName('password')}}">
-  </div>
 </div>
 <div *ngFor="let httpWriteValue of httpWrite.writeValues; index as i">
   <div class="ui fields">

@@ -20,6 +20,11 @@
       >{{aContentProtocol}}</option>
     </select>
   </div>
+  <div class="field">
+    <app-http-configuration
+      [httpConfiguration]="httpElectricityMeter.httpConfiguration"
+    ></app-http-configuration>
+  </div>
 </div>
 <app-http-read
   [httpRead]="httpElectricityMeter.powerConfiguration"

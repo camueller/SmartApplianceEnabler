@@ -17,6 +17,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 import {HttpRead} from '../http-read/http-read';
+import {HttpConfiguration} from '../http-configuration/http-configuration';
 
 export class HttpElectricityMeter {
 
@@ -28,6 +29,7 @@ export class HttpElectricityMeter {
   measurementInterval: number;
   pollInterval: number;
   contentProtocol: string;
+  httpConfiguration: HttpConfiguration;
   powerConfiguration: HttpRead;
   energyConfiguration: HttpRead;
 

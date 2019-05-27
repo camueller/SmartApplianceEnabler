@@ -16,6 +16,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import {HttpConfiguration} from '../http-configuration/http-configuration';
+
 export class HttpSwitch {
 
   static get TYPE(): string {
@@ -23,6 +25,7 @@ export class HttpSwitch {
   }
 
   '@class' = HttpSwitch.TYPE;
+  httpConfiguration: HttpConfiguration;
   onUrl: string;
   offUrl: string;
   username: string;

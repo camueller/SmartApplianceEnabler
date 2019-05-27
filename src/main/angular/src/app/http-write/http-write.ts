@@ -7,9 +7,6 @@ export class HttpWrite {
 
   '@class' = HttpWrite.TYPE;
   url: string;
-  contentType: string;
-  username: string;
-  password: string;
   writeValues: HttpWriteValue[];
 
   public constructor(init?: Partial<HttpWrite>) {

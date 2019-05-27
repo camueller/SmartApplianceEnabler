@@ -119,19 +119,10 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked, OnDestroy {
     formHandler.addFormControl(form, this.getFormControlName('url'),
       httpWrite ? httpWrite.url : undefined,
       [Validators.required, Validators.pattern(InputValidatorPatterns.URL)]);
-    formHandler.addFormControl(form, this.getFormControlName('contentType'),
-      httpWrite ? httpWrite.contentType : undefined);
-    formHandler.addFormControl(form, this.getFormControlName('username'),
-      httpWrite ? httpWrite.username : undefined);
-    formHandler.addFormControl(form, this.getFormControlName('password'),
-      httpWrite ? httpWrite.password : undefined);
   }
 
   updateHttpWrite(httpWrite: HttpWrite, form: FormGroup) {
     httpWrite.url = this.form.controls[this.getFormControlName('url')].value;
-    httpWrite.contentType = this.form.controls[this.getFormControlName('contentType')].value;
-    httpWrite.username = this.form.controls[this.getFormControlName('username')].value;
-    httpWrite.password = this.form.controls[this.getFormControlName('password')].value;
     this.nestedFormService.complete();
   }
 }
