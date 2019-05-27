@@ -62,6 +62,14 @@ public class HttpSwitch implements Control, Initializable, Validateable, Applian
         this.httpTransactionExecutor.setApplianceId(applianceId);
     }
 
+    public void setHttpConfiguration(HttpConfiguration httpConfiguration) {
+        this.httpConfiguration = httpConfiguration;
+    }
+
+    public void setHttpTransactionExecutor(HttpTransactionExecutor httpTransactionExecutor) {
+        this.httpTransactionExecutor = httpTransactionExecutor;
+    }
+
     public void setHttpWrites(List<HttpWrite> httpWrites) {
         this.httpWrites = httpWrites;
     }
