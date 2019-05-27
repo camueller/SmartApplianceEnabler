@@ -560,13 +560,12 @@ public class SaeController {
             if (appliance != null) {
                 if (appliance.getControl() instanceof ElectricVehicleCharger) {
                     ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
-                    ElectricVehicle electricVehicle = evCharger.getVehicle(evId);
-                    if (electricVehicle != null) {
-                        Float soc = electricVehicle.getStateOfCharge();
+                    Integer soc = evCharger.getConnectedVehicleSoc();
+                    if (soc != null) {
                         logger.debug("{}: Return SOC={}", applianceId, soc);
-                        return soc;
+                        return Integer.valueOf(soc).floatValue();
                     } else {
-                        logger.error("{}: EV-Id {} not found", applianceId, evId);
+                        logger.error("{}: SOC not available", applianceId);
                         response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                     }
                 } else {

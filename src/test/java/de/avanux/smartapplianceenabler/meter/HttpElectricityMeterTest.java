@@ -19,6 +19,8 @@
 package de.avanux.smartapplianceenabler.meter;
 
 import de.avanux.smartapplianceenabler.TestBase;
+import de.avanux.smartapplianceenabler.http.HttpConfiguration;
+import de.avanux.smartapplianceenabler.http.HttpTransactionExecutor;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolType;
 import de.avanux.smartapplianceenabler.http.HttpRead;
 import de.avanux.smartapplianceenabler.http.HttpReadValue;
@@ -31,20 +33,23 @@ import java.util.*;
 public class HttpElectricityMeterTest extends TestBase {
 
     private HttpElectricityMeter meter;
+    private HttpTransactionExecutor executorMock = Mockito.mock(HttpTransactionExecutor.class);
 
     public HttpElectricityMeterTest() {
         this.meter = new HttpElectricityMeter();
         this.meter.setApplianceId("F-001");
+        this.meter.setHttpTransactionExecutor(this.executorMock);
         this.meter.init();
     }
 
     @Test
     public void pollPower_EdimaxSP2101W() {
-        HttpRead powerReadSpy = Mockito.spy(new HttpRead("http://192.168.69.74:10000/smartplug.cgi", "application/xml", "admin", "12345678"));
+        HttpRead read = new HttpRead("http://192.168.69.74:10000/smartplug.cgi");
+        this.meter.setHttpConfiguration(new HttpConfiguration("application/xml", "admin", "12345678"));
         HttpReadValue powerReadValue = new HttpReadValue(MeterValueName.Power.name(), null, "<?xml version=\"1.0\" encoding=\"UTF8\"?><SMARTPLUG id=\"edimax\"><CMD id=\"get\"><NOW_POWER><Device.System.Power.NowCurrent></Device.System.Power.NowCurrent><Device.System.Power.NowPower></Device.System.Power.NowPower></NOW_POWER></CMD></SMARTPLUG>", ".*NowPower.(\\d+).*", null);
-        powerReadSpy.setReadValues(Collections.singletonList(powerReadValue));
-        meter.setHttpReads(Collections.singletonList(powerReadSpy));
-        Mockito.doReturn(edimaxSP2101WResponse).when(powerReadSpy).execute(Mockito.any(), Mockito.any(), Mockito.any());
+        read.setReadValues(Collections.singletonList(powerReadValue));
+        meter.setHttpReads(Collections.singletonList(read));
+        Mockito.doReturn(edimaxSP2101WResponse).when(executorMock).execute(Mockito.any(), Mockito.any(), Mockito.any());
         Assert.assertEquals(52.0, meter.pollPower(), 0.01);
     }
 
@@ -54,7 +59,7 @@ public class HttpElectricityMeterTest extends TestBase {
         HttpReadValue powerReadValue = new HttpReadValue(MeterValueName.Power.name(), null, null, ".*Power.:(\\d+).*", null);
         powerReadSpy.setReadValues(Collections.singletonList(powerReadValue));
         meter.setHttpReads(Collections.singletonList(powerReadSpy));
-        Mockito.doReturn(sonoffPowResponse).when(powerReadSpy).execute(Mockito.any(), Mockito.any(), Mockito.any());
+        Mockito.doReturn(sonoffPowResponse).when(executorMock).execute(Mockito.any(), Mockito.any(), Mockito.any());
         Assert.assertEquals(26.0, meter.pollPower(), 0.01);
     }
 
@@ -64,7 +69,7 @@ public class HttpElectricityMeterTest extends TestBase {
         HttpReadValue powerReadValue = new HttpReadValue(MeterValueName.Power.name(), null, null, ".*RealPower.*\\n(\\d+\\,\\d{2}) kW.*Energy \\(present session\\).*", null);
         powerReadSpy.setReadValues(Collections.singletonList(powerReadValue));
         meter.setHttpReads(Collections.singletonList(powerReadSpy));
-        Mockito.doReturn(keContactP30Response).when(powerReadSpy).execute(Mockito.any(), Mockito.any(), Mockito.any());
+        Mockito.doReturn(keContactP30Response).when(executorMock).execute(Mockito.any(), Mockito.any(), Mockito.any());
         Assert.assertEquals(12.34, meter.pollPower(), 0.01);
     }
 
@@ -82,13 +87,13 @@ public class HttpElectricityMeterTest extends TestBase {
 
         long timestamp = 1 * 60 * 60 * 1000;
         String response = goEChargerStatus.replace((CharSequence) "dws\":\"0", (CharSequence) "dws\":\"2500");
-        Mockito.doReturn(response).when(energyReadSpy).execute(Mockito.any(), Mockito.any(), Mockito.any());
+        Mockito.doReturn(response).when(executorMock).execute(Mockito.any(), Mockito.any(), Mockito.any());
         meter.getPollEnergyMeter().addValue(timestamp); // simulate timer task
         meter.getPollPowerMeter().addValue(timestamp, meter); // simulate timer task
 
         timestamp = 2 * 60 * 60 * 1000;
         response = goEChargerStatus.replace((CharSequence) "dws\":\"0", (CharSequence) "dws\":\"5900");
-        Mockito.doReturn(response).when(energyReadSpy).execute(Mockito.any(), Mockito.any(), Mockito.any());
+        Mockito.doReturn(response).when(executorMock).execute(Mockito.any(), Mockito.any(), Mockito.any());
         meter.getPollEnergyMeter().addValue(timestamp); // simulate timer task
         meter.getPollPowerMeter().addValue(timestamp, meter); // simulate timer task
 
@@ -111,11 +116,11 @@ public class HttpElectricityMeterTest extends TestBase {
         meter.setHttpReads(Collections.singletonList(energyReadSpy));
 
         String startResponse = goEChargerStatus.replace((CharSequence) "dws\":\"0", (CharSequence) "dws\":\"2500");
-        Mockito.doReturn(startResponse).when(energyReadSpy).execute(Mockito.any(), Mockito.any(), Mockito.any());
+        Mockito.doReturn(startResponse).when(executorMock).execute(Mockito.any(), Mockito.any(), Mockito.any());
 
         this.meter.startEnergyMeter();
         String stopResponse = goEChargerStatus.replace((CharSequence) "dws\":\"0", (CharSequence) "dws\":\"5900");
-        Mockito.doReturn(stopResponse).when(energyReadSpy).execute(Mockito.any(), Mockito.any(), Mockito.any());
+        Mockito.doReturn(stopResponse).when(executorMock).execute(Mockito.any(), Mockito.any(), Mockito.any());
         this.meter.stopEnergyMeter();
 
         Assert.assertEquals(3.4f, this.meter.getEnergy(), 0.01);

@@ -69,7 +69,7 @@ username = IhrNissan+YOUUsername
 password = IhrNissan+YOUPasswort
 ```
 
-Das eigentliche SOC-Script sollte mit dem Namen ```soc.py``` und folgendem Inhalt angelegt werden:
+Das eigentliche SOC-Python-Script sollte mit dem Namen ```soc.py``` und folgendem Inhalt angelegt werden:
 ```console
 #!/usr/bin/python
 
@@ -101,22 +101,29 @@ print "get_latest_battery_status"
 leaf_info = l.get_latest_battery_status()
 print "leaf_info.state_of_charge %s" % leaf_info.state_of_charge
 ```
-
-Bevor das Scrip ausgeführt werden kann, muss es noch ausführbar gemacht werden:
+Damit das SOC-Python-Script von überall aus aufgerufen werden kann und trotzdem die ```config.ini``` gefunden wird, hilft folgendes kleine Shell-Script ```/app/soc/soc.sh```, das vom *Smart Appliance Enabler* aufgerufen wird:
 ```console
-pi@raspberrypi:/app/soc $ chmod +x soc.py
+#!/bin/sh
+cd /app/soc
+./soc.py
+```
+
+Beide Scripts müssen noch ausführbar gemacht werden:
+```console
+pi@raspberrypi:/app/soc $ chmod +x soc.*
 ```
 
 ### Ausführung
 ```console
-pi@raspberrypi:/app/soc $ ./soc.py
+pi@raspberrypi:/app/soc $ ./soc.sh
 Prepare Session
 Login...
 get_latest_battery_status
 leaf_info.state_of_charge 76
 ```
 
-Um aus die Ausgaben den eigentlichen Zahlenwert zu extrahieren, muss als *Regulärer Ausdruck* angegeben werden:
+Im *Smart Appliance Enabler* wird als SOC-Script angegeben: ```/app/soc/soc.sh```.
+Außerdem muss der nachfolgende *Reguläre Ausdruck* angegeben werden, um aus den Ausgaben den eigentlichen Zahlenwert zu extrahieren:
 ```
 .*state_of_charge (\d+)
 ```

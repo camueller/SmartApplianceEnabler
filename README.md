@@ -37,8 +37,8 @@ Ein Wintertag mit hohem Energiebedarf für die Heizungswärmepumpe und zusätzli
 
 ## Hardware
 
-### [Raspberry Pi](doc/Raspberry_DE.md)
-Der *Smart Appliance Enabler* benötigt einen [Raspberry Pi als Hardware](doc/Raspberry_DE.md). 
+### Anforderungen
+Der *Smart Appliance Enabler* wurde in **Java** implementiert und läuft grundsätzlich auf jedem Gerät, für das eine Java Virtual Machine existiert. Neben dem compilierten Code werden diverse Script bereitgestellt in denen von **Linux** als Betriebssystem ausgegangen wird. Falls Geräte über [GPIO](https://www.itwissen.info/GPIO-general-purpose-input-output.html) angebunden werden sollen, benötigt der *Smart Appliance Enabler* einen [**Raspberry Pi**](doc/Raspberry_DE.md) als Hardware. 
 
 ### Stromzähler
 
@@ -46,9 +46,9 @@ Aktuell unterstützt der *Smart Appliance Enabler* folgende Möglichkeiten, den 
 
 | Protokolle    | Produkte      |
 | ------------- | ------------- |
-| [S0](doc/S0Meter_DE.md)  | [WLAN-Stromzähler selbst gebaut](doc/WifiS0PulseForwarder_DE.md) |
-| [Modbus](doc/ModbusMeter_DE.md)  |  |
-| [HTTP](doc/HttpMeter_DE.md)      | [Sonoff Pow](doc/SonoffPow_DE.md) <br> [Edimax SP-2101W](doc/EdimaxSP2101W_DE.md) <br> [Shelly 4 Pro](doc/Shelly4Pro_DE.md)|
+| GPIO | [S0-Zähler](doc/S0Meter_DE.md) <br> [WLAN-Stromzähler selbst gebaut](doc/WifiS0PulseForwarder_DE.md) |
+| Modbus | [Modbus-basierte Zähler](doc/ModbusMeter_DE.md) |
+| HTTP | [HTTP-basierte Zähler](doc/HttpMeter_DE.md)<ul><li>[Sonoff Pow](doc/SonoffPow_DE.md)</li><li>[Edimax SP-2101W](doc/EdimaxSP2101W_DE.md)</li><li>[Shelly 4 Pro](doc/Shelly4Pro_DE.md)</li></ul>|
 
 ### Schalter
 
@@ -56,13 +56,11 @@ Zum Ein-/Ausschalten eines Gerätes unterstützt der *Smart Appliance Enabler* d
 
 | Protokolle    | Produkte      |
 | ------------- | ------------- |
-| [GPIO](doc/GPIOSwitch_DE.md) | [GPIO-basierte Schalter](doc/GPIOSwitch_DE.md) |
-| [Modbus](doc/ModbusSwitch_DE.md) | |
-| [HTTP](doc/HttpSwitch_DE.md) | [Sonoff Pow](doc/SonoffPow_DE.md) <br> [Edimax SP-2101W](doc/EdimaxSP2101W_DE.md)  <br> [Shelly 4 Pro](doc/Shelly4Pro_DE.md)|
+| GPIO | [GPIO-basierte Schalter](doc/GPIOSwitch_DE.md) |
+| Modbus | [Modbus-basierte Schalter](doc/ModbusSwitch_DE.md)<br><br>Modbus-basierte Ladegeräte für Elektroautos<ul><li>[Phoenix Contact EM-CP-PP-ETH](doc/EVCharger_DE.md)</li></ul>|
+| HTTP | [HTTP-basierte Schalter](doc/HttpSwitch_DE.md)<ul><li>[Sonoff Pow](doc/SonoffPow_DE.md)</li><li>[Edimax SP-2101W](doc/EdimaxSP2101W_DE.md)</li><li>[Shelly 4 Pro](doc/Shelly4Pro_DE.md)</li></ul>|
 
-Alle aufgeführten Schalter können mit einer [Anlaufstromerkennung](doc/Anlaufstromerkennung_DE.md) verwendet werden, um die Programmierung des Gerätes zu ermöglichen.
-
-Ein Schaltem, der neben dem Schaltzustand auch die Leistungsaufnahme vorgegeben werden kann, existiert für [Ladegeräte von Elektro-Autos](doc/EVCharger_DE.md).
+Alle aufgeführten Schalter (außer Ladegeräte für Elektro-Autos) können mit einer [Anlaufstromerkennung](doc/Anlaufstromerkennung_DE.md) verwendet werden, um die Programmierung des Gerätes zu ermöglichen.
 
 ### [Montage](doc/Montage_DE.md)
 Für den reibungslosen Einsatz des *Smart Appliance Enabler* sollten die [Montage-Hinweise](doc/Montage_DE.md) beachtet werden.
