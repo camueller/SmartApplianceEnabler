@@ -53,7 +53,6 @@ export class HttpReadComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   ngOnInit() {
-    console.log('singleValue=', this.singleValue);
     this.errorMessages = new HttpReadErrorMessages(this.translate);
     this.form = this.parent.form;
     this.expandParentForm(this.form, this.httpRead, this.formHandler);
@@ -119,19 +118,10 @@ export class HttpReadComponent implements OnInit, AfterViewChecked, OnDestroy {
     formHandler.addFormControl(form, this.getFormControlName('url'),
       httpRead ? httpRead.url : undefined,
       [Validators.required, Validators.pattern(InputValidatorPatterns.URL)]);
-    formHandler.addFormControl(form, this.getFormControlName('contentType'),
-      httpRead ? httpRead.contentType : undefined);
-    formHandler.addFormControl(form, this.getFormControlName('username'),
-      httpRead ? httpRead.username : undefined);
-    formHandler.addFormControl(form, this.getFormControlName('password'),
-      httpRead ? httpRead.password : undefined);
   }
 
   updateHttpRead(httpRead: HttpRead, form: FormGroup) {
     httpRead.url = this.form.controls[this.getFormControlName('url')].value;
-    httpRead.contentType = this.form.controls[this.getFormControlName('contentType')].value;
-    httpRead.username = this.form.controls[this.getFormControlName('username')].value;
-    httpRead.password = this.form.controls[this.getFormControlName('password')].value;
     this.nestedFormService.complete();
   }
 }

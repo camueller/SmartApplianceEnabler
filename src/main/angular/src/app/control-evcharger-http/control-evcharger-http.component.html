@@ -1,12 +1,17 @@
 <div class="ui fields">
   <div class="field">
-    <label>{{'ControlEvchargerHttpComponent.contentProtocol' | translate}}</label>
+    <label class="sae-label">{{'ControlEvchargerHttpComponent.contentProtocol' | translate}}</label>
     <select class="ui fluid dropdown" formControlName="contentProtocol">
       <option *ngFor="let aContentProtocol of contentProtocols"
               [ngValue]="aContentProtocol"
               [selected]="aContentProtocol==contentProtocol"
       >{{aContentProtocol}}</option>
     </select>
+  </div>
+  <div class="field">
+    <app-http-configuration
+      [httpConfiguration]="evHttpControl.httpConfiguration"
+    ></app-http-configuration>
   </div>
 </div>
 <div class="ui hidden divider"></div>

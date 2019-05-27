@@ -7,9 +7,6 @@ export class HttpRead {
 
   '@class' = HttpRead.TYPE;
   url: string;
-  contentType: string;
-  username: string;
-  password: string;
   readValues: HttpReadValue[];
 
   public constructor(init?: Partial<HttpRead>) {

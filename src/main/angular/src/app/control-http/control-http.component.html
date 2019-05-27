@@ -1,4 +1,7 @@
 <form class="ui form" [formGroup]="form" (ngSubmit)="submitForm()">
+  <app-http-configuration
+    [httpConfiguration]="control.httpSwitch.httpConfiguration"
+  ></app-http-configuration>
   <div class="ui fields">
     <div class="six wide field">
       <label>{{'ControlHttpComponent.onUrl' | translate}}</label>
