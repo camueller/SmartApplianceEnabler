@@ -43,6 +43,8 @@ public class EVHttpControl implements EVControl {
     private transient Logger logger = LoggerFactory.getLogger(EVHttpControl.class);
     @XmlAttribute
     private String contentProtocol;
+    @XmlElement(name = "HttpConfiguration")
+    private HttpConfiguration httpConfiguration;
     @XmlElement(name = "HttpRead")
     private List<HttpRead> httpReads;
     @XmlElement(name = "HttpWrite")
@@ -50,6 +52,7 @@ public class EVHttpControl implements EVControl {
     private transient String applianceId;
     private transient ContentProtocolHandler contentProtocolHandler;
     private transient RequestCache<ParentWithChild<HttpRead, HttpReadValue>, String> requestCache;
+    private transient HttpTransactionExecutor httpTransactionExecutor = new HttpTransactionExecutor();
     private transient Integer pollInterval; // seconds
 
 
@@ -59,16 +62,11 @@ public class EVHttpControl implements EVControl {
     @Override
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
-        if(this.httpReads != null) {
-            for(HttpRead read: this.httpReads) {
-                read.setApplianceId(applianceId);
-            }
-        }
-        if(this.httpWrites != null) {
-            for(HttpWrite write: this.httpWrites) {
-                write.setApplianceId(applianceId);
-            }
-        }
+        this.httpTransactionExecutor.setApplianceId(applianceId);
+    }
+
+    public void setHttpTransactionExecutor(HttpTransactionExecutor httpTransactionExecutor) {
+        this.httpTransactionExecutor = httpTransactionExecutor;
     }
 
     public void setContentProtocol(ContentProtocolType contentProtocol) {
@@ -109,6 +107,9 @@ public class EVHttpControl implements EVControl {
     public void init() {
         int cacheMaxAgeSeconds = this.pollInterval - 1;
         this.requestCache = new RequestCache<ParentWithChild<HttpRead, HttpReadValue>, String>(applianceId, cacheMaxAgeSeconds);
+        if(this.httpConfiguration != null) {
+            this.httpTransactionExecutor.setConfiguration(this.httpConfiguration);
+        }
     }
 
     @Override
@@ -156,7 +157,7 @@ public class EVHttpControl implements EVControl {
         if(read != null) {
             String response = this.requestCache.get(read);
             if(response == null) {
-                response = read.parent().executeGet(read.parent().getUrl());
+                response = this.httpTransactionExecutor.executeGet(read.parent().getUrl());
                 this.requestCache.put(read, response);
             }
             else {
@@ -224,6 +225,6 @@ public class EVHttpControl implements EVControl {
             // the next poll after write should return a fresh response from charger
             this.requestCache.clear();
         }
-        write.parent().writeValue(write.child(), arguments);
+        write.parent().writeValue(this.httpTransactionExecutor, write.child(), arguments);
     }
 }
