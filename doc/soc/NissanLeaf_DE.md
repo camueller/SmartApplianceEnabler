@@ -8,7 +8,7 @@ Nissan stellt ein API names **Carwings** bereit, für das einige Implementierung
 ### Installation
 Zunächst muss der Python-Package-Manager installiert werden:
 ```console
-pi@raspberrypi ~ $ sudo apt install python-pip
+pi@raspberrypi ~ $ sudo apt install python-pip python-dev
 ```
 
 Danach muss die Python-Implementierung des Carwings-API https://github.com/jdhorne/pycarwings2) installiert werden. Dabei werden keine Dateien in das aktuelle Verzeichnis geschrieben!
