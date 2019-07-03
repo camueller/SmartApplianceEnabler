@@ -6,20 +6,20 @@ Die Konfiguration von Modbus/TCP erfolgt in den [Einstellungen](Settings_DE.md#M
 ## Modbus/RTU
 *Smart Appliance Enabler* unterstützt das [Modbus](https://de.wikipedia.org/wiki/Modbus)-Protokoll lediglich in der Ausprägung Modbus/TCP. Allerdings können Modbus/RTU-Geräte verwendet werden mittels eines Modbus/TCP zu Modbus/RTU Gateway wie z.B. des frei verfügbaren [mbusd](https://sourceforge.net/projects/mbus), dessen Installation nachfolgend beschrieben ist.
 
-Als erstes sollte in das tmp-Verzeichnis gewechselt werden:
-```console
-pi@raspberrypi ~ $ cd /tmp
-```
-
-Falls noch nicht installiert, muss als nächstes Git und cmake installiert werden:
+Falls noch nicht installiert, muss als Git und cmake installiert werden:
 ```console
 pi@raspberrypi:/tmp $ sudo apt update
 pi@raspberrypi:/tmp $ sudo apt install git cmake
 ```
 
+Für den Build wird in das tmp-Verzeichnis gewechselt:
+```console
+pi@raspberrypi ~ $ cd /tmp
+```
+
 Damit können jetzt die Sourcen aus dem Git-Repository gehole werden:
 ```console
-git clone https://github.com/camueller/mbusd.git
+pi@raspberrypi:/tmp $ git clone https://github.com/camueller/mbusd.git
 Cloning into 'mbusd'...
 remote: Enumerating objects: 22, done.
 remote: Counting objects: 100% (22/22), done.
@@ -29,13 +29,9 @@ Receiving objects: 100% (775/775), 986.62 KiB | 540.00 KiB/s, done.
 Resolving deltas: 100% (480/480), done.
 ```
 
-Als nächstes in das Verzeichnis mit den Sourcen wechseln:
+Als nächstes in das Verzeichnis mit den Sourcen wechseln, dort ein build-Verzeichnis erstellen und dortin wechseln:
 ```console
-pi@raspberrypi:/tmp $ cd mbusd
-```
-
-```console
-mkdir -p build && cd build
+pi@raspberrypi:/tmp $ cd mbusd && mkdir build && cd build
 ```
 
 Jetzt kann die Build-Konfiguration erstellt werden:
@@ -129,6 +125,11 @@ sudo cp mbusd.conf.example mbusd-ttyUSB0.conf
 Jetzt steht einem Start des ```mbusd``` nichts mehr im Wege:
 ```console
 pi@raspberrypi:/etc/mbusd $ sudo systemctl start mbusd@ttyUSB0.service
+```
+
+Nachfolgend ist zu sehen, wie überprüft werden kann, ob der ```mbusd``` läuft:
+```console
+pi@raspberrypi:/etc/mbusd $ sudo systemctl status mbusd@ttyUSB0.service
 ● mbusd@ttyUSB0.service - Modbus TCP to Modbus RTU (RS-232/485) gateway.
    Loaded: loaded (/lib/systemd/system/mbusd@.service; disabled; vendor preset: enabled)
    Active: active (running) since Sun 2019-03-24 18:33:53 CET; 2s ago
@@ -144,20 +145,6 @@ Damit der ```mbusd``` direkt beim Booten gestartet wird, muss der Service noch a
 ```console
 pi@raspberrypi:/etc/mbusd $ sudo systemctl enable mbusd@ttyUSB0.service
 Created symlink /etc/systemd/system/multi-user.target.wants/mbusd@ttyUSB0.service → /lib/systemd/system/mbusd@.service.
-```
-
-Das kann man nach einem Reboot überprüfen - es sollte dann folgende Ausgabe zu sehen sein:
-```console
-pi@raspberrypi:~ $ sudo systemctl status mbusd@ttyUSB0.service
-● mbusd@ttyUSB0.service - Modbus TCP to Modbus RTU (RS-232/485) gateway.
-   Loaded: loaded (/lib/systemd/system/mbusd@.service; enabled; vendor preset: enabled)
-   Active: active (running) since Sun 2019-03-24 19:03:34 CET; 40s ago
- Main PID: 315 (mbusd)
-   CGroup: /system.slice/system-mbusd.slice/mbusd@ttyUSB0.service
-           └─315 /usr/bin/mbusd -d -v2 -L - -c /etc/mbusd/mbusd-ttyUSB0.conf -p /dev/ttyUSB0
-
-Mar 24 19:03:34 raspberrypi systemd[1]: Started Modbus TCP to Modbus RTU (RS-232/485) gateway..
-Mar 24 19:03:34 raspberrypi mbusd[315]: 24 Mar 2019 19:03:34 mbusd-0.3.1 started...
 ```
 
 Falls es Probleme mit ```mbusd``` gibt, kann man den Log-Level erhöhen und die Ausgaben in eine Datei leiten, in dem man in der Datei ```/lib/systemd/system/mbusd@.service``` die ```ExecStart```-Zeile wie folgt ändert:
