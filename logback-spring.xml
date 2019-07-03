@@ -42,6 +42,10 @@ Usage: java ... -Dlogging.config=/path/logback-spring.xml
         <appender-ref ref="FILEROLLING" />
     </logger>
 
+    <logger name="org.fourthline.cling" level="error">
+        <appender-ref ref="STDOUT" />
+    </logger>
+
     <root level="info">
         <appender-ref ref="STDOUT" />
     </root>
