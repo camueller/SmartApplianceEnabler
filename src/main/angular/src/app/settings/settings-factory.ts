@@ -45,11 +45,11 @@ export class SettingsFactory {
     const settings = new SettingsDefaults();
     settings.holidaysUrl = rawSettings.holidaysUrl;
     settings.modbusTcpHost = rawSettings.modbusTcpHost;
-    settings.modbusTcpPort = Number.parseInt(rawSettings.modbusTcpPort);
+    settings.modbusTcpPort = Number.parseInt(rawSettings.modbusTcpPort, 10);
     settings.modbusReadRegisterTypes = rawSettings.modbusReadRegisterTypes;
     settings.modbusWriteRegisterTypes = rawSettings.modbusWriteRegisterTypes;
     settings.byteOrders = rawSettings.byteOrders;
-    settings.pulseReceiverPort = Number.parseInt(rawSettings.pulseReceiverPort);
+    settings.pulseReceiverPort = Number.parseInt(rawSettings.pulseReceiverPort, 10);
     this.logger.debug('SettingsDefaults (TYPE): ' + JSON.stringify(settings));
     return settings;
   }
