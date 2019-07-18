@@ -43,9 +43,7 @@
       <div class="appliance-type">{{getTranslatedType(applianceStatus.type)}}</div>
       <div *ngIf="isEvCharger(applianceStatus); else notEvCharger">
         <app-status-evcharger-edit *ngIf="isTrafficLightGreenClicked(applianceStatus); else goLightNotClickedCharger"
-                                 [applianceId]="applianceIdClicked"
                                  [status]="applianceStatus"
-                                 [electricVehicles]="electricVehicles"
                                  [dows]="dows"
                                  (formSubmitted)="onFormSubmitted()"
         >
@@ -53,7 +51,6 @@
         <ng-template #goLightNotClickedCharger>
           <app-status-charger-view
             [status]="applianceStatus"
-            [electricVehicles]="electricVehicles"
             [dows]="dows"
           >
           </app-status-charger-view>

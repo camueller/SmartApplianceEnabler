@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {AfterViewChecked, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {AbstractControl, FormControl, FormControlName, FormGroup, Validators} from '@angular/forms';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {TimeUtil} from '../shared/time-util';
@@ -6,6 +6,8 @@ import {Status} from '../status/status';
 import {StatusService} from '../status/status.service';
 import {DayOfWeek} from '../shared/days-of-week';
 import {ElectricVehicle} from '../control-evcharger/electric-vehicle';
+import {ControlService} from '../control/control-service';
+import {interval, Subscription} from 'rxjs';
 
 const socValidator = (control: AbstractControl): { [key: string]: boolean } => {
   const stateOfChargeCurrent = control.get('stateOfChargeCurrent');
@@ -52,28 +54,26 @@ FormControlName.prototype.ngOnChanges = function () {
   templateUrl: './status-evcharger-edit.component.html',
   styleUrls: ['./status-evcharger-edit.component.css', '../status/status.component.css', '../global.css']
 })
-export class StatusEvchargerEditComponent implements OnInit, AfterViewChecked {
-  @Input()
-  applianceId: string;
+export class StatusEvchargerEditComponent implements OnInit, AfterViewChecked, OnDestroy {
   @Input()
   status: Status;
-  @Input()
-  electricVehicles: ElectricVehicle[];
   @Input()
   dows: DayOfWeek[] = [];
   @Output()
   formSubmitted = new EventEmitter<any>();
   startChargeForm: FormGroup;
   initializeOnceAfterViewChecked = false;
+  electricVehicles: ElectricVehicle[];
+  loadVehiclesSubscription: Subscription;
 
-  constructor(private statusService: StatusService) { }
+  constructor(private controlService: ControlService,
+              private statusService: StatusService) { }
 
   ngOnInit() {
-    if (this.electricVehicles.length > 0) {
-      this.updateStartChargeForm(this.electricVehicles[0]);
-    } else {
-      this.updateStartChargeForm();
-    }
+    this.loadStatus();
+    this.loadVehiclesSubscription = interval(60 * 1000)
+      .subscribe(() => this.loadStatus());
+    this.updateStartChargeForm();
     this.initializeOnceAfterViewChecked = true;
   }
 
@@ -84,8 +84,19 @@ export class StatusEvchargerEditComponent implements OnInit, AfterViewChecked {
     }
   }
 
+  ngOnDestroy() {
+    this.loadVehiclesSubscription.unsubscribe();
+  }
+
   initializeClockPicker() {
     $('.clockpicker').clockpicker({ autoclose: true });
+  }
+
+  loadStatus() {
+    this.controlService.getElectricVehicles(this.status.id).subscribe(electricVehicles => {
+      this.electricVehicles = electricVehicles;
+      this.updateStartChargeForm(this.electricVehicles[0]);
+    });
   }
 
   updateStartChargeForm(ev?: ElectricVehicle) {
@@ -102,7 +113,7 @@ export class StatusEvchargerEditComponent implements OnInit, AfterViewChecked {
       chargeEndTime: new FormControl(),
     }, socValidator);
     if (ev) {
-      this.statusService.getSoc(this.applianceId, ev.id).subscribe(soc => {
+      this.statusService.getSoc(this.status.id, ev.id).subscribe(soc => {
         if (! Number.isNaN(Number.parseInt(soc, 10))) {
           this.startChargeForm.setControl('stateOfChargeCurrent', new FormControl(Number.parseFloat(soc).toFixed()));
         }
@@ -122,7 +133,7 @@ export class StatusEvchargerEditComponent implements OnInit, AfterViewChecked {
     const chargeEnd = TimeUtil.timestringOfNextMatchingDow(
       this.startChargeForm.value.chargeEndDow,
       this.startChargeForm.value.chargeEndTime);
-    this.statusService.requestEvCharge(this.applianceId, evid, socCurrent, socRequested, chargeEnd)
+    this.statusService.requestEvCharge(this.status.id, evid, socCurrent, socRequested, chargeEnd)
       .subscribe(() => this.formSubmitted.emit());
   }
 }

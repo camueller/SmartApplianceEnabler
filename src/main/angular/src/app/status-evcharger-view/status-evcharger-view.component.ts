@@ -1,26 +1,41 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Status} from '../status/status';
 import {TimeUtil} from '../shared/time-util';
 import {DayOfWeek} from '../shared/days-of-week';
 import {ElectricVehicle} from '../control-evcharger/electric-vehicle';
+import {ControlService} from '../control/control-service';
+import {interval, Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-status-charger-view',
   templateUrl: './status-evcharger-view.component.html',
   styleUrls: ['./status-evcharger-view.component.css', '../status/status.component.css']
 })
-export class StatusEvchargerViewComponent implements OnInit {
+export class StatusEvchargerViewComponent implements OnInit, OnDestroy {
 
   @Input()
   status: Status;
   @Input()
-  electricVehicles: ElectricVehicle[];
-  @Input()
   dows: DayOfWeek[] = [];
+  electricVehicles: ElectricVehicle[];
+  loadVehiclesSubscription: Subscription;
 
-  constructor() { }
+  constructor(private controlService: ControlService) { }
 
   ngOnInit() {
+    this.loadVehicles();
+    this.loadVehiclesSubscription = interval(60 * 1000)
+      .subscribe(() => this.loadVehicles());
+  }
+
+  ngOnDestroy() {
+    this.loadVehiclesSubscription.unsubscribe();
+  }
+
+  loadVehicles() {
+    this.controlService.getElectricVehicles(this.status.id).subscribe(electricVehicles => {
+      this.electricVehicles = electricVehicles;
+    });
   }
 
   get stateKey() {
