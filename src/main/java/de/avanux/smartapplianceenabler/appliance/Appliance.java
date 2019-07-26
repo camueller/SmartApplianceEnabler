@@ -938,7 +938,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                     startingCurrentDetected(now);
                 }
             }
-            if(meter != null) {
+            if(meter != null && ! isEvCharger()) {
                 meter.resetEnergyMeter();
             }
             setAcceptControlRecommendations(true);
