@@ -163,7 +163,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             if(control instanceof ApplianceIdConsumer) {
                 ((ApplianceIdConsumer) control).setApplianceId(id);
             }
-            if(control instanceof ElectricVehicleCharger) {
+            if(isEvCharger()) {
                 ((ElectricVehicleCharger) control).setAppliance(this);
                 ((ElectricVehicleCharger) control).init();
             }
@@ -268,7 +268,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             control.on(new LocalDateTime(), false);
         }
 
-        if(control instanceof ElectricVehicleCharger) {
+        if(isEvCharger()) {
             logger.info("{}: Starting {}", id, ElectricVehicleCharger.class.getSimpleName());
             ((ElectricVehicleCharger) control).start(timer);
         }
@@ -285,7 +285,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             logger.info("{}: Stopping control {}", id, control.getClass().getSimpleName());
             ((GpioControllable) control).stop();
         }
-        else if(control instanceof ElectricVehicleCharger) {
+        else if(isEvCharger()) {
             logger.info("{}: Stopping control {}", id, control.getClass().getSimpleName());
             ((ElectricVehicleCharger) control).stop();
         }
@@ -356,15 +356,19 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                 || control instanceof ModbusSwitch
                 || control instanceof MockSwitch
                 || control instanceof StartingCurrentSwitch
-                || control instanceof ElectricVehicleCharger
+                || isEvCharger()
             );
+    }
+
+    private boolean isEvCharger() {
+        return this.control instanceof ElectricVehicleCharger;
     }
 
     public void setApplianceState(LocalDateTime now, boolean switchOn, Integer recommendedPowerConsumption,
                                   boolean deactivateTimeframe, String logMessage) {
         if(control != null) {
             logger.debug("{}: {}", id, logMessage);
-            if(switchOn && control instanceof ElectricVehicleCharger) {
+            if(switchOn && isEvCharger()) {
                 int chargePower = 0;
 //                if(this.runningTimeMonitor.getActiveTimeframeInterval() != null) {
 //                    // if we receive a switch recommendation with an active timeframe interval
@@ -404,7 +408,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     }
 
     public void setEnergyDemand(LocalDateTime now, Integer evId, Integer socCurrent, Integer socRequested, LocalDateTime chargeEnd) {
-        if (this.control instanceof ElectricVehicleCharger) {
+        if (isEvCharger()) {
             Meter meter = getMeter();
             if(meter != null) {
                 meter.resetEnergyMeter();
@@ -442,7 +446,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
                     slaves.add((ModbusSwitch) wrappedControl);
                 }
             }
-            else if(control instanceof  ElectricVehicleCharger) {
+            else if(isEvCharger()) {
                 EVControl evControl = ((ElectricVehicleCharger) control).getControl();
                 if(evControl instanceof EVModbusControl) {
                     slaves.add((EVModbusControl) evControl);
@@ -453,7 +457,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     }
 
     public boolean canConsumeOptionalEnergy() {
-        if(this.control instanceof ElectricVehicleCharger) {
+        if(isEvCharger()) {
             return ((ElectricVehicleCharger) this.control).isUseOptionalEnergy();
         }
         else if(schedules != null) {
@@ -537,7 +541,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
 
     public List<RuntimeInterval> getRuntimeIntervals(List<RuntimeInterval> nonEvOptionalEnergyRuntimeIntervals) {
         List<RuntimeInterval> runtimeIntervals = new ArrayList<>();
-        if (this.control instanceof ElectricVehicleCharger) {
+        if (isEvCharger()) {
             logger.debug("{}: control is ev charger", id);
             ElectricVehicleCharger electricVehicleCharger = (ElectricVehicleCharger) this.control;
             if (electricVehicleCharger.isInErrorState()) {
@@ -663,7 +667,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     }
 
     public EnergyRequest calculateRemainingEnergy(SocRequest socRequest, boolean considerEnergyAlreadyCharged) {
-        if(this.control instanceof ElectricVehicleCharger) {
+        if(isEvCharger()) {
             ElectricVehicleCharger charger = (ElectricVehicleCharger) this.control;
             ElectricVehicle ev = charger.getVehicle(socRequest.getEvId());
             if(ev == null) {
@@ -911,7 +915,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     public void activeIntervalChanged(LocalDateTime now, String applianceId, TimeframeInterval deactivatedInterval,
                                       TimeframeInterval activatedInterval, boolean wasRunning) {
         if(activatedInterval != null) {
-            if(this.control instanceof ElectricVehicleCharger) {
+            if(isEvCharger()) {
                 ElectricVehicleCharger charger = (ElectricVehicleCharger) this.control;
                 if(charger.isVehicleConnected()) {
                     Request request = activatedInterval.getTimeframe().getSchedule().getRequest();
@@ -937,8 +941,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             if(meter != null) {
                 meter.resetEnergyMeter();
             }
-            acceptControlRecommendations = true;
-            logger.debug("{}: Set acceptControlRecommendations={}", id, acceptControlRecommendations);
+            setAcceptControlRecommendations(true);
         }
     }
 
