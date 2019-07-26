@@ -11,39 +11,39 @@ const translations: any = {
 };
 
 describe('StatusEvchargerViewComponent', () => {
-  let component: StatusEvchargerViewComponent;
-  let fixture: ComponentFixture<StatusEvchargerViewComponent>;
-  let translate: TranslateService;
-  const defaultStatus = {
-    planningRequested: true,
-    evIdCharging: 1,
-  } as Status;
-
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ StatusEvchargerViewComponent ],
-      imports: [
-        TranslateModule.forRoot({
-          loader: {
-            provide: TranslateLoader,
-            useValue: new FakeTranslateLoader(translations)
-          }
-        })
-      ]
-    }).compileComponents();
-
-    translate = TestBed.get(TranslateService);
-    translate.use('de');
-  }));
-
-  beforeEach(() => {
-    fixture = TestBed.createComponent(StatusEvchargerViewComponent);
-    component = fixture.componentInstance;
-  });
-
-  it('should create', () => {
-    component.status = defaultStatus;
-    fixture.detectChanges();
-    expect(component).toBeTruthy();
-  });
+  // let component: StatusEvchargerViewComponent;
+  // let fixture: ComponentFixture<StatusEvchargerViewComponent>;
+  // let translate: TranslateService;
+  // const defaultStatus = {
+  //   planningRequested: true,
+  //   evIdCharging: 1,
+  // } as Status;
+  //
+  // beforeEach(async(() => {
+  //   TestBed.configureTestingModule({
+  //     declarations: [ StatusEvchargerViewComponent ],
+  //     imports: [
+  //       TranslateModule.forRoot({
+  //         loader: {
+  //           provide: TranslateLoader,
+  //           useValue: new FakeTranslateLoader(translations)
+  //         }
+  //       })
+  //     ]
+  //   }).compileComponents();
+  //
+  //   translate = TestBed.get(TranslateService);
+  //   translate.use('de');
+  // }));
+  //
+  // beforeEach(() => {
+  //   fixture = TestBed.createComponent(StatusEvchargerViewComponent);
+  //   component = fixture.componentInstance;
+  // });
+  //
+  // it('should create', () => {
+  //   component.status = defaultStatus;
+  //   fixture.detectChanges();
+  //   expect(component).toBeTruthy();
+  // });
 });
