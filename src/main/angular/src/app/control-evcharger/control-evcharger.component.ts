@@ -61,7 +61,7 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
   }
 
   ngOnInit() {
-    this.errorMessages =  new ControlEvchargerErrorMessages(this.translate);
+    this.errorMessages = new ControlEvchargerErrorMessages(this.translate);
     this.translate.get([
       'ControlEvchargerComponent.protocol.HTTP',
       'ControlEvchargerComponent.protocol.MODBUS',
@@ -111,7 +111,7 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
     this.electricVehicles = new FormArray(this.control.evCharger.vehicles ?
       this.control.evCharger.vehicles.map(ev => this.buildElectricVehicleFormGroup(ev)) : []
     );
-    const fg =  new FormGroup({});
+    const fg = new FormGroup({});
     this.formHandler.addFormControl(fg, 'template', undefined);
     this.formHandler.addFormControl(fg, 'protocol', this.evChargerProtocol);
     this.formHandler.addFormControl(fg, 'voltage', evCharger.voltage,
@@ -128,7 +128,7 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
   }
 
   buildElectricVehicleFormGroup(ev: ElectricVehicle, newId?: number): FormGroup {
-    const fg =  new FormGroup({});
+    const fg = new FormGroup({});
     this.formHandler.addFormControl(fg, 'id', ev && ev.id || newId);
     this.formHandler.addFormControl(fg, 'name', ev && ev.name, [Validators.required]);
     this.formHandler.addFormControl(fg, 'batteryCapacity', ev && ev.batteryCapacity,
@@ -154,10 +154,11 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
   }
 
   public updateEvCharger(form: FormGroup, evCharger: EvCharger) {
-    evCharger.voltage = form.controls.voltage.value;
-    evCharger.phases = form.controls.phases.value;
-    evCharger.pollInterval = form.controls.pollInterval.value;
-    evCharger.startChargingStateDetectionDelay = form.controls.startChargingStateDetectionDelay.value;
+    evCharger.voltage = form.controls.voltage.value ? form.controls.voltage.value : undefined;
+    evCharger.phases = form.controls.phases.value ? form.controls.phases.value : undefined;
+    evCharger.pollInterval = form.controls.pollInterval.value ? form.controls.pollInterval.value : undefined;
+    evCharger.startChargingStateDetectionDelay = form.controls.startChargingStateDetectionDelay.value
+      ? form.controls.startChargingStateDetectionDelay.value : undefined;
     evCharger.forceInitialCharging = form.controls.forceInitialCharging.value;
     evCharger.modbusControl.idref = form.controls.modbusIdref.value;
     evCharger.modbusControl.slaveAddress = form.controls.slaveAddress.value;
