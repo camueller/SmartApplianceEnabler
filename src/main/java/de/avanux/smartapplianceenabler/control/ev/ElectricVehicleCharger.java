@@ -131,6 +131,25 @@ public class ElectricVehicleCharger implements Control, ApplianceIdConsumer {
         return connectedVehicleSoc;
     }
 
+    // TODO until we retrieve SOC periodically we calculate the current SOC here
+    public Integer getCurrentSoc(Meter meter) {
+        int whAlreadyCharged = 0;
+        if (meter != null) {
+            whAlreadyCharged = Float.valueOf(meter.getEnergy() * 1000.0f).intValue();
+        }
+
+        ElectricVehicle vehicle = getConnectedVehicle();
+        if (vehicle != null) {
+            Integer initialSoc = connectedVehicleSoc != null ? connectedVehicleSoc : 0;
+            Integer chargeLoss = vehicle.getChargeLoss() != null ? vehicle.getChargeLoss() : 0;
+            Integer currentSoc = Float.valueOf(initialSoc
+                    + whAlreadyCharged / Float.valueOf(vehicle.getBatteryCapacity())
+                    * (100 - chargeLoss)).intValue();
+            return currentSoc > 100 ? 100 : currentSoc;
+        }
+        return 0;
+    }
+
     public Long getConnectedVehicleSocTimestamp() {
         return connectedVehicleSocTimestamp;
     }
