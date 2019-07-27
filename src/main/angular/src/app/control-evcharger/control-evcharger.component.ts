@@ -59,7 +59,7 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
   }
 
   ngOnInit() {
-    this.errorMessages =  new ControlEvchargerErrorMessages(this.translate);
+    this.errorMessages = new ControlEvchargerErrorMessages(this.translate);
     this.translate.get([
       'ControlEvchargerComponent.VehicleNotConnected',
       'ControlEvchargerComponent.VehicleConnected',
@@ -105,7 +105,7 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
     this.electricVehicles = new FormArray(this.control.evCharger.vehicles ?
       this.control.evCharger.vehicles.map(ev => this.buildElectricVehicleFormGroup(ev)) : []
     );
-    const fg =  new FormGroup({});
+    const fg = new FormGroup({});
     this.formHandler.addFormControl(fg, 'template', undefined);
     this.formHandler.addFormControl(fg, 'voltage', evCharger.voltage,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
@@ -125,7 +125,7 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
   }
 
   buildElectricVehicleFormGroup(ev: ElectricVehicle, newId?: number): FormGroup {
-    const fg =  new FormGroup({});
+    const fg = new FormGroup({});
     this.formHandler.addFormControl(fg, 'id', ev && ev.id || newId);
     this.formHandler.addFormControl(fg, 'name', ev && ev.name, [Validators.required]);
     this.formHandler.addFormControl(fg, 'batteryCapacity', ev && ev.batteryCapacity,
@@ -151,7 +151,7 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
   }
 
   buildModbusConfigurationFormGroup(configuration: ModbusRegisterConfguration): FormGroup {
-    const fg =  new FormGroup({});
+    const fg = new FormGroup({});
     this.formHandler.addFormControl(fg, 'name', configuration.name, [Validators.required]);
     this.formHandler.addFormControl(fg, 'registerAddress', configuration.address,
       [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER_OR_HEX)]);
@@ -179,10 +179,11 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
   }
 
   public updateEvCharger(form: FormGroup, evCharger: EvCharger) {
-    evCharger.voltage = form.controls.voltage.value;
-    evCharger.phases = form.controls.phases.value;
-    evCharger.pollInterval = form.controls.pollInterval.value;
-    evCharger.startChargingStateDetectionDelay = form.controls.startChargingStateDetectionDelay.value;
+    evCharger.voltage = form.controls.voltage.value ? form.controls.voltage.value : undefined;
+    evCharger.phases = form.controls.phases.value ? form.controls.phases.value : undefined;
+    evCharger.pollInterval = form.controls.pollInterval.value ? form.controls.pollInterval.value : undefined;
+    evCharger.startChargingStateDetectionDelay = form.controls.startChargingStateDetectionDelay.value
+      ? form.controls.startChargingStateDetectionDelay.value : undefined;
     evCharger.forceInitialCharging = form.controls.forceInitialCharging.value;
     evCharger.control.idref = form.controls.modbusIdref.value;
     evCharger.control.slaveAddress = form.controls.slaveAddress.value;
@@ -207,7 +208,7 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
     const name = modbusConfigurationFormControl.controls.name.value;
 
     let value = modbusConfigurationFormControl.controls.value.value;
-    if (name === EvModbusWriteRegisterName.ChargingCurrent && ! value) {
+    if (name === EvModbusWriteRegisterName.ChargingCurrent && !value) {
       value = '0';
     }
 
@@ -230,7 +231,7 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
     };
   }
 
- buildElectricVehicle(evFormControl: FormGroup): ElectricVehicle {
+  buildElectricVehicle(evFormControl: FormGroup): ElectricVehicle {
     let newSocScript: SocScript
     if (evFormControl.controls.scriptEnabled.value) {
       newSocScript = new SocScript({
