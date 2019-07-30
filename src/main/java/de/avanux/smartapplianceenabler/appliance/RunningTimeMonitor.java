@@ -36,17 +36,8 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
     private String applianceId;
     private List<Schedule> schedules;
     private Set<ActiveIntervalChangedListener> scheduleChangedListeners = new HashSet<>();
-    private TimeframeInterval activeTimeframeInterval;
-    private Request activeRequest;
-    private LocalDateTime statusChangedAt;
-    private Integer runningTime;
-    // remaining min running time while not running or when running started
-    private Integer remainingMinRunningTimeWhileNotRunning;
-    // remaining max running time while not running or when running started
-    private Integer remainingMaxRunningTimeWhileNotRunning;
-    private boolean running;
-    private boolean wasRunning;
-    private boolean interrupted;
+    private RuntimeState state;
+    private RuntimeState previousState;
     private GuardedTimerTask updateActiveTimeframeIntervalTimerTask;
 
     public RunningTimeMonitor() {
@@ -101,10 +92,10 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
             logger.debug("{}: No schedules to set", applianceId);
         }
         this.schedules = enabledSchedules;
-        this.activeTimeframeInterval = null;
+        this.state.activeTimeframeInterval = null;
         updateActiveTimeframeInterval(now);
     }
-    
+
     public List<Schedule> getSchedules() {
         return schedules;
     }
@@ -116,63 +107,64 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
     public void setRunning(boolean running, LocalDateTime now) {
         if(! running) {
             int secondsSinceStatusChange = getSecondsSinceStatusChange(now);
-            if(this.runningTime != null) {
-                this.runningTime += secondsSinceStatusChange;
+            if(this.state.runningTime != null) {
+                this.state.runningTime += secondsSinceStatusChange;
             }
-            if(this.remainingMinRunningTimeWhileNotRunning != null) {
-                if(this.remainingMinRunningTimeWhileNotRunning - secondsSinceStatusChange >= 0) {
-                    this.remainingMinRunningTimeWhileNotRunning -= secondsSinceStatusChange;
+            if(this.state.remainingMinRunningTimeWhileNotRunning != null) {
+                if(this.state.remainingMinRunningTimeWhileNotRunning - secondsSinceStatusChange >= 0) {
+                    this.state.remainingMinRunningTimeWhileNotRunning -= secondsSinceStatusChange;
                 }
                 else {
-                    this.remainingMinRunningTimeWhileNotRunning = 0;
+                    this.state.remainingMinRunningTimeWhileNotRunning = 0;
                 }
             }
-            if(this.remainingMaxRunningTimeWhileNotRunning != null) {
-                if(this.remainingMaxRunningTimeWhileNotRunning - secondsSinceStatusChange >= 0) {
-                    this.remainingMaxRunningTimeWhileNotRunning -= secondsSinceStatusChange;
+            if(this.state.remainingMaxRunningTimeWhileNotRunning != null) {
+                if(this.state.remainingMaxRunningTimeWhileNotRunning - secondsSinceStatusChange >= 0) {
+                    this.state.remainingMaxRunningTimeWhileNotRunning -= secondsSinceStatusChange;
                 }
                 else {
-                    this.remainingMaxRunningTimeWhileNotRunning = 0;
+                    this.state.remainingMaxRunningTimeWhileNotRunning = 0;
                 }
             }
-            if(this.activeTimeframeInterval != null) {
-                this.interrupted = true;
+            if(this.state.activeTimeframeInterval != null) {
+                this.state.interrupted = true;
             }
         }
         else {
-            this.interrupted = false;
-            this.wasRunning = true;
+            this.state.interrupted = false;
+            this.state.wasRunning = true;
         }
-        this.running = running;
-        this.statusChangedAt = now;
-        logger.debug("{}: Set running={} statusChangedAt={} ", applianceId, running, statusChangedAt);
+        this.state.running = running;
+        this.state.statusChangedAt = now;
+        logger.debug("{}: Set running={} statusChangedAt={} ", applianceId, running, this.state.statusChangedAt);
     }
 
     public LocalDateTime getStatusChangedAt() {
-        return statusChangedAt;
+        return this.state.statusChangedAt;
     }
 
     protected int getSecondsSinceStatusChange(LocalDateTime now) {
         try {
-            if(statusChangedAt != null && now != null) {
-                Interval runtimeSinceStatusChange = new Interval(statusChangedAt.toDateTime(), now.toDateTime());
+            if(this.state.statusChangedAt != null && now != null) {
+                Interval runtimeSinceStatusChange = new Interval(this.state.statusChangedAt.toDateTime(), now.toDateTime());
                 return Double.valueOf(runtimeSinceStatusChange.toDuration().getMillis() / 1000).intValue();
             }
         }
         catch(IllegalArgumentException e) {
-            logger.error("{} Invalid interval: start={} end={}", applianceId, statusChangedAt.toDateTime(), now.toDateTime());
+            logger.error("{} Invalid interval: start={} end={}", applianceId, this.state.statusChangedAt.toDateTime(),
+                    now.toDateTime());
         }
         return 0;
     }
 
     public Integer getRunningTimeOfCurrentTimeFrame(LocalDateTime now) {
         Integer runningTime = null;
-        if(this.runningTime != null) {
-            if(running) {
-                runningTime = this.runningTime + getSecondsSinceStatusChange(now);
+        if(this.state.runningTime != null) {
+            if(this.state.running) {
+                runningTime = this.state.runningTime + getSecondsSinceStatusChange(now);
             }
             else {
-                runningTime = this.runningTime;
+                runningTime = this.state.runningTime;
             }
         }
         return runningTime;
@@ -180,14 +172,14 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
 
     public Integer getRemainingMinRunningTimeOfCurrentTimeFrame(LocalDateTime now) {
         Integer remainingRunningTime = null;
-        if(remainingMinRunningTimeWhileNotRunning != null) {
-            if(running) {
+        if(this.state.remainingMinRunningTimeWhileNotRunning != null) {
+            if(this.state.running) {
                 int calculatedRemainingRunningTime
-                        = remainingMinRunningTimeWhileNotRunning - getSecondsSinceStatusChange(now);
+                        = this.state.remainingMinRunningTimeWhileNotRunning - getSecondsSinceStatusChange(now);
                 remainingRunningTime = calculatedRemainingRunningTime > 0 ? calculatedRemainingRunningTime : 0;
             }
             else {
-                remainingRunningTime = remainingMinRunningTimeWhileNotRunning;
+                remainingRunningTime = this.state.remainingMinRunningTimeWhileNotRunning;
             }
         }
         return remainingRunningTime;
@@ -195,35 +187,36 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
 
     public Integer getRemainingMaxRunningTimeOfCurrentTimeFrame(LocalDateTime now) {
         Integer remainingRunningTime = null;
-        if(remainingMaxRunningTimeWhileNotRunning != null) {
-            if(running) {
+        if(this.state.remainingMaxRunningTimeWhileNotRunning != null) {
+            if(this.state.running) {
                 int calculatedRemainingRunningTime
-                        = this.remainingMaxRunningTimeWhileNotRunning - getSecondsSinceStatusChange(now);
+                        = this.state.remainingMaxRunningTimeWhileNotRunning - getSecondsSinceStatusChange(now);
                 remainingRunningTime = calculatedRemainingRunningTime > 0 ? calculatedRemainingRunningTime : 0;
             }
             else {
-                remainingRunningTime = remainingMaxRunningTimeWhileNotRunning;
+                remainingRunningTime = this.state.remainingMaxRunningTimeWhileNotRunning;
             }
         }
         return remainingRunningTime;
     }
 
     public boolean isRunning() {
-        return running;
+        return this.state.running;
     }
 
     public boolean isInterrupted() {
-        return interrupted;
+        return this.state.interrupted;
     }
 
     public void updateActiveTimeframeInterval(LocalDateTime now) {
         activateTimeframeInterval(now, schedules);
         deactivateExpiredTimeframeInterval(now);
-        logger.debug("{}: activeTimeframeInterval={}", applianceId, activeTimeframeInterval);
+        logger.debug("{}: activeTimeframeInterval={}", applianceId, this.state.activeTimeframeInterval);
         logger.debug("{}: runningTime={} remainingMinRunningTime={} remainingMaxRunningTime={}",
                 applianceId, getRunningTimeOfCurrentTimeFrame(now), getRemainingMinRunningTimeOfCurrentTimeFrame(now),
                 getRemainingMaxRunningTimeOfCurrentTimeFrame(now));
-        logger.debug("{}: running={} interrupted={} statusChangedAt={} ", applianceId, running, interrupted, statusChangedAt);
+        logger.debug("{}: running={} interrupted={} statusChangedAt={} ", applianceId, this.state.running,
+                this.state.interrupted, this.state.statusChangedAt);
     }
 
     /**
@@ -231,11 +224,11 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
      * @return
      */
     public TimeframeInterval getActiveTimeframeInterval() {
-        return activeTimeframeInterval;
+        return this.state.activeTimeframeInterval;
     }
 
     public Request getActiveRequest() {
-        return activeRequest;
+        return this.state.activeRequest;
     }
 
     /**
@@ -244,7 +237,7 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
      * @param schedules
      */
     public void activateTimeframeInterval(LocalDateTime now, List<Schedule> schedules) {
-        if(activeTimeframeInterval == null && schedules != null && schedules.size() > 0) {
+        if(this.state.activeTimeframeInterval == null && schedules != null && schedules.size() > 0) {
             TimeframeInterval nextSufficientTimeframeInterval =
                     Schedule.getCurrentOrNextTimeframeInterval(now, schedules, true, false);
             activateTimeframeInterval(now, nextSufficientTimeframeInterval);
@@ -253,17 +246,24 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
             for(ActiveIntervalChangedListener listener : scheduleChangedListeners) {
                 logger.debug("{}: Timeframe interval activation check: notifying {} {}", applianceId,
                         ActiveIntervalChangedListener.class.getSimpleName(), listener.getClass().getSimpleName());
-                listener.activeIntervalChecked(now, applianceId, activeTimeframeInterval);
+                listener.activeIntervalChecked(now, applianceId, this.state.activeTimeframeInterval);
             }
         }
     }
 
     public void activateTimeframeInterval(LocalDateTime now, Integer runtime) {
-        activeTimeframeInterval = null;
         Schedule schedule = new Schedule(runtime, null, new TimeOfDay(now), new TimeOfDay(now));
         Interval interval = new Interval(now.toDateTime(), now.plusSeconds(runtime).toDateTime());
         Timeframe timeframe = schedule.getTimeframe();
-        activateTimeframeInterval(now, new TimeframeInterval(timeframe, interval));
+        TimeframeInterval runtimeTimeframeInterval = new TimeframeInterval(timeframe, interval);
+        try {
+            this.previousState = (RuntimeState) this.state.clone();
+        } catch (CloneNotSupportedException e) {
+            logger.error("{}: Error cloning state.", applianceId, e);
+        }
+        logger.debug("{}: Saving active timeframe interval: {}", applianceId, this.previousState.activeTimeframeInterval);
+        this.initState();
+        activateTimeframeInterval(now, runtimeTimeframeInterval);
     }
 
     public void activateTimeframeInterval(LocalDateTime now, Integer energy, LocalDateTime chargeEnd) {
@@ -282,42 +282,44 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
      * @param timeframeIntervalToBeActivated the timeframe interval or null
      */
     public void activateTimeframeInterval(LocalDateTime now, TimeframeInterval timeframeIntervalToBeActivated) {
+        TimeframeInterval deactivatedTimeframeInterval = this.state.activeTimeframeInterval;
+        boolean wasRunning = this.state.wasRunning;
         boolean intervalChanged = false;
-        boolean wasRunning = this.wasRunning;
-        if(timeframeIntervalToBeActivated != null && activeTimeframeInterval == null) {
+        if(timeframeIntervalToBeActivated != null && this.state.activeTimeframeInterval == null) {
             Schedule schedule = timeframeIntervalToBeActivated.getTimeframe().getSchedule();
-            runningTime = 0;
-            activeRequest = schedule.getRequest();
+            this.state.runningTime = 0;
+            this.state.activeRequest = schedule.getRequest();
             if(schedule.getRequest() instanceof RuntimeRequest || schedule.getRequest() instanceof SocRequest) {
                 if(schedule.getRequest() instanceof RuntimeRequest) {
-                    remainingMinRunningTimeWhileNotRunning = schedule.getRequest().getMin();
-                    remainingMaxRunningTimeWhileNotRunning = schedule.getRequest().getMax();
+                    this.state.remainingMinRunningTimeWhileNotRunning = schedule.getRequest().getMin();
+                    this.state.remainingMaxRunningTimeWhileNotRunning = schedule.getRequest().getMax();
                 }
                 intervalChanged = true;
                 logger.debug("{}: Interval activated: {}", applianceId, timeframeIntervalToBeActivated);
             }
         }
-        else if(timeframeIntervalToBeActivated == null && activeTimeframeInterval != null) {
-            logger.debug("{}: Interval expired: {}", applianceId, activeTimeframeInterval);
-            running = false;
-            this.wasRunning = false;
-            runningTime = null;
-            interrupted = false;
-            statusChangedAt = null;
-            remainingMinRunningTimeWhileNotRunning = null;
-            remainingMaxRunningTimeWhileNotRunning = null;
-            activeRequest = null;
+        else if(timeframeIntervalToBeActivated == null && this.state.activeTimeframeInterval != null) {
+            logger.debug("{}: Interval expired: {}", applianceId, this.state.activeTimeframeInterval);
+            if(this.previousState != null) {
+                logger.debug("{}: Restore original Interval: {}", applianceId, previousState.activeTimeframeInterval);
+                timeframeIntervalToBeActivated = this.previousState.activeTimeframeInterval;
+                this.state = this.previousState;
+                this.previousState = null;
+            }
+            else {
+                this.initState();
+            }
             intervalChanged = true;
         }
-        TimeframeInterval deactivatedTimeframeInterval = activeTimeframeInterval;
-        activeTimeframeInterval = timeframeIntervalToBeActivated;
+        this.state.activeTimeframeInterval = timeframeIntervalToBeActivated;
         if(intervalChanged) {
             logger.debug("{}: Active interval changed. deactivatedTimeframeInterval={} activeTimeframeInterval={}",
-                    applianceId, deactivatedTimeframeInterval, activeTimeframeInterval);
+                    applianceId, deactivatedTimeframeInterval, this.state.activeTimeframeInterval);
             for(ActiveIntervalChangedListener listener : scheduleChangedListeners) {
                 logger.debug("{}: Notifying {} {}", applianceId, ActiveIntervalChangedListener.class.getSimpleName(),
                         listener.getClass().getSimpleName());
-                listener.activeIntervalChanged(now, applianceId, deactivatedTimeframeInterval, activeTimeframeInterval, wasRunning);
+                listener.activeIntervalChanged(now, applianceId, deactivatedTimeframeInterval,
+                        this.state.activeTimeframeInterval, wasRunning);
             }
         }
     }
@@ -327,8 +329,8 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
      * @param now
      */
     protected void deactivateExpiredTimeframeInterval(LocalDateTime now) {
-        if(activeTimeframeInterval != null) {
-            if(now.toDateTime().isAfter(activeTimeframeInterval.getInterval().getEnd())) {
+        if(this.state.activeTimeframeInterval != null) {
+            if(now.toDateTime().isAfter(this.state.activeTimeframeInterval.getInterval().getEnd())) {
                 activateTimeframeInterval(now, (TimeframeInterval) null);
             }
         }
