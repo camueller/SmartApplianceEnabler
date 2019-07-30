@@ -50,11 +50,17 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
     private GuardedTimerTask updateActiveTimeframeIntervalTimerTask;
 
     public RunningTimeMonitor() {
+        this.initState();
     }
 
     @Override
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
+    }
+
+    private void initState() {
+        logger.debug("{}: Initialize state", applianceId);
+        this.state = new RuntimeState();
     }
 
     public void setTimer(Timer timer) {
