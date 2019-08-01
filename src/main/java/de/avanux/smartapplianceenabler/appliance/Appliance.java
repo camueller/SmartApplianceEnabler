@@ -915,8 +915,7 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     public void activeIntervalChanged(LocalDateTime now, String applianceId, TimeframeInterval deactivatedInterval,
                                       TimeframeInterval activatedInterval, boolean wasRunning) {
         if(activatedInterval != null && deactivatedInterval != null) {
-            setApplianceState(now, false, null,
-                    false,"Switching off due to end of time frame");
+            endOfTimeFrame(now);
         }
         else if(activatedInterval != null) {
             if(isEvCharger()) {
@@ -934,19 +933,28 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
             }
         }
         else {
-            setApplianceState(now, false, null,
-                    true,"Switching off due to end of time frame");
+            endOfTimeFrame(now);
             if(! wasRunning) {
                 if(runningTimeMonitor.getRunningTimeOfCurrentTimeFrame(now) == null) {
                     logger.debug("{}: Rescheduling timeframe interval for starting current controlled appliance with no running time", id);
                     startingCurrentDetected(now);
                 }
             }
-            if(meter != null && ! isEvCharger()) {
-                meter.resetEnergyMeter();
-            }
-            setAcceptControlRecommendations(true);
         }
+    }
+
+    /**
+     * This method should not update RunningTimeMonitor (since it is already triggered by it).
+     *
+     * @param now
+     */
+    private void endOfTimeFrame(LocalDateTime now) {
+        setApplianceState(now, false, null,
+                false, "Switching off due to end of time frame");
+        if(meter != null && ! isEvCharger()) {
+            meter.resetEnergyMeter();
+        }
+        setAcceptControlRecommendations(true);
     }
 
     @Override
