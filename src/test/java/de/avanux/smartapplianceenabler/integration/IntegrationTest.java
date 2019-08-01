@@ -205,6 +205,66 @@ public class IntegrationTest extends TestBase {
     }
 
     @Test
+    public void testClickGoLightAfterTimeframeWithNoRunningTimeLeft() {
+        LocalDateTime timeInitial = toToday(11, 0, 0);
+        TestBuilder builder = new TestBuilder()
+                .appliance(applianceId, dateTimeProvider, timeInitial)
+                .withMockSwitch(false)
+                .withSchedule(10, 0, 18, 0, 3600, null)
+                .init();
+        Appliance appliance = builder.getAppliance();
+        Control control = appliance.getControl();
+        RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
+
+        log("Check initial values");
+        Assert.assertFalse(control.isOn());
+
+        log("Switch on");
+        LocalDateTime timeSwitchOnSchedule = toToday(12, 0, 1);
+        sempController.em2Device(timeSwitchOnSchedule, createEM2Device(applianceId,true));
+
+        log("Switch off");
+        LocalDateTime timeSwitchOffSchedule = toToday(13, 0, 1);
+        sempController.em2Device(timeSwitchOffSchedule, createEM2Device(applianceId,false));
+        assertRunningTime(timeInitial, control, runningTimeMonitor, false, false, true,
+                3600, 0, null);
+
+        log("Set runtime creates timeframe to be set");
+        LocalDateTime timeSwitchOnManually = toToday(14, 0, 0);
+        Assert.assertEquals(3600, saeController.suggestRuntime(applianceId).intValue());
+        saeController.setRuntimeDemand(timeSwitchOnManually, applianceId, 1800);
+        Assert.assertNotNull(runningTimeMonitor.getActiveTimeframeInterval());
+
+        log("Switch on");
+        sempController.em2Device(timeSwitchOnManually, createEM2Device(applianceId,true));
+
+        log("Check values after switch on");
+        assertRunningTime(timeSwitchOnManually, control, runningTimeMonitor, true, true, false,
+                0, 1800, null);
+        assertPlanningRequest(timeSwitchOnManually,
+                new Timeframe(applianceId,0, 1800,1799, 1800),
+                new Timeframe(applianceId, 72000, 100800,3599, 3600),
+                new Timeframe(applianceId, 158400, 187200,3599, 3600)
+        );
+        ApplianceStatus applianceStatusAfterSwitchOn = getApplianceStatus(timeSwitchOnManually);
+        Assert.assertTrue(applianceStatusAfterSwitchOn.isOn());
+
+        log("Update timeframe intervals right after min running time is reached");
+        log("Timeframe interval active before manual timeframe interval is restored");
+        LocalDateTime timeAfterExpiration = toToday(14, 30, 1);
+        runningTimeMonitor.updateActiveTimeframeInterval(timeAfterExpiration);
+        assertRunningTime(timeAfterExpiration, control, runningTimeMonitor, false,false, true,
+                9000, 0, null);
+        assertPlanningRequest(timeAfterExpiration,
+                new Timeframe(applianceId,0, 12599,0, 0),
+                new Timeframe(applianceId, 70199, 98999,3599, 3600),
+                new Timeframe(applianceId, 156599, 185399,3599, 3600)
+        );
+        ApplianceStatus applianceStatusAfterSwitchOff = getApplianceStatus(timeAfterExpiration);
+        Assert.assertFalse(applianceStatusAfterSwitchOff.isOn());
+    }
+
+    @Test
     public void testSwitchOnAndOff_startingCurrentDetectedDuringTimeframeInterval() {
         LocalDateTime timeInitial = toToday(11, 29, 0);
         TestBuilder builder = new TestBuilder()

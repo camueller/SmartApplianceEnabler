@@ -1,5 +1,6 @@
 language: java
 script: mvn test -B -Ptravis,web
+dist: trusty
 sudo: required
 jdk:
   - oraclejdk8
