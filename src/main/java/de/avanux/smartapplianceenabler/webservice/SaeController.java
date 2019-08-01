@@ -560,7 +560,7 @@ public class SaeController {
             if (appliance != null) {
                 if (appliance.getControl() instanceof ElectricVehicleCharger) {
                     ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
-                    Integer soc = evCharger.getConnectedVehicleSoc();
+                    Integer soc = evCharger.getCurrentSoc(appliance.getMeter());
                     if (soc != null) {
                         logger.debug("{}: Return SOC={}", applianceId, soc);
                         return Integer.valueOf(soc).floatValue();
@@ -761,8 +761,9 @@ public class SaeController {
                     applianceStatus.setEvIdCharging(evCharger.getConnectedVehicleId());
                     applianceStatus.setState(evCharger.getState().name());
                     applianceStatus.setStateLastChangedTimestamp(evCharger.getStateLastChangedTimestamp());
-
-                    ElectricVehicle vehicle = evCharger.getConnectedVehicle();
+                    applianceStatus.setSocInitial(evCharger.getConnectedVehicleSoc());
+                    applianceStatus.setSocInitialTimestamp(evCharger.getConnectedVehicleSocTimestamp());
+                    applianceStatus.setSoc(evCharger.getCurrentSoc(meter));
 
                     int whAlreadyCharged = 0;
                     Integer chargePower = evCharger.getChargePower();
@@ -770,20 +771,6 @@ public class SaeController {
                         whAlreadyCharged = Float.valueOf(meter.getEnergy() * 1000.0f).intValue();
                         chargePower = meter.getAveragePower();
                     }
-
-                    // TODO until we retrieve SOC periodically we calculate the current SOC here
-                    applianceStatus.setSocInitial(evCharger.getConnectedVehicleSoc());
-                    applianceStatus.setSocInitialTimestamp(evCharger.getConnectedVehicleSocTimestamp());
-                    if (vehicle != null) {
-                        Integer initialSoc = evCharger.getConnectedVehicleSoc() != null
-                                ? evCharger.getConnectedVehicleSoc() : 0;
-                        Integer chargeLoss = vehicle.getChargeLoss() != null ? vehicle.getChargeLoss() : 0;
-                        Integer currentSoc = Float.valueOf(initialSoc
-                                + whAlreadyCharged / Float.valueOf(vehicle.getBatteryCapacity())
-                                * (100 - chargeLoss)).intValue();
-                        applianceStatus.setSoc(currentSoc > 100 ? 100 : currentSoc);
-                    }
-
                     if (control.isOn()) {
                         applianceStatus.setCurrentChargePower(chargePower);
                     }
