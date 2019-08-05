@@ -37,7 +37,7 @@ export class MeterService extends SaeService {
   updateMeter(meter: Meter, id: string): Observable<any> {
     const url = `${SaeService.API}/meter?id=${id}`;
     const content = this.meterFactory.toJSON(meter);
-    console.log('Update meter using ' + url);
+    this.logger.debug('Update meter using ' + url);
     if (content != null) {
       return this.http.put(url, content, {headers: this.headersContentTypeJson, responseType: 'text'});
     } else {
