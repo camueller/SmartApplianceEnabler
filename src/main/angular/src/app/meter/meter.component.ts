@@ -16,7 +16,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, CanDeactivate} from '@angular/router';
 import {S0ElectricityMeter} from '../meter-s0/s0-electricity-meter';
 import {ModbusElectricityMeter} from '../meter-modbus/modbus-electricity-meter';
@@ -123,8 +123,7 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
   submitForm() {
     this.nestedFormService.completed.subscribe(() => {
       this.nestedFormService.completed.unsubscribe();
-      console.log('meter=', this.meter);
-      // this.meterService.updateMeter(this.meter, this.applianceId).subscribe();
+      this.meterService.updateMeter(this.meter, this.applianceId).subscribe();
       this.form.markAsPristine();
     });
     this.nestedFormService.submit();
