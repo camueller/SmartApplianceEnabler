@@ -86,6 +86,9 @@ export class MeterFactory {
       if (meter.type === ModbusElectricityMeter.TYPE) {
         this.toJSONModbusElectricityMeter(meter.modbusElectricityMeter);
       }
+      if (meter.type === HttpElectricityMeter.TYPE) {
+        this.toJSONHttpElectricityMeter(meter.httpElectricityMeter);
+      }
       meterRaw = JSON.stringify(meterUsed);
     }
     this.logger.debug('Meter (JSON): ' + meterRaw);
@@ -171,5 +174,17 @@ export class MeterFactory {
     }
     delete httpElectricityMeter.httpReads;
     return httpElectricityMeter;
+  }
+
+  toJSONHttpElectricityMeter(httpElectricityMeter: HttpElectricityMeter) {
+    const rawMeter = httpElectricityMeter as any;
+    rawMeter.httpReads = [];
+    if (httpElectricityMeter.powerConfiguration) {
+      rawMeter.httpReads.push(httpElectricityMeter.powerConfiguration);
+    }
+    if (httpElectricityMeter.powerConfiguration) {
+      rawMeter.httpReads.push(httpElectricityMeter.energyConfiguration);
+    }
+    return rawMeter;
   }
 }
