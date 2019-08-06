@@ -11,6 +11,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {HttpReadErrorMessages} from './http-read-error-messages';
 import {HttpReadValue} from '../http-read-value/http-read-value';
+import {getValidString} from '../shared/form-util';
 
 @Component({
   selector: 'app-http-read',
@@ -121,7 +122,7 @@ export class HttpReadComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   updateHttpRead(httpRead: HttpRead, form: FormGroup) {
-    httpRead.url = this.form.controls[this.getFormControlName('url')].value;
+    httpRead.url = getValidString(this.form.controls[this.getFormControlName('url')].value);
     this.nestedFormService.complete();
   }
 }
