@@ -11,6 +11,7 @@ import {ErrorMessages} from '../shared/error-messages';
 import {HttpReadValue} from './http-read-value';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {HttpReadValueErrorMessages} from './http-read-value-error-messages';
+import {getValidFloat, getValidString} from '../shared/form-util';
 
 @Component({
   selector: 'app-http-read-value',
@@ -114,11 +115,11 @@ export class HttpReadValueComponent implements OnInit, AfterViewChecked, OnDestr
   }
 
   updateHttpReadValue(httpReadValue: HttpReadValue, form: FormGroup) {
-    httpReadValue.name = this.form.controls[this.getFormControlName('name')].value;
-    httpReadValue.data = this.form.controls[this.getFormControlName('data')].value;
-    httpReadValue.path = this.form.controls[this.getFormControlName('path')].value;
-    httpReadValue.extractionRegex = this.form.controls[this.getFormControlName('extractionRegex')].value;
-    httpReadValue.factorToValue = this.form.controls[this.getFormControlName('factorToValue')].value;
+    httpReadValue.name = getValidString(this.form.controls[this.getFormControlName('name')].value);
+    httpReadValue.data = getValidString(this.form.controls[this.getFormControlName('data')].value);
+    httpReadValue.path = getValidString(this.form.controls[this.getFormControlName('path')].value);
+    httpReadValue.extractionRegex = getValidString(this.form.controls[this.getFormControlName('extractionRegex')].value);
+    httpReadValue.factorToValue = getValidFloat(this.form.controls[this.getFormControlName('factorToValue')].value);
     this.nestedFormService.complete();
   }
 }
