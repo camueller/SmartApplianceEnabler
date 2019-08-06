@@ -69,7 +69,7 @@ export class HttpReadComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   ngAfterViewChecked() {
-    // this.formHandler.markLabelsRequired();
+    this.formHandler.markLabelsRequired();
   }
 
   ngOnDestroy() {
