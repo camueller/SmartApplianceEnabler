@@ -43,7 +43,7 @@ import {NestedFormService} from '../shared/nested-form-service';
   templateUrl: './meter.component.html',
   styles: []
 })
-export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
+export class MeterComponent implements OnInit, OnDestroy, CanDeactivate<MeterComponent> {
   form: FormGroup;
   applianceId: string;
   meterDefaults: MeterDefaults;
@@ -91,6 +91,10 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
     //   this.errors = this.errorMessageHandler.applyErrorMessages4TemplateDrivenForm(this.form, this.errorMessages));
   }
 
+  ngOnDestroy(): void {
+    this.nestedFormService.completed.unsubscribe();
+  }
+
   buildFormGroup(): FormGroup {
     const fg = new FormGroup({});
     fg.addControl('meterType', new FormControl(this.meter && this.meter.type));
@@ -122,7 +126,6 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
 
   submitForm() {
     this.nestedFormService.completed.subscribe(() => {
-      this.nestedFormService.completed.unsubscribe();
       this.meterService.updateMeter(this.meter, this.applianceId).subscribe();
       this.form.markAsPristine();
     });
