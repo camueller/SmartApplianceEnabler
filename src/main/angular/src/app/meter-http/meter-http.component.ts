@@ -12,6 +12,7 @@ import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {MeterHttpErrorMessages} from './meter-http-error-messages';
 import {ContentProtocol} from '../shared/content-protocol';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-meter-http',
@@ -32,6 +33,7 @@ export class MeterHttpComponent implements OnInit, AfterViewChecked, OnDestroy {
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
+  nestedFormServiceSubscription: Subscription;
 
   constructor(private logger: Logger,
               private parent: FormGroupDirective,
@@ -50,7 +52,7 @@ export class MeterHttpComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
-    this.nestedFormService.submitted.subscribe(
+    this.nestedFormServiceSubscription = this.nestedFormService.submitted.subscribe(
       () => this.updateHttpElectricityMeter(this.httpElectricityMeter, this.form));
     this.formMarkerService.dirty.subscribe(() => this.form.markAsDirty());
   }
@@ -60,8 +62,7 @@ export class MeterHttpComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   ngOnDestroy() {
-    // FIXME: erzeugt Fehler bei Wechsel des Zählertypes
-    // this.nestedFormService.submitted.unsubscribe();
+    this.nestedFormServiceSubscription.unsubscribe();
   }
 
   get powerValueNames() {

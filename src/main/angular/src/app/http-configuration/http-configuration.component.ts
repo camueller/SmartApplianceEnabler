@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {ControlContainer, FormGroup, FormGroupDirective} from '@angular/forms';
 import {FormHandler} from '../shared/form-handler';
 import {Logger} from '../log/logger';
@@ -7,6 +7,7 @@ import {FormMarkerService} from '../shared/form-marker-service';
 import {TranslateService} from '@ngx-translate/core';
 import {HttpConfiguration} from './http-configuration';
 import {getValidString} from '../shared/form-util';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-http-configuration',
@@ -16,11 +17,12 @@ import {getValidString} from '../shared/form-util';
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
 })
-export class HttpConfigurationComponent implements OnInit {
+export class HttpConfigurationComponent implements OnInit, OnDestroy {
   @Input()
   httpConfiguration: HttpConfiguration;
   form: FormGroup;
   formHandler: FormHandler;
+  nestedFormServiceSubscription: Subscription;
 
   constructor(private logger: Logger,
               private parent: FormGroupDirective,
@@ -34,8 +36,12 @@ export class HttpConfigurationComponent implements OnInit {
   ngOnInit(): void {
     this.form = this.parent.form;
     this.expandParentForm(this.form, this.httpConfiguration, this.formHandler);
-    this.nestedFormService.submitted.subscribe(
+    this.nestedFormServiceSubscription = this.nestedFormService.submitted.subscribe(
       () => this.updateHttpConfiguration(this.httpConfiguration, this.form));
+  }
+
+  ngOnDestroy() {
+    this.nestedFormServiceSubscription.unsubscribe();
   }
 
   expandParentForm(form: FormGroup, httpConfiguration: HttpConfiguration, formHandler: FormHandler) {

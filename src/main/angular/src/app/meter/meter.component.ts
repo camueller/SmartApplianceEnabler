@@ -125,9 +125,10 @@ export class MeterComponent implements OnInit, OnDestroy, CanDeactivate<MeterCom
   }
 
   submitForm() {
-    this.nestedFormService.completed.subscribe(() => {
+    const subscription = this.nestedFormService.completed.subscribe(() => {
       this.meterService.updateMeter(this.meter, this.applianceId).subscribe();
       this.form.markAsPristine();
+      subscription.unsubscribe();
     });
     this.nestedFormService.submit();
   }

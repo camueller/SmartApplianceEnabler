@@ -12,6 +12,7 @@ import {HttpWriteValue} from './http-write-value';
 import {HttpWriteValueErrorMessages} from './http-write-value-error-messages';
 import {EvChargerProtocol} from '../control-evcharger/ev-charger-protocol';
 import {HttpMethod} from '../shared/http-method';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-http-write-value',
@@ -40,6 +41,7 @@ export class HttpWriteValueComponent implements OnInit, AfterViewChecked, OnDest
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
+  nestedFormServiceSubscription: Subscription;
 
   constructor(private logger: Logger,
               private parent: FormGroupDirective,
@@ -66,7 +68,7 @@ export class HttpWriteValueComponent implements OnInit, AfterViewChecked, OnDest
       this.translatedStrings = translatedStrings;
       // console.log('translatedStrings=', this.translatedStrings);
     });
-    this.nestedFormService.submitted.subscribe(
+    this.nestedFormServiceSubscription = this.nestedFormService.submitted.subscribe(
       () => this.updateHttpWriteValue(this.httpWriteValue, this.form));
     this.formMarkerService.dirty.subscribe(() => this.form.markAsDirty());
   }
@@ -76,8 +78,7 @@ export class HttpWriteValueComponent implements OnInit, AfterViewChecked, OnDest
   }
 
   ngOnDestroy() {
-    // FIXME: erzeugt Fehler bei Wechsel des Zählertypes
-    // this.nestedFormService.submitted.unsubscribe();
+    this.nestedFormServiceSubscription.unsubscribe();
   }
 
   getFormControlName(formControlName: string): string {
