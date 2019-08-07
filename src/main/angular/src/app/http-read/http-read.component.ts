@@ -12,6 +12,7 @@ import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {HttpReadErrorMessages} from './http-read-error-messages';
 import {HttpReadValue} from '../http-read-value/http-read-value';
 import {getValidString} from '../shared/form-util';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-http-read',
@@ -42,6 +43,7 @@ export class HttpReadComponent implements OnInit, AfterViewChecked, OnDestroy {
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
+  nestedFormServiceSubscription: Subscription;
 
   constructor(private logger: Logger,
               private parent: FormGroupDirective,
@@ -63,7 +65,7 @@ export class HttpReadComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.translate.get(this.translationKeys).subscribe(translatedStrings => {
       this.translatedStrings = translatedStrings;
     });
-    this.nestedFormService.submitted.subscribe(
+    this.nestedFormServiceSubscription = this.nestedFormService.submitted.subscribe(
       () => this.updateHttpRead(this.httpRead, this.form));
     this.formMarkerService.dirty.subscribe(() => this.form.markAsDirty());
   }
@@ -73,8 +75,7 @@ export class HttpReadComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   ngOnDestroy() {
-    // FIXME: erzeugt Fehler bei Wechsel des Zählertypes
-    // this.nestedFormService.submitted.unsubscribe();
+    this.nestedFormServiceSubscription.unsubscribe();
   }
 
   getReadValueFormControlPrefix(index: number) {
