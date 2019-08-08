@@ -26,19 +26,27 @@
     ></app-http-configuration>
   </div>
 </div>
-<app-http-read
-  [httpRead]="httpElectricityMeter.powerConfiguration"
-  [singleValue]="true"
-  [formControlNamePrefix]="'power'"
-  [valueNames]="powerValueNames"
-  [translationPrefix]="'MeterHttpComponent.'"
-  [translationKeys]="powerValueNameTextKeys"
-></app-http-read>
-<app-http-read
-  [httpRead]="httpElectricityMeter.energyConfiguration"
-  [singleValue]="true"
-  [formControlNamePrefix]="'energy'"
-  [valueNames]="energyValueNames"
-  [translationPrefix]="'MeterHttpComponent.'"
-  [translationKeys]="energyValueNameTextKeys"
-></app-http-read>
+<div class="ui fields">
+  <div class="field">
+    <app-http-read
+      [httpRead]="httpElectricityMeter.powerConfiguration"
+      [singleValue]="true"
+      [formControlNamePrefix]="'power'"
+      [valueNames]="powerValueNames"
+      [translationPrefix]="'MeterHttpComponent.'"
+      [translationKeys]="powerValueNameTextKeys"
+    ></app-http-read>
+  </div>
+</div>
+<div class="ui fields">
+  <div class="field">
+    <app-http-read
+      [httpRead]="httpElectricityMeter.energyConfiguration"
+      [singleValue]="true"
+      [formControlNamePrefix]="'energy'"
+      [valueNames]="energyValueNames"
+      [translationPrefix]="'MeterHttpComponent.'"
+      [translationKeys]="energyValueNameTextKeys"
+    ></app-http-read>
+  </div>
+</div>

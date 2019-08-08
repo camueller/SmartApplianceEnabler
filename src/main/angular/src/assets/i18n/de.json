@@ -105,8 +105,7 @@
   "HttpReadComponent.error.url_pattern": "Die URL muss gültig sein",
   "HttpReadComponent.button.addValue": "Weiterer Zustand/Aktion",
 
-  "HttpReadValueComponent.enabled": "Aktiv",
-  "HttpReadValueComponent.name": "Zustand / Aktion",
+  "HttpReadValueComponent.name": "Zustand",
   "HttpReadValueComponent.data": "Daten",
   "HttpReadValueComponent.path": "Pfad",
   "HttpReadValueComponent.extractionRegex": "Regex für Extraktion",
