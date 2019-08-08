@@ -47,7 +47,6 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked, OnDestroy {
   constructor(private logger: Logger,
               private parent: FormGroupDirective,
               private nestedFormService: NestedFormService,
-              private formMarkerService: FormMarkerService,
               private translate: TranslateService
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
@@ -67,11 +66,10 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked, OnDestroy {
     });
     this.nestedFormServiceSubscription = this.nestedFormService.submitted.subscribe(
       () => this.updateHttpWrite(this.httpWrite, this.form));
-    this.formMarkerService.dirty.subscribe(() => this.form.markAsDirty());
   }
 
   ngAfterViewChecked() {
-    // this.formHandler.markLabelsRequired();
+    this.formHandler.markLabelsRequired();
   }
 
   ngOnDestroy() {
@@ -104,8 +102,6 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   addValue() {
-    // const newEv = this.buildElectricVehicleFormGroup(undefined, newEvId);
-    // this.electricVehicles.push(newEv);
     const newWriteValue = new HttpWriteValue();
     this.httpWrite.writeValues.push(newWriteValue);
     this.form.markAsDirty();

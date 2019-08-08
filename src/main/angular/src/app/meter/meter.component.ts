@@ -51,9 +51,6 @@ export class MeterComponent implements OnInit, OnDestroy, CanDeactivate<MeterCom
   meter: Meter;
   settingsDefaults: SettingsDefaults;
   settings: Settings;
-  errors: { [key: string]: string } = {};
-  errorMessages: ErrorMessages;
-  errorMessageHandler: ErrorMessageHandler;
   discardChangesMessage: string;
   TYPE_S0_ELECTRICITY_METER = S0ElectricityMeter.TYPE;
   TYPE_S0_ELECTRICITY_METER_NETWORKED = S0ElectricityMeter.TYPE_NETWORKED;
@@ -68,12 +65,10 @@ export class MeterComponent implements OnInit, OnDestroy, CanDeactivate<MeterCom
               private translate: TranslateService) {
     this.meterFactory = new MeterFactory(logger);
     this.meter = this.meterFactory.createEmptyMeter();
-    this.errorMessageHandler = new ErrorMessageHandler(logger);
   }
 
   ngOnInit() {
     this.form = this.buildFormGroup();
-    this.errorMessages =  new MeterErrorMessages(this.translate);
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.route.paramMap.subscribe(() => this.applianceId = this.route.snapshot.paramMap.get('id'));
     this.route.data.subscribe((data: {meter: Meter, meterDefaults: MeterDefaults,
@@ -87,8 +82,6 @@ export class MeterComponent implements OnInit, OnDestroy, CanDeactivate<MeterCom
       this.settingsDefaults = data.settingsDefaults;
       this.form.markAsPristine();
     });
-    // this.form.statusChanges.subscribe(() =>
-    //   this.errors = this.errorMessageHandler.applyErrorMessages4TemplateDrivenForm(this.form, this.errorMessages));
   }
 
   ngOnDestroy(): void {

@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Subject} from 'rxjs';
 
+// TODO remove, form can be accessed directly (FormGroupDirective)
 @Injectable()
 export class FormMarkerService {
 
