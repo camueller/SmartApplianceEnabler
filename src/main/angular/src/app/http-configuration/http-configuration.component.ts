@@ -27,8 +27,6 @@ export class HttpConfigurationComponent implements OnInit, OnDestroy {
   constructor(private logger: Logger,
               private parent: FormGroupDirective,
               private nestedFormService: NestedFormService,
-              private formMarkerService: FormMarkerService,
-              private translate: TranslateService
   ) {
     this.formHandler = new FormHandler();
   }

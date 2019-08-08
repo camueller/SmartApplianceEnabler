@@ -48,7 +48,6 @@ export class HttpReadComponent implements OnInit, AfterViewChecked, OnDestroy {
   constructor(private logger: Logger,
               private parent: FormGroupDirective,
               private nestedFormService: NestedFormService,
-              private formMarkerService: FormMarkerService,
               private translate: TranslateService
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
@@ -67,7 +66,6 @@ export class HttpReadComponent implements OnInit, AfterViewChecked, OnDestroy {
     });
     this.nestedFormServiceSubscription = this.nestedFormService.submitted.subscribe(
       () => this.updateHttpRead(this.httpRead, this.form));
-    this.formMarkerService.dirty.subscribe(() => this.form.markAsDirty());
   }
 
   ngAfterViewChecked() {
@@ -104,8 +102,6 @@ export class HttpReadComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   addValue() {
-    // const newEv = this.buildElectricVehicleFormGroup(undefined, newEvId);
-    // this.electricVehicles.push(newEv);
     const newReadValue = new HttpReadValue();
     this.httpRead.readValues.push(newReadValue);
     this.form.markAsDirty();

@@ -70,11 +70,10 @@ export class HttpWriteValueComponent implements OnInit, AfterViewChecked, OnDest
     });
     this.nestedFormServiceSubscription = this.nestedFormService.submitted.subscribe(
       () => this.updateHttpWriteValue(this.httpWriteValue, this.form));
-    this.formMarkerService.dirty.subscribe(() => this.form.markAsDirty());
   }
 
   ngAfterViewChecked() {
-    // this.formHandler.markLabelsRequired();
+    this.formHandler.markLabelsRequired();
   }
 
   ngOnDestroy() {
