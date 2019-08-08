@@ -14,8 +14,8 @@ export class FormHandler {
   formControlNamesRequired: string[] = [];
 
   public addFormControl(formGroup: FormGroup, formControlName: string, formState?: any,
-                               validatorOrOpts?: ValidatorFn | ValidatorFn[] | AbstractControlOptions | null,
-                               asyncValidator?: AsyncValidatorFn | AsyncValidatorFn[] | null) {
+                        validatorOrOpts?: ValidatorFn | ValidatorFn[] | AbstractControlOptions | null,
+                        asyncValidator?: AsyncValidatorFn | AsyncValidatorFn[] | null) {
     if (Array.isArray(validatorOrOpts)) {
       (validatorOrOpts as []).forEach((validatorFn: ValidatorFn) => {
         this.registerRequiredValidator(validatorFn, formControlName);

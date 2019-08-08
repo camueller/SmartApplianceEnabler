@@ -9,14 +9,16 @@
 </div>
 <div *ngFor="let httpReadValue of httpRead.readValues; index as i">
   <div class="ui fields">
-    <app-http-read-value
-      [httpReadValue]="httpReadValue"
-      [disableFactorToValue]="disableFactorToValue"
-      [formControlNamePrefix]="getReadValueFormControlPrefix(i)"
-      [valueNames]="valueNames"
-      [translationPrefix]="translationPrefix"
-      [translationKeys]="translationKeys"
-    ></app-http-read-value>
+    <div class="field">
+      <app-http-read-value
+        [httpReadValue]="httpReadValue"
+        [disableFactorToValue]="disableFactorToValue"
+        [formControlNamePrefix]="getReadValueFormControlPrefix(i)"
+        [valueNames]="valueNames"
+        [translationPrefix]="translationPrefix"
+        [translationKeys]="translationKeys"
+      ></app-http-read-value>
+    </div>
     <div class="field icon-field" *ngIf="! singleValue">
       <i (click)="removeValue(i)" class="icon big red remove circle"></i>
     </div>
