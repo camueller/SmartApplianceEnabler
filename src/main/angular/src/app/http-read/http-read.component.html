@@ -2,9 +2,9 @@
 <div class="ui fields">
   <div class="six wide field">
     <label class="sae-label">{{'HttpReadComponent.url' | translate}}</label>
-    <input type="text" formControlName="{{this.getFormControlName('url')}}">
-    <div *ngIf="errors[this.getFormControlName('url')]"
-         class="ui negative message">{{errors[this.getFormControlName('url')]}}</div>
+    <input type="text" formControlName="url">
+    <div *ngIf="errors['url']"
+         class="ui negative message">{{errors['url']}}</div>
   </div>
 </div>
 <div *ngFor="let httpReadValue of httpRead.readValues; index as i">
