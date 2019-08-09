@@ -5,7 +5,6 @@ import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {Logger} from '../log/logger';
 import {NestedFormService} from '../shared/nested-form-service';
-import {FormMarkerService} from '../shared/form-marker-service';
 import {TranslateService} from '@ngx-translate/core';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {HttpWrite} from './http-write';
@@ -69,7 +68,7 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   ngAfterViewChecked() {
-    this.formHandler.markLabelsRequired();
+    // this.formHandler.markLabelsRequired();
   }
 
   ngOnDestroy() {
@@ -78,10 +77,6 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   getWriteValueFormControlPrefix(index: number) {
     return `${this.formControlNamePrefix}writeValue${index}.`;
-  }
-
-  getFormControlName(formControlName: string): string {
-    return `${this.formControlNamePrefix}${formControlName.charAt(0).toUpperCase()}${formControlName.slice(1)}`;
   }
 
   public getTranslatedValueName(valueName: string) {
@@ -98,7 +93,7 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   get disabled() {
-    return ! this.form.controls[this.getFormControlName('enabled')].value;
+    return ! this.form.controls.enabled.value;
   }
 
   addValue() {
@@ -113,13 +108,13 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   expandParentForm(form: FormGroup, httpWrite: HttpWrite, formHandler: FormHandler) {
-    formHandler.addFormControl(form, this.getFormControlName('url'),
+    formHandler.addFormControl(form, 'url',
       httpWrite ? httpWrite.url : undefined,
       [Validators.required, Validators.pattern(InputValidatorPatterns.URL)]);
   }
 
   updateHttpWrite(httpWrite: HttpWrite, form: FormGroup) {
-    httpWrite.url = this.form.controls[this.getFormControlName('url')].value;
+    httpWrite.url = this.form.controls.url.value;
     this.nestedFormService.complete();
   }
 }

@@ -80,10 +80,6 @@ export class HttpReadComponent implements OnInit, AfterViewChecked, OnDestroy {
     return `${this.formControlNamePrefix}readValue${index}.`;
   }
 
-  getFormControlName(formControlName: string): string {
-    return `${this.formControlNamePrefix}${formControlName.charAt(0).toUpperCase()}${formControlName.slice(1)}`;
-  }
-
   public getTranslatedValueName(valueName: string) {
     const textKey = `${this.translationPrefix}${valueName.toLowerCase()}`;
     return this.translatedStrings[textKey];
@@ -98,7 +94,7 @@ export class HttpReadComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   get disabled() {
-    return ! this.form.controls[this.getFormControlName('enabled')].value;
+    return ! this.form.controls.enabled.value;
   }
 
   addValue() {
@@ -113,13 +109,13 @@ export class HttpReadComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   expandParentForm(form: FormGroup, httpRead: HttpRead, formHandler: FormHandler) {
-    formHandler.addFormControl(form, this.getFormControlName('url'),
+    formHandler.addFormControl(form, 'url',
       httpRead ? httpRead.url : undefined,
       [Validators.required, Validators.pattern(InputValidatorPatterns.URL)]);
   }
 
   updateHttpRead(httpRead: HttpRead, form: FormGroup) {
-    httpRead.url = getValidString(this.form.controls[this.getFormControlName('url')].value);
+    httpRead.url = getValidString(this.form.controls.url.value);
     this.nestedFormService.complete();
   }
 }
