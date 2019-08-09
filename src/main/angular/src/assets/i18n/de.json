@@ -103,7 +103,7 @@
   "HttpReadComponent.password": "Passwort",
   "HttpReadComponent.error.url_required": "Die URL muss angegeben werden",
   "HttpReadComponent.error.url_pattern": "Die URL muss gültig sein",
-  "HttpReadComponent.button.addValue": "Weiterer Zustand/Aktion",
+  "HttpReadComponent.button.addValue": "Weiterer Zustand",
 
   "HttpReadValueComponent.name": "Zustand",
   "HttpReadValueComponent.data": "Daten",
