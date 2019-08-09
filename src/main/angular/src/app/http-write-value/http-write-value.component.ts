@@ -105,12 +105,7 @@ export class HttpWriteValueComponent implements OnInit, AfterViewChecked, OnDest
     return `HttpMethod.${method}`;
   }
 
-  get disabled() {
-    return !this.form.controls[this.getFormControlName('enabled')].value;
-  }
-
   expandParentForm(form: FormGroup, httpWriteValue: HttpWriteValue, formHandler: FormHandler) {
-    form.addControl(this.getFormControlName('enabled'), new FormControl({}));
     formHandler.addFormControl(form, this.getFormControlName('name'),
       httpWriteValue ? httpWriteValue.name : undefined);
     formHandler.addFormControl(form, this.getFormControlName('value'),
