@@ -86,13 +86,18 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked, OnDestroy {
   get valueName() {
     if (this.httpWrite.writeValues && this.httpWrite.writeValues.length === 1) {
       const httpWriteValue = this.httpWrite.writeValues[0];
-      return this.getTranslatedValueName(httpWriteValue.name);
+      if (httpWriteValue.name) {
+        return this.getTranslatedValueName(httpWriteValue.name);
+      }
     }
     return undefined;
   }
 
   addValue() {
     const newWriteValue = new HttpWriteValue();
+    if (!this.httpWrite.writeValues) {
+      this.httpWrite.writeValues = [];
+    }
     this.httpWrite.writeValues.push(newWriteValue);
     this.form.markAsDirty();
   }
