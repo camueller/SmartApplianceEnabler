@@ -53,7 +53,6 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   ngOnInit() {
-    console.log('singleValue=', this.singleValue);
     this.errorMessages = new HttpWriteErrorMessages(this.translate);
     this.form = this.parent.form;
     this.expandParentForm(this.form, this.httpWrite, this.formHandler);
@@ -68,7 +67,7 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   ngAfterViewChecked() {
-    // this.formHandler.markLabelsRequired();
+    this.formHandler.markLabelsRequired();
   }
 
   ngOnDestroy() {
@@ -90,10 +89,6 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked, OnDestroy {
       return this.getTranslatedValueName(httpWriteValue.name);
     }
     return undefined;
-  }
-
-  get disabled() {
-    return ! this.form.controls.enabled.value;
   }
 
   addValue() {

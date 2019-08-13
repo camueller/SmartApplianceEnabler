@@ -93,10 +93,6 @@ export class HttpReadComponent implements OnInit, AfterViewChecked, OnDestroy {
     return undefined;
   }
 
-  get disabled() {
-    return ! this.form.controls.enabled.value;
-  }
-
   addValue() {
     const newReadValue = new HttpReadValue();
     this.httpRead.readValues.push(newReadValue);
