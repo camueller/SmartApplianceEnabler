@@ -10,7 +10,13 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="SmartApplianceEnabler" target="1.8" />
+      <module name="SmartApplianceEnabler" target="8" />
     </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_STRING" value="-source 7" />
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="SmartApplianceEnabler" options="" />
+    </option>
   </component>
 </project>
