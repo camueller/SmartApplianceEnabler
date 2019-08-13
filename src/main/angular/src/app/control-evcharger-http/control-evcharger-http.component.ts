@@ -11,6 +11,7 @@ import {EvModbusReadRegisterName} from '../control-evcharger-modbus/ev-modbus-re
 import {EvModbusWriteRegisterName} from '../control-evcharger-modbus/ev-modbus-write-register-name';
 import {ContentProtocol} from '../shared/content-protocol';
 import {FormHandler} from '../shared/form-handler';
+import {HttpRead} from '../http-read/http-read';
 
 @Component({
   selector: 'app-control-evcharger-http',
@@ -103,7 +104,9 @@ export class ControlEvchargerHttpComponent implements OnInit, AfterViewChecked, 
   }
 
   addHttpRead() {
-
+    const httpRead = new HttpRead();
+    this.evHttpControl.httpReads.push(httpRead);
+    this.form.markAsDirty();
   }
 
   expandParentForm(form: FormGroup, evHttpControl: EvHttpControl, formHandler: FormHandler) {
