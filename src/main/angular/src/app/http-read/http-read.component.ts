@@ -88,13 +88,18 @@ export class HttpReadComponent implements OnInit, AfterViewChecked, OnDestroy {
   get valueName() {
     if (this.httpRead.readValues && this.httpRead.readValues.length === 1) {
       const httpReadValue = this.httpRead.readValues[0];
-      return this.getTranslatedValueName(httpReadValue.name);
+      if (httpReadValue.name) {
+        return this.getTranslatedValueName(httpReadValue.name);
+      }
     }
     return undefined;
   }
 
   addValue() {
     const newReadValue = new HttpReadValue();
+    if (!this.httpRead.readValues) {
+      this.httpRead.readValues = [];
+    }
     this.httpRead.readValues.push(newReadValue);
     this.form.markAsDirty();
   }
