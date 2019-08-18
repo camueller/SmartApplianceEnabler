@@ -84,7 +84,8 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
 
     @Override
     public boolean isOn() {
-        return pollPower() > 0;
+        Float power = pollPower();
+        return power != null && power > 0;
     }
 
     public Integer getPollInterval() {
