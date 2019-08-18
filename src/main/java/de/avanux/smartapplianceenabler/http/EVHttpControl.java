@@ -163,12 +163,14 @@ public class EVHttpControl implements EVControl {
             else {
                 logger.debug("{}: Cached response: {}", applianceId, response);
             }
-            getContentProtocolHandler().parse(response);
-            String value = getContentProtocolHandler().readValue(read.child().getPath());
-            String regex = read.child().getExtractionRegex();
-            boolean match = value.matches(regex);
-            logger.debug("test={} value={} regex={} match={}", valueName.name(), value, regex, match);
-            return match;
+            if(response != null) {
+                getContentProtocolHandler().parse(response);
+                String value = getContentProtocolHandler().readValue(read.child().getPath());
+                String regex = read.child().getExtractionRegex();
+                boolean match = value.matches(regex);
+                logger.debug("test={} value={} regex={} match={}", valueName.name(), value, regex, match);
+                return match;
+            }
         }
         return false;
     }

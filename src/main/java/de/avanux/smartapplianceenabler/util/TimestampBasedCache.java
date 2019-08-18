@@ -67,6 +67,10 @@ public class TimestampBasedCache<T> implements ApplianceIdConsumer {
         return this.timestampWithValue.isEmpty();
     }
 
+    public void clear() {
+        this.timestampWithValue.clear();
+    }
+
     public List<T> values() {
         List<T> values = new ArrayList<>();
         values.addAll(this.timestampWithValue.values());
