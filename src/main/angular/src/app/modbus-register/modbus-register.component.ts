@@ -60,7 +60,7 @@ export class ModbusRegisterComponent implements OnInit, AfterViewChecked, OnDest
     this.errorMessages = new ModbusRegisterErrorMessages(this.translate);
     this.form = this.parent.form;
     this.expandParentForm(this.register);
-    this.nestedFormService.submitted.subscribe(() => this.updateModbusRegisterConfiguration());
+    this.nestedFormService.submitted.subscribe(() => this.updateModelFromForm(this.form, this.register));
     this.translate.get(this.translationKeys).subscribe(translatedStrings => {
       this.translatedStrings = translatedStrings;
     });
@@ -102,16 +102,16 @@ export class ModbusRegisterComponent implements OnInit, AfterViewChecked, OnDest
       register ? register.factorToValue : undefined);
   }
 
-  updateModbusRegisterConfiguration() {
-    this.register.name = this.form.controls[this.getFormControlName('name')].value;
-    this.register.address = this.form.controls[this.getFormControlName('registerAddress')].value;
-    this.register.write = this.form.controls[this.getFormControlName('write')].value;
-    this.register.type = this.form.controls[this.getFormControlName('registerType')].value;
-    this.register.bytes = this.form.controls[this.getFormControlName('bytes')].value;
-    this.register.byteOrder = this.form.controls[this.getFormControlName('byteOrder')].value;
-    this.register.extractionRegex = this.form.controls[this.getFormControlName('extractionRegex')].value;
-    this.register.value = this.form.controls[this.getFormControlName('value')].value;
-    this.register.factorToValue = this.form.controls[this.getFormControlName('factorToValue')].value;
+  updateModelFromForm(form: FormGroup, register: ModbusRegisterConfguration) {
+    register.name = form.controls[this.getFormControlName('name')].value;
+    register.address = form.controls[this.getFormControlName('registerAddress')].value;
+    register.write = form.controls[this.getFormControlName('write')].value;
+    register.type = form.controls[this.getFormControlName('registerType')].value;
+    register.bytes = form.controls[this.getFormControlName('bytes')].value;
+    register.byteOrder = form.controls[this.getFormControlName('byteOrder')].value;
+    register.extractionRegex = form.controls[this.getFormControlName('extractionRegex')].value;
+    register.value = form.controls[this.getFormControlName('value')].value;
+    register.factorToValue = form.controls[this.getFormControlName('factorToValue')].value;
     this.nestedFormService.complete();
   }
 

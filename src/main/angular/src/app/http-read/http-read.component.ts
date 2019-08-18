@@ -6,7 +6,6 @@ import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {HttpRead} from './http-read';
 import {Logger} from '../log/logger';
 import {NestedFormService} from '../shared/nested-form-service';
-import {FormMarkerService} from '../shared/form-marker-service';
 import {TranslateService} from '@ngx-translate/core';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {HttpReadErrorMessages} from './http-read-error-messages';
@@ -65,7 +64,7 @@ export class HttpReadComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.translatedStrings = translatedStrings;
     });
     this.nestedFormServiceSubscription = this.nestedFormService.submitted.subscribe(
-      () => this.updateHttpRead(this.httpRead, this.form));
+      () => this.updateModelFromForm(this.httpRead, this.form));
   }
 
   ngAfterViewChecked() {
@@ -115,8 +114,8 @@ export class HttpReadComponent implements OnInit, AfterViewChecked, OnDestroy {
       [Validators.required, Validators.pattern(InputValidatorPatterns.URL)]);
   }
 
-  updateHttpRead(httpRead: HttpRead, form: FormGroup) {
-    httpRead.url = getValidString(this.form.controls.url.value);
+  updateModelFromForm(httpRead: HttpRead, form: FormGroup) {
+    httpRead.url = getValidString(form.controls.url.value);
     this.nestedFormService.complete();
   }
 }

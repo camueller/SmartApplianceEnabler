@@ -153,7 +153,7 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
     return fg;
   }
 
-  public updateEvCharger(form: FormGroup, evCharger: EvCharger) {
+  public updateModelFromForm(form: FormGroup, evCharger: EvCharger) {
     evCharger.voltage = form.controls.voltage.value ? form.controls.voltage.value : undefined;
     evCharger.phases = form.controls.phases.value ? form.controls.phases.value : undefined;
     evCharger.pollInterval = form.controls.pollInterval.value ? form.controls.pollInterval.value : undefined;
@@ -279,7 +279,7 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
   }
 
   submitForm() {
-    this.updateEvCharger(this.form, this.control.evCharger);
+    this.updateModelFromForm(this.form, this.control.evCharger);
     this.controlService.updateControl(this.control, this.applianceId).subscribe(
       () => this.appliancesReloadService.reload());
     this.form.markAsPristine();

@@ -3,8 +3,6 @@ import {ControlContainer, FormGroup, FormGroupDirective} from '@angular/forms';
 import {FormHandler} from '../shared/form-handler';
 import {Logger} from '../log/logger';
 import {NestedFormService} from '../shared/nested-form-service';
-import {FormMarkerService} from '../shared/form-marker-service';
-import {TranslateService} from '@ngx-translate/core';
 import {HttpConfiguration} from './http-configuration';
 import {getValidString} from '../shared/form-util';
 import {Subscription} from 'rxjs';
@@ -35,7 +33,7 @@ export class HttpConfigurationComponent implements OnInit, OnDestroy {
     this.form = this.parent.form;
     this.expandParentForm(this.form, this.httpConfiguration, this.formHandler);
     this.nestedFormServiceSubscription = this.nestedFormService.submitted.subscribe(
-      () => this.updateHttpConfiguration(this.httpConfiguration, this.form));
+      () => this.updateModelFromForm(this.httpConfiguration, this.form));
   }
 
   ngOnDestroy() {
@@ -51,7 +49,7 @@ export class HttpConfigurationComponent implements OnInit, OnDestroy {
       httpConfiguration ? httpConfiguration.password : undefined);
   }
 
-  updateHttpConfiguration(httpConfiguration: HttpConfiguration, form: FormGroup) {
+  updateModelFromForm(httpConfiguration: HttpConfiguration, form: FormGroup) {
     httpConfiguration.contentType = getValidString(form.controls.contentType.value);
     httpConfiguration.username = getValidString(form.controls.username.value);
     httpConfiguration.password = getValidString(form.controls.password.value);

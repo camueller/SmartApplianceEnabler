@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {AfterViewChecked, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {MeterDefaults} from '../meter/meter-defaults';
 import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {FormHandler} from '../shared/form-handler';
@@ -60,7 +60,7 @@ export class MeterModbusComponent implements OnInit, AfterViewChecked, OnDestroy
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
     this.nestedFormService.submitted.subscribe(
-      () => this.updateModbusElectricityMeter(this.modbusElectricityMeter, this.form));
+      () => this.updateModelFromForm(this.modbusElectricityMeter, this.form));
     this.formMarkerService.dirty.subscribe(() => this.form.markAsDirty());
   }
 
@@ -115,7 +115,7 @@ export class MeterModbusComponent implements OnInit, AfterViewChecked, OnDestroy
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
   }
 
-  updateModbusElectricityMeter(modbusElectricityMeter: ModbusElectricityMeter, form: FormGroup) {
+  updateModelFromForm(modbusElectricityMeter: ModbusElectricityMeter, form: FormGroup) {
     modbusElectricityMeter.idref = form.controls.idref.value;
     modbusElectricityMeter.slaveAddress = form.controls.slaveAddress.value;
     modbusElectricityMeter.pollInterval = form.controls.pollInterval.value;

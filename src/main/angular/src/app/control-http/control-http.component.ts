@@ -74,7 +74,7 @@ export class ControlHttpComponent implements OnInit, AfterViewChecked {
     return fg;
   }
 
-  updateHttpSwitch(form: FormGroup, httpSwitch: HttpSwitch, startingCurrentSwitch: StartingCurrentSwitch) {
+  updateModelFromForm(form: FormGroup, httpSwitch: HttpSwitch, startingCurrentSwitch: StartingCurrentSwitch) {
     httpSwitch.onUrl = form.controls.onUrl.value;
     httpSwitch.onData = form.controls.onData.value;
     httpSwitch.offUrl = form.controls.offUrl.value;
@@ -83,12 +83,12 @@ export class ControlHttpComponent implements OnInit, AfterViewChecked {
     httpSwitch.password = form.controls.password.value;
     httpSwitch.contentType = form.controls.contentType.value;
     if (this.control.startingCurrentDetection) {
-      ControlStartingcurrentComponent.updateStartingCurrentSwitch(form, startingCurrentSwitch);
+      ControlStartingcurrentComponent.updateModelFromForm(form, startingCurrentSwitch);
     }
   }
 
   submitForm() {
-    this.updateHttpSwitch(this.form, this.control.httpSwitch, this.control.startingCurrentSwitch);
+    this.updateModelFromForm(this.form, this.control.httpSwitch, this.control.startingCurrentSwitch);
     this.controlService.updateControl(this.control, this.applianceId).subscribe(
       () => this.appliancesReloadService.reload());
     this.form.markAsPristine();

@@ -2,7 +2,6 @@ import {Component, Input, OnInit} from '@angular/core';
 import {ControlDefaults} from '../control/control-defaults';
 import {ControlContainer, FormControl, FormGroup, FormGroupDirective} from '@angular/forms';
 import {StartingCurrentSwitch} from './starting-current-switch';
-import {Switch} from '../control-switch/switch';
 
 @Component({
   selector: 'app-control-startingcurrent',
@@ -20,7 +19,8 @@ export class ControlStartingcurrentComponent implements OnInit {
   controlDefaults: ControlDefaults;
   private form: FormGroup;
 
-  public static updateStartingCurrentSwitch(form: FormGroup, startingCurrentSwitch: StartingCurrentSwitch) {
+  // TODO use NestedFormService
+  public static updateModelFromForm(form: FormGroup, startingCurrentSwitch: StartingCurrentSwitch) {
     startingCurrentSwitch.powerThreshold = form.controls.powerThreshold.value;
     startingCurrentSwitch.startingCurrentDetectionDuration = form.controls.startingCurrentDetectionDuration.value;
     startingCurrentSwitch.finishedCurrentDetectionDuration = form.controls.finishedCurrentDetectionDuration.value;

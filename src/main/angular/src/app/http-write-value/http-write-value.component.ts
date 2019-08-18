@@ -1,5 +1,5 @@
 import {AfterViewChecked, Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {ControlContainer, FormControl, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {FormHandler} from '../shared/form-handler';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
@@ -10,7 +10,6 @@ import {TranslateService} from '@ngx-translate/core';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {HttpWriteValue} from './http-write-value';
 import {HttpWriteValueErrorMessages} from './http-write-value-error-messages';
-import {EvChargerProtocol} from '../control-evcharger/ev-charger-protocol';
 import {HttpMethod} from '../shared/http-method';
 import {Subscription} from 'rxjs';
 
@@ -69,7 +68,7 @@ export class HttpWriteValueComponent implements OnInit, AfterViewChecked, OnDest
       // console.log('translatedStrings=', this.translatedStrings);
     });
     this.nestedFormServiceSubscription = this.nestedFormService.submitted.subscribe(
-      () => this.updateHttpWriteValue(this.httpWriteValue, this.form));
+      () => this.updateModelFromForm(this.httpWriteValue, this.form));
   }
 
   ngAfterViewChecked() {
@@ -117,10 +116,9 @@ export class HttpWriteValueComponent implements OnInit, AfterViewChecked, OnDest
     }
     formHandler.addFormControl(form, this.getFormControlName('method'),
       httpWriteValue ? httpWriteValue.method : undefined);
-    console.log('form=', this.form);
   }
 
-  updateHttpWriteValue(httpWriteValue: HttpWriteValue, form: FormGroup) {
+  updateModelFromForm(httpWriteValue: HttpWriteValue, form: FormGroup) {
     httpWriteValue.name = this.form.controls[this.getFormControlName('name')].value;
     httpWriteValue.value = this.form.controls[this.getFormControlName('value')].value;
     httpWriteValue.factorToValue = this.form.controls[this.getFormControlName('factorToValue')].value;

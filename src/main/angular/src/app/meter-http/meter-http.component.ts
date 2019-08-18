@@ -53,7 +53,7 @@ export class MeterHttpComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
     this.nestedFormServiceSubscription = this.nestedFormService.submitted.subscribe(
-      () => this.updateHttpElectricityMeter(this.httpElectricityMeter, this.form));
+      () => this.updateModelFromForm(this.httpElectricityMeter, this.form));
     this.formMarkerService.dirty.subscribe(() => this.form.markAsDirty());
   }
 
@@ -97,7 +97,7 @@ export class MeterHttpComponent implements OnInit, AfterViewChecked, OnDestroy {
       httpElectricityMeter ? httpElectricityMeter.contentProtocol : undefined);
   }
 
-  updateHttpElectricityMeter(httpElectricityMeter: HttpElectricityMeter, form: FormGroup) {
+  updateModelFromForm(httpElectricityMeter: HttpElectricityMeter, form: FormGroup) {
     httpElectricityMeter.pollInterval = form.controls.pollInterval.value;
     httpElectricityMeter.measurementInterval = form.controls.measurementInterval.value;
     httpElectricityMeter.contentProtocol = form.controls.contentProtocol.value;
