@@ -179,7 +179,8 @@ public class HttpElectricityMeter implements Meter, Initializable, Validateable,
 
     @Override
     public boolean isOn() {
-        return pollPower() > 0;
+        Float power = pollPower();
+        return power != null && power > 0;
     }
 
     @Override
