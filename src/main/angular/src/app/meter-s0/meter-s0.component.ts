@@ -51,7 +51,7 @@ export class MeterS0Component implements OnInit, AfterViewChecked {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
     this.nestedFormService.submitted.subscribe(
-      () => this.updateS0ElectricityMeter(this.s0ElectricityMeter, this.form));
+      () => this.updateModelFromForm(this.s0ElectricityMeter, this.form));
     this.formMarkerService.dirty.subscribe(() => this.form.markAsDirty());
   }
 
@@ -73,7 +73,7 @@ export class MeterS0Component implements OnInit, AfterViewChecked {
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
   }
 
-  updateS0ElectricityMeter(s0ElectricityMeter: S0ElectricityMeter, form: FormGroup) {
+  updateModelFromForm(s0ElectricityMeter: S0ElectricityMeter, form: FormGroup) {
     s0ElectricityMeter.gpio = form.controls.gpio.value;
     s0ElectricityMeter.pinPullResistance = form.controls.pinPullResistance.value;
     s0ElectricityMeter.impulsesPerKwh = form.controls.impulsesPerKwh.value;

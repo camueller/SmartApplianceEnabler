@@ -1,12 +1,11 @@
 import {AfterViewChecked, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Logger} from '../log/logger';
-import {ControlContainer, FormControl, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {NestedFormService} from '../shared/nested-form-service';
 import {FormMarkerService} from '../shared/form-marker-service';
 import {TranslateService} from '@ngx-translate/core';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {FormHandler} from '../shared/form-handler';
-import {MeterHttpErrorMessages} from '../meter-http/meter-http-error-messages';
 import {ErrorMessages} from '../shared/error-messages';
 import {HttpReadValue} from './http-read-value';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
@@ -64,7 +63,7 @@ export class HttpReadValueComponent implements OnInit, AfterViewChecked, OnDestr
       this.translatedStrings = translatedStrings;
     });
     this.nestedFormServiceSubscription = this.nestedFormService.submitted.subscribe(
-      () => this.updateHttpReadValue(this.httpReadValue, this.form));
+      () => this.updateModelFromForm(this.httpReadValue, this.form));
     this.formMarkerService.dirty.subscribe(() => this.form.markAsDirty());
   }
 
@@ -105,7 +104,7 @@ export class HttpReadValueComponent implements OnInit, AfterViewChecked, OnDestr
     }
   }
 
-  updateHttpReadValue(httpReadValue: HttpReadValue, form: FormGroup) {
+  updateModelFromForm(httpReadValue: HttpReadValue, form: FormGroup) {
     httpReadValue.name = getValidString(this.form.controls[this.getFormControlName('name')].value);
     httpReadValue.data = getValidString(this.form.controls[this.getFormControlName('data')].value);
     httpReadValue.path = getValidString(this.form.controls[this.getFormControlName('path')].value);

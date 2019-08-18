@@ -83,7 +83,7 @@ export class ControlModbusComponent implements OnInit, AfterViewChecked {
     return fg;
   }
 
-  updateModbusSwitch(form: FormGroup, modbusSwitch: ModbusSwitch, startingCurrentSwitch: StartingCurrentSwitch) {
+  updateModelFromForm(form: FormGroup, modbusSwitch: ModbusSwitch, startingCurrentSwitch: StartingCurrentSwitch) {
     modbusSwitch.idref = form.controls.modbusTcpId.value;
     modbusSwitch.slaveAddress = form.controls.slaveAddress.value;
     modbusSwitch.registerAddress = form.controls.registerAddress.value;
@@ -91,12 +91,12 @@ export class ControlModbusComponent implements OnInit, AfterViewChecked {
     modbusSwitch.onValue = form.controls.onValue.value;
     modbusSwitch.offValue = form.controls.offValue.value;
     if (this.control.startingCurrentDetection) {
-      ControlStartingcurrentComponent.updateStartingCurrentSwitch(form, startingCurrentSwitch);
+      ControlStartingcurrentComponent.updateModelFromForm(form, startingCurrentSwitch);
     }
   }
 
   submitForm() {
-    this.updateModbusSwitch(this.form, this.control.modbusSwitch, this.control.startingCurrentSwitch);
+    this.updateModelFromForm(this.form, this.control.modbusSwitch, this.control.startingCurrentSwitch);
     this.controlService.updateControl(this.control, this.applianceId).subscribe(
       () => this.appliancesReloadService.reload());
     this.form.markAsPristine();

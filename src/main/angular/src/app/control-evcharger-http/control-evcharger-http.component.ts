@@ -4,7 +4,6 @@ import {SettingsDefaults} from '../settings/settings-defaults';
 import {ControlContainer, FormGroup, FormGroupDirective} from '@angular/forms';
 import {Logger} from '../log/logger';
 import {NestedFormService} from '../shared/nested-form-service';
-import {FormMarkerService} from '../shared/form-marker-service';
 import {TranslateService} from '@ngx-translate/core';
 import {EvHttpControl} from './ev-http-control';
 import {EvModbusReadRegisterName} from '../control-evcharger-modbus/ev-modbus-read-register-name';
@@ -13,6 +12,7 @@ import {ContentProtocol} from '../shared/content-protocol';
 import {FormHandler} from '../shared/form-handler';
 import {HttpRead} from '../http-read/http-read';
 import {HttpWrite} from '../http-write/http-write';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-control-evcharger-http',
@@ -40,18 +40,17 @@ export class ControlEvchargerHttpComponent implements OnInit, AfterViewChecked, 
   // errors: { [key: string]: string } = {};
   // errorMessages: ErrorMessages;
   // errorMessageHandler: ErrorMessageHandler;
+  nestedFormServiceSubscription: Subscription;
 
   constructor(private logger: Logger,
               private parent: FormGroupDirective,
               private nestedFormService: NestedFormService,
-              private formMarkerService: FormMarkerService,
               private translate: TranslateService) {
     // this.errorMessageHandler = new ErrorMessageHandler(logger);
     this.formHandler = new FormHandler();
   }
 
   ngOnInit() {
-    console.log('evHttpControl=', this.evHttpControl);
     // this.errorMessages = new MeterHttpErrorMessages(this.translate);
     this.form = this.parent.form;
     this.expandParentForm(this.form, this.evHttpControl, this.formHandler);
@@ -61,18 +60,16 @@ export class ControlEvchargerHttpComponent implements OnInit, AfterViewChecked, 
     // this.translate.get(this.translationKeys).subscribe(translatedStrings => {
     //   this.translatedStrings = translatedStrings;
     // });
-    // this.nestedFormService.submitted.subscribe(
-    //   () => this.updateFromForm(this.evModbusControl, this.form));
-    // this.formMarkerService.dirty.subscribe(() => this.form.markAsDirty());
+    this.nestedFormServiceSubscription = this.nestedFormService.submitted.subscribe(
+      () => this.updateModelFromForm(this.evHttpControl, this.form));
   }
 
   ngAfterViewChecked() {
-    // this.formHandler.markLabelsRequired();
+    this.formHandler.markLabelsRequired();
   }
 
   ngOnDestroy() {
-    // FIXME: erzeugt Fehler bei Wechsel des Zählertypes
-    // this.nestedFormService.submitted.unsubscribe();
+    this.nestedFormServiceSubscription.unsubscribe();
   }
 
   get contentProtocol(): string {
@@ -119,5 +116,9 @@ export class ControlEvchargerHttpComponent implements OnInit, AfterViewChecked, 
   expandParentForm(form: FormGroup, evHttpControl: EvHttpControl, formHandler: FormHandler) {
     formHandler.addFormControl(form, 'contentProtocol',
       evHttpControl ? evHttpControl.contentProtocol : undefined);
+  }
+
+  updateModelFromForm(evHttpControl: EvHttpControl, form: FormGroup) {
+    this.evHttpControl.contentProtocol = form.controls.contentProtocol.value;
   }
 }

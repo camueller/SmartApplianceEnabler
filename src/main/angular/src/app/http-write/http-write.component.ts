@@ -63,7 +63,7 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.translatedStrings = translatedStrings;
     });
     this.nestedFormServiceSubscription = this.nestedFormService.submitted.subscribe(
-      () => this.updateHttpWrite(this.httpWrite, this.form));
+      () => this.updateModelFromForm(this.httpWrite, this.form));
   }
 
   ngAfterViewChecked() {
@@ -113,8 +113,8 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked, OnDestroy {
       [Validators.required, Validators.pattern(InputValidatorPatterns.URL)]);
   }
 
-  updateHttpWrite(httpWrite: HttpWrite, form: FormGroup) {
-    httpWrite.url = this.form.controls.url.value;
+  updateModelFromForm(httpWrite: HttpWrite, form: FormGroup) {
+    httpWrite.url = form.controls.url.value;
     this.nestedFormService.complete();
   }
 }
