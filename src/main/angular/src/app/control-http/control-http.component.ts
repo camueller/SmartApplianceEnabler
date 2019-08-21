@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {AfterViewChecked, Component, Input, OnInit} from '@angular/core';
 import {Control} from '../control/control';
 import {ControlDefaults} from '../control/control-defaults';
 import {FormGroup, Validators} from '@angular/forms';
@@ -28,8 +28,6 @@ export class ControlHttpComponent implements OnInit, AfterViewChecked {
   applianceId: string;
   @Input()
   controlDefaults: ControlDefaults;
-  @Output()
-  childFormChanged = new EventEmitter<boolean>();
   form: FormGroup;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};
@@ -50,7 +48,6 @@ export class ControlHttpComponent implements OnInit, AfterViewChecked {
     this.errorMessages =  new ControlHttpErrorMessages(this.translate);
     this.form = this.buildHttpFormGroup(this.control.httpSwitch);
     this.form.statusChanges.subscribe(() => {
-      this.childFormChanged.emit(this.form.valid);
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
     this.formMarkerService.dirty.subscribe(() => this.form.markAsDirty());
@@ -92,6 +89,5 @@ export class ControlHttpComponent implements OnInit, AfterViewChecked {
     this.controlService.updateControl(this.control, this.applianceId).subscribe(
       () => this.appliancesReloadService.reload());
     this.form.markAsPristine();
-    this.childFormChanged.emit(this.form.valid);
   }
 }

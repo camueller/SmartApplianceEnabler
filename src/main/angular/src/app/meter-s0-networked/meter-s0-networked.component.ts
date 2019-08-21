@@ -1,14 +1,11 @@
-import {AfterViewChecked, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Meter} from '../meter/meter';
+import {AfterViewChecked, Component, Input, OnInit} from '@angular/core';
 import {MeterDefaults} from '../meter/meter-defaults';
 import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {FormHandler} from '../shared/form-handler';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {Logger} from '../log/logger';
-import {MeterService} from '../meter/meter-service';
 import {FormMarkerService} from '../shared/form-marker-service';
-import {AppliancesReloadService} from '../appliance/appliances-reload-service';
 import {TranslateService} from '@ngx-translate/core';
 import {MeterS0ErrorMessages} from '../meter-s0/meter-s0-error-messages';
 import {S0ElectricityMeter} from '../meter-s0/s0-electricity-meter';
@@ -30,8 +27,6 @@ export class MeterS0NetworkedComponent implements OnInit, AfterViewChecked {
   meterDefaults: MeterDefaults;
   @Input()
   applianceId: string;
-  @Output()
-  childFormChanged = new EventEmitter<boolean>();
   form: FormGroup;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};
@@ -53,7 +48,6 @@ export class MeterS0NetworkedComponent implements OnInit, AfterViewChecked {
     this.form = this.parent.form;
     this.expandParentForm(this.form, this.s0ElectricityMeterNetworked, this.formHandler);
     this.form.statusChanges.subscribe(() => {
-      this.childFormChanged.emit(this.form.valid);
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
     this.nestedFormService.submitted.subscribe(

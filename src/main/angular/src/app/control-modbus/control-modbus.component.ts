@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {AfterViewChecked, Component, Input, OnInit} from '@angular/core';
 import {Control} from '../control/control';
 import {ControlDefaults} from '../control/control-defaults';
 import {FormGroup, Validators} from '@angular/forms';
@@ -34,8 +34,6 @@ export class ControlModbusComponent implements OnInit, AfterViewChecked {
   modbusSettings: ModbusSettings[];
   @Input()
   settingsDefaults: SettingsDefaults;
-  @Output()
-  childFormChanged = new EventEmitter<boolean>();
   form: FormGroup;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};
@@ -56,7 +54,6 @@ export class ControlModbusComponent implements OnInit, AfterViewChecked {
     this.errorMessages =  new ControlModbusErrorMessages(this.translate);
     this.form = this.buildModbusFormGroup(this.control.modbusSwitch);
     this.form.statusChanges.subscribe(() => {
-      this.childFormChanged.emit(this.form.valid);
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
     this.formMarkerService.dirty.subscribe(() => this.form.markAsDirty());
@@ -100,6 +97,5 @@ export class ControlModbusComponent implements OnInit, AfterViewChecked {
     this.controlService.updateControl(this.control, this.applianceId).subscribe(
       () => this.appliancesReloadService.reload());
     this.form.markAsPristine();
-    this.childFormChanged.emit(this.form.valid);
   }
 }

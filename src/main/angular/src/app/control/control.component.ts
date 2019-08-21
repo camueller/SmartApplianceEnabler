@@ -16,7 +16,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, CanDeactivate} from '@angular/router';
 import {ControlFactory} from './control-factory';
 import {Switch} from '../control-switch/switch';
@@ -36,9 +36,9 @@ import {Logger} from '../log/logger';
 import {Settings} from '../settings/settings';
 import {SettingsDefaults} from '../settings/settings-defaults';
 import {Appliance} from '../appliance/appliance';
-import {NgForm} from '@angular/forms';
-import {FormMarkerService} from '../shared/form-marker-service';
+import {FormControl, FormGroup} from '@angular/forms';
 import {EvCharger} from '../control-evcharger/ev-charger';
+import {NestedFormService} from '../shared/nested-form-service';
 
 @Component({
   selector: 'app-appliance-switch',
@@ -46,8 +46,7 @@ import {EvCharger} from '../control-evcharger/ev-charger';
   styleUrls: ['../global.css']
 })
 export class ControlComponent implements OnInit, CanDeactivate<ControlComponent> {
-  @ViewChild('controlForm')
-  form: NgForm;
+  form: FormGroup;
   applianceId: string;
   controlDefaults: ControlDefaults;
   control: Control;
@@ -55,7 +54,6 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   appliance: Appliance;
   settingsDefaults: SettingsDefaults;
   settings: Settings;
-  childFormPristine = true;
   discardChangesMessage: string;
   TYPE_ALWAYS_ON_SWITCH = AlwaysOnSwitch.TYPE;
   TYPE_SWITCH = Switch.TYPE;
@@ -67,7 +65,7 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   constructor(private logger: Logger,
               private controlService: ControlService,
               private appliancesReloadService: AppliancesReloadService,
-              private formMarkerService: FormMarkerService,
+              private nestedFormService: NestedFormService,
               private route: ActivatedRoute,
               private dialogService: DialogService,
               private translate: TranslateService) {
@@ -76,6 +74,7 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   }
 
   ngOnInit() {
+    this.form = this.buildFormGroup();
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.route.paramMap.subscribe(() => this.applianceId = this.route.snapshot.paramMap.get('id'));
     this.route.data.subscribe((data: {control: Control, controlDefaults: ControlDefaults, appliance: Appliance,
@@ -90,17 +89,21 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
         this.typeChanged(EvCharger.TYPE);
       }
     });
+    this.form.markAsPristine();
+  }
+
+  buildFormGroup(): FormGroup {
+    const fg = new FormGroup({});
+    fg.addControl('controlType', new FormControl(this.control && this.control.type));
+    fg.addControl('startingCurrentDetection', new FormControl(this.control && this.control.startingCurrentDetection));
+    return fg;
   }
 
   canDeactivate(): Observable<boolean> | boolean {
-    if ((!this.form || this.form.form.pristine) && this.childFormPristine) {
+    if (this.form.pristine) {
       return true;
     }
     return this.dialogService.confirm(this.discardChangesMessage);
-  }
-
-  onChildFormChanged(event: boolean) {
-    this.childFormPristine = event;
   }
 
   typeChanged(newType: string) {
@@ -143,6 +146,16 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
       this.control.startingCurrentSwitch = null;
       this.control.startingCurrentDetection = false;
     }
-    this.formMarkerService.markDirty();
+    this.form.markAsDirty();
+  }
+
+  submitForm() {
+    const subscription = this.nestedFormService.completed.subscribe(() => {
+      this.controlService.updateControl(this.control, this.applianceId).subscribe(
+        () => this.appliancesReloadService.reload());
+      this.form.markAsPristine();
+      subscription.unsubscribe();
+    });
+    this.nestedFormService.submit();
   }
 }

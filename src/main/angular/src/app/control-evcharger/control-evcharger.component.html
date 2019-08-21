@@ -1,4 +1,4 @@
-<form class="ui form" [formGroup]="form" (ngSubmit)="submitForm()">
+<div [formGroup]="form">
   <h3 class="ui dividing header">{{'ControlEvchargerComponent.heading' | translate}}</h3>
   <div class="ui fields sae-fields">
     <div class="field">
@@ -66,10 +66,10 @@
       </div>
     </div>
     <app-control-evcharger-modbus *ngIf="protocol === PROTOCOL_MODBUS"
-      [evModbusControl]="control.evCharger.modbusControl"
-      [settings]="settings"
-      [settingsDefaults]="settingsDefaults"
-      [translationKeys]="modbusTranslationKeys"
+                                  [evModbusControl]="control.evCharger.modbusControl"
+                                  [settings]="settings"
+                                  [settingsDefaults]="settingsDefaults"
+                                  [translationKeys]="modbusTranslationKeys"
     ></app-control-evcharger-modbus>
     <app-control-evcharger-http
       [evHttpControl]="control.evCharger.httpControl"
@@ -139,15 +139,8 @@
     </div>
     <div>{{'dialog.mandatoryfields'|translate}}</div>
     <div class="ui hidden divider"></div>
-    <button type="submit" class="ui button" [disabled]="form.pristine||form.invalid">
-      {{'button.save' | translate}}</button>
-    <button type="button" (click)="addElectricVehicle()" class="ui button">
-      {{'ControlEvchargerComponent.ev.button.new' | translate}}</button>
   </div>
-</form>
-<pre>{{control.evCharger | json}}</pre>
-<!--
-<pre>pristine={{form.pristine}}</pre>
-<pre>invalid={{form.invalid}}</pre>
--->
+</div>
+<button type="button" (click)="addElectricVehicle()" class="ui button">
+  {{'ControlEvchargerComponent.ev.button.new' | translate}}</button>
 
