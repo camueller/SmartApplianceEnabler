@@ -74,7 +74,6 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   }
 
   ngOnInit() {
-    this.form = this.buildFormGroup();
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.route.paramMap.subscribe(() => this.applianceId = this.route.snapshot.paramMap.get('id'));
     this.route.data.subscribe((data: {control: Control, controlDefaults: ControlDefaults, appliance: Appliance,
@@ -84,6 +83,7 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
       this.appliance = data.appliance;
       this.settings = data.settings;
       this.settingsDefaults = data.settingsDefaults;
+      this.form = this.buildFormGroup();
       if (!this.control.evCharger && this.appliance.type === 'EVCharger') {
         // there is not type change for ev charger since it is determined by appliance type
         this.typeChanged(EvCharger.TYPE);
