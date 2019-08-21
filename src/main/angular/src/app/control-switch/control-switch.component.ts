@@ -1,5 +1,5 @@
-import {AfterViewChecked, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FormGroup, Validators} from '@angular/forms';
+import {AfterViewChecked, Component, Input, OnInit} from '@angular/core';
+import {FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {Control} from '../control/control';
 import {Switch} from './switch';
 import {ErrorMessages} from '../shared/error-messages';
@@ -9,12 +9,12 @@ import {TranslateService} from '@ngx-translate/core';
 import {ControlDefaults} from '../control/control-defaults';
 import {ControlSwitchErrorMessages} from './control-switch-error-messages';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
-import {Logger} from '../log/logger';
 import {FormMarkerService} from '../shared/form-marker-service';
 import {FormHandler} from '../shared/form-handler';
 import {AppliancesReloadService} from '../appliance/appliances-reload-service';
 import {ControlStartingcurrentComponent} from '../control-startingcurrent/control-startingcurrent.component';
 import {StartingCurrentSwitch} from '../control-startingcurrent/starting-current-switch';
+import {Logger} from '../log/logger';
 
 @Component({
   selector: 'app-control-switch',
@@ -28,8 +28,6 @@ export class ControlSwitchComponent implements OnInit, AfterViewChecked {
   controlDefaults: ControlDefaults;
   @Input()
   applianceId: string;
-  @Output()
-  childFormChanged = new EventEmitter<boolean>();
   form: FormGroup;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};
@@ -37,6 +35,7 @@ export class ControlSwitchComponent implements OnInit, AfterViewChecked {
   errorMessageHandler: ErrorMessageHandler;
 
   constructor(private logger: Logger,
+              private parent: FormGroupDirective,
               private controlService: ControlService,
               private formMarkerService: FormMarkerService,
               private appliancesReloadService: AppliancesReloadService,
@@ -47,10 +46,10 @@ export class ControlSwitchComponent implements OnInit, AfterViewChecked {
   }
 
   ngOnInit() {
+    this.form = this.parent.form;
+    this.expandParentForm(this.form, this.control.switch_);
     this.errorMessages =  new ControlSwitchErrorMessages(this.translate);
-    this.form = this.buildSwitchFormGroup(this.control.switch_);
     this.form.statusChanges.subscribe(() => {
-      this.childFormChanged.emit(this.form.valid);
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
     this.formMarkerService.dirty.subscribe(() => this.form.markAsDirty());
@@ -60,12 +59,10 @@ export class ControlSwitchComponent implements OnInit, AfterViewChecked {
     this.formHandler.markLabelsRequired();
   }
 
-  buildSwitchFormGroup(switch_: Switch): FormGroup {
-    const fg =  new FormGroup({});
-    this.formHandler.addFormControl(fg, 'gpio', switch_ ? switch_.gpio : undefined,
+  expandParentForm(form: FormGroup, switch_: Switch) {
+    this.formHandler.addFormControl(form, 'gpio', switch_ ? switch_.gpio : undefined,
       [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(fg, 'reverseStates', switch_ && switch_.reverseStates );
-    return fg;
+    this.formHandler.addFormControl(form, 'reverseStates', switch_ && switch_.reverseStates );
   }
 
   updateModelFromForm(form: FormGroup, switch_: Switch, startingCurrentSwitch: StartingCurrentSwitch) {
@@ -74,13 +71,5 @@ export class ControlSwitchComponent implements OnInit, AfterViewChecked {
     if (this.control.startingCurrentDetection) {
       ControlStartingcurrentComponent.updateModelFromForm(form, startingCurrentSwitch);
     }
-  }
-
-  submitForm() {
-    this.updateModelFromForm(this.form, this.control.switch_, this.control.startingCurrentSwitch);
-    this.controlService.updateControl(this.control, this.applianceId).subscribe(
-      () => this.appliancesReloadService.reload());
-    this.form.markAsPristine();
-    this.childFormChanged.emit(this.form.valid);
   }
 }

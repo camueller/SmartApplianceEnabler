@@ -17,21 +17,20 @@
   -->
 
 <div *ngIf="control" xmlns="http://www.w3.org/1999/html">
-  <app-control-evcharger *ngIf="control.type === TYPE_EVCHARGER; else notEvCharger"
-                         [control]="control"
-                         [controlDefaults]="controlDefaults"
-                         [applianceId]="applianceId"
-                         [settings]="settings"
-                         [settingsDefaults]="settingsDefaults"
-                         (childFormChanged)="onChildFormChanged($event)"
-  >
-  </app-control-evcharger>
-  <ng-template #notEvCharger>
-    <form class="ui form" #form="ngForm">
+  <form class="ui form" [formGroup]="form" (ngSubmit)="submitForm()">
+    <app-control-evcharger *ngIf="control.type === TYPE_EVCHARGER; else notEvCharger"
+                           [control]="control"
+                           [controlDefaults]="controlDefaults"
+                           [applianceId]="applianceId"
+                           [settings]="settings"
+                           [settingsDefaults]="settingsDefaults"
+    >
+    </app-control-evcharger>
+    <ng-template #notEvCharger>
       <div class="fields">
         <div class="field">
           <label>{{'ControlComponent.type' | translate}}</label>
-          <select class="ui fluid dropdown" name="controlType" [(ngModel)]="control.type"
+          <select class="ui fluid dropdown" name="controlType" formControlName="controlType"
                   (ngModelChange)="typeChanged($event)">
             <option [ngValue]="TYPE_SWITCH">{{TYPE_SWITCH | translate}}</option>
             <option [ngValue]="TYPE_MODBUS_SWITCH">{{TYPE_MODBUS_SWITCH | translate}}</option>
@@ -42,7 +41,7 @@
         <div class="field" *ngIf="canHaveStartingCurrentDetection">
           <label>{{'ControlStartingcurrentComponent.startingCurrentDetection' | translate}}</label>
           <input class="ui checkbox" type="checkbox" name="startingCurrentDetection"
-                 [(ngModel)]="control.startingCurrentDetection"
+                 formControlName="startingCurrentDetection"
                  (ngModelChange)="startingCurrentDetectionChanged($event)">
         </div>
       </div>
@@ -67,10 +66,15 @@
                             [control]="control"
                             [applianceId]="applianceId"
       ></app-control-alwayson>
-    </form>
-  </ng-template>
+    </ng-template>
+    <button type="submit" class="ui button" [disabled]="form.pristine||form.invalid">
+      {{'button.save' | translate}}</button>
+  </form>
   <!--
   <pre>{{control | json}}</pre>
   <pre>{{form.value | json}}</pre>
+  <pre>{{control.evCharger | json}}</pre>
+  <pre>pristine={{form.pristine}}</pre>
+  <pre>invalid={{form.invalid}}</pre>
   -->
 </div>

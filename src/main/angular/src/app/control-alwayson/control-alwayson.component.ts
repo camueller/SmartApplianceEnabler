@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import {ControlService} from '../control/control-service';
 import {Control} from '../control/control';
@@ -15,8 +15,6 @@ export class ControlAlwaysonComponent implements OnInit {
   control: Control;
   @Input()
   applianceId: string;
-  @Output()
-  childFormChanged = new EventEmitter<boolean>();
   form: FormGroup;
 
   constructor(
@@ -34,6 +32,5 @@ export class ControlAlwaysonComponent implements OnInit {
     this.controlService.updateControl(this.control, this.applianceId).subscribe(
       () => this.appliancesReloadService.reload());
     this.form.markAsPristine();
-    this.childFormChanged.emit(this.form.valid);
   }
 }

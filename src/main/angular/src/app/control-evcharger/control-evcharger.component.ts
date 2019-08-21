@@ -1,10 +1,10 @@
-import {AfterViewChecked, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {AfterViewChecked, Component, Input, OnInit} from '@angular/core';
 import {EvCharger} from './ev-charger';
 import {EvChargerTemplates} from './ev-charger-templates';
 import {Settings} from '../settings/settings';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {TranslateService} from '@ngx-translate/core';
-import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormArray, FormControl, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {ControlEvchargerErrorMessages} from './control-evcharger-error-messages';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
@@ -39,8 +39,6 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
   settings: Settings;
   @Input()
   settingsDefaults: SettingsDefaults;
-  @Output()
-  childFormChanged = new EventEmitter<boolean>();
   form: FormGroup;
   electricVehicles: FormArray;
   formHandler: FormHandler;
@@ -53,6 +51,7 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
   PROTOCOL_HTTP = EvChargerProtocol.HTTP;
 
   constructor(private logger: Logger,
+              private parent: FormGroupDirective,
               private controlService: ControlService,
               private appliancesReloadService: AppliancesReloadService,
               private translate: TranslateService) {
@@ -61,17 +60,19 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
   }
 
   ngOnInit() {
+    this.form = this.parent.form;
+    this.expandParentForm(this.form, this.control.evCharger);
     this.errorMessages = new ControlEvchargerErrorMessages(this.translate);
     this.translate.get([
       'ControlEvchargerComponent.protocol.HTTP',
       'ControlEvchargerComponent.protocol.MODBUS',
     ]).subscribe(translatedStrings => this.translatedStrings = translatedStrings);
     this.templates = EvChargerTemplates.getTemplates();
-    if (this.isConfigured()) {
-      this.initForm(this.control.evCharger);
-    } else {
-      this.form = this.buildEmptyEvChargerFormGroup();
-    }
+    // if (this.isConfigured()) {
+      // this.initForm(this.control.evCharger);
+    // } else {
+    //   this.form = this.buildEmptyEvChargerFormGroup();
+    // }
   }
 
   ngAfterViewChecked() {
@@ -79,10 +80,9 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
   }
 
   initForm(evCharger: EvCharger) {
-    this.form = this.buildEvChargerFormGroup(evCharger);
+    // this.form = this.buildEvChargerFormGroup(evCharger);
     this.form.markAsPristine();
     this.form.statusChanges.subscribe(() => {
-      this.childFormChanged.emit(this.form.pristine);
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
   }
@@ -107,24 +107,22 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
     });
   }
 
-  buildEvChargerFormGroup(evCharger: EvCharger): FormGroup {
+  expandParentForm(form: FormGroup, evCharger: EvCharger) {
     this.electricVehicles = new FormArray(this.control.evCharger.vehicles ?
       this.control.evCharger.vehicles.map(ev => this.buildElectricVehicleFormGroup(ev)) : []
     );
-    const fg = new FormGroup({});
-    this.formHandler.addFormControl(fg, 'template', undefined);
-    this.formHandler.addFormControl(fg, 'protocol', this.evChargerProtocol);
-    this.formHandler.addFormControl(fg, 'voltage', evCharger.voltage,
+    this.formHandler.addFormControl(form, 'template', undefined);
+    this.formHandler.addFormControl(form, 'protocol', this.evChargerProtocol);
+    this.formHandler.addFormControl(form, 'voltage', evCharger.voltage,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(fg, 'phases', evCharger.phases,
+    this.formHandler.addFormControl(form, 'phases', evCharger.phases,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(fg, 'pollInterval', evCharger.pollInterval,
+    this.formHandler.addFormControl(form, 'pollInterval', evCharger.pollInterval,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(fg, 'startChargingStateDetectionDelay',
+    this.formHandler.addFormControl(form, 'startChargingStateDetectionDelay',
       evCharger.startChargingStateDetectionDelay, [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(fg, 'forceInitialCharging', evCharger.forceInitialCharging);
-    fg.addControl('electricVehicles', this.electricVehicles);
-    return fg;
+    this.formHandler.addFormControl(form, 'forceInitialCharging', evCharger.forceInitialCharging);
+    form.addControl('electricVehicles', this.electricVehicles);
   }
 
   buildElectricVehicleFormGroup(ev: ElectricVehicle, newId?: number): FormGroup {
@@ -276,13 +274,5 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
   isScriptEnabled(index: number) {
     const ev = this.electricVehicles.at(index) as FormGroup;
     return ev.enabled;
-  }
-
-  submitForm() {
-    this.updateModelFromForm(this.form, this.control.evCharger);
-    this.controlService.updateControl(this.control, this.applianceId).subscribe(
-      () => this.appliancesReloadService.reload());
-    this.form.markAsPristine();
-    this.childFormChanged.emit(this.form.pristine);
   }
 }
