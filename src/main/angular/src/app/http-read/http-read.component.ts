@@ -8,10 +8,10 @@ import {Logger} from '../log/logger';
 import {NestedFormService} from '../shared/nested-form-service';
 import {TranslateService} from '@ngx-translate/core';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
-import {HttpReadErrorMessages} from './http-read-error-messages';
 import {HttpReadValue} from '../http-read-value/http-read-value';
 import {getValidString} from '../shared/form-util';
 import {Subscription} from 'rxjs';
+import {ErrorMessage, ValidatorType} from '../shared/error-message';
 
 @Component({
   selector: 'app-http-read',
@@ -54,11 +54,15 @@ export class HttpReadComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   ngOnInit() {
-    this.errorMessages = new HttpReadErrorMessages(this.translate);
+    this.errorMessages = new ErrorMessages('HttpReadComponent.error.', [
+      new ErrorMessage(this.getFormControlName('url'), ValidatorType.required, 'url'),
+      new ErrorMessage(this.getFormControlName('url'), ValidatorType.pattern, 'url'),
+    ], this.translate);
     this.form = this.parent.form;
     this.expandParentForm(this.form, this.httpRead, this.formHandler);
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
+      console.log('ERRORS=', this.errors);
     });
     this.translate.get(this.translationKeys).subscribe(translatedStrings => {
       this.translatedStrings = translatedStrings;
@@ -73,6 +77,10 @@ export class HttpReadComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   ngOnDestroy() {
     this.nestedFormServiceSubscription.unsubscribe();
+  }
+
+  getFormControlName(formControlName: string): string {
+    return `${this.formControlNamePrefix}${formControlName.charAt(0).toUpperCase()}${formControlName.slice(1)}`;
   }
 
   getReadValueFormControlPrefix(index: number) {
@@ -109,7 +117,7 @@ export class HttpReadComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   expandParentForm(form: FormGroup, httpRead: HttpRead, formHandler: FormHandler) {
-    formHandler.addFormControl(form, 'url',
+    formHandler.addFormControl(form, this.getFormControlName('url'),
       httpRead ? httpRead.url : undefined,
       [Validators.required, Validators.pattern(InputValidatorPatterns.URL)]);
   }

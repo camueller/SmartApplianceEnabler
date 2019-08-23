@@ -21,7 +21,7 @@ import {TranslateService} from '@ngx-translate/core';
 
 export class ErrorMessages {
 
-  constructor(private typePrefix: string, private errorMessages: ErrorMessage[], protected translate: TranslateService) {
+  constructor(private typePrefix: string, protected errorMessages: ErrorMessage[], protected translate: TranslateService) {
     const controlValidators = [];
     this.errorMessages.forEach(errorMessage => controlValidators.push(this.buildTextKey(errorMessage)));
     this.translate.get(controlValidators).subscribe(translatedTexts => {

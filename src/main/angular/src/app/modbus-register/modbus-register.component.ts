@@ -8,7 +8,7 @@ import {ModbusRegisterConfguration} from '../shared/modbus-register-confguration
 import {TranslateService} from '@ngx-translate/core';
 import {NestedFormService} from '../shared/nested-form-service';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
-import {ModbusRegisterErrorMessages} from './modbus-register-error-messages';
+import {ErrorMessage, ValidatorType} from '../shared/error-message';
 
 @Component({
   selector: 'app-modbus-register',
@@ -57,7 +57,12 @@ export class ModbusRegisterComponent implements OnInit, AfterViewChecked, OnDest
   }
 
   ngOnInit() {
-    this.errorMessages = new ModbusRegisterErrorMessages(this.translate);
+    this.errorMessages = new ErrorMessages('ModbusRegisterComponent.error.', [
+      new ErrorMessage('powerRegisterAddress', ValidatorType.required, 'registerAddress'),
+      new ErrorMessage('powerRegisterAddress', ValidatorType.pattern, 'registerAddress'),
+      new ErrorMessage('energyRegisterAddress', ValidatorType.required, 'registerAddress'),
+      new ErrorMessage('energyRegisterAddress', ValidatorType.pattern, 'registerAddress'),
+    ], this.translate);
     this.form = this.parent.form;
     this.expandParentForm(this.register);
     this.nestedFormService.submitted.subscribe(() => this.updateModelFromForm(this.form, this.register));

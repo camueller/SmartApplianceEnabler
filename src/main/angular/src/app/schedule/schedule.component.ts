@@ -24,7 +24,6 @@ import {ConsecutiveDaysTimeframe} from './consecutive-days-timeframe';
 import {DayTimeframe} from './day-timeframe';
 import {ErrorMessages} from '../shared/error-messages';
 import {TranslateService} from '@ngx-translate/core';
-import {ScheduleErrorMessages} from './schedule-error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {ScheduleFactory} from './schedule-factory';
 import {ScheduleService} from './schedule-service';
@@ -38,6 +37,7 @@ import {SocRequest} from './soc-request';
 import {ElectricVehicle} from '../control-evcharger/electric-vehicle';
 import {FormHandler} from '../shared/form-handler';
 import {DayOfWeek, DaysOfWeek} from '../shared/days-of-week';
+import {ErrorMessage, ValidatorType} from '../shared/error-message';
 
 declare const $: any;
 
@@ -107,7 +107,22 @@ export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewCheck
   }
 
   ngOnInit() {
-    this.errorMessages =  new ScheduleErrorMessages(this.translate);
+    this.errorMessages = new ErrorMessages('ScheduleComponent.error.', [
+      new ErrorMessage('dayTimeframe_startTime', ValidatorType.required),
+      new ErrorMessage('dayTimeframe_startTime', ValidatorType.pattern),
+      new ErrorMessage('dayTimeframe_endTime', ValidatorType.required),
+      new ErrorMessage('dayTimeframe_endTime', ValidatorType.pattern),
+      new ErrorMessage('consecutiveDaysTimeframe_startTime', ValidatorType.required),
+      new ErrorMessage('consecutiveDaysTimeframe_startTime', ValidatorType.pattern),
+      new ErrorMessage('consecutiveDaysTimeframe_endTime', ValidatorType.required),
+      new ErrorMessage('consecutiveDaysTimeframe_endTime', ValidatorType.pattern),
+      new ErrorMessage('runtimeRequest_minRuntime', ValidatorType.pattern),
+      new ErrorMessage('runtimeRequest_maxRuntime', ValidatorType.required),
+      new ErrorMessage('runtimeRequest_maxRuntime', ValidatorType.pattern),
+      new ErrorMessage('energyRequest_minEnergy', ValidatorType.pattern),
+      new ErrorMessage('energyRequest_maxEnergy', ValidatorType.required),
+      new ErrorMessage('energyRequest_maxEnergy', ValidatorType.pattern),
+    ], this.translate);
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     DaysOfWeek.getDows(this.translate).subscribe(daysOfWeek => this.daysOfWeek = daysOfWeek);
     const timeframeTypeKeys = this.timeframeTypes.map(timeframeType => timeframeType.key);

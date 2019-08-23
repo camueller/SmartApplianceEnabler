@@ -9,12 +9,12 @@ import {ControlService} from '../control/control-service';
 import {TranslateService} from '@ngx-translate/core';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {HttpSwitch} from './http-switch';
-import {ControlHttpErrorMessages} from './control-http-error-messages';
 import {FormMarkerService} from '../shared/form-marker-service';
 import {FormHandler} from '../shared/form-handler';
 import {AppliancesReloadService} from '../appliance/appliances-reload-service';
 import {StartingCurrentSwitch} from '../control-startingcurrent/starting-current-switch';
 import {ControlStartingcurrentComponent} from '../control-startingcurrent/control-startingcurrent.component';
+import {ErrorMessage, ValidatorType} from '../shared/error-message';
 
 @Component({
   selector: 'app-control-http',
@@ -45,7 +45,12 @@ export class ControlHttpComponent implements OnInit, AfterViewChecked {
   }
 
   ngOnInit() {
-    this.errorMessages =  new ControlHttpErrorMessages(this.translate);
+    this.errorMessages = new ErrorMessages('ControlHttpComponent.error.', [
+      new ErrorMessage('onUrl', ValidatorType.required),
+      new ErrorMessage('onUrl', ValidatorType.pattern),
+      new ErrorMessage('offUrl', ValidatorType.required),
+      new ErrorMessage('offUrl', ValidatorType.pattern),
+    ], this.translate);
     this.form = this.buildHttpFormGroup(this.control.httpSwitch);
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);

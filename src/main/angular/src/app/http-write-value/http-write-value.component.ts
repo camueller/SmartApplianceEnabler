@@ -9,9 +9,9 @@ import {FormMarkerService} from '../shared/form-marker-service';
 import {TranslateService} from '@ngx-translate/core';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {HttpWriteValue} from './http-write-value';
-import {HttpWriteValueErrorMessages} from './http-write-value-error-messages';
 import {HttpMethod} from '../shared/http-method';
 import {Subscription} from 'rxjs';
+import {ErrorMessage, ValidatorType} from '../shared/error-message';
 
 @Component({
   selector: 'app-http-write-value',
@@ -53,11 +53,9 @@ export class HttpWriteValueComponent implements OnInit, AfterViewChecked, OnDest
   }
 
   ngOnInit() {
-    // console.log('formControlNamePrefix=', this.formControlNamePrefix);
-    // console.log('httpReadValue=', this.httpReadValue);
-    // console.log('valueNames=', this.valueNames);
-    // console.log('translationKeys=', this.translationKeys);
-    this.errorMessages = new HttpWriteValueErrorMessages(this.translate);
+    this.errorMessages = new ErrorMessages('HttpWriteValueComponent.error.', [
+      new ErrorMessage(this.getFormControlName('factorToValue'), ValidatorType.pattern, 'factorToValue'),
+    ], this.translate);
     this.form = this.parent.form;
     this.expandParentForm(this.form, this.httpWriteValue, this.formHandler);
     this.form.statusChanges.subscribe(() => {
@@ -65,7 +63,6 @@ export class HttpWriteValueComponent implements OnInit, AfterViewChecked, OnDest
     });
     this.translate.get(this.translationKeys).subscribe(translatedStrings => {
       this.translatedStrings = translatedStrings;
-      // console.log('translatedStrings=', this.translatedStrings);
     });
     this.nestedFormServiceSubscription = this.nestedFormService.submitted.subscribe(
       () => this.updateModelFromForm(this.httpWriteValue, this.form));

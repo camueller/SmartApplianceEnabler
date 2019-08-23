@@ -7,7 +7,6 @@ import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {Logger} from '../log/logger';
 import {ControlService} from '../control/control-service';
 import {TranslateService} from '@ngx-translate/core';
-import {ControlModbusErrorMessages} from './control-modbus-error-messages';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {ModbusSwitch} from './modbus-switch';
 import {ModbusSettings} from '../settings/modbus-settings';
@@ -17,6 +16,7 @@ import {FormHandler} from '../shared/form-handler';
 import {AppliancesReloadService} from '../appliance/appliances-reload-service';
 import {StartingCurrentSwitch} from '../control-startingcurrent/starting-current-switch';
 import {ControlStartingcurrentComponent} from '../control-startingcurrent/control-startingcurrent.component';
+import {ErrorMessage, ValidatorType} from '../shared/error-message';
 
 @Component({
   selector: 'app-control-modbus',
@@ -51,7 +51,12 @@ export class ControlModbusComponent implements OnInit, AfterViewChecked {
   }
 
   ngOnInit() {
-    this.errorMessages =  new ControlModbusErrorMessages(this.translate);
+    this.errorMessages = new ErrorMessages('ControlModbusComponent.error.', [
+      new ErrorMessage('slaveAddress', ValidatorType.required),
+      new ErrorMessage('slaveAddress', ValidatorType.pattern),
+      new ErrorMessage('registerAddress', ValidatorType.required),
+      new ErrorMessage('registerAddress', ValidatorType.pattern),
+    ], this.translate);
     this.form = this.buildModbusFormGroup(this.control.modbusSwitch);
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);

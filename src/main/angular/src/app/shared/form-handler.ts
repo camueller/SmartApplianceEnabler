@@ -27,18 +27,6 @@ export class FormHandler {
     formGroup.addControl(formControlName, control);
   }
 
-  public setValidators(formGroup: FormGroup, formControlName: string, validators: ValidatorFn[]) {
-    formGroup.get(formControlName).setValidators(validators);
-    validators.forEach((validatorFn: ValidatorFn) => {
-      this.registerRequiredValidator(validatorFn, formControlName);
-    });
-  }
-
-  public clearValidators(formGroup: FormGroup, formControlName: string) {
-    formGroup.get(formControlName).clearValidators();
-    this.formControlNamesRequired.splice(this.formControlNamesRequired.indexOf(formControlName));
-  }
-
   registerRequiredValidator(validatorFn: any, formControlName: string) {
     if (validatorFn === Validators.required) {
       this.formControlNamesRequired.push(formControlName);
@@ -47,9 +35,9 @@ export class FormHandler {
 
   public markLabelsRequired() {
     this.formControlNamesRequired.forEach(formControlName => {
-      $(`input[ng-reflect-name=${formControlName}]`).parent().children('label').addClass('required');
-      $(`select[ng-reflect-name=${formControlName}]`).parent().children('label').addClass('required');
-      $(`sui-select[ng-reflect-name=${formControlName}]`).parent().children('label').addClass('required');
+      $(`input[ng-reflect-name="${formControlName}"]`).parent().children('label').addClass('required');
+      $(`select[ng-reflect-name="${formControlName}"]`).parent().children('label').addClass('required');
+      $(`sui-select[ng-reflect-name="${formControlName}"]`).parent().children('label').addClass('required');
     });
   }
 }

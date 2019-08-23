@@ -9,9 +9,9 @@ import {FormHandler} from '../shared/form-handler';
 import {ErrorMessages} from '../shared/error-messages';
 import {HttpReadValue} from './http-read-value';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
-import {HttpReadValueErrorMessages} from './http-read-value-error-messages';
 import {getValidFloat, getValidString} from '../shared/form-util';
 import {Subscription} from 'rxjs';
+import {ErrorMessage, ValidatorType} from '../shared/error-message';
 
 @Component({
   selector: 'app-http-read-value',
@@ -53,7 +53,9 @@ export class HttpReadValueComponent implements OnInit, AfterViewChecked, OnDestr
   }
 
   ngOnInit() {
-    this.errorMessages = new HttpReadValueErrorMessages(this.translate);
+    this.errorMessages = new ErrorMessages('HttpReadValueComponent.error.', [
+      new ErrorMessage(this.getFormControlName('factorToValue'), ValidatorType.pattern, 'factorToValue'),
+    ], this.translate);
     this.form = this.parent.form;
     this.expandParentForm(this.form, this.httpReadValue, this.formHandler);
     this.form.statusChanges.subscribe(() => {
