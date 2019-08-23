@@ -3,9 +3,9 @@
 <div class="ui fields">
   <div class="six wide field">
     <label class="sae-label">{{'HttpWriteComponent.url' | translate}}</label>
-    <input type="text" formControlName="url">
-    <div *ngIf="errors['url']"
-         class="ui negative message">{{errors['url']}}</div>
+    <input type="text" formControlName="{{getFormControlName('url')}}">
+    <div *ngIf="errors[getFormControlName('url')]"
+         class="ui negative message">{{errors[getFormControlName('url')]}}</div>
   </div>
 </div>
 <div *ngFor="let httpWriteValue of httpWrite.writeValues; index as i">

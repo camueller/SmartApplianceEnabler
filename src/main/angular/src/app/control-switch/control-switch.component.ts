@@ -7,7 +7,6 @@ import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {ControlService} from '../control/control-service';
 import {TranslateService} from '@ngx-translate/core';
 import {ControlDefaults} from '../control/control-defaults';
-import {ControlSwitchErrorMessages} from './control-switch-error-messages';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {FormMarkerService} from '../shared/form-marker-service';
 import {FormHandler} from '../shared/form-handler';
@@ -15,6 +14,7 @@ import {AppliancesReloadService} from '../appliance/appliances-reload-service';
 import {ControlStartingcurrentComponent} from '../control-startingcurrent/control-startingcurrent.component';
 import {StartingCurrentSwitch} from '../control-startingcurrent/starting-current-switch';
 import {Logger} from '../log/logger';
+import {ErrorMessage, ValidatorType} from '../shared/error-message';
 
 @Component({
   selector: 'app-control-switch',
@@ -48,7 +48,10 @@ export class ControlSwitchComponent implements OnInit, AfterViewChecked {
   ngOnInit() {
     this.form = this.parent.form;
     this.expandParentForm(this.form, this.control.switch_);
-    this.errorMessages =  new ControlSwitchErrorMessages(this.translate);
+    this.errorMessages = new ErrorMessages('ControlSwitchComponent.error.', [
+      new ErrorMessage('gpio', ValidatorType.required),
+      new ErrorMessage('gpio', ValidatorType.pattern),
+    ], this.translate);
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });

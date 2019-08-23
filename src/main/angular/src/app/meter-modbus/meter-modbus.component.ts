@@ -12,7 +12,7 @@ import {ModbusElectricityMeter} from './modbus-electricity-meter';
 import {ModbusSettings} from '../settings/modbus-settings';
 import {SettingsDefaults} from '../settings/settings-defaults';
 import {NestedFormService} from '../shared/nested-form-service';
-import {MeterModbusErrorMessages} from './meter-modbus-error-messages';
+import {ErrorMessage, ValidatorType} from '../shared/error-message';
 
 @Component({
   selector: 'app-meter-modbus',
@@ -53,7 +53,10 @@ export class MeterModbusComponent implements OnInit, AfterViewChecked, OnDestroy
   }
 
   ngOnInit() {
-    this.errorMessages = new MeterModbusErrorMessages(this.translate);
+    this.errorMessages = new ErrorMessages('MeterModbusComponent.error.', [
+      new ErrorMessage('slaveAddress', ValidatorType.required),
+      new ErrorMessage('slaveAddress', ValidatorType.pattern),
+    ], this.translate);
     this.form = this.parent.form;
     this.expandParentForm(this.form, this.modbusElectricityMeter, this.formHandler);
     this.form.statusChanges.subscribe(() => {

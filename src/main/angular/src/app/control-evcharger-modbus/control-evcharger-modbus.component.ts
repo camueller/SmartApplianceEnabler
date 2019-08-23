@@ -6,7 +6,6 @@ import {FormHandler} from '../shared/form-handler';
 import {ErrorMessages} from '../shared/error-messages';
 import {ControlContainer, FormArray, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {NestedFormService} from '../shared/nested-form-service';
-import {MeterHttpErrorMessages} from '../meter-http/meter-http-error-messages';
 import {FormMarkerService} from '../shared/form-marker-service';
 import {Settings} from '../settings/settings';
 import {EvModbusControl} from './ev-modbus-control';
@@ -50,7 +49,9 @@ export class ControlEvchargerModbusComponent implements OnInit, AfterViewChecked
   }
 
   ngOnInit() {
-    this.errorMessages = new MeterHttpErrorMessages(this.translate);
+    // this.errorMessages = new ErrorMessages('ControlEvchargerModbusComponent.error.', [
+    //   new ErrorMessage('voltage', ValidatorType.pattern),
+    // ], this.translate);
     this.form = this.parent.form;
     this.expandParentForm(this.form, this.evModbusControl, this.formHandler);
     this.form.statusChanges.subscribe(() => {

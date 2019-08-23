@@ -9,8 +9,8 @@ export class ErrorMessageHandler {
   }
 
   public applyErrorMessages4TemplateDrivenForm(formViewChild: NgForm,
-                                                      errorMessages: ErrorMessages,
-                                                      controlSuffix = ''): { [key: string]: string } {
+                                               errorMessages: ErrorMessages,
+                                               controlSuffix = ''): { [key: string]: string } {
     const errors: { [key: string]: string } = {};
     for (const message of errorMessages.getErrorMessages()) {
       const control = formViewChild.form.get(message.forControl + controlSuffix);
@@ -68,7 +68,7 @@ export class ErrorMessageHandler {
 
   private validateControl(control: AbstractControl, validatorType: string,
                           errorKey: string, errorMessage: string, errors: { [key: string]: string }) {
-    //console.log(`errorKey=${errorKey}`)
+    // console.log(`errorKey=${errorKey}`)
     if (control && control.dirty && control.invalid
       && control.errors[validatorType] && !errors[errorKey]) {
       errors[errorKey] = errorMessage;

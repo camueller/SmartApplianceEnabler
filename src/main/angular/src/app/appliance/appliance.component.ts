@@ -23,7 +23,6 @@ import {ApplianceFactory} from './appliance-factory';
 import {AppliancesReloadService} from './appliances-reload-service';
 import {Location} from '@angular/common';
 import {NgForm} from '@angular/forms';
-import {ApplianceErrorMessages} from './appliance-error-messages';
 import {TranslateService} from '@ngx-translate/core';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
@@ -32,6 +31,7 @@ import {Appliance} from './appliance';
 import {Observable} from 'rxjs';
 import {DialogService} from '../shared/dialog.service';
 import {Logger} from '../log/logger';
+import {ErrorMessage, ValidatorType} from '../shared/error-message';
 
 @Component({
   selector: 'app-appliance-details',
@@ -66,7 +66,16 @@ export class ApplianceComponent implements OnInit, CanDeactivate<ApplianceCompon
 
   ngOnInit() {
     this.logger.debug('ApplianceComponent.ngOnInit()');
-    this.errorMessages =  new ApplianceErrorMessages(this.translate);
+    this.errorMessages = new ErrorMessages('ApplianceComponent.error.', [
+      new ErrorMessage('id', ValidatorType.required),
+      new ErrorMessage('id', ValidatorType.pattern),
+      new ErrorMessage('vendor', ValidatorType.required),
+      new ErrorMessage('name', ValidatorType.required),
+      new ErrorMessage('serial', ValidatorType.required),
+      new ErrorMessage('minPowerConsumption', ValidatorType.pattern),
+      new ErrorMessage('maxPowerConsumption', ValidatorType.required),
+      new ErrorMessage('maxPowerConsumption', ValidatorType.pattern)
+    ], this.translate);
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.translate.get('ApplianceComponent.confirmDeletion').subscribe(translated => this.confirmDeletionMessage = translated);
     this.route.paramMap.subscribe(() => this.isNew = this.route.snapshot.paramMap.get('id') == null);

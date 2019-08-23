@@ -5,7 +5,6 @@ import {Settings} from '../settings/settings';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {TranslateService} from '@ngx-translate/core';
 import {FormArray, FormControl, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
-import {ControlEvchargerErrorMessages} from './control-evcharger-error-messages';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {Logger} from '../log/logger';
@@ -20,6 +19,7 @@ import {AppliancesReloadService} from '../appliance/appliances-reload-service';
 import {EvChargerProtocol} from './ev-charger-protocol';
 import {EvModbusControl} from '../control-evcharger-modbus/ev-modbus-control';
 import {EvHttpControl} from '../control-evcharger-http/ev-http-control';
+import {ErrorMessage, ValidatorType} from '../shared/error-message';
 
 declare const $: any;
 
@@ -62,17 +62,23 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
   ngOnInit() {
     this.form = this.parent.form;
     this.expandParentForm(this.form, this.control.evCharger);
-    this.errorMessages = new ControlEvchargerErrorMessages(this.translate);
+    this.errorMessages = new ErrorMessages('ControlEvchargerComponent.error.', [
+      // TODO EV in separate komponente
+      new ErrorMessage('voltage', ValidatorType.pattern),
+      new ErrorMessage('phases', ValidatorType.pattern),
+      new ErrorMessage('pollInterval', ValidatorType.pattern),
+      new ErrorMessage('startChargingStateDetectionDelay', ValidatorType.pattern),
+    ], this.translate);
     this.translate.get([
       'ControlEvchargerComponent.protocol.HTTP',
       'ControlEvchargerComponent.protocol.MODBUS',
     ]).subscribe(translatedStrings => this.translatedStrings = translatedStrings);
     this.templates = EvChargerTemplates.getTemplates();
-    // if (this.isConfigured()) {
-      // this.initForm(this.control.evCharger);
-    // } else {
-    //   this.form = this.buildEmptyEvChargerFormGroup();
-    // }
+    if (this.isConfigured()) {
+      this.initForm(this.control.evCharger);
+    } else {
+      this.form = this.buildEmptyEvChargerFormGroup();
+    }
   }
 
   ngAfterViewChecked() {
@@ -158,8 +164,6 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
     evCharger.startChargingStateDetectionDelay = form.controls.startChargingStateDetectionDelay.value
       ? form.controls.startChargingStateDetectionDelay.value : undefined;
     evCharger.forceInitialCharging = form.controls.forceInitialCharging.value;
-    evCharger.modbusControl.idref = form.controls.modbusIdref.value;
-    evCharger.modbusControl.slaveAddress = form.controls.slaveAddress.value;
 
     const evs: Array<ElectricVehicle> = [];
     for (let i = 0; i < this.electricVehicles.length; i++) {

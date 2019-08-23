@@ -9,8 +9,8 @@ import {Logger} from '../log/logger';
 import {FormMarkerService} from '../shared/form-marker-service';
 import {TranslateService} from '@ngx-translate/core';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
-import {MeterS0ErrorMessages} from './meter-s0-error-messages';
 import {NestedFormService} from '../shared/nested-form-service';
+import {ErrorMessage, ValidatorType} from '../shared/error-message';
 
 @Component({
   selector: 'app-meter-s0',
@@ -44,7 +44,12 @@ export class MeterS0Component implements OnInit, AfterViewChecked {
   }
 
   ngOnInit() {
-    this.errorMessages =  new MeterS0ErrorMessages(this.translate);
+    this.errorMessages = new ErrorMessages('MeterS0Component.error.', [
+      new ErrorMessage('gpio', ValidatorType.required),
+      new ErrorMessage('gpio', ValidatorType.pattern),
+      new ErrorMessage('impulsesPerKwh', ValidatorType.required),
+      new ErrorMessage('impulsesPerKwh', ValidatorType.pattern),
+    ], this.translate);
     this.form = this.parent.form;
     this.expandParentForm(this.form, this.s0ElectricityMeter, this.formHandler);
     this.form.statusChanges.subscribe(() => {

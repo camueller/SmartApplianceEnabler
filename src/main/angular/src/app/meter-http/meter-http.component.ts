@@ -10,9 +10,9 @@ import {FormMarkerService} from '../shared/form-marker-service';
 import {TranslateService} from '@ngx-translate/core';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
-import {MeterHttpErrorMessages} from './meter-http-error-messages';
 import {ContentProtocol} from '../shared/content-protocol';
 import {Subscription} from 'rxjs';
+import {ErrorMessage, ValidatorType} from '../shared/error-message';
 
 @Component({
   selector: 'app-meter-http',
@@ -46,7 +46,10 @@ export class MeterHttpComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   ngOnInit() {
-    this.errorMessages = new MeterHttpErrorMessages(this.translate);
+    this.errorMessages = new ErrorMessages('MeterHttpComponent.error.', [
+      new ErrorMessage('pollInterval', ValidatorType.pattern),
+      new ErrorMessage('measurementInterval', ValidatorType.pattern),
+    ], this.translate);
     this.form = this.parent.form;
     this.expandParentForm(this.form, this.httpElectricityMeter, this.formHandler);
     this.form.statusChanges.subscribe(() => {

@@ -9,8 +9,8 @@ import {TranslateService} from '@ngx-translate/core';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {HttpWrite} from './http-write';
 import {HttpWriteValue} from '../http-write-value/http-write-value';
-import {HttpWriteErrorMessages} from './http-write-error-messages';
 import {Subscription} from 'rxjs';
+import {ErrorMessage, ValidatorType} from '../shared/error-message';
 
 @Component({
   selector: 'app-http-write',
@@ -53,7 +53,10 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   ngOnInit() {
-    this.errorMessages = new HttpWriteErrorMessages(this.translate);
+    this.errorMessages = new ErrorMessages('HttpWriteComponent.error.', [
+      new ErrorMessage(this.getFormControlName('url'), ValidatorType.required, 'url'),
+      new ErrorMessage(this.getFormControlName('url'), ValidatorType.pattern, 'url'),
+    ], this.translate);
     this.form = this.parent.form;
     this.expandParentForm(this.form, this.httpWrite, this.formHandler);
     this.form.statusChanges.subscribe(() => {
@@ -72,6 +75,10 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   ngOnDestroy() {
     this.nestedFormServiceSubscription.unsubscribe();
+  }
+
+  getFormControlName(formControlName: string): string {
+    return `${this.formControlNamePrefix}${formControlName.charAt(0).toUpperCase()}${formControlName.slice(1)}`;
   }
 
   getWriteValueFormControlPrefix(index: number) {
@@ -108,7 +115,7 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   expandParentForm(form: FormGroup, httpWrite: HttpWrite, formHandler: FormHandler) {
-    formHandler.addFormControl(form, 'url',
+    formHandler.addFormControl(form, this.getFormControlName('url'),
       httpWrite ? httpWrite.url : undefined,
       [Validators.required, Validators.pattern(InputValidatorPatterns.URL)]);
   }

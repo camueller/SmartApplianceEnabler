@@ -26,12 +26,11 @@ import {SettingsDefaults} from './settings-defaults';
 import {DialogService} from '../shared/dialog.service';
 import {TranslateService} from '@ngx-translate/core';
 import {Observable} from 'rxjs';
-import {SettingsErrorMessages} from './settings-error-messages';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {Logger} from '../log/logger';
-import {ModbusSettings} from './modbus-settings';
+import {ErrorMessage, ValidatorType} from '../shared/error-message';
 
 @Component({
   selector: 'app-settings',
@@ -62,7 +61,12 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
   }
 
   ngOnInit() {
-    this.errorMessages =  new SettingsErrorMessages(this.translate);
+    this.errorMessages = new ErrorMessages('SettingsComponent.error.', [
+      new ErrorMessage('holidaysUrl', ValidatorType.pattern),
+      new ErrorMessage('modbusTcpHost', ValidatorType.pattern),
+      new ErrorMessage('modbusTcpPort', ValidatorType.pattern),
+      new ErrorMessage('pulseReceiverPort', ValidatorType.pattern),
+    ], this.translate);
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.route.data.subscribe((data: {settings: Settings, settingsDefaults: SettingsDefaults}) => {
       this.settings = data.settings;
