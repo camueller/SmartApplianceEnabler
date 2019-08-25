@@ -151,7 +151,7 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
             }
         }
         catch(IllegalArgumentException e) {
-            logger.error("{} Invalid interval: start={} end={}", applianceId, this.state.statusChangedAt.toDateTime(),
+            logger.warn("{} Invalid interval: start={} end={}", applianceId, this.state.statusChangedAt.toDateTime(),
                     now.toDateTime());
         }
         return 0;
