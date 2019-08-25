@@ -158,7 +158,7 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     @Override
     public void resetEnergyMeter() {
         logger.debug("{}: Reset energy meter ...", getApplianceId());
-        this.pollEnergyMeter.resetEnergyCounter();
+        this.pollEnergyMeter.reset();
     }
 
     @Override

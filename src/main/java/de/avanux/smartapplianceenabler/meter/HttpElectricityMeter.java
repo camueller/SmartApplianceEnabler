@@ -35,7 +35,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Electricity meter reading current power and energy from the response of a HTTP request.
@@ -174,7 +173,9 @@ public class HttpElectricityMeter implements Meter, Initializable, Validateable,
     @Override
     public void resetEnergyMeter() {
         logger.debug("{}: Reset energy meter ...", applianceId);
-        this.pollEnergyMeter.resetEnergyCounter();
+        this.pollEnergyMeter.reset();
+        // TODO rename method to reset since we are resetting not just energy but also power
+        this.pollPowerMeter.reset();
     }
 
     @Override
@@ -279,7 +280,7 @@ public class HttpElectricityMeter implements Meter, Initializable, Validateable,
                 }
                 String extractedValue = valueExtractor.extractValue(protocolHandlerValue, valueExtractionRegex);
                 String parsableString = extractedValue.replace(',', '.');
-                Float value = null;
+                Float value;
                 if(factorToValue != null) {
                     value = Double.valueOf(Double.parseDouble(parsableString) * factorToValue).floatValue();
                 }
