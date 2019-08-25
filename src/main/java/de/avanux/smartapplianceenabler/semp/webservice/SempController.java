@@ -135,7 +135,7 @@ public class SempController {
             capabilities = new Capabilities();
         }
         capabilities.setAbsoluteTimestamps(false);
-        if (hasMeter && !isEvCharger) {
+        if (hasMeter) {
             capabilities.setCurrentPowerMethod(CurrentPowerMethod.Measurement);
         } else {
             capabilities.setCurrentPowerMethod(CurrentPowerMethod.Estimation);
