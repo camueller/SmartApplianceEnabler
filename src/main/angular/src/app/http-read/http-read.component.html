@@ -1,27 +1,29 @@
-<h4 class="ui dividing header sae-header" *ngIf="valueName">{{valueName}}</h4>
+-<h4 class="ui dividing header sae-header" *ngIf="valueName">{{valueName}}</h4>
 <div class="ui hidden divider"></div>
-<div class="ui fields">
-  <div class="six wide field">
-    <label class="sae-label">{{'HttpReadComponent.url' | translate}}</label>
-    <input type="text" formControlName="{{getFormControlName('url')}}">
-    <div *ngIf="errors[getFormControlName('url')]"
-         class="ui negative message">{{errors[getFormControlName('url')]}}</div>
-  </div>
-</div>
-<div *ngFor="let httpReadValue of httpRead.readValues; index as i">
+<div [formGroup]="form">
   <div class="ui fields">
-    <div class="field">
-      <app-http-read-value
-        [httpReadValue]="httpReadValue"
-        [disableFactorToValue]="disableFactorToValue"
-        [formControlNamePrefix]="getReadValueFormControlPrefix(i)"
-        [valueNames]="valueNames"
-        [translationPrefix]="translationPrefix"
-        [translationKeys]="translationKeys"
-      ></app-http-read-value>
+    <div class="six wide field">
+      <label class="sae-label">{{'HttpReadComponent.url' | translate}}</label>
+      <input type="text" formControlName="{{getFormControlName('url')}}">
+      <div *ngIf="errors[getFormControlName('url')]"
+           class="ui negative message">{{errors[getFormControlName('url')]}}</div>
     </div>
-    <div class="field icon-field" *ngIf="! singleValue">
-      <i (click)="removeValue(i)" class="icon big red remove circle"></i>
+  </div>
+  <div *ngFor="let httpReadValue of httpRead.readValues; index as i">
+    <div class="ui fields">
+      <div class="field">
+        <app-http-read-value
+          [httpReadValue]="httpReadValue"
+          [disableFactorToValue]="disableFactorToValue"
+          [formControlNamePrefix]="getReadValueFormControlPrefix(i)"
+          [valueNames]="valueNames"
+          [translationPrefix]="translationPrefix"
+          [translationKeys]="translationKeys"
+        ></app-http-read-value>
+      </div>
+      <div class="field icon-field" *ngIf="! singleValue">
+        <i (click)="removeValue(i)" class="icon big red remove circle"></i>
+      </div>
     </div>
   </div>
 </div>

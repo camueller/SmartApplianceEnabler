@@ -1,0 +1,75 @@
+<div class="ui hidden divider"></div>
+<div [formGroup]="form">
+  <div class="ui fields sae-fields">
+    <div class="field">
+      <label>{{'ElectricVehicleComponent.name' | translate}}</label>
+      <input type="text" formControlName="{{this.getFormControlName('name')}}">
+      <div *ngIf="errors[getFormControlName('name')]"
+           class="ui negative message">{{errors[getFormControlName('name')]}}</div>
+    </div>
+    <div class="field icon-field">
+      <i (click)="removeElectricVehicle()" class="icon big red remove circle"></i>
+    </div>
+  </div>
+  <h5 class="ui header">{{'ElectricVehicleComponent.general' | translate}}</h5>
+  <div class="ui fields sae-fields">
+    <div class="field">
+      <label>{{'ElectricVehicleComponent.batteryCapacity' | translate}}</label>
+      <input type="text" formControlName="{{this.getFormControlName('batteryCapacity')}}">
+      <div *ngIf="errors[getFormControlName('batteryCapacity')]"
+           class="ui negative message">{{errors[getFormControlName('batteryCapacity')]}}</div>
+    </div>
+    <div class="field">
+      <label>{{'ElectricVehicleComponent.phases' | translate}}</label>
+      <input type="text" formControlName="{{this.getFormControlName('phases')}}">
+      <div *ngIf="errors[getFormControlName('phases')]"
+           class="ui negative message">{{errors[getFormControlName('phases')]}}</div>
+    </div>
+    <div class="field">
+      <label>{{'ElectricVehicleComponent.maxChargePower' | translate}}</label>
+      <input type="text" formControlName="{{this.getFormControlName('maxChargePower')}}">
+      <div *ngIf="errors[getFormControlName('maxChargePower')]"
+           class="ui negative message">{{errors[getFormControlName('maxChargePower')]}}</div>
+    </div>
+    <div class="field">
+      <label>{{'ElectricVehicleComponent.chargeLoss' | translate}}</label>
+      <input type="text" formControlName="{{this.getFormControlName('chargeLoss')}}"
+             placeholder="{{controlDefaults.electricVehicleChargerDefaults_chargeLoss}}">
+      <div *ngIf="errors[getFormControlName('chargeLoss')]"
+           class="ui negative message">{{errors[getFormControlName('chargeLoss')]}}</div>
+    </div>
+  </div>
+  <h5 class="ui header">{{'ElectricVehicleComponent.soc' | translate}}</h5>
+  <div class="ui fields sae-fields">
+    <div class="field">
+      <label>{{'ElectricVehicleComponent.defaultSocManual' | translate}}</label>
+      <input type="text" formControlName="{{this.getFormControlName('defaultSocManual')}}">
+      <div *ngIf="errors[getFormControlName('defaultSocManual')]"
+           class="ui negative message">{{errors[getFormControlName('defaultSocManual')]}}</div>
+    </div>
+    <div class="field">
+      <label>{{'ElectricVehicleComponent.defaultSocOptionalEnergy' | translate}}</label>
+      <input type="text" formControlName="{{this.getFormControlName('defaultSocOptionalEnergy')}}">
+      <div *ngIf="errors[getFormControlName('defaultSocOptionalEnergy')]"
+           class="ui negative message">{{errors[getFormControlName('defaultSocOptionalEnergy')]}}</div>
+    </div>
+  </div>
+  <h5 class="ui header">{{'ElectricVehicleComponent.script.heading' | translate}}</h5>
+  <div class="fields sae-fields">
+    <div class="field">
+      <label>{{'ElectricVehicleComponent.script.enabled' | translate}}</label>
+      <input class="ui checkbox" type="checkbox" formControlName="{{this.getFormControlName('scriptEnabled')}}"
+             (ngModelChange)="onScriptEnabledToggle($event)">
+    </div>
+    <div class="six wide field" [class.disabled]="!isScriptEnabled()">
+      <label>{{'ElectricVehicleComponent.script.filename' | translate}}</label>
+      <input type="text" formControlName="{{this.getFormControlName('scriptFilename')}}">
+      <div *ngIf="errors[getFormControlName('scriptFilename')]"
+           class="ui negative message">{{errors[getFormControlName('scriptFilename')]}}</div>
+    </div>
+    <div class="field" [class.disabled]="!isScriptEnabled()">
+      <label>{{'ElectricVehicleComponent.script.extractionRegex' | translate}}</label>
+      <input type="text" formControlName="{{this.getFormControlName('scriptExtractionRegex')}}">
+    </div>
+  </div>
+</div>

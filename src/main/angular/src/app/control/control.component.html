@@ -19,7 +19,7 @@
 <div *ngIf="control" xmlns="http://www.w3.org/1999/html">
   <form class="ui form" [formGroup]="form" (ngSubmit)="submitForm()">
     <app-control-evcharger *ngIf="control.type === TYPE_EVCHARGER; else notEvCharger"
-                           [control]="control"
+                           [evCharger]="control.evCharger"
                            [controlDefaults]="controlDefaults"
                            [applianceId]="applianceId"
                            [settings]="settings"
