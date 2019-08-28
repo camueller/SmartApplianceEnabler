@@ -209,6 +209,8 @@
   "ControlEvchargerComponent.StopCharging": "Ladevorgang beenden",
   "ControlEvchargerComponent.Error": "Ladegerät meldet Fehler",
   "ControlEvchargerComponent.ChargingCurrent": "Ladestromstärke setzen",
+  "ControlEvchargerComponent.headingEv": "Fahrzeuge",
+  "ControlEvchargerComponent.button.newEv": "Neues Fahrzeug",
 
   "ControlEvchargerHttpComponent.contentProtocol": "Format",
   "ControlEvchargerHttpComponent.heading.httpRead": "Lesezugriff",
@@ -216,7 +218,6 @@
   "ControlEvchargerHttpComponent.button.addHttpRead": "Weitere URL",
   "ControlEvchargerHttpComponent.button.addHttpWrite": "Weitere URL",
 
-  "ElectricVehicleComponent.heading": "Fahrzeuge",
   "ElectricVehicleComponent.name": "Hersteller / Modell",
   "ElectricVehicleComponent.general": "Allgemeine Angaben",
   "ElectricVehicleComponent.batteryCapacity": "Batteriekapazität [Wh]",
@@ -230,7 +231,6 @@
   "ElectricVehicleComponent.script.enabled": "Verwenden",
   "ElectricVehicleComponent.script.filename": "Dateiname mit Pfad",
   "ElectricVehicleComponent.script.extractionRegex": "Regex für Extraktion",
-  "ElectricVehicleComponent.button.new": "Neues Fahrzeug",
   "ElectricVehicleComponent.error.name_required": "Der Name des Fahrzeugs muss angegeben werden",
   "ElectricVehicleComponent.error.batteryCapacity_required": "Die Batteriekapazität muss angegeben werden",
   "ElectricVehicleComponent.error.batteryCapacity_pattern": "Die Batteriekapazität muss eine Zahl sein",
