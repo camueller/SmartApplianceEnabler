@@ -138,6 +138,9 @@ public class Appliance implements ControlStateChangedListener, StartingCurrentSw
     }
 
     public boolean isAcceptControlRecommendations() {
+        if(this.control instanceof AlwaysOnSwitch) {
+            return false;
+        }
         return acceptControlRecommendations;
     }
 
