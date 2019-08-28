@@ -74,7 +74,7 @@
     <app-control-evcharger-http
       [evHttpControl]="evCharger.httpControl"
     ></app-control-evcharger-http>
-    <h3 class="ui dividing header">{{'ControlEvchargerComponent.ev.heading' | translate}}</h3>
+    <h3 class="ui dividing header">{{'ControlEvchargerComponent.headingEv' | translate}}</h3>
     <div *ngFor="let electricVehicle of evCharger.vehicles; index as i; last as l">
       <app-electric-vehicle
         [electricVehicle]="electricVehicle"
@@ -89,5 +89,5 @@
   </div>
 </div>
 <button type="button" (click)="addElectricVehicle()" class="ui button">
-  {{'ControlEvchargerComponent.ev.button.new' | translate}}</button>
+  {{'ControlEvchargerComponent.button.newEv' | translate}}</button>
 
