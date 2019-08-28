@@ -62,7 +62,6 @@ export class HttpReadComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.expandParentForm(this.form, this.httpRead, this.formHandler);
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
-      console.log('ERRORS=', this.errors);
     });
     this.translate.get(this.translationKeys).subscribe(translatedStrings => {
       this.translatedStrings = translatedStrings;

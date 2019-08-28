@@ -66,76 +66,23 @@
       </div>
     </div>
     <app-control-evcharger-modbus *ngIf="protocol === PROTOCOL_MODBUS"
-                                  [evModbusControl]="control.evCharger.modbusControl"
+                                  [evModbusControl]="evCharger.modbusControl"
                                   [settings]="settings"
                                   [settingsDefaults]="settingsDefaults"
                                   [translationKeys]="modbusTranslationKeys"
     ></app-control-evcharger-modbus>
     <app-control-evcharger-http
-      [evHttpControl]="control.evCharger.httpControl"
+      [evHttpControl]="evCharger.httpControl"
     ></app-control-evcharger-http>
     <h3 class="ui dividing header">{{'ControlEvchargerComponent.ev.heading' | translate}}</h3>
-    <div formArrayName="electricVehicles">
-      <div *ngFor="let electricVehicle of electricVehicles.controls; index as i; last as l" [formGroupName]="i">
-        <div class="ui hidden divider"></div>
-        <div class="ui fields sae-fields">
-          <div class="field">
-            <label>{{'ControlEvchargerComponent.ev.name' | translate}}</label>
-            <input type="text" formControlName="name">
-          </div>
-          <div class="field icon-field">
-            <i (click)="removeElectricVehicle(i)" class="icon big red remove circle"></i>
-          </div>
-        </div>
-        <h5 class="ui header">{{'ControlEvchargerComponent.ev.general' | translate}}</h5>
-        <div class="ui fields sae-fields">
-          <div class="field">
-            <label>{{'ControlEvchargerComponent.ev.batteryCapacity' | translate}}</label>
-            <input type="text" formControlName="batteryCapacity">
-          </div>
-          <div class="field">
-            <label>{{'ControlEvchargerComponent.ev.phases' | translate}}</label>
-            <input type="text" formControlName="phases">
-          </div>
-          <div class="field">
-            <label>{{'ControlEvchargerComponent.ev.maxChargePower' | translate}}</label>
-            <input type="text" formControlName="maxChargePower">
-          </div>
-          <div class="field">
-            <label>{{'ControlEvchargerComponent.ev.chargeLoss' | translate}}</label>
-            <input type="text" formControlName="chargeLoss"
-                   placeholder="{{controlDefaults.electricVehicleChargerDefaults_chargeLoss}}">
-          </div>
-        </div>
-        <h5 class="ui header">{{'ControlEvchargerComponent.ev.soc' | translate}}</h5>
-        <div class="ui fields sae-fields">
-          <div class="field">
-            <label>{{'ControlEvchargerComponent.ev.defaultSocManual' | translate}}</label>
-            <input type="text" formControlName="defaultSocManual">
-          </div>
-          <div class="field">
-            <label>{{'ControlEvchargerComponent.ev.defaultSocOptionalEnergy' | translate}}</label>
-            <input type="text" formControlName="defaultSocOptionalEnergy">
-          </div>
-        </div>
-        <h5 class="ui header">{{'ControlEvchargerComponent.ev.script.heading' | translate}}</h5>
-        <div class="fields sae-fields">
-          <div class="field">
-            <label>{{'ControlEvchargerComponent.ev.script.enabled' | translate}}</label>
-            <input class="ui checkbox" type="checkbox" formControlName="scriptEnabled"
-                   (ngModelChange)="onScriptEnabledToggle(i, $event)">
-          </div>
-          <div class="six wide field" [class.disabled]="!isScriptEnabled(i)">
-            <label>{{'ControlEvchargerComponent.ev.script.filename' | translate}}</label>
-            <input type="text" formControlName="scriptFilename">
-          </div>
-          <div class="field" [class.disabled]="!isScriptEnabled(i)">
-            <label>{{'ControlEvchargerComponent.ev.script.extractionRegex' | translate}}</label>
-            <input type="text" formControlName="scriptExtractionRegex">
-          </div>
-        </div>
-        <div *ngIf="!l" class="ui dividing header"></div>
-      </div>
+    <div *ngFor="let electricVehicle of evCharger.vehicles; index as i; last as l">
+      <app-electric-vehicle
+        [electricVehicle]="electricVehicle"
+        [formControlNamePrefix]="getEvFormControlPrefix(i)"
+        [controlDefaults]="controlDefaults"
+        (remove)="onElectricVehicleRemove(i)"
+      ></app-electric-vehicle>
+      <div *ngIf="!l" class="ui dividing header"></div>
     </div>
     <div>{{'dialog.mandatoryfields'|translate}}</div>
     <div class="ui hidden divider"></div>

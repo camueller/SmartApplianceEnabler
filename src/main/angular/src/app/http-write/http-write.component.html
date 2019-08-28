@@ -1,27 +1,29 @@
 <h4 class="ui dividing header sae-header" *ngIf="valueName">{{valueName}}</h4>
 <div class="ui hidden divider"></div>
-<div class="ui fields">
-  <div class="six wide field">
-    <label class="sae-label">{{'HttpWriteComponent.url' | translate}}</label>
-    <input type="text" formControlName="{{getFormControlName('url')}}">
-    <div *ngIf="errors[getFormControlName('url')]"
-         class="ui negative message">{{errors[getFormControlName('url')]}}</div>
-  </div>
-</div>
-<div *ngFor="let httpWriteValue of httpWrite.writeValues; index as i">
+<div [formGroup]="form">
   <div class="ui fields">
-    <div class="field">
-      <app-http-write-value
-        [httpWriteValue]="httpWriteValue"
-        [disableFactorToValue]="disableFactorToValue"
-        [formControlNamePrefix]="getWriteValueFormControlPrefix(i)"
-        [valueNames]="valueNames"
-        [translationPrefix]="translationPrefix"
-        [translationKeys]="translationKeys"
-      ></app-http-write-value>
+    <div class="six wide field">
+      <label class="sae-label">{{'HttpWriteComponent.url' | translate}}</label>
+      <input type="text" formControlName="{{getFormControlName('url')}}">
+      <div *ngIf="errors[getFormControlName('url')]"
+           class="ui negative message">{{errors[getFormControlName('url')]}}</div>
     </div>
-    <div class="field icon-field" *ngIf="! singleValue">
-      <i (click)="removeValue(i)" class="icon big red remove circle"></i>
+  </div>
+  <div *ngFor="let httpWriteValue of httpWrite.writeValues; index as i">
+    <div class="ui fields">
+      <div class="field">
+        <app-http-write-value
+          [httpWriteValue]="httpWriteValue"
+          [disableFactorToValue]="disableFactorToValue"
+          [formControlNamePrefix]="getWriteValueFormControlPrefix(i)"
+          [valueNames]="valueNames"
+          [translationPrefix]="translationPrefix"
+          [translationKeys]="translationKeys"
+        ></app-http-write-value>
+      </div>
+      <div class="field icon-field" *ngIf="! singleValue">
+        <i (click)="removeValue(i)" class="icon big red remove circle"></i>
+      </div>
     </div>
   </div>
 </div>

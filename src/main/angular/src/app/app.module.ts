@@ -78,6 +78,7 @@ import { ControlEvchargerHttpComponent } from './control-evcharger-http/control-
 import { HttpWriteComponent } from './http-write/http-write.component';
 import { HttpWriteValueComponent } from './http-write-value/http-write-value.component';
 import { HttpConfigurationComponent } from './http-configuration/http-configuration.component';
+import { ElectricVehicleComponent } from './electric-vehicle/electric-vehicle.component';
 
 @NgModule({
   declarations: [
@@ -86,10 +87,13 @@ import { HttpConfigurationComponent } from './http-configuration/http-configurat
     ControlAlwaysonComponent,
     ControlComponent,
     ControlEvchargerComponent,
+    ControlEvchargerHttpComponent,
+    ControlEvchargerModbusComponent,
     ControlHttpComponent,
     ControlModbusComponent,
     ControlSwitchComponent,
     ControlStartingcurrentComponent,
+    ElectricVehicleComponent,
     HttpConfigurationComponent,
     HttpReadComponent,
     HttpReadValueComponent,
@@ -109,8 +113,6 @@ import { HttpConfigurationComponent } from './http-configuration/http-configurat
     StatusEvchargerEditComponent,
     StatusEvchargerViewComponent,
     StatusViewComponent,
-    ControlEvchargerModbusComponent,
-    ControlEvchargerHttpComponent,
   ],
   imports: [
     BrowserModule,
