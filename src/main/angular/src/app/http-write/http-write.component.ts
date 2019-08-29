@@ -11,6 +11,7 @@ import {HttpWrite} from './http-write';
 import {HttpWriteValue} from '../http-write-value/http-write-value';
 import {Subscription} from 'rxjs';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
+import {getValidString} from '../shared/form-util';
 
 @Component({
   selector: 'app-http-write',
@@ -121,7 +122,7 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   updateModelFromForm(httpWrite: HttpWrite, form: FormGroup) {
-    httpWrite.url = form.controls.url.value;
+    httpWrite.url = getValidString(this.form.controls[this.getFormControlName('url')].value);
     this.nestedFormService.complete();
   }
 }

@@ -111,7 +111,9 @@ export class HttpReadValueComponent implements OnInit, AfterViewChecked, OnDestr
     httpReadValue.data = getValidString(this.form.controls[this.getFormControlName('data')].value);
     httpReadValue.path = getValidString(this.form.controls[this.getFormControlName('path')].value);
     httpReadValue.extractionRegex = getValidString(this.form.controls[this.getFormControlName('extractionRegex')].value);
-    httpReadValue.factorToValue = getValidFloat(this.form.controls[this.getFormControlName('factorToValue')].value);
+    if (!this.disableFactorToValue) {
+      httpReadValue.factorToValue = getValidFloat(this.form.controls[this.getFormControlName('factorToValue')].value);
+    }
     this.nestedFormService.complete();
   }
 }

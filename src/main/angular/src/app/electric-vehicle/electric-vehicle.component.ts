@@ -99,8 +99,7 @@ export class ElectricVehicleComponent implements OnInit, AfterViewChecked, OnDes
     const scriptEnabled: boolean = ev && ev.socScript && (ev.socScript.script !== undefined);
     this.formHandler.addFormControl(form, this.getFormControlName('scriptEnabled'), scriptEnabled);
     this.formHandler.addFormControl(form, this.getFormControlName('scriptFilename'),
-      ev && ev.socScript && ev.socScript.script,
-      [Validators.required]);
+      ev && ev.socScript && ev.socScript.script);
     this.formHandler.addFormControl(form, this.getFormControlName('scriptExtractionRegex'),
       ev && ev.socScript && ev.socScript.extractionRegex);
   }
@@ -120,12 +119,15 @@ export class ElectricVehicleComponent implements OnInit, AfterViewChecked, OnDes
       evFormControl.controls[this.getFormControlName('defaultSocOptionalEnergy')].value);
 
     const scriptFilename = evFormControl.controls[this.getFormControlName('scriptFilename')].value;
-    const extractionRegex = evFormControl.controls[this.getFormControlName('extractionRegex')].value;
+    const extractionRegex = evFormControl.controls[this.getFormControlName('scriptExtractionRegex')].value;
     if (!electricVehicle.socScript && scriptFilename) {
       electricVehicle.socScript = new SocScript();
     }
-    electricVehicle.socScript.script = scriptFilename;
-    electricVehicle.socScript.extractionRegex = extractionRegex;
+    if (electricVehicle.socScript) {
+      electricVehicle.socScript.script = scriptFilename;
+      electricVehicle.socScript.extractionRegex = extractionRegex;
+    }
+    this.nestedFormService.complete();
   }
 
   getFormControlName(formControlName: string): string {
