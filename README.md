@@ -11,8 +11,8 @@
     <a href="https://camueller.github.io/SmartApplianceEnabler-web-coverage">
       <img src="https://camueller.github.io/SmartApplianceEnabler-web-coverage/SmartApplianceEnabler-web-coverage.svg">
     </a>
-    <a href="https://github.com/camueller/SmartApplianceEnabler/releases/download/v1.2.1/SmartApplianceEnabler-1.2.1.war">
-      <img src="https://img.shields.io/badge/Download-1.2.1-brightgreen.svg">
+    <a href="https://github.com/camueller/SmartApplianceEnabler/releases/download/v1.3.50/SmartApplianceEnabler-1.3.50.war">
+      <img src="https://img.shields.io/badge/Download-1.3.50-brightgreen.svg">
     </a>
     <a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.html">
       <img src="https://img.shields.io/badge/license-GPLv2-blue.svg">
