@@ -1,9 +1,8 @@
-import {AfterViewChecked, Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewChecked, Component, Input, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {Settings} from '../settings/settings';
 import {SettingsDefaults} from '../settings/settings-defaults';
 import {ControlContainer, FormGroup, FormGroupDirective} from '@angular/forms';
 import {Logger} from '../log/logger';
-import {NestedFormService} from '../shared/nested-form-service';
 import {TranslateService} from '@ngx-translate/core';
 import {EvHttpControl} from './ev-http-control';
 import {EvModbusReadRegisterName} from '../control-evcharger-modbus/ev-modbus-read-register-name';
@@ -12,7 +11,9 @@ import {ContentProtocol} from '../shared/content-protocol';
 import {FormHandler} from '../shared/form-handler';
 import {HttpRead} from '../http-read/http-read';
 import {HttpWrite} from '../http-write/http-write';
-import {Subscription} from 'rxjs';
+import {HttpReadComponent} from '../http-read/http-read.component';
+import {HttpWriteComponent} from '../http-write/http-write.component';
+import {HttpConfigurationComponent} from '../http-configuration/http-configuration.component';
 
 @Component({
   selector: 'app-control-evcharger-http',
@@ -22,7 +23,7 @@ import {Subscription} from 'rxjs';
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
 })
-export class ControlEvchargerHttpComponent implements OnInit, AfterViewChecked, OnDestroy {
+export class ControlEvchargerHttpComponent implements OnInit, AfterViewChecked {
 
   @Input()
   evHttpControl: EvHttpControl;
@@ -31,7 +32,12 @@ export class ControlEvchargerHttpComponent implements OnInit, AfterViewChecked, 
   @Input()
   settingsDefaults: SettingsDefaults;
   contentProtocols = [undefined, ContentProtocol.JSON.toUpperCase()];
-  // httpConfigurations: FormArray;
+  @ViewChild(HttpConfigurationComponent)
+  httpConfigurationComp: HttpConfigurationComponent;
+  @ViewChildren('httpReadComponents')
+  httpReadComps: QueryList<HttpReadComponent>;
+  @ViewChildren('httpWriteComponents')
+  httpWriteComps: QueryList<HttpWriteComponent>;
   form: FormGroup;
   formHandler: FormHandler;
   // @Input()
@@ -40,11 +46,9 @@ export class ControlEvchargerHttpComponent implements OnInit, AfterViewChecked, 
   // errors: { [key: string]: string } = {};
   // errorMessages: ErrorMessages;
   // errorMessageHandler: ErrorMessageHandler;
-  nestedFormServiceSubscription: Subscription;
 
   constructor(private logger: Logger,
               private parent: FormGroupDirective,
-              private nestedFormService: NestedFormService,
               private translate: TranslateService) {
     // this.errorMessageHandler = new ErrorMessageHandler(logger);
     this.formHandler = new FormHandler();
@@ -54,22 +58,20 @@ export class ControlEvchargerHttpComponent implements OnInit, AfterViewChecked, 
     // this.errorMessages = new MeterHttpErrorMessages(this.translate);
     this.form = this.parent.form;
     this.expandParentForm(this.form, this.evHttpControl, this.formHandler);
+    // if (!this.evHttpControl.httpConfiguration) {
+    //   this.evHttpControl.httpConfiguration = new HttpConfiguration();
+    //   this.evHttpControl.httpConfiguration.contentType = 'hallo';
+    // }
     // this.form.statusChanges.subscribe(() => {
     //   this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     // });
     // this.translate.get(this.translationKeys).subscribe(translatedStrings => {
     //   this.translatedStrings = translatedStrings;
     // });
-    this.nestedFormServiceSubscription = this.nestedFormService.submitted.subscribe(
-      () => this.updateModelFromForm(this.evHttpControl, this.form));
   }
 
   ngAfterViewChecked() {
     this.formHandler.markLabelsRequired();
-  }
-
-  ngOnDestroy() {
-    this.nestedFormServiceSubscription.unsubscribe();
   }
 
   get contentProtocol(): string {
@@ -118,7 +120,33 @@ export class ControlEvchargerHttpComponent implements OnInit, AfterViewChecked, 
       evHttpControl ? evHttpControl.contentProtocol : undefined);
   }
 
-  updateModelFromForm(evHttpControl: EvHttpControl, form: FormGroup) {
-    this.evHttpControl.contentProtocol = form.controls.contentProtocol.value;
+  updateModelFromForm(): EvHttpControl | undefined {
+    const contentProtocol = this.form.controls.contentProtocol.value;
+    const httpConfiguration = this.httpConfigurationComp.updateModelFromForm();
+    const httpReads = [];
+    this.httpReadComps.forEach(httpReadComponent => {
+      const httpRead = httpReadComponent.updateModelFromForm();
+      if (httpRead) {
+        httpReads.push(httpRead);
+      }
+    });
+    const httpWrites = [];
+    this.httpWriteComps.forEach(httpWriteComponent => {
+      const httpWrite = httpWriteComponent.updateModelFromForm();
+      if (httpWrite) {
+        httpWrites.push(httpWrite);
+      }
+    });
+
+    if (!(contentProtocol || httpConfiguration || httpReads.length > 0 || httpWrites.length > 0)) {
+      return undefined;
+    }
+
+    const evHttpControl = this.evHttpControl || new EvHttpControl();
+    evHttpControl.contentProtocol = contentProtocol;
+    evHttpControl.httpConfiguration = httpConfiguration;
+    evHttpControl.httpReads = httpReads;
+    evHttpControl.httpWrites = httpWrites;
+    return evHttpControl;
   }
 }

@@ -81,6 +81,7 @@
         [formControlNamePrefix]="getEvFormControlPrefix(i)"
         [controlDefaults]="controlDefaults"
         (remove)="onElectricVehicleRemove(i)"
+        #electricVehicles
       ></app-electric-vehicle>
       <div *ngIf="!l" class="ui dividing header"></div>
     </div>

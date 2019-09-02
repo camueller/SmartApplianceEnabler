@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, Input, OnInit} from '@angular/core';
+import {AfterViewChecked, Component, Input, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {EvCharger} from './ev-charger';
 import {EvChargerTemplates} from './ev-charger-templates';
 import {Settings} from '../settings/settings';
@@ -18,6 +18,10 @@ import {EvChargerProtocol} from './ev-charger-protocol';
 import {EvModbusControl} from '../control-evcharger-modbus/ev-modbus-control';
 import {EvHttpControl} from '../control-evcharger-http/ev-http-control';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
+import {ControlEvchargerHttpComponent} from '../control-evcharger-http/control-evcharger-http.component';
+import {getValidInt} from '../shared/form-util';
+import {HttpReadComponent} from '../http-read/http-read.component';
+import {ElectricVehicleComponent} from '../electric-vehicle/electric-vehicle.component';
 
 declare const $: any;
 
@@ -37,6 +41,10 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
   settings: Settings;
   @Input()
   settingsDefaults: SettingsDefaults;
+  @ViewChild(ControlEvchargerHttpComponent)
+  evChargerHttpComp: ControlEvchargerHttpComponent;
+  @ViewChildren('electricVehicles')
+  electricVehicleComps: QueryList<ElectricVehicleComponent>;
   form: FormGroup;
   formHandler: FormHandler;
   templates: { [name: string]: EvCharger };
@@ -71,7 +79,7 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
     ]).subscribe(translatedStrings => this.translatedStrings = translatedStrings);
     this.templates = EvChargerTemplates.getTemplates();
     // if (this.isConfigured()) {
-    //   this.initForm(this.control.evCharger);
+       this.initForm(this.evCharger);
     // } else {
     //   this.form = this.buildEmptyEvChargerFormGroup();
     // }
@@ -124,20 +132,33 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
   }
 
 
-  public updateModelFromForm(form: FormGroup, evCharger: EvCharger) {
-    evCharger.voltage = form.controls.voltage.value ? form.controls.voltage.value : undefined;
-    evCharger.phases = form.controls.phases.value ? form.controls.phases.value : undefined;
-    evCharger.pollInterval = form.controls.pollInterval.value ? form.controls.pollInterval.value : undefined;
-    evCharger.startChargingStateDetectionDelay = form.controls.startChargingStateDetectionDelay.value
-      ? form.controls.startChargingStateDetectionDelay.value : undefined;
-    evCharger.forceInitialCharging = form.controls.forceInitialCharging.value;
+  public updateModelFromForm(): EvCharger | undefined {
+    const voltage = getValidInt(this.form.controls.voltage.value);
+    const phases = getValidInt(this.form.controls.phases.value);
+    const pollInterval = getValidInt(this.form.controls.pollInterval.value);
+    const startChargingStateDetectionDelay = getValidInt(this.form.controls.startChargingStateDetectionDelay.value);
+    const forceInitialCharging = this.form.controls.forceInitialCharging.value;
+    const httpControl = this.evChargerHttpComp.updateModelFromForm();
+    const electricVehicles = [];
+    this.electricVehicleComps.forEach(electricVehicleComp => {
+      const electricVehicle = electricVehicleComp.updateModelFromForm();
+      if (electricVehicles) {
+        electricVehicles.push(electricVehicle);
+      }
+    });
 
-    // const evs: Array<ElectricVehicle> = [];
-    // for (let i = 0; i < this.electricVehicles.length; i++) {
-    //   const evControl = this.electricVehicles.at(i) as FormGroup;
-    //   evs.push(this.buildElectricVehicle(evControl));
-    // }
-    // evCharger.vehicles = evs;
+    if (!(voltage || phases || pollInterval || startChargingStateDetectionDelay || httpControl || electricVehicles.length > 0)) {
+      return undefined;
+    }
+
+    const evCharger = this.evCharger || new EvCharger();
+    evCharger.voltage = voltage;
+    evCharger.phases = phases;
+    evCharger.pollInterval = pollInterval;
+    evCharger.startChargingStateDetectionDelay = startChargingStateDetectionDelay;
+    evCharger.forceInitialCharging = forceInitialCharging;
+    evCharger.httpControl = httpControl;
+    return evCharger;
   }
 
   getEvFormControlPrefix(index: number) {
@@ -159,8 +180,8 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
   }
 
   isConfigured(): boolean {
-    return this.evCharger.modbusControl !== undefined
-      || this.evCharger.httpControl !== undefined;
+    return this.evCharger && (this.evCharger.modbusControl !== undefined
+      || this.evCharger.httpControl !== undefined);
   }
 
   get evChargerProtocol() {

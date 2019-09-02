@@ -1,17 +1,18 @@
-import {AfterViewChecked, Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewChecked, Component, Input, OnDestroy, OnInit, QueryList, ViewChildren} from '@angular/core';
 import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {FormHandler} from '../shared/form-handler';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {HttpRead} from './http-read';
 import {Logger} from '../log/logger';
-import {NestedFormService} from '../shared/nested-form-service';
 import {TranslateService} from '@ngx-translate/core';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {HttpReadValue} from '../http-read-value/http-read-value';
 import {getValidString} from '../shared/form-util';
 import {Subscription} from 'rxjs';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
+import {ElectricVehicleComponent} from '../electric-vehicle/electric-vehicle.component';
+import {HttpReadValueComponent} from '../http-read-value/http-read-value.component';
 
 @Component({
   selector: 'app-http-read',
@@ -21,9 +22,11 @@ import {ErrorMessage, ValidatorType} from '../shared/error-message';
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
 })
-export class HttpReadComponent implements OnInit, AfterViewChecked, OnDestroy {
+export class HttpReadComponent implements OnInit, AfterViewChecked {
   @Input()
   httpRead: HttpRead;
+  @ViewChildren('httpReadValues')
+  httpReadValueComps: QueryList<HttpReadValueComponent>;
   @Input()
   valueNames: string[];
   @Input()
@@ -42,11 +45,9 @@ export class HttpReadComponent implements OnInit, AfterViewChecked, OnDestroy {
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
-  nestedFormServiceSubscription: Subscription;
 
   constructor(private logger: Logger,
               private parent: FormGroupDirective,
-              private nestedFormService: NestedFormService,
               private translate: TranslateService
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
@@ -66,16 +67,10 @@ export class HttpReadComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.translate.get(this.translationKeys).subscribe(translatedStrings => {
       this.translatedStrings = translatedStrings;
     });
-    this.nestedFormServiceSubscription = this.nestedFormService.submitted.subscribe(
-      () => this.updateModelFromForm(this.httpRead, this.form));
   }
 
   ngAfterViewChecked() {
     this.formHandler.markLabelsRequired();
-  }
-
-  ngOnDestroy() {
-    this.nestedFormServiceSubscription.unsubscribe();
   }
 
   getFormControlName(formControlName: string): string {
@@ -121,8 +116,22 @@ export class HttpReadComponent implements OnInit, AfterViewChecked, OnDestroy {
       [Validators.required, Validators.pattern(InputValidatorPatterns.URL)]);
   }
 
-  updateModelFromForm(httpRead: HttpRead, form: FormGroup) {
-    httpRead.url = getValidString(this.form.controls[this.getFormControlName('url')].value);
-    this.nestedFormService.complete();
+  updateModelFromForm(): HttpRead | undefined {
+    const url = this.form.controls[this.getFormControlName('url')].value;
+    const httpReadValues = [];
+    this.httpReadValueComps.forEach(httpReadValueComp => {
+      const httpReadValue = httpReadValueComp.updateModelFromForm();
+      if (httpReadValue) {
+        httpReadValues.push(httpReadValue);
+      }
+    });
+
+    if (!(url || httpReadValues.length > 0)) {
+      return undefined;
+    }
+
+    const httpRead = this.httpRead || new HttpRead();
+    httpRead.url = getValidString(url.value);
+    return httpRead;
   }
 }

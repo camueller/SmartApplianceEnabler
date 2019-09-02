@@ -1,17 +1,17 @@
-import {AfterViewChecked, Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewChecked, Component, Input, OnInit, QueryList, ViewChildren} from '@angular/core';
 import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {FormHandler} from '../shared/form-handler';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {Logger} from '../log/logger';
-import {NestedFormService} from '../shared/nested-form-service';
 import {TranslateService} from '@ngx-translate/core';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {HttpWrite} from './http-write';
 import {HttpWriteValue} from '../http-write-value/http-write-value';
-import {Subscription} from 'rxjs';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {getValidString} from '../shared/form-util';
+import {HttpReadValueComponent} from '../http-read-value/http-read-value.component';
+import {HttpWriteValueComponent} from '../http-write-value/http-write-value.component';
 
 @Component({
   selector: 'app-http-write',
@@ -21,9 +21,11 @@ import {getValidString} from '../shared/form-util';
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
 })
-export class HttpWriteComponent implements OnInit, AfterViewChecked, OnDestroy {
+export class HttpWriteComponent implements OnInit, AfterViewChecked {
   @Input()
   httpWrite: HttpWrite;
+  @ViewChildren('httpWriteValues')
+  httpWriteValueComps: QueryList<HttpWriteValueComponent>;
   @Input()
   valueNames: string[];
   @Input()
@@ -42,11 +44,9 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked, OnDestroy {
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
-  nestedFormServiceSubscription: Subscription;
 
   constructor(private logger: Logger,
               private parent: FormGroupDirective,
-              private nestedFormService: NestedFormService,
               private translate: TranslateService
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
@@ -66,16 +66,10 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.translate.get(this.translationKeys).subscribe(translatedStrings => {
       this.translatedStrings = translatedStrings;
     });
-    this.nestedFormServiceSubscription = this.nestedFormService.submitted.subscribe(
-      () => this.updateModelFromForm(this.httpWrite, this.form));
   }
 
   ngAfterViewChecked() {
     this.formHandler.markLabelsRequired();
-  }
-
-  ngOnDestroy() {
-    this.nestedFormServiceSubscription.unsubscribe();
   }
 
   getFormControlName(formControlName: string): string {
@@ -121,8 +115,22 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked, OnDestroy {
       [Validators.required, Validators.pattern(InputValidatorPatterns.URL)]);
   }
 
-  updateModelFromForm(httpWrite: HttpWrite, form: FormGroup) {
-    httpWrite.url = getValidString(this.form.controls[this.getFormControlName('url')].value);
-    this.nestedFormService.complete();
+  updateModelFromForm(): HttpWrite | undefined {
+    const url = this.form.controls[this.getFormControlName('url')].value;
+    const httpWriteValues = [];
+    this.httpWriteValueComps.forEach(httpWriteValueComp => {
+      const httpWriteValue = httpWriteValueComp.updateModelFromForm();
+      if (httpWriteValue) {
+        httpWriteValues.push(httpWriteValue);
+      }
+    });
+
+    if (!(url || httpWriteValues.length > 0)) {
+      return undefined;
+    }
+
+    const httpWrite = this.httpWrite || new HttpWrite();
+    httpWrite.url = getValidString(url.value);
+    return httpWrite;
   }
 }

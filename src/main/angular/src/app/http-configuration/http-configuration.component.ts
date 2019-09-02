@@ -1,11 +1,9 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {ControlContainer, FormGroup, FormGroupDirective} from '@angular/forms';
 import {FormHandler} from '../shared/form-handler';
 import {Logger} from '../log/logger';
-import {NestedFormService} from '../shared/nested-form-service';
 import {HttpConfiguration} from './http-configuration';
 import {getValidString} from '../shared/form-util';
-import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-http-configuration',
@@ -15,16 +13,14 @@ import {Subscription} from 'rxjs';
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
 })
-export class HttpConfigurationComponent implements OnInit, OnDestroy {
+export class HttpConfigurationComponent implements OnInit {
   @Input()
   httpConfiguration: HttpConfiguration;
   form: FormGroup;
   formHandler: FormHandler;
-  nestedFormServiceSubscription: Subscription;
 
   constructor(private logger: Logger,
               private parent: FormGroupDirective,
-              private nestedFormService: NestedFormService,
   ) {
     this.formHandler = new FormHandler();
   }
@@ -32,12 +28,6 @@ export class HttpConfigurationComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.form = this.parent.form;
     this.expandParentForm(this.form, this.httpConfiguration, this.formHandler);
-    this.nestedFormServiceSubscription = this.nestedFormService.submitted.subscribe(
-      () => this.updateModelFromForm(this.httpConfiguration, this.form));
-  }
-
-  ngOnDestroy() {
-    this.nestedFormServiceSubscription.unsubscribe();
   }
 
   expandParentForm(form: FormGroup, httpConfiguration: HttpConfiguration, formHandler: FormHandler) {
@@ -49,10 +39,19 @@ export class HttpConfigurationComponent implements OnInit, OnDestroy {
       httpConfiguration ? httpConfiguration.password : undefined);
   }
 
-  updateModelFromForm(httpConfiguration: HttpConfiguration, form: FormGroup) {
-    httpConfiguration.contentType = getValidString(form.controls.contentType.value);
-    httpConfiguration.username = getValidString(form.controls.username.value);
-    httpConfiguration.password = getValidString(form.controls.password.value);
-    this.nestedFormService.complete();
+  updateModelFromForm(): HttpConfiguration | undefined {
+    const contentType = getValidString(this.form.controls.contentType.value);
+    const username = getValidString(this.form.controls.username.value);
+    const password = getValidString(this.form.controls.password.value);
+
+    if (!(contentType || username || password)) {
+      return undefined;
+    }
+
+    const httpConfiguration = this.httpConfiguration || new HttpConfiguration();
+    httpConfiguration.contentType = contentType;
+    httpConfiguration.username = username;
+    httpConfiguration.password = password;
+    return httpConfiguration;
   }
 }
