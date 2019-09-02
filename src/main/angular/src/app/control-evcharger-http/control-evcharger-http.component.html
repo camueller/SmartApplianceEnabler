@@ -23,6 +23,7 @@
                [valueNames]="readValueNames"
                [translationPrefix]="'ControlEvchargerComponent.'"
                [translationKeys]="readValueNameTextKeys"
+               #httpReadComponents
 ></app-http-read>
 <button type="button" (click)="addHttpRead()" class="ui button">
   {{'ControlEvchargerHttpComponent.button.addHttpRead' | translate}}</button>
@@ -33,6 +34,7 @@
                 [valueNames]="writeValueNames"
                 [translationPrefix]="'ControlEvchargerComponent.'"
                 [translationKeys]="writeValueNameTextKeys"
+                #httpWriteComponents
 ></app-http-write>
 <button type="button" (click)="addHttpWrite()" class="ui button">
   {{'ControlEvchargerHttpComponent.button.addHttpWrite' | translate}}</button>

@@ -1,17 +1,16 @@
-import {AfterViewChecked, Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewChecked, Component, Input, OnInit} from '@angular/core';
 import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {FormHandler} from '../shared/form-handler';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {Logger} from '../log/logger';
-import {NestedFormService} from '../shared/nested-form-service';
 import {FormMarkerService} from '../shared/form-marker-service';
 import {TranslateService} from '@ngx-translate/core';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {HttpWriteValue} from './http-write-value';
 import {HttpMethod} from '../shared/http-method';
-import {Subscription} from 'rxjs';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
+import {getValidFloat, getValidString} from '../shared/form-util';
 
 @Component({
   selector: 'app-http-write-value',
@@ -21,7 +20,7 @@ import {ErrorMessage, ValidatorType} from '../shared/error-message';
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
 })
-export class HttpWriteValueComponent implements OnInit, AfterViewChecked, OnDestroy {
+export class HttpWriteValueComponent implements OnInit, AfterViewChecked {
   @Input()
   httpWriteValue: HttpWriteValue;
   @Input()
@@ -40,11 +39,9 @@ export class HttpWriteValueComponent implements OnInit, AfterViewChecked, OnDest
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
-  nestedFormServiceSubscription: Subscription;
 
   constructor(private logger: Logger,
               private parent: FormGroupDirective,
-              private nestedFormService: NestedFormService,
               private formMarkerService: FormMarkerService,
               private translate: TranslateService
   ) {
@@ -64,16 +61,10 @@ export class HttpWriteValueComponent implements OnInit, AfterViewChecked, OnDest
     this.translate.get(this.translationKeys).subscribe(translatedStrings => {
       this.translatedStrings = translatedStrings;
     });
-    this.nestedFormServiceSubscription = this.nestedFormService.submitted.subscribe(
-      () => this.updateModelFromForm(this.httpWriteValue, this.form));
   }
 
   ngAfterViewChecked() {
     this.formHandler.markLabelsRequired();
-  }
-
-  ngOnDestroy() {
-    this.nestedFormServiceSubscription.unsubscribe();
   }
 
   getFormControlName(formControlName: string): string {
@@ -115,11 +106,20 @@ export class HttpWriteValueComponent implements OnInit, AfterViewChecked, OnDest
       httpWriteValue ? httpWriteValue.method : undefined);
   }
 
-  updateModelFromForm(httpWriteValue: HttpWriteValue, form: FormGroup) {
-    httpWriteValue.name = this.form.controls[this.getFormControlName('name')].value;
-    httpWriteValue.value = this.form.controls[this.getFormControlName('value')].value;
-    httpWriteValue.factorToValue = this.form.controls[this.getFormControlName('factorToValue')].value;
-    httpWriteValue.method = this.form.controls[this.getFormControlName('method')].value;
-    this.nestedFormService.complete();
+  updateModelFromForm(): HttpWriteValue | undefined {
+    const name = getValidString(this.form.controls[this.getFormControlName('name')].value);
+    const value = getValidString(this.form.controls[this.getFormControlName('value')].value);
+    const factorToValue = getValidFloat(this.form.controls[this.getFormControlName('factorToValue')].value);
+    const method = getValidString(this.form.controls[this.getFormControlName('method')].value);
+
+    if (!(name || value || factorToValue || method)) {
+      return undefined;
+    }
+
+    const httpWriteValue = this.httpWriteValue || new HttpWriteValue();
+    httpWriteValue.name = name;
+    httpWriteValue.value = value;
+    httpWriteValue.factorToValue = factorToValue;
+    httpWriteValue.method = method;
   }
 }

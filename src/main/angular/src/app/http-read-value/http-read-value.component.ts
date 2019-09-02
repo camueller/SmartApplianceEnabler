@@ -1,8 +1,6 @@
-import {AfterViewChecked, Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewChecked, Component, Input, OnInit} from '@angular/core';
 import {Logger} from '../log/logger';
 import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
-import {NestedFormService} from '../shared/nested-form-service';
-import {FormMarkerService} from '../shared/form-marker-service';
 import {TranslateService} from '@ngx-translate/core';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {FormHandler} from '../shared/form-handler';
@@ -10,7 +8,6 @@ import {ErrorMessages} from '../shared/error-messages';
 import {HttpReadValue} from './http-read-value';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {getValidFloat, getValidString} from '../shared/form-util';
-import {Subscription} from 'rxjs';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
 
 @Component({
@@ -21,7 +18,7 @@ import {ErrorMessage, ValidatorType} from '../shared/error-message';
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
 })
-export class HttpReadValueComponent implements OnInit, AfterViewChecked, OnDestroy {
+export class HttpReadValueComponent implements OnInit, AfterViewChecked {
   @Input()
   httpReadValue: HttpReadValue;
   @Input()
@@ -40,12 +37,9 @@ export class HttpReadValueComponent implements OnInit, AfterViewChecked, OnDestr
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
-  nestedFormServiceSubscription: Subscription;
 
   constructor(private logger: Logger,
               private parent: FormGroupDirective,
-              private nestedFormService: NestedFormService,
-              private formMarkerService: FormMarkerService,
               private translate: TranslateService
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
@@ -64,17 +58,10 @@ export class HttpReadValueComponent implements OnInit, AfterViewChecked, OnDestr
     this.translate.get(this.translationKeys).subscribe(translatedStrings => {
       this.translatedStrings = translatedStrings;
     });
-    this.nestedFormServiceSubscription = this.nestedFormService.submitted.subscribe(
-      () => this.updateModelFromForm(this.httpReadValue, this.form));
-    this.formMarkerService.dirty.subscribe(() => this.form.markAsDirty());
   }
 
   ngAfterViewChecked() {
     this.formHandler.markLabelsRequired();
-  }
-
-  ngOnDestroy() {
-    this.nestedFormServiceSubscription.unsubscribe();
   }
 
   getFormControlName(formControlName: string): string {
@@ -106,14 +93,25 @@ export class HttpReadValueComponent implements OnInit, AfterViewChecked, OnDestr
     }
   }
 
-  updateModelFromForm(httpReadValue: HttpReadValue, form: FormGroup) {
-    httpReadValue.name = getValidString(this.form.controls[this.getFormControlName('name')].value);
-    httpReadValue.data = getValidString(this.form.controls[this.getFormControlName('data')].value);
-    httpReadValue.path = getValidString(this.form.controls[this.getFormControlName('path')].value);
-    httpReadValue.extractionRegex = getValidString(this.form.controls[this.getFormControlName('extractionRegex')].value);
+  updateModelFromForm(): HttpReadValue | undefined {
+    const name = getValidString(this.form.controls[this.getFormControlName('name')].value);
+    const data = getValidString(this.form.controls[this.getFormControlName('data')].value);
+    const path = getValidString(this.form.controls[this.getFormControlName('path')].value);
+    const extractionRegex = getValidString(this.form.controls[this.getFormControlName('extractionRegex')].value);
+    let factorToValue;
     if (!this.disableFactorToValue) {
-      httpReadValue.factorToValue = getValidFloat(this.form.controls[this.getFormControlName('factorToValue')].value);
+      factorToValue = getValidFloat(this.form.controls[this.getFormControlName('factorToValue')].value);
     }
-    this.nestedFormService.complete();
+
+    if (!(name || data || path || extractionRegex || factorToValue)) {
+      return undefined;
+    }
+
+    const httpReadValue = this.httpReadValue || new HttpReadValue();
+    httpReadValue.name = name;
+    httpReadValue.data = data;
+    httpReadValue.path = path;
+    httpReadValue.extractionRegex = extractionRegex;
+    httpReadValue.factorToValue = factorToValue;
   }
 }

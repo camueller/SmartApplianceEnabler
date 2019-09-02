@@ -16,7 +16,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, CanDeactivate} from '@angular/router';
 import {ControlFactory} from './control-factory';
 import {Switch} from '../control-switch/switch';
@@ -38,7 +38,7 @@ import {SettingsDefaults} from '../settings/settings-defaults';
 import {Appliance} from '../appliance/appliance';
 import {FormControl, FormGroup} from '@angular/forms';
 import {EvCharger} from '../control-evcharger/ev-charger';
-import {NestedFormService} from '../shared/nested-form-service';
+import {ControlEvchargerComponent} from '../control-evcharger/control-evcharger.component';
 
 @Component({
   selector: 'app-appliance-switch',
@@ -47,6 +47,8 @@ import {NestedFormService} from '../shared/nested-form-service';
 })
 export class ControlComponent implements OnInit, CanDeactivate<ControlComponent> {
   form: FormGroup;
+  @ViewChild(ControlEvchargerComponent)
+  evChargerComp: ControlEvchargerComponent;
   applianceId: string;
   controlDefaults: ControlDefaults;
   control: Control;
@@ -65,7 +67,6 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   constructor(private logger: Logger,
               private controlService: ControlService,
               private appliancesReloadService: AppliancesReloadService,
-              private nestedFormService: NestedFormService,
               private route: ActivatedRoute,
               private dialogService: DialogService,
               private translate: TranslateService) {
@@ -90,6 +91,7 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
       }
     });
     this.form.markAsPristine();
+    console.log('FORM=', this.form);
   }
 
   buildFormGroup(): FormGroup {
@@ -150,12 +152,16 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   }
 
   submitForm() {
-    const subscription = this.nestedFormService.completed.subscribe(() => {
-      this.controlService.updateControl(this.control, this.applianceId).subscribe(
-        () => this.appliancesReloadService.reload());
-      this.form.markAsPristine();
-      subscription.unsubscribe();
-    });
-    this.nestedFormService.submit();
+    this.control.evCharger = this.evChargerComp.updateModelFromForm();
+    console.log('CONTROL=', this.control);
+
+    // const subscription = this.nestedFormService.completed.subscribe(() => {
+    //   console.log('CONTROL=', this.control);
+    //   // this.controlService.updateControl(this.control, this.applianceId).subscribe(
+    //   //   () => this.appliancesReloadService.reload());
+    //   this.form.markAsPristine();
+    //   subscription.unsubscribe();
+    // });
+    // this.nestedFormService.submit();
   }
 }
