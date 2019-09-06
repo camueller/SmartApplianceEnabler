@@ -56,7 +56,7 @@ Hard resetting via RTS pin...
 Die aktuelle Leistungsaufnahme kann wie folgt abgefragt werden:
 ```
 curl http://192.168.1.1/cm?cmnd=Status%208
-STATUS8 = {"StatusPWR":{"Total":0.000, "Yesterday":0.000, "Today":0.000, "Power":27, "Factor":0.94, "Voltage":234, "Current":0.122}}
+{"StatusSNS":{"Time":"2019-09-06T20:06:19","ENERGY":{"TotalStartTime":"2019-08-18T11:07:55","Total":0.003,"Yesterday":0.000,"Today":0.003,"Power":26,"ApparentPower":25,"ReactivePower":25,"Factor":0.06,"Voltage":239,"Current":0.106}}}
 ```
 
 Aus obigem Beispiel ergeben sich folgende Feld-Inhalte im *Smart Appliance Enabler*:
@@ -64,7 +64,7 @@ Aus obigem Beispiel ergeben sich folgende Feld-Inhalte im *Smart Appliance Enabl
 | Feld         | Wert |
 | ----         | ---- |
 | URL          | http://192.168.1.1/cm?cmnd=Status%208 |
-| Regulärer Ausdruck zum Extrahieren der Leistung | .*Power.:(\d+).* |
+| Regulärer Ausdruck zum Extrahieren der Leistung | ,.*Power.:(\d+).* |
 
 Für jede Zähler-Abfrage finden sich in der [Log-Datei](Support.md#Log) folgende Zeilen:
 ```
@@ -75,8 +75,8 @@ Für jede Zähler-Abfrage finden sich in der [Log-Datei](Support.md#Log) folgend
 2017-06-03 18:39:55,126 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:105] F-00000001-000000000001-00: username=null
 2017-06-03 18:39:55,126 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:106] F-00000001-000000000001-00: password=null
 2017-06-03 18:39:55,146 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:118] F-00000001-000000000001-00: Response code is 200
-2017-06-03 18:39:55,147 DEBUG [Timer-0] d.a.s.a.HttpElectricityMeter [HttpElectricityMeter.java:119] F-00000001-000000000001-00: HTTP response: STATUS8 = {"StatusPWR":{"Total":0.000, "Yesterday":0.000, "Today":0.000, "Power":26, "Factor":0.94, "Voltage":234, "Current":0.122}}
-2017-06-03 18:39:55,147 DEBUG [Timer-0] d.a.s.a.HttpElectricityMeter [HttpElectricityMeter.java:120] F-00000001-000000000001-00: Power value extraction regex: .*Power.:(\d+).*
+2017-06-03 18:39:55,147 DEBUG [Timer-0] d.a.s.a.HttpElectricityMeter [HttpElectricityMeter.java:119] F-00000001-000000000001-00: HTTP response: STATUS8 = {"StatusSNS":{"Time":"2019-09-06T19:19:50","ENERGY":{"TotalStartTime":"2019-08-18T11:30:33","Total":27.772,"Yesterday":1.046,"Today":0.980,"Power":26,"ApparentPower":47,"ReactivePower":47,"Factor":0.05,"Voltage":231,"Current":0.204}}}
+2017-06-03 18:39:55,147 DEBUG [Timer-0] d.a.s.a.HttpElectricityMeter [HttpElectricityMeter.java:120] F-00000001-000000000001-00: Power value extraction regex: ,.*Power.:(\d+).*
 2017-06-03 18:39:55,153 DEBUG [Timer-0] d.a.s.a.HttpElectricityMeter [HttpElectricityMeter.java:119] F-00000001-000000000001-00: Power value extracted from HTTP response: 26
 ```
 
