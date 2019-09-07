@@ -41,6 +41,12 @@ pi@raspi ~ $ tail -f /tmp/rolling-2018-04-08.log
 2018-04-08 10:17:30,576 INFO [Thread-7] d.a.s.u.FileHandler [FileHandler.java:55] Using appliance directory /app
 2018-04-08 10:17:30,583 INFO [main] d.a.s.Application [Application.java:95] PID 23914 written to /var/run/smartapplianceenabler.pid
 ```
+Der *Log-Level* steht defaultmäßig auf ```debug```, um im Fehlerfall detaillierte Informationen zu haben. Falls weniger geloggt werden soll, kann der Log-Level auf ```info``` geändert werden in der Datei ```/app/logbacl-spring.xml```:
+```
+...
+<logger name="de.avanux" level="debug" additivity="false">
+...
+```
 
 ## Version des Smart Appliance Enabler
 Direkt nach dem Start schreibt der *Smart Appliance Enabler* die Version in die Log-Datei:
