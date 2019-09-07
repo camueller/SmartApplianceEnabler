@@ -86,7 +86,7 @@ Der Sunny Home Manager kann die Geräte erst dann steuern und deren Verbrauch me
 ### [Bauen aus Sourcen](doc/Build_DE.md)
 Zur Nutzung von Features, die noch nicht in der releasten Version enthalten sind, muss der *Smart Appliance Enabler* [aus Sourcen gebaut werden](doc/Build_DE.md).
 
-### [Fragen / Probleme](doc/Troubleshooting_DE.md)
+### [Fragen / Probleme](doc/Support_DE.md)
 Durch die Vielzahl von Hard- und Softwarekomponenten können bei der Verwendung des *Smart Appliance Enabler* naturgemäß Fragen oder Probleme auftreten. In diesem Fall sollten [diese Hinweise](doc/Support_DE.md) beachtet werden.
 
 ## Mitmachen
