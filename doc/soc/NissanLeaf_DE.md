@@ -43,12 +43,6 @@ Installing collected packages: pycryptodome, chardet, certifi, urllib3, idna, re
 Successfully installed PyYAML-5.1.2 certifi-2019.6.16 chardet-3.0.4 idna-2.8 iso8601-0.1.12 pycarwings2-2.9 pycryptodome-3.9.0 requests-2.22.0 urllib3-1.25.3
 ```
 
-In der Datei ```~/.local/lib/python2.7/site-packages/pycarwings2/pycarwings2.py``` muss ggf. die Carwings-URL angepasst werden, da diese sich von Zeit zu Zeit ändert. Diese kann man ggf. von der "My Leaf"-App abschauen: https://gitlab.com/tobiaswkjeldsen/carwingsflutter/blob/master/android/app/src/main/java/dk/kjeldsen/carwingsflutter/CarwingsSession.java 
-Dazu nach einer Zeile mit ```BASE_URL``` am Zeilenanfang suchen und die URL auf folgenden Wert anpassen:
-```console
-BASE_URL = "https://gdcportalgw.its-mo.com/api_v181217_NE/gdc/"
-```
-
 Jetzt kann das Verzeichnis für das SOC-Script und Konfigurationsdatei angelegt werden:
 ```console
 pi@raspberrypi ~ $ mkdir /app/soc
@@ -57,7 +51,7 @@ pi@raspberrypi ~ $ cd /app/soc
 
 Die Konfigurationsdatei muss den Namen ```config.ini``` haben mit folgendem Inhalt:
 ```console
-[soc]
+[get-leaf-info]
 username = IhrNissan+YOUUsername
 password = IhrNissan+YOUPasswort
 region = NE
@@ -138,6 +132,13 @@ Im *Smart Appliance Enabler* wird als SOC-Script angegeben: ```/app/soc/soc.sh``
 Außerdem muss der nachfolgende *Reguläre Ausdruck* angegeben werden, um aus den Ausgaben den eigentlichen Zahlenwert zu extrahieren:
 ```
 .*state_of_charge (\d+)
+```
+
+### Hinweis
+In der Datei ```~/.local/lib/python3.5/site-packages/pycarwings2/pycarwings2.py``` muss ggf. die Carwings-URL angepasst werden, da diese sich von Zeit zu Zeit ändert. Diese kann man ggf. von der "My Leaf"-App abschauen: https://gitlab.com/tobiaswkjeldsen/carwingsflutter/blob/master/android/app/src/main/java/dk/kjeldsen/carwingsflutter/CarwingsSession.java 
+Dazu nach einer Zeile mit ```BASE_URL``` am Zeilenanfang suchen und die URL auf folgenden Wert anpassen:
+```console
+BASE_URL = "https://gdcportalgw.its-mo.com/api_v181217_NE/gdc/"
 ```
 
 ## Dart-Implementierung
