@@ -7,7 +7,7 @@ import {FormHandler} from '../shared/form-handler';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {ModbusReadValue} from './modbus-read-value';
-import {InputValidatorPatterns} from '../shared/input-validator-patterns';
+import {getValidString} from '../shared/form-util';
 
 @Component({
   selector: 'app-modbus-read-value',
@@ -76,5 +76,19 @@ export class ModbusReadValueComponent implements OnInit, AfterViewChecked {
       [Validators.required]);
     formHandler.addFormControl(form, this.getFormControlName('extractionRegex'),
       modbusReadValue ? modbusReadValue.extractionRegex : undefined);
+  }
+
+  updateModelFromForm(): ModbusReadValue | undefined {
+    const name = this.form.controls[this.getFormControlName('name')].value;
+    const extractionRegex = this.form.controls[this.getFormControlName('extractionRegex')].value;
+
+    if (!(name || extractionRegex)) {
+      return undefined;
+    }
+
+    const modbusReadValue = this.modbusReadValue || new ModbusReadValue();
+    modbusReadValue.name = getValidString(name);
+    modbusReadValue.extractionRegex = getValidString(extractionRegex);
+    return modbusReadValue;
   }
 }

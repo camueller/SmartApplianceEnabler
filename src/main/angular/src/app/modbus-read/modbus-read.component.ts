@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, Input, OnInit} from '@angular/core';
+import {AfterViewChecked, Component, Input, OnInit, QueryList, ViewChildren} from '@angular/core';
 import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {Logger} from '../log/logger';
 import {TranslateService} from '@ngx-translate/core';
@@ -9,6 +9,8 @@ import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {ModbusRead} from './modbus-read';
 import {ModbusReadValue} from '../modbus-read-value/modbus-read-value';
+import {getValidInt, getValidString} from '../shared/form-util';
+import {ModbusReadValueComponent} from '../modbus-read-value/modbus-read-value.component';
 
 @Component({
   selector: 'app-modbus-read',
@@ -21,6 +23,8 @@ import {ModbusReadValue} from '../modbus-read-value/modbus-read-value';
 export class ModbusReadComponent implements OnInit, AfterViewChecked {
   @Input()
   modbusRead: ModbusRead;
+  @ViewChildren('modbusReadValues')
+  modbusReadValueComps: QueryList<ModbusReadValueComponent>;
   @Input()
   valueNames: string[];
   @Input()
@@ -58,7 +62,6 @@ export class ModbusReadComponent implements OnInit, AfterViewChecked {
     this.expandParentForm(this.form, this.modbusRead, this.formHandler);
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
-      console.log('ERRORS=', this.errors);
     });
     // this.translate.get(this.translationKeys).subscribe(translatedStrings => {
     //   this.translatedStrings = translatedStrings;
@@ -127,5 +130,32 @@ export class ModbusReadComponent implements OnInit, AfterViewChecked {
     formHandler.addFormControl(form, this.getFormControlName('factorToValue'),
       modbusRead ? modbusRead.factorToValue : undefined,
       [Validators.pattern(InputValidatorPatterns.FLOAT)]);
+  }
+
+  updateModelFromForm(): ModbusRead | undefined {
+    const address = this.form.controls[this.getFormControlName('address')].value;
+    const type = this.form.controls[this.getFormControlName('type')].value;
+    const bytes = this.form.controls[this.getFormControlName('bytes')].value;
+    const byteOrder = this.form.controls[this.getFormControlName('byteOrder')].value;
+    const factorToValue = this.form.controls[this.getFormControlName('factorToValue')].value;
+    const modbusReadValues = [];
+    this.modbusReadValueComps.forEach(modbusReadValueComp => {
+      const modbusReadValue = modbusReadValueComp.updateModelFromForm();
+      if (modbusReadValue) {
+        modbusReadValues.push(modbusReadValue);
+      }
+    });
+
+    if (!(address || type || bytes || byteOrder || factorToValue || modbusReadValues.length > 0)) {
+      return undefined;
+    }
+
+    const modbusRead = this.modbusRead || new ModbusRead();
+    modbusRead.address = getValidString(address);
+    modbusRead.type = getValidString(type);
+    modbusRead.bytes = getValidInt(bytes);
+    modbusRead.byteOrder = getValidString(byteOrder);
+    modbusRead.address = getValidString(address);
+    return modbusRead;
   }
 }
