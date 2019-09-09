@@ -216,45 +216,11 @@ export class ControlFactory {
   }
 
   createEvModbusControl(rawModbusControl: any): EvModbusControl {
-    const evModbusControl = new EvModbusControl(...rawModbusControl);
-    // if (!!rawModbusControl.registerReads) {
-    //   evModbusControl.modbusReads = [];
-    //   rawModbusControl.registerReads.forEach((rawRegisterRead) => {
-    //     if (!!rawRegisterRead.readValues && rawRegisterRead.readValues.length > 0) {
-    //       evModbusControl.modbusReads.push({...rawRegisterRead});
-    //     }
-    //   });
-    // }
-    // if (!!rawModbusControl.httpWrites) {
-    //   evHttpControl.httpWrites = [];
-    //   rawHttpControl.httpWrites.forEach((rawHttpWrite) => {
-    //     if (!!rawHttpWrite.writeValues && rawHttpWrite.writeValues.length > 0) {
-    //       evHttpControl.httpWrites.push({... rawHttpWrite});
-    //     }
-    //   });
-    // }
-    return evModbusControl;
+    return new EvModbusControl(...rawModbusControl);
   }
 
   createEvHttpControl(rawHttpControl: any): EvHttpControl {
-    const evHttpControl = new EvHttpControl(...rawHttpControl);
-    if (!!rawHttpControl.httpReads) {
-      evHttpControl.httpReads = [];
-      rawHttpControl.httpReads.forEach((rawHttpRead) => {
-        if (!!rawHttpRead.readValues && rawHttpRead.readValues.length > 0) {
-          evHttpControl.httpReads.push({...rawHttpRead});
-        }
-      });
-    }
-    if (!!rawHttpControl.httpWrites) {
-      evHttpControl.httpWrites = [];
-      rawHttpControl.httpWrites.forEach((rawHttpWrite) => {
-        if (!!rawHttpWrite.writeValues && rawHttpWrite.writeValues.length > 0) {
-          evHttpControl.httpWrites.push({... rawHttpWrite});
-        }
-      });
-    }
-    return evHttpControl;
+    return new EvHttpControl(...rawHttpControl);
   }
 
   toJSON(control: Control): string {
