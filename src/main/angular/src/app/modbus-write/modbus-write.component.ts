@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, Input, OnInit} from '@angular/core';
+import {AfterViewChecked, Component, Input, OnInit, QueryList, ViewChildren} from '@angular/core';
 import {Logger} from '../log/logger';
 import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
@@ -9,6 +9,8 @@ import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {ModbusWrite} from './modbus-write';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {ModbusWriteValue} from '../modbus-write-value/modbus-write-value';
+import {getValidString} from '../shared/form-util';
+import {ModbusWriteValueComponent} from '../modbus-write-value/modbus-write-value.component';
 
 @Component({
   selector: 'app-modbus-write',
@@ -21,6 +23,8 @@ import {ModbusWriteValue} from '../modbus-write-value/modbus-write-value';
 export class ModbusWriteComponent implements OnInit, AfterViewChecked {
   @Input()
   modbusWrite: ModbusWrite;
+  @ViewChildren('modbusWriteValues')
+  modbusWriteValueComps: QueryList<ModbusWriteValueComponent>;
   @Input()
   valueNames: string[];
   @Input()
@@ -114,5 +118,28 @@ export class ModbusWriteComponent implements OnInit, AfterViewChecked {
     formHandler.addFormControl(form, this.getFormControlName('factorToValue'),
       modbusWrite ? modbusWrite.factorToValue : undefined,
       [Validators.pattern(InputValidatorPatterns.FLOAT)]);
+  }
+
+  updateModelFromForm(): ModbusWrite | undefined {
+    const address = this.form.controls[this.getFormControlName('address')].value;
+    const type = this.form.controls[this.getFormControlName('type')].value;
+    const factorToValue = this.form.controls[this.getFormControlName('factorToValue')].value;
+    const modbusWriteValues = [];
+    this.modbusWriteValueComps.forEach(modbusWriteValueComp => {
+      const modbusWriteValue = modbusWriteValueComp.updateModelFromForm();
+      if (modbusWriteValue) {
+        modbusWriteValues.push(modbusWriteValue);
+      }
+    });
+
+    if (!(address || type || factorToValue || modbusWriteValues.length > 0)) {
+      return undefined;
+    }
+
+    const modbusWrite = this.modbusWrite || new ModbusWrite();
+    modbusWrite.address = getValidString(address);
+    modbusWrite.type = getValidString(type);
+    modbusWrite.address = getValidString(address);
+    return modbusWrite;
   }
 }

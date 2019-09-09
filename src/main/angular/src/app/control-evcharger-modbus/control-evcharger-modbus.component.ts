@@ -1,21 +1,21 @@
-import {AfterViewChecked, Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewChecked, Component, Input, OnInit, QueryList, ViewChildren} from '@angular/core';
 import {Logger} from '../log/logger';
 import {TranslateService} from '@ngx-translate/core';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {FormHandler} from '../shared/form-handler';
 import {ErrorMessages} from '../shared/error-messages';
-import {ControlContainer, FormArray, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
-import {NestedFormService} from '../shared/nested-form-service';
-import {FormMarkerService} from '../shared/form-marker-service';
+import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {Settings} from '../settings/settings';
 import {EvModbusControl} from './ev-modbus-control';
 import {SettingsDefaults} from '../settings/settings-defaults';
 import {EvModbusWriteRegisterName} from './ev-modbus-write-register-name';
-import {ModbusRegisterConfguration} from '../shared/modbus-register-confguration';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {ModbusRead} from '../modbus-read/modbus-read';
 import {EvModbusReadRegisterName} from './ev-modbus-read-register-name';
 import {ModbusWrite} from '../modbus-write/modbus-write';
+import {ModbusReadComponent} from '../modbus-read/modbus-read.component';
+import {ModbusWriteComponent} from '../modbus-write/modbus-write.component';
+import {getValidString} from '../shared/form-util';
 
 @Component({
   selector: 'app-control-evcharger-modbus',
@@ -25,14 +25,17 @@ import {ModbusWrite} from '../modbus-write/modbus-write';
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
 })
-export class ControlEvchargerModbusComponent implements OnInit, AfterViewChecked, OnDestroy {
+export class ControlEvchargerModbusComponent implements OnInit, AfterViewChecked {
   @Input()
   evModbusControl: EvModbusControl;
   @Input()
   settings: Settings;
   @Input()
   settingsDefaults: SettingsDefaults;
-  modbusConfigurations: FormArray;
+  @ViewChildren('modbusReadComponents')
+  modbusReadComps: QueryList<ModbusReadComponent>;
+  @ViewChildren('modbusWriteComponents')
+  modbusWriteComps: QueryList<ModbusWriteComponent>;
   form: FormGroup;
   formHandler: FormHandler;
   @Input()
@@ -44,8 +47,6 @@ export class ControlEvchargerModbusComponent implements OnInit, AfterViewChecked
 
   constructor(private logger: Logger,
               private parent: FormGroupDirective,
-              private nestedFormService: NestedFormService,
-              private formMarkerService: FormMarkerService,
               private translate: TranslateService) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
     this.formHandler = new FormHandler();
@@ -64,18 +65,10 @@ export class ControlEvchargerModbusComponent implements OnInit, AfterViewChecked
     this.translate.get(this.translationKeys).subscribe(translatedStrings => {
       this.translatedStrings = translatedStrings;
     });
-    this.nestedFormService.submitted.subscribe(
-      () => this.updateFromForm(this.evModbusControl, this.form));
-    this.formMarkerService.dirty.subscribe(() => this.form.markAsDirty());
   }
 
   ngAfterViewChecked() {
     this.formHandler.markLabelsRequired();
-  }
-
-  ngOnDestroy() {
-    // FIXME: erzeugt Fehler bei Wechsel des Zählertypes
-    // this.nestedFormService.submitted.unsubscribe();
   }
 
   getReadFormControlPrefix(index: number) {
@@ -102,16 +95,6 @@ export class ControlEvchargerModbusComponent implements OnInit, AfterViewChecked
     return Object.keys(EvModbusWriteRegisterName).map(key => `ControlEvchargerComponent.${key}`);
   }
 
-  expandParentForm(form: FormGroup, evModbusControl: EvModbusControl, formHandler: FormHandler) {
-    this.formHandler.addFormControl(form, 'modbusIdref', evModbusControl.idref,
-      [Validators.required]);
-    this.formHandler.addFormControl(form, 'slaveAddress', evModbusControl.slaveAddress,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
-  }
-
-  updateFromForm(evModbusControl: EvModbusControl, form: FormGroup) {
-  }
-
   addModbusRead() {
     const modbusRead = new ModbusRead();
     this.evModbusControl.registerReads.push(modbusRead);
@@ -122,5 +105,42 @@ export class ControlEvchargerModbusComponent implements OnInit, AfterViewChecked
     const modbusWrite = new ModbusWrite();
     this.evModbusControl.registerWrites.push(modbusWrite);
     this.form.markAsDirty();
+  }
+
+  expandParentForm(form: FormGroup, evModbusControl: EvModbusControl, formHandler: FormHandler) {
+    this.formHandler.addFormControl(form, 'idref', evModbusControl.idref,
+      [Validators.required]);
+    this.formHandler.addFormControl(form, 'slaveAddress', evModbusControl.slaveAddress,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
+  }
+
+  updateModelFromForm(): EvModbusControl | undefined {
+    const idref = getValidString(this.form.controls.idref.value);
+    const slaveAdress = getValidString(this.form.controls.slaveAddress.value);
+    const modbusReads = [];
+    this.modbusReadComps.forEach(modbusReadComponent => {
+      const modbusRead = modbusReadComponent.updateModelFromForm();
+      if (modbusRead) {
+        modbusReads.push(modbusRead);
+      }
+    });
+    const modbusWrites = [];
+    this.modbusWriteComps.forEach(modbusWriteComponent => {
+      const modbusWrite = modbusWriteComponent.updateModelFromForm();
+      if (modbusWrite) {
+        modbusWrites.push(modbusWrite);
+      }
+    });
+
+    if (!(slaveAdress || modbusReads.length > 0 || modbusWrites.length > 0)) {
+      return undefined;
+    }
+
+    const evModbusControl = this.evModbusControl || new EvModbusControl();
+    evModbusControl.idref = idref;
+    evModbusControl.slaveAddress = slaveAdress;
+    evModbusControl.registerReads = modbusReads;
+    evModbusControl.registerWrites = modbusWrites;
+    return evModbusControl;
   }
 }

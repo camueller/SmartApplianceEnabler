@@ -266,11 +266,6 @@
   "ModbusWriteValueComponent.name": "Zustand",
   "ModbusWriteValueComponent.value": "Wert",
 
-  "ModbusRegisterComponent.enabled": "Aktiv",
-  "ModbusRegisterComponent.idref": "Modbus",
-  "ModbusRegisterComponent.write": "Schreibzugriff",
-
-
   "ScheduleComponent.schedule": "Zeitplan",
   "ScheduleComponent.enabled": "aktiviert",
   "ScheduleComponent.daysOfWeek_monday": "Montag",

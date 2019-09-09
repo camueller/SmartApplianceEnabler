@@ -7,6 +7,7 @@ import {FormHandler} from '../shared/form-handler';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {ModbusWriteValue} from './modbus-write-value';
+import {getValidString} from '../shared/form-util';
 
 @Component({
   selector: 'app-modbus-write-value',
@@ -75,5 +76,19 @@ export class ModbusWriteValueComponent implements OnInit, AfterViewChecked {
       [Validators.required]);
     formHandler.addFormControl(form, this.getFormControlName('value'),
       modbusWriteValue ? modbusWriteValue.value : undefined);
+  }
+
+  updateModelFromForm(): ModbusWriteValue | undefined {
+    const name = this.form.controls[this.getFormControlName('name')].value;
+    const value = this.form.controls[this.getFormControlName('value')].value;
+
+    if (!(name || value)) {
+      return undefined;
+    }
+
+    const modbusWriteValue = this.modbusWriteValue || new ModbusWriteValue();
+    modbusWriteValue.name = getValidString(name);
+    modbusWriteValue.value = getValidString(value);
+    return modbusWriteValue;
   }
 }

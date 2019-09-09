@@ -2,7 +2,7 @@
   <div class="ui fields sae-fields">
     <div class="field">
       <label>{{'ControlEvchargerComponent.idref' | translate}}</label>
-      <select class="ui fluid dropdown" formControlName="modbusIdref">
+      <select class="ui fluid dropdown" formControlName="idref">
         <option *ngFor="let modbusSettings of settings.modbusSettings" [ngValue]="modbusSettings.modbusTcpId"
                 [selected]="modbusSettings.modbusTcpId==evModbusControl.idref">
           {{modbusSettings.modbusTcpId}}</option>
