@@ -1,0 +1,45 @@
+<!-- FIXME is the line below really used ??? -->
+<h4 class="ui dividing header sae-header" *ngIf="valueName">{{valueName}}</h4>
+<div class="ui hidden divider"></div>
+<div [formGroup]="form">
+  <div class="ui fields">
+    <div class="field">
+      <label>{{'ModbusWriteComponent.address' | translate}}</label>
+      <input type="text" formControlName="{{this.getFormControlName('address')}}">
+      <div *ngIf="errors[this.getFormControlName('address')]"
+           class="ui negative message">{{errors[this.getFormControlName('address')]}}</div>
+    </div>
+    <div class="field">
+      <label>{{'ModbusWriteComponent.type' | translate}}</label>
+      <select class="ui fluid dropdown" formControlName="{{this.getFormControlName('type')}}">
+        <option *ngFor="let readRegisterType of writeRegisterTypes"
+                [ngValue]="readRegisterType"
+                [selected]="readRegisterType==type"
+        >{{readRegisterType}}</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>{{'ModbusWriteComponent.factorToValue' | translate}}</label>
+      <input type="text" formControlName="{{this.getFormControlName('factorToValue')}}">
+    </div>
+  </div>
+  <div *ngFor="let writeValue of modbusWrite.registerWriteValues; index as i">
+    <div class="ui fields">
+      <div class="field">
+        <app-modbus-write-value
+          [modbusWriteValue]="writeValue"
+          [formControlNamePrefix]="getWriteValueFormControlPrefix(i)"
+          [valueNames]="valueNames"
+          [translationPrefix]="translationPrefix"
+          [translationKeys]="translationKeys"
+          #modbusWriteValues
+        ></app-modbus-write-value>
+      </div>
+      <div class="field icon-field" *ngIf="! singleValue">
+        <i (click)="removeValue(i)" class="icon big red remove circle"></i>
+      </div>
+    </div>
+  </div>
+</div>
+<button type="button" (click)="addValue()" class="ui button" *ngIf="! singleValue">
+  {{'HttpWriteComponent.button.addValue' | translate}}</button>

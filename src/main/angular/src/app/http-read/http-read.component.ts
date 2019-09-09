@@ -87,6 +87,7 @@ export class HttpReadComponent implements OnInit, AfterViewChecked {
   }
 
   get valueName() {
+    // TODO ist das so notwendig?
     if (this.httpRead.readValues && this.httpRead.readValues.length === 1) {
       const httpReadValue = this.httpRead.readValues[0];
       if (httpReadValue.name) {

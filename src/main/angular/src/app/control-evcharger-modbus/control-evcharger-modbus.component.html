@@ -1,4 +1,4 @@
-<div class="ui hidden divider" [formGroup]="form">
+<div class="ui fields" [formGroup]="form">
   <div class="ui fields sae-fields">
     <div class="field">
       <label>{{'ControlEvchargerComponent.idref' | translate}}</label>
@@ -15,72 +15,31 @@
            class="ui negative message">{{errors['slaveAddress']}}</div>
     </div>
   </div>
-  <div formArrayName="modbusConfigurations">
-    <div *ngFor="let modbusConfiguration of modbusConfigurations.controls; index as i; last as l" [formGroupName]="i">
-      <div class="ui hidden divider"></div>
-      <div class="ui fields  sae-fields">
-        <div class="field">
-          <label>{{'ControlEvchargerComponent.name' | translate}}</label>
-          <select class="ui fluid dropdown" formControlName="name">
-            <option *ngFor="let modbusRegisterName of getModbusRegisterNames()"
-                    [ngValue]="modbusRegisterName"
-            >{{getTranslatedModbusRegisterName(modbusRegisterName)}}</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>{{'ControlEvchargerComponent.registerAddress' | translate}}</label>
-          <input type="text" formControlName="registerAddress">
-          <div *ngIf="getIndexedErrorMessage('registerAddress', i)" class="ui negative message">
-            {{getIndexedErrorMessage('registerAddress', i)}}</div>
-        </div>
-        <div class="field">
-          <label>{{'ControlEvchargerComponent.write' | translate}}</label>
-          <input class="ui checkbox" type="checkbox" formControlName="write">
-        </div>
-        <div class="field">
-          <label>{{'ControlEvchargerComponent.registerType' | translate}}</label>
-          <select class="ui fluid dropdown" formControlName="registerType">
-            <option
-              *ngFor="let modbusRegisterType of getModbusRegisterTypes(isModbusWriteRegister(modbusConfiguration))"
-              [ngValue]="modbusRegisterType"
-              [selected]="modbusRegisterType==getRegisterType(modbusConfiguration)"
-            >{{modbusRegisterType}}</option>
-          </select>
-        </div>
-        <div class="field" *ngIf="!isModbusWriteRegister(modbusConfiguration)">
-          <label>{{'ControlEvchargerComponent.bytes' | translate}}</label>
-          <input type="text" formControlName="bytes">
-        </div>
-        <div class="field" *ngIf="!isModbusWriteRegister(modbusConfiguration)">
-          <label>{{'ControlEvchargerComponent.byteOrder' | translate}}</label>
-          <select class="ui fluid dropdown" formControlName="byteOrder">
-            <option *ngFor="let byteOrder of getByteOrders()"
-                    [ngValue]="byteOrder"
-                    [selected]="byteOrder==getRegisterType(modbusConfiguration)"
-            >{{byteOrder}}</option>
-          </select>
-        </div>
-        <div class="field" *ngIf="!isModbusWriteRegister(modbusConfiguration)">
-          <label>{{'ControlEvchargerComponent.extractionRegex' | translate}}</label>
-          <input type="text" formControlName="extractionRegex">
-        </div>
-
-        <div class="field"
-             *ngIf="isModbusWriteRegister(modbusConfiguration) && ! isChargingCurrentRegister(modbusConfiguration)">
-          <label>{{'ControlEvchargerComponent.value' | translate}}</label>
-          <input type="text" formControlName="value">
-        </div>
-        <div class="field"
-             *ngIf="isModbusWriteRegister(modbusConfiguration) && isChargingCurrentRegister(modbusConfiguration)">
-          <label>{{'ControlEvchargerComponent.factorToValue' | translate}}</label>
-          <input type="text" formControlName="factorToValue">
-        </div>
-
-        <div class="field icon-field">
-          <i (click)="removeModbusConfiguration(i)" class="icon big red remove circle"></i>
-          <i *ngIf="l" (click)="addModbusConfiguration()" class="icon big green add circle"></i>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>
+<div class="ui hidden divider"></div>
+<h4 class="ui dividing header">{{'ControlEvchargerModbusComponent.heading.modbusRead' | translate}}</h4>
+<app-modbus-read *ngFor="let modbusRead of evModbusControl.registerReads; index as i; last as l"
+                 [modbusRead]="modbusRead"
+                 [formControlNamePrefix]="getReadFormControlPrefix(i)"
+                 [valueNames]="readValueNames"
+                 [translationPrefix]="'ControlEvchargerComponent.'"
+                 [translationKeys]="readValueNameTextKeys"
+                 [readRegisterTypes]="settingsDefaults.modbusReadRegisterTypes"
+                 #modbusReadComponents
+></app-modbus-read>
+<button type="button" (click)="addModbusRead()" class="ui button">
+  {{'ControlEvchargerModbusComponent.button.addModbusRead' | translate}}</button>
+
+
+<h4 class="ui dividing header">{{'ControlEvchargerModbusComponent.heading.modbusWrite' | translate}}</h4>
+<app-modbus-write *ngFor="let modbusWrite of evModbusControl.registerWrites; index as i; last as l"
+                 [modbusWrite]="modbusWrite"
+                 [formControlNamePrefix]="getWriteFormControlPrefix(i)"
+                 [valueNames]="writeValueNames"
+                 [translationPrefix]="'ControlEvchargerComponent.'"
+                 [translationKeys]="writeValueNameTextKeys"
+                 [writeRegisterTypes]="settingsDefaults.modbusReadRegisterTypes"
+                 #modbusWriteComponents
+></app-modbus-write>
+<button type="button" (click)="addModbusWrite()" class="ui button">
+  {{'ControlEvchargerModbusComponent.button.addModbusRead' | translate}}</button>

@@ -241,19 +241,34 @@
   "ElectricVehicleComponent.error.defaultSocOptionalEnergy_pattern": "Der State of Charge muss ein Prozentwert sein",
   "ElectricVehicleComponent.error.scriptFilename_required": "Der Dateiname mit Pfad muss angegeben werden",
 
+  "ControlEvchargerModbusComponent.heading.modbusRead": "Lesezugriff",
+  "ControlEvchargerModbusComponent.heading.modbusWrite": "Schreibzugriff",
+  "ControlEvchargerModbusComponent.button.addModbusRead": "Weiteres Register",
+  "ControlEvchargerModbusComponent.button.addModbusWrite": "Weiteres Register",
+
+  "ModbusReadComponent.address": "Register-Adresse",
+  "ModbusReadComponent.type": "Register-Typ",
+  "ModbusReadComponent.bytes": "Bytes",
+  "ModbusReadComponent.byteOrder": "Byte Reihenfolge",
+  "ModbusReadComponent.factorToValue": "Umrechnungsfaktor",
+  "ModbusReadComponent.error.address_required": "Die Register-Adresse muss angegeben werden",
+  "ModbusReadComponent.error.address_pattern": "Die Register-Adresse muss als Zahl (z.B. 13) oder Hex-Zahl (z.B. 0x0A) angegeben werden",
+  "ModbusReadComponent.error.bytes_pattern": "Die Anzahl der Bytes muss als Zahl angegeben werden",
+  "ModbusReadComponent.error.factorToValue_pattern": "Der Umrechnungsfaktor muss als Zahl angegeben werden",
+
+  "ModbusReadValueComponent.name": "Zustand",
+  "ModbusReadValueComponent.extractionRegex": "Regex für Extraktion",
+
+  "ModbusWriteComponent.address": "Register-Adresse",
+  "ModbusWriteComponent.type": "Register-Typ",
+  "ModbusWriteComponent.factorToValue": "Umrechnungsfaktor",
+
+  "ModbusWriteValueComponent.name": "Zustand",
+  "ModbusWriteValueComponent.value": "Wert",
+
   "ModbusRegisterComponent.enabled": "Aktiv",
-  "ModbusRegisterComponent.name": "Zustand / Aktion",
   "ModbusRegisterComponent.idref": "Modbus",
-  "ModbusRegisterComponent.address": "Register-Adresse",
   "ModbusRegisterComponent.write": "Schreibzugriff",
-  "ModbusRegisterComponent.registerType": "Register-Typ",
-  "ModbusRegisterComponent.bytes": "Bytes",
-  "ModbusRegisterComponent.byteOrder": "Byte Reihenfolge",
-  "ModbusRegisterComponent.extractionRegex": "Regex für Extraktion",
-  "ModbusRegisterComponent.value": "Wert",
-  "ModbusRegisterComponent.factorToValue": "Umrechnungsfaktor",
-  "ModbusRegisterComponent.error.registerAddress_required": "Die Register-Adresse muss angegeben werden",
-  "ModbusRegisterComponent.error.registerAddress_pattern": "Die Register-Adresse muss als Zahl (z.B. 13) oder Hex-Zahl (z.B. 0x0A) angegeben werden",
 
 
   "ScheduleComponent.schedule": "Zeitplan",
