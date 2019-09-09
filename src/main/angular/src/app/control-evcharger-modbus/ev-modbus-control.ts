@@ -1,6 +1,8 @@
 import {ModbusRegisterConfguration} from '../shared/modbus-register-confguration';
 import {ModbusRegisterRead} from '../shared/modbus-register-read';
 import {ModbusRegisterWrite} from '../shared/modbus-register-write';
+import {ModbusRead} from '../modbus-read/modbus-read';
+import {ModbusWrite} from '../modbus-write/modbus-write';
 
 export class EvModbusControl {
 
@@ -11,9 +13,8 @@ export class EvModbusControl {
   '@class' = EvModbusControl.TYPE;
   idref: string;
   slaveAddress: string;
-  configuration: ModbusRegisterConfguration[];
-  registerReads: ModbusRegisterRead[];
-  registerWrites: ModbusRegisterWrite[];
+  registerReads: ModbusRead[];
+  registerWrites: ModbusWrite[];
 
   public constructor(init?: Partial<EvModbusControl>) {
     Object.assign(this, init);

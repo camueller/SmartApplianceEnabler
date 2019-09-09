@@ -79,6 +79,10 @@ import { HttpWriteComponent } from './http-write/http-write.component';
 import { HttpWriteValueComponent } from './http-write-value/http-write-value.component';
 import { HttpConfigurationComponent } from './http-configuration/http-configuration.component';
 import { ElectricVehicleComponent } from './electric-vehicle/electric-vehicle.component';
+import { ModbusReadComponent } from './modbus-read/modbus-read.component';
+import { ModbusReadValueComponent } from './modbus-read-value/modbus-read-value.component';
+import { ModbusWriteComponent } from './modbus-write/modbus-write.component';
+import { ModbusWriteValueComponent } from './modbus-write-value/modbus-write-value.component';
 
 @NgModule({
   declarations: [
@@ -104,7 +108,11 @@ import { ElectricVehicleComponent } from './electric-vehicle/electric-vehicle.co
     MeterHttpComponent,
     MeterS0Component,
     MeterS0NetworkedComponent,
+    ModbusReadComponent,
+    ModbusReadValueComponent,
     ModbusRegisterComponent,
+    ModbusWriteComponent,
+    ModbusWriteValueComponent,
     PageNotFoundComponent,
     SchedulesComponent,
     SettingsComponent,

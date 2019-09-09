@@ -1,0 +1,15 @@
+<div class="ui fields" [formGroup]="form">
+  <div class="field">
+    <label>{{'ModbusReadValueComponent.name' | translate}}</label>
+    <select class="ui fluid dropdown" formControlName="{{this.getFormControlName('name')}}">
+      <option *ngFor="let aValueName of valueNames"
+              [ngValue]="aValueName"
+              [selected]="aValueName==modbusReadValue.name"
+      >{{getTranslatedValueName(aValueName)}}</option>
+    </select>
+  </div>
+  <div class="field">
+    <label>{{'ModbusReadValueComponent.extractionRegex' | translate}}</label>
+    <input type="text" formControlName="{{this.getFormControlName('extractionRegex')}}">
+  </div>
+</div>
