@@ -68,8 +68,8 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
 
   ngOnInit() {
     this.evCharger = this.evCharger || new EvCharger();
+    console.log(`CHARGER=${JSON.stringify(this.evCharger)}`);
     this.form = this.parent.form;
-    this.expandParentForm(this.form, this.evCharger);
     this.errorMessages = new ErrorMessages('ControlEvchargerComponent.error.', [
       new ErrorMessage('voltage', ValidatorType.pattern),
       new ErrorMessage('phases', ValidatorType.pattern),
@@ -93,7 +93,7 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
   }
 
   initForm(evCharger: EvCharger) {
-    // this.form = this.buildEvChargerFormGroup(evCharger);
+    this.expandParentForm(this.form, this.evCharger);
     this.form.markAsPristine();
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
@@ -112,12 +112,6 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
       'ControlEvchargerComponent.StopCharging',
       'ControlEvchargerComponent.ChargingCurrent'
     ];
-  }
-
-  buildEmptyEvChargerFormGroup(): FormGroup {
-    return new FormGroup({
-      template: new FormControl()
-    });
   }
 
   expandParentForm(form: FormGroup, evCharger: EvCharger) {
@@ -186,6 +180,7 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
   useTemplate() {
     const templateName = this.getTemplateNameSelected();
     this.evCharger = this.templates[templateName];
+    this.setProtocol(this.evChargerProtocol);
     this.initForm(this.evCharger);
   }
 
@@ -204,6 +199,10 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
 
   get protocol() {
     return this.form.controls.protocol.value;
+  }
+
+  setProtocol(protocol: EvChargerProtocol) {
+    this.form.controls.protocol.setValue(protocol);
   }
 
   get protocols() {
