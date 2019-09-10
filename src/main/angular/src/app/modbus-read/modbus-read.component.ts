@@ -52,6 +52,7 @@ export class ModbusReadComponent implements OnInit, AfterViewChecked {
   }
 
   ngOnInit() {
+    this.modbusRead = this.modbusRead || new ModbusRead();
     this.errorMessages = new ErrorMessages('ModbusReadComponent.error.', [
       new ErrorMessage(this.getFormControlName('address'), ValidatorType.required, 'address'),
       new ErrorMessage(this.getFormControlName('address'), ValidatorType.pattern, 'address'),
@@ -150,12 +151,11 @@ export class ModbusReadComponent implements OnInit, AfterViewChecked {
       return undefined;
     }
 
-    const modbusRead = this.modbusRead || new ModbusRead();
-    modbusRead.address = getValidString(address);
-    modbusRead.type = getValidString(type);
-    modbusRead.bytes = getValidInt(bytes);
-    modbusRead.byteOrder = getValidString(byteOrder);
-    modbusRead.address = getValidString(address);
-    return modbusRead;
+    this.modbusRead.address = getValidString(address);
+    this.modbusRead.type = getValidString(type);
+    this.modbusRead.bytes = getValidInt(bytes);
+    this.modbusRead.byteOrder = getValidString(byteOrder);
+    this.modbusRead.address = getValidString(address);
+    return this.modbusRead;
   }
 }

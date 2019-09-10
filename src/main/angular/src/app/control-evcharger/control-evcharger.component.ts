@@ -67,6 +67,7 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
   }
 
   ngOnInit() {
+    this.evCharger = this.evCharger || new EvCharger();
     this.form = this.parent.form;
     this.expandParentForm(this.form, this.evCharger);
     this.errorMessages = new ErrorMessages('ControlEvchargerComponent.error.', [
@@ -160,15 +161,14 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
       return undefined;
     }
 
-    const evCharger = this.evCharger || new EvCharger();
-    evCharger.voltage = voltage;
-    evCharger.phases = phases;
-    evCharger.pollInterval = pollInterval;
-    evCharger.startChargingStateDetectionDelay = startChargingStateDetectionDelay;
-    evCharger.forceInitialCharging = forceInitialCharging;
-    evCharger.modbusControl = modbusControl;
-    evCharger.httpControl = httpControl;
-    return evCharger;
+    this.evCharger.voltage = voltage;
+    this.evCharger.phases = phases;
+    this.evCharger.pollInterval = pollInterval;
+    this.evCharger.startChargingStateDetectionDelay = startChargingStateDetectionDelay;
+    this.evCharger.forceInitialCharging = forceInitialCharging;
+    this.evCharger.modbusControl = modbusControl;
+    this.evCharger.httpControl = httpControl;
+    return this.evCharger;
   }
 
   getEvFormControlPrefix(index: number) {

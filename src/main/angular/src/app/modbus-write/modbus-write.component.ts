@@ -52,6 +52,7 @@ export class ModbusWriteComponent implements OnInit, AfterViewChecked {
   }
 
   ngOnInit() {
+    this.modbusWrite = this.modbusWrite || new ModbusWrite();
     this.errorMessages = new ErrorMessages('ModbusReadComponent.error.', [
       new ErrorMessage(this.getFormControlName('address'), ValidatorType.required, 'address'),
       new ErrorMessage(this.getFormControlName('address'), ValidatorType.pattern, 'address'),
@@ -136,10 +137,9 @@ export class ModbusWriteComponent implements OnInit, AfterViewChecked {
       return undefined;
     }
 
-    const modbusWrite = this.modbusWrite || new ModbusWrite();
-    modbusWrite.address = getValidString(address);
-    modbusWrite.type = getValidString(type);
-    modbusWrite.address = getValidString(address);
-    return modbusWrite;
+    this.modbusWrite.address = getValidString(address);
+    this.modbusWrite.type = getValidString(type);
+    this.modbusWrite.address = getValidString(address);
+    return this.modbusWrite;
   }
 }

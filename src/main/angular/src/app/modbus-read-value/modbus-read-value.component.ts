@@ -44,6 +44,7 @@ export class ModbusReadValueComponent implements OnInit, AfterViewChecked {
   }
 
   ngOnInit() {
+    this.modbusReadValue = this.modbusReadValue || new ModbusReadValue();
     this.errorMessages = new ErrorMessages('ModbusReadValueComponent.error.', [
       new ErrorMessage(this.getFormControlName('factorToValue'), ValidatorType.pattern, 'factorToValue'),
     ], this.translate);
@@ -86,9 +87,8 @@ export class ModbusReadValueComponent implements OnInit, AfterViewChecked {
       return undefined;
     }
 
-    const modbusReadValue = this.modbusReadValue || new ModbusReadValue();
-    modbusReadValue.name = getValidString(name);
-    modbusReadValue.extractionRegex = getValidString(extractionRegex);
-    return modbusReadValue;
+    this.modbusReadValue.name = getValidString(name);
+    this.modbusReadValue.extractionRegex = getValidString(extractionRegex);
+    return this.modbusReadValue;
   }
 }

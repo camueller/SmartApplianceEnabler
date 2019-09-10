@@ -50,6 +50,7 @@ export class HttpWriteValueComponent implements OnInit, AfterViewChecked {
   }
 
   ngOnInit() {
+    this.httpWriteValue = this.httpWriteValue || new HttpWriteValue();
     this.errorMessages = new ErrorMessages('HttpWriteValueComponent.error.', [
       new ErrorMessage(this.getFormControlName('factorToValue'), ValidatorType.pattern, 'factorToValue'),
     ], this.translate);
@@ -116,10 +117,10 @@ export class HttpWriteValueComponent implements OnInit, AfterViewChecked {
       return undefined;
     }
 
-    const httpWriteValue = this.httpWriteValue || new HttpWriteValue();
-    httpWriteValue.name = name;
-    httpWriteValue.value = value;
-    httpWriteValue.factorToValue = factorToValue;
-    httpWriteValue.method = method;
+    this.httpWriteValue.name = name;
+    this.httpWriteValue.value = value;
+    this.httpWriteValue.factorToValue = factorToValue;
+    this.httpWriteValue.method = method;
+    return this.httpWriteValue;
   }
 }

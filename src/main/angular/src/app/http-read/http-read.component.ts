@@ -55,6 +55,7 @@ export class HttpReadComponent implements OnInit, AfterViewChecked {
   }
 
   ngOnInit() {
+    this.httpRead = this.httpRead || new HttpRead();
     this.errorMessages = new ErrorMessages('HttpReadComponent.error.', [
       new ErrorMessage(this.getFormControlName('url'), ValidatorType.required, 'url'),
       new ErrorMessage(this.getFormControlName('url'), ValidatorType.pattern, 'url'),
@@ -131,8 +132,7 @@ export class HttpReadComponent implements OnInit, AfterViewChecked {
       return undefined;
     }
 
-    const httpRead = this.httpRead || new HttpRead();
-    httpRead.url = getValidString(url.value);
-    return httpRead;
+    this.httpRead.url = getValidString(url.value);
+    return this.httpRead;
   }
 }
