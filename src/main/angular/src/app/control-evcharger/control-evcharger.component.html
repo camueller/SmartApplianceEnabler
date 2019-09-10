@@ -13,17 +13,19 @@
       <button type="button" class="ui button" [disabled]="!!getTemplateNameSelected() === false"
               (click)="useTemplate()">{{'ControlEvchargerComponent.templateButton' | translate}}</button>
     </div>
+    <div class="field">
+      <label class="standalone-label">{{'ControlEvchargerComponent.protocol' | translate}}</label>
+    </div>
+    <div class="field">
+      <select class="ui fluid dropdown" formControlName="protocol">
+        <option *ngFor="let aProtocol of protocols" [ngValue]="aProtocol" [selected]="aProtocol === protocol"
+        >{{getProtocolTranslationKey(aProtocol)| translate}}</option>
+      </select>
+    </div>
   </div>
   <div class="ui hidden divider"></div>
   <div *ngIf="isConfigured()">
     <div class="ui fields sae-fields">
-      <div class="field">
-        <label>{{'ControlEvchargerComponent.protocol' | translate}}</label>
-        <select class="ui fluid dropdown" formControlName="protocol">
-          <option *ngFor="let aProtocol of protocols" [ngValue]="aProtocol" [selected]="aProtocol === protocol"
-          >{{getProtocolTranslationKey(aProtocol)| translate}}</option>
-        </select>
-      </div>
       <div class="field">
         <label>{{'ControlEvchargerComponent.voltage' | translate}}</label>
         <input type="text" formControlName="voltage"

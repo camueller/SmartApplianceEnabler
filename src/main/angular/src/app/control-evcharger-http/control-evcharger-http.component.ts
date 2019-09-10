@@ -55,6 +55,7 @@ export class ControlEvchargerHttpComponent implements OnInit, AfterViewChecked {
   }
 
   ngOnInit() {
+    this.evHttpControl = this.evHttpControl || new EvHttpControl();
     // this.errorMessages = new MeterHttpErrorMessages(this.translate);
     this.form = this.parent.form;
     this.expandParentForm(this.form, this.evHttpControl, this.formHandler);
@@ -105,12 +106,18 @@ export class ControlEvchargerHttpComponent implements OnInit, AfterViewChecked {
 
   addHttpRead() {
     const httpRead = new HttpRead();
+    if (!this.evHttpControl.httpReads) {
+      this.evHttpControl.httpReads = [];
+    }
     this.evHttpControl.httpReads.push(httpRead);
     this.form.markAsDirty();
   }
 
   addHttpWrite() {
     const httpWrite = new HttpWrite();
+    if (!this.evHttpControl.httpWrites) {
+      this.evHttpControl.httpWrites = [];
+    }
     this.evHttpControl.httpWrites.push(httpWrite);
     this.form.markAsDirty();
   }
@@ -142,11 +149,10 @@ export class ControlEvchargerHttpComponent implements OnInit, AfterViewChecked {
       return undefined;
     }
 
-    const evHttpControl = this.evHttpControl || new EvHttpControl();
-    evHttpControl.contentProtocol = contentProtocol;
-    evHttpControl.httpConfiguration = httpConfiguration;
-    evHttpControl.httpReads = httpReads;
-    evHttpControl.httpWrites = httpWrites;
-    return evHttpControl;
+    this.evHttpControl.contentProtocol = contentProtocol;
+    this.evHttpControl.httpConfiguration = httpConfiguration;
+    this.evHttpControl.httpReads = httpReads;
+    this.evHttpControl.httpWrites = httpWrites;
+    return this.evHttpControl;
   }
 }

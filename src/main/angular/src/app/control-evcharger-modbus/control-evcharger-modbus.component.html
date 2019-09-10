@@ -4,7 +4,7 @@
       <label>{{'ControlEvchargerComponent.idref' | translate}}</label>
       <select class="ui fluid dropdown" formControlName="idref">
         <option *ngFor="let modbusSettings of settings.modbusSettings" [ngValue]="modbusSettings.modbusTcpId"
-                [selected]="modbusSettings.modbusTcpId==evModbusControl.idref">
+                [selected]="evModbusControl && modbusSettings.modbusTcpId==evModbusControl.idref">
           {{modbusSettings.modbusTcpId}}</option>
       </select>
     </div>
@@ -18,28 +18,32 @@
 </div>
 <div class="ui hidden divider"></div>
 <h4 class="ui dividing header">{{'ControlEvchargerModbusComponent.heading.modbusRead' | translate}}</h4>
-<app-modbus-read *ngFor="let modbusRead of evModbusControl.registerReads; index as i; last as l"
-                 [modbusRead]="modbusRead"
-                 [formControlNamePrefix]="getReadFormControlPrefix(i)"
-                 [valueNames]="readValueNames"
-                 [translationPrefix]="'ControlEvchargerComponent.'"
-                 [translationKeys]="readValueNameTextKeys"
-                 [readRegisterTypes]="settingsDefaults.modbusReadRegisterTypes"
-                 #modbusReadComponents
-></app-modbus-read>
+<span *ngIf="evModbusControl && evModbusControl.registerReads">
+  <app-modbus-read *ngFor="let modbusRead of evModbusControl.registerReads; index as i; last as l"
+                   [modbusRead]="modbusRead"
+                   [formControlNamePrefix]="getReadFormControlPrefix(i)"
+                   [valueNames]="readValueNames"
+                   [translationPrefix]="'ControlEvchargerComponent.'"
+                   [translationKeys]="readValueNameTextKeys"
+                   [readRegisterTypes]="settingsDefaults.modbusReadRegisterTypes"
+                   #modbusReadComponents
+  ></app-modbus-read>
+</span>
 <button type="button" (click)="addModbusRead()" class="ui button">
   {{'ControlEvchargerModbusComponent.button.addModbusRead' | translate}}</button>
 
 
 <h4 class="ui dividing header">{{'ControlEvchargerModbusComponent.heading.modbusWrite' | translate}}</h4>
-<app-modbus-write *ngFor="let modbusWrite of evModbusControl.registerWrites; index as i; last as l"
-                 [modbusWrite]="modbusWrite"
-                 [formControlNamePrefix]="getWriteFormControlPrefix(i)"
-                 [valueNames]="writeValueNames"
-                 [translationPrefix]="'ControlEvchargerComponent.'"
-                 [translationKeys]="writeValueNameTextKeys"
-                 [writeRegisterTypes]="settingsDefaults.modbusReadRegisterTypes"
-                 #modbusWriteComponents
-></app-modbus-write>
+<span *ngIf="evModbusControl && evModbusControl.registerWrites">
+  <app-modbus-write *ngFor="let modbusWrite of evModbusControl.registerWrites; index as i; last as l"
+                    [modbusWrite]="modbusWrite"
+                    [formControlNamePrefix]="getWriteFormControlPrefix(i)"
+                    [valueNames]="writeValueNames"
+                    [translationPrefix]="'ControlEvchargerComponent.'"
+                    [translationKeys]="writeValueNameTextKeys"
+                    [writeRegisterTypes]="settingsDefaults.modbusReadRegisterTypes"
+                    #modbusWriteComponents
+  ></app-modbus-write>
+</span>
 <button type="button" (click)="addModbusWrite()" class="ui button">
   {{'ControlEvchargerModbusComponent.button.addModbusRead' | translate}}</button>
