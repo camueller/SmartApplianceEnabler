@@ -4,7 +4,7 @@ import {EvChargerTemplates} from './ev-charger-templates';
 import {Settings} from '../settings/settings';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {TranslateService} from '@ngx-translate/core';
-import {FormControl, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {Logger} from '../log/logger';
@@ -81,51 +81,38 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
       'ControlEvchargerComponent.protocol.MODBUS',
     ]).subscribe(translatedStrings => this.translatedStrings = translatedStrings);
     this.templates = EvChargerTemplates.getTemplates();
-    // if (this.isConfigured()) {
-    this.initForm(this.evCharger);
-    // } else {
-    //   this.form = this.buildEmptyEvChargerFormGroup();
-    // }
+    this.expandParentForm(this.form, this.evCharger);
+    this.updateFormFromModel(this.evCharger);
   }
 
   ngAfterViewChecked() {
     this.formHandler.markLabelsRequired();
   }
 
-  initForm(evCharger: EvCharger) {
-    this.expandParentForm(this.form, this.evCharger);
+  expandParentForm(form: FormGroup, evCharger: EvCharger) {
+    this.formHandler.addFormControl(form, 'template', undefined);
+    this.formHandler.addFormControl(form, 'protocol', this.evChargerProtocol);
+    this.formHandler.addFormControl(form, 'voltage', undefined,
+      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
+    this.formHandler.addFormControl(form, 'phases', undefined,
+      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
+    this.formHandler.addFormControl(form, 'pollInterval', undefined,
+      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
+    this.formHandler.addFormControl(form, 'startChargingStateDetectionDelay',
+      undefined, [Validators.pattern(InputValidatorPatterns.INTEGER)]);
+    this.formHandler.addFormControl(form, 'forceInitialCharging', evCharger.forceInitialCharging);
+  }
+
+  updateFormFromModel(evCharger: EvCharger) {
+    this.form.controls.voltage.setValue(evCharger.voltage);
+    this.form.controls.phases.setValue(evCharger.phases);
+    this.form.controls.pollInterval.setValue(evCharger.pollInterval);
+    this.form.controls.startChargingStateDetectionDelay.setValue(evCharger.startChargingStateDetectionDelay);
+    this.form.controls.startChargingStateDetectionDelay.setValue(evCharger.startChargingStateDetectionDelay);
     this.form.markAsPristine();
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
-  }
-
-  // FIXME: alle Enums indirect liefern
-  get modbusTranslationKeys() {
-    return [
-      'ControlEvchargerComponent.VehicleNotConnected',
-      'ControlEvchargerComponent.VehicleConnected',
-      'ControlEvchargerComponent.Charging',
-      'ControlEvchargerComponent.ChargingCompleted',
-      'ControlEvchargerComponent.Error',
-      'ControlEvchargerComponent.StartCharging',
-      'ControlEvchargerComponent.StopCharging',
-      'ControlEvchargerComponent.ChargingCurrent'
-    ];
-  }
-
-  expandParentForm(form: FormGroup, evCharger: EvCharger) {
-    this.formHandler.addFormControl(form, 'template', undefined);
-    this.formHandler.addFormControl(form, 'protocol', this.evChargerProtocol);
-    this.formHandler.addFormControl(form, 'voltage', evCharger.voltage,
-      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(form, 'phases', evCharger.phases,
-      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(form, 'pollInterval', evCharger.pollInterval,
-      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(form, 'startChargingStateDetectionDelay',
-      evCharger.startChargingStateDetectionDelay, [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(form, 'forceInitialCharging', evCharger.forceInitialCharging);
   }
 
   public updateModelFromForm(): EvCharger | undefined {
@@ -181,7 +168,7 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
     const templateName = this.getTemplateNameSelected();
     this.evCharger = this.templates[templateName];
     this.setProtocol(this.evChargerProtocol);
-    this.initForm(this.evCharger);
+    this.updateFormFromModel(this.evCharger);
   }
 
   isConfigured(): boolean {
@@ -211,6 +198,20 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
 
   getProtocolTranslationKey(protocol: string) {
     return `ControlEvchargerComponent.protocol.${protocol}`;
+  }
+
+  // FIXME: alle Enums indirect liefern
+  get modbusTranslationKeys() {
+    return [
+      'ControlEvchargerComponent.VehicleNotConnected',
+      'ControlEvchargerComponent.VehicleConnected',
+      'ControlEvchargerComponent.Charging',
+      'ControlEvchargerComponent.ChargingCompleted',
+      'ControlEvchargerComponent.Error',
+      'ControlEvchargerComponent.StartCharging',
+      'ControlEvchargerComponent.StopCharging',
+      'ControlEvchargerComponent.ChargingCurrent'
+    ];
   }
 
   addElectricVehicle() {
