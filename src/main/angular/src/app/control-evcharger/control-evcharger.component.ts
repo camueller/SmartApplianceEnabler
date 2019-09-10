@@ -190,8 +190,7 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
   }
 
   isConfigured(): boolean {
-    return this.evCharger && (this.evCharger.modbusControl !== undefined
-      || this.evCharger.httpControl !== undefined);
+    return this.evCharger && this.protocol;
   }
 
   get evChargerProtocol() {

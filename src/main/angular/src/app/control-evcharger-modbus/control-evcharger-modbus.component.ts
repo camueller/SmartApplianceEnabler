@@ -53,6 +53,7 @@ export class ControlEvchargerModbusComponent implements OnInit, AfterViewChecked
   }
 
   ngOnInit() {
+    this.evModbusControl = this.evModbusControl || new EvModbusControl();
     console.log('evModbusControl=', this.evModbusControl);
     // this.errorMessages = new ErrorMessages('ControlEvchargerModbusComponent.error.', [
     //   new ErrorMessage('voltage', ValidatorType.pattern),
@@ -97,20 +98,26 @@ export class ControlEvchargerModbusComponent implements OnInit, AfterViewChecked
 
   addModbusRead() {
     const modbusRead = new ModbusRead();
+    if (!this.evModbusControl.registerReads) {
+      this.evModbusControl.registerReads = [];
+    }
     this.evModbusControl.registerReads.push(modbusRead);
     this.form.markAsDirty();
   }
 
   addModbusWrite() {
     const modbusWrite = new ModbusWrite();
+    if (!this.evModbusControl.registerWrites) {
+      this.evModbusControl.registerWrites = [];
+    }
     this.evModbusControl.registerWrites.push(modbusWrite);
     this.form.markAsDirty();
   }
 
   expandParentForm(form: FormGroup, evModbusControl: EvModbusControl, formHandler: FormHandler) {
-    this.formHandler.addFormControl(form, 'idref', evModbusControl.idref,
+    this.formHandler.addFormControl(form, 'idref', evModbusControl ? evModbusControl.idref : undefined,
       [Validators.required]);
-    this.formHandler.addFormControl(form, 'slaveAddress', evModbusControl.slaveAddress,
+    this.formHandler.addFormControl(form, 'slaveAddress', evModbusControl ? evModbusControl.slaveAddress : undefined,
       [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
   }
 
@@ -136,11 +143,10 @@ export class ControlEvchargerModbusComponent implements OnInit, AfterViewChecked
       return undefined;
     }
 
-    const evModbusControl = this.evModbusControl || new EvModbusControl();
-    evModbusControl.idref = idref;
-    evModbusControl.slaveAddress = slaveAdress;
-    evModbusControl.registerReads = modbusReads;
-    evModbusControl.registerWrites = modbusWrites;
-    return evModbusControl;
+    this.evModbusControl.idref = idref;
+    this.evModbusControl.slaveAddress = slaveAdress;
+    this.evModbusControl.registerReads = modbusReads;
+    this.evModbusControl.registerWrites = modbusWrites;
+    return this.evModbusControl;
   }
 }
