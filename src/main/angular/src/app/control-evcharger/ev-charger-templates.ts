@@ -147,6 +147,89 @@ export class EvChargerTemplates {
       '    ]\n' +
       '  }\n' +
       '}');
+    templates['go-eCharger'] = JSON.parse('{\n' +
+      '  "@class": "de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger",\n' +
+      '  "voltage": null,\n' +
+      '  "phases": null,\n' +
+      '  "pollInterval": null,\n' +
+      '  "startChargingStateDetectionDelay": 15,\n' +
+      '  "forceInitialCharging": null,\n' +
+      '  "vehicles": [],\n' +
+      '  "httpControl": {\n' +
+      '    "@class": "de.avanux.smartapplianceenabler.http.EVHttpControl",\n' +
+      '    "contentProtocol": "json",\n' +
+      '    "httpConfiguration": null,\n' +
+      '    "httpReads": [\n' +
+      '      {\n' +
+      '        "@class": "de.avanux.smartapplianceenabler.http.HttpRead",\n' +
+      '        "readValues": [\n' +
+      '          {\n' +
+      '            "@class": "de.avanux.smartapplianceenabler.http.HttpReadValue",\n' +
+      '            "data": null,\n' +
+      '            "extractionRegex": "(1)",\n' +
+      '            "factorToValue": null,\n' +
+      '            "name": "VehicleNotConnected",\n' +
+      '            "path": "$.car"\n' +
+      '          },\n' +
+      '          {\n' +
+      '            "@class": "de.avanux.smartapplianceenabler.http.HttpReadValue",\n' +
+      '            "data": null,\n' +
+      '            "extractionRegex": "(3|4)",\n' +
+      '            "factorToValue": null,\n' +
+      '            "name": "VehicleConnected",\n' +
+      '            "path": "$.car"\n' +
+      '          },\n' +
+      '          {\n' +
+      '            "@class": "de.avanux.smartapplianceenabler.http.HttpReadValue",\n' +
+      '            "data": null,\n' +
+      '            "extractionRegex": "(2)",\n' +
+      '            "factorToValue": null,\n' +
+      '            "name": "Charging",\n' +
+      '            "path": "$.car"\n' +
+      '          },\n' +
+      '          {\n' +
+      '            "@class": "de.avanux.smartapplianceenabler.http.HttpReadValue",\n' +
+      '            "data": null,\n' +
+      '            "extractionRegex": "([^0])",\n' +
+      '            "factorToValue": null,\n' +
+      '            "name": "Error",\n' +
+      '            "path": "$.err"\n' +
+      '          }\n' +
+      '        ],\n' +
+      '        "url": "http://192.168.1.1/status"\n' +
+      '      }\n' +
+      '    ],\n' +
+      '    "httpWrites": [\n' +
+      '      {\n' +
+      '        "@class": "de.avanux.smartapplianceenabler.http.HttpWrite",\n' +
+      '        "url": "http://192.168.1.1/mqtt?payload=",\n' +
+      '        "writeValues": [\n' +
+      '          {\n' +
+      '            "@class": "de.avanux.smartapplianceenabler.http.HttpWriteValue",\n' +
+      '            "factorToValue": null,\n' +
+      '            "method": "GET",\n' +
+      '            "name": "ChargingCurrent",\n' +
+      '            "value": "amp={0}"\n' +
+      '          },\n' +
+      '          {\n' +
+      '            "@class": "de.avanux.smartapplianceenabler.http.HttpWriteValue",\n' +
+      '            "factorToValue": null,\n' +
+      '            "method": "GET",\n' +
+      '            "name": "StartCharging",\n' +
+      '            "value": "alw=1"\n' +
+      '          },\n' +
+      '          {\n' +
+      '            "@class": "de.avanux.smartapplianceenabler.http.HttpWriteValue",\n' +
+      '            "factorToValue": null,\n' +
+      '            "method": "GET",\n' +
+      '            "name": "StopCharging",\n' +
+      '            "value": "alw=0"\n' +
+      '          }\n' +
+      '        ]\n' +
+      '      }\n' +
+      '    ]\n' +
+      '  }\n' +
+      '}');
     return templates;
   }
 }
