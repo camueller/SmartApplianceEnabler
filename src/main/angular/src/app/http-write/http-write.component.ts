@@ -54,6 +54,7 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked {
   }
 
   ngOnInit() {
+    this.httpWrite = this.httpWrite || new HttpWrite();
     this.errorMessages = new ErrorMessages('HttpWriteComponent.error.', [
       new ErrorMessage(this.getFormControlName('url'), ValidatorType.required, 'url'),
       new ErrorMessage(this.getFormControlName('url'), ValidatorType.pattern, 'url'),
@@ -129,8 +130,7 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked {
       return undefined;
     }
 
-    const httpWrite = this.httpWrite || new HttpWrite();
-    httpWrite.url = getValidString(url.value);
-    return httpWrite;
+    this.httpWrite.url = getValidString(url.value);
+    return this.httpWrite;
   }
 }

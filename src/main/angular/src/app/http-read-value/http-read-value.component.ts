@@ -47,6 +47,7 @@ export class HttpReadValueComponent implements OnInit, AfterViewChecked {
   }
 
   ngOnInit() {
+    this.httpReadValue = this.httpReadValue || new HttpReadValue();
     this.errorMessages = new ErrorMessages('HttpReadValueComponent.error.', [
       new ErrorMessage(this.getFormControlName('factorToValue'), ValidatorType.pattern, 'factorToValue'),
     ], this.translate);
@@ -107,11 +108,11 @@ export class HttpReadValueComponent implements OnInit, AfterViewChecked {
       return undefined;
     }
 
-    const httpReadValue = this.httpReadValue || new HttpReadValue();
-    httpReadValue.name = name;
-    httpReadValue.data = data;
-    httpReadValue.path = path;
-    httpReadValue.extractionRegex = extractionRegex;
-    httpReadValue.factorToValue = factorToValue;
+    this.httpReadValue.name = name;
+    this.httpReadValue.data = data;
+    this.httpReadValue.path = path;
+    this.httpReadValue.extractionRegex = extractionRegex;
+    this.httpReadValue.factorToValue = factorToValue;
+    return this.httpReadValue;
   }
 }

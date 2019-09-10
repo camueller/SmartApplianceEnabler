@@ -26,6 +26,7 @@ export class HttpConfigurationComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.httpConfiguration = this.httpConfiguration || new HttpConfiguration();
     this.form = this.parent.form;
     this.expandParentForm(this.form, this.httpConfiguration, this.formHandler);
   }
@@ -48,10 +49,9 @@ export class HttpConfigurationComponent implements OnInit {
       return undefined;
     }
 
-    const httpConfiguration = this.httpConfiguration || new HttpConfiguration();
-    httpConfiguration.contentType = contentType;
-    httpConfiguration.username = username;
-    httpConfiguration.password = password;
-    return httpConfiguration;
+    this.httpConfiguration.contentType = contentType;
+    this.httpConfiguration.username = username;
+    this.httpConfiguration.password = password;
+    return this.httpConfiguration;
   }
 }
