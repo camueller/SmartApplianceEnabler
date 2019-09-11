@@ -132,9 +132,9 @@ export class MeterFactory {
     modbusElectricityMeter.slaveAddress = rawMeter.slaveAddress;
     modbusElectricityMeter.pollInterval = rawMeter.pollInterval;
     modbusElectricityMeter.measurementInterval = rawMeter.measurementInterval;
-    if (rawMeter.registerReads != null) {
-      rawMeter.registerReads.forEach((registerRead) => {
-        const name = registerRead.registerReadValues[0].name;
+    if (rawMeter.modbusReads != null) {
+      rawMeter.modbusReads.forEach((registerRead) => {
+        const name = registerRead.readValues[0].name;
         if (name === 'Power') {
           modbusElectricityMeter.powerConfiguration = new ModbusRegisterConfguration({
             address: registerRead.address,

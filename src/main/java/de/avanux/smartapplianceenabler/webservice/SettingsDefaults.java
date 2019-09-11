@@ -21,9 +21,9 @@ package de.avanux.smartapplianceenabler.webservice;
 import de.avanux.smartapplianceenabler.HolidaysDownloader;
 import de.avanux.smartapplianceenabler.meter.PulseReceiver;
 import de.avanux.smartapplianceenabler.modbus.ByteOrder;
-import de.avanux.smartapplianceenabler.modbus.ModbusReadRegisterType;
+import de.avanux.smartapplianceenabler.modbus.ReadRegisterType;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
-import de.avanux.smartapplianceenabler.modbus.ModbusWriteRegisterType;
+import de.avanux.smartapplianceenabler.modbus.WriteRegisterType;
 
 public class SettingsDefaults {
     private static SettingsDefaults instance = new SettingsDefaults();
@@ -32,8 +32,8 @@ public class SettingsDefaults {
     private String holidaysUrl = HolidaysDownloader.DEFAULT_URL;
     private String modbusTcpHost = ModbusTcp.DEFAULT_HOST;
     private Integer modbusTcpPort = ModbusTcp.DEFAULT_PORT;
-    private ModbusReadRegisterType[] modbusReadRegisterTypes = ModbusReadRegisterType.values();
-    private ModbusWriteRegisterType[] modbusWriteRegisterTypes = ModbusWriteRegisterType.values();
+    private ReadRegisterType[] readRegisterTypes = ReadRegisterType.values();
+    private WriteRegisterType[] writeRegisterTypes = WriteRegisterType.values();
     private ByteOrder[] byteOrders = ByteOrder.values();
     private Integer pulseReceiverPort = PulseReceiver.DEFAULT_PORT;
 
@@ -49,12 +49,12 @@ public class SettingsDefaults {
         return instance.modbusTcpPort;
     }
 
-    public ModbusReadRegisterType[] getModbusReadRegisterTypes() {
-        return modbusReadRegisterTypes;
+    public ReadRegisterType[] getReadRegisterTypes() {
+        return readRegisterTypes;
     }
 
-    public ModbusWriteRegisterType[] getModbusWriteRegisterTypes() {
-        return modbusWriteRegisterTypes;
+    public WriteRegisterType[] getWriteRegisterTypes() {
+        return writeRegisterTypes;
     }
 
     public ByteOrder[] getByteOrders() {

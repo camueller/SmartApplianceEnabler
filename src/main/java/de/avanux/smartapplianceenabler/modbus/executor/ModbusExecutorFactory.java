@@ -19,8 +19,8 @@
 package de.avanux.smartapplianceenabler.modbus.executor;
 
 import de.avanux.smartapplianceenabler.modbus.ByteOrder;
-import de.avanux.smartapplianceenabler.modbus.ModbusReadRegisterType;
-import de.avanux.smartapplianceenabler.modbus.ModbusWriteRegisterType;
+import de.avanux.smartapplianceenabler.modbus.ReadRegisterType;
+import de.avanux.smartapplianceenabler.modbus.WriteRegisterType;
 
 public class ModbusExecutorFactory {
 
@@ -51,17 +51,17 @@ public class ModbusExecutorFactory {
     }
 
 
-    public static ModbusReadTransactionExecutor getReadExecutor(String applianceId, ModbusReadRegisterType type,
+    public static ModbusReadTransactionExecutor getReadExecutor(String applianceId, ReadRegisterType type,
                                                                 String address) {
         return getReadExecutor(applianceId, type, address, 1, ByteOrder.BigEndian, 1.0);
     }
 
-    public static ModbusReadTransactionExecutor getReadExecutor(String applianceId, ModbusReadRegisterType type,
+    public static ModbusReadTransactionExecutor getReadExecutor(String applianceId, ReadRegisterType type,
                                                                 String address, int bytes) {
         return getReadExecutor(applianceId, type, address, bytes, ByteOrder.BigEndian, 1.0);
     }
 
-    public static ModbusReadTransactionExecutor getReadExecutor(String applianceId, ModbusReadRegisterType type,
+    public static ModbusReadTransactionExecutor getReadExecutor(String applianceId, ReadRegisterType type,
                                                                 String address, int bytes, ByteOrder byteOrder,
                                                                 Double factorToValue) {
         ModbusReadTransactionExecutor executor;
@@ -113,7 +113,7 @@ public class ModbusExecutorFactory {
         return executor;
     }
 
-    public static ModbusWriteTransactionExecutor getWriteExecutor(String applianceId, ModbusWriteRegisterType type,
+    public static ModbusWriteTransactionExecutor getWriteExecutor(String applianceId, WriteRegisterType type,
                                                                   String address, Double factorToValue) {
         ModbusWriteTransactionExecutor executor;
         switch (type) {

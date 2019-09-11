@@ -1,3 +1,6 @@
+/**
+ * @Deprecated
+ */
 import {ModbusRegisterWriteValue} from './modbus-register-write-value';
 
 export class ModbusRegisterWrite {
@@ -10,7 +13,7 @@ export class ModbusRegisterWrite {
   address: string;
   type: string;
   factorToValue: number;
-  registerWriteValues: ModbusRegisterWriteValue[];
+  writeValues: ModbusRegisterWriteValue[];
 
   public constructor(init?: Partial<ModbusRegisterWrite>) {
     Object.assign(this, init);

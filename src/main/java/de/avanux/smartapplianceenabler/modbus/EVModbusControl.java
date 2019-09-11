@@ -36,38 +36,38 @@ import java.util.List;
 public class EVModbusControl extends ModbusSlave implements EVControl {
 
     private transient Logger logger = LoggerFactory.getLogger(EVModbusControl.class);
-    @XmlElement(name = "ModbusRegisterRead")
-    private List<ModbusRegisterRead> registerReads;
-    @XmlElement(name = "ModbusRegisterWrite")
-    private List<ModbusRegisterWrite> registerWrites;
+    @XmlElement(name = "ModbusRead")
+    private List<ModbusRead> modbusReads;
+    @XmlElement(name = "ModbusWrite")
+    private List<ModbusWrite> modbusWrites;
     private transient Integer pollInterval; // seconds
-    private transient RequestCache<ModbusRegisterRead, ModbusReadTransactionExecutor> requestCache;
+    private transient RequestCache<ModbusRead, ModbusReadTransactionExecutor> requestCache;
 
-    public List<ModbusRegisterRead> getRegisterReads() {
-        return registerReads;
+    public List<ModbusRead> getModbusReads() {
+        return modbusReads;
     }
 
-    public void setRegisterReads(List<ModbusRegisterRead> registerReads) {
-        this.registerReads = registerReads;
+    public void setModbusReads(List<ModbusRead> modbusReads) {
+        this.modbusReads = modbusReads;
     }
 
-    public List<ModbusRegisterWrite> getRegisterWrites() {
-        return registerWrites;
+    public List<ModbusWrite> getModbusWrites() {
+        return modbusWrites;
     }
 
-    public void setRegisterWrites(List<ModbusRegisterWrite> registerWrites) {
-        this.registerWrites = registerWrites;
+    public void setModbusWrites(List<ModbusWrite> modbusWrites) {
+        this.modbusWrites = modbusWrites;
     }
 
     public void setPollInterval(Integer pollInterval) {
         this.pollInterval = pollInterval;
     }
 
-    public RequestCache<ModbusRegisterRead, ModbusReadTransactionExecutor> getRequestCache() {
+    public RequestCache<ModbusRead, ModbusReadTransactionExecutor> getRequestCache() {
         return requestCache;
     }
 
-    public void setRequestCache(RequestCache<ModbusRegisterRead, ModbusReadTransactionExecutor> requestCache) {
+    public void setRequestCache(RequestCache<ModbusRead, ModbusReadTransactionExecutor> requestCache) {
         this.requestCache = requestCache;
     }
 
@@ -84,14 +84,14 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
         boolean valid = true;
         ModbusValidator validator = new ModbusValidator(getApplianceId());
         for(EVReadValueName valueName: EVReadValueName.values()) {
-            List<ParentWithChild<ModbusRegisterRead, ModbusRegisterReadValue>> reads
-                    = ModbusRegisterRead.getRegisterReads(valueName.name(), this.registerReads);
+            List<ParentWithChild<ModbusRead, ModbusReadValue>> reads
+                    = ModbusRead.getRegisterReads(valueName.name(), this.modbusReads);
             valid = validator.validateReads(valueName.name(), reads);
         }
 
         for(EVWriteValueName valueName: EVWriteValueName.values()) {
-            List<ParentWithChild<ModbusRegisterWrite, ModbusRegisterWriteValue>> writes
-                    = ModbusRegisterWrite.getRegisterWrites(valueName.name(), this.registerWrites);
+            List<ParentWithChild<ModbusWrite, ModbusWriteValue>> writes
+                    = ModbusWrite.getRegisterWrites(valueName.name(), this.modbusWrites);
             valid = validator.validateWrites(valueName.name(), writes);
         }
         if(! valid) {
@@ -121,12 +121,12 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
     }
 
     public boolean isMatchingVehicleStatus(EVReadValueName registerName) {
-        List<ParentWithChild<ModbusRegisterRead, ModbusRegisterReadValue>> reads
-                = ModbusRegisterRead.getRegisterReads(registerName.name(), this.registerReads);
+        List<ParentWithChild<ModbusRead, ModbusReadValue>> reads
+                = ModbusRead.getRegisterReads(registerName.name(), this.modbusReads);
         if (reads.size() > 0) {
             boolean result = true;
-            for (ParentWithChild<ModbusRegisterRead, ModbusRegisterReadValue> read : reads) {
-                ModbusRegisterRead registerRead = read.parent();
+            for (ParentWithChild<ModbusRead, ModbusReadValue> read : reads) {
+                ModbusRead registerRead = read.parent();
                 try {
                     ModbusReadTransactionExecutor executor = this.requestCache.get(registerRead);
                     if (executor == null) {
@@ -176,14 +176,14 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
     @Override
     public void setChargeCurrent(int current) {
         logger.debug("{}: Set charge current {}A", getApplianceId(), current);
-        ParentWithChild<ModbusRegisterWrite, ModbusRegisterWriteValue> write = ModbusRegisterWrite.getFirstRegisterWrite(
-                EVWriteValueName.ChargingCurrent.name(), this.registerWrites);
+        ParentWithChild<ModbusWrite, ModbusWriteValue> write = ModbusWrite.getFirstRegisterWrite(
+                EVWriteValueName.ChargingCurrent.name(), this.modbusWrites);
         if(write != null) {
             if(this.requestCache != null) {
                 // the next poll after write should return a fresh response from charger
                 this.requestCache.clear();
             }
-            ModbusRegisterWrite registerWrite = write.parent();
+            ModbusWrite registerWrite = write.parent();
             try {
                 ModbusWriteTransactionExecutor executor = ModbusExecutorFactory.getWriteExecutor(getApplianceId(),
                         registerWrite.getType(), registerWrite.getAddress(), registerWrite.getFactorToValue());
@@ -212,21 +212,21 @@ public class EVModbusControl extends ModbusSlave implements EVControl {
     }
 
     private void setCharging(EVWriteValueName registerName) {
-        ParentWithChild<ModbusRegisterWrite, ModbusRegisterWriteValue> write
-                = ModbusRegisterWrite.getFirstRegisterWrite(registerName.name(), this.registerWrites);
+        ParentWithChild<ModbusWrite, ModbusWriteValue> write
+                = ModbusWrite.getFirstRegisterWrite(registerName.name(), this.modbusWrites);
         if(write != null) {
             if(this.requestCache != null) {
                 // the next poll after write should return a fresh response from charger
                 this.requestCache.clear();
             }
-            ModbusRegisterWrite registerWrite = write.parent();
+            ModbusWrite registerWrite = write.parent();
             try {
                 ModbusWriteTransactionExecutor executor = ModbusExecutorFactory.getWriteExecutor(getApplianceId(),
                         registerWrite.getType(), registerWrite.getAddress(), registerWrite.getFactorToValue());
                 if(executor != null) {
                     String stringValue = write.child().getValue();
                     Object value = null;
-                    if(ModbusWriteRegisterType.Coil.equals(registerWrite.getType())) {
+                    if(WriteRegisterType.Coil.equals(registerWrite.getType())) {
                         value = "1".equals(stringValue);
                     }
                     executor.setValue(value);

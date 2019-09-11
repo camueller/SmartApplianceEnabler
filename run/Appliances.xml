@@ -2,38 +2,34 @@
 <Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.4">
     <Appliance id="F-00000001-000000000099-00">
         <ElectricVehicleCharger startChargingStateDetectionDelay="15">
-            <!--EVModbusControl idref="wallbox" slaveAddress="180">
-                <ModbusRegisterRead address="100" type="InputString">
-                    <ModbusRegisterReadValue name="VehicleNotConnected" extractionRegex="(A)"/>
-                    <ModbusRegisterReadValue name="VehicleConnected" extractionRegex="(B)"/>
-                    <ModbusRegisterReadValue name="Charging" extractionRegex="(C|D)"/>
-                    <ModbusRegisterReadValue name="Error" extractionRegex="(E|F)"/>
-                </ModbusRegisterRead>
-                <ModbusRegisterWrite address="400" type="Coil">
-                    <ModbusRegisterWriteValue name="StartCharging" value="1"/>
-                    <ModbusRegisterWriteValue name="StopCharging" value="0"/>
-                </ModbusRegisterWrite>
-                <ModbusRegisterWrite address="300" type="Holding">
-                    <ModbusRegisterWriteValue name="ChargingCurrent" value="0"/>
-                </ModbusRegisterWrite>
-            </EVModbusControl-->
-            <EVHttpControl contentProtocol="json">
-                <HttpRead url="http://192.168.178.48/status">
+            <EVModbusControl idref="wallbox" slaveAddress="180">
+                <ModbusRead address="100" type="InputString">
+                    <ModbusReadValue name="VehicleNotConnected" extractionRegex="(A)"/>
+                    <ModbusReadValue name="VehicleConnected" extractionRegex="(B)"/>
+                    <ModbusReadValue name="Charging" extractionRegex="(C|D)"/>
+                    <ModbusReadValue name="Error" extractionRegex="(E|F)"/>
+                </ModbusRead>
+                <ModbusWrite address="400" type="Coil">
+                    <ModbusWriteValue name="StartCharging" value="1"/>
+                    <ModbusWriteValue name="StopCharging" value="0"/>
+                </ModbusWrite>
+                <ModbusWrite address="300" type="Holding">
+                    <ModbusWriteValue name="ChargingCurrent" value="0"/>
+                </ModbusWrite>
+            </EVModbusControl>
+            <!--EVHttpControl contentProtocol="json">
+                <HttpRead url="http://192.168.1.1/status">
                     <HttpReadValue name="VehicleNotConnected" path="$.car" extractionRegex="(1)"/>
                     <HttpReadValue name="VehicleConnected" path="$.car" extractionRegex="(3|4)"/>
                     <HttpReadValue name="Charging" path="$.car" extractionRegex="(2)"/>
                     <HttpReadValue name="Error" path="$.err" extractionRegex="([^0])"/>
                 </HttpRead>
-                <HttpWrite url="http://192.168.178.48/mqtt?payload=">
+                <HttpWrite url="http://192.168.1.1/mqtt?payload=">
                     <HttpWriteValue name="ChargingCurrent" value="amp={0}" method="GET"/>
                     <HttpWriteValue name="StartCharging" value="alw=1" method="GET"/>
                     <HttpWriteValue name="StopCharging" value="alw=0" method="GET"/>
                 </HttpWrite>
-            </EVHttpControl>
-            <ElectricVehicle id="1" name="Nissan Leaf" batteryCapacity="40000" phases="1" maxChargePower="10000" chargeLoss="20" defaultSocManual="100" defaultSocOptionalEnergy="90">
-                <!--SocScript script="/home/axel/IdeaProjects/SmartApplianceEnabler/src/test/soc.sh" extractionRegex=".*is (\d*.{0,1}\d+).*"/-->
-            </ElectricVehicle>
-            <ElectricVehicle id="2" name="Tesla Model S" batteryCapacity="80000"/>
+            </EVHttpControl-->
         </ElectricVehicleCharger>
         <!--S0ElectricityMeter gpio="3" pinPullResistance="PULL_DOWN" impulsesPerKwh="1000"/-->
         <!--S0ElectricityMeterNetworked idref="pulsereceiver" impulsesPerKwh="1000"/-->

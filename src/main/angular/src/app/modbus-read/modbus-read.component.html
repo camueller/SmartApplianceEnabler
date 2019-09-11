@@ -40,7 +40,7 @@
            class="ui negative message">{{errors[this.getFormControlName('factorToValue')]}}</div>
     </div>
   </div>
-  <div *ngFor="let readValue of modbusRead.registerReadValues; index as i">
+  <div *ngFor="let readValue of modbusRead.readValues; index as i">
     <div class="ui fields">
       <div class="field">
         <app-modbus-read-value

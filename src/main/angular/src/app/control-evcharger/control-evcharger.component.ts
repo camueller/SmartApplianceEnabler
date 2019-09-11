@@ -68,7 +68,6 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
 
   ngOnInit() {
     this.evCharger = this.evCharger || new EvCharger();
-    console.log(`CHARGER=${JSON.stringify(this.evCharger)}`);
     this.form = this.parent.form;
     this.errorMessages = new ErrorMessages('ControlEvchargerComponent.error.', [
       new ErrorMessage('voltage', ValidatorType.pattern),

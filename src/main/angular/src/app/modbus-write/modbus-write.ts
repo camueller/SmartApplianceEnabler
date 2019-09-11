@@ -4,8 +4,7 @@ export class ModbusWrite {
   address: string;
   type: string;
   factorToValue: number;
-  // FIXME: rename in Java and Angular
-  registerWriteValues: ModbusWriteValue[];
+  writeValues: ModbusWriteValue[];
 
   public constructor(init?: Partial<ModbusWrite>) {
     Object.assign(this, init);

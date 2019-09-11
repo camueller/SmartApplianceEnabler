@@ -13,8 +13,8 @@ export class EvModbusControl {
   '@class' = EvModbusControl.TYPE;
   idref: string;
   slaveAddress: string;
-  registerReads: ModbusRead[];
-  registerWrites: ModbusWrite[];
+  modbusReads: ModbusRead[];
+  modbusWrites: ModbusWrite[];
 
   public constructor(init?: Partial<EvModbusControl>) {
     Object.assign(this, init);

@@ -18,8 +18,8 @@
 </div>
 <div class="ui hidden divider"></div>
 <h4 class="ui dividing header">{{'ControlEvchargerModbusComponent.heading.modbusRead' | translate}}</h4>
-<span *ngIf="evModbusControl && evModbusControl.registerReads">
-  <app-modbus-read *ngFor="let modbusRead of evModbusControl.registerReads; index as i; last as l"
+<span *ngIf="evModbusControl && evModbusControl.modbusReads">
+  <app-modbus-read *ngFor="let modbusRead of evModbusControl.modbusReads; index as i; last as l"
                    [modbusRead]="modbusRead"
                    [formControlNamePrefix]="getReadFormControlPrefix(i)"
                    [valueNames]="readValueNames"
@@ -34,8 +34,8 @@
 
 
 <h4 class="ui dividing header">{{'ControlEvchargerModbusComponent.heading.modbusWrite' | translate}}</h4>
-<span *ngIf="evModbusControl && evModbusControl.registerWrites">
-  <app-modbus-write *ngFor="let modbusWrite of evModbusControl.registerWrites; index as i; last as l"
+<span *ngIf="evModbusControl && evModbusControl.modbusWrites">
+  <app-modbus-write *ngFor="let modbusWrite of evModbusControl.modbusWrites; index as i; last as l"
                     [modbusWrite]="modbusWrite"
                     [formControlNamePrefix]="getWriteFormControlPrefix(i)"
                     [valueNames]="writeValueNames"

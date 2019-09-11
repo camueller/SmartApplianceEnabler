@@ -81,8 +81,8 @@ export class ModbusWriteComponent implements OnInit, AfterViewChecked {
 
   get valueName() {
     // TODO ist das so notwendig?
-    if (this.modbusWrite.registerWriteValues && this.modbusWrite.registerWriteValues.length === 1) {
-      const modbusReadValue = this.modbusWrite.registerWriteValues[0];
+    if (this.modbusWrite.writeValues && this.modbusWrite.writeValues.length === 1) {
+      const modbusReadValue = this.modbusWrite.writeValues[0];
       // if (modbusReadValue.name) {
       //   return this.getTranslatedValueName(modbusReadValue.name);
       // }
@@ -97,15 +97,15 @@ export class ModbusWriteComponent implements OnInit, AfterViewChecked {
 
   addValue() {
     const newWriteValue = new ModbusWriteValue();
-    if (!this.modbusWrite.registerWriteValues) {
-      this.modbusWrite.registerWriteValues = [];
+    if (!this.modbusWrite.writeValues) {
+      this.modbusWrite.writeValues = [];
     }
-    this.modbusWrite.registerWriteValues.push(newWriteValue);
+    this.modbusWrite.writeValues.push(newWriteValue);
     this.form.markAsDirty();
   }
 
   removeValue(index: number) {
-    this.modbusWrite.registerWriteValues.splice(index, 1);
+    this.modbusWrite.writeValues.splice(index, 1);
     this.form.markAsDirty();
   }
 

@@ -98,19 +98,19 @@ export class ControlEvchargerModbusComponent implements OnInit, AfterViewChecked
 
   addModbusRead() {
     const modbusRead = new ModbusRead();
-    if (!this.evModbusControl.registerReads) {
-      this.evModbusControl.registerReads = [];
+    if (!this.evModbusControl.modbusReads) {
+      this.evModbusControl.modbusReads = [];
     }
-    this.evModbusControl.registerReads.push(modbusRead);
+    this.evModbusControl.modbusReads.push(modbusRead);
     this.form.markAsDirty();
   }
 
   addModbusWrite() {
     const modbusWrite = new ModbusWrite();
-    if (!this.evModbusControl.registerWrites) {
-      this.evModbusControl.registerWrites = [];
+    if (!this.evModbusControl.modbusWrites) {
+      this.evModbusControl.modbusWrites = [];
     }
-    this.evModbusControl.registerWrites.push(modbusWrite);
+    this.evModbusControl.modbusWrites.push(modbusWrite);
     this.form.markAsDirty();
   }
 
@@ -145,8 +145,8 @@ export class ControlEvchargerModbusComponent implements OnInit, AfterViewChecked
 
     this.evModbusControl.idref = idref;
     this.evModbusControl.slaveAddress = slaveAdress;
-    this.evModbusControl.registerReads = modbusReads;
-    this.evModbusControl.registerWrites = modbusWrites;
+    this.evModbusControl.modbusReads = modbusReads;
+    this.evModbusControl.modbusWrites = modbusWrites;
     return this.evModbusControl;
   }
 }

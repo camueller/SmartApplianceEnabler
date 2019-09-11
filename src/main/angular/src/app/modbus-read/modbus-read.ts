@@ -6,7 +6,7 @@ export class ModbusRead {
   bytes: number;
   byteOrder: string;
   factorToValue: number;
-  registerReadValues: ModbusReadValue[];
+  readValues: ModbusReadValue[];
 
   public constructor(init?: Partial<ModbusRead>) {
     Object.assign(this, init);

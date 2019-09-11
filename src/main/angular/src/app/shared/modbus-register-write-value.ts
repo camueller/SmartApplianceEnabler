@@ -1,3 +1,6 @@
+/**
+ * @Deprecated
+ */
 export class ModbusRegisterWriteValue {
 
   static get TYPE(): string {

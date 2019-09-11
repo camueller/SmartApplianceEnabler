@@ -1,3 +1,6 @@
+/**
+ * @Deprecated
+ */
 export class ModbusRegisterReadValue {
   static get TYPE(): string {
     return 'de.avanux.smartapplianceenabler.modbus.ModbusRegisterReadValue';

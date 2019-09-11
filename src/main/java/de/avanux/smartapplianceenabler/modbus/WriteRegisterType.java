@@ -18,30 +18,7 @@
 
 package de.avanux.smartapplianceenabler.modbus;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-
-@XmlAccessorType(XmlAccessType.FIELD)
-public class ModbusRegisterReadValue {
-    @XmlAttribute
-    private String name;
-    @XmlAttribute
-    private String extractionRegex;
-
-    public ModbusRegisterReadValue() {
-    }
-
-    public ModbusRegisterReadValue(String name, String extractionRegex) {
-        this.name = name;
-        this.extractionRegex = extractionRegex;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getExtractionRegex() {
-        return extractionRegex;
-    }
+public enum WriteRegisterType {
+    Holding,
+    Coil
 }
