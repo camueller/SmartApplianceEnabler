@@ -6,147 +6,162 @@ export class EvChargerTemplates {
     const templates: { [name: string]: EvCharger } = {};
     templates['PhoenixContact'] = JSON.parse('{\n' +
       '  "@class": "de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger",\n' +
-      '  "control": {\n' +
+      '  "voltage": null,\n' +
+      '  "phases": null,\n' +
+      '  "pollInterval": null,\n' +
+      '  "startChargingStateDetectionDelay": 300,\n' +
+      '  "forceInitialCharging": null,\n' +
+      '  "vehicles": [],\n' +
+      '  "modbusControl": {\n' +
       '    "@class": "de.avanux.smartapplianceenabler.modbus.EVModbusControl",\n' +
-      '    "slaveAddress": 180,\n' +
-      '    "configuration": [\n' +
+      '    "idref": "wallbox",\n' +
+      '    "modbusReads": [\n' +
       '      {\n' +
-      '        "name": "VehicleNotConnected",\n' +
+      '        "@class": "de.avanux.smartapplianceenabler.modbus.ModbusRead",\n' +
       '        "address": "100",\n' +
-      '        "type": "InputString",\n' +
-      '        "extractionRegex": "(A)",\n' +
-      '        "write": false\n' +
-      '      },\n' +
-      '      {\n' +
-      '        "name": "VehicleConnected",\n' +
-      '        "address": "100",\n' +
-      '        "type": "InputString",\n' +
-      '        "extractionRegex": "(B)",\n' +
-      '        "write": false\n' +
-      '      },\n' +
-      '      {\n' +
-      '        "name": "Charging",\n' +
-      '        "address": "100",\n' +
-      '        "type": "InputString",\n' +
-      '        "extractionRegex": "(C|D)",\n' +
-      '        "write": false\n' +
-      '      },\n' +
-      '      {\n' +
-      '        "name": "ChargingCompleted",\n' +
-      '        "address": "100",\n' +
-      '        "type": "InputString",\n' +
-      '        "extractionRegex": "(B)",\n' +
-      '        "write": false\n' +
-      '      },\n' +
-      '      {\n' +
-      '        "name": "Error",\n' +
-      '        "address": "100",\n' +
-      '        "type": "InputString",\n' +
-      '        "extractionRegex": "(E|F)",\n' +
-      '        "write": false\n' +
-      '      },\n' +
-      '      {\n' +
-      '        "name": "ChargingCompleted",\n' +
-      '        "address": "204",\n' +
-      '        "type": "Discrete",\n' +
-      '        "extractionRegex": null,\n' +
-      '        "write": false\n' +
-      '      },\n' +
-      '      {\n' +
-      '        "name": "StartCharging",\n' +
-      '        "address": "400",\n' +
-      '        "type": "Coil",\n' +
-      '        "value": "1",\n' +
-      '        "write": true\n' +
-      '      },\n' +
-      '      {\n' +
-      '        "name": "StopCharging",\n' +
-      '        "address": "400",\n' +
-      '        "type": "Coil",\n' +
-      '        "value": "0",\n' +
-      '        "write": true\n' +
-      '      },\n' +
-      '      {\n' +
-      '        "name": "ChargingCurrent",\n' +
-      '        "address": "300",\n' +
-      '        "type": "Holding",\n' +
-      '        "write": true\n' +
+      '        "byteOrder": null,\n' +
+      '        "bytes": null,\n' +
+      '        "factorToValue": null,\n' +
+      '        "readValues": [\n' +
+      '          {\n' +
+      '            "@class": "de.avanux.smartapplianceenabler.modbus.ModbusReadValue",\n' +
+      '            "extractionRegex": "(A)",\n' +
+      '            "name": "VehicleNotConnected"\n' +
+      '          },\n' +
+      '          {\n' +
+      '            "@class": "de.avanux.smartapplianceenabler.modbus.ModbusReadValue",\n' +
+      '            "extractionRegex": "(B)",\n' +
+      '            "name": "VehicleConnected"\n' +
+      '          },\n' +
+      '          {\n' +
+      '            "@class": "de.avanux.smartapplianceenabler.modbus.ModbusReadValue",\n' +
+      '            "extractionRegex": "(C|D)",\n' +
+      '            "name": "Charging"\n' +
+      '          },\n' +
+      '          {\n' +
+      '            "@class": "de.avanux.smartapplianceenabler.modbus.ModbusReadValue",\n' +
+      '            "extractionRegex": "(E|F)",\n' +
+      '            "name": "Error"\n' +
+      '          }\n' +
+      '        ],\n' +
+      '        "type": "InputString"\n' +
       '      }\n' +
-      '    ]\n' +
+      '    ],\n' +
+      '    "modbusWrites": [\n' +
+      '      {\n' +
+      '        "@class": "de.avanux.smartapplianceenabler.modbus.ModbusWrite",\n' +
+      '        "address": "400",\n' +
+      '        "factorToValue": null,\n' +
+      '        "type": "Coil",\n' +
+      '        "writeValues": [\n' +
+      '          {\n' +
+      '            "@class": "de.avanux.smartapplianceenabler.modbus.ModbusWriteValue",\n' +
+      '            "name": "StartCharging",\n' +
+      '            "value": "1"\n' +
+      '          },\n' +
+      '          {\n' +
+      '            "@class": "de.avanux.smartapplianceenabler.modbus.ModbusWriteValue",\n' +
+      '            "name": "StopCharging",\n' +
+      '            "value": "0"\n' +
+      '          }\n' +
+      '        ]\n' +
+      '      },\n' +
+      '      {\n' +
+      '        "@class": "de.avanux.smartapplianceenabler.modbus.ModbusWrite",\n' +
+      '        "address": "300",\n' +
+      '        "factorToValue": null,\n' +
+      '        "type": "Holding",\n' +
+      '        "writeValues": [\n' +
+      '          {\n' +
+      '            "@class": "de.avanux.smartapplianceenabler.modbus.ModbusWriteValue",\n' +
+      '            "name": "ChargingCurrent",\n' +
+      '            "value": "0"\n' +
+      '          }\n' +
+      '        ]\n' +
+      '      }\n' +
+      '    ],\n' +
+      '    "slaveAddress": 180\n' +
       '  }\n' +
-      '}');
+      '}\n');
     templates['wallbe (neuer Controller)'] = JSON.parse('{\n' +
       '  "@class": "de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger",\n' +
-      '  "control": {\n' +
+      '  "voltage": null,\n' +
+      '  "phases": null,\n' +
+      '  "pollInterval": null,\n' +
+      '  "startChargingStateDetectionDelay": 300,\n' +
+      '  "forceInitialCharging": null,\n' +
+      '  "vehicles": [],\n' +
+      '  "modbusControl": {\n' +
       '    "@class": "de.avanux.smartapplianceenabler.modbus.EVModbusControl",\n' +
-      '    "slaveAddress": 255,\n' +
-      '    "configuration": [\n' +
+      '    "idref": "wallbox",\n' +
+      '    "modbusReads": [\n' +
       '      {\n' +
-      '        "name": "VehicleNotConnected",\n' +
+      '        "@class": "de.avanux.smartapplianceenabler.modbus.ModbusRead",\n' +
       '        "address": "100",\n' +
-      '        "type": "InputString",\n' +
-      '        "extractionRegex": "(A)",\n' +
-      '        "write": false\n' +
-      '      },\n' +
-      '      {\n' +
-      '        "name": "VehicleConnected",\n' +
-      '        "address": "100",\n' +
-      '        "type": "InputString",\n' +
-      '        "extractionRegex": "(B)",\n' +
-      '        "write": false\n' +
-      '      },\n' +
-      '      {\n' +
-      '        "name": "Charging",\n' +
-      '        "address": "100",\n' +
-      '        "type": "InputString",\n' +
-      '        "extractionRegex": "(C|D)",\n' +
-      '        "write": false\n' +
-      '      },\n' +
-      '      {\n' +
-      '        "name": "ChargingCompleted",\n' +
-      '        "address": "100",\n' +
-      '        "type": "InputString",\n' +
-      '        "extractionRegex": "(B)",\n' +
-      '        "write": false\n' +
-      '      },\n' +
-      '      {\n' +
-      '        "name": "Error",\n' +
-      '        "address": "100",\n' +
-      '        "type": "InputString",\n' +
-      '        "extractionRegex": "(E|F)",\n' +
-      '        "write": false\n' +
-      '      },\n' +
-      '      {\n' +
-      '        "name": "ChargingCompleted",\n' +
-      '        "address": "204",\n' +
-      '        "type": "Discrete",\n' +
-      '        "extractionRegex": null,\n' +
-      '        "write": false\n' +
-      '      },\n' +
-      '      {\n' +
-      '        "name": "StartCharging",\n' +
-      '        "address": "400",\n' +
-      '        "type": "Coil",\n' +
-      '        "value": "1",\n' +
-      '        "write": true\n' +
-      '      },\n' +
-      '      {\n' +
-      '        "name": "StopCharging",\n' +
-      '        "address": "400",\n' +
-      '        "type": "Coil",\n' +
-      '        "value": "0",\n' +
-      '        "write": true\n' +
-      '      },\n' +
-      '      {\n' +
-      '        "name": "ChargingCurrent",\n' +
-      '        "address": "528",\n' +
-      '        "type": "Holding",\n' +
-      '        "write": true,\n' +
-      '        "factorToValue": "10"\n' +
+      '        "byteOrder": null,\n' +
+      '        "bytes": null,\n' +
+      '        "factorToValue": null,\n' +
+      '        "readValues": [\n' +
+      '          {\n' +
+      '            "@class": "de.avanux.smartapplianceenabler.modbus.ModbusReadValue",\n' +
+      '            "extractionRegex": "(A)",\n' +
+      '            "name": "VehicleNotConnected"\n' +
+      '          },\n' +
+      '          {\n' +
+      '            "@class": "de.avanux.smartapplianceenabler.modbus.ModbusReadValue",\n' +
+      '            "extractionRegex": "(B)",\n' +
+      '            "name": "VehicleConnected"\n' +
+      '          },\n' +
+      '          {\n' +
+      '            "@class": "de.avanux.smartapplianceenabler.modbus.ModbusReadValue",\n' +
+      '            "extractionRegex": "(C|D)",\n' +
+      '            "name": "Charging"\n' +
+      '          },\n' +
+      '          {\n' +
+      '            "@class": "de.avanux.smartapplianceenabler.modbus.ModbusReadValue",\n' +
+      '            "extractionRegex": "(E|F)",\n' +
+      '            "name": "Error"\n' +
+      '          }\n' +
+      '        ],\n' +
+      '        "type": "InputString"\n' +
       '      }\n' +
-      '    ]\n' +
+      '    ],\n' +
+      '    "modbusWrites": [\n' +
+      '      {\n' +
+      '        "@class": "de.avanux.smartapplianceenabler.modbus.ModbusWrite",\n' +
+      '        "address": "400",\n' +
+      '        "factorToValue": null,\n' +
+      '        "type": "Coil",\n' +
+      '        "writeValues": [\n' +
+      '          {\n' +
+      '            "@class": "de.avanux.smartapplianceenabler.modbus.ModbusWriteValue",\n' +
+      '            "name": "StartCharging",\n' +
+      '            "value": "1"\n' +
+      '          },\n' +
+      '          {\n' +
+      '            "@class": "de.avanux.smartapplianceenabler.modbus.ModbusWriteValue",\n' +
+      '            "name": "StopCharging",\n' +
+      '            "value": "0"\n' +
+      '          }\n' +
+      '        ]\n' +
+      '      },\n' +
+      '      {\n' +
+      '        "@class": "de.avanux.smartapplianceenabler.modbus.ModbusWrite",\n' +
+      '        "address": "528",\n' +
+      '        "factorToValue": 10,\n' +
+      '        "type": "Holding",\n' +
+      '        "writeValues": [\n' +
+      '          {\n' +
+      '            "@class": "de.avanux.smartapplianceenabler.modbus.ModbusWriteValue",\n' +
+      '            "name": "ChargingCurrent",\n' +
+      '            "value": "0"\n' +
+      '          }\n' +
+      '        ]\n' +
+      '      }\n' +
+      '    ],\n' +
+      '    "slaveAddress": 255\n' +
       '  }\n' +
-      '}');
+      '}\n');
     templates['go-eCharger'] = JSON.parse('{\n' +
       '  "@class": "de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger",\n' +
       '  "voltage": null,\n' +
