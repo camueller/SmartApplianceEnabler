@@ -156,10 +156,10 @@ export class ControlFactory {
     if (rawModbusSwitch) {
       modbusSwitch.idref = rawModbusSwitch.idref;
       modbusSwitch.slaveAddress = rawModbusSwitch.slaveAddress;
-      if (rawModbusSwitch.registerWrites != null) {
-        modbusSwitch.registerAddress = rawModbusSwitch.registerWrites[0].address;
-        modbusSwitch.registerType = rawModbusSwitch.registerWrites[0].type;
-        rawModbusSwitch.registerWrites[0].registerWriteValues.forEach((registerWrite) => {
+      if (rawModbusSwitch.modbusWrites != null) {
+        modbusSwitch.registerAddress = rawModbusSwitch.modbusWrites[0].address;
+        modbusSwitch.registerType = rawModbusSwitch.modbusWrites[0].type;
+        rawModbusSwitch.modbusWrites[0].writeValues.forEach((registerWrite) => {
           if (registerWrite.name === 'On') {
             modbusSwitch.onValue = registerWrite.value;
           }
@@ -271,7 +271,7 @@ export class ControlFactory {
     const registerWrite = new ModbusRegisterWrite();
     registerWrite.address = control.modbusSwitch.registerAddress;
     registerWrite.type = control.modbusSwitch.registerType;
-    registerWrite.registerWriteValues = [registerWriteValueOn, registerWriteValueOff];
+    registerWrite.writeValues = [registerWriteValueOn, registerWriteValueOff];
     control.modbusSwitch.registerWrites = [registerWrite];
   }
 

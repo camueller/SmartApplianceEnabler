@@ -30,7 +30,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.InputStream;
-import java.util.List;
 
 public class FileHandlerTest {
 
@@ -167,24 +166,24 @@ public class FileHandlerTest {
         Assert.assertEquals(method, writeValue.getMethod());
     }
 
-    private void assertModbusRegisterRead(ModbusRegisterRead registerRead, String address, ModbusReadRegisterType registerType) {
+    private void assertModbusRegisterRead(ModbusRead registerRead, String address, ReadRegisterType registerType) {
         Assert.assertEquals(address, registerRead.getAddress());
         Assert.assertEquals(registerType, registerRead.getType());
     }
 
-    private void assertModbusRegisterReadValue(ModbusRegisterReadValue registerReadValue, EVReadValueName name, String extractionRegex) {
+    private void assertModbusRegisterReadValue(ModbusReadValue registerReadValue, EVReadValueName name, String extractionRegex) {
         Assert.assertEquals(name.name(), registerReadValue.getName());
         if(extractionRegex != null) {
             Assert.assertEquals(extractionRegex, registerReadValue.getExtractionRegex());
         }
     }
 
-    private void assertModbusRegisterWrite(ModbusRegisterWrite registerWrite, String address, ModbusWriteRegisterType registerType) {
+    private void assertModbusRegisterWrite(ModbusWrite registerWrite, String address, WriteRegisterType registerType) {
         Assert.assertEquals(address, registerWrite.getAddress());
         Assert.assertEquals(registerType, registerWrite.getType());
     }
 
-    private void assertModbusRegisterWriteValue(ModbusRegisterWriteValue registerWriteValue, EVWriteValueName name, String value) {
+    private void assertModbusRegisterWriteValue(ModbusWriteValue registerWriteValue, EVWriteValueName name, String value) {
         Assert.assertEquals(name.name(), registerWriteValue.getName());
         if(value != null) {
             Assert.assertEquals(value, registerWriteValue.getValue());

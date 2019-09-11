@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ModbusRegisterRead {
+public class ModbusRead {
     @XmlAttribute
     private String address;
     @XmlAttribute
@@ -41,10 +41,10 @@ public class ModbusRegisterRead {
     private String type;
     @XmlAttribute
     private Double factorToValue;
-    @XmlElement(name = "ModbusRegisterReadValue")
-    private List<ModbusRegisterReadValue> registerReadValues;
+    @XmlElement(name = "ModbusReadValue")
+    private List<ModbusReadValue> readValues;
 
-    public ModbusRegisterRead() {
+    public ModbusRead() {
     }
 
     public String getAddress() {
@@ -57,7 +57,7 @@ public class ModbusRegisterRead {
 
     public Integer getBytes() {
         if(bytes == null) {
-            if(getType() == ModbusReadRegisterType.InputFloat) {
+            if(getType() == ReadRegisterType.InputFloat) {
                 return 2;
             }
             return 1;
@@ -77,8 +77,8 @@ public class ModbusRegisterRead {
         this.byteOrder = byteOrder;
     }
 
-    public ModbusReadRegisterType getType() {
-        return ModbusReadRegisterType.valueOf(this.type);
+    public ReadRegisterType getType() {
+        return ReadRegisterType.valueOf(this.type);
     }
 
     public void setType(String type) {
@@ -93,27 +93,27 @@ public class ModbusRegisterRead {
         this.factorToValue = factorToValue;
     }
 
-    public List<ModbusRegisterReadValue> getRegisterReadValues() {
-        return registerReadValues;
+    public List<ModbusReadValue> getReadValues() {
+        return readValues;
     }
 
-    public void setRegisterReadValues(List<ModbusRegisterReadValue> registerReadValues) {
-        this.registerReadValues = registerReadValues;
+    public void setReadValues(List<ModbusReadValue> readValues) {
+        this.readValues = readValues;
     }
 
-    public static ParentWithChild<ModbusRegisterRead, ModbusRegisterReadValue> getFirstRegisterRead(
-            String registerName, List<ModbusRegisterRead> registerReads) {
-        List<ParentWithChild<ModbusRegisterRead, ModbusRegisterReadValue>> matches = getRegisterReads(
+    public static ParentWithChild<ModbusRead, ModbusReadValue> getFirstRegisterRead(
+            String registerName, List<ModbusRead> registerReads) {
+        List<ParentWithChild<ModbusRead, ModbusReadValue>> matches = getRegisterReads(
                 registerName, registerReads);
         return matches.size() > 0 ? matches.get(0) : null;
     }
 
-    public static List<ParentWithChild<ModbusRegisterRead, ModbusRegisterReadValue>> getRegisterReads(
-            String registerName, List<ModbusRegisterRead> registerReads) {
-        List<ParentWithChild<ModbusRegisterRead, ModbusRegisterReadValue>> matches = new ArrayList<>();
+    public static List<ParentWithChild<ModbusRead, ModbusReadValue>> getRegisterReads(
+            String registerName, List<ModbusRead> registerReads) {
+        List<ParentWithChild<ModbusRead, ModbusReadValue>> matches = new ArrayList<>();
         if(registerReads != null) {
-            for(ModbusRegisterRead registerRead: registerReads) {
-                for(ModbusRegisterReadValue registerReadValue: registerRead.getRegisterReadValues()) {
+            for(ModbusRead registerRead: registerReads) {
+                for(ModbusReadValue registerReadValue: registerRead.getReadValues()) {
                     if(registerName.equals(registerReadValue.getName())) {
                         matches.add(new ParentWithChild<>(registerRead, registerReadValue));
                     }
@@ -129,7 +129,7 @@ public class ModbusRegisterRead {
 
         if (o == null || getClass() != o.getClass()) return false;
 
-        ModbusRegisterRead that = (ModbusRegisterRead) o;
+        ModbusRead that = (ModbusRead) o;
 
         return new EqualsBuilder()
                 .append(address, that.address)

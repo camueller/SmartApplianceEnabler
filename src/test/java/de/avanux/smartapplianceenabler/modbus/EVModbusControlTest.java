@@ -56,15 +56,15 @@ public class EVModbusControlTest {
 
     private void isMatchingVehicleStatusUsingCache(boolean expectedResult, EVReadValueName registerName,
                                                    String extractionRegex, Integer[] byteValues) {
-        ModbusRegisterRead registerRead = new ModbusRegisterRead();
+        ModbusRead registerRead = new ModbusRead();
         registerRead.setAddress("42");
-        registerRead.setType(ModbusReadRegisterType.InputString.name());
+        registerRead.setType(ReadRegisterType.InputString.name());
         registerRead.setBytes(1);
 
-        ModbusRegisterReadValue registerReadValue = new ModbusRegisterReadValue(registerName.name(), extractionRegex);
-        registerRead.setRegisterReadValues(Collections.singletonList(registerReadValue));
+        ModbusReadValue registerReadValue = new ModbusReadValue(registerName.name(), extractionRegex);
+        registerRead.setReadValues(Collections.singletonList(registerReadValue));
 
-        this.evModbusControl.setRegisterReads(Collections.singletonList(registerRead));
+        this.evModbusControl.setModbusReads(Collections.singletonList(registerRead));
         this.evModbusControl.init();
 
         ModbusReadTransactionExecutor executor

@@ -33,10 +33,10 @@ public class ModbusValidator {
         this.applianceId = applianceId;
     }
 
-    public boolean validateReads(String valueName, List<ParentWithChild<ModbusRegisterRead, ModbusRegisterReadValue>> reads) {
+    public boolean validateReads(String valueName, List<ParentWithChild<ModbusRead, ModbusReadValue>> reads) {
         if(reads.size() > 0) {
-            for(ParentWithChild<ModbusRegisterRead, ModbusRegisterReadValue> read: reads) {
-                ModbusRegisterRead registerRead = read.parent();
+            for(ParentWithChild<ModbusRead, ModbusReadValue> read: reads) {
+                ModbusRead registerRead = read.parent();
                 logger.debug("{}: {} configured: read register={} / bytes={} / byte order={} / type={} / extraction regex={} / factorToValue={}",
                         applianceId,
                         valueName,
@@ -53,9 +53,9 @@ public class ModbusValidator {
         return false;
     }
 
-    public boolean validateWrites(String valueName, List<ParentWithChild<ModbusRegisterWrite, ModbusRegisterWriteValue>> writes) {
+    public boolean validateWrites(String valueName, List<ParentWithChild<ModbusWrite, ModbusWriteValue>> writes) {
         if(writes.size() > 0) {
-            for(ParentWithChild<ModbusRegisterWrite, ModbusRegisterWriteValue> write: writes) {
+            for(ParentWithChild<ModbusWrite, ModbusWriteValue> write: writes) {
                 logger.debug("{}: {} configured: write register={} value={} factorToValue={}",
                         applianceId,
                         valueName,

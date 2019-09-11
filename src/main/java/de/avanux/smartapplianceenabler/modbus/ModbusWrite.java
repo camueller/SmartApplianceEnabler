@@ -28,25 +28,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ModbusRegisterWrite {
+public class ModbusWrite {
     @XmlAttribute
     private String address;
     @XmlAttribute
     private String type;
     @XmlAttribute
     private Double factorToValue;
-    @XmlElement(name = "ModbusRegisterWriteValue")
-    private List<ModbusRegisterWriteValue> registerWriteValues;
+    @XmlElement(name = "ModbusWriteValue")
+    private List<ModbusWriteValue> writeValues;
 
-    public ModbusRegisterWrite() {
+    public ModbusWrite() {
     }
 
     public String getAddress() {
         return address;
     }
 
-    public ModbusWriteRegisterType getType() {
-        return ModbusWriteRegisterType.valueOf(this.type);
+    public WriteRegisterType getType() {
+        return WriteRegisterType.valueOf(this.type);
     }
 
     public void setType(String type) {
@@ -61,31 +61,31 @@ public class ModbusRegisterWrite {
         this.factorToValue = factorToValue;
     }
 
-    public ModbusReadRegisterType getReadRegisterType() {
-        return ModbusReadRegisterType.valueOf(this.type);
+    public ReadRegisterType getReadRegisterType() {
+        return ReadRegisterType.valueOf(this.type);
     }
 
-    public List<ModbusRegisterWriteValue> getRegisterWriteValues() {
-        return registerWriteValues;
+    public List<ModbusWriteValue> getWriteValues() {
+        return writeValues;
     }
 
-    public void setRegisterWriteValues(List<ModbusRegisterWriteValue> registerWriteValues) {
-        this.registerWriteValues = registerWriteValues;
+    public void setWriteValues(List<ModbusWriteValue> writeValues) {
+        this.writeValues = writeValues;
     }
 
-    public static ParentWithChild<ModbusRegisterWrite, ModbusRegisterWriteValue> getFirstRegisterWrite(
-            String registerName, List<ModbusRegisterWrite> registerWrites) {
-        List<ParentWithChild<ModbusRegisterWrite, ModbusRegisterWriteValue>> matches
+    public static ParentWithChild<ModbusWrite, ModbusWriteValue> getFirstRegisterWrite(
+            String registerName, List<ModbusWrite> registerWrites) {
+        List<ParentWithChild<ModbusWrite, ModbusWriteValue>> matches
                 = getRegisterWrites(registerName, registerWrites);
         return matches.size() > 0 ? matches.get(0) : null;
     }
 
-    public static List<ParentWithChild<ModbusRegisterWrite, ModbusRegisterWriteValue>> getRegisterWrites(
-            String registerName, List<ModbusRegisterWrite> registerWrites) {
-        List<ParentWithChild<ModbusRegisterWrite, ModbusRegisterWriteValue>> matches = new ArrayList<>();
+    public static List<ParentWithChild<ModbusWrite, ModbusWriteValue>> getRegisterWrites(
+            String registerName, List<ModbusWrite> registerWrites) {
+        List<ParentWithChild<ModbusWrite, ModbusWriteValue>> matches = new ArrayList<>();
         if(registerWrites != null) {
-            for(ModbusRegisterWrite registerWrite: registerWrites) {
-                for(ModbusRegisterWriteValue registerWriteValue: registerWrite.getRegisterWriteValues()) {
+            for(ModbusWrite registerWrite: registerWrites) {
+                for(ModbusWriteValue registerWriteValue: registerWrite.getWriteValues()) {
                     if(registerName.equals(registerWriteValue.getName())) {
                         matches.add(new ParentWithChild<>(registerWrite, registerWriteValue));
                     }

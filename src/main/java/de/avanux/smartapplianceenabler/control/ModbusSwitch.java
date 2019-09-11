@@ -17,8 +17,8 @@
  */
 package de.avanux.smartapplianceenabler.control;
 
-import de.avanux.smartapplianceenabler.modbus.ModbusRegisterWrite;
-import de.avanux.smartapplianceenabler.modbus.ModbusRegisterWriteValue;
+import de.avanux.smartapplianceenabler.modbus.ModbusWrite;
+import de.avanux.smartapplianceenabler.modbus.ModbusWriteValue;
 import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
 import de.avanux.smartapplianceenabler.modbus.ModbusValidator;
 import de.avanux.smartapplianceenabler.modbus.executor.*;
@@ -36,8 +36,8 @@ import java.util.List;
 public class ModbusSwitch extends ModbusSlave implements Control, Validateable {
 
     private transient Logger logger = LoggerFactory.getLogger(ModbusSwitch.class);
-    @XmlElement(name = "ModbusRegisterWrite")
-    private List<ModbusRegisterWrite> registerWrites;
+    @XmlElement(name = "ModbusWrite")
+    private List<ModbusWrite> registerWrites;
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
 
     @Override
@@ -46,8 +46,8 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable {
         boolean valid = true;
         ModbusValidator validator = new ModbusValidator(getApplianceId());
         for(ControlValueName valueName: ControlValueName.values()) {
-            ParentWithChild<ModbusRegisterWrite, ModbusRegisterWriteValue> write
-                    = ModbusRegisterWrite.getFirstRegisterWrite(valueName.name(), this.registerWrites);
+            ParentWithChild<ModbusWrite, ModbusWriteValue> write
+                    = ModbusWrite.getFirstRegisterWrite(valueName.name(), this.registerWrites);
             valid = validator.validateWrites(valueName.name(), Collections.singletonList(write));
         }
         if(! valid) {
@@ -60,10 +60,10 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable {
     public boolean on(LocalDateTime now, boolean switchOn) {
         boolean result = false;
         logger.info("{}: Switching {}", getApplianceId(), (switchOn ? "on" : "off"));
-        ParentWithChild<ModbusRegisterWrite, ModbusRegisterWriteValue> write
-                = ModbusRegisterWrite.getFirstRegisterWrite(getValueName(switchOn).name(), this.registerWrites);
+        ParentWithChild<ModbusWrite, ModbusWriteValue> write
+                = ModbusWrite.getFirstRegisterWrite(getValueName(switchOn).name(), this.registerWrites);
         if (write != null) {
-            ModbusRegisterWrite registerWrite = write.parent();
+            ModbusWrite registerWrite = write.parent();
             try {
                 ModbusWriteTransactionExecutor executor = ModbusExecutorFactory.getWriteExecutor(getApplianceId(),
                         registerWrite.getType(), registerWrite.getAddress(),registerWrite.getFactorToValue());
@@ -90,10 +90,10 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable {
     @Override
     public boolean isOn() {
         boolean on = false;
-        ParentWithChild<ModbusRegisterWrite, ModbusRegisterWriteValue> write
-                = ModbusRegisterWrite.getFirstRegisterWrite(ControlValueName.On.name(), this.registerWrites);
+        ParentWithChild<ModbusWrite, ModbusWriteValue> write
+                = ModbusWrite.getFirstRegisterWrite(ControlValueName.On.name(), this.registerWrites);
         if(write != null) {
-            ModbusRegisterWrite registerWrite = write.parent();
+            ModbusWrite registerWrite = write.parent();
             try {
                 ModbusReadTransactionExecutor executor = ModbusExecutorFactory.getReadExecutor(getApplianceId(),
                         registerWrite.getReadRegisterType(), registerWrite.getAddress());

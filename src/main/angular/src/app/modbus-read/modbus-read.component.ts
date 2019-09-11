@@ -83,8 +83,8 @@ export class ModbusReadComponent implements OnInit, AfterViewChecked {
 
   get valueName() {
     // TODO ist das so notwendig?
-    if (this.modbusRead.registerReadValues && this.modbusRead.registerReadValues.length === 1) {
-      const modbusReadValue = this.modbusRead.registerReadValues[0];
+    if (this.modbusRead.readValues && this.modbusRead.readValues.length === 1) {
+      const modbusReadValue = this.modbusRead.readValues[0];
       // if (modbusReadValue.name) {
       //   return this.getTranslatedValueName(modbusReadValue.name);
       // }
@@ -104,15 +104,15 @@ export class ModbusReadComponent implements OnInit, AfterViewChecked {
 
   addValue() {
     const newReadValue = new ModbusReadValue();
-    if (!this.modbusRead.registerReadValues) {
-      this.modbusRead.registerReadValues = [];
+    if (!this.modbusRead.readValues) {
+      this.modbusRead.readValues = [];
     }
-    this.modbusRead.registerReadValues.push(newReadValue);
+    this.modbusRead.readValues.push(newReadValue);
     this.form.markAsDirty();
   }
 
   removeValue(index: number) {
-    this.modbusRead.registerReadValues.splice(index, 1);
+    this.modbusRead.readValues.splice(index, 1);
     this.form.markAsDirty();
   }
 

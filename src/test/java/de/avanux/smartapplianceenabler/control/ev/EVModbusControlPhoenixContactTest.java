@@ -42,35 +42,35 @@ public class EVModbusControlPhoenixContactTest {
         this.evModbusControl.setApplianceId("F-001-01");
         this.evModbusControl.setPollInterval(10);
 
-        ModbusRegisterRead register100 = new ModbusRegisterRead();
-        register100.setType(ModbusReadRegisterType.InputString.name());
-        List<ModbusRegisterReadValue> register100ReadValues = new ArrayList<>();
-        register100ReadValues.add(new ModbusRegisterReadValue("VehicleNotConnected", "(A)"));
-        register100ReadValues.add(new ModbusRegisterReadValue("VehicleConnected", "(B)"));
-        register100ReadValues.add(new ModbusRegisterReadValue("Charging", "(C|D)"));
-        register100ReadValues.add(new ModbusRegisterReadValue("ChargingCompleted", "(B)"));
-        register100ReadValues.add(new ModbusRegisterReadValue("Error", "(E|F)"));
-        register100.setRegisterReadValues(register100ReadValues);
+        ModbusRead register100 = new ModbusRead();
+        register100.setType(ReadRegisterType.InputString.name());
+        List<ModbusReadValue> register100ReadValues = new ArrayList<>();
+        register100ReadValues.add(new ModbusReadValue("VehicleNotConnected", "(A)"));
+        register100ReadValues.add(new ModbusReadValue("VehicleConnected", "(B)"));
+        register100ReadValues.add(new ModbusReadValue("Charging", "(C|D)"));
+        register100ReadValues.add(new ModbusReadValue("ChargingCompleted", "(B)"));
+        register100ReadValues.add(new ModbusReadValue("Error", "(E|F)"));
+        register100.setReadValues(register100ReadValues);
 
-        ModbusRegisterRead register204 = new ModbusRegisterRead();
-        register204.setType(ModbusReadRegisterType.Discrete.name());
-        register204.setRegisterReadValues(Collections.singletonList(
-                new ModbusRegisterReadValue("ChargingCompleted", null)));
+        ModbusRead register204 = new ModbusRead();
+        register204.setType(ReadRegisterType.Discrete.name());
+        register204.setReadValues(Collections.singletonList(
+                new ModbusReadValue("ChargingCompleted", null)));
 
-        ModbusRegisterWrite register400 = new ModbusRegisterWrite();
-        register400.setType(ModbusWriteRegisterType.Coil.name());
-        List<ModbusRegisterWriteValue> register400WriteValues = new ArrayList<>();
-        register400WriteValues.add(new ModbusRegisterWriteValue("StartCharging", "1"));
-        register400WriteValues.add(new ModbusRegisterWriteValue("StopCharging", "0"));
-        register400.setRegisterWriteValues(register400WriteValues);
+        ModbusWrite register400 = new ModbusWrite();
+        register400.setType(WriteRegisterType.Coil.name());
+        List<ModbusWriteValue> register400WriteValues = new ArrayList<>();
+        register400WriteValues.add(new ModbusWriteValue("StartCharging", "1"));
+        register400WriteValues.add(new ModbusWriteValue("StopCharging", "0"));
+        register400.setWriteValues(register400WriteValues);
 
-        ModbusRegisterWrite register300 = new ModbusRegisterWrite();
-        register300.setType(ModbusWriteRegisterType.Holding.name());
-        register300.setRegisterWriteValues(Collections.singletonList(
-                new ModbusRegisterWriteValue("ChargingCurrent", "0")));
+        ModbusWrite register300 = new ModbusWrite();
+        register300.setType(WriteRegisterType.Holding.name());
+        register300.setWriteValues(Collections.singletonList(
+                new ModbusWriteValue("ChargingCurrent", "0")));
 
-        this.evModbusControl.setRegisterReads(Arrays.asList(register100, register204));
-        this.evModbusControl.setRegisterWrites(Arrays.asList(register400, register300));
+        this.evModbusControl.setModbusReads(Arrays.asList(register100, register204));
+        this.evModbusControl.setModbusWrites(Arrays.asList(register400, register300));
         this.evModbusControl.init();
         this.evModbusControl.validate();
 

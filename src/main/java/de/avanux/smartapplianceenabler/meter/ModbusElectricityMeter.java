@@ -45,8 +45,8 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
         Validateable, PollPowerExecutor, PollEnergyExecutor {
 
     private transient Logger logger = LoggerFactory.getLogger(ModbusElectricityMeter.class);
-    @XmlElement(name = "ModbusRegisterRead")
-    private List<ModbusRegisterRead> registerReads;
+    @XmlElement(name = "ModbusRead")
+    private List<ModbusRead> registerReads;
     @XmlAttribute
     private Integer pollInterval; // seconds
     @XmlAttribute
@@ -109,8 +109,8 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
         boolean valid = true;
         ModbusValidator validator = new ModbusValidator(getApplianceId());
         for(MeterValueName valueName: MeterValueName.values()) {
-            ParentWithChild<ModbusRegisterRead, ModbusRegisterReadValue> read
-                    = ModbusRegisterRead.getFirstRegisterRead(valueName.name(), registerReads);
+            ParentWithChild<ModbusRead, ModbusReadValue> read
+                    = ModbusRead.getFirstRegisterRead(valueName.name(), registerReads);
             valid = validator.validateReads(valueName.name(), Collections.singletonList(read));
         }
         if(! valid) {
@@ -133,8 +133,8 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
 
     @Override
     public Float pollPower() {
-        ParentWithChild<ModbusRegisterRead, ModbusRegisterReadValue> read
-                = ModbusRegisterRead.getFirstRegisterRead(MeterValueName.Power.name(), registerReads);
+        ParentWithChild<ModbusRead, ModbusReadValue> read
+                = ModbusRead.getFirstRegisterRead(MeterValueName.Power.name(), registerReads);
         return readRegister(read.parent());
     }
 
@@ -163,12 +163,12 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
 
     @Override
     public Float pollEnergy(LocalDateTime now) {
-        ParentWithChild<ModbusRegisterRead, ModbusRegisterReadValue> read
-                = ModbusRegisterRead.getFirstRegisterRead(MeterValueName.Energy.name(), registerReads);
+        ParentWithChild<ModbusRead, ModbusReadValue> read
+                = ModbusRead.getFirstRegisterRead(MeterValueName.Energy.name(), registerReads);
         return readRegister(read.parent());
     }
 
-    private float readRegister(ModbusRegisterRead registerRead) {
+    private float readRegister(ModbusRead registerRead) {
         try {
             ModbusReadTransactionExecutor executor = ModbusExecutorFactory.getReadExecutor(getApplianceId(),
                     registerRead.getType(), registerRead.getAddress(), registerRead.getBytes(),

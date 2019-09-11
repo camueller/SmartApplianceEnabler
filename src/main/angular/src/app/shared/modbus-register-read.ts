@@ -1,5 +1,8 @@
 import {ModbusRegisterReadValue} from './modbus-register-read-value';
 
+/**
+ * @Deprecated
+ */
 export class ModbusRegisterRead {
   static get TYPE(): string {
     return 'de.avanux.smartapplianceenabler.modbus.ModbusRegisterRead';
