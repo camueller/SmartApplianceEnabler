@@ -58,18 +58,18 @@ public class HttpValidator {
     }
 
     public boolean validateWrites(Collection<String> valueNames, List<HttpWrite> httpWrites) {
-        for(EVWriteValueName valueName: EVWriteValueName.values()) {
-            ParentWithChild<HttpWrite, HttpWriteValue> write = HttpWrite.getFirstHttpWrite(valueName.name(), httpWrites);
+        for(String valueName: valueNames) {
+            ParentWithChild<HttpWrite, HttpWriteValue> write = HttpWrite.getFirstHttpWrite(valueName, httpWrites);
             if(write != null) {
                 logger.debug("{}: {} configured: write url={} value={} factorToValue={}",
                         applianceId,
-                        valueName.name(),
+                        valueName,
                         write.parent().getUrl(),
                         write.child().getValue(),
                         write.child().getFactorToValue());
             }
             else {
-                logger.error("{}: Missing configuration for {}", applianceId, valueName.name());
+                logger.error("{}: Missing configuration for {}", applianceId, valueName);
                 return false;
             }
         }

@@ -37,7 +37,7 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable {
 
     private transient Logger logger = LoggerFactory.getLogger(ModbusSwitch.class);
     @XmlElement(name = "ModbusWrite")
-    private List<ModbusWrite> registerWrites;
+    private List<ModbusWrite> modbusWrites;
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
 
     @Override
@@ -47,7 +47,7 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable {
         ModbusValidator validator = new ModbusValidator(getApplianceId());
         for(ControlValueName valueName: ControlValueName.values()) {
             ParentWithChild<ModbusWrite, ModbusWriteValue> write
-                    = ModbusWrite.getFirstRegisterWrite(valueName.name(), this.registerWrites);
+                    = ModbusWrite.getFirstRegisterWrite(valueName.name(), this.modbusWrites);
             valid = validator.validateWrites(valueName.name(), Collections.singletonList(write));
         }
         if(! valid) {
@@ -61,7 +61,7 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable {
         boolean result = false;
         logger.info("{}: Switching {}", getApplianceId(), (switchOn ? "on" : "off"));
         ParentWithChild<ModbusWrite, ModbusWriteValue> write
-                = ModbusWrite.getFirstRegisterWrite(getValueName(switchOn).name(), this.registerWrites);
+                = ModbusWrite.getFirstRegisterWrite(getValueName(switchOn).name(), this.modbusWrites);
         if (write != null) {
             ModbusWrite registerWrite = write.parent();
             try {
@@ -91,7 +91,7 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable {
     public boolean isOn() {
         boolean on = false;
         ParentWithChild<ModbusWrite, ModbusWriteValue> write
-                = ModbusWrite.getFirstRegisterWrite(ControlValueName.On.name(), this.registerWrites);
+                = ModbusWrite.getFirstRegisterWrite(ControlValueName.On.name(), this.modbusWrites);
         if(write != null) {
             ModbusWrite registerWrite = write.parent();
             try {

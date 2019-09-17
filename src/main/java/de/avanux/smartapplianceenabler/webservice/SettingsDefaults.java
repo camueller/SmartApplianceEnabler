@@ -32,8 +32,8 @@ public class SettingsDefaults {
     private String holidaysUrl = HolidaysDownloader.DEFAULT_URL;
     private String modbusTcpHost = ModbusTcp.DEFAULT_HOST;
     private Integer modbusTcpPort = ModbusTcp.DEFAULT_PORT;
-    private ReadRegisterType[] readRegisterTypes = ReadRegisterType.values();
-    private WriteRegisterType[] writeRegisterTypes = WriteRegisterType.values();
+    private ReadRegisterType[] modbusReadRegisterTypes = ReadRegisterType.values();
+    private WriteRegisterType[] modbusWriteRegisterTypes = WriteRegisterType.values();
     private ByteOrder[] byteOrders = ByteOrder.values();
     private Integer pulseReceiverPort = PulseReceiver.DEFAULT_PORT;
 
@@ -49,12 +49,12 @@ public class SettingsDefaults {
         return instance.modbusTcpPort;
     }
 
-    public ReadRegisterType[] getReadRegisterTypes() {
-        return readRegisterTypes;
+    public ReadRegisterType[] getModbusReadRegisterTypes() {
+        return modbusReadRegisterTypes;
     }
 
-    public WriteRegisterType[] getWriteRegisterTypes() {
-        return writeRegisterTypes;
+    public WriteRegisterType[] getModbusWriteRegisterTypes() {
+        return modbusWriteRegisterTypes;
     }
 
     public ByteOrder[] getByteOrders() {
