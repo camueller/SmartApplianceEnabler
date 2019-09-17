@@ -58,6 +58,10 @@ label.required::after {
   width: 2.5em !important;
 }
 
+.mandatory-fields {
+  padding-bottom: 1.5rem;
+}
+
 .tooltip {
   position: relative;
   display: inline-block;

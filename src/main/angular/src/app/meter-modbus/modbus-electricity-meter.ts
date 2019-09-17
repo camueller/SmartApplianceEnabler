@@ -16,8 +16,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {ModbusRegisterRead} from '../shared/modbus-register-read';
-import {ModbusRegisterConfguration} from '../shared/modbus-register-confguration';
+import {ModbusRead} from '../modbus-read/modbus-read';
 
 export class ModbusElectricityMeter {
 
@@ -28,14 +27,8 @@ export class ModbusElectricityMeter {
   '@class' = ModbusElectricityMeter.TYPE;
   idref: string;
   slaveAddress: string;
-  registerReads?: ModbusRegisterRead[];
   pollInterval: number;
   measurementInterval: number;
-  powerConfiguration: ModbusRegisterConfguration;
-  energyConfiguration: ModbusRegisterConfguration;
-
-  constructor() {
-    this.powerConfiguration = new ModbusRegisterConfguration();
-    this.energyConfiguration = new ModbusRegisterConfguration();
-  }
+  powerModbusRead: ModbusRead;
+  energyModbusRead: ModbusRead;
 }

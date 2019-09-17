@@ -39,6 +39,7 @@ import {Appliance} from '../appliance/appliance';
 import {FormControl, FormGroup} from '@angular/forms';
 import {EvCharger} from '../control-evcharger/ev-charger';
 import {ControlEvchargerComponent} from '../control-evcharger/control-evcharger.component';
+import {ControlHttpComponent} from '../control-http/control-http.component';
 
 @Component({
   selector: 'app-appliance-switch',
@@ -47,6 +48,8 @@ import {ControlEvchargerComponent} from '../control-evcharger/control-evcharger.
 })
 export class ControlComponent implements OnInit, CanDeactivate<ControlComponent> {
   form: FormGroup;
+  @ViewChild(ControlHttpComponent)
+  controlHttpComp: ControlHttpComponent;
   @ViewChild(ControlEvchargerComponent)
   evChargerComp: ControlEvchargerComponent;
   applianceId: string;
@@ -77,8 +80,10 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   ngOnInit() {
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.route.paramMap.subscribe(() => this.applianceId = this.route.snapshot.paramMap.get('id'));
-    this.route.data.subscribe((data: {control: Control, controlDefaults: ControlDefaults, appliance: Appliance,
-      settings: Settings, settingsDefaults: SettingsDefaults}) => {
+    this.route.data.subscribe((data: {
+      control: Control, controlDefaults: ControlDefaults, appliance: Appliance,
+      settings: Settings, settingsDefaults: SettingsDefaults
+    }) => {
       this.control = data.control;
       this.controlDefaults = data.controlDefaults;
       this.appliance = data.appliance;
@@ -137,7 +142,7 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
 
   get canHaveStartingCurrentDetection(): boolean {
     return this.control.type !== AlwaysOnSwitch.TYPE
-    && this.control.type !== MockSwitch.TYPE;
+      && this.control.type !== MockSwitch.TYPE;
   }
 
   startingCurrentDetectionChanged(startingCurrentDetection: boolean) {
@@ -152,9 +157,14 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   }
 
   submitForm() {
-    this.control.evCharger = this.evChargerComp.updateModelFromForm();
-    console.log('CONTROL=', this.control);
+    if (this.controlHttpComp) {
+      this.control.httpSwitch = this.controlHttpComp.updateModelFromForm();
+    }
+    if (this.evChargerComp) {
+      this.control.evCharger = this.evChargerComp.updateModelFromForm();
+    }
 
+    console.log('CONTROL=', this.control);
     // const subscription = this.nestedFormService.completed.subscribe(() => {
     //   console.log('CONTROL=', this.control);
     //   // this.controlService.updateControl(this.control, this.applianceId).subscribe(

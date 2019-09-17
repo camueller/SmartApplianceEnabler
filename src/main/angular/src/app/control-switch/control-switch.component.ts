@@ -11,7 +11,6 @@ import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {FormMarkerService} from '../shared/form-marker-service';
 import {FormHandler} from '../shared/form-handler';
 import {AppliancesReloadService} from '../appliance/appliances-reload-service';
-import {ControlStartingcurrentComponent} from '../control-startingcurrent/control-startingcurrent.component';
 import {StartingCurrentSwitch} from '../control-startingcurrent/starting-current-switch';
 import {Logger} from '../log/logger';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
@@ -71,8 +70,8 @@ export class ControlSwitchComponent implements OnInit, AfterViewChecked {
   updateModelFromForm(form: FormGroup, switch_: Switch, startingCurrentSwitch: StartingCurrentSwitch) {
     switch_.gpio = form.controls.gpio.value;
     switch_.reverseStates = form.controls.reverseStates.value;
-    if (this.control.startingCurrentDetection) {
-      ControlStartingcurrentComponent.updateModelFromForm(form, startingCurrentSwitch);
-    }
+    // if (this.control.startingCurrentDetection) {
+    //   ControlStartingcurrentComponent.updateModelFromForm(form, startingCurrentSwitch);
+    // }
   }
 }

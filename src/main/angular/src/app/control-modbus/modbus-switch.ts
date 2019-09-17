@@ -16,7 +16,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {ModbusRegisterWrite} from '../shared/modbus-register-write';
+import {ModbusWrite} from '../modbus-write/modbus-write';
 
 export class ModbusSwitch {
 
@@ -27,9 +27,5 @@ export class ModbusSwitch {
   '@class' = ModbusSwitch.TYPE;
   idref: string;
   slaveAddress: string;
-  registerWrites?: ModbusRegisterWrite[];
-  registerAddress: string;
-  registerType: string;
-  onValue: string;
-  offValue: string;
+  modbusWrites: ModbusWrite[];
 }

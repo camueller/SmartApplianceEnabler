@@ -51,14 +51,14 @@
                           [controlDefaults]="controlDefaults"
       ></app-control-switch>
       <app-control-modbus *ngIf="control.type===TYPE_MODBUS_SWITCH"
-                          [control]="control"
+                          [modbusSwitch]="control.modbusSwitch"
                           [applianceId]="applianceId"
                           [controlDefaults]="controlDefaults"
                           [modbusSettings]="settings.modbusSettings"
                           [settingsDefaults]="settingsDefaults"
       ></app-control-modbus>
       <app-control-http *ngIf="control.type===TYPE_HTTP_SWITCH"
-                        [control]="control"
+                        [httpSwitch]="control.httpSwitch"
                         [applianceId]="applianceId"
                         [controlDefaults]="controlDefaults"
       ></app-control-http>
@@ -66,7 +66,12 @@
                             [control]="control"
                             [applianceId]="applianceId"
       ></app-control-alwayson>
+      <app-control-startingcurrent *ngIf="control.startingCurrentDetection"
+                                   [startingCurrentSwitch]="control.startingCurrentSwitch"
+                                   [controlDefaults]="controlDefaults"
+      ></app-control-startingcurrent>
     </ng-template>
+    <div class="mandatory-fields">{{'dialog.mandatoryfields'|translate}}</div>
     <button type="submit" class="ui button" [disabled]="form.pristine||form.invalid">
       {{'button.save' | translate}}</button>
   </form>

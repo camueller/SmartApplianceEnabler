@@ -30,12 +30,6 @@ export class HttpElectricityMeter {
   pollInterval: number;
   contentProtocol: string;
   httpConfiguration: HttpConfiguration;
-  powerConfiguration: HttpRead;
-  energyConfiguration: HttpRead;
-
-
-  constructor() {
-    this.powerConfiguration = new HttpRead();
-    this.energyConfiguration = new HttpRead();
-  }
+  powerHttpRead: HttpRead;
+  energyHttpRead: HttpRead;
 }

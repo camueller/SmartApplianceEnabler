@@ -16,7 +16,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, CanDeactivate} from '@angular/router';
 import {S0ElectricityMeter} from '../meter-s0/s0-electricity-meter';
 import {ModbusElectricityMeter} from '../meter-modbus/modbus-electricity-meter';
@@ -32,15 +32,23 @@ import {Observable} from 'rxjs';
 import {Logger} from '../log/logger';
 import {SettingsDefaults} from '../settings/settings-defaults';
 import {Settings} from '../settings/settings';
-import {NestedFormService} from '../shared/nested-form-service';
+import {MeterS0Component} from '../meter-s0/meter-s0.component';
+import {MeterModbusComponent} from '../meter-modbus/meter-modbus.component';
+import {MeterHttpComponent} from '../meter-http/meter-http.component';
 
 @Component({
   selector: 'app-appliance-meter',
   templateUrl: './meter.component.html',
   styles: []
 })
-export class MeterComponent implements OnInit, OnDestroy, CanDeactivate<MeterComponent> {
+export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
   form: FormGroup;
+  @ViewChild(MeterS0Component)
+  meterS0Comp: MeterS0Component;
+  @ViewChild(MeterModbusComponent)
+  meterModbusComp: MeterModbusComponent;
+  @ViewChild(MeterHttpComponent)
+  meterHttpComp: MeterHttpComponent;
   applianceId: string;
   meterDefaults: MeterDefaults;
   meterFactory: MeterFactory;
@@ -56,7 +64,6 @@ export class MeterComponent implements OnInit, OnDestroy, CanDeactivate<MeterCom
   constructor(private logger: Logger,
               private meterService: MeterService,
               private route: ActivatedRoute,
-              private nestedFormService: NestedFormService,
               private dialogService: DialogService,
               private translate: TranslateService) {
     this.meterFactory = new MeterFactory(logger);
@@ -67,8 +74,10 @@ export class MeterComponent implements OnInit, OnDestroy, CanDeactivate<MeterCom
     this.form = this.buildFormGroup();
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.route.paramMap.subscribe(() => this.applianceId = this.route.snapshot.paramMap.get('id'));
-    this.route.data.subscribe((data: {meter: Meter, meterDefaults: MeterDefaults,
-      settings: Settings, settingsDefaults: SettingsDefaults}) => {
+    this.route.data.subscribe((data: {
+      meter: Meter, meterDefaults: MeterDefaults,
+      settings: Settings, settingsDefaults: SettingsDefaults
+    }) => {
       if (data.meter) {
         this.meter = data.meter;
         this.form.setControl('meterType', new FormControl(this.meter && this.meter.type));
@@ -78,10 +87,6 @@ export class MeterComponent implements OnInit, OnDestroy, CanDeactivate<MeterCom
       this.settingsDefaults = data.settingsDefaults;
       this.form.markAsPristine();
     });
-  }
-
-  ngOnDestroy(): void {
-    this.nestedFormService.completed.unsubscribe();
   }
 
   buildFormGroup(): FormGroup {
@@ -114,11 +119,19 @@ export class MeterComponent implements OnInit, OnDestroy, CanDeactivate<MeterCom
   }
 
   submitForm() {
-    const subscription = this.nestedFormService.completed.subscribe(() => {
-      this.meterService.updateMeter(this.meter, this.applianceId).subscribe();
-      this.form.markAsPristine();
-      subscription.unsubscribe();
-    });
-    this.nestedFormService.submit();
+    if (this.meterS0Comp) {
+      // this.meterS0Comp.updateModelFromForm();
+    }
+    if (this.meterModbusComp) {
+      // this.meterModbusComp.updateModelFromForm();
+    }
+    if (this.meterHttpComp) {
+      this.meterHttpComp.updateModelFromForm();
+    }
+    // const subscription = this.nestedFormService.completed.subscribe(() => {
+    //   this.meterService.updateMeter(this.meter, this.applianceId).subscribe();
+    //   this.form.markAsPristine();
+    //   subscription.unsubscribe();
+    // });
   }
 }

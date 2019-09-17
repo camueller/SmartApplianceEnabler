@@ -96,11 +96,11 @@ export class MeterFactory {
   }
 
   toJSONModbusElectricityMeter(modbusElectricityMeter: ModbusElectricityMeter) {
-    const powerRegisterRead = this.toJSONModbusRegisterRead(
-      'Power', modbusElectricityMeter.powerConfiguration);
-    const energyRegisterRead = this.toJSONModbusRegisterRead(
-      'Energy', modbusElectricityMeter.energyConfiguration);
-    modbusElectricityMeter.registerReads = [powerRegisterRead, energyRegisterRead];
+    // const powerRegisterRead = this.toJSONModbusRegisterRead(
+    //   'Power', modbusElectricityMeter.powerConfiguration);
+    // const energyRegisterRead = this.toJSONModbusRegisterRead(
+    //   'Energy', modbusElectricityMeter.energyConfiguration);
+    // modbusElectricityMeter.registerReads = [powerRegisterRead, energyRegisterRead];
   }
 
   toJSONModbusRegisterRead(registerReadValueName: string, configuration: ModbusRegisterConfguration): ModbusRegisterRead {
@@ -127,31 +127,16 @@ export class MeterFactory {
   }
 
   createModbusElectricityMeter(rawMeter: any): ModbusElectricityMeter {
-    const modbusElectricityMeter = new ModbusElectricityMeter();
-    modbusElectricityMeter.idref = rawMeter.idref;
-    modbusElectricityMeter.slaveAddress = rawMeter.slaveAddress;
-    modbusElectricityMeter.pollInterval = rawMeter.pollInterval;
-    modbusElectricityMeter.measurementInterval = rawMeter.measurementInterval;
-    if (rawMeter.modbusReads != null) {
-      rawMeter.modbusReads.forEach((registerRead) => {
-        const name = registerRead.readValues[0].name;
-        if (name === 'Power') {
-          modbusElectricityMeter.powerConfiguration = new ModbusRegisterConfguration({
-            address: registerRead.address,
-            bytes: registerRead.bytes,
-            byteOrder: registerRead.byteOrder,
-            type: registerRead.type,
-            factorToValue: registerRead.factorToValue
-          });
-        }
-        if (name === 'Energy') {
-          modbusElectricityMeter.energyConfiguration = new ModbusRegisterConfguration({
-            address: registerRead.address,
-            bytes: registerRead.bytes,
-            byteOrder: registerRead.byteOrder,
-            type: registerRead.type,
-            factorToValue: registerRead.factorToValue
-          });
+    const modbusElectricityMeter: ModbusElectricityMeter = {...rawMeter};
+    if (!!rawMeter.modbusReads) {
+      rawMeter.modbusReads.forEach((rawModbusRead) => {
+        if (!!rawModbusRead.readValues && rawModbusRead.readValues.length > 0) {
+          if (rawModbusRead.readValues[0].name === MeterValueName.Power) {
+            modbusElectricityMeter.powerModbusRead = {...rawModbusRead};
+          }
+          if (rawModbusRead.readValues[0].name === MeterValueName.Energy) {
+            modbusElectricityMeter.energyModbusRead = {...rawModbusRead};
+          }
         }
       });
     }
@@ -159,31 +144,30 @@ export class MeterFactory {
   }
 
   createHttpElectricityMeter(rawMeter: any): HttpElectricityMeter {
-    const httpElectricityMeter = {...rawMeter};
+    const httpElectricityMeter: HttpElectricityMeter = {...rawMeter};
     if (!!rawMeter.httpReads) {
       rawMeter.httpReads.forEach((rawHttpRead) => {
         if (!!rawHttpRead.readValues && rawHttpRead.readValues.length > 0) {
           if (rawHttpRead.readValues[0].name === MeterValueName.Power) {
-            httpElectricityMeter.powerConfiguration = {...rawHttpRead};
+            httpElectricityMeter.powerHttpRead = {...rawHttpRead};
           }
           if (rawHttpRead.readValues[0].name === MeterValueName.Energy) {
-            httpElectricityMeter.energyConfiguration = {...rawHttpRead};
+            httpElectricityMeter.energyHttpRead = {...rawHttpRead};
           }
         }
       });
     }
-    delete httpElectricityMeter.httpReads;
     return httpElectricityMeter;
   }
 
   toJSONHttpElectricityMeter(httpElectricityMeter: HttpElectricityMeter) {
     const rawMeter = httpElectricityMeter as any;
     rawMeter.httpReads = [];
-    if (httpElectricityMeter.powerConfiguration) {
-      rawMeter.httpReads.push(httpElectricityMeter.powerConfiguration);
+    if (httpElectricityMeter.powerHttpRead) {
+      rawMeter.httpReads.push(httpElectricityMeter.powerHttpRead);
     }
-    if (httpElectricityMeter.powerConfiguration) {
-      rawMeter.httpReads.push(httpElectricityMeter.energyConfiguration);
+    if (httpElectricityMeter.powerHttpRead) {
+      rawMeter.httpReads.push(httpElectricityMeter.energyHttpRead);
     }
     return rawMeter;
   }

@@ -53,6 +53,7 @@ export class ModbusReadComponent implements OnInit, AfterViewChecked {
 
   ngOnInit() {
     this.modbusRead = this.modbusRead || new ModbusRead();
+    console.log('modbusRead=', this.modbusRead);
     this.errorMessages = new ErrorMessages('ModbusReadComponent.error.', [
       new ErrorMessage(this.getFormControlName('address'), ValidatorType.required, 'address'),
       new ErrorMessage(this.getFormControlName('address'), ValidatorType.pattern, 'address'),

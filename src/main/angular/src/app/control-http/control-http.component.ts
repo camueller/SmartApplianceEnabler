@@ -1,20 +1,15 @@
-import {AfterViewChecked, Component, Input, OnInit} from '@angular/core';
-import {Control} from '../control/control';
+import {AfterViewChecked, Component, Input, OnInit, ViewChild} from '@angular/core';
 import {ControlDefaults} from '../control/control-defaults';
-import {FormGroup, Validators} from '@angular/forms';
+import {FormGroup, FormGroupDirective} from '@angular/forms';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {Logger} from '../log/logger';
-import {ControlService} from '../control/control-service';
 import {TranslateService} from '@ngx-translate/core';
-import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {HttpSwitch} from './http-switch';
-import {FormMarkerService} from '../shared/form-marker-service';
 import {FormHandler} from '../shared/form-handler';
-import {AppliancesReloadService} from '../appliance/appliances-reload-service';
-import {StartingCurrentSwitch} from '../control-startingcurrent/starting-current-switch';
-import {ControlStartingcurrentComponent} from '../control-startingcurrent/control-startingcurrent.component';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
+import {HttpWriteComponent} from '../http-write/http-write.component';
+import {ControlValueName} from '../control/control-value-name';
 
 @Component({
   selector: 'app-control-http',
@@ -23,7 +18,11 @@ import {ErrorMessage, ValidatorType} from '../shared/error-message';
 })
 export class ControlHttpComponent implements OnInit, AfterViewChecked {
   @Input()
-  control: Control;
+  httpSwitch: HttpSwitch;
+  @ViewChild('onHttpWrite')
+  onHttpWriteComp: HttpWriteComponent;
+  @ViewChild('offHttpWrite')
+  offHttpWriteComp: HttpWriteComponent;
   @Input()
   applianceId: string;
   @Input()
@@ -35,9 +34,7 @@ export class ControlHttpComponent implements OnInit, AfterViewChecked {
   errorMessageHandler: ErrorMessageHandler;
 
   constructor(private logger: Logger,
-              private controlService: ControlService,
-              private formMarkerService: FormMarkerService,
-              private appliancesReloadService: AppliancesReloadService,
+              private parent: FormGroupDirective,
               private translate: TranslateService
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
@@ -45,54 +42,46 @@ export class ControlHttpComponent implements OnInit, AfterViewChecked {
   }
 
   ngOnInit() {
+    this.httpSwitch = this.httpSwitch || new HttpSwitch();
+    console.log('HttpSwitch', this.httpSwitch);
     this.errorMessages = new ErrorMessages('ControlHttpComponent.error.', [
       new ErrorMessage('onUrl', ValidatorType.required),
       new ErrorMessage('onUrl', ValidatorType.pattern),
       new ErrorMessage('offUrl', ValidatorType.required),
       new ErrorMessage('offUrl', ValidatorType.pattern),
     ], this.translate);
-    this.form = this.buildHttpFormGroup(this.control.httpSwitch);
+    this.form = this.parent.form;
+    this.expandParentForm(this.form, this.httpSwitch, this.formHandler);
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
-    this.formMarkerService.dirty.subscribe(() => this.form.markAsDirty());
   }
 
   ngAfterViewChecked() {
     this.formHandler.markLabelsRequired();
   }
 
-  buildHttpFormGroup(httpSwitch: HttpSwitch): FormGroup {
-    const fg =  new FormGroup({});
-    this.formHandler.addFormControl(fg, 'onUrl', httpSwitch ? httpSwitch.onUrl : undefined,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.URL)]);
-    this.formHandler.addFormControl(fg, 'onData', httpSwitch ? httpSwitch.onData : undefined);
-    this.formHandler.addFormControl(fg, 'offUrl', httpSwitch ? httpSwitch.offUrl : undefined,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.URL)]);
-    this.formHandler.addFormControl(fg, 'offData', httpSwitch ? httpSwitch.offData : undefined);
-    this.formHandler.addFormControl(fg, 'username', httpSwitch ? httpSwitch.username : undefined);
-    this.formHandler.addFormControl(fg, 'password', httpSwitch ? httpSwitch.password : undefined);
-    this.formHandler.addFormControl(fg, 'contentType', httpSwitch ? httpSwitch.contentType : undefined);
-    return fg;
+  get valueNames() {
+    return [ControlValueName.On, ControlValueName.Off];
   }
 
-  updateModelFromForm(form: FormGroup, httpSwitch: HttpSwitch, startingCurrentSwitch: StartingCurrentSwitch) {
-    httpSwitch.onUrl = form.controls.onUrl.value;
-    httpSwitch.onData = form.controls.onData.value;
-    httpSwitch.offUrl = form.controls.offUrl.value;
-    httpSwitch.offData = form.controls.offData.value;
-    httpSwitch.username = form.controls.username.value;
-    httpSwitch.password = form.controls.password.value;
-    httpSwitch.contentType = form.controls.contentType.value;
-    if (this.control.startingCurrentDetection) {
-      ControlStartingcurrentComponent.updateModelFromForm(form, startingCurrentSwitch);
+  get valueNameTextKeys() {
+    return ['ControlHttpComponent.On', 'ControlHttpComponent.Off'];
+  }
+
+  expandParentForm(form: FormGroup, httpSwitch: HttpSwitch, formHandler: FormHandler) {
+  }
+
+  updateModelFromForm(): HttpSwitch | undefined {
+    const onHttpWrite = this.onHttpWriteComp.updateModelFromForm();
+    const offHttpWrite = this.offHttpWriteComp.updateModelFromForm();
+
+    if (!(onHttpWrite || offHttpWrite)) {
+      return undefined;
     }
-  }
 
-  submitForm() {
-    this.updateModelFromForm(this.form, this.control.httpSwitch, this.control.startingCurrentSwitch);
-    this.controlService.updateControl(this.control, this.applianceId).subscribe(
-      () => this.appliancesReloadService.reload());
-    this.form.markAsPristine();
+    // this.httpSwitch.onHttpWrite = onHttpWrite;
+    // this.httpSwitch.offHttpWrite = offHttpWrite;
+    return this.httpSwitch;
   }
 }

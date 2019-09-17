@@ -5,13 +5,11 @@ import {FormHandler} from '../shared/form-handler';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {Logger} from '../log/logger';
-import {FormMarkerService} from '../shared/form-marker-service';
 import {TranslateService} from '@ngx-translate/core';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {ModbusElectricityMeter} from './modbus-electricity-meter';
 import {ModbusSettings} from '../settings/modbus-settings';
 import {SettingsDefaults} from '../settings/settings-defaults';
-import {NestedFormService} from '../shared/nested-form-service';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
 
 @Component({
@@ -43,8 +41,6 @@ export class MeterModbusComponent implements OnInit, AfterViewChecked, OnDestroy
 
   constructor(private logger: Logger,
               private parent: FormGroupDirective,
-              private nestedFormService: NestedFormService,
-              private formMarkerService: FormMarkerService,
               private translate: TranslateService
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
@@ -53,6 +49,7 @@ export class MeterModbusComponent implements OnInit, AfterViewChecked, OnDestroy
   }
 
   ngOnInit() {
+    console.log('modbusElectricityMeter=', this.modbusElectricityMeter);
     this.errorMessages = new ErrorMessages('MeterModbusComponent.error.', [
       new ErrorMessage('slaveAddress', ValidatorType.required),
       new ErrorMessage('slaveAddress', ValidatorType.pattern),
@@ -62,9 +59,6 @@ export class MeterModbusComponent implements OnInit, AfterViewChecked, OnDestroy
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
-    this.nestedFormService.submitted.subscribe(
-      () => this.updateModelFromForm(this.modbusElectricityMeter, this.form));
-    this.formMarkerService.dirty.subscribe(() => this.form.markAsDirty());
   }
 
   ngAfterViewChecked() {
@@ -81,11 +75,7 @@ export class MeterModbusComponent implements OnInit, AfterViewChecked, OnDestroy
   }
 
   get powerValueNameTextKeys() {
-    return ['MeterModbusComponent.power'];
-  }
-
-  get powerConfiguration() {
-    return this.modbusElectricityMeter.powerConfiguration;
+    return ['MeterModbusComponent.Power'];
   }
 
   get energyValueNames() {
@@ -93,15 +83,7 @@ export class MeterModbusComponent implements OnInit, AfterViewChecked, OnDestroy
   }
 
   get energyValueNameTextKeys() {
-    return ['MeterModbusComponent.energy'];
-  }
-
-  get energyConfiguration() {
-    return this.modbusElectricityMeter.energyConfiguration;
-  }
-
-  get readRegisterTypes() {
-    return this.settingsDefaults.modbusReadRegisterTypes;
+    return ['MeterModbusComponent.Energy'];
   }
 
   expandParentForm(form: FormGroup, modbusElectricityMeter: ModbusElectricityMeter, formHandler: FormHandler) {
@@ -119,10 +101,9 @@ export class MeterModbusComponent implements OnInit, AfterViewChecked, OnDestroy
   }
 
   updateModelFromForm(modbusElectricityMeter: ModbusElectricityMeter, form: FormGroup) {
-    modbusElectricityMeter.idref = form.controls.idref.value;
-    modbusElectricityMeter.slaveAddress = form.controls.slaveAddress.value;
-    modbusElectricityMeter.pollInterval = form.controls.pollInterval.value;
-    modbusElectricityMeter.measurementInterval = form.controls.measurementInterval.value;
-    this.nestedFormService.complete();
+    // modbusElectricityMeter.idref = form.controls.idref.value;
+    // modbusElectricityMeter.slaveAddress = form.controls.slaveAddress.value;
+    // modbusElectricityMeter.pollInterval = form.controls.pollInterval.value;
+    // modbusElectricityMeter.measurementInterval = form.controls.measurementInterval.value;
   }
 }

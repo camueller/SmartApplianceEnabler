@@ -1,4 +1,4 @@
-<div class="ui fields">
+<div class="ui fields" [formGroup]="form">
   <div class="field">
     <label>{{'MeterHttpComponent.pollInterval' | translate}}</label>
     <input type="text" formControlName="pollInterval"
@@ -26,27 +26,31 @@
     ></app-http-configuration>
   </div>
 </div>
+<h4 class="ui dividing header">{{'MeterHttpComponent.Power' | translate}}</h4>
 <div class="ui fields">
   <div class="field">
     <app-http-read
-      [httpRead]="httpElectricityMeter.powerConfiguration"
+      [httpRead]="httpElectricityMeter.powerHttpRead"
       [singleValue]="true"
       [formControlNamePrefix]="'power'"
       [valueNames]="powerValueNames"
       [translationPrefix]="'MeterHttpComponent.'"
       [translationKeys]="powerValueNameTextKeys"
+      #powerHttpRead
     ></app-http-read>
   </div>
 </div>
+<h4 class="ui dividing header">{{'MeterHttpComponent.Energy' | translate}}</h4>
 <div class="ui fields">
   <div class="field">
     <app-http-read
-      [httpRead]="httpElectricityMeter.energyConfiguration"
+      [httpRead]="httpElectricityMeter.energyHttpRead"
       [singleValue]="true"
       [formControlNamePrefix]="'energy'"
       [valueNames]="energyValueNames"
       [translationPrefix]="'MeterHttpComponent.'"
       [translationKeys]="energyValueNameTextKeys"
+      #energyHttpRead
     ></app-http-read>
   </div>
 </div>

@@ -17,6 +17,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 import {HttpConfiguration} from '../http-configuration/http-configuration';
+import {HttpWrite} from '../http-write/http-write';
 
 export class HttpSwitch {
 
@@ -26,11 +27,5 @@ export class HttpSwitch {
 
   '@class' = HttpSwitch.TYPE;
   httpConfiguration: HttpConfiguration;
-  onUrl: string;
-  offUrl: string;
-  username: string;
-  password: string;
-  contentType: string;
-  onData: string;
-  offData: string;
+  httpWrites: HttpWrite[];
 }
