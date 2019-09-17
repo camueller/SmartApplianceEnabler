@@ -69,7 +69,6 @@ import { MeterModbusComponent } from './meter-modbus/meter-modbus.component';
 import { MeterHttpComponent } from './meter-http/meter-http.component';
 import { MeterS0Component } from './meter-s0/meter-s0.component';
 import { MeterS0NetworkedComponent } from './meter-s0-networked/meter-s0-networked.component';
-import { ModbusRegisterComponent } from './modbus-register/modbus-register.component';
 import {NestedFormService} from './shared/nested-form-service';
 import { HttpReadComponent } from './http-read/http-read.component';
 import { HttpReadValueComponent } from './http-read-value/http-read-value.component';
@@ -110,7 +109,6 @@ import { ModbusWriteValueComponent } from './modbus-write-value/modbus-write-val
     MeterS0NetworkedComponent,
     ModbusReadComponent,
     ModbusReadValueComponent,
-    ModbusRegisterComponent,
     ModbusWriteComponent,
     ModbusWriteValueComponent,
     PageNotFoundComponent,
