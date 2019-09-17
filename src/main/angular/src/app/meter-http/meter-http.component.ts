@@ -13,6 +13,8 @@ import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {getValidInt} from '../shared/form-util';
 import {HttpConfigurationComponent} from '../http-configuration/http-configuration.component';
 import {HttpReadComponent} from '../http-read/http-read.component';
+import {HttpRead} from '../http-read/http-read';
+import {HttpReadValue} from '../http-read-value/http-read-value';
 
 @Component({
   selector: 'app-meter-http',
@@ -50,6 +52,18 @@ export class MeterHttpComponent implements OnInit, AfterViewChecked {
 
   ngOnInit() {
     this.httpElectricityMeter = this.httpElectricityMeter || new HttpElectricityMeter();
+    if (!this.httpElectricityMeter.powerHttpRead) {
+      this.httpElectricityMeter.powerHttpRead = new HttpRead();
+    }
+    if (!this.httpElectricityMeter.powerHttpRead.readValues) {
+      this.httpElectricityMeter.powerHttpRead.readValues = [new HttpReadValue()];
+    }
+    if (!this.httpElectricityMeter.energyHttpRead) {
+      this.httpElectricityMeter.energyHttpRead = new HttpRead();
+    }
+    if (!this.httpElectricityMeter.energyHttpRead.readValues) {
+      this.httpElectricityMeter.energyHttpRead.readValues = [new HttpReadValue()];
+    }
     this.errorMessages = new ErrorMessages('MeterHttpComponent.error.', [
       new ErrorMessage('pollInterval', ValidatorType.pattern),
       new ErrorMessage('measurementInterval', ValidatorType.pattern),

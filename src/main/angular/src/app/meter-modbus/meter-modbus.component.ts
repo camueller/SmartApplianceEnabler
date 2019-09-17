@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewChecked, Component, Input, OnInit} from '@angular/core';
 import {MeterDefaults} from '../meter/meter-defaults';
 import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {FormHandler} from '../shared/form-handler';
@@ -11,6 +11,8 @@ import {ModbusElectricityMeter} from './modbus-electricity-meter';
 import {ModbusSettings} from '../settings/modbus-settings';
 import {SettingsDefaults} from '../settings/settings-defaults';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
+import {ModbusReadValue} from '../modbus-read-value/modbus-read-value';
+import {ModbusRead} from '../modbus-read/modbus-read';
 
 @Component({
   selector: 'app-meter-modbus',
@@ -49,6 +51,19 @@ export class MeterModbusComponent implements OnInit, AfterViewChecked {
   }
 
   ngOnInit() {
+    this.modbusElectricityMeter = this.modbusElectricityMeter || new ModbusElectricityMeter();
+    if (!this.modbusElectricityMeter.powerModbusRead) {
+      this.modbusElectricityMeter.powerModbusRead = new ModbusRead();
+    }
+    if (!this.modbusElectricityMeter.powerModbusRead.readValues) {
+      this.modbusElectricityMeter.powerModbusRead.readValues = [new ModbusReadValue()];
+    }
+    if (!this.modbusElectricityMeter.energyModbusRead) {
+      this.modbusElectricityMeter.energyModbusRead = new ModbusRead();
+    }
+    if (!this.modbusElectricityMeter.energyModbusRead.readValues) {
+      this.modbusElectricityMeter.energyModbusRead.readValues = [new ModbusReadValue()];
+    }
     this.errorMessages = new ErrorMessages('MeterModbusComponent.error.', [
       new ErrorMessage('slaveAddress', ValidatorType.required),
       new ErrorMessage('slaveAddress', ValidatorType.pattern),
