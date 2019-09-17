@@ -54,7 +54,6 @@ export class ControlEvchargerModbusComponent implements OnInit, AfterViewChecked
 
   ngOnInit() {
     this.evModbusControl = this.evModbusControl || new EvModbusControl();
-    console.log('evModbusControl=', this.evModbusControl);
     // this.errorMessages = new ErrorMessages('ControlEvchargerModbusComponent.error.', [
     //   new ErrorMessage('voltage', ValidatorType.pattern),
     // ], this.translate);

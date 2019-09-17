@@ -50,7 +50,6 @@ export class MeterHttpComponent implements OnInit, AfterViewChecked {
 
   ngOnInit() {
     this.httpElectricityMeter = this.httpElectricityMeter || new HttpElectricityMeter();
-    console.log('HttpElectricityMeter', this.httpElectricityMeter);
     this.errorMessages = new ErrorMessages('MeterHttpComponent.error.', [
       new ErrorMessage('pollInterval', ValidatorType.pattern),
       new ErrorMessage('measurementInterval', ValidatorType.pattern),
