@@ -46,7 +46,7 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
 
     private transient Logger logger = LoggerFactory.getLogger(ModbusElectricityMeter.class);
     @XmlElement(name = "ModbusRead")
-    private List<ModbusRead> registerReads;
+    private List<ModbusRead> modbusReads;
     @XmlAttribute
     private Integer pollInterval; // seconds
     @XmlAttribute
@@ -110,7 +110,7 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
         ModbusValidator validator = new ModbusValidator(getApplianceId());
         for(MeterValueName valueName: MeterValueName.values()) {
             ParentWithChild<ModbusRead, ModbusReadValue> read
-                    = ModbusRead.getFirstRegisterRead(valueName.name(), registerReads);
+                    = ModbusRead.getFirstRegisterRead(valueName.name(), modbusReads);
             valid = validator.validateReads(valueName.name(), Collections.singletonList(read));
         }
         if(! valid) {
@@ -134,7 +134,7 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     @Override
     public Float pollPower() {
         ParentWithChild<ModbusRead, ModbusReadValue> read
-                = ModbusRead.getFirstRegisterRead(MeterValueName.Power.name(), registerReads);
+                = ModbusRead.getFirstRegisterRead(MeterValueName.Power.name(), modbusReads);
         return readRegister(read.parent());
     }
 
@@ -164,7 +164,7 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     @Override
     public Float pollEnergy(LocalDateTime now) {
         ParentWithChild<ModbusRead, ModbusReadValue> read
-                = ModbusRead.getFirstRegisterRead(MeterValueName.Energy.name(), registerReads);
+                = ModbusRead.getFirstRegisterRead(MeterValueName.Energy.name(), modbusReads);
         return readRegister(read.parent());
     }
 
