@@ -22,11 +22,11 @@
           #httpWriteValues
         ></app-http-write-value>
       </div>
-      <div class="field icon-field" *ngIf="! singleValue">
+      <div class="field icon-field">
         <i (click)="removeValue(i)" class="icon big red remove circle"></i>
       </div>
     </div>
   </div>
 </div>
-<button type="button" (click)="addValue()" class="ui button" *ngIf="! singleValue">
+<button type="button" (click)="addValue()" class="ui button" *ngIf="isAddValuePossible">
   {{'HttpWriteComponent.button.addValue' | translate}}</button>

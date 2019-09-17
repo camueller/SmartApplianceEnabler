@@ -25,23 +25,25 @@
     <div *ngIf="errors.measurementInterval" class="ui negative message">{{errors.measurementInterval}}</div>
   </div>
 </div>
-<app-modbus-register
-    [register]="powerConfiguration"
-    [valueNames]="powerValueNames"
-    [valueNameTextKeys]="powerValueNameTextKeys"
-    [readRegisterTypes]="readRegisterTypes"
-    [isReadOnly]="true"
+<h4 class="ui dividing header">{{'MeterModbusComponent.Power' | translate}}</h4>
+<app-modbus-read
+    [modbusRead]="modbusElectricityMeter.powerModbusRead"
+    [singleValue]="true"
     [formControlNamePrefix]="'power'"
+    [valueNames]="powerValueNames"
+    [readRegisterTypes]="settingsDefaults.modbusReadRegisterTypes"
     [translationPrefix]="'MeterModbusComponent.'"
-    [translationKeys]="translationKeys"
-  ></app-modbus-register>
-<app-modbus-register
-  [register]="energyConfiguration"
-  [valueNames]="energyValueNames"
-  [valueNameTextKeys]="energyValueNameTextKeys"
-  [readRegisterTypes]="readRegisterTypes"
-  [isReadOnly]="true"
+    [translationKeys]="powerValueNameTextKeys"
+    #powerHttpRead
+  ></app-modbus-read>
+<h4 class="ui dividing header">{{'MeterModbusComponent.Energy' | translate}}</h4>
+<app-modbus-read
+  [modbusRead]="modbusElectricityMeter.energyModbusRead"
+  [singleValue]="true"
   [formControlNamePrefix]="'energy'"
+  [valueNames]="energyValueNames"
+  [readRegisterTypes]="settingsDefaults.modbusReadRegisterTypes"
   [translationPrefix]="'MeterModbusComponent.'"
-  [translationKeys]="translationKeys"
-></app-modbus-register>
+  [translationKeys]="energyValueNameTextKeys"
+  #energyHttpRead
+></app-modbus-read>

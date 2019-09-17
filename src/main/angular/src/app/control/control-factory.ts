@@ -26,15 +26,11 @@ import {ControlDefaults} from './control-defaults';
 import {MockSwitch} from './mock-switch';
 import {Logger} from '../log/logger';
 import {ModbusRegisterWrite} from '../shared/modbus-register-write';
-import {ModbusRegisterWriteValue} from '../shared/modbus-register-write-value';
 import {EvCharger} from '../control-evcharger/ev-charger';
-import {ModbusRegisterConfguration} from '../shared/modbus-register-confguration';
 import {EvModbusControl} from '../control-evcharger-modbus/ev-modbus-control';
 import {ModbusRegisterRead} from '../shared/modbus-register-read';
-import {ModbusRegisterReadValue} from '../shared/modbus-register-read-value';
 import {ElectricVehicle} from '../control-evcharger/electric-vehicle';
 import {EvHttpControl} from '../control-evcharger-http/ev-http-control';
-import {MeterValueName} from '../meter/meter-value-name';
 
 export class ControlFactory {
 
@@ -152,38 +148,11 @@ export class ControlFactory {
   }
 
   createModbusSwitch(rawModbusSwitch: any): ModbusSwitch {
-    const modbusSwitch = new ModbusSwitch();
-    if (rawModbusSwitch) {
-      modbusSwitch.idref = rawModbusSwitch.idref;
-      modbusSwitch.slaveAddress = rawModbusSwitch.slaveAddress;
-      if (rawModbusSwitch.modbusWrites != null) {
-        modbusSwitch.registerAddress = rawModbusSwitch.modbusWrites[0].address;
-        modbusSwitch.registerType = rawModbusSwitch.modbusWrites[0].type;
-        rawModbusSwitch.modbusWrites[0].writeValues.forEach((registerWrite) => {
-          if (registerWrite.name === 'On') {
-            modbusSwitch.onValue = registerWrite.value;
-          }
-          if (registerWrite.name === 'Off') {
-            modbusSwitch.offValue = registerWrite.value;
-          }
-        });
-      }
-    }
-    return modbusSwitch;
+    return {...rawModbusSwitch};
   }
 
-  createHttpSwitch(rawHttpSwitch: any): HttpSwitch {
-    const httpSwitch = new HttpSwitch();
-    if (rawHttpSwitch) {
-      httpSwitch.onUrl = rawHttpSwitch.onUrl;
-      httpSwitch.offUrl = rawHttpSwitch.offUrl;
-      httpSwitch.username = rawHttpSwitch.username;
-      httpSwitch.password = rawHttpSwitch.password;
-      httpSwitch.contentType = rawHttpSwitch.contentType;
-      httpSwitch.onData = rawHttpSwitch.onData;
-      httpSwitch.offData = rawHttpSwitch.offData;
-    }
-    return httpSwitch;
+  createHttpSwitch(rawControl: any): HttpSwitch {
+    return {...rawControl};
   }
 
   createEvCharger(rawEvCharger: any): EvCharger {
@@ -259,20 +228,20 @@ export class ControlFactory {
   }
 
   toJSONModbusSwitch(control: Control) {
-    const registerWriteValueOn = new ModbusRegisterWriteValue({
-      name: 'On',
-      value: control.modbusSwitch.onValue
-    });
-    const registerWriteValueOff = new ModbusRegisterWriteValue({
-      name: 'Off',
-      value: control.modbusSwitch.offValue
-    });
-
-    const registerWrite = new ModbusRegisterWrite();
-    registerWrite.address = control.modbusSwitch.registerAddress;
-    registerWrite.type = control.modbusSwitch.registerType;
-    registerWrite.writeValues = [registerWriteValueOn, registerWriteValueOff];
-    control.modbusSwitch.registerWrites = [registerWrite];
+    // const registerWriteValueOn = new ModbusRegisterWriteValue({
+    //   name: 'On',
+    //   value: control.modbusSwitch.onValue
+    // });
+    // const registerWriteValueOff = new ModbusRegisterWriteValue({
+    //   name: 'Off',
+    //   value: control.modbusSwitch.offValue
+    // });
+    //
+    // const registerWrite = new ModbusRegisterWrite();
+    // registerWrite.address = control.modbusSwitch.registerAddress;
+    // registerWrite.type = control.modbusSwitch.registerType;
+    // registerWrite.writeValues = [registerWriteValueOn, registerWriteValueOff];
+    // control.modbusSwitch.registerWrites = [registerWrite];
   }
 
   toJSONEvCharger(control: Control) {

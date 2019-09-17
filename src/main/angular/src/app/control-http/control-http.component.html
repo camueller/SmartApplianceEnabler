@@ -1,46 +1,14 @@
 <div [formGroup]="form">
   <app-http-configuration
-    [httpConfiguration]="control.httpSwitch.httpConfiguration"
+    [httpConfiguration]="httpSwitch.httpConfiguration"
   ></app-http-configuration>
-  <div class="ui fields">
-    <div class="six wide field">
-      <label>{{'ControlHttpComponent.onUrl' | translate}}</label>
-      <input type="text" formControlName="onUrl">
-      <div *ngIf="errors.onUrl" class="ui negative message">{{errors.onUrl}}</div>
-    </div>
-    <div class="four wide field">
-      <label>{{'ControlHttpComponent.onData' | translate}}</label>
-      <input type="text" formControlName="onData">
-    </div>
-  </div>
-  <div class="ui fields">
-    <div class="six wide field">
-      <label>{{'ControlHttpComponent.offUrl' | translate}}</label>
-      <input type="text" formControlName="offUrl">
-      <div *ngIf="errors.offUrl" class="ui negative message">{{errors.offUrl}}</div>
-    </div>
-    <div class="four wide field">
-      <label>{{'ControlHttpComponent.offData' | translate}}</label>
-      <input type="text" formControlName="offData">
-    </div>
-  </div>
-  <div class="ui fields">
-    <div class="field">
-      <label>{{'ControlHttpComponent.username' | translate}}</label>
-      <input type="text" formControlName="username">
-    </div>
-    <div class="field">
-      <label>{{'ControlHttpComponent.password' | translate}}</label>
-      <input type="text" formControlName="password">
-    </div>
-    <div class="field">
-      <label>{{'ControlHttpComponent.contentType' | translate}}</label>
-      <input type="text" formControlName="contentType">
-    </div>
-  </div>
-  <app-control-startingcurrent *ngIf="control.startingCurrentDetection"
-                               [startingCurrentSwitch]="control.startingCurrentSwitch"
-                               [controlDefaults]="controlDefaults"
-  ></app-control-startingcurrent>
-  <div>{{'dialog.mandatoryfields'|translate}}</div>
+  <app-http-write *ngFor="let httpWrite of httpSwitch.httpWrites; index as i; last as l"
+    [httpWrite]="httpWrite"
+    [maxValues]="2"
+    [formControlNamePrefix]="'on'"
+    [valueNames]="valueNames"
+    [translationPrefix]="'ControlHttpComponent.'"
+    [translationKeys]="valueNameTextKeys"
+    #onHttpWrite
+  ></app-http-write>
 </div>

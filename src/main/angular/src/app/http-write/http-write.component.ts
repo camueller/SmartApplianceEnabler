@@ -10,7 +10,6 @@ import {HttpWrite} from './http-write';
 import {HttpWriteValue} from '../http-write-value/http-write-value';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {getValidString} from '../shared/form-util';
-import {HttpReadValueComponent} from '../http-read-value/http-read-value.component';
 import {HttpWriteValueComponent} from '../http-write-value/http-write-value.component';
 
 @Component({
@@ -29,7 +28,8 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked {
   @Input()
   valueNames: string[];
   @Input()
-  singleValue = false;
+  maxValues: number;
+  // FIXME: brauchen wir das noch?
   @Input()
   disableFactorToValue = false;
   @Input()
@@ -94,6 +94,10 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked {
       }
     }
     return undefined;
+  }
+
+  get isAddValuePossible() {
+    return !this.maxValues || this.httpWrite.writeValues.length < this.maxValues;
   }
 
   addValue() {

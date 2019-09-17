@@ -32,7 +32,7 @@ export class ModbusWriteComponent implements OnInit, AfterViewChecked {
   @Input()
   formControlNamePrefix = '';
   @Input()
-  singleValue = false;
+  maxValues: number;
   form: FormGroup;
   formHandler: FormHandler;
   @Input()
@@ -53,18 +53,17 @@ export class ModbusWriteComponent implements OnInit, AfterViewChecked {
 
   ngOnInit() {
     this.modbusWrite = this.modbusWrite || new ModbusWrite();
+    console.log('writeRegisterTypes=', this.writeRegisterTypes);
     this.errorMessages = new ErrorMessages('ModbusReadComponent.error.', [
       new ErrorMessage(this.getFormControlName('address'), ValidatorType.required, 'address'),
       new ErrorMessage(this.getFormControlName('address'), ValidatorType.pattern, 'address'),
+      new ErrorMessage(this.getFormControlName('factorToValue'), ValidatorType.pattern, 'factorToValue'),
     ], this.translate);
     this.form = this.parent.form;
     this.expandParentForm(this.form, this.modbusWrite, this.formHandler);
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
-    // this.translate.get(this.translationKeys).subscribe(translatedStrings => {
-    //   this.translatedStrings = translatedStrings;
-    // });
   }
 
   ngAfterViewChecked() {
@@ -93,6 +92,10 @@ export class ModbusWriteComponent implements OnInit, AfterViewChecked {
   get type(): string {
     const typeControl = this.form.controls[this.getFormControlName('type')];
     return (typeControl ? typeControl.value : '');
+  }
+
+  get isAddValuePossible() {
+    return !this.maxValues || this.modbusWrite.writeValues.length < this.maxValues;
   }
 
   addValue() {

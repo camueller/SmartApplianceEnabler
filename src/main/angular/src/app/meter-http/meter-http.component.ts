@@ -1,18 +1,18 @@
-import {AfterViewChecked, Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewChecked, Component, Input, OnInit, ViewChild} from '@angular/core';
 import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {HttpElectricityMeter} from './http-electricity-meter';
 import {MeterDefaults} from '../meter/meter-defaults';
 import {FormHandler} from '../shared/form-handler';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {Logger} from '../log/logger';
-import {NestedFormService} from '../shared/nested-form-service';
-import {FormMarkerService} from '../shared/form-marker-service';
 import {TranslateService} from '@ngx-translate/core';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {ContentProtocol} from '../shared/content-protocol';
-import {Subscription} from 'rxjs';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
+import {getValidInt} from '../shared/form-util';
+import {HttpConfigurationComponent} from '../http-configuration/http-configuration.component';
+import {HttpReadComponent} from '../http-read/http-read.component';
 
 @Component({
   selector: 'app-meter-http',
@@ -22,9 +22,15 @@ import {ErrorMessage, ValidatorType} from '../shared/error-message';
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
 })
-export class MeterHttpComponent implements OnInit, AfterViewChecked, OnDestroy {
+export class MeterHttpComponent implements OnInit, AfterViewChecked {
   @Input()
   httpElectricityMeter: HttpElectricityMeter;
+  @ViewChild(HttpConfigurationComponent)
+  httpConfigurationComp: HttpConfigurationComponent;
+  @ViewChild('powerHttpRead')
+  powerHttpReadComp: HttpReadComponent;
+  @ViewChild('energyHttpRead')
+  energyHttpReadComp: HttpReadComponent;
   @Input()
   meterDefaults: MeterDefaults;
   contentProtocols = [undefined, ContentProtocol.JSON.toUpperCase()];
@@ -33,12 +39,9 @@ export class MeterHttpComponent implements OnInit, AfterViewChecked, OnDestroy {
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
-  nestedFormServiceSubscription: Subscription;
 
   constructor(private logger: Logger,
               private parent: FormGroupDirective,
-              private nestedFormService: NestedFormService,
-              private formMarkerService: FormMarkerService,
               private translate: TranslateService
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
@@ -46,6 +49,8 @@ export class MeterHttpComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   ngOnInit() {
+    this.httpElectricityMeter = this.httpElectricityMeter || new HttpElectricityMeter();
+    console.log('HttpElectricityMeter', this.httpElectricityMeter);
     this.errorMessages = new ErrorMessages('MeterHttpComponent.error.', [
       new ErrorMessage('pollInterval', ValidatorType.pattern),
       new ErrorMessage('measurementInterval', ValidatorType.pattern),
@@ -55,17 +60,10 @@ export class MeterHttpComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
-    this.nestedFormServiceSubscription = this.nestedFormService.submitted.subscribe(
-      () => this.updateModelFromForm(this.httpElectricityMeter, this.form));
-    this.formMarkerService.dirty.subscribe(() => this.form.markAsDirty());
   }
 
   ngAfterViewChecked() {
     this.formHandler.markLabelsRequired();
-  }
-
-  ngOnDestroy() {
-    this.nestedFormServiceSubscription.unsubscribe();
   }
 
   get powerValueNames() {
@@ -100,10 +98,25 @@ export class MeterHttpComponent implements OnInit, AfterViewChecked, OnDestroy {
       httpElectricityMeter ? httpElectricityMeter.contentProtocol : undefined);
   }
 
-  updateModelFromForm(httpElectricityMeter: HttpElectricityMeter, form: FormGroup) {
-    httpElectricityMeter.pollInterval = form.controls.pollInterval.value;
-    httpElectricityMeter.measurementInterval = form.controls.measurementInterval.value;
-    httpElectricityMeter.contentProtocol = form.controls.contentProtocol.value;
-    this.nestedFormService.complete();
+  updateModelFromForm(): HttpElectricityMeter | undefined {
+    const pollInterval = getValidInt(this.form.controls.pollInterval.value);
+    const measurementInterval = getValidInt(this.form.controls.measurementInterval.value);
+    const contentProtocol = this.form.controls.contentProtocol.value;
+    const httpConfiguration = this.httpConfigurationComp.updateModelFromForm();
+    const powerHttpRead = this.powerHttpReadComp.updateModelFromForm();
+    const energyHttpRead = this.energyHttpReadComp.updateModelFromForm();
+
+    if (!(pollInterval || measurementInterval || contentProtocol || httpConfiguration || powerHttpRead
+      || energyHttpRead)) {
+      return undefined;
+    }
+
+    this.httpElectricityMeter.pollInterval = pollInterval;
+    this.httpElectricityMeter.measurementInterval = measurementInterval;
+    this.httpElectricityMeter.contentProtocol = contentProtocol;
+    this.httpElectricityMeter.httpConfiguration = httpConfiguration;
+    this.httpElectricityMeter.powerHttpRead = powerHttpRead;
+    this.httpElectricityMeter.energyHttpRead = energyHttpRead;
+    return this.httpElectricityMeter;
   }
 }
