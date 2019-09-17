@@ -20,7 +20,7 @@ import {ErrorMessage, ValidatorType} from '../shared/error-message';
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
 })
-export class MeterModbusComponent implements OnInit, AfterViewChecked, OnDestroy {
+export class MeterModbusComponent implements OnInit, AfterViewChecked {
   @Input()
   modbusElectricityMeter: ModbusElectricityMeter;
   @Input()
@@ -52,6 +52,8 @@ export class MeterModbusComponent implements OnInit, AfterViewChecked, OnDestroy
     this.errorMessages = new ErrorMessages('MeterModbusComponent.error.', [
       new ErrorMessage('slaveAddress', ValidatorType.required),
       new ErrorMessage('slaveAddress', ValidatorType.pattern),
+      new ErrorMessage('pollInterval', ValidatorType.pattern),
+      new ErrorMessage('measurementInterval', ValidatorType.pattern),
     ], this.translate);
     this.form = this.parent.form;
     this.expandParentForm(this.form, this.modbusElectricityMeter, this.formHandler);
@@ -64,10 +66,6 @@ export class MeterModbusComponent implements OnInit, AfterViewChecked, OnDestroy
     this.formHandler.markLabelsRequired();
   }
 
-  ngOnDestroy() {
-     // FIXME: erzeugt Fehler bei Wechsel des Zählertypes
-    // this.nestedFormService.submitted.unsubscribe();
-  }
 
   get powerValueNames() {
     return ['Power'];
