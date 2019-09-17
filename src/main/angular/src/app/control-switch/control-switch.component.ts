@@ -8,7 +8,6 @@ import {ControlService} from '../control/control-service';
 import {TranslateService} from '@ngx-translate/core';
 import {ControlDefaults} from '../control/control-defaults';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
-import {FormMarkerService} from '../shared/form-marker-service';
 import {FormHandler} from '../shared/form-handler';
 import {AppliancesReloadService} from '../appliance/appliances-reload-service';
 import {StartingCurrentSwitch} from '../control-startingcurrent/starting-current-switch';
@@ -36,8 +35,6 @@ export class ControlSwitchComponent implements OnInit, AfterViewChecked {
   constructor(private logger: Logger,
               private parent: FormGroupDirective,
               private controlService: ControlService,
-              private formMarkerService: FormMarkerService,
-              private appliancesReloadService: AppliancesReloadService,
               private translate: TranslateService
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
@@ -54,7 +51,6 @@ export class ControlSwitchComponent implements OnInit, AfterViewChecked {
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
-    this.formMarkerService.dirty.subscribe(() => this.form.markAsDirty());
   }
 
   ngAfterViewChecked() {

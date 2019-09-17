@@ -5,11 +5,9 @@ import {FormHandler} from '../shared/form-handler';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {Logger} from '../log/logger';
-import {FormMarkerService} from '../shared/form-marker-service';
 import {TranslateService} from '@ngx-translate/core';
 import {S0ElectricityMeter} from '../meter-s0/s0-electricity-meter';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
-import {NestedFormService} from '../shared/nested-form-service';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
 
 @Component({
@@ -35,8 +33,6 @@ export class MeterS0NetworkedComponent implements OnInit, AfterViewChecked {
 
   constructor(private logger: Logger,
               private parent: FormGroupDirective,
-              private nestedFormService: NestedFormService,
-              private formMarkerService: FormMarkerService,
               private translate: TranslateService
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
@@ -53,9 +49,6 @@ export class MeterS0NetworkedComponent implements OnInit, AfterViewChecked {
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
-    this.nestedFormService.submitted.subscribe(
-      () => this.updateS0ElectricityMeter(this.s0ElectricityMeterNetworked, this.form));
-    this.formMarkerService.dirty.subscribe(() => this.form.markAsDirty());
   }
 
   ngAfterViewChecked() {
@@ -74,6 +67,5 @@ export class MeterS0NetworkedComponent implements OnInit, AfterViewChecked {
   updateS0ElectricityMeter(s0ElectricityMeterNetworked: S0ElectricityMeter, form: FormGroup) {
     s0ElectricityMeterNetworked.impulsesPerKwh = form.controls.impulsesPerKwh.value;
     s0ElectricityMeterNetworked.measurementInterval = form.controls.measurementInterval.value;
-    this.nestedFormService.complete();
   }
 }
