@@ -53,7 +53,6 @@ export class ModbusWriteComponent implements OnInit, AfterViewChecked {
 
   ngOnInit() {
     this.modbusWrite = this.modbusWrite || new ModbusWrite();
-    console.log('writeRegisterTypes=', this.writeRegisterTypes);
     this.errorMessages = new ErrorMessages('ModbusReadComponent.error.', [
       new ErrorMessage(this.getFormControlName('address'), ValidatorType.required, 'address'),
       new ErrorMessage(this.getFormControlName('address'), ValidatorType.pattern, 'address'),

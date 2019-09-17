@@ -40,7 +40,6 @@ export class ControlStartingcurrentComponent implements OnInit, AfterViewChecked
 
   ngOnInit() {
     this.startingCurrentSwitch = this.startingCurrentSwitch || new StartingCurrentSwitch();
-    console.log('StartingCurrentSwitch', this.startingCurrentSwitch);
     this.errorMessages = new ErrorMessages('ControlStartingcurrentComponent.error.', [
       new ErrorMessage('powerThreshold', ValidatorType.pattern),
       new ErrorMessage('startingCurrentDetectionDuration', ValidatorType.pattern),

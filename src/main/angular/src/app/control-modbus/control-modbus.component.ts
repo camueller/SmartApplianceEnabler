@@ -48,7 +48,6 @@ export class ControlModbusComponent implements OnInit, AfterViewChecked {
 
   ngOnInit() {
     this.modbusSwitch = this.modbusSwitch || new ModbusSwitch();
-    console.log('ModbusSwitch', this.modbusSwitch);
     this.errorMessages = new ErrorMessages('ControlModbusComponent.error.', [
       new ErrorMessage('slaveAddress', ValidatorType.required),
       new ErrorMessage('slaveAddress', ValidatorType.pattern),

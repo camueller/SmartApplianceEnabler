@@ -49,7 +49,6 @@ export class MeterModbusComponent implements OnInit, AfterViewChecked, OnDestroy
   }
 
   ngOnInit() {
-    console.log('modbusElectricityMeter=', this.modbusElectricityMeter);
     this.errorMessages = new ErrorMessages('MeterModbusComponent.error.', [
       new ErrorMessage('slaveAddress', ValidatorType.required),
       new ErrorMessage('slaveAddress', ValidatorType.pattern),

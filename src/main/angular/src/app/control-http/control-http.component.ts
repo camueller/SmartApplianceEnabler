@@ -43,7 +43,6 @@ export class ControlHttpComponent implements OnInit, AfterViewChecked {
 
   ngOnInit() {
     this.httpSwitch = this.httpSwitch || new HttpSwitch();
-    console.log('HttpSwitch', this.httpSwitch);
     this.errorMessages = new ErrorMessages('ControlHttpComponent.error.', [
       new ErrorMessage('onUrl', ValidatorType.required),
       new ErrorMessage('onUrl', ValidatorType.pattern),
