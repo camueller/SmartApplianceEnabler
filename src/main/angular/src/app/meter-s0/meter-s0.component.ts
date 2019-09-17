@@ -45,6 +45,7 @@ export class MeterS0Component implements OnInit, AfterViewChecked {
       new ErrorMessage('gpio', ValidatorType.pattern),
       new ErrorMessage('impulsesPerKwh', ValidatorType.required),
       new ErrorMessage('impulsesPerKwh', ValidatorType.pattern),
+      new ErrorMessage('measurementInterval', ValidatorType.pattern),
     ], this.translate);
     this.form = this.parent.form;
     this.expandParentForm(this.form, this.s0ElectricityMeter, this.formHandler);

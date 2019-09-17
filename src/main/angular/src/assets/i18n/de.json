@@ -69,6 +69,7 @@
   "MeterS0Component.error.gpio_pattern": "Der GPIO-Anschluss muss eine Zahl sein",
   "MeterS0Component.error.impulsesPerKwh_required": "Die Anzahl der Impulse pro kWh muss angegeben werden",
   "MeterS0Component.error.impulsesPerKwh_pattern": "Die Anzahl der Impulse pro kWh muss eine Zahl sein",
+  "MeterS0Component.error.measurementInterval_pattern": "Das Messinterval muss eine Zahl sein",
 
   "MeterS0NetworkedComponent.impulsesPerKwh": "Impulse/kWh",
   "MeterS0NetworkedComponent.measurementInterval": "Messinterval [s]",
