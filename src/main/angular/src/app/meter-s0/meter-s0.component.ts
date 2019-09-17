@@ -6,10 +6,8 @@ import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {MeterDefaults} from '../meter/meter-defaults';
 import {S0ElectricityMeter} from './s0-electricity-meter';
 import {Logger} from '../log/logger';
-import {FormMarkerService} from '../shared/form-marker-service';
 import {TranslateService} from '@ngx-translate/core';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
-import {NestedFormService} from '../shared/nested-form-service';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
 
 @Component({
@@ -35,8 +33,6 @@ export class MeterS0Component implements OnInit, AfterViewChecked {
 
   constructor(private logger: Logger,
               private parent: FormGroupDirective,
-              private nestedFormService: NestedFormService,
-              private formMarkerService: FormMarkerService,
               private translate: TranslateService
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
@@ -55,9 +51,6 @@ export class MeterS0Component implements OnInit, AfterViewChecked {
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
-    this.nestedFormService.submitted.subscribe(
-      () => this.updateModelFromForm(this.s0ElectricityMeter, this.form));
-    this.formMarkerService.dirty.subscribe(() => this.form.markAsDirty());
   }
 
   ngAfterViewChecked() {
@@ -83,6 +76,5 @@ export class MeterS0Component implements OnInit, AfterViewChecked {
     s0ElectricityMeter.pinPullResistance = form.controls.pinPullResistance.value;
     s0ElectricityMeter.impulsesPerKwh = form.controls.impulsesPerKwh.value;
     s0ElectricityMeter.measurementInterval = form.controls.measurementInterval.value;
-    this.nestedFormService.complete();
   }
 }

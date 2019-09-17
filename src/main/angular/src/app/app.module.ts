@@ -60,28 +60,26 @@ import {StatusViewComponent} from './status-view/status-view.component';
 import {ControlEvchargerComponent} from './control-evcharger/control-evcharger.component';
 import {ControlSwitchComponent} from './control-switch/control-switch.component';
 import {ControlStartingcurrentComponent} from './control-startingcurrent/control-startingcurrent.component';
-import { ControlModbusComponent } from './control-modbus/control-modbus.component';
-import { ControlHttpComponent } from './control-http/control-http.component';
-import {FormMarkerService} from './shared/form-marker-service';
+import {ControlModbusComponent} from './control-modbus/control-modbus.component';
+import {ControlHttpComponent} from './control-http/control-http.component';
 import {ElectricVehicleResolver} from './control-evcharger/electric-vehicle-resolver.service';
-import { ControlAlwaysonComponent } from './control-alwayson/control-alwayson.component';
-import { MeterModbusComponent } from './meter-modbus/meter-modbus.component';
-import { MeterHttpComponent } from './meter-http/meter-http.component';
-import { MeterS0Component } from './meter-s0/meter-s0.component';
-import { MeterS0NetworkedComponent } from './meter-s0-networked/meter-s0-networked.component';
-import {NestedFormService} from './shared/nested-form-service';
-import { HttpReadComponent } from './http-read/http-read.component';
-import { HttpReadValueComponent } from './http-read-value/http-read-value.component';
-import { ControlEvchargerModbusComponent } from './control-evcharger-modbus/control-evcharger-modbus.component';
-import { ControlEvchargerHttpComponent } from './control-evcharger-http/control-evcharger-http.component';
-import { HttpWriteComponent } from './http-write/http-write.component';
-import { HttpWriteValueComponent } from './http-write-value/http-write-value.component';
-import { HttpConfigurationComponent } from './http-configuration/http-configuration.component';
-import { ElectricVehicleComponent } from './electric-vehicle/electric-vehicle.component';
-import { ModbusReadComponent } from './modbus-read/modbus-read.component';
-import { ModbusReadValueComponent } from './modbus-read-value/modbus-read-value.component';
-import { ModbusWriteComponent } from './modbus-write/modbus-write.component';
-import { ModbusWriteValueComponent } from './modbus-write-value/modbus-write-value.component';
+import {ControlAlwaysonComponent} from './control-alwayson/control-alwayson.component';
+import {MeterModbusComponent} from './meter-modbus/meter-modbus.component';
+import {MeterHttpComponent} from './meter-http/meter-http.component';
+import {MeterS0Component} from './meter-s0/meter-s0.component';
+import {MeterS0NetworkedComponent} from './meter-s0-networked/meter-s0-networked.component';
+import {HttpReadComponent} from './http-read/http-read.component';
+import {HttpReadValueComponent} from './http-read-value/http-read-value.component';
+import {ControlEvchargerModbusComponent} from './control-evcharger-modbus/control-evcharger-modbus.component';
+import {ControlEvchargerHttpComponent} from './control-evcharger-http/control-evcharger-http.component';
+import {HttpWriteComponent} from './http-write/http-write.component';
+import {HttpWriteValueComponent} from './http-write-value/http-write-value.component';
+import {HttpConfigurationComponent} from './http-configuration/http-configuration.component';
+import {ElectricVehicleComponent} from './electric-vehicle/electric-vehicle.component';
+import {ModbusReadComponent} from './modbus-read/modbus-read.component';
+import {ModbusReadValueComponent} from './modbus-read-value/modbus-read-value.component';
+import {ModbusWriteComponent} from './modbus-write/modbus-write.component';
+import {ModbusWriteValueComponent} from './modbus-write-value/modbus-write-value.component';
 
 @NgModule({
   declarations: [
@@ -150,13 +148,11 @@ import { ModbusWriteValueComponent } from './modbus-write-value/modbus-write-val
     ControlDefaultsResolver,
     DialogService,
     ElectricVehicleResolver,
-    FormMarkerService,
     Logger,
     {provide: Options, useValue: {level: Level.DEBUG}},
     MeterService,
     MeterResolver,
     MeterDefaultsResolver,
-    NestedFormService,
     ScheduleService,
     ScheduleResolver,
     SettingsService,
