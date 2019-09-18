@@ -267,7 +267,7 @@
   "ModbusWriteComponent.factorToValue": "Umrechnungsfaktor",
   "ModbusWriteComponent.error.factorToValue_pattern": "Der Umrechnungsfaktor muss als Zahl angegeben werden",
 
-  "ModbusWriteValueComponent.name": "Zustand",
+  "ModbusWriteValueComponent.name": "Zustand / Aktion",
   "ModbusWriteValueComponent.value": "Wert",
 
   "ScheduleComponent.schedule": "Zeitplan",
