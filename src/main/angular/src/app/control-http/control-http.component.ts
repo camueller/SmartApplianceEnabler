@@ -29,6 +29,7 @@ export class ControlHttpComponent implements OnInit, AfterViewChecked {
   applianceId: string;
   @Input()
   controlDefaults: ControlDefaults;
+  maxHttpWrites = 2;
   form: FormGroup;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};
@@ -46,10 +47,7 @@ export class ControlHttpComponent implements OnInit, AfterViewChecked {
   ngOnInit() {
     this.httpSwitch = this.httpSwitch || new HttpSwitch();
     if (!this.httpSwitch.httpWrites) {
-      this.httpSwitch.httpWrites = [new HttpWrite()];
-    }
-    if (!this.httpSwitch.httpWrites[0].writeValues) {
-      this.httpSwitch.httpWrites[0].writeValues = [new HttpWriteValue()];
+      this.httpSwitch.httpWrites = [this.createHttpWrite()];
     }
     this.errorMessages = new ErrorMessages('ControlHttpComponent.error.', [
       new ErrorMessage('onUrl', ValidatorType.required),
@@ -74,6 +72,21 @@ export class ControlHttpComponent implements OnInit, AfterViewChecked {
 
   get valueNameTextKeys() {
     return ['ControlHttpComponent.On', 'ControlHttpComponent.Off'];
+  }
+
+  get isAddHttpWritePossible() {
+    return this.httpSwitch.httpWrites.length < this.maxHttpWrites;
+  }
+
+  addHttpWrite() {
+    this.httpSwitch.httpWrites.push(this.createHttpWrite());
+    this.form.markAsDirty();
+  }
+
+  createHttpWrite() {
+    const httpWrite = new HttpWrite();
+    httpWrite.writeValues = [new HttpWriteValue()];
+    return httpWrite;
   }
 
   expandParentForm(form: FormGroup, httpSwitch: HttpSwitch, formHandler: FormHandler) {
