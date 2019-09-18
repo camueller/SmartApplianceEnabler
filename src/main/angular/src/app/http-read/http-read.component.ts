@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, Input, OnDestroy, OnInit, QueryList, ViewChildren} from '@angular/core';
+import {AfterViewChecked, Component, Input, OnInit, QueryList, ViewChildren} from '@angular/core';
 import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {FormHandler} from '../shared/form-handler';
 import {ErrorMessages} from '../shared/error-messages';
@@ -9,9 +9,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {HttpReadValue} from '../http-read-value/http-read-value';
 import {getValidString} from '../shared/form-util';
-import {Subscription} from 'rxjs';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
-import {ElectricVehicleComponent} from '../electric-vehicle/electric-vehicle.component';
 import {HttpReadValueComponent} from '../http-read-value/http-read-value.component';
 
 @Component({

@@ -52,10 +52,7 @@ export class ControlModbusComponent implements OnInit, AfterViewChecked {
   ngOnInit() {
     this.modbusSwitch = this.modbusSwitch || new ModbusSwitch();
     if (!this.modbusSwitch.modbusWrites) {
-      this.modbusSwitch.modbusWrites = [new ModbusWrite()];
-    }
-    if (!this.modbusSwitch.modbusWrites[0].writeValues) {
-      this.modbusSwitch.modbusWrites[0].writeValues = [new ModbusWriteValue()];
+      this.modbusSwitch.modbusWrites = [this.createModbusWrite()];
     }
     this.errorMessages = new ErrorMessages('ControlModbusComponent.error.', [
       new ErrorMessage('slaveAddress', ValidatorType.required),
@@ -82,6 +79,12 @@ export class ControlModbusComponent implements OnInit, AfterViewChecked {
 
   get valueNameTextKeys() {
     return ['ControlModbusComponent.On', 'ControlModbusComponent.Off'];
+  }
+
+  createModbusWrite() {
+    const modbusWrite = new ModbusWrite();
+    modbusWrite.writeValues = [new ModbusWriteValue()];
+    return modbusWrite;
   }
 
   expandParentForm(form: FormGroup, modbusSwitch: ModbusSwitch, formHandler: FormHandler) {
