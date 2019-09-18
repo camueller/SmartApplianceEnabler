@@ -10,6 +10,8 @@ import {FormHandler} from '../shared/form-handler';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {HttpWriteComponent} from '../http-write/http-write.component';
 import {ControlValueName} from '../control/control-value-name';
+import {HttpWrite} from '../http-write/http-write';
+import {HttpWriteValue} from '../http-write-value/http-write-value';
 
 @Component({
   selector: 'app-control-http',
@@ -43,6 +45,12 @@ export class ControlHttpComponent implements OnInit, AfterViewChecked {
 
   ngOnInit() {
     this.httpSwitch = this.httpSwitch || new HttpSwitch();
+    if (!this.httpSwitch.httpWrites) {
+      this.httpSwitch.httpWrites = [new HttpWrite()];
+    }
+    if (!this.httpSwitch.httpWrites[0].writeValues) {
+      this.httpSwitch.httpWrites[0].writeValues = [new HttpWriteValue()];
+    }
     this.errorMessages = new ErrorMessages('ControlHttpComponent.error.', [
       new ErrorMessage('onUrl', ValidatorType.required),
       new ErrorMessage('onUrl', ValidatorType.pattern),

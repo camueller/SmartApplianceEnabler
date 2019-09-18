@@ -13,6 +13,9 @@ import {FormHandler} from '../shared/form-handler';
 import {StartingCurrentSwitch} from '../control-startingcurrent/starting-current-switch';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {ModbusWriteComponent} from '../modbus-write/modbus-write.component';
+import {ModbusWrite} from '../modbus-write/modbus-write';
+import {ModbusWriteValue} from '../modbus-write-value/modbus-write-value';
+import {ControlValueName} from '../control/control-value-name';
 
 @Component({
   selector: 'app-control-modbus',
@@ -48,6 +51,12 @@ export class ControlModbusComponent implements OnInit, AfterViewChecked {
 
   ngOnInit() {
     this.modbusSwitch = this.modbusSwitch || new ModbusSwitch();
+    if (!this.modbusSwitch.modbusWrites) {
+      this.modbusSwitch.modbusWrites = [new ModbusWrite()];
+    }
+    if (!this.modbusSwitch.modbusWrites[0].writeValues) {
+      this.modbusSwitch.modbusWrites[0].writeValues = [new ModbusWriteValue()];
+    }
     this.errorMessages = new ErrorMessages('ControlModbusComponent.error.', [
       new ErrorMessage('slaveAddress', ValidatorType.required),
       new ErrorMessage('slaveAddress', ValidatorType.pattern),
@@ -68,7 +77,7 @@ export class ControlModbusComponent implements OnInit, AfterViewChecked {
   }
 
   get valueNames() {
-    return ['ControlHttpComponent.On', 'ControlHttpComponent.Off'];
+    return [ControlValueName.On, ControlValueName.Off];
   }
 
   get valueNameTextKeys() {
