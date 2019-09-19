@@ -8,6 +8,9 @@
       <div *ngIf="errors[getFormControlName('url')]"
            class="ui negative message">{{errors[getFormControlName('url')]}}</div>
     </div>
+    <div class="field icon-field">
+      <i (click)="removeHttpWrite()" class="icon big red remove circle"></i>
+    </div>
   </div>
   <div *ngFor="let httpWriteValue of httpWrite.writeValues; index as i">
     <div class="ui fields">

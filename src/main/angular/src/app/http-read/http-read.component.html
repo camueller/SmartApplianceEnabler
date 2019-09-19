@@ -9,6 +9,9 @@
       <div *ngIf="errors[getFormControlName('url')]"
            class="ui negative message">{{errors[getFormControlName('url')]}}</div>
     </div>
+    <div class="field icon-field">
+      <i (click)="removeHttpRead()" class="icon big red remove circle"></i>
+    </div>
   </div>
   <div *ngFor="let httpReadValue of httpRead.readValues; index as i">
     <div class="ui fields">
@@ -23,11 +26,11 @@
           #httpReadValues
         ></app-http-read-value>
       </div>
-      <div class="field icon-field" *ngIf="! singleValue">
-        <i (click)="removeValue(i)" class="icon big red remove circle"></i>
+      <div class="field icon-field">
+        <i (click)="removeHttpReadValue(i)" class="icon big red remove circle"></i>
       </div>
     </div>
   </div>
 </div>
-<button type="button" (click)="addValue()" class="ui button" *ngIf="! singleValue">
+<button type="button" (click)="addValue()" class="ui button" *ngIf="isAddHttpReadPossible">
   {{'HttpReadComponent.button.addValue' | translate}}</button>

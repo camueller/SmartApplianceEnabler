@@ -39,6 +39,9 @@
       <div *ngIf="errors[this.getFormControlName('factorToValue')]"
            class="ui negative message">{{errors[this.getFormControlName('factorToValue')]}}</div>
     </div>
+    <div class="field icon-field">
+      <i (click)="removeModbusRead()" class="icon big red remove circle"></i>
+    </div>
   </div>
   <div *ngFor="let readValue of modbusRead.readValues; index as i">
     <div class="ui fields">
@@ -52,11 +55,11 @@
           #modbusReadValues
         ></app-modbus-read-value>
       </div>
-      <div class="field icon-field" *ngIf="! singleValue">
+      <div class="field icon-field">
         <i (click)="removeValue(i)" class="icon big red remove circle"></i>
       </div>
     </div>
   </div>
 </div>
-<button type="button" (click)="addValue()" class="ui button" *ngIf="! singleValue">
-  {{'HttpReadComponent.button.addValue' | translate}}</button>
+<button type="button" (click)="addValue()" class="ui button" *ngIf="isAddModbusReadPossible">
+  {{'ModbusReadComponent.button.addValue' | translate}}</button>

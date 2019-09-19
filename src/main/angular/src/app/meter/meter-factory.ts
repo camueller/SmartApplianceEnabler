@@ -128,47 +128,47 @@ export class MeterFactory {
 
   createModbusElectricityMeter(rawMeter: any): ModbusElectricityMeter {
     const modbusElectricityMeter: ModbusElectricityMeter = {...rawMeter};
-    if (!!rawMeter.modbusReads) {
-      rawMeter.modbusReads.forEach((rawModbusRead) => {
-        if (!!rawModbusRead.readValues && rawModbusRead.readValues.length > 0) {
-          if (rawModbusRead.readValues[0].name === MeterValueName.Power) {
-            modbusElectricityMeter.powerModbusRead = {...rawModbusRead};
-          }
-          if (rawModbusRead.readValues[0].name === MeterValueName.Energy) {
-            modbusElectricityMeter.energyModbusRead = {...rawModbusRead};
-          }
-        }
-      });
-    }
+    // if (!!rawMeter.modbusReads) {
+    //   rawMeter.modbusReads.forEach((rawModbusRead) => {
+    //     if (!!rawModbusRead.readValues && rawModbusRead.readValues.length > 0) {
+    //       if (rawModbusRead.readValues[0].name === MeterValueName.Power) {
+    //         modbusElectricityMeter.powerModbusRead = {...rawModbusRead};
+    //       }
+    //       if (rawModbusRead.readValues[0].name === MeterValueName.Energy) {
+    //         modbusElectricityMeter.energyModbusRead = {...rawModbusRead};
+    //       }
+    //     }
+    //   });
+    // }
     return modbusElectricityMeter;
   }
 
   createHttpElectricityMeter(rawMeter: any): HttpElectricityMeter {
     const httpElectricityMeter: HttpElectricityMeter = {...rawMeter};
-    if (!!rawMeter.httpReads) {
-      rawMeter.httpReads.forEach((rawHttpRead) => {
-        if (!!rawHttpRead.readValues && rawHttpRead.readValues.length > 0) {
-          if (rawHttpRead.readValues[0].name === MeterValueName.Power) {
-            httpElectricityMeter.powerHttpRead = {...rawHttpRead};
-          }
-          if (rawHttpRead.readValues[0].name === MeterValueName.Energy) {
-            httpElectricityMeter.energyHttpRead = {...rawHttpRead};
-          }
-        }
-      });
-    }
+    // if (!!rawMeter.httpReads) {
+    //   rawMeter.httpReads.forEach((rawHttpRead) => {
+    //     if (!!rawHttpRead.readValues && rawHttpRead.readValues.length > 0) {
+    //       if (rawHttpRead.readValues[0].name === MeterValueName.Power) {
+    //         httpElectricityMeter.powerHttpRead = {...rawHttpRead};
+    //       }
+    //       if (rawHttpRead.readValues[0].name === MeterValueName.Energy) {
+    //         httpElectricityMeter.energyHttpRead = {...rawHttpRead};
+    //       }
+    //     }
+    //   });
+    // }
     return httpElectricityMeter;
   }
 
   toJSONHttpElectricityMeter(httpElectricityMeter: HttpElectricityMeter) {
     const rawMeter = httpElectricityMeter as any;
     rawMeter.httpReads = [];
-    if (httpElectricityMeter.powerHttpRead) {
-      rawMeter.httpReads.push(httpElectricityMeter.powerHttpRead);
-    }
-    if (httpElectricityMeter.powerHttpRead) {
-      rawMeter.httpReads.push(httpElectricityMeter.energyHttpRead);
-    }
+    // if (httpElectricityMeter.powerHttpRead) {
+    //   rawMeter.httpReads.push(httpElectricityMeter.powerHttpRead);
+    // }
+    // if (httpElectricityMeter.powerHttpRead) {
+    //   rawMeter.httpReads.push(httpElectricityMeter.energyHttpRead);
+    // }
     return rawMeter;
   }
 }

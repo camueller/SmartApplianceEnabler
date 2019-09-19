@@ -29,6 +29,5 @@ export class ModbusElectricityMeter {
   slaveAddress: string;
   pollInterval: number;
   measurementInterval: number;
-  powerModbusRead: ModbusRead;
-  energyModbusRead: ModbusRead;
+  modbusReads: ModbusRead[];
 }

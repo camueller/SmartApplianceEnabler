@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, Input, OnInit, QueryList, ViewChildren} from '@angular/core';
+import {AfterViewChecked, Component, EventEmitter, Input, OnInit, Output, QueryList, ViewChildren} from '@angular/core';
 import {Logger} from '../log/logger';
 import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
@@ -39,6 +39,8 @@ export class ModbusWriteComponent implements OnInit, AfterViewChecked {
   translationPrefix: string;
   @Input()
   translationKeys: string[];
+  @Output()
+  remove = new EventEmitter<any>();
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -93,8 +95,12 @@ export class ModbusWriteComponent implements OnInit, AfterViewChecked {
     return (typeControl ? typeControl.value : '');
   }
 
+  removeModbusWrite() {
+    this.remove.emit();
+  }
+
   get isAddValuePossible() {
-    return !this.maxValues || this.modbusWrite.writeValues.length < this.maxValues;
+    return this.modbusWrite.writeValues.length < this.maxValues;
   }
 
   addValue() {

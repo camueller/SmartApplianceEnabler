@@ -24,6 +24,9 @@
       <div *ngIf="errors[this.getFormControlName('factorToValue')]"
            class="ui negative message">{{errors[this.getFormControlName('factorToValue')]}}</div>
     </div>
+    <div class="field icon-field">
+      <i (click)="removeModbusWrite()" class="icon big red remove circle"></i>
+    </div>
   </div>
   <div *ngFor="let writeValue of modbusWrite.writeValues; index as i">
     <div class="ui fields">

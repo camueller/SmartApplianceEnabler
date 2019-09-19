@@ -25,25 +25,16 @@
     <div *ngIf="errors.measurementInterval" class="ui negative message">{{errors.measurementInterval}}</div>
   </div>
 </div>
-<h4 class="ui dividing header">{{'MeterModbusComponent.Power' | translate}}</h4>
-<app-modbus-read
-    [modbusRead]="modbusElectricityMeter.powerModbusRead"
-    [singleValue]="true"
-    [formControlNamePrefix]="'power'"
-    [valueNames]="powerValueNames"
+<app-modbus-read *ngFor="let modbusRead of modbusElectricityMeter.modbusReads; index as i; last as l"
+    [modbusRead]="modbusRead"
+    [maxValues]="maxValues"
+    [formControlNamePrefix]="getReadFormControlPrefix(i)"
+    [valueNames]="valueNames"
     [readRegisterTypes]="settingsDefaults.modbusReadRegisterTypes"
     [translationPrefix]="'MeterModbusComponent.'"
-    [translationKeys]="powerValueNameTextKeys"
+    [translationKeys]="valueNameTextKeys"
+    (remove)="onModbusReadRemove(i)"
     #powerHttpRead
   ></app-modbus-read>
-<h4 class="ui dividing header">{{'MeterModbusComponent.Energy' | translate}}</h4>
-<app-modbus-read
-  [modbusRead]="modbusElectricityMeter.energyModbusRead"
-  [singleValue]="true"
-  [formControlNamePrefix]="'energy'"
-  [valueNames]="energyValueNames"
-  [readRegisterTypes]="settingsDefaults.modbusReadRegisterTypes"
-  [translationPrefix]="'MeterModbusComponent.'"
-  [translationKeys]="energyValueNameTextKeys"
-  #energyHttpRead
-></app-modbus-read>
+<button type="button" (click)="addModbusRead()" class="ui button" *ngIf="isAddModbusReadPossible">
+  {{'MeterModbusComponent.button.addModbusRead' | translate}}</button>

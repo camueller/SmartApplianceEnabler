@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, Input, OnInit, QueryList, ViewChildren} from '@angular/core';
+import {AfterViewChecked, Component, EventEmitter, Input, OnInit, Output, QueryList, ViewChildren} from '@angular/core';
 import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {Logger} from '../log/logger';
 import {TranslateService} from '@ngx-translate/core';
@@ -32,13 +32,15 @@ export class ModbusReadComponent implements OnInit, AfterViewChecked {
   @Input()
   formControlNamePrefix = '';
   @Input()
-  singleValue = false;
+  maxValues: number;
   form: FormGroup;
   formHandler: FormHandler;
   @Input()
   translationPrefix: string;
   @Input()
   translationKeys: string[];
+  @Output()
+  remove = new EventEmitter<any>();
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -100,6 +102,14 @@ export class ModbusReadComponent implements OnInit, AfterViewChecked {
   // TODO move to config
   getByteOrders(): string[] {
     return ['BigEndian', 'LittleEndian'];
+  }
+
+  removeModbusRead() {
+    this.remove.emit();
+  }
+
+  get isAddModbusReadPossible() {
+    return this.modbusRead.readValues.length < this.maxValues;
   }
 
   addValue() {

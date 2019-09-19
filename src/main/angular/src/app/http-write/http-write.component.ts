@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, Input, OnInit, QueryList, ViewChildren} from '@angular/core';
+import {AfterViewChecked, Component, EventEmitter, Input, OnInit, Output, QueryList, ViewChildren} from '@angular/core';
 import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {FormHandler} from '../shared/form-handler';
 import {ErrorMessages} from '../shared/error-messages';
@@ -41,6 +41,8 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked {
   @Input()
   translationKeys: string[];
   translatedStrings: string[];
+  @Output()
+  remove = new EventEmitter<any>();
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -96,8 +98,12 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked {
     return undefined;
   }
 
+  removeHttpWrite() {
+    this.remove.emit();
+  }
+
   get isAddValuePossible() {
-    return !this.maxValues || this.httpWrite.writeValues.length < this.maxValues;
+    return this.httpWrite.writeValues.length < this.maxValues;
   }
 
   addValue() {

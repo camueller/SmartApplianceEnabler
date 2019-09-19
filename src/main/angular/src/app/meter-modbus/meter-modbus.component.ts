@@ -13,6 +13,7 @@ import {SettingsDefaults} from '../settings/settings-defaults';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {ModbusReadValue} from '../modbus-read-value/modbus-read-value';
 import {ModbusRead} from '../modbus-read/modbus-read';
+import {MeterValueName} from '../meter/meter-value-name';
 
 @Component({
   selector: 'app-meter-modbus',
@@ -36,7 +37,6 @@ export class MeterModbusComponent implements OnInit, AfterViewChecked {
   form: FormGroup;
   formHandler: FormHandler;
   translatedStrings: string[];
-  translationKeys: string[];
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -47,22 +47,12 @@ export class MeterModbusComponent implements OnInit, AfterViewChecked {
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
     this.formHandler = new FormHandler();
-    this.translationKeys = [].concat(this.powerValueNameTextKeys, this.energyValueNameTextKeys);
   }
 
   ngOnInit() {
     this.modbusElectricityMeter = this.modbusElectricityMeter || new ModbusElectricityMeter();
-    if (!this.modbusElectricityMeter.powerModbusRead) {
-      this.modbusElectricityMeter.powerModbusRead = new ModbusRead();
-    }
-    if (!this.modbusElectricityMeter.powerModbusRead.readValues) {
-      this.modbusElectricityMeter.powerModbusRead.readValues = [new ModbusReadValue()];
-    }
-    if (!this.modbusElectricityMeter.energyModbusRead) {
-      this.modbusElectricityMeter.energyModbusRead = new ModbusRead();
-    }
-    if (!this.modbusElectricityMeter.energyModbusRead.readValues) {
-      this.modbusElectricityMeter.energyModbusRead.readValues = [new ModbusReadValue()];
+    if (!this.modbusElectricityMeter.modbusReads) {
+      this.modbusElectricityMeter.modbusReads = [this.createModbusRead()];
     }
     this.errorMessages = new ErrorMessages('MeterModbusComponent.error.', [
       new ErrorMessage('slaveAddress', ValidatorType.required),
@@ -82,20 +72,42 @@ export class MeterModbusComponent implements OnInit, AfterViewChecked {
   }
 
 
-  get powerValueNames() {
-    return ['Power'];
+  get valueNames() {
+    return [MeterValueName.Power, MeterValueName.Energy];
   }
 
-  get powerValueNameTextKeys() {
-    return ['MeterModbusComponent.Power'];
+  get valueNameTextKeys() {
+    return ['MeterModbusComponent.Power', 'MeterModbusComponent.Energy'];
   }
 
-  get energyValueNames() {
-    return ['Energy'];
+  getReadFormControlPrefix(index: number) {
+    return `read${index}.`;
   }
 
-  get energyValueNameTextKeys() {
-    return ['MeterModbusComponent.Energy'];
+  get isAddModbusReadPossible() {
+    if (this.modbusElectricityMeter.modbusReads.length === 1) {
+      return this.modbusElectricityMeter.modbusReads[0].readValues.length < 2;
+    }
+    return this.modbusElectricityMeter.modbusReads.length < 2;
+  }
+
+  get maxValues() {
+    return this.modbusElectricityMeter.modbusReads.length === 2 ? 1 : 2;
+  }
+
+  addModbusRead() {
+    this.modbusElectricityMeter.modbusReads.push(this.createModbusRead());
+    this.form.markAsDirty();
+  }
+
+  onModbusReadRemove(index: number) {
+    this.modbusElectricityMeter.modbusReads.splice(index, 1);
+  }
+
+  createModbusRead() {
+    const modbusRead = new ModbusRead();
+    modbusRead.readValues = [new ModbusReadValue()];
+    return modbusRead;
   }
 
   expandParentForm(form: FormGroup, modbusElectricityMeter: ModbusElectricityMeter, formHandler: FormHandler) {

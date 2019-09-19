@@ -26,31 +26,15 @@
     ></app-http-configuration>
   </div>
 </div>
-<h4 class="ui dividing header">{{'MeterHttpComponent.Power' | translate}}</h4>
-<div class="ui fields">
-  <div class="field">
-    <app-http-read
-      [httpRead]="httpElectricityMeter.powerHttpRead"
-      [singleValue]="true"
-      [formControlNamePrefix]="'power'"
-      [valueNames]="powerValueNames"
-      [translationPrefix]="'MeterHttpComponent.'"
-      [translationKeys]="powerValueNameTextKeys"
-      #powerHttpRead
-    ></app-http-read>
-  </div>
-</div>
-<h4 class="ui dividing header">{{'MeterHttpComponent.Energy' | translate}}</h4>
-<div class="ui fields">
-  <div class="field">
-    <app-http-read
-      [httpRead]="httpElectricityMeter.energyHttpRead"
-      [singleValue]="true"
-      [formControlNamePrefix]="'energy'"
-      [valueNames]="energyValueNames"
-      [translationPrefix]="'MeterHttpComponent.'"
-      [translationKeys]="energyValueNameTextKeys"
-      #energyHttpRead
-    ></app-http-read>
-  </div>
-</div>
+<app-http-read *ngFor="let httpRead of httpElectricityMeter.httpReads; index as i; last as l"
+  [httpRead]="httpRead"
+  [maxValues]="maxValues"
+  [formControlNamePrefix]="getReadFormControlPrefix(i)"
+  [valueNames]="valueNames"
+  [translationPrefix]="'MeterHttpComponent.'"
+  [translationKeys]="valueNameTextKeys"
+  (remove)="onHttpReadRemove(i)"
+  #powerHttpRead
+></app-http-read>
+<button type="button" (click)="addHttpRead()" class="ui button" *ngIf="isAddHttpReadPossible">
+  {{'MeterHttpComponent.button.addHttpRead' | translate}}</button>

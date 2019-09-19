@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, Input, OnInit, QueryList, ViewChildren} from '@angular/core';
+import {AfterViewChecked, Component, EventEmitter, Input, OnInit, Output, QueryList, ViewChildren} from '@angular/core';
 import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {FormHandler} from '../shared/form-handler';
 import {ErrorMessages} from '../shared/error-messages';
@@ -28,7 +28,7 @@ export class HttpReadComponent implements OnInit, AfterViewChecked {
   @Input()
   valueNames: string[];
   @Input()
-  singleValue = false;
+  maxValues: number;
   @Input()
   disableFactorToValue = false;
   @Input()
@@ -40,6 +40,8 @@ export class HttpReadComponent implements OnInit, AfterViewChecked {
   @Input()
   translationKeys: string[];
   translatedStrings: string[];
+  @Output()
+  remove = new EventEmitter<any>();
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -96,6 +98,14 @@ export class HttpReadComponent implements OnInit, AfterViewChecked {
     return undefined;
   }
 
+  removeHttpRead() {
+    this.remove.emit();
+  }
+
+  get isAddHttpReadPossible() {
+    return this.httpRead.readValues.length < this.maxValues;
+  }
+
   addValue() {
     const newReadValue = new HttpReadValue();
     if (!this.httpRead.readValues) {
@@ -105,7 +115,7 @@ export class HttpReadComponent implements OnInit, AfterViewChecked {
     this.form.markAsDirty();
   }
 
-  removeValue(index: number) {
+  removeHttpReadValue(index: number) {
     this.httpRead.readValues.splice(index, 1);
     this.form.markAsDirty();
   }

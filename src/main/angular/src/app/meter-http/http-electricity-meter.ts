@@ -30,6 +30,5 @@ export class HttpElectricityMeter {
   pollInterval: number;
   contentProtocol: string;
   httpConfiguration: HttpConfiguration;
-  powerHttpRead: HttpRead;
-  energyHttpRead: HttpRead;
+  httpReads: HttpRead[];
 }
