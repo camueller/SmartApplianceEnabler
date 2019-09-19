@@ -82,6 +82,7 @@
   "MeterModbusComponent.Power": "Leistung",
   "MeterModbusComponent.Energy": "Energiemenge",
   "MeterModbusComponent.pollInterval": "Abfrage-Interval [s]",
+  "MeterModbusComponent.button.addModbusRead": "Weiteres Register",
   "MeterModbusComponent.error.slaveAddress_required": "Die Slave-Adresse muss angegeben werden",
   "MeterModbusComponent.error.slaveAddress_pattern": "Die Slave-Adresse muss eine Zahl sein",
   "MeterModbusComponent.error.registerAddress_required": "Die Register-Adresse muss angegeben werden",
@@ -95,6 +96,7 @@
   "MeterHttpComponent.pollInterval": "Abfrage-Interval [s]",
   "MeterHttpComponent.measurementInterval": "Messinterval [s]",
   "MeterHttpComponent.contentProtocol": "Format",
+  "MeterHttpComponent.button.addHttpRead": "Weitere URL",
   "MeterHttpComponent.error.pollInterval_pattern": "Das Abfrage-Interval muss eine Zahl sein",
   "MeterHttpComponent.error.measurementInterval_pattern": "Das Messinterval muss eine Zahl sein",
 
@@ -169,6 +171,7 @@
   "ControlModbusComponent.idref": "Modbus",
   "ControlModbusComponent.slaveAddress": "Slave-Adresse",
   "ControlModbusComponent.registerType": "Register-Typ",
+  "ControlModbusComponent.button.addModbusWrite": "Weiteres Register",
   "ControlModbusComponent.error.slaveAddress_required": "Die Slave-Adresse muss angegeben werden",
   "ControlModbusComponent.error.slaveAddress_pattern": "Die Slave-Adresse muss eine Zahl sein",
 
@@ -254,6 +257,7 @@
   "ModbusReadComponent.bytes": "Bytes",
   "ModbusReadComponent.byteOrder": "Byte Reihenfolge",
   "ModbusReadComponent.factorToValue": "Umrechnungsfaktor",
+  "ModbusReadComponent.button.addValue": "Weiterer Zustand",
   "ModbusReadComponent.error.address_required": "Die Register-Adresse muss angegeben werden",
   "ModbusReadComponent.error.address_pattern": "Die Register-Adresse muss als Zahl (z.B. 13) oder Hex-Zahl (z.B. 0x0A) angegeben werden",
   "ModbusReadComponent.error.bytes_pattern": "Die Anzahl der Bytes muss als Zahl angegeben werden",

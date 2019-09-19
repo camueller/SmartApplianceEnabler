@@ -15,6 +15,7 @@ import {HttpConfigurationComponent} from '../http-configuration/http-configurati
 import {HttpReadComponent} from '../http-read/http-read.component';
 import {HttpRead} from '../http-read/http-read';
 import {HttpReadValue} from '../http-read-value/http-read-value';
+import {MeterValueName} from '../meter/meter-value-name';
 
 @Component({
   selector: 'app-meter-http',
@@ -52,17 +53,8 @@ export class MeterHttpComponent implements OnInit, AfterViewChecked {
 
   ngOnInit() {
     this.httpElectricityMeter = this.httpElectricityMeter || new HttpElectricityMeter();
-    if (!this.httpElectricityMeter.powerHttpRead) {
-      this.httpElectricityMeter.powerHttpRead = new HttpRead();
-    }
-    if (!this.httpElectricityMeter.powerHttpRead.readValues) {
-      this.httpElectricityMeter.powerHttpRead.readValues = [new HttpReadValue()];
-    }
-    if (!this.httpElectricityMeter.energyHttpRead) {
-      this.httpElectricityMeter.energyHttpRead = new HttpRead();
-    }
-    if (!this.httpElectricityMeter.energyHttpRead.readValues) {
-      this.httpElectricityMeter.energyHttpRead.readValues = [new HttpReadValue()];
+    if (!this.httpElectricityMeter.httpReads) {
+      this.httpElectricityMeter.httpReads = [this.createHttpRead()];
     }
     this.errorMessages = new ErrorMessages('MeterHttpComponent.error.', [
       new ErrorMessage('pollInterval', ValidatorType.pattern),
@@ -79,25 +71,47 @@ export class MeterHttpComponent implements OnInit, AfterViewChecked {
     this.formHandler.markLabelsRequired();
   }
 
-  get powerValueNames() {
-    return ['Power'];
+  get valueNames() {
+    return [MeterValueName.Power, MeterValueName.Energy];
   }
 
-  get powerValueNameTextKeys() {
-    return ['MeterHttpComponent.Power'];
+  get valueNameTextKeys() {
+    return ['MeterHttpComponent.Power', 'MeterHttpComponent.Energy'];
   }
 
-  get energyValueNames() {
-    return ['Energy'];
-  }
-
-  get energyValueNameTextKeys() {
-    return ['MeterHttpComponent.Energy'];
+  getReadFormControlPrefix(index: number) {
+    return `read${index}.`;
   }
 
   get contentProtocol(): string {
     const contentProtocolControl = this.form.controls['contentProtocol'];
     return (contentProtocolControl.value ? contentProtocolControl.value.toUpperCase() : '');
+  }
+
+  get isAddHttpReadPossible() {
+    if (this.httpElectricityMeter.httpReads.length === 1) {
+      return this.httpElectricityMeter.httpReads[0].readValues.length < 2;
+    }
+    return this.httpElectricityMeter.httpReads.length < 2;
+  }
+
+  get maxValues() {
+    return this.httpElectricityMeter.httpReads.length === 2 ? 1 : 2;
+  }
+
+  addHttpRead() {
+    this.httpElectricityMeter.httpReads.push(this.createHttpRead());
+    this.form.markAsDirty();
+  }
+
+  onHttpReadRemove(index: number) {
+    this.httpElectricityMeter.httpReads.splice(index, 1);
+  }
+
+  createHttpRead() {
+    const httpRead = new HttpRead();
+    httpRead.readValues = [new HttpReadValue()];
+    return httpRead;
   }
 
   expandParentForm(form: FormGroup, httpElectricityMeter: HttpElectricityMeter, formHandler: FormHandler) {
@@ -128,8 +142,8 @@ export class MeterHttpComponent implements OnInit, AfterViewChecked {
     this.httpElectricityMeter.measurementInterval = measurementInterval;
     this.httpElectricityMeter.contentProtocol = contentProtocol;
     this.httpElectricityMeter.httpConfiguration = httpConfiguration;
-    this.httpElectricityMeter.powerHttpRead = powerHttpRead;
-    this.httpElectricityMeter.energyHttpRead = energyHttpRead;
+    // this.httpElectricityMeter.powerHttpRead = powerHttpRead;
+    // this.httpElectricityMeter.energyHttpRead = energyHttpRead;
     return this.httpElectricityMeter;
   }
 }

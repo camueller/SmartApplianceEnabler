@@ -15,14 +15,18 @@
         {{errors.slaveAddress}}</div>
     </div>
   </div>
-  <app-modbus-write *ngFor="let modbusWrite of modbusSwitch.modbusWrites; index as i; last as l"
-    [modbusWrite]="modbusWrite"
-    [maxValues]="2"
-    [formControlNamePrefix]="getWriteFormControlPrefix(i)"
-    [valueNames]="valueNames"
-    [writeRegisterTypes]="settingsDefaults.modbusWriteRegisterTypes"
-    [translationPrefix]="'ControlModbusComponent.'"
-    [translationKeys]="valueNameTextKeys"
-    #modbusWrites
-  ></app-modbus-write>
 </div>
+<app-modbus-write *ngFor="let modbusWrite of modbusSwitch.modbusWrites; index as i; last as l"
+                  [modbusWrite]="modbusWrite"
+                  [maxValues]="maxValues"
+                  [formControlNamePrefix]="getWriteFormControlPrefix(i)"
+                  [valueNames]="valueNames"
+                  [writeRegisterTypes]="settingsDefaults.modbusWriteRegisterTypes"
+                  [translationPrefix]="'ControlModbusComponent.'"
+                  [translationKeys]="valueNameTextKeys"
+                  (remove)="onModbusWriteRemove(i)"
+                  #modbusWrites
+></app-modbus-write>
+<button type="button" (click)="addModbusWrite()" class="ui button" *ngIf="isAddModbusWritePossible">
+  {{'ControlModbusComponent.button.addModbusWrite' | translate}}</button>
+

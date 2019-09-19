@@ -74,13 +74,28 @@ export class ControlHttpComponent implements OnInit, AfterViewChecked {
     return ['ControlHttpComponent.On', 'ControlHttpComponent.Off'];
   }
 
+  getWriteFormControlPrefix(index: number) {
+    return `read${index}.`;
+  }
+
   get isAddHttpWritePossible() {
-    return this.httpSwitch.httpWrites.length < this.maxHttpWrites;
+    if (this.httpSwitch.httpWrites.length === 1) {
+      return this.httpSwitch.httpWrites[0].writeValues.length < 2;
+    }
+    return this.httpSwitch.httpWrites.length < 2;
+  }
+
+  get maxValues() {
+    return this.httpSwitch.httpWrites.length === 2 ? 1 : 2;
   }
 
   addHttpWrite() {
     this.httpSwitch.httpWrites.push(this.createHttpWrite());
     this.form.markAsDirty();
+  }
+
+  onHttpWriteRemove(index: number) {
+    this.httpSwitch.httpWrites.splice(index, 1);
   }
 
   createHttpWrite() {

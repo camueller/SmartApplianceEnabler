@@ -81,6 +81,26 @@ export class ControlModbusComponent implements OnInit, AfterViewChecked {
     return ['ControlModbusComponent.On', 'ControlModbusComponent.Off'];
   }
 
+  get isAddModbusWritePossible() {
+    if (this.modbusSwitch.modbusWrites.length === 1) {
+      return this.modbusSwitch.modbusWrites[0].writeValues.length < 2;
+    }
+    return this.modbusSwitch.modbusWrites.length < 2;
+  }
+
+  get maxValues() {
+    return this.modbusSwitch.modbusWrites.length === 2 ? 1 : 2;
+  }
+
+  addModbusWrite() {
+    this.modbusSwitch.modbusWrites.push(this.createModbusWrite());
+    this.form.markAsDirty();
+  }
+
+  onModbusWriteRemove(index: number) {
+    this.modbusSwitch.modbusWrites.splice(index, 1);
+  }
+
   createModbusWrite() {
     const modbusWrite = new ModbusWrite();
     modbusWrite.writeValues = [new ModbusWriteValue()];
