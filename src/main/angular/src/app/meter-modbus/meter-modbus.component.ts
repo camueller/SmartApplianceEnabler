@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, Input, OnInit} from '@angular/core';
+import {AfterViewChecked, Component, Input, OnInit, QueryList, ViewChild} from '@angular/core';
 import {MeterDefaults} from '../meter/meter-defaults';
 import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {FormHandler} from '../shared/form-handler';
@@ -14,6 +14,9 @@ import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {ModbusReadValue} from '../modbus-read-value/modbus-read-value';
 import {ModbusRead} from '../modbus-read/modbus-read';
 import {MeterValueName} from '../meter/meter-value-name';
+import {getValidInt, getValidString} from '../shared/form-util';
+import {HttpReadComponent} from '../http-read/http-read.component';
+import {ModbusReadComponent} from '../modbus-read/modbus-read.component';
 
 @Component({
   selector: 'app-meter-modbus',
@@ -26,6 +29,8 @@ import {MeterValueName} from '../meter/meter-value-name';
 export class MeterModbusComponent implements OnInit, AfterViewChecked {
   @Input()
   modbusElectricityMeter: ModbusElectricityMeter;
+  @ViewChild('modbusReadComponents')
+  modbusReadComps: QueryList<ModbusReadComponent>;
   @Input()
   meterDefaults: MeterDefaults;
   @Input()
@@ -124,10 +129,27 @@ export class MeterModbusComponent implements OnInit, AfterViewChecked {
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
   }
 
-  updateModelFromForm(modbusElectricityMeter: ModbusElectricityMeter, form: FormGroup) {
-    // modbusElectricityMeter.idref = form.controls.idref.value;
-    // modbusElectricityMeter.slaveAddress = form.controls.slaveAddress.value;
-    // modbusElectricityMeter.pollInterval = form.controls.pollInterval.value;
-    // modbusElectricityMeter.measurementInterval = form.controls.measurementInterval.value;
+  updateModelFromForm(): ModbusElectricityMeter | undefined {
+    const idref = getValidString(this.form.controls['idref'].value);
+    const slaveAddress = getValidString(this.form.controls['slaveAddress'].value);
+    const pollInterval = getValidInt(this.form.controls['pollInterval'].value);
+    const measurementInterval = getValidInt(this.form.controls['measurementInterval'].value);
+    const modbusReads = [];
+    this.modbusReadComps.forEach(modbusReadComponent => {
+      const modbusRead = modbusReadComponent.updateModelFromForm();
+      if (modbusRead) {
+        modbusReads.push(modbusRead);
+      }
+    });
+
+    if (!(idref || slaveAddress || pollInterval || measurementInterval || modbusReads.length > 0)) {
+      return undefined;
+    }
+
+    this.modbusElectricityMeter.idref = idref;
+    this.modbusElectricityMeter.slaveAddress = slaveAddress;
+    this.modbusElectricityMeter.pollInterval = pollInterval;
+    this.modbusElectricityMeter.measurementInterval = measurementInterval;
+    this.modbusElectricityMeter.modbusReads = modbusReads;
   }
 }

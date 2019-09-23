@@ -9,7 +9,7 @@
                 [translationPrefix]="'ControlHttpComponent.'"
                 [translationKeys]="valueNameTextKeys"
                 (remove)="onHttpWriteRemove(i)"
-                #onHttpWrite
+                #httpWriteComponents
 ></app-http-write>
 <button type="button" (click)="addHttpWrite()" class="ui button" *ngIf="isAddHttpWritePossible">
   {{'ControlEvchargerHttpComponent.button.addHttpWrite' | translate}}</button>

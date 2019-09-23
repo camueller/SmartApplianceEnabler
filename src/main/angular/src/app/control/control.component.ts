@@ -40,6 +40,8 @@ import {FormControl, FormGroup} from '@angular/forms';
 import {EvCharger} from '../control-evcharger/ev-charger';
 import {ControlEvchargerComponent} from '../control-evcharger/control-evcharger.component';
 import {ControlHttpComponent} from '../control-http/control-http.component';
+import {ControlSwitchComponent} from '../control-switch/control-switch.component';
+import {ControlModbusComponent} from '../control-modbus/control-modbus.component';
 
 @Component({
   selector: 'app-appliance-switch',
@@ -48,6 +50,10 @@ import {ControlHttpComponent} from '../control-http/control-http.component';
 })
 export class ControlComponent implements OnInit, CanDeactivate<ControlComponent> {
   form: FormGroup;
+  @ViewChild(ControlSwitchComponent)
+  controlSwitchComp: ControlSwitchComponent;
+  @ViewChild(ControlModbusComponent)
+  controlModbusComp: ControlModbusComponent;
   @ViewChild(ControlHttpComponent)
   controlHttpComp: ControlHttpComponent;
   @ViewChild(ControlEvchargerComponent)
@@ -157,6 +163,12 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   }
 
   submitForm() {
+    if (this.controlSwitchComp) {
+      this.control.switch_ = this.controlSwitchComp.updateModelFromForm();
+    }
+    if (this.controlModbusComp) {
+      this.control.modbusSwitch = this.controlModbusComp.updateModelFromForm();
+    }
     if (this.controlHttpComp) {
       this.control.httpSwitch = this.controlHttpComp.updateModelFromForm();
     }

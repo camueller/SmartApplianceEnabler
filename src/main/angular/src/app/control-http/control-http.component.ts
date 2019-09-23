@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, Input, OnInit, ViewChild} from '@angular/core';
+import {AfterViewChecked, Component, Input, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {ControlDefaults} from '../control/control-defaults';
 import {FormGroup, FormGroupDirective} from '@angular/forms';
 import {ErrorMessages} from '../shared/error-messages';
@@ -21,15 +21,12 @@ import {HttpWriteValue} from '../http-write-value/http-write-value';
 export class ControlHttpComponent implements OnInit, AfterViewChecked {
   @Input()
   httpSwitch: HttpSwitch;
-  @ViewChild('onHttpWrite')
-  onHttpWriteComp: HttpWriteComponent;
-  @ViewChild('offHttpWrite')
-  offHttpWriteComp: HttpWriteComponent;
+  @ViewChildren('httpWriteComponents')
+  httpWriteComps: QueryList<HttpWriteComponent>;
   @Input()
   applianceId: string;
   @Input()
   controlDefaults: ControlDefaults;
-  maxHttpWrites = 2;
   form: FormGroup;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};
@@ -108,15 +105,19 @@ export class ControlHttpComponent implements OnInit, AfterViewChecked {
   }
 
   updateModelFromForm(): HttpSwitch | undefined {
-    const onHttpWrite = this.onHttpWriteComp.updateModelFromForm();
-    const offHttpWrite = this.offHttpWriteComp.updateModelFromForm();
+    const httpWrites = [];
+    this.httpWriteComps.forEach(httpWriteComponent => {
+      const httpWrite = httpWriteComponent.updateModelFromForm();
+      if (httpWrite) {
+        httpWrites.push(httpWrite);
+      }
+    });
 
-    if (!(onHttpWrite || offHttpWrite)) {
+    if (!(httpWrites.length > 0)) {
       return undefined;
     }
 
-    // this.httpSwitch.onHttpWrite = onHttpWrite;
-    // this.httpSwitch.offHttpWrite = offHttpWrite;
+    this.httpSwitch.httpWrites = httpWrites;
     return this.httpSwitch;
   }
 }

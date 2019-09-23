@@ -120,10 +120,10 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
 
   submitForm() {
     if (this.meterS0Comp) {
-      // this.meterS0Comp.updateModelFromForm();
+      this.meterS0Comp.updateModelFromForm();
     }
     if (this.meterModbusComp) {
-      // this.meterModbusComp.updateModelFromForm();
+      this.meterModbusComp.updateModelFromForm();
     }
     if (this.meterHttpComp) {
       this.meterHttpComp.updateModelFromForm();

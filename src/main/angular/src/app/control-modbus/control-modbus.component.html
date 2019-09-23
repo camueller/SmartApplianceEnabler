@@ -25,7 +25,7 @@
                   [translationPrefix]="'ControlModbusComponent.'"
                   [translationKeys]="valueNameTextKeys"
                   (remove)="onModbusWriteRemove(i)"
-                  #modbusWrites
+                  #modbusWriteComponents
 ></app-modbus-write>
 <button type="button" (click)="addModbusWrite()" class="ui button" *ngIf="isAddModbusWritePossible">
   {{'ControlModbusComponent.button.addModbusWrite' | translate}}</button>

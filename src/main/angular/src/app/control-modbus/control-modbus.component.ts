@@ -10,12 +10,13 @@ import {ModbusSwitch} from './modbus-switch';
 import {ModbusSettings} from '../settings/modbus-settings';
 import {SettingsDefaults} from '../settings/settings-defaults';
 import {FormHandler} from '../shared/form-handler';
-import {StartingCurrentSwitch} from '../control-startingcurrent/starting-current-switch';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {ModbusWriteComponent} from '../modbus-write/modbus-write.component';
 import {ModbusWrite} from '../modbus-write/modbus-write';
 import {ModbusWriteValue} from '../modbus-write-value/modbus-write-value';
 import {ControlValueName} from '../control/control-value-name';
+import {getValidInt, getValidString} from '../shared/form-util';
+import {_iterableDiffersFactory} from '@angular/core/src/application_module';
 
 @Component({
   selector: 'app-control-modbus',
@@ -25,7 +26,7 @@ import {ControlValueName} from '../control/control-value-name';
 export class ControlModbusComponent implements OnInit, AfterViewChecked {
   @Input()
   modbusSwitch: ModbusSwitch;
-  @ViewChild('modbusWrites')
+  @ViewChild('modbusWriteComponents')
   modbusWriteComps: QueryList<ModbusWriteComponent>;
   @Input()
   applianceId: string;
@@ -114,15 +115,23 @@ export class ControlModbusComponent implements OnInit, AfterViewChecked {
       [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
   }
 
-  updateModelFromForm(form: FormGroup, modbusSwitch: ModbusSwitch, startingCurrentSwitch: StartingCurrentSwitch) {
-    // modbusSwitch.idref = form.controls.modbusTcpId.value;
-    // modbusSwitch.slaveAddress = form.controls.slaveAddress.value;
-    // modbusSwitch.registerAddress = form.controls.registerAddress.value;
-    // modbusSwitch.registerType = form.controls.registerType.value;
-    // modbusSwitch.onValue = form.controls.onValue.value;
-    // modbusSwitch.offValue = form.controls.offValue.value;
-    // if (this.control.startingCurrentDetection) {
-    //   ControlStartingcurrentComponent.updateModelFromForm(form, startingCurrentSwitch);
-    // }
+  updateModelFromForm(): ModbusSwitch | undefined {
+    const idref = getValidString(this.form.controls['idref'].value);
+    const slaveAddress = getValidString(this.form.controls['slaveAddress'].value);
+    const modbusWrites = [];
+    this.modbusWriteComps.forEach(modbusWriteComponent => {
+      const modbusWrite = modbusWriteComponent.updateModelFromForm();
+      if (modbusWrite) {
+        modbusWrites.push(modbusWrite);
+      }
+    });
+
+    if (!(idref || slaveAddress || modbusWrites.length > 0)) {
+      return undefined;
+    }
+
+    this.modbusSwitch.idref = idref;
+    this.modbusSwitch.slaveAddress = slaveAddress;
+    this.modbusSwitch.modbusWrites = modbusWrites;
   }
 }

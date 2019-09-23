@@ -1,6 +1,5 @@
 import {AfterViewChecked, Component, Input, OnInit} from '@angular/core';
 import {FormGroup, FormGroupDirective, Validators} from '@angular/forms';
-import {Control} from '../control/control';
 import {Switch} from './switch';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
@@ -9,10 +8,9 @@ import {TranslateService} from '@ngx-translate/core';
 import {ControlDefaults} from '../control/control-defaults';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {FormHandler} from '../shared/form-handler';
-import {AppliancesReloadService} from '../appliance/appliances-reload-service';
-import {StartingCurrentSwitch} from '../control-startingcurrent/starting-current-switch';
 import {Logger} from '../log/logger';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
+import {getValidInt} from '../shared/form-util';
 
 @Component({
   selector: 'app-control-switch',
@@ -21,7 +19,7 @@ import {ErrorMessage, ValidatorType} from '../shared/error-message';
 })
 export class ControlSwitchComponent implements OnInit, AfterViewChecked {
   @Input()
-  control: Control;
+  switch_: Switch;
   @Input()
   controlDefaults: ControlDefaults;
   @Input()
@@ -43,7 +41,7 @@ export class ControlSwitchComponent implements OnInit, AfterViewChecked {
 
   ngOnInit() {
     this.form = this.parent.form;
-    this.expandParentForm(this.form, this.control.switch_);
+    this.expandParentForm(this.form, this.switch_);
     this.errorMessages = new ErrorMessages('ControlSwitchComponent.error.', [
       new ErrorMessage('gpio', ValidatorType.required),
       new ErrorMessage('gpio', ValidatorType.pattern),
@@ -63,11 +61,15 @@ export class ControlSwitchComponent implements OnInit, AfterViewChecked {
     this.formHandler.addFormControl(form, 'reverseStates', switch_ && switch_.reverseStates );
   }
 
-  updateModelFromForm(form: FormGroup, switch_: Switch, startingCurrentSwitch: StartingCurrentSwitch) {
-    switch_.gpio = form.controls.gpio.value;
-    switch_.reverseStates = form.controls.reverseStates.value;
-    // if (this.control.startingCurrentDetection) {
-    //   ControlStartingcurrentComponent.updateModelFromForm(form, startingCurrentSwitch);
-    // }
+  updateModelFromForm(): Switch | undefined {
+    const gpio = getValidInt(this.form.controls['gpio'].value);
+    const reverseStates = this.form.controls['reverseStates'].value;
+
+    if (!(gpio || reverseStates)) {
+      return undefined;
+    }
+
+    this.switch_.gpio = gpio;
+    this.switch_.reverseStates = reverseStates;
   }
 }

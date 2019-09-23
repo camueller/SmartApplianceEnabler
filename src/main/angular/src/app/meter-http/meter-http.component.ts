@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, Input, OnInit, ViewChild} from '@angular/core';
+import {AfterViewChecked, Component, Input, OnInit, QueryList, ViewChild} from '@angular/core';
 import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {HttpElectricityMeter} from './http-electricity-meter';
 import {MeterDefaults} from '../meter/meter-defaults';
@@ -30,10 +30,8 @@ export class MeterHttpComponent implements OnInit, AfterViewChecked {
   httpElectricityMeter: HttpElectricityMeter;
   @ViewChild(HttpConfigurationComponent)
   httpConfigurationComp: HttpConfigurationComponent;
-  @ViewChild('powerHttpRead')
-  powerHttpReadComp: HttpReadComponent;
-  @ViewChild('energyHttpRead')
-  energyHttpReadComp: HttpReadComponent;
+  @ViewChild('httpReadComponents')
+  httpReadComps: QueryList<HttpReadComponent>;
   @Input()
   meterDefaults: MeterDefaults;
   contentProtocols = [undefined, ContentProtocol.JSON.toUpperCase()];
@@ -130,11 +128,15 @@ export class MeterHttpComponent implements OnInit, AfterViewChecked {
     const measurementInterval = getValidInt(this.form.controls.measurementInterval.value);
     const contentProtocol = this.form.controls.contentProtocol.value;
     const httpConfiguration = this.httpConfigurationComp.updateModelFromForm();
-    const powerHttpRead = this.powerHttpReadComp.updateModelFromForm();
-    const energyHttpRead = this.energyHttpReadComp.updateModelFromForm();
+    const httpReads = [];
+    this.httpReadComps.forEach(httpReadComponent => {
+      const httpRead = httpReadComponent.updateModelFromForm();
+      if (httpRead) {
+        httpReads.push(httpRead);
+      }
+    });
 
-    if (!(pollInterval || measurementInterval || contentProtocol || httpConfiguration || powerHttpRead
-      || energyHttpRead)) {
+    if (!(pollInterval || measurementInterval || contentProtocol || httpConfiguration || httpReads.length > 0)) {
       return undefined;
     }
 
@@ -142,8 +144,7 @@ export class MeterHttpComponent implements OnInit, AfterViewChecked {
     this.httpElectricityMeter.measurementInterval = measurementInterval;
     this.httpElectricityMeter.contentProtocol = contentProtocol;
     this.httpElectricityMeter.httpConfiguration = httpConfiguration;
-    // this.httpElectricityMeter.powerHttpRead = powerHttpRead;
-    // this.httpElectricityMeter.energyHttpRead = energyHttpRead;
+    this.httpElectricityMeter.httpReads = httpReads;
     return this.httpElectricityMeter;
   }
 }

@@ -23,7 +23,7 @@ export class Switch {
   }
 
   '@class' = Switch.TYPE;
-  gpio: string;
+  gpio: number;
   reverseStates: boolean;
 
   public constructor(init?: Partial<Switch>) {
