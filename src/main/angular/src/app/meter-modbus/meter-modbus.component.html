@@ -34,7 +34,7 @@
     [translationPrefix]="'MeterModbusComponent.'"
     [translationKeys]="valueNameTextKeys"
     (remove)="onModbusReadRemove(i)"
-    #powerHttpRead
+    #modbusReadComponents
   ></app-modbus-read>
 <button type="button" (click)="addModbusRead()" class="ui button" *ngIf="isAddModbusReadPossible">
   {{'MeterModbusComponent.button.addModbusRead' | translate}}</button>

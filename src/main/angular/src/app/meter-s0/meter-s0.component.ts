@@ -9,6 +9,7 @@ import {Logger} from '../log/logger';
 import {TranslateService} from '@ngx-translate/core';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
+import {getValidInt, getValidString} from '../shared/form-util';
 
 @Component({
   selector: 'app-meter-s0',
@@ -72,10 +73,19 @@ export class MeterS0Component implements OnInit, AfterViewChecked {
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
   }
 
-  updateModelFromForm(s0ElectricityMeter: S0ElectricityMeter, form: FormGroup) {
-    s0ElectricityMeter.gpio = form.controls.gpio.value;
-    s0ElectricityMeter.pinPullResistance = form.controls.pinPullResistance.value;
-    s0ElectricityMeter.impulsesPerKwh = form.controls.impulsesPerKwh.value;
-    s0ElectricityMeter.measurementInterval = form.controls.measurementInterval.value;
+  updateModelFromForm(): S0ElectricityMeter | undefined {
+    const gpio = getValidInt(this.form.controls['gpio'].value);
+    const pinPullResistance = this.form.controls['pinPullResistance'].value;
+    const impulsesPerKwh = getValidInt(this.form.controls['impulsesPerKwh'].value);
+    const measurementInterval = getValidInt(this.form.controls['measurementInterval'].value);
+
+    if (!(gpio || pinPullResistance || impulsesPerKwh || measurementInterval)) {
+      return undefined;
+    }
+
+    this.s0ElectricityMeter.gpio = gpio;
+    this.s0ElectricityMeter.pinPullResistance = pinPullResistance;
+    this.s0ElectricityMeter.impulsesPerKwh = impulsesPerKwh;
+    this.s0ElectricityMeter.measurementInterval = measurementInterval;
   }
 }

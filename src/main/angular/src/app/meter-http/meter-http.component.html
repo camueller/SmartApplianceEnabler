@@ -34,7 +34,7 @@
   [translationPrefix]="'MeterHttpComponent.'"
   [translationKeys]="valueNameTextKeys"
   (remove)="onHttpReadRemove(i)"
-  #powerHttpRead
+  #httpReadComponents
 ></app-http-read>
 <button type="button" (click)="addHttpRead()" class="ui button" *ngIf="isAddHttpReadPossible">
   {{'MeterHttpComponent.button.addHttpRead' | translate}}</button>
