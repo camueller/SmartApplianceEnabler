@@ -108,8 +108,8 @@ export class ModbusReadComponent implements OnInit, AfterViewChecked {
     this.remove.emit();
   }
 
-  get isAddModbusReadPossible() {
-    return this.modbusRead.readValues.length < this.maxValues;
+  get isAddValuePossible() {
+    return !this.modbusRead.readValues || !this.maxValues || this.modbusRead.readValues.length < this.maxValues;
   }
 
   addValue() {

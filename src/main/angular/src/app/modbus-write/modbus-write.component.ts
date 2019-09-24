@@ -100,7 +100,7 @@ export class ModbusWriteComponent implements OnInit, AfterViewChecked {
   }
 
   get isAddValuePossible() {
-    return this.modbusWrite.writeValues.length < this.maxValues;
+    return !this.modbusWrite.writeValues || !this.maxValues || this.modbusWrite.writeValues.length < this.maxValues;
   }
 
   addValue() {

@@ -102,8 +102,8 @@ export class HttpReadComponent implements OnInit, AfterViewChecked {
     this.remove.emit();
   }
 
-  get isAddHttpReadPossible() {
-    return this.httpRead.readValues.length < this.maxValues;
+  get isAddValuePossible() {
+    return !this.httpRead.readValues || !this.maxValues || this.httpRead.readValues.length < this.maxValues;
   }
 
   addValue() {
