@@ -93,6 +93,8 @@ export class ControlModbusComponent implements OnInit, AfterViewChecked {
   }
 
   addModbusWrite() {
+    // avoid ExpressionChangedAfterItHasBeenCheckedError when calling this on a valid form
+    this.form.setErrors({ 'invalid': true });
     this.modbusSwitch.modbusWrites.push(this.createModbusWrite());
     this.form.markAsDirty();
   }

@@ -98,6 +98,8 @@ export class MeterHttpComponent implements OnInit, AfterViewChecked {
   }
 
   addHttpRead() {
+    // avoid ExpressionChangedAfterItHasBeenCheckedError when calling this on a valid form
+    this.form.setErrors({ 'invalid': true });
     this.httpElectricityMeter.httpReads.push(this.createHttpRead());
     this.form.markAsDirty();
   }

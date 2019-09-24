@@ -87,6 +87,8 @@ export class ControlHttpComponent implements OnInit, AfterViewChecked {
   }
 
   addHttpWrite() {
+    // avoid ExpressionChangedAfterItHasBeenCheckedError when calling this on a valid form
+    this.form.setErrors({ 'invalid': true });
     this.httpSwitch.httpWrites.push(this.createHttpWrite());
     this.form.markAsDirty();
   }
