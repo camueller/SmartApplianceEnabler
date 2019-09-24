@@ -104,6 +104,8 @@ export class ModbusWriteComponent implements OnInit, AfterViewChecked {
   }
 
   addValue() {
+    // avoid ExpressionChangedAfterItHasBeenCheckedError when calling this on a valid form
+    this.form.setErrors({ 'invalid': true });
     const newWriteValue = new ModbusWriteValue();
     if (!this.modbusWrite.writeValues) {
       this.modbusWrite.writeValues = [];
