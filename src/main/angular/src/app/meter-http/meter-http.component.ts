@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, Input, OnInit, QueryList, ViewChild} from '@angular/core';
+import {AfterViewChecked, Component, Input, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {HttpElectricityMeter} from './http-electricity-meter';
 import {MeterDefaults} from '../meter/meter-defaults';
@@ -30,7 +30,7 @@ export class MeterHttpComponent implements OnInit, AfterViewChecked {
   httpElectricityMeter: HttpElectricityMeter;
   @ViewChild(HttpConfigurationComponent)
   httpConfigurationComp: HttpConfigurationComponent;
-  @ViewChild('httpReadComponents')
+  @ViewChildren('httpReadComponents')
   httpReadComps: QueryList<HttpReadComponent>;
   @Input()
   meterDefaults: MeterDefaults;

@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, Input, OnInit, QueryList, ViewChild} from '@angular/core';
+import {AfterViewChecked, Component, Input, OnInit, QueryList, ViewChildren} from '@angular/core';
 import {ControlDefaults} from '../control/control-defaults';
 import {FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {ErrorMessages} from '../shared/error-messages';
@@ -15,8 +15,7 @@ import {ModbusWriteComponent} from '../modbus-write/modbus-write.component';
 import {ModbusWrite} from '../modbus-write/modbus-write';
 import {ModbusWriteValue} from '../modbus-write-value/modbus-write-value';
 import {ControlValueName} from '../control/control-value-name';
-import {getValidInt, getValidString} from '../shared/form-util';
-import {_iterableDiffersFactory} from '@angular/core/src/application_module';
+import {getValidString} from '../shared/form-util';
 
 @Component({
   selector: 'app-control-modbus',
@@ -26,7 +25,7 @@ import {_iterableDiffersFactory} from '@angular/core/src/application_module';
 export class ControlModbusComponent implements OnInit, AfterViewChecked {
   @Input()
   modbusSwitch: ModbusSwitch;
-  @ViewChild('modbusWriteComponents')
+  @ViewChildren('modbusWriteComponents')
   modbusWriteComps: QueryList<ModbusWriteComponent>;
   @Input()
   applianceId: string;
