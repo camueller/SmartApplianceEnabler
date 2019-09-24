@@ -117,7 +117,8 @@ export class MeterModbusComponent implements OnInit, AfterViewChecked {
 
   expandParentForm(form: FormGroup, modbusElectricityMeter: ModbusElectricityMeter, formHandler: FormHandler) {
     formHandler.addFormControl(form, 'idref',
-      modbusElectricityMeter ? modbusElectricityMeter.idref : undefined);
+      modbusElectricityMeter ? modbusElectricityMeter.idref : undefined,
+      [Validators.required]);
     formHandler.addFormControl(form, 'slaveAddress',
       modbusElectricityMeter ? modbusElectricityMeter.slaveAddress : undefined,
       [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER_OR_HEX)]);
