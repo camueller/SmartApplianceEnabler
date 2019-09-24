@@ -113,6 +113,8 @@ export class ModbusReadComponent implements OnInit, AfterViewChecked {
   }
 
   addValue() {
+    // avoid ExpressionChangedAfterItHasBeenCheckedError when calling this on a valid form
+    this.form.setErrors({ 'invalid': true });
     const newReadValue = new ModbusReadValue();
     if (!this.modbusRead.readValues) {
       this.modbusRead.readValues = [];

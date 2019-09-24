@@ -107,6 +107,8 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked {
   }
 
   addValue() {
+    // avoid ExpressionChangedAfterItHasBeenCheckedError when calling this on a valid form
+    this.form.setErrors({ 'invalid': true });
     const newWriteValue = new HttpWriteValue();
     if (!this.httpWrite.writeValues) {
       this.httpWrite.writeValues = [];

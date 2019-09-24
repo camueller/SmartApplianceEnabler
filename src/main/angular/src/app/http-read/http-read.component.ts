@@ -107,6 +107,8 @@ export class HttpReadComponent implements OnInit, AfterViewChecked {
   }
 
   addValue() {
+    // avoid ExpressionChangedAfterItHasBeenCheckedError when calling this on a valid form
+    this.form.setErrors({ 'invalid': true });
     const newReadValue = new HttpReadValue();
     if (!this.httpRead.readValues) {
       this.httpRead.readValues = [];
