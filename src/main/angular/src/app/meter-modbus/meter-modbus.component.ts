@@ -15,7 +15,6 @@ import {ModbusReadValue} from '../modbus-read-value/modbus-read-value';
 import {ModbusRead} from '../modbus-read/modbus-read';
 import {MeterValueName} from '../meter/meter-value-name';
 import {getValidInt, getValidString} from '../shared/form-util';
-import {HttpReadComponent} from '../http-read/http-read.component';
 import {ModbusReadComponent} from '../modbus-read/modbus-read.component';
 
 @Component({

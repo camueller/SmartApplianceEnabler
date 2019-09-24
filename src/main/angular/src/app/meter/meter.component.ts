@@ -128,6 +128,7 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
     if (this.meterHttpComp) {
       this.meterHttpComp.updateModelFromForm();
     }
+    console.log('METER=', this.meter);
     // const subscription = this.nestedFormService.completed.subscribe(() => {
     //   this.meterService.updateMeter(this.meter, this.applianceId).subscribe();
     //   this.form.markAsPristine();

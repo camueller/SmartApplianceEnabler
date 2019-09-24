@@ -103,7 +103,7 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked {
   }
 
   get isAddValuePossible() {
-    return this.httpWrite.writeValues.length < this.maxValues;
+    return !this.httpWrite.writeValues || !this.maxValues || this.httpWrite.writeValues.length < this.maxValues;
   }
 
   addValue() {
