@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, Input, OnInit, QueryList, ViewChild} from '@angular/core';
+import {AfterViewChecked, Component, Input, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {MeterDefaults} from '../meter/meter-defaults';
 import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {FormHandler} from '../shared/form-handler';
@@ -28,7 +28,7 @@ import {ModbusReadComponent} from '../modbus-read/modbus-read.component';
 export class MeterModbusComponent implements OnInit, AfterViewChecked {
   @Input()
   modbusElectricityMeter: ModbusElectricityMeter;
-  @ViewChild('modbusReadComponents')
+  @ViewChildren('modbusReadComponents')
   modbusReadComps: QueryList<ModbusReadComponent>;
   @Input()
   meterDefaults: MeterDefaults;
@@ -54,6 +54,7 @@ export class MeterModbusComponent implements OnInit, AfterViewChecked {
   }
 
   ngOnInit() {
+    console.log('modbusReadComps=', this.modbusReadComps);
     this.modbusElectricityMeter = this.modbusElectricityMeter || new ModbusElectricityMeter();
     if (!this.modbusElectricityMeter.modbusReads) {
       this.modbusElectricityMeter.modbusReads = [this.createModbusRead()];
@@ -134,6 +135,7 @@ export class MeterModbusComponent implements OnInit, AfterViewChecked {
     const pollInterval = getValidInt(this.form.controls['pollInterval'].value);
     const measurementInterval = getValidInt(this.form.controls['measurementInterval'].value);
     const modbusReads = [];
+    console.log('modbusReadComps=', this.modbusReadComps);
     this.modbusReadComps.forEach(modbusReadComponent => {
       const modbusRead = modbusReadComponent.updateModelFromForm();
       if (modbusRead) {
