@@ -54,7 +54,6 @@ export class MeterModbusComponent implements OnInit, AfterViewChecked {
   }
 
   ngOnInit() {
-    console.log('modbusReadComps=', this.modbusReadComps);
     this.modbusElectricityMeter = this.modbusElectricityMeter || new ModbusElectricityMeter();
     if (!this.modbusElectricityMeter.modbusReads) {
       this.modbusElectricityMeter.modbusReads = [this.createModbusRead()];
@@ -101,6 +100,8 @@ export class MeterModbusComponent implements OnInit, AfterViewChecked {
   }
 
   addModbusRead() {
+    // avoid ExpressionChangedAfterItHasBeenCheckedError when calling this on a valid form
+    this.form.setErrors({ 'invalid': true });
     this.modbusElectricityMeter.modbusReads.push(this.createModbusRead());
     this.form.markAsDirty();
   }
@@ -136,7 +137,6 @@ export class MeterModbusComponent implements OnInit, AfterViewChecked {
     const pollInterval = getValidInt(this.form.controls['pollInterval'].value);
     const measurementInterval = getValidInt(this.form.controls['measurementInterval'].value);
     const modbusReads = [];
-    console.log('modbusReadComps=', this.modbusReadComps);
     this.modbusReadComps.forEach(modbusReadComponent => {
       const modbusRead = modbusReadComponent.updateModelFromForm();
       if (modbusRead) {
