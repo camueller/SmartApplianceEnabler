@@ -54,7 +54,7 @@ export class ControlTestdata {
   public static switch_json(): any {
     return {
         '@class': 'de.avanux.smartapplianceenabler.control.Switch',
-        'gpio': '1'
+        'gpio': 1
       };
   }
 
@@ -62,7 +62,7 @@ export class ControlTestdata {
     return new Control({
       type: 'de.avanux.smartapplianceenabler.control.Switch',
       switch_: new Switch({
-        gpio: '1',
+        gpio: 1,
         reverseStates: undefined
       })
     });
@@ -73,7 +73,7 @@ export class ControlTestdata {
       '@class': 'de.avanux.smartapplianceenabler.control.StartingCurrentSwitch',
       'control': {
         '@class': 'de.avanux.smartapplianceenabler.control.Switch',
-        'gpio': '1',
+        'gpio': 1,
         'pinPullResistance': null,
         'reverseStates': false
       },
@@ -98,7 +98,7 @@ export class ControlTestdata {
       }),
       switch_: new Switch({
         '@class': 'de.avanux.smartapplianceenabler.control.Switch',
-        gpio: '1',
+        gpio: 1,
         reverseStates: false
       })
     });
