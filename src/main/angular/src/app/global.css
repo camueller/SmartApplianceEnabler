@@ -27,6 +27,10 @@ label.required::after {
   padding-top: 1.5rem;
 }
 
+.sae-block {
+  margin-bottom: 1em;
+}
+
 .icon-field {
   padding-top: 2.0em;
 }

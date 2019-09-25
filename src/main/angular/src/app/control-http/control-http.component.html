@@ -1,15 +1,17 @@
-<app-http-configuration
-  [httpConfiguration]="httpSwitch.httpConfiguration"
-></app-http-configuration>
-<app-http-write *ngFor="let httpWrite of httpSwitch.httpWrites; index as i; last as l"
-                [httpWrite]="httpWrite"
-                [maxValues]="maxValues"
-                [formControlNamePrefix]="getWriteFormControlPrefix(i)"
-                [valueNames]="valueNames"
-                [translationPrefix]="'ControlHttpComponent.'"
-                [translationKeys]="valueNameTextKeys"
-                (remove)="onHttpWriteRemove(i)"
-                #httpWriteComponents
-></app-http-write>
-<button type="button" (click)="addHttpWrite()" class="ui button" *ngIf="isAddHttpWritePossible">
-  {{'ControlEvchargerHttpComponent.button.addHttpWrite' | translate}}</button>
+<div class="sae-block" [formGroup]="form">
+  <app-http-configuration
+    [httpConfiguration]="httpSwitch.httpConfiguration"
+  ></app-http-configuration>
+  <app-http-write *ngFor="let httpWrite of httpSwitch.httpWrites; index as i; last as l"
+                  [httpWrite]="httpWrite"
+                  [maxValues]="maxValues"
+                  [formControlNamePrefix]="getWriteFormControlPrefix(i)"
+                  [valueNames]="valueNames"
+                  [translationPrefix]="'ControlHttpComponent.'"
+                  [translationKeys]="valueNameTextKeys"
+                  (remove)="onHttpWriteRemove(i)"
+                  #httpWriteComponents
+  ></app-http-write>
+  <button type="button" (click)="addHttpWrite()" class="ui button" *ngIf="isAddHttpWritePossible">
+    {{'ControlEvchargerHttpComponent.button.addHttpWrite' | translate}}</button>
+</div>

@@ -25,16 +25,18 @@
     <div *ngIf="errors.measurementInterval" class="ui negative message">{{errors.measurementInterval}}</div>
   </div>
 </div>
-<app-modbus-read *ngFor="let modbusRead of modbusElectricityMeter.modbusReads; index as i; last as l"
-    [modbusRead]="modbusRead"
-    [maxValues]="maxValues"
-    [formControlNamePrefix]="getReadFormControlPrefix(i)"
-    [valueNames]="valueNames"
-    [readRegisterTypes]="settingsDefaults.modbusReadRegisterTypes"
-    [translationPrefix]="'MeterModbusComponent.'"
-    [translationKeys]="valueNameTextKeys"
-    (remove)="onModbusReadRemove(i)"
-    #modbusReadComponents
+<div class="sae-block">
+  <app-modbus-read *ngFor="let modbusRead of modbusElectricityMeter.modbusReads; index as i; last as l"
+                   [modbusRead]="modbusRead"
+                   [maxValues]="maxValues"
+                   [formControlNamePrefix]="getReadFormControlPrefix(i)"
+                   [valueNames]="valueNames"
+                   [readRegisterTypes]="settingsDefaults.modbusReadRegisterTypes"
+                   [translationPrefix]="'MeterModbusComponent.'"
+                   [translationKeys]="valueNameTextKeys"
+                   (remove)="onModbusReadRemove(i)"
+                   #modbusReadComponents
   ></app-modbus-read>
-<button type="button" (click)="addModbusRead()" class="ui button" *ngIf="isAddModbusReadPossible">
-  {{'MeterModbusComponent.button.addModbusRead' | translate}}</button>
+  <button type="button" (click)="addModbusRead()" class="ui button" *ngIf="isAddModbusReadPossible">
+    {{'MeterModbusComponent.button.addModbusRead' | translate}}</button>
+</div>
