@@ -57,7 +57,6 @@
   "de.avanux.smartapplianceenabler.meter.S0ElectricityMeter": "S0",
   "de.avanux.smartapplianceenabler.meter.ModbusElectricityMeter": "Modbus",
   "de.avanux.smartapplianceenabler.meter.HttpElectricityMeter": "HTTP",
-  "de.avanux.smartapplianceenabler.meter.S0ElectricityMeterNetworked": "UDP-Impulse",
 
   "MeterS0Component.gpio": "GPIO-Anschluss",
   "MeterS0Component.pinPullResistance": "Interner Widerstand",
@@ -70,11 +69,6 @@
   "MeterS0Component.error.impulsesPerKwh_required": "Die Anzahl der Impulse pro kWh muss angegeben werden",
   "MeterS0Component.error.impulsesPerKwh_pattern": "Die Anzahl der Impulse pro kWh muss eine Zahl sein",
   "MeterS0Component.error.measurementInterval_pattern": "Das Messinterval muss eine Zahl sein",
-
-  "MeterS0NetworkedComponent.impulsesPerKwh": "Impulse/kWh",
-  "MeterS0NetworkedComponent.measurementInterval": "Messinterval [s]",
-  "MeterS0NetworkedComponent.error.impulsesPerKwh_required": "Die Anzahl der Impulse pro kWh muss angegeben werden",
-  "MeterS0NetworkedComponent.error.impulsesPerKwh_pattern": "Die Anzahl der Impulse pro kWh muss eine Zahl sein",
 
   "MeterModbusComponent.idref": "Modbus",
   "MeterModbusComponent.slaveAddress": "Slave-Adresse",
@@ -359,8 +353,6 @@
   "SettingsComponent.modbusTcpId": "ID (Name)",
   "SettingsComponent.modbusTcpHost": "Host",
   "SettingsComponent.modbusTcpPort": "Port",
-  "SettingsComponent.pulseReceiveEnabled": "Aktiviert",
-  "SettingsComponent.pulseReceiverPort": "Port",
   "SettingsComponent.error.holidaysUrl_pattern": "Die URL muss gültig sein",
   "SettingsComponent.error.modbusTcpHost_pattern": "Der Wert muss als Hostname oder IP-Adresse eingegeben werden",
   "SettingsComponent.error.modbusTcpPort_pattern": "Die Portnummer muss gültig sein",

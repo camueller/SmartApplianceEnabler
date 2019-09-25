@@ -24,14 +24,13 @@ import de.avanux.smartapplianceenabler.configuration.Configuration;
 import de.avanux.smartapplianceenabler.configuration.Connectivity;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.meter.Meter;
-import de.avanux.smartapplianceenabler.meter.PulseReceiver;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
 import de.avanux.smartapplianceenabler.schedule.Schedule;
 import de.avanux.smartapplianceenabler.semp.webservice.Device2EM;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceStatus;
-import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
 import de.avanux.smartapplianceenabler.util.FileHandler;
+import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
 import de.avanux.smartapplianceenabler.util.Initializable;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
@@ -128,15 +127,6 @@ public class ApplianceManager implements Initializable, Runnable {
         logger.debug("Restarting ...");
         if(this.appliances != null) {
             Connectivity connectivity = this.appliances.getConnectivity();
-            if(connectivity != null) {
-                // make PulseReceiver accessible by id
-                if (connectivity.getPulseReceivers() != null) {
-                    for (PulseReceiver pulseReceiver : connectivity.getPulseReceivers()) {
-                        logger.info("Stopping PulseReceiver (" + pulseReceiver.getId() + ") configured for port " + pulseReceiver.getPort());
-                        pulseReceiver.stop();
-                    }
-                }
-            }
             if(appliances.getAppliances() != null) {
                 for(Appliance appliance : appliances.getAppliances()) {
                     logger.info("{}: Stopping appliance ...", appliance.getId());
@@ -153,18 +143,9 @@ public class ApplianceManager implements Initializable, Runnable {
     @Override
     public void init() {
         logger.debug("Initializing ...");
-        Map<String,PulseReceiver> pulseReceiverIdWithPulseReceiver = new HashMap<String,PulseReceiver>();
         Map<String,ModbusTcp> modbusIdWithModbusTcp = new HashMap<String,ModbusTcp>();
         Connectivity connectivity = appliances.getConnectivity();
         if(connectivity != null) {
-            // make PulseReceiver accessible by id
-            if(connectivity.getPulseReceivers() != null) {
-                for(PulseReceiver pulseReceiver : connectivity.getPulseReceivers()) {
-                    logger.info("PulseReceiver (" + pulseReceiver.getId() + ") configured for port " + pulseReceiver.getPort());
-                    pulseReceiverIdWithPulseReceiver.put(pulseReceiver.getId(), pulseReceiver);
-                    pulseReceiver.start();
-                }
-            }
             // make ModbusTcp accessible by id
             if(connectivity.getModbusTCPs() != null) {
                 for(ModbusTcp modbusTCP : connectivity.getModbusTCPs()) {
@@ -190,7 +171,7 @@ public class ApplianceManager implements Initializable, Runnable {
             logger.debug("{}: Validating appliance ...", appliance.getId());
             appliance.validate();
             logger.debug("{}: Starting appliance ...", appliance.getId());
-            appliance.start(timer, getGpioController(), pulseReceiverIdWithPulseReceiver, modbusIdWithModbusTcp);
+            appliance.start(timer, getGpioController(), modbusIdWithModbusTcp);
         }
 
         if(holidaysUsed) {
