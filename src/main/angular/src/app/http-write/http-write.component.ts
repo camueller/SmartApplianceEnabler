@@ -9,7 +9,7 @@ import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {HttpWrite} from './http-write';
 import {HttpWriteValue} from '../http-write-value/http-write-value';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
-import {getValidString} from '../shared/form-util';
+import {fixExpressionChangedAfterItHasBeenCheckedError, getValidString} from '../shared/form-util';
 import {HttpWriteValueComponent} from '../http-write-value/http-write-value.component';
 
 @Component({
@@ -107,8 +107,7 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked {
   }
 
   addValue() {
-    // avoid ExpressionChangedAfterItHasBeenCheckedError when calling this on a valid form
-    this.form.setErrors({ 'invalid': true });
+    fixExpressionChangedAfterItHasBeenCheckedError(this.form);
     const newWriteValue = new HttpWriteValue();
     if (!this.httpWrite.writeValues) {
       this.httpWrite.writeValues = [];

@@ -1,3 +1,5 @@
+import {Form, FormGroup} from '@angular/forms';
+
 export function getValidString(input: any): string | undefined {
   if (!input) {
     return undefined;
@@ -17,4 +19,11 @@ export function getValidFloat(input: any): number | undefined {
     return undefined;
   }
   return input.toString().length > 0 ? Number.parseFloat(input) : undefined;
+}
+
+export function fixExpressionChangedAfterItHasBeenCheckedError(form: FormGroup) {
+  // avoid ExpressionChangedAfterItHasBeenCheckedError when calling this on a valid form
+  if (form.valid) {
+    form.setErrors({'invalid': true});
+  }
 }

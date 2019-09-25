@@ -15,7 +15,7 @@ import {ModbusWriteComponent} from '../modbus-write/modbus-write.component';
 import {ModbusWrite} from '../modbus-write/modbus-write';
 import {ModbusWriteValue} from '../modbus-write-value/modbus-write-value';
 import {ControlValueName} from '../control/control-value-name';
-import {getValidString} from '../shared/form-util';
+import {fixExpressionChangedAfterItHasBeenCheckedError, getValidString} from '../shared/form-util';
 
 @Component({
   selector: 'app-control-modbus',
@@ -93,8 +93,7 @@ export class ControlModbusComponent implements OnInit, AfterViewChecked {
   }
 
   addModbusWrite() {
-    // avoid ExpressionChangedAfterItHasBeenCheckedError when calling this on a valid form
-    this.form.setErrors({ 'invalid': true });
+    fixExpressionChangedAfterItHasBeenCheckedError(this.form);
     this.modbusSwitch.modbusWrites.push(this.createModbusWrite());
     this.form.markAsDirty();
   }

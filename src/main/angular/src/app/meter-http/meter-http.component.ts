@@ -10,7 +10,7 @@ import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {ContentProtocol} from '../shared/content-protocol';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
-import {getValidInt} from '../shared/form-util';
+import {fixExpressionChangedAfterItHasBeenCheckedError, getValidInt} from '../shared/form-util';
 import {HttpConfigurationComponent} from '../http-configuration/http-configuration.component';
 import {HttpReadComponent} from '../http-read/http-read.component';
 import {HttpRead} from '../http-read/http-read';
@@ -98,8 +98,7 @@ export class MeterHttpComponent implements OnInit, AfterViewChecked {
   }
 
   addHttpRead() {
-    // avoid ExpressionChangedAfterItHasBeenCheckedError when calling this on a valid form
-    this.form.setErrors({ 'invalid': true });
+    fixExpressionChangedAfterItHasBeenCheckedError(this.form);
     this.httpElectricityMeter.httpReads.push(this.createHttpRead());
     this.form.markAsDirty();
   }

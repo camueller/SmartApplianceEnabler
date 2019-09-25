@@ -14,7 +14,7 @@ import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {ModbusReadValue} from '../modbus-read-value/modbus-read-value';
 import {ModbusRead} from '../modbus-read/modbus-read';
 import {MeterValueName} from '../meter/meter-value-name';
-import {getValidInt, getValidString} from '../shared/form-util';
+import {fixExpressionChangedAfterItHasBeenCheckedError, getValidInt, getValidString} from '../shared/form-util';
 import {ModbusReadComponent} from '../modbus-read/modbus-read.component';
 
 @Component({
@@ -100,8 +100,7 @@ export class MeterModbusComponent implements OnInit, AfterViewChecked {
   }
 
   addModbusRead() {
-    // avoid ExpressionChangedAfterItHasBeenCheckedError when calling this on a valid form
-    this.form.setErrors({ 'invalid': true });
+    fixExpressionChangedAfterItHasBeenCheckedError(this.form);
     this.modbusElectricityMeter.modbusReads.push(this.createModbusRead());
     this.form.markAsDirty();
   }

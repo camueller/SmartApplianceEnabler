@@ -80,7 +80,8 @@ export class HttpReadValueComponent implements OnInit, AfterViewChecked {
 
   expandParentForm(form: FormGroup, httpReadValue: HttpReadValue, formHandler: FormHandler) {
     formHandler.addFormControl(form, this.getFormControlName('name'),
-      httpReadValue ? httpReadValue.name : undefined);
+      httpReadValue ? httpReadValue.name : undefined,
+      [Validators.required]);
     formHandler.addFormControl(form, this.getFormControlName('data'),
       httpReadValue ? httpReadValue.data : undefined);
     formHandler.addFormControl(form, this.getFormControlName('path'),
