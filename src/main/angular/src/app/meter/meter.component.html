@@ -26,8 +26,6 @@
         >{{TYPE_MODBUS_ELECTRICITY_METER | translate}}</option>
         <option [ngValue]="TYPE_HTTP_ELECTRICITY_METER" [selected]="meterType==TYPE_HTTP_ELECTRICITY_METER"
         >{{TYPE_HTTP_ELECTRICITY_METER | translate}}</option>
-        <option [ngValue]="TYPE_S0_ELECTRICITY_METER_NETWORKED" [selected]="meterType==TYPE_S0_ELECTRICITY_METER_NETWORKED"
-        >{{TYPE_S0_ELECTRICITY_METER_NETWORKED | translate}}</option>
       </select>
     </div>
   </div>
@@ -46,10 +44,6 @@
                   [httpElectricityMeter]="meter.httpElectricityMeter"
                   [meterDefaults]="meterDefaults"
   ></app-meter-http>
-  <app-meter-s0-networked *ngIf="meterType===TYPE_S0_ELECTRICITY_METER_NETWORKED"
-                          [s0ElectricityMeterNetworked]="meter.s0ElectricityMeterNetworked"
-                          [meterDefaults]="meterDefaults"
-  ></app-meter-s0-networked>
 
   <div>{{'dialog.mandatoryfields'|translate}}</div>
   <div class="ui hidden divider"></div>

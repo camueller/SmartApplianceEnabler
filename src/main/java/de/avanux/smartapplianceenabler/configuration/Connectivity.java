@@ -17,31 +17,19 @@
  */
 package de.avanux.smartapplianceenabler.configuration;
 
-import java.util.List;
+import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import de.avanux.smartapplianceenabler.meter.PulseReceiver;
-import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
+import java.util.List;
 
 @XmlRootElement(name = "Connectivity")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Connectivity {
-    @XmlElement(name = "PulseReceiver")
-    private List<PulseReceiver> pulseReceivers;
     @XmlElement(name = "ModbusTCP")
     private List<ModbusTcp> modbusTCPs;
-
-    public List<PulseReceiver> getPulseReceivers() {
-        return pulseReceivers;
-    }
-
-    public void setPulseReceivers(List<PulseReceiver> pulseReceivers) {
-        this.pulseReceivers = pulseReceivers;
-    }
 
     public List<ModbusTcp> getModbusTCPs() {
         return modbusTCPs;

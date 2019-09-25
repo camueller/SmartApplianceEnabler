@@ -57,9 +57,7 @@ export class MeterFactory {
     const meter = new Meter();
     meter.type = rawMeter['@class'];
     if (meter.type === S0ElectricityMeter.TYPE) {
-      meter.s0ElectricityMeter = this.createS0ElectricityMeter(rawMeter, false);
-    } else if (meter.type === S0ElectricityMeter.TYPE_NETWORKED) {
-      meter.s0ElectricityMeterNetworked = this.createS0ElectricityMeter(rawMeter, true);
+      meter.s0ElectricityMeter = this.createS0ElectricityMeter(rawMeter);
     } else if (meter.type === ModbusElectricityMeter.TYPE) {
       meter.modbusElectricityMeter = this.createModbusElectricityMeter(rawMeter);
     } else if (meter.type === HttpElectricityMeter.TYPE) {
@@ -74,8 +72,6 @@ export class MeterFactory {
     let meterUsed: any;
     if (meter.type === S0ElectricityMeter.TYPE) {
       meterUsed = meter.s0ElectricityMeter;
-    } else if (meter.type === S0ElectricityMeter.TYPE_NETWORKED) {
-      meterUsed = meter.s0ElectricityMeterNetworked;
     } else if (meter.type === ModbusElectricityMeter.TYPE) {
       meterUsed = meter.modbusElectricityMeter;
     } else if (meter.type === HttpElectricityMeter.TYPE) {
@@ -114,11 +110,8 @@ export class MeterFactory {
     });
   }
 
-  createS0ElectricityMeter(rawMeter: any, networked: boolean): S0ElectricityMeter {
+  createS0ElectricityMeter(rawMeter: any): S0ElectricityMeter {
     const s0ElectricityMeter = new S0ElectricityMeter();
-    if (networked) {
-      s0ElectricityMeter['@class'] = S0ElectricityMeter.TYPE_NETWORKED;
-    }
     s0ElectricityMeter.gpio = rawMeter.gpio;
     s0ElectricityMeter.pinPullResistance = rawMeter.pinPullResistance;
     s0ElectricityMeter.impulsesPerKwh = rawMeter.impulsesPerKwh;

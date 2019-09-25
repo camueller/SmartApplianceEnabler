@@ -62,20 +62,6 @@
     <i (click)="addModbusSettings()" class="icon big green add circle"></i>
   </div>
 
-  <h4 class="ui dividing header">Pulse receiver</h4>
-  <div class="ui fields">
-    <div class="field">
-      <label>{{'SettingsComponent.pulseReceiveEnabled' | translate}}</label>
-      <input class="ui checkbox" type="checkbox" name="pulseReceiveEnabled" [(ngModel)]="settings.pulseReceiverEnabled">
-    </div>
-    <div class="field" [class.disabled]="!settings.pulseReceiverEnabled">
-      <label>{{'SettingsComponent.pulseReceiverPort' | translate}}</label>
-      <input type="text" name="pulseReceiverPort" placeholder="{{settingsDefaults.pulseReceiverPort}}"
-             [(ngModel)]="settings.pulseReceiverPort" pattern="{{VALIDATOR_PATTERN_INTEGER}}">
-      <div *ngIf="errors.pulseReceiverPort" class="ui negative message">{{errors.pulseReceiverPort}}</div>
-    </div>
-  </div>
-
   <div class="ui hidden divider"></div>
   <button type="submit" class="ui button" [disabled]="settingsForm.pristine||settingsForm.invalid">
     {{'button.save' | translate}}</button>

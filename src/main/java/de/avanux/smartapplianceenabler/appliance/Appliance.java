@@ -20,10 +20,13 @@ package de.avanux.smartapplianceenabler.appliance;
 import com.pi4j.io.gpio.GpioController;
 import de.avanux.smartapplianceenabler.control.*;
 import de.avanux.smartapplianceenabler.control.ev.EVControl;
-import de.avanux.smartapplianceenabler.modbus.EVModbusControl;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
-import de.avanux.smartapplianceenabler.meter.*;
+import de.avanux.smartapplianceenabler.meter.HttpElectricityMeter;
+import de.avanux.smartapplianceenabler.meter.Meter;
+import de.avanux.smartapplianceenabler.meter.ModbusElectricityMeter;
+import de.avanux.smartapplianceenabler.meter.S0ElectricityMeter;
+import de.avanux.smartapplianceenabler.modbus.EVModbusControl;
 import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
 import de.avanux.smartapplianceenabler.schedule.*;
@@ -67,7 +70,6 @@ public class Appliance implements Initializable, Validateable, ControlStateChang
             @XmlElement(name = "HttpElectricityMeter", type = HttpElectricityMeter.class),
             @XmlElement(name = "ModbusElectricityMeter", type = ModbusElectricityMeter.class),
             @XmlElement(name = "S0ElectricityMeter", type = S0ElectricityMeter.class),
-            @XmlElement(name = "S0ElectricityMeterNetworked", type = S0ElectricityMeterNetworked.class)
     })
     private Meter meter;
     @XmlElement(name = "Schedule")
@@ -201,9 +203,6 @@ public class Appliance implements Initializable, Validateable, ControlStateChang
                 if(meter instanceof S0ElectricityMeter) {
                     ((S0ElectricityMeter) meter).setControl(control);
                 }
-                if(meter instanceof S0ElectricityMeterNetworked) {
-                    ((S0ElectricityMeterNetworked) meter).setControl(control);
-                }
                 logger.debug("{}: {} uses {}", id, meter.getClass().getSimpleName(), control.getClass().getSimpleName());
             }
         }
@@ -231,7 +230,6 @@ public class Appliance implements Initializable, Validateable, ControlStateChang
     }
 
     public void start(Timer timer, GpioController gpioController,
-                      Map<String, PulseReceiver> pulseReceiverIdWithPulseReceiver,
                       Map<String, ModbusTcp> modbusIdWithModbusTcp) {
 
         logger.info("{}: Starting appliance", id);
@@ -262,14 +260,6 @@ public class Appliance implements Initializable, Validateable, ControlStateChang
             String modbusId = modbusSlave.getIdref();
             ModbusTcp modbusTcp = modbusIdWithModbusTcp.get(modbusId);
             modbusSlave.setModbusTcp(modbusTcp);
-        }
-
-        if(meter instanceof S0ElectricityMeterNetworked) {
-            S0ElectricityMeterNetworked s0ElectricityMeterNetworked = (S0ElectricityMeterNetworked) meter;
-            logger.info("{}: Configuring {}", id, S0ElectricityMeterNetworked.class.getSimpleName());
-            String pulseReceiverId = s0ElectricityMeterNetworked.getIdref();
-            PulseReceiver pulseReceiver = pulseReceiverIdWithPulseReceiver.get(pulseReceiverId);
-            s0ElectricityMeterNetworked.setPulseReceiver(pulseReceiver);
         }
 
         if(meter != null) {

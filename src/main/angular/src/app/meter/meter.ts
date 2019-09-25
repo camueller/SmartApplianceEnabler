@@ -23,7 +23,6 @@ import {HttpElectricityMeter} from '../meter-http/http-electricity-meter';
 export class Meter {
   type: string;
   s0ElectricityMeter: S0ElectricityMeter;
-  s0ElectricityMeterNetworked: S0ElectricityMeter;
   modbusElectricityMeter: ModbusElectricityMeter;
   httpElectricityMeter: HttpElectricityMeter;
 

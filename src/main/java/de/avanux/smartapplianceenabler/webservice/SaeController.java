@@ -25,10 +25,12 @@ import de.avanux.smartapplianceenabler.configuration.Configuration;
 import de.avanux.smartapplianceenabler.configuration.Connectivity;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.ControlDefaults;
-import de.avanux.smartapplianceenabler.control.StartingCurrentSwitchDefaults;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
-import de.avanux.smartapplianceenabler.meter.*;
+import de.avanux.smartapplianceenabler.meter.HttpElectricityMeterDefaults;
+import de.avanux.smartapplianceenabler.meter.Meter;
+import de.avanux.smartapplianceenabler.meter.MeterDefaults;
+import de.avanux.smartapplianceenabler.meter.S0ElectricityMeterDefaults;
 import de.avanux.smartapplianceenabler.modbus.ModbusElectricityMeterDefaults;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
 import de.avanux.smartapplianceenabler.schedule.RuntimeRequest;
@@ -620,13 +622,6 @@ public class SaeController {
 
             Connectivity connectivity = appliances.getConnectivity();
             if (connectivity != null) {
-                List<PulseReceiver> pulseReceivers = connectivity.getPulseReceivers();
-                if (pulseReceivers != null && pulseReceivers.size() > 0) {
-                    settings.setPulseReceiverEnabled(true);
-                    PulseReceiver pulseReceiver = pulseReceivers.get(0);
-                    settings.setPulseReceiverPort(pulseReceiver.getPort());
-                }
-
                 List<ModbusTcp> modbusTCPs = connectivity.getModbusTCPs();
                 if (modbusTCPs != null) {
                     List<ModbusSettings> modbusSettingsList = new ArrayList<>();
@@ -659,14 +654,6 @@ public class SaeController {
         try {
             logger.debug("Received request to set " + settings);
 
-            List<PulseReceiver> pulseReceivers = null;
-            if (settings.isPulseReceiverEnabled()) {
-                PulseReceiver pulseReceiver = new PulseReceiver();
-                pulseReceiver.setId(PulseReceiver.DEFAULT_ID);
-                pulseReceiver.setPort(settings.getPulseReceiverPort());
-                pulseReceivers = Collections.singletonList(pulseReceiver);
-            }
-
             List<ModbusTcp> modbusTCPs = null;
             List<ModbusSettings> modbusSettingsList = settings.getModbusSettings();
             if (modbusSettingsList != null) {
@@ -681,9 +668,8 @@ public class SaeController {
             }
 
             Connectivity connectivity = null;
-            if (pulseReceivers != null || modbusTCPs != null) {
+            if (modbusTCPs != null) {
                 connectivity = new Connectivity();
-                connectivity.setPulseReceivers(pulseReceivers);
                 connectivity.setModbusTCPs(modbusTCPs);
             }
             ApplianceManager.getInstance().setConnectivity(connectivity);

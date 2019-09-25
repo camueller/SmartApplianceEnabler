@@ -65,7 +65,6 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
       new ErrorMessage('holidaysUrl', ValidatorType.pattern),
       new ErrorMessage('modbusTcpHost', ValidatorType.pattern),
       new ErrorMessage('modbusTcpPort', ValidatorType.pattern),
-      new ErrorMessage('pulseReceiverPort', ValidatorType.pattern),
     ], this.translate);
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.route.data.subscribe((data: {settings: Settings, settingsDefaults: SettingsDefaults}) => {

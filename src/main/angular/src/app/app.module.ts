@@ -67,7 +67,6 @@ import {ControlAlwaysonComponent} from './control-alwayson/control-alwayson.comp
 import {MeterModbusComponent} from './meter-modbus/meter-modbus.component';
 import {MeterHttpComponent} from './meter-http/meter-http.component';
 import {MeterS0Component} from './meter-s0/meter-s0.component';
-import {MeterS0NetworkedComponent} from './meter-s0-networked/meter-s0-networked.component';
 import {HttpReadComponent} from './http-read/http-read.component';
 import {HttpReadValueComponent} from './http-read-value/http-read-value.component';
 import {ControlEvchargerModbusComponent} from './control-evcharger-modbus/control-evcharger-modbus.component';
@@ -104,7 +103,6 @@ import {ModbusWriteValueComponent} from './modbus-write-value/modbus-write-value
     MeterModbusComponent,
     MeterHttpComponent,
     MeterS0Component,
-    MeterS0NetworkedComponent,
     ModbusReadComponent,
     ModbusReadValueComponent,
     ModbusWriteComponent,

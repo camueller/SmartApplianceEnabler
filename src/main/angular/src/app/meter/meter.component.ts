@@ -57,7 +57,6 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
   settings: Settings;
   discardChangesMessage: string;
   TYPE_S0_ELECTRICITY_METER = S0ElectricityMeter.TYPE;
-  TYPE_S0_ELECTRICITY_METER_NETWORKED = S0ElectricityMeter.TYPE_NETWORKED;
   TYPE_MODBUS_ELECTRICITY_METER = ModbusElectricityMeter.TYPE;
   TYPE_HTTP_ELECTRICITY_METER = HttpElectricityMeter.TYPE;
 
@@ -109,8 +108,6 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
   typeChanged(newType: string) {
     if (newType === this.TYPE_S0_ELECTRICITY_METER && this.meter.s0ElectricityMeter == null) {
       this.meter.s0ElectricityMeter = new S0ElectricityMeter();
-    } else if (newType === this.TYPE_S0_ELECTRICITY_METER_NETWORKED && this.meter.s0ElectricityMeterNetworked == null) {
-      this.meter.s0ElectricityMeterNetworked = new S0ElectricityMeter();
     } else if (newType === this.TYPE_MODBUS_ELECTRICITY_METER && this.meter.modbusElectricityMeter == null) {
       this.meter.modbusElectricityMeter = new ModbusElectricityMeter();
     } else if (newType === this.TYPE_HTTP_ELECTRICITY_METER && this.meter.httpElectricityMeter == null) {
