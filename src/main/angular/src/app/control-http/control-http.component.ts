@@ -12,6 +12,7 @@ import {HttpWriteComponent} from '../http-write/http-write.component';
 import {ControlValueName} from '../control/control-value-name';
 import {HttpWrite} from '../http-write/http-write';
 import {HttpWriteValue} from '../http-write-value/http-write-value';
+import {fixExpressionChangedAfterItHasBeenCheckedError} from '../shared/form-util';
 
 @Component({
   selector: 'app-control-http',
@@ -87,8 +88,7 @@ export class ControlHttpComponent implements OnInit, AfterViewChecked {
   }
 
   addHttpWrite() {
-    // avoid ExpressionChangedAfterItHasBeenCheckedError when calling this on a valid form
-    this.form.setErrors({ 'invalid': true });
+    fixExpressionChangedAfterItHasBeenCheckedError(this.form);
     this.httpSwitch.httpWrites.push(this.createHttpWrite());
     this.form.markAsDirty();
   }

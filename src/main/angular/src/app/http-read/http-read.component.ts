@@ -8,7 +8,7 @@ import {Logger} from '../log/logger';
 import {TranslateService} from '@ngx-translate/core';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {HttpReadValue} from '../http-read-value/http-read-value';
-import {getValidString} from '../shared/form-util';
+import {fixExpressionChangedAfterItHasBeenCheckedError, getValidString} from '../shared/form-util';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {HttpReadValueComponent} from '../http-read-value/http-read-value.component';
 
@@ -107,8 +107,7 @@ export class HttpReadComponent implements OnInit, AfterViewChecked {
   }
 
   addValue() {
-    // avoid ExpressionChangedAfterItHasBeenCheckedError when calling this on a valid form
-    this.form.setErrors({ 'invalid': true });
+    fixExpressionChangedAfterItHasBeenCheckedError(this.form);
     const newReadValue = new HttpReadValue();
     if (!this.httpRead.readValues) {
       this.httpRead.readValues = [];

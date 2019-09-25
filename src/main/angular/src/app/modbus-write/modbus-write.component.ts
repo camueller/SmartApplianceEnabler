@@ -9,7 +9,7 @@ import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {ModbusWrite} from './modbus-write';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {ModbusWriteValue} from '../modbus-write-value/modbus-write-value';
-import {getValidString} from '../shared/form-util';
+import {fixExpressionChangedAfterItHasBeenCheckedError, getValidString} from '../shared/form-util';
 import {ModbusWriteValueComponent} from '../modbus-write-value/modbus-write-value.component';
 
 @Component({
@@ -104,8 +104,7 @@ export class ModbusWriteComponent implements OnInit, AfterViewChecked {
   }
 
   addValue() {
-    // avoid ExpressionChangedAfterItHasBeenCheckedError when calling this on a valid form
-    this.form.setErrors({ 'invalid': true });
+    fixExpressionChangedAfterItHasBeenCheckedError(this.form);
     const newWriteValue = new ModbusWriteValue();
     if (!this.modbusWrite.writeValues) {
       this.modbusWrite.writeValues = [];
