@@ -141,7 +141,7 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked {
       return undefined;
     }
 
-    this.httpWrite.url = getValidString(url.value);
+    this.httpWrite.url = getValidString(url);
     return this.httpWrite;
   }
 }

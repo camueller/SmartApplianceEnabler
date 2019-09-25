@@ -109,7 +109,7 @@ export class ControlModbusComponent implements OnInit, AfterViewChecked {
   }
 
   expandParentForm(form: FormGroup, modbusSwitch: ModbusSwitch, formHandler: FormHandler) {
-    formHandler.addFormControl(form, 'modbusTcpId', modbusSwitch && modbusSwitch.idref,
+    formHandler.addFormControl(form, 'idref', modbusSwitch && modbusSwitch.idref,
       [Validators.required]);
     formHandler.addFormControl(form, 'slaveAddress', modbusSwitch && modbusSwitch.slaveAddress,
       [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
@@ -133,5 +133,6 @@ export class ControlModbusComponent implements OnInit, AfterViewChecked {
     this.modbusSwitch.idref = idref;
     this.modbusSwitch.slaveAddress = slaveAddress;
     this.modbusSwitch.modbusWrites = modbusWrites;
+    return this.modbusSwitch;
   }
 }

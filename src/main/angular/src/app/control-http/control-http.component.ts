@@ -13,6 +13,7 @@ import {ControlValueName} from '../control/control-value-name';
 import {HttpWrite} from '../http-write/http-write';
 import {HttpWriteValue} from '../http-write-value/http-write-value';
 import {fixExpressionChangedAfterItHasBeenCheckedError} from '../shared/form-util';
+import {HttpConfigurationComponent} from '../http-configuration/http-configuration.component';
 
 @Component({
   selector: 'app-control-http',
@@ -22,6 +23,8 @@ import {fixExpressionChangedAfterItHasBeenCheckedError} from '../shared/form-uti
 export class ControlHttpComponent implements OnInit, AfterViewChecked {
   @Input()
   httpSwitch: HttpSwitch;
+  @ViewChild(HttpConfigurationComponent)
+  httpConfigurationComp: HttpConfigurationComponent;
   @ViewChildren('httpWriteComponents')
   httpWriteComps: QueryList<HttpWriteComponent>;
   @Input()
@@ -107,6 +110,7 @@ export class ControlHttpComponent implements OnInit, AfterViewChecked {
   }
 
   updateModelFromForm(): HttpSwitch | undefined {
+    const httpConfiguration = this.httpConfigurationComp.updateModelFromForm();
     const httpWrites = [];
     this.httpWriteComps.forEach(httpWriteComponent => {
       const httpWrite = httpWriteComponent.updateModelFromForm();
@@ -115,10 +119,11 @@ export class ControlHttpComponent implements OnInit, AfterViewChecked {
       }
     });
 
-    if (!(httpWrites.length > 0)) {
+    if (!(httpConfiguration || httpWrites.length > 0)) {
       return undefined;
     }
 
+    this.httpSwitch.httpConfiguration = httpConfiguration;
     this.httpSwitch.httpWrites = httpWrites;
     return this.httpSwitch;
   }

@@ -76,7 +76,8 @@ export class ModbusWriteValueComponent implements OnInit, AfterViewChecked {
       modbusWriteValue ? modbusWriteValue.name : undefined,
       [Validators.required]);
     formHandler.addFormControl(form, this.getFormControlName('value'),
-      modbusWriteValue ? modbusWriteValue.value : undefined);
+      modbusWriteValue ? modbusWriteValue.value : undefined,
+      [Validators.required]);
   }
 
   updateModelFromForm(): ModbusWriteValue | undefined {

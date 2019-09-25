@@ -102,7 +102,6 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
       }
     });
     this.form.markAsPristine();
-    console.log('FORM=', this.form);
   }
 
   buildFormGroup(): FormGroup {
