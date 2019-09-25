@@ -2,7 +2,7 @@
   <div class="ui fields">
     <div class="field">
       <label>{{'ControlModbusComponent.idref' | translate}}</label>
-      <select class="ui fluid dropdown" formControlName="modbusTcpId">
+      <select class="ui fluid dropdown" formControlName="idref">
         <option *ngFor="let modbusSetting of modbusSettings" [ngValue]="modbusSetting.modbusTcpId"
                 [selected]="modbusSetting.modbusTcpId==modbusSwitch.idref">
           {{modbusSetting.modbusTcpId}}</option>

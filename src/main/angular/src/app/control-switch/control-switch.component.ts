@@ -71,5 +71,6 @@ export class ControlSwitchComponent implements OnInit, AfterViewChecked {
 
     this.switch_.gpio = gpio;
     this.switch_.reverseStates = reverseStates;
+    return this.switch_;
   }
 }
