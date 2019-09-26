@@ -15,7 +15,7 @@ import {ErrorMessage, ValidatorType} from '../shared/error-message';
 @Component({
   selector: 'app-electric-vehicle',
   templateUrl: './electric-vehicle.component.html',
-  styles: []
+  styleUrls: ['../global.css']
 })
 export class ElectricVehicleComponent implements OnInit, AfterViewChecked {
   @Input()

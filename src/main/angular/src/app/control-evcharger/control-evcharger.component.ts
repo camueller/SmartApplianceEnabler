@@ -19,7 +19,7 @@ import {EvModbusControl} from '../control-evcharger-modbus/ev-modbus-control';
 import {EvHttpControl} from '../control-evcharger-http/ev-http-control';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {ControlEvchargerHttpComponent} from '../control-evcharger-http/control-evcharger-http.component';
-import {getValidInt} from '../shared/form-util';
+import {fixExpressionChangedAfterItHasBeenCheckedError, getValidInt} from '../shared/form-util';
 import {ElectricVehicleComponent} from '../electric-vehicle/electric-vehicle.component';
 import {ControlEvchargerModbusComponent} from '../control-evcharger-modbus/control-evcharger-modbus.component';
 
@@ -68,6 +68,7 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
 
   ngOnInit() {
     this.evCharger = this.evCharger || new EvCharger();
+    this.evCharger.vehicles = this.evCharger.vehicles || [];
     this.form = this.parent.form;
     this.errorMessages = new ErrorMessages('ControlEvchargerComponent.error.', [
       new ErrorMessage('voltage', ValidatorType.pattern),
@@ -168,6 +169,7 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
     this.evCharger = this.templates[templateName];
     this.setProtocol(this.evChargerProtocol);
     this.updateFormFromModel(this.evCharger);
+    this.form.markAsDirty();
   }
 
   isConfigured(): boolean {
@@ -214,6 +216,7 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
   }
 
   addElectricVehicle() {
+    fixExpressionChangedAfterItHasBeenCheckedError(this.form);
     const newEvId = this.findNextEvId(this.evCharger.vehicles);
     const newEv = new ElectricVehicle({id: newEvId});
     if (!this.evCharger.vehicles) {
