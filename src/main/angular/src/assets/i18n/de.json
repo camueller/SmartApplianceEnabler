@@ -159,7 +159,6 @@
 
   "ControlEvchargerComponent.heading": "Ladegerät",
   "ControlEvchargerComponent.template": "Vorlage",
-  "ControlEvchargerComponent.templateButton": "Verwenden",
   "ControlEvchargerComponent.protocol": "Protokoll",
   "ControlEvchargerComponent.protocol.HTTP": "HTTP",
   "ControlEvchargerComponent.protocol.MODBUS": "Modbus",

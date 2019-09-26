@@ -56,6 +56,10 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
   errorMessageHandler: ErrorMessageHandler;
   PROTOCOL_MODBUS = EvChargerProtocol.MODBUS;
   PROTOCOL_HTTP = EvChargerProtocol.HTTP;
+  protocols: { id: string, name: string }[] = [
+    {id: EvChargerProtocol.MODBUS, name: undefined},
+    {id: EvChargerProtocol.HTTP, name: undefined}
+  ];
 
   constructor(private logger: Logger,
               private parent: FormGroupDirective,
@@ -79,7 +83,11 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
     this.translate.get([
       'ControlEvchargerComponent.protocol.HTTP',
       'ControlEvchargerComponent.protocol.MODBUS',
-    ]).subscribe(translatedStrings => this.translatedStrings = translatedStrings);
+    ]).subscribe(translatedStrings => {
+      this.translatedStrings = translatedStrings;
+      this.protocols.forEach(protocol =>
+        protocol.name = this.translatedStrings[`ControlEvchargerComponent.protocol.${protocol.id}`]);
+    });
     this.templates = EvChargerTemplates.getTemplates();
     this.expandParentForm(this.form, this.evCharger);
     this.updateFormFromModel(this.evCharger);
@@ -193,12 +201,14 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
     this.form.controls.protocol.setValue(protocol);
   }
 
-  get protocols() {
-    return Object.keys(EvChargerProtocol);
-  }
-
-  getProtocolTranslationKey(protocol: string) {
-    return `ControlEvchargerComponent.protocol.${protocol}`;
+  get protocols2(): { id: string, name: string }[] {
+    // return Object.keys(EvChargerProtocol);
+    const x = [
+      {id: EvChargerProtocol.MODBUS, name: 'Modbus'},
+      {id: EvChargerProtocol.HTTP, name: 'HTTP'}
+    ];
+    console.log('OPTIONS=', x);
+    return x;
   }
 
   // FIXME: alle Enums indirect liefern
