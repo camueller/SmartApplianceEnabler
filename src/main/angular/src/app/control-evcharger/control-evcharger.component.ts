@@ -201,16 +201,6 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
     this.form.controls.protocol.setValue(protocol);
   }
 
-  get protocols2(): { id: string, name: string }[] {
-    // return Object.keys(EvChargerProtocol);
-    const x = [
-      {id: EvChargerProtocol.MODBUS, name: 'Modbus'},
-      {id: EvChargerProtocol.HTTP, name: 'HTTP'}
-    ];
-    console.log('OPTIONS=', x);
-    return x;
-  }
-
   // FIXME: alle Enums indirect liefern
   get modbusTranslationKeys() {
     return [
