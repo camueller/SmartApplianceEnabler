@@ -50,6 +50,7 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
   form: FormGroup;
   formHandler: FormHandler;
   templates: { [name: string]: EvCharger };
+  templateNames: string[];
   translatedStrings: string[];
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
@@ -89,6 +90,7 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
         protocol.name = this.translatedStrings[`ControlEvchargerComponent.protocol.${protocol.id}`]);
     });
     this.templates = EvChargerTemplates.getTemplates();
+    this.templateNames = Object.keys(this.templates);
     this.expandParentForm(this.form, this.evCharger);
     this.updateFormFromModel(this.evCharger);
   }
@@ -162,10 +164,6 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
 
   getEvFormControlPrefix(index: number) {
     return `ev${index}.`;
-  }
-
-  getTemplateNames(): string[] {
-    return Object.keys(this.templates);
   }
 
   getTemplateNameSelected(): string {
