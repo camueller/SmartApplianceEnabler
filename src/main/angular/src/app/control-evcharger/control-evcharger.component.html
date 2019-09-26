@@ -6,7 +6,7 @@
     </div>
     <div class="field">
       <sui-select class="selection form-control"
-                  [options]="getTemplateNames()"
+                  [options]="templateNames"
                   formControlName="template"
                   placeholder="aus vorkonfigurierten Ladengeräten wählen"
                   (selectedOptionChange)="useTemplate()"
