@@ -5,22 +5,30 @@
       <label class="standalone-label">{{'ControlEvchargerComponent.template' | translate}}</label>
     </div>
     <div class="field">
-      <select class="ui fluid dropdown" formControlName="template">
-        <option *ngFor="let name of getTemplateNames()" [ngValue]="name">{{name}}</option>
-      </select>
-    </div>
-    <div class="field">
-      <button type="button" class="ui button" [disabled]="!!getTemplateNameSelected() === false"
-              (click)="useTemplate()">{{'ControlEvchargerComponent.templateButton' | translate}}</button>
+      <sui-select class="selection form-control"
+                  [options]="getTemplateNames()"
+                  formControlName="template"
+                  placeholder="aus vorkonfigurierten Ladengeräten wählen"
+                  (selectedOptionChange)="useTemplate()"
+                  #selectTemplate
+      >
+        <sui-select-option *ngFor="let option of selectTemplate.filteredOptions" class="dropdown-item" [value]="option"></sui-select-option>
+      </sui-select>
     </div>
     <div class="field">
       <label class="standalone-label">{{'ControlEvchargerComponent.protocol' | translate}}</label>
     </div>
     <div class="field">
-      <select class="ui fluid dropdown" formControlName="protocol">
-        <option *ngFor="let aProtocol of protocols" [ngValue]="aProtocol" [selected]="aProtocol === protocol"
-        >{{getProtocolTranslationKey(aProtocol)| translate}}</option>
-      </select>
+      <sui-select class="selection form-control"
+                  [options]="protocols"
+                  labelField="name"
+                  valueField="id"
+                  formControlName="protocol"
+                  placeholder="wählen für manuelle Konfiguration"
+                  #selectProtocol
+      >
+        <sui-select-option *ngFor="let option of selectProtocol.filteredOptions" class="dropdown-item" [value]="option"></sui-select-option>
+      </sui-select>
     </div>
   </div>
   <div class="ui hidden divider"></div>
