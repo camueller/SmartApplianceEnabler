@@ -1,6 +1,10 @@
 import {ModbusReadValue} from '../modbus-read-value/modbus-read-value';
 
 export class ModbusRead {
+  static get TYPE(): string {
+    return 'de.avanux.smartapplianceenabler.modbus.ModbusRead';
+  }
+  '@class' = ModbusRead.TYPE;
   address: string;
   type: string;
   bytes: number;
