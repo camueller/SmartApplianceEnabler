@@ -19,5 +19,5 @@
 package de.avanux.smartapplianceenabler.protocol;
 
 public enum ContentProtocolType {
-    json
+    JSON
 }

@@ -295,7 +295,7 @@ public class HttpElectricityMeter implements Meter, Initializable, Validateable,
 
     public ContentProtocolHandler getContentContentProtocolHandler() {
         if(this.contentContentProtocolHandler == null) {
-            if(ContentProtocolType.json.name().equals(this.contentProtocol)) {
+            if(ContentProtocolType.JSON.name().equals(this.contentProtocol)) {
                 this.contentContentProtocolHandler = new JsonContentProtocolHandler();
             }
         }
