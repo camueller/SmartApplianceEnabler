@@ -63,7 +63,6 @@ import {ControlStartingcurrentComponent} from './control-startingcurrent/control
 import {ControlModbusComponent} from './control-modbus/control-modbus.component';
 import {ControlHttpComponent} from './control-http/control-http.component';
 import {ElectricVehicleResolver} from './control-evcharger/electric-vehicle-resolver.service';
-import {ControlAlwaysonComponent} from './control-alwayson/control-alwayson.component';
 import {MeterModbusComponent} from './meter-modbus/meter-modbus.component';
 import {MeterHttpComponent} from './meter-http/meter-http.component';
 import {MeterS0Component} from './meter-s0/meter-s0.component';
@@ -84,7 +83,6 @@ import {ModbusWriteValueComponent} from './modbus-write-value/modbus-write-value
   declarations: [
     AppComponent,
     ApplianceComponent,
-    ControlAlwaysonComponent,
     ControlComponent,
     ControlEvchargerComponent,
     ControlEvchargerHttpComponent,
