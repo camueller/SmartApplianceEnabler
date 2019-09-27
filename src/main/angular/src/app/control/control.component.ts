@@ -42,6 +42,7 @@ import {ControlEvchargerComponent} from '../control-evcharger/control-evcharger.
 import {ControlHttpComponent} from '../control-http/control-http.component';
 import {ControlSwitchComponent} from '../control-switch/control-switch.component';
 import {ControlModbusComponent} from '../control-modbus/control-modbus.component';
+import {ControlStartingcurrentComponent} from '../control-startingcurrent/control-startingcurrent.component';
 
 @Component({
   selector: 'app-appliance-switch',
@@ -57,7 +58,9 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   @ViewChild(ControlHttpComponent)
   controlHttpComp: ControlHttpComponent;
   @ViewChild(ControlEvchargerComponent)
-  evChargerComp: ControlEvchargerComponent;
+  controlEvchargerComp: ControlEvchargerComponent;
+  @ViewChild(ControlStartingcurrentComponent)
+  controlStartingcurrentComp: ControlStartingcurrentComponent;
   applianceId: string;
   controlDefaults: ControlDefaults;
   control: Control;
@@ -119,30 +122,14 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   }
 
   typeChanged(newType: string) {
-    let newControl;
     if (newType === '') {
       this.control.startingCurrentDetection = false;
     } else if (newType === this.TYPE_ALWAYS_ON_SWITCH) {
-      this.control.type = AlwaysOnSwitch.TYPE;
-      newControl = this.control.alwaysOnSwitch;
-    } else if (newType === this.TYPE_SWITCH) {
-      this.control.type = Switch.TYPE;
-      newControl = this.control.switch_;
-    } else if (newType === this.TYPE_MODBUS_SWITCH) {
-      this.control.type = ModbusSwitch.TYPE;
-      newControl = this.control.modbusSwitch;
-    } else if (newType === this.TYPE_MOCK_SWITCH) {
-      this.control.type = MockSwitch.TYPE;
-      newControl = this.control.mockSwitch;
-    } else if (newType === this.TYPE_HTTP_SWITCH) {
-      this.control.type = HttpSwitch.TYPE;
-      newControl = this.control.httpSwitch;
+      this.control.alwaysOnSwitch = this.controlFactory.createAlwaysOnSwitch();
     } else if (newType === EvCharger.TYPE) {
-      this.control.type = EvCharger.TYPE;
-      newControl = this.control.evCharger;
       this.control.startingCurrentDetection = false;
     }
-    this.controlFactory.initializeByType(this.control, newControl, newType);
+    this.control.type = newType;
   }
 
   get canHaveStartingCurrentDetection(): boolean {
@@ -171,18 +158,13 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
     if (this.controlHttpComp) {
       this.control.httpSwitch = this.controlHttpComp.updateModelFromForm();
     }
-    if (this.evChargerComp) {
-      this.control.evCharger = this.evChargerComp.updateModelFromForm();
+    if (this.controlEvchargerComp) {
+      this.control.evCharger = this.controlEvchargerComp.updateModelFromForm();
     }
-
-    console.log('CONTROL=', this.control);
-    // const subscription = this.nestedFormService.completed.subscribe(() => {
-    //   console.log('CONTROL=', this.control);
-    //   // this.controlService.updateControl(this.control, this.applianceId).subscribe(
-    //   //   () => this.appliancesReloadService.reload());
-    //   this.form.markAsPristine();
-    //   subscription.unsubscribe();
-    // });
-    // this.nestedFormService.submit();
+    if (this.control.startingCurrentDetection) {
+      this.control.startingCurrentSwitch = this.controlStartingcurrentComp.updateModelFromForm();
+    }
+    this.controlService.updateControl(this.control, this.applianceId).subscribe(
+      () => this.appliancesReloadService.reload());
   }
 }
