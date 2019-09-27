@@ -141,7 +141,7 @@ export class HttpReadComponent implements OnInit, AfterViewChecked {
       return undefined;
     }
 
-    this.httpRead.url = getValidString(url.value);
+    this.httpRead.url = getValidString(url);
     return this.httpRead;
   }
 }
