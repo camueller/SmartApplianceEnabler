@@ -62,10 +62,6 @@
                         [applianceId]="applianceId"
                         [controlDefaults]="controlDefaults"
       ></app-control-http>
-      <app-control-alwayson *ngIf="control.type===TYPE_ALWAYS_ON_SWITCH"
-                            [control]="control"
-                            [applianceId]="applianceId"
-      ></app-control-alwayson>
       <app-control-startingcurrent *ngIf="control.startingCurrentDetection"
                                    [startingCurrentSwitch]="control.startingCurrentSwitch"
                                    [controlDefaults]="controlDefaults"
