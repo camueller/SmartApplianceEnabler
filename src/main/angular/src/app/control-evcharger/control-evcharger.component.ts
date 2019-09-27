@@ -134,10 +134,12 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
     let modbusControl: EvModbusControl;
     if (this.evChargerModbusComp) {
       modbusControl = this.evChargerModbusComp.updateModelFromForm();
+      this.evCharger.httpControl = undefined;
     }
     let httpControl: EvHttpControl;
     if (this.evChargerHttpComp) {
       httpControl = this.evChargerHttpComp.updateModelFromForm();
+      this.evCharger.modbusControl = undefined;
     }
     const electricVehicles = [];
     this.electricVehicleComps.forEach(electricVehicleComp => {
