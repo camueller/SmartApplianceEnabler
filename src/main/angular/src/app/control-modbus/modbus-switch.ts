@@ -19,11 +19,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 import {ModbusWrite} from '../modbus-write/modbus-write';
 
 export class ModbusSwitch {
-
   static get TYPE(): string {
     return 'de.avanux.smartapplianceenabler.control.ModbusSwitch';
   }
-
   '@class' = ModbusSwitch.TYPE;
   idref: string;
   slaveAddress: string;
