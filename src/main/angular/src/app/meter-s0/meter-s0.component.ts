@@ -41,6 +41,7 @@ export class MeterS0Component implements OnInit, AfterViewChecked {
   }
 
   ngOnInit() {
+    this.s0ElectricityMeter = this.s0ElectricityMeter || new S0ElectricityMeter();
     this.errorMessages = new ErrorMessages('MeterS0Component.error.', [
       new ErrorMessage('gpio', ValidatorType.required),
       new ErrorMessage('gpio', ValidatorType.pattern),
@@ -87,5 +88,6 @@ export class MeterS0Component implements OnInit, AfterViewChecked {
     this.s0ElectricityMeter.pinPullResistance = pinPullResistance;
     this.s0ElectricityMeter.impulsesPerKwh = impulsesPerKwh;
     this.s0ElectricityMeter.measurementInterval = measurementInterval;
+    return this.s0ElectricityMeter;
   }
 }

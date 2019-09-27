@@ -152,5 +152,6 @@ export class MeterModbusComponent implements OnInit, AfterViewChecked {
     this.modbusElectricityMeter.pollInterval = pollInterval;
     this.modbusElectricityMeter.measurementInterval = measurementInterval;
     this.modbusElectricityMeter.modbusReads = modbusReads;
+    return this.modbusElectricityMeter;
   }
 }

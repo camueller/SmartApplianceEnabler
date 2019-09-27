@@ -22,12 +22,6 @@ import {ModbusElectricityMeter} from '../meter-modbus/modbus-electricity-meter';
 import {HttpElectricityMeter} from '../meter-http/http-electricity-meter';
 import {MeterDefaults} from './meter-defaults';
 import {Logger} from '../log/logger';
-import {ModbusRegisterRead} from '../shared/modbus-register-read';
-import {ModbusRegisterReadValue} from '../shared/modbus-register-read-value';
-import {ModbusRegisterConfguration} from '../shared/modbus-register-confguration';
-import {HttpReadValue} from '../http-read-value/http-read-value';
-import {MeterValueName} from './meter-value-name';
-import {HttpRead} from '../http-read/http-read';
 
 export class MeterFactory {
 
@@ -79,35 +73,10 @@ export class MeterFactory {
     }
     let meterRaw: string;
     if (meterUsed != null) {
-      if (meter.type === ModbusElectricityMeter.TYPE) {
-        this.toJSONModbusElectricityMeter(meter.modbusElectricityMeter);
-      }
-      if (meter.type === HttpElectricityMeter.TYPE) {
-        this.toJSONHttpElectricityMeter(meter.httpElectricityMeter);
-      }
       meterRaw = JSON.stringify(meterUsed);
     }
     this.logger.debug('Meter (JSON): ' + meterRaw);
     return meterRaw;
-  }
-
-  toJSONModbusElectricityMeter(modbusElectricityMeter: ModbusElectricityMeter) {
-    // const powerRegisterRead = this.toJSONModbusRegisterRead(
-    //   'Power', modbusElectricityMeter.powerConfiguration);
-    // const energyRegisterRead = this.toJSONModbusRegisterRead(
-    //   'Energy', modbusElectricityMeter.energyConfiguration);
-    // modbusElectricityMeter.registerReads = [powerRegisterRead, energyRegisterRead];
-  }
-
-  toJSONModbusRegisterRead(registerReadValueName: string, configuration: ModbusRegisterConfguration): ModbusRegisterRead {
-    return new ModbusRegisterRead({
-      address: configuration.address,
-      bytes: configuration.bytes,
-      byteOrder: configuration.byteOrder,
-      type: configuration.type,
-      factorToValue: configuration.factorToValue,
-      registerReadValues: [new ModbusRegisterReadValue({name: registerReadValueName})]
-    });
   }
 
   createS0ElectricityMeter(rawMeter: any): S0ElectricityMeter {
@@ -120,48 +89,10 @@ export class MeterFactory {
   }
 
   createModbusElectricityMeter(rawMeter: any): ModbusElectricityMeter {
-    const modbusElectricityMeter: ModbusElectricityMeter = {...rawMeter};
-    // if (!!rawMeter.modbusReads) {
-    //   rawMeter.modbusReads.forEach((rawModbusRead) => {
-    //     if (!!rawModbusRead.readValues && rawModbusRead.readValues.length > 0) {
-    //       if (rawModbusRead.readValues[0].name === MeterValueName.Power) {
-    //         modbusElectricityMeter.powerModbusRead = {...rawModbusRead};
-    //       }
-    //       if (rawModbusRead.readValues[0].name === MeterValueName.Energy) {
-    //         modbusElectricityMeter.energyModbusRead = {...rawModbusRead};
-    //       }
-    //     }
-    //   });
-    // }
-    return modbusElectricityMeter;
+    return new ModbusElectricityMeter(...rawMeter);
   }
 
   createHttpElectricityMeter(rawMeter: any): HttpElectricityMeter {
-    const httpElectricityMeter: HttpElectricityMeter = {...rawMeter};
-    // if (!!rawMeter.httpReads) {
-    //   rawMeter.httpReads.forEach((rawHttpRead) => {
-    //     if (!!rawHttpRead.readValues && rawHttpRead.readValues.length > 0) {
-    //       if (rawHttpRead.readValues[0].name === MeterValueName.Power) {
-    //         httpElectricityMeter.powerHttpRead = {...rawHttpRead};
-    //       }
-    //       if (rawHttpRead.readValues[0].name === MeterValueName.Energy) {
-    //         httpElectricityMeter.energyHttpRead = {...rawHttpRead};
-    //       }
-    //     }
-    //   });
-    // }
-    return httpElectricityMeter;
-  }
-
-  toJSONHttpElectricityMeter(httpElectricityMeter: HttpElectricityMeter) {
-    const rawMeter = httpElectricityMeter as any;
-    rawMeter.httpReads = [];
-    // if (httpElectricityMeter.powerHttpRead) {
-    //   rawMeter.httpReads.push(httpElectricityMeter.powerHttpRead);
-    // }
-    // if (httpElectricityMeter.powerHttpRead) {
-    //   rawMeter.httpReads.push(httpElectricityMeter.energyHttpRead);
-    // }
-    return rawMeter;
+    return new HttpElectricityMeter(...rawMeter);
   }
 }

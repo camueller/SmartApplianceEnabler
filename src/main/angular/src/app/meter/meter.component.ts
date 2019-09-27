@@ -35,6 +35,7 @@ import {Settings} from '../settings/settings';
 import {MeterS0Component} from '../meter-s0/meter-s0.component';
 import {MeterModbusComponent} from '../meter-modbus/meter-modbus.component';
 import {MeterHttpComponent} from '../meter-http/meter-http.component';
+import {AppliancesReloadService} from '../appliance/appliances-reload-service';
 
 @Component({
   selector: 'app-appliance-meter',
@@ -62,6 +63,7 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
 
   constructor(private logger: Logger,
               private meterService: MeterService,
+              private appliancesReloadService: AppliancesReloadService,
               private route: ActivatedRoute,
               private dialogService: DialogService,
               private translate: TranslateService) {
@@ -106,30 +108,20 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
   }
 
   typeChanged(newType: string) {
-    if (newType === this.TYPE_S0_ELECTRICITY_METER && this.meter.s0ElectricityMeter == null) {
-      this.meter.s0ElectricityMeter = new S0ElectricityMeter();
-    } else if (newType === this.TYPE_MODBUS_ELECTRICITY_METER && this.meter.modbusElectricityMeter == null) {
-      this.meter.modbusElectricityMeter = new ModbusElectricityMeter();
-    } else if (newType === this.TYPE_HTTP_ELECTRICITY_METER && this.meter.httpElectricityMeter == null) {
-      this.meter.httpElectricityMeter = this.meterFactory.createHttpElectricityMeter(new Object());
-    }
+    this.meter.type = newType;
   }
 
   submitForm() {
     if (this.meterS0Comp) {
-      this.meterS0Comp.updateModelFromForm();
+      this.meter.s0ElectricityMeter = this.meterS0Comp.updateModelFromForm();
     }
     if (this.meterModbusComp) {
-      this.meterModbusComp.updateModelFromForm();
+      this.meter.modbusElectricityMeter = this.meterModbusComp.updateModelFromForm();
     }
     if (this.meterHttpComp) {
-      this.meterHttpComp.updateModelFromForm();
+      this.meter.httpElectricityMeter = this.meterHttpComp.updateModelFromForm();
     }
-    console.log('METER=', this.meter);
-    // const subscription = this.nestedFormService.completed.subscribe(() => {
-    //   this.meterService.updateMeter(this.meter, this.applianceId).subscribe();
-    //   this.form.markAsPristine();
-    //   subscription.unsubscribe();
-    // });
+    this.meterService.updateMeter(this.meter, this.applianceId).subscribe(
+      () => this.appliancesReloadService.reload());
   }
 }
