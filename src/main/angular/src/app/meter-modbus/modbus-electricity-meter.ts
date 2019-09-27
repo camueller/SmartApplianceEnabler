@@ -19,15 +19,17 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 import {ModbusRead} from '../modbus-read/modbus-read';
 
 export class ModbusElectricityMeter {
-
   static get TYPE(): string {
     return 'de.avanux.smartapplianceenabler.meter.ModbusElectricityMeter';
   }
-
   '@class' = ModbusElectricityMeter.TYPE;
   idref: string;
   slaveAddress: string;
   pollInterval: number;
   measurementInterval: number;
   modbusReads: ModbusRead[];
+
+  public constructor(init?: Partial<ModbusElectricityMeter>) {
+    Object.assign(this, init);
+  }
 }

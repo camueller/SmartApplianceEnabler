@@ -20,15 +20,17 @@ import {HttpRead} from '../http-read/http-read';
 import {HttpConfiguration} from '../http-configuration/http-configuration';
 
 export class HttpElectricityMeter {
-
   static get TYPE(): string {
     return 'de.avanux.smartapplianceenabler.meter.HttpElectricityMeter';
   }
-
   '@class' = HttpElectricityMeter.TYPE;
   measurementInterval: number;
   pollInterval: number;
   contentProtocol: string;
   httpConfiguration: HttpConfiguration;
   httpReads: HttpRead[];
+
+  public constructor(init?: Partial<HttpElectricityMeter>) {
+    Object.assign(this, init);
+  }
 }
