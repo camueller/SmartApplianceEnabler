@@ -143,7 +143,7 @@
 
     <xs:simpleType name="ContentProtcolType">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="json" />
+            <xs:enumeration value="JSON" />
         </xs:restriction>
     </xs:simpleType>
 

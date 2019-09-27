@@ -75,7 +75,7 @@ public class EVHttpControl implements EVControl {
 
     public ContentProtocolHandler getContentProtocolHandler() {
         if(this.contentProtocolHandler == null) {
-            if(ContentProtocolType.json.name().equals(this.contentProtocol)) {
+            if(ContentProtocolType.JSON.name().equals(this.contentProtocol)) {
                 this.contentProtocolHandler = new JsonContentProtocolHandler();
             }
         }
