@@ -173,7 +173,9 @@ public class HttpElectricityMeter implements Meter, Initializable, Validateable,
     @Override
     public void resetEnergyMeter() {
         logger.debug("{}: Reset energy meter ...", applianceId);
-        this.pollEnergyMeter.resetEnergyCounter();
+        this.pollEnergyMeter.reset();
+        // TODO rename method to reset since we are resetting not just energy but also power
+        this.pollPowerMeter.reset();
     }
 
     @Override
@@ -278,7 +280,7 @@ public class HttpElectricityMeter implements Meter, Initializable, Validateable,
                 }
                 String extractedValue = valueExtractor.extractValue(protocolHandlerValue, valueExtractionRegex);
                 String parsableString = extractedValue.replace(',', '.');
-                Float value = null;
+                Float value;
                 if(factorToValue != null) {
                     value = Double.valueOf(Double.parseDouble(parsableString) * factorToValue).floatValue();
                 }

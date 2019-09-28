@@ -91,7 +91,7 @@ public class MockElectricityMeter implements Meter, ApplianceIdConsumer {
     @Override
     public void resetEnergyMeter() {
         logger.debug("{}: Reset energy meter ...", applianceId);
-        this.pollEnergyMeter.resetEnergyCounter();
+        this.pollEnergyMeter.reset();
     }
 
     @Override

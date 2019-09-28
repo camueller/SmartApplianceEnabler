@@ -140,7 +140,7 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
         return stopEnergyCounter;
     }
 
-    public void resetEnergyCounter() {
+    public void reset() {
         this.startEnergyCounter = null;
         this.totalEnergy = null;
         this.cache.clear();

@@ -143,6 +143,9 @@ public class Appliance implements Initializable, Validateable, ControlStateChang
     }
 
     public boolean isAcceptControlRecommendations() {
+        if(this.control instanceof AlwaysOnSwitch) {
+            return false;
+        }
         return acceptControlRecommendations;
     }
 
