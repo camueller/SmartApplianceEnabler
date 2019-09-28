@@ -24,7 +24,7 @@ export class ControlStartingcurrentComponent implements OnInit, AfterViewChecked
   startingCurrentSwitch: StartingCurrentSwitch;
   @Input()
   controlDefaults: ControlDefaults;
-  private form: FormGroup;
+  form: FormGroup;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
