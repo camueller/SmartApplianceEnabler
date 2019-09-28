@@ -41,6 +41,12 @@ pi@raspi ~ $ tail -f /tmp/rolling-2018-04-08.log
 2018-04-08 10:17:30,576 INFO [Thread-7] d.a.s.u.FileHandler [FileHandler.java:55] Using appliance directory /app
 2018-04-08 10:17:30,583 INFO [main] d.a.s.Application [Application.java:95] PID 23914 written to /var/run/smartapplianceenabler.pid
 ```
+Der *Log-Level* steht defaultmäßig auf ```debug```, um im Fehlerfall detaillierte Informationen zu haben. Falls weniger geloggt werden soll, kann der Log-Level auf ```info``` geändert werden in der Datei ```/app/logbacl-spring.xml```:
+```
+...
+<logger name="de.avanux" level="debug" additivity="false">
+...
+```
 
 ## Version des Smart Appliance Enabler
 Direkt nach dem Start schreibt der *Smart Appliance Enabler* die Version in die Log-Datei:
@@ -55,7 +61,7 @@ Wenn der Log-Level mindestens auf DEBUG gesetzt wurde, kann man in der Log-Datei
 20:25:17.390 [http-nio-8080-exec-1] DEBUG d.a.s.semp.webservice.SempController - Device info/status/planning requested.
 ```
 ## Analyse der Log Dateien des SEMP Moduls im Sunny Home Manager
-Siehe http://www.photovoltaikforum.com/geraete-mit-home-manager-koppeln-via-semp-ethernet-p1396300.html#p1396300
+Siehe https://www.photovoltaikforum.com/thread/104060-ger%C3%A4te-mit-home-manager-koppeln-via-semp-ethernet/?postID=1396300#post1396300
 
 ## Anwender-Forum
 Fragen zur Verwendung des *Smart Appliance Enabler* sollten im SEMP-Thread des *photovoltaik-forums* im SMA Herstellerbereich gestellt werden: https://www.photovoltaikforum.com/geraete-mit-home-manager-koppeln-via-semp-ethernet-t104060.html.
