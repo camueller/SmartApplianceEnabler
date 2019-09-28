@@ -71,6 +71,10 @@ public class PollPowerMeter implements ApplianceIdConsumer {
         cache.addValue(timestamp, power);
     }
 
+    public void reset() {
+        this.cache.clear();
+    }
+
     public int getAveragePower() {
         double sum = 0.0f;
         if(!cache.isEmpty()) {

@@ -20,7 +20,9 @@ Java HotSpot(TM) Client VM (build 25.65-b01, mixed mode)
 ### Raspbian
 Für den Raspberry Pi existieren verschiedene, darauf zugeschnittene, Linux-Distributionen (Images), wobei [Raspbian](https://www.raspberrypi.org/downloads/raspbian) vermutlich das geläufigste ist (auf dieses beziehe ich mich nachfolgend).
 
-Damit der *Smart Appliance Enabler* lauffähig ist, muss bei der Wahl des Images ist darauf geachtet werden, dass dieses eine Java 8-Runtime enthält oder dass diese nachinstallierbar ist. Beim Raspbian-Image ist die *Lite-Version ausreichend*, sodass man eine *4GB-SD-Karte* verwenden kann.
+Damit der *Smart Appliance Enabler* lauffähig ist, muss bei der Wahl des Images ist darauf geachtet werden, dass dieses eine Oracle-Java8-Runtime enthält oder dass diese nachinstallierbar ist. Beim Raspbian-Image ist die *Lite-Version ausreichend*, sodass man eine *4GB-SD-Karte* verwenden kann.
+
+**Für Raspbian "Buster" ist aktuell keine Oracle-Java8-Runtime verfügbar - deshalb weiterhin Raspbian "Stretch" verwenden: https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2019-06-24**
 
 Mit dem nachfolgenden Befehl kann man unter Linux ein Image auf eine SD-Karte schreiben:
 ```console
