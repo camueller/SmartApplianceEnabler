@@ -300,7 +300,7 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         }
         else if(timeframeIntervalToBeActivated == null && this.state.activeTimeframeInterval != null) {
             logger.debug("{}: Interval expired: {}", applianceId, this.state.activeTimeframeInterval);
-            if(this.previousState != null) {
+            if(this.previousState != null && this.previousState.remainingMinRunningTimeWhileNotRunning != null) {
                 if(this.previousState.remainingMinRunningTimeWhileNotRunning == 0) {
                     logger.debug("{}: Restore original Interval: {}", applianceId, previousState.activeTimeframeInterval);
                     timeframeIntervalToBeActivated = this.previousState.activeTimeframeInterval;
