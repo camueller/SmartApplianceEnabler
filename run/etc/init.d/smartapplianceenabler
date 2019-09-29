@@ -14,9 +14,9 @@ if [ -f /etc/default/$NAME ]; then
 	. /etc/default/$NAME
 fi
 
-SAE_JAR=`/usr/bin/find $SAE_HOME -name SmartApplianceEnabler-*ar`
+SAE_JAR=`/usr/bin/find $SAE_HOME -name "SmartApplianceEnabler-*ar" | /usr/bin/head -n 1`
 if [ -z "$SAE_JAR" ]; then
-	log_failure_msg "$SAE_HOME/SmartApplianceEnabler-*ar was not found"
+	echo "$SAE_HOME/SmartApplianceEnabler-*ar was not found"
 	exit 1
 fi
 
@@ -45,7 +45,7 @@ case "$1" in
     if is_running; then
         echo "Already started"
     else
-        echo "Starting $NAME"
+        echo "Starting $NAME ($SAE_JAR)"
         cd "$SAE_HOME"
         if [ -z "$USER" ]; then
             sudo $CMD >> "$STDOUT_LOG" 2>> "$STDERR_LOG" &
