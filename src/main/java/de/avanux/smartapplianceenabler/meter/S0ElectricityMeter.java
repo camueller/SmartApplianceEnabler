@@ -113,40 +113,17 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Initi
 
     @Override
     public void start(Timer timer) {
-
-        GpioController gpioController = getGpioController();
-        if(gpioController != null) {
-            try {
-                inputPin = gpioController.provisionDigitalInputPin(getGpio(), getPinPullResistance());
-                inputPin.addListener(new GpioPinListenerDigital() {
-                    @Override
-                    public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
-                        logger.debug("{}: GPIO {} changed to {}", getApplianceId(), event.getPin(), event.getState());
-                        if(event.getState() == PinState.HIGH) {
-                            pulsePowerMeter.addTimestampAndMaintain(System.currentTimeMillis());
-                            pulseEnergyMeter.increasePulseCounter();
-                        }
-                    }
-                });
-                logger.debug("{}: Starting {} for {}", getApplianceId(), getClass().getSimpleName(), getGpio());
+        super.start(this.getClass(), (GpioPinListenerDigital) event -> {
+            logger.debug("{}: GPIO {} changed to {}", getApplianceId(), event.getPin(), event.getState());
+            if(event.getState() == PinState.HIGH) {
+                pulsePowerMeter.addTimestampAndMaintain(System.currentTimeMillis());
+                pulseEnergyMeter.increasePulseCounter();
             }
-            catch(Exception e) {
-                logger.error("{}: Error start metering using {}", getApplianceId(), getGpio(), e);
-            }
-        }
-        else { 
-            logGpioAccessDisabled();
-        }
+        });
     }
 
     @Override
     public void stop() {
-        GpioController gpioController = getGpioController();
-        if(gpioController != null) {
-            gpioController.unprovisionPin(inputPin);
-        }
-        else {
-            logGpioAccessDisabled();
-        }
+        super.stop(this.getClass());
     }
 }

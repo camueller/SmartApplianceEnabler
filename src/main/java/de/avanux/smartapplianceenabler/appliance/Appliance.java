@@ -129,7 +129,8 @@ public class Appliance implements Initializable, Validateable, ControlStateChang
     public void deleteControl() {
         logger.debug("{}: Delete control", id);
         if(control instanceof GpioControllable) {
-            ((GpioControllable) control).stop();
+            GpioControllable gpioControllable = (GpioControllable) control;
+            gpioControllable.stop(gpioControllable.getClass());
         }
         setControl(null);
     }
@@ -248,7 +249,7 @@ public class Appliance implements Initializable, Validateable, ControlStateChang
                     if(gpioControllable != meter) {
                         // Meter instances will be started later anyway and should not be started twice
                         logger.info("{}: Starting {}", id, gpioControllable.getClass().getSimpleName());
-                        gpioControllable.start(timer);
+                        gpioControllable.start(gpioControllable.getClass(), null);
                     }
                 }
             }
@@ -290,13 +291,14 @@ public class Appliance implements Initializable, Validateable, ControlStateChang
         logger.info("{}: Stopping appliance ...", id);
         if(control instanceof GpioControllable) {
             logger.info("{}: Stopping control {}", id, control.getClass().getSimpleName());
-            ((GpioControllable) control).stop();
+            GpioControllable gpioControllable = (GpioControllable) control;
+            gpioControllable.stop(gpioControllable.getClass());
         }
         else if(isEvCharger()) {
             logger.info("{}: Stopping control {}", id, control.getClass().getSimpleName());
             ((ElectricVehicleCharger) control).stop();
         }
-        else if(control instanceof  StartingCurrentSwitch) {
+        else if(control instanceof StartingCurrentSwitch) {
             logger.info("{}: Stopping control {}", id, control.getClass().getSimpleName());
             ((StartingCurrentSwitch) control).stop();
         }

@@ -41,32 +41,12 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
 
 
-    @Override
     public void start(Timer timer) {
-        GpioController gpioController = getGpioController();
-        if(gpioController != null) {
-            try {
-                outputPin = gpioController.provisionDigitalOutputPin(getGpio(), adjustState(PinState.LOW));
-                logger.info("{}: Switch uses {} reverseStates={}", getApplianceId(), getGpio(), reverseStates);
-            }
-            catch(Exception e) {
-                logger.error("{}: Error starting {} for {}", getApplianceId(), getClass().getSimpleName(), getGpio(), e);
-            }
-        }
-        else {
-            logGpioAccessDisabled();
-        }
+        super.start(this.getClass(), null);
     }
 
-    @Override
     public void stop() {
-        GpioController gpioController = getGpioController();
-        if(gpioController != null) {
-            gpioController.unprovisionPin(outputPin);
-        }
-        else {
-            logGpioAccessDisabled();
-        }
+        super.stop(this.getClass());
     }
 
     @Override

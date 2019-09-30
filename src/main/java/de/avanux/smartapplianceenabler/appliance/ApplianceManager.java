@@ -126,7 +126,6 @@ public class ApplianceManager implements Initializable, Runnable {
     private void restartAppliances() {
         logger.debug("Restarting ...");
         if(this.appliances != null) {
-            Connectivity connectivity = this.appliances.getConnectivity();
             if(appliances.getAppliances() != null) {
                 for(Appliance appliance : appliances.getAppliances()) {
                     logger.info("{}: Stopping appliance ...", appliance.getId());
