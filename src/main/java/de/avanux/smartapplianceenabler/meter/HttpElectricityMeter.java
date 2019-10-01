@@ -22,7 +22,6 @@ import de.avanux.smartapplianceenabler.http.*;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolHandler;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolType;
 import de.avanux.smartapplianceenabler.protocol.JsonContentProtocolHandler;
-import de.avanux.smartapplianceenabler.util.Initializable;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import de.avanux.smartapplianceenabler.util.Validateable;
 import de.avanux.smartapplianceenabler.util.ValueExtractor;
@@ -42,7 +41,7 @@ import java.util.*;
  * IMPORTANT: URLs have to be escaped (e.g. use "&amp;" instead of "&")
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class HttpElectricityMeter implements Meter, Initializable, Validateable, PollPowerExecutor, PollEnergyExecutor,
+public class HttpElectricityMeter implements Meter, Validateable, PollPowerExecutor, PollEnergyExecutor,
         ApplianceIdConsumer {
 
     private transient Logger logger = LoggerFactory.getLogger(HttpElectricityMeter.class);
@@ -193,14 +192,14 @@ public class HttpElectricityMeter implements Meter, Initializable, Validateable,
     }
 
     @Override
-    public void start(Timer timer) {
+    public void start(LocalDateTime now, Timer timer) {
         logger.debug("{}: Starting ...", applianceId);
         pollEnergyMeter.start(timer, getPollInterval(), getMeasurementInterval(), this);
         pollPowerMeter.start(timer, getPollInterval(), getMeasurementInterval(), this);
     }
 
     @Override
-    public void stop() {
+    public void stop(LocalDateTime now) {
         logger.debug("{}: Stopping ...", applianceId);
         pollEnergyMeter.cancelTimer();
         pollPowerMeter.cancelTimer();

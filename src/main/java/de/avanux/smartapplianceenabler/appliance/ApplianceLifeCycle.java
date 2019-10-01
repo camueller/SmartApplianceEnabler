@@ -16,10 +16,17 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.avanux.smartapplianceenabler.util;
+package de.avanux.smartapplianceenabler.appliance;
 
-public interface Initializable {
+import org.joda.time.LocalDateTime;
+
+import java.util.Timer;
+
+public interface ApplianceLifeCycle {
 
     void init();
 
+    void start(LocalDateTime now, Timer timer);
+
+    void stop(LocalDateTime now);
 }

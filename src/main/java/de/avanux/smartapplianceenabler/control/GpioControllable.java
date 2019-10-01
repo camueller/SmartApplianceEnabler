@@ -17,8 +17,10 @@
  */
 package de.avanux.smartapplianceenabler.control;
 
-import com.pi4j.io.gpio.*;
-import com.pi4j.io.gpio.event.GpioPinListener;
+import com.pi4j.io.gpio.GpioController;
+import com.pi4j.io.gpio.Pin;
+import com.pi4j.io.gpio.PinPullResistance;
+import com.pi4j.io.gpio.RaspiPin;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +39,6 @@ abstract public class GpioControllable implements ApplianceIdConsumer {
     @XmlAttribute
     private String pinPullResistance;
     private transient GpioController gpioController;
-    private transient GpioPin gpioPin;
     private transient String applianceId;
 
 
@@ -52,7 +53,7 @@ abstract public class GpioControllable implements ApplianceIdConsumer {
     protected Pin getGpio() {
        return RaspiPin.getPinByName("GPIO " + gpio);
     }
-    
+
     protected PinPullResistance getPinPullResistance() {
         if(PinPullResistance.OFF.getName().equals(pinPullResistance)) {
             return PinPullResistance.OFF;
@@ -66,42 +67,7 @@ abstract public class GpioControllable implements ApplianceIdConsumer {
         return null;
     }
 
-    public void start(Class<? extends GpioControllable> subClass, GpioPinListener listener) {
-        GpioController gpioController = getGpioController();
-        if(gpioController != null) {
-            logger.debug("{}: Starting {} using {}", getApplianceId(), subClass.getSimpleName(), getGpio());
-            try {
-                this.gpioPin = gpioController.provisionDigitalInputPin(getGpio(), getPinPullResistance());
-                if(listener != null) {
-                    gpioPin.addListener(listener);
-                }
-            }
-            catch(Exception e) {
-                logger.error("{}: Error starting {} using {}", getApplianceId(), subClass.getSimpleName(), getGpio(), e);
-            }
-        }
-        else {
-            logGpioAccessDisabled();
-        }
-    }
-
-    public void stop(Class<? extends GpioControllable> subClass) {
-        GpioController gpioController = getGpioController();
-        if(gpioController != null) {
-            logger.info("{}: Stopping {} using {}", getApplianceId(), subClass.getSimpleName(), getGpio());
-            try {
-                gpioController.unprovisionPin(this.gpioPin);
-            }
-            catch(Exception e) {
-                logger.error("{}: Error stopping {} using {}", getApplianceId(), subClass.getSimpleName(), getGpio(), e);
-            }
-        }
-        else {
-            logGpioAccessDisabled();
-        }
-    }
-
-    protected void logGpioAccessDisabled() {
+    protected void logGpioAccessDisabled(Logger logger) {
         logger.warn("{}: Configured for {}, but GPIO access disabled.", applianceId, getGpio());
     }
 

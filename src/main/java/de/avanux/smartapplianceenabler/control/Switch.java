@@ -40,25 +40,47 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
     private transient GpioPinDigitalOutput outputPin;
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
 
-
-    public void start(Timer timer) {
-        super.start(this.getClass(), null);
+    @Override
+    public void init() {
     }
 
-    public void stop() {
-        super.stop(this.getClass());
+    @Override
+    public void start(LocalDateTime now, Timer timer) {
+        logger.debug("{}: Starting {} for {}", getApplianceId(), getClass().getSimpleName(), getGpio());
+        GpioController gpioController = getGpioController();
+        if (gpioController != null) {
+            try {
+                outputPin = gpioController.provisionDigitalOutputPin(getGpio(), adjustState(PinState.LOW));
+                logger.debug("{}: {} uses {} reverseStates={}", getApplianceId(), getClass().getSimpleName(),
+                        getGpio(), reverseStates);
+            } catch (Exception e) {
+                logger.error("{}: Error starting {} for {}", getApplianceId(), getClass().getSimpleName(), getGpio(), e);
+            }
+        } else {
+            logGpioAccessDisabled(logger);
+        }
+    }
+
+    @Override
+    public void stop(LocalDateTime now) {
+        logger.debug("{}: Stopping {} for {}", getApplianceId(), getClass().getSimpleName(), getGpio());
+        GpioController gpioController = getGpioController();
+        if (gpioController != null) {
+            gpioController.unprovisionPin(outputPin);
+        } else {
+            logGpioAccessDisabled(logger);
+        }
     }
 
     @Override
     public boolean on(LocalDateTime now, boolean switchOn) {
         logger.info("{}: Switching {} {}", getApplianceId(), (switchOn ? "on" : "off"), getGpio());
-        if(outputPin != null) {
+        if (outputPin != null) {
             outputPin.setState(adjustState(switchOn ? PinState.HIGH : PinState.LOW));
+        } else {
+            logGpioAccessDisabled(logger);
         }
-        else {
-            logGpioAccessDisabled();
-        }
-        for(ControlStateChangedListener listener : controlStateChangedListeners) {
+        for (ControlStateChangedListener listener : controlStateChangedListeners) {
             listener.controlStateChanged(now, switchOn);
         }
         return true;
@@ -66,16 +88,16 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
 
     @Override
     public boolean isOn() {
-        if(outputPin != null) {
+        if (outputPin != null) {
             return adjustState(outputPin.getState()) == PinState.HIGH;
         }
-        logGpioAccessDisabled();
+        logGpioAccessDisabled(logger);
         return false;
     }
-    
+
     private PinState adjustState(PinState pinState) {
-        if(reverseStates) {
-            if(pinState == PinState.HIGH) {
+        if (reverseStates) {
+            if (pinState == PinState.HIGH) {
                 return PinState.LOW;
             }
             return PinState.HIGH;

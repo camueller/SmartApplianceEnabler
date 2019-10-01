@@ -63,6 +63,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
     @XmlElement(name = "ForceSchedule")
     private DayTimeframeCondition dayTimeframeCondition;
     private transient String applianceId;
+    private transient Meter meter;
     private transient Integer lastAveragePowerOfPowerOnDetection;
     private transient Integer lastAveragePowerOfPowerOffDetection;
     private transient boolean on;
@@ -84,6 +85,10 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
 
     public Control getControl() {
         return control;
+    }
+
+    public void setMeter(Meter meter) {
+        this.meter = meter;
     }
 
     public DayTimeframeCondition getDayTimeframeCondition() {
@@ -129,6 +134,54 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
     }
 
     @Override
+    public void init() {
+    }
+
+    @Override
+    public void start(LocalDateTime now, Timer timer) {
+        logger.info("{}: Starting current switch: powerThreshold={}W startingCurrentDetectionDuration={}s " +
+                        "finishedCurrentDetectionDuration={}s minRunningTime={}s",
+                applianceId, getPowerThreshold(), getStartingCurrentDetectionDuration(),
+                getFinishedCurrentDetectionDuration(), getMinRunningTime());
+        if(this.control != null) {
+            this.control.start(now, timer);
+        }
+        applianceOn(now, true);
+        if (timer != null) {
+            this.detectStartingCurrentTimerTask = new GuardedTimerTask(applianceId, "DetectStartingCurrent",
+                    getStartingCurrentDetectionDuration() * 1000) {
+                @Override
+                public void runTask() {
+                    detectStartingCurrent(now, meter);
+                }
+            };
+            timer.schedule(this.detectStartingCurrentTimerTask, 0, this.detectStartingCurrentTimerTask.getPeriod());
+
+            this.detectFinishedCurrentTimerTask = new GuardedTimerTask(applianceId, "DetectFinishedCurrent", getFinishedCurrentDetectionDuration() * 1000) {
+                @Override
+                public void runTask() {
+                    detectFinishedCurrent(new LocalDateTime(), meter);
+                }
+            };
+            timer.schedule(this.detectFinishedCurrentTimerTask, 0, this.detectFinishedCurrentTimerTask.getPeriod());
+        }
+    }
+
+    @Override
+    public void stop(LocalDateTime now) {
+        logger.debug("{}: Stopping ...", this.applianceId);
+        if(this.detectStartingCurrentTimerTask != null) {
+            this.detectStartingCurrentTimerTask.cancel();
+        }
+        if(this.detectFinishedCurrentTimerTask != null) {
+            this.detectFinishedCurrentTimerTask.cancel();
+        }
+        if(this.control != null) {
+            this.control.stop(now);
+        }
+    }
+
+    @Override
     public boolean on(LocalDateTime now, boolean switchOn) {
         logger.debug("{}: Setting appliance switch to {}", applianceId, (switchOn ? "on" : "off"));
         on = switchOn;
@@ -160,42 +213,6 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
             return control.isOn();
         }
         return false;
-    }
-
-    public void start(LocalDateTime now, final Meter meter, Timer timer) {
-        logger.info("{}: Starting current switch: powerThreshold={}W startingCurrentDetectionDuration={}s " +
-                        "finishedCurrentDetectionDuration={}s minRunningTime={}s",
-                applianceId, getPowerThreshold(), getStartingCurrentDetectionDuration(),
-                getFinishedCurrentDetectionDuration(), getMinRunningTime());
-        applianceOn(now, true);
-        if (timer != null) {
-            this.detectStartingCurrentTimerTask = new GuardedTimerTask(applianceId, "DetectStartingCurrent",
-                    getStartingCurrentDetectionDuration() * 1000) {
-                @Override
-                public void runTask() {
-                    detectStartingCurrent(new LocalDateTime(), meter);
-                }
-            };
-            timer.schedule(this.detectStartingCurrentTimerTask, 0, this.detectStartingCurrentTimerTask.getPeriod());
-
-            this.detectFinishedCurrentTimerTask = new GuardedTimerTask(applianceId, "DetectFinishedCurrent", getFinishedCurrentDetectionDuration() * 1000) {
-                @Override
-                public void runTask() {
-                    detectFinishedCurrent(new LocalDateTime(), meter);
-                }
-            };
-            timer.schedule(this.detectFinishedCurrentTimerTask, 0, this.detectFinishedCurrentTimerTask.getPeriod());
-        }
-    }
-
-    public void stop() {
-        logger.debug("{}: Stopping ...", this.applianceId);
-        if(this.detectStartingCurrentTimerTask != null) {
-            this.detectStartingCurrentTimerTask.cancel();
-        }
-        if(this.detectFinishedCurrentTimerTask != null) {
-            this.detectFinishedCurrentTimerTask.cancel();
-        }
     }
 
     /**

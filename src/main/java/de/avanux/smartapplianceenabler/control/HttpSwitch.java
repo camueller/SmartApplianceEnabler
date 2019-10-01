@@ -19,7 +19,7 @@ package de.avanux.smartapplianceenabler.control;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.http.*;
-import de.avanux.smartapplianceenabler.util.Initializable;
+import de.avanux.smartapplianceenabler.appliance.ApplianceLifeCycle;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import de.avanux.smartapplianceenabler.util.Validateable;
 import org.apache.http.HttpStatus;
@@ -34,6 +34,7 @@ import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Timer;
 import java.util.stream.Collectors;
 
 /**
@@ -44,7 +45,7 @@ import java.util.stream.Collectors;
  * IMPORTANT: The URLs in Appliance.xml have to be escaped (e.g. use "&amp;" instead of "&")
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class HttpSwitch implements Control, Initializable, Validateable, ApplianceIdConsumer {
+public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, ApplianceIdConsumer {
 
     private transient Logger logger = LoggerFactory.getLogger(HttpSwitch.class);
     @XmlElement(name = "HttpConfiguration")
@@ -91,6 +92,14 @@ public class HttpSwitch implements Control, Initializable, Validateable, Applian
             logger.error("{}: Terminating because of incorrect configuration", applianceId);
             System.exit(-1);
         }
+    }
+
+    @Override
+    public void start(LocalDateTime now, Timer timer) {
+    }
+
+    @Override
+    public void stop(LocalDateTime now) {
     }
 
     @Override

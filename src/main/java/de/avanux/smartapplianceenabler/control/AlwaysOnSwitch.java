@@ -18,14 +18,26 @@
 
 package de.avanux.smartapplianceenabler.control;
 
-import de.avanux.smartapplianceenabler.control.Control;
-import de.avanux.smartapplianceenabler.control.ControlStateChangedListener;
 import org.joda.time.LocalDateTime;
+
+import java.util.Timer;
 
 /**
  * A switch which is always switched on.
  */
 public class AlwaysOnSwitch implements Control {
+
+    @Override
+    public void init() {
+    }
+
+    @Override
+    public void start(LocalDateTime now, Timer timer) {
+    }
+
+    @Override
+    public void stop(LocalDateTime now) {
+    }
 
     @Override
     public boolean on(LocalDateTime now, boolean switchOn) {

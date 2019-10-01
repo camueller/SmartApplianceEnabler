@@ -19,6 +19,7 @@
 package de.avanux.smartapplianceenabler.control.ev;
 
 import de.avanux.smartapplianceenabler.meter.Meter;
+import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,11 +65,6 @@ public class EVControlMock implements EVControl, Meter {
     @Override
     public void setPollInterval(Integer pollInterval) {
         logDebug("setPollInterval=" + pollInterval);
-    }
-
-    @Override
-    public void init() {
-        logDebug("init");
     }
 
     @Override
@@ -123,12 +119,17 @@ public class EVControlMock implements EVControl, Meter {
     // --------- Meter ------------------------------------------------------
 
     @Override
-    public void start(Timer timer) {
+    public void init() {
+        logDebug("init");
+    }
+
+    @Override
+    public void start(LocalDateTime now, Timer timer) {
         logDebug("start");
     }
 
     @Override
-    public void stop() {
+    public void stop(LocalDateTime now) {
         logDebug("stop");
     }
 
