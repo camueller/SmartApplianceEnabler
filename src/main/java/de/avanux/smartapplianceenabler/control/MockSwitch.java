@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
 
 /**
  * This switch only maintains its state and listeners.
@@ -35,6 +36,18 @@ public class MockSwitch implements Control, ApplianceIdConsumer {
     private transient String applianceId;
     private transient boolean on;
     transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
+
+    @Override
+    public void init() {
+    }
+
+    @Override
+    public void start(LocalDateTime now, Timer timer) {
+    }
+
+    @Override
+    public void stop(LocalDateTime now) {
+    }
 
     @Override
     public boolean on(LocalDateTime now, boolean switchOn) {

@@ -33,7 +33,6 @@ import de.avanux.smartapplianceenabler.schedule.*;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
 import de.avanux.smartapplianceenabler.util.DateTimeProvider;
 import de.avanux.smartapplianceenabler.util.DateTimeProviderImpl;
-import de.avanux.smartapplianceenabler.util.Initializable;
 import de.avanux.smartapplianceenabler.util.Validateable;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
@@ -47,7 +46,7 @@ import java.util.*;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Appliance implements Initializable, Validateable, ControlStateChangedListener,
+public class Appliance implements Validateable, ControlStateChangedListener,
         StartingCurrentSwitchListener, ActiveIntervalChangedListener {
 
     private transient Logger logger = LoggerFactory.getLogger(Appliance.class);
@@ -102,7 +101,7 @@ public class Appliance implements Initializable, Validateable, ControlStateChang
     public void deleteMeter() {
         logger.debug("{}: Delete meter", id);
         if(meter != null) {
-            meter.stop();
+            meter.stop(new LocalDateTime());
         }
         setMeter(null);
     }
@@ -128,9 +127,8 @@ public class Appliance implements Initializable, Validateable, ControlStateChang
 
     public void deleteControl() {
         logger.debug("{}: Delete control", id);
-        if(control instanceof GpioControllable) {
-            GpioControllable gpioControllable = (GpioControllable) control;
-            gpioControllable.stop(gpioControllable.getClass());
+        if(control != null) {
+            control.stop(new LocalDateTime());
         }
         setControl(null);
     }
@@ -162,11 +160,11 @@ public class Appliance implements Initializable, Validateable, ControlStateChang
     public void setRunningTimeMonitor(RunningTimeMonitor runningTimeMonitor) {
         this.runningTimeMonitor = runningTimeMonitor;
         this.runningTimeMonitor.setApplianceId(id);
+        this.runningTimeMonitor.init();
         this.runningTimeMonitor.addTimeFrameChangedListener(this);
     }
 
-    @Override
-    public void init() {
+    public void init(GpioController gpioController, Map<String, ModbusTcp> modbusIdWithModbusTcp) {
         logger.debug("{}: Initializing appliance", id);
         if(control != null) {
             setRunningTimeMonitor(new RunningTimeMonitor());
@@ -191,8 +189,8 @@ public class Appliance implements Initializable, Validateable, ControlStateChang
                 logger.debug("{}: Registered as {} with {}", id, ControlStateChangedListener.class.getSimpleName(),
                         control.getClass().getSimpleName());
             }
-            if(control instanceof Initializable) {
-                ((Initializable) control).init();
+            if(control instanceof ApplianceLifeCycle) {
+                ((ApplianceLifeCycle) control).init();
             }
         }
         Meter meter = getMeter();
@@ -200,8 +198,8 @@ public class Appliance implements Initializable, Validateable, ControlStateChang
             if(meter instanceof ApplianceIdConsumer) {
                 ((ApplianceIdConsumer) meter).setApplianceId(id);
             }
-            if(meter instanceof Initializable) {
-                ((Initializable) meter).init();
+            if(meter instanceof ApplianceLifeCycle) {
+                ((ApplianceLifeCycle) meter).init();
             }
             if(control != null) {
                 if(meter instanceof S0ElectricityMeter) {
@@ -209,6 +207,30 @@ public class Appliance implements Initializable, Validateable, ControlStateChang
                 }
                 logger.debug("{}: {} uses {}", id, meter.getClass().getSimpleName(), control.getClass().getSimpleName());
             }
+        }
+
+        if(control instanceof  StartingCurrentSwitch) {
+            ((StartingCurrentSwitch) control).setMeter(meter);
+            logger.debug("{}: {} uses {}", id, control.getClass().getSimpleName(), meter.getClass().getSimpleName());
+        }
+
+        if(getGpioControllables().size() > 0) {
+            if(gpioController != null) {
+                for(GpioControllable gpioControllable : getGpioControllables()) {
+                    logger.info("{}: Configuring {}", id, gpioControllable.getClass().getSimpleName());
+                    gpioControllable.setGpioController(gpioController);
+                }
+            }
+            else {
+                logger.error("Error initializing pi4j. Most likely libwiringPi.so is missing. In order to install it use the following command: sudo apt-get install wiringpi");
+            }
+        }
+
+        for(ModbusSlave modbusSlave : getModbusSlaves()) {
+            logger.info("{}: Configuring {}", id, modbusSlave.getClass().getSimpleName());
+            String modbusId = modbusSlave.getIdref();
+            ModbusTcp modbusTcp = modbusIdWithModbusTcp.get(modbusId);
+            modbusSlave.setModbusTcp(modbusTcp);
         }
 
         if(schedules != null && schedules.size() > 0) {
@@ -233,79 +255,41 @@ public class Appliance implements Initializable, Validateable, ControlStateChang
         }
     }
 
-    public void start(Timer timer, GpioController gpioController,
-                      Map<String, ModbusTcp> modbusIdWithModbusTcp) {
-
+    public void start(Timer timer) {
         logger.info("{}: Starting appliance", id);
+        LocalDateTime now = new LocalDateTime();
+
         if(runningTimeMonitor != null) {
             runningTimeMonitor.setTimer(timer);
         }
 
-        if(getGpioControllables().size() > 0) {
-            if(gpioController != null) {
-                for(GpioControllable gpioControllable : getGpioControllables()) {
-                    logger.info("{}: Configuring {}", id, gpioControllable.getClass().getSimpleName());
-                    gpioControllable.setGpioController(gpioController);
-                    if(gpioControllable != meter) {
-                        // Meter instances will be started later anyway and should not be started twice
-                        logger.info("{}: Starting {}", id, gpioControllable.getClass().getSimpleName());
-                        gpioControllable.start(gpioControllable.getClass(), null);
-                    }
-                }
-            }
-            else {
-                logger.error("Error initializing pi4j. Most likely libwiringPi.so is missing. In order to install it use the following command: sudo apt-get install wiringpi");
-            }
-        }
-
-        for(ModbusSlave modbusSlave : getModbusSlaves()) {
-            logger.info("{}: Configuring {}", id, modbusSlave.getClass().getSimpleName());
-            modbusSlave.setApplianceId(id);
-            String modbusId = modbusSlave.getIdref();
-            ModbusTcp modbusTcp = modbusIdWithModbusTcp.get(modbusId);
-            modbusSlave.setModbusTcp(modbusTcp);
-        }
-
         if(meter != null) {
             logger.info("{}: Starting {}", id, meter.getClass().getSimpleName());
-            meter.start(timer);
+            meter.start(now, timer);
         }
 
         if(control != null) {
+            logger.info("{}: Starting {}", id, control.getClass().getSimpleName());
+            control.start(new LocalDateTime(), timer);
             logger.info("{}: Switch off appliance initially", id);
-            control.on(new LocalDateTime(), false);
-        }
-
-        if(isEvCharger()) {
-            logger.info("{}: Starting {}", id, ElectricVehicleCharger.class.getSimpleName());
-            ((ElectricVehicleCharger) control).start(timer);
-        }
-
-        if(control instanceof  StartingCurrentSwitch) {
-            logger.info("{}: Starting {}", id, StartingCurrentSwitch.class.getSimpleName());
-            ((StartingCurrentSwitch) control).start(new LocalDateTime(), getMeter(), timer);
+            control.on(now, false);
         }
     }
 
     public void stop() {
         logger.info("{}: Stopping appliance ...", id);
-        if(control instanceof GpioControllable) {
-            logger.info("{}: Stopping control {}", id, control.getClass().getSimpleName());
-            GpioControllable gpioControllable = (GpioControllable) control;
-            gpioControllable.stop(gpioControllable.getClass());
+        LocalDateTime now = new LocalDateTime();
+
+        if(control != null) {
+            logger.info("{}: Stopping {}", id, control.getClass().getSimpleName());
+            control.stop(now);
         }
-        else if(isEvCharger()) {
-            logger.info("{}: Stopping control {}", id, control.getClass().getSimpleName());
-            ((ElectricVehicleCharger) control).stop();
-        }
-        else if(control instanceof StartingCurrentSwitch) {
-            logger.info("{}: Stopping control {}", id, control.getClass().getSimpleName());
-            ((StartingCurrentSwitch) control).stop();
-        }
+
         if(meter != null) {
             logger.info("{}: Stopping meter {}", id, meter.getClass().getSimpleName());
-            meter.stop();
+            meter.stop(now);
         }
+
         if(runningTimeMonitor != null) {
             logger.info("{}: Cancel runningTimeMonitor timer", id);
             runningTimeMonitor.cancelTimer();
@@ -344,10 +328,10 @@ public class Appliance implements Initializable, Validateable, ControlStateChang
             controllables.add((S0ElectricityMeter) meter);
         }
         if(control != null) {
-            if(control instanceof  GpioControllable) {
+            if(control instanceof GpioControllable) {
                 controllables.add((GpioControllable) control);
             }
-            else if(control instanceof  StartingCurrentSwitch) {
+            else if(control instanceof StartingCurrentSwitch) {
                 Control wrappedControl = ((StartingCurrentSwitch) control).getControl();
                 if(wrappedControl instanceof GpioControllable) {
                     controllables.add((GpioControllable) wrappedControl);

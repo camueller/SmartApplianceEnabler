@@ -32,6 +32,7 @@ import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Timer;
 
 public class ModbusSwitch extends ModbusSlave implements Control, Validateable {
 
@@ -39,6 +40,10 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable {
     @XmlElement(name = "ModbusWrite")
     private List<ModbusWrite> modbusWrites;
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
+
+    @Override
+    public void init() {
+    }
 
     @Override
     public void validate() {
@@ -54,6 +59,14 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable {
             logger.error("{}: Terminating because of incorrect configuration", getApplianceId());
             System.exit(-1);
         }
+    }
+
+    @Override
+    public void start(LocalDateTime now, Timer timer) {
+    }
+
+    @Override
+    public void stop(LocalDateTime now) {
     }
 
     @Override

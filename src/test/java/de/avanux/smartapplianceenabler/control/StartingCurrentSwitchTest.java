@@ -18,9 +18,6 @@
 
 package de.avanux.smartapplianceenabler.control;
 
-import de.avanux.smartapplianceenabler.control.Control;
-import de.avanux.smartapplianceenabler.control.StartingCurrentSwitch;
-import de.avanux.smartapplianceenabler.control.StartingCurrentSwitchListener;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import org.joda.time.LocalDateTime;
 import org.junit.Assert;
@@ -48,7 +45,8 @@ public class StartingCurrentSwitchTest {
     @Test
     public void test() throws Exception {
         LocalDateTime now = new LocalDateTime();
-        startingCurrentSwitch.start(now, meter, null);
+        startingCurrentSwitch.setMeter(meter);
+        startingCurrentSwitch.start(now, null);
 
         // right after start
         // ... the appliance should be switched on

@@ -19,10 +19,11 @@
 package de.avanux.smartapplianceenabler.control.ev;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
-import de.avanux.smartapplianceenabler.util.Initializable;
 import de.avanux.smartapplianceenabler.util.Validateable;
 
-public interface EVControl extends ApplianceIdConsumer, Initializable, Validateable {
+public interface EVControl extends ApplianceIdConsumer, Validateable {
+
+    void init();
 
     void setPollInterval(Integer pollInterval);
 

@@ -19,6 +19,7 @@
 package de.avanux.smartapplianceenabler.meter;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,11 +45,15 @@ public class MockElectricityMeter implements Meter, ApplianceIdConsumer {
     }
 
     @Override
-    public void start(Timer timer) {
+    public void init() {
     }
 
     @Override
-    public void stop() {
+    public void start(LocalDateTime now, Timer timer) {
+    }
+
+    @Override
+    public void stop(LocalDateTime now) {
     }
 
     @Override

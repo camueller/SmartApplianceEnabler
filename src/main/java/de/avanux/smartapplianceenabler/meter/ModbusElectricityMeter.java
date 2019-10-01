@@ -23,7 +23,7 @@ import de.avanux.smartapplianceenabler.modbus.executor.ModbusExecutorFactory;
 import de.avanux.smartapplianceenabler.modbus.executor.ModbusReadTransactionExecutor;
 import de.avanux.smartapplianceenabler.modbus.executor.ReadDecimalInputRegisterExecutor;
 import de.avanux.smartapplianceenabler.modbus.executor.ReadFloatInputRegisterExecutor;
-import de.avanux.smartapplianceenabler.util.Initializable;
+import de.avanux.smartapplianceenabler.appliance.ApplianceLifeCycle;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import de.avanux.smartapplianceenabler.util.Validateable;
 import org.joda.time.LocalDateTime;
@@ -41,7 +41,7 @@ import java.util.Timer;
  * The device is polled according to poll interval in order to provide min/avg/max values of the measurement interval.
  * The TCP connection to the device remains established across the polls.
  */
-public class ModbusElectricityMeter extends ModbusSlave implements Meter, ApplianceIdConsumer, Initializable,
+public class ModbusElectricityMeter extends ModbusSlave implements Meter, ApplianceIdConsumer,
         Validateable, PollPowerExecutor, PollEnergyExecutor {
 
     private transient Logger logger = LoggerFactory.getLogger(ModbusElectricityMeter.class);
@@ -120,13 +120,13 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     }
 
     @Override
-    public void start(Timer timer) {
+    public void start(LocalDateTime now, Timer timer) {
         logger.debug("{}: Starting ...", getApplianceId());
         pollPowerMeter.start(timer, getPollInterval(), getMeasurementInterval(), this);
     }
 
     @Override
-    public void stop() {
+    public void stop(LocalDateTime now) {
         logger.debug("{}: Stopping ...", getApplianceId());
         pollPowerMeter.cancelTimer();
     }

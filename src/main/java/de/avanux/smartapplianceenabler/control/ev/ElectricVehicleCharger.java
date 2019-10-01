@@ -29,7 +29,7 @@ import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.modbus.EVModbusControl;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
 import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
-import de.avanux.smartapplianceenabler.util.Initializable;
+import de.avanux.smartapplianceenabler.appliance.ApplianceLifeCycle;
 import de.avanux.smartapplianceenabler.util.Validateable;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
@@ -39,7 +39,7 @@ import javax.xml.bind.annotation.*;
 import java.util.*;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ElectricVehicleCharger implements Control, Initializable, Validateable, ApplianceIdConsumer {
+public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Validateable, ApplianceIdConsumer {
 
     private transient Logger logger = LoggerFactory.getLogger(ElectricVehicleCharger.class);
     @XmlAttribute
@@ -220,7 +220,8 @@ public class ElectricVehicleCharger implements Control, Initializable, Validatea
         control.validate();
     }
 
-    public void start(Timer timer) {
+    @Override
+    public void start(LocalDateTime now, Timer timer) {
         logger.debug("{}: Starting ...", this.applianceId);
         if(timer != null) {
             this.updateStateTimerTask = new GuardedTimerTask(this.applianceId,"UpdateState",
@@ -234,7 +235,8 @@ public class ElectricVehicleCharger implements Control, Initializable, Validatea
         }
     }
 
-    public void stop() {
+    @Override
+    public void stop(LocalDateTime now) {
         logger.debug("{}: Stopping ...", this.applianceId);
         if(this.updateStateTimerTask != null) {
             this.updateStateTimerTask.cancel();

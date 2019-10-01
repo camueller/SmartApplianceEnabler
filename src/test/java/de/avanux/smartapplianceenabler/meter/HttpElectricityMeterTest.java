@@ -24,6 +24,7 @@ import de.avanux.smartapplianceenabler.http.HttpTransactionExecutor;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolType;
 import de.avanux.smartapplianceenabler.http.HttpRead;
 import de.avanux.smartapplianceenabler.http.HttpReadValue;
+import org.joda.time.LocalDateTime;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -83,7 +84,7 @@ public class HttpElectricityMeterTest extends TestBase {
         energyReadSpy.setReadValues(Collections.singletonList(powerReadValue));
         meter.setHttpReads(Collections.singletonList(energyReadSpy));
 
-        meter.start(null);
+        meter.start(new LocalDateTime(), null);
 
         long timestamp = 1 * 60 * 60 * 1000;
         String response = goEChargerStatus.replace((CharSequence) "dws\":\"0", (CharSequence) "dws\":\"2500");
