@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.4">
     <Appliance id="F-00000001-000000000099-00">
-        <!--ElectricVehicleCharger startChargingStateDetectionDelay="15">
-            <EVModbusControl idref="wallbox" slaveAddress="180">
+        <!--ElectricVehicleCharger startChargingStateDetectionDelay="15"-->
+            <!--EVModbusControl idref="wallbox" slaveAddress="180">
                 <ModbusRead address="100" type="InputString">
                     <ModbusReadValue name="VehicleNotConnected" extractionRegex="(A)"/>
                     <ModbusReadValue name="VehicleConnected" extractionRegex="(B)"/>
@@ -16,8 +16,8 @@
                 <ModbusWrite address="300" type="Holding">
                     <ModbusWriteValue name="ChargingCurrent" value="0"/>
                 </ModbusWrite>
-            </EVModbusControl>
-            <EVHttpControl contentProtocol="json">
+            </EVModbusControl-->
+            <!--EVHttpControl contentProtocol="JSON">
                 <HttpRead url="http://192.168.1.1/status">
                     <HttpReadValue name="VehicleNotConnected" path="$.car" extractionRegex="(1)"/>
                     <HttpReadValue name="VehicleConnected" path="$.car" extractionRegex="(3|4)"/>
@@ -29,8 +29,11 @@
                     <HttpWriteValue name="StartCharging" value="alw=1" method="GET"/>
                     <HttpWriteValue name="StopCharging" value="alw=0" method="GET"/>
                 </HttpWrite>
-            </EVHttpControl>
-        </ElectricVehicleCharger-->
+            </EVHttpControl-->
+        <!--/ElectricVehicleCharger-->
+        <!--StartingCurrentSwitch>
+            <Switch gpio="1" reverseStates="true"/>
+        </StartingCurrentSwitch-->
         <!--HttpSwitch>
             <HttpConfiguration username="hallo" password="ich" />
             <HttpWrite url="http://192.168.178.48/powerOn">
@@ -62,6 +65,11 @@
                 <ModbusReadValue name="Energy"/>
             </ModbusRead>
         </ModbusElectricityMeter-->
+        <ModbusElectricityMeter idref="modbus" slaveAddress="2">
+            <ModbusRead address="0x000C" bytes="2" byteOrder="BigEndian" type="InputFloat">
+                <ModbusReadValue name="Power"/>
+            </ModbusRead>
+        </ModbusElectricityMeter>
     </Appliance>
     <Connectivity>
         <ModbusTCP id="modbus" host="127.0.0.1"/>
