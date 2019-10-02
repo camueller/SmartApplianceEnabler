@@ -108,11 +108,21 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
                 getApplianceId(), getPollInterval(), getMeasurementInterval());
         boolean valid = true;
         ModbusValidator validator = new ModbusValidator(getApplianceId());
-        for(MeterValueName valueName: MeterValueName.values()) {
-            ParentWithChild<ModbusRead, ModbusReadValue> read
-                    = ModbusRead.getFirstRegisterRead(valueName.name(), modbusReads);
-            valid = validator.validateReads(valueName.name(), Collections.singletonList(read));
+
+        MeterValueName power = MeterValueName.Power;
+        ParentWithChild<ModbusRead, ModbusReadValue> powerRead
+                = ModbusRead.getFirstRegisterRead(power.name(), modbusReads);
+        valid = validator.validateReads(power.name(), Collections.singletonList(powerRead));
+
+        if(valid) {
+            MeterValueName energy = MeterValueName.Energy;
+            ParentWithChild<ModbusRead, ModbusReadValue> energyRead
+                    = ModbusRead.getFirstRegisterRead(energy.name(), modbusReads);
+            if(energyRead != null) {
+                valid = validator.validateReads(energy.name(), Collections.singletonList(energyRead));
+            }
         }
+
         if(! valid) {
             logger.error("{}: Terminating because of incorrect configuration", getApplianceId());
             System.exit(-1);
