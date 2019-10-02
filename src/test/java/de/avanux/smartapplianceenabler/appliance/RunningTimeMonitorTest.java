@@ -21,6 +21,7 @@ public class RunningTimeMonitorTest extends TestBase {
     public RunningTimeMonitorTest() {
         runningTimeMonitor = new RunningTimeMonitor();
         runningTimeMonitor.setApplianceId("F-00000001-000000000001-00");
+        runningTimeMonitor.init();
     }
 
     @Test
