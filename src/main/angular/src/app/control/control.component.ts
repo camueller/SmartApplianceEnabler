@@ -90,8 +90,11 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.route.paramMap.subscribe(() => this.applianceId = this.route.snapshot.paramMap.get('id'));
     this.route.data.subscribe((data: {
-      control: Control, controlDefaults: ControlDefaults, appliance: Appliance,
-      settings: Settings, settingsDefaults: SettingsDefaults
+      control: Control,
+      controlDefaults: ControlDefaults,
+      appliance: Appliance,
+      settings: Settings,
+      settingsDefaults: SettingsDefaults
     }) => {
       this.control = data.control;
       this.controlDefaults = data.controlDefaults;
