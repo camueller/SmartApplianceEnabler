@@ -72,15 +72,13 @@ export class ControlStartingcurrentComponent implements OnInit, AfterViewChecked
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
   }
 
-  updateModelFromForm(): StartingCurrentSwitch | undefined {
+  updateModelFromForm(): StartingCurrentSwitch {
     const powerThreshold = getValidInt(this.form.controls.powerThreshold.value);
     const startingCurrentDetectionDuration = getValidInt(this.form.controls.startingCurrentDetectionDuration.value);
     const finishedCurrentDetectionDuration = getValidInt(this.form.controls.finishedCurrentDetectionDuration.value);
     const minRunningTime = getValidInt(this.form.controls.minRunningTime.value);
 
-    if (!(powerThreshold || startingCurrentDetectionDuration || finishedCurrentDetectionDuration || minRunningTime)) {
-      return undefined;
-    }
+    // all properties are optional; therefore we always have to return an instance
 
     this.startingCurrentSwitch.powerThreshold = powerThreshold;
     this.startingCurrentSwitch.startingCurrentDetectionDuration = startingCurrentDetectionDuration;
