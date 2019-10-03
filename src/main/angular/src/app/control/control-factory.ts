@@ -73,7 +73,7 @@ export class ControlFactory {
     if (rawControl['@class'] === StartingCurrentSwitch.TYPE) {
       control.startingCurrentDetection = true;
       control.startingCurrentSwitch = this.createStartingCurrentSwitch(rawControl);
-      this.fromJSONbyType(control, rawControl.modbusControl);
+      this.fromJSONbyType(control, rawControl.control);
     } else {
       this.fromJSONbyType(control, rawControl);
     }
