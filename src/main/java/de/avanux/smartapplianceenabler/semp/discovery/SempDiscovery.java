@@ -127,6 +127,10 @@ public class SempDiscovery implements Runnable {
     }
 
     private String resolveListenAddress() {
+        String customListenAddress = System.getProperty("server.address");
+        if(customListenAddress != null) {
+            return customListenAddress;
+        }
         NetworkAddressFactory networkAddressFactory = this.serviceConfiguration.createNetworkAddressFactory();
         Iterator<InetAddress> bindAddresses = networkAddressFactory.getBindAddresses();
         while(bindAddresses.hasNext()) {
