@@ -127,7 +127,7 @@ public class SempDiscovery implements Runnable {
     }
 
     private String resolveListenAddress() {
-        String customListenAddress = System.getProperty("server.address");
+        String customListenAddress = System.getProperty("semp.gateway.address");
         if(customListenAddress != null) {
             return customListenAddress;
         }

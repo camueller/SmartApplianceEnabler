@@ -7,6 +7,9 @@ JAVA_OPTS="${JAVA_OPTS} -Dlogging.config=/app/logback-spring.xml"
 # Bind to specific network address
 #JAVA_OPTS="${JAVA_OPTS} -Dserver.address=192.168.178.33"
 
+# The network address the Sunny Home Manager should use to access the Smart Appliance Enabler
+#JAVA_OPTS="${JAVA_OPTS} -Dsemp.gateway.address=192.168.178.33"
+
 # Change port from default port 8080
 #JAVA_OPTS="${JAVA_OPTS} -Dserver.port=8888"
 
