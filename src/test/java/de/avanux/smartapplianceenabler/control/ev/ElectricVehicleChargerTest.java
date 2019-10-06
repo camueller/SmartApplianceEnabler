@@ -253,16 +253,17 @@ public class ElectricVehicleChargerTest {
     public void isWithinStartChargingStateDetectionDelay() {
         int startChargingStateDetectionDelay = 300;
         long currentMillis = 1000000;
-        Assert.assertFalse(evCharger.isWithinStartChargingStateDetectionDelay(
+        Assert.assertFalse(evCharger.isWithinSwitchChargingStateDetectionDelay(
                 startChargingStateDetectionDelay, currentMillis, null));
-        Assert.assertTrue(evCharger.isWithinStartChargingStateDetectionDelay(startChargingStateDetectionDelay, currentMillis, currentMillis - (startChargingStateDetectionDelay - 1) * 1000));
-        Assert.assertFalse(evCharger.isWithinStartChargingStateDetectionDelay(startChargingStateDetectionDelay, currentMillis, currentMillis - (startChargingStateDetectionDelay + 1) * 1000));
+        Assert.assertTrue(evCharger.isWithinSwitchChargingStateDetectionDelay(startChargingStateDetectionDelay, currentMillis, currentMillis - (startChargingStateDetectionDelay - 1) * 1000));
+        Assert.assertFalse(evCharger.isWithinSwitchChargingStateDetectionDelay(startChargingStateDetectionDelay, currentMillis, currentMillis - (startChargingStateDetectionDelay + 1) * 1000));
     }
 
     @Test
     public void isOn_startChargingStateDetectionDelay() {
         int startChargingStateDetectionDelay = 300;
         long currentMillis = 1000000;
+        evCharger.setStartChargingRequested(true);
         // initial state != CHARGING
         Assert.assertFalse(evCharger.isOn(
                 startChargingStateDetectionDelay, currentMillis, null));
