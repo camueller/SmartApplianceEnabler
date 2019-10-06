@@ -38,10 +38,18 @@ DRIVER              VOLUME NAME
 local               sae
 ```
 
-### Logging
-Um die Logging-Konfigurationsdatei in das soeben erzeugte Volume zu laden, erzeugen wir einen temporären Container vom SAE-Image und starten ihn, wobei wir das Volume unter ```/app``` in den zu startenden Container mounten. Beim Start des Containers geben wir einen alternativen Startbefehl mit, der anstelle des Java-Aufrufs zum Starten des *Smart Appliance Enabler* einfach ```wget``` aufruft, um die Logging-Konfigurationsdatei herunterzuladen und im Verzeichnis ```/app``` (und damit auf dem Volume) zu plazieren.
+Der *Smart Appliance Enabler* benötig für die Konfiguration des Loggings die Datei ```logback-spring.xml```. Um diese in das soeben erzeugte Volume zu laden, starten wir einen temporären Container, wobei das Volume unter ```/app``` gemountet wird. Im Container wird ```wget``` aufgerufen, um die Logging-Konfigurationsdatei herunterzuladen in das Verzeichnis ```/app``` (und damit auf das Volume).
+```console
+$ docker run -v sae:/app alpine:3.8 wget https://github.com/camueller/SmartApplianceEnabler/raw/master/logback-spring.xml -O /app/logback-spring.xml
+Connecting to github.com (140.82.118.4:443)
+Connecting to raw.githubusercontent.com (151.101.112.133:443)
+logback-spring.xml   100% |*******************************|  2103   0:00:00 ETA
 ```
-root@resin:/var/lib/docker/sae# docker run -v sae:/app avanux/smartapplianceenabler-de wget https://github.com/camueller/SmartApplianceEnabler/raw/master/logback-spring.xml -O /app/logback-spring.xml
+
+Jetzt kann man überprüfung, ob das Volume die benötigen Dateien enthält:
+```console
+$ docker run -v sae:/app alpine:3.8 ls /app
+logback-spring.xml
 ```
 
 ### Init-System
@@ -67,7 +75,14 @@ Created symlink /etc/systemd/system/multi-user.target.wants/sae.service → /lib
 
 ## Betrieb
 ### Manueller Start
-Zum manuellen Starten des Container mit dem *Smart Appliance Enabler* genügt folgender Befehl:
+Zum direkten Staren des *Smart Appliance Enabler* eignet sich folgender Befehl:
+```console
+docker run -v sae:/app -p 8080:8080 sae
+```
+Dabei wird das SAE-Volume gemounted und der Por 8080 des SAE auf dem localhost ebenfalls als Port 8080 verfügbar gemacht.
+
+### Manueller Start über Init-System
+Zum manuellen Starten des Container mit dem *Smart Appliance Enabler* via Init-System genügt folgender Befehl:
 ```
 systemctl start sae
 ```
