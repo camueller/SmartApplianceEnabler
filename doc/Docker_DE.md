@@ -1,27 +1,138 @@
 # Installation als Docker-Container
 
-Die nachfolgenden Kapitel beschreiben die Installation des *Smart Appliance Enabler* als __Docker Container__ und sollten in der angegebenen Reihenfolge umgesetzt werden.
+Die nachfolgenden Kapitel beschreiben die Installation des *Smart Appliance Enabler* als __Docker Container__ und sollten in der angegebenen Reihenfolge umgesetzt werden. Dabei sollte beachtet werden, dass dabei ausreichend Platz auf der SD-Karte ist - 4 GB haben sich als nicht ausreichend erwiesen.
 
-## Host-Betriebssystem
-Als Host-Betriebssystem für den Raspberry eignet sich insbesondere das schlanke __[Resin OS](https://resinos.io/)__ auf das sich diese Anleitung bezieht. Von der [Download-Seite](https://resinos.io/#downloads-raspberrypi) kann eine ZIP-Datei für das entsprechende Raspberry-Pi-Model heruntergeladen werden.
+## Docker-Installation
+Bevor der *Smart Appliance Enabler* als Docker-Container betrieben werden kann, muss zunächt Docker selbst installiert sein.
 
-Auf der [Getting Started](https://resinos.io/docs/raspberry-pi2/gettingstarted/)-Seite ist die Installation beschrieben, wobei weder die Installation des Resin CLI noch die Anpassung der Datei ```/boot/config.json``` (da im Image bereits mit richtigem Inhalt vorhanden) erforderlich ist, wenn man den Raspberry Pi mittels Ethernet anschließt. Nur falls man statt Ethernet doch WLAN verwenden möchte, muss die Datei ```/boot/system-connections/resin-sample``` entsprechend der Dokumentation angepasst werden.
+Die Docker-Installation ist denkbar einfach, muss aber in einer Root-Shell erfolgen:
 
-Das in der ZIP-Datei enthaltene Image muss auf ein Micro-SD-Karte geflasht werden, die mindestens 4GB haben sollte. Unter Linux kann das mit folgendem Befehl gemacht werden:
+```console
+pi@raspberrypi:~ $ sudo bash
+root@raspberrypi:/home/pi# curl -sSL https://get.docker.com | sh
+# Executing docker install script, commit: 6bf300318ebaab958c4adc341a8c7bb9f3a54a1a
++ sh -c apt-get update -qq >/dev/null
++ sh -c apt-get install -y -qq apt-transport-https ca-certificates curl >/dev/null
++ sh -c curl -fsSL "https://download.docker.com/linux/raspbian/gpg" | apt-key add -qq - >/dev/null
+Warning: apt-key output should not be parsed (stdout is not a terminal)
++ sh -c echo "deb [arch=armhf] https://download.docker.com/linux/raspbian stretch stable" > /etc/apt/sources.list.d/docker.list
++ sh -c apt-get update -qq >/dev/null
++ [ -n  ]
++ sh -c apt-get install -y -qq --no-install-recommends docker-ce >/dev/null
++ sh -c docker version
+Client: Docker Engine - Community
+ Version:           19.03.2
+ API version:       1.40
+ Go version:        go1.12.8
+ Git commit:        6a30dfc
+ Built:             Thu Aug 29 06:18:10 2019
+ OS/Arch:           linux/arm
+ Experimental:      false
+
+Server: Docker Engine - Community
+ Engine:
+  Version:          19.03.2
+  API version:      1.40 (minimum version 1.12)
+  Go version:       go1.12.8
+  Git commit:       6a30dfc
+  Built:            Thu Aug 29 06:12:07 2019
+  OS/Arch:          linux/arm
+  Experimental:     false
+ containerd:
+  Version:          1.2.6
+  GitCommit:        894b81a4b802e4eb2a91d1ce216b8817763c29fb
+ runc:
+  Version:          1.0.0-rc8
+  GitCommit:        425e105d5a03fabd737a126ad93d62a9eeede87f
+ docker-init:
+  Version:          0.18.0
+  GitCommit:        fec3683
+If you would like to use Docker as a non-root user, you should now consider
+adding your user to the "docker" group with something like:
+
+  sudo usermod -aG docker your-user
+
+Remember that you will have to log out and back in for this to take effect!
+
+WARNING: Adding a user to the "docker" group will grant the ability to run
+         containers which can be used to obtain root privileges on the
+         docker host.
+         Refer to https://docs.docker.com/engine/security/security/#docker-daemon-attack-surface
+         for more information.
 ```
-$ sudo dd if=resin.img of=/dev/mmcblk0 status=progress && sync
+
+Nachdem man entsprechend des Vorschlags der Docker-Installation dem User die Rolle `docker` gegeben hat, muss man sich aus- und einloggen, bevor man die Dokcer-Installation überprüfen kan: 
+
+```console
+$ docker info
+Client:
+ Debug Mode: false
+
+Server:
+ Containers: 0
+  Running: 0
+  Paused: 0
+  Stopped: 0
+ Images: 0
+ Server Version: 19.03.2
+ Storage Driver: overlay2
+  Backing Filesystem: extfs
+  Supports d_type: true
+  Native Overlay Diff: true
+ Logging Driver: json-file
+ Cgroup Driver: cgroupfs
+ Plugins:
+  Volume: local
+  Network: bridge host ipvlan macvlan null overlay
+  Log: awslogs fluentd gcplogs gelf journald json-file local logentries splunk syslog
+ Swarm: inactive
+ Runtimes: runc
+ Default Runtime: runc
+ Init Binary: docker-init
+ containerd version: 894b81a4b802e4eb2a91d1ce216b8817763c29fb
+ runc version: 425e105d5a03fabd737a126ad93d62a9eeede87f
+ init version: fec3683
+ Security Options:
+  seccomp
+   Profile: default
+ Kernel Version: 4.9.80-v7+
+ Operating System: Raspbian GNU/Linux 9 (stretch)
+ OSType: linux
+ Architecture: armv7l
+ CPUs: 4
+ Total Memory: 927.3MiB
+ Name: raspberrypi
+ ID: N46Q:WC5N:PZRB:UHCB:XKJQ:6QH3:XUAJ:6Q77:WDUA:NIVX:37UD:UNHW
+ Docker Root Dir: /var/lib/docker
+ Debug Mode: false
+ Registry: https://index.docker.io/v1/
+ Labels:
+ Experimental: false
+ Insecure Registries:
+  127.0.0.0/8
+ Live Restore Enabled: false
+
+WARNING: No memory limit support
+WARNING: No swap limit support
+WARNING: No kernel memory limit support
+WARNING: No kernel memory TCP limit support
+WARNING: No oom kill disable support
+WARNING: No cpu cfs quota support
+WARNING: No cpu cfs period support
 ```
 
-Danach muss man entsprechend der Dokumentation auf [Getting Started](https://resinos.io/docs/raspberry-pi2/gettingstarted/) die Micro-SD-Karte nur noch in den Raspberry Pi einsetzen und diesen damit booten. Auch der in der Dokumentation gezeigte ```ping resin.local``` sollte funktionieren, damit sichergestellt ist, dass man sich per SSH mit dem Raspberry Pi verbinden kann. Zu beachten ist, dass der SSH-Daemon von Resin OS auf Port 22222 horcht (anstelle des Standard-Ports 22). Dementsprechend sieht der Befehl unter Linux wie folgt aus:
-```
-$ ssh root@resin.local -p22222
+## Images installieren
+
+```console
+docker pull avanux/smartapplianceenabler-java-download-arm32
+docker tag avanux/smartapplianceenabler-java-download-arm32 avanux/smartapplianceenabler-java-download
+docker pull avanux/smartapplianceenabler
 ```
 
-## Docker-Image
 Für den *Smart Appliance Enabler* gibt es ein Basis-Image (avanux/smartapplianceenabler) und darauf aubauend ein Image für Deutschland (avanux/smartapplianceenabler-de). Letzteres setzt lediglich die Zeitzone auf Ortszeit für Deutschland, was bei der Auswertung von Logs weniger Irritationen mit sich bringt.
 Zum Installieren des Images genügt folgender Befehl:
 ```
-docker pull avanux/smartapplianceenabler-de
+docker pull avanux/smartapplianceenabler
 ```
 
 ## Docker-Konfiguration
@@ -80,6 +191,10 @@ Zum direkten Staren des *Smart Appliance Enabler* eignet sich folgender Befehl:
 docker run -v sae:/app -p 8080:8080 sae
 ```
 Dabei wird das SAE-Volume gemounted und der Por 8080 des SAE auf dem localhost ebenfalls als Port 8080 verfügbar gemacht.
+Dabei können über die Docker-Variable _JAVA_OPTS_ auch Properties gesetzt werden:
+```console
+docker run -v sae:/app -e "JAVA_OPTS=-Dsae.discovery.disable=true" -p 8080:8080 avanux/smartapplianceenabler-arm32:1.4.14
+```
 
 ### Manueller Start über Init-System
 Zum manuellen Starten des Container mit dem *Smart Appliance Enabler* via Init-System genügt folgender Befehl:
