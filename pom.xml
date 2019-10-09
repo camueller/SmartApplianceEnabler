@@ -6,7 +6,7 @@
 	<groupId>de.avanux.smartapplianceenabler</groupId>
 	<artifactId>SmartApplianceEnabler</artifactId>
     <packaging>war</packaging>
-	<version>1.4.15-SNAPSHOT</version>
+	<version>1.4.15</version>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -94,6 +94,13 @@
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
 			</resource>
+			<resource>
+				<directory>${project.basedir}</directory>
+				<includes>
+					<include>docker/templates/**/Dockerfile</include>
+				</includes>
+				<filtering>true</filtering>
+			</resource>
 		</resources>
 		<plugins>
 			<plugin>
@@ -157,7 +164,25 @@
                     <target>8</target>
                 </configuration>
             </plugin>
-        </plugins>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<configuration>
+							<tasks>
+								<copy todir="${project.basedir}/docker">
+									<fileset dir="${project.basedir}/target/classes/docker/templates"/>
+								</copy>
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
 	</build>
     <profiles>
         <profile>
