@@ -408,13 +408,13 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                 }
                 if(previousState == State.VEHICLE_NOT_CONNECTED) {
                     retrieveSoc(firstVehicle);
+                    if(this.appliance != null) {
+                        this.appliance.activateSchedules();
+                    }
                 }
             }
             if(getForceInitialCharging() && wasInStateOneTime(State.VEHICLE_CONNECTED)) {
                 startCharging();
-            }
-            if(this.appliance != null) {
-                this.appliance.activateSchedules();
             }
         }
         if(newState == State.CHARGING) {
