@@ -123,16 +123,15 @@ WARNING: No cpu cfs period support
 
 ## Images installieren
 
-```console
-docker pull avanux/smartapplianceenabler-java-download-arm32
-docker tag avanux/smartapplianceenabler-java-download-arm32 avanux/smartapplianceenabler-java-download
-docker pull avanux/smartapplianceenabler
+Für den *Smart Appliance Enabler* gibt es Images für Raspberry Pi und x86, die jeweils die passende Java-Version beinhalten (deshalb Plaform-spezifische Images).
+Zum Installieren des Images für den Raspberry Pi folgender Befehl:
+```
+docker pull avanux/smartapplianceenabler-arm32
 ```
 
-Für den *Smart Appliance Enabler* gibt es ein Basis-Image (avanux/smartapplianceenabler) und darauf aubauend ein Image für Deutschland (avanux/smartapplianceenabler-de). Letzteres setzt lediglich die Zeitzone auf Ortszeit für Deutschland, was bei der Auswertung von Logs weniger Irritationen mit sich bringt.
-Zum Installieren des Images genügt folgender Befehl:
+Für x86 muss der Befehl wie folgt aussehen:
 ```
-docker pull avanux/smartapplianceenabler
+docker pull avanux/smartapplianceenabler-x86
 ```
 
 ## Docker-Konfiguration
@@ -151,7 +150,7 @@ local               sae
 
 Der *Smart Appliance Enabler* benötig für die Konfiguration des Loggings die Datei ```logback-spring.xml```. Um diese in das soeben erzeugte Volume zu laden, starten wir einen temporären Container, wobei das Volume unter ```/app``` gemountet wird. Im Container wird ```wget``` aufgerufen, um die Logging-Konfigurationsdatei herunterzuladen in das Verzeichnis ```/app``` (und damit auf das Volume).
 ```console
-$ docker run -v sae:/app alpine:3.8 wget https://github.com/camueller/SmartApplianceEnabler/raw/master/logback-spring.xml -O /app/logback-spring.xml
+$ docker run -v sae:/app easypi/alpine-arm wget https://github.com/camueller/SmartApplianceEnabler/raw/master/logback-spring.xml -O /app/logback-spring.xml
 Connecting to github.com (140.82.118.4:443)
 Connecting to raw.githubusercontent.com (151.101.112.133:443)
 logback-spring.xml   100% |*******************************|  2103   0:00:00 ETA
@@ -159,11 +158,11 @@ logback-spring.xml   100% |*******************************|  2103   0:00:00 ETA
 
 Jetzt kann man überprüfung, ob das Volume die benötigen Dateien enthält:
 ```console
-$ docker run -v sae:/app alpine:3.8 ls /app
+$ docker run -v sae:/app easypi/alpine-arm ls /app
 logback-spring.xml
 ```
 
-### Init-System
+### Init-System (********************* Kapitel ist veraltet und muss überarbeitet werden **************************)
 Damit der SAE-Container nach jedem Boot des Raspberry Pi automatisch gestartet wird, muss eine Unit-Datei für SAE in systemd installiert werden.
 Weil das root-Filesystem von ResinOS read-only ist, muss dieses zunächst read-write gemountet werden:
 ```
@@ -193,10 +192,10 @@ docker run -v sae:/app -p 8080:8080 sae
 Dabei wird das SAE-Volume gemounted und der Por 8080 des SAE auf dem localhost ebenfalls als Port 8080 verfügbar gemacht.
 Dabei können über die Docker-Variable _JAVA_OPTS_ auch Properties gesetzt werden:
 ```console
-docker run -v sae:/app -e "JAVA_OPTS=-Dsae.discovery.disable=true" -p 8080:8080 avanux/smartapplianceenabler-arm32:1.4.14
+docker run -v sae:/app -e "JAVA_OPTS=-Dsemp.gateway.address=192.168.178.33" --net=host avanux/smartapplianceenabler-arm32
 ```
 
-### Manueller Start über Init-System
+### Manueller Start über Init-System (********************* Kapitel ist veraltet und muss überarbeitet werden **************************)
 Zum manuellen Starten des Container mit dem *Smart Appliance Enabler* via Init-System genügt folgender Befehl:
 ```
 systemctl start sae

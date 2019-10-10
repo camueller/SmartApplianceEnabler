@@ -1,4 +1,4 @@
-FROM avanux/smartapplianceenabler-java-arm32
+FROM avanux/smartapplianceenabler-java-arm32:8.65.17
 
 MAINTAINER Axel Mueller <axel.mueller@avanux.de>
 
@@ -15,7 +15,7 @@ EXPOSE 8080
 
 RUN apk upgrade --update && apk add --update jq curl tzdata && \
     cp /usr/share/zoneinfo/Europe/Berlin /etc/localtime && echo "Europe/Berlin" > /etc/timezone && apk del tzdata && \
-    curl -o /opt/SmartApplianceEnabler.war -L -k https://github.com/camueller/SmartApplianceEnabler/releases/download/v1.4.14/SmartApplianceEnabler-1.4.14-SNAPSHOT.war
+    curl -o /opt/SmartApplianceEnabler.war -L -k https://github.com/camueller/SmartApplianceEnabler/releases/download/$SAE_VERSION/SmartApplianceEnabler-$SAE_VERSION.war
 
 CMD java $JAVA_OPTS -Djava.awt.headless=true -Xmx256m -Dsae.home=/app -Dlogging.config=/app/logback-spring.xml -jar /opt/SmartApplianceEnabler.war
 
