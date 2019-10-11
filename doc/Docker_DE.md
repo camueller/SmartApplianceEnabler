@@ -147,21 +147,6 @@ root@resin:/# docker volume ls
 DRIVER              VOLUME NAME
 local               sae
 ```
-
-Der *Smart Appliance Enabler* benötig für die Konfiguration des Loggings die Datei ```logback-spring.xml```. Um diese in das soeben erzeugte Volume zu laden, starten wir einen temporären Container, wobei das Volume unter ```/app``` gemountet wird. Im Container wird ```wget``` aufgerufen, um die Logging-Konfigurationsdatei herunterzuladen in das Verzeichnis ```/app``` (und damit auf das Volume).
-```console
-$ docker run -v sae:/app easypi/alpine-arm wget https://github.com/camueller/SmartApplianceEnabler/raw/master/logback-spring.xml -O /app/logback-spring.xml
-Connecting to github.com (140.82.118.4:443)
-Connecting to raw.githubusercontent.com (151.101.112.133:443)
-logback-spring.xml   100% |*******************************|  2103   0:00:00 ETA
-```
-
-Jetzt kann man überprüfung, ob das Volume die benötigen Dateien enthält:
-```console
-$ docker run -v sae:/app easypi/alpine-arm ls /app
-logback-spring.xml
-```
-
 ### Init-System (********************* Kapitel ist veraltet und muss überarbeitet werden **************************)
 Damit der SAE-Container nach jedem Boot des Raspberry Pi automatisch gestartet wird, muss eine Unit-Datei für SAE in systemd installiert werden.
 Weil das root-Filesystem von ResinOS read-only ist, muss dieses zunächst read-write gemountet werden:
