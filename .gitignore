@@ -15,3 +15,5 @@ target
 /captures
 /src/main/angular/node_modules
 /src/main/resources/static
+/docker/sae-arm32/image.release
+/docker/sae-arm32/releases
