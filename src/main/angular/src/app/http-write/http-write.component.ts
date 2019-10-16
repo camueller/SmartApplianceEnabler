@@ -56,7 +56,7 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked {
   }
 
   ngOnInit() {
-    this.httpWrite = this.httpWrite || new HttpWrite();
+    this.httpWrite = this.httpWrite || HttpWrite.createWithSingleChild();
     this.errorMessages = new ErrorMessages('HttpWriteComponent.error.', [
       new ErrorMessage(this.getFormControlName('url'), ValidatorType.required, 'url'),
       new ErrorMessage(this.getFormControlName('url'), ValidatorType.pattern, 'url'),

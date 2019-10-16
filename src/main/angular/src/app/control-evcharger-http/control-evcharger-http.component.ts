@@ -105,7 +105,7 @@ export class ControlEvchargerHttpComponent implements OnInit, AfterViewChecked {
   }
 
   addHttpRead() {
-    const httpRead = new HttpRead();
+    const httpRead = HttpRead.createWithSingleChild();
     if (!this.evHttpControl.httpReads) {
       this.evHttpControl.httpReads = [];
     }
@@ -114,7 +114,7 @@ export class ControlEvchargerHttpComponent implements OnInit, AfterViewChecked {
   }
 
   addHttpWrite() {
-    const httpWrite = new HttpWrite();
+    const httpWrite = HttpWrite.createWithSingleChild();
     if (!this.evHttpControl.httpWrites) {
       this.evHttpControl.httpWrites = [];
     }
