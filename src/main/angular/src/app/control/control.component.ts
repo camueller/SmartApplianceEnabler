@@ -169,5 +169,6 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
     }
     this.controlService.updateControl(this.control, this.applianceId).subscribe(
       () => this.appliancesReloadService.reload());
+    this.form.markAsPristine();
   }
 }
