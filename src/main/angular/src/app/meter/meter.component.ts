@@ -123,5 +123,6 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
     }
     this.meterService.updateMeter(this.meter, this.applianceId).subscribe(
       () => this.appliancesReloadService.reload());
+    this.form.markAsPristine();
   }
 }
