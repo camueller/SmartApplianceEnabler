@@ -93,7 +93,7 @@ export class HttpWriteValueComponent implements OnInit, AfterViewChecked {
 
   expandParentForm(form: FormGroup, httpWriteValue: HttpWriteValue, formHandler: FormHandler) {
     formHandler.addFormControl(form, this.getFormControlName('name'),
-      httpWriteValue ? httpWriteValue.name : undefined);
+      httpWriteValue ? httpWriteValue.name : undefined, [Validators.required]);
     formHandler.addFormControl(form, this.getFormControlName('value'),
       httpWriteValue ? httpWriteValue.value : undefined);
     if (!this.disableFactorToValue) {

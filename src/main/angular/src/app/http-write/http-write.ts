@@ -12,4 +12,8 @@ export class HttpWrite {
   public constructor(init?: Partial<HttpWrite>) {
     Object.assign(this, init);
   }
+
+  public static createWithSingleChild() {
+    return new HttpWrite({writeValues: [new HttpWriteValue()]});
+  }
 }

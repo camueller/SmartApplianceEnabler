@@ -12,4 +12,8 @@ export class HttpRead {
   public constructor(init?: Partial<HttpRead>) {
     Object.assign(this, init);
   }
+
+  public static createWithSingleChild() {
+    return new HttpRead({readValues: [new HttpReadValue()]});
+  }
 }
