@@ -40,6 +40,7 @@ export class ControlSwitchComponent implements OnInit, AfterViewChecked {
   }
 
   ngOnInit() {
+    this.switch_ = this.switch_ || new Switch();
     this.form = this.parent.form;
     this.expandParentForm(this.form, this.switch_);
     this.errorMessages = new ErrorMessages('ControlSwitchComponent.error.', [
