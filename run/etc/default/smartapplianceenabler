@@ -1,26 +1,49 @@
-# Directory where the SmartApplianceEnabler-*.jar and configuration files are placed
-SAE_HOME=/app
+# user owning the process and the files
+USER=sae
 
-# Set alternate logging configuration
-JAVA_OPTS="${JAVA_OPTS} -Dlogging.config=/app/logback-spring.xml"
+# group owning the process and the files
+GROUP=sae
 
-# Bind to specific network address
+# directory where the Smart Appliance Enabler executable and configuration files are placed
+SAE_HOME=/opt/sae
+
+# pid file
+PID_FILE_DIR=/var/run/sae
+PID_FILE=$PID_FILE_DIR/smartapplianceenabler.pid
+
+# Logging
+#     the application level logging configuration of the Smart Appliance Enabler
+LOGGING_CONFIG=/opt/sae/logback-spring.xml
+#     the redirected stdout
+STDOUT_LOG=/var/log/smartapplianceenabler.log
+#     the redirected stderr
+STDERR_LOG=/var/log/smartapplianceenabler.err
+
+# fully qualified path name of Java Virtual Machine binary
+JAVA_BIN=/usr/bin/java
+
+# Enable this line to disable discovery of this Smart Appliance Enabler instance by the Sunny Home Manager
+# This is useful for testing only.
+#JAVA_OPTS="${JAVA_OPTS} -Dsae.discovery.disable=true"
+
+# Enable this line to bind to let the Smart Appliance Enabler specific network address.
+# This hast Du be the address of one of the local network interfaces.
 #JAVA_OPTS="${JAVA_OPTS} -Dserver.address=192.168.178.33"
 
-# The network address the Sunny Home Manager should use to access the Smart Appliance Enabler
-#JAVA_OPTS="${JAVA_OPTS} -Dsemp.gateway.address=192.168.178.33"
+# Enable this line to set the network address the Sunny Home Manager should use to access this
+# Smart Appliance Enabler instance. Default is the address to which the Smart Appliance Enabler is bound.
+# This line should only be enabled for virtualization scenarios, e.g the Smart Appliance Enabler runs
+# inside a Docker container.
+#JAVA_OPTS="${JAVA_OPTS} -Dsemp.gateway.address=10.0.0.3"
 
-# Change port from default port 8080
-#JAVA_OPTS="${JAVA_OPTS} -Dserver.port=8888"
+# Enable this line to have the Smart Appliance Enabler use a different port. By default port 8080 is used.
+#JAVA_OPTS="${JAVA_OPTS} -Dserver.port=8080"
 
-# The home directory of the Java development kit (JDK). You need at least
-# JDK version 7. If JAVA_HOME is not set, some common directories for
-# OpenJDK and the Oracle JDK are tried.
-#JAVA_HOME=/usr/lib/jvm/java-7-openjdk
+# Headless mode should always be activated
+JAVA_OPTS="${JAVA_OPTS} -Djava.awt.headless=true"
 
-# Activate headless mode and set maximum heap size
-JAVA_OPTS="${JAVA_OPTS} -Djava.awt.headless=true -Xmx256m"
+# Maximum heap size should be 256MB for Smart Appliance Enabler
+JAVA_OPTS="${JAVA_OPTS} -Xmx256m"
 
-# To enable remote debugging uncomment the following line.
-# You will then be able to use a java debugger on port 8000.
+# Enable this line for remote debugging on port 8000
 # JAVA_OPTS="${JAVA_OPTS} -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n"
