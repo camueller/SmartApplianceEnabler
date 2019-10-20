@@ -9,38 +9,35 @@
 # Description:       Enable service provided by daemon.
 ### END INIT INFO
 
-# create PID directory for sae script - will be deleted on each reboot
-if [ ! -d /var/run/sae ]; then
-        mkdir /var/run/sae
-        chown sae:sae /var/run/sae
+NAME=`basename $0`
+if [ -f /etc/default/$NAME ]; then
+	. /etc/default/$NAME
 fi
 
-dir="/opt/sae"
+SAE_JAR=`/usr/bin/find $SAE_HOME -name SmartApplianceEnabler-*ar`
+if [ -z "$SAE_JAR" ]; then
+	log_failure_msg "$SAE_HOME/SmartApplianceEnabler-*ar was not found"
+	exit 1
+fi
 
-# To enable remote debugging add the following options in cmd variable.
-# You will then be able to use a java debugger on port 8000.
-# -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n
+CMD="$JAVA_BIN $JAVA_OPTS -Dlogging.config=$LOGGING_CONFIG -Dsae.pidfile=$PID_FILE -Dsae.home=$SAE_HOME -jar $SAE_JAR"
 
+# create PID file directory - will be deleted on each reboot
+if [ ! -f /var/run/sae ]; then
+        mkdir -p $PID_FILE_DIR
+        chown $USER:$GROUP $PID_FILE_DIR
+fi
 
-# Production Version - with UPNP Discovery (SHM will discover SAE)
-cmd="/usr/bin/java -Dserver.port=8080 -Dserver.address=0.0.0.0 -Djava.awt.headless=true -Xms128M -Xmx256m -Dlogging.config=/opt/sae/logback-spring.xml -Dsae.pidfile=/var/run/sae/smartapplianceenabler.pid -Dsae.home=/opt/sae -Dsae.discovery.disable=false -jar /opt/sae/SmartApplianceEnabler.war"
-
-# DEBUG Version - without UPNP Discovery (SHM will NOT discover SAE)
-#cmd="/usr/bin/java -Dserver.port=8080 -Dserver.address=0.0.0.0 -Djava.awt.headless=true -Xms128M -Xmx256m -Dlogging.config=/opt/sae/logback-spring.xml -Dsae.pidfile=/var/run/sae/smartapplianceenabler.pid -Dsae.home=/opt/sae -Dsae.discovery.disable=true -jar /opt/sae/SmartApplianceEnabler.war"
-
-user="sae"
-
-name=`basename $0`
-pid_file="/var/run/sae/$name.pid"
-stdout_log="/var/log/$name.log"
-stderr_log="/var/log/$name.err"
+# The PID file will be created by the Java process during startup. At this time the Smart Appliance Enabler is not
+# fully running but at least the Java is up and running. If there are any problems later during startup it should show
+# up in the Smart Appliance Enabler log file (/tmp/rolling-<date>.log)
 
 get_pid() {
-    cat "$pid_file"
+    cat "$PID_FILE"
 }
 
 is_running() {
-    [ -f "$pid_file" ] && ps -p `get_pid` > /dev/null 2>&1
+    [ -f "$PID_FILE" ] && ps -p `get_pid` > /dev/null 2>&1
 }
 
 case "$1" in
@@ -48,31 +45,37 @@ case "$1" in
     if is_running; then
         echo "Already started"
     else
-        echo "Starting $name"
-        cd "$dir"
-        if [ -z "$user" ]; then
-            sudo $cmd >> "$stdout_log" 2>> "$stderr_log" &
+        echo "Starting $NAME"
+        cd "$SAE_HOME"
+        if [ -z "$USER" ]; then
+            sudo $CMD >> "$STDOUT_LOG" 2>> "$STDERR_LOG" &
         else
-            sudo -u "$user" $cmd >> "$stdout_log" 2>> "$stderr_log" &
+            sudo -u "$USER" $CMD >> "$STDOUT_LOG" 2>> "$STDERR_LOG" &
         fi
-        echo $! > "$pid_file"
-        if ! is_running; then
-            echo "Unable to start, see $stdout_log and $stderr_log"
+        for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60; do
+            if is_running; then
+                break
+            fi
+            echo -n "."
+            sleep 1
+        done
+        echo
+        if is_running; then
+            echo "Started"
+        else
+            echo "Unable to start, see $STDOUT_LOG and $STDERR_LOG"
             exit 1
         fi
     fi
     ;;
     stop)
     if is_running; then
-        echo -n "Stopping $name.."
+        echo -n "Stopping $NAME.."
         kill `get_pid`
-        for i in 1 2 3 4 5 6 7 8 9 10
-        # for i in `seq 10`
-        do
+        for i in 1 2 3 4 5 6 7 8 9 10; do
             if ! is_running; then
                 break
             fi
-
             echo -n "."
             sleep 1
         done
@@ -83,8 +86,8 @@ case "$1" in
             exit 1
         else
             echo "Stopped"
-            if [ -f "$pid_file" ]; then
-                rm "$pid_file"
+            if [ -f "$PID_FILE" ]; then
+                rm "$PID_FILE"
             fi
         fi
     else

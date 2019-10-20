@@ -163,18 +163,17 @@ Falls die zweite Zeile nicht angezeigt wird, sollte der Raspberry neu gestartet 
 Der *Smart Appliance Enabler* selbst und seine Konfigurationsdateien sollten im Verzeichnis ```/opt/sae``` abgelegt werden, das zunächst erstellt werden muss:
 ```console
 pi@raspberrypi ~ $ sudo mkdir /opt/sae
-pi@raspberrypi ~ $ sudo chown sae:sae /opt/sae
+pi@raspberrypi ~ $ sudo chown -R pi:pi /opt/sae
 ```
 Für die Konfiguration des Loggings wird die Datei ```logback-spring.xml``` benötigt, die einfach heruntergeladen werden kann:
 ```console
 pi@raspberrypi ~ $ wget https://github.com/camueller/SmartApplianceEnabler/raw/master/logback-spring.xml -P /opt/sae
-pi@raspberrypi ~ $ sudo chown -R sae:sae /opt/sae/
 ```
 #### Programm-Download
 Als nächstes wird die Datei ```SmartApplianceEnabler-X.Y.Z.war``` mit dem eigentlichen Programmcode heruntergeladen. *X.Y.Z* steht dabei für die aktuelle Versionsnummer (z.B. 1.2.1), die [hinter dem Download-Button](https://github.com/camueller/SmartApplianceEnabler#smart-appliance-enabler) angezeigt wird. Entsprechend dieser Hinweise muss die Version im nachfolgenden Befehl angepasst werden an 2 Stellen (*v1.2.1* und *SmartApplianceEnabler-1.2.1.war*):
 ```console
 pi@raspberrypi ~ $ wget https://github.com/camueller/SmartApplianceEnabler/releases/download/v1.2.1/SmartApplianceEnabler-1.2.1.war -P /opt/sae
-pi@raspberrypi ~ $ sudo chown -R sae:sae /opt/sae/
+pi@raspberrypi ~ $ sudo chown -R sae:sae /opt/sae
 ```
 
 Nach dem Download sollte geprüft werden, dass die heruntergeladene Programm-Datei ca. 20 MB gross ist - andernfalls wurde möglicherweise eine inkorrekte URL verwendet:
@@ -185,7 +184,7 @@ pi@raspberrypi ~ $ ls -al /opt/sae/*.war
 
 Das init-Script versucht immer /opt/sae/SmartApplianceEnabler.war zu starten - deshalb legen wir einen Link an:
 ```console
-pi@raspberrypi ~ $ sudo ln -s /opt/sae/SmartApplianceEnabler-1.2.1-SNAPSHOT.war SmartApplianceEnabler.war
+pi@raspberrypi ~ $ cd /opt/sae; ln -s /opt/sae/SmartApplianceEnabler-1.2.1-SNAPSHOT.war SmartApplianceEnabler.war
 ```
 
 #### Start
