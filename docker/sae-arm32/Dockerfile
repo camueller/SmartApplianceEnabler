@@ -15,7 +15,7 @@ COPY logback-spring.xml /opt
 
 RUN apk upgrade --update && apk add --update jq curl tzdata && \
     cp /usr/share/zoneinfo/Europe/Berlin /etc/localtime && echo "Europe/Berlin" > /etc/timezone && apk del tzdata && \
-    curl -o /opt/SmartApplianceEnabler.war -L -k https://github.com/camueller/SmartApplianceEnabler/releases/download/v1.4.14/SmartApplianceEnabler-1.4.14-SNAPSHOT.war
+    curl -o /opt/SmartApplianceEnabler.war -L -k https://github.com/camueller/SmartApplianceEnabler/releases/download/1.4.15/SmartApplianceEnabler-1.4.15.war
 
 CMD java $JAVA_OPTS -Djava.awt.headless=true -Xmx256m -Dsae.home=/app -Dlogging.config=/opt/logback-spring.xml -jar /opt/SmartApplianceEnabler.war
 
