@@ -124,9 +124,12 @@ Danach werden Start-Script und zugehörige Konfigurationsdateien heruntergeladen
 ```console
 pi@raspberrypi ~ $ sudo mkdir /opt/sae
 pi@raspberrypi ~ $ sudo groupadd sae
-pi@raspberrypi ~ $ sudo useradd -d /opt/sae -c "SmartApplianceEnabler" -g sae -M sae
+pi@raspberrypi ~ $ sudo useradd -d /opt/sae -c "SmartApplianceEnabler" -g sae -M sae -s /bin/bash
+pi@raspberrypi ~ $ sudo usermod -a -G gpio sae,sudo
+pi@raspberrypi ~ $ sudo passwd sae
+pi@raspberrypi ~ $ sudo cp /home/pi/.profile /opt/sae
+pi@raspberrypi ~ $ sudo cp /home/pi/.bashrc /opt/sae
 pi@raspberrypi ~ $ sudo chown -R sae:sae /opt/sae
-pi@raspberrypi ~ $ sudo usermod -a -G gpio sae
 pi@raspberrypi ~ $ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/etc/init.d/smartapplianceenabler -P /etc/init.d
 pi@raspberrypi ~ $ sudo chown root.root /etc/init.d/smartapplianceenabler
 pi@raspberrypi ~ $ sudo chmod 755 /etc/init.d/smartapplianceenabler
