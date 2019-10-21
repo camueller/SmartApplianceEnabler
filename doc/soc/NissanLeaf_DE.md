@@ -45,8 +45,8 @@ Successfully installed PyYAML-5.1.2 certifi-2019.6.16 chardet-3.0.4 idna-2.8 iso
 
 Jetzt kann das Verzeichnis für das SOC-Script und Konfigurationsdatei angelegt werden:
 ```console
-pi@raspberrypi ~ $ mkdir /app/soc
-pi@raspberrypi ~ $ cd /app/soc
+pi@raspberrypi ~ $ mkdir /opt/sae/soc
+pi@raspberrypi ~ $ cd /opt/sae/soc
 ```
 
 Die Konfigurationsdatei muss den Namen ```config.ini``` haben mit folgendem Inhalt:
@@ -107,28 +107,28 @@ leaf_info = leaf.get_latest_battery_status()
 print("state_of_charge %s" % leaf_info.state_of_charge)
 ```
 
-Damit das SOC-Python-Script von überall aus aufgerufen werden kann und trotzdem die ```config.ini``` gefunden wird, hilft folgendes kleine Shell-Script ```/app/soc/soc.sh```, das vom *Smart Appliance Enabler* aufgerufen wird:
+Damit das SOC-Python-Script von überall aus aufgerufen werden kann und trotzdem die ```config.ini``` gefunden wird, hilft folgendes kleine Shell-Script ```/opt/sae/soc/soc.sh```, das vom *Smart Appliance Enabler* aufgerufen wird:
 
 ```console
 #!/bin/sh
-cd /app/soc
+cd /opt/sae/soc
 python3 ./soc.py
 ```
 
 Das Script muss noch ausführbar gemacht werden:
 ```console
-pi@raspberrypi:/app/soc $ chmod +x soc.sh
+pi@raspberrypi:/opt/sae/soc $ chmod +x soc.sh
 ```
 
 ### Ausführung
 ```console
-pi@raspberrypi:/app/soc $ ./soc.sh
+pi@raspberrypi:/opt/sae/soc $ ./soc.sh
 Prepare Session
 Login...
 state_of_charge 19
 ```
 
-Im *Smart Appliance Enabler* wird als SOC-Script angegeben: ```/app/soc/soc.sh```.
+Im *Smart Appliance Enabler* wird als SOC-Script angegeben: ```/opt/sae/soc/soc.sh```.
 Außerdem muss der nachfolgende *Reguläre Ausdruck* angegeben werden, um aus den Ausgaben den eigentlichen Zahlenwert zu extrahieren:
 ```
 .*state_of_charge (\d+)
