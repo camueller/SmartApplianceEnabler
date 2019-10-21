@@ -691,6 +691,10 @@ public class Appliance implements Validateable, ControlStateChangedListener,
                 remainingEnergy.setMax(max - whAlreadyCharged);
             }
         }
+        if(remainingEnergy.getMax() != null && remainingEnergy.getMax() == 0) {
+            logger.debug("{}: Skip creation of energy request with remaining max energy = 0", id);
+            return null;
+        }
         logger.debug("{}: Remaining energy calculated: {}", id, remainingEnergy);
         return remainingEnergy;
     }
@@ -919,7 +923,7 @@ public class Appliance implements Validateable, ControlStateChangedListener,
                     }
                     else if(request instanceof SocRequest) {
                         EnergyRequest remainingEnergy = calculateRemainingEnergy((SocRequest) request, false);
-                        charger.setChargeAmount(remainingEnergy.getMin());
+                        charger.setChargeAmount(remainingEnergy != null ? remainingEnergy.getMin() : 0);
                     }
                 }
             }
