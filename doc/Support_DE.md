@@ -4,24 +4,13 @@ Wenn sich der *Smart Appliance Enabler* nicht starten lässt oder der *SMA Home 
 
 ## Läuft der Smart Appliance Enabler?
 Ruft man das Start-Script *smartapplianceenabler* mit dem Parameter `status` auf, kann geprüft werden, ob der Service läuft:
+```console
+pi@raspberrypi:~ $ sudo /etc/init.d/smartapplianceenabler status
+Running
 ```
-pi@raspberrypi ~ $ sudo /etc/init.d/smartapplianceenabler status
-● smartapplianceenabler.service - LSB: Start Smart Appliance Enabler.
-   Loaded: loaded (/etc/init.d/smartapplianceenabler; generated; vendor preset: enabled)
-   Active: active (running) since Sun 2018-04-08 09:55:52 CEST; 8min ago
-     Docs: man:systemd-sysv-generator(8)
-  Process: 2137 ExecStop=/etc/init.d/smartapplianceenabler stop (code=exited, status=0/SUCCESS)
-  Process: 2191 ExecStart=/etc/init.d/smartapplianceenabler start (code=exited, status=0/SUCCESS)
-   CGroup: /system.slice/smartapplianceenabler.service
-           └─2203 /usr/lib/jvm/jdk-8-oracle-arm32-vfp-hflt/bin/java -Djava.awt.headless=true -Xmx128M -Dlogging.config=/app/logback-spring.xml -Djava.awt.headless…ar
-
-Apr 08 09:55:13 raspi3 systemd[1]: Starting LSB: Start Smart Appliance Enabler....
-Apr 08 09:55:52 raspi3 smartapplianceenabler[2191]: Starting smartapplianceenabler: smartapplianceenabler.
-Apr 08 09:55:52 raspi3 systemd[1]: Started LSB: Start Smart Appliance Enabler..
-```
+Wenn `Running` angezeigt wird, läuft der *Smart Appliance Enabler*.
 
 ## Log
-
 Der *Smart Appliance Enabler* schreibt seine Log-Daten in das Verzeichnis ```/tmp```, wobei die Dateinamen mit ```rolling``` beginnen gefolgt vom jeweilgen Datum:
 ```
 pi@raspi ~ $ tail -f /tmp/rolling-2018-04-08.log
@@ -41,7 +30,7 @@ pi@raspi ~ $ tail -f /tmp/rolling-2018-04-08.log
 2018-04-08 10:17:30,576 INFO [Thread-7] d.a.s.u.FileHandler [FileHandler.java:55] Using appliance directory /app
 2018-04-08 10:17:30,583 INFO [main] d.a.s.Application [Application.java:95] PID 23914 written to /var/run/smartapplianceenabler.pid
 ```
-Der *Log-Level* steht defaultmäßig auf ```debug```, um im Fehlerfall detaillierte Informationen zu haben. Falls weniger geloggt werden soll, kann der Log-Level auf ```info``` geändert werden in der Datei ```/app/logbacl-spring.xml```:
+Der *Log-Level* steht defaultmäßig auf ```debug```, um im Fehlerfall detaillierte Informationen zu haben. Falls weniger geloggt werden soll, kann der Log-Level auf ```info``` geändert werden in der Datei ```/opt/sae/logback-spring.xml```:
 ```
 ...
 <logger name="de.avanux" level="debug" additivity="false">

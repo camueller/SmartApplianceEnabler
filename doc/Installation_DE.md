@@ -79,7 +79,7 @@ This is a security risk - please login as the 'pi' user and type 'passwd' to set
 pi@raspberrypi:~ $
 ```
 
-### WLAN einrichten (nur Raspberry Pi 3)
+### WLAN einrichten (nicht verfügbar bei Raspberry Pi 2)
 Soll der Raspberry Pi über WLAN statt über Ethernet angebunden werden, müssen SSID und Passwort in die Datei ```/etc/wpa_supplicant/wpa_supplicant.conf``` eingetragen werden. Eine genaue Beschreibung findet sich im Kapitel [ADDING THE NETWORK DETAILS TO THE RASPBERRY PI](https://www.raspberrypi.org/documentation/configuration/wireless/wireless-cli.md).
 
 ### Hostnamen ändern
@@ -117,31 +117,29 @@ pi@raspberrypi ~ $ sudo apt-get install wiringpi
 
 ## Smart Appliance Enabler
 ### Erstinstallation
-Die Installation des *Smart Appliance Enabler* besteht darin, einige Dateien auf den Raspberry zu kopieren.
 
 #### Start-Script und Konfigurationsdateien
-Zunächst werden Start-Script und zugehörige Konfigurationsdateien auf den Raspberry heruntergeladen und gleich die Berechtigungen für dieses Dateien gesetzt:
+Zunächst werden User und Gruppe angelegt, die beim Starten des *Smart Appliance Enabler* verwendet werden und denen bestimmte Dateien/Verzeichnisse gehören.
+Danach werden Start-Script und zugehörige Konfigurationsdateien heruntergeladen und gleich die Berechtigungen für dieses Dateien gesetzt.
 ```console
-axel@tpw520:/data/git/SmartApplianceEnabler$ ssh pi@raspi
-pi@raspi's password: 
-
-The programs included with the Debian GNU/Linux system are free software;
-the exact distribution terms for each program are described in the
-individual files in /usr/share/doc/*/copyright.
-
-Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
-permitted by applicable law.
-Last login: Sun Dec  6 19:17:12 2015
-
+pi@raspberrypi ~ $ sudo mkdir /opt/sae
+pi@raspberrypi ~ $ sudo groupadd sae
+pi@raspberrypi ~ $ sudo useradd -d /opt/sae -c "SmartApplianceEnabler" -g sae -M sae -s /bin/bash
+pi@raspberrypi ~ $ sudo usermod -a -G gpio sae,sudo
+pi@raspberrypi ~ $ sudo passwd sae
+pi@raspberrypi ~ $ sudo cp /home/pi/.profile /opt/sae
+pi@raspberrypi ~ $ sudo cp /home/pi/.bashrc /opt/sae
+pi@raspberrypi ~ $ sudo chown -R sae:sae /opt/sae
 pi@raspberrypi ~ $ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/etc/init.d/smartapplianceenabler -P /etc/init.d
 pi@raspberrypi ~ $ sudo chown root.root /etc/init.d/smartapplianceenabler
 pi@raspberrypi ~ $ sudo chmod 755 /etc/init.d/smartapplianceenabler
-
 pi@raspberrypi ~ $ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/etc/default/smartapplianceenabler -P /etc/default
 pi@raspberrypi ~ $ sudo chown root.root /etc/default/smartapplianceenabler
 pi@raspberrypi ~ $ sudo chmod 644 /etc/default/smartapplianceenabler
-
 ```
+
+Die Datei ```/etc/init.d/smartapplianceenabler``` ist das eigentliche Start-Script für den Dienst *smartapplianceenabler*.
+
 In der Datei ```/etc/default/smartapplianceenabler``` finden sich die Konfigurationseinstellungen für den Dienst *smartapplianceenabler*. Die darin befindlichen Parameter (z.B. Netzwerk-Adresse, Port, Java-Einstellungen, ...) sind in der Datei selbst dokumentiert. Normalerweise sollte man die Datei unverändert lassen können.
 
 Damit der Dienst *smartapplianceenabler* beim Systemstart ebenfalls gestartet wird, muss folgender Befehl ausgeführt werden:
@@ -159,48 +157,45 @@ smartapplianceenabler.service                                            loaded 
 ```
 Falls die zweite Zeile nicht angezeigt wird, sollte der Raspberry neu gestartet werden.
 
-Der *Smart Appliance Enabler* selbst und seine Konfigurationsdateien sollten im Verzeichnis ```/app``` abgelegt werden, das zunächst erstellt werden muss:
-```console
-pi@raspberrypi ~ $ sudo mkdir /app
-pi@raspberrypi ~ $ sudo chown pi.pi /app
-```
 Für die Konfiguration des Loggings wird die Datei ```logback-spring.xml``` benötigt, die einfach heruntergeladen werden kann:
 ```console
-pi@raspberrypi ~ $ wget https://github.com/camueller/SmartApplianceEnabler/raw/master/logback-spring.xml -P /app
+pi@raspberrypi ~ $ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/logback-spring.xml -P /opt/sae
+pi@raspberrypi ~ $ sudo chown -R sae:sae /opt/sae
 ```
 #### Programm-Download
 Als nächstes wird die Datei ```SmartApplianceEnabler-X.Y.Z.war``` mit dem eigentlichen Programmcode heruntergeladen. *X.Y.Z* steht dabei für die aktuelle Versionsnummer (z.B. 1.2.1), die [hinter dem Download-Button](https://github.com/camueller/SmartApplianceEnabler#smart-appliance-enabler) angezeigt wird. Entsprechend dieser Hinweise muss die Version im nachfolgenden Befehl angepasst werden an 2 Stellen (*v1.2.1* und *SmartApplianceEnabler-1.2.1.war*):
 ```console
-pi@raspberrypi ~ $ wget https://github.com/camueller/SmartApplianceEnabler/releases/download/v1.2.1/SmartApplianceEnabler-1.2.1.war -P /app
+pi@raspberrypi ~ $ wget https://github.com/camueller/SmartApplianceEnabler/releases/download/v1.3.50/SmartApplianceEnabler-1.3.50.war -P /opt/sae
+pi@raspberrypi ~ $ sudo chown -R sae:sae /opt/sae
 ```
 
 Nach dem Download sollte geprüft werden, dass die heruntergeladene Programm-Datei ca. 20 MB gross ist - andernfalls wurde möglicherweise eine inkorrekte URL verwendet:
 ```console
-pi@raspberrypi ~ $ ls -al /app/*.war
--rw-r--r-- 1 pi pi 21356486 May  2 19:13 /app/SmartApplianceEnabler-1.2.1-SNAPSHOT.war
+pi@raspberrypi ~ $ ls -al /opt/sae/*.war
+-rw-r--r-- 1 sae sae 23040544 Oct 20 08:49 /opt/sae/SmartApplianceEnabler-1.4.15.war
 ```
 
 #### Start
 Jetzt sollte man den *Smart Appliance Enabler* starten können. Auf einem Raspberry Pi 2 Model B dauert der Start ca. 30 Sekunden.  Dabei sollte man folgende Ausgaben zu sehen bekommen:
 ```console
-pi@raspberrypi ~ $ sudo /etc/init.d/smartapplianceenabler start
-[ ok ] Starting smartapplianceenabler (via systemctl): smartapplianceenabler.service.
+pi@raspberrypi:~ $ sudo /etc/init.d/smartapplianceenabler start
+Starting smartapplianceenabler
+........................................
+Started
 ```
-Sollten statt des ```ok``` andere Meldungen angezeigt werden, helfen [diese Hinweise](Troubleshooting_DE.md) bei der Lokalisierung des Problems.
+Sollte `Started` nicht angezeigt werden oder andere Meldungen erscheinen, helfen [diese Hinweise](Troubleshooting_DE.md) bei der Lokalisierung des Problems.
 
-Eigentlich lässt man Dienste wie *smartapplianceenabler* nicht unter dem Benutzer *root* laufen. Allerdings habe ich bisher keine Möglichkeit gefunden, die Rechte für den Zugriff auf die GPIO-Ports so zu setzen, dass diese auch für andere Benutzer möglich ist.
-
-Wenn der *Smart Appliance Enabler* jetzt läuft, muss als Nächstes die [Konfiguration](Configuration_DE.md) vorgenommen werden.
+Wenn der *Smart Appliance Enabler* läuft, muss als Nächstes die [Konfiguration](Configuration_DE.md) vorgenommen werden.
 
 ### Update
 Das Update einer vorhandenen Version besteht darin, zunächst das alte Programm zu löschen:
 ```console
-pi@raspberrypi ~ $ rm /app/*.war
+pi@raspberrypi ~ $ rm /opt/sae/*.war
 ```
 Jetzt kann die gewünschte Version des Programms heruntergeladen werden, wie im Erstinstallations-Kapitel [Programm-Download](#programm-download) beschrieben.
 Falls das Format der Konfigurationsdatei ```Appliances.xml``` in der neuen Programmversion nicht mehr kompatibel zur alten Version ist oder man sich diesbezüglich unsicher ist, müssen die alten Konfigurationsdateien gelöscht werden:
 ```console
-pi@raspberrypi ~ $ rm /app/Appliances.xml
-pi@raspberrypi ~ $ rm /app/Device2EM.xml
+pi@raspberrypi ~ $ rm /opt/sae/Appliances.xml
+pi@raspberrypi ~ $ rm /opt/sae/Device2EM.xml
 ```
 Nach dem Löschen dieser beiden Datei muss die Konfiguration neu erstellt werden, wie im Kapitel [Konfiguration](Configuration_DE.md) beschrieben.
