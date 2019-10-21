@@ -189,7 +189,7 @@ Das Update einer vorhandenen Version besteht darin, zunächst das alte Programm 
 ```console
 pi@raspberrypi ~ $ rm /opt/sae/*.war
 ```
-Jetzt kann die gewünschte Version des Programms heruntergeladen und der Link neu angelegt werden, wie im Erstinstallations-Kapitel [Programm-Download](#programm-download) beschrieben.
+Jetzt kann die gewünschte Version des Programms heruntergeladen werden, wie im Erstinstallations-Kapitel [Programm-Download](#programm-download) beschrieben.
 Falls das Format der Konfigurationsdatei ```Appliances.xml``` in der neuen Programmversion nicht mehr kompatibel zur alten Version ist oder man sich diesbezüglich unsicher ist, müssen die alten Konfigurationsdateien gelöscht werden:
 ```console
 pi@raspberrypi ~ $ rm /opt/sae/Appliances.xml
