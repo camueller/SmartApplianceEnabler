@@ -761,7 +761,8 @@ public class SaeController {
                         applianceStatus.setCurrentChargePower(chargePower);
                     }
                     applianceStatus.setChargedEnergyAmount(whAlreadyCharged);
-                    applianceStatus.setPlannedEnergyAmount(evCharger.getChargeAmount());
+                    Integer chargeAmount = evCharger.getChargeAmount();
+                    applianceStatus.setPlannedEnergyAmount(chargeAmount != null ? chargeAmount : 0);
                     if (nextRuntimeInterval != null && !nextRuntimeInterval.isUsingOptionalEnergy()) {
                         applianceStatus.setLatestEnd(nextRuntimeInterval.getLatestEnd());
                     }
