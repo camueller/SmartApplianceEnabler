@@ -120,7 +120,7 @@ pi@raspberrypi ~ $ sudo apt-get install wiringpi
 
 #### Start-Script und Konfigurationsdateien
 Zunächst werden User und Gruppe angelegt, die beim Starten des *Smart Appliance Enabler* verwendet werden und denen bestimmte Dateien/Verzeichnisse gehören.
-Danach werden Start-Script und zugehörige Konfigurationsdateien heruntergeladen und gleich die Berechtigungen für dieses Dateien gesetzt.
+Danach werden Start-Script und zugehörige Konfigurationsdateien heruntergeladen und gleich die Berechtigungen für diese Dateien gesetzt.
 ```console
 pi@raspberrypi ~ $ sudo mkdir /opt/sae
 pi@raspberrypi ~ $ sudo groupadd sae
@@ -165,7 +165,7 @@ pi@raspberrypi ~ $ sudo chown -R sae:sae /opt/sae
 #### Programm-Download
 Als nächstes wird die Datei ```SmartApplianceEnabler-X.Y.Z.war``` mit dem eigentlichen Programmcode heruntergeladen. *X.Y.Z* steht dabei für die aktuelle Versionsnummer (z.B. 1.2.1), die [hinter dem Download-Button](https://github.com/camueller/SmartApplianceEnabler#smart-appliance-enabler) angezeigt wird. Entsprechend dieser Hinweise muss die Version im nachfolgenden Befehl angepasst werden an 2 Stellen (*v1.2.1* und *SmartApplianceEnabler-1.2.1.war*):
 ```console
-pi@raspberrypi ~ $ wget https://github.com/camueller/SmartApplianceEnabler/releases/download/v1.3.50/SmartApplianceEnabler-1.3.50.war -P /opt/sae
+pi@raspberrypi ~ $ sudo wget https://github.com/camueller/SmartApplianceEnabler/releases/download/v1.3.50/SmartApplianceEnabler-1.3.50.war -P /opt/sae
 pi@raspberrypi ~ $ sudo chown -R sae:sae /opt/sae
 ```
 
