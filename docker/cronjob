@@ -1,0 +1,2 @@
+#/bin/sh
+sudo -u sae -i sh -c "cd /opt/sae/docker; ./git_check.sh"
