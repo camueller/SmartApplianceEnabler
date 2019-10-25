@@ -9,7 +9,12 @@ import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {ModbusRead} from './modbus-read';
 import {ModbusReadValue} from '../modbus-read-value/modbus-read-value';
-import {fixExpressionChangedAfterItHasBeenCheckedError, getValidInt, getValidString} from '../shared/form-util';
+import {
+  fixExpressionChangedAfterItHasBeenCheckedError,
+  getValidFloat,
+  getValidInt,
+  getValidString
+} from '../shared/form-util';
 import {ModbusReadValueComponent} from '../modbus-read-value/modbus-read-value.component';
 
 @Component({
@@ -166,7 +171,7 @@ export class ModbusReadComponent implements OnInit, AfterViewChecked {
     this.modbusRead.type = getValidString(type);
     this.modbusRead.bytes = getValidInt(bytes);
     this.modbusRead.byteOrder = getValidString(byteOrder);
-    this.modbusRead.address = getValidString(address);
+    this.modbusRead.factorToValue = getValidFloat(factorToValue);
     return this.modbusRead;
   }
 }
