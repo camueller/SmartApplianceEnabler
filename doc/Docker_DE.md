@@ -245,4 +245,4 @@ Wenn man sich den LD_LIBRARY_PATH von Java ausgeben läßt, erhält man:
 java.library.path=/usr/java/packages/lib/arm:/lib:/usr/lib
 ```
 Da `/usr/lib` enthalten ist, müßten `libwiringPi.so` und `libwiringPiDev.so` vom Java-Prozess geladen werden können.
-Dieses Problem werde ich erneut untersuchen, wenn die Umstellung auf eine aktuellere Java-Version abgeschlossen ist (siehe #41). 
+Dieses Problem werde ich erneut untersuchen, wenn die Umstellung auf eine aktuellere Java-Version abgeschlossen ist (siehe [Issue #41](https://github.com/camueller/SmartApplianceEnabler/issues/41). 
