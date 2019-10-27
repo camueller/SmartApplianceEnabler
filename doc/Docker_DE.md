@@ -166,7 +166,7 @@ pi@raspberrypi:~ $ docker run -it --rm -v sae:/opt/sae/data --net=host -e "JAVA_
 ```
 
 ## Hilfreiche Befehle
-### Befehl im laufenden SAE-Container ausführen
+### Befehl im laufenden Smart Appliance Enabler-Container ausführen
 
 ```console
 pi@raspberrypi:~ $ docker container exec $(docker ps -q) ls -al /opt/sae
@@ -178,7 +178,7 @@ drwxr-xr-x    2 root     root          4096 Oct 27 12:17 data
 -rw-r--r--    1 root     root          2103 Oct 27 13:49 logback-spring.xml
 ```
 
-### Shell im laufenden SAE-Container ausführen
+### Shell im laufenden Smart Appliance Enabler-Container ausführen
 Falls man einen Befehl im laufenden Container des *Smart Appliance Enabler* ausführen möchte, kann man mit nachfolgendem Befehl eine entsprechend Shell erzeugen:
 ```console
 pi@raspberrypi:~ $ docker run -it --rm -v sae:/opt/sae/data --entrypoint=/bin/sh avanux/smartapplianceenabler-arm32
@@ -190,7 +190,7 @@ Folgender Befehl zeigt die Ausgaben des *Smart Appliance Enabler* auf der Konsol
 pi@raspberrypi:~ $ docker logs $(docker ps -q)
 ```
 
-### SAE-Logdatei anzeigen
+### Smart Appliance Enabler-Logdatei anzeigen
 Zusätzlich zum Konsole-Log erzeugt der *Smart Appliance Enabler* für jeden Tag eine Log-Datei im ```/tmp```-Verzeichnis.
 Mit dem nachfolgenden Befehl kann dieses angezeigt werden, wobei das Datum entsprechend angepasst werden muss:
 ```console
@@ -198,7 +198,7 @@ pi@raspberrypi:~ $ docker container exec $(docker ps -q) tail -f /tmp/rolling-20
 ```
 
 ## Bekannte Probleme
-### SHE findet SAE nicht ohne --net=host
+### Sunny Home Managaer findet Smart Appliance Enabler nicht ohne --net=host
 Der *Smart Appliance Enabler* implementiert das SEMP-Protokoll von SMA. Dieses Protokoll basiert auf UPnP, welches wiederum IP Multicast benötigt.
 Aktuell unterstützt Docker nicht die Weiterleitung der Multicast-Pakete vom Host in die Dokker-Container.
 Siehe auch https://forums.docker.com/t/multicast-forward-from-host-to-container-for-dlna-discovery/33723
