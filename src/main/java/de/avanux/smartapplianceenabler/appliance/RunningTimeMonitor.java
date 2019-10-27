@@ -127,7 +127,7 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
                 }
             }
             if(this.state.activeTimeframeInterval != null) {
-                this.state.interrupted = true;
+                this.state.interrupted = this.state.wasRunning;
             }
         }
         else {

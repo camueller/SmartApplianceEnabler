@@ -75,8 +75,12 @@ public class Appliance implements Validateable, ControlStateChangedListener,
     private List<Schedule> schedules;
     private transient DateTimeProvider dateTimeProvider = new DateTimeProviderImpl();
     private transient RunningTimeMonitor runningTimeMonitor;
-    private transient boolean acceptControlRecommendations = true;
+    private transient Stack<Boolean> acceptControlRecommendations;
     private transient static final int CONSIDERATION_INTERVAL_DAYS = 2;
+
+    public Appliance() {
+        this.initAcceptControlRecommendations();
+    }
 
     public void setDateTimeProvider(DateTimeProvider dateTimeProvider) {
         this.dateTimeProvider = dateTimeProvider;
@@ -141,16 +145,28 @@ public class Appliance implements Validateable, ControlStateChangedListener,
         this.schedules = schedules;
     }
 
+    private void initAcceptControlRecommendations() {
+        this.acceptControlRecommendations = new Stack<>();
+        setAcceptControlRecommendations(true);
+    }
+
     public boolean isAcceptControlRecommendations() {
         if(this.control instanceof AlwaysOnSwitch) {
             return false;
         }
-        return acceptControlRecommendations;
+        return acceptControlRecommendations.peek();
     }
 
     public void setAcceptControlRecommendations(boolean acceptControlRecommendations) {
-        this.acceptControlRecommendations = acceptControlRecommendations;
-        logger.debug("{} Set acceptControlRecommendations={}", id, acceptControlRecommendations);
+        this.acceptControlRecommendations.push(acceptControlRecommendations);
+        logger.debug("{} Set acceptControlRecommendations={}", id, isAcceptControlRecommendations());
+    }
+
+    public void resetAcceptControlRecommendations() {
+        if(this.acceptControlRecommendations.size() > 1) {
+            this.acceptControlRecommendations.pop();
+        }
+        logger.debug("{} Reset acceptControlRecommendations to {}", id, isAcceptControlRecommendations());
     }
 
     public RunningTimeMonitor getRunningTimeMonitor() {
@@ -950,7 +966,7 @@ public class Appliance implements Validateable, ControlStateChangedListener,
         if(meter != null && ! isEvCharger()) {
             meter.resetEnergyMeter();
         }
-        setAcceptControlRecommendations(true);
+        initAcceptControlRecommendations();
     }
 
     @Override

@@ -13,7 +13,7 @@ import {ControlService} from '../control/control-service';
   styleUrls: ['./status.component.css', '../global.css']
 })
 export class StatusComponent implements OnInit, OnDestroy {
-  applianceStatuses: Status[];
+  applianceStatuses: Status[] = [];
   typePrefix = 'ApplianceComponent.type.';
   translatedTypes = {};
   dows: DayOfWeek[] = [];
@@ -47,6 +47,10 @@ export class StatusComponent implements OnInit, OnDestroy {
         this.translate.get(types).subscribe(translatedTypes => this.translatedTypes = translatedTypes);
       }
     });
+  }
+
+  getApplianceStatus(applianceId: string): Status {
+    return this.applianceStatuses.filter(applianceStatus => applianceStatus.id === applianceId)[0];
   }
 
   getTranslatedType(type: string): string {
@@ -96,7 +100,9 @@ export class StatusComponent implements OnInit, OnDestroy {
   }
 
   onClickStopLight(applianceId: string) {
-    // console.log('CLICK STOP=' + applianceId);
+    // at the end of each timeframe interval acceptControlRecommendations=true is set
+    this.statusService.toggleAppliance(applianceId, false).subscribe(() => this.loadApplianceStatuses());
+    this.statusService.setAcceptControlRecommendations(applianceId, false).subscribe();
   }
 
   /**
@@ -104,8 +110,17 @@ export class StatusComponent implements OnInit, OnDestroy {
    * @param {string} applianceId
    */
   onClickGoLight(applianceId: string) {
-    this.trafficLightClicked = TrafficLight.Green;
-    this.applianceIdClicked = applianceId;
+    const status = this.getApplianceStatus(applianceId)
+    // backend returns "null" if not interrupted but may return "0" right after interruption.
+    if (status.interruptedSince != null) {
+      // only switch on again
+      this.statusService.resetAcceptControlRecommendations(applianceId).subscribe();
+      this.statusService.toggleAppliance(applianceId, true).subscribe(() => this.loadApplianceStatuses());
+    } else {
+      // display form to request runtime parameters
+      this.trafficLightClicked = TrafficLight.Green;
+      this.applianceIdClicked = applianceId;
+    }
   }
 
   onFormSubmitted() {
