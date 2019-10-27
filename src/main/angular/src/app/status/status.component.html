@@ -5,14 +5,16 @@
 <div class="appliances">
   <div class="appliance" *ngFor="let applianceStatus of applianceStatuses">
     <div class="traffic-light">
-      <div class="bulb stopLight" *ngIf="isTrafficLightRed(applianceStatus)"></div>
-      <div class="bulb" *ngIf="!isTrafficLightRed(applianceStatus)"></div>
-      <!--
-      <div class="bulb" *ngIf="!isTrafficLightRed(applianceStatus) && isTrafficLightGreen(applianceStatus)"
-           (click)="onClickStopLight(applianceStatus.id)"
-           [attr.data-tooltip]="'StatusComponent.tooltipStopLight' | translate"
-           data-position="right center"></div>
-      -->
+      <div class="bulb stopLight" *ngIf="isTrafficLightRed(applianceStatus); else stopLightOffClickable"></div>
+      <ng-template #stopLightOffClickable>
+        <div class="bulb" *ngIf="isTrafficLightGreen(applianceStatus) || isTrafficLightGreenBlink(applianceStatus); else stopLightOff"
+             (click)="onClickStopLight(applianceStatus.id)"
+             [attr.data-tooltip]="'StatusComponent.tooltipStopLight' | translate"
+             data-position="right center"></div>
+      </ng-template>
+      <ng-template #stopLightOff>
+        <div class="bulb" *ngIf="!isTrafficLightRed(applianceStatus)"></div>
+      </ng-template>
 
       <div class="bulb" [class.slowLight]="isTrafficLightYellow(applianceStatus)"></div>
 
