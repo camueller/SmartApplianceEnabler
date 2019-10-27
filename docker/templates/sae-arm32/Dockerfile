@@ -4,18 +4,15 @@ MAINTAINER Axel Mueller <axel.mueller@avanux.de>
 
 ENV PATH="/usr/bin:${PATH}"
 ENV JAVA_OPTS=""
+ENV SAE_INSTALL_DIR=/opt/sae
+ENV SAE_HOME=/opt/sae/data
 
 EXPOSE 8080
 
-COPY logback-spring.xml /opt
-# download latest SmartApplianceEnabler release from GitHub to /opt (directory has already been created by parent image)
-#RUN apk upgrade --update && apk add --update jq wget && rm -rf /var/cache/apk/* && echo "#!/bin/bash" > /tmp/install.sh && \
-#    echo "wget -q -O - https://api.github.com/repos/camueller/SmartApplianceEnabler/releases/latest | jq -r '.assets[0].name' | sed 's/.*-\(.*\)\..ar/\1/' | awk '{print \"https://github.com/camueller/SmartApplianceEnabler/releases/download/v\"\$1\"/SmartApplianceEnabler-\"\$1\".jar\"}' | xargs wget -O /opt/SmartApplianceEnabler.war" >> /tmp/install.sh && \
-#    cat /tmp/install.sh && chmod +x /tmp/install.sh && /bin/bash -c /tmp/install.sh
-
-RUN apk upgrade --update && apk add --update jq curl tzdata && \
+RUN apk upgrade --update && apk add --update jq curl tzdata wiringpi && \
     cp /usr/share/zoneinfo/Europe/Berlin /etc/localtime && echo "Europe/Berlin" > /etc/timezone && apk del tzdata && \
-    curl -o /opt/SmartApplianceEnabler.war -L -k https://github.com/camueller/SmartApplianceEnabler/releases/download/@project.version@/SmartApplianceEnabler-@project.version@.war
+    mkdir -p $SAE_INSTALL_DIR && \
+    curl -o $SAE_INSTALL_DIR/logback-spring.xml -L -k https://github.com/camueller/SmartApplianceEnabler/raw/master/logback-spring.xml && \
+    curl -o $SAE_INSTALL_DIR/SmartApplianceEnabler.war -L -k https://github.com/camueller/SmartApplianceEnabler/releases/download/@project.version@/SmartApplianceEnabler-@project.version@.war
 
-CMD java $JAVA_OPTS -Djava.awt.headless=true -Xmx256m -Dsae.home=/app -Dlogging.config=/opt/logback-spring.xml -jar /opt/SmartApplianceEnabler.war
-
+CMD java $JAVA_OPTS -Djava.awt.headless=true -Xmx256m -Dsae.home=$SAE_HOME -Dlogging.config=$SAE_INSTALL_DIR/logback-spring.xml -jar $SAE_INSTALL_DIR/SmartApplianceEnabler.war
