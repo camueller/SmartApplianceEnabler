@@ -67,7 +67,7 @@ public class HttpWriteValue {
     }
 
     public HttpMethod getMethod() {
-        return HttpMethod.valueOf(method);
+        return method != null ? HttpMethod.valueOf(method) : null;
     }
 
     public void setMethod(HttpMethod method) {

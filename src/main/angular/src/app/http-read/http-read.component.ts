@@ -28,9 +28,13 @@ export class HttpReadComponent implements OnInit, AfterViewChecked {
   @Input()
   valueNames: string[];
   @Input()
+  minValues: number;
+  @Input()
   maxValues: number;
   @Input()
   disableFactorToValue = false;
+  @Input()
+  disableRemove = false;
   @Input()
   formControlNamePrefix = '';
   form: FormGroup;
@@ -96,6 +100,10 @@ export class HttpReadComponent implements OnInit, AfterViewChecked {
       }
     }
     return undefined;
+  }
+
+  get isRemoveValuePossible() {
+    return !this.minValues || this.httpRead.readValues.length > this.minValues;
   }
 
   removeHttpRead() {

@@ -34,13 +34,16 @@
         <!--StartingCurrentSwitch>
             <Switch gpio="1" reverseStates="true"/>
         </StartingCurrentSwitch-->
-        <!--HttpSwitch>
+        <HttpSwitch>
             <HttpConfiguration username="hallo" password="ich" />
             <HttpWrite url="http://192.168.178.48/powerOn">
                 <HttpWriteValue name="Off" value="0"/>
                 <HttpWriteValue name="On" value="1"/>
             </HttpWrite>
-        </HttpSwitch-->
+            <HttpRead url="http://espressomaschine/cm?cmnd=Power">
+                <HttpReadValue name="On" extractionRegex=":.ON"/>
+            </HttpRead>
+        </HttpSwitch>
         <!--ModbusSwitch idref="modbus" slaveAddress="150">
             <ModbusWrite address="300" type="Holding">
                 <ModbusWriteValue name="Off" value="0"/>
@@ -49,14 +52,11 @@
         </ModbusSwitch-->
         <!--S0ElectricityMeter gpio="3" pinPullResistance="PULL_DOWN" impulsesPerKwh="1000"/-->
         <!--S0ElectricityMeterNetworked idref="pulsereceiver" impulsesPerKwh="1000"/-->
-        <!--HttpElectricityMeter contentProtocol="json">
-            <HttpRead url="http://192.168.178.48/power">
-                <HttpReadValue name="Power" path="$.dps" factorToValue="0.123"/>
+        <HttpElectricityMeter>
+            <HttpRead url="http://kuehltruhe/cm?cmnd=Status%208">
+                <HttpReadValue name="Power" extractionRegex=",.Power.:(\d+)"/>
             </HttpRead>
-            <HttpRead url="http://192.168.178.48/status">
-                <HttpReadValue name="Energy" path="$.dws" factorToValue="0.0000027778"/>
-            </HttpRead>
-        </HttpElectricityMeter-->
+        </HttpElectricityMeter>
         <!--ModbusElectricityMeter idref="modbus" slaveAddress="1" pollInterval="10" measurementInterval="60">
             <ModbusRead address="0x000C" type="InputFloat">
                 <ModbusReadValue name="Power"/>
@@ -65,11 +65,11 @@
                 <ModbusReadValue name="Energy"/>
             </ModbusRead>
         </ModbusElectricityMeter-->
-        <ModbusElectricityMeter idref="modbus" slaveAddress="2">
+        <!--ModbusElectricityMeter idref="modbus" slaveAddress="2">
             <ModbusRead address="0x000C" bytes="2" byteOrder="BigEndian" type="InputFloat">
                 <ModbusReadValue name="Power"/>
             </ModbusRead>
-        </ModbusElectricityMeter>
+        </ModbusElectricityMeter-->
     </Appliance>
     <Connectivity>
         <ModbusTCP id="modbus" host="127.0.0.1"/>

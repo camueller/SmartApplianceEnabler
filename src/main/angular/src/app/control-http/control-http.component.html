@@ -12,6 +12,17 @@
                   (remove)="onHttpWriteRemove(i)"
                   #httpWriteComponents
   ></app-http-write>
+  <app-http-read [httpRead]="httpSwitch.httpRead"
+                 [disableRemove]="true"
+                 [disableFactorToValue]="true"
+                 [minValues]="1"
+                 [maxValues]="1"
+                 [formControlNamePrefix]="'read'"
+                 [valueNames]="readValueNames"
+                 [translationPrefix]="'ControlHttpComponent.read.'"
+                 [translationKeys]="readValueNameTextKeys"
+  ></app-http-read>
+
   <button type="button" (click)="addHttpWrite()" class="ui button" *ngIf="isAddHttpWritePossible">
     {{'ControlEvchargerHttpComponent.button.addHttpWrite' | translate}}</button>
 </div>
