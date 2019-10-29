@@ -9,7 +9,7 @@
       <div *ngIf="errors[getFormControlName('url')]"
            class="ui negative message">{{errors[getFormControlName('url')]}}</div>
     </div>
-    <div class="field icon-field">
+    <div class="field icon-field" *ngIf="! disableRemove">
       <i (click)="removeHttpRead()" class="icon big red remove circle"></i>
     </div>
   </div>
@@ -26,7 +26,7 @@
           #httpReadValues
         ></app-http-read-value>
       </div>
-      <div class="field icon-field">
+      <div class="field icon-field" *ngIf="isRemoveValuePossible">
         <i (click)="removeHttpReadValue(i)" class="icon big red remove circle"></i>
       </div>
     </div>

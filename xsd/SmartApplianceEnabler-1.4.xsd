@@ -105,7 +105,9 @@
         <xs:sequence>
             <xs:element name="HttpConfiguration" type="HttpConfigurationType" minOccurs="0" />
             <xs:element name="HttpWrite" type="HttpWriteType" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="HttpRead" type="HttpReadType" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
+        <xs:attribute name="contentProtocol" type="ContentProtcolType" />
     </xs:complexType>
 
     <xs:complexType name="ElectricVehicleChargerType">
@@ -187,6 +189,9 @@
             <!-- ModbusElectricityMeter -->
             <xs:enumeration value="Power" />
             <xs:enumeration value="Energy" />
+            <!-- HttpSwitch -->
+            <xs:enumeration value="On" />
+            <xs:enumeration value="Off" />
             <!-- EVModbusControl -->
             <xs:enumeration value="VehicleNotConnected" />
             <xs:enumeration value="VehicleConnected" />

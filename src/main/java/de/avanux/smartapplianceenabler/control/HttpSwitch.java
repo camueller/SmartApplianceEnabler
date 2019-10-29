@@ -20,6 +20,10 @@ package de.avanux.smartapplianceenabler.control;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.http.*;
 import de.avanux.smartapplianceenabler.appliance.ApplianceLifeCycle;
+import de.avanux.smartapplianceenabler.meter.MeterValueName;
+import de.avanux.smartapplianceenabler.protocol.ContentProtocolHandler;
+import de.avanux.smartapplianceenabler.protocol.ContentProtocolType;
+import de.avanux.smartapplianceenabler.protocol.JsonContentProtocolHandler;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import de.avanux.smartapplianceenabler.util.Validateable;
 import org.apache.http.HttpStatus;
@@ -30,17 +34,13 @@ import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Timer;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
  * Changes the on/off state of an appliance by sending an HTTP request.
- * Limitation: Currently the appliance state is not requested by from the appliance but
- * maintained internally.
  *
  * IMPORTANT: The URLs in Appliance.xml have to be escaped (e.g. use "&amp;" instead of "&")
  */
@@ -52,15 +52,22 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
     private HttpConfiguration httpConfiguration;
     @XmlElement(name = "HttpWrite")
     private List<HttpWrite> httpWrites;
+    @XmlElement(name = "HttpRead")
+    private HttpRead httpRead;
+    @XmlAttribute
+    private String contentProtocol;
     private transient String applianceId;
+    private transient HttpHandler httpHandler = new HttpHandler();
     private transient HttpTransactionExecutor httpTransactionExecutor = new HttpTransactionExecutor();
+    private transient ContentProtocolHandler contentContentProtocolHandler;
     protected transient boolean on;
-    transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
+    private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
 
     @Override
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
         this.httpTransactionExecutor.setApplianceId(applianceId);
+        this.httpHandler.setApplianceId(applianceId);
     }
 
     public void setHttpConfiguration(HttpConfiguration httpConfiguration) {
@@ -80,6 +87,7 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
         if(this.httpConfiguration != null) {
             this.httpTransactionExecutor.setConfiguration(this.httpConfiguration);
         }
+        this.httpHandler.setHttpTransactionExecutor(httpTransactionExecutor);
     }
 
     public void validate() {
@@ -104,6 +112,14 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
 
     @Override
     public boolean isOn() {
+        if(this.httpRead != null) {
+            ParentWithChild<HttpRead, HttpReadValue> onRead = HttpRead.getFirstHttpRead(ControlValueName.On.name(),
+                    Collections.singletonList(this.httpRead));
+            if(onRead != null) {
+                return this.httpHandler.getBooleanValue(onRead, getContentContentProtocolHandler());
+            }
+        }
+        // fall back to internal state if no HttpRead is configured
         return on;
     }
 
@@ -130,6 +146,15 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
             }
         }
         return false;
+    }
+
+    public ContentProtocolHandler getContentContentProtocolHandler() {
+        if(this.contentContentProtocolHandler == null) {
+            if(ContentProtocolType.JSON.name().equals(this.contentProtocol)) {
+                this.contentContentProtocolHandler = new JsonContentProtocolHandler();
+            }
+        }
+        return this.contentContentProtocolHandler;
     }
 
     private ControlValueName getValueName(boolean switchOn) {

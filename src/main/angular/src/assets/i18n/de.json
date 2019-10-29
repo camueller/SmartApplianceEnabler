@@ -148,6 +148,7 @@
 
   "ControlHttpComponent.On": "Einschalten",
   "ControlHttpComponent.Off": "Ausschalten",
+  "ControlHttpComponent.read.On": "Eingeschaltet",
 
   "ControlModbusComponent.On": "Einschalten",
   "ControlModbusComponent.Off": "Ausschalten",

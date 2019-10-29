@@ -14,6 +14,7 @@ import {HttpWrite} from '../http-write/http-write';
 import {HttpWriteValue} from '../http-write-value/http-write-value';
 import {fixExpressionChangedAfterItHasBeenCheckedError} from '../shared/form-util';
 import {HttpConfigurationComponent} from '../http-configuration/http-configuration.component';
+import {HttpReadComponent} from '../http-read/http-read.component';
 
 @Component({
   selector: 'app-control-http',
@@ -27,6 +28,8 @@ export class ControlHttpComponent implements OnInit, AfterViewChecked {
   httpConfigurationComp: HttpConfigurationComponent;
   @ViewChildren('httpWriteComponents')
   httpWriteComps: QueryList<HttpWriteComponent>;
+  @ViewChild(HttpReadComponent)
+  httpReadComp: HttpReadComponent;
   @Input()
   applianceId: string;
   @Input()
@@ -71,8 +74,16 @@ export class ControlHttpComponent implements OnInit, AfterViewChecked {
     return [ControlValueName.On, ControlValueName.Off];
   }
 
+  get readValueNames() {
+    return [ControlValueName.On];
+  }
+
   get valueNameTextKeys() {
     return ['ControlHttpComponent.On', 'ControlHttpComponent.Off'];
+  }
+
+  get readValueNameTextKeys() {
+    return ['ControlHttpComponent.read.On'];
   }
 
   getWriteFormControlPrefix(index: number) {
@@ -118,13 +129,15 @@ export class ControlHttpComponent implements OnInit, AfterViewChecked {
         httpWrites.push(httpWrite);
       }
     });
+    const httpRead = this.httpReadComp.updateModelFromForm();
 
-    if (!(httpConfiguration || httpWrites.length > 0)) {
+    if (!(httpConfiguration || httpWrites.length > 0 || httpRead)) {
       return undefined;
     }
 
     this.httpSwitch.httpConfiguration = httpConfiguration;
     this.httpSwitch.httpWrites = httpWrites;
+    this.httpSwitch.httpRead = httpRead;
     return this.httpSwitch;
   }
 }

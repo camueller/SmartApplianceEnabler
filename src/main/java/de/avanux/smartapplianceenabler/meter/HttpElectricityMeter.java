@@ -18,13 +18,14 @@
 package de.avanux.smartapplianceenabler.meter;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import de.avanux.smartapplianceenabler.appliance.ApplianceLifeCycle;
 import de.avanux.smartapplianceenabler.http.*;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolHandler;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolType;
 import de.avanux.smartapplianceenabler.protocol.JsonContentProtocolHandler;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import de.avanux.smartapplianceenabler.util.Validateable;
-import de.avanux.smartapplianceenabler.util.ValueExtractor;
+import de.avanux.smartapplianceenabler.util.RegexUtil;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +42,7 @@ import java.util.*;
  * IMPORTANT: URLs have to be escaped (e.g. use "&amp;" instead of "&")
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class HttpElectricityMeter implements Meter, Validateable, PollPowerExecutor, PollEnergyExecutor,
+public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validateable, PollPowerExecutor, PollEnergyExecutor,
         ApplianceIdConsumer {
 
     private transient Logger logger = LoggerFactory.getLogger(HttpElectricityMeter.class);
@@ -59,7 +60,7 @@ public class HttpElectricityMeter implements Meter, Validateable, PollPowerExecu
     private transient HttpTransactionExecutor httpTransactionExecutor = new HttpTransactionExecutor();
     private transient PollPowerMeter pollPowerMeter = new PollPowerMeter();
     private transient PollEnergyMeter pollEnergyMeter = new PollEnergyMeter();
-    private transient ValueExtractor valueExtractor = new ValueExtractor();
+    private transient HttpHandler httpHandler = new HttpHandler();
     private transient ContentProtocolHandler contentContentProtocolHandler;
 
 
@@ -68,6 +69,7 @@ public class HttpElectricityMeter implements Meter, Validateable, PollPowerExecu
         this.applianceId = applianceId;
         this.pollPowerMeter.setApplianceId(applianceId);
         this.pollEnergyMeter.setApplianceId(applianceId);
+        this.httpHandler.setApplianceId(applianceId);
         this.httpTransactionExecutor.setApplianceId(applianceId);
     }
 
@@ -189,6 +191,7 @@ public class HttpElectricityMeter implements Meter, Validateable, PollPowerExecu
         if(this.httpConfiguration != null) {
             this.httpTransactionExecutor.setConfiguration(this.httpConfiguration);
         }
+        this.httpHandler.setHttpTransactionExecutor(httpTransactionExecutor);
     }
 
     @Override
@@ -259,39 +262,7 @@ public class HttpElectricityMeter implements Meter, Validateable, PollPowerExecu
     }
 
     private float getValue(ParentWithChild<HttpRead, HttpReadValue> read) {
-        if(read != null) {
-            String url = read.parent().getUrl();
-            String data = read.child().getData();
-            HttpMethod httpMethod = data != null ? HttpMethod.POST : HttpMethod.GET;
-            String path = read.child().getPath();
-            String valueExtractionRegex = read.child().getExtractionRegex();
-            Double factorToValue = read.child().getFactorToValue();
-            String response = this.httpTransactionExecutor.execute(httpMethod, url, data);
-            logger.debug("{}: url={} httpMethod={} data={} path={} valueExtractionRegex={} factorToValue={}",
-                    applianceId, url, httpMethod, data, path, valueExtractionRegex, factorToValue);
-            if(response != null) {
-                logger.debug("{}: Response: {}", applianceId, response);
-                String protocolHandlerValue = response;
-                ContentProtocolHandler contentProtocolHandler = getContentContentProtocolHandler();
-                if(contentProtocolHandler != null) {
-                    contentProtocolHandler.parse(response);
-                    protocolHandlerValue = contentProtocolHandler.readValue(path);
-                }
-                String extractedValue = valueExtractor.extractValue(protocolHandlerValue, valueExtractionRegex);
-                String parsableString = extractedValue.replace(',', '.');
-                Float value;
-                if(factorToValue != null) {
-                    value = Double.valueOf(Double.parseDouble(parsableString) * factorToValue).floatValue();
-                }
-                else {
-                    value = Double.valueOf(Double.parseDouble(parsableString)).floatValue();
-                }
-                logger.debug("{}: value={} contentProtocolHandler={} extracted={}",
-                        applianceId, value, protocolHandlerValue, extractedValue);
-                return value;
-            }
-        }
-        return 0.0f;
+        return this.httpHandler.getFloatValue(read, getContentContentProtocolHandler());
     }
 
     public ContentProtocolHandler getContentContentProtocolHandler() {
