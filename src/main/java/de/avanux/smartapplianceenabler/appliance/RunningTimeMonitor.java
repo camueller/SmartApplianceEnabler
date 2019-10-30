@@ -281,11 +281,13 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
      * @param now
      * @param timeframeIntervalToBeActivated the timeframe interval or null
      */
-    public void activateTimeframeInterval(LocalDateTime now, TimeframeInterval timeframeIntervalToBeActivated) {
+    public synchronized void activateTimeframeInterval(LocalDateTime now, TimeframeInterval timeframeIntervalToBeActivated) {
+        logger.debug("{}: Begin interval (de-)activation: {}", applianceId, timeframeIntervalToBeActivated);
         TimeframeInterval deactivatedTimeframeInterval = this.state.activeTimeframeInterval;
         boolean wasRunning = this.state.wasRunning;
         boolean intervalChanged = false;
         if(timeframeIntervalToBeActivated != null && this.state.activeTimeframeInterval == null) {
+            logger.debug("{}: No active interval but will activate this interval: {}", applianceId, timeframeIntervalToBeActivated);
             Schedule schedule = timeframeIntervalToBeActivated.getTimeframe().getSchedule();
             this.state.runningTime = 0;
             this.state.activeRequest = schedule.getRequest();
@@ -293,9 +295,10 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
                 if(schedule.getRequest() instanceof RuntimeRequest) {
                     this.state.remainingMinRunningTimeWhileNotRunning = schedule.getRequest().getMin();
                     this.state.remainingMaxRunningTimeWhileNotRunning = schedule.getRequest().getMax();
+                    logger.debug("{}: Remaining running time reset to schedule defaults.", applianceId);
                 }
                 intervalChanged = true;
-                logger.debug("{}: Interval activated: {}", applianceId, timeframeIntervalToBeActivated);
+                logger.debug("{}: Interval updated from schedule.", applianceId);
             }
         }
         else if(timeframeIntervalToBeActivated == null && this.state.activeTimeframeInterval != null) {
