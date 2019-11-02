@@ -75,10 +75,6 @@ export class HttpWriteValueComponent implements OnInit, AfterViewChecked {
     return this.translatedStrings[textKey];
   }
 
-  get readValueName() {
-    return this.valueNames.length === 1 ? this.valueNames[0] : this.httpWriteValue.name;
-  }
-
   get method() {
     return this.form.controls.method && this.form.controls.method.value;
   }

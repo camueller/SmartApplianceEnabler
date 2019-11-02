@@ -4,7 +4,7 @@
     <select class="ui fluid dropdown" formControlName="{{this.getFormControlName('name')}}">
       <option *ngFor="let aValueName of valueNames"
               [ngValue]="aValueName"
-              [selected]="aValueName==readValueName"
+              [selected]="aValueName==httpReadValue.name"
       >{{getTranslatedValueName(aValueName)}}</option>
     </select>
   </div>

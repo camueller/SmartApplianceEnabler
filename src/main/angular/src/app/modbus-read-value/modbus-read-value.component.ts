@@ -71,10 +71,6 @@ export class ModbusReadValueComponent implements OnInit, AfterViewChecked {
     return this.translatedStrings[textKey];
   }
 
-  get readValueName() {
-    return this.valueNames.length === 1 ? this.valueNames[0] : this.modbusReadValue.name;
-  }
-
   expandParentForm(form: FormGroup, modbusReadValue: ModbusReadValue, formHandler: FormHandler) {
     formHandler.addFormControl(form, this.getFormControlName('name'),
       modbusReadValue ? modbusReadValue.name : undefined,

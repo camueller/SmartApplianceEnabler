@@ -74,10 +74,6 @@ export class HttpReadValueComponent implements OnInit, AfterViewChecked {
     return this.translatedStrings[textKey];
   }
 
-  get readValueName() {
-    return this.valueNames.length === 1 ? this.valueNames[0] : this.httpReadValue.name;
-  }
-
   expandParentForm(form: FormGroup, httpReadValue: HttpReadValue, formHandler: FormHandler) {
     formHandler.addFormControl(form, this.getFormControlName('name'),
       httpReadValue ? httpReadValue.name : undefined,
