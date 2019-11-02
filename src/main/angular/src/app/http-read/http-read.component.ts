@@ -83,7 +83,7 @@ export class HttpReadComponent implements OnInit, AfterViewChecked {
   }
 
   getReadValueFormControlPrefix(index: number) {
-    return `${this.formControlNamePrefix}readValue${index}.`;
+    return `${this.formControlNamePrefix}.readValue${index}.`;
   }
 
   public getTranslatedValueName(valueName: string) {
