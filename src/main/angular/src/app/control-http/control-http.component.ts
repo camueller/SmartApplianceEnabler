@@ -87,7 +87,7 @@ export class ControlHttpComponent implements OnInit, AfterViewChecked {
   }
 
   getWriteFormControlPrefix(index: number) {
-    return `read${index}.`;
+    return `write${index}.`;
   }
 
   get isAddHttpWritePossible() {
