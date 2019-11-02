@@ -1,6 +1,3 @@
-import {ModbusRegisterConfguration} from '../shared/modbus-register-confguration';
-import {ModbusRegisterRead} from '../shared/modbus-register-read';
-import {ModbusRegisterWrite} from '../shared/modbus-register-write';
 import {ModbusRead} from '../modbus-read/modbus-read';
 import {ModbusWrite} from '../modbus-write/modbus-write';
 
