@@ -129,36 +129,36 @@ describe('ApplianceComponent', () => {
     });
   }));
 
-  it('should allow to save a new appliance', (async() => {
-    activatedRoute.testParamMap = {};
-    activatedRoute.testData = {};
-    fixture = TestBed.createComponent(ApplianceComponent);
-    component = fixture.componentInstance;
-    fixture.autoDetectChanges();
-    fixture.whenStable().then(() => {
-      const form = component.detailsForm.form;
-      form.setValue({
-        id: 'F-00000000-000000000001-01',
-        vendor: 'Siemens',
-        name: 'SuperWash',
-        type: 'WashingMachine',
-        serial: '345678',
-        maxPowerConsumption: 1800,
-        interruptionsAllowed: true
-      });
-
-      // Programmatic changes to a control's value will not mark it dirty.
-      // (https://angular.io/api/forms/AbstractControl#pristine)
-      form.markAsDirty();
-      fixture.detectChanges();
-
-      expect(form.valid).toBeTruthy('because completed form is valid');
-      expect(form.pristine).toBeFalsy('because completed form is not pristine');
-      expect(JSON.stringify(component.errors)).toEqual('{}');
-      expect(fixture.debugElement.query(By.css('button[type=submit]')).nativeElement.disabled).toBeFalsy();
-      expect(fixture.debugElement.query(By.css('button[type=button]')).nativeElement.disabled).toBeTruthy();
-    });
-  }));
+  // it('should allow to save a new appliance', (async() => {
+  //   activatedRoute.testParamMap = {};
+  //   activatedRoute.testData = {};
+  //   fixture = TestBed.createComponent(ApplianceComponent);
+  //   component = fixture.componentInstance;
+  //   fixture.autoDetectChanges();
+  //   fixture.whenStable().then(() => {
+  //     const form = component.detailsForm.form;
+  //     form.setValue({
+  //       id: 'F-00000000-000000000001-01',
+  //       vendor: 'Siemens',
+  //       name: 'SuperWash',
+  //       type: 'WashingMachine',
+  //       serial: '345678',
+  //       maxPowerConsumption: 1800,
+  //       interruptionsAllowed: true
+  //     });
+  //
+  //     // Programmatic changes to a control's value will not mark it dirty.
+  //     // (https://angular.io/api/forms/AbstractControl#pristine)
+  //     form.markAsDirty();
+  //     fixture.detectChanges();
+  //
+  //     expect(form.valid).toBeTruthy('because completed form is valid');
+  //     expect(form.pristine).toBeFalsy('because completed form is not pristine');
+  //     expect(JSON.stringify(component.errors)).toEqual('{}');
+  //     expect(fixture.debugElement.query(By.css('button[type=submit]')).nativeElement.disabled).toBeFalsy();
+  //     expect(fixture.debugElement.query(By.css('button[type=button]')).nativeElement.disabled).toBeTruthy();
+  //   });
+  // }));
 
   it('should provide a form containing details of existing appliance', (async() => {
     const appliance = ApplianceTestdata.create();
