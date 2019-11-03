@@ -39,7 +39,7 @@ import {ErrorMessage, ValidatorType} from '../shared/error-message';
   styleUrls: ['./appliance.component.css', '../global.css']
 })
 export class ApplianceComponent implements OnInit, CanDeactivate<ApplianceComponent> {
-  @ViewChild('detailsForm') detailsForm: NgForm;
+  @ViewChild('detailsForm', { static: true }) detailsForm: NgForm;
   appliance: Appliance;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;

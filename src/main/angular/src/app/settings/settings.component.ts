@@ -38,7 +38,7 @@ import {ErrorMessage, ValidatorType} from '../shared/error-message';
   styleUrls: ['../global.css']
 })
 export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponent> {
-  @ViewChild('settingsForm') settingsForm: NgForm;
+  @ViewChild('settingsForm', { static: true }) settingsForm: NgForm;
   settingsDefaults: SettingsDefaults;
   settings: Settings;
   errors: { [key: string]: string } = {};
