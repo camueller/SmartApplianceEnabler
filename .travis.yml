@@ -6,10 +6,6 @@ jdk:
   - oraclejdk8
 node_js:
   - "8"
-addons:
-  apt:
-    packages:
-      - google-chrome-stable
 before_install:
   - wget https://archive.apache.org/dist/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.zip
   - unzip -qq apache-maven-3.3.9-bin.zip
@@ -17,11 +13,3 @@ before_install:
   - export PATH=$M2_HOME/bin:$PATH
 after_success:
   - bash <(curl -s https://codecov.io/bash)
-deploy:
-  provider: pages
-  repo: camueller/SmartApplianceEnabler-web-coverage
-  local_dir: src/main/angular/coverage
-  skip_cleanup: true
-  github_token: $GITHUB_TOKEN # Set in travis-ci.org dashboard
-  on:
-    branch: master
