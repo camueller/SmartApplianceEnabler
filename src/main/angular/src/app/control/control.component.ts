@@ -51,15 +51,15 @@ import {ControlStartingcurrentComponent} from '../control-startingcurrent/contro
 })
 export class ControlComponent implements OnInit, CanDeactivate<ControlComponent> {
   form: FormGroup;
-  @ViewChild(ControlSwitchComponent, { static: true })
+  @ViewChild(ControlSwitchComponent, { static: false })
   controlSwitchComp: ControlSwitchComponent;
-  @ViewChild(ControlModbusComponent, { static: true })
+  @ViewChild(ControlModbusComponent, { static: false })
   controlModbusComp: ControlModbusComponent;
-  @ViewChild(ControlHttpComponent, { static: true })
+  @ViewChild(ControlHttpComponent, { static: false })
   controlHttpComp: ControlHttpComponent;
-  @ViewChild(ControlEvchargerComponent, { static: true })
+  @ViewChild(ControlEvchargerComponent, { static: false })
   controlEvchargerComp: ControlEvchargerComponent;
-  @ViewChild(ControlStartingcurrentComponent, { static: true })
+  @ViewChild(ControlStartingcurrentComponent, { static: false })
   controlStartingcurrentComp: ControlStartingcurrentComponent;
   applianceId: string;
   controlDefaults: ControlDefaults;
@@ -152,6 +152,8 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   }
 
   submitForm() {
+    console.log('submit');
+
     if (this.controlSwitchComp) {
       this.control.switch_ = this.controlSwitchComp.updateModelFromForm();
     }

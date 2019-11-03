@@ -44,11 +44,11 @@ import {AppliancesReloadService} from '../appliance/appliances-reload-service';
 })
 export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
   form: FormGroup;
-  @ViewChild(MeterS0Component, { static: true })
+  @ViewChild(MeterS0Component, { static: false })
   meterS0Comp: MeterS0Component;
-  @ViewChild(MeterModbusComponent, { static: true })
+  @ViewChild(MeterModbusComponent, { static: false })
   meterModbusComp: MeterModbusComponent;
-  @ViewChild(MeterHttpComponent, { static: true })
+  @ViewChild(MeterHttpComponent, { static: false })
   meterHttpComp: MeterHttpComponent;
   applianceId: string;
   meterDefaults: MeterDefaults;
