@@ -61,29 +61,6 @@
             "browserTarget": "smartapplianceenabler:build"
           }
         },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "src/test.ts",
-            "karmaConfig": "./karma.conf.js",
-            "polyfills": "src/polyfills.ts",
-            "tsConfig": "src/tsconfig.spec.json",
-            "scripts": [
-              "node_modules/jquery/dist/jquery.js",
-              "node_modules/semantic-ui-css/semantic.min.js",
-              "node_modules/clockpicker/dist/jquery-clockpicker.min.js"
-            ],
-            "styles": [
-              "src/styles.css",
-              "node_modules/semantic-ui-css/semantic.css",
-              "node_modules/clockpicker/dist/jquery-clockpicker.min.css"
-            ],
-            "assets": [
-              "src/assets",
-              "src/favicon.ico"
-            ]
-          }
-        },
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
