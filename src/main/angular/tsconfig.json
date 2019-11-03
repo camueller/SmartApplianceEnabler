@@ -15,7 +15,14 @@
       "es2017",
       "dom"
     ],
+    "types": [
+      "jest"
+    ],
     "module": "es2015",
     "baseUrl": "./"
-  }
+  },
+  "exclude": [
+    "test.ts",
+    "**/*.spec.ts"
+  ]
 }
