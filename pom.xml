@@ -217,7 +217,7 @@
 									<arguments>
 										<argument>install</argument>
 										<argument>-g</argument>
-										<argument>@angular/cli@1.6.2</argument>
+										<argument>@angular/cli</argument>
 									</arguments>
 								</configuration>
 								<goals>
@@ -282,38 +282,6 @@
 										<argument>install</argument>
 										<argument>@ngx-translate/http-loader</argument>
 										<argument>--save</argument>
-									</arguments>
-								</configuration>
-								<goals>
-									<goal>exec</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>npm-install-karma-coverage-istanbul-reporter</id>
-								<phase>generate-sources</phase>
-								<configuration>
-									<workingDirectory>${project.basedir}/src/main/angular</workingDirectory>
-									<executable>npm</executable>
-									<arguments>
-										<argument>install</argument>
-										<argument>karma-coverage-istanbul-reporter</argument>
-										<argument>--save-dev</argument>
-									</arguments>
-								</configuration>
-								<goals>
-									<goal>exec</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>npm-install-istanbul-cobertura-badger</id>
-								<phase>generate-sources</phase>
-								<configuration>
-									<workingDirectory>${project.basedir}/src/main/angular</workingDirectory>
-									<executable>npm</executable>
-									<arguments>
-										<argument>install</argument>
-										<argument>istanbul-cobertura-badger</argument>
-										<argument>--save-dev</argument>
 									</arguments>
 								</configuration>
 								<goals>
