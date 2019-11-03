@@ -28,7 +28,7 @@ import {MeterValueName} from '../meter/meter-value-name';
 export class MeterHttpComponent implements OnInit, AfterViewChecked {
   @Input()
   httpElectricityMeter: HttpElectricityMeter;
-  @ViewChild(HttpConfigurationComponent)
+  @ViewChild(HttpConfigurationComponent, { static: true })
   httpConfigurationComp: HttpConfigurationComponent;
   @ViewChildren('httpReadComponents')
   httpReadComps: QueryList<HttpReadComponent>;

@@ -24,11 +24,11 @@ import {HttpReadComponent} from '../http-read/http-read.component';
 export class ControlHttpComponent implements OnInit, AfterViewChecked {
   @Input()
   httpSwitch: HttpSwitch;
-  @ViewChild(HttpConfigurationComponent)
+  @ViewChild(HttpConfigurationComponent, { static: true })
   httpConfigurationComp: HttpConfigurationComponent;
   @ViewChildren('httpWriteComponents')
   httpWriteComps: QueryList<HttpWriteComponent>;
-  @ViewChild(HttpReadComponent)
+  @ViewChild(HttpReadComponent, { static: true })
   httpReadComp: HttpReadComponent;
   @Input()
   applianceId: string;

@@ -51,15 +51,15 @@ import {ControlStartingcurrentComponent} from '../control-startingcurrent/contro
 })
 export class ControlComponent implements OnInit, CanDeactivate<ControlComponent> {
   form: FormGroup;
-  @ViewChild(ControlSwitchComponent)
+  @ViewChild(ControlSwitchComponent, { static: true })
   controlSwitchComp: ControlSwitchComponent;
-  @ViewChild(ControlModbusComponent)
+  @ViewChild(ControlModbusComponent, { static: true })
   controlModbusComp: ControlModbusComponent;
-  @ViewChild(ControlHttpComponent)
+  @ViewChild(ControlHttpComponent, { static: true })
   controlHttpComp: ControlHttpComponent;
-  @ViewChild(ControlEvchargerComponent)
+  @ViewChild(ControlEvchargerComponent, { static: true })
   controlEvchargerComp: ControlEvchargerComponent;
-  @ViewChild(ControlStartingcurrentComponent)
+  @ViewChild(ControlStartingcurrentComponent, { static: true })
   controlStartingcurrentComp: ControlStartingcurrentComponent;
   applianceId: string;
   controlDefaults: ControlDefaults;
