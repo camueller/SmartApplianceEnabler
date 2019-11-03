@@ -1,12 +1,14 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {ControlHttpComponent} from './control-http.component';
-import {Component, NO_ERRORS_SCHEMA} from '@angular/core';
+import {Component, DebugElement, NO_ERRORS_SCHEMA} from '@angular/core';
 import {TranslateLoader, TranslateModule, TranslateService} from '@ngx-translate/core';
 import {FakeTranslateLoader} from '../testing/fake-translate-loader';
 import {FormGroup, FormGroupDirective, ReactiveFormsModule} from '@angular/forms';
 import {Level} from '../log/level';
 import {Logger, Options} from '../log/logger';
 import {By} from '@angular/platform-browser';
+import {HttpWriteValue} from '../http-write-value/http-write-value';
+import {HttpWrite} from '../http-write/http-write';
 const translations = require('assets/i18n/de.json');
 
 
@@ -64,7 +66,7 @@ describe('ControlHttpComponent', () => {
 
   describe('Initially', () => {
 
-    it('there is 1 HttpRead', async( () => {
+    it('there is one HttpWrite', async( () => {
       expect(component.httpSwitch.httpWrites.length).toBe(1);
     }));
 
@@ -74,7 +76,7 @@ describe('ControlHttpComponent', () => {
     let button;
 
     beforeEach(() => {
-      button = fixture.debugElement.query(By.css('button'));
+      button = buttonAddHttpWrite();
     });
 
     it('exists and is enabled', async( () => {
@@ -82,17 +84,29 @@ describe('ControlHttpComponent', () => {
       expect(button.nativeElement.disabled).toBeFalsy();
     }));
 
-    it('adds another HttpRead', async( () => {
-      button.triggerEventHandler('click', null);
-      expect(component.httpSwitch.httpWrites.length).toBe(2);
-    }));
+    describe('with one existing HttpWrite', () => {
+      it('another HttpRead can be added if it has one HttpReadValue', async( () => {
+        button.triggerEventHandler('click', null);
+        expect(component.httpSwitch.httpWrites.length).toBe(2);
+      }));
+
+      it('no HttpRead can be added if the existing HttpWrite contains two HttpWriteValue', async( () => {
+        component.httpSwitch.httpWrites[0].writeValues.push(new HttpWriteValue());
+        fixture.detectChanges();
+        expect(buttonAddHttpWrite()).toBeFalsy();
+      }));
+    });
+
+    describe('with two existing HttpWrite', () => {
+      it('no HttpRead can be added if the existing HttpWrite contains two HttpWriteValue', async( () => {
+        component.httpSwitch.httpWrites.push(new HttpWrite());
+        fixture.detectChanges();
+        expect(buttonAddHttpWrite()).toBeFalsy();
+      }));
+    });
   });
 
-  // it('can save', async( () => {
-  //   fixture.detectChanges();
-  //   const compiled = fixture.debugElement.nativeElement;
-  //   console.log('HTML=', compiled.innerHTML);
-  //   expect(component).toBeDefined();
-  // }));
-
+  function buttonAddHttpWrite(): DebugElement {
+    return fixture.debugElement.query(By.css('button'));
+  }
 });
