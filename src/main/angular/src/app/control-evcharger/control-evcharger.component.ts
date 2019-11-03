@@ -41,9 +41,9 @@ export class ControlEvchargerComponent implements OnInit, AfterViewChecked {
   settings: Settings;
   @Input()
   settingsDefaults: SettingsDefaults;
-  @ViewChild(ControlEvchargerModbusComponent, { static: true })
+  @ViewChild(ControlEvchargerModbusComponent, { static: false })
   evChargerModbusComp: ControlEvchargerModbusComponent;
-  @ViewChild(ControlEvchargerHttpComponent, { static: true })
+  @ViewChild(ControlEvchargerHttpComponent, { static: false })
   evChargerHttpComp: ControlEvchargerHttpComponent;
   @ViewChildren('electricVehicles')
   electricVehicleComps: QueryList<ElectricVehicleComponent>;
