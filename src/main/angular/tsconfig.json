@@ -7,7 +7,7 @@
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "es5",
+    "target": "es2015",
     "typeRoots": [
       "node_modules/@types"
     ],
@@ -16,13 +16,18 @@
       "dom"
     ],
     "types": [
-      "jest"
+      "jest",
+      "node"
     ],
-    "module": "es2015",
+    "module": "commonjs",
     "baseUrl": "./"
   },
+  "include": [
+    "**/*.ts"
+  ],
   "exclude": [
-    "test.ts",
-    "**/*.spec.ts"
+    "dist",
+    "build",
+    "node_modules"
   ]
 }
