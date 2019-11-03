@@ -456,6 +456,10 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                 && currentMillis - switchChargingStateTimestamp < switchChargingStateDetectionDelay * 1000);
     }
 
+    public boolean isVehicleNotConnected() {
+        return getState() == State.VEHICLE_NOT_CONNECTED;
+    }
+
     public boolean isVehicleConnected() {
         return getState() == State.VEHICLE_CONNECTED;
     }

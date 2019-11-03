@@ -787,27 +787,32 @@ public class SaeController {
                 }
                 if (control instanceof ElectricVehicleCharger) {
                     ElectricVehicleCharger evCharger = (ElectricVehicleCharger) control;
-                    applianceStatus.setEvIdCharging(evCharger.getConnectedVehicleId());
-                    applianceStatus.setState(evCharger.getState().name());
-                    applianceStatus.setStateLastChangedTimestamp(evCharger.getStateLastChangedTimestamp());
-                    applianceStatus.setSocInitial(evCharger.getConnectedVehicleSoc());
-                    applianceStatus.setSocInitialTimestamp(evCharger.getConnectedVehicleSocTimestamp());
-                    applianceStatus.setSoc(evCharger.getCurrentSoc(meter));
+                    if(evCharger.isVehicleNotConnected()) {
+                        applianceStatus.setControllable(false);
+                    }
+                    else {
+                        applianceStatus.setEvIdCharging(evCharger.getConnectedVehicleId());
+                        applianceStatus.setState(evCharger.getState().name());
+                        applianceStatus.setStateLastChangedTimestamp(evCharger.getStateLastChangedTimestamp());
+                        applianceStatus.setSocInitial(evCharger.getConnectedVehicleSoc());
+                        applianceStatus.setSocInitialTimestamp(evCharger.getConnectedVehicleSocTimestamp());
+                        applianceStatus.setSoc(evCharger.getCurrentSoc(meter));
 
-                    int whAlreadyCharged = 0;
-                    Integer chargePower = evCharger.getChargePower();
-                    if (meter != null) {
-                        whAlreadyCharged = Float.valueOf(meter.getEnergy() * 1000.0f).intValue();
-                        chargePower = meter.getAveragePower();
-                    }
-                    if (control.isOn()) {
-                        applianceStatus.setCurrentChargePower(chargePower);
-                    }
-                    applianceStatus.setChargedEnergyAmount(whAlreadyCharged);
-                    Integer chargeAmount = evCharger.getChargeAmount();
-                    applianceStatus.setPlannedEnergyAmount(chargeAmount != null ? chargeAmount : 0);
-                    if (nextRuntimeInterval != null && !nextRuntimeInterval.isUsingOptionalEnergy()) {
-                        applianceStatus.setLatestEnd(nextRuntimeInterval.getLatestEnd());
+                        int whAlreadyCharged = 0;
+                        Integer chargePower = evCharger.getChargePower();
+                        if (meter != null) {
+                            whAlreadyCharged = Float.valueOf(meter.getEnergy() * 1000.0f).intValue();
+                            chargePower = meter.getAveragePower();
+                        }
+                        if (control.isOn()) {
+                            applianceStatus.setCurrentChargePower(chargePower);
+                        }
+                        applianceStatus.setChargedEnergyAmount(whAlreadyCharged);
+                        Integer chargeAmount = evCharger.getChargeAmount();
+                        applianceStatus.setPlannedEnergyAmount(chargeAmount != null ? chargeAmount : 0);
+                        if (nextRuntimeInterval != null && !nextRuntimeInterval.isUsingOptionalEnergy()) {
+                            applianceStatus.setLatestEnd(nextRuntimeInterval.getLatestEnd());
+                        }
                     }
                 }
                 if (activeTimeframeInterval != null) {
