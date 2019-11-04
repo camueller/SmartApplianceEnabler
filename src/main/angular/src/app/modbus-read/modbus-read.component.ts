@@ -88,17 +88,6 @@ export class ModbusReadComponent implements OnInit, AfterViewChecked {
     return `${this.formControlNamePrefix}readValue${index}.`;
   }
 
-  get valueName() {
-    // TODO ist das so notwendig?
-    if (this.modbusRead.readValues && this.modbusRead.readValues.length === 1) {
-      const modbusReadValue = this.modbusRead.readValues[0];
-      // if (modbusReadValue.name) {
-      //   return this.getTranslatedValueName(modbusReadValue.name);
-      // }
-    }
-    return undefined;
-  }
-
   get type(): string {
     const typeControl = this.form.controls[this.getFormControlName('type')];
     return (typeControl ? typeControl.value : '');

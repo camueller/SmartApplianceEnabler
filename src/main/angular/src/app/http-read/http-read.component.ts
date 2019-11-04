@@ -86,22 +86,6 @@ export class HttpReadComponent implements OnInit, AfterViewChecked {
     return `${this.formControlNamePrefix}.readValue${index}.`;
   }
 
-  public getTranslatedValueName(valueName: string) {
-    const textKey = `${this.translationPrefix}${valueName.toLowerCase()}`;
-    return this.translatedStrings[textKey];
-  }
-
-  get valueName() {
-    // TODO ist das so notwendig?
-    if (this.httpRead.readValues && this.httpRead.readValues.length === 1) {
-      const httpReadValue = this.httpRead.readValues[0];
-      if (httpReadValue.name) {
-        return this.getTranslatedValueName(httpReadValue.name);
-      }
-    }
-    return undefined;
-  }
-
   get isRemoveValuePossible() {
     return !this.minValues || this.httpRead.readValues.length > this.minValues;
   }
