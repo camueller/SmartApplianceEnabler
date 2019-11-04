@@ -557,7 +557,8 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     public void stopCharging() {
         logger.debug("{}: Stop charging process", applianceId);
         control.stopCharging();
-        this.switchChargingStateTimestamp = System.currentTimeMillis();
+        boolean wasInChargingAfterLastVehicleConnected = wasInStateAfterLastState(State.CHARGING, State.VEHICLE_CONNECTED);
+        this.switchChargingStateTimestamp = wasInChargingAfterLastVehicleConnected ? System.currentTimeMillis() : null;
         this.chargeAmount = null;
         this.chargePower = null;
         this.startChargingRequested = false;
