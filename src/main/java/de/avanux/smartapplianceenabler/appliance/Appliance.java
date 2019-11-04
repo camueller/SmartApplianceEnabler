@@ -616,13 +616,17 @@ public class Appliance implements Validateable, ControlStateChangedListener,
                 }
                 else if(request instanceof EnergyRequest) {
                     EnergyRequest remainingEnergy = calculateRemainingEnergy(schedule);
-                    addEnergyRequestInterval(now, runtimeIntervals, activeTimeframeInterval.getInterval(),
-                            remainingEnergy.getMin(), remainingEnergy.getMax());
+                    if(remainingEnergy != null) {
+                        addEnergyRequestInterval(now, runtimeIntervals, activeTimeframeInterval.getInterval(),
+                                remainingEnergy.getMin(), remainingEnergy.getMax());
+                    }
                 }
                 else if(request instanceof SocRequest) {
                     EnergyRequest remainingEnergy = calculateRemainingEnergy((SocRequest) request, true);
-                    addEnergyRequestInterval(now, runtimeIntervals, activeTimeframeInterval.getInterval(),
-                            remainingEnergy.getMin(), remainingEnergy.getMax());
+                    if(remainingEnergy != null) {
+                        addEnergyRequestInterval(now, runtimeIntervals, activeTimeframeInterval.getInterval(),
+                                remainingEnergy.getMin(), remainingEnergy.getMax());
+                    }
                 }
             }
 
@@ -645,8 +649,10 @@ public class Appliance implements Validateable, ControlStateChangedListener,
                 }
                 else if(request instanceof SocRequest) {
                     EnergyRequest remainingEnergy = calculateRemainingEnergy((SocRequest) request, false);
-                    addEnergyRequestInterval(now, runtimeIntervals, interval,
-                            remainingEnergy.getMin(), remainingEnergy.getMax());
+                    if(remainingEnergy != null) {
+                        addEnergyRequestInterval(now, runtimeIntervals, interval,
+                                remainingEnergy.getMin(), remainingEnergy.getMax());
+                    }
                 }
             }
         }
