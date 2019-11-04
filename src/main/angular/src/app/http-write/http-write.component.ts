@@ -83,21 +83,6 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked {
     return `${this.formControlNamePrefix}writeValue${index}.`;
   }
 
-  public getTranslatedValueName(valueName: string) {
-    const textKey = `${this.translationPrefix}${valueName.toLowerCase()}`;
-    return this.translatedStrings[textKey];
-  }
-
-  get valueName() {
-    if (this.httpWrite.writeValues && this.httpWrite.writeValues.length === 1) {
-      const httpWriteValue = this.httpWrite.writeValues[0];
-      if (httpWriteValue.name) {
-        return this.getTranslatedValueName(httpWriteValue.name);
-      }
-    }
-    return undefined;
-  }
-
   removeHttpWrite() {
     this.remove.emit();
   }
