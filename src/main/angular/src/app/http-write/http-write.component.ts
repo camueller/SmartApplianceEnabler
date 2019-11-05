@@ -66,9 +66,11 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked {
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
-    this.translate.get(this.translationKeys).subscribe(translatedStrings => {
-      this.translatedStrings = translatedStrings;
-    });
+    if (this.translate) {
+      this.translate.get(this.translationKeys).subscribe(translatedStrings => {
+        this.translatedStrings = translatedStrings;
+      });
+    }
   }
 
   ngAfterViewChecked() {
