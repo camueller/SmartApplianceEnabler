@@ -55,6 +55,7 @@
     "globals": {
       "ts-jest": {
         "tsConfig": "<rootDir>/tsconfig.json",
+        "diagnostics": false,
         "stringifyContentPathRegex": "\\.html$",
         "astTransformers": [
           "jest-preset-angular/build/InlineFilesTransformer",
