@@ -28,7 +28,6 @@ class MockFormGroupDirective {
 describe('ControlHttpComponent', () => {
   let component: ControlHttpComponent;
   let fixture: ComponentFixture<ControlHttpComponent>;
-  const controlService = jest.fn();
   const mockFormGroupDirective = {form: new FormGroup({})} as MockFormGroupDirective;
 
   beforeEach(async(() => {
@@ -66,7 +65,11 @@ describe('ControlHttpComponent', () => {
 
   describe('Initially', () => {
 
-    it('there is one HttpWrite', async( () => {
+    it('a Http switch exists', () => {
+      expect(component.httpSwitch).toBeTruthy();
+    });
+
+    it('the HttpSwitch contains one HttpWrite', async( () => {
       expect(component.httpSwitch.httpWrites.length).toBe(1);
     }));
 
