@@ -25,10 +25,10 @@
         ></app-http-write-value>
       </div>
       <div class="field icon-field">
-        <i (click)="removeValue(i)" class="icon big red remove circle"></i>
+        <i (click)="removeValue(i)" [ngClass]="getRemoveValueCssClass(i)" class="icon big red remove circle"></i>
       </div>
     </div>
   </div>
 </div>
-<button type="button" (click)="addValue()" class="ui button" *ngIf="isAddValuePossible">
-  {{'HttpWriteComponent.button.addValue' | translate}}</button>
+<button type="button" (click)="addValue()" class="ui button addValue" *ngIf="isAddValuePossible"
+>{{'HttpWriteComponent.button.addValue' | translate}}</button>
