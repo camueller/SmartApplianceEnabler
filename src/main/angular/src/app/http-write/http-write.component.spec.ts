@@ -1,13 +1,17 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {async, ComponentFixture, TestBed, tick, fakeAsync} from '@angular/core/testing';
 import {Component, DebugElement, NO_ERRORS_SCHEMA} from '@angular/core';
 import {HttpWriteComponent} from './http-write.component';
 import {ControlValueName} from '../control/control-value-name';
 import {By} from '@angular/platform-browser';
 import {
+  click,
   createComponentAndConfigure,
   importsFormsAndTranslate,
   providersLoggingAndFormGroupDirective
 } from '../shared/test-util';
+import {HttpWriteValue} from '../http-write-value/http-write-value';
+
+const httpWriteValueStubComponentName = 'httpWriteValue.name';
 
 @Component({
   template: `<app-http-write (remove)="onHttpWriteRemove()" [translationKeys]="['dummy']"></app-http-write>`
@@ -22,6 +26,9 @@ class HttpWriteTestHostComponent {
 
 @Component({selector: 'app-http-write-value', template: ''})
 class HttpWriteValueStubComponent {
+  updateModelFromForm(): HttpWriteValue | undefined {
+    return {name: httpWriteValueStubComponentName} as HttpWriteValue;
+  }
 }
 
 describe('HttpWriteComponent', () => {
@@ -81,7 +88,7 @@ describe('HttpWriteComponent', () => {
       component.httpWrite.writeValues[0].name = ControlValueName.On;
       component.translationPrefix = 'ControlHttpComponent.';
 
-      // fixture.detectChanges();
+      fixture.detectChanges();
       // fixture.whenStable().then(() => {
       //   console.log('HTML=', fixture.debugElement.nativeElement.innerHTML);
       // });
@@ -145,6 +152,71 @@ describe('HttpWriteComponent', () => {
       });
     });
 
+    describe('Button "Weiterer Zustand/Aktion"', () => {
+      beforeEach(() => {
+        expect(component.httpWrite.writeValues.length).toBe(1);
+        expect(component.form.dirty).toBeFalsy();
+        const button = fixture.debugElement.query(By.css('button.addValue'));
+        click(button);
+      });
+
+      it('should add a HttpWriteValue', () => {
+        expect(component.httpWrite.writeValues.length).toBe(2);
+      });
+
+      it('set form to dirty', () => {
+        fixture.whenStable().then(() => {
+          expect(component.form.dirty).toBeTruthy();
+        });
+      });
+    });
+
+    describe('Button "X" (Remove HttpWriteValue)', () => {
+      beforeEach(() => {
+        expect(component.form.dirty).toBeFalsy();
+        const button = fixture.debugElement.query(By.css('i[ng-reflect-ng-class=removeValue0]'));
+        click(button);
+        fixture.detectChanges();
+      });
+
+      it('should remove HttpWriteValue', () => {
+        expect(component.httpWrite.writeValues.length).toBe(0);
+      });
+
+      it('set form to dirty', () => {
+        fixture.whenStable().then(() => {
+          expect(component.form.dirty).toBeTruthy();
+        });
+      });
+    });
+
+    describe('updateModelFromForm', () => {
+
+      const inputValue = 'http://web.de';
+      let httpWrite;
+
+      beforeEach(fakeAsync(() => {
+        const url = fixture.debugElement.query(By.css('input[ng-reflect-name="writeUrl"]'));
+        const urlNE = url.nativeElement;
+        urlNE.value = inputValue;
+        urlNE.dispatchEvent(new Event('input'));
+        tick();
+        httpWrite = component.updateModelFromForm();
+      }));
+
+      describe('return HttpWrite', () => {
+        it('with URL', () => {
+          expect(httpWrite.url).toBe(inputValue);
+        });
+
+        it('with HttpWriteValue', () => {
+          expect(httpWrite.writeValues[0].name).toBe(httpWriteValueStubComponentName);
+        });
+      });
+
+      describe('return undefined', () => {
+      });
+    });
   });
 
 });

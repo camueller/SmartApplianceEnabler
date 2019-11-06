@@ -108,6 +108,10 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked {
     this.form.markAsDirty();
   }
 
+  getRemoveValueCssClass(index: number): string {
+    return `removeValue${index}`;
+  }
+
   expandParentForm(form: FormGroup, httpWrite: HttpWrite, formHandler: FormHandler) {
     formHandler.addFormControl(form, this.getFormControlName('url'),
       httpWrite ? httpWrite.url : undefined,
@@ -129,6 +133,7 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked {
     }
 
     this.httpWrite.url = getValidString(url);
+    this.httpWrite.writeValues = httpWriteValues;
     return this.httpWrite;
   }
 }
