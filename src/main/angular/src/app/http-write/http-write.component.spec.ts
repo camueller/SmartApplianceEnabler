@@ -1,31 +1,27 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {Component, DebugElement, NO_ERRORS_SCHEMA} from '@angular/core';
-import {TranslateLoader, TranslateModule, TranslateService} from '@ngx-translate/core';
-import {FakeTranslateLoader} from '../testing/fake-translate-loader';
-import {FormGroup, FormGroupDirective, ReactiveFormsModule} from '@angular/forms';
-import {Level} from '../log/level';
-import {Logger, Options} from '../log/logger';
 import {HttpWriteComponent} from './http-write.component';
 import {ControlValueName} from '../control/control-value-name';
 import {By} from '@angular/platform-browser';
-
-const translations = require('assets/i18n/de.json');
+import {
+  createComponentAndConfigure,
+  importsFormsAndTranslate,
+  providersLoggingAndFormGroupDirective
+} from '../shared/test-util';
 
 @Component({
   template: `<app-http-write (remove)="onHttpWriteRemove()" [translationKeys]="['dummy']"></app-http-write>`
 })
 class HttpWriteTestHostComponent {
   onHttpWriteRemoveCalled: boolean;
+
   onHttpWriteRemove() {
     this.onHttpWriteRemoveCalled = true;
   }
 }
 
 @Component({selector: 'app-http-write-value', template: ''})
-class HttpWriteValueStubComponent {}
-
-class MockFormGroupDirective {
-  form: FormGroup;
+class HttpWriteValueStubComponent {
 }
 
 describe('HttpWriteComponent', () => {
@@ -36,32 +32,13 @@ describe('HttpWriteComponent', () => {
 
     beforeEach(async(() => {
       TestBed.configureTestingModule({
-        declarations: [
-          HttpWriteComponent,
-          HttpWriteTestHostComponent
-        ],
-        imports: [
-          ReactiveFormsModule,
-          TranslateModule.forRoot({
-            loader: {
-              provide: TranslateLoader,
-              useValue: new FakeTranslateLoader(translations)
-            }
-          })
-        ],
-        providers: [
-          Logger,
-          {provide: Options, useValue: {level: Level.DEBUG}},
-          {provide: FormGroupDirective, useValue: {form: new FormGroup({})} as MockFormGroupDirective}
-        ],
-        schemas: [ NO_ERRORS_SCHEMA ]
+        declarations: [HttpWriteComponent, HttpWriteTestHostComponent],
+        imports: importsFormsAndTranslate(),
+        providers: providersLoggingAndFormGroupDirective(),
+        schemas: [NO_ERRORS_SCHEMA]
       });
-      fixture  = TestBed.createComponent(HttpWriteTestHostComponent);
+      fixture = createComponentAndConfigure(HttpWriteTestHostComponent);
       component = fixture.componentInstance;
-
-      const translate = TestBed.get(TranslateService);
-      translate.use('de');
-
       fixture.detectChanges();
     }));
 
@@ -88,27 +65,12 @@ describe('HttpWriteComponent', () => {
           HttpWriteComponent,
           HttpWriteValueStubComponent,
         ],
-        imports: [
-          ReactiveFormsModule,
-          TranslateModule.forRoot({
-            loader: {
-              provide: TranslateLoader,
-              useValue: new FakeTranslateLoader(translations)
-            }
-          })
-        ],
-        providers: [
-          Logger,
-          {provide: Options, useValue: {level: Level.DEBUG}},
-          {provide: FormGroupDirective, useValue: {form: new FormGroup({})} as MockFormGroupDirective}
-        ],
-        schemas: [ NO_ERRORS_SCHEMA ]
+        imports: importsFormsAndTranslate(),
+        providers: providersLoggingAndFormGroupDirective(),
+        schemas: [NO_ERRORS_SCHEMA]
       });
-      fixture = TestBed.createComponent(HttpWriteComponent);
+      fixture = createComponentAndConfigure(HttpWriteComponent);
       component = fixture.componentInstance;
-
-      const translate = TestBed.get(TranslateService);
-      translate.use('de');
 
       component.formHandler.markLabelsRequired = jest.fn();
       component.translationKeys = ['ControlHttpComponent.On', 'ControlHttpComponent.Off'];
@@ -131,7 +93,7 @@ describe('HttpWriteComponent', () => {
         expect(component.httpWrite).toBeTruthy();
       });
 
-      it('the HttpWrite contains one HttpWriteValue', async( () => {
+      it('the HttpWrite contains one HttpWriteValue', async(() => {
         expect(component.httpWrite.writeValues.length).toBe(1);
       }));
 
