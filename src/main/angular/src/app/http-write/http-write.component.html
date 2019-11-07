@@ -1,4 +1,3 @@
-<h4 class="ui dividing header sae-header" *ngIf="valueName">{{valueName}}</h4>
 <div class="ui hidden divider"></div>
 <div [formGroup]="form">
   <div class="ui fields">
@@ -9,7 +8,7 @@
            class="ui negative message">{{errors[getFormControlName('url')]}}</div>
     </div>
     <div class="field icon-field">
-      <i (click)="removeHttpWrite()" class="icon big red remove circle"></i>
+      <i (click)="removeHttpWrite()" class="icon big red remove circle buttonRemoveHttpWrite"></i>
     </div>
   </div>
   <div *ngFor="let httpWriteValue of httpWrite.writeValues; index as i">
@@ -26,10 +25,10 @@
         ></app-http-write-value>
       </div>
       <div class="field icon-field">
-        <i (click)="removeValue(i)" class="icon big red remove circle"></i>
+        <i (click)="removeValue(i)" [ngClass]="getRemoveValueCssClass(i)" class="icon big red remove circle"></i>
       </div>
     </div>
   </div>
 </div>
-<button type="button" (click)="addValue()" class="ui button" *ngIf="isAddValuePossible">
-  {{'HttpWriteComponent.button.addValue' | translate}}</button>
+<button type="button" (click)="addValue()" class="ui button addValue" *ngIf="isAddValuePossible"
+>{{'HttpWriteComponent.button.addValue' | translate}}</button>

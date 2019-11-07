@@ -41,9 +41,9 @@ describe('StatusEvchargerViewComponent', () => {
   //   component = fixture.componentInstance;
   // });
   //
-  // it('should create', () => {
-  //   component.status = defaultStatus;
-  //   fixture.detectChanges();
-  //   expect(component).toBeTruthy();
-  // });
+  it('should create', () => {
+    // component.status = defaultStatus;
+    // fixture.detectChanges();
+    // expect(component).toBeTruthy();
+  });
 });

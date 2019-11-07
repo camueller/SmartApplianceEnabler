@@ -181,8 +181,7 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
 
     @Override
     public boolean isOn() {
-        Float power = pollPower();
-        return power != null && power > 0;
+        return getAveragePower() > 0;
     }
 
     @Override
