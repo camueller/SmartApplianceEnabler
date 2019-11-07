@@ -11,7 +11,7 @@ import {
 } from '../shared/test-util';
 import {HttpWriteValue} from '../http-write-value/http-write-value';
 
-const httpWriteValueStubComponentName = 'httpWriteValue.name';
+const httpWriteValueUpdateModelFromFormMock = jest.fn();
 
 @Component({
   template: `<app-http-write (remove)="onHttpWriteRemove()" [translationKeys]="['dummy']"></app-http-write>`
@@ -27,7 +27,7 @@ class HttpWriteTestHostComponent {
 @Component({selector: 'app-http-write-value', template: ''})
 class HttpWriteValueStubComponent {
   updateModelFromForm(): HttpWriteValue | undefined {
-    return {name: httpWriteValueStubComponentName} as HttpWriteValue;
+    return httpWriteValueUpdateModelFromFormMock();
   }
 }
 
@@ -192,29 +192,35 @@ describe('HttpWriteComponent', () => {
 
     describe('updateModelFromForm', () => {
 
-      const inputValue = 'http://web.de';
-      let httpWrite;
+      describe('returns HttpWrite', () => {
+        const inputValue = 'http://web.de';
+        const httpWriteValueName = 'httpWriteValue.name';
+        let httpWrite;
 
-      beforeEach(fakeAsync(() => {
-        const url = fixture.debugElement.query(By.css('input[ng-reflect-name="writeUrl"]'));
-        const urlNE = url.nativeElement;
-        urlNE.value = inputValue;
-        urlNE.dispatchEvent(new Event('input'));
-        tick();
-        httpWrite = component.updateModelFromForm();
-      }));
+        beforeEach(fakeAsync(() => {
+          httpWriteValueUpdateModelFromFormMock.mockReturnValue({name: httpWriteValueName} as HttpWriteValue);
+          const url = fixture.debugElement.query(By.css('input[ng-reflect-name="writeUrl"]'));
+          const urlNE = url.nativeElement;
+          urlNE.value = inputValue;
+          urlNE.dispatchEvent(new Event('input'));
+          tick();
+          httpWrite = component.updateModelFromForm();
+        }));
 
-      describe('return HttpWrite', () => {
         it('with URL', () => {
           expect(httpWrite.url).toBe(inputValue);
         });
 
         it('with HttpWriteValue', () => {
-          expect(httpWrite.writeValues[0].name).toBe(httpWriteValueStubComponentName);
+          expect(httpWrite.writeValues[0].name).toBe(httpWriteValueName);
         });
       });
 
-      describe('return undefined', () => {
+      describe('returns undefined', () => {
+        it('if form values have not been changed', () => {
+          httpWriteValueUpdateModelFromFormMock.mockReturnValue(undefined);
+          expect(component.updateModelFromForm()).toBe(undefined);
+        });
       });
     });
   });
