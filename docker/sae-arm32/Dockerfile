@@ -13,6 +13,6 @@ RUN apk upgrade --update && apk add --update jq curl tzdata wiringpi && \
     cp /usr/share/zoneinfo/Europe/Berlin /etc/localtime && echo "Europe/Berlin" > /etc/timezone && apk del tzdata && \
     mkdir -p $SAE_INSTALL_DIR && \
     curl -o $SAE_INSTALL_DIR/logback-spring.xml -L -k https://github.com/camueller/SmartApplianceEnabler/raw/master/logback-spring.xml && \
-    curl -o $SAE_INSTALL_DIR/SmartApplianceEnabler.war -L -k https://github.com/camueller/SmartApplianceEnabler/releases/download/1.4.16/SmartApplianceEnabler-1.4.16.war
+    curl -o $SAE_INSTALL_DIR/SmartApplianceEnabler.war -L -k https://github.com/camueller/SmartApplianceEnabler/releases/download/1.4.17/SmartApplianceEnabler-1.4.17.war
 
 CMD java $JAVA_OPTS -Djava.awt.headless=true -Xmx256m -Dsae.home=$SAE_HOME -Dlogging.config=$SAE_INSTALL_DIR/logback-spring.xml -jar $SAE_INSTALL_DIR/SmartApplianceEnabler.war
