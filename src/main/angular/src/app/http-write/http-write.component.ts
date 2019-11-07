@@ -66,9 +66,11 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked {
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
-    this.translate.get(this.translationKeys).subscribe(translatedStrings => {
-      this.translatedStrings = translatedStrings;
-    });
+    if (this.translate) {
+      this.translate.get(this.translationKeys).subscribe(translatedStrings => {
+        this.translatedStrings = translatedStrings;
+      });
+    }
   }
 
   ngAfterViewChecked() {
@@ -81,21 +83,6 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked {
 
   getWriteValueFormControlPrefix(index: number) {
     return `${this.formControlNamePrefix}writeValue${index}.`;
-  }
-
-  public getTranslatedValueName(valueName: string) {
-    const textKey = `${this.translationPrefix}${valueName.toLowerCase()}`;
-    return this.translatedStrings[textKey];
-  }
-
-  get valueName() {
-    if (this.httpWrite.writeValues && this.httpWrite.writeValues.length === 1) {
-      const httpWriteValue = this.httpWrite.writeValues[0];
-      if (httpWriteValue.name) {
-        return this.getTranslatedValueName(httpWriteValue.name);
-      }
-    }
-    return undefined;
   }
 
   removeHttpWrite() {
@@ -121,6 +108,10 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked {
     this.form.markAsDirty();
   }
 
+  getRemoveValueCssClass(index: number): string {
+    return `removeValue${index}`;
+  }
+
   expandParentForm(form: FormGroup, httpWrite: HttpWrite, formHandler: FormHandler) {
     formHandler.addFormControl(form, this.getFormControlName('url'),
       httpWrite ? httpWrite.url : undefined,
@@ -142,6 +133,7 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked {
     }
 
     this.httpWrite.url = getValidString(url);
+    this.httpWrite.writeValues = httpWriteValues;
     return this.httpWrite;
   }
 }

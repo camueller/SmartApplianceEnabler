@@ -79,17 +79,6 @@ export class ModbusWriteComponent implements OnInit, AfterViewChecked {
     return `${this.formControlNamePrefix}writeValue${index}.`;
   }
 
-  get valueName() {
-    // TODO ist das so notwendig?
-    if (this.modbusWrite.writeValues && this.modbusWrite.writeValues.length === 1) {
-      const modbusReadValue = this.modbusWrite.writeValues[0];
-      // if (modbusReadValue.name) {
-      //   return this.getTranslatedValueName(modbusReadValue.name);
-      // }
-    }
-    return undefined;
-  }
-
   get type(): string {
     const typeControl = this.form.controls[this.getFormControlName('type')];
     return (typeControl ? typeControl.value : '');
