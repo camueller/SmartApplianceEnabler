@@ -31,7 +31,7 @@ export class ControlEvchargerHttpComponent implements OnInit, AfterViewChecked {
   settings: Settings;
   @Input()
   settingsDefaults: SettingsDefaults;
-  contentProtocols = [undefined, ContentProtocol.JSON.toUpperCase()];
+  contentProtocols = [undefined, ContentProtocol.JSON];
   @ViewChild(HttpConfigurationComponent, { static: true })
   httpConfigurationComp: HttpConfigurationComponent;
   @ViewChildren('httpReadComponents')
