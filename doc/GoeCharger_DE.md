@@ -7,7 +7,7 @@ Ein sehr vielseitiges, kompaktes Ladegerät, das auch für den mobilen Einsatz g
 
 ## Konfiguration im Smart Appliance Enabler
 
-Für neuere Wallbe-Wallboxen sollte die Vorlage `wallbe (neuer Controller)` verwendet werden.
-Alle anderen, oben genannten Ladegeräte werden durch die Vorlage `Phoenix Contact EM-CP-PP-ETH` konfiguriert.
+Für die Konfiguration sollte die Vorlage `go-eCharger` verwendet werden.
+Die IP-Adresse bzw. der Hostname in den URL-Felder muss entsprechend angepasst werden. 
 
 ![Konfiguration go-eCharger](../pics/fe/EVChargerGoeCharger.png)
