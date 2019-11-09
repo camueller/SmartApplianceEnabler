@@ -4,7 +4,7 @@ export class EvChargerTemplates {
 
   static getTemplates(): { [name: string]: EvCharger } {
     const templates: { [name: string]: EvCharger } = {};
-    templates['PhoenixContact'] = JSON.parse('{\n' +
+    templates['Phoenix Contact EM-CP-PP-ETH'] = JSON.parse('{\n' +
       '  "@class": "de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger",\n' +
       '  "voltage": null,\n' +
       '  "phases": null,\n' +
