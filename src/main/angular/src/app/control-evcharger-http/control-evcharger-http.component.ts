@@ -3,7 +3,6 @@ import {Settings} from '../settings/settings';
 import {SettingsDefaults} from '../settings/settings-defaults';
 import {ControlContainer, FormGroup, FormGroupDirective} from '@angular/forms';
 import {Logger} from '../log/logger';
-import {TranslateService} from '@ngx-translate/core';
 import {EvHttpControl} from './ev-http-control';
 import {EvModbusReadRegisterName} from '../control-evcharger-modbus/ev-modbus-read-register-name';
 import {EvModbusWriteRegisterName} from '../control-evcharger-modbus/ev-modbus-write-register-name';
@@ -40,35 +39,16 @@ export class ControlEvchargerHttpComponent implements OnInit, AfterViewChecked {
   httpWriteComps: QueryList<HttpWriteComponent>;
   form: FormGroup;
   formHandler: FormHandler;
-  // @Input()
-  // translationKeys: string[];
-  // translatedStrings: string[];
-  // errors: { [key: string]: string } = {};
-  // errorMessages: ErrorMessages;
-  // errorMessageHandler: ErrorMessageHandler;
 
   constructor(private logger: Logger,
-              private parent: FormGroupDirective,
-              private translate: TranslateService) {
-    // this.errorMessageHandler = new ErrorMessageHandler(logger);
+              private parent: FormGroupDirective) {
     this.formHandler = new FormHandler();
   }
 
   ngOnInit() {
     this.evHttpControl = this.evHttpControl || new EvHttpControl();
-    // this.errorMessages = new MeterHttpErrorMessages(this.translate);
     this.form = this.parent.form;
     this.expandParentForm(this.form, this.evHttpControl, this.formHandler);
-    // if (!this.evHttpControl.httpConfiguration) {
-    //   this.evHttpControl.httpConfiguration = new HttpConfiguration();
-    //   this.evHttpControl.httpConfiguration.contentType = 'hallo';
-    // }
-    // this.form.statusChanges.subscribe(() => {
-    //   this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
-    // });
-    // this.translate.get(this.translationKeys).subscribe(translatedStrings => {
-    //   this.translatedStrings = translatedStrings;
-    // });
   }
 
   ngAfterViewChecked() {
