@@ -1,6 +1,6 @@
 # Ladegeräte für Elektro-Fahrzeuge (Wallboxen)
 
-Damit der Sunny Home Manager die Leistung von Ladegeräten für Elekto-Fahrzeuge steuern kann, **muss zur Bestimmung der aktuellen Leistungsaufnahme ein Stromzähler verwendet und im Smart Appliance Enabler konfiguriert werden**!
+Damit der Sunny Home Manager die Leistung von Ladegeräten für Elekto-Fahrzeuge steuern kann, **muss zur Bestimmung der aktuellen Leistungsaufnahme ein Stromzähler im Smart Appliance Enabler konfiguriert werden**!
 
 ## Konfiguration
 ### Appliance
@@ -9,20 +9,17 @@ Um ein Gerät zum Laden von Elektroautos konfigurieren zu können, muss als Typ 
 ![Elektroauto-Ladegerät](../pics/fe/GeraetEV.png)
 
 ### Schalter
-Im *Smart Appliance Enabler* wird ein Ladegerät für Elektro-Autos als komplexer Schalter mit diversen Konfigurationsparametern für den Controller und die Fahrzeuge repräsentiert.
-#### Controller
-Die Konfigurationsparameter richten sich dabei vor allem nach dem im Ladegerät verbauten Controller. Momentan unterstützt der *Smart Appliance Enabler* folgende Controller:
-* [Phoenix Contact EM-CP-PP-ETH](https://www.phoenixcontact.com/online/portal/de?uri=pxc-oc-itemdetail:pid=2902802)
-  * mit folgenden DIP-Schalter-Einstellungen: DIP-Schalter 10 an, alle anderen DIP-Schalter aus
+Im *Smart Appliance Enabler* wird ein Ladegerät für Elektro-Autos als komplexer Schalter mit diversen Konfigurationsparametern und die Fahrzeuge repräsentiert.
 
-Damit die Konfigurationsparameter nicht manuell eingegeben werden müssen, existieren für die unterstützten Controller **Vorlagen**, aus denen die benötigte Konfiguration geladen werden kann.
+Momentan unterstützt der *Smart Appliance Enabler* folgende Ladegeräte für Elektro-Fahrzeuge:
+* [Ladegeräte mit Phoenix Contact EM-CP-PP-ETH-Controller](PhoenixContactEMCPPPETH_DE.md) wie z.B. Walli
+* [go-eCharger](GoeCharger_DE.md)
+* wallbe
 
-![Konfiguration Phoenix Contact](../pics/fe/EVChargerPhoenixContact.png)
-
-Grundsätzlich sollte auch die Verwendung von Controllern möglich sein, die nicht direkt untersützt werden, solange diese über ein unterstütztes Protokoll angebunden werden:
+Der *Smart Appliance Enabler* stellt Vorlagen bereit, welche die Konfiguration für die genannt Ladegeräte beinhalten.
+Darüber hinaus sollte auch die Verwendung von anderen Ladegeräten möglich sein, solange diese über ein unterstütztes Protokoll angebunden werden:
 * [Modbus/TCP](Modbus_DE.md)
-
-Wenn der Controller einen benötigten Wert nicht allein liefert, sondern diese irgendwo in einem Text (XML, JSON, ...) enthalten ist, muss ein [Regex für Extraktion](WertExtraktion_DE.md) angegeben werden.
+* HTTP
 
 #### Fahrzeuge
 Die Konfiguration von Fahrzeugen beinhaltet Parameter zur Steuerung des Ladevorgangs und Standardwerte für Dialoge.

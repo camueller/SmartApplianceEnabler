@@ -57,8 +57,8 @@ Zum Ein-/Ausschalten eines Gerätes unterstützt der *Smart Appliance Enabler* d
 | Protokolle    | Produkte      |
 | ------------- | ------------- |
 | GPIO | [GPIO-basierte Schalter](doc/GPIOSwitch_DE.md) |
-| Modbus | [Modbus-basierte Schalter](doc/ModbusSwitch_DE.md)<br><br>Modbus-basierte Ladegeräte für Elektroautos<ul><li>[Phoenix Contact EM-CP-PP-ETH](doc/EVCharger_DE.md)</li></ul>|
-| HTTP | [HTTP-basierte Schalter](doc/HttpSwitch_DE.md) allgemein<ul></ul>kompatible Produkte<ul><li>[Shelly Plug](doc/ShellyPlug_DE.md)</li><li>[Shelly 4 Pro](doc/Shelly4Pro_DE.md)</li><li>[Edimax SP-2101W](doc/EdimaxSP2101W_DE.md)</li></ul>mit [Tasmota-Firmware](doc/Tasmota_DE.md) nutzbare Produkte<ul><li>[Gosund SP111](doc/GosundSP111_DE.md)</li><li>[Sonoff Pow](doc/SonoffPow_DE.md)</li></ul>|
+| Modbus | [Modbus-basierte Schalter](doc/ModbusSwitch_DE.md)<br><br>[Modbus-basierte Ladegeräte für Elektroautos](doc/EVCharger_DE.md)|
+| HTTP | [HTTP-basierte Schalter](doc/HttpSwitch_DE.md) allgemein<ul></ul>kompatible Produkte<ul><li>[Shelly Plug](doc/ShellyPlug_DE.md)</li><li>[Shelly 4 Pro](doc/Shelly4Pro_DE.md)</li><li>[Edimax SP-2101W](doc/EdimaxSP2101W_DE.md)</li></ul>mit [Tasmota-Firmware](doc/Tasmota_DE.md) nutzbare Produkte<ul><li>[Gosund SP111](doc/GosundSP111_DE.md)</li><li>[Sonoff Pow](doc/SonoffPow_DE.md)</li></ul>[HTTP-basierte Ladegeräte für Elektroautos](doc/EVCharger_DE.md)|
 
 Alle aufgeführten Schalter (außer Ladegeräte für Elektro-Autos) können mit einer [Anlaufstromerkennung](doc/Anlaufstromerkennung_DE.md) verwendet werden, um die Programmierung des Gerätes zu ermöglichen.
 
