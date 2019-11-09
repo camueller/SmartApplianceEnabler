@@ -1,3 +1,3 @@
 export enum ContentProtocol {
-  JSON = 'json',
+  JSON = 'JSON',
 }

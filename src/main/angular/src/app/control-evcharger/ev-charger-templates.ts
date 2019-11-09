@@ -172,7 +172,7 @@ export class EvChargerTemplates {
       '  "vehicles": [],\n' +
       '  "httpControl": {\n' +
       '    "@class": "de.avanux.smartapplianceenabler.http.EVHttpControl",\n' +
-      '    "contentProtocol": "json",\n' +
+      '    "contentProtocol": "JSON",\n' +
       '    "httpConfiguration": null,\n' +
       '    "httpReads": [\n' +
       '      {\n' +
