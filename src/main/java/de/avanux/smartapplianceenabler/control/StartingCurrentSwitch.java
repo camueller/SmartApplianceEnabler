@@ -135,6 +135,9 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
 
     @Override
     public void init() {
+        if(this.control != null) {
+            this.control.init();
+        }
     }
 
     @Override
