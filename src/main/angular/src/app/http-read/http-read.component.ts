@@ -1,4 +1,14 @@
-import {AfterViewChecked, Component, EventEmitter, Input, OnInit, Output, QueryList, ViewChildren} from '@angular/core';
+import {
+  AfterViewChecked,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  QueryList, SimpleChanges,
+  ViewChildren
+} from '@angular/core';
 import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {FormHandler} from '../shared/form-handler';
 import {ErrorMessages} from '../shared/error-messages';
@@ -20,7 +30,7 @@ import {HttpReadValueComponent} from '../http-read-value/http-read-value.compone
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
 })
-export class HttpReadComponent implements OnInit, AfterViewChecked {
+export class HttpReadComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()
   httpRead: HttpRead;
   @ViewChildren('httpReadValues')
@@ -58,13 +68,20 @@ export class HttpReadComponent implements OnInit, AfterViewChecked {
     this.formHandler = new FormHandler();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.httpRead) {
+      this.httpRead = changes.httpRead.currentValue;
+    }
+    this.form = this.parent.form;
+    this.updateForm(this.form, this.httpRead, this.formHandler);
+  }
+
   ngOnInit() {
     this.httpRead = this.httpRead || HttpRead.createWithSingleChild();
     this.errorMessages = new ErrorMessages('HttpReadComponent.error.', [
       new ErrorMessage(this.getFormControlName('url'), ValidatorType.required, 'url'),
       new ErrorMessage(this.getFormControlName('url'), ValidatorType.pattern, 'url'),
     ], this.translate);
-    this.form = this.parent.form;
     this.expandParentForm(this.form, this.httpRead, this.formHandler);
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
@@ -117,6 +134,10 @@ export class HttpReadComponent implements OnInit, AfterViewChecked {
     formHandler.addFormControl(form, this.getFormControlName('url'),
       httpRead ? httpRead.url : undefined,
       [Validators.required, Validators.pattern(InputValidatorPatterns.URL)]);
+  }
+
+  updateForm(form: FormGroup, httpRead: HttpRead, formHandler: FormHandler) {
+    formHandler.setFormControlValue(form, this.getFormControlName('url'), this.httpRead.url);
   }
 
   updateModelFromForm(): HttpRead | undefined {

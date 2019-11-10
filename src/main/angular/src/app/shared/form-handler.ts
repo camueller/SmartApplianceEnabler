@@ -27,6 +27,13 @@ export class FormHandler {
     formGroup.addControl(formControlName, control);
   }
 
+  public setFormControlValue(formGroup: FormGroup, formControlName: string, value: any) {
+    const control = formGroup.controls[formControlName];
+    if (control) {
+      control.setValue(value);
+    }
+  }
+
   registerRequiredValidator(validatorFn: any, formControlName: string) {
     if (validatorFn === Validators.required) {
       this.formControlNamesRequired.push(formControlName);
