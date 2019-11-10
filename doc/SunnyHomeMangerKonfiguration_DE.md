@@ -1,4 +1,7 @@
-# Integration in den Sunny Home Manager (SHM)
+# Sunny Home Manager
+
+## Hinzugfügen neuer Geräte in den Sunny Home Manager (SHM)
+
 Zum Hinzufügen neuer Geräte in den Sunny Home Manager muss auf der Seite
 ```
 Konfiguration -> Geräteübersicht -> Tab: Übersicht Neugeräte
@@ -33,4 +36,8 @@ In der Verbraucherbilanz sollte ab jetzt das neue Gerät aufgeführt werden mit 
 
 ![Verbraucherbilanz](../pics/shm/Verbraucherbilanz.png)
 
-Aktuell unterstützt der Sunny Home Manager maximal 12 Geräte. Zur Gesamtzahl zählen neben den Geräten, die mit dem SEMP Protokoll angesprochen werden, auch z.B. SMA Bluetooth Funksteckdosen - also alle Geräte, die im Sunny Portal in der Verbraucherübersicht angezeigt werden. Wird die zulässige Höchstzahl überschritten, wird das neu angelegte Gerät im Sunny Portal angezeigt, kann jedoch nicht hinzugefügt werden (gelbes Ausrufezeichen, Fehlermeldung "Weder eine Erweiterung noch ein Austausch ist in dieser Geräteklasse möglich").
+## Maximale Anzahl der Geräte im Sunny Portal
+
+Aktuell unterstützt der Sunny Home Manager *maximal 12 Geräte*. Zur Gesamtzahl zählen neben den Geräten, die mit dem SEMP Protokoll angesprochen werden, auch z.B. SMA Bluetooth Funksteckdosen - also alle Geräte, die im Sunny Portal in der Verbraucherübersicht angezeigt werden. Dieses Limit läßt sich auf 22 anheben, wenn man auf einen Rutsch alle Geräte anlegt, solange man weniger als 12 Geräte im *Sunny Portal* anlegt hat. Noch nicht benötige Geräte legt man dann einfach als Platzhalter an und ändert einfach die Daten, wenn man tatsächlich ein Gerät anstatt des Platzhalter haben möchte. Wenn man mehr als 12 Geräte im *Sunny Portal*, darf man die Geräte dort nicht inaktiv setzen, da sie sich nicht wieder aktivieren lassen. Stattdessen sollte man nur die Konfiguration im *Smart Appliance Enabler* entsprechend anpassen. 
+
+Quelle: https://www.photovoltaikforum.com/thread/104060-ger%C3%A4te-mit-home-manager-koppeln-via-semp-ethernet/?postID=1774797#post1774797
