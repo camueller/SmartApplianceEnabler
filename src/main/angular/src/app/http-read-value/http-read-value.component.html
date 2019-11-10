@@ -20,7 +20,7 @@
     <label class="sae-label">{{'HttpReadValueComponent.extractionRegex' | translate}}</label>
     <input type="text" formControlName="{{this.getFormControlName('extractionRegex')}}">
   </div>
-  <div class="two wide field" *ngIf="! disableFactorToValue">
+  <div class="three wide field" *ngIf="! disableFactorToValue">
     <label class="sae-label">{{'HttpReadValueComponent.factorToValue' | translate}}</label>
     <input type="text" formControlName="{{this.getFormControlName('factorToValue')}}">
     <div *ngIf="errors[this.getFormControlName('factorToValue')]"
