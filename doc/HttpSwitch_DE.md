@@ -26,6 +26,6 @@ Wird ein Gerät über HTTP geschaltet, finden sich in der [Log-Datei](Support.md
 Von den nachfolgend aufgeführten Produkten ist bekannt, dass sie mit dem *Smart Appliance Enabler* eingesetzt werden.
 Hinweise zur Konfiguration finden sich ebenfalls auf diesen Seiten.
 
-* [Sonoff Pow](doc/SonoffPow_DE.md)
-* [Edimax SP-2101W](doc/EdimaxSP2101W_DE.md)
-* [Shelly 4 Pro](doc/Shelly4Pro_DE.md)
+* [Sonoff Pow]SonoffPow_DE.md)
+* [Edimax SP-2101W]EdimaxSP2101W_DE.md)
+* [Shelly 4 Pro]Shelly4Pro_DE.md)

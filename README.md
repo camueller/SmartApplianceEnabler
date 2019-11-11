@@ -66,7 +66,7 @@ Alle aufgeführten Schalter (außer Ladegeräte für Elektro-Autos) können mit 
 Für den reibungslosen Einsatz des *Smart Appliance Enabler* sollten die [Montage-Hinweise](doc/Montage_DE.md) beachtet werden.
 
 ## Software
-In den nachfolgenden Kapiteln ist Installation und Konfiguration des *Smart Appliance Enabler* beschrieben. Gegebenenfalls sollte auch das Kapitel [Fragen / Probleme](doc/Troubleshooting_DE.md) konsultiert werden.
+In den nachfolgenden Kapiteln ist Installation und Konfiguration des *Smart Appliance Enabler* beschrieben. Gegebenenfalls sollte auch das Kapitel [Fragen / Probleme](doc/Support_DE.md) konsultiert werden.
 
 ### [Installation](doc/Installation_DE.md)
 Der einfachste Weg zu einem lauffähigen *Smart Appliance Enabler* besteht in der [Installation](doc/Installation_DE.md) einer releasten Version.
@@ -75,7 +75,7 @@ Der einfachste Weg zu einem lauffähigen *Smart Appliance Enabler* besteht in de
 Damit der *Smart Appliance Enabler* die Geräte steuern und deren Stromverbrauch messen kann, ist zusätzlich zur Installation der Software die Erstellung einer [Konfiguration](doc/Configuration_DE.md) erforderlich.
 
 ### [Einstellungen](doc/Settings_DE.md)
-Im oberen Bereich der Seite findet sich der Menüpunkt zur Verwaltung der zentralen [Einstellungen](Settings_DE.md).
+Im oberen Bereich der Seite findet sich der Menüpunkt zur Verwaltung der zentralen [Einstellungen](doc/Settings_DE.md).
 
 ### [Status-Anzeige](doc/Status_DE.md)
 Der Status aller Geräte wird in der [Status-Anzeige](doc/Status_DE.md) übersichtlich dargestellt, wobei der Status jedes Gerätes durch eine **Ampel** visualisiert wird. Die Ampel kann auch zur **manuellen Steuerung** verwendet werden.
