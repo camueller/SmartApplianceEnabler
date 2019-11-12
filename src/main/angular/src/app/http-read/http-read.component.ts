@@ -69,11 +69,11 @@ export class HttpReadComponent implements OnChanges, OnInit, AfterViewChecked {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    this.form = this.parent.form;
     if (changes.httpRead) {
       this.httpRead = changes.httpRead.currentValue;
+      this.updateForm(this.form, this.httpRead, this.formHandler);
     }
-    this.form = this.parent.form;
-    this.updateForm(this.form, this.httpRead, this.formHandler);
   }
 
   ngOnInit() {
@@ -137,7 +137,7 @@ export class HttpReadComponent implements OnChanges, OnInit, AfterViewChecked {
   }
 
   updateForm(form: FormGroup, httpRead: HttpRead, formHandler: FormHandler) {
-    formHandler.setFormControlValue(form, this.getFormControlName('url'), this.httpRead.url);
+    formHandler.setFormControlValue(form, this.getFormControlName('url'), httpRead.url);
   }
 
   updateModelFromForm(): HttpRead | undefined {

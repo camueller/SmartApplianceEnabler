@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {ControlContainer, FormGroup, FormGroupDirective} from '@angular/forms';
 import {FormHandler} from '../shared/form-handler';
 import {Logger} from '../log/logger';
@@ -13,7 +13,7 @@ import {getValidString} from '../shared/form-util';
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
 })
-export class HttpConfigurationComponent implements OnInit {
+export class HttpConfigurationComponent implements OnChanges, OnInit {
   @Input()
   httpConfiguration: HttpConfiguration;
   form: FormGroup;
@@ -25,9 +25,16 @@ export class HttpConfigurationComponent implements OnInit {
     this.formHandler = new FormHandler();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    this.form = this.parent.form;
+    if (changes.httpConfiguration) {
+      this.httpConfiguration = changes.httpConfiguration.currentValue;
+      this.updateForm(this.form, this.httpConfiguration, this.formHandler);
+    }
+  }
+
   ngOnInit(): void {
     this.httpConfiguration = this.httpConfiguration || new HttpConfiguration();
-    this.form = this.parent.form;
     this.expandParentForm(this.form, this.httpConfiguration, this.formHandler);
   }
 
@@ -38,6 +45,12 @@ export class HttpConfigurationComponent implements OnInit {
       httpConfiguration ? httpConfiguration.username : undefined);
     formHandler.addFormControl(form, 'password',
       httpConfiguration ? httpConfiguration.password : undefined);
+  }
+
+  updateForm(form: FormGroup, httpConfiguration: HttpConfiguration, formHandler: FormHandler) {
+    formHandler.setFormControlValue(form, 'contentType', httpConfiguration.contentType);
+    formHandler.setFormControlValue(form, 'username', httpConfiguration.username);
+    formHandler.setFormControlValue(form, 'password', httpConfiguration.password);
   }
 
   updateModelFromForm(): HttpConfiguration | undefined {

@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, Input, OnInit} from '@angular/core';
+import {AfterViewChecked, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {Logger} from '../log/logger';
 import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
@@ -9,6 +9,7 @@ import {HttpReadValue} from './http-read-value';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {getValidFloat, getValidString} from '../shared/form-util';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
+import {HttpConfiguration} from '../http-configuration/http-configuration';
 
 @Component({
   selector: 'app-http-read-value',
@@ -18,7 +19,7 @@ import {ErrorMessage, ValidatorType} from '../shared/error-message';
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
 })
-export class HttpReadValueComponent implements OnInit, AfterViewChecked {
+export class HttpReadValueComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()
   httpReadValue: HttpReadValue;
   @Input()
@@ -46,12 +47,19 @@ export class HttpReadValueComponent implements OnInit, AfterViewChecked {
     this.formHandler = new FormHandler();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    this.form = this.parent.form;
+    if (changes.httpReadValue) {
+      this.httpReadValue = changes.httpReadValue.currentValue;
+      this.updateForm(this.form, this.httpReadValue, this.formHandler);
+    }
+  }
+
   ngOnInit() {
     this.httpReadValue = this.httpReadValue || new HttpReadValue();
     this.errorMessages = new ErrorMessages('HttpReadValueComponent.error.', [
       new ErrorMessage(this.getFormControlName('factorToValue'), ValidatorType.pattern, 'factorToValue'),
     ], this.translate);
-    this.form = this.parent.form;
     this.expandParentForm(this.form, this.httpReadValue, this.formHandler);
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
@@ -88,6 +96,18 @@ export class HttpReadValueComponent implements OnInit, AfterViewChecked {
       formHandler.addFormControl(form, this.getFormControlName('factorToValue'),
         httpReadValue ? httpReadValue.factorToValue : undefined,
         [Validators.pattern(InputValidatorPatterns.FLOAT)]);
+    }
+  }
+
+  updateForm(form: FormGroup, httpReadValue: HttpReadValue, formHandler: FormHandler) {
+    formHandler.setFormControlValue(form, this.getFormControlName('name'), httpReadValue.name);
+    formHandler.setFormControlValue(form, this.getFormControlName('data'), httpReadValue.data);
+    formHandler.setFormControlValue(form, this.getFormControlName('path'), httpReadValue.path);
+    formHandler.setFormControlValue(form, this.getFormControlName('extractionRegex'),
+      httpReadValue.extractionRegex);
+    if (!this.disableFactorToValue) {
+      formHandler.setFormControlValue(form, this.getFormControlName('factorToValue'),
+        httpReadValue.factorToValue);
     }
   }
 

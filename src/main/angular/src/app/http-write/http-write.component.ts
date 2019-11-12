@@ -1,4 +1,14 @@
-import {AfterViewChecked, Component, EventEmitter, Input, OnInit, Output, QueryList, ViewChildren} from '@angular/core';
+import {
+  AfterViewChecked,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  QueryList, SimpleChanges,
+  ViewChildren
+} from '@angular/core';
 import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {FormHandler} from '../shared/form-handler';
 import {ErrorMessages} from '../shared/error-messages';
@@ -11,6 +21,7 @@ import {HttpWriteValue} from '../http-write-value/http-write-value';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {fixExpressionChangedAfterItHasBeenCheckedError, getValidString} from '../shared/form-util';
 import {HttpWriteValueComponent} from '../http-write-value/http-write-value.component';
+import {HttpRead} from '../http-read/http-read';
 
 @Component({
   selector: 'app-http-write',
@@ -20,7 +31,7 @@ import {HttpWriteValueComponent} from '../http-write-value/http-write-value.comp
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
 })
-export class HttpWriteComponent implements OnInit, AfterViewChecked {
+export class HttpWriteComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()
   httpWrite: HttpWrite;
   @ViewChildren('httpWriteValues')
@@ -55,13 +66,20 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked {
     this.formHandler = new FormHandler();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    this.form = this.parent.form;
+    if (changes.httpWrite) {
+      this.httpWrite = changes.httpWrite.currentValue;
+      this.updateForm(this.form, this.httpWrite, this.formHandler);
+    }
+  }
+
   ngOnInit() {
     this.httpWrite = this.httpWrite || HttpWrite.createWithSingleChild();
     this.errorMessages = new ErrorMessages('HttpWriteComponent.error.', [
       new ErrorMessage(this.getFormControlName('url'), ValidatorType.required, 'url'),
       new ErrorMessage(this.getFormControlName('url'), ValidatorType.pattern, 'url'),
     ], this.translate);
-    this.form = this.parent.form;
     this.expandParentForm(this.form, this.httpWrite, this.formHandler);
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
@@ -116,6 +134,10 @@ export class HttpWriteComponent implements OnInit, AfterViewChecked {
     formHandler.addFormControl(form, this.getFormControlName('url'),
       httpWrite ? httpWrite.url : undefined,
       [Validators.required, Validators.pattern(InputValidatorPatterns.URL)]);
+  }
+
+  updateForm(form: FormGroup, httpWrite: HttpWrite, formHandler: FormHandler) {
+    formHandler.setFormControlValue(form, this.getFormControlName('url'), httpWrite.url);
   }
 
   updateModelFromForm(): HttpWrite | undefined {
