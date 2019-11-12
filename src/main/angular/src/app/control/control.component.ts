@@ -16,7 +16,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {ActivatedRoute, CanDeactivate} from '@angular/router';
 import {ControlFactory} from './control-factory';
 import {Switch} from '../control-switch/switch';
@@ -36,31 +36,33 @@ import {Logger} from '../log/logger';
 import {Settings} from '../settings/settings';
 import {SettingsDefaults} from '../settings/settings-defaults';
 import {Appliance} from '../appliance/appliance';
-import {FormControl, FormGroup} from '@angular/forms';
+import {FormGroup} from '@angular/forms';
 import {EvCharger} from '../control-evcharger/ev-charger';
 import {ControlEvchargerComponent} from '../control-evcharger/control-evcharger.component';
 import {ControlHttpComponent} from '../control-http/control-http.component';
 import {ControlSwitchComponent} from '../control-switch/control-switch.component';
 import {ControlModbusComponent} from '../control-modbus/control-modbus.component';
 import {ControlStartingcurrentComponent} from '../control-startingcurrent/control-startingcurrent.component';
+import {FormHandler} from '../shared/form-handler';
 
 @Component({
   selector: 'app-appliance-switch',
   templateUrl: './control.component.html',
   styleUrls: ['../global.css']
 })
-export class ControlComponent implements OnInit, CanDeactivate<ControlComponent> {
-  form: FormGroup;
-  @ViewChild(ControlSwitchComponent, { static: false })
+export class ControlComponent implements OnChanges, OnInit, CanDeactivate<ControlComponent> {
+  @ViewChild(ControlSwitchComponent, {static: false})
   controlSwitchComp: ControlSwitchComponent;
-  @ViewChild(ControlModbusComponent, { static: false })
+  @ViewChild(ControlModbusComponent, {static: false})
   controlModbusComp: ControlModbusComponent;
-  @ViewChild(ControlHttpComponent, { static: false })
+  @ViewChild(ControlHttpComponent, {static: false})
   controlHttpComp: ControlHttpComponent;
-  @ViewChild(ControlEvchargerComponent, { static: false })
+  @ViewChild(ControlEvchargerComponent, {static: false})
   controlEvchargerComp: ControlEvchargerComponent;
-  @ViewChild(ControlStartingcurrentComponent, { static: false })
+  @ViewChild(ControlStartingcurrentComponent, {static: false})
   controlStartingcurrentComp: ControlStartingcurrentComponent;
+  form: FormGroup;
+  formHandler: FormHandler;
   applianceId: string;
   controlDefaults: ControlDefaults;
   control: Control;
@@ -84,6 +86,16 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
               private translate: TranslateService) {
     this.controlFactory = new ControlFactory(logger);
     this.control = this.controlFactory.createEmptyControl();
+    this.formHandler = new FormHandler();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.control) {
+      this.control = changes.control.currentValue;
+    }
+    if (this.form) {
+      this.updateForm(this.form, this.control, this.formHandler);
+    }
   }
 
   ngOnInit() {
@@ -101,7 +113,7 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
       this.appliance = data.appliance;
       this.settings = data.settings;
       this.settingsDefaults = data.settingsDefaults;
-      this.form = this.buildFormGroup();
+      this.form = this.buildForm(this.control, this.formHandler);
       if (!this.control.evCharger && this.appliance.type === 'EVCharger') {
         // there is not type change for ev charger since it is determined by appliance type
         this.typeChanged(EvCharger.TYPE);
@@ -110,11 +122,17 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
     this.form.markAsPristine();
   }
 
-  buildFormGroup(): FormGroup {
-    const fg = new FormGroup({});
-    fg.addControl('controlType', new FormControl(this.control && this.control.type));
-    fg.addControl('startingCurrentDetection', new FormControl(this.control && this.control.startingCurrentDetection));
-    return fg;
+  buildForm(control: Control, formHandler: FormHandler): FormGroup {
+    const form = new FormGroup({});
+    formHandler.addFormControl(form, 'controlType', control && control.type);
+    formHandler.addFormControl(form, 'startingCurrentDetection',
+      control && control.startingCurrentDetection);
+    return form;
+  }
+
+  updateForm(form: FormGroup, control: Control, formHandler: FormHandler) {
+    formHandler.setFormControlValue(form, 'controlType', control.type);
+    formHandler.setFormControlValue(form, 'startingCurrentDetection', control.startingCurrentDetection);
   }
 
   canDeactivate(): Observable<boolean> | boolean {
@@ -152,8 +170,6 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   }
 
   submitForm() {
-    console.log('submit');
-
     if (this.controlSwitchComp) {
       this.control.switch_ = this.controlSwitchComp.updateModelFromForm();
     }
