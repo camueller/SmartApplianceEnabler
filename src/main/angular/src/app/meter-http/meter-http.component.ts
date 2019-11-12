@@ -1,4 +1,14 @@
-import {AfterViewChecked, Component, Input, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
+import {
+  AfterViewChecked,
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  QueryList,
+  SimpleChanges,
+  ViewChild,
+  ViewChildren
+} from '@angular/core';
 import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {HttpElectricityMeter} from './http-electricity-meter';
 import {MeterDefaults} from '../meter/meter-defaults';
@@ -25,7 +35,7 @@ import {MeterValueName} from '../meter/meter-value-name';
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
 })
-export class MeterHttpComponent implements OnInit, AfterViewChecked {
+export class MeterHttpComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()
   httpElectricityMeter: HttpElectricityMeter;
   @ViewChild(HttpConfigurationComponent, { static: true })
@@ -49,6 +59,14 @@ export class MeterHttpComponent implements OnInit, AfterViewChecked {
     this.formHandler = new FormHandler();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    this.form = this.parent.form;
+    if (changes.httpElectricityMeter && changes.httpElectricityMeter.currentValue) {
+      this.httpElectricityMeter = changes.httpElectricityMeter.currentValue;
+      this.updateForm(this.form, this.httpElectricityMeter, this.formHandler);
+    }
+  }
+
   ngOnInit() {
     this.httpElectricityMeter = this.httpElectricityMeter || new HttpElectricityMeter();
     if (!this.httpElectricityMeter.httpReads) {
@@ -58,7 +76,6 @@ export class MeterHttpComponent implements OnInit, AfterViewChecked {
       new ErrorMessage('pollInterval', ValidatorType.pattern),
       new ErrorMessage('measurementInterval', ValidatorType.pattern),
     ], this.translate);
-    this.form = this.parent.form;
     this.expandParentForm(this.form, this.httpElectricityMeter, this.formHandler);
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
@@ -114,14 +131,17 @@ export class MeterHttpComponent implements OnInit, AfterViewChecked {
   }
 
   expandParentForm(form: FormGroup, httpElectricityMeter: HttpElectricityMeter, formHandler: FormHandler) {
-    formHandler.addFormControl(form, 'pollInterval',
-      httpElectricityMeter ? httpElectricityMeter.pollInterval : undefined,
+    formHandler.addFormControl(form, 'pollInterval', httpElectricityMeter.pollInterval,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    formHandler.addFormControl(form, 'measurementInterval',
-      httpElectricityMeter ? httpElectricityMeter.measurementInterval : undefined,
+    formHandler.addFormControl(form, 'measurementInterval', httpElectricityMeter.measurementInterval,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    formHandler.addFormControl(form, 'contentProtocol',
-      httpElectricityMeter ? httpElectricityMeter.contentProtocol : undefined);
+    formHandler.addFormControl(form, 'contentProtocol', httpElectricityMeter.contentProtocol);
+  }
+
+  updateForm(form: FormGroup, httpElectricityMeter: HttpElectricityMeter, formHandler: FormHandler) {
+    formHandler.setFormControlValue(form, 'pollInterval', httpElectricityMeter.pollInterval);
+    formHandler.setFormControlValue(form, 'measurementInterval', httpElectricityMeter.measurementInterval);
+    formHandler.setFormControlValue(form, 'contentProtocol', httpElectricityMeter.contentProtocol);
   }
 
   updateModelFromForm(): HttpElectricityMeter | undefined {

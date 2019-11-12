@@ -27,7 +27,7 @@ export class HttpConfigurationComponent implements OnChanges, OnInit {
 
   ngOnChanges(changes: SimpleChanges): void {
     this.form = this.parent.form;
-    if (changes.httpConfiguration) {
+    if (changes.httpConfiguration && changes.httpConfiguration.currentValue) {
       this.httpConfiguration = changes.httpConfiguration.currentValue;
       this.updateForm(this.form, this.httpConfiguration, this.formHandler);
     }

@@ -50,7 +50,7 @@ export class HttpWriteValueComponent implements OnChanges, OnInit, AfterViewChec
 
   ngOnChanges(changes: SimpleChanges): void {
     this.form = this.parent.form;
-    if (changes.httpWriteValue) {
+    if (changes.httpWriteValue && changes.httpWriteValue.currentValue) {
       this.httpWriteValue = changes.httpWriteValue.currentValue;
       this.updateForm(this.form, this.httpWriteValue, this.formHandler);
     }

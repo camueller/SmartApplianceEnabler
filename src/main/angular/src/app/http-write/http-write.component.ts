@@ -68,7 +68,7 @@ export class HttpWriteComponent implements OnChanges, OnInit, AfterViewChecked {
 
   ngOnChanges(changes: SimpleChanges): void {
     this.form = this.parent.form;
-    if (changes.httpWrite) {
+    if (changes.httpWrite && changes.httpWrite.currentValue) {
       this.httpWrite = changes.httpWrite.currentValue;
       this.updateForm(this.form, this.httpWrite, this.formHandler);
     }

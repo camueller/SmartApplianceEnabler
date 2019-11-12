@@ -90,7 +90,7 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.control) {
+    if (changes.control && changes.control.currentValue) {
       this.control = changes.control.currentValue;
     }
     if (this.form) {
