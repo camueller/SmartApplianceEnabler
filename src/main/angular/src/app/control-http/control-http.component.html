@@ -1,4 +1,4 @@
-<div class="sae-block" [formGroup]="form">
+<div class="sae-block">
   <app-http-configuration
     [httpConfiguration]="httpSwitch.httpConfiguration"
   ></app-http-configuration>
@@ -21,6 +21,7 @@
                  [valueNames]="readValueNames"
                  [translationPrefix]="'ControlHttpComponent.read.'"
                  [translationKeys]="readValueNameTextKeys"
+                 #httpReadComponent
   ></app-http-read>
 
   <button type="button" (click)="addHttpWrite()" class="ui button" *ngIf="isAddHttpWritePossible"

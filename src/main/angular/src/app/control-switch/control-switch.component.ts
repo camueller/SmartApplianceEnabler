@@ -1,5 +1,5 @@
-import {AfterViewChecked, Component, Input, OnInit} from '@angular/core';
-import {FormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {AfterViewChecked, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {Switch} from './switch';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
@@ -15,9 +15,12 @@ import {getValidInt} from '../shared/form-util';
 @Component({
   selector: 'app-control-switch',
   templateUrl: './control-switch.component.html',
-  styleUrls: ['../global.css']
+  styleUrls: ['../global.css'],
+  viewProviders: [
+    {provide: ControlContainer, useExisting: FormGroupDirective}
+  ]
 })
-export class ControlSwitchComponent implements OnInit, AfterViewChecked {
+export class ControlSwitchComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()
   switch_: Switch;
   @Input()
@@ -39,9 +42,19 @@ export class ControlSwitchComponent implements OnInit, AfterViewChecked {
     this.formHandler = new FormHandler();
   }
 
-  ngOnInit() {
-    this.switch_ = this.switch_ || new Switch();
+  ngOnChanges(changes: SimpleChanges): void {
     this.form = this.parent.form;
+    if (changes.switch_) {
+      if (changes.switch_.currentValue) {
+        this.switch_ = changes.switch_.currentValue;
+      } else {
+        this.switch_ = new Switch();
+      }
+    }
+    this.updateForm(this.form, this.switch_, this.formHandler);
+  }
+
+  ngOnInit() {
     this.expandParentForm(this.form, this.switch_);
     this.errorMessages = new ErrorMessages('ControlSwitchComponent.error.', [
       new ErrorMessage('gpio', ValidatorType.required),
@@ -59,7 +72,12 @@ export class ControlSwitchComponent implements OnInit, AfterViewChecked {
   expandParentForm(form: FormGroup, switch_: Switch) {
     this.formHandler.addFormControl(form, 'gpio', switch_ ? switch_.gpio : undefined,
       [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(form, 'reverseStates', switch_ && switch_.reverseStates );
+    this.formHandler.addFormControl(form, 'reverseStates', switch_ && switch_.reverseStates);
+  }
+
+  updateForm(form: FormGroup, switch_: Switch, formHandler: FormHandler) {
+    formHandler.setFormControlValue(form, 'gpio', switch_.gpio);
+    formHandler.setFormControlValue(form, 'reverseStates', switch_.reverseStates);
   }
 
   updateModelFromForm(): Switch | undefined {

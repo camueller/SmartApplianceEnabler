@@ -16,7 +16,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {ActivatedRoute, CanDeactivate} from '@angular/router';
 import {S0ElectricityMeter} from '../meter-s0/s0-electricity-meter';
 import {ModbusElectricityMeter} from '../meter-modbus/modbus-electricity-meter';
@@ -36,20 +36,23 @@ import {MeterS0Component} from '../meter-s0/meter-s0.component';
 import {MeterModbusComponent} from '../meter-modbus/meter-modbus.component';
 import {MeterHttpComponent} from '../meter-http/meter-http.component';
 import {AppliancesReloadService} from '../appliance/appliances-reload-service';
+import {Control} from '../control/control';
+import {FormHandler} from '../shared/form-handler';
 
 @Component({
   selector: 'app-appliance-meter',
   templateUrl: './meter.component.html',
   styles: []
 })
-export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
-  form: FormGroup;
+export class MeterComponent implements OnChanges, OnInit, CanDeactivate<MeterComponent> {
   @ViewChild(MeterS0Component, { static: false })
   meterS0Comp: MeterS0Component;
   @ViewChild(MeterModbusComponent, { static: false })
   meterModbusComp: MeterModbusComponent;
   @ViewChild(MeterHttpComponent, { static: false })
   meterHttpComp: MeterHttpComponent;
+  form: FormGroup;
+  formHandler: FormHandler;
   applianceId: string;
   meterDefaults: MeterDefaults;
   meterFactory: MeterFactory;
@@ -69,31 +72,45 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
               private translate: TranslateService) {
     this.meterFactory = new MeterFactory(logger);
     this.meter = this.meterFactory.createEmptyMeter();
+    this.formHandler = new FormHandler();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.control && changes.control.currentValue) {
+      this.meter = changes.meter.currentValue;
+    }
+    if (this.form) {
+      this.updateForm(this.form, this.meter, this.formHandler);
+    }
   }
 
   ngOnInit() {
-    this.form = this.buildFormGroup();
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.route.paramMap.subscribe(() => this.applianceId = this.route.snapshot.paramMap.get('id'));
     this.route.data.subscribe((data: {
       meter: Meter, meterDefaults: MeterDefaults,
       settings: Settings, settingsDefaults: SettingsDefaults
     }) => {
-      if (data.meter) {
-        this.meter = data.meter;
-        this.form.setControl('meterType', new FormControl(this.meter && this.meter.type));
-      }
+      this.meter = data.meter;
       this.meterDefaults = data.meterDefaults;
       this.settings = data.settings;
       this.settingsDefaults = data.settingsDefaults;
-      this.form.markAsPristine();
+      this.updateForm(this.form, this.meter, this.formHandler);
+      if (this.form) {
+        this.form.markAsPristine();
+      }
     });
+    this.form = this.buildForm(this.meter, this.formHandler);
   }
 
-  buildFormGroup(): FormGroup {
-    const fg = new FormGroup({});
-    fg.addControl('meterType', new FormControl(this.meter && this.meter.type));
-    return fg;
+  buildForm(meter: Meter, formHandler: FormHandler): FormGroup {
+    const form = new FormGroup({});
+    formHandler.addFormControl(form, 'meterType', this.meter && this.meter.type);
+    return form;
+  }
+
+  updateForm(form: FormGroup, meter: Meter, formHandler: FormHandler) {
+    formHandler.setFormControlValue(form, 'meterType', meter.type);
   }
 
   get meterType() {

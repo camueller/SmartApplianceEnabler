@@ -1,6 +1,16 @@
-import {AfterViewChecked, Component, Input, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
+import {
+  AfterViewChecked,
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  QueryList,
+  SimpleChanges,
+  ViewChild,
+  ViewChildren
+} from '@angular/core';
 import {ControlDefaults} from '../control/control-defaults';
-import {FormGroup, FormGroupDirective} from '@angular/forms';
+import {ControlContainer, FormGroup, FormGroupDirective} from '@angular/forms';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {Logger} from '../log/logger';
@@ -19,16 +29,19 @@ import {HttpReadComponent} from '../http-read/http-read.component';
 @Component({
   selector: 'app-control-http',
   templateUrl: './control-http.component.html',
-  styleUrls: ['../global.css']
+  styleUrls: ['../global.css'],
+  viewProviders: [
+    {provide: ControlContainer, useExisting: FormGroupDirective}
+  ]
 })
-export class ControlHttpComponent implements OnInit, AfterViewChecked {
+export class ControlHttpComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()
   httpSwitch: HttpSwitch;
   @ViewChild(HttpConfigurationComponent, { static: true })
   httpConfigurationComp: HttpConfigurationComponent;
   @ViewChildren('httpWriteComponents')
   httpWriteComps: QueryList<HttpWriteComponent>;
-  @ViewChild(HttpReadComponent, { static: true })
+  @ViewChild('httpReadComponent', { static: false })
   httpReadComp: HttpReadComponent;
   @Input()
   applianceId: string;
@@ -48,18 +61,26 @@ export class ControlHttpComponent implements OnInit, AfterViewChecked {
     this.formHandler = new FormHandler();
   }
 
-  ngOnInit() {
-    this.httpSwitch = this.httpSwitch || new HttpSwitch();
-    if (!this.httpSwitch.httpWrites) {
-      this.httpSwitch.httpWrites = [this.createHttpWrite()];
+  ngOnChanges(changes: SimpleChanges): void {
+    this.form = this.parent.form;
+    if (changes.httpSwitch) {
+      if (changes.httpSwitch.currentValue) {
+        this.httpSwitch = changes.httpSwitch.currentValue;
+      } else {
+        this.httpSwitch = new HttpSwitch();
+        this.httpSwitch.httpWrites = [this.createHttpWrite()];
+      }
+      this.updateForm(this.form, this.httpSwitch, this.formHandler);
     }
+  }
+
+  ngOnInit() {
     this.errorMessages = new ErrorMessages('ControlHttpComponent.error.', [
       new ErrorMessage('onUrl', ValidatorType.required),
       new ErrorMessage('onUrl', ValidatorType.pattern),
       new ErrorMessage('offUrl', ValidatorType.required),
       new ErrorMessage('offUrl', ValidatorType.pattern),
     ], this.translate);
-    this.form = this.parent.form;
     this.expandParentForm(this.form, this.httpSwitch, this.formHandler);
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
@@ -118,6 +139,9 @@ export class ControlHttpComponent implements OnInit, AfterViewChecked {
   }
 
   expandParentForm(form: FormGroup, httpSwitch: HttpSwitch, formHandler: FormHandler) {
+  }
+
+  updateForm(form: FormGroup, httpSwitch: HttpSwitch, formHandler: FormHandler) {
   }
 
   updateModelFromForm(): HttpSwitch | undefined {

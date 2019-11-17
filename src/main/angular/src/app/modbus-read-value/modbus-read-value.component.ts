@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, Input, OnInit} from '@angular/core';
+import {AfterViewChecked, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {Logger} from '../log/logger';
 import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
@@ -17,7 +17,7 @@ import {getValidString} from '../shared/form-util';
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
 })
-export class ModbusReadValueComponent implements OnInit, AfterViewChecked {
+export class ModbusReadValueComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()
   modbusReadValue: ModbusReadValue;
   @Input()
@@ -43,12 +43,22 @@ export class ModbusReadValueComponent implements OnInit, AfterViewChecked {
     this.formHandler = new FormHandler();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    this.form = this.parent.form;
+    if (changes.modbusReadValue) {
+      if (changes.modbusReadValue.currentValue) {
+        this.modbusReadValue = changes.modbusReadValue.currentValue;
+      } else {
+        this.modbusReadValue = new ModbusReadValue();
+      }
+    }
+    this.updateForm(this.form, this.modbusReadValue, this.formHandler);
+  }
+
   ngOnInit() {
-    this.modbusReadValue = this.modbusReadValue || new ModbusReadValue();
     this.errorMessages = new ErrorMessages('ModbusReadValueComponent.error.', [
       new ErrorMessage(this.getFormControlName('factorToValue'), ValidatorType.pattern, 'factorToValue'),
     ], this.translate);
-    this.form = this.parent.form;
     this.expandParentForm(this.form, this.modbusReadValue, this.formHandler);
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
@@ -77,6 +87,12 @@ export class ModbusReadValueComponent implements OnInit, AfterViewChecked {
       [Validators.required]);
     formHandler.addFormControl(form, this.getFormControlName('extractionRegex'),
       modbusReadValue ? modbusReadValue.extractionRegex : undefined);
+  }
+
+  updateForm(form: FormGroup, modbusReadValue: ModbusReadValue, formHandler: FormHandler) {
+    formHandler.setFormControlValue(form, this.getFormControlName('name'), modbusReadValue.name);
+    formHandler.setFormControlValue(form, this.getFormControlName('extractionRegex'),
+      modbusReadValue.extractionRegex);
   }
 
   updateModelFromForm(): ModbusReadValue | undefined {

@@ -27,10 +27,12 @@ export class FormHandler {
     formGroup.addControl(formControlName, control);
   }
 
-  public setFormControlValue(formGroup: FormGroup, formControlName: string, value: any) {
-    const control = formGroup.controls[formControlName];
-    if (control) {
-      control.setValue(value);
+  public setFormControlValue(form: FormGroup, formControlName: string, value: any) {
+    if (form) {
+      const control = form.controls[formControlName];
+      if (control) {
+        control.setValue(value);
+      }
     }
   }
 

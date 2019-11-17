@@ -6,7 +6,8 @@ import {
   OnChanges,
   OnInit,
   Output,
-  QueryList, SimpleChanges,
+  QueryList,
+  SimpleChanges,
   ViewChildren
 } from '@angular/core';
 import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
@@ -21,7 +22,6 @@ import {HttpWriteValue} from '../http-write-value/http-write-value';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {fixExpressionChangedAfterItHasBeenCheckedError, getValidString} from '../shared/form-util';
 import {HttpWriteValueComponent} from '../http-write-value/http-write-value.component';
-import {HttpRead} from '../http-read/http-read';
 
 @Component({
   selector: 'app-http-write',
@@ -68,14 +68,17 @@ export class HttpWriteComponent implements OnChanges, OnInit, AfterViewChecked {
 
   ngOnChanges(changes: SimpleChanges): void {
     this.form = this.parent.form;
-    if (changes.httpWrite && changes.httpWrite.currentValue) {
-      this.httpWrite = changes.httpWrite.currentValue;
+    if (changes.httpWrite) {
+      if (changes.httpWrite.currentValue) {
+        this.httpWrite = changes.httpWrite.currentValue;
+      } else {
+        this.httpWrite = HttpWrite.createWithSingleChild();
+      }
       this.updateForm(this.form, this.httpWrite, this.formHandler);
     }
   }
 
   ngOnInit() {
-    this.httpWrite = this.httpWrite || HttpWrite.createWithSingleChild();
     this.errorMessages = new ErrorMessages('HttpWriteComponent.error.', [
       new ErrorMessage(this.getFormControlName('url'), ValidatorType.required, 'url'),
       new ErrorMessage(this.getFormControlName('url'), ValidatorType.pattern, 'url'),

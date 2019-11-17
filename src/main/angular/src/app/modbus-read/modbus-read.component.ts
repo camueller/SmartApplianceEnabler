@@ -1,4 +1,15 @@
-import {AfterViewChecked, Component, EventEmitter, Input, OnInit, Output, QueryList, ViewChildren} from '@angular/core';
+import {
+  AfterViewChecked,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  QueryList,
+  SimpleChanges,
+  ViewChildren
+} from '@angular/core';
 import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {Logger} from '../log/logger';
 import {TranslateService} from '@ngx-translate/core';
@@ -25,7 +36,7 @@ import {ModbusReadValueComponent} from '../modbus-read-value/modbus-read-value.c
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
 })
-export class ModbusReadComponent implements OnInit, AfterViewChecked {
+export class ModbusReadComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()
   modbusRead: ModbusRead;
   @ViewChildren('modbusReadValues')
@@ -58,19 +69,30 @@ export class ModbusReadComponent implements OnInit, AfterViewChecked {
     this.formHandler = new FormHandler();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    this.form = this.parent.form;
+    if (changes.modbusRead) {
+      if (changes.modbusRead.currentValue) {
+        this.modbusRead = changes.modbusRead.currentValue;
+      } else {
+        this.modbusRead = new ModbusRead();
+      }
+    }
+    this.updateForm(this.form, this.modbusRead, this.formHandler);
+  }
+
   ngOnInit() {
-    this.modbusRead = this.modbusRead || new ModbusRead();
     this.errorMessages = new ErrorMessages('ModbusReadComponent.error.', [
       new ErrorMessage(this.getFormControlName('address'), ValidatorType.required, 'address'),
       new ErrorMessage(this.getFormControlName('address'), ValidatorType.pattern, 'address'),
       new ErrorMessage(this.getFormControlName('bytes'), ValidatorType.pattern, 'bytes'),
       new ErrorMessage(this.getFormControlName('factorToValue'), ValidatorType.pattern, 'factorToValue'),
     ], this.translate);
-    this.form = this.parent.form;
     this.expandParentForm(this.form, this.modbusRead, this.formHandler);
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
+    // FIXME prüfen
     // this.translate.get(this.translationKeys).subscribe(translatedStrings => {
     //   this.translatedStrings = translatedStrings;
     // });
@@ -136,6 +158,15 @@ export class ModbusReadComponent implements OnInit, AfterViewChecked {
     formHandler.addFormControl(form, this.getFormControlName('factorToValue'),
       modbusRead ? modbusRead.factorToValue : undefined,
       [Validators.pattern(InputValidatorPatterns.FLOAT)]);
+  }
+
+  updateForm(form: FormGroup, modbusRead: ModbusRead, formHandler: FormHandler) {
+    formHandler.setFormControlValue(form, this.getFormControlName('address'), modbusRead.address);
+    formHandler.setFormControlValue(form, this.getFormControlName('type'), modbusRead.type);
+    formHandler.setFormControlValue(form, this.getFormControlName('bytes'), modbusRead.bytes);
+    formHandler.setFormControlValue(form, this.getFormControlName('byteOrder'), modbusRead.byteOrder);
+    formHandler.setFormControlValue(form, this.getFormControlName('factorToValue'),
+      modbusRead.factorToValue);
   }
 
   updateModelFromForm(): ModbusRead | undefined {

@@ -1,5 +1,14 @@
-import {AfterViewChecked, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {
+  AfterViewChecked,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges
+} from '@angular/core';
+import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {Logger} from '../log/logger';
 import {TranslateService} from '@ngx-translate/core';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
@@ -15,9 +24,12 @@ import {ErrorMessage, ValidatorType} from '../shared/error-message';
 @Component({
   selector: 'app-electric-vehicle',
   templateUrl: './electric-vehicle.component.html',
-  styleUrls: ['../global.css']
+  styleUrls: ['../global.css'],
+  viewProviders: [
+    {provide: ControlContainer, useExisting: FormGroupDirective}
+  ]
 })
-export class ElectricVehicleComponent implements OnInit, AfterViewChecked {
+export class ElectricVehicleComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()
   electricVehicle: ElectricVehicle;
   @Input()
@@ -39,6 +51,18 @@ export class ElectricVehicleComponent implements OnInit, AfterViewChecked {
     this.formHandler = new FormHandler();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    this.form = this.parent.form;
+    if (changes.electricVehicle) {
+      if (changes.electricVehicle.currentValue) {
+        this.electricVehicle = changes.electricVehicle.currentValue;
+      } else {
+        this.electricVehicle = new ElectricVehicle();
+      }
+    }
+    this.updateForm(this.form, this.electricVehicle, this.formHandler);
+  }
+
   ngOnInit() {
     this.errorMessages = new ErrorMessages('ElectricVehicleComponent.error.', [
       new ErrorMessage(this.getFormControlName('name'), ValidatorType.required, 'name'),
@@ -51,7 +75,6 @@ export class ElectricVehicleComponent implements OnInit, AfterViewChecked {
       new ErrorMessage(this.getFormControlName('defaultSocOptionalEnergy'), ValidatorType.pattern, 'defaultSocOptionalEnergy'),
       new ErrorMessage(this.getFormControlName('scriptFilename'), ValidatorType.required, 'scriptFilename'),
     ], this.translate);
-    this.form = this.parent.form;
     this.expandParentForm(this.form, this.electricVehicle);
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
@@ -92,6 +115,22 @@ export class ElectricVehicleComponent implements OnInit, AfterViewChecked {
       ev && ev.socScript && ev.socScript.script);
     this.formHandler.addFormControl(form, this.getFormControlName('scriptExtractionRegex'),
       ev && ev.socScript && ev.socScript.extractionRegex);
+  }
+
+  updateForm(form: FormGroup, ev: ElectricVehicle, formHandler: FormHandler) {
+    formHandler.setFormControlValue(form, this.getFormControlName('name'), ev.name);
+    formHandler.setFormControlValue(form, this.getFormControlName('batteryCapacity'), ev.batteryCapacity);
+    formHandler.setFormControlValue(form, this.getFormControlName('maxChargePower'), ev.maxChargePower);
+    formHandler.setFormControlValue(form, this.getFormControlName('chargeLoss'), ev.chargeLoss);
+    formHandler.setFormControlValue(form, this.getFormControlName('defaultSocManual'), ev.defaultSocManual);
+    formHandler.setFormControlValue(form, this.getFormControlName('defaultSocOptionalEnergy'),
+      ev.defaultSocOptionalEnergy);
+    if (ev && ev.socScript) {
+      formHandler.setFormControlValue(form, this.getFormControlName('scriptFilename'),
+        ev.socScript.script);
+      formHandler.setFormControlValue(form, this.getFormControlName('scriptExtractionRegex'),
+        ev.socScript.extractionRegex);
+    }
   }
 
   updateModelFromForm(): ElectricVehicle {

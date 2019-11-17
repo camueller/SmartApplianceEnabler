@@ -38,7 +38,7 @@ import {MeterValueName} from '../meter/meter-value-name';
 export class MeterHttpComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()
   httpElectricityMeter: HttpElectricityMeter;
-  @ViewChild(HttpConfigurationComponent, { static: true })
+  @ViewChild(HttpConfigurationComponent, {static: true})
   httpConfigurationComp: HttpConfigurationComponent;
   @ViewChildren('httpReadComponents')
   httpReadComps: QueryList<HttpReadComponent>;
@@ -61,17 +61,18 @@ export class MeterHttpComponent implements OnChanges, OnInit, AfterViewChecked {
 
   ngOnChanges(changes: SimpleChanges): void {
     this.form = this.parent.form;
-    if (changes.httpElectricityMeter && changes.httpElectricityMeter.currentValue) {
-      this.httpElectricityMeter = changes.httpElectricityMeter.currentValue;
-      this.updateForm(this.form, this.httpElectricityMeter, this.formHandler);
+    if (changes.httpElectricityMeter) {
+      if (changes.httpElectricityMeter.currentValue) {
+        this.httpElectricityMeter = changes.httpElectricityMeter.currentValue;
+      } else {
+        this.httpElectricityMeter = new HttpElectricityMeter();
+        this.httpElectricityMeter.httpReads = [this.createHttpRead()];
+      }
     }
+    this.updateForm(this.form, this.httpElectricityMeter, this.formHandler);
   }
 
   ngOnInit() {
-    this.httpElectricityMeter = this.httpElectricityMeter || new HttpElectricityMeter();
-    if (!this.httpElectricityMeter.httpReads) {
-      this.httpElectricityMeter.httpReads = [this.createHttpRead()];
-    }
     this.errorMessages = new ErrorMessages('MeterHttpComponent.error.', [
       new ErrorMessage('pollInterval', ValidatorType.pattern),
       new ErrorMessage('measurementInterval', ValidatorType.pattern),

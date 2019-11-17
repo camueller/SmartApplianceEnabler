@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, Input, OnInit} from '@angular/core';
+import {AfterViewChecked, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {ControlDefaults} from '../control/control-defaults';
 import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {StartingCurrentSwitch} from './starting-current-switch';
@@ -19,7 +19,7 @@ import {getValidInt} from '../shared/form-util';
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
 })
-export class ControlStartingcurrentComponent implements OnInit, AfterViewChecked {
+export class ControlStartingcurrentComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()
   startingCurrentSwitch: StartingCurrentSwitch;
   @Input()
@@ -38,15 +38,25 @@ export class ControlStartingcurrentComponent implements OnInit, AfterViewChecked
     this.formHandler = new FormHandler();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    this.form = this.parent.form;
+    if (changes.startingCurrentSwitch) {
+      if (changes.startingCurrentSwitch.currentValue) {
+        this.startingCurrentSwitch = changes.startingCurrentSwitch.currentValue;
+      } else {
+        this.startingCurrentSwitch = new StartingCurrentSwitch();
+      }
+    }
+    this.updateForm(this.form, this.startingCurrentSwitch, this.formHandler);
+  }
+
   ngOnInit() {
-    this.startingCurrentSwitch = this.startingCurrentSwitch || new StartingCurrentSwitch();
     this.errorMessages = new ErrorMessages('ControlStartingcurrentComponent.error.', [
       new ErrorMessage('powerThreshold', ValidatorType.pattern),
       new ErrorMessage('startingCurrentDetectionDuration', ValidatorType.pattern),
       new ErrorMessage('finishedCurrentDetectionDuration', ValidatorType.pattern),
       new ErrorMessage('minRunningTime', ValidatorType.pattern),
     ], this.translate);
-    this.form = this.parent.form;
     this.expandParentForm(this.form, this.startingCurrentSwitch, this.formHandler);
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
@@ -70,6 +80,15 @@ export class ControlStartingcurrentComponent implements OnInit, AfterViewChecked
     formHandler.addFormControl(form, 'minRunningTime',
       startingCurrentSwitch ? startingCurrentSwitch.minRunningTime : undefined,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
+  }
+
+  updateForm(form: FormGroup, startingCurrentSwitch: StartingCurrentSwitch, formHandler: FormHandler) {
+    formHandler.setFormControlValue(form, 'powerThreshold', startingCurrentSwitch.powerThreshold);
+    formHandler.setFormControlValue(form, 'startingCurrentDetectionDuration',
+      startingCurrentSwitch.startingCurrentDetectionDuration);
+    formHandler.setFormControlValue(form, 'finishedCurrentDetectionDuration',
+      startingCurrentSwitch.finishedCurrentDetectionDuration);
+    formHandler.setFormControlValue(form, 'minRunningTime', startingCurrentSwitch.minRunningTime);
   }
 
   updateModelFromForm(): StartingCurrentSwitch {

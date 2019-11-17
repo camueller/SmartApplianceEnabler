@@ -1,4 +1,15 @@
-import {AfterViewChecked, Component, EventEmitter, Input, OnInit, Output, QueryList, ViewChildren} from '@angular/core';
+import {
+  AfterViewChecked,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  QueryList,
+  SimpleChanges,
+  ViewChildren
+} from '@angular/core';
 import {Logger} from '../log/logger';
 import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
@@ -20,7 +31,7 @@ import {ModbusWriteValueComponent} from '../modbus-write-value/modbus-write-valu
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
 })
-export class ModbusWriteComponent implements OnInit, AfterViewChecked {
+export class ModbusWriteComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()
   modbusWrite: ModbusWrite;
   @ViewChildren('modbusWriteValues')
@@ -53,14 +64,24 @@ export class ModbusWriteComponent implements OnInit, AfterViewChecked {
     this.formHandler = new FormHandler();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    this.form = this.parent.form;
+    if (changes.modbusWrite) {
+      if (changes.modbusWrite.currentValue) {
+        this.modbusWrite = changes.modbusWrite.currentValue;
+      } else {
+        this.modbusWrite = new ModbusWrite();
+      }
+    }
+    this.updateForm(this.form, this.modbusWrite, this.formHandler);
+  }
+
   ngOnInit() {
-    this.modbusWrite = this.modbusWrite || new ModbusWrite();
     this.errorMessages = new ErrorMessages('ModbusReadComponent.error.', [
       new ErrorMessage(this.getFormControlName('address'), ValidatorType.required, 'address'),
       new ErrorMessage(this.getFormControlName('address'), ValidatorType.pattern, 'address'),
       new ErrorMessage(this.getFormControlName('factorToValue'), ValidatorType.pattern, 'factorToValue'),
     ], this.translate);
-    this.form = this.parent.form;
     this.expandParentForm(this.form, this.modbusWrite, this.formHandler);
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
@@ -117,6 +138,13 @@ export class ModbusWriteComponent implements OnInit, AfterViewChecked {
     formHandler.addFormControl(form, this.getFormControlName('factorToValue'),
       modbusWrite ? modbusWrite.factorToValue : undefined,
       [Validators.pattern(InputValidatorPatterns.FLOAT)]);
+  }
+
+  updateForm(form: FormGroup, modbusWrite: ModbusWrite, formHandler: FormHandler) {
+    formHandler.setFormControlValue(form, this.getFormControlName('address'), modbusWrite.address);
+    formHandler.setFormControlValue(form, this.getFormControlName('type'), modbusWrite.type);
+    formHandler.setFormControlValue(form, this.getFormControlName('factorToValue'),
+      modbusWrite.factorToValue);
   }
 
   updateModelFromForm(): ModbusWrite | undefined {

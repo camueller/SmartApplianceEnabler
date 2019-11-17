@@ -50,14 +50,17 @@ export class HttpWriteValueComponent implements OnChanges, OnInit, AfterViewChec
 
   ngOnChanges(changes: SimpleChanges): void {
     this.form = this.parent.form;
-    if (changes.httpWriteValue && changes.httpWriteValue.currentValue) {
-      this.httpWriteValue = changes.httpWriteValue.currentValue;
+    if (changes.httpWriteValue) {
+      if (changes.httpWriteValue.currentValue) {
+        this.httpWriteValue = changes.httpWriteValue.currentValue;
+      } else {
+        this.httpWriteValue = new HttpWriteValue();
+      }
       this.updateForm(this.form, this.httpWriteValue, this.formHandler);
     }
   }
 
   ngOnInit() {
-    this.httpWriteValue = this.httpWriteValue || new HttpWriteValue();
     this.errorMessages = new ErrorMessages('HttpWriteValueComponent.error.', [
       new ErrorMessage(this.getFormControlName('factorToValue'), ValidatorType.pattern, 'factorToValue'),
     ], this.translate);

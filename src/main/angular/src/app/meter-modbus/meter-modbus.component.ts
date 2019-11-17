@@ -1,4 +1,13 @@
-import {AfterViewChecked, Component, Input, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
+import {
+  AfterViewChecked,
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  QueryList,
+  SimpleChanges,
+  ViewChildren
+} from '@angular/core';
 import {MeterDefaults} from '../meter/meter-defaults';
 import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {FormHandler} from '../shared/form-handler';
@@ -25,7 +34,7 @@ import {ModbusReadComponent} from '../modbus-read/modbus-read.component';
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
 })
-export class MeterModbusComponent implements OnInit, AfterViewChecked {
+export class MeterModbusComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()
   modbusElectricityMeter: ModbusElectricityMeter;
   @ViewChildren('modbusReadComponents')
@@ -53,18 +62,26 @@ export class MeterModbusComponent implements OnInit, AfterViewChecked {
     this.formHandler = new FormHandler();
   }
 
-  ngOnInit() {
-    this.modbusElectricityMeter = this.modbusElectricityMeter || new ModbusElectricityMeter();
-    if (!this.modbusElectricityMeter.modbusReads) {
-      this.modbusElectricityMeter.modbusReads = [this.createModbusRead()];
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.modbusElectricityMeter) {
+      if (changes.modbusElectricityMeter.currentValue) {
+        this.modbusElectricityMeter = changes.modbusElectricityMeter.currentValue;
+      } else {
+        this.modbusElectricityMeter = new ModbusElectricityMeter();
+        this.modbusElectricityMeter.modbusReads = [this.createModbusRead()];
+      }
     }
+    this.form = this.parent.form;
+    this.updateForm(this.form, this.modbusElectricityMeter, this.formHandler);
+  }
+
+  ngOnInit() {
     this.errorMessages = new ErrorMessages('MeterModbusComponent.error.', [
       new ErrorMessage('slaveAddress', ValidatorType.required),
       new ErrorMessage('slaveAddress', ValidatorType.pattern),
       new ErrorMessage('pollInterval', ValidatorType.pattern),
       new ErrorMessage('measurementInterval', ValidatorType.pattern),
     ], this.translate);
-    this.form = this.parent.form;
     this.expandParentForm(this.form, this.modbusElectricityMeter, this.formHandler);
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
@@ -74,7 +91,6 @@ export class MeterModbusComponent implements OnInit, AfterViewChecked {
   ngAfterViewChecked() {
     this.formHandler.markLabelsRequired();
   }
-
 
   get valueNames() {
     return [MeterValueName.Power, MeterValueName.Energy];
@@ -116,18 +132,21 @@ export class MeterModbusComponent implements OnInit, AfterViewChecked {
   }
 
   expandParentForm(form: FormGroup, modbusElectricityMeter: ModbusElectricityMeter, formHandler: FormHandler) {
-    formHandler.addFormControl(form, 'idref',
-      modbusElectricityMeter ? modbusElectricityMeter.idref : undefined,
+    formHandler.addFormControl(form, 'idref', modbusElectricityMeter.idref,
       [Validators.required]);
-    formHandler.addFormControl(form, 'slaveAddress',
-      modbusElectricityMeter ? modbusElectricityMeter.slaveAddress : undefined,
+    formHandler.addFormControl(form, 'slaveAddress', modbusElectricityMeter.slaveAddress,
       [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER_OR_HEX)]);
-    formHandler.addFormControl(form, 'pollInterval',
-      modbusElectricityMeter ? modbusElectricityMeter.pollInterval : undefined,
+    formHandler.addFormControl(form, 'pollInterval', modbusElectricityMeter.pollInterval,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    formHandler.addFormControl(form, 'measurementInterval',
-      modbusElectricityMeter ? modbusElectricityMeter.measurementInterval : undefined,
+    formHandler.addFormControl(form, 'measurementInterval', modbusElectricityMeter.measurementInterval,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
+  }
+
+  updateForm(form: FormGroup, modbusElectricityMeter: ModbusElectricityMeter, formHandler: FormHandler) {
+    formHandler.setFormControlValue(form, 'idref', modbusElectricityMeter.idref);
+    formHandler.setFormControlValue(form, 'slaveAddress', modbusElectricityMeter.slaveAddress);
+    formHandler.setFormControlValue(form, 'pollInterval', modbusElectricityMeter.pollInterval);
+    formHandler.setFormControlValue(form, 'measurementInterval', modbusElectricityMeter.measurementInterval);
   }
 
   updateModelFromForm(): ModbusElectricityMeter | undefined {

@@ -16,8 +16,8 @@ import {getValidString} from '../shared/form-util';
 export class HttpConfigurationComponent implements OnChanges, OnInit {
   @Input()
   httpConfiguration: HttpConfiguration;
-  form: FormGroup;
   formHandler: FormHandler;
+  form: FormGroup;
 
   constructor(private logger: Logger,
               private parent: FormGroupDirective,
@@ -27,15 +27,18 @@ export class HttpConfigurationComponent implements OnChanges, OnInit {
 
   ngOnChanges(changes: SimpleChanges): void {
     this.form = this.parent.form;
-    if (changes.httpConfiguration && changes.httpConfiguration.currentValue) {
-      this.httpConfiguration = changes.httpConfiguration.currentValue;
-      this.updateForm(this.form, this.httpConfiguration, this.formHandler);
+    if (changes.httpConfiguration) {
+      if (changes.httpConfiguration.currentValue) {
+        this.httpConfiguration = changes.httpConfiguration.currentValue;
+      } else {
+        this.httpConfiguration = new HttpConfiguration();
+      }
+      this.updateForm(this.parent.form, this.httpConfiguration, this.formHandler);
     }
   }
 
   ngOnInit(): void {
-    this.httpConfiguration = this.httpConfiguration || new HttpConfiguration();
-    this.expandParentForm(this.form, this.httpConfiguration, this.formHandler);
+    this.expandParentForm(this.parent.form, this.httpConfiguration, this.formHandler);
   }
 
   expandParentForm(form: FormGroup, httpConfiguration: HttpConfiguration, formHandler: FormHandler) {
@@ -54,9 +57,9 @@ export class HttpConfigurationComponent implements OnChanges, OnInit {
   }
 
   updateModelFromForm(): HttpConfiguration | undefined {
-    const contentType = getValidString(this.form.controls.contentType.value);
-    const username = getValidString(this.form.controls.username.value);
-    const password = getValidString(this.form.controls.password.value);
+    const contentType = getValidString(this.parent.form.controls.contentType.value);
+    const username = getValidString(this.parent.form.controls.username.value);
+    const password = getValidString(this.parent.form.controls.password.value);
 
     if (!(contentType || username || password)) {
       return undefined;

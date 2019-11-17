@@ -1,15 +1,17 @@
 import {
   AfterViewChecked,
+  ChangeDetectionStrategy,
   Component,
   EventEmitter,
   Input,
   OnChanges,
   OnInit,
   Output,
-  QueryList, SimpleChanges,
+  QueryList,
+  SimpleChanges,
   ViewChildren
 } from '@angular/core';
-import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {ControlContainer, FormControl, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {FormHandler} from '../shared/form-handler';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
@@ -62,7 +64,7 @@ export class HttpReadComponent implements OnChanges, OnInit, AfterViewChecked {
 
   constructor(private logger: Logger,
               private parent: FormGroupDirective,
-              private translate: TranslateService
+              private translate: TranslateService,
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
     this.formHandler = new FormHandler();
@@ -70,14 +72,17 @@ export class HttpReadComponent implements OnChanges, OnInit, AfterViewChecked {
 
   ngOnChanges(changes: SimpleChanges): void {
     this.form = this.parent.form;
-    if (changes.httpRead && changes.httpRead.currentValue) {
-      this.httpRead = changes.httpRead.currentValue;
+    if (changes.httpRead) {
+      if (changes.httpRead.currentValue) {
+        this.httpRead = changes.httpRead.currentValue;
+      } else {
+        this.httpRead = HttpRead.createWithSingleChild();
+      }
       this.updateForm(this.form, this.httpRead, this.formHandler);
     }
   }
 
   ngOnInit() {
-    this.httpRead = this.httpRead || HttpRead.createWithSingleChild();
     this.errorMessages = new ErrorMessages('HttpReadComponent.error.', [
       new ErrorMessage(this.getFormControlName('url'), ValidatorType.required, 'url'),
       new ErrorMessage(this.getFormControlName('url'), ValidatorType.pattern, 'url'),
@@ -131,8 +136,7 @@ export class HttpReadComponent implements OnChanges, OnInit, AfterViewChecked {
   }
 
   expandParentForm(form: FormGroup, httpRead: HttpRead, formHandler: FormHandler) {
-    formHandler.addFormControl(form, this.getFormControlName('url'),
-      httpRead ? httpRead.url : undefined,
+    formHandler.addFormControl(form, this.getFormControlName('url'), httpRead.url,
       [Validators.required, Validators.pattern(InputValidatorPatterns.URL)]);
   }
 

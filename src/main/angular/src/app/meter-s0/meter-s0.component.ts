@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, Input, OnInit} from '@angular/core';
+import {AfterViewChecked, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {FormHandler} from '../shared/form-handler';
 import {ErrorMessages} from '../shared/error-messages';
@@ -9,7 +9,7 @@ import {Logger} from '../log/logger';
 import {TranslateService} from '@ngx-translate/core';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
-import {getValidInt, getValidString} from '../shared/form-util';
+import {getValidInt} from '../shared/form-util';
 
 @Component({
   selector: 'app-meter-s0',
@@ -19,7 +19,7 @@ import {getValidInt, getValidString} from '../shared/form-util';
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
 })
-export class MeterS0Component implements OnInit, AfterViewChecked {
+export class MeterS0Component implements OnChanges, OnInit, AfterViewChecked {
   @Input()
   s0ElectricityMeter: S0ElectricityMeter;
   @Input()
@@ -40,8 +40,19 @@ export class MeterS0Component implements OnInit, AfterViewChecked {
     this.formHandler = new FormHandler();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    this.form = this.parent.form;
+    if (changes.s0ElectricityMeter) {
+      if (changes.s0ElectricityMeter.currentValue) {
+        this.s0ElectricityMeter = changes.s0ElectricityMeter.currentValue;
+      } else {
+        this.s0ElectricityMeter = this.s0ElectricityMeter || new S0ElectricityMeter();
+      }
+      this.updateForm(this.form, this.s0ElectricityMeter, this.formHandler);
+    }
+  }
+
   ngOnInit() {
-    this.s0ElectricityMeter = this.s0ElectricityMeter || new S0ElectricityMeter();
     this.errorMessages = new ErrorMessages('MeterS0Component.error.', [
       new ErrorMessage('gpio', ValidatorType.required),
       new ErrorMessage('gpio', ValidatorType.pattern),
@@ -49,7 +60,6 @@ export class MeterS0Component implements OnInit, AfterViewChecked {
       new ErrorMessage('impulsesPerKwh', ValidatorType.pattern),
       new ErrorMessage('measurementInterval', ValidatorType.pattern),
     ], this.translate);
-    this.form = this.parent.form;
     this.expandParentForm(this.form, this.s0ElectricityMeter, this.formHandler);
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
@@ -72,6 +82,13 @@ export class MeterS0Component implements OnInit, AfterViewChecked {
     formHandler.addFormControl(form, 'measurementInterval',
       s0ElectricityMeter ? s0ElectricityMeter.measurementInterval : undefined,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
+  }
+
+  updateForm(form: FormGroup, s0ElectricityMeter: S0ElectricityMeter, formHandler: FormHandler) {
+    formHandler.setFormControlValue(form, 'gpio', s0ElectricityMeter.gpio);
+    formHandler.setFormControlValue(form, 'pinPullResistance', s0ElectricityMeter.pinPullResistance);
+    formHandler.setFormControlValue(form, 'impulsesPerKwh', s0ElectricityMeter.impulsesPerKwh);
+    formHandler.setFormControlValue(form, 'measurementInterval', s0ElectricityMeter.measurementInterval);
   }
 
   updateModelFromForm(): S0ElectricityMeter | undefined {

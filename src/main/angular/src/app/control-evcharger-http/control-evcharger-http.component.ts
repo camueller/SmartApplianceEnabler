@@ -1,4 +1,14 @@
-import {AfterViewChecked, Component, Input, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
+import {
+  AfterViewChecked,
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  QueryList,
+  SimpleChanges,
+  ViewChild,
+  ViewChildren
+} from '@angular/core';
 import {Settings} from '../settings/settings';
 import {SettingsDefaults} from '../settings/settings-defaults';
 import {ControlContainer, FormGroup, FormGroupDirective} from '@angular/forms';
@@ -22,7 +32,7 @@ import {HttpConfigurationComponent} from '../http-configuration/http-configurati
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
 })
-export class ControlEvchargerHttpComponent implements OnInit, AfterViewChecked {
+export class ControlEvchargerHttpComponent implements OnChanges, OnInit, AfterViewChecked {
 
   @Input()
   evHttpControl: EvHttpControl;
@@ -45,9 +55,19 @@ export class ControlEvchargerHttpComponent implements OnInit, AfterViewChecked {
     this.formHandler = new FormHandler();
   }
 
-  ngOnInit() {
-    this.evHttpControl = this.evHttpControl || new EvHttpControl();
+  ngOnChanges(changes: SimpleChanges): void {
     this.form = this.parent.form;
+    if (changes.evHttpControl) {
+      if (changes.evHttpControl.currentValue) {
+        this.evHttpControl = changes.evHttpControl.currentValue;
+      } else {
+        this.evHttpControl = new EvHttpControl();
+      }
+      this.updateForm(this.form, this.evHttpControl, this.formHandler);
+    }
+  }
+
+  ngOnInit() {
     this.expandParentForm(this.form, this.evHttpControl, this.formHandler);
   }
 
@@ -105,6 +125,10 @@ export class ControlEvchargerHttpComponent implements OnInit, AfterViewChecked {
   expandParentForm(form: FormGroup, evHttpControl: EvHttpControl, formHandler: FormHandler) {
     formHandler.addFormControl(form, 'contentProtocol',
       evHttpControl ? evHttpControl.contentProtocol : undefined);
+  }
+
+  updateForm(form: FormGroup, evHttpControl: EvHttpControl, formHandler: FormHandler) {
+    formHandler.setFormControlValue(form, 'contentProtocol', evHttpControl.contentProtocol);
   }
 
   updateModelFromForm(): EvHttpControl | undefined {

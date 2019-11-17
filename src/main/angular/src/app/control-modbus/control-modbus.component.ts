@@ -1,6 +1,15 @@
-import {AfterViewChecked, Component, Input, OnInit, QueryList, ViewChildren} from '@angular/core';
+import {
+  AfterViewChecked,
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  QueryList,
+  SimpleChanges,
+  ViewChildren
+} from '@angular/core';
 import {ControlDefaults} from '../control/control-defaults';
-import {FormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {Logger} from '../log/logger';
@@ -20,9 +29,12 @@ import {fixExpressionChangedAfterItHasBeenCheckedError, getValidString} from '..
 @Component({
   selector: 'app-control-modbus',
   templateUrl: './control-modbus.component.html',
-  styleUrls: ['../global.css']
+  styleUrls: ['../global.css'],
+  viewProviders: [
+    {provide: ControlContainer, useExisting: FormGroupDirective}
+  ]
 })
-export class ControlModbusComponent implements OnInit, AfterViewChecked {
+export class ControlModbusComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()
   modbusSwitch: ModbusSwitch;
   @ViewChildren('modbusWriteComponents')
@@ -49,8 +61,19 @@ export class ControlModbusComponent implements OnInit, AfterViewChecked {
     this.formHandler = new FormHandler();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    this.form = this.parent.form;
+    if (changes.modbusSwitch) {
+      if (changes.modbusSwitch.currentValue) {
+        this.modbusSwitch = changes.modbusSwitch.currentValue;
+      } else {
+        this.modbusSwitch = new ModbusSwitch();
+      }
+    }
+    this.updateForm(this.form, this.modbusSwitch, this.formHandler);
+  }
+
   ngOnInit() {
-    this.modbusSwitch = this.modbusSwitch || new ModbusSwitch();
     if (!this.modbusSwitch.modbusWrites) {
       this.modbusSwitch.modbusWrites = [this.createModbusWrite()];
     }
@@ -58,7 +81,6 @@ export class ControlModbusComponent implements OnInit, AfterViewChecked {
       new ErrorMessage('slaveAddress', ValidatorType.required),
       new ErrorMessage('slaveAddress', ValidatorType.pattern),
     ], this.translate);
-    this.form = this.parent.form;
     this.expandParentForm(this.form, this.modbusSwitch, this.formHandler);
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
@@ -113,6 +135,11 @@ export class ControlModbusComponent implements OnInit, AfterViewChecked {
       [Validators.required]);
     formHandler.addFormControl(form, 'slaveAddress', modbusSwitch && modbusSwitch.slaveAddress,
       [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
+  }
+
+  updateForm(form: FormGroup, modbusSwitch: ModbusSwitch, formHandler: FormHandler) {
+    formHandler.setFormControlValue(form, 'idref', modbusSwitch.idref);
+    formHandler.setFormControlValue(form, 'slaveAddress', modbusSwitch.slaveAddress);
   }
 
   updateModelFromForm(): ModbusSwitch | undefined {

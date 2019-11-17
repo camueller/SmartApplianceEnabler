@@ -48,7 +48,7 @@ import {FormHandler} from '../shared/form-handler';
 @Component({
   selector: 'app-appliance-switch',
   templateUrl: './control.component.html',
-  styleUrls: ['../global.css']
+  styleUrls: ['../global.css'],
 })
 export class ControlComponent implements OnChanges, OnInit, CanDeactivate<ControlComponent> {
   @ViewChild(ControlSwitchComponent, {static: false})
@@ -113,13 +113,16 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
       this.appliance = data.appliance;
       this.settings = data.settings;
       this.settingsDefaults = data.settingsDefaults;
-      this.form = this.buildForm(this.control, this.formHandler);
+      this.updateForm(this.form, this.control, this.formHandler);
       if (!this.control.evCharger && this.appliance.type === 'EVCharger') {
         // there is not type change for ev charger since it is determined by appliance type
         this.typeChanged(EvCharger.TYPE);
       }
+      if (this.form) {
+        this.form.markAsPristine();
+      }
     });
-    this.form.markAsPristine();
+    this.form = this.buildForm(this.control, this.formHandler);
   }
 
   buildForm(control: Control, formHandler: FormHandler): FormGroup {

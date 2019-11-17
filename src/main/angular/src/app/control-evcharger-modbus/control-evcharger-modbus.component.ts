@@ -1,4 +1,13 @@
-import {AfterViewChecked, Component, Input, OnInit, QueryList, ViewChildren} from '@angular/core';
+import {
+  AfterViewChecked,
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  QueryList,
+  SimpleChanges,
+  ViewChildren
+} from '@angular/core';
 import {Logger} from '../log/logger';
 import {TranslateService} from '@ngx-translate/core';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
@@ -25,7 +34,7 @@ import {getValidString} from '../shared/form-util';
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
 })
-export class ControlEvchargerModbusComponent implements OnInit, AfterViewChecked {
+export class ControlEvchargerModbusComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()
   evModbusControl: EvModbusControl;
   @Input()
@@ -52,12 +61,23 @@ export class ControlEvchargerModbusComponent implements OnInit, AfterViewChecked
     this.formHandler = new FormHandler();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.evModbusControl) {
+      if (changes.evModbusControl.currentValue) {
+        this.evModbusControl = changes.evModbusControl.currentValue;
+      } else {
+        this.evModbusControl = new EvModbusControl();
+      }
+    }
+    this.form = this.parent.form;
+    this.updateForm(this.form, this.evModbusControl, this.formHandler);
+  }
+
   ngOnInit() {
-    this.evModbusControl = this.evModbusControl || new EvModbusControl();
+    // FIXME
     // this.errorMessages = new ErrorMessages('ControlEvchargerModbusComponent.error.', [
     //   new ErrorMessage('voltage', ValidatorType.pattern),
     // ], this.translate);
-    this.form = this.parent.form;
     this.expandParentForm(this.form, this.evModbusControl, this.formHandler);
     // this.form.statusChanges.subscribe(() => {
     //   this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
@@ -114,10 +134,17 @@ export class ControlEvchargerModbusComponent implements OnInit, AfterViewChecked
   }
 
   expandParentForm(form: FormGroup, evModbusControl: EvModbusControl, formHandler: FormHandler) {
-    this.formHandler.addFormControl(form, 'idref', evModbusControl ? evModbusControl.idref : undefined,
+    formHandler.addFormControl(form, 'idref',
+      evModbusControl ? evModbusControl.idref : undefined,
       [Validators.required]);
-    this.formHandler.addFormControl(form, 'slaveAddress', evModbusControl ? evModbusControl.slaveAddress : undefined,
+    formHandler.addFormControl(form, 'slaveAddress',
+      evModbusControl ? evModbusControl.slaveAddress : undefined,
       [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
+  }
+
+  updateForm(form: FormGroup, evModbusControl: EvModbusControl, formHandler: FormHandler) {
+    formHandler.setFormControlValue(form, 'idref', this.evModbusControl.idref);
+    formHandler.setFormControlValue(form, 'slaveAddress', this.evModbusControl.slaveAddress);
   }
 
   updateModelFromForm(): EvModbusControl | undefined {

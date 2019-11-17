@@ -49,14 +49,17 @@ export class HttpReadValueComponent implements OnChanges, OnInit, AfterViewCheck
 
   ngOnChanges(changes: SimpleChanges): void {
     this.form = this.parent.form;
-    if (changes.httpReadValue && changes.httpReadValue.currentValue) {
-      this.httpReadValue = changes.httpReadValue.currentValue;
+    if (changes.httpReadValue) {
+      if (changes.httpReadValue.currentValue) {
+        this.httpReadValue = changes.httpReadValue.currentValue;
+      } else {
+        this.httpReadValue = new HttpReadValue();
+      }
       this.updateForm(this.form, this.httpReadValue, this.formHandler);
     }
   }
 
   ngOnInit() {
-    this.httpReadValue = this.httpReadValue || new HttpReadValue();
     this.errorMessages = new ErrorMessages('HttpReadValueComponent.error.', [
       new ErrorMessage(this.getFormControlName('factorToValue'), ValidatorType.pattern, 'factorToValue'),
     ], this.translate);

@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, Input, OnInit} from '@angular/core';
+import {AfterViewChecked, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {Logger} from '../log/logger';
 import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
@@ -17,7 +17,7 @@ import {getValidString} from '../shared/form-util';
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
 })
-export class ModbusWriteValueComponent implements OnInit, AfterViewChecked {
+export class ModbusWriteValueComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()
   modbusWriteValue: ModbusWriteValue;
   @Input()
@@ -43,12 +43,22 @@ export class ModbusWriteValueComponent implements OnInit, AfterViewChecked {
     this.formHandler = new FormHandler();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.modbusWriteValue) {
+      if (changes.modbusWriteValue.currentValue) {
+        this.modbusWriteValue = changes.modbusWriteValue.currentValue;
+      } else {
+        this.modbusWriteValue = new ModbusWriteValue();
+      }
+    }
+    this.form = this.parent.form;
+    this.updateForm(this.form, this.modbusWriteValue, this.formHandler);
+  }
+
   ngOnInit() {
-    this.modbusWriteValue = this.modbusWriteValue || new ModbusWriteValue();
     this.errorMessages = new ErrorMessages('ModbusReadValueComponent.error.', [
       new ErrorMessage(this.getFormControlName('factorToValue'), ValidatorType.pattern, 'factorToValue'),
     ], this.translate);
-    this.form = this.parent.form;
     this.expandParentForm(this.form, this.modbusWriteValue, this.formHandler);
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
@@ -78,6 +88,11 @@ export class ModbusWriteValueComponent implements OnInit, AfterViewChecked {
     formHandler.addFormControl(form, this.getFormControlName('value'),
       modbusWriteValue ? modbusWriteValue.value : undefined,
       [Validators.required]);
+  }
+
+  updateForm(form: FormGroup, modbusWriteValue: ModbusWriteValue, formHandler: FormHandler) {
+    formHandler.setFormControlValue(form, this.getFormControlName('name'), modbusWriteValue.name);
+    formHandler.setFormControlValue(form, this.getFormControlName('value'), modbusWriteValue.value);
   }
 
   updateModelFromForm(): ModbusWriteValue | undefined {
