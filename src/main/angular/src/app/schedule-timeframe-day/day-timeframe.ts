@@ -16,8 +16,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {TimeOfDay} from './time-of-day';
-import {DayOfWeek} from './day-of-week';
+import {TimeOfDay} from '../schedule/time-of-day';
+import {DayOfWeek} from '../schedule/day-of-week';
 
 export class DayTimeframe {
 

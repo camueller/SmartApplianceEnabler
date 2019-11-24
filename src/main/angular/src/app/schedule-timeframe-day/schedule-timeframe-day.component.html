@@ -1,0 +1,28 @@
+<div class="ui fields">
+  <div class="ui two wide field">
+    <label>{{'ScheduleTimeframeDayComponent.startTime' | translate}}</label>
+    <input type="text" class="clockpicker" formControlName="{{getFormControlName('startTime')}}">
+    <div *ngIf="errors[this.getFormControlName('startTime')]" class="ui negative message">
+      {{errors[this.getFormControlName('startTime')]}}</div>
+  </div>
+  <div class="ui two wide field">
+    <label>{{'ScheduleTimeframeDayComponent.endTime' | translate}}</label>
+    <input type="text" class="clockpicker" formControlName="{{getFormControlName('endTime')}}">
+    <div *ngIf="errors[this.getFormControlName('endTime')]" class="ui negative message">
+      {{errors[this.getFormControlName('endTime')]}}</div>
+  </div>
+  <div class="ui field">
+    <label>{{'ScheduleTimeframeDayComponent.daysOfWeekValues' | translate}}</label>
+    <sui-multi-select class="selection form-control"
+                      [options]="daysOfWeek"
+                      labelField="name"
+                      valueField="id"
+                      formControlName="{{getFormControlName('daysOfWeekValues')}}"
+                      placeholder="{{'ScheduleTimeframeDayComponent.daysOfWeekValues_placeholder' | translate}}"
+                      #selectDaysOfWeek
+    >
+      <sui-select-option *ngFor="let option of selectDaysOfWeek.filteredOptions"
+                         class="dropdown-item" [value]="option"></sui-select-option>
+    </sui-multi-select>
+  </div>
+</div>

@@ -15,191 +15,66 @@
   ~ with this program; if not, write to the Free Software Foundation, Inc.,
   ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
   -->
-<form class="ui form" [formGroup]="form" (ngSubmit)="submitForm()">
-  <div formArrayName="schedules">
-    <div *ngFor="let schedule of schedules.controls;let i = index" [formGroupName]="i">
-      <div class="ui segment">
-        <div class="ui fields">
-          <div class="ui header field">
-            {{'ScheduleComponent.schedule' | translate}}
-            <i (click)="removeSchedule(i)" class="icon red remove circle"></i>
-          </div>
-          <div class="field">
-            <label>{{'ScheduleComponent.enabled' | translate}}</label>
-            <input class="ui checkbox" type="checkbox" formControlName="enabled">
-          </div>
-          <div class="three wide field" [class.disabled]="!schedule.controls.enabled.value">
-            <label>{{'ScheduleComponent.timeframeType' | translate}}</label>
-            <sui-select class="selection form-control"
-                        [options]="timeframeTypes"
-                        labelField="value"
-                        valueField="key"
-                        formControlName="timeframeType"
-                        placeholder=" "
-                        #selectTimeframeType
-            >
-              <sui-select-option *ngFor="let option of selectTimeframeType.filteredOptions"
-                                 class="dropdown-item" [value]="option"></sui-select-option>
-            </sui-select>
-          </div>
-          <div class="three wide field" [class.disabled]="!schedule.controls.enabled.value">
-            <label>{{'ScheduleComponent.requestType' | translate}}</label>
-            <sui-select class="selection form-control"
-                        [options]="validRequestTypes"
-                        labelField="value"
-                        valueField="key"
-                        formControlName="requestType"
-                        placeholder=" "
-                        #selectRequestType
-            >
-              <sui-select-option *ngFor="let option of selectRequestType.filteredOptions"
-                                 class="dropdown-item" [value]="option"></sui-select-option>
-            </sui-select>
-          </div>
-        </div>
-        <div class="ui fields" [class.disabled]="!schedule.controls.enabled.value"
-             *ngIf="hasDayTimeframe(schedule.value)" formGroupName="dayTimeframe">
-          <div class="field">
-            <label>{{'ScheduleComponent.dayTimeframe_daysOfWeekValues' | translate}}</label>
-            <sui-multi-select class="selection form-control"
-                        [options]="daysOfWeek"
-                        labelField="name"
-                        valueField="id"
-                        formControlName="daysOfWeekValues"
-                        placeholder=" "
-                        #selectDaysOfWeek
-            >
-              <sui-select-option *ngFor="let option of selectDaysOfWeek.filteredOptions"
-                                 class="dropdown-item" [value]="option"></sui-select-option>
-            </sui-multi-select>
-          </div>
-          <div class="field">
-            <label>{{'ScheduleComponent.dayTimeframe_startTime' | translate}}</label>
-            <input type="text" class="clockpicker" formControlName="startTime">
-            <div *ngIf="getIndexedErrorMessage('dayTimeframe_startTime', i)" class="ui negative message">
-              {{getIndexedErrorMessage('dayTimeframe_startTime', i)}}</div>
-          </div>
-          <div class="field">
-            <label>{{'ScheduleComponent.dayTimeframe_endTime' | translate}}</label>
-            <input type="text" class="clockpicker" formControlName="endTime">
-            <div *ngIf="getIndexedErrorMessage('dayTimeframe_endTime', i)" class="ui negative message">
-              {{getIndexedErrorMessage('dayTimeframe_endTime', i)}}</div>
-          </div>
-        </div>
-        <div class="ui fields" [class.disabled]="!schedule.controls.enabled.value"
-             *ngIf="hasConsecutiveDaysTimeframe(schedule.value)" formGroupName="consecutiveDaysTimeframe">
-          <div class="field">
-            <div class="two fields">
-              <div class="field">
-                <label>{{'ScheduleComponent.consecutiveDaysTimeframe_startDayOfWeek' | translate}}</label>
-                <sui-select class="selection form-control"
-                            [options]="daysOfWeek"
-                            labelField="name"
-                            valueField="id"
-                            formControlName="startDayOfWeek"
-                            placeholder=" "
-                            #selectStartDayOfWeek
-                >
-                  <sui-select-option *ngFor="let option of selectStartDayOfWeek.filteredOptions"
-                                     class="dropdown-item" [value]="option"></sui-select-option>
-                </sui-select>
-              </div>
-              <div class="field">
-                <label>{{'ScheduleComponent.consecutiveDaysTimeframe_startTime' | translate}}</label>
-                <input type="text" class="clockpicker" formControlName="startTime">
-                <div *ngIf="getIndexedErrorMessage('consecutiveDaysTimeframe_startTime', i)" class="ui negative message">
-                  {{getIndexedErrorMessage('consecutiveDaysTimeframe_startTime', i)}}</div>
-              </div>
-            </div>
-          </div>
-          <div class="field">
-            <div class="two fields">
-              <div class="field">
-                <label>{{'ScheduleComponent.consecutiveDaysTimeframe_endDayOfWeek' | translate}}</label>
-                <sui-select class="selection form-control"
-                            [options]="daysOfWeek"
-                            labelField="name"
-                            valueField="id"
-                            formControlName="endDayOfWeek"
-                            placeholder=" "
-                            #selectEndDayOfWeek
-                >
-                  <sui-select-option *ngFor="let option of selectEndDayOfWeek.filteredOptions"
-                                     class="dropdown-item" [value]="option"></sui-select-option>
-                </sui-select>
-              </div>
-              <div class="field">
-                <label>{{'ScheduleComponent.consecutiveDaysTimeframe_endTime' | translate}}</label>
-                <input type="text" class="clockpicker" formControlName="endTime">
-                <div *ngIf="getIndexedErrorMessage('consecutiveDaysTimeframe_endTime', i)" class="ui negative message">
-                  {{getIndexedErrorMessage('consecutiveDaysTimeframe_endTime', i)}}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="ui fields" [class.disabled]="!schedule.controls.enabled.value"
-             *ngIf="hasRuntimeRequest(schedule.value)" formGroupName="runtimeRequest">
-          <div class="field">
-            <label>{{'ScheduleComponent.runtimeRequest_minRuntime' | translate}}</label>
-            <input class="clockpicker" type="text" formControlName="minRuntime">
-            <div *ngIf="getIndexedErrorMessage('runtimeRequest_minRuntime', i)" class="ui negative message">
-              {{getIndexedErrorMessage('runtimeRequest_minRuntime', i)}}</div>
-          </div>
-          <div class="field">
-            <label>{{'ScheduleComponent.runtimeRequest_maxRuntime' | translate}}</label>
-            <input class="clockpicker" type="text" formControlName="maxRuntime">
-            <div *ngIf="getIndexedErrorMessage('runtimeRequest_maxRuntime', i)" class="ui negative message">
-              {{getIndexedErrorMessage('runtimeRequest_maxRuntime', i)}}</div>
-          </div>
-        </div>
-        <div class="ui fields" [class.disabled]="!schedule.controls.enabled.value"
-             *ngIf="hasEnergyRequest(schedule.value)" formGroupName="energyRequest">
-          <div class="field">
-            <label>{{'ScheduleComponent.energyRequest_minEnergy' | translate}}</label>
-            <input type="text" formControlName="minEnergy">
-            <div *ngIf="getIndexedErrorMessage('energyRequest_minEnergy', i)" class="ui negative message">
-              {{getIndexedErrorMessage('energyRequest_minEnergy', i)}}</div>
-          </div>
-          <div class="field">
-            <label>{{'ScheduleComponent.energyRequest_maxEnergy' | translate}}</label>
-            <input type="text" formControlName="maxEnergy">
-            <div *ngIf="getIndexedErrorMessage('energyRequest_maxEnergy', i)" class="ui negative message">
-              {{getIndexedErrorMessage('energyRequest_maxEnergy', i)}}</div>
-          </div>
-        </div>
-        <div class="ui fields" [class.disabled]="!schedule.controls.enabled.value"
-             *ngIf="hasSocRequest(schedule.value)" formGroupName="socRequest">
-          <div class="field">
-            <label>{{'ScheduleComponent.socRequest_evId' | translate}}</label>
-            <sui-select class="selection form-control"
-                        [options]="electricVehicles"
-                        labelField="name"
-                        valueField="id"
-                        formControlName="evId"
-                        placeholder=" "
-                        #selectElectricVehicle
-            >
-              <sui-select-option *ngFor="let option of selectElectricVehicle.filteredOptions"
-                                 class="dropdown-item" [value]="option"></sui-select-option>
-            </sui-select>
-          </div>
-          <div class="field">
-            <label>{{'ScheduleComponent.socRequest_soc' | translate}}</label>
-            <input type="text" formControlName="soc">
-          </div>
-        </div>
-      </div>
-      <div class="ui hidden divider"></div>
+<div class="ui segment">
+  <div class="ui fields">
+    <div class="ui header field">
+      {{'ScheduleComponent.schedule' | translate}}
+      <i (click)="removeSchedule()" class="icon red remove circle"></i>
+    </div>
+    <div class="ui field">
+      <label>{{'ScheduleComponent.enabled' | translate}}</label>
+      <input class="ui checkbox" type="checkbox" formControlName="{{getFormControlName('enabled')}}">
+    </div>
+    <div class="ui two wide field" [class.disabled]="!isEnabled()">
+      <label>{{'ScheduleComponent.timeframeType' | translate}}</label>
+      <sui-select class="selection form-control"
+                  [options]="timeframeTypes"
+                  labelField="value"
+                  valueField="key"
+                  formControlName="{{getFormControlName('timeframeType')}}"
+                  placeholder=" "
+                  #selectTimeframeType
+      >
+        <sui-select-option *ngFor="let option of selectTimeframeType.filteredOptions"
+                           class="dropdown-item" [value]="option"></sui-select-option>
+      </sui-select>
+    </div>
+    <div class="ui two wide field" [class.disabled]="!isEnabled()">
+      <label>{{'ScheduleComponent.requestType' | translate}}</label>
+      <sui-select class="selection form-control"
+                  [options]="validRequestTypes"
+                  labelField="value"
+                  valueField="key"
+                  formControlName="{{getFormControlName('requestType')}}"
+                  placeholder=" "
+                  #selectRequestType
+      >
+        <sui-select-option *ngFor="let option of selectRequestType.filteredOptions"
+                           class="dropdown-item" [value]="option"></sui-select-option>
+      </sui-select>
     </div>
   </div>
-  <div>{{'dialog.mandatoryfields'|translate}}</div>
-  <div class="ui hidden divider"></div>
-  <button type="button" (click)="addSchedule()" class="ui button">{{'button.new' | translate}}</button>
-  <button type="submit" class="ui button" [disabled]="form.pristine||form.invalid">
-    {{'button.save' | translate}}</button>
-</form>
-<!--
-<pre>pristine={{form.pristine}}</pre>
-<pre>invalid={{form.invalid}}</pre>
-<pre>{{form.value | json}}</pre>
--->
+  <div class="ui vertical segment" [class.disabled]="!isEnabled()">
+    <app-schedule-timeframe-day *ngIf="isDayTimeframe()"
+                                [dayTimeFrame]="schedule.timeframe"
+                                [formControlNamePrefix]="formControlNamePrefix"
+    ></app-schedule-timeframe-day>
+    <app-schedule-timeframe-consecutivedays *ngIf="isConsecutiveDaysTimeframe()"
+                                            [consecutiveDaysTimeframe]="schedule.timeframe"
+                                            [formControlNamePrefix]="formControlNamePrefix"
+    ></app-schedule-timeframe-consecutivedays>
+    <app-schedule-request-runtime *ngIf="isRuntimeRequest()"
+                                  [runtimeRequest]="schedule.request"
+                                  [formControlNamePrefix]="formControlNamePrefix"
+    ></app-schedule-request-runtime>
+    <app-schedule-request-energy *ngIf="isEnergyRequest()"
+                                  [energyRequest]="schedule.request"
+                                  [formControlNamePrefix]="formControlNamePrefix"
+    ></app-schedule-request-energy>
+    <app-schedule-request-soc *ngIf="isSocRequest()"
+                              [socRequest]="schedule.request"
+                              [electricVehicles]="electricVehicles"
+                              [formControlNamePrefix]="formControlNamePrefix"
+    ></app-schedule-request-soc>
+  </div>
+</div>

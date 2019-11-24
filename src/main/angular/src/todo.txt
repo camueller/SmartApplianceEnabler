@@ -1,0 +1,5 @@
+appliance-component
+schedule-component
+settings-component
+//fixme
+test fixen

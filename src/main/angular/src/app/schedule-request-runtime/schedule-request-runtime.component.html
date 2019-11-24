@@ -1,0 +1,14 @@
+<div class="ui fields">
+  <div class="ui two wide field">
+    <label>{{'ScheduleRequestRuntimeComponent.minRuntime' | translate}}</label>
+    <input class="clockpicker" type="text" formControlName="{{getFormControlName('minRuntime')}}">
+    <div *ngIf="errors[this.getFormControlName('minRuntime')]" class="ui negative message">
+      {{errors[this.getFormControlName('minRuntime')]}}</div>
+  </div>
+  <div class="ui two wide field">
+    <label>{{'ScheduleRequestRuntimeComponent.maxRuntime' | translate}}</label>
+    <input class="clockpicker" type="text" formControlName="{{getFormControlName('maxRuntime')}}">
+    <div *ngIf="errors[this.getFormControlName('maxRuntime')]" class="ui negative message">
+      {{errors[this.getFormControlName('maxRuntime')]}}</div>
+  </div>
+</div>

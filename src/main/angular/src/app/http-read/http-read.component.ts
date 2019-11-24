@@ -72,6 +72,7 @@ export class HttpReadComponent implements OnChanges, OnInit, AfterViewChecked {
 
   ngOnChanges(changes: SimpleChanges): void {
     this.form = this.parent.form;
+    console.log('form=', this.form);
     if (changes.httpRead) {
       if (changes.httpRead.currentValue) {
         this.httpRead = changes.httpRead.currentValue;

@@ -16,351 +16,208 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {AfterViewChecked, AfterViewInit, Component, OnInit} from '@angular/core';
-import {ActivatedRoute, CanDeactivate} from '@angular/router';
-import {Schedule} from './schedule';
-import {FormArray, FormBuilder, FormControlName, FormGroup, Validators} from '@angular/forms';
-import {ConsecutiveDaysTimeframe} from './consecutive-days-timeframe';
-import {DayTimeframe} from './day-timeframe';
-import {ErrorMessages} from '../shared/error-messages';
-import {TranslateService} from '@ngx-translate/core';
-import {ErrorMessageHandler} from '../shared/error-message-handler';
-import {ScheduleFactory} from './schedule-factory';
-import {ScheduleService} from './schedule-service';
-import {InputValidatorPatterns} from '../shared/input-validator-patterns';
-import {DialogService} from '../shared/dialog.service';
-import {Observable} from 'rxjs';
+import {
+  AfterViewChecked,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+  ViewChild
+} from '@angular/core';
 import {Logger} from '../log/logger';
-import {RuntimeRequest} from './runtime-request';
-import {EnergyRequest} from './energy-request';
-import {SocRequest} from './soc-request';
-import {ElectricVehicle} from '../control-evcharger/electric-vehicle';
+import {Schedule} from './schedule';
+import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {FormHandler} from '../shared/form-handler';
-import {DayOfWeek, DaysOfWeek} from '../shared/days-of-week';
-import {ErrorMessage, ValidatorType} from '../shared/error-message';
-
-declare const $: any;
-
-/**
- * The time set by clock picker is displayed in input field but not set in the form model.
- * Since there is no direct access to the native element from the form control we have to add a hook to
- * propagate time changes on the native element to the form control.
- * Inspired by https://stackoverflow.com/questions/39642547/is-it-possible-to-get-native-element-for-formcontrol
- */
-const originFormControlNameNgOnChanges = FormControlName.prototype.ngOnChanges;
-FormControlName.prototype.ngOnChanges = function () {
-  const result = originFormControlNameNgOnChanges.apply(this, arguments);
-  this.control.nativeElement = this.valueAccessor._elementRef;
-
-  const elementRef = this.valueAccessor._elementRef;
-  if (elementRef) {
-    const classAttribute: string = elementRef.nativeElement.attributes.getNamedItem('class');
-    if (classAttribute != null) {
-      const classAttributeValues = classAttribute['nodeValue'];
-      if (classAttributeValues.indexOf('clockpicker') > -1) {
-        $(this.valueAccessor._elementRef.nativeElement).on('change', (event) => {
-          this.control.setValue(event.target.value);
-          this.control.markAsDirty();
-        });
-      }
-    }
-  }
-  return result;
-};
+import {ErrorMessages} from '../shared/error-messages';
+import {ErrorMessageHandler} from '../shared/error-message-handler';
+import {DayTimeframe} from '../schedule-timeframe-day/day-timeframe';
+import {RuntimeRequest} from '../schedule-request-runtime/runtime-request';
+import {SocRequest} from '../schedule-request-soc/soc-request';
+import {ElectricVehicle} from '../control-evcharger/electric-vehicle';
+import {EnergyRequest} from '../schedule-request-energy/energy-request';
+import {ConsecutiveDaysTimeframe} from '../schedule-timeframe-consecutivedays/consecutive-days-timeframe';
+import {ScheduleTimeframeDayComponent} from '../schedule-timeframe-day/schedule-timeframe-day.component';
+// tslint:disable-next-line:max-line-length
+import {ScheduleTimeframeConsecutivedaysComponent} from '../schedule-timeframe-consecutivedays/schedule-timeframe-consecutivedays.component';
+import {ScheduleRequestRuntimeComponent} from '../schedule-request-runtime/schedule-request-runtime.component';
+import {ScheduleRequestEnergyComponent} from '../schedule-request-energy/schedule-request-energy.component';
+import {ScheduleRequestSocComponent} from '../schedule-request-soc/schedule-request-soc.component';
 
 @Component({
-  selector: 'app-schedules',
+  selector: 'app-schedule',
   templateUrl: './schedule.component.html',
-  styleUrls: ['../global.css']
+  styleUrls: ['./schedule.css', '../global.css'],
+  viewProviders: [
+    {provide: ControlContainer, useExisting: FormGroupDirective}
+  ]
 })
-export class SchedulesComponent implements OnInit, AfterViewInit, AfterViewChecked, CanDeactivate<SchedulesComponent> {
+export class ScheduleComponent implements OnChanges, OnInit, AfterViewChecked {
+  @Input()
+  schedule: Schedule;
+  @Input()
+  formControlNamePrefix = '';
+  @Input()
+  timeframeTypes: { key: string, value?: string }[];
+  @Input()
+  validRequestTypes: { key: string, value?: string }[];
+  @Input()
+  electricVehicles: ElectricVehicle[];
+  @Output()
+  remove = new EventEmitter<any>();
+  @ViewChild(ScheduleTimeframeDayComponent, {static: false})
+  timeframeDayComp: ScheduleTimeframeDayComponent;
+  @ViewChild(ScheduleTimeframeConsecutivedaysComponent, {static: false})
+  timeframeConsecutiveDaysComp: ScheduleTimeframeConsecutivedaysComponent;
+  @ViewChild(ScheduleRequestRuntimeComponent, {static: false})
+  requestRuntimeComp: ScheduleRequestRuntimeComponent;
+  @ViewChild(ScheduleRequestEnergyComponent, {static: false})
+  requestEnergyComp: ScheduleRequestEnergyComponent;
+  @ViewChild(ScheduleRequestSocComponent, {static: false})
+  requestSocComp: ScheduleRequestSocComponent;
   form: FormGroup;
   formHandler: FormHandler;
-  schedules: FormArray;
-  applianceId: string;
-  electricVehicles: ElectricVehicle[];
-  timeframeTypes: {key: string, value?: string}[] = [
-    { key: DayTimeframe.TYPE },
-    { key: ConsecutiveDaysTimeframe.TYPE },
-  ];
-  evRequestTypes: {key: string, value?: string}[] = [
-    { key: RuntimeRequest.TYPE },
-    { key: EnergyRequest.TYPE },
-    { key: SocRequest.TYPE },
-  ];
-  nonEvRequestTypes: {key: string, value?: string}[] = [];
-  daysOfWeek: DayOfWeek[];
-  initializeOnceAfterViewChecked = false;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
-  discardChangesMessage: string;
 
   constructor(private logger: Logger,
-              private fb: FormBuilder,
-              private scheduleService: ScheduleService,
-              private route: ActivatedRoute,
-              private dialogService: DialogService,
-              private translate: TranslateService) {
+              private parent: FormGroupDirective
+  ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
     this.formHandler = new FormHandler();
   }
 
-  ngOnInit() {
-    this.errorMessages = new ErrorMessages('ScheduleComponent.error.', [
-      new ErrorMessage('dayTimeframe_startTime', ValidatorType.required),
-      new ErrorMessage('dayTimeframe_startTime', ValidatorType.pattern),
-      new ErrorMessage('dayTimeframe_endTime', ValidatorType.required),
-      new ErrorMessage('dayTimeframe_endTime', ValidatorType.pattern),
-      new ErrorMessage('consecutiveDaysTimeframe_startTime', ValidatorType.required),
-      new ErrorMessage('consecutiveDaysTimeframe_startTime', ValidatorType.pattern),
-      new ErrorMessage('consecutiveDaysTimeframe_endTime', ValidatorType.required),
-      new ErrorMessage('consecutiveDaysTimeframe_endTime', ValidatorType.pattern),
-      new ErrorMessage('runtimeRequest_minRuntime', ValidatorType.pattern),
-      new ErrorMessage('runtimeRequest_maxRuntime', ValidatorType.required),
-      new ErrorMessage('runtimeRequest_maxRuntime', ValidatorType.pattern),
-      new ErrorMessage('energyRequest_minEnergy', ValidatorType.pattern),
-      new ErrorMessage('energyRequest_maxEnergy', ValidatorType.required),
-      new ErrorMessage('energyRequest_maxEnergy', ValidatorType.pattern),
-    ], this.translate);
-    this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
-    DaysOfWeek.getDows(this.translate).subscribe(daysOfWeek => this.daysOfWeek = daysOfWeek);
-    const timeframeTypeKeys = this.timeframeTypes.map(timeframeType => timeframeType.key);
-    this.translate.get(timeframeTypeKeys).subscribe(
-      translatedKeys => {
-        this.timeframeTypes.forEach(timeframeType => timeframeType.value = translatedKeys[timeframeType.key]);
-      });
-    const requestTypeKeys = this.evRequestTypes.map(requestType => requestType.key);
-    this.translate.get(requestTypeKeys).subscribe(
-      translatedKeys => {
-        this.evRequestTypes.forEach(requestType => requestType.value = translatedKeys[requestType.key]);
-        this.nonEvRequestTypes = this.evRequestTypes.filter(requestType => requestType.key === RuntimeRequest.TYPE);
-      });
-    this.initForm();
-    this.route.paramMap.subscribe(() => this.applianceId = this.route.snapshot.paramMap.get('id'));
-    this.route.data.subscribe((data: {schedules: Schedule[], electricVehicles: ElectricVehicle[]}) => {
-      this.initForm();
-      this.electricVehicles = data.electricVehicles;
-      data.schedules.forEach(schedule => {
-        const scheduleFormGroup = this.buildScheduleFormGroup(schedule);
-        this.schedules.push(scheduleFormGroup);
-      });
-      this.initializeOnceAfterViewChecked = true;
-    });
+  ngOnChanges(changes: SimpleChanges): void {
+    this.form = this.parent.form;
+    console.log('--------------------------------');
+    console.log('schedule=', this.schedule);
+    console.log('form=', this.form);
+    console.log('changes=', changes);
+    if (changes.schedule) {
+      if (changes.schedule.currentValue) {
+        this.schedule = changes.schedule.currentValue;
+      } else {
+        this.schedule = new Schedule();
+      }
+      this.updateForm(this.parent.form, this.schedule, this.formHandler);
+    }
+    if (changes.formControlNamePrefix) {
+      this.formControlNamePrefix = changes.formControlNamePrefix.currentValue;
+      this.updateForm(this.parent.form, this.schedule, this.formHandler);
+    }
   }
 
-  ngAfterViewInit() {
+  ngOnInit() {
+    this.expandParentForm(this.form, this.schedule, this.formHandler);
   }
 
   ngAfterViewChecked() {
-    if (this.initializeOnceAfterViewChecked) {
-      this.logger.debug('ngAfterViewChecked initializeOnceAfterViewChecked=' + this.initializeOnceAfterViewChecked);
-      this.formHandler.markLabelsRequired();
-      this.initializeOnceAfterViewChecked = false;
-      this.initializeClockPicker();
-    }
+    this.formHandler.markLabelsRequired();
   }
 
-  initializeClockPicker() {
-    $('.clockpicker').clockpicker({ autoclose: true });
+  getFormControlName(formControlName: string): string {
+    return `${this.formControlNamePrefix}${formControlName.charAt(0).toUpperCase()}${formControlName.slice(1)}`;
   }
 
-  initForm() {
-    this.schedules = new FormArray([]);
-    this.form = this.fb.group({
-      schedules: this.schedules
-    });
-    this.form.statusChanges.subscribe(() =>
-      this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages));
+  isEnabled() {
+    return this.form.controls[this.getFormControlName('enabled')].value;
   }
 
-  canDeactivate(): Observable<boolean> | boolean {
-    if (this.form.pristine) {
-      return true;
-    }
-    return this.dialogService.confirm(this.discardChangesMessage);
+  isDayTimeframe() {
+    return this.form.controls[this.getFormControlName('timeframeType')].value === DayTimeframe.TYPE;
   }
 
-  buildScheduleFormGroup(schedule: Schedule): FormGroup {
-    const fg = new FormGroup({});
-    this.formHandler.addFormControl(fg, 'enabled', schedule != null ? schedule.enabled : true);
+  isConsecutiveDaysTimeframe() {
+    return this.form.controls[this.getFormControlName('timeframeType')].value === ConsecutiveDaysTimeframe.TYPE;
+  }
 
-    const requestType = schedule != null ? schedule.requestType : RuntimeRequest.TYPE;
-    if (requestType === RuntimeRequest.TYPE) {
-      fg.addControl('runtimeRequest', this.buildRuntimeRequest(schedule));
-    }
-    if (requestType === EnergyRequest.TYPE) {
-      fg.addControl('energyRequest', this.buildEnergyRequest(schedule));
-    }
-    if (requestType === SocRequest.TYPE) {
-      fg.addControl('socRequest', this.buildSocRequest(schedule));
-    }
-    this.formHandler.addFormControl(fg, 'requestType',  requestType, Validators.required);
+  isRuntimeRequest() {
+    return this.form.controls[this.getFormControlName('requestType')].value === RuntimeRequest.TYPE;
+  }
 
-    const timeframeType = schedule != null ? schedule.timeframeType : DayTimeframe.TYPE;
+  isEnergyRequest() {
+    return this.form.controls[this.getFormControlName('requestType')].value === EnergyRequest.TYPE;
+  }
+
+  isSocRequest() {
+    return this.form.controls[this.getFormControlName('requestType')].value === SocRequest.TYPE;
+  }
+
+  removeSchedule() {
+    this.remove.emit();
+  }
+
+  get timeframeType() {
+    if (this.schedule && this.schedule.timeframe) {
+      if (this.schedule.timeframe['@class'] === DayTimeframe.TYPE) {
+        return DayTimeframe.TYPE;
+      } else if (this.schedule.timeframe['@class'] === ConsecutiveDaysTimeframe.TYPE) {
+        return ConsecutiveDaysTimeframe.TYPE;
+      }
+    }
+    return undefined;
+  }
+
+  get requestType() {
+    if (this.schedule && this.schedule.request) {
+      if (this.schedule.request['@class'] === RuntimeRequest.TYPE) {
+        return RuntimeRequest.TYPE;
+      } else if (this.schedule.request['@class'] === EnergyRequest.TYPE) {
+        return EnergyRequest.TYPE;
+      } else if (this.schedule.request['@class'] === SocRequest.TYPE) {
+        return SocRequest.TYPE;
+      }
+    }
+    return undefined;
+  }
+
+  expandParentForm(form: FormGroup, schedule: Schedule, formHandler: FormHandler) {
+    formHandler.addFormControl(form, this.getFormControlName('enabled'), schedule.enabled);
+    formHandler.addFormControl(form, this.getFormControlName('timeframeType'),
+      this.timeframeType, [Validators.required]);
+    formHandler.addFormControl(form, this.getFormControlName('requestType'),
+      this.requestType, [Validators.required]);
+  }
+
+  updateForm(form: FormGroup, schedule: Schedule, formHandler: FormHandler) {
+    formHandler.setFormControlValue(form, this.getFormControlName('enabled'), schedule.enabled);
+    formHandler.setFormControlValue(form, this.getFormControlName('timeframeType'), this.timeframeType);
+    formHandler.setFormControlValue(form, this.getFormControlName('requestType'), this.requestType);
+  }
+
+  updateModelFromForm(): Schedule | undefined {
+    const enabled = this.form.controls[this.getFormControlName('enabled')].value;
+    const timeframeType = this.form.controls[this.getFormControlName('timeframeType')].value;
+    const requestType = this.form.controls[this.getFormControlName('requestType')].value;
+
+    let timeframe: DayTimeframe | ConsecutiveDaysTimeframe;
     if (timeframeType === DayTimeframe.TYPE) {
-      fg.addControl('dayTimeframe', this.buildDayTimeframe(schedule));
+      timeframe = this.timeframeDayComp.updateModelFromForm();
     }
     if (timeframeType === ConsecutiveDaysTimeframe.TYPE) {
-      fg.addControl('consecutiveDaysTimeframe',  this.buildConsecutiveDaysTimeframe(schedule));
+      timeframe = this.timeframeConsecutiveDaysComp.updateModelFromForm();
     }
-    this.formHandler.addFormControl(fg, 'timeframeType', timeframeType, Validators.required);
 
-    fg.get('requestType').valueChanges.forEach(
-      (newRequestType) => {
-        this.logger.debug('requestType changed to ' + newRequestType);
-        if (newRequestType === RuntimeRequest.TYPE) {
-          fg.removeControl('energyRequest');
-          fg.removeControl('socRequest');
-          fg.setControl('runtimeRequest', this.buildRuntimeRequest(schedule));
-        } else if (newRequestType === EnergyRequest.TYPE) {
-          fg.removeControl('runtimeRequest');
-          fg.removeControl('socRequest');
-          fg.setControl('energyRequest', this.buildEnergyRequest(schedule));
-        } else if (newRequestType === SocRequest.TYPE) {
-          fg.removeControl('runtimeRequest');
-          fg.removeControl('energyRequest');
-          fg.setControl('socRequest', this.buildSocRequest(schedule));
-        }
-        this.initializeOnceAfterViewChecked = true;
-      }
-    );
-    fg.get('timeframeType').valueChanges.forEach(
-      (newTimeframeType) => {
-        this.logger.debug('timeframeType changed to ' + newTimeframeType);
-        if (newTimeframeType === DayTimeframe.TYPE) {
-          fg.removeControl('consecutiveDaysTimeframe');
-          fg.setControl(
-            'dayTimeframe', this.buildDayTimeframe(schedule)
-          );
-        } else if (newTimeframeType === ConsecutiveDaysTimeframe.TYPE) {
-          fg.removeControl('dayTimeframe');
-          fg.setControl(
-            'consecutiveDaysTimeframe', this.buildConsecutiveDaysTimeframe(schedule)
-          );
-        }
-        this.initializeOnceAfterViewChecked = true;
-      }
-    );
-    return fg;
-  }
-
-  buildRuntimeRequest(schedule: Schedule): FormGroup {
-    const fg = new FormGroup({});
-    this.formHandler.addFormControl(fg, 'minRuntime',
-      this.hasRuntimeRequest(schedule) ? schedule.runtimeRequest.minHHMM : undefined,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]);
-    this.formHandler.addFormControl(fg, 'maxRuntime',
-      this.hasRuntimeRequest(schedule) ? schedule.runtimeRequest.maxHHMM : undefined,
-      [Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]);
-    return fg;
-  }
-
-  hasRuntimeRequest(schedule: Schedule): boolean {
-    return schedule != null && schedule.runtimeRequest != null;
-  }
-
-  buildEnergyRequest(schedule: Schedule): FormGroup {
-    const fg = new FormGroup({});
-    this.formHandler.addFormControl(fg, 'minEnergy',
-      this.hasEnergyRequest(schedule) ? schedule.energyRequest.min : undefined,
-      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(fg, 'maxEnergy',
-      this.hasEnergyRequest(schedule) ? schedule.energyRequest.max : undefined,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    return fg;
-  }
-
-  hasEnergyRequest(schedule: Schedule): boolean {
-    return schedule != null && schedule.energyRequest != null;
-  }
-
-  buildSocRequest(schedule: Schedule): FormGroup {
-    const fg = new FormGroup({});
-    this.formHandler.addFormControl(fg, 'evId',
-      this.hasSocRequest(schedule) ? schedule.socRequest.evId : undefined,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(fg, 'soc',
-      this.hasSocRequest(schedule) ? schedule.socRequest.soc : undefined,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    return fg;
-  }
-
-  hasSocRequest(schedule: Schedule): boolean {
-    return schedule != null && schedule.socRequest != null;
-  }
-
-  get hasElectricVehicles(): boolean {
-    return this.electricVehicles.length > 0;
-  }
-  get validRequestTypes() {
-    if (this.hasElectricVehicles) {
-      return this.evRequestTypes;
+    let request: RuntimeRequest | EnergyRequest | SocRequest;
+    if (requestType === RuntimeRequest.TYPE) {
+      request = this.requestRuntimeComp.updateModelFromForm();
     }
-    return this.nonEvRequestTypes;
-  }
+    if (requestType === EnergyRequest.TYPE) {
+      request = this.requestEnergyComp.updateModelFromForm();
+    }
+    if (requestType === SocRequest.TYPE) {
+      request = this.requestSocComp.updateModelFromForm();
+    }
 
-  buildDayTimeframe(schedule: Schedule): FormGroup {
-    const fg = new FormGroup({});
-    this.formHandler.addFormControl(fg, 'daysOfWeekValues',
-      this.hasDayTimeframe(schedule) ? schedule.dayTimeframe.daysOfWeekValues : []);
-    this.formHandler.addFormControl(fg, 'startTime',
-      this.hasDayTimeframe(schedule) ? schedule.dayTimeframe.startTime : null,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]);
-    this.formHandler.addFormControl(fg, 'endTime',
-      this.hasDayTimeframe(schedule) ? schedule.dayTimeframe.endTime : null,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]);
-    return fg;
-  }
+    if (!(enabled || timeframe || request)) {
+      return undefined;
+    }
 
-  hasDayTimeframe(schedule: Schedule): boolean {
-    return schedule != null && schedule.dayTimeframe != null;
-  }
-
-  buildConsecutiveDaysTimeframe(schedule: Schedule): FormGroup {
-    const fg = new FormGroup({});
-    this.formHandler.addFormControl(fg, 'startDayOfWeek',
-      this.hasConsecutiveDaysTimeframe(schedule) ? schedule.consecutiveDaysTimeframe.startDayOfWeek : null,
-      Validators.required);
-    this.formHandler.addFormControl(fg, 'startTime',
-      this.hasConsecutiveDaysTimeframe(schedule) ? schedule.consecutiveDaysTimeframe.startTime : null,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]);
-    this.formHandler.addFormControl(fg, 'endDayOfWeek',
-      this.hasConsecutiveDaysTimeframe(schedule) ? schedule.consecutiveDaysTimeframe.endDayOfWeek : null,
-      Validators.required);
-    this.formHandler.addFormControl(fg, 'endTime',
-      this.hasConsecutiveDaysTimeframe(schedule) ? schedule.consecutiveDaysTimeframe.endTime : null,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]);
-    return fg;
-  }
-
-  hasConsecutiveDaysTimeframe(schedule: Schedule): boolean {
-    return schedule != null && schedule.consecutiveDaysTimeframe != null;
-  }
-
-  getIndexedErrorMessage(key: string, index: number): string {
-    const indexedKey = key + '.' + index.toString();
-    return this.errors[indexedKey];
-  }
-
-  addSchedule() {
-    const schedulesControl = <FormArray>this.form.controls['schedules'];
-    schedulesControl.push(this.buildScheduleFormGroup(null));
-    this.initializeOnceAfterViewChecked = true;
-    this.form.markAsDirty();
-  }
-
-  removeSchedule(index: number) {
-    this.logger.debug('Remove ' + index);
-    const schedulesControl = <FormArray>this.form.controls['schedules'];
-    schedulesControl.removeAt(index);
-    this.form.markAsDirty();
-  }
-
-  submitForm() {
-    const scheduleFactory = new ScheduleFactory(this.logger);
-    const schedules = scheduleFactory.fromForm(this.form.value);
-    this.scheduleService.setSchedules(this.applianceId, schedules).subscribe();
-    this.form.markAsPristine();
+    this.schedule.enabled = enabled;
+    this.schedule.request = request;
+    return this.schedule;
   }
 }

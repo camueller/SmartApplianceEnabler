@@ -27,7 +27,7 @@ import {AppRoutingModule} from './app-routing.module';
 import {PageNotFoundComponent} from './not-found.component';
 import {MeterComponent} from './meter/meter.component';
 import {ControlComponent} from './control/control.component';
-import {SchedulesComponent} from './schedule/schedule.component';
+import {ScheduleComponent} from './schedule/schedule.component';
 import {SettingsComponent} from './settings/settings.component';
 import {ApplianceResolver} from './appliance/appliance-resolver.service';
 import {AppliancesReloadService} from './appliance/appliances-reload-service';
@@ -78,6 +78,12 @@ import {ModbusReadComponent} from './modbus-read/modbus-read.component';
 import {ModbusReadValueComponent} from './modbus-read-value/modbus-read-value.component';
 import {ModbusWriteComponent} from './modbus-write/modbus-write.component';
 import {ModbusWriteValueComponent} from './modbus-write-value/modbus-write-value.component';
+import { ScheduleTimeframeConsecutivedaysComponent } from './schedule-timeframe-consecutivedays/schedule-timeframe-consecutivedays.component';
+import { ScheduleTimeframeDayComponent } from './schedule-timeframe-day/schedule-timeframe-day.component';
+import { ScheduleRequestRuntimeComponent } from './schedule-request-runtime/schedule-request-runtime.component';
+import { ScheduleRequestEnergyComponent } from './schedule-request-energy/schedule-request-energy.component';
+import { ScheduleRequestSocComponent } from './schedule-request-soc/schedule-request-soc.component';
+import {SchedulesComponent} from './schedules/schedules.component';
 
 @NgModule({
   declarations: [
@@ -106,7 +112,13 @@ import {ModbusWriteValueComponent} from './modbus-write-value/modbus-write-value
     ModbusWriteComponent,
     ModbusWriteValueComponent,
     PageNotFoundComponent,
+    ScheduleComponent,
     SchedulesComponent,
+    ScheduleRequestRuntimeComponent,
+    ScheduleRequestEnergyComponent,
+    ScheduleRequestSocComponent,
+    ScheduleTimeframeConsecutivedaysComponent,
+    ScheduleTimeframeDayComponent,
     SettingsComponent,
     StatusComponent,
     StatusEditComponent,

@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2017 Axel Müller <axel.mueller@avanux.de>
+Copyright (C) 2018 Axel Müller <axel.mueller@avanux.de>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -16,19 +16,18 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export class ConsecutiveDaysTimeframe {
+export class RuntimeRequest {
 
   static get TYPE(): string {
-    return 'de.avanux.smartapplianceenabler.schedule.ConsecutiveDaysTimeframe';
+    return 'de.avanux.smartapplianceenabler.schedule.RuntimeRequest';
   }
 
-  '@class' = ConsecutiveDaysTimeframe.TYPE;
-  startTime: string;
-  startDayOfWeek: number;
-  endTime: string;
-  endDayOfWeek: number;
+  '@class' = RuntimeRequest.TYPE;
+  min: number;
+  max: number;
 
-  public constructor(init?: Partial<ConsecutiveDaysTimeframe>) {
+  public constructor(init?: Partial<RuntimeRequest>) {
     Object.assign(this, init);
   }
 }
+

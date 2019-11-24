@@ -1,0 +1,42 @@
+<div class="ui fields">
+    <div class="ui two wide field">
+      <label>{{'ScheduleTimeframeConsecutivedaysComponent.startDayOfWeek' | translate}}</label>
+      <sui-select class="selection form-control"
+                  [options]="daysOfWeek"
+                  labelField="name"
+                  valueField="id"
+                  formControlName="{{getFormControlName('startDayOfWeek')}}"
+                  placeholder=" "
+                  #selectStartDayOfWeek
+      >
+        <sui-select-option *ngFor="let option of selectStartDayOfWeek.filteredOptions"
+                           class="dropdown-item" [value]="option"></sui-select-option>
+      </sui-select>
+    </div>
+    <div class="ui two wide field">
+      <label>{{'ScheduleTimeframeConsecutivedaysComponent.startTime' | translate}}</label>
+      <input type="text" class="clockpicker" formControlName="{{getFormControlName('startTime')}}">
+      <div *ngIf="errors[this.getFormControlName('startTime')]" class="ui negative message">
+        {{errors[this.getFormControlName('startTime')]}}</div>
+    </div>
+    <div class="ui two wide field">
+      <label>{{'ScheduleTimeframeConsecutivedaysComponent.endDayOfWeek' | translate}}</label>
+      <sui-select class="selection form-control"
+                  [options]="daysOfWeek"
+                  labelField="name"
+                  valueField="id"
+                  formControlName="{{getFormControlName('endDayOfWeek')}}"
+                  placeholder=" "
+                  #selectEndDayOfWeek
+      >
+        <sui-select-option *ngFor="let option of selectEndDayOfWeek.filteredOptions"
+                           class="dropdown-item" [value]="option"></sui-select-option>
+      </sui-select>
+    </div>
+    <div class="ui two wide field">
+      <label>{{'ScheduleTimeframeConsecutivedaysComponent.endTime' | translate}}</label>
+      <input type="text" class="clockpicker" formControlName="{{getFormControlName('endTime')}}">
+      <div *ngIf="errors[this.getFormControlName('endTime')]" class="ui negative message">
+        {{errors[this.getFormControlName('endTime')]}}</div>
+    </div>
+</div>

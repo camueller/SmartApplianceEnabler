@@ -1,5 +1,7 @@
 import * as moment from 'moment';
 import {Moment} from 'moment';
+import {TimeOfDay} from '../schedule/time-of-day';
+import {DayOfWeek} from '../schedule/day-of-week';
 
 export class TimeUtil {
 
@@ -9,10 +11,10 @@ export class TimeUtil {
 
   static toHourMinuteWithUnits(seconds: number): string {
     const date = new Date(seconds * 1000).toISOString();
-    let daysExtracted = Number.parseInt(date.substring(8, 10)) - 1;
-    let hoursExtracted = Number.parseInt(date.substring(11, 13));
-    let minutesExtracted = Number.parseInt(date.substring(14, 16));
-    const secondsExtracted = Number.parseInt(date.substring(17, 19));
+    let daysExtracted = Number.parseInt(date.substring(8, 10), 10) - 1;
+    let hoursExtracted = Number.parseInt(date.substring(11, 13), 10);
+    let minutesExtracted = Number.parseInt(date.substring(14, 16), 10);
+    const secondsExtracted = Number.parseInt(date.substring(17, 19), 10);
     if (secondsExtracted > 0) {
       minutesExtracted++;
       if (minutesExtracted > 59) {
@@ -37,6 +39,10 @@ export class TimeUtil {
       return (+hhmm[0]) * 3600 + (+hhmm[1]) * 60;
     }
     return 0;
+  }
+
+  static timestringFromTimeOfDay(time: TimeOfDay): string {
+    return this.timestring(time.hour, time.minute);
   }
 
   static timestring(hour: number, minute: number): string {
@@ -64,8 +70,8 @@ export class TimeUtil {
       m.add(1, 'day');
     }
     const timeOfDaySplit = timeOfDay.split(':');
-    m.hour(Number.parseInt(timeOfDaySplit[0]));
-    m.minute(Number.parseInt(timeOfDaySplit[1]));
+    m.hour(Number.parseInt(timeOfDaySplit[0], 10));
+    m.minute(Number.parseInt(timeOfDaySplit[1], 10));
     m.second(0);
     m.millisecond(0);
     return m.toISOString();
@@ -88,6 +94,26 @@ export class TimeUtil {
   static toWeekdayFromTimestamp(timestamp: number): number {
     const m = moment(timestamp);
     return m.weekday();
+  }
+
+  static toDayOfWeekValue(rawDayOfWeek: {value: number}): number {
+    return rawDayOfWeek.value;
+  }
+
+  static toDayOfWeekValues(rawDaysOfWeek: {value: number}[]): number[] {
+    const daysOfWeek: number[] = [];
+    if (rawDaysOfWeek) {
+      for (let i = 0; i < rawDaysOfWeek.length; i++) {
+        daysOfWeek.push(this.toDayOfWeekValue(rawDaysOfWeek[i]));
+      }
+    }
+    return daysOfWeek;
+  }
+
+  static toDaysOfWeek(dayOfWeekValues: number[]): DayOfWeek[] {
+    const daysOfWeek: DayOfWeek[] = [];
+    dayOfWeekValues.forEach((dayOfWeekValue) => daysOfWeek.push(new DayOfWeek(dayOfWeekValue)));
+    return daysOfWeek;
   }
 
   static padLeadingZero(value: number, size: number): string {

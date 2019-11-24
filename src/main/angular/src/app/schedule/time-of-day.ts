@@ -27,4 +27,10 @@ export class TimeOfDay {
     this.minute = minute;
     this.second = second;
   }
+
+  public static fromString(timestring: string) {
+    return new TimeOfDay(
+      parseInt(timestring.substr(0, 2), 10),
+      parseInt(timestring.substr(3, 2), 10), 0);
+  }
 }

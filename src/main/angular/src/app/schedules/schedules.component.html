@@ -1,0 +1,20 @@
+<form class="ui form" [formGroup]="form" (ngSubmit)="submitForm()">
+  <div class="sae-block">
+    <app-schedule *ngFor="let schedule of schedules; index as i; last as l"
+                  [schedule]="schedule"
+                  [formControlNamePrefix]="getFormControlPrefix(i)"
+                  [electricVehicles]="electricVehicles"
+                  [timeframeTypes]="timeframeTypes"
+                  [validRequestTypes]="validRequestTypes"
+                  (remove)="onScheduleRemove(i)"
+                  #scheduleComponents
+    ></app-schedule>
+  </div>
+  <div class="mandatory-fields">{{'dialog.mandatoryfields'|translate}}</div>
+  <button type="button" (click)="addSchedule()" class="ui button">{{'button.new' | translate}}</button>
+  <button type="submit" class="ui button" [disabled]="form.pristine||form.invalid">
+    {{'button.save' | translate}}</button>
+</form>
+<!--pre>pristine={{form.pristine}}</pre>
+<pre>invalid={{form.invalid}}</pre>
+<pre>{{form.value | json}}</pre-->

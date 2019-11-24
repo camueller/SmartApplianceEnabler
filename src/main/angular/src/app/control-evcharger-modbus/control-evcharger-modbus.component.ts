@@ -62,6 +62,8 @@ export class ControlEvchargerModbusComponent implements OnChanges, OnInit, After
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    this.form = this.parent.form;
+    console.log('form=', this.form);
     if (changes.evModbusControl) {
       if (changes.evModbusControl.currentValue) {
         this.evModbusControl = changes.evModbusControl.currentValue;
@@ -69,7 +71,6 @@ export class ControlEvchargerModbusComponent implements OnChanges, OnInit, After
         this.evModbusControl = new EvModbusControl();
       }
     }
-    this.form = this.parent.form;
     this.updateForm(this.form, this.evModbusControl, this.formHandler);
   }
 

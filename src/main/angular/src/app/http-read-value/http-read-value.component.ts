@@ -9,7 +9,6 @@ import {HttpReadValue} from './http-read-value';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {getValidFloat, getValidString} from '../shared/form-util';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
-import {HttpConfiguration} from '../http-configuration/http-configuration';
 
 @Component({
   selector: 'app-http-read-value',
@@ -49,6 +48,7 @@ export class HttpReadValueComponent implements OnChanges, OnInit, AfterViewCheck
 
   ngOnChanges(changes: SimpleChanges): void {
     this.form = this.parent.form;
+    console.log('form=', this.form);
     if (changes.httpReadValue) {
       if (changes.httpReadValue.currentValue) {
         this.httpReadValue = changes.httpReadValue.currentValue;

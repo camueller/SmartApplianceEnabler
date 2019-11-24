@@ -1,0 +1,22 @@
+<div class="ui fields">
+  <div class="ui two wide field">
+    <label>{{'ScheduleRequestSocComponent.evId' | translate}}</label>
+    <sui-select class="selection form-control"
+                [options]="electricVehicles"
+                labelField="name"
+                valueField="id"
+                formControlName="{{getFormControlName('evId')}}"
+                placeholder=" "
+                #selectElectricVehicle
+    >
+      <sui-select-option *ngFor="let option of selectElectricVehicle.filteredOptions"
+                         class="dropdown-item" [value]="option"></sui-select-option>
+    </sui-select>
+  </div>
+  <div class="ui two wide field">
+    <label>{{'ScheduleRequestSocComponent.soc' | translate}}</label>
+    <input type="text" formControlName="{{getFormControlName('soc')}}">
+    <div *ngIf="errors[this.getFormControlName('soc')]" class="ui negative message">
+      {{errors[this.getFormControlName('soc')]}}</div>
+  </div>
+</div>

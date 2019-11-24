@@ -57,9 +57,9 @@ export class HttpConfigurationComponent implements OnChanges, OnInit {
   }
 
   updateModelFromForm(): HttpConfiguration | undefined {
-    const contentType = getValidString(this.parent.form.controls.contentType.value);
-    const username = getValidString(this.parent.form.controls.username.value);
-    const password = getValidString(this.parent.form.controls.password.value);
+    const contentType = getValidString(this.form.controls.contentType.value);
+    const username = getValidString(this.form.controls.username.value);
+    const password = getValidString(this.form.controls.password.value);
 
     if (!(contentType || username || password)) {
       return undefined;

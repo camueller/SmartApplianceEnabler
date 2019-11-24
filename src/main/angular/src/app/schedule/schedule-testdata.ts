@@ -1,7 +1,7 @@
 import {Schedule} from './schedule';
-import {DayTimeframe} from './day-timeframe';
-import {ConsecutiveDaysTimeframe} from './consecutive-days-timeframe';
-import {RuntimeRequest} from './runtime-request';
+import {DayTimeframe} from '../schedule-timeframe-day/day-timeframe';
+import {ConsecutiveDaysTimeframe} from '../schedule-timeframe-consecutivedays/consecutive-days-timeframe';
+import {RuntimeRequest} from '../schedule-request-runtime/runtime-request';
 
 export class ScheduleTestdata {
 
@@ -69,21 +69,20 @@ export class ScheduleTestdata {
   public static daytimeframe12345_type(): Schedule {
     return new Schedule({
       '@class': 'de.avanux.smartapplianceenabler.schedule.Schedule',
-      enabled: true,
-      requestType: 'de.avanux.smartapplianceenabler.schedule.RuntimeRequest',
-      runtimeRequest: new RuntimeRequest({
-        '@class': 'de.avanux.smartapplianceenabler.schedule.RuntimeRequest',
-        min: 3600,
-        minHHMM: '01:00',
-        max: undefined,
-      }),
-      timeframeType: 'de.avanux.smartapplianceenabler.schedule.DayTimeframe',
-      dayTimeframe: new DayTimeframe({
-        '@class': 'de.avanux.smartapplianceenabler.schedule.DayTimeframe',
-        daysOfWeekValues: [1, 2, 3, 4, 5],
-        startTime: '06:00',
-        endTime: '07:30'
-      })
+      // enabled: true,
+      // requestType: 'de.avanux.smartapplianceenabler.schedule.RuntimeRequest',
+      // runtimeRequest: new RuntimeRequest({
+      //   '@class': 'de.avanux.smartapplianceenabler.schedule.RuntimeRequest',
+      //   min: 3600,
+      //   max: undefined,
+      // }),
+      // timeframeType: 'de.avanux.smartapplianceenabler.schedule.DayTimeframe',
+      // dayTimeframe: new DayTimeframe({
+      //   '@class': 'de.avanux.smartapplianceenabler.schedule.DayTimeframe',
+      //   daysOfWeekValues: [1, 2, 3, 4, 5],
+      //   startTime: '06:00',
+      //   endTime: '07:30'
+      // })
     });
   }
 
@@ -130,22 +129,21 @@ export class ScheduleTestdata {
   public static consecutiveDaysTimeframe567_type(): Schedule {
     return new Schedule({
       '@class': 'de.avanux.smartapplianceenabler.schedule.Schedule',
-      enabled: true,
-      requestType: 'de.avanux.smartapplianceenabler.schedule.RuntimeRequest',
-      runtimeRequest: new RuntimeRequest({
-        '@class': 'de.avanux.smartapplianceenabler.schedule.RuntimeRequest',
-        min: 3600,
-        minHHMM: '01:00',
-        max: undefined
-      }),
-      timeframeType: 'de.avanux.smartapplianceenabler.schedule.ConsecutiveDaysTimeframe',
-      consecutiveDaysTimeframe: new ConsecutiveDaysTimeframe({
-        '@class': 'de.avanux.smartapplianceenabler.schedule.ConsecutiveDaysTimeframe',
-        startDayOfWeek: 5,
-        startTime: '18:00',
-        endDayOfWeek: 7,
-        endTime: '20:00'
-      })
+      // enabled: true,
+      // requestType: 'de.avanux.smartapplianceenabler.schedule.RuntimeRequest',
+      // runtimeRequest: new RuntimeRequest({
+      //   '@class': 'de.avanux.smartapplianceenabler.schedule.RuntimeRequest',
+      //   min: 3600,
+      //   max: undefined
+      // }),
+      // timeframeType: 'de.avanux.smartapplianceenabler.schedule.ConsecutiveDaysTimeframe',
+      // timeframe: new ConsecutiveDaysTimeframe({
+      //   '@class': 'de.avanux.smartapplianceenabler.schedule.ConsecutiveDaysTimeframe',
+      //   startDayOfWeek: 5,
+      //   startTime: '18:00',
+      //   endDayOfWeek: 7,
+      //   endTime: '20:00'
+      // })
     });
   }
 }

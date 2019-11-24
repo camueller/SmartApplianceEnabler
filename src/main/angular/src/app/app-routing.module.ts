@@ -22,7 +22,7 @@ import {NgModule} from '@angular/core';
 import {PageNotFoundComponent} from './not-found.component';
 import {MeterComponent} from './meter/meter.component';
 import {ControlComponent} from './control/control.component';
-import {SchedulesComponent} from './schedule/schedule.component';
+import {SchedulesComponent} from './schedules/schedules.component';
 import {SettingsComponent} from './settings/settings.component';
 import {ApplianceResolver} from './appliance/appliance-resolver.service';
 import {StatusComponent} from './status/status.component';
@@ -34,7 +34,6 @@ import {ScheduleResolver} from './schedule/schedule-resolver.service';
 import {SettingsResolver} from './settings/settings-resolver.service';
 import {SettingsDefaultsResolver} from './settings/settings-defaults-resolver.service';
 import {CanDeactivateGuard} from './shared/can-deactivate-guard.service';
-import {ElectricVehicle} from './control-evcharger/electric-vehicle';
 import {ElectricVehicleResolver} from './control-evcharger/electric-vehicle-resolver.service';
 
 const routes: Routes = [

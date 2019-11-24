@@ -16,22 +16,17 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {DayTimeframe} from './day-timeframe';
-import {ConsecutiveDaysTimeframe} from './consecutive-days-timeframe';
-import {RuntimeRequest} from './runtime-request';
-import {EnergyRequest} from './energy-request';
-import {SocRequest} from './soc-request';
+import {DayTimeframe} from '../schedule-timeframe-day/day-timeframe';
+import {ConsecutiveDaysTimeframe} from '../schedule-timeframe-consecutivedays/consecutive-days-timeframe';
+import {RuntimeRequest} from '../schedule-request-runtime/runtime-request';
+import {EnergyRequest} from '../schedule-request-energy/energy-request';
+import {SocRequest} from '../schedule-request-soc/soc-request';
 
 export class Schedule {
   '@class' = 'de.avanux.smartapplianceenabler.schedule.Schedule';
   enabled: boolean;
-  requestType: string;
-  runtimeRequest: RuntimeRequest;
-  energyRequest: EnergyRequest;
-  socRequest: SocRequest;
-  timeframeType: string;
-  dayTimeframe: DayTimeframe;
-  consecutiveDaysTimeframe: ConsecutiveDaysTimeframe;
+  request: RuntimeRequest | EnergyRequest | SocRequest;
+  timeframe: DayTimeframe | ConsecutiveDaysTimeframe;
 
   public constructor(init?: Partial<Schedule>) {
     Object.assign(this, init);
