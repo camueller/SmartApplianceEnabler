@@ -706,22 +706,24 @@ public class Appliance implements Validateable, ControlStateChangedListener,
 
     private EnergyRequest buildEnergyRequestConsideringEnergyAlreadyCharged(int min, int max) {
         EnergyRequest remainingEnergy = buildEnergyRequest(min, max);
-        if(meter != null) {
-            int whAlreadyCharged = Float.valueOf(meter.getEnergy() * 1000.0f).intValue();
-            remainingEnergy.setMin(min - whAlreadyCharged);
-            if(remainingEnergy.getMax() != null) {
-                remainingEnergy.setMax(max - whAlreadyCharged);
+        if(remainingEnergy != null) {
+            if(meter != null) {
+                int whAlreadyCharged = Float.valueOf(meter.getEnergy() * 1000.0f).intValue();
+                remainingEnergy.setMin(min - whAlreadyCharged);
+                if(remainingEnergy.getMax() != null) {
+                    remainingEnergy.setMax(max - whAlreadyCharged);
+                }
             }
+            logger.debug("{}: Remaining energy calculated: {}", id, remainingEnergy);
         }
-        if(remainingEnergy.getMax() != null && remainingEnergy.getMax() == 0) {
-            logger.debug("{}: Skip creation of energy request with remaining max energy = 0", id);
-            return null;
-        }
-        logger.debug("{}: Remaining energy calculated: {}", id, remainingEnergy);
         return remainingEnergy;
     }
 
     private EnergyRequest buildEnergyRequest(int min, int max) {
+        if(max == 0) {
+            logger.debug("{}: Skip creation of energy request with remaining max energy = 0", id);
+            return null;
+        }
         EnergyRequest request = new EnergyRequest();
         request.setMin(min);
         request.setMax(max);
@@ -874,6 +876,10 @@ public class Appliance implements Validateable, ControlStateChangedListener,
 
     protected RuntimeInterval createEnergyRequestInterval(Integer earliestStart, Integer latestEnd, Integer minEnergy,
                                                           Integer maxEnergy) {
+        if(maxEnergy != null && maxEnergy == 0) {
+            logger.debug("{}: Skip creation of energy request with remaining max energy = 0", id);
+            return null;
+        }
         RuntimeInterval energyRequestInterval = new RuntimeInterval();
         energyRequestInterval.setEarliestStart(earliestStart);
         energyRequestInterval.setLatestEnd(latestEnd);
