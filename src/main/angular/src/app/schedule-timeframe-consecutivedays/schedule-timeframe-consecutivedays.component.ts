@@ -53,8 +53,6 @@ FormControlName.prototype.ngOnChanges = function () {
 export class ScheduleTimeframeConsecutivedaysComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()
   consecutiveDaysTimeframe: ConsecutiveDaysTimeframe;
-  @Input()
-  formControlNamePrefix = '';
   form: FormGroup;
   formHandler: FormHandler;
   daysOfWeek: DayOfWeek[];
@@ -79,19 +77,19 @@ export class ScheduleTimeframeConsecutivedaysComponent implements OnChanges, OnI
       } else {
         this.consecutiveDaysTimeframe = new ConsecutiveDaysTimeframe();
       }
-      this.updateForm(this.parent.form, this.consecutiveDaysTimeframe, this.formHandler);
+      this.updateForm();
     }
   }
 
   ngOnInit() {
     DaysOfWeek.getDows(this.translate).subscribe(daysOfWeek => this.daysOfWeek = daysOfWeek);
     this.errorMessages = new ErrorMessages('ScheduleTimeframeDayComponent.error.', [
-      new ErrorMessage(this.getFormControlName('startTime'), ValidatorType.required, 'startTime'),
-      new ErrorMessage(this.getFormControlName('startTime'), ValidatorType.pattern, 'startTime'),
-      new ErrorMessage(this.getFormControlName('endTime'), ValidatorType.required, 'endTime'),
-      new ErrorMessage(this.getFormControlName('endTime'), ValidatorType.pattern, 'endTime'),
+      new ErrorMessage('startTime', ValidatorType.required),
+      new ErrorMessage('startTime', ValidatorType.pattern),
+      new ErrorMessage('endTime', ValidatorType.required),
+      new ErrorMessage('endTime', ValidatorType.pattern),
     ], this.translate);
-    this.expandParentForm(this.form, this.consecutiveDaysTimeframe, this.formHandler);
+    this.expandParentForm();
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
@@ -110,39 +108,45 @@ export class ScheduleTimeframeConsecutivedaysComponent implements OnChanges, OnI
     $('.clockpicker').clockpicker({ autoclose: true });
   }
 
-  getFormControlName(formControlName: string): string {
-    return `${this.formControlNamePrefix}${formControlName.charAt(0).toUpperCase()}${formControlName.slice(1)}`;
+  get startDayOfWeek() {
+    return this.consecutiveDaysTimeframe.start && this.consecutiveDaysTimeframe.start.dayOfWeek;
   }
 
-  expandParentForm(form: FormGroup, consecutiveDaysTimeframe: ConsecutiveDaysTimeframe, formHandler: FormHandler) {
-    formHandler.addFormControl(form, this.getFormControlName('startDayOfWeek'),
-      consecutiveDaysTimeframe && consecutiveDaysTimeframe.start.dayOfWeek);
-    formHandler.addFormControl(form, this.getFormControlName('startTime'),
-      consecutiveDaysTimeframe && TimeUtil.timestringFromTimeOfDay(consecutiveDaysTimeframe.start),
+  get startTime() {
+    return this.consecutiveDaysTimeframe.start && TimeUtil.timestringFromTimeOfDay(this.consecutiveDaysTimeframe.start);
+  }
+
+  get endDayOfWeek() {
+    return this.consecutiveDaysTimeframe.end && this.consecutiveDaysTimeframe.end.dayOfWeek;
+  }
+
+  get endTime() {
+    return this.consecutiveDaysTimeframe.end && TimeUtil.timestringFromTimeOfDay(this.consecutiveDaysTimeframe.end);
+  }
+
+  expandParentForm() {
+    this.formHandler.addFormControl(this.form, 'startDayOfWeek', this.startDayOfWeek,
+      Validators.required);
+    this.formHandler.addFormControl(this.form, 'startTime', this.startTime,
       [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]);
-    formHandler.addFormControl(form, this.getFormControlName('endDayOfWeek'),
-      consecutiveDaysTimeframe && consecutiveDaysTimeframe.end.dayOfWeek);
-    formHandler.addFormControl(form, this.getFormControlName('endTime'),
-      consecutiveDaysTimeframe && TimeUtil.timestringFromTimeOfDay(consecutiveDaysTimeframe.end),
+    this.formHandler.addFormControl(this.form, 'endDayOfWeek', this.endDayOfWeek,
+      Validators.required);
+    this.formHandler.addFormControl(this.form, 'endTime', this.endTime,
       [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]);
   }
 
-  updateForm(form: FormGroup, consecutiveDaysTimeframe: ConsecutiveDaysTimeframe, formHandler: FormHandler) {
-    formHandler.setFormControlValue(form, this.getFormControlName('startDayOfWeek'),
-      consecutiveDaysTimeframe.startDayOfWeek);
-    formHandler.setFormControlValue(form, this.getFormControlName('startTime'),
-      consecutiveDaysTimeframe.startTime);
-    formHandler.setFormControlValue(form, this.getFormControlName('endDayOfWeek'),
-      consecutiveDaysTimeframe.endDayOfWeek);
-    formHandler.setFormControlValue(form, this.getFormControlName('endTime'),
-      consecutiveDaysTimeframe.endTime);
+  updateForm() {
+    this.formHandler.setFormControlValue(this.form, 'startDayOfWeek', this.startDayOfWeek);
+    this.formHandler.setFormControlValue(this.form, 'startTime', this.startTime);
+    this.formHandler.setFormControlValue(this.form, 'endDayOfWeek', this.endDayOfWeek);
+    this.formHandler.setFormControlValue(this.form, 'endTime', this.endTime);
   }
 
   updateModelFromForm(): ConsecutiveDaysTimeframe | undefined {
-    const startDayOfWeek = this.form.controls[this.getFormControlName('startDayOfWeek')].value;
-    const startTime = this.form.controls[this.getFormControlName('startTime')].value;
-    const endDayOfWeek = this.form.controls[this.getFormControlName('endDayOfWeek')].value;
-    const endTime = this.form.controls[this.getFormControlName('endTime')].value;
+    const startDayOfWeek = this.form.controls.startDayOfWeek.value;
+    const startTime = this.form.controls.startTime.value;
+    const endDayOfWeek = this.form.controls.endDayOfWeek.value;
+    const endTime = this.form.controls.endTime.value;
 
     if (!(startDayOfWeek || startTime || endDayOfWeek || endTime)) {
       return undefined;

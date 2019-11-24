@@ -1,14 +1,14 @@
 <div class="ui fields">
   <div class="ui two wide field">
     <label>{{'ScheduleRequestEnergyComponent.minEnergy' | translate}}</label>
-    <input type="text" formControlName="{{getFormControlName('minEnergy')}}">
-    <div *ngIf="errors[this.getFormControlName('minEnergy')]" class="ui negative message">
-      {{errors[this.getFormControlName('minEnergy')]}}</div>
+    <input type="text" formControlName="minEnergy">
+    <div *ngIf="errors.minEnergy" class="ui negative message">
+      {{errors.minEnergy}}</div>
   </div>
   <div class="ui two wide field">
     <label>{{'ScheduleRequestEnergyComponent.maxEnergy' | translate}}</label>
-    <input type="text" formControlName="{{getFormControlName('maxEnergy')}}">
-    <div *ngIf="errors[this.getFormControlName('maxEnergy')]" class="ui negative message">
-      {{errors[this.getFormControlName('maxEnergy')]}}</div>
+    <input type="text" formControlName="maxEnergy">
+    <div *ngIf="errors.maxEnergy" class="ui negative message">
+      {{errors.maxEnergy}}</div>
   </div>
 </div>

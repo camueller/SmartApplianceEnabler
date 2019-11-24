@@ -29,7 +29,7 @@ import {
 } from '@angular/core';
 import {Logger} from '../log/logger';
 import {Schedule} from './schedule';
-import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {FormGroup, Validators} from '@angular/forms';
 import {FormHandler} from '../shared/form-handler';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
@@ -50,15 +50,12 @@ import {ScheduleRequestSocComponent} from '../schedule-request-soc/schedule-requ
   selector: 'app-schedule',
   templateUrl: './schedule.component.html',
   styleUrls: ['./schedule.css', '../global.css'],
-  viewProviders: [
-    {provide: ControlContainer, useExisting: FormGroupDirective}
-  ]
 })
 export class ScheduleComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()
   schedule: Schedule;
   @Input()
-  formControlNamePrefix = '';
+  form: FormGroup;
   @Input()
   timeframeTypes: { key: string, value?: string }[];
   @Input()
@@ -77,36 +74,25 @@ export class ScheduleComponent implements OnChanges, OnInit, AfterViewChecked {
   requestEnergyComp: ScheduleRequestEnergyComponent;
   @ViewChild(ScheduleRequestSocComponent, {static: false})
   requestSocComp: ScheduleRequestSocComponent;
-  form: FormGroup;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
 
   constructor(private logger: Logger,
-              private parent: FormGroupDirective
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
     this.formHandler = new FormHandler();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.form = this.parent.form;
-    console.log('--------------------------------');
-    console.log('schedule=', this.schedule);
-    console.log('form=', this.form);
-    console.log('changes=', changes);
     if (changes.schedule) {
       if (changes.schedule.currentValue) {
         this.schedule = changes.schedule.currentValue;
       } else {
         this.schedule = new Schedule();
       }
-      this.updateForm(this.parent.form, this.schedule, this.formHandler);
-    }
-    if (changes.formControlNamePrefix) {
-      this.formControlNamePrefix = changes.formControlNamePrefix.currentValue;
-      this.updateForm(this.parent.form, this.schedule, this.formHandler);
+      this.updateForm(this.form, this.schedule, this.formHandler);
     }
   }
 
@@ -118,32 +104,28 @@ export class ScheduleComponent implements OnChanges, OnInit, AfterViewChecked {
     this.formHandler.markLabelsRequired();
   }
 
-  getFormControlName(formControlName: string): string {
-    return `${this.formControlNamePrefix}${formControlName.charAt(0).toUpperCase()}${formControlName.slice(1)}`;
-  }
-
   isEnabled() {
-    return this.form.controls[this.getFormControlName('enabled')].value;
+    return this.form.controls.enabled.value;
   }
 
   isDayTimeframe() {
-    return this.form.controls[this.getFormControlName('timeframeType')].value === DayTimeframe.TYPE;
+    return this.form.controls.timeframeType.value === DayTimeframe.TYPE;
   }
 
   isConsecutiveDaysTimeframe() {
-    return this.form.controls[this.getFormControlName('timeframeType')].value === ConsecutiveDaysTimeframe.TYPE;
+    return this.form.controls.timeframeType.value === ConsecutiveDaysTimeframe.TYPE;
   }
 
   isRuntimeRequest() {
-    return this.form.controls[this.getFormControlName('requestType')].value === RuntimeRequest.TYPE;
+    return this.form.controls.requestType.value === RuntimeRequest.TYPE;
   }
 
   isEnergyRequest() {
-    return this.form.controls[this.getFormControlName('requestType')].value === EnergyRequest.TYPE;
+    return this.form.controls.requestType.value === EnergyRequest.TYPE;
   }
 
   isSocRequest() {
-    return this.form.controls[this.getFormControlName('requestType')].value === SocRequest.TYPE;
+    return this.form.controls.requestType.value === SocRequest.TYPE;
   }
 
   removeSchedule() {
@@ -175,23 +157,23 @@ export class ScheduleComponent implements OnChanges, OnInit, AfterViewChecked {
   }
 
   expandParentForm(form: FormGroup, schedule: Schedule, formHandler: FormHandler) {
-    formHandler.addFormControl(form, this.getFormControlName('enabled'), schedule.enabled);
-    formHandler.addFormControl(form, this.getFormControlName('timeframeType'),
+    formHandler.addFormControl(form, 'enabled', schedule.enabled);
+    formHandler.addFormControl(form, 'timeframeType',
       this.timeframeType, [Validators.required]);
-    formHandler.addFormControl(form, this.getFormControlName('requestType'),
+    formHandler.addFormControl(form, 'requestType',
       this.requestType, [Validators.required]);
   }
 
   updateForm(form: FormGroup, schedule: Schedule, formHandler: FormHandler) {
-    formHandler.setFormControlValue(form, this.getFormControlName('enabled'), schedule.enabled);
-    formHandler.setFormControlValue(form, this.getFormControlName('timeframeType'), this.timeframeType);
-    formHandler.setFormControlValue(form, this.getFormControlName('requestType'), this.requestType);
+    formHandler.setFormControlValue(form, 'enabled', schedule.enabled);
+    formHandler.setFormControlValue(form, 'timeframeType', this.timeframeType);
+    formHandler.setFormControlValue(form, 'requestType', this.requestType);
   }
 
   updateModelFromForm(): Schedule | undefined {
-    const enabled = this.form.controls[this.getFormControlName('enabled')].value;
-    const timeframeType = this.form.controls[this.getFormControlName('timeframeType')].value;
-    const requestType = this.form.controls[this.getFormControlName('requestType')].value;
+    const enabled = this.form.controls.enabled.value;
+    const timeframeType = this.form.controls.timeframeType.value;
+    const requestType = this.form.controls.requestType.value;
 
     let timeframe: DayTimeframe | ConsecutiveDaysTimeframe;
     if (timeframeType === DayTimeframe.TYPE) {

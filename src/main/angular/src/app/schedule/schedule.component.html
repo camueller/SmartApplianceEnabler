@@ -15,7 +15,7 @@
   ~ with this program; if not, write to the Free Software Foundation, Inc.,
   ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
   -->
-<div class="ui segment">
+<div class="ui segment" [formGroup]="form">
   <div class="ui fields">
     <div class="ui header field">
       {{'ScheduleComponent.schedule' | translate}}
@@ -23,7 +23,7 @@
     </div>
     <div class="ui field">
       <label>{{'ScheduleComponent.enabled' | translate}}</label>
-      <input class="ui checkbox" type="checkbox" formControlName="{{getFormControlName('enabled')}}">
+      <input class="ui checkbox" type="checkbox" formControlName="enabled">
     </div>
     <div class="ui two wide field" [class.disabled]="!isEnabled()">
       <label>{{'ScheduleComponent.timeframeType' | translate}}</label>
@@ -31,7 +31,7 @@
                   [options]="timeframeTypes"
                   labelField="value"
                   valueField="key"
-                  formControlName="{{getFormControlName('timeframeType')}}"
+                  formControlName="timeframeType"
                   placeholder=" "
                   #selectTimeframeType
       >
@@ -45,7 +45,7 @@
                   [options]="validRequestTypes"
                   labelField="value"
                   valueField="key"
-                  formControlName="{{getFormControlName('requestType')}}"
+                  formControlName="requestType"
                   placeholder=" "
                   #selectRequestType
       >
@@ -57,24 +57,19 @@
   <div class="ui vertical segment" [class.disabled]="!isEnabled()">
     <app-schedule-timeframe-day *ngIf="isDayTimeframe()"
                                 [dayTimeFrame]="schedule.timeframe"
-                                [formControlNamePrefix]="formControlNamePrefix"
     ></app-schedule-timeframe-day>
     <app-schedule-timeframe-consecutivedays *ngIf="isConsecutiveDaysTimeframe()"
                                             [consecutiveDaysTimeframe]="schedule.timeframe"
-                                            [formControlNamePrefix]="formControlNamePrefix"
     ></app-schedule-timeframe-consecutivedays>
     <app-schedule-request-runtime *ngIf="isRuntimeRequest()"
                                   [runtimeRequest]="schedule.request"
-                                  [formControlNamePrefix]="formControlNamePrefix"
     ></app-schedule-request-runtime>
     <app-schedule-request-energy *ngIf="isEnergyRequest()"
                                   [energyRequest]="schedule.request"
-                                  [formControlNamePrefix]="formControlNamePrefix"
     ></app-schedule-request-energy>
     <app-schedule-request-soc *ngIf="isSocRequest()"
                               [socRequest]="schedule.request"
                               [electricVehicles]="electricVehicles"
-                              [formControlNamePrefix]="formControlNamePrefix"
     ></app-schedule-request-soc>
   </div>
 </div>

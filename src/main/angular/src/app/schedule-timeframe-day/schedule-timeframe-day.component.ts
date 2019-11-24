@@ -52,8 +52,6 @@ FormControlName.prototype.ngOnChanges = function () {
 export class ScheduleTimeframeDayComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()
   dayTimeFrame: DayTimeframe;
-  @Input()
-  formControlNamePrefix = '';
   form: FormGroup;
   formHandler: FormHandler;
   daysOfWeek: DayOfWeek[];
@@ -78,19 +76,19 @@ export class ScheduleTimeframeDayComponent implements OnChanges, OnInit, AfterVi
       } else {
         this.dayTimeFrame = new DayTimeframe();
       }
-      this.updateForm(this.parent.form, this.dayTimeFrame, this.formHandler);
+      this.updateForm();
     }
   }
 
   ngOnInit() {
     DaysOfWeek.getDows(this.translate).subscribe(daysOfWeek => this.daysOfWeek = daysOfWeek);
     this.errorMessages = new ErrorMessages('ScheduleTimeframeDayComponent.error.', [
-      new ErrorMessage(this.getFormControlName('startTime'), ValidatorType.required, 'startTime'),
-      new ErrorMessage(this.getFormControlName('startTime'), ValidatorType.pattern, 'startTime'),
-      new ErrorMessage(this.getFormControlName('endTime'), ValidatorType.required, 'endTime'),
-      new ErrorMessage(this.getFormControlName('endTime'), ValidatorType.pattern, 'endTime'),
+      new ErrorMessage('startTime', ValidatorType.required),
+      new ErrorMessage('startTime', ValidatorType.pattern),
+      new ErrorMessage('endTime', ValidatorType.required),
+      new ErrorMessage('endTime', ValidatorType.pattern),
     ], this.translate);
-    this.expandParentForm(this.form, this.dayTimeFrame, this.formHandler);
+    this.expandParentForm();
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
@@ -106,36 +104,39 @@ export class ScheduleTimeframeDayComponent implements OnChanges, OnInit, AfterVi
   }
 
   initializeClockPicker() {
-    console.log('initializeClockPicker');
-    $('.clockpicker').clockpicker({ autoclose: true });
+    $('.clockpicker').clockpicker({autoclose: true});
   }
 
-  getFormControlName(formControlName: string): string {
-    return `${this.formControlNamePrefix}${formControlName.charAt(0).toUpperCase()}${formControlName.slice(1)}`;
+  get startTime() {
+    return this.dayTimeFrame.start && TimeUtil.timestringFromTimeOfDay(this.dayTimeFrame.start);
   }
 
-  expandParentForm(form: FormGroup, dayTimeFrame: DayTimeframe, formHandler: FormHandler) {
-    formHandler.addFormControl(form, this.getFormControlName('daysOfWeekValues'),
-      dayTimeFrame && TimeUtil.toDayOfWeekValues(dayTimeFrame.daysOfWeek));
-    formHandler.addFormControl(form, this.getFormControlName('startTime'),
-      dayTimeFrame && TimeUtil.timestringFromTimeOfDay(dayTimeFrame.start),
+  get endTime() {
+    return this.dayTimeFrame.end && TimeUtil.timestringFromTimeOfDay(this.dayTimeFrame.end);
+  }
+
+  get daysOfWeekValues() {
+    return this.dayTimeFrame.daysOfWeek && TimeUtil.toDayOfWeekValues(this.dayTimeFrame.daysOfWeek);
+  }
+
+  expandParentForm() {
+    this.formHandler.addFormControl(this.form, 'daysOfWeekValues', this.daysOfWeekValues);
+    this.formHandler.addFormControl(this.form, 'startTime', this.startTime,
       [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]);
-    formHandler.addFormControl(form, this.getFormControlName('endTime'),
-      dayTimeFrame && TimeUtil.timestringFromTimeOfDay(dayTimeFrame.end),
+    this.formHandler.addFormControl(this.form, 'endTime', this.endTime,
       [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]);
   }
 
-  updateForm(form: FormGroup, dayTimeFrame: DayTimeframe, formHandler: FormHandler) {
-    formHandler.setFormControlValue(form, this.getFormControlName('daysOfWeekValues'),
-      dayTimeFrame.daysOfWeekValues);
-    formHandler.setFormControlValue(form, this.getFormControlName('startTime'), dayTimeFrame.startTime);
-    formHandler.setFormControlValue(form, this.getFormControlName('endTime'), dayTimeFrame.endTime);
+  updateForm() {
+    this.formHandler.setFormControlValue(this.form, 'daysOfWeekValues', this.daysOfWeekValues);
+    this.formHandler.setFormControlValue(this.form, 'startTime', this.startTime);
+    this.formHandler.setFormControlValue(this.form, 'endTime', this.endTime);
   }
 
   updateModelFromForm(): DayTimeframe | undefined {
-    const daysOfWeekValues = this.form.controls[this.getFormControlName('daysOfWeekValues')].value;
-    const startTime = this.form.controls[this.getFormControlName('startTime')].value;
-    const endTime = this.form.controls[this.getFormControlName('endTime')].value;
+    const daysOfWeekValues = this.form.controls.daysOfWeekValues.value;
+    const startTime = this.form.controls.startTime.value;
+    const endTime = this.form.controls.endTime.value;
 
     if (!(daysOfWeekValues || startTime || endTime)) {
       return undefined;

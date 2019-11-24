@@ -71,6 +71,30 @@
             </ModbusRead>
         </ModbusElectricityMeter-->
     </Appliance>
+    <Appliance id="F-00000001-000000000099-00">
+        <HttpSwitch>
+            <HttpConfiguration username="hallo" password="ich" />
+            <HttpWrite url="http://192.168.178.48/powerOn">
+                <HttpWriteValue name="Off" value="0"/>
+                <HttpWriteValue name="On" value="1"/>
+            </HttpWrite>
+            <HttpRead url="http://espressomaschine/cm?cmnd=Power">
+                <HttpReadValue name="On" extractionRegex=":.ON"/>
+            </HttpRead>
+        </HttpSwitch>
+        <Schedule enabled="true">
+            <RuntimeRequest min="9000" max="12000"/>
+            <DayTimeframe>
+                <Start hour="11" minute="0" second="0"/>
+                <End hour="17" minute="30" second="0"/>
+                <DayOfWeek>1</DayOfWeek>
+                <DayOfWeek>2</DayOfWeek>
+                <DayOfWeek>3</DayOfWeek>
+                <DayOfWeek>4</DayOfWeek>
+                <DayOfWeek>5</DayOfWeek>
+            </DayTimeframe>
+        </Schedule>
+    </Appliance>
     <Connectivity>
         <ModbusTCP id="modbus" host="127.0.0.1"/>
         <ModbusTCP id="wallbox" host="192.168.178.39"/>

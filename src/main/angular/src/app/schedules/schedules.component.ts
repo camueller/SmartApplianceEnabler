@@ -3,7 +3,7 @@ import {Logger} from '../log/logger';
 import {ActivatedRoute} from '@angular/router';
 import {Schedule} from '../schedule/schedule';
 import {ElectricVehicle} from '../control-evcharger/electric-vehicle';
-import {FormGroup} from '@angular/forms';
+import {FormArray, FormGroup} from '@angular/forms';
 import {ScheduleService} from '../schedule/schedule-service';
 import {FormHandler} from '../shared/form-handler';
 import {DayTimeframe} from '../schedule-timeframe-day/day-timeframe';
@@ -47,12 +47,12 @@ export class SchedulesComponent implements OnChanges, OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // if (changes.control && changes.schedules.currentValue) {
-    //   this.schedules = changes.schedules.currentValue;
-    // }
-    // if (this.form) {
-    //   this.updateForm(this.form, this.schedules, this.formHandler);
-    // }
+    if (changes.control && changes.schedules.currentValue) {
+      this.schedules = changes.schedules.currentValue;
+    }
+    if (this.form) {
+      this.updateForm();
+    }
   }
 
   ngOnInit() {
@@ -60,9 +60,8 @@ export class SchedulesComponent implements OnChanges, OnInit {
     this.route.data.subscribe((data: {schedules: Schedule[], electricVehicles: ElectricVehicle[]}) => {
       this.schedules = data.schedules;
       this.electricVehicles = data.electricVehicles;
+      this.form = this.buildForm();
     });
-    this.form = this.buildForm(this.schedules, this.formHandler);
-
     const timeframeTypeKeys = this.timeframeTypes.map(timeframeType => timeframeType.key);
     this.translate.get(timeframeTypeKeys).subscribe(
       translatedKeys => {
@@ -75,11 +74,6 @@ export class SchedulesComponent implements OnChanges, OnInit {
         this.evRequestTypes.forEach(requestType => requestType.value = translatedKeys[requestType.key]);
         this.nonEvRequestTypes = this.evRequestTypes.filter(requestType => requestType.key === RuntimeRequest.TYPE);
       });
-
-  }
-
-  getFormControlPrefix(index: number) {
-    return `schedule${index}.`;
   }
 
   get validRequestTypes() {
@@ -95,21 +89,39 @@ export class SchedulesComponent implements OnChanges, OnInit {
 
   addSchedule() {
     this.schedules.push(new Schedule({enabled: true}));
+    this.scheduleFormArray.push(this.createSchedulesFormGroup());
     this.form.markAsDirty();
   }
 
   onScheduleRemove(index: number) {
-    console.log('Remove ', index);
     this.schedules.splice(index, 1);
+    this.scheduleFormArray.removeAt(index);
     this.form.markAsDirty();
   }
 
-  buildForm(schedules: Schedule[], formHandler: FormHandler): FormGroup {
-    const form = new FormGroup({});
+  get scheduleFormArray() {
+    return this.form.controls.schedules as FormArray;
+  }
+
+  createSchedulesFormGroup(): FormGroup {
+    return new FormGroup({});
+  }
+
+  getScheduleFormGroup(index: number) {
+    return this.scheduleFormArray.controls[index];
+  }
+
+  buildForm(): FormGroup {
+    const schedulesFormArray = new FormArray([]);
+    this.schedules.forEach((schedule) => schedulesFormArray.push(this.createSchedulesFormGroup()));
+
+    const form = new FormGroup({
+      schedules: schedulesFormArray
+    });
     return form;
   }
 
-  updateForm(form: FormGroup, schedules: Schedule[], formHandler: FormHandler) {
+  updateForm() {
   }
 
   submitForm() {

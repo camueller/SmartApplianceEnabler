@@ -5,7 +5,7 @@
                   [options]="daysOfWeek"
                   labelField="name"
                   valueField="id"
-                  formControlName="{{getFormControlName('startDayOfWeek')}}"
+                  formControlName="startDayOfWeek"
                   placeholder=" "
                   #selectStartDayOfWeek
       >
@@ -15,9 +15,9 @@
     </div>
     <div class="ui two wide field">
       <label>{{'ScheduleTimeframeConsecutivedaysComponent.startTime' | translate}}</label>
-      <input type="text" class="clockpicker" formControlName="{{getFormControlName('startTime')}}">
-      <div *ngIf="errors[this.getFormControlName('startTime')]" class="ui negative message">
-        {{errors[this.getFormControlName('startTime')]}}</div>
+      <input type="text" class="clockpicker" formControlName="startTime">
+      <div *ngIf="errors.startTime" class="ui negative message">
+        {{errors.startTime}}</div>
     </div>
     <div class="ui two wide field">
       <label>{{'ScheduleTimeframeConsecutivedaysComponent.endDayOfWeek' | translate}}</label>
@@ -25,7 +25,7 @@
                   [options]="daysOfWeek"
                   labelField="name"
                   valueField="id"
-                  formControlName="{{getFormControlName('endDayOfWeek')}}"
+                  formControlName="endDayOfWeek"
                   placeholder=" "
                   #selectEndDayOfWeek
       >
@@ -35,8 +35,8 @@
     </div>
     <div class="ui two wide field">
       <label>{{'ScheduleTimeframeConsecutivedaysComponent.endTime' | translate}}</label>
-      <input type="text" class="clockpicker" formControlName="{{getFormControlName('endTime')}}">
-      <div *ngIf="errors[this.getFormControlName('endTime')]" class="ui negative message">
-        {{errors[this.getFormControlName('endTime')]}}</div>
+      <input type="text" class="clockpicker" formControlName="endTime">
+      <div *ngIf="errors.endTime" class="ui negative message">
+        {{errors.endTime}}</div>
     </div>
 </div>

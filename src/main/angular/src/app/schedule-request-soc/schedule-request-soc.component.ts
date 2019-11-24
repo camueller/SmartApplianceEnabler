@@ -24,8 +24,6 @@ export class ScheduleRequestSocComponent implements OnChanges, OnInit, AfterView
   socRequest: SocRequest;
   @Input()
   electricVehicles: ElectricVehicle[];
-  @Input()
-  formControlNamePrefix = '';
   form: FormGroup;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};
@@ -48,16 +46,16 @@ export class ScheduleRequestSocComponent implements OnChanges, OnInit, AfterView
       } else {
         this.socRequest = new SocRequest();
       }
-      this.updateForm(this.parent.form, this.socRequest, this.formHandler);
+      this.updateForm();
     }
   }
 
   ngOnInit() {
     this.errorMessages = new ErrorMessages('ScheduleRequestSocComponent.error.', [
-      new ErrorMessage(this.getFormControlName('soc'), ValidatorType.required, 'soc'),
-      new ErrorMessage(this.getFormControlName('soc'), ValidatorType.pattern, 'soc'),
+      new ErrorMessage('soc', ValidatorType.required),
+      new ErrorMessage('soc', ValidatorType.pattern),
     ], this.translate);
-    this.expandParentForm(this.form, this.socRequest, this.formHandler);
+    this.expandParentForm();
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
@@ -67,26 +65,28 @@ export class ScheduleRequestSocComponent implements OnChanges, OnInit, AfterView
     this.formHandler.markLabelsRequired();
   }
 
-  getFormControlName(formControlName: string): string {
-    return `${this.formControlNamePrefix}${formControlName.charAt(0).toUpperCase()}${formControlName.slice(1)}`;
+  get evId() {
+    return this.socRequest && this.socRequest.evId;
   }
 
-  expandParentForm(form: FormGroup, socRequest: SocRequest, formHandler: FormHandler) {
-    formHandler.addFormControl(form, this.getFormControlName('evId'),
-      socRequest && socRequest.evId);
-    formHandler.addFormControl(form, this.getFormControlName('soc'),
-      socRequest && socRequest.soc,
+  get soc() {
+    return this.socRequest && this.socRequest.soc;
+  }
+
+  expandParentForm() {
+    this.formHandler.addFormControl(this.form, 'evId', this.evId);
+    this.formHandler.addFormControl(this.form, 'soc', this.soc,
       [Validators.required, Validators.pattern(InputValidatorPatterns.PERCENTAGE)]);
   }
 
-  updateForm(form: FormGroup, socRequest: SocRequest, formHandler: FormHandler) {
-    formHandler.setFormControlValue(form, this.getFormControlName('evId'), socRequest.evId);
-    formHandler.setFormControlValue(form, this.getFormControlName('soc'), socRequest.soc);
+  updateForm() {
+    this.formHandler.setFormControlValue(this.form, 'evId', this.evId);
+    this.formHandler.setFormControlValue(this.form, 'soc', this.soc);
   }
 
   updateModelFromForm(): SocRequest | undefined {
-    const evId = this.form.controls[this.getFormControlName('evId')].value;
-    const soc = this.form.controls[this.getFormControlName('soc')].value;
+    const evId = this.form.controls.evId.value;
+    const soc = this.form.controls.soc.value;
 
     if (!(evId || soc)) {
       return undefined;

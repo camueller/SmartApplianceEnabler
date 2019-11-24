@@ -1,15 +1,15 @@
 <div class="ui fields">
   <div class="ui two wide field">
     <label>{{'ScheduleTimeframeDayComponent.startTime' | translate}}</label>
-    <input type="text" class="clockpicker" formControlName="{{getFormControlName('startTime')}}">
-    <div *ngIf="errors[this.getFormControlName('startTime')]" class="ui negative message">
-      {{errors[this.getFormControlName('startTime')]}}</div>
+    <input type="text" class="clockpicker" formControlName="startTime">
+    <div *ngIf="errors.startTime" class="ui negative message">
+      {{errors.startTime}}</div>
   </div>
   <div class="ui two wide field">
     <label>{{'ScheduleTimeframeDayComponent.endTime' | translate}}</label>
-    <input type="text" class="clockpicker" formControlName="{{getFormControlName('endTime')}}">
-    <div *ngIf="errors[this.getFormControlName('endTime')]" class="ui negative message">
-      {{errors[this.getFormControlName('endTime')]}}</div>
+    <input type="text" class="clockpicker" formControlName="endTime">
+    <div *ngIf="errors.endTime" class="ui negative message">
+      {{errors.endTime}}</div>
   </div>
   <div class="ui field">
     <label>{{'ScheduleTimeframeDayComponent.daysOfWeekValues' | translate}}</label>
@@ -17,7 +17,7 @@
                       [options]="daysOfWeek"
                       labelField="name"
                       valueField="id"
-                      formControlName="{{getFormControlName('daysOfWeekValues')}}"
+                      formControlName="daysOfWeekValues"
                       placeholder="{{'ScheduleTimeframeDayComponent.daysOfWeekValues_placeholder' | translate}}"
                       #selectDaysOfWeek
     >

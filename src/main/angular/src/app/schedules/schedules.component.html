@@ -1,14 +1,17 @@
 <form class="ui form" [formGroup]="form" (ngSubmit)="submitForm()">
   <div class="sae-block">
-    <app-schedule *ngFor="let schedule of schedules; index as i; last as l"
-                  [schedule]="schedule"
-                  [formControlNamePrefix]="getFormControlPrefix(i)"
-                  [electricVehicles]="electricVehicles"
-                  [timeframeTypes]="timeframeTypes"
-                  [validRequestTypes]="validRequestTypes"
-                  (remove)="onScheduleRemove(i)"
-                  #scheduleComponents
-    ></app-schedule>
+    <div formArrayName="schedules">
+      <div *ngFor="let scheduleFormGroup of scheduleFormArray.controls;let i = index" [formGroupName]="i">
+        <app-schedule [schedule]="schedules[i]"
+                      [form]="getScheduleFormGroup(i)"
+                      [electricVehicles]="electricVehicles"
+                      [timeframeTypes]="timeframeTypes"
+                      [validRequestTypes]="validRequestTypes"
+                      (remove)="onScheduleRemove(i)"
+                      #scheduleComponents
+        ></app-schedule>
+      </div>
+    </div>
   </div>
   <div class="mandatory-fields">{{'dialog.mandatoryfields'|translate}}</div>
   <button type="button" (click)="addSchedule()" class="ui button">{{'button.new' | translate}}</button>

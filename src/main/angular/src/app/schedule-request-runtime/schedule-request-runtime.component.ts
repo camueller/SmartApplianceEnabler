@@ -23,8 +23,6 @@ import {Schedule} from '../schedule/schedule';
 export class ScheduleRequestRuntimeComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()
   runtimeRequest: RuntimeRequest;
-  @Input()
-  formControlNamePrefix = '';
   form: FormGroup;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};
@@ -47,15 +45,15 @@ export class ScheduleRequestRuntimeComponent implements OnChanges, OnInit, After
       } else {
         this.runtimeRequest = new RuntimeRequest();
       }
-      this.updateForm(this.parent.form, this.runtimeRequest, this.formHandler);
+      this.updateForm(this.form, this.runtimeRequest, this.formHandler);
     }
   }
 
   ngOnInit() {
     this.errorMessages = new ErrorMessages('ScheduleRequestRuntimeComponent.error.', [
-      new ErrorMessage(this.getFormControlName('minRuntime'), ValidatorType.required, 'minRuntime'),
-      new ErrorMessage(this.getFormControlName('minRuntime'), ValidatorType.pattern, 'minRuntime'),
-      new ErrorMessage(this.getFormControlName('maxRuntime'), ValidatorType.pattern, 'maxRuntime'),
+      new ErrorMessage('minRuntime', ValidatorType.required),
+      new ErrorMessage('minRuntime', ValidatorType.pattern),
+      new ErrorMessage('maxRuntime', ValidatorType.pattern),
     ], this.translate);
     this.expandParentForm(this.form, this.runtimeRequest, this.formHandler);
     this.form.statusChanges.subscribe(() => {
@@ -67,28 +65,29 @@ export class ScheduleRequestRuntimeComponent implements OnChanges, OnInit, After
     this.formHandler.markLabelsRequired();
   }
 
-  getFormControlName(formControlName: string): string {
-    return `${this.formControlNamePrefix}${formControlName.charAt(0).toUpperCase()}${formControlName.slice(1)}`;
+  get minRuntime() {
+    return this.runtimeRequest.min && TimeUtil.toHourMinute(this.runtimeRequest.min);
+  }
+
+  get maxRuntime() {
+    return this.runtimeRequest.max && TimeUtil.toHourMinute(this.runtimeRequest.max);
   }
 
   expandParentForm(form: FormGroup, runtimeRequest: RuntimeRequest, formHandler: FormHandler) {
-    console.log('expand=', runtimeRequest);
-    formHandler.addFormControl(form, this.getFormControlName('minRuntime'),
-      runtimeRequest && TimeUtil.toHourMinute(runtimeRequest.min),
+    formHandler.addFormControl(form, 'minRuntime', this.minRuntime,
       [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]);
-    formHandler.addFormControl(form, this.getFormControlName('maxRuntime'),
-      runtimeRequest && TimeUtil.toHourMinute(runtimeRequest.max),
+    formHandler.addFormControl(form, 'maxRuntime', this.maxRuntime,
       [Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]);
   }
 
   updateForm(form: FormGroup, runtimeRequest: RuntimeRequest, formHandler: FormHandler) {
-    formHandler.setFormControlValue(form, this.getFormControlName('minRuntime'), runtimeRequest.min);
-    formHandler.setFormControlValue(form, this.getFormControlName('maxRuntime'), runtimeRequest.max);
+    formHandler.setFormControlValue(form, 'minRuntime', this.minRuntime);
+    formHandler.setFormControlValue(form, 'maxRuntime', this.maxRuntime);
   }
 
   updateModelFromForm(): RuntimeRequest | undefined {
-    const minRuntime = this.form.controls[this.getFormControlName('minRuntime')].value;
-    const maxRuntime = this.form.controls[this.getFormControlName('maxRuntime')].value;
+    const minRuntime = this.form.controls.minRuntime.value;
+    const maxRuntime = this.form.controls.maxRuntime.value;
 
     if (!(minRuntime || maxRuntime)) {
       return undefined;

@@ -5,7 +5,7 @@
                 [options]="electricVehicles"
                 labelField="name"
                 valueField="id"
-                formControlName="{{getFormControlName('evId')}}"
+                formControlName="evId"
                 placeholder=" "
                 #selectElectricVehicle
     >
@@ -15,8 +15,8 @@
   </div>
   <div class="ui two wide field">
     <label>{{'ScheduleRequestSocComponent.soc' | translate}}</label>
-    <input type="text" formControlName="{{getFormControlName('soc')}}">
-    <div *ngIf="errors[this.getFormControlName('soc')]" class="ui negative message">
-      {{errors[this.getFormControlName('soc')]}}</div>
+    <input type="text" formControlName="soc">
+    <div *ngIf="errors.soc" class="ui negative message">
+      {{errors.soc}}</div>
   </div>
 </div>

@@ -8,7 +8,6 @@ import {TranslateService} from '@ngx-translate/core';
 import {EnergyRequest} from './energy-request';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
-import {Schedule} from '../schedule/schedule';
 
 @Component({
   selector: 'app-schedule-request-energy',
@@ -21,8 +20,6 @@ import {Schedule} from '../schedule/schedule';
 export class ScheduleRequestEnergyComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()
   energyRequest: EnergyRequest;
-  @Input()
-  formControlNamePrefix = '';
   form: FormGroup;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};
@@ -45,17 +42,17 @@ export class ScheduleRequestEnergyComponent implements OnChanges, OnInit, AfterV
       } else {
         this.energyRequest = new EnergyRequest();
       }
-      this.updateForm(this.parent.form, this.energyRequest, this.formHandler);
+      this.updateForm();
     }
   }
 
   ngOnInit() {
     this.errorMessages = new ErrorMessages('ScheduleRequestEnergyComponent.error.', [
-      new ErrorMessage(this.getFormControlName('minEnergy'), ValidatorType.pattern, 'minEnergy'),
-      new ErrorMessage(this.getFormControlName('maxEnergy'), ValidatorType.required, 'maxEnergy'),
-      new ErrorMessage(this.getFormControlName('maxEnergy'), ValidatorType.pattern, 'maxEnergy'),
+      new ErrorMessage('minEnergy', ValidatorType.pattern),
+      new ErrorMessage('maxEnergy', ValidatorType.required),
+      new ErrorMessage('maxEnergy', ValidatorType.pattern),
     ], this.translate);
-    this.expandParentForm(this.form, this.energyRequest, this.formHandler);
+    this.expandParentForm();
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
@@ -65,27 +62,29 @@ export class ScheduleRequestEnergyComponent implements OnChanges, OnInit, AfterV
     this.formHandler.markLabelsRequired();
   }
 
-  getFormControlName(formControlName: string): string {
-    return `${this.formControlNamePrefix}${formControlName.charAt(0).toUpperCase()}${formControlName.slice(1)}`;
+  get minEnergy() {
+    return this.energyRequest && this.energyRequest.min;
   }
 
-  expandParentForm(form: FormGroup, energyRequest: EnergyRequest, formHandler: FormHandler) {
-    formHandler.addFormControl(form, this.getFormControlName('minEnergy'),
-      energyRequest && energyRequest.min,
-      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    formHandler.addFormControl(form, this.getFormControlName('maxEnergy'),
-      energyRequest && energyRequest.max,
+  get maxEnergy() {
+    return this.energyRequest && this.energyRequest.max;
+  }
+
+  expandParentForm() {
+    this.formHandler.addFormControl(this.form, 'minEnergy', this.minEnergy,
       [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
+    this.formHandler.addFormControl(this.form, 'maxEnergy', this.maxEnergy,
+      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
   }
 
-  updateForm(form: FormGroup, energyRequest: EnergyRequest, formHandler: FormHandler) {
-    formHandler.setFormControlValue(form, this.getFormControlName('minEnergy'), energyRequest.min);
-    formHandler.setFormControlValue(form, this.getFormControlName('maxEnergy'), energyRequest.max);
+  updateForm() {
+    this.formHandler.setFormControlValue(this.form, 'minEnergy', this.minEnergy);
+    this.formHandler.setFormControlValue(this.form, 'maxEnergy', this.maxEnergy);
   }
 
   updateModelFromForm(): EnergyRequest | undefined {
-    const minEnergy = this.form.controls[this.getFormControlName('minEnergy')].value;
-    const maxEnergy = this.form.controls[this.getFormControlName('maxEnergy')].value;
+    const minEnergy = this.form.controls.minEnergy.value;
+    const maxEnergy = this.form.controls.maxEnergy.value;
 
     if (!(minEnergy || maxEnergy)) {
       return undefined;
