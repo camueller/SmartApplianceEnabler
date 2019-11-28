@@ -1,23 +1,24 @@
 <div class="ui hidden divider"></div>
-<div>
+<div [formGroup]="form">
   <div class="ui fields">
     <div class="six wide field">
       <label class="sae-label">{{'HttpReadComponent.url' | translate}}</label>
-      <input type="text" formControlName="{{getFormControlName('url')}}">
-      <div *ngIf="errors[getFormControlName('url')]"
-           class="ui negative message">{{errors[getFormControlName('url')]}}</div>
+      <input type="text" formControlName="url">
+      <div *ngIf="errors.url"
+           class="ui negative message">{{errors.url}}</div>
     </div>
     <div class="field icon-field" *ngIf="! disableRemove">
       <i (click)="removeHttpRead()" class="icon big red remove circle"></i>
     </div>
   </div>
-  <div *ngFor="let httpReadValue of httpRead.readValues; index as i">
-    <div class="ui fields">
+  <div formArrayName="httpReadValues">
+    <div class="ui fields" *ngFor="let httpReadValue of httpRead.readValues; index as i">
       <div class="field">
         <app-http-read-value
+          [formGroupName]="i"
+          [form]="getHttpReadValueFormGroup(i)"
           [httpReadValue]="httpReadValue"
           [disableFactorToValue]="disableFactorToValue"
-          [formControlNamePrefix]="getReadValueFormControlPrefix(i)"
           [valueNames]="valueNames"
           [translationPrefix]="translationPrefix"
           [translationKeys]="translationKeys"

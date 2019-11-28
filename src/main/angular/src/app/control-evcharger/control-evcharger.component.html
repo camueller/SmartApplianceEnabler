@@ -38,19 +38,19 @@
         <label>{{'ControlEvchargerComponent.voltage' | translate}}</label>
         <input type="text" formControlName="voltage"
                placeholder="{{controlDefaults.electricVehicleChargerDefaults_voltage}}">
-        <div *ngIf="errors['voltage']" class="ui negative message">{{errors['voltage']}}</div>
+        <div *ngIf="errors.voltage" class="ui negative message">{{errors.voltage}}</div>
       </div>
       <div class="field">
         <label>{{'ControlEvchargerComponent.phases' | translate}}</label>
         <input type="text" formControlName="phases"
                placeholder="{{controlDefaults.electricVehicleChargerDefaults_phases}}">
-        <div *ngIf="errors['phases']" class="ui negative message">{{errors['phases']}}</div>
+        <div *ngIf="errors.phases" class="ui negative message">{{errors.phases}}</div>
       </div>
       <div class="field">
         <label>{{'ControlEvchargerComponent.pollInterval' | translate}}</label>
         <input type="text" formControlName="pollInterval"
                placeholder="{{controlDefaults.electricVehicleChargerDefaults_pollInterval}}">
-        <div *ngIf="errors['pollInterval']" class="ui negative message">{{errors['pollInterval']}}</div>
+        <div *ngIf="errors.pollInterval" class="ui negative message">{{errors.pollInterval}}</div>
       </div>
       <div class="field">
         <label>{{'ControlEvchargerComponent.startChargingStateDetectionDelay' | translate}}
@@ -61,8 +61,8 @@
         </label>
         <input type="text" formControlName="startChargingStateDetectionDelay"
                placeholder="{{controlDefaults.electricVehicleChargerDefaults_startChargingStateDetectionDelay}}">
-        <div *ngIf="errors['startChargingStateDetectionDelay']"
-             class="ui negative message">{{errors['startChargingStateDetectionDelay']}}</div>
+        <div *ngIf="errors.startChargingStateDetectionDelay"
+             class="ui negative message">{{errors.startChargingStateDetectionDelay}}</div>
       </div>
       <div class="field">
         <label>{{'ControlEvchargerComponent.forceInitialCharging' | translate}}
@@ -88,15 +88,18 @@
                               [evHttpControl]="evCharger.httpControl"
   ></app-control-evcharger-http>
   <h3 class="ui dividing header">{{'ControlEvchargerComponent.headingEv' | translate}}</h3>
-  <div *ngFor="let electricVehicle of evCharger.vehicles; index as i; last as l">
-    <app-electric-vehicle
-      [electricVehicle]="electricVehicle"
-      [formControlNamePrefix]="getEvFormControlPrefix(i)"
-      [controlDefaults]="controlDefaults"
-      (remove)="onElectricVehicleRemove(i)"
-      #electricVehicles
-    ></app-electric-vehicle>
-    <div *ngIf="!l" class="ui dividing header"></div>
+  <div formArrayName="electricVehicles">
+    <div *ngFor="let electricVehicle of evCharger.vehicles; index as i; last as l">
+      <app-electric-vehicle
+        [formGroupName]="i"
+        [form]="getElectricVehicleFormGroup(i)"
+        [electricVehicle]="electricVehicle"
+        [controlDefaults]="controlDefaults"
+        (remove)="onElectricVehicleRemove(i)"
+        #electricVehicles
+      ></app-electric-vehicle>
+      <div *ngIf="!l" class="ui dividing header"></div>
+    </div>
   </div>
   <button type="button" (click)="addElectricVehicle()" class="ui button">
     {{'ControlEvchargerComponent.button.newEv' | translate}}</button>

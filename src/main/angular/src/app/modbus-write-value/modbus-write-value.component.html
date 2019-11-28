@@ -1,7 +1,7 @@
-<div class="ui fields">
+<div class="ui fields" [formGroup]="form">
   <div class="field">
     <label>{{'ModbusWriteValueComponent.name' | translate}}</label>
-    <select class="ui fluid dropdown" formControlName="{{this.getFormControlName('name')}}">
+    <select class="ui fluid dropdown" formControlName="name">
       <option *ngFor="let aValueName of valueNames"
               [ngValue]="aValueName"
               [selected]="aValueName==modbusWriteValue.name"
@@ -10,6 +10,6 @@
   </div>
   <div class="field">
     <label>{{'ModbusWriteValueComponent.value' | translate}}</label>
-    <input type="text" formControlName="{{this.getFormControlName('value')}}">
+    <input type="text" formControlName="value">
   </div>
 </div>

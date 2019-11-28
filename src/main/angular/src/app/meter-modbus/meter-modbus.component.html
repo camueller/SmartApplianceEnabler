@@ -29,7 +29,6 @@
   <app-modbus-read *ngFor="let modbusRead of modbusElectricityMeter.modbusReads; index as i; last as l"
                    [modbusRead]="modbusRead"
                    [maxValues]="maxValues"
-                   [formControlNamePrefix]="getReadFormControlPrefix(i)"
                    [valueNames]="valueNames"
                    [readRegisterTypes]="settingsDefaults.modbusReadRegisterTypes"
                    [translationPrefix]="'MeterModbusComponent.'"

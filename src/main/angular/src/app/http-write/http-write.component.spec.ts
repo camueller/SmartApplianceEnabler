@@ -81,7 +81,6 @@ describe('HttpWriteComponent', () => {
 
       component.formHandler.markLabelsRequired = jest.fn();
       component.translationKeys = ['ControlHttpComponent.On', 'ControlHttpComponent.Off'];
-      component.formControlNamePrefix = 'write';
 
       fixture.detectChanges();
 
@@ -128,7 +127,7 @@ describe('HttpWriteComponent', () => {
         const inputValue = 'http://web.de';
         urlNE.value = inputValue;
         urlNE.dispatchEvent(new Event('input'));
-        expect(component.form.controls['writeUrl'].value).toBe(inputValue);
+        expect(component.form.controls.writeUrl.value).toBe(inputValue);
         expect(component.form.valid).toBeTruthy();
       });
 
@@ -136,7 +135,7 @@ describe('HttpWriteComponent', () => {
         const inputValue = 'http:web.de';
         urlNE.value = inputValue;
         urlNE.dispatchEvent(new Event('input'));
-        expect(component.form.controls['writeUrl'].value).toBe(inputValue);
+        expect(component.form.controls.writeUrl.value).toBe(inputValue);
         expect(component.form.valid).toBeFalsy();
       });
 

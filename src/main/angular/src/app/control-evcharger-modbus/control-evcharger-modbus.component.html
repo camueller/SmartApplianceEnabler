@@ -11,21 +11,22 @@
     <div class="field">
       <label>{{'ControlEvchargerComponent.slaveAddress' | translate}}</label>
       <input type="text" formControlName="slaveAddress">
-      <div *ngIf="errors['slaveAddress']"
-           class="ui negative message">{{errors['slaveAddress']}}</div>
+      <div *ngIf="errors.slaveAddress" class="ui negative message">{{errors.slaveAddress}}</div>
     </div>
   </div>
 </div>
 <div class="ui hidden divider"></div>
 <h4 class="ui dividing header">{{'ControlEvchargerModbusComponent.heading.modbusRead' | translate}}</h4>
-<span *ngIf="evModbusControl && evModbusControl.modbusReads">
+<span formArrayName="modbusReads">
   <app-modbus-read *ngFor="let modbusRead of evModbusControl.modbusReads; index as i; last as l"
+                   [formGroupName]="i"
+                   [form]="getModbusReadFormGroup(i)"
                    [modbusRead]="modbusRead"
-                   [formControlNamePrefix]="getReadFormControlPrefix(i)"
                    [valueNames]="readValueNames"
                    [translationPrefix]="'ControlEvchargerComponent.'"
                    [translationKeys]="readValueNameTextKeys"
                    [readRegisterTypes]="settingsDefaults.modbusReadRegisterTypes"
+                   (remove)="onModbusReadRemove(i)"
                    #modbusReadComponents
   ></app-modbus-read>
 </span>
@@ -34,14 +35,16 @@
 
 
 <h4 class="ui dividing header">{{'ControlEvchargerModbusComponent.heading.modbusWrite' | translate}}</h4>
-<span *ngIf="evModbusControl && evModbusControl.modbusWrites">
+<span formArrayName="modbusWrites">
   <app-modbus-write *ngFor="let modbusWrite of evModbusControl.modbusWrites; index as i; last as l"
+                    [formGroupName]="i"
+                    [form]="getModbusWriteFormGroup(i)"
                     [modbusWrite]="modbusWrite"
-                    [formControlNamePrefix]="getWriteFormControlPrefix(i)"
                     [valueNames]="writeValueNames"
                     [translationPrefix]="'ControlEvchargerComponent.'"
                     [translationKeys]="writeValueNameTextKeys"
                     [writeRegisterTypes]="settingsDefaults.modbusReadRegisterTypes"
+                    (remove)="onModbusWriteRemove(i)"
                     #modbusWriteComponents
   ></app-modbus-write>
 </span>

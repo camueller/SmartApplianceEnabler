@@ -33,27 +33,27 @@ export class HttpConfigurationComponent implements OnChanges, OnInit {
       } else {
         this.httpConfiguration = new HttpConfiguration();
       }
-      this.updateForm(this.parent.form, this.httpConfiguration, this.formHandler);
+      this.updateForm();
     }
   }
 
   ngOnInit(): void {
-    this.expandParentForm(this.parent.form, this.httpConfiguration, this.formHandler);
+    this.expandParentForm();
   }
 
-  expandParentForm(form: FormGroup, httpConfiguration: HttpConfiguration, formHandler: FormHandler) {
-    formHandler.addFormControl(form, 'contentType',
-      httpConfiguration ? httpConfiguration.contentType : undefined);
-    formHandler.addFormControl(form, 'username',
-      httpConfiguration ? httpConfiguration.username : undefined);
-    formHandler.addFormControl(form, 'password',
-      httpConfiguration ? httpConfiguration.password : undefined);
+  expandParentForm() {
+    this.formHandler.addFormControl(this.form, 'contentType',
+      this.httpConfiguration && this.httpConfiguration.contentType);
+    this.formHandler.addFormControl(this.form, 'username',
+      this.httpConfiguration && this.httpConfiguration.username);
+    this.formHandler.addFormControl(this.form, 'password',
+      this.httpConfiguration && this.httpConfiguration.password);
   }
 
-  updateForm(form: FormGroup, httpConfiguration: HttpConfiguration, formHandler: FormHandler) {
-    formHandler.setFormControlValue(form, 'contentType', httpConfiguration.contentType);
-    formHandler.setFormControlValue(form, 'username', httpConfiguration.username);
-    formHandler.setFormControlValue(form, 'password', httpConfiguration.password);
+  updateForm() {
+    this.formHandler.setFormControlValue(this.form, 'contentType', this.httpConfiguration.contentType);
+    this.formHandler.setFormControlValue(this.form, 'username', this.httpConfiguration.username);
+    this.formHandler.setFormControlValue(this.form, 'password', this.httpConfiguration.password);
   }
 
   updateModelFromForm(): HttpConfiguration | undefined {

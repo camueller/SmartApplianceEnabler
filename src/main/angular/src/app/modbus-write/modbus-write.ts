@@ -13,4 +13,8 @@ export class ModbusWrite {
   public constructor(init?: Partial<ModbusWrite>) {
     Object.assign(this, init);
   }
+
+  public static createWithSingleChild() {
+    return new ModbusWrite({writeValues: [new ModbusWriteValue()]});
+  }
 }

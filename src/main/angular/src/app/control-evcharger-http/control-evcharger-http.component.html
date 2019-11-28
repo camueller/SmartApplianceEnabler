@@ -16,25 +16,31 @@
 </div>
 <div class="ui hidden divider"></div>
 <h4 class="ui dividing header">{{'ControlEvchargerHttpComponent.heading.httpRead' | translate}}</h4>
-<app-http-read *ngFor="let httpRead of evHttpControl.httpReads; index as i; last as l"
-               [httpRead]="httpRead"
-               [disableFactorToValue]="true"
-               [formControlNamePrefix]="getReadFormControlPrefix(i)"
-               [valueNames]="readValueNames"
-               [translationPrefix]="'ControlEvchargerComponent.'"
-               [translationKeys]="readValueNameTextKeys"
-               #httpReadComponents
-></app-http-read>
+<span formArrayName="httpReads">
+  <app-http-read *ngFor="let httpRead of evHttpControl.httpReads; index as i; last as l"
+                 [formGroupName]="i"
+                 [form]="getHttpReadFormGroup(i)"
+                 [httpRead]="httpRead"
+                 [disableFactorToValue]="true"
+                 [valueNames]="readValueNames"
+                 [translationPrefix]="'ControlEvchargerComponent.'"
+                 [translationKeys]="readValueNameTextKeys"
+                 #httpReadComponents
+  ></app-http-read>
+</span>
 <button type="button" (click)="addHttpRead()" class="ui button">
   {{'ControlEvchargerHttpComponent.button.addHttpRead' | translate}}</button>
 <h4 class="ui dividing header">{{'ControlEvchargerHttpComponent.heading.httpWrite' | translate}}</h4>
-<app-http-write *ngFor="let httpWrite of evHttpControl.httpWrites; index as i; last as l"
-                [httpWrite]="httpWrite"
-                [formControlNamePrefix]="getWriteFormControlPrefix(i)"
-                [valueNames]="writeValueNames"
-                [translationPrefix]="'ControlEvchargerComponent.'"
-                [translationKeys]="writeValueNameTextKeys"
-                #httpWriteComponents
-></app-http-write>
+<span formArrayName="httpWrites">
+  <app-http-write *ngFor="let httpWrite of evHttpControl.httpWrites; index as i; last as l"
+                  [formGroupName]="i"
+                  [form]="getHttpWriteFormGroup(i)"
+                  [httpWrite]="httpWrite"
+                  [valueNames]="writeValueNames"
+                  [translationPrefix]="'ControlEvchargerComponent.'"
+                  [translationKeys]="writeValueNameTextKeys"
+                  #httpWriteComponents
+  ></app-http-write>
+</span>
 <button type="button" (click)="addHttpWrite()" class="ui button">
   {{'ControlEvchargerHttpComponent.button.addHttpWrite' | translate}}</button>

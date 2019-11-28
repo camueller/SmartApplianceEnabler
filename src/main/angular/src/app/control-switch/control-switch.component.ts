@@ -55,7 +55,7 @@ export class ControlSwitchComponent implements OnChanges, OnInit, AfterViewCheck
   }
 
   ngOnInit() {
-    this.expandParentForm(this.form, this.switch_);
+    this.expandParentForm();
     this.errorMessages = new ErrorMessages('ControlSwitchComponent.error.', [
       new ErrorMessage('gpio', ValidatorType.required),
       new ErrorMessage('gpio', ValidatorType.pattern),
@@ -69,10 +69,10 @@ export class ControlSwitchComponent implements OnChanges, OnInit, AfterViewCheck
     this.formHandler.markLabelsRequired();
   }
 
-  expandParentForm(form: FormGroup, switch_: Switch) {
-    this.formHandler.addFormControl(form, 'gpio', switch_ ? switch_.gpio : undefined,
+  expandParentForm() {
+    this.formHandler.addFormControl(this.form, 'gpio', this.switch_ && this.switch_.gpio,
       [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(form, 'reverseStates', switch_ && switch_.reverseStates);
+    this.formHandler.addFormControl(this.form, 'reverseStates', this.switch_ && this.switch_.reverseStates);
   }
 
   updateForm(form: FormGroup, switch_: Switch, formHandler: FormHandler) {
@@ -81,8 +81,8 @@ export class ControlSwitchComponent implements OnChanges, OnInit, AfterViewCheck
   }
 
   updateModelFromForm(): Switch | undefined {
-    const gpio = getValidInt(this.form.controls['gpio'].value);
-    const reverseStates = this.form.controls['reverseStates'].value;
+    const gpio = getValidInt(this.form.controls.gpio.value);
+    const reverseStates = this.form.controls.reverseStates.value;
 
     if (!(gpio || reverseStates)) {
       return undefined;

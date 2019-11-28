@@ -1,6 +1,6 @@
 import {AfterViewChecked, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {Logger} from '../log/logger';
-import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {FormGroup, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {FormHandler} from '../shared/form-handler';
@@ -14,9 +14,6 @@ import {ErrorMessage, ValidatorType} from '../shared/error-message';
   selector: 'app-http-read-value',
   templateUrl: './http-read-value.component.html',
   styleUrls: ['../global.css'],
-  viewProviders: [
-    {provide: ControlContainer, useExisting: FormGroupDirective}
-  ]
 })
 export class HttpReadValueComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()
@@ -26,7 +23,6 @@ export class HttpReadValueComponent implements OnChanges, OnInit, AfterViewCheck
   @Input()
   disableFactorToValue = false;
   @Input()
-  formControlNamePrefix = '';
   form: FormGroup;
   formHandler: FormHandler;
   @Input()
@@ -39,7 +35,6 @@ export class HttpReadValueComponent implements OnChanges, OnInit, AfterViewCheck
   errorMessageHandler: ErrorMessageHandler;
 
   constructor(private logger: Logger,
-              private parent: FormGroupDirective,
               private translate: TranslateService
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
@@ -47,23 +42,21 @@ export class HttpReadValueComponent implements OnChanges, OnInit, AfterViewCheck
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.form = this.parent.form;
-    console.log('form=', this.form);
     if (changes.httpReadValue) {
       if (changes.httpReadValue.currentValue) {
         this.httpReadValue = changes.httpReadValue.currentValue;
       } else {
         this.httpReadValue = new HttpReadValue();
       }
-      this.updateForm(this.form, this.httpReadValue, this.formHandler);
+      this.updateForm();
     }
   }
 
   ngOnInit() {
     this.errorMessages = new ErrorMessages('HttpReadValueComponent.error.', [
-      new ErrorMessage(this.getFormControlName('factorToValue'), ValidatorType.pattern, 'factorToValue'),
+      new ErrorMessage('factorToValue', ValidatorType.pattern),
     ], this.translate);
-    this.expandParentForm(this.form, this.httpReadValue, this.formHandler);
+    this.expandParentForm();
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
@@ -76,52 +69,46 @@ export class HttpReadValueComponent implements OnChanges, OnInit, AfterViewCheck
     this.formHandler.markLabelsRequired();
   }
 
-  getFormControlName(formControlName: string): string {
-    return `${this.formControlNamePrefix}${formControlName.charAt(0).toUpperCase()}${formControlName.slice(1)}`;
-  }
-
   public getTranslatedValueName(valueName: string) {
     const textKey = `${this.translationPrefix}${valueName}`;
     return this.translatedStrings[textKey];
   }
 
-  expandParentForm(form: FormGroup, httpReadValue: HttpReadValue, formHandler: FormHandler) {
-    formHandler.addFormControl(form, this.getFormControlName('name'),
-      httpReadValue ? httpReadValue.name : undefined,
+  expandParentForm() {
+    this.formHandler.addFormControl(this.form, 'name',
+      this.httpReadValue && this.httpReadValue.name,
       [Validators.required]);
-    formHandler.addFormControl(form, this.getFormControlName('data'),
-      httpReadValue ? httpReadValue.data : undefined);
-    formHandler.addFormControl(form, this.getFormControlName('path'),
-      httpReadValue ? httpReadValue.path : undefined);
-    formHandler.addFormControl(form, this.getFormControlName('extractionRegex'),
-      httpReadValue ? httpReadValue.extractionRegex : undefined);
+    this.formHandler.addFormControl(this.form, 'data',
+      this.httpReadValue && this.httpReadValue.data);
+    this.formHandler.addFormControl(this.form, 'path',
+      this.httpReadValue && this.httpReadValue.path);
+    this.formHandler.addFormControl(this.form, 'extractionRegex',
+      this.httpReadValue && this.httpReadValue.extractionRegex);
     if (!this.disableFactorToValue) {
-      formHandler.addFormControl(form, this.getFormControlName('factorToValue'),
-        httpReadValue ? httpReadValue.factorToValue : undefined,
+      this.formHandler.addFormControl(this.form, 'factorToValue',
+        this.httpReadValue && this.httpReadValue.factorToValue,
         [Validators.pattern(InputValidatorPatterns.FLOAT)]);
     }
   }
 
-  updateForm(form: FormGroup, httpReadValue: HttpReadValue, formHandler: FormHandler) {
-    formHandler.setFormControlValue(form, this.getFormControlName('name'), httpReadValue.name);
-    formHandler.setFormControlValue(form, this.getFormControlName('data'), httpReadValue.data);
-    formHandler.setFormControlValue(form, this.getFormControlName('path'), httpReadValue.path);
-    formHandler.setFormControlValue(form, this.getFormControlName('extractionRegex'),
-      httpReadValue.extractionRegex);
+  updateForm() {
+    this.formHandler.setFormControlValue(this.form, 'name', this.httpReadValue.name);
+    this.formHandler.setFormControlValue(this.form, 'data', this.httpReadValue.data);
+    this.formHandler.setFormControlValue(this.form, 'path', this.httpReadValue.path);
+    this.formHandler.setFormControlValue(this.form, 'extractionRegex', this.httpReadValue.extractionRegex);
     if (!this.disableFactorToValue) {
-      formHandler.setFormControlValue(form, this.getFormControlName('factorToValue'),
-        httpReadValue.factorToValue);
+      this.formHandler.setFormControlValue(this.form, 'factorToValue', this.httpReadValue.factorToValue);
     }
   }
 
   updateModelFromForm(): HttpReadValue | undefined {
-    const name = getValidString(this.form.controls[this.getFormControlName('name')].value);
-    const data = getValidString(this.form.controls[this.getFormControlName('data')].value);
-    const path = getValidString(this.form.controls[this.getFormControlName('path')].value);
-    const extractionRegex = getValidString(this.form.controls[this.getFormControlName('extractionRegex')].value);
+    const name = getValidString(this.form.controls.name.value);
+    const data = getValidString(this.form.controls.data.value);
+    const path = getValidString(this.form.controls.path.value);
+    const extractionRegex = getValidString(this.form.controls.extractionRegex.value);
     let factorToValue;
     if (!this.disableFactorToValue) {
-      factorToValue = getValidFloat(this.form.controls[this.getFormControlName('factorToValue')].value);
+      factorToValue = getValidFloat(this.form.controls.factorToValue.value);
     }
 
     if (!(name || data || path || extractionRegex || factorToValue)) {

@@ -9,7 +9,7 @@ import {
   ViewChildren
 } from '@angular/core';
 import {ControlDefaults} from '../control/control-defaults';
-import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {ControlContainer, FormArray, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {Logger} from '../log/logger';
@@ -70,18 +70,15 @@ export class ControlModbusComponent implements OnChanges, OnInit, AfterViewCheck
         this.modbusSwitch = new ModbusSwitch();
       }
     }
-    this.updateForm(this.form, this.modbusSwitch, this.formHandler);
+    this.updateForm();
   }
 
   ngOnInit() {
-    if (!this.modbusSwitch.modbusWrites) {
-      this.modbusSwitch.modbusWrites = [this.createModbusWrite()];
-    }
     this.errorMessages = new ErrorMessages('ControlModbusComponent.error.', [
       new ErrorMessage('slaveAddress', ValidatorType.required),
       new ErrorMessage('slaveAddress', ValidatorType.pattern),
     ], this.translate);
-    this.expandParentForm(this.form, this.modbusSwitch, this.formHandler);
+    this.expandParentForm();
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
@@ -89,10 +86,6 @@ export class ControlModbusComponent implements OnChanges, OnInit, AfterViewCheck
 
   ngAfterViewChecked() {
     this.formHandler.markLabelsRequired();
-  }
-
-  getWriteFormControlPrefix(index: number) {
-    return `write${index}.`;
   }
 
   get valueNames() {
@@ -116,7 +109,7 @@ export class ControlModbusComponent implements OnChanges, OnInit, AfterViewCheck
 
   addModbusWrite() {
     fixExpressionChangedAfterItHasBeenCheckedError(this.form);
-    this.modbusSwitch.modbusWrites.push(this.createModbusWrite());
+    this.modbusSwitch.modbusWrites.push(ModbusWrite.createWithSingleChild());
     this.form.markAsDirty();
   }
 
@@ -124,27 +117,33 @@ export class ControlModbusComponent implements OnChanges, OnInit, AfterViewCheck
     this.modbusSwitch.modbusWrites.splice(index, 1);
   }
 
-  createModbusWrite() {
-    const modbusWrite = new ModbusWrite();
-    modbusWrite.writeValues = [new ModbusWriteValue()];
-    return modbusWrite;
+  get modbusWritesFormArray() {
+    return this.form.controls.modbusWrites as FormArray;
   }
 
-  expandParentForm(form: FormGroup, modbusSwitch: ModbusSwitch, formHandler: FormHandler) {
-    formHandler.addFormControl(form, 'idref', modbusSwitch && modbusSwitch.idref,
+  getModbusWriteFormGroup(index: number) {
+    return this.modbusWritesFormArray.controls[index];
+  }
+
+  expandParentForm() {
+    this.formHandler.addFormControl(this.form, 'idref', this.modbusSwitch.idref,
       [Validators.required]);
-    formHandler.addFormControl(form, 'slaveAddress', modbusSwitch && modbusSwitch.slaveAddress,
+    this.formHandler.addFormControl(this.form, 'slaveAddress', this.modbusSwitch.slaveAddress,
       [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
+    this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'modbusWrites',
+      this.modbusSwitch.modbusWrites);
   }
 
-  updateForm(form: FormGroup, modbusSwitch: ModbusSwitch, formHandler: FormHandler) {
-    formHandler.setFormControlValue(form, 'idref', modbusSwitch.idref);
-    formHandler.setFormControlValue(form, 'slaveAddress', modbusSwitch.slaveAddress);
+  updateForm() {
+    this.formHandler.setFormControlValue(this.form, 'idref', this.modbusSwitch.idref);
+    this.formHandler.setFormControlValue(this.form, 'slaveAddress', this.modbusSwitch.slaveAddress);
+    this.formHandler.setFormArrayControlWithEmptyFormGroups(this.form, 'modbusWrites',
+      this.modbusSwitch.modbusWrites);
   }
 
   updateModelFromForm(): ModbusSwitch | undefined {
-    const idref = getValidString(this.form.controls['idref'].value);
-    const slaveAddress = getValidString(this.form.controls['slaveAddress'].value);
+    const idref = getValidString(this.form.controls.idref.value);
+    const slaveAddress = getValidString(this.form.controls.slaveAddress.value);
     const modbusWrites = [];
     this.modbusWriteComps.forEach(modbusWriteComponent => {
       const modbusWrite = modbusWriteComponent.updateModelFromForm();

@@ -1,7 +1,7 @@
-<div class="ui fields">
+<div class="ui fields" [formGroup]="form">
   <div class="five wide field">
     <label class="sae-label">{{'HttpWriteValueComponent.name' | translate}}</label>
-    <select class="ui fluid dropdown" formControlName="{{this.getFormControlName('name')}}">
+    <select class="ui fluid dropdown" formControlName="name">
       <option *ngFor="let aValueName of valueNames"
               [ngValue]="aValueName"
               [selected]="aValueName==httpWriteValue.name"
@@ -10,17 +10,17 @@
   </div>
   <div class="field">
     <label class="sae-label">{{'HttpWriteValueComponent.value' | translate}}</label>
-    <input type="text" formControlName="{{this.getFormControlName('value')}}">
+    <input type="text" formControlName="value">
   </div>
   <div class="field" *ngIf="! disableFactorToValue">
     <label class="sae-label">{{'HttpWriteValueComponent.factorToValue' | translate}}</label>
-    <input type="text" formControlName="{{this.getFormControlName('factorToValue')}}">
-    <div *ngIf="errors[this.getFormControlName('factorToValue')]"
-         class="ui negative message">{{errors[this.getFormControlName('factorToValue')]}}</div>
+    <input type="text" formControlName="factorToValue">
+    <div *ngIf="errors.factorToValue"
+         class="ui negative message">{{errors.factorToValue}}</div>
   </div>
   <div class="field">
     <label class="sae-label">{{'HttpMethod' | translate}}</label>
-    <select class="ui fluid dropdown" formControlName="{{this.getFormControlName('method')}}">
+    <select class="ui fluid dropdown" formControlName="method">
       <option *ngFor="let aMethod of methods" [ngValue]="aMethod" [selected]="aMethod === method"
       >{{getMethodTranslationKey(aMethod)| translate}}</option>
     </select>

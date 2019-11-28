@@ -9,7 +9,7 @@ import {
   ViewChild,
   ViewChildren
 } from '@angular/core';
-import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {ControlContainer, FormArray, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {HttpElectricityMeter} from './http-electricity-meter';
 import {MeterDefaults} from '../meter/meter-defaults';
 import {FormHandler} from '../shared/form-handler';
@@ -69,7 +69,7 @@ export class MeterHttpComponent implements OnChanges, OnInit, AfterViewChecked {
         this.httpElectricityMeter.httpReads = [this.createHttpRead()];
       }
     }
-    this.updateForm(this.form, this.httpElectricityMeter, this.formHandler);
+    this.updateForm();
   }
 
   ngOnInit() {
@@ -77,7 +77,7 @@ export class MeterHttpComponent implements OnChanges, OnInit, AfterViewChecked {
       new ErrorMessage('pollInterval', ValidatorType.pattern),
       new ErrorMessage('measurementInterval', ValidatorType.pattern),
     ], this.translate);
-    this.expandParentForm(this.form, this.httpElectricityMeter, this.formHandler);
+    this.expandParentForm();
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
@@ -95,12 +95,8 @@ export class MeterHttpComponent implements OnChanges, OnInit, AfterViewChecked {
     return ['MeterHttpComponent.Power', 'MeterHttpComponent.Energy'];
   }
 
-  getReadFormControlPrefix(index: number) {
-    return `read${index}.`;
-  }
-
   get contentProtocol(): string {
-    const contentProtocolControl = this.form.controls['contentProtocol'];
+    const contentProtocolControl = this.form.controls.contentProtocol;
     return (contentProtocolControl.value ? contentProtocolControl.value.toUpperCase() : '');
   }
 
@@ -131,18 +127,30 @@ export class MeterHttpComponent implements OnChanges, OnInit, AfterViewChecked {
     return httpRead;
   }
 
-  expandParentForm(form: FormGroup, httpElectricityMeter: HttpElectricityMeter, formHandler: FormHandler) {
-    formHandler.addFormControl(form, 'pollInterval', httpElectricityMeter.pollInterval,
-      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    formHandler.addFormControl(form, 'measurementInterval', httpElectricityMeter.measurementInterval,
-      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    formHandler.addFormControl(form, 'contentProtocol', httpElectricityMeter.contentProtocol);
+  get httpReadsFormArray() {
+    return this.form.controls.httpReads as FormArray;
   }
 
-  updateForm(form: FormGroup, httpElectricityMeter: HttpElectricityMeter, formHandler: FormHandler) {
-    formHandler.setFormControlValue(form, 'pollInterval', httpElectricityMeter.pollInterval);
-    formHandler.setFormControlValue(form, 'measurementInterval', httpElectricityMeter.measurementInterval);
-    formHandler.setFormControlValue(form, 'contentProtocol', httpElectricityMeter.contentProtocol);
+  getHttpReadFormGroup(index: number) {
+    return this.httpReadsFormArray.controls[index];
+  }
+
+  expandParentForm() {
+    this.formHandler.addFormControl(this.form, 'pollInterval', this.httpElectricityMeter.pollInterval,
+      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
+    this.formHandler.addFormControl(this.form, 'measurementInterval', this.httpElectricityMeter.measurementInterval,
+      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
+    this.formHandler.addFormControl(this.form, 'contentProtocol', this.httpElectricityMeter.contentProtocol);
+    this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'httpReads',
+      this.httpElectricityMeter.httpReads);
+  }
+
+  updateForm() {
+    this.formHandler.setFormControlValue(this.form, 'pollInterval', this.httpElectricityMeter.pollInterval);
+    this.formHandler.setFormControlValue(this.form, 'measurementInterval', this.httpElectricityMeter.measurementInterval);
+    this.formHandler.setFormControlValue(this.form, 'contentProtocol', this.httpElectricityMeter.contentProtocol);
+    this.formHandler.setFormArrayControlWithEmptyFormGroups(this.form, 'httpReads',
+      this.httpElectricityMeter.httpReads);
   }
 
   updateModelFromForm(): HttpElectricityMeter | undefined {

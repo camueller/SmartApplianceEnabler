@@ -1,6 +1,6 @@
 import {
   AbstractControlOptions,
-  AsyncValidatorFn,
+  AsyncValidatorFn, FormArray,
   FormControl,
   FormGroup,
   ValidatorFn,
@@ -34,6 +34,20 @@ export class FormHandler {
         control.setValue(value);
       }
     }
+  }
+
+  public addFormArrayControlWithEmptyFormGroups(form: FormGroup, formControlName: string, items: Array<any>) {
+    form.addControl(formControlName, this.buildFormArrayWithEmptyFormGroups(items));
+  }
+
+  public setFormArrayControlWithEmptyFormGroups(form: FormGroup, formControlName: string, items: Array<any>) {
+    form.setControl(formControlName, this.buildFormArrayWithEmptyFormGroups(items));
+  }
+
+  private buildFormArrayWithEmptyFormGroups(items: Array<any>): FormArray {
+    const formArray = new FormArray([]);
+    items.forEach((item) => formArray.push(new FormGroup({})));
+    return formArray;
   }
 
   registerRequiredValidator(validatorFn: any, formControlName: string) {

@@ -1,15 +1,15 @@
 <div class="ui hidden divider"></div>
-<div>
+<div [formGroup]="form">
   <div class="ui fields">
     <div class="field">
       <label>{{'ModbusReadComponent.address' | translate}}</label>
-      <input type="text" formControlName="{{this.getFormControlName('address')}}">
-      <div *ngIf="errors[this.getFormControlName('address')]"
-           class="ui negative message">{{errors[this.getFormControlName('address')]}}</div>
+      <input type="text" formControlName="address">
+      <div *ngIf="errors.address"
+           class="ui negative message">{{errors.address}}</div>
     </div>
     <div class="field">
       <label>{{'ModbusReadComponent.type' | translate}}</label>
-      <select class="ui fluid dropdown" formControlName="{{this.getFormControlName('type')}}">
+      <select class="ui fluid dropdown" formControlName="type">
         <option *ngFor="let readRegisterType of readRegisterTypes"
                 [ngValue]="readRegisterType"
                 [selected]="readRegisterType==type"
@@ -18,13 +18,13 @@
     </div>
     <div class="field">
       <label>{{'ModbusReadComponent.bytes' | translate}}</label>
-      <input type="text" formControlName="{{this.getFormControlName('bytes')}}">
-      <div *ngIf="errors[this.getFormControlName('bytes')]"
-           class="ui negative message">{{errors[this.getFormControlName('bytes')]}}</div>
+      <input type="text" formControlName="bytes">
+      <div *ngIf="errors.bytes"
+           class="ui negative message">{{errors.bytes}}</div>
     </div>
     <div class="field">
       <label>{{'ModbusReadComponent.byteOrder' | translate}}</label>
-      <select class="ui fluid dropdown" formControlName="{{this.getFormControlName('byteOrder')}}">
+      <select class="ui fluid dropdown" formControlName="byteOrder">
         <option *ngFor="let aByteOrder of getByteOrders()"
                 [ngValue]="aByteOrder"
                 [selected]="aByteOrder==this.modbusRead.byteOrder"
@@ -33,20 +33,20 @@
     </div>
     <div class="field">
       <label>{{'ModbusReadComponent.factorToValue' | translate}}</label>
-      <input type="text" formControlName="{{this.getFormControlName('factorToValue')}}">
-      <div *ngIf="errors[this.getFormControlName('factorToValue')]"
-           class="ui negative message">{{errors[this.getFormControlName('factorToValue')]}}</div>
+      <input type="text" formControlName="factorToValue">
+      <div *ngIf="errors.factorToValue"
+           class="ui negative message">{{errors.factorToValue}}</div>
     </div>
     <div class="field icon-field">
       <i (click)="removeModbusRead()" class="icon big red remove circle"></i>
     </div>
   </div>
-  <div *ngFor="let readValue of modbusRead.readValues; index as i">
-    <div class="ui fields">
+  <div formArrayName="modbusReadValues">
+    <div class="ui fields" *ngFor="let readValue of modbusRead.readValues; index as i">
       <div class="field">
         <app-modbus-read-value
           [modbusReadValue]="readValue"
-          [formControlNamePrefix]="getReadValueFormControlPrefix(i)"
+          [form]="getModbusReadValueFormGroup(i)"
           [valueNames]="valueNames"
           [translationPrefix]="translationPrefix"
           [translationKeys]="translationKeys"

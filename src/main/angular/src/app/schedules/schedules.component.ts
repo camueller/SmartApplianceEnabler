@@ -89,17 +89,17 @@ export class SchedulesComponent implements OnChanges, OnInit {
 
   addSchedule() {
     this.schedules.push(new Schedule({enabled: true}));
-    this.scheduleFormArray.push(this.createSchedulesFormGroup());
+    this.schedulesFormArray.push(this.createSchedulesFormGroup());
     this.form.markAsDirty();
   }
 
   onScheduleRemove(index: number) {
     this.schedules.splice(index, 1);
-    this.scheduleFormArray.removeAt(index);
+    this.schedulesFormArray.removeAt(index);
     this.form.markAsDirty();
   }
 
-  get scheduleFormArray() {
+  get schedulesFormArray() {
     return this.form.controls.schedules as FormArray;
   }
 
@@ -108,7 +108,7 @@ export class SchedulesComponent implements OnChanges, OnInit {
   }
 
   getScheduleFormGroup(index: number) {
-    return this.scheduleFormArray.controls[index];
+    return this.schedulesFormArray.controls[index];
   }
 
   buildForm(): FormGroup {

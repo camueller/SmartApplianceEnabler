@@ -1,6 +1,6 @@
 import {AfterViewChecked, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {Logger} from '../log/logger';
-import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {FormGroup, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {FormHandler} from '../shared/form-handler';
@@ -13,9 +13,6 @@ import {getValidString} from '../shared/form-util';
   selector: 'app-modbus-read-value',
   templateUrl: './modbus-read-value.component.html',
   styleUrls: ['../global.css'],
-  viewProviders: [
-    {provide: ControlContainer, useExisting: FormGroupDirective}
-  ]
 })
 export class ModbusReadValueComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()
@@ -23,7 +20,6 @@ export class ModbusReadValueComponent implements OnChanges, OnInit, AfterViewChe
   @Input()
   valueNames: string[];
   @Input()
-  formControlNamePrefix = '';
   form: FormGroup;
   formHandler: FormHandler;
   @Input()
@@ -36,7 +32,6 @@ export class ModbusReadValueComponent implements OnChanges, OnInit, AfterViewChe
   errorMessageHandler: ErrorMessageHandler;
 
   constructor(private logger: Logger,
-              private parent: FormGroupDirective,
               private translate: TranslateService
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
@@ -44,22 +39,21 @@ export class ModbusReadValueComponent implements OnChanges, OnInit, AfterViewChe
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.form = this.parent.form;
     if (changes.modbusReadValue) {
       if (changes.modbusReadValue.currentValue) {
         this.modbusReadValue = changes.modbusReadValue.currentValue;
       } else {
         this.modbusReadValue = new ModbusReadValue();
       }
+      this.updateForm();
     }
-    this.updateForm(this.form, this.modbusReadValue, this.formHandler);
   }
 
   ngOnInit() {
     this.errorMessages = new ErrorMessages('ModbusReadValueComponent.error.', [
-      new ErrorMessage(this.getFormControlName('factorToValue'), ValidatorType.pattern, 'factorToValue'),
+      new ErrorMessage('factorToValue', ValidatorType.pattern),
     ], this.translate);
-    this.expandParentForm(this.form, this.modbusReadValue, this.formHandler);
+    this.expandParentForm();
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
@@ -72,32 +66,27 @@ export class ModbusReadValueComponent implements OnChanges, OnInit, AfterViewChe
     this.formHandler.markLabelsRequired();
   }
 
-  getFormControlName(formControlName: string): string {
-    return `${this.formControlNamePrefix}${formControlName.charAt(0).toUpperCase()}${formControlName.slice(1)}`;
-  }
-
   public getTranslatedValueName(valueName: string) {
     const textKey = `${this.translationPrefix}${valueName}`;
     return this.translatedStrings[textKey];
   }
 
-  expandParentForm(form: FormGroup, modbusReadValue: ModbusReadValue, formHandler: FormHandler) {
-    formHandler.addFormControl(form, this.getFormControlName('name'),
-      modbusReadValue ? modbusReadValue.name : undefined,
+  expandParentForm() {
+    this.formHandler.addFormControl(this.form, 'name',
+      this.modbusReadValue && this.modbusReadValue.name,
       [Validators.required]);
-    formHandler.addFormControl(form, this.getFormControlName('extractionRegex'),
-      modbusReadValue ? modbusReadValue.extractionRegex : undefined);
+    this.formHandler.addFormControl(this.form, 'extractionRegex',
+      this.modbusReadValue && this.modbusReadValue.extractionRegex);
   }
 
-  updateForm(form: FormGroup, modbusReadValue: ModbusReadValue, formHandler: FormHandler) {
-    formHandler.setFormControlValue(form, this.getFormControlName('name'), modbusReadValue.name);
-    formHandler.setFormControlValue(form, this.getFormControlName('extractionRegex'),
-      modbusReadValue.extractionRegex);
+  updateForm() {
+    this.formHandler.setFormControlValue(this.form, 'name', this.modbusReadValue.name);
+    this.formHandler.setFormControlValue(this.form, 'extractionRegex', this.modbusReadValue.extractionRegex);
   }
 
   updateModelFromForm(): ModbusReadValue | undefined {
-    const name = this.form.controls[this.getFormControlName('name')].value;
-    const extractionRegex = this.form.controls[this.getFormControlName('extractionRegex')].value;
+    const name = this.form.controls.name.value;
+    const extractionRegex = this.form.controls.extractionRegex.value;
 
     if (!(name || extractionRegex)) {
       return undefined;

@@ -48,7 +48,7 @@ export class MeterS0Component implements OnChanges, OnInit, AfterViewChecked {
       } else {
         this.s0ElectricityMeter = this.s0ElectricityMeter || new S0ElectricityMeter();
       }
-      this.updateForm(this.form, this.s0ElectricityMeter, this.formHandler);
+      this.updateForm();
     }
   }
 
@@ -60,7 +60,7 @@ export class MeterS0Component implements OnChanges, OnInit, AfterViewChecked {
       new ErrorMessage('impulsesPerKwh', ValidatorType.pattern),
       new ErrorMessage('measurementInterval', ValidatorType.pattern),
     ], this.translate);
-    this.expandParentForm(this.form, this.s0ElectricityMeter, this.formHandler);
+    this.expandParentForm();
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
@@ -70,32 +70,32 @@ export class MeterS0Component implements OnChanges, OnInit, AfterViewChecked {
     this.formHandler.markLabelsRequired();
   }
 
-  expandParentForm(form: FormGroup, s0ElectricityMeter: S0ElectricityMeter, formHandler: FormHandler) {
-    formHandler.addFormControl(form, 'gpio',
-      s0ElectricityMeter ? s0ElectricityMeter.gpio : undefined,
+  expandParentForm() {
+    this.formHandler.addFormControl(this.form, 'gpio',
+      this.s0ElectricityMeter && this.s0ElectricityMeter.gpio,
       [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    formHandler.addFormControl(form, 'pinPullResistance',
-      s0ElectricityMeter ? s0ElectricityMeter.pinPullResistance : undefined);
-    formHandler.addFormControl(form, 'impulsesPerKwh',
-      s0ElectricityMeter ? s0ElectricityMeter.impulsesPerKwh : undefined,
+    this.formHandler.addFormControl(this.form, 'pinPullResistance',
+      this.s0ElectricityMeter && this.s0ElectricityMeter.pinPullResistance);
+    this.formHandler.addFormControl(this.form, 'impulsesPerKwh',
+      this.s0ElectricityMeter && this.s0ElectricityMeter.impulsesPerKwh,
       [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    formHandler.addFormControl(form, 'measurementInterval',
-      s0ElectricityMeter ? s0ElectricityMeter.measurementInterval : undefined,
+    this.formHandler.addFormControl(this.form, 'measurementInterval',
+      this.s0ElectricityMeter && this.s0ElectricityMeter.measurementInterval,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
   }
 
-  updateForm(form: FormGroup, s0ElectricityMeter: S0ElectricityMeter, formHandler: FormHandler) {
-    formHandler.setFormControlValue(form, 'gpio', s0ElectricityMeter.gpio);
-    formHandler.setFormControlValue(form, 'pinPullResistance', s0ElectricityMeter.pinPullResistance);
-    formHandler.setFormControlValue(form, 'impulsesPerKwh', s0ElectricityMeter.impulsesPerKwh);
-    formHandler.setFormControlValue(form, 'measurementInterval', s0ElectricityMeter.measurementInterval);
+  updateForm() {
+    this.formHandler.setFormControlValue(this.form, 'gpio', this.s0ElectricityMeter.gpio);
+    this.formHandler.setFormControlValue(this.form, 'pinPullResistance', this.s0ElectricityMeter.pinPullResistance);
+    this.formHandler.setFormControlValue(this.form, 'impulsesPerKwh', this.s0ElectricityMeter.impulsesPerKwh);
+    this.formHandler.setFormControlValue(this.form, 'measurementInterval', this.s0ElectricityMeter.measurementInterval);
   }
 
   updateModelFromForm(): S0ElectricityMeter | undefined {
-    const gpio = getValidInt(this.form.controls['gpio'].value);
-    const pinPullResistance = this.form.controls['pinPullResistance'].value;
-    const impulsesPerKwh = getValidInt(this.form.controls['impulsesPerKwh'].value);
-    const measurementInterval = getValidInt(this.form.controls['measurementInterval'].value);
+    const gpio = getValidInt(this.form.controls.gpio.value);
+    const pinPullResistance = this.form.controls.pinPullResistance.value;
+    const impulsesPerKwh = getValidInt(this.form.controls.impulsesPerKwh.value);
+    const measurementInterval = getValidInt(this.form.controls.measurementInterval.value);
 
     if (!(gpio || pinPullResistance || impulsesPerKwh || measurementInterval)) {
       return undefined;

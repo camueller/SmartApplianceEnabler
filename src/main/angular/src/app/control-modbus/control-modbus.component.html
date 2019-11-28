@@ -14,11 +14,12 @@
       {{errors.slaveAddress}}</div>
   </div>
 </div>
-<div class="sae-block">
+<div class="sae-block" formArrayName="modbusWrites">
   <app-modbus-write *ngFor="let modbusWrite of modbusSwitch.modbusWrites; index as i; last as l"
+                    [formGroupName]="i"
+                    [form]="getModbusWriteFormGroup(i)"
                     [modbusWrite]="modbusWrite"
                     [maxValues]="maxValues"
-                    [formControlNamePrefix]="getWriteFormControlPrefix(i)"
                     [valueNames]="valueNames"
                     [writeRegisterTypes]="settingsDefaults.modbusWriteRegisterTypes"
                     [translationPrefix]="'ControlModbusComponent.'"

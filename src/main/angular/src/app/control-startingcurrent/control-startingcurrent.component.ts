@@ -47,7 +47,7 @@ export class ControlStartingcurrentComponent implements OnChanges, OnInit, After
         this.startingCurrentSwitch = new StartingCurrentSwitch();
       }
     }
-    this.updateForm(this.form, this.startingCurrentSwitch, this.formHandler);
+    this.updateForm();
   }
 
   ngOnInit() {
@@ -57,7 +57,7 @@ export class ControlStartingcurrentComponent implements OnChanges, OnInit, After
       new ErrorMessage('finishedCurrentDetectionDuration', ValidatorType.pattern),
       new ErrorMessage('minRunningTime', ValidatorType.pattern),
     ], this.translate);
-    this.expandParentForm(this.form, this.startingCurrentSwitch, this.formHandler);
+    this.expandParentForm();
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
@@ -67,28 +67,28 @@ export class ControlStartingcurrentComponent implements OnChanges, OnInit, After
     this.formHandler.markLabelsRequired();
   }
 
-  expandParentForm(form: FormGroup, startingCurrentSwitch: StartingCurrentSwitch, formHandler: FormHandler) {
-    formHandler.addFormControl(form, 'powerThreshold',
-      startingCurrentSwitch ? startingCurrentSwitch.powerThreshold : undefined,
+  expandParentForm() {
+    this.formHandler.addFormControl(this.form, 'powerThreshold',
+      this.startingCurrentSwitch && this.startingCurrentSwitch.powerThreshold,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    formHandler.addFormControl(form, 'startingCurrentDetectionDuration',
-      startingCurrentSwitch ? startingCurrentSwitch.startingCurrentDetectionDuration : undefined,
+    this.formHandler.addFormControl(this.form, 'startingCurrentDetectionDuration',
+      this.startingCurrentSwitch && this.startingCurrentSwitch.startingCurrentDetectionDuration,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    formHandler.addFormControl(form, 'finishedCurrentDetectionDuration',
-      startingCurrentSwitch ? startingCurrentSwitch.finishedCurrentDetectionDuration : undefined,
+    this.formHandler.addFormControl(this.form, 'finishedCurrentDetectionDuration',
+      this.startingCurrentSwitch && this.startingCurrentSwitch.finishedCurrentDetectionDuration,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    formHandler.addFormControl(form, 'minRunningTime',
-      startingCurrentSwitch ? startingCurrentSwitch.minRunningTime : undefined,
+    this.formHandler.addFormControl(this.form, 'minRunningTime',
+      this.startingCurrentSwitch && this.startingCurrentSwitch.minRunningTime,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
   }
 
-  updateForm(form: FormGroup, startingCurrentSwitch: StartingCurrentSwitch, formHandler: FormHandler) {
-    formHandler.setFormControlValue(form, 'powerThreshold', startingCurrentSwitch.powerThreshold);
-    formHandler.setFormControlValue(form, 'startingCurrentDetectionDuration',
-      startingCurrentSwitch.startingCurrentDetectionDuration);
-    formHandler.setFormControlValue(form, 'finishedCurrentDetectionDuration',
-      startingCurrentSwitch.finishedCurrentDetectionDuration);
-    formHandler.setFormControlValue(form, 'minRunningTime', startingCurrentSwitch.minRunningTime);
+  updateForm() {
+    this.formHandler.setFormControlValue(this.form, 'powerThreshold', this.startingCurrentSwitch.powerThreshold);
+    this.formHandler.setFormControlValue(this.form, 'startingCurrentDetectionDuration',
+      this.startingCurrentSwitch.startingCurrentDetectionDuration);
+    this.formHandler.setFormControlValue(this.form, 'finishedCurrentDetectionDuration',
+      this.startingCurrentSwitch.finishedCurrentDetectionDuration);
+    this.formHandler.setFormControlValue(this.form, 'minRunningTime', this.startingCurrentSwitch.minRunningTime);
   }
 
   updateModelFromForm(): StartingCurrentSwitch {

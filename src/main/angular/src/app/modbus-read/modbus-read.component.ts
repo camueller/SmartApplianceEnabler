@@ -10,7 +10,7 @@ import {
   SimpleChanges,
   ViewChildren
 } from '@angular/core';
-import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {FormArray, FormGroup, Validators} from '@angular/forms';
 import {Logger} from '../log/logger';
 import {TranslateService} from '@ngx-translate/core';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
@@ -32,9 +32,6 @@ import {ModbusReadValueComponent} from '../modbus-read-value/modbus-read-value.c
   selector: 'app-modbus-read',
   templateUrl: './modbus-read.component.html',
   styleUrls: ['../global.css'],
-  viewProviders: [
-    {provide: ControlContainer, useExisting: FormGroupDirective}
-  ]
 })
 export class ModbusReadComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()
@@ -46,9 +43,8 @@ export class ModbusReadComponent implements OnChanges, OnInit, AfterViewChecked 
   @Input()
   readRegisterTypes: string[];
   @Input()
-  formControlNamePrefix = '';
-  @Input()
   maxValues: number;
+  @Input()
   form: FormGroup;
   formHandler: FormHandler;
   @Input()
@@ -62,7 +58,6 @@ export class ModbusReadComponent implements OnChanges, OnInit, AfterViewChecked 
   errorMessageHandler: ErrorMessageHandler;
 
   constructor(private logger: Logger,
-              private parent: FormGroupDirective,
               private translate: TranslateService
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
@@ -70,25 +65,24 @@ export class ModbusReadComponent implements OnChanges, OnInit, AfterViewChecked 
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.form = this.parent.form;
     if (changes.modbusRead) {
       if (changes.modbusRead.currentValue) {
         this.modbusRead = changes.modbusRead.currentValue;
       } else {
         this.modbusRead = new ModbusRead();
       }
+      this.updateForm();
     }
-    this.updateForm(this.form, this.modbusRead, this.formHandler);
   }
 
   ngOnInit() {
     this.errorMessages = new ErrorMessages('ModbusReadComponent.error.', [
-      new ErrorMessage(this.getFormControlName('address'), ValidatorType.required, 'address'),
-      new ErrorMessage(this.getFormControlName('address'), ValidatorType.pattern, 'address'),
-      new ErrorMessage(this.getFormControlName('bytes'), ValidatorType.pattern, 'bytes'),
-      new ErrorMessage(this.getFormControlName('factorToValue'), ValidatorType.pattern, 'factorToValue'),
+      new ErrorMessage('address', ValidatorType.required),
+      new ErrorMessage('address', ValidatorType.pattern),
+      new ErrorMessage('bytes', ValidatorType.pattern),
+      new ErrorMessage('factorToValue', ValidatorType.pattern),
     ], this.translate);
-    this.expandParentForm(this.form, this.modbusRead, this.formHandler);
+    this.expandParentForm();
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
@@ -102,16 +96,8 @@ export class ModbusReadComponent implements OnChanges, OnInit, AfterViewChecked 
     this.formHandler.markLabelsRequired();
   }
 
-  getFormControlName(formControlName: string): string {
-    return `${this.formControlNamePrefix}${formControlName.charAt(0).toUpperCase()}${formControlName.slice(1)}`;
-  }
-
-  getReadValueFormControlPrefix(index: number) {
-    return `${this.formControlNamePrefix}readValue${index}.`;
-  }
-
   get type(): string {
-    const typeControl = this.form.controls[this.getFormControlName('type')];
+    const typeControl = this.form.controls.type;
     return (typeControl ? typeControl.value : '');
   }
 
@@ -135,46 +121,63 @@ export class ModbusReadComponent implements OnChanges, OnInit, AfterViewChecked 
       this.modbusRead.readValues = [];
     }
     this.modbusRead.readValues.push(newReadValue);
+    this.modbusReadValuesFormArray.push(this.createModbusReadValueFormGroup());
     this.form.markAsDirty();
   }
 
   removeValue(index: number) {
     this.modbusRead.readValues.splice(index, 1);
+    this.modbusReadValuesFormArray.removeAt(index);
     this.form.markAsDirty();
   }
 
-  expandParentForm(form: FormGroup, modbusRead: ModbusRead, formHandler: FormHandler) {
-    formHandler.addFormControl(form, this.getFormControlName('address'),
-      modbusRead ? modbusRead.address : undefined,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER_OR_HEX)]);
-    formHandler.addFormControl(form, this.getFormControlName('type'),
-      modbusRead ? modbusRead.type : undefined,
-      [Validators.required]);
-    formHandler.addFormControl(form, this.getFormControlName('bytes'),
-      modbusRead ? modbusRead.bytes : undefined,
-      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    formHandler.addFormControl(form, this.getFormControlName('byteOrder'),
-      modbusRead ? modbusRead.byteOrder : undefined);
-    formHandler.addFormControl(form, this.getFormControlName('factorToValue'),
-      modbusRead ? modbusRead.factorToValue : undefined,
-      [Validators.pattern(InputValidatorPatterns.FLOAT)]);
+  get modbusReadValuesFormArray() {
+    return this.form.controls.modbusReadValues as FormArray;
   }
 
-  updateForm(form: FormGroup, modbusRead: ModbusRead, formHandler: FormHandler) {
-    formHandler.setFormControlValue(form, this.getFormControlName('address'), modbusRead.address);
-    formHandler.setFormControlValue(form, this.getFormControlName('type'), modbusRead.type);
-    formHandler.setFormControlValue(form, this.getFormControlName('bytes'), modbusRead.bytes);
-    formHandler.setFormControlValue(form, this.getFormControlName('byteOrder'), modbusRead.byteOrder);
-    formHandler.setFormControlValue(form, this.getFormControlName('factorToValue'),
-      modbusRead.factorToValue);
+  createModbusReadValueFormGroup(): FormGroup {
+    return new FormGroup({});
+  }
+
+  getModbusReadValueFormGroup(index: number) {
+    return this.modbusReadValuesFormArray.controls[index];
+  }
+
+  expandParentForm() {
+    this.formHandler.addFormControl(this.form, 'address',
+      this.modbusRead && this.modbusRead.address,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER_OR_HEX)]);
+    this.formHandler.addFormControl(this.form, 'type',
+      this.modbusRead && this.modbusRead.type,
+      [Validators.required]);
+    this.formHandler.addFormControl(this.form, 'bytes',
+      this.modbusRead && this.modbusRead.bytes,
+      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
+    this.formHandler.addFormControl(this.form, 'byteOrder',
+      this.modbusRead && this.modbusRead.byteOrder);
+    this.formHandler.addFormControl(this.form, 'factorToValue',
+      this.modbusRead && this.modbusRead.factorToValue,
+      [Validators.pattern(InputValidatorPatterns.FLOAT)]);
+    this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'modbusReadValues',
+      this.modbusRead.readValues);
+  }
+
+  updateForm() {
+    this.formHandler.setFormControlValue(this.form, 'address', this.modbusRead.address);
+    this.formHandler.setFormControlValue(this.form, 'type', this.modbusRead.type);
+    this.formHandler.setFormControlValue(this.form, 'bytes', this.modbusRead.bytes);
+    this.formHandler.setFormControlValue(this.form, 'byteOrder', this.modbusRead.byteOrder);
+    this.formHandler.setFormControlValue(this.form, 'factorToValue', this.modbusRead.factorToValue);
+    this.formHandler.setFormArrayControlWithEmptyFormGroups(this.form, 'modbusReadValues',
+      this.modbusRead.readValues);
   }
 
   updateModelFromForm(): ModbusRead | undefined {
-    const address = this.form.controls[this.getFormControlName('address')].value;
-    const type = this.form.controls[this.getFormControlName('type')].value;
-    const bytes = this.form.controls[this.getFormControlName('bytes')].value;
-    const byteOrder = this.form.controls[this.getFormControlName('byteOrder')].value;
-    const factorToValue = this.form.controls[this.getFormControlName('factorToValue')].value;
+    const address = this.form.controls.address.value;
+    const type = this.form.controls.type.value;
+    const bytes = this.form.controls.bytes.value;
+    const byteOrder = this.form.controls.byteOrder.value;
+    const factorToValue = this.form.controls.factorToValue.value;
     const modbusReadValues = [];
     this.modbusReadValueComps.forEach(modbusReadValueComp => {
       const modbusReadValue = modbusReadValueComp.updateModelFromForm();

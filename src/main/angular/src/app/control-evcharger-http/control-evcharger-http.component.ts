@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import {Settings} from '../settings/settings';
 import {SettingsDefaults} from '../settings/settings-defaults';
-import {ControlContainer, FormGroup, FormGroupDirective} from '@angular/forms';
+import {ControlContainer, FormArray, FormGroup, FormGroupDirective} from '@angular/forms';
 import {Logger} from '../log/logger';
 import {EvHttpControl} from './ev-http-control';
 import {EvModbusReadRegisterName} from '../control-evcharger-modbus/ev-modbus-read-register-name';
@@ -23,6 +23,7 @@ import {HttpWrite} from '../http-write/http-write';
 import {HttpReadComponent} from '../http-read/http-read.component';
 import {HttpWriteComponent} from '../http-write/http-write.component';
 import {HttpConfigurationComponent} from '../http-configuration/http-configuration.component';
+import {fixExpressionChangedAfterItHasBeenCheckedError} from '../shared/form-util';
 
 @Component({
   selector: 'app-control-evcharger-http',
@@ -63,12 +64,12 @@ export class ControlEvchargerHttpComponent implements OnChanges, OnInit, AfterVi
       } else {
         this.evHttpControl = new EvHttpControl();
       }
-      this.updateForm(this.form, this.evHttpControl, this.formHandler);
+      this.updateForm();
     }
   }
 
   ngOnInit() {
-    this.expandParentForm(this.form, this.evHttpControl, this.formHandler);
+    this.expandParentForm();
   }
 
   ngAfterViewChecked() {
@@ -76,16 +77,8 @@ export class ControlEvchargerHttpComponent implements OnChanges, OnInit, AfterVi
   }
 
   get contentProtocol(): string {
-    const contentProtocolControl = this.form.controls['contentProtocol'];
+    const contentProtocolControl = this.form.controls.contentProtocol;
     return (contentProtocolControl.value ? contentProtocolControl.value.toUpperCase() : '');
-  }
-
-  getReadFormControlPrefix(index: number) {
-    return `read${index}.`;
-  }
-
-  getWriteFormControlPrefix(index: number) {
-    return `write${index}.`;
   }
 
   get readValueNames() {
@@ -110,6 +103,7 @@ export class ControlEvchargerHttpComponent implements OnChanges, OnInit, AfterVi
       this.evHttpControl.httpReads = [];
     }
     this.evHttpControl.httpReads.push(httpRead);
+    this.httpReadsFormArray.push(new FormGroup({}));
     this.form.markAsDirty();
   }
 
@@ -119,16 +113,41 @@ export class ControlEvchargerHttpComponent implements OnChanges, OnInit, AfterVi
       this.evHttpControl.httpWrites = [];
     }
     this.evHttpControl.httpWrites.push(httpWrite);
+    this.httpWritesFormArray.push(new FormGroup({}));
     this.form.markAsDirty();
   }
 
-  expandParentForm(form: FormGroup, evHttpControl: EvHttpControl, formHandler: FormHandler) {
-    formHandler.addFormControl(form, 'contentProtocol',
-      evHttpControl ? evHttpControl.contentProtocol : undefined);
+  get httpReadsFormArray() {
+    return this.form.controls.httpReads as FormArray;
   }
 
-  updateForm(form: FormGroup, evHttpControl: EvHttpControl, formHandler: FormHandler) {
-    formHandler.setFormControlValue(form, 'contentProtocol', evHttpControl.contentProtocol);
+  getHttpReadFormGroup(index: number) {
+    return this.httpReadsFormArray.controls[index];
+  }
+
+  get httpWritesFormArray() {
+    return this.form.controls.httpWrites as FormArray;
+  }
+
+  getHttpWriteFormGroup(index: number) {
+    return this.httpWritesFormArray.controls[index];
+  }
+
+  expandParentForm() {
+    this.formHandler.addFormControl(this.form, 'contentProtocol',
+      this.evHttpControl && this.evHttpControl.contentProtocol);
+    this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'httpReads',
+      this.evHttpControl.httpReads);
+    this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'httpWrites',
+      this.evHttpControl.httpWrites);
+  }
+
+  updateForm() {
+    this.formHandler.setFormControlValue(this.form, 'contentProtocol', this.evHttpControl.contentProtocol);
+    this.formHandler.setFormArrayControlWithEmptyFormGroups(this.form, 'httpReads',
+      this.evHttpControl.httpReads);
+    this.formHandler.setFormArrayControlWithEmptyFormGroups(this.form, 'httpWrites',
+      this.evHttpControl.httpWrites);
   }
 
   updateModelFromForm(): EvHttpControl | undefined {

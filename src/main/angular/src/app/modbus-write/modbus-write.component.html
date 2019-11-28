@@ -1,15 +1,15 @@
 <div class="ui hidden divider"></div>
-<div>
+<div [formGroup]="form">
   <div class="ui fields">
     <div class="field">
       <label>{{'ModbusWriteComponent.address' | translate}}</label>
-      <input type="text" formControlName="{{this.getFormControlName('address')}}">
-      <div *ngIf="errors[this.getFormControlName('address')]"
-           class="ui negative message">{{errors[this.getFormControlName('address')]}}</div>
+      <input type="text" formControlName="address">
+      <div *ngIf="errors.address"
+           class="ui negative message">{{errors.address}}</div>
     </div>
     <div class="field">
       <label>{{'ModbusWriteComponent.type' | translate}}</label>
-      <select class="ui fluid dropdown" formControlName="{{this.getFormControlName('type')}}">
+      <select class="ui fluid dropdown" formControlName="type">
         <option *ngFor="let readRegisterType of writeRegisterTypes"
                 [ngValue]="readRegisterType"
                 [selected]="readRegisterType==type"
@@ -18,20 +18,21 @@
     </div>
     <div class="field">
       <label>{{'ModbusWriteComponent.factorToValue' | translate}}</label>
-      <input type="text" formControlName="{{this.getFormControlName('factorToValue')}}">
-      <div *ngIf="errors[this.getFormControlName('factorToValue')]"
-           class="ui negative message">{{errors[this.getFormControlName('factorToValue')]}}</div>
+      <input type="text" formControlName="factorToValue">
+      <div *ngIf="errors.factorToValue"
+           class="ui negative message">{{errors.factorToValue}}</div>
     </div>
     <div class="field icon-field">
       <i (click)="removeModbusWrite()" class="icon big red remove circle"></i>
     </div>
   </div>
-  <div *ngFor="let writeValue of modbusWrite.writeValues; index as i">
-    <div class="ui fields">
+  <div formArrayName="modbusWriteValues">
+    <div class="ui fields" *ngFor="let writeValue of modbusWrite.writeValues; index as i">
       <div class="field">
         <app-modbus-write-value
           [modbusWriteValue]="writeValue"
-          [formControlNamePrefix]="getWriteValueFormControlPrefix(i)"
+          [formGroupName]="i"
+          [form]="getModbusWriteValueFormGroup(i)"
           [valueNames]="valueNames"
           [translationPrefix]="translationPrefix"
           [translationKeys]="translationKeys"

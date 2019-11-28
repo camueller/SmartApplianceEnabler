@@ -45,7 +45,7 @@ export class ScheduleRequestRuntimeComponent implements OnChanges, OnInit, After
       } else {
         this.runtimeRequest = new RuntimeRequest();
       }
-      this.updateForm(this.form, this.runtimeRequest, this.formHandler);
+      this.updateForm();
     }
   }
 
@@ -55,7 +55,7 @@ export class ScheduleRequestRuntimeComponent implements OnChanges, OnInit, After
       new ErrorMessage('minRuntime', ValidatorType.pattern),
       new ErrorMessage('maxRuntime', ValidatorType.pattern),
     ], this.translate);
-    this.expandParentForm(this.form, this.runtimeRequest, this.formHandler);
+    this.expandParentForm();
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
@@ -73,16 +73,16 @@ export class ScheduleRequestRuntimeComponent implements OnChanges, OnInit, After
     return this.runtimeRequest.max && TimeUtil.toHourMinute(this.runtimeRequest.max);
   }
 
-  expandParentForm(form: FormGroup, runtimeRequest: RuntimeRequest, formHandler: FormHandler) {
-    formHandler.addFormControl(form, 'minRuntime', this.minRuntime,
+  expandParentForm() {
+    this.formHandler.addFormControl(this.form, 'minRuntime', this.minRuntime,
       [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]);
-    formHandler.addFormControl(form, 'maxRuntime', this.maxRuntime,
+    this.formHandler.addFormControl(this.form, 'maxRuntime', this.maxRuntime,
       [Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]);
   }
 
-  updateForm(form: FormGroup, runtimeRequest: RuntimeRequest, formHandler: FormHandler) {
-    formHandler.setFormControlValue(form, 'minRuntime', this.minRuntime);
-    formHandler.setFormControlValue(form, 'maxRuntime', this.maxRuntime);
+  updateForm() {
+    this.formHandler.setFormControlValue(this.form, 'minRuntime', this.minRuntime);
+    this.formHandler.setFormControlValue(this.form, 'maxRuntime', this.maxRuntime);
   }
 
   updateModelFromForm(): RuntimeRequest | undefined {

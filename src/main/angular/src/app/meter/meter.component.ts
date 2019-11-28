@@ -114,7 +114,7 @@ export class MeterComponent implements OnChanges, OnInit, CanDeactivate<MeterCom
   }
 
   get meterType() {
-    return this.form.controls['meterType'].value;
+    return this.form.controls.meterType.value;
   }
 
   canDeactivate(): Observable<boolean> | boolean {

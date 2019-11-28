@@ -72,7 +72,7 @@ export class MeterModbusComponent implements OnChanges, OnInit, AfterViewChecked
       }
     }
     this.form = this.parent.form;
-    this.updateForm(this.form, this.modbusElectricityMeter, this.formHandler);
+    this.updateForm();
   }
 
   ngOnInit() {
@@ -82,7 +82,7 @@ export class MeterModbusComponent implements OnChanges, OnInit, AfterViewChecked
       new ErrorMessage('pollInterval', ValidatorType.pattern),
       new ErrorMessage('measurementInterval', ValidatorType.pattern),
     ], this.translate);
-    this.expandParentForm(this.form, this.modbusElectricityMeter, this.formHandler);
+    this.expandParentForm();
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
@@ -98,10 +98,6 @@ export class MeterModbusComponent implements OnChanges, OnInit, AfterViewChecked
 
   get valueNameTextKeys() {
     return ['MeterModbusComponent.Power', 'MeterModbusComponent.Energy'];
-  }
-
-  getReadFormControlPrefix(index: number) {
-    return `read${index}.`;
   }
 
   get isAddModbusReadPossible() {
@@ -131,29 +127,29 @@ export class MeterModbusComponent implements OnChanges, OnInit, AfterViewChecked
     return modbusRead;
   }
 
-  expandParentForm(form: FormGroup, modbusElectricityMeter: ModbusElectricityMeter, formHandler: FormHandler) {
-    formHandler.addFormControl(form, 'idref', modbusElectricityMeter.idref,
+  expandParentForm() {
+    this.formHandler.addFormControl(this.form, 'idref', this.modbusElectricityMeter.idref,
       [Validators.required]);
-    formHandler.addFormControl(form, 'slaveAddress', modbusElectricityMeter.slaveAddress,
+    this.formHandler.addFormControl(this.form, 'slaveAddress', this.modbusElectricityMeter.slaveAddress,
       [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER_OR_HEX)]);
-    formHandler.addFormControl(form, 'pollInterval', modbusElectricityMeter.pollInterval,
+    this.formHandler.addFormControl(this.form, 'pollInterval', this.modbusElectricityMeter.pollInterval,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    formHandler.addFormControl(form, 'measurementInterval', modbusElectricityMeter.measurementInterval,
+    this.formHandler.addFormControl(this.form, 'measurementInterval', this.modbusElectricityMeter.measurementInterval,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
   }
 
-  updateForm(form: FormGroup, modbusElectricityMeter: ModbusElectricityMeter, formHandler: FormHandler) {
-    formHandler.setFormControlValue(form, 'idref', modbusElectricityMeter.idref);
-    formHandler.setFormControlValue(form, 'slaveAddress', modbusElectricityMeter.slaveAddress);
-    formHandler.setFormControlValue(form, 'pollInterval', modbusElectricityMeter.pollInterval);
-    formHandler.setFormControlValue(form, 'measurementInterval', modbusElectricityMeter.measurementInterval);
+  updateForm() {
+    this.formHandler.setFormControlValue(this.form, 'idref', this.modbusElectricityMeter.idref);
+    this.formHandler.setFormControlValue(this.form, 'slaveAddress', this.modbusElectricityMeter.slaveAddress);
+    this.formHandler.setFormControlValue(this.form, 'pollInterval', this.modbusElectricityMeter.pollInterval);
+    this.formHandler.setFormControlValue(this.form, 'measurementInterval', this.modbusElectricityMeter.measurementInterval);
   }
 
   updateModelFromForm(): ModbusElectricityMeter | undefined {
-    const idref = getValidString(this.form.controls['idref'].value);
-    const slaveAddress = getValidString(this.form.controls['slaveAddress'].value);
-    const pollInterval = getValidInt(this.form.controls['pollInterval'].value);
-    const measurementInterval = getValidInt(this.form.controls['measurementInterval'].value);
+    const idref = getValidString(this.form.controls.idref.value);
+    const slaveAddress = getValidString(this.form.controls.slaveAddress.value);
+    const pollInterval = getValidInt(this.form.controls.pollInterval.value);
+    const measurementInterval = getValidInt(this.form.controls.measurementInterval.value);
     const modbusReads = [];
     this.modbusReadComps.forEach(modbusReadComponent => {
       const modbusRead = modbusReadComponent.updateModelFromForm();

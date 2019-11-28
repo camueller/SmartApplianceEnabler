@@ -92,12 +92,12 @@ export class ScheduleComponent implements OnChanges, OnInit, AfterViewChecked {
       } else {
         this.schedule = new Schedule();
       }
-      this.updateForm(this.form, this.schedule, this.formHandler);
+      this.updateForm();
     }
   }
 
   ngOnInit() {
-    this.expandParentForm(this.form, this.schedule, this.formHandler);
+    this.expandParentForm();
   }
 
   ngAfterViewChecked() {
@@ -156,18 +156,18 @@ export class ScheduleComponent implements OnChanges, OnInit, AfterViewChecked {
     return undefined;
   }
 
-  expandParentForm(form: FormGroup, schedule: Schedule, formHandler: FormHandler) {
-    formHandler.addFormControl(form, 'enabled', schedule.enabled);
-    formHandler.addFormControl(form, 'timeframeType',
+  expandParentForm() {
+    this.formHandler.addFormControl(this.form, 'enabled', this.schedule.enabled);
+    this.formHandler.addFormControl(this.form, 'timeframeType',
       this.timeframeType, [Validators.required]);
-    formHandler.addFormControl(form, 'requestType',
+    this.formHandler.addFormControl(this.form, 'requestType',
       this.requestType, [Validators.required]);
   }
 
-  updateForm(form: FormGroup, schedule: Schedule, formHandler: FormHandler) {
-    formHandler.setFormControlValue(form, 'enabled', schedule.enabled);
-    formHandler.setFormControlValue(form, 'timeframeType', this.timeframeType);
-    formHandler.setFormControlValue(form, 'requestType', this.requestType);
+  updateForm() {
+    this.formHandler.setFormControlValue(this.form, 'enabled', this.schedule.enabled);
+    this.formHandler.setFormControlValue(this.form, 'timeframeType', this.timeframeType);
+    this.formHandler.setFormControlValue(this.form, 'requestType', this.requestType);
   }
 
   updateModelFromForm(): Schedule | undefined {

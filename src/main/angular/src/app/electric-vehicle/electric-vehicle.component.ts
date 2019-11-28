@@ -8,7 +8,7 @@ import {
   Output,
   SimpleChanges
 } from '@angular/core';
-import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {FormGroup, Validators} from '@angular/forms';
 import {Logger} from '../log/logger';
 import {TranslateService} from '@ngx-translate/core';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
@@ -25,9 +25,6 @@ import {ErrorMessage, ValidatorType} from '../shared/error-message';
   selector: 'app-electric-vehicle',
   templateUrl: './electric-vehicle.component.html',
   styleUrls: ['../global.css'],
-  viewProviders: [
-    {provide: ControlContainer, useExisting: FormGroupDirective}
-  ]
 })
 export class ElectricVehicleComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()
@@ -35,7 +32,6 @@ export class ElectricVehicleComponent implements OnChanges, OnInit, AfterViewChe
   @Input()
   controlDefaults: ControlDefaults;
   @Input()
-  formControlNamePrefix = '';
   form: FormGroup;
   formHandler: FormHandler;
   @Output()
@@ -45,37 +41,35 @@ export class ElectricVehicleComponent implements OnChanges, OnInit, AfterViewChe
   errorMessageHandler: ErrorMessageHandler;
 
   constructor(private logger: Logger,
-              private parent: FormGroupDirective,
               private translate: TranslateService) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
     this.formHandler = new FormHandler();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.form = this.parent.form;
     if (changes.electricVehicle) {
       if (changes.electricVehicle.currentValue) {
         this.electricVehicle = changes.electricVehicle.currentValue;
       } else {
         this.electricVehicle = new ElectricVehicle();
       }
+      this.updateForm();
     }
-    this.updateForm(this.form, this.electricVehicle, this.formHandler);
   }
 
   ngOnInit() {
     this.errorMessages = new ErrorMessages('ElectricVehicleComponent.error.', [
-      new ErrorMessage(this.getFormControlName('name'), ValidatorType.required, 'name'),
-      new ErrorMessage(this.getFormControlName('batteryCapacity'), ValidatorType.required, 'batteryCapacity'),
-      new ErrorMessage(this.getFormControlName('batteryCapacity'), ValidatorType.pattern, 'batteryCapacity'),
-      new ErrorMessage(this.getFormControlName('phases'), ValidatorType.pattern, 'phases'),
-      new ErrorMessage(this.getFormControlName('maxChargePower'), ValidatorType.pattern, 'maxChargePower'),
-      new ErrorMessage(this.getFormControlName('chargeLoss'), ValidatorType.pattern, 'chargeLoss'),
-      new ErrorMessage(this.getFormControlName('defaultSocManual'), ValidatorType.pattern, 'defaultSocManual'),
-      new ErrorMessage(this.getFormControlName('defaultSocOptionalEnergy'), ValidatorType.pattern, 'defaultSocOptionalEnergy'),
-      new ErrorMessage(this.getFormControlName('scriptFilename'), ValidatorType.required, 'scriptFilename'),
+      new ErrorMessage('name', ValidatorType.required),
+      new ErrorMessage('batteryCapacity', ValidatorType.required),
+      new ErrorMessage('batteryCapacity', ValidatorType.pattern),
+      new ErrorMessage('phases', ValidatorType.pattern),
+      new ErrorMessage('maxChargePower', ValidatorType.pattern, 'maxChargePower'),
+      new ErrorMessage('chargeLoss', ValidatorType.pattern),
+      new ErrorMessage('defaultSocManual', ValidatorType.pattern),
+      new ErrorMessage('defaultSocOptionalEnergy', ValidatorType.pattern),
+      new ErrorMessage('scriptFilename', ValidatorType.required),
     ], this.translate);
-    this.expandParentForm(this.form, this.electricVehicle);
+    this.expandParentForm();
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
@@ -85,63 +79,62 @@ export class ElectricVehicleComponent implements OnChanges, OnInit, AfterViewChe
     this.formHandler.markLabelsRequired();
   }
 
-  expandParentForm(form: FormGroup, ev: ElectricVehicle) {
-    this.formHandler.addFormControl(form, this.getFormControlName('id'),
-      ev && ev.id);
-    this.formHandler.addFormControl(form, this.getFormControlName('name'),
-      ev && ev.name,
+  expandParentForm() {
+    this.formHandler.addFormControl(this.form, 'id',
+      this.electricVehicle && this.electricVehicle.id);
+    this.formHandler.addFormControl(this.form, 'name',
+      this.electricVehicle && this.electricVehicle.name,
       [Validators.required]);
-    this.formHandler.addFormControl(form, this.getFormControlName('batteryCapacity'),
-      ev && ev.batteryCapacity,
+    this.formHandler.addFormControl(this.form, 'batteryCapacity',
+      this.electricVehicle && this.electricVehicle.batteryCapacity,
       [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(form, this.getFormControlName('phases'),
-      ev && ev.phases,
+    this.formHandler.addFormControl(this.form, 'phases',
+      this.electricVehicle && this.electricVehicle.phases,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(form, this.getFormControlName('maxChargePower'),
-      ev && ev.maxChargePower,
+    this.formHandler.addFormControl(this.form, 'maxChargePower',
+      this.electricVehicle && this.electricVehicle.maxChargePower,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(form, this.getFormControlName('chargeLoss'),
-      ev && ev.chargeLoss,
+    this.formHandler.addFormControl(this.form, 'chargeLoss',
+      this.electricVehicle && this.electricVehicle.chargeLoss,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(form, this.getFormControlName('defaultSocManual'),
-      ev && ev.defaultSocManual,
+    this.formHandler.addFormControl(this.form, 'defaultSocManual',
+      this.electricVehicle && this.electricVehicle.defaultSocManual,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(form, this.getFormControlName('defaultSocOptionalEnergy'),
-      ev && ev.defaultSocOptionalEnergy,
+    this.formHandler.addFormControl(this.form, 'defaultSocOptionalEnergy',
+      this.electricVehicle && this.electricVehicle.defaultSocOptionalEnergy,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    const scriptEnabled: boolean = ev && ev.socScript && (ev.socScript.script !== undefined);
-    this.formHandler.addFormControl(form, this.getFormControlName('scriptEnabled'), scriptEnabled);
-    this.formHandler.addFormControl(form, this.getFormControlName('scriptFilename'),
-      ev && ev.socScript && ev.socScript.script);
-    this.formHandler.addFormControl(form, this.getFormControlName('scriptExtractionRegex'),
-      ev && ev.socScript && ev.socScript.extractionRegex);
+    const scriptEnabled: boolean = this.electricVehicle && this.electricVehicle.socScript
+      && (this.electricVehicle.socScript.script !== undefined);
+    this.formHandler.addFormControl(this.form, 'scriptEnabled', scriptEnabled);
+    this.formHandler.addFormControl(this.form, 'scriptFilename',
+      this.electricVehicle && this.electricVehicle.socScript && this.electricVehicle.socScript.script);
+    this.formHandler.addFormControl(this.form, 'scriptExtractionRegex',
+      this.electricVehicle && this.electricVehicle.socScript && this.electricVehicle.socScript.extractionRegex);
   }
 
-  updateForm(form: FormGroup, ev: ElectricVehicle, formHandler: FormHandler) {
-    formHandler.setFormControlValue(form, this.getFormControlName('name'), ev.name);
-    formHandler.setFormControlValue(form, this.getFormControlName('batteryCapacity'), ev.batteryCapacity);
-    formHandler.setFormControlValue(form, this.getFormControlName('maxChargePower'), ev.maxChargePower);
-    formHandler.setFormControlValue(form, this.getFormControlName('chargeLoss'), ev.chargeLoss);
-    formHandler.setFormControlValue(form, this.getFormControlName('defaultSocManual'), ev.defaultSocManual);
-    formHandler.setFormControlValue(form, this.getFormControlName('defaultSocOptionalEnergy'),
-      ev.defaultSocOptionalEnergy);
-    if (ev && ev.socScript) {
-      formHandler.setFormControlValue(form, this.getFormControlName('scriptFilename'),
-        ev.socScript.script);
-      formHandler.setFormControlValue(form, this.getFormControlName('scriptExtractionRegex'),
-        ev.socScript.extractionRegex);
+  updateForm() {
+    this.formHandler.setFormControlValue(this.form, 'name', this.electricVehicle.name);
+    this.formHandler.setFormControlValue(this.form, 'batteryCapacity', this.electricVehicle.batteryCapacity);
+    this.formHandler.setFormControlValue(this.form, 'maxChargePower', this.electricVehicle.maxChargePower);
+    this.formHandler.setFormControlValue(this.form, 'chargeLoss', this.electricVehicle.chargeLoss);
+    this.formHandler.setFormControlValue(this.form, 'defaultSocManual', this.electricVehicle.defaultSocManual);
+    this.formHandler.setFormControlValue(this.form, 'defaultSocOptionalEnergy',
+      this.electricVehicle.defaultSocOptionalEnergy);
+    if (this.electricVehicle && this.electricVehicle.socScript) {
+      this.formHandler.setFormControlValue(this.form, 'scriptFilename', this.electricVehicle.socScript.script);
+      this.formHandler.setFormControlValue(this.form, 'scriptExtractionRegex', this.electricVehicle.socScript.extractionRegex);
     }
   }
 
   updateModelFromForm(): ElectricVehicle {
-    const name = getValidString(this.form.controls[this.getFormControlName('name')].value);
-    const batteryCapacity = getValidInt(this.form.controls[this.getFormControlName('batteryCapacity')].value);
-    const maxChargePower = getValidInt(this.form.controls[this.getFormControlName('maxChargePower')].value);
-    const chargeLoss = getValidInt(this.form.controls[this.getFormControlName('chargeLoss')].value);
-    const defaultSocManual = getValidInt(this.form.controls[this.getFormControlName('defaultSocManual')].value);
-    const defaultSocOptionalEnergy = getValidInt(this.form.controls[this.getFormControlName('defaultSocOptionalEnergy')].value);
-    const scriptFilename = this.form.controls[this.getFormControlName('scriptFilename')].value;
-    const extractionRegex = this.form.controls[this.getFormControlName('scriptExtractionRegex')].value;
+    const name = getValidString(this.form.controls.name.value);
+    const batteryCapacity = getValidInt(this.form.controls.batteryCapacity.value);
+    const maxChargePower = getValidInt(this.form.controls.maxChargePower.value);
+    const chargeLoss = getValidInt(this.form.controls.chargeLoss.value);
+    const defaultSocManual = getValidInt(this.form.controls.defaultSocManual.value);
+    const defaultSocOptionalEnergy = getValidInt(this.form.controls.defaultSocOptionalEnergy.value);
+    const scriptFilename = this.form.controls.scriptFilename.value;
+    const extractionRegex = this.form.controls.scriptExtractionRegex.value;
 
     this.electricVehicle.name = name;
     this.electricVehicle.batteryCapacity = batteryCapacity;
@@ -162,13 +155,9 @@ export class ElectricVehicleComponent implements OnChanges, OnInit, AfterViewChe
     return this.electricVehicle;
   }
 
-  getFormControlName(formControlName: string): string {
-    return `${this.formControlNamePrefix}${formControlName.charAt(0).toUpperCase()}${formControlName.slice(1)}`;
-  }
-
   onScriptEnabledToggle(enabled: boolean) {
-    const scriptFilenameControl = this.form.controls[this.getFormControlName('scriptFilename')];
-    const scriptExtractionRegexControl = this.form.controls[this.getFormControlName('scriptExtractionRegex')];
+    const scriptFilenameControl = this.form.controls.scriptFilename;
+    const scriptExtractionRegexControl = this.form.controls.scriptExtractionRegex;
     if (enabled) {
       scriptFilenameControl.enable();
       scriptExtractionRegexControl.enable();
@@ -179,7 +168,7 @@ export class ElectricVehicleComponent implements OnChanges, OnInit, AfterViewChe
   }
 
   isScriptEnabled() {
-    return this.form.controls[this.getFormControlName('scriptEnabled')].enabled;
+    return this.form.controls.scriptEnabled.enabled;
   }
 
   removeElectricVehicle() {

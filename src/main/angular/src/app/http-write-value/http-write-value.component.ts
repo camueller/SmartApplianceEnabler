@@ -10,15 +10,11 @@ import {HttpWriteValue} from './http-write-value';
 import {HttpMethod} from '../shared/http-method';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {getValidFloat, getValidString} from '../shared/form-util';
-import {HttpRead} from '../http-read/http-read';
 
 @Component({
   selector: 'app-http-write-value',
   templateUrl: './http-write-value.component.html',
   styleUrls: ['../global.css'],
-  viewProviders: [
-    {provide: ControlContainer, useExisting: FormGroupDirective}
-  ]
 })
 export class HttpWriteValueComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()
@@ -28,7 +24,6 @@ export class HttpWriteValueComponent implements OnChanges, OnInit, AfterViewChec
   @Input()
   disableFactorToValue = false;
   @Input()
-  formControlNamePrefix = '';
   form: FormGroup;
   formHandler: FormHandler;
   @Input()
@@ -41,7 +36,6 @@ export class HttpWriteValueComponent implements OnChanges, OnInit, AfterViewChec
   errorMessageHandler: ErrorMessageHandler;
 
   constructor(private logger: Logger,
-              private parent: FormGroupDirective,
               private translate: TranslateService
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
@@ -49,22 +43,21 @@ export class HttpWriteValueComponent implements OnChanges, OnInit, AfterViewChec
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.form = this.parent.form;
     if (changes.httpWriteValue) {
       if (changes.httpWriteValue.currentValue) {
         this.httpWriteValue = changes.httpWriteValue.currentValue;
       } else {
         this.httpWriteValue = new HttpWriteValue();
       }
-      this.updateForm(this.form, this.httpWriteValue, this.formHandler);
+      this.updateForm();
     }
   }
 
   ngOnInit() {
     this.errorMessages = new ErrorMessages('HttpWriteValueComponent.error.', [
-      new ErrorMessage(this.getFormControlName('factorToValue'), ValidatorType.pattern, 'factorToValue'),
+      new ErrorMessage('factorToValue', ValidatorType.pattern),
     ], this.translate);
-    this.expandParentForm(this.form, this.httpWriteValue, this.formHandler);
+    this.expandParentForm();
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
@@ -75,10 +68,6 @@ export class HttpWriteValueComponent implements OnChanges, OnInit, AfterViewChec
 
   ngAfterViewChecked() {
     this.formHandler.markLabelsRequired();
-  }
-
-  getFormControlName(formControlName: string): string {
-    return `${this.formControlNamePrefix}${formControlName.charAt(0).toUpperCase()}${formControlName.slice(1)}`;
   }
 
   public getTranslatedValueName(valueName: string) {
@@ -98,35 +87,34 @@ export class HttpWriteValueComponent implements OnChanges, OnInit, AfterViewChec
     return `HttpMethod.${method}`;
   }
 
-  expandParentForm(form: FormGroup, httpWriteValue: HttpWriteValue, formHandler: FormHandler) {
-    formHandler.addFormControl(form, this.getFormControlName('name'),
-      httpWriteValue ? httpWriteValue.name : undefined, [Validators.required]);
-    formHandler.addFormControl(form, this.getFormControlName('value'),
-      httpWriteValue ? httpWriteValue.value : undefined);
+  expandParentForm() {
+    this.formHandler.addFormControl(this.form, 'name',
+      this.httpWriteValue && this.httpWriteValue.name, [Validators.required]);
+    this.formHandler.addFormControl(this.form, 'value',
+      this.httpWriteValue && this.httpWriteValue.value);
     if (!this.disableFactorToValue) {
-      formHandler.addFormControl(form, this.getFormControlName('factorToValue'),
-        httpWriteValue ? httpWriteValue.factorToValue : undefined,
+      this.formHandler.addFormControl(this.form, 'factorToValue',
+        this.httpWriteValue && this.httpWriteValue.factorToValue,
         [Validators.pattern(InputValidatorPatterns.FLOAT)]);
     }
-    formHandler.addFormControl(form, this.getFormControlName('method'),
-      httpWriteValue ? httpWriteValue.method : undefined);
+    this.formHandler.addFormControl(this.form, 'method',
+      this.httpWriteValue && this.httpWriteValue.method);
   }
 
-  updateForm(form: FormGroup, httpWriteValue: HttpWriteValue, formHandler: FormHandler) {
-    formHandler.setFormControlValue(form, this.getFormControlName('name'), httpWriteValue.name);
-    formHandler.setFormControlValue(form, this.getFormControlName('value'), httpWriteValue.value);
+  updateForm() {
+    this.formHandler.setFormControlValue(this.form, 'name', this.httpWriteValue.name);
+    this.formHandler.setFormControlValue(this.form, 'value', this.httpWriteValue.value);
     if (!this.disableFactorToValue) {
-      formHandler.setFormControlValue(form, this.getFormControlName('factorToValue'),
-        httpWriteValue.factorToValue);
+      this.formHandler.setFormControlValue(this.form, 'factorToValue', this.httpWriteValue.factorToValue);
     }
-    formHandler.setFormControlValue(form, this.getFormControlName('method'), httpWriteValue.method);
+    this.formHandler.setFormControlValue(this.form, 'method', this.httpWriteValue.method);
   }
 
   updateModelFromForm(): HttpWriteValue | undefined {
-    const name = getValidString(this.form.controls[this.getFormControlName('name')].value);
-    const value = getValidString(this.form.controls[this.getFormControlName('value')].value);
-    const factorToValue = getValidFloat(this.form.controls[this.getFormControlName('factorToValue')].value);
-    const method = getValidString(this.form.controls[this.getFormControlName('method')].value);
+    const name = getValidString(this.form.controls.name.value);
+    const value = getValidString(this.form.controls.value.value);
+    const factorToValue = getValidFloat(this.form.controls.factorToValue.value);
+    const method = getValidString(this.form.controls.method.value);
 
     if (!(name || value || factorToValue || method)) {
       return undefined;

@@ -10,7 +10,7 @@ import {
   ViewChildren
 } from '@angular/core';
 import {ControlDefaults} from '../control/control-defaults';
-import {ControlContainer, FormGroup, FormGroupDirective} from '@angular/forms';
+import {ControlContainer, FormArray, FormGroup, FormGroupDirective} from '@angular/forms';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {Logger} from '../log/logger';
@@ -70,7 +70,7 @@ export class ControlHttpComponent implements OnChanges, OnInit, AfterViewChecked
         this.httpSwitch = new HttpSwitch();
         this.httpSwitch.httpWrites = [this.createHttpWrite()];
       }
-      this.updateForm(this.form, this.httpSwitch, this.formHandler);
+      this.updateForm();
     }
   }
 
@@ -81,7 +81,7 @@ export class ControlHttpComponent implements OnChanges, OnInit, AfterViewChecked
       new ErrorMessage('offUrl', ValidatorType.required),
       new ErrorMessage('offUrl', ValidatorType.pattern),
     ], this.translate);
-    this.expandParentForm(this.form, this.httpSwitch, this.formHandler);
+    this.expandParentForm();
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
@@ -105,10 +105,6 @@ export class ControlHttpComponent implements OnChanges, OnInit, AfterViewChecked
 
   get readValueNameTextKeys() {
     return ['ControlHttpComponent.read.On'];
-  }
-
-  getWriteFormControlPrefix(index: number) {
-    return `write${index}.`;
   }
 
   get isAddHttpWritePossible() {
@@ -138,10 +134,22 @@ export class ControlHttpComponent implements OnChanges, OnInit, AfterViewChecked
     return httpWrite;
   }
 
-  expandParentForm(form: FormGroup, httpSwitch: HttpSwitch, formHandler: FormHandler) {
+  get httpWritesFormArray() {
+    return this.form.controls.httpWrites as FormArray;
   }
 
-  updateForm(form: FormGroup, httpSwitch: HttpSwitch, formHandler: FormHandler) {
+  getHttpWriteFormGroup(index: number) {
+    return this.httpWritesFormArray.controls[index];
+  }
+
+  expandParentForm() {
+    this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'httpWrites',
+      this.httpSwitch.httpWrites);
+  }
+
+  updateForm() {
+    this.formHandler.setFormArrayControlWithEmptyFormGroups(this.form, 'httpWrites',
+      this.httpSwitch.httpWrites);
   }
 
   updateModelFromForm(): HttpSwitch | undefined {

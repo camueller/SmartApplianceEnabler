@@ -10,7 +10,7 @@ import {
   SimpleChanges,
   ViewChildren
 } from '@angular/core';
-import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {FormArray, FormGroup, Validators} from '@angular/forms';
 import {FormHandler} from '../shared/form-handler';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
@@ -27,9 +27,6 @@ import {HttpWriteValueComponent} from '../http-write-value/http-write-value.comp
   selector: 'app-http-write',
   templateUrl: './http-write.component.html',
   styleUrls: ['../global.css'],
-  viewProviders: [
-    {provide: ControlContainer, useExisting: FormGroupDirective}
-  ]
 })
 export class HttpWriteComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()
@@ -44,7 +41,6 @@ export class HttpWriteComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()
   disableFactorToValue = false;
   @Input()
-  formControlNamePrefix = '';
   form: FormGroup;
   formHandler: FormHandler;
   @Input()
@@ -59,7 +55,6 @@ export class HttpWriteComponent implements OnChanges, OnInit, AfterViewChecked {
   errorMessageHandler: ErrorMessageHandler;
 
   constructor(private logger: Logger,
-              private parent: FormGroupDirective,
               private translate: TranslateService
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
@@ -67,23 +62,22 @@ export class HttpWriteComponent implements OnChanges, OnInit, AfterViewChecked {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.form = this.parent.form;
     if (changes.httpWrite) {
       if (changes.httpWrite.currentValue) {
         this.httpWrite = changes.httpWrite.currentValue;
       } else {
         this.httpWrite = HttpWrite.createWithSingleChild();
       }
-      this.updateForm(this.form, this.httpWrite, this.formHandler);
+      this.updateForm();
     }
   }
 
   ngOnInit() {
     this.errorMessages = new ErrorMessages('HttpWriteComponent.error.', [
-      new ErrorMessage(this.getFormControlName('url'), ValidatorType.required, 'url'),
-      new ErrorMessage(this.getFormControlName('url'), ValidatorType.pattern, 'url'),
+      new ErrorMessage('url', ValidatorType.required),
+      new ErrorMessage('url', ValidatorType.pattern),
     ], this.translate);
-    this.expandParentForm(this.form, this.httpWrite, this.formHandler);
+    this.expandParentForm();
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
@@ -96,14 +90,6 @@ export class HttpWriteComponent implements OnChanges, OnInit, AfterViewChecked {
 
   ngAfterViewChecked() {
     this.formHandler.markLabelsRequired();
-  }
-
-  getFormControlName(formControlName: string): string {
-    return `${this.formControlNamePrefix}${formControlName.charAt(0).toUpperCase()}${formControlName.slice(1)}`;
-  }
-
-  getWriteValueFormControlPrefix(index: number) {
-    return `${this.formControlNamePrefix}writeValue${index}.`;
   }
 
   removeHttpWrite() {
@@ -121,11 +107,13 @@ export class HttpWriteComponent implements OnChanges, OnInit, AfterViewChecked {
       this.httpWrite.writeValues = [];
     }
     this.httpWrite.writeValues.push(newWriteValue);
+    this.httpWriteValuesFormArray.push(new FormGroup({}));
     this.form.markAsDirty();
   }
 
   removeValue(index: number) {
     this.httpWrite.writeValues.splice(index, 1);
+    this.httpWriteValuesFormArray.removeAt(index);
     this.form.markAsDirty();
   }
 
@@ -133,18 +121,30 @@ export class HttpWriteComponent implements OnChanges, OnInit, AfterViewChecked {
     return `removeValue${index}`;
   }
 
-  expandParentForm(form: FormGroup, httpWrite: HttpWrite, formHandler: FormHandler) {
-    formHandler.addFormControl(form, this.getFormControlName('url'),
-      httpWrite ? httpWrite.url : undefined,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.URL)]);
+  get httpWriteValuesFormArray() {
+    return this.form.controls.httpWriteValues as FormArray;
   }
 
-  updateForm(form: FormGroup, httpWrite: HttpWrite, formHandler: FormHandler) {
-    formHandler.setFormControlValue(form, this.getFormControlName('url'), httpWrite.url);
+  getHttpWriteValueFormGroup(index: number) {
+    return this.httpWriteValuesFormArray.controls[index];
+  }
+
+  expandParentForm() {
+    this.formHandler.addFormControl(this.form, 'url',
+      this.httpWrite && this.httpWrite.url,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.URL)]);
+    this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'httpWriteValues',
+      this.httpWrite.writeValues);
+  }
+
+  updateForm() {
+    this.formHandler.setFormControlValue(this.form, 'url', this.httpWrite.url);
+    this.formHandler.setFormArrayControlWithEmptyFormGroups(this.form, 'httpWriteValues',
+      this.httpWrite.writeValues);
   }
 
   updateModelFromForm(): HttpWrite | undefined {
-    const url = this.form.controls[this.getFormControlName('url')].value;
+    const url = this.form.controls.url.value;
     const httpWriteValues = [];
     this.httpWriteValueComps.forEach(httpWriteValueComp => {
       const httpWriteValue = httpWriteValueComp.updateModelFromForm();

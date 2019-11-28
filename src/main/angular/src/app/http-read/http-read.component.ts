@@ -1,6 +1,5 @@
 import {
   AfterViewChecked,
-  ChangeDetectionStrategy,
   Component,
   EventEmitter,
   Input,
@@ -11,7 +10,7 @@ import {
   SimpleChanges,
   ViewChildren
 } from '@angular/core';
-import {ControlContainer, FormControl, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {FormArray, FormGroup, Validators} from '@angular/forms';
 import {FormHandler} from '../shared/form-handler';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
@@ -28,9 +27,6 @@ import {HttpReadValueComponent} from '../http-read-value/http-read-value.compone
   selector: 'app-http-read',
   templateUrl: './http-read.component.html',
   styleUrls: ['../global.css'],
-  viewProviders: [
-    {provide: ControlContainer, useExisting: FormGroupDirective}
-  ]
 })
 export class HttpReadComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()
@@ -48,7 +44,6 @@ export class HttpReadComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()
   disableRemove = false;
   @Input()
-  formControlNamePrefix = '';
   form: FormGroup;
   formHandler: FormHandler;
   @Input()
@@ -63,7 +58,6 @@ export class HttpReadComponent implements OnChanges, OnInit, AfterViewChecked {
   errorMessageHandler: ErrorMessageHandler;
 
   constructor(private logger: Logger,
-              private parent: FormGroupDirective,
               private translate: TranslateService,
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
@@ -71,24 +65,22 @@ export class HttpReadComponent implements OnChanges, OnInit, AfterViewChecked {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.form = this.parent.form;
-    console.log('form=', this.form);
     if (changes.httpRead) {
       if (changes.httpRead.currentValue) {
         this.httpRead = changes.httpRead.currentValue;
       } else {
         this.httpRead = HttpRead.createWithSingleChild();
       }
-      this.updateForm(this.form, this.httpRead, this.formHandler);
+      this.updateForm();
     }
   }
 
   ngOnInit() {
     this.errorMessages = new ErrorMessages('HttpReadComponent.error.', [
-      new ErrorMessage(this.getFormControlName('url'), ValidatorType.required, 'url'),
-      new ErrorMessage(this.getFormControlName('url'), ValidatorType.pattern, 'url'),
+      new ErrorMessage('url', ValidatorType.required),
+      new ErrorMessage('url', ValidatorType.pattern),
     ], this.translate);
-    this.expandParentForm(this.form, this.httpRead, this.formHandler);
+    this.expandParentForm();
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
@@ -99,14 +91,6 @@ export class HttpReadComponent implements OnChanges, OnInit, AfterViewChecked {
 
   ngAfterViewChecked() {
     this.formHandler.markLabelsRequired();
-  }
-
-  getFormControlName(formControlName: string): string {
-    return `${this.formControlNamePrefix}${formControlName.charAt(0).toUpperCase()}${formControlName.slice(1)}`;
-  }
-
-  getReadValueFormControlPrefix(index: number) {
-    return `${this.formControlNamePrefix}.readValue${index}.`;
   }
 
   get isRemoveValuePossible() {
@@ -128,25 +112,39 @@ export class HttpReadComponent implements OnChanges, OnInit, AfterViewChecked {
       this.httpRead.readValues = [];
     }
     this.httpRead.readValues.push(newReadValue);
+    this.httpReadValuesFormArray.push(new FormGroup({}));
     this.form.markAsDirty();
   }
 
   removeHttpReadValue(index: number) {
     this.httpRead.readValues.splice(index, 1);
+    this.httpReadValuesFormArray.removeAt(index);
     this.form.markAsDirty();
   }
 
-  expandParentForm(form: FormGroup, httpRead: HttpRead, formHandler: FormHandler) {
-    formHandler.addFormControl(form, this.getFormControlName('url'), httpRead.url,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.URL)]);
+  get httpReadValuesFormArray() {
+    return this.form.controls.httpReadValues as FormArray;
   }
 
-  updateForm(form: FormGroup, httpRead: HttpRead, formHandler: FormHandler) {
-    formHandler.setFormControlValue(form, this.getFormControlName('url'), httpRead.url);
+  getHttpReadValueFormGroup(index: number) {
+    return this.httpReadValuesFormArray.controls[index];
+  }
+
+  expandParentForm() {
+    this.formHandler.addFormControl(this.form, 'url', this.httpRead.url,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.URL)]);
+    this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'httpReadValues',
+      this.httpRead.readValues);
+  }
+
+  updateForm() {
+    this.formHandler.setFormControlValue(this.form, 'url', this.httpRead.url);
+    this.formHandler.setFormArrayControlWithEmptyFormGroups(this.form, 'httpReadValues',
+      this.httpRead.readValues);
   }
 
   updateModelFromForm(): HttpRead | undefined {
-    const url = this.form.controls[this.getFormControlName('url')].value;
+    const url = this.form.controls.url.value;
     const httpReadValues = [];
     this.httpReadValueComps.forEach(httpReadValueComp => {
       const httpReadValue = httpReadValueComp.updateModelFromForm();

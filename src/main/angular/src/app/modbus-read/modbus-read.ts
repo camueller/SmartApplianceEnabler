@@ -15,4 +15,8 @@ export class ModbusRead {
   public constructor(init?: Partial<ModbusRead>) {
     Object.assign(this, init);
   }
+
+  public static createWithSingleChild() {
+    return new ModbusRead({readValues: [new ModbusReadValue()]});
+  }
 }

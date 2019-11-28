@@ -55,8 +55,8 @@ export class StatusEditComponent implements OnInit, AfterViewChecked {
         Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)])
     });
     this.statusService.suggestRuntime(this.applianceId).subscribe(suggestedRuntime => {
-      const hourMinute = TimeUtil.toHourMinute(Number.parseInt(suggestedRuntime));
-      this.switchOnForm.controls['switchOnRunningTime'].setValue(hourMinute);
+      const hourMinute = TimeUtil.toHourMinute(Number.parseInt(suggestedRuntime, 10));
+      this.switchOnForm.controls.switchOnRunningTime.setValue(hourMinute);
     });
     this.initializeOnceAfterViewChecked = true;
   }
