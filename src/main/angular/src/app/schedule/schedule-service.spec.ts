@@ -65,7 +65,7 @@ describe('ScheduleService', () => {
     req.flush([ScheduleTestdata.consecutiveDaysTimeframe567_json(true)]);
   });
 
-  it('should update the schedules', () => {
+  xit('should update the schedules', () => {
     const service = TestBed.get(ScheduleService);
     const httpMock = TestBed.get(HttpTestingController);
     const applianceId = ApplianceTestdata.getApplianceId();
