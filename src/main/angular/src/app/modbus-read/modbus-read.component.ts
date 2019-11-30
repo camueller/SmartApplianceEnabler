@@ -86,10 +86,6 @@ export class ModbusReadComponent implements OnChanges, OnInit, AfterViewChecked 
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
-    // FIXME prüfen
-    // this.translate.get(this.translationKeys).subscribe(translatedStrings => {
-    //   this.translatedStrings = translatedStrings;
-    // });
   }
 
   ngAfterViewChecked() {

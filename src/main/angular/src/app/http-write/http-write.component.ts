@@ -37,7 +37,6 @@ export class HttpWriteComponent implements OnChanges, OnInit, AfterViewChecked {
   valueNames: string[];
   @Input()
   maxValues: number;
-  // FIXME: brauchen wir das noch?
   @Input()
   disableFactorToValue = false;
   @Input()
