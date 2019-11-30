@@ -2,7 +2,7 @@
   <app-http-configuration
     [httpConfiguration]="httpSwitch.httpConfiguration"
   ></app-http-configuration>
-  <div formArrayName="httpWrites">
+  <span formArrayName="httpWrites">
     <app-http-write *ngFor="let httpWriteFormGroup of httpSwitch.httpWrites; index as i; last as l"
                     [formGroupName]="i"
                     [form]="getHttpWriteFormGroup(i)"
@@ -14,19 +14,26 @@
                     (remove)="onHttpWriteRemove(i)"
                     #httpWriteComponents
     ></app-http-write>
-  </div>
-  <app-http-read [form]="form"
-                 [httpRead]="httpSwitch.httpRead"
-                 [disableRemove]="true"
-                 [disableFactorToValue]="true"
-                 [minValues]="1"
-                 [maxValues]="1"
-                 [valueNames]="readValueNames"
-                 [translationPrefix]="'ControlHttpComponent.read.'"
-                 [translationKeys]="readValueNameTextKeys"
-                 #httpReadComponent
-  ></app-http-read>
-
+  </span>
   <button type="button" (click)="addHttpWrite()" class="ui button" *ngIf="isAddHttpWritePossible"
-  >{{'ControlEvchargerHttpComponent.button.addHttpWrite' | translate}}</button>
+  >{{'ControlHttpComponent.button.addHttpWrite' | translate}}</button>
 </div>
+<div class="fields">
+  <div class="field">
+    <label>{{'ControlHttpComponent.readControlState' | translate}}</label>
+    <input class="ui checkbox" type="checkbox" formControlName="readControlState"
+           (ngModelChange)="readControlStateChanged($event)">
+  </div>
+</div>
+<app-http-read *ngIf="readControlState"
+               [form]="getHttpReadFormGroup()"
+               [httpRead]="httpSwitch.httpRead"
+               [disableRemove]="true"
+               [disableFactorToValue]="true"
+               [minValues]="1"
+               [maxValues]="1"
+               [valueNames]="readValueNames"
+               [translationPrefix]="'ControlHttpComponent.read.'"
+               [translationKeys]="readValueNameTextKeys"
+               #httpReadComponent
+></app-http-read>

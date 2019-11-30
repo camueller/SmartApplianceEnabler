@@ -149,6 +149,8 @@
   "ControlHttpComponent.On": "Einschalten",
   "ControlHttpComponent.Off": "Ausschalten",
   "ControlHttpComponent.read.On": "Eingeschaltet",
+  "ControlHttpComponent.readControlState": "Status über HTTP abfragen",
+  "ControlHttpComponent.button.addHttpWrite": "Weitere URL",
 
   "ControlModbusComponent.On": "Einschalten",
   "ControlModbusComponent.Off": "Ausschalten",

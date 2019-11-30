@@ -10,7 +10,7 @@ import {
   ViewChildren
 } from '@angular/core';
 import {ControlDefaults} from '../control/control-defaults';
-import {ControlContainer, FormArray, FormGroup, FormGroupDirective} from '@angular/forms';
+import {ControlContainer, FormArray, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {Logger} from '../log/logger';
@@ -37,16 +37,17 @@ import {HttpReadComponent} from '../http-read/http-read.component';
 export class ControlHttpComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()
   httpSwitch: HttpSwitch;
-  @ViewChild(HttpConfigurationComponent, { static: true })
+  @ViewChild(HttpConfigurationComponent, {static: true})
   httpConfigurationComp: HttpConfigurationComponent;
   @ViewChildren('httpWriteComponents')
   httpWriteComps: QueryList<HttpWriteComponent>;
-  @ViewChild('httpReadComponent', { static: false })
+  @ViewChild('httpReadComponent', {static: false})
   httpReadComp: HttpReadComponent;
   @Input()
   applianceId: string;
   @Input()
   controlDefaults: ControlDefaults;
+  readControlState: boolean;
   form: FormGroup;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};
@@ -118,6 +119,21 @@ export class ControlHttpComponent implements OnChanges, OnInit, AfterViewChecked
     return this.httpSwitch.httpWrites.length === 2 ? 1 : 2;
   }
 
+  readControlStateChanged(readControlState: boolean) {
+    this.readControlState = readControlState;
+    if (this.readControlState) {
+      this.form.addControl('httpRead', new FormGroup({}));
+    } else {
+      this.form.removeControl('httpRead');
+    }
+  }
+
+  updateReadControlState() {
+    this.readControlState = this.httpSwitch.httpRead && this.httpSwitch.httpRead.readValues
+      && this.httpSwitch.httpRead.readValues.length > 0;
+    this.readControlStateChanged(this.readControlState);
+  }
+
   addHttpWrite() {
     fixExpressionChangedAfterItHasBeenCheckedError(this.form);
     this.httpSwitch.httpWrites.push(this.createHttpWrite());
@@ -142,14 +158,21 @@ export class ControlHttpComponent implements OnChanges, OnInit, AfterViewChecked
     return this.httpWritesFormArray.controls[index];
   }
 
+  getHttpReadFormGroup() {
+    return this.form.controls.httpRead;
+  }
+
   expandParentForm() {
     this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'httpWrites',
       this.httpSwitch.httpWrites);
+    this.formHandler.addFormControl(this.form, 'readControlState', this.readControlState);
+    this.updateReadControlState();
   }
 
   updateForm() {
     this.formHandler.setFormArrayControlWithEmptyFormGroups(this.form, 'httpWrites',
       this.httpSwitch.httpWrites);
+    this.updateReadControlState();
   }
 
   updateModelFromForm(): HttpSwitch | undefined {
