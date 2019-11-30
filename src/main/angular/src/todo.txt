@@ -1,4 +1,1 @@
-appliance-component
-settings-component
 //fixme
-test fixen

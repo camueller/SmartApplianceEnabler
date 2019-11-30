@@ -16,13 +16,12 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewChecked, Component, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {ApplianceService} from './appliance.service';
 import {ActivatedRoute, CanDeactivate, Router} from '@angular/router';
-import {ApplianceFactory} from './appliance-factory';
 import {AppliancesReloadService} from './appliances-reload-service';
 import {Location} from '@angular/common';
-import {NgForm} from '@angular/forms';
+import {FormGroup, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
@@ -32,20 +31,21 @@ import {Observable} from 'rxjs';
 import {DialogService} from '../shared/dialog.service';
 import {Logger} from '../log/logger';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
+import {FormHandler} from '../shared/form-handler';
+import {getValidInt, getValidString} from '../shared/form-util';
 
 @Component({
   selector: 'app-appliance-details',
   templateUrl: './appliance.component.html',
-  styleUrls: ['./appliance.component.css', '../global.css']
+  styleUrls: ['../global.css']
 })
-export class ApplianceComponent implements OnInit, CanDeactivate<ApplianceComponent> {
-  @ViewChild('detailsForm', { static: true }) detailsForm: NgForm;
+export class ApplianceComponent implements OnChanges, OnInit, AfterViewChecked, CanDeactivate<ApplianceComponent> {
   appliance: Appliance;
+  form: FormGroup;
+  formHandler: FormHandler;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
-  VALIDATOR_PATTERN_INTEGER = InputValidatorPatterns.INTEGER;
-  VALIDATOR_PATTERN_ID = InputValidatorPatterns.APPLIANCE_ID;
   isNew = false;
   discardChangesMessage: string;
   confirmDeletionMessage: string;
@@ -59,9 +59,17 @@ export class ApplianceComponent implements OnInit, CanDeactivate<ApplianceCompon
               private location: Location,
               private router: Router
   ) {
-    const applianceFactory = new ApplianceFactory(logger);
-    this.appliance = applianceFactory.createEmptyAppliance();
     this.errorMessageHandler = new ErrorMessageHandler(logger);
+    this.formHandler = new FormHandler();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.control && changes.control.currentValue) {
+      this.appliance = changes.appliance.currentValue;
+    }
+    if (this.form) {
+      this.updateForm();
+    }
   }
 
   ngOnInit() {
@@ -79,43 +87,28 @@ export class ApplianceComponent implements OnInit, CanDeactivate<ApplianceCompon
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.translate.get('ApplianceComponent.confirmDeletion').subscribe(translated => this.confirmDeletionMessage = translated);
     this.route.paramMap.subscribe(() => this.isNew = this.route.snapshot.paramMap.get('id') == null);
-    this.route.data.subscribe((data: {appliance: Appliance}) => {
-      if (data.appliance) {
-        this.appliance = data.appliance;
-        this.detailsForm.reset(this.appliance);
+    this.route.data.subscribe((data: { appliance: Appliance }) => {
+      this.appliance = data.appliance;
+      if (this.form) {
+        this.updateForm();
+        this.form.markAsPristine();
       }
     });
-    this.detailsForm.statusChanges.subscribe(() =>
-      this.errors = this.errorMessageHandler.applyErrorMessages4TemplateDrivenForm(this.detailsForm, this.errorMessages));
+    this.buildForm();
+    this.form.statusChanges.subscribe(() => {
+      this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
+    });
+  }
+
+  ngAfterViewChecked() {
+    this.formHandler.markLabelsRequired();
   }
 
   canDeactivate(): Observable<boolean> | boolean {
-    if (this.detailsForm.form.pristine) {
+    if (this.form.pristine) {
       return true;
     }
     return this.dialogService.confirm(this.discardChangesMessage);
-  }
-
-  submitForm() {
-    this.logger.debug('ApplianceComponent.submitForm()');
-
-    // FIXME use form model in order to avoid empty strings being assigned to properties of type number
-    this.appliance.minPowerConsumption = this.appliance.minPowerConsumption
-    && this.appliance.minPowerConsumption.toString() !== '' ? this.appliance.minPowerConsumption : undefined;
-    this.appliance.minOnTime = this.appliance.minOnTime
-    && this.appliance.minOnTime.toString() !== '' ? this.appliance.minOnTime : undefined;
-    this.appliance.maxOnTime = this.appliance.maxOnTime
-    && this.appliance.maxOnTime.toString() !== '' ? this.appliance.maxOnTime : undefined;
-    this.appliance.minOffTime = this.appliance.minOffTime
-    && this.appliance.minOffTime.toString() !== '' ? this.appliance.minOffTime : undefined;
-    this.appliance.maxOffTime = this.appliance.maxOffTime
-    && this.appliance.maxOffTime.toString() !== '' ? this.appliance.maxOffTime : undefined;
-
-    this.applianceService.updateAppliance(this.appliance, this.isNew).subscribe(() => {
-      this.appliancesReloadService.reload();
-      this.router.navigateByUrl(`appliance/${this.appliance.id}`);
-    });
-    this.detailsForm.form.markAsPristine();
   }
 
   deleteAppliance() {
@@ -126,5 +119,81 @@ export class ApplianceComponent implements OnInit, CanDeactivate<ApplianceCompon
         this.location.back();
       }
     });
+  }
+
+  buildForm() {
+    this.form = new FormGroup({});
+    this.formHandler.addFormControl(this.form, 'id', this.appliance && this.appliance.id,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.APPLIANCE_ID)]);
+    this.formHandler.addFormControl(this.form, 'vendor', this.appliance && this.appliance.vendor,
+      Validators.required);
+    this.formHandler.addFormControl(this.form, 'name', this.appliance && this.appliance.name,
+      Validators.required);
+    this.formHandler.addFormControl(this.form, 'type', this.appliance && this.appliance.type,
+      Validators.required);
+    this.formHandler.addFormControl(this.form, 'serial', this.appliance && this.appliance.serial,
+      Validators.required);
+    this.formHandler.addFormControl(this.form, 'minPowerConsumption',
+      this.appliance && this.appliance.minPowerConsumption,
+      Validators.pattern(InputValidatorPatterns.INTEGER));
+    this.formHandler.addFormControl(this.form, 'maxPowerConsumption',
+      this.appliance && this.appliance.maxPowerConsumption,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
+    this.formHandler.addFormControl(this.form, 'interruptionsAllowed',
+      this.appliance && this.appliance.interruptionsAllowed);
+    this.formHandler.addFormControl(this.form, 'minOnTime',
+      this.appliance && this.appliance.minOnTime,
+      Validators.pattern(InputValidatorPatterns.INTEGER));
+    this.formHandler.addFormControl(this.form, 'maxOnTime',
+      this.appliance && this.appliance.maxOnTime,
+      Validators.pattern(InputValidatorPatterns.INTEGER));
+    this.formHandler.addFormControl(this.form, 'minOffTime',
+      this.appliance && this.appliance.minOffTime,
+      Validators.pattern(InputValidatorPatterns.INTEGER));
+    this.formHandler.addFormControl(this.form, 'maxOffTime',
+      this.appliance && this.appliance.maxOffTime,
+      Validators.pattern(InputValidatorPatterns.INTEGER));
+  }
+
+  updateForm() {
+    this.formHandler.setFormControlValue(this.form, 'id', this.appliance.id);
+    this.formHandler.setFormControlValue(this.form, 'vendor', this.appliance.vendor);
+    this.formHandler.setFormControlValue(this.form, 'name', this.appliance.name);
+    this.formHandler.setFormControlValue(this.form, 'type', this.appliance.type);
+    this.formHandler.setFormControlValue(this.form, 'serial', this.appliance.serial);
+    this.formHandler.setFormControlValue(this.form, 'minPowerConsumption', this.appliance.minPowerConsumption);
+    this.formHandler.setFormControlValue(this.form, 'maxPowerConsumption', this.appliance.maxPowerConsumption);
+    this.formHandler.setFormControlValue(this.form, 'interruptionsAllowed', this.appliance.interruptionsAllowed);
+    this.formHandler.setFormControlValue(this.form, 'minOnTime', this.appliance.minOnTime);
+    this.formHandler.setFormControlValue(this.form, 'maxOnTime', this.appliance.maxOnTime);
+    this.formHandler.setFormControlValue(this.form, 'minOffTime', this.appliance.minOffTime);
+    this.formHandler.setFormControlValue(this.form, 'maxOffTime', this.appliance.maxOffTime);
+  }
+
+  updateModelFromForm() {
+    if (!this.appliance) {
+      this.appliance = new Appliance();
+    }
+    this.appliance.id = getValidString(this.form.controls.id.value);
+    this.appliance.vendor = getValidString(this.form.controls.vendor.value);
+    this.appliance.name = getValidString(this.form.controls.name.value);
+    this.appliance.type = getValidString(this.form.controls.type.value);
+    this.appliance.serial = getValidString(this.form.controls.serial.value);
+    this.appliance.minPowerConsumption = getValidInt(this.form.controls.minPowerConsumption.value);
+    this.appliance.maxPowerConsumption = getValidInt(this.form.controls.maxPowerConsumption.value);
+    this.appliance.interruptionsAllowed = this.form.controls.interruptionsAllowed.value;
+    this.appliance.minOnTime = getValidInt(this.form.controls.minOnTime.value);
+    this.appliance.maxOnTime = getValidInt(this.form.controls.maxOnTime.value);
+    this.appliance.minOffTime = getValidInt(this.form.controls.minOffTime.value);
+    this.appliance.maxOffTime = getValidInt(this.form.controls.maxOffTime.value);
+  }
+
+  submitForm() {
+    this.updateModelFromForm();
+    this.applianceService.updateAppliance(this.appliance, this.isNew).subscribe(() => {
+      this.appliancesReloadService.reload();
+      this.router.navigateByUrl(`appliance/${this.appliance.id}`);
+    });
+    this.form.markAsPristine();
   }
 }

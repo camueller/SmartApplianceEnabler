@@ -16,8 +16,8 @@
   ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
   -->
 
-<form class="ui form" #detailsForm="ngForm" (ngSubmit)="submitForm()">
-  <div class="three fields appliance-row">
+<form class="ui form" [formGroup]="form" (ngSubmit)="submitForm()">
+  <div class="three fields">
     <div class="field">
       <label>{{'ApplianceComponent.id' | translate}}
         <i class="icon blue info circle tooltip">
@@ -25,26 +25,25 @@
           >{{'ApplianceComponent.id.tooltip' | translate}}</span>
         </i>
       </label>
-      <input type="text" placeholder="F-00000000-000000000000-00" name="id" [(ngModel)]="appliance.id"
-             required pattern="{{VALIDATOR_PATTERN_ID}}">
-      <div *ngIf="errors['id']" class="ui negative message">{{errors['id']}}</div>
+      <input type="text" placeholder="F-00000000-000000000000-00" formControlName="id">
+      <div *ngIf="errors.id" class="ui negative message">{{errors.id}}</div>
     </div>
   </div>
   <h4 class="ui dividing header">{{'ApplianceComponent.general' | translate}}</h4>
-  <div class="fields appliance-row">
+  <div class="fields">
     <div class="field">
       <label>{{'ApplianceComponent.vendor' | translate}}</label>
-      <input type="text" name="vendor" [(ngModel)]="appliance.vendor" required>
-      <div *ngIf="errors['vendor']" class="ui negative message">{{errors['vendor']}}</div>
+      <input type="text" formControlName="vendor">
+      <div *ngIf="errors.vendor" class="ui negative message">{{errors.vendor}}</div>
     </div>
     <div class="field">
       <label>{{'ApplianceComponent.name' | translate}}</label>
-      <input type="text" name="name" [(ngModel)]="appliance.name" required>
-      <div *ngIf="errors['name']" class="ui negative message">{{errors['name']}}</div>
+      <input type="text" formControlName="name">
+      <div *ngIf="errors.name" class="ui negative message">{{errors.name}}</div>
     </div>
     <div class="field">
       <label>{{'ApplianceComponent.type' | translate}}</label>
-      <select class="ui fluid dropdown" name="type" [(ngModel)]="appliance.type" required>
+      <select class="ui fluid dropdown" formControlName="type">
         <option value="AirConditioning">{{'ApplianceComponent.type.AirConditioning' | translate}}</option>
         <option value="Charger">{{'ApplianceComponent.type.Charger' | translate}}</option>
         <option value="DishWasher">{{'ApplianceComponent.type.DishWasher' | translate}}</option>
@@ -63,13 +62,13 @@
     </div>
     <div class="field">
       <label>{{'ApplianceComponent.serial' | translate}}</label>
-      <input type="text" name="serial" [(ngModel)]="appliance.serial" required>
-      <div *ngIf="errors['serial']" class="ui negative message">{{errors['serial']}}</div>
+      <input type="text" formControlName="serial">
+      <div *ngIf="errors.serial" class="ui negative message">{{errors.serial}}</div>
     </div>
   </div>
 
   <h4 class="ui dividing header">{{'ApplianceComponent.characteristics' | translate}}</h4>
-  <div class="fields appliance-row">
+  <div class="fields">
     <div class="field">
       <label class="">{{'ApplianceComponent.minPowerConsumption' | translate}}
         <i class="icon blue info circle tooltip">
@@ -77,9 +76,8 @@
           >{{'ApplianceComponent.minPowerConsumption.tooltip' | translate}}</span>
         </i>
       </label>
-      <input type="text" name="minPowerConsumption" [(ngModel)]="appliance.minPowerConsumption"
-             pattern="{{VALIDATOR_PATTERN_INTEGER}}">
-      <div *ngIf="errors['minPowerConsumption']" class="ui negative message">{{errors['minPowerConsumption']}}</div>
+      <input type="text" formControlName="minPowerConsumption">
+      <div *ngIf="errors.minPowerConsumption" class="ui negative message">{{errors.minPowerConsumption}}</div>
     </div>
     <div class="field">
       <label>{{'ApplianceComponent.maxPowerConsumption' | translate}}
@@ -88,21 +86,20 @@
           >{{'ApplianceComponent.maxPowerConsumption.tooltip' | translate}}</span>
         </i>
       </label>
-      <input type="text" name="maxPowerConsumption" [(ngModel)]="appliance.maxPowerConsumption"
-             required pattern="{{VALIDATOR_PATTERN_INTEGER}}">
-      <div *ngIf="errors['maxPowerConsumption']" class="ui negative message">{{errors['maxPowerConsumption']}}</div>
+      <input type="text" formControlName="maxPowerConsumption">
+      <div *ngIf="errors.maxPowerConsumption" class="ui negative message">{{errors.maxPowerConsumption}}</div>
     </div>
-    <div class="field" style="align-self: center">
+    <div class="field">
       <label>{{'ApplianceComponent.interruptionsAllowed' | translate}}
         <i class="icon blue info circle tooltip">
           <span class="tooltiptext" style="margin-left: -300px;"
           >{{'ApplianceComponent.interruptionsAllowed.tooltip' | translate}}</span>
         </i>
       </label>
-      <input class="ui checkbox" type="checkbox" name="interruptionsAllowed" [(ngModel)]="appliance.interruptionsAllowed">
+      <input class="ui checkbox" type="checkbox" formControlName="interruptionsAllowed">
     </div>
   </div>
-  <div class="fields appliance-row">
+  <div class="fields">
     <div class="field">
       <label>{{'ApplianceComponent.minOnTime' | translate}}
         <i class="icon blue info circle tooltip">
@@ -110,9 +107,8 @@
           >{{'ApplianceComponent.minOnTime.tooltip' | translate}}</span>
         </i>
       </label>
-      <input type="text" name="minOnTime" [(ngModel)]="appliance.minOnTime"
-             pattern="{{VALIDATOR_PATTERN_INTEGER}}">
-      <div *ngIf="errors['minOnTime']" class="ui negative message">{{errors['minOnTime']}}</div>
+      <input type="text" formControlName="minOnTime">
+      <div *ngIf="errors.minOnTime" class="ui negative message">{{errors.minOnTime}}</div>
     </div>
     <div class="field">
       <label>{{'ApplianceComponent.maxOnTime' | translate}}
@@ -121,9 +117,8 @@
           >{{'ApplianceComponent.maxOnTime.tooltip' | translate}}</span>
         </i>
       </label>
-      <input type="text" name="maxOnTime" [(ngModel)]="appliance.maxOnTime"
-             pattern="{{VALIDATOR_PATTERN_INTEGER}}">
-      <div *ngIf="errors['maxOnTime']" class="ui negative message">{{errors['maxOnTime']}}</div>
+      <input type="text" formControlName="maxOnTime">
+      <div *ngIf="errors.maxOnTime" class="ui negative message">{{errors.maxOnTime}}</div>
     </div>
     <div class="field">
       <label>{{'ApplianceComponent.minOffTime' | translate}}
@@ -132,9 +127,8 @@
           >{{'ApplianceComponent.minOffTime.tooltip' | translate}}</span>
         </i>
       </label>
-      <input type="text" name="minOffTime" [(ngModel)]="appliance.minOffTime"
-             pattern="{{VALIDATOR_PATTERN_INTEGER}}">
-      <div *ngIf="errors['minOffTime']" class="ui negative message">{{errors['minOffTime']}}</div>
+      <input type="text" formControlName="minOffTime">
+      <div *ngIf="errors.minOffTime" class="ui negative message">{{errors.minOffTime}}</div>
     </div>
     <div class="field">
       <label>{{'ApplianceComponent.maxOffTime' | translate}}
@@ -143,14 +137,13 @@
           >{{'ApplianceComponent.maxOffTime.tooltip' | translate}}</span>
         </i>
       </label>
-      <input type="text" name="maxOffTime" [(ngModel)]="appliance.maxOffTime"
-             pattern="{{VALIDATOR_PATTERN_INTEGER}}">
-      <div *ngIf="errors['maxOffTime']" class="ui negative message">{{errors['maxOffTime']}}</div>
+      <input type="text" formControlName="maxOffTime">
+      <div *ngIf="errors.maxOffTime" class="ui negative message">{{errors.maxOffTime}}</div>
     </div>
   </div>
 
-  <button type="submit" class="ui button" [disabled]="detailsForm.pristine||detailsForm.invalid">
+  <button type="submit" class="ui button" [disabled]="form.pristine||form.invalid">
     {{'button.save' | translate}}</button>
-  <button type="button" (click)="deleteAppliance()" class="ui button" [disabled]="isNew">
+  <button type="button" (click)="deleteAppliance()" class="ui button">
     {{'button.delete' | translate}}</button>
 </form>

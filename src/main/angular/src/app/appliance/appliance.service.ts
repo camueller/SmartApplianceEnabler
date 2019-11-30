@@ -19,7 +19,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 import {Injectable} from '@angular/core';
 import {Appliance} from './appliance';
 import {Observable} from 'rxjs';
-import {ApplianceFactory} from './appliance-factory';
 import {ApplianceHeader} from './appliance-header';
 import {SaeService} from '../shared/sae-service';
 import {HttpClient} from '@angular/common/http';
@@ -29,32 +28,28 @@ import {map} from 'rxjs/operators';
 @Injectable()
 export class ApplianceService extends SaeService {
 
-  applianceFactory: ApplianceFactory;
-
   constructor(private logger: Logger,
               protected http: HttpClient) {
     super(http);
-    this.applianceFactory = new ApplianceFactory(logger);
   }
 
   getApplianceHeaders(): Observable<Array<ApplianceHeader>> {
     return this.http.get(`${SaeService.API}/appliances`)
       .pipe(map((applianceHeaders: Array<ApplianceHeader>) => {
         return applianceHeaders.map(
-          applianceHeader => this.applianceFactory.toApplianceHeaderFromJSON(applianceHeader));
+          (applianceHeader: any) => new ApplianceHeader(...applianceHeader));
       }));
   }
 
   getAppliance(id: string): Observable<Appliance> {
     return this.http.get(`${SaeService.API}/appliance?id=${id}`)
-      .pipe(map(applianceInfo => this.applianceFactory.toApplianceFromJSON(applianceInfo)));
+      .pipe(map((applianceInfo: any) => new Appliance(...applianceInfo)));
   }
 
   updateAppliance(appliance: Appliance, create: boolean): Observable<any> {
     const url = `${SaeService.API}/appliance?id=${appliance.id}&create=${create}`;
-    const content = this.applianceFactory.toJSONfromApplianceInfo(appliance);
     this.logger.debug('Updating appliance using ' + url);
-    return this.http.put(url, content,
+    return this.http.put(url, appliance,
       {headers: this.headersContentTypeJson, responseType: 'text'});
   }
 
