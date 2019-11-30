@@ -184,7 +184,7 @@ export class ControlHttpComponent implements OnChanges, OnInit, AfterViewChecked
         httpWrites.push(httpWrite);
       }
     });
-    const httpRead = this.httpReadComp.updateModelFromForm();
+    const httpRead = this.httpReadComp && this.httpReadComp.updateModelFromForm();
 
     if (!(httpConfiguration || httpWrites.length > 0 || httpRead)) {
       return undefined;
