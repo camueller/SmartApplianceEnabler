@@ -25,6 +25,7 @@ import {ModbusWrite} from '../modbus-write/modbus-write';
 import {ModbusReadComponent} from '../modbus-read/modbus-read.component';
 import {ModbusWriteComponent} from '../modbus-write/modbus-write.component';
 import {getValidString} from '../shared/form-util';
+import {ErrorMessage, ValidatorType} from '../shared/error-message';
 
 @Component({
   selector: 'app-control-evcharger-modbus',
@@ -74,14 +75,14 @@ export class ControlEvchargerModbusComponent implements OnChanges, OnInit, After
   }
 
   ngOnInit() {
-    // FIXME
-    // this.errorMessages = new ErrorMessages('ControlEvchargerModbusComponent.error.', [
-    //   new ErrorMessage('voltage', ValidatorType.pattern),
-    // ], this.translate);
+    this.errorMessages = new ErrorMessages('ControlEvchargerModbusComponent.error.', [
+      new ErrorMessage('slaveAddress', ValidatorType.required),
+      new ErrorMessage('slaveAddress', ValidatorType.pattern),
+    ], this.translate);
     this.expandParentForm();
-    // this.form.statusChanges.subscribe(() => {
-    //   this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
-    // });
+    this.form.statusChanges.subscribe(() => {
+      this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
+    });
     this.translate.get(this.translationKeys).subscribe(translatedStrings => {
       this.translatedStrings = translatedStrings;
     });
@@ -161,7 +162,7 @@ export class ControlEvchargerModbusComponent implements OnChanges, OnInit, After
       [Validators.required]);
     this.formHandler.addFormControl(this.form, 'slaveAddress',
       this.evModbusControl && this.evModbusControl.slaveAddress,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
+      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER_OR_HEX)]);
     this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'modbusReads',
       this.evModbusControl.modbusReads);
     this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'modbusWrites',

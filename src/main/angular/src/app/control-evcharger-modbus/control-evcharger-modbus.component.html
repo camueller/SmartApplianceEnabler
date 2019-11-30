@@ -1,7 +1,7 @@
 <div class="ui fields">
   <div class="ui fields sae-fields">
     <div class="field">
-      <label>{{'ControlEvchargerComponent.idref' | translate}}</label>
+      <label>{{'ControlEvchargerModbusComponent.idref' | translate}}</label>
       <select class="ui fluid dropdown" formControlName="idref">
         <option *ngFor="let modbusSettings of settings.modbusSettings" [ngValue]="modbusSettings.modbusTcpId"
                 [selected]="evModbusControl && modbusSettings.modbusTcpId==evModbusControl.idref">
@@ -9,7 +9,7 @@
       </select>
     </div>
     <div class="field">
-      <label>{{'ControlEvchargerComponent.slaveAddress' | translate}}</label>
+      <label>{{'ControlEvchargerModbusComponent.slaveAddress' | translate}}</label>
       <input type="text" formControlName="slaveAddress">
       <div *ngIf="errors.slaveAddress" class="ui negative message">{{errors.slaveAddress}}</div>
     </div>
