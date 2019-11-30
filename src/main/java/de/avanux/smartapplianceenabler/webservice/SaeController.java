@@ -148,7 +148,7 @@ public class SaeController {
 
         Capabilities capabilities = new Capabilities();
         capabilities.setCurrentPowerMethod(applianceInfo.getCurrentPowerMethod() != null ?
-                CurrentPowerMethod.valueOf(applianceInfo.getCurrentPowerMethod()) : null);
+                CurrentPowerMethod.valueOf(applianceInfo.getCurrentPowerMethod()) : CurrentPowerMethod.Estimation);
         capabilities.setInterruptionsAllowed(applianceInfo.isInterruptionsAllowed());
         capabilities.setOptionalEnergy(false);
 
