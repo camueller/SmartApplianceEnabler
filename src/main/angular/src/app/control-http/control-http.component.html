@@ -15,7 +15,8 @@
                     #httpWriteComponents
     ></app-http-write>
   </div>
-  <app-http-read [httpRead]="httpSwitch.httpRead"
+  <app-http-read [form]="form"
+                 [httpRead]="httpSwitch.httpRead"
                  [disableRemove]="true"
                  [disableFactorToValue]="true"
                  [minValues]="1"
