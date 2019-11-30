@@ -94,7 +94,7 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
       this.control = changes.control.currentValue;
     }
     if (this.form) {
-      this.updateForm(this.form, this.control, this.formHandler);
+      this.updateForm();
     }
   }
 
@@ -113,7 +113,7 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
       this.appliance = data.appliance;
       this.settings = data.settings;
       this.settingsDefaults = data.settingsDefaults;
-      this.updateForm(this.form, this.control, this.formHandler);
+      this.updateForm();
       if (!this.control.evCharger && this.appliance.type === 'EVCharger') {
         // there is not type change for ev charger since it is determined by appliance type
         this.typeChanged(EvCharger.TYPE);
@@ -122,20 +122,20 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
         this.form.markAsPristine();
       }
     });
-    this.form = this.buildForm(this.control, this.formHandler);
+    this.buildForm();
   }
 
-  buildForm(control: Control, formHandler: FormHandler): FormGroup {
-    const form = new FormGroup({});
-    formHandler.addFormControl(form, 'controlType', control && control.type);
-    formHandler.addFormControl(form, 'startingCurrentDetection',
-      control && control.startingCurrentDetection);
-    return form;
+  buildForm() {
+    this.form = new FormGroup({});
+    this.formHandler.addFormControl(this.form, 'controlType', this.control && this.control.type);
+    this.formHandler.addFormControl(this.form, 'startingCurrentDetection',
+      this.control && this.control.startingCurrentDetection);
   }
 
-  updateForm(form: FormGroup, control: Control, formHandler: FormHandler) {
-    formHandler.setFormControlValue(form, 'controlType', control.type);
-    formHandler.setFormControlValue(form, 'startingCurrentDetection', control.startingCurrentDetection);
+  updateForm() {
+    this.formHandler.setFormControlValue(this.form, 'controlType', this.control.type);
+    this.formHandler.setFormControlValue(this.form, 'startingCurrentDetection',
+      this.control.startingCurrentDetection);
   }
 
   canDeactivate(): Observable<boolean> | boolean {

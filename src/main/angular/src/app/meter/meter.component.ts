@@ -80,7 +80,7 @@ export class MeterComponent implements OnChanges, OnInit, CanDeactivate<MeterCom
       this.meter = changes.meter.currentValue;
     }
     if (this.form) {
-      this.updateForm(this.form, this.meter, this.formHandler);
+      this.updateForm();
     }
   }
 
@@ -95,22 +95,21 @@ export class MeterComponent implements OnChanges, OnInit, CanDeactivate<MeterCom
       this.meterDefaults = data.meterDefaults;
       this.settings = data.settings;
       this.settingsDefaults = data.settingsDefaults;
-      this.updateForm(this.form, this.meter, this.formHandler);
+      this.updateForm();
       if (this.form) {
         this.form.markAsPristine();
       }
     });
-    this.form = this.buildForm(this.meter, this.formHandler);
+    this.buildForm();
   }
 
-  buildForm(meter: Meter, formHandler: FormHandler): FormGroup {
-    const form = new FormGroup({});
-    formHandler.addFormControl(form, 'meterType', this.meter && this.meter.type);
-    return form;
+  buildForm() {
+    this.form = new FormGroup({});
+    this.formHandler.addFormControl(this.form, 'meterType', this.meter && this.meter.type);
   }
 
-  updateForm(form: FormGroup, meter: Meter, formHandler: FormHandler) {
-    formHandler.setFormControlValue(form, 'meterType', meter.type);
+  updateForm() {
+    this.formHandler.setFormControlValue(this.form, 'meterType', this.meter.type);
   }
 
   get meterType() {
