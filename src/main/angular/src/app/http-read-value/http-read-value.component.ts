@@ -50,13 +50,15 @@ export class HttpReadValueComponent implements OnChanges, OnInit, AfterViewCheck
       }
       this.updateForm();
     }
+    if (changes.form) {
+      this.expandParentForm();
+    }
   }
 
   ngOnInit() {
     this.errorMessages = new ErrorMessages('HttpReadValueComponent.error.', [
       new ErrorMessage('factorToValue', ValidatorType.pattern),
     ], this.translate);
-    this.expandParentForm();
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });

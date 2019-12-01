@@ -10,7 +10,7 @@ import {
   ViewChildren
 } from '@angular/core';
 import {ControlDefaults} from '../control/control-defaults';
-import {ControlContainer, FormArray, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {ControlContainer, FormArray, FormGroup, FormGroupDirective} from '@angular/forms';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {Logger} from '../log/logger';
@@ -21,7 +21,6 @@ import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {HttpWriteComponent} from '../http-write/http-write.component';
 import {ControlValueName} from '../control/control-value-name';
 import {HttpWrite} from '../http-write/http-write';
-import {HttpWriteValue} from '../http-write-value/http-write-value';
 import {fixExpressionChangedAfterItHasBeenCheckedError} from '../shared/form-util';
 import {HttpConfigurationComponent} from '../http-configuration/http-configuration.component';
 import {HttpReadComponent} from '../http-read/http-read.component';
@@ -69,7 +68,7 @@ export class ControlHttpComponent implements OnChanges, OnInit, AfterViewChecked
         this.httpSwitch = changes.httpSwitch.currentValue;
       } else {
         this.httpSwitch = new HttpSwitch();
-        this.httpSwitch.httpWrites = [this.createHttpWrite()];
+        this.httpSwitch.httpWrites = [HttpWrite.createWithSingleChild()];
       }
       this.updateForm();
     }
@@ -136,18 +135,15 @@ export class ControlHttpComponent implements OnChanges, OnInit, AfterViewChecked
 
   addHttpWrite() {
     fixExpressionChangedAfterItHasBeenCheckedError(this.form);
-    this.httpSwitch.httpWrites.push(this.createHttpWrite());
+    this.httpSwitch.httpWrites.push(HttpWrite.createWithSingleChild());
+    this.httpWritesFormArray.push(new FormGroup({}));
     this.form.markAsDirty();
   }
 
   onHttpWriteRemove(index: number) {
     this.httpSwitch.httpWrites.splice(index, 1);
-  }
-
-  createHttpWrite() {
-    const httpWrite = new HttpWrite();
-    httpWrite.writeValues = [new HttpWriteValue()];
-    return httpWrite;
+    this.httpWritesFormArray.removeAt(index);
+    this.form.markAsDirty();
   }
 
   get httpWritesFormArray() {

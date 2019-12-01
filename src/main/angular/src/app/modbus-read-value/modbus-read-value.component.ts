@@ -47,13 +47,15 @@ export class ModbusReadValueComponent implements OnChanges, OnInit, AfterViewChe
       }
       this.updateForm();
     }
+    if (changes.form) {
+      this.expandParentForm();
+    }
   }
 
   ngOnInit() {
     this.errorMessages = new ErrorMessages('ModbusReadValueComponent.error.', [
       new ErrorMessage('factorToValue', ValidatorType.pattern),
     ], this.translate);
-    this.expandParentForm();
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });

@@ -1,5 +1,5 @@
 import {AfterViewChecked, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {FormGroup, Validators} from '@angular/forms';
 import {FormHandler} from '../shared/form-handler';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
@@ -51,13 +51,15 @@ export class HttpWriteValueComponent implements OnChanges, OnInit, AfterViewChec
       }
       this.updateForm();
     }
+    if (changes.form) {
+      this.expandParentForm();
+    }
   }
 
   ngOnInit() {
     this.errorMessages = new ErrorMessages('HttpWriteValueComponent.error.', [
       new ErrorMessage('factorToValue', ValidatorType.pattern),
     ], this.translate);
-    this.expandParentForm();
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });

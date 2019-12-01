@@ -16,7 +16,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {DayOfWeek} from '../schedule/day-of-week';
 import {TimeOfDayOfWeek} from '../schedule/time-of-day-of-week';
 
 export class ConsecutiveDaysTimeframe {
@@ -27,11 +26,7 @@ export class ConsecutiveDaysTimeframe {
 
   '@class' = ConsecutiveDaysTimeframe.TYPE;
   start: TimeOfDayOfWeek;
-  startTime: string;
-  startDayOfWeek: DayOfWeek;
   end: TimeOfDayOfWeek;
-  endTime: string;
-  endDayOfWeek: DayOfWeek;
 
   public constructor(init?: Partial<ConsecutiveDaysTimeframe>) {
     Object.assign(this, init);

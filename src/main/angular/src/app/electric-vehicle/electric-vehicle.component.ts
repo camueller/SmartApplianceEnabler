@@ -55,6 +55,9 @@ export class ElectricVehicleComponent implements OnChanges, OnInit, AfterViewChe
       }
       this.updateForm();
     }
+    if (changes.form) {
+      this.expandParentForm();
+    }
   }
 
   ngOnInit() {
@@ -69,7 +72,6 @@ export class ElectricVehicleComponent implements OnChanges, OnInit, AfterViewChe
       new ErrorMessage('defaultSocOptionalEnergy', ValidatorType.pattern),
       new ErrorMessage('scriptFilename', ValidatorType.required),
     ], this.translate);
-    this.expandParentForm();
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });

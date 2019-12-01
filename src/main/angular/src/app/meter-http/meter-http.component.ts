@@ -24,7 +24,6 @@ import {fixExpressionChangedAfterItHasBeenCheckedError, getValidInt} from '../sh
 import {HttpConfigurationComponent} from '../http-configuration/http-configuration.component';
 import {HttpReadComponent} from '../http-read/http-read.component';
 import {HttpRead} from '../http-read/http-read';
-import {HttpReadValue} from '../http-read-value/http-read-value';
 import {MeterValueName} from '../meter/meter-value-name';
 
 @Component({
@@ -66,10 +65,10 @@ export class MeterHttpComponent implements OnChanges, OnInit, AfterViewChecked {
         this.httpElectricityMeter = changes.httpElectricityMeter.currentValue;
       } else {
         this.httpElectricityMeter = new HttpElectricityMeter();
-        this.httpElectricityMeter.httpReads = [this.createHttpRead()];
+        this.httpElectricityMeter.httpReads = [HttpRead.createWithSingleChild()];
       }
+      this.updateForm();
     }
-    this.updateForm();
   }
 
   ngOnInit() {
@@ -113,18 +112,15 @@ export class MeterHttpComponent implements OnChanges, OnInit, AfterViewChecked {
 
   addHttpRead() {
     fixExpressionChangedAfterItHasBeenCheckedError(this.form);
-    this.httpElectricityMeter.httpReads.push(this.createHttpRead());
+    this.httpElectricityMeter.httpReads.push(HttpRead.createWithSingleChild());
+    this.httpReadsFormArray.push(new FormGroup({}));
     this.form.markAsDirty();
   }
 
   onHttpReadRemove(index: number) {
     this.httpElectricityMeter.httpReads.splice(index, 1);
-  }
-
-  createHttpRead() {
-    const httpRead = new HttpRead();
-    httpRead.readValues = [new HttpReadValue()];
-    return httpRead;
+    this.httpReadsFormArray.removeAt(index);
+    this.form.markAsDirty();
   }
 
   get httpReadsFormArray() {

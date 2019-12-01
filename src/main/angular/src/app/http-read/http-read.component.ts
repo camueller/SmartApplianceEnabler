@@ -73,6 +73,9 @@ export class HttpReadComponent implements OnChanges, OnInit, AfterViewChecked {
       }
       this.updateForm();
     }
+    if (changes.form) {
+      this.expandParentForm();
+    }
   }
 
   ngOnInit() {
@@ -80,7 +83,6 @@ export class HttpReadComponent implements OnChanges, OnInit, AfterViewChecked {
       new ErrorMessage('url', ValidatorType.required),
       new ErrorMessage('url', ValidatorType.pattern),
     ], this.translate);
-    this.expandParentForm();
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });

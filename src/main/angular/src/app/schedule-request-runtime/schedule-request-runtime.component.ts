@@ -1,16 +1,43 @@
 import {AfterViewChecked, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {Logger} from '../log/logger';
-import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {ControlContainer, FormControlName, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {FormHandler} from '../shared/form-handler';
 import {RuntimeRequest} from './runtime-request';
 import {ErrorMessages} from '../shared/error-messages';
-import {DayTimeframe} from '../schedule-timeframe-day/day-timeframe';
 import {TimeUtil} from '../shared/time-util';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
-import {Schedule} from '../schedule/schedule';
+
+declare const $: any;
+
+/**
+ * The time set by clock picker is displayed in input field but not set in the form model.
+ * Since there is no direct access to the native element from the form control we have to add a hook to
+ * propagate time changes on the native element to the form control.
+ * Inspired by https://stackoverflow.com/questions/39642547/is-it-possible-to-get-native-element-for-formcontrol
+ */
+const originFormControlNameNgOnChanges = FormControlName.prototype.ngOnChanges;
+FormControlName.prototype.ngOnChanges = function () {
+  const result = originFormControlNameNgOnChanges.apply(this, arguments);
+  this.control.nativeElement = this.valueAccessor._elementRef;
+
+  const elementRef = this.valueAccessor._elementRef;
+  if (elementRef) {
+    const classAttribute: string = elementRef.nativeElement.attributes.getNamedItem('class');
+    if (classAttribute != null) {
+      const classAttributeValues = classAttribute['nodeValue'];
+      if (classAttributeValues.indexOf('clockpicker') > -1) {
+        $(this.valueAccessor._elementRef.nativeElement).on('change', (event) => {
+          this.control.setValue(event.target.value);
+          this.control.markAsDirty();
+        });
+      }
+    }
+  }
+  return result;
+};
 
 @Component({
   selector: 'app-schedule-request-runtime',
@@ -25,6 +52,7 @@ export class ScheduleRequestRuntimeComponent implements OnChanges, OnInit, After
   runtimeRequest: RuntimeRequest;
   form: FormGroup;
   formHandler: FormHandler;
+  initializeOnceAfterViewChecked = false;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -59,10 +87,19 @@ export class ScheduleRequestRuntimeComponent implements OnChanges, OnInit, After
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
+    this.initializeOnceAfterViewChecked = true;
   }
 
   ngAfterViewChecked() {
     this.formHandler.markLabelsRequired();
+    if (this.initializeOnceAfterViewChecked) {
+      this.initializeOnceAfterViewChecked = false;
+      this.initializeClockPicker();
+    }
+  }
+
+  initializeClockPicker() {
+    $('.clockpicker').clockpicker({autoclose: true});
   }
 
   get minRuntime() {

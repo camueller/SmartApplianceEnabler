@@ -46,7 +46,9 @@ export class FormHandler {
 
   private buildFormArrayWithEmptyFormGroups(items: Array<any>): FormArray {
     const formArray = new FormArray([]);
-    items.forEach((item) => formArray.push(new FormGroup({})));
+    if (items) {
+      items.forEach(() => formArray.push(new FormGroup({})));
+    }
     return formArray;
   }
 

@@ -32,9 +32,6 @@ import {ControlEvchargerHttpComponent} from '../control-evcharger-http/control-e
 import {fixExpressionChangedAfterItHasBeenCheckedError, getValidInt} from '../shared/form-util';
 import {ElectricVehicleComponent} from '../electric-vehicle/electric-vehicle.component';
 import {ControlEvchargerModbusComponent} from '../control-evcharger-modbus/control-evcharger-modbus.component';
-import {HttpRead} from '../http-read/http-read';
-
-declare const $: any;
 
 @Component({
   selector: 'app-control-evcharger',
@@ -123,6 +120,81 @@ export class ControlEvchargerComponent implements OnChanges, OnInit, AfterViewCh
     this.formHandler.markLabelsRequired();
   }
 
+  getTemplateNameSelected(): string {
+    return this.form.controls.template.value;
+  }
+
+  useTemplate() {
+    const templateName = this.getTemplateNameSelected();
+    this.evCharger = this.templates[templateName];
+    this.setProtocol(this.evChargerProtocol);
+    this.updateForm();
+    this.form.markAsDirty();
+  }
+
+  isConfigured(): boolean {
+    return this.evCharger && this.protocol;
+  }
+
+  get evChargerProtocol() {
+    if (this.evCharger.modbusControl && this.evCharger.modbusControl['@class'] === EvModbusControl.TYPE) {
+      return EvChargerProtocol.MODBUS;
+    } else if (this.evCharger.httpControl && this.evCharger.httpControl['@class'] === EvHttpControl.TYPE) {
+      return EvChargerProtocol.HTTP;
+    }
+    return undefined;
+  }
+
+  get protocol() {
+    return this.form.controls.protocol.value;
+  }
+
+  setProtocol(protocol: EvChargerProtocol) {
+    this.form.controls.protocol.setValue(protocol);
+  }
+
+  // FIXME: alle Enums indirect liefern
+  get modbusTranslationKeys() {
+    return [
+      'ControlEvchargerComponent.VehicleNotConnected',
+      'ControlEvchargerComponent.VehicleConnected',
+      'ControlEvchargerComponent.Charging',
+      'ControlEvchargerComponent.ChargingCompleted',
+      'ControlEvchargerComponent.Error',
+      'ControlEvchargerComponent.StartCharging',
+      'ControlEvchargerComponent.StopCharging',
+      'ControlEvchargerComponent.ChargingCurrent'
+    ];
+  }
+
+  findNextEvId(evs: ElectricVehicle[]): number {
+    const ids: number[] = evs.map(ev => ev.id);
+    for (let i = 1; i < 100; i++) {
+      if (ids.indexOf(i) < 0) {
+        return i;
+      }
+    }
+    return 0;
+  }
+
+  addElectricVehicle() {
+    fixExpressionChangedAfterItHasBeenCheckedError(this.form);
+    const newEvId = this.findNextEvId(this.evCharger.vehicles);
+    const newEv = new ElectricVehicle({id: newEvId});
+    if (!this.evCharger.vehicles) {
+      this.evCharger.vehicles = [];
+    }
+    this.evCharger.vehicles.push(newEv);
+    this.electricVehiclesFormArray.push(new FormGroup({}));
+    this.form.markAsDirty();
+  }
+
+  onElectricVehicleRemove(index: number) {
+    this.evCharger.vehicles.splice(index, 1);
+    this.electricVehiclesFormArray.removeAt(index);
+    this.form.markAsDirty();
+  }
+
   get electricVehiclesFormArray() {
     return this.form.controls.electricVehicles as FormArray;
   }
@@ -201,77 +273,5 @@ export class ControlEvchargerComponent implements OnChanges, OnInit, AfterViewCh
     this.evCharger.modbusControl = modbusControl;
     this.evCharger.httpControl = httpControl;
     return this.evCharger;
-  }
-
-  getTemplateNameSelected(): string {
-    return this.form.controls.template.value;
-  }
-
-  useTemplate() {
-    const templateName = this.getTemplateNameSelected();
-    this.evCharger = this.templates[templateName];
-    this.setProtocol(this.evChargerProtocol);
-    this.updateForm();
-    this.form.markAsDirty();
-  }
-
-  isConfigured(): boolean {
-    return this.evCharger && this.protocol;
-  }
-
-  get evChargerProtocol() {
-    if (this.evCharger.modbusControl && this.evCharger.modbusControl['@class'] === EvModbusControl.TYPE) {
-      return EvChargerProtocol.MODBUS;
-    } else if (this.evCharger.httpControl && this.evCharger.httpControl['@class'] === EvHttpControl.TYPE) {
-      return EvChargerProtocol.HTTP;
-    }
-    return undefined;
-  }
-
-  get protocol() {
-    return this.form.controls.protocol.value;
-  }
-
-  setProtocol(protocol: EvChargerProtocol) {
-    this.form.controls.protocol.setValue(protocol);
-  }
-
-  // FIXME: alle Enums indirect liefern
-  get modbusTranslationKeys() {
-    return [
-      'ControlEvchargerComponent.VehicleNotConnected',
-      'ControlEvchargerComponent.VehicleConnected',
-      'ControlEvchargerComponent.Charging',
-      'ControlEvchargerComponent.ChargingCompleted',
-      'ControlEvchargerComponent.Error',
-      'ControlEvchargerComponent.StartCharging',
-      'ControlEvchargerComponent.StopCharging',
-      'ControlEvchargerComponent.ChargingCurrent'
-    ];
-  }
-
-  addElectricVehicle() {
-    fixExpressionChangedAfterItHasBeenCheckedError(this.form);
-    const newEvId = this.findNextEvId(this.evCharger.vehicles);
-    const newEv = new ElectricVehicle({id: newEvId});
-    if (!this.evCharger.vehicles) {
-      this.evCharger.vehicles = [];
-    }
-    this.evCharger.vehicles.push(newEv);
-    this.form.markAsDirty();
-  }
-
-  onElectricVehicleRemove(index: number) {
-    this.evCharger.vehicles.splice(index, 1);
-  }
-
-  findNextEvId(evs: ElectricVehicle[]): number {
-    const ids: number[] = evs.map(ev => ev.id);
-    for (let i = 1; i < 100; i++) {
-      if (ids.indexOf(i) < 0) {
-        return i;
-      }
-    }
-    return 0;
   }
 }

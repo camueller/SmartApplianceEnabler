@@ -9,7 +9,7 @@ import {
   ViewChildren
 } from '@angular/core';
 import {MeterDefaults} from '../meter/meter-defaults';
-import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {ControlContainer, FormArray, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {FormHandler} from '../shared/form-handler';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
@@ -20,7 +20,6 @@ import {ModbusElectricityMeter} from './modbus-electricity-meter';
 import {ModbusSettings} from '../settings/modbus-settings';
 import {SettingsDefaults} from '../settings/settings-defaults';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
-import {ModbusReadValue} from '../modbus-read-value/modbus-read-value';
 import {ModbusRead} from '../modbus-read/modbus-read';
 import {MeterValueName} from '../meter/meter-value-name';
 import {fixExpressionChangedAfterItHasBeenCheckedError, getValidInt, getValidString} from '../shared/form-util';
@@ -63,16 +62,16 @@ export class MeterModbusComponent implements OnChanges, OnInit, AfterViewChecked
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    this.form = this.parent.form;
     if (changes.modbusElectricityMeter) {
       if (changes.modbusElectricityMeter.currentValue) {
         this.modbusElectricityMeter = changes.modbusElectricityMeter.currentValue;
       } else {
         this.modbusElectricityMeter = new ModbusElectricityMeter();
-        this.modbusElectricityMeter.modbusReads = [this.createModbusRead()];
+        this.modbusElectricityMeter.modbusReads = [ModbusRead.createWithSingleChild()];
       }
+      this.updateForm();
     }
-    this.form = this.parent.form;
-    this.updateForm();
   }
 
   ngOnInit() {
@@ -113,18 +112,23 @@ export class MeterModbusComponent implements OnChanges, OnInit, AfterViewChecked
 
   addModbusRead() {
     fixExpressionChangedAfterItHasBeenCheckedError(this.form);
-    this.modbusElectricityMeter.modbusReads.push(this.createModbusRead());
+    this.modbusElectricityMeter.modbusReads.push(ModbusRead.createWithSingleChild());
+    this.modbusReadsFormArray.push(new FormGroup({}));
     this.form.markAsDirty();
   }
 
   onModbusReadRemove(index: number) {
     this.modbusElectricityMeter.modbusReads.splice(index, 1);
+    this.modbusReadsFormArray.removeAt(index);
+    this.form.markAsDirty();
   }
 
-  createModbusRead() {
-    const modbusRead = new ModbusRead();
-    modbusRead.readValues = [new ModbusReadValue()];
-    return modbusRead;
+  get modbusReadsFormArray() {
+    return this.form.controls.modbusReads as FormArray;
+  }
+
+  getModbusReadFormGroup(index: number) {
+    return this.modbusReadsFormArray.controls[index];
   }
 
   expandParentForm() {
@@ -136,6 +140,8 @@ export class MeterModbusComponent implements OnChanges, OnInit, AfterViewChecked
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
     this.formHandler.addFormControl(this.form, 'measurementInterval', this.modbusElectricityMeter.measurementInterval,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
+    this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'modbusReads',
+      this.modbusElectricityMeter.modbusReads);
   }
 
   updateForm() {
@@ -143,6 +149,8 @@ export class MeterModbusComponent implements OnChanges, OnInit, AfterViewChecked
     this.formHandler.setFormControlValue(this.form, 'slaveAddress', this.modbusElectricityMeter.slaveAddress);
     this.formHandler.setFormControlValue(this.form, 'pollInterval', this.modbusElectricityMeter.pollInterval);
     this.formHandler.setFormControlValue(this.form, 'measurementInterval', this.modbusElectricityMeter.measurementInterval);
+    this.formHandler.setFormArrayControlWithEmptyFormGroups(this.form, 'modbusReads',
+      this.modbusElectricityMeter.modbusReads);
   }
 
   updateModelFromForm(): ModbusElectricityMeter | undefined {

@@ -22,7 +22,6 @@ import {
   EventEmitter,
   Input,
   OnChanges,
-  OnInit,
   Output,
   SimpleChanges,
   ViewChild
@@ -51,7 +50,7 @@ import {ScheduleRequestSocComponent} from '../schedule-request-soc/schedule-requ
   templateUrl: './schedule.component.html',
   styleUrls: ['./schedule.css', '../global.css'],
 })
-export class ScheduleComponent implements OnChanges, OnInit, AfterViewChecked {
+export class ScheduleComponent implements OnChanges, AfterViewChecked {
   @Input()
   schedule: Schedule;
   @Input()
@@ -94,10 +93,9 @@ export class ScheduleComponent implements OnChanges, OnInit, AfterViewChecked {
       }
       this.updateForm();
     }
-  }
-
-  ngOnInit() {
-    this.expandParentForm();
+    if (changes.form) {
+      this.expandParentForm();
+    }
   }
 
   ngAfterViewChecked() {
@@ -199,6 +197,7 @@ export class ScheduleComponent implements OnChanges, OnInit, AfterViewChecked {
     }
 
     this.schedule.enabled = enabled;
+    this.schedule.timeframe = timeframe;
     this.schedule.request = request;
     return this.schedule;
   }

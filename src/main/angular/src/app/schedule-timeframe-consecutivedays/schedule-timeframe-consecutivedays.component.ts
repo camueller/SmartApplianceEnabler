@@ -7,11 +7,9 @@ import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {Logger} from '../log/logger';
 import {TranslateService} from '@ngx-translate/core';
 import {ConsecutiveDaysTimeframe} from './consecutive-days-timeframe';
-import {DayTimeframe} from '../schedule-timeframe-day/day-timeframe';
 import {TimeUtil} from '../shared/time-util';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
-import {Schedule} from '../schedule/schedule';
 
 declare const $: any;
 
@@ -152,10 +150,8 @@ export class ScheduleTimeframeConsecutivedaysComponent implements OnChanges, OnI
       return undefined;
     }
 
-    this.consecutiveDaysTimeframe.startDayOfWeek = startDayOfWeek;
-    this.consecutiveDaysTimeframe.startTime = startTime;
-    this.consecutiveDaysTimeframe.endDayOfWeek = endDayOfWeek;
-    this.consecutiveDaysTimeframe.endTime = endTime;
+    this.consecutiveDaysTimeframe.start = TimeUtil.toTimeOfDayOfWeek(startDayOfWeek, startTime);
+    this.consecutiveDaysTimeframe.end = TimeUtil.toTimeOfDayOfWeek(endDayOfWeek, endTime);
     return this.consecutiveDaysTimeframe;
   }
 }

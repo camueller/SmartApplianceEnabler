@@ -22,7 +22,6 @@ import {FormHandler} from '../shared/form-handler';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {ModbusWriteComponent} from '../modbus-write/modbus-write.component';
 import {ModbusWrite} from '../modbus-write/modbus-write';
-import {ModbusWriteValue} from '../modbus-write-value/modbus-write-value';
 import {ControlValueName} from '../control/control-value-name';
 import {fixExpressionChangedAfterItHasBeenCheckedError, getValidString} from '../shared/form-util';
 
@@ -68,9 +67,10 @@ export class ControlModbusComponent implements OnChanges, OnInit, AfterViewCheck
         this.modbusSwitch = changes.modbusSwitch.currentValue;
       } else {
         this.modbusSwitch = new ModbusSwitch();
+        this.modbusSwitch.modbusWrites = [ModbusWrite.createWithSingleChild()];
       }
+      this.updateForm();
     }
-    this.updateForm();
   }
 
   ngOnInit() {
@@ -110,11 +110,14 @@ export class ControlModbusComponent implements OnChanges, OnInit, AfterViewCheck
   addModbusWrite() {
     fixExpressionChangedAfterItHasBeenCheckedError(this.form);
     this.modbusSwitch.modbusWrites.push(ModbusWrite.createWithSingleChild());
+    this.modbusWritesFormArray.push(new FormGroup({}));
     this.form.markAsDirty();
   }
 
   onModbusWriteRemove(index: number) {
     this.modbusSwitch.modbusWrites.splice(index, 1);
+    this.modbusWritesFormArray.removeAt(index);
+    this.form.markAsDirty();
   }
 
   get modbusWritesFormArray() {

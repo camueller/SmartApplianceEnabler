@@ -68,6 +68,9 @@ export class ModbusWriteComponent implements OnChanges, OnInit, AfterViewChecked
       }
       this.updateForm();
     }
+    if (changes.form) {
+      this.expandParentForm();
+    }
   }
 
   ngOnInit() {
@@ -76,7 +79,6 @@ export class ModbusWriteComponent implements OnChanges, OnInit, AfterViewChecked
       new ErrorMessage('address', ValidatorType.pattern),
       new ErrorMessage('factorToValue', ValidatorType.pattern),
     ], this.translate);
-    this.expandParentForm();
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
