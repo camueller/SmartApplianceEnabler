@@ -61,6 +61,9 @@ export class HttpWriteComponent implements OnChanges, OnInit, AfterViewChecked {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    if (changes.form) {
+      this.expandParentForm();
+    }
     if (changes.httpWrite) {
       if (changes.httpWrite.currentValue) {
         this.httpWrite = changes.httpWrite.currentValue;
@@ -68,9 +71,6 @@ export class HttpWriteComponent implements OnChanges, OnInit, AfterViewChecked {
         this.httpWrite = HttpWrite.createWithSingleChild();
       }
       this.updateForm();
-    }
-    if (changes.form) {
-      this.expandParentForm();
     }
   }
 
