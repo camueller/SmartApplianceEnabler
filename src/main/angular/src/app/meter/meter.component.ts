@@ -125,6 +125,7 @@ export class MeterComponent implements OnChanges, OnInit, CanDeactivate<MeterCom
 
   typeChanged(newType: string) {
     this.meter.type = newType;
+    this.buildForm();
   }
 
   submitForm() {
