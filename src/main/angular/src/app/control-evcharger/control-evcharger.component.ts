@@ -206,14 +206,14 @@ export class ControlEvchargerComponent implements OnChanges, OnInit, AfterViewCh
   expandParentForm() {
     this.formHandler.addFormControl(this.form, 'template', undefined);
     this.formHandler.addFormControl(this.form, 'protocol', this.evChargerProtocol);
-    this.formHandler.addFormControl(this.form, 'voltage', undefined,
+    this.formHandler.addFormControl(this.form, 'voltage', this.evCharger.voltage,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(this.form, 'phases', undefined,
+    this.formHandler.addFormControl(this.form, 'phases', this.evCharger.phases,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(this.form, 'pollInterval', undefined,
+    this.formHandler.addFormControl(this.form, 'pollInterval', this.evCharger.pollInterval,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
     this.formHandler.addFormControl(this.form, 'startChargingStateDetectionDelay',
-      undefined, [Validators.pattern(InputValidatorPatterns.INTEGER)]);
+      this.evCharger.startChargingStateDetectionDelay, [Validators.pattern(InputValidatorPatterns.INTEGER)]);
     this.formHandler.addFormControl(this.form, 'forceInitialCharging',
       this.evCharger.forceInitialCharging);
     this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'electricVehicles',
