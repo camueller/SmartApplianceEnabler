@@ -96,7 +96,7 @@ export class MeterHttpComponent implements OnChanges, OnInit, AfterViewChecked {
 
   get contentProtocol(): string {
     const contentProtocolControl = this.form.controls.contentProtocol;
-    return (contentProtocolControl.value ? contentProtocolControl.value.toUpperCase() : '');
+    return (contentProtocolControl && contentProtocolControl.value ? contentProtocolControl.value.toUpperCase() : '');
   }
 
   get isAddHttpReadPossible() {

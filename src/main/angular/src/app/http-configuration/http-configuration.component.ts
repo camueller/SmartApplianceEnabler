@@ -1,5 +1,5 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {ControlContainer, FormGroup, FormGroupDirective} from '@angular/forms';
+import {FormGroup} from '@angular/forms';
 import {FormHandler} from '../shared/form-handler';
 import {Logger} from '../log/logger';
 import {HttpConfiguration} from './http-configuration';
@@ -8,25 +8,21 @@ import {getValidString} from '../shared/form-util';
 @Component({
   selector: 'app-http-configuration',
   templateUrl: './http-configuration.component.html',
-  styleUrls: ['../global.css'],
-  viewProviders: [
-    {provide: ControlContainer, useExisting: FormGroupDirective}
-  ]
+  styleUrls: ['../global.css']
 })
 export class HttpConfigurationComponent implements OnChanges, OnInit {
   @Input()
   httpConfiguration: HttpConfiguration;
-  formHandler: FormHandler;
+  @Input()
   form: FormGroup;
+  formHandler: FormHandler;
 
   constructor(private logger: Logger,
-              private parent: FormGroupDirective,
   ) {
     this.formHandler = new FormHandler();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.form = this.parent.form;
     if (changes.httpConfiguration) {
       if (changes.httpConfiguration.currentValue) {
         this.httpConfiguration = changes.httpConfiguration.currentValue;
@@ -35,10 +31,12 @@ export class HttpConfigurationComponent implements OnChanges, OnInit {
       }
       this.updateForm();
     }
+    if (changes.form) {
+      this.expandParentForm();
+    }
   }
 
   ngOnInit(): void {
-    this.expandParentForm();
   }
 
   expandParentForm() {

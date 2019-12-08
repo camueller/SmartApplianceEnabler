@@ -63,6 +63,7 @@
                         [controlDefaults]="controlDefaults"
       ></app-control-http>
       <app-control-startingcurrent *ngIf="control.startingCurrentDetection"
+                                   [form]="form"
                                    [startingCurrentSwitch]="control.startingCurrentSwitch"
                                    [controlDefaults]="controlDefaults"
       ></app-control-startingcurrent>

@@ -1,6 +1,6 @@
 import {AfterViewChecked, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {ControlDefaults} from '../control/control-defaults';
-import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {FormGroup, Validators} from '@angular/forms';
 import {StartingCurrentSwitch} from './starting-current-switch';
 import {Logger} from '../log/logger';
 import {TranslateService} from '@ngx-translate/core';
@@ -14,16 +14,14 @@ import {getValidInt} from '../shared/form-util';
 @Component({
   selector: 'app-control-startingcurrent',
   templateUrl: './control-startingcurrent.component.html',
-  styleUrls: ['../global.css'],
-  viewProviders: [
-    {provide: ControlContainer, useExisting: FormGroupDirective}
-  ]
+  styleUrls: ['../global.css']
 })
 export class ControlStartingcurrentComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()
   startingCurrentSwitch: StartingCurrentSwitch;
   @Input()
   controlDefaults: ControlDefaults;
+  @Input()
   form: FormGroup;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};
@@ -31,7 +29,6 @@ export class ControlStartingcurrentComponent implements OnChanges, OnInit, After
   errorMessageHandler: ErrorMessageHandler;
 
   constructor(private logger: Logger,
-              private parent: FormGroupDirective,
               private translate: TranslateService
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
@@ -39,15 +36,17 @@ export class ControlStartingcurrentComponent implements OnChanges, OnInit, After
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.form = this.parent.form;
     if (changes.startingCurrentSwitch) {
       if (changes.startingCurrentSwitch.currentValue) {
         this.startingCurrentSwitch = changes.startingCurrentSwitch.currentValue;
       } else {
         this.startingCurrentSwitch = new StartingCurrentSwitch();
       }
+      this.updateForm();
     }
-    this.updateForm();
+    if (changes.form) {
+      this.expandParentForm();
+    }
   }
 
   ngOnInit() {
@@ -57,7 +56,6 @@ export class ControlStartingcurrentComponent implements OnChanges, OnInit, After
       new ErrorMessage('finishedCurrentDetectionDuration', ValidatorType.pattern),
       new ErrorMessage('minRunningTime', ValidatorType.pattern),
     ], this.translate);
-    this.expandParentForm();
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
     });
