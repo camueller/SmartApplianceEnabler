@@ -116,9 +116,8 @@ describe('HttpWriteComponent', () => {
       expect(url).toBeTruthy();
     });
 
-    // FIXME: find from input via parent
     it('has label', () => {
-      expect(fixture.debugElement.query(By.css('label'))).toBeTruthy();
+      expect(fixture.debugElement.query(By.css('label.url'))).toBeTruthy();
     });
 
     it('with valid URL should make the form valid', () => {
