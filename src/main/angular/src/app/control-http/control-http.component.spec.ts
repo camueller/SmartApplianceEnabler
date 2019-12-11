@@ -1,119 +1,218 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {ControlHttpComponent} from './control-http.component';
-import {Component, DebugElement, NO_ERRORS_SCHEMA} from '@angular/core';
-import {TranslateLoader, TranslateModule, TranslateService} from '@ngx-translate/core';
-import {FakeTranslateLoader} from '../testing/fake-translate-loader';
-import {FormGroup, FormGroupDirective, ReactiveFormsModule} from '@angular/forms';
-import {Level} from '../log/level';
-import {Logger, Options} from '../log/logger';
-import {By} from '@angular/platform-browser';
+import {Component, EventEmitter, NO_ERRORS_SCHEMA, Output, ViewChild} from '@angular/core';
+import {HttpSwitch} from './http-switch';
+import {
+  click,
+  createComponentAndConfigure,
+  debugElementByCss,
+  importsFormsAndTranslate,
+  providers
+} from '../shared/test-util';
+import {FormGroup} from '@angular/forms';
 import {HttpWriteValue} from '../http-write-value/http-write-value';
 import {HttpWrite} from '../http-write/http-write';
-const translations = require('assets/i18n/de.json');
+import {HttpConfiguration} from '../http-configuration/http-configuration';
+import {HttpRead} from '../http-read/http-read';
 
+const removeHttpWrite = new EventEmitter<any>();
+const httpConfigurationUpdateModelFromFormMock = jest.fn();
+const httpWriteUpdateModelFromFormMock = jest.fn();
+const httpReadUpdateModelFromFormMock = jest.fn();
 
 @Component({selector: 'app-http-configuration', template: ''})
-class HttpConfigurationStubComponent {}
-
-@Component({selector: 'app-http-read', template: ''})
-class HttpReadStubComponent {}
-
-@Component({selector: 'app-http-write', template: ''})
-class HttpWriteStubComponent {}
-
-class MockFormGroupDirective {
-  form: FormGroup;
+class HttpConfigurationStubComponent {
+  updateModelFromForm(): HttpConfiguration | undefined {
+    return httpConfigurationUpdateModelFromFormMock();
+  }
 }
 
-it('dummy test', () => {
-  expect(true);
-});
+@Component({selector: 'app-http-write', template: ''})
+class HttpWriteStubComponent {
+  @Output()
+  remove = removeHttpWrite;
 
-// describe('ControlHttpComponent', () => {
-//   let component: ControlHttpComponent;
-//   let fixture: ComponentFixture<ControlHttpComponent>;
-//   const mockFormGroupDirective = {form: new FormGroup({})} as MockFormGroupDirective;
-//
-//   beforeEach(async(() => {
-    // TestBed.configureTestingModule({
-    //   declarations: [
-    //     ControlHttpComponent,
-    //     HttpConfigurationStubComponent,
-    //     HttpReadStubComponent,
-    //     HttpWriteStubComponent
-    //   ],
-    //   imports: [
-    //     ReactiveFormsModule,
-    //     TranslateModule.forRoot({
-    //       loader: {
-    //         provide: TranslateLoader,
-    //         useValue: new FakeTranslateLoader(translations)
-    //       }
-    //     })
-    //   ],
-    //   providers: [
-    //     Logger,
-    //     {provide: Options, useValue: {level: Level.DEBUG}},
-    //     {provide: FormGroupDirective, useValue: mockFormGroupDirective}
-    //   ],
-    //   schemas: [ NO_ERRORS_SCHEMA ]
+  updateModelFromForm(): HttpWrite | undefined {
+    return httpWriteUpdateModelFromFormMock();
+  }
+}
+
+@Component({selector: 'app-http-read', template: ''})
+class HttpReadStubComponent {
+  updateModelFromForm(): HttpRead | undefined {
+    return httpReadUpdateModelFromFormMock();
+  }
+}
+
+@Component({
+  template: `
+    <form [formGroup]="form">
+        <app-control-http
+            [httpSwitch]="httpSwitch"
+            [applianceId]="applianceId"
+        ></app-control-http>
+    </form>`
+})
+class ControlHttpTestHostComponent {
+  @ViewChild(ControlHttpComponent, { static: true }) testComponent;
+  httpSwitch = undefined;
+  applianceId = 'F-00000000001-00';
+  form = new FormGroup({});
+}
+
+describe('ControlHttpComponent', () => {
+  const ADD_HTTPWRITE_BUTTON = 'button.addHttpWrite';
+  const READ_CONTROL_STATE_CHECKBOX = 'input.readControlState';
+
+  let component: ControlHttpComponent;
+  let hostComponent: ControlHttpTestHostComponent;
+  let fixture: ComponentFixture<ControlHttpTestHostComponent>;
+
+  beforeEach(async(() => {
+    TestBed.configureTestingModule({
+      declarations: [
+        ControlHttpComponent,
+        ControlHttpTestHostComponent,
+        HttpConfigurationStubComponent,
+        HttpReadStubComponent,
+        HttpWriteStubComponent
+      ],
+      imports: importsFormsAndTranslate(),
+      providers: providers(),
+      schemas: [ NO_ERRORS_SCHEMA ]
+    });
+    fixture = createComponentAndConfigure(ControlHttpTestHostComponent);
+    hostComponent = fixture.componentInstance;
+    component = hostComponent.testComponent;
+
+    fixture.detectChanges();
+    // fixture.whenStable().then(() => {
+    //   console.log('HTML=', fixture.debugElement.nativeElement.innerHTML);
     // });
-    // fixture = TestBed.createComponent(ControlHttpComponent);
-    // component = fixture.componentInstance;
-    //
-    // const translate = TestBed.get(TranslateService);
-    // translate.use('de');
-    //
-    // fixture.detectChanges();
-  // }));
-  //
-  // describe('Initially', () => {
-  //
-  //   it('a Http switch exists', () => {
-  //     expect(component.httpSwitch).toBeTruthy();
-  //   });
-  //
-  //   it('the HttpSwitch contains one HttpWrite', async( () => {
-  //     expect(component.httpSwitch.httpWrites.length).toBe(1);
-  //   }));
-  //
-  // });
-  //
-  // describe('Button "Weitere URL"', () => {
-  //   let button;
-  //
-  //   beforeEach(() => {
-  //     button = buttonAddHttpWrite();
-  //   });
-  //
-  //   it('exists and is enabled', async( () => {
-  //     expect(button.nativeElement.innerHTML).toBe('Weitere URL');
-  //     expect(button.nativeElement.disabled).toBeFalsy();
-  //   }));
-  //
-  //   describe('with one existing HttpWrite', () => {
-  //     it('another HttpRead can be added if it has one HttpReadValue', async( () => {
-  //       button.triggerEventHandler('click', null);
-  //       expect(component.httpSwitch.httpWrites.length).toBe(2);
-  //     }));
-  //
-  //     it('no HttpRead can be added if the existing HttpWrite contains two HttpWriteValue', async( () => {
-  //       component.httpSwitch.httpWrites[0].writeValues.push(new HttpWriteValue());
-  //       fixture.detectChanges();
-  //       expect(buttonAddHttpWrite()).toBeFalsy();
-  //     }));
-  //   });
-  //
-  //   describe('with two existing HttpWrite', () => {
-  //     it('no HttpRead can be added if the existing HttpWrite contains two HttpWriteValue', async( () => {
-  //       component.httpSwitch.httpWrites.push(new HttpWrite());
-  //       fixture.detectChanges();
-  //       expect(buttonAddHttpWrite()).toBeFalsy();
-  //     }));
-  //   });
-  // });
-//
-//   function buttonAddHttpWrite(): DebugElement {
-//     return fixture.debugElement.query(By.css('button'));
-//   }
-// });
+  }));
+
+  describe('Initially', () => {
+
+    it('a Http switch will be created if none is passed in', () => {
+      expect(component.httpSwitch).toBeTruthy();
+    });
+
+    it('the HttpSwitch can be passed in', async( () => {
+      hostComponent.httpSwitch = new HttpSwitch();
+      fixture.detectChanges();
+      expect(component.httpSwitch).toBeTruthy();
+    }));
+
+    it('the HttpSwitch contains one HttpWrite', async( () => {
+      expect(component.httpSwitch.httpWrites.length).toBe(1);
+    }));
+
+    it('the readControlState checkbox is not checked', () => {
+      expect(debugElementByCss(fixture, READ_CONTROL_STATE_CHECKBOX).nativeElement.checked).toBeFalsy();
+    });
+
+    it('the HttpSwitch contains no HttpRead', async( () => {
+      expect(component.httpSwitch.httpRead).toBeUndefined();
+    }));
+  });
+
+  describe('HttpWrite', () => {
+   it('should handle "remove" event', () => {
+     removeHttpWrite.emit();
+     expect(component.httpSwitch.httpWrites.length).toBe(0);
+     expect(component.httpWritesFormArray.length).toBe(0);
+     fixture.whenStable().then(() => {
+       expect(component.form.dirty).toBeTruthy();
+     });
+   });
+  });
+
+  describe('Button "Weitere URL"', () => {
+
+    it('exists and is enabled', async( () => {
+      const button = debugElementByCss(fixture, ADD_HTTPWRITE_BUTTON);
+      expect(button.nativeElement.innerHTML).toBe('Weitere URL');
+      expect(button.nativeElement.disabled).toBeFalsy();
+    }));
+
+    describe('with one existing HttpWrite', () => {
+      it('another HttpRead can be added if it has one HttpReadValue', async( () => {
+        click(debugElementByCss(fixture, ADD_HTTPWRITE_BUTTON));
+        expect(component.httpSwitch.httpWrites.length).toBe(2);
+      }));
+
+      it('no HttpRead can be added if the existing HttpWrite contains two HttpWriteValue', async( () => {
+        component.httpSwitch.httpWrites[0].writeValues.push(new HttpWriteValue());
+        fixture.detectChanges();
+        expect(debugElementByCss(fixture, ADD_HTTPWRITE_BUTTON)).toBeFalsy();
+      }));
+    });
+
+    describe('with two existing HttpWrite', () => {
+      it('no HttpRead can be added if the existing HttpWrite contains two HttpWriteValue', async( () => {
+        component.addHttpWrite();
+        fixture.detectChanges();
+        expect(debugElementByCss(fixture, ADD_HTTPWRITE_BUTTON)).toBeFalsy();
+      }));
+    });
+  });
+
+  describe('HttpRead', () => {
+
+    beforeEach(() => {
+      expect(component.form.dirty).toBeFalsy();
+      debugElementByCss(fixture, READ_CONTROL_STATE_CHECKBOX).nativeElement.click();
+      fixture.detectChanges();
+    });
+
+    it('can be enabled', () => {
+      expect(debugElementByCss(fixture, READ_CONTROL_STATE_CHECKBOX).nativeElement.checked).toBeTruthy();
+    });
+
+    it('contains a HttpRead', () => {
+      expect(debugElementByCss(fixture, 'app-http-read')).toBeTruthy();
+    });
+  });
+
+  describe('updateModelFromForm', () => {
+    describe('returns HttpSwitch', () => {
+      let httpSwitch: HttpSwitch;
+      const httpConfigurationContentType = 'httpConfiguration.contentType';
+      const httpWriteUrl = 'httpWrite.url';
+      const httpReadUrl = 'httpRead.url';
+
+      beforeEach(fakeAsync(() => {
+        httpConfigurationUpdateModelFromFormMock.mockReturnValue(
+          {contentType: httpConfigurationContentType} as HttpConfiguration)
+        httpWriteUpdateModelFromFormMock.mockReturnValue({url: httpWriteUrl, writeValues: []} as HttpWrite);
+        httpReadUpdateModelFromFormMock.mockReturnValue({url: httpReadUrl, readValues: []} as HttpRead);
+        httpSwitch = component.updateModelFromForm();
+      }));
+
+      it('with HttpConfiguration', () => {
+        expect(httpSwitch.httpConfiguration.contentType).toBe(httpConfigurationContentType);
+      });
+
+      it('with HttpWrite', () => {
+        expect(httpSwitch.httpWrites[0].url).toBe(httpWriteUrl);
+      });
+
+      it('with HttpRead', () => {
+        debugElementByCss(fixture, READ_CONTROL_STATE_CHECKBOX).nativeElement.click();
+        fixture.detectChanges();
+        httpSwitch = component.updateModelFromForm();
+        expect(httpSwitch.httpRead.url).toBe(httpReadUrl);
+      });
+    });
+
+    describe('returns undefined', () => {
+      it('if form values have not been changed', () => {
+        httpConfigurationUpdateModelFromFormMock.mockReturnValue(undefined);
+        httpWriteUpdateModelFromFormMock.mockReturnValue(undefined);
+        httpReadUpdateModelFromFormMock.mockReturnValue(undefined);
+        expect(component.updateModelFromForm()).toBe(undefined);
+      });
+    });
+
+  });
+});

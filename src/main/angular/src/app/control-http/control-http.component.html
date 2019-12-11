@@ -2,6 +2,7 @@
   <app-http-configuration
     [form]="form"
     [httpConfiguration]="httpSwitch.httpConfiguration"
+    #httpConfigurationComponent
   ></app-http-configuration>
   <span formArrayName="httpWrites">
     <app-http-write *ngFor="let httpWriteFormGroup of httpSwitch.httpWrites; index as i; last as l"
@@ -16,13 +17,13 @@
                     #httpWriteComponents
     ></app-http-write>
   </span>
-  <button type="button" (click)="addHttpWrite()" class="ui button" *ngIf="isAddHttpWritePossible"
+  <button type="button" (click)="addHttpWrite()" class="ui button addHttpWrite" *ngIf="isAddHttpWritePossible"
   >{{'ControlHttpComponent.button.addHttpWrite' | translate}}</button>
 </div>
 <div class="fields">
   <div class="field">
     <label>{{'ControlHttpComponent.readControlState' | translate}}</label>
-    <input class="ui checkbox" type="checkbox" formControlName="readControlState"
+    <input class="ui checkbox readControlState" type="checkbox" formControlName="readControlState"
            (ngModelChange)="readControlStateChanged($event)">
   </div>
 </div>

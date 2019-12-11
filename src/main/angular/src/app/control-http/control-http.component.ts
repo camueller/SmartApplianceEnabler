@@ -36,7 +36,7 @@ import {HttpReadComponent} from '../http-read/http-read.component';
 export class ControlHttpComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()
   httpSwitch: HttpSwitch;
-  @ViewChild(HttpConfigurationComponent, {static: true})
+  @ViewChild('httpConfigurationComponent', {static: true})
   httpConfigurationComp: HttpConfigurationComponent;
   @ViewChildren('httpWriteComponents')
   httpWriteComps: QueryList<HttpWriteComponent>;

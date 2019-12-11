@@ -5,15 +5,22 @@ import {ControlValueName} from '../control/control-value-name';
 import {By} from '@angular/platform-browser';
 import {
   click,
-  createComponentAndConfigure,
+  createComponentAndConfigure, debugElementByCss,
   importsFormsAndTranslate,
-  providersLoggingAndFormGroupDirective
+  providers
 } from '../shared/test-util';
 import {HttpWriteValue} from '../http-write-value/http-write-value';
 import {FormGroup} from '@angular/forms';
 import {HttpWrite} from './http-write';
 
 const httpWriteValueUpdateModelFromFormMock = jest.fn();
+
+@Component({selector: 'app-http-write-value', template: ''})
+class HttpWriteValueStubComponent {
+  updateModelFromForm(): HttpWriteValue | undefined {
+    return httpWriteValueUpdateModelFromFormMock();
+  }
+}
 
 @Component({
   template: `<app-http-write
@@ -34,18 +41,13 @@ class HttpWriteTestHostComponent {
   }
 }
 
-@Component({selector: 'app-http-write-value', template: ''})
-class HttpWriteValueStubComponent {
-  updateModelFromForm(): HttpWriteValue | undefined {
-    return httpWriteValueUpdateModelFromFormMock();
-  }
-}
-
 describe('HttpWriteComponent', () => {
 
-  const URL_INPUT_SELECTOR = 'input[formcontrolname="url"]';
-  const ERROR_ELEMENT_SELECTOR = 'div.negative';
-  const REMOVE_HTTPWRITE_BUTTON_SELECTOR = 'i[ng-reflect-ng-class=removeValue0]';
+  const URL_INPUT = 'input[formcontrolname="url"]';
+  const URL_LABEL = 'label.url';
+  const ERROR_ELEMENT = 'div.negative';
+  const ADD_HTTPWRITE_BUTTON = 'button.addValue';
+  const REMOVE_HTTPWRITE_BUTTON = 'i[ng-reflect-ng-class=removeValue0]';
 
   let component: HttpWriteComponent;
   let hostComponent: HttpWriteTestHostComponent;
@@ -59,7 +61,7 @@ describe('HttpWriteComponent', () => {
         HttpWriteValueStubComponent,
       ],
       imports: importsFormsAndTranslate(),
-      providers: providersLoggingAndFormGroupDirective(),
+      providers: providers(),
       schemas: [NO_ERRORS_SCHEMA]
     });
     fixture = createComponentAndConfigure(HttpWriteTestHostComponent);
@@ -81,12 +83,10 @@ describe('HttpWriteComponent', () => {
   }));
 
   describe('Bindings', () => {
-    it('should handle "remove" event', () => {
+    it('should emit "remove" event', () => {
       fixture.detectChanges();
       fixture.whenStable().then(() => {
-        // console.log('HTML=', fixture.debugElement.nativeElement.innerHTML);
-        const removeButton = fixture.debugElement.query(By.css('.buttonRemoveHttpWrite'));
-        removeButton.nativeElement.click();
+        debugElementByCss(fixture, '.buttonRemoveHttpWrite').nativeElement.click();
         expect(hostComponent.onHttpWriteRemoveCalled).toBeTruthy();
       });
     });
@@ -105,11 +105,9 @@ describe('HttpWriteComponent', () => {
 
   describe('URL field', () => {
     let url: DebugElement;
-    let urlNE: any;
 
     beforeEach(() => {
-      url = fixture.debugElement.query(By.css(URL_INPUT_SELECTOR));
-      urlNE = url.nativeElement;
+      url = debugElementByCss(fixture, URL_INPUT);
     });
 
     it('exists', () => {
@@ -117,33 +115,32 @@ describe('HttpWriteComponent', () => {
     });
 
     it('has label', () => {
-      expect(fixture.debugElement.query(By.css('label.url'))).toBeTruthy();
+      expect(debugElementByCss(fixture, URL_LABEL)).toBeTruthy();
     });
 
     it('with valid URL should make the form valid', () => {
       const inputValue = 'http://web.de';
-      urlNE.value = inputValue;
-      urlNE.dispatchEvent(new Event('input'));
+      url.nativeElement.value = inputValue;
+      url.nativeElement.dispatchEvent(new Event('input'));
       expect(component.form.controls.url.value).toBe(inputValue);
       expect(component.form.valid).toBeTruthy();
     });
 
     it('with invalid URL should make the form invalid', () => {
       const inputValue = 'http:web.de';
-      urlNE.value = inputValue;
-      urlNE.dispatchEvent(new Event('input'));
+      url.nativeElement.value = inputValue;
+      url.nativeElement.dispatchEvent(new Event('input'));
       expect(component.form.controls.url.value).toBe(inputValue);
       expect(component.form.valid).toBeFalsy();
     });
 
     it('with invalid URL should display an error message', () => {
       const inputValue = 'http:web.de';
-      urlNE.value = inputValue;
-      urlNE.dispatchEvent(new Event('input'));
+      url.nativeElement.value = inputValue;
+      url.nativeElement.dispatchEvent(new Event('input'));
       fixture.detectChanges();
       fixture.whenStable().then(() => {
-        const error = fixture.debugElement.query(By.css(ERROR_ELEMENT_SELECTOR));
-        expect(error.nativeElement.innerHTML).toBe('Die URL muss gültig sein');
+        expect(debugElementByCss(fixture, ERROR_ELEMENT).nativeElement.innerHTML).toBe('Die URL muss gültig sein');
       });
     });
   });
@@ -152,8 +149,7 @@ describe('HttpWriteComponent', () => {
     beforeEach(() => {
       expect(component.httpWrite.writeValues.length).toBe(1);
       expect(component.form.dirty).toBeFalsy();
-      const button = fixture.debugElement.query(By.css('button.addValue'));
-      click(button);
+      click(debugElementByCss(fixture, ADD_HTTPWRITE_BUTTON));
     });
 
     it('should add a HttpWriteValue', () => {
@@ -170,8 +166,7 @@ describe('HttpWriteComponent', () => {
   describe('Button "X" (Remove HttpWriteValue)', () => {
     beforeEach(() => {
       expect(component.form.dirty).toBeFalsy();
-      const button = fixture.debugElement.query(By.css(REMOVE_HTTPWRITE_BUTTON_SELECTOR));
-      click(button);
+      click(debugElementByCss(fixture, REMOVE_HTTPWRITE_BUTTON));
       fixture.detectChanges();
     });
 
@@ -191,14 +186,13 @@ describe('HttpWriteComponent', () => {
     describe('returns HttpWrite', () => {
       const inputValue = 'http://web.de';
       const httpWriteValueName = 'httpWriteValue.name';
-      let httpWrite;
+      let httpWrite: HttpWrite;
 
       beforeEach(fakeAsync(() => {
         httpWriteValueUpdateModelFromFormMock.mockReturnValue({name: httpWriteValueName} as HttpWriteValue);
-        const url = fixture.debugElement.query(By.css(URL_INPUT_SELECTOR));
-        const urlNE = url.nativeElement;
-        urlNE.value = inputValue;
-        urlNE.dispatchEvent(new Event('input'));
+        const url = debugElementByCss(fixture, URL_INPUT);
+        url.nativeElement.value = inputValue;
+        url.nativeElement.dispatchEvent(new Event('input'));
         tick();
         httpWrite = component.updateModelFromForm();
       }));

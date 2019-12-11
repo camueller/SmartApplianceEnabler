@@ -5,6 +5,7 @@ import {Logger, Options} from '../log/logger';
 import {Level} from '../log/level';
 import {DebugElement, Type} from '@angular/core';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {By} from '@angular/platform-browser';
 
 const translations = require('assets/i18n/de.json');
 
@@ -23,6 +24,10 @@ export function click(el: DebugElement | HTMLElement, eventObj: any = ButtonClic
   }
 }
 
+export function debugElementByCss(fixture: ComponentFixture<any>, selector: string): DebugElement {
+  return fixture.debugElement.query(By.css(selector));
+}
+
 export function createComponentAndConfigure<T>(component: Type<T>): ComponentFixture<T> {
   const fixture = TestBed.createComponent(component);
 
@@ -39,11 +44,10 @@ export function importsFormsAndTranslate(): any[] {
   ];
 }
 
-export function providersLoggingAndFormGroupDirective() {
+export function providers() {
   return [
     Logger,
     {provide: Options, useValue: {level: Level.DEBUG}},
-    {provide: FormGroupDirective, useValue: {form: new FormGroup({})}}
   ];
 }
 
