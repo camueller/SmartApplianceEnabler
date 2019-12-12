@@ -59,3 +59,9 @@ export function translateModuleConfig() {
     }
   };
 }
+
+export function enterAndCheckInputValue(form: FormGroup, formControlName: string, element: DebugElement, inputValue: string) {
+  element.nativeElement.value = inputValue;
+  element.nativeElement.dispatchEvent(new Event('input'));
+  expect(form.controls[formControlName].value).toBe(inputValue);
+}

@@ -5,7 +5,7 @@ import {ControlValueName} from '../control/control-value-name';
 import {
   click,
   createComponentAndConfigure,
-  debugElementByCss,
+  debugElementByCss, enterAndCheckInputValue,
   importsFormsAndTranslate,
   providers
 } from '../shared/test-util';
@@ -118,25 +118,17 @@ describe('HttpWriteComponent', () => {
     });
 
     it('with valid URL should make the form valid', () => {
-      const inputValue = 'http://web.de';
-      url.nativeElement.value = inputValue;
-      url.nativeElement.dispatchEvent(new Event('input'));
-      expect(component.form.controls.url.value).toBe(inputValue);
+      enterAndCheckInputValue(component.form, 'url', url, 'http://web.de');
       expect(component.form.valid).toBeTruthy();
     });
 
     it('with invalid URL should make the form invalid', () => {
-      const inputValue = 'http:web.de';
-      url.nativeElement.value = inputValue;
-      url.nativeElement.dispatchEvent(new Event('input'));
-      expect(component.form.controls.url.value).toBe(inputValue);
+      enterAndCheckInputValue(component.form, 'url', url, 'http:web.de');
       expect(component.form.valid).toBeFalsy();
     });
 
     it('with invalid URL should display an error message', () => {
-      const inputValue = 'http:web.de';
-      url.nativeElement.value = inputValue;
-      url.nativeElement.dispatchEvent(new Event('input'));
+      enterAndCheckInputValue(component.form, 'url', url, 'http:web.de');
       fixture.detectChanges();
       fixture.whenStable().then(() => {
         expect(debugElementByCss(fixture, ERROR_ELEMENT).nativeElement.innerHTML).toBe('Die URL muss gültig sein');
