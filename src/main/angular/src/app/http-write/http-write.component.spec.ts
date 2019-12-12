@@ -2,10 +2,10 @@ import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/t
 import {Component, DebugElement, NO_ERRORS_SCHEMA, ViewChild} from '@angular/core';
 import {HttpWriteComponent} from './http-write.component';
 import {ControlValueName} from '../control/control-value-name';
-import {By} from '@angular/platform-browser';
 import {
   click,
-  createComponentAndConfigure, debugElementByCss,
+  createComponentAndConfigure,
+  debugElementByCss,
   importsFormsAndTranslate,
   providers
 } from '../shared/test-util';
@@ -26,7 +26,6 @@ class HttpWriteValueStubComponent {
   template: `<app-http-write
     [form]="form"
     [httpWrite]="httpWrite"
-    [translationKeys]="['dummy']"
     (remove)="onHttpWriteRemove()"
   ></app-http-write>`
 })
