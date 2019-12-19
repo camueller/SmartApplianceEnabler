@@ -1,6 +1,6 @@
 import {TranslateLoader, TranslateModule, TranslateService} from '@ngx-translate/core';
 import {FakeTranslateLoader} from '../testing/fake-translate-loader';
-import {FormGroup, FormGroupDirective, ReactiveFormsModule} from '@angular/forms';
+import {FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {Logger, Options} from '../log/logger';
 import {Level} from '../log/level';
 import {DebugElement, Type} from '@angular/core';
@@ -22,6 +22,12 @@ export function click(el: DebugElement | HTMLElement, eventObj: any = ButtonClic
   } else {
     el.triggerEventHandler('click', eventObj);
   }
+}
+
+export function selectOptionValue(fixture: ComponentFixture<any>, selector: string, value: string) {
+  const nativeElement = fixture.debugElement.query(By.css(selector)).nativeElement;
+  nativeElement.value = value;
+  nativeElement.dispatchEvent(new Event('change'));
 }
 
 export function debugElementByCss(fixture: ComponentFixture<any>, selector: string): DebugElement {
