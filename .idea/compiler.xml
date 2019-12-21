@@ -10,7 +10,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="SmartApplianceEnabler" target="8" />
+      <module name="SmartApplianceEnabler" target="11" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
