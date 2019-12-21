@@ -1,35 +1,16 @@
-matrix:
-  include:
-    - language: java
-      script: mvn test -B -Ptravis,web
-      dist: bionic
-      sudo: required
-      jdk:
-        - openjdk11
-      before_install:
-        - wget https://archive.apache.org/dist/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.zip
-        - unzip -qq apache-maven-3.3.9-bin.zip
-        - export M2_HOME=$PWD/apache-maven-3.3.9
-        - export PATH=$M2_HOME/bin:$PATH
-        - wget https://nodejs.org/dist/v10.17.0/node-v10.17.0-linux-x64.tar.gz
-        - tar xfz node-v10.17.0-linux-x64.tar.gz
-        - export PATH=$PWD/node-v10.17.0-linux-x64/bin:$PATH
-      after_success:
-        - bash <(curl -s https://codecov.io/bash)
-
-    - language: node_js
-      script: mvn test -B -Ptravis,web
-      dist: bionic
-      sudo: required
-      jdk:
-        - openjdk11
-      before_install:
-        - wget https://archive.apache.org/dist/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.zip
-        - unzip -qq apache-maven-3.3.9-bin.zip
-        - export M2_HOME=$PWD/apache-maven-3.3.9
-        - export PATH=$M2_HOME/bin:$PATH
-        - wget https://nodejs.org/dist/v10.17.0/node-v10.17.0-linux-x64.tar.gz
-        - tar xfz node-v10.17.0-linux-x64.tar.gz
-        - export PATH=$PWD/node-v10.17.0-linux-x64/bin:$PATH
-      after_success:
-        - codecov
+language: java
+script: mvn test -B -Ptravis,web
+dist: bionic
+sudo: required
+jdk:
+  - openjdk11
+before_install:
+  - wget https://archive.apache.org/dist/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.zip
+  - unzip -qq apache-maven-3.3.9-bin.zip
+  - export M2_HOME=$PWD/apache-maven-3.3.9
+  - export PATH=$M2_HOME/bin:$PATH
+  - wget https://nodejs.org/dist/v10.17.0/node-v10.17.0-linux-x64.tar.gz
+  - tar xfz node-v10.17.0-linux-x64.tar.gz
+  - export PATH=$PWD/node-v10.17.0-linux-x64/bin:$PATH
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
