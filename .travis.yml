@@ -13,4 +13,5 @@ before_install:
   - tar xfz node-v10.17.0-linux-x64.tar.gz
   - export PATH=$PWD/node-v10.17.0-linux-x64/bin:$PATH
 after_success:
+  - codecov
   - bash <(curl -s https://codecov.io/bash)
