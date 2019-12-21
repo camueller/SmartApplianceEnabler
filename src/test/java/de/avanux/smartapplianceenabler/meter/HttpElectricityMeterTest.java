@@ -25,11 +25,12 @@ import de.avanux.smartapplianceenabler.protocol.ContentProtocolType;
 import de.avanux.smartapplianceenabler.http.HttpRead;
 import de.avanux.smartapplianceenabler.http.HttpReadValue;
 import org.joda.time.LocalDateTime;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpElectricityMeterTest extends TestBase {
 
@@ -51,7 +52,7 @@ public class HttpElectricityMeterTest extends TestBase {
         read.setReadValues(Collections.singletonList(powerReadValue));
         meter.setHttpReads(Collections.singletonList(read));
         Mockito.doReturn(edimaxSP2101WResponse).when(executorMock).execute(Mockito.any(), Mockito.any(), Mockito.any());
-        Assert.assertEquals(52.0, meter.pollPower(), 0.01);
+        assertEquals(52.0, meter.pollPower(), 0.01);
     }
 
     @Test
@@ -61,7 +62,7 @@ public class HttpElectricityMeterTest extends TestBase {
         powerReadSpy.setReadValues(Collections.singletonList(powerReadValue));
         meter.setHttpReads(Collections.singletonList(powerReadSpy));
         Mockito.doReturn(sonoffPowResponse).when(executorMock).execute(Mockito.any(), Mockito.any(), Mockito.any());
-        Assert.assertEquals(26.0, meter.pollPower(), 0.01);
+        assertEquals(26.0, meter.pollPower(), 0.01);
     }
 
     @Test
@@ -71,7 +72,7 @@ public class HttpElectricityMeterTest extends TestBase {
         powerReadSpy.setReadValues(Collections.singletonList(powerReadValue));
         meter.setHttpReads(Collections.singletonList(powerReadSpy));
         Mockito.doReturn(keContactP30Response).when(executorMock).execute(Mockito.any(), Mockito.any(), Mockito.any());
-        Assert.assertEquals(12.34, meter.pollPower(), 0.01);
+        assertEquals(12.34, meter.pollPower(), 0.01);
     }
 
     @Test
@@ -98,14 +99,14 @@ public class HttpElectricityMeterTest extends TestBase {
         meter.getPollEnergyMeter().addValue(timestamp); // simulate timer task
         meter.getPollPowerMeter().addValue(timestamp, meter); // simulate timer task
 
-        Assert.assertEquals(3400, this.meter.getAveragePower());
-        Assert.assertEquals(3400, this.meter.getMaxPower());
-        Assert.assertEquals(3400, this.meter.getMinPower());
+        assertEquals(3400, this.meter.getAveragePower());
+        assertEquals(3400, this.meter.getMaxPower());
+        assertEquals(3400, this.meter.getMinPower());
     }
 
     @Test
     public void getEnergy_Initial() {
-        Assert.assertEquals(0.0f, this.meter.getEnergy(), 0.01);
+        assertEquals(0.0f, this.meter.getEnergy(), 0.01);
     }
 
     @Test
@@ -124,7 +125,7 @@ public class HttpElectricityMeterTest extends TestBase {
         Mockito.doReturn(stopResponse).when(executorMock).execute(Mockito.any(), Mockito.any(), Mockito.any());
         this.meter.stopEnergyMeter();
 
-        Assert.assertEquals(3.4f, this.meter.getEnergy(), 0.01);
+        assertEquals(3.4f, this.meter.getEnergy(), 0.01);
     }
 
     @Test
@@ -134,8 +135,8 @@ public class HttpElectricityMeterTest extends TestBase {
         energyValues.put(Long.valueOf(2 * 60 * 60 * 1000), 8.0f); // after 2h: 8 kWh
 
         List<Float> powerValues = this.meter.calculatePower(energyValues);
-        Assert.assertEquals(1, powerValues.size());
-        Assert.assertEquals(3000, powerValues.get(0).floatValue(), 0.01);
+        assertEquals(1, powerValues.size());
+        assertEquals(3000, powerValues.get(0).floatValue(), 0.01);
     }
 
     @Test
@@ -147,10 +148,10 @@ public class HttpElectricityMeterTest extends TestBase {
         energyValues.put(Long.valueOf(4 * 60 * 60 * 1000), 17.0f); // after 4h: 17 kWh
 
         List<Float> powerValues = this.meter.calculatePower(energyValues);
-        Assert.assertEquals(3, powerValues.size());
-        Assert.assertEquals(3000, powerValues.get(0).floatValue(), 0.01);
-        Assert.assertEquals(4000, powerValues.get(1).floatValue(), 0.01);
-        Assert.assertEquals(5000, powerValues.get(2).floatValue(), 0.01);
+        assertEquals(3, powerValues.size());
+        assertEquals(3000, powerValues.get(0).floatValue(), 0.01);
+        assertEquals(4000, powerValues.get(1).floatValue(), 0.01);
+        assertEquals(5000, powerValues.get(2).floatValue(), 0.01);
     }
 
     @Test
@@ -160,8 +161,8 @@ public class HttpElectricityMeterTest extends TestBase {
         energyValues.put(Long.valueOf(1 * 60 * 60 * 1000 + 10), 0.0f); // after 1h and 10s: 0 kWh
 
         List<Float> powerValues = this.meter.calculatePower(energyValues);
-        Assert.assertEquals(1, powerValues.size());
-        Assert.assertEquals(0, powerValues.get(0).floatValue(), 0.01);
+        assertEquals(1, powerValues.size());
+        assertEquals(0, powerValues.get(0).floatValue(), 0.01);
     }
 
     private final static String goEChargerStatus = "{\"version\":\"B\",\"rbc\":\"251\",\"rbt\":\"2208867\",\"car\":\"1\",\"amp\":\"10\",\"err\":\"0\",\"ast\"\n" +

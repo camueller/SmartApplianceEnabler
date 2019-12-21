@@ -24,10 +24,11 @@ import de.avanux.smartapplianceenabler.modbus.executor.ModbusExecutorFactory;
 import de.avanux.smartapplianceenabler.modbus.executor.ModbusReadTransactionExecutor;
 import de.avanux.smartapplianceenabler.modbus.executor.ReadInputRegisterExecutor;
 import de.avanux.smartapplianceenabler.modbus.executor.ReadStringInputRegisterExecutorImpl;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EVModbusControlTest {
     private EVModbusControl evModbusControl;
@@ -72,6 +73,6 @@ public class EVModbusControlTest {
         ((ReadInputRegisterExecutor) executor).setByteValues(byteValues);
         this.evModbusControl.getRequestCache().put(registerRead, executor);
 
-        Assert.assertEquals(expectedResult, this.evModbusControl.isMatchingVehicleStatus(registerName));
+        assertEquals(expectedResult, this.evModbusControl.isMatchingVehicleStatus(registerName));
     }
 }

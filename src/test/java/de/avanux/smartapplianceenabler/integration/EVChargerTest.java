@@ -31,8 +31,7 @@ import de.avanux.smartapplianceenabler.meter.PollEnergyExecutor;
 import de.avanux.smartapplianceenabler.test.TestBuilder;
 import de.avanux.smartapplianceenabler.util.DateTimeProvider;
 import org.joda.time.LocalDateTime;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +40,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.never;
 
 public class EVChargerTest extends TestBase {
@@ -76,14 +77,14 @@ public class EVChargerTest extends TestBase {
         log("Vehicle not connected");
         tick(appliance, timeInitial, false, false);
         List<RuntimeInterval> runtimeIntervalsNotConnected = appliance.getRuntimeIntervals(timeInitial, false);
-        Assert.assertEquals(0, runtimeIntervalsNotConnected.size());
+        assertEquals(0, runtimeIntervalsNotConnected.size());
 
         log("Vehicle connected");
         LocalDateTime timeVehicleConnected = toToday(9, 55, 0);
         Mockito.when(pollEnergyExecutor.pollEnergy(Mockito.any())).thenReturn(10.0f);
         tick(appliance, timeInitial, true, false);
         List<RuntimeInterval> runtimeIntervalsConnected = appliance.getRuntimeIntervals(timeVehicleConnected, false);
-        Assert.assertEquals(
+        assertEquals(
                 Collections.singletonList(
                     new RuntimeInterval(0, 172800, 0, 44000, true)
                 ),
@@ -95,20 +96,20 @@ public class EVChargerTest extends TestBase {
                 true, 4000, false, "Switch on");
         tick(appliance, timeInitial, true, true);
         List<RuntimeInterval> runtimeIntervalsStartCharging = appliance.getRuntimeIntervals(timeStartCharging, false);
-        Assert.assertEquals(
+        assertEquals(
                 Collections.singletonList(
                         new RuntimeInterval(0, 172800, 0, 44000, true)
                 ),
                 runtimeIntervalsStartCharging);
         Mockito.verify(mockMeter).startEnergyMeter();
-        Assert.assertEquals(0.0f, mockMeter.getEnergy(), 0.01);
+        assertEquals(0.0f, mockMeter.getEnergy(), 0.01);
 
         log("After start charging");
         LocalDateTime timeAfterStartCharging = toToday(11, 0, 0);
         Mockito.when(pollEnergyExecutor.pollEnergy(Mockito.any())).thenReturn(14.0f);
         tick(appliance, timeInitial, true, true);
         List<RuntimeInterval> runtimeIntervalsAfterStartCharging = appliance.getRuntimeIntervals(timeAfterStartCharging, false);
-        Assert.assertEquals(
+        assertEquals(
                 Collections.singletonList(
                         new RuntimeInterval(0, 172800, 0, 40000, true)
                 ),
@@ -121,14 +122,14 @@ public class EVChargerTest extends TestBase {
                 false, null, false, "Switch off");
         tick(appliance, timeInitial,  true, false);
         List<RuntimeInterval> runtimeIntervalsAfterInterrupCharging = appliance.getRuntimeIntervals(timeAfterStartCharging, false);
-        Assert.assertEquals(
+        assertEquals(
                 Collections.singletonList(
                         new RuntimeInterval(0, 172800, 0, 36000, true)
                 ),
                 runtimeIntervalsAfterInterrupCharging);
         Mockito.verify(mockMeter).stopEnergyMeter();
         Mockito.verify(mockMeter, never()).resetEnergyMeter();
-        Assert.assertEquals(8.0f, mockMeter.getEnergy(), 0.01);
+        assertEquals(8.0f, mockMeter.getEnergy(), 0.01);
 
         log("Start charging again");
         LocalDateTime timeStartChargingAgain = toToday(13, 0, 0);
@@ -136,20 +137,20 @@ public class EVChargerTest extends TestBase {
                 true, 6000, false, "Switch on");
         tick(appliance, timeInitial, true, true);
         List<RuntimeInterval> runtimeIntervalsStartChargingAgain = appliance.getRuntimeIntervals(timeStartCharging, false);
-        Assert.assertEquals(
+        assertEquals(
                 Collections.singletonList(
                         new RuntimeInterval(0, 172800, 0, 36000, true)
                 ),
                 runtimeIntervalsStartChargingAgain);
-        Assert.assertEquals(8.0f, mockMeter.getEnergy(), 0.01);
+        assertEquals(8.0f, mockMeter.getEnergy(), 0.01);
 
         log("After start charging again");
         LocalDateTime timeAfterStartChargingAgain = toToday(14, 0, 0);
         Mockito.when(pollEnergyExecutor.pollEnergy(Mockito.any())).thenReturn(24.0f);
         tick(appliance, timeInitial, true, true);
         List<RuntimeInterval> runtimeIntervalsAfterStartChargingAgain = appliance.getRuntimeIntervals(timeAfterStartChargingAgain, false);
-        Assert.assertEquals(14.0f, mockMeter.getEnergy(), 0.01);
-        Assert.assertEquals(
+        assertEquals(14.0f, mockMeter.getEnergy(), 0.01);
+        assertEquals(
                 Collections.singletonList(
                         new RuntimeInterval(0, 172800, 0, 30000, true)
                 ),
@@ -159,11 +160,11 @@ public class EVChargerTest extends TestBase {
         LocalDateTime timeManualStartChargingCompleted = toToday(15, 0, 0);
         Mockito.when(pollEnergyExecutor.pollEnergy(Mockito.any())).thenReturn(30.0f);
         tick(appliance, timeManualStartChargingCompleted, true, false);
-        Assert.assertTrue(evCharger.isChargingCompleted());
+        assertTrue(evCharger.isChargingCompleted());
         List<RuntimeInterval> runtimeIntervalsManualStartChargingCompleted
                 = appliance.getRuntimeIntervals(timeManualStartChargingCompleted, false);
-        Assert.assertEquals(0, runtimeIntervalsManualStartChargingCompleted.size());
-        Assert.assertEquals(20.0f, mockMeter.getEnergy(), 0.01);
+        assertEquals(0, runtimeIntervalsManualStartChargingCompleted.size());
+        assertEquals(20.0f, mockMeter.getEnergy(), 0.01);
     }
 
     @Test
@@ -181,14 +182,14 @@ public class EVChargerTest extends TestBase {
         log("Vehicle not connected");
         tick(appliance, timeInitial, false, false);
         List<RuntimeInterval> runtimeIntervalsNotConnected = appliance.getRuntimeIntervals(timeInitial, false);
-        Assert.assertEquals(0, runtimeIntervalsNotConnected.size());
+        assertEquals(0, runtimeIntervalsNotConnected.size());
 
         log("Vehicle connected");
         LocalDateTime timeVehicleConnected = toToday(9, 55, 0);
         Mockito.when(socScript.getStateOfCharge()).thenReturn(70.0f);
         tick(appliance, timeInitial, true, false);
         List<RuntimeInterval> runtimeIntervalsConnected = appliance.getRuntimeIntervals(timeVehicleConnected, false);
-        Assert.assertEquals(
+        assertEquals(
                 Collections.singletonList(
                         new RuntimeInterval(0, 172800, 0, 4400, true)
                 ),
@@ -210,14 +211,14 @@ public class EVChargerTest extends TestBase {
         log("Vehicle not connected");
         tick(appliance, timeInitial, false, false);
         List<RuntimeInterval> runtimeIntervalsNotConnected = appliance.getRuntimeIntervals(timeInitial, false);
-        Assert.assertEquals(0, runtimeIntervalsNotConnected.size());
+        assertEquals(0, runtimeIntervalsNotConnected.size());
 
         log("Vehicle connected");
         LocalDateTime timeVehicleConnected = toToday(9, 55, 0);
         Mockito.when(socScript.getStateOfCharge()).thenReturn(84.5f);
         tick(appliance, timeInitial, true, false);
         List<RuntimeInterval> runtimeIntervalsConnected = appliance.getRuntimeIntervals(timeVehicleConnected, false);
-        Assert.assertEquals(0, runtimeIntervalsNotConnected.size());
+        assertEquals(0, runtimeIntervalsNotConnected.size());
     }
 
     @Test
@@ -239,7 +240,7 @@ public class EVChargerTest extends TestBase {
 
         log("Vehicle not connected");
         List<RuntimeInterval> runtimeIntervalsNotConnected = appliance.getRuntimeIntervals(timeInitial, false);
-        Assert.assertEquals(0, runtimeIntervalsNotConnected.size());
+        assertEquals(0, runtimeIntervalsNotConnected.size());
 
         log("After vehicle has been connected");
         LocalDateTime timeVehicleConnected = toToday(9, 55, 0);
@@ -247,7 +248,7 @@ public class EVChargerTest extends TestBase {
         Mockito.when(socScript.getStateOfCharge()).thenReturn(50.0f);
         evCharger.updateState(timeVehicleConnected);
         List<RuntimeInterval> runtimeIntervalsConnected = appliance.getRuntimeIntervals(timeVehicleConnected, false);
-        Assert.assertEquals(
+        assertEquals(
             Arrays.asList(
                     new RuntimeInterval(0, 299, 0, 22000, true),
                     new RuntimeInterval(300, 21900, 4400, 4400, true),
@@ -261,7 +262,7 @@ public class EVChargerTest extends TestBase {
                 true, 4000, false, "Switch on");
         tick(appliance, timeInitial, true, true);
         List<RuntimeInterval> runtimeIntervalsStartCharging = appliance.getRuntimeIntervals(timeStartCharging, false);
-        Assert.assertEquals(
+        assertEquals(
                 Arrays.asList(
                         new RuntimeInterval(0, 21600, 4400, 4400, true),
                         new RuntimeInterval(86400, 108000, 4400, 4400, true)
@@ -272,7 +273,7 @@ public class EVChargerTest extends TestBase {
         LocalDateTime timeSOCReached = toToday(11, 0, 0);
         tick(appliance, timeSOCReached, true, true, 4.4f);
         List<RuntimeInterval> runtimeIntervalsSocReached = appliance.getRuntimeIntervals(timeSOCReached, false);
-        Assert.assertEquals(
+        assertEquals(
                 Arrays.asList(
                         new RuntimeInterval(0, 18000, 4400, 4400, true),
                         new RuntimeInterval(82800, 104400, 4400, 4400, true),
@@ -298,7 +299,7 @@ public class EVChargerTest extends TestBase {
 
         log("Vehicle not connected");
         List<RuntimeInterval> runtimeIntervalsNotConnected = appliance.getRuntimeIntervals(timeInitial, false);
-        Assert.assertEquals(0, runtimeIntervalsNotConnected.size());
+        assertEquals(0, runtimeIntervalsNotConnected.size());
 
         log("After vehicle has been connected");
         LocalDateTime timeVehicleConnected = toToday(9, 55, 0);
@@ -306,7 +307,7 @@ public class EVChargerTest extends TestBase {
         Mockito.when(socScript.getStateOfCharge()).thenReturn(42.7f);
         evCharger.updateState(timeVehicleConnected);
         List<RuntimeInterval> runtimeIntervalsConnected = appliance.getRuntimeIntervals(timeVehicleConnected, false);
-        Assert.assertEquals(
+        assertEquals(
                 Arrays.asList(
                         new RuntimeInterval(0, 299, 0, 25520, true),
                         new RuntimeInterval(300, 21900, 3520, 3520, true),
@@ -334,14 +335,14 @@ public class EVChargerTest extends TestBase {
 
         log("Vehicle not connected");
         List<RuntimeInterval> runtimeIntervalsNotConnected = appliance.getRuntimeIntervals(timeInitial, false);
-        Assert.assertEquals(0, runtimeIntervalsNotConnected.size());
+        assertEquals(0, runtimeIntervalsNotConnected.size());
 
         log("After connected");
         LocalDateTime timeVehicleConnected = toToday(9, 55, 0);
         Mockito.when(socScript.getStateOfCharge()).thenReturn(72.7f);
         evCharger.updateState(timeVehicleConnected);
         List<RuntimeInterval> runtimeIntervalsConnected = appliance.getRuntimeIntervals(timeVehicleConnected, false);
-        Assert.assertEquals(0, runtimeIntervalsConnected.size());
+        assertEquals(0, runtimeIntervalsConnected.size());
 
         log("Start charging");
         LocalDateTime timeStartCharging = toToday(10, 0, 0);
@@ -349,21 +350,21 @@ public class EVChargerTest extends TestBase {
                 true, 4000, false, "Switch on");
         tick(appliance, timeInitial, true, true);
         List<RuntimeInterval> runtimeIntervalsStartCharging = appliance.getRuntimeIntervals(timeStartCharging, false);
-        Assert.assertEquals(
+        assertEquals(
                 Arrays.asList(
                         new RuntimeInterval(0, 21600, 22000, 22000, true),
                         new RuntimeInterval(86400, 108000, 22000, 22000, true)
                 ),
                 runtimeIntervalsStartCharging);
         Mockito.verify(mockMeter).startEnergyMeter();
-        Assert.assertEquals(0.0f, mockMeter.getEnergy(), 0.01);
+        assertEquals(0.0f, mockMeter.getEnergy(), 0.01);
 
         log("After start charging");
         LocalDateTime timeAfterStartCharging = toToday(11, 0, 0);
         Mockito.when(pollEnergyExecutor.pollEnergy(Mockito.any())).thenReturn(14.0f);
         tick(appliance, timeInitial, true, true);
         List<RuntimeInterval> runtimeIntervalsAfterStartCharging = appliance.getRuntimeIntervals(timeAfterStartCharging, false);
-        Assert.assertEquals(
+        assertEquals(
                 Arrays.asList(
                         new RuntimeInterval(0, 18000, 8000, 8000, true),
                         new RuntimeInterval(82800, 104400, 22000, 22000, true),
@@ -379,7 +380,7 @@ public class EVChargerTest extends TestBase {
                 false, null, false, "Switch off");
         tick(appliance, timeInitial,  true, false);
         List<RuntimeInterval> runtimeIntervalsAfterInterrupCharging = appliance.getRuntimeIntervals(timeAfterStartCharging, false);
-        Assert.assertEquals(
+        assertEquals(
                 Arrays.asList(
                         new RuntimeInterval(0, 18000, 4000, 4000, true),
                         new RuntimeInterval(82800, 104400, 22000, 22000, true),
@@ -388,7 +389,7 @@ public class EVChargerTest extends TestBase {
                 runtimeIntervalsAfterInterrupCharging);
         Mockito.verify(mockMeter).stopEnergyMeter();
         Mockito.verify(mockMeter, never()).resetEnergyMeter();
-        Assert.assertEquals(18.0f, mockMeter.getEnergy(), 0.01);
+        assertEquals(18.0f, mockMeter.getEnergy(), 0.01);
     }
 
     @Test
@@ -408,13 +409,13 @@ public class EVChargerTest extends TestBase {
 
         log("Vehicle not connected");
         List<RuntimeInterval> runtimeIntervalsNotConnected = appliance.getRuntimeIntervals(timeInitial, false);
-        Assert.assertEquals(0, runtimeIntervalsNotConnected.size());
+        assertEquals(0, runtimeIntervalsNotConnected.size());
 
         log("Vehicle connected");
         LocalDateTime timeVehicleConnected = toToday(10, 0, 0);
         tick(appliance, timeVehicleConnected, true, false);
         List<RuntimeInterval> runtimeIntervalsConnected = appliance.getRuntimeIntervals(timeVehicleConnected, false);
-        Assert.assertEquals(
+        assertEquals(
                 Arrays.asList(
                         new RuntimeInterval(0, 21599, 0, 44000, true),
                         new RuntimeInterval(21600, 43200, 5000, 5000),
@@ -429,7 +430,7 @@ public class EVChargerTest extends TestBase {
         LocalDateTime timeAfterManualStart = toToday(12, 0, 0);
         tick(appliance, timeAfterManualStart, true, true);
         List<RuntimeInterval> runtimeIntervalsManualStart = appliance.getRuntimeIntervals(timeAfterManualStart, false);
-        Assert.assertEquals(
+        assertEquals(
                 Arrays.asList(
                         new RuntimeInterval(0, 12240, 4400, 4400, true),
                         new RuntimeInterval(14400, 36000, 5000, 5000),
@@ -440,10 +441,10 @@ public class EVChargerTest extends TestBase {
         log("Manual start - charging completed");
         LocalDateTime timeManualStartChargingCompleted = toToday(13, 0, 0);
         tick(appliance, timeManualStartChargingCompleted, true, false);
-        Assert.assertTrue(evCharger.isChargingCompleted());
+        assertTrue(evCharger.isChargingCompleted());
         List<RuntimeInterval> runtimeIntervalsManualStartChargingCompleted
                 = appliance.getRuntimeIntervals(timeManualStartChargingCompleted, false);
-        Assert.assertEquals(0, runtimeIntervalsManualStartChargingCompleted.size());
+        assertEquals(0, runtimeIntervalsManualStartChargingCompleted.size());
     }
 
     private void tick(Appliance appliance, LocalDateTime now, boolean connected, boolean charging) {

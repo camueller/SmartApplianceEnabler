@@ -6,7 +6,8 @@ import org.joda.time.DateTimeFieldType;
 import org.joda.time.Interval;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
-import org.junit.Assert;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 abstract public class TestBase {
 
@@ -81,6 +82,6 @@ abstract public class TestBase {
     }
 
     protected void assertDateTime(LocalDateTime dt1, LocalDateTime dt2) {
-        Assert.assertEquals(dt1.get(DateTimeFieldType.dayOfMonth()), dt2.get(DateTimeFieldType.dayOfMonth()));
+        assertEquals(dt1.get(DateTimeFieldType.dayOfMonth()), dt2.get(DateTimeFieldType.dayOfMonth()));
     }
 }

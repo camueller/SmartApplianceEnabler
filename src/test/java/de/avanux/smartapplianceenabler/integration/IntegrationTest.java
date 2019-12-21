@@ -33,14 +33,15 @@ import de.avanux.smartapplianceenabler.util.DateTimeProvider;
 import de.avanux.smartapplianceenabler.webservice.ApplianceStatus;
 import de.avanux.smartapplianceenabler.webservice.SaeController;
 import org.joda.time.LocalDateTime;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class IntegrationTest extends TestBase {
 
@@ -67,7 +68,7 @@ public class IntegrationTest extends TestBase {
         RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
 
         log("Check initial values");
-        Assert.assertFalse(control.isOn());
+        assertFalse(control.isOn());
         assertPlanningRequest(timeInitial,
                 new Timeframe(applianceId,0, 28800,7199, 7200),
                 new Timeframe(applianceId, add24h(0), add24h(28800),7199, 7200));
@@ -77,7 +78,7 @@ public class IntegrationTest extends TestBase {
         log("Update timeframe intervals right before switch on");
         LocalDateTime timeSwitchOn = toToday(11, 0, 0);
         runningTimeMonitor.updateActiveTimeframeInterval(timeSwitchOn);
-        Assert.assertNotNull(runningTimeMonitor.getActiveTimeframeInterval());
+        assertNotNull(runningTimeMonitor.getActiveTimeframeInterval());
         assertPlanningRequest(timeSwitchOn,
                 new Timeframe(applianceId,0, 25200,7199, 7200),
                 new Timeframe(applianceId, add24h(-3600), add24h(25200),7199, 7200),
@@ -91,7 +92,7 @@ public class IntegrationTest extends TestBase {
         assertRunningTime(timeSwitchOn, control, runningTimeMonitor, true, true, false,
                 0, 7200, null);
         ApplianceStatus applianceStatusAfterSwitchOn = getApplianceStatus(timeSwitchOn);
-        Assert.assertTrue(applianceStatusAfterSwitchOn.isOn());
+        assertTrue(applianceStatusAfterSwitchOn.isOn());
         assertPlanningRequest(timeSwitchOn,
                 new Timeframe(applianceId,0, 25200,7199, 7200),
                 new Timeframe(applianceId, add24h(-3600), add24h(25200),7199, 7200),
@@ -115,7 +116,7 @@ public class IntegrationTest extends TestBase {
         );
 
         ApplianceStatus applianceStatusAfterSwitchOff = getApplianceStatus(timeSwitchOff);
-        Assert.assertFalse(applianceStatusAfterSwitchOff.isOn());
+        assertFalse(applianceStatusAfterSwitchOff.isOn());
 
         logger.debug("########## Second switching cycle");
 
@@ -132,7 +133,7 @@ public class IntegrationTest extends TestBase {
                 new Timeframe(applianceId, add48h(-21600), add48h(7200),7199, 7200)
         );
         applianceStatusAfterSwitchOn = getApplianceStatus(timeSwitchOn);
-        Assert.assertTrue(applianceStatusAfterSwitchOn.isOn());
+        assertTrue(applianceStatusAfterSwitchOn.isOn());
 
         log("Switch off");
         timeSwitchOff = toToday(17, 0, 0);
@@ -150,7 +151,7 @@ public class IntegrationTest extends TestBase {
                 new Timeframe(applianceId, add48h(-25200), add48h(3600),7199, 7200)
         );
         applianceStatusAfterSwitchOff = getApplianceStatus(timeSwitchOff);
-        Assert.assertFalse(applianceStatusAfterSwitchOff.isOn());
+        assertFalse(applianceStatusAfterSwitchOff.isOn());
     }
 
     @Test
@@ -166,12 +167,12 @@ public class IntegrationTest extends TestBase {
         RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
 
         log("Check initial values");
-        Assert.assertFalse(control.isOn());
+        assertFalse(control.isOn());
 
         log("Set runtime creates timeframe to be set");
-        Assert.assertEquals(3600, saeController.suggestRuntime(applianceId).intValue());
+        assertEquals(3600, saeController.suggestRuntime(applianceId).intValue());
         saeController.setRuntimeDemand(timeInitial, applianceId, 1800);
-        Assert.assertNotNull(runningTimeMonitor.getActiveTimeframeInterval());
+        assertNotNull(runningTimeMonitor.getActiveTimeframeInterval());
 
         log("Switch on");
         sempController.em2Device(timeInitial, createEM2Device(applianceId,true));
@@ -185,7 +186,7 @@ public class IntegrationTest extends TestBase {
                 new Timeframe(applianceId, add48h(-3600), add48h(25200),3599, 3600)
         );
         ApplianceStatus applianceStatusAfterSwitchOn = getApplianceStatus(timeInitial);
-        Assert.assertTrue(applianceStatusAfterSwitchOn.isOn());
+        assertTrue(applianceStatusAfterSwitchOn.isOn());
 
         log("Update timeframe intervals right after min running time is reached");
         log("Timeframe interval created is deactivated and timeframe interval of schedule is activated");
@@ -201,7 +202,7 @@ public class IntegrationTest extends TestBase {
                 new Timeframe(applianceId, add48h(-5401), add48h(23399),3599, 3600)
         );
         ApplianceStatus applianceStatusAfterSwitchOff = getApplianceStatus(timeAfterExpiration);
-        Assert.assertFalse(applianceStatusAfterSwitchOff.isOn());
+        assertFalse(applianceStatusAfterSwitchOff.isOn());
     }
 
     @Test
@@ -217,7 +218,7 @@ public class IntegrationTest extends TestBase {
         RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
 
         log("Check initial values");
-        Assert.assertFalse(control.isOn());
+        assertFalse(control.isOn());
 
         log("Switch on");
         LocalDateTime timeSwitchOnSchedule = toToday(12, 0, 1);
@@ -231,9 +232,9 @@ public class IntegrationTest extends TestBase {
 
         log("Set runtime creates timeframe to be set");
         LocalDateTime timeSwitchOnManually = toToday(14, 0, 0);
-        Assert.assertEquals(3600, saeController.suggestRuntime(applianceId).intValue());
+        assertEquals(3600, saeController.suggestRuntime(applianceId).intValue());
         saeController.setRuntimeDemand(timeSwitchOnManually, applianceId, 1800);
-        Assert.assertNotNull(runningTimeMonitor.getActiveTimeframeInterval());
+        assertNotNull(runningTimeMonitor.getActiveTimeframeInterval());
 
         log("Switch on");
         sempController.em2Device(timeSwitchOnManually, createEM2Device(applianceId,true));
@@ -247,7 +248,7 @@ public class IntegrationTest extends TestBase {
                 new Timeframe(applianceId, 158400, 187200,3599, 3600)
         );
         ApplianceStatus applianceStatusAfterSwitchOn = getApplianceStatus(timeSwitchOnManually);
-        Assert.assertTrue(applianceStatusAfterSwitchOn.isOn());
+        assertTrue(applianceStatusAfterSwitchOn.isOn());
 
         log("Update timeframe intervals right after min running time is reached");
         log("Timeframe interval active before manual timeframe interval is restored");
@@ -261,7 +262,7 @@ public class IntegrationTest extends TestBase {
                 new Timeframe(applianceId, 156599, 185399,3599, 3600)
         );
         ApplianceStatus applianceStatusAfterSwitchOff = getApplianceStatus(timeAfterExpiration);
-        Assert.assertFalse(applianceStatusAfterSwitchOff.isOn());
+        assertFalse(applianceStatusAfterSwitchOff.isOn());
     }
 
     @Test
@@ -288,7 +289,7 @@ public class IntegrationTest extends TestBase {
         control.detectStartingCurrent(timeInitial, meter);
         assertRunningTime(timeInitial, control, runningTimeMonitor, false, true, false, false,
                 false, null, null, null);
-        Assert.assertEquals(0, sempController.createDevice2EM(timeInitial).getPlanningRequest().size());
+        assertEquals(0, sempController.createDevice2EM(timeInitial).getPlanningRequest().size());
 
         LocalDateTime timeStartingCurrent = toToday(11, 30, 0);
         control.detectStartingCurrent(toToday(11, 30, 0), meter);
@@ -305,7 +306,7 @@ public class IntegrationTest extends TestBase {
                 true, 0, 3600, null);
         assertPlanningRequest(timeSwitchOn, new Timeframe(applianceId,0, 21600,3599, 3600));
         ApplianceStatus applianceStatusAfterSwitchOn = getApplianceStatus(timeSwitchOn);
-        Assert.assertTrue(applianceStatusAfterSwitchOn.isOn());
+        assertTrue(applianceStatusAfterSwitchOn.isOn());
 
         log("Switch off");
         LocalDateTime timeSwitchOff = toToday(13, 0, 0);
@@ -349,7 +350,7 @@ public class IntegrationTest extends TestBase {
         control.detectStartingCurrent(timeInitial, meter);
         assertRunningTime(timeInitial, control, runningTimeMonitor, false, true, false, false,
                 false, null, null, null);
-        Assert.assertEquals(0, sempController.createDevice2EM(timeInitial).getPlanningRequest().size());
+        assertEquals(0, sempController.createDevice2EM(timeInitial).getPlanningRequest().size());
 
         LocalDateTime timeStartingCurrent = toToday(11, 30, 0);
         control.detectStartingCurrent(toToday(11, 30, 0), meter);
@@ -382,8 +383,7 @@ public class IntegrationTest extends TestBase {
 
         log("Switch on");
         sempController.em2Device(timeInitial, createEM2Device(applianceId,true));
-        Assert.assertTrue("It should be possible to set appliance control state to running before " +
-                "the timeframe interval started", runningTimeMonitor.isRunning());
+        assertTrue(runningTimeMonitor.isRunning());
 
         log("Check values right after switch on before interval start");
         assertRunningTime(timeInitial, control, runningTimeMonitor, true, true, false,
@@ -439,32 +439,32 @@ public class IntegrationTest extends TestBase {
                                    Integer remainingMinRunningTime, Integer remainingMaxRunningTime) {
         assertRunningTime(now, control, runningTimeMonitor, on, running, interrupted, activateTimeframeIntervalNotNull,
                 runningTime, remainingMinRunningTime, remainingMaxRunningTime);
-        Assert.assertEquals(applianceOn, ((StartingCurrentSwitch) control).isApplianceOn());
-        Assert.assertNull(runningTimeMonitor.getSchedules());
+        assertEquals(applianceOn, ((StartingCurrentSwitch) control).isApplianceOn());
+        assertNull(runningTimeMonitor.getSchedules());
     }
 
     private void assertRunningTime(LocalDateTime now, Control control, RunningTimeMonitor runningTimeMonitor,
                                    boolean on, boolean running, boolean interrupted,
                                    boolean activateTimeframeIntervalNotNull, Integer runningTime,
                                    Integer remainingMinRunningTime, Integer remainingMaxRunningTime) {
-        Assert.assertEquals(on, control.isOn());
-        Assert.assertEquals(running, runningTimeMonitor.isRunning());
-        Assert.assertEquals(interrupted, runningTimeMonitor.isInterrupted());
+        assertEquals(on, control.isOn());
+        assertEquals(running, runningTimeMonitor.isRunning());
+        assertEquals(interrupted, runningTimeMonitor.isInterrupted());
         if (activateTimeframeIntervalNotNull) {
-            Assert.assertNotNull(runningTimeMonitor.getActiveTimeframeInterval());
+            assertNotNull(runningTimeMonitor.getActiveTimeframeInterval());
         }
-        Assert.assertEquals(runningTime, runningTimeMonitor.getRunningTimeOfCurrentTimeFrame(now));
-        Assert.assertEquals(remainingMinRunningTime, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(now));
-        Assert.assertEquals(remainingMaxRunningTime, runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(now));
+        assertEquals(runningTime, runningTimeMonitor.getRunningTimeOfCurrentTimeFrame(now));
+        assertEquals(remainingMinRunningTime, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(now));
+        assertEquals(remainingMaxRunningTime, runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(now));
     }
 
     private void assertPlanningRequest(LocalDateTime now, Timeframe... expectedTimeframes) {
         List<PlanningRequest> planningRequests = sempController.createDevice2EM(now).getPlanningRequest();
-        Assert.assertEquals(1, planningRequests.size());
+        assertEquals(1, planningRequests.size());
         List<Timeframe> timeframes = planningRequests.get(0).getTimeframes();
-        Assert.assertEquals(expectedTimeframes.length, timeframes.size());
+        assertEquals(expectedTimeframes.length, timeframes.size());
         for(int i=0; i<expectedTimeframes.length; i++) {
-            Assert.assertEquals("Timeframes not equals for index=" + i, expectedTimeframes[i], timeframes.get(i));
+            assertEquals(expectedTimeframes[i], timeframes.get(i));
         }
     }
 

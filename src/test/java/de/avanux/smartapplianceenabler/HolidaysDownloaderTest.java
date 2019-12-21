@@ -18,10 +18,11 @@
 package de.avanux.smartapplianceenabler;
 
 import org.joda.time.LocalDate;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HolidaysDownloaderTest {
 
@@ -29,6 +30,6 @@ public class HolidaysDownloaderTest {
     public void downloadHolidays() {
         HolidaysDownloader downloader = new HolidaysDownloader();
         Map<LocalDate, String> holidayWithName = downloader.downloadHolidays();
-        Assert.assertTrue(holidayWithName.size() > 0);
+        assertTrue(holidayWithName.size() > 0);
     }
 }

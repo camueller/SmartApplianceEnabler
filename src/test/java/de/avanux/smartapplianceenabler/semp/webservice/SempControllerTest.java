@@ -7,15 +7,17 @@ import de.avanux.smartapplianceenabler.schedule.TimeOfDay;
 import de.avanux.smartapplianceenabler.test.TestBuilder;
 import de.avanux.smartapplianceenabler.util.DateTimeProvider;
 import org.joda.time.LocalDateTime;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Collections;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.util.AssertionErrors.assertFalse;
+import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 public class SempControllerTest extends TestBase {
 
@@ -37,7 +39,7 @@ public class SempControllerTest extends TestBase {
                 .withSchedule(10, 0, 18, 0, 3600, null)
                 .init();
         DeviceInfo deviceInfo = sempController.createDeviceInfo(applianceId);
-        Assert.assertFalse("No value for maxRunningTime indicates no ability to consume optional energy",
+        assertFalse("No value for maxRunningTime indicates no ability to consume optional energy",
                 deviceInfo.getCapabilities().getOptionalEnergy());
     }
 
@@ -50,7 +52,7 @@ public class SempControllerTest extends TestBase {
                 .withSchedule(10, 0, 18, 0, 3600, 7200)
                 .init();
         DeviceInfo deviceInfo = sempController.createDeviceInfo(applianceId);
-        Assert.assertTrue("Different values for minRunningTime and maxRunningTime indicate consumption of " +
+        assertTrue("Different values for minRunningTime and maxRunningTime indicate consumption of " +
                 "optional energy", deviceInfo.getCapabilities().getOptionalEnergy());
     }
 
@@ -85,9 +87,9 @@ public class SempControllerTest extends TestBase {
 
         Device2EM device2EM = sempController.createDevice2EM(now);
         List<PlanningRequest> planningRequests = device2EM.getPlanningRequest();
-        Assert.assertEquals(1, planningRequests.size());
+        assertEquals(1, planningRequests.size());
         List<Timeframe> timeframes = planningRequests.get(0).getTimeframes();
-        Assert.assertEquals(3, timeframes.size());
+        assertEquals(3, timeframes.size());
         assertTimeframe(timeframes.get(0), 0, 1800, 599, 600);
         assertTimeframe(timeframes.get(1), 86399, 88200, 599, 600);
         assertTimeframe(timeframes.get(2), 172799, 174600, 599, 600);
@@ -125,16 +127,16 @@ public class SempControllerTest extends TestBase {
         // check timeframes for the first time after activation
         Device2EM device2EM = sempController.createDevice2EM(now);
         List<PlanningRequest> planningRequests = device2EM.getPlanningRequest();
-        Assert.assertEquals(1, planningRequests.size());
+        assertEquals(1, planningRequests.size());
         List<Timeframe> timeframes = planningRequests.get(0).getTimeframes();
-        Assert.assertEquals(1, timeframes.size());
+        assertEquals(1, timeframes.size());
 
         // check again in order to make sure that the timeframe remains active
         device2EM = sempController.createDevice2EM(now);
         planningRequests = device2EM.getPlanningRequest();
-        Assert.assertEquals(1, planningRequests.size());
+        assertEquals(1, planningRequests.size());
         timeframes = planningRequests.get(0).getTimeframes();
-        Assert.assertEquals(1, timeframes.size());
+        assertEquals(1, timeframes.size());
 
         appliance.finishedCurrentDetected();
         when(runningTimeMonitor.getActiveTimeframeInterval()).thenReturn(null);
@@ -142,20 +144,20 @@ public class SempControllerTest extends TestBase {
         // check timeframes for the first time after deactivation
         device2EM = sempController.createDevice2EM(now);
         planningRequests = device2EM.getPlanningRequest();
-        Assert.assertEquals(0, planningRequests.size());
+        assertEquals(0, planningRequests.size());
 
         // check again in order to make sure that the timeframe remains inactive
         device2EM = sempController.createDevice2EM(now);
         planningRequests = device2EM.getPlanningRequest();
-        Assert.assertEquals(0, planningRequests.size());
+        assertEquals(0, planningRequests.size());
     }
 
     private void assertTimeframe(Timeframe timeframe, Integer earliestStart, Integer latestEnd, Integer minRuningTime, Integer maxRunningTime) {
-        Assert.assertEquals(earliestStart, timeframe.getEarliestStart());
-        Assert.assertEquals(latestEnd, timeframe.getLatestEnd());
-        Assert.assertEquals(latestEnd, timeframe.getLatestEnd());
-        Assert.assertEquals(minRuningTime, timeframe.getMinRunningTime());
-        Assert.assertEquals(maxRunningTime, timeframe.getMaxRunningTime());
+        assertEquals(earliestStart, timeframe.getEarliestStart());
+        assertEquals(latestEnd, timeframe.getLatestEnd());
+        assertEquals(latestEnd, timeframe.getLatestEnd());
+        assertEquals(minRuningTime, timeframe.getMinRunningTime());
+        assertEquals(maxRunningTime, timeframe.getMaxRunningTime());
     }
 
     private void setDeviceInfo(DeviceInfo deviceInfo) {

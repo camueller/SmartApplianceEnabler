@@ -21,12 +21,14 @@ package de.avanux.smartapplianceenabler.http;
 import de.avanux.smartapplianceenabler.control.ev.EVReadValueName;
 import de.avanux.smartapplianceenabler.control.ev.EVWriteValueName;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolType;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EVHttpControlTest {
 
@@ -78,31 +80,31 @@ public class EVHttpControlTest {
     @Test
     public void isVehicleNotConnected() {
         Mockito.doReturn("{ \"car\": \"1\" }").when(executorMock).executeGet(Mockito.any());
-        Assert.assertTrue(this.control.isVehicleNotConnected());
+        assertTrue(this.control.isVehicleNotConnected());
     }
 
     @Test
     public void isVehicleConnected() {
         Mockito.doReturn("{ \"car\": \"3\" }").when(executorMock).executeGet(Mockito.any());
-        Assert.assertTrue(this.control.isVehicleConnected());
+        assertTrue(this.control.isVehicleConnected());
     }
 
     @Test
     public void isCharging() {
         Mockito.doReturn("{ \"car\": \"2\" }").when(executorMock).executeGet(Mockito.any());
-        Assert.assertTrue(this.control.isCharging());
+        assertTrue(this.control.isCharging());
     }
 
     @Test
     public void isInErrorState_True() {
         Mockito.doReturn("{ \"err\": \"1\" }").when(executorMock).executeGet(Mockito.any());
-        Assert.assertTrue(this.control.isInErrorState());
+        assertTrue(this.control.isInErrorState());
     }
 
     @Test
     public void isInErrorState_False() {
         Mockito.doReturn("{ \"err\": \"0\" }").when(executorMock).executeGet(Mockito.any());
-        Assert.assertFalse(this.control.isInErrorState());
+        assertFalse(this.control.isInErrorState());
     }
 
     @Test

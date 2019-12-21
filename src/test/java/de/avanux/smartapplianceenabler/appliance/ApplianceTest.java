@@ -30,13 +30,15 @@ import de.avanux.smartapplianceenabler.test.TestBuilder;
 import de.avanux.smartapplianceenabler.util.DateTimeProvider;
 import org.joda.time.Interval;
 import org.joda.time.LocalDateTime;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ApplianceTest extends TestBase {
     private Appliance appliance;
@@ -64,10 +66,10 @@ public class ApplianceTest extends TestBase {
 
         RuntimeInterval runtimeInterval = this.appliance.createRuntimeRequestInterval(interval, schedule.getRequest().getMin(),
                 null, now);
-        Assert.assertEquals(1800, (int) runtimeInterval.getEarliestStart());
-        Assert.assertEquals(30600, (int) runtimeInterval.getLatestEnd());
-        Assert.assertEquals(7200, (int) runtimeInterval.getMinRunningTime());
-        Assert.assertNull(runtimeInterval.getMaxRunningTime());
+        assertEquals(1800, (int) runtimeInterval.getEarliestStart());
+        assertEquals(30600, (int) runtimeInterval.getLatestEnd());
+        assertEquals(7200, (int) runtimeInterval.getMinRunningTime());
+        assertNull(runtimeInterval.getMaxRunningTime());
     }
 
     @Test
@@ -80,10 +82,10 @@ public class ApplianceTest extends TestBase {
 
         RuntimeInterval runtimeInterval = this.appliance.createRuntimeRequestInterval(interval, schedule.getRequest().getMin(),
                 schedule.getRequest().getMax(), now);
-        Assert.assertEquals(1800, (int) runtimeInterval.getEarliestStart());
-        Assert.assertEquals(30600, (int) runtimeInterval.getLatestEnd());
-        Assert.assertEquals(3600, (int) runtimeInterval.getMinRunningTime());
-        Assert.assertEquals(7200, (int) runtimeInterval.getMaxRunningTime());
+        assertEquals(1800, (int) runtimeInterval.getEarliestStart());
+        assertEquals(30600, (int) runtimeInterval.getLatestEnd());
+        assertEquals(3600, (int) runtimeInterval.getMinRunningTime());
+        assertEquals(7200, (int) runtimeInterval.getMaxRunningTime());
     }
 
     @Test
@@ -96,10 +98,10 @@ public class ApplianceTest extends TestBase {
 
         RuntimeInterval runtimeInterval = this.appliance.createRuntimeRequestInterval(interval, schedule.getRequest().getMin(),
                 schedule.getRequest().getMax(), now);
-        Assert.assertEquals(0, (int) runtimeInterval.getEarliestStart());
-        Assert.assertEquals(3600, (int) runtimeInterval.getLatestEnd());
-        Assert.assertEquals(3600, (int) runtimeInterval.getMinRunningTime());
-        Assert.assertEquals(3600, (int) runtimeInterval.getMaxRunningTime());
+        assertEquals(0, (int) runtimeInterval.getEarliestStart());
+        assertEquals(3600, (int) runtimeInterval.getLatestEnd());
+        assertEquals(3600, (int) runtimeInterval.getMinRunningTime());
+        assertEquals(3600, (int) runtimeInterval.getMaxRunningTime());
     }
 
     @Test
@@ -111,10 +113,10 @@ public class ApplianceTest extends TestBase {
 
         RuntimeInterval runtimeInterval = this.appliance.createRuntimeRequestInterval(interval, schedule.getRequest().getMin(),
                 null, now);
-        Assert.assertEquals(0, (int) runtimeInterval.getEarliestStart());
-        Assert.assertEquals(16200, (int) runtimeInterval.getLatestEnd());
-        Assert.assertEquals(7200, (int) runtimeInterval.getMinRunningTime());
-        Assert.assertNull(runtimeInterval.getMaxRunningTime());
+        assertEquals(0, (int) runtimeInterval.getEarliestStart());
+        assertEquals(16200, (int) runtimeInterval.getLatestEnd());
+        assertEquals(7200, (int) runtimeInterval.getMinRunningTime());
+        assertNull(runtimeInterval.getMaxRunningTime());
     }
 
     @Test
@@ -126,10 +128,10 @@ public class ApplianceTest extends TestBase {
 
         RuntimeInterval runtimeInterval = this.appliance.createRuntimeRequestInterval(interval, schedule.getRequest().getMin(),
                 null, now);
-        Assert.assertEquals(0, (int) runtimeInterval.getEarliestStart());
-        Assert.assertEquals(12600, (int) runtimeInterval.getLatestEnd());
-        Assert.assertEquals(7200, (int) runtimeInterval.getMinRunningTime());
-        Assert.assertNull(runtimeInterval.getMaxRunningTime());
+        assertEquals(0, (int) runtimeInterval.getEarliestStart());
+        assertEquals(12600, (int) runtimeInterval.getLatestEnd());
+        assertEquals(7200, (int) runtimeInterval.getMinRunningTime());
+        assertNull(runtimeInterval.getMaxRunningTime());
     }
 
     @Test
@@ -143,12 +145,12 @@ public class ApplianceTest extends TestBase {
                 Collections.singletonList(schedule), null, true,
                 3600 - nowSeconds, null);
 
-        Assert.assertEquals(3, runtimeIntervals.size());
-        Assert.assertEquals(new RuntimeInterval(0, 14400-nowSeconds,
+        assertEquals(3, runtimeIntervals.size());
+        assertEquals(new RuntimeInterval(0, 14400-nowSeconds,
                         3600-nowSeconds, null), runtimeIntervals.get(0));
-        Assert.assertEquals(new RuntimeInterval(86400-nowSeconds, 100800-nowSeconds,
+        assertEquals(new RuntimeInterval(86400-nowSeconds, 100800-nowSeconds,
                         3600, null), runtimeIntervals.get(1));
-        Assert.assertEquals(new RuntimeInterval(172800-nowSeconds, 187200-nowSeconds,
+        assertEquals(new RuntimeInterval(172800-nowSeconds, 187200-nowSeconds,
                 3600, null), runtimeIntervals.get(2));
     }
 
@@ -164,12 +166,12 @@ public class ApplianceTest extends TestBase {
                 Collections.singletonList(schedule), activeTimeframeInterval, true,
                 3600 - nowSeconds, null);
 
-        Assert.assertEquals(3, runtimeIntervals.size());
-        Assert.assertEquals(new RuntimeInterval(0, 14400-nowSeconds,
+        assertEquals(3, runtimeIntervals.size());
+        assertEquals(new RuntimeInterval(0, 14400-nowSeconds,
                         3600-nowSeconds, null), runtimeIntervals.get(0));
-        Assert.assertEquals(new RuntimeInterval(86400-nowSeconds, 100800-nowSeconds,
+        assertEquals(new RuntimeInterval(86400-nowSeconds, 100800-nowSeconds,
                         3600, null), runtimeIntervals.get(1));
-        Assert.assertEquals(new RuntimeInterval(172800-nowSeconds, 187200-nowSeconds,
+        assertEquals(new RuntimeInterval(172800-nowSeconds, 187200-nowSeconds,
                         3600, null), runtimeIntervals.get(2));
     }
 
@@ -185,12 +187,12 @@ public class ApplianceTest extends TestBase {
                 Collections.singletonList(schedule), activeTimeframeInterval, true,
                 3600 - nowSeconds, null);
 
-        Assert.assertEquals(3, runtimeIntervals.size());
-        Assert.assertEquals(new RuntimeInterval(0, 3600-nowSeconds,
+        assertEquals(3, runtimeIntervals.size());
+        assertEquals(new RuntimeInterval(0, 3600-nowSeconds,
                 3600-nowSeconds, null), runtimeIntervals.get(0));
-        Assert.assertEquals(new RuntimeInterval(75600-nowSeconds, 90000-nowSeconds,
+        assertEquals(new RuntimeInterval(75600-nowSeconds, 90000-nowSeconds,
                 3600, null), runtimeIntervals.get(1));
-        Assert.assertEquals(new RuntimeInterval(162000-nowSeconds, 176400-nowSeconds,
+        assertEquals(new RuntimeInterval(162000-nowSeconds, 176400-nowSeconds,
                 3600, null), runtimeIntervals.get(2));
     }
 
@@ -211,8 +213,8 @@ public class ApplianceTest extends TestBase {
                 appliance.getSchedules(), activeTimeframeInterval, true,
                 3600, null);
 
-        Assert.assertEquals(1, runtimeIntervals.size());
-        Assert.assertEquals(new RuntimeInterval(0, runtime, runtime, null), runtimeIntervals.get(0));
+        assertEquals(1, runtimeIntervals.size());
+        assertEquals(new RuntimeInterval(0, runtime, runtime, null), runtimeIntervals.get(0));
     }
 
     @Test
@@ -231,12 +233,12 @@ public class ApplianceTest extends TestBase {
                 appliance.getSchedules(), activeTimeframeInterval, true,
                 3600, null);
 
-        Assert.assertEquals(3, runtimeIntervals.size());
-        Assert.assertEquals(new RuntimeInterval(0, 18000, 5000, 5000,
+        assertEquals(3, runtimeIntervals.size());
+        assertEquals(new RuntimeInterval(0, 18000, 5000, 5000,
                 true), runtimeIntervals.get(0));
-        Assert.assertEquals(new RuntimeInterval(82800, 104400,5000, 5000,
+        assertEquals(new RuntimeInterval(82800, 104400,5000, 5000,
                 true), runtimeIntervals.get(1));
-        Assert.assertEquals(new RuntimeInterval(169200, 190800,5000, 5000,
+        assertEquals(new RuntimeInterval(169200, 190800,5000, 5000,
                 true), runtimeIntervals.get(2));
     }
 
@@ -258,8 +260,8 @@ public class ApplianceTest extends TestBase {
                 appliance.getSchedules(), activeTimeframeInterval, true,
                 3600, null);
 
-        Assert.assertEquals(1, runtimeIntervals.size());
-        Assert.assertEquals(new RuntimeInterval(0, 7200, energy, energy, true),
+        assertEquals(1, runtimeIntervals.size());
+        assertEquals(new RuntimeInterval(0, 7200, energy, energy, true),
                 runtimeIntervals.get(0));
     }
 
@@ -283,8 +285,8 @@ public class ApplianceTest extends TestBase {
                 appliance.getSchedules(), activeTimeframeInterval, true,
                 3600, null);
 
-        Assert.assertEquals(1, runtimeIntervals.size());
-        Assert.assertEquals(new RuntimeInterval(0, 7200, 15000, 15000, true),
+        assertEquals(1, runtimeIntervals.size());
+        assertEquals(new RuntimeInterval(0, 7200, 15000, 15000, true),
                 runtimeIntervals.get(0));
     }
 
@@ -304,10 +306,10 @@ public class ApplianceTest extends TestBase {
                 appliance.getSchedules(), activeTimeframeInterval, true,
                 3600, null);
 
-        Assert.assertEquals(2, runtimeIntervals.size());
-        Assert.assertEquals(new RuntimeInterval(3600, 25200, 5000, 5000,
+        assertEquals(2, runtimeIntervals.size());
+        assertEquals(new RuntimeInterval(3600, 25200, 5000, 5000,
                 true), runtimeIntervals.get(0));
-        Assert.assertEquals(new RuntimeInterval(90000, 111600,5000, 5000,
+        assertEquals(new RuntimeInterval(90000, 111600,5000, 5000,
                 true), runtimeIntervals.get(1));
     }
 
@@ -330,12 +332,12 @@ public class ApplianceTest extends TestBase {
                 appliance.getSchedules(), activeTimeframeInterval, true,
                 3600, null);
 
-        Assert.assertEquals(3, runtimeIntervals.size());
-        Assert.assertEquals(new RuntimeInterval(0, 18000, 8800, 8800,
+        assertEquals(3, runtimeIntervals.size());
+        assertEquals(new RuntimeInterval(0, 18000, 8800, 8800,
                 true), runtimeIntervals.get(0));
-        Assert.assertEquals(new RuntimeInterval(82800, 104400, 8800, 8800,
+        assertEquals(new RuntimeInterval(82800, 104400, 8800, 8800,
                 true), runtimeIntervals.get(1));
-        Assert.assertEquals(new RuntimeInterval(169200, 190800, 8800, 8800,
+        assertEquals(new RuntimeInterval(169200, 190800, 8800, 8800,
                 true), runtimeIntervals.get(2));
     }
 
@@ -358,10 +360,10 @@ public class ApplianceTest extends TestBase {
                 appliance.getSchedules(), activeTimeframeInterval, true,
                 3600, null);
 
-        Assert.assertEquals(2, runtimeIntervals.size());
-        Assert.assertEquals(new RuntimeInterval(3600, 25200, 8800, 8800,
+        assertEquals(2, runtimeIntervals.size());
+        assertEquals(new RuntimeInterval(3600, 25200, 8800, 8800,
                 true), runtimeIntervals.get(0));
-        Assert.assertEquals(new RuntimeInterval(90000, 111600, 8800, 8800,
+        assertEquals(new RuntimeInterval(90000, 111600, 8800, 8800,
                 true), runtimeIntervals.get(1));
     }
 
@@ -396,11 +398,11 @@ public class ApplianceTest extends TestBase {
         nonEvOptionalEnergyIntervals.add(nonEvOptionalEnergyInterval);
 
         List<RuntimeInterval> runtimeIntervals = this.appliance.getRuntimeIntervals(nonEvOptionalEnergyIntervals);
-        Assert.assertEquals(2, runtimeIntervals.size());
+        assertEquals(2, runtimeIntervals.size());
         RuntimeInterval evOptionalEnergyInterval = new RuntimeInterval(0, 3599,
                 0, 12000, true);
-        Assert.assertEquals(runtimeIntervals.get(0), evOptionalEnergyInterval);
-        Assert.assertEquals(runtimeIntervals.get(1), nonEvOptionalEnergyInterval);
+        assertEquals(runtimeIntervals.get(0), evOptionalEnergyInterval);
+        assertEquals(runtimeIntervals.get(1), nonEvOptionalEnergyInterval);
     }
 
     @Test
@@ -415,6 +417,6 @@ public class ApplianceTest extends TestBase {
         nonEvOptionalEnergyIntervals.add(nonEvOptionalEnergyInterval);
 
         List<RuntimeInterval> runtimeIntervals = this.appliance.getRuntimeIntervals(nonEvOptionalEnergyIntervals);
-        Assert.assertEquals(0, runtimeIntervals.size());
+        assertEquals(0, runtimeIntervals.size());
     }
 }

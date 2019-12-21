@@ -18,11 +18,12 @@
 
 package de.avanux.smartapplianceenabler.control.ev;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.PrintWriter;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SocScriptTest {
 
@@ -33,7 +34,7 @@ public class SocScriptTest {
         File socScriptFile = writeSocScriptFile();
         socScript.setScript(socScriptFile.getAbsolutePath());
         socScript.setExtractionRegex(".*is (\\d*.{0,1}\\d+).*");
-        Assert.assertEquals(42.7f, socScript.getStateOfCharge(), 0.01f);
+        assertEquals(42.7f, socScript.getStateOfCharge(), 0.01f);
     }
 
     private File writeSocScriptFile() throws Exception {

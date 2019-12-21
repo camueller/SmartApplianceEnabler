@@ -18,8 +18,9 @@
 
 package de.avanux.smartapplianceenabler.protocol;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JsonContentProtocolHandlerTest {
     private ContentProtocolHandler contentProtocolHandler;
@@ -33,6 +34,6 @@ public class JsonContentProtocolHandlerTest {
         String content = "{ \"car\": \"3\" }";
         String selector = "$.car";
         this.contentProtocolHandler.parse(content);
-        Assert.assertEquals(3, this.contentProtocolHandler.readIntegerValue(selector).intValue());
+        assertEquals(3, this.contentProtocolHandler.readIntegerValue(selector).intValue());
     }
 }
