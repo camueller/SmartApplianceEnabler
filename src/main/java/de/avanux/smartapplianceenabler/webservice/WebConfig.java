@@ -20,32 +20,33 @@ package de.avanux.smartapplianceenabler.webservice;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.resource.PathResourceResolver;
 
-import javax.servlet.Servlet;
 import java.io.IOException;
 import java.util.List;
 
 @EnableWebMvc
 @Configuration
-@ConditionalOnClass({Servlet.class, DispatcherServlet.class, WebMvcAutoConfiguration.WebMvcAutoConfigurationAdapter.class})
 public class WebConfig implements WebMvcConfigurer {
 
     private Logger logger = LoggerFactory.getLogger(WebConfig.class);
+
+    @Autowired
+    private HttpMessageConverters messageConverters;
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.add(new GensonHttpMessageConverter());
         logger.debug("Registered " + GensonHttpMessageConverter.class.getName());
+        converters.addAll(this.messageConverters.getConverters());
     }
 
     @Override
