@@ -4,7 +4,7 @@
         <Identification>
             <DeviceId>F-00000001-000000000099-00</DeviceId>
             <DeviceName>Elektroauto</DeviceName>
-            <DeviceType>Heater</DeviceType>
+            <DeviceType>EVCharger</DeviceType>
             <DeviceSerial>EV-914</DeviceSerial>
             <DeviceVendor>EV Ltd.</DeviceVendor>
         </Identification>
