@@ -8,9 +8,6 @@
     <a href="https://codecov.io/gh/camueller/SmartApplianceEnabler">
       <img src="https://codecov.io/gh/camueller/SmartApplianceEnabler/coverage.svg">
     </a>
-    <a href="https://camueller.github.io/SmartApplianceEnabler-web-coverage">
-      <img src="https://camueller.github.io/SmartApplianceEnabler-web-coverage/SmartApplianceEnabler-web-coverage.svg">
-    </a>
     <a href="https://github.com/camueller/SmartApplianceEnabler/releases/download/v1.3.50/SmartApplianceEnabler-1.3.50.war">
       <img src="https://img.shields.io/badge/Download-1.3.50-brightgreen.svg">
     </a>
