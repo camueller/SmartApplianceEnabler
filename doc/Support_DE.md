@@ -3,12 +3,29 @@
 Wenn sich der *Smart Appliance Enabler* nicht starten lässt oder der *SMA Home Manager* die vom *Smart Appliance Enabler* verwalteten Geräte nicht finden kann, sollen folgende Punkte geprüft werden:
 
 ## Läuft der Smart Appliance Enabler?
-Ruft man das Start-Script *smartapplianceenabler* mit dem Parameter `status` auf, kann geprüft werden, ob der Service läuft:
+Mit folgedem Befehl läßt sich überprüfen, ob der *Smart Appliance Enabler* läuft:
 ```console
-pi@raspberrypi:~ $ sudo /etc/init.d/smartapplianceenabler status
-Running
+pi@raspberrypi:~ $ sudo systemctl status smartapplianceenabler.service
+● smartapplianceenabler.service - Smart Appliance Enabler
+   Loaded: loaded (/lib/systemd/system/smartapplianceenabler.service; enabled; vendor preset: enabled)
+   Active: active (running) since Mon 2019-12-23 18:06:40 CET; 1min 30s ago
+  Process: 3890 ExecStart=/opt/sae/smartapplianceenabler start (code=exited, status=0/SUCCESS)
+ Main PID: 3897 (sudo)
+    Tasks: 34 (limit: 2200)
+   Memory: 83.1M
+   CGroup: /system.slice/smartapplianceenabler.service
+           ├─3897 sudo -u sae /usr/bin/java -Dsae.discovery.disable=true -Djava.awt.headless=true -Xmx256m -Dlogging.config=/opt/sae/logback-spring.xml -Dsae.pidfile=/var/run/sae/smartapplianceenabler.pid -Dsae.home=/opt/sae -jar /op
+           └─3903 /usr/bin/java -Dsae.discovery.disable=true -Djava.awt.headless=true -Xmx256m -Dlogging.config=/opt/sae/logback-spring.xml -Dsae.pidfile=/var/run/sae/smartapplianceenabler.pid -Dsae.home=/opt/sae -jar /opt/sae/SmartA
+
+Dec 23 18:05:56 raspberrypi systemd[1]: Starting Smart Appliance Enabler...
+Dec 23 18:05:56 raspberrypi smartapplianceenabler[3890]: Starting smartapplianceenabler (/opt/sae/SmartApplianceEnabler-1.5.1.war)
+Dec 23 18:05:56 raspberrypi sudo[3897]:     root : TTY=unknown ; PWD=/opt/sae ; USER=sae ; COMMAND=/usr/bin/java -Dsae.discovery.disable=true -Djava.awt.headless=true -Xmx256m -Dlogging.config=/opt/sae/logback-spring.xml -Dsae.pidfil
+Dec 23 18:05:56 raspberrypi sudo[3897]: pam_unix(sudo:session): session opened for user sae by (uid=0)
+Dec 23 18:06:40 raspberrypi smartapplianceenabler[3890]: ............................................
+Dec 23 18:06:40 raspberrypi smartapplianceenabler[3890]: Started
+Dec 23 18:06:40 raspberrypi systemd[1]: Started Smart Appliance Enabler.
 ```
-Wenn `Running` angezeigt wird, läuft der *Smart Appliance Enabler*.
+Der *Smart Appliance Enabler* läuft, wenn in der mit `Active:` beginnenden Zeile steht `active (running)`.
 
 ## Log
 Der *Smart Appliance Enabler* schreibt seine Log-Daten in das Verzeichnis ```/tmp```, wobei die Dateinamen mit ```rolling``` beginnen gefolgt vom jeweilgen Datum:
@@ -35,6 +52,12 @@ Der *Log-Level* steht defaultmäßig auf ```debug```, um im Fehlerfall detaillie
 ...
 <logger name="de.avanux" level="debug" additivity="false">
 ...
+```
+
+## Historie des SmartApplianceEnabler-Service
+```console
+sae@raspi ~ $ sudo journalctl -u smartapplianceenabler.service
+-- Logs begin at Sun 2019-12-22 18:21:01 CET, end at Mon 2019-12-23 17:52:01 CET. --
 ```
 
 ## Version des Smart Appliance Enabler
