@@ -176,7 +176,7 @@ pi@raspberrypi ~ $ sudo cp /home/pi/.bashrc /opt/sae
 pi@raspberrypi ~ $ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/smartapplianceenabler -P /opt/sae
 pi@raspberrypi ~ $ sudo chmod 755 /opt/sae/smartapplianceenabler
 
-pi@raspberrypi ~ $ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/lib/systemd/system/smartapplianceenabler -P /lib/systemd/system
+pi@raspberrypi ~ $ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/lib/systemd/system/smartapplianceenabler.service -P /lib/systemd/system
 pi@raspberrypi ~ $ sudo chown root.root /lib/systemd/system/smartapplianceenabler.service
 pi@raspberrypi ~ $ sudo chmod 755 /lib/systemd/system/smartapplianceenabler.service
 
