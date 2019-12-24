@@ -20,9 +20,10 @@ package de.avanux.smartapplianceenabler.control;
 
 import de.avanux.smartapplianceenabler.meter.Meter;
 import org.joda.time.LocalDateTime;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class StartingCurrentSwitchTest {
@@ -51,9 +52,9 @@ public class StartingCurrentSwitchTest {
         // right after start
         // ... the appliance should be switched on
         when(control.isOn()).thenReturn(true);
-        Assert.assertTrue(startingCurrentSwitch.isApplianceOn());
+        assertTrue(startingCurrentSwitch.isApplianceOn());
         // ... but from the outside perspective the control is switched off
-        Assert.assertFalse(startingCurrentSwitch.isOn());
+        assertFalse(startingCurrentSwitch.isOn());
 
         // averagePower=0 lastAveragePowerOfPowerOnDetection=null
         startingCurrentSwitch.detectStartingCurrent(now, meter);
@@ -80,9 +81,9 @@ public class StartingCurrentSwitchTest {
         // ... causing appliance power off
         verify(control).on(now, false);
         when(control.isOn()).thenReturn(false);
-        Assert.assertFalse(startingCurrentSwitch.isApplianceOn());
+        assertFalse(startingCurrentSwitch.isApplianceOn());
         // ... and also from the outside perspective the control is switched off
-        Assert.assertFalse(startingCurrentSwitch.isOn());
+        assertFalse(startingCurrentSwitch.isOn());
         // ... listeners are notified of starting current detection
         verify(startingCurrentSwitchListener).startingCurrentDetected(now);
 
@@ -92,9 +93,9 @@ public class StartingCurrentSwitchTest {
         // ... causing appliance power on
         verify(control).on(now, true);
         when(control.isOn()).thenReturn(true);
-        Assert.assertTrue(startingCurrentSwitch.isApplianceOn());
+        assertTrue(startingCurrentSwitch.isApplianceOn());
         // ... and also from the outside perspective the control is switched on
-        Assert.assertTrue(startingCurrentSwitch.isOn());
+        assertTrue(startingCurrentSwitch.isOn());
 
         // averagePower=30 lastAveragePower=30
         when(meter.getAveragePower()).thenReturn(30);
@@ -114,11 +115,11 @@ public class StartingCurrentSwitchTest {
         // power consumption fell below threshold for more than configured finished current detection duration
         // (2 consecutive calls to detectFinishedCurrent())
         // ... causing power off from the outside perspective
-        Assert.assertFalse(startingCurrentSwitch.isOn());
+        assertFalse(startingCurrentSwitch.isOn());
         // ... but appliance remaining powered on
         verify(control).on(now, true);
         when(control.isOn()).thenReturn(true);
-        Assert.assertTrue(startingCurrentSwitch.isApplianceOn());
+        assertTrue(startingCurrentSwitch.isApplianceOn());
         // ... listeners are notified of finish current detection
         verify(startingCurrentSwitchListener).finishedCurrentDetected();
     }

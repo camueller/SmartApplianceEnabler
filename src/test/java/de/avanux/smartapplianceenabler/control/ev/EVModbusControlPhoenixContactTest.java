@@ -20,13 +20,14 @@ package de.avanux.smartapplianceenabler.control.ev;
 
 import de.avanux.smartapplianceenabler.modbus.*;
 import de.avanux.smartapplianceenabler.modbus.executor.*;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EVModbusControlPhoenixContactTest {
 
@@ -94,92 +95,92 @@ public class EVModbusControlPhoenixContactTest {
     @Test
     public void isVehicleNotConnected_A() {
         this.readStringTestingExecutor.setValue("A");
-        Assert.assertTrue(this.evModbusControl.isVehicleNotConnected());
+        assertTrue(this.evModbusControl.isVehicleNotConnected());
     }
 
     @Test
     public void isVehicleNotConnected_B() {
         this.readStringTestingExecutor.setValue("B");
-        Assert.assertFalse(this.evModbusControl.isVehicleNotConnected());
+        assertFalse(this.evModbusControl.isVehicleNotConnected());
     }
 
     @Test
     public void isVehicleNotConnected_C() {
         this.readStringTestingExecutor.setValue("C");
-        Assert.assertFalse(this.evModbusControl.isVehicleNotConnected());
+        assertFalse(this.evModbusControl.isVehicleNotConnected());
     }
 
     @Test
     public void isVehicleNotConnected_D() {
         this.readStringTestingExecutor.setValue("D");
-        Assert.assertFalse(this.evModbusControl.isVehicleNotConnected());
+        assertFalse(this.evModbusControl.isVehicleNotConnected());
     }
 
     @Test
     public void isVehicleConnected_A() {
         this.readStringTestingExecutor.setValue("A");
-        Assert.assertFalse(this.evModbusControl.isVehicleConnected());
+        assertFalse(this.evModbusControl.isVehicleConnected());
     }
 
     @Test
     public void isVehicleConnected_B() {
         this.readStringTestingExecutor.setValue("B");
-        Assert.assertTrue(this.evModbusControl.isVehicleConnected());
+        assertTrue(this.evModbusControl.isVehicleConnected());
     }
 
     @Test
     public void isVehicleConnected_C() {
         this.readStringTestingExecutor.setValue("C");
-        Assert.assertFalse(this.evModbusControl.isVehicleConnected());
+        assertFalse(this.evModbusControl.isVehicleConnected());
     }
 
     @Test
     public void isVehicleConnected_D() {
         this.readStringTestingExecutor.setValue("D");
-        Assert.assertFalse(this.evModbusControl.isVehicleConnected());
+        assertFalse(this.evModbusControl.isVehicleConnected());
     }
 
     @Test
     public void isCharging_C() {
         this.readStringTestingExecutor.setValue("C");
-        Assert.assertTrue(this.evModbusControl.isCharging());
+        assertTrue(this.evModbusControl.isCharging());
     }
 
     @Test
     public void isCharging_D() {
         this.readStringTestingExecutor.setValue("D");
-        Assert.assertTrue(this.evModbusControl.isCharging());
+        assertTrue(this.evModbusControl.isCharging());
     }
 
     @Test
     public void isCharging_A() {
         this.readStringTestingExecutor.setValue("A");
-        Assert.assertFalse(this.evModbusControl.isCharging());
+        assertFalse(this.evModbusControl.isCharging());
     }
 
     @Test
     public void isCharging_B() {
         this.readStringTestingExecutor.setValue("B");
-        Assert.assertFalse(this.evModbusControl.isCharging());
+        assertFalse(this.evModbusControl.isCharging());
     }
 
     @Test
     public void setChargeCurrent() {
         int chargeCurrent = 13;
         this.evModbusControl.setChargeCurrent(chargeCurrent);
-        Assert.assertEquals(chargeCurrent, this.writeIntegerTestingExecutor.getValue().intValue());
+        assertEquals(chargeCurrent, this.writeIntegerTestingExecutor.getValue().intValue());
     }
 
     @Test
     public void startCharging() {
         this.evModbusControl.startCharging();
-        Assert.assertTrue(this.writeBooleanTestingExecutor.getValue());
+        assertTrue(this.writeBooleanTestingExecutor.getValue());
     }
 
     @Test
     public void stopCharging() {
         this.evModbusControl.startCharging();
         this.evModbusControl.stopCharging();
-        Assert.assertFalse(this.writeBooleanTestingExecutor.getValue());
+        assertFalse(this.writeBooleanTestingExecutor.getValue());
     }
 }

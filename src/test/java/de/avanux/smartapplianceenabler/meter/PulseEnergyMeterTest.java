@@ -18,8 +18,9 @@
 
 package de.avanux.smartapplianceenabler.meter;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PulseEnergyMeterTest {
 
@@ -33,27 +34,27 @@ public class PulseEnergyMeterTest {
 
     @Test
     public void getEnergy_initial() {
-        Assert.assertEquals(0.0f, this.pulseEnergyMeter.getEnergy(), 0.01f);
+        assertEquals(0.0f, this.pulseEnergyMeter.getEnergy(), 0.01f);
     }
 
     @Test
     public void getEnergy_1pulse() {
         this.pulseEnergyMeter.increasePulseCounter();
-        Assert.assertEquals(0.000f, this.pulseEnergyMeter.getEnergy(), 0.0001f);
+        assertEquals(0.000f, this.pulseEnergyMeter.getEnergy(), 0.0001f);
     }
 
     @Test
     public void getEnergy_started_1pulse() {
         this.pulseEnergyMeter.startEnergyCounter();
         this.pulseEnergyMeter.increasePulseCounter();
-        Assert.assertEquals(0.001f, this.pulseEnergyMeter.getEnergy(), 0.0001f);
+        assertEquals(0.001f, this.pulseEnergyMeter.getEnergy(), 0.0001f);
     }
 
     @Test
     public void getEnergy_started_500pulse() {
         this.pulseEnergyMeter.startEnergyCounter();
         increasePulseCounter(500);
-        Assert.assertEquals(0.5f, this.pulseEnergyMeter.getEnergy(), 0.0001f);
+        assertEquals(0.5f, this.pulseEnergyMeter.getEnergy(), 0.0001f);
     }
 
     @Test
@@ -61,11 +62,11 @@ public class PulseEnergyMeterTest {
         this.pulseEnergyMeter.startEnergyCounter();
         increasePulseCounter(1000);
         this.pulseEnergyMeter.stopEnergyCounter();
-        Assert.assertEquals(1.0f, this.pulseEnergyMeter.getEnergy(), 0.0001f);
+        assertEquals(1.0f, this.pulseEnergyMeter.getEnergy(), 0.0001f);
         this.pulseEnergyMeter.startEnergyCounter();
         increasePulseCounter(1000);
         this.pulseEnergyMeter.stopEnergyCounter();
-        Assert.assertEquals(2.0f, this.pulseEnergyMeter.getEnergy(), 0.0001f);
+        assertEquals(2.0f, this.pulseEnergyMeter.getEnergy(), 0.0001f);
     }
 
     @Test
@@ -73,12 +74,12 @@ public class PulseEnergyMeterTest {
         this.pulseEnergyMeter.startEnergyCounter();
         increasePulseCounter(1000);
         this.pulseEnergyMeter.stopEnergyCounter();
-        Assert.assertEquals(1.0f, this.pulseEnergyMeter.getEnergy(), 0.0001f);
+        assertEquals(1.0f, this.pulseEnergyMeter.getEnergy(), 0.0001f);
         this.pulseEnergyMeter.resetEnergyCounter();
         this.pulseEnergyMeter.startEnergyCounter();
         increasePulseCounter(1000);
         this.pulseEnergyMeter.stopEnergyCounter();
-        Assert.assertEquals(1.0f, this.pulseEnergyMeter.getEnergy(), 0.0001f);
+        assertEquals(1.0f, this.pulseEnergyMeter.getEnergy(), 0.0001f);
     }
 
     void increasePulseCounter(int pulseCount) {

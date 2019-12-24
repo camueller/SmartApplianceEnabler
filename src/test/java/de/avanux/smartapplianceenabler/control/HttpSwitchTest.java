@@ -24,11 +24,13 @@ import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.joda.time.LocalDateTime;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Collections;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HttpSwitchTest extends TestBase {
 
@@ -59,9 +61,9 @@ public class HttpSwitchTest extends TestBase {
         this.httpSwitch.setHttpWrites(Collections.singletonList(write));
         Mockito.doReturn(responseMock).when(executorMock).executeLeaveOpen(Mockito.any(), Mockito.any(), Mockito.any());
 
-        Assert.assertFalse(this.httpSwitch.isOn());
+        assertFalse(this.httpSwitch.isOn());
         this.httpSwitch.on(new LocalDateTime(), true);
-        Assert.assertTrue(this.httpSwitch.isOn());
+        assertTrue(this.httpSwitch.isOn());
         Mockito.verify(executorMock).executeLeaveOpen(httpMethod, url, data);
     }
 
@@ -77,9 +79,9 @@ public class HttpSwitchTest extends TestBase {
         this.httpSwitch.setHttpWrites(Collections.singletonList(write));
         Mockito.doReturn(responseMock).when(executorMock).executeLeaveOpen(Mockito.any(), Mockito.any(), Mockito.any());
         this.httpSwitch.on = true;
-        Assert.assertTrue(this.httpSwitch.isOn());
+        assertTrue(this.httpSwitch.isOn());
         this.httpSwitch.on(new LocalDateTime(), false);
-        Assert.assertFalse(this.httpSwitch.isOn());
+        assertFalse(this.httpSwitch.isOn());
         Mockito.verify(executorMock).executeLeaveOpen(httpMethod, url, data);
     }
 
@@ -93,9 +95,9 @@ public class HttpSwitchTest extends TestBase {
         this.httpSwitch.setHttpWrites(Collections.singletonList(write));
         Mockito.doReturn(responseMock).when(executorMock).executeLeaveOpen(Mockito.any(), Mockito.any(), Mockito.any());
 
-        Assert.assertFalse(this.httpSwitch.isOn());
+        assertFalse(this.httpSwitch.isOn());
         this.httpSwitch.on(new LocalDateTime(), true);
-        Assert.assertTrue(this.httpSwitch.isOn());
+        assertTrue(this.httpSwitch.isOn());
         Mockito.verify(executorMock).executeLeaveOpen(httpMethod, url, null);
     }
 
@@ -109,9 +111,9 @@ public class HttpSwitchTest extends TestBase {
         this.httpSwitch.setHttpWrites(Collections.singletonList(write));
         Mockito.doReturn(responseMock).when(executorMock).executeLeaveOpen(Mockito.any(), Mockito.any(), Mockito.any());
         this.httpSwitch.on = true;
-        Assert.assertTrue(this.httpSwitch.isOn());
+        assertTrue(this.httpSwitch.isOn());
         this.httpSwitch.on(new LocalDateTime(), false);
-        Assert.assertFalse(this.httpSwitch.isOn());
+        assertFalse(this.httpSwitch.isOn());
         Mockito.verify(executorMock).executeLeaveOpen(httpMethod, url, null);
     }
 }

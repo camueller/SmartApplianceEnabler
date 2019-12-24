@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Axel Müller <axel.mueller@avanux.de>
+ * Copyright (C) 2017 Axel Müller <axel.mueller@avanux.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,21 +15,10 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package de.avanux.smartapplianceenabler;
+@XmlSchema(namespace = ApplianceManager.SCHEMA_LOCATION, elementFormDefault = XmlNsForm.QUALIFIED)
+package de.avanux.smartapplianceenabler.http;
 
-import org.joda.time.LocalDate;
-import org.junit.jupiter.api.Test;
+import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
 
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-public class HolidaysDownloaderTest {
-
-    @Test
-    public void downloadHolidays() {
-        HolidaysDownloader downloader = new HolidaysDownloader();
-        Map<LocalDate, String> holidayWithName = downloader.downloadHolidays();
-        assertTrue(holidayWithName.size() > 0);
-    }
-}
+import javax.xml.bind.annotation.XmlNsForm;
+import javax.xml.bind.annotation.XmlSchema;

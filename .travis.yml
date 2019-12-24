@@ -1,11 +1,9 @@
 language: java
 script: mvn test -B -Ptravis,web
-dist: trusty
+dist: bionic
 sudo: required
 jdk:
-  - oraclejdk8
-node_js:
-  - "11"
+  - openjdk11
 before_install:
   - wget https://archive.apache.org/dist/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.zip
   - unzip -qq apache-maven-3.3.9-bin.zip

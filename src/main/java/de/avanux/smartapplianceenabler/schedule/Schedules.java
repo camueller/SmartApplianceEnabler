@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Axel Müller <axel.mueller@avanux.de>
+ * Copyright (C) 2019 Axel Müller <axel.mueller@avanux.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,24 +16,25 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.avanux.smartapplianceenabler.modbus.executor;
+package de.avanux.smartapplianceenabler.schedule;
 
-import de.avanux.smartapplianceenabler.modbus.ByteOrder;
-import org.junit.jupiter.api.Test;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+@XmlRootElement(name = "Schedules")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class Schedules {
+    @XmlElement(name = "Schedule")
+    private List<Schedule> schedules;
 
-public class ReadDecimalInputRegisterExecutorImplTest {
-
-    private ReadDecimalInputRegisterExecutorImpl executor;
-
-    public ReadDecimalInputRegisterExecutorImplTest() {
+    public List<Schedule> getSchedules() {
+        return schedules;
     }
 
-    @Test
-    public void getValueLittleEndian() {
-        this.executor = new ReadDecimalInputRegisterExecutorImpl("182", 2, ByteOrder.LittleEndian, 0.01);
-        this.executor.setByteValues(new Integer[]{18254, 1});
-        assertEquals(837.90, this.executor.getValue(), 0.0001f);
+    public void setSchedules(List<Schedule> schedules) {
+        this.schedules = schedules;
     }
 }

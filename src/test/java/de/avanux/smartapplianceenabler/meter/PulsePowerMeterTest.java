@@ -20,8 +20,9 @@ package de.avanux.smartapplianceenabler.meter;
 
 import de.avanux.smartapplianceenabler.control.AlwaysOnSwitch;
 import de.avanux.smartapplianceenabler.control.Control;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -56,13 +57,13 @@ public class PulsePowerMeterTest {
 
     @Test
     public void isOn_0ts() {
-        Assert.assertFalse(pulsePowerMeter.isOn(currentTimeMillis));
+        assertFalse(pulsePowerMeter.isOn(currentTimeMillis));
     }
 
     @Test
     public void isOn_0ts_powerOnAlways() {
         pulsePowerMeter.setControl(new AlwaysOnSwitch());
-        Assert.assertTrue(pulsePowerMeter.isOn(currentTimeMillis));
+        assertTrue(pulsePowerMeter.isOn(currentTimeMillis));
     }
 
     /**
@@ -71,7 +72,7 @@ public class PulsePowerMeterTest {
     @Test
     public void isOn_rightAfterPulse() {
         addTimestamps(600, 0);
-        Assert.assertTrue(pulsePowerMeter.isOn(currentTimeMillis));
+        assertTrue(pulsePowerMeter.isOn(currentTimeMillis));
     }
 
     /**
@@ -80,7 +81,7 @@ public class PulsePowerMeterTest {
     @Test
     public void isOn_noIntervalIncreaseAboveFactor() {
         addTimestamps(700, 100);
-        Assert.assertTrue(pulsePowerMeter.isOn(currentTimeMillis));
+        assertTrue(pulsePowerMeter.isOn(currentTimeMillis));
     }
 
     /**
@@ -89,7 +90,7 @@ public class PulsePowerMeterTest {
     @Test
     public void isOn_intervalIncreaseAboveFactor() {
         addTimestamps(1900, 1300);
-        Assert.assertFalse(pulsePowerMeter.isOn(currentTimeMillis));
+        assertFalse(pulsePowerMeter.isOn(currentTimeMillis));
     }
 
     /**
@@ -99,7 +100,7 @@ public class PulsePowerMeterTest {
     public void isOn_powerOnAlways() {
         pulsePowerMeter.setControl(new AlwaysOnSwitch());
         addTimestamps(1900, 1300);
-        Assert.assertTrue(pulsePowerMeter.isOn(currentTimeMillis));
+        assertTrue(pulsePowerMeter.isOn(currentTimeMillis));
     }
 
     /**
@@ -109,7 +110,7 @@ public class PulsePowerMeterTest {
     public void getImpulsesInMeasurementInterval_2ts_2tsi() {
         pulsePowerMeter.setMeasurementInterval(3600);
         addTimestamps(3600, 0);
-        Assert.assertEquals(1, pulsePowerMeter.getImpulsesInMeasurementInterval(currentTimeMillis).size());
+        assertEquals(1, pulsePowerMeter.getImpulsesInMeasurementInterval(currentTimeMillis).size());
     }
 
     /**
@@ -118,7 +119,7 @@ public class PulsePowerMeterTest {
     @Test
     public void getImpulsesInMeasurementInterval_4ts_2tsi() {
         addTimestamps(3600, 2000, 50, 0);
-        Assert.assertEquals(2, pulsePowerMeter.getImpulsesInMeasurementInterval(currentTimeMillis).size());
+        assertEquals(2, pulsePowerMeter.getImpulsesInMeasurementInterval(currentTimeMillis).size());
     }
 
     /**
@@ -127,7 +128,7 @@ public class PulsePowerMeterTest {
     @Test
     public void getAveragePower_2ts_1tsi() {
         addTimestamps(600, 0);
-        Assert.assertEquals(6, pulsePowerMeter.getAveragePower(currentTimeMillis));
+        assertEquals(6, pulsePowerMeter.getAveragePower(currentTimeMillis));
     }
 
     /**
@@ -137,7 +138,7 @@ public class PulsePowerMeterTest {
     public void getAveragePower_2ts_2tsi_3600mi() {
         pulsePowerMeter.setMeasurementInterval(3600);
         addTimestamps(3600, 0);
-        Assert.assertEquals(1, pulsePowerMeter.getAveragePower(currentTimeMillis));
+        assertEquals(1, pulsePowerMeter.getAveragePower(currentTimeMillis));
     }
 
     /**
@@ -147,7 +148,7 @@ public class PulsePowerMeterTest {
     public void getAveragePower_3ts_3tsi_3600mi() {
         pulsePowerMeter.setMeasurementInterval(3600);
         addTimestamps(3600, 3599, 0);
-        Assert.assertEquals(2, pulsePowerMeter.getAveragePower(currentTimeMillis));
+        assertEquals(2, pulsePowerMeter.getAveragePower(currentTimeMillis));
     }
 
     /**
@@ -156,7 +157,7 @@ public class PulsePowerMeterTest {
     @Test
     public void getAveragePower_9ts_6tsi() {
         addTimestamps(3600, 3599, 60, 50, 40, 30, 20, 10, 0);
-        Assert.assertEquals(360, pulsePowerMeter.getAveragePower(currentTimeMillis));
+        assertEquals(360, pulsePowerMeter.getAveragePower(currentTimeMillis));
     }
 
     /**
@@ -165,7 +166,7 @@ public class PulsePowerMeterTest {
     @Test
     public void getAveragePower_9ts_5tsi() {
         addTimestamps(3600, 3599, 80, 60, 30, 20, 10, 0);
-        Assert.assertEquals(240, pulsePowerMeter.getAveragePower(currentTimeMillis));
+        assertEquals(240, pulsePowerMeter.getAveragePower(currentTimeMillis));
     }
 
     /**
@@ -175,7 +176,7 @@ public class PulsePowerMeterTest {
     public void getAveragePower_5ts_5tsi_3600mi() {
         pulsePowerMeter.setMeasurementInterval(3600);
         addTimestamps(3600, 2700, 1800, 900, 0);
-        Assert.assertEquals(4, pulsePowerMeter.getAveragePower(currentTimeMillis));
+        assertEquals(4, pulsePowerMeter.getAveragePower(currentTimeMillis));
     }
 
     /**
@@ -184,7 +185,7 @@ public class PulsePowerMeterTest {
     @Test
     public void getAveragePower_2ts_0tsi() {
         addTimestamps(911, 612);
-        Assert.assertEquals(0, pulsePowerMeter.getAveragePower(currentTimeMillis));
+        assertEquals(0, pulsePowerMeter.getAveragePower(currentTimeMillis));
     }
 
     /**
@@ -196,7 +197,7 @@ public class PulsePowerMeterTest {
         when(control.isOn()).thenReturn(true);
         pulsePowerMeter.setControl(control);
         addTimestamps(911, 612);
-        Assert.assertEquals(0, pulsePowerMeter.getAveragePower(currentTimeMillis));
+        assertEquals(0, pulsePowerMeter.getAveragePower(currentTimeMillis));
     }
 
     /**
@@ -206,7 +207,7 @@ public class PulsePowerMeterTest {
     public void getAveragePower_2ts_0tsi_alwaysOn() {
         pulsePowerMeter.setControl(new AlwaysOnSwitch());
         addTimestamps(911, 612);
-        Assert.assertEquals(0, pulsePowerMeter.getAveragePower(currentTimeMillis));
+        assertEquals(0, pulsePowerMeter.getAveragePower(currentTimeMillis));
     }
 
     /**
@@ -219,7 +220,7 @@ public class PulsePowerMeterTest {
     public void getAveragePower_NH() {
         pulsePowerMeter.setControl(new AlwaysOnSwitch());
         addTimestamps(1200, 600, 36, 30, 24, 18);
-        Assert.assertEquals(6, pulsePowerMeter.getAveragePower(currentTimeMillis));
+        assertEquals(6, pulsePowerMeter.getAveragePower(currentTimeMillis));
     }
 
     /**
@@ -232,21 +233,21 @@ public class PulsePowerMeterTest {
         pulsePowerMeter.setControl(new AlwaysOnSwitch());
         // 1889s / 16:28:46 = 189s
         addTimestamps(1889, 189);
-        Assert.assertEquals(2, pulsePowerMeter.getAveragePower(currentTimeMillis - 180000));
+        assertEquals(2, pulsePowerMeter.getAveragePower(currentTimeMillis - 180000));
         // 16:28:52 = 183s
         addTimestamps(183);
         // 16:28:57 = 178s
-        Assert.assertEquals(120, pulsePowerMeter.getAveragePower(currentTimeMillis - 178000));
+        assertEquals(120, pulsePowerMeter.getAveragePower(currentTimeMillis - 178000));
         // 16:28:59 = 176s / 16:29:04 = 171s / 16:29:11 = 164s / 16:29:17 = 158s
         addTimestamps(176,171,164,158);
         // 16:29:55 = 120s
-        Assert.assertEquals(2, pulsePowerMeter.getAveragePower(currentTimeMillis - 120000));
+        assertEquals(2, pulsePowerMeter.getAveragePower(currentTimeMillis - 120000));
         // 16:30:55 = 60s
-        Assert.assertEquals(2, pulsePowerMeter.getAveragePower(currentTimeMillis - 60000));
+        assertEquals(2, pulsePowerMeter.getAveragePower(currentTimeMillis - 60000));
         // 16:30:15 = 20s
         addTimestamps(20);
         // 16:31:55 = 0s
-        Assert.assertEquals(26, pulsePowerMeter.getAveragePower(currentTimeMillis));
+        assertEquals(26, pulsePowerMeter.getAveragePower(currentTimeMillis));
     }
 
     /**
@@ -257,7 +258,7 @@ public class PulsePowerMeterTest {
     @Test
     public void getAveragePower_NHN() {
         addTimestamps(1800, 1200, 618, 612, 606, 600, 0);
-        Assert.assertEquals(6, pulsePowerMeter.getAveragePower(currentTimeMillis));
+        assertEquals(6, pulsePowerMeter.getAveragePower(currentTimeMillis));
     }
 
     /**
@@ -271,7 +272,7 @@ public class PulsePowerMeterTest {
         Control control = mock(Control.class);
         when(control.isOn()).thenReturn(true);
         pulsePowerMeter.setControl(control);
-        Assert.assertEquals(6, pulsePowerMeter.getAveragePower(currentTimeMillis));
+        assertEquals(6, pulsePowerMeter.getAveragePower(currentTimeMillis));
     }
 
     /**
@@ -286,7 +287,7 @@ public class PulsePowerMeterTest {
         Control control = mock(Control.class);
         when(control.isOn()).thenReturn(true);
         pulsePowerMeter.setControl(control);
-        Assert.assertEquals(0, pulsePowerMeter.getAveragePower(currentTimeMillis));
+        assertEquals(0, pulsePowerMeter.getAveragePower(currentTimeMillis));
     }
 
     /**
@@ -296,7 +297,7 @@ public class PulsePowerMeterTest {
     public void getMinPower_3ts_3tsi_3600mi() {
         pulsePowerMeter.setMeasurementInterval(3600);
         addTimestamps(3599, 3598, 0);
-        Assert.assertEquals(1, pulsePowerMeter.getMinPower(currentTimeMillis));
+        assertEquals(1, pulsePowerMeter.getMinPower(currentTimeMillis));
     }
 
     /**
@@ -306,8 +307,8 @@ public class PulsePowerMeterTest {
     @Test
     public void getMinPower_3ts_3tsi() {
         addTimestamps(58, 50, 45);
-        Assert.assertEquals(180, pulsePowerMeter.getMinPower(currentTimeMillis));
-        Assert.assertEquals(180, pulsePowerMeter.getAveragePower(currentTimeMillis));
+        assertEquals(180, pulsePowerMeter.getMinPower(currentTimeMillis));
+        assertEquals(180, pulsePowerMeter.getAveragePower(currentTimeMillis));
     }
 
     /**
@@ -317,7 +318,7 @@ public class PulsePowerMeterTest {
     public void getMaxPower_3ts_3tsi_3600mi() {
         pulsePowerMeter.setMeasurementInterval(3600);
         addTimestamps(3599, 3598, 0);
-        Assert.assertEquals(3600, pulsePowerMeter.getMaxPower(currentTimeMillis));
+        assertEquals(3600, pulsePowerMeter.getMaxPower(currentTimeMillis));
     }
 
     private void addTimestamps(int... seconds) {

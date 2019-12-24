@@ -19,14 +19,12 @@
 package de.avanux.smartapplianceenabler.schedule;
 
 import de.avanux.smartapplianceenabler.TestBase;
-import de.avanux.smartapplianceenabler.schedule.ConsecutiveDaysTimeframe;
-import de.avanux.smartapplianceenabler.schedule.TimeOfDayOfWeek;
-import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
 import org.joda.time.LocalDateTime;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ConsecutiveDaysTimeframeTest extends TestBase {
 
@@ -37,7 +35,7 @@ public class ConsecutiveDaysTimeframeTest extends TestBase {
         ConsecutiveDaysTimeframe timeRange = new ConsecutiveDaysTimeframe(startTimeOfDayOfWeek, endTimeOfDayOfWeek);
         LocalDateTime now = toDayOfWeek(1, 0, 0, 0);
         List<TimeframeInterval> intervals = timeRange.getIntervals(now);
-        Assert.assertEquals(1, intervals.size());
+        assertEquals(1, intervals.size());
         LocalDateTime start = startTimeOfDayOfWeek.toNextOccurrence(now);
         assertDateTime(start, intervals.get(0).getInterval().getStart().toLocalDateTime());
         assertDateTime(endTimeOfDayOfWeek.toNextOccurrence(start), intervals.get(0).getInterval().getEnd().toLocalDateTime());
@@ -50,7 +48,7 @@ public class ConsecutiveDaysTimeframeTest extends TestBase {
         ConsecutiveDaysTimeframe timeRange = new ConsecutiveDaysTimeframe(startTimeOfDayOfWeek, endTimeOfDayOfWeek);
         LocalDateTime now = toDayOfWeek(5, 18, 0, 0);
         List<TimeframeInterval> intervals = timeRange.getIntervals(now);
-        Assert.assertEquals(1, intervals.size());
+        assertEquals(1, intervals.size());
         LocalDateTime start = startTimeOfDayOfWeek.toNextOccurrence(now);
         assertDateTime(start, intervals.get(0).getInterval().getStart().toLocalDateTime());
         assertDateTime(endTimeOfDayOfWeek.toNextOccurrence(start), intervals.get(0).getInterval().getEnd().toLocalDateTime());
@@ -63,7 +61,7 @@ public class ConsecutiveDaysTimeframeTest extends TestBase {
         ConsecutiveDaysTimeframe timeRange = new ConsecutiveDaysTimeframe(startTimeOfDayOfWeek, endTimeOfDayOfWeek);
         LocalDateTime now = toDayOfWeek(7, 21, 0, 0);
         List<TimeframeInterval> intervals = timeRange.getIntervals(now);
-        Assert.assertEquals(1, intervals.size());
+        assertEquals(1, intervals.size());
         LocalDateTime start = startTimeOfDayOfWeek.toNextOccurrence(now);
         assertDateTime(start, intervals.get(0).getInterval().getStart().toLocalDateTime());
         assertDateTime(endTimeOfDayOfWeek.toNextOccurrence(start), intervals.get(0).getInterval().getEnd().toLocalDateTime());
@@ -76,7 +74,7 @@ public class ConsecutiveDaysTimeframeTest extends TestBase {
         ConsecutiveDaysTimeframe timeRange = new ConsecutiveDaysTimeframe(startTimeOfDayOfWeek, endTimeOfDayOfWeek);
         LocalDateTime now = toDayOfWeek(3, 0, 0, 0);
         List<TimeframeInterval> intervals = timeRange.getIntervals(now);
-        Assert.assertEquals(1, intervals.size());
+        assertEquals(1, intervals.size());
         LocalDateTime start = startTimeOfDayOfWeek.toNextOccurrence(now);
         assertDateTime(start, intervals.get(0).getInterval().getStart().toLocalDateTime());
         assertDateTime(endTimeOfDayOfWeek.toNextOccurrence(start), intervals.get(0).getInterval().getEnd().toLocalDateTime());
@@ -89,7 +87,7 @@ public class ConsecutiveDaysTimeframeTest extends TestBase {
         ConsecutiveDaysTimeframe timeRange = new ConsecutiveDaysTimeframe(startTimeOfDayOfWeek, endTimeOfDayOfWeek);
         LocalDateTime now = toDayOfWeek(7, 10, 0, 0);
         List<TimeframeInterval> intervals = timeRange.getIntervals(now);
-        Assert.assertEquals(1, intervals.size());
+        assertEquals(1, intervals.size());
         LocalDateTime start = startTimeOfDayOfWeek.toLastOccurrence(now);
         assertDateTime(start, intervals.get(0).getInterval().getStart().toLocalDateTime());
         assertDateTime(endTimeOfDayOfWeek.toNextOccurrence(start), intervals.get(0).getInterval().getEnd().toLocalDateTime());
@@ -102,7 +100,7 @@ public class ConsecutiveDaysTimeframeTest extends TestBase {
         ConsecutiveDaysTimeframe timeRange = new ConsecutiveDaysTimeframe(startTimeOfDayOfWeek, endTimeOfDayOfWeek);
         LocalDateTime now = toDayOfWeek(1, 21, 0, 0);
         List<TimeframeInterval> intervals = timeRange.getIntervals(now);
-        Assert.assertEquals(1, intervals.size());
+        assertEquals(1, intervals.size());
         LocalDateTime start = startTimeOfDayOfWeek.toNextOccurrence(now);
         assertDateTime(start, intervals.get(0).getInterval().getStart().toLocalDateTime());
         assertDateTime(endTimeOfDayOfWeek.toNextOccurrence(start), intervals.get(0).getInterval().getEnd().toLocalDateTime());

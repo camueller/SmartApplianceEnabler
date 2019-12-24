@@ -26,10 +26,12 @@ import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
 import de.avanux.smartapplianceenabler.http.*;
 import de.avanux.smartapplianceenabler.modbus.*;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.InputStream;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FileHandlerTest {
 
@@ -38,155 +40,146 @@ public class FileHandlerTest {
     @Test
     public void load_PhoenixContact() throws Exception {
         Appliances appliances = loadAppliances("PhoenixContact.xml");
-        Assert.assertNotNull(appliances);
+        assertNotNull(appliances);
         Appliance appliance = appliances.getAppliances().get(0);
-        Assert.assertNotNull(appliance);
+        assertNotNull(appliance);
         ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
-        Assert.assertNotNull(evCharger);
+        assertNotNull(evCharger);
+        assertEquals(300, evCharger.getStartChargingStateDetectionDelay());
 
-        // FIXME enabling the code below causes NPE on JDK 1.8.151 used by Travis-CI
-//        EVModbusControl modbusControl = (EVModbusControl) evCharger.getControl();
-//        Assert.assertNotNull(modbusControl);
-//
-//        List<ModbusRegisterRead> registerReads = modbusControl.getRegisterReads();
-//        Assert.assertEquals(2, registerReads.size());
-//
-//        ModbusRegisterRead r100 = registerReads.get(0);
-//        assertModbusRegisterRead(r100, "100", ModbusReadRegisterType.InputString);
-//        List<ModbusRegisterReadValue> r100Values = r100.getRegisterReadValues();
-//        Assert.assertEquals(5, r100Values.size());
-//        assertModbusRegisterReadValue(r100Values.get(0), EVReadValueName.VehicleNotConnected, "(A)");
-//        assertModbusRegisterReadValue(r100Values.get(1), EVReadValueName.VehicleConnected, "(B)");
-//        assertModbusRegisterReadValue(r100Values.get(2), EVReadValueName.Charging, "(C|D)");
-//        assertModbusRegisterReadValue(r100Values.get(3), EVReadValueName.ChargingCompleted, "(B)");
-//        assertModbusRegisterReadValue(r100Values.get(4), EVReadValueName.Error, "(E|F)");
-//
-//        ModbusRegisterRead r204 = registerReads.get(1);
-//        assertModbusRegisterRead(r204, "204", ModbusReadRegisterType.Discrete);
-//        List<ModbusRegisterReadValue> r204Values = r204.getRegisterReadValues();
-//        Assert.assertEquals(1, r204Values.size());
-//        assertModbusRegisterReadValue(r204Values.get(0), EVReadValueName.ChargingCompleted, null);
-//
-//        List<ModbusRegisterWrite> registerWrites = modbusControl.getRegisterWrites();
-//        ModbusRegisterWrite r400 = registerWrites.get(0);
-//        assertModbusRegisterWrite(r400, "400", ModbusWriteRegisterType.Coil);
-//        List<ModbusRegisterWriteValue> r400Values = r400.getRegisterWriteValues();
-//        Assert.assertEquals(2, r400Values.size());
-//        assertModbusRegisterWriteValue(r400Values.get(0), EVWriteValueName.StartCharging, "1");
-//        assertModbusRegisterWriteValue(r400Values.get(1), EVWriteValueName.StopCharging, "0");
-//
-//        ModbusRegisterWrite r300 = registerWrites.get(1);
-//        assertModbusRegisterWrite(r300, "300", ModbusWriteRegisterType.Holding);
-//        List<ModbusRegisterWriteValue> r300Values = r300.getRegisterWriteValues();
-//        Assert.assertEquals(1, r300Values.size());
-//        assertModbusRegisterWriteValue(r300Values.get(0), EVWriteValueName.ChargingCurrent, "0");
-//
-//        List<ElectricVehicle> vehicles = evCharger.getVehicles();
-//        assertElectricVehicle(vehicles.get(0), 1, "Nissan Leaf", 40000, 1,
-//                10000, 20, 100, 90,
-//                "/home/axel/IdeaProjects/SmartApplianceEnabler/src/test/soc.sh",
-//                ".*is (\\d*.{0,1}\\d+).*");
-//        assertElectricVehicle(vehicles.get(1), 2, "Tesla Model S", 80000, null,
-//                null, 10, null, null,
-//                null,
-//                null);
+        EVModbusControl modbusControl = (EVModbusControl) evCharger.getControl();
+        assertNotNull(modbusControl);
+
+        List<ModbusRead> registerReads = modbusControl.getModbusReads();
+        assertEquals(1, registerReads.size());
+
+        ModbusRead r100 = registerReads.get(0);
+        assertModbusRead(r100, "100", ReadRegisterType.InputString);
+        List<ModbusReadValue> r100Values = r100.getReadValues();
+        assertEquals(4, r100Values.size());
+        assertModbusReadValue(r100Values.get(0), EVReadValueName.VehicleNotConnected, "(A)");
+        assertModbusReadValue(r100Values.get(1), EVReadValueName.VehicleConnected, "(B)");
+        assertModbusReadValue(r100Values.get(2), EVReadValueName.Charging, "(C|D)");
+        assertModbusReadValue(r100Values.get(3), EVReadValueName.Error, "(E|F)");
+
+        List<ModbusWrite> registerWrites = modbusControl.getModbusWrites();
+        ModbusWrite r400 = registerWrites.get(0);
+        assertModbusRegisterWrite(r400, "400", WriteRegisterType.Coil);
+        List<ModbusWriteValue> r400Values = r400.getWriteValues();
+        assertEquals(2, r400Values.size());
+        assertModbusRegisterWriteValue(r400Values.get(0), EVWriteValueName.StartCharging, "1");
+        assertModbusRegisterWriteValue(r400Values.get(1), EVWriteValueName.StopCharging, "0");
+
+        ModbusWrite r300 = registerWrites.get(1);
+        assertModbusRegisterWrite(r300, "300", WriteRegisterType.Holding);
+        List<ModbusWriteValue> r300Values = r300.getWriteValues();
+        assertEquals(1, r300Values.size());
+        assertModbusRegisterWriteValue(r300Values.get(0), EVWriteValueName.ChargingCurrent, "0");
+
+        List<ElectricVehicle> vehicles = evCharger.getVehicles();
+        assertElectricVehicle(vehicles.get(0), 1, "Nissan Leaf", 40000, 1,
+                10000, 20, 100, 90,
+                "/home/axel/IdeaProjects/SmartApplianceEnabler/src/test/soc.sh",
+                ".*is (\\d*.{0,1}\\d+).*");
+        assertElectricVehicle(vehicles.get(1), 2, "Tesla Model S", 80000, null,
+                null, 10, null, null,
+                null,
+                null);
     }
 
     @Test
     public void load_GoECharger() throws Exception {
         Appliances appliances = loadAppliances("GoECharger.xml");
-        Assert.assertNotNull(appliances);
+        assertNotNull(appliances);
         Appliance appliance = appliances.getAppliances().get(0);
-        Assert.assertNotNull(appliance);
+        assertNotNull(appliance);
         ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
-        Assert.assertNotNull(evCharger);
+        assertNotNull(evCharger);
 
-        // FIXME enabling the code below causes NPE on JDK 1.8.151 used by Travis-CI
-//        EVHttpControl httpControl = (EVHttpControl) evCharger.getControl();
-//        Assert.assertNotNull(httpControl);
-//
-//        List<HttpRead> reads = httpControl.getHttpReads();
-//        Assert.assertEquals(1, reads.size());
-//        HttpRead read = reads.get(0);
-//        assertRead(read, "http://127.0.0.1:8999/status");
-//        List<HttpReadValue> readValues = read.getReadValues();
-//        Assert.assertEquals(5, readValues.size());
-//        assertReadValue(readValues.get(0), EVReadValueName.VehicleNotConnected, "$.car", "(1)");
-//        assertReadValue(readValues.get(1), EVReadValueName.VehicleConnected, "$.car", "(3)");
-//        assertReadValue(readValues.get(2), EVReadValueName.Charging, "$.car", "(2)");
-//        assertReadValue(readValues.get(3), EVReadValueName.ChargingCompleted, "$.car", "(4)");
-//        assertReadValue(readValues.get(4), EVReadValueName.Error, "$.err", "([^0])");
-//
-//        List<HttpWrite> writes = httpControl.getHttpWrites();
-//        Assert.assertEquals(1, writes.size());
-//        HttpWrite write = writes.get(0);
-//        assertWrite(write, "http://127.0.0.1:8999/mqtt=");
-//        List<HttpWriteValue> writeValues = write.getWriteValues();
-//        Assert.assertEquals(3, writeValues.size());
-//        assertWriteValue(writeValues.get(0), EVWriteValueName.ChargingCurrent.name(),"amp={}", HttpMethod.GET);
-//        assertWriteValue(writeValues.get(1), EVWriteValueName.StartCharging.name(),"alw=1", HttpMethod.GET);
-//        assertWriteValue(writeValues.get(2), EVWriteValueName.StopCharging.name(),"alw=0", HttpMethod.GET);
-//
-//        List<ElectricVehicle> vehicles = evCharger.getVehicles();
-//        assertElectricVehicle(vehicles.get(0), 1, "Nissan Leaf", 40000, 1,
-//                10000, 20, 100, 90,
-//                "/home/axel/IdeaProjects/SmartApplianceEnabler/src/test/soc.sh",
-//                ".*is (\\d*.{0,1}\\d+).*");
-//        assertElectricVehicle(vehicles.get(1), 2, "Tesla Model S", 80000, null,
-//                null, 10, null, null,
-//                null,
-//                null);
+        EVHttpControl httpControl = (EVHttpControl) evCharger.getControl();
+        assertNotNull(httpControl);
+
+        List<HttpRead> reads = httpControl.getHttpReads();
+        assertEquals(1, reads.size());
+        HttpRead read = reads.get(0);
+        assertRead(read, "http://192.168.1.1/status");
+        List<HttpReadValue> readValues = read.getReadValues();
+        assertEquals(4, readValues.size());
+        assertReadValue(readValues.get(0), EVReadValueName.VehicleNotConnected, "$.car", "(1)");
+        assertReadValue(readValues.get(1), EVReadValueName.VehicleConnected, "$.car", "(3|4)");
+        assertReadValue(readValues.get(2), EVReadValueName.Charging, "$.car", "(2)");
+        assertReadValue(readValues.get(3), EVReadValueName.Error, "$.err", "([^0])");
+
+        List<HttpWrite> writes = httpControl.getHttpWrites();
+        assertEquals(1, writes.size());
+        HttpWrite write = writes.get(0);
+        assertWrite(write, "http://192.168.1.1/mqtt?payload=");
+        List<HttpWriteValue> writeValues = write.getWriteValues();
+        assertEquals(3, writeValues.size());
+        assertWriteValue(writeValues.get(0), EVWriteValueName.ChargingCurrent.name(),"amp={0}", HttpMethod.GET);
+        assertWriteValue(writeValues.get(1), EVWriteValueName.StartCharging.name(),"alw=1", HttpMethod.GET);
+        assertWriteValue(writeValues.get(2), EVWriteValueName.StopCharging.name(),"alw=0", HttpMethod.GET);
+
+        List<ElectricVehicle> vehicles = evCharger.getVehicles();
+        assertElectricVehicle(vehicles.get(0), 1, "Nissan Leaf", 40000, 1,
+                10000, 20, 100, 90,
+                "/home/axel/IdeaProjects/SmartApplianceEnabler/src/test/soc.sh",
+                ".*is (\\d*.{0,1}\\d+).*");
+        assertElectricVehicle(vehicles.get(1), 2, "Tesla Model S", 80000, null,
+                null, 10, null, null,
+                null,
+                null);
     }
 
     private Appliances loadAppliances(String filename) throws Exception {
         InputStream is = getClass().getClassLoader().getResourceAsStream(filename);
-        Assert.assertTrue(is.available() > 0);
+        assertTrue(is.available() > 0);
         Appliances appliances = fileHandler.load(Appliances.class, is);
         is.close();
         return appliances;
     }
 
     private void assertRead(HttpRead read, String url) {
-        Assert.assertEquals(url, read.getUrl());
+        assertEquals(url, read.getUrl());
     }
 
     private void assertReadValue(HttpReadValue readValue, EVReadValueName name, String path, String extractionRegex) {
-        Assert.assertEquals(name.name(), readValue.getName());
-        Assert.assertEquals(path, readValue.getPath());
-        Assert.assertEquals(extractionRegex, readValue.getExtractionRegex());
+        assertEquals(name.name(), readValue.getName());
+        assertEquals(path, readValue.getPath());
+        assertEquals(extractionRegex, readValue.getExtractionRegex());
     }
 
     private void assertWrite(HttpWrite write, String url) {
-        Assert.assertEquals(url, write.getUrl());
+        assertEquals(url, write.getUrl());
     }
 
     private void assertWriteValue(HttpWriteValue writeValue, String name, String value, HttpMethod method) {
-        Assert.assertEquals(name, writeValue.getName());
-        Assert.assertEquals(value, writeValue.getValue());
-        Assert.assertEquals(method, writeValue.getMethod());
+        assertEquals(name, writeValue.getName());
+        assertEquals(value, writeValue.getValue());
+        assertEquals(method, writeValue.getMethod());
     }
 
-    private void assertModbusRegisterRead(ModbusRead registerRead, String address, ReadRegisterType registerType) {
-        Assert.assertEquals(address, registerRead.getAddress());
-        Assert.assertEquals(registerType, registerRead.getType());
+    private void assertModbusRead(ModbusRead registerRead, String address, ReadRegisterType registerType) {
+        assertEquals(address, registerRead.getAddress());
+        assertEquals(registerType, registerRead.getType());
     }
 
-    private void assertModbusRegisterReadValue(ModbusReadValue registerReadValue, EVReadValueName name, String extractionRegex) {
-        Assert.assertEquals(name.name(), registerReadValue.getName());
+    private void assertModbusReadValue(ModbusReadValue registerReadValue, EVReadValueName name, String extractionRegex) {
+        assertEquals(name.name(), registerReadValue.getName());
         if(extractionRegex != null) {
-            Assert.assertEquals(extractionRegex, registerReadValue.getExtractionRegex());
+            assertEquals(extractionRegex, registerReadValue.getExtractionRegex());
         }
     }
 
     private void assertModbusRegisterWrite(ModbusWrite registerWrite, String address, WriteRegisterType registerType) {
-        Assert.assertEquals(address, registerWrite.getAddress());
-        Assert.assertEquals(registerType, registerWrite.getType());
+        assertEquals(address, registerWrite.getAddress());
+        assertEquals(registerType, registerWrite.getType());
     }
 
     private void assertModbusRegisterWriteValue(ModbusWriteValue registerWriteValue, EVWriteValueName name, String value) {
-        Assert.assertEquals(name.name(), registerWriteValue.getName());
+        assertEquals(name.name(), registerWriteValue.getName());
         if(value != null) {
-            Assert.assertEquals(value, registerWriteValue.getValue());
+            assertEquals(value, registerWriteValue.getValue());
         }
     }
 
@@ -194,19 +187,19 @@ public class FileHandlerTest {
                                        Integer phases, Integer maxChargePower, Integer chargeLoss,
                                        Integer defaultSocManual, Integer defaultSocOptionalEnergy,
                                        String socScript, String socExtractionRegex) {
-        Assert.assertEquals(id, ev.getId());
-        Assert.assertEquals(name, ev.getName());
-        Assert.assertEquals(batteryCapacity, ev.getBatteryCapacity());
-        Assert.assertEquals(phases, ev.getPhases());
-        Assert.assertEquals(maxChargePower, ev.getMaxChargePower());
-        Assert.assertEquals(chargeLoss, ev.getChargeLoss());
-        Assert.assertEquals(defaultSocManual, ev.getDefaultSocManual());
-        Assert.assertEquals(defaultSocOptionalEnergy, ev.getDefaultSocOptionalEnergy());
+        assertEquals(id, ev.getId());
+        assertEquals(name, ev.getName());
+        assertEquals(batteryCapacity, ev.getBatteryCapacity());
+        assertEquals(phases, ev.getPhases());
+        assertEquals(maxChargePower, ev.getMaxChargePower());
+        assertEquals(chargeLoss, ev.getChargeLoss());
+        assertEquals(defaultSocManual, ev.getDefaultSocManual());
+        assertEquals(defaultSocOptionalEnergy, ev.getDefaultSocOptionalEnergy());
         if(socScript != null) {
-            Assert.assertEquals(socScript, ev.getSocScript().getScript());
+            assertEquals(socScript, ev.getSocScript().getScript());
         }
         if(socExtractionRegex != null) {
-            Assert.assertEquals(socExtractionRegex, ev.getSocScript().getExtractionRegex());
+            assertEquals(socExtractionRegex, ev.getSocScript().getExtractionRegex());
         }
     }
 }

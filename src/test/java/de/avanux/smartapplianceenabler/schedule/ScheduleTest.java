@@ -24,20 +24,22 @@ import de.avanux.smartapplianceenabler.schedule.TimeOfDay;
 import org.joda.time.DateTimeFieldType;
 import org.joda.time.Interval;
 import org.joda.time.LocalDateTime;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 public class ScheduleTest extends TestBase {
 
     @Test
     public void findTimeframeIntervals_noTimeFrames() {
         List<Schedule> schedules = new ArrayList<Schedule>();
-        Assert.assertEquals(0, Schedule.findTimeframeIntervals(
+        assertEquals(0, Schedule.findTimeframeIntervals(
                 toToday(16, 1), null, schedules,
                 false, true).size());
     }
@@ -49,10 +51,9 @@ public class ScheduleTest extends TestBase {
         List<TimeframeInterval> timeframeIntervals = Schedule.findTimeframeIntervals(
                 toToday(9, 0), null, schedules,
                 false, true);
-        Assert.assertEquals(7, timeframeIntervals.size());
+        assertEquals(7, timeframeIntervals.size());
         for(int i=0; i<7; i++) {
-            Assert.assertEquals("Error for i=" + i,
-                    toInterval(i,10,0, i, 16, 0),
+            assertEquals(toInterval(i,10,0, i, 16, 0),
                     timeframeIntervals.get(i).getInterval());
         }
     }
@@ -64,10 +65,9 @@ public class ScheduleTest extends TestBase {
         List<TimeframeInterval> timeframeIntervals = Schedule.findTimeframeIntervals(
                 toToday(14, 0), null, schedules,
                 false, false);
-        Assert.assertEquals(7, timeframeIntervals.size());
+        assertEquals(7, timeframeIntervals.size());
         for(int i=0; i<7; i++) {
-            Assert.assertEquals("Error for i=" + i,
-                    toInterval(i,10,0, i, 16, 0),
+            assertEquals(toInterval(i,10,0, i, 16, 0),
                     timeframeIntervals.get(i).getInterval());
         }
     }
@@ -79,10 +79,9 @@ public class ScheduleTest extends TestBase {
         List<TimeframeInterval> timeframeIntervals = Schedule.findTimeframeIntervals(
                 toToday(15, 1), null, schedules,
                 false, false);
-        Assert.assertEquals(7, timeframeIntervals.size());
+        assertEquals(7, timeframeIntervals.size());
         for(int i=0; i<7; i++) {
-            Assert.assertEquals("Error for i=" + i,
-                    toInterval(i,10,0, i, 16, 0),
+            assertEquals(toInterval(i,10,0, i, 16, 0),
                     timeframeIntervals.get(i).getInterval());
         }
     }
@@ -94,10 +93,9 @@ public class ScheduleTest extends TestBase {
         List<TimeframeInterval> timeframeIntervals = Schedule.findTimeframeIntervals(
                 toToday(15, 1), null, schedules,
                 false, true);
-        Assert.assertEquals(6, timeframeIntervals.size());
+        assertEquals(6, timeframeIntervals.size());
         for(int i=0; i<6; i++) {
-            Assert.assertEquals("Error for i=" + i,
-                    toInterval(i+1,10,0,
+            assertEquals(toInterval(i+1,10,0,
                             i+1, 16, 0),
                     timeframeIntervals.get(i).getInterval());
         }
@@ -113,22 +111,22 @@ public class ScheduleTest extends TestBase {
         List<TimeframeInterval> timeframeIntervals = Schedule.findTimeframeIntervals(
                 now, null, schedules,
                 false, true);
-        Assert.assertEquals(5, timeframeIntervals.size());
-        Assert.assertEquals(toIntervalByDow(now,1,14,0,1, 16, 0),
+        assertEquals(5, timeframeIntervals.size());
+        assertEquals(toIntervalByDow(now,1,14,0,1, 16, 0),
                 timeframeIntervals.get(0).getInterval());
-        Assert.assertEquals(toIntervalByDow(now,2,12,0,2, 14, 0),
+        assertEquals(toIntervalByDow(now,2,12,0,2, 14, 0),
                 timeframeIntervals.get(1).getInterval());
-        Assert.assertEquals(toIntervalByDow(now,3,10,0,3, 12, 0),
+        assertEquals(toIntervalByDow(now,3,10,0,3, 12, 0),
                 timeframeIntervals.get(2).getInterval());
-        Assert.assertEquals(toIntervalByDow(now,4,12,0,4, 14, 0),
+        assertEquals(toIntervalByDow(now,4,12,0,4, 14, 0),
                 timeframeIntervals.get(3).getInterval());
-        Assert.assertEquals(toIntervalByDow(now,5,14,0,5, 16, 0),
+        assertEquals(toIntervalByDow(now,5,14,0,5, 16, 0),
                 timeframeIntervals.get(4).getInterval());
     }
 
     @Test
     public void getCurrentOrNextTimeframeInterval_noTimeFrames() {
-        Assert.assertNull(Schedule.getCurrentOrNextTimeframeInterval(toToday(20, 0),
+        assertNull(Schedule.getCurrentOrNextTimeframeInterval(toToday(20, 0),
                 null, false, false));
     }
 
@@ -137,7 +135,7 @@ public class ScheduleTest extends TestBase {
         List<Schedule> schedules = new ArrayList<Schedule>();
         addSchedule(schedules, false, 7200, null,
                 14, 0, 18, 0, null);
-        Assert.assertNull(Schedule.getCurrentOrNextTimeframeInterval(toToday(16, 0),
+        assertNull(Schedule.getCurrentOrNextTimeframeInterval(toToday(16, 0),
                 schedules, false, false));
     }
 
@@ -146,7 +144,7 @@ public class ScheduleTest extends TestBase {
         List<Schedule> schedules = new ArrayList<Schedule>();
         addSchedule(schedules, 7200, 14, 0, 18, 0);
         addSchedule(schedules, 7200, 10, 0, 14, 0);
-        Assert.assertEquals(toIntervalToday(10, 0, 14, 0),
+        assertEquals(toIntervalToday(10, 0, 14, 0),
                 Schedule.getCurrentOrNextTimeframeInterval(
                         toToday(11, 59), schedules,
                         false, true).getInterval());
@@ -157,7 +155,7 @@ public class ScheduleTest extends TestBase {
         List<Schedule> schedules = new ArrayList<Schedule>();
         addSchedule(schedules, 7200, 14, 0, 18, 0);
         addSchedule(schedules, 7200, 10, 0, 14, 0);
-        Assert.assertEquals(toIntervalToday(14, 0, 18, 0),
+        assertEquals(toIntervalToday(14, 0, 18, 0),
                 Schedule.getCurrentOrNextTimeframeInterval(
                         toToday(12, 1), schedules,
                         false, true).getInterval());
@@ -170,7 +168,7 @@ public class ScheduleTest extends TestBase {
         addSchedule(schedules, 7200, 10, 0, 14, 0);
         Interval expectedInterval = new Interval(toDay(1, 10, 0, 0).toDateTime(),
                 toDay(1, 14, 0, 0).toDateTime());
-        Assert.assertEquals(expectedInterval, Schedule.getCurrentOrNextTimeframeInterval(
+        assertEquals(expectedInterval, Schedule.getCurrentOrNextTimeframeInterval(
                 toToday(16, 1), schedules, false, true).getInterval());
     }
 
@@ -179,7 +177,7 @@ public class ScheduleTest extends TestBase {
         List<Schedule> schedules = new ArrayList<Schedule>();
         addSchedule(schedules, 7200, 15, 0, 18, 0);
         addSchedule(schedules, 7200, 10, 0, 14, 0);
-        Assert.assertEquals(toIntervalToday(15, 0, 18, 0),
+        assertEquals(toIntervalToday(15, 0, 18, 0),
                 Schedule.getCurrentOrNextTimeframeInterval(
                         toToday(14, 30), schedules,
                         false, true).getInterval());
@@ -197,7 +195,7 @@ public class ScheduleTest extends TestBase {
         schedules.add(new Schedule(true, 7200, null,
                 new TimeOfDay(15, 0, 0), new TimeOfDay(18, 0, 0),
                 Collections.singletonList(now.plusDays(1).get(DateTimeFieldType.dayOfWeek()))));
-        Assert.assertEquals(
+        assertEquals(
                 new Interval(toDay(1, 15, 0, 0).toDateTime(),
                 toDay(1, 18, 0, 0).toDateTime()),
                 Schedule.getCurrentOrNextTimeframeInterval(now, schedules,
