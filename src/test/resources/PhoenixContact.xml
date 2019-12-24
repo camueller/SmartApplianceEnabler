@@ -19,25 +19,21 @@
 
 <Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.4">
     <Appliance id="F-00000001-000000000001-00">
-        <ElectricVehicleCharger startChargingStateDetectionDelay="0">
+        <ElectricVehicleCharger startChargingStateDetectionDelay="300">
             <EVModbusControl idref="wallbox" slaveAddress="180">
-                <ModbusRegisterRead address="100" type="InputString">
-                    <ModbusRegisterReadValue name="VehicleNotConnected" extractionRegex="(A)"/>
-                    <ModbusRegisterReadValue name="VehicleConnected" extractionRegex="(B)"/>
-                    <ModbusRegisterReadValue name="Charging" extractionRegex="(C|D)"/>
-                    <ModbusRegisterReadValue name="ChargingCompleted" extractionRegex="(B)"/>
-                    <ModbusRegisterReadValue name="Error" extractionRegex="(E|F)"/>
-                </ModbusRegisterRead>
-                <ModbusRegisterRead address="204" type="Discrete">
-                    <ModbusRegisterReadValue name="ChargingCompleted"/>
-                </ModbusRegisterRead>
-                <ModbusRegisterWrite address="400" type="Coil">
-                    <ModbusRegisterWriteValue name="StartCharging" value="1"/>
-                    <ModbusRegisterWriteValue name="StopCharging" value="0"/>
-                </ModbusRegisterWrite>
-                <ModbusRegisterWrite address="300" type="Holding">
-                    <ModbusRegisterWriteValue name="ChargingCurrent" value="0"/>
-                </ModbusRegisterWrite>
+                <ModbusRead address="100" type="InputString">
+                    <ModbusReadValue name="VehicleNotConnected" extractionRegex="(A)"/>
+                    <ModbusReadValue name="VehicleConnected" extractionRegex="(B)"/>
+                    <ModbusReadValue name="Charging" extractionRegex="(C|D)"/>
+                    <ModbusReadValue name="Error" extractionRegex="(E|F)"/>
+                </ModbusRead>
+                <ModbusWrite address="400" type="Coil">
+                    <ModbusWriteValue name="StartCharging" value="1"/>
+                    <ModbusWriteValue name="StopCharging" value="0"/>
+                </ModbusWrite>
+                <ModbusWrite address="300" type="Holding">
+                    <ModbusWriteValue name="ChargingCurrent" value="0"/>
+                </ModbusWrite>
             </EVModbusControl>
             <ElectricVehicle id="1" name="Nissan Leaf" batteryCapacity="40000" phases="1" maxChargePower="10000" chargeLoss="20" defaultSocManual="100" defaultSocOptionalEnergy="90">
                 <SocScript script="/home/axel/IdeaProjects/SmartApplianceEnabler/src/test/soc.sh" extractionRegex=".*is (\d*.{0,1}\d+).*"/>
