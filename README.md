@@ -8,7 +8,7 @@
     <a href="https://codecov.io/gh/camueller/SmartApplianceEnabler">
       <img src="https://codecov.io/gh/camueller/SmartApplianceEnabler/coverage.svg">
     </a>
-    <a href="https://github.com/camueller/SmartApplianceEnabler/releases/download/v1.4.19/SmartApplianceEnabler-1.4.19.war">
+    <a href="https://github.com/camueller/SmartApplianceEnabler/releases/download/1.4.19/SmartApplianceEnabler-1.4.19.war">
       <img src="https://img.shields.io/badge/Download-1.4.19-brightgreen.svg">
     </a>
     <a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.html">
