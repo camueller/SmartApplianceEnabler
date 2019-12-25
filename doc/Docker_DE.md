@@ -153,35 +153,82 @@ local               sae
 
 Zur Laufzeit wird das Volume unter `/opt/sae/data` gemounted.
 
-## Betrieb
-### Manueller Start
-Zum direkten Starten des *Smart Appliance Enabler* eignet sich folgender Befehl:
+Um evtuell vorhandene Konfigurationsdateien des *Smart Appliance Enabler* auf dieses Volume zu kopieren, eignet sich dieser Befehl (die erste Zeile erzeugt einen Dummy-Container mit dem Namen _sae_, falls noch keiner läuft): 
 ```console
-pi@raspberrypi:~ $ docker run -it --rm -v sae:/opt/sae/data --net=host avanux/smartapplianceenabler-arm32
+docker run -v sae:/opt/sae/data --name sae busybox true
+docker cp Appliances.xml sae:/opt/sae/data/
+docker cp Device2EM.xml sae:/opt/sae/data/
+```
+
+## Betrieb
+### Erzeugen eines Containers und Start
+Zum direkten Starten des *Smart Appliance Enabler* in einem neuen Container mit dem Namen _sae_ eignet sich folgender Befehl:
+```console
+pi@raspberrypi:~ $ docker run -v sae:/opt/sae/data --net=host --device /dev/mem:/dev/mem --privileged --name=sae avanux/smartapplianceenabler-arm32
 ```
 
 Dabei können über die Docker-Variable _JAVA_OPTS_ auch Properties gesetzt werden:
 ```console
-pi@raspberrypi:~ $ docker run -it --rm -v sae:/opt/sae/data --net=host -e "JAVA_OPTS=-Dsae.discovery.disable=true" avanux/smartapplianceenabler-arm32
+pi@raspberrypi:~ $ docker run -v sae:/opt/sae/data --net=host --device /dev/mem:/dev/mem --privileged --name=sae -e "JAVA_OPTS=-Dsae.discovery.disable=true" avanux/smartapplianceenabler-arm32
+```
+
+### Stoppen des Containers
+Zum Stoppen Starten des Containers mit dem *Smart Appliance Enabler* eignet sich folgender Befehl:
+```console
+pi@raspberrypi:~ $ docker stop sae
+sae
+```
+
+### Status des Containers
+Zum Anzeigen des Status des Containers mit dem *Smart Appliance Enabler* eignet sich folgender Befehl:
+```console
+sae@raspberrypi:~/docker $ sudo systemctl status smartapplianceenabler-docker.service
+● smartapplianceenabler-docker.service - Smart Appliance Enabler Container
+   Loaded: loaded (/lib/systemd/system/smartapplianceenabler-docker.service; enabled; vendor preset: enabled)
+   Active: active (running) since Wed 2019-12-25 17:18:25 CET; 2min 38s ago
+  Process: 9566 ExecStartPre=/bin/sleep 1 (code=exited, status=0/SUCCESS)
+ Main PID: 9567 (docker)
+    Tasks: 11 (limit: 2200)
+   Memory: 23.0M
+   CGroup: /system.slice/smartapplianceenabler-docker.service
+           └─9567 /usr/bin/docker run -v sae:/opt/sae/data --net=host --device /dev/mem:/dev/mem --privileged --name=sae avanux/smartapplianceenabler-arm32
+
+Dec 25 17:19:13 raspberrypi docker[9567]: 16:19:13.925 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+Dec 25 17:19:13 raspberrypi docker[9567]: 16:19:13.930 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+Dec 25 17:19:13 raspberrypi docker[9567]: 16:19:13.933 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.29]
+Dec 25 17:19:20 raspberrypi docker[9567]: 16:19:20.991 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+Dec 25 17:19:20 raspberrypi docker[9567]: 16:19:20.992 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 20208 ms
+Dec 25 17:19:25 raspberrypi docker[9567]: 16:19:25.964 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+Dec 25 17:19:26 raspberrypi docker[9567]: 16:19:26.183 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+Dec 25 17:19:38 raspberrypi docker[9567]: 16:19:38.878 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+Dec 25 17:19:38 raspberrypi docker[9567]: 16:19:38.879 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+Dec 25 17:19:38 raspberrypi docker[9567]: 16:19:38.952 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 69 ms
+```
+
+### Automatisches Starten des Containers durch Systemd
+Auch wenn der *Smart Appliance Enabler* als Docker-Container betrieben wird, bietet es sich an, den Container als Service des [Systemd](https://de.wikipedia.org/wiki/Systemd) zu verwalten. Dazu dient die Datei ```/lib/systemd/system/smartapplianceenabler-docker.service```, die nachfolgend heruntergeladen und konfiguriert wird:
+```console
+pi@raspberrypi ~ $ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/lib/systemd/system/smartapplianceenabler-docker.service -P /lib/systemd/system
+pi@raspberrypi ~ $ sudo chown root.root /lib/systemd/system/smartapplianceenabler-docker.service
+pi@raspberrypi ~ $ sudo chmod 755 /lib/systemd/system/smartapplianceenabler-docker.service
+```
+ 
+Damit der *Smart Appliance Enabler* beim Systemstart ebenfalls gestartet wird (via Systemd), muss folgender Befehl ausgeführt werden:
+```console
+pi@raspberrypi ~ $ sudo systemctl enable smartapplianceenabler-docker.service
+Created symlink /etc/systemd/system/multi-user.target.wants/smartapplianceenabler.service → /lib/systemd/system/smartapplianceenabler.service.
+```
+Nach diesen Änderungen muss der Systemd dazu gebracht werden, die Service-Konfigurationen neu zu lesen:
+```console
+pi@raspberrypi ~ $ sudo systemctl daemon-reload
 ```
 
 ## Hilfreiche Befehle
-### Befehl im laufenden Smart Appliance Enabler-Container ausführen
-
-```console
-pi@raspberrypi:~ $ docker container exec $(docker ps -q) ls -al /opt/sae
-total 22780
-drwxr-xr-x    1 root     root          4096 Oct 27 16:32 .
-drwxr-xr-x    1 root     root          4096 Oct 27 13:49 ..
--rw-r--r--    1 root     root      23308408 Oct 27 13:50 SmartApplianceEnabler.war
-drwxr-xr-x    2 root     root          4096 Oct 27 12:17 data
--rw-r--r--    1 root     root          2103 Oct 27 13:49 logback-spring.xml
-```
 
 ### Shell im laufenden Smart Appliance Enabler-Container ausführen
 Falls man einen Befehl im laufenden Container des *Smart Appliance Enabler* ausführen möchte, kann man mit nachfolgendem Befehl eine entsprechend Shell erzeugen:
 ```console
-pi@raspberrypi:~ $ docker run -it --rm -v sae:/opt/sae/data --entrypoint=/bin/sh avanux/smartapplianceenabler-arm32
+pi@raspberrypi:~ $ docker exec -it sae bash
 ```
 
 ### Konsole-Log anzeigen
@@ -194,7 +241,7 @@ pi@raspberrypi:~ $ docker logs $(docker ps -q)
 Zusätzlich zum Konsole-Log erzeugt der *Smart Appliance Enabler* für jeden Tag eine Log-Datei im ```/tmp```-Verzeichnis.
 Mit dem nachfolgenden Befehl kann dieses angezeigt werden, wobei das Datum entsprechend angepasst werden muss:
 ```console
-pi@raspberrypi:~ $ docker container exec $(docker ps -q) tail -f /tmp/rolling-2017-10-30.log
+pi@raspberrypi:~ $ docker container exec $(docker ps -q) tail -f /tmp/rolling-2019-12-25.log
 ```
 
 ## Bekannte Probleme
@@ -202,47 +249,3 @@ pi@raspberrypi:~ $ docker container exec $(docker ps -q) tail -f /tmp/rolling-20
 Der *Smart Appliance Enabler* implementiert das SEMP-Protokoll von SMA. Dieses Protokoll basiert auf UPnP, welches wiederum IP Multicast benötigt.
 Aktuell unterstützt Docker nicht die Weiterleitung der Multicast-Pakete vom Host in die Dokker-Container.
 Siehe auch https://forums.docker.com/t/multicast-forward-from-host-to-container-for-dlna-discovery/33723
-
-### GPIO-Zugriff
-Wenn im *Smart Appliance Enabler* ein Gerät konfiguriert wird, das auf die GPIO-Port zugreift, erscheint folgender Fehler:
-```
-16:33:05.837 [Thread-5] ERROR com.pi4j.util.NativeLibraryLoader - Unable to load [libpi4j.so] using path: [/lib/raspberrypi/dynamic/libpi4j.so]
-java.lang.UnsatisfiedLinkError: /tmp/libpi4j7547460481529582810.so: libwiringPi.so: cannot open shared object file: No such file or directory
-        at java.lang.ClassLoader$NativeLibrary.load(Native Method) ~[na:1.8.0_65]
-        at java.lang.ClassLoader.loadLibrary0(ClassLoader.java:1938) ~[na:1.8.0_65]
-        at java.lang.ClassLoader.loadLibrary(ClassLoader.java:1821) ~[na:1.8.0_65]
-        at java.lang.Runtime.load0(Runtime.java:809) ~[na:1.8.0_65]
-        at java.lang.System.load(System.java:1086) ~[na:1.8.0_65]
-        at com.pi4j.util.NativeLibraryLoader.loadLibraryFromClasspath(NativeLibraryLoader.java:159) ~[pi4j-core-1.2.jar!/:na]
-        at com.pi4j.util.NativeLibraryLoader.load(NativeLibraryLoader.java:105) ~[pi4j-core-1.2.jar!/:na]
-        at com.pi4j.wiringpi.Gpio.<clinit>(Gpio.java:189) [pi4j-core-1.2.jar!/:na]
-        at com.pi4j.io.gpio.RaspiGpioProvider.<init>(RaspiGpioProvider.java:69) [pi4j-core-1.2.jar!/:na]
-        at com.pi4j.io.gpio.RaspiGpioProvider.<init>(RaspiGpioProvider.java:51) [pi4j-core-1.2.jar!/:na]
-        at com.pi4j.platform.Platform.getGpioProvider(Platform.java:125) [pi4j-core-1.2.jar!/:na]
-        at com.pi4j.platform.Platform.getGpioProvider(Platform.java:118) [pi4j-core-1.2.jar!/:na]
-        at com.pi4j.io.gpio.GpioFactory.getDefaultProvider(GpioFactory.java:109) [pi4j-core-1.2.jar!/:na]
-        at com.pi4j.io.gpio.impl.GpioControllerImpl.<init>(GpioControllerImpl.java:53) [pi4j-core-1.2.jar!/:na]
-        at com.pi4j.io.gpio.GpioFactory.getInstance(GpioFactory.java:91) [pi4j-core-1.2.jar!/:na]
-        at de.avanux.smartapplianceenabler.appliance.ApplianceManager.getGpioController(ApplianceManager.java:74) [classes!/:na]
-        at de.avanux.smartapplianceenabler.appliance.ApplianceManager.init(ApplianceManager.java:168) [classes!/:na]
-        at de.avanux.smartapplianceenabler.appliance.ApplianceManager.startAppliances(ApplianceManager.java:118) [classes!/:na]
-        at de.avanux.smartapplianceenabler.appliance.ApplianceManager.run(ApplianceManager.java:88) [classes!/:na]
-        at java.lang.Thread.run(Thread.java:745) [na:1.8.0_65]
-```
-Der *Smart Appliance Enabler* verwendet für den Zugriff auf die PIO-Ports pi4j, welches intern libwiringpi.so verwendet.
-Die obige Fehlermeldung besagt, dass libpi4j gefunden wurde, aber nicht geladen werden kann, weil `libwiringPi.so` nicht gefunden wird.
-Wenn man dass mit `ldd` überprüft, wird aber `libwiringPi.so` sehr wohl gefunden:
-```console
-pi@raspberrypi:~ $$ docker container exec $(docker ps -q) ldd /usr/lib/libpi4j.so
-                          /lib/ld-musl-armhf.so.1 (0x76f15000)
-                          libwiringPi.so => /usr/lib/libwiringPi.so (0x76edc000)
-                          libwiringPiDev.so => /usr/lib/libwiringPiDev.so (0x76ec6000)
-                          libc.so.6 => /lib/ld-musl-armhf.so.1 (0x76f15000)
-```
-
-Wenn man sich den LD_LIBRARY_PATH von Java ausgeben läßt, erhält man:
-```
-java.library.path=/usr/java/packages/lib/arm:/lib:/usr/lib
-```
-Da `/usr/lib` enthalten ist, müßten `libwiringPi.so` und `libwiringPiDev.so` vom Java-Prozess geladen werden können.
-Dieses Problem werde ich erneut untersuchen, wenn die Umstellung auf eine aktuellere Java-Version abgeschlossen ist (siehe [Issue #41](https://github.com/camueller/SmartApplianceEnabler/issues/41). 
