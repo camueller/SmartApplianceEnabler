@@ -75,6 +75,9 @@ Wenn der Log-Level mindestens auf DEBUG gesetzt wurde, kann man in der Log-Datei
 ## Analyse der Log Dateien des SEMP Moduls im Sunny Home Manager
 Siehe https://www.photovoltaikforum.com/thread/104060-ger%C3%A4te-mit-home-manager-koppeln-via-semp-ethernet/?postID=1396300#post1396300
 
+## Fehler "Timeframe for unknown or unrequested device" im Log des SEMP Moduls vom Sunny Home Manager
+Der Fehler tritt dann auf wenn sich die interne UID des *Smart Appliance Enabler* ändert. Dies passiert immer dann wenn man die Hardware auf der der *Smart Appliance Enabler* läuft austauscht (zB neuer Raspberry Pi), da sie von der Hardware-MAC-Adresse der ersten Netzwerkstelle abhängt. Einfachste Abhilfe ist ein Neustart des Sunny Home Managers, danach werden die Timeframes wieder akzeptiert.
+
 ## Anwender-Forum
 Fragen zur Verwendung des *Smart Appliance Enabler* sollten im SEMP-Thread des *photovoltaik-forums* im SMA Herstellerbereich gestellt werden: https://www.photovoltaikforum.com/geraete-mit-home-manager-koppeln-via-semp-ethernet-t104060.html.
 
