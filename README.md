@@ -68,7 +68,9 @@ In den nachfolgenden Kapiteln ist Installation und Konfiguration des *Smart Appl
 ### [Installation](doc/Installation_DE.md)
 Der einfachste Weg zu einem lauffähigen *Smart Appliance Enabler* besteht in der [Installation](doc/Installation_DE.md) einer releasten Version.
 
-<img align="left" src="pics/docker.png">Alternativ kann *Smart Appliance Enabler* auch als [Docker-Container](doc/Docker_DE.md) betrieben werden.
+![Docker](pics/docker.png)
+
+Alternativ kann *Smart Appliance Enabler* auch als [Docker-Container](doc/Docker_DE.md) betrieben werden.
 
 ### [Konfiguration](doc/Configuration_DE.md)
 Damit der *Smart Appliance Enabler* die Geräte steuern und deren Stromverbrauch messen kann, ist zusätzlich zur Installation der Software die Erstellung einer [Konfiguration](doc/Configuration_DE.md) erforderlich.
