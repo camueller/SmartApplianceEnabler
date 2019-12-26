@@ -33,6 +33,8 @@ axel@p51:/tmp$ sudo dd bs=4M if=2019-09-26-raspbian-buster-lite.img of=/dev/mmcb
 536+0 records out
 2248146944 bytes (2.2 GB, 2.1 GiB) copied, 280.242 s, 8.0 MB/s
 ```
+Das [Vergrößerung des Root-Filesystems](#root-filesystem-vergrern) kann später noch erfolgen.
+
 Sollte der Raspberry mit der SD-Karte nicht starten, kann es durchaus an der SD-Karte selbst liegen. In diesem Fall einfach einen anderen SD-Karten-Typ verwenden (gute Erfahrungen habe ich mit SanDisk gemacht). Einen erfolgreichen Start erkennt man leicht daran, dass die grüne LED flackert/leuchtet (= Zugriff auf die SD-Karte).
 
 ### SSH-Client
@@ -74,6 +76,57 @@ This is a security risk - please login as the 'pi' user and type 'passwd' to set
 
 pi@raspberrypi:~ $
 ```
+### Root-Filesystem vergrößern
+Die Raspbian-Images werde in der Regel für SD-Karten mit einer Größe von 2 GB erstellt. Wenn die verwendete SD-Karte größer ist, bleibt der darüber hinausgehene Speicherplatz unbenutzt. Raspbian enthält jedoch das Utility ```raspi-config```, mit dem man ganz einfach das Root-Filesystem so vergrößern kann, dass die gesamte SD-Karte genutzt wird (hier wurde eine 16 GB SD-Karte verwendet):
+
+```console
+pi@raspberrypi:~ $ sudo raspi-config --expand-rootfs
+
+Welcome to fdisk (util-linux 2.33.1).
+Changes will remain in memory only, until you decide to write them.
+Be careful before using the write command.
+
+
+Command (m for help): Disk /dev/mmcblk0: 14.7 GiB, 15719727104 bytes, 30702592 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0x6c586e13
+
+Device         Boot  Start      End  Sectors  Size Id Type
+/dev/mmcblk0p1        8192   532479   524288  256M  c W95 FAT32 (LBA)
+/dev/mmcblk0p2      532480 30702591 30170112 14.4G 83 Linux
+
+Command (m for help): Partition number (1,2, default 2): 
+Partition 2 has been deleted.
+
+Command (m for help): Partition type
+   p   primary (1 primary, 0 extended, 3 free)
+   e   extended (container for logical partitions)
+Select (default p): Partition number (2-4, default 2): First sector (2048-30702591, default 2048): Last sector, +/-sectors or +/-size{K,M,G,T,P} (532480-30702591, default 30702591): 
+Created a new partition 2 of type 'Linux' and of size 14.4 GiB.
+Partition #2 contains a ext4 signature.
+
+Command (m for help): 
+Disk /dev/mmcblk0: 14.7 GiB, 15719727104 bytes, 30702592 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0x6c586e13
+
+Device         Boot  Start      End  Sectors  Size Id Type
+/dev/mmcblk0p1        8192   532479   524288  256M  c W95 FAT32 (LBA)
+/dev/mmcblk0p2      532480 30702591 30170112 14.4G 83 Linux
+
+Command (m for help): The partition table has been altered.
+Syncing disks.
+
+Please reboot
+```
+
+
 ### Pakete aktualisieren
 Nach der Installation von Raspbian empfiehlt es sich, die Paket-Informationen zu aktualisieren:
 ```console
@@ -114,10 +167,14 @@ Get:3 http://archive.raspberrypi.org/debian buster/main armhf firmware-atheros a
 Soll der Raspberry Pi über WLAN statt über Ethernet angebunden werden, müssen SSID und Passwort in die Datei ```/etc/wpa_supplicant/wpa_supplicant.conf``` eingetragen werden. Eine genaue Beschreibung findet sich in [Setting WiFi up via the command line](https://www.raspberrypi.org/documentation/configuration/wireless/wireless-cli.md).
 
 ### Hostnamen ändern
-Unabhängig von dem Hostnamen, über den der Raspberry im lokalen Netzwerk erreicht werden kann, ist sein Hostname standardmäßig ```raspberry``` (auch sichtbar am Prompt: ```pi@raspberrypi:~ $```). Vor allem, wenn man mehrere Raspberries im Netz hat, will man auch am Prompt sehen, auf welchem Raspberry man gerade die Befehle eingibt. Zum Ändern des Hostnames kann nachfolgender Befehl auf dem Raspberry verwendet werden:
+Unabhängig von dem Hostnamen, über den der Raspberry im lokalen Netzwerk erreicht werden kann, ist sein Hostname standardmäßig ```raspberry``` (auch sichtbar am Prompt: ```pi@raspberrypi:~ $```). Vor allem, wenn man mehrere Raspberries im Netz hat, will man auch am Prompt sehen, auf welchem Raspberry man gerade die Befehle eingibt.
+
+Zum Ändern des Hostnames kann das Tool ```raspi-config``` verwendet werden, wobei der Menüpunkt _Network Options_ und dann der Menüpunkt _Hostname_ gewählt werden muss:
 ```console
-pi@raspberrypi ~ $ sudo hostname -b raspi3
+pi@raspberrypi:~ $ sudo raspi-config
 ```
+
+Wenn der Hostname so geändert wird, propagiert der Raspberry Pi seinen Namen auch, was zu Problemen führen kann, wenn bereits ein Raspberry Pi mit gleichem Namen läuft. In diesem Fall sollte der Hostname erst dann geändert werden, wenn der neue Raspberry Pi den bisherigen ersetzen soll. 
 
 ### Zeitzone einstellen
 Damit Zeitangaben zum Schalten der Geräte richtig interpretiert werden, sollte die Zeitzone des Raspberry auf die lokale Zeit gesetzt sein (nicht UTC!). Das kann mit folgendende Befehlen erreicht werden:
@@ -217,7 +274,7 @@ Falls die zweite Zeile nicht angezeigt wird, sollte der Raspberry neu gestartet 
 #### Programm-Download
 Der eigentliche Programmcode befindet sich in der Datei ```SmartApplianceEnabler-X.Y.Z.war```, die ebenfalls heruntergeladen werden muss. *X.Y.Z* steht dabei für die aktuelle Versionsnummer (z.B. 1.3.50), die [hinter dem Download-Button](https://github.com/camueller/SmartApplianceEnabler#smart-appliance-enabler) angezeigt wird. Entsprechend dieser Hinweise muss die Version im nachfolgenden Befehl angepasst werden an 2 Stellen (*v1.3.501* und *SmartApplianceEnabler-1.3.50.war*):
 ```console
-pi@raspberrypi ~ $ wget https://github.com/camueller/SmartApplianceEnabler/releases/download/v1.3.50/SmartApplianceEnabler-1.3.50.war -P /opt/sae
+pi@raspberrypi ~ $ sudo wget https://github.com/camueller/SmartApplianceEnabler/releases/download/1.4.19/SmartApplianceEnabler-1.4.19.war -P /opt/sae
 pi@raspberrypi ~ $ sudo chown -R sae:sae /opt/sae
 ```
 
