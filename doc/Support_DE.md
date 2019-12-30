@@ -28,25 +28,36 @@ Dec 23 18:06:40 raspberrypi systemd[1]: Started Smart Appliance Enabler.
 Der *Smart Appliance Enabler* läuft, wenn in der mit `Active:` beginnenden Zeile steht `active (running)`.
 
 ## Log
-Der *Smart Appliance Enabler* schreibt seine Log-Daten in das Verzeichnis ```/tmp```, wobei die Dateinamen mit ```rolling``` beginnen gefolgt vom jeweilgen Datum:
+Der *Smart Appliance Enabler* schreibt seine Log-Daten in das Verzeichnis ```/tmp```, wobei die Dateinamen mit ```rolling``` beginnen gefolgt vom jeweilgen Datum.
+Mit dem folgenden Befehl kann man die Log-Dtei _live_ verfolgen, d.h. neue Einträge erscheinen automatisch:
 ```
-pi@raspi ~ $ tail -f /tmp/rolling-2018-04-08.log
-2018-04-08 10:17:01,072 INFO [main] d.a.s.Application [StartupInfoLogger.java:48] Starting Application on raspi with PID 23914 (started by root in /)
-2018-04-08 10:17:01,106 DEBUG [main] d.a.s.Application [StartupInfoLogger.java:51] Running with Spring Boot v1.3.0.RELEASE, Spring v4.2.3.RELEASE
-2018-04-08 10:17:01,108 INFO [main] d.a.s.Application [SpringApplication.java:653] No profiles are active
-2018-04-08 10:17:23,172 INFO [main] d.a.s.s.w.SempController [SempController.java:50] SEMP controller created.
-2018-04-08 10:17:23,247 INFO [main] d.a.s.w.SaeController [SaeController.java:67] SAE controller created.
-2018-04-08 10:17:24,301 DEBUG [main] d.a.s.w.WebConfig$SaeWebMvcAutoConfigurationAdapter [WebConfig.java:63] Registered de.avanux.smartapplianceenabler.webservice.GensonHttpMessageConverter
-2018-04-08 10:17:29,970 INFO [main] d.a.s.Application [StartupInfoLogger.java:57] Started Application in 33.225 seconds (JVM running for 36.295)
-2018-04-08 10:17:29,973 INFO [main] d.a.s.Application [Application.java:45] Running version 1.2.0-SNAPSHOT 2017-12-23 19:16
-2018-04-08 10:17:29,975 DEBUG [main] d.a.s.Application [Application.java:72] Starting SEMP discovery ...
-2018-04-08 10:17:30,250 INFO [main] d.a.s.s.d.SempDiscovery [SempDiscovery.java:55] SEMP UPnP will redirect to http://192.168.69.5:8080
-2018-04-08 10:17:30,252 DEBUG [main] d.a.s.Application [Application.java:75] ... SEMP discovery started
-2018-04-08 10:17:30,253 DEBUG [main] d.a.s.Application [Application.java:80] Starting appliance manager ...
-2018-04-08 10:17:30,574 DEBUG [main] d.a.s.Application [Application.java:83] ... Appliance manager started
-2018-04-08 10:17:30,576 INFO [Thread-7] d.a.s.u.FileHandler [FileHandler.java:55] Using appliance directory /app
-2018-04-08 10:17:30,583 INFO [main] d.a.s.Application [Application.java:95] PID 23914 written to /var/run/smartapplianceenabler.pid
+pi@raspi ~ $ tail -f /tmp/rolling-2019-12-30.log
+2019-12-30 11:46:51,367 DEBUG [Timer-0] d.a.s.u.TimestampBasedCache [TimestampBasedCache.java:62] F-00000001-000000000014-00: cache=Power added value=1.0 timestamp=1577702811300  removed/total: 1/6
+2019-12-30 11:46:51,408 DEBUG [Timer-0] d.a.s.u.GuardedTimerTask [GuardedTimerTask.java:54] F-00000001-000000000015-00: Executing timer task name=PollEnergyMeter id=4447659
+2019-12-30 11:46:51,411 DEBUG [Timer-0] d.a.s.u.GuardedTimerTask [GuardedTimerTask.java:54] F-00000001-000000000015-00: Executing timer task name=PollPowerMeter id=29541189
+2019-12-30 11:46:51,412 DEBUG [Timer-0] d.a.s.h.HttpTransactionExecutor [HttpTransactionExecutor.java:105] F-00000001-000000000015-00: Sending GET request url=http://trockner/cm?cmnd=Status%208
+2019-12-30 11:46:51,501 DEBUG [Timer-0] d.a.s.h.HttpTransactionExecutor [HttpTransactionExecutor.java:160] F-00000001-000000000015-00: Response code is 200
+2019-12-30 11:46:51,535 DEBUG [Timer-0] d.a.s.h.HttpHandler [HttpHandler.java:86] F-00000001-000000000015-00: url=http://trockner/cm?cmnd=Status%208 httpMethod=GET data=null path=null
+2019-12-30 11:46:51,536 DEBUG [Timer-0] d.a.s.h.HttpHandler [HttpHandler.java:89] F-00000001-000000000015-00: Response: {"StatusSNS":{"Time":"2019-12-30T11:46:52","ENERGY":{"TotalStartTime":"2019-08-18T11:21:09","Total":1.580,"Yesterday":0.008,"Today":0.004,"Power":2,"ApparentPower":49,"ReactivePower":49,"Factor":0.04,"Voltage":233,"Current":0.209}}}
+2019-12-30 11:46:51,539 DEBUG [Timer-0] d.a.s.h.HttpHandler [HttpHandler.java:58] F-00000001-000000000015-00: value=2.0 protocolHandlerValue={"StatusSNS":{"Time":"2019-12-30T11:46:52","ENERGY":{"TotalStartTime":"2019-08-18T11:21:09","Total":1.580,"Yesterday":0.008,"Today":0.004,"Power":2,"ApparentPower":49,"ReactivePower":49,"Factor":0.04,"Voltage":233,"Current":0.209}}} valueExtractionRegex=,.Power.:(\d+) extractedValue=2
+2019-12-30 11:46:51,541 DEBUG [Timer-0] d.a.s.u.TimestampBasedCache [TimestampBasedCache.java:62] F-00000001-000000000015-00: cache=Power added value=2.0 timestamp=1577702811412  removed/total: 1/6
+2019-12-30 11:46:51,713 DEBUG [Timer-0] d.a.s.u.GuardedTimerTask [GuardedTimerTask.java:54] F-00000001-000000000019-00: Executing timer task name=PollPowerMeter id=10020238
+2019-12-30 11:46:51,716 DEBUG [Timer-0] d.a.s.m.ModbusSlave [ModbusSlave.java:76] F-00000001-000000000019-00: Connecting to modbus modbus@127.0.0.1:502
+2019-12-30 11:46:51,776 DEBUG [Timer-0] d.a.s.m.e.ReadFloatInputRegisterExecutorImpl [ReadInputRegisterExecutor.java:57] F-00000001-000000000019-00: Input register=52 value=[0, 0, 0, 0]
+2019-12-30 11:46:51,779 DEBUG [Timer-0] d.a.s.m.ModbusElectricityMeter [ModbusElectricityMeter.java:196] F-00000001-000000000019-00: Float value=0.0
 ```
+Um nur die Einträge für ein bestimmtes Gerät zu sehen, eignet sich der folgende Befehl:
+```
+pi@raspi ~ $ tail -f /tmp/rolling-2019-12-30.log | grep --line-buffered F-00000001-000000000019-00
+2019-12-30 11:41:41,109 DEBUG [http-nio-8080-exec-8] d.a.s.s.w.SempController [SempController.java:221] F-00000001-000000000019-00: Received control request: on=false
+2019-12-30 11:41:41,111 DEBUG [http-nio-8080-exec-8] d.a.s.a.Appliance [Appliance.java:379] F-00000001-000000000019-00: Setting appliance state to OFF
+2019-12-30 11:41:41,112 INFO [http-nio-8080-exec-8] d.a.s.c.e.ElectricVehicleCharger [ElectricVehicleCharger.java:370] F-00000001-000000000019-00: Switching off
+2019-12-30 11:41:41,114 DEBUG [http-nio-8080-exec-8] d.a.s.c.e.ElectricVehicleCharger [ElectricVehicleCharger.java:558] F-00000001-000000000019-00: Stop charging process
+2019-12-30 11:41:41,116 DEBUG [http-nio-8080-exec-8] d.a.s.m.EVModbusControl [EVModbusControl.java:210] F-00000001-000000000019-00: Stop charging
+2019-12-30 11:41:41,117 DEBUG [http-nio-8080-exec-8] d.a.s.u.RequestCache [RequestCache.java:66] F-00000001-000000000019-00: Cache cleared
+2019-12-30 11:41:41,119 DEBUG [http-nio-8080-exec-8] d.a.s.m.ModbusSlave [ModbusSlave.java:76] F-00000001-000000000019-00: Connecting to modbus wallbox@wallbox:502
+```
+
 Der *Log-Level* steht defaultmäßig auf ```debug```, um im Fehlerfall detaillierte Informationen zu haben. Falls weniger geloggt werden soll, kann der Log-Level auf ```info``` geändert werden in der Datei ```/opt/sae/logback-spring.xml```:
 ```
 ...
