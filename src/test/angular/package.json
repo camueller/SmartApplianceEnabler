@@ -1,0 +1,20 @@
+{
+  "name": "smartapplianceenabler",
+  "version": "0.0.0",
+  "description": "Web frontend of Smart Appliance Enabler - a gateway software that turns existing devices into smart appliances.",
+  "homepage": "https://github.com/camueller/SmartApplianceEnabler",
+  "author": "Axel Müller <axel.mueller@avanux.de>",
+  "license": "GPL",
+  "scripts": {
+    "debug": "testcafe $NODE_DEBUG_OPTION chrome"
+  },
+  "private": true,
+  "dependencies": {
+    "testcafe": "^1.7.1",
+    "testcafe-browser-provider-browserstack": "^1.10.1",
+    "ts-node": "~7.0.0",
+    "tslint": "~5.20.1",
+    "typescript": "~3.5.3",
+    "typescript-tslint-plugin": "~0.5.5"
+  }
+}
