@@ -13,7 +13,7 @@ before_install:
   - export PATH=$M2_HOME/bin:$PATH
   - wget https://nodejs.org/dist/v10.17.0/node-v10.17.0-linux-x64.tar.gz
   - tar xfz node-v10.17.0-linux-x64.tar.gz
-  - export PATH=$PWD/node-v10.17.0-linux-x64/bin:$PWD/camueller/SmartApplianceEnabler/src/main/angular/node_modules/.bin:$PWD/camueller/SmartApplianceEnabler/src/test/angular/node_modules/.bin:$PATH
+  - export PATH=$PWD/node-v10.17.0-linux-x64/bin:$PATH
 script:
   - mvn package -B -Ptravis,web
   - pushd docker
@@ -30,6 +30,6 @@ script:
   - pushd src/test/angular
   - npm i
   - export BROWSERSTACK_BUILD_ID=$TRAVIS_COMMIT
-  - testcafe "browserstack:chrome@69.0:Windows 10" "appliance.spec.ts"
+  - node_modules/.bin/testcafe "browserstack:chrome@69.0:Windows 10" "appliance.spec.ts"
 after_success:
   - bash <(curl -s https://codecov.io/bash)
