@@ -1,10 +1,23 @@
 language: java
-script: mvn test -B -Ptravis,web
+services:
+  - docker
+script:
+  - pushd ci
+  - ccrypt -d -K $AWS_CRYPT_KEY aws.pem.cpt >/dev/null 2>&1
+  - cat aws.pem
+  - popd
+  - echo $DOCKERHUB_ACCESS_TOKEN | docker login --username avanux --password-stdin
+  - mvn test -B -Ptravis,web
+  - cd docker
+  - cp ../target/SmartApplianceEnabler*.war sae-ci/SmartApplianceEnabler.war
+  - docker build --tag=avanux/smartapplianceenabler-amd64:ci ./sae-ci
+  - docker push avanux/smartapplianceenabler-amd64:ci
 dist: bionic
 sudo: required
 jdk:
   - openjdk11
 before_install:
+  - sudo apt-get -y install ccrypt
   - wget https://archive.apache.org/dist/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.zip
   - unzip -qq apache-maven-3.3.9-bin.zip
   - export M2_HOME=$PWD/apache-maven-3.3.9
