@@ -7,7 +7,7 @@ script:
   - cat aws.pem
   - popd
   - echo $DOCKERHUB_ACCESS_TOKEN | docker login --username avanux --password-stdin
-  - mvn test -B -Ptravis,web
+  - mvn package -B -Ptravis,web
   - cd docker
   - cp ../target/SmartApplianceEnabler*.war sae-ci/SmartApplianceEnabler.war
   - docker build --tag=avanux/smartapplianceenabler-amd64:ci ./sae-ci
