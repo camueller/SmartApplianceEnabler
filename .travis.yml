@@ -20,11 +20,12 @@ script:
   - cp ../target/SmartApplianceEnabler*.war sae-ci/SmartApplianceEnabler.war
   - echo $DOCKERHUB_ACCESS_TOKEN | docker login --username avanux --password-stdin
   - docker build --tag=avanux/smartapplianceenabler-amd64:ci ./sae-ci
+  - docker push avanux/smartapplianceenabler-amd64:ci
   - popd
   - pushd ci
   - ccrypt -d -K $AWS_CRYPT_KEY aws.pem.cpt >/dev/null 2>&1
+  - chmod 400 aws.pem
   - ssh -i aws.pem -o StrictHostKeyChecking=no ec2-user@$DEPLOY_HOST 'bash -s' < deploy.sh
   - popd
 after_success:
-  - docker push avanux/smartapplianceenabler-amd64:ci
   - bash <(curl -s https://codecov.io/bash)
