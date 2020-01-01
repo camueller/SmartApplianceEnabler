@@ -23,7 +23,7 @@ script:
   - popd
   - pushd ci
   - ccrypt -d -K $AWS_CRYPT_KEY aws.pem.cpt >/dev/null 2>&1
-  - ssh -i aws.pem ec2-user@$DEPLOY_HOST 'bash -s' < deploy.sh
+  - ssh -i aws.pem -o StrictHostKeyChecking=no ec2-user@$DEPLOY_HOST 'bash -s' < deploy.sh
   - popd
 after_success:
   - docker push avanux/smartapplianceenabler-amd64:ci
