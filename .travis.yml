@@ -30,6 +30,6 @@ script:
   - pushd src/test/angular
   - npm i
   - export BROWSERSTACK_BUILD_ID=$TRAVIS_COMMIT
-  - node_modules/.bin/testcafe "browserstack:chrome@69.0:Windows 10" "appliance.spec.ts"
+  - node_modules/.bin/testcafe "browserstack:chrome@69.0:Windows 10" "src/appliance.spec.ts"
 after_success:
   - bash <(curl -s https://codecov.io/bash)
