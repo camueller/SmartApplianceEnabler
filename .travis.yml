@@ -1,21 +1,10 @@
-language: java
-services:
-  - docker
-script:
-  - pushd ci
-  - ccrypt -d -K $AWS_CRYPT_KEY aws.pem.cpt >/dev/null 2>&1
-  - cat aws.pem
-  - popd
-  - echo $DOCKERHUB_ACCESS_TOKEN | docker login --username avanux --password-stdin
-  - mvn package -B -Ptravis,web
-  - cd docker
-  - cp ../target/SmartApplianceEnabler*.war sae-ci/SmartApplianceEnabler.war
-  - docker build --tag=avanux/smartapplianceenabler-amd64:ci ./sae-ci
-  - docker push avanux/smartapplianceenabler-amd64:ci
 dist: bionic
 sudo: required
+language: java
 jdk:
   - openjdk11
+services:
+  - docker
 before_install:
   - sudo apt-get -y install ccrypt
   - wget https://archive.apache.org/dist/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.zip
@@ -25,5 +14,17 @@ before_install:
   - wget https://nodejs.org/dist/v10.17.0/node-v10.17.0-linux-x64.tar.gz
   - tar xfz node-v10.17.0-linux-x64.tar.gz
   - export PATH=$PWD/node-v10.17.0-linux-x64/bin:$PATH
+script:
+  - mvn package -B -Ptravis,web
+  - pushd docker
+  - cp ../target/SmartApplianceEnabler*.war sae-ci/SmartApplianceEnabler.war
+  - echo $DOCKERHUB_ACCESS_TOKEN | docker login --username avanux --password-stdin
+  - docker build --tag=avanux/smartapplianceenabler-amd64:ci ./sae-ci
+  - popd
+  - pushd ci
+  - ccrypt -d -K $AWS_CRYPT_KEY aws.pem.cpt >/dev/null 2>&1
+  - ssh -i aws.pem ec2-user@$DEPLOY_HOST 'bash -s' < deploy.sh
+  - popd
 after_success:
+  - docker push avanux/smartapplianceenabler-amd64:ci
   - bash <(curl -s https://codecov.io/bash)
