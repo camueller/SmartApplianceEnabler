@@ -91,7 +91,7 @@ Der Status aller Geräte wird in der [Status-Anzeige](doc/Status_DE.md) übersic
 Der Sunny Home Manager kann die Geräte erst dann steuern und deren Verbrauch messen, nachdem sie auch im [Sunny Home Manager konfiguriert](doc/SunnyHomeMangerKonfiguration_DE.md) worden sind.
 
 ### [Entwicklung](doc/Development_DE.md)
-Alle Informationen rund um die Entwicklung des *Smart Appliance Enabler* einschliesslich der Dokumentation der Build- und Testumgebungen.
+Alle Informationen rund um die [Entwicklung](doc/Development_DE.md) des *Smart Appliance Enabler* einschliesslich der Dokumentation der Build- und Testumgebungen.
 
 ### [Fragen / Probleme](doc/Support_DE.md)
 Durch die Vielzahl von Hard- und Softwarekomponenten können bei der Verwendung des *Smart Appliance Enabler* naturgemäß Fragen oder Probleme auftreten. In diesem Fall sollten [diese Hinweise](doc/Support_DE.md) beachtet werden.
