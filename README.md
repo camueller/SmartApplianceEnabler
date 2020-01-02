@@ -11,6 +11,12 @@
     <a href="https://github.com/camueller/SmartApplianceEnabler/releases/download/1.4.19/SmartApplianceEnabler-1.4.19.war">
       <img src="https://img.shields.io/badge/Download-1.4.19-brightgreen.svg">
     </a>
+    <a href="https://hub.docker.com/repository/docker/avanux/smartapplianceenabler-arm32">
+      <img src="https://img.shields.io/badge/Docker-arm32-blue">
+    </a>
+    <a href="https://hub.docker.com/repository/docker/avanux/smartapplianceenabler-amd64">
+      <img src="https://img.shields.io/badge/Docker-amd64-blue">
+    </a>
     <a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.html">
       <img src="https://img.shields.io/badge/license-GPLv2-blue.svg">
     </a>
@@ -84,8 +90,8 @@ Der Status aller Geräte wird in der [Status-Anzeige](doc/Status_DE.md) übersic
 ### Integration in den Sunny Home Manager
 Der Sunny Home Manager kann die Geräte erst dann steuern und deren Verbrauch messen, nachdem sie auch im [Sunny Home Manager konfiguriert](doc/SunnyHomeMangerKonfiguration_DE.md) worden sind.
 
-### [Bauen aus Sourcen](doc/Build_DE.md)
-Zur Nutzung von Features, die noch nicht in der releasten Version enthalten sind, muss der *Smart Appliance Enabler* [aus Sourcen gebaut werden](doc/Build_DE.md).
+### [Entwicklung](doc/Development_DE.md)
+Alle Informationen rund um die Entwicklung des *Smart Appliance Enabler* einschliesslich der Dokumentation der Build- und Testumgebungen.
 
 ### [Fragen / Probleme](doc/Support_DE.md)
 Durch die Vielzahl von Hard- und Softwarekomponenten können bei der Verwendung des *Smart Appliance Enabler* naturgemäß Fragen oder Probleme auftreten. In diesem Fall sollten [diese Hinweise](doc/Support_DE.md) beachtet werden.
@@ -96,12 +102,21 @@ Durch die Vielzahl von Hard- und Softwarekomponenten können bei der Verwendung 
 Wenn Ihr zum *Smart Appliance Enabler* inkl. Dokumenation beitragen wollt, solltet Ihr das **Smart Appliance Enabler-Repository clonen**. Ihr könnte dann in Eurer Kopie z.B. die Dokumentation erweitern oder korrigieren und mir dann einen **Pull-Request** schicken, mit dem ich Eure Änderungen direkt in das *Smart Appliance Enabler*-Repository übernehmen kann.
 
 ## Dank und Anerkennung
-Der *Smart Appliance Enabler* verwendet intern folgende Open-Source-Software:
-* [Pi4J](http://pi4j.com) für den Zugriff auf die GPIO-Ports des Raspberry
-* [Spring Boot](http://projects.spring.io/spring-boot) für RESTful Web-Services (SEMP-Protokoll)
+Der *Smart Appliance Enabler* würde so nicht existieren ohne folgende Tools und Frameworks, deren Entwicklern ich Dank und Anerkennung zolle:
 * [Angular](https://angular.io) für das Web-Frontend
-* [Semantic UI](https://semantic-ui.com/) für das Web-Frontend
+* [Amazon AWS](https://aws.amazon.com/de) für die Bereitstellung einer leistungsfähigen Cloud-Platform
+* [Browserstack](https://www.browserstack.com) für automatisierte Multi-Browser-Tests und kostenlose Lizenz für Open-Source-Projekte
 * [Cling](http://4thline.org/projects/cling) für UPnP (SEMP-Protokoll)
+* [Docker](https://www.docker.com/) für die Entwicklung einer Container-Platform
+* [Docker Hub](https://hub.docker.com/) für den Betrieb einer Community-Platform zum Austausch von für Docker-Images
+* [GitHub](https://github.com/) für den Betrieb einer Community-Platform für Open-Source-Projekte
+* [IntelliJ](https://www.jetbrains.com/de-de/idea/) für die beste IDE (vor allem auch unter Linux) und kostenlose Lizenz für Open-Source-Projekte
+* [Pi4J](http://pi4j.com) für den Zugriff auf die GPIO-Ports des Raspberry
+* [Semantic UI](https://semantic-ui.com/) für das Web-Frontend
+* [Spring Boot](https://spring.io/projects/spring-boot) für Spring-basierte Anwendungen mit eingebettetem Web-Container
+* [Testcafe](https://devexpress.github.io/testcafe/) für einfaches Testen von Web-Anwendungen
+* [Travis CI](https://www.travis-ci.com/) für den Betrieb einer Continuous Integration-Platform
+* [WebStorm](https://www.jetbrains.com/de-de/webstorm/) für die beste Web-IDE (vor allem auch unter Linux) und kostenlose Lizenz für Open-Source-Projekte
 
 ## Lizenz
 Die Inhalte in diesem Repository sind lizensiert unter der [GNU GENERAL PUBLIC LICENSE](LICENSE.txt), falls nicht anders angegeben.

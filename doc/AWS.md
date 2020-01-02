@@ -13,12 +13,7 @@ sudo yum update -y
 sudo yum install docker -y
 sudo service docker start
 sudo service docker status
-sudo docker volume create sae
-sudo docker pull avanux/smartapplianceenabler-amd64
-docker image ls
-sudo docker image ls
-sudo docker run -d --rm -v sae:/opt/sae/data -p80:8080 --name=sae avanux/smartapplianceenabler-amd64
 ```
 
-# Hinweis
+## Hinweis
 Falls das _EC2 Dashboard_ laufende Instanzen nicht anzeigt, stimmt möglicherweise die Regio nicht mit der Region überein, in der die Instanzen angelegt wurden (z.B. us-east-2).
