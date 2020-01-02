@@ -74,7 +74,7 @@ In den nachfolgenden Kapiteln ist Installation und Konfiguration des *Smart Appl
 ### [Installation](doc/Installation_DE.md)
 Der einfachste Weg zu einem lauffähigen *Smart Appliance Enabler* besteht in der [Installation](doc/Installation_DE.md) einer releasten Version.
 
-![Docker](pics/docker.png)
+![Docker](pics/Docker.png)
 
 Alternativ kann *Smart Appliance Enabler* auch als [Docker-Container](doc/Docker_DE.md) betrieben werden.
 
