@@ -30,6 +30,7 @@ script:
   - pushd src/test/angular
   - npm i
   - export BROWSERSTACK_BUILD_ID=$TRAVIS_COMMIT
-  - node_modules/.bin/testcafe "browserstack:chrome@69.0:Windows 10" "src/*.spec.ts"
+# FIXME "browserstack:safari@13.0:OS X Catalina" breaks meter type dropdown
+  - node_modules/.bin/testcafe "browserstack:chrome@69.0:Windows 10,browserstack:firefox@71.0:Windows 10" "src/*.spec.ts"
 after_success:
   - bash <(curl -s https://codecov.io/bash)

@@ -75,3 +75,13 @@ Für die Verwendung von Testcafe mit Browserstack muss ein Plugin installiert we
 npm install --save testcafe-browser-provider-browserstack
 ```
 Weitere Infos: https://www.browserstack.com/automate/testcafe
+
+Zum Anzeigen der unterstützten Kombinationen eignet sich der folgende Befehl:
+```console
+axel@p51:/data/IdeaProjects/SmartApplianceEnabler/src/test/angular$ testcafe -b browserstack
+"browserstack:firefox@71.0:OS X Catalina"
+"browserstack:firefox@70.0:OS X Catalina"
+"browserstack:firefox@69.0:OS X Catalina"
+"browserstack:firefox@68.0:OS X Catalina"
+...
+```
