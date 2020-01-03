@@ -3,10 +3,11 @@ import {SideMenu} from './page/side.menu.page';
 import {Appliance} from './page/appliance.page';
 import {heatPump} from './fixture/appliance/heatpump';
 import {baseUrl} from './page/page';
-import {S0ElectricityMeter} from '../../../main/angular/src/app/meter-s0/s0-electricity-meter';
 import {S0MeterPage} from './page/meter/S0-meter.page';
-import {s0MeterAllAttributes} from './fixture/meter/S0Meter';
+import {s0Meter} from './fixture/meter/S0Meter';
 import {generateApplianceId} from './shared/appliance-id-generator';
+import {SwitchPage} from './page/control/switch.page';
+import {switch_} from './fixture/control/Switch';
 
 fixture('Heat pump').page(baseUrl());
 
@@ -35,10 +36,19 @@ test('Create appliance', async t => {
 test('Create meter', async t => {
   await TopMenu.clickAppliances(t);
   await SideMenu.clickMeter(t, applianceId);
-  await S0MeterPage.setType(t, S0ElectricityMeter.TYPE);
-  await S0MeterPage.setGpio(t, s0MeterAllAttributes.gpio);
-  await S0MeterPage.setPinPullResistance(t, s0MeterAllAttributes.pinPullResistance);
-  await S0MeterPage.setImpulsesPerKwh(t, s0MeterAllAttributes.impulsesPerKwh);
-  await S0MeterPage.setMeasurementInterval(t, s0MeterAllAttributes.measurementInterval);
+  await S0MeterPage.setTypeS0(t);
+  await S0MeterPage.setGpio(t, s0Meter.gpio);
+  await S0MeterPage.setPinPullResistance(t, s0Meter.pinPullResistance);
+  await S0MeterPage.setImpulsesPerKwh(t, s0Meter.impulsesPerKwh);
+  await S0MeterPage.setMeasurementInterval(t, s0Meter.measurementInterval);
   await S0MeterPage.clickSave(t);
+});
+
+test('Create control', async t => {
+  await TopMenu.clickAppliances(t);
+  await SideMenu.clickControl(t, applianceId);
+  await SwitchPage.setTypeSwitch(t);
+  await SwitchPage.setGpio(t, switch_.gpio);
+  await SwitchPage.setReverseStates(t, switch_.reverseStates);
+  await SwitchPage.clickSave(t);
 });

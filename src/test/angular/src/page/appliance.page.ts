@@ -1,4 +1,5 @@
 import {Selector} from 'testcafe';
+import {setCheckboxEnabled} from '../shared/checkbox';
 
 export class Appliance {
 
@@ -54,11 +55,7 @@ export class Appliance {
   }
 
   public static async setInterruptionsAllowed(t: TestController, interruptionsAllowed: boolean): Promise<TestController> {
-    const checked = await Appliance.interruptionsAllowedInput.checked;
-    if ((interruptionsAllowed && !checked) || (!interruptionsAllowed && checked)) {
-      await t.click(Appliance.interruptionsAllowedInput);
-    }
-    return t;
+    return setCheckboxEnabled(t, Appliance.interruptionsAllowedInput, interruptionsAllowed);
   }
 
   public static async setMinOnTime(t: TestController, minOnTime: number): Promise<TestController> {
