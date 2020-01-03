@@ -53,33 +53,33 @@ public class PulseEnergyMeterTest {
     @Test
     public void getEnergy_started_500pulse() {
         this.pulseEnergyMeter.startEnergyCounter();
-        increasePulseCounter(500);
-        assertEquals(0.5f, this.pulseEnergyMeter.getEnergy(), 0.0001f);
+        increasePulseCounter(5);
+        assertEquals(0.005f, this.pulseEnergyMeter.getEnergy(), 0.0001f);
     }
 
     @Test
     public void getEnergy_with_interruptions() {
         this.pulseEnergyMeter.startEnergyCounter();
-        increasePulseCounter(1000);
+        increasePulseCounter(10);
         this.pulseEnergyMeter.stopEnergyCounter();
-        assertEquals(1.0f, this.pulseEnergyMeter.getEnergy(), 0.0001f);
+        assertEquals(0.01f, this.pulseEnergyMeter.getEnergy(), 0.0001f);
         this.pulseEnergyMeter.startEnergyCounter();
-        increasePulseCounter(1000);
+        increasePulseCounter(10);
         this.pulseEnergyMeter.stopEnergyCounter();
-        assertEquals(2.0f, this.pulseEnergyMeter.getEnergy(), 0.0001f);
+        assertEquals(0.02f, this.pulseEnergyMeter.getEnergy(), 0.0001f);
     }
 
     @Test
     public void getEnergy_with_reset() {
         this.pulseEnergyMeter.startEnergyCounter();
-        increasePulseCounter(1000);
+        increasePulseCounter(10);
         this.pulseEnergyMeter.stopEnergyCounter();
-        assertEquals(1.0f, this.pulseEnergyMeter.getEnergy(), 0.0001f);
+        assertEquals(0.01f, this.pulseEnergyMeter.getEnergy(), 0.0001f);
         this.pulseEnergyMeter.resetEnergyCounter();
         this.pulseEnergyMeter.startEnergyCounter();
-        increasePulseCounter(1000);
+        increasePulseCounter(10);
         this.pulseEnergyMeter.stopEnergyCounter();
-        assertEquals(1.0f, this.pulseEnergyMeter.getEnergy(), 0.0001f);
+        assertEquals(0.01f, this.pulseEnergyMeter.getEnergy(), 0.0001f);
     }
 
     void increasePulseCounter(int pulseCount) {
