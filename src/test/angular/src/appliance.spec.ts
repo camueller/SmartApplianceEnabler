@@ -2,9 +2,9 @@ import {TopMenu} from './page/top-menu.page';
 import {SideMenu} from './page/side.menu.page';
 import {Appliance} from './page/appliance.page';
 import {heatPump} from './fixture/appliance/heatpump';
-import {base_url} from './page/page';
+import {baseUrl} from './page/page';
 
-fixture('Appliance').page(base_url);
+fixture('Appliance').page(baseUrl());
 
 test('Create appliance', async t => {
   await TopMenu.clickAppliances(t);
@@ -22,9 +22,6 @@ test('Create appliance', async t => {
   await Appliance.setMaxOffTime(t, heatPump.maxOffTime);
   await Appliance.clickSave(t);
 
-  // await SideMenu.appliance(heatPump.id).with({ timeout: 10000 });
-  // await t.expect(SideMenu.appliance(heatPump.id).exists).ok({timeout: 10000});
-  // await t.wait(10000);
-  // await t.expect(SideMenu.appliance(heatPump.id).exists).ok();
-  // await t.wait(10000);
+  await t.expect(SideMenu.appliance(heatPump.id).exists)
+    .ok('The appliance created should show up in the side menu', { timeout: 10000 });
 });

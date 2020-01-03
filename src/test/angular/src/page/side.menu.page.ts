@@ -10,6 +10,6 @@ export class SideMenu {
   }
 
   public static appliance(id: string): Selector {
-    return Selector(`a[href="${id}"]`);
+    return Selector(`a[href="/appliance/${id}"]`);
   }
 }
