@@ -12,4 +12,12 @@ export class SideMenu {
   public static appliance(id: string): Selector {
     return Selector(`a[href="/appliance/${id}"]`);
   }
+
+  public static meter(id: string): Selector {
+    return Selector(`a[href="/meter/${id}"]`);
+  }
+  public static async clickMeter(t: TestController, id: string): Promise<TestController> {
+    await t.click(SideMenu.meter(id));
+    return t;
+  }
 }

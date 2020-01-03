@@ -22,9 +22,9 @@ import {HttpElectricityMeter} from '../meter-http/http-electricity-meter';
 
 export class Meter {
   type: string;
-  s0ElectricityMeter: S0ElectricityMeter;
-  modbusElectricityMeter: ModbusElectricityMeter;
-  httpElectricityMeter: HttpElectricityMeter;
+  s0ElectricityMeter?: S0ElectricityMeter;
+  modbusElectricityMeter?: ModbusElectricityMeter;
+  httpElectricityMeter?: HttpElectricityMeter;
 
   public constructor(init?: Partial<Meter>) {
     Object.assign(this, init);
