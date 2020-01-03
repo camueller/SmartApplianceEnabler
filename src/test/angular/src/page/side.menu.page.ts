@@ -2,10 +2,14 @@ import {Selector} from 'testcafe';
 
 export class SideMenu {
 
-    private static NEW_APPLIANCE = 'a[href="/appliance"]';
+  private static applianceAnchor = Selector('a[href="/appliance"]');
 
-    public static async clickNewAppliance(t: TestController): Promise<TestController> {
-        await t.click(Selector(SideMenu.NEW_APPLIANCE));
-        return t;
-    }
+  public static async clickNewAppliance(t: TestController): Promise<TestController> {
+    await t.click(SideMenu.applianceAnchor);
+    return t;
+  }
+
+  public static appliance(id: string): Selector {
+    return Selector(`a[href="${id}"]`);
+  }
 }
