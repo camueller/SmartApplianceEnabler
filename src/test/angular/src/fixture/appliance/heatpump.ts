@@ -1,7 +1,6 @@
 import {Appliance} from '../../../../../main/angular/src/app/appliance/appliance';
 
-export const heatPump: Appliance = {
-    id: 'F-00000001-000000000001-00',
+export const heatPump = new Appliance({
     vendor: 'Viessmann',
     name: 'Vitocal 300',
     type: 'HeatPump',
@@ -12,4 +11,4 @@ export const heatPump: Appliance = {
     maxOnTime: 7200,
     minOffTime: 600,
     maxOffTime: 900,
-};
+});
