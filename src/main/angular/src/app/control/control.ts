@@ -27,13 +27,13 @@ import {EvCharger} from '../control-evcharger/ev-charger';
 export class Control {
   type: string;
   startingCurrentDetection: boolean;
-  startingCurrentSwitch: StartingCurrentSwitch;
-  alwaysOnSwitch: AlwaysOnSwitch;
-  switch_: Switch;
-  modbusSwitch: ModbusSwitch;
-  mockSwitch: MockSwitch;
-  httpSwitch: HttpSwitch;
-  evCharger: EvCharger;
+  startingCurrentSwitch?: StartingCurrentSwitch;
+  alwaysOnSwitch?: AlwaysOnSwitch;
+  switch_?: Switch;
+  modbusSwitch?: ModbusSwitch;
+  mockSwitch?: MockSwitch;
+  httpSwitch?: HttpSwitch;
+  evCharger?: EvCharger;
 
   public constructor(init?: Partial<Control>) {
     Object.assign(this, init);
