@@ -56,7 +56,7 @@ Deshalb kann das UPnP des SAE mit einem Property deaktiviert werden:
 Zum Ausführen von Testcafe-Tests in WebStorm sollte folgendes Plugin über den Marketplace installiert werden:
 https://plugins.jetbrains.com/plugin/13133-testcafe-runner-for-webstorm/
 
-Alternativen können die Tests in der Shell gestartet werden:
+Alternativ können die Tests in der Shell gestartet werden:
 ```console
 axel@p51:/data/IdeaProjects/SmartApplianceEnabler/src/test/angular$ testcafe "browserstack:chrome@69.0:Windows 10" "src/appliance.spec.ts"
  Running tests in:
@@ -64,9 +64,26 @@ axel@p51:/data/IdeaProjects/SmartApplianceEnabler/src/test/angular$ testcafe "br
 
  Appliance
  ✓ Create appliance
+ ✓ Create meter
+ ✓ Create control
 
 
  1 passed (27s)
+```
+... auch mit mehreren Browsern:
+```console
+axel@p51:/data/IdeaProjects/SmartApplianceEnabler/src/test/angular$ testcafe "browserstack:chrome@69.0:Windows 10,browserstack:firefox@71.0:Windows 10" "src/heatpump.spec.ts"
+ Running tests in:
+ - Chrome 69.0.3497.92 / Windows 10 (https://automate.browserstack.com/builds/9be7af7e23e9e7a63ea57062980ddffdcbc03f8e/sessions/e3c72a4aa3df464416f6b82063e6fec62e108055)
+ - Firefox 71.0 / Windows 10 (https://automate.browserstack.com/builds/9be7af7e23e9e7a63ea57062980ddffdcbc03f8e/sessions/07bfbba39b44bfe5ed7544a2d66c326553ae4d11)
+
+ Heat pump
+ ✓ Create appliance
+ ✓ Create meter
+ ✓ Create control
+
+
+ 3 passed (48s)
 ```
 
 #### Browserstack
