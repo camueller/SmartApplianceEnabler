@@ -3,12 +3,10 @@ import {TestContext} from './shared/test-context';
 import {createAppliance, createControl, createMeter} from './shared/helper';
 
 fixture('Heat pump')
-  .page(baseUrl())
-  .before(async ctx => {
-    ctx.heatPump = TestContext.getHeatPump();
-  });
+  .page(baseUrl());
 
 test('Create appliance', async t => {
+  t.fixtureCtx.heatPump = TestContext.getHeatPump(t);
   await createAppliance(t, t.fixtureCtx.heatPump.appliance);
 });
 

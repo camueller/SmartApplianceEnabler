@@ -3,12 +3,10 @@ import {TestContext} from './shared/test-context';
 import {createAppliance, createMeter} from './shared/helper';
 
 fixture('Washing Machine')
-  .page(baseUrl())
-  .before(async ctx => {
-    ctx.washingMachine = TestContext.getWashingMachine();
-  });
+  .page(baseUrl());
 
 test('Create appliance', async t => {
+  t.fixtureCtx.washingMachine = TestContext.getWashingMachine(t);
   await createAppliance(t, t.fixtureCtx.washingMachine.appliance);
 });
 

@@ -14,34 +14,43 @@ import {httpMeter} from '../fixture/meter/http-meter';
 
 export class TestContext {
 
-  private static heatPump: ApplianceConfiguration;
-  private static washingMachine: ApplianceConfiguration;
+  private static configurations = new Map();
 
-  public static getHeatPump(): ApplianceConfiguration {
-    if (!TestContext.heatPump) {
+  private static configurationKey(t: TestController, configurationName: string) {
+    return {configurationName, userAgent: t.browser.prettyUserAgent};
+  }
+
+  public static getHeatPump(t: TestController): ApplianceConfiguration {
+    const configurationKey = TestContext.configurationKey(t, 'HeatPump');
+    let configuration = TestContext.configurations.get(configurationKey);
+    if (!configuration) {
       const appliance: Appliance = {...heatPump, id: generateApplianceId()};
       const meter: Meter = {type: S0ElectricityMeter.TYPE, s0ElectricityMeter: s0Meter};
       const control: Control = {type: Switch.TYPE, startingCurrentDetection: false, switch_};
-      TestContext.heatPump = new ApplianceConfiguration({
+      configuration = new ApplianceConfiguration({
         appliance,
         meter,
         control
       });
+      TestContext.configurations.set(configurationKey, configuration);
     }
-    return TestContext.heatPump;
+    return configuration;
   }
 
-  public static getWashingMachine(): ApplianceConfiguration {
-    if (!TestContext.washingMachine) {
+  public static getWashingMachine(t: TestController): ApplianceConfiguration {
+    const configurationKey = TestContext.configurationKey(t, 'WashingMachine');
+    let configuration = TestContext.configurations.get(configurationKey);
+    if (!configuration) {
       const appliance: Appliance = {...washingMachine, id: generateApplianceId()};
       const meter: Meter = {type: HttpElectricityMeter.TYPE, httpElectricityMeter: httpMeter};
       const control: Control = {type: Switch.TYPE, startingCurrentDetection: false, switch_};
-      TestContext.washingMachine = new ApplianceConfiguration({
+      configuration = new ApplianceConfiguration({
         appliance,
         meter,
         control
       });
+      TestContext.configurations.set(configurationKey, configuration);
     }
-    return TestContext.washingMachine;
+    return configuration;
   }
 }
