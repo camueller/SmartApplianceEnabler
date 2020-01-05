@@ -17,7 +17,7 @@ export class TestContext {
   private static configurations = new Map();
 
   private static configurationKey(t: TestController, configurationName: string) {
-    return {configurationName, userAgent: t.browser.prettyUserAgent};
+    return JSON.stringify({configurationName, userAgent: t.browser.name});
   }
 
   public static getHeatPump(t: TestController): ApplianceConfiguration {
