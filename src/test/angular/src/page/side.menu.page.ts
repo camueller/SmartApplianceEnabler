@@ -1,4 +1,5 @@
 import {Selector} from 'testcafe';
+import {saeRestartTimeout} from '../shared/timeout';
 
 export class SideMenu {
 
@@ -18,7 +19,7 @@ export class SideMenu {
   }
 
   public static meter(id: string): Selector {
-    return Selector(`a[href="/meter/${id}"]`);
+    return Selector(`a[href="/meter/${id}"]`,  { timeout: saeRestartTimeout });
   }
   public static async clickMeter(t: TestController, id: string): Promise<TestController> {
     await t.click(SideMenu.meter(id));
@@ -26,7 +27,7 @@ export class SideMenu {
   }
 
   public static control(id: string): Selector {
-    return Selector(`a[href="/control/${id}"]`);
+    return Selector(`a[href="/control/${id}"]`, { timeout: saeRestartTimeout });
   }
   public static async clickControl(t: TestController, id: string): Promise<TestController> {
     await t.click(SideMenu.control(id));
