@@ -50,6 +50,9 @@ Leaving...
 Hard resetting via RTS pin...
 ```
 
+## Aktualisieren der Firmware
+Wenn sich auf dem Adapter bereits Tasmota-Firmware befindet, kann man diese über den Menüpunkt `Firmware update` aktualsieren. Falls dabei ein Fehler auftritt (`Upload-buffer-Vergleich weicht ab`), sollte man zunächst die `tasmota-minimal.bin` aufspielen und danach erst die gewünschte Vollversion. [Quelle](https://www.schimmer-media.de/forum/index.php?thread/223-sonoff-basic-update-nicht-m%C3%B6glich/)
+
 
 ## Geräte mit Tasmota-Firmware als Stromzähler 
 
