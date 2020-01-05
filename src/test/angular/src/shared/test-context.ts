@@ -10,7 +10,7 @@ import {s0Meter} from '../fixture/meter/s0-meter';
 import {S0ElectricityMeter} from '../../../../main/angular/src/app/meter-s0/s0-electricity-meter';
 import {Switch} from '../../../../main/angular/src/app/control-switch/switch';
 import {HttpElectricityMeter} from '../../../../main/angular/src/app/meter-http/http-electricity-meter';
-import {httpMeter} from '../fixture/meter/http-meter';
+import {httpMeter_2HttpRead_complete} from '../fixture/meter/http-meter';
 
 export class TestContext {
 
@@ -42,7 +42,7 @@ export class TestContext {
     let configuration = TestContext.configurations.get(configurationKey);
     if (!configuration) {
       const appliance: Appliance = {...washingMachine, id: generateApplianceId()};
-      const meter: Meter = {type: HttpElectricityMeter.TYPE, httpElectricityMeter: httpMeter};
+      const meter: Meter = {type: HttpElectricityMeter.TYPE, httpElectricityMeter: httpMeter_2HttpRead_complete};
       const control: Control = {type: Switch.TYPE, startingCurrentDetection: false, switch_};
       configuration = new ApplianceConfiguration({
         appliance,

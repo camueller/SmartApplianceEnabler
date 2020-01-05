@@ -3,14 +3,17 @@ import {MeterValueName} from '../../../../../main/angular/src/app/meter/meter-va
 import {HttpReadValue} from '../../../../../main/angular/src/app/http-read-value/http-read-value';
 import {HttpRead} from '../../../../../main/angular/src/app/http-read/http-read';
 
-export const httpMeter = new HttpElectricityMeter({
+export const httpMeter_2HttpRead_complete = new HttpElectricityMeter({
   httpReads: [
     new HttpRead({
       url: 'http://fritz.box/power',
       readValues: [
         new HttpReadValue({
           name: MeterValueName.Power,
-          extractionRegex: ',.Power.:(\\d+)'
+          data: 'GET_POWER',
+          path: '$.dws',
+          extractionRegex: ',.Power.:(\\d+)',
+          factorToValue: 10
         })
       ]
     }),
@@ -19,7 +22,10 @@ export const httpMeter = new HttpElectricityMeter({
       readValues: [
         new HttpReadValue({
           name: MeterValueName.Energy,
-          extractionRegex: ',.Energy.:(\\d+)'
+          data: 'GET_ENERGY',
+          path: '$.des',
+          extractionRegex: ',.Energy.:(\\d+)',
+          factorToValue: 0.1
         })
       ]
     })
