@@ -34,7 +34,7 @@ Das Kalibrieren der Werte erfolgt über die Konsole:
 ```
 
 ## Version 1.0
-Bei der neueren Version 1.1 ist in der Steckdose die maximale Leistungsaufnahme mit 2300 W angegeben.
+Bei der älteren Version 1.0 ist in der Steckdose die maximale Leistungsaufnahme mit 2300 W angegeben.
 
 Auf der Platine sind die Kontakte verteilt zu finden:
 ![Gosund SP111 v1.1](../pics/GosundSP111v1_0.png)
