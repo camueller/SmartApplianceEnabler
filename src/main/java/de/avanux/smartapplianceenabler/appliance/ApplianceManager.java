@@ -46,8 +46,9 @@ public class ApplianceManager implements Runnable {
     private FileHandler fileHandler = new FileHandler();
     private Device2EM device2EM;
     private Appliances appliances;
-    private Timer timer;
+    private Timer timer = new Timer();
     private GuardedTimerTask holidaysDownloaderTimerTask;
+    private Integer autoclearSeconds;
     
     private ApplianceManager() {
     }
@@ -55,7 +56,11 @@ public class ApplianceManager implements Runnable {
     public static ApplianceManager getInstance() {
         if(instance == null) {
             instance = new ApplianceManager();
-            instance.timer = new Timer();
+            String autoClear = System.getProperty("sae.autoclear", null);
+            if(autoClear != null) {
+                instance.autoclearSeconds = Integer.parseInt(autoClear);
+                instance.logger.info("*** AUTO CLEAR ENABLED ({} s) ***", instance.autoclearSeconds);
+            }
         }
         return instance;
     }
@@ -219,6 +224,23 @@ public class ApplianceManager implements Runnable {
         }
         if(writeDevice2EM || writeAppliances) {
             restartAppliances();
+            if(this.autoclearSeconds != null) {
+                this.timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        logger.info("*** AUTO CLEAR ENABLED ***");
+                        if(device2EM.getDeviceInfo() != null) {
+                            device2EM.getDeviceInfo().clear();
+                        }
+                        if(appliances.getAppliances() != null) {
+                            appliances.getAppliances().clear();
+                        }
+                        fileHandler.save(device2EM);
+                        fileHandler.save(appliances);
+                        restartAppliances();
+                    }
+                }, this.autoclearSeconds * 1000);
+            }
         }
     }
 

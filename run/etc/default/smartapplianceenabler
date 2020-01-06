@@ -26,6 +26,11 @@ JAVA_BIN=/usr/bin/java
 # This is useful for testing only.
 #JAVA_OPTS="${JAVA_OPTS} -Dsae.discovery.disable=true"
 
+# Enable this line to clear configuration (all appliances, ...) after the given number of seconds after the first
+# appliance has been saved.
+# This is useful for testing only.
+#JAVA_OPTS="${JAVA_OPTS} -Dsae.autoclear=30"
+
 # Enable this line to bind to let the Smart Appliance Enabler specific network address.
 # This hast Du be the address of one of the local network interfaces.
 #JAVA_OPTS="${JAVA_OPTS} -Dserver.address=192.168.178.33"
