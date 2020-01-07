@@ -155,6 +155,9 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
     }
     this.control.type = newType;
     this.buildForm();
+    if (newType === this.TYPE_ALWAYS_ON_SWITCH) {
+      this.form.markAsDirty();
+    }
   }
 
   get canHaveStartingCurrentDetection(): boolean {
