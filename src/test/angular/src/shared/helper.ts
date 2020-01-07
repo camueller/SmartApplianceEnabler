@@ -10,6 +10,9 @@ import {SwitchPage} from '../page/control/switch.page';
 import {Control} from '../../../../main/angular/src/app/control/control';
 import {HttpElectricityMeter} from '../../../../main/angular/src/app/meter-http/http-electricity-meter';
 import {HttpMeterPage} from '../page/meter/http-meter.page';
+import {Switch} from '../../../../main/angular/src/app/control-switch/switch';
+import {AlwaysOnSwitch} from '../../../../main/angular/src/app/control-alwayson/always-on-switch';
+import {AlwaysOnSwitchPage} from '../page/control/always-on-switch.page';
 
 export async function createAppliance(t: TestController, appliance: Appliance) {
   await TopMenu.clickAppliances(t);
@@ -36,6 +39,11 @@ export async function createMeter(t: TestController, applianceId: string, meter:
 export async function createControl(t: TestController, applianceId: string, control: Control) {
   await TopMenu.clickAppliances(t);
   await SideMenu.clickControl(t, applianceId);
-  await SwitchPage.setSwitch(t, control.switch_);
+  if (control.type === AlwaysOnSwitch.TYPE) {
+    await AlwaysOnSwitchPage.setAlwaysOnSwitch(t, control.alwaysOnSwitch);
+  }
+  if (control.type === Switch.TYPE) {
+    await SwitchPage.setSwitch(t, control.switch_);
+  }
   await SwitchPage.clickSave(t);
 }
