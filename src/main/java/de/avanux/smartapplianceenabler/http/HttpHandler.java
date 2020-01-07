@@ -88,7 +88,7 @@ public class HttpHandler implements ApplianceIdConsumer {
             if(response != null) {
                 logger.debug("{}: Response: {}", applianceId, response);
                 String protocolHandlerValue = response;
-                if(contentProtocolHandler != null) {
+                if(contentProtocolHandler != null && path != null) {
                     contentProtocolHandler.parse(response);
                     protocolHandlerValue = contentProtocolHandler.readValue(path);
                 }
