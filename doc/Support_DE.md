@@ -77,12 +77,32 @@ Direkt nach dem Start schreibt der *Smart Appliance Enabler* die Version in die 
 2018-04-08 10:17:29,973 INFO [main] d.a.s.Application [Application.java:45] Running version 1.2.0-SNAPSHOT 2017-12-23 19:16
 ```
 
-## Verbindung zwischen Home Manager und Smart Appliance Enabler
+## Netzwerkverbindung zwischen Smart Appliance Enabler und Sunny Home Manager
 Home Manager auf den *Smart Appliance Enabler* müssen sich im gleichen Netz befinden!
 Wenn der Log-Level mindestens auf DEBUG gesetzt wurde, kann man in der Log-Datei sehen, wenn der Home Manager auf den *Smart Appliance Enabler* zugreift:
 ```
 20:25:17.390 [http-nio-8080-exec-1] DEBUG d.a.s.semp.webservice.SempController - Device info/status/planning requested.
 ```
+
+## Datenaustausch zwischen Smart Appliance Enabler und Sunny Home Manager
+Bei Problemen wird oft nur der offensichtliche Fehler betrachtet (_"Im Sunny Portal werden keine Messwerte angezeigt"_). Dabei läßt sich relativ leicht herausfinden, ob der Fehler im *Smart Appliance Enabler* liegt oder am Sunny Home Manager bzw. Sunny Portal.
+
+Die Kommunikation zwischen den beiden besteht darin, dass der Sunny Home Manager **alle 60 Sekunden** den *Smart Appliance Enabler* über die **URL http://raspi:8080/semp (wobei "raspi" durch den Hostnamen oder IP-Adresse des Raspberry Pi zu ersetzen ist)** aufruft. Diese URL kann man auch in einen ganz normalen Web-Browser eingeben und sich anzeigen lassen, welche Informationen der *Smart Appliance Enabler* an den Sunny Home Manager überträgt.
+
+Die URL liefert ein SEMP-XML-Dokument, in der für jedes Gerät ein *DeviceInfo* und ein *DeviceStatus* enthalten ist. Optional können auch *PlanningRequest* enthalten sein.
+
+Jedes Gerät wird über eine **DeviceId** identifiziert - das ist die (Appliance-) ID, die beim Anlegen des Gerätes eingetragen werden musste.
+
+Bei der Fehlersuche wird man also denjenigen *DeviceStatus* betrachten, in dem die *DeviceId* des problematischen Gerätes enthalten ist.
+
+Wenn **Zählerwerte nicht im Sunny Portal** angezeigt werden, müssen zwei Dinge geprüft werden:
+- Im *DeviceStatus* unter *PowerInfo* muss bei *AveragePower* die aktuelle Leistungsaufnahme enthalten sein, die größer als 0 sein muss
+- Im *DeviceStatus* muss der *Status* auf _On_ stehen, sonst werden die Leistungswerte vom Sunny Home Manager ignoriert
+
+Wenn Geräte vom Sunny Home Manager **nicht geschaltet werden**, müssen folgende Dinge geprüft werden:
+- Im *DeviceStatus* muss *EMSignalsAccepted* auf _true_ stehen
+- Der Sunny Home Manager schickt nur einen Schaltbefehl, wenn ein *PlanningRequest* mit einem *Timeframe* für die betreffene *DeviceId* existiert. Ein Schaltbefehl kann nur kommen, wenn *EarliestStart* den Wert 0 hat!
+
 ## Analyse der Log Dateien des SEMP Moduls im Sunny Home Manager
 Siehe https://www.photovoltaikforum.com/thread/104060-ger%C3%A4te-mit-home-manager-koppeln-via-semp-ethernet/?postID=1396300#post1396300
 
