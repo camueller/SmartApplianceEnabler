@@ -22,7 +22,7 @@ export class SideMenu {
   }
 
   public static appliance(id: string): Selector {
-    return Selector(`a[href="/appliance/${id}"]`);
+    return Selector(`a[href="/appliance/${id}"]`, {timeout: saeRestartTimeout});
   }
 
   public static async clickAppliance(t: TestController, id: string): Promise<TestController> {

@@ -33,7 +33,7 @@ export class SwitchPage extends ControlPage {
     return t;
   }
   public static async assertReverseStates(t: TestController, reverseStates: boolean): Promise<TestController> {
-    await assertCheckbox(t, SwitchPage.gpioInput, reverseStates);
+    await assertCheckbox(t, SwitchPage.reverseStatesInput, reverseStates);
     return t;
   }
 }
