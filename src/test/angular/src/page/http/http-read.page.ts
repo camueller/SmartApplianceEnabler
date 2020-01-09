@@ -1,5 +1,5 @@
 import {HttpRead} from '../../../../../main/angular/src/app/http-read/http-read';
-import {inputText} from '../../shared/form';
+import {assertInput, inputText} from '../../shared/form';
 import {Selector} from 'testcafe';
 import {HttpReadValue} from '../../../../../main/angular/src/app/http-read-value/http-read-value';
 import {HttpReadValuePage} from './http-read-value.page';
@@ -21,15 +21,25 @@ export class HttpReadPage {
   public static async setHttpRead(t: TestController, httpRead: HttpRead, httpReadIndex: number, selectorPrefix?: string) {
     HttpReadPage.setUrl(t, httpRead.url, httpReadIndex, selectorPrefix);
   }
+  public static async assertHttpRead(t: TestController, httpRead: HttpRead, httpReadIndex: number, selectorPrefix?: string) {
+    HttpReadPage.assertUrl(t, httpRead.url, httpReadIndex, selectorPrefix);
+  }
 
   public static async setHttpReadValue(t: TestController, httpReadValue: HttpReadValue, httpReadIndex: number, selectorPrefix?: string) {
     const httpReadValueSelectorPrefix = `${selectorPrefix} ${HttpReadPage.selectorBase(httpReadIndex)}`;
     await HttpReadValuePage.setHttpReadValue(t, httpReadValue, 0, httpReadValueSelectorPrefix);
   }
+  public static async assertHttpReadValue(t: TestController, httpReadValue: HttpReadValue, httpReadIndex: number, selectorPrefix?: string) {
+    const httpReadValueSelectorPrefix = `${selectorPrefix} ${HttpReadPage.selectorBase(httpReadIndex)}`;
+    await HttpReadValuePage.assertHttpReadValue(t, httpReadValue, 0, httpReadValueSelectorPrefix);
+  }
 
   public static async setUrl(t: TestController, url: string, httpReadIndex: number, selectorPrefix?: string): Promise<TestController> {
     await inputText(t, HttpReadPage.urlInput(httpReadIndex, selectorPrefix), url);
     return t;
+  }
+  public static async assertUrl(t: TestController, url: string, httpReadIndex: number, selectorPrefix?: string) {
+    await assertInput(t, HttpReadPage.urlInput(httpReadIndex, selectorPrefix), url);
   }
 
   public static async clickAddHttpRead(t: TestController, selectorPrefix?: string): Promise<TestController> {
