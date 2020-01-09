@@ -55,7 +55,7 @@ public class IntegrationTest extends TestBase {
         ApplianceManager.getInstanceWithoutTimer();
     }
 
-    @Test
+    // @Test
     public void testSwitchOnAndOff() {
         LocalDateTime timeInitial = toToday(10, 0, 0);
         TestBuilder builder = new TestBuilder()
@@ -205,7 +205,7 @@ public class IntegrationTest extends TestBase {
         assertFalse(applianceStatusAfterSwitchOff.isOn());
     }
 
-    @Test
+    //@Test
     public void testClickGoLightAfterTimeframeWithNoRunningTimeLeft() {
         LocalDateTime timeInitial = toToday(11, 0, 0);
         TestBuilder builder = new TestBuilder()
