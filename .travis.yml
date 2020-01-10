@@ -6,31 +6,33 @@ jdk:
 services:
   - docker
 before_install:
-  - sudo apt-get -y install ccrypt
-  - wget https://archive.apache.org/dist/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.zip
-  - unzip -qq apache-maven-3.3.9-bin.zip
-  - export M2_HOME=$PWD/apache-maven-3.3.9
-  - export PATH=$M2_HOME/bin:$PATH
-  - wget https://nodejs.org/dist/v10.17.0/node-v10.17.0-linux-x64.tar.gz
-  - tar xfz node-v10.17.0-linux-x64.tar.gz
-  - export PATH=$PWD/node-v10.17.0-linux-x64/bin:$PATH
+  - |
+    sudo apt-get -y install ccrypt
+    wget https://archive.apache.org/dist/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.zip
+    unzip -qq apache-maven-3.3.9-bin.zip
+    export M2_HOME=$PWD/apache-maven-3.3.9
+    export PATH=$M2_HOME/bin:$PATH
+    wget https://nodejs.org/dist/v10.17.0/node-v10.17.0-linux-x64.tar.gz
+    tar xfz node-v10.17.0-linux-x64.tar.gz
+    export PATH=$PWD/node-v10.17.0-linux-x64/bin:$PATH
 script:
-  - mvn package -B -Ptravis,web
-  - pushd docker
-  - cp ../target/SmartApplianceEnabler*.war sae-ci/SmartApplianceEnabler.war
-  - echo $DOCKERHUB_ACCESS_TOKEN | docker login --username avanux --password-stdin
-  - docker build --tag=avanux/smartapplianceenabler-amd64:ci ./sae-ci
-  - docker push avanux/smartapplianceenabler-amd64:ci
-  - popd
-  - pushd ci
-  - ccrypt -d -K $AWS_CRYPT_KEY aws.pem.cpt >/dev/null 2>&1
-  - chmod 400 aws.pem
-  - ssh -i aws.pem -o StrictHostKeyChecking=no ec2-user@$DEPLOY_HOST 'bash -s' < deploy.sh
-  - popd
-  - pushd src/test/angular
-  - npm i
-  - export BROWSERSTACK_BUILD_ID=$TRAVIS_COMMIT
+  - |
+    mvn package -B -Ptravis,web
+    pushd docker
+    cp ../target/SmartApplianceEnabler*.war sae-ci/SmartApplianceEnabler.war
+    echo $DOCKERHUB_ACCESS_TOKEN | docker login --username avanux --password-stdin
+    docker build --tag=avanux/smartapplianceenabler-amd64:ci ./sae-ci
+    docker push avanux/smartapplianceenabler-amd64:ci
+    popd
+    pushd ci
+    ccrypt -d -K $AWS_CRYPT_KEY aws.pem.cpt >/dev/null 2>&1
+    chmod 400 aws.pem
+    ssh -i aws.pem -o StrictHostKeyChecking=no ec2-user@$DEPLOY_HOST 'bash -s' < deploy.sh
+    popd
+    pushd src/test/angular
+    npm i
+    export BROWSERSTACK_BUILD_ID=$TRAVIS_COMMIT
+    node_modules/.bin/testcafe --page-load-timeout 10000 "browserstack:chrome@69.0:Windows 10,browserstack:firefox@71.0:Windows 10" "src/*.spec.ts"
 # FIXME "browserstack:safari@13.0:OS X Catalina" breaks meter type dropdown
-  - node_modules/.bin/testcafe --page-load-timeout 10000 "browserstack:chrome@69.0:Windows 10,browserstack:firefox@71.0:Windows 10" "src/*.spec.ts"
 after_success:
   - bash <(curl -s https://codecov.io/bash)
