@@ -2,25 +2,32 @@ import {baseUrl} from './page/page';
 import {TestContext} from './shared/test-context';
 import {assertAppliance, assertControl, assertMeter, createAppliance, createControl, createMeter} from './shared/helper';
 import {TopMenu} from './page/top-menu.page';
+import {ApplianceConfiguration} from './shared/appliance-configuration';
 
-fixture('Fridge')
-  .page(baseUrl());
+const fixtureName = 'Fridge';
+fixture(fixtureName).page(baseUrl());
 
 test('Create appliance', async t => {
-  t.fixtureCtx.fridge = TestContext.getFridge(t);
-  await createAppliance(t, t.fixtureCtx.fridge.appliance);
+  const fridge = TestContext.getFridge(t);
+  const key = TestContext.runnerConfigurationKey(t, fixtureName);
+  t.fixtureCtx[key] = fridge;
+  await createAppliance(t, fridge.appliance);
   await TopMenu.clickStatus(t);
-  await assertAppliance(t, t.fixtureCtx.fridge.appliance);
+  await assertAppliance(t, fridge.appliance);
 });
 
 test('Create meter', async t => {
-  await createMeter(t, t.fixtureCtx.fridge.appliance.id, t.fixtureCtx.fridge.meter);
+  const key = TestContext.runnerConfigurationKey(t, fixtureName);
+  const fridge: ApplianceConfiguration = t.fixtureCtx[key];
+  await createMeter(t, fridge.appliance.id, fridge.meter);
   await TopMenu.clickStatus(t);
-  await assertMeter(t, t.fixtureCtx.fridge.appliance.id, t.fixtureCtx.fridge.meter);
+  await assertMeter(t, fridge.appliance.id, fridge.meter);
 });
 
 test('Create control', async t => {
-  await createControl(t, t.fixtureCtx.fridge.appliance.id, t.fixtureCtx.fridge.control);
+  const key = TestContext.runnerConfigurationKey(t, fixtureName);
+  const fridge: ApplianceConfiguration = t.fixtureCtx[key];
+  await createControl(t, fridge.appliance.id, fridge.control);
   await TopMenu.clickStatus(t);
-  await assertControl(t, t.fixtureCtx.fridge.appliance.id, t.fixtureCtx.fridge.control);
+  await assertControl(t, fridge.appliance.id, fridge.control);
 });

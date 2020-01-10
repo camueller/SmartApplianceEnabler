@@ -2,25 +2,32 @@ import {baseUrl} from './page/page';
 import {TestContext} from './shared/test-context';
 import {assertAppliance, assertControl, assertMeter, createAppliance, createControl, createMeter} from './shared/helper';
 import {TopMenu} from './page/top-menu.page';
+import {ApplianceConfiguration} from './shared/appliance-configuration';
 
-fixture('Heat pump')
-  .page(baseUrl());
+const fixtureName = 'Heat pump';
+fixture(fixtureName).page(baseUrl());
 
 test('Create appliance', async t => {
-  t.fixtureCtx.heatPump = TestContext.getHeatPump(t);
-  await createAppliance(t, t.fixtureCtx.heatPump.appliance);
+  const heatPump = TestContext.getHeatPump(t);
+  const key = TestContext.runnerConfigurationKey(t, fixtureName);
+  t.fixtureCtx[key] = heatPump;
+  await createAppliance(t, heatPump.appliance);
   await TopMenu.clickStatus(t);
-  await assertAppliance(t, t.fixtureCtx.heatPump.appliance);
+  await assertAppliance(t, heatPump.appliance);
 });
 
 test('Create meter', async t => {
-  await createMeter(t, t.fixtureCtx.heatPump.appliance.id, t.fixtureCtx.heatPump.meter);
+  const key = TestContext.runnerConfigurationKey(t, fixtureName);
+  const heatPump: ApplianceConfiguration = t.fixtureCtx[key];
+  await createMeter(t, heatPump.appliance.id, heatPump.meter);
   await TopMenu.clickStatus(t);
-  await assertMeter(t, t.fixtureCtx.heatPump.appliance.id, t.fixtureCtx.heatPump.meter);
+  await assertMeter(t, heatPump.appliance.id, heatPump.meter);
 });
 
 test('Create control', async t => {
-  await createControl(t, t.fixtureCtx.heatPump.appliance.id, t.fixtureCtx.heatPump.control);
+  const key = TestContext.runnerConfigurationKey(t, fixtureName);
+  const heatPump: ApplianceConfiguration = t.fixtureCtx[key];
+  await createControl(t, heatPump.appliance.id, heatPump.control);
   await TopMenu.clickStatus(t);
-  await assertControl(t, t.fixtureCtx.heatPump.appliance.id, t.fixtureCtx.heatPump.control);
+  await assertControl(t, heatPump.appliance.id, heatPump.control);
 });

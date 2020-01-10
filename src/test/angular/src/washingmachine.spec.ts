@@ -2,19 +2,24 @@ import {baseUrl} from './page/page';
 import {TestContext} from './shared/test-context';
 import {assertAppliance, assertMeter, createAppliance, createMeter} from './shared/helper';
 import {TopMenu} from './page/top-menu.page';
+import {ApplianceConfiguration} from './shared/appliance-configuration';
 
-fixture('Washing Machine')
-  .page(baseUrl());
+const fixtureName = 'Washing Machine';
+fixture(fixtureName).page(baseUrl());
 
 test('Create appliance', async t => {
-  t.fixtureCtx.washingMachine = TestContext.getWashingMachine(t);
-  await createAppliance(t, t.fixtureCtx.washingMachine.appliance);
+  const washingMachine = TestContext.getWashingMachine(t);
+  const key = TestContext.runnerConfigurationKey(t, fixtureName);
+  t.fixtureCtx[key] = washingMachine;
+  await createAppliance(t, washingMachine.appliance);
   await TopMenu.clickStatus(t);
-  await assertAppliance(t, t.fixtureCtx.washingMachine.appliance);
+  await assertAppliance(t, washingMachine.appliance);
 });
 
 test('Create meter', async t => {
-  await createMeter(t, t.fixtureCtx.washingMachine.appliance.id, t.fixtureCtx.washingMachine.meter);
+  const key = TestContext.runnerConfigurationKey(t, fixtureName);
+  const washingMachine: ApplianceConfiguration = t.fixtureCtx[key];
+  await createMeter(t, washingMachine.appliance.id, washingMachine.meter);
   await TopMenu.clickStatus(t);
-  await assertMeter(t, t.fixtureCtx.washingMachine.appliance.id, t.fixtureCtx.washingMachine.meter);
+  await assertMeter(t, washingMachine.appliance.id, washingMachine.meter);
 });

@@ -19,7 +19,11 @@ export class TestContext {
 
   private static configurations = new Map();
 
-  private static configurationKey(t: TestController, configurationName: string) {
+  public static configurationKey(t: TestController, configurationName: string) {
+    return configurationName;
+  }
+
+  public static runnerConfigurationKey(t: TestController, configurationName: string) {
     return JSON.stringify({configurationName, userAgent: t.browser.name});
   }
 
