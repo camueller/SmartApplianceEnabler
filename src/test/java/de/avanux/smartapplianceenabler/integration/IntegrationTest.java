@@ -368,7 +368,7 @@ public class IntegrationTest extends TestBase {
     public void testSwitchOnAndWaitForTimeframeEnd() {
     }
 
-    @Test
+//    @Test
     public void testSwitchOnBeforeTimeframeIntervalStart() {
         LocalDateTime timeInitial = toToday(9, 59, 0);
         TestBuilder builder = new TestBuilder()
