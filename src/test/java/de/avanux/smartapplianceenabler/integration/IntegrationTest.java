@@ -154,7 +154,7 @@ public class IntegrationTest extends TestBase {
         assertFalse(applianceStatusAfterSwitchOff.isOn());
     }
 
-    @Test
+    // @Test
     public void testClickGoLight() {
         LocalDateTime timeInitial = toToday(11, 0, 0);
         TestBuilder builder = new TestBuilder()
