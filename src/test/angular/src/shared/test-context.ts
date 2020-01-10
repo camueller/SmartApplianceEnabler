@@ -27,54 +27,50 @@ export class TestContext {
     return JSON.stringify({configurationName, userAgent: t.browser.name});
   }
 
-  public static getHeatPump(t: TestController): ApplianceConfiguration {
-    const configurationKey = TestContext.configurationKey(t, 'HeatPump');
+  public static getConfiguration(t: TestController, configuationName: string,
+                                 factory: () => ApplianceConfiguration): ApplianceConfiguration {
+    const configurationKey = TestContext.configurationKey(t, configuationName);
     let configuration = TestContext.configurations.get(configurationKey);
     if (!configuration) {
-      const appliance: Appliance = {...heatPump, id: generateApplianceId()};
-      const meter: Meter = {type: S0ElectricityMeter.TYPE, s0ElectricityMeter: s0Meter};
-      const control: Control = {type: Switch.TYPE, startingCurrentDetection: false, switch_};
-      configuration = new ApplianceConfiguration({
-        appliance,
-        meter,
-        control
-      });
+      configuration = factory.call(TestContext);
       TestContext.configurations.set(configurationKey, configuration);
     }
     return configuration;
+  }
+
+  public static getHeatPump(t: TestController): ApplianceConfiguration {
+    return TestContext.getConfiguration(t, 'HeatPump', () => TestContext.createHeatPump(t));
+  }
+
+  public static createHeatPump(t: TestController): ApplianceConfiguration {
+    return new ApplianceConfiguration({
+      appliance: {...heatPump, id: generateApplianceId()},
+      meter: {type: S0ElectricityMeter.TYPE, s0ElectricityMeter: s0Meter},
+      control: {type: Switch.TYPE, startingCurrentDetection: false, switch_}
+    });
   }
 
   public static getWashingMachine(t: TestController): ApplianceConfiguration {
-    const configurationKey = TestContext.configurationKey(t, 'WashingMachine');
-    let configuration = TestContext.configurations.get(configurationKey);
-    if (!configuration) {
-      const appliance: Appliance = {...washingMachine, id: generateApplianceId()};
-      const meter: Meter = {type: HttpElectricityMeter.TYPE, httpElectricityMeter: httpMeter_2HttpRead_complete};
-      const control: Control = {type: Switch.TYPE, startingCurrentDetection: false, switch_};
-      configuration = new ApplianceConfiguration({
-        appliance,
-        meter,
-        control
-      });
-      TestContext.configurations.set(configurationKey, configuration);
-    }
-    return configuration;
+    return TestContext.getConfiguration(t, 'Washing Machine', () => TestContext.createWashingMachine(t));
+  }
+
+  public static createWashingMachine(t: TestController): ApplianceConfiguration {
+    return new ApplianceConfiguration({
+      appliance: {...washingMachine, id: generateApplianceId()},
+      meter: {type: HttpElectricityMeter.TYPE, httpElectricityMeter: httpMeter_2HttpRead_complete},
+      control: {type: Switch.TYPE, startingCurrentDetection: false, switch_}
+    });
   }
 
   public static getFridge(t: TestController): ApplianceConfiguration {
-    const configurationKey = TestContext.configurationKey(t, 'Fridge');
-    let configuration = TestContext.configurations.get(configurationKey);
-    if (!configuration) {
-      const appliance: Appliance = {...fridge, id: generateApplianceId()};
-      const meter: Meter = {type: HttpElectricityMeter.TYPE, httpElectricityMeter: httpMeter_2HttpRead_complete};
-      const control: Control = {type: AlwaysOnSwitch.TYPE, startingCurrentDetection: false, alwaysOnSwitch};
-      configuration = new ApplianceConfiguration({
-        appliance,
-        meter,
-        control
-      });
-      TestContext.configurations.set(configurationKey, configuration);
-    }
-    return configuration;
+    return TestContext.getConfiguration(t, 'Fridge', () => TestContext.createFridge(t));
+  }
+
+  public static createFridge(t: TestController): ApplianceConfiguration {
+    return new ApplianceConfiguration({
+      appliance: {...fridge, id: generateApplianceId()},
+      meter: {type: HttpElectricityMeter.TYPE, httpElectricityMeter: httpMeter_2HttpRead_complete},
+      control: {type: AlwaysOnSwitch.TYPE, startingCurrentDetection: false, alwaysOnSwitch}
+    });
   }
 }

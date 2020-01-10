@@ -8,7 +8,7 @@ const fixtureName = 'Heat pump';
 fixture(fixtureName).page(baseUrl());
 
 test('Create appliance', async t => {
-  const heatPump = TestContext.getHeatPump(t);
+  const heatPump = TestContext.createHeatPump(t);
   const key = TestContext.runnerConfigurationKey(t, fixtureName);
   t.fixtureCtx[key] = heatPump;
   await createAppliance(t, heatPump.appliance);

@@ -8,7 +8,7 @@ const fixtureName = 'Fridge';
 fixture(fixtureName).page(baseUrl());
 
 test('Create appliance', async t => {
-  const fridge = TestContext.getFridge(t);
+  const fridge = TestContext.createFridge(t);
   const key = TestContext.runnerConfigurationKey(t, fixtureName);
   t.fixtureCtx[key] = fridge;
   await createAppliance(t, fridge.appliance);
