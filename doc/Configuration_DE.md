@@ -123,7 +123,7 @@ Ein Gerät, das manuell eingeschaltet wird bleibt nur dann in diesem Zustand wen
 Um vor dem Einschalten zusätzlich einen Timeframe für eine bestimmte Laufzeit zu erzeugen ist ein zweiter Befehl notwendig. Beide Befehle direkt hintereinander abgesetzt (zuerst Timeframe, dann Einschalten) bewirken das selbe was die Ampelfunktion zur Verfügung stellt (Klick für sofortigen Start + Auswahl der entsprechenden Laufzeit).
 Zum aktivieren eines zusätzlichen Timeframe für 10 Minuten ab sofort funktioniert folgender Befehl:
 ```console
-curl -s -X PUT -d id=F-00000001-000000000002-00 -d runtime=600 http://127.0.0.1:8080/sae/runtime
+curl -s -X PUT -F id=F-00000001-000000000002-00 -F runtime=600 http://127.0.0.1:8080/sae/runtime
 ```
 
 ### Setzen der Schedules
