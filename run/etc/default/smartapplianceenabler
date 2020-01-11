@@ -31,8 +31,8 @@ JAVA_BIN=/usr/bin/java
 # This is useful for testing only.
 #JAVA_OPTS="${JAVA_OPTS} -Dsae.autoclear=30"
 
-# Enable this line to bind to let the Smart Appliance Enabler specific network address.
-# This hast Du be the address of one of the local network interfaces.
+# Enable this line to bind the Smart Appliance Enabler to a specific network address.
+# This has to be the address of one of the local network interfaces.
 #JAVA_OPTS="${JAVA_OPTS} -Dserver.address=192.168.178.33"
 
 # Enable this line to set the network address the Sunny Home Manager should use to access this

@@ -50,7 +50,10 @@ public class SempDiscovery implements Runnable {
 
     public SempDiscovery() {
         serviceConfiguration = createServiceConfiguration();
-        sempServerUrl = "http://" + resolveListenAddress() + ":" + resolveListenPort();
+        String listenAddress = resolveListenAddress();
+        String listenPort = resolveListenPort();
+        System.setProperty("org.fourthline.cling.network.useAddresses", listenAddress);
+        sempServerUrl = "http://" + listenAddress + ":" + listenPort;
         logger.info("SEMP UPnP will redirect to " + sempServerUrl);
     }
 
@@ -127,9 +130,13 @@ public class SempDiscovery implements Runnable {
     }
 
     private String resolveListenAddress() {
-        String customListenAddress = System.getProperty("semp.gateway.address");
-        if(customListenAddress != null) {
-            return customListenAddress;
+        String sempGatewayAddress = System.getProperty("semp.gateway.address");
+        if(sempGatewayAddress != null) {
+            return sempGatewayAddress;
+        }
+        String serverAddress = System.getProperty("server.address"); // Spring Boot Property for embedded Tomcat
+        if(serverAddress != null) {
+            return serverAddress;
         }
         NetworkAddressFactory networkAddressFactory = this.serviceConfiguration.createNetworkAddressFactory();
         Iterator<InetAddress> bindAddresses = networkAddressFactory.getBindAddresses();
@@ -140,6 +147,6 @@ public class SempDiscovery implements Runnable {
     }
 
     private String resolveListenPort() {
-        return System.getProperty("server.port", "8080");
+        return System.getProperty("server.port", "8080"); // Spring Boot Property for embedded Tomcat
     }
 }
