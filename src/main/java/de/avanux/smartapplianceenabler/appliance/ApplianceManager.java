@@ -46,7 +46,7 @@ public class ApplianceManager implements Runnable {
     private FileHandler fileHandler = new FileHandler();
     private Device2EM device2EM;
     private Appliances appliances;
-    private Timer timer = new Timer();
+    private Timer timer;
     private GuardedTimerTask holidaysDownloaderTimerTask;
     private Integer autoclearSeconds;
     
@@ -56,6 +56,8 @@ public class ApplianceManager implements Runnable {
     public static ApplianceManager getInstance() {
         if(instance == null) {
             instance = new ApplianceManager();
+            // creating the timer here disables the it during unit tests
+            instance.timer = new Timer();
             String autoClear = System.getProperty("sae.autoclear", null);
             if(autoClear != null) {
                 instance.autoclearSeconds = Integer.parseInt(autoClear);
