@@ -13,6 +13,15 @@ import {Switch} from '../../../../main/angular/src/app/control-switch/switch';
 import {AlwaysOnSwitch} from '../../../../main/angular/src/app/control-alwayson/always-on-switch';
 import {AlwaysOnSwitchPage} from '../page/control/always-on-switch.page';
 
+export function fixtureName(t: TestController) {
+  // @ts-ignore
+  return t.testRun.test.fixture.name;
+}
+
+export function configurationKey(t: TestController, configurationName: string) {
+  return JSON.stringify({configurationName, userAgent: t.browser.name});
+}
+
 export async function createAppliance(t: TestController, appliance: Appliance) {
   await SideMenu.clickNewAppliance(t);
   await AppliancePage.setAppliance(t, appliance);
