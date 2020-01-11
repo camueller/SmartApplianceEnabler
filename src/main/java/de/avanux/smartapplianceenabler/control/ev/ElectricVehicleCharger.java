@@ -329,32 +329,40 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         if(errorState) {
             return State.ERROR;
         }
+        if(currenState == State.ERROR) {
+            if(charging) {
+                return State.CHARGING;
+            }
+            if(vehicleConnected) {
+                return State.VEHICLE_CONNECTED;
+            }
+        }
         if(vehicleNotConnected) {
-            newState = State.VEHICLE_NOT_CONNECTED;
+            return State.VEHICLE_NOT_CONNECTED;
         }
         else if(currenState == State.CHARGING_COMPLETED) {
-            newState = State.CHARGING_COMPLETED;
+            return State.CHARGING_COMPLETED;
         }
-        else if(this.startChargingRequested && vehicleConnected) {
+        else if(this.startChargingRequested && vehicleConnected && !charging) {
             if(charging) {
-                newState = State.CHARGING;
+                return State.CHARGING;
             }
             else {
-                newState = State.CHARGING_COMPLETED;
+                return State.CHARGING_COMPLETED;
             }
+        }
+        else if(this.startChargingRequested && charging) {
+            return State.CHARGING;
         }
         else if(this.stopChargingRequested && vehicleConnected) {
-            newState = State.VEHICLE_CONNECTED;
+            return State.VEHICLE_CONNECTED;
         }
-        else if(charging) {
-            newState = State.CHARGING;
-        }
-        else if(vehicleConnected) {
+        else if(vehicleConnected && !charging) {
             if(wasInChargingAfterLastVehicleConnected) {
-                newState = State.CHARGING_COMPLETED;
+                return State.CHARGING_COMPLETED;
             }
             else {
-                newState = State.VEHICLE_CONNECTED;
+                return State.VEHICLE_CONNECTED;
             }
         }
         return newState;
@@ -561,8 +569,10 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         this.switchChargingStateTimestamp = wasInChargingAfterLastVehicleConnected ? System.currentTimeMillis() : null;
         this.chargeAmount = null;
         this.chargePower = null;
+        if(!this.startChargingRequested) {
+            this.stopChargingRequested = true;
+        }
         this.startChargingRequested = false;
-        this.stopChargingRequested = true;
     }
 
     public void setStopChargingRequested(boolean stopChargingRequested) {

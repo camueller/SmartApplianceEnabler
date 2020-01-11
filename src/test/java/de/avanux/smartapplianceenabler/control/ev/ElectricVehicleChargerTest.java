@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ElectricVehicleChargerTest {
 
     private Logger logger = LoggerFactory.getLogger(ElectricVehicleChargerTest.class);
-    private ElectricVehicleCharger evCharger = new ElectricVehicleCharger();
+    private ElectricVehicleCharger evCharger = Mockito.spy(new ElectricVehicleCharger());
     private EVControl evControl = Mockito.mock(EVControl.class);
     private LocalDateTime now = new LocalDateTime();
 
@@ -234,6 +234,31 @@ public class ElectricVehicleChargerTest {
         configureMocks(true, false, false);
         updateState();
         assertEquals(State.VEHICLE_NOT_CONNECTED, evCharger.getState());
+    }
+
+    @Test
+    public void updateState_stopAfterStart() {
+        log("Vehicle not yet connected");
+        configureMocks(true, false, false);
+        updateState();
+        assertEquals(State.VEHICLE_NOT_CONNECTED, evCharger.getState());
+        log("Connect vehicle");
+        configureMocks(false, true, false);
+        updateState();
+        assertEquals(State.VEHICLE_CONNECTED, evCharger.getState());
+        log("Start charging");
+        evCharger.startCharging();
+        Mockito.when(evCharger.isWithinSwitchChargingStateDetectionDelay()).thenReturn(true);
+        configureMocks(false, true, true);
+        updateState();
+        assertEquals(State.VEHICLE_CONNECTED, evCharger.getState());
+        log("Stop charging during ChargingStateDetectionDelay");
+        evCharger.stopCharging();
+        updateState();
+        log("After ChargingStateDetectionDelay");
+        Mockito.when(evCharger.isWithinSwitchChargingStateDetectionDelay()).thenReturn(false);
+        updateState();
+        assertEquals(State.VEHICLE_CONNECTED, evCharger.getState());
     }
 
     @Test
