@@ -88,32 +88,32 @@ Für jede Zähler-Abfrage finden sich in der [Log-Datei](Support.md#Log) folgend
 Der Schaltzustand kann wie folgt geändert werden:
 
 _Einschalten_
-```
-curl http://192.168.1.1/cm?cmnd=Power%20On
+```console
+axel@p51:~$ curl http://192.168.1.1/cm?cmnd=Power%20On
 ```
 
 _Ausschalten_
+```console
+axel@p51:~$ curl http://192.168.1.1/cm?cmnd=Power%20Off
 ```
-curl http://192.168.1.1/cm?cmnd=Power%20Off
+
+_Abfrage des Schaltzustandes_
+```console
+$ curl http://192.168.1.1/cm?cmnd=Power
+{"POWER":"OFF"}
 ```
 
 Aus obigem Beispiel ergeben sich folgende Feld-Inhalte im *Smart Appliance Enabler*:
 
-| Feld                  | Wert |
-| ----                  | ---- |
-| URL zum Einschalten   | http://192.168.1.1/cm?cmnd=Power%20On |
-| URL zum Ausschalten   | http://192.168.1.1/cm?cmnd=Power%20Off |
+| Zustand / Aktion | URL                                    | Regex für Extraktion
+| ----             | ----                                   | ----
+| Einschalten      | http://192.168.1.1/cm?cmnd=Power%20On  |
+| Ausschalten      | http://192.168.1.1/cm?cmnd=Power%20Off |
+| Eingeschaltet    | http://192.168.1.1/cm?cmnd=Power       | :.ON
 
 Für jeden Schaltvorgang finden sich in der [Log-Datei](Support.md#Log) folgende Zeilen:
 ```
-2017-06-03 18:39:52,143 DEBUG [http-nio-8080-exec-1] d.a.s.s.w.SempController [SempController.java:192] F-00000001-000000000001-00: Received control request
-2017-06-03 18:39:52,145 DEBUG [http-nio-8080-exec-1] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:101] F-00000001-000000000001-00: Sending HTTP request
-2017-06-03 18:39:52,145 DEBUG [http-nio-8080-exec-1] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:102] F-00000001-000000000001-00: url=http://192.168.1.1/cm?cmnd=Power%20On
-2017-06-03 18:39:52,145 DEBUG [http-nio-8080-exec-1] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:103] F-00000001-000000000001-00: data=null
-2017-06-03 18:39:52,145 DEBUG [http-nio-8080-exec-1] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:104] F-00000001-000000000001-00: contentType=null
-2017-06-03 18:39:52,145 DEBUG [http-nio-8080-exec-1] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:105] F-00000001-000000000001-00: username=null
-2017-06-03 18:39:52,145 DEBUG [http-nio-8080-exec-1] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:106] F-00000001-000000000001-00: password=null
-2017-06-03 18:39:52,163 DEBUG [http-nio-8080-exec-1] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:118] F-00000001-000000000001-00: Response code is 200
-2017-06-03 18:39:52,163 DEBUG [http-nio-8080-exec-1] d.a.s.a.Appliance [Appliance.java:318] F-00000001-000000000001-00: Control state has changed to on: runningTimeMonitor=not null
-2017-06-03 18:39:52,165 DEBUG [http-nio-8080-exec-1] d.a.s.s.w.SempController [SempController.java:214] F-00000001-000000000001-00: Setting appliance state to ON
+2020-01-06 14:51:22,817 INFO [http-nio-8080-exec-4] d.a.s.c.HttpSwitch [HttpSwitch.java:128] F-00000001-000000000001-00: Switching on
+2020-01-06 14:51:22,817 DEBUG [http-nio-8080-exec-4] d.a.s.h.HttpTransactionExecutor [HttpTransactionExecutor.java:105] F-00000001-000000000001-00: Sending GET request url=http://192.168.1.1/cm?cmnd=Power%20On
+2020-01-06 14:51:22,984 DEBUG [http-nio-8080-exec-4] d.a.s.h.HttpTransactionExecutor [HttpTransactionExecutor.java:160] F-00000001-000000000001-00: Response code is 200
 ```
