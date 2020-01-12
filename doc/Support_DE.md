@@ -74,15 +74,17 @@ sae@raspi ~ $ sudo journalctl -u smartapplianceenabler.service
 ## Version des Smart Appliance Enabler
 Direkt nach dem Start schreibt der *Smart Appliance Enabler* die Version in die Log-Datei:
 ```
-2018-04-08 10:17:29,973 INFO [main] d.a.s.Application [Application.java:45] Running version 1.2.0-SNAPSHOT 2017-12-23 19:16
+2020-01-12 19:03:41,194 INFO [main] d.a.s.Application [Application.java:49] Running version 1.5.1 2020-01-11 18:44
 ```
 
 ## Netzwerkverbindung zwischen Smart Appliance Enabler und Sunny Home Manager
-Home Manager auf den *Smart Appliance Enabler* müssen sich im gleichen Netz befinden!
-Wenn der Log-Level mindestens auf DEBUG gesetzt wurde, kann man in der Log-Datei sehen, wenn der Home Manager auf den *Smart Appliance Enabler* zugreift:
+Wegen des SEMP-Protokolls mit dem *Sunny Home Manager* und *Smart Appliance Enabler* kommunizieren, müssen sich beide im gleichen Netz befinden!
+
+Wenn der *Sunny Home Manager* den *Smart Appliance Enabler* im Netz gefunden hat, fragt er nachfolgend dessen Status **alle 60 Sekunden** ab. Diese Abfragen kann man in der Log-Datei des *Smart Appliance Enabler* sehen:
 ```
 20:25:17.390 [http-nio-8080-exec-1] DEBUG d.a.s.semp.webservice.SempController - Device info/status/planning requested.
 ```
+Wenn sich diese Einträge in der Log-Datei finden, funktioniert die Kommunikation zwischen *Sunny Home Manager* und *Smart Appliance Enabler*. 
 
 ## Datenaustausch zwischen Smart Appliance Enabler und Sunny Home Manager
 Bei Problemen wird oft nur der offensichtliche Fehler betrachtet (_"Im Sunny Portal werden keine Messwerte angezeigt"_). Dabei läßt sich relativ leicht herausfinden, ob der Fehler im *Smart Appliance Enabler* liegt oder am Sunny Home Manager bzw. Sunny Portal.
