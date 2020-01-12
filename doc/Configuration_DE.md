@@ -129,10 +129,12 @@ curl -s -X PUT -F id=F-00000001-000000000002-00 -F runtime=600 http://127.0.0.1:
 ### Setzen der Schedules
 Normalerweise werden die Schedules aus der Datei `Appliance.xml` gelesen. Es ist jedoch möglich, die Schedules via REST an den SAE zu übergeben. Dazu müssen der/die Schedules in einem Root-Element `Schedules` zusammengefasst werden, das an SAE unter Angabe der Appliance-ID übergeben wird:
 ```console
-/usr/bin/curl -s -X POST -d '<Schedules><Schedule minRunningTime="36000" maxRunningTime="43200"><ConsecutiveDaysTimeframe><Start dayOfWeek="5" hour="16" minute="0" second="0" /><End dayOfWeek="7" hour="20" minute="0" second="0" /></ConsecutiveDaysTimeframe></Schedule></Schedules>' --header 'Content-Type: application/xml' http://localhost:8080/sae/schedules?ApplianceId=F-00000001-000000000001-00
+curl -s -X POST -d '<Schedules xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.4"><Schedule><RuntimeRequest min="1800" max="3600" /><DayTimeframe><Start hour="0" minute="0" second="0" /><End hour="18" minute="59" second="59" /></DayTimeframe></Schedule></Schedules>' --header 'Content-Type: application/xml' http://localhost:8080/sae/schedules?id=F-00000001-000000000001-00
 ```
+Das ```xmlns```-Attribut (insbesondere die Version des *Smart Appliance Enabler* am Ende) muss dabei übereinstimmen mit dem ```xmlns```-Attribut in der Datei ```Appliances.xml```. 
+
 Im Log des SAE sollte sich danach folgendes finden:
 ```console
-2016-12-17 15:27:49,802 DEBUG [http-nio-8080-exec-1] d.a.s.w.SaeController [SaeController.java:29] F-00000001-000000000001-00: Received request to set 1 schedule(s)
-2016-12-17 15:27:49,804 DEBUG [http-nio-8080-exec-1] d.a.s.a.RunningTimeMonitor [RunningTimeMonitor.java:58] F-00000001-000000000001-00: Configured schedule: 16:00:00.000[5]-20:00:00.000[7]/36000s/43200s
+2020-01-12 18:31:10,606 DEBUG [http-nio-8080-exec-3] d.a.s.w.SaeController [SaeController.java:413] F-00000001-000000000099-00: Received request to activate 1 schedule(s)
+2020-01-12 18:31:10,614 DEBUG [http-nio-8080-exec-3] d.a.s.a.RunningTimeMonitor [RunningTimeMonitor.java:82] F-00000001-000000000099-00: Using enabled time frame 00:00:00.000-18:59:59.000/1800s/3600s
 ```
