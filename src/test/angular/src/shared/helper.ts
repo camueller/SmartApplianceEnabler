@@ -12,6 +12,8 @@ import {HttpMeterPage} from '../page/meter/http-meter.page';
 import {Switch} from '../../../../main/angular/src/app/control-switch/switch';
 import {AlwaysOnSwitch} from '../../../../main/angular/src/app/control-alwayson/always-on-switch';
 import {AlwaysOnSwitchPage} from '../page/control/always-on-switch.page';
+import {HttpSwitch} from '../../../../main/angular/src/app/control-http/http-switch';
+import {HttpControlPage} from '../page/control/http-control.page';
 
 export function fixtureName(t: TestController) {
   // @ts-ignore
@@ -64,6 +66,9 @@ export async function createControl(t: TestController, applianceId: string, cont
   if (control.type === Switch.TYPE) {
     await SwitchPage.setSwitch(t, control.switch_);
   }
+  if (control.type === HttpSwitch.TYPE) {
+    await HttpControlPage.setHttpSwitch(t, control.httpSwitch);
+  }
   await SwitchPage.clickSave(t);
 }
 export async function assertControl(t: TestController, applianceId: string, control: Control) {
@@ -73,5 +78,8 @@ export async function assertControl(t: TestController, applianceId: string, cont
   }
   if (control.type === Switch.TYPE) {
     await SwitchPage.assertSwitch(t, control.switch_);
+  }
+  if (control.type === HttpSwitch.TYPE) {
+    await HttpControlPage.assertHttpSwitch(t, control.httpSwitch);
   }
 }
