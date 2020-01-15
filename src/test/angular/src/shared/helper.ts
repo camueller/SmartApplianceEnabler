@@ -14,6 +14,8 @@ import {AlwaysOnSwitch} from '../../../../main/angular/src/app/control-alwayson/
 import {AlwaysOnSwitchPage} from '../page/control/always-on-switch.page';
 import {HttpSwitch} from '../../../../main/angular/src/app/control-http/http-switch';
 import {HttpControlPage} from '../page/control/http-control.page';
+import {ModbusElectricityMeter} from '../../../../main/angular/src/app/meter-modbus/modbus-electricity-meter';
+import {ModbusMeterPage} from '../page/meter/modbus-meter.page';
 
 export function fixtureName(t: TestController) {
   // @ts-ignore
@@ -46,6 +48,9 @@ export async function createMeter(t: TestController, applianceId: string, meter:
   if (meter.type === HttpElectricityMeter.TYPE) {
     await HttpMeterPage.setHttpElectricityMeter(t, meter.httpElectricityMeter);
   }
+  if (meter.type === ModbusElectricityMeter.TYPE) {
+    await ModbusMeterPage.setModbusElectricityMeter(t, meter.modbusElectricityMeter);
+  }
   await S0MeterPage.clickSave(t);
 }
 export async function assertMeter(t: TestController, applianceId: string, meter: Meter) {
@@ -55,6 +60,9 @@ export async function assertMeter(t: TestController, applianceId: string, meter:
   }
   if (meter.type === HttpElectricityMeter.TYPE) {
     await HttpMeterPage.assertHttpElectricityMeter(t, meter.httpElectricityMeter);
+  }
+  if (meter.type === ModbusElectricityMeter.TYPE) {
+    await ModbusMeterPage.assertModbusElectricityMeter(t, meter.modbusElectricityMeter);
   }
 }
 

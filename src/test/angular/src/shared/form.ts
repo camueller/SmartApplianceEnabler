@@ -1,4 +1,21 @@
+import { Selector } from 'testcafe';
+
 const SELECT_OPTION_MAX_KEY_LEN = 50;
+
+export function selectorInputByFormControlName(httpWriteValueIndex: number, selectorPrefix: string | undefined,
+                                               selectorBase: string | undefined, formcontrolname: string) {
+  return selectorByFormControlName(httpWriteValueIndex, selectorPrefix, selectorBase, 'input', formcontrolname);
+}
+
+export function selectorSelectByFormControlName(httpWriteValueIndex: number, selectorPrefix: string | undefined,
+                                                selectorBase: string | undefined, formcontrolname: string) {
+  return selectorByFormControlName(httpWriteValueIndex, selectorPrefix, selectorBase, 'select', formcontrolname);
+}
+
+export function selectorByFormControlName(httpWriteValueIndex: number, selectorPrefix: string | undefined, selectorBase: string | undefined,
+  formcontrolType: string, formControlName: string) {
+  return Selector(`${selectorPrefix || ''} ${selectorBase || ''} ${formcontrolType}[formcontrolname="${formControlName}"]`);
+}
 
 export async function inputText(t: TestController, selector: Selector, text: string | undefined): Promise<TestController> {
   if (text) {
