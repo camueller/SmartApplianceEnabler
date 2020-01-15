@@ -145,7 +145,7 @@ public class Appliance implements Validateable, ControlStateChangedListener,
         this.schedules = schedules;
     }
 
-    private void initAcceptControlRecommendations() {
+    public void initAcceptControlRecommendations() {
         this.acceptControlRecommendations = new Stack<>();
         setAcceptControlRecommendations(true);
     }

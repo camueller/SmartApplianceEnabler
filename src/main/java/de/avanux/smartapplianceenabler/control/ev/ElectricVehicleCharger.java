@@ -417,6 +417,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                 if(previousState == State.VEHICLE_NOT_CONNECTED) {
                     retrieveSoc(firstVehicle);
                     if(this.appliance != null) {
+                        this.appliance.initAcceptControlRecommendations();
                         this.appliance.activateSchedules();
                     }
                 }
