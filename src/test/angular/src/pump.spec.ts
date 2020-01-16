@@ -1,6 +1,14 @@
 import {baseUrl} from './page/page';
 import {GlobalContext} from './shared/global-context';
-import {assertAppliance, assertMeter, configurationKey, createAppliance, createMeter, fixtureName} from './shared/helper';
+import {
+  assertAppliance, assertControl,
+  assertMeter,
+  configurationKey,
+  createAndAssertAppliance, createAndAssertControl, createAndAssertMeter,
+  createAppliance, createControl,
+  createMeter,
+  fixtureName
+} from './shared/helper';
 import {TopMenu} from './page/top-menu.page';
 import {ApplianceConfiguration} from './shared/appliance-configuration';
 import {switch_} from './fixture/control/switch';
@@ -21,26 +29,13 @@ function createPump(): ApplianceConfiguration {
 }
 
 test('Create appliance', async t => {
-  // FIXME rausziehen ...
-  const configuration = createPump();
-  const key = configurationKey(t, fixtureName(t));
-  t.fixtureCtx[key] = configuration;
-  GlobalContext.ctx[key] = configuration;
-  await createAppliance(t, configuration.appliance);
-  await TopMenu.clickStatus(t);
-  await assertAppliance(t, configuration.appliance);
+  await createAndAssertAppliance(t, createPump());
 });
 
 test('Create Modbus meter', async t => {
-  const configuration: ApplianceConfiguration = t.fixtureCtx[configurationKey(t, fixtureName(t))];
-  await createMeter(t, configuration.appliance.id, configuration.meter);
-  await TopMenu.clickStatus(t);
-  await assertMeter(t, configuration.appliance.id, configuration.meter);
+  await createAndAssertMeter(t, t.fixtureCtx[configurationKey(t, fixtureName(t))]);
 });
 
 // test('Create GPIO switch', async t => {
-//   const configuration: ApplianceConfiguration = t.fixtureCtx[configurationKey(t, fixtureName(t))];
-//   await createControl(t, configuration.appliance.id, configuration.control);
-//   await TopMenu.clickStatus(t);
-//   await assertControl(t, configuration.appliance.id, configuration.control);
+//   await createAndAssertControl(t, t.fixtureCtx[configurationKey(t, fixtureName(t))]);
 // });

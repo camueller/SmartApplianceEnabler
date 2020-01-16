@@ -1,16 +1,5 @@
 import {baseUrl} from './page/page';
-import {GlobalContext} from './shared/global-context';
-import {
-  assertAppliance,
-  assertControl,
-  assertMeter,
-  createAppliance,
-  createControl,
-  createMeter,
-  fixtureName,
-  configurationKey
-} from './shared/helper';
-import {TopMenu} from './page/top-menu.page';
+import {configurationKey, createAndAssertAppliance, createAndAssertControl, createAndAssertMeter, fixtureName} from './shared/helper';
 import {ApplianceConfiguration} from './shared/appliance-configuration';
 import {fridge as fridgeAppliance} from './fixture/appliance/fridge';
 import {generateApplianceId} from './shared/appliance-id-generator';
@@ -30,25 +19,13 @@ function createFridge(): ApplianceConfiguration {
 }
 
 test('Create appliance', async t => {
-  const fridge = createFridge();
-  const key = configurationKey(t, fixtureName(t));
-  t.fixtureCtx[key] = fridge;
-  GlobalContext.ctx[key] = fridge;
-  await createAppliance(t, fridge.appliance);
-  await TopMenu.clickStatus(t);
-  await assertAppliance(t, fridge.appliance);
+  await createAndAssertAppliance(t, createFridge());
 });
 
 test('Create HTTP meter', async t => {
-  const fridge: ApplianceConfiguration = t.fixtureCtx[configurationKey(t, fixtureName(t))];
-  await createMeter(t, fridge.appliance.id, fridge.meter);
-  await TopMenu.clickStatus(t);
-  await assertMeter(t, fridge.appliance.id, fridge.meter);
+  await createAndAssertMeter(t, t.fixtureCtx[configurationKey(t, fixtureName(t))]);
 });
 
 test('Create always-on-switch', async t => {
-  const fridge: ApplianceConfiguration = t.fixtureCtx[configurationKey(t, fixtureName(t))];
-  await createControl(t, fridge.appliance.id, fridge.control);
-  await TopMenu.clickStatus(t);
-  await assertControl(t, fridge.appliance.id, fridge.control);
+  await createAndAssertControl(t, t.fixtureCtx[configurationKey(t, fixtureName(t))]);
 });

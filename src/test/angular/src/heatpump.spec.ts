@@ -1,15 +1,5 @@
 import {baseUrl} from './page/page';
-import {GlobalContext} from './shared/global-context';
-import {
-  assertAppliance,
-  assertControl,
-  assertMeter,
-  createAppliance,
-  createControl,
-  createMeter, fixtureName,
-  configurationKey
-} from './shared/helper';
-import {TopMenu} from './page/top-menu.page';
+import {configurationKey, createAndAssertAppliance, createAndAssertControl, createAndAssertMeter, fixtureName} from './shared/helper';
 import {ApplianceConfiguration} from './shared/appliance-configuration';
 import {S0ElectricityMeter} from '../../../main/angular/src/app/meter-s0/s0-electricity-meter';
 import {switch_} from './fixture/control/switch';
@@ -29,25 +19,13 @@ function createHeatPump(): ApplianceConfiguration {
 }
 
 test('Create appliance', async t => {
-  const heatPump = createHeatPump();
-  const key = configurationKey(t, fixtureName(t));
-  t.fixtureCtx[key] = heatPump;
-  GlobalContext.ctx[key] = heatPump;
-  await createAppliance(t, heatPump.appliance);
-  await TopMenu.clickStatus(t);
-  await assertAppliance(t, heatPump.appliance);
+  await createAndAssertAppliance(t, createHeatPump());
 });
 
 test('Create S0 meter', async t => {
-  const heatPump: ApplianceConfiguration = t.fixtureCtx[configurationKey(t, fixtureName(t))];
-  await createMeter(t, heatPump.appliance.id, heatPump.meter);
-  await TopMenu.clickStatus(t);
-  await assertMeter(t, heatPump.appliance.id, heatPump.meter);
+  await createAndAssertMeter(t, t.fixtureCtx[configurationKey(t, fixtureName(t))]);
 });
 
 test('Create GPIO switch', async t => {
-  const heatPump: ApplianceConfiguration = t.fixtureCtx[configurationKey(t, fixtureName(t))];
-  await createControl(t, heatPump.appliance.id, heatPump.control);
-  await TopMenu.clickStatus(t);
-  await assertControl(t, heatPump.appliance.id, heatPump.control);
+  await createAndAssertControl(t, t.fixtureCtx[configurationKey(t, fixtureName(t))]);
 });
