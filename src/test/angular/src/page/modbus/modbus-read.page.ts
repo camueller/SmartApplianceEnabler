@@ -98,8 +98,7 @@ export class ModbusReadPage {
       ModbusReadPage.selectorBase(modbusReadIndex)), factorToValue && factorToValue.toString());
   }
 
-  public static async clickAddModbusRead(t: TestController, selectorPrefix?: string): Promise<TestController> {
+  public static async clickAddModbusRead(t: TestController, selectorPrefix?: string) {
     await t.click(ModbusReadPage.addModbusReadButton(selectorPrefix));
-    return t;
   }
 }

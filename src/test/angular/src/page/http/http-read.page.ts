@@ -1,5 +1,5 @@
 import {HttpRead} from '../../../../../main/angular/src/app/http-read/http-read';
-import {assertInput, inputText} from '../../shared/form';
+import {assertInput, inputText, selectorInputByFormControlName} from '../../shared/form';
 import {Selector} from 'testcafe';
 import {HttpReadValue} from '../../../../../main/angular/src/app/http-read-value/http-read-value';
 import {HttpReadValuePage} from './http-read-value.page';
@@ -12,10 +12,6 @@ export class HttpReadPage {
 
   private static addHttpReadButton(selectorPrefix?: string) {
     return Selector(`${selectorPrefix || ''}> div > button`);
-  }
-
-  private static urlInput(httpReadIndex: number, selectorPrefix?: string) {
-    return Selector(`${selectorPrefix || ''} ${HttpReadPage.selectorBase(httpReadIndex)} input[formcontrolname="url"]`);
   }
 
   public static async setHttpRead(t: TestController, httpRead: HttpRead, httpReadIndex: number, selectorPrefix?: string) {
@@ -34,16 +30,16 @@ export class HttpReadPage {
     await HttpReadValuePage.assertHttpReadValue(t, httpReadValue, 0, httpReadValueSelectorPrefix);
   }
 
-  public static async setUrl(t: TestController, url: string, httpReadIndex: number, selectorPrefix?: string): Promise<TestController> {
-    await inputText(t, HttpReadPage.urlInput(httpReadIndex, selectorPrefix), url);
-    return t;
+  public static async setUrl(t: TestController, url: string, httpReadIndex: number, selectorPrefix?: string) {
+    await inputText(t, selectorInputByFormControlName('url', selectorPrefix,
+      HttpReadPage.selectorBase(httpReadIndex)), url);
   }
   public static async assertUrl(t: TestController, url: string, httpReadIndex: number, selectorPrefix?: string) {
-    await assertInput(t, HttpReadPage.urlInput(httpReadIndex, selectorPrefix), url);
+    await assertInput(t, selectorInputByFormControlName('url', selectorPrefix,
+      HttpReadPage.selectorBase(httpReadIndex)), url);
   }
 
-  public static async clickAddHttpRead(t: TestController, selectorPrefix?: string): Promise<TestController> {
+  public static async clickAddHttpRead(t: TestController, selectorPrefix?: string) {
     await t.click(HttpReadPage.addHttpReadButton(selectorPrefix));
-    return t;
   }
 }

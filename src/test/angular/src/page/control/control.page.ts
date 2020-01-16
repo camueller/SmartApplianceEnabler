@@ -1,21 +1,18 @@
 import {Selector} from 'testcafe';
-import {getIndexedSelectOptionValueRegExp, selectOptionByAttribute} from '../../shared/form';
+import {getIndexedSelectOptionValueRegExp, selectOptionByAttribute, selectorSelectByFormControlName} from '../../shared/form';
 
 export class ControlPage {
 
-  private static typeSelect = Selector('select[formcontrolname="controlType"]');
   private static saveButton = Selector('button[type="submit"]');
 
-  public static async setType(t: TestController, type: string): Promise<TestController> {
-    await selectOptionByAttribute(t, ControlPage.typeSelect, type, true);
-    return t;
+  public static async setType(t: TestController, controlType: string) {
+    await selectOptionByAttribute(t, selectorSelectByFormControlName('controlType'), controlType, true);
   }
-  public static async assertType(t: TestController, type: string) {
-    await t.expect(ControlPage.typeSelect.value).match(getIndexedSelectOptionValueRegExp(type));
+  public static async assertType(t: TestController, controlType: string) {
+    await t.expect(selectorSelectByFormControlName('controlType').value).match(getIndexedSelectOptionValueRegExp(controlType));
   }
 
-  public static async clickSave(t: TestController): Promise<TestController> {
+  public static async clickSave(t: TestController) {
     await t.click(ControlPage.saveButton);
-    return t;
   }
 }

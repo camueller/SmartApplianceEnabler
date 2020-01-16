@@ -1,6 +1,6 @@
 import {HttpWrite} from '../../../../../main/angular/src/app/http-write/http-write';
 import {Selector} from 'testcafe';
-import {assertInput, inputText} from '../../shared/form';
+import {assertInput, inputText, selectorInputByFormControlName} from '../../shared/form';
 import {HttpWriteValue} from '../../../../../main/angular/src/app/http-write-value/http-write-value';
 import {HttpWriteValuePage} from './http-write-value.page';
 
@@ -12,10 +12,6 @@ export class HttpWritePage {
 
   private static addHttpWriteButton(selectorPrefix?: string) {
     return Selector(`${selectorPrefix || ''}> div > button`);
-  }
-
-  private static urlInput(httpWriteIndex: number, selectorPrefix?: string) {
-    return Selector(`${selectorPrefix || ''} ${HttpWritePage.selectorBase(httpWriteIndex)} input[formcontrolname="url"]`);
   }
 
   public static async setHttpWrite(t: TestController, httpWrite: HttpWrite, httpWriteIndex: number, selectorPrefix?: string) {
@@ -36,16 +32,16 @@ export class HttpWritePage {
     await HttpWriteValuePage.assertHttpWriteValue(t, httpWriteValue, 0, httpWriteValueSelectorPrefix);
   }
 
-  public static async setUrl(t: TestController, url: string, httpWriteIndex: number, selectorPrefix?: string): Promise<TestController> {
-    await inputText(t, HttpWritePage.urlInput(httpWriteIndex, selectorPrefix), url);
-    return t;
+  public static async setUrl(t: TestController, url: string, httpWriteIndex: number, selectorPrefix?: string) {
+    await inputText(t, selectorInputByFormControlName('url', selectorPrefix,
+      HttpWritePage.selectorBase(httpWriteIndex)), url);
   }
   public static async assertUrl(t: TestController, url: string, httpWriteIndex: number, selectorPrefix?: string) {
-    await assertInput(t, HttpWritePage.urlInput(httpWriteIndex, selectorPrefix), url);
+    await assertInput(t, selectorInputByFormControlName('url', selectorPrefix,
+      HttpWritePage.selectorBase(httpWriteIndex)), url);
   }
 
-  public static async clickAddHttpWrite(t: TestController, selectorPrefix?: string): Promise<TestController> {
+  public static async clickAddHttpWrite(t: TestController, selectorPrefix?: string) {
     await t.click(HttpWritePage.addHttpWriteButton(selectorPrefix));
-    return t;
   }
 }

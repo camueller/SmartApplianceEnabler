@@ -1,14 +1,15 @@
-import {Selector} from 'testcafe';
 import {MeterPage} from './meter.page';
 import {S0ElectricityMeter} from '../../../../../main/angular/src/app/meter-s0/s0-electricity-meter';
-import {assertInput, assertSelect, inputText, selectOptionByAttribute} from '../../shared/form';
+import {
+  assertInput,
+  assertSelect,
+  inputText,
+  selectOptionByAttribute,
+  selectorInputByFormControlName,
+  selectorSelectByFormControlName
+} from '../../shared/form';
 
 export class S0MeterPage extends MeterPage {
-
-  private static gpioInput = Selector('input[formcontrolname="gpio"]');
-  private static pinPullResistanceSelect = Selector('select[formcontrolname="pinPullResistance"]');
-  private static impulsesPerKwhInput = Selector('input[formcontrolname="impulsesPerKwh"]');
-  private static measurementIntervalInput = Selector('input[formcontrolname="measurementInterval"]');
 
   public static async setS0ElectricityMeter(t: TestController, s0ElectricityMeter: S0ElectricityMeter) {
     await S0MeterPage.setType(t, S0ElectricityMeter.TYPE);
@@ -25,39 +26,31 @@ export class S0MeterPage extends MeterPage {
     await S0MeterPage.assertMeasurementInterval(t, s0ElectricityMeter.measurementInterval);
   }
 
-  public static async setGpio(t: TestController, gpio: number): Promise<TestController> {
-    await inputText(t, S0MeterPage.gpioInput, gpio && gpio.toString());
-    return t;
+  public static async setGpio(t: TestController, gpio: number) {
+    await inputText(t, selectorInputByFormControlName('gpio'), gpio && gpio.toString());
   }
-  public static async assertGpio(t: TestController, gpio: number): Promise<TestController> {
-    await assertInput(t, S0MeterPage.gpioInput, gpio && gpio.toString());
-    return t;
+  public static async assertGpio(t: TestController, gpio: number) {
+    await assertInput(t, selectorInputByFormControlName('gpio'), gpio && gpio.toString());
   }
 
-  public static async setPinPullResistance(t: TestController, type: string): Promise<TestController> {
-    await selectOptionByAttribute(t, S0MeterPage.pinPullResistanceSelect, type);
-    return t;
+  public static async setPinPullResistance(t: TestController, pinPullResistance: string) {
+    await selectOptionByAttribute(t, selectorSelectByFormControlName('pinPullResistance'), pinPullResistance);
   }
-  public static async assertPinPullResistance(t: TestController, type: string): Promise<TestController> {
-    await assertSelect(t, S0MeterPage.pinPullResistanceSelect, new RegExp(type));
-    return t;
+  public static async assertPinPullResistance(t: TestController, pinPullResistance: string) {
+    await assertSelect(t, selectorSelectByFormControlName('pinPullResistance'), new RegExp(pinPullResistance));
   }
 
-  public static async setImpulsesPerKwh(t: TestController, impulsesPerKwh: number): Promise<TestController> {
-    await inputText(t, S0MeterPage.impulsesPerKwhInput, impulsesPerKwh && impulsesPerKwh.toString());
-    return t;
+  public static async setImpulsesPerKwh(t: TestController, impulsesPerKwh: number) {
+    await inputText(t, selectorInputByFormControlName('impulsesPerKwh'), impulsesPerKwh && impulsesPerKwh.toString());
   }
-  public static async assertImpulsesPerKwh(t: TestController, impulsesPerKwh: number): Promise<TestController> {
-    await assertInput(t, S0MeterPage.impulsesPerKwhInput, impulsesPerKwh && impulsesPerKwh.toString());
-    return t;
+  public static async assertImpulsesPerKwh(t: TestController, impulsesPerKwh: number) {
+    await assertInput(t, selectorInputByFormControlName('impulsesPerKwh'), impulsesPerKwh && impulsesPerKwh.toString());
   }
 
-  public static async setMeasurementInterval(t: TestController, measurementInterval: number): Promise<TestController> {
-    await inputText(t, S0MeterPage.measurementIntervalInput, measurementInterval && measurementInterval.toString());
-    return t;
+  public static async setMeasurementInterval(t: TestController, measurementInterval: number) {
+    await inputText(t, selectorInputByFormControlName('measurementInterval'), measurementInterval && measurementInterval.toString());
   }
-  public static async assertMeasurementInterval(t: TestController, measurementInterval: number): Promise<TestController> {
-    await assertInput(t, S0MeterPage.measurementIntervalInput, measurementInterval && measurementInterval.toString());
-    return t;
+  public static async assertMeasurementInterval(t: TestController, measurementInterval: number) {
+    await assertInput(t, selectorInputByFormControlName('measurementInterval'), measurementInterval && measurementInterval.toString());
   }
 }
