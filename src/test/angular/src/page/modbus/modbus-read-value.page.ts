@@ -27,26 +27,24 @@ export class ModbusReadValuePage {
     await ModbusReadValuePage.assertExtractionRegex(t, modbusReadValue.extractionRegex, modbusReadValueIndex, selectorPrefix);
   }
 
-  public static async setName(t: TestController, name: string, modbusReadValueIndex: number,
-                              selectorPrefix?: string): Promise<TestController> {
-    await selectOptionByAttribute(t, selectorSelectByFormControlName(modbusReadValueIndex, selectorPrefix,
-      ModbusReadValuePage.selectorBase(modbusReadValueIndex), 'name'), name, true);
-    return t;
+  public static async setName(t: TestController, name: string, modbusReadValueIndex: number, selectorPrefix?: string) {
+    await selectOptionByAttribute(t, selectorSelectByFormControlName('name', selectorPrefix,
+      ModbusReadValuePage.selectorBase(modbusReadValueIndex)), name, true);
   }
   public static async assertName(t: TestController, name: string, modbusReadValueIndex: number,
                                  selectorPrefix?: string) {
-    await assertSelect(t, selectorSelectByFormControlName(modbusReadValueIndex, selectorPrefix,
-      ModbusReadValuePage.selectorBase(modbusReadValueIndex), 'name'), getIndexedSelectOptionValueRegExp(name));
+    await assertSelect(t, selectorSelectByFormControlName('name', selectorPrefix,
+      ModbusReadValuePage.selectorBase(modbusReadValueIndex)), getIndexedSelectOptionValueRegExp(name));
   }
 
   public static async setExtractionRegex(t: TestController, extractionRegex: string, modbusReadValueIndex: number,
                                          selectorPrefix?: string) {
-    await inputText(t, selectorInputByFormControlName(modbusReadValueIndex, selectorPrefix,
-      ModbusReadValuePage.selectorBase(modbusReadValueIndex), 'extractionRegex'), extractionRegex);
+    await inputText(t, selectorInputByFormControlName('extractionRegex', selectorPrefix,
+      ModbusReadValuePage.selectorBase(modbusReadValueIndex)), extractionRegex);
   }
   public static async assertExtractionRegex(t: TestController, extractionRegex: string, modbusReadValueIndex: number,
                                             selectorPrefix?: string) {
-    await assertInput(t, selectorInputByFormControlName(modbusReadValueIndex, selectorPrefix,
-      ModbusReadValuePage.selectorBase(modbusReadValueIndex), 'extractionRegex'), extractionRegex);
+    await assertInput(t, selectorInputByFormControlName('extractionRegex', selectorPrefix,
+      ModbusReadValuePage.selectorBase(modbusReadValueIndex)), extractionRegex);
   }
 }

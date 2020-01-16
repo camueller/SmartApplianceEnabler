@@ -2,15 +2,19 @@ import {MeterPage} from './meter.page';
 import {MeterValueName} from '../../../../../main/angular/src/app/meter/meter-value-name';
 import {ModbusElectricityMeter} from '../../../../../main/angular/src/app/meter-modbus/modbus-electricity-meter';
 import {ModbusReadPage} from '../modbus/modbus-read.page';
-import {assertInput, getIndexedSelectOptionValueRegExp, inputText, selectOptionByAttribute} from '../../shared/form';
-import {Selector} from 'testcafe';
+import {
+  assertInput,
+  getIndexedSelectOptionValueRegExp,
+  inputText,
+  selectOptionByAttribute,
+  selectorInputByFormControlName,
+  selectorSelectByFormControlName
+} from '../../shared/form';
 import {settings} from '../../fixture/settings/settings';
 
 export class ModbusMeterPage extends MeterPage {
 
   private static selectorPrefix = 'app-meter-modbus';
-  private static idRefSelect = Selector('select[formcontrolname="idref"]');
-  private static slaveAddressInput = Selector('input[formcontrolname="slaveAddress"]');
 
   public static async setModbusElectricityMeter(t: TestController, modbusElectricityMeter: ModbusElectricityMeter) {
     await ModbusMeterPage.setType(t, ModbusElectricityMeter.TYPE);
@@ -54,18 +58,17 @@ export class ModbusMeterPage extends MeterPage {
     }
   }
 
-  public static async setIdRef(t: TestController, idRef: string): Promise<TestController> {
-    await selectOptionByAttribute(t, ModbusMeterPage.idRefSelect, idRef, true);
-    return t;
+  public static async setIdRef(t: TestController, idRef: string) {
+    await selectOptionByAttribute(t, selectorSelectByFormControlName('idref'), idRef, true);
   }
   public static async assertIdRef(t: TestController, idRef: string) {
-    await t.expect(ModbusMeterPage.idRefSelect.value).match(getIndexedSelectOptionValueRegExp(idRef));
+    await t.expect(selectorSelectByFormControlName('idref').value).match(getIndexedSelectOptionValueRegExp(idRef));
   }
 
   public static async setAddress(t: TestController, address: string) {
-    await inputText(t, ModbusMeterPage.slaveAddressInput, address);
+    await inputText(t, selectorInputByFormControlName('slaveAddress'), address);
   }
   public static async assertAddress(t: TestController, address: string) {
-    await assertInput(t, ModbusMeterPage.slaveAddressInput, address);
+    await assertInput(t, selectorInputByFormControlName('slaveAddress'), address);
   }
 }
