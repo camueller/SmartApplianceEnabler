@@ -18,8 +18,10 @@
 <form class="ui form" [formGroup]="form" (ngSubmit)="submitForm()">
   <div class="fields">
     <div class="field">
-      <label>{{'MeterComponent.type' | translate}}</label>
+      <label class="required">{{'MeterComponent.type' | translate}}</label>
       <select class="ui fluid dropdown" name="meterType" formControlName="meterType" (ngModelChange)="typeChanged($event)">
+        <!-- hack for Safari in order to avoid selection of first option initially -->
+        <option selected disabled hidden></option>
         <option [ngValue]="TYPE_S0_ELECTRICITY_METER" [selected]="meterType==TYPE_S0_ELECTRICITY_METER"
         >{{TYPE_S0_ELECTRICITY_METER | translate}}</option>
         <option [ngValue]="TYPE_MODBUS_ELECTRICITY_METER" [selected]="meterType==TYPE_MODBUS_ELECTRICITY_METER"
