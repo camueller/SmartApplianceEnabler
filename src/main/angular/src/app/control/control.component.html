@@ -32,8 +32,6 @@
           <label class="required">{{'ControlComponent.type' | translate}}</label>
           <select class="ui fluid dropdown" name="controlType" formControlName="controlType"
                   (ngModelChange)="typeChanged($event)">
-            <!-- hack for Safari in order to avoid selection of first option initially -->
-            <option selected disabled hidden></option>
             <option [ngValue]="TYPE_SWITCH">{{TYPE_SWITCH | translate}}</option>
             <option [ngValue]="TYPE_MODBUS_SWITCH">{{TYPE_MODBUS_SWITCH | translate}}</option>
             <option [ngValue]="TYPE_HTTP_SWITCH">{{TYPE_HTTP_SWITCH | translate}}</option>
