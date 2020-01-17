@@ -42,7 +42,7 @@ import {FormHandler} from '../shared/form-handler';
 @Component({
   selector: 'app-appliance-meter',
   templateUrl: './meter.component.html',
-  styles: []
+  styleUrls: ['../global.css'],
 })
 export class MeterComponent implements OnChanges, OnInit, CanDeactivate<MeterComponent> {
   @ViewChild(MeterS0Component, { static: false })
