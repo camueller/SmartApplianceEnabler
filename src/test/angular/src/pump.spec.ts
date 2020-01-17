@@ -32,9 +32,9 @@ test('Create appliance', async t => {
   await createAndAssertAppliance(t, createPump());
 });
 
-test('Create Modbus meter', async t => {
-  await createAndAssertMeter(t, t.fixtureCtx[configurationKey(t, fixtureName(t))]);
-});
+// test('Create Modbus meter', async t => {
+//   await createAndAssertMeter(t, t.fixtureCtx[configurationKey(t, fixtureName(t))]);
+// });
 
 // test('Create GPIO switch', async t => {
 //   await createAndAssertControl(t, t.fixtureCtx[configurationKey(t, fixtureName(t))]);
