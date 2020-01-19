@@ -2,40 +2,7 @@
 <Device2EM xmlns="http://www.sma.de/communication/schema/SEMP/v1">
     <DeviceInfo>
         <Identification>
-            <DeviceId>F-00000001-000000000099-00</DeviceId>
-            <DeviceName>Elektroauto</DeviceName>
-            <DeviceType>EVCharger</DeviceType>
-            <DeviceSerial>EV-914</DeviceSerial>
-            <DeviceVendor>EV Ltd.</DeviceVendor>
-        </Identification>
-        <Characteristics>
-            <MaxPowerConsumption>22000</MaxPowerConsumption>
-            <MinPowerConsumption>1380</MinPowerConsumption>
-            <!--MinOnTime>3600</MinOnTime>
-            <MinOffTime>1800</MinOffTime-->
-            <!--PowerLevels>
-                <PowerLevel>50</PowerLevel>
-                <PowerLevel>360</PowerLevel>
-                <PowerLevel>1220</PowerLevel>
-                <PowerLevel>2440</PowerLevel>
-                <PowerLevel>3660</PowerLevel>
-            </PowerLevels -->
-        </Characteristics>
-        <Capabilities>
-            <CurrentPower>
-                <Method>Measurement</Method>
-            </CurrentPower>
-            <Interruptions>
-                <InterruptionsAllowed>true</InterruptionsAllowed>
-            </Interruptions>
-            <Requests>
-                <OptionalEnergy>true</OptionalEnergy>
-            </Requests>
-        </Capabilities>
-    </DeviceInfo>
-    <DeviceInfo>
-        <Identification>
-            <DeviceId>F-00000001-000000000003-00</DeviceId>
+            <DeviceId>F-00000001-000000000001-00</DeviceId>
             <DeviceName>Gerät 1</DeviceName>
             <DeviceType>HeatPump</DeviceType>
             <DeviceSerial>4158934</DeviceSerial>
