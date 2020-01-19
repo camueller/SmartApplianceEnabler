@@ -46,7 +46,7 @@ import {ControlStartingcurrentComponent} from '../control-startingcurrent/contro
 import {FormHandler} from '../shared/form-handler';
 
 @Component({
-  selector: 'app-appliance-switch',
+  selector: 'app-control',
   templateUrl: './control.component.html',
   styleUrls: ['../global.css'],
 })

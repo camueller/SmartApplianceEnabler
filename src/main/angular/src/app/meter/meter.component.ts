@@ -40,7 +40,7 @@ import {Control} from '../control/control';
 import {FormHandler} from '../shared/form-handler';
 
 @Component({
-  selector: 'app-appliance-meter',
+  selector: 'app-meter',
   templateUrl: './meter.component.html',
   styleUrls: ['../global.css'],
 })

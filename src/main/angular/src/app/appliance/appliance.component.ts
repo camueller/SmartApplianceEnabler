@@ -35,7 +35,7 @@ import {FormHandler} from '../shared/form-handler';
 import {getValidInt, getValidString} from '../shared/form-util';
 
 @Component({
-  selector: 'app-appliance-details',
+  selector: 'app-appliance',
   templateUrl: './appliance.component.html',
   styleUrls: ['../global.css']
 })
