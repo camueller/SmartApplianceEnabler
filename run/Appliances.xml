@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.4">
+<Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.5">
     <Appliance id="F-00000001-000000000001-00">
         <Switch gpio="1" reverseStates="true"/>
         <S0ElectricityMeter gpio="3" pinPullResistance="PULL_DOWN" impulsesPerKwh="1000"/>
         <Schedule>
-            <RuntimeRequest min="1800"/>
+            <RuntimeRequest max="1800"/>
             <DayTimeframe>
                 <Start hour="10" minute="0" second="0"/>
                 <End hour="18" minute="0" second="0"/>

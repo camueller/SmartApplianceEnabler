@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Axel Müller <axel.mueller@avanux.de>
+ * Copyright (C) 2020 Axel Müller <axel.mueller@avanux.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,15 +18,7 @@
 
 package de.avanux.smartapplianceenabler.schedule;
 
-import org.joda.time.LocalDateTime;
-
-public interface Request {
-
-    Integer getMin();
-
-    Integer getMax();
-
-    void stateTransitionTo(LocalDateTime now, RequestState state);
-
-    public RequestState getState();
+public enum RequestState {
+    CREATED,
+    QUEUED,
 }

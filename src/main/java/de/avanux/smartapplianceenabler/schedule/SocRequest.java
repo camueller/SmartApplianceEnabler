@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SocRequest implements Request {
+public class SocRequest extends AbstractRequest implements Request {
     @XmlAttribute
     private Integer soc;
     @XmlAttribute

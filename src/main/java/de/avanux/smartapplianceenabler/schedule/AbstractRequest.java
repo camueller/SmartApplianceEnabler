@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Axel Müller <axel.mueller@avanux.de>
+ * Copyright (C) 2020 Axel Müller <axel.mueller@avanux.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,13 +20,27 @@ package de.avanux.smartapplianceenabler.schedule;
 
 import org.joda.time.LocalDateTime;
 
-public interface Request {
+import java.util.Vector;
 
-    Integer getMin();
+public class AbstractRequest {
+    private transient Vector<RequestState> stateHistory = new Vector<>();
+    private LocalDateTime stateChangedAt;
 
-    Integer getMax();
+    public AbstractRequest() {
+        initStateHistory();
+    }
 
-    void stateTransitionTo(LocalDateTime now, RequestState state);
+    private void initStateHistory() {
+        this.stateHistory.clear();
+        stateHistory.add(RequestState.CREATED);
+    }
 
-    public RequestState getState();
+    public void stateTransitionTo(LocalDateTime now, RequestState state) {
+        this.stateHistory.add(state);
+        this.stateChangedAt = now;
+    }
+
+    public RequestState getState() {
+        return stateHistory.lastElement();
+    }
 }

@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "min", "max" })
-public class EnergyRequest implements Request {
+public class EnergyRequest extends AbstractRequest implements Request {
     @XmlAttribute
     private Integer min;
     @XmlAttribute

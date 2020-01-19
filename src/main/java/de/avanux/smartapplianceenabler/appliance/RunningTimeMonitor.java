@@ -55,17 +55,17 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
     }
 
     public void setTimer(Timer timer) {
-        this.updateActiveTimeframeIntervalTimerTask = new GuardedTimerTask(this.applianceId,
-                "UpdateActiveTimeframeInterval", 30000) {
-            @Override
-            public void runTask() {
-                updateActiveTimeframeInterval(new LocalDateTime());
-            }
-        };
-        if(timer != null) {
-            timer.schedule(updateActiveTimeframeIntervalTimerTask, 0,
-                    updateActiveTimeframeIntervalTimerTask.getPeriod());
-        }
+//        this.updateActiveTimeframeIntervalTimerTask = new GuardedTimerTask(this.applianceId,
+//                "UpdateActiveTimeframeInterval", 30000) {
+//            @Override
+//            public void runTask() {
+//                updateActiveTimeframeInterval(new LocalDateTime());
+//            }
+//        };
+//        if(timer != null) {
+//            timer.schedule(updateActiveTimeframeIntervalTimerTask, 0,
+//                    updateActiveTimeframeIntervalTimerTask.getPeriod());
+//        }
     }
 
     public void cancelTimer() {

@@ -75,6 +75,7 @@ public class Appliance implements Validateable, ControlStateChangedListener,
     private List<Schedule> schedules;
     private transient DateTimeProvider dateTimeProvider = new DateTimeProviderImpl();
     private transient RunningTimeMonitor runningTimeMonitor;
+    private transient TimeframeIntervalHandler timeframeIntervalHandler;
     private transient Stack<Boolean> acceptControlRecommendations;
     private transient static final int CONSIDERATION_INTERVAL_DAYS = 2;
 
@@ -180,10 +181,20 @@ public class Appliance implements Validateable, ControlStateChangedListener,
         this.runningTimeMonitor.addTimeFrameChangedListener(this);
     }
 
+    public TimeframeIntervalHandler getTimeframeIntervalHandler() {
+        return timeframeIntervalHandler;
+    }
+
+    public void setTimeframeIntervalHandler(TimeframeIntervalHandler timeframeIntervalHandler) {
+        this.timeframeIntervalHandler = timeframeIntervalHandler;
+        this.timeframeIntervalHandler.setApplianceId(id);
+    }
+
     public void init(GpioController gpioController, Map<String, ModbusTcp> modbusIdWithModbusTcp) {
         logger.debug("{}: Initializing appliance", id);
         if(control != null) {
             setRunningTimeMonitor(new RunningTimeMonitor());
+            setTimeframeIntervalHandler(new TimeframeIntervalHandler(this.schedules));
             if(control instanceof ApplianceIdConsumer) {
                 ((ApplianceIdConsumer) control).setApplianceId(id);
             }
@@ -278,6 +289,9 @@ public class Appliance implements Validateable, ControlStateChangedListener,
         if(runningTimeMonitor != null) {
             runningTimeMonitor.setTimer(timer);
         }
+        if(timeframeIntervalHandler != null) {
+            timeframeIntervalHandler.setTimer(timer);
+        }
 
         if(meter != null) {
             logger.info("{}: Starting {}", id, meter.getClass().getSimpleName());
@@ -309,6 +323,9 @@ public class Appliance implements Validateable, ControlStateChangedListener,
         if(runningTimeMonitor != null) {
             logger.info("{}: Cancel runningTimeMonitor timer", id);
             runningTimeMonitor.cancelTimer();
+        }
+        if(timeframeIntervalHandler != null) {
+            timeframeIntervalHandler.cancelTimer();
         }
     }
 
