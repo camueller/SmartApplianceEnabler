@@ -19,6 +19,8 @@ import {ModbusMeterPage} from '../page/meter/modbus-meter.page';
 import {GlobalContext} from './global-context';
 import {TopMenu} from '../page/top-menu.page';
 import {ApplianceConfiguration} from './appliance-configuration';
+import {ModbusSwitch} from '../../../../main/angular/src/app/control-modbus/modbus-switch';
+import {ModbusControlPage} from '../page/control/modbus-control.page';
 
 export function fixtureName(t: TestController) {
   // @ts-ignore
@@ -101,6 +103,9 @@ export async function createControl(t: TestController, applianceId: string, cont
   if (control.type === HttpSwitch.TYPE) {
     await HttpControlPage.setHttpSwitch(t, control.httpSwitch);
   }
+  if (control.type === ModbusSwitch.TYPE) {
+    await ModbusControlPage.setModbusSwitch(t, control.modbusSwitch);
+  }
   await SwitchPage.clickSave(t);
 }
 export async function assertControl(t: TestController, applianceId: string, control: Control) {
@@ -113,5 +118,8 @@ export async function assertControl(t: TestController, applianceId: string, cont
   }
   if (control.type === HttpSwitch.TYPE) {
     await HttpControlPage.assertHttpSwitch(t, control.httpSwitch);
+  }
+  if (control.type === ModbusSwitch.TYPE) {
+    await ModbusControlPage.assertModbusSwitch(t, control.modbusSwitch);
   }
 }

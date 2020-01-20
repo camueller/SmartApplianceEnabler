@@ -6,7 +6,7 @@ import {washingMachine as washingMachineAppliance} from './fixture/appliance/was
 import {httpMeter_2HttpRead_complete} from './fixture/meter/http-meter';
 import {generateApplianceId} from './shared/appliance-id-generator';
 import {HttpSwitch} from '../../../main/angular/src/app/control-http/http-switch';
-import {httpControl_2httpWrite_httpRead_complete} from './fixture/control/http-control';
+import {httpSwitch_2httpWrite_httpRead_complete} from './fixture/control/http-control';
 
 fixture('Washing Machine').page(baseUrl());
 
@@ -14,7 +14,7 @@ function createWashingMachine(): ApplianceConfiguration {
   return new ApplianceConfiguration({
     appliance: {...washingMachineAppliance, id: generateApplianceId()},
     meter: {type: HttpElectricityMeter.TYPE, httpElectricityMeter: httpMeter_2HttpRead_complete},
-    control: {type: HttpSwitch.TYPE, startingCurrentDetection: false, httpSwitch: httpControl_2httpWrite_httpRead_complete}
+    control: {type: HttpSwitch.TYPE, startingCurrentDetection: false, httpSwitch: httpSwitch_2httpWrite_httpRead_complete}
   });
 }
 

@@ -6,7 +6,7 @@ import {HttpWrite} from '../../../../../main/angular/src/app/http-write/http-wri
 import {HttpWriteValue} from '../../../../../main/angular/src/app/http-write-value/http-write-value';
 import {ControlValueName} from '../../../../../main/angular/src/app/control/control-value-name';
 
-export const httpControl_2httpWrite_httpRead_complete = new HttpSwitch({
+export const httpSwitch_2httpWrite_httpRead_complete = new HttpSwitch({
   httpConfiguration: new HttpConfiguration({
     contentType: 'application/json',
     username: 'myUser',
