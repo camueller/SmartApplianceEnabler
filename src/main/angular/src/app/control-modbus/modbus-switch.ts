@@ -26,4 +26,8 @@ export class ModbusSwitch {
   idref: string;
   slaveAddress: string;
   modbusWrites: ModbusWrite[];
+
+  public constructor(init?: Partial<ModbusSwitch>) {
+    Object.assign(this, init);
+  }
 }

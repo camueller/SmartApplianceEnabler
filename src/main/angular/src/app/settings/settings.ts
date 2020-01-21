@@ -24,9 +24,6 @@ export class Settings {
 
   modbusSettings: ModbusSettings[];
 
-  pulseReceiverEnabled: boolean;
-  pulseReceiverPort: number;
-
   public constructor(init?: Partial<Settings>) {
     Object.assign(this, init);
   }
