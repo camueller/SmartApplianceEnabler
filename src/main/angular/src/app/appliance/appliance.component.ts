@@ -64,7 +64,7 @@ export class ApplianceComponent implements OnChanges, OnInit, AfterViewChecked, 
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.control && changes.control.currentValue) {
+    if (changes.appliance && changes.appliance.currentValue) {
       this.appliance = changes.appliance.currentValue;
     }
     if (this.form) {
