@@ -21,23 +21,23 @@ export class ModbusPage {
   }
 
   public static async setId(t: TestController, id: string) {
-    await inputText(t, selectorInputByFormControlName('modbusTcpId0'), id);
+    await inputText(t, selectorInputByFormControlName('modbusTcpId'), id);
   }
   public static async assertId(t: TestController, id: string) {
-    await assertInput(t, selectorInputByFormControlName('modbusTcpId0'), id);
+    await assertInput(t, selectorInputByFormControlName('modbusTcpId'), id);
   }
 
   public static async setHost(t: TestController, host: string) {
-    await inputText(t, selectorInputByFormControlName('modbusTcpHost0'), host);
+    await inputText(t, selectorInputByFormControlName('modbusTcpHost'), host);
   }
   public static async assertHost(t: TestController, host: string) {
-    await assertInput(t, selectorInputByFormControlName('modbusTcpHost0'), host);
+    await assertInput(t, selectorInputByFormControlName('modbusTcpHost'), host);
   }
 
   public static async setPort(t: TestController, port: number) {
-    await inputText(t, selectorInputByFormControlName('modbusTcpPort0'), port && port.toString());
+    await inputText(t, selectorInputByFormControlName('modbusTcpPort'), port && port.toString());
   }
   public static async assertPort(t: TestController, port: number) {
-    await assertInput(t, selectorInputByFormControlName('modbusTcpPort0'), port && port.toString());
+    await assertInput(t, selectorInputByFormControlName('modbusTcpPort'), port && port.toString());
   }
 }
