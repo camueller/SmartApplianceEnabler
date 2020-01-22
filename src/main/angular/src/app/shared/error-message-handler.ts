@@ -1,4 +1,4 @@
-import {AbstractControl, FormArray, FormGroup, NgForm} from '@angular/forms';
+import {AbstractControl, FormArray, FormGroup} from '@angular/forms';
 import {ErrorMessages} from './error-messages';
 import {ValidatorType} from './error-message';
 import {Logger} from '../log/logger';
@@ -8,25 +8,7 @@ export class ErrorMessageHandler {
   constructor(private logger: Logger) {
   }
 
-  public applyErrorMessages4TemplateDrivenForm(formViewChild: NgForm,
-                                               errorMessages: ErrorMessages,
-                                               controlSuffix = ''): { [key: string]: string } {
-    const errors: { [key: string]: string } = {};
-    for (const message of errorMessages.getErrorMessages()) {
-      const control = formViewChild.form.get(message.forControl + controlSuffix);
-      if (control && control.dirty && control.invalid
-        && control.errors[ValidatorType[message.forValidator]] && !errors[message.forControl]) {
-        errors[message.forControl] = message.text;
-      }
-    }
-    const errorsString = JSON.stringify(errors);
-    if (errorsString.length > 2) {
-      this.logger.debug('ERRORS=' + errorsString);
-    }
-    return errors;
-  }
-
-  public applyErrorMessages4ReactiveForm(form: FormGroup, errorMessages: ErrorMessages): { [key: string]: string } {
+  public applyErrorMessages(form: FormGroup, errorMessages: ErrorMessages): { [key: string]: string } {
     const errors: { [key: string]: string } = {};
     const formControlKeys = Object.keys(form.controls);
     for (const formControlKey of formControlKeys) {

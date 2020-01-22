@@ -57,7 +57,7 @@ export class ControlStartingcurrentComponent implements OnChanges, OnInit, After
       new ErrorMessage('minRunningTime', ValidatorType.pattern),
     ], this.translate);
     this.form.statusChanges.subscribe(() => {
-      this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
+      this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
     });
   }
 

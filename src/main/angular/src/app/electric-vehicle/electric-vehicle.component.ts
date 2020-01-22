@@ -73,7 +73,7 @@ export class ElectricVehicleComponent implements OnChanges, OnInit, AfterViewChe
       new ErrorMessage('scriptFilename', ValidatorType.required),
     ], this.translate);
     this.form.statusChanges.subscribe(() => {
-      this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
+      this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
     });
   }
 

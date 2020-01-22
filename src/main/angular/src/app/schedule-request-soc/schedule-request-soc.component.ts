@@ -9,7 +9,6 @@ import {ErrorMessages} from '../shared/error-messages';
 import {SocRequest} from './soc-request';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
-import {Schedule} from '../schedule/schedule';
 
 @Component({
   selector: 'app-schedule-request-soc',
@@ -57,7 +56,7 @@ export class ScheduleRequestSocComponent implements OnChanges, OnInit, AfterView
     ], this.translate);
     this.expandParentForm();
     this.form.statusChanges.subscribe(() => {
-      this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
+      this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
     });
   }
 

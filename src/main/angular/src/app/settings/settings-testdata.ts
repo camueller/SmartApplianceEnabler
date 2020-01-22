@@ -45,8 +45,6 @@ export class SettingsTestdata {
       'holidaysEnabled': false,
       'holidaysUrl': null,
       'modbusSettings': [] as ModbusSettings[],
-      'pulseReceiverEnabled': false,
-      'pulseReceiverPort': null
     });
   }
 
@@ -74,8 +72,6 @@ export class SettingsTestdata {
         'modbusTcpHost': 'modbushost',
         'modbusTcpPort': 1234,
       })],
-      'pulseReceiverEnabled': true,
-      'pulseReceiverPort': 9876
     });
   }
 

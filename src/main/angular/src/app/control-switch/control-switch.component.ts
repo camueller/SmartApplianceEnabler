@@ -61,7 +61,7 @@ export class ControlSwitchComponent implements OnChanges, OnInit, AfterViewCheck
       new ErrorMessage('gpio', ValidatorType.pattern),
     ], this.translate);
     this.form.statusChanges.subscribe(() => {
-      this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
+      this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
     });
   }
 
