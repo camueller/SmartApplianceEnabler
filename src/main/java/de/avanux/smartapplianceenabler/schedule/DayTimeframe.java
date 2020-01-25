@@ -34,7 +34,7 @@ import java.util.List;
  * A time range being valid between start time and end time on particular days of week.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DayTimeframe implements Timeframe {
+public class DayTimeframe extends AbstractTimeframe implements Timeframe {
     public static final int DOW_HOLIDAYS = 8;
     @XmlElement(name = "Start")
     private TimeOfDay start;
@@ -130,11 +130,11 @@ public class DayTimeframe implements Timeframe {
                         dow = DOW_HOLIDAYS;
                     }
                     if(dowValues.contains(dow)) {
-                        intervals.add(new TimeframeInterval(this, new Interval(timeFrameStart, timeFrameEnd)));
+                        intervals.add(createTimeframeInterval(this, new Interval(timeFrameStart, timeFrameEnd), schedule));
                     }
                 }
                 else {
-                    intervals.add(new TimeframeInterval(this, new Interval(timeFrameStart, timeFrameEnd)));
+                    intervals.add(createTimeframeInterval(this, new Interval(timeFrameStart, timeFrameEnd), schedule));
                 }
             }
         }

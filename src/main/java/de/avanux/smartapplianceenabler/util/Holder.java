@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Axel Müller <axel.mueller@avanux.de>
+ * Copyright (C) 2020 Axel Müller <axel.mueller@avanux.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,19 +16,13 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.avanux.smartapplianceenabler.schedule;
+package de.avanux.smartapplianceenabler.util;
 
-import org.joda.time.LocalDateTime;
+public class Holder<A> {
 
-import java.io.Serializable;
+    public A value;
 
-public interface Request extends Serializable {
-
-    Integer getMin();
-
-    Integer getMax();
-
-    void stateTransitionTo(LocalDateTime now, RequestState state);
-
-    public RequestState getState();
+    public Holder(A a) {
+        this.value = a;
+    }
 }

@@ -255,7 +255,7 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         Schedule schedule = new Schedule(runtime, null, new TimeOfDay(now), new TimeOfDay(now));
         Interval interval = new Interval(now.toDateTime(), now.plusSeconds(runtime).toDateTime());
         Timeframe timeframe = schedule.getTimeframe();
-        TimeframeInterval runtimeTimeframeInterval = new TimeframeInterval(timeframe, interval);
+        TimeframeInterval runtimeTimeframeInterval = new TimeframeInterval(timeframe, interval, schedule.getRequest());
         try {
             this.previousState = (RuntimeState) this.state.clone();
         } catch (CloneNotSupportedException e) {
@@ -273,7 +273,7 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         Interval interval = new Interval(now.toDateTime(), chargeEnd.toDateTime());
         // FIXME: geht das nicht besser?
         Timeframe timeframe = schedule.getTimeframe();
-        activateTimeframeInterval(now, new TimeframeInterval(timeframe, interval));
+        activateTimeframeInterval(now, new TimeframeInterval(timeframe, interval, schedule.getRequest()));
     }
 
     /**

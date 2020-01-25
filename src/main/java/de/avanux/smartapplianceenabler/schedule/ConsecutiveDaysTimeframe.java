@@ -35,7 +35,7 @@ import java.util.List;
  * A time range being valid from the start time on one day of week until the end time on another day of week.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ConsecutiveDaysTimeframe implements Timeframe {
+public class ConsecutiveDaysTimeframe extends AbstractTimeframe implements Timeframe {
     @XmlElement(name = "Start")
     private TimeOfDayOfWeek start;
     @XmlElement(name = "End")
@@ -76,7 +76,7 @@ public class ConsecutiveDaysTimeframe implements Timeframe {
             }
             LocalDateTime latestEndDateTime = end.toNextOccurrence(earliestStartDateTime);
             Interval interval = new Interval(earliestStartDateTime.toDateTime(), latestEndDateTime.toDateTime()).withChronology(ISOChronology.getInstance());
-            TimeframeInterval timeframeInterval = new TimeframeInterval(this, interval);
+            TimeframeInterval timeframeInterval = createTimeframeInterval(this, interval, schedule);
             return Collections.singletonList(timeframeInterval);
         }
         return null;

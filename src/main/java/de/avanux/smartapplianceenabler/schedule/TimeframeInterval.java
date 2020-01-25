@@ -26,11 +26,14 @@ import org.joda.time.LocalDateTime;
 public class TimeframeInterval {
     private Timeframe timeframe;
     private Interval interval;
+    private Request request;
+    // FIXME make more generic
     private boolean triggeredByStartingCurrent;
 
-    public TimeframeInterval(Timeframe timeframe, Interval interval) {
+    public TimeframeInterval(Timeframe timeframe, Interval interval, Request request) {
         this.timeframe = timeframe;
         this.interval = interval;
+        this.request = request;
     }
 
     public Timeframe getTimeframe() {
@@ -41,8 +44,22 @@ public class TimeframeInterval {
         return interval;
     }
 
-    public boolean isIntervalSufficient(LocalDateTime now, Integer minRunningTime) {
-        return now.isBefore(getLatestStart(now, new LocalDateTime(interval.getEnd()), minRunningTime));
+    public Request getRequest() {
+        return request;
+    }
+
+    public boolean isActivatable(LocalDateTime now) {
+        return now.toDateTime().isAfter(getInterval().getStart())
+                && isIntervalSufficient(now, request.getMin(), request.getMax());
+    }
+
+    public boolean isDeactivatable(LocalDateTime now) {
+        return now.toDateTime().isAfter(getInterval().getEnd());
+    }
+
+    public boolean isIntervalSufficient(LocalDateTime now, Integer minRunningTime, Integer maxRunningTime) {
+        int runningTime = minRunningTime != null ? minRunningTime : maxRunningTime;
+        return now.isBefore(getLatestStart(now, new LocalDateTime(interval.getEnd()), runningTime));
     }
 
     public static LocalDateTime getLatestStart(LocalDateTime now, LocalDateTime intervalEnd, Integer minRunningTime) {
@@ -63,6 +80,7 @@ public class TimeframeInterval {
         return null;
     }
 
+    // TriggeredBy: WallboxState
     public boolean isTriggeredByStartingCurrent() {
         return triggeredByStartingCurrent;
     }
@@ -86,6 +104,8 @@ public class TimeframeInterval {
                 text += ")";
             }
         }
+        text += "=>";
+        text += request;
         return text;
     }
 }

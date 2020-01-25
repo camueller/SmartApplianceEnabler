@@ -21,4 +21,5 @@ package de.avanux.smartapplianceenabler.schedule;
 public enum RequestState {
     CREATED,
     QUEUED,
+    ACTIVE
 }

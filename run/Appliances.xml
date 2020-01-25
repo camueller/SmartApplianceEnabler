@@ -4,10 +4,10 @@
         <Switch gpio="1" reverseStates="true"/>
         <S0ElectricityMeter gpio="3" pinPullResistance="PULL_DOWN" impulsesPerKwh="1000"/>
         <Schedule>
-            <RuntimeRequest max="1800"/>
+            <RuntimeRequest max="30"/>
             <DayTimeframe>
                 <Start hour="10" minute="0" second="0"/>
-                <End hour="18" minute="0" second="0"/>
+                <End hour="17" minute="22" second="0"/>
             </DayTimeframe>
         </Schedule>
     </Appliance>

@@ -155,7 +155,7 @@ public class Schedule {
                         }
                         if (!onlySufficient
                                 || (request instanceof RuntimeRequest
-                                    && timeframeInterval.isIntervalSufficient(now, request.getMin()))
+                                    && timeframeInterval.isIntervalSufficient(now, request.getMin(), request.getMax()))
                                 || (request instanceof EnergyRequest)
                                 || (request instanceof SocRequest)
                         ) {

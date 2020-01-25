@@ -20,6 +20,7 @@ package de.avanux.smartapplianceenabler.schedule;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
+import de.avanux.smartapplianceenabler.util.Holder;
 import org.joda.time.Interval;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
@@ -93,17 +94,56 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
                         logger.debug("{}: Adding timeframeInterval to queue: {}", applianceId, timeframeInterval))
                 .forEach(timeFrameInterval -> {
                     queue.add(timeFrameInterval);
-                    timeFrameInterval.getTimeframe().getSchedule().getRequest().stateTransitionTo(now, RequestState.QUEUED);
+                    timeFrameInterval.getRequest().stateTransitionTo(now, RequestState.QUEUED);
                 });
     }
 
     public void updateQueue(LocalDateTime now) {
-        logger.debug("{}: Updating queue", applianceId);
+        logger.debug("{}: Updating queue:", applianceId);
+        logQueue();
+
+        Holder<Boolean> queueUpdated = new Holder<>(false);
+
+        Collection<TimeframeInterval> timeframeIntervalsForRemoval = new HashSet<>();
+        queue.stream()
+                .filter(timeframeInterval -> timeframeInterval.isDeactivatable(now))
+                .forEach(timeframeInterval -> {
+                    logger.debug("{}: Timeframe interval expired: {}", applianceId, timeframeInterval);
+                    timeframeIntervalsForRemoval.add(timeframeInterval);
+                    queueUpdated.value = true;
+                });
+        queue.removeAll(timeframeIntervalsForRemoval);
+
+        if(! hasActiveTimeframeInterval()) {
+            Optional<TimeframeInterval> activatableTimeframe = queue.stream()
+                    .filter(timeframeInterval -> timeframeInterval.isActivatable(now))
+                    .findFirst();
+            if(activatableTimeframe.isPresent()) {
+                logger.debug("{}: Activate timeframe interval: {}", applianceId, activatableTimeframe.get());
+                activatableTimeframe.get().getRequest().stateTransitionTo(now, RequestState.ACTIVE);
+                queueUpdated.value = true;
+            }
+        }
+
+        if(queueUpdated.value) {
+            logger.debug("{}: Updated queue:", applianceId);
+            logQueue();
+        }
+    }
+
+    private void logQueue() {
         queue.forEach(timeFrameInterval -> logger.debug("{}: {} {}",
                 applianceId,
-                timeFrameInterval.getTimeframe().getSchedule().getRequest().getState(),
+                timeFrameInterval.getRequest().getState(),
                 timeFrameInterval.toString()));
+    }
 
+    private boolean hasActiveTimeframeInterval() {
+        return queue.stream()
+                .anyMatch(timeframeInterval -> timeframeInterval.getRequest().getState() == RequestState.ACTIVE);
+    }
+
+    public void deactivateCurrentlyActiveTimeframeInterval() {
     }
 
     /**
