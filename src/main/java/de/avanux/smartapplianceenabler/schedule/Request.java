@@ -18,11 +18,20 @@
 
 package de.avanux.smartapplianceenabler.schedule;
 
+import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import de.avanux.smartapplianceenabler.control.Control;
+import de.avanux.smartapplianceenabler.meter.Meter;
 import org.joda.time.LocalDateTime;
 
 import java.io.Serializable;
 
-public interface Request extends Serializable {
+public interface Request extends Serializable, ApplianceIdConsumer {
+
+    void setMeter(Meter meter);
+
+    void setControl(Control control);
+
+    void addRequestStateChangedListener(RequestStateChangedListener listener);
 
     Integer getMin();
 

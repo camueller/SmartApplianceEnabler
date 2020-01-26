@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Axel Müller <axel.mueller@avanux.de>
+ * Copyright (C) 2020 Axel Müller <axel.mueller@avanux.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,19 +15,13 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package de.avanux.smartapplianceenabler.appliance;
 
-import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
+package de.avanux.smartapplianceenabler.schedule;
+
 import org.joda.time.LocalDateTime;
 
-/**
- * Implementors will be notified when the active timeframe interval is checked or has changed.
- */
-public interface ActiveIntervalChangedListener {
+public interface RequestStateChangedListener {
 
-    void timeframeIntervalCreated(LocalDateTime now, TimeframeInterval timeframeInterval);
+    void onRequestStateChanged(LocalDateTime now, RequestState previousState, RequestState newState);
 
-    void activeIntervalChanged(LocalDateTime now, String applianceId, TimeframeInterval deactivatedInterval, TimeframeInterval activatedInterval, boolean wasRunning);
-
-    void activeIntervalChecked(LocalDateTime now, String applianceId, TimeframeInterval activeInterval);
 }

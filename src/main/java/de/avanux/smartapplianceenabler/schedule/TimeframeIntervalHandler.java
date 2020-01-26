@@ -37,7 +37,8 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
     private GuardedTimerTask fillQueueTimerTask;
     private GuardedTimerTask updateQueueTimerTask;
     private LinkedList<TimeframeInterval> queue = new LinkedList<>();
-    private Set<ActiveIntervalChangedListener> scheduleChangedListeners = new HashSet<>();
+    private Set<ActiveIntervalChangedListener> timeframeIntervalChangedListeners = new HashSet<>();
+    private Set<RequestStateChangedListener> requestStateChangedListeners = new HashSet<>();
 
     public TimeframeIntervalHandler(List<Schedule> schedules) {
         this.schedules = schedules;
@@ -49,7 +50,11 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
     }
 
     public void addTimeFrameIntervalChangedListener(ActiveIntervalChangedListener listener) {
-        this.scheduleChangedListeners.add(listener);
+        this.timeframeIntervalChangedListeners.add(listener);
+    }
+
+    public void addRequestStateChangedListener(RequestStateChangedListener listener) {
+        this.requestStateChangedListeners.add(listener);
     }
 
     public void setTimer(Timer timer) {
@@ -126,7 +131,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
         if(deactivatableTimeframeInterval.isPresent() || activatableTimeframeInterval.isPresent()) {
             logger.debug("{}: Updated queue:", applianceId);
             logQueue();
-            for(ActiveIntervalChangedListener listener : scheduleChangedListeners) {
+            for(ActiveIntervalChangedListener listener : timeframeIntervalChangedListeners) {
                 logger.debug("{}: Notifying {} {}", applianceId, ActiveIntervalChangedListener.class.getSimpleName(),
                         listener.getClass().getSimpleName());
                 listener.activeIntervalChanged(now, applianceId,
@@ -162,7 +167,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
      * @param considerationInterval timeframe intervals have to start within this interval
      * @return a (possibly empty) list of timeframes sorted by starting time
      */
-    public List<TimeframeInterval> findTimeframeIntervals(LocalDateTime now, Interval considerationInterval) {
+    private List<TimeframeInterval> findTimeframeIntervals(LocalDateTime now, Interval considerationInterval) {
         List<TimeframeInterval> timeframeIntervals = new ArrayList<>();
         if (schedules != null) {
             schedules
@@ -175,6 +180,11 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
                                     || considerationInterval.contains(timeframeInterval.getInterval().getStart())
                                     || timeframeInterval.getInterval().contains(considerationInterval.getStart())
                             ) {
+                                timeframeInterval.getRequest().setApplianceId(applianceId);
+                                requestStateChangedListeners.forEach(listener ->
+                                        timeframeInterval.getRequest().addRequestStateChangedListener(listener));
+                                timeframeIntervalChangedListeners.forEach(
+                                        listener -> listener.timeframeIntervalCreated(now, timeframeInterval));
                                 timeframeIntervals.add(timeframeInterval);
                             }
                         });

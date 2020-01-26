@@ -47,7 +47,7 @@ import java.util.*;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Appliance implements Validateable, ControlStateChangedListener,
-        StartingCurrentSwitchListener, ActiveIntervalChangedListener {
+        StartingCurrentSwitchListener, ActiveIntervalChangedListener, RequestStateChangedListener {
 
     private transient Logger logger = LoggerFactory.getLogger(Appliance.class);
     @XmlAttribute
@@ -189,6 +189,7 @@ public class Appliance implements Validateable, ControlStateChangedListener,
         this.timeframeIntervalHandler = timeframeIntervalHandler;
         this.timeframeIntervalHandler.setApplianceId(id);
         this.timeframeIntervalHandler.addTimeFrameIntervalChangedListener(this);
+        this.timeframeIntervalHandler.addRequestStateChangedListener(this);
     }
 
     public void init(GpioController gpioController, Map<String, ModbusTcp> modbusIdWithModbusTcp) {
@@ -983,6 +984,16 @@ public class Appliance implements Validateable, ControlStateChangedListener,
                 }
             }
         }
+    }
+
+    @Override
+    public void timeframeIntervalCreated(LocalDateTime now, TimeframeInterval timeframeInterval) {
+        timeframeInterval.getRequest().setMeter(meter);
+        timeframeInterval.getRequest().setControl(control);
+    }
+
+    @Override
+    public void onRequestStateChanged(LocalDateTime now, RequestState previousState, RequestState newState) {
     }
 
     /**
