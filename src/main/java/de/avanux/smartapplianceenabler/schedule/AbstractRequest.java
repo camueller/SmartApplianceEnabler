@@ -43,4 +43,8 @@ public class AbstractRequest {
     public RequestState getState() {
         return stateHistory.lastElement();
     }
+
+    public boolean wasInState(RequestState state) {
+        return stateHistory.contains(state);
+    }
 }

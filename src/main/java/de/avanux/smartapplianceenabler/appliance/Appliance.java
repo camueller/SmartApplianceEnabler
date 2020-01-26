@@ -188,6 +188,7 @@ public class Appliance implements Validateable, ControlStateChangedListener,
     public void setTimeframeIntervalHandler(TimeframeIntervalHandler timeframeIntervalHandler) {
         this.timeframeIntervalHandler = timeframeIntervalHandler;
         this.timeframeIntervalHandler.setApplianceId(id);
+        this.timeframeIntervalHandler.addTimeFrameIntervalChangedListener(this);
     }
 
     public void init(GpioController gpioController, Map<String, ModbusTcp> modbusIdWithModbusTcp) {

@@ -31,4 +31,7 @@ public interface Request extends Serializable {
     void stateTransitionTo(LocalDateTime now, RequestState state);
 
     public RequestState getState();
+
+    boolean wasInState(RequestState state);
+
 }
