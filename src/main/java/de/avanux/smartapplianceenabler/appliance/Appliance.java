@@ -393,7 +393,7 @@ public class Appliance implements Validateable, ControlStateChangedListener,
     }
 
     public void setApplianceState(LocalDateTime now, boolean switchOn, Integer recommendedPowerConsumption,
-                                  boolean deactivateTimeframe, String logMessage) {
+                                  String logMessage) {
         if(control != null) {
             logger.debug("{}: {}", id, logMessage);
             if(switchOn && isEvCharger()) {
@@ -421,10 +421,6 @@ public class Appliance implements Validateable, ControlStateChangedListener,
             // only change state if requested state differs from actual state
             if(control.isOn() ^ switchOn) {
                 control.on(now, switchOn);
-                if(! switchOn && deactivateTimeframe) {
-                    this.runningTimeMonitor.activateTimeframeInterval(now, (TimeframeInterval) null);
-                }
-                this.runningTimeMonitor.updateActiveTimeframeInterval(now);
             }
             else {
                 logger.debug("{}: Requested appliance state already set.", id);
@@ -448,9 +444,7 @@ public class Appliance implements Validateable, ControlStateChangedListener,
             if(chargeEnd == null) {
                 // if no charge end is provided we switch on immediatly with full power and don't accept
                 // any control recommendations
-                setApplianceState(now, true, null,
-                        false,
-                        "Switching on charger");
+                setApplianceState(now, true, null,"Switching on charger");
                 setAcceptControlRecommendations(false);
             }
             else {
@@ -1002,8 +996,7 @@ public class Appliance implements Validateable, ControlStateChangedListener,
      * @param now
      */
     private void endOfTimeFrame(LocalDateTime now) {
-        setApplianceState(now, false, null,
-                false, "Switching off due to end of time frame");
+        setApplianceState(now, false, null, "Switching off due to end of time frame");
         if(meter != null && ! isEvCharger()) {
             meter.resetEnergyMeter();
         }
@@ -1019,9 +1012,7 @@ public class Appliance implements Validateable, ControlStateChangedListener,
                 && remainingMaxRunningTime != null && remainingMaxRunningTime <= 0)) {
             // Timeframe must not be deactivated in order to avoid recreation of the same timeframe!
             // Only for StartingCurrentSwitch timeframe should be deactivated
-            setApplianceState(now,false, null,
-                    hasStartingCurrentDetection(),
-                    "Switching off because runningTime finished");
+            setApplianceState(now,false, null, "Switching off because runningTime finished");
         }
     }
 }

@@ -93,7 +93,7 @@ public class EVChargerTest extends TestBase {
         log("Start charging");
         LocalDateTime timeStartCharging = toToday(10, 0, 0);
         appliance.setApplianceState(timeStartCharging,
-                true, 4000, false, "Switch on");
+                true, 4000, "Switch on");
         tick(appliance, timeInitial, true, true);
         List<RuntimeInterval> runtimeIntervalsStartCharging = appliance.getRuntimeIntervals(timeStartCharging, false);
         assertEquals(
@@ -119,7 +119,7 @@ public class EVChargerTest extends TestBase {
         LocalDateTime timeInterruptCharging = toToday(12, 0, 0);
         Mockito.when(pollEnergyExecutor.pollEnergy(Mockito.any())).thenReturn(18.0f);
         appliance.setApplianceState(timeInterruptCharging,
-                false, null, false, "Switch off");
+                false, null, "Switch off");
         tick(appliance, timeInitial,  true, false);
         List<RuntimeInterval> runtimeIntervalsAfterInterrupCharging = appliance.getRuntimeIntervals(timeAfterStartCharging, false);
         assertEquals(
@@ -134,7 +134,7 @@ public class EVChargerTest extends TestBase {
         log("Start charging again");
         LocalDateTime timeStartChargingAgain = toToday(13, 0, 0);
         appliance.setApplianceState(timeStartChargingAgain,
-                true, 6000, false, "Switch on");
+                true, 6000, "Switch on");
         tick(appliance, timeInitial, true, true);
         List<RuntimeInterval> runtimeIntervalsStartChargingAgain = appliance.getRuntimeIntervals(timeStartCharging, false);
         assertEquals(
@@ -259,7 +259,7 @@ public class EVChargerTest extends TestBase {
         log("Start charging");
         LocalDateTime timeStartCharging = toToday(10, 0, 0);
         appliance.setApplianceState(timeStartCharging,
-                true, 4000, false, "Switch on");
+                true, 4000, "Switch on");
         tick(appliance, timeInitial, true, true);
         List<RuntimeInterval> runtimeIntervalsStartCharging = appliance.getRuntimeIntervals(timeStartCharging, false);
         assertEquals(
@@ -347,7 +347,7 @@ public class EVChargerTest extends TestBase {
         log("Start charging");
         LocalDateTime timeStartCharging = toToday(10, 0, 0);
         appliance.setApplianceState(timeStartCharging,
-                true, 4000, false, "Switch on");
+                true, 4000, "Switch on");
         tick(appliance, timeInitial, true, true);
         List<RuntimeInterval> runtimeIntervalsStartCharging = appliance.getRuntimeIntervals(timeStartCharging, false);
         assertEquals(
@@ -377,7 +377,7 @@ public class EVChargerTest extends TestBase {
         Mockito.reset(mockMeter);
         Mockito.when(pollEnergyExecutor.pollEnergy(Mockito.any())).thenReturn(18.0f);
         appliance.setApplianceState(timeInterruptCharging,
-                false, null, false, "Switch off");
+                false, null, "Switch off");
         tick(appliance, timeInitial,  true, false);
         List<RuntimeInterval> runtimeIntervalsAfterInterrupCharging = appliance.getRuntimeIntervals(timeAfterStartCharging, false);
         assertEquals(

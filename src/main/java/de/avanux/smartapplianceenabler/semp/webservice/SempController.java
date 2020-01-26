@@ -223,7 +223,6 @@ public class SempController {
             if (appliance != null) {
                 appliance.setApplianceState(now, deviceControl.isOn(),
                         deviceControl.getRecommendedPowerConsumption(),
-                        false,
                         "Setting appliance state to " + (deviceControl.isOn() ? "ON" : "OFF"));
             } else {
                 logger.warn("{}: No appliance configured for device id", deviceControl.getDeviceId());
