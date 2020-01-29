@@ -116,6 +116,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
         logQueue();
 
         Optional<TimeframeInterval> deactivatableTimeframeInterval = queue.stream()
+                .filter(timeframeInterval -> timeframeInterval.getState() == TimeframeIntervalState.ACTIVE)
                 .filter(timeframeInterval -> timeframeInterval.isDeactivatable(now))
                 .findFirst();
         if(deactivatableTimeframeInterval.isPresent()) {
@@ -124,6 +125,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
         }
 
         Optional<TimeframeInterval> activatableTimeframeInterval = queue.stream()
+                .filter(timeframeInterval -> timeframeInterval.getState() != TimeframeIntervalState.ACTIVE)
                 .filter(timeframeInterval -> timeframeInterval.isActivatable(now))
                 .findFirst();
         if(! hasActiveTimeframeInterval() && activatableTimeframeInterval.isPresent()) {

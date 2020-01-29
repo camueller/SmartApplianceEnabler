@@ -19,12 +19,13 @@
 package de.avanux.smartapplianceenabler.schedule;
 
 import de.avanux.smartapplianceenabler.control.Control;
+import de.avanux.smartapplianceenabler.control.ControlStateChangedListener;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AbstractRequest {
+public class AbstractRequest implements ControlStateChangedListener {
     private transient Logger logger = LoggerFactory.getLogger(AbstractRequest.class);
     private transient String applianceId;
     private transient Meter meter;
@@ -77,6 +78,19 @@ public class AbstractRequest {
         this.active = false;
         if(newState == TimeframeIntervalState.ACTIVE) {
             this.active = true;
+        }
+    }
+
+    @Override
+    public void controlStateChanged(LocalDateTime now, boolean switchOn) {
+        if (isActive()) {
+            if (meter != null) {
+                if (switchOn) {
+                    meter.startEnergyMeter();
+                } else {
+                    meter.stopEnergyMeter();
+                }
+            }
         }
     }
 }

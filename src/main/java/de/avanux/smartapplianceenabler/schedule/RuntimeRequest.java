@@ -34,7 +34,7 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "min", "max" })
-public class RuntimeRequest extends AbstractRequest implements Request, ControlStateChangedListener, StartingCurrentSwitchListener {
+public class RuntimeRequest extends AbstractRequest implements Request, StartingCurrentSwitchListener {
     @XmlAttribute
     private Integer min;
     @XmlAttribute
@@ -85,6 +85,7 @@ public class RuntimeRequest extends AbstractRequest implements Request, ControlS
 
     @Override
     public void controlStateChanged(LocalDateTime now, boolean switchOn) {
+        super.controlStateChanged(now, switchOn);
         if(isActive()) {
             if(switchOn) {
                 wasRunning = true;
@@ -136,11 +137,12 @@ public class RuntimeRequest extends AbstractRequest implements Request, ControlS
     @Override
     public String toString() {
         String text = isEnabled() ? "ENABLED" : "DISABLED";
+        text += "/";
         if(min != null) {
             text += min.toString();
         }
         else {
-            text += "?";
+            text += "_";
         }
         text += "s/";
         text += max;
