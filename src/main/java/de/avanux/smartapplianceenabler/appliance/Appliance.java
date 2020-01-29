@@ -913,7 +913,7 @@ public class Appliance implements Validateable, ControlStateChangedListener,
     public void controlStateChanged(LocalDateTime now, boolean switchOn) {
         logger.debug("{}: Control state has changed to {}", id, (switchOn ? "on" : "off"));
         if (runningTimeMonitor != null) {
-            runningTimeMonitor.setRunning(switchOn, now);
+//            runningTimeMonitor.setRunning(switchOn, now);
         }
         if (meter != null) {
             if (switchOn) {
