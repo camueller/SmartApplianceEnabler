@@ -53,6 +53,16 @@ public class EnergyRequest extends AbstractRequest implements Request {
         return max;
     }
 
+    @Override
+    public boolean isEnabled() {
+        return false;
+    }
+
+    @Override
+    public boolean isFinished(LocalDateTime now) {
+        return false;
+    }
+
     public void setMax(Integer max) {
         this.max = max;
     }

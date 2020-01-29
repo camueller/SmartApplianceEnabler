@@ -20,6 +20,7 @@ package de.avanux.smartapplianceenabler.schedule;
 
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.meter.Meter;
+import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +29,8 @@ public class AbstractRequest {
     private transient String applianceId;
     private transient Meter meter;
     private transient Control control;
+    private transient boolean enabled;
+    private transient boolean active;
 
 
     public AbstractRequest() {
@@ -57,5 +60,23 @@ public class AbstractRequest {
         return control;
     }
 
+    public boolean isEnabled() {
+        return enabled;
+    }
 
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void onTimeframeIntervalStateChanged(LocalDateTime now, TimeframeIntervalState previousState,
+                                                TimeframeIntervalState newState) {
+        this.active = false;
+        if(newState == TimeframeIntervalState.ACTIVE) {
+            this.active = true;
+        }
+    }
 }

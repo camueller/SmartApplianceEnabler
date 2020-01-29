@@ -77,12 +77,13 @@ public class TimeframeInterval implements ApplianceIdConsumer {
     }
 
     public void stateTransitionTo(LocalDateTime now, TimeframeIntervalState state) {
+        TimeframeIntervalState previousState = this.stateHistory.lastElement();
         this.stateHistory.add(state);
         this.stateChangedAt = now;
         timeframeStateChangedListeners.forEach(listener -> {
             logger.debug("{}: Notifying {} {}", applianceId, ActiveIntervalChangedListener.class.getSimpleName(),
                     listener.getClass().getSimpleName());
-
+            listener.onTimeframeIntervalStateChanged(now, previousState, state);
         });
     }
 
@@ -100,7 +101,7 @@ public class TimeframeInterval implements ApplianceIdConsumer {
     }
 
     public boolean isDeactivatable(LocalDateTime now) {
-        return now.toDateTime().isAfter(getInterval().getEnd());
+        return now.toDateTime().isAfter(getInterval().getEnd()) || getRequest().isFinished(now);
     }
 
     public boolean isIntervalSufficient(LocalDateTime now, Integer minRunningTime, Integer maxRunningTime) {

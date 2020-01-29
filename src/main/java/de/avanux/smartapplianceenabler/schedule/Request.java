@@ -25,7 +25,7 @@ import org.joda.time.LocalDateTime;
 
 import java.io.Serializable;
 
-public interface Request extends Serializable, ApplianceIdConsumer {
+public interface Request extends Serializable, ApplianceIdConsumer, TimeframeIntervalStateChangedListener {
 
     void setMeter(Meter meter);
 
@@ -34,4 +34,10 @@ public interface Request extends Serializable, ApplianceIdConsumer {
     Integer getMin(LocalDateTime now);
 
     Integer getMax(LocalDateTime now);
+
+    boolean isEnabled();
+
+    void setEnabled(boolean enabled);
+
+    boolean isFinished(LocalDateTime now);
 }

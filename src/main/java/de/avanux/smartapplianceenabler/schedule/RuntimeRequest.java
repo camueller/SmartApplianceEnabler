@@ -20,6 +20,8 @@ package de.avanux.smartapplianceenabler.schedule;
 
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.ControlStateChangedListener;
+import de.avanux.smartapplianceenabler.control.StartingCurrentSwitch;
+import de.avanux.smartapplianceenabler.control.StartingCurrentSwitchListener;
 import org.joda.time.Interval;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
@@ -32,7 +34,7 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "min", "max" })
-public class RuntimeRequest extends AbstractRequest implements Request, ControlStateChangedListener {
+public class RuntimeRequest extends AbstractRequest implements Request, ControlStateChangedListener, StartingCurrentSwitchListener {
     @XmlAttribute
     private Integer min;
     @XmlAttribute
@@ -50,7 +52,7 @@ public class RuntimeRequest extends AbstractRequest implements Request, ControlS
     }
 
     public Integer getMin(LocalDateTime now) {
-        if(min != null && getControl().isOn()) {
+        if(min != null && isActive() && getControl().isOn()) {
             return min - getSecondsSinceStatusChange(now);
         }
         return min;
@@ -61,7 +63,7 @@ public class RuntimeRequest extends AbstractRequest implements Request, ControlS
     }
 
     public Integer getMax(LocalDateTime now) {
-        if(getControl().isOn()) {
+        if(isActive() && getControl().isOn()) {
             return max - getSecondsSinceStatusChange(now);
         }
         return max;
@@ -75,25 +77,46 @@ public class RuntimeRequest extends AbstractRequest implements Request, ControlS
     public void setControl(Control control) {
         super.setControl(control);
         control.addControlStateChangedListener(this);
+        if (control instanceof StartingCurrentSwitch) {
+            setEnabled(false);
+            ((StartingCurrentSwitch) control).addStartingCurrentSwitchListener(this);
+        }
     }
 
     @Override
     public void controlStateChanged(LocalDateTime now, boolean switchOn) {
-        if(switchOn) {
-            wasRunning = true;
-        }
-        else {
-            if(controlStatusChangedAt != null) {
-                int secondsSinceStatusChange = getSecondsSinceStatusChange(now);
-                int newMax = this.max - secondsSinceStatusChange;
-                this.max = newMax > 0 ? newMax : 0;
-                if(this.min != null) {
-                    int newMin = this.min - secondsSinceStatusChange;
-                    this.min = newMin > 0 ? newMin : 0;
+        if(isActive()) {
+            if(switchOn) {
+                wasRunning = true;
+            }
+            else {
+                if(controlStatusChangedAt != null) {
+                    int secondsSinceStatusChange = getSecondsSinceStatusChange(now);
+                    int newMax = this.max - secondsSinceStatusChange;
+                    this.max = newMax > 0 ? newMax : 0;
+                    if(this.min != null) {
+                        int newMin = this.min - secondsSinceStatusChange;
+                        this.min = newMin > 0 ? newMin : 0;
+                    }
                 }
             }
+            controlStatusChangedAt = now;
         }
-        controlStatusChangedAt = now;
+    }
+
+    @Override
+    public void startingCurrentDetected(LocalDateTime now) {
+        setEnabled(true);
+    }
+
+    @Override
+    public void finishedCurrentDetected() {
+        setEnabled(false);
+    }
+
+    @Override
+    public boolean isFinished(LocalDateTime now) {
+        return getMax(now) <= 0;
     }
 
     protected int getSecondsSinceStatusChange(LocalDateTime now) {
@@ -112,7 +135,7 @@ public class RuntimeRequest extends AbstractRequest implements Request, ControlS
 
     @Override
     public String toString() {
-        String text = "";
+        String text = isEnabled() ? "ENABLED" : "DISABLED";
         if(min != null) {
             text += min.toString();
         }

@@ -58,6 +58,16 @@ public class SocRequest extends AbstractRequest implements Request {
     }
 
     @Override
+    public boolean isEnabled() {
+        return false;
+    }
+
+    @Override
+    public boolean isFinished(LocalDateTime now) {
+        return false;
+    }
+
+    @Override
     public String toString() {
         return "evId=" + evId +
                 "/soc=" + soc +
