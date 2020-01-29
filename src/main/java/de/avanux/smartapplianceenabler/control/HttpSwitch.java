@@ -138,7 +138,7 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
                 this.httpTransactionExecutor.closeResponse(response);
                 if(statusCode == HttpStatus.SC_OK) {
                     on = switchOn;
-                    for(ControlStateChangedListener listener : controlStateChangedListeners) {
+                    for(ControlStateChangedListener listener : new ArrayList<>(controlStateChangedListeners)) {
                         listener.controlStateChanged(now, switchOn);
                     }
                     return true;

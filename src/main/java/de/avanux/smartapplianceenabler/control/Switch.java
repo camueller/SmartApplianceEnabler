@@ -80,7 +80,7 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
         } else {
             logGpioAccessDisabled(logger);
         }
-        for (ControlStateChangedListener listener : controlStateChangedListeners) {
+        for (ControlStateChangedListener listener : new ArrayList<>(controlStateChangedListeners)) {
             listener.controlStateChanged(now, switchOn);
         }
         return true;

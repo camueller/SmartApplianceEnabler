@@ -88,7 +88,7 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable {
                     result = 1 == ((WriteHoldingRegisterExecutor) executor).getResult();
                 }
 
-                for(ControlStateChangedListener listener : controlStateChangedListeners) {
+                for(ControlStateChangedListener listener : new ArrayList<>(controlStateChangedListeners)) {
                     listener.controlStateChanged(now, switchOn);
                 }
             }

@@ -53,7 +53,7 @@ public class MockSwitch implements Control, ApplianceIdConsumer {
     public boolean on(LocalDateTime now, boolean switchOn) {
         logger.info("{}: Switching {}", applianceId, (switchOn ? "on" : "off"));
         on = switchOn;
-        for(ControlStateChangedListener listener : controlStateChangedListeners) {
+        for(ControlStateChangedListener listener : new ArrayList<>(controlStateChangedListeners)) {
             listener.controlStateChanged(now, switchOn);
         }
         return true;

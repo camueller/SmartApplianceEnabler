@@ -193,7 +193,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
             applianceOn(now,true);
             switchOnTime = new LocalDateTime();
         }
-        for(ControlStateChangedListener listener : controlStateChangedListeners) {
+        for(ControlStateChangedListener listener : new ArrayList<>(controlStateChangedListeners)) {
             logger.debug("{}: Notifying {} {}", applianceId, ControlStateChangedListener.class.getSimpleName(),
                     listener.getClass().getSimpleName());
             listener.controlStateChanged(now, switchOn);
