@@ -206,12 +206,12 @@ public class Appliance implements Validateable, ControlStateChangedListener,
             if(control instanceof StartingCurrentSwitch) {
                 Control wrappedControl = ((StartingCurrentSwitch) control).getControl();
                 ((ApplianceIdConsumer) wrappedControl).setApplianceId(id);
-                control.addControlStateChangedListener(this);
-                logger.debug("{}: Registered as {} with {}", id, ControlStateChangedListener.class.getSimpleName(),
-                        control.getClass().getSimpleName());
-                ((StartingCurrentSwitch) control).addStartingCurrentSwitchListener(this);
-                logger.debug("{}: Registered as {} with {}", id, StartingCurrentSwitchListener.class.getSimpleName(),
-                        control.getClass().getSimpleName());
+//                control.addControlStateChangedListener(this);
+//                logger.debug("{}: Registered as {} with {}", id, ControlStateChangedListener.class.getSimpleName(),
+//                        control.getClass().getSimpleName());
+//                ((StartingCurrentSwitch) control).addStartingCurrentSwitchListener(this);
+//                logger.debug("{}: Registered as {} with {}", id, StartingCurrentSwitchListener.class.getSimpleName(),
+//                        control.getClass().getSimpleName());
             }
             else {
                 control.addControlStateChangedListener(this);
@@ -511,15 +511,15 @@ public class Appliance implements Validateable, ControlStateChangedListener,
 
     public void activateSchedules() {
         if(runningTimeMonitor != null) {
-            logger.debug("{}: Activating schedules", id);
-            runningTimeMonitor.setSchedules(schedules, this.dateTimeProvider.now());
+//            logger.debug("{}: Activating schedules", id);
+//            runningTimeMonitor.setSchedules(schedules, this.dateTimeProvider.now());
         }
     }
 
     public void deactivateSchedules() {
         if(runningTimeMonitor != null) {
-            logger.debug("{}: Deactivating schedules", id);
-            runningTimeMonitor.setSchedules(new ArrayList<>(), this.dateTimeProvider.now());
+//            logger.debug("{}: Deactivating schedules", id);
+//            runningTimeMonitor.setSchedules(new ArrayList<>(), this.dateTimeProvider.now());
         }
     }
 
