@@ -31,16 +31,7 @@ public interface Request extends Serializable, ApplianceIdConsumer {
 
     void setControl(Control control);
 
-    void addRequestStateChangedListener(RequestStateChangedListener listener);
+    Integer getMin(LocalDateTime now);
 
-    Integer getMin();
-
-    Integer getMax();
-
-    void stateTransitionTo(LocalDateTime now, RequestState state);
-
-    public RequestState getState();
-
-    boolean wasInState(RequestState state);
-
+    Integer getMax(LocalDateTime now);
 }

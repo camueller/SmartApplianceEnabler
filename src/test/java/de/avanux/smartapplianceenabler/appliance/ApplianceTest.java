@@ -64,7 +64,7 @@ public class ApplianceTest extends TestBase {
         Interval interval = schedule.getTimeframe().getIntervals(now).get(0).getInterval();
         schedule.getTimeframe().setSchedule(schedule);
 
-        RuntimeInterval runtimeInterval = this.appliance.createRuntimeRequestInterval(interval, schedule.getRequest().getMin(),
+        RuntimeInterval runtimeInterval = this.appliance.createRuntimeRequestInterval(interval, schedule.getRequest().getMin(now),
                 null, now);
         assertEquals(1800, (int) runtimeInterval.getEarliestStart());
         assertEquals(30600, (int) runtimeInterval.getLatestEnd());
@@ -80,8 +80,8 @@ public class ApplianceTest extends TestBase {
         Interval interval = schedule.getTimeframe().getIntervals(now).get(0).getInterval();
         schedule.getTimeframe().setSchedule(schedule);
 
-        RuntimeInterval runtimeInterval = this.appliance.createRuntimeRequestInterval(interval, schedule.getRequest().getMin(),
-                schedule.getRequest().getMax(), now);
+        RuntimeInterval runtimeInterval = this.appliance.createRuntimeRequestInterval(interval, schedule.getRequest().getMin(now),
+                schedule.getRequest().getMax(now), now);
         assertEquals(1800, (int) runtimeInterval.getEarliestStart());
         assertEquals(30600, (int) runtimeInterval.getLatestEnd());
         assertEquals(3600, (int) runtimeInterval.getMinRunningTime());
@@ -96,8 +96,8 @@ public class ApplianceTest extends TestBase {
         Interval interval = schedule.getTimeframe().getIntervals(now).get(0).getInterval();
         schedule.getTimeframe().setSchedule(schedule);
 
-        RuntimeInterval runtimeInterval = this.appliance.createRuntimeRequestInterval(interval, schedule.getRequest().getMin(),
-                schedule.getRequest().getMax(), now);
+        RuntimeInterval runtimeInterval = this.appliance.createRuntimeRequestInterval(interval, schedule.getRequest().getMin(now),
+                schedule.getRequest().getMax(now), now);
         assertEquals(0, (int) runtimeInterval.getEarliestStart());
         assertEquals(3600, (int) runtimeInterval.getLatestEnd());
         assertEquals(3600, (int) runtimeInterval.getMinRunningTime());
@@ -111,7 +111,7 @@ public class ApplianceTest extends TestBase {
                 new TimeOfDay(20, 0, 0), new TimeOfDay(4, 0, 0));
         Interval interval = schedule.getTimeframe().getIntervals(now).get(0).getInterval();
 
-        RuntimeInterval runtimeInterval = this.appliance.createRuntimeRequestInterval(interval, schedule.getRequest().getMin(),
+        RuntimeInterval runtimeInterval = this.appliance.createRuntimeRequestInterval(interval, schedule.getRequest().getMin(now),
                 null, now);
         assertEquals(0, (int) runtimeInterval.getEarliestStart());
         assertEquals(16200, (int) runtimeInterval.getLatestEnd());
@@ -126,7 +126,7 @@ public class ApplianceTest extends TestBase {
                 new TimeOfDay(20, 0, 0), new TimeOfDay(4, 0, 0));
         Interval interval = schedule.getTimeframe().getIntervals(now).get(0).getInterval();
 
-        RuntimeInterval runtimeInterval = this.appliance.createRuntimeRequestInterval(interval, schedule.getRequest().getMin(),
+        RuntimeInterval runtimeInterval = this.appliance.createRuntimeRequestInterval(interval, schedule.getRequest().getMin(now),
                 null, now);
         assertEquals(0, (int) runtimeInterval.getEarliestStart());
         assertEquals(12600, (int) runtimeInterval.getLatestEnd());

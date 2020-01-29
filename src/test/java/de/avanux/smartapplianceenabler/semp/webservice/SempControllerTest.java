@@ -38,7 +38,7 @@ public class SempControllerTest extends TestBase {
                 .withMockSwitch(false)
                 .withSchedule(10, 0, 18, 0, 3600, null)
                 .init();
-        DeviceInfo deviceInfo = sempController.createDeviceInfo(applianceId);
+        DeviceInfo deviceInfo = sempController.createDeviceInfo(now, applianceId);
         assertFalse("No value for maxRunningTime indicates no ability to consume optional energy",
                 deviceInfo.getCapabilities().getOptionalEnergy());
     }
@@ -51,7 +51,7 @@ public class SempControllerTest extends TestBase {
                 .withMockSwitch(false)
                 .withSchedule(10, 0, 18, 0, 3600, 7200)
                 .init();
-        DeviceInfo deviceInfo = sempController.createDeviceInfo(applianceId);
+        DeviceInfo deviceInfo = sempController.createDeviceInfo(now, applianceId);
         assertTrue("Different values for minRunningTime and maxRunningTime indicate consumption of " +
                 "optional energy", deviceInfo.getCapabilities().getOptionalEnergy());
     }
@@ -77,8 +77,8 @@ public class SempControllerTest extends TestBase {
         RunningTimeMonitor runningTimeMonitor = mock(RunningTimeMonitor.class);
         when(runningTimeMonitor.getSchedules()).thenReturn(Collections.singletonList(schedule));
         when(runningTimeMonitor.getActiveTimeframeInterval()).thenReturn(timeframe.getIntervals(now).get(0));
-        when(runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(now)).thenReturn(schedule.getRequest().getMin());
-        when(runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(now)).thenReturn(schedule.getRequest().getMax());
+        when(runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(now)).thenReturn(schedule.getRequest().getMin(now));
+        when(runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(now)).thenReturn(schedule.getRequest().getMax(now));
         appliance.setRunningTimeMonitor(runningTimeMonitor);
 
         Appliances appliances = new Appliances();
@@ -114,8 +114,8 @@ public class SempControllerTest extends TestBase {
         timeframe.setSchedule(schedule);
         RunningTimeMonitor runningTimeMonitor = mock(RunningTimeMonitor.class);
         when(runningTimeMonitor.getActiveTimeframeInterval()).thenReturn(timeframe.getIntervals(now).get(0));
-        when(runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(now)).thenReturn(schedule.getRequest().getMin());
-        when(runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(now)).thenReturn(schedule.getRequest().getMax());
+        when(runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(now)).thenReturn(schedule.getRequest().getMin(now));
+        when(runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(now)).thenReturn(schedule.getRequest().getMax(now));
         appliance.setRunningTimeMonitor(runningTimeMonitor);
 
         Appliances appliances = new Appliances();

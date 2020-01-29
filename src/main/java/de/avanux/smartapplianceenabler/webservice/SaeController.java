@@ -210,6 +210,7 @@ public class SaeController {
                                  @RequestBody ApplianceInfo applianceInfo) {
         try {
             logger.debug("{}: Received request to set ApplianceInfo (create={}): {}", applianceId, create, applianceInfo);
+            LocalDateTime now = new LocalDateTime();
             DeviceInfo deviceInfo = toDeviceInfo(applianceInfo);
             if (create) {
                 Appliance appliance = new Appliance();
@@ -218,7 +219,7 @@ public class SaeController {
             } else {
                 Appliance appliance = getAppliance(applianceId);
                 if (appliance != null) {
-                    deviceInfo.getCapabilities().setOptionalEnergy(appliance.canConsumeOptionalEnergy());
+                    deviceInfo.getCapabilities().setOptionalEnergy(appliance.canConsumeOptionalEnergy(now));
                 }
                 if (!ApplianceManager.getInstance().updateAppliance(deviceInfo)) {
                     logger.error("{}: Appliance not found.", applianceId);
@@ -501,7 +502,7 @@ public class SaeController {
                 if (timeframeIntervals.size() > 0) {
                     Schedule schedule = timeframeIntervals.get(0).getTimeframe().getSchedule();
                     if (schedule.getRequest() instanceof RuntimeRequest) {
-                        return schedule.getRequest().getMin();
+                        return schedule.getRequest().getMin(now);
                     }
                 }
             } else {

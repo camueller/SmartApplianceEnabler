@@ -18,9 +18,10 @@
 
 package de.avanux.smartapplianceenabler.schedule;
 
-public enum RequestState {
-    // den Status haben wir eigentlich direkt im Control !!!
-    IDLE,
-    RUNNING,
-    ACTIVE
+import org.joda.time.LocalDateTime;
+
+public interface TimeframeIntervalStateChangedListener {
+
+    void onTimeframeIntervalStateChanged(LocalDateTime now, TimeframeIntervalState previousState, TimeframeIntervalState newState);
+
 }

@@ -17,16 +17,30 @@
  */
 package de.avanux.smartapplianceenabler.schedule;
 
+import de.avanux.smartapplianceenabler.appliance.ActiveIntervalChangedListener;
+import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import org.joda.time.Interval;
 import org.joda.time.LocalDateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 /**
  * A TimeframeInterval associates a timeframe with an interval.
  */
-public class TimeframeInterval {
+public class TimeframeInterval implements ApplianceIdConsumer {
+    private transient Logger logger = LoggerFactory.getLogger(TimeframeInterval.class);
     private Timeframe timeframe;
     private Interval interval;
     private Request request;
+    private TimeframeIntervalState state;
+    private transient Vector<TimeframeIntervalState> stateHistory = new Vector<>();
+    private transient LocalDateTime stateChangedAt;
+    private transient List<TimeframeIntervalStateChangedListener> timeframeStateChangedListeners = new ArrayList<>();
+    private transient String applianceId;
     // FIXME make more generic
     private boolean triggeredByStartingCurrent;
 
@@ -34,6 +48,11 @@ public class TimeframeInterval {
         this.timeframe = timeframe;
         this.interval = interval;
         this.request = request;
+        initStateHistory();
+    }
+
+    public void setApplianceId(String applianceId) {
+        this.applianceId = applianceId;
     }
 
     public Timeframe getTimeframe() {
@@ -48,9 +67,36 @@ public class TimeframeInterval {
         return request;
     }
 
+    public void addTimeframeIntervalStateChangedListener(TimeframeIntervalStateChangedListener listener) {
+        this.timeframeStateChangedListeners.add(listener);
+    }
+
+    private void initStateHistory() {
+        this.stateHistory.clear();
+        stateHistory.add(TimeframeIntervalState.CREATED);
+    }
+
+    public void stateTransitionTo(LocalDateTime now, TimeframeIntervalState state) {
+        this.stateHistory.add(state);
+        this.stateChangedAt = now;
+        timeframeStateChangedListeners.forEach(listener -> {
+            logger.debug("{}: Notifying {} {}", applianceId, ActiveIntervalChangedListener.class.getSimpleName(),
+                    listener.getClass().getSimpleName());
+
+        });
+    }
+
+    public TimeframeIntervalState getState() {
+        return stateHistory.lastElement();
+    }
+
+    public boolean wasInState(TimeframeIntervalState state) {
+        return stateHistory.contains(state);
+    }
+
     public boolean isActivatable(LocalDateTime now) {
         return now.toDateTime().isAfter(getInterval().getStart())
-                && isIntervalSufficient(now, request.getMin(), request.getMax());
+                && isIntervalSufficient(now, request.getMin(now), request.getMax(now));
     }
 
     public boolean isDeactivatable(LocalDateTime now) {
@@ -60,6 +106,24 @@ public class TimeframeInterval {
     public boolean isIntervalSufficient(LocalDateTime now, Integer minRunningTime, Integer maxRunningTime) {
         int runningTime = minRunningTime != null ? minRunningTime : maxRunningTime;
         return now.isBefore(getLatestStart(now, new LocalDateTime(interval.getEnd()), runningTime));
+    }
+
+    public Integer getEarliestStartSeconds(LocalDateTime now) {
+        Integer earliestStart = 0;
+        if(interval.getStart().isAfter(now.toDateTime())) {
+            earliestStart = Double.valueOf(
+                    new Interval(now.toDateTime(), interval.getStart()).toDurationMillis() / 1000.0).intValue();
+        }
+        return earliestStart;
+    }
+
+    public Integer getLatestEndSeconds(LocalDateTime now) {
+        LocalDateTime nowBeforeEnd = new LocalDateTime(now);
+        if(now.toDateTime().isAfter(interval.getEnd())) {
+            nowBeforeEnd = now.minusHours(24);
+        }
+        return Double.valueOf(
+                new Interval(nowBeforeEnd.toDateTime(), interval.getEnd()).toDurationMillis() / 1000.0).intValue();
     }
 
     public static LocalDateTime getLatestStart(LocalDateTime now, LocalDateTime intervalEnd, Integer minRunningTime) {

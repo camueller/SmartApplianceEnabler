@@ -47,7 +47,7 @@ import java.util.*;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Appliance implements Validateable, ControlStateChangedListener,
-        StartingCurrentSwitchListener, ActiveIntervalChangedListener, RequestStateChangedListener {
+        StartingCurrentSwitchListener, ActiveIntervalChangedListener, TimeframeIntervalStateChangedListener {
 
     private transient Logger logger = LoggerFactory.getLogger(Appliance.class);
     @XmlAttribute
@@ -189,7 +189,7 @@ public class Appliance implements Validateable, ControlStateChangedListener,
         this.timeframeIntervalHandler = timeframeIntervalHandler;
         this.timeframeIntervalHandler.setApplianceId(id);
         this.timeframeIntervalHandler.addTimeFrameIntervalChangedListener(this);
-        this.timeframeIntervalHandler.addRequestStateChangedListener(this);
+        this.timeframeIntervalHandler.addTimeframeIntervalStateChangedListener(this);
     }
 
     public void init(GpioController gpioController, Map<String, ModbusTcp> modbusIdWithModbusTcp) {
@@ -478,15 +478,15 @@ public class Appliance implements Validateable, ControlStateChangedListener,
         return slaves;
     }
 
-    public boolean canConsumeOptionalEnergy() {
+    public boolean canConsumeOptionalEnergy(LocalDateTime now) {
         if(isEvCharger()) {
             return ((ElectricVehicleCharger) this.control).isUseOptionalEnergy();
         }
         else if(schedules != null) {
             for (Schedule schedule : schedules) {
                 if (schedule.getRequest() != null
-                        && schedule.getRequest().getMax() != null
-                        && schedule.getRequest().getMax() > schedule.getRequest().getMin()) {
+                        && schedule.getRequest().getMin(now) != null
+                        && schedule.getRequest().getMax(now) > schedule.getRequest().getMin(now)) {
                     return true;
                 }
             }
@@ -628,17 +628,17 @@ public class Appliance implements Validateable, ControlStateChangedListener,
                             remainingMinRunningTime, remainingMaxRunningTime);
                 }
                 else if(request instanceof EnergyRequest) {
-                    EnergyRequest remainingEnergy = calculateRemainingEnergy(schedule);
+                    EnergyRequest remainingEnergy = calculateRemainingEnergy(now, schedule);
                     if(remainingEnergy != null) {
                         addEnergyRequestInterval(now, runtimeIntervals, activeTimeframeInterval.getInterval(),
-                                remainingEnergy.getMin(), remainingEnergy.getMax());
+                                remainingEnergy.getMin(now), remainingEnergy.getMax(now));
                     }
                 }
                 else if(request instanceof SocRequest) {
-                    EnergyRequest remainingEnergy = calculateRemainingEnergy((SocRequest) request, true);
+                    EnergyRequest remainingEnergy = calculateRemainingEnergy(now, (SocRequest) request, true);
                     if(remainingEnergy != null) {
                         addEnergyRequestInterval(now, runtimeIntervals, activeTimeframeInterval.getInterval(),
-                                remainingEnergy.getMin(), remainingEnergy.getMax());
+                                remainingEnergy.getMin(now), remainingEnergy.getMax(now));
                     }
                 }
             }
@@ -651,20 +651,20 @@ public class Appliance implements Validateable, ControlStateChangedListener,
                 Interval interval = timeframeIntervalOfSchedule.getInterval();
                 Request request = schedule.getRequest();
                 if(request instanceof RuntimeRequest) {
-                    Integer minRunningTime = request.getMin();
+                    Integer minRunningTime = request.getMin(now);
                     if(interval.contains(now.toDateTime()) && remainingMinRunningTime != null) {
                         minRunningTime = remainingMinRunningTime;
                     }
-                    addRuntimeRequestInterval(now, interval, runtimeIntervals, minRunningTime, request.getMax());
+                    addRuntimeRequestInterval(now, interval, runtimeIntervals, minRunningTime, request.getMax(now));
                 }
                 else if(request instanceof EnergyRequest) {
-                    addEnergyRequestInterval(now, runtimeIntervals, interval, request.getMin(), request.getMax());
+                    addEnergyRequestInterval(now, runtimeIntervals, interval, request.getMin(now), request.getMax(now));
                 }
                 else if(request instanceof SocRequest) {
-                    EnergyRequest remainingEnergy = calculateRemainingEnergy((SocRequest) request, false);
+                    EnergyRequest remainingEnergy = calculateRemainingEnergy(now, (SocRequest) request, false);
                     if(remainingEnergy != null) {
                         addEnergyRequestInterval(now, runtimeIntervals, interval,
-                                remainingEnergy.getMin(), remainingEnergy.getMax());
+                                remainingEnergy.getMin(now), remainingEnergy.getMax(now));
                     }
                 }
             }
@@ -678,9 +678,9 @@ public class Appliance implements Validateable, ControlStateChangedListener,
                         remainingMinRunningTime, remainingMaxRunningTime);
             }
             else if(request instanceof EnergyRequest) {
-                EnergyRequest remainingEnergy = calculateRemainingEnergy(schedule);
+                EnergyRequest remainingEnergy = calculateRemainingEnergy(now, schedule);
                 addEnergyRequestInterval(now, runtimeIntervals, activeTimeframeInterval.getInterval(),
-                        remainingEnergy.getMin(), remainingEnergy.getMax());
+                        remainingEnergy.getMin(now), remainingEnergy.getMax(now));
             }
         }
         else {
@@ -689,12 +689,12 @@ public class Appliance implements Validateable, ControlStateChangedListener,
         return runtimeIntervals;
     }
 
-    public EnergyRequest calculateRemainingEnergy(Schedule schedule) {
-        return buildEnergyRequestConsideringEnergyAlreadyCharged(
-                schedule.getRequest().getMin(), schedule.getRequest().getMax());
+    public EnergyRequest calculateRemainingEnergy(LocalDateTime now, Schedule schedule) {
+        return buildEnergyRequestConsideringEnergyAlreadyCharged(now,
+                schedule.getRequest().getMin(now), schedule.getRequest().getMax(now));
     }
 
-    public EnergyRequest calculateRemainingEnergy(SocRequest socRequest, boolean considerEnergyAlreadyCharged) {
+    public EnergyRequest calculateRemainingEnergy(LocalDateTime now, SocRequest socRequest, boolean considerEnergyAlreadyCharged) {
         if(isEvCharger()) {
             ElectricVehicleCharger charger = (ElectricVehicleCharger) this.control;
             ElectricVehicle ev = charger.getVehicle(socRequest.getEvId());
@@ -710,20 +710,20 @@ public class Appliance implements Validateable, ControlStateChangedListener,
             logger.debug("{}: Energy to be charged: {} Wh (batteryCapacity={}Wh chargeLoss={}% socStart={} socRequested={})",
                     id, energyToBeCharged, ev.getBatteryCapacity(), ev.getChargeLoss(), socStart, socRequest.getSoc());
             if(considerEnergyAlreadyCharged) {
-                return buildEnergyRequestConsideringEnergyAlreadyCharged(energyToBeCharged, energyToBeCharged);
+                return buildEnergyRequestConsideringEnergyAlreadyCharged(now, energyToBeCharged, energyToBeCharged);
             }
             return buildEnergyRequest(energyToBeCharged, energyToBeCharged);
         }
         return null;
     }
 
-    private EnergyRequest buildEnergyRequestConsideringEnergyAlreadyCharged(int min, int max) {
+    private EnergyRequest buildEnergyRequestConsideringEnergyAlreadyCharged(LocalDateTime now, int min, int max) {
         EnergyRequest remainingEnergy = buildEnergyRequest(min, max);
         if(remainingEnergy != null) {
             if(meter != null) {
                 int whAlreadyCharged = Float.valueOf(meter.getEnergy() * 1000.0f).intValue();
                 remainingEnergy.setMin(min - whAlreadyCharged);
-                if(remainingEnergy.getMax() != null) {
+                if(remainingEnergy.getMax(now) != null) {
                     remainingEnergy.setMax(max - whAlreadyCharged);
                 }
             }
@@ -960,11 +960,11 @@ public class Appliance implements Validateable, ControlStateChangedListener,
                 if(charger.isVehicleConnected()) {
                     Request request = activatedInterval.getTimeframe().getSchedule().getRequest();
                     if(request instanceof EnergyRequest) {
-                        charger.setChargeAmount(request.getMin());
+                        charger.setChargeAmount(request.getMin(now));
                     }
                     else if(request instanceof SocRequest) {
-                        EnergyRequest remainingEnergy = calculateRemainingEnergy((SocRequest) request, false);
-                        charger.setChargeAmount(remainingEnergy != null ? remainingEnergy.getMin() : 0);
+                        EnergyRequest remainingEnergy = calculateRemainingEnergy(now, (SocRequest) request, false);
+                        charger.setChargeAmount(remainingEnergy != null ? remainingEnergy.getMin(now) : 0);
                     }
                 }
             }
@@ -987,7 +987,7 @@ public class Appliance implements Validateable, ControlStateChangedListener,
     }
 
     @Override
-    public void onRequestStateChanged(LocalDateTime now, RequestState previousState, RequestState newState) {
+    public void onTimeframeIntervalStateChanged(LocalDateTime now, TimeframeIntervalState previousState, TimeframeIntervalState newState) {
     }
 
     /**

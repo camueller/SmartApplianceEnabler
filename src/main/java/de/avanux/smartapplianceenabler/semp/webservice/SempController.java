@@ -23,6 +23,7 @@ import de.avanux.smartapplianceenabler.appliance.RuntimeInterval;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
 import de.avanux.smartapplianceenabler.meter.Meter;
+import de.avanux.smartapplianceenabler.schedule.*;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,7 +77,7 @@ public class SempController {
             }
         }
         Device2EM device2EM = ApplianceManager.getInstance().getDevice2EM();
-        device2EM.setDeviceInfo(createDeviceInfo());
+        device2EM.setDeviceInfo(createDeviceInfo(now));
         device2EM.setDeviceStatus(deviceStatuses);
         device2EM.setPlanningRequest(planningRequests);
         return device2EM;
@@ -85,15 +86,16 @@ public class SempController {
     @RequestMapping(value = BASE_URL + "/DeviceInfo", method = RequestMethod.GET, produces = "application/xml")
     public String deviceInfo(@RequestParam(value = "DeviceId", required = false) String deviceId) {
         try {
+            LocalDateTime now = new LocalDateTime();
             List<DeviceInfo> deviceInfos = new ArrayList<>();
             if (deviceId != null) {
                 logger.debug("{}: Device info requested", deviceId);
-                deviceInfos.add(createDeviceInfo(deviceId));
+                deviceInfos.add(createDeviceInfo(now, deviceId));
             } else {
                 logger.debug("Device info requested of all devices");
                 List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
                 for (Appliance appliance : appliances) {
-                    deviceInfos.add(createDeviceInfo(appliance.getId()));
+                    deviceInfos.add(createDeviceInfo(now, appliance.getId()));
                 }
             }
             Device2EM device2EM = new Device2EM();
@@ -105,25 +107,25 @@ public class SempController {
         return null;
     }
 
-    protected DeviceInfo createDeviceInfo(String deviceId) {
+    protected DeviceInfo createDeviceInfo(LocalDateTime now, String deviceId) {
         if (deviceId != null) {
             DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(deviceId);
             Appliance appliance = ApplianceManager.getInstance().findAppliance(deviceId);
             deviceInfo.setCapabilities(createCapabilities(deviceInfo, appliance.getMeter() != null,
-                    appliance.canConsumeOptionalEnergy(), appliance.getControl() instanceof ElectricVehicleCharger));
+                    appliance.canConsumeOptionalEnergy(now), appliance.getControl() instanceof ElectricVehicleCharger));
             return deviceInfo;
         }
         return null;
     }
 
-    private List<DeviceInfo> createDeviceInfo() {
+    private List<DeviceInfo> createDeviceInfo(LocalDateTime now) {
         logger.debug("Device info requested of all devices");
         List<DeviceInfo> deviceInfos = new ArrayList<DeviceInfo>();
         List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
         for (Appliance appliance : appliances) {
             DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(appliance.getId());
             deviceInfo.setCapabilities(createCapabilities(deviceInfo, appliance.getMeter() != null,
-                    appliance.canConsumeOptionalEnergy(), appliance.getControl() instanceof ElectricVehicleCharger));
+                    appliance.canConsumeOptionalEnergy(now), appliance.getControl() instanceof ElectricVehicleCharger));
             deviceInfos.add(deviceInfo);
         }
         return deviceInfos;
@@ -285,33 +287,45 @@ public class SempController {
     }
 
     private PlanningRequest createPlanningRequest(LocalDateTime now, Appliance appliance) {
-        PlanningRequest planningRequest = null;
-        List<RuntimeInterval> runtimeIntervals = appliance.getRuntimeIntervals(now, false);
-        if (runtimeIntervals.size() > 0) {
-            planningRequest = new PlanningRequest();
-            List<de.avanux.smartapplianceenabler.semp.webservice.Timeframe> sempTimeFrames = new ArrayList<de.avanux.smartapplianceenabler.semp.webservice.Timeframe>();
-            planningRequest.setTimeframes(sempTimeFrames);
-            for (RuntimeInterval runtimeInterval : runtimeIntervals) {
-                Timeframe sempTimeFrame = createSempTimeFrame(appliance.getId(), runtimeInterval);
-                sempTimeFrames.add(sempTimeFrame);
-                logger.debug("{}: Timeframe added to PlanningRequest: {}", appliance.getId(), sempTimeFrame);
-            }
-        } else {
-            logger.debug("{}: No planning requests created", appliance.getId());
-            return null;
-        }
-        return planningRequest;
+        List<de.avanux.smartapplianceenabler.semp.webservice.Timeframe> sempTimeFrames
+                = new ArrayList<de.avanux.smartapplianceenabler.semp.webservice.Timeframe>();
+        List<TimeframeInterval> queue = appliance.getTimeframeIntervalHandler().getQueue();
+        queue.forEach(timeframeInterval -> {
+            Timeframe sempTimeFrame = createSempTimeFrame(now, appliance.getId(), timeframeInterval);
+            sempTimeFrames.add(sempTimeFrame);
+            logger.debug("{}: Timeframe added to PlanningRequest: {}", appliance.getId(), sempTimeFrame);
+        });
+
+        final PlanningRequest planningRequest = new PlanningRequest();
+        planningRequest.setTimeframes(sempTimeFrames);
+        return sempTimeFrames.size() > 0 ? planningRequest : null;
+
+//        List<RuntimeInterval> runtimeIntervals = appliance.getRuntimeIntervals(now, false);
+//        if (runtimeIntervals.size() > 0) {
+//            planningRequest = new PlanningRequest();
+//            List<de.avanux.smartapplianceenabler.semp.webservice.Timeframe> sempTimeFrames = new ArrayList<de.avanux.smartapplianceenabler.semp.webservice.Timeframe>();
+//            planningRequest.setTimeframes(sempTimeFrames);
+//            for (RuntimeInterval runtimeInterval : runtimeIntervals) {
+//                Timeframe sempTimeFrame = createSempTimeFrame(appliance.getId(), runtimeInterval);
+//                sempTimeFrames.add(sempTimeFrame);
+//                logger.debug("{}: Timeframe added to PlanningRequest: {}", appliance.getId(), sempTimeFrame);
+//            }
+//        } else {
+//            logger.debug("{}: No planning requests created", appliance.getId());
+//            return null;
+//        }
+//        return planningRequest;
     }
 
     protected de.avanux.smartapplianceenabler.semp.webservice.Timeframe
-    createSempTimeFrame(String deviceId, RuntimeInterval runtimeInterval) {
-        Integer minRunningTime = runtimeInterval.getMinRunningTime();
-        Integer maxRunningTime = runtimeInterval.getMaxRunningTime();
-        if (minRunningTime == null) {
-            minRunningTime = 0;
-        }
+    createSempTimeFrame(LocalDateTime now, String deviceId, TimeframeInterval timeframeInterval) {
+        Integer minRunningTime = timeframeInterval.getRequest().getMin(now);
+        Integer maxRunningTime = timeframeInterval.getRequest().getMax(now);
         if (maxRunningTime == null) {
-            maxRunningTime = minRunningTime;
+            maxRunningTime = 0;
+        }
+        if (minRunningTime == null) {
+            minRunningTime = maxRunningTime;
         }
         if (minRunningTime.equals(maxRunningTime)) {
             /** WORKAROUND:
@@ -329,11 +343,12 @@ public class SempController {
         de.avanux.smartapplianceenabler.semp.webservice.Timeframe timeFrame
                 = new de.avanux.smartapplianceenabler.semp.webservice.Timeframe();
         timeFrame.setDeviceId(deviceId);
-        timeFrame.setEarliestStart(runtimeInterval.getEarliestStart());
-        timeFrame.setLatestEnd(runtimeInterval.getLatestEnd());
-        if (runtimeInterval.getMinEnergy() != null) {
-            timeFrame.setMinEnergy(runtimeInterval.getMinEnergy());
-            timeFrame.setMaxEnergy(runtimeInterval.getMaxEnergy());
+        timeFrame.setEarliestStart(timeframeInterval.getEarliestStartSeconds(now));
+        timeFrame.setLatestEnd(timeframeInterval.getLatestEndSeconds(now));
+        if (timeframeInterval.getRequest() instanceof EnergyRequest
+                || timeframeInterval.getRequest() instanceof SocRequest) {
+            timeFrame.setMinEnergy(timeframeInterval.getRequest().getMin(now));
+            timeFrame.setMaxEnergy(timeframeInterval.getRequest().getMax(now));
         } else {
             timeFrame.setMinRunningTime(minRunningTime);
             timeFrame.setMaxRunningTime(maxRunningTime);

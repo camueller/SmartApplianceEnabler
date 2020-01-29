@@ -18,9 +18,8 @@
 
 package de.avanux.smartapplianceenabler.schedule;
 
-public enum RequestState {
-    // den Status haben wir eigentlich direkt im Control !!!
-    IDLE,
-    RUNNING,
+public enum TimeframeIntervalState {
+    CREATED,
+    QUEUED,
     ACTIVE
 }

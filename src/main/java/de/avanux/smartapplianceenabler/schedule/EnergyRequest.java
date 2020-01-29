@@ -18,6 +18,8 @@
 
 package de.avanux.smartapplianceenabler.schedule;
 
+import org.joda.time.LocalDateTime;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -39,7 +41,7 @@ public class EnergyRequest extends AbstractRequest implements Request {
         this.max = max;
     }
 
-    public Integer getMin() {
+    public Integer getMin(LocalDateTime now) {
         return min;
     }
 
@@ -47,7 +49,7 @@ public class EnergyRequest extends AbstractRequest implements Request {
         this.min = min;
     }
 
-    public Integer getMax() {
+    public Integer getMax(LocalDateTime now) {
         return max;
     }
 

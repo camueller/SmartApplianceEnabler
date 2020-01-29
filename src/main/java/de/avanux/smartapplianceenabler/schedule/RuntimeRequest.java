@@ -18,6 +18,13 @@
 
 package de.avanux.smartapplianceenabler.schedule;
 
+import de.avanux.smartapplianceenabler.control.Control;
+import de.avanux.smartapplianceenabler.control.ControlStateChangedListener;
+import org.joda.time.Interval;
+import org.joda.time.LocalDateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,11 +32,14 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "min", "max" })
-public class RuntimeRequest extends AbstractRequest implements Request {
+public class RuntimeRequest extends AbstractRequest implements Request, ControlStateChangedListener {
     @XmlAttribute
     private Integer min;
     @XmlAttribute
-    private Integer max;
+    private int max;
+    private transient Logger logger = LoggerFactory.getLogger(RuntimeRequest.class);
+    private transient boolean wasRunning;
+    private transient LocalDateTime controlStatusChangedAt;
 
     public RuntimeRequest() {
     }
@@ -39,7 +49,10 @@ public class RuntimeRequest extends AbstractRequest implements Request {
         this.max = max;
     }
 
-    public Integer getMin() {
+    public Integer getMin(LocalDateTime now) {
+        if(min != null && getControl().isOn()) {
+            return min - getSecondsSinceStatusChange(now);
+        }
         return min;
     }
 
@@ -47,7 +60,10 @@ public class RuntimeRequest extends AbstractRequest implements Request {
         this.min = min;
     }
 
-    public Integer getMax() {
+    public Integer getMax(LocalDateTime now) {
+        if(getControl().isOn()) {
+            return max - getSecondsSinceStatusChange(now);
+        }
         return max;
     }
 
@@ -56,9 +72,47 @@ public class RuntimeRequest extends AbstractRequest implements Request {
     }
 
     @Override
+    public void setControl(Control control) {
+        super.setControl(control);
+        control.addControlStateChangedListener(this);
+    }
+
+    @Override
+    public void controlStateChanged(LocalDateTime now, boolean switchOn) {
+        if(switchOn) {
+            wasRunning = true;
+        }
+        else {
+            if(controlStatusChangedAt != null) {
+                int secondsSinceStatusChange = getSecondsSinceStatusChange(now);
+                int newMax = this.max - secondsSinceStatusChange;
+                this.max = newMax > 0 ? newMax : 0;
+                if(this.min != null) {
+                    int newMin = this.min - secondsSinceStatusChange;
+                    this.min = newMin > 0 ? newMin : 0;
+                }
+            }
+        }
+        controlStatusChangedAt = now;
+    }
+
+    protected int getSecondsSinceStatusChange(LocalDateTime now) {
+        try {
+            if(this.controlStatusChangedAt != null && now != null) {
+                Interval runtimeSinceStatusChange = new Interval(this.controlStatusChangedAt.toDateTime(), now.toDateTime());
+                return Double.valueOf(runtimeSinceStatusChange.toDuration().getMillis() / 1000.0).intValue();
+            }
+        }
+        catch(IllegalArgumentException e) {
+            logger.warn("{} Invalid interval: start={} end={}", getApplianceId(), this.controlStatusChangedAt.toDateTime(),
+                    now.toDateTime());
+        }
+        return 0;
+    }
+
+    @Override
     public String toString() {
         String text = "";
-
         if(min != null) {
             text += min.toString();
         }
@@ -66,14 +120,8 @@ public class RuntimeRequest extends AbstractRequest implements Request {
             text += "?";
         }
         text += "s/";
-        if(max != null) {
-            text += max.toString();
-        }
-        else {
-            text += "?";
-        }
+        text += max;
         text += "s";
-
         return text;
     }
 }

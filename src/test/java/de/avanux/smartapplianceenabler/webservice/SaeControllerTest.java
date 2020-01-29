@@ -6,6 +6,7 @@ import de.avanux.smartapplianceenabler.appliance.Appliances;
 import de.avanux.smartapplianceenabler.appliance.RunningTimeMonitor;
 import de.avanux.smartapplianceenabler.schedule.*;
 import de.avanux.smartapplianceenabler.util.FileHandler;
+import org.joda.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -74,6 +75,7 @@ public class SaeControllerTest {
     private MediaType contentType = new MediaType(MediaType.APPLICATION_XML.getType(),
             MediaType.APPLICATION_XML.getSubtype(),
             Charset.forName("utf8"));
+    private LocalDateTime now;
 
     @Autowired
     private MockMvc mockMvc;
@@ -85,6 +87,7 @@ public class SaeControllerTest {
     public void setup() throws Exception {
         System.setProperty(FileHandler.SAE_HOME, System.getProperty("java.io.tmpdir"));
         this.mockMvc = webAppContextSetup(webApplicationContext).build();
+        this.now = new LocalDateTime();
     }
 
     @Test
@@ -95,8 +98,8 @@ public class SaeControllerTest {
         assertEquals(1, schedules.size());
         Schedule schedule = schedules.get(0);
 
-        assertEquals(7200, schedule.getRequest().getMin().intValue());
-        assertEquals(10800, schedule.getRequest().getMax().intValue());
+        assertEquals(7200, schedule.getRequest().getMin(now).intValue());
+        assertEquals(10800, schedule.getRequest().getMax(now).intValue());
 
         Timeframe timeframe = schedule.getTimeframe();
         assertTrue(timeframe instanceof DayTimeframe);
@@ -121,8 +124,8 @@ public class SaeControllerTest {
         Schedule schedule = schedules.get(0);
 
         assertTrue(schedule.getRequest() instanceof RuntimeRequest);
-        assertEquals(36000, schedule.getRequest().getMin().intValue());
-        assertEquals(43200, schedule.getRequest().getMax().intValue());
+        assertEquals(36000, schedule.getRequest().getMin(now).intValue());
+        assertEquals(43200, schedule.getRequest().getMax(now).intValue());
 
         Timeframe timeframe = schedule.getTimeframe();
         assertTrue(timeframe instanceof ConsecutiveDaysTimeframe);
@@ -141,8 +144,8 @@ public class SaeControllerTest {
         Schedule schedule = schedules.get(0);
 
         assertTrue(schedule.getRequest() instanceof EnergyRequest);
-        assertEquals(1380, schedule.getRequest().getMin().intValue());
-        assertEquals(7360, schedule.getRequest().getMax().intValue());
+        assertEquals(1380, schedule.getRequest().getMin(now).intValue());
+        assertEquals(7360, schedule.getRequest().getMax(now).intValue());
 
         Timeframe timeframe = schedule.getTimeframe();
         assertTrue(timeframe instanceof DayTimeframe);

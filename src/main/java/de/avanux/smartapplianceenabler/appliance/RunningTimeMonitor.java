@@ -293,8 +293,8 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
             this.state.activeRequest = schedule.getRequest();
             if(schedule.getRequest() instanceof RuntimeRequest || schedule.getRequest() instanceof SocRequest) {
                 if(schedule.getRequest() instanceof RuntimeRequest) {
-                    this.state.remainingMinRunningTimeWhileNotRunning = schedule.getRequest().getMin();
-                    this.state.remainingMaxRunningTimeWhileNotRunning = schedule.getRequest().getMax();
+                    this.state.remainingMinRunningTimeWhileNotRunning = schedule.getRequest().getMin(now);
+                    this.state.remainingMaxRunningTimeWhileNotRunning = schedule.getRequest().getMax(now);
                     logger.debug("{}: Remaining running time reset to schedule defaults.", applianceId);
                 }
                 intervalChanged = true;

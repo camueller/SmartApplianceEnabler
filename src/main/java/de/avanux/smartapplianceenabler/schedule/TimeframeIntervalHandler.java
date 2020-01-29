@@ -38,7 +38,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
     private GuardedTimerTask updateQueueTimerTask;
     private LinkedList<TimeframeInterval> queue = new LinkedList<>();
     private Set<ActiveIntervalChangedListener> timeframeIntervalChangedListeners = new HashSet<>();
-    private Set<RequestStateChangedListener> requestStateChangedListeners = new HashSet<>();
+    private Set<TimeframeIntervalStateChangedListener> timeframeIntervalStateChangedListeners = new HashSet<>();
 
     public TimeframeIntervalHandler(List<Schedule> schedules) {
         this.schedules = schedules;
@@ -53,8 +53,8 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
         this.timeframeIntervalChangedListeners.add(listener);
     }
 
-    public void addRequestStateChangedListener(RequestStateChangedListener listener) {
-        this.requestStateChangedListeners.add(listener);
+    public void addTimeframeIntervalStateChangedListener(TimeframeIntervalStateChangedListener listener) {
+        this.timeframeIntervalStateChangedListeners.add(listener);
     }
 
     public void setTimer(Timer timer) {
@@ -91,6 +91,9 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
         }
     }
 
+    public List<TimeframeInterval> getQueue() {
+        return new ArrayList<>(queue);
+    }
 
     private void fillQueue(LocalDateTime now) {
         logger.debug("{}: Starting to fill queue", applianceId);
@@ -104,7 +107,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
                         logger.debug("{}: Adding timeframeInterval to queue: {}", applianceId, timeframeInterval))
                 .forEach(timeFrameInterval -> {
                     queue.add(timeFrameInterval);
-                    timeFrameInterval.getRequest().stateTransitionTo(now, RequestState.QUEUED);
+                    timeFrameInterval.stateTransitionTo(now, TimeframeIntervalState.QUEUED);
                 });
     }
 
@@ -125,7 +128,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
                 .findFirst();
         if(! hasActiveTimeframeInterval() && activatableTimeframeInterval.isPresent()) {
             logger.debug("{}: Activate timeframe interval: {}", applianceId, activatableTimeframeInterval.get());
-            activatableTimeframeInterval.get().getRequest().stateTransitionTo(now, RequestState.ACTIVE);
+            activatableTimeframeInterval.get().stateTransitionTo(now, TimeframeIntervalState.ACTIVE);
         }
 
         if(deactivatableTimeframeInterval.isPresent() || activatableTimeframeInterval.isPresent()) {
@@ -138,7 +141,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
                         deactivatableTimeframeInterval.orElse(null),
                         activatableTimeframeInterval.orElse(null),
                         deactivatableTimeframeInterval
-                                .map(timeframeInterval -> timeframeInterval.getRequest().wasInState(RequestState.ACTIVE))
+                                .map(timeframeInterval -> timeframeInterval.wasInState(TimeframeIntervalState.ACTIVE))
                                 .orElse(false));
             }
         }
@@ -147,13 +150,13 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
     private void logQueue() {
         queue.forEach(timeFrameInterval -> logger.debug("{}: {} {}",
                 applianceId,
-                timeFrameInterval.getRequest().getState(),
+                timeFrameInterval.getState(),
                 timeFrameInterval.toString()));
     }
 
     private boolean hasActiveTimeframeInterval() {
         return queue.stream()
-                .anyMatch(timeframeInterval -> timeframeInterval.getRequest().getState() == RequestState.ACTIVE);
+                .anyMatch(timeframeInterval -> timeframeInterval.getState() == TimeframeIntervalState.ACTIVE);
     }
 
     public void deactivateCurrentlyActiveTimeframeInterval() {
@@ -180,9 +183,10 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
                                     || considerationInterval.contains(timeframeInterval.getInterval().getStart())
                                     || timeframeInterval.getInterval().contains(considerationInterval.getStart())
                             ) {
+                                timeframeInterval.setApplianceId(applianceId);
                                 timeframeInterval.getRequest().setApplianceId(applianceId);
-                                requestStateChangedListeners.forEach(listener ->
-                                        timeframeInterval.getRequest().addRequestStateChangedListener(listener));
+                                timeframeIntervalStateChangedListeners.forEach(listener ->
+                                        timeframeInterval.addTimeframeIntervalStateChangedListener(listener));
                                 timeframeIntervalChangedListeners.forEach(
                                         listener -> listener.timeframeIntervalCreated(now, timeframeInterval));
                                 timeframeIntervals.add(timeframeInterval);
