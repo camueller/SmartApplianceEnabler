@@ -1,29 +1,26 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.5">
     <Appliance id="F-00000001-000000000001-00">
-        <ElectricVehicleCharger startChargingStateDetectionDelay="15">
-            <EVModbusControl idref="wallbox" slaveAddress="180">
-                <ModbusRead address="100" type="InputString">
-                    <ModbusReadValue name="VehicleNotConnected" extractionRegex="(A)"/>
-                    <ModbusReadValue name="VehicleConnected" extractionRegex="(B)"/>
-                    <ModbusReadValue name="Charging" extractionRegex="(C|D)"/>
-                    <ModbusReadValue name="Error" extractionRegex="(E|F)"/>
-                </ModbusRead>
-                <ModbusWrite address="400" type="Coil">
-                    <ModbusWriteValue name="StartCharging" value="1"/>
-                    <ModbusWriteValue name="StopCharging" value="0"/>
-                </ModbusWrite>
-                <ModbusWrite address="300" type="Holding">
-                    <ModbusWriteValue name="ChargingCurrent" value="0"/>
-                </ModbusWrite>
-            </EVModbusControl>
-            <ElectricVehicle id="1" name="Nissan Leaf" batteryCapacity="40000" phases="1" maxChargePower="7400" chargeLoss="12">
-                <SocScript script="/data/projects/pycarwings2/soc.sh" extractionRegex=".*state_of_charge (\d+)"/>
-            </ElectricVehicle>
-        </ElectricVehicleCharger>
-        <S0ElectricityMeter gpio="3" pinPullResistance="PULL_DOWN" impulsesPerKwh="1000"/>
-        <Schedule>
-            <SocRequest evId="1" soc="100"/>
+        <StartingCurrentSwitch>
+            <HttpSwitch>
+                <HttpWrite url="http://thermomix/cm?cmnd=Power%20On">
+                    <HttpWriteValue name="On"/>
+                </HttpWrite>
+                <HttpWrite url="http://thermomix/cm?cmnd=Power%20Off">
+                    <HttpWriteValue name="Off"/>
+                </HttpWrite>
+                <HttpRead url="http://thermomix/cm?cmnd=Power">
+                    <HttpReadValue name="On" extractionRegex=":.ON"/>
+                </HttpRead>
+            </HttpSwitch>
+        </StartingCurrentSwitch>
+        <HttpElectricityMeter>
+            <HttpRead url="http://thermomix/cm?cmnd=Status%208">
+                <HttpReadValue name="Power" extractionRegex=",.Power.:(\d+)"/>
+            </HttpRead>
+        </HttpElectricityMeter>
+        <Schedule enabled="true">
+            <RuntimeRequest max="120" />
             <DayTimeframe>
                 <Start hour="21" minute="0" second="0"/>
                 <End hour="22" minute="0" second="0"/>
