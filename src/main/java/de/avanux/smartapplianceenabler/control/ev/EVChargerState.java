@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Axel Müller <axel.mueller@avanux.de>
+ * Copyright (C) 2019 Axel Müller <axel.mueller@avanux.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,18 +15,13 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package de.avanux.smartapplianceenabler.control;
 
-import de.avanux.smartapplianceenabler.control.ev.EVChargerState;
-import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
-import org.joda.time.LocalDateTime;
+package de.avanux.smartapplianceenabler.control.ev;
 
-public interface ControlStateChangedListener {
-
-    void controlStateChanged(LocalDateTime now, boolean switchOn);
-
-    void onEVChargerStateChanged(LocalDateTime now, EVChargerState previousState, EVChargerState newState,
-                                 ElectricVehicle ev);
-
-    void onEVChargerSocChanged(LocalDateTime now, Float soc);
+public enum EVChargerState {
+    VEHICLE_NOT_CONNECTED,
+    VEHICLE_CONNECTED,
+    CHARGING,
+    CHARGING_COMPLETED,
+    ERROR
 }

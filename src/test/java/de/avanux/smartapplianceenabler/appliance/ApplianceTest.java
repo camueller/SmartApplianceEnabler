@@ -19,7 +19,7 @@
 package de.avanux.smartapplianceenabler.appliance;
 
 import de.avanux.smartapplianceenabler.TestBase;
-import de.avanux.smartapplianceenabler.control.ev.EVControl;
+import de.avanux.smartapplianceenabler.control.ev.EVChargerControl;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
 import de.avanux.smartapplianceenabler.meter.Meter;
@@ -47,7 +47,7 @@ public class ApplianceTest extends TestBase {
     private Integer batteryCapacity = 40000;
     private DateTimeProvider dateTimeProvider = Mockito.mock(DateTimeProvider.class);
     private ElectricVehicleCharger evChargerSpy = Mockito.spy(new ElectricVehicleCharger());
-    private EVControl evControl = Mockito.mock(EVControl.class);
+    private EVChargerControl evChargerControl = Mockito.mock(EVChargerControl.class);
     private Meter meter = Mockito.mock(Meter.class);
 
     public ApplianceTest() {
@@ -318,7 +318,7 @@ public class ApplianceTest extends TestBase {
         LocalDateTime timeInitial = toToday(11, 0, 0);
         TestBuilder builder = new TestBuilder()
                 .appliance(applianceId, dateTimeProvider, timeInitial)
-                .withEvCharger(evChargerSpy, evControl)
+                .withEvCharger(evChargerSpy, evChargerControl)
                 .withElectricVehicle(evId, batteryCapacity, 80, null)
                 .withSchedule(10,0, 16, 0)
                 .withSocRequest(evId, 80)
@@ -346,7 +346,7 @@ public class ApplianceTest extends TestBase {
         LocalDateTime timeInitial = toToday(9, 0, 0);
         TestBuilder builder = new TestBuilder()
                 .appliance(applianceId, dateTimeProvider, timeInitial)
-                .withEvCharger(evChargerSpy, evControl)
+                .withEvCharger(evChargerSpy, evChargerControl)
                 .withElectricVehicle(evId, batteryCapacity, 80, null)
                 .withSchedule(10,0, 16, 0)
                 .withSocRequest(evId, 80)

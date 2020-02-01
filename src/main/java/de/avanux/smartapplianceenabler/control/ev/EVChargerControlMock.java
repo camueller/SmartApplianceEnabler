@@ -26,9 +26,9 @@ import org.slf4j.LoggerFactory;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class EVControlMock implements EVControl, Meter {
+public class EVChargerControlMock implements EVChargerControl, Meter {
 
-    private Logger logger = LoggerFactory.getLogger(EVControlMock.class);
+    private Logger logger = LoggerFactory.getLogger(EVChargerControlMock.class);
     private boolean charging;
     private boolean chargingCompleted;
     private boolean energyMeterStarted;
@@ -53,7 +53,7 @@ public class EVControlMock implements EVControl, Meter {
         }
     };
 
-    public EVControlMock() {
+    public EVChargerControlMock() {
         logDebug("using EvControl Mock");
     }
 

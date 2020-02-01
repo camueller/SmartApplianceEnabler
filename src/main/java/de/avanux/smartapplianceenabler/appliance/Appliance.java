@@ -19,7 +19,8 @@ package de.avanux.smartapplianceenabler.appliance;
 
 import com.pi4j.io.gpio.GpioController;
 import de.avanux.smartapplianceenabler.control.*;
-import de.avanux.smartapplianceenabler.control.ev.EVControl;
+import de.avanux.smartapplianceenabler.control.ev.EVChargerControl;
+import de.avanux.smartapplianceenabler.control.ev.EVChargerState;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
 import de.avanux.smartapplianceenabler.meter.HttpElectricityMeter;
@@ -155,6 +156,7 @@ public class Appliance implements Validateable, ControlStateChangedListener,
         if(this.control instanceof AlwaysOnSwitch) {
             return false;
         }
+        // FIXME delegate to EVCharger
         return acceptControlRecommendations.peek();
     }
 
@@ -196,7 +198,7 @@ public class Appliance implements Validateable, ControlStateChangedListener,
         logger.debug("{}: Initializing appliance", id);
         if(control != null) {
             setRunningTimeMonitor(new RunningTimeMonitor());
-            setTimeframeIntervalHandler(new TimeframeIntervalHandler(this.schedules));
+            setTimeframeIntervalHandler(new TimeframeIntervalHandler(this.schedules, this.control));
             if(control instanceof ApplianceIdConsumer) {
                 ((ApplianceIdConsumer) control).setApplianceId(id);
             }
@@ -469,9 +471,9 @@ public class Appliance implements Validateable, ControlStateChangedListener,
                 }
             }
             else if(isEvCharger()) {
-                EVControl evControl = ((ElectricVehicleCharger) control).getControl();
-                if(evControl instanceof EVModbusControl) {
-                    slaves.add((EVModbusControl) evControl);
+                EVChargerControl evChargerControl = ((ElectricVehicleCharger) control).getControl();
+                if(evChargerControl instanceof EVModbusControl) {
+                    slaves.add((EVModbusControl) evChargerControl);
                 }
             }
         }
@@ -925,6 +927,19 @@ public class Appliance implements Validateable, ControlStateChangedListener,
     }
 
     @Override
+    public void onEVChargerStateChanged(LocalDateTime now, EVChargerState previousState, EVChargerState newState,
+                                        ElectricVehicle ev) {
+        if(newState == EVChargerState.VEHICLE_CONNECTED) {
+            initAcceptControlRecommendations();
+        }
+    }
+
+    @Override
+    public void onEVChargerSocChanged(LocalDateTime now, Float soc) {
+
+    }
+
+    @Override
     public void startingCurrentDetected(LocalDateTime now) {
         logger.debug("{}: Activating next sufficient timeframe interval for starting current controlled appliance", id);
         TimeframeInterval timeframeInterval;
@@ -982,8 +997,12 @@ public class Appliance implements Validateable, ControlStateChangedListener,
 
     @Override
     public void timeframeIntervalCreated(LocalDateTime now, TimeframeInterval timeframeInterval) {
+        timeframeInterval.setApplianceId(id);
+        timeframeInterval.getRequest().setApplianceId(id);
         timeframeInterval.getRequest().setMeter(meter);
         timeframeInterval.getRequest().setControl(control);
+        control.addControlStateChangedListener(timeframeInterval.getRequest());
+
     }
 
     @Override

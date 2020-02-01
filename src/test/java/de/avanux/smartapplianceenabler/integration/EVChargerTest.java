@@ -22,7 +22,7 @@ import de.avanux.smartapplianceenabler.TestBase;
 import de.avanux.smartapplianceenabler.appliance.Appliance;
 import de.avanux.smartapplianceenabler.appliance.RunningTimeMonitor;
 import de.avanux.smartapplianceenabler.appliance.RuntimeInterval;
-import de.avanux.smartapplianceenabler.control.ev.EVControl;
+import de.avanux.smartapplianceenabler.control.ev.EVChargerControl;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
 import de.avanux.smartapplianceenabler.control.ev.SocScript;
 import de.avanux.smartapplianceenabler.meter.Meter;
@@ -48,7 +48,7 @@ public class EVChargerTest extends TestBase {
 
     private Logger logger = LoggerFactory.getLogger(EVChargerTest.class);
     private DateTimeProvider dateTimeProvider = Mockito.mock(DateTimeProvider.class);
-    private EVControl evControl = Mockito.mock(EVControl.class);
+    private EVChargerControl evChargerControl = Mockito.mock(EVChargerControl.class);
     private Meter meter = Mockito.mock(Meter.class);
     private MockElectricityMeter mockMeter = Mockito.spy(new MockElectricityMeter());
     private PollEnergyExecutor pollEnergyExecutor = Mockito.mock(PollEnergyExecutor.class);
@@ -66,7 +66,7 @@ public class EVChargerTest extends TestBase {
 
         TestBuilder builder = new TestBuilder()
                 .appliance(applianceId, dateTimeProvider, timeInitial)
-                .withEvCharger(evControl)
+                .withEvCharger(evChargerControl)
                 .withElectricVehicle(evId, batteryCapacity)
                 .withMeter(mockMeter)
                 .init();
@@ -172,7 +172,7 @@ public class EVChargerTest extends TestBase {
         LocalDateTime timeInitial = toToday(9, 50, 0);
         TestBuilder builder = new TestBuilder()
                 .appliance(applianceId, dateTimeProvider, timeInitial)
-                .withEvCharger(evControl)
+                .withEvCharger(evChargerControl)
                 .withElectricVehicle(evId, batteryCapacity, 80, socScript)
                 .withMeter(meter)
                 .init();
@@ -201,7 +201,7 @@ public class EVChargerTest extends TestBase {
         LocalDateTime timeInitial = toToday(9, 50, 0);
         TestBuilder builder = new TestBuilder()
                 .appliance(applianceId, dateTimeProvider, timeInitial)
-                .withEvCharger(evControl)
+                .withEvCharger(evChargerControl)
                 .withElectricVehicle(evId, batteryCapacity, 80, socScript)
                 .withMeter(meter)
                 .init();
@@ -229,7 +229,7 @@ public class EVChargerTest extends TestBase {
         LocalDateTime timeInitial = toToday(9, 50, 0);
         TestBuilder builder = new TestBuilder()
                 .appliance(applianceId, dateTimeProvider, timeInitial)
-                .withEvCharger(evControl)
+                .withEvCharger(evChargerControl)
                 .withElectricVehicle(evId, batteryCapacity, null, socScript)
                 .withMeter(mockMeter)
                 .withSchedule(10,0, 16, 0)
@@ -244,7 +244,7 @@ public class EVChargerTest extends TestBase {
 
         log("After vehicle has been connected");
         LocalDateTime timeVehicleConnected = toToday(9, 55, 0);
-        Mockito.when(evControl.isVehicleConnected()).thenReturn(true);
+        Mockito.when(evChargerControl.isVehicleConnected()).thenReturn(true);
         Mockito.when(socScript.getStateOfCharge()).thenReturn(50.0f);
         evCharger.updateState(timeVehicleConnected);
         List<RuntimeInterval> runtimeIntervalsConnected = appliance.getRuntimeIntervals(timeVehicleConnected, false);
@@ -288,7 +288,7 @@ public class EVChargerTest extends TestBase {
         LocalDateTime timeInitial = toToday(9, 50, 0);
         TestBuilder builder = new TestBuilder()
                 .appliance(applianceId, dateTimeProvider, timeInitial)
-                .withEvCharger(evControl)
+                .withEvCharger(evChargerControl)
                 .withElectricVehicle(evId, batteryCapacity, null, socScript)
                 .withMockMeter()
                 .withSchedule(10,0, 16, 0)
@@ -303,7 +303,7 @@ public class EVChargerTest extends TestBase {
 
         log("After vehicle has been connected");
         LocalDateTime timeVehicleConnected = toToday(9, 55, 0);
-        Mockito.when(evControl.isVehicleConnected()).thenReturn(true);
+        Mockito.when(evChargerControl.isVehicleConnected()).thenReturn(true);
         Mockito.when(socScript.getStateOfCharge()).thenReturn(42.7f);
         evCharger.updateState(timeVehicleConnected);
         List<RuntimeInterval> runtimeIntervalsConnected = appliance.getRuntimeIntervals(timeVehicleConnected, false);
@@ -324,7 +324,7 @@ public class EVChargerTest extends TestBase {
         LocalDateTime timeInitial = toToday(9, 50, 0);
         TestBuilder builder = new TestBuilder()
                 .appliance(applianceId, dateTimeProvider, timeInitial)
-                .withEvCharger(evControl)
+                .withEvCharger(evChargerControl)
                 .withElectricVehicle(evId, batteryCapacity, null, socScript)
                 .withMeter(mockMeter)
                 .withSchedule(10,0, 16, 0)
@@ -397,7 +397,7 @@ public class EVChargerTest extends TestBase {
         LocalDateTime timeInitial = toToday(9, 50, 0);
         TestBuilder builder = new TestBuilder()
                 .appliance(applianceId, dateTimeProvider, timeInitial)
-                .withEvCharger(evControl)
+                .withEvCharger(evChargerControl)
                 .withElectricVehicle(evId, batteryCapacity)
                 .withMockMeter()
                 .withSchedule(16,0, 22, 0)
@@ -454,8 +454,8 @@ public class EVChargerTest extends TestBase {
     private void tick(Appliance appliance, LocalDateTime now,
                       boolean connected, boolean charging, Float energyMetered) {
         Mockito.when(dateTimeProvider.now()).thenReturn(now);
-        Mockito.when(evControl.isVehicleConnected()).thenReturn(connected);
-        Mockito.when(evControl.isCharging()).thenReturn(charging);
+        Mockito.when(evChargerControl.isVehicleConnected()).thenReturn(connected);
+        Mockito.when(evChargerControl.isCharging()).thenReturn(charging);
         if(energyMetered != null) {
             Mockito.doReturn(energyMetered).when(mockMeter).getEnergy();
         }

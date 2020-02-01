@@ -1,14 +1,36 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.5">
     <Appliance id="F-00000001-000000000001-00">
-        <Switch gpio="1" reverseStates="true"/>
+        <ElectricVehicleCharger startChargingStateDetectionDelay="15">
+            <EVModbusControl idref="wallbox" slaveAddress="180">
+                <ModbusRead address="100" type="InputString">
+                    <ModbusReadValue name="VehicleNotConnected" extractionRegex="(A)"/>
+                    <ModbusReadValue name="VehicleConnected" extractionRegex="(B)"/>
+                    <ModbusReadValue name="Charging" extractionRegex="(C|D)"/>
+                    <ModbusReadValue name="Error" extractionRegex="(E|F)"/>
+                </ModbusRead>
+                <ModbusWrite address="400" type="Coil">
+                    <ModbusWriteValue name="StartCharging" value="1"/>
+                    <ModbusWriteValue name="StopCharging" value="0"/>
+                </ModbusWrite>
+                <ModbusWrite address="300" type="Holding">
+                    <ModbusWriteValue name="ChargingCurrent" value="0"/>
+                </ModbusWrite>
+            </EVModbusControl>
+            <ElectricVehicle id="1" name="Nissan Leaf" batteryCapacity="40000" phases="1" maxChargePower="7400" chargeLoss="12">
+                <SocScript script="/data/projects/pycarwings2/soc.sh" extractionRegex=".*state_of_charge (\d+)"/>
+            </ElectricVehicle>
+        </ElectricVehicleCharger>
         <S0ElectricityMeter gpio="3" pinPullResistance="PULL_DOWN" impulsesPerKwh="1000"/>
         <Schedule>
-            <RuntimeRequest max="30"/>
+            <SocRequest evId="1" soc="100"/>
             <DayTimeframe>
-                <Start hour="10" minute="0" second="0"/>
-                <End hour="17" minute="22" second="0"/>
+                <Start hour="21" minute="0" second="0"/>
+                <End hour="22" minute="0" second="0"/>
             </DayTimeframe>
         </Schedule>
     </Appliance>
+    <Connectivity>
+        <ModbusTCP id="wallbox" host="wallbox"/>
+    </Connectivity>
 </Appliances>

@@ -136,7 +136,7 @@ public class RuntimeRequest extends AbstractRequest implements Request, Starting
 
     @Override
     public String toString() {
-        String text = isEnabled() ? "ENABLED" : "DISABLED";
+        String text = super.toString();
         text += "/";
         if(min != null) {
             text += min.toString();

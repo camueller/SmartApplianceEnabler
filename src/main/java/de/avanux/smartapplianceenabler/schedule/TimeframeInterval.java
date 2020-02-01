@@ -33,6 +33,7 @@ import java.util.Vector;
  */
 public class TimeframeInterval implements ApplianceIdConsumer {
     private transient Logger logger = LoggerFactory.getLogger(TimeframeInterval.class);
+    /** @deprecated */
     private Timeframe timeframe;
     private Interval interval;
     private Request request;
@@ -55,12 +56,17 @@ public class TimeframeInterval implements ApplianceIdConsumer {
         this.applianceId = applianceId;
     }
 
+    /** @deprecated */
     public Timeframe getTimeframe() {
         return timeframe;
     }
 
     public Interval getInterval() {
         return interval;
+    }
+
+    public void setInterval(Interval interval) {
+        this.interval = interval;
     }
 
     public Request getRequest() {
@@ -160,15 +166,15 @@ public class TimeframeInterval implements ApplianceIdConsumer {
         if(interval != null) {
             text += interval.toString();
         }
-        if(timeframe != null) {
-            if (interval != null) {
-                text += "(";
-            }
-            text += timeframe.toString();
-            if (interval != null) {
-                text += ")";
-            }
-        }
+//        if(timeframe != null) {
+//            if (interval != null) {
+//                text += "(";
+//            }
+//            text += timeframe.toString();
+//            if (interval != null) {
+//                text += ")";
+//            }
+//        }
         text += "=>";
         text += request;
         return text;

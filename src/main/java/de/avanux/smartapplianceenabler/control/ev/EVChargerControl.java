@@ -21,7 +21,7 @@ package de.avanux.smartapplianceenabler.control.ev;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.util.Validateable;
 
-public interface EVControl extends ApplianceIdConsumer, Validateable {
+public interface EVChargerControl extends ApplianceIdConsumer, Validateable {
 
     void init();
 

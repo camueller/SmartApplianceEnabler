@@ -18,7 +18,7 @@
 
 package de.avanux.smartapplianceenabler.http;
 
-import de.avanux.smartapplianceenabler.control.ev.EVControl;
+import de.avanux.smartapplianceenabler.control.ev.EVChargerControl;
 import de.avanux.smartapplianceenabler.control.ev.EVReadValueName;
 import de.avanux.smartapplianceenabler.control.ev.EVWriteValueName;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolHandler;
@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class EVHttpControl implements EVControl {
+public class EVHttpControl implements EVChargerControl {
 
     private transient Logger logger = LoggerFactory.getLogger(EVHttpControl.class);
     @XmlAttribute

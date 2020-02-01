@@ -30,12 +30,12 @@ public class ElectricVehicleChargerTest {
 
     private Logger logger = LoggerFactory.getLogger(ElectricVehicleChargerTest.class);
     private ElectricVehicleCharger evCharger = Mockito.spy(new ElectricVehicleCharger());
-    private EVControl evControl = Mockito.mock(EVControl.class);
+    private EVChargerControl evChargerControl = Mockito.mock(EVChargerControl.class);
     private LocalDateTime now = new LocalDateTime();
 
     public ElectricVehicleChargerTest() {
         evCharger.startChargingStateDetectionDelay = 0;
-        evCharger.setControl(evControl);
+        evCharger.setControl(evChargerControl);
         evCharger.setApplianceId("TEST");
         evCharger.init();
     }
@@ -45,9 +45,9 @@ public class ElectricVehicleChargerTest {
     }
 
     private void configureMocks(boolean vehicleNotConnected, boolean vehicleConnected, boolean charging) {
-        Mockito.when(evControl.isVehicleNotConnected()).thenReturn(vehicleNotConnected);
-        Mockito.when(evControl.isVehicleConnected()).thenReturn(vehicleConnected);
-        Mockito.when(evControl.isCharging()).thenReturn(charging);
+        Mockito.when(evChargerControl.isVehicleNotConnected()).thenReturn(vehicleNotConnected);
+        Mockito.when(evChargerControl.isVehicleConnected()).thenReturn(vehicleConnected);
+        Mockito.when(evChargerControl.isCharging()).thenReturn(charging);
     }
 
     private void updateState() {
@@ -58,74 +58,74 @@ public class ElectricVehicleChargerTest {
 
     @Test
     public void getNewState_initial() {
-        Mockito.when(evControl.isVehicleConnected()).thenReturn(false);
-        assertEquals(State.VEHICLE_NOT_CONNECTED,
-                evCharger.getNewState(State.VEHICLE_NOT_CONNECTED));
+        Mockito.when(evChargerControl.isVehicleConnected()).thenReturn(false);
+        assertEquals(EVChargerState.VEHICLE_NOT_CONNECTED,
+                evCharger.getNewState(EVChargerState.VEHICLE_NOT_CONNECTED));
     }
 
     @Test
     public void getNewState_connect() {
-        Mockito.when(evControl.isVehicleConnected()).thenReturn(true);
-        assertEquals(State.VEHICLE_CONNECTED,
-                evCharger.getNewState(State.VEHICLE_NOT_CONNECTED));
+        Mockito.when(evChargerControl.isVehicleConnected()).thenReturn(true);
+        assertEquals(EVChargerState.VEHICLE_CONNECTED,
+                evCharger.getNewState(EVChargerState.VEHICLE_NOT_CONNECTED));
     }
 
     @Test
     public void getNewState_charging() {
         evCharger.setStartChargingRequested(true);
-        Mockito.when(evControl.isCharging()).thenReturn(true);
-        assertEquals(State.CHARGING,
-                evCharger.getNewState(State.VEHICLE_CONNECTED));
+        Mockito.when(evChargerControl.isCharging()).thenReturn(true);
+        assertEquals(EVChargerState.CHARGING,
+                evCharger.getNewState(EVChargerState.VEHICLE_CONNECTED));
     }
 
     @Test
     public void getNewState_disconnect() {
-        Mockito.when(evControl.isVehicleNotConnected()).thenReturn(true);
-        assertEquals(State.VEHICLE_NOT_CONNECTED,
-                evCharger.getNewState(State.VEHICLE_CONNECTED));
+        Mockito.when(evChargerControl.isVehicleNotConnected()).thenReturn(true);
+        assertEquals(EVChargerState.VEHICLE_NOT_CONNECTED,
+                evCharger.getNewState(EVChargerState.VEHICLE_CONNECTED));
     }
 
     @Test
     public void getNewState_disconnectWhileCharging() {
-        Mockito.when(evControl.isVehicleNotConnected()).thenReturn(true);
-        Mockito.when(evControl.isCharging()).thenReturn(false);
-        assertEquals(State.VEHICLE_NOT_CONNECTED,
-                evCharger.getNewState(State.CHARGING));
+        Mockito.when(evChargerControl.isVehicleNotConnected()).thenReturn(true);
+        Mockito.when(evChargerControl.isCharging()).thenReturn(false);
+        assertEquals(EVChargerState.VEHICLE_NOT_CONNECTED,
+                evCharger.getNewState(EVChargerState.CHARGING));
     }
 
     @Test
     public void wasInState() {
-        assertFalse(evCharger.wasInState(State.VEHICLE_CONNECTED));
-        evCharger.setState(State.CHARGING);
-        assertFalse(evCharger.wasInState(State.VEHICLE_CONNECTED));
-        evCharger.setState(State.VEHICLE_CONNECTED);
-        assertTrue(evCharger.wasInState(State.VEHICLE_CONNECTED));
-        evCharger.setState(State.CHARGING);
-        assertTrue(evCharger.wasInState(State.VEHICLE_CONNECTED));
+        assertFalse(evCharger.wasInState(EVChargerState.VEHICLE_CONNECTED));
+        evCharger.setState(EVChargerState.CHARGING);
+        assertFalse(evCharger.wasInState(EVChargerState.VEHICLE_CONNECTED));
+        evCharger.setState(EVChargerState.VEHICLE_CONNECTED);
+        assertTrue(evCharger.wasInState(EVChargerState.VEHICLE_CONNECTED));
+        evCharger.setState(EVChargerState.CHARGING);
+        assertTrue(evCharger.wasInState(EVChargerState.VEHICLE_CONNECTED));
     }
 
     @Test
     public void wasInStateOneTime() {
-        assertFalse(evCharger.wasInStateOneTime(State.VEHICLE_CONNECTED));
-        evCharger.setState(State.CHARGING);
-        assertFalse(evCharger.wasInStateOneTime(State.VEHICLE_CONNECTED));
-        evCharger.setState(State.VEHICLE_CONNECTED);
-        assertTrue(evCharger.wasInStateOneTime(State.VEHICLE_CONNECTED));
-        evCharger.setState(State.CHARGING);
-        assertTrue(evCharger.wasInStateOneTime(State.VEHICLE_CONNECTED));
-        evCharger.setState(State.VEHICLE_CONNECTED);
-        assertFalse(evCharger.wasInStateOneTime(State.VEHICLE_CONNECTED));
+        assertFalse(evCharger.wasInStateOneTime(EVChargerState.VEHICLE_CONNECTED));
+        evCharger.setState(EVChargerState.CHARGING);
+        assertFalse(evCharger.wasInStateOneTime(EVChargerState.VEHICLE_CONNECTED));
+        evCharger.setState(EVChargerState.VEHICLE_CONNECTED);
+        assertTrue(evCharger.wasInStateOneTime(EVChargerState.VEHICLE_CONNECTED));
+        evCharger.setState(EVChargerState.CHARGING);
+        assertTrue(evCharger.wasInStateOneTime(EVChargerState.VEHICLE_CONNECTED));
+        evCharger.setState(EVChargerState.VEHICLE_CONNECTED);
+        assertFalse(evCharger.wasInStateOneTime(EVChargerState.VEHICLE_CONNECTED));
     }
 
     @Test
     public void wasInStateAfterState() {
-        assertFalse(evCharger.wasInStateAfterLastState(State.CHARGING, State.VEHICLE_CONNECTED));
-        evCharger.setState(State.VEHICLE_CONNECTED);
-        assertFalse(evCharger.wasInStateAfterLastState(State.CHARGING, State.VEHICLE_CONNECTED));
-        evCharger.setState(State.CHARGING);
-        assertTrue(evCharger.wasInStateAfterLastState(State.CHARGING, State.VEHICLE_CONNECTED));
-        evCharger.setState(State.VEHICLE_CONNECTED);
-        assertFalse(evCharger.wasInStateAfterLastState(State.CHARGING, State.VEHICLE_CONNECTED));
+        assertFalse(evCharger.wasInStateAfterLastState(EVChargerState.CHARGING, EVChargerState.VEHICLE_CONNECTED));
+        evCharger.setState(EVChargerState.VEHICLE_CONNECTED);
+        assertFalse(evCharger.wasInStateAfterLastState(EVChargerState.CHARGING, EVChargerState.VEHICLE_CONNECTED));
+        evCharger.setState(EVChargerState.CHARGING);
+        assertTrue(evCharger.wasInStateAfterLastState(EVChargerState.CHARGING, EVChargerState.VEHICLE_CONNECTED));
+        evCharger.setState(EVChargerState.VEHICLE_CONNECTED);
+        assertFalse(evCharger.wasInStateAfterLastState(EVChargerState.CHARGING, EVChargerState.VEHICLE_CONNECTED));
     }
 
     @Test
@@ -133,24 +133,24 @@ public class ElectricVehicleChargerTest {
         log("Vehicle not yet connected");
         configureMocks(true, false, false);
         updateState();
-        assertEquals(State.VEHICLE_NOT_CONNECTED, evCharger.getState());
+        assertEquals(EVChargerState.VEHICLE_NOT_CONNECTED, evCharger.getState());
         log("Connect vehicle");
         configureMocks(false, true, false);
         updateState();
-        assertEquals(State.VEHICLE_CONNECTED, evCharger.getState());
+        assertEquals(EVChargerState.VEHICLE_CONNECTED, evCharger.getState());
         log("Start charging");
         evCharger.startCharging();
         configureMocks(false, true, true);
         updateState();
-        assertEquals(State.CHARGING, evCharger.getState());
+        assertEquals(EVChargerState.CHARGING, evCharger.getState());
         log("Fully charged now");
         configureMocks(false, true, false);
         updateState();
-        assertEquals(State.CHARGING_COMPLETED, evCharger.getState());
+        assertEquals(EVChargerState.CHARGING_COMPLETED, evCharger.getState());
         log("Disconnect vehicle");
         configureMocks(true, false, false);
         updateState();
-        assertEquals(State.VEHICLE_NOT_CONNECTED, evCharger.getState());
+        assertEquals(EVChargerState.VEHICLE_NOT_CONNECTED, evCharger.getState());
     }
 
     @Test
@@ -164,34 +164,34 @@ public class ElectricVehicleChargerTest {
         log("Vehicle not yet connected");
         configureMocks(true, false, false);
         updateState();
-        assertEquals(State.VEHICLE_NOT_CONNECTED, evCharger.getState());
+        assertEquals(EVChargerState.VEHICLE_NOT_CONNECTED, evCharger.getState());
         log("Connect vehicle");
         configureMocks(false, true, false);
         updateState();
-        assertEquals(State.VEHICLE_CONNECTED, evCharger.getState());
+        assertEquals(EVChargerState.VEHICLE_CONNECTED, evCharger.getState());
         log("Start charging");
         evCharger.startCharging();
         configureMocks(false, true, true);
         updateState();
-        assertEquals(State.CHARGING, evCharger.getState());
+        assertEquals(EVChargerState.CHARGING, evCharger.getState());
         log("Stop charging");
         evCharger.stopCharging();
         configureMocks(false, true, false);
         updateState();
-        assertEquals(State.VEHICLE_CONNECTED, evCharger.getState());
+        assertEquals(EVChargerState.VEHICLE_CONNECTED, evCharger.getState());
         log("Start charging again");
         evCharger.startCharging();
         configureMocks(false, true, true);
         updateState();
-        assertEquals(State.CHARGING, evCharger.getState());
+        assertEquals(EVChargerState.CHARGING, evCharger.getState());
         log("Fully charged now");
         configureMocks(false, true, false);
         updateState();
-        assertEquals(State.CHARGING_COMPLETED, evCharger.getState());
+        assertEquals(EVChargerState.CHARGING_COMPLETED, evCharger.getState());
         log("Disconnect vehicle");
         configureMocks(true, false, false);
         updateState();
-        assertEquals(State.VEHICLE_NOT_CONNECTED, evCharger.getState());
+        assertEquals(EVChargerState.VEHICLE_NOT_CONNECTED, evCharger.getState());
     }
 
     @Test
@@ -199,20 +199,20 @@ public class ElectricVehicleChargerTest {
         log("Vehicle initially connected");
         configureMocks(false, true, false);
         updateState();
-        assertEquals(State.VEHICLE_CONNECTED, evCharger.getState());
+        assertEquals(EVChargerState.VEHICLE_CONNECTED, evCharger.getState());
         log("Start charging");
         evCharger.startCharging();
         configureMocks(false, true, true);
         updateState();
-        assertEquals(State.CHARGING, evCharger.getState());
+        assertEquals(EVChargerState.CHARGING, evCharger.getState());
         log("Fully charged now");
         configureMocks(false, true, false);
         updateState();
-        assertEquals(State.CHARGING_COMPLETED, evCharger.getState());
+        assertEquals(EVChargerState.CHARGING_COMPLETED, evCharger.getState());
         log("Disconnect vehicle");
         configureMocks(true, false, false);
         updateState();
-        assertEquals(State.VEHICLE_NOT_CONNECTED, evCharger.getState());
+        assertEquals(EVChargerState.VEHICLE_NOT_CONNECTED, evCharger.getState());
     }
 
     @Test
@@ -220,20 +220,20 @@ public class ElectricVehicleChargerTest {
         log("Vehicle not yet connected");
         configureMocks(true, false, false);
         updateState();
-        assertEquals(State.VEHICLE_NOT_CONNECTED, evCharger.getState());
+        assertEquals(EVChargerState.VEHICLE_NOT_CONNECTED, evCharger.getState());
         log("Connect vehicle");
         configureMocks(false, true, false);
         updateState();
-        assertEquals(State.VEHICLE_CONNECTED, evCharger.getState());
+        assertEquals(EVChargerState.VEHICLE_CONNECTED, evCharger.getState());
         log("Start charging");
         evCharger.startCharging();
         configureMocks(false, true, true);
         updateState();
-        assertEquals(State.CHARGING, evCharger.getState());
+        assertEquals(EVChargerState.CHARGING, evCharger.getState());
         log("Disconnect vehicle");
         configureMocks(true, false, false);
         updateState();
-        assertEquals(State.VEHICLE_NOT_CONNECTED, evCharger.getState());
+        assertEquals(EVChargerState.VEHICLE_NOT_CONNECTED, evCharger.getState());
     }
 
     @Test
@@ -241,24 +241,24 @@ public class ElectricVehicleChargerTest {
         log("Vehicle not yet connected");
         configureMocks(true, false, false);
         updateState();
-        assertEquals(State.VEHICLE_NOT_CONNECTED, evCharger.getState());
+        assertEquals(EVChargerState.VEHICLE_NOT_CONNECTED, evCharger.getState());
         log("Connect vehicle");
         configureMocks(false, true, false);
         updateState();
-        assertEquals(State.VEHICLE_CONNECTED, evCharger.getState());
+        assertEquals(EVChargerState.VEHICLE_CONNECTED, evCharger.getState());
         log("Start charging");
         evCharger.startCharging();
         Mockito.when(evCharger.isWithinSwitchChargingStateDetectionDelay()).thenReturn(true);
         configureMocks(false, true, true);
         updateState();
-        assertEquals(State.VEHICLE_CONNECTED, evCharger.getState());
+        assertEquals(EVChargerState.VEHICLE_CONNECTED, evCharger.getState());
         log("Stop charging during ChargingStateDetectionDelay");
         evCharger.stopCharging();
         updateState();
         log("After ChargingStateDetectionDelay");
         Mockito.when(evCharger.isWithinSwitchChargingStateDetectionDelay()).thenReturn(false);
         updateState();
-        assertEquals(State.VEHICLE_CONNECTED, evCharger.getState());
+        assertEquals(EVChargerState.VEHICLE_CONNECTED, evCharger.getState());
     }
 
     @Test
@@ -267,12 +267,12 @@ public class ElectricVehicleChargerTest {
         evCharger.startCharging();
         configureMocks(false, true, true);
         updateState();
-        Mockito.when(evControl.isInErrorState()).thenReturn(true);
+        Mockito.when(evChargerControl.isInErrorState()).thenReturn(true);
         updateState();
-        assertEquals(State.ERROR, evCharger.getState());
-        Mockito.when(evControl.isInErrorState()).thenReturn(false);
+        assertEquals(EVChargerState.ERROR, evCharger.getState());
+        Mockito.when(evChargerControl.isInErrorState()).thenReturn(false);
         updateState();
-        assertEquals(State.CHARGING, evCharger.getState());
+        assertEquals(EVChargerState.CHARGING, evCharger.getState());
     }
 
     @Test
@@ -302,7 +302,7 @@ public class ElectricVehicleChargerTest {
                 currentMillis,
                 currentMillis - (startChargingStateDetectionDelay + 1) * 1000));
         // state = CHARGING
-        evCharger.setState(State.CHARGING);
+        evCharger.setState(EVChargerState.CHARGING);
         assertTrue(evCharger.isOn(
                 startChargingStateDetectionDelay, 0, null));
         assertTrue(evCharger.isOn(

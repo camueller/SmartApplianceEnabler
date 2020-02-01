@@ -25,7 +25,7 @@ import de.avanux.smartapplianceenabler.appliance.RunningTimeMonitor;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.MockSwitch;
 import de.avanux.smartapplianceenabler.control.StartingCurrentSwitch;
-import de.avanux.smartapplianceenabler.control.ev.EVControl;
+import de.avanux.smartapplianceenabler.control.ev.EVChargerControl;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
 import de.avanux.smartapplianceenabler.control.ev.SocScript;
@@ -89,14 +89,14 @@ public class TestBuilder {
         return this;
     }
 
-    public TestBuilder withEvCharger(EVControl evControl) {
+    public TestBuilder withEvCharger(EVChargerControl evChargerControl) {
         ElectricVehicleCharger evCharger = new ElectricVehicleCharger();
-        return withEvCharger(evCharger, evControl);
+        return withEvCharger(evCharger, evChargerControl);
     }
 
-    public TestBuilder withEvCharger(ElectricVehicleCharger evCharger, EVControl evControl) {
+    public TestBuilder withEvCharger(ElectricVehicleCharger evCharger, EVChargerControl evChargerControl) {
         evCharger.setStartChargingStateDetectionDelay(0);
-        evCharger.setControl(evControl);
+        evCharger.setControl(evChargerControl);
         getAppliance().setControl(evCharger);
         return this;
     }

@@ -19,13 +19,14 @@
 package de.avanux.smartapplianceenabler.schedule;
 
 import de.avanux.smartapplianceenabler.control.Control;
-import de.avanux.smartapplianceenabler.control.ControlStateChangedListener;
+import de.avanux.smartapplianceenabler.control.ev.EVChargerState;
+import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AbstractRequest implements ControlStateChangedListener {
+abstract public class AbstractRequest implements Request {
     private transient Logger logger = LoggerFactory.getLogger(AbstractRequest.class);
     private transient String applianceId;
     private transient Meter meter;
@@ -92,5 +93,19 @@ public class AbstractRequest implements ControlStateChangedListener {
                 }
             }
         }
+    }
+
+    @Override
+    public void onEVChargerStateChanged(LocalDateTime now, EVChargerState previousState, EVChargerState newState,
+                                        ElectricVehicle ev) {
+    }
+
+    @Override
+    public void onEVChargerSocChanged(LocalDateTime now, Float soc) {
+    }
+
+    @Override
+    public String toString() {
+        return isEnabled() ? "ENABLED" : "DISABLED";
     }
 }

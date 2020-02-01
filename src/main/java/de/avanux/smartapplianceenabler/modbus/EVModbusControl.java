@@ -18,7 +18,7 @@
 
 package de.avanux.smartapplianceenabler.modbus;
 
-import de.avanux.smartapplianceenabler.control.ev.EVControl;
+import de.avanux.smartapplianceenabler.control.ev.EVChargerControl;
 import de.avanux.smartapplianceenabler.control.ev.EVReadValueName;
 import de.avanux.smartapplianceenabler.control.ev.EVWriteValueName;
 import de.avanux.smartapplianceenabler.modbus.executor.*;
@@ -33,7 +33,7 @@ import javax.xml.bind.annotation.XmlElement;
 import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class EVModbusControl extends ModbusSlave implements EVControl {
+public class EVModbusControl extends ModbusSlave implements EVChargerControl {
 
     private transient Logger logger = LoggerFactory.getLogger(EVModbusControl.class);
     @XmlElement(name = "ModbusRead")

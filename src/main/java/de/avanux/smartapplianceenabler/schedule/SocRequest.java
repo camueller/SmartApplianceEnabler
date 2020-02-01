@@ -18,18 +18,26 @@
 
 package de.avanux.smartapplianceenabler.schedule;
 
+import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
+import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
 import org.joda.time.LocalDateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SocRequest extends AbstractRequest implements Request {
+public class SocRequest extends AbstractEnergyRequest implements Request {
     @XmlAttribute
     private Integer soc;
     @XmlAttribute
     private Integer evId;
+    private static transient Logger logger = LoggerFactory.getLogger(SocRequest.class);
+    private transient Integer socInitial = 0;
+    private transient Integer energy;
+    private transient Long energyLastCalculationMillis;
 
     public void setSoc(Integer soc) {
         this.soc = soc;
@@ -49,28 +57,78 @@ public class SocRequest extends AbstractRequest implements Request {
 
     @Override
     public Integer getMin(LocalDateTime now) {
-        return this.soc;
+        return getEnergy();
     }
 
     @Override
     public Integer getMax(LocalDateTime now) {
-        return this.soc;
+        return getEnergy();
     }
 
-    @Override
-    public boolean isEnabled() {
-        return false;
+    private Integer getEnergy() {
+        if(energyLastCalculationMillis == null || System.currentTimeMillis() - energyLastCalculationMillis > 5000) {
+            this.energy = calculateEnergy();
+            this.energyLastCalculationMillis = System.currentTimeMillis();
+        }
+        return this.energy;
+    }
+
+    private Integer calculateEnergy() {
+        float energy = 0.0f;
+        if(getMeter() != null) {
+            energy = getMeter().getEnergy();
+            logger.debug("{}: energy metered: {} kWh", getApplianceId(), energy);
+        }
+        else {
+            logger.debug("{}: No energy meter configured - cannot calculate max energy", getApplianceId());
+        }
+        ElectricVehicleCharger evCharger = (ElectricVehicleCharger) getControl();
+        ElectricVehicle vehicle = evCharger.getVehicle(evId);
+        if(vehicle != null) {
+            int batteryCapacity = vehicle.getBatteryCapacity();
+            Integer initialSoc = this.socInitial;
+            Integer targetSoc = this.soc;
+            logger.debug("{}: energy calculation using evId={} batteryCapactiy={} chargeLoss={}% initialSoc={} targetSoc={}",
+                    getApplianceId(), vehicle.getId(), batteryCapacity, vehicle.getChargeLoss(), initialSoc, targetSoc);
+            if(initialSoc == null) {
+                initialSoc = 0;
+            }
+            if(targetSoc == null) {
+                targetSoc = 100;
+            }
+            Integer maxEnergy = Float.valueOf((targetSoc - initialSoc)/100.0f
+                    * (100 + vehicle.getChargeLoss())/100.0f * batteryCapacity).intValue()
+                    - Float.valueOf(energy * 1000).intValue();
+            logger.debug("{}: energy calculated={}Wh", getApplianceId(), maxEnergy);
+            return maxEnergy;
+        }
+        else {
+            logger.warn("{}: no connected vehicle was found", getApplianceId());
+        }
+        return 0;
     }
 
     @Override
     public boolean isFinished(LocalDateTime now) {
-        return false;
+        return getEnergy() <= 0;
+    }
+
+    @Override
+    public void onEVChargerSocChanged(LocalDateTime now, Float soc) {
+        if(isActive()) {
+            logger.debug("{}: Using updated SOC={}", getApplianceId(), soc);
+            this.socInitial = Float.valueOf(soc).intValue();
+        }
     }
 
     @Override
     public String toString() {
-        return "evId=" + evId +
-                "/soc=" + soc +
-                '%';
+        String text = super.toString();
+        text += "/";
+        text += "evId=" + evId;
+        text += "/";
+        text += "soc=" + soc;
+        text += "%";
+        return text;
     }
 }
