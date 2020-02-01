@@ -550,366 +550,366 @@ public class Appliance implements Validateable, ControlStateChangedListener,
         return null;
     }
 
-    public List<RuntimeInterval> getRuntimeIntervals(LocalDateTime now, boolean onlySufficient) {
-        List<RuntimeInterval> nonEvOptionalEnergyRuntimeIntervals = null;
-        if(runningTimeMonitor != null) {
-            nonEvOptionalEnergyRuntimeIntervals = getRuntimeIntervals(now,
-                    runningTimeMonitor.getSchedules(),
-                    runningTimeMonitor.getActiveTimeframeInterval(),
-                    onlySufficient,
-                    runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(now),
-                    runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(now));
-        }
-        return getRuntimeIntervals(nonEvOptionalEnergyRuntimeIntervals);
-    }
-
-    public List<RuntimeInterval> getRuntimeIntervals(List<RuntimeInterval> nonEvOptionalEnergyRuntimeIntervals) {
-        List<RuntimeInterval> runtimeIntervals = new ArrayList<>();
-        if (isEvCharger()) {
-            logger.debug("{}: control is ev charger", id);
-            ElectricVehicleCharger electricVehicleCharger = (ElectricVehicleCharger) this.control;
-            if (electricVehicleCharger.isInErrorState()) {
-                logger.warn("{}: skipping runtime intervals because of charger error state", id);
-            } else {
-                logger.debug("{}: checking ev charger state", id);
-                if (electricVehicleCharger.isVehicleConnected() || electricVehicleCharger.isCharging()) {
-                    logger.debug("{}: connected={} charging={}", id,
-                            electricVehicleCharger.isVehicleConnected(), electricVehicleCharger.isCharging());
-                    if (runningTimeMonitor == null || runningTimeMonitor.getActiveTimeframeInterval() == null) {
-                        logger.debug("{}: no active timeframe interval found", id);
-                        RuntimeInterval evOptionalEnergy = getRuntimeIntervalForEVUsingOptionalEnergy(electricVehicleCharger);
-                        if (evOptionalEnergy != null) {
-                            logger.warn("{}: request for optional energy was created", id);
-                            if (nonEvOptionalEnergyRuntimeIntervals != null && nonEvOptionalEnergyRuntimeIntervals.size() > 0) {
-                                // evOptionalEnergy runtime interval must not overlap with other intervals
-                                Integer firstNonEvOptionalEnergyRuntimeIntervalEarliestStart
-                                        = nonEvOptionalEnergyRuntimeIntervals.get(0).getEarliestStart();
-                                if(firstNonEvOptionalEnergyRuntimeIntervalEarliestStart > 0) {
-                                    evOptionalEnergy.setLatestEnd(firstNonEvOptionalEnergyRuntimeIntervalEarliestStart - 1);
-                                }
-                            }
-                            logger.debug("{}: requesting optional energy for electric vehicle: {}", id, evOptionalEnergy);
-                            runtimeIntervals.add(evOptionalEnergy);
-                        }
-                        else {
-                            logger.warn("{}: no request for optional energy was created", id);
-                        }
-                    }
-                    else {
-                        logger.debug("{}: active timeframe interval found - not requesting optional energy", id);
-                    }
-                    if (nonEvOptionalEnergyRuntimeIntervals != null && nonEvOptionalEnergyRuntimeIntervals.size() > 0) {
-                        runtimeIntervals.addAll(nonEvOptionalEnergyRuntimeIntervals);
-                    }
-                }
-                else {
-                    logger.debug("{}: ignoring runtime intervals due to vehicle state {}", id, electricVehicleCharger.getState());
-                }
-            }
-        }
-        else {
-            if (nonEvOptionalEnergyRuntimeIntervals != null && nonEvOptionalEnergyRuntimeIntervals.size() > 0) {
-                runtimeIntervals.addAll(nonEvOptionalEnergyRuntimeIntervals);
-            }
-        }
-        return runtimeIntervals;
-    }
-
-    protected List<RuntimeInterval> getRuntimeIntervals(LocalDateTime now, List<Schedule> schedules,
-                                                        TimeframeInterval activeTimeframeInterval, boolean onlySufficient,
-                                                        Integer remainingMinRunningTime, Integer remainingMaxRunningTime) {
-        List<RuntimeInterval> runtimeIntervals = new ArrayList<>();
-        if(schedules != null && schedules.size() > 0) {
-            logger.debug("{}: Active schedules: {}", id, schedules.size());
-            if(activeTimeframeInterval != null) {
-                // active timeframe interval has always to be added even if not sufficient
-                Schedule schedule = activeTimeframeInterval.getTimeframe().getSchedule();
-                Request request = schedule.getRequest();
-                if(request instanceof RuntimeRequest) {
-                    addRuntimeRequestInterval(now, activeTimeframeInterval.getInterval(), runtimeIntervals,
-                            remainingMinRunningTime, remainingMaxRunningTime);
-                }
-                else if(request instanceof EnergyRequest) {
-                    EnergyRequest remainingEnergy = calculateRemainingEnergy(now, schedule);
-                    if(remainingEnergy != null) {
-                        addEnergyRequestInterval(now, runtimeIntervals, activeTimeframeInterval.getInterval(),
-                                remainingEnergy.getMin(now), remainingEnergy.getMax(now));
-                    }
-                }
-                else if(request instanceof SocRequest) {
-                    EnergyRequest remainingEnergy = calculateRemainingEnergy(now, (SocRequest) request, true);
-                    if(remainingEnergy != null) {
-                        addEnergyRequestInterval(now, runtimeIntervals, activeTimeframeInterval.getInterval(),
-                                remainingEnergy.getMin(now), remainingEnergy.getMax(now));
-                    }
-                }
-            }
-
-            Interval considerationInterval = new Interval(now.toDateTime(), now.plusDays(CONSIDERATION_INTERVAL_DAYS).toDateTime());
-            List<TimeframeInterval> timeFrameIntervals = Schedule.findTimeframeIntervals(now, considerationInterval,
-                    schedules, false, onlySufficient);
-            for(TimeframeInterval timeframeIntervalOfSchedule : timeFrameIntervals) {
-                Schedule schedule = timeframeIntervalOfSchedule.getTimeframe().getSchedule();
-                Interval interval = timeframeIntervalOfSchedule.getInterval();
-                Request request = schedule.getRequest();
-                if(request instanceof RuntimeRequest) {
-                    Integer minRunningTime = request.getMin(now);
-                    if(interval.contains(now.toDateTime()) && remainingMinRunningTime != null) {
-                        minRunningTime = remainingMinRunningTime;
-                    }
-                    addRuntimeRequestInterval(now, interval, runtimeIntervals, minRunningTime, request.getMax(now));
-                }
-                else if(request instanceof EnergyRequest) {
-                    addEnergyRequestInterval(now, runtimeIntervals, interval, request.getMin(now), request.getMax(now));
-                }
-                else if(request instanceof SocRequest) {
-                    EnergyRequest remainingEnergy = calculateRemainingEnergy(now, (SocRequest) request, false);
-                    if(remainingEnergy != null) {
-                        addEnergyRequestInterval(now, runtimeIntervals, interval,
-                                remainingEnergy.getMin(now), remainingEnergy.getMax(now));
-                    }
-                }
-            }
-        }
-        else if(activeTimeframeInterval != null) {
-            logger.debug("{}: Active timeframe interval found", id);
-            Schedule schedule = activeTimeframeInterval.getTimeframe().getSchedule();
-            Request request = schedule.getRequest();
-            if(request instanceof RuntimeRequest) {
-                addRuntimeRequestInterval(now, activeTimeframeInterval.getInterval(), runtimeIntervals,
-                        remainingMinRunningTime, remainingMaxRunningTime);
-            }
-            else if(request instanceof EnergyRequest) {
-                EnergyRequest remainingEnergy = calculateRemainingEnergy(now, schedule);
-                addEnergyRequestInterval(now, runtimeIntervals, activeTimeframeInterval.getInterval(),
-                        remainingEnergy.getMin(now), remainingEnergy.getMax(now));
-            }
-        }
-        else {
-            logger.debug("{}: No timeframes found", id);
-        }
-        return runtimeIntervals;
-    }
-
-    public EnergyRequest calculateRemainingEnergy(LocalDateTime now, Schedule schedule) {
-        return buildEnergyRequestConsideringEnergyAlreadyCharged(now,
-                schedule.getRequest().getMin(now), schedule.getRequest().getMax(now));
-    }
-
-    public EnergyRequest calculateRemainingEnergy(LocalDateTime now, SocRequest socRequest, boolean considerEnergyAlreadyCharged) {
-        if(isEvCharger()) {
-            ElectricVehicleCharger charger = (ElectricVehicleCharger) this.control;
-            ElectricVehicle ev = charger.getVehicle(socRequest.getEvId());
-            if(ev == null) {
-                return buildEnergyRequest(0, 0);
-            }
-            Integer socStart = charger.getConnectedVehicleSoc() != null ? charger.getConnectedVehicleSoc() : 0;
-            int energyToBeCharged = 0;
-            if(socRequest.getSoc() > socStart) {
-                energyToBeCharged = Float.valueOf((socRequest.getSoc() - socStart)/100.0f
-                        * (100 + ev.getChargeLoss())/100.0f * ev.getBatteryCapacity()).intValue();
-            }
-            logger.debug("{}: Energy to be charged: {} Wh (batteryCapacity={}Wh chargeLoss={}% socStart={} socRequested={})",
-                    id, energyToBeCharged, ev.getBatteryCapacity(), ev.getChargeLoss(), socStart, socRequest.getSoc());
-            if(considerEnergyAlreadyCharged) {
-                return buildEnergyRequestConsideringEnergyAlreadyCharged(now, energyToBeCharged, energyToBeCharged);
-            }
-            return buildEnergyRequest(energyToBeCharged, energyToBeCharged);
-        }
-        return null;
-    }
-
-    private EnergyRequest buildEnergyRequestConsideringEnergyAlreadyCharged(LocalDateTime now, int min, int max) {
-        EnergyRequest remainingEnergy = buildEnergyRequest(min, max);
-        if(remainingEnergy != null) {
-            if(meter != null) {
-                int whAlreadyCharged = Float.valueOf(meter.getEnergy() * 1000.0f).intValue();
-                remainingEnergy.setMin(min - whAlreadyCharged);
-                if(remainingEnergy.getMax(now) != null) {
-                    remainingEnergy.setMax(max - whAlreadyCharged);
-                }
-            }
-            logger.debug("{}: Remaining energy calculated: {}", id, remainingEnergy);
-        }
-        return remainingEnergy;
-    }
-
-    private EnergyRequest buildEnergyRequest(int min, int max) {
-        if(max == 0) {
-            logger.debug("{}: Skip creation of energy request with remaining max energy = 0", id);
-            return null;
-        }
-        EnergyRequest request = new EnergyRequest();
-        request.setMin(min);
-        request.setMax(max);
-        return request;
-    }
-
-    private RuntimeInterval getRuntimeIntervalForEVUsingOptionalEnergy(ElectricVehicleCharger evCharger) {
-        float energy = 0.0f;
-        if(meter != null) {
-            energy = meter.getEnergy();
-            logger.debug("{}: energy metered: {} kWh", id, energy);
-        }
-        else {
-            logger.debug("{}: No energy meter configured - cannot calculate maxEnergy", id);
-        }
-        RuntimeInterval runtimeInterval = null;
-        ElectricVehicle vehicle = evCharger.getConnectedVehicle();
-        if(vehicle != null) {
-            logger.warn("{}: creating optional energy request for vehicleId={}", id, vehicle.getId());
-            int batteryCapacity = vehicle.getBatteryCapacity();
-            Integer initialSoc = evCharger.getConnectedVehicleSoc();
-            Integer targetSoc = vehicle.getDefaultSocOptionalEnergy();
-            logger.debug("{}: calculating optional energy evId={} batteryCapactiy={} chargeLoss={}% initialSoc={} targetSoc={}",
-                    id, vehicle.getId(), batteryCapacity, vehicle.getChargeLoss(), initialSoc, targetSoc);
-            if(initialSoc == null) {
-                initialSoc = 0;
-            }
-            if(targetSoc == null) {
-                targetSoc = 100;
-            }
-            Integer maxEnergy = Float.valueOf((targetSoc - initialSoc)/100.0f
-                    * (100 + vehicle.getChargeLoss())/100.0f * batteryCapacity).intValue()
-                    - Float.valueOf(energy * 1000).intValue();
-            logger.debug("{}: optional energy calculated={}Wh", id, maxEnergy);
-            if (maxEnergy > 0) {
-                runtimeInterval = new RuntimeInterval();
-                runtimeInterval.setEarliestStart(0);
-                runtimeInterval.setLatestEnd(CONSIDERATION_INTERVAL_DAYS * 24 * 3600);
-                runtimeInterval.setMinEnergy(0);
-                runtimeInterval.setMaxEnergy(maxEnergy);
-            }
-        }
-        else {
-            logger.warn("{}: no connected vehicle was found", id);
-        }
-        return runtimeInterval;
-    }
-
-    private void addRuntimeRequestInterval(LocalDateTime now, Interval interval, List<RuntimeInterval> runtimeIntervals,
-                                           Integer remainingMinRunningTime, Integer remainingMaxRunningTime) {
-        RuntimeInterval runtimeInterval = createRuntimeRequestInterval(interval, remainingMinRunningTime, remainingMaxRunningTime, now);
-        if(runtimeInterval != null) {
-            if(! isOverlappingRuntimeInterval(runtimeInterval, runtimeIntervals)) {
-                runtimeIntervals.add(runtimeInterval);
-            }
-            else {
-                logger.debug("{} Ignore overlapping RuntimeInterval: {}", id, runtimeInterval);
-            }
-        }
-    }
-
-    private void addEnergyRequestInterval(LocalDateTime now, List<RuntimeInterval> runtimeIntervals, Interval interval, Integer minEnergy,
-                                          Integer maxEnergy) {
-        RuntimeInterval runtimeInterval = createEnergyRequestInterval(interval, minEnergy, maxEnergy, now);
-        if(runtimeInterval != null) {
-            if(!isFutureEmptyEnergyRequestInterval(runtimeInterval)) {
-                if(! isOverlappingRuntimeInterval(runtimeInterval, runtimeIntervals)) {
-                    runtimeIntervals.add(runtimeInterval);
-                }
-                else {
-                    logger.debug("{} Ignore overlapping request Interval: {}", id, runtimeInterval);
-                }
-            }
-            else {
-                logger.debug("{} Ignore future empty energy request Interval: {}", id, runtimeInterval);
-            }
-        }
-    }
-
-    protected boolean isFutureEmptyEnergyRequestInterval(RuntimeInterval runtimeInterval) {
-        return runtimeInterval.getEarliestStart() > 0
-                && runtimeInterval.getMinEnergy() == 0
-                && runtimeInterval.getMaxEnergy() == 0;
-    }
-
-    protected boolean isOverlappingRuntimeInterval(RuntimeInterval runtimeInterval, List<RuntimeInterval> runtimeIntervals) {
-        // we already might have a runtime request obtained from RunningTimeMonitor which might have been added
-        // manually (setRuntime() aka click green traffic light). It would be not equal to any of the runtime requests
-        // derived from the schedule, e.g. (from IntegrationTest.testClickGoLight):
-        // RuntimeInterval created: 0s-1800s:1800s/nulls
-        // RuntimeInterval created: 0s-25200s:1800s/nulls <--- has to be excluded
-        // RuntimeInterval created: 82800s-111600s:3600s/nulls
-        // RuntimeInterval created: 169200s-198000s:3600s/nulls
-        for(RuntimeInterval existingRuntimeInterval : runtimeIntervals) {
-            if(runtimeInterval.getEarliestStart()>= existingRuntimeInterval.getEarliestStart()
-                    && runtimeInterval.getEarliestStart() < existingRuntimeInterval.getLatestEnd()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    protected RuntimeInterval createRuntimeRequestInterval(Interval interval, Integer minRunningTime,
-                                                           Integer maxRunningTime, LocalDateTime now) {
-        Integer earliestStart = calculateEarliestStart(now, interval.getStart());
-        Integer latestEnd = calculateLatestEnd(now, interval.getEnd());
-        if(minRunningTime != null && minRunningTime > latestEnd) {
-            minRunningTime = latestEnd;
-        }
-        if(maxRunningTime != null && maxRunningTime > latestEnd) {
-            maxRunningTime = latestEnd;
-        }
-        return createRuntimeRequestInterval(earliestStart, latestEnd, minRunningTime, maxRunningTime);
-    }
-
-    protected RuntimeInterval createEnergyRequestInterval(Interval interval, Integer minEnergy,
-                                                          Integer maxEnergy, LocalDateTime now) {
-        Integer earliestStart = calculateEarliestStart(now, interval.getStart());
-        Integer latestEnd = calculateLatestEnd(now, interval.getEnd());
-        return createEnergyRequestInterval(earliestStart, latestEnd, minEnergy, maxEnergy);
-    }
-
-    protected Integer calculateEarliestStart(LocalDateTime now, DateTime start) {
-        Integer earliestStart = 0;
-        if(start.isAfter(now.toDateTime())) {
-            earliestStart = Double.valueOf(new Interval(now.toDateTime(), start).toDurationMillis() / 1000).intValue();
-        }
-        return earliestStart;
-    }
-
-    protected Integer calculateLatestEnd(LocalDateTime now, DateTime end) {
-        LocalDateTime nowBeforeEnd = new LocalDateTime(now);
-        if(now.toDateTime().isAfter(end)) {
-            nowBeforeEnd = now.minusHours(24);
-        }
-        return Double.valueOf(new Interval(nowBeforeEnd.toDateTime(), end).toDurationMillis() / 1000).intValue();
-    }
-
-
-    protected RuntimeInterval createRuntimeRequestInterval(Integer earliestStart, Integer latestEnd, Integer minRunningTime,
-                                                           Integer maxRunningTime) {
-        RuntimeInterval runtimeInterval = new RuntimeInterval();
-        runtimeInterval.setEarliestStart(earliestStart);
-        runtimeInterval.setLatestEnd(latestEnd);
-        runtimeInterval.setMinRunningTime(minRunningTime);
-        runtimeInterval.setMaxRunningTime(maxRunningTime);
-        logger.debug("{}: RuntimeInterval created: {}", id, runtimeInterval);
-        return runtimeInterval;
-    }
-
-    protected RuntimeInterval createEnergyRequestInterval(Integer earliestStart, Integer latestEnd, Integer minEnergy,
-                                                          Integer maxEnergy) {
-        if(maxEnergy != null && maxEnergy == 0) {
-            logger.debug("{}: Skip creation of energy request with remaining max energy = 0", id);
-            return null;
-        }
-        RuntimeInterval energyRequestInterval = new RuntimeInterval();
-        energyRequestInterval.setEarliestStart(earliestStart);
-        energyRequestInterval.setLatestEnd(latestEnd);
-        energyRequestInterval.setMinEnergy(minEnergy);
-        energyRequestInterval.setMaxEnergy(maxEnergy);
-        logger.debug("{}: Energy request created: {}", id, energyRequestInterval);
-        return energyRequestInterval;
-    }
-
-    public void resetActiveTimeframInterval() {
-        if(runningTimeMonitor != null) {
-            logger.debug("{}: Reset active timeframe interval", id);
-            runningTimeMonitor.activateTimeframeInterval(new LocalDateTime(), (TimeframeInterval) null);
-        }
-    }
+//    public List<RuntimeInterval> getRuntimeIntervals(LocalDateTime now, boolean onlySufficient) {
+//        List<RuntimeInterval> nonEvOptionalEnergyRuntimeIntervals = null;
+//        if(runningTimeMonitor != null) {
+//            nonEvOptionalEnergyRuntimeIntervals = getRuntimeIntervals(now,
+//                    runningTimeMonitor.getSchedules(),
+//                    runningTimeMonitor.getActiveTimeframeInterval(),
+//                    onlySufficient,
+//                    runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(now),
+//                    runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(now));
+//        }
+//        return getRuntimeIntervals(nonEvOptionalEnergyRuntimeIntervals);
+//    }
+//
+//    public List<RuntimeInterval> getRuntimeIntervals(List<RuntimeInterval> nonEvOptionalEnergyRuntimeIntervals) {
+//        List<RuntimeInterval> runtimeIntervals = new ArrayList<>();
+//        if (isEvCharger()) {
+//            logger.debug("{}: control is ev charger", id);
+//            ElectricVehicleCharger electricVehicleCharger = (ElectricVehicleCharger) this.control;
+//            if (electricVehicleCharger.isInErrorState()) {
+//                logger.warn("{}: skipping runtime intervals because of charger error state", id);
+//            } else {
+//                logger.debug("{}: checking ev charger state", id);
+//                if (electricVehicleCharger.isVehicleConnected() || electricVehicleCharger.isCharging()) {
+//                    logger.debug("{}: connected={} charging={}", id,
+//                            electricVehicleCharger.isVehicleConnected(), electricVehicleCharger.isCharging());
+//                    if (runningTimeMonitor == null || runningTimeMonitor.getActiveTimeframeInterval() == null) {
+//                        logger.debug("{}: no active timeframe interval found", id);
+//                        RuntimeInterval evOptionalEnergy = getRuntimeIntervalForEVUsingOptionalEnergy(electricVehicleCharger);
+//                        if (evOptionalEnergy != null) {
+//                            logger.warn("{}: request for optional energy was created", id);
+//                            if (nonEvOptionalEnergyRuntimeIntervals != null && nonEvOptionalEnergyRuntimeIntervals.size() > 0) {
+//                                // evOptionalEnergy runtime interval must not overlap with other intervals
+//                                Integer firstNonEvOptionalEnergyRuntimeIntervalEarliestStart
+//                                        = nonEvOptionalEnergyRuntimeIntervals.get(0).getEarliestStart();
+//                                if(firstNonEvOptionalEnergyRuntimeIntervalEarliestStart > 0) {
+//                                    evOptionalEnergy.setLatestEnd(firstNonEvOptionalEnergyRuntimeIntervalEarliestStart - 1);
+//                                }
+//                            }
+//                            logger.debug("{}: requesting optional energy for electric vehicle: {}", id, evOptionalEnergy);
+//                            runtimeIntervals.add(evOptionalEnergy);
+//                        }
+//                        else {
+//                            logger.warn("{}: no request for optional energy was created", id);
+//                        }
+//                    }
+//                    else {
+//                        logger.debug("{}: active timeframe interval found - not requesting optional energy", id);
+//                    }
+//                    if (nonEvOptionalEnergyRuntimeIntervals != null && nonEvOptionalEnergyRuntimeIntervals.size() > 0) {
+//                        runtimeIntervals.addAll(nonEvOptionalEnergyRuntimeIntervals);
+//                    }
+//                }
+//                else {
+//                    logger.debug("{}: ignoring runtime intervals due to vehicle state {}", id, electricVehicleCharger.getState());
+//                }
+//            }
+//        }
+//        else {
+//            if (nonEvOptionalEnergyRuntimeIntervals != null && nonEvOptionalEnergyRuntimeIntervals.size() > 0) {
+//                runtimeIntervals.addAll(nonEvOptionalEnergyRuntimeIntervals);
+//            }
+//        }
+//        return runtimeIntervals;
+//    }
+//
+//    protected List<RuntimeInterval> getRuntimeIntervals(LocalDateTime now, List<Schedule> schedules,
+//                                                        TimeframeInterval activeTimeframeInterval, boolean onlySufficient,
+//                                                        Integer remainingMinRunningTime, Integer remainingMaxRunningTime) {
+//        List<RuntimeInterval> runtimeIntervals = new ArrayList<>();
+//        if(schedules != null && schedules.size() > 0) {
+//            logger.debug("{}: Active schedules: {}", id, schedules.size());
+//            if(activeTimeframeInterval != null) {
+//                // active timeframe interval has always to be added even if not sufficient
+//                Schedule schedule = activeTimeframeInterval.getTimeframe().getSchedule();
+//                Request request = schedule.getRequest();
+//                if(request instanceof RuntimeRequest) {
+//                    addRuntimeRequestInterval(now, activeTimeframeInterval.getInterval(), runtimeIntervals,
+//                            remainingMinRunningTime, remainingMaxRunningTime);
+//                }
+//                else if(request instanceof EnergyRequest) {
+//                    EnergyRequest remainingEnergy = calculateRemainingEnergy(now, schedule);
+//                    if(remainingEnergy != null) {
+//                        addEnergyRequestInterval(now, runtimeIntervals, activeTimeframeInterval.getInterval(),
+//                                remainingEnergy.getMin(now), remainingEnergy.getMax(now));
+//                    }
+//                }
+//                else if(request instanceof SocRequest) {
+//                    EnergyRequest remainingEnergy = calculateRemainingEnergy(now, (SocRequest) request, true);
+//                    if(remainingEnergy != null) {
+//                        addEnergyRequestInterval(now, runtimeIntervals, activeTimeframeInterval.getInterval(),
+//                                remainingEnergy.getMin(now), remainingEnergy.getMax(now));
+//                    }
+//                }
+//            }
+//
+//            Interval considerationInterval = new Interval(now.toDateTime(), now.plusDays(CONSIDERATION_INTERVAL_DAYS).toDateTime());
+//            List<TimeframeInterval> timeFrameIntervals = Schedule.findTimeframeIntervals(now, considerationInterval,
+//                    schedules, false, onlySufficient);
+//            for(TimeframeInterval timeframeIntervalOfSchedule : timeFrameIntervals) {
+//                Schedule schedule = timeframeIntervalOfSchedule.getTimeframe().getSchedule();
+//                Interval interval = timeframeIntervalOfSchedule.getInterval();
+//                Request request = schedule.getRequest();
+//                if(request instanceof RuntimeRequest) {
+//                    Integer minRunningTime = request.getMin(now);
+//                    if(interval.contains(now.toDateTime()) && remainingMinRunningTime != null) {
+//                        minRunningTime = remainingMinRunningTime;
+//                    }
+//                    addRuntimeRequestInterval(now, interval, runtimeIntervals, minRunningTime, request.getMax(now));
+//                }
+//                else if(request instanceof EnergyRequest) {
+//                    addEnergyRequestInterval(now, runtimeIntervals, interval, request.getMin(now), request.getMax(now));
+//                }
+//                else if(request instanceof SocRequest) {
+//                    EnergyRequest remainingEnergy = calculateRemainingEnergy(now, (SocRequest) request, false);
+//                    if(remainingEnergy != null) {
+//                        addEnergyRequestInterval(now, runtimeIntervals, interval,
+//                                remainingEnergy.getMin(now), remainingEnergy.getMax(now));
+//                    }
+//                }
+//            }
+//        }
+//        else if(activeTimeframeInterval != null) {
+//            logger.debug("{}: Active timeframe interval found", id);
+//            Schedule schedule = activeTimeframeInterval.getTimeframe().getSchedule();
+//            Request request = schedule.getRequest();
+//            if(request instanceof RuntimeRequest) {
+//                addRuntimeRequestInterval(now, activeTimeframeInterval.getInterval(), runtimeIntervals,
+//                        remainingMinRunningTime, remainingMaxRunningTime);
+//            }
+//            else if(request instanceof EnergyRequest) {
+//                EnergyRequest remainingEnergy = calculateRemainingEnergy(now, schedule);
+//                addEnergyRequestInterval(now, runtimeIntervals, activeTimeframeInterval.getInterval(),
+//                        remainingEnergy.getMin(now), remainingEnergy.getMax(now));
+//            }
+//        }
+//        else {
+//            logger.debug("{}: No timeframes found", id);
+//        }
+//        return runtimeIntervals;
+//    }
+//
+//    public EnergyRequest calculateRemainingEnergy(LocalDateTime now, Schedule schedule) {
+//        return buildEnergyRequestConsideringEnergyAlreadyCharged(now,
+//                schedule.getRequest().getMin(now), schedule.getRequest().getMax(now));
+//    }
+//
+//    public EnergyRequest calculateRemainingEnergy(LocalDateTime now, SocRequest socRequest, boolean considerEnergyAlreadyCharged) {
+//        if(isEvCharger()) {
+//            ElectricVehicleCharger charger = (ElectricVehicleCharger) this.control;
+//            ElectricVehicle ev = charger.getVehicle(socRequest.getEvId());
+//            if(ev == null) {
+//                return buildEnergyRequest(0, 0);
+//            }
+//            Integer socStart = charger.getConnectedVehicleSoc() != null ? charger.getConnectedVehicleSoc() : 0;
+//            int energyToBeCharged = 0;
+//            if(socRequest.getSoc() > socStart) {
+//                energyToBeCharged = Float.valueOf((socRequest.getSoc() - socStart)/100.0f
+//                        * (100 + ev.getChargeLoss())/100.0f * ev.getBatteryCapacity()).intValue();
+//            }
+//            logger.debug("{}: Energy to be charged: {} Wh (batteryCapacity={}Wh chargeLoss={}% socStart={} socRequested={})",
+//                    id, energyToBeCharged, ev.getBatteryCapacity(), ev.getChargeLoss(), socStart, socRequest.getSoc());
+//            if(considerEnergyAlreadyCharged) {
+//                return buildEnergyRequestConsideringEnergyAlreadyCharged(now, energyToBeCharged, energyToBeCharged);
+//            }
+//            return buildEnergyRequest(energyToBeCharged, energyToBeCharged);
+//        }
+//        return null;
+//    }
+//
+//    private EnergyRequest buildEnergyRequestConsideringEnergyAlreadyCharged(LocalDateTime now, int min, int max) {
+//        EnergyRequest remainingEnergy = buildEnergyRequest(min, max);
+//        if(remainingEnergy != null) {
+//            if(meter != null) {
+//                int whAlreadyCharged = Float.valueOf(meter.getEnergy() * 1000.0f).intValue();
+//                remainingEnergy.setMin(min - whAlreadyCharged);
+//                if(remainingEnergy.getMax(now) != null) {
+//                    remainingEnergy.setMax(max - whAlreadyCharged);
+//                }
+//            }
+//            logger.debug("{}: Remaining energy calculated: {}", id, remainingEnergy);
+//        }
+//        return remainingEnergy;
+//    }
+//
+//    private EnergyRequest buildEnergyRequest(int min, int max) {
+//        if(max == 0) {
+//            logger.debug("{}: Skip creation of energy request with remaining max energy = 0", id);
+//            return null;
+//        }
+//        EnergyRequest request = new EnergyRequest();
+//        request.setMin(min);
+//        request.setMax(max);
+//        return request;
+//    }
+//
+//    private RuntimeInterval getRuntimeIntervalForEVUsingOptionalEnergy(ElectricVehicleCharger evCharger) {
+//        float energy = 0.0f;
+//        if(meter != null) {
+//            energy = meter.getEnergy();
+//            logger.debug("{}: energy metered: {} kWh", id, energy);
+//        }
+//        else {
+//            logger.debug("{}: No energy meter configured - cannot calculate maxEnergy", id);
+//        }
+//        RuntimeInterval runtimeInterval = null;
+//        ElectricVehicle vehicle = evCharger.getConnectedVehicle();
+//        if(vehicle != null) {
+//            logger.warn("{}: creating optional energy request for vehicleId={}", id, vehicle.getId());
+//            int batteryCapacity = vehicle.getBatteryCapacity();
+//            Integer initialSoc = evCharger.getConnectedVehicleSoc();
+//            Integer targetSoc = vehicle.getDefaultSocOptionalEnergy();
+//            logger.debug("{}: calculating optional energy evId={} batteryCapactiy={} chargeLoss={}% initialSoc={} targetSoc={}",
+//                    id, vehicle.getId(), batteryCapacity, vehicle.getChargeLoss(), initialSoc, targetSoc);
+//            if(initialSoc == null) {
+//                initialSoc = 0;
+//            }
+//            if(targetSoc == null) {
+//                targetSoc = 100;
+//            }
+//            Integer maxEnergy = Float.valueOf((targetSoc - initialSoc)/100.0f
+//                    * (100 + vehicle.getChargeLoss())/100.0f * batteryCapacity).intValue()
+//                    - Float.valueOf(energy * 1000).intValue();
+//            logger.debug("{}: optional energy calculated={}Wh", id, maxEnergy);
+//            if (maxEnergy > 0) {
+//                runtimeInterval = new RuntimeInterval();
+//                runtimeInterval.setEarliestStart(0);
+//                runtimeInterval.setLatestEnd(CONSIDERATION_INTERVAL_DAYS * 24 * 3600);
+//                runtimeInterval.setMinEnergy(0);
+//                runtimeInterval.setMaxEnergy(maxEnergy);
+//            }
+//        }
+//        else {
+//            logger.warn("{}: no connected vehicle was found", id);
+//        }
+//        return runtimeInterval;
+//    }
+//
+//    private void addRuntimeRequestInterval(LocalDateTime now, Interval interval, List<RuntimeInterval> runtimeIntervals,
+//                                           Integer remainingMinRunningTime, Integer remainingMaxRunningTime) {
+//        RuntimeInterval runtimeInterval = createRuntimeRequestInterval(interval, remainingMinRunningTime, remainingMaxRunningTime, now);
+//        if(runtimeInterval != null) {
+//            if(! isOverlappingRuntimeInterval(runtimeInterval, runtimeIntervals)) {
+//                runtimeIntervals.add(runtimeInterval);
+//            }
+//            else {
+//                logger.debug("{} Ignore overlapping RuntimeInterval: {}", id, runtimeInterval);
+//            }
+//        }
+//    }
+//
+//    private void addEnergyRequestInterval(LocalDateTime now, List<RuntimeInterval> runtimeIntervals, Interval interval, Integer minEnergy,
+//                                          Integer maxEnergy) {
+//        RuntimeInterval runtimeInterval = createEnergyRequestInterval(interval, minEnergy, maxEnergy, now);
+//        if(runtimeInterval != null) {
+//            if(!isFutureEmptyEnergyRequestInterval(runtimeInterval)) {
+//                if(! isOverlappingRuntimeInterval(runtimeInterval, runtimeIntervals)) {
+//                    runtimeIntervals.add(runtimeInterval);
+//                }
+//                else {
+//                    logger.debug("{} Ignore overlapping request Interval: {}", id, runtimeInterval);
+//                }
+//            }
+//            else {
+//                logger.debug("{} Ignore future empty energy request Interval: {}", id, runtimeInterval);
+//            }
+//        }
+//    }
+//
+//    protected boolean isFutureEmptyEnergyRequestInterval(RuntimeInterval runtimeInterval) {
+//        return runtimeInterval.getEarliestStart() > 0
+//                && runtimeInterval.getMinEnergy() == 0
+//                && runtimeInterval.getMaxEnergy() == 0;
+//    }
+//
+//    protected boolean isOverlappingRuntimeInterval(RuntimeInterval runtimeInterval, List<RuntimeInterval> runtimeIntervals) {
+//        // we already might have a runtime request obtained from RunningTimeMonitor which might have been added
+//        // manually (setRuntime() aka click green traffic light). It would be not equal to any of the runtime requests
+//        // derived from the schedule, e.g. (from IntegrationTest.testClickGoLight):
+//        // RuntimeInterval created: 0s-1800s:1800s/nulls
+//        // RuntimeInterval created: 0s-25200s:1800s/nulls <--- has to be excluded
+//        // RuntimeInterval created: 82800s-111600s:3600s/nulls
+//        // RuntimeInterval created: 169200s-198000s:3600s/nulls
+//        for(RuntimeInterval existingRuntimeInterval : runtimeIntervals) {
+//            if(runtimeInterval.getEarliestStart()>= existingRuntimeInterval.getEarliestStart()
+//                    && runtimeInterval.getEarliestStart() < existingRuntimeInterval.getLatestEnd()) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
+//
+//    protected RuntimeInterval createRuntimeRequestInterval(Interval interval, Integer minRunningTime,
+//                                                           Integer maxRunningTime, LocalDateTime now) {
+//        Integer earliestStart = calculateEarliestStart(now, interval.getStart());
+//        Integer latestEnd = calculateLatestEnd(now, interval.getEnd());
+//        if(minRunningTime != null && minRunningTime > latestEnd) {
+//            minRunningTime = latestEnd;
+//        }
+//        if(maxRunningTime != null && maxRunningTime > latestEnd) {
+//            maxRunningTime = latestEnd;
+//        }
+//        return createRuntimeRequestInterval(earliestStart, latestEnd, minRunningTime, maxRunningTime);
+//    }
+//
+//    protected RuntimeInterval createEnergyRequestInterval(Interval interval, Integer minEnergy,
+//                                                          Integer maxEnergy, LocalDateTime now) {
+//        Integer earliestStart = calculateEarliestStart(now, interval.getStart());
+//        Integer latestEnd = calculateLatestEnd(now, interval.getEnd());
+//        return createEnergyRequestInterval(earliestStart, latestEnd, minEnergy, maxEnergy);
+//    }
+//
+//    protected Integer calculateEarliestStart(LocalDateTime now, DateTime start) {
+//        Integer earliestStart = 0;
+//        if(start.isAfter(now.toDateTime())) {
+//            earliestStart = Double.valueOf(new Interval(now.toDateTime(), start).toDurationMillis() / 1000).intValue();
+//        }
+//        return earliestStart;
+//    }
+//
+//    protected Integer calculateLatestEnd(LocalDateTime now, DateTime end) {
+//        LocalDateTime nowBeforeEnd = new LocalDateTime(now);
+//        if(now.toDateTime().isAfter(end)) {
+//            nowBeforeEnd = now.minusHours(24);
+//        }
+//        return Double.valueOf(new Interval(nowBeforeEnd.toDateTime(), end).toDurationMillis() / 1000).intValue();
+//    }
+//
+//
+//    protected RuntimeInterval createRuntimeRequestInterval(Integer earliestStart, Integer latestEnd, Integer minRunningTime,
+//                                                           Integer maxRunningTime) {
+//        RuntimeInterval runtimeInterval = new RuntimeInterval();
+//        runtimeInterval.setEarliestStart(earliestStart);
+//        runtimeInterval.setLatestEnd(latestEnd);
+//        runtimeInterval.setMinRunningTime(minRunningTime);
+//        runtimeInterval.setMaxRunningTime(maxRunningTime);
+//        logger.debug("{}: RuntimeInterval created: {}", id, runtimeInterval);
+//        return runtimeInterval;
+//    }
+//
+//    protected RuntimeInterval createEnergyRequestInterval(Integer earliestStart, Integer latestEnd, Integer minEnergy,
+//                                                          Integer maxEnergy) {
+//        if(maxEnergy != null && maxEnergy == 0) {
+//            logger.debug("{}: Skip creation of energy request with remaining max energy = 0", id);
+//            return null;
+//        }
+//        RuntimeInterval energyRequestInterval = new RuntimeInterval();
+//        energyRequestInterval.setEarliestStart(earliestStart);
+//        energyRequestInterval.setLatestEnd(latestEnd);
+//        energyRequestInterval.setMinEnergy(minEnergy);
+//        energyRequestInterval.setMaxEnergy(maxEnergy);
+//        logger.debug("{}: Energy request created: {}", id, energyRequestInterval);
+//        return energyRequestInterval;
+//    }
+//
+//    public void resetActiveTimeframInterval() {
+//        if(runningTimeMonitor != null) {
+//            logger.debug("{}: Reset active timeframe interval", id);
+//            runningTimeMonitor.activateTimeframeInterval(new LocalDateTime(), (TimeframeInterval) null);
+//        }
+//    }
 
     @Override
     public void controlStateChanged(LocalDateTime now, boolean switchOn) {
@@ -936,31 +936,30 @@ public class Appliance implements Validateable, ControlStateChangedListener,
 
     @Override
     public void onEVChargerSocChanged(LocalDateTime now, Float soc) {
-
     }
 
     @Override
     public void startingCurrentDetected(LocalDateTime now) {
-        logger.debug("{}: Activating next sufficient timeframe interval for starting current controlled appliance", id);
-        TimeframeInterval timeframeInterval;
-        Schedule forcedSchedule = getForcedSchedule(now);
-        if(forcedSchedule != null) {
-            logger.debug("{}: Forcing schedule {}", id, forcedSchedule);
-            timeframeInterval = Schedule.getCurrentOrNextTimeframeInterval(now, Collections.singletonList(forcedSchedule), false, true);
-        }
-        else {
-            timeframeInterval = Schedule.getCurrentOrNextTimeframeInterval(now, schedules, false, true);
-        }
-        if(timeframeInterval != null) {
-            timeframeInterval.setTriggeredByStartingCurrent(true);
-        }
-        runningTimeMonitor.activateTimeframeInterval(now, timeframeInterval);
+//        logger.debug("{}: Activating next sufficient timeframe interval for starting current controlled appliance", id);
+//        TimeframeInterval timeframeInterval;
+//        Schedule forcedSchedule = getForcedSchedule(now);
+//        if(forcedSchedule != null) {
+//            logger.debug("{}: Forcing schedule {}", id, forcedSchedule);
+//            timeframeInterval = Schedule.getCurrentOrNextTimeframeInterval(now, Collections.singletonList(forcedSchedule), false, true);
+//        }
+//        else {
+//            timeframeInterval = Schedule.getCurrentOrNextTimeframeInterval(now, schedules, false, true);
+//        }
+//        if(timeframeInterval != null) {
+//            timeframeInterval.setTriggeredByStartingCurrent(true);
+//        }
+//        runningTimeMonitor.activateTimeframeInterval(now, timeframeInterval);
     }
 
     @Override
     public void finishedCurrentDetected() {
-        logger.debug("{}: Deactivating timeframe interval until starting current is detected again", id);
-        resetActiveTimeframInterval();
+//        logger.debug("{}: Deactivating timeframe interval until starting current is detected again", id);
+//        resetActiveTimeframInterval();
     }
 
     @Override
@@ -970,27 +969,27 @@ public class Appliance implements Validateable, ControlStateChangedListener,
             endOfTimeFrame(now);
         }
         else if(activatedInterval != null) {
-            if(isEvCharger()) {
-                ElectricVehicleCharger charger = (ElectricVehicleCharger) this.control;
-                if(charger.isVehicleConnected()) {
-                    Request request = activatedInterval.getTimeframe().getSchedule().getRequest();
-                    if(request instanceof EnergyRequest) {
-                        charger.setChargeAmount(request.getMin(now));
-                    }
-                    else if(request instanceof SocRequest) {
-                        EnergyRequest remainingEnergy = calculateRemainingEnergy(now, (SocRequest) request, false);
-                        charger.setChargeAmount(remainingEnergy != null ? remainingEnergy.getMin(now) : 0);
-                    }
-                }
-            }
+//            if(isEvCharger()) {
+//                ElectricVehicleCharger charger = (ElectricVehicleCharger) this.control;
+//                if(charger.isVehicleConnected()) {
+//                    Request request = activatedInterval.getTimeframe().getSchedule().getRequest();
+//                    if(request instanceof EnergyRequest) {
+//                        charger.setChargeAmount(request.getMin(now));
+//                    }
+//                    else if(request instanceof SocRequest) {
+//                        EnergyRequest remainingEnergy = calculateRemainingEnergy(now, (SocRequest) request, false);
+//                        charger.setChargeAmount(remainingEnergy != null ? remainingEnergy.getMin(now) : 0);
+//                    }
+//                }
+//            }
         }
         else {
             endOfTimeFrame(now);
             if(! wasRunning) {
-                if(runningTimeMonitor.getRunningTimeOfCurrentTimeFrame(now) == null) {
-                    logger.debug("{}: Rescheduling timeframe interval for starting current controlled appliance with no running time", id);
-                    startingCurrentDetected(now);
-                }
+//                if(runningTimeMonitor.getRunningTimeOfCurrentTimeFrame(now) == null) {
+//                    logger.debug("{}: Rescheduling timeframe interval for starting current controlled appliance with no running time", id);
+//                    startingCurrentDetected(now);
+//                }
             }
         }
     }
@@ -1009,11 +1008,6 @@ public class Appliance implements Validateable, ControlStateChangedListener,
     public void onTimeframeIntervalStateChanged(LocalDateTime now, TimeframeIntervalState previousState, TimeframeIntervalState newState) {
     }
 
-    /**
-     * This method should not update RunningTimeMonitor (since it is already triggered by it).
-     *
-     * @param now
-     */
     private void endOfTimeFrame(LocalDateTime now) {
         setApplianceState(now, false, null, "Switching off due to end of time frame");
         if(meter != null && ! isEvCharger()) {
@@ -1024,14 +1018,14 @@ public class Appliance implements Validateable, ControlStateChangedListener,
 
     @Override
     public void activeIntervalChecked(LocalDateTime now, String applianceId, TimeframeInterval activeInterval) {
-        Integer remainingMinRunningTime = runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(now);
-        Integer remainingMaxRunningTime = runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(now);
-        logger.debug("{}: Checking running time: remainingMinRunningTime={} remainingMaxRunningTime={}", id, remainingMinRunningTime, remainingMaxRunningTime);
-        if((remainingMinRunningTime !=null && remainingMinRunningTime <= 0
-                && remainingMaxRunningTime != null && remainingMaxRunningTime <= 0)) {
-            // Timeframe must not be deactivated in order to avoid recreation of the same timeframe!
-            // Only for StartingCurrentSwitch timeframe should be deactivated
-            setApplianceState(now,false, null, "Switching off because runningTime finished");
-        }
+//        Integer remainingMinRunningTime = runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(now);
+//        Integer remainingMaxRunningTime = runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(now);
+//        logger.debug("{}: Checking running time: remainingMinRunningTime={} remainingMaxRunningTime={}", id, remainingMinRunningTime, remainingMaxRunningTime);
+//        if((remainingMinRunningTime !=null && remainingMinRunningTime <= 0
+//                && remainingMaxRunningTime != null && remainingMaxRunningTime <= 0)) {
+//            // Timeframe must not be deactivated in order to avoid recreation of the same timeframe!
+//            // Only for StartingCurrentSwitch timeframe should be deactivated
+//            setApplianceState(now,false, null, "Switching off because runningTime finished");
+//        }
     }
 }
