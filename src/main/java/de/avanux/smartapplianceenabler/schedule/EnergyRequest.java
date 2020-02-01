@@ -41,6 +41,11 @@ public class EnergyRequest extends AbstractEnergyRequest implements Request {
         this.max = max;
     }
 
+    @Override
+    public boolean isUsingOptionalEnergy() {
+        return (this.min != null && this.min == 0 && this.max > 0);
+    }
+
     public Integer getMin(LocalDateTime now) {
         return min;
     }

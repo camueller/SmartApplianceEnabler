@@ -34,43 +34,57 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "min", "max" })
-public class RuntimeRequest extends AbstractRequest implements Request, StartingCurrentSwitchListener {
+public class RuntimeRequest extends AbstractRequest implements StartingCurrentSwitchListener {
     @XmlAttribute
     private Integer min;
     @XmlAttribute
     private int max;
     private transient Logger logger = LoggerFactory.getLogger(RuntimeRequest.class);
+    private transient Integer currentMin;
+    private transient Integer currentMax;
     private transient boolean wasRunning;
-    private transient LocalDateTime controlStatusChangedAt;
 
     public RuntimeRequest() {
     }
 
     public RuntimeRequest(Integer min, Integer max) {
-        this.min = min;
-        this.max = max;
+        setMin(min);
+        setMax(max);
     }
 
     public Integer getMin(LocalDateTime now) {
-        if(min != null && isActive() && getControl().isOn()) {
-            return min - getSecondsSinceStatusChange(now);
+        if(currentMin == null) {
+            currentMin = min;
         }
-        return min;
+        if(currentMin != null && isActive() && getControl().isOn()) {
+            return currentMin - getSecondsSinceStatusChange(now);
+        }
+        return currentMin;
     }
 
     public void setMin(Integer min) {
         this.min = min;
+        this.currentMin = min;
     }
 
     public Integer getMax(LocalDateTime now) {
-        if(isActive() && getControl().isOn()) {
-            return max - getSecondsSinceStatusChange(now);
+        if(currentMax == null) {
+            currentMax = max;
         }
-        return max;
+        if(isActive() && getControl().isOn()) {
+            return currentMax - getSecondsSinceStatusChange(now);
+        }
+        return currentMax;
     }
 
     public void setMax(Integer max) {
         this.max = max;
+        this.currentMax = max;
+    }
+
+    @Override
+    public boolean isUsingOptionalEnergy() {
+        return (this.min != null && this.min == 0 && this.max > 0);
     }
 
     @Override
@@ -91,17 +105,14 @@ public class RuntimeRequest extends AbstractRequest implements Request, Starting
                 wasRunning = true;
             }
             else {
-                if(controlStatusChangedAt != null) {
-                    int secondsSinceStatusChange = getSecondsSinceStatusChange(now);
-                    int newMax = this.max - secondsSinceStatusChange;
-                    this.max = newMax > 0 ? newMax : 0;
-                    if(this.min != null) {
-                        int newMin = this.min - secondsSinceStatusChange;
-                        this.min = newMin > 0 ? newMin : 0;
-                    }
+                int secondsSinceStatusChange = getSecondsSinceStatusChange(now);
+                int newMax = this.currentMax - secondsSinceStatusChange;
+                this.currentMax = newMax > 0 ? newMax : 0;
+                if(this.currentMin != null) {
+                    int newMin = this.currentMin - secondsSinceStatusChange;
+                    this.currentMin = newMin > 0 ? newMin : 0;
                 }
             }
-            controlStatusChangedAt = now;
         }
     }
 
@@ -120,32 +131,18 @@ public class RuntimeRequest extends AbstractRequest implements Request, Starting
         return getMax(now) <= 0;
     }
 
-    protected int getSecondsSinceStatusChange(LocalDateTime now) {
-        try {
-            if(this.controlStatusChangedAt != null && now != null) {
-                Interval runtimeSinceStatusChange = new Interval(this.controlStatusChangedAt.toDateTime(), now.toDateTime());
-                return Double.valueOf(runtimeSinceStatusChange.toDuration().getMillis() / 1000.0).intValue();
-            }
-        }
-        catch(IllegalArgumentException e) {
-            logger.warn("{} Invalid interval: start={} end={}", getApplianceId(), this.controlStatusChangedAt.toDateTime(),
-                    now.toDateTime());
-        }
-        return 0;
-    }
-
     @Override
     public String toString() {
         String text = super.toString();
         text += "/";
-        if(min != null) {
-            text += min.toString();
+        if(currentMin != null) {
+            text += currentMin.toString();
         }
         else {
             text += "_";
         }
         text += "s/";
-        text += max;
+        text += currentMax;
         text += "s";
         return text;
     }

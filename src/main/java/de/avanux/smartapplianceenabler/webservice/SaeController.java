@@ -33,10 +33,7 @@ import de.avanux.smartapplianceenabler.meter.MeterDefaults;
 import de.avanux.smartapplianceenabler.meter.S0ElectricityMeterDefaults;
 import de.avanux.smartapplianceenabler.modbus.ModbusElectricityMeterDefaults;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
-import de.avanux.smartapplianceenabler.schedule.RuntimeRequest;
-import de.avanux.smartapplianceenabler.schedule.Schedule;
-import de.avanux.smartapplianceenabler.schedule.Schedules;
-import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
+import de.avanux.smartapplianceenabler.schedule.*;
 import de.avanux.smartapplianceenabler.semp.webservice.*;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
@@ -761,30 +758,25 @@ public class SaeController {
                 applianceStatus.setType(identification.getDeviceType());
             }
 
-            List<RuntimeInterval> runtimeIntervals = appliance.getRuntimeIntervals(now, false);
-
+            TimeframeInterval nextTimeframeInterval = appliance.getTimeframeIntervalHandler().getQueue().get(0);
             if (appliance.isControllable()) {
                 applianceStatus.setControllable(true);
                 Control control = appliance.getControl();
                 Meter meter = appliance.getMeter();
                 applianceStatus.setOn(control.isOn());
-                RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
-                TimeframeInterval activeTimeframeInterval =
-                        runningTimeMonitor != null ? runningTimeMonitor.getActiveTimeframeInterval() : null;
-                RuntimeInterval nextRuntimeInterval = null;
-                if (runtimeIntervals.size() > 0) {
-                    nextRuntimeInterval = runtimeIntervals.get(0);
+                if (nextTimeframeInterval != null) {
                     applianceStatus.setPlanningRequested(true);
-                    applianceStatus.setEarliestStart(nextRuntimeInterval.getEarliestStart());
-                    applianceStatus.setLatestStart(TimeframeInterval.getLatestStart(nextRuntimeInterval.getLatestEnd(),
-                            nextRuntimeInterval.getMinRunningTime()));
+                    applianceStatus.setEarliestStart(nextTimeframeInterval.getEarliestStartSeconds(now));
+                    applianceStatus.setLatestStart(TimeframeInterval.getLatestStart(
+                            nextTimeframeInterval.getLatestEndSeconds(now),
+                            nextTimeframeInterval.getRequest().getMin(now)));
                     if (control.isOn()) {
-                        applianceStatus.setOptionalEnergy(nextRuntimeInterval.isUsingOptionalEnergy());
+                        applianceStatus.setOptionalEnergy(nextTimeframeInterval.getRequest().isUsingOptionalEnergy());
                     }
-                    if (activeTimeframeInterval == null) {
+                    if (nextTimeframeInterval.getState() == TimeframeIntervalState.QUEUED) {
                         applianceStatus.setRunningTime(0);
-                        applianceStatus.setRemainingMinRunningTime(nextRuntimeInterval.getMinRunningTime());
-                        applianceStatus.setRemainingMaxRunningTime(nextRuntimeInterval.getMaxRunningTime());
+                        applianceStatus.setRemainingMinRunningTime(nextTimeframeInterval.getRequest().getMin(now));
+                        applianceStatus.setRemainingMaxRunningTime(nextTimeframeInterval.getRequest().getMax(now));
                     }
                 }
                 if (control instanceof ElectricVehicleCharger) {
@@ -810,23 +802,25 @@ public class SaeController {
                             applianceStatus.setCurrentChargePower(chargePower);
                         }
                         applianceStatus.setChargedEnergyAmount(whAlreadyCharged);
-                        Integer chargeAmount = evCharger.getChargeAmount();
-                        applianceStatus.setPlannedEnergyAmount(chargeAmount != null ? chargeAmount : 0);
-                        if (nextRuntimeInterval != null && !nextRuntimeInterval.isUsingOptionalEnergy()) {
-                            applianceStatus.setLatestEnd(nextRuntimeInterval.getLatestEnd());
+                        int chargeAmount = 0;
+                        if(nextTimeframeInterval != null
+                                && nextTimeframeInterval.getRequest() instanceof AbstractEnergyRequest) {
+                            chargeAmount = nextTimeframeInterval.getRequest().getMax(now);
+                        }
+                        applianceStatus.setPlannedEnergyAmount(chargeAmount);
+                        if (nextTimeframeInterval != null && !nextTimeframeInterval.getRequest().isUsingOptionalEnergy()) {
+                            applianceStatus.setLatestEnd(nextTimeframeInterval.getLatestEndSeconds(now));
                         }
                     }
                 }
-                if (activeTimeframeInterval != null) {
+                if (nextTimeframeInterval != null && nextTimeframeInterval.getState() == TimeframeIntervalState.ACTIVE) {
                     applianceStatus.setPlanningRequested(true);
-                    Integer runningTime = runningTimeMonitor.getRunningTimeOfCurrentTimeFrame(now);
-                    applianceStatus.setRunningTime(runningTime);
-                    Integer minRunningTime = runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(now);
-                    applianceStatus.setRemainingMinRunningTime(minRunningTime != null ? minRunningTime : 0);
-                    Integer maxRunningTime = runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(now);
-                    applianceStatus.setRemainingMaxRunningTime(maxRunningTime);
-                    if (runningTimeMonitor.isInterrupted()) {
-                        Interval interrupted = new Interval(runningTimeMonitor.getStatusChangedAt().toDateTime(),
+                    applianceStatus.setRunningTime(nextTimeframeInterval.getRequest().getRuntime(now));
+                    applianceStatus.setRemainingMinRunningTime(nextTimeframeInterval.getRequest().getMin(now));
+                    applianceStatus.setRemainingMaxRunningTime(nextTimeframeInterval.getRequest().getMax(now));
+                    if (! nextTimeframeInterval.getRequest().isEnabled()) {
+                        Interval interrupted = new Interval(
+                                nextTimeframeInterval.getRequest().getControlStatusChangedAt().toDateTime(),
                                 now.toDateTime());
                         applianceStatus.setInterruptedSince(
                                 new Double(interrupted.toDurationMillis() / 1000).intValue());

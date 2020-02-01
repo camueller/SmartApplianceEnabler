@@ -27,6 +27,11 @@ public class OptionalEnergySocRequest extends SocRequest {
     }
 
     @Override
+    public boolean isUsingOptionalEnergy() {
+        return true;
+    }
+
+    @Override
     public String toString() {
         String text = super.toString();
         text += "/";

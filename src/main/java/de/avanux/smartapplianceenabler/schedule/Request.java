@@ -31,6 +31,8 @@ public interface Request extends Serializable, ApplianceIdConsumer, TimeframeInt
 
     void setMeter(Meter meter);
 
+    boolean isUsingOptionalEnergy();
+
     void setControl(Control control);
 
     Integer getMin(LocalDateTime now);
@@ -42,4 +44,8 @@ public interface Request extends Serializable, ApplianceIdConsumer, TimeframeInt
     void setEnabled(boolean enabled);
 
     boolean isFinished(LocalDateTime now);
+
+    Integer getRuntime(LocalDateTime now);
+
+    LocalDateTime getControlStatusChangedAt();
 }

@@ -56,6 +56,11 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
     }
 
     @Override
+    public boolean isUsingOptionalEnergy() {
+        return false;
+    }
+
+    @Override
     public Integer getMin(LocalDateTime now) {
         return getEnergy();
     }

@@ -71,7 +71,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     private transient boolean useOptionalEnergy = true;
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
     private transient Long switchChargingStateTimestamp;
-    private transient Integer chargeAmount;
+//    private transient Integer chargeAmount;
     private transient Integer chargePower;
     private transient GuardedTimerTask updateStateTimerTask;
     private transient boolean startChargingRequested;
@@ -126,13 +126,13 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                 ElectricVehicleChargerDefaults.getForceInitialCharging();
     }
 
-    public Integer getChargeAmount() {
-        return chargeAmount;
-    }
-
-    public void setChargeAmount(Integer chargeAmount) {
-        this.chargeAmount = chargeAmount;
-    }
+//    public Integer getChargeAmount() {
+//        return chargeAmount;
+//    }
+//
+//    public void setChargeAmount(Integer chargeAmount) {
+//        this.chargeAmount = chargeAmount;
+//    }
 
     public Integer getConnectedVehicleSoc() {
         return connectedVehicleSoc;
@@ -522,7 +522,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
             updateSoc(Integer.valueOf(socCurrent != null ? socCurrent : 0).floatValue());
             int energy = Float.valueOf(((float) resolvedSocRequested - getConnectedVehicleSoc())/100.0f
                     * (100 + vehicle.getChargeLoss())/100.0f * batteryCapacity).intValue();
-            setChargeAmount(energy);
+//            setChargeAmount(energy);
             logger.debug("{}: Calculated energy={}Wh (batteryCapacity={}Wh chargeLoss={}%)", applianceId, energy,
                     batteryCapacity, vehicle.getChargeLoss());
 
@@ -581,7 +581,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         control.stopCharging();
         boolean wasInChargingAfterLastVehicleConnected = wasInStateAfterLastState(EVChargerState.CHARGING, EVChargerState.VEHICLE_CONNECTED);
         this.switchChargingStateTimestamp = wasInChargingAfterLastVehicleConnected ? System.currentTimeMillis() : null;
-        this.chargeAmount = null;
+//        this.chargeAmount = null;
         this.chargePower = null;
         if(!this.startChargingRequested) {
             this.stopChargingRequested = true;

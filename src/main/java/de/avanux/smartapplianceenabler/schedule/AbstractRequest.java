@@ -22,6 +22,7 @@ import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.ev.EVChargerState;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import de.avanux.smartapplianceenabler.meter.Meter;
+import org.joda.time.Interval;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +34,8 @@ abstract public class AbstractRequest implements Request {
     private transient Control control;
     private transient boolean enabled;
     private transient boolean active;
+    private transient int runtimeUntilLastStatusChange;
+    private transient LocalDateTime controlStatusChangedAt;
 
 
     public AbstractRequest() {
@@ -83,15 +86,43 @@ abstract public class AbstractRequest implements Request {
     }
 
     @Override
+    public Integer getRuntime(LocalDateTime now) {
+        return runtimeUntilLastStatusChange + getSecondsSinceStatusChange(now);
+    }
+
+    @Override
+    public LocalDateTime getControlStatusChangedAt() {
+        return controlStatusChangedAt;
+    }
+
+    protected int getSecondsSinceStatusChange(LocalDateTime now) {
+        try {
+            if(controlStatusChangedAt != null && now != null) {
+                Interval runtimeSinceStatusChange = new Interval(controlStatusChangedAt.toDateTime(), now.toDateTime());
+                return Double.valueOf(runtimeSinceStatusChange.toDuration().getMillis() / 1000.0).intValue();
+            }
+        }
+        catch(IllegalArgumentException e) {
+            logger.warn("{} Invalid interval: start={} end={}", getApplianceId(), controlStatusChangedAt.toDateTime(),
+                    now.toDateTime());
+        }
+        return 0;
+    }
+
+    @Override
     public void controlStateChanged(LocalDateTime now, boolean switchOn) {
         if (isActive()) {
-            if (meter != null) {
-                if (switchOn) {
+            if (switchOn) {
+                if (meter != null) {
                     meter.startEnergyMeter();
-                } else {
+                }
+            } else {
+                if (meter != null) {
                     meter.stopEnergyMeter();
                 }
+                runtimeUntilLastStatusChange += getSecondsSinceStatusChange(now);
             }
+            controlStatusChangedAt = now;
         }
     }
 
