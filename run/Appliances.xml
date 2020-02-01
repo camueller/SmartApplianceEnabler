@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.5">
     <Appliance id="F-00000001-000000000001-00">
-        <StartingCurrentSwitch>
+        <StartingCurrentSwitch finishedCurrentDetectionDuration="20" minRunningTime="2">
             <HttpSwitch>
                 <HttpWrite url="http://thermomix/cm?cmnd=Power%20On">
                     <HttpWriteValue name="On"/>
@@ -20,7 +20,7 @@
             </HttpRead>
         </HttpElectricityMeter>
         <Schedule enabled="true">
-            <RuntimeRequest max="120" />
+            <RuntimeRequest max="300" />
             <DayTimeframe>
                 <Start hour="2" minute="0" second="0"/>
                 <End hour="22" minute="0" second="0"/>
