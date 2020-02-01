@@ -35,8 +35,6 @@ import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
 import de.avanux.smartapplianceenabler.util.DateTimeProvider;
 import de.avanux.smartapplianceenabler.util.DateTimeProviderImpl;
 import de.avanux.smartapplianceenabler.util.Validateable;
-import org.joda.time.DateTime;
-import org.joda.time.Interval;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
@@ -966,7 +964,7 @@ public class Appliance implements Validateable, ControlStateChangedListener,
     public void activeIntervalChanged(LocalDateTime now, String applianceId, TimeframeInterval deactivatedInterval,
                                       TimeframeInterval activatedInterval, boolean wasRunning) {
         if(activatedInterval != null && deactivatedInterval != null) {
-            endOfTimeFrame(now);
+            onTimeframeIntervalDeactivated(now);
         }
         else if(activatedInterval != null) {
 //            if(isEvCharger()) {
@@ -984,13 +982,13 @@ public class Appliance implements Validateable, ControlStateChangedListener,
 //            }
         }
         else {
-            endOfTimeFrame(now);
-            if(! wasRunning) {
+            onTimeframeIntervalDeactivated(now);
+//            if(! wasRunning) {
 //                if(runningTimeMonitor.getRunningTimeOfCurrentTimeFrame(now) == null) {
 //                    logger.debug("{}: Rescheduling timeframe interval for starting current controlled appliance with no running time", id);
 //                    startingCurrentDetected(now);
 //                }
-            }
+//            }
         }
     }
 
@@ -1008,8 +1006,8 @@ public class Appliance implements Validateable, ControlStateChangedListener,
     public void onTimeframeIntervalStateChanged(LocalDateTime now, TimeframeIntervalState previousState, TimeframeIntervalState newState) {
     }
 
-    private void endOfTimeFrame(LocalDateTime now) {
-        setApplianceState(now, false, null, "Switching off due to end of time frame");
+    private void onTimeframeIntervalDeactivated(LocalDateTime now) {
+        setApplianceState(now, false, null, "Switching off since timeframe interval was deactivated");
         if(meter != null && ! isEvCharger()) {
             meter.resetEnergyMeter();
         }

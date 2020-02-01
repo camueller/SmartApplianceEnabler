@@ -120,6 +120,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
                 .filter(timeframeInterval -> lastTimeframeInterval == null
                         || timeframeInterval.getInterval().getStart().isAfter(lastTimeframeInterval.getInterval().getEnd()))
                 .forEach(timeframeInterval -> addTimeframeIntervalToQueue(now, timeframeInterval, false));
+//        addTimeframeIntervalToQueue(now, timeframeIntervals.get(0), false);
     }
 
     public void updateQueue(LocalDateTime now) {

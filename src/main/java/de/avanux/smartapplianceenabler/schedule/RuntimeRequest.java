@@ -133,16 +133,19 @@ public class RuntimeRequest extends AbstractRequest implements StartingCurrentSw
 
     @Override
     public String toString() {
+        LocalDateTime now = new LocalDateTime();
+        Integer min = getMin(now);
+        Integer max = getMax(now);
         String text = super.toString();
         text += "/";
-        if(currentMin != null) {
-            text += currentMin.toString();
+        if(min != null) {
+            text += min.toString();
         }
         else {
             text += "_";
         }
         text += "s/";
-        text += currentMax;
+        text += max;
         text += "s";
         return text;
     }
