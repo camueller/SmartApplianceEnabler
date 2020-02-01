@@ -22,7 +22,7 @@
         <Schedule enabled="true">
             <RuntimeRequest max="120" />
             <DayTimeframe>
-                <Start hour="21" minute="0" second="0"/>
+                <Start hour="2" minute="0" second="0"/>
                 <End hour="22" minute="0" second="0"/>
             </DayTimeframe>
         </Schedule>
