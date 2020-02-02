@@ -44,11 +44,13 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
     private LinkedList<TimeframeInterval> queue = new LinkedList<>();
     private Set<ActiveIntervalChangedListener> timeframeIntervalChangedListeners = new HashSet<>();
     private Set<TimeframeIntervalStateChangedListener> timeframeIntervalStateChangedListeners = new HashSet<>();
+    private boolean controlExists;
 
     public TimeframeIntervalHandler(List<Schedule> schedules, Control control) {
         this.schedules = schedules;
         if(control != null) {
             control.addControlStateChangedListener(this);
+            controlExists = true;
         }
     }
 
@@ -66,26 +68,27 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
     }
 
     public void setTimer(Timer timer) {
-
-        this.fillQueueTimerTask = new GuardedTimerTask(this.applianceId, "FillQueueTimerTask", 1 * 3600 * 1000) {
-            @Override
-            public void runTask() {
-                fillQueue(new LocalDateTime());
+        if(controlExists) {
+            this.fillQueueTimerTask = new GuardedTimerTask(this.applianceId, "FillQueueTimerTask", 1 * 3600 * 1000) {
+                @Override
+                public void runTask() {
+                    fillQueue(new LocalDateTime());
+                }
+            };
+            if (timer != null) {
+                timer.schedule(fillQueueTimerTask, 0, fillQueueTimerTask.getPeriod());
             }
-        };
-        if (timer != null) {
-            timer.schedule(fillQueueTimerTask, 0, fillQueueTimerTask.getPeriod());
-        }
 
-        this.updateQueueTimerTask = new GuardedTimerTask(this.applianceId,
-                "UpdateActiveTimeframeInterval", 30000) {
-            @Override
-            public void runTask() {
-                updateQueue(new LocalDateTime());
+            this.updateQueueTimerTask = new GuardedTimerTask(this.applianceId,
+                    "UpdateActiveTimeframeInterval", 30000) {
+                @Override
+                public void runTask() {
+                    updateQueue(new LocalDateTime());
+                }
+            };
+            if (timer != null) {
+                timer.schedule(updateQueueTimerTask, 0, updateQueueTimerTask.getPeriod());
             }
-        };
-        if (timer != null) {
-            timer.schedule(updateQueueTimerTask, 0, updateQueueTimerTask.getPeriod());
         }
     }
 
