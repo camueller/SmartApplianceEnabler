@@ -112,9 +112,9 @@ export class ScheduleRequestRuntimeComponent implements OnChanges, OnInit, After
 
   expandParentForm() {
     this.formHandler.addFormControl(this.form, 'minRuntime', this.minRuntime,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]);
-    this.formHandler.addFormControl(this.form, 'maxRuntime', this.maxRuntime,
       [Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]);
+    this.formHandler.addFormControl(this.form, 'maxRuntime', this.maxRuntime,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]);
   }
 
   updateForm() {

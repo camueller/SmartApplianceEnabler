@@ -72,9 +72,9 @@ export class ScheduleRequestEnergyComponent implements OnChanges, OnInit, AfterV
 
   expandParentForm() {
     this.formHandler.addFormControl(this.form, 'minEnergy', this.minEnergy,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(this.form, 'maxEnergy', this.maxEnergy,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
+    this.formHandler.addFormControl(this.form, 'maxEnergy', this.maxEnergy,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
   }
 
   updateForm() {

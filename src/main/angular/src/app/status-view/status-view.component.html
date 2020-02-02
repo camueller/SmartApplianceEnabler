@@ -18,13 +18,13 @@
       <span class="appliance-status-value">{{toHourMinuteWithUnits(status.runningTime)}}</span>
     </div>
   </div>
-  <div *ngIf="status.remainingMaxRunningTime == null">
+  <div *ngIf="status.remainingMinRunningTime == null">
     <div class="appliance-status">
       <span class="appliance-status-label">{{getRemainingRunningTimeLabel(status)}}</span>
-      <span class="appliance-status-value">{{toHourMinuteWithUnits(status.remainingMinRunningTime)}}</span>
+      <span class="appliance-status-value">{{toHourMinuteWithUnits(status.remainingMaxRunningTime)}}</span>
     </div>
   </div>
-  <div *ngIf="status.remainingMaxRunningTime != null">
+  <div *ngIf="status.remainingMinRunningTime != null">
     <div class="appliance-status">
       <span class="appliance-status-label">{{getRemainingMinRunningTimeLabel(status)}}</span>
       <span class="appliance-status-value">{{toHourMinuteWithUnits(status.remainingMinRunningTime)}}</span>
