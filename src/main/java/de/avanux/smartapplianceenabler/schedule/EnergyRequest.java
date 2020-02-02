@@ -59,13 +59,8 @@ public class EnergyRequest extends AbstractEnergyRequest implements Request {
     }
 
     @Override
-    public boolean isEnabled() {
-        return false;
-    }
-
-    @Override
     public boolean isFinished(LocalDateTime now) {
-        return false;
+        return getMax(now) <= 0;
     }
 
     public void setMax(Integer max) {
@@ -74,23 +69,17 @@ public class EnergyRequest extends AbstractEnergyRequest implements Request {
 
     @Override
     public String toString() {
-        String text = "";
-
+        String text = super.toString();
+        text += "/";
         if(min != null) {
             text += min.toString();
         }
         else {
-            text += "?";
+            text += "_";
         }
         text += "Wh/";
-        if(max != null) {
-            text += max.toString();
-        }
-        else {
-            text += "?";
-        }
+        text += max.toString();
         text += "Wh";
-
         return text;
     }
 }

@@ -758,12 +758,15 @@ public class SaeController {
                 applianceStatus.setType(identification.getDeviceType());
             }
 
-            TimeframeInterval nextTimeframeInterval = appliance.getTimeframeIntervalHandler().getQueue().get(0);
             if (appliance.isControllable()) {
                 applianceStatus.setControllable(true);
                 Control control = appliance.getControl();
                 Meter meter = appliance.getMeter();
                 applianceStatus.setOn(control.isOn());
+                TimeframeInterval nextTimeframeInterval
+                        = appliance.getTimeframeIntervalHandler().getQueue().size() > 0
+                        ? appliance.getTimeframeIntervalHandler().getQueue().get(0)
+                        : null;
                 if (nextTimeframeInterval != null) {
                     applianceStatus.setPlanningRequested(true);
                     if(nextTimeframeInterval.getRequest().isEnabled()) {
@@ -807,8 +810,8 @@ public class SaeController {
                                 && nextTimeframeInterval.getRequest() instanceof AbstractEnergyRequest) {
                             chargeAmount = nextTimeframeInterval.getRequest().getMax(now);
                         }
-                        applianceStatus.setPlannedEnergyAmount(chargeAmount);
                         if (nextTimeframeInterval != null && !nextTimeframeInterval.getRequest().isUsingOptionalEnergy()) {
+                            applianceStatus.setPlannedEnergyAmount(chargeAmount);
                             applianceStatus.setLatestEnd(nextTimeframeInterval.getLatestEndSeconds(now));
                         }
                     }

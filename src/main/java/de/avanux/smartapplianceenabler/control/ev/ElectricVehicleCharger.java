@@ -27,10 +27,16 @@ import de.avanux.smartapplianceenabler.control.ControlStateChangedListener;
 import de.avanux.smartapplianceenabler.http.EVHttpControl;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.modbus.EVModbusControl;
+import de.avanux.smartapplianceenabler.schedule.EnergyRequest;
+import de.avanux.smartapplianceenabler.schedule.OptionalEnergySocRequest;
+import de.avanux.smartapplianceenabler.schedule.SocRequest;
+import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
 import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
 import de.avanux.smartapplianceenabler.appliance.ApplianceLifeCycle;
 import de.avanux.smartapplianceenabler.util.Validateable;
+import org.joda.time.DateTime;
+import org.joda.time.Interval;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -502,42 +508,44 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         return useOptionalEnergy;
     }
 
-    public  void setEnergyDemand(LocalDateTime now, Integer evId, Integer socCurrent, Integer socRequested,
-                                 LocalDateTime chargeEnd) {
-        logger.debug("{}: Energy demand: evId={} socCurrent={} socCurrent={} chargeEnd={}",
-                applianceId, evId, socCurrent, socRequested, chargeEnd);
-        setConnectedVehicleId(evId);
+    public TimeframeInterval createTimeframeInterval(LocalDateTime now, Integer evId, Integer socCurrent, Integer socRequested,
+                                             LocalDateTime chargeEnd) {
+        SocRequest request = new SocRequest();
+        request.setEvId(evId);
+        request.setSoc(socRequested);
+        request.setSocInitial(socCurrent);
+        request.setEnabled(true);
 
-        DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(appliance.getId());
+        if(chargeEnd == null) {
+            Integer energy = request.calculateEnergy(getVehicle(evId));
+            chargeEnd = now.plusSeconds(calculateChargeSeconds(getVehicle(evId), energy));
+        }
+
+        Interval interval = new Interval(now.toDateTime(), chargeEnd.toDateTime());
+
+        TimeframeInterval timeframeInterval = new TimeframeInterval(null, interval, request);
+        timeframeInterval.addTimeframeIntervalStateChangedListener(request);
+
+        return timeframeInterval;
+    }
+
+    public int calculateChargeSeconds(ElectricVehicle vehicle, Integer energy) {
+        DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(applianceId);
         int maxChargePower = deviceInfo.getCharacteristics().getMaxPowerConsumption();
-
-        ElectricVehicle vehicle = getVehicle(evId);
         if(vehicle != null) {
-            int batteryCapacity = vehicle.getBatteryCapacity();
             Integer maxVehicleChargePower = vehicle.getMaxChargePower();
             if(maxVehicleChargePower != null && maxVehicleChargePower < maxChargePower) {
                 maxChargePower = maxVehicleChargePower;
             }
-            int resolvedSocRequested = (socRequested != null ? socRequested : 100);
-            updateSoc(Integer.valueOf(socCurrent != null ? socCurrent : 0).floatValue());
-            int energy = Float.valueOf(((float) resolvedSocRequested - getConnectedVehicleSoc())/100.0f
-                    * (100 + vehicle.getChargeLoss())/100.0f * batteryCapacity).intValue();
-//            setChargeAmount(energy);
-            logger.debug("{}: Calculated energy={}Wh (batteryCapacity={}Wh chargeLoss={}%)", applianceId, energy,
-                    batteryCapacity, vehicle.getChargeLoss());
-
-            if(chargeEnd == null) {
-                int chargeMinutes = Float.valueOf((float) energy / maxChargePower * 60).intValue();
-                chargeEnd = now.plusMinutes(chargeMinutes);
-                logger.debug("{}: Calculated charge end={} chargeMinutes={} maxPowerConsumption={} chargeLoss={}",
-                        applianceId, chargeEnd, chargeMinutes, maxChargePower, vehicle.getChargeLoss());
-            }
-
-            RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
-            if (runningTimeMonitor != null) {
-                runningTimeMonitor.activateTimeframeInterval(now, energy, chargeEnd);
-            }
         }
+        else {
+            logger.warn("{}: evId not set - using defaults", applianceId);
+        }
+        int chargeSeconds = Float.valueOf((float) energy / maxChargePower * 3600).intValue();
+        logger.debug("{}: Calculated duration: {}s energy={} maxChargePower={}",
+                applianceId, chargeSeconds, energy, maxChargePower);
+
+        return chargeSeconds;
     }
 
     public void setChargePower(int power) {
@@ -607,7 +615,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         }
     }
 
-    private void updateSoc(Float soc) {
+    public void updateSoc(Float soc) {
         this.connectedVehicleSoc = Float.valueOf(soc).intValue();
         this.connectedVehicleSocTimestamp = System.currentTimeMillis();
         logger.debug("{}: Current SoC={}%", applianceId, connectedVehicleSoc);

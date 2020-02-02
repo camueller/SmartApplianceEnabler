@@ -18,8 +18,10 @@
 
 package de.avanux.smartapplianceenabler.schedule;
 
+import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
+import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,12 +41,24 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
     private transient Integer energy;
     private transient Long energyLastCalculationMillis;
 
+    public void setSocInitial(Integer socInitial) {
+        this.socInitial = socInitial;
+    }
+
+    private Integer getSocInitialOrDefault() {
+        return socInitial != null ? socInitial : 100;
+    }
+
     public void setSoc(Integer soc) {
         this.soc = soc;
     }
 
     public Integer getSoc() {
         return soc;
+    }
+
+    private Integer getSocOrDefault() {
+        return getSoc() != null ? getSoc() : 100;
     }
 
     public Integer getEvId() {
@@ -72,13 +86,13 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
 
     private Integer getEnergy() {
         if(energyLastCalculationMillis == null || System.currentTimeMillis() - energyLastCalculationMillis > 5000) {
-            this.energy = calculateEnergy();
+            this.energy = calculateEnergy(((ElectricVehicleCharger) getControl()).getVehicle(evId));
             this.energyLastCalculationMillis = System.currentTimeMillis();
         }
         return this.energy;
     }
 
-    private Integer calculateEnergy() {
+    public Integer calculateEnergy(ElectricVehicle vehicle) {
         float energy = 0.0f;
         if(getMeter() != null) {
             energy = getMeter().getEnergy();
@@ -87,30 +101,25 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
         else {
             logger.debug("{}: No energy meter configured - cannot calculate max energy", getApplianceId());
         }
-        ElectricVehicleCharger evCharger = (ElectricVehicleCharger) getControl();
-        ElectricVehicle vehicle = evCharger.getVehicle(evId);
+
+        int batteryCapacity = 100000; // default is 100 kWh
+        int chargeLoss = 10; // default is 10%
         if(vehicle != null) {
-            int batteryCapacity = vehicle.getBatteryCapacity();
-            Integer initialSoc = this.socInitial;
-            Integer targetSoc = this.soc;
-            logger.debug("{}: energy calculation using evId={} batteryCapactiy={} chargeLoss={}% initialSoc={} targetSoc={}",
-                    getApplianceId(), vehicle.getId(), batteryCapacity, vehicle.getChargeLoss(), initialSoc, targetSoc);
-            if(initialSoc == null) {
-                initialSoc = 0;
-            }
-            if(targetSoc == null) {
-                targetSoc = 100;
-            }
-            Integer maxEnergy = Float.valueOf((targetSoc - initialSoc)/100.0f
-                    * (100 + vehicle.getChargeLoss())/100.0f * batteryCapacity).intValue()
-                    - Float.valueOf(energy * 1000).intValue();
-            logger.debug("{}: energy calculated={}Wh", getApplianceId(), maxEnergy);
-            return maxEnergy;
+            batteryCapacity = vehicle.getBatteryCapacity();
+            chargeLoss = vehicle.getChargeLoss();
         }
         else {
-            logger.warn("{}: no connected vehicle was found", getApplianceId());
+            logger.warn("{}: evId not set - using defaults", getApplianceId());
         }
-        return 0;
+        Integer initialSoc = getSocInitialOrDefault();
+        Integer targetSoc = getSocOrDefault();
+        logger.debug("{}: energy calculation using evId={} batteryCapactiy={} chargeLoss={}% initialSoc={} targetSoc={}",
+                getApplianceId(), evId, batteryCapacity, chargeLoss, initialSoc, targetSoc);
+        Integer maxEnergy = Float.valueOf((targetSoc - initialSoc)/100.0f
+                * (100 + chargeLoss)/100.0f * batteryCapacity).intValue()
+                - Float.valueOf(energy * 1000).intValue();
+        logger.debug("{}: energy calculated={}Wh", getApplianceId(), maxEnergy);
+        return maxEnergy;
     }
 
     @Override
@@ -122,7 +131,7 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
     public void onEVChargerSocChanged(LocalDateTime now, Float soc) {
         if(isActive()) {
             logger.debug("{}: Using updated SOC={}", getApplianceId(), soc);
-            this.socInitial = Float.valueOf(soc).intValue();
+            setSocInitial(Float.valueOf(soc).intValue());
         }
     }
 
@@ -132,7 +141,7 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
         text += "/";
         text += "evId=" + evId;
         text += "/";
-        text += "soc=" + soc;
+        text += "soc=" + getSocOrDefault();
         text += "%";
         return text;
     }

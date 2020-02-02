@@ -19,6 +19,7 @@ package de.avanux.smartapplianceenabler.schedule;
 
 import de.avanux.smartapplianceenabler.appliance.ActiveIntervalChangedListener;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
@@ -103,7 +104,9 @@ public class TimeframeInterval implements ApplianceIdConsumer {
 
     public boolean isActivatable(LocalDateTime now) {
         return now.toDateTime().isAfter(getInterval().getStart())
-                && isIntervalSufficient(now, request.getMin(now), request.getMax(now));
+                && (!(request instanceof RuntimeRequest)
+                || isIntervalSufficient(now, request.getMin(now), request.getMax(now))
+        );
     }
 
     public boolean isDeactivatable(LocalDateTime now) {
@@ -143,9 +146,13 @@ public class TimeframeInterval implements ApplianceIdConsumer {
      * null if input values are null or latest start would be in the past
      */
     public Integer getLatestStartSeconds(LocalDateTime now) {
-        return Double.valueOf(
-                new Interval(now.toDateTime(), interval.getEnd().minusSeconds(getRequest().getMax(now)))
-                        .toDurationMillis() / 1000.0).intValue();
+        DateTime latestStart = interval.getEnd().minusSeconds(getRequest().getMax(now));
+        if(now.toDateTime().isBefore(latestStart)) {
+            return Double.valueOf(
+                    new Interval(now.toDateTime(), latestStart)
+                            .toDurationMillis() / 1000.0).intValue();
+        }
+        return null;
     }
 
     // TriggeredBy: WallboxState
