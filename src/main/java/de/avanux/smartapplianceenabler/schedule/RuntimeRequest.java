@@ -42,7 +42,6 @@ public class RuntimeRequest extends AbstractRequest implements StartingCurrentSw
     private transient Logger logger = LoggerFactory.getLogger(RuntimeRequest.class);
     private transient Integer currentMin;
     private transient Integer currentMax;
-    private transient boolean wasRunning;
 
     public RuntimeRequest() {
     }
@@ -101,10 +100,7 @@ public class RuntimeRequest extends AbstractRequest implements StartingCurrentSw
     public void controlStateChanged(LocalDateTime now, boolean switchOn) {
         super.controlStateChanged(now, switchOn);
         if(isActive()) {
-            if(switchOn) {
-                wasRunning = true;
-            }
-            else {
+            if(! switchOn) {
                 int secondsSinceStatusChange = getSecondsSinceStatusChange(now);
                 int newMax = this.currentMax - secondsSinceStatusChange;
                 this.currentMax = newMax > 0 ? newMax : 0;

@@ -41,6 +41,8 @@ public interface Request extends Serializable, ApplianceIdConsumer, TimeframeInt
 
     boolean isEnabled();
 
+    boolean isEnabledBefore();
+
     void setEnabled(boolean enabled);
 
     boolean isFinished(LocalDateTime now);

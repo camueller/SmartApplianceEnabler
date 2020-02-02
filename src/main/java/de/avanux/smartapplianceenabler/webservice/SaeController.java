@@ -818,7 +818,7 @@ public class SaeController {
                     applianceStatus.setRunningTime(nextTimeframeInterval.getRequest().getRuntime(now));
                     applianceStatus.setRemainingMinRunningTime(nextTimeframeInterval.getRequest().getMin(now));
                     applianceStatus.setRemainingMaxRunningTime(nextTimeframeInterval.getRequest().getMax(now));
-                    if (! nextTimeframeInterval.getRequest().isEnabled()) {
+                    if (! nextTimeframeInterval.getRequest().isEnabled() && nextTimeframeInterval.getRequest().isEnabledBefore()) {
                         Interval interrupted = new Interval(
                                 nextTimeframeInterval.getRequest().getControlStatusChangedAt().toDateTime(),
                                 now.toDateTime());

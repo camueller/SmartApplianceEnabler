@@ -36,6 +36,7 @@ abstract public class AbstractRequest implements Request {
     private transient Meter meter;
     private transient Control control;
     private transient boolean enabled;
+    private transient boolean enabledBefore;
     private transient boolean active;
     private transient int runtimeUntilLastStatusChange;
     private transient LocalDateTime controlStatusChangedAt;
@@ -68,10 +69,17 @@ abstract public class AbstractRequest implements Request {
         return control;
     }
 
+    @Override
     public boolean isEnabled() {
         return enabled;
     }
 
+    @Override
+    public boolean isEnabledBefore() {
+        return enabledBefore;
+    }
+
+    @Override
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
@@ -116,6 +124,7 @@ abstract public class AbstractRequest implements Request {
     public void controlStateChanged(LocalDateTime now, boolean switchOn) {
         if (isActive()) {
             if (switchOn) {
+                enabledBefore = true;
                 if (meter != null) {
                     meter.startEnergyMeter();
                 }
