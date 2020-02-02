@@ -139,16 +139,13 @@ public class TimeframeInterval implements ApplianceIdConsumer {
 
     /**
      * Returns the latest start.
-     * @param intervalEnd the interval end in seconds from now
-     * @param minRunningTime the minimum running time
      * @return the latest start time in seconds from now or
      * null if input values are null or latest start would be in the past
      */
-    public static Integer getLatestStart(Integer intervalEnd, Integer minRunningTime) {
-        if(intervalEnd != null && minRunningTime != null && intervalEnd > minRunningTime) {
-            return intervalEnd - minRunningTime;
-        }
-        return null;
+    public Integer getLatestStartSeconds(LocalDateTime now) {
+        return Double.valueOf(
+                new Interval(now.toDateTime(), interval.getEnd().minusSeconds(getRequest().getMax(now)))
+                        .toDurationMillis() / 1000.0).intValue();
     }
 
     // TriggeredBy: WallboxState
