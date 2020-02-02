@@ -98,7 +98,10 @@ abstract public class AbstractRequest implements Request {
 
     @Override
     public Integer getRuntime(LocalDateTime now) {
-        return runtimeUntilLastStatusChange + getSecondsSinceStatusChange(now);
+        if(isEnabledBefore()) {
+            return runtimeUntilLastStatusChange + getSecondsSinceStatusChange(now);
+        }
+        return 0;
     }
 
     @Override
