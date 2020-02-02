@@ -766,8 +766,10 @@ public class SaeController {
                 applianceStatus.setOn(control.isOn());
                 if (nextTimeframeInterval != null) {
                     applianceStatus.setPlanningRequested(true);
-                    applianceStatus.setEarliestStart(nextTimeframeInterval.getEarliestStartSeconds(now));
-                    applianceStatus.setLatestStart(nextTimeframeInterval.getLatestStartSeconds(now));
+                    if(nextTimeframeInterval.getRequest().isEnabled()) {
+                        applianceStatus.setEarliestStart(nextTimeframeInterval.getEarliestStartSeconds(now));
+                        applianceStatus.setLatestStart(nextTimeframeInterval.getLatestStartSeconds(now));
+                    }
                     if (control.isOn()) {
                         applianceStatus.setOptionalEnergy(nextTimeframeInterval.getRequest().isUsingOptionalEnergy());
                     }
