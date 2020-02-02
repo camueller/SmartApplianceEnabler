@@ -24,8 +24,6 @@ public class Settings {
     boolean holidaysEnabled;
     String holidaysUrl;
     List<ModbusSettings> modbusSettings;
-    boolean pulseReceiverEnabled;
-    Integer pulseReceiverPort;
 
     public boolean isHolidaysEnabled() {
         return holidaysEnabled;
@@ -51,30 +49,12 @@ public class Settings {
         this.modbusSettings = modbusSettings;
     }
 
-    public boolean isPulseReceiverEnabled() {
-        return pulseReceiverEnabled;
-    }
-
-    public void setPulseReceiverEnabled(boolean pulseReceiverEnabled) {
-        this.pulseReceiverEnabled = pulseReceiverEnabled;
-    }
-
-    public Integer getPulseReceiverPort() {
-        return pulseReceiverPort;
-    }
-
-    public void setPulseReceiverPort(Integer pulseReceiverPort) {
-        this.pulseReceiverPort = pulseReceiverPort;
-    }
-
     @Override
     public String toString() {
         return "Settings{" +
                 "holidaysEnabled=" + holidaysEnabled +
                 ", holidaysUrl='" + holidaysUrl + '\'' +
                 ", modbusSettings=" + modbusSettings +
-                ", pulseReceiverEnabled=" + pulseReceiverEnabled +
-                ", pulseReceiverPort=" + pulseReceiverPort +
                 '}';
     }
 }
