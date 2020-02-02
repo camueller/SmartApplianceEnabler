@@ -18,6 +18,9 @@
 
 package de.avanux.smartapplianceenabler.schedule;
 
+import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
+import org.joda.time.LocalDateTime;
+
 public class OptionalEnergySocRequest extends SocRequest {
 
     public OptionalEnergySocRequest(Integer evId) {
@@ -29,6 +32,14 @@ public class OptionalEnergySocRequest extends SocRequest {
     @Override
     public boolean isUsingOptionalEnergy() {
         return true;
+    }
+
+    public void onTimeframeIntervalStateChanged(LocalDateTime now, TimeframeIntervalState previousState,
+                                                TimeframeIntervalState newState) {
+        super.onTimeframeIntervalStateChanged(now, previousState, newState);
+        if(newState == TimeframeIntervalState.ACTIVE) {
+            ((ElectricVehicleCharger) getControl()).retrieveSoc(now);
+        }
     }
 
     @Override

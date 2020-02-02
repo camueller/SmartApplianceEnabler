@@ -440,7 +440,7 @@ public class Appliance implements Validateable, ControlStateChangedListener,
 
             ElectricVehicleCharger evCharger = (ElectricVehicleCharger) this.control;
             evCharger.setConnectedVehicleId(evId);
-            evCharger.updateSoc(Integer.valueOf(socCurrent != null ? socCurrent : 0).floatValue());
+//            evCharger.updateSoc(Integer.valueOf(socCurrent != null ? socCurrent : 0).floatValue());
             TimeframeInterval timeframeInterval =
                     evCharger.createTimeframeInterval(now, evId, socCurrent, socRequested, chargeEnd);
             timeframeIntervalHandler.addTimeframeInterval(now, timeframeInterval, true);

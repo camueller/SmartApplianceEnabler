@@ -18,10 +18,8 @@
 
 package de.avanux.smartapplianceenabler.schedule;
 
-import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
-import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -143,6 +141,9 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
         text += "/";
         text += "soc=" + getSocOrDefault();
         text += "%";
+        text += "/";
+        text += "energy=" + (energy != null ? energy : 0);
+        text += "Wh";
         return text;
     }
 }

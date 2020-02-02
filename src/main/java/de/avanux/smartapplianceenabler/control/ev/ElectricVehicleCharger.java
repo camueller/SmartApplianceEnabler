@@ -21,21 +21,17 @@ package de.avanux.smartapplianceenabler.control.ev;
 import de.avanux.smartapplianceenabler.appliance.Appliance;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
-import de.avanux.smartapplianceenabler.appliance.RunningTimeMonitor;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.ControlStateChangedListener;
 import de.avanux.smartapplianceenabler.http.EVHttpControl;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.modbus.EVModbusControl;
-import de.avanux.smartapplianceenabler.schedule.EnergyRequest;
-import de.avanux.smartapplianceenabler.schedule.OptionalEnergySocRequest;
 import de.avanux.smartapplianceenabler.schedule.SocRequest;
 import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
 import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
 import de.avanux.smartapplianceenabler.appliance.ApplianceLifeCycle;
 import de.avanux.smartapplianceenabler.util.Validateable;
-import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
@@ -384,7 +380,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
             logger.info("{}: Switching off", applianceId);
             stopCharging();
         }
-        for(ControlStateChangedListener listener : controlStateChangedListeners) {
+        for(ControlStateChangedListener listener : new ArrayList<>(controlStateChangedListeners)) {
             logger.debug("{}: Notifying {} {}", applianceId, ControlStateChangedListener.class.getSimpleName(),
                     listener.getClass().getSimpleName());
             listener.controlStateChanged(now, switchOn);
@@ -601,11 +597,18 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         this.stopChargingRequested = stopChargingRequested;
     }
 
+    public void retrieveSoc(LocalDateTime now) {
+        retrieveSoc(now, getConnectedVehicle());
+    }
+
     private void retrieveSoc(LocalDateTime now, ElectricVehicle electricVehicle) {
-        if(electricVehicle != null) {
+        if(electricVehicle != null && isSocNeedsRefresh()) {
             Float soc = electricVehicle.getStateOfCharge();
             if(soc != null) {
-                updateSoc(soc);
+//                updateSoc(soc);
+                this.connectedVehicleSoc = soc.intValue();
+                this.connectedVehicleSocTimestamp = System.currentTimeMillis();
+                logger.debug("{}: Current SoC={}%", applianceId, connectedVehicleSoc);
                 for(ControlStateChangedListener listener : controlStateChangedListeners) {
                     logger.debug("{}: Notifying {} {}", applianceId, ControlStateChangedListener.class.getSimpleName(),
                             listener.getClass().getSimpleName());
@@ -615,9 +618,14 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         }
     }
 
-    public void updateSoc(Float soc) {
-        this.connectedVehicleSoc = Float.valueOf(soc).intValue();
-        this.connectedVehicleSocTimestamp = System.currentTimeMillis();
-        logger.debug("{}: Current SoC={}%", applianceId, connectedVehicleSoc);
+    private boolean isSocNeedsRefresh() {
+        return connectedVehicleSocTimestamp == null
+                || System.currentTimeMillis() - this.connectedVehicleSocTimestamp > 1 * 60 * 60;
     }
+
+//    public void updateSoc(Float soc) {
+//        this.connectedVehicleSoc = Float.valueOf(soc).intValue();
+//        this.connectedVehicleSocTimestamp = System.currentTimeMillis();
+//        logger.debug("{}: Current SoC={}%", applianceId, connectedVehicleSoc);
+//    }
 }
