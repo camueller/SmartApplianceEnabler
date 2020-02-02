@@ -194,9 +194,9 @@ public class Appliance implements Validateable, ControlStateChangedListener,
 
     public void init(GpioController gpioController, Map<String, ModbusTcp> modbusIdWithModbusTcp) {
         logger.debug("{}: Initializing appliance", id);
+        setTimeframeIntervalHandler(new TimeframeIntervalHandler(this.schedules, this.control));
         if(control != null) {
             setRunningTimeMonitor(new RunningTimeMonitor());
-            setTimeframeIntervalHandler(new TimeframeIntervalHandler(this.schedules, this.control));
             if(control instanceof ApplianceIdConsumer) {
                 ((ApplianceIdConsumer) control).setApplianceId(id);
             }

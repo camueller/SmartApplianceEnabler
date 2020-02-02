@@ -6,7 +6,7 @@
 	<groupId>de.avanux.smartapplianceenabler</groupId>
 	<artifactId>SmartApplianceEnabler</artifactId>
     <packaging>war</packaging>
-	<version>1.5.1</version>
+	<version>1.5.2</version>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -370,7 +370,7 @@ Caused by: java.lang.ClassNotFoundException: junit.runner.Version
                                     <goal>exec</goal>
                                 </goals>
                             </execution>
-							<execution>
+							<!--execution>
 								<id>ng-test</id>
 								<phase>test</phase>
 								<configuration>
@@ -384,7 +384,7 @@ Caused by: java.lang.ClassNotFoundException: junit.runner.Version
 								<goals>
 									<goal>exec</goal>
 								</goals>
-							</execution>
+							</execution-->
                         </executions>
                     </plugin>
 					<plugin>

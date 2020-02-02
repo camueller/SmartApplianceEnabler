@@ -47,7 +47,9 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
 
     public TimeframeIntervalHandler(List<Schedule> schedules, Control control) {
         this.schedules = schedules;
-        control.addControlStateChangedListener(this);
+        if(control != null) {
+            control.addControlStateChangedListener(this);
+        }
     }
 
     @Override
