@@ -16,7 +16,7 @@ export class TimeUtil {
     let hoursExtracted = Number.parseInt(date.substring(11, 13), 10);
     let minutesExtracted = Number.parseInt(date.substring(14, 16), 10);
     const secondsExtracted = Number.parseInt(date.substring(17, 19), 10);
-    if (secondsExtracted > 0) {
+    if (secondsExtracted > 59) {
       minutesExtracted++;
       if (minutesExtracted > 59) {
         hoursExtracted++;
