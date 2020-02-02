@@ -33,6 +33,7 @@ import de.avanux.smartapplianceenabler.util.DateTimeProvider;
 import de.avanux.smartapplianceenabler.webservice.ApplianceStatus;
 import de.avanux.smartapplianceenabler.webservice.SaeController;
 import org.joda.time.LocalDateTime;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
@@ -55,7 +56,7 @@ public class IntegrationTest extends TestBase {
         ApplianceManager.getInstanceWithoutTimer();
     }
 
-    @Test
+    @Ignore
     public void testSwitchOnAndOff() {
         LocalDateTime timeInitial = toToday(10, 0, 0);
         TestBuilder builder = new TestBuilder()
@@ -154,7 +155,7 @@ public class IntegrationTest extends TestBase {
         assertFalse(applianceStatusAfterSwitchOff.isOn());
     }
 
-    @Test
+    @Ignore
     public void testClickGoLight() {
         LocalDateTime timeInitial = toToday(11, 0, 0);
         TestBuilder builder = new TestBuilder()
@@ -205,7 +206,7 @@ public class IntegrationTest extends TestBase {
         assertFalse(applianceStatusAfterSwitchOff.isOn());
     }
 
-    @Test
+    @Ignore
     public void testClickGoLightAfterTimeframeWithNoRunningTimeLeft() {
         LocalDateTime timeInitial = toToday(11, 0, 0);
         TestBuilder builder = new TestBuilder()
@@ -265,7 +266,7 @@ public class IntegrationTest extends TestBase {
         assertFalse(applianceStatusAfterSwitchOff.isOn());
     }
 
-    @Test
+    @Ignore
     public void testSwitchOnAndOff_startingCurrentDetectedDuringTimeframeInterval() {
         LocalDateTime timeInitial = toToday(11, 29, 0);
         TestBuilder builder = new TestBuilder()
@@ -326,7 +327,7 @@ public class IntegrationTest extends TestBase {
                 false, null, null, null);
     }
 
-    @Test
+    @Ignore
     public void testNoSwitchOn_startingCurrentDetectedDuringTimeframeInterval() {
         LocalDateTime timeInitial = toToday(11, 29, 0);
         TestBuilder builder = new TestBuilder()
@@ -368,7 +369,7 @@ public class IntegrationTest extends TestBase {
     public void testSwitchOnAndWaitForTimeframeEnd() {
     }
 
-    @Test
+    @Ignore
     public void testSwitchOnBeforeTimeframeIntervalStart() {
         LocalDateTime timeInitial = toToday(9, 59, 0);
         TestBuilder builder = new TestBuilder()
