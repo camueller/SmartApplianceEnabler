@@ -23,6 +23,9 @@ import de.avanux.smartapplianceenabler.control.ev.EVChargerState;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import org.joda.time.LocalDateTime;
 
+import javax.xml.bind.annotation.XmlTransient;
+
+@XmlTransient
 abstract public class AbstractEnergyRequest extends AbstractRequest {
 
     public AbstractEnergyRequest() {
