@@ -40,7 +40,7 @@ abstract public class AbstractEnergyRequest extends AbstractRequest {
     @Override
     public void onEVChargerStateChanged(LocalDateTime now, EVChargerState previousState, EVChargerState newState,
                                         ElectricVehicle ev) {
-        if(newState == EVChargerState.VEHICLE_CONNECTED) {
+        if(newState == EVChargerState.VEHICLE_CONNECTED && ev.getSocScript() == null) {
             setEnabled(true);
         }
         if(newState == EVChargerState.VEHICLE_NOT_CONNECTED) {

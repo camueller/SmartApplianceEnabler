@@ -129,6 +129,9 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
     public void onEVChargerSocChanged(LocalDateTime now, Float soc) {
         if(isActive()) {
             logger.debug("{}: Using updated SOC={}", getApplianceId(), soc);
+            if(! isEnabledBefore()) {
+                setEnabled(true);
+            }
             setSocInitial(Float.valueOf(soc).intValue());
         }
     }
