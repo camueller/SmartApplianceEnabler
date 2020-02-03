@@ -34,6 +34,11 @@ public class OptionalEnergySocRequest extends SocRequest {
         return true;
     }
 
+    @Override
+    public Integer getMin(LocalDateTime now) {
+        return 0;
+    }
+
     public void onTimeframeIntervalStateChanged(LocalDateTime now, TimeframeIntervalState previousState,
                                                 TimeframeIntervalState newState) {
         super.onTimeframeIntervalStateChanged(now, previousState, newState);
