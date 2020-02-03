@@ -323,21 +323,7 @@ public class SempController {
     createSempTimeFrame(LocalDateTime now, String deviceId, TimeframeInterval timeframeInterval) {
         Integer minRunningTime = timeframeInterval.getRequest().getMin(now);
         Integer maxRunningTime = timeframeInterval.getRequest().getMax(now);
-        if (maxRunningTime == null) {
-            maxRunningTime = 0;
-        }
-        if (minRunningTime == null) {
-            minRunningTime = maxRunningTime;
-        }
-        if (minRunningTime.equals(maxRunningTime)) {
-            /** WORKAROUND:
-             * For unknown reason the SunnyPortal displays the scheduled times only
-             * if maxRunningTime AND minRunningTime are returned and are NOT EQUAL
-             * Therefore we ensure that they are not equal by reducing minRunningTime by 1 second
-             */
-            minRunningTime = minRunningTime >= 1 ? minRunningTime - 1 : 0;
-        } else {
-            // according to spec minRunningTime only has to be returned if different from maxRunningTime
+        if(minRunningTime != null) {
             minRunningTime = minRunningTime >= 0 ? minRunningTime : 0;
         }
         maxRunningTime = maxRunningTime >= 0 ? maxRunningTime : 0;
