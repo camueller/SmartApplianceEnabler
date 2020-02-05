@@ -72,19 +72,19 @@ public class Appliance implements Validateable, ControlStateChangedListener,
     private Meter meter;
     @XmlElement(name = "Schedule")
     private List<Schedule> schedules;
-    private transient DateTimeProvider dateTimeProvider = new DateTimeProviderImpl();
+//    private transient DateTimeProvider dateTimeProvider = new DateTimeProviderImpl();
     private transient RunningTimeMonitor runningTimeMonitor;
     private transient TimeframeIntervalHandler timeframeIntervalHandler;
     private transient Stack<Boolean> acceptControlRecommendations;
     private transient static final int CONSIDERATION_INTERVAL_DAYS = 2;
 
-    public Appliance() {
-        this.initAcceptControlRecommendations();
-    }
+//    public Appliance() {
+//        this.initAcceptControlRecommendations();
+//    }
 
-    public void setDateTimeProvider(DateTimeProvider dateTimeProvider) {
-        this.dateTimeProvider = dateTimeProvider;
-    }
+//    public void setDateTimeProvider(DateTimeProvider dateTimeProvider) {
+//        this.dateTimeProvider = dateTimeProvider;
+//    }
 
     public void setId(String id) {
         this.id = id;
@@ -186,7 +186,9 @@ public class Appliance implements Validateable, ControlStateChangedListener,
     }
 
     public void setTimeframeIntervalHandler(TimeframeIntervalHandler timeframeIntervalHandler) {
-        this.timeframeIntervalHandler = timeframeIntervalHandler;
+        if(this.timeframeIntervalHandler == null) {
+            this.timeframeIntervalHandler = timeframeIntervalHandler;
+        }
         this.timeframeIntervalHandler.setApplianceId(id);
         this.timeframeIntervalHandler.addTimeFrameIntervalChangedListener(this);
         this.timeframeIntervalHandler.addTimeframeIntervalStateChangedListener(this);
@@ -194,6 +196,7 @@ public class Appliance implements Validateable, ControlStateChangedListener,
 
     public void init(GpioController gpioController, Map<String, ModbusTcp> modbusIdWithModbusTcp) {
         logger.debug("{}: Initializing appliance", id);
+        initAcceptControlRecommendations();
         setTimeframeIntervalHandler(new TimeframeIntervalHandler(this.schedules, this.control));
         if(control != null) {
             setRunningTimeMonitor(new RunningTimeMonitor());
@@ -919,13 +922,13 @@ public class Appliance implements Validateable, ControlStateChangedListener,
         if (runningTimeMonitor != null) {
 //            runningTimeMonitor.setRunning(switchOn, now);
         }
-        if (meter != null) {
-            if (switchOn) {
-                meter.startEnergyMeter();
-            } else {
-                meter.stopEnergyMeter();
-            }
-        }
+//        if (meter != null) {
+//            if (switchOn) {
+//                meter.startEnergyMeter();
+//            } else {
+//                meter.stopEnergyMeter();
+//            }
+//        }
     }
 
     @Override
