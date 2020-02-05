@@ -34,6 +34,7 @@ public class MockElectricityMeter implements Meter, ApplianceIdConsumer {
     @Override
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
+        this.pollEnergyMeter.setApplianceId(applianceId);
     }
 
     public PollEnergyMeter getPollEnergyMeter() {
@@ -42,6 +43,7 @@ public class MockElectricityMeter implements Meter, ApplianceIdConsumer {
 
     public void setPollEnergyMeter(PollEnergyMeter pollEnergyMeter) {
         this.pollEnergyMeter = pollEnergyMeter;
+        this.pollEnergyMeter.setApplianceId(applianceId);
     }
 
     @Override
