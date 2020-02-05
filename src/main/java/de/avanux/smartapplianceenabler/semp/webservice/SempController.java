@@ -44,7 +44,6 @@ public class SempController {
     private static final String CROSS_ORIGIN_URL = "http://localhost:4200";
     public static final String SCHEMA_LOCATION = "http://www.sma.de/communication/schema/SEMP/v1";
     private Logger logger = LoggerFactory.getLogger(SempController.class);
-    private boolean timeFrameChangedListenerRegistered;
 
     public SempController() {
         logger.info("SEMP controller created.");
@@ -66,9 +65,6 @@ public class SempController {
         List<PlanningRequest> planningRequests = new ArrayList<PlanningRequest>();
         List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
         for (Appliance appliance : appliances) {
-            if (!timeFrameChangedListenerRegistered && appliance.getRunningTimeMonitor() != null) {
-                timeFrameChangedListenerRegistered = true;
-            }
             DeviceStatus deviceStatus = createDeviceStatus(appliance);
             deviceStatuses.add(deviceStatus);
             PlanningRequest planningRequest = createPlanningRequest(now, appliance);
@@ -323,7 +319,21 @@ public class SempController {
     createSempTimeFrame(LocalDateTime now, String deviceId, TimeframeInterval timeframeInterval) {
         Integer minRunningTime = timeframeInterval.getRequest().getMin(now);
         Integer maxRunningTime = timeframeInterval.getRequest().getMax(now);
-        if(minRunningTime != null) {
+        if (maxRunningTime == null) {
+            maxRunningTime = 0;
+        }
+        if (minRunningTime == null) {
+            minRunningTime = maxRunningTime;
+        }
+        if (minRunningTime.equals(maxRunningTime)) {
+            /** WORKAROUND:
+             * For unknown reason the SunnyPortal displays the scheduled times only
+             * if maxRunningTime AND minRunningTime are returned and are NOT EQUAL
+             * Therefore we ensure that they are not equal by reducing minRunningTime by 1 second
+             */
+            minRunningTime = minRunningTime >= 1 ? minRunningTime - 1 : 0;
+        } else {
+            // according to spec minRunningTime only has to be returned if different from maxRunningTime
             minRunningTime = minRunningTime >= 0 ? minRunningTime : 0;
         }
         maxRunningTime = maxRunningTime >= 0 ? maxRunningTime : 0;
@@ -333,8 +343,7 @@ public class SempController {
         timeFrame.setDeviceId(deviceId);
         timeFrame.setEarliestStart(timeframeInterval.getEarliestStartSeconds(now));
         timeFrame.setLatestEnd(timeframeInterval.getLatestEndSeconds(now));
-        if (timeframeInterval.getRequest() instanceof EnergyRequest
-                || timeframeInterval.getRequest() instanceof SocRequest) {
+        if (timeframeInterval.getRequest() instanceof AbstractEnergyRequest) {
             timeFrame.setMinEnergy(timeframeInterval.getRequest().getMin(now));
             timeFrame.setMaxEnergy(timeframeInterval.getRequest().getMax(now));
         } else {
