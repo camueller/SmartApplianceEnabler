@@ -36,7 +36,7 @@ import java.util.*;
 public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlStateChangedListener {
 
     private Logger logger = LoggerFactory.getLogger(TimeframeIntervalHandler.class);
-    private static final int CONSIDERATION_INTERVAL_DAYS = 2;
+    public static final int CONSIDERATION_INTERVAL_DAYS = 2;
     private String applianceId;
     private List<Schedule> schedules;
     private GuardedTimerTask fillQueueTimerTask;
@@ -119,6 +119,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
     }
 
     public void updateQueue(LocalDateTime now) {
+        queue.forEach(timeframeInterval -> timeframeInterval.getRequest().update());
         logger.debug("{}: Current Queue:", applianceId);
         logQueue();
 

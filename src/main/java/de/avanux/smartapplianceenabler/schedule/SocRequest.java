@@ -20,6 +20,8 @@ package de.avanux.smartapplianceenabler.schedule;
 
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +40,9 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
     private transient Integer socInitial = 0;
     private transient Integer energy;
     private transient Long energyLastCalculationMillis;
+
+    public SocRequest() {
+    }
 
     public void setSocInitial(Integer socInitial) {
         this.socInitial = socInitial;
@@ -82,13 +87,23 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
         return getEnergy();
     }
 
+    @Override
+    public void update() {
+        this.energy = calculateEnergy(((ElectricVehicleCharger) getControl()).getVehicle(evId));
+        this.energyLastCalculationMillis = System.currentTimeMillis();
+    }
+
     private Integer getEnergy() {
         if(energyLastCalculationMillis == null || System.currentTimeMillis() - energyLastCalculationMillis > 5000) {
-            this.energy = calculateEnergy(((ElectricVehicleCharger) getControl()).getVehicle(evId));
-            this.energyLastCalculationMillis = System.currentTimeMillis();
+            update();
         }
         return this.energy;
     }
+
+    protected void setEnergy(Integer energy) {
+        this.energy = energy;
+    }
+
 
     public Integer calculateEnergy(ElectricVehicle vehicle) {
         float energy = 0.0f;
@@ -134,6 +149,32 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
             }
             setSocInitial(Float.valueOf(soc).intValue());
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SocRequest that = (SocRequest) o;
+
+        return new EqualsBuilder()
+                .appendSuper(super.equals(o))
+                .append(soc, that.soc)
+                .append(evId, that.evId)
+                .append(energy, that.energy)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .appendSuper(super.hashCode())
+                .append(soc)
+                .append(evId)
+                .append(energy)
+                .toHashCode();
     }
 
     @Override

@@ -50,4 +50,6 @@ public interface Request extends Serializable, ApplianceIdConsumer, TimeframeInt
     Integer getRuntime(LocalDateTime now);
 
     LocalDateTime getControlStatusChangedAt();
+
+    void update();
 }

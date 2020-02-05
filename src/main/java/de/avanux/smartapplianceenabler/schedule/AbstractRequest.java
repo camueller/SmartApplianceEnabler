@@ -22,6 +22,8 @@ import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.ev.EVChargerState;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import de.avanux.smartapplianceenabler.meter.Meter;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.joda.time.Interval;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
@@ -88,6 +90,10 @@ abstract public class AbstractRequest implements Request {
         return active;
     }
 
+    @Override
+    public void update() {
+    }
+
     public void onTimeframeIntervalStateChanged(LocalDateTime now, TimeframeIntervalState previousState,
                                                 TimeframeIntervalState newState) {
         this.active = false;
@@ -148,6 +154,26 @@ abstract public class AbstractRequest implements Request {
 
     @Override
     public void onEVChargerSocChanged(LocalDateTime now, Float soc) {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        AbstractRequest that = (AbstractRequest) o;
+
+        return new EqualsBuilder()
+                .append(enabled, that.enabled)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(enabled)
+                .toHashCode();
     }
 
     @Override

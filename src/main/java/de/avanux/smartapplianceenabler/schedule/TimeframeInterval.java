@@ -19,6 +19,8 @@ package de.avanux.smartapplianceenabler.schedule;
 
 import de.avanux.smartapplianceenabler.appliance.ActiveIntervalChangedListener;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.joda.time.LocalDateTime;
@@ -162,6 +164,30 @@ public class TimeframeInterval implements ApplianceIdConsumer {
 
     public void setTriggeredByStartingCurrent(boolean triggeredByStartingCurrent) {
         this.triggeredByStartingCurrent = triggeredByStartingCurrent;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TimeframeInterval that = (TimeframeInterval) o;
+
+        return new EqualsBuilder()
+                .append(interval, that.interval)
+                .append(request, that.request)
+                .append(state, that.state)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(interval)
+                .append(request)
+                .append(state)
+                .toHashCode();
     }
 
     @Override

@@ -29,6 +29,12 @@ public class OptionalEnergySocRequest extends SocRequest {
         setSoc(100);
     }
 
+    public OptionalEnergySocRequest(Integer evId, Integer energy, Long energyLastCalculationMillis) {
+        this(evId);
+        setEnergy(energy);
+    }
+
+
     @Override
     public boolean isUsingOptionalEnergy() {
         return true;
