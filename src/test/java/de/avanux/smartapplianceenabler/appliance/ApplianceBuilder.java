@@ -40,6 +40,7 @@ import java.util.Vector;
 public class ApplianceBuilder {
 
     private Appliance appliance;
+    boolean initialized = false;
 
     public ApplianceBuilder(String applianceId) {
         appliance = new Appliance();
@@ -189,26 +190,12 @@ public class ApplianceBuilder {
         ApplianceManager.getInstanceWithoutTimer().setDevice2EM(device2EM);
 
         ApplianceManager.getInstanceWithoutTimer().init();
+    }
 
-//        Appliance appliance = getAppliance();
-//        TimeframeIntervalHandler timeframeIntervalHandler = appliance.getTimeframeIntervalHandler();
-//        if(timeframeIntervalHandler != null && this.timeTimeframeIntervalActivation != null) {
-//            if(this.runtime != null) {
-//                Interval interval = new Interval(this.timeTimeframeIntervalActivation.toDateTime(),
-//                        this.timeTimeframeIntervalActivation.toDateTime().plusSeconds(this.runtime));
-//                RuntimeRequest request = new RuntimeRequest(this.runtime, this.runtime);
-//                TimeframeInterval timeframeInterval = new TimeframeInterval(null, interval, request);
-//                timeframeIntervalHandler.addTimeframeInterval(this.timeTimeframeIntervalActivation, timeframeInterval, false);
-//            }
-//            if(this.energy != null && this.timeTimeframeIntervalChargeEnd != null) {
-//                Interval interval = new Interval(this.timeTimeframeIntervalActivation.toDateTime(),
-//                        this.timeTimeframeIntervalChargeEnd.toDateTime());
-//                EnergyRequest request = new EnergyRequest(this.energy, this.energy);
-//                TimeframeInterval timeframeInterval = new TimeframeInterval(null, interval, request);
-//                timeframeIntervalHandler.addTimeframeInterval(this.timeTimeframeIntervalActivation, timeframeInterval, false);
-//            }
-//        }
-//        return this;
+    public ApplianceBuilder init() {
+        ApplianceBuilder.init(Collections.singletonList(appliance));
+        initialized = true;
+        return this;
     }
 
     public Appliance build(boolean init) {
@@ -219,12 +206,10 @@ public class ApplianceBuilder {
     }
 
     private TimeframeIntervalHandler getTimeframeIntervalHandler() {
-        TimeframeIntervalHandler timeframeIntervalHandler = appliance.getTimeframeIntervalHandler();
-        if(timeframeIntervalHandler == null) {
-            timeframeIntervalHandler = new TimeframeIntervalHandler(appliance.getSchedules(), appliance.getControl());
-            appliance.setTimeframeIntervalHandler(timeframeIntervalHandler);
+        if(! initialized) {
+            init();
         }
-        return timeframeIntervalHandler;
+        return appliance.getTimeframeIntervalHandler();
     }
 
 }

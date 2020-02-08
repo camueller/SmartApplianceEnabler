@@ -32,7 +32,6 @@ abstract public class AbstractTimeframe {
         clonedRequest.setEnabled(true);
 
         TimeframeInterval timeframeInterval = new TimeframeInterval(interval, clonedRequest);
-        timeframeInterval.addTimeframeIntervalStateChangedListener(clonedRequest);
         return timeframeInterval;
     }
 }

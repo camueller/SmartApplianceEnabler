@@ -152,14 +152,20 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
     }
 
     @Override
-    public void onEVChargerSocChanged(LocalDateTime now, Float soc) {
-        if(isActive()) {
-            logger.debug("{}: Using updated SOC={}", getApplianceId(), soc);
-            if(! isEnabledBefore()) {
-                setEnabled(true);
-            }
-            setSocInitial(Float.valueOf(soc).intValue());
+    public void activeIntervalChanged(LocalDateTime now, String applianceId, TimeframeInterval deactivatedInterval, TimeframeInterval activatedInterval, boolean wasRunning) {
+        super.activeIntervalChanged(now, applianceId, deactivatedInterval, activatedInterval, wasRunning);
+        if(activatedInterval != null && activatedInterval.getState() == TimeframeIntervalState.ACTIVE) {
+            ((ElectricVehicleCharger) getControl()).retrieveSoc(now);
         }
+    }
+
+    @Override
+    public void onEVChargerSocChanged(LocalDateTime now, Float soc) {
+        logger.debug("{}: Using updated SOC={}", getApplianceId(), soc);
+        if(! isEnabledBefore()) {
+            setEnabled(true);
+        }
+        setSocInitial(Float.valueOf(soc).intValue());
     }
 
     @Override
@@ -194,7 +200,9 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
         text += "/";
         text += "evId=" + evId;
         text += "/";
-        text += "soc=" + soc;
+        text += "soc=" + socInitial;
+        text += "%=>";
+        text += soc;
         text += "%";
         text += "/";
         text += "energy=" + (energy != null ? energy : 0);

@@ -86,12 +86,14 @@ abstract public class TestBase {
 
     protected void assertTimeframeIntervalOptionalEnergy(Interval interval,
                                                          TimeframeIntervalState state,
+                                                         Integer socInitial,
                                                          Integer evId,
                                                          Integer energy,
                                                          boolean enabled,
                                                          TimeframeInterval actual) {
         OptionalEnergySocRequest request = new OptionalEnergySocRequest(evId, energy);
         request.setEnabled(enabled);
+        request.setSocInitial(socInitial);
         request.setSoc(100);
         TimeframeInterval expected = new TimeframeInterval(interval, request);
         expected.initState(state);

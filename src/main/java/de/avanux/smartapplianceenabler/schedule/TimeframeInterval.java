@@ -17,7 +17,6 @@
  */
 package de.avanux.smartapplianceenabler.schedule;
 
-import de.avanux.smartapplianceenabler.appliance.ActiveIntervalChangedListener;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -27,8 +26,6 @@ import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Vector;
 
 /**
@@ -40,7 +37,6 @@ public class TimeframeInterval implements ApplianceIdConsumer {
     private Request request;
     private transient Vector<TimeframeIntervalState> stateHistory = new Vector<>();
     private transient LocalDateTime stateChangedAt;
-    private transient List<TimeframeIntervalStateChangedListener> timeframeStateChangedListeners = new ArrayList<>();
     private transient String applianceId;
     // FIXME make more generic
     private boolean triggeredByStartingCurrent;
@@ -73,10 +69,6 @@ public class TimeframeInterval implements ApplianceIdConsumer {
         return request;
     }
 
-    public void addTimeframeIntervalStateChangedListener(TimeframeIntervalStateChangedListener listener) {
-        this.timeframeStateChangedListeners.add(listener);
-    }
-
     public void initState(TimeframeIntervalState initialState) {
         this.stateHistory.clear();
         stateHistory.add(initialState != null ? initialState : TimeframeIntervalState.CREATED);
@@ -86,11 +78,6 @@ public class TimeframeInterval implements ApplianceIdConsumer {
         TimeframeIntervalState previousState = this.stateHistory.lastElement();
         this.stateHistory.add(state);
         this.stateChangedAt = now;
-        timeframeStateChangedListeners.forEach(listener -> {
-            logger.debug("{}: Notifying {} {}", applianceId, ActiveIntervalChangedListener.class.getSimpleName(),
-                    listener.getClass().getSimpleName());
-            listener.onTimeframeIntervalStateChanged(now, previousState, state);
-        });
     }
 
     public TimeframeIntervalState getState() {
@@ -197,7 +184,7 @@ public class TimeframeInterval implements ApplianceIdConsumer {
         if(interval != null) {
             text += interval.toString();
         }
-        text += "=>";
+        text += "::";
         text += request;
         return text;
     }

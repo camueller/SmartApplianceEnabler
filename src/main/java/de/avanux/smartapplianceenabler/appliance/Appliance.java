@@ -32,8 +32,6 @@ import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
 import de.avanux.smartapplianceenabler.schedule.*;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
-import de.avanux.smartapplianceenabler.util.DateTimeProvider;
-import de.avanux.smartapplianceenabler.util.DateTimeProviderImpl;
 import de.avanux.smartapplianceenabler.util.Validateable;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
@@ -46,7 +44,7 @@ import java.util.*;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Appliance implements Validateable, ControlStateChangedListener,
-        StartingCurrentSwitchListener, ActiveIntervalChangedListener, TimeframeIntervalStateChangedListener {
+        StartingCurrentSwitchListener, TimeframeIntervalChangedListener {
 
     private transient Logger logger = LoggerFactory.getLogger(Appliance.class);
     @XmlAttribute
@@ -190,8 +188,7 @@ public class Appliance implements Validateable, ControlStateChangedListener,
             this.timeframeIntervalHandler = timeframeIntervalHandler;
         }
         this.timeframeIntervalHandler.setApplianceId(id);
-        this.timeframeIntervalHandler.addTimeFrameIntervalChangedListener(this);
-        this.timeframeIntervalHandler.addTimeframeIntervalStateChangedListener(this);
+        this.timeframeIntervalHandler.addTimeframeIntervalChangedListener(this);
     }
 
     public void init(GpioController gpioController, Map<String, ModbusTcp> modbusIdWithModbusTcp) {
@@ -1007,11 +1004,8 @@ public class Appliance implements Validateable, ControlStateChangedListener,
         timeframeInterval.getRequest().setApplianceId(id);
         timeframeInterval.getRequest().setMeter(meter);
         timeframeInterval.getRequest().setControl(control);
+//        timeframeIntervalHandler.addTimeframeIntervalStateChangedListener(timeframeInterval.getRequest());
         control.addControlStateChangedListener(timeframeInterval.getRequest());
-    }
-
-    @Override
-    public void onTimeframeIntervalStateChanged(LocalDateTime now, TimeframeIntervalState previousState, TimeframeIntervalState newState) {
     }
 
     private void onTimeframeIntervalDeactivated(LocalDateTime now) {

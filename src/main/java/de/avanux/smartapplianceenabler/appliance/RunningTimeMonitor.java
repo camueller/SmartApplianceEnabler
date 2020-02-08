@@ -35,7 +35,7 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
     private Logger logger = LoggerFactory.getLogger(RunningTimeMonitor.class);
     private String applianceId;
     private List<Schedule> schedules;
-    private Set<ActiveIntervalChangedListener> scheduleChangedListeners = new HashSet<>();
+    private Set<TimeframeIntervalChangedListener> scheduleChangedListeners = new HashSet<>();
     private RuntimeState state;
     private RuntimeState previousState;
     private GuardedTimerTask updateActiveTimeframeIntervalTimerTask;
@@ -100,7 +100,7 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         return schedules;
     }
 
-    public void addTimeFrameChangedListener(ActiveIntervalChangedListener listener) {
+    public void addTimeFrameChangedListener(TimeframeIntervalChangedListener listener) {
         this.scheduleChangedListeners.add(listener);
     }
 
@@ -243,9 +243,9 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
             activateTimeframeInterval(now, nextSufficientTimeframeInterval);
         }
         else {
-            for(ActiveIntervalChangedListener listener : scheduleChangedListeners) {
+            for(TimeframeIntervalChangedListener listener : scheduleChangedListeners) {
                 logger.debug("{}: Timeframe interval activation check: notifying {} {}", applianceId,
-                        ActiveIntervalChangedListener.class.getSimpleName(), listener.getClass().getSimpleName());
+                        TimeframeIntervalChangedListener.class.getSimpleName(), listener.getClass().getSimpleName());
                 listener.activeIntervalChecked(now, applianceId, this.state.activeTimeframeInterval);
             }
         }
@@ -318,8 +318,8 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         if(intervalChanged) {
             logger.debug("{}: Active interval changed. deactivatedTimeframeInterval={} activeTimeframeInterval={}",
                     applianceId, deactivatedTimeframeInterval, this.state.activeTimeframeInterval);
-            for(ActiveIntervalChangedListener listener : scheduleChangedListeners) {
-                logger.debug("{}: Notifying {} {}", applianceId, ActiveIntervalChangedListener.class.getSimpleName(),
+            for(TimeframeIntervalChangedListener listener : scheduleChangedListeners) {
+                logger.debug("{}: Notifying {} {}", applianceId, TimeframeIntervalChangedListener.class.getSimpleName(),
                         listener.getClass().getSimpleName());
                 listener.activeIntervalChanged(now, applianceId, deactivatedTimeframeInterval,
                         this.state.activeTimeframeInterval, wasRunning);

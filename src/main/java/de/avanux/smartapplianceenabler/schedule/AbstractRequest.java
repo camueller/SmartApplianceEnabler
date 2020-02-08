@@ -94,12 +94,20 @@ abstract public class AbstractRequest implements Request {
     public void update() {
     }
 
-    public void onTimeframeIntervalStateChanged(LocalDateTime now, TimeframeIntervalState previousState,
-                                                TimeframeIntervalState newState) {
+    @Override
+    public void timeframeIntervalCreated(LocalDateTime now, TimeframeInterval timeframeInterval) {
+    }
+
+    @Override
+    public void activeIntervalChanged(LocalDateTime now, String applianceId, TimeframeInterval deactivatedInterval, TimeframeInterval activatedInterval, boolean wasRunning) {
         this.active = false;
-        if(newState == TimeframeIntervalState.ACTIVE) {
+        if(activatedInterval != null && activatedInterval.getState() == TimeframeIntervalState.ACTIVE) {
             this.active = true;
         }
+    }
+
+    @Override
+    public void activeIntervalChecked(LocalDateTime now, String applianceId, TimeframeInterval activeInterval) {
     }
 
     @Override
