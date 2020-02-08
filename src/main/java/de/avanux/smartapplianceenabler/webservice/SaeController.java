@@ -407,6 +407,7 @@ public class SaeController {
     public void activateSchedules(HttpServletResponse response, @RequestParam(value = "id") String applianceId,
                                   @RequestBody Schedules schedules) {
         try {
+            LocalDateTime now = new LocalDateTime();
             List<Schedule> schedulesToSet = schedules.getSchedules();
             logger.debug("{}: Received request to activate {} schedule(s)", applianceId,
                     (schedulesToSet != null ? schedulesToSet.size() : "0"));
@@ -415,7 +416,10 @@ public class SaeController {
                 if (appliance.getMeter() != null) {
                     appliance.getMeter().resetEnergyMeter();
                 }
-                appliance.getRunningTimeMonitor().setSchedules(schedulesToSet, new LocalDateTime());
+//                appliance.getRunningTimeMonitor().setSchedules(schedulesToSet, new LocalDateTime());
+                appliance.setSchedules(schedulesToSet);
+                appliance.getTimeframeIntervalHandler().clearQueue();
+                appliance.getTimeframeIntervalHandler().fillQueue(now);
                 return;
             }
             logger.error("{}: Appliance not found", applianceId);
@@ -497,9 +501,8 @@ public class SaeController {
                 List<TimeframeInterval> timeframeIntervals = Schedule.findTimeframeIntervals(now,
                         null, appliance.getSchedules(), false, false);
                 if (timeframeIntervals.size() > 0) {
-                    Schedule schedule = timeframeIntervals.get(0).getTimeframe().getSchedule();
-                    if (schedule.getRequest() instanceof RuntimeRequest) {
-                        return schedule.getRequest().getMin(now);
+                    if (timeframeIntervals.get(0).getRequest() instanceof RuntimeRequest) {
+                        return timeframeIntervals.get(0).getRequest().getMin(now);
                     }
                 }
             } else {
