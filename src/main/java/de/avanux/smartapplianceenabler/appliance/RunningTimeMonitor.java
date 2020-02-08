@@ -254,8 +254,7 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
     public void activateTimeframeInterval(LocalDateTime now, Integer runtime) {
         Schedule schedule = new Schedule(runtime, null, new TimeOfDay(now), new TimeOfDay(now));
         Interval interval = new Interval(now.toDateTime(), now.plusSeconds(runtime).toDateTime());
-        Timeframe timeframe = schedule.getTimeframe();
-        TimeframeInterval runtimeTimeframeInterval = new TimeframeInterval(timeframe, interval, schedule.getRequest());
+        TimeframeInterval runtimeTimeframeInterval = new TimeframeInterval(interval, schedule.getRequest());
         try {
             this.previousState = (RuntimeState) this.state.clone();
         } catch (CloneNotSupportedException e) {
@@ -272,8 +271,7 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         Schedule schedule = Schedule.withEnergyRequest(energy, energy, new TimeOfDay(now), new TimeOfDay(now));
         Interval interval = new Interval(now.toDateTime(), chargeEnd.toDateTime());
         // FIXME: geht das nicht besser?
-        Timeframe timeframe = schedule.getTimeframe();
-        activateTimeframeInterval(now, new TimeframeInterval(timeframe, interval, schedule.getRequest()));
+        activateTimeframeInterval(now, new TimeframeInterval(interval, schedule.getRequest()));
     }
 
     /**
@@ -288,7 +286,7 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
         boolean intervalChanged = false;
         if(timeframeIntervalToBeActivated != null && this.state.activeTimeframeInterval == null) {
             logger.debug("{}: No active interval but will activate this interval: {}", applianceId, timeframeIntervalToBeActivated);
-            Schedule schedule = timeframeIntervalToBeActivated.getTimeframe().getSchedule();
+            Schedule schedule = null;
             this.state.runningTime = 0;
             this.state.activeRequest = schedule.getRequest();
             if(schedule.getRequest() instanceof RuntimeRequest || schedule.getRequest() instanceof SocRequest) {
