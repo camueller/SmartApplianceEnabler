@@ -115,24 +115,6 @@ public class ApplianceBuilder {
         return this;
     }
 
-    public ApplianceBuilder withSchedule(int startHour, int startMinute, int endHour, int endMinute) {
-//        Schedule schedule = new Schedule(true, new DayTimeframe(
-//                new TimeOfDay(startHour, startMinute, 0),
-//                new TimeOfDay(endHour, endMinute, 0)),
-//                null);
-//        addSchedule(schedule);
-        return this;
-    }
-
-//    private void addSchedule(Schedule schedule) {
-//        List<Schedule> schedules = appliance.getSchedules();
-//        if(schedules == null) {
-//            schedules = new ArrayList<>();
-//            appliance.setSchedules(schedules);
-//        }
-//        schedules.add(schedule);
-//    }
-
     public ApplianceBuilder withRuntimeRequest(LocalDateTime now, LocalDateTime intervalStart, LocalDateTime intervalEnd,
                                                Integer min, Integer max, boolean enabled) {
         Interval interval = new Interval(intervalStart.toDateTime(), intervalEnd.toDateTime());
@@ -143,41 +125,12 @@ public class ApplianceBuilder {
         return this;
     }
 
-    public ApplianceBuilder withEnergyRequest(Integer min, Integer max) {
-//        EnergyRequest request = new EnergyRequest();
-//        request.setMin(min);
-//        request.setMax(max);
-//        addRequest(request);
-        return this;
-    }
-
-    public ApplianceBuilder withSocRequest(LocalDateTime now, LocalDateTime intervalStart, LocalDateTime intervalEnd,
-                                           Integer evId, Integer soc, boolean enabled) {
-        Interval interval = new Interval(intervalStart.toDateTime(), intervalEnd.toDateTime());
-        withSocRequest(now, interval, evId, soc, enabled);
-        return this;
-    }
-
     public ApplianceBuilder withSocRequest(LocalDateTime now, Interval interval,
                                            Integer evId, Integer soc, boolean enabled) {
         SocRequest request = new SocRequest(soc, evId);
         request.setEnabled(enabled);
         TimeframeInterval timeframeInterval = new TimeframeInterval(null, interval, request);
         getTimeframeIntervalHandler().addTimeframeInterval(now, timeframeInterval, false);
-        return this;
-    }
-
-    public ApplianceBuilder withActivatedTimeframeInterval(LocalDateTime now, Integer runtime) {
-//        this.runtime = runtime;
-//        this.timeTimeframeIntervalActivation = now;
-        return this;
-    }
-
-    public ApplianceBuilder withActivatedTimeframeInterval(LocalDateTime now, Integer energy,
-                                                           LocalDateTime timeTimeframeIntervalChargeEnd) {
-//        this.energy = energy;
-//        this.timeTimeframeIntervalActivation = now;
-//        this.timeTimeframeIntervalChargeEnd = timeTimeframeIntervalChargeEnd;
         return this;
     }
 

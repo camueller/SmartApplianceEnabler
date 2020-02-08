@@ -82,6 +82,7 @@ public class EVChargerTest extends TestBase {
                 timeVehicleConnected.plusDays(TimeframeIntervalHandler.CONSIDERATION_INTERVAL_DAYS).toDateTime());
         Mockito.when(pollEnergyExecutor.pollEnergy(Mockito.any())).thenReturn(10.0f);
         tick(appliance, timeVehicleConnected, true, false);
+        assertEquals(1, timeframeIntervalHandler.getQueue().size());
         assertTimeframeIntervalOptionalEnergy(interval, TimeframeIntervalState.ACTIVE,
                 0, evId, 44000, true, timeframeIntervalHandler.getQueue().get(0));
 
@@ -90,6 +91,7 @@ public class EVChargerTest extends TestBase {
         appliance.setApplianceState(timeStartCharging,
                 true, 4000, "Switch on");
         tick(appliance, timeStartCharging, true, true);
+        assertEquals(1, timeframeIntervalHandler.getQueue().size());
         assertTimeframeIntervalOptionalEnergy(interval, TimeframeIntervalState.ACTIVE,
                 0, evId, 44000, true, timeframeIntervalHandler.getQueue().get(0));
         Mockito.verify(mockMeter).startEnergyMeter();
@@ -108,6 +110,7 @@ public class EVChargerTest extends TestBase {
         appliance.setApplianceState(timeInterruptCharging,
                 false, null, "Switch off");
         tick(appliance, timeInterruptCharging,  true, false);
+        assertEquals(1, timeframeIntervalHandler.getQueue().size());
         assertTimeframeIntervalOptionalEnergy(interval, TimeframeIntervalState.ACTIVE,
                 0, evId, 36000, true, timeframeIntervalHandler.getQueue().get(0));
         Mockito.verify(mockMeter).stopEnergyMeter();
@@ -119,6 +122,7 @@ public class EVChargerTest extends TestBase {
         appliance.setApplianceState(timeStartChargingAgain,
                 true, 6000, "Switch on");
         tick(appliance, timeStartChargingAgain, true, true);
+        assertEquals(1, timeframeIntervalHandler.getQueue().size());
         assertTimeframeIntervalOptionalEnergy(interval, TimeframeIntervalState.ACTIVE,
                 0, evId, 36000, true, timeframeIntervalHandler.getQueue().get(0));
         assertEquals(8.0f, mockMeter.getEnergy(), 0.01);
@@ -127,6 +131,7 @@ public class EVChargerTest extends TestBase {
         LocalDateTime timeAfterStartChargingAgain = toToday(14, 0, 0);
         Mockito.when(pollEnergyExecutor.pollEnergy(Mockito.any())).thenReturn(24.0f);
         tick(appliance, timeAfterStartChargingAgain, true, true);
+        assertEquals(1, timeframeIntervalHandler.getQueue().size());
         assertTimeframeIntervalOptionalEnergy(interval, TimeframeIntervalState.ACTIVE,
                 0, evId, 30000, true, timeframeIntervalHandler.getQueue().get(0));
         assertEquals(14.0f, mockMeter.getEnergy(), 0.01);
@@ -136,6 +141,7 @@ public class EVChargerTest extends TestBase {
         Mockito.when(pollEnergyExecutor.pollEnergy(Mockito.any())).thenReturn(30.0f);
         tick(appliance, timeManualStartChargingCompleted, true, false);
         assertTrue(evCharger.isChargingCompleted());
+        assertEquals(1, timeframeIntervalHandler.getQueue().size());
         assertTimeframeIntervalOptionalEnergy(interval, TimeframeIntervalState.ACTIVE,
                 0, evId, 24000, true, timeframeIntervalHandler.getQueue().get(0));
         assertEquals(20.0f, mockMeter.getEnergy(), 0.01);
@@ -161,6 +167,7 @@ public class EVChargerTest extends TestBase {
                 timeVehicleConnected.plusDays(TimeframeIntervalHandler.CONSIDERATION_INTERVAL_DAYS).toDateTime());
         Mockito.when(socScript.getStateOfCharge()).thenReturn(70.0f);
         tick(appliance, timeVehicleConnected, true, false);
+        assertEquals(1, timeframeIntervalHandler.getQueue().size());
         assertTimeframeIntervalOptionalEnergy(interval, TimeframeIntervalState.ACTIVE,
                 0, evId, 13200, true, timeframeIntervalHandler.getQueue().get(0));
     }
@@ -207,7 +214,7 @@ public class EVChargerTest extends TestBase {
         log("Vehicle not connected");
         tick(appliance, timeInitial, false, false);
         assertTimeframeIntervalSocRequest(TimeframeIntervalState.QUEUED, interval,
-                socRequested, evId, 26400, true, timeframeIntervalHandler.getQueue().get(0));
+                0, socRequested, evId, 26400, true, timeframeIntervalHandler.getQueue().get(0));
 
         log("After vehicle has been connected");
         LocalDateTime timeVehicleConnected = toToday(9, 55, 0);
@@ -220,7 +227,7 @@ public class EVChargerTest extends TestBase {
         assertTimeframeIntervalOptionalEnergy(optionalEnergyInterval, TimeframeIntervalState.ACTIVE,
                 0, evId, 22000, true, timeframeIntervalHandler.getQueue().get(0));
         assertTimeframeIntervalSocRequest(TimeframeIntervalState.QUEUED, interval,
-                socRequested, evId, 4400, true, timeframeIntervalHandler.getQueue().get(1));
+                0, socRequested, evId, 4400, true, timeframeIntervalHandler.getQueue().get(1));
 
         log("Start charging");
         LocalDateTime timeStartCharging = toToday(10, 0, 0);
@@ -230,8 +237,9 @@ public class EVChargerTest extends TestBase {
         appliance.setApplianceState(timeStartCharging,
                 true, 4000, "Switch on");
         tick(appliance, timeStartCharging, true, true);
+        assertEquals(2, timeframeIntervalHandler.getQueue().size());
         assertTimeframeIntervalSocRequest(TimeframeIntervalState.ACTIVE, interval,
-                socRequested, evId, 4400, true, timeframeIntervalHandler.getQueue().get(0));
+                0, socRequested, evId, 4400, true, timeframeIntervalHandler.getQueue().get(0));
         assertTimeframeIntervalOptionalEnergy(optionalEnergyInterval, TimeframeIntervalState.QUEUED,
                 50, evId, 22000, true, timeframeIntervalHandler.getQueue().get(1));
 
@@ -241,43 +249,45 @@ public class EVChargerTest extends TestBase {
         assertEquals(1, timeframeIntervalHandler.getQueue().size());
         assertTimeframeIntervalOptionalEnergy(optionalEnergyInterval, TimeframeIntervalState.ACTIVE,
                 50, evId, 17600, true, timeframeIntervalHandler.getQueue().get(0));
-
-        // TODO Timeframe für optionale Energie muss aktiviert sein
     }
 
-//    @Test
-//    public void daytimeframeSocRequest_SocScript_RequestedSocGTInitialSoc() {
-//        LocalDateTime timeInitial = toToday(9, 50, 0);
-//        TestBuilder builder = new TestBuilder()
-//                .appliance(applianceId, dateTimeProvider, timeInitial)
-//                .withEvCharger(evChargerControl)
-//                .withElectricVehicle(evId, batteryCapacity, null, socScript)
-//                .withMockMeter()
-//                .withSchedule(10,0, 16, 0)
-//                .withSocRequest(evId, 50)
-//                .init();
-//        Appliance appliance = builder.getAppliance();
-//        ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
-//
-//        log("Vehicle not connected");
-//        List<RuntimeInterval> runtimeIntervalsNotConnected = appliance.getRuntimeIntervals(timeInitial, false);
-//        assertEquals(0, runtimeIntervalsNotConnected.size());
-//
-//        log("After vehicle has been connected");
-//        LocalDateTime timeVehicleConnected = toToday(9, 55, 0);
-//        Mockito.when(evChargerControl.isVehicleConnected()).thenReturn(true);
-//        Mockito.when(socScript.getStateOfCharge()).thenReturn(42.7f);
-//        evCharger.updateState(timeVehicleConnected);
-//        List<RuntimeInterval> runtimeIntervalsConnected = appliance.getRuntimeIntervals(timeVehicleConnected, false);
-//        assertEquals(
-//                Arrays.asList(
-//                        new RuntimeInterval(0, 299, 0, 25520, true),
-//                        new RuntimeInterval(300, 21900, 3520, 3520, true),
-//                        new RuntimeInterval(86700, 108300, 3520, 3520, true)
-//                ),
-//                runtimeIntervalsConnected);
-//    }
-//
+    @Test
+    public void daytimeframeSocRequest_SocScript_RequestedSocGTInitialSoc() {
+        int socRequested = 60;
+        int socInitial = 50;
+        mockMeter.setApplianceId(applianceId);
+        mockMeter.getPollEnergyMeter().setPollEnergyExecutor(pollEnergyExecutor);
+
+        Interval interval = new Interval(toToday(10, 0, 0).toDateTime(),
+                toToday(16, 0, 0).toDateTime());
+        LocalDateTime timeInitial = toToday(11, 0, 0);
+        Appliance appliance = new ApplianceBuilder(applianceId)
+                .withEvCharger(evChargerControl)
+                .withElectricVehicle(evId, batteryCapacity, null, socScript)
+                .withMeter(mockMeter)
+                .withSocRequest(timeInitial, interval, evId, socRequested, true)
+                .build(false);
+        TimeframeIntervalHandler timeframeIntervalHandler = appliance.getTimeframeIntervalHandler();
+        ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
+
+        log("Vehicle not connected");
+        tick(appliance, timeInitial, false, false);
+        assertTimeframeIntervalSocRequest(TimeframeIntervalState.ACTIVE, interval,
+                0, socRequested, evId, 26400, true, timeframeIntervalHandler.getQueue().get(0));
+
+        log("After vehicle has been connected");
+        LocalDateTime timeVehicleConnected = toToday(9, 55, 0);
+        Interval optionalEnergyInterval = new Interval(timeVehicleConnected.toDateTime(),
+                toToday(9, 59, 59).toDateTime());
+        Mockito.when(evChargerControl.isVehicleConnected()).thenReturn(true);
+        Mockito.when(socScript.getStateOfCharge()).thenReturn(Integer.valueOf(socInitial).floatValue());
+        evCharger.updateState(timeVehicleConnected);
+        tick(appliance, timeInitial, true, false);
+        assertEquals(1, timeframeIntervalHandler.getQueue().size());
+        assertTimeframeIntervalSocRequest(TimeframeIntervalState.ACTIVE, interval,
+                socInitial, socRequested, evId, 4400, true, timeframeIntervalHandler.getQueue().get(0));
+    }
+
 //    @Test
 //    public void daytimeframeSocRequest_SocScript_RequestedSocLTInitialSoc() {
 //        mockMeter.setApplianceId(applianceId);
@@ -425,8 +435,6 @@ public class EVChargerTest extends TestBase {
         ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
         evCharger.updateState(now);
 
-//        RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
-//        runningTimeMonitor.updateActiveTimeframeInterval(now);
         TimeframeIntervalHandler timeframeIntervalHandler = appliance.getTimeframeIntervalHandler();
         timeframeIntervalHandler.updateQueue(now);
     }

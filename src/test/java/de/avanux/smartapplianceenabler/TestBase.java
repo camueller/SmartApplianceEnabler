@@ -102,12 +102,14 @@ abstract public class TestBase {
 
     protected void assertTimeframeIntervalSocRequest(TimeframeIntervalState state,
                                                      Interval interval,
+                                                     Integer socInitial,
                                                      Integer soc,
                                                      Integer evId,
                                                      Integer energy,
                                                      boolean enabled,
                                                      TimeframeInterval actual) {
         SocRequest request = new SocRequest(soc, evId, energy);
+        request.setSocInitial(socInitial);
         request.setEnabled(enabled);
         assertEquals(new TimeframeInterval(state, interval, request), actual);
     }
