@@ -76,7 +76,7 @@ public class ConsecutiveDaysTimeframe extends AbstractTimeframe implements Timef
             }
             LocalDateTime latestEndDateTime = end.toNextOccurrence(earliestStartDateTime);
             Interval interval = new Interval(earliestStartDateTime.toDateTime(), latestEndDateTime.toDateTime()).withChronology(ISOChronology.getInstance());
-            TimeframeInterval timeframeInterval = createTimeframeInterval(this, interval, schedule);
+            TimeframeInterval timeframeInterval = createTimeframeInterval(interval, schedule);
             return Collections.singletonList(timeframeInterval);
         }
         return null;

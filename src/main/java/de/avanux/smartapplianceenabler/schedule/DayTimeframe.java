@@ -130,11 +130,11 @@ public class DayTimeframe extends AbstractTimeframe implements Timeframe {
                         dow = DOW_HOLIDAYS;
                     }
                     if(dowValues.contains(dow)) {
-                        intervals.add(createTimeframeInterval(this, new Interval(timeFrameStart, timeFrameEnd), schedule));
+                        intervals.add(createTimeframeInterval(new Interval(timeFrameStart, timeFrameEnd), schedule));
                     }
                 }
                 else {
-                    intervals.add(createTimeframeInterval(this, new Interval(timeFrameStart, timeFrameEnd), schedule));
+                    intervals.add(createTimeframeInterval(new Interval(timeFrameStart, timeFrameEnd), schedule));
                 }
             }
         }

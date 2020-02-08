@@ -36,11 +36,8 @@ import java.util.Vector;
  */
 public class TimeframeInterval implements ApplianceIdConsumer {
     private transient Logger logger = LoggerFactory.getLogger(TimeframeInterval.class);
-    /** @deprecated */
-    private Timeframe timeframe;
     private Interval interval;
     private Request request;
-    private TimeframeIntervalState state;
     private transient Vector<TimeframeIntervalState> stateHistory = new Vector<>();
     private transient LocalDateTime stateChangedAt;
     private transient List<TimeframeIntervalStateChangedListener> timeframeStateChangedListeners = new ArrayList<>();
@@ -48,20 +45,20 @@ public class TimeframeInterval implements ApplianceIdConsumer {
     // FIXME make more generic
     private boolean triggeredByStartingCurrent;
 
-    public TimeframeInterval(Timeframe timeframe, Interval interval, Request request) {
-        this.timeframe = timeframe;
+    public TimeframeInterval(Interval interval, Request request) {
         this.interval = interval;
         this.request = request;
-        initStateHistory();
+        initState(null);
+    }
+
+    public TimeframeInterval(TimeframeIntervalState state, Interval interval, Request request) {
+        this.interval = interval;
+        this.request = request;
+        stateHistory.add(state);
     }
 
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
-    }
-
-    /** @deprecated */
-    public Timeframe getTimeframe() {
-        return timeframe;
     }
 
     public Interval getInterval() {
@@ -80,9 +77,9 @@ public class TimeframeInterval implements ApplianceIdConsumer {
         this.timeframeStateChangedListeners.add(listener);
     }
 
-    private void initStateHistory() {
+    public void initState(TimeframeIntervalState initialState) {
         this.stateHistory.clear();
-        stateHistory.add(TimeframeIntervalState.CREATED);
+        stateHistory.add(initialState != null ? initialState : TimeframeIntervalState.CREATED);
     }
 
     public void stateTransitionTo(LocalDateTime now, TimeframeIntervalState state) {
@@ -105,7 +102,7 @@ public class TimeframeInterval implements ApplianceIdConsumer {
     }
 
     public boolean isActivatable(LocalDateTime now) {
-        return now.toDateTime().isAfter(getInterval().getStart())
+        return now.toDateTime().isEqual(getInterval().getStart()) || now.toDateTime().isAfter(getInterval().getStart())
                 && (!(request instanceof RuntimeRequest)
                 || isIntervalSufficient(now, request.getMin(now), request.getMax(now))
         );
@@ -177,7 +174,7 @@ public class TimeframeInterval implements ApplianceIdConsumer {
         return new EqualsBuilder()
                 .append(interval, that.interval)
                 .append(request, that.request)
-                .append(state, that.state)
+                .append(getState(), that.getState())
                 .isEquals();
     }
 
@@ -186,25 +183,20 @@ public class TimeframeInterval implements ApplianceIdConsumer {
         return new HashCodeBuilder(17, 37)
                 .append(interval)
                 .append(request)
-                .append(state)
+                .append(getState())
                 .toHashCode();
     }
 
     @Override
     public String toString() {
         String text = "";
+        if(getState() != null) {
+            text += getState();
+            text += "/";
+        }
         if(interval != null) {
             text += interval.toString();
         }
-//        if(timeframe != null) {
-//            if (interval != null) {
-//                text += "(";
-//            }
-//            text += timeframe.toString();
-//            if (interval != null) {
-//                text += ")";
-//            }
-//        }
         text += "=>";
         text += request;
         return text;
