@@ -1,14 +1,15 @@
 package de.avanux.smartapplianceenabler.webservice;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import de.avanux.smartapplianceenabler.appliance.Appliance;
-import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
-import de.avanux.smartapplianceenabler.appliance.Appliances;
-import de.avanux.smartapplianceenabler.appliance.RunningTimeMonitor;
+import de.avanux.smartapplianceenabler.appliance.ApplianceBuilder;
 import de.avanux.smartapplianceenabler.schedule.*;
 import de.avanux.smartapplianceenabler.util.FileHandler;
 import org.joda.time.LocalDateTime;
-import org.junit.Ignore;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -18,12 +19,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.nio.charset.Charset;
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import org.junit.jupiter.api.Test;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
@@ -34,7 +33,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 public class SaeControllerTest {
 
     private final static String SCHEDULE_RUNTIME_REQUEST_DAY_TIMEFRAME =
-            "<Schedules xmlns=\"http://github.com/camueller/SmartApplianceEnabler/v1.4\">\n" +
+            "<Schedules xmlns=\"http://github.com/camueller/SmartApplianceEnabler/v1.5\">\n" +
             "  <Schedule>\n" +
             "    <RuntimeRequest min=\"7200\" max=\"10800\" />\n" +
             "    <DayTimeframe>\n" +
@@ -48,7 +47,7 @@ public class SaeControllerTest {
             ;
 
     private  final static String SCHEDULE_CONSECUTIVE_DAYS_TIMEFRAME =
-            "<Schedules xmlns=\"http://github.com/camueller/SmartApplianceEnabler/v1.4\">\n" +
+            "<Schedules xmlns=\"http://github.com/camueller/SmartApplianceEnabler/v1.5\">\n" +
             "  <Schedule>\n" +
             "    <RuntimeRequest min=\"36000\" max=\"43200\" />\n" +
             "    <ConsecutiveDaysTimeframe>\n" +
@@ -60,7 +59,7 @@ public class SaeControllerTest {
             ;
 
     private final static String SCHEDULE_ENERGY_REQUEST_DAY_TIMEFRAME =
-            "<Schedules xmlns=\"http://github.com/camueller/SmartApplianceEnabler/v1.4\">\n" +
+            "<Schedules xmlns=\"http://github.com/camueller/SmartApplianceEnabler/v1.5\">\n" +
                     "  <Schedule>\n" +
                     "    <EnergyRequest min=\"1380\" max=\"7360\" />\n" +
                     "    <DayTimeframe>\n" +
@@ -89,13 +88,16 @@ public class SaeControllerTest {
         System.setProperty(FileHandler.SAE_HOME, System.getProperty("java.io.tmpdir"));
         this.mockMvc = webAppContextSetup(webApplicationContext).build();
         this.now = new LocalDateTime();
+
+        Logger root = (Logger) LoggerFactory.getLogger("de.avanux");
+        root.setLevel(Level.DEBUG);
     }
 
-    @Ignore
+    @Test
     public void setSchedules_RuntimeRequest_DayTimeframe() throws Exception {
-        RunningTimeMonitor runningTimeMonitor = runTest(SaeController.SCHEDULES_URL, SCHEDULE_RUNTIME_REQUEST_DAY_TIMEFRAME);
+        Appliance appliance = runTest(SaeController.SCHEDULES_URL, SCHEDULE_RUNTIME_REQUEST_DAY_TIMEFRAME);
 
-        List<Schedule> schedules = runningTimeMonitor.getSchedules();
+        List<Schedule> schedules = appliance.getSchedules();
         assertEquals(1, schedules.size());
         Schedule schedule = schedules.get(0);
 
@@ -116,11 +118,11 @@ public class SaeControllerTest {
         assertEquals(7, daysOfWeekValues.get(1).intValue());
     }
 
-    @Ignore
+    @Test
     public void setSchedules_RuntimeRequest_ConsecutiveDaysTimeframe() throws Exception {
-        RunningTimeMonitor runningTimeMonitor = runTest(SaeController.SCHEDULES_URL, SCHEDULE_CONSECUTIVE_DAYS_TIMEFRAME);
+        Appliance appliance = runTest(SaeController.SCHEDULES_URL, SCHEDULE_CONSECUTIVE_DAYS_TIMEFRAME);
 
-        List<Schedule> schedules = runningTimeMonitor.getSchedules();
+        List<Schedule> schedules = appliance.getSchedules();
         assertEquals(1, schedules.size());
         Schedule schedule = schedules.get(0);
 
@@ -136,11 +138,11 @@ public class SaeControllerTest {
         assertEquals(new TimeOfDayOfWeek(7, 20, 0, 0), consecutiveDaysTimeframe.getEnd());
     }
 
-    @Ignore
+    @Test
     public void setSchedules_EnergyRequest_DayTimeframe() throws Exception {
-        RunningTimeMonitor runningTimeMonitor = runTest(SaeController.SCHEDULES_URL, SCHEDULE_ENERGY_REQUEST_DAY_TIMEFRAME);
+        Appliance appliance = runTest(SaeController.SCHEDULES_URL, SCHEDULE_ENERGY_REQUEST_DAY_TIMEFRAME);
 
-        List<Schedule> schedules = runningTimeMonitor.getSchedules();
+        List<Schedule> schedules = appliance.getSchedules();
         assertEquals(1, schedules.size());
         Schedule schedule = schedules.get(0);
 
@@ -161,18 +163,10 @@ public class SaeControllerTest {
         assertEquals(7, daysOfWeekValues.get(1).intValue());
     }
 
-    private RunningTimeMonitor runTest(String url, String content) throws Exception {
-        RunningTimeMonitor runningTimeMonitor = new RunningTimeMonitor();
-
+    private Appliance runTest(String url, String content) throws Exception {
         String applianceId = "F-00000001-000000000001-00";
-        Appliance appliance = new Appliance();
-        appliance.setId(applianceId);
-        appliance.setRunningTimeMonitor(runningTimeMonitor);
-
-        Appliances appliances = new Appliances();
-        appliances.setAppliances(Collections.singletonList(appliance));
-
-        ApplianceManager.getInstanceWithoutTimer().setAppliances(appliances);
+        Appliance appliance = new ApplianceBuilder(applianceId)
+                .build(true);
 
         this.mockMvc.perform(post(url)
                 .param("id", applianceId)
@@ -180,6 +174,6 @@ public class SaeControllerTest {
                 .content(content))
                 .andExpect(status().isOk());
 
-        return runningTimeMonitor;
+        return appliance;
     }
 }

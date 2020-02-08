@@ -28,13 +28,12 @@ import de.avanux.smartapplianceenabler.control.StartingCurrentSwitch;
 import de.avanux.smartapplianceenabler.control.StartingCurrentSwitchDefaults;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.semp.webservice.*;
-import de.avanux.smartapplianceenabler.test.TestBuilder;
+import de.avanux.smartapplianceenabler.appliance.ApplianceBuilder;
 import de.avanux.smartapplianceenabler.util.DateTimeProvider;
 import de.avanux.smartapplianceenabler.webservice.ApplianceStatus;
 import de.avanux.smartapplianceenabler.webservice.SaeController;
 import org.joda.time.LocalDateTime;
 import org.junit.Ignore;
-import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,12 +58,10 @@ public class IntegrationTest extends TestBase {
     @Ignore
     public void testSwitchOnAndOff() {
         LocalDateTime timeInitial = toToday(10, 0, 0);
-        TestBuilder builder = new TestBuilder()
-                .appliance(applianceId, dateTimeProvider, timeInitial)
+        Appliance appliance = new ApplianceBuilder(applianceId)
                 .withMockSwitch(false)
-                .withSchedule(10, 0, 18, 0, 7200, null)
-                .init();
-        Appliance appliance = builder.getAppliance();
+                .withSchedule(10, 0, 18, 0, null, 7200)
+                .build(true);
         Control control = appliance.getControl();
         RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
 
@@ -158,12 +155,10 @@ public class IntegrationTest extends TestBase {
     @Ignore
     public void testClickGoLight() {
         LocalDateTime timeInitial = toToday(11, 0, 0);
-        TestBuilder builder = new TestBuilder()
-                .appliance(applianceId, dateTimeProvider, timeInitial)
+        Appliance appliance = new ApplianceBuilder(applianceId)
                 .withMockSwitch(false)
-                .withSchedule(10, 0, 18, 0, 3600, null)
-                .init();
-        Appliance appliance = builder.getAppliance();
+                .withSchedule(10, 0, 18, 0, null, 3600)
+                .build(true);
         Control control = appliance.getControl();
         RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
 
@@ -209,12 +204,10 @@ public class IntegrationTest extends TestBase {
     @Ignore
     public void testClickGoLightAfterTimeframeWithNoRunningTimeLeft() {
         LocalDateTime timeInitial = toToday(11, 0, 0);
-        TestBuilder builder = new TestBuilder()
-                .appliance(applianceId, dateTimeProvider, timeInitial)
+        Appliance appliance = new ApplianceBuilder(applianceId)
                 .withMockSwitch(false)
-                .withSchedule(10, 0, 18, 0, 3600, null)
-                .init();
-        Appliance appliance = builder.getAppliance();
+                .withSchedule(10, 0, 18, 0, null, 3600)
+                .build(true);
         Control control = appliance.getControl();
         RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
 
@@ -269,14 +262,11 @@ public class IntegrationTest extends TestBase {
     @Ignore
     public void testSwitchOnAndOff_startingCurrentDetectedDuringTimeframeInterval() {
         LocalDateTime timeInitial = toToday(11, 29, 0);
-        TestBuilder builder = new TestBuilder()
-                .appliance(applianceId, dateTimeProvider, timeInitial)
+        Appliance appliance = new ApplianceBuilder(applianceId)
                 .withMockSwitch(true)
                 .withMockMeter()
-                .withSchedule(10, 0, 18, 0, 3600, null)
-                .init();
-
-        Appliance appliance = builder.getAppliance();
+                .withSchedule(10, 0, 18, 0, null, 3600)
+                .build(true);
         StartingCurrentSwitch control = (StartingCurrentSwitch) appliance.getControl();
         Meter meter = appliance.getMeter();
         RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
@@ -330,14 +320,11 @@ public class IntegrationTest extends TestBase {
     @Ignore
     public void testNoSwitchOn_startingCurrentDetectedDuringTimeframeInterval() {
         LocalDateTime timeInitial = toToday(11, 29, 0);
-        TestBuilder builder = new TestBuilder()
-                .appliance(applianceId, dateTimeProvider, timeInitial)
+        Appliance appliance = new ApplianceBuilder(applianceId)
                 .withMockSwitch(true)
                 .withMockMeter()
-                .withSchedule(10, 0, 13, 0, 3600, null)
-                .init();
-
-        Appliance appliance = builder.getAppliance();
+                .withSchedule(10, 0, 13, 0, null, 3600)
+                .build(true);
         StartingCurrentSwitch control = (StartingCurrentSwitch) appliance.getControl();
         Meter meter = appliance.getMeter();
         RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
@@ -372,13 +359,11 @@ public class IntegrationTest extends TestBase {
     @Ignore
     public void testSwitchOnBeforeTimeframeIntervalStart() {
         LocalDateTime timeInitial = toToday(9, 59, 0);
-        TestBuilder builder = new TestBuilder()
-                .appliance(applianceId, dateTimeProvider, timeInitial)
+        Appliance appliance = new ApplianceBuilder(applianceId)
                 .withMockSwitch(false)
                 .withMockMeter()
-                .withSchedule(10, 0, 18, 0, 3600, null)
-                .init();
-        Appliance appliance = builder.getAppliance();
+                .withSchedule(10, 0, 18, 0, null, 3600)
+                .build(true);
         Control control = (MockSwitch) appliance.getControl();
         RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
 

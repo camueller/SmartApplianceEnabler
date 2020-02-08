@@ -1,7 +1,6 @@
 package de.avanux.smartapplianceenabler;
 
-import de.avanux.smartapplianceenabler.schedule.TimeOfDay;
-import de.avanux.smartapplianceenabler.schedule.TimeOfDayOfWeek;
+import de.avanux.smartapplianceenabler.schedule.*;
 import org.joda.time.DateTimeFieldType;
 import org.joda.time.Interval;
 import org.joda.time.LocalDate;
@@ -83,5 +82,31 @@ abstract public class TestBase {
 
     protected void assertDateTime(LocalDateTime dt1, LocalDateTime dt2) {
         assertEquals(dt1.get(DateTimeFieldType.dayOfMonth()), dt2.get(DateTimeFieldType.dayOfMonth()));
+    }
+
+    protected void assertTimeframeIntervalOptionalEnergy(Interval interval,
+                                                         TimeframeIntervalState state,
+                                                         Integer evId,
+                                                         Integer energy,
+                                                         boolean enabled,
+                                                         TimeframeInterval actual) {
+        OptionalEnergySocRequest request = new OptionalEnergySocRequest(evId, energy);
+        request.setEnabled(enabled);
+        request.setSoc(100);
+        TimeframeInterval expected = new TimeframeInterval(interval, request);
+        expected.initState(state);
+        assertEquals(expected, actual);
+    }
+
+    protected void assertTimeframeIntervalSocRequest(TimeframeIntervalState state,
+                                                     Interval interval,
+                                                     Integer soc,
+                                                     Integer evId,
+                                                     Integer energy,
+                                                     boolean enabled,
+                                                     TimeframeInterval actual) {
+        SocRequest request = new SocRequest(soc, evId, energy);
+        request.setEnabled(enabled);
+        assertEquals(new TimeframeInterval(state, interval, request), actual);
     }
 }

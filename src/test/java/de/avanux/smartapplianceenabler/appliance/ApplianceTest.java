@@ -20,22 +20,11 @@ package de.avanux.smartapplianceenabler.appliance;
 
 import de.avanux.smartapplianceenabler.TestBase;
 import de.avanux.smartapplianceenabler.control.ev.EVChargerControl;
-import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
 import de.avanux.smartapplianceenabler.meter.Meter;
-import de.avanux.smartapplianceenabler.schedule.Schedule;
-import de.avanux.smartapplianceenabler.schedule.TimeOfDay;
-import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
-import de.avanux.smartapplianceenabler.test.TestBuilder;
 import de.avanux.smartapplianceenabler.util.DateTimeProvider;
-import org.joda.time.Interval;
-import org.joda.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;

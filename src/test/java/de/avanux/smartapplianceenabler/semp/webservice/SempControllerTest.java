@@ -1,156 +1,65 @@
 package de.avanux.smartapplianceenabler.semp.webservice;
 
 import de.avanux.smartapplianceenabler.TestBase;
-import de.avanux.smartapplianceenabler.appliance.*;
-import de.avanux.smartapplianceenabler.schedule.Schedule;
-import de.avanux.smartapplianceenabler.schedule.TimeOfDay;
-import de.avanux.smartapplianceenabler.test.TestBuilder;
-import de.avanux.smartapplianceenabler.util.DateTimeProvider;
+import de.avanux.smartapplianceenabler.appliance.Appliance;
+import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
+import de.avanux.smartapplianceenabler.appliance.ApplianceBuilder;
 import org.joda.time.LocalDateTime;
-import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.util.AssertionErrors.assertFalse;
-import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 public class SempControllerTest extends TestBase {
 
     public static final String DEVICE_ID = "DeviceID1";
-    String applianceId = "F-001";
+    public static final String DEVICE_ID2 = "DeviceID2";
+    public static final String DEVICE_ID3 = "DeviceID3";
     private SempController sempController;
-    private DateTimeProvider dateTimeProvider = Mockito.mock(DateTimeProvider.class);
 
     public SempControllerTest() {
         sempController = new SempController();
     }
 
-    @Ignore
-    public void createDeviceInfo_noOptionalEnergy() {
-        LocalDateTime now = toToday(9, 30, 0);
-        TestBuilder builder = new TestBuilder()
-                .appliance(applianceId, dateTimeProvider, now)
-                .withMockSwitch(false)
-                .withSchedule(10, 0, 18, 0, 3600, null)
-                .init();
-        DeviceInfo deviceInfo = sempController.createDeviceInfo(now, applianceId);
-        assertFalse("No value for maxRunningTime indicates no ability to consume optional energy",
-                deviceInfo.getCapabilities().getOptionalEnergy());
-    }
-
     @Test
-    public void createDeviceInfo_optionalEnergy() {
-        LocalDateTime now = toToday(9, 30, 0);
-        TestBuilder builder = new TestBuilder()
-                .appliance(applianceId, dateTimeProvider, now)
+    public void getPlanningRequest() {
+        LocalDateTime now = toToday(6, 0, 0);
+        List<Appliance> appliances = new ArrayList<>();
+
+        Appliance appliance1 = new ApplianceBuilder(DEVICE_ID)
                 .withMockSwitch(false)
-                .withSchedule(10, 0, 18, 0, 3600, 7200)
-                .init();
-        DeviceInfo deviceInfo = sempController.createDeviceInfo(now, applianceId);
-        assertTrue("Different values for minRunningTime and maxRunningTime indicate consumption of " +
-                "optional energy", deviceInfo.getCapabilities().getOptionalEnergy());
-    }
+                .withRuntimeRequest(now, now.plusHours(4), now.plusHours(8), null, 3600, true)
+                .build(false);
+        appliances.add(appliance1);
 
-    @Ignore
-    public void getPlanningRequest_intervalAlreadyActive() {
-        Identification identification = new Identification();
-        identification.setDeviceId(DEVICE_ID);
+        Appliance appliance2 = new ApplianceBuilder(DEVICE_ID2)
+                .withMockSwitch(false)
+                .withRuntimeRequest(now, now.plusHours(3), now.plusHours(7), null, 7200, false)
+                .build(false);
+        appliances.add(appliance2);
 
-        DeviceInfo deviceInfo = new DeviceInfo();
-        deviceInfo.setIdentification(identification);
-        setDeviceInfo(deviceInfo);
+        Appliance appliance3 = new ApplianceBuilder(DEVICE_ID3)
+                .withMockSwitch(false)
+                .withRuntimeRequest(now, now.plusHours(2), now.plusHours(6), 1000, 1800, true)
+                .build(false);
+        appliances.add(appliance3);
 
-        Appliance appliance = new Appliance();
-        appliance.setId(DEVICE_ID);
-
-        LocalDateTime now = toToday(9, 30, 0);
-        int remainingMaxRunningTime = 1800;
-        Schedule schedule = new Schedule(600, null, new TimeOfDay(now.minusSeconds(1)),
-                new TimeOfDay(now.plusSeconds(remainingMaxRunningTime)));
-        de.avanux.smartapplianceenabler.schedule.Timeframe timeframe = schedule.getTimeframe();
-        timeframe.setSchedule(schedule);
-        RunningTimeMonitor runningTimeMonitor = mock(RunningTimeMonitor.class);
-        when(runningTimeMonitor.getSchedules()).thenReturn(Collections.singletonList(schedule));
-        when(runningTimeMonitor.getActiveTimeframeInterval()).thenReturn(timeframe.getIntervals(now).get(0));
-        when(runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(now)).thenReturn(schedule.getRequest().getMin(now));
-        when(runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(now)).thenReturn(schedule.getRequest().getMax(now));
-        appliance.setRunningTimeMonitor(runningTimeMonitor);
-
-        Appliances appliances = new Appliances();
-        appliances.setAppliances(Collections.singletonList(appliance));
-        ApplianceManager.getInstanceWithoutTimer().setAppliances(appliances);
+        ApplianceBuilder.init(appliances);
 
         Device2EM device2EM = sempController.createDevice2EM(now);
         List<PlanningRequest> planningRequests = device2EM.getPlanningRequest();
-        assertEquals(1, planningRequests.size());
-        List<Timeframe> timeframes = planningRequests.get(0).getTimeframes();
-        assertEquals(3, timeframes.size());
-        assertTimeframe(timeframes.get(0), 0, 1800, 599, 600);
-        assertTimeframe(timeframes.get(1), 86399, 88200, 599, 600);
-        assertTimeframe(timeframes.get(2), 172799, 174600, 599, 600);
-    }
+        assertEquals(2, planningRequests.size());
 
-    @Ignore
-    public void getPlanningRequest_startingCurrentDetected() {
-        Identification identification = new Identification();
-        identification.setDeviceId(DEVICE_ID);
-
-        DeviceInfo deviceInfo = new DeviceInfo();
-        deviceInfo.setIdentification(identification);
-        setDeviceInfo(deviceInfo);
-
-        Appliance appliance = new Appliance();
-        appliance.setId(DEVICE_ID);
-
-        LocalDateTime now = toToday(9, 0, 0);
-        Schedule schedule = new Schedule(3600, null,
-                new TimeOfDay(11, 0, 0), new TimeOfDay(13, 0, 0));
-        de.avanux.smartapplianceenabler.schedule.Timeframe timeframe = schedule.getTimeframe();
-        timeframe.setSchedule(schedule);
-        RunningTimeMonitor runningTimeMonitor = mock(RunningTimeMonitor.class);
-        when(runningTimeMonitor.getActiveTimeframeInterval()).thenReturn(timeframe.getIntervals(now).get(0));
-        when(runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(now)).thenReturn(schedule.getRequest().getMin(now));
-        when(runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(now)).thenReturn(schedule.getRequest().getMax(now));
-        appliance.setRunningTimeMonitor(runningTimeMonitor);
-
-        Appliances appliances = new Appliances();
-        appliances.setAppliances(Collections.singletonList(appliance));
-        ApplianceManager.getInstanceWithoutTimer().setAppliances(appliances);
-
-        appliance.startingCurrentDetected(now);
-
-        // check timeframes for the first time after activation
-        Device2EM device2EM = sempController.createDevice2EM(now);
-        List<PlanningRequest> planningRequests = device2EM.getPlanningRequest();
-        assertEquals(1, planningRequests.size());
         List<Timeframe> timeframes = planningRequests.get(0).getTimeframes();
         assertEquals(1, timeframes.size());
+        assertTimeframe(timeframes.get(0), 4 * 3600,  8 * 3600, 3599, 3600);
 
-        // check again in order to make sure that the timeframe remains active
-        device2EM = sempController.createDevice2EM(now);
-        planningRequests = device2EM.getPlanningRequest();
-        assertEquals(1, planningRequests.size());
-        timeframes = planningRequests.get(0).getTimeframes();
+        timeframes = planningRequests.get(1).getTimeframes();
         assertEquals(1, timeframes.size());
-
-        appliance.finishedCurrentDetected();
-        when(runningTimeMonitor.getActiveTimeframeInterval()).thenReturn(null);
-
-        // check timeframes for the first time after deactivation
-        device2EM = sempController.createDevice2EM(now);
-        planningRequests = device2EM.getPlanningRequest();
-        assertEquals(0, planningRequests.size());
-
-        // check again in order to make sure that the timeframe remains inactive
-        device2EM = sempController.createDevice2EM(now);
-        planningRequests = device2EM.getPlanningRequest();
-        assertEquals(0, planningRequests.size());
+        assertTimeframe(timeframes.get(0), 2 * 3600,  6 * 3600, 1000, 1800);
     }
 
     private void assertTimeframe(Timeframe timeframe, Integer earliestStart, Integer latestEnd, Integer minRuningTime, Integer maxRunningTime) {
