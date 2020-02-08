@@ -44,6 +44,16 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
     public SocRequest() {
     }
 
+    public SocRequest(Integer soc, Integer evId) {
+        this.soc = soc;
+        this.evId = evId;
+    }
+
+    public SocRequest(Integer soc, Integer evId, Integer energy) {
+        this(soc, evId);
+        this.energy = energy;
+    }
+
     public void setSocInitial(Integer socInitial) {
         this.socInitial = socInitial;
     }
@@ -91,6 +101,7 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
     public void update() {
         this.energy = calculateEnergy(((ElectricVehicleCharger) getControl()).getVehicle(evId));
         this.energyLastCalculationMillis = System.currentTimeMillis();
+        setEnabled(energy > 0);
     }
 
     private Integer getEnergy() {
@@ -183,7 +194,7 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
         text += "/";
         text += "evId=" + evId;
         text += "/";
-        text += "soc=" + getSocOrDefault();
+        text += "soc=" + soc;
         text += "%";
         text += "/";
         text += "energy=" + (energy != null ? energy : 0);
