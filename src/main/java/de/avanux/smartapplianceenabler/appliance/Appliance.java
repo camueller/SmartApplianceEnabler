@@ -167,9 +167,9 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
         logger.debug("{} Reset acceptControlRecommendations to {}", id, isAcceptControlRecommendations());
     }
 
-    public RunningTimeMonitor getRunningTimeMonitor() {
-        return runningTimeMonitor;
-    }
+//    public RunningTimeMonitor getRunningTimeMonitor() {
+//        return runningTimeMonitor;
+//    }
 
     public void setRunningTimeMonitor(RunningTimeMonitor runningTimeMonitor) {
         this.runningTimeMonitor = runningTimeMonitor;
