@@ -22,6 +22,7 @@ import de.avanux.smartapplianceenabler.appliance.TimeframeIntervalChangedListene
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.ControlStateChangedListener;
+import de.avanux.smartapplianceenabler.control.StartingCurrentSwitch;
 import de.avanux.smartapplianceenabler.control.ev.EVChargerState;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
@@ -45,12 +46,16 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
     private LinkedList<TimeframeInterval> queue = new LinkedList<>();
     private Set<TimeframeIntervalChangedListener> timeframeIntervalChangedListeners = new HashSet<>();
     private boolean controlExists;
+    private boolean controlIsStartingCurrentSwitch;
 
     public TimeframeIntervalHandler(List<Schedule> schedules, Control control) {
         this.schedules = schedules;
         if(control != null) {
             control.addControlStateChangedListener(this);
             controlExists = true;
+            if(control instanceof StartingCurrentSwitch) {
+                controlIsStartingCurrentSwitch = true;
+            }
         }
     }
 
@@ -115,6 +120,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
         timeframeIntervals.stream()
                 .filter(timeframeInterval -> lastTimeframeInterval == null
                         || timeframeInterval.getInterval().getStart().isAfter(lastTimeframeInterval.getInterval().getEnd()))
+                .limit(controlIsStartingCurrentSwitch ? 1 : Integer.MAX_VALUE)
                 .forEach(timeframeInterval -> addTimeframeInterval(now, timeframeInterval, false));
 //        addTimeframeIntervalToQueue(now, timeframeIntervals.get(0), false);
     }
@@ -221,6 +227,9 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
     private void removeTimeframeInterval(LocalDateTime now, TimeframeInterval timeframeInterval) {
         logger.debug("{}: Remove timeframe interval: {}", applianceId, timeframeInterval);
         queue.remove(timeframeInterval);
+        if(controlIsStartingCurrentSwitch) {
+            fillQueue(now);
+        }
     }
 
     private boolean hasActiveTimeframeInterval() {
