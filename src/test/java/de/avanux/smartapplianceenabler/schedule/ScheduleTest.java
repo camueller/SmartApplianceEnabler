@@ -37,171 +37,171 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ScheduleTest extends TestBase {
 
-    @Test
-    public void findTimeframeIntervals_noTimeFrames() {
-        List<Schedule> schedules = new ArrayList<Schedule>();
-        assertEquals(0, Schedule.findTimeframeIntervals(
-                toToday(16, 1), null, schedules,
-                false, true).size());
-    }
-
-    @Ignore
-    public void findTimeframeIntervals_beforeIntervalStart() {
-        List<Schedule> schedules = new ArrayList<Schedule>();
-        addSchedule(schedules, 3600, 10, 0, 16, 0);
-        List<TimeframeInterval> timeframeIntervals = Schedule.findTimeframeIntervals(
-                toToday(9, 0), null, schedules,
-                false, true);
-        assertEquals(7, timeframeIntervals.size());
-        for(int i=0; i<7; i++) {
-            assertEquals(toInterval(i,10,0, i, 16, 0),
-                    timeframeIntervals.get(i).getInterval());
-        }
-    }
-
-    @Ignore
-    public void findTimeframeIntervals_IntervalStartedAndSufficient() {
-        List<Schedule> schedules = new ArrayList<Schedule>();
-        addSchedule(schedules, 3600, 10, 0, 16, 0);
-        List<TimeframeInterval> timeframeIntervals = Schedule.findTimeframeIntervals(
-                toToday(14, 0), null, schedules,
-                false, false);
-        assertEquals(7, timeframeIntervals.size());
-        for(int i=0; i<7; i++) {
-            assertEquals(toInterval(i,10,0, i, 16, 0),
-                    timeframeIntervals.get(i).getInterval());
-        }
-    }
-
-    @Ignore
-    public void findTimeframeIntervals_IntervalStartedButNotSufficient_OnlySufficientFalse() {
-        List<Schedule> schedules = new ArrayList<Schedule>();
-        addSchedule(schedules, 3600, 10, 0, 16, 0);
-        List<TimeframeInterval> timeframeIntervals = Schedule.findTimeframeIntervals(
-                toToday(15, 1), null, schedules,
-                false, false);
-        assertEquals(7, timeframeIntervals.size());
-        for(int i=0; i<7; i++) {
-            assertEquals(toInterval(i,10,0, i, 16, 0),
-                    timeframeIntervals.get(i).getInterval());
-        }
-    }
-
-    @Ignore
-    public void findTimeframeIntervals_IntervalStartedButNotSufficient_OnlySufficientTrue() {
-        List<Schedule> schedules = new ArrayList<Schedule>();
-        addSchedule(schedules, 3600, 10, 0, 16, 0);
-        List<TimeframeInterval> timeframeIntervals = Schedule.findTimeframeIntervals(
-                toToday(15, 1), null, schedules,
-                false, true);
-        assertEquals(6, timeframeIntervals.size());
-        for(int i=0; i<6; i++) {
-            assertEquals(toInterval(i+1,10,0,
-                            i+1, 16, 0),
-                    timeframeIntervals.get(i).getInterval());
-        }
-    }
-
-    @Ignore
-    public void findTimeframeIntervals_multipleSchedules_differentDaysOfWeek() {
-        List<Schedule> schedules = new ArrayList<Schedule>();
-        addSchedule(schedules, 3600, 10, 0, 12, 0, dowList(3));
-        addSchedule(schedules, 3600, 12, 0, 14, 0, dowList(2,4));
-        addSchedule(schedules, 3600, 14, 0, 16, 0, dowList(1,5));
-        LocalDateTime now = toDayOfWeek(1, 9, 0);
-        List<TimeframeInterval> timeframeIntervals = Schedule.findTimeframeIntervals(
-                now, null, schedules,
-                false, true);
-        assertEquals(5, timeframeIntervals.size());
-        assertEquals(toIntervalByDow(now,1,14,0,1, 16, 0),
-                timeframeIntervals.get(0).getInterval());
-        assertEquals(toIntervalByDow(now,2,12,0,2, 14, 0),
-                timeframeIntervals.get(1).getInterval());
-        assertEquals(toIntervalByDow(now,3,10,0,3, 12, 0),
-                timeframeIntervals.get(2).getInterval());
-        assertEquals(toIntervalByDow(now,4,12,0,4, 14, 0),
-                timeframeIntervals.get(3).getInterval());
-        assertEquals(toIntervalByDow(now,5,14,0,5, 16, 0),
-                timeframeIntervals.get(4).getInterval());
-    }
-
-    @Test
-    public void getCurrentOrNextTimeframeInterval_noTimeFrames() {
-        assertNull(Schedule.getCurrentOrNextTimeframeInterval(toToday(20, 0),
-                null, false, false));
-    }
-
-    @Ignore
-    public void getCurrentOrNextTimeframeInterval_ignoreDisabledSchedules() {
-        List<Schedule> schedules = new ArrayList<Schedule>();
-        addSchedule(schedules, false, 7200, null,
-                14, 0, 18, 0, null);
-        assertNull(Schedule.getCurrentOrNextTimeframeInterval(toToday(16, 0),
-                schedules, false, false));
-    }
-
-    @Ignore
-    public void getCurrentOrNextTimeframeInterval_alreadyStarted_remainingRunningTimeSufficient() {
-        List<Schedule> schedules = new ArrayList<Schedule>();
-        addSchedule(schedules, 7200, 14, 0, 18, 0);
-        addSchedule(schedules, 7200, 10, 0, 14, 0);
-        assertEquals(toIntervalToday(10, 0, 14, 0),
-                Schedule.getCurrentOrNextTimeframeInterval(
-                        toToday(11, 59), schedules,
-                        false, true).getInterval());
-    }
-
-    @Ignore
-    public void getCurrentOrNextTimeframeInterval_alreadyStarted_remainingRunningTimeInsufficient_firstTimeFrameOfDay() {
-        List<Schedule> schedules = new ArrayList<Schedule>();
-        addSchedule(schedules, 7200, 14, 0, 18, 0);
-        addSchedule(schedules, 7200, 10, 0, 14, 0);
-        assertEquals(toIntervalToday(14, 0, 18, 0),
-                Schedule.getCurrentOrNextTimeframeInterval(
-                        toToday(12, 1), schedules,
-                        false, true).getInterval());
-    }
-
-    @Ignore
-    public void getCurrentOrNextTimeframeInterval_alreadyStarted_remainingRunningTimeInsufficient_secondTimeFrameOfDay() {
-        List<Schedule> schedules = new ArrayList<Schedule>();
-        addSchedule(schedules, 7200, 15, 0, 18, 0);
-        addSchedule(schedules, 7200, 10, 0, 14, 0);
-        Interval expectedInterval = new Interval(toDay(1, 10, 0, 0).toDateTime(),
-                toDay(1, 14, 0, 0).toDateTime());
-        assertEquals(expectedInterval, Schedule.getCurrentOrNextTimeframeInterval(
-                toToday(16, 1), schedules, false, true).getInterval());
-    }
-
-    @Ignore
-    public void getCurrentOrNextTimeframeInterval_notYetStarted_secondTimeFrameOfDay() {
-        List<Schedule> schedules = new ArrayList<Schedule>();
-        addSchedule(schedules, 7200, 15, 0, 18, 0);
-        addSchedule(schedules, 7200, 10, 0, 14, 0);
-        assertEquals(toIntervalToday(15, 0, 18, 0),
-                Schedule.getCurrentOrNextTimeframeInterval(
-                        toToday(14, 30), schedules,
-                        false, true).getInterval());
-    }
-
-    @Ignore
-    public void getCurrentOrNextTimeframeInterval_timeFrameNotValidForDow() {
-        LocalDateTime now = toToday(9, 0, 0);
-        List<Schedule> schedules = new ArrayList<Schedule>();
-        // Timeframe only valid yesterday
-        schedules.add(new Schedule(true, 7200, null,
-                new TimeOfDay(10, 0, 0), new TimeOfDay(14, 0, 0),
-                Collections.singletonList(now.minusDays(1).get(DateTimeFieldType.dayOfWeek()))));
-        // Timeframe only valid tomorrow
-        schedules.add(new Schedule(true, 7200, null,
-                new TimeOfDay(15, 0, 0), new TimeOfDay(18, 0, 0),
-                Collections.singletonList(now.plusDays(1).get(DateTimeFieldType.dayOfWeek()))));
-        assertEquals(
-                new Interval(toDay(1, 15, 0, 0).toDateTime(),
-                toDay(1, 18, 0, 0).toDateTime()),
-                Schedule.getCurrentOrNextTimeframeInterval(now, schedules,
-                false, false).getInterval());
-    }
+//    @Test
+//    public void findTimeframeIntervals_noTimeFrames() {
+//        List<Schedule> schedules = new ArrayList<Schedule>();
+//        assertEquals(0, Schedule.findTimeframeIntervals(
+//                toToday(16, 1), null, schedules,
+//                false, true).size());
+//    }
+//
+//    @Ignore
+//    public void findTimeframeIntervals_beforeIntervalStart() {
+//        List<Schedule> schedules = new ArrayList<Schedule>();
+//        addSchedule(schedules, 3600, 10, 0, 16, 0);
+//        List<TimeframeInterval> timeframeIntervals = Schedule.findTimeframeIntervals(
+//                toToday(9, 0), null, schedules,
+//                false, true);
+//        assertEquals(7, timeframeIntervals.size());
+//        for(int i=0; i<7; i++) {
+//            assertEquals(toInterval(i,10,0, i, 16, 0),
+//                    timeframeIntervals.get(i).getInterval());
+//        }
+//    }
+//
+//    @Ignore
+//    public void findTimeframeIntervals_IntervalStartedAndSufficient() {
+//        List<Schedule> schedules = new ArrayList<Schedule>();
+//        addSchedule(schedules, 3600, 10, 0, 16, 0);
+//        List<TimeframeInterval> timeframeIntervals = Schedule.findTimeframeIntervals(
+//                toToday(14, 0), null, schedules,
+//                false, false);
+//        assertEquals(7, timeframeIntervals.size());
+//        for(int i=0; i<7; i++) {
+//            assertEquals(toInterval(i,10,0, i, 16, 0),
+//                    timeframeIntervals.get(i).getInterval());
+//        }
+//    }
+//
+//    @Ignore
+//    public void findTimeframeIntervals_IntervalStartedButNotSufficient_OnlySufficientFalse() {
+//        List<Schedule> schedules = new ArrayList<Schedule>();
+//        addSchedule(schedules, 3600, 10, 0, 16, 0);
+//        List<TimeframeInterval> timeframeIntervals = Schedule.findTimeframeIntervals(
+//                toToday(15, 1), null, schedules,
+//                false, false);
+//        assertEquals(7, timeframeIntervals.size());
+//        for(int i=0; i<7; i++) {
+//            assertEquals(toInterval(i,10,0, i, 16, 0),
+//                    timeframeIntervals.get(i).getInterval());
+//        }
+//    }
+//
+//    @Ignore
+//    public void findTimeframeIntervals_IntervalStartedButNotSufficient_OnlySufficientTrue() {
+//        List<Schedule> schedules = new ArrayList<Schedule>();
+//        addSchedule(schedules, 3600, 10, 0, 16, 0);
+//        List<TimeframeInterval> timeframeIntervals = Schedule.findTimeframeIntervals(
+//                toToday(15, 1), null, schedules,
+//                false, true);
+//        assertEquals(6, timeframeIntervals.size());
+//        for(int i=0; i<6; i++) {
+//            assertEquals(toInterval(i+1,10,0,
+//                            i+1, 16, 0),
+//                    timeframeIntervals.get(i).getInterval());
+//        }
+//    }
+//
+//    @Ignore
+//    public void findTimeframeIntervals_multipleSchedules_differentDaysOfWeek() {
+//        List<Schedule> schedules = new ArrayList<Schedule>();
+//        addSchedule(schedules, 3600, 10, 0, 12, 0, dowList(3));
+//        addSchedule(schedules, 3600, 12, 0, 14, 0, dowList(2,4));
+//        addSchedule(schedules, 3600, 14, 0, 16, 0, dowList(1,5));
+//        LocalDateTime now = toDayOfWeek(1, 9, 0);
+//        List<TimeframeInterval> timeframeIntervals = Schedule.findTimeframeIntervals(
+//                now, null, schedules,
+//                false, true);
+//        assertEquals(5, timeframeIntervals.size());
+//        assertEquals(toIntervalByDow(now,1,14,0,1, 16, 0),
+//                timeframeIntervals.get(0).getInterval());
+//        assertEquals(toIntervalByDow(now,2,12,0,2, 14, 0),
+//                timeframeIntervals.get(1).getInterval());
+//        assertEquals(toIntervalByDow(now,3,10,0,3, 12, 0),
+//                timeframeIntervals.get(2).getInterval());
+//        assertEquals(toIntervalByDow(now,4,12,0,4, 14, 0),
+//                timeframeIntervals.get(3).getInterval());
+//        assertEquals(toIntervalByDow(now,5,14,0,5, 16, 0),
+//                timeframeIntervals.get(4).getInterval());
+//    }
+//
+//    @Test
+//    public void getCurrentOrNextTimeframeInterval_noTimeFrames() {
+//        assertNull(Schedule.getCurrentOrNextTimeframeInterval(toToday(20, 0),
+//                null, false, false));
+//    }
+//
+//    @Ignore
+//    public void getCurrentOrNextTimeframeInterval_ignoreDisabledSchedules() {
+//        List<Schedule> schedules = new ArrayList<Schedule>();
+//        addSchedule(schedules, false, 7200, null,
+//                14, 0, 18, 0, null);
+//        assertNull(Schedule.getCurrentOrNextTimeframeInterval(toToday(16, 0),
+//                schedules, false, false));
+//    }
+//
+//    @Ignore
+//    public void getCurrentOrNextTimeframeInterval_alreadyStarted_remainingRunningTimeSufficient() {
+//        List<Schedule> schedules = new ArrayList<Schedule>();
+//        addSchedule(schedules, 7200, 14, 0, 18, 0);
+//        addSchedule(schedules, 7200, 10, 0, 14, 0);
+//        assertEquals(toIntervalToday(10, 0, 14, 0),
+//                Schedule.getCurrentOrNextTimeframeInterval(
+//                        toToday(11, 59), schedules,
+//                        false, true).getInterval());
+//    }
+//
+//    @Ignore
+//    public void getCurrentOrNextTimeframeInterval_alreadyStarted_remainingRunningTimeInsufficient_firstTimeFrameOfDay() {
+//        List<Schedule> schedules = new ArrayList<Schedule>();
+//        addSchedule(schedules, 7200, 14, 0, 18, 0);
+//        addSchedule(schedules, 7200, 10, 0, 14, 0);
+//        assertEquals(toIntervalToday(14, 0, 18, 0),
+//                Schedule.getCurrentOrNextTimeframeInterval(
+//                        toToday(12, 1), schedules,
+//                        false, true).getInterval());
+//    }
+//
+//    @Ignore
+//    public void getCurrentOrNextTimeframeInterval_alreadyStarted_remainingRunningTimeInsufficient_secondTimeFrameOfDay() {
+//        List<Schedule> schedules = new ArrayList<Schedule>();
+//        addSchedule(schedules, 7200, 15, 0, 18, 0);
+//        addSchedule(schedules, 7200, 10, 0, 14, 0);
+//        Interval expectedInterval = new Interval(toDay(1, 10, 0, 0).toDateTime(),
+//                toDay(1, 14, 0, 0).toDateTime());
+//        assertEquals(expectedInterval, Schedule.getCurrentOrNextTimeframeInterval(
+//                toToday(16, 1), schedules, false, true).getInterval());
+//    }
+//
+//    @Ignore
+//    public void getCurrentOrNextTimeframeInterval_notYetStarted_secondTimeFrameOfDay() {
+//        List<Schedule> schedules = new ArrayList<Schedule>();
+//        addSchedule(schedules, 7200, 15, 0, 18, 0);
+//        addSchedule(schedules, 7200, 10, 0, 14, 0);
+//        assertEquals(toIntervalToday(15, 0, 18, 0),
+//                Schedule.getCurrentOrNextTimeframeInterval(
+//                        toToday(14, 30), schedules,
+//                        false, true).getInterval());
+//    }
+//
+//    @Ignore
+//    public void getCurrentOrNextTimeframeInterval_timeFrameNotValidForDow() {
+//        LocalDateTime now = toToday(9, 0, 0);
+//        List<Schedule> schedules = new ArrayList<Schedule>();
+//        // Timeframe only valid yesterday
+//        schedules.add(new Schedule(true, 7200, null,
+//                new TimeOfDay(10, 0, 0), new TimeOfDay(14, 0, 0),
+//                Collections.singletonList(now.minusDays(1).get(DateTimeFieldType.dayOfWeek()))));
+//        // Timeframe only valid tomorrow
+//        schedules.add(new Schedule(true, 7200, null,
+//                new TimeOfDay(15, 0, 0), new TimeOfDay(18, 0, 0),
+//                Collections.singletonList(now.plusDays(1).get(DateTimeFieldType.dayOfWeek()))));
+//        assertEquals(
+//                new Interval(toDay(1, 15, 0, 0).toDateTime(),
+//                toDay(1, 18, 0, 0).toDateTime()),
+//                Schedule.getCurrentOrNextTimeframeInterval(now, schedules,
+//                false, false).getInterval());
+//    }
 
     private void addSchedule(List<Schedule> schedules, Integer minRunningTime,
                              int startHour, int startMinutes, int endHour, int endMinutes) {
