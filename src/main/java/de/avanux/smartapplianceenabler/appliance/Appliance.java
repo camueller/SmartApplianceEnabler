@@ -43,8 +43,7 @@ import java.util.*;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Appliance implements Validateable, ControlStateChangedListener,
-        StartingCurrentSwitchListener, TimeframeIntervalChangedListener {
+public class Appliance implements Validateable, ControlStateChangedListener, TimeframeIntervalChangedListener {
 
     private transient Logger logger = LoggerFactory.getLogger(Appliance.class);
     @XmlAttribute
@@ -221,7 +220,7 @@ public class Appliance implements Validateable, ControlStateChangedListener,
                         control.getClass().getSimpleName());
             }
             if(control instanceof ApplianceLifeCycle) {
-                ((ApplianceLifeCycle) control).init();
+                control.init();
             }
         }
         Meter meter = getMeter();
@@ -230,7 +229,7 @@ public class Appliance implements Validateable, ControlStateChangedListener,
                 ((ApplianceIdConsumer) meter).setApplianceId(id);
             }
             if(meter instanceof ApplianceLifeCycle) {
-                ((ApplianceLifeCycle) meter).init();
+                meter.init();
             }
             if(control != null) {
                 if(meter instanceof S0ElectricityMeter) {
@@ -942,7 +941,7 @@ public class Appliance implements Validateable, ControlStateChangedListener,
     public void onEVChargerSocChanged(LocalDateTime now, Float soc) {
     }
 
-    @Override
+//    @Override
     public void startingCurrentDetected(LocalDateTime now) {
 //        logger.debug("{}: Activating next sufficient timeframe interval for starting current controlled appliance", id);
 //        TimeframeInterval timeframeInterval;
@@ -960,7 +959,7 @@ public class Appliance implements Validateable, ControlStateChangedListener,
 //        runningTimeMonitor.activateTimeframeInterval(now, timeframeInterval);
     }
 
-    @Override
+//    @Override
     public void finishedCurrentDetected() {
 //        logger.debug("{}: Deactivating timeframe interval until starting current is detected again", id);
 //        resetActiveTimeframInterval();
