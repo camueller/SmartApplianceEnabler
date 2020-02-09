@@ -498,12 +498,10 @@ public class SaeController {
             Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
             if (appliance != null) {
                 LocalDateTime now = new LocalDateTime();
-                List<TimeframeInterval> timeframeIntervals = Schedule.findTimeframeIntervals(now,
-                        null, appliance.getSchedules(), false, false);
-                if (timeframeIntervals.size() > 0) {
-                    if (timeframeIntervals.get(0).getRequest() instanceof RuntimeRequest) {
-                        return timeframeIntervals.get(0).getRequest().getMin(now);
-                    }
+                List<TimeframeInterval> queue = appliance.getTimeframeIntervalHandler().getQueue();
+                if(queue.size() > 0) {
+                    TimeframeInterval timeframeInterval = queue.get(0);
+                    return timeframeInterval.getRequest().getMax(now);
                 }
             } else {
                 logger.error("{}: Appliance not found", applianceId);

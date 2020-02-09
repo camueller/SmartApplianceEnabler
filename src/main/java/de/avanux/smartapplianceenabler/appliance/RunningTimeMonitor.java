@@ -238,9 +238,9 @@ public class RunningTimeMonitor implements ApplianceIdConsumer {
      */
     public void activateTimeframeInterval(LocalDateTime now, List<Schedule> schedules) {
         if(this.state.activeTimeframeInterval == null && schedules != null && schedules.size() > 0) {
-            TimeframeInterval nextSufficientTimeframeInterval =
-                    Schedule.getCurrentOrNextTimeframeInterval(now, schedules, true, false);
-            activateTimeframeInterval(now, nextSufficientTimeframeInterval);
+//            TimeframeInterval nextSufficientTimeframeInterval =
+//                    Schedule.getCurrentOrNextTimeframeInterval(now, schedules, true, false);
+//            activateTimeframeInterval(now, nextSufficientTimeframeInterval);
         }
         else {
             for(TimeframeIntervalChangedListener listener : scheduleChangedListeners) {
