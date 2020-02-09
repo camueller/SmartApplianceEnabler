@@ -120,7 +120,7 @@ public class ApplianceBuilder {
         Interval interval = new Interval(intervalStart.toDateTime(), intervalEnd.toDateTime());
         RuntimeRequest request = new RuntimeRequest(min, max);
         request.setEnabled(enabled);
-        TimeframeInterval timeframeInterval = new TimeframeInterval(null, interval, request);
+        TimeframeInterval timeframeInterval = new TimeframeInterval(interval, request);
         getTimeframeIntervalHandler().addTimeframeInterval(now, timeframeInterval, false);
         return this;
     }
@@ -129,7 +129,7 @@ public class ApplianceBuilder {
                                            Integer evId, Integer soc, boolean enabled) {
         SocRequest request = new SocRequest(soc, evId);
         request.setEnabled(enabled);
-        TimeframeInterval timeframeInterval = new TimeframeInterval(null, interval, request);
+        TimeframeInterval timeframeInterval = new TimeframeInterval(interval, request);
         getTimeframeIntervalHandler().addTimeframeInterval(now, timeframeInterval, false);
         return this;
     }

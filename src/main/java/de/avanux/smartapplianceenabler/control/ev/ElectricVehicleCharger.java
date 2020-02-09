@@ -519,7 +519,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
 
         Interval interval = new Interval(now.toDateTime(), chargeEnd.toDateTime());
 
-        TimeframeInterval timeframeInterval = new TimeframeInterval(null, interval, request);
+        TimeframeInterval timeframeInterval = new TimeframeInterval(interval, request);
 
         return timeframeInterval;
     }
