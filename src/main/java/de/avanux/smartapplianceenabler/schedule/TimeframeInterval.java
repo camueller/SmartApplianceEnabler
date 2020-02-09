@@ -91,7 +91,7 @@ public class TimeframeInterval implements ApplianceIdConsumer {
     public boolean isActivatable(LocalDateTime now) {
         return now.toDateTime().isEqual(getInterval().getStart()) || now.toDateTime().isAfter(getInterval().getStart())
                 && (!(request instanceof RuntimeRequest)
-                || isIntervalSufficient(now, request.getMin(now), request.getMax(now))
+                || isIntervalSufficient(now, request.getMax(now))
         );
     }
 
@@ -99,9 +99,9 @@ public class TimeframeInterval implements ApplianceIdConsumer {
         return now.toDateTime().isAfter(getInterval().getEnd()) || getRequest().isFinished(now);
     }
 
-    public boolean isIntervalSufficient(LocalDateTime now, Integer minRunningTime, Integer maxRunningTime) {
-        int runningTime = minRunningTime != null ? minRunningTime : maxRunningTime;
-        return now.isBefore(getLatestStart(now, new LocalDateTime(interval.getEnd()), runningTime));
+    public boolean isIntervalSufficient(LocalDateTime now, Integer maxRunningTime) {
+        LocalDateTime latestStart = getLatestStart(now, new LocalDateTime(interval.getEnd()), maxRunningTime);
+        return now.isEqual(latestStart) || now.isBefore(latestStart);
     }
 
     public Integer getEarliestStartSeconds(LocalDateTime now) {
@@ -122,8 +122,8 @@ public class TimeframeInterval implements ApplianceIdConsumer {
                 new Interval(nowBeforeEnd.toDateTime(), interval.getEnd()).toDurationMillis() / 1000.0).intValue();
     }
 
-    public static LocalDateTime getLatestStart(LocalDateTime now, LocalDateTime intervalEnd, Integer minRunningTime) {
-        return intervalEnd.minusSeconds(minRunningTime);
+    public static LocalDateTime getLatestStart(LocalDateTime now, LocalDateTime intervalEnd, Integer maxRunningTime) {
+        return intervalEnd.minusSeconds(maxRunningTime);
     }
 
     /**

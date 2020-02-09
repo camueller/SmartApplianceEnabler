@@ -121,8 +121,12 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
                 .filter(timeframeInterval -> lastTimeframeInterval == null
                         || timeframeInterval.getInterval().getStart().isAfter(lastTimeframeInterval.getInterval().getEnd()))
                 .limit(controlIsStartingCurrentSwitch ? 1 : Integer.MAX_VALUE)
-                .forEach(timeframeInterval -> addTimeframeInterval(now, timeframeInterval, false));
-//        addTimeframeIntervalToQueue(now, timeframeIntervals.get(0), false);
+                .forEach(timeframeInterval -> {
+                    if(controlIsStartingCurrentSwitch) {
+                        timeframeInterval.getRequest().setEnabled(false);
+                    }
+                    addTimeframeInterval(now, timeframeInterval, false);
+                });
     }
 
     public void updateQueue(LocalDateTime now) {
@@ -212,6 +216,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
             queue.add(timeframeInterval);
         }
         timeframeInterval.stateTransitionTo(now, TimeframeIntervalState.QUEUED);
+        updateQueue(now);
     }
 
     private void activateTimeframeInterval(LocalDateTime now, TimeframeInterval timeframeInterval) {
@@ -282,7 +287,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
 
         OptionalEnergySocRequest request = new OptionalEnergySocRequest(evId);
 
-        TimeframeInterval timeframeInterval = new TimeframeInterval(null, interval, request);
+        TimeframeInterval timeframeInterval = new TimeframeInterval(interval, request);
 
         return timeframeInterval;
     }

@@ -90,7 +90,6 @@ public class RuntimeRequest extends AbstractRequest implements StartingCurrentSw
     public void setControl(Control control) {
         super.setControl(control);
         if (control instanceof StartingCurrentSwitch) {
-            setEnabled(false);
             ((StartingCurrentSwitch) control).addStartingCurrentSwitchListener(this);
         }
     }

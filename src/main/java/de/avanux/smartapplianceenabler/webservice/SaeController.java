@@ -634,10 +634,13 @@ public class SaeController {
                                      boolean acceptControlRecommendations) {
         Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
         if (appliance != null) {
-            RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
-            if (runningTimeMonitor != null) {
-                runningTimeMonitor.activateTimeframeInterval(now, runtime);
-            }
+            TimeframeIntervalHandler timeframeIntervalHandler = appliance.getTimeframeIntervalHandler();
+            RuntimeRequest request = new RuntimeRequest(null, runtime);
+            request.setEnabled(true);
+            Interval interval = new Interval(now.toDateTime(), now.plusSeconds(runtime).toDateTime());
+            TimeframeInterval timeframeInterval = new TimeframeInterval(interval, request);
+            timeframeIntervalHandler.addTimeframeInterval(now, timeframeInterval, true);
+
             appliance.setAcceptControlRecommendations(acceptControlRecommendations);
             return true;
         }
