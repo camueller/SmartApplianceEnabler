@@ -89,7 +89,6 @@ public class RuntimeRequest extends AbstractRequest implements StartingCurrentSw
     @Override
     public void setControl(Control control) {
         super.setControl(control);
-        control.addControlStateChangedListener(this);
         if (control instanceof StartingCurrentSwitch) {
             setEnabled(false);
             ((StartingCurrentSwitch) control).addStartingCurrentSwitchListener(this);
@@ -125,6 +124,14 @@ public class RuntimeRequest extends AbstractRequest implements StartingCurrentSw
     @Override
     public boolean isFinished(LocalDateTime now) {
         return getMax(now) <= 0;
+    }
+
+    @Override
+    public void activeIntervalChanged(LocalDateTime now, String applianceId, TimeframeInterval deactivatedInterval, TimeframeInterval activatedInterval, boolean wasRunning) {
+        super.activeIntervalChanged(now, applianceId, deactivatedInterval, activatedInterval, wasRunning);
+        if(deactivatedInterval != null && deactivatedInterval.getRequest() == this) {
+            setEnabled(false);
+        }
     }
 
     @Override
