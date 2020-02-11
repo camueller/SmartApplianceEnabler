@@ -25,6 +25,7 @@ import de.avanux.smartapplianceenabler.control.ControlStateChangedListener;
 import de.avanux.smartapplianceenabler.control.StartingCurrentSwitch;
 import de.avanux.smartapplianceenabler.control.ev.EVChargerState;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
+import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
 import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
 import de.avanux.smartapplianceenabler.util.Holder;
 import org.joda.time.DateTime;
@@ -45,17 +46,13 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
     private GuardedTimerTask updateQueueTimerTask;
     private LinkedList<TimeframeInterval> queue = new LinkedList<>();
     private Set<TimeframeIntervalChangedListener> timeframeIntervalChangedListeners = new HashSet<>();
-    private boolean controlExists;
-    private boolean controlIsStartingCurrentSwitch;
+    private Control control;
 
     public TimeframeIntervalHandler(List<Schedule> schedules, Control control) {
         this.schedules = schedules;
+        this.control = control;
         if(control != null) {
             control.addControlStateChangedListener(this);
-            controlExists = true;
-            if(control instanceof StartingCurrentSwitch) {
-                controlIsStartingCurrentSwitch = true;
-            }
         }
     }
 
@@ -68,8 +65,12 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
         this.timeframeIntervalChangedListeners.add(listener);
     }
 
+    public void removeTimeframeIntervalChangedListener(TimeframeIntervalChangedListener listener) {
+        this.timeframeIntervalChangedListeners.remove(listener);
+    }
+
     public void setTimer(Timer timer) {
-        if(controlExists) {
+        if(control != null) {
             this.fillQueueTimerTask = new GuardedTimerTask(this.applianceId, "FillQueueTimerTask", 1 * 3600 * 1000) {
                 @Override
                 public void runTask() {
@@ -120,12 +121,12 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
         timeframeIntervals.stream()
                 .filter(timeframeInterval -> lastTimeframeInterval == null
                         || timeframeInterval.getInterval().getStart().isAfter(lastTimeframeInterval.getInterval().getEnd()))
-                .limit(controlIsStartingCurrentSwitch ? 1 : Integer.MAX_VALUE)
+                .limit(control instanceof StartingCurrentSwitch ? 1 : Integer.MAX_VALUE)
                 .forEach(timeframeInterval -> {
-                    if(controlIsStartingCurrentSwitch) {
+                    if(control instanceof StartingCurrentSwitch) {
                         timeframeInterval.getRequest().setEnabled(false);
                     }
-                    addTimeframeInterval(now, timeframeInterval, false);
+                    addTimeframeInterval(now, timeframeInterval, false, true);
                 });
     }
 
@@ -152,6 +153,13 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
             if(!optionalEnergyTimeframeIntervalMoved.value
                     && ! prolongOptionalEnergyTimeframeIntervalForEVCharger(now, timeframeInterval)) {
                 removeTimeframeInterval(now, timeframeInterval);
+                if(control instanceof ElectricVehicleCharger
+                        && !(timeframeInterval.getRequest() instanceof OptionalEnergySocRequest)
+                        && queue.size() == 0) {
+                    TimeframeInterval optionalEnergyTimeframeInterval = createOptionalEnergyTimeframeIntervalForEVCharger(now,
+                            ((ElectricVehicleCharger) control).getConnectedVehicleId());
+                    addTimeframeInterval(now, optionalEnergyTimeframeInterval, false, false);
+                }
             }
         });
 
@@ -165,10 +173,11 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
 
         if(deactivatableTimeframeInterval.isPresent() || activatableTimeframeInterval.isPresent()) {
             logger.debug("{}: Updated queue:", applianceId);
+            queue.forEach(timeframeInterval -> timeframeInterval.getRequest().update());
             logQueue();
             for(TimeframeIntervalChangedListener listener : timeframeIntervalChangedListeners) {
-                logger.debug("{}: Notifying {} {}", applianceId, TimeframeIntervalChangedListener.class.getSimpleName(),
-                        listener.getClass().getSimpleName());
+                logger.debug("{}: Notifying {} {} {}", applianceId, TimeframeIntervalChangedListener.class.getSimpleName(),
+                        listener.getClass().getSimpleName(), listener);
                 listener.activeIntervalChanged(now, applianceId,
                         deactivatableTimeframeInterval.orElse(null),
                         activatableTimeframeInterval.orElse(null),
@@ -199,7 +208,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
                 .findFirst();
     }
 
-    public void addTimeframeInterval(LocalDateTime now, TimeframeInterval timeframeInterval, boolean asFirst) {
+    public void addTimeframeInterval(LocalDateTime now, TimeframeInterval timeframeInterval, boolean asFirst, boolean updateQueue) {
         logger.debug("{}: Adding timeframeInterval to queue: {}", applianceId, timeframeInterval);
 
         addTimeframeIntervalChangedListener(timeframeInterval.getRequest());
@@ -216,7 +225,9 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
             queue.add(timeframeInterval);
         }
         timeframeInterval.stateTransitionTo(now, TimeframeIntervalState.QUEUED);
-        updateQueue(now);
+        if(updateQueue) {
+            updateQueue(now);
+        }
     }
 
     private void activateTimeframeInterval(LocalDateTime now, TimeframeInterval timeframeInterval) {
@@ -232,7 +243,9 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
     private void removeTimeframeInterval(LocalDateTime now, TimeframeInterval timeframeInterval) {
         logger.debug("{}: Remove timeframe interval: {}", applianceId, timeframeInterval);
         queue.remove(timeframeInterval);
-        if(controlIsStartingCurrentSwitch) {
+        removeTimeframeIntervalChangedListener(timeframeInterval.getRequest());
+        control.removeControlStateChangedListener(timeframeInterval.getRequest());
+        if(control instanceof StartingCurrentSwitch) {
             fillQueue(now);
         }
     }
@@ -342,15 +355,23 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
     @Override
     public void onEVChargerStateChanged(LocalDateTime now, EVChargerState previousState, EVChargerState newState,
                                         ElectricVehicle ev) {
-        if(newState == EVChargerState.VEHICLE_CONNECTED && ! hasActiveTimeframeInterval()) {
-            TimeframeInterval timeframeInterval = createOptionalEnergyTimeframeIntervalForEVCharger(now, ev.getId());
-            addTimeframeInterval(now, timeframeInterval, true);
-            updateQueue(now);
-            activateTimeframeInterval(now, timeframeInterval);
+        if(newState == EVChargerState.VEHICLE_CONNECTED) {
+            if(! hasActiveTimeframeInterval()) {
+                TimeframeInterval timeframeInterval = createOptionalEnergyTimeframeIntervalForEVCharger(now, ev.getId());
+                addTimeframeInterval(now, timeframeInterval, true, true);
+                updateQueue(now);
+                activateTimeframeInterval(now, timeframeInterval);
+            }
         }
     }
 
     @Override
     public void onEVChargerSocChanged(LocalDateTime now, Float soc) {
+//        queue.forEach(timeframeInterval -> timeframeInterval.getRequest().onEVChargerSocChanged(now ,soc));
+    }
+
+    @Override
+    public String toString() {
+        return "";
     }
 }
