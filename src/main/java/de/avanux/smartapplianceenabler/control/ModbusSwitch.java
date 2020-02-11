@@ -130,4 +130,9 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable {
     public void addControlStateChangedListener(ControlStateChangedListener listener) {
         this.controlStateChangedListeners.add(listener);
     }
+
+    @Override
+    public void removeControlStateChangedListener(ControlStateChangedListener listener) {
+        this.controlStateChangedListeners.remove(listener);
+    }
 }

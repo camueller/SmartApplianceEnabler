@@ -109,4 +109,9 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
     public void addControlStateChangedListener(ControlStateChangedListener listener) {
         this.controlStateChangedListeners.add(listener);
     }
+
+    @Override
+    public void removeControlStateChangedListener(ControlStateChangedListener listener) {
+        this.controlStateChangedListeners.remove(listener);
+    }
 }

@@ -65,6 +65,11 @@ public class MockSwitch implements Control, ApplianceIdConsumer {
     }
 
     @Override
+    public void removeControlStateChangedListener(ControlStateChangedListener listener) {
+        this.controlStateChangedListeners.remove(listener);
+    }
+
+    @Override
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
     }

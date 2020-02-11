@@ -34,5 +34,6 @@ public interface Control extends ApplianceLifeCycle, ControlMonitor {
     boolean on(LocalDateTime now, boolean switchOn);
 
     void addControlStateChangedListener(ControlStateChangedListener listener);
-    
+
+    void removeControlStateChangedListener(ControlStateChangedListener listener);
 }
