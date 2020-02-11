@@ -444,7 +444,7 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
 //            evCharger.updateSoc(Integer.valueOf(socCurrent != null ? socCurrent : 0).floatValue());
             TimeframeInterval timeframeInterval =
                     evCharger.createTimeframeInterval(now, evId, socCurrent, socRequested, chargeEnd);
-            timeframeIntervalHandler.addTimeframeInterval(now, timeframeInterval, true);
+            timeframeIntervalHandler.addTimeframeInterval(now, timeframeInterval, true, true);
 
             if(chargeEnd == null) {
                 // if no charge end is provided we switch on immediatly with full power and don't accept
@@ -1026,5 +1026,10 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
 //            // Only for StartingCurrentSwitch timeframe should be deactivated
 //            setApplianceState(now,false, null, "Switching off because runningTime finished");
 //        }
+    }
+
+    @Override
+    public String toString() {
+        return "";
     }
 }

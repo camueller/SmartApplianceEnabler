@@ -637,7 +637,7 @@ public class SaeController {
             request.setEnabled(true);
             Interval interval = new Interval(now.toDateTime(), now.plusSeconds(runtime).toDateTime());
             TimeframeInterval timeframeInterval = new TimeframeInterval(interval, request);
-            timeframeIntervalHandler.addTimeframeInterval(now, timeframeInterval, true);
+            timeframeIntervalHandler.addTimeframeInterval(now, timeframeInterval, true, true);
 
             appliance.setAcceptControlRecommendations(acceptControlRecommendations);
             return true;

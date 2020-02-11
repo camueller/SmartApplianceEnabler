@@ -469,6 +469,11 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         this.controlStateChangedListeners.add(listener);
     }
 
+    @Override
+    public void removeControlStateChangedListener(ControlStateChangedListener listener) {
+        this.controlStateChangedListeners.remove(listener);
+    }
+
     protected boolean isWithinSwitchChargingStateDetectionDelay() {
         return isWithinSwitchChargingStateDetectionDelay(getStartChargingStateDetectionDelay(),
                 System.currentTimeMillis(), this.switchChargingStateTimestamp);
@@ -601,30 +606,18 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     }
 
     private void retrieveSoc(LocalDateTime now, ElectricVehicle electricVehicle) {
-        if(electricVehicle != null && isSocNeedsRefresh()) {
+        if(electricVehicle != null) {
             Float soc = electricVehicle.getStateOfCharge();
             if(soc != null) {
-//                updateSoc(soc);
                 this.connectedVehicleSoc = soc.intValue();
                 this.connectedVehicleSocTimestamp = System.currentTimeMillis();
                 logger.debug("{}: Current SoC={}%", applianceId, connectedVehicleSoc);
                 for(ControlStateChangedListener listener : controlStateChangedListeners) {
-                    logger.debug("{}: Notifying {} {}", applianceId, ControlStateChangedListener.class.getSimpleName(),
-                            listener.getClass().getSimpleName());
+                    logger.debug("{}: Notifying {} {} {}", applianceId, ControlStateChangedListener.class.getSimpleName(),
+                            listener.getClass().getSimpleName(), listener);
                     listener.onEVChargerSocChanged(now, soc);
                 }
             }
         }
     }
-
-    private boolean isSocNeedsRefresh() {
-        return connectedVehicleSocTimestamp == null
-                || System.currentTimeMillis() - this.connectedVehicleSocTimestamp > 1 * 60 * 60;
-    }
-
-//    public void updateSoc(Float soc) {
-//        this.connectedVehicleSoc = Float.valueOf(soc).intValue();
-//        this.connectedVehicleSocTimestamp = System.currentTimeMillis();
-//        logger.debug("{}: Current SoC={}%", applianceId, connectedVehicleSoc);
-//    }
 }
