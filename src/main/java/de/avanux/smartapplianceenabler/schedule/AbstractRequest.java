@@ -33,7 +33,6 @@ import javax.xml.bind.annotation.XmlTransient;
 
 @XmlTransient
 abstract public class AbstractRequest implements Request {
-    private transient Logger logger = LoggerFactory.getLogger(AbstractRequest.class);
     private transient String applianceId;
     private transient Meter meter;
     private transient Control control;
@@ -45,6 +44,10 @@ abstract public class AbstractRequest implements Request {
 
 
     public AbstractRequest() {
+    }
+
+    protected Logger getLogger() {
+        return LoggerFactory.getLogger(AbstractRequest.class);
     }
 
     public void setApplianceId(String applianceId) {
@@ -131,7 +134,7 @@ abstract public class AbstractRequest implements Request {
             }
         }
         catch(IllegalArgumentException e) {
-            logger.warn("{} Invalid interval: start={} end={}", getApplianceId(), controlStatusChangedAt.toDateTime(),
+            getLogger().warn("{} Invalid interval: start={} end={}", getApplianceId(), controlStatusChangedAt.toDateTime(),
                     now.toDateTime());
         }
         return 0;

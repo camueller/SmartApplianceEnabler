@@ -22,6 +22,8 @@ import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.ev.EVChargerState;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import org.joda.time.LocalDateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -30,6 +32,10 @@ abstract public class AbstractEnergyRequest extends AbstractRequest {
 
     public AbstractEnergyRequest() {
         setEnabled(false);
+    }
+
+    protected Logger getLogger() {
+        return LoggerFactory.getLogger(AbstractEnergyRequest.class);
     }
 
     @Override

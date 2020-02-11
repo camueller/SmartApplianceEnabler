@@ -19,6 +19,8 @@
 package de.avanux.smartapplianceenabler.schedule;
 
 import org.joda.time.LocalDateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -39,6 +41,10 @@ public class EnergyRequest extends AbstractEnergyRequest implements Request {
     public EnergyRequest(Integer min, Integer max) {
         this.min = min;
         this.max = max;
+    }
+
+    protected Logger getLogger() {
+        return LoggerFactory.getLogger(EnergyRequest.class);
     }
 
     @Override

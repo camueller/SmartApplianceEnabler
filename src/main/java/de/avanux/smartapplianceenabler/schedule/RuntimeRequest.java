@@ -39,7 +39,6 @@ public class RuntimeRequest extends AbstractRequest implements StartingCurrentSw
     private Integer min;
     @XmlAttribute
     private int max;
-    private transient Logger logger = LoggerFactory.getLogger(RuntimeRequest.class);
     private transient Integer currentMin;
     private transient Integer currentMax;
 
@@ -49,6 +48,10 @@ public class RuntimeRequest extends AbstractRequest implements StartingCurrentSw
     public RuntimeRequest(Integer min, Integer max) {
         setMin(min);
         setMax(max);
+    }
+
+    protected Logger getLogger() {
+        return LoggerFactory.getLogger(RuntimeRequest.class);
     }
 
     public Integer getMin(LocalDateTime now) {
