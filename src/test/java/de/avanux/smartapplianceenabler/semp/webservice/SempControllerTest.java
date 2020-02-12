@@ -47,7 +47,7 @@ public class SempControllerTest extends TestBase {
                 .build(false);
         appliances.add(appliance3);
 
-        ApplianceBuilder.init(appliances);
+        ApplianceBuilder.init(appliances, null);
 
         Device2EM device2EM = sempController.createDevice2EM(now);
         List<PlanningRequest> planningRequests = device2EM.getPlanningRequest();

@@ -26,8 +26,13 @@ import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
 import de.avanux.smartapplianceenabler.control.ev.SocScript;
 import de.avanux.smartapplianceenabler.meter.Meter;
-import de.avanux.smartapplianceenabler.schedule.*;
-import de.avanux.smartapplianceenabler.semp.webservice.*;
+import de.avanux.smartapplianceenabler.schedule.RuntimeRequest;
+import de.avanux.smartapplianceenabler.schedule.SocRequest;
+import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
+import de.avanux.smartapplianceenabler.schedule.TimeframeIntervalHandler;
+import de.avanux.smartapplianceenabler.semp.webservice.Device2EM;
+import de.avanux.smartapplianceenabler.semp.webservice.SempBuilder;
+import de.avanux.smartapplianceenabler.semp.webservice.SempBuilderCall;
 import org.joda.time.Interval;
 import org.joda.time.LocalDateTime;
 import org.mockito.Mockito;
@@ -35,12 +40,12 @@ import org.mockito.Mockito;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Vector;
 
 public class ApplianceBuilder {
 
     private Appliance appliance;
-    boolean initialized = false;
+    private boolean initialized = false;
+    private List<SempBuilderCall> sempBuilderCalls = new ArrayList<>();
 
     public ApplianceBuilder(String applianceId) {
         appliance = new Appliance();
@@ -134,26 +139,33 @@ public class ApplianceBuilder {
         return this;
     }
 
-    public static void init(List<Appliance> applianceList) {
+    public ApplianceBuilder withSempBuilderOperation(SempBuilderCall call) {
+        sempBuilderCalls.add(call);
+        return this;
+    }
+
+    public static void init(List<Appliance> applianceList, List<SempBuilderCall> sempBuilderOperations) {
         Appliances appliances = new Appliances();
         appliances.setAppliances(applianceList);
         ApplianceManager.getInstanceWithoutTimer().setAppliances(appliances);
 
-        Device2EM device2EM = new SempBuilder(appliances).build();
+        SempBuilder sempBuilder = new SempBuilder(appliances);
+        sempBuilderOperations.forEach(sempBuilderOperation -> sempBuilderOperation.call(sempBuilder));
+        Device2EM device2EM = sempBuilder.build();
         ApplianceManager.getInstanceWithoutTimer().setDevice2EM(device2EM);
 
         ApplianceManager.getInstanceWithoutTimer().init();
     }
 
     public ApplianceBuilder init() {
-        ApplianceBuilder.init(Collections.singletonList(appliance));
+        ApplianceBuilder.init(Collections.singletonList(appliance), sempBuilderCalls);
         initialized = true;
         return this;
     }
 
     public Appliance build(boolean init) {
         if(init) {
-            ApplianceBuilder.init(Collections.singletonList(appliance));
+            ApplianceBuilder.init(Collections.singletonList(appliance), sempBuilderCalls);
         }
         return appliance;
     }
@@ -164,5 +176,4 @@ public class ApplianceBuilder {
         }
         return appliance.getTimeframeIntervalHandler();
     }
-
 }
