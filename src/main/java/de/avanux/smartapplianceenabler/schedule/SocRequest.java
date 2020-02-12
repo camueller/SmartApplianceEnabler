@@ -169,6 +169,7 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
             setEnabled(true);
         }
         setSocInitial(Float.valueOf(soc).intValue());
+        update();
     }
 
     @Override
