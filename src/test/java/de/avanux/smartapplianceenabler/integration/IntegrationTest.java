@@ -27,13 +27,17 @@ import de.avanux.smartapplianceenabler.control.MockSwitch;
 import de.avanux.smartapplianceenabler.control.StartingCurrentSwitch;
 import de.avanux.smartapplianceenabler.control.StartingCurrentSwitchDefaults;
 import de.avanux.smartapplianceenabler.meter.Meter;
+import de.avanux.smartapplianceenabler.schedule.TimeframeIntervalHandler;
+import de.avanux.smartapplianceenabler.schedule.TimeframeIntervalState;
 import de.avanux.smartapplianceenabler.semp.webservice.*;
 import de.avanux.smartapplianceenabler.appliance.ApplianceBuilder;
 import de.avanux.smartapplianceenabler.util.DateTimeProvider;
 import de.avanux.smartapplianceenabler.webservice.ApplianceStatus;
 import de.avanux.smartapplianceenabler.webservice.SaeController;
+import org.joda.time.Interval;
 import org.joda.time.LocalDateTime;
 import org.junit.Ignore;
+import org.junit.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,101 +59,82 @@ public class IntegrationTest extends TestBase {
         ApplianceManager.getInstanceWithoutTimer();
     }
 
-    @Ignore
+    @Test
     public void testSwitchOnAndOff() {
-//        LocalDateTime timeInitial = toToday(10, 0, 0);
-//        Appliance appliance = new ApplianceBuilder(applianceId)
-//                .withMockSwitch(false)
-//                .withSchedule(10, 0, 18, 0, null, 7200)
-//                .build(true);
-//        Control control = appliance.getControl();
-//        RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
-//
-//        log("Check initial values");
-//        assertFalse(control.isOn());
-//        assertPlanningRequest(timeInitial,
-//                new Timeframe(applianceId,0, 28800,7199, 7200),
-//                new Timeframe(applianceId, add24h(0), add24h(28800),7199, 7200));
-//
-//        logger.debug("########## First switching cycle");
-//
-//        log("Update timeframe intervals right before switch on");
-//        LocalDateTime timeSwitchOn = toToday(11, 0, 0);
-//        runningTimeMonitor.updateActiveTimeframeInterval(timeSwitchOn);
-//        assertNotNull(runningTimeMonitor.getActiveTimeframeInterval());
-//        assertPlanningRequest(timeSwitchOn,
-//                new Timeframe(applianceId,0, 25200,7199, 7200),
-//                new Timeframe(applianceId, add24h(-3600), add24h(25200),7199, 7200),
-//                new Timeframe(applianceId, add48h(-3600), add48h(25200),7199, 7200)
-//                );
-//
-//        log("Switch on");
-//        sempController.em2Device(timeSwitchOn, createEM2Device(applianceId,true));
-//
-//        log("Check values after switch on");
-//        assertRunningTime(timeSwitchOn, control, runningTimeMonitor, true, true, false,
-//                0, 7200, null);
-//        ApplianceStatus applianceStatusAfterSwitchOn = getApplianceStatus(timeSwitchOn);
-//        assertTrue(applianceStatusAfterSwitchOn.isOn());
-//        assertPlanningRequest(timeSwitchOn,
-//                new Timeframe(applianceId,0, 25200,7199, 7200),
-//                new Timeframe(applianceId, add24h(-3600), add24h(25200),7199, 7200),
-//                new Timeframe(applianceId, add48h(-3600), add48h(25200),7199, 7200)
-//        );
-//
-//        log("Switch off");
-//        LocalDateTime timeSwitchOff = toToday(12, 0, 0);
-//        sempController.em2Device(timeSwitchOff, createEM2Device(applianceId,false));
-//
-//        log("Update timeframe intervals right after switch off");
-//        runningTimeMonitor.updateActiveTimeframeInterval(timeSwitchOff);
-//
-//        log("Check values after switch off");
-//        assertRunningTime(timeSwitchOff, control, runningTimeMonitor, false,false, true,
-//                3600, 3600, null);
-//        assertPlanningRequest(timeSwitchOff,
-//                new Timeframe(applianceId,0, 21600,3599, 3600),
-//                new Timeframe(applianceId, add24h(-7200), add24h(21600),7199, 7200),
-//                new Timeframe(applianceId, add48h(-7200), add48h(21600),7199, 7200)
-//        );
-//
-//        ApplianceStatus applianceStatusAfterSwitchOff = getApplianceStatus(timeSwitchOff);
-//        assertFalse(applianceStatusAfterSwitchOff.isOn());
-//
-//        logger.debug("########## Second switching cycle");
-//
-//        log("Switch on");
-//        timeSwitchOn = toToday(16, 0, 0);
-//        sempController.em2Device(timeSwitchOn, createEM2Device(applianceId,true));
-//
-//        log("Check values after switch on");
-//        assertRunningTime(timeSwitchOn, control, runningTimeMonitor, true, true, false,
-//                3600, 3600, null);
-//        assertPlanningRequest(timeSwitchOn,
-//                new Timeframe(applianceId,0, 7200,3599, 3600),
-//                new Timeframe(applianceId, add24h(-21600), add24h(7200),7199, 7200),
-//                new Timeframe(applianceId, add48h(-21600), add48h(7200),7199, 7200)
-//        );
-//        applianceStatusAfterSwitchOn = getApplianceStatus(timeSwitchOn);
-//        assertTrue(applianceStatusAfterSwitchOn.isOn());
-//
-//        log("Switch off");
-//        timeSwitchOff = toToday(17, 0, 0);
-//        sempController.em2Device(timeSwitchOff, createEM2Device(applianceId,false));
-//
-//        log("Update timeframe intervals right after switch off");
-//        runningTimeMonitor.updateActiveTimeframeInterval(timeSwitchOff);
-//
-//        log("Check values after switch off");
-//        assertRunningTime(timeSwitchOff, control, runningTimeMonitor, false,false, true,
-//                7200, 0, null);
-//        assertPlanningRequest(timeSwitchOff,
-//                new Timeframe(applianceId, 0, 3600,0, 0),
-//                new Timeframe(applianceId, add24h(-25200), add24h(3600),7199, 7200),
-//                new Timeframe(applianceId, add48h(-25200), add48h(3600),7199, 7200)
-//        );
-//        applianceStatusAfterSwitchOff = getApplianceStatus(timeSwitchOff);
-//        assertFalse(applianceStatusAfterSwitchOff.isOn());
+        int maxRuntime = 7200;
+        LocalDateTime timeInitial = toToday(10, 0, 0);
+        Appliance appliance = new ApplianceBuilder(applianceId)
+                .withMockSwitch(false)
+                .withSchedule(10, 0, 18, 0, null, maxRuntime)
+                .withSempBuilderOperation(sempBuilder -> sempBuilder.withMaxPowerConsumption(applianceId, 2000))
+                .build(true);
+        Control control = appliance.getControl();
+        TimeframeIntervalHandler timeframeIntervalHandler = appliance.getTimeframeIntervalHandler();
+        timeframeIntervalHandler.fillQueue(timeInitial);
+
+        log("Check initial values");
+        tick(appliance, timeInitial);
+        assertFalse(control.isOn());
+        assertEquals(2, timeframeIntervalHandler.getQueue().size());
+        assertTimeframeIntervalRuntime(toIntervalToday(10, 0, 0, 18, 0, 0),
+                TimeframeIntervalState.ACTIVE, null, maxRuntime, true, timeframeIntervalHandler.getQueue().get(0));
+        assertTimeframeIntervalRuntime(toIntervalTomorrow(10, 0, 0, 18, 0, 0),
+                TimeframeIntervalState.QUEUED, null, maxRuntime, true, timeframeIntervalHandler.getQueue().get(1));
+
+        logger.debug("########## First switching cycle");
+
+        LocalDateTime timeSwitchOn = toToday(11, 0, 0);
+        log("Switch on");
+        sempController.em2Device(timeSwitchOn, createEM2Device(applianceId,true));
+        ApplianceStatus applianceStatusAfterSwitchOn = getApplianceStatus(timeSwitchOn);
+        assertTrue(applianceStatusAfterSwitchOn.isOn());
+        assertPlanningRequest(timeSwitchOn,
+                new Timeframe(applianceId,0, 25200,7199, 7200),
+                new Timeframe(applianceId, add24h(-3600), add24h(25200),7199, 7200)
+        );
+
+        log("Switch off");
+        LocalDateTime timeSwitchOff = toToday(12, 0, 0);
+        tick(appliance, timeSwitchOff);
+        sempController.em2Device(timeSwitchOff, createEM2Device(applianceId,false));
+        assertPlanningRequest(timeSwitchOff,
+                new Timeframe(applianceId,0,
+                        toSecondsFromNow(timeSwitchOff, 0, 18, 0, 0),
+                        3599, 3600),
+                new Timeframe(applianceId,
+                        toSecondsFromNow(timeSwitchOff, 1, 10, 0, 0),
+                        toSecondsFromNow(timeSwitchOff, 1, 18, 0, 0),
+                        7199, 7200)
+        );
+        assertFalse(getApplianceStatus(timeSwitchOff).isOn());
+
+        logger.debug("########## Second switching cycle");
+
+        log("Switch on");
+        timeSwitchOn = toToday(16, 0, 0);
+        sempController.em2Device(timeSwitchOn, createEM2Device(applianceId,true));
+
+        log("Check values after switch on");
+        tick(appliance, timeSwitchOn);
+        assertTrue(control.isOn());
+        assertEquals(2, timeframeIntervalHandler.getQueue().size());
+        assertTimeframeIntervalRuntime(toIntervalToday(10, 0, 0, 18, 0, 0),
+                TimeframeIntervalState.ACTIVE, null, maxRuntime, true, timeframeIntervalHandler.getQueue().get(0));
+        assertTimeframeIntervalRuntime(toIntervalTomorrow(10, 0, 0, 18, 0, 0),
+                TimeframeIntervalState.QUEUED, null, maxRuntime, true, timeframeIntervalHandler.getQueue().get(1));
+        assertTrue(getApplianceStatus(timeSwitchOn).isOn());
+
+        log("Switch off");
+        timeSwitchOff = toToday(17, 0, 0);
+        tick(appliance, timeSwitchOff);
+        sempController.em2Device(timeSwitchOff, createEM2Device(applianceId,false));
+        assertPlanningRequest(timeSwitchOff,
+                new Timeframe(applianceId,
+                        toSecondsFromNow(timeSwitchOff, 1, 10, 0, 0),
+                        toSecondsFromNow(timeSwitchOff, 1, 18, 0, 0),
+                        7199, 7200)
+        );
+        assertFalse(getApplianceStatus(timeSwitchOff).isOn());
     }
 
 //    @Ignore
@@ -387,30 +372,29 @@ public class IntegrationTest extends TestBase {
 //        assertRunningTime(timeIntervalStart, control, runningTimeMonitor, true, true, false,
 //                true, 60, 3540, null);
 //    }
-//
-//    private void log(String message) {
-//        logger.debug("*********** " + message);
-//    }
-//
-//    private ApplianceStatus getApplianceStatus(LocalDateTime now) {
-//        List<ApplianceStatus> applianceStatuses = saeController.getApplianceStatus(now);
-//        return applianceStatuses.get(0);
-//    }
-//
-//
-//    private EM2Device createEM2Device(String applianceId, boolean on) {
-//        DeviceControl deviceControl = new DeviceControl();
-//        deviceControl.setDeviceId(applianceId);
-//        deviceControl.setOn(on);
-//
-//        List<DeviceControl> deviceControls = new ArrayList<>();
-//        deviceControls.add(deviceControl);
-//
-//        EM2Device em2Device = new EM2Device();
-//        em2Device.setDeviceControl(deviceControls);
-//        return em2Device;
-//    }
-//
+
+    private void log(String message) {
+        logger.debug("*********** " + message);
+    }
+
+    private ApplianceStatus getApplianceStatus(LocalDateTime now) {
+        List<ApplianceStatus> applianceStatuses = saeController.getApplianceStatus(now);
+        return applianceStatuses.get(0);
+    }
+
+    private EM2Device createEM2Device(String applianceId, boolean on) {
+        DeviceControl deviceControl = new DeviceControl();
+        deviceControl.setDeviceId(applianceId);
+        deviceControl.setOn(on);
+
+        List<DeviceControl> deviceControls = new ArrayList<>();
+        deviceControls.add(deviceControl);
+
+        EM2Device em2Device = new EM2Device();
+        em2Device.setDeviceControl(deviceControls);
+        return em2Device;
+    }
+
 //    private void assertRunningTime(LocalDateTime now, Control control, RunningTimeMonitor runningTimeMonitor,
 //                                    boolean on, boolean running, boolean interrupted,
 //                                    Integer runningTime,
@@ -443,22 +427,27 @@ public class IntegrationTest extends TestBase {
 //        assertEquals(remainingMinRunningTime, runningTimeMonitor.getRemainingMinRunningTimeOfCurrentTimeFrame(now));
 //        assertEquals(remainingMaxRunningTime, runningTimeMonitor.getRemainingMaxRunningTimeOfCurrentTimeFrame(now));
 //    }
-//
-//    private void assertPlanningRequest(LocalDateTime now, Timeframe... expectedTimeframes) {
-//        List<PlanningRequest> planningRequests = sempController.createDevice2EM(now).getPlanningRequest();
-//        assertEquals(1, planningRequests.size());
-//        List<Timeframe> timeframes = planningRequests.get(0).getTimeframes();
-//        assertEquals(expectedTimeframes.length, timeframes.size());
-//        for(int i=0; i<expectedTimeframes.length; i++) {
-//            assertEquals(expectedTimeframes[i], timeframes.get(i));
-//        }
-//    }
-//
-//    private int add24h(int seconds) {
-//        return seconds + 86400;
-//    }
-//
-//    private int add48h(int seconds) {
-//        return seconds + 2 * 86400;
-//    }
+
+    private void assertPlanningRequest(LocalDateTime now, Timeframe... expectedTimeframes) {
+        List<PlanningRequest> planningRequests = sempController.createDevice2EM(now).getPlanningRequest();
+        assertEquals(1, planningRequests.size());
+        List<Timeframe> timeframes = planningRequests.get(0).getTimeframes();
+        assertEquals(expectedTimeframes.length, timeframes.size());
+        for(int i=0; i<expectedTimeframes.length; i++) {
+            assertEquals(expectedTimeframes[i], timeframes.get(i));
+        }
+    }
+
+    private int add24h(int seconds) {
+        return seconds + 86400;
+    }
+
+    private int add48h(int seconds) {
+        return seconds + 2 * 86400;
+    }
+
+    private void tick(Appliance appliance, LocalDateTime now) {
+        TimeframeIntervalHandler timeframeIntervalHandler = appliance.getTimeframeIntervalHandler();
+        timeframeIntervalHandler.updateQueue(now);
+    }
 }

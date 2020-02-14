@@ -26,10 +26,7 @@ import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
 import de.avanux.smartapplianceenabler.control.ev.SocScript;
 import de.avanux.smartapplianceenabler.meter.Meter;
-import de.avanux.smartapplianceenabler.schedule.RuntimeRequest;
-import de.avanux.smartapplianceenabler.schedule.SocRequest;
-import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
-import de.avanux.smartapplianceenabler.schedule.TimeframeIntervalHandler;
+import de.avanux.smartapplianceenabler.schedule.*;
 import de.avanux.smartapplianceenabler.semp.webservice.Device2EM;
 import de.avanux.smartapplianceenabler.semp.webservice.SempBuilder;
 import de.avanux.smartapplianceenabler.semp.webservice.SempBuilderCall;
@@ -115,8 +112,14 @@ public class ApplianceBuilder {
 
     public ApplianceBuilder withSchedule(int startHour, int startMinute, int endHour, int endMinute,
                                          Integer minRunningTime, int maxRunningTime) {
-//        addSchedule(new Schedule(minRunningTime, maxRunningTime, new TimeOfDay(startHour, startMinute, 0),
-//                new TimeOfDay(endHour, endMinute, 0)));
+        Schedule schedule = new Schedule(minRunningTime, maxRunningTime, new TimeOfDay(startHour, startMinute, 0),
+                new TimeOfDay(endHour, endMinute, 0));
+        List<Schedule> schedules = appliance.getSchedules();
+        if(schedules == null) {
+            schedules = new ArrayList<>();
+            appliance.setSchedules(schedules);
+        }
+        schedules.add(schedule);
         return this;
     }
 

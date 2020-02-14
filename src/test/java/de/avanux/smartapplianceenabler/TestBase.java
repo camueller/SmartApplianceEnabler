@@ -57,6 +57,12 @@ abstract public class TestBase {
                 toToday(endHour, endMinutes, endSeconds).toDateTime());
     }
 
+    protected Interval toIntervalTomorrow(Integer startHour, Integer startMinutes, Integer startSeconds,
+                                       Integer endHour, Integer endMinutes, Integer endSeconds) {
+        return new Interval(toTomorrow(startHour, startMinutes, startSeconds).toDateTime(),
+                toTomorrow(endHour, endMinutes, endSeconds).toDateTime());
+    }
+
     protected Interval toInterval(Integer startDayOffset, Integer startHour, Integer startMinutes,
                                   Integer endDayOffset, Integer endHour, Integer endMinutes) {
         return toInterval(startDayOffset, startHour, startMinutes, 0,
@@ -80,8 +86,25 @@ abstract public class TestBase {
                 toDayOfWeek(now, endDow, endHour, endMinutes, endSeconds).toDateTime());
     }
 
+    protected int toSecondsFromNow(LocalDateTime now, int dayOffset, Integer hour, Integer minutes, Integer seconds) {
+        return new Interval(now.toDateTime(), toDay(dayOffset, hour, minutes, seconds).toDateTime()).toDuration().toStandardSeconds().getSeconds();
+    }
+
     protected void assertDateTime(LocalDateTime dt1, LocalDateTime dt2) {
         assertEquals(dt1.get(DateTimeFieldType.dayOfMonth()), dt2.get(DateTimeFieldType.dayOfMonth()));
+    }
+
+    protected void assertTimeframeIntervalRuntime(Interval interval,
+                                                         TimeframeIntervalState state,
+                                                         Integer min,
+                                                         int max,
+                                                         boolean enabled,
+                                                         TimeframeInterval actual) {
+        RuntimeRequest request = new RuntimeRequest(min, max);
+        request.setEnabled(enabled);
+        TimeframeInterval expected = new TimeframeInterval(interval, request);
+        expected.initState(state);
+        assertEquals(expected, actual);
     }
 
     protected void assertTimeframeIntervalOptionalEnergy(Interval interval,
