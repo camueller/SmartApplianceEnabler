@@ -147,13 +147,15 @@ public class ApplianceBuilder {
         return this;
     }
 
-    public static void init(List<Appliance> applianceList, List<SempBuilderCall> sempBuilderOperations) {
+    public static void init(List<Appliance> applianceList, List<SempBuilderCall> sempBuilderCalls) {
         Appliances appliances = new Appliances();
         appliances.setAppliances(applianceList);
         ApplianceManager.getInstanceWithoutTimer().setAppliances(appliances);
 
         SempBuilder sempBuilder = new SempBuilder(appliances);
-        sempBuilderOperations.forEach(sempBuilderOperation -> sempBuilderOperation.call(sempBuilder));
+        if(sempBuilderCalls != null) {
+            sempBuilderCalls.forEach(sempBuilderOperation -> sempBuilderOperation.call(sempBuilder));
+        }
         Device2EM device2EM = sempBuilder.build();
         ApplianceManager.getInstanceWithoutTimer().setDevice2EM(device2EM);
 
