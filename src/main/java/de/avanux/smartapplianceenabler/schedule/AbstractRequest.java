@@ -191,4 +191,7 @@ abstract public class AbstractRequest implements Request {
     public String toString() {
         return isEnabled() ? "ENABLED" : "DISABLED";
     }
+
+    @Override
+    public abstract String toString(LocalDateTime now);
 }

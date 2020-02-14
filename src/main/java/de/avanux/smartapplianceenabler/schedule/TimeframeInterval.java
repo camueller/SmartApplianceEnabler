@@ -176,6 +176,10 @@ public class TimeframeInterval implements ApplianceIdConsumer {
 
     @Override
     public String toString() {
+        return toString(new LocalDateTime());
+    }
+
+    public String toString(LocalDateTime now) {
         String text = "";
         if(getState() != null) {
             text += getState();
@@ -185,7 +189,7 @@ public class TimeframeInterval implements ApplianceIdConsumer {
             text += interval.toString();
         }
         text += "::";
-        text += request;
+        text += request.toString(now);
         return text;
     }
 }

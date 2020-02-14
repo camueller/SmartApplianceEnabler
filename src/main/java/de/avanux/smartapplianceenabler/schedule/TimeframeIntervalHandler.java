@@ -133,7 +133,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
     public void updateQueue(LocalDateTime now) {
         queue.forEach(timeframeInterval -> timeframeInterval.getRequest().update());
         logger.debug("{}: Current Queue:", applianceId);
-        logQueue();
+        logQueue(now);
 
         Optional<TimeframeInterval> deactivatableTimeframeInterval = getDeactivatableTimeframeInterval(now);
         Optional<TimeframeInterval> activatableTimeframeInterval = getActivatableTimeframeInterval(now);
@@ -174,7 +174,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
         if(deactivatableTimeframeInterval.isPresent() || activatableTimeframeInterval.isPresent()) {
             logger.debug("{}: Updated queue:", applianceId);
             queue.forEach(timeframeInterval -> timeframeInterval.getRequest().update());
-            logQueue();
+            logQueue(now);
             for(TimeframeIntervalChangedListener listener : timeframeIntervalChangedListeners) {
                 logger.debug("{}: Notifying {} {} {}", applianceId, TimeframeIntervalChangedListener.class.getSimpleName(),
                         listener.getClass().getSimpleName(), listener);
@@ -188,10 +188,10 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
         }
     }
 
-    private void logQueue() {
+    private void logQueue(LocalDateTime now) {
         queue.forEach(timeframeInterval -> logger.debug("{}: {}",
                 applianceId,
-                timeframeInterval.toString()));
+                timeframeInterval.toString(now)));
     }
 
     private Optional<TimeframeInterval> getActivatableTimeframeInterval(LocalDateTime now) {
@@ -209,7 +209,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
     }
 
     public void addTimeframeInterval(LocalDateTime now, TimeframeInterval timeframeInterval, boolean asFirst, boolean updateQueue) {
-        logger.debug("{}: Adding timeframeInterval to queue: {}", applianceId, timeframeInterval);
+        logger.debug("{}: Adding timeframeInterval to queue: {}", applianceId, timeframeInterval.toString(now));
 
         addTimeframeIntervalChangedListener(timeframeInterval.getRequest());
         timeframeIntervalChangedListeners.forEach(
@@ -231,17 +231,17 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
     }
 
     private void activateTimeframeInterval(LocalDateTime now, TimeframeInterval timeframeInterval) {
-        logger.debug("{}: Activate timeframe interval: {}", applianceId, timeframeInterval);
+        logger.debug("{}: Activate timeframe interval: {}", applianceId, timeframeInterval.toString(now));
         timeframeInterval.stateTransitionTo(now, TimeframeIntervalState.ACTIVE);
     }
 
     private void deactivateTimeframeInterval(LocalDateTime now, TimeframeInterval timeframeInterval) {
-        logger.debug("{}: Deactivate timeframe interval: {}", applianceId, timeframeInterval);
+        logger.debug("{}: Deactivate timeframe interval: {}", applianceId, timeframeInterval.toString(now));
         timeframeInterval.stateTransitionTo(now, TimeframeIntervalState.QUEUED);
     }
 
     private void removeTimeframeInterval(LocalDateTime now, TimeframeInterval timeframeInterval) {
-        logger.debug("{}: Remove timeframe interval: {}", applianceId, timeframeInterval);
+        logger.debug("{}: Remove timeframe interval: {}", applianceId, timeframeInterval.toString(now));
         queue.remove(timeframeInterval);
         removeTimeframeIntervalChangedListener(timeframeInterval.getRequest());
         control.removeControlStateChangedListener(timeframeInterval.getRequest());
@@ -311,9 +311,9 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
             if(! optionalEnergySocRequest.isFinished(now)) {
                 Interval prolongedInterval = createOptionalEnergyIntervalForEVCharger(now, null, timeframeInterval);
                 if(prolongedInterval != null) {
-                    logger.debug("{}: Prolong timeframe interval:   {}", applianceId, timeframeInterval);
+                    logger.debug("{}: Prolong timeframe interval:   {}", applianceId, timeframeInterval.toString(now));
                     timeframeInterval.setInterval(prolongedInterval);
-                    logger.debug("{}: Prolonged timeframe interval: {}", applianceId, timeframeInterval);
+                    logger.debug("{}: Prolonged timeframe interval: {}", applianceId, timeframeInterval.toString(now));
                     return true;
                 }
             }
@@ -323,7 +323,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
 
     private void moveOptionalEnergyTimeframeIntervalToSecondPosition(LocalDateTime now) {
         TimeframeInterval activeTimeframeInterval = getActiveTimeframeInterval();
-        logger.debug("{}: Moving to second place in queue: {}", applianceId, getActiveTimeframeInterval());
+        logger.debug("{}: Moving to second place in queue: {}", applianceId, getActiveTimeframeInterval().toString(now));
         queue.remove(activeTimeframeInterval);
         queue.add(1, activeTimeframeInterval);
         activeTimeframeInterval.stateTransitionTo(now, TimeframeIntervalState.QUEUED);

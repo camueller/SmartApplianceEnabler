@@ -53,4 +53,6 @@ public interface Request extends Serializable, ApplianceIdConsumer, TimeframeInt
     LocalDateTime getControlStatusChangedAt();
 
     void update();
+
+    String toString(LocalDateTime now);
 }

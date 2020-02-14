@@ -67,7 +67,7 @@ public class DeviceControl {
     @Override
     public String toString() {
         String string = "on=" + on;
-        if(on) {
+        if(recommendedPowerConsumption != null) {
             string += ", recommendedPowerConsumption=" + recommendedPowerConsumption + "W";
         }
         return string;

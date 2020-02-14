@@ -39,13 +39,11 @@ public class RuntimeRequest extends AbstractRequest implements StartingCurrentSw
     private Integer min;
     @XmlAttribute
     private int max;
-    private transient Integer currentMin;
-    private transient Integer currentMax;
 
     public RuntimeRequest() {
     }
 
-    public RuntimeRequest(Integer min, Integer max) {
+    public RuntimeRequest(Integer min, int max) {
         setMin(min);
         setMax(max);
     }
@@ -55,33 +53,25 @@ public class RuntimeRequest extends AbstractRequest implements StartingCurrentSw
     }
 
     public Integer getMin(LocalDateTime now) {
-        if(currentMin == null) {
-            currentMin = min;
+        if(min != null && isActive()) {
+            return min - getRuntime(now);
         }
-        if(currentMin != null && isActive() && getControl().isOn()) {
-            return currentMin - getSecondsSinceStatusChange(now);
-        }
-        return currentMin;
+        return min;
     }
 
     public void setMin(Integer min) {
         this.min = min;
-        this.currentMin = min;
     }
 
     public Integer getMax(LocalDateTime now) {
-        if(currentMax == null) {
-            currentMax = max;
+        if(isActive()) {
+            return max - getRuntime(now);
         }
-        if(isActive() && getControl().isOn()) {
-            return currentMax - getSecondsSinceStatusChange(now);
-        }
-        return currentMax;
+        return max;
     }
 
-    public void setMax(Integer max) {
+    public void setMax(int max) {
         this.max = max;
-        this.currentMax = max;
     }
 
     @Override
@@ -94,22 +84,6 @@ public class RuntimeRequest extends AbstractRequest implements StartingCurrentSw
         super.setControl(control);
         if (control instanceof StartingCurrentSwitch) {
             ((StartingCurrentSwitch) control).addStartingCurrentSwitchListener(this);
-        }
-    }
-
-    @Override
-    public void controlStateChanged(LocalDateTime now, boolean switchOn) {
-        super.controlStateChanged(now, switchOn);
-        if(isActive()) {
-            if(! switchOn) {
-                int secondsSinceStatusChange = getSecondsSinceStatusChange(now);
-                int newMax = this.currentMax - secondsSinceStatusChange;
-                this.currentMax = newMax > 0 ? newMax : 0;
-                if(this.currentMin != null) {
-                    int newMin = this.currentMin - secondsSinceStatusChange;
-                    this.currentMin = newMin > 0 ? newMin : 0;
-                }
-            }
         }
     }
 
@@ -138,7 +112,11 @@ public class RuntimeRequest extends AbstractRequest implements StartingCurrentSw
 
     @Override
     public String toString() {
-        LocalDateTime now = new LocalDateTime();
+        return toString(new LocalDateTime());
+    }
+
+    @Override
+    public String toString(LocalDateTime now) {
         Integer min = getMin(now);
         Integer max = getMax(now);
         String text = super.toString();

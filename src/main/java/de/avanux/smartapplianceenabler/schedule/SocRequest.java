@@ -200,6 +200,11 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
 
     @Override
     public String toString() {
+        return toString(new LocalDateTime());
+    }
+
+    @Override
+    public String toString(LocalDateTime now) {
         String text = super.toString();
         text += "/";
         text += "evId=" + evId;
