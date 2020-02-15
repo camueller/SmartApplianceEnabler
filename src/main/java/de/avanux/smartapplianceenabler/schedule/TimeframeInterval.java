@@ -99,6 +99,10 @@ public class TimeframeInterval implements ApplianceIdConsumer {
         return now.toDateTime().isAfter(getInterval().getEnd()) || getRequest().isFinished(now);
     }
 
+    public boolean isRemovable(LocalDateTime now) {
+        return ! getRequest().isControlOn();
+    }
+
     public boolean isIntervalSufficient(LocalDateTime now, Integer maxRunningTime) {
         LocalDateTime latestStart = getLatestStart(now, new LocalDateTime(interval.getEnd()), maxRunningTime);
         return now.isEqual(latestStart) || now.isBefore(latestStart);

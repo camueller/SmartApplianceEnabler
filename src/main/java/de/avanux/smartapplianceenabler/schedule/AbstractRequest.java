@@ -93,6 +93,10 @@ abstract public class AbstractRequest implements Request {
         return active;
     }
 
+    public boolean isControlOn() {
+        return control.isOn();
+    }
+
     @Override
     public void update() {
     }
@@ -116,7 +120,7 @@ abstract public class AbstractRequest implements Request {
     @Override
     public Integer getRuntime(LocalDateTime now) {
         if(isEnabledBefore()) {
-            return runtimeUntilLastStatusChange + getSecondsSinceStatusChange(now);
+            return runtimeUntilLastStatusChange + (control.isOn() ? getSecondsSinceStatusChange(now) : 0);
         }
         return 0;
     }

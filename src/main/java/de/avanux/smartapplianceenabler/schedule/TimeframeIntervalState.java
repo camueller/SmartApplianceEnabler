@@ -21,5 +21,6 @@ package de.avanux.smartapplianceenabler.schedule;
 public enum TimeframeIntervalState {
     CREATED,
     QUEUED,
-    ACTIVE
+    ACTIVE,
+    EXPIRED
 }

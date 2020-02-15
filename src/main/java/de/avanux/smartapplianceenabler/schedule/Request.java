@@ -48,6 +48,8 @@ public interface Request extends Serializable, ApplianceIdConsumer, TimeframeInt
 
     boolean isFinished(LocalDateTime now);
 
+    boolean isControlOn();
+
     Integer getRuntime(LocalDateTime now);
 
     LocalDateTime getControlStatusChangedAt();
