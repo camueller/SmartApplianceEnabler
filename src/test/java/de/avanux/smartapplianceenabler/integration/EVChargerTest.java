@@ -369,6 +369,7 @@ public class EVChargerTest extends TestBase {
         LocalDateTime timeAfterManualStart = toToday(12, 0, 0);
         Mockito.when(socScript.getStateOfCharge()).thenReturn(Integer.valueOf(socRequested).floatValue());
         tick(appliance, timeAfterManualStart, true, true);
+        tick(appliance, timeAfterManualStart, true, true);
         assertEquals(1, timeframeIntervalHandler.getQueue().size());
         assertTimeframeIntervalOptionalEnergy(intervalOptionalEnergyAdjusted, TimeframeIntervalState.ACTIVE,
                 50, evId, 22000, true, timeframeIntervalHandler.getQueue().get(0));

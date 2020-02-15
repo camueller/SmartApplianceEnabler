@@ -1,5 +1,6 @@
 package de.avanux.smartapplianceenabler;
 
+import de.avanux.smartapplianceenabler.appliance.Appliance;
 import de.avanux.smartapplianceenabler.schedule.*;
 import org.joda.time.DateTimeFieldType;
 import org.joda.time.Interval;
@@ -141,5 +142,10 @@ abstract public class TestBase {
         request.setSocInitial(socInitial);
         request.setEnabled(enabled);
         assertEquals(new TimeframeInterval(state, interval, request), actual);
+    }
+
+    protected void tick(Appliance appliance, LocalDateTime now) {
+        TimeframeIntervalHandler timeframeIntervalHandler = appliance.getTimeframeIntervalHandler();
+        timeframeIntervalHandler.updateQueue(now);
     }
 }

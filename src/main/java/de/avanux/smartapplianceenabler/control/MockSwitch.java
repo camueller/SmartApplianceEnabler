@@ -54,6 +54,8 @@ public class MockSwitch implements Control, ApplianceIdConsumer {
         logger.info("{}: Switching {}", applianceId, (switchOn ? "on" : "off"));
         on = switchOn;
         for(ControlStateChangedListener listener : new ArrayList<>(controlStateChangedListeners)) {
+            logger.debug("{}: Notifying {} {}", applianceId, ControlStateChangedListener.class.getSimpleName(),
+                    listener.getClass().getSimpleName());
             listener.controlStateChanged(now, switchOn);
         }
         return true;
