@@ -634,7 +634,12 @@ public class SaeController {
         if (appliance != null) {
             TimeframeIntervalHandler timeframeIntervalHandler = appliance.getTimeframeIntervalHandler();
             TimeframeInterval activeTimeframeInterval = timeframeIntervalHandler.getActiveTimeframeInterval();
-            if(activeTimeframeInterval == null) {
+            if(activeTimeframeInterval != null) {
+                if(activeTimeframeInterval.getRequest() instanceof RuntimeRequest) {
+                    ((RuntimeRequest) activeTimeframeInterval.getRequest()).setMax(runtime);
+                }
+            }
+            else {
                 RuntimeRequest request = new RuntimeRequest(null, runtime);
                 request.setEnabled(true);
                 Interval interval = new Interval(now.toDateTime(), now.plusSeconds(runtime).toDateTime());

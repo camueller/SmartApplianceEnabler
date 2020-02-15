@@ -178,24 +178,20 @@ public class IntegrationTest extends TestBase {
         assertEquals(3600, saeController.suggestRuntime(applianceId).intValue());
         saeController.setRuntimeDemand(timeInitial, applianceId, maxRuntimeSet);
         sempController.em2Device(timeInitial, createEM2Device(applianceId,true));
-        assertEquals(4, timeframeIntervalHandler.getQueue().size());
-        assertTimeframeIntervalRuntime(toIntervalToday(11, 0, 0, 11, 30, 0),
+        assertEquals(3, timeframeIntervalHandler.getQueue().size());
+//        assertTimeframeIntervalRuntime(toIntervalToday(11, 0, 0, 11, 30, 0),
+//                TimeframeIntervalState.ACTIVE, null, maxRuntimeSet, true, timeframeIntervalHandler.getQueue().get(0));
+        assertTimeframeIntervalRuntime(toIntervalToday(10, 0, 0, 18, 0, 0),
                 TimeframeIntervalState.ACTIVE, null, maxRuntimeSet, true, timeframeIntervalHandler.getQueue().get(0));
-        assertTimeframeIntervalRuntime(toIntervalToday(11, 30, 1, 18, 0, 0),
-                TimeframeIntervalState.QUEUED, null, maxRuntimeSet, true, timeframeIntervalHandler.getQueue().get(1));
         assertTimeframeIntervalRuntime(toIntervalTomorrow(10, 0, 0, 18, 0, 0),
-                TimeframeIntervalState.QUEUED, null, maxRuntimeSet, true, timeframeIntervalHandler.getQueue().get(2));
+                TimeframeIntervalState.QUEUED, null, maxRuntimeSet, true, timeframeIntervalHandler.getQueue().get(1));
         assertTimeframeIntervalRuntime(toIntervalDayAfterTomorrow(10, 0, 0, 18, 0, 0),
-                TimeframeIntervalState.QUEUED, null, maxRuntimeSet, true, timeframeIntervalHandler.getQueue().get(3));
+                TimeframeIntervalState.QUEUED, null, maxRuntimeSet, true, timeframeIntervalHandler.getQueue().get(2));
         assertPlanningRequest(timeInitial,
                 new Timeframe(applianceId,
                         0,
-                        toSecondsFromNow(timeInitial, 0, 11, 30, 0),
-                        1799, maxRuntimeSet),
-                new Timeframe(applianceId,
-                        toSecondsFromNow(timeInitial, 0, 11, 30, 1),
                         toSecondsFromNow(timeInitial, 0, 18, 0, 0),
-                        3599, maxRuntimeSchedule),
+                        1799, 1800),
                 new Timeframe(applianceId,
                         toSecondsFromNow(timeInitial, 1, 10, 0, 0),
                         toSecondsFromNow(timeInitial, 1, 18, 0, 0),
@@ -214,18 +210,12 @@ public class IntegrationTest extends TestBase {
         log("After go light timeframe expired - tick 2");
         // timeframe interval gets removed from queue since control is switiched off
         tick(appliance, timeAfterExpiration);
-        assertEquals(3, timeframeIntervalHandler.getQueue().size());
-        assertTimeframeIntervalRuntime(toIntervalToday(11, 30, 1, 18, 0, 0),
-                TimeframeIntervalState.ACTIVE, null, maxRuntimeSchedule, true, timeframeIntervalHandler.getQueue().get(0));
+        assertEquals(2, timeframeIntervalHandler.getQueue().size());
         assertTimeframeIntervalRuntime(toIntervalTomorrow(10, 0, 0, 18, 0, 0),
-                TimeframeIntervalState.QUEUED, null, maxRuntimeSchedule, true, timeframeIntervalHandler.getQueue().get(1));
+                TimeframeIntervalState.QUEUED, null, maxRuntimeSchedule, true, timeframeIntervalHandler.getQueue().get(0));
         assertTimeframeIntervalRuntime(toIntervalDayAfterTomorrow(10, 0, 0, 18, 0, 0),
-                TimeframeIntervalState.QUEUED, null, maxRuntimeSchedule, true, timeframeIntervalHandler.getQueue().get(2));
+                TimeframeIntervalState.QUEUED, null, maxRuntimeSchedule, true, timeframeIntervalHandler.getQueue().get(1));
         assertPlanningRequest(timeAfterExpiration,
-                new Timeframe(applianceId,
-                        0,
-                        toSecondsFromNow(timeAfterExpiration, 0, 18, 0, 0),
-                        3599, maxRuntimeSchedule),
                 new Timeframe(applianceId,
                         toSecondsFromNow(timeAfterExpiration, 1, 10, 0, 0),
                         toSecondsFromNow(timeAfterExpiration, 1, 18, 0, 0),
