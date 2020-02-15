@@ -63,6 +63,12 @@ abstract public class TestBase {
                 toTomorrow(endHour, endMinutes, endSeconds).toDateTime());
     }
 
+    protected Interval toIntervalDayAfterTomorrow(Integer startHour, Integer startMinutes, Integer startSeconds,
+                                          Integer endHour, Integer endMinutes, Integer endSeconds) {
+        return new Interval(toDayAfterTomorrow(startHour, startMinutes, startSeconds).toDateTime(),
+                toDayAfterTomorrow(endHour, endMinutes, endSeconds).toDateTime());
+    }
+
     protected Interval toInterval(Integer startDayOffset, Integer startHour, Integer startMinutes,
                                   Integer endDayOffset, Integer endHour, Integer endMinutes) {
         return toInterval(startDayOffset, startHour, startMinutes, 0,
