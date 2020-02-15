@@ -219,6 +219,14 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
             TimeframeInterval activeTimeframeInterval = getActiveTimeframeInterval();
             if(activeTimeframeInterval != null) {
                 deactivateTimeframeInterval(now, activeTimeframeInterval);
+
+                DateTime firstIntervalStart = activeTimeframeInterval.getInterval().getStart();
+                DateTime addedIntervalEnd = timeframeInterval.getInterval().getEnd();
+                if(firstIntervalStart.isEqual(addedIntervalEnd) || firstIntervalStart.isBefore(addedIntervalEnd)) {
+                    Interval firstIntervalAdjusted = new Interval(addedIntervalEnd.plusSeconds(1),
+                            activeTimeframeInterval.getInterval().getEnd());
+                    activeTimeframeInterval.setInterval(firstIntervalAdjusted);
+                }
             }
             queue.addFirst(timeframeInterval);
         } else {
