@@ -279,7 +279,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
         return getActiveTimeframeInterval() != null;
     }
 
-    private TimeframeInterval getActiveTimeframeInterval() {
+    public TimeframeInterval getActiveTimeframeInterval() {
         return queue.stream()
                 .filter(timeframeInterval -> timeframeInterval.getState() == TimeframeIntervalState.ACTIVE)
                 .findFirst().orElse(null);
