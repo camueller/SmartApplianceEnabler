@@ -179,8 +179,6 @@ public class IntegrationTest extends TestBase {
         saeController.setRuntimeDemand(timeInitial, applianceId, maxRuntimeSet);
         sempController.em2Device(timeInitial, createEM2Device(applianceId,true));
         assertEquals(3, timeframeIntervalHandler.getQueue().size());
-//        assertTimeframeIntervalRuntime(toIntervalToday(11, 0, 0, 11, 30, 0),
-//                TimeframeIntervalState.ACTIVE, null, maxRuntimeSet, true, timeframeIntervalHandler.getQueue().get(0));
         assertTimeframeIntervalRuntime(toIntervalToday(10, 0, 0, 18, 0, 0),
                 TimeframeIntervalState.ACTIVE, null, maxRuntimeSet, true, timeframeIntervalHandler.getQueue().get(0));
         assertTimeframeIntervalRuntime(toIntervalTomorrow(10, 0, 0, 18, 0, 0),
