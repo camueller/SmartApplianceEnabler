@@ -11,6 +11,6 @@ EXPOSE 8080
 
 RUN mkdir -p $SAE_INSTALL_DIR && \
     curl -o $SAE_INSTALL_DIR/logback-spring.xml -L -k https://github.com/camueller/SmartApplianceEnabler/raw/master/run/logback-spring.xml && \
-    curl -o $SAE_INSTALL_DIR/SmartApplianceEnabler-1.5.1.war -L -k https://github.com/camueller/SmartApplianceEnabler/releases/download/1.5.1/SmartApplianceEnabler-1.5.1.war
+    curl -o $SAE_INSTALL_DIR/SmartApplianceEnabler-1.5.2.war -L -k https://github.com/camueller/SmartApplianceEnabler/releases/download/1.5.2/SmartApplianceEnabler-1.5.2.war
 
-CMD java $JAVA_OPTS -Djava.awt.headless=true -Xmx256m -Dsae.home=$SAE_HOME -Dlogging.config=$SAE_INSTALL_DIR/logback-spring.xml -jar $SAE_INSTALL_DIR/SmartApplianceEnabler-1.5.1.war
+CMD java $JAVA_OPTS -Djava.awt.headless=true -Xmx256m -Dsae.home=$SAE_HOME -Dlogging.config=$SAE_INSTALL_DIR/logback-spring.xml -jar $SAE_INSTALL_DIR/SmartApplianceEnabler-1.5.2.war

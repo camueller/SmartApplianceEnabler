@@ -4,12 +4,12 @@
         <Identification>
             <DeviceId>F-00000001-000000000001-00</DeviceId>
             <DeviceName>Gerät 1</DeviceName>
-            <DeviceType>EVCharger</DeviceType>
+            <DeviceType>Heater</DeviceType>
             <DeviceSerial>4158934</DeviceSerial>
             <DeviceVendor>Speck</DeviceVendor>
         </Identification>
         <Characteristics>
-            <MaxPowerConsumption>22000</MaxPowerConsumption>
+            <MaxPowerConsumption>960</MaxPowerConsumption>
             <MinOnTime>900</MinOnTime>
         </Characteristics>
         <Capabilities>
