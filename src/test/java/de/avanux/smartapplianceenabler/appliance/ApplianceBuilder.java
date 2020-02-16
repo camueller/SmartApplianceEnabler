@@ -62,7 +62,7 @@ public class ApplianceBuilder {
     }
 
     public ApplianceBuilder withEvCharger(EVChargerControl evChargerControl) {
-        ElectricVehicleCharger evCharger = new ElectricVehicleCharger();
+        ElectricVehicleCharger evCharger = Mockito.spy(new ElectricVehicleCharger());
         return withEvCharger(evCharger, evChargerControl);
     }
 

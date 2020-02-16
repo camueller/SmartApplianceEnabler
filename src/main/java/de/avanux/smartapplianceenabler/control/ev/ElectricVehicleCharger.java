@@ -460,7 +460,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
 
         // SOC has to be retrieved after listener notification in order to allow for new listeners interested in SOC
         if(previousState == EVChargerState.VEHICLE_NOT_CONNECTED && newState == EVChargerState.VEHICLE_CONNECTED) {
-            retrieveSoc(now, getConnectedVehicle());
+            retrieveSoc(now);
         }
     }
 
@@ -607,10 +607,9 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
 
     private void retrieveSoc(LocalDateTime now, ElectricVehicle electricVehicle) {
         if(electricVehicle != null) {
-            Float soc = electricVehicle.getStateOfCharge();
+            Float soc = getStateOfCharge(electricVehicle);
             if(soc != null) {
                 this.connectedVehicleSoc = soc.intValue();
-                this.connectedVehicleSocTimestamp = System.currentTimeMillis();
                 logger.debug("{}: Current SoC={}%", applianceId, connectedVehicleSoc);
                 for(ControlStateChangedListener listener : controlStateChangedListeners) {
                     logger.debug("{}: Notifying {} {} {}", applianceId, ControlStateChangedListener.class.getSimpleName(),
@@ -619,5 +618,22 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                 }
             }
         }
+    }
+
+    /**
+     * This method is extracted only for mocking which should also disable any time limits.
+     * @param electricVehicle
+     * @return
+     */
+    public Float getStateOfCharge(ElectricVehicle electricVehicle) {
+        if(connectedVehicleSocTimestamp == null
+                || System.currentTimeMillis() - this.connectedVehicleSocTimestamp > 1 * 60 * 60) {
+            logger.debug("{}: Try to retrieve SoC", applianceId);
+            Float soc = electricVehicle.getStateOfCharge();
+            this.connectedVehicleSocTimestamp = System.currentTimeMillis();
+            return soc;
+        }
+        logger.debug("{}: Using cached SoC", applianceId);
+        return Integer.valueOf(this.connectedVehicleSoc).floatValue();
     }
 }
