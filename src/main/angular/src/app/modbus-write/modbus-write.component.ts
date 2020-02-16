@@ -20,7 +20,7 @@ import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {ModbusWrite} from './modbus-write';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {ModbusWriteValue} from '../modbus-write-value/modbus-write-value';
-import {fixExpressionChangedAfterItHasBeenCheckedError, getValidString} from '../shared/form-util';
+import {fixExpressionChangedAfterItHasBeenCheckedError, getValidInt, getValidString} from '../shared/form-util';
 import {ModbusWriteValueComponent} from '../modbus-write-value/modbus-write-value.component';
 
 @Component({
@@ -80,7 +80,7 @@ export class ModbusWriteComponent implements OnChanges, OnInit, AfterViewChecked
       new ErrorMessage('factorToValue', ValidatorType.pattern),
     ], this.translate);
     this.form.statusChanges.subscribe(() => {
-      this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
+      this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
     });
   }
 
@@ -170,7 +170,7 @@ export class ModbusWriteComponent implements OnChanges, OnInit, AfterViewChecked
 
     this.modbusWrite.address = getValidString(address);
     this.modbusWrite.type = getValidString(type);
-    this.modbusWrite.address = getValidString(address);
+    this.modbusWrite.factorToValue = getValidInt(factorToValue);
     return this.modbusWrite;
   }
 }

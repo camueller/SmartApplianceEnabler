@@ -35,7 +35,7 @@ import {FormHandler} from '../shared/form-handler';
 import {getValidInt, getValidString} from '../shared/form-util';
 
 @Component({
-  selector: 'app-appliance-details',
+  selector: 'app-appliance',
   templateUrl: './appliance.component.html',
   styleUrls: ['../global.css']
 })
@@ -64,7 +64,7 @@ export class ApplianceComponent implements OnChanges, OnInit, AfterViewChecked, 
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.control && changes.control.currentValue) {
+    if (changes.appliance && changes.appliance.currentValue) {
       this.appliance = changes.appliance.currentValue;
     }
     if (this.form) {
@@ -96,7 +96,7 @@ export class ApplianceComponent implements OnChanges, OnInit, AfterViewChecked, 
     });
     this.buildForm();
     this.form.statusChanges.subscribe(() => {
-      this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
+      this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
     });
   }
 

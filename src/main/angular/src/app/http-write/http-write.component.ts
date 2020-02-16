@@ -80,7 +80,7 @@ export class HttpWriteComponent implements OnChanges, OnInit, AfterViewChecked {
       new ErrorMessage('url', ValidatorType.pattern),
     ], this.translate);
     this.form.statusChanges.subscribe(() => {
-      this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
+      this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
     });
     if (this.translate) {
       this.translate.get(this.translationKeys).subscribe(translatedStrings => {

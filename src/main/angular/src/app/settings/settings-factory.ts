@@ -75,9 +75,6 @@ export class SettingsFactory {
       });
     }
 
-    settings.pulseReceiverEnabled = rawSettings.pulseReceiverEnabled;
-    settings.pulseReceiverPort = rawSettings.pulseReceiverPort;
-
     this.logger.debug('Settings (TYPE): ' + JSON.stringify(settings));
     return settings;
   }

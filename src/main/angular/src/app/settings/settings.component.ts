@@ -16,10 +16,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, CanDeactivate} from '@angular/router';
-import {SettingsFactory} from './settings-factory';
-import {NgForm} from '@angular/forms';
+import {FormArray, FormGroup, Validators} from '@angular/forms';
 import {SettingsService} from './settings-service';
 import {Settings} from './settings';
 import {SettingsDefaults} from './settings-defaults';
@@ -31,6 +30,8 @@ import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {Logger} from '../log/logger';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
+import {FormHandler} from '../shared/form-handler';
+import {ModbusSettings} from './modbus-settings';
 
 @Component({
   selector: 'app-settings',
@@ -38,15 +39,13 @@ import {ErrorMessage, ValidatorType} from '../shared/error-message';
   styleUrls: ['../global.css']
 })
 export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponent> {
-  @ViewChild('settingsForm', { static: true }) settingsForm: NgForm;
-  settingsDefaults: SettingsDefaults;
   settings: Settings;
+  settingsDefaults: SettingsDefaults;
+  form: FormGroup;
+  formHandler: FormHandler;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
-  VALIDATOR_PATTERN_INTEGER = InputValidatorPatterns.INTEGER;
-  VALIDATOR_PATTERN_HOSTNAME = InputValidatorPatterns.HOSTNAME;
-  VALIDATOR_PATTERN_URL = InputValidatorPatterns.URL;
   discardChangesMessage: string;
 
   constructor(private logger: Logger,
@@ -54,10 +53,8 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
               private translate: TranslateService,
               private dialogService: DialogService,
               private route: ActivatedRoute) {
-    const settingsFactory = new SettingsFactory(logger);
-    this.settingsDefaults = settingsFactory.createEmptySettingsDefaults();
-    this.settings = settingsFactory.createEmptySettings();
     this.errorMessageHandler = new ErrorMessageHandler(logger);
+    this.formHandler = new FormHandler();
   }
 
   ngOnInit() {
@@ -67,36 +64,86 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
       new ErrorMessage('modbusTcpPort', ValidatorType.pattern),
     ], this.translate);
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
-    this.route.data.subscribe((data: {settings: Settings, settingsDefaults: SettingsDefaults}) => {
+    this.route.data.subscribe((data: { settings: Settings, settingsDefaults: SettingsDefaults }) => {
       this.settings = data.settings;
       this.settingsDefaults = data.settingsDefaults;
     });
-    this.settingsForm.statusChanges.subscribe(() =>
-      this.errors = this.errorMessageHandler.applyErrorMessages4TemplateDrivenForm(this.settingsForm, this.errorMessages));
-  }
-
-  addModbusSettings() {
-    this.settings.modbusSettings.push({
-      modbusTcpId: undefined,
-      modbusTcpHost: undefined,
-      modbusTcpPort: undefined
+    this.buildForm();
+    this.form.statusChanges.subscribe(() => {
+      this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
     });
   }
 
-  removeModbusSettings(index: number) {
+  ngAfterViewChecked() {
+    this.formHandler.markLabelsRequired();
+  }
+
+  buildForm() {
+    const modbusFormArray = new FormArray([]);
+    this.settings.modbusSettings.forEach((modbusSettings) => modbusFormArray.push(this.createModbusFormGroup(modbusSettings)));
+
+    this.form = new FormGroup({modbus: modbusFormArray});
+    this.formHandler.addFormControl(this.form, 'holidaysEnabled', this.settings.holidaysEnabled);
+    this.formHandler.addFormControl(this.form, 'holidaysUrl', this.settings.holidaysUrl,
+      [Validators.pattern(InputValidatorPatterns.URL)]);
+  }
+
+  isHolidaysEnabled() {
+    return this.form.controls.holidaysEnabled.value;
+  }
+
+  get modbusFormArray() {
+    return this.form.controls.modbus as FormArray;
+  }
+
+  createModbusFormGroup(modbusSettings?: ModbusSettings): FormGroup {
+    const modbusFormGroup = new FormGroup({});
+    this.formHandler.addFormControl(modbusFormGroup, 'modbusTcpId', modbusSettings && modbusSettings.modbusTcpId);
+    this.formHandler.addFormControl(modbusFormGroup, 'modbusTcpHost', modbusSettings && modbusSettings.modbusTcpHost);
+    this.formHandler.addFormControl(modbusFormGroup, 'modbusTcpPort', modbusSettings && modbusSettings.modbusTcpPort);
+    return modbusFormGroup;
+  }
+
+  getModbusFormGroup(index: number) {
+    return this.modbusFormArray.controls[index];
+  }
+
+  addModbus() {
+    this.settings.modbusSettings.push(new ModbusSettings());
+    this.modbusFormArray.push(this.createModbusFormGroup());
+    this.form.markAsDirty();
+  }
+
+  removeModbus(index: number) {
     this.settings.modbusSettings.splice(index, 1);
+    this.modbusFormArray.removeAt(index);
+    this.form.markAsDirty();
   }
 
   canDeactivate(): Observable<boolean> | boolean {
-    if (this.settingsForm.form.pristine) {
+    if (this.form.pristine) {
       return true;
     }
     return this.dialogService.confirm(this.discardChangesMessage);
   }
 
   submitForm() {
+    this.settings.holidaysEnabled = this.form.controls.holidaysEnabled.value;
+    this.settings.holidaysUrl = this.form.controls.holidaysUrl.value;
+
+    this.settings.modbusSettings = [];
+    for (let i = 0; i < this.modbusFormArray.length; i++) {
+      const modbusFormGroup = this.modbusFormArray.at(i) as FormGroup;
+      const modbusSettings = new ModbusSettings({
+        modbusTcpId: modbusFormGroup.controls.modbusTcpId.value,
+        modbusTcpHost: modbusFormGroup.controls.modbusTcpHost.value,
+        modbusTcpPort: modbusFormGroup.controls.modbusTcpPort.value,
+      });
+      this.settings.modbusSettings.push(modbusSettings);
+    }
+
     this.settingsService.updateSettings(this.settings).subscribe();
-    this.settingsForm.form.markAsPristine();
+    this.form.markAsPristine();
   }
 
 }

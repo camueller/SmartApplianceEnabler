@@ -78,7 +78,7 @@ export class MeterHttpComponent implements OnChanges, OnInit, AfterViewChecked {
     ], this.translate);
     this.expandParentForm();
     this.form.statusChanges.subscribe(() => {
-      this.errors = this.errorMessageHandler.applyErrorMessages4ReactiveForm(this.form, this.errorMessages);
+      this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
     });
   }
 

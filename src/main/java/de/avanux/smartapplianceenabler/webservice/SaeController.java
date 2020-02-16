@@ -69,6 +69,8 @@ public class SaeController {
     // only required for development if running via "ng serve"
     private static final String CROSS_ORIGIN_URL = "http://localhost:4200";
     private Logger logger = LoggerFactory.getLogger(SaeController.class);
+    // the lock ensures that no data is changed or read while appliances are restarted
+    private Object lock = new Object();
 
     public SaeController() {
         logger.info("SAE controller created.");
@@ -160,21 +162,23 @@ public class SaeController {
     @RequestMapping(value = APPLIANCES_URL, method = RequestMethod.GET, produces = "application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public List<ApplianceHeader> getAppliances() {
-        try {
-            logger.debug("Received request for ApplianceHeaders");
-            List<ApplianceHeader> applianceHeaders = new ArrayList<>();
-            List<Appliance> applianceList = ApplianceManager.getInstance().getAppliances();
-            Device2EM device2EM = ApplianceManager.getInstance().getDevice2EM();
-            if (applianceList != null && device2EM != null) {
-                for (Appliance appliance : applianceList) {
-                    DeviceInfo deviceInfo = getDeviceInfo(appliance.getId());
-                    applianceHeaders.add(toApplianceHeader(appliance, deviceInfo));
+        synchronized (lock) {
+            try {
+                logger.debug("Received request for ApplianceHeaders");
+                List<ApplianceHeader> applianceHeaders = new ArrayList<>();
+                List<Appliance> applianceList = ApplianceManager.getInstance().getAppliances();
+                Device2EM device2EM = ApplianceManager.getInstance().getDevice2EM();
+                if (applianceList != null && device2EM != null) {
+                    for (Appliance appliance : applianceList) {
+                        DeviceInfo deviceInfo = getDeviceInfo(appliance.getId());
+                        applianceHeaders.add(toApplianceHeader(appliance, deviceInfo));
+                    }
                 }
+                logger.debug("Returning " + applianceHeaders.size() + " ApplianceHeaders");
+                return applianceHeaders;
+            } catch (Throwable e) {
+                logger.error("Error in " + getClass().getSimpleName(), e);
             }
-            logger.debug("Returning " + applianceHeaders.size() + " ApplianceHeaders");
-            return applianceHeaders;
-        } catch (Throwable e) {
-            logger.error("Error in " + getClass().getSimpleName(), e);
         }
         return null;
     }
@@ -182,20 +186,22 @@ public class SaeController {
     @RequestMapping(value = APPLIANCE_URL, method = RequestMethod.GET, produces = "application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public ApplianceInfo getApplianceInfo(HttpServletResponse response, @RequestParam(value = "id") String applianceId) {
-        try {
-            logger.debug("{}: Received request for ApplianceInfo", applianceId);
-            Device2EM device2EM = ApplianceManager.getInstance().getDevice2EM();
-            for (DeviceInfo deviceInfo : device2EM.getDeviceInfo()) {
-                if (deviceInfo.getIdentification().getDeviceId().equals(applianceId)) {
-                    ApplianceInfo applianceInfo = toApplianceInfo(deviceInfo);
-                    logger.debug("{}: Returning ApplianceInfo {}", applianceId, applianceInfo);
-                    return applianceInfo;
+        synchronized (lock) {
+            try {
+                logger.debug("{}: Received request for ApplianceInfo", applianceId);
+                Device2EM device2EM = ApplianceManager.getInstance().getDevice2EM();
+                for (DeviceInfo deviceInfo : device2EM.getDeviceInfo()) {
+                    if (deviceInfo.getIdentification().getDeviceId().equals(applianceId)) {
+                        ApplianceInfo applianceInfo = toApplianceInfo(deviceInfo);
+                        logger.debug("{}: Returning ApplianceInfo {}", applianceId, applianceInfo);
+                        return applianceInfo;
+                    }
                 }
+                logger.error("{}: Appliance not found.", applianceId);
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            } catch (Throwable e) {
+                logger.error("Error in " + getClass().getSimpleName(), e);
             }
-            logger.error("{}: Appliance not found.", applianceId);
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        } catch (Throwable e) {
-            logger.error("Error in " + getClass().getSimpleName(), e);
         }
         return null;
     }
@@ -205,39 +211,43 @@ public class SaeController {
     public void setApplianceInfo(HttpServletResponse response, @RequestParam(value = "id") String applianceId,
                                  @RequestParam(value = "create") Boolean create,
                                  @RequestBody ApplianceInfo applianceInfo) {
-        try {
-            logger.debug("{}: Received request to set ApplianceInfo (create={}): {}", applianceId, create, applianceInfo);
-            LocalDateTime now = new LocalDateTime();
-            DeviceInfo deviceInfo = toDeviceInfo(applianceInfo);
-            if (create) {
-                Appliance appliance = new Appliance();
-                appliance.setId(applianceId);
-                ApplianceManager.getInstance().addAppliance(appliance, deviceInfo);
-            } else {
-                Appliance appliance = getAppliance(applianceId);
-                if (appliance != null) {
-                    deviceInfo.getCapabilities().setOptionalEnergy(appliance.canConsumeOptionalEnergy(now));
+        synchronized (lock) {
+            try {
+                logger.debug("{}: Received request to set ApplianceInfo (create={}): {}", applianceId, create, applianceInfo);
+                LocalDateTime now = new LocalDateTime();
+                DeviceInfo deviceInfo = toDeviceInfo(applianceInfo);
+                if (create) {
+                    Appliance appliance = new Appliance();
+                    appliance.setId(applianceId);
+                    ApplianceManager.getInstance().addAppliance(appliance, deviceInfo);
+                } else {
+                    Appliance appliance = getAppliance(applianceId);
+                    if (appliance != null) {
+                        deviceInfo.getCapabilities().setOptionalEnergy(appliance.canConsumeOptionalEnergy(now));
+                    }
+                    if (!ApplianceManager.getInstance().updateAppliance(deviceInfo)) {
+                        logger.error("{}: Appliance not found.", applianceId);
+                        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    }
                 }
-                if (!ApplianceManager.getInstance().updateAppliance(deviceInfo)) {
-                    logger.error("{}: Appliance not found.", applianceId);
-                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                }
+            } catch (Throwable e) {
+                logger.error("Error in " + getClass().getSimpleName(), e);
             }
-        } catch (Throwable e) {
-            logger.error("Error in " + getClass().getSimpleName(), e);
         }
     }
 
     @RequestMapping(value = APPLIANCE_URL, method = RequestMethod.DELETE)
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public void deleteAppliance(HttpServletResponse response, @RequestParam(value = "id") String applianceId) {
-        try {
-            if (!ApplianceManager.getInstance().deleteAppliance(applianceId)) {
-                logger.error("{}: Appliance not found.", applianceId);
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        synchronized (lock) {
+            try {
+                if (!ApplianceManager.getInstance().deleteAppliance(applianceId)) {
+                    logger.error("{}: Appliance not found.", applianceId);
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                }
+            } catch (Throwable e) {
+                logger.error("Error in " + getClass().getSimpleName(), e);
             }
-        } catch (Throwable e) {
-            logger.error("Error in " + getClass().getSimpleName(), e);
         }
     }
 
@@ -255,21 +265,23 @@ public class SaeController {
     @RequestMapping(value = CONTROL_URL, method = RequestMethod.GET, produces = "application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public Control getControl(HttpServletResponse response, @RequestParam(value = "id") String applianceId) {
-        try {
-            logger.debug("{}: Received request for control", applianceId);
-            Appliance appliance = getAppliance(applianceId);
-            if (appliance != null) {
-                Control control = appliance.getControl();
-                logger.debug("{}: Returning control {}", applianceId, control);
-                if (control == null) {
-                    response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+        synchronized (lock) {
+            try {
+                logger.debug("{}: Received request for control", applianceId);
+                Appliance appliance = getAppliance(applianceId);
+                if (appliance != null) {
+                    Control control = appliance.getControl();
+                    logger.debug("{}: Returning control {}", applianceId, control);
+                    if (control == null) {
+                        response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+                    }
+                    return control;
                 }
-                return control;
+                logger.error("{}: Appliance not found", applianceId);
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            } catch (Throwable e) {
+                logger.error("Error in " + getClass().getSimpleName(), e);
             }
-            logger.error("{}: Appliance not found", applianceId);
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        } catch (Throwable e) {
-            logger.error("Error in " + getClass().getSimpleName(), e);
         }
         return null;
     }
@@ -278,28 +290,32 @@ public class SaeController {
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public void setControl(HttpServletResponse response, @RequestParam(value = "id") String applianceId,
                            @RequestBody Control control) {
-        try {
-            logger.debug("{}: Received request to set control {}", applianceId, control);
-            if (!ApplianceManager.getInstance().setControl(applianceId, control)) {
-                logger.error("{}: Appliance not found", applianceId);
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        synchronized (lock) {
+            try {
+                logger.debug("{}: Received request to set control {}", applianceId, control);
+                if (!ApplianceManager.getInstance().setControl(applianceId, control)) {
+                    logger.error("{}: Appliance not found", applianceId);
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                }
+            } catch (Throwable e) {
+                logger.error("Error in " + getClass().getSimpleName(), e);
             }
-        } catch (Throwable e) {
-            logger.error("Error in " + getClass().getSimpleName(), e);
         }
     }
 
     @RequestMapping(value = CONTROL_URL, method = RequestMethod.DELETE, consumes = "application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public void deleteControl(HttpServletResponse response, @RequestParam(value = "id") String applianceId) {
-        try {
-            logger.debug("{}: Received request to delete control", applianceId);
-            if (!ApplianceManager.getInstance().deleteControl(applianceId)) {
-                logger.error("{}: Appliance not found", applianceId);
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        synchronized (lock) {
+            try {
+                logger.debug("{}: Received request to delete control", applianceId);
+                if (!ApplianceManager.getInstance().deleteControl(applianceId)) {
+                    logger.error("{}: Appliance not found", applianceId);
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                }
+            } catch (Throwable e) {
+                logger.error("Error in " + getClass().getSimpleName(), e);
             }
-        } catch (Throwable e) {
-            logger.error("Error in " + getClass().getSimpleName(), e);
         }
     }
 
@@ -321,21 +337,23 @@ public class SaeController {
     @RequestMapping(value = METER_URL, method = RequestMethod.GET, produces = "application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public Meter getMeter(HttpServletResponse response, @RequestParam(value = "id") String applianceId) {
-        try {
-            logger.debug("{}: Received request for meter", applianceId);
-            Appliance appliance = getAppliance(applianceId);
-            if (appliance != null) {
-                Meter meter = appliance.getMeter();
-                logger.debug("{}: Returning meter {}", applianceId, meter);
-                if (meter == null) {
-                    response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+        synchronized (lock) {
+            try {
+                logger.debug("{}: Received request for meter", applianceId);
+                Appliance appliance = getAppliance(applianceId);
+                if (appliance != null) {
+                    Meter meter = appliance.getMeter();
+                    logger.debug("{}: Returning meter {}", applianceId, meter);
+                    if (meter == null) {
+                        response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+                    }
+                    return meter;
                 }
-                return meter;
+                logger.error("{}: Appliance not found", applianceId);
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            } catch (Throwable e) {
+                logger.error("Error in " + getClass().getSimpleName(), e);
             }
-            logger.error("{}: Appliance not found", applianceId);
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        } catch (Throwable e) {
-            logger.error("Error in " + getClass().getSimpleName(), e);
         }
         return null;
     }
@@ -344,49 +362,55 @@ public class SaeController {
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public void setMeter(HttpServletResponse response, @RequestParam(value = "id") String applianceId,
                          @RequestBody Meter meter) {
-        try {
-            logger.debug("{}: Received request to set meter {}", applianceId, meter);
-            if (!ApplianceManager.getInstance().setMeter(applianceId, meter)) {
-                logger.error("{}: Appliance not found", applianceId);
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        synchronized (lock) {
+            try {
+                logger.debug("{}: Received request to set meter {}", applianceId, meter);
+                if (!ApplianceManager.getInstance().setMeter(applianceId, meter)) {
+                    logger.error("{}: Appliance not found", applianceId);
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                }
+            } catch (Throwable e) {
+                logger.error("Error in " + getClass().getSimpleName(), e);
             }
-        } catch (Throwable e) {
-            logger.error("Error in " + getClass().getSimpleName(), e);
         }
     }
 
     @RequestMapping(value = METER_URL, method = RequestMethod.DELETE, consumes = "application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public void deleteMeter(HttpServletResponse response, @RequestParam(value = "id") String applianceId) {
-        try {
-            logger.debug("{}: Received request to delete meter", applianceId);
-            if (!ApplianceManager.getInstance().deleteMeter(applianceId)) {
-                logger.error("{}: Appliance not found", applianceId);
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        synchronized (lock) {
+            try {
+                logger.debug("{}: Received request to delete meter", applianceId);
+                if (!ApplianceManager.getInstance().deleteMeter(applianceId)) {
+                    logger.error("{}: Appliance not found", applianceId);
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                }
+            } catch (Throwable e) {
+                logger.error("Error in " + getClass().getSimpleName(), e);
             }
-        } catch (Throwable e) {
-            logger.error("Error in " + getClass().getSimpleName(), e);
         }
     }
 
     @RequestMapping(value = SCHEDULES_URL, method = RequestMethod.GET, produces = "application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public List<Schedule> getSchedules(HttpServletResponse response, @RequestParam(value = "id") String applianceId) {
-        try {
-            logger.debug("{}: Received request for schedules", applianceId);
-            Appliance appliance = getAppliance(applianceId);
-            if (appliance != null) {
-                List<Schedule> schedules = appliance.getSchedules();
-                if (schedules == null) {
-                    response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+        synchronized (lock) {
+            try {
+                logger.debug("{}: Received request for schedules", applianceId);
+                Appliance appliance = getAppliance(applianceId);
+                if (appliance != null) {
+                    List<Schedule> schedules = appliance.getSchedules();
+                    if (schedules == null) {
+                        response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+                    }
+                    logger.debug("{}: Returning {} schedules", applianceId, schedules != null ? schedules.size() : 0);
+                    return schedules;
                 }
-                logger.debug("{}: Returning {} schedules", applianceId, schedules != null ? schedules.size() : 0);
-                return schedules;
+                logger.error("{}: Appliance not found", applianceId);
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            } catch (Throwable e) {
+                logger.error("Error in " + getClass().getSimpleName(), e);
             }
-            logger.error("{}: Appliance not found", applianceId);
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        } catch (Throwable e) {
-            logger.error("Error in " + getClass().getSimpleName(), e);
         }
         return null;
     }
@@ -394,11 +418,13 @@ public class SaeController {
     @RequestMapping(value = SCHEDULES_URL, method = RequestMethod.PUT, consumes = "application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public void setSchedules(@RequestParam(value = "id") String applianceId, @RequestBody List<Schedule> schedules) {
-        try {
-            logger.debug("{}: Received request to set {} schedules", applianceId, schedules.size());
-            ApplianceManager.getInstance().setSchedules(applianceId, schedules);
-        } catch (Throwable e) {
-            logger.error("Error in " + getClass().getSimpleName(), e);
+        synchronized (lock) {
+            try {
+                logger.debug("{}: Received request to set {} schedules", applianceId, schedules.size());
+                ApplianceManager.getInstance().setSchedules(applianceId, schedules);
+            } catch (Throwable e) {
+                logger.error("Error in " + getClass().getSimpleName(), e);
+            }
         }
     }
 
@@ -406,26 +432,27 @@ public class SaeController {
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public void activateSchedules(HttpServletResponse response, @RequestParam(value = "id") String applianceId,
                                   @RequestBody Schedules schedules) {
-        try {
-            LocalDateTime now = new LocalDateTime();
-            List<Schedule> schedulesToSet = schedules.getSchedules();
-            logger.debug("{}: Received request to activate {} schedule(s)", applianceId,
-                    (schedulesToSet != null ? schedulesToSet.size() : "0"));
-            Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
-            if (appliance != null) {
-                if (appliance.getMeter() != null) {
-                    appliance.getMeter().resetEnergyMeter();
+        synchronized (lock) {
+            try {
+                LocalDateTime now = new LocalDateTime();
+                List<Schedule> schedulesToSet = schedules.getSchedules();
+                logger.debug("{}: Received request to activate {} schedule(s)", applianceId,
+                        (schedulesToSet != null ? schedulesToSet.size() : "0"));
+                Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
+                if (appliance != null) {
+                    if (appliance.getMeter() != null) {
+                        appliance.getMeter().resetEnergyMeter();
+                    }
+                    appliance.setSchedules(schedulesToSet);
+                    appliance.getTimeframeIntervalHandler().clearQueue();
+                    appliance.getTimeframeIntervalHandler().fillQueue(now);
+                    return;
                 }
-//                appliance.getRunningTimeMonitor().setSchedules(schedulesToSet, new LocalDateTime());
-                appliance.setSchedules(schedulesToSet);
-                appliance.getTimeframeIntervalHandler().clearQueue();
-                appliance.getTimeframeIntervalHandler().fillQueue(now);
-                return;
+                logger.error("{}: Appliance not found", applianceId);
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            } catch (Throwable e) {
+                logger.error("Error in " + getClass().getSimpleName(), e);
             }
-            logger.error("{}: Appliance not found", applianceId);
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        } catch (Throwable e) {
-            logger.error("Error in " + getClass().getSimpleName(), e);
         }
     }
 
@@ -435,19 +462,20 @@ public class SaeController {
             HttpServletResponse response,
             @RequestParam(value = "id") String applianceId,
             @RequestParam(value = "accept") Boolean acceptControlRecommendations) {
-
-        try {
-            logger.debug("{}: Received request to set control recommenandations to {}",
-                    applianceId ,acceptControlRecommendations);
-            Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
-            if (appliance != null) {
-                appliance.setAcceptControlRecommendations(acceptControlRecommendations);
-            } else {
-                logger.error("{}: Appliance not found", applianceId);
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        synchronized (lock) {
+            try {
+                logger.debug("{}: Received request to set control recommenandations to {}",
+                        applianceId ,acceptControlRecommendations);
+                Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
+                if (appliance != null) {
+                    appliance.setAcceptControlRecommendations(acceptControlRecommendations);
+                } else {
+                    logger.error("{}: Appliance not found", applianceId);
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                }
+            } catch (Throwable e) {
+                logger.error("Error in " + getClass().getSimpleName(), e);
             }
-        } catch (Throwable e) {
-            logger.error("Error in " + getClass().getSimpleName(), e);
         }
     }
 
@@ -456,32 +484,35 @@ public class SaeController {
     public void resetAcceptControlRecommendations(
             HttpServletResponse response,
             @RequestParam(value = "id") String applianceId) {
-
-        try {
-            logger.debug("{}: Received request to reset control recommenandations", applianceId);
-            Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
-            if (appliance != null) {
-                appliance.resetAcceptControlRecommendations();
-            } else {
-                logger.error("{}: Appliance not found", applianceId);
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        synchronized (lock) {
+            try {
+                logger.debug("{}: Received request to reset control recommenandations", applianceId);
+                Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
+                if (appliance != null) {
+                    appliance.resetAcceptControlRecommendations();
+                } else {
+                    logger.error("{}: Appliance not found", applianceId);
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                }
+            } catch (Throwable e) {
+                logger.error("Error in " + getClass().getSimpleName(), e);
             }
-        } catch (Throwable e) {
-            logger.error("Error in " + getClass().getSimpleName(), e);
         }
     }
 
     @RequestMapping(value = RUNTIME_URL, method = RequestMethod.GET)
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public Integer suggestRuntime(HttpServletResponse response, @RequestParam(value = "id") String applianceId) {
-        try {
-            Integer suggestedRuntime = suggestRuntime(applianceId);
-            if (suggestedRuntime == null) {
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        synchronized (lock) {
+            try {
+                Integer suggestedRuntime = suggestRuntime(applianceId);
+                if (suggestedRuntime == null) {
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                }
+                return suggestedRuntime;
+            } catch (Throwable e) {
+                logger.error("Error in " + getClass().getSimpleName(), e);
             }
-            return suggestedRuntime;
-        } catch (Throwable e) {
-            logger.error("Error in " + getClass().getSimpleName(), e);
         }
         return null;
     }
@@ -519,12 +550,14 @@ public class SaeController {
     public void setRuntimeDemand(HttpServletResponse response,
                                  @RequestParam(value = "id") String applianceId,
                                  @RequestParam(value = "runtime") Integer runtime) {
-        try {
-            if (!setRuntimeDemand(new LocalDateTime(), applianceId, runtime)) {
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        synchronized (lock) {
+            try {
+                if (!setRuntimeDemand(new LocalDateTime(), applianceId, runtime)) {
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                }
+            } catch (Throwable e) {
+                logger.error("Error in " + getClass().getSimpleName(), e);
             }
-        } catch (Throwable e) {
-            logger.error("Error in " + getClass().getSimpleName(), e);
         }
     }
 
@@ -544,23 +577,25 @@ public class SaeController {
     @RequestMapping(value = EV_URL, method = RequestMethod.GET, produces = "application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public List<ElectricVehicle> getElectricVehicles(HttpServletResponse response, @RequestParam(value = "id") String applianceId) {
-        try {
-            logger.debug("{}: Received request for electric vehicles", applianceId);
-            Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
-            if (appliance != null) {
-                if (appliance.getControl() instanceof ElectricVehicleCharger) {
-                    ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
-                    return evCharger.getVehicles();
+        synchronized (lock) {
+            try {
+                logger.debug("{}: Received request for electric vehicles", applianceId);
+                Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
+                if (appliance != null) {
+                    if (appliance.getControl() instanceof ElectricVehicleCharger) {
+                        ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
+                        return evCharger.getVehicles();
+                    } else {
+                        logger.debug("{}: Appliance has no electric vehicle charger", applianceId);
+                        return new ArrayList<>();
+                    }
                 } else {
-                    logger.debug("{}: Appliance has no electric vehicle charger", applianceId);
-                    return new ArrayList<>();
+                    logger.error("{}: Appliance not found", applianceId);
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 }
-            } else {
-                logger.error("{}: Appliance not found", applianceId);
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            } catch (Throwable e) {
+                logger.error("Error in " + getClass().getSimpleName(), e);
             }
-        } catch (Throwable e) {
-            logger.error("Error in " + getClass().getSimpleName(), e);
         }
         return null;
     }
@@ -574,22 +609,24 @@ public class SaeController {
                                 @RequestParam(value = "socRequested", required = false) Integer socRequested,
                                 @RequestParam(value = "chargeEnd", required = false) String chargeEndString
     ) {
-        try {
-            LocalDateTime chargeEnd = null;
-            if (chargeEndString != null) {
-                chargeEnd = DateTime.parse(chargeEndString, ISODateTimeFormat.dateTimeParser()).toLocalDateTime();
+        synchronized (lock) {
+            try {
+                LocalDateTime chargeEnd = null;
+                if (chargeEndString != null) {
+                    chargeEnd = DateTime.parse(chargeEndString, ISODateTimeFormat.dateTimeParser()).toLocalDateTime();
+                }
+                logger.debug("{}: Received energy request: evId={} socCurrent={} socRequested={} chargeEnd={}",
+                        applianceId, evId, socCurrent, socRequested, chargeEnd);
+                Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
+                if (appliance != null) {
+                    appliance.setEnergyDemand(new LocalDateTime(), evId, socCurrent, socRequested, chargeEnd);
+                } else {
+                    logger.error("{}: Appliance not found", applianceId);
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                }
+            } catch (Throwable e) {
+                logger.error("Error in " + getClass().getSimpleName(), e);
             }
-            logger.debug("{}: Received energy request: evId={} socCurrent={} socRequested={} chargeEnd={}",
-                    applianceId, evId, socCurrent, socRequested, chargeEnd);
-            Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
-            if (appliance != null) {
-                appliance.setEnergyDemand(new LocalDateTime(), evId, socCurrent, socRequested, chargeEnd);
-            } else {
-                logger.error("{}: Appliance not found", applianceId);
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            }
-        } catch (Throwable e) {
-            logger.error("Error in " + getClass().getSimpleName(), e);
         }
     }
 
@@ -743,10 +780,12 @@ public class SaeController {
     @RequestMapping(value = STATUS_URL, method = RequestMethod.GET, produces = "application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public List<ApplianceStatus> getApplianceStatus() {
-        try {
-            return getApplianceStatus(new LocalDateTime());
-        } catch (Throwable e) {
-            logger.error("Error in " + getClass().getSimpleName(), e);
+        synchronized (lock) {
+            try {
+                return getApplianceStatus(new LocalDateTime());
+            } catch (Throwable e) {
+                logger.error("Error in " + getClass().getSimpleName(), e);
+            }
         }
         return null;
     }

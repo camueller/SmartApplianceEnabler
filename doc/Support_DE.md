@@ -86,6 +86,21 @@ Wenn der *Sunny Home Manager* den *Smart Appliance Enabler* im Netz gefunden hat
 ```
 Wenn sich diese Einträge in der Log-Datei finden, funktioniert die Kommunikation zwischen *Sunny Home Manager* und *Smart Appliance Enabler*. 
 
+Falls die Verbindung zwischen Smart Appliance Enabler und Sunny Home Manager nicht zustande kommt sollte man die Bindung des SEMP UPnP Controllers überprüfen. Ein Hinweis auf ein Kommunikationsproblem ist im Logbuch in Sunnyportal zu finden, ein fortwährender Wechsel zwischen EM Gateway gefunden und EM Gateway nicht gefunden kann auf eine inkorrekte Bindung hindeuten.
+
+Im Logfile findes sich nach dem Starten folgender Hinweis:
+```
+d.a.s.s.d.SempDiscovery [SempDiscovery.java:54] SEMP UPnP will redirect to http://192.168.193.5:8080
+```
+Sofern der Raspberry über mehrere Interfaces verfügt sollte das zu verwendente Interface in /etc/default/smartapplianceenabler angegeben werden. Die konfigurierten Interfaces können mittles ifconfig abgerufen werden.
+
+```
+JAVA_OPTS="${JAVA_OPTS} -Dserver.address=192.168.178.51"
+
+JAVA_OPTS="${JAVA_OPTS} -Dsemp.gateway.address=192.168.178.51"
+```
+
+
 ## Datenaustausch zwischen Smart Appliance Enabler und Sunny Home Manager
 Bei Problemen wird oft nur der offensichtliche Fehler betrachtet (_"Im Sunny Portal werden keine Messwerte angezeigt"_). Dabei läßt sich relativ leicht herausfinden, ob der Fehler im *Smart Appliance Enabler* liegt oder am Sunny Home Manager bzw. Sunny Portal.
 
