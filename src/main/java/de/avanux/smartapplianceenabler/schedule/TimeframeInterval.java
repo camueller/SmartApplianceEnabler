@@ -38,8 +38,6 @@ public class TimeframeInterval implements ApplianceIdConsumer {
     private transient Vector<TimeframeIntervalState> stateHistory = new Vector<>();
     private transient LocalDateTime stateChangedAt;
     private transient String applianceId;
-    // FIXME make more generic
-    private boolean triggeredByStartingCurrent;
 
     public TimeframeInterval(Interval interval, Request request) {
         this.interval = interval;
@@ -75,7 +73,6 @@ public class TimeframeInterval implements ApplianceIdConsumer {
     }
 
     public void stateTransitionTo(LocalDateTime now, TimeframeIntervalState state) {
-        TimeframeIntervalState previousState = this.stateHistory.lastElement();
         this.stateHistory.add(state);
         this.stateChangedAt = now;
     }
@@ -147,15 +144,6 @@ public class TimeframeInterval implements ApplianceIdConsumer {
                             .toDurationMillis() / 1000.0).intValue();
         }
         return null;
-    }
-
-    // TriggeredBy: WallboxState
-    public boolean isTriggeredByStartingCurrent() {
-        return triggeredByStartingCurrent;
-    }
-
-    public void setTriggeredByStartingCurrent(boolean triggeredByStartingCurrent) {
-        this.triggeredByStartingCurrent = triggeredByStartingCurrent;
     }
 
     @Override
