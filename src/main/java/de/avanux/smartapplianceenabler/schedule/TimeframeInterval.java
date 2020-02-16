@@ -36,7 +36,6 @@ public class TimeframeInterval implements ApplianceIdConsumer {
     private Interval interval;
     private Request request;
     private transient Vector<TimeframeIntervalState> stateHistory = new Vector<>();
-    private transient LocalDateTime stateChangedAt;
     private transient String applianceId;
 
     public TimeframeInterval(Interval interval, Request request) {
@@ -74,7 +73,6 @@ public class TimeframeInterval implements ApplianceIdConsumer {
 
     public void stateTransitionTo(LocalDateTime now, TimeframeIntervalState state) {
         this.stateHistory.add(state);
-        this.stateChangedAt = now;
     }
 
     public TimeframeIntervalState getState() {
