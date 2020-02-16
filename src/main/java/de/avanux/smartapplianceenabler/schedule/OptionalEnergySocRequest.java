@@ -51,6 +51,11 @@ public class OptionalEnergySocRequest extends SocRequest {
 
     @Override
     public String toString() {
+        return toString(new LocalDateTime());
+    }
+
+    @Override
+    public String toString(LocalDateTime now) {
         String text = super.toString();
         text += "/";
         text += "Optional Energy";
