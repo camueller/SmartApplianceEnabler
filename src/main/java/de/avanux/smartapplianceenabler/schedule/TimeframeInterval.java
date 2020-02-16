@@ -89,18 +89,21 @@ public class TimeframeInterval implements ApplianceIdConsumer {
     }
 
     public boolean isActivatable(LocalDateTime now) {
-        return now.toDateTime().isEqual(getInterval().getStart()) || now.toDateTime().isAfter(getInterval().getStart())
-                && (!(request instanceof RuntimeRequest)
-                || isIntervalSufficient(now, request.getMax(now))
+        return getState() != TimeframeIntervalState.ACTIVE
+                && (now.toDateTime().isEqual(getInterval().getStart()) || now.toDateTime().isAfter(getInterval().getStart()))
+                && (!(request instanceof RuntimeRequest) || isIntervalSufficient(now, request.getMax(now))
         );
     }
 
     public boolean isDeactivatable(LocalDateTime now) {
-        return now.toDateTime().isAfter(getInterval().getEnd()) || getRequest().isFinished(now);
+        return getState() == TimeframeIntervalState.ACTIVE
+                && now.toDateTime().isAfter(getInterval().getEnd()) || getRequest().isFinished(now);
     }
 
     public boolean isRemovable(LocalDateTime now) {
-        return ! getRequest().isControlOn();
+        return (getState() == TimeframeIntervalState.QUEUED || getState() == TimeframeIntervalState.EXPIRED)
+                && (now.toDateTime().isAfter(getInterval().getEnd()) || getRequest().isFinished(now))
+                && ! getRequest().isControlOn();
     }
 
     public boolean isIntervalSufficient(LocalDateTime now, Integer maxRunningTime) {
