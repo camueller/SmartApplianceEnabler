@@ -231,7 +231,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
                 int averagePower = meter.getAveragePower();
                 logger.debug("{}: averagePower={} lastAveragePowerOfPowerOnDetection={}", applianceId, averagePower,
                         lastAveragePowerOfPowerOnDetection);
-                if (lastAveragePowerOfPowerOnDetection != null) {
+                if (lastAveragePowerOfPowerOnDetection != null) { // FIXME brauchen wir das wirklich??
                     if (! on) {
                         if (averagePower > getPowerThreshold() && lastAveragePowerOfPowerOnDetection > getPowerThreshold()) {
                             logger.debug("{}: Starting current detected.", applianceId);

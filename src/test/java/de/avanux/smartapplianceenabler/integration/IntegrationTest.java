@@ -246,118 +246,178 @@ public class IntegrationTest extends TestBase {
         assertTimeframeIntervalRuntime(toIntervalToday(10, 0, 0, 18, 0, 0),
                 TimeframeIntervalState.ACTIVE, null, maxRuntime, false, timeframeIntervalHandler.getQueue().get(0));
 
-//        log("Detect starting current");
-//        Mockito.when(meter.getAveragePower()).thenReturn(StartingCurrentSwitchDefaults.getPowerThreshold() + 1);
-//        control.detectStartingCurrent(timeInitial, meter);
-//        assertRunningTime(timeInitial, control, runningTimeMonitor, false, true, false, false,
-//                false, null, null, null);
-//        assertEquals(0, sempController.createDevice2EM(timeInitial).getPlanningRequest().size());
-//
-//        LocalDateTime timeStartingCurrent = toToday(11, 30, 0);
-//        control.detectStartingCurrent(toToday(11, 30, 0), meter);
-//        assertRunningTime(timeStartingCurrent, control, runningTimeMonitor, false, false, false, false,
-//                true, 0, 3600, null);
-//        assertPlanningRequest(timeStartingCurrent, new Timeframe(applianceId,0, 23400,3599, 3600));
-//
-//        log("Switch on");
-//        LocalDateTime timeSwitchOn = toToday(12, 0, 0);
-//        sempController.em2Device(timeSwitchOn, createEM2Device(applianceId,true));
-//
-//        log("Check values after switch on");
-//        assertRunningTime(timeSwitchOn, control, runningTimeMonitor, true, true, true, false,
-//                true, 0, 3600, null);
-//        assertPlanningRequest(timeSwitchOn, new Timeframe(applianceId,0, 21600,3599, 3600));
-//        ApplianceStatus applianceStatusAfterSwitchOn = getApplianceStatus(timeSwitchOn);
-//        assertTrue(applianceStatusAfterSwitchOn.isOn());
-//
-//        log("Switch off");
-//        LocalDateTime timeSwitchOff = toToday(13, 0, 0);
-//        sempController.em2Device(timeSwitchOff, createEM2Device(applianceId,false));
-//
-//        // TODO nochmal an/aus schalten
-//
-//        log("Check values after switch off");
-//        assertRunningTime(timeSwitchOff, control, runningTimeMonitor, false, true,false, true,
-//                true, 3600, 0, null);
-//        assertPlanningRequest(timeStartingCurrent, new Timeframe(applianceId,0, 23400,0, 0));
-//
-//        log("No timeframe should exist after timeframe end");
-//        LocalDateTime timeAfterTimeframeEnd = toToday(18, 1, 0);
-//        runningTimeMonitor.updateActiveTimeframeInterval(timeAfterTimeframeEnd);
-//        assertRunningTime(timeAfterTimeframeEnd, control, runningTimeMonitor, false, true,false, false,
-//                false, null, null, null);
+        log("Detect starting current");
+        LocalDateTime timeStartingCurrent = toToday(11, 30, 0);
+        Mockito.when(meter.getAveragePower()).thenReturn(StartingCurrentSwitchDefaults.getPowerThreshold() + 1);
+        control.detectStartingCurrent(timeStartingCurrent, meter);
+        control.detectStartingCurrent(timeStartingCurrent, meter);
+        tick(appliance, timeStartingCurrent);
+        assertTimeframeIntervalRuntime(toIntervalToday(10, 0, 0, 18, 0, 0),
+                TimeframeIntervalState.ACTIVE, null, maxRuntime, true, timeframeIntervalHandler.getQueue().get(0));
+        assertEquals(1, sempController.createDevice2EM(timeInitial).getPlanningRequest().size());
+        assertPlanningRequest(timeStartingCurrent,
+                new Timeframe(applianceId,
+                        0,
+                        toSecondsFromNow(timeStartingCurrent, 0, 18, 0, 0),
+                        maxRuntime - 1, maxRuntime)
+        );
+        assertFalse(getApplianceStatus(timeStartingCurrent).isOn());
+
+        log("Switch on");
+        LocalDateTime timeSwitchOn = toToday(12, 0, 0);
+        sempController.em2Device(timeSwitchOn, createEM2Device(applianceId,true));
+        assertTrue(getApplianceStatus(timeSwitchOn).isOn());
+
+        log("Switch off");
+        LocalDateTime timeSwitchOff = toToday(13, 0, 0);
+        tick(appliance, timeSwitchOff);
+        tick(appliance, timeSwitchOff);
+        assertEquals(1, timeframeIntervalHandler.getQueue().size());
+        assertTimeframeIntervalRuntime(toIntervalToday(10, 0, 0, 18, 0, 0),
+                TimeframeIntervalState.ACTIVE, null, maxRuntime, false, timeframeIntervalHandler.getQueue().get(0));
+        assertEquals(0, sempController.createDevice2EM(timeInitial).getPlanningRequest().size());
+        assertFalse(getApplianceStatus(timeStartingCurrent).isOn());
+
+        log("Detect starting current");
+        timeStartingCurrent = toToday(14, 30, 0);
+        Mockito.when(meter.getAveragePower()).thenReturn(StartingCurrentSwitchDefaults.getPowerThreshold() + 1);
+        control.detectStartingCurrent(timeStartingCurrent, meter);
+        control.detectStartingCurrent(timeStartingCurrent, meter);
+        tick(appliance, timeStartingCurrent);
+        assertTimeframeIntervalRuntime(toIntervalToday(10, 0, 0, 18, 0, 0),
+                TimeframeIntervalState.ACTIVE, null, maxRuntime, true, timeframeIntervalHandler.getQueue().get(0));
+        assertEquals(1, sempController.createDevice2EM(timeInitial).getPlanningRequest().size());
+        assertPlanningRequest(timeStartingCurrent,
+                new Timeframe(applianceId,
+                        0,
+                        toSecondsFromNow(timeStartingCurrent, 0, 18, 0, 0),
+                        maxRuntime - 1, maxRuntime)
+        );
+        assertFalse(getApplianceStatus(timeStartingCurrent).isOn());
+
+        log("Switch on");
+        timeSwitchOn = toToday(15, 0, 0);
+        sempController.em2Device(timeSwitchOn, createEM2Device(applianceId,true));
+        assertTrue(getApplianceStatus(timeSwitchOn).isOn());
+
+        log("Switch off");
+        timeSwitchOff = toToday(16, 0, 0);
+        tick(appliance, timeSwitchOff);
+        tick(appliance, timeSwitchOff);
+        assertEquals(1, timeframeIntervalHandler.getQueue().size());
+        assertTimeframeIntervalRuntime(toIntervalToday(10, 0, 0, 18, 0, 0),
+                TimeframeIntervalState.ACTIVE, null, maxRuntime, false, timeframeIntervalHandler.getQueue().get(0));
+        assertEquals(0, sempController.createDevice2EM(timeInitial).getPlanningRequest().size());
+        assertFalse(getApplianceStatus(timeStartingCurrent).isOn());
+
+        log("No timeframe should exist after timeframe end");
+        LocalDateTime timeAfterTimeframeEnd = toToday(18, 1, 0);
+        tick(appliance, timeAfterTimeframeEnd);
+        assertEquals(1, timeframeIntervalHandler.getQueue().size());
+        assertTimeframeIntervalRuntime(toIntervalTomorrow(10, 0, 0, 18, 0, 0),
+                TimeframeIntervalState.QUEUED, null, maxRuntime, false, timeframeIntervalHandler.getQueue().get(0));
+        assertEquals(0, sempController.createDevice2EM(timeAfterTimeframeEnd).getPlanningRequest().size());
     }
 
-//    @Ignore
-//    public void testNoSwitchOn_startingCurrentDetectedDuringTimeframeInterval() {
-//        LocalDateTime timeInitial = toToday(11, 29, 0);
-//        Appliance appliance = new ApplianceBuilder(applianceId)
-//                .withMockSwitch(true)
-//                .withMockMeter()
-//                .withSchedule(10, 0, 13, 0, null, 3600)
-//                .build(true);
-//        StartingCurrentSwitch control = (StartingCurrentSwitch) appliance.getControl();
-//        Meter meter = appliance.getMeter();
-//        RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
-//
-//        log("Check initial values");
-//        assertRunningTime(null, control, runningTimeMonitor, false, true, false, false,
-//                false, null, null, null);
-//
-//        log("Detect starting current");
-//        Mockito.when(meter.getAveragePower()).thenReturn(StartingCurrentSwitchDefaults.getPowerThreshold() + 1);
-//        control.detectStartingCurrent(timeInitial, meter);
-//        assertRunningTime(timeInitial, control, runningTimeMonitor, false, true, false, false,
-//                false, null, null, null);
-//        assertEquals(0, sempController.createDevice2EM(timeInitial).getPlanningRequest().size());
-//
-//        LocalDateTime timeStartingCurrent = toToday(11, 30, 0);
-//        control.detectStartingCurrent(toToday(11, 30, 0), meter);
-//        assertRunningTime(timeStartingCurrent, control, runningTimeMonitor, false, false, false, false,
-//                true, 0, 3600, null);
-//        assertPlanningRequest(timeStartingCurrent, new Timeframe(applianceId,0, 5400,3599, 3600));
-//
-//        log("If not switched on during timeframe a new timeframe should exist after timeframe end");
-//        LocalDateTime timeAfterTimeframeEnd = toToday(13, 1, 0);
-//        runningTimeMonitor.updateActiveTimeframeInterval(timeAfterTimeframeEnd);
-//        assertPlanningRequest(timeAfterTimeframeEnd, new Timeframe(applianceId,75540, 86340,3599, 3600));
-//    }
-//
-//    // @Test
-//    public void testSwitchOnAndWaitForTimeframeEnd() {
-//    }
-//
-//    @Ignore
-//    public void testSwitchOnBeforeTimeframeIntervalStart() {
-//        LocalDateTime timeInitial = toToday(9, 59, 0);
-//        Appliance appliance = new ApplianceBuilder(applianceId)
-//                .withMockSwitch(false)
-//                .withMockMeter()
-//                .withSchedule(10, 0, 18, 0, null, 3600)
-//                .build(true);
-//        Control control = (MockSwitch) appliance.getControl();
-//        RunningTimeMonitor runningTimeMonitor = appliance.getRunningTimeMonitor();
-//
-//        log("Switch on");
-//        sempController.em2Device(timeInitial, createEM2Device(applianceId,true));
-//        assertTrue(runningTimeMonitor.isRunning());
-//
-//        log("Check values right after switch on before interval start");
-//        assertRunningTime(timeInitial, control, runningTimeMonitor, true, true, false,
-//                false, null, null, null);
-//
-//        log("Check values after switch on right before interval start");
-//        LocalDateTime timeBeforeIntervalStart = toToday(9, 59, 59);
-//        runningTimeMonitor.updateActiveTimeframeInterval(timeBeforeIntervalStart);
-//        assertRunningTime(timeBeforeIntervalStart, control, runningTimeMonitor, true, true, false,
-//                false, null, null, null);
-//
-//        log("Check values after switch on right after interval start");
-//        LocalDateTime timeIntervalStart = toToday(10, 0, 0);
-//        runningTimeMonitor.updateActiveTimeframeInterval(timeIntervalStart);
-//        assertRunningTime(timeIntervalStart, control, runningTimeMonitor, true, true, false,
-//                true, 60, 3540, null);
-//    }
+    @Test
+    public void testSwitchOn_timeframeIntervalJustSufficient() {
+        int maxRuntime = 3600;
+        LocalDateTime timeInitial = toToday(11, 0, 0);
+        Appliance appliance = new ApplianceBuilder(applianceId)
+                .withMockSwitch(true)
+                .withMockMeter()
+                .withSchedule(10, 0, 18, 0, null, maxRuntime)
+                .build(true);
+        StartingCurrentSwitch control = (StartingCurrentSwitch) appliance.getControl();
+        Meter meter = appliance.getMeter();
+        TimeframeIntervalHandler timeframeIntervalHandler = appliance.getTimeframeIntervalHandler();
+        timeframeIntervalHandler.fillQueue(timeInitial);
+
+        log("Check initial values");
+        assertFalse(control.isOn());
+        assertEquals(1, timeframeIntervalHandler.getQueue().size());
+        assertTimeframeIntervalRuntime(toIntervalToday(10, 0, 0, 18, 0, 0),
+                TimeframeIntervalState.ACTIVE, null, maxRuntime, false, timeframeIntervalHandler.getQueue().get(0));
+
+        log("Detect starting current");
+        LocalDateTime timeStartingCurrent = toToday(16, 30, 0);
+        Mockito.when(meter.getAveragePower()).thenReturn(StartingCurrentSwitchDefaults.getPowerThreshold() + 1);
+        control.detectStartingCurrent(timeStartingCurrent, meter);
+        control.detectStartingCurrent(timeStartingCurrent, meter);
+        tick(appliance, timeStartingCurrent);
+        assertTimeframeIntervalRuntime(toIntervalToday(10, 0, 0, 18, 0, 0),
+                TimeframeIntervalState.ACTIVE, null, maxRuntime, true, timeframeIntervalHandler.getQueue().get(0));
+        assertEquals(1, sempController.createDevice2EM(timeInitial).getPlanningRequest().size());
+        assertPlanningRequest(timeStartingCurrent,
+                new Timeframe(applianceId,
+                        0,
+                        toSecondsFromNow(timeStartingCurrent, 0, 18, 0, 0),
+                        maxRuntime - 1, maxRuntime)
+        );
+        assertFalse(getApplianceStatus(timeStartingCurrent).isOn());
+
+        log("Switch on");
+        LocalDateTime timeSwitchOn = toToday(17, 0, 0);
+        sempController.em2Device(timeSwitchOn, createEM2Device(applianceId, true));
+        assertTrue(getApplianceStatus(timeSwitchOn).isOn());
+
+        log("No timeframe should exist after timeframe end");
+        LocalDateTime timeBeforeTimeframeEnd = toToday(17, 59, 0);
+        tick(appliance, timeBeforeTimeframeEnd);
+        assertTimeframeIntervalRuntime(toIntervalToday(10, 0, 0, 18, 0, 0),
+                TimeframeIntervalState.ACTIVE, null, maxRuntime, true, timeframeIntervalHandler.getQueue().get(0));
+        assertEquals(1, sempController.createDevice2EM(timeBeforeTimeframeEnd).getPlanningRequest().size());
+        assertPlanningRequest(timeStartingCurrent,
+                new Timeframe(applianceId,
+                        0,
+                        toSecondsFromNow(timeStartingCurrent, 0, 18, 0, 0),
+                        maxRuntime - 1, maxRuntime)
+        );
+
+        log("No timeframe should exist after timeframe end");
+        LocalDateTime timeAfterTimeframeEnd = toToday(18, 1, 0);
+        tick(appliance, timeAfterTimeframeEnd);
+        tick(appliance, timeAfterTimeframeEnd);
+        assertEquals(1, timeframeIntervalHandler.getQueue().size());
+        assertTimeframeIntervalRuntime(toIntervalTomorrow(10, 0, 0, 18, 0, 0),
+                TimeframeIntervalState.QUEUED, null, maxRuntime, false, timeframeIntervalHandler.getQueue().get(0));
+        assertEquals(0, sempController.createDevice2EM(timeAfterTimeframeEnd).getPlanningRequest().size());
+        assertFalse(getApplianceStatus(timeStartingCurrent).isOn());
+    }
+
+    @Test
+    public void testNoSwitchOn_startingCurrentDetectedDuringTimeframeInterval() {
+        int maxRuntime = 3600;
+        LocalDateTime timeInitial = toToday(11, 29, 0);
+        Appliance appliance = new ApplianceBuilder(applianceId)
+                .withMockSwitch(true)
+                .withMockMeter()
+                .withSchedule(10, 0, 13, 0, null, maxRuntime)
+                .build(true);
+        StartingCurrentSwitch control = (StartingCurrentSwitch) appliance.getControl();
+        Meter meter = appliance.getMeter();
+        TimeframeIntervalHandler timeframeIntervalHandler = appliance.getTimeframeIntervalHandler();
+        timeframeIntervalHandler.fillQueue(timeInitial);
+
+        log("Check initial values");
+        assertFalse(control.isOn());
+        assertEquals(1, timeframeIntervalHandler.getQueue().size());
+        assertTimeframeIntervalRuntime(toIntervalToday(10, 0, 0, 13, 0, 0),
+                TimeframeIntervalState.ACTIVE, null, maxRuntime, false, timeframeIntervalHandler.getQueue().get(0));
+
+        log("Check initial timeframe interval not sufficient anymore");
+        LocalDateTime timeNotSufficient = toToday(12, 1, 0);
+        tick(appliance, timeNotSufficient);
+
+        log("Detect starting current");
+        LocalDateTime timeStartingCurrent = toToday(12, 30, 0);
+        Mockito.when(meter.getAveragePower()).thenReturn(StartingCurrentSwitchDefaults.getPowerThreshold() + 1);
+        control.detectStartingCurrent(timeStartingCurrent, meter);
+        control.detectStartingCurrent(timeStartingCurrent, meter);
+        tick(appliance, timeStartingCurrent);
+        assertTimeframeIntervalRuntime(toIntervalTomorrow(10, 0, 0, 13, 0, 0),
+                TimeframeIntervalState.QUEUED, null, maxRuntime, true, timeframeIntervalHandler.getQueue().get(0));
+    }
 
     private void log(String message) {
         logger.debug("*********** " + message);

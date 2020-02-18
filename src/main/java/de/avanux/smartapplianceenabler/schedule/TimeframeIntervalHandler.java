@@ -119,8 +119,10 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
         TimeframeInterval lastTimeframeInterval = queue.peekLast();
         List<TimeframeInterval> timeframeIntervals = findTimeframeIntervals(now, considerationInterval);
         timeframeIntervals.stream()
-                .filter(timeframeInterval -> lastTimeframeInterval == null
+                .filter(timeframeInterval -> (lastTimeframeInterval == null
                         || timeframeInterval.getInterval().getStart().isAfter(lastTimeframeInterval.getInterval().getEnd()))
+                        && timeframeInterval.isIntervalSufficient(now)
+                )
                 .limit(control instanceof StartingCurrentSwitch ? 1 : Integer.MAX_VALUE)
                 .forEach(timeframeInterval -> {
                     if(control instanceof StartingCurrentSwitch) {

@@ -86,13 +86,18 @@ public class TimeframeInterval implements ApplianceIdConsumer {
     public boolean isActivatable(LocalDateTime now) {
         return getState() == TimeframeIntervalState.QUEUED
                 && (now.toDateTime().isEqual(getInterval().getStart()) || now.toDateTime().isAfter(getInterval().getStart()))
-                && (!(request instanceof RuntimeRequest) || isIntervalSufficient(now, request.getMax(now))
+                && (!(request instanceof RuntimeRequest) || isIntervalSufficient(now)
         );
     }
 
     public boolean isDeactivatable(LocalDateTime now) {
         return getState() == TimeframeIntervalState.ACTIVE
-                && now.toDateTime().isAfter(getInterval().getEnd()) || getRequest().isFinished(now);
+                && (
+                       now.toDateTime().isAfter(getInterval().getEnd())
+                    || request.isFinished(now)
+                    || (request instanceof RuntimeRequest && ((RuntimeRequest) request).hasStartingCurrentSwitch()
+                                && !((RuntimeRequest) request).getControl().isOn() && !isIntervalSufficient(now))
+                );
     }
 
     public boolean isRemovable(LocalDateTime now) {
@@ -102,8 +107,8 @@ public class TimeframeInterval implements ApplianceIdConsumer {
         ) && ! getRequest().isControlOn();
     }
 
-    public boolean isIntervalSufficient(LocalDateTime now, Integer maxRunningTime) {
-        LocalDateTime latestStart = getLatestStart(now, new LocalDateTime(interval.getEnd()), maxRunningTime);
+    public boolean isIntervalSufficient(LocalDateTime now) {
+        LocalDateTime latestStart = getLatestStart(now, new LocalDateTime(interval.getEnd()), getRequest().getMax(now));
         return now.isEqual(latestStart) || now.isBefore(latestStart);
     }
 
