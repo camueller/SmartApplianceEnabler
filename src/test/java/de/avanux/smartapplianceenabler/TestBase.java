@@ -148,4 +148,10 @@ abstract public class TestBase {
         TimeframeIntervalHandler timeframeIntervalHandler = appliance.getTimeframeIntervalHandler();
         timeframeIntervalHandler.updateQueue(now);
     }
+
+    protected Schedule buildScheduleWithRequest() {
+        Schedule schedule = new Schedule();
+        schedule.setRequest(new RuntimeRequest());
+        return schedule;
+    }
 }

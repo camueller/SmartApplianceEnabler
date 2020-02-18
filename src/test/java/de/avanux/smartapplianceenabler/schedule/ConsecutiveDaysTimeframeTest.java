@@ -29,78 +29,84 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ConsecutiveDaysTimeframeTest extends TestBase {
 
-    @Ignore
+    @Test
     public void getIntervals_SameWeek_BeforeIntervalStart() {
         TimeOfDayOfWeek startTimeOfDayOfWeek = new TimeOfDayOfWeek(5, 15, 0, 0);
         TimeOfDayOfWeek endTimeOfDayOfWeek = new TimeOfDayOfWeek(7, 20, 0, 0);
-        ConsecutiveDaysTimeframe timeRange = new ConsecutiveDaysTimeframe(startTimeOfDayOfWeek, endTimeOfDayOfWeek);
+        ConsecutiveDaysTimeframe timeframe = new ConsecutiveDaysTimeframe(startTimeOfDayOfWeek, endTimeOfDayOfWeek);
+        timeframe.setSchedule(buildScheduleWithRequest());
         LocalDateTime now = toDayOfWeek(1, 0, 0, 0);
-        List<TimeframeInterval> intervals = timeRange.getIntervals(now);
+        List<TimeframeInterval> intervals = timeframe.getIntervals(now);
         assertEquals(1, intervals.size());
         LocalDateTime start = startTimeOfDayOfWeek.toNextOccurrence(now);
         assertDateTime(start, intervals.get(0).getInterval().getStart().toLocalDateTime());
         assertDateTime(endTimeOfDayOfWeek.toNextOccurrence(start), intervals.get(0).getInterval().getEnd().toLocalDateTime());
     }
 
-    @Ignore
+    @Test
     public void getIntervals_SameWeek_WithinInterval() {
         TimeOfDayOfWeek startTimeOfDayOfWeek = new TimeOfDayOfWeek(5, 15, 0, 0);
         TimeOfDayOfWeek endTimeOfDayOfWeek = new TimeOfDayOfWeek(7, 20, 0, 0);
-        ConsecutiveDaysTimeframe timeRange = new ConsecutiveDaysTimeframe(startTimeOfDayOfWeek, endTimeOfDayOfWeek);
+        ConsecutiveDaysTimeframe timeframe = new ConsecutiveDaysTimeframe(startTimeOfDayOfWeek, endTimeOfDayOfWeek);
+        timeframe.setSchedule(buildScheduleWithRequest());
         LocalDateTime now = toDayOfWeek(5, 18, 0, 0);
-        List<TimeframeInterval> intervals = timeRange.getIntervals(now);
+        List<TimeframeInterval> intervals = timeframe.getIntervals(now);
         assertEquals(1, intervals.size());
         LocalDateTime start = startTimeOfDayOfWeek.toNextOccurrence(now);
         assertDateTime(start, intervals.get(0).getInterval().getStart().toLocalDateTime());
         assertDateTime(endTimeOfDayOfWeek.toNextOccurrence(start), intervals.get(0).getInterval().getEnd().toLocalDateTime());
     }
 
-    @Ignore
+    @Test
     public void getIntervals_SameWeek_AfterInterval() {
         TimeOfDayOfWeek startTimeOfDayOfWeek = new TimeOfDayOfWeek(5, 15, 0, 0);
         TimeOfDayOfWeek endTimeOfDayOfWeek = new TimeOfDayOfWeek(7, 20, 0, 0);
-        ConsecutiveDaysTimeframe timeRange = new ConsecutiveDaysTimeframe(startTimeOfDayOfWeek, endTimeOfDayOfWeek);
+        ConsecutiveDaysTimeframe timeframe = new ConsecutiveDaysTimeframe(startTimeOfDayOfWeek, endTimeOfDayOfWeek);
+        timeframe.setSchedule(buildScheduleWithRequest());
         LocalDateTime now = toDayOfWeek(7, 21, 0, 0);
-        List<TimeframeInterval> intervals = timeRange.getIntervals(now);
+        List<TimeframeInterval> intervals = timeframe.getIntervals(now);
         assertEquals(1, intervals.size());
         LocalDateTime start = startTimeOfDayOfWeek.toNextOccurrence(now);
         assertDateTime(start, intervals.get(0).getInterval().getStart().toLocalDateTime());
         assertDateTime(endTimeOfDayOfWeek.toNextOccurrence(start), intervals.get(0).getInterval().getEnd().toLocalDateTime());
     }
 
-    @Ignore
+    @Test
     public void getIntervals_AcrossWeeks_BeforeIntervalStart() {
         TimeOfDayOfWeek startTimeOfDayOfWeek = new TimeOfDayOfWeek(6, 15, 0, 0);
         TimeOfDayOfWeek endTimeOfDayOfWeek = new TimeOfDayOfWeek(1, 20, 0, 0);
-        ConsecutiveDaysTimeframe timeRange = new ConsecutiveDaysTimeframe(startTimeOfDayOfWeek, endTimeOfDayOfWeek);
+        ConsecutiveDaysTimeframe timeframe = new ConsecutiveDaysTimeframe(startTimeOfDayOfWeek, endTimeOfDayOfWeek);
+        timeframe.setSchedule(buildScheduleWithRequest());
         LocalDateTime now = toDayOfWeek(3, 0, 0, 0);
-        List<TimeframeInterval> intervals = timeRange.getIntervals(now);
+        List<TimeframeInterval> intervals = timeframe.getIntervals(now);
         assertEquals(1, intervals.size());
         LocalDateTime start = startTimeOfDayOfWeek.toNextOccurrence(now);
         assertDateTime(start, intervals.get(0).getInterval().getStart().toLocalDateTime());
         assertDateTime(endTimeOfDayOfWeek.toNextOccurrence(start), intervals.get(0).getInterval().getEnd().toLocalDateTime());
     }
 
-    @Ignore
+    @Test
     public void getIntervals_AcrossWeeks_WithinInterval() {
         TimeOfDayOfWeek startTimeOfDayOfWeek = new TimeOfDayOfWeek(6, 15, 0, 0);
         TimeOfDayOfWeek endTimeOfDayOfWeek = new TimeOfDayOfWeek(1, 20, 0, 0);
-        ConsecutiveDaysTimeframe timeRange = new ConsecutiveDaysTimeframe(startTimeOfDayOfWeek, endTimeOfDayOfWeek);
+        ConsecutiveDaysTimeframe timeframe = new ConsecutiveDaysTimeframe(startTimeOfDayOfWeek, endTimeOfDayOfWeek);
+        timeframe.setSchedule(buildScheduleWithRequest());
         LocalDateTime now = toDayOfWeek(7, 10, 0, 0);
-        List<TimeframeInterval> intervals = timeRange.getIntervals(now);
+        List<TimeframeInterval> intervals = timeframe.getIntervals(now);
         assertEquals(1, intervals.size());
         LocalDateTime start = startTimeOfDayOfWeek.toLastOccurrence(now);
         assertDateTime(start, intervals.get(0).getInterval().getStart().toLocalDateTime());
         assertDateTime(endTimeOfDayOfWeek.toNextOccurrence(start), intervals.get(0).getInterval().getEnd().toLocalDateTime());
     }
 
-    @Ignore
+    @Test
     public void getIntervals_AcrossWeeks_AfterIntervalEnd() {
         TimeOfDayOfWeek startTimeOfDayOfWeek = new TimeOfDayOfWeek(6, 15, 0, 0);
         TimeOfDayOfWeek endTimeOfDayOfWeek = new TimeOfDayOfWeek(1, 20, 0, 0);
-        ConsecutiveDaysTimeframe timeRange = new ConsecutiveDaysTimeframe(startTimeOfDayOfWeek, endTimeOfDayOfWeek);
+        ConsecutiveDaysTimeframe timeframe = new ConsecutiveDaysTimeframe(startTimeOfDayOfWeek, endTimeOfDayOfWeek);
+        timeframe.setSchedule(buildScheduleWithRequest());
         LocalDateTime now = toDayOfWeek(1, 21, 0, 0);
-        List<TimeframeInterval> intervals = timeRange.getIntervals(now);
+        List<TimeframeInterval> intervals = timeframe.getIntervals(now);
         assertEquals(1, intervals.size());
         LocalDateTime start = startTimeOfDayOfWeek.toNextOccurrence(now);
         assertDateTime(start, intervals.get(0).getInterval().getStart().toLocalDateTime());
