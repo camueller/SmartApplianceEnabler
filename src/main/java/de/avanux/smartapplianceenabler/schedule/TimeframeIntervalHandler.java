@@ -292,7 +292,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
      * @param considerationInterval timeframe intervals have to start within this interval
      * @return a (possibly empty) list of timeframes sorted by starting time
      */
-    private List<TimeframeInterval> findTimeframeIntervals(LocalDateTime now, Interval considerationInterval) {
+    protected List<TimeframeInterval> findTimeframeIntervals(LocalDateTime now, Interval considerationInterval) {
         List<TimeframeInterval> timeframeIntervals = new ArrayList<>();
         if (schedules != null) {
             schedules
