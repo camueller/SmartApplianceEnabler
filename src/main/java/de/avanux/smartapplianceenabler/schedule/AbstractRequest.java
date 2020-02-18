@@ -114,10 +114,6 @@ abstract public class AbstractRequest implements Request {
     }
 
     @Override
-    public void activeIntervalChecked(LocalDateTime now, String applianceId, TimeframeInterval activeInterval) {
-    }
-
-    @Override
     public Integer getRuntime(LocalDateTime now) {
         if(isEnabledBefore()) {
             return runtimeUntilLastStatusChange + (control.isOn() ? getSecondsSinceStatusChange(now) : 0);

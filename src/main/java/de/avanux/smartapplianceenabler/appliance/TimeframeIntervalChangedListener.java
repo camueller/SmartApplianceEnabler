@@ -29,6 +29,4 @@ public interface TimeframeIntervalChangedListener {
     void timeframeIntervalCreated(LocalDateTime now, TimeframeInterval timeframeInterval);
 
     void activeIntervalChanged(LocalDateTime now, String applianceId, TimeframeInterval deactivatedInterval, TimeframeInterval activatedInterval, boolean wasRunning);
-
-    void activeIntervalChecked(LocalDateTime now, String applianceId, TimeframeInterval activeInterval);
 }
