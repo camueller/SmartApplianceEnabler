@@ -69,7 +69,6 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
     private Meter meter;
     @XmlElement(name = "Schedule")
     private List<Schedule> schedules;
-    private transient RunningTimeMonitor runningTimeMonitor;
     private transient TimeframeIntervalHandler timeframeIntervalHandler;
     private transient Stack<Boolean> acceptControlRecommendations;
     private transient static final int CONSIDERATION_INTERVAL_DAYS = 2;
@@ -158,13 +157,6 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
         logger.debug("{} Reset acceptControlRecommendations to {}", id, isAcceptControlRecommendations());
     }
 
-    public void setRunningTimeMonitor(RunningTimeMonitor runningTimeMonitor) {
-        this.runningTimeMonitor = runningTimeMonitor;
-        this.runningTimeMonitor.setApplianceId(id);
-        this.runningTimeMonitor.init();
-        this.runningTimeMonitor.addTimeFrameChangedListener(this);
-    }
-
     public TimeframeIntervalHandler getTimeframeIntervalHandler() {
         return timeframeIntervalHandler;
     }
@@ -184,7 +176,6 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
             setTimeframeIntervalHandler(new TimeframeIntervalHandler(this.schedules, this.control));
         }
         if(control != null) {
-            setRunningTimeMonitor(new RunningTimeMonitor());
             if(control instanceof ApplianceIdConsumer) {
                 ((ApplianceIdConsumer) control).setApplianceId(id);
             }
@@ -259,19 +250,13 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
     public void start(Timer timer) {
         logger.info("{}: Starting appliance", id);
         LocalDateTime now = new LocalDateTime();
-
-        if(runningTimeMonitor != null) {
-            runningTimeMonitor.setTimer(timer);
-        }
         if(timeframeIntervalHandler != null) {
             timeframeIntervalHandler.setTimer(timer);
         }
-
         if(meter != null) {
             logger.info("{}: Starting {}", id, meter.getClass().getSimpleName());
             meter.start(now, timer);
         }
-
         if(control != null) {
             logger.info("{}: Starting {}", id, control.getClass().getSimpleName());
             control.start(new LocalDateTime(), timer);
@@ -283,20 +268,13 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
     public void stop() {
         logger.info("{}: Stopping appliance ...", id);
         LocalDateTime now = new LocalDateTime();
-
         if(control != null) {
             logger.info("{}: Stopping {}", id, control.getClass().getSimpleName());
             control.stop(now);
         }
-
         if(meter != null) {
             logger.info("{}: Stopping meter {}", id, meter.getClass().getSimpleName());
             meter.stop(now);
-        }
-
-        if(runningTimeMonitor != null) {
-            logger.info("{}: Cancel runningTimeMonitor timer", id);
-            runningTimeMonitor.cancelTimer();
         }
         if(timeframeIntervalHandler != null) {
             timeframeIntervalHandler.cancelTimer();
