@@ -175,6 +175,9 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
             }
         });
 
+        // re-evaluate after potential prolongation
+        deactivatableTimeframeInterval = getDeactivatableTimeframeInterval(now);
+
         // re-evaluate after potential de-activation
         activatableTimeframeInterval = getActivatableTimeframeInterval(now);
         if(activatableTimeframeInterval.isPresent() && ! removalPending.value) {
@@ -183,9 +186,11 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
             }
         }
 
-        if(deactivatableTimeframeInterval.isPresent() || activatableTimeframeInterval.isPresent()) {
-            logger.debug("{}: Updated queue:", applianceId);
+        if(deactivatableTimeframeInterval.isPresent()
+                || activatableTimeframeInterval.isPresent()
+                || removableTimeframeInterval.isPresent()) {
             queue.forEach(timeframeInterval -> timeframeInterval.getRequest().update());
+            logger.debug("{}: Updated queue:", applianceId);
             logQueue(now);
             for(TimeframeIntervalChangedListener listener : timeframeIntervalChangedListeners) {
                 logger.debug("{}: Notifying {} {} {}", applianceId, TimeframeIntervalChangedListener.class.getSimpleName(),
@@ -335,7 +340,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
         if(timeframeInterval.getRequest() instanceof OptionalEnergySocRequest) {
             OptionalEnergySocRequest optionalEnergySocRequest = (OptionalEnergySocRequest) timeframeInterval.getRequest();
             if(! optionalEnergySocRequest.isFinished(now)) {
-                Interval prolongedInterval = createOptionalEnergyIntervalForEVCharger(now, null, timeframeInterval);
+                Interval prolongedInterval = createOptionalEnergyIntervalForEVCharger(now, timeframeInterval, null);
                 if(prolongedInterval != null) {
                     logger.debug("{}: Prolong timeframe interval:   {}", applianceId, timeframeInterval.toString(now));
                     timeframeInterval.setInterval(prolongedInterval);

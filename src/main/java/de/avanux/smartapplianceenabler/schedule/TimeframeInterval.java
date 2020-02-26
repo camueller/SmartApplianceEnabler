@@ -104,7 +104,9 @@ public class TimeframeInterval implements ApplianceIdConsumer {
         return (getState() == TimeframeIntervalState.EXPIRED
                 || (getState() == TimeframeIntervalState.QUEUED
                     && (now.toDateTime().isAfter(getInterval().getEnd()) || getRequest().isFinished(now)))
-        ) && ! getRequest().isControlOn();
+                )
+                && ! getRequest().isControlOn()
+                && (! (getRequest() instanceof OptionalEnergySocRequest) || getRequest().getMax(now) <= 0);
     }
 
     public boolean isIntervalSufficient(LocalDateTime now) {
