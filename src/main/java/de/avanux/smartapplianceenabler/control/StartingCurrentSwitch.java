@@ -263,7 +263,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
      *
      * @param meter the meter providing current power consumption
      */
-    protected void detectFinishedCurrent(LocalDateTime now, Meter meter) {
+    public void detectFinishedCurrent(LocalDateTime now, Meter meter) {
         if (meter != null) {
             boolean applianceOn = isApplianceOn();
             logger.debug("{}: on={} applianceOn={}", applianceId, on, applianceOn);
@@ -273,7 +273,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
                 if (lastAveragePowerOfPowerOffDetection != null) {
                     if (on) {
                         // requiring minimum running time avoids finish current detection right after power on
-                        if (isMinRunningTimeExceeded() && averagePower < getPowerThreshold() && lastAveragePowerOfPowerOffDetection < getPowerThreshold()) {
+                        if (isMinRunningTimeExceeded(now) && averagePower < getPowerThreshold() && lastAveragePowerOfPowerOffDetection < getPowerThreshold()) {
                             logger.debug("{}: Finished current detected.", applianceId);
                             for (StartingCurrentSwitchListener listener : startingCurrentSwitchListeners) {
                                 logger.debug("{}: Notifying {} {}", applianceId, StartingCurrentSwitchListener.class.getSimpleName(),
@@ -302,8 +302,8 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
      *
      * @return
      */
-    protected boolean isMinRunningTimeExceeded() {
-        return switchOnTime.plusSeconds(getMinRunningTime()).isBefore(new LocalDateTime());
+    protected boolean isMinRunningTimeExceeded(LocalDateTime now) {
+        return switchOnTime.plusSeconds(getMinRunningTime()).isBefore(now);
     }
 
     @Override

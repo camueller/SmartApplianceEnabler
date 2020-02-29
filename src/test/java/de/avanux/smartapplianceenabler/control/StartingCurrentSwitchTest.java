@@ -103,7 +103,7 @@ public class StartingCurrentSwitchTest {
         startingCurrentSwitch.detectStartingCurrent(now, meter);
 
         // the minimum running time has been exceeded now
-        when(startingCurrentSwitch.isMinRunningTimeExceeded()).thenReturn(true);
+        when(startingCurrentSwitch.isMinRunningTimeExceeded(now)).thenReturn(true);
 
         // averagePower=10 lastAveragePower=30
         when(meter.getAveragePower()).thenReturn(10);

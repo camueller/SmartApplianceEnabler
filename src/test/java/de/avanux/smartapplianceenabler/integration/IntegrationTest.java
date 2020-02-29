@@ -201,7 +201,7 @@ public class IntegrationTest extends TestBase {
         // let the appliance switch off but timeframe interval stays in queue since control is still switiched on
         tick(appliance, timeAfterExpiration);
         log("After go light timeframe expired - tick 2");
-        // timeframe interval gets removed from queue since control is switiched off
+        // timeframe interval gets removed from queue since control is switched off
         tick(appliance, timeAfterExpiration);
         assertEquals(2, timeframeIntervalHandler.getQueue().size());
         assertTimeframeIntervalRuntime(toIntervalTomorrow(10, 0, 0, 18, 0, 0),
@@ -295,10 +295,12 @@ public class IntegrationTest extends TestBase {
         sempController.em2Device(timeSwitchOn, createEM2Device(applianceId,true));
         assertTrue(getApplianceStatus(timeSwitchOn).isOn());
 
-        log("Switch off");
-        timeSwitchOff = toToday(16, 0, 0);
-        tick(appliance, timeSwitchOff);
-        tick(appliance, timeSwitchOff);
+        log("Detect finished current");
+        LocalDateTime timeFinishedCurrent = toToday(15, 45, 0);
+        Mockito.when(meter.getAveragePower()).thenReturn(StartingCurrentSwitchDefaults.getPowerThreshold() - 1);
+        tick(appliance, timeFinishedCurrent);
+        control.detectFinishedCurrent(timeFinishedCurrent, meter);
+        control.detectFinishedCurrent(timeFinishedCurrent, meter);
         assertEquals(1, timeframeIntervalHandler.getQueue().size());
         assertTimeframeIntervalRuntime(toIntervalToday(10, 0, 0, 18, 0, 0),
                 TimeframeIntervalState.ACTIVE, null, maxRuntime, false, timeframeIntervalHandler.getQueue().get(0));

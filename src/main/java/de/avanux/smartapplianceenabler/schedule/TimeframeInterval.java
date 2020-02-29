@@ -109,6 +109,14 @@ public class TimeframeInterval implements ApplianceIdConsumer {
                 && (! (getRequest() instanceof OptionalEnergySocRequest) || getRequest().getMax(now) <= 0);
     }
 
+    public boolean isProlongable(LocalDateTime now) {
+        return getState() == TimeframeIntervalState.ACTIVE
+                && (now.toDateTime().isAfter(getInterval().getEnd())
+                && (request instanceof OptionalEnergySocRequest)
+                && ! request.isFinished(now)
+        );
+    }
+
     public boolean isIntervalSufficient(LocalDateTime now) {
         LocalDateTime latestStart = getLatestStart(now, new LocalDateTime(interval.getEnd()), getRequest().getMax(now));
         return now.isEqual(latestStart) || now.isBefore(latestStart);

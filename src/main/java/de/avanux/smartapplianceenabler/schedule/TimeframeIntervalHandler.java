@@ -137,12 +137,11 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
         logger.debug("{}: Current Queue:", applianceId);
         logQueue(now);
 
-        Optional<TimeframeInterval> removableTimeframeInterval = getRemovableTimeframeInterval(now);
-        Optional<TimeframeInterval> deactivatableTimeframeInterval = getDeactivatableTimeframeInterval(now);
+        Optional<TimeframeInterval> prolongableTimeframeInterval = getProlongableTimeframeInterval(now);
+        prolongableTimeframeInterval.ifPresent(timeframeInterval ->
+            prolongOptionalEnergyTimeframeIntervalForEVCharger(now, timeframeInterval));
+
         Optional<TimeframeInterval> activatableTimeframeInterval = getActivatableTimeframeInterval(now);
-
-        removableTimeframeInterval.ifPresent(timeframeInterval -> removeTimeframeInterval(now, timeframeInterval));
-
         Holder<Boolean> optionalEnergyTimeframeIntervalMoved = new Holder<>(false);
         if(activatableTimeframeInterval.isPresent()) {
             TimeframeInterval activeTimeframeInterval = getActiveTimeframeInterval();
@@ -153,10 +152,10 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
             }
         }
 
+        Optional<TimeframeInterval> deactivatableTimeframeInterval = getDeactivatableTimeframeInterval(now);
         Holder<Boolean> removalPending = new Holder<>(false);
         deactivatableTimeframeInterval.ifPresent(timeframeInterval -> {
-            if(!optionalEnergyTimeframeIntervalMoved.value
-                    && ! prolongOptionalEnergyTimeframeIntervalForEVCharger(now, timeframeInterval)) {
+            if(!optionalEnergyTimeframeIntervalMoved.value) {
                 timeframeInterval.stateTransitionTo(now, TimeframeIntervalState.EXPIRED);
                 timeframeInterval.getRequest().setEnabled(false);
                 if(timeframeInterval.isRemovable(now)) {
@@ -175,9 +174,6 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
             }
         });
 
-        // re-evaluate after potential prolongation
-        deactivatableTimeframeInterval = getDeactivatableTimeframeInterval(now);
-
         // re-evaluate after potential de-activation
         activatableTimeframeInterval = getActivatableTimeframeInterval(now);
         if(activatableTimeframeInterval.isPresent() && ! removalPending.value) {
@@ -185,6 +181,9 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
                 activateTimeframeInterval(now, activatableTimeframeInterval.get());
             }
         }
+
+        Optional<TimeframeInterval> removableTimeframeInterval = getRemovableTimeframeInterval(now);
+        removableTimeframeInterval.ifPresent(timeframeInterval -> removeTimeframeInterval(now, timeframeInterval));
 
         if(deactivatableTimeframeInterval.isPresent()
                 || activatableTimeframeInterval.isPresent()
@@ -226,6 +225,12 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
     private Optional<TimeframeInterval> getRemovableTimeframeInterval(LocalDateTime now) {
         return queue.stream()
                 .filter(timeframeInterval -> timeframeInterval.isRemovable(now))
+                .findFirst();
+    }
+
+    private Optional<TimeframeInterval> getProlongableTimeframeInterval(LocalDateTime now) {
+        return queue.stream()
+                .filter(timeframeInterval -> timeframeInterval.isProlongable(now))
                 .findFirst();
     }
 
