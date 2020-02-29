@@ -18,6 +18,7 @@
 package de.avanux.smartapplianceenabler.schedule;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.joda.time.DateTime;
@@ -101,12 +102,23 @@ public class TimeframeInterval implements ApplianceIdConsumer {
     }
 
     public boolean isRemovable(LocalDateTime now) {
-        return (getState() == TimeframeIntervalState.EXPIRED
-                || (getState() == TimeframeIntervalState.QUEUED
-                    && (now.toDateTime().isAfter(getInterval().getEnd()) || getRequest().isFinished(now)))
+        return
+        (
+            (
+                getState() == TimeframeIntervalState.EXPIRED
+                || (
+                        getState() == TimeframeIntervalState.QUEUED
+                        && (now.toDateTime().isAfter(getInterval().getEnd()) || getRequest().isFinished(now))
                 )
-                && ! getRequest().isControlOn()
-                && (! (getRequest() instanceof OptionalEnergySocRequest) || getRequest().getMax(now) <= 0);
+            )
+            && ! getRequest().isControlOn()
+            && (! (getRequest() instanceof OptionalEnergySocRequest) || getRequest().getMax(now) <= 0)
+        )
+        || (
+                getRequest() instanceof OptionalEnergySocRequest
+                        && ((ElectricVehicleCharger) ((OptionalEnergySocRequest) getRequest()).getControl())
+                        .isVehicleNotConnected()
+        );
     }
 
     public boolean isProlongable(LocalDateTime now) {
