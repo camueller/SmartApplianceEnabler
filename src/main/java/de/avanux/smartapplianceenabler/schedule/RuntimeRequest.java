@@ -99,6 +99,7 @@ public class RuntimeRequest extends AbstractRequest implements StartingCurrentSw
     @Override
     public void finishedCurrentDetected() {
         setEnabled(false);
+        resetEnabledBefore();
     }
 
     @Override

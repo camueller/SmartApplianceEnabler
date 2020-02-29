@@ -80,13 +80,17 @@ abstract public class AbstractRequest implements Request {
     }
 
     @Override
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    @Override
     public boolean isEnabledBefore() {
         return enabledBefore;
     }
 
-    @Override
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    protected void resetEnabledBefore() {
+        this.enabledBefore = false;
     }
 
     public boolean isActive() {
