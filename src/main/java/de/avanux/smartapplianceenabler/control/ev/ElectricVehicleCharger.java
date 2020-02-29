@@ -73,7 +73,6 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     private transient boolean useOptionalEnergy = true;
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
     private transient Long switchChargingStateTimestamp;
-//    private transient Integer chargeAmount;
     private transient Integer chargePower;
     private transient GuardedTimerTask updateStateTimerTask;
     private transient boolean startChargingRequested;
@@ -127,14 +126,6 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         return forceInitialCharging != null ? forceInitialCharging :
                 ElectricVehicleChargerDefaults.getForceInitialCharging();
     }
-
-//    public Integer getChargeAmount() {
-//        return chargeAmount;
-//    }
-//
-//    public void setChargeAmount(Integer chargeAmount) {
-//        this.chargeAmount = chargeAmount;
-//    }
 
     public Integer getConnectedVehicleSoc() {
         return connectedVehicleSoc;
@@ -418,13 +409,6 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                 if (getConnectedVehicleId() == null) {
                     setConnectedVehicleId(firstVehicle.getId());
                 }
-//                if(previousState == EVChargerState.VEHICLE_NOT_CONNECTED) {
-//                    retrieveSoc(now, firstVehicle);
-//                    if(this.appliance != null) {
-//                        this.appliance.initAcceptControlRecommendations();
-//                        this.appliance.activateSchedules();
-//                    }
-//                }
             }
             if(getForceInitialCharging() && wasInStateOneTime(EVChargerState.VEHICLE_CONNECTED)) {
                 startCharging();
@@ -440,13 +424,8 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
             stopCharging();
         }
         if(newState == EVChargerState.VEHICLE_NOT_CONNECTED) {
-            on(now, false);
-            if(this.appliance != null) {
-//                this.appliance.deactivateSchedules();
-//                Meter meter = this.appliance.getMeter();
-//                if(meter != null) {
-//                    meter.resetEnergyMeter();
-//                }
+            if(isOn()) {
+                on(now, false);
             }
             setConnectedVehicleId(null);
             initStateHistory();
