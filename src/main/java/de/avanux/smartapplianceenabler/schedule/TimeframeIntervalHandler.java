@@ -211,6 +211,9 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
     }
 
     private Optional<TimeframeInterval> getActivatableTimeframeInterval(LocalDateTime now) {
+        if(hasActiveTimeframeInterval()) {
+            return Optional.empty();
+        }
         return queue.stream()
                 .filter(timeframeInterval -> timeframeInterval.isActivatable(now))
                 .findFirst();
