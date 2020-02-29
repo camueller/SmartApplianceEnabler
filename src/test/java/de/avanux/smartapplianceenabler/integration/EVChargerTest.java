@@ -238,6 +238,15 @@ public class EVChargerTest extends TestBase {
         LocalDateTime timeVehicleDisconnected = toToday(11, 0, 0);
         tick(appliance, timeVehicleDisconnected, false, false);
         assertEquals(0, timeframeIntervalHandler.getQueue().size());
+
+        log("Vehicle connected again");
+        LocalDateTime timeVehicleConnectedAgain = toToday(12, 0, 0);
+        interval = new Interval(timeVehicleConnectedAgain.toDateTime(),
+                timeVehicleConnectedAgain.plusDays(TimeframeIntervalHandler.CONSIDERATION_INTERVAL_DAYS).toDateTime());
+        tick(appliance, timeVehicleConnectedAgain, true, false);
+        assertEquals(1, timeframeIntervalHandler.getQueue().size());
+        assertTimeframeIntervalOptionalEnergy(interval, TimeframeIntervalState.ACTIVE,
+                0, evId, 44000, true, timeframeIntervalHandler.getQueue().get(0));
     }
 
     @Test
