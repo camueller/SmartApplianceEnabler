@@ -20,9 +20,9 @@
             </HttpRead>
         </HttpElectricityMeter>
         <Schedule enabled="true">
-            <RuntimeRequest max="120" />
+            <RuntimeRequest max="300" />
             <DayTimeframe>
-                <Start hour="2" minute="0" second="0"/>
+                <Start hour="17" minute="39" second="0"/>
                 <End hour="22" minute="0" second="0"/>
             </DayTimeframe>
         </Schedule>

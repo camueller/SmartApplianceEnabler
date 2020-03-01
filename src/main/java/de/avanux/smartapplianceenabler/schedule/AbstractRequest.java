@@ -38,9 +38,9 @@ abstract public class AbstractRequest implements Request {
     private transient Control control;
     private transient boolean enabled;
     private transient boolean enabledBefore;
-    private transient boolean active;
     private transient int runtimeUntilLastStatusChange;
     private transient LocalDateTime controlStatusChangedAt;
+    private transient TimeframeIntervalStateProvider timeframeIntervalStateProvider;
 
 
     public AbstractRequest() {
@@ -74,6 +74,10 @@ abstract public class AbstractRequest implements Request {
         return control;
     }
 
+    public void setTimeframeIntervalStateProvider(TimeframeIntervalStateProvider timeframeIntervalStateProvider) {
+        this.timeframeIntervalStateProvider = timeframeIntervalStateProvider;
+    }
+
     @Override
     public boolean isEnabled() {
         return enabled;
@@ -94,7 +98,7 @@ abstract public class AbstractRequest implements Request {
     }
 
     public boolean isActive() {
-        return active;
+        return this.timeframeIntervalStateProvider.getState() == TimeframeIntervalState.ACTIVE;
     }
 
     public boolean isControlOn() {
@@ -111,10 +115,6 @@ abstract public class AbstractRequest implements Request {
 
     @Override
     public void activeIntervalChanged(LocalDateTime now, String applianceId, TimeframeInterval deactivatedInterval, TimeframeInterval activatedInterval, boolean wasRunning) {
-        this.active = false;
-        if(activatedInterval != null && activatedInterval.getState() == TimeframeIntervalState.ACTIVE) {
-            this.active = true;
-        }
     }
 
     @Override

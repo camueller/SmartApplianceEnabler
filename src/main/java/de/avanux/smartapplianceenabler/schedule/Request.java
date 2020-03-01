@@ -36,6 +36,8 @@ public interface Request extends Serializable, ApplianceIdConsumer, TimeframeInt
 
     void setControl(Control control);
 
+    void setTimeframeIntervalStateProvider(TimeframeIntervalStateProvider timeframeIntervalStateProvider);
+
     Integer getMin(LocalDateTime now);
 
     Integer getMax(LocalDateTime now);

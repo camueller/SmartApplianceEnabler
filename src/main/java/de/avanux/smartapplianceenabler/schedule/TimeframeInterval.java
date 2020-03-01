@@ -32,7 +32,7 @@ import java.util.Vector;
 /**
  * A TimeframeInterval associates a timeframe with an interval.
  */
-public class TimeframeInterval implements ApplianceIdConsumer {
+public class TimeframeInterval implements ApplianceIdConsumer, TimeframeIntervalStateProvider {
     private transient Logger logger = LoggerFactory.getLogger(TimeframeInterval.class);
     private Interval interval;
     private Request request;
@@ -42,12 +42,14 @@ public class TimeframeInterval implements ApplianceIdConsumer {
     public TimeframeInterval(Interval interval, Request request) {
         this.interval = interval;
         this.request = request;
+        this.request.setTimeframeIntervalStateProvider(this);
         initState(null);
     }
 
     public TimeframeInterval(TimeframeIntervalState state, Interval interval, Request request) {
         this.interval = interval;
         this.request = request;
+        this.request.setTimeframeIntervalStateProvider(this);
         stateHistory.add(state);
     }
 
@@ -76,6 +78,7 @@ public class TimeframeInterval implements ApplianceIdConsumer {
         this.stateHistory.add(state);
     }
 
+    @Override
     public TimeframeIntervalState getState() {
         return stateHistory.lastElement();
     }
