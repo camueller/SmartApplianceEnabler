@@ -98,7 +98,8 @@ abstract public class AbstractRequest implements Request {
     }
 
     public boolean isActive() {
-        return this.timeframeIntervalStateProvider.getState() == TimeframeIntervalState.ACTIVE;
+        return this.timeframeIntervalStateProvider != null
+                && this.timeframeIntervalStateProvider.getState() == TimeframeIntervalState.ACTIVE;
     }
 
     public boolean isControlOn() {
