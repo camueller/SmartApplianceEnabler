@@ -191,6 +191,9 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
             queue.forEach(timeframeInterval -> timeframeInterval.getRequest().update());
             logger.debug("{}: Updated queue:", applianceId);
             logQueue(now);
+        }
+
+        if(deactivatableTimeframeInterval.isPresent() || activatableTimeframeInterval.isPresent()) {
             for(TimeframeIntervalChangedListener listener : timeframeIntervalChangedListeners) {
                 logger.debug("{}: Notifying {} {} {}", applianceId, TimeframeIntervalChangedListener.class.getSimpleName(),
                         listener.getClass().getSimpleName(), listener);
@@ -282,7 +285,9 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
         queue.remove(timeframeInterval);
         removeTimeframeIntervalChangedListener(timeframeInterval.getRequest());
         control.removeControlStateChangedListener(timeframeInterval.getRequest());
-        if(control instanceof StartingCurrentSwitch) {
+        if(control instanceof StartingCurrentSwitch && timeframeInterval.getRequest() instanceof RuntimeRequest) {
+            ((StartingCurrentSwitch) control)
+                    .removeStartingCurrentSwitchListener((RuntimeRequest) timeframeInterval.getRequest());
             fillQueue(now);
         }
     }

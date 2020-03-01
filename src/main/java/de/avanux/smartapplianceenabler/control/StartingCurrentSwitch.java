@@ -319,4 +319,8 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
     public void addStartingCurrentSwitchListener(StartingCurrentSwitchListener listener) {
         this.startingCurrentSwitchListeners.add(listener);
     }
+
+    public void removeStartingCurrentSwitchListener(StartingCurrentSwitchListener listener) {
+        this.startingCurrentSwitchListeners.remove(listener);
+    }
 }
