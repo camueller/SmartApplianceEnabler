@@ -18,4 +18,8 @@ Die IP-Adresse bzw. der Hostname in den URL-Feldern muss auf die des go-eCharger
 Wie oben geschrieben muss der go-eCharger selbst als Zähler angegeben werden, d.h.
 die IP-Adresse bzw. der Hostname in den URL-Feldern muss auf die des go-eChargers angepasst werden. 
 
+Der Wert von `0.0000027778` als Umrechnungsfaktor in kWh für den Zustand _Energiemenge_ liegt darin begründet, dass der go-eCharger die Energiemenge im Feld `dws` in 10 Deka-Watt-Sekunden liefert.
+
+Der Zustand _Leistung_ darf für den go-eCharger nicht konfiguriert werden, weil der *Smart Appliance Enabler* die aktuelle Leistung aus Energiemengendifferenz bezogen auf die Zeitdifferenz berechnet.
+
 ![Konfiguration des go-eCharger als Zähler](../pics/fe/EVChargerGoeChargerMeter.png)
