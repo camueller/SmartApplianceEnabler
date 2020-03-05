@@ -444,8 +444,11 @@ public class SaeController {
                         appliance.getMeter().resetEnergyMeter();
                     }
                     appliance.setSchedules(schedulesToSet);
-                    appliance.getTimeframeIntervalHandler().clearQueue();
-                    appliance.getTimeframeIntervalHandler().fillQueue(now);
+                    TimeframeIntervalHandler timeframeIntervalHandler = appliance.getTimeframeIntervalHandler();
+                    if(timeframeIntervalHandler != null) {
+                        timeframeIntervalHandler.clearQueue();
+                        timeframeIntervalHandler.fillQueue(now);
+                    }
                     return;
                 }
                 logger.error("{}: Appliance not found", applianceId);
@@ -465,10 +468,16 @@ public class SaeController {
         synchronized (lock) {
             try {
                 logger.debug("{}: Received request to set control recommenandations to {}",
-                        applianceId ,acceptControlRecommendations);
+                        applianceId, acceptControlRecommendations);
                 Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
                 if (appliance != null) {
-                    appliance.setAcceptControlRecommendations(acceptControlRecommendations);
+                    TimeframeIntervalHandler timeframeIntervalHandler = appliance.getTimeframeIntervalHandler();
+                    if(timeframeIntervalHandler != null) {
+                        TimeframeInterval activeTimeframeInterval = timeframeIntervalHandler.getActiveTimeframeInterval();
+                        if(activeTimeframeInterval != null) {
+                            activeTimeframeInterval.getRequest().setAcceptControlRecommendations(acceptControlRecommendations);
+                        }
+                    }
                 } else {
                     logger.error("{}: Appliance not found", applianceId);
                     response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -484,20 +493,7 @@ public class SaeController {
     public void resetAcceptControlRecommendations(
             HttpServletResponse response,
             @RequestParam(value = "id") String applianceId) {
-        synchronized (lock) {
-            try {
-                logger.debug("{}: Received request to reset control recommenandations", applianceId);
-                Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
-                if (appliance != null) {
-                    appliance.resetAcceptControlRecommendations();
-                } else {
-                    logger.error("{}: Appliance not found", applianceId);
-                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                }
-            } catch (Throwable e) {
-                logger.error("Error in " + getClass().getSimpleName(), e);
-            }
-        }
+        setAcceptControlRecommendations(response, applianceId, null);
     }
 
     @RequestMapping(value = RUNTIME_URL, method = RequestMethod.GET)
@@ -571,7 +567,7 @@ public class SaeController {
      */
     public boolean setRuntimeDemand(LocalDateTime now, String applianceId, Integer runtime) {
         logger.debug("{}: Received request to set runtime to {}s", applianceId, runtime);
-        return activateTimeframe(now, applianceId, null, runtime, false);
+        return activateTimeframe(now, applianceId, runtime, false);
     }
 
     @RequestMapping(value = EV_URL, method = RequestMethod.GET, produces = "application/json")
@@ -665,7 +661,7 @@ public class SaeController {
         return null;
     }
 
-    public boolean activateTimeframe(LocalDateTime now, String applianceId, Integer energy, Integer runtime,
+    public boolean activateTimeframe(LocalDateTime now, String applianceId, Integer runtime,
                                      boolean acceptControlRecommendations) {
         Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
         if (appliance != null) {
@@ -673,17 +669,19 @@ public class SaeController {
             TimeframeInterval activeTimeframeInterval = timeframeIntervalHandler.getActiveTimeframeInterval();
             if(activeTimeframeInterval != null) {
                 if(activeTimeframeInterval.getRequest() instanceof RuntimeRequest) {
-                    ((RuntimeRequest) activeTimeframeInterval.getRequest()).setMax(runtime);
+                    RuntimeRequest request = (RuntimeRequest) activeTimeframeInterval.getRequest();
+                    request.setMax(runtime);
+                    request.setAcceptControlRecommendations(acceptControlRecommendations);
                 }
             }
             else {
                 RuntimeRequest request = new RuntimeRequest(null, runtime);
                 request.setEnabled(true);
+                request.setAcceptControlRecommendations(acceptControlRecommendations);
                 Interval interval = new Interval(now.toDateTime(), now.plusSeconds(runtime).toDateTime());
                 TimeframeInterval timeframeInterval = new TimeframeInterval(interval, request);
                 timeframeIntervalHandler.addTimeframeInterval(now, timeframeInterval, true, true);
             }
-            appliance.setAcceptControlRecommendations(acceptControlRecommendations);
             return true;
         }
         logger.error("{}: Appliance not found", applianceId);

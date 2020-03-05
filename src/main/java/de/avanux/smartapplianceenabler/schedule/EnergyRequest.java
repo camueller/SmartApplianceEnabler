@@ -52,6 +52,11 @@ public class EnergyRequest extends AbstractEnergyRequest implements Request {
         return (this.min != null && this.min == 0 && this.max > 0);
     }
 
+    @Override
+    public Boolean isAcceptControlRecommendations() {
+        return super.isAcceptControlRecommendations() != null ? super.isAcceptControlRecommendations() : true;
+    }
+
     public Integer getMin(LocalDateTime now) {
         return min;
     }

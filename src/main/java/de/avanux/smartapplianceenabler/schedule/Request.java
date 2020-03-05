@@ -48,6 +48,10 @@ public interface Request extends Serializable, ApplianceIdConsumer, TimeframeInt
 
     void setEnabled(boolean enabled);
 
+    Boolean isAcceptControlRecommendations();
+
+    void setAcceptControlRecommendations(Boolean acceptControlRecommendations);
+
     boolean isFinished(LocalDateTime now);
 
     boolean isControlOn();

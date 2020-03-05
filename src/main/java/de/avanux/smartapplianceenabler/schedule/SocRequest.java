@@ -123,6 +123,11 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
     }
 
     @Override
+    public Boolean isAcceptControlRecommendations() {
+        return super.isAcceptControlRecommendations() != null ? super.isAcceptControlRecommendations() : true;
+    }
+
+    @Override
     public Integer getMin(LocalDateTime now) {
         return getEnergy();
     }

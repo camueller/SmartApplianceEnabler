@@ -40,6 +40,7 @@ abstract public class AbstractRequest implements Request {
     private transient boolean enabledBefore;
     private transient int runtimeUntilLastStatusChange;
     private transient LocalDateTime controlStatusChangedAt;
+    private transient Boolean acceptControlRecommendations;
     private transient TimeframeIntervalStateProvider timeframeIntervalStateProvider;
 
 
@@ -104,6 +105,16 @@ abstract public class AbstractRequest implements Request {
 
     public boolean isControlOn() {
         return control.isOn();
+    }
+
+    @Override
+    public Boolean isAcceptControlRecommendations() {
+        return this.acceptControlRecommendations;
+    }
+
+    @Override
+    public void setAcceptControlRecommendations(Boolean acceptControlRecommendations) {
+        this.acceptControlRecommendations = acceptControlRecommendations;
     }
 
     @Override

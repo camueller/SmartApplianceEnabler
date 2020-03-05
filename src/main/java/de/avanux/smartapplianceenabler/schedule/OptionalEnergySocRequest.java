@@ -45,6 +45,11 @@ public class OptionalEnergySocRequest extends SocRequest {
     }
 
     @Override
+    public Boolean isAcceptControlRecommendations() {
+        return true;
+    }
+
+    @Override
     public Integer getMin(LocalDateTime now) {
         return 0;
     }

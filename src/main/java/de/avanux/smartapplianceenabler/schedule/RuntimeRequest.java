@@ -79,6 +79,11 @@ public class RuntimeRequest extends AbstractRequest implements StartingCurrentSw
         return (this.min != null && this.min == 0 && this.max > 0);
     }
 
+    @Override
+    public Boolean isAcceptControlRecommendations() {
+        return super.isAcceptControlRecommendations() != null ? super.isAcceptControlRecommendations() : true;
+    }
+
     public boolean hasStartingCurrentSwitch() {
         return getControl() instanceof StartingCurrentSwitch;
     }

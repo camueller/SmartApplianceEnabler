@@ -70,7 +70,6 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
     @XmlElement(name = "Schedule")
     private List<Schedule> schedules;
     private transient TimeframeIntervalHandler timeframeIntervalHandler;
-    private transient Stack<Boolean> acceptControlRecommendations;
     private transient static final int CONSIDERATION_INTERVAL_DAYS = 2;
 
     public void setId(String id) {
@@ -132,29 +131,12 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
         this.schedules = schedules;
     }
 
-    public void initAcceptControlRecommendations() {
-        this.acceptControlRecommendations = new Stack<>();
-        setAcceptControlRecommendations(true);
-    }
-
     public boolean isAcceptControlRecommendations() {
         if(this.control instanceof AlwaysOnSwitch) {
             return false;
         }
-        // FIXME delegate to EVCharger
-        return acceptControlRecommendations.peek();
-    }
-
-    public void setAcceptControlRecommendations(boolean acceptControlRecommendations) {
-        this.acceptControlRecommendations.push(acceptControlRecommendations);
-        logger.debug("{} Set acceptControlRecommendations={}", id, isAcceptControlRecommendations());
-    }
-
-    public void resetAcceptControlRecommendations() {
-        if(this.acceptControlRecommendations.size() > 1) {
-            this.acceptControlRecommendations.pop();
-        }
-        logger.debug("{} Reset acceptControlRecommendations to {}", id, isAcceptControlRecommendations());
+        TimeframeInterval activeTimeframeInterval = this.timeframeIntervalHandler.getActiveTimeframeInterval();
+        return activeTimeframeInterval != null && activeTimeframeInterval.getRequest().isAcceptControlRecommendations();
     }
 
     public TimeframeIntervalHandler getTimeframeIntervalHandler() {
@@ -171,7 +153,6 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
 
     public void init(GpioController gpioController, Map<String, ModbusTcp> modbusIdWithModbusTcp) {
         logger.debug("{}: Initializing appliance", id);
-        initAcceptControlRecommendations();
         if(getTimeframeIntervalHandler() == null) {
             setTimeframeIntervalHandler(new TimeframeIntervalHandler(this.schedules, this.control));
         }
@@ -390,10 +371,6 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
                 // if no charge end is provided we switch on immediatly with full power and don't accept
                 // any control recommendations
                 setApplianceState(now, true, null,"Switching on charger");
-                setAcceptControlRecommendations(false);
-            }
-            else {
-                setAcceptControlRecommendations(true);
             }
         }
     }
@@ -450,9 +427,6 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
     @Override
     public void onEVChargerStateChanged(LocalDateTime now, EVChargerState previousState, EVChargerState newState,
                                         ElectricVehicle ev) {
-        if(newState == EVChargerState.VEHICLE_CONNECTED) {
-            initAcceptControlRecommendations();
-        }
     }
 
     @Override
@@ -467,7 +441,6 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
             if(meter != null && ! isEvCharger()) {
                 meter.resetEnergyMeter();
             }
-            initAcceptControlRecommendations();
         }
     }
 
