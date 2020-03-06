@@ -460,17 +460,16 @@ public class IntegrationTest extends TestBase {
         sempController.em2Device(timeSwitchOn, createEM2Device(applianceId, true));
         assertTrue(getApplianceStatus(timeSwitchOn).isOn());
 
-        LocalDateTime timeBeforeTimeframeEnd = toToday(17, 59, 0);
+        LocalDateTime timeBeforeTimeframeEnd = toToday(17, 59, 59);
         log("The timeframe should exist right before timeframe end", timeBeforeTimeframeEnd);
         tick(appliance, timeBeforeTimeframeEnd);
         assertTimeframeIntervalRuntime(toIntervalToday(10, 0, 0, 18, 0, 0),
                 TimeframeIntervalState.ACTIVE, null, maxRuntime, true, timeframeIntervalHandler.getQueue().get(0));
-        assertEquals(1, sempController.createDevice2EM(timeBeforeTimeframeEnd).getPlanningRequest().size());
-        assertPlanningRequest(timeStartingCurrent,
+        assertPlanningRequest(timeBeforeTimeframeEnd,
                 new Timeframe(applianceId,
                         0,
-                        toSecondsFromNow(timeStartingCurrent, 0, 18, 0, 0),
-                        maxRuntime - 1, maxRuntime)
+                        toSecondsFromNow(timeBeforeTimeframeEnd, 0, 18, 0, 0),
+                        0, 1)
         );
 
         LocalDateTime timeAfterTimeframeEnd = toToday(18, 1, 0);
