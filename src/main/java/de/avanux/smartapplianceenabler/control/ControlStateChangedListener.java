@@ -19,7 +19,7 @@ package de.avanux.smartapplianceenabler.control;
 
 import de.avanux.smartapplianceenabler.control.ev.EVChargerState;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
-import org.joda.time.LocalDateTime;
+import java.time.LocalDateTime;
 
 public interface ControlStateChangedListener {
 

@@ -4,7 +4,7 @@ import de.avanux.smartapplianceenabler.TestBase;
 import de.avanux.smartapplianceenabler.appliance.Appliance;
 import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
 import de.avanux.smartapplianceenabler.appliance.ApplianceBuilder;
-import org.joda.time.LocalDateTime;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

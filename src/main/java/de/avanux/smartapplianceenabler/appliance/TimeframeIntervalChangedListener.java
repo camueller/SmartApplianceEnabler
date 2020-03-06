@@ -18,8 +18,8 @@
 package de.avanux.smartapplianceenabler.appliance;
 
 import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
-import de.avanux.smartapplianceenabler.schedule.TimeframeIntervalState;
-import org.joda.time.LocalDateTime;
+
+import java.time.LocalDateTime;
 
 /**
  * Implementors will be notified when the active timeframe interval is checked or has changed.

@@ -19,10 +19,9 @@
 package de.avanux.smartapplianceenabler.schedule;
 
 import de.avanux.smartapplianceenabler.TestBase;
-import org.joda.time.LocalDateTime;
-import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,8 +38,8 @@ public class ConsecutiveDaysTimeframeTest extends TestBase {
         List<TimeframeInterval> intervals = timeframe.getIntervals(now);
         assertEquals(1, intervals.size());
         LocalDateTime start = startTimeOfDayOfWeek.toNextOccurrence(now);
-        assertDateTime(start, intervals.get(0).getInterval().getStart().toLocalDateTime());
-        assertDateTime(endTimeOfDayOfWeek.toNextOccurrence(start), intervals.get(0).getInterval().getEnd().toLocalDateTime());
+        assertDateTime(start, intervals.get(0).getInterval().getStart());
+        assertDateTime(endTimeOfDayOfWeek.toNextOccurrence(start), intervals.get(0).getInterval().getEnd());
     }
 
     @Test
@@ -53,8 +52,8 @@ public class ConsecutiveDaysTimeframeTest extends TestBase {
         List<TimeframeInterval> intervals = timeframe.getIntervals(now);
         assertEquals(1, intervals.size());
         LocalDateTime start = startTimeOfDayOfWeek.toNextOccurrence(now);
-        assertDateTime(start, intervals.get(0).getInterval().getStart().toLocalDateTime());
-        assertDateTime(endTimeOfDayOfWeek.toNextOccurrence(start), intervals.get(0).getInterval().getEnd().toLocalDateTime());
+        assertDateTime(start, intervals.get(0).getInterval().getStart());
+        assertDateTime(endTimeOfDayOfWeek.toNextOccurrence(start), intervals.get(0).getInterval().getEnd());
     }
 
     @Test
@@ -67,8 +66,8 @@ public class ConsecutiveDaysTimeframeTest extends TestBase {
         List<TimeframeInterval> intervals = timeframe.getIntervals(now);
         assertEquals(1, intervals.size());
         LocalDateTime start = startTimeOfDayOfWeek.toNextOccurrence(now);
-        assertDateTime(start, intervals.get(0).getInterval().getStart().toLocalDateTime());
-        assertDateTime(endTimeOfDayOfWeek.toNextOccurrence(start), intervals.get(0).getInterval().getEnd().toLocalDateTime());
+        assertDateTime(start, intervals.get(0).getInterval().getStart());
+        assertDateTime(endTimeOfDayOfWeek.toNextOccurrence(start), intervals.get(0).getInterval().getEnd());
     }
 
     @Test
@@ -81,8 +80,8 @@ public class ConsecutiveDaysTimeframeTest extends TestBase {
         List<TimeframeInterval> intervals = timeframe.getIntervals(now);
         assertEquals(1, intervals.size());
         LocalDateTime start = startTimeOfDayOfWeek.toNextOccurrence(now);
-        assertDateTime(start, intervals.get(0).getInterval().getStart().toLocalDateTime());
-        assertDateTime(endTimeOfDayOfWeek.toNextOccurrence(start), intervals.get(0).getInterval().getEnd().toLocalDateTime());
+        assertDateTime(start, intervals.get(0).getInterval().getStart());
+        assertDateTime(endTimeOfDayOfWeek.toNextOccurrence(start), intervals.get(0).getInterval().getEnd());
     }
 
     @Test
@@ -95,8 +94,8 @@ public class ConsecutiveDaysTimeframeTest extends TestBase {
         List<TimeframeInterval> intervals = timeframe.getIntervals(now);
         assertEquals(1, intervals.size());
         LocalDateTime start = startTimeOfDayOfWeek.toLastOccurrence(now);
-        assertDateTime(start, intervals.get(0).getInterval().getStart().toLocalDateTime());
-        assertDateTime(endTimeOfDayOfWeek.toNextOccurrence(start), intervals.get(0).getInterval().getEnd().toLocalDateTime());
+        assertDateTime(start, intervals.get(0).getInterval().getStart());
+        assertDateTime(endTimeOfDayOfWeek.toNextOccurrence(start), intervals.get(0).getInterval().getEnd());
     }
 
     @Test
@@ -109,7 +108,7 @@ public class ConsecutiveDaysTimeframeTest extends TestBase {
         List<TimeframeInterval> intervals = timeframe.getIntervals(now);
         assertEquals(1, intervals.size());
         LocalDateTime start = startTimeOfDayOfWeek.toNextOccurrence(now);
-        assertDateTime(start, intervals.get(0).getInterval().getStart().toLocalDateTime());
-        assertDateTime(endTimeOfDayOfWeek.toNextOccurrence(start), intervals.get(0).getInterval().getEnd().toLocalDateTime());
+        assertDateTime(start, intervals.get(0).getInterval().getStart());
+        assertDateTime(endTimeOfDayOfWeek.toNextOccurrence(start), intervals.get(0).getInterval().getEnd());
     }
 }

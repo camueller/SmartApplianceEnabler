@@ -17,13 +17,11 @@
  */
 package de.avanux.smartapplianceenabler.schedule;
 
-import de.avanux.smartapplianceenabler.schedule.TimeOfDay;
-import org.joda.time.LocalDateTime;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import java.time.LocalDateTime;
 
 /**
  * A condition identified by a time range being valid between start time and end time.

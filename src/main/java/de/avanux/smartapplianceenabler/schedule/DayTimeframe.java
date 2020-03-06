@@ -18,15 +18,13 @@
 package de.avanux.smartapplianceenabler.schedule;
 
 import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
-import org.joda.time.Interval;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-import org.joda.time.chrono.ISOChronology;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -92,8 +90,8 @@ public class DayTimeframe extends AbstractTimeframe implements Timeframe {
 
     protected Interval buildMidnightAdjustedInterval(LocalDateTime now) {
         if(start != null && end != null) {
-            LocalDateTime earliestStartDateTime = new LocalDate(now).toLocalDateTime(start.toLocalTime());
-            LocalDateTime latestEndDateTime = new LocalDate(now).toLocalDateTime(end.toLocalTime());
+            LocalDateTime earliestStartDateTime = LocalDate.from(now).atTime(start.toLocalTime());
+            LocalDateTime latestEndDateTime = LocalDate.from(now).atTime(end.toLocalTime());
             if(isOverMidnight(earliestStartDateTime, latestEndDateTime)) {
                 if(now.toLocalTime().isAfter(start.toLocalTime())) {
                     // before midnight
@@ -108,7 +106,7 @@ public class DayTimeframe extends AbstractTimeframe implements Timeframe {
                     latestEndDateTime = latestEndDateTime.plusHours(24);
                 }
             }
-            return new Interval(earliestStartDateTime.toDateTime(), latestEndDateTime.toDateTime()).withChronology(ISOChronology.getInstance());
+            return new Interval(earliestStartDateTime, latestEndDateTime);
         }
         return null;
     }
@@ -120,12 +118,12 @@ public class DayTimeframe extends AbstractTimeframe implements Timeframe {
             Interval interval = buildMidnightAdjustedInterval(now);
             List<Integer> dowValues = getDaysOfWeekValues();
             // if today's interval already ended we ignore today
-            int dayOffset = (interval.getEnd().isBefore(now.toDateTime()) ? 1 : 0);
+            int dayOffset = (interval.getEnd().isBefore(now) ? 1 : 0);
             for(int i=dayOffset;i<7+dayOffset;i++) {
-                DateTime timeFrameStart = interval.getStart().plusDays(i);
-                DateTime timeFrameEnd = interval.getEnd().plusDays(i);
+                LocalDateTime timeFrameStart = interval.getStart().plusDays(i);
+                LocalDateTime timeFrameEnd = interval.getEnd().plusDays(i);
                 if(dowValues != null) {
-                    int dow = timeFrameStart.getDayOfWeek();
+                    int dow = timeFrameStart.getDayOfWeek().getValue();
                     if(dowValues.contains(DOW_HOLIDAYS) && isHoliday(timeFrameStart.toLocalDate())) {
                         dow = DOW_HOLIDAYS;
                     }
@@ -163,7 +161,7 @@ public class DayTimeframe extends AbstractTimeframe implements Timeframe {
     }
 
     private LocalDateTime toDateTimeToday(TimeOfDay timeOfDay) {
-        return new LocalDate().toLocalDateTime(timeOfDay.toLocalTime());
+        return LocalDate.now().atTime(timeOfDay.toLocalTime());
     }
 
     @Override

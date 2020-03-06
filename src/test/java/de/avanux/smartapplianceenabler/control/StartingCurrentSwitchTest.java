@@ -19,7 +19,7 @@
 package de.avanux.smartapplianceenabler.control;
 
 import de.avanux.smartapplianceenabler.meter.Meter;
-import org.joda.time.LocalDateTime;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -45,7 +45,7 @@ public class StartingCurrentSwitchTest {
 
     @Test
     public void test() throws Exception {
-        LocalDateTime now = new LocalDateTime();
+        LocalDateTime now = LocalDateTime.now();
         startingCurrentSwitch.setMeter(meter);
         startingCurrentSwitch.start(now, null);
 

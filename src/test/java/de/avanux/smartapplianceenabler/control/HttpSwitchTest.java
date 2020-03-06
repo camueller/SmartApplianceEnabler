@@ -23,7 +23,7 @@ import de.avanux.smartapplianceenabler.http.*;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.joda.time.LocalDateTime;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -62,7 +62,7 @@ public class HttpSwitchTest extends TestBase {
         Mockito.doReturn(responseMock).when(executorMock).executeLeaveOpen(Mockito.any(), Mockito.any(), Mockito.any());
 
         assertFalse(this.httpSwitch.isOn());
-        this.httpSwitch.on(new LocalDateTime(), true);
+        this.httpSwitch.on(LocalDateTime.now(), true);
         assertTrue(this.httpSwitch.isOn());
         Mockito.verify(executorMock).executeLeaveOpen(httpMethod, url, data);
     }
@@ -80,7 +80,7 @@ public class HttpSwitchTest extends TestBase {
         Mockito.doReturn(responseMock).when(executorMock).executeLeaveOpen(Mockito.any(), Mockito.any(), Mockito.any());
         this.httpSwitch.on = true;
         assertTrue(this.httpSwitch.isOn());
-        this.httpSwitch.on(new LocalDateTime(), false);
+        this.httpSwitch.on(LocalDateTime.now(), false);
         assertFalse(this.httpSwitch.isOn());
         Mockito.verify(executorMock).executeLeaveOpen(httpMethod, url, data);
     }
@@ -96,7 +96,7 @@ public class HttpSwitchTest extends TestBase {
         Mockito.doReturn(responseMock).when(executorMock).executeLeaveOpen(Mockito.any(), Mockito.any(), Mockito.any());
 
         assertFalse(this.httpSwitch.isOn());
-        this.httpSwitch.on(new LocalDateTime(), true);
+        this.httpSwitch.on(LocalDateTime.now(), true);
         assertTrue(this.httpSwitch.isOn());
         Mockito.verify(executorMock).executeLeaveOpen(httpMethod, url, null);
     }
@@ -112,7 +112,7 @@ public class HttpSwitchTest extends TestBase {
         Mockito.doReturn(responseMock).when(executorMock).executeLeaveOpen(Mockito.any(), Mockito.any(), Mockito.any());
         this.httpSwitch.on = true;
         assertTrue(this.httpSwitch.isOn());
-        this.httpSwitch.on(new LocalDateTime(), false);
+        this.httpSwitch.on(LocalDateTime.now(), false);
         assertFalse(this.httpSwitch.isOn());
         Mockito.verify(executorMock).executeLeaveOpen(httpMethod, url, null);
     }

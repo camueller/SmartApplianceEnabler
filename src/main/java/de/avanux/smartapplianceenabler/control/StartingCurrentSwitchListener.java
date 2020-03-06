@@ -17,7 +17,7 @@
  */
 package de.avanux.smartapplianceenabler.control;
 
-import org.joda.time.LocalDateTime;
+import java.time.LocalDateTime;
 
 public interface StartingCurrentSwitchListener {
 

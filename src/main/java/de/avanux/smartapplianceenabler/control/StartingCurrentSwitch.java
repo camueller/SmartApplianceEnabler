@@ -21,7 +21,7 @@ import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.schedule.DayTimeframeCondition;
 import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
-import org.joda.time.LocalDateTime;
+import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -163,7 +163,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer {
             this.detectFinishedCurrentTimerTask = new GuardedTimerTask(applianceId, "DetectFinishedCurrent", getFinishedCurrentDetectionDuration() * 1000) {
                 @Override
                 public void runTask() {
-                    detectFinishedCurrent(new LocalDateTime(), meter);
+                    detectFinishedCurrent(LocalDateTime.now(), meter);
                 }
             };
             timer.schedule(this.detectFinishedCurrentTimerTask, 0, this.detectFinishedCurrentTimerTask.getPeriod());

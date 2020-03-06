@@ -23,6 +23,7 @@ import de.avanux.smartapplianceenabler.util.TimestampBasedCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDateTime;
 import java.util.Timer;
 
 /**
@@ -46,7 +47,7 @@ public class PollPowerMeter implements ApplianceIdConsumer {
         this.pollTimerTask = new GuardedTimerTask(this.applianceId, "PollPowerMeter", pollInterval * 1000) {
             @Override
             public void runTask() {
-                addValue(System.currentTimeMillis(), pollPowerExecutor);
+                addValue(LocalDateTime.now(), pollPowerExecutor);
             }
         };
         if(timer != null) {
@@ -60,14 +61,14 @@ public class PollPowerMeter implements ApplianceIdConsumer {
         }
     }
 
-    public void addValue(long timestamp, PollPowerExecutor pollPowerExecutor) {
+    public void addValue(LocalDateTime timestamp, PollPowerExecutor pollPowerExecutor) {
         Float power = pollPowerExecutor.pollPower();
         if(power != null) {
             cache.addValue(timestamp, power);
         }
     }
 
-    public void addValue(long timestamp, float power) {
+    public void addValue(LocalDateTime timestamp, float power) {
         cache.addValue(timestamp, power);
     }
 

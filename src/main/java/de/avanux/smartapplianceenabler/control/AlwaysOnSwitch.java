@@ -18,7 +18,7 @@
 
 package de.avanux.smartapplianceenabler.control;
 
-import org.joda.time.LocalDateTime;
+import java.time.LocalDateTime;
 
 import java.util.Timer;
 

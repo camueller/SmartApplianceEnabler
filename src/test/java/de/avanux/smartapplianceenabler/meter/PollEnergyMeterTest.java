@@ -18,7 +18,7 @@
 
 package de.avanux.smartapplianceenabler.meter;
 
-import org.joda.time.LocalDateTime;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

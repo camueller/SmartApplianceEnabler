@@ -19,8 +19,7 @@ package de.avanux.smartapplianceenabler.schedule;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.joda.time.DateTimeFieldType;
-import org.joda.time.LocalDateTime;
+import java.time.LocalDateTime;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -48,24 +47,26 @@ public class TimeOfDayOfWeek extends TimeOfDay {
     }
 
     public LocalDateTime toLocalDateTime() {
-        return toNextOccurrence(new LocalDateTime());
+        return toNextOccurrence(LocalDateTime.now());
     }
 
     public LocalDateTime toNextOccurrence() {
-        return toNextOccurrence(new LocalDateTime());
+        return toNextOccurrence(LocalDateTime.now());
     }
 
     public LocalDateTime toNextOccurrence(LocalDateTime now) {
-        LocalDateTime dateTime = new LocalDateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), getHour(), getMinute(), getSecond());
-        while(dateTime.get(DateTimeFieldType.dayOfWeek()) != dayOfWeek) {
+        LocalDateTime dateTime = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(),
+                getHour(), getMinute(), getSecond());
+        while(dateTime.getDayOfWeek().getValue() != dayOfWeek) {
             dateTime = dateTime.plusDays(1);
         }
         return dateTime;
     }
 
     public LocalDateTime toLastOccurrence(LocalDateTime now) {
-        LocalDateTime dateTime = new LocalDateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), getHour(), getMinute(), getSecond());
-        while(dateTime.get(DateTimeFieldType.dayOfWeek()) != dayOfWeek) {
+        LocalDateTime dateTime = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(),
+                getHour(), getMinute(), getSecond());
+        while(dateTime.getDayOfWeek().getValue() != dayOfWeek) {
             dateTime = dateTime.minusDays(1);
         }
         return dateTime;

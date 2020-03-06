@@ -22,7 +22,7 @@ import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.joda.time.LocalDateTime;
+import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -230,7 +230,7 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
 
     @Override
     public String toString() {
-        return toString(new LocalDateTime());
+        return toString(LocalDateTime.now());
     }
 
     @Override

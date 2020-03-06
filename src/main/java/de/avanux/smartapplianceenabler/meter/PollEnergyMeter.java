@@ -21,7 +21,7 @@ package de.avanux.smartapplianceenabler.meter;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
 import de.avanux.smartapplianceenabler.util.TimestampBasedCache;
-import org.joda.time.LocalDateTime;
+import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,12 +58,12 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
         this.pollTimerTask = new GuardedTimerTask(this.applianceId, "PollEnergyMeter", pollInterval * 1000) {
             @Override
             public void runTask() {
-                LocalDateTime now = new LocalDateTime();
+                LocalDateTime now = LocalDateTime.now();
                 Float energy = pollEnergyExecutor.pollEnergy(now);
                 if(energy != null && energy.floatValue() > 0.0f) {
                     // the energy counter we poll might already have been reset and we don't want to add 0 to the cache
                     // except we reset the counter outselves
-                    addValue(now.toDateTime().getMillis(), energy);
+                    addValue(now, energy);
                 }
             }
         };
@@ -78,20 +78,20 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
         }
     }
 
-    public void addValue(long timestamp) {
-        cache.addValue(timestamp, pollEnergyExecutor.pollEnergy(new LocalDateTime()));
+    public void addValue(LocalDateTime timestamp) {
+        cache.addValue(timestamp, pollEnergyExecutor.pollEnergy(LocalDateTime.now()));
     }
 
-    public void addValue(long timestamp, float power) {
+    public void addValue(LocalDateTime timestamp, float power) {
         cache.addValue(timestamp, power);
     }
 
-    public TreeMap<Long, Float> getValuesInMeasurementInterval() {
+    public TreeMap<LocalDateTime, Float> getValuesInMeasurementInterval() {
         return this.cache.getTimestampWithValue();
     }
 
     public float getEnergy() {
-        float currentEnergyCounter = this.pollEnergyExecutor.pollEnergy(new LocalDateTime());
+        float currentEnergyCounter = this.pollEnergyExecutor.pollEnergy(LocalDateTime.now());
         float energy = 0.0f;
         if(this.startEnergyCounter != null) {
             if(this.totalEnergy != null) {
@@ -112,14 +112,14 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
     }
 
     public Float startEnergyCounter() {
-        this.startEnergyCounter = this.pollEnergyExecutor.pollEnergy(new LocalDateTime());
+        this.startEnergyCounter = this.pollEnergyExecutor.pollEnergy(LocalDateTime.now());
         logger.debug("{}: Start energy counter: {}", applianceId, startEnergyCounter);
         this.started = true;
         return startEnergyCounter;
     }
 
     public Float stopEnergyCounter() {
-        float stopEnergyCounter = this.pollEnergyExecutor.pollEnergy(new LocalDateTime());
+        float stopEnergyCounter = this.pollEnergyExecutor.pollEnergy(LocalDateTime.now());
         if(stopEnergyCounter == 0.0f) {
             // the event causing the the counter to stop may have already reset the counter we poll
             // in this case we use the last value from cache

@@ -18,7 +18,7 @@
 package de.avanux.smartapplianceenabler.control;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceLifeCycle;
-import org.joda.time.LocalDateTime;
+import java.time.LocalDateTime;
 
 /**
  * A control can change the on/off state of an appliance.

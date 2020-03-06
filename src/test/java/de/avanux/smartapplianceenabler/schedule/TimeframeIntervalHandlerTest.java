@@ -20,7 +20,7 @@ package de.avanux.smartapplianceenabler.schedule;
 
 import de.avanux.smartapplianceenabler.TestBase;
 import de.avanux.smartapplianceenabler.control.MockSwitch;
-import org.joda.time.LocalDateTime;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

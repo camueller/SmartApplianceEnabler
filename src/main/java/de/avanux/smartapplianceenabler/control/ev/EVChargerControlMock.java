@@ -19,7 +19,7 @@
 package de.avanux.smartapplianceenabler.control.ev;
 
 import de.avanux.smartapplianceenabler.meter.Meter;
-import org.joda.time.LocalDateTime;
+import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

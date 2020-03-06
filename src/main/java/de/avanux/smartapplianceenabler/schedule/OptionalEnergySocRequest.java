@@ -18,7 +18,7 @@
 
 package de.avanux.smartapplianceenabler.schedule;
 
-import org.joda.time.LocalDateTime;
+import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +56,7 @@ public class OptionalEnergySocRequest extends SocRequest {
 
     @Override
     public String toString() {
-        return toString(new LocalDateTime());
+        return toString(LocalDateTime.now());
     }
 
     @Override

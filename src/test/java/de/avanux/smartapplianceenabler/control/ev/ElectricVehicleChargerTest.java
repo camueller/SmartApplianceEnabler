@@ -18,7 +18,7 @@
 
 package de.avanux.smartapplianceenabler.control.ev;
 
-import org.joda.time.LocalDateTime;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
@@ -31,7 +31,7 @@ public class ElectricVehicleChargerTest {
     private Logger logger = LoggerFactory.getLogger(ElectricVehicleChargerTest.class);
     private ElectricVehicleCharger evCharger = Mockito.spy(new ElectricVehicleCharger());
     private EVChargerControl evChargerControl = Mockito.mock(EVChargerControl.class);
-    private LocalDateTime now = new LocalDateTime();
+    private LocalDateTime now = LocalDateTime.now();
 
     public ElectricVehicleChargerTest() {
         evCharger.startChargingStateDetectionDelay = 0;

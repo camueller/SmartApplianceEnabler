@@ -24,7 +24,7 @@ import de.avanux.smartapplianceenabler.modbus.ModbusValidator;
 import de.avanux.smartapplianceenabler.modbus.executor.*;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import de.avanux.smartapplianceenabler.util.Validateable;
-import org.joda.time.LocalDateTime;
+import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

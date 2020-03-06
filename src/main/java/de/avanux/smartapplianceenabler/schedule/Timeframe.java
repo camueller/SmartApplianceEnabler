@@ -17,7 +17,7 @@
  */
 package de.avanux.smartapplianceenabler.schedule;
 
-import org.joda.time.LocalDateTime;
+import java.time.LocalDateTime;
 
 import java.util.List;
 

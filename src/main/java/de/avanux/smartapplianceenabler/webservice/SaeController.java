@@ -35,15 +35,16 @@ import de.avanux.smartapplianceenabler.modbus.ModbusElectricityMeterDefaults;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
 import de.avanux.smartapplianceenabler.schedule.*;
 import de.avanux.smartapplianceenabler.semp.webservice.*;
-import org.joda.time.DateTime;
-import org.joda.time.Interval;
-import org.joda.time.LocalDateTime;
-import org.joda.time.format.ISODateTimeFormat;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -214,7 +215,7 @@ public class SaeController {
         synchronized (lock) {
             try {
                 logger.debug("{}: Received request to set ApplianceInfo (create={}): {}", applianceId, create, applianceInfo);
-                LocalDateTime now = new LocalDateTime();
+                LocalDateTime now = LocalDateTime.now();
                 DeviceInfo deviceInfo = toDeviceInfo(applianceInfo);
                 if (create) {
                     Appliance appliance = new Appliance();
@@ -434,7 +435,7 @@ public class SaeController {
                                   @RequestBody Schedules schedules) {
         synchronized (lock) {
             try {
-                LocalDateTime now = new LocalDateTime();
+                LocalDateTime now = LocalDateTime.now();
                 List<Schedule> schedulesToSet = schedules.getSchedules();
                 logger.debug("{}: Received request to activate {} schedule(s)", applianceId,
                         (schedulesToSet != null ? schedulesToSet.size() : "0"));
@@ -524,7 +525,7 @@ public class SaeController {
             logger.debug("{}: Received request to suggest runtime", applianceId);
             Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
             if (appliance != null) {
-                LocalDateTime now = new LocalDateTime();
+                LocalDateTime now = LocalDateTime.now();
                 List<TimeframeInterval> queue = appliance.getTimeframeIntervalHandler().getQueue();
                 if(queue.size() > 0) {
                     TimeframeInterval timeframeInterval = queue.get(0);
@@ -548,7 +549,7 @@ public class SaeController {
                                  @RequestParam(value = "runtime") Integer runtime) {
         synchronized (lock) {
             try {
-                if (!setRuntimeDemand(new LocalDateTime(), applianceId, runtime)) {
+                if (!setRuntimeDemand(LocalDateTime.now(), applianceId, runtime)) {
                     response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 }
             } catch (Throwable e) {
@@ -609,13 +610,13 @@ public class SaeController {
             try {
                 LocalDateTime chargeEnd = null;
                 if (chargeEndString != null) {
-                    chargeEnd = DateTime.parse(chargeEndString, ISODateTimeFormat.dateTimeParser()).toLocalDateTime();
+                    chargeEnd = LocalDateTime.parse(chargeEndString);
                 }
                 logger.debug("{}: Received energy request: evId={} socCurrent={} socRequested={} chargeEnd={}",
                         applianceId, evId, socCurrent, socRequested, chargeEnd);
                 Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
                 if (appliance != null) {
-                    appliance.setEnergyDemand(new LocalDateTime(), evId, socCurrent, socRequested, chargeEnd);
+                    appliance.setEnergyDemand(LocalDateTime.now(), evId, socCurrent, socRequested, chargeEnd);
                 } else {
                     logger.error("{}: Appliance not found", applianceId);
                     response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -678,7 +679,7 @@ public class SaeController {
                 RuntimeRequest request = new RuntimeRequest(null, runtime);
                 request.setEnabled(true);
                 request.setAcceptControlRecommendations(acceptControlRecommendations);
-                Interval interval = new Interval(now.toDateTime(), now.plusSeconds(runtime).toDateTime());
+                Interval interval = new Interval(now, now.plusSeconds(runtime));
                 TimeframeInterval timeframeInterval = new TimeframeInterval(interval, request);
                 timeframeIntervalHandler.addTimeframeInterval(now, timeframeInterval, true, true);
             }
@@ -780,7 +781,7 @@ public class SaeController {
     public List<ApplianceStatus> getApplianceStatus() {
         synchronized (lock) {
             try {
-                return getApplianceStatus(new LocalDateTime());
+                return getApplianceStatus(LocalDateTime.now());
             } catch (Throwable e) {
                 logger.error("Error in " + getClass().getSimpleName(), e);
             }
@@ -838,7 +839,8 @@ public class SaeController {
                     else {
                         applianceStatus.setEvIdCharging(evCharger.getConnectedVehicleId());
                         applianceStatus.setState(evCharger.getState().name());
-                        applianceStatus.setStateLastChangedTimestamp(evCharger.getStateLastChangedTimestamp());
+                        ZonedDateTime zdt = ZonedDateTime.of(evCharger.getStateLastChangedTimestamp(), ZoneId.systemDefault());
+                        applianceStatus.setStateLastChangedTimestamp(zdt.toInstant().toEpochMilli());
                         applianceStatus.setSocInitial(evCharger.getConnectedVehicleSoc());
                         applianceStatus.setSocInitialTimestamp(evCharger.getConnectedVehicleSocTimestamp());
                         applianceStatus.setSoc(evCharger.getCurrentSoc(meter));
@@ -870,11 +872,10 @@ public class SaeController {
                     applianceStatus.setRemainingMinRunningTime(nextTimeframeInterval.getRequest().getMin(now));
                     applianceStatus.setRemainingMaxRunningTime(nextTimeframeInterval.getRequest().getMax(now));
                     if (! nextTimeframeInterval.getRequest().isEnabled() && nextTimeframeInterval.getRequest().isEnabledBefore()) {
-                        Interval interrupted = new Interval(
-                                nextTimeframeInterval.getRequest().getControlStatusChangedAt().toDateTime(),
-                                now.toDateTime());
                         applianceStatus.setInterruptedSince(
-                                new Double(interrupted.toDurationMillis() / 1000).intValue());
+                            Long.valueOf(
+                                    Duration.between(nextTimeframeInterval.getRequest().getControlStatusChangedAt(), now).toSeconds()
+                            ).intValue());
                     }
                 }
             }

@@ -17,9 +17,6 @@
  */
 package de.avanux.smartapplianceenabler.schedule;
 
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
-
 import javax.xml.bind.annotation.*;
 import java.util.List;
 
@@ -40,7 +37,6 @@ public class Schedule {
             @XmlElement(name = "ConsecutiveDaysTimeframe", type = ConsecutiveDaysTimeframe.class)
     })
     private Timeframe timeframe;
-    transient DateTimeFormatter formatter = ISODateTimeFormat.basicTTimeNoMillis();
 
 
     public Schedule() {

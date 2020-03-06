@@ -18,12 +18,12 @@
 
 package de.avanux.smartapplianceenabler.util;
 
-import org.joda.time.LocalDateTime;
+import java.time.LocalDateTime;
 
 public class DateTimeProviderImpl implements DateTimeProvider {
 
     public LocalDateTime now() {
-        return new LocalDateTime();
+        return LocalDateTime.now();
     }
 
 }

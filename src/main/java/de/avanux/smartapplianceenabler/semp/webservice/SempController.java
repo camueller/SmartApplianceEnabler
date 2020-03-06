@@ -19,12 +19,11 @@ package de.avanux.smartapplianceenabler.semp.webservice;
 
 import de.avanux.smartapplianceenabler.appliance.Appliance;
 import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
-import de.avanux.smartapplianceenabler.appliance.RuntimeInterval;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
 import de.avanux.smartapplianceenabler.meter.Meter;
-import de.avanux.smartapplianceenabler.schedule.*;
-import org.joda.time.LocalDateTime;
+import de.avanux.smartapplianceenabler.schedule.AbstractEnergyRequest;
+import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +32,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.StringWriter;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -53,7 +53,7 @@ public class SempController {
     public String device2EM() {
         try {
             logger.debug("Device info/status/planning requested.");
-            return marshall(createDevice2EM(new LocalDateTime()));
+            return marshall(createDevice2EM(LocalDateTime.now()));
         } catch (Throwable e) {
             logger.error("Error in " + getClass().getSimpleName(), e);
         }
@@ -82,7 +82,7 @@ public class SempController {
     @RequestMapping(value = BASE_URL + "/DeviceInfo", method = RequestMethod.GET, produces = "application/xml")
     public String deviceInfo(@RequestParam(value = "DeviceId", required = false) String deviceId) {
         try {
-            LocalDateTime now = new LocalDateTime();
+            LocalDateTime now = LocalDateTime.now();
             List<DeviceInfo> deviceInfos = new ArrayList<>();
             if (deviceId != null) {
                 logger.debug("{}: Device info requested", deviceId);
@@ -171,7 +171,7 @@ public class SempController {
     @RequestMapping(value = BASE_URL + "/PlanningRequest", method = RequestMethod.GET, produces = "application/xml")
     public String planningRequest(@RequestParam(value = "DeviceId", required = false) String deviceId) {
         try {
-            LocalDateTime now = new LocalDateTime();
+            LocalDateTime now = LocalDateTime.now();
             List<PlanningRequest> planningRequests = new ArrayList<PlanningRequest>();
             if (deviceId != null) {
                 logger.debug("{}: Planning request requested", deviceId);
@@ -207,7 +207,7 @@ public class SempController {
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public void em2Device(@RequestBody EM2Device em2Device) {
         try {
-            em2Device(new LocalDateTime(), em2Device);
+            em2Device(LocalDateTime.now(), em2Device);
         } catch (Throwable e) {
             logger.error("Error in " + getClass().getSimpleName(), e);
         }

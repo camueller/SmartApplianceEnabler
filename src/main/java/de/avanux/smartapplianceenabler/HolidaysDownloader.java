@@ -19,9 +19,7 @@ package de.avanux.smartapplianceenabler;
 
 import com.owlike.genson.Genson;
 import com.owlike.genson.GensonBuilder;
-import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+import java.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +29,7 @@ import java.net.URL;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -41,7 +40,7 @@ public class HolidaysDownloader {
     public transient static final String DEFAULT_URL = "https://feiertage-api.de/api/?jahr={0}&nur_land=NATIONAL";
     private String url;
 
-    private static final DateTimeFormatter dateFormatter = DateTimeFormat.forPattern("yyyy-MM-dd");
+    private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     public String getUrl() {
         return url;
@@ -53,7 +52,7 @@ public class HolidaysDownloader {
     }
 
     private String getResolvedUrl() {
-        int year = new LocalDate().getYear();
+        int year = LocalDate.now().getYear();
         return MessageFormat.format(url != null ? url : DEFAULT_URL, Integer.valueOf(year).toString());
     }
 
@@ -94,7 +93,7 @@ public class HolidaysDownloader {
             for(String holidayName : json.keySet()) {
                 Map<String, Object> dateAndHint = (Map<String, Object>) json.get(holidayName);
                 String datumString = dateAndHint.get("datum").toString();
-                LocalDate datum = dateFormatter.parseLocalDate(datumString);
+                LocalDate datum = LocalDate.parse(datumString, dateFormatter);
                 holidayWithName.put(datum, holidayName);
             }
 

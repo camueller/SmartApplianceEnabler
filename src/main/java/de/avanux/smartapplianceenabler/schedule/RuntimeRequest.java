@@ -19,11 +19,8 @@
 package de.avanux.smartapplianceenabler.schedule;
 
 import de.avanux.smartapplianceenabler.control.Control;
-import de.avanux.smartapplianceenabler.control.ControlStateChangedListener;
 import de.avanux.smartapplianceenabler.control.StartingCurrentSwitch;
 import de.avanux.smartapplianceenabler.control.StartingCurrentSwitchListener;
-import org.joda.time.Interval;
-import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +28,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import java.time.LocalDateTime;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "min", "max" })
@@ -124,7 +122,7 @@ public class RuntimeRequest extends AbstractRequest implements StartingCurrentSw
 
     @Override
     public String toString() {
-        return toString(new LocalDateTime());
+        return toString(LocalDateTime.now());
     }
 
     @Override

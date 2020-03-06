@@ -31,8 +31,9 @@ import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceStatus;
 import de.avanux.smartapplianceenabler.util.FileHandler;
 import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -396,7 +397,7 @@ public class ApplianceManager implements Runnable {
         if(appliance != null) {
             Control oldControl = appliance.getControl();
             if(oldControl != null) {
-                oldControl.stop(new LocalDateTime());
+                oldControl.stop(LocalDateTime.now());
             }
             if(control instanceof ApplianceIdConsumer) {
                 ((ApplianceIdConsumer) control).setApplianceId(applianceId);
@@ -436,7 +437,7 @@ public class ApplianceManager implements Runnable {
         if(appliance != null) {
             Meter oldMeter = appliance.getMeter();
             if(oldMeter != null) {
-                oldMeter.stop(new LocalDateTime());
+                oldMeter.stop(LocalDateTime.now());
             }
             if(meter instanceof ApplianceIdConsumer) {
                 ((ApplianceIdConsumer) meter).setApplianceId(applianceId);

@@ -31,7 +31,7 @@ import de.avanux.smartapplianceenabler.schedule.TimeframeIntervalState;
 import de.avanux.smartapplianceenabler.semp.webservice.*;
 import de.avanux.smartapplianceenabler.webservice.ApplianceStatus;
 import de.avanux.smartapplianceenabler.webservice.SaeController;
-import org.joda.time.LocalDateTime;
+import java.time.LocalDateTime;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;

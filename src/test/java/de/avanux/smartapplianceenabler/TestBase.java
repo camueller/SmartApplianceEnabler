@@ -2,10 +2,10 @@ package de.avanux.smartapplianceenabler;
 
 import de.avanux.smartapplianceenabler.appliance.Appliance;
 import de.avanux.smartapplianceenabler.schedule.*;
-import org.joda.time.DateTimeFieldType;
-import org.joda.time.Interval;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
+
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -24,7 +24,7 @@ abstract public class TestBase {
     }
 
     protected LocalDateTime toDay(Integer dayOffset, Integer hour, Integer minute, Integer second) {
-        return new LocalDate().toLocalDateTime(new TimeOfDay(hour, minute, second).toLocalTime()).plusDays(dayOffset);
+        return LocalDate.now().atTime(new TimeOfDay(hour, minute, second).toLocalTime()).plusDays(dayOffset);
     }
 
     protected LocalDateTime toTomorrow(Integer hour, Integer minute, Integer second) {
@@ -36,11 +36,11 @@ abstract public class TestBase {
     }
 
     protected LocalDateTime toDayOfWeek(int dayOfWeek, Integer hour, Integer minute) {
-        return toDayOfWeek(new LocalDateTime(), dayOfWeek, hour, minute, 0);
+        return toDayOfWeek(LocalDateTime.now(), dayOfWeek, hour, minute, 0);
     }
 
     protected LocalDateTime toDayOfWeek(int dayOfWeek, Integer hour, Integer minute, Integer second) {
-        return toDayOfWeek(new LocalDateTime(), dayOfWeek, hour, minute, second);
+        return toDayOfWeek(LocalDateTime.now(), dayOfWeek, hour, minute, second);
     }
 
     protected LocalDateTime toDayOfWeek(LocalDateTime now, int dayOfWeek, Integer hour, Integer minute, Integer second) {
@@ -54,20 +54,20 @@ abstract public class TestBase {
 
     protected Interval toIntervalToday(Integer startHour, Integer startMinutes, Integer startSeconds,
                                        Integer endHour, Integer endMinutes, Integer endSeconds) {
-        return new Interval(toToday(startHour, startMinutes, startSeconds).toDateTime(),
-                toToday(endHour, endMinutes, endSeconds).toDateTime());
+        return new Interval(toToday(startHour, startMinutes, startSeconds),
+                toToday(endHour, endMinutes, endSeconds));
     }
 
     protected Interval toIntervalTomorrow(Integer startHour, Integer startMinutes, Integer startSeconds,
                                        Integer endHour, Integer endMinutes, Integer endSeconds) {
-        return new Interval(toTomorrow(startHour, startMinutes, startSeconds).toDateTime(),
-                toTomorrow(endHour, endMinutes, endSeconds).toDateTime());
+        return new Interval(toTomorrow(startHour, startMinutes, startSeconds),
+                toTomorrow(endHour, endMinutes, endSeconds));
     }
 
     protected Interval toIntervalDayAfterTomorrow(Integer startHour, Integer startMinutes, Integer startSeconds,
                                           Integer endHour, Integer endMinutes, Integer endSeconds) {
-        return new Interval(toDayAfterTomorrow(startHour, startMinutes, startSeconds).toDateTime(),
-                toDayAfterTomorrow(endHour, endMinutes, endSeconds).toDateTime());
+        return new Interval(toDayAfterTomorrow(startHour, startMinutes, startSeconds),
+                toDayAfterTomorrow(endHour, endMinutes, endSeconds));
     }
 
     protected Interval toInterval(Integer startDayOffset, Integer startHour, Integer startMinutes,
@@ -78,8 +78,8 @@ abstract public class TestBase {
 
     protected Interval toInterval(Integer startDayOffset, Integer startHour, Integer startMinutes, Integer startSeconds,
                                   Integer endDayOffset, Integer endHour, Integer endMinutes, Integer endSeconds) {
-        return new Interval(toDay(startDayOffset, startHour, startMinutes, startSeconds).toDateTime(),
-                toDay(endDayOffset, endHour, endMinutes, endSeconds).toDateTime());
+        return new Interval(toDay(startDayOffset, startHour, startMinutes, startSeconds),
+                toDay(endDayOffset, endHour, endMinutes, endSeconds));
     }
 
     protected Interval toIntervalByDow(LocalDateTime now, Integer startDow, Integer startHour, Integer startMinutes,
@@ -89,16 +89,16 @@ abstract public class TestBase {
 
     protected Interval toIntervalByDow(LocalDateTime now, Integer startDow, Integer startHour, Integer startMinutes, Integer startSeconds,
                                   Integer endDow, Integer endHour, Integer endMinutes, Integer endSeconds) {
-        return new Interval(toDayOfWeek(now, startDow, startHour, startMinutes, startSeconds).toDateTime(),
-                toDayOfWeek(now, endDow, endHour, endMinutes, endSeconds).toDateTime());
+        return new Interval(toDayOfWeek(now, startDow, startHour, startMinutes, startSeconds),
+                toDayOfWeek(now, endDow, endHour, endMinutes, endSeconds));
     }
 
     protected int toSecondsFromNow(LocalDateTime now, int dayOffset, Integer hour, Integer minutes, Integer seconds) {
-        return new Interval(now.toDateTime(), toDay(dayOffset, hour, minutes, seconds).toDateTime()).toDuration().toStandardSeconds().getSeconds();
+        return Long.valueOf(Duration.between(now, toDay(dayOffset, hour, minutes, seconds)).toSeconds()).intValue();
     }
 
     protected void assertDateTime(LocalDateTime dt1, LocalDateTime dt2) {
-        assertEquals(dt1.get(DateTimeFieldType.dayOfMonth()), dt2.get(DateTimeFieldType.dayOfMonth()));
+        assertEquals(dt1, dt2);
     }
 
     protected void assertTimeframeIntervalRuntime(Interval interval,

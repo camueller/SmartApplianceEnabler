@@ -17,9 +17,7 @@
  */
 package de.avanux.smartapplianceenabler.util;
 
-import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+import java.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +28,7 @@ import javax.xml.bind.Unmarshaller;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +39,7 @@ public class FileHandler {
     private static Logger logger = LoggerFactory.getLogger(FileHandler.class);
     public static final String SAE_HOME = "sae.home";
     private static String homeDir;
-    private static final DateTimeFormatter dateFormatter = DateTimeFormat.forPattern("yyyy-MM-dd");
+    private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     private String getHomeDir() {
         if(homeDir == null) {
@@ -120,7 +119,7 @@ public class FileHandler {
         try {
             Writer writer = new FileWriter(holidayFile);
             for(LocalDate date : holidayWithName.keySet()) {
-                String dateString = dateFormatter.print(date);
+                String dateString = dateFormatter.format(date);
                 String name = holidayWithName.get(date);
                 writer.write(dateString + " " + name + "\n");
             }
@@ -140,7 +139,7 @@ public class FileHandler {
                 List<String> lines = Files.readAllLines(holidayFile.toPath(), StandardCharsets.UTF_8);
                 for(String line : lines) {
                     final String[] lineSegments = line.split("\\s+");
-                    LocalDate holiday = dateFormatter.parseLocalDate(lineSegments[0]);
+                    LocalDate holiday = LocalDate.parse(lineSegments[0], dateFormatter);
                     holidays.add(holiday);
                     logger.debug("Loaded holiday: " + holiday);
                 }
@@ -157,7 +156,7 @@ public class FileHandler {
     }
 
     private File getHolidayFile() {
-        int year = new LocalDate().getYear();
+        int year = LocalDate.now().getYear();
         return new File(getHomeDir(), "Holidays-" + year + ".txt");
     }
 }

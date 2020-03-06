@@ -26,14 +26,14 @@ import de.avanux.smartapplianceenabler.control.ControlStateChangedListener;
 import de.avanux.smartapplianceenabler.http.EVHttpControl;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.modbus.EVModbusControl;
+import de.avanux.smartapplianceenabler.schedule.Interval;
 import de.avanux.smartapplianceenabler.schedule.SocRequest;
 import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
 import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
 import de.avanux.smartapplianceenabler.appliance.ApplianceLifeCycle;
 import de.avanux.smartapplianceenabler.util.Validateable;
-import org.joda.time.Interval;
-import org.joda.time.LocalDateTime;
+import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,7 +69,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     private transient Appliance appliance;
     private transient String applianceId;
     private transient Vector<EVChargerState> stateHistory = new Vector<>();
-    private transient Long stateLastChangedTimestamp;
+    private transient LocalDateTime stateLastChangedTimestamp;
     private transient boolean useOptionalEnergy = true;
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
     private transient Long switchChargingStateTimestamp;
@@ -221,7 +221,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                     getPollInterval() * 1000) {
                 @Override
                 public void runTask() {
-                    updateState(new LocalDateTime());
+                    updateState(LocalDateTime.now());
                 }
             };
             timer.schedule(this.updateStateTimerTask, 0, this.updateStateTimerTask.getPeriod());
@@ -251,7 +251,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         if(currentState != previousState) {
             logger.debug("{}: Vehicle state changed: previousState={} newState={}", applianceId, previousState, currentState);
             stateHistory.add(currentState);
-            stateLastChangedTimestamp = now.toDateTime().getMillis();
+            stateLastChangedTimestamp = now;
             onEVChargerStateChanged(now, previousState, currentState);
         }
         else {
@@ -297,7 +297,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         return false;
     }
 
-    public Long getStateLastChangedTimestamp() {
+    public LocalDateTime getStateLastChangedTimestamp() {
         return stateLastChangedTimestamp;
     }
 
@@ -501,7 +501,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
             chargeEnd = now.plusSeconds(calculateChargeSeconds(getVehicle(evId), energy));
         }
 
-        Interval interval = new Interval(now.toDateTime(), chargeEnd.toDateTime());
+        Interval interval = new Interval(now, chargeEnd);
 
         TimeframeInterval timeframeInterval = new TimeframeInterval(interval, request);
 

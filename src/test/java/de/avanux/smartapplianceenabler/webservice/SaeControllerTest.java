@@ -6,7 +6,7 @@ import de.avanux.smartapplianceenabler.appliance.Appliance;
 import de.avanux.smartapplianceenabler.appliance.ApplianceBuilder;
 import de.avanux.smartapplianceenabler.schedule.*;
 import de.avanux.smartapplianceenabler.util.FileHandler;
-import org.joda.time.LocalDateTime;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
@@ -87,7 +87,7 @@ public class SaeControllerTest {
     public void setup() throws Exception {
         System.setProperty(FileHandler.SAE_HOME, System.getProperty("java.io.tmpdir"));
         this.mockMvc = webAppContextSetup(webApplicationContext).build();
-        this.now = new LocalDateTime();
+        this.now = LocalDateTime.now();
 
         Logger root = (Logger) LoggerFactory.getLogger("de.avanux");
         root.setLevel(Level.DEBUG);

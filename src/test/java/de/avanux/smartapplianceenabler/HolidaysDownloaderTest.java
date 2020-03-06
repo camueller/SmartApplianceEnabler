@@ -17,7 +17,7 @@
  */
 package de.avanux.smartapplianceenabler;
 
-import org.joda.time.LocalDate;
+import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;

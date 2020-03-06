@@ -30,8 +30,7 @@ import de.avanux.smartapplianceenabler.schedule.*;
 import de.avanux.smartapplianceenabler.semp.webservice.Device2EM;
 import de.avanux.smartapplianceenabler.semp.webservice.SempBuilder;
 import de.avanux.smartapplianceenabler.semp.webservice.SempBuilderCall;
-import org.joda.time.Interval;
-import org.joda.time.LocalDateTime;
+import java.time.LocalDateTime;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
@@ -125,7 +124,7 @@ public class ApplianceBuilder {
 
     public ApplianceBuilder withRuntimeRequest(LocalDateTime now, LocalDateTime intervalStart, LocalDateTime intervalEnd,
                                                Integer min, Integer max, boolean enabled) {
-        Interval interval = new Interval(intervalStart.toDateTime(), intervalEnd.toDateTime());
+        Interval interval = new Interval(intervalStart, intervalEnd);
         RuntimeRequest request = new RuntimeRequest(min, max);
         request.setEnabled(enabled);
         TimeframeInterval timeframeInterval = new TimeframeInterval(interval, request);

@@ -17,17 +17,10 @@
  */
 package de.avanux.smartapplianceenabler.schedule;
 
-import de.avanux.smartapplianceenabler.schedule.Schedule;
-import de.avanux.smartapplianceenabler.schedule.TimeOfDayOfWeek;
-import de.avanux.smartapplianceenabler.schedule.Timeframe;
-import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
-import org.joda.time.Interval;
-import org.joda.time.LocalDateTime;
-import org.joda.time.chrono.ISOChronology;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -75,7 +68,7 @@ public class ConsecutiveDaysTimeframe extends AbstractTimeframe implements Timef
                 earliestStartDateTime = start.toLastOccurrence(now);
             }
             LocalDateTime latestEndDateTime = end.toNextOccurrence(earliestStartDateTime);
-            Interval interval = new Interval(earliestStartDateTime.toDateTime(), latestEndDateTime.toDateTime()).withChronology(ISOChronology.getInstance());
+            Interval interval = new Interval(earliestStartDateTime, latestEndDateTime);
             TimeframeInterval timeframeInterval = createTimeframeInterval(interval, schedule);
             return Collections.singletonList(timeframeInterval);
         }

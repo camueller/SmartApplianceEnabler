@@ -22,13 +22,15 @@ import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class TimestampBasedCache<T> implements ApplianceIdConsumer {
 
     private Logger logger = LoggerFactory.getLogger(TimestampBasedCache.class);
     private String name;
-    private TreeMap<Long,T> timestampWithValue = new TreeMap<>();
+    private TreeMap<LocalDateTime,T> timestampWithValue = new TreeMap<>();
     private String applianceId;
     private int maxAgeSeconds;
 
@@ -46,17 +48,15 @@ public class TimestampBasedCache<T> implements ApplianceIdConsumer {
         this.applianceId = applianceId;
     }
 
-    public void addValue(Long timestamp, T value) {
+    public void addValue(LocalDateTime timestamp, T value) {
         // remove expired values
-        Set<Long> expiredTimestamps = new HashSet<Long>();
-        for(Long cachedTimeStamp : timestampWithValue.keySet()) {
-            if(cachedTimeStamp < timestamp - maxAgeSeconds * 1000) {
+        Set<LocalDateTime> expiredTimestamps = new HashSet<LocalDateTime>();
+        timestampWithValue.keySet().forEach(cachedTimeStamp -> {
+            if(Duration.between(cachedTimeStamp, timestamp).toSeconds() > maxAgeSeconds) {
                 expiredTimestamps.add(cachedTimeStamp);
             }
-        }
-        for(Long expiredTimestamp : expiredTimestamps) {
-            timestampWithValue.remove(expiredTimestamp);
-        }
+        });
+        expiredTimestamps.forEach(expiredTimestamp -> timestampWithValue.remove(expiredTimestamp));
         // add new value
         timestampWithValue.put(timestamp, value);
         logger.debug("{}: cache={} added value={} timestamp={}  removed/total: {}/{}",
@@ -81,11 +81,11 @@ public class TimestampBasedCache<T> implements ApplianceIdConsumer {
         if(size() == 0) {
             return null;
         }
-        Vector<Long> keys = new Vector<>(this.timestampWithValue.keySet());
+        Vector<LocalDateTime> keys = new Vector<>(this.timestampWithValue.keySet());
         return this.timestampWithValue.get(keys.lastElement());
     }
 
-    public TreeMap<Long, T> getTimestampWithValue() {
+    public TreeMap<LocalDateTime, T> getTimestampWithValue() {
         return timestampWithValue;
     }
 

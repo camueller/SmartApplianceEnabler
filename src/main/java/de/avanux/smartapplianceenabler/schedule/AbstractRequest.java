@@ -24,8 +24,9 @@ import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.joda.time.Interval;
-import org.joda.time.LocalDateTime;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -145,13 +146,13 @@ abstract public class AbstractRequest implements Request {
     protected int getSecondsSinceStatusChange(LocalDateTime now) {
         try {
             if(controlStatusChangedAt != null && now != null) {
-                Interval runtimeSinceStatusChange = new Interval(controlStatusChangedAt.toDateTime(), now.toDateTime());
-                return Double.valueOf(runtimeSinceStatusChange.toDuration().getMillis() / 1000.0).intValue();
+                return Long.valueOf(
+                        Duration.between(controlStatusChangedAt, LocalDateTime.from(now)).toSeconds()).intValue();
             }
         }
         catch(IllegalArgumentException e) {
-            getLogger().warn("{} Invalid interval: start={} end={}", getApplianceId(), controlStatusChangedAt.toDateTime(),
-                    now.toDateTime());
+            getLogger().warn("{} Invalid interval: start={} end={}", getApplianceId(), controlStatusChangedAt,
+                    now);
         }
         return 0;
     }

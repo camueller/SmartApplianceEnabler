@@ -23,10 +23,9 @@ import de.avanux.smartapplianceenabler.http.*;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolHandler;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolType;
 import de.avanux.smartapplianceenabler.protocol.JsonContentProtocolHandler;
+import de.avanux.smartapplianceenabler.util.Holder;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import de.avanux.smartapplianceenabler.util.Validateable;
-import de.avanux.smartapplianceenabler.util.RegexUtil;
-import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +33,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -216,22 +217,22 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
      * @param timestampWithEnergyValue a collection of timestamp with energy value
      * @return the power values in W
      */
-    protected Vector<Float> calculatePower(TreeMap<Long, Float> timestampWithEnergyValue) {
+    protected Vector<Float> calculatePower(TreeMap<LocalDateTime, Float> timestampWithEnergyValue) {
         Vector<Float> powerValues = new Vector<>();
-        Long previousTimestamp = null;
-        Float previousEnergy = null;
-        for(Long timestamp: timestampWithEnergyValue.keySet()) {
+        final Holder<LocalDateTime> previousTimestamp = new Holder<>(null);
+        final Holder<Float> previousEnergy = new Holder<>(null);
+        timestampWithEnergyValue.keySet().forEach(timestamp -> {
             Float energy = timestampWithEnergyValue.get(timestamp);
-            if(previousTimestamp != null && previousEnergy != null) {
-                long diffTime = timestamp - previousTimestamp;
-                Float diffEnergy = energy - previousEnergy;
+            if(previousTimestamp.value != null && previousEnergy.value != null) {
+                long diffTime = Duration.between(timestamp, previousTimestamp.value).toMillis();
+                float diffEnergy = energy - previousEnergy.value;
                 // diffEnergy kWh * 1000W/kW * 3600000ms/1h / diffTime ms
                 float power = diffEnergy * 1000.0f * 3600000.0f / diffTime;
                 powerValues.add(power > 0 ? power : 0.0f);
             }
-            previousTimestamp = timestamp;
-            previousEnergy = energy;
-        }
+            previousTimestamp.value = timestamp;
+            previousEnergy.value = energy;
+        });
         return powerValues;
     }
 
@@ -252,10 +253,10 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
 
     @Override
     public Float pollEnergy(LocalDateTime now) {
-        return pollEnergy(now.toDateTime().getMillis());
+        return pollEnergy();
     }
 
-    protected float pollEnergy(long timestamp) {
+    protected float pollEnergy() {
         ParentWithChild<HttpRead, HttpReadValue> energyRead = HttpRead.getFirstHttpRead(MeterValueName.Energy.name(), this.httpReads);
         return getValue(energyRead);
     }

@@ -18,8 +18,8 @@
 
 package de.avanux.smartapplianceenabler.schedule;
 
-import de.avanux.smartapplianceenabler.appliance.TimeframeIntervalChangedListener;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import de.avanux.smartapplianceenabler.appliance.TimeframeIntervalChangedListener;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.ControlStateChangedListener;
 import de.avanux.smartapplianceenabler.control.StartingCurrentSwitch;
@@ -28,12 +28,10 @@ import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
 import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
 import de.avanux.smartapplianceenabler.util.Holder;
-import org.joda.time.DateTime;
-import org.joda.time.Interval;
-import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlStateChangedListener {
@@ -74,7 +72,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
             this.fillQueueTimerTask = new GuardedTimerTask(this.applianceId, "FillQueueTimerTask", 1 * 3600 * 1000) {
                 @Override
                 public void runTask() {
-                    fillQueue(new LocalDateTime());
+                    fillQueue(LocalDateTime.now());
                 }
             };
             if (timer != null) {
@@ -85,7 +83,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
                     "UpdateActiveTimeframeInterval", 30000) {
                 @Override
                 public void runTask() {
-                    updateQueue(new LocalDateTime());
+                    updateQueue(LocalDateTime.now());
                 }
             };
             if (timer != null) {
@@ -115,7 +113,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
 
     public void fillQueue(LocalDateTime now) {
         logger.debug("{}: Starting to fill queue", applianceId);
-        Interval considerationInterval = new Interval(now.toDateTime(), now.plusDays(CONSIDERATION_INTERVAL_DAYS).toDateTime());
+        Interval considerationInterval = new Interval(now, now.plusDays(CONSIDERATION_INTERVAL_DAYS));
         TimeframeInterval lastTimeframeInterval = queue.peekLast();
         List<TimeframeInterval> timeframeIntervals = findTimeframeIntervals(now, considerationInterval);
         timeframeIntervals.stream()
@@ -258,8 +256,8 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
             if(activeTimeframeInterval != null) {
                 deactivateTimeframeInterval(now, activeTimeframeInterval);
 
-                DateTime firstIntervalStart = activeTimeframeInterval.getInterval().getStart();
-                DateTime addedIntervalEnd = timeframeInterval.getInterval().getEnd();
+                LocalDateTime firstIntervalStart = activeTimeframeInterval.getInterval().getStart();
+                LocalDateTime addedIntervalEnd = timeframeInterval.getInterval().getEnd();
                 if(firstIntervalStart.isEqual(addedIntervalEnd) || firstIntervalStart.isBefore(addedIntervalEnd)) {
                     Interval firstIntervalAdjusted = new Interval(addedIntervalEnd.plusSeconds(1),
                             activeTimeframeInterval.getInterval().getEnd());
@@ -356,8 +354,8 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
     private Interval createOptionalEnergyIntervalForEVCharger(LocalDateTime now,
                                                               TimeframeInterval predecessor,
                                                               TimeframeInterval successor) {
-        DateTime timeframeStart = now.toDateTime();
-        DateTime timeframeEnd = timeframeStart.plusDays(CONSIDERATION_INTERVAL_DAYS);
+        LocalDateTime timeframeStart = LocalDateTime.from(now);
+        LocalDateTime timeframeEnd = timeframeStart.plusDays(CONSIDERATION_INTERVAL_DAYS);
         if(predecessor != null) {
             timeframeStart = predecessor.getInterval().getEnd().plusSeconds(1);
         }

@@ -23,7 +23,7 @@ import de.avanux.smartapplianceenabler.appliance.TimeframeIntervalChangedListene
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.ControlStateChangedListener;
 import de.avanux.smartapplianceenabler.meter.Meter;
-import org.joda.time.LocalDateTime;
+import java.time.LocalDateTime;
 
 import java.io.Serializable;
 

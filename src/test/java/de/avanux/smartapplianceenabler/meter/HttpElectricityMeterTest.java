@@ -24,7 +24,7 @@ import de.avanux.smartapplianceenabler.http.HttpTransactionExecutor;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolType;
 import de.avanux.smartapplianceenabler.http.HttpRead;
 import de.avanux.smartapplianceenabler.http.HttpReadValue;
-import org.joda.time.LocalDateTime;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -85,15 +85,15 @@ public class HttpElectricityMeterTest extends TestBase {
         energyReadSpy.setReadValues(Collections.singletonList(powerReadValue));
         meter.setHttpReads(Collections.singletonList(energyReadSpy));
 
-        meter.start(new LocalDateTime(), null);
+        meter.start(LocalDateTime.now(), null);
 
-        long timestamp = 1 * 60 * 60 * 1000;
+        LocalDateTime timestamp = LocalDateTime.now().plusHours(1);
         String response = goEChargerStatus.replace((CharSequence) "dws\":\"0", (CharSequence) "dws\":\"2500");
         Mockito.doReturn(response).when(executorMock).execute(Mockito.any(), Mockito.any(), Mockito.any());
         meter.getPollEnergyMeter().addValue(timestamp); // simulate timer task
         meter.getPollPowerMeter().addValue(timestamp, meter); // simulate timer task
 
-        timestamp = 2 * 60 * 60 * 1000;
+        timestamp = LocalDateTime.now().plusHours(2);
         response = goEChargerStatus.replace((CharSequence) "dws\":\"0", (CharSequence) "dws\":\"5900");
         Mockito.doReturn(response).when(executorMock).execute(Mockito.any(), Mockito.any(), Mockito.any());
         meter.getPollEnergyMeter().addValue(timestamp); // simulate timer task
@@ -130,9 +130,10 @@ public class HttpElectricityMeterTest extends TestBase {
 
     @Test
     public void calculatePower_2energyValues() {
-        TreeMap<Long, Float> energyValues = new TreeMap<>();
-        energyValues.put(Long.valueOf(1 * 60 * 60 * 1000), 5.0f); // after 1h: 5 kWh
-        energyValues.put(Long.valueOf(2 * 60 * 60 * 1000), 8.0f); // after 2h: 8 kWh
+        TreeMap<LocalDateTime, Float> energyValues = new TreeMap<>();
+        LocalDateTime now = LocalDateTime.now();
+        energyValues.put(now.plusHours(1), 5.0f); // after 1h: 5 kWh
+        energyValues.put(now.plusHours(2), 8.0f); // after 2h: 8 kWh
 
         List<Float> powerValues = this.meter.calculatePower(energyValues);
         assertEquals(1, powerValues.size());
@@ -141,11 +142,12 @@ public class HttpElectricityMeterTest extends TestBase {
 
     @Test
     public void calculatePower_4energyValues() {
-        TreeMap<Long, Float> energyValues = new TreeMap<>();
-        energyValues.put(Long.valueOf(1 * 60 * 60 * 1000), 5.0f);  // after 1h: 5 kWh
-        energyValues.put(Long.valueOf(2 * 60 * 60 * 1000), 8.0f);  // after 2h: 8 kWh
-        energyValues.put(Long.valueOf(3 * 60 * 60 * 1000), 12.0f); // after 3h: 12 kWh
-        energyValues.put(Long.valueOf(4 * 60 * 60 * 1000), 17.0f); // after 4h: 17 kWh
+        TreeMap<LocalDateTime, Float> energyValues = new TreeMap<>();
+        LocalDateTime now = LocalDateTime.now();
+        energyValues.put(now.plusHours(1), 5.0f);  // after 1h: 5 kWh
+        energyValues.put(now.plusHours(2), 8.0f);  // after 2h: 8 kWh
+        energyValues.put(now.plusHours(3), 12.0f); // after 3h: 12 kWh
+        energyValues.put(now.plusHours(4), 17.0f); // after 4h: 17 kWh
 
         List<Float> powerValues = this.meter.calculatePower(energyValues);
         assertEquals(3, powerValues.size());
@@ -156,9 +158,10 @@ public class HttpElectricityMeterTest extends TestBase {
 
     @Test
     public void calculatePower_afterReset() {
-        TreeMap<Long, Float> energyValues = new TreeMap<>();
-        energyValues.put(Long.valueOf(1 * 60 * 60 * 1000), 5.0f); // after 1h: 5 kWh
-        energyValues.put(Long.valueOf(1 * 60 * 60 * 1000 + 10), 0.0f); // after 1h and 10s: 0 kWh
+        TreeMap<LocalDateTime, Float> energyValues = new TreeMap<>();
+        LocalDateTime now = LocalDateTime.now();
+        energyValues.put(now.plusHours(1), 5.0f); // after 1h: 5 kWh
+        energyValues.put(now.plusHours(1).plusSeconds(10), 0.0f); // after 1h and 10s: 0 kWh
 
         List<Float> powerValues = this.meter.calculatePower(energyValues);
         assertEquals(1, powerValues.size());

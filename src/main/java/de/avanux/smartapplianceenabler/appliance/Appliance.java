@@ -33,8 +33,8 @@ import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
 import de.avanux.smartapplianceenabler.schedule.*;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
 import de.avanux.smartapplianceenabler.util.Validateable;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,7 +91,7 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
     public void deleteMeter() {
         logger.debug("{}: Delete meter", id);
         if(meter != null) {
-            meter.stop(new LocalDateTime());
+            meter.stop(LocalDateTime.now());
         }
         setMeter(null);
     }
@@ -118,7 +118,7 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
     public void deleteControl() {
         logger.debug("{}: Delete control", id);
         if(control != null) {
-            control.stop(new LocalDateTime());
+            control.stop(LocalDateTime.now());
         }
         setControl(null);
     }
@@ -230,7 +230,7 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
 
     public void start(Timer timer) {
         logger.info("{}: Starting appliance", id);
-        LocalDateTime now = new LocalDateTime();
+        LocalDateTime now = LocalDateTime.now();
         if(timeframeIntervalHandler != null) {
             timeframeIntervalHandler.setTimer(timer);
         }
@@ -240,7 +240,7 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
         }
         if(control != null) {
             logger.info("{}: Starting {}", id, control.getClass().getSimpleName());
-            control.start(new LocalDateTime(), timer);
+            control.start(LocalDateTime.now(), timer);
             logger.info("{}: Switch off appliance initially", id);
             control.on(now, false);
         }
@@ -248,7 +248,7 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
 
     public void stop() {
         logger.info("{}: Stopping appliance ...", id);
-        LocalDateTime now = new LocalDateTime();
+        LocalDateTime now = LocalDateTime.now();
         if(control != null) {
             logger.info("{}: Stopping {}", id, control.getClass().getSimpleName());
             control.stop(now);

@@ -21,9 +21,9 @@ import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.joda.time.DateTime;
-import org.joda.time.Interval;
-import org.joda.time.LocalDateTime;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,7 +89,7 @@ public class TimeframeInterval implements ApplianceIdConsumer, TimeframeInterval
 
     public boolean isActivatable(LocalDateTime now) {
         return getState() == TimeframeIntervalState.QUEUED
-                && (now.toDateTime().isEqual(getInterval().getStart()) || now.toDateTime().isAfter(getInterval().getStart()))
+                && (now.isEqual(getInterval().getStart()) || now.isAfter(getInterval().getStart()))
                 && (!(request instanceof RuntimeRequest) || isIntervalSufficient(now)
         );
     }
@@ -97,7 +97,7 @@ public class TimeframeInterval implements ApplianceIdConsumer, TimeframeInterval
     public boolean isDeactivatable(LocalDateTime now) {
         return getState() == TimeframeIntervalState.ACTIVE
                 && (
-                       now.toDateTime().isAfter(getInterval().getEnd())
+                       now.isAfter(getInterval().getEnd())
                     || request.isFinished(now)
                     || (request instanceof RuntimeRequest && ((RuntimeRequest) request).hasStartingCurrentSwitch()
                                 && !((RuntimeRequest) request).getControl().isOn() && !isIntervalSufficient(now))
@@ -111,7 +111,7 @@ public class TimeframeInterval implements ApplianceIdConsumer, TimeframeInterval
                 getState() == TimeframeIntervalState.EXPIRED
                 || (
                         getState() == TimeframeIntervalState.QUEUED
-                        && (now.toDateTime().isAfter(getInterval().getEnd()) || getRequest().isFinished(now))
+                        && (now.isAfter(getInterval().getEnd()) || getRequest().isFinished(now))
                 )
             )
             && ! getRequest().isControlOn()
@@ -126,33 +126,31 @@ public class TimeframeInterval implements ApplianceIdConsumer, TimeframeInterval
 
     public boolean isProlongable(LocalDateTime now) {
         return getState() == TimeframeIntervalState.ACTIVE
-                && (now.toDateTime().isAfter(getInterval().getEnd())
+                && (now.isAfter(getInterval().getEnd())
                 && (request instanceof OptionalEnergySocRequest)
                 && ! request.isFinished(now)
         );
     }
 
     public boolean isIntervalSufficient(LocalDateTime now) {
-        LocalDateTime latestStart = getLatestStart(now, new LocalDateTime(interval.getEnd()), getRequest().getMax(now));
+        LocalDateTime latestStart = getLatestStart(now, LocalDateTime.from(interval.getEnd()), getRequest().getMax(now));
         return now.isEqual(latestStart) || now.isBefore(latestStart);
     }
 
     public Integer getEarliestStartSeconds(LocalDateTime now) {
         Integer earliestStart = 0;
-        if(interval.getStart().isAfter(now.toDateTime())) {
-            earliestStart = Double.valueOf(
-                    new Interval(now.toDateTime(), interval.getStart()).toDurationMillis() / 1000.0).intValue();
+        if(interval.getStart().isAfter(now)) {
+            earliestStart = Long.valueOf(Duration.between(now, interval.getStart()).toSeconds()).intValue();
         }
         return earliestStart;
     }
 
     public Integer getLatestEndSeconds(LocalDateTime now) {
-        LocalDateTime nowBeforeEnd = new LocalDateTime(now);
-        if(now.toDateTime().isAfter(interval.getEnd())) {
+        LocalDateTime nowBeforeEnd = LocalDateTime.from(now);
+        if(now.isAfter(interval.getEnd())) {
             nowBeforeEnd = now.minusHours(24);
         }
-        return Double.valueOf(
-                new Interval(nowBeforeEnd.toDateTime(), interval.getEnd()).toDurationMillis() / 1000.0).intValue();
+        return Long.valueOf(Duration.between(nowBeforeEnd, interval.getEnd()).toSeconds()).intValue();
     }
 
     public static LocalDateTime getLatestStart(LocalDateTime now, LocalDateTime intervalEnd, Integer maxRunningTime) {
@@ -165,11 +163,9 @@ public class TimeframeInterval implements ApplianceIdConsumer, TimeframeInterval
      * null if input values are null or latest start would be in the past
      */
     public Integer getLatestStartSeconds(LocalDateTime now) {
-        DateTime latestStart = interval.getEnd().minusSeconds(getRequest().getMax(now));
-        if(now.toDateTime().isBefore(latestStart)) {
-            return Double.valueOf(
-                    new Interval(now.toDateTime(), latestStart)
-                            .toDurationMillis() / 1000.0).intValue();
+        LocalDateTime latestStart = interval.getEnd().minusSeconds(getRequest().getMax(now));
+        if(now.isBefore(latestStart)) {
+            return Long.valueOf(Duration.between(now, latestStart).toSeconds()).intValue();
         }
         return null;
     }
@@ -200,7 +196,7 @@ public class TimeframeInterval implements ApplianceIdConsumer, TimeframeInterval
 
     @Override
     public String toString() {
-        return toString(new LocalDateTime());
+        return toString(LocalDateTime.now());
     }
 
     public String toString(LocalDateTime now) {
