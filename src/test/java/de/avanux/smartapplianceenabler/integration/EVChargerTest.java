@@ -36,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -44,6 +45,7 @@ import static org.mockito.Mockito.never;
 public class EVChargerTest extends TestBase {
 
     private Logger logger = LoggerFactory.getLogger(EVChargerTest.class);
+    private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_DATE_TIME;
     private DateTimeProvider dateTimeProvider = Mockito.mock(DateTimeProvider.class);
     private EVChargerControl evChargerControl = Mockito.mock(EVChargerControl.class);
     private Meter meter = Mockito.mock(Meter.class);
@@ -525,6 +527,6 @@ public class EVChargerTest extends TestBase {
     }
 
     private void log(String message, LocalDateTime now) {
-        logger.debug("*********** " + message + " - " + now);
+        logger.debug("*********** " + message + " - " + dateTimeFormatter.format(now));
     }
 }

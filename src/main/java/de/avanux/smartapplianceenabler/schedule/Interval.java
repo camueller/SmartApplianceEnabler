@@ -44,7 +44,7 @@ public class Interval {
 
     public boolean contains(LocalDateTime instant) {
         if(start != null && end != null && instant != null) {
-            return instant.isAfter(start) && instant.isBefore(end);
+            return (instant.isEqual(start) || instant.isAfter(start)) && (instant.isEqual(end) || instant.isBefore(end));
         }
         return false;
     }

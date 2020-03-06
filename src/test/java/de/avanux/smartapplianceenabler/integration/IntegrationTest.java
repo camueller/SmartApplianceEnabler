@@ -37,6 +37,7 @@ import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +46,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class IntegrationTest extends TestBase {
 
     private Logger logger = LoggerFactory.getLogger(IntegrationTest.class);
+    private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_DATE_TIME;
     private SaeController saeController = new SaeController();
     private SempController sempController = new SempController();
     String applianceId = "F-001";
@@ -69,11 +71,13 @@ public class IntegrationTest extends TestBase {
         log("Check initial values", timeInitial);
         tick(appliance, timeInitial);
         assertFalse(control.isOn());
-        assertEquals(2, timeframeIntervalHandler.getQueue().size());
+        assertEquals(3, timeframeIntervalHandler.getQueue().size());
         assertTimeframeIntervalRuntime(toIntervalToday(10, 0, 0, 18, 0, 0),
                 TimeframeIntervalState.ACTIVE, null, maxRuntime, true, timeframeIntervalHandler.getQueue().get(0));
         assertTimeframeIntervalRuntime(toIntervalTomorrow(10, 0, 0, 18, 0, 0),
                 TimeframeIntervalState.QUEUED, null, maxRuntime, true, timeframeIntervalHandler.getQueue().get(1));
+        assertTimeframeIntervalRuntime(toIntervalDayAfterTomorrow(10, 0, 0, 18, 0, 0),
+                TimeframeIntervalState.QUEUED, null, maxRuntime, true, timeframeIntervalHandler.getQueue().get(2));
         assertPlanningRequest(timeInitial,
                 new Timeframe(applianceId,0,
                         toSecondsFromNow(timeInitial, 0, 18, 0, 0),
@@ -81,6 +85,10 @@ public class IntegrationTest extends TestBase {
                 new Timeframe(applianceId,
                         toSecondsFromNow(timeInitial, 1, 10, 0, 0),
                         toSecondsFromNow(timeInitial, 1, 18, 0, 0),
+                        7199, 7200),
+                new Timeframe(applianceId,
+                        toSecondsFromNow(timeInitial, 2, 10, 0, 0),
+                        toSecondsFromNow(timeInitial, 2, 18, 0, 0),
                         7199, 7200)
         );
 
@@ -98,6 +106,10 @@ public class IntegrationTest extends TestBase {
                 new Timeframe(applianceId,
                         toSecondsFromNow(timeSwitchOn, 1, 10, 0, 0),
                         toSecondsFromNow(timeSwitchOn, 1, 18, 0, 0),
+                        7199, 7200),
+                new Timeframe(applianceId,
+                        toSecondsFromNow(timeSwitchOn, 2, 10, 0, 0),
+                        toSecondsFromNow(timeSwitchOn, 2, 18, 0, 0),
                         7199, 7200)
         );
 
@@ -112,6 +124,10 @@ public class IntegrationTest extends TestBase {
                 new Timeframe(applianceId,
                         toSecondsFromNow(timeSwitchOff, 1, 10, 0, 0),
                         toSecondsFromNow(timeSwitchOff, 1, 18, 0, 0),
+                        7199, 7200),
+                new Timeframe(applianceId,
+                        toSecondsFromNow(timeSwitchOff, 2, 10, 0, 0),
+                        toSecondsFromNow(timeSwitchOff, 2, 18, 0, 0),
                         7199, 7200)
         );
         assertFalse(getApplianceStatus(timeSwitchOff).isOn());
@@ -125,11 +141,13 @@ public class IntegrationTest extends TestBase {
         tick(appliance, timeSwitchOn);
         log("Check values after switch on", timeSwitchOn);
         assertTrue(control.isOn());
-        assertEquals(2, timeframeIntervalHandler.getQueue().size());
+        assertEquals(3, timeframeIntervalHandler.getQueue().size());
         assertTimeframeIntervalRuntime(toIntervalToday(10, 0, 0, 18, 0, 0),
                 TimeframeIntervalState.ACTIVE, null, maxRuntime, true, timeframeIntervalHandler.getQueue().get(0));
         assertTimeframeIntervalRuntime(toIntervalTomorrow(10, 0, 0, 18, 0, 0),
                 TimeframeIntervalState.QUEUED, null, maxRuntime, true, timeframeIntervalHandler.getQueue().get(1));
+        assertTimeframeIntervalRuntime(toIntervalDayAfterTomorrow(10, 0, 0, 18, 0, 0),
+                TimeframeIntervalState.QUEUED, null, maxRuntime, true, timeframeIntervalHandler.getQueue().get(2));
         assertTrue(getApplianceStatus(timeSwitchOn).isOn());
 
         timeSwitchOff = toToday(17, 0, 0);
@@ -140,6 +158,10 @@ public class IntegrationTest extends TestBase {
                 new Timeframe(applianceId,
                         toSecondsFromNow(timeSwitchOff, 1, 10, 0, 0),
                         toSecondsFromNow(timeSwitchOff, 1, 18, 0, 0),
+                        7199, 7200),
+                new Timeframe(applianceId,
+                        toSecondsFromNow(timeSwitchOff, 2, 10, 0, 0),
+                        toSecondsFromNow(timeSwitchOff, 2, 18, 0, 0),
                         7199, 7200)
         );
         assertFalse(getApplianceStatus(timeSwitchOff).isOn());
@@ -439,7 +461,7 @@ public class IntegrationTest extends TestBase {
         assertTrue(getApplianceStatus(timeSwitchOn).isOn());
 
         LocalDateTime timeBeforeTimeframeEnd = toToday(17, 59, 0);
-        log("No timeframe should exist after timeframe end", timeBeforeTimeframeEnd);
+        log("The timeframe should exist right before timeframe end", timeBeforeTimeframeEnd);
         tick(appliance, timeBeforeTimeframeEnd);
         assertTimeframeIntervalRuntime(toIntervalToday(10, 0, 0, 18, 0, 0),
                 TimeframeIntervalState.ACTIVE, null, maxRuntime, true, timeframeIntervalHandler.getQueue().get(0));
@@ -497,7 +519,7 @@ public class IntegrationTest extends TestBase {
     }
 
     private void log(String message, LocalDateTime now) {
-        logger.debug("*********** " + message + " - " + now);
+        logger.debug("*********** " + message + " - " + dateTimeFormatter.format(now));
     }
 
     private ApplianceStatus getApplianceStatus(LocalDateTime now) {

@@ -219,20 +219,20 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
      */
     protected Vector<Float> calculatePower(TreeMap<LocalDateTime, Float> timestampWithEnergyValue) {
         Vector<Float> powerValues = new Vector<>();
-        final Holder<LocalDateTime> previousTimestamp = new Holder<>(null);
-        final Holder<Float> previousEnergy = new Holder<>(null);
-        timestampWithEnergyValue.keySet().forEach(timestamp -> {
+        LocalDateTime previousTimestamp = null;
+        Float previousEnergy = null;
+        for(LocalDateTime timestamp: timestampWithEnergyValue.keySet()) {
             Float energy = timestampWithEnergyValue.get(timestamp);
-            if(previousTimestamp.value != null && previousEnergy.value != null) {
-                long diffTime = Duration.between(timestamp, previousTimestamp.value).toMillis();
-                float diffEnergy = energy - previousEnergy.value;
-                // diffEnergy kWh * 1000W/kW * 3600000ms/1h / diffTime ms
-                float power = diffEnergy * 1000.0f * 3600000.0f / diffTime;
+            if(previousTimestamp != null && previousEnergy != null) {
+                long diffTime = Duration.between(previousTimestamp, timestamp).toSeconds();
+                Float diffEnergy = energy - previousEnergy;
+                // diffEnergy kWh * 1000W/kW * 3600s/1h / diffTime ms
+                float power = diffEnergy * 1000.0f * 3600.0f / diffTime;
                 powerValues.add(power > 0 ? power : 0.0f);
             }
-            previousTimestamp.value = timestamp;
-            previousEnergy.value = energy;
-        });
+            previousTimestamp = timestamp;
+            previousEnergy = energy;
+        }
         return powerValues;
     }
 
