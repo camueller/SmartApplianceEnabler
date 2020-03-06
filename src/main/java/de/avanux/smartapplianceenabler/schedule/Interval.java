@@ -22,10 +22,12 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Interval {
     private LocalDateTime start;
     private LocalDateTime end;
+    private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_DATE_TIME;
 
     public Interval(LocalDateTime start, LocalDateTime end) {
         this.start = start;
@@ -67,5 +69,10 @@ public class Interval {
                 .append(start)
                 .append(end)
                 .toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return dateTimeFormatter.format(start) + "/" + dateTimeFormatter.format(end);
     }
 }
