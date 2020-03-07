@@ -37,6 +37,7 @@ abstract public class AbstractRequest implements Request {
     private transient String applianceId;
     private transient Meter meter;
     private transient Control control;
+    private transient boolean next;
     private transient boolean enabled;
     private transient boolean enabledBefore;
     private transient int runtimeUntilLastStatusChange;
@@ -78,6 +79,16 @@ abstract public class AbstractRequest implements Request {
 
     public void setTimeframeIntervalStateProvider(TimeframeIntervalStateProvider timeframeIntervalStateProvider) {
         this.timeframeIntervalStateProvider = timeframeIntervalStateProvider;
+    }
+
+    @Override
+    public boolean isNext() {
+        return next;
+    }
+
+    @Override
+    public void setNext(boolean next) {
+        this.next = next;
     }
 
     @Override

@@ -189,6 +189,10 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
         Optional<TimeframeInterval> removableTimeframeInterval = getRemovableTimeframeInterval(now);
         removableTimeframeInterval.ifPresent(timeframeInterval -> removeTimeframeInterval(now, timeframeInterval));
 
+        for(int i=0; i<queue.size(); i++) {
+            queue.get(i).getRequest().setNext(i == 0);
+        }
+
         if(deactivatableTimeframeInterval.isPresent()
                 || activatableTimeframeInterval.isPresent()
                 || removableTimeframeInterval.isPresent()) {
