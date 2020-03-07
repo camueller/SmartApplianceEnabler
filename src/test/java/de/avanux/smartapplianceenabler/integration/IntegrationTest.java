@@ -56,7 +56,7 @@ public class IntegrationTest extends TestBase {
     }
 
     @Test
-    public void testSwitchOnAndOff() {
+    public void switchOnAndOff() {
         int maxRuntime = 7200;
         LocalDateTime timeInitial = toToday(10, 0, 0);
         Appliance appliance = new ApplianceBuilder(applianceId)
@@ -168,7 +168,7 @@ public class IntegrationTest extends TestBase {
     }
 
     @Test
-    public void testClickGoLight() {
+    public void clickGoLight() {
         int maxRuntimeSet = 1800;
         int maxRuntimeSchedule = 3600;
         LocalDateTime timeInitial = toToday(11, 0, 0);
@@ -244,7 +244,7 @@ public class IntegrationTest extends TestBase {
     }
 
     @Test
-    public void testClickGoLight_scheduledTimeframeIntervalBeginsDuringManualTimeframeInterval() {
+    public void clickGoLight_scheduledTimeframeIntervalBeginsDuringManualTimeframeInterval() {
         int maxRuntime = 3600;
         LocalDateTime timeInitial = toToday(9, 30, 0);
         Appliance appliance = new ApplianceBuilder(applianceId)
@@ -324,7 +324,7 @@ public class IntegrationTest extends TestBase {
     }
 
     @Test
-    public void testSwitchOnAndOff_startingCurrentDetectedDuringTimeframeInterval() {
+    public void startingCurrentDetectedSwitchOnAndOff_startingCurrentDetectedSwitchOnAndOff() {
         int maxRuntime = 3600;
         LocalDateTime timeInitial = toToday(11, 0, 0);
         Appliance appliance = new ApplianceBuilder(applianceId)
@@ -419,7 +419,7 @@ public class IntegrationTest extends TestBase {
     }
 
     @Test
-    public void testSwitchOn_timeframeIntervalJustSufficient() {
+    public void startingCurrentDetected_TimeframeIntervalSufficient() {
         int maxRuntime = 3600;
         LocalDateTime timeInitial = toToday(11, 0, 0);
         Appliance appliance = new ApplianceBuilder(applianceId)
@@ -484,7 +484,7 @@ public class IntegrationTest extends TestBase {
     }
 
     @Test
-    public void testNoSwitchOn_startingCurrentDetectedDuringTimeframeInterval() {
+    public void startingCurrentDetected_TimeframeIntervalInsufficient() {
         int maxRuntime = 3600;
         LocalDateTime timeInitial = toToday(11, 29, 0);
         Appliance appliance = new ApplianceBuilder(applianceId)
@@ -514,7 +514,7 @@ public class IntegrationTest extends TestBase {
         control.detectStartingCurrent(timeStartingCurrent, meter);
         tick(appliance, timeStartingCurrent);
         assertTimeframeIntervalRuntime(toIntervalTomorrow(10, 0, 0, 13, 0, 0),
-                TimeframeIntervalState.QUEUED, null, maxRuntime, false, timeframeIntervalHandler.getQueue().get(0));
+                TimeframeIntervalState.QUEUED, null, maxRuntime, true, timeframeIntervalHandler.getQueue().get(0));
     }
 
     private void log(String message, LocalDateTime now) {
