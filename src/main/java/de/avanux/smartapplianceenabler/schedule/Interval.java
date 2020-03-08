@@ -27,7 +27,7 @@ import java.time.format.DateTimeFormatter;
 public class Interval {
     private LocalDateTime start;
     private LocalDateTime end;
-    private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_DATE_TIME;
+    private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
     public Interval(LocalDateTime start, LocalDateTime end) {
         this.start = start;
