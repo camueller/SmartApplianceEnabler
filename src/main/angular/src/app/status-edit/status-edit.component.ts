@@ -42,6 +42,8 @@ export class StatusEditComponent implements OnInit, AfterViewChecked {
   @Input()
   applianceId: string;
   @Output()
+  beforeFormSubmit = new EventEmitter<any>();
+  @Output()
   formSubmitted = new EventEmitter<any>();
   switchOnForm: FormGroup;
   initializeOnceAfterViewChecked = false;
@@ -73,6 +75,7 @@ export class StatusEditComponent implements OnInit, AfterViewChecked {
   }
 
   submitForm() {
+    this.beforeFormSubmit.emit();
     const switchOnRunningTime = this.switchOnForm.value.switchOnRunningTime;
     const seconds = TimeUtil.toSeconds(switchOnRunningTime);
     this.statusService.setRuntime(this.applianceId, seconds).subscribe();

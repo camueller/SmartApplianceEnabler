@@ -20,13 +20,14 @@ export class StatusComponent implements OnInit, OnDestroy {
   loadApplianceStatusesSubscription: Subscription;
   applianceIdClicked: string;
   trafficLightClicked: TrafficLight;
+  showLoadingIndicator: boolean;
 
   constructor(private statusService: StatusService,
               private controlService: ControlService,
               private translate: TranslateService) {
   }
 
-  ngOnInit()  {
+  ngOnInit() {
     DaysOfWeek.getDows(this.translate).subscribe(dows => this.dows = dows);
     this.loadApplianceStatuses();
     this.loadApplianceStatusesSubscription = interval(60 * 1000)
@@ -37,7 +38,7 @@ export class StatusComponent implements OnInit, OnDestroy {
     this.loadApplianceStatusesSubscription.unsubscribe();
   }
 
-  loadApplianceStatuses() {
+  loadApplianceStatuses(loadingCompletedFunction?: () => {}) {
     this.statusService.getStatus().subscribe(applianceStatuses => {
       this.applianceStatuses = applianceStatuses.filter(applianceStatus => applianceStatus.controllable);
 
@@ -46,6 +47,8 @@ export class StatusComponent implements OnInit, OnDestroy {
       if (types.length > 0) {
         this.translate.get(types).subscribe(translatedTypes => this.translatedTypes = translatedTypes);
       }
+
+      loadingCompletedFunction();
     });
   }
 
@@ -100,9 +103,11 @@ export class StatusComponent implements OnInit, OnDestroy {
   }
 
   onClickStopLight(applianceId: string) {
-    // at the end of each timeframe interval acceptControlRecommendations=true is set
-    this.statusService.toggleAppliance(applianceId, false).subscribe(() => this.loadApplianceStatuses());
-    this.statusService.setAcceptControlRecommendations(applianceId, false).subscribe();
+    this.showLoadingIndicator = true;
+    this.statusService.toggleAppliance(applianceId, false).subscribe(() => {
+      this.statusService.setAcceptControlRecommendations(applianceId, false).subscribe();
+      this.loadApplianceStatuses(() => this.showLoadingIndicator = false);
+    });
   }
 
   /**
@@ -110,7 +115,7 @@ export class StatusComponent implements OnInit, OnDestroy {
    * @param {string} applianceId
    */
   onClickGoLight(applianceId: string) {
-    const status = this.getApplianceStatus(applianceId)
+    const status = this.getApplianceStatus(applianceId);
     // backend returns "null" if not interrupted but may return "0" right after interruption.
     if (status.interruptedSince != null) {
       // only switch on again
@@ -123,9 +128,13 @@ export class StatusComponent implements OnInit, OnDestroy {
     }
   }
 
+  onBeforeFormSubmit() {
+    this.showLoadingIndicator = true;
+  }
+
   onFormSubmitted() {
     this.trafficLightClicked = undefined;
     this.applianceIdClicked = null;
-    this.loadApplianceStatuses();
+    this.loadApplianceStatuses(() => this.showLoadingIndicator = false);
   }
 }

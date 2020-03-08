@@ -60,6 +60,8 @@ export class StatusEvchargerEditComponent implements OnInit, AfterViewChecked, O
   @Input()
   dows: DayOfWeek[] = [];
   @Output()
+  beforeFormSubmit = new EventEmitter<any>();
+  @Output()
   formSubmitted = new EventEmitter<any>();
   startChargeForm: FormGroup;
   initializeOnceAfterViewChecked = false;
@@ -127,6 +129,7 @@ export class StatusEvchargerEditComponent implements OnInit, AfterViewChecked, O
   }
 
   submitForm() {
+    this.beforeFormSubmit.emit();
     const evid = this.startChargeForm.value.electricVehicle;
     const socCurrent = this.startChargeForm.value.stateOfChargeCurrent;
     const socRequested = this.startChargeForm.value.stateOfChargeRequested;
