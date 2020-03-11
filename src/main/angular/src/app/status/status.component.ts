@@ -1,12 +1,13 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, QueryList, ViewChildren} from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
 import {Status} from './status';
-import {interval, Subscription, Subject} from 'rxjs';
+import {interval, Subject, Subscription} from 'rxjs';
 import {StatusService} from './status.service';
 import {DayOfWeek, DaysOfWeek} from '../shared/days-of-week';
 import {ControlService} from '../control/control-service';
 import {TrafficLightState} from '../traffic-light/traffic-light-state';
 import {TrafficLightClick} from '../traffic-light/traffic-light-click';
+import {TrafficLightComponent} from '../traffic-light/traffic-light.component';
 
 @Component({
   selector: 'app-status',
@@ -14,30 +15,33 @@ import {TrafficLightClick} from '../traffic-light/traffic-light-click';
   styleUrls: ['./status.component.css', '../global.css']
 })
 export class StatusComponent implements OnInit, OnDestroy {
-  applianceStatuses: Status[] = [];
-  typePrefix = 'ApplianceComponent.type.';
-  translatedTypes = {};
-  dows: DayOfWeek[] = [];
-  loadApplianceStatusesSubscription: Subscription;
-  applianceIdClicked: string;
 
   constructor(private statusService: StatusService,
               private controlService: ControlService,
               private translate: TranslateService) {
   }
+  applianceStatuses: Status[] = [];
+  typePrefix = 'ApplianceComponent.type.';
+  translatedTypes = {};
+  dows: DayOfWeek[] = [];
+  loadApplianceStatusesSubscription: Subscription;
+  @ViewChildren('trafficLights')
+  trafficLightComps: QueryList<TrafficLightComponent>;
+  applianceIdClicked: string;
+  editMode = false;
 
   ngOnInit() {
     DaysOfWeek.getDows(this.translate).subscribe(dows => this.dows = dows);
-    this.loadApplianceStatuses();
+    this.loadApplianceStatuses(() => {});
     this.loadApplianceStatusesSubscription = interval(60 * 1000)
-      .subscribe(() => this.loadApplianceStatuses());
+      .subscribe(() => this.loadApplianceStatuses(() => {}));
   }
 
   ngOnDestroy() {
     this.loadApplianceStatusesSubscription.unsubscribe();
   }
 
-  loadApplianceStatuses() {
+  loadApplianceStatuses(onComplete: () => void) {
     this.statusService.getStatus().subscribe(applianceStatuses => {
       this.applianceStatuses = applianceStatuses.filter(applianceStatus => applianceStatus.controllable);
 
@@ -46,11 +50,8 @@ export class StatusComponent implements OnInit, OnDestroy {
       if (types.length > 0) {
         this.translate.get(types).subscribe(translatedTypes => this.translatedTypes = translatedTypes);
       }
+      onComplete();
     });
-  }
-
-  getApplianceStatus(applianceId: string): Status {
-    return this.applianceStatuses.filter(applianceStatus => applianceStatus.id === applianceId)[0];
   }
 
   getTrafficLightStateHandler(applianceStatus: Status): TrafficLightState {
@@ -75,16 +76,17 @@ export class StatusComponent implements OnInit, OnDestroy {
 
   getTrafficLightClickHandler(applianceStatus: Status): TrafficLightClick {
     const stateHandler = this.getTrafficLightStateHandler(applianceStatus);
+    const this_ = this;
     return {
       isRedClickable(): boolean {
         return ! stateHandler.isRed();
       },
 
-      onRedClicked(applianceId: string, onActionCompleted: Subject<any>) {
-        this.applianceIdClicked = applianceId;
-        this.statusService.toggleAppliance(applianceId, false).subscribe(() => {
-          this.statusService.setAcceptControlRecommendations(applianceId, false).subscribe();
-          this.loadApplianceStatuses(() => this.showLoadingIndicator = false);
+      onRedClicked(status: Status, onActionCompleted: Subject<any>) {
+        this_.applianceIdClicked = status.id;
+        this_.statusService.toggleAppliance(status.id, false).subscribe(() => {
+          this_.statusService.setAcceptControlRecommendations(status.id, false).subscribe();
+          this_.loadApplianceStatuses(() => {});
           onActionCompleted.next();
         });
       },
@@ -93,24 +95,31 @@ export class StatusComponent implements OnInit, OnDestroy {
         return ! stateHandler.isGreen();
       },
 
-      onGreenClicked(applianceId: string, onActionCompleted: Subject<any>) {
-        this.applianceIdClicked = applianceId;
-        const status = this.getApplianceStatus(applianceId);
+      onGreenClicked(status: Status, onActionCompleted: Subject<any>) {
+        this_.applianceIdClicked = status.id;
+        console.log('ID clicked:', this_.applianceIdClicked);
         // backend returns "null" if not interrupted but may return "0" right after interruption.
         if (status.interruptedSince != null) {
           // only switch on again
-          this.statusService.resetAcceptControlRecommendations(applianceId).subscribe(() => {
-            this.statusService.toggleAppliance(applianceId, true).subscribe(() => {
-              this.loadApplianceStatuses();
+          this_.statusService.resetAcceptControlRecommendations(status.id).subscribe(() => {
+            this_.statusService.toggleAppliance(status.id, true).subscribe(() => {
+              this_.loadApplianceStatuses(() => {});
               onActionCompleted.next();
             });
           });
         } else {
           // display form to request runtime parameters
+          console.log('set editMode');
+          this_.editMode = true;
           onActionCompleted.next();
         }
+        console.log(`editMode=${this.editMode}`);
       }
     };
+  }
+
+  getTrafficLightComponent(applianceId: string): TrafficLightComponent {
+    return this.trafficLightComps.find(comp => (comp.key as Status).id === applianceId);
   }
 
   getTranslatedType(type: string): string {
@@ -124,17 +133,21 @@ export class StatusComponent implements OnInit, OnDestroy {
     return applianceStatus.type === 'EVCharger';
   }
 
-  isTrafficLightGreenClicked(applianceStatus: Status): boolean {
-    return this.getTrafficLightStateHandler(applianceStatus).isGreen() && applianceStatus.id === this.applianceIdClicked;
+  isEditMode(applianceStatus: Status): boolean {
+    console.log(`editMode=${this.editMode} applianceIdClicked=${this.applianceIdClicked}`);
+    return this.editMode && applianceStatus.id === this.applianceIdClicked;
   }
 
   onBeforeFormSubmit() {
-    // this.showLoadingIndicator = true;
+    console.log('onBeforeFormSubmit');
+    this.getTrafficLightComponent(this.applianceIdClicked).showLoadingIndicator = true;
   }
 
   onFormSubmitted() {
-    // this.loadApplianceStatuses(() => this.showLoadingIndicator = false);
-    this.loadApplianceStatuses();
+    console.log('onFormSubmitted');
+    const applianceIdClicked = this.applianceIdClicked;
+    this.loadApplianceStatuses(() => this.getTrafficLightComponent(applianceIdClicked).showLoadingIndicator = false);
     this.applianceIdClicked = null;
+    this.editMode = false;
   }
 }

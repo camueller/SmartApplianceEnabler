@@ -4,20 +4,22 @@
 </div>
 <div class="appliances">
   <div class="appliance" *ngFor="let applianceStatus of applianceStatuses">
-    <app-traffic-light key="applianceStatus.id"
+    <app-traffic-light [key]="applianceStatus"
                        [stateHandler]="getTrafficLightStateHandler(applianceStatus)"
-                       [clickHandler]="getTrafficLightClickHandler(applianceStatus)">
+                       [clickHandler]="getTrafficLightClickHandler(applianceStatus)"
+                       #trafficLights
+    >
     </app-traffic-light>
     <div class="appliance-details">
       <div class="appliance-type">{{getTranslatedType(applianceStatus.type)}}</div>
       <div *ngIf="isEvCharger(applianceStatus); else notEvCharger">
-        <app-status-evcharger-edit *ngIf="isTrafficLightGreenClicked(applianceStatus); else goLightNotClickedCharger"
+        <app-status-evcharger-edit *ngIf="isEditMode(applianceStatus); else greenNotClickedCharger"
                                  [status]="applianceStatus"
                                  [dows]="dows"
                                  (formSubmitted)="onFormSubmitted()"
         >
         </app-status-evcharger-edit>
-        <ng-template #goLightNotClickedCharger>
+        <ng-template #greenNotClickedCharger>
           <app-status-charger-view
             [status]="applianceStatus"
             [dows]="dows"
@@ -26,13 +28,13 @@
         </ng-template>
       </div>
       <ng-template #notEvCharger>
-        <app-status-edit *ngIf="isTrafficLightGreenClicked(applianceStatus); else goLightNotClicked"
-                         [applianceId]="applianceIdClicked"
+        <app-status-edit *ngIf="isEditMode(applianceStatus); else greenNotClicked"
+                         [applianceId]="applianceStatus.id"
                          (beforeFormSubmit)="onBeforeFormSubmit()"
                          (formSubmitted)="onFormSubmitted()"
         >
         </app-status-edit>
-        <ng-template #goLightNotClicked>
+        <ng-template #greenNotClicked>
           <app-status-view
             [status]="applianceStatus"
             [trafficLightStateHandler]="getTrafficLightStateHandler(applianceStatus)"

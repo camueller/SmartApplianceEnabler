@@ -19,7 +19,10 @@ export class TrafficLightComponent implements OnChanges, OnInit {
   showLoadingIndicator: boolean;
 
   constructor() {
-    this.clickActionCompleted.subscribe(() => this.showLoadingIndicator = false);
+    this.clickActionCompleted.subscribe(() => {
+      console.log('ACTION COMPLETED');
+      this.showLoadingIndicator = false;
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
