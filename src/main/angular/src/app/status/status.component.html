@@ -4,48 +4,10 @@
 </div>
 <div class="appliances">
   <div class="appliance" *ngFor="let applianceStatus of applianceStatuses">
-    <div class="traffic-light">
-      <div *ngIf="!showLoadingIndicator">
-        <div class="bulb stopLight" *ngIf="isTrafficLightRed(applianceStatus); else stopLightOffClickable"></div>
-        <ng-template #stopLightOffClickable>
-          <div class="bulb" *ngIf="isTrafficLightGreen(applianceStatus) || isTrafficLightGreenBlink(applianceStatus); else stopLightOff"
-               (click)="onClickStopLight(applianceStatus.id)"
-               [attr.data-tooltip]="'StatusComponent.tooltipStopLight' | translate"
-               data-position="right center"></div>
-        </ng-template>
-        <ng-template #stopLightOff>
-          <div class="bulb" *ngIf="!isTrafficLightRed(applianceStatus)"></div>
-        </ng-template>
-
-        <div class="bulb" [class.slowLight]="isTrafficLightYellow(applianceStatus)"></div>
-
-        <div class="bulb goLight" *ngIf="isTrafficLightGreen(applianceStatus)"
-             data-position="right center"
-        ></div>
-        <div *ngIf="isTrafficLightGreenBlink(applianceStatus)">
-          <div class="bulb goLight" *ngIf="!isTrafficLightGreenClicked(applianceStatus)"
-               [class.goLight-blink]="isTrafficLightGreenBlink(applianceStatus)"
-               (click)="onClickGoLight(applianceStatus.id)"
-               [attr.data-tooltip]="'StatusComponent.tooltipGoLight' | translate"
-               data-position="right center"
-          ></div>
-          <div class="bulb goLight-blink" *ngIf="isTrafficLightGreenClicked(applianceStatus)"
-               data-position="right center"
-          ></div>
-        </div>
-        <div *ngIf="!(isTrafficLightGreen(applianceStatus) || isTrafficLightGreenBlink(applianceStatus))">
-          <div class="bulb" *ngIf="applianceStatus.id === applianceIdClicked"></div>
-          <div class="bulb" *ngIf="applianceStatus.id != applianceIdClicked"
-               (click)="onClickGoLight(applianceStatus.id)"
-               [attr.data-tooltip]="'StatusComponent.tooltipGoLight' | translate"
-               data-position="right center"
-          ></div>
-        </div>
-      </div>
-      <div *ngIf="showLoadingIndicator">
-        <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-      </div>
-    </div>
+    <app-traffic-light key="applianceStatus.id"
+                       [stateHandler]="getTrafficLightStateHandler(applianceStatus)"
+                       [clickHandler]="getTrafficLightClickHandler(applianceStatus)">
+    </app-traffic-light>
     <div class="appliance-details">
       <div class="appliance-type">{{getTranslatedType(applianceStatus.type)}}</div>
       <div *ngIf="isEvCharger(applianceStatus); else notEvCharger">
@@ -73,7 +35,7 @@
         <ng-template #goLightNotClicked>
           <app-status-view
             [status]="applianceStatus"
-            [trafficLight]="getTrafficLightState(applianceStatus)"
+            [trafficLightStateHandler]="getTrafficLightStateHandler(applianceStatus)"
           >
           </app-status-view>
         </ng-template>

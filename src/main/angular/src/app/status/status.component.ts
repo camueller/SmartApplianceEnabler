@@ -1,11 +1,12 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
 import {Status} from './status';
-import {interval, Subscription} from 'rxjs';
+import {interval, Subscription, Subject} from 'rxjs';
 import {StatusService} from './status.service';
 import {DayOfWeek, DaysOfWeek} from '../shared/days-of-week';
-import {TrafficLight} from './traffic-light';
 import {ControlService} from '../control/control-service';
+import {TrafficLightState} from '../traffic-light/traffic-light-state';
+import {TrafficLightClick} from '../traffic-light/traffic-light-click';
 
 @Component({
   selector: 'app-status',
@@ -19,8 +20,6 @@ export class StatusComponent implements OnInit, OnDestroy {
   dows: DayOfWeek[] = [];
   loadApplianceStatusesSubscription: Subscription;
   applianceIdClicked: string;
-  trafficLightClicked: TrafficLight;
-  showLoadingIndicator: boolean;
 
   constructor(private statusService: StatusService,
               private controlService: ControlService,
@@ -38,7 +37,7 @@ export class StatusComponent implements OnInit, OnDestroy {
     this.loadApplianceStatusesSubscription.unsubscribe();
   }
 
-  loadApplianceStatuses(loadingCompletedFunction?: () => {}) {
+  loadApplianceStatuses() {
     this.statusService.getStatus().subscribe(applianceStatuses => {
       this.applianceStatuses = applianceStatuses.filter(applianceStatus => applianceStatus.controllable);
 
@@ -47,13 +46,71 @@ export class StatusComponent implements OnInit, OnDestroy {
       if (types.length > 0) {
         this.translate.get(types).subscribe(translatedTypes => this.translatedTypes = translatedTypes);
       }
-
-      loadingCompletedFunction();
     });
   }
 
   getApplianceStatus(applianceId: string): Status {
     return this.applianceStatuses.filter(applianceStatus => applianceStatus.id === applianceId)[0];
+  }
+
+  getTrafficLightStateHandler(applianceStatus: Status): TrafficLightState {
+    return {
+      isRed(): boolean {
+        return applianceStatus.planningRequested && applianceStatus.earliestStart > 0 && !applianceStatus.on;
+      },
+
+      isYellow(): boolean {
+        return applianceStatus.earliestStart === 0 && !applianceStatus.on;
+      },
+
+      isGreen(): boolean {
+        return applianceStatus.on;
+      },
+
+      isGreenBlink(): boolean {
+        return applianceStatus.on && applianceStatus.optionalEnergy;
+      }
+    };
+  }
+
+  getTrafficLightClickHandler(applianceStatus: Status): TrafficLightClick {
+    const stateHandler = this.getTrafficLightStateHandler(applianceStatus);
+    return {
+      isRedClickable(): boolean {
+        return ! stateHandler.isRed();
+      },
+
+      onRedClicked(applianceId: string, onActionCompleted: Subject<any>) {
+        this.applianceIdClicked = applianceId;
+        this.statusService.toggleAppliance(applianceId, false).subscribe(() => {
+          this.statusService.setAcceptControlRecommendations(applianceId, false).subscribe();
+          this.loadApplianceStatuses(() => this.showLoadingIndicator = false);
+          onActionCompleted.next();
+        });
+      },
+
+      isGreenClickable(): boolean {
+        return ! stateHandler.isGreen();
+      },
+
+      onGreenClicked(applianceId: string, onActionCompleted: Subject<any>) {
+        this.applianceIdClicked = applianceId;
+        const status = this.getApplianceStatus(applianceId);
+        // backend returns "null" if not interrupted but may return "0" right after interruption.
+        if (status.interruptedSince != null) {
+          // only switch on again
+          this.statusService.resetAcceptControlRecommendations(applianceId).subscribe(() => {
+            this.statusService.toggleAppliance(applianceId, true).subscribe(() => {
+              this.loadApplianceStatuses();
+              onActionCompleted.next();
+            });
+          });
+        } else {
+          // display form to request runtime parameters
+          onActionCompleted.next();
+        }
+      }
+    };
   }
 
   getTranslatedType(type: string): string {
@@ -67,74 +124,17 @@ export class StatusComponent implements OnInit, OnDestroy {
     return applianceStatus.type === 'EVCharger';
   }
 
-  getTrafficLightState(applianceStatus: Status): TrafficLight {
-    if (applianceStatus.planningRequested && applianceStatus.earliestStart > 0 && !applianceStatus.on) {
-      return TrafficLight.Red;
-    }
-    if (applianceStatus.earliestStart === 0 && !applianceStatus.on) {
-      return TrafficLight.Yellow;
-    }
-    if (applianceStatus.on) {
-      if (applianceStatus.optionalEnergy) {
-        return TrafficLight.GreenBlink;
-      }
-      return TrafficLight.Green;
-    }
-  }
-
-  isTrafficLightRed(applianceStatus: Status): boolean {
-    return this.getTrafficLightState(applianceStatus) === TrafficLight.Red;
-  }
-
-  isTrafficLightYellow(applianceStatus: Status): boolean {
-    return this.getTrafficLightState(applianceStatus) === TrafficLight.Yellow;
-  }
-
-  isTrafficLightGreen(applianceStatus: Status): boolean {
-    return this.getTrafficLightState(applianceStatus) === TrafficLight.Green;
-  }
-
   isTrafficLightGreenClicked(applianceStatus: Status): boolean {
-    return this.trafficLightClicked === TrafficLight.Green && applianceStatus.id === this.applianceIdClicked;
-  }
-
-  isTrafficLightGreenBlink(applianceStatus: Status): boolean {
-    return this.getTrafficLightState(applianceStatus) === TrafficLight.GreenBlink;
-  }
-
-  onClickStopLight(applianceId: string) {
-    this.showLoadingIndicator = true;
-    this.statusService.toggleAppliance(applianceId, false).subscribe(() => {
-      this.statusService.setAcceptControlRecommendations(applianceId, false).subscribe();
-      this.loadApplianceStatuses(() => this.showLoadingIndicator = false);
-    });
-  }
-
-  /**
-   * Immediately turn on the appliance and set remainingRunningTime in RunningtimeMonitor.
-   * @param {string} applianceId
-   */
-  onClickGoLight(applianceId: string) {
-    const status = this.getApplianceStatus(applianceId);
-    // backend returns "null" if not interrupted but may return "0" right after interruption.
-    if (status.interruptedSince != null) {
-      // only switch on again
-      this.statusService.resetAcceptControlRecommendations(applianceId).subscribe();
-      this.statusService.toggleAppliance(applianceId, true).subscribe(() => this.loadApplianceStatuses());
-    } else {
-      // display form to request runtime parameters
-      this.trafficLightClicked = TrafficLight.Green;
-      this.applianceIdClicked = applianceId;
-    }
+    return this.getTrafficLightStateHandler(applianceStatus).isGreen() && applianceStatus.id === this.applianceIdClicked;
   }
 
   onBeforeFormSubmit() {
-    this.showLoadingIndicator = true;
+    // this.showLoadingIndicator = true;
   }
 
   onFormSubmitted() {
-    this.trafficLightClicked = undefined;
+    // this.loadApplianceStatuses(() => this.showLoadingIndicator = false);
+    this.loadApplianceStatuses();
     this.applianceIdClicked = null;
-    this.loadApplianceStatuses(() => this.showLoadingIndicator = false);
   }
 }

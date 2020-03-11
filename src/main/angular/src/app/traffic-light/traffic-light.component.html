@@ -1,0 +1,52 @@
+<div class="traffic-light">
+  <div *ngIf="!showLoadingIndicator">
+    <div class="bulb stopLight" *ngIf="isRed(); else stopLightOffClickable"></div>
+    <ng-template #stopLightOffClickable>
+      <div class="bulb" *ngIf="isRedClickable(); else stopLightOff"
+           (click)="onRedClick()"
+           [attr.data-tooltip]="'StatusComponent.tooltipStopLight' | translate"
+           data-position="right center"></div>
+    </ng-template>
+    <ng-template #stopLightOff>
+      <div class="bulb" *ngIf="!isRed()"></div>
+    </ng-template>
+
+    <div class="bulb" [class.slowLight]="isYellow()"></div>
+
+    <div class="bulb goLight" *ngIf="isGreen()"
+         data-position="right center"
+    ></div>
+    <div *ngIf="isGreenBlink()">
+      <div class="bulb goLight"
+           [class.goLight-blink]="isGreenBlink()"
+           (click)="onGreenClick()"
+           [attr.data-tooltip]="'StatusComponent.tooltipGoLight' | translate"
+           data-position="right center"
+      ></div>
+    </div>
+    <div *ngIf="!(isGreen() || isGreenBlink())">
+      <div class="bulb" *ngIf="! isGreenClickable()"></div>
+      <div class="bulb" *ngIf="isGreenClickable()"
+           (click)="onGreenClick()"
+           [attr.data-tooltip]="'StatusComponent.tooltipGoLight' | translate"
+           data-position="right center"
+      ></div>
+    </div>
+  </div>
+  <div *ngIf="showLoadingIndicator">
+    <div class="lds-spinner">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </div>
+</div>

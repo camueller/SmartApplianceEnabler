@@ -84,6 +84,7 @@ import { ScheduleRequestRuntimeComponent } from './schedule-request-runtime/sche
 import { ScheduleRequestEnergyComponent } from './schedule-request-energy/schedule-request-energy.component';
 import { ScheduleRequestSocComponent } from './schedule-request-soc/schedule-request-soc.component';
 import {SchedulesComponent} from './schedules/schedules.component';
+import { TrafficLightComponent } from './traffic-light/traffic-light.component';
 
 @NgModule({
   declarations: [
@@ -125,6 +126,7 @@ import {SchedulesComponent} from './schedules/schedules.component';
     StatusEvchargerEditComponent,
     StatusEvchargerViewComponent,
     StatusViewComponent,
+    TrafficLightComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,8 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Status} from '../status/status';
-import {TrafficLight} from '../status/traffic-light';
 import {TimeUtil} from '../shared/time-util';
 import {TranslateService} from '@ngx-translate/core';
+import {TrafficLightState} from '../traffic-light/traffic-light-state';
 
 @Component({
   selector: 'app-status-view',
@@ -14,7 +14,7 @@ export class StatusViewComponent implements OnInit {
   @Input()
   status: Status;
   @Input()
-  trafficLight: TrafficLight;
+  trafficLightStateHandler: TrafficLightState;
   translatedStrings: string[];
 
   constructor(private translate: TranslateService) { }
@@ -31,15 +31,15 @@ export class StatusViewComponent implements OnInit {
   }
 
   isTrafficLightRed(): boolean {
-    return this.trafficLight === TrafficLight.Red;
+    return this.trafficLightStateHandler.isRed();
   }
 
   isTrafficLightYellow(): boolean {
-    return this.trafficLight === TrafficLight.Yellow;
+    return this.trafficLightStateHandler.isYellow();
   }
 
   isTrafficLightGreen(): boolean {
-    return this.trafficLight === TrafficLight.Green;
+    return this.trafficLightStateHandler.isGreen();
   }
 
   getRemainingRunningTimeLabel(applianceStatus: Status): string {
