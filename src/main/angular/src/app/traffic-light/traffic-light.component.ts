@@ -15,6 +15,8 @@ export class TrafficLightComponent implements OnChanges, OnInit {
   clickHandler: TrafficLightClick;
   @Input()
   stateHandler: TrafficLightState;
+  @Input()
+  sizeSmall: boolean;
   clickActionCompleted: Subject<any> = new Subject();
   showLoadingIndicator: boolean;
 
@@ -29,6 +31,14 @@ export class TrafficLightComponent implements OnChanges, OnInit {
   }
 
   ngOnInit() {
+  }
+
+  get trafficLightClass() {
+    return this.sizeSmall ? 'traffic-light-small' : 'traffic-light';
+  }
+
+  get bulbClass() {
+    return this.sizeSmall ? 'bulb-small' : 'bulb';
   }
 
   isRed(): boolean {

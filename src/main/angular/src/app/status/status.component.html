@@ -47,41 +47,33 @@
 </div>
 <h4 class="ui dividing header">{{'StatusComponent.explanation' | translate}}</h4>
 <div class="traffic-light-explanation">
-  <div class="traffic-light-small">
-    <div class="bulb-small"></div>
-    <div class="bulb-small"></div>
-    <div class="bulb-small"></div>
-  </div>
+  <app-traffic-light [stateHandler]="getTrafficLightStateHandlerForExplanation(false, false, false)"
+                     sizeSmall="true">
+  </app-traffic-light>
   <div class="traffic-light-explanation-text">
     <p>{{'StatusComponent.explanationNoLight' | translate}}</p>
   </div>
 </div>
 <div class="traffic-light-explanation">
-  <div class="traffic-light-small">
-    <div class="bulb-small stopLight"></div>
-    <div class="bulb-small"></div>
-    <div class="bulb-small"></div>
-  </div>
+  <app-traffic-light [stateHandler]="getTrafficLightStateHandlerForExplanation(true, false, false)"
+                     sizeSmall="true">
+  </app-traffic-light>
   <div class="traffic-light-explanation-text">
     <p>{{'StatusComponent.explanationStopLight' | translate}}</p>
   </div>
 </div>
 <div class="traffic-light-explanation">
-  <div class="traffic-light-small">
-    <div class="bulb-small"></div>
-    <div class="bulb-small slowLight"></div>
-    <div class="bulb-small"></div>
-  </div>
+  <app-traffic-light [stateHandler]="getTrafficLightStateHandlerForExplanation(false, true, false)"
+                     sizeSmall="true">
+  </app-traffic-light>
   <div class="traffic-light-explanation-text">
     <p>{{'StatusComponent.explanationSlowLight' | translate}}</p>
   </div>
 </div>
 <div class="traffic-light-explanation">
-  <div class="traffic-light-small">
-    <div class="bulb-small"></div>
-    <div class="bulb-small"></div>
-    <div class="bulb-small goLight"></div>
-  </div>
+  <app-traffic-light [stateHandler]="getTrafficLightStateHandlerForExplanation(false, false, true)"
+                     sizeSmall="true">
+  </app-traffic-light>
   <div class="traffic-light-explanation-text">
     <p>{{'StatusComponent.explanationGoLight' | translate}}</p>
   </div>

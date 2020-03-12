@@ -150,4 +150,24 @@ export class StatusComponent implements OnInit, OnDestroy {
     this.applianceIdClicked = null;
     this.editMode = false;
   }
+
+  getTrafficLightStateHandlerForExplanation(red: boolean, yellow: boolean, green: boolean): TrafficLightState {
+    return {
+      isRed(): boolean {
+        return red;
+      },
+
+      isYellow(): boolean {
+        return yellow;
+      },
+
+      isGreen(): boolean {
+        return green;
+      },
+
+      isGreenBlink(): boolean {
+        return false;
+      }
+    };
+  }
 }

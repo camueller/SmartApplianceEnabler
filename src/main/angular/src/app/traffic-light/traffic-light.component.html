@@ -1,23 +1,23 @@
-<div class="traffic-light">
+<div [class]="trafficLightClass">
   <div *ngIf="!showLoadingIndicator">
-    <div class="bulb stopLight" *ngIf="isRed(); else stopLightOffClickable"></div>
+    <div [class]="bulbClass" [class.stopLight]="true" *ngIf="isRed(); else stopLightOffClickable"></div>
     <ng-template #stopLightOffClickable>
-      <div class="bulb" *ngIf="isRedClickable(); else stopLightOff"
+      <div [class]="bulbClass" *ngIf="isRedClickable(); else stopLightOff"
            (click)="onRedClick()"
            [attr.data-tooltip]="'StatusComponent.tooltipStopLight' | translate"
            data-position="right center"></div>
     </ng-template>
     <ng-template #stopLightOff>
-      <div class="bulb" *ngIf="!isRed()"></div>
+      <div [class]="bulbClass" *ngIf="!isRed()"></div>
     </ng-template>
 
-    <div class="bulb" [class.slowLight]="isYellow()"></div>
+    <div [class]="bulbClass" [class.slowLight]="isYellow()"></div>
 
-    <div class="bulb goLight" *ngIf="isGreen()"
+    <div [class]="bulbClass" [class.goLight]="true" *ngIf="isGreen()"
          data-position="right center"
     ></div>
     <div *ngIf="isGreenBlink()">
-      <div class="bulb goLight"
+      <div [class]="bulbClass" [class.goLight]="true"
            [class.goLight-blink]="isGreenBlink()"
            (click)="onGreenClick()"
            [attr.data-tooltip]="'StatusComponent.tooltipGoLight' | translate"
@@ -25,8 +25,8 @@
       ></div>
     </div>
     <div *ngIf="!(isGreen() || isGreenBlink())">
-      <div class="bulb" *ngIf="! isGreenClickable()"></div>
-      <div class="bulb" *ngIf="isGreenClickable()"
+      <div [class]="bulbClass" *ngIf="! isGreenClickable()"></div>
+      <div [class]="bulbClass" *ngIf="isGreenClickable()"
            (click)="onGreenClick()"
            [attr.data-tooltip]="'StatusComponent.tooltipGoLight' | translate"
            data-position="right center"
