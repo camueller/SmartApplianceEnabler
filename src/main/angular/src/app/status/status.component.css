@@ -65,3 +65,13 @@
   padding-left: 4px !important;
   padding-right: 4px !important;
 }
+
+.traffic-light-explanation {
+  min-height: 38px;
+  margin: 5px;
+  font-family: "Lato", "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+
+.traffic-light-explanation-text {
+  margin-left: 22px
+}

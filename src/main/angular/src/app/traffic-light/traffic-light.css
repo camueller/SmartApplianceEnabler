@@ -9,22 +9,12 @@
 
 .traffic-light-small {
   height: 28px;
-  width: 10px;
+  width: 11px;
   float: left;
   background-color: #333;
   border-radius: 2px;
   margin: 6px;
-  padding: 2px;
-}
-
-.traffic-light-explanation {
-  min-height: 38px;
-  margin: 5px;
-  font-family: "Lato", "Helvetica Neue", Arial, Helvetica, sans-serif;
-}
-
-.traffic-light-explanation-text {
-  margin-left: 22px
+  padding: 1px;
 }
 
 .bulb {
