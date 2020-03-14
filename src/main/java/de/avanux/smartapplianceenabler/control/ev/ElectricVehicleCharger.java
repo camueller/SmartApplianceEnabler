@@ -65,6 +65,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     private List<ElectricVehicle> vehicles;
     private transient Integer connectedVehicleId;
     private transient Integer connectedVehicleSoc;
+    private transient boolean socScriptAsync = true;
     private transient Long connectedVehicleSocTimestamp;
     private transient Appliance appliance;
     private transient String applianceId;
@@ -125,6 +126,10 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     public Boolean getForceInitialCharging() {
         return forceInitialCharging != null ? forceInitialCharging :
                 ElectricVehicleChargerDefaults.getForceInitialCharging();
+    }
+
+    public void setSocScriptAsync(boolean socScriptAsync) {
+        this.socScriptAsync = socScriptAsync;
     }
 
     public Integer getConnectedVehicleSoc() {
