@@ -78,7 +78,9 @@ export class StatusEditComponent implements OnInit, AfterViewChecked {
     this.beforeFormSubmit.emit();
     const switchOnRunningTime = this.switchOnForm.value.switchOnRunningTime;
     const seconds = TimeUtil.toSeconds(switchOnRunningTime);
-    this.statusService.setRuntime(this.applianceId, seconds).subscribe();
-    this.statusService.toggleAppliance(this.applianceId, true).subscribe(() => this.formSubmitted.emit());
+    this.statusService.setRuntime(this.applianceId, seconds).subscribe(() => {
+      this.statusService.toggleAppliance(this.applianceId, true).subscribe(
+        () => this.formSubmitted.emit());
+    });
   }
 }

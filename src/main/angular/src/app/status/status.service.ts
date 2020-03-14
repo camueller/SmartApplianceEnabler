@@ -75,13 +75,11 @@ export class StatusService extends SaeService {
   // FIXME: verschieben in richtigen Service (obige Services auch)
   setAcceptControlRecommendations(id: string, acceptControlRecommendations: boolean): Observable<any> {
     const url = `${SaeService.API}/controlrecommendations?id=${id}&accept=${acceptControlRecommendations}`;
-    console.log('Set acceptControlRecommendations using ' + url);
     return this.http.put(url, '');
   }
 
   resetAcceptControlRecommendations(id: string): Observable<any> {
     const url = `${SaeService.API}/controlrecommendations?id=${id}`;
-    console.log('Set acceptControlRecommendations using ' + url);
     return this.http.delete(url);
   }
 }

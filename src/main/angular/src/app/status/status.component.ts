@@ -79,7 +79,7 @@ export class StatusComponent implements OnInit, OnDestroy {
     const this_ = this;
     return {
       isRedClickable(): boolean {
-        return ! stateHandler.isRed();
+        return ! this_.editMode && ! stateHandler.isRed();
       },
 
       onRedClicked(status: Status, onActionCompleted: Subject<any>) {
@@ -92,12 +92,11 @@ export class StatusComponent implements OnInit, OnDestroy {
       },
 
       isGreenClickable(): boolean {
-        return ! stateHandler.isGreen();
+        return ! this_.editMode && ! stateHandler.isGreen();
       },
 
       onGreenClicked(status: Status, onActionCompleted: Subject<any>) {
         this_.applianceIdClicked = status.id;
-        console.log('ID clicked:', this_.applianceIdClicked);
         // backend returns "null" if not interrupted but may return "0" right after interruption.
         if (status.interruptedSince != null) {
           // only switch on again
@@ -109,11 +108,9 @@ export class StatusComponent implements OnInit, OnDestroy {
           });
         } else {
           // display form to request runtime parameters
-          console.log('set editMode');
           this_.editMode = true;
           onActionCompleted.next();
         }
-        console.log(`editMode=${this.editMode}`);
       }
     };
   }
@@ -134,17 +131,14 @@ export class StatusComponent implements OnInit, OnDestroy {
   }
 
   isEditMode(applianceStatus: Status): boolean {
-    console.log(`editMode=${this.editMode} applianceIdClicked=${this.applianceIdClicked}`);
     return this.editMode && applianceStatus.id === this.applianceIdClicked;
   }
 
   onBeforeFormSubmit() {
-    console.log('onBeforeFormSubmit');
     this.getTrafficLightComponent(this.applianceIdClicked).showLoadingIndicator = true;
   }
 
   onFormSubmitted() {
-    console.log('onFormSubmitted');
     const applianceIdClicked = this.applianceIdClicked;
     this.loadApplianceStatuses(() => this.getTrafficLightComponent(applianceIdClicked).showLoadingIndicator = false);
     this.applianceIdClicked = null;

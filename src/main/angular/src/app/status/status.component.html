@@ -16,6 +16,7 @@
         <app-status-evcharger-edit *ngIf="isEditMode(applianceStatus); else greenNotClickedCharger"
                                  [status]="applianceStatus"
                                  [dows]="dows"
+                                 (beforeFormSubmit)="onBeforeFormSubmit()"
                                  (formSubmitted)="onFormSubmitted()"
         >
         </app-status-evcharger-edit>

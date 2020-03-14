@@ -22,7 +22,6 @@ export class TrafficLightComponent implements OnChanges, OnInit {
 
   constructor() {
     this.clickActionCompleted.subscribe(() => {
-      console.log('ACTION COMPLETED');
       this.showLoadingIndicator = false;
     });
   }
