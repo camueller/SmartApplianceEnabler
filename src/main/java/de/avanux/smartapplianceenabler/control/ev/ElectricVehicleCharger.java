@@ -20,6 +20,7 @@ package de.avanux.smartapplianceenabler.control.ev;
 
 import de.avanux.smartapplianceenabler.appliance.Appliance;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import de.avanux.smartapplianceenabler.appliance.ApplianceLifeCycle;
 import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.ControlStateChangedListener;
@@ -31,14 +32,16 @@ import de.avanux.smartapplianceenabler.schedule.SocRequest;
 import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
 import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
-import de.avanux.smartapplianceenabler.appliance.ApplianceLifeCycle;
 import de.avanux.smartapplianceenabler.util.Validateable;
-import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.*;
-import java.util.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Timer;
+import java.util.Vector;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Validateable, ApplianceIdConsumer {
@@ -134,6 +137,15 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
 
     public Integer getConnectedVehicleSoc() {
         return connectedVehicleSoc;
+    }
+
+    public void setConnectedVehicleSoc(LocalDateTime now, Integer connectedVehicleSoc) {
+        this.connectedVehicleSoc = connectedVehicleSoc;
+        for(ControlStateChangedListener listener : controlStateChangedListeners) {
+            logger.debug("{}: Notifying {} {} {}", applianceId, ControlStateChangedListener.class.getSimpleName(),
+                    listener.getClass().getSimpleName(), listener);
+            listener.onEVChargerSocChanged(now, Integer.valueOf(connectedVehicleSoc).floatValue());
+        }
     }
 
     // TODO until we retrieve SOC periodically we calculate the current SOC here
@@ -591,15 +603,33 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
 
     private void retrieveSoc(LocalDateTime now, ElectricVehicle electricVehicle) {
         if(electricVehicle != null) {
+            SocRetriever socRetriever = new SocRetriever(now, electricVehicle);
+            if(socScriptAsync) {
+                Thread managerThread = new Thread(socRetriever);
+                managerThread.start();
+            }
+            else {
+                // for unit tests
+                socRetriever.run();
+            }
+        }
+    }
+
+    private class SocRetriever implements Runnable {
+        private LocalDateTime now;
+        private ElectricVehicle electricVehicle;
+
+        public SocRetriever(LocalDateTime now, ElectricVehicle electricVehicle) {
+            this.now = now;
+            this.electricVehicle = electricVehicle;
+        }
+
+        @Override
+        public void run() {
             Float soc = getStateOfCharge(electricVehicle);
             if(soc != null) {
-                this.connectedVehicleSoc = soc.intValue();
+                setConnectedVehicleSoc(now, soc.intValue());
                 logger.debug("{}: Current SoC={}%", applianceId, connectedVehicleSoc);
-                for(ControlStateChangedListener listener : controlStateChangedListeners) {
-                    logger.debug("{}: Notifying {} {} {}", applianceId, ControlStateChangedListener.class.getSimpleName(),
-                            listener.getClass().getSimpleName(), listener);
-                    listener.onEVChargerSocChanged(now, soc);
-                }
             }
         }
     }
