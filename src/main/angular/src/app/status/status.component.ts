@@ -86,8 +86,7 @@ export class StatusComponent implements OnInit, OnDestroy {
         this_.applianceIdClicked = status.id;
         this_.statusService.toggleAppliance(status.id, false).subscribe(() => {
           this_.statusService.setAcceptControlRecommendations(status.id, false).subscribe();
-          this_.loadApplianceStatuses(() => {});
-          onActionCompleted.next();
+          this_.loadApplianceStatuses(() => onActionCompleted.next());
         });
       },
 
