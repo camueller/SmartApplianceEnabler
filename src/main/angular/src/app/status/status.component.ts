@@ -101,8 +101,7 @@ export class StatusComponent implements OnInit, OnDestroy {
           // only switch on again
           this_.statusService.resetAcceptControlRecommendations(status.id).subscribe(() => {
             this_.statusService.toggleAppliance(status.id, true).subscribe(() => {
-              this_.loadApplianceStatuses(() => {});
-              onActionCompleted.next();
+              this_.loadApplianceStatuses(() => onActionCompleted.next());
             });
           });
         } else {
