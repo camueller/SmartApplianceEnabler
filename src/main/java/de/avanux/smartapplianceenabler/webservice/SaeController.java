@@ -468,7 +468,7 @@ public class SaeController {
             @RequestParam(value = "accept") Boolean acceptControlRecommendations) {
         synchronized (lock) {
             try {
-                logger.debug("{}: Received request to set control recommenandations to {}",
+                logger.debug("{}: Received request to set control recommendations to {}",
                         applianceId, acceptControlRecommendations);
                 Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
                 if (appliance != null) {
