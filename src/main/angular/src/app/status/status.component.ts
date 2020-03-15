@@ -65,7 +65,7 @@ export class StatusComponent implements OnInit, OnDestroy {
       },
 
       isGreen(): boolean {
-        return applianceStatus.on;
+        return applianceStatus.on && !applianceStatus.optionalEnergy;
       },
 
       isGreenBlink(): boolean {
