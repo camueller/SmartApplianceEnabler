@@ -143,6 +143,10 @@ export class StatusComponent implements OnInit, OnDestroy {
     this.editMode = false;
   }
 
+  onFormCancel() {
+    this.editMode = false;
+  }
+
   getTrafficLightStateHandlerForExplanation(red: boolean, yellow: boolean, green: boolean): TrafficLightState {
     return {
       isRed(): boolean {

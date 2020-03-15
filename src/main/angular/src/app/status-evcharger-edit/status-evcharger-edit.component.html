@@ -36,7 +36,8 @@
            formControlName="chargeEndTime" placeholder="00:00">
   </div>
   <div class="appliance-details-row appliance-button-row">
-    <button type="submit" class="ui button"
+    <button type="button" class="ui button" (click)="cancelForm()">{{'StatusComponent.buttonCancel' | translate}}</button>
+    <button type="submit" class="ui primary button"
             [disabled]="startChargeForm.invalid">{{'StatusComponent.buttonStart' | translate}}</button>
   </div>
 </form>

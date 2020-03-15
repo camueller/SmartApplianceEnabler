@@ -4,7 +4,8 @@
     <input class="appliance-number-input clockpicker" type="text" name="minRunningTime" style="width: 4em" formControlName="switchOnRunningTime">
   </div>
   <div class="appliance-details-row appliance-button-row">
-    <button type="submit" class="ui button"
+    <button type="button" class="ui button" (click)="cancelForm()">{{'StatusComponent.buttonCancel' | translate}}</button>
+    <button type="submit" class="ui primary button"
             [disabled]="switchOnForm.invalid">{{'StatusComponent.buttonStart' | translate}}</button>
   </div>
 </form>

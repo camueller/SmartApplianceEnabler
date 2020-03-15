@@ -45,6 +45,8 @@ export class StatusEditComponent implements OnInit, AfterViewChecked {
   beforeFormSubmit = new EventEmitter<any>();
   @Output()
   formSubmitted = new EventEmitter<any>();
+  @Output()
+  formCancelled = new EventEmitter<any>();
   switchOnForm: FormGroup;
   initializeOnceAfterViewChecked = false;
 
@@ -72,6 +74,10 @@ export class StatusEditComponent implements OnInit, AfterViewChecked {
 
   initializeClockPicker() {
     $('.clockpicker').clockpicker({ autoclose: true });
+  }
+
+  cancelForm() {
+    this.formCancelled.emit();
   }
 
   submitForm() {

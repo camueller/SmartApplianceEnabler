@@ -18,6 +18,7 @@
                                  [dows]="dows"
                                  (beforeFormSubmit)="onBeforeFormSubmit()"
                                  (formSubmitted)="onFormSubmitted()"
+                                 (formCancelled)="onFormCancel()"
         >
         </app-status-evcharger-edit>
         <ng-template #greenNotClickedCharger>
@@ -33,6 +34,7 @@
                          [applianceId]="applianceStatus.id"
                          (beforeFormSubmit)="onBeforeFormSubmit()"
                          (formSubmitted)="onFormSubmitted()"
+                         (formCancelled)="onFormCancel()"
         >
         </app-status-edit>
         <ng-template #greenNotClicked>

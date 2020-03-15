@@ -63,6 +63,8 @@ export class StatusEvchargerEditComponent implements OnInit, AfterViewChecked, O
   beforeFormSubmit = new EventEmitter<any>();
   @Output()
   formSubmitted = new EventEmitter<any>();
+  @Output()
+  formCancelled = new EventEmitter<any>();
   startChargeForm: FormGroup;
   initializeOnceAfterViewChecked = false;
   electricVehicles: ElectricVehicle[];
@@ -126,6 +128,10 @@ export class StatusEvchargerEditComponent implements OnInit, AfterViewChecked, O
 
   getElectricVehicle(id: number): ElectricVehicle {
     return id && this.electricVehicles.filter(ev => ev.id === id)[0];
+  }
+
+  cancelForm() {
+    this.formCancelled.emit();
   }
 
   submitForm() {
