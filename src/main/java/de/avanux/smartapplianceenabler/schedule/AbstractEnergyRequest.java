@@ -49,11 +49,14 @@ abstract public class AbstractEnergyRequest extends AbstractRequest {
         if(newState == EVChargerState.VEHICLE_CONNECTED && ev.getSocScript() == null) {
             setEnabled(true);
         }
-        if(newState == EVChargerState.VEHICLE_NOT_CONNECTED) {
+        else if(newState == EVChargerState.VEHICLE_NOT_CONNECTED) {
             setEnabled(false);
             if(getMeter() != null) {
                 getMeter().resetEnergyMeter();
             }
+        }
+        else if(newState == EVChargerState.CHARGING_COMPLETED) {
+            setEnabled(false);
         }
     }
 
