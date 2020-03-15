@@ -79,7 +79,7 @@ export class StatusComponent implements OnInit, OnDestroy {
     const this_ = this;
     return {
       isRedClickable(): boolean {
-        return ! this_.editMode && ! stateHandler.isRed();
+        return applianceStatus.on && ! this_.editMode && ! stateHandler.isRed();
       },
 
       onRedClicked(status: Status, onActionCompleted: Subject<any>) {
