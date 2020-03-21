@@ -30,6 +30,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 
 @XmlType(propOrder={"gpio", "pinPullResistance", "impulsesPerKwh", "measurementInterval"})
@@ -43,6 +45,7 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
     private transient GpioPinDigitalInput inputPin;
     private transient PulsePowerMeter pulsePowerMeter = new PulsePowerMeter();
     private transient PulseEnergyMeter pulseEnergyMeter = new PulseEnergyMeter();
+    private transient List<PowerUpdateListener> powerMeterListeners = new ArrayList<>();
 
 
     public Integer getImpulsesPerKwh() {
@@ -100,6 +103,11 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
     }
 
     @Override
+    public void addPowerUpdateListener(PowerUpdateListener listener) {
+        this.powerMeterListeners.add(listener);
+    }
+
+    @Override
     public boolean isOn() {
         return pulsePowerMeter.isOn();
     }
@@ -125,6 +133,7 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
                         if(event.getState() == PinState.HIGH) {
                             pulsePowerMeter.addTimestampAndMaintain(System.currentTimeMillis());
                             pulseEnergyMeter.increasePulseCounter();
+                            powerMeterListeners.forEach(listener -> listener.onPowerUpdate(getAveragePower()));
                         }
                     }
                 });

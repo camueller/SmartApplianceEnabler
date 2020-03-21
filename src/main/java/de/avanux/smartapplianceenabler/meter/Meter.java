@@ -20,8 +20,6 @@ package de.avanux.smartapplianceenabler.meter;
 import de.avanux.smartapplianceenabler.appliance.ApplianceLifeCycle;
 import de.avanux.smartapplianceenabler.control.ControlMonitor;
 
-import java.util.Timer;
-
 public interface Meter extends ApplianceLifeCycle, ControlMonitor {
 
     /**
@@ -69,4 +67,6 @@ public interface Meter extends ApplianceLifeCycle, ControlMonitor {
      * Reset energy counter to 0.
      */
     void resetEnergyMeter();
+
+    void addPowerUpdateListener(PowerUpdateListener listener);
 }

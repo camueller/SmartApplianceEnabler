@@ -102,6 +102,11 @@ public class MockElectricityMeter implements Meter, ApplianceIdConsumer {
     }
 
     @Override
+    public void addPowerUpdateListener(PowerUpdateListener listener) {
+
+    }
+
+    @Override
     public boolean isOn() {
         return false;
     }

@@ -423,6 +423,35 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
 //        queue.forEach(timeframeInterval -> timeframeInterval.getRequest().onEVChargerSocChanged(now ,soc));
     }
 
+    public Integer suggestRuntime() {
+        LocalDateTime now = LocalDateTime.now();
+        if(queue.size() > 0) {
+            TimeframeInterval timeframeInterval = queue.get(0);
+            return timeframeInterval.getRequest().getMax(now);
+        }
+        return null;
+    }
+
+    public void setRuntimeDemand(LocalDateTime now, Integer runtime, boolean acceptControlRecommendations) {
+        TimeframeInterval activeTimeframeInterval = getActiveTimeframeInterval();
+        if(activeTimeframeInterval != null) {
+            if(activeTimeframeInterval.getRequest() instanceof RuntimeRequest) {
+                RuntimeRequest request = (RuntimeRequest) activeTimeframeInterval.getRequest();
+                request.setMax(runtime);
+                request.setAcceptControlRecommendations(acceptControlRecommendations);
+            }
+        }
+        else {
+            RuntimeRequest request = new RuntimeRequest(null, runtime);
+            request.setEnabled(true);
+            request.setAcceptControlRecommendations(acceptControlRecommendations);
+            Interval interval = new Interval(now, now.plusSeconds(runtime));
+            TimeframeInterval timeframeInterval = new TimeframeInterval(interval, request);
+            queue.forEach(queuedTimeframeInterval -> queuedTimeframeInterval.getRequest().setEnabled(false));
+            addTimeframeInterval(now, timeframeInterval, true, true);
+        }
+    }
+
     @Override
     public String toString() {
         return "";

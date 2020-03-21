@@ -20,6 +20,8 @@ package de.avanux.smartapplianceenabler.control.ev;
 
 import de.avanux.smartapplianceenabler.meter.Meter;
 import java.time.LocalDateTime;
+
+import de.avanux.smartapplianceenabler.meter.PowerUpdateListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -185,6 +187,11 @@ public class EVChargerControlMock implements EVChargerControl, Meter {
     public void resetEnergyMeter() {
         logDebug("resetEnergyMeter");
         energyCounter = 0.0f;
+    }
+
+    @Override
+    public void addPowerUpdateListener(PowerUpdateListener listener) {
+
     }
 
     private void logDebug(String message) {

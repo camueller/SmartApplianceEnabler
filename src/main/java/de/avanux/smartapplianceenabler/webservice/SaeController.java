@@ -525,17 +525,12 @@ public class SaeController {
             logger.debug("{}: Received request to suggest runtime", applianceId);
             Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
             if (appliance != null) {
-                LocalDateTime now = LocalDateTime.now();
-                List<TimeframeInterval> queue = appliance.getTimeframeIntervalHandler().getQueue();
-                if(queue.size() > 0) {
-                    TimeframeInterval timeframeInterval = queue.get(0);
-                    return timeframeInterval.getRequest().getMax(now);
-                }
+                Integer runtime = appliance.getTimeframeIntervalHandler().suggestRuntime();
+                return runtime != null ? runtime : 0;
             } else {
                 logger.error("{}: Appliance not found", applianceId);
                 return null;
             }
-            return 0;
         } catch (Throwable e) {
             logger.error("Error in " + getClass().getSimpleName(), e);
         }
@@ -666,23 +661,7 @@ public class SaeController {
                                      boolean acceptControlRecommendations) {
         Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
         if (appliance != null) {
-            TimeframeIntervalHandler timeframeIntervalHandler = appliance.getTimeframeIntervalHandler();
-            TimeframeInterval activeTimeframeInterval = timeframeIntervalHandler.getActiveTimeframeInterval();
-            if(activeTimeframeInterval != null) {
-                if(activeTimeframeInterval.getRequest() instanceof RuntimeRequest) {
-                    RuntimeRequest request = (RuntimeRequest) activeTimeframeInterval.getRequest();
-                    request.setMax(runtime);
-                    request.setAcceptControlRecommendations(acceptControlRecommendations);
-                }
-            }
-            else {
-                RuntimeRequest request = new RuntimeRequest(null, runtime);
-                request.setEnabled(true);
-                request.setAcceptControlRecommendations(acceptControlRecommendations);
-                Interval interval = new Interval(now, now.plusSeconds(runtime));
-                TimeframeInterval timeframeInterval = new TimeframeInterval(interval, request);
-                timeframeIntervalHandler.addTimeframeInterval(now, timeframeInterval, true, true);
-            }
+            appliance.getTimeframeIntervalHandler().setRuntimeDemand(now, runtime, acceptControlRecommendations);
             return true;
         }
         logger.error("{}: Appliance not found", applianceId);

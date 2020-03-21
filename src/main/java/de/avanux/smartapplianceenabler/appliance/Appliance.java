@@ -172,7 +172,7 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
                 logger.debug("{}: Registered as {} with {}", id, ControlStateChangedListener.class.getSimpleName(),
                         control.getClass().getSimpleName());
             }
-            if(control instanceof ApplianceLifeCycle) {
+            if(control instanceof ApplianceLifeCycle && !(control instanceof  StartingCurrentSwitch)) {
                 control.init();
             }
         }
@@ -192,8 +192,11 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
             }
         }
 
-        if(control instanceof  StartingCurrentSwitch) {
-            ((StartingCurrentSwitch) control).setMeter(meter);
+        if(control instanceof StartingCurrentSwitch) {
+            StartingCurrentSwitch startingCurrentSwitch = (StartingCurrentSwitch) control;
+            startingCurrentSwitch.setMeter(meter);
+            startingCurrentSwitch.setTimeframeIntervalHandler(timeframeIntervalHandler);
+            startingCurrentSwitch.init();
             logger.debug("{}: {} uses {}", id, control.getClass().getSimpleName(), meter.getClass().getSimpleName());
         }
 

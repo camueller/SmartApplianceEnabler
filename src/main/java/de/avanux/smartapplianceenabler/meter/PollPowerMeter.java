@@ -24,6 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 
 /**
@@ -35,6 +37,8 @@ public class PollPowerMeter implements ApplianceIdConsumer {
     private TimestampBasedCache<Float> cache = new TimestampBasedCache<>("Power");
     private String applianceId;
     private GuardedTimerTask pollTimerTask;
+    private transient List<PowerUpdateListener> powerUpdateListeners = new ArrayList<>();
+
 
     @Override
     public void setApplianceId(String applianceId) {
@@ -48,6 +52,7 @@ public class PollPowerMeter implements ApplianceIdConsumer {
             @Override
             public void runTask() {
                 addValue(LocalDateTime.now(), pollPowerExecutor);
+                powerUpdateListeners.forEach(listener -> listener.onPowerUpdate(getAveragePower()));
             }
         };
         if(timer != null) {
@@ -111,5 +116,9 @@ public class PollPowerMeter implements ApplianceIdConsumer {
             return Float.valueOf(maxValue).intValue();
         }
         return 0;
+    }
+
+    public void addPowerUpateListener(PowerUpdateListener listener) {
+        this.powerUpdateListeners.add(listener);
     }
 }

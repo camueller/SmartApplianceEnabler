@@ -171,6 +171,11 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     }
 
     @Override
+    public void addPowerUpdateListener(PowerUpdateListener listener) {
+        this.pollPowerMeter.addPowerUpateListener(listener);
+    }
+
+    @Override
     public Float pollEnergy(LocalDateTime now) {
         ParentWithChild<ModbusRead, ModbusReadValue> read
                 = ModbusRead.getFirstRegisterRead(MeterValueName.Energy.name(), modbusReads);

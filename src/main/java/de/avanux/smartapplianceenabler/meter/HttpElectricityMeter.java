@@ -23,7 +23,6 @@ import de.avanux.smartapplianceenabler.http.*;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolHandler;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolType;
 import de.avanux.smartapplianceenabler.protocol.JsonContentProtocolHandler;
-import de.avanux.smartapplianceenabler.util.Holder;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import de.avanux.smartapplianceenabler.util.Validateable;
 import org.slf4j.Logger;
@@ -234,6 +233,11 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
             previousEnergy = energy;
         }
         return powerValues;
+    }
+
+    @Override
+    public void addPowerUpdateListener(PowerUpdateListener listener) {
+        this.pollPowerMeter.addPowerUpateListener(listener);
     }
 
     @Override
