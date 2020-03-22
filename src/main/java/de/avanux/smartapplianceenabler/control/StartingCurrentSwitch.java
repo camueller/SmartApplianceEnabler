@@ -20,6 +20,7 @@ package de.avanux.smartapplianceenabler.control;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.meter.PowerUpdateListener;
+import de.avanux.smartapplianceenabler.meter.S0ElectricityMeter;
 import de.avanux.smartapplianceenabler.schedule.DayTimeframeCondition;
 
 import java.time.Duration;
@@ -27,6 +28,7 @@ import java.time.LocalDateTime;
 
 import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
 import de.avanux.smartapplianceenabler.schedule.TimeframeIntervalHandler;
+import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,6 +79,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
     private transient LocalDateTime switchOnTime;
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
     private transient List<StartingCurrentSwitchListener> startingCurrentSwitchListeners = new ArrayList<>();
+    private transient GuardedTimerTask powerUpdateTimerTask;
 
 
     @Override
@@ -162,6 +165,22 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
             this.control.start(now, timer);
         }
         applianceOn(now, true);
+        if (timer != null && meter instanceof S0ElectricityMeter) {
+            logger.debug("{}: Creating timer task to trigger power updates for finished current detection", this.applianceId);
+            // for PulsePowerMeter the finished current cannot be detected if there are no pulses anymore
+            // therefore this time task is needed
+            this.powerUpdateTimerTask = new GuardedTimerTask(applianceId, "StartingCurrentSwitchPowerUpdate",
+                    getFinishedCurrentDetectionDuration() * 1000) {
+                @Override
+                public void runTask() {
+                    if(on) {
+                        int averagePower = meter.getAveragePower();
+                        onPowerUpdate(averagePower);
+                    }
+                }
+            };
+            timer.schedule(this.powerUpdateTimerTask, 0, this.powerUpdateTimerTask.getPeriod());
+        }
     }
 
     @Override
@@ -169,6 +188,9 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
         logger.debug("{}: Stopping ...", this.applianceId);
         if(this.control != null) {
             this.control.stop(now);
+        }
+        if(this.powerUpdateTimerTask != null) {
+            this.powerUpdateTimerTask.cancel();
         }
     }
 
