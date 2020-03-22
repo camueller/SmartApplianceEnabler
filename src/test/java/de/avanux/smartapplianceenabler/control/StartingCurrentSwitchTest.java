@@ -44,40 +44,33 @@ public class StartingCurrentSwitchTest {
     }
 
     @Test
-    public void test() throws Exception {
+    public void detectStartingCurrent() throws Exception {
         LocalDateTime now = LocalDateTime.now();
         startingCurrentSwitch.setMeter(meter);
         startingCurrentSwitch.start(now, null);
 
-        // right after start
+        // test fixture
         // ... the appliance should be switched on
         when(control.isOn()).thenReturn(true);
         assertTrue(startingCurrentSwitch.isApplianceOn());
         // ... but from the outside perspective the control is switched off
         assertFalse(startingCurrentSwitch.isOn());
 
-        // averagePower=0 lastAveragePowerOfPowerOnDetection=null
-        startingCurrentSwitch.detectStartingCurrent(now, meter);
+        startingCurrentSwitch.detectStartingCurrent(now, 0, 0);
         verify(startingCurrentSwitchListener, never()).startingCurrentDetected(now);
-        // averagePower=0 lastAveragePowerOfPowerOnDetection=0
-        startingCurrentSwitch.detectStartingCurrent(now, meter);
+
+        startingCurrentSwitch.detectStartingCurrent(now, 10, 0);
         verify(startingCurrentSwitchListener, never()).startingCurrentDetected(now);
-        // averagePower=10 lastAveragePowerOfPowerOnDetection=0
-        when(meter.getAveragePower()).thenReturn(10);
-        startingCurrentSwitch.detectStartingCurrent(now, meter);
+
+        startingCurrentSwitch.detectStartingCurrent(now, 10, 10);
         verify(startingCurrentSwitchListener, never()).startingCurrentDetected(now);
-        // averagePower=10 lastAveragePowerOfPowerOnDetection=10
-        startingCurrentSwitch.detectStartingCurrent(now, meter);
+
+        startingCurrentSwitch.detectStartingCurrent(now, 30, 10);
         verify(startingCurrentSwitchListener, never()).startingCurrentDetected(now);
-        // averagePower=30 lastAveragePowerOfPowerOnDetection=0
-        when(meter.getAveragePower()).thenReturn(30);
-        startingCurrentSwitch.detectStartingCurrent(now, meter);
-        verify(startingCurrentSwitchListener, never()).startingCurrentDetected(now);
-        // averagePower=30 lastAveragePowerOfPowerOnDetection=30
-        startingCurrentSwitch.detectStartingCurrent(now, meter);
+
+        startingCurrentSwitch.detectStartingCurrent(now, 30, 30);
 
         // power threshold exceeded for more than configured starting current detection duration
-        // (2 consecutive calls to detectStartingCurrent())
         // ... causing appliance power off
         verify(control).on(now, false);
         when(control.isOn()).thenReturn(false);
@@ -86,41 +79,42 @@ public class StartingCurrentSwitchTest {
         assertFalse(startingCurrentSwitch.isOn());
         // ... listeners are notified of starting current detection
         verify(startingCurrentSwitchListener).startingCurrentDetected(now);
+    }
 
-        // power on recommendation received by energy manager
-        reset(control);
+    @Test
+    public void detectFinishedCurrent() throws Exception {
+        LocalDateTime now = LocalDateTime.now();
+        startingCurrentSwitch.setMeter(meter);
+        startingCurrentSwitch.start(now, null);
         startingCurrentSwitch.on(now, true);
-        // ... causing appliance power on
-        verify(control).on(now, true);
+
+        // test fixture
+        // ... the appliance should be switched on
         when(control.isOn()).thenReturn(true);
         assertTrue(startingCurrentSwitch.isApplianceOn());
-        // ... and also from the outside perspective the control is switched on
+        // ... from the outside perspective the control is switched on
         assertTrue(startingCurrentSwitch.isOn());
 
-        // averagePower=30 lastAveragePower=30
-        when(meter.getAveragePower()).thenReturn(30);
-        // power threshold still exceeds power threshold
-        startingCurrentSwitch.detectStartingCurrent(now, meter);
-
-        // the minimum running time has been exceeded now
-        when(startingCurrentSwitch.isMinRunningTimeExceeded(now)).thenReturn(true);
-
-        // averagePower=10 lastAveragePower=30
-        when(meter.getAveragePower()).thenReturn(10);
-        startingCurrentSwitch.detectFinishedCurrent(now, meter);
+        startingCurrentSwitch.detectFinishedCurrent(now, 30, 30);
         verify(startingCurrentSwitchListener, never()).finishedCurrentDetected();
-        // averagePower=10 lastAveragePower=10
-        startingCurrentSwitch.detectFinishedCurrent(now, meter);
 
-        // power consumption fell below threshold for more than configured finished current detection duration
-        // (2 consecutive calls to detectFinishedCurrent())
+        startingCurrentSwitch.detectFinishedCurrent(now, 10, 30);
+        verify(startingCurrentSwitchListener, never()).finishedCurrentDetected();
+
+        // last/current average power is below threshold, but minRunningTime has not been reached
+        startingCurrentSwitch.detectFinishedCurrent(now, 10, 10);
+        // with minRunningTime reached ...
+        when(startingCurrentSwitch.isMinRunningTimeExceeded(now)).thenReturn(true);
+        // ... the finished current should be detected
+        startingCurrentSwitch.detectFinishedCurrent(now, 10, 10);
         // ... causing power off from the outside perspective
         assertFalse(startingCurrentSwitch.isOn());
         // ... but appliance remaining powered on
-        verify(control).on(now, true);
+        verify(control, times(2)).on(now, true);
         when(control.isOn()).thenReturn(true);
         assertTrue(startingCurrentSwitch.isApplianceOn());
         // ... listeners are notified of finish current detection
         verify(startingCurrentSwitchListener).finishedCurrentDetected();
     }
+
 }
