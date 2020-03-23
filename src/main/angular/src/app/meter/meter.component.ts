@@ -60,6 +60,7 @@ export class MeterComponent implements OnChanges, OnInit, CanDeactivate<MeterCom
   settingsDefaults: SettingsDefaults;
   settings: Settings;
   discardChangesMessage: string;
+  confirmDeleteMessage: string;
   TYPE_S0_ELECTRICITY_METER = S0ElectricityMeter.TYPE;
   TYPE_MODBUS_ELECTRICITY_METER = ModbusElectricityMeter.TYPE;
   TYPE_HTTP_ELECTRICITY_METER = HttpElectricityMeter.TYPE;
@@ -86,6 +87,7 @@ export class MeterComponent implements OnChanges, OnInit, CanDeactivate<MeterCom
 
   ngOnInit() {
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
+    this.translate.get('dialog.confirmDelete').subscribe(translated => this.confirmDeleteMessage = translated);
     this.route.paramMap.subscribe(() => this.applianceId = this.route.snapshot.paramMap.get('id'));
     this.route.data.subscribe((data: {
       meter: Meter, meterDefaults: MeterDefaults,
@@ -123,7 +125,19 @@ export class MeterComponent implements OnChanges, OnInit, CanDeactivate<MeterCom
     return this.dialogService.confirm(this.discardChangesMessage);
   }
 
-  typeChanged(newType: string) {
+  delete() {
+    this.dialogService.confirm(this.confirmDeleteMessage).subscribe(confirmed => {
+      if (confirmed) {
+        this.meterService.deleteMeter(this.applianceId).subscribe(() => this.typeChanged());
+      }
+    });
+  }
+
+  isDeleteEnabled() {
+    return this.meter != null && this.meter.type != null;
+  }
+
+  typeChanged(newType?: string) {
     this.meter.type = newType;
     this.buildForm();
   }

@@ -71,6 +71,8 @@
     <div class="mandatory-fields">{{'dialog.mandatoryfields'|translate}}</div>
     <button type="submit" class="ui primary button" [disabled]="form.pristine||form.invalid">
       {{'button.save' | translate}}</button>
+    <button type="button" [disabled]="!isDeleteEnabled()" (click)="delete()" class="ui button">
+      {{'button.delete' | translate}}</button>
   </form>
   <!--
   <pre>{{control | json}}</pre>

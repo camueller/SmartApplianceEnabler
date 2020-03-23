@@ -71,6 +71,7 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
   settingsDefaults: SettingsDefaults;
   settings: Settings;
   discardChangesMessage: string;
+  confirmDeleteMessage: string;
   TYPE_ALWAYS_ON_SWITCH = AlwaysOnSwitch.TYPE;
   TYPE_SWITCH = Switch.TYPE;
   TYPE_MODBUS_SWITCH = ModbusSwitch.TYPE;
@@ -100,6 +101,7 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
 
   ngOnInit() {
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
+    this.translate.get('dialog.confirmDelete').subscribe(translated => this.confirmDeleteMessage = translated);
     this.route.paramMap.subscribe(() => this.applianceId = this.route.snapshot.paramMap.get('id'));
     this.route.data.subscribe((data: {
       control: Control,
@@ -145,8 +147,20 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
     return this.dialogService.confirm(this.discardChangesMessage);
   }
 
-  typeChanged(newType: string) {
-    if (newType === '') {
+  delete() {
+    this.dialogService.confirm(this.confirmDeleteMessage).subscribe(confirmed => {
+      if (confirmed) {
+        this.controlService.deleteControl(this.applianceId).subscribe(() => this.typeChanged());
+      }
+    });
+  }
+
+  isDeleteEnabled() {
+    return this.control != null && this.control.type != null;
+  }
+
+  typeChanged(newType?: string | undefined) {
+    if (!newType) {
       this.control.startingCurrentDetection = false;
     } else if (newType === this.TYPE_ALWAYS_ON_SWITCH) {
       this.control.alwaysOnSwitch = this.controlFactory.createAlwaysOnSwitch();

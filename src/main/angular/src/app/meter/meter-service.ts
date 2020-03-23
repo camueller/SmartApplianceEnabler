@@ -41,7 +41,12 @@ export class MeterService extends SaeService {
     if (content != null) {
       return this.http.put(url, content, {headers: this.headersContentTypeJson, responseType: 'text'});
     } else {
-      return this.http.delete(url, {headers: this.headersContentTypeJson, responseType: 'text'});
+      return this.deleteMeter(id);
     }
+  }
+
+  deleteMeter(id: string): Observable<any> {
+    const url = `${SaeService.API}/meter?id=${id}`;
+    return this.http.delete(url, {headers: this.headersContentTypeJson, responseType: 'text'});
   }
 }
