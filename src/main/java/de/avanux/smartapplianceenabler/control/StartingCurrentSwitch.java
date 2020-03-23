@@ -175,7 +175,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
                 public void runTask() {
                     if(on) {
                         int averagePower = meter.getAveragePower();
-                        if(averagePower < powerThreshold) {
+                        if(averagePower < getPowerThreshold()) {
                             onPowerUpdate(averagePower);
                         }
                     }
