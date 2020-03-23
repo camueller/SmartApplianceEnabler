@@ -12,9 +12,9 @@
     </div>
   </div>
   <div class="mandatory-fields">{{'dialog.mandatoryfields'|translate}}</div>
-  <button type="button" (click)="addSchedule()" class="ui button">{{'button.new' | translate}}</button>
   <button type="submit" class="ui primary button" [disabled]="form.pristine||form.invalid">
     {{'button.save' | translate}}</button>
+  <button type="button" (click)="addSchedule()" class="ui button">{{'button.new' | translate}}</button>
 </form>
 <!--pre>pristine={{form.pristine}}</pre>
 <pre>invalid={{form.invalid}}</pre>
