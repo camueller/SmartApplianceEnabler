@@ -6,7 +6,7 @@
 	<groupId>de.avanux.smartapplianceenabler</groupId>
 	<artifactId>SmartApplianceEnabler</artifactId>
     <packaging>war</packaging>
-	<version>1.5.3</version>
+	<version>1.5.4</version>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
