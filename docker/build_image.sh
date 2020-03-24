@@ -13,7 +13,7 @@ VERSION="$2"
 DIRECTORY="$3"
 
 echo "Build image $NAME:$VERSION"
-docker image rmi $(docker images -qa $NAME) 2> /dev/null
+docker image rmi -f $(docker images -qa $NAME | uniq) 2> /dev/null
 docker build --tag=$NAME:$VERSION $DIRECTORY
 docker tag $NAME:$VERSION $NAME:latest
 docker push $NAME
