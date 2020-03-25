@@ -1,0 +1,16 @@
+export enum ApplianceType {
+  AIR_CONDITIONING = 'AirConditioning',
+  CHARGER = 'Charger',
+  DISH_WASHER = 'DishWasher',
+  DRYER = 'Dryer',
+  ELECTRIC_VEHICLE = 'ElectricVehicle',
+  EV_CHARGER = 'EVCharger',
+  FREEZER = 'Freezer',
+  FRIDGE = 'Fridge',
+  HEATER = 'Heater',
+  HEAT_PUMP = 'HeatPump',
+  MOTOR = 'Motor',
+  PUMP = 'Pump',
+  WASHING_MACHINE = 'WashingMachine',
+  OTHER = 'Other',
+}

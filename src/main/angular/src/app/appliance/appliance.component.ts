@@ -33,6 +33,8 @@ import {Logger} from '../log/logger';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {FormHandler} from '../shared/form-handler';
 import {getValidInt, getValidString} from '../shared/form-util';
+import {EvCharger} from '../control-evcharger/ev-charger';
+import {ApplianceType} from './appliance-type';
 
 @Component({
   selector: 'app-appliance',
@@ -49,6 +51,7 @@ export class ApplianceComponent implements OnChanges, OnInit, AfterViewChecked, 
   isNew = false;
   discardChangesMessage: string;
   confirmDeletionMessage: string;
+  ApplianceType = ApplianceType;
 
   constructor(private logger: Logger,
               private applianceService: ApplianceService,
@@ -109,6 +112,10 @@ export class ApplianceComponent implements OnChanges, OnInit, AfterViewChecked, 
       return true;
     }
     return this.dialogService.confirm(this.discardChangesMessage);
+  }
+
+  isEvCharger() {
+    return this.form && this.form.controls.type.value === ApplianceType.EV_CHARGER;
   }
 
   deleteAppliance() {
@@ -179,7 +186,7 @@ export class ApplianceComponent implements OnChanges, OnInit, AfterViewChecked, 
     this.appliance.name = getValidString(this.form.controls.name.value);
     this.appliance.type = getValidString(this.form.controls.type.value);
     this.appliance.serial = getValidString(this.form.controls.serial.value);
-    this.appliance.minPowerConsumption = getValidInt(this.form.controls.minPowerConsumption.value);
+    this.appliance.minPowerConsumption = this.isEvCharger() ? getValidInt(this.form.controls.minPowerConsumption.value) : undefined;
     this.appliance.maxPowerConsumption = getValidInt(this.form.controls.maxPowerConsumption.value);
     this.appliance.interruptionsAllowed = this.form.controls.interruptionsAllowed.value;
     this.appliance.minOnTime = getValidInt(this.form.controls.minOnTime.value);

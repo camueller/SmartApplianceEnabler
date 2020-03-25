@@ -44,20 +44,20 @@
     <div class="field">
       <label>{{'ApplianceComponent.type' | translate}}</label>
       <select class="ui fluid dropdown" formControlName="type">
-        <option value="AirConditioning">{{'ApplianceComponent.type.AirConditioning' | translate}}</option>
-        <option value="Charger">{{'ApplianceComponent.type.Charger' | translate}}</option>
-        <option value="DishWasher">{{'ApplianceComponent.type.DishWasher' | translate}}</option>
-        <option value="Dryer">{{'ApplianceComponent.type.Dryer' | translate}}</option>
-        <option value="ElectricVehicle">{{'ApplianceComponent.type.ElectricVehicle' | translate}}</option>
-        <option value="EVCharger">{{'ApplianceComponent.type.EVCharger' | translate}}</option>
-        <option value="Freezer">{{'ApplianceComponent.type.Freezer' | translate}}</option>
-        <option value="Fridge">{{'ApplianceComponent.type.Fridge' | translate}}</option>
-        <option value="Heater">{{'ApplianceComponent.type.Heater' | translate}}</option>
-        <option value="HeatPump">{{'ApplianceComponent.type.HeatPump' | translate}}</option>
-        <option value="Motor">{{'ApplianceComponent.type.Motor' | translate}}</option>
-        <option value="Pump">{{'ApplianceComponent.type.Pump' | translate}}</option>
-        <option value="WashingMachine">{{'ApplianceComponent.type.WashingMachine' | translate}}</option>
-        <option value="Other">{{'ApplianceComponent.type.Other' | translate}}</option>
+        <option value="{{ApplianceType.AIR_CONDITIONING}}">{{'ApplianceComponent.type.AirConditioning' | translate}}</option>
+        <option value="{{ApplianceType.CHARGER}}">{{'ApplianceComponent.type.Charger' | translate}}</option>
+        <option value="{{ApplianceType.DISH_WASHER}}">{{'ApplianceComponent.type.DishWasher' | translate}}</option>
+        <option value="{{ApplianceType.DRYER}}">{{'ApplianceComponent.type.Dryer' | translate}}</option>
+        <option value="{{ApplianceType.ELECTRIC_VEHICLE}}">{{'ApplianceComponent.type.ElectricVehicle' | translate}}</option>
+        <option value="{{ApplianceType.EV_CHARGER}}">{{'ApplianceComponent.type.EVCharger' | translate}}</option>
+        <option value="{{ApplianceType.FREEZER}}">{{'ApplianceComponent.type.Freezer' | translate}}</option>
+        <option value="{{ApplianceType.FRIDGE}}">{{'ApplianceComponent.type.Fridge' | translate}}</option>
+        <option value="{{ApplianceType.HEATER}}">{{'ApplianceComponent.type.Heater' | translate}}</option>
+        <option value="{{ApplianceType.HEAT_PUMP}}">{{'ApplianceComponent.type.HeatPump' | translate}}</option>
+        <option value="{{ApplianceType.MOTOR}}">{{'ApplianceComponent.type.Motor' | translate}}</option>
+        <option value="{{ApplianceType.PUMP}}">{{'ApplianceComponent.type.Pump' | translate}}</option>
+        <option value="{{ApplianceType.WASHING_MACHINE}}">{{'ApplianceComponent.type.WashingMachine' | translate}}</option>
+        <option value="{{ApplianceType.OTHER}}">{{'ApplianceComponent.type.Other' | translate}}</option>
       </select>
     </div>
     <div class="field">
@@ -69,7 +69,7 @@
 
   <h4 class="ui dividing header">{{'ApplianceComponent.characteristics' | translate}}</h4>
   <div class="fields">
-    <div class="field">
+    <div class="field" *ngIf="isEvCharger()">
       <label class="">{{'ApplianceComponent.minPowerConsumption' | translate}}
         <i class="icon blue info circle tooltip">
           <span class="tooltiptext" style="margin-left: -180px;"

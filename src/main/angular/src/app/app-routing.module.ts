@@ -87,7 +87,7 @@ const routes: Routes = [
     component: SchedulesComponent,
     resolve: {
       schedules: ScheduleResolver,
-      electricVehicles: ElectricVehicleResolver
+      control: ControlResolver,
     },
     canDeactivate: [CanDeactivateGuard]
   },

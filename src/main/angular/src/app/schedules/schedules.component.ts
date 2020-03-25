@@ -13,6 +13,8 @@ import {RuntimeRequest} from '../schedule-request-runtime/runtime-request';
 import {EnergyRequest} from '../schedule-request-energy/energy-request';
 import {SocRequest} from '../schedule-request-soc/soc-request';
 import {ScheduleComponent} from '../schedule/schedule.component';
+import {Control} from '../control/control';
+import {EvCharger} from '../control-evcharger/ev-charger';
 
 @Component({
   selector: 'app-schedules',
@@ -25,24 +27,25 @@ export class SchedulesComponent implements OnChanges, OnInit {
   form: FormGroup;
   formHandler: FormHandler;
   schedules: Schedule[];
-  electricVehicles: ElectricVehicle[];
+  control: Control;
   applianceId: string;
-  timeframeTypes: {key: string, value?: string}[] = [
-    { key: DayTimeframe.TYPE },
-    { key: ConsecutiveDaysTimeframe.TYPE },
+  timeframeTypes: { key: string, value?: string }[] = [
+    {key: DayTimeframe.TYPE},
+    {key: ConsecutiveDaysTimeframe.TYPE},
   ];
-  evRequestTypes: {key: string, value?: string}[] = [
-    { key: RuntimeRequest.TYPE },
-    { key: EnergyRequest.TYPE },
-    { key: SocRequest.TYPE },
+  evRequestTypes: { key: string, value?: string }[] = [
+    {key: EnergyRequest.TYPE},
+    {key: SocRequest.TYPE},
   ];
-  nonEvRequestTypes: {key: string, value?: string}[] = [];
+  nonEvRequestTypes: { key: string, value?: string }[] = [
+    {key: RuntimeRequest.TYPE}
+  ];
 
   constructor(private logger: Logger,
               private route: ActivatedRoute,
               private scheduleService: ScheduleService,
               private translate: TranslateService
-              ) {
+  ) {
     this.formHandler = new FormHandler();
   }
 
@@ -57,9 +60,9 @@ export class SchedulesComponent implements OnChanges, OnInit {
 
   ngOnInit() {
     this.route.paramMap.subscribe(() => this.applianceId = this.route.snapshot.paramMap.get('id'));
-    this.route.data.subscribe((data: {schedules: Schedule[], electricVehicles: ElectricVehicle[]}) => {
+    this.route.data.subscribe((data: { schedules: Schedule[], control: Control }) => {
       this.schedules = data.schedules;
-      this.electricVehicles = data.electricVehicles;
+      this.control = data.control;
       this.form = this.buildForm();
     });
     const timeframeTypeKeys = this.timeframeTypes.map(timeframeType => timeframeType.key);
@@ -68,23 +71,34 @@ export class SchedulesComponent implements OnChanges, OnInit {
         this.timeframeTypes.forEach(timeframeType => timeframeType.value = translatedKeys[timeframeType.key]);
       });
 
-    const requestTypeKeys = this.evRequestTypes.map(requestType => requestType.key);
+    const requestTypeKeys = [...this.evRequestTypes, ...this.nonEvRequestTypes].map((requestType) => requestType.key);
     this.translate.get(requestTypeKeys).subscribe(
       translatedKeys => {
         this.evRequestTypes.forEach(requestType => requestType.value = translatedKeys[requestType.key]);
-        this.nonEvRequestTypes = this.evRequestTypes.filter(requestType => requestType.key === RuntimeRequest.TYPE);
+        this.nonEvRequestTypes.forEach(requestType => requestType.value = translatedKeys[requestType.key]);
       });
   }
 
   get validRequestTypes() {
-    if (this.hasElectricVehicles) {
-      return this.evRequestTypes;
+    if (this.isEvCharger) {
+      if (this.hasElectricVehicles) {
+        return this.evRequestTypes;
+      }
+      return [];
     }
     return this.nonEvRequestTypes;
   }
 
+  get isEvCharger(): boolean {
+    return this.control ? this.control.type === EvCharger.TYPE : false;
+  }
+
   get hasElectricVehicles(): boolean {
-    return this.electricVehicles.length > 0;
+    return this.isEvCharger && this.electricVehicles.length > 0;
+  }
+
+  get electricVehicles(): ElectricVehicle[] {
+    return this.control.evCharger ? this.control.evCharger.vehicles : [];
   }
 
   addSchedule() {

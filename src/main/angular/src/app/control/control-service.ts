@@ -37,11 +37,11 @@ export class ControlService extends SaeService {
 
   getElectricVehicles(id: string): Observable<Array<ElectricVehicle>> {
     return this.http.get(`${SaeService.API}/ev?id=${id}`)
-      .pipe(map((schedules: Array<ElectricVehicle>) => {
-        if (!schedules) {
+      .pipe(map((evs: Array<ElectricVehicle>) => {
+        if (!evs) {
           return new Array<ElectricVehicle>();
         }
-        return schedules.map(ev => this.controlFactory.toElectricVehicle(ev));
+        return evs.map(ev => this.controlFactory.toElectricVehicle(ev));
       }));
   }
 
