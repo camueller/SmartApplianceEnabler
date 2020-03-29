@@ -15,7 +15,20 @@
   ~ with this program; if not, write to the Free Software Foundation, Inc.,
   ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
   -->
-<div class="sae-title">Smart Appliance Enabler <span class="sae-version">{{version}}</span></div>
+<app-layout>
+  <mat-sidenav-container>
+    <mat-sidenav #sidenav mode="push" role="navigation">
+      <app-sidenav (sidenavClose)="sidenav.close()"></app-sidenav>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <app-header (sidenavToggle)="sidenav.toggle()"></app-header>
+      <main>
+        <router-outlet></router-outlet>
+      </main>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</app-layout>
+<!--div class="sae-title">Smart Appliance Enabler <span class="sae-version">{{version}}</span></div>
 <div class="ui sidebar inverted vertical menu">
   <div class="ui item">
 
@@ -46,4 +59,4 @@
   <div class="ui segment">
     <router-outlet></router-outlet>
   </div>
-</div>
+</div-->

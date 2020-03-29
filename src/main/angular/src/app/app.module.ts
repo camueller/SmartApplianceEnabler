@@ -85,6 +85,12 @@ import { ScheduleRequestEnergyComponent } from './schedule-request-energy/schedu
 import { ScheduleRequestSocComponent } from './schedule-request-soc/schedule-request-soc.component';
 import {SchedulesComponent} from './schedules/schedules.component';
 import { TrafficLightComponent } from './traffic-light/traffic-light.component';
+import {MaterialModule} from './material/material.module';
+import { LayoutComponent } from './layout/layout.component';
+import {FlexLayoutModule} from '@angular/flex-layout';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import { HeaderComponent } from './navigation/header/header.component';
+import { SidenavComponent } from './navigation/sidenav/sidenav.component';
 
 @NgModule({
   declarations: [
@@ -127,14 +133,20 @@ import { TrafficLightComponent } from './traffic-light/traffic-light.component';
     StatusEvchargerViewComponent,
     StatusViewComponent,
     TrafficLightComponent,
+    LayoutComponent,
+    HeaderComponent,
+    SidenavComponent,
   ],
   imports: [
+    AppRoutingModule,
+    BrowserAnimationsModule,
     BrowserModule,
+    FlexLayoutModule,
     FormsModule,
+    HttpClientModule,
+    MaterialModule,
     ReactiveFormsModule,
     SuiModule,
-    AppRoutingModule,
-    HttpClientModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

@@ -34,7 +34,6 @@ import {ScheduleResolver} from './schedule/schedule-resolver.service';
 import {SettingsResolver} from './settings/settings-resolver.service';
 import {SettingsDefaultsResolver} from './settings/settings-defaults-resolver.service';
 import {CanDeactivateGuard} from './shared/can-deactivate-guard.service';
-import {ElectricVehicleResolver} from './control-evcharger/electric-vehicle-resolver.service';
 
 const routes: Routes = [
   {

@@ -1,0 +1,38 @@
+<mat-nav-list>
+  <a mat-list-item (click)="onSidenavClose()">
+    <mat-icon>menu</mat-icon><span class="nav-caption">Close</span>
+  </a>
+  <a mat-list-item routerLink="/status" (click)="onSidenavClose()">
+    <mat-icon>traffic</mat-icon> <span class="nav-caption">{{'AppComponent.status' | translate}}</span>
+  </a>
+  <a mat-list-item routerLink="/settings" (click)="onSidenavClose()">
+    <mat-icon>settings</mat-icon> <span class="nav-caption">{{'AppComponent.settings' | translate}}</span>
+  </a>
+  <a mat-list-item routerLink="/appliance" (click)="onSidenavClose()">
+    <mat-icon>add</mat-icon><span class="nav-caption">{{'AppComponent.appliance.new' | translate}}</span>
+  </a>
+  <mat-divider *ngIf="hasAppliances"></mat-divider>
+
+  <div *ngFor="let applianceHeader of applianceHeaders; last as last">
+    <a mat-list-item [routerLink]="['appliance', applianceHeader.id]">
+      <mat-icon>devices_other</mat-icon>
+      <div fxLayout="column">
+        <div class="nav-caption appliance-type">{{getTranslatedType(applianceHeader.type)}}</div>
+        <div class="appliance-name">{{applianceHeader.vendor}} {{applianceHeader.name}}</div>
+      </div>
+    </a>
+    <a mat-list-item [routerLink]="['meter', applianceHeader.id]" class="submenu-item">
+      <mat-icon class="submenu-icon" [inline]="true">show_chart</mat-icon><span class="nav-caption">{{'AppComponent.meter' | translate}}</span>
+    </a>
+    <a mat-list-item [routerLink]="['control', applianceHeader.id]" class="submenu-item">
+      <mat-icon class="submenu-icon" [inline]="true">power_settings_new</mat-icon><span class="nav-caption">{{'AppComponent.control' | translate}}</span>
+    </a>
+    <a mat-list-item [routerLink]="['schedule', applianceHeader.id]" class="submenu-item" *ngIf="applianceHeader.controllable">
+      <mat-icon class="submenu-icon" [inline]="true">access_time</mat-icon><span class="nav-caption">{{'AppComponent.schedules' | translate}}</span>
+    </a>
+    <!--a mat-line mat-list-item [routerLink]="['appliance', applianceHeader.id]">{{getTranslatedType(applianceHeader.type)}}</a>
+    <a mat-line mat-list-item [routerLink]="['meter', applianceHeader.id]">{{'AppComponent.meter' | translate}}</a-->
+
+    <mat-divider *ngIf="!last"></mat-divider>
+  </div>
+</mat-nav-list>
