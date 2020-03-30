@@ -6,12 +6,17 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
 import {MatListModule} from '@angular/material/list';
 import {MatCardModule} from '@angular/material/card';
+import {MessageboxComponent} from './messagebox/messagebox.component';
+import {FlexModule} from '@angular/flex-layout';
 
 
 @NgModule({
-  declarations: [],
+  declarations: [
+    MessageboxComponent,
+  ],
   imports: [
     CommonModule,
+    FlexModule,
     MatButtonModule,
     MatCardModule,
     MatIconModule,
@@ -26,6 +31,7 @@ import {MatCardModule} from '@angular/material/card';
     MatListModule,
     MatSidenavModule,
     MatToolbarModule,
+    MessageboxComponent,
   ]
 })
 export class MaterialModule { }

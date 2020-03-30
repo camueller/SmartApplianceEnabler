@@ -256,6 +256,7 @@
   "ModbusWriteValueComponent.name": "Zustand / Aktion",
   "ModbusWriteValueComponent.value": "Wert",
 
+  "SchedulesComponent.message.notControllable": "Schaltzeiten können nur für Geräte mit Schalter konfiguriert werden.",
 
   "ScheduleComponent.schedule": "Zeitplan",
   "ScheduleComponent.enabled": "aktiviert",

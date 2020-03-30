@@ -15,6 +15,7 @@ import {SocRequest} from '../schedule-request-soc/soc-request';
 import {ScheduleComponent} from '../schedule/schedule.component';
 import {Control} from '../control/control';
 import {EvCharger} from '../control-evcharger/ev-charger';
+import {MessageBoxLevel} from '../material/messagebox/messagebox.component';
 
 @Component({
   selector: 'app-schedules',
@@ -40,6 +41,7 @@ export class SchedulesComponent implements OnChanges, OnInit {
   nonEvRequestTypes: { key: string, value?: string }[] = [
     {key: RuntimeRequest.TYPE}
   ];
+  MessageBoxLevel = MessageBoxLevel;
 
   constructor(private logger: Logger,
               private route: ActivatedRoute,
