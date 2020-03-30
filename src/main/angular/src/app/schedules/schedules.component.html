@@ -1,4 +1,4 @@
-<form class="ui form" [formGroup]="form" (ngSubmit)="submitForm()">
+<form class="ui form" [formGroup]="form" (ngSubmit)="submitForm()" *ngIf="hasControl; else notControllable">
   <div class="sae-block" formArrayName="schedules">
     <div *ngFor="let scheduleFormGroup of schedulesFormArray.controls;let i = index" [formGroupName]="i">
       <app-schedule [schedule]="schedules[i]"
@@ -16,6 +16,9 @@
     {{'button.save' | translate}}</button>
   <button type="button" (click)="addSchedule()" class="ui button">{{'button.new' | translate}}</button>
 </form>
+<ng-template #notControllable>
+  <div>WARNBOX: Schaltzeiten können nur für Geräte mit Schalter konfiguriert werden.</div>
+</ng-template>
 <!--pre>pristine={{form.pristine}}</pre>
 <pre>invalid={{form.invalid}}</pre>
 <pre>{{form.value | json}}</pre-->

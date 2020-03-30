@@ -27,7 +27,7 @@
     <a mat-list-item [routerLink]="['control', applianceHeader.id]" class="submenu-item">
       <mat-icon class="submenu-icon" [inline]="true">power_settings_new</mat-icon><span class="nav-caption">{{'AppComponent.control' | translate}}</span>
     </a>
-    <a mat-list-item [routerLink]="['schedule', applianceHeader.id]" class="submenu-item" *ngIf="applianceHeader.controllable">
+    <a mat-list-item [routerLink]="['schedule', applianceHeader.id]" class="submenu-item">
       <mat-icon class="submenu-icon" [inline]="true">access_time</mat-icon><span class="nav-caption">{{'AppComponent.schedules' | translate}}</span>
     </a>
     <!--a mat-line mat-list-item [routerLink]="['appliance', applianceHeader.id]">{{getTranslatedType(applianceHeader.type)}}</a>

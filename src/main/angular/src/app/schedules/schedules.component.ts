@@ -89,6 +89,10 @@ export class SchedulesComponent implements OnChanges, OnInit {
     return this.nonEvRequestTypes;
   }
 
+  get hasControl(): boolean {
+    return this.control ? this.control.type !== undefined : false;
+  }
+
   get isEvCharger(): boolean {
     return this.control ? this.control.type === EvCharger.TYPE : false;
   }
