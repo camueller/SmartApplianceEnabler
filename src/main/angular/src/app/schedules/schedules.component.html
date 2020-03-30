@@ -17,7 +17,7 @@
   <button type="button" (click)="addSchedule()" class="ui button">{{'button.new' | translate}}</button>
 </form>
 <ng-template #notControllable>
-  <div>WARNBOX: Schaltzeiten können nur für Geräte mit Schalter konfiguriert werden.</div>
+  <mat-card class="messagebox"><div fxFlex fxLayout><mat-icon>warning</mat-icon><span class="messagebox-text">Schaltzeiten können nur für Geräte mit Schalter konfiguriert werden.</span></div></mat-card>
 </ng-template>
 <!--pre>pristine={{form.pristine}}</pre>
 <pre>invalid={{form.invalid}}</pre>

@@ -19,7 +19,7 @@ import {EvCharger} from '../control-evcharger/ev-charger';
 @Component({
   selector: 'app-schedules',
   templateUrl: './schedules.component.html',
-  styleUrls: ['../global.css'],
+  styleUrls: ['../global.css', './schedules.component.css'],
 })
 export class SchedulesComponent implements OnChanges, OnInit {
   @ViewChildren('scheduleComponents')
