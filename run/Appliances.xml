@@ -1,6 +1,33 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.5">
     <Appliance id="F-00000001-000000000001-00">
+        <!--StartingCurrentSwitch finishedCurrentDetectionDuration="20" minRunningTime="2">
+            <HttpSwitch>
+                <HttpWrite url="http://tasmota/cm?cmnd=Power%20On">
+                    <HttpWriteValue name="On"/>
+                </HttpWrite>
+                <HttpWrite url="http://tasmota/cm?cmnd=Power%20Off">
+                    <HttpWriteValue name="Off"/>
+                </HttpWrite>
+                <HttpRead url="http://tasmota/cm?cmnd=Power">
+                    <HttpReadValue name="On" extractionRegex=":.ON"/>
+                </HttpRead>
+            </HttpSwitch>
+        </StartingCurrentSwitch-->
+        <HttpElectricityMeter>
+            <HttpRead url="http://tasmota/cm?cmnd=Status%208">
+                <HttpReadValue name="Power" extractionRegex=",.Power.:(\d+)"/>
+            </HttpRead>
+        </HttpElectricityMeter>
+        <!--Schedule enabled="true">
+            <RuntimeRequest max="300"/>
+            <DayTimeframe>
+                <Start hour="17" minute="39" second="0"/>
+                <End hour="22" minute="0" second="0"/>
+            </DayTimeframe>
+        </Schedule-->
+    </Appliance>
+    <Appliance id="F-00000001-000000000002-00">
         <StartingCurrentSwitch finishedCurrentDetectionDuration="20" minRunningTime="2">
             <HttpSwitch>
                 <HttpWrite url="http://tasmota/cm?cmnd=Power%20On">
