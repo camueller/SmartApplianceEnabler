@@ -16,7 +16,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {AfterViewChecked, Component, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {ApplianceService} from './appliance.service';
 import {ActivatedRoute, CanDeactivate, Router} from '@angular/router';
 import {AppliancesReloadService} from './appliances-reload-service';
@@ -33,15 +33,19 @@ import {Logger} from '../log/logger';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {FormHandler} from '../shared/form-handler';
 import {getValidInt, getValidString} from '../shared/form-util';
-import {EvCharger} from '../control-evcharger/ev-charger';
 import {ApplianceType} from './appliance-type';
+
+interface ApplianceTypViewValue {
+  value: string;
+  viewValue: string;
+}
 
 @Component({
   selector: 'app-appliance',
   templateUrl: './appliance.component.html',
-  styleUrls: ['../global.css']
+  styleUrls: ['./appliance.component.css', '../global.css']
 })
-export class ApplianceComponent implements OnChanges, OnInit, AfterViewChecked, CanDeactivate<ApplianceComponent> {
+export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<ApplianceComponent> {
   appliance: Appliance;
   form: FormGroup;
   formHandler: FormHandler;
@@ -51,6 +55,7 @@ export class ApplianceComponent implements OnChanges, OnInit, AfterViewChecked, 
   isNew = false;
   discardChangesMessage: string;
   confirmDeletionMessage: string;
+  applianceTypViewValues: ApplianceTypViewValue[] = [];
   ApplianceType = ApplianceType;
 
   constructor(private logger: Logger,
@@ -85,10 +90,20 @@ export class ApplianceComponent implements OnChanges, OnInit, AfterViewChecked, 
       new ErrorMessage('serial', ValidatorType.required),
       new ErrorMessage('minPowerConsumption', ValidatorType.pattern),
       new ErrorMessage('maxPowerConsumption', ValidatorType.required),
-      new ErrorMessage('maxPowerConsumption', ValidatorType.pattern)
+      new ErrorMessage('maxPowerConsumption', ValidatorType.pattern),
+      new ErrorMessage('minOnTime', ValidatorType.pattern),
+      new ErrorMessage('maxOnTime', ValidatorType.pattern),
+      new ErrorMessage('minOffTime', ValidatorType.pattern),
+      new ErrorMessage('maxOffTime', ValidatorType.pattern),
     ], this.translate);
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.translate.get('ApplianceComponent.confirmDeletion').subscribe(translated => this.confirmDeletionMessage = translated);
+    const applianceTypeKeys = Object.keys(ApplianceType).map(key => `ApplianceComponent.type.${ApplianceType[key]}`);
+    this.translate.get(applianceTypeKeys).subscribe(translatedStrings => {
+      Object.keys(translatedStrings).forEach(key => {
+        this.applianceTypViewValues.push({value: key.split('.')[2], viewValue: translatedStrings[key]});
+      });
+    });
     this.route.paramMap.subscribe(() => this.isNew = this.route.snapshot.paramMap.get('id') == null);
     this.route.data.subscribe((data: { appliance: Appliance }) => {
       this.appliance = data.appliance;
@@ -101,10 +116,6 @@ export class ApplianceComponent implements OnChanges, OnInit, AfterViewChecked, 
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
     });
-  }
-
-  ngAfterViewChecked() {
-    this.formHandler.markLabelsRequired();
   }
 
   canDeactivate(): Observable<boolean> | boolean {

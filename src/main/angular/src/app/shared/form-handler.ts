@@ -58,6 +58,10 @@ export class FormHandler {
     }
   }
 
+  public isRequired(formControlName: string) {
+    return this.formControlNamesRequired.indexOf(formControlName) >= 0;
+  }
+
   public markLabelsRequired() {
     this.formControlNamesRequired.forEach(formControlName => {
       if (typeof $ !== 'undefined') {

@@ -3,7 +3,9 @@ import {CommonModule} from '@angular/common';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatButtonModule} from '@angular/material/button';
+import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatIconModule} from '@angular/material/icon';
+import {MatInputModule, MatTooltipModule, MatOptionModule, MatSelectModule, MatCheckboxModule} from '@angular/material';
 import {MatListModule} from '@angular/material/list';
 import {MatCardModule} from '@angular/material/card';
 import {MessageboxComponent} from './messagebox/messagebox.component';
@@ -19,18 +21,30 @@ import {FlexModule} from '@angular/flex-layout';
     FlexModule,
     MatButtonModule,
     MatCardModule,
+    MatCheckboxModule,
+    MatFormFieldModule,
     MatIconModule,
+    MatInputModule,
     MatListModule,
+    MatOptionModule,
+    MatSelectModule,
     MatSidenavModule,
     MatToolbarModule,
+    MatTooltipModule,
   ],
   exports: [
     MatButtonModule,
     MatCardModule,
+    MatCheckboxModule,
+    MatFormFieldModule,
     MatIconModule,
+    MatInputModule,
     MatListModule,
+    MatOptionModule,
+    MatSelectModule,
     MatSidenavModule,
     MatToolbarModule,
+    MatTooltipModule,
     MessageboxComponent,
   ]
 })
