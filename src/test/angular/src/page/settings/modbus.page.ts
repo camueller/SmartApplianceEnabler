@@ -1,4 +1,4 @@
-import {ModbusSettings} from '../../../../../main/angular/src/app/settings/modbus-settings';
+import {ModbusSetting} from '../../../../../main/angular/src/app/settings-modbus/modbus-setting';
 import {Selector} from 'testcafe';
 import {assertInput, inputText, selectorInputByFormControlName} from '../../shared/form';
 
@@ -7,13 +7,13 @@ export class ModbusPage {
   private static selectorBase = 'app-settings';
   private static addModbusButton = Selector(`${ModbusPage.selectorBase} i.green.icon.add`);
 
-  public static async addModbus(t: TestController, modbusSettings: ModbusSettings) {
+  public static async addModbus(t: TestController, modbusSettings: ModbusSetting) {
     await t.click(ModbusPage.addModbusButton);
     await ModbusPage.setId(t, modbusSettings.modbusTcpId);
     await ModbusPage.setHost(t, modbusSettings.modbusTcpHost);
     await ModbusPage.setPort(t, modbusSettings.modbusTcpPort);
   }
-  public static async assertModbus(t: TestController, modbusSettings: ModbusSettings) {
+  public static async assertModbus(t: TestController, modbusSettings: ModbusSetting) {
     await t.click(ModbusPage.addModbusButton);
     await ModbusPage.assertId(t, modbusSettings.modbusTcpId);
     await ModbusPage.assertHost(t, modbusSettings.modbusTcpHost);

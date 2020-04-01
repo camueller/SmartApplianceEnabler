@@ -17,7 +17,7 @@ import {Logger} from '../log/logger';
 import {TranslateService} from '@ngx-translate/core';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {ModbusElectricityMeter} from './modbus-electricity-meter';
-import {ModbusSettings} from '../settings/modbus-settings';
+import {ModbusSetting} from '../settings-modbus/modbus-setting';
 import {SettingsDefaults} from '../settings/settings-defaults';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {ModbusRead} from '../modbus-read/modbus-read';
@@ -43,7 +43,7 @@ export class MeterModbusComponent implements OnChanges, OnInit, AfterViewChecked
   @Input()
   settingsDefaults: SettingsDefaults;
   @Input()
-  modbusSettings: ModbusSettings[];
+  modbusSettings: ModbusSetting[];
   @Input()
   applianceId: string;
   form: FormGroup;

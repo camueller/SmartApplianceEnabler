@@ -35,36 +35,19 @@
 
   <section>
     <h2>{{'SettingsComponent.modbus' | translate}}</h2>
-    <div formArrayName="modbus">
-      <div *ngFor="let modbusFormGroup of modbusFormArray.controls;let i = index;last as l" [formGroupName]="i">
-        <div class="fields">
-          <mat-form-field class="modbusTcpId">
-            <mat-label>{{'SettingsComponent.modbusTcpId' | translate}}</mat-label>
-            <input matInput type="text" formControlName="modbusTcpId"
-                   required="{{formHandler.isRequired('modbusTcpId')}}">
-          </mat-form-field>
-          <mat-form-field class="modbusTcpHost">
-            <mat-label>{{'SettingsComponent.modbusTcpHost' | translate}}</mat-label>
-            <input matInput type="text" formControlName="modbusTcpHost"
-                   required="{{formHandler.isRequired('modbusTcpHost')}}">
-            <mat-error *ngIf="errors.modbusTcpHost">{{errors.modbusTcpHost}}</mat-error>
-          </mat-form-field>
-          <mat-form-field class="modbusTcpPort">
-            <mat-label>{{'SettingsComponent.modbusTcpPort' | translate}}</mat-label>
-            <input matInput type="text" formControlName="modbusTcpPort"
-                   required="{{formHandler.isRequired('modbusTcpPort')}}">
-            <mat-error *ngIf="errors.modbusTcpPort">{{errors.modbusTcpPort}}</mat-error>
-          </mat-form-field>
-          <button mat-button (click)="addModbus()" *ngIf="l"><mat-icon>add_circle_outline</mat-icon></button>
-          <button mat-button (click)="removeModbus(i)"><mat-icon>remove_circle_outline</mat-icon></button>
-        </div>
+    <div formArrayName="modbusSettings">
+      <div *ngFor="let modbusSetting of settings.modbusSettings; index as i">
+        <app-settings-modbus
+          [formGroupName]="i"
+          [form]="getModbusSettingFormGroup(i)"
+          [modbusSetting]="modbusSetting"
+          (remove)="onModbusSettingRemove(i)"
+          #modbusSettings
+        ></app-settings-modbus>
       </div>
-      <div *ngIf="settings.modbusSettings.length === 0">
-        <button mat-button (click)="addModbus()"><mat-icon>add_circle_outline</mat-icon></button>
-      </div>
+      <button mat-raised-button type="button" (click)="addModbusSetting()">{{'button.new' | translate}}</button>
     </div>
   </section>
-
 
   <div class="mandatory-fields">{{'dialog.mandatoryfields'|translate}}</div>
   <button mat-raised-button type="submit" color="primary" [disabled]="form.pristine||form.invalid">

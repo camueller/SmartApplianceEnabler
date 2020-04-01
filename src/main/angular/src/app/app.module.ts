@@ -78,19 +78,20 @@ import {ModbusReadComponent} from './modbus-read/modbus-read.component';
 import {ModbusReadValueComponent} from './modbus-read-value/modbus-read-value.component';
 import {ModbusWriteComponent} from './modbus-write/modbus-write.component';
 import {ModbusWriteValueComponent} from './modbus-write-value/modbus-write-value.component';
-import { ScheduleTimeframeConsecutivedaysComponent } from './schedule-timeframe-consecutivedays/schedule-timeframe-consecutivedays.component';
-import { ScheduleTimeframeDayComponent } from './schedule-timeframe-day/schedule-timeframe-day.component';
-import { ScheduleRequestRuntimeComponent } from './schedule-request-runtime/schedule-request-runtime.component';
-import { ScheduleRequestEnergyComponent } from './schedule-request-energy/schedule-request-energy.component';
-import { ScheduleRequestSocComponent } from './schedule-request-soc/schedule-request-soc.component';
+import {ScheduleTimeframeConsecutivedaysComponent} from './schedule-timeframe-consecutivedays/schedule-timeframe-consecutivedays.component';
+import {ScheduleTimeframeDayComponent} from './schedule-timeframe-day/schedule-timeframe-day.component';
+import {ScheduleRequestRuntimeComponent} from './schedule-request-runtime/schedule-request-runtime.component';
+import {ScheduleRequestEnergyComponent} from './schedule-request-energy/schedule-request-energy.component';
+import {ScheduleRequestSocComponent} from './schedule-request-soc/schedule-request-soc.component';
 import {SchedulesComponent} from './schedules/schedules.component';
-import { TrafficLightComponent } from './traffic-light/traffic-light.component';
+import {TrafficLightComponent} from './traffic-light/traffic-light.component';
 import {MaterialModule} from './material/material.module';
-import { LayoutComponent } from './layout/layout.component';
+import {LayoutComponent} from './layout/layout.component';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import { HeaderComponent } from './navigation/header/header.component';
-import { SidenavComponent } from './navigation/sidenav/sidenav.component';
+import {HeaderComponent} from './navigation/header/header.component';
+import {SidenavComponent} from './navigation/sidenav/sidenav.component';
+import {SettingsModbusComponent} from './settings-modbus/settings-modbus.component';
 
 @NgModule({
   declarations: [
@@ -136,6 +137,7 @@ import { SidenavComponent } from './navigation/sidenav/sidenav.component';
     LayoutComponent,
     HeaderComponent,
     SidenavComponent,
+    SettingsModbusComponent,
   ],
   imports: [
     AppRoutingModule,

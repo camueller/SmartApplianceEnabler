@@ -1,0 +1,20 @@
+<div class="fields" [formGroup]="form">
+  <mat-form-field class="modbusTcpId">
+    <mat-label>{{'SettingsComponent.modbusTcpId' | translate}}</mat-label>
+    <input matInput type="text" formControlName="modbusTcpId"
+           required="{{formHandler.isRequired('modbusTcpId')}}">
+  </mat-form-field>
+  <mat-form-field class="modbusTcpHost">
+    <mat-label>{{'SettingsComponent.modbusTcpHost' | translate}}</mat-label>
+    <input matInput type="text" formControlName="modbusTcpHost"
+           required="{{formHandler.isRequired('modbusTcpHost')}}">
+    <mat-error *ngIf="errors.modbusTcpHost">{{errors.modbusTcpHost}}</mat-error>
+  </mat-form-field>
+  <mat-form-field class="modbusTcpPort">
+    <mat-label>{{'SettingsComponent.modbusTcpPort' | translate}}</mat-label>
+    <input matInput type="text" formControlName="modbusTcpPort"
+           required="{{formHandler.isRequired('modbusTcpPort')}}">
+    <mat-error *ngIf="errors.modbusTcpPort">{{errors.modbusTcpPort}}</mat-error>
+  </mat-form-field>
+  <button mat-raised-button (click)="removeModbus()">{{'button.delete' | translate}}</button>
+</div>

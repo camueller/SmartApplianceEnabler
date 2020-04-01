@@ -16,13 +16,13 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {ModbusSettings} from './modbus-settings';
+import {ModbusSetting} from '../settings-modbus/modbus-setting';
 
 export class Settings {
   holidaysEnabled: boolean;
   holidaysUrl: string;
 
-  modbusSettings: ModbusSettings[];
+  modbusSettings: ModbusSetting[];
 
   public constructor(init?: Partial<Settings>) {
     Object.assign(this, init);
