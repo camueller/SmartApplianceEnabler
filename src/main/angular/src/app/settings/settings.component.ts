@@ -74,10 +74,6 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
     });
   }
 
-  ngAfterViewChecked() {
-    this.formHandler.markLabelsRequired();
-  }
-
   buildForm() {
     const modbusFormArray = new FormArray([]);
     this.settings.modbusSettings.forEach((modbusSettings) => modbusFormArray.push(this.createModbusFormGroup(modbusSettings)));
@@ -86,10 +82,23 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
     this.formHandler.addFormControl(this.form, 'holidaysEnabled', this.settings.holidaysEnabled);
     this.formHandler.addFormControl(this.form, 'holidaysUrl', this.settings.holidaysUrl,
       [Validators.pattern(InputValidatorPatterns.URL)]);
+    this.setHolidaysUrlEnabled(this.settings.holidaysEnabled);
   }
 
   isHolidaysEnabled() {
     return this.form.controls.holidaysEnabled.value;
+  }
+
+  setHolidaysUrlEnabled(enabled: boolean) {
+    if (enabled) {
+      this.form.controls.holidaysUrl.enable();
+    } else {
+      this.form.controls.holidaysUrl.disable();
+    }
+  }
+
+  toggleHolidaysEnabled() {
+    this.setHolidaysUrlEnabled(!this.isHolidaysEnabled());
   }
 
   get modbusFormArray() {
