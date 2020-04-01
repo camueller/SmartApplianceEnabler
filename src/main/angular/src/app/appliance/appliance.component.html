@@ -16,7 +16,7 @@
   ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
   -->
 
-<form class="ui form" [formGroup]="form" (ngSubmit)="submitForm()">
+<form [formGroup]="form" (ngSubmit)="submitForm()">
   <mat-form-field class="id">
     <mat-label>{{'ApplianceComponent.id' | translate}}</mat-label>
     <input matInput type="text" placeholder="F-00000000-000000000000-00" formControlName="id"
@@ -78,7 +78,9 @@
                required="{{formHandler.isRequired('maxPowerConsumption')}}">
         <mat-error *ngIf="errors.maxPowerConsumption">{{errors.maxPowerConsumption}}</mat-error>
       </mat-form-field>
-      <mat-checkbox formControlName="interruptionsAllowed" matTooltip="{{'ApplianceComponent.interruptionsAllowed.tooltip' | translate}}">{{'ApplianceComponent.interruptionsAllowed' | translate}}</mat-checkbox>
+      <mat-checkbox formControlName="interruptionsAllowed"
+                    matTooltip="{{'ApplianceComponent.interruptionsAllowed.tooltip' | translate}}"
+      >{{'ApplianceComponent.interruptionsAllowed' | translate}}</mat-checkbox>
     </div>
     <div class="fields">
       <mat-form-field class="minOnTime">
@@ -112,8 +114,8 @@
     </div>
   </section>
 
-  <button type="submit" class="ui primary button" [disabled]="form.pristine||form.invalid">
+  <button mat-raised-button type="submit" color="primary" [disabled]="form.pristine||form.invalid">
     {{'button.save' | translate}}</button>
-  <button type="button" (click)="deleteAppliance()" class="ui button">
+  <button mat-raised-button type="button" (click)="deleteAppliance()">
     {{'button.delete' | translate}}</button>
 </form>
