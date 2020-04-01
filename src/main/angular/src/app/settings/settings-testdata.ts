@@ -1,6 +1,6 @@
 import {Settings} from './settings';
 import {SettingsDefaults} from './settings-defaults';
-import {ModbusSettings} from './modbus-settings';
+import {ModbusSetting} from '../settings-modbus/modbus-setting';
 
 export class SettingsTestdata {
 
@@ -44,7 +44,7 @@ export class SettingsTestdata {
     return new Settings({
       'holidaysEnabled': false,
       'holidaysUrl': null,
-      'modbusSettings': [] as ModbusSettings[],
+      'modbusSettings': [] as ModbusSetting[],
     });
   }
 
@@ -67,7 +67,7 @@ export class SettingsTestdata {
     return new Settings({
       'holidaysEnabled': true,
       'holidaysUrl': 'http://service.domain.de/path',
-      'modbusSettings': [new ModbusSettings({
+      'modbusSettings': [new ModbusSetting({
         'modbusTcpId': 'defaultID',
         'modbusTcpHost': 'modbushost',
         'modbusTcpPort': 1234,

@@ -16,12 +16,12 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export class ModbusSettings {
+export class ModbusSetting {
   modbusTcpId: string;
   modbusTcpHost: string;
   modbusTcpPort: number;
 
-  public constructor(init?: Partial<ModbusSettings>) {
+  public constructor(init?: Partial<ModbusSetting>) {
     Object.assign(this, init);
   }
 }

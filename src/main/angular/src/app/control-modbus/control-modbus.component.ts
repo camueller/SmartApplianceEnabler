@@ -16,7 +16,7 @@ import {Logger} from '../log/logger';
 import {TranslateService} from '@ngx-translate/core';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {ModbusSwitch} from './modbus-switch';
-import {ModbusSettings} from '../settings/modbus-settings';
+import {ModbusSetting} from '../settings-modbus/modbus-setting';
 import {SettingsDefaults} from '../settings/settings-defaults';
 import {FormHandler} from '../shared/form-handler';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
@@ -43,7 +43,7 @@ export class ControlModbusComponent implements OnChanges, OnInit, AfterViewCheck
   @Input()
   controlDefaults: ControlDefaults;
   @Input()
-  modbusSettings: ModbusSettings[];
+  modbusSettings: ModbusSetting[];
   @Input()
   settingsDefaults: SettingsDefaults;
   form: FormGroup;
