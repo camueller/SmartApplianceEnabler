@@ -1,11 +1,11 @@
-<form class="ui form" [formGroup]="switchOnForm" (ngSubmit)="submitForm()">
+<form [formGroup]="switchOnForm" (ngSubmit)="submitForm()">
   <div class="appliance-details-row">
     <span class="appliance-status-label">{{'StatusComponent.plannedRunningTime' | translate}}</span>
     <input class="appliance-number-input clockpicker" type="text" name="minRunningTime" style="width: 4em" formControlName="switchOnRunningTime">
   </div>
   <div class="appliance-details-row appliance-button-row">
-    <button type="button" class="ui button" (click)="cancelForm()">{{'StatusComponent.buttonCancel' | translate}}</button>
-    <button type="submit" class="ui primary button"
+    <button mat-raised-button type="button" (click)="cancelForm()">{{'StatusComponent.buttonCancel' | translate}}</button>
+    <button mat-raised-button type="submit" color="primary"
             [disabled]="switchOnForm.invalid">{{'StatusComponent.buttonStart' | translate}}</button>
   </div>
 </form>

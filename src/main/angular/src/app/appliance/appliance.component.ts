@@ -35,11 +35,6 @@ import {FormHandler} from '../shared/form-handler';
 import {getValidInt, getValidString} from '../shared/form-util';
 import {ApplianceType} from './appliance-type';
 
-interface ApplianceTypViewValue {
-  value: string;
-  viewValue: string;
-}
-
 @Component({
   selector: 'app-appliance',
   templateUrl: './appliance.component.html',
@@ -55,7 +50,7 @@ export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<Appl
   isNew = false;
   discardChangesMessage: string;
   confirmDeletionMessage: string;
-  applianceTypViewValues: ApplianceTypViewValue[] = [];
+  applianceTypes: ListItem[] = [];
   ApplianceType = ApplianceType;
 
   constructor(private logger: Logger,
@@ -101,7 +96,7 @@ export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<Appl
     const applianceTypeKeys = Object.keys(ApplianceType).map(key => `ApplianceComponent.type.${ApplianceType[key]}`);
     this.translate.get(applianceTypeKeys).subscribe(translatedStrings => {
       Object.keys(translatedStrings).forEach(key => {
-        this.applianceTypViewValues.push({value: key.split('.')[2], viewValue: translatedStrings[key]});
+        this.applianceTypes.push({value: key.split('.')[2], viewValue: translatedStrings[key]});
       });
     });
     this.route.paramMap.subscribe(() => this.isNew = this.route.snapshot.paramMap.get('id') == null);

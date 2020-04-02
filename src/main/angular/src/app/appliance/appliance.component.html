@@ -45,7 +45,7 @@
       <mat-form-field>
         <mat-label>{{'ApplianceComponent.type' | translate}}</mat-label>
         <mat-select formControlName="type" required="{{formHandler.isRequired('type')}}">
-          <mat-option *ngFor="let applianceTyp of applianceTypViewValues" [value]="applianceTyp.value">
+          <mat-option *ngFor="let applianceTyp of applianceTypes" [value]="applianceTyp.value">
             {{applianceTyp.viewValue}}
           </mat-option>
         </mat-select>

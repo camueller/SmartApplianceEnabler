@@ -1,43 +1,49 @@
-<form class="ui form" [formGroup]="startChargeForm" (ngSubmit)="submitForm()">
+<form [formGroup]="form" (ngSubmit)="submitForm()">
   <div class="appliance-details-row">
-    <sui-select class="selection form-control"
-                [options]="electricVehicles"
-                labelField="name"
-                valueField="id"
-                formControlName="electricVehicle"
-                placeholder="{{'StatusComponent.ev' | translate}}"
-                #selectElectricVehicle
-    >
-      <sui-select-option *ngFor="let option of selectElectricVehicle.filteredOptions" class="dropdown-item" [value]="option"></sui-select-option>
-    </sui-select>
+    <mat-form-field>
+      <mat-label>{{'StatusComponent.ev' | translate}}</mat-label>
+      <mat-select formControlName="electricVehicle">
+        <mat-option *ngFor="let electricVehicle of electricVehicles" [value]="electricVehicle.id">{{electricVehicle.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
   </div>
   <div class="appliance-details-row">
     <span class="appliance-status-label">{{'StatusComponent.stateOfCharge' | translate}}: </span>
-    <span class="appliance-status-label">{{'StatusComponent.stateOfChargeCurrent' | translate}}</span>
-    <input type="text" class="percentage-input" name="stateOfChargeCurrent" formControlName="stateOfChargeCurrent">
+    <mat-form-field class="stateOfChargeCurrent">
+      <mat-label>{{'StatusComponent.stateOfChargeCurrent' | translate}}</mat-label>
+      <input matInput type="text" formControlName="stateOfChargeCurrent"
+             placeholder="0"
+             required="{{formHandler.isRequired('stateOfChargeCurrent')}}">
+      <mat-error *ngIf="errors.stateOfChargeCurrent">{{errors.stateOfChargeCurrent}}</mat-error>
+    </mat-form-field>
     <span class="appliance-status-label">{{'StatusComponent.stateOfChargeUnit' | translate}}</span>
-    <span class="appliance-status-label">{{'StatusComponent.stateOfChargeRequested' | translate}}</span>
-    <input type="text" class="percentage-input" name="stateOfChargeRequested" formControlName="stateOfChargeRequested">
+    <mat-form-field class="stateOfChargeRequested">
+      <mat-label>{{'StatusComponent.stateOfChargeRequested' | translate}}</mat-label>
+      <input matInput type="text" formControlName="stateOfChargeRequested"
+             placeholder="100"
+             required="{{formHandler.isRequired('stateOfChargeRequested')}}">
+      <mat-error *ngIf="errors.stateOfChargeRequested">{{errors.stateOfChargeRequested}}</mat-error>
+    </mat-form-field>
     <span class="appliance-status-label">{{'StatusComponent.stateOfChargeUnit' | translate}}</span>
   </div>
   <div class="appliance-details-row">
     <span class="appliance-status-label">{{'StatusComponent.chargeLatestEndRequested' | translate}}</span>
-    <sui-select class="selection form-control dow-select"
-                [options]="dows"
-                labelField="name"
-                valueField="id"
-                formControlName="chargeEndDow"
-                placeholder="{{'dayOfWeek' | translate}}"
-                #selectChargeEndDow
-    >
-      <sui-select-option *ngFor="let option of selectChargeEndDow.filteredOptions" class="dropdown-item" [value]="option"></sui-select-option>
-    </sui-select>
-    <input type="text" class="time-of-day clockpicker" name="chargeEndTime"
-           formControlName="chargeEndTime" placeholder="00:00">
+    <mat-form-field>
+      <mat-label>{{'dayOfWeek' | translate}}</mat-label>
+      <mat-select formControlName="chargeEndDow">
+        <mat-option *ngFor="let dow of dows" [value]="dow.id">{{dow.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="chargeEndTime">
+      <input matInput type="text" class="time-of-day clockpicker" formControlName="chargeEndTime"
+             placeholder="00:00"
+             required="{{formHandler.isRequired('chargeEndTime')}}">
+      <mat-error *ngIf="errors.chargeEndTime">{{errors.chargeEndTime}}</mat-error>
+    </mat-form-field>
   </div>
   <div class="appliance-details-row appliance-button-row">
-    <button type="button" class="ui button" (click)="cancelForm()">{{'StatusComponent.buttonCancel' | translate}}</button>
-    <button type="submit" class="ui primary button"
-            [disabled]="startChargeForm.invalid">{{'StatusComponent.buttonStart' | translate}}</button>
+    <button mat-raised-button type="button" (click)="cancelForm()">{{'StatusComponent.buttonCancel' | translate}}</button>
+    <button mat-raised-button type="submit" color="primary"
+            [disabled]="form.invalid">{{'StatusComponent.buttonStart' | translate}}</button>
   </div>
 </form>

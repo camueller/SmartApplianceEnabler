@@ -341,7 +341,7 @@
   "StatusComponent.energyCharged": "Geladene Energiemenge: ",
   "StatusComponent.energyChargePower": "Aktuelle Ladeleistung: ",
   "StatusComponent.energyLatestEnd": "Ende spätestens: ",
-  "StatusComponent.ev": "Fahrzeug wählen",
+  "StatusComponent.ev": "Fahrzeug",
   "StatusComponent.state": "Status",
   "StatusComponent.state.VEHICLE_NOT_CONNECTED": "Getrennt",
   "StatusComponent.state.VEHICLE_CONNECTED": "Verbunden",
