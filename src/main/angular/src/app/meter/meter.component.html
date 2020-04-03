@@ -18,38 +18,36 @@
 <form class="ui form" [formGroup]="form" (ngSubmit)="submitForm()">
   <div class="fields">
     <div class="field">
-      <label class="required">{{'MeterComponent.type' | translate}}</label>
-      <select class="ui fluid dropdown" name="meterType" formControlName="meterType" (ngModelChange)="typeChanged($event)">
-        <option [ngValue]="TYPE_S0_ELECTRICITY_METER" [selected]="meterType==TYPE_S0_ELECTRICITY_METER"
-        >{{TYPE_S0_ELECTRICITY_METER | translate}}</option>
-        <option [ngValue]="TYPE_MODBUS_ELECTRICITY_METER" [selected]="meterType==TYPE_MODBUS_ELECTRICITY_METER"
-        >{{TYPE_MODBUS_ELECTRICITY_METER | translate}}</option>
-        <option [ngValue]="TYPE_HTTP_ELECTRICITY_METER" [selected]="meterType==TYPE_HTTP_ELECTRICITY_METER"
-        >{{TYPE_HTTP_ELECTRICITY_METER | translate}}</option>
-      </select>
+      <mat-form-field>
+        <mat-label>{{'MeterComponent.type' | translate}}</mat-label>
+        <mat-select formControlName="meterType" required="{{formHandler.isRequired('meterType')}}">
+          <mat-option *ngFor="let meterType of meterTypes" [value]="meterType.value">
+            {{meterType.viewValue}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
     </div>
   </div>
-  <app-meter-s0 *ngIf="meterType===TYPE_S0_ELECTRICITY_METER"
+  <app-meter-s0 *ngIf="isS0ElectricityMeter"
                 [s0ElectricityMeter]="meter.s0ElectricityMeter"
                 [meterDefaults]="meterDefaults"
   ></app-meter-s0>
-  <app-meter-modbus *ngIf="meterType===TYPE_MODBUS_ELECTRICITY_METER"
+  <app-meter-modbus *ngIf="isModbusElectricityMeter"
                     [modbusElectricityMeter]="meter.modbusElectricityMeter"
                     [meterDefaults]="meterDefaults"
                     [settingsDefaults]="settingsDefaults"
                     [modbusSettings]="settings.modbusSettings"
                     [applianceId]="applianceId"
   ></app-meter-modbus>
-  <app-meter-http *ngIf="meterType===TYPE_HTTP_ELECTRICITY_METER"
+  <app-meter-http *ngIf="isHttpElectricityMeter"
                   [httpElectricityMeter]="meter.httpElectricityMeter"
                   [meterDefaults]="meterDefaults"
   ></app-meter-http>
 
   <div>{{'dialog.mandatoryfields'|translate}}</div>
   <div class="ui hidden divider"></div>
-  <button type="submit" class="ui primary button" [disabled]="form.pristine||form.invalid">{{'button.save' | translate}}</button>
-  <button type="button" [disabled]="!isDeleteEnabled()" (click)="delete()" class="ui button">
-    {{'button.delete' | translate}}</button>
+  <button mat-raised-button type="submit" color="primary" [disabled]="form.pristine||form.invalid">{{'button.save' | translate}}</button>
+  <button mat-raised-button type="button" [disabled]="!isDeleteEnabled()" (click)="delete()">{{'button.delete' | translate}}</button>
 </form>
 <!--
 <pre>pristine={{form.pristine}}</pre>

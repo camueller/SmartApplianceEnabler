@@ -1,75 +1,73 @@
-<div class="ui hidden divider"></div>
 <div [formGroup]="form">
-  <div class="ui fields sae-fields">
-    <div class="field">
-      <label>{{'ElectricVehicleComponent.name' | translate}}</label>
-      <input type="text" formControlName="name">
-      <div *ngIf="errors.name"
-           class="ui negative message">{{errors.name}}</div>
-    </div>
-    <div class="field icon-field">
-      <i (click)="removeElectricVehicle()" class="icon big red remove circle"></i>
-    </div>
+  <div class="fields">
+    <mat-form-field class="name">
+      <mat-label>{{'ElectricVehicleComponent.name' | translate}}</mat-label>
+      <input matInput type="text" formControlName="name"
+             required="{{formHandler.isRequired('name')}}">
+      <mat-error *ngIf="errors.name">{{errors.name}}</mat-error>
+    </mat-form-field>
+    <button mat-raised-button type="button" (click)="removeElectricVehicle()">
+      {{'button.delete' | translate}}</button>
   </div>
-  <h5 class="ui header">{{'ElectricVehicleComponent.general' | translate}}</h5>
-  <div class="ui fields sae-fields">
-    <div class="field">
-      <label>{{'ElectricVehicleComponent.batteryCapacity' | translate}}</label>
-      <input type="text" formControlName="batteryCapacity">
-      <div *ngIf="errors.batteryCapacity"
-           class="ui negative message">{{errors.batteryCapacity}}</div>
-    </div>
-    <div class="field">
-      <label>{{'ElectricVehicleComponent.phases' | translate}}</label>
-      <input type="text" formControlName="phases">
-      <div *ngIf="errors.phases"
-           class="ui negative message">{{errors.phases}}</div>
-    </div>
-    <div class="field">
-      <label>{{'ElectricVehicleComponent.maxChargePower' | translate}}</label>
-      <input type="text" formControlName="maxChargePower">
-      <div *ngIf="errors.maxChargePower"
-           class="ui negative message">{{errors.maxChargePower}}</div>
-    </div>
-    <div class="field">
-      <label>{{'ElectricVehicleComponent.chargeLoss' | translate}}</label>
-      <input type="text" formControlName="chargeLoss"
-             placeholder="{{controlDefaults.electricVehicleChargerDefaults_chargeLoss}}">
-      <div *ngIf="errors.chargeLoss"
-           class="ui negative message">{{errors.chargeLoss}}</div>
-    </div>
+  <h3>{{'ElectricVehicleComponent.general' | translate}}</h3>
+  <div class="fields">
+    <mat-form-field class="batteryCapacity">
+      <mat-label>{{'ElectricVehicleComponent.batteryCapacity' | translate}}</mat-label>
+      <input matInput type="text" formControlName="batteryCapacity"
+             required="{{formHandler.isRequired('batteryCapacity')}}">
+      <mat-error *ngIf="errors.batteryCapacity">{{errors.batteryCapacity}}</mat-error>
+    </mat-form-field>
+    <mat-form-field class="phases">
+      <mat-label>{{'ElectricVehicleComponent.phases' | translate}}</mat-label>
+      <input matInput type="text" formControlName="phases"
+             required="{{formHandler.isRequired('phases')}}">
+      <mat-error *ngIf="errors.phases">{{errors.phases}}</mat-error>
+    </mat-form-field>
+    <mat-form-field class="maxChargePower">
+      <mat-label>{{'ElectricVehicleComponent.maxChargePower' | translate}}</mat-label>
+      <input matInput type="text" formControlName="maxChargePower"
+             required="{{formHandler.isRequired('maxChargePower')}}">
+      <mat-error *ngIf="errors.maxChargePower">{{errors.maxChargePower}}</mat-error>
+    </mat-form-field>
+    <mat-form-field class="chargeLoss">
+      <mat-label>{{'ElectricVehicleComponent.chargeLoss' | translate}}</mat-label>
+      <input matInput type="text" formControlName="chargeLoss"
+             placeholder="{{controlDefaults.electricVehicleChargerDefaults_chargeLoss}}"
+             required="{{formHandler.isRequired('chargeLoss')}}">
+      <mat-error *ngIf="errors.chargeLoss">{{errors.chargeLoss}}</mat-error>
+    </mat-form-field>
   </div>
-  <h5 class="ui header">{{'ElectricVehicleComponent.soc' | translate}}</h5>
-  <div class="ui fields sae-fields">
-    <div class="field">
-      <label>{{'ElectricVehicleComponent.defaultSocManual' | translate}}</label>
-      <input type="text" formControlName="defaultSocManual">
-      <div *ngIf="errors.defaultSocManual"
-           class="ui negative message">{{errors.defaultSocManual}}</div>
-    </div>
-    <div class="field">
-      <label>{{'ElectricVehicleComponent.defaultSocOptionalEnergy' | translate}}</label>
-      <input type="text" formControlName="defaultSocOptionalEnergy">
-      <div *ngIf="errors.defaultSocOptionalEnergy"
-           class="ui negative message">{{errors.defaultSocOptionalEnergy}}</div>
-    </div>
+  <h3>{{'ElectricVehicleComponent.soc' | translate}}</h3>
+  <div class="fields">
+    <mat-form-field class="defaultSocManual">
+      <mat-label>{{'ElectricVehicleComponent.defaultSocManual' | translate}}</mat-label>
+      <input matInput type="text" formControlName="defaultSocManual"
+             required="{{formHandler.isRequired('defaultSocManual')}}">
+      <mat-error *ngIf="errors.defaultSocManual">{{errors.defaultSocManual}}</mat-error>
+    </mat-form-field>
+    <mat-form-field class="defaultSocOptionalEnergy">
+      <mat-label>{{'ElectricVehicleComponent.defaultSocOptionalEnergy' | translate}}</mat-label>
+      <input matInput type="text" formControlName="defaultSocOptionalEnergy"
+             required="{{formHandler.isRequired('defaultSocOptionalEnergy')}}">
+      <mat-error *ngIf="errors.defaultSocOptionalEnergy">{{errors.defaultSocOptionalEnergy}}</mat-error>
+    </mat-form-field>
   </div>
-  <h5 class="ui header">{{'ElectricVehicleComponent.script.heading' | translate}}</h5>
-  <div class="fields sae-fields">
-    <div class="field">
-      <label>{{'ElectricVehicleComponent.script.enabled' | translate}}</label>
-      <input class="ui checkbox" type="checkbox" formControlName="scriptEnabled"
-             (ngModelChange)="onScriptEnabledToggle($event)">
-    </div>
-    <div class="six wide field" [class.disabled]="!isScriptEnabled()">
-      <label>{{'ElectricVehicleComponent.script.filename' | translate}}</label>
-      <input type="text" formControlName="scriptFilename">
-      <div *ngIf="errors.scriptFilename"
-           class="ui negative message">{{errors.scriptFilename}}</div>
-    </div>
-    <div class="field" [class.disabled]="!isScriptEnabled()">
-      <label>{{'ElectricVehicleComponent.script.extractionRegex' | translate}}</label>
-      <input type="text" formControlName="scriptExtractionRegex">
-    </div>
+  <h3>{{'ElectricVehicleComponent.script.heading' | translate}}</h3>
+  <div class="fields">
+    <mat-checkbox formControlName="scriptEnabled"
+                  (click)="onScriptEnabledToggle()"
+    >{{'ElectricVehicleComponent.script.enabled' | translate}}</mat-checkbox>
+    <mat-form-field class="scriptFilename">
+      <mat-label>{{'ElectricVehicleComponent.script.filename' | translate}}</mat-label>
+      <input matInput type="text" formControlName="scriptFilename"
+             required="{{formHandler.isRequired('scriptFilename')}}">
+      <mat-error *ngIf="errors.scriptFilename">{{errors.scriptFilename}}</mat-error>
+    </mat-form-field>
+    <mat-form-field class="scriptExtractionRegex">
+      <mat-label>{{'ElectricVehicleComponent.script.extractionRegex' | translate}}</mat-label>
+      <input matInput type="text" formControlName="scriptExtractionRegex"
+             required="{{formHandler.isRequired('scriptExtractionRegex')}}">
+      <mat-error *ngIf="errors.scriptExtractionRegex">{{errors.scriptExtractionRegex}}</mat-error>
+    </mat-form-field>
   </div>
 </div>

@@ -1,48 +1,44 @@
-<div class="ui hidden divider"></div>
 <div [formGroup]="form">
-  <div class="ui fields">
-    <div class="field">
-      <label>{{'ModbusReadComponent.address' | translate}}</label>
-      <input type="text" formControlName="address">
-      <div *ngIf="errors.address"
-           class="ui negative message">{{errors.address}}</div>
-    </div>
-    <div class="field">
-      <label>{{'ModbusReadComponent.type' | translate}}</label>
-      <select class="ui fluid dropdown" formControlName="type">
-        <option *ngFor="let readRegisterType of readRegisterTypes"
-                [ngValue]="readRegisterType"
-                [selected]="readRegisterType==type"
-        >{{readRegisterType}}</option>
-      </select>
-    </div>
-    <div class="field">
-      <label>{{'ModbusReadComponent.bytes' | translate}}</label>
-      <input type="text" formControlName="bytes">
-      <div *ngIf="errors.bytes"
-           class="ui negative message">{{errors.bytes}}</div>
-    </div>
-    <div class="field">
-      <label>{{'ModbusReadComponent.byteOrder' | translate}}</label>
-      <select class="ui fluid dropdown" formControlName="byteOrder">
-        <option *ngFor="let aByteOrder of getByteOrders()"
-                [ngValue]="aByteOrder"
-                [selected]="aByteOrder==this.modbusRead.byteOrder"
-        >{{aByteOrder}}</option>
-      </select>
-    </div>
-    <div class="field">
-      <label>{{'ModbusReadComponent.factorToValue' | translate}}</label>
-      <input type="text" formControlName="factorToValue">
-      <div *ngIf="errors.factorToValue"
-           class="ui negative message">{{errors.factorToValue}}</div>
-    </div>
-    <div class="field icon-field">
-      <i (click)="removeModbusRead()" class="icon big red remove circle"></i>
-    </div>
+  <div class="fields">
+    <mat-form-field class="address">
+      <mat-label>{{'ModbusReadComponent.address' | translate}}</mat-label>
+      <input matInput type="text" formControlName="address"
+             required="{{formHandler.isRequired('address')}}">
+      <mat-error *ngIf="errors.address">{{errors.address}}</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>{{'ModbusReadComponent.type' | translate}}</mat-label>
+      <mat-select formControlName="type" required="{{formHandler.isRequired('type')}}">
+        <mat-option *ngFor="let readRegisterType of readRegisterTypes" [value]="readRegisterType">
+          {{readRegisterType}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="slaveAddress">
+      <mat-label>{{'ModbusReadComponent.bytes' | translate}}</mat-label>
+      <input matInput type="text" formControlName="bytes"
+             required="{{formHandler.isRequired('bytes')}}">
+      <mat-error *ngIf="errors.bytes">{{errors.bytes}}</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>{{'ModbusReadComponent.byteOrder' | translate}}</mat-label>
+      <mat-select formControlName="byteOrder" required="{{formHandler.isRequired('byteOrder')}}">
+        <mat-option *ngFor="let byteOrder of byteOrders" [value]="byteOrder">
+          {{byteOrder}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="factorToValue">
+      <mat-label>{{'ModbusReadComponent.factorToValue' | translate}}</mat-label>
+      <input matInput type="text" formControlName="factorToValue"
+             required="{{formHandler.isRequired('factorToValue')}}">
+      <mat-error *ngIf="errors.factorToValue">{{errors.factorToValue}}</mat-error>
+    </mat-form-field>
+    <button mat-raised-button type="button" (click)="removeModbusRead()">
+      {{'ModbusReadComponent.button.remove' | translate}}</button>
   </div>
   <div formArrayName="modbusReadValues">
-    <div class="ui fields" *ngFor="let readValue of modbusRead.readValues; index as i">
+    <div class="fields" *ngFor="let readValue of modbusRead.readValues; index as i">
       <div class="field">
         <app-modbus-read-value
           [modbusReadValue]="readValue"
@@ -53,11 +49,10 @@
           #modbusReadValues
         ></app-modbus-read-value>
       </div>
-      <div class="field icon-field">
-        <i (click)="removeValue(i)" class="icon big red remove circle"></i>
-      </div>
+      <button mat-raised-button type="button" (click)="removeValue(i)">
+        {{'ModbusReadComponent.button.removeValue' | translate}}</button>
     </div>
   </div>
 </div>
-<button type="button" (click)="addValue()" class="ui button" *ngIf="isAddValuePossible">
+<button mat-raised-button type="button" (click)="addValue()" *ngIf="isAddValuePossible">
   {{'ModbusReadComponent.button.addValue' | translate}}</button>

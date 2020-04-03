@@ -1,15 +1,16 @@
-<div class="ui fields" [formGroup]="form">
-  <div class="field">
-    <label>{{'ModbusReadValueComponent.name' | translate}}</label>
-    <select class="ui fluid dropdown" formControlName="name">
-      <option *ngFor="let aValueName of valueNames"
-              [ngValue]="aValueName"
-              [selected]="aValueName==modbusReadValue.name"
-      >{{getTranslatedValueName(aValueName)}}</option>
-    </select>
-  </div>
-  <div class="field">
-    <label>{{'ModbusReadValueComponent.extractionRegex' | translate}}</label>
-    <input type="text" formControlName="extractionRegex">
-  </div>
+<div class="fields" [formGroup]="form">
+  <mat-form-field>
+    <mat-label>{{'ModbusReadValueComponent.name' | translate}}</mat-label>
+    <mat-select formControlName="name" required="{{formHandler.isRequired('name')}}">
+      <mat-option *ngFor="let valueName of valueNames" [value]="valueName">
+        {{getTranslatedValueName(valueName)}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field class="extractionRegex">
+    <mat-label>{{'ModbusReadValueComponent.extractionRegex' | translate}}</mat-label>
+    <input matInput type="text" formControlName="extractionRegex"
+           required="{{formHandler.isRequired('extractionRegex')}}">
+    <mat-error *ngIf="errors.extractionRegex">{{errors.extractionRegex}}</mat-error>
+  </mat-form-field>
 </div>

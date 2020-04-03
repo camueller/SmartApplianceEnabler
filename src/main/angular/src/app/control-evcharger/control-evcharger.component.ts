@@ -1,14 +1,4 @@
-import {
-  AfterViewChecked,
-  Component,
-  Input,
-  OnChanges,
-  OnInit,
-  QueryList,
-  SimpleChanges,
-  ViewChild,
-  ViewChildren
-} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, QueryList, SimpleChanges, ViewChild, ViewChildren} from '@angular/core';
 import {EvCharger} from './ev-charger';
 import {EvChargerTemplates} from './ev-charger-templates';
 import {Settings} from '../settings/settings';
@@ -41,7 +31,7 @@ import {ControlEvchargerModbusComponent} from '../control-evcharger-modbus/contr
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
 })
-export class ControlEvchargerComponent implements OnChanges, OnInit, AfterViewChecked {
+export class ControlEvchargerComponent implements OnChanges, OnInit {
   @Input()
   evCharger: EvCharger;
   @Input()
@@ -66,12 +56,7 @@ export class ControlEvchargerComponent implements OnChanges, OnInit, AfterViewCh
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
-  PROTOCOL_MODBUS = EvChargerProtocol.MODBUS;
-  PROTOCOL_HTTP = EvChargerProtocol.HTTP;
-  protocols: { id: string, name: string }[] = [
-    {id: EvChargerProtocol.MODBUS, name: undefined},
-    {id: EvChargerProtocol.HTTP, name: undefined}
-  ];
+  protocols: ListItem[] = [];
 
   constructor(private logger: Logger,
               private parent: FormGroupDirective,
@@ -103,21 +88,18 @@ export class ControlEvchargerComponent implements OnChanges, OnInit, AfterViewCh
       new ErrorMessage('pollInterval', ValidatorType.pattern),
       new ErrorMessage('startChargingStateDetectionDelay', ValidatorType.pattern),
     ], this.translate);
-    this.translate.get([
-      'ControlEvchargerComponent.protocol.HTTP',
-      'ControlEvchargerComponent.protocol.MODBUS',
-    ]).subscribe(translatedStrings => {
-      this.translatedStrings = translatedStrings;
-      this.protocols.forEach(protocol =>
-        protocol.name = this.translatedStrings[`ControlEvchargerComponent.protocol.${protocol.id}`]);
+    const protocolKeys = Object.keys(EvChargerProtocol).map(key => `ControlEvchargerComponent.protocol.${EvChargerProtocol[key]}`);
+    this.translate.get(protocolKeys).subscribe(translatedStrings => {
+      Object.keys(translatedStrings).forEach(key => {
+        this.protocols.push({value: key.split('.')[2], viewValue: translatedStrings[key]});
+      });
     });
     this.templates = EvChargerTemplates.getTemplates();
     this.templateNames = Object.keys(this.templates);
     this.expandParentForm();
-  }
-
-  ngAfterViewChecked() {
-    this.formHandler.markLabelsRequired();
+    this.form.statusChanges.subscribe(() => {
+      this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
+    });
   }
 
   getTemplateNameSelected(): string {
@@ -145,12 +127,20 @@ export class ControlEvchargerComponent implements OnChanges, OnInit, AfterViewCh
     return undefined;
   }
 
+  setProtocol(protocol: EvChargerProtocol) {
+    this.form.controls.protocol.setValue(protocol);
+  }
+
   get protocol() {
     return this.form.controls.protocol.value;
   }
 
-  setProtocol(protocol: EvChargerProtocol) {
-    this.form.controls.protocol.setValue(protocol);
+  get isProtocolModbus() {
+    return this.protocol === EvChargerProtocol.MODBUS;
+  }
+
+  get isProtocolHttp() {
+    return this.protocol === EvChargerProtocol.HTTP;
   }
 
   // FIXME: alle Enums indirect liefern

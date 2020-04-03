@@ -244,6 +244,8 @@
   "ModbusReadComponent.byteOrder": "Byte Reihenfolge",
   "ModbusReadComponent.factorToValue": "Umrechnungsfaktor",
   "ModbusReadComponent.button.addValue": "Weiterer Zustand",
+  "ModbusReadComponent.button.removeValue": "Zustand löschen",
+  "ModbusReadComponent.button.remove": "Register löschen",
   "ModbusReadComponent.error.address_required": "Die Register-Adresse muss angegeben werden",
   "ModbusReadComponent.error.address_pattern": "Die Register-Adresse muss als Zahl (z.B. 13) oder Hex-Zahl (z.B. 0x0A) angegeben werden",
   "ModbusReadComponent.error.bytes_pattern": "Die Anzahl der Bytes muss als Zahl angegeben werden",
@@ -255,6 +257,9 @@
   "ModbusWriteComponent.address": "Register-Adresse",
   "ModbusWriteComponent.type": "Register-Typ",
   "ModbusWriteComponent.factorToValue": "Umrechnungsfaktor",
+  "ModbusWriteComponent.button.addValue": "Weiterer Zustand",
+  "ModbusWriteComponent.button.removeValue": "Zustand löschen",
+  "ModbusWriteComponent.button.remove": "Register löschen",
   "ModbusWriteComponent.error.factorToValue_pattern": "Der Umrechnungsfaktor muss als Zahl angegeben werden",
 
   "ModbusWriteValueComponent.name": "Zustand / Aktion",

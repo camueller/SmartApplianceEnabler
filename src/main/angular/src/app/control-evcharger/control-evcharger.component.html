@@ -1,93 +1,74 @@
 <div>
-  <h3 class="ui dividing header">{{'ControlEvchargerComponent.heading' | translate}}</h3>
-  <div class="ui fields sae-fields">
-    <div class="field">
-      <label class="standalone-label">{{'ControlEvchargerComponent.template' | translate}}</label>
-    </div>
-    <div class="field">
-      <sui-select class="selection form-control"
-                  [options]="templateNames"
-                  formControlName="template"
-                  placeholder="aus vorkonfigurierten Ladengeräten wählen"
-                  (selectedOptionChange)="useTemplate()"
-                  #selectTemplate
-      >
-        <sui-select-option *ngFor="let option of selectTemplate.filteredOptions" class="dropdown-item" [value]="option"></sui-select-option>
-      </sui-select>
-    </div>
-    <div class="field">
-      <label class="standalone-label">{{'ControlEvchargerComponent.protocol' | translate}}</label>
-    </div>
-    <div class="field">
-      <sui-select class="selection form-control"
-                  [options]="protocols"
-                  labelField="name"
-                  valueField="id"
-                  formControlName="protocol"
-                  placeholder="wählen für manuelle Konfiguration"
-                  #selectProtocol
-      >
-        <sui-select-option *ngFor="let option of selectProtocol.filteredOptions" class="dropdown-item" [value]="option"></sui-select-option>
-      </sui-select>
-    </div>
+  <h2>{{'ControlEvchargerComponent.heading' | translate}}</h2>
+  <div class="fields">
+    <mat-form-field>
+      <mat-label>{{'ControlEvchargerComponent.template' | translate}}</mat-label>
+      <mat-select formControlName="template"
+                  (selectionChange)="useTemplate()"
+                  placeholder="aus vorkonfigurierten Ladengeräten wählen">
+        <mat-option *ngFor="let templateName of templateNames" [value]="templateName">
+          {{templateName}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>{{'ControlEvchargerComponent.protocol' | translate}}</mat-label>
+      <mat-select formControlName="protocol"
+                  placeholder="wählen für manuelle Konfiguration">
+        <mat-option *ngFor="let protocol of protocols" [value]="protocol.value">
+          {{protocol.viewValue}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
   </div>
-  <div class="ui hidden divider"></div>
   <div *ngIf="isConfigured()">
-    <div class="ui fields sae-fields">
-      <div class="field">
-        <label>{{'ControlEvchargerComponent.voltage' | translate}}</label>
-        <input type="text" formControlName="voltage"
-               placeholder="{{controlDefaults.electricVehicleChargerDefaults_voltage}}">
-        <div *ngIf="errors.voltage" class="ui negative message">{{errors.voltage}}</div>
-      </div>
-      <div class="field">
-        <label>{{'ControlEvchargerComponent.phases' | translate}}</label>
-        <input type="text" formControlName="phases"
-               placeholder="{{controlDefaults.electricVehicleChargerDefaults_phases}}">
-        <div *ngIf="errors.phases" class="ui negative message">{{errors.phases}}</div>
-      </div>
-      <div class="field">
-        <label>{{'ControlEvchargerComponent.pollInterval' | translate}}</label>
-        <input type="text" formControlName="pollInterval"
-               placeholder="{{controlDefaults.electricVehicleChargerDefaults_pollInterval}}">
-        <div *ngIf="errors.pollInterval" class="ui negative message">{{errors.pollInterval}}</div>
-      </div>
-      <div class="field">
-        <label>{{'ControlEvchargerComponent.startChargingStateDetectionDelay' | translate}}
-          <i class="icon blue info circle tooltip">
-          <span class="tooltiptext" style="margin-left: -180px;"
-          >{{'ControlEvchargerComponent.startChargingStateDetectionDelay.tooltip' | translate}}</span>
-          </i>
-        </label>
-        <input type="text" formControlName="startChargingStateDetectionDelay"
-               placeholder="{{controlDefaults.electricVehicleChargerDefaults_startChargingStateDetectionDelay}}">
-        <div *ngIf="errors.startChargingStateDetectionDelay"
-             class="ui negative message">{{errors.startChargingStateDetectionDelay}}</div>
-      </div>
-      <div class="field">
-        <label>{{'ControlEvchargerComponent.forceInitialCharging' | translate}}
-          <i class="icon blue info circle tooltip">
-          <span class="tooltiptext" style="margin-left: -180px;"
-          >{{'ControlEvchargerComponent.forceInitialCharging.tooltip' | translate}}</span>
-          </i>
-        </label>
-        <input class="ui checkbox" type="checkbox" formControlName="forceInitialCharging"
-               placeholder="{{controlDefaults.electricVehicleChargerDefaults_forceInitialCharging}}">
-      </div>
+    <div class="fields">
+      <mat-form-field class="voltage">
+        <mat-label>{{'ControlEvchargerComponent.voltage' | translate}}</mat-label>
+        <input matInput type="text" formControlName="voltage"
+               placeholder="{{controlDefaults.electricVehicleChargerDefaults_voltage}}"
+               required="{{formHandler.isRequired('voltage')}}">
+        <mat-error *ngIf="errors.voltage">{{errors.voltage}}</mat-error>
+      </mat-form-field>
+      <mat-form-field class="phases">
+        <mat-label>{{'ControlEvchargerComponent.phases' | translate}}</mat-label>
+        <input matInput type="text" formControlName="phases"
+               placeholder="{{controlDefaults.electricVehicleChargerDefaults_phases}}"
+               required="{{formHandler.isRequired('phases')}}">
+        <mat-error *ngIf="errors.phases">{{errors.phases}}</mat-error>
+      </mat-form-field>
+      <mat-form-field class="pollInterval">
+        <mat-label>{{'ControlEvchargerComponent.pollInterval' | translate}}</mat-label>
+        <input matInput type="text" formControlName="pollInterval"
+               placeholder="{{controlDefaults.electricVehicleChargerDefaults_pollInterval}}"
+               required="{{formHandler.isRequired('pollInterval')}}">
+        <mat-error *ngIf="errors.pollInterval">{{errors.pollInterval}}</mat-error>
+      </mat-form-field>
+      <mat-form-field class="startChargingStateDetectionDelay">
+        <mat-label>{{'ControlEvchargerComponent.startChargingStateDetectionDelay' | translate}}</mat-label>
+        <input matInput type="text" formControlName="startChargingStateDetectionDelay"
+               placeholder="{{controlDefaults.electricVehicleChargerDefaults_startChargingStateDetectionDelay}}"
+               matTooltip="{{'ControlEvchargerComponent.startChargingStateDetectionDelay.tooltip' | translate}}"
+               required="{{formHandler.isRequired('startChargingStateDetectionDelay')}}">
+        <mat-error *ngIf="errors.startChargingStateDetectionDelay">{{errors.startChargingStateDetectionDelay}}</mat-error>
+      </mat-form-field>
+      <mat-checkbox formControlName="forceInitialCharging"
+                    matTooltip="{{'ControlEvchargerComponent.forceInitialCharging.tooltip' | translate}}"
+      >{{'ControlEvchargerComponent.forceInitialCharging' | translate}}</mat-checkbox>
     </div>
   </div>
 </div>
 <div class="sae-block">
-  <app-control-evcharger-modbus *ngIf="protocol === PROTOCOL_MODBUS"
+  <app-control-evcharger-modbus *ngIf="isProtocolModbus"
                                 [evModbusControl]="evCharger.modbusControl"
                                 [settings]="settings"
                                 [settingsDefaults]="settingsDefaults"
                                 [translationKeys]="modbusTranslationKeys"
   ></app-control-evcharger-modbus>
-  <app-control-evcharger-http *ngIf="protocol === PROTOCOL_HTTP"
+  <app-control-evcharger-http *ngIf="isProtocolHttp"
                               [evHttpControl]="evCharger.httpControl"
   ></app-control-evcharger-http>
-  <h3 class="ui dividing header">{{'ControlEvchargerComponent.headingEv' | translate}}</h3>
+  <h2>{{'ControlEvchargerComponent.headingEv' | translate}}</h2>
   <div formArrayName="electricVehicles">
     <div *ngFor="let electricVehicle of evCharger.vehicles; index as i; last as l">
       <app-electric-vehicle
@@ -98,9 +79,8 @@
         (remove)="onElectricVehicleRemove(i)"
         #electricVehicles
       ></app-electric-vehicle>
-      <div *ngIf="!l" class="ui dividing header"></div>
     </div>
   </div>
-  <button type="button" (click)="addElectricVehicle()" class="ui button">
+  <button mat-raised-button type="button" (click)="addElectricVehicle()">
     {{'ControlEvchargerComponent.button.newEv' | translate}}</button>
 </div>

@@ -100,7 +100,7 @@ export class ModbusReadComponent implements OnChanges, OnInit, AfterViewChecked 
   }
 
   // TODO move to config
-  getByteOrders(): string[] {
+  get byteOrders(): string[] {
     return ['BigEndian', 'LittleEndian'];
   }
 

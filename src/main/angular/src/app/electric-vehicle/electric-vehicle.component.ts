@@ -112,6 +112,7 @@ export class ElectricVehicleComponent implements OnChanges, OnInit, AfterViewChe
       this.electricVehicle && this.electricVehicle.socScript && this.electricVehicle.socScript.script);
     this.formHandler.addFormControl(this.form, 'scriptExtractionRegex',
       this.electricVehicle && this.electricVehicle.socScript && this.electricVehicle.socScript.extractionRegex);
+    this.setScriptEnabled(scriptEnabled);
   }
 
   updateForm() {
@@ -157,7 +158,11 @@ export class ElectricVehicleComponent implements OnChanges, OnInit, AfterViewChe
     return this.electricVehicle;
   }
 
-  onScriptEnabledToggle(enabled: boolean) {
+  onScriptEnabledToggle() {
+    this.setScriptEnabled(! this.isScriptEnabled());
+  }
+
+  setScriptEnabled(enabled: boolean) {
     const scriptFilenameControl = this.form.controls.scriptFilename;
     const scriptExtractionRegexControl = this.form.controls.scriptExtractionRegex;
     if (enabled) {
@@ -170,7 +175,7 @@ export class ElectricVehicleComponent implements OnChanges, OnInit, AfterViewChe
   }
 
   isScriptEnabled() {
-    return this.form.controls.scriptEnabled.enabled;
+    return this.form.controls.scriptEnabled.value;
   }
 
   removeElectricVehicle() {

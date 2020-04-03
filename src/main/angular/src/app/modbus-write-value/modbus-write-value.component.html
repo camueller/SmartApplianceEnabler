@@ -1,15 +1,15 @@
-<div class="ui fields" [formGroup]="form">
-  <div class="field">
-    <label>{{'ModbusWriteValueComponent.name' | translate}}</label>
-    <select class="ui fluid dropdown" formControlName="name">
-      <option *ngFor="let aValueName of valueNames"
-              [ngValue]="aValueName"
-              [selected]="aValueName==modbusWriteValue.name"
-      >{{getTranslatedValueName(aValueName)}}</option>
-    </select>
-  </div>
-  <div class="field">
-    <label>{{'ModbusWriteValueComponent.value' | translate}}</label>
-    <input type="text" formControlName="value">
-  </div>
+<div class="fields" [formGroup]="form">
+  <mat-form-field>
+    <mat-label>{{'ModbusWriteValueComponent.name' | translate}}</mat-label>
+    <mat-select formControlName="name" required="{{formHandler.isRequired('name')}}">
+      <mat-option *ngFor="let valueName of valueNames" [value]="valueName">
+        {{getTranslatedValueName(valueName)}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field class="value">
+    <mat-label>{{'ModbusReadValueComponent.value' | translate}}</mat-label>
+    <input matInput type="text" formControlName="value"
+           required="{{formHandler.isRequired('value')}}">
+  </mat-form-field>
 </div>

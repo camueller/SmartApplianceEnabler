@@ -33,8 +33,6 @@ import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {FormHandler} from '../shared/form-handler';
 import {ModbusSetting} from '../settings-modbus/modbus-setting';
 import {SettingsModbusComponent} from '../settings-modbus/settings-modbus.component';
-import {HttpElectricityMeter} from '../meter-http/http-electricity-meter';
-import {getValidInt} from '../shared/form-util';
 
 @Component({
   selector: 'app-settings',

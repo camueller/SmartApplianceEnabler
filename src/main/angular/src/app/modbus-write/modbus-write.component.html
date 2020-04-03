@@ -1,33 +1,30 @@
-<div class="ui hidden divider"></div>
 <div [formGroup]="form">
-  <div class="ui fields">
-    <div class="field">
-      <label>{{'ModbusWriteComponent.address' | translate}}</label>
-      <input type="text" formControlName="address">
-      <div *ngIf="errors.address"
-           class="ui negative message">{{errors.address}}</div>
-    </div>
-    <div class="field">
-      <label>{{'ModbusWriteComponent.type' | translate}}</label>
-      <select class="ui fluid dropdown" formControlName="type">
-        <option *ngFor="let readRegisterType of writeRegisterTypes"
-                [ngValue]="readRegisterType"
-                [selected]="readRegisterType==type"
-        >{{readRegisterType}}</option>
-      </select>
-    </div>
-    <div class="field">
-      <label>{{'ModbusWriteComponent.factorToValue' | translate}}</label>
-      <input type="text" formControlName="factorToValue">
-      <div *ngIf="errors.factorToValue"
-           class="ui negative message">{{errors.factorToValue}}</div>
-    </div>
-    <div class="field icon-field">
-      <i (click)="removeModbusWrite()" class="icon big red remove circle"></i>
-    </div>
+  <div class="fields">
+    <mat-form-field class="address">
+      <mat-label>{{'ModbusReadComponent.address' | translate}}</mat-label>
+      <input matInput type="text" formControlName="address"
+             required="{{formHandler.isRequired('address')}}">
+      <mat-error *ngIf="errors.address">{{errors.address}}</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>{{'ModbusReadComponent.type' | translate}}</mat-label>
+      <mat-select formControlName="type" required="{{formHandler.isRequired('type')}}">
+        <mat-option *ngFor="let writeRegisterType of writeRegisterTypes" [value]="writeRegisterType">
+          {{writeRegisterType}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="factorToValue">
+      <mat-label>{{'ModbusReadComponent.factorToValue' | translate}}</mat-label>
+      <input matInput type="text" formControlName="factorToValue"
+             required="{{formHandler.isRequired('factorToValue')}}">
+      <mat-error *ngIf="errors.factorToValue">{{errors.factorToValue}}</mat-error>
+    </mat-form-field>
+    <button mat-raised-button type="button" (click)="removeModbusWrite()">
+      {{'ModbusWriteComponent.button.remove' | translate}}</button>
   </div>
   <div formArrayName="modbusWriteValues">
-    <div class="ui fields" *ngFor="let writeValue of modbusWrite.writeValues; index as i">
+    <div class="fields" *ngFor="let writeValue of modbusWrite.writeValues; index as i">
       <div class="field">
         <app-modbus-write-value
           [modbusWriteValue]="writeValue"
@@ -39,11 +36,10 @@
           #modbusWriteValues
         ></app-modbus-write-value>
       </div>
-      <div class="field icon-field">
-        <i (click)="removeValue(i)" class="icon big red remove circle"></i>
-      </div>
+      <button mat-raised-button type="button" (click)="removeValue(i)">
+        {{'ModbusWriteComponent.button.removeValue' | translate}}</button>
     </div>
   </div>
 </div>
 <button type="button" (click)="addValue()" class="ui button" *ngIf="isAddValuePossible">
-  {{'HttpWriteComponent.button.addValue' | translate}}</button>
+  {{'ModbusWriteComponent.button.addValue' | translate}}</button>

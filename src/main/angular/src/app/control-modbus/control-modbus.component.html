@@ -1,20 +1,20 @@
-<div class="ui fields">
-  <div class="field">
-    <label>{{'ControlModbusComponent.idref' | translate}}</label>
-    <select class="ui fluid dropdown" formControlName="idref">
-      <option *ngFor="let modbusSetting of modbusSettings" [ngValue]="modbusSetting.modbusTcpId"
-              [selected]="modbusSetting.modbusTcpId==modbusSwitch.idref">
-        {{modbusSetting.modbusTcpId}}</option>
-    </select>
-  </div>
-  <div class="field">
-    <label>{{'ControlModbusComponent.slaveAddress' | translate}}</label>
-    <input type="text" formControlName="slaveAddress">
-    <div *ngIf="errors.slaveAddress" class="ui negative message">
-      {{errors.slaveAddress}}</div>
-  </div>
+<div class="fields">
+  <mat-form-field>
+    <mat-label>{{'MeterModbusComponent.idref' | translate}}</mat-label>
+    <mat-select formControlName="idref" required="{{formHandler.isRequired('idref')}}">
+      <mat-option *ngFor="let modbusSetting of modbusSettings" [value]="modbusSetting.modbusTcpId">
+        {{modbusSetting.modbusTcpId}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field class="slaveAddress">
+    <mat-label>{{'MeterModbusComponent.slaveAddress' | translate}}</mat-label>
+    <input matInput type="text" formControlName="slaveAddress"
+           required="{{formHandler.isRequired('slaveAddress')}}">
+    <mat-error *ngIf="errors.slaveAddress">{{errors.slaveAddress}}</mat-error>
+  </mat-form-field>
 </div>
-<div class="ui fields">
+<div class="fields">
   <div formArrayName="modbusWrites">
     <app-modbus-write *ngFor="let modbusWrite of modbusSwitch.modbusWrites; index as i; last as l"
                       [formGroupName]="i"
@@ -28,7 +28,7 @@
                       (remove)="onModbusWriteRemove(i)"
                       #modbusWriteComponents
     ></app-modbus-write>
-    <button type="button" (click)="addModbusWrite()" class="ui button" *ngIf="isAddModbusWritePossible">
+    <button mat-raised-button type="button" (click)="addModbusWrite()" *ngIf="isAddModbusWritePossible">
       {{'ControlModbusComponent.button.addModbusWrite' | translate}}</button>
   </div>
 </div>
