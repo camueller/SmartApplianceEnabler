@@ -1,6 +1,6 @@
 import {Settings} from './settings';
 import {SettingsDefaults} from './settings-defaults';
-import {ModbusSetting} from '../settings-modbus/modbus-setting';
+import {ModbusSetting} from './modbus/modbus-setting';
 
 export class SettingsTestdata {
 

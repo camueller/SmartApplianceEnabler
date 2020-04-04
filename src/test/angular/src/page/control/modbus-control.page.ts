@@ -9,9 +9,9 @@ import {
 } from '../../shared/form';
 import {settings} from '../../fixture/settings/settings';
 import {ControlPage} from './control.page';
-import {ModbusSwitch} from '../../../../../main/angular/src/app/control-modbus/modbus-switch';
 import {ControlValueName} from '../../../../../main/angular/src/app/control/control-value-name';
 import {ModbusWritePage} from '../modbus/modbus-write.page';
+import {ModbusSwitch} from '../../../../../main/angular/src/app/control/modbus/modbus-switch';
 
 export class ModbusControlPage extends ControlPage {
 

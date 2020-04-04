@@ -5,8 +5,8 @@ import {pump as pumpAppliance} from './fixture/appliance/pump';
 import {modbusMeter_complete} from './fixture/meter/modbus-meter';
 import {generateApplianceId} from './shared/appliance-id-generator';
 import {ModbusElectricityMeter} from '../../../main/angular/src/app/meter-modbus/modbus-electricity-meter';
-import {ModbusSwitch} from '../../../main/angular/src/app/control-modbus/modbus-switch';
 import {modbusSwitch_2modbusWrite_complete} from './fixture/control/modbus-control';
+import {ModbusSwitch} from '../../../main/angular/src/app/control/modbus/modbus-switch';
 
 fixture('Pump').page(baseUrl());
 

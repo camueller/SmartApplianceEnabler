@@ -5,10 +5,10 @@ import {interval, Subject, Subscription} from 'rxjs';
 import {StatusService} from './status.service';
 import {DayOfWeek, DaysOfWeek} from '../shared/days-of-week';
 import {ControlService} from '../control/control-service';
-import {TrafficLightState} from '../traffic-light/traffic-light-state';
-import {TrafficLightClick} from '../traffic-light/traffic-light-click';
-import {TrafficLightComponent} from '../traffic-light/traffic-light.component';
 import { MessageBoxLevel } from '../material/messagebox/messagebox.component';
+import {TrafficLightClick} from './traffic-light/traffic-light-click';
+import {TrafficLightState} from './traffic-light/traffic-light-state';
+import {TrafficLightComponent} from './traffic-light/traffic-light.component';
 
 @Component({
   selector: 'app-status',

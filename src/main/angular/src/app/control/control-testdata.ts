@@ -1,7 +1,7 @@
 import {Control} from './control';
-import {Switch} from '../control-switch/switch';
-import {StartingCurrentSwitch} from '../control-startingcurrent/starting-current-switch';
 import {ControlDefaults} from './control-defaults';
+import {Switch} from './switch/switch';
+import {StartingCurrentSwitch} from './startingcurrent/starting-current-switch';
 
 export class ControlTestdata {
 

@@ -18,9 +18,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 import {Component, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {ActivatedRoute, CanDeactivate} from '@angular/router';
-import {S0ElectricityMeter} from '../meter-s0/s0-electricity-meter';
-import {ModbusElectricityMeter} from '../meter-modbus/modbus-electricity-meter';
-import {HttpElectricityMeter} from '../meter-http/http-electricity-meter';
 import {MeterFactory} from './meter-factory';
 import {TranslateService} from '@ngx-translate/core';
 import {FormGroup} from '@angular/forms';
@@ -32,11 +29,14 @@ import {Observable} from 'rxjs';
 import {Logger} from '../log/logger';
 import {SettingsDefaults} from '../settings/settings-defaults';
 import {Settings} from '../settings/settings';
-import {MeterS0Component} from '../meter-s0/meter-s0.component';
-import {MeterModbusComponent} from '../meter-modbus/meter-modbus.component';
-import {MeterHttpComponent} from '../meter-http/meter-http.component';
 import {AppliancesReloadService} from '../appliance/appliances-reload-service';
 import {FormHandler} from '../shared/form-handler';
+import {S0ElectricityMeter} from './s0/s0-electricity-meter';
+import {MeterModbusComponent} from './modbus/meter-modbus.component';
+import {ModbusElectricityMeter} from './modbus/modbus-electricity-meter';
+import {MeterHttpComponent} from './http/meter-http.component';
+import {HttpElectricityMeter} from './http/http-electricity-meter';
+import {MeterS0Component} from './s0/meter-s0.component';
 
 @Component({
   selector: 'app-meter',

@@ -1,7 +1,7 @@
-import {HttpRead} from '../../../../../main/angular/src/app/http-read/http-read';
+import {HttpRead} from '../../../../../main/angular/src/app/http/http-read/http-read';
 import {assertInput, inputText, selectorInputByFormControlName} from '../../shared/form';
 import {Selector} from 'testcafe';
-import {HttpReadValue} from '../../../../../main/angular/src/app/http-read-value/http-read-value';
+import {HttpReadValue} from '../../../../../main/angular/src/app/http/http-read-value/http-read-value';
 import {HttpReadValuePage} from './http-read-value.page';
 
 export class HttpReadPage {

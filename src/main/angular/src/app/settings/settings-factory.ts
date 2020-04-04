@@ -19,8 +19,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 import {Settings} from './settings';
 import {SettingsDefaults} from './settings-defaults';
 import {Logger} from '../log/logger';
-import {ModbusSetting} from '../settings-modbus/modbus-setting';
 import {Info} from './info';
+import {ModbusSetting} from './modbus/modbus-setting';
 
 export class SettingsFactory {
 

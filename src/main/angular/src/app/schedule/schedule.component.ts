@@ -32,18 +32,17 @@ import {FormGroup, Validators} from '@angular/forms';
 import {FormHandler} from '../shared/form-handler';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
-import {DayTimeframe} from '../schedule-timeframe-day/day-timeframe';
-import {RuntimeRequest} from '../schedule-request-runtime/runtime-request';
-import {SocRequest} from '../schedule-request-soc/soc-request';
-import {ElectricVehicle} from '../control-evcharger/electric-vehicle';
-import {EnergyRequest} from '../schedule-request-energy/energy-request';
-import {ConsecutiveDaysTimeframe} from '../schedule-timeframe-consecutivedays/consecutive-days-timeframe';
-import {ScheduleTimeframeDayComponent} from '../schedule-timeframe-day/schedule-timeframe-day.component';
-// tslint:disable-next-line:max-line-length
-import {ScheduleTimeframeConsecutivedaysComponent} from '../schedule-timeframe-consecutivedays/schedule-timeframe-consecutivedays.component';
-import {ScheduleRequestRuntimeComponent} from '../schedule-request-runtime/schedule-request-runtime.component';
-import {ScheduleRequestEnergyComponent} from '../schedule-request-energy/schedule-request-energy.component';
-import {ScheduleRequestSocComponent} from '../schedule-request-soc/schedule-request-soc.component';
+import {ElectricVehicle} from '../control/evcharger/electric-vehicle';
+import {ScheduleTimeframeDayComponent} from './schedule-timeframe-day/schedule-timeframe-day.component';
+import {RuntimeRequest} from './request-runtime/runtime-request';
+import {EnergyRequest} from './request-energy/energy-request';
+import {DayTimeframe} from './schedule-timeframe-day/day-timeframe';
+import {ConsecutiveDaysTimeframe} from './timeframe-consecutivedays/consecutive-days-timeframe';
+import {ScheduleRequestEnergyComponent} from './request-energy/schedule-request-energy.component';
+import {ScheduleRequestRuntimeComponent} from './request-runtime/schedule-request-runtime.component';
+import {ScheduleTimeframeConsecutivedaysComponent} from './timeframe-consecutivedays/schedule-timeframe-consecutivedays.component';
+import {ScheduleRequestSocComponent} from './request-soc/schedule-request-soc.component';
+import {SocRequest} from './request-soc/soc-request';
 
 @Component({
   selector: 'app-schedule',

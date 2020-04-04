@@ -19,12 +19,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 import {Component, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {ActivatedRoute, CanDeactivate} from '@angular/router';
 import {ControlFactory} from './control-factory';
-import {Switch} from '../control-switch/switch';
-import {ModbusSwitch} from '../control-modbus/modbus-switch';
-import {HttpSwitch} from '../control-http/http-switch';
-import {StartingCurrentSwitch} from '../control-startingcurrent/starting-current-switch';
 import {TranslateService} from '@ngx-translate/core';
-import {AlwaysOnSwitch} from '../control-alwayson/always-on-switch';
 import {AppliancesReloadService} from '../appliance/appliances-reload-service';
 import {ControlDefaults} from './control-defaults';
 import {ControlService} from './control-service';
@@ -37,16 +32,18 @@ import {Settings} from '../settings/settings';
 import {SettingsDefaults} from '../settings/settings-defaults';
 import {Appliance} from '../appliance/appliance';
 import {FormGroup} from '@angular/forms';
-import {EvCharger} from '../control-evcharger/ev-charger';
-import {ControlEvchargerComponent} from '../control-evcharger/control-evcharger.component';
-import {ControlHttpComponent} from '../control-http/control-http.component';
-import {ControlSwitchComponent} from '../control-switch/control-switch.component';
-import {ControlModbusComponent} from '../control-modbus/control-modbus.component';
-import {ControlStartingcurrentComponent} from '../control-startingcurrent/control-startingcurrent.component';
 import {FormHandler} from '../shared/form-handler';
-import {S0ElectricityMeter} from '../meter-s0/s0-electricity-meter';
-import {ModbusElectricityMeter} from '../meter-modbus/modbus-electricity-meter';
-import {HttpElectricityMeter} from '../meter-http/http-electricity-meter';
+import {Switch} from './switch/switch';
+import {ControlSwitchComponent} from './switch/control-switch.component';
+import {ControlHttpComponent} from './http/control-http.component';
+import {HttpSwitch} from './http/http-switch';
+import {AlwaysOnSwitch} from './alwayson/always-on-switch';
+import {ModbusSwitch} from './modbus/modbus-switch';
+import {StartingCurrentSwitch} from './startingcurrent/starting-current-switch';
+import {ControlModbusComponent} from './modbus/control-modbus.component';
+import {ControlEvchargerComponent} from './evcharger/control-evcharger.component';
+import {ControlStartingcurrentComponent} from './startingcurrent/control-startingcurrent.component';
+import {EvCharger} from './evcharger/ev-charger';
 
 @Component({
   selector: 'app-control',

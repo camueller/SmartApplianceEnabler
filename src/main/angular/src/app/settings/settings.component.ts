@@ -31,8 +31,8 @@ import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {Logger} from '../log/logger';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {FormHandler} from '../shared/form-handler';
-import {ModbusSetting} from '../settings-modbus/modbus-setting';
-import {SettingsModbusComponent} from '../settings-modbus/settings-modbus.component';
+import {SettingsModbusComponent} from './modbus/settings-modbus.component';
+import {ModbusSetting} from './modbus/modbus-setting';
 
 @Component({
   selector: 'app-settings',

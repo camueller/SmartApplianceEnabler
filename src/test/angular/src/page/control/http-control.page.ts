@@ -1,7 +1,7 @@
 import {ControlPage} from './control.page';
-import {HttpSwitch} from '../../../../../main/angular/src/app/control-http/http-switch';
 import {ControlValueName} from '../../../../../main/angular/src/app/control/control-value-name';
 import {HttpWritePage} from '../http/http-write.page';
+import {HttpSwitch} from '../../../../../main/angular/src/app/control/http/http-switch';
 
 export class HttpControlPage extends ControlPage {
 

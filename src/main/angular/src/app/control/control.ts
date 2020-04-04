@@ -16,13 +16,13 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {StartingCurrentSwitch} from '../control-startingcurrent/starting-current-switch';
-import {Switch} from '../control-switch/switch';
-import {ModbusSwitch} from '../control-modbus/modbus-switch';
-import {HttpSwitch} from '../control-http/http-switch';
-import {AlwaysOnSwitch} from '../control-alwayson/always-on-switch';
 import {MockSwitch} from './mock-switch';
-import {EvCharger} from '../control-evcharger/ev-charger';
+import {HttpSwitch} from './http/http-switch';
+import {StartingCurrentSwitch} from './startingcurrent/starting-current-switch';
+import {AlwaysOnSwitch} from './alwayson/always-on-switch';
+import {ModbusSwitch} from './modbus/modbus-switch';
+import {Switch} from './switch/switch';
+import {EvCharger} from './evcharger/ev-charger';
 
 export class Control {
   type: string;

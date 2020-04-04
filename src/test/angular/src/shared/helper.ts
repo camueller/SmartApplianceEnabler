@@ -9,18 +9,18 @@ import {SwitchPage} from '../page/control/switch.page';
 import {Control} from '../../../../main/angular/src/app/control/control';
 import {HttpElectricityMeter} from '../../../../main/angular/src/app/meter-http/http-electricity-meter';
 import {HttpMeterPage} from '../page/meter/http-meter.page';
-import {Switch} from '../../../../main/angular/src/app/control-switch/switch';
-import {AlwaysOnSwitch} from '../../../../main/angular/src/app/control-alwayson/always-on-switch';
 import {AlwaysOnSwitchPage} from '../page/control/always-on-switch.page';
-import {HttpSwitch} from '../../../../main/angular/src/app/control-http/http-switch';
 import {HttpControlPage} from '../page/control/http-control.page';
 import {ModbusElectricityMeter} from '../../../../main/angular/src/app/meter-modbus/modbus-electricity-meter';
 import {ModbusMeterPage} from '../page/meter/modbus-meter.page';
 import {GlobalContext} from './global-context';
 import {TopMenu} from '../page/top-menu.page';
 import {ApplianceConfiguration} from './appliance-configuration';
-import {ModbusSwitch} from '../../../../main/angular/src/app/control-modbus/modbus-switch';
 import {ModbusControlPage} from '../page/control/modbus-control.page';
+import {HttpSwitch} from '../../../../main/angular/src/app/control/http/http-switch';
+import {AlwaysOnSwitch} from '../../../../main/angular/src/app/control/alwayson/always-on-switch';
+import {ModbusSwitch} from '../../../../main/angular/src/app/control/modbus/modbus-switch';
+import {Switch} from '../../../../main/angular/src/app/control/switch/switch';
 
 export function fixtureName(t: TestController) {
   // @ts-ignore

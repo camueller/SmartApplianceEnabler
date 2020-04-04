@@ -1,7 +1,7 @@
-import {HttpWrite} from '../../../../../main/angular/src/app/http-write/http-write';
+import {HttpWrite} from '../../../../../main/angular/src/app/http/http-write/http-write';
 import {Selector} from 'testcafe';
 import {assertInput, inputText, selectorInputByFormControlName} from '../../shared/form';
-import {HttpWriteValue} from '../../../../../main/angular/src/app/http-write-value/http-write-value';
+import {HttpWriteValue} from '../../../../../main/angular/src/app/http/http-write-value/http-write-value';
 import {HttpWriteValuePage} from './http-write-value.page';
 
 export class HttpWritePage {

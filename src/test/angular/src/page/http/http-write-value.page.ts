@@ -1,4 +1,4 @@
-import {HttpWriteValue} from '../../../../../main/angular/src/app/http-write-value/http-write-value';
+import {HttpWriteValue} from '../../../../../main/angular/src/app/http/http-write-value/http-write-value';
 import {
   assertInput,
   assertSelect,
