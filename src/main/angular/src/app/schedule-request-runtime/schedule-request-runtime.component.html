@@ -1,14 +1,14 @@
-<div class="ui fields">
-  <div class="ui two wide field">
-    <label>{{'ScheduleRequestRuntimeComponent.minRuntime' | translate}}</label>
-    <input class="clockpicker" type="text" formControlName="minRuntime">
-    <div *ngIf="errors.minRuntime" class="ui negative message">
-      {{errors.minRuntime}}</div>
-  </div>
-  <div class="ui two wide field">
-    <label>{{'ScheduleRequestRuntimeComponent.maxRuntime' | translate}}</label>
-    <input class="clockpicker" type="text" formControlName="maxRuntime">
-    <div *ngIf="errors.maxRuntime" class="ui negative message">
-      {{errors.maxRuntime}}</div>
-  </div>
+<div class="fields">
+  <mat-form-field class="minRuntime">
+    <mat-label>{{'ScheduleRequestRuntimeComponent.minRuntime' | translate}}</mat-label>
+    <input matInput type="text" formControlName="minRuntime" class="clockpicker"
+           required="{{formHandler.isRequired('minRuntime')}}">
+    <mat-error *ngIf="errors.minRuntime">{{errors.minRuntime}}</mat-error>
+  </mat-form-field>
+  <mat-form-field class="maxRuntime">
+    <mat-label>{{'ScheduleRequestRuntimeComponent.maxRuntime' | translate}}</mat-label>
+    <input matInput type="text" formControlName="maxRuntime" class="clockpicker"
+           required="{{formHandler.isRequired('maxRuntime')}}">
+    <mat-error *ngIf="errors.maxRuntime">{{errors.maxRuntime}}</mat-error>
+  </mat-form-field>
 </div>

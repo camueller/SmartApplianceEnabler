@@ -1,28 +1,24 @@
-<div class="ui fields">
-  <div class="ui two wide field">
-    <label>{{'ScheduleTimeframeDayComponent.startTime' | translate}}</label>
-    <input type="text" class="clockpicker" formControlName="startTime">
-    <div *ngIf="errors.startTime" class="ui negative message">
-      {{errors.startTime}}</div>
-  </div>
-  <div class="ui two wide field">
-    <label>{{'ScheduleTimeframeDayComponent.endTime' | translate}}</label>
-    <input type="text" class="clockpicker" formControlName="endTime">
-    <div *ngIf="errors.endTime" class="ui negative message">
-      {{errors.endTime}}</div>
-  </div>
-  <div class="ui field">
-    <label>{{'ScheduleTimeframeDayComponent.daysOfWeekValues' | translate}}</label>
-    <sui-multi-select class="selection form-control"
-                      [options]="daysOfWeek"
-                      labelField="name"
-                      valueField="id"
-                      formControlName="daysOfWeekValues"
-                      placeholder="{{'ScheduleTimeframeDayComponent.daysOfWeekValues_placeholder' | translate}}"
-                      #selectDaysOfWeek
-    >
-      <sui-select-option *ngFor="let option of selectDaysOfWeek.filteredOptions"
-                         class="dropdown-item" [value]="option"></sui-select-option>
-    </sui-multi-select>
-  </div>
+<div class="fields">
+  <mat-form-field class="startTime">
+    <mat-label>{{'ScheduleTimeframeDayComponent.startTime' | translate}}</mat-label>
+    <input matInput type="text" formControlName="startTime" class="clockpicker"
+           required="{{formHandler.isRequired('startTime')}}">
+    <mat-error *ngIf="errors.startTime">{{errors.startTime}}</mat-error>
+  </mat-form-field>
+  <mat-form-field class="endTime">
+    <mat-label>{{'ScheduleTimeframeDayComponent.endTime' | translate}}</mat-label>
+    <input matInput type="text" formControlName="endTime" class="clockpicker"
+           required="{{formHandler.isRequired('endTime')}}">
+    <mat-error *ngIf="errors.endTime">{{errors.endTime}}</mat-error>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>{{'ScheduleTimeframeDayComponent.daysOfWeekValues' | translate}}</mat-label>
+    <mat-select formControlName="daysOfWeekValues" multiple
+                placeholder="{{'ScheduleTimeframeDayComponent.daysOfWeekValues_placeholder' | translate}}"
+                required="{{formHandler.isRequired('daysOfWeekValues')}}">
+      <mat-option *ngFor="let dayOfWeek of daysOfWeek" [value]="dayOfWeek.id">
+        {{dayOfWeek.name}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
 </div>

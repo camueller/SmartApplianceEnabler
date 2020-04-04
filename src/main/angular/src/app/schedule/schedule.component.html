@@ -16,45 +16,31 @@
   ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
   -->
 <div class="ui segment" [formGroup]="form">
-  <div class="ui fields">
-    <div class="ui header field">
-      {{'ScheduleComponent.schedule' | translate}}
-      <i (click)="removeSchedule()" class="icon red remove circle"></i>
-    </div>
-    <div class="ui field">
-      <label>{{'ScheduleComponent.enabled' | translate}}</label>
-      <input class="ui checkbox" type="checkbox" formControlName="enabled">
-    </div>
-    <div class="ui two wide field" [class.disabled]="!isEnabled()">
-      <label>{{'ScheduleComponent.timeframeType' | translate}}</label>
-      <sui-select class="selection form-control"
-                  [options]="timeframeTypes"
-                  labelField="value"
-                  valueField="key"
-                  formControlName="timeframeType"
-                  placeholder=" "
-                  #selectTimeframeType
-      >
-        <sui-select-option *ngFor="let option of selectTimeframeType.filteredOptions"
-                           class="dropdown-item" [value]="option"></sui-select-option>
-      </sui-select>
-    </div>
-    <div class="ui two wide field" [class.disabled]="!isEnabled()">
-      <label>{{'ScheduleComponent.requestType' | translate}}</label>
-      <sui-select class="selection form-control"
-                  [options]="validRequestTypes"
-                  labelField="value"
-                  valueField="key"
-                  formControlName="requestType"
-                  placeholder=" "
-                  #selectRequestType
-      >
-        <sui-select-option *ngFor="let option of selectRequestType.filteredOptions"
-                           class="dropdown-item" [value]="option"></sui-select-option>
-      </sui-select>
+  <div class="fields">
+    <h2>{{'ScheduleComponent.schedule' | translate}}</h2>
+    <button mat-raised-button type="button" (click)="removeSchedule()">{{'button.delete' | translate}}</button>
+    <mat-checkbox formControlName="enabled"
+    >{{'ScheduleComponent.enabled' | translate}}</mat-checkbox>
+    <div>
+      <mat-form-field>
+        <mat-label>{{'ScheduleComponent.timeframeType' | translate}}</mat-label>
+        <mat-select formControlName="timeframeType" required="{{formHandler.isRequired('timeframeType')}}">
+          <mat-option *ngFor="let timeframeType of timeframeTypes" [value]="timeframeType.key">
+            {{timeframeType.value}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{'ScheduleComponent.requestType' | translate}}</mat-label>
+        <mat-select formControlName="requestType" required="{{formHandler.isRequired('requestType')}}">
+          <mat-option *ngFor="let requestType of validRequestTypes" [value]="requestType.key">
+            {{requestType.value}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
     </div>
   </div>
-  <div class="ui vertical segment" [class.disabled]="!isEnabled()">
+  <div>
     <app-schedule-timeframe-day *ngIf="isDayTimeframe()"
                                 [dayTimeFrame]="schedule.timeframe"
     ></app-schedule-timeframe-day>

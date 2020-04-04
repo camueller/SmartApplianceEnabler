@@ -1,5 +1,22 @@
-<form class="ui form" [formGroup]="form" (ngSubmit)="submitForm()" *ngIf="hasControl; else notControllable">
-  <div class="sae-block" formArrayName="schedules">
+<!--
+  ~ Copyright (C) 2017 Axel Müller <axel.mueller@avanux.de>
+  ~
+  ~ This program is free software; you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation; either version 2 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more appliance.
+  ~
+  ~ You should have received a copy of the GNU General Public License along
+  ~ with this program; if not, write to the Free Software Foundation, Inc.,
+  ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+  -->
+<form class="form" [formGroup]="form" (ngSubmit)="submitForm()" *ngIf="hasControl; else notControllable">
+  <div formArrayName="schedules">
     <div *ngFor="let scheduleFormGroup of schedulesFormArray.controls;let i = index" [formGroupName]="i">
       <app-schedule [schedule]="schedules[i]"
                     [form]="getScheduleFormGroup(i)"
@@ -12,9 +29,9 @@
     </div>
   </div>
   <div class="mandatory-fields">{{'dialog.mandatoryfields'|translate}}</div>
-  <button type="submit" class="ui primary button" [disabled]="form.pristine||form.invalid">
+  <button mat-raised-button type="submit" color="primary" [disabled]="form.pristine||form.invalid">
     {{'button.save' | translate}}</button>
-  <button type="button" (click)="addSchedule()" class="ui button">{{'button.new' | translate}}</button>
+  <button mat-raised-button type="button" (click)="addSchedule()">{{'button.new' | translate}}</button>
 </form>
 <ng-template #notControllable>
   <messagebox [level]="MessageBoxLevel.WARN">{{'SchedulesComponent.message.notControllable' | translate}}</messagebox>

@@ -1,14 +1,14 @@
-<div class="ui fields">
-  <div class="ui two wide field">
-    <label>{{'ScheduleRequestEnergyComponent.minEnergy' | translate}}</label>
-    <input type="text" formControlName="minEnergy">
-    <div *ngIf="errors.minEnergy" class="ui negative message">
-      {{errors.minEnergy}}</div>
-  </div>
-  <div class="ui two wide field">
-    <label>{{'ScheduleRequestEnergyComponent.maxEnergy' | translate}}</label>
-    <input type="text" formControlName="maxEnergy">
-    <div *ngIf="errors.maxEnergy" class="ui negative message">
-      {{errors.maxEnergy}}</div>
-  </div>
+<div class="fields">
+  <mat-form-field class="minEnergy">
+    <mat-label>{{'ScheduleRequestEnergyComponent.minEnergy' | translate}}</mat-label>
+    <input matInput type="text" formControlName="minEnergy"
+           required="{{formHandler.isRequired('minEnergy')}}">
+    <mat-error *ngIf="errors.minEnergy">{{errors.minEnergy}}</mat-error>
+  </mat-form-field>
+  <mat-form-field class="maxEnergy">
+    <mat-label>{{'ScheduleRequestEnergyComponent.maxEnergy' | translate}}</mat-label>
+    <input matInput type="text" formControlName="maxEnergy"
+           required="{{formHandler.isRequired('maxEnergy')}}">
+    <mat-error *ngIf="errors.minEnergy">{{errors.maxEnergy}}</mat-error>
+  </mat-form-field>
 </div>
