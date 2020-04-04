@@ -44,6 +44,9 @@ import {ControlSwitchComponent} from '../control-switch/control-switch.component
 import {ControlModbusComponent} from '../control-modbus/control-modbus.component';
 import {ControlStartingcurrentComponent} from '../control-startingcurrent/control-startingcurrent.component';
 import {FormHandler} from '../shared/form-handler';
+import {S0ElectricityMeter} from '../meter-s0/s0-electricity-meter';
+import {ModbusElectricityMeter} from '../meter-modbus/modbus-electricity-meter';
+import {HttpElectricityMeter} from '../meter-http/http-electricity-meter';
 
 @Component({
   selector: 'app-control',
@@ -72,6 +75,7 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
   settings: Settings;
   discardChangesMessage: string;
   confirmDeleteMessage: string;
+  controlTypes: ListItem[] = [];
   TYPE_ALWAYS_ON_SWITCH = AlwaysOnSwitch.TYPE;
   TYPE_SWITCH = Switch.TYPE;
   TYPE_MODBUS_SWITCH = ModbusSwitch.TYPE;
@@ -102,6 +106,12 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
   ngOnInit() {
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.translate.get('dialog.confirmDelete').subscribe(translated => this.confirmDeleteMessage = translated);
+    const controlTypeKeys = [Switch.TYPE, ModbusSwitch.TYPE, HttpSwitch.TYPE, AlwaysOnSwitch.TYPE];
+    this.translate.get(controlTypeKeys).subscribe(translatedStrings => {
+      Object.keys(translatedStrings).forEach(key => {
+        this.controlTypes.push({value: key, viewValue: translatedStrings[key]} as ListItem);
+      });
+    });
     this.route.paramMap.subscribe(() => this.applianceId = this.route.snapshot.paramMap.get('id'));
     this.route.data.subscribe((data: {
       control: Control,

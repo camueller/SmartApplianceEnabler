@@ -17,7 +17,7 @@
   -->
 
 <div *ngIf="control" xmlns="http://www.w3.org/1999/html">
-  <form class="ui form" [formGroup]="form" (ngSubmit)="submitForm()">
+  <form [formGroup]="form" (ngSubmit)="submitForm()">
     <app-control-evcharger *ngIf="control.type === TYPE_EVCHARGER; else notEvCharger"
                            [evCharger]="control.evCharger"
                            [controlDefaults]="controlDefaults"
@@ -29,19 +29,18 @@
     <ng-template #notEvCharger>
       <div class="fields">
         <div class="field">
-          <label class="required">{{'ControlComponent.type' | translate}}</label>
-          <select class="ui fluid dropdown" name="controlType" formControlName="controlType"
-                  (ngModelChange)="typeChanged($event)">
-            <option [ngValue]="TYPE_SWITCH">{{TYPE_SWITCH | translate}}</option>
-            <option [ngValue]="TYPE_MODBUS_SWITCH">{{TYPE_MODBUS_SWITCH | translate}}</option>
-            <option [ngValue]="TYPE_HTTP_SWITCH">{{TYPE_HTTP_SWITCH | translate}}</option>
-            <option [ngValue]="TYPE_ALWAYS_ON_SWITCH">{{TYPE_ALWAYS_ON_SWITCH | translate}}</option>
-          </select>
+          <mat-form-field>
+            <mat-label>{{'ControlComponent.type' | translate}}</mat-label>
+            <mat-select formControlName="controlType" required="{{formHandler.isRequired('controlType')}}">
+              <mat-option *ngFor="let controlType of controlTypes" [value]="controlType.value">
+                {{controlType.viewValue}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
         </div>
-        <div class="field" *ngIf="canHaveStartingCurrentDetection">
-          <mat-checkbox formControlName="startingCurrentDetection" (click)="toggleStartingCurrentDetection()"
-          >{{'ControlStartingcurrentComponent.startingCurrentDetection' | translate}}</mat-checkbox>
-        </div>
+        <mat-checkbox formControlName="startingCurrentDetection" (click)="toggleStartingCurrentDetection()"
+                      *ngIf="canHaveStartingCurrentDetection"
+        >{{'ControlStartingcurrentComponent.startingCurrentDetection' | translate}}</mat-checkbox>
       </div>
       <app-control-switch *ngIf="control.type===TYPE_SWITCH"
                           [switch_]="control.switch_"

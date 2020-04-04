@@ -15,7 +15,7 @@
   ~ with this program; if not, write to the Free Software Foundation, Inc.,
   ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
   -->
-<form class="ui form" [formGroup]="form" (ngSubmit)="submitForm()">
+<form class="form" [formGroup]="form" (ngSubmit)="submitForm()">
   <div class="fields">
     <div class="field">
       <mat-form-field>
@@ -45,7 +45,6 @@
   ></app-meter-http>
 
   <div>{{'dialog.mandatoryfields'|translate}}</div>
-  <div class="ui hidden divider"></div>
   <button mat-raised-button type="submit" color="primary" [disabled]="form.pristine||form.invalid">{{'button.save' | translate}}</button>
   <button mat-raised-button type="button" [disabled]="!isDeleteEnabled()" (click)="delete()">{{'button.delete' | translate}}</button>
 </form>
