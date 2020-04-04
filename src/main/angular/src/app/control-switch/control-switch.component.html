@@ -1,13 +1,12 @@
 <div>
-  <div class="ui fields">
-    <div class="field">
-      <label>{{'ControlSwitchComponent.gpio' | translate}}</label>
-      <input type="text" formControlName="gpio">
-      <div *ngIf="errors.gpio" class="ui negative message">{{errors.gpio}}</div>
-    </div>
-    <div class="field">
-      <label>{{'ControlSwitchComponent.reverseStates' | translate}}</label>
-      <input class="ui checkbox" type="checkbox" formControlName="reverseStates">
-    </div>
+  <div class="fields">
+    <mat-form-field class="gpio">
+      <mat-label>{{'ControlSwitchComponent.gpio' | translate}}</mat-label>
+      <input matInput type="text" formControlName="gpio"
+             required="{{formHandler.isRequired('gpio')}}">
+      <mat-error *ngIf="errors.gpio">{{errors.gpio}}</mat-error>
+    </mat-form-field>
+    <mat-checkbox formControlName="reverseStates"
+    >{{'ControlSwitchComponent.reverseStates' | translate}}</mat-checkbox>
   </div>
 </div>

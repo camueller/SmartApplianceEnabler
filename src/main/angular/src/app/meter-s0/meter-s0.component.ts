@@ -10,6 +10,10 @@ import {TranslateService} from '@ngx-translate/core';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {getValidInt} from '../shared/form-util';
+import {ModbusElectricityMeter} from '../meter-modbus/modbus-electricity-meter';
+import {HttpElectricityMeter} from '../meter-http/http-electricity-meter';
+import {ApplianceType} from '../appliance/appliance-type';
+import {PinPullResistance} from './PinPullResistance';
 
 @Component({
   selector: 'app-meter-s0',
@@ -31,6 +35,8 @@ export class MeterS0Component implements OnChanges, OnInit, AfterViewChecked {
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
+  pinPullResistanceTypes: ListItem[] = [];
+
 
   constructor(private logger: Logger,
               private parent: FormGroupDirective,
@@ -60,6 +66,14 @@ export class MeterS0Component implements OnChanges, OnInit, AfterViewChecked {
       new ErrorMessage('impulsesPerKwh', ValidatorType.pattern),
       new ErrorMessage('measurementInterval', ValidatorType.pattern),
     ], this.translate);
+    const pinPullResistanceTypeKeys = Object.keys(PinPullResistance)
+      .map(key => `MeterS0Component.pinPullResistance.${PinPullResistance[key]}`);
+    this.translate.get(pinPullResistanceTypeKeys).subscribe(translatedStrings => {
+      Object.keys(translatedStrings).forEach(key => {
+        this.pinPullResistanceTypes.push({value: key.split('.')[2], viewValue: translatedStrings[key]});
+      });
+      console.log('TYPES=', this.pinPullResistanceTypes);
+    });
     this.expandParentForm();
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
