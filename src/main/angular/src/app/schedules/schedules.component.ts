@@ -20,7 +20,7 @@ import {MessageBoxLevel} from '../material/messagebox/messagebox.component';
 @Component({
   selector: 'app-schedules',
   templateUrl: './schedules.component.html',
-  styleUrls: ['../global.css', './schedules.component.css'],
+  styleUrls: ['./schedules.component.css'],
 })
 export class SchedulesComponent implements OnChanges, OnInit {
   @ViewChildren('scheduleComponents')

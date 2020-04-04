@@ -13,7 +13,7 @@ import { MessageBoxLevel } from '../material/messagebox/messagebox.component';
 @Component({
   selector: 'app-status',
   templateUrl: './status.component.html',
-  styleUrls: ['./status.component.css', '../global.css']
+  styleUrls: ['./status.component.css']
 })
 export class StatusComponent implements OnInit, OnDestroy {
 

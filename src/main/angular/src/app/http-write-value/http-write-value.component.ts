@@ -14,7 +14,7 @@ import {getValidFloat, getValidString} from '../shared/form-util';
 @Component({
   selector: 'app-http-write-value',
   templateUrl: './http-write-value.component.html',
-  styleUrls: ['../global.css'],
+  styleUrls: [],
 })
 export class HttpWriteValueComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()

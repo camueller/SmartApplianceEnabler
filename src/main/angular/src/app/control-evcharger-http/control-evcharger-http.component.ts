@@ -1,14 +1,4 @@
-import {
-  AfterViewChecked,
-  Component,
-  Input,
-  OnChanges,
-  OnInit,
-  QueryList,
-  SimpleChanges,
-  ViewChild,
-  ViewChildren
-} from '@angular/core';
+import {AfterViewChecked, Component, Input, OnChanges, OnInit, QueryList, SimpleChanges, ViewChild, ViewChildren} from '@angular/core';
 import {Settings} from '../settings/settings';
 import {SettingsDefaults} from '../settings/settings-defaults';
 import {ControlContainer, FormArray, FormGroup, FormGroupDirective} from '@angular/forms';
@@ -23,12 +13,11 @@ import {HttpWrite} from '../http-write/http-write';
 import {HttpReadComponent} from '../http-read/http-read.component';
 import {HttpWriteComponent} from '../http-write/http-write.component';
 import {HttpConfigurationComponent} from '../http-configuration/http-configuration.component';
-import {fixExpressionChangedAfterItHasBeenCheckedError} from '../shared/form-util';
 
 @Component({
   selector: 'app-control-evcharger-http',
   templateUrl: './control-evcharger-http.component.html',
-  styleUrls: ['../global.css'],
+  styleUrls: [],
   viewProviders: [
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]

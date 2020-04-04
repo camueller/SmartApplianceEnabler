@@ -48,7 +48,7 @@ import {ScheduleRequestSocComponent} from '../schedule-request-soc/schedule-requ
 @Component({
   selector: 'app-schedule',
   templateUrl: './schedule.component.html',
-  styleUrls: ['./schedule.css', '../global.css'],
+  styleUrls: ['./schedule.css'],
 })
 export class ScheduleComponent implements OnChanges, AfterViewChecked {
   @Input()

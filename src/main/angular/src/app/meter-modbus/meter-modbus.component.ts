@@ -28,7 +28,7 @@ import {ModbusReadComponent} from '../modbus-read/modbus-read.component';
 @Component({
   selector: 'app-meter-modbus',
   templateUrl: './meter-modbus.component.html',
-  styleUrls: ['../global.css'],
+  styleUrls: [],
   viewProviders: [
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]

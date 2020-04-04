@@ -26,7 +26,7 @@ import {HttpWriteValueComponent} from '../http-write-value/http-write-value.comp
 @Component({
   selector: 'app-http-write',
   templateUrl: './http-write.component.html',
-  styleUrls: ['../global.css'],
+  styleUrls: [],
 })
 export class HttpWriteComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()

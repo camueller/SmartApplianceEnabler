@@ -29,7 +29,7 @@ import {MeterValueName} from '../meter/meter-value-name';
 @Component({
   selector: 'app-meter-http',
   templateUrl: './meter-http.component.html',
-  styleUrls: ['../global.css'],
+  styleUrls: [],
   viewProviders: [
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]

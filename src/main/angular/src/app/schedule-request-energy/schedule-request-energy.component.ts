@@ -12,7 +12,7 @@ import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 @Component({
   selector: 'app-schedule-request-energy',
   templateUrl: './schedule-request-energy.component.html',
-  styleUrls: ['../global.css'],
+  styleUrls: [],
   viewProviders: [
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]

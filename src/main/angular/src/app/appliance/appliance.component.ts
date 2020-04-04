@@ -38,7 +38,7 @@ import {ApplianceType} from './appliance-type';
 @Component({
   selector: 'app-appliance',
   templateUrl: './appliance.component.html',
-  styleUrls: ['./appliance.component.css', '../global.css']
+  styleUrls: ['./appliance.component.css']
 })
 export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<ApplianceComponent> {
   appliance: Appliance;

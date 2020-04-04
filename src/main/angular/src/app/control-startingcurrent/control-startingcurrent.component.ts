@@ -14,7 +14,7 @@ import {getValidInt} from '../shared/form-util';
 @Component({
   selector: 'app-control-startingcurrent',
   templateUrl: './control-startingcurrent.component.html',
-  styleUrls: ['../global.css']
+  styleUrls: []
 })
 export class ControlStartingcurrentComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()

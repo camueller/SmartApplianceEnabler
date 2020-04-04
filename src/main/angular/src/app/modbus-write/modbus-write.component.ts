@@ -26,7 +26,7 @@ import {ModbusWriteValueComponent} from '../modbus-write-value/modbus-write-valu
 @Component({
   selector: 'app-modbus-write',
   templateUrl: './modbus-write.component.html',
-  styleUrls: ['../global.css'],
+  styleUrls: [],
 })
 export class ModbusWriteComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()

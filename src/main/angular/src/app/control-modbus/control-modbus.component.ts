@@ -28,7 +28,7 @@ import {fixExpressionChangedAfterItHasBeenCheckedError, getValidString} from '..
 @Component({
   selector: 'app-control-modbus',
   templateUrl: './control-modbus.component.html',
-  styleUrls: ['../global.css'],
+  styleUrls: [],
   viewProviders: [
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]

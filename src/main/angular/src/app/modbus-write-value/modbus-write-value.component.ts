@@ -12,7 +12,7 @@ import {getValidString} from '../shared/form-util';
 @Component({
   selector: 'app-modbus-write-value',
   templateUrl: './modbus-write-value.component.html',
-  styleUrls: ['../global.css'],
+  styleUrls: [],
 })
 export class ModbusWriteValueComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()

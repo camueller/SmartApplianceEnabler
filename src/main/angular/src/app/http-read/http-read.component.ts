@@ -26,7 +26,7 @@ import {HttpReadValueComponent} from '../http-read-value/http-read-value.compone
 @Component({
   selector: 'app-http-read',
   templateUrl: './http-read.component.html',
-  styleUrls: ['../global.css'],
+  styleUrls: [],
 })
 export class HttpReadComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()

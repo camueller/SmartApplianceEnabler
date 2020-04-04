@@ -12,7 +12,7 @@ import {getValidString} from '../shared/form-util';
 @Component({
   selector: 'app-modbus-read-value',
   templateUrl: './modbus-read-value.component.html',
-  styleUrls: ['../global.css'],
+  styleUrls: [],
 })
 export class ModbusReadValueComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()

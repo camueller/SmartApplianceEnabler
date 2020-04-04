@@ -13,7 +13,7 @@ import {ErrorMessage, ValidatorType} from '../shared/error-message';
 @Component({
   selector: 'app-http-read-value',
   templateUrl: './http-read-value.component.html',
-  styleUrls: ['../global.css'],
+  styleUrls: [],
 })
 export class HttpReadValueComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()

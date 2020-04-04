@@ -15,7 +15,7 @@ import {getValidInt} from '../shared/form-util';
 @Component({
   selector: 'app-control-switch',
   templateUrl: './control-switch.component.html',
-  styleUrls: ['../global.css'],
+  styleUrls: [],
   viewProviders: [
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]

@@ -10,15 +10,12 @@ import {TranslateService} from '@ngx-translate/core';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {getValidInt} from '../shared/form-util';
-import {ModbusElectricityMeter} from '../meter-modbus/modbus-electricity-meter';
-import {HttpElectricityMeter} from '../meter-http/http-electricity-meter';
-import {ApplianceType} from '../appliance/appliance-type';
 import {PinPullResistance} from './PinPullResistance';
 
 @Component({
   selector: 'app-meter-s0',
   templateUrl: './meter-s0.component.html',
-  styleUrls: ['../global.css'],
+  styleUrls: [],
   viewProviders: [
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]

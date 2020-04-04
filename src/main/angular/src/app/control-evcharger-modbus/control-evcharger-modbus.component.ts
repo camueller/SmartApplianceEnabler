@@ -30,7 +30,7 @@ import {ErrorMessage, ValidatorType} from '../shared/error-message';
 @Component({
   selector: 'app-control-evcharger-modbus',
   templateUrl: './control-evcharger-modbus.component.html',
-  styleUrls: ['../global.css'],
+  styleUrls: [],
   viewProviders: [
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]

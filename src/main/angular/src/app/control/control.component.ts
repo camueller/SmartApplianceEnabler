@@ -51,7 +51,7 @@ import {HttpElectricityMeter} from '../meter-http/http-electricity-meter';
 @Component({
   selector: 'app-control',
   templateUrl: './control.component.html',
-  styleUrls: ['../global.css'],
+  styleUrls: [],
 })
 export class ControlComponent implements OnChanges, OnInit, CanDeactivate<ControlComponent> {
   @ViewChild(ControlSwitchComponent, {static: false})

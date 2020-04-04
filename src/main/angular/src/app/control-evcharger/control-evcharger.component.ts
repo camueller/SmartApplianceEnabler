@@ -26,7 +26,7 @@ import {ControlEvchargerModbusComponent} from '../control-evcharger-modbus/contr
 @Component({
   selector: 'app-control-evcharger',
   templateUrl: './control-evcharger.component.html',
-  styleUrls: ['./control-evcharger.component.css', '../global.css'],
+  styleUrls: ['./control-evcharger.component.css'],
   viewProviders: [
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]

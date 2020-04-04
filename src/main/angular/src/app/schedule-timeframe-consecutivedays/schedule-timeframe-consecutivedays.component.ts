@@ -43,7 +43,7 @@ FormControlName.prototype.ngOnChanges = function () {
 @Component({
   selector: 'app-schedule-timeframe-consecutivedays',
   templateUrl: './schedule-timeframe-consecutivedays.component.html',
-  styleUrls: ['../global.css'],
+  styleUrls: [],
   viewProviders: [
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]

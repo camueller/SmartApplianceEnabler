@@ -28,7 +28,7 @@ import {HttpReadComponent} from '../http-read/http-read.component';
 @Component({
   selector: 'app-control-http',
   templateUrl: './control-http.component.html',
-  styleUrls: ['../global.css'],
+  styleUrls: [],
   viewProviders: [
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]

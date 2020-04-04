@@ -31,7 +31,7 @@ import {ModbusReadValueComponent} from '../modbus-read-value/modbus-read-value.c
 @Component({
   selector: 'app-modbus-read',
   templateUrl: './modbus-read.component.html',
-  styleUrls: ['../global.css'],
+  styleUrls: [],
 })
 export class ModbusReadComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()
