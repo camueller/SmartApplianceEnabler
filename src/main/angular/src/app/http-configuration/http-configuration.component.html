@@ -1,14 +1,17 @@
-<div class="ui fields" [formGroup]="form">
-  <div class="field">
-    <label class="sae-label">{{'HttpReadComponent.contentType' | translate}}</label>
-    <input type="text" formControlName="contentType">
-  </div>
-  <div class="field">
-    <label class="sae-label">{{'HttpReadComponent.username' | translate}}</label>
-    <input type="text" formControlName="username">
-  </div>
-  <div class="field">
-    <label class="sae-label">{{'HttpReadComponent.password' | translate}}</label>
-    <input type="text" formControlName="password">
-  </div>
+<div class="fields" [formGroup]="form">
+  <mat-form-field class="contentType">
+    <mat-label>{{'HttpReadComponent.contentType' | translate}}</mat-label>
+    <input matInput type="text" formControlName="contentType"
+           required="{{formHandler.isRequired('contentType')}}">
+  </mat-form-field>
+  <mat-form-field class="username">
+    <mat-label>{{'HttpReadComponent.username' | translate}}</mat-label>
+    <input matInput type="text" formControlName="username"
+           required="{{formHandler.isRequired('username')}}">
+  </mat-form-field>
+  <mat-form-field class="password">
+    <mat-label>{{'HttpReadComponent.password' | translate}}</mat-label>
+    <input matInput type="text" formControlName="password"
+           required="{{formHandler.isRequired('password')}}">
+  </mat-form-field>
 </div>

@@ -118,7 +118,11 @@ export class ControlHttpComponent implements OnChanges, OnInit, AfterViewChecked
     return this.httpSwitch.httpWrites.length === 2 ? 1 : 2;
   }
 
-  readControlStateChanged(readControlState: boolean) {
+  toggleReadControlState() {
+    this.setReadControlState(!this.readControlState);
+  }
+
+  setReadControlState(readControlState: boolean) {
     this.readControlState = readControlState;
     if (this.readControlState) {
       this.form.addControl('httpRead', new FormGroup({}));
@@ -130,7 +134,7 @@ export class ControlHttpComponent implements OnChanges, OnInit, AfterViewChecked
   updateReadControlState() {
     this.readControlState = this.httpSwitch.httpRead && this.httpSwitch.httpRead.readValues
       && this.httpSwitch.httpRead.readValues.length > 0;
-    this.readControlStateChanged(this.readControlState);
+    this.setReadControlState(this.readControlState);
   }
 
   addHttpWrite() {

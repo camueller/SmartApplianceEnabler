@@ -39,10 +39,8 @@
           </select>
         </div>
         <div class="field" *ngIf="canHaveStartingCurrentDetection">
-          <label>{{'ControlStartingcurrentComponent.startingCurrentDetection' | translate}}</label>
-          <input class="ui checkbox" type="checkbox" name="startingCurrentDetection"
-                 formControlName="startingCurrentDetection"
-                 (ngModelChange)="startingCurrentDetectionChanged($event)">
+          <mat-checkbox formControlName="startingCurrentDetection" (click)="toggleStartingCurrentDetection()"
+          >{{'ControlStartingcurrentComponent.startingCurrentDetection' | translate}}</mat-checkbox>
         </div>
       </div>
       <app-control-switch *ngIf="control.type===TYPE_SWITCH"
@@ -69,9 +67,9 @@
       ></app-control-startingcurrent>
     </ng-template>
     <div class="mandatory-fields">{{'dialog.mandatoryfields'|translate}}</div>
-    <button type="submit" class="ui primary button" [disabled]="form.pristine||form.invalid">
+    <button mat-raised-button type="submit" color="primary" [disabled]="form.pristine||form.invalid">
       {{'button.save' | translate}}</button>
-    <button type="button" [disabled]="!isDeleteEnabled()" (click)="delete()" class="ui button">
+    <button mat-raised-button type="button" [disabled]="!isDeleteEnabled()" (click)="delete()">
       {{'button.delete' | translate}}</button>
   </form>
   <!--

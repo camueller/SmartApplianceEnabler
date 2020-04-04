@@ -1,22 +1,18 @@
-<div class="ui fields">
-  <div class="field">
-    <label class="sae-label">{{'ControlEvchargerHttpComponent.contentProtocol' | translate}}</label>
-    <select class="ui fluid dropdown" formControlName="contentProtocol">
-      <option *ngFor="let aContentProtocol of contentProtocols"
-              [ngValue]="aContentProtocol"
-              [selected]="aContentProtocol==contentProtocol"
-      >{{aContentProtocol}}</option>
-    </select>
-  </div>
-  <div class="field">
-    <app-http-configuration
-      [form]="form"
-      [httpConfiguration]="evHttpControl.httpConfiguration"
-    ></app-http-configuration>
-  </div>
+<div class="fields">
+  <mat-form-field>
+    <mat-label>{{'ControlEvchargerHttpComponent.contentProtocol' | translate}}</mat-label>
+    <mat-select formControlName="contentProtocol" required="{{formHandler.isRequired('contentProtocol')}}">
+      <mat-option *ngFor="let contentProtocol of contentProtocols" [value]="contentProtocol">
+        {{contentProtocol}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <app-http-configuration
+    [form]="form"
+    [httpConfiguration]="evHttpControl.httpConfiguration"
+  ></app-http-configuration>
 </div>
-<div class="ui hidden divider"></div>
-<h4 class="ui dividing header">{{'ControlEvchargerHttpComponent.heading.httpRead' | translate}}</h4>
+<h2>{{'ControlEvchargerHttpComponent.heading.httpRead' | translate}}</h2>
 <span formArrayName="httpReads">
   <app-http-read *ngFor="let httpRead of evHttpControl.httpReads; index as i; last as l"
                  [formGroupName]="i"
@@ -26,12 +22,13 @@
                  [valueNames]="readValueNames"
                  [translationPrefix]="'ControlEvchargerComponent.'"
                  [translationKeys]="readValueNameTextKeys"
+                 (remove)="onHttpReadRemove(i)"
                  #httpReadComponents
   ></app-http-read>
 </span>
-<button type="button" (click)="addHttpRead()" class="ui button">
+<button mat-raised-button type="button" (click)="addHttpRead()">
   {{'ControlEvchargerHttpComponent.button.addHttpRead' | translate}}</button>
-<h4 class="ui dividing header">{{'ControlEvchargerHttpComponent.heading.httpWrite' | translate}}</h4>
+<h2>{{'ControlEvchargerHttpComponent.heading.httpWrite' | translate}}</h2>
 <span formArrayName="httpWrites">
   <app-http-write *ngFor="let httpWrite of evHttpControl.httpWrites; index as i; last as l"
                   [formGroupName]="i"
@@ -40,8 +37,9 @@
                   [valueNames]="writeValueNames"
                   [translationPrefix]="'ControlEvchargerComponent.'"
                   [translationKeys]="writeValueNameTextKeys"
+                  (remove)="onHttpWriteRemove(i)"
                   #httpWriteComponents
   ></app-http-write>
 </span>
-<button type="button" (click)="addHttpWrite()" class="ui button">
+<button mat-raised-button type="button" (click)="addHttpWrite()">
   {{'ControlEvchargerHttpComponent.button.addHttpWrite' | translate}}</button>

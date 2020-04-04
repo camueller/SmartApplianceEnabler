@@ -1,25 +1,24 @@
-<div class="ui fields">
-  <div class="field">
-    <label>{{'MeterHttpComponent.pollInterval' | translate}}</label>
-    <input type="text" formControlName="pollInterval"
-           placeholder="{{meterDefaults.httpElectricityMeter_pollInterval}}">
-    <div *ngIf="errors.pollInterval" class="ui negative message">{{errors.pollInterval}}</div>
-  </div>
-  <div class="field">
-    <label>{{'MeterHttpComponent.measurementInterval' | translate}}</label>
-    <input type="text" formControlName="measurementInterval"
-           placeholder="{{meterDefaults.httpElectricityMeter_measurementInterval}}">
-    <div *ngIf="errors.measurementInterval" class="ui negative message">{{errors.measurementInterval}}</div>
-  </div>
-  <div class="field">
-    <label>{{'MeterHttpComponent.contentProtocol' | translate}}</label>
-    <select class="ui fluid dropdown" formControlName="contentProtocol">
-      <option *ngFor="let aContentProtocol of contentProtocols"
-              [ngValue]="aContentProtocol"
-              [selected]="aContentProtocol==contentProtocol"
-      >{{aContentProtocol}}</option>
-    </select>
-  </div>
+<div class="fields">
+  <mat-form-field class="pollInterval">
+    <mat-label>{{'MeterHttpComponent.pollInterval' | translate}}</mat-label>
+    <input matInput type="text" formControlName="pollInterval"
+           required="{{formHandler.isRequired('pollInterval')}}">
+    <mat-error *ngIf="errors.pollInterval">{{errors.pollInterval}}</mat-error>
+  </mat-form-field>
+  <mat-form-field class="measurementInterval">
+    <mat-label>{{'MeterHttpComponent.measurementInterval' | translate}}</mat-label>
+    <input matInput type="text" formControlName="measurementInterval"
+           required="{{formHandler.isRequired('measurementInterval')}}">
+    <mat-error *ngIf="errors.measurementInterval">{{errors.measurementInterval}}</mat-error>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>{{'MeterHttpComponent.contentProtocol' | translate}}</mat-label>
+    <mat-select formControlName="contentProtocol" required="{{formHandler.isRequired('contentProtocol')}}">
+      <mat-option *ngFor="let contentProtocol of contentProtocols" [value]="contentProtocol">
+        {{contentProtocol}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
   <div class="field">
     <app-http-configuration
       [form]="form"
@@ -27,7 +26,7 @@
     ></app-http-configuration>
   </div>
 </div>
-<div class="sae-block" formArrayName="httpReads">
+<div formArrayName="httpReads">
   <app-http-read *ngFor="let httpRead of httpElectricityMeter.httpReads; index as i; last as l"
                  [formGroupName]="i"
                  [form]="getHttpReadFormGroup(i)"
@@ -39,6 +38,6 @@
                  (remove)="onHttpReadRemove(i)"
                  #httpReadComponents
   ></app-http-read>
-  <button type="button" (click)="addHttpRead()" class="ui button" *ngIf="isAddHttpReadPossible">
+  <button mat-raised-button type="button" (click)="addHttpRead()" *ngIf="isAddHttpReadPossible">
     {{'MeterHttpComponent.button.addHttpRead' | translate}}</button>
 </div>

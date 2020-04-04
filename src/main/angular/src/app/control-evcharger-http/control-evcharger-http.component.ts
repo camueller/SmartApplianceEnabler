@@ -97,6 +97,10 @@ export class ControlEvchargerHttpComponent implements OnChanges, OnInit, AfterVi
     return Object.keys(EvModbusWriteRegisterName).map(key => `ControlEvchargerComponent.${key}`);
   }
 
+  getHttpReadFormGroup(index: number) {
+    return this.httpReadsFormArray.controls[index];
+  }
+
   addHttpRead() {
     const httpRead = HttpRead.createWithSingleChild();
     if (!this.evHttpControl.httpReads) {
@@ -105,6 +109,20 @@ export class ControlEvchargerHttpComponent implements OnChanges, OnInit, AfterVi
     this.evHttpControl.httpReads.push(httpRead);
     this.httpReadsFormArray.push(new FormGroup({}));
     this.form.markAsDirty();
+  }
+
+  get httpReadsFormArray() {
+    return this.form.controls.httpReads as FormArray;
+  }
+
+  onHttpReadRemove(index: number) {
+    this.evHttpControl.httpReads.splice(index, 1);
+    this.httpReadsFormArray.removeAt(index);
+    this.form.markAsDirty();
+  }
+
+  getHttpWriteFormGroup(index: number) {
+    return this.httpWritesFormArray.controls[index];
   }
 
   addHttpWrite() {
@@ -117,20 +135,14 @@ export class ControlEvchargerHttpComponent implements OnChanges, OnInit, AfterVi
     this.form.markAsDirty();
   }
 
-  get httpReadsFormArray() {
-    return this.form.controls.httpReads as FormArray;
-  }
-
-  getHttpReadFormGroup(index: number) {
-    return this.httpReadsFormArray.controls[index];
-  }
-
   get httpWritesFormArray() {
     return this.form.controls.httpWrites as FormArray;
   }
 
-  getHttpWriteFormGroup(index: number) {
-    return this.httpWritesFormArray.controls[index];
+  onHttpWriteRemove(index: number) {
+    this.evHttpControl.httpWrites.splice(index, 1);
+    this.httpWritesFormArray.removeAt(index);
+    this.form.markAsDirty();
   }
 
   expandParentForm() {

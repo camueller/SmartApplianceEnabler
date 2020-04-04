@@ -179,7 +179,11 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
       && this.control.type !== MockSwitch.TYPE;
   }
 
-  startingCurrentDetectionChanged(startingCurrentDetection: boolean) {
+  toggleStartingCurrentDetection() {
+    this.setStartingCurrentDetection(!this.control.startingCurrentDetection);
+  }
+
+  setStartingCurrentDetection(startingCurrentDetection: boolean) {
     if (startingCurrentDetection) {
       this.control.startingCurrentSwitch = new StartingCurrentSwitch();
       this.control.startingCurrentDetection = true;

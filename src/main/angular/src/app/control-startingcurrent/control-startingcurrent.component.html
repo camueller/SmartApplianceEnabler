@@ -1,35 +1,31 @@
 <div [formGroup]="form">
-  <h4 class="ui dividing header">{{'ControlStartingcurrentComponent.startingCurrentDetection' | translate}}</h4>
-  <div class="ui fields">
-    <div class="field">
-      <label>{{'ControlStartingcurrentComponent.powerThreshold' | translate}}</label>
-      <input type="text" formControlName="powerThreshold"
-             placeholder="{{controlDefaults.startingCurrentSwitchDefaults_powerThreshold}}">
-      <div *ngIf="errors['powerThreshold']"
-           class="ui negative message">{{errors['powerThreshold']}}</div>
-    </div>
-    <div class="field">
-      <label>
-        {{'ControlStartingcurrentComponent.startingCurrentDetectionDuration' | translate}}</label>
-      <input type="text" formControlName="startingCurrentDetectionDuration"
-             placeholder="{{controlDefaults.startingCurrentSwitchDefaults_startingCurrentDetectionDuration}}">
-      <div *ngIf="errors['startingCurrentDetectionDuration']"
-           class="ui negative message">{{errors['startingCurrentDetectionDuration']}}</div>
-    </div>
-    <div class="field">
-      <label>
-        {{'ControlStartingcurrentComponent.finishedCurrentDetectionDuration' | translate}}</label>
-      <input type="text" formControlName="finishedCurrentDetectionDuration"
-             placeholder="{{controlDefaults.startingCurrentSwitchDefaults_finishedCurrentDetectionDuration}}">
-      <div *ngIf="errors['finishedCurrentDetectionDuration']"
-           class="ui negative message">{{errors['finishedCurrentDetectionDuration']}}</div>
-    </div>
-    <div class="field">
-      <label>{{'ControlStartingcurrentComponent.minRunningTime' | translate}}</label>
-      <input type="text" formControlName="minRunningTime"
-             placeholder="{{controlDefaults.startingCurrentSwitchDefaults_minRunningTime}}">
-      <div *ngIf="errors['minRunningTime']"
-           class="ui negative message">{{errors['minRunningTime']}}</div>
+  <h2>{{'ControlStartingcurrentComponent.startingCurrentDetection' | translate}}</h2>
+  <div class="fields">
+    <div class="fields">
+      <mat-form-field class="powerThreshold">
+        <mat-label>{{'ControlStartingcurrentComponent.powerThreshold' | translate}}</mat-label>
+        <input matInput type="text" formControlName="powerThreshold"
+               required="{{formHandler.isRequired('powerThreshold')}}">
+        <mat-error *ngIf="errors.powerThreshold">{{errors.powerThreshold}}</mat-error>
+      </mat-form-field>
+      <mat-form-field class="startingCurrentDetectionDuration">
+        <mat-label>{{'ControlStartingcurrentComponent.startingCurrentDetectionDuration' | translate}}</mat-label>
+        <input matInput type="text" formControlName="startingCurrentDetectionDuration"
+               required="{{formHandler.isRequired('startingCurrentDetectionDuration')}}">
+        <mat-error *ngIf="errors.startingCurrentDetectionDuration">{{errors.startingCurrentDetectionDuration}}</mat-error>
+      </mat-form-field>
+      <mat-form-field class="finishedCurrentDetectionDuration">
+        <mat-label>{{'ControlStartingcurrentComponent.finishedCurrentDetectionDuration' | translate}}</mat-label>
+        <input matInput type="text" formControlName="finishedCurrentDetectionDuration"
+               required="{{formHandler.isRequired('finishedCurrentDetectionDuration')}}">
+        <mat-error *ngIf="errors.finishedCurrentDetectionDuration">{{errors.finishedCurrentDetectionDuration}}</mat-error>
+      </mat-form-field>
+      <mat-form-field class="minRunningTime">
+        <mat-label>{{'ControlStartingcurrentComponent.minRunningTime' | translate}}</mat-label>
+        <input matInput type="text" formControlName="minRunningTime"
+               required="{{formHandler.isRequired('minRunningTime')}}">
+        <mat-error *ngIf="errors.minRunningTime">{{errors.minRunningTime}}</mat-error>
+      </mat-form-field>
     </div>
   </div>
 </div>

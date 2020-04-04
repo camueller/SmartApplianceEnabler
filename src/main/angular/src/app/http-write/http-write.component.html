@@ -1,15 +1,13 @@
-<div class="ui hidden divider"></div>
 <div [formGroup]="form">
-  <div class="ui fields">
-    <div class="six wide field">
-      <label class="sae-label url">{{'HttpWriteComponent.url' | translate}}</label>
-      <input type="text" formControlName="url">
-      <div *ngIf="errors.url"
-           class="ui negative message">{{errors.url}}</div>
-    </div>
-    <div class="field icon-field">
-      <i (click)="removeHttpWrite()" class="icon big red remove circle buttonRemoveHttpWrite"></i>
-    </div>
+  <div class="fields">
+    <mat-form-field class="url">
+      <mat-label>{{'HttpWriteComponent.url' | translate}}</mat-label>
+      <input matInput type="text" formControlName="url"
+             required="{{formHandler.isRequired('url')}}">
+      <mat-error *ngIf="errors.url">{{errors.url}}</mat-error>
+    </mat-form-field>
+    <button mat-raised-button type="button" (click)="removeHttpWrite()">
+      {{'HttpWriteComponent.button.remove' | translate}}</button>
   </div>
   <div formArrayName="httpWriteValues">
     <div class="ui fields" *ngFor="let httpWriteValue of httpWrite.writeValues; index as i">
@@ -25,11 +23,10 @@
           #httpWriteValues
         ></app-http-write-value>
       </div>
-      <div class="field icon-field">
-        <i (click)="removeValue(i)" [ngClass]="getRemoveValueCssClass(i)" class="icon big red remove circle"></i>
-      </div>
+      <button mat-raised-button type="button" (click)="removeValue(i)">
+        {{'HttpWriteComponent.button.removeValue' | translate}}</button>
     </div>
   </div>
 </div>
-<button type="button" (click)="addValue()" class="ui button addValue" *ngIf="isAddValuePossible"
+<button mat-raised-button type="button" (click)="addValue()" *ngIf="isAddValuePossible"
 >{{'HttpWriteComponent.button.addValue' | translate}}</button>

@@ -1,30 +1,30 @@
-<div class="ui fields" [formGroup]="form">
-  <div class="five wide field">
-    <label class="sae-label name">{{'HttpWriteValueComponent.name' | translate}}</label>
-    <select class="ui fluid dropdown" formControlName="name">
-      <option *ngFor="let aValueName of valueNames"
-              [ngValue]="aValueName"
-              [selected]="aValueName===httpWriteValue.name"
-      >{{getTranslatedValueName(aValueName)}}</option>
-    </select>
-  </div>
-  <div class="field">
-    <label class="sae-label value">{{'HttpWriteValueComponent.value' | translate}}</label>
-    <input type="text" formControlName="value">
-  </div>
-  <div class="field" *ngIf="! disableFactorToValue">
-    <label class="sae-label factorToValue">{{'HttpWriteValueComponent.factorToValue' | translate}}</label>
-    <input type="text" formControlName="factorToValue">
-    <div *ngIf="errors.factorToValue"
-         class="ui negative message">{{errors.factorToValue}}</div>
-  </div>
-  <div class="field">
-    <label class="sae-label method">{{'HttpMethod' | translate}}</label>
-    <select class="ui fluid dropdown" formControlName="method">
-      <option *ngFor="let aMethod of methods"
-              [ngValue]="aMethod"
-              [selected]="aMethod === method"
-      >{{getMethodTranslationKey(aMethod)| translate}}</option>
-    </select>
-  </div>
+<div class="fields" [formGroup]="form">
+  <mat-form-field>
+    <mat-label>{{'HttpWriteValueComponent.name' | translate}}</mat-label>
+    <mat-select formControlName="name" required="{{formHandler.isRequired('name')}}">
+      <mat-option *ngFor="let valueName of valueNames" [value]="valueName">
+        {{getTranslatedValueName(valueName)}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field class="value">
+    <mat-label>{{'HttpWriteValueComponent.value' | translate}}</mat-label>
+    <input matInput type="text" formControlName="value"
+           required="{{formHandler.isRequired('value')}}">
+    <mat-error *ngIf="errors.value">{{errors.value}}</mat-error>
+  </mat-form-field>
+  <mat-form-field class="factorToValue" *ngIf="! disableFactorToValue">
+    <mat-label>{{'HttpWriteValueComponent.factorToValue' | translate}}</mat-label>
+    <input matInput type="text" formControlName="factorToValue"
+           required="{{formHandler.isRequired('factorToValue')}}">
+    <mat-error *ngIf="errors.factorToValue">{{errors.factorToValue}}</mat-error>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>{{'HttpWriteValueComponent.method' | translate}}</mat-label>
+    <mat-select formControlName="method" required="{{formHandler.isRequired('method')}}">
+      <mat-option *ngFor="let method of methods" [value]="method">
+        {{getMethodTranslationKey(method)| translate}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
 </div>

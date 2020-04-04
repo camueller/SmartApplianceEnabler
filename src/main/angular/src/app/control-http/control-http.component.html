@@ -1,10 +1,10 @@
-<div class="sae-block">
+<div>
   <app-http-configuration
     [form]="form"
     [httpConfiguration]="httpSwitch.httpConfiguration"
     #httpConfigurationComponent
   ></app-http-configuration>
-  <span formArrayName="httpWrites">
+  <div formArrayName="httpWrites">
     <app-http-write *ngFor="let httpWriteFormGroup of httpSwitch.httpWrites; index as i; last as l"
                     [formGroupName]="i"
                     [form]="getHttpWriteFormGroup(i)"
@@ -16,16 +16,13 @@
                     (remove)="onHttpWriteRemove(i)"
                     #httpWriteComponents
     ></app-http-write>
-  </span>
-  <button type="button" (click)="addHttpWrite()" class="ui button addHttpWrite" *ngIf="isAddHttpWritePossible"
+  </div>
+  <button mat-raised-button type="button" (click)="addHttpWrite()" *ngIf="isAddHttpWritePossible"
   >{{'ControlHttpComponent.button.addHttpWrite' | translate}}</button>
 </div>
 <div class="fields">
-  <div class="field">
-    <label>{{'ControlHttpComponent.readControlState' | translate}}</label>
-    <input class="ui checkbox readControlState" type="checkbox" formControlName="readControlState"
-           (ngModelChange)="readControlStateChanged($event)">
-  </div>
+  <mat-checkbox formControlName="readControlState" (click)="toggleReadControlState()"
+  >{{'ControlHttpComponent.readControlState' | translate}}</mat-checkbox>
 </div>
 <app-http-read *ngIf="readControlState"
                [form]="getHttpReadFormGroup()"
