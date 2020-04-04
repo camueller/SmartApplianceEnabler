@@ -41,7 +41,6 @@ import {ControlService} from './control/control-service';
 import {MeterService} from './meter/meter-service';
 import {ScheduleService} from './schedule/schedule-service';
 import {SettingsService} from './settings/settings-service';
-import {SuiModule} from 'ng2-semantic-ui';
 import {ControlResolver} from './control/control-resolver.service';
 import {MeterResolver} from './meter/meter-resolver.service';
 import {MeterDefaultsResolver} from './meter/meter-defaults-resolver.service';
@@ -148,7 +147,6 @@ import {SettingsModbusComponent} from './settings-modbus/settings-modbus.compone
     HttpClientModule,
     MaterialModule,
     ReactiveFormsModule,
-    SuiModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

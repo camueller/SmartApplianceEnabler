@@ -7,7 +7,6 @@ import {ReactiveFormsModule} from '@angular/forms';
 import {StatusService} from '../status/status.service';
 import {Logger, Options} from '../log/logger';
 import {Level} from '../log/level';
-import {SuiModule} from 'ng2-semantic-ui';
 import {Status} from '../status/status';
 import {FakeTranslateLoader} from '../testing/fake-translate-loader';
 import {FormUtil} from '../testing/form-util';

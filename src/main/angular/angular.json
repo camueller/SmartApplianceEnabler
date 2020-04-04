@@ -22,12 +22,10 @@
             ],
             "styles": [
               "src/styles.css",
-              "node_modules/semantic-ui-css/semantic.css",
               "node_modules/clockpicker/dist/jquery-clockpicker.min.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.js",
-              "node_modules/semantic-ui-css/semantic.min.js",
               "node_modules/clockpicker/dist/jquery-clockpicker.min.js"
             ]
           },
