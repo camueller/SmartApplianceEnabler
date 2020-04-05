@@ -18,16 +18,27 @@ h3 {
   font-size: 1rem;
 }
 
-.clockpicker {
-  width: 4em;
+mat-form-field {
+  margin: 5px;
 }
 
-.time-of-day {
-  width: 5rem !important;
+button {
+  margin: 5px !important;
+  height: 36px;
+  min-width: fit-content !important;
 }
 
-.percentage-input {
-  padding-left: 4px !important;
-  padding-right: 4px !important;
-  width: 2.5em !important;
+.sae {
+  &__url {
+    width: 600px;
+  }
+
+  &__fields {
+    display: flex;
+    align-items: baseline;
+  }
+
+  &__hint_mandatory_fields {
+    margin: 25px 5px;
+  }
 }

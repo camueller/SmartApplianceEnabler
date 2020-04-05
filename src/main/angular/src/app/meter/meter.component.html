@@ -44,7 +44,7 @@
                   [meterDefaults]="meterDefaults"
   ></app-meter-http>
 
-  <div>{{'dialog.mandatoryfields'|translate}}</div>
+  <div class="sae__hint_mandatory_fields">{{'dialog.mandatoryfields'|translate}}</div>
   <button mat-raised-button type="submit" color="primary" [disabled]="form.pristine||form.invalid">{{'button.save' | translate}}</button>
   <button mat-raised-button type="button" [disabled]="!isDeleteEnabled()" (click)="delete()">{{'button.delete' | translate}}</button>
 </form>

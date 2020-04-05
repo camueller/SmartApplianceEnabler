@@ -1,6 +1,6 @@
 <div [formGroup]="form">
-  <div class="fields">
-    <mat-form-field class="url">
+  <div class="sae__fields">
+    <mat-form-field class="sae__url">
       <mat-label>{{'HttpReadComponent.url' | translate}}</mat-label>
       <input matInput type="text" formControlName="url"
              required="{{formHandler.isRequired('url')}}">
@@ -10,19 +10,17 @@
       {{'HttpReadComponent.button.remove' | translate}}</button>
   </div>
   <div formArrayName="httpReadValues">
-    <div class="fields" *ngFor="let httpReadValue of httpRead.readValues; index as i">
-      <div class="field">
-        <app-http-read-value
-          [formGroupName]="i"
-          [form]="getHttpReadValueFormGroup(i)"
-          [httpReadValue]="httpReadValue"
-          [disableFactorToValue]="disableFactorToValue"
-          [valueNames]="valueNames"
-          [translationPrefix]="translationPrefix"
-          [translationKeys]="translationKeys"
-          #httpReadValues
-        ></app-http-read-value>
-      </div>
+    <div class="sae__fields" *ngFor="let httpReadValue of httpRead.readValues; index as i">
+      <app-http-read-value
+        [formGroupName]="i"
+        [form]="getHttpReadValueFormGroup(i)"
+        [httpReadValue]="httpReadValue"
+        [disableFactorToValue]="disableFactorToValue"
+        [valueNames]="valueNames"
+        [translationPrefix]="translationPrefix"
+        [translationKeys]="translationKeys"
+        #httpReadValues
+      ></app-http-read-value>
       <button mat-raised-button type="button" (click)="removeHttpReadValue(i)" *ngIf="isRemoveValuePossible">
         {{'HttpReadComponent.button.removeValue' | translate}}</button>
     </div>
