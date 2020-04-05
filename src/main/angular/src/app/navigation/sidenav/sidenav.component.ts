@@ -21,17 +21,18 @@ export class SidenavComponent implements OnInit {
     private applianceService: ApplianceService,
     private appliancesReloadService: AppliancesReloadService,
     private translate: TranslateService,
-  ) { }
+  ) {
+  }
 
-  ngOnInit()  {
+  ngOnInit() {
     this.loadAppliances();
     this.appliancesReloadService.triggered.subscribe(() => {
       this.loadAppliances();
     });
   }
 
-  public onSidenavClose = () => {
-    this.sidenavClose.emit();
+  public onSidenavClose(force?: boolean) {
+    this.sidenavClose.emit(force);
   }
 
   get hasAppliances() {
