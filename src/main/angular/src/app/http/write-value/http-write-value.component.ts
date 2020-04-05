@@ -7,9 +7,9 @@ import {Logger} from '../../log/logger';
 import {TranslateService} from '@ngx-translate/core';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {HttpWriteValue} from './http-write-value';
-import {HttpMethod} from '../../shared/http-method';
 import {ErrorMessage, ValidatorType} from '../../shared/error-message';
 import {getValidFloat, getValidString} from '../../shared/form-util';
+import {HttpMethod} from '../http-method';
 
 @Component({
   selector: 'app-http-write-value',
