@@ -16,7 +16,7 @@ import {getValidFloat, getValidString} from '../../shared/form-util';
   templateUrl: './http-write-value.component.html',
   styleUrls: [],
 })
-export class HttpWriteValueComponent implements OnChanges, OnInit, AfterViewChecked {
+export class HttpWriteValueComponent implements OnChanges, OnInit {
   @Input()
   httpWriteValue: HttpWriteValue;
   @Input()
@@ -66,10 +66,6 @@ export class HttpWriteValueComponent implements OnChanges, OnInit, AfterViewChec
     this.translate.get(this.translationKeys).subscribe(translatedStrings => {
       this.translatedStrings = translatedStrings;
     });
-  }
-
-  ngAfterViewChecked() {
-    this.formHandler.markLabelsRequired();
   }
 
   public getTranslatedValueName(valueName: string) {

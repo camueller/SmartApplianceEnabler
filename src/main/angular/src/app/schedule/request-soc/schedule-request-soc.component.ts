@@ -18,7 +18,7 @@ import {Logger} from '../../log/logger';
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
 })
-export class ScheduleRequestSocComponent implements OnChanges, OnInit, AfterViewChecked {
+export class ScheduleRequestSocComponent implements OnChanges, OnInit {
   @Input()
   socRequest: SocRequest;
   @Input()
@@ -58,10 +58,6 @@ export class ScheduleRequestSocComponent implements OnChanges, OnInit, AfterView
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
     });
-  }
-
-  ngAfterViewChecked() {
-    this.formHandler.markLabelsRequired();
   }
 
   get evId() {

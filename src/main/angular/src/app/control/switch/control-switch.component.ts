@@ -20,7 +20,7 @@ import {getValidInt} from '../../shared/form-util';
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
 })
-export class ControlSwitchComponent implements OnChanges, OnInit, AfterViewChecked {
+export class ControlSwitchComponent implements OnChanges, OnInit {
   @Input()
   switch_: Switch;
   @Input()
@@ -63,10 +63,6 @@ export class ControlSwitchComponent implements OnChanges, OnInit, AfterViewCheck
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
     });
-  }
-
-  ngAfterViewChecked() {
-    this.formHandler.markLabelsRequired();
   }
 
   expandParentForm() {

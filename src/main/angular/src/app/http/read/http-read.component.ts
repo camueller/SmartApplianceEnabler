@@ -28,7 +28,7 @@ import {HttpReadValue} from '../read-value/http-read-value';
   templateUrl: './http-read.component.html',
   styleUrls: [],
 })
-export class HttpReadComponent implements OnChanges, OnInit, AfterViewChecked {
+export class HttpReadComponent implements OnChanges, OnInit {
   @Input()
   httpRead: HttpRead;
   @ViewChildren('httpReadValues')
@@ -89,10 +89,6 @@ export class HttpReadComponent implements OnChanges, OnInit, AfterViewChecked {
     this.translate.get(this.translationKeys).subscribe(translatedStrings => {
       this.translatedStrings = translatedStrings;
     });
-  }
-
-  ngAfterViewChecked() {
-    this.formHandler.markLabelsRequired();
   }
 
   get isRemoveValuePossible() {

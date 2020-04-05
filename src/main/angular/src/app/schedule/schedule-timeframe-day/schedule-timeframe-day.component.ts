@@ -96,7 +96,6 @@ export class ScheduleTimeframeDayComponent implements OnChanges, OnInit, AfterVi
   }
 
   ngAfterViewChecked() {
-    this.formHandler.markLabelsRequired();
     if (this.initializeOnceAfterViewChecked) {
       this.initializeOnceAfterViewChecked = false;
       this.initializeClockPicker();

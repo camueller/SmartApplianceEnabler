@@ -28,7 +28,7 @@ import {Logger} from '../../log/logger';
   templateUrl: './modbus-read.component.html',
   styleUrls: [],
 })
-export class ModbusReadComponent implements OnChanges, OnInit, AfterViewChecked {
+export class ModbusReadComponent implements OnChanges, OnInit {
   @Input()
   modbusRead: ModbusRead;
   @ViewChildren('modbusReadValues')
@@ -83,10 +83,6 @@ export class ModbusReadComponent implements OnChanges, OnInit, AfterViewChecked 
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
     });
-  }
-
-  ngAfterViewChecked() {
-    this.formHandler.markLabelsRequired();
   }
 
   get type(): string {

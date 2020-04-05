@@ -26,7 +26,7 @@ import {ElectricVehicle} from '../evcharger/electric-vehicle';
   templateUrl: './electric-vehicle.component.html',
   styleUrls: [],
 })
-export class ElectricVehicleComponent implements OnChanges, OnInit, AfterViewChecked {
+export class ElectricVehicleComponent implements OnChanges, OnInit {
   @Input()
   electricVehicle: ElectricVehicle;
   @Input()
@@ -75,10 +75,6 @@ export class ElectricVehicleComponent implements OnChanges, OnInit, AfterViewChe
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
     });
-  }
-
-  ngAfterViewChecked() {
-    this.formHandler.markLabelsRequired();
   }
 
   expandParentForm() {

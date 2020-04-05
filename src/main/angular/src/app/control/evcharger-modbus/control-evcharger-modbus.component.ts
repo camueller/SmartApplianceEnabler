@@ -35,7 +35,7 @@ import {ModbusReadComponent} from '../../modbus/read/modbus-read.component';
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
 })
-export class ControlEvchargerModbusComponent implements OnChanges, OnInit, AfterViewChecked {
+export class ControlEvchargerModbusComponent implements OnChanges, OnInit {
   @Input()
   evModbusControl: EvModbusControl;
   @Input()
@@ -86,10 +86,6 @@ export class ControlEvchargerModbusComponent implements OnChanges, OnInit, After
     this.translate.get(this.translationKeys).subscribe(translatedStrings => {
       this.translatedStrings = translatedStrings;
     });
-  }
-
-  ngAfterViewChecked() {
-    this.formHandler.markLabelsRequired();
   }
 
   get readValueNames() {

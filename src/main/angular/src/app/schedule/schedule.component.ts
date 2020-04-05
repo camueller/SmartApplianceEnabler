@@ -49,7 +49,7 @@ import {SocRequest} from './request-soc/soc-request';
   templateUrl: './schedule.component.html',
   styleUrls: ['./schedule.css'],
 })
-export class ScheduleComponent implements OnChanges, AfterViewChecked {
+export class ScheduleComponent implements OnChanges {
   @Input()
   schedule: Schedule;
   @Input()
@@ -95,10 +95,6 @@ export class ScheduleComponent implements OnChanges, AfterViewChecked {
     if (changes.form) {
       this.expandParentForm();
     }
-  }
-
-  ngAfterViewChecked() {
-    this.formHandler.markLabelsRequired();
   }
 
   isEnabled() {

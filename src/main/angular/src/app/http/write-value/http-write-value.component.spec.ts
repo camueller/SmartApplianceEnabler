@@ -63,8 +63,6 @@ describe('HttpWriteValueComponent', () => {
     hostComponent = fixture.componentInstance;
     component = hostComponent.testComponent;
 
-    component.formHandler.markLabelsRequired = jest.fn();
-
     fixture.detectChanges();
     // fixture.whenStable().then(() => {
     //   console.log('HTML=', fixture.debugElement.nativeElement.innerHTML);

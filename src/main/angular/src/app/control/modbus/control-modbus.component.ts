@@ -33,7 +33,7 @@ import {ModbusSetting} from '../../settings/modbus/modbus-setting';
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
 })
-export class ControlModbusComponent implements OnChanges, OnInit, AfterViewChecked {
+export class ControlModbusComponent implements OnChanges, OnInit {
   @Input()
   modbusSwitch: ModbusSwitch;
   @ViewChildren('modbusWriteComponents')
@@ -82,10 +82,6 @@ export class ControlModbusComponent implements OnChanges, OnInit, AfterViewCheck
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
     });
-  }
-
-  ngAfterViewChecked() {
-    this.formHandler.markLabelsRequired();
   }
 
   get valueNames() {

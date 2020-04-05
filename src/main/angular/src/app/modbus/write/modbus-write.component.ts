@@ -28,7 +28,7 @@ import {Logger} from '../../log/logger';
   templateUrl: './modbus-write.component.html',
   styleUrls: [],
 })
-export class ModbusWriteComponent implements OnChanges, OnInit, AfterViewChecked {
+export class ModbusWriteComponent implements OnChanges, OnInit {
   @Input()
   modbusWrite: ModbusWrite;
   @ViewChildren('modbusWriteValues')
@@ -82,10 +82,6 @@ export class ModbusWriteComponent implements OnChanges, OnInit, AfterViewChecked
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
     });
-  }
-
-  ngAfterViewChecked() {
-    this.formHandler.markLabelsRequired();
   }
 
   get type(): string {

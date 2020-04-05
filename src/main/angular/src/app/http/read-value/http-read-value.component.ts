@@ -15,7 +15,7 @@ import {ErrorMessage, ValidatorType} from '../../shared/error-message';
   templateUrl: './http-read-value.component.html',
   styleUrls: [],
 })
-export class HttpReadValueComponent implements OnChanges, OnInit, AfterViewChecked {
+export class HttpReadValueComponent implements OnChanges, OnInit {
   @Input()
   httpReadValue: HttpReadValue;
   @Input()
@@ -65,10 +65,6 @@ export class HttpReadValueComponent implements OnChanges, OnInit, AfterViewCheck
     this.translate.get(this.translationKeys).subscribe(translatedStrings => {
       this.translatedStrings = translatedStrings;
     });
-  }
-
-  ngAfterViewChecked() {
-    this.formHandler.markLabelsRequired();
   }
 
   public getTranslatedValueName(valueName: string) {

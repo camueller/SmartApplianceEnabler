@@ -28,7 +28,7 @@ import {HttpWriteValue} from '../write-value/http-write-value';
   templateUrl: './http-write.component.html',
   styleUrls: [],
 })
-export class HttpWriteComponent implements OnChanges, OnInit, AfterViewChecked {
+export class HttpWriteComponent implements OnChanges, OnInit {
   @Input()
   httpWrite: HttpWrite;
   @ViewChildren('httpWriteValues')
@@ -87,10 +87,6 @@ export class HttpWriteComponent implements OnChanges, OnInit, AfterViewChecked {
         this.translatedStrings = translatedStrings;
       });
     }
-  }
-
-  ngAfterViewChecked() {
-    this.formHandler.markLabelsRequired();
   }
 
   removeHttpWrite() {

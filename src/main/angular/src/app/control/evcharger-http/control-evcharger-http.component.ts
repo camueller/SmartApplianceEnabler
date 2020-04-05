@@ -22,7 +22,7 @@ import {HttpWrite} from '../../http/write/http-write';
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
 })
-export class ControlEvchargerHttpComponent implements OnChanges, OnInit, AfterViewChecked {
+export class ControlEvchargerHttpComponent implements OnChanges, OnInit {
 
   @Input()
   evHttpControl: EvHttpControl;
@@ -59,10 +59,6 @@ export class ControlEvchargerHttpComponent implements OnChanges, OnInit, AfterVi
 
   ngOnInit() {
     this.expandParentForm();
-  }
-
-  ngAfterViewChecked() {
-    this.formHandler.markLabelsRequired();
   }
 
   get contentProtocol(): string {

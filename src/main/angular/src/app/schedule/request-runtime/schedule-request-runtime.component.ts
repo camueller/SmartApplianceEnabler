@@ -47,7 +47,7 @@ FormControlName.prototype.ngOnChanges = function () {
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
 })
-export class ScheduleRequestRuntimeComponent implements OnChanges, OnInit, AfterViewChecked {
+export class ScheduleRequestRuntimeComponent implements OnChanges, OnInit {
   @Input()
   runtimeRequest: RuntimeRequest;
   form: FormGroup;
@@ -91,7 +91,6 @@ export class ScheduleRequestRuntimeComponent implements OnChanges, OnInit, After
   }
 
   ngAfterViewChecked() {
-    this.formHandler.markLabelsRequired();
     if (this.initializeOnceAfterViewChecked) {
       this.initializeOnceAfterViewChecked = false;
       this.initializeClockPicker();

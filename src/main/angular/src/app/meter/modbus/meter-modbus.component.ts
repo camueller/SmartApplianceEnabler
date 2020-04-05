@@ -33,7 +33,7 @@ import {ModbusSetting} from '../../settings/modbus/modbus-setting';
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
 })
-export class MeterModbusComponent implements OnChanges, OnInit, AfterViewChecked {
+export class MeterModbusComponent implements OnChanges, OnInit {
   @Input()
   modbusElectricityMeter: ModbusElectricityMeter;
   @ViewChildren('modbusReadComponents')
@@ -85,10 +85,6 @@ export class MeterModbusComponent implements OnChanges, OnInit, AfterViewChecked
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
     });
-  }
-
-  ngAfterViewChecked() {
-    this.formHandler.markLabelsRequired();
   }
 
   get valueNames() {

@@ -20,7 +20,7 @@ import {Logger} from '../../log/logger';
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
 })
-export class MeterS0Component implements OnChanges, OnInit, AfterViewChecked {
+export class MeterS0Component implements OnChanges, OnInit {
   @Input()
   s0ElectricityMeter: S0ElectricityMeter;
   @Input()
@@ -74,10 +74,6 @@ export class MeterS0Component implements OnChanges, OnInit, AfterViewChecked {
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
     });
-  }
-
-  ngAfterViewChecked() {
-    this.formHandler.markLabelsRequired();
   }
 
   expandParentForm() {

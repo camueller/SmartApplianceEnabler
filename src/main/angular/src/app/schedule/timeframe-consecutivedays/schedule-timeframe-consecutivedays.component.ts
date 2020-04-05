@@ -96,7 +96,6 @@ export class ScheduleTimeframeConsecutivedaysComponent implements OnChanges, OnI
 
   ngAfterViewChecked() {
     if (this.initializeOnceAfterViewChecked) {
-      this.formHandler.markLabelsRequired();
       this.initializeOnceAfterViewChecked = false;
       this.initializeClockPicker();
     }

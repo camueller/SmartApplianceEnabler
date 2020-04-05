@@ -14,7 +14,7 @@ import {Logger} from '../../log/logger';
   templateUrl: './modbus-write-value.component.html',
   styleUrls: [],
 })
-export class ModbusWriteValueComponent implements OnChanges, OnInit, AfterViewChecked {
+export class ModbusWriteValueComponent implements OnChanges, OnInit {
   @Input()
   modbusWriteValue: ModbusWriteValue;
   @Input()
@@ -62,10 +62,6 @@ export class ModbusWriteValueComponent implements OnChanges, OnInit, AfterViewCh
     this.translate.get(this.translationKeys).subscribe(translatedStrings => {
       this.translatedStrings = translatedStrings;
     });
-  }
-
-  ngAfterViewChecked() {
-    this.formHandler.markLabelsRequired();
   }
 
   public getTranslatedValueName(valueName: string) {

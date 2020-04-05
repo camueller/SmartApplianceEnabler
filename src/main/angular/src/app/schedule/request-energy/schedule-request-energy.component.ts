@@ -17,7 +17,7 @@ import {Logger} from '../../log/logger';
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
 })
-export class ScheduleRequestEnergyComponent implements OnChanges, OnInit, AfterViewChecked {
+export class ScheduleRequestEnergyComponent implements OnChanges, OnInit {
   @Input()
   energyRequest: EnergyRequest;
   form: FormGroup;
@@ -56,10 +56,6 @@ export class ScheduleRequestEnergyComponent implements OnChanges, OnInit, AfterV
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
     });
-  }
-
-  ngAfterViewChecked() {
-    this.formHandler.markLabelsRequired();
   }
 
   get minEnergy() {

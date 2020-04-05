@@ -68,7 +68,6 @@ describe('HttpWriteComponent', () => {
     hostComponent = fixture.componentInstance;
     component = hostComponent.testComponent;
 
-    component.formHandler.markLabelsRequired = jest.fn();
     component.translationKeys = ['ControlHttpComponent.On', 'ControlHttpComponent.Off'];
 
     fixture.detectChanges();

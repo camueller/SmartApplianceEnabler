@@ -16,7 +16,7 @@ import {getValidInt} from '../../shared/form-util';
   templateUrl: './control-startingcurrent.component.html',
   styleUrls: []
 })
-export class ControlStartingcurrentComponent implements OnChanges, OnInit, AfterViewChecked {
+export class ControlStartingcurrentComponent implements OnChanges, OnInit {
   @Input()
   startingCurrentSwitch: StartingCurrentSwitch;
   @Input()
@@ -59,10 +59,6 @@ export class ControlStartingcurrentComponent implements OnChanges, OnInit, After
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
     });
-  }
-
-  ngAfterViewChecked() {
-    this.formHandler.markLabelsRequired();
   }
 
   expandParentForm() {

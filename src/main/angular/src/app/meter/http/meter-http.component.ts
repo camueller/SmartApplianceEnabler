@@ -34,7 +34,7 @@ import { TranslateService } from '@ngx-translate/core';
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
 })
-export class MeterHttpComponent implements OnChanges, OnInit, AfterViewChecked {
+export class MeterHttpComponent implements OnChanges, OnInit {
   @Input()
   httpElectricityMeter: HttpElectricityMeter;
   @ViewChild(HttpConfigurationComponent, {static: true})
@@ -80,10 +80,6 @@ export class MeterHttpComponent implements OnChanges, OnInit, AfterViewChecked {
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
     });
-  }
-
-  ngAfterViewChecked() {
-    this.formHandler.markLabelsRequired();
   }
 
   get valueNames() {

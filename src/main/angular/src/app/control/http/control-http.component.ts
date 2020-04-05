@@ -33,7 +33,7 @@ import {HttpWrite} from '../../http/write/http-write';
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
 })
-export class ControlHttpComponent implements OnChanges, OnInit, AfterViewChecked {
+export class ControlHttpComponent implements OnChanges, OnInit {
   @Input()
   httpSwitch: HttpSwitch;
   @ViewChild('httpConfigurationComponent', {static: true})
@@ -85,10 +85,6 @@ export class ControlHttpComponent implements OnChanges, OnInit, AfterViewChecked
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
     });
-  }
-
-  ngAfterViewChecked() {
-    this.formHandler.markLabelsRequired();
   }
 
   get valueNames() {
