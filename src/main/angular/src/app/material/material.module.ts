@@ -3,7 +3,7 @@ import {CommonModule} from '@angular/common';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatButtonModule} from '@angular/material/button';
-import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatFormFieldModule, MAT_FORM_FIELD_DEFAULT_OPTIONS} from '@angular/material/form-field';
 import {MatIconModule} from '@angular/material/icon';
 import {MatInputModule, MatTooltipModule, MatOptionModule, MatSelectModule, MatCheckboxModule} from '@angular/material';
 import {MatListModule} from '@angular/material/list';
@@ -46,6 +46,9 @@ import {FlexModule} from '@angular/flex-layout';
     MatToolbarModule,
     MatTooltipModule,
     MessageboxComponent,
+  ],
+  providers: [
+    {provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {floatLabel: 'always'}},
   ]
 })
 export class MaterialModule { }
