@@ -50,6 +50,10 @@
     "tslint": "~5.11.0",
     "typescript": "~3.5.3"
   },
+  "peerDependencies": {
+    "typescript": "3.6.4",
+    "tslib": "1.10.0"
+  },
   "jest": {
     "preset": "jest-preset-angular",
     "globals": {
