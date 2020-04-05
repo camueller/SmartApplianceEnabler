@@ -7,7 +7,7 @@ import {TrafficLightState} from '../traffic-light/traffic-light-state';
 @Component({
   selector: 'app-status-view',
   templateUrl: './status-view.component.html',
-  styleUrls: ['./status-view.component.css', '../status.component.css']
+  styleUrls: ['./status-view.component.scss', '../status.component.scss']
 })
 export class StatusViewComponent implements OnInit {
 

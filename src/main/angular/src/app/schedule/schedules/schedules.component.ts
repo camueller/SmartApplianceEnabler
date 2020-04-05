@@ -20,7 +20,7 @@ import {Logger} from '../../log/logger';
 @Component({
   selector: 'app-schedules',
   templateUrl: './schedules.component.html',
-  styleUrls: ['./schedules.component.css'],
+  styleUrls: ['./schedules.component.scss'],
 })
 export class SchedulesComponent implements OnChanges, OnInit {
   @ViewChildren('scheduleComponents')

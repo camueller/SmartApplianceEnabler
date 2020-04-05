@@ -56,7 +56,7 @@ FormControlName.prototype.ngOnChanges = function () {
 @Component({
   selector: 'app-status-evcharger-edit',
   templateUrl: './status-evcharger-edit.component.html',
-  styleUrls: ['./status-evcharger-edit.component.css', '../status.component.css']
+  styleUrls: ['./status-evcharger-edit.component.scss', '../status.component.scss']
 })
 export class StatusEvchargerEditComponent implements OnInit, AfterViewChecked, OnDestroy {
   @Input()

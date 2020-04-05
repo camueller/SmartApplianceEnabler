@@ -22,7 +22,7 @@
               "src/favicon.ico"
             ],
             "styles": [
-              "src/styles.css",
+              "src/styles.scss",
               "node_modules/clockpicker/dist/jquery-clockpicker.min.css"
             ],
             "scripts": [
@@ -78,6 +78,11 @@
             ]
           }
         }
+      },
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
       }
     }
   },
@@ -86,7 +91,8 @@
     "@schematics/angular:component": {
       "inlineStyle": true,
       "prefix": "app",
-      "style": "css"
+      "style": "css",
+      "styleext": "scss"
     },
     "@schematics/angular:directive": {
       "prefix": "app"

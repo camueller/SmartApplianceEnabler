@@ -6,7 +6,7 @@ import {Subject} from 'rxjs';
 @Component({
   selector: 'app-traffic-light',
   templateUrl: './traffic-light.component.html',
-  styleUrls: ['./traffic-light.css']
+  styleUrls: ['./traffic-light.scss']
 })
 export class TrafficLightComponent implements OnChanges, OnInit {
   @Input()

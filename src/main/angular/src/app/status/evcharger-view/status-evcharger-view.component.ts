@@ -9,7 +9,7 @@ import {DayOfWeek} from '../../shared/days-of-week';
 @Component({
   selector: 'app-status-charger-view',
   templateUrl: './status-evcharger-view.component.html',
-  styleUrls: ['./status-evcharger-view.component.css', '../status.component.css']
+  styleUrls: ['./status-evcharger-view.component.scss', '../status.component.scss']
 })
 export class StatusEvchargerViewComponent implements OnInit, OnDestroy {
 

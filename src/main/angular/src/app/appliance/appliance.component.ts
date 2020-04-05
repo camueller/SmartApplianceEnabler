@@ -39,7 +39,7 @@ import {ListItem} from '../shared/list-item';
 @Component({
   selector: 'app-appliance',
   templateUrl: './appliance.component.html',
-  styleUrls: ['./appliance.component.css']
+  styleUrls: ['./appliance.component.scss']
 })
 export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<ApplianceComponent> {
   appliance: Appliance;

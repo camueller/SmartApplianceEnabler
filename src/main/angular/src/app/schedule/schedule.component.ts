@@ -47,7 +47,7 @@ import {SocRequest} from './request-soc/soc-request';
 @Component({
   selector: 'app-schedule',
   templateUrl: './schedule.component.html',
-  styleUrls: ['./schedule.css'],
+  styleUrls: ['./schedule.scss'],
 })
 export class ScheduleComponent implements OnChanges {
   @Input()

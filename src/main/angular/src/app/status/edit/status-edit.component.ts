@@ -36,7 +36,7 @@ FormControlName.prototype.ngOnChanges = function () {
 @Component({
   selector: 'app-status-edit',
   templateUrl: './status-edit.component.html',
-  styleUrls: ['./status-edit.component.css', '../status.component.css']
+  styleUrls: ['./status-edit.component.scss', '../status.component.scss']
 })
 export class StatusEditComponent implements OnInit, AfterViewChecked {
   @Input()

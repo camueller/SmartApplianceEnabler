@@ -27,7 +27,7 @@ import {ListItem} from '../../shared/list-item';
 @Component({
   selector: 'app-control-evcharger',
   templateUrl: './control-evcharger.component.html',
-  styleUrls: ['./control-evcharger.component.css'],
+  styleUrls: ['./control-evcharger.component.scss'],
   viewProviders: [
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
