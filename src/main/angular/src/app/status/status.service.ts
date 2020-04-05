@@ -3,27 +3,20 @@ import {Observable} from 'rxjs';
 import {SaeService} from '../shared/sae-service';
 import {HttpClient} from '@angular/common/http';
 import {Status} from './status';
-import {StatusFactory} from './status-factory';
 import {Logger} from '../log/logger';
 import {map, tap} from 'rxjs/operators';
 
 @Injectable()
 export class StatusService extends SaeService {
 
-  statusFactory: StatusFactory;
-
   constructor(private logger: Logger,
               protected http: HttpClient) {
     super(http);
-    this.statusFactory = new StatusFactory(logger);
   }
 
   getStatus(): Observable<Array<Status>> {
     return this.http.get(`${SaeService.API}/status`)
-      .pipe(map((statuses: Array<Status>) => {
-        return statuses.map(
-          status => this.statusFactory.toStatusFromJSON(status));
-      }));
+      .pipe(map((statuses: Array<Status>) => statuses));
   }
 
   suggestRuntime(id: string): Observable<string> {

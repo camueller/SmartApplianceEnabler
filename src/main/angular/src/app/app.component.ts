@@ -16,63 +16,17 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {Component, OnInit} from '@angular/core';
-import {ApplianceService} from './appliance/appliance.service';
-import {ApplianceHeader} from './appliance/appliance-header';
-import {AppliancesReloadService} from './appliance/appliances-reload-service';
+import {Component} from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
-import {SettingsService} from './settings/settings-service';
-
-declare const $: any;
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
 
-  applianceHeaders: ApplianceHeader[];
-  version: string;
-  typePrefix = 'ApplianceComponent.type.';
-  translatedTypes = new Object();
-
-  constructor(private applianceService: ApplianceService,
-              private appliancesReloadService: AppliancesReloadService,
-              private settingsService: SettingsService,
-              private translate: TranslateService) {
+  constructor(private translate: TranslateService) {
     translate.setDefaultLang('de');
-  }
-
-  toggleSidebar() {
-    $('.ui.sidebar').sidebar({dimPage: false, closable: false});
-    $('.ui.sidebar').sidebar('toggle');
-  }
-
-  ngOnInit()  {
-    this.settingsService.getInfo().subscribe(info => this.version = info.version);
-    this.loadAppliances();
-    this.appliancesReloadService.triggered.subscribe(() => {
-      this.loadAppliances();
-    });
-  }
-
-  loadAppliances() {
-    this.applianceService.getApplianceHeaders().subscribe(applianceHeaders => {
-      this.applianceHeaders = applianceHeaders;
-
-      const types = [];
-      this.applianceHeaders.forEach(applianceHeader => types.push(this.typePrefix + applianceHeader.type));
-      if (types.length > 0) {
-        this.translate.get(types).subscribe(translatedTypes => this.translatedTypes = translatedTypes);
-      }
-    });
-  }
-
-  getTranslatedType(type: string): string {
-    if (this.translatedTypes != null) {
-      return this.translatedTypes[this.typePrefix + type];
-    }
-    return '';
   }
 }
