@@ -56,6 +56,10 @@ export class StatusComponent implements OnInit, OnDestroy {
     });
   }
 
+  get hasControllableAppliances() {
+    return this.applianceStatuses.length > 0;
+  }
+
   getTrafficLightStateHandler(applianceStatus: Status): TrafficLightState {
     return {
       isRed(): boolean {

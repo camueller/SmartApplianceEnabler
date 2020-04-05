@@ -1,5 +1,6 @@
 <h1>{{'StatusComponent.title' | translate }}</h1>
-<messagebox [level]="MessageBoxLevel.INFO">{{'StatusComponent.message.noControllableAppliances' | translate}}</messagebox>
+<messagebox [level]="MessageBoxLevel.INFO" *ngIf="!hasControllableAppliances"
+>{{'StatusComponent.message.noControllableAppliances' | translate}}</messagebox>
 <div class="appliances">
   <div class="appliance" *ngFor="let applianceStatus of applianceStatuses">
     <app-traffic-light [key]="applianceStatus"
