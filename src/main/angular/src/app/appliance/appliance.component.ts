@@ -34,6 +34,7 @@ import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {FormHandler} from '../shared/form-handler';
 import {getValidInt, getValidString} from '../shared/form-util';
 import {ApplianceType} from './appliance-type';
+import {ListItem} from '../shared/list-item';
 
 @Component({
   selector: 'app-appliance',

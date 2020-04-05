@@ -22,6 +22,7 @@ import {EvModbusControl} from '../evcharger-modbus/ev-modbus-control';
 import {ControlEvchargerModbusComponent} from '../evcharger-modbus/control-evcharger-modbus.component';
 import {EvHttpControl} from '../evcharger-http/ev-http-control';
 import {ControlEvchargerHttpComponent} from '../evcharger-http/control-evcharger-http.component';
+import {ListItem} from '../../shared/list-item';
 
 @Component({
   selector: 'app-control-evcharger',
@@ -42,9 +43,9 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
   settings: Settings;
   @Input()
   settingsDefaults: SettingsDefaults;
-  @ViewChild(ControlEvchargerModbusComponent, {static: false})
+  @ViewChild(ControlEvchargerModbusComponent)
   evChargerModbusComp: ControlEvchargerModbusComponent;
-  @ViewChild(ControlEvchargerHttpComponent, {static: false})
+  @ViewChild(ControlEvchargerHttpComponent)
   evChargerHttpComp: ControlEvchargerHttpComponent;
   @ViewChildren('electricVehicles')
   electricVehicleComps: QueryList<ElectricVehicleComponent>;

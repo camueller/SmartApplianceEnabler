@@ -128,29 +128,19 @@ export class ControlFactory {
   }
 
   createStartingCurrentSwitch(rawStartingCurrentSwitch: any): StartingCurrentSwitch {
-    const startingCurrentSwitch = new StartingCurrentSwitch();
-    startingCurrentSwitch.powerThreshold = rawStartingCurrentSwitch.powerThreshold;
-    startingCurrentSwitch.startingCurrentDetectionDuration = rawStartingCurrentSwitch.startingCurrentDetectionDuration;
-    startingCurrentSwitch.finishedCurrentDetectionDuration = rawStartingCurrentSwitch.finishedCurrentDetectionDuration;
-    startingCurrentSwitch.minRunningTime = rawStartingCurrentSwitch.minRunningTime;
-    return startingCurrentSwitch;
+    return rawStartingCurrentSwitch;
   }
 
   createSwitch(rawSwitch: any): Switch {
-    const switch_ = new Switch();
-    if (rawSwitch) {
-      switch_.gpio = rawSwitch.gpio;
-      switch_.reverseStates = rawSwitch.reverseStates;
-    }
-    return switch_;
+    return rawSwitch;
   }
 
   createModbusSwitch(rawModbusSwitch: any): ModbusSwitch {
     return {...rawModbusSwitch};
   }
 
-  createHttpSwitch(rawControl: any): HttpSwitch {
-    return {...rawControl};
+  createHttpSwitch(rawHttpSwitch: any): HttpSwitch {
+    return {...rawHttpSwitch};
   }
 
   createEvCharger(rawEvCharger: any): EvCharger {
@@ -183,11 +173,11 @@ export class ControlFactory {
   }
 
   createEvModbusControl(rawModbusControl: any): EvModbusControl {
-    return new EvModbusControl(...rawModbusControl);
+    return rawModbusControl;
   }
 
   createEvHttpControl(rawHttpControl: any): EvHttpControl {
-    return new EvHttpControl(...rawHttpControl);
+    return rawHttpControl;
   }
 
   toJSON(control: Control): string {
@@ -233,9 +223,6 @@ export class ControlFactory {
   }
 
   toElectricVehicle(rawEv: any): ElectricVehicle {
-    this.logger.debug('ElectricVehicle (JSON): ' + JSON.stringify(rawEv));
-    const ev = new ElectricVehicle(...rawEv);
-    this.logger.debug('ElectricVehicle (TYPE): ' + JSON.stringify(ev));
-    return ev;
+    return rawEv;
   }
 }

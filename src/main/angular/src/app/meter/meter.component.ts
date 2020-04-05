@@ -37,6 +37,7 @@ import {ModbusElectricityMeter} from './modbus/modbus-electricity-meter';
 import {MeterHttpComponent} from './http/meter-http.component';
 import {HttpElectricityMeter} from './http/http-electricity-meter';
 import {MeterS0Component} from './s0/meter-s0.component';
+import {ListItem} from '../shared/list-item';
 
 @Component({
   selector: 'app-meter',
@@ -44,11 +45,11 @@ import {MeterS0Component} from './s0/meter-s0.component';
   styleUrls: [],
 })
 export class MeterComponent implements OnChanges, OnInit, CanDeactivate<MeterComponent> {
-  @ViewChild(MeterS0Component, { static: false })
+  @ViewChild(MeterS0Component)
   meterS0Comp: MeterS0Component;
-  @ViewChild(MeterModbusComponent, { static: false })
+  @ViewChild(MeterModbusComponent)
   meterModbusComp: MeterModbusComponent;
-  @ViewChild(MeterHttpComponent, { static: false })
+  @ViewChild(MeterHttpComponent)
   meterHttpComp: MeterHttpComponent;
   form: FormGroup;
   formHandler: FormHandler;
@@ -61,9 +62,6 @@ export class MeterComponent implements OnChanges, OnInit, CanDeactivate<MeterCom
   discardChangesMessage: string;
   confirmDeleteMessage: string;
   meterTypes: ListItem[] = [];
-  // TYPE_S0_ELECTRICITY_METER = S0ElectricityMeter.TYPE;
-  // TYPE_MODBUS_ELECTRICITY_METER = ModbusElectricityMeter.TYPE;
-  // TYPE_HTTP_ELECTRICITY_METER = HttpElectricityMeter.TYPE;
 
   constructor(private logger: Logger,
               private meterService: MeterService,

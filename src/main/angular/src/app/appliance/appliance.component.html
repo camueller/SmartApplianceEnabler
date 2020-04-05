@@ -90,7 +90,7 @@
                required="{{formHandler.isRequired('minOnTime')}}">
         <mat-error *ngIf="errors.minOnTime">{{errors.minOnTime}}</mat-error>
       </mat-form-field>
-      <mat-form-field class="maxOnTime" floatLabel="always">
+      <mat-form-field class="maxOnTime">
         <mat-label>{{'ApplianceComponent.maxOnTime' | translate}}</mat-label>
         <input matInput type="text" formControlName="maxOnTime"
                matTooltip="{{'ApplianceComponent.maxOnTime.tooltip' | translate}}"

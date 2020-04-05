@@ -50,7 +50,7 @@ import {ScheduleModule} from './schedule/schedule.module';
 import {StatusModule} from './status/status.module';
 import {HttpLoaderFactory} from './shared/http-loader-factory';
 import {SettingsModbusComponent} from './settings/modbus/settings-modbus.component';
-import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 
 @NgModule({
   declarations: [
@@ -89,7 +89,6 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material';
       useClass: ErrorInterceptor,
       multi: true,
     },
-    {provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {floatLabel: 'always'}},
     ApplianceService,
     AppliancesReloadService,
     ApplianceResolver,

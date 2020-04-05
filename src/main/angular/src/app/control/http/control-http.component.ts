@@ -40,7 +40,7 @@ export class ControlHttpComponent implements OnChanges, OnInit {
   httpConfigurationComp: HttpConfigurationComponent;
   @ViewChildren('httpWriteComponents')
   httpWriteComps: QueryList<HttpWriteComponent>;
-  @ViewChild('httpReadComponent', {static: false})
+  @ViewChild('httpReadComponent')
   httpReadComp: HttpReadComponent;
   @Input()
   applianceId: string;

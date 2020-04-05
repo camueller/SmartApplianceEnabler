@@ -62,15 +62,15 @@ export class ScheduleComponent implements OnChanges {
   electricVehicles: ElectricVehicle[];
   @Output()
   remove = new EventEmitter<any>();
-  @ViewChild(ScheduleTimeframeDayComponent, {static: false})
+  @ViewChild(ScheduleTimeframeDayComponent)
   timeframeDayComp: ScheduleTimeframeDayComponent;
-  @ViewChild(ScheduleTimeframeConsecutivedaysComponent, {static: false})
+  @ViewChild(ScheduleTimeframeConsecutivedaysComponent)
   timeframeConsecutiveDaysComp: ScheduleTimeframeConsecutivedaysComponent;
-  @ViewChild(ScheduleRequestRuntimeComponent, {static: false})
+  @ViewChild(ScheduleRequestRuntimeComponent)
   requestRuntimeComp: ScheduleRequestRuntimeComponent;
-  @ViewChild(ScheduleRequestEnergyComponent, {static: false})
+  @ViewChild(ScheduleRequestEnergyComponent)
   requestEnergyComp: ScheduleRequestEnergyComponent;
-  @ViewChild(ScheduleRequestSocComponent, {static: false})
+  @ViewChild(ScheduleRequestSocComponent)
   requestSocComp: ScheduleRequestSocComponent;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};

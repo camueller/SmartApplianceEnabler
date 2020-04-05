@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {S0ElectricityMeter} from './s0-electricity-meter';
 import {TranslateService} from '@ngx-translate/core';
@@ -11,6 +11,7 @@ import {getValidInt} from '../../shared/form-util';
 import {MeterDefaults} from '../meter-defaults';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
 import {Logger} from '../../log/logger';
+import {ListItem} from '../../shared/list-item';
 
 @Component({
   selector: 'app-meter-s0',

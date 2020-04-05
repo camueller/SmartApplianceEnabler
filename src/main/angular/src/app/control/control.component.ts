@@ -44,6 +44,7 @@ import {ControlModbusComponent} from './modbus/control-modbus.component';
 import {ControlEvchargerComponent} from './evcharger/control-evcharger.component';
 import {ControlStartingcurrentComponent} from './startingcurrent/control-startingcurrent.component';
 import {EvCharger} from './evcharger/ev-charger';
+import {ListItem} from '../shared/list-item';
 
 @Component({
   selector: 'app-control',
@@ -51,15 +52,15 @@ import {EvCharger} from './evcharger/ev-charger';
   styleUrls: [],
 })
 export class ControlComponent implements OnChanges, OnInit, CanDeactivate<ControlComponent> {
-  @ViewChild(ControlSwitchComponent, {static: false})
+  @ViewChild(ControlSwitchComponent)
   controlSwitchComp: ControlSwitchComponent;
-  @ViewChild(ControlModbusComponent, {static: false})
+  @ViewChild(ControlModbusComponent)
   controlModbusComp: ControlModbusComponent;
-  @ViewChild(ControlHttpComponent, {static: false})
+  @ViewChild(ControlHttpComponent)
   controlHttpComp: ControlHttpComponent;
-  @ViewChild(ControlEvchargerComponent, {static: false})
+  @ViewChild(ControlEvchargerComponent)
   controlEvchargerComp: ControlEvchargerComponent;
-  @ViewChild(ControlStartingcurrentComponent, {static: false})
+  @ViewChild(ControlStartingcurrentComponent)
   controlStartingcurrentComp: ControlStartingcurrentComponent;
   form: FormGroup;
   formHandler: FormHandler;

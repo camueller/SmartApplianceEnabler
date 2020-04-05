@@ -80,19 +80,14 @@ export class MeterFactory {
   }
 
   createS0ElectricityMeter(rawMeter: any): S0ElectricityMeter {
-    const s0ElectricityMeter = new S0ElectricityMeter();
-    s0ElectricityMeter.gpio = rawMeter.gpio;
-    s0ElectricityMeter.pinPullResistance = rawMeter.pinPullResistance;
-    s0ElectricityMeter.impulsesPerKwh = rawMeter.impulsesPerKwh;
-    s0ElectricityMeter.measurementInterval = rawMeter.measurementInterval;
-    return s0ElectricityMeter;
+    return rawMeter;
   }
 
   createModbusElectricityMeter(rawMeter: any): ModbusElectricityMeter {
-    return new ModbusElectricityMeter(...rawMeter);
+    return rawMeter;
   }
 
   createHttpElectricityMeter(rawMeter: any): HttpElectricityMeter {
-    return new HttpElectricityMeter(...rawMeter);
+    return rawMeter;
   }
 }

@@ -1,4 +1,4 @@
-interface ListItem {
+export interface ListItem {
   value: string;
   viewValue: string;
 }
