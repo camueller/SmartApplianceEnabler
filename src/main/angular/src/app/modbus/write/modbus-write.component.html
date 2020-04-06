@@ -1,5 +1,5 @@
 <div [formGroup]="form">
-  <div class="fields">
+  <div class="sae__fields">
     <mat-form-field class="address">
       <mat-label>{{'ModbusReadComponent.address' | translate}}</mat-label>
       <input matInput type="text" formControlName="address"
@@ -24,7 +24,7 @@
       {{'ModbusWriteComponent.button.remove' | translate}}</button>
   </div>
   <div formArrayName="modbusWriteValues">
-    <div class="fields" *ngFor="let writeValue of modbusWrite.writeValues; index as i">
+    <div class="sae__fields" *ngFor="let writeValue of modbusWrite.writeValues; index as i">
       <div class="field">
         <app-modbus-write-value
           [modbusWriteValue]="writeValue"

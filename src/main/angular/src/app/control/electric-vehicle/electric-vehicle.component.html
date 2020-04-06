@@ -1,6 +1,6 @@
 <div [formGroup]="form">
-  <div class="fields">
-    <mat-form-field class="name">
+  <div class="sae__fields">
+    <mat-form-field class="ElectricVehicleComponent__name">
       <mat-label>{{'ElectricVehicleComponent.name' | translate}}</mat-label>
       <input matInput type="text" formControlName="name"
              required="{{formHandler.isRequired('name')}}">
@@ -10,26 +10,26 @@
       {{'button.delete' | translate}}</button>
   </div>
   <h3>{{'ElectricVehicleComponent.general' | translate}}</h3>
-  <div class="fields">
-    <mat-form-field class="batteryCapacity">
+  <div class="sae__fields">
+    <mat-form-field class="ElectricVehicleComponent__batteryCapacity">
       <mat-label>{{'ElectricVehicleComponent.batteryCapacity' | translate}}</mat-label>
       <input matInput type="text" formControlName="batteryCapacity"
              required="{{formHandler.isRequired('batteryCapacity')}}">
       <mat-error *ngIf="errors.batteryCapacity">{{errors.batteryCapacity}}</mat-error>
     </mat-form-field>
-    <mat-form-field class="phases">
+    <mat-form-field class="ElectricVehicleComponent__phases">
       <mat-label>{{'ElectricVehicleComponent.phases' | translate}}</mat-label>
       <input matInput type="text" formControlName="phases"
              required="{{formHandler.isRequired('phases')}}">
       <mat-error *ngIf="errors.phases">{{errors.phases}}</mat-error>
     </mat-form-field>
-    <mat-form-field class="maxChargePower">
+    <mat-form-field class="ElectricVehicleComponent__maxChargePower">
       <mat-label>{{'ElectricVehicleComponent.maxChargePower' | translate}}</mat-label>
       <input matInput type="text" formControlName="maxChargePower"
              required="{{formHandler.isRequired('maxChargePower')}}">
       <mat-error *ngIf="errors.maxChargePower">{{errors.maxChargePower}}</mat-error>
     </mat-form-field>
-    <mat-form-field class="chargeLoss">
+    <mat-form-field class="ElectricVehicleComponent__chargeLoss">
       <mat-label>{{'ElectricVehicleComponent.chargeLoss' | translate}}</mat-label>
       <input matInput type="text" formControlName="chargeLoss"
              placeholder="{{controlDefaults.electricVehicleChargerDefaults_chargeLoss}}"
@@ -38,14 +38,14 @@
     </mat-form-field>
   </div>
   <h3>{{'ElectricVehicleComponent.soc' | translate}}</h3>
-  <div class="fields">
-    <mat-form-field class="defaultSocManual">
+  <div class="sae__fields">
+    <mat-form-field class="ElectricVehicleComponent__defaultSocManual">
       <mat-label>{{'ElectricVehicleComponent.defaultSocManual' | translate}}</mat-label>
       <input matInput type="text" formControlName="defaultSocManual"
              required="{{formHandler.isRequired('defaultSocManual')}}">
       <mat-error *ngIf="errors.defaultSocManual">{{errors.defaultSocManual}}</mat-error>
     </mat-form-field>
-    <mat-form-field class="defaultSocOptionalEnergy">
+    <mat-form-field class="ElectricVehicleComponent__defaultSocOptionalEnergy">
       <mat-label>{{'ElectricVehicleComponent.defaultSocOptionalEnergy' | translate}}</mat-label>
       <input matInput type="text" formControlName="defaultSocOptionalEnergy"
              required="{{formHandler.isRequired('defaultSocOptionalEnergy')}}">
@@ -53,17 +53,17 @@
     </mat-form-field>
   </div>
   <h3>{{'ElectricVehicleComponent.script.heading' | translate}}</h3>
-  <div class="fields">
+  <div class="sae__fields">
     <mat-checkbox formControlName="scriptEnabled"
                   (click)="onScriptEnabledToggle()"
     >{{'ElectricVehicleComponent.script.enabled' | translate}}</mat-checkbox>
-    <mat-form-field class="scriptFilename">
+    <mat-form-field class="ElectricVehicleComponent__scriptFilename">
       <mat-label>{{'ElectricVehicleComponent.script.filename' | translate}}</mat-label>
       <input matInput type="text" formControlName="scriptFilename"
              required="{{formHandler.isRequired('scriptFilename')}}">
       <mat-error *ngIf="errors.scriptFilename">{{errors.scriptFilename}}</mat-error>
     </mat-form-field>
-    <mat-form-field class="scriptExtractionRegex">
+    <mat-form-field class="ElectricVehicleComponent__scriptExtractionRegex">
       <mat-label>{{'ElectricVehicleComponent.script.extractionRegex' | translate}}</mat-label>
       <input matInput type="text" formControlName="scriptExtractionRegex"
              required="{{formHandler.isRequired('scriptExtractionRegex')}}">

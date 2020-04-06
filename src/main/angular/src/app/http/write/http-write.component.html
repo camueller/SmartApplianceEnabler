@@ -1,6 +1,6 @@
 <div [formGroup]="form">
-  <div class="fields">
-    <mat-form-field class="url">
+  <div class="sae__fields">
+    <mat-form-field class="sae__url">
       <mat-label>{{'HttpWriteComponent.url' | translate}}</mat-label>
       <input matInput type="text" formControlName="url"
              required="{{formHandler.isRequired('url')}}">
@@ -10,8 +10,8 @@
       {{'HttpWriteComponent.button.remove' | translate}}</button>
   </div>
   <div formArrayName="httpWriteValues">
-    <div class="fields" *ngFor="let httpWriteValue of httpWrite.writeValues; index as i">
-      <div class="field">
+    <div class="HttpWriteComponent__fields" *ngFor="let httpWriteValue of httpWrite.writeValues; index as i">
+      <div class="sae__fields">
         <app-http-write-value
           [formGroupName]="i"
           [form]="getHttpWriteValueFormGroup(i)"

@@ -27,7 +27,7 @@
 
   <section>
     <h2>{{'ApplianceComponent.general' | translate}}</h2>
-    <div class="fields">
+    <div class="sae__fields">
       <mat-form-field class="vendor">
         <mat-label>{{'ApplianceComponent.vendor' | translate}}</mat-label>
         <input matInput type="text" formControlName="vendor"
@@ -59,7 +59,7 @@
 
   <section>
     <h2>{{'ApplianceComponent.characteristics' | translate}}</h2>
-    <div class="fields">
+    <div class="sae__fields">
       <mat-form-field class="minPowerConsumption" *ngIf="isEvCharger()">
         <mat-label>{{'ApplianceComponent.minPowerConsumption' | translate}}</mat-label>
         <input matInput type="text" formControlName="minPowerConsumption"
@@ -78,7 +78,7 @@
                     matTooltip="{{'ApplianceComponent.interruptionsAllowed.tooltip' | translate}}"
       >{{'ApplianceComponent.interruptionsAllowed' | translate}}</mat-checkbox>
     </div>
-    <div class="fields">
+    <div class="sae__fields">
       <mat-form-field class="minOnTime">
         <mat-label>{{'ApplianceComponent.minOnTime' | translate}}</mat-label>
         <input matInput type="text" formControlName="minOnTime"

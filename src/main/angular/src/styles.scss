@@ -12,33 +12,44 @@ h1 {
 
 h2 {
   font-size: 1.2rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
 }
 
 h3 {
   font-size: 1rem;
 }
 
-mat-form-field {
-  margin: 5px;
+mat-form-field, mat-checkbox {
+  margin: 0.3rem;
 }
 
 button {
-  margin: 5px !important;
-  height: 36px;
+  margin: 0.3rem !important;
+  height: 2.25rem;
   min-width: fit-content !important;
 }
 
 .sae {
   &__url {
-    width: 600px;
+    width: 35rem;
+  }
+
+  &__hostname {
+    width: 5rem;
+  }
+
+  &__port {
+    width: 4rem;
   }
 
   &__fields {
     display: flex;
+    flex-flow: row wrap;
     align-items: baseline;
   }
 
   &__hint_mandatory_fields {
-    margin: 25px 5px;
+    margin: 1.5rem 0.3rem;
   }
 }

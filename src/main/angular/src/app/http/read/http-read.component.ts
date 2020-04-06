@@ -1,15 +1,4 @@
-import {
-  AfterViewChecked,
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  QueryList,
-  SimpleChanges,
-  ViewChildren
-} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, SimpleChanges, ViewChildren} from '@angular/core';
 import {FormArray, FormGroup, Validators} from '@angular/forms';
 import {FormHandler} from '../../shared/form-handler';
 import {ErrorMessages} from '../../shared/error-messages';
@@ -26,7 +15,7 @@ import {HttpReadValue} from '../read-value/http-read-value';
 @Component({
   selector: 'app-http-read',
   templateUrl: './http-read.component.html',
-  styleUrls: [],
+  styleUrls: ['./http-read.component.scss'],
 })
 export class HttpReadComponent implements OnChanges, OnInit {
   @Input()

@@ -10,15 +10,18 @@ import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {getValidInt} from '../../shared/form-util';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
 import {Logger} from '../../log/logger';
+import {SettingsDefaults} from '../settings-defaults';
 
 @Component({
   selector: 'app-settings-modbus',
   templateUrl: './settings-modbus.component.html',
-  styles: []
+  styleUrls: ['./settings-modbus.component.scss']
 })
 export class SettingsModbusComponent implements OnChanges, OnInit {
   @Input()
   modbusSetting: ModbusSetting;
+  @Input()
+  settingsDefaults: SettingsDefaults;
   @Input()
   form: FormGroup;
   @Output()

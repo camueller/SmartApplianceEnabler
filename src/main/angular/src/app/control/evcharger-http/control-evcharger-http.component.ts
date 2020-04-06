@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, Input, OnChanges, OnInit, QueryList, SimpleChanges, ViewChild, ViewChildren} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, QueryList, SimpleChanges, ViewChild, ViewChildren} from '@angular/core';
 import {Settings} from '../../settings/settings';
 import {SettingsDefaults} from '../../settings/settings-defaults';
 import {ControlContainer, FormArray, FormGroup, FormGroupDirective} from '@angular/forms';
@@ -17,7 +17,7 @@ import {HttpWrite} from '../../http/write/http-write';
 @Component({
   selector: 'app-control-evcharger-http',
   templateUrl: './control-evcharger-http.component.html',
-  styleUrls: [],
+  styleUrls: ['./control-evcharger-http.component.scss'],
   viewProviders: [
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]

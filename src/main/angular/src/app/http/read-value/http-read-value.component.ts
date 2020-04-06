@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {Logger} from '../../log/logger';
 import {FormGroup, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
@@ -13,7 +13,7 @@ import {ErrorMessage, ValidatorType} from '../../shared/error-message';
 @Component({
   selector: 'app-http-read-value',
   templateUrl: './http-read-value.component.html',
-  styleUrls: [],
+  styleUrls: ['./http-read-value.component.scss'],
 })
 export class HttpReadValueComponent implements OnChanges, OnInit {
   @Input()

@@ -18,10 +18,10 @@
 <form [formGroup]="form" (ngSubmit)="submitForm()">
   <section>
     <h2>{{'SettingsComponent.holidays' | translate}}</h2>
-    <div class="fields">
+    <div class="sae__fields">
       <mat-checkbox formControlName="holidaysEnabled" (click)="toggleHolidaysEnabled()"
       >{{'SettingsComponent.holidaysEnabled' | translate}}</mat-checkbox>
-      <mat-form-field class="holidaysUrl">
+      <mat-form-field class="sae__url">
         <mat-label>{{'SettingsComponent.holidaysUrl' | translate}}</mat-label>
         <input matInput type="text" formControlName="holidaysUrl"
                placeholder="{{settingsDefaults.holidaysUrl}}"
@@ -41,6 +41,7 @@
           [formGroupName]="i"
           [form]="getModbusSettingFormGroup(i)"
           [modbusSetting]="modbusSetting"
+          [settingsDefaults]="settingsDefaults"
           (remove)="onModbusSettingRemove(i)"
           #modbusSettings
         ></app-settings-modbus>
@@ -49,7 +50,7 @@
     </div>
   </section>
 
-  <div class="mandatory-fields">{{'dialog.mandatoryfields'|translate}}</div>
+  <div class="sae__hint_mandatory_fields">{{'dialog.mandatoryfields'|translate}}</div>
   <button mat-raised-button type="submit" color="primary" [disabled]="form.pristine||form.invalid">
     {{'button.save' | translate}}</button>
 </form>

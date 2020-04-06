@@ -37,7 +37,7 @@ import {ModbusSetting} from './modbus/modbus-setting';
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
-  styleUrls: []
+  styleUrls: ['./settings.component.scss']
 })
 export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponent> {
   settings: Settings;

@@ -57,4 +57,4 @@ describe('SettingsService', () => {
     req.flush(SettingsTestdata.all_json());
   });
 
-})
+});

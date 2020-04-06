@@ -1,18 +1,20 @@
-<div class="fields" [formGroup]="form">
-  <mat-form-field class="modbusTcpId">
+<div class="sae__fields" [formGroup]="form">
+  <mat-form-field class="SettingsModbusComponent__modbusTcpId">
     <mat-label>{{'SettingsComponent.modbusTcpId' | translate}}</mat-label>
     <input matInput type="text" formControlName="modbusTcpId"
            required="{{formHandler.isRequired('modbusTcpId')}}">
   </mat-form-field>
-  <mat-form-field class="modbusTcpHost">
+  <mat-form-field class="sae__hostname">
     <mat-label>{{'SettingsComponent.modbusTcpHost' | translate}}</mat-label>
     <input matInput type="text" formControlName="modbusTcpHost"
+           placeholder="{{settingsDefaults.modbusTcpHost}}"
            required="{{formHandler.isRequired('modbusTcpHost')}}">
     <mat-error *ngIf="errors.modbusTcpHost">{{errors.modbusTcpHost}}</mat-error>
   </mat-form-field>
-  <mat-form-field class="modbusTcpPort">
+  <mat-form-field class="sae__port">
     <mat-label>{{'SettingsComponent.modbusTcpPort' | translate}}</mat-label>
     <input matInput type="text" formControlName="modbusTcpPort"
+           placeholder="{{settingsDefaults.modbusTcpPort}}"
            required="{{formHandler.isRequired('modbusTcpPort')}}">
     <mat-error *ngIf="errors.modbusTcpPort">{{errors.modbusTcpPort}}</mat-error>
   </mat-form-field>

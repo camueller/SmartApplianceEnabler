@@ -1,5 +1,5 @@
 <div [formGroup]="form">
-  <div class="fields">
+  <div class="sae__fields">
     <mat-form-field class="address">
       <mat-label>{{'ModbusReadComponent.address' | translate}}</mat-label>
       <input matInput type="text" formControlName="address"
@@ -38,7 +38,7 @@
       {{'ModbusReadComponent.button.remove' | translate}}</button>
   </div>
   <div formArrayName="modbusReadValues">
-    <div class="fields" *ngFor="let readValue of modbusRead.readValues; index as i">
+    <div class="sae__fields" *ngFor="let readValue of modbusRead.readValues; index as i">
       <div class="field">
         <app-modbus-read-value
           [modbusReadValue]="readValue"

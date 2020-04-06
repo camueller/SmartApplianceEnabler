@@ -1,15 +1,4 @@
-import {
-  AfterViewChecked,
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  QueryList,
-  SimpleChanges,
-  ViewChildren
-} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, SimpleChanges, ViewChildren} from '@angular/core';
 import {FormArray, FormGroup, Validators} from '@angular/forms';
 import {FormHandler} from '../../shared/form-handler';
 import {ErrorMessages} from '../../shared/error-messages';
@@ -26,7 +15,7 @@ import {HttpWriteValue} from '../write-value/http-write-value';
 @Component({
   selector: 'app-http-write',
   templateUrl: './http-write.component.html',
-  styleUrls: [],
+  styleUrls: ['./http-write.component.scss'],
 })
 export class HttpWriteComponent implements OnChanges, OnInit {
   @Input()

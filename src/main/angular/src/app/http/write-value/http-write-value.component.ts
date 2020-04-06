@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {FormGroup, Validators} from '@angular/forms';
 import {FormHandler} from '../../shared/form-handler';
 import {ErrorMessages} from '../../shared/error-messages';
@@ -14,7 +14,7 @@ import {HttpMethod} from '../http-method';
 @Component({
   selector: 'app-http-write-value',
   templateUrl: './http-write-value.component.html',
-  styleUrls: [],
+  styleUrls: ['./http-write-value.component.scss'],
 })
 export class HttpWriteValueComponent implements OnChanges, OnInit {
   @Input()

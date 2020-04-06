@@ -1,13 +1,4 @@
-import {
-  AfterViewChecked,
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  SimpleChanges
-} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {FormGroup, Validators} from '@angular/forms';
 import {Logger} from '../../log/logger';
 import {TranslateService} from '@ngx-translate/core';
@@ -24,7 +15,7 @@ import {ElectricVehicle} from '../evcharger/electric-vehicle';
 @Component({
   selector: 'app-electric-vehicle',
   templateUrl: './electric-vehicle.component.html',
-  styleUrls: [],
+  styleUrls: ['./electric-vehicle.component.scss'],
 })
 export class ElectricVehicleComponent implements OnChanges, OnInit {
   @Input()

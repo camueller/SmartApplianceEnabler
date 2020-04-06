@@ -1,4 +1,4 @@
-<div class="fields">
+<div class="sae__fields">
   <mat-form-field>
     <mat-label>{{'MeterModbusComponent.idref' | translate}}</mat-label>
     <mat-select formControlName="idref" required="{{formHandler.isRequired('idref')}}">
@@ -14,7 +14,7 @@
     <mat-error *ngIf="errors.slaveAddress">{{errors.slaveAddress}}</mat-error>
   </mat-form-field>
 </div>
-<div class="fields">
+<div class="sae__fields">
   <div formArrayName="modbusWrites">
     <app-modbus-write *ngFor="let modbusWrite of modbusSwitch.modbusWrites; index as i; last as l"
                       [formGroupName]="i"

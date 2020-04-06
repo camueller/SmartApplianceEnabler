@@ -1,7 +1,7 @@
 <div>
   <h2>{{'ControlEvchargerComponent.heading' | translate}}</h2>
-  <div class="fields">
-    <mat-form-field>
+  <div class="sae__fields">
+    <mat-form-field class="ControlEvchargerComponent__template">
       <mat-label>{{'ControlEvchargerComponent.template' | translate}}</mat-label>
       <mat-select formControlName="template"
                   (selectionChange)="useTemplate()"
@@ -11,7 +11,7 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-form-field>
+    <mat-form-field class="ControlEvchargerComponent__protocol">
       <mat-label>{{'ControlEvchargerComponent.protocol' | translate}}</mat-label>
       <mat-select formControlName="protocol"
                   placeholder="wählen für manuelle Konfiguration">
@@ -22,29 +22,29 @@
     </mat-form-field>
   </div>
   <div *ngIf="isConfigured()">
-    <div class="fields">
-      <mat-form-field class="voltage">
+    <div class="sae__fields">
+      <mat-form-field class="ControlEvchargerComponent__voltage">
         <mat-label>{{'ControlEvchargerComponent.voltage' | translate}}</mat-label>
         <input matInput type="text" formControlName="voltage"
                placeholder="{{controlDefaults.electricVehicleChargerDefaults_voltage}}"
                required="{{formHandler.isRequired('voltage')}}">
         <mat-error *ngIf="errors.voltage">{{errors.voltage}}</mat-error>
       </mat-form-field>
-      <mat-form-field class="phases">
+      <mat-form-field class="ControlEvchargerComponent__phases">
         <mat-label>{{'ControlEvchargerComponent.phases' | translate}}</mat-label>
         <input matInput type="text" formControlName="phases"
                placeholder="{{controlDefaults.electricVehicleChargerDefaults_phases}}"
                required="{{formHandler.isRequired('phases')}}">
         <mat-error *ngIf="errors.phases">{{errors.phases}}</mat-error>
       </mat-form-field>
-      <mat-form-field class="pollInterval">
+      <mat-form-field class="ControlEvchargerComponent__pollInterval">
         <mat-label>{{'ControlEvchargerComponent.pollInterval' | translate}}</mat-label>
         <input matInput type="text" formControlName="pollInterval"
                placeholder="{{controlDefaults.electricVehicleChargerDefaults_pollInterval}}"
                required="{{formHandler.isRequired('pollInterval')}}">
         <mat-error *ngIf="errors.pollInterval">{{errors.pollInterval}}</mat-error>
       </mat-form-field>
-      <mat-form-field class="startChargingStateDetectionDelay">
+      <mat-form-field class="ControlEvchargerComponent__startChargingStateDetectionDelay">
         <mat-label>{{'ControlEvchargerComponent.startChargingStateDetectionDelay' | translate}}</mat-label>
         <input matInput type="text" formControlName="startChargingStateDetectionDelay"
                placeholder="{{controlDefaults.electricVehicleChargerDefaults_startChargingStateDetectionDelay}}"

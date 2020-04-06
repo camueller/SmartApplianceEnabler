@@ -75,4 +75,4 @@ describe('ScheduleService', () => {
     expect(JSON.parse(req.request.body)).toEqual(jasmine.objectContaining([ScheduleTestdata.daytimeframe12345_json(false)]));
   });
 
-})
+});
