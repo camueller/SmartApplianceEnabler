@@ -1,10 +1,11 @@
-@import '../../../_variables';
+@import '../../../_variables.scss';
+@import 'node_modules/include-media/dist/_include-media.scss';
 
 mat-toolbar{
   border-radius: 3px;
 }
 
-@media(max-width: 599px){
+@include media("<=xs") {
   mat-toolbar{
     border-radius: 0;
   }
