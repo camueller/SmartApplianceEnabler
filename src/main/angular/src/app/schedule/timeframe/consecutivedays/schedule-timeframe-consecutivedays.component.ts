@@ -2,14 +2,14 @@ import {AfterViewChecked, Component, Input, OnChanges, OnInit, SimpleChanges} fr
 import {ControlContainer, FormControlName, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {ConsecutiveDaysTimeframe} from './consecutive-days-timeframe';
-import {ErrorMessages} from '../../shared/error-messages';
-import {DayOfWeek, DaysOfWeek} from '../../shared/days-of-week';
-import {TimeUtil} from '../../shared/time-util';
-import {FormHandler} from '../../shared/form-handler';
-import {ErrorMessage, ValidatorType} from '../../shared/error-message';
-import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
-import {ErrorMessageHandler} from '../../shared/error-message-handler';
-import {Logger} from '../../log/logger';
+import {ErrorMessages} from '../../../shared/error-messages';
+import {DayOfWeek, DaysOfWeek} from '../../../shared/days-of-week';
+import {TimeUtil} from '../../../shared/time-util';
+import {FormHandler} from '../../../shared/form-handler';
+import {ErrorMessage, ValidatorType} from '../../../shared/error-message';
+import {InputValidatorPatterns} from '../../../shared/input-validator-patterns';
+import {ErrorMessageHandler} from '../../../shared/error-message-handler';
+import {Logger} from '../../../log/logger';
 
 declare const $: any;
 

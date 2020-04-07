@@ -1,13 +1,13 @@
-import {AfterViewChecked, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {EnergyRequest} from './energy-request';
-import {ErrorMessages} from '../../shared/error-messages';
-import {FormHandler} from '../../shared/form-handler';
-import {ErrorMessage, ValidatorType} from '../../shared/error-message';
-import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
-import {ErrorMessageHandler} from '../../shared/error-message-handler';
-import {Logger} from '../../log/logger';
+import {ErrorMessages} from '../../../shared/error-messages';
+import {FormHandler} from '../../../shared/form-handler';
+import {ErrorMessage, ValidatorType} from '../../../shared/error-message';
+import {InputValidatorPatterns} from '../../../shared/input-validator-patterns';
+import {ErrorMessageHandler} from '../../../shared/error-message-handler';
+import {Logger} from '../../../log/logger';
 
 @Component({
   selector: 'app-schedule-request-energy',

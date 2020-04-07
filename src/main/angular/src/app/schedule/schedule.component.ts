@@ -33,16 +33,16 @@ import {FormHandler} from '../shared/form-handler';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {ElectricVehicle} from '../control/evcharger/electric-vehicle/electric-vehicle';
-import {ScheduleTimeframeDayComponent} from './schedule-timeframe-day/schedule-timeframe-day.component';
-import {RuntimeRequest} from './request-runtime/runtime-request';
-import {EnergyRequest} from './request-energy/energy-request';
-import {DayTimeframe} from './schedule-timeframe-day/day-timeframe';
-import {ConsecutiveDaysTimeframe} from './timeframe-consecutivedays/consecutive-days-timeframe';
-import {ScheduleRequestEnergyComponent} from './request-energy/schedule-request-energy.component';
-import {ScheduleRequestRuntimeComponent} from './request-runtime/schedule-request-runtime.component';
-import {ScheduleTimeframeConsecutivedaysComponent} from './timeframe-consecutivedays/schedule-timeframe-consecutivedays.component';
-import {ScheduleRequestSocComponent} from './request-soc/schedule-request-soc.component';
-import {SocRequest} from './request-soc/soc-request';
+import {ScheduleTimeframeDayComponent} from './timeframe/day/schedule-timeframe-day.component';
+import {RuntimeRequest} from './request/runtime/runtime-request';
+import {EnergyRequest} from './request/energy/energy-request';
+import {DayTimeframe} from './timeframe/day/day-timeframe';
+import {ConsecutiveDaysTimeframe} from './timeframe/consecutivedays/consecutive-days-timeframe';
+import {ScheduleRequestEnergyComponent} from './request/energy/schedule-request-energy.component';
+import {ScheduleRequestRuntimeComponent} from './request/runtime/schedule-request-runtime.component';
+import {ScheduleTimeframeConsecutivedaysComponent} from './timeframe/consecutivedays/schedule-timeframe-consecutivedays.component';
+import {ScheduleRequestSocComponent} from './request/soc/schedule-request-soc.component';
+import {SocRequest} from './request/soc/soc-request';
 
 @Component({
   selector: 'app-schedule',

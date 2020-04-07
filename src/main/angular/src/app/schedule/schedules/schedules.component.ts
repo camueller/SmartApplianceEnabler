@@ -1,19 +1,19 @@
 import {Component, OnChanges, OnInit, QueryList, SimpleChanges, ViewChildren} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {FormArray, FormGroup} from '@angular/forms';
-import {DayTimeframe} from '../schedule-timeframe-day/day-timeframe';
+import {DayTimeframe} from '../timeframe/day/day-timeframe';
 import {TranslateService} from '@ngx-translate/core';
 import {MessageBoxLevel} from '../../material/messagebox/messagebox.component';
 import {ScheduleService} from '../schedule-service';
 import {EvCharger} from '../../control/evcharger/ev-charger';
 import {ScheduleComponent} from '../schedule.component';
 import {Control} from '../../control/control';
-import {EnergyRequest} from '../request-energy/energy-request';
-import {RuntimeRequest} from '../request-runtime/runtime-request';
+import {EnergyRequest} from '../request/energy/energy-request';
+import {RuntimeRequest} from '../request/runtime/runtime-request';
 import {Schedule} from '../schedule';
 import {FormHandler} from '../../shared/form-handler';
-import {ConsecutiveDaysTimeframe} from '../timeframe-consecutivedays/consecutive-days-timeframe';
-import {SocRequest} from '../request-soc/soc-request';
+import {ConsecutiveDaysTimeframe} from '../timeframe/consecutivedays/consecutive-days-timeframe';
+import {SocRequest} from '../request/soc/soc-request';
 import {ElectricVehicle} from '../../control/evcharger/electric-vehicle/electric-vehicle';
 import {Logger} from '../../log/logger';
 
