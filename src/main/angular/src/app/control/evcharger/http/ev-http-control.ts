@@ -1,6 +1,6 @@
-import {HttpRead} from '../../http/read/http-read';
-import {HttpConfiguration} from '../../http/configuration/http-configuration';
-import {HttpWrite} from '../../http/write/http-write';
+import {HttpRead} from '../../../http/read/http-read';
+import {HttpConfiguration} from '../../../http/configuration/http-configuration';
+import {HttpWrite} from '../../../http/write/http-write';
 
 export class EvHttpControl {
 

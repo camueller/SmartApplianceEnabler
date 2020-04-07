@@ -1,7 +1,7 @@
 import {ActivatedRouteSnapshot, Resolve} from '@angular/router';
 import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
-import {ElectricVehicle} from './electric-vehicle';
+import {ElectricVehicle} from './electric-vehicle/electric-vehicle';
 import {ControlService} from '../control-service';
 
 @Injectable()

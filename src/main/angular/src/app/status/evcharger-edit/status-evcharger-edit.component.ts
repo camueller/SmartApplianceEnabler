@@ -8,7 +8,7 @@ import {TimeUtil} from '../../shared/time-util';
 import {FormHandler} from '../../shared/form-handler';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
-import {ElectricVehicle} from '../../control/evcharger/electric-vehicle';
+import {ElectricVehicle} from '../../control/evcharger/electric-vehicle/electric-vehicle';
 import {Status} from '../status';
 import {DayOfWeek} from '../../shared/days-of-week';
 import {Logger} from '../../log/logger';

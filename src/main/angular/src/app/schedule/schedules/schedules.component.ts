@@ -14,7 +14,7 @@ import {Schedule} from '../schedule';
 import {FormHandler} from '../../shared/form-handler';
 import {ConsecutiveDaysTimeframe} from '../timeframe-consecutivedays/consecutive-days-timeframe';
 import {SocRequest} from '../request-soc/soc-request';
-import {ElectricVehicle} from '../../control/evcharger/electric-vehicle';
+import {ElectricVehicle} from '../../control/evcharger/electric-vehicle/electric-vehicle';
 import {Logger} from '../../log/logger';
 
 @Component({

@@ -2,7 +2,7 @@ import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {interval, Subscription} from 'rxjs';
 import {ControlService} from '../../control/control-service';
 import {TimeUtil} from '../../shared/time-util';
-import {ElectricVehicle} from '../../control/evcharger/electric-vehicle';
+import {ElectricVehicle} from '../../control/evcharger/electric-vehicle/electric-vehicle';
 import {Status} from '../status';
 import {DayOfWeek} from '../../shared/days-of-week';
 

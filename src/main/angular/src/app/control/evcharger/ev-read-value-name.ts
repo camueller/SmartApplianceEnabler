@@ -1,4 +1,4 @@
-export enum EvModbusReadRegisterName {
+export enum EvReadValueName {
   VehicleNotConnected = 'VehicleNotConnected',
   VehicleConnected = 'VehicleConnected',
   Charging = 'Charging',

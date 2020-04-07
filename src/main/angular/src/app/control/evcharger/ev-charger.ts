@@ -1,6 +1,6 @@
-import {ElectricVehicle} from './electric-vehicle';
-import {EvModbusControl} from '../evcharger-modbus/ev-modbus-control';
-import {EvHttpControl} from '../evcharger-http/ev-http-control';
+import {ElectricVehicle} from './electric-vehicle/electric-vehicle';
+import {EvModbusControl} from './modbus/ev-modbus-control';
+import {EvHttpControl} from './http/ev-http-control';
 
 export class EvCharger {
 

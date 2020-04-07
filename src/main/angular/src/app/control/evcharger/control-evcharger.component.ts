@@ -10,18 +10,18 @@ import {ErrorMessageHandler} from '../../shared/error-message-handler';
 import {Logger} from '../../log/logger';
 import {SettingsDefaults} from '../../settings/settings-defaults';
 import {ControlService} from '../control-service';
-import {ElectricVehicle} from './electric-vehicle';
+import {ElectricVehicle} from './electric-vehicle/electric-vehicle';
 import {FormHandler} from '../../shared/form-handler';
 import {ControlDefaults} from '../control-defaults';
 import {AppliancesReloadService} from '../../appliance/appliances-reload-service';
 import {EvChargerProtocol} from './ev-charger-protocol';
 import {ErrorMessage, ValidatorType} from '../../shared/error-message';
 import {fixExpressionChangedAfterItHasBeenCheckedError, getValidInt} from '../../shared/form-util';
-import {ElectricVehicleComponent} from '../electric-vehicle/electric-vehicle.component';
-import {EvModbusControl} from '../evcharger-modbus/ev-modbus-control';
-import {ControlEvchargerModbusComponent} from '../evcharger-modbus/control-evcharger-modbus.component';
-import {EvHttpControl} from '../evcharger-http/ev-http-control';
-import {ControlEvchargerHttpComponent} from '../evcharger-http/control-evcharger-http.component';
+import {ElectricVehicleComponent} from './electric-vehicle/electric-vehicle.component';
+import {EvModbusControl} from './modbus/ev-modbus-control';
+import {ControlEvchargerModbusComponent} from './modbus/control-evcharger-modbus.component';
+import {EvHttpControl} from './http/ev-http-control';
+import {ControlEvchargerHttpComponent} from './http/control-evcharger-http.component';
 import {ListItem} from '../../shared/list-item';
 
 @Component({

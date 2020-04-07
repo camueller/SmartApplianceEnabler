@@ -32,7 +32,7 @@ import {FormGroup, Validators} from '@angular/forms';
 import {FormHandler} from '../shared/form-handler';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
-import {ElectricVehicle} from '../control/evcharger/electric-vehicle';
+import {ElectricVehicle} from '../control/evcharger/electric-vehicle/electric-vehicle';
 import {ScheduleTimeframeDayComponent} from './schedule-timeframe-day/schedule-timeframe-day.component';
 import {RuntimeRequest} from './request-runtime/runtime-request';
 import {EnergyRequest} from './request-energy/energy-request';

@@ -1,18 +1,18 @@
 import {Component, Input, OnChanges, OnInit, QueryList, SimpleChanges, ViewChild, ViewChildren} from '@angular/core';
-import {Settings} from '../../settings/settings';
-import {SettingsDefaults} from '../../settings/settings-defaults';
+import {Settings} from '../../../settings/settings';
+import {SettingsDefaults} from '../../../settings/settings-defaults';
 import {ControlContainer, FormArray, FormGroup, FormGroupDirective} from '@angular/forms';
-import {Logger} from '../../log/logger';
+import {Logger} from '../../../log/logger';
 import {EvHttpControl} from './ev-http-control';
-import {ContentProtocol} from '../../shared/content-protocol';
-import {FormHandler} from '../../shared/form-handler';
-import {EvModbusWriteRegisterName} from '../evcharger-modbus/ev-modbus-write-register-name';
-import {EvModbusReadRegisterName} from '../evcharger-modbus/ev-modbus-read-register-name';
-import {HttpRead} from '../../http/read/http-read';
-import {HttpReadComponent} from '../../http/read/http-read.component';
-import {HttpConfigurationComponent} from '../../http/configuration/http-configuration.component';
-import {HttpWriteComponent} from '../../http/write/http-write.component';
-import {HttpWrite} from '../../http/write/http-write';
+import {ContentProtocol} from '../../../shared/content-protocol';
+import {FormHandler} from '../../../shared/form-handler';
+import {HttpRead} from '../../../http/read/http-read';
+import {HttpReadComponent} from '../../../http/read/http-read.component';
+import {HttpConfigurationComponent} from '../../../http/configuration/http-configuration.component';
+import {HttpWriteComponent} from '../../../http/write/http-write.component';
+import {HttpWrite} from '../../../http/write/http-write';
+import {EvReadValueName} from '../ev-read-value-name';
+import {EvWriteValueName} from '../ev-write-value-name';
 
 @Component({
   selector: 'app-control-evcharger-http',
@@ -67,19 +67,19 @@ export class ControlEvchargerHttpComponent implements OnChanges, OnInit {
   }
 
   get readValueNames() {
-    return Object.keys(EvModbusReadRegisterName);
+    return Object.keys(EvReadValueName);
   }
 
   get writeValueNames() {
-    return Object.keys(EvModbusWriteRegisterName);
+    return Object.keys(EvWriteValueName);
   }
 
   get readValueNameTextKeys() {
-    return Object.keys(EvModbusReadRegisterName).map(key => `ControlEvchargerComponent.${key}`);
+    return Object.keys(EvReadValueName).map(key => `ControlEvchargerComponent.${key}`);
   }
 
   get writeValueNameTextKeys() {
-    return Object.keys(EvModbusWriteRegisterName).map(key => `ControlEvchargerComponent.${key}`);
+    return Object.keys(EvWriteValueName).map(key => `ControlEvchargerComponent.${key}`);
   }
 
   getHttpReadFormGroup(index: number) {

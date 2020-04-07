@@ -6,7 +6,7 @@ import {ErrorMessages} from '../../shared/error-messages';
 import {FormHandler} from '../../shared/form-handler';
 import {ErrorMessage, ValidatorType} from '../../shared/error-message';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
-import {ElectricVehicle} from '../../control/evcharger/electric-vehicle';
+import {ElectricVehicle} from '../../control/evcharger/electric-vehicle/electric-vehicle';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
 import {Logger} from '../../log/logger';
 

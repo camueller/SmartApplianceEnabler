@@ -1,16 +1,16 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {FormGroup, Validators} from '@angular/forms';
-import {Logger} from '../../log/logger';
+import {Logger} from '../../../log/logger';
 import {TranslateService} from '@ngx-translate/core';
-import {ErrorMessageHandler} from '../../shared/error-message-handler';
-import {FormHandler} from '../../shared/form-handler';
-import {ErrorMessages} from '../../shared/error-messages';
-import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
-import {ControlDefaults} from '../control-defaults';
-import {getValidInt, getValidString} from '../../shared/form-util';
-import {ErrorMessage, ValidatorType} from '../../shared/error-message';
-import {SocScript} from '../evcharger/soc-script';
-import {ElectricVehicle} from '../evcharger/electric-vehicle';
+import {ErrorMessageHandler} from '../../../shared/error-message-handler';
+import {FormHandler} from '../../../shared/form-handler';
+import {ErrorMessages} from '../../../shared/error-messages';
+import {InputValidatorPatterns} from '../../../shared/input-validator-patterns';
+import {ControlDefaults} from '../../control-defaults';
+import {getValidInt, getValidString} from '../../../shared/form-util';
+import {ErrorMessage, ValidatorType} from '../../../shared/error-message';
+import {SocScript} from './soc-script';
+import {ElectricVehicle} from './electric-vehicle';
 
 @Component({
   selector: 'app-electric-vehicle',

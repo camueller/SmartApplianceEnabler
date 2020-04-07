@@ -8,24 +8,24 @@ import {
   SimpleChanges,
   ViewChildren
 } from '@angular/core';
-import {Logger} from '../../log/logger';
+import {Logger} from '../../../log/logger';
 import {TranslateService} from '@ngx-translate/core';
-import {ErrorMessageHandler} from '../../shared/error-message-handler';
-import {FormHandler} from '../../shared/form-handler';
-import {ErrorMessages} from '../../shared/error-messages';
+import {ErrorMessageHandler} from '../../../shared/error-message-handler';
+import {FormHandler} from '../../../shared/form-handler';
+import {ErrorMessages} from '../../../shared/error-messages';
 import {ControlContainer, FormArray, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
-import {Settings} from '../../settings/settings';
+import {Settings} from '../../../settings/settings';
 import {EvModbusControl} from './ev-modbus-control';
-import {SettingsDefaults} from '../../settings/settings-defaults';
-import {EvModbusWriteRegisterName} from './ev-modbus-write-register-name';
-import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
-import {EvModbusReadRegisterName} from './ev-modbus-read-register-name';
-import {getValidString} from '../../shared/form-util';
-import {ErrorMessage, ValidatorType} from '../../shared/error-message';
-import {ModbusWriteComponent} from '../../modbus/write/modbus-write.component';
-import {ModbusWrite} from '../../modbus/write/modbus-write';
-import {ModbusRead} from '../../modbus/read/modbus-read';
-import {ModbusReadComponent} from '../../modbus/read/modbus-read.component';
+import {SettingsDefaults} from '../../../settings/settings-defaults';
+import {InputValidatorPatterns} from '../../../shared/input-validator-patterns';
+import {getValidString} from '../../../shared/form-util';
+import {ErrorMessage, ValidatorType} from '../../../shared/error-message';
+import {ModbusWriteComponent} from '../../../modbus/write/modbus-write.component';
+import {ModbusWrite} from '../../../modbus/write/modbus-write';
+import {ModbusRead} from '../../../modbus/read/modbus-read';
+import {ModbusReadComponent} from '../../../modbus/read/modbus-read.component';
+import {EvReadValueName} from '../ev-read-value-name';
+import {EvWriteValueName} from '../ev-write-value-name';
 
 @Component({
   selector: 'app-control-evcharger-modbus',
@@ -89,19 +89,19 @@ export class ControlEvchargerModbusComponent implements OnChanges, OnInit {
   }
 
   get readValueNames() {
-    return Object.keys(EvModbusReadRegisterName);
+    return Object.keys(EvReadValueName);
   }
 
   get writeValueNames() {
-    return Object.keys(EvModbusWriteRegisterName);
+    return Object.keys(EvWriteValueName);
   }
 
   get readValueNameTextKeys() {
-    return Object.keys(EvModbusReadRegisterName).map(key => `ControlEvchargerComponent.${key}`);
+    return Object.keys(EvReadValueName).map(key => `ControlEvchargerComponent.${key}`);
   }
 
   get writeValueNameTextKeys() {
-    return Object.keys(EvModbusWriteRegisterName).map(key => `ControlEvchargerComponent.${key}`);
+    return Object.keys(EvWriteValueName).map(key => `ControlEvchargerComponent.${key}`);
   }
 
   addModbusRead() {

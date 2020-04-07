@@ -22,13 +22,13 @@ import {MockSwitch} from './mock-switch';
 import {Logger} from '../log/logger';
 import {Switch} from './switch/switch';
 import {HttpSwitch} from './http/http-switch';
-import {EvModbusControl} from './evcharger-modbus/ev-modbus-control';
+import {EvModbusControl} from './evcharger/modbus/ev-modbus-control';
 import {StartingCurrentSwitch} from './startingcurrent/starting-current-switch';
 import {AlwaysOnSwitch} from './alwayson/always-on-switch';
 import {ModbusSwitch} from './modbus/modbus-switch';
-import {EvHttpControl} from './evcharger-http/ev-http-control';
+import {EvHttpControl} from './evcharger/http/ev-http-control';
 import {EvCharger} from './evcharger/ev-charger';
-import {ElectricVehicle} from './evcharger/electric-vehicle';
+import {ElectricVehicle} from './evcharger/electric-vehicle/electric-vehicle';
 
 export class ControlFactory {
 

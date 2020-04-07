@@ -1,5 +1,5 @@
-import {ModbusWrite} from '../../modbus/write/modbus-write';
-import {ModbusRead} from '../../modbus/read/modbus-read';
+import {ModbusWrite} from '../../../modbus/write/modbus-write';
+import {ModbusRead} from '../../../modbus/read/modbus-read';
 
 export class EvModbusControl {
 
