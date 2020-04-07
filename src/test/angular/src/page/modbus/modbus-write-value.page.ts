@@ -7,7 +7,7 @@ import {
   selectorInputByFormControlName,
   selectorSelectByFormControlName
 } from '../../shared/form';
-import {ModbusWriteValue} from '../../../../../main/angular/src/app/modbus-write-value/modbus-write-value';
+import {ModbusWriteValue} from '../../../../../main/angular/src/app/modbus/write-value/modbus-write-value';
 
 export class ModbusWriteValuePage {
 

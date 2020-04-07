@@ -1,7 +1,7 @@
 import {MeterValueName} from '../../../../../main/angular/src/app/meter/meter-value-name';
-import {ModbusElectricityMeter} from '../../../../../main/angular/src/app/meter-modbus/modbus-electricity-meter';
-import {ModbusRead} from '../../../../../main/angular/src/app/modbus-read/modbus-read';
-import {ModbusReadValue} from '../../../../../main/angular/src/app/modbus-read-value/modbus-read-value';
+import {ModbusElectricityMeter} from '../../../../../main/angular/src/app/meter/modbus/modbus-electricity-meter';
+import {ModbusRead} from '../../../../../main/angular/src/app/modbus/read/modbus-read';
+import {ModbusReadValue} from '../../../../../main/angular/src/app/modbus/read-value/modbus-read-value';
 
 export const modbusMeter_complete = new ModbusElectricityMeter({
   slaveAddress: '100',

@@ -1,5 +1,5 @@
-import {ModbusWrite} from '../../../../../main/angular/src/app/modbus-write/modbus-write';
-import {ModbusWriteValue} from '../../../../../main/angular/src/app/modbus-write-value/modbus-write-value';
+import {ModbusWrite} from '../../../../../main/angular/src/app/modbus/write/modbus-write';
+import {ModbusWriteValue} from '../../../../../main/angular/src/app/modbus/write-value/modbus-write-value';
 import {ControlValueName} from '../../../../../main/angular/src/app/control/control-value-name';
 import {ModbusSwitch} from '../../../../../main/angular/src/app/control/modbus/modbus-switch';
 

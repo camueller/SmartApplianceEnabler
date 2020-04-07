@@ -1,7 +1,7 @@
 import {baseUrl} from './page/page';
 import {configurationKey, createAndAssertAppliance, createAndAssertControl, createAndAssertMeter, fixtureName} from './shared/helper';
 import {ApplianceConfiguration} from './shared/appliance-configuration';
-import {S0ElectricityMeter} from '../../../main/angular/src/app/meter-s0/s0-electricity-meter';
+import {S0ElectricityMeter} from '../../../main/angular/src/app/meter/s0/s0-electricity-meter';
 import {switch_} from './fixture/control/switch';
 import {heatPump as heatPumpAppliance} from './fixture/appliance/heatpump';
 import {s0Meter} from './fixture/meter/s0-meter';

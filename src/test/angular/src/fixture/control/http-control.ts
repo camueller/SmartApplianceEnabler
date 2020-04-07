@@ -1,8 +1,8 @@
-import {HttpReadValue} from '../../../../../main/angular/src/app/http/http-read-value/http-read-value';
-import {HttpRead} from '../../../../../main/angular/src/app/http/http-read/http-read';
-import {HttpConfiguration} from '../../../../../main/angular/src/app/http/http-configuration/http-configuration';
-import {HttpWrite} from '../../../../../main/angular/src/app/http/http-write/http-write';
-import {HttpWriteValue} from '../../../../../main/angular/src/app/http/http-write-value/http-write-value';
+import {HttpReadValue} from '../../../../../main/angular/src/app/http/read-value/http-read-value';
+import {HttpRead} from '../../../../../main/angular/src/app/http/read/http-read';
+import {HttpConfiguration} from '../../../../../main/angular/src/app/http/configuration/http-configuration';
+import {HttpWrite} from '../../../../../main/angular/src/app/http/write/http-write';
+import {HttpWriteValue} from '../../../../../main/angular/src/app/http/write-value/http-write-value';
 import {ControlValueName} from '../../../../../main/angular/src/app/control/control-value-name';
 import {HttpSwitch} from '../../../../../main/angular/src/app/control/http/http-switch';
 

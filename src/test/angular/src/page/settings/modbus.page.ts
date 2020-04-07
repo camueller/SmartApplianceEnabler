@@ -1,4 +1,4 @@
-import {ModbusSetting} from '../../../../../main/angular/src/app/settings-modbus/modbus-setting';
+import {ModbusSetting} from '../../../../../main/angular/src/app/settings/modbus/modbus-setting';
 import {Selector} from 'testcafe';
 import {assertInput, inputText, selectorInputByFormControlName} from '../../shared/form';
 

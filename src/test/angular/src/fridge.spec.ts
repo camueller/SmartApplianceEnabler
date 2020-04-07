@@ -3,7 +3,7 @@ import {configurationKey, createAndAssertAppliance, createAndAssertControl, crea
 import {ApplianceConfiguration} from './shared/appliance-configuration';
 import {fridge as fridgeAppliance} from './fixture/appliance/fridge';
 import {generateApplianceId} from './shared/appliance-id-generator';
-import {HttpElectricityMeter} from '../../../main/angular/src/app/meter-http/http-electricity-meter';
+import {HttpElectricityMeter} from '../../../main/angular/src/app/meter/http/http-electricity-meter';
 import {httpMeter_2HttpRead_complete} from './fixture/meter/http-meter';
 import {alwaysOnSwitch} from './fixture/control/always-on-switch';
 import {AlwaysOnSwitch} from '../../../main/angular/src/app/control/alwayson/always-on-switch';

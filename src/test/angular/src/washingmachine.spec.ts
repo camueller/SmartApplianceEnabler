@@ -1,7 +1,7 @@
 import {baseUrl} from './page/page';
 import {configurationKey, createAndAssertAppliance, createAndAssertControl, createAndAssertMeter, fixtureName} from './shared/helper';
 import {ApplianceConfiguration} from './shared/appliance-configuration';
-import {HttpElectricityMeter} from '../../../main/angular/src/app/meter-http/http-electricity-meter';
+import {HttpElectricityMeter} from '../../../main/angular/src/app/meter/http/http-electricity-meter';
 import {washingMachine as washingMachineAppliance} from './fixture/appliance/washingmachine';
 import {httpMeter_2HttpRead_complete} from './fixture/meter/http-meter';
 import {generateApplianceId} from './shared/appliance-id-generator';

@@ -1,5 +1,5 @@
 import {Selector} from 'testcafe';
-import {ModbusSetting} from '../../../../../main/angular/src/app/settings-modbus/modbus-setting';
+import {ModbusSetting} from '../../../../../main/angular/src/app/settings/modbus/modbus-setting';
 import {TopMenu} from '../top-menu.page';
 import {ModbusPage} from './modbus.page';
 

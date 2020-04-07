@@ -7,7 +7,7 @@ import {
   selectorInputByFormControlName,
   selectorSelectByFormControlName
 } from '../../shared/form';
-import {HttpReadValue} from '../../../../../main/angular/src/app/http/http-read-value/http-read-value';
+import {HttpReadValue} from '../../../../../main/angular/src/app/http/read-value/http-read-value';
 
 export class HttpReadValuePage {
 

@@ -1,4 +1,4 @@
-import {S0ElectricityMeter} from '../../../../../main/angular/src/app/meter-s0/s0-electricity-meter';
+import {S0ElectricityMeter} from '../../../../../main/angular/src/app/meter/s0/s0-electricity-meter';
 
 export const s0Meter = new S0ElectricityMeter({
   gpio: 1,
