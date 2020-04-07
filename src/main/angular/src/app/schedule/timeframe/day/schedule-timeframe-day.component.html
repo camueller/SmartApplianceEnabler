@@ -1,17 +1,17 @@
-<div class="sae__fields">
-  <mat-form-field class="startTime">
+<div class="sae__fields ScheduleTimeframeDayComponent">
+  <mat-form-field class="ScheduleTimeframeDayComponent__startTime">
     <mat-label>{{'ScheduleTimeframeDayComponent.startTime' | translate}}</mat-label>
     <input matInput type="text" formControlName="startTime" class="clockpicker"
            required="{{formHandler.isRequired('startTime')}}">
     <mat-error *ngIf="errors.startTime">{{errors.startTime}}</mat-error>
   </mat-form-field>
-  <mat-form-field class="endTime">
+  <mat-form-field class="ScheduleTimeframeDayComponent__endTime">
     <mat-label>{{'ScheduleTimeframeDayComponent.endTime' | translate}}</mat-label>
     <input matInput type="text" formControlName="endTime" class="clockpicker"
            required="{{formHandler.isRequired('endTime')}}">
     <mat-error *ngIf="errors.endTime">{{errors.endTime}}</mat-error>
   </mat-form-field>
-  <mat-form-field>
+  <mat-form-field class="ScheduleTimeframeDayComponent__daysOfWeekValues">
     <mat-label>{{'ScheduleTimeframeDayComponent.daysOfWeekValues' | translate}}</mat-label>
     <mat-select formControlName="daysOfWeekValues" multiple
                 placeholder="{{'ScheduleTimeframeDayComponent.daysOfWeekValues_placeholder' | translate}}"

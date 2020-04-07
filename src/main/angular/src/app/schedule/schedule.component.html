@@ -15,10 +15,9 @@
   ~ with this program; if not, write to the Free Software Foundation, Inc.,
   ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
   -->
-<div [formGroup]="form">
+<div class="ScheduleComponent" [formGroup]="form">
   <div class="sae__fields">
     <h2>{{'ScheduleComponent.schedule' | translate}}</h2>
-    <button mat-raised-button type="button" (click)="removeSchedule()">{{'button.delete' | translate}}</button>
     <mat-checkbox formControlName="enabled"
     >{{'ScheduleComponent.enabled' | translate}}</mat-checkbox>
     <div>
@@ -39,6 +38,7 @@
         </mat-select>
       </mat-form-field>
     </div>
+    <button mat-raised-button type="button" (click)="removeSchedule()">{{'button.delete' | translate}}</button>
   </div>
   <div>
     <app-schedule-timeframe-day *ngIf="isDayTimeframe()"

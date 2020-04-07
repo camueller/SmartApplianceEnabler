@@ -16,16 +16,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {
-  AfterViewChecked,
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  Output,
-  SimpleChanges,
-  ViewChild
-} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild} from '@angular/core';
 import {Logger} from '../log/logger';
 import {Schedule} from './schedule';
 import {FormGroup, Validators} from '@angular/forms';
@@ -47,7 +38,7 @@ import {SocRequest} from './request/soc/soc-request';
 @Component({
   selector: 'app-schedule',
   templateUrl: './schedule.component.html',
-  styleUrls: ['./schedule.scss'],
+  styleUrls: ['./schedule.component.scss'],
 })
 export class ScheduleComponent implements OnChanges {
   @Input()
