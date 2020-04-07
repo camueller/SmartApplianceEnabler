@@ -50,6 +50,11 @@ Deshalb kann das UPnP des SAE mit einem Property deaktiviert werden:
 ```console
 -Dsae.discovery.disable=true
 ```
+#### Zugriff auf den Entwicklungs-Web-Server
+Normalerweise kann aus Sicherheistgründen nur lokal auf den Entwicklungs-Web-Server zugegriffen werden. Manchmal ist es sinnvoll, diese Einschränk aufzuheben um z.B. mit dem Handy auf den Entwicklungs-Web-Server zuzugreifen. Dazu muss der Entwicklungs-Web-Server wie folgt gestartet werden:
+```console
+$ ng serve --host 0.0.0.0 --disable-host-check
+```
 
 ### Tests
 #### Testcafe
