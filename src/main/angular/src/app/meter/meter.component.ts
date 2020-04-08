@@ -42,7 +42,7 @@ import {ListItem} from '../shared/list-item';
 @Component({
   selector: 'app-meter',
   templateUrl: './meter.component.html',
-  styleUrls: [],
+  styleUrls: ['./meter.component.scss'],
 })
 export class MeterComponent implements OnChanges, OnInit, CanDeactivate<MeterComponent> {
   @ViewChild(MeterS0Component)

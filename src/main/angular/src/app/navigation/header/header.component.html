@@ -1,10 +1,10 @@
-<mat-toolbar color="primary">
+<mat-toolbar class="HeaderComponent" color="primary">
   <div>
     <button mat-icon-button (click)="onToggleSidenav()">
       <mat-icon>menu</mat-icon>
     </button>
   </div>
   <div>
-    <div class="sae-title">Smart Appliance Enabler <span class="sae-version">{{version}}</span></div>
+    <div>{{'HeaderComponent.title' | translate}} {{version}}</div>
   </div>
 </mat-toolbar>

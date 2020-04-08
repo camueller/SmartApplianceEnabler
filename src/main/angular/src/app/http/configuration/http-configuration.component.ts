@@ -8,7 +8,7 @@ import {getValidString} from '../../shared/form-util';
 @Component({
   selector: 'app-http-configuration',
   templateUrl: './http-configuration.component.html',
-  styleUrls: []
+  styleUrls: ['./http-configuration.component.scss']
 })
 export class HttpConfigurationComponent implements OnChanges, OnInit {
   @Input()

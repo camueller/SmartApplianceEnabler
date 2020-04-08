@@ -1,15 +1,4 @@
-import {
-  AfterViewChecked,
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  QueryList,
-  SimpleChanges,
-  ViewChildren
-} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, SimpleChanges, ViewChildren} from '@angular/core';
 import {FormArray, FormGroup, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {ModbusWrite} from './modbus-write';
@@ -26,7 +15,7 @@ import {Logger} from '../../log/logger';
 @Component({
   selector: 'app-modbus-write',
   templateUrl: './modbus-write.component.html',
-  styleUrls: [],
+  styleUrls: ['./modbus-write.component.scss'],
 })
 export class ModbusWriteComponent implements OnChanges, OnInit {
   @Input()

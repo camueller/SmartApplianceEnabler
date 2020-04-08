@@ -1,13 +1,4 @@
-import {
-  AfterViewChecked,
-  Component,
-  Input,
-  OnChanges,
-  OnInit,
-  QueryList,
-  SimpleChanges,
-  ViewChildren
-} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, QueryList, SimpleChanges, ViewChildren} from '@angular/core';
 import {ControlDefaults} from '../control-defaults';
 import {ControlContainer, FormArray, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {ErrorMessages} from '../../shared/error-messages';
@@ -28,7 +19,7 @@ import {ModbusSetting} from '../../settings/modbus/modbus-setting';
 @Component({
   selector: 'app-control-modbus',
   templateUrl: './control-modbus.component.html',
-  styleUrls: [],
+  styleUrls: ['./control-modbus.component.scss'],
   viewProviders: [
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]

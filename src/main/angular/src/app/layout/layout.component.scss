@@ -1,8 +1,8 @@
-.layout-wrapper{
+.LayoutComponent{
   height: 100%;
-}
 
-.flex-wrapper{
-  height: 100%;
-  width: 100%;
+  &__flex-wrapper{
+    height: 100%;
+    width: 100%;
+  }
 }

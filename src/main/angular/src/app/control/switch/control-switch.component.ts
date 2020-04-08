@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {Switch} from './switch';
 import {ErrorMessages} from '../../shared/error-messages';
@@ -15,7 +15,7 @@ import {getValidInt} from '../../shared/form-util';
 @Component({
   selector: 'app-control-switch',
   templateUrl: './control-switch.component.html',
-  styleUrls: [],
+  styleUrls: ['./control-switch.component.scss'],
   viewProviders: [
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]

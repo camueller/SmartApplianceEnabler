@@ -1,78 +1,79 @@
+.StatusComponent {
+  &__appliances {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
 
-.appliances {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-}
+  &__appliance {
+    display: flex;
+    flex-direction: row;
+    height: fit-content;
+    width: fit-content;
+    padding: 6px;
+    margin: 5px;
+    border-radius: 8px;
+    border: 1px solid black;
+    font-family: "Lato", "Helvetica Neue", Arial, Helvetica, sans-serif;
+  }
 
-.appliance {
-  display: flex;
-  flex-direction: row;
-  height: fit-content;
-  width: fit-content;
-  padding: 6px;
-  margin: 5px;
-  border-radius: 8px;
-  border: 1px solid black;
-  font-family: "Lato", "Helvetica Neue", Arial, Helvetica, sans-serif;
-}
+  &__appliance-details {
+    display: flex;
+    flex-direction: column;
+    margin-left: 6px;
+  }
 
-.appliance-details {
-  display: flex;
-  flex-direction: column;
-  margin-left: 6px;
-}
+  &__appliance-details-row {
+    display: flex;
+    align-items: center;
+    padding: 3px 0;
+  }
 
-.appliance-details-row {
-  display: flex;
-  align-items: center;
-  padding: 3px 0;
-}
+  &__appliance-button-row {
+    justify-content: center;
+  }
 
-.appliance-button-row {
-  justify-content: center;
-}
+  &__appliance-type {
+    font-weight: bold;
+    color: rgba(0,0,0,.6)
+  }
 
-.appliance-type {
-  font-weight: bold;
-  color: rgba(0,0,0,.6)
-}
+  &__appliance-name {
+    font-weight: bold;
+    font-size: 1.5em;
+    padding-bottom: 0.5rem;
+  }
 
-.appliance-name {
-  font-weight: bold;
-  font-size: 1.5em;
-  padding-bottom: 0.5rem;
-}
+  &__appliance-status {
+    line-height: 1.4em;
+    white-space: nowrap;
+  }
 
-.appliance-status {
-  line-height: 1.4em;
-  white-space: nowrap;
-}
+  &__appliance-status-label {
+    padding: 0 3px;
+    color: rgba(0,0,0,.6);
+  }
 
-.appliance-status-label {
-  padding: 0 3px;
-  color: rgba(0,0,0,.6);
-}
+  &__appliance-status-value {
+    line-height: 1.4em;
+  }
 
-.appliance-status-value {
-  line-height: 1.4em;
-}
+  &__appliance-status-value-indented {
+    padding-left: 1rem;
+  }
 
-.appliance-status-value-indented {
-  padding-left: 1rem;
-}
+  &__appliance-number-input {
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+  }
 
-.appliance-number-input {
-  padding-left: 4px !important;
-  padding-right: 4px !important;
-}
+  &__traffic-light-explanation {
+    min-height: 38px;
+    margin: 5px;
+    font-family: "Lato", "Helvetica Neue", Arial, Helvetica, sans-serif;
+  }
 
-.traffic-light-explanation {
-  min-height: 38px;
-  margin: 5px;
-  font-family: "Lato", "Helvetica Neue", Arial, Helvetica, sans-serif;
-}
-
-.traffic-light-explanation-text {
-  margin-left: 22px
+  &__traffic-light-explanation-text {
+    margin-left: 22px
+  }
 }

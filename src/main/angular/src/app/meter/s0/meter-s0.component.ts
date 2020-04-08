@@ -2,7 +2,7 @@ import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core'
 import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {S0ElectricityMeter} from './s0-electricity-meter';
 import {TranslateService} from '@ngx-translate/core';
-import {PinPullResistance} from './PinPullResistance';
+import {PinPullResistance} from './pin-pull-resistance';
 import {ErrorMessages} from '../../shared/error-messages';
 import {FormHandler} from '../../shared/form-handler';
 import {ErrorMessage, ValidatorType} from '../../shared/error-message';
@@ -16,7 +16,7 @@ import {ListItem} from '../../shared/list-item';
 @Component({
   selector: 'app-meter-s0',
   templateUrl: './meter-s0.component.html',
-  styleUrls: [],
+  styleUrls: ['./meter-s0.component.scss'],
   viewProviders: [
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]

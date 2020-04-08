@@ -16,8 +16,8 @@
   ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
   -->
 
-<form [formGroup]="form" (ngSubmit)="submitForm()">
-  <mat-form-field class="id">
+<form class="ApplianceComponent" [formGroup]="form" (ngSubmit)="submitForm()">
+  <mat-form-field class="ApplianceComponent__id">
     <mat-label>{{'ApplianceComponent.id' | translate}}</mat-label>
     <input matInput type="text" placeholder="F-00000000-000000000000-00" formControlName="id"
            matTooltip="{{'ApplianceComponent.id.tooltip' | translate}}"

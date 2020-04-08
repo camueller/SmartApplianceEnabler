@@ -1,15 +1,4 @@
-import {
-  AfterViewChecked,
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  QueryList,
-  SimpleChanges,
-  ViewChildren
-} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, SimpleChanges, ViewChildren} from '@angular/core';
 import {FormArray, FormGroup, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {ModbusRead} from './modbus-read';
@@ -26,7 +15,7 @@ import {Logger} from '../../log/logger';
 @Component({
   selector: 'app-modbus-read',
   templateUrl: './modbus-read.component.html',
-  styleUrls: [],
+  styleUrls: ['./modbus-read.component.scss'],
 })
 export class ModbusReadComponent implements OnChanges, OnInit {
   @Input()

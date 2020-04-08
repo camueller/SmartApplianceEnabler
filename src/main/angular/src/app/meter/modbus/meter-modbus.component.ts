@@ -1,13 +1,4 @@
-import {
-  AfterViewChecked,
-  Component,
-  Input,
-  OnChanges,
-  OnInit,
-  QueryList,
-  SimpleChanges,
-  ViewChildren
-} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, QueryList, SimpleChanges, ViewChildren} from '@angular/core';
 import {ControlContainer, FormArray, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {ModbusRead} from '../../modbus/read/modbus-read';
@@ -28,7 +19,7 @@ import {ModbusSetting} from '../../settings/modbus/modbus-setting';
 @Component({
   selector: 'app-meter-modbus',
   templateUrl: './meter-modbus.component.html',
-  styleUrls: [],
+  styleUrls: ['./meter-modbus.component.scss'],
   viewProviders: [
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]

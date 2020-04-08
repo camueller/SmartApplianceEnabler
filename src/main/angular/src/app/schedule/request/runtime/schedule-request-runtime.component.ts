@@ -42,7 +42,7 @@ FormControlName.prototype.ngOnChanges = function () {
 @Component({
   selector: 'app-schedule-request-runtime',
   templateUrl: './schedule-request-runtime.component.html',
-  styleUrls: [],
+  styleUrls: ['./schedule-request-runtime.component.scss'],
   viewProviders: [
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]

@@ -1,13 +1,4 @@
-import {
-  AfterViewChecked,
-  Component,
-  Input,
-  OnChanges,
-  OnInit,
-  QueryList,
-  SimpleChanges,
-  ViewChildren
-} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, QueryList, SimpleChanges, ViewChildren} from '@angular/core';
 import {Logger} from '../../../log/logger';
 import {TranslateService} from '@ngx-translate/core';
 import {ErrorMessageHandler} from '../../../shared/error-message-handler';
@@ -30,7 +21,7 @@ import {EvWriteValueName} from '../ev-write-value-name';
 @Component({
   selector: 'app-control-evcharger-modbus',
   templateUrl: './control-evcharger-modbus.component.html',
-  styleUrls: [],
+  styleUrls: ['./control-evcharger-modbus.component.scss'],
   viewProviders: [
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]

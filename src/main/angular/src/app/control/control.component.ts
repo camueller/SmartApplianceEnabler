@@ -49,7 +49,7 @@ import {ListItem} from '../shared/list-item';
 @Component({
   selector: 'app-control',
   templateUrl: './control.component.html',
-  styleUrls: [],
+  styleUrls: ['./control.component.scss'],
 })
 export class ControlComponent implements OnChanges, OnInit, CanDeactivate<ControlComponent> {
   @ViewChild(ControlSwitchComponent)

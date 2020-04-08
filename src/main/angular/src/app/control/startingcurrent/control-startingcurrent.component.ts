@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {ControlDefaults} from '../control-defaults';
 import {FormGroup, Validators} from '@angular/forms';
 import {StartingCurrentSwitch} from './starting-current-switch';
@@ -14,7 +14,7 @@ import {getValidInt} from '../../shared/form-util';
 @Component({
   selector: 'app-control-startingcurrent',
   templateUrl: './control-startingcurrent.component.html',
-  styleUrls: []
+  styleUrls: ['./control-startingcurrent.component.scss']
 })
 export class ControlStartingcurrentComponent implements OnChanges, OnInit {
   @Input()

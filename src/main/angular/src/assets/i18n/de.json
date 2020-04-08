@@ -98,6 +98,8 @@
   "MeterHttpComponent.error.pollInterval_pattern": "Das Abfrage-Interval muss eine Zahl sein",
   "MeterHttpComponent.error.measurementInterval_pattern": "Das Messinterval muss eine Zahl sein",
 
+  "HeaderComponent.title": "Smart Appliance Enabler",
+
   "HttpReadComponent.url": "URL",
   "HttpReadComponent.contentType": "Content-Type",
   "HttpReadComponent.username": "Benutzername",

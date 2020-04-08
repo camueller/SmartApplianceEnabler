@@ -12,7 +12,7 @@ import {Logger} from '../../../log/logger';
 @Component({
   selector: 'app-schedule-request-energy',
   templateUrl: './schedule-request-energy.component.html',
-  styleUrls: [],
+  styleUrls: ['./schedule-request-energy.component.scss'],
   viewProviders: [
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]

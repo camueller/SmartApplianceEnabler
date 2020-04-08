@@ -13,7 +13,7 @@ import {Logger} from '../../../log/logger';
 @Component({
   selector: 'app-schedule-request-soc',
   templateUrl: './schedule-request-soc.component.html',
-  styleUrls: [],
+  styleUrls: ['./schedule-request-soc.component.scss'],
   viewProviders: [
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]

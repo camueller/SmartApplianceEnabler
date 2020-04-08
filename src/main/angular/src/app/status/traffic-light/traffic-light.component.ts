@@ -33,11 +33,11 @@ export class TrafficLightComponent implements OnChanges, OnInit {
   }
 
   get trafficLightClass() {
-    return this.sizeSmall ? 'traffic-light-small' : 'traffic-light';
+    return this.sizeSmall ? 'TrafficLightComponent__traffic-light-small' : 'TrafficLightComponent__traffic-light';
   }
 
   get bulbClass() {
-    return this.sizeSmall ? 'bulb-small' : 'bulb';
+    return this.sizeSmall ? 'TrafficLightComponent__bulb-small' : 'TrafficLightComponent__bulb';
   }
 
   isRed(): boolean {

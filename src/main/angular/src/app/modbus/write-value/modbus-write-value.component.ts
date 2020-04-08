@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {FormGroup, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {ModbusWriteValue} from './modbus-write-value';
@@ -12,7 +12,7 @@ import {Logger} from '../../log/logger';
 @Component({
   selector: 'app-modbus-write-value',
   templateUrl: './modbus-write-value.component.html',
-  styleUrls: [],
+  styleUrls: ['./modbus-write-value.component.scss'],
 })
 export class ModbusWriteValueComponent implements OnChanges, OnInit {
   @Input()
