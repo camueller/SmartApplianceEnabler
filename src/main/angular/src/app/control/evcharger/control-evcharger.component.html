@@ -23,21 +23,21 @@
   </div>
   <div *ngIf="isConfigured()">
     <div class="sae__fields">
-      <mat-form-field class="ControlEvchargerComponent__voltage">
+      <mat-form-field class="sae__voltage">
         <mat-label>{{'ControlEvchargerComponent.voltage' | translate}}</mat-label>
         <input matInput type="text" formControlName="voltage"
                placeholder="{{controlDefaults.electricVehicleChargerDefaults_voltage}}"
                required="{{formHandler.isRequired('voltage')}}">
         <mat-error *ngIf="errors.voltage">{{errors.voltage}}</mat-error>
       </mat-form-field>
-      <mat-form-field class="ControlEvchargerComponent__phases">
+      <mat-form-field class="sae__phases">
         <mat-label>{{'ControlEvchargerComponent.phases' | translate}}</mat-label>
         <input matInput type="text" formControlName="phases"
                placeholder="{{controlDefaults.electricVehicleChargerDefaults_phases}}"
                required="{{formHandler.isRequired('phases')}}">
         <mat-error *ngIf="errors.phases">{{errors.phases}}</mat-error>
       </mat-form-field>
-      <mat-form-field class="ControlEvchargerComponent__pollInterval">
+      <mat-form-field class="sae__pollInterval">
         <mat-label>{{'ControlEvchargerComponent.pollInterval' | translate}}</mat-label>
         <input matInput type="text" formControlName="pollInterval"
                placeholder="{{controlDefaults.electricVehicleChargerDefaults_pollInterval}}"

@@ -10,7 +10,7 @@
       {{'HttpReadComponent.button.remove' | translate}}</button>
   </div>
   <div formArrayName="httpReadValues">
-    <div class="HttpReadComponent__fields" *ngFor="let httpReadValue of httpRead.readValues; index as i">
+    <div class="sae__fields-with-button" *ngFor="let httpReadValue of httpRead.readValues; index as i">
       <div class="sae__fields">
         <app-http-read-value
           [formGroupName]="i"

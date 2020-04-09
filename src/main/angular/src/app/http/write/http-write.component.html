@@ -10,7 +10,7 @@
       {{'HttpWriteComponent.button.remove' | translate}}</button>
   </div>
   <div formArrayName="httpWriteValues">
-    <div class="HttpWriteComponent__fields" *ngFor="let httpWriteValue of httpWrite.writeValues; index as i">
+    <div class="sae__fields-with-button" *ngFor="let httpWriteValue of httpWrite.writeValues; index as i">
       <div class="sae__fields">
         <app-http-write-value
           [formGroupName]="i"

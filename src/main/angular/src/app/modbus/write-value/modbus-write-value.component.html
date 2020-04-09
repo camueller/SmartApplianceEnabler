@@ -1,5 +1,5 @@
 <div class="ModbusWriteValueComponent sae__fields" [formGroup]="form">
-  <mat-form-field>
+  <mat-form-field class="sae__value-name">
     <mat-label>{{'ModbusWriteValueComponent.name' | translate}}</mat-label>
     <mat-select formControlName="name" required="{{formHandler.isRequired('name')}}">
       <mat-option *ngFor="let valueName of valueNames" [value]="valueName">
@@ -7,8 +7,8 @@
       </mat-option>
     </mat-select>
   </mat-form-field>
-  <mat-form-field class="value">
-    <mat-label>{{'ModbusReadValueComponent.value' | translate}}</mat-label>
+  <mat-form-field class="ModbusWriteValueComponent__value">
+    <mat-label>{{'ModbusWriteValueComponent.value' | translate}}</mat-label>
     <input matInput type="text" formControlName="value"
            required="{{formHandler.isRequired('value')}}">
   </mat-form-field>
