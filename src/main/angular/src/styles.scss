@@ -23,11 +23,11 @@ h3 {
 }
 
 mat-form-field, mat-checkbox {
-  margin: 0.3rem;
+  margin: $field-margin;
 }
 
 button {
-  margin: 0.3rem !important;
+  margin: $field-margin !important;
   height: 2.25rem;
   min-width: fit-content !important;
 }
@@ -65,7 +65,7 @@ button {
   }
 
   &__mandatory_fields_hint {
-    margin: 1.5rem 0.3rem;
+    margin: 1.5rem $field-margin;
   }
 
   &__modbus-address {
