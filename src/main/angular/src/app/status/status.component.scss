@@ -1,5 +1,5 @@
 .StatusComponent {
-  font-size: 14px;
+  font-size: 0.875rem;
 
   &__appliances {
     display: flex;
@@ -12,22 +12,22 @@
     flex-direction: row;
     height: fit-content;
     width: fit-content;
-    padding: 6px;
-    margin: 5px;
-    border-radius: 8px;
+    padding: 0.375rem;
+    margin: 0.375rem;
+    border-radius: 0.5rem;
     border: 1px solid black;
   }
 
   &__appliance-details {
     display: flex;
     flex-direction: column;
-    margin-left: 6px;
+    margin-left: 0.375rem;
   }
 
   &__appliance-details-row {
     display: flex;
     align-items: center;
-    padding: 3px 0;
+    padding: 0.1875rem 0;
   }
 
   &__appliance-button-row {
@@ -41,39 +41,34 @@
 
   &__appliance-name {
     font-weight: bold;
-    font-size: 1.5em;
+    font-size: 1.5rem;
     padding-bottom: 0.5rem;
   }
 
   &__appliance-status {
-    line-height: 1.4em;
+    line-height: 1.4rem;
     white-space: nowrap;
   }
 
   &__appliance-status-label {
-    padding: 0 3px;
+    padding-right: 0.1875rem;
     color: rgba(0,0,0,.6);
   }
 
   &__appliance-status-value {
-    line-height: 1.4em;
+    line-height: 1.4rem;
   }
 
   &__appliance-status-value-indented {
     padding-left: 1rem;
   }
 
-  &__appliance-number-input {
-    padding-left: 4px !important;
-    padding-right: 4px !important;
-  }
-
   &__traffic-light-explanation {
-    min-height: 38px;
-    margin: 5px;
+    min-height: 2.375rem;
+    margin: 0.3125rem;
   }
 
   &__traffic-light-explanation-text {
-    margin-left: 22px
+    margin-left: 1.5rem;
   }
 }
