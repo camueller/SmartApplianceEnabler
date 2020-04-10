@@ -76,6 +76,7 @@
       </mat-form-field>
       <mat-checkbox formControlName="interruptionsAllowed"
                     matTooltip="{{'ApplianceComponent.interruptionsAllowed.tooltip' | translate}}"
+                    (click)="toggleInterruptionAllowed()"
       >{{'ApplianceComponent.interruptionsAllowed' | translate}}</mat-checkbox>
     </div>
     <div class="sae__fields">

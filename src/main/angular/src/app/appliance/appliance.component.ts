@@ -125,6 +125,32 @@ export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<Appl
     return this.form && this.form.controls.type.value === ApplianceType.EV_CHARGER;
   }
 
+  isInterruptionAllowed() {
+    return this.form.controls.interruptionsAllowed.value;
+  }
+
+  setInterruptionAllowed(enabled: boolean) {
+    if (enabled) {
+      this.form.controls.minOnTime.enable();
+      this.form.controls.maxOnTime.enable();
+      this.form.controls.minOffTime.enable();
+      this.form.controls.maxOffTime.enable();
+    } else {
+      this.form.controls.minOnTime.disable();
+      this.form.controls.minOnTime.reset();
+      this.form.controls.maxOnTime.disable();
+      this.form.controls.maxOnTime.reset();
+      this.form.controls.minOffTime.disable();
+      this.form.controls.minOffTime.reset();
+      this.form.controls.maxOffTime.disable();
+      this.form.controls.maxOffTime.reset();
+    }
+  }
+
+  toggleInterruptionAllowed() {
+    this.setInterruptionAllowed(!this.isInterruptionAllowed());
+  }
+
   deleteAppliance() {
     this.logger.debug('ApplianceComponent.deleteAppliance()');
     this.dialogService.confirm(this.confirmDeletionMessage).subscribe(confirmed => {
@@ -167,6 +193,7 @@ export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<Appl
     this.formHandler.addFormControl(this.form, 'maxOffTime',
       this.appliance && this.appliance.maxOffTime,
       Validators.pattern(InputValidatorPatterns.INTEGER));
+    this.setInterruptionAllowed(this.appliance.interruptionsAllowed);
   }
 
   updateForm() {
