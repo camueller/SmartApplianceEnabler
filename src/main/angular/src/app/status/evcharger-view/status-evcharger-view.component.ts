@@ -20,7 +20,8 @@ export class StatusEvchargerViewComponent implements OnInit, OnDestroy {
   electricVehicles: ElectricVehicle[];
   loadVehiclesSubscription: Subscription;
 
-  constructor(private controlService: ControlService) { }
+  constructor(private controlService: ControlService) {
+  }
 
   ngOnInit() {
     this.loadVehicles();
@@ -39,7 +40,9 @@ export class StatusEvchargerViewComponent implements OnInit, OnDestroy {
   }
 
   get stateKey() {
-    return `StatusComponent.state.${this.status.state}`;
+    if (this.status.state) {
+      return `StatusComponent.state.${this.status.state}`;
+    }
   }
 
   getEvNameCharging(evId: number): string {
@@ -57,7 +60,7 @@ export class StatusEvchargerViewComponent implements OnInit, OnDestroy {
   }
 
   toWeekdayStringFromDelta(seconds: number): string | undefined {
-    if (! seconds) {
+    if (!seconds) {
       return undefined;
     }
     const dow = this.toWeekdayFromDelta(seconds);
