@@ -7,8 +7,8 @@
       </mat-option>
     </mat-select>
   </mat-form-field>
-  <mat-form-field class="soc">
-    <mat-label>{{'ScheduleRequestEnergyComponent.soc' | translate}}</mat-label>
+  <mat-form-field class="ScheduleRequestSocComponent__soc">
+    <mat-label>{{'ScheduleRequestSocComponent.soc' | translate}}</mat-label>
     <input matInput type="text" formControlName="soc"
            required="{{formHandler.isRequired('soc')}}">
     <mat-error *ngIf="errors.soc">{{errors.soc}}</mat-error>
