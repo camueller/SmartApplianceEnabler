@@ -1,83 +1,85 @@
-<h1>{{'StatusComponent.title' | translate }}</h1>
-<messagebox [level]="MessageBoxLevel.INFO" *ngIf="!hasControllableAppliances"
->{{'StatusComponent.message.noControllableAppliances' | translate}}</messagebox>
-<div class="StatusComponent__appliances">
-  <div class="StatusComponent__appliance" *ngFor="let applianceStatus of applianceStatuses">
-    <app-traffic-light [key]="applianceStatus"
-                       [stateHandler]="getTrafficLightStateHandler(applianceStatus)"
-                       [clickHandler]="getTrafficLightClickHandler(applianceStatus)"
-                       #trafficLights
-    >
-    </app-traffic-light>
-    <div class="StatusComponent__appliance-details">
-      <div class="StatusComponent__appliance-type">{{getTranslatedType(applianceStatus.type)}}</div>
-      <div *ngIf="isEvCharger(applianceStatus); else notEvCharger">
-        <app-status-evcharger-edit *ngIf="isEditMode(applianceStatus); else greenNotClickedCharger"
-                                 [status]="applianceStatus"
-                                 [dows]="dows"
-                                 (beforeFormSubmit)="onBeforeFormSubmit()"
-                                 (formSubmitted)="onFormSubmitted()"
-                                 (formCancelled)="onFormCancel()"
-        >
-        </app-status-evcharger-edit>
-        <ng-template #greenNotClickedCharger>
-          <app-status-charger-view
-            [status]="applianceStatus"
-            [dows]="dows"
+<div class="StatusComponent">
+  <h1>{{'StatusComponent.title' | translate }}</h1>
+  <messagebox [level]="MessageBoxLevel.INFO" *ngIf="!hasControllableAppliances"
+  >{{'StatusComponent.message.noControllableAppliances' | translate}}</messagebox>
+  <div class="StatusComponent__appliances">
+    <div class="StatusComponent__appliance" *ngFor="let applianceStatus of applianceStatuses">
+      <app-traffic-light [key]="applianceStatus"
+                         [stateHandler]="getTrafficLightStateHandler(applianceStatus)"
+                         [clickHandler]="getTrafficLightClickHandler(applianceStatus)"
+                         #trafficLights
+      >
+      </app-traffic-light>
+      <div class="StatusComponent__appliance-details">
+        <div class="StatusComponent__appliance-type">{{getTranslatedType(applianceStatus.type)}}</div>
+        <div *ngIf="isEvCharger(applianceStatus); else notEvCharger">
+          <app-status-evcharger-edit *ngIf="isEditMode(applianceStatus); else greenNotClickedCharger"
+                                     [status]="applianceStatus"
+                                     [dows]="dows"
+                                     (beforeFormSubmit)="onBeforeFormSubmit()"
+                                     (formSubmitted)="onFormSubmitted()"
+                                     (formCancelled)="onFormCancel()"
           >
-          </app-status-charger-view>
+          </app-status-evcharger-edit>
+          <ng-template #greenNotClickedCharger>
+            <app-status-charger-view
+              [status]="applianceStatus"
+              [dows]="dows"
+            >
+            </app-status-charger-view>
+          </ng-template>
+        </div>
+        <ng-template #notEvCharger>
+          <app-status-edit *ngIf="isEditMode(applianceStatus); else greenNotClicked"
+                           [applianceId]="applianceStatus.id"
+                           (beforeFormSubmit)="onBeforeFormSubmit()"
+                           (formSubmitted)="onFormSubmitted()"
+                           (formCancelled)="onFormCancel()"
+          >
+          </app-status-edit>
+          <ng-template #greenNotClicked>
+            <app-status-view
+              [status]="applianceStatus"
+              [trafficLightStateHandler]="getTrafficLightStateHandler(applianceStatus)"
+            >
+            </app-status-view>
+          </ng-template>
         </ng-template>
       </div>
-      <ng-template #notEvCharger>
-        <app-status-edit *ngIf="isEditMode(applianceStatus); else greenNotClicked"
-                         [applianceId]="applianceStatus.id"
-                         (beforeFormSubmit)="onBeforeFormSubmit()"
-                         (formSubmitted)="onFormSubmitted()"
-                         (formCancelled)="onFormCancel()"
-        >
-        </app-status-edit>
-        <ng-template #greenNotClicked>
-          <app-status-view
-            [status]="applianceStatus"
-            [trafficLightStateHandler]="getTrafficLightStateHandler(applianceStatus)"
-          >
-          </app-status-view>
-        </ng-template>
-      </ng-template>
     </div>
   </div>
-</div>
-<h3>{{'StatusComponent.explanation' | translate}}</h3>
-<div class="StatusComponent__traffic-light-explanation">
-  <app-traffic-light [stateHandler]="getTrafficLightStateHandlerForExplanation(false, false, false)"
-                     sizeSmall="true">
-  </app-traffic-light>
-  <div class="StatusComponent__traffic-light-explanation-text">
-    <p>{{'StatusComponent.explanationNoLight' | translate}}</p>
+  <h3>{{'StatusComponent.explanation' | translate}}</h3>
+  <div class="StatusComponent__traffic-light-explanation">
+    <app-traffic-light [stateHandler]="getTrafficLightStateHandlerForExplanation(false, false, false)"
+                       sizeSmall="true">
+    </app-traffic-light>
+    <div class="StatusComponent__traffic-light-explanation-text">
+      <p>{{'StatusComponent.explanationNoLight' | translate}}</p>
+    </div>
   </div>
-</div>
-<div class="StatusComponent__traffic-light-explanation">
-  <app-traffic-light [stateHandler]="getTrafficLightStateHandlerForExplanation(true, false, false)"
-                     sizeSmall="true">
-  </app-traffic-light>
-  <div class="StatusComponent__traffic-light-explanation-text">
-    <p>{{'StatusComponent.explanationStopLight' | translate}}</p>
+  <div class="StatusComponent__traffic-light-explanation">
+    <app-traffic-light [stateHandler]="getTrafficLightStateHandlerForExplanation(true, false, false)"
+                       sizeSmall="true">
+    </app-traffic-light>
+    <div class="StatusComponent__traffic-light-explanation-text">
+      <p>{{'StatusComponent.explanationStopLight' | translate}}</p>
+    </div>
   </div>
-</div>
-<div class="StatusComponent__traffic-light-explanation">
-  <app-traffic-light [stateHandler]="getTrafficLightStateHandlerForExplanation(false, true, false)"
-                     sizeSmall="true">
-  </app-traffic-light>
-  <div class="StatusComponent__traffic-light-explanation-text">
-    <p>{{'StatusComponent.explanationSlowLight' | translate}}</p>
+  <div class="StatusComponent__traffic-light-explanation">
+    <app-traffic-light [stateHandler]="getTrafficLightStateHandlerForExplanation(false, true, false)"
+                       sizeSmall="true">
+    </app-traffic-light>
+    <div class="StatusComponent__traffic-light-explanation-text">
+      <p>{{'StatusComponent.explanationSlowLight' | translate}}</p>
+    </div>
   </div>
-</div>
-<div class="StatusComponent__traffic-light-explanation">
-  <app-traffic-light [stateHandler]="getTrafficLightStateHandlerForExplanation(false, false, true)"
-                     sizeSmall="true">
-  </app-traffic-light>
-  <div class="StatusComponent__traffic-light-explanation-text">
-    <p>{{'StatusComponent.explanationGoLight' | translate}}</p>
+  <div class="StatusComponent__traffic-light-explanation">
+    <app-traffic-light [stateHandler]="getTrafficLightStateHandlerForExplanation(false, false, true)"
+                       sizeSmall="true">
+    </app-traffic-light>
+    <div class="StatusComponent__traffic-light-explanation-text">
+      <p>{{'StatusComponent.explanationGoLight' | translate}}</p>
+    </div>
   </div>
 </div>
 <!--pre>{{applianceStatuses | json}}</pre-->
