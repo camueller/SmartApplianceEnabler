@@ -1,32 +1,32 @@
-<div class="MeterModbusComponent sae__fields">
-  <mat-form-field>
-    <mat-label>{{'MeterModbusComponent.idref' | translate}}</mat-label>
-    <mat-select formControlName="idref" required="{{formHandler.isRequired('idref')}}">
-      <mat-option *ngFor="let modbusSetting of modbusSettings" [value]="modbusSetting.modbusTcpId">
-        {{modbusSetting.modbusTcpId}}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-  <mat-form-field class="slaveAddress">
-    <mat-label>{{'MeterModbusComponent.slaveAddress' | translate}}</mat-label>
-    <input matInput type="text" formControlName="slaveAddress"
-           required="{{formHandler.isRequired('slaveAddress')}}">
-    <mat-error *ngIf="errors.slaveAddress">{{errors.slaveAddress}}</mat-error>
-  </mat-form-field>
-  <mat-form-field class="pollInterval">
-    <mat-label>{{'MeterModbusComponent.pollInterval' | translate}}</mat-label>
-    <input matInput type="text" formControlName="pollInterval"
-           required="{{formHandler.isRequired('pollInterval')}}">
-    <mat-error *ngIf="errors.pollInterval">{{errors.pollInterval}}</mat-error>
-  </mat-form-field>
-  <mat-form-field class="measurementInterval">
-    <mat-label>{{'MeterModbusComponent.measurementInterval' | translate}}</mat-label>
-    <input matInput type="text" formControlName="measurementInterval"
-           required="{{formHandler.isRequired('measurementInterval')}}">
-    <mat-error *ngIf="errors.measurementInterval">{{errors.measurementInterval}}</mat-error>
-  </mat-form-field>
-</div>
-<div class="sae__fields">
+<div class="MeterModbusComponent">
+  <div class="sae__fields">
+    <mat-form-field>
+      <mat-label>{{'MeterModbusComponent.idref' | translate}}</mat-label>
+      <mat-select formControlName="idref" required="{{formHandler.isRequired('idref')}}">
+        <mat-option *ngFor="let modbusSetting of modbusSettings" [value]="modbusSetting.modbusTcpId">
+          {{modbusSetting.modbusTcpId}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="slaveAddress">
+      <mat-label>{{'MeterModbusComponent.slaveAddress' | translate}}</mat-label>
+      <input matInput type="text" formControlName="slaveAddress"
+             required="{{formHandler.isRequired('slaveAddress')}}">
+      <mat-error *ngIf="errors.slaveAddress">{{errors.slaveAddress}}</mat-error>
+    </mat-form-field>
+    <mat-form-field class="pollInterval">
+      <mat-label>{{'MeterModbusComponent.pollInterval' | translate}}</mat-label>
+      <input matInput type="text" formControlName="pollInterval"
+             required="{{formHandler.isRequired('pollInterval')}}">
+      <mat-error *ngIf="errors.pollInterval">{{errors.pollInterval}}</mat-error>
+    </mat-form-field>
+    <mat-form-field class="measurementInterval">
+      <mat-label>{{'MeterModbusComponent.measurementInterval' | translate}}</mat-label>
+      <input matInput type="text" formControlName="measurementInterval"
+             required="{{formHandler.isRequired('measurementInterval')}}">
+      <mat-error *ngIf="errors.measurementInterval">{{errors.measurementInterval}}</mat-error>
+    </mat-form-field>
+  </div>
   <div formArrayName="modbusReads">
     <app-modbus-read *ngFor="let modbusRead of modbusElectricityMeter.modbusReads; index as i; last as l"
                      [formGroupName]="i"

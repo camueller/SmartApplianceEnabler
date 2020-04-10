@@ -1,20 +1,20 @@
-<div class="ControlModbusComponent sae__fields">
-  <mat-form-field>
-    <mat-label>{{'MeterModbusComponent.idref' | translate}}</mat-label>
-    <mat-select formControlName="idref" required="{{formHandler.isRequired('idref')}}">
-      <mat-option *ngFor="let modbusSetting of modbusSettings" [value]="modbusSetting.modbusTcpId">
-        {{modbusSetting.modbusTcpId}}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-  <mat-form-field class="slaveAddress">
-    <mat-label>{{'MeterModbusComponent.slaveAddress' | translate}}</mat-label>
-    <input matInput type="text" formControlName="slaveAddress"
-           required="{{formHandler.isRequired('slaveAddress')}}">
-    <mat-error *ngIf="errors.slaveAddress">{{errors.slaveAddress}}</mat-error>
-  </mat-form-field>
-</div>
-<div class="sae__fields">
+<div class="ControlModbusComponent">
+  <div class="ControlModbusComponent sae__fields">
+    <mat-form-field>
+      <mat-label>{{'MeterModbusComponent.idref' | translate}}</mat-label>
+      <mat-select formControlName="idref" required="{{formHandler.isRequired('idref')}}">
+        <mat-option *ngFor="let modbusSetting of modbusSettings" [value]="modbusSetting.modbusTcpId">
+          {{modbusSetting.modbusTcpId}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="slaveAddress">
+      <mat-label>{{'MeterModbusComponent.slaveAddress' | translate}}</mat-label>
+      <input matInput type="text" formControlName="slaveAddress"
+             required="{{formHandler.isRequired('slaveAddress')}}">
+      <mat-error *ngIf="errors.slaveAddress">{{errors.slaveAddress}}</mat-error>
+    </mat-form-field>
+  </div>
   <div formArrayName="modbusWrites">
     <app-modbus-write *ngFor="let modbusWrite of modbusSwitch.modbusWrites; index as i; last as l"
                       [formGroupName]="i"
