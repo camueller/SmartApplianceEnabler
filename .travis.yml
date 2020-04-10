@@ -15,8 +15,12 @@ before_install:
     tar xfz node-v10.17.0-linux-x64.tar.gz &&
     export PATH=$PWD/node-v10.17.0-linux-x64/bin:$PATH
 script:
-  - mvn package -B -Ptravis,web &&
-    exit 1
-  - echo "hallo"
+  - mvn package -B -Ptravis,web
+  - |
+    if [ $TRAVIS_BRANCH == "master" && $TRAVIS_PULL_REQUEST == "false" ]; then
+      pushd docker && ./amd64_check.sh
+    else
+      echo "*** Not on master branch - skipping docker push"
+    fi
 after_success:
   - bash <(curl -s https://codecov.io/bash)
