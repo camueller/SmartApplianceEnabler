@@ -18,7 +18,7 @@ Beim ersten Start ohne vorhandene Konfigurationsdateien wird folgende Seite ange
 
 ![Ohne Konfiguration](../pics/fe/OhneKonfiguration.png)
 
-Im oberen Bereich der Seite findet sich der Menüpunkt zur Verwaltung der zentralen [Einstellungen](Settings_DE.md).
+Im oberen Bereich der Seite findet sich der Menüpunkt zur Verwaltung der zentralen, geräteunabhängigen [Einstellungen](Settings_DE.md).
 
 Das Seitenmenü zur Konfiguration der Geräte, Zähler, Schalter und Schaltzeiten ist nicht sichtbar und muss durch Klick auf ```Geräte``` geöffnet werden. Jetzt sieht die Seite wie folgt aus:
 

@@ -41,7 +41,7 @@ Die nachfolgende Grafik des [Sunny Home Manager (SHM)](http://www.sma.de/produkt
 ## Hardware
 
 ### Anforderungen
-Der *Smart Appliance Enabler* wurde in **Java** implementiert und läuft grundsätzlich auf jedem Gerät, für das eine Java Virtual Machine existiert. Neben dem compilierten Code werden diverse Script bereitgestellt in denen von **Linux** als Betriebssystem ausgegangen wird. Falls Geräte über [GPIO](https://www.itwissen.info/GPIO-general-purpose-input-output.html) angebunden werden sollen, benötigt der *Smart Appliance Enabler* einen [**Raspberry Pi**](doc/Raspberry_DE.md) als Hardware. 
+Der *Smart Appliance Enabler* wurde in **Java** implementiert und läuft grundsätzlich auf jedem Gerät, für das eine Java Virtual Machine mit Java 11 existiert. Neben dem compilierten Code werden diverse Scripts bereitgestellt in denen von **Linux** als Betriebssystem ausgegangen wird. Falls Geräte über [GPIO](https://www.itwissen.info/GPIO-general-purpose-input-output.html) angebunden werden sollen, benötigt der *Smart Appliance Enabler* einen [**Raspberry Pi**](doc/Raspberry_DE.md) als Hardware. 
 
 ### Stromzähler
 
@@ -69,7 +69,7 @@ Alle aufgeführten Schalter (außer Ladegeräte für Elektro-Autos) können mit 
 Für den reibungslosen Einsatz des *Smart Appliance Enabler* sollten die [Montage-Hinweise](doc/Montage_DE.md) beachtet werden.
 
 ## Software
-In den nachfolgenden Kapiteln ist Installation und Konfiguration des *Smart Appliance Enabler* beschrieben. Gegebenenfalls sollte auch das Kapitel [Fragen / Probleme](doc/Troubleshooting_DE.md) konsultiert werden.
+In den nachfolgenden Kapiteln ist Installation und Konfiguration des *Smart Appliance Enabler* beschrieben. Gegebenenfalls sollte auch das Kapitel [Fragen / Probleme](doc/Support_DE.md) konsultiert werden.
 
 ### [Installation](doc/Installation_DE.md)
 Der einfachste Weg zu einem lauffähigen *Smart Appliance Enabler* besteht in der [Installation](doc/Installation_DE.md) einer releasten Version.
@@ -79,27 +79,24 @@ Der einfachste Weg zu einem lauffähigen *Smart Appliance Enabler* besteht in de
 Alternativ kann *Smart Appliance Enabler* auch als [Docker-Container](doc/Docker_DE.md) betrieben werden.
 
 ### [Konfiguration](doc/Configuration_DE.md)
-Damit der *Smart Appliance Enabler* die Geräte steuern und deren Stromverbrauch messen kann, ist zusätzlich zur Installation der Software die Erstellung einer [Konfiguration](doc/Configuration_DE.md) erforderlich.
-
-### [Einstellungen](doc/Settings_DE.md)
-Im oberen Bereich der Seite findet sich der Menüpunkt zur Verwaltung der zentralen [Einstellungen](Settings_DE.md).
+Nach der Installation müssen die zu messenden und zu steuernden Geräte im *Smart Appliance Enabler* [konfiguriert](doc/Configuration_DE.md) werden.
 
 ### [Status-Anzeige](doc/Status_DE.md)
-Der Status aller Geräte wird in der [Status-Anzeige](doc/Status_DE.md) übersichtlich dargestellt, wobei der Status jedes Gerätes durch eine **Ampel** visualisiert wird. Die Ampel kann auch zur **manuellen Steuerung** verwendet werden.
+Der Status aller steuerbaren Geräte wird in der [Status-Anzeige](doc/Status_DE.md) übersichtlich dargestellt, wobei der Status jedes Gerätes durch eine **Ampel** visualisiert wird. Die Ampel kann auch zur **manuellen Steuerung** verwendet werden.
 
-### Integration in den Sunny Home Manager
-Der Sunny Home Manager kann die Geräte erst dann steuern und deren Verbrauch messen, nachdem sie auch im [Sunny Home Manager konfiguriert](doc/SunnyHomeMangerKonfiguration_DE.md) worden sind.
+### [Integration in den Sunny Home Manager](doc/SunnyHomeMangerKonfiguration_DE.md)
+Der eigentliche Zweck des *Smart Appliance Enabler* besteht in der Integration von Geräten in den [Sunny Home Manager konfiguriert](doc/SunnyHomeMangerKonfiguration_DE.md).
 
-### [Entwicklung](doc/Development_DE.md)
-Alle Informationen rund um die [Entwicklung](doc/Development_DE.md) des *Smart Appliance Enabler* einschliesslich der Dokumentation der Build- und Testumgebungen.
-
-### [Fragen / Probleme](doc/Support_DE.md)
+## [Fragen / Probleme](doc/Support_DE.md)
 Durch die Vielzahl von Hard- und Softwarekomponenten können bei der Verwendung des *Smart Appliance Enabler* naturgemäß Fragen oder Probleme auftreten. In diesem Fall sollten [diese Hinweise](doc/Support_DE.md) beachtet werden.
 
 ## Mitmachen
 <img align="left" src="pics/IWantYou.png">Zum Mitmachen muss man **kein Programmierer** sein! Auch die **Dokumentation** oder **Support von anderen Anwendern** im [Forum](https://www.photovoltaikforum.com/geraete-mit-home-manager-koppeln-via-semp-ethernet-t104060.html) sind Bereiche, in denen man helfen kann, den *Smart Appliance Enabler* besser zu machen. Der *Smart Appliance Enabler* ist für einige Einsatzzwecke "Out-of-the-box" geeignet. Viel interessanter sind aber oft Ideen, an die bei der Entwicklung des *Smart Appliance Enabler* gar nicht gedacht wurde, die ihr aber damit umgesetzt habt. Es wäre doch schön, wenn andere auch **von Euren Ideen profitieren** würden oder vielleicht sogar dazu beitragen könnten, sie noch besser zu machen.
 
 Wenn Ihr zum *Smart Appliance Enabler* inkl. Dokumenation beitragen wollt, solltet Ihr das **Smart Appliance Enabler-Repository clonen**. Ihr könnte dann in Eurer Kopie z.B. die Dokumentation erweitern oder korrigieren und mir dann einen **Pull-Request** schicken, mit dem ich Eure Änderungen direkt in das *Smart Appliance Enabler*-Repository übernehmen kann.
+
+### [Entwicklung](doc/Development_DE.md)
+Alle Informationen rund um die [Entwicklung](doc/Development_DE.md) des *Smart Appliance Enabler* einschliesslich der Dokumentation der Build- und Testumgebungen.
 
 ## Dank und Anerkennung
 Der *Smart Appliance Enabler* würde so nicht existieren ohne folgende Tools und Frameworks, deren Entwicklern ich Dank und Anerkennung zolle:
