@@ -115,7 +115,7 @@ export class HttpWriteValueComponent implements OnChanges, OnInit, AfterViewChec
   updateModelFromForm(): HttpWriteValue | undefined {
     const name = getValidString(this.form.controls.name.value);
     const value = getValidString(this.form.controls.value.value);
-    const factorToValue = getValidFloat(this.form.controls.factorToValue.value);
+    const factorToValue = this.form.controls.factorToValue && getValidFloat(this.form.controls.factorToValue.value);
     const method = getValidString(this.form.controls.method.value);
 
     if (!(name || value || factorToValue || method)) {

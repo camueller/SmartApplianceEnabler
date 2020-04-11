@@ -16,7 +16,7 @@
         >{{readRegisterType}}</option>
       </select>
     </div>
-    <div class="field">
+    <div class="field" *ngIf="! disableFactorToValue">
       <label>{{'ModbusWriteComponent.factorToValue' | translate}}</label>
       <input type="text" formControlName="factorToValue">
       <div *ngIf="errors.factorToValue"

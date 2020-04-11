@@ -40,6 +40,8 @@ export class ModbusWriteComponent implements OnChanges, OnInit, AfterViewChecked
   @Input()
   maxValues: number;
   @Input()
+  disableFactorToValue = false;
+  @Input()
   form: FormGroup;
   formHandler: FormHandler;
   @Input()
@@ -137,9 +139,11 @@ export class ModbusWriteComponent implements OnChanges, OnInit, AfterViewChecked
     this.formHandler.addFormControl(this.form, 'type',
       this.modbusWrite && this.modbusWrite.type,
       [Validators.required]);
-    this.formHandler.addFormControl(this.form, 'factorToValue',
-      this.modbusWrite && this.modbusWrite.factorToValue,
-      [Validators.pattern(InputValidatorPatterns.FLOAT)]);
+    if (!this.disableFactorToValue) {
+      this.formHandler.addFormControl(this.form, 'factorToValue',
+        this.modbusWrite && this.modbusWrite.factorToValue,
+        [Validators.pattern(InputValidatorPatterns.FLOAT)]);
+    }
     this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'modbusWriteValues',
       this.modbusWrite.writeValues);
   }
@@ -147,7 +151,9 @@ export class ModbusWriteComponent implements OnChanges, OnInit, AfterViewChecked
   updateForm() {
     this.formHandler.setFormControlValue(this.form, 'address', this.modbusWrite.address);
     this.formHandler.setFormControlValue(this.form, 'type', this.modbusWrite.type);
-    this.formHandler.setFormControlValue(this.form, 'factorToValue', this.modbusWrite.factorToValue);
+    if (!this.disableFactorToValue) {
+      this.formHandler.setFormControlValue(this.form, 'factorToValue', this.modbusWrite.factorToValue);
+    }
     this.formHandler.setFormArrayControlWithEmptyFormGroups(this.form, 'modbusWriteValues',
       this.modbusWrite.writeValues);
   }
@@ -155,7 +161,7 @@ export class ModbusWriteComponent implements OnChanges, OnInit, AfterViewChecked
   updateModelFromForm(): ModbusWrite | undefined {
     const address = this.form.controls.address.value;
     const type = this.form.controls.type.value;
-    const factorToValue = this.form.controls.factorToValue.value;
+    const factorToValue = this.form.controls.factorToValue && this.form.controls.factorToValue.value;
     const modbusWriteValues = [];
     this.modbusWriteValueComps.forEach(modbusWriteValueComp => {
       const modbusWriteValue = modbusWriteValueComp.updateModelFromForm();

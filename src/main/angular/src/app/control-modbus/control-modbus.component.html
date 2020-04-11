@@ -19,6 +19,7 @@
     <app-modbus-write *ngFor="let modbusWrite of modbusSwitch.modbusWrites; index as i; last as l"
                       [formGroupName]="i"
                       [form]="getModbusWriteFormGroup(i)"
+                      [disableFactorToValue]="true"
                       [modbusWrite]="modbusWrite"
                       [maxValues]="maxValues"
                       [valueNames]="valueNames"
