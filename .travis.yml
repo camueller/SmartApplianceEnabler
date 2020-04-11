@@ -16,11 +16,10 @@ before_install:
     export PATH=$PWD/node-v10.17.0-linux-x64/bin:$PATH
 script:
   - mvn package -B -Ptravis,web
-  - |
-    if [ $TRAVIS_BRANCH == "master" && $TRAVIS_PULL_REQUEST == "false" ]; then
-      echo "*** Pushing"
+  - if [ $TRAVIS_BRANCH == "master" && $TRAVIS_PULL_REQUEST == "false" ]; then
+      echo "*** Pushing";
     else
-      echo "*** Not on master branch - skipping docker push"
+      echo "*** Not on master branch - skipping docker push";
     fi
 after_success:
   - bash <(curl -s https://codecov.io/bash)
