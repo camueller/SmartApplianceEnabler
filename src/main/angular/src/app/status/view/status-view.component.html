@@ -1,0 +1,39 @@
+<div class="StatusViewComponent">
+  <div class="StatusComponent__appliance-name">{{status.name}}</div>
+  <div *ngIf="status.planningRequested">
+    <div class="StatusComponent__appliance-status">
+      <div *ngIf="isTrafficLightRed()">
+        <span class="StatusComponent__appliance-status-label">{{'StatusComponent.earliestStart' | translate}}</span>
+        <span class="StatusComponent__appliance-status-value">{{toHourMinuteWithUnits(status.earliestStart)}}</span>
+      </div>
+      <div *ngIf="isTrafficLightYellow()">
+        <div *ngIf="status.interruptedSince != null">
+          <span class="StatusComponent__appliance-status-label">{{'StatusComponent.interruptedSince' | translate}}</span>
+          <span class="StatusComponent__appliance-status-value">{{toHourMinuteWithUnits(status.interruptedSince)}}</span>
+        </div>
+        <span class="StatusComponent__appliance-status-label">{{'StatusComponent.latestStart' | translate}}</span>
+        <span class="StatusComponent__appliance-status-value">{{toHourMinuteWithUnits(status.latestStart)}}</span>
+      </div>
+      <div *ngIf="isTrafficLightGreen()">
+        <span class="StatusComponent__appliance-status-label">{{'StatusComponent.runningTimeCompleted' | translate}}</span>
+        <span class="StatusComponent__appliance-status-value">{{toHourMinuteWithUnits(status.runningTime)}}</span>
+      </div>
+    </div>
+    <div *ngIf="status.remainingMinRunningTime == null">
+      <div class="StatusComponent__appliance-status">
+        <span class="StatusComponent__appliance-status-label">{{getRemainingRunningTimeLabel(status)}}</span>
+        <span class="StatusComponent__appliance-status-value">{{toHourMinuteWithUnits(status.remainingMaxRunningTime)}}</span>
+      </div>
+    </div>
+    <div *ngIf="status.remainingMinRunningTime != null">
+      <div class="StatusComponent__appliance-status">
+        <span class="StatusComponent__appliance-status-label">{{getRemainingMinRunningTimeLabel(status)}}</span>
+        <span class="StatusComponent__appliance-status-value">{{toHourMinuteWithUnits(status.remainingMinRunningTime)}}</span>
+      </div>
+      <div class="StatusComponent__appliance-status">
+        <span class="StatusComponent__appliance-status-label">{{getRemainingMaxRunningTimeLabel(status)}}</span>
+        <span class="StatusComponent__appliance-status-value">{{toHourMinuteWithUnits(status.remainingMaxRunningTime)}}</span>
+      </div>
+    </div>
+  </div>
+</div>

@@ -15,55 +15,42 @@
   ~ with this program; if not, write to the Free Software Foundation, Inc.,
   ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
   -->
-<form class="ui form" [formGroup]="form" (ngSubmit)="submitForm()">
-
-  <h4 class="ui dividing header">{{'SettingsComponent.holidays' | translate}}</h4>
-  <div class="ui fields">
-    <div class="field">
-      <label>{{'SettingsComponent.holidaysEnabled' | translate}}</label>
-      <input class="ui checkbox" type="checkbox" name="holidaysEnabled" formControlName="holidaysEnabled">
+<form class="SettingsComponent" [formGroup]="form" (ngSubmit)="submitForm()">
+  <section>
+    <h2>{{'SettingsComponent.holidays' | translate}}</h2>
+    <div class="sae__fields">
+      <mat-checkbox formControlName="holidaysEnabled" (click)="toggleHolidaysEnabled()"
+      >{{'SettingsComponent.holidaysEnabled' | translate}}</mat-checkbox>
+      <mat-form-field class="sae__url">
+        <mat-label>{{'SettingsComponent.holidaysUrl' | translate}}</mat-label>
+        <input matInput type="text" formControlName="holidaysUrl"
+               placeholder="{{settingsDefaults.holidaysUrl}}"
+               required="{{formHandler.isRequired('holidaysUrl')}}">
+        <mat-error *ngIf="errors.holidaysUrl">{{errors.holidaysUrl}}</mat-error>
+      </mat-form-field>
     </div>
-    <div class="seven wide field" [class.disabled]="!isHolidaysEnabled()">
-      <label>{{'SettingsComponent.holidaysUrl' | translate}}</label>
-      <input type="text" name="holidaysUrl" placeholder="{{settingsDefaults.holidaysUrl}}"
-             formControlName="holidaysUrl">
-      <div *ngIf="errors.holidaysUrl" class="ui negative message">{{errors.holidaysUrl}}</div>
-    </div>
-  </div>
+  </section>
 
-  <h4 class="ui dividing header">{{'SettingsComponent.modbus' | translate}}</h4>
-  <div class="sae-block" formArrayName="modbus">
-    <div *ngFor="let modbusFormGroup of modbusFormArray.controls;let i = index;last as l" [formGroupName]="i">
-      <div class="ui hidden divider"></div>
-      <div class="ui fields">
-        <div class="field">
-          <label>{{'SettingsComponent.modbusTcpId' | translate}}</label>
-          <input type="text" name="modbusTcpId" formControlName="modbusTcpId">
-        </div>
-        <div class="field">
-          <label>{{'SettingsComponent.modbusTcpHost' | translate}}</label>
-          <input type="text" name="modbusTcpHost" placeholder="{{settingsDefaults.modbusTcpHost}}"
-                 formControlName="modbusTcpHost">
-          <div *ngIf="errors.modbusTcpHost" class="ui negative message">{{errors.modbusTcpHost}}</div>
-        </div>
-        <div class="field">
-          <label>{{'SettingsComponent.modbusTcpPort' | translate}}</label>
-          <input type="text" name="modbusTcpPort" placeholder="{{settingsDefaults.modbusTcpPort}}"
-                 formControlName="modbusTcpPort">
-          <div *ngIf="errors.modbusTcpPort" class="ui negative message">{{errors.modbusTcpPort}}</div>
-        </div>
-        <div class="field icon-field">
-          <i class="icon big red remove circle" (click)="removeModbus(i)"></i>
-          <i class="icon big green add circle" (click)="addModbus()" *ngIf="l"></i>
-        </div>
+  <mat-divider></mat-divider>
+
+  <section>
+    <h2>{{'SettingsComponent.modbus' | translate}}</h2>
+    <div formArrayName="modbusSettings">
+      <div *ngFor="let modbusSetting of settings.modbusSettings; index as i">
+        <app-settings-modbus
+          [formGroupName]="i"
+          [form]="getModbusSettingFormGroup(i)"
+          [modbusSetting]="modbusSetting"
+          [settingsDefaults]="settingsDefaults"
+          (remove)="onModbusSettingRemove(i)"
+          #modbusSettings
+        ></app-settings-modbus>
       </div>
+      <button mat-raised-button type="button" (click)="addModbusSetting()">{{'button.new' | translate}}</button>
     </div>
-    <div *ngIf="settings.modbusSettings.length === 0">
-      <i class="icon big green add circle" (click)="addModbus()"></i>
-    </div>
-  </div>
+  </section>
 
-  <div class="mandatory-fields">{{'dialog.mandatoryfields'|translate}}</div>
-  <button type="submit" class="ui primary button" [disabled]="form.pristine||form.invalid">
+  <div class="sae__mandatory_fields_hint">{{'dialog.mandatoryfields'|translate}}</div>
+  <button mat-raised-button type="submit" color="primary" [disabled]="form.pristine||form.invalid">
     {{'button.save' | translate}}</button>
 </form>

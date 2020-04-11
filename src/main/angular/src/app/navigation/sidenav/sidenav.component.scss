@@ -1,0 +1,31 @@
+.SidenavComponent {
+
+  &__nav-caption {
+    display: inline-block;
+    padding-left: 0.3rem;
+  }
+
+  &__submenu-item {
+    height: 2rem !important;
+    font-size: 0.875rem;
+    line-height: 0.875rem;
+  }
+
+  &__submenu-icon {
+    height: 0.875rem !important;
+  }
+
+  &__appliance-name {
+    font-size: 0.875rem;
+    padding-left: 0.3rem;
+  }
+}
+
+a {
+  text-decoration: none;
+  color: white;
+}
+
+a:hover, a:active {
+  color: lightgray;
+}

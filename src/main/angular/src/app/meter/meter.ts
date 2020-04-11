@@ -16,9 +16,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {S0ElectricityMeter} from '../meter-s0/s0-electricity-meter';
-import {ModbusElectricityMeter} from '../meter-modbus/modbus-electricity-meter';
-import {HttpElectricityMeter} from '../meter-http/http-electricity-meter';
+import {S0ElectricityMeter} from './s0/s0-electricity-meter';
+import {ModbusElectricityMeter} from './modbus/modbus-electricity-meter';
+import {HttpElectricityMeter} from './http/http-electricity-meter';
 
 export class Meter {
   type: string;

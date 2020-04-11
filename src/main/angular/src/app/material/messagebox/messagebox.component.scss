@@ -1,0 +1,22 @@
+.messagebox {
+}
+
+/*
+ Colors from https://mdbootstrap.com/docs/angular/components/alerts/
+ */
+.messagebox-level-info {
+  background-color: #d9edf7;
+}
+
+.messagebox-level-warn {
+  background-color: #fcf8e3;
+}
+
+.messagebox-level-error {
+  background-color: #f2dede;
+}
+
+.messagebox-content {
+  align-self: center;
+  margin-left: 5px;
+}

@@ -1,0 +1,32 @@
+<div class="ScheduleTimeframeConsecutivedaysComponent sae__fields">
+  <mat-form-field class="ScheduleTimeframeConsecutivedaysComponent__startDayOfWeek">
+    <mat-label>{{'ScheduleTimeframeConsecutivedaysComponent.startDayOfWeek' | translate}}</mat-label>
+    <mat-select formControlName="startDayOfWeek"
+                required="{{formHandler.isRequired('startDayOfWeek')}}">
+      <mat-option *ngFor="let dayOfWeek of daysOfWeek" [value]="dayOfWeek.id">
+        {{dayOfWeek.name}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field class="ScheduleTimeframeConsecutivedaysComponent__startTime">
+    <mat-label>{{'ScheduleTimeframeConsecutivedaysComponent.startTime' | translate}}</mat-label>
+    <input matInput type="text" formControlName="startTime" class="clockpicker"
+           required="{{formHandler.isRequired('startTime')}}">
+    <mat-error *ngIf="errors.startTime">{{errors.startTime}}</mat-error>
+  </mat-form-field>
+  <mat-form-field class="ScheduleTimeframeConsecutivedaysComponent__endDayOfWeek">
+    <mat-label>{{'ScheduleTimeframeConsecutivedaysComponent.endDayOfWeek' | translate}}</mat-label>
+    <mat-select formControlName="endDayOfWeek"
+                required="{{formHandler.isRequired('endDayOfWeek')}}">
+      <mat-option *ngFor="let dayOfWeek of daysOfWeek" [value]="dayOfWeek.id">
+        {{dayOfWeek.name}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field class="ScheduleTimeframeConsecutivedaysComponent__endTime">
+    <mat-label>{{'ScheduleTimeframeConsecutivedaysComponent.endTime' | translate}}</mat-label>
+    <input matInput type="text" formControlName="endTime" class="clockpicker"
+           required="{{formHandler.isRequired('endTime')}}">
+    <mat-error *ngIf="errors.endTime">{{errors.endTime}}</mat-error>
+  </mat-form-field>
+</div>

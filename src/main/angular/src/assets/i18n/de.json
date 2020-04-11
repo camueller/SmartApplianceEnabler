@@ -51,6 +51,10 @@
   "ApplianceComponent.error.minPowerConsumption_pattern": "Die minimale Leistungsaufnahme muss in Watt angegeben werden",
   "ApplianceComponent.error.maxPowerConsumption_required": "Die maximale Leistungsaufnahme muss angegeben werden",
   "ApplianceComponent.error.maxPowerConsumption_pattern": "Die maximale Leistungsaufnahme muss in Watt angegeben werden",
+  "ApplianceComponent.error.minOnTime_pattern": "Die minimale Einschaltdauer muss in Sekunden angegeben werden",
+  "ApplianceComponent.error.maxOnTime_pattern": "Die maximale Einschaltdauer muss in Sekunden angegeben werden",
+  "ApplianceComponent.error.minOffTime_pattern": "Die minimale Ausschaltdauer muss in Sekunden angegeben werden",
+  "ApplianceComponent.error.maxOffTime_pattern": "Die maximale Ausschaltdauer muss in Sekunden angegeben werden",
   "ApplianceComponent.confirmDeletion": "Wirklich löschen?",
 
   "MeterComponent.type": "Typ",
@@ -94,13 +98,17 @@
   "MeterHttpComponent.error.pollInterval_pattern": "Das Abfrage-Interval muss eine Zahl sein",
   "MeterHttpComponent.error.measurementInterval_pattern": "Das Messinterval muss eine Zahl sein",
 
+  "HeaderComponent.title": "Smart Appliance Enabler",
+
   "HttpReadComponent.url": "URL",
   "HttpReadComponent.contentType": "Content-Type",
   "HttpReadComponent.username": "Benutzername",
   "HttpReadComponent.password": "Passwort",
+  "HttpReadComponent.button.remove": "URL löschen",
+  "HttpReadComponent.button.addValue": "Weiterer Zustand",
+  "HttpReadComponent.button.removeValue": "Zustand löschen",
   "HttpReadComponent.error.url_required": "Die URL muss angegeben werden",
   "HttpReadComponent.error.url_pattern": "Die URL muss gültig sein",
-  "HttpReadComponent.button.addValue": "Weiterer Zustand",
 
   "HttpReadValueComponent.name": "Zustand",
   "HttpReadValueComponent.data": "Daten",
@@ -113,9 +121,11 @@
   "HttpWriteComponent.contentType": "Content-Type",
   "HttpWriteComponent.username": "Benutzername",
   "HttpWriteComponent.password": "Passwort",
+  "HttpWriteComponent.button.remove": "URL löschen",
+  "HttpWriteComponent.button.addValue": "Weiterer Zustand/Aktion",
+  "HttpWriteComponent.button.removeValue": "Zustand löschen",
   "HttpWriteComponent.error.url_required": "Die URL muss angegeben werden",
   "HttpWriteComponent.error.url_pattern": "Die URL muss gültig sein",
-  "HttpWriteComponent.button.addValue": "Weiterer Zustand/Aktion",
 
   "HttpWriteValueComponent.enabled": "Aktiv",
   "HttpWriteValueComponent.name": "Zustand / Aktion",
@@ -240,6 +250,8 @@
   "ModbusReadComponent.byteOrder": "Byte Reihenfolge",
   "ModbusReadComponent.factorToValue": "Umrechnungsfaktor",
   "ModbusReadComponent.button.addValue": "Weiterer Zustand",
+  "ModbusReadComponent.button.removeValue": "Zustand löschen",
+  "ModbusReadComponent.button.remove": "Register löschen",
   "ModbusReadComponent.error.address_required": "Die Register-Adresse muss angegeben werden",
   "ModbusReadComponent.error.address_pattern": "Die Register-Adresse muss als Zahl (z.B. 13) oder Hex-Zahl (z.B. 0x0A) angegeben werden",
   "ModbusReadComponent.error.bytes_pattern": "Die Anzahl der Bytes muss als Zahl angegeben werden",
@@ -251,11 +263,15 @@
   "ModbusWriteComponent.address": "Register-Adresse",
   "ModbusWriteComponent.type": "Register-Typ",
   "ModbusWriteComponent.factorToValue": "Umrechnungsfaktor",
+  "ModbusWriteComponent.button.addValue": "Weiterer Zustand",
+  "ModbusWriteComponent.button.removeValue": "Zustand löschen",
+  "ModbusWriteComponent.button.remove": "Register löschen",
   "ModbusWriteComponent.error.factorToValue_pattern": "Der Umrechnungsfaktor muss als Zahl angegeben werden",
 
   "ModbusWriteValueComponent.name": "Zustand / Aktion",
   "ModbusWriteValueComponent.value": "Wert",
 
+  "SchedulesComponent.message.notControllable": "Schaltzeiten können nur für Geräte mit Schalter konfiguriert werden.",
 
   "ScheduleComponent.schedule": "Zeitplan",
   "ScheduleComponent.enabled": "aktiviert",
@@ -316,8 +332,8 @@
   "ScheduleRequestSocComponent.error.soc_required": "Die State of Charge (SOC) muss angegeben werden",
 
 
-  "StatusComponent.noControllableAppliances_title": "Keine steuerbaren Geräte",
-  "StatusComponent.noControllableAppliances_message": "In der Statusanzeige wird der Status aller steuerbaren Geräte angezeigt. Wenn keine Geräte konfiguriert sind oder diese nicht steuerbar sind, ist die Liste leer.",
+  "StatusComponent.title": "Steuerbare Geräte",
+  "StatusComponent.message.noControllableAppliances": "Keine steuerbaren Geräte vorhanden.",
   "StatusComponent.tooltipStopLight": "Klick für sofortigen Stop",
   "StatusComponent.tooltipGoLight": "Klick für sofortigen Start",
   "StatusComponent.earliestStart": "Start frühestens in ",
@@ -335,7 +351,7 @@
   "StatusComponent.energyCharged": "Geladene Energiemenge: ",
   "StatusComponent.energyChargePower": "Aktuelle Ladeleistung: ",
   "StatusComponent.energyLatestEnd": "Ende spätestens: ",
-  "StatusComponent.ev": "Fahrzeug wählen",
+  "StatusComponent.ev": "Fahrzeug",
   "StatusComponent.state": "Status",
   "StatusComponent.state.VEHICLE_NOT_CONNECTED": "Getrennt",
   "StatusComponent.state.VEHICLE_CONNECTED": "Verbunden",
@@ -382,7 +398,7 @@
   "daysOfWeek_sunday": "Sonntag",
   "daysOfWeek_holiday": "Feiertag",
 
-  "button.new": "Neu",
+  "button.new": "Hinzufügen",
   "button.save": "Speichern",
   "button.delete": "Löschen",
   "dialog.mandatoryfields": "Die mit einem Stern (*) gekennzeichneten Felder sind Pflichtfelder.",

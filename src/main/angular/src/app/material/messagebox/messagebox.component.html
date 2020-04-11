@@ -1,0 +1,12 @@
+<mat-card class="messagebox"
+          [class.messagebox-level-info]="isLevelInfo"
+          [class.messagebox-level-warn]="isLevelWarn"
+          [class.messagebox-level-error]="isLevelError"
+>
+  <div fxFlex fxLayout>
+    <mat-icon>{{icon}}</mat-icon>
+    <div class="messagebox-content">
+      <ng-content></ng-content>
+    </div>
+  </div>
+</mat-card>

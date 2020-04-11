@@ -1,0 +1,74 @@
+.StatusComponent {
+  font-size: 0.875rem;
+
+  &__appliances {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  &__appliance {
+    display: flex;
+    flex-direction: row;
+    height: fit-content;
+    width: fit-content;
+    padding: 0.375rem;
+    margin: 0.375rem;
+    border-radius: 0.5rem;
+    border: 1px solid black;
+  }
+
+  &__appliance-details {
+    display: flex;
+    flex-direction: column;
+    margin-left: 0.375rem;
+  }
+
+  &__appliance-details-row {
+    display: flex;
+    align-items: center;
+    padding: 0.1875rem 0;
+  }
+
+  &__appliance-button-row {
+    justify-content: center;
+  }
+
+  &__appliance-type {
+    font-weight: bold;
+    color: rgba(0,0,0,.6)
+  }
+
+  &__appliance-name {
+    font-weight: bold;
+    font-size: 1.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  &__appliance-status {
+    line-height: 1.4rem;
+    white-space: nowrap;
+  }
+
+  &__appliance-status-label {
+    padding-right: 0.1875rem;
+    color: rgba(0,0,0,.6);
+  }
+
+  &__appliance-status-value {
+    line-height: 1.4rem;
+  }
+
+  &__appliance-status-value-indented {
+    padding-left: 1rem;
+  }
+
+  &__traffic-light-explanation {
+    min-height: 2.375rem;
+    margin: 0.3125rem;
+  }
+
+  &__traffic-light-explanation-text {
+    margin-left: 1.5rem;
+  }
+}

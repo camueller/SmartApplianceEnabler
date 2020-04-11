@@ -1,0 +1,28 @@
+<div class="MeterS0Component sae__fields">
+  <mat-form-field class="gpio">
+    <mat-label>{{'MeterS0Component.gpio' | translate}}</mat-label>
+    <input matInput type="text" formControlName="gpio"
+           required="{{formHandler.isRequired('gpio')}}">
+    <mat-error *ngIf="errors.gpio">{{errors.gpio}}</mat-error>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>{{'MeterS0Component.pinPullResistance' | translate}}</mat-label>
+    <mat-select formControlName="pinPullResistance" required="{{formHandler.isRequired('pinPullResistance')}}">
+      <mat-option *ngFor="let pinPullResistanceType of pinPullResistanceTypes" [value]="pinPullResistanceType.value">
+        {{pinPullResistanceType.viewValue}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field class="impulsesPerKwh">
+    <mat-label>{{'MeterS0Component.impulsesPerKwh' | translate}}</mat-label>
+    <input matInput type="text" formControlName="impulsesPerKwh"
+           required="{{formHandler.isRequired('impulsesPerKwh')}}">
+    <mat-error *ngIf="errors.impulsesPerKwh">{{errors.impulsesPerKwh}}</mat-error>
+  </mat-form-field>
+  <mat-form-field class="measurementInterval">
+    <mat-label>{{'MeterS0Component.measurementInterval' | translate}}</mat-label>
+    <input matInput type="text" formControlName="measurementInterval"
+           required="{{formHandler.isRequired('measurementInterval')}}">
+    <mat-error *ngIf="errors.measurementInterval">{{errors.measurementInterval}}</mat-error>
+  </mat-form-field>
+</div>

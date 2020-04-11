@@ -7,8 +7,6 @@ import {
   Validators
 } from '@angular/forms';
 
-declare const $: any;
-
 export class FormHandler {
 
   formControlNamesRequired: string[] = [];
@@ -58,13 +56,7 @@ export class FormHandler {
     }
   }
 
-  public markLabelsRequired() {
-    this.formControlNamesRequired.forEach(formControlName => {
-      if (typeof $ !== 'undefined') {
-        $(`input[ng-reflect-name="${formControlName}"]`).parent().children('label').addClass('required');
-        $(`select[ng-reflect-name="${formControlName}"]`).parent().children('label').addClass('required');
-        $(`sui-select[ng-reflect-name="${formControlName}"]`).parent().children('label').addClass('required');
-      }
-    });
+  public isRequired(formControlName: string) {
+    return this.formControlNamesRequired.indexOf(formControlName) >= 0;
   }
 }

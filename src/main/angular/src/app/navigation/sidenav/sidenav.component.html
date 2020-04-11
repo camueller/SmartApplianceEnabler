@@ -1,0 +1,38 @@
+<mat-nav-list class="SidenavComponent">
+  <a mat-list-item (click)="onSidenavClose(true)">
+    <mat-icon>menu</mat-icon><span class="SidenavComponent__nav-caption">Close</span>
+  </a>
+  <a mat-list-item routerLink="/status" (click)="onSidenavClose()">
+    <mat-icon>traffic</mat-icon><span class="SidenavComponent__nav-caption">{{'AppComponent.status' | translate}}</span>
+  </a>
+  <a mat-list-item routerLink="/settings" (click)="onSidenavClose()">
+    <mat-icon>settings</mat-icon><span class="SidenavComponent__nav-caption">{{'AppComponent.settings' | translate}}</span>
+  </a>
+  <a mat-list-item routerLink="/appliance" (click)="onSidenavClose()">
+    <mat-icon>add</mat-icon><span class="SidenavComponent__nav-caption">{{'AppComponent.appliance.new' | translate}}</span>
+  </a>
+  <mat-divider *ngIf="hasAppliances"></mat-divider>
+
+  <div *ngFor="let applianceHeader of applianceHeaders; last as last">
+    <a mat-list-item [routerLink]="['appliance', applianceHeader.id]" (click)="onSidenavClose()">
+      <mat-icon>devices_other</mat-icon>
+      <div fxLayout="column">
+        <div class="SidenavComponent__nav-caption appliance-type">{{getTranslatedType(applianceHeader.type)}}</div>
+        <div class="SidenavComponent__appliance-name">{{applianceHeader.vendor}} {{applianceHeader.name}}</div>
+      </div>
+    </a>
+    <a mat-list-item [routerLink]="['meter', applianceHeader.id]" class="SidenavComponent__submenu-item" (click)="onSidenavClose()">
+      <mat-icon class="SidenavComponent__submenu-icon" [inline]="true">show_chart</mat-icon>
+      <span class="SidenavComponent__nav-caption">{{'AppComponent.meter' | translate}}</span>
+    </a>
+    <a mat-list-item [routerLink]="['control', applianceHeader.id]" class="SidenavComponent__submenu-item" (click)="onSidenavClose()">
+      <mat-icon class="SidenavComponent__submenu-icon" [inline]="true">power_settings_new</mat-icon>
+      <span class="SidenavComponent__nav-caption">{{'AppComponent.control' | translate}}</span>
+    </a>
+    <a mat-list-item [routerLink]="['schedule', applianceHeader.id]" class="SidenavComponent__submenu-item" (click)="onSidenavClose()">
+      <mat-icon class="SidenavComponent__submenu-icon" [inline]="true">access_time</mat-icon>
+      <span class="SidenavComponent__nav-caption">{{'AppComponent.schedules' | translate}}</span>
+    </a>
+    <mat-divider *ngIf="!last"></mat-divider>
+  </div>
+</mat-nav-list>

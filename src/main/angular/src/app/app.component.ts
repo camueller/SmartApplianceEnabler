@@ -16,63 +16,48 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {Component, OnInit} from '@angular/core';
-import {ApplianceService} from './appliance/appliance.service';
-import {ApplianceHeader} from './appliance/appliance-header';
-import {AppliancesReloadService} from './appliance/appliances-reload-service';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
-import {SettingsService} from './settings/settings-service';
-
-declare const $: any;
+import {MatSidenav} from '@angular/material/sidenav';
+import {Subscription} from 'rxjs';
+import {MediaChange, MediaObserver} from '@angular/flex-layout';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
+  @ViewChild('sidenav')
+  sidenav: MatSidenav;
+  watcher: Subscription;
+  activeMediaQueryAlias = '';
 
-  applianceHeaders: ApplianceHeader[];
-  version: string;
-  typePrefix = 'ApplianceComponent.type.';
-  translatedTypes = new Object();
-
-  constructor(private applianceService: ApplianceService,
-              private appliancesReloadService: AppliancesReloadService,
-              private settingsService: SettingsService,
-              private translate: TranslateService) {
+  constructor(
+    private mediaObserver: MediaObserver,
+    private translate: TranslateService
+  ) {
     translate.setDefaultLang('de');
   }
 
-  toggleSidebar() {
-    $('.ui.sidebar').sidebar({dimPage: false, closable: false});
-    $('.ui.sidebar').sidebar('toggle');
-  }
-
-  ngOnInit()  {
-    this.settingsService.getInfo().subscribe(info => this.version = info.version);
-    this.loadAppliances();
-    this.appliancesReloadService.triggered.subscribe(() => {
-      this.loadAppliances();
+  ngOnInit(): void {
+    this.watcher = this.mediaObserver.media$.subscribe((change: MediaChange) => {
+      this.activeMediaQueryAlias = change.mqAlias;
     });
   }
 
-  loadAppliances() {
-    this.applianceService.getApplianceHeaders().subscribe(applianceHeaders => {
-      this.applianceHeaders = applianceHeaders;
-
-      const types = [];
-      this.applianceHeaders.forEach(applianceHeader => types.push(this.typePrefix + applianceHeader.type));
-      if (types.length > 0) {
-        this.translate.get(types).subscribe(translatedTypes => this.translatedTypes = translatedTypes);
-      }
-    });
+  get sideNavMode() {
+    return this.activeMediaQueryAlias === 'xs' ? 'over' : 'side';
   }
 
-  getTranslatedType(type: string): string {
-    if (this.translatedTypes != null) {
-      return this.translatedTypes[this.typePrefix + type];
+  closeSideNav(force: boolean) {
+    if (force || this.activeMediaQueryAlias === 'xs') {
+      this.sidenav.close();
     }
-    return '';
   }
+
+  toggleSideNav() {
+    this.sidenav.toggle();
+  }
+
 }

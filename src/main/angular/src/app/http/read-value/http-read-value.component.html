@@ -1,0 +1,34 @@
+<div class="HttpReadValueComponent sae__fields" [formGroup]="form">
+  <mat-form-field class="sae__value-name">
+    <mat-label>{{'HttpReadValueComponent.name' | translate}}</mat-label>
+    <mat-select formControlName="name" required="{{formHandler.isRequired('name')}}">
+      <mat-option *ngFor="let valueName of valueNames" [value]="valueName">
+        {{getTranslatedValueName(valueName)}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field class="HttpReadValueComponent__data">
+    <mat-label>{{'HttpReadValueComponent.data' | translate}}</mat-label>
+    <input matInput type="text" formControlName="data"
+           required="{{formHandler.isRequired('data')}}">
+    <mat-error *ngIf="errors.data">{{errors.data}}</mat-error>
+  </mat-form-field>
+  <mat-form-field class="sae__contentPath">
+    <mat-label>{{'HttpReadValueComponent.path' | translate}}</mat-label>
+    <input matInput type="text" formControlName="path"
+           required="{{formHandler.isRequired('path')}}">
+    <mat-error *ngIf="errors.path">{{errors.path}}</mat-error>
+  </mat-form-field>
+  <mat-form-field class="sae__regex">
+    <mat-label>{{'HttpReadValueComponent.extractionRegex' | translate}}</mat-label>
+    <input matInput type="text" formControlName="extractionRegex"
+           required="{{formHandler.isRequired('extractionRegex')}}">
+    <mat-error *ngIf="errors.extractionRegex">{{errors.extractionRegex}}</mat-error>
+  </mat-form-field>
+  <mat-form-field class="sae__factorToValue" *ngIf="! disableFactorToValue">
+    <mat-label>{{'HttpReadValueComponent.factorToValue' | translate}}</mat-label>
+    <input matInput type="text" formControlName="factorToValue"
+           required="{{formHandler.isRequired('factorToValue')}}">
+    <mat-error *ngIf="errors.factorToValue">{{errors.factorToValue}}</mat-error>
+  </mat-form-field>
+</div>

@@ -1,0 +1,86 @@
+<div class="ControlEvchargerComponent">
+  <h2>{{'ControlEvchargerComponent.heading' | translate}}</h2>
+  <div class="sae__fields">
+    <mat-form-field class="ControlEvchargerComponent__template">
+      <mat-label>{{'ControlEvchargerComponent.template' | translate}}</mat-label>
+      <mat-select formControlName="template"
+                  (selectionChange)="useTemplate()"
+                  placeholder="aus vorkonfigurierten Ladengeräten wählen">
+        <mat-option *ngFor="let templateName of templateNames" [value]="templateName">
+          {{templateName}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="ControlEvchargerComponent__protocol">
+      <mat-label>{{'ControlEvchargerComponent.protocol' | translate}}</mat-label>
+      <mat-select formControlName="protocol"
+                  placeholder="wählen für manuelle Konfiguration">
+        <mat-option *ngFor="let protocol of protocols" [value]="protocol.value">
+          {{protocol.viewValue}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div *ngIf="isConfigured()">
+    <div class="sae__fields">
+      <mat-form-field class="sae__voltage">
+        <mat-label>{{'ControlEvchargerComponent.voltage' | translate}}</mat-label>
+        <input matInput type="text" formControlName="voltage"
+               placeholder="{{controlDefaults.electricVehicleChargerDefaults_voltage}}"
+               required="{{formHandler.isRequired('voltage')}}">
+        <mat-error *ngIf="errors.voltage">{{errors.voltage}}</mat-error>
+      </mat-form-field>
+      <mat-form-field class="sae__phases">
+        <mat-label>{{'ControlEvchargerComponent.phases' | translate}}</mat-label>
+        <input matInput type="text" formControlName="phases"
+               placeholder="{{controlDefaults.electricVehicleChargerDefaults_phases}}"
+               required="{{formHandler.isRequired('phases')}}">
+        <mat-error *ngIf="errors.phases">{{errors.phases}}</mat-error>
+      </mat-form-field>
+      <mat-form-field class="sae__pollInterval">
+        <mat-label>{{'ControlEvchargerComponent.pollInterval' | translate}}</mat-label>
+        <input matInput type="text" formControlName="pollInterval"
+               placeholder="{{controlDefaults.electricVehicleChargerDefaults_pollInterval}}"
+               required="{{formHandler.isRequired('pollInterval')}}">
+        <mat-error *ngIf="errors.pollInterval">{{errors.pollInterval}}</mat-error>
+      </mat-form-field>
+      <mat-form-field class="ControlEvchargerComponent__startChargingStateDetectionDelay">
+        <mat-label>{{'ControlEvchargerComponent.startChargingStateDetectionDelay' | translate}}</mat-label>
+        <input matInput type="text" formControlName="startChargingStateDetectionDelay"
+               placeholder="{{controlDefaults.electricVehicleChargerDefaults_startChargingStateDetectionDelay}}"
+               matTooltip="{{'ControlEvchargerComponent.startChargingStateDetectionDelay.tooltip' | translate}}"
+               required="{{formHandler.isRequired('startChargingStateDetectionDelay')}}">
+        <mat-error *ngIf="errors.startChargingStateDetectionDelay">{{errors.startChargingStateDetectionDelay}}</mat-error>
+      </mat-form-field>
+      <mat-checkbox formControlName="forceInitialCharging"
+                    matTooltip="{{'ControlEvchargerComponent.forceInitialCharging.tooltip' | translate}}"
+      >{{'ControlEvchargerComponent.forceInitialCharging' | translate}}</mat-checkbox>
+    </div>
+  </div>
+</div>
+<div class="sae-block">
+  <app-control-evcharger-modbus *ngIf="isProtocolModbus"
+                                [evModbusControl]="evCharger.modbusControl"
+                                [settings]="settings"
+                                [settingsDefaults]="settingsDefaults"
+                                [translationKeys]="modbusTranslationKeys"
+  ></app-control-evcharger-modbus>
+  <app-control-evcharger-http *ngIf="isProtocolHttp"
+                              [evHttpControl]="evCharger.httpControl"
+  ></app-control-evcharger-http>
+  <h2>{{'ControlEvchargerComponent.headingEv' | translate}}</h2>
+  <div formArrayName="electricVehicles">
+    <div *ngFor="let electricVehicle of evCharger.vehicles; index as i; last as l">
+      <app-electric-vehicle
+        [formGroupName]="i"
+        [form]="getElectricVehicleFormGroup(i)"
+        [electricVehicle]="electricVehicle"
+        [controlDefaults]="controlDefaults"
+        (remove)="onElectricVehicleRemove(i)"
+        #electricVehicles
+      ></app-electric-vehicle>
+    </div>
+  </div>
+  <button mat-raised-button type="button" (click)="addElectricVehicle()">
+    {{'ControlEvchargerComponent.button.newEv' | translate}}</button>
+</div>

@@ -7,7 +7,7 @@ import {SaeService} from '../shared/sae-service';
 import {HttpClient} from '@angular/common/http';
 import {Logger} from '../log/logger';
 import {map} from 'rxjs/operators';
-import {ElectricVehicle} from '../control-evcharger/electric-vehicle';
+import {ElectricVehicle} from './evcharger/electric-vehicle/electric-vehicle';
 
 @Injectable()
 export class ControlService extends SaeService {

@@ -16,11 +16,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {DayTimeframe} from '../schedule-timeframe-day/day-timeframe';
-import {ConsecutiveDaysTimeframe} from '../schedule-timeframe-consecutivedays/consecutive-days-timeframe';
-import {RuntimeRequest} from '../schedule-request-runtime/runtime-request';
-import {EnergyRequest} from '../schedule-request-energy/energy-request';
-import {SocRequest} from '../schedule-request-soc/soc-request';
+import {RuntimeRequest} from './request/runtime/runtime-request';
+import {EnergyRequest} from './request/energy/energy-request';
+import {DayTimeframe} from './timeframe/day/day-timeframe';
+import {ConsecutiveDaysTimeframe} from './timeframe/consecutivedays/consecutive-days-timeframe';
+import {SocRequest} from './request/soc/soc-request';
 
 export class Schedule {
   '@class' = 'de.avanux.smartapplianceenabler.schedule.Schedule';

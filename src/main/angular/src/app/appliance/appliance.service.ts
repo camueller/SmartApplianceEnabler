@@ -35,15 +35,12 @@ export class ApplianceService extends SaeService {
 
   getApplianceHeaders(): Observable<Array<ApplianceHeader>> {
     return this.http.get(`${SaeService.API}/appliances`)
-      .pipe(map((applianceHeaders: Array<ApplianceHeader>) => {
-        return applianceHeaders.map(
-          (applianceHeader: any) => new ApplianceHeader(...applianceHeader));
-      }));
+      .pipe(map((applianceHeaders: Array<ApplianceHeader>) => applianceHeaders));
   }
 
   getAppliance(id: string): Observable<Appliance> {
     return this.http.get(`${SaeService.API}/appliance?id=${id}`)
-      .pipe(map((applianceInfo: any) => new Appliance(...applianceInfo)));
+      .pipe(map((appliance: Appliance) => appliance));
   }
 
   updateAppliance(appliance: Appliance, create: boolean): Observable<any> {

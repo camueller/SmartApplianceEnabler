@@ -16,7 +16,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, QueryList, ViewChildren} from '@angular/core';
 import {ActivatedRoute, CanDeactivate} from '@angular/router';
 import {FormArray, FormGroup, Validators} from '@angular/forms';
 import {SettingsService} from './settings-service';
@@ -31,16 +31,19 @@ import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {Logger} from '../log/logger';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {FormHandler} from '../shared/form-handler';
-import {ModbusSettings} from './modbus-settings';
+import {SettingsModbusComponent} from './modbus/settings-modbus.component';
+import {ModbusSetting} from './modbus/modbus-setting';
 
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
-  styleUrls: ['../global.css']
+  styleUrls: ['./settings.component.scss']
 })
 export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponent> {
   settings: Settings;
   settingsDefaults: SettingsDefaults;
+  @ViewChildren('modbusSettings')
+  modbusSettingComps: QueryList<SettingsModbusComponent>;
   form: FormGroup;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};
@@ -74,49 +77,48 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
     });
   }
 
-  ngAfterViewChecked() {
-    this.formHandler.markLabelsRequired();
-  }
-
   buildForm() {
-    const modbusFormArray = new FormArray([]);
-    this.settings.modbusSettings.forEach((modbusSettings) => modbusFormArray.push(this.createModbusFormGroup(modbusSettings)));
-
-    this.form = new FormGroup({modbus: modbusFormArray});
+    this.form = new FormGroup({});
     this.formHandler.addFormControl(this.form, 'holidaysEnabled', this.settings.holidaysEnabled);
     this.formHandler.addFormControl(this.form, 'holidaysUrl', this.settings.holidaysUrl,
       [Validators.pattern(InputValidatorPatterns.URL)]);
+    this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'modbusSettings', this.settings.modbusSettings);
+    this.setHolidaysUrlEnabled(this.settings.holidaysEnabled);
   }
 
   isHolidaysEnabled() {
     return this.form.controls.holidaysEnabled.value;
   }
 
-  get modbusFormArray() {
-    return this.form.controls.modbus as FormArray;
+  setHolidaysUrlEnabled(enabled: boolean) {
+    if (enabled) {
+      this.form.controls.holidaysUrl.enable();
+    } else {
+      this.form.controls.holidaysUrl.disable();
+    }
   }
 
-  createModbusFormGroup(modbusSettings?: ModbusSettings): FormGroup {
-    const modbusFormGroup = new FormGroup({});
-    this.formHandler.addFormControl(modbusFormGroup, 'modbusTcpId', modbusSettings && modbusSettings.modbusTcpId);
-    this.formHandler.addFormControl(modbusFormGroup, 'modbusTcpHost', modbusSettings && modbusSettings.modbusTcpHost);
-    this.formHandler.addFormControl(modbusFormGroup, 'modbusTcpPort', modbusSettings && modbusSettings.modbusTcpPort);
-    return modbusFormGroup;
+  toggleHolidaysEnabled() {
+    this.setHolidaysUrlEnabled(!this.isHolidaysEnabled());
   }
 
-  getModbusFormGroup(index: number) {
-    return this.modbusFormArray.controls[index];
+  get modbusSettingsFormArray() {
+    return this.form.controls.modbusSettings as FormArray;
   }
 
-  addModbus() {
-    this.settings.modbusSettings.push(new ModbusSettings());
-    this.modbusFormArray.push(this.createModbusFormGroup());
+  getModbusSettingFormGroup(index: number) {
+    return this.modbusSettingsFormArray.controls[index];
+  }
+
+  addModbusSetting() {
+    this.settings.modbusSettings.push(new ModbusSetting());
+    this.modbusSettingsFormArray.push(new FormGroup({}));
     this.form.markAsDirty();
   }
 
-  removeModbus(index: number) {
+  onModbusSettingRemove(index: number) {
     this.settings.modbusSettings.splice(index, 1);
-    this.modbusFormArray.removeAt(index);
+    this.modbusSettingsFormArray.removeAt(index);
     this.form.markAsDirty();
   }
 
@@ -127,21 +129,20 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
     return this.dialogService.confirm(this.discardChangesMessage);
   }
 
-  submitForm() {
+  updateModelFromForm() {
     this.settings.holidaysEnabled = this.form.controls.holidaysEnabled.value;
     this.settings.holidaysUrl = this.form.controls.holidaysUrl.value;
-
     this.settings.modbusSettings = [];
-    for (let i = 0; i < this.modbusFormArray.length; i++) {
-      const modbusFormGroup = this.modbusFormArray.at(i) as FormGroup;
-      const modbusSettings = new ModbusSettings({
-        modbusTcpId: modbusFormGroup.controls.modbusTcpId.value,
-        modbusTcpHost: modbusFormGroup.controls.modbusTcpHost.value,
-        modbusTcpPort: modbusFormGroup.controls.modbusTcpPort.value,
-      });
-      this.settings.modbusSettings.push(modbusSettings);
-    }
+    this.modbusSettingComps.forEach(modbusSettingComponent => {
+      const modbusSetting = modbusSettingComponent.updateModelFromForm();
+      if (modbusSetting) {
+        this.settings.modbusSettings.push(modbusSetting);
+      }
+    });
+  }
 
+  submitForm() {
+    this.updateModelFromForm();
     this.settingsService.updateSettings(this.settings).subscribe();
     this.form.markAsPristine();
   }

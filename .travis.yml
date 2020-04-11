@@ -31,8 +31,12 @@ script:
     npm i &&
     export BROWSERSTACK_BUILD_ID=$TRAVIS_COMMIT &&
     node_modules/.bin/testcafe --page-load-timeout 10000 "browserstack:chrome@79.0:Windows 10,browserstack:firefox@72.0:Windows 10" "src/*.spec.ts" &&
-    popd &&
-    pushd docker &&
-    ./amd64_check.sh
+    popd
+  - |
+    if [ $TRAVIS_BRANCH == "master" && $TRAVIS_PULL_REQUEST == "false" ]; then
+      pushd docker; ./amd64_check.sh
+    else
+      echo "*** Not on master branch - skipping docker push"
+    fi
 after_success:
   - bash <(curl -s https://codecov.io/bash)

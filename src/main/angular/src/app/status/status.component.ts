@@ -5,14 +5,15 @@ import {interval, Subject, Subscription} from 'rxjs';
 import {StatusService} from './status.service';
 import {DayOfWeek, DaysOfWeek} from '../shared/days-of-week';
 import {ControlService} from '../control/control-service';
-import {TrafficLightState} from '../traffic-light/traffic-light-state';
-import {TrafficLightClick} from '../traffic-light/traffic-light-click';
-import {TrafficLightComponent} from '../traffic-light/traffic-light.component';
+import { MessageBoxLevel } from '../material/messagebox/messagebox.component';
+import {TrafficLightClick} from './traffic-light/traffic-light-click';
+import {TrafficLightState} from './traffic-light/traffic-light-state';
+import {TrafficLightComponent} from './traffic-light/traffic-light.component';
 
 @Component({
   selector: 'app-status',
   templateUrl: './status.component.html',
-  styleUrls: ['./status.component.css', '../global.css']
+  styleUrls: ['./status.component.scss']
 })
 export class StatusComponent implements OnInit, OnDestroy {
 
@@ -29,6 +30,7 @@ export class StatusComponent implements OnInit, OnDestroy {
   trafficLightComps: QueryList<TrafficLightComponent>;
   applianceIdClicked: string;
   editMode = false;
+  MessageBoxLevel = MessageBoxLevel;
 
   ngOnInit() {
     DaysOfWeek.getDows(this.translate).subscribe(dows => this.dows = dows);
@@ -52,6 +54,10 @@ export class StatusComponent implements OnInit, OnDestroy {
       }
       onComplete();
     });
+  }
+
+  get hasControllableAppliances() {
+    return this.applianceStatuses.length > 0;
   }
 
   getTrafficLightStateHandler(applianceStatus: Status): TrafficLightState {

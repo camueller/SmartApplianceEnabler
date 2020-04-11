@@ -1,4 +1,4 @@
-import {ModbusWrite} from '../../../../../main/angular/src/app/modbus-write/modbus-write';
+import {ModbusWrite} from '../../../../../main/angular/src/app/modbus/write/modbus-write';
 import {
   assertInput,
   assertSelect,
@@ -8,7 +8,7 @@ import {
   selectorInputByFormControlName,
   selectorSelectByFormControlName
 } from '../../shared/form';
-import {ModbusWriteValue} from '../../../../../main/angular/src/app/modbus-write-value/modbus-write-value';
+import {ModbusWriteValue} from '../../../../../main/angular/src/app/modbus/write-value/modbus-write-value';
 import {ModbusWriteValuePage} from './modbus-write-value.page';
 import {Selector} from 'testcafe';
 

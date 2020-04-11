@@ -19,12 +19,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 import {Component, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {ActivatedRoute, CanDeactivate} from '@angular/router';
 import {ControlFactory} from './control-factory';
-import {Switch} from '../control-switch/switch';
-import {ModbusSwitch} from '../control-modbus/modbus-switch';
-import {HttpSwitch} from '../control-http/http-switch';
-import {StartingCurrentSwitch} from '../control-startingcurrent/starting-current-switch';
 import {TranslateService} from '@ngx-translate/core';
-import {AlwaysOnSwitch} from '../control-alwayson/always-on-switch';
 import {AppliancesReloadService} from '../appliance/appliances-reload-service';
 import {ControlDefaults} from './control-defaults';
 import {ControlService} from './control-service';
@@ -37,29 +32,35 @@ import {Settings} from '../settings/settings';
 import {SettingsDefaults} from '../settings/settings-defaults';
 import {Appliance} from '../appliance/appliance';
 import {FormGroup} from '@angular/forms';
-import {EvCharger} from '../control-evcharger/ev-charger';
-import {ControlEvchargerComponent} from '../control-evcharger/control-evcharger.component';
-import {ControlHttpComponent} from '../control-http/control-http.component';
-import {ControlSwitchComponent} from '../control-switch/control-switch.component';
-import {ControlModbusComponent} from '../control-modbus/control-modbus.component';
-import {ControlStartingcurrentComponent} from '../control-startingcurrent/control-startingcurrent.component';
 import {FormHandler} from '../shared/form-handler';
+import {Switch} from './switch/switch';
+import {ControlSwitchComponent} from './switch/control-switch.component';
+import {ControlHttpComponent} from './http/control-http.component';
+import {HttpSwitch} from './http/http-switch';
+import {AlwaysOnSwitch} from './alwayson/always-on-switch';
+import {ModbusSwitch} from './modbus/modbus-switch';
+import {StartingCurrentSwitch} from './startingcurrent/starting-current-switch';
+import {ControlModbusComponent} from './modbus/control-modbus.component';
+import {ControlEvchargerComponent} from './evcharger/control-evcharger.component';
+import {ControlStartingcurrentComponent} from './startingcurrent/control-startingcurrent.component';
+import {EvCharger} from './evcharger/ev-charger';
+import {ListItem} from '../shared/list-item';
 
 @Component({
   selector: 'app-control',
   templateUrl: './control.component.html',
-  styleUrls: ['../global.css'],
+  styleUrls: ['./control.component.scss'],
 })
 export class ControlComponent implements OnChanges, OnInit, CanDeactivate<ControlComponent> {
-  @ViewChild(ControlSwitchComponent, {static: false})
+  @ViewChild(ControlSwitchComponent)
   controlSwitchComp: ControlSwitchComponent;
-  @ViewChild(ControlModbusComponent, {static: false})
+  @ViewChild(ControlModbusComponent)
   controlModbusComp: ControlModbusComponent;
-  @ViewChild(ControlHttpComponent, {static: false})
+  @ViewChild(ControlHttpComponent)
   controlHttpComp: ControlHttpComponent;
-  @ViewChild(ControlEvchargerComponent, {static: false})
+  @ViewChild(ControlEvchargerComponent)
   controlEvchargerComp: ControlEvchargerComponent;
-  @ViewChild(ControlStartingcurrentComponent, {static: false})
+  @ViewChild(ControlStartingcurrentComponent)
   controlStartingcurrentComp: ControlStartingcurrentComponent;
   form: FormGroup;
   formHandler: FormHandler;
@@ -72,6 +73,7 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
   settings: Settings;
   discardChangesMessage: string;
   confirmDeleteMessage: string;
+  controlTypes: ListItem[] = [];
   TYPE_ALWAYS_ON_SWITCH = AlwaysOnSwitch.TYPE;
   TYPE_SWITCH = Switch.TYPE;
   TYPE_MODBUS_SWITCH = ModbusSwitch.TYPE;
@@ -102,6 +104,12 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
   ngOnInit() {
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.translate.get('dialog.confirmDelete').subscribe(translated => this.confirmDeleteMessage = translated);
+    const controlTypeKeys = [Switch.TYPE, ModbusSwitch.TYPE, HttpSwitch.TYPE, AlwaysOnSwitch.TYPE];
+    this.translate.get(controlTypeKeys).subscribe(translatedStrings => {
+      Object.keys(translatedStrings).forEach(key => {
+        this.controlTypes.push({value: key, viewValue: translatedStrings[key]} as ListItem);
+      });
+    });
     this.route.paramMap.subscribe(() => this.applianceId = this.route.snapshot.paramMap.get('id'));
     this.route.data.subscribe((data: {
       control: Control,
@@ -179,7 +187,11 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
       && this.control.type !== MockSwitch.TYPE;
   }
 
-  startingCurrentDetectionChanged(startingCurrentDetection: boolean) {
+  toggleStartingCurrentDetection() {
+    this.setStartingCurrentDetection(!this.control.startingCurrentDetection);
+  }
+
+  setStartingCurrentDetection(startingCurrentDetection: boolean) {
     if (startingCurrentDetection) {
       this.control.startingCurrentSwitch = new StartingCurrentSwitch();
       this.control.startingCurrentDetection = true;

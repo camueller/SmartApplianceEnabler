@@ -1,0 +1,25 @@
+.ElectricVehicleComponent {
+  &__batteryCapacity {
+    width: 6rem;
+  }
+
+  &__maxChargePower {
+    width: 8rem;
+  }
+
+  &__chargeLoss {
+    width: 6rem;
+  }
+
+  &__defaultSocManual {
+    width: 5rem;
+  }
+
+  &__defaultSocOptionalEnergy {
+    width: 8rem;
+  }
+
+  &__scriptFilename {
+    width: 14rem;
+  }
+}

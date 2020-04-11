@@ -1,6 +1,6 @@
 import {ControlPage} from './control.page';
 import {assertCheckbox, assertInput, inputText, selectorInputByFormControlName, setCheckboxEnabled} from '../../shared/form';
-import {Switch} from '../../../../../main/angular/src/app/control-switch/switch';
+import {Switch} from '../../../../../main/angular/src/app/control/switch/switch';
 
 export class SwitchPage extends ControlPage {
 

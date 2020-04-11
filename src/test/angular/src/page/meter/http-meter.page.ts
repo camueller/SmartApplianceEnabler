@@ -1,5 +1,5 @@
 import {MeterPage} from './meter.page';
-import {HttpElectricityMeter} from '../../../../../main/angular/src/app/meter-http/http-electricity-meter';
+import {HttpElectricityMeter} from '../../../../../main/angular/src/app/meter/http/http-electricity-meter';
 import {MeterValueName} from '../../../../../main/angular/src/app/meter/meter-value-name';
 import {HttpReadPage} from '../http/http-read.page';
 

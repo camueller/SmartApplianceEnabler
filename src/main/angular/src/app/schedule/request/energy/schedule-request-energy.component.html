@@ -1,0 +1,14 @@
+<div class="ScheduleRequestEnergyComponent sae__fields">
+  <mat-form-field class="ScheduleRequestEnergyComponent__minEnergy">
+    <mat-label>{{'ScheduleRequestEnergyComponent.minEnergy' | translate}}</mat-label>
+    <input matInput type="text" formControlName="minEnergy"
+           required="{{formHandler.isRequired('minEnergy')}}">
+    <mat-error *ngIf="errors.minEnergy">{{errors.minEnergy}}</mat-error>
+  </mat-form-field>
+  <mat-form-field class="ScheduleRequestEnergyComponent__maxEnergy">
+    <mat-label>{{'ScheduleRequestEnergyComponent.maxEnergy' | translate}}</mat-label>
+    <input matInput type="text" formControlName="maxEnergy"
+           required="{{formHandler.isRequired('maxEnergy')}}">
+    <mat-error *ngIf="errors.minEnergy">{{errors.maxEnergy}}</mat-error>
+  </mat-form-field>
+</div>

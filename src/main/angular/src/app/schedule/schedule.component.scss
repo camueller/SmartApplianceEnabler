@@ -1,0 +1,9 @@
+@import "../../variables";
+
+.ScheduleComponent {
+  &__schedule {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin: $field-margin;
+  }
+}

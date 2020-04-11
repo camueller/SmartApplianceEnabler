@@ -1,7 +1,4 @@
 import {Schedule} from './schedule';
-import {DayTimeframe} from '../schedule-timeframe-day/day-timeframe';
-import {ConsecutiveDaysTimeframe} from '../schedule-timeframe-consecutivedays/consecutive-days-timeframe';
-import {RuntimeRequest} from '../schedule-request-runtime/runtime-request';
 
 export class ScheduleTestdata {
 

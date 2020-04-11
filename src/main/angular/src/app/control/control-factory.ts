@@ -17,20 +17,18 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 import {Control} from './control';
-import {StartingCurrentSwitch} from '../control-startingcurrent/starting-current-switch';
-import {Switch} from '../control-switch/switch';
-import {ModbusSwitch} from '../control-modbus/modbus-switch';
-import {HttpSwitch} from '../control-http/http-switch';
-import {AlwaysOnSwitch} from '../control-alwayson/always-on-switch';
 import {ControlDefaults} from './control-defaults';
 import {MockSwitch} from './mock-switch';
 import {Logger} from '../log/logger';
-import {ModbusRegisterWrite} from '../shared/modbus-register-write';
-import {EvCharger} from '../control-evcharger/ev-charger';
-import {EvModbusControl} from '../control-evcharger-modbus/ev-modbus-control';
-import {ModbusRegisterRead} from '../shared/modbus-register-read';
-import {ElectricVehicle} from '../control-evcharger/electric-vehicle';
-import {EvHttpControl} from '../control-evcharger-http/ev-http-control';
+import {Switch} from './switch/switch';
+import {HttpSwitch} from './http/http-switch';
+import {EvModbusControl} from './evcharger/modbus/ev-modbus-control';
+import {StartingCurrentSwitch} from './startingcurrent/starting-current-switch';
+import {AlwaysOnSwitch} from './alwayson/always-on-switch';
+import {ModbusSwitch} from './modbus/modbus-switch';
+import {EvHttpControl} from './evcharger/http/ev-http-control';
+import {EvCharger} from './evcharger/ev-charger';
+import {ElectricVehicle} from './evcharger/electric-vehicle/electric-vehicle';
 
 export class ControlFactory {
 
@@ -130,29 +128,19 @@ export class ControlFactory {
   }
 
   createStartingCurrentSwitch(rawStartingCurrentSwitch: any): StartingCurrentSwitch {
-    const startingCurrentSwitch = new StartingCurrentSwitch();
-    startingCurrentSwitch.powerThreshold = rawStartingCurrentSwitch.powerThreshold;
-    startingCurrentSwitch.startingCurrentDetectionDuration = rawStartingCurrentSwitch.startingCurrentDetectionDuration;
-    startingCurrentSwitch.finishedCurrentDetectionDuration = rawStartingCurrentSwitch.finishedCurrentDetectionDuration;
-    startingCurrentSwitch.minRunningTime = rawStartingCurrentSwitch.minRunningTime;
-    return startingCurrentSwitch;
+    return rawStartingCurrentSwitch;
   }
 
   createSwitch(rawSwitch: any): Switch {
-    const switch_ = new Switch();
-    if (rawSwitch) {
-      switch_.gpio = rawSwitch.gpio;
-      switch_.reverseStates = rawSwitch.reverseStates;
-    }
-    return switch_;
+    return rawSwitch;
   }
 
   createModbusSwitch(rawModbusSwitch: any): ModbusSwitch {
     return {...rawModbusSwitch};
   }
 
-  createHttpSwitch(rawControl: any): HttpSwitch {
-    return {...rawControl};
+  createHttpSwitch(rawHttpSwitch: any): HttpSwitch {
+    return {...rawHttpSwitch};
   }
 
   createEvCharger(rawEvCharger: any): EvCharger {
@@ -185,11 +173,11 @@ export class ControlFactory {
   }
 
   createEvModbusControl(rawModbusControl: any): EvModbusControl {
-    return new EvModbusControl(...rawModbusControl);
+    return rawModbusControl;
   }
 
   createEvHttpControl(rawHttpControl: any): EvHttpControl {
-    return new EvHttpControl(...rawHttpControl);
+    return rawHttpControl;
   }
 
   toJSON(control: Control): string {
@@ -235,9 +223,6 @@ export class ControlFactory {
   }
 
   toElectricVehicle(rawEv: any): ElectricVehicle {
-    this.logger.debug('ElectricVehicle (JSON): ' + JSON.stringify(rawEv));
-    const ev = new ElectricVehicle(...rawEv);
-    this.logger.debug('ElectricVehicle (TYPE): ' + JSON.stringify(ev));
-    return ev;
+    return rawEv;
   }
 }

@@ -1,0 +1,16 @@
+<div class="ModbusReadValueComponent sae__fields" [formGroup]="form">
+  <mat-form-field class="sae__value-name">
+    <mat-label>{{'ModbusReadValueComponent.name' | translate}}</mat-label>
+    <mat-select formControlName="name" required="{{formHandler.isRequired('name')}}">
+      <mat-option *ngFor="let valueName of valueNames" [value]="valueName">
+        {{getTranslatedValueName(valueName)}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field class="sae__regex">
+    <mat-label>{{'ModbusReadValueComponent.extractionRegex' | translate}}</mat-label>
+    <input matInput type="text" formControlName="extractionRegex"
+           required="{{formHandler.isRequired('extractionRegex')}}">
+    <mat-error *ngIf="errors.extractionRegex">{{errors.extractionRegex}}</mat-error>
+  </mat-form-field>
+</div>

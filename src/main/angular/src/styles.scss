@@ -1,0 +1,118 @@
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+@import 'node_modules/include-media/dist/_include-media.scss';
+@import "variables";
+
+html, body {
+  font-family: Roboto, Helvetica Neue Light, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif;
+  margin: 0;
+  height: 100%;
+}
+
+h1 {
+  font-size: 1.5rem;
+}
+
+h2 {
+  font-size: 1.2rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+h3 {
+  font-size: 1rem;
+}
+
+mat-form-field, mat-checkbox {
+  margin: $field-margin;
+}
+
+button {
+  margin: $field-margin !important;
+  height: 2.25rem;
+  min-width: fit-content !important;
+}
+
+.sae {
+  &__contentPath {
+    width: 6rem;
+  }
+
+  &__contentProtocol {
+    width: 5rem;
+  }
+
+  &__factorToValue {
+    width: 8rem;
+  }
+
+  &__fields {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: baseline;
+  }
+
+  &__fields-with-button {
+    display: flex;
+    flex-flow: nowrap;
+  }
+
+  &__hostname {
+    width: 5rem;
+  }
+
+  &__http-method {
+    width: 4rem;
+  }
+
+  &__mandatory_fields_hint {
+    margin: 1.5rem $field-margin;
+  }
+
+  &__modbus-address {
+    width: 6rem;
+  }
+
+  &__modbus-name {
+    width: 6rem;
+  }
+
+  &__modbus-register-type {
+    width: 8rem;
+  }
+
+  &__phases {
+    width: 5rem;
+  }
+
+  &__pollInterval {
+    width: 7rem;
+  }
+
+  &__port {
+    width: 4rem;
+  }
+
+  &__regex {
+    width: 12rem;
+  }
+
+  &__url {
+    width: 35rem;
+
+    @include media(">xs", "<=sm") {
+      width: 28rem;
+    }
+
+    @include media("<=xs") {
+      width: 20rem;
+    }
+  }
+
+  &__value-name {
+    width: 18rem;
+  }
+
+  &__voltage {
+    width: 5rem;
+  }
+}

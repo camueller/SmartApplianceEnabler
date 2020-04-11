@@ -18,12 +18,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 import {Component, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {ActivatedRoute, CanDeactivate} from '@angular/router';
-import {S0ElectricityMeter} from '../meter-s0/s0-electricity-meter';
-import {ModbusElectricityMeter} from '../meter-modbus/modbus-electricity-meter';
-import {HttpElectricityMeter} from '../meter-http/http-electricity-meter';
 import {MeterFactory} from './meter-factory';
 import {TranslateService} from '@ngx-translate/core';
-import {FormControl, FormGroup} from '@angular/forms';
+import {FormGroup} from '@angular/forms';
 import {MeterDefaults} from './meter-defaults';
 import {MeterService} from './meter-service';
 import {Meter} from './meter';
@@ -32,24 +29,27 @@ import {Observable} from 'rxjs';
 import {Logger} from '../log/logger';
 import {SettingsDefaults} from '../settings/settings-defaults';
 import {Settings} from '../settings/settings';
-import {MeterS0Component} from '../meter-s0/meter-s0.component';
-import {MeterModbusComponent} from '../meter-modbus/meter-modbus.component';
-import {MeterHttpComponent} from '../meter-http/meter-http.component';
 import {AppliancesReloadService} from '../appliance/appliances-reload-service';
-import {Control} from '../control/control';
 import {FormHandler} from '../shared/form-handler';
+import {S0ElectricityMeter} from './s0/s0-electricity-meter';
+import {MeterModbusComponent} from './modbus/meter-modbus.component';
+import {ModbusElectricityMeter} from './modbus/modbus-electricity-meter';
+import {MeterHttpComponent} from './http/meter-http.component';
+import {HttpElectricityMeter} from './http/http-electricity-meter';
+import {MeterS0Component} from './s0/meter-s0.component';
+import {ListItem} from '../shared/list-item';
 
 @Component({
   selector: 'app-meter',
   templateUrl: './meter.component.html',
-  styleUrls: ['../global.css'],
+  styleUrls: ['./meter.component.scss'],
 })
 export class MeterComponent implements OnChanges, OnInit, CanDeactivate<MeterComponent> {
-  @ViewChild(MeterS0Component, { static: false })
+  @ViewChild(MeterS0Component)
   meterS0Comp: MeterS0Component;
-  @ViewChild(MeterModbusComponent, { static: false })
+  @ViewChild(MeterModbusComponent)
   meterModbusComp: MeterModbusComponent;
-  @ViewChild(MeterHttpComponent, { static: false })
+  @ViewChild(MeterHttpComponent)
   meterHttpComp: MeterHttpComponent;
   form: FormGroup;
   formHandler: FormHandler;
@@ -61,9 +61,7 @@ export class MeterComponent implements OnChanges, OnInit, CanDeactivate<MeterCom
   settings: Settings;
   discardChangesMessage: string;
   confirmDeleteMessage: string;
-  TYPE_S0_ELECTRICITY_METER = S0ElectricityMeter.TYPE;
-  TYPE_MODBUS_ELECTRICITY_METER = ModbusElectricityMeter.TYPE;
-  TYPE_HTTP_ELECTRICITY_METER = HttpElectricityMeter.TYPE;
+  meterTypes: ListItem[] = [];
 
   constructor(private logger: Logger,
               private meterService: MeterService,
@@ -88,6 +86,12 @@ export class MeterComponent implements OnChanges, OnInit, CanDeactivate<MeterCom
   ngOnInit() {
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.translate.get('dialog.confirmDelete').subscribe(translated => this.confirmDeleteMessage = translated);
+    const meterTypeKeys = [S0ElectricityMeter.TYPE, ModbusElectricityMeter.TYPE, HttpElectricityMeter.TYPE];
+    this.translate.get(meterTypeKeys).subscribe(translatedStrings => {
+      Object.keys(translatedStrings).forEach(key => {
+        this.meterTypes.push({value: key, viewValue: translatedStrings[key]} as ListItem);
+      });
+    });
     this.route.paramMap.subscribe(() => this.applianceId = this.route.snapshot.paramMap.get('id'));
     this.route.data.subscribe((data: {
       meter: Meter, meterDefaults: MeterDefaults,
@@ -114,8 +118,19 @@ export class MeterComponent implements OnChanges, OnInit, CanDeactivate<MeterCom
     this.formHandler.setFormControlValue(this.form, 'meterType', this.meter.type);
   }
 
-  get meterType() {
-    return this.form.controls.meterType.value;
+  // get meterType() {
+  //   return this.form.controls.meterType.value;
+  // }
+  get isS0ElectricityMeter() {
+    return this.form.controls.meterType.value === S0ElectricityMeter.TYPE;
+  }
+
+  get isModbusElectricityMeter() {
+    return this.form.controls.meterType.value === ModbusElectricityMeter.TYPE;
+  }
+
+  get isHttpElectricityMeter() {
+    return this.form.controls.meterType.value === HttpElectricityMeter.TYPE;
   }
 
   canDeactivate(): Observable<boolean> | boolean {

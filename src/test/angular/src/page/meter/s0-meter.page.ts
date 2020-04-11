@@ -1,5 +1,5 @@
 import {MeterPage} from './meter.page';
-import {S0ElectricityMeter} from '../../../../../main/angular/src/app/meter-s0/s0-electricity-meter';
+import {S0ElectricityMeter} from '../../../../../main/angular/src/app/meter/s0/s0-electricity-meter';
 import {
   assertInput,
   assertSelect,

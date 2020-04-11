@@ -1,4 +1,4 @@
-import {ModbusRead} from '../../../../../main/angular/src/app/modbus-read/modbus-read';
+import {ModbusRead} from '../../../../../main/angular/src/app/modbus/read/modbus-read';
 import {
   assertInput,
   assertSelect,
@@ -8,7 +8,7 @@ import {
   selectorInputByFormControlName,
   selectorSelectByFormControlName
 } from '../../shared/form';
-import {ModbusReadValue} from '../../../../../main/angular/src/app/modbus-read-value/modbus-read-value';
+import {ModbusReadValue} from '../../../../../main/angular/src/app/modbus/read-value/modbus-read-value';
 import {ModbusReadValuePage} from './modbus-read-value.page';
 import { Selector } from 'testcafe';
 

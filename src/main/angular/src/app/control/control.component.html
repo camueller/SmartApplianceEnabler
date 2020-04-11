@@ -16,8 +16,8 @@
   ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
   -->
 
-<div *ngIf="control" xmlns="http://www.w3.org/1999/html">
-  <form class="ui form" [formGroup]="form" (ngSubmit)="submitForm()">
+<div class="ControlComponent" *ngIf="control" xmlns="http://www.w3.org/1999/html">
+  <form [formGroup]="form" (ngSubmit)="submitForm()">
     <app-control-evcharger *ngIf="control.type === TYPE_EVCHARGER; else notEvCharger"
                            [evCharger]="control.evCharger"
                            [controlDefaults]="controlDefaults"
@@ -27,23 +27,20 @@
     >
     </app-control-evcharger>
     <ng-template #notEvCharger>
-      <div class="fields">
+      <div class="sae__fields">
         <div class="field">
-          <label class="required">{{'ControlComponent.type' | translate}}</label>
-          <select class="ui fluid dropdown" name="controlType" formControlName="controlType"
-                  (ngModelChange)="typeChanged($event)">
-            <option [ngValue]="TYPE_SWITCH">{{TYPE_SWITCH | translate}}</option>
-            <option [ngValue]="TYPE_MODBUS_SWITCH">{{TYPE_MODBUS_SWITCH | translate}}</option>
-            <option [ngValue]="TYPE_HTTP_SWITCH">{{TYPE_HTTP_SWITCH | translate}}</option>
-            <option [ngValue]="TYPE_ALWAYS_ON_SWITCH">{{TYPE_ALWAYS_ON_SWITCH | translate}}</option>
-          </select>
+          <mat-form-field>
+            <mat-label>{{'ControlComponent.type' | translate}}</mat-label>
+            <mat-select formControlName="controlType" required="{{formHandler.isRequired('controlType')}}">
+              <mat-option *ngFor="let controlType of controlTypes" [value]="controlType.value">
+                {{controlType.viewValue}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
         </div>
-        <div class="field" *ngIf="canHaveStartingCurrentDetection">
-          <label>{{'ControlStartingcurrentComponent.startingCurrentDetection' | translate}}</label>
-          <input class="ui checkbox" type="checkbox" name="startingCurrentDetection"
-                 formControlName="startingCurrentDetection"
-                 (ngModelChange)="startingCurrentDetectionChanged($event)">
-        </div>
+        <mat-checkbox formControlName="startingCurrentDetection" (click)="toggleStartingCurrentDetection()"
+                      *ngIf="canHaveStartingCurrentDetection"
+        >{{'ControlStartingcurrentComponent.startingCurrentDetection' | translate}}</mat-checkbox>
       </div>
       <app-control-switch *ngIf="control.type===TYPE_SWITCH"
                           [switch_]="control.switch_"
@@ -68,10 +65,10 @@
                                    [controlDefaults]="controlDefaults"
       ></app-control-startingcurrent>
     </ng-template>
-    <div class="mandatory-fields">{{'dialog.mandatoryfields'|translate}}</div>
-    <button type="submit" class="ui primary button" [disabled]="form.pristine||form.invalid">
+    <div class="sae__mandatory_fields_hint">{{'dialog.mandatoryfields'|translate}}</div>
+    <button mat-raised-button type="submit" color="primary" [disabled]="form.pristine||form.invalid">
       {{'button.save' | translate}}</button>
-    <button type="button" [disabled]="!isDeleteEnabled()" (click)="delete()" class="ui button">
+    <button mat-raised-button type="button" [disabled]="!isDeleteEnabled()" (click)="delete()">
       {{'button.delete' | translate}}</button>
   </form>
   <!--

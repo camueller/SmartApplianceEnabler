@@ -1,6 +1,6 @@
 import {MeterPage} from './meter.page';
 import {MeterValueName} from '../../../../../main/angular/src/app/meter/meter-value-name';
-import {ModbusElectricityMeter} from '../../../../../main/angular/src/app/meter-modbus/modbus-electricity-meter';
+import {ModbusElectricityMeter} from '../../../../../main/angular/src/app/meter/modbus/modbus-electricity-meter';
 import {ModbusReadPage} from '../modbus/modbus-read.page';
 import {
   assertInput,

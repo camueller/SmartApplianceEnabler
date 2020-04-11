@@ -15,35 +15,16 @@
   ~ with this program; if not, write to the Free Software Foundation, Inc.,
   ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
   -->
-<div class="sae-title">Smart Appliance Enabler <span class="sae-version">{{version}}</span></div>
-<div class="ui sidebar inverted vertical menu">
-  <div class="ui item">
-
-    <a style="font-size: 1.4em" [routerLink]="['appliance']" routerLinkActive="active">
-      <span class="ui inverted">{{'AppComponent.appliance.new' | translate}}</span>
-      <i class="icon green add"></i>
-    </a>
-  </div>
-
-  <div *ngFor="let applianceHeader of applianceHeaders">
-    <a class="ui item" [routerLink]="['appliance', applianceHeader.id]" routerLinkActive="active">{{getTranslatedType(applianceHeader.type)}}<br>
-      <span style="font-size: 0.7em">{{applianceHeader.vendor}} {{applianceHeader.name}}</span>
-    </a>
-    <div class="menu">
-      <a class="item" [routerLink]="['meter', applianceHeader.id]" routerLinkActive="active">{{'AppComponent.meter' | translate}}</a>
-      <a class="item" [routerLink]="['control', applianceHeader.id]" routerLinkActive="active">{{'AppComponent.control' | translate}}</a>
-      <a *ngIf="applianceHeader.controllable" class="item" [routerLink]="['schedule', applianceHeader.id]" routerLinkActive="active">{{'AppComponent.schedules' | translate}}</a>
-      <span *ngIf="!applianceHeader.controllable" class="item disabled" style="color:rgba(225,225,225,0.3)">{{'AppComponent.schedules' | translate}}</span>
-    </div>
-  </div>
-</div>
-<div class="ui inverted menu">
-  <a (click)="toggleSidebar()" class="launch icon item"><p style="padding-left:1em">{{'AppComponent.appliances' | translate}}</p></a>
-  <a class="launch icon item" [routerLink]="['status']" routerLinkActive="active">{{'AppComponent.status' | translate}}</a>
-  <a class="launch icon item" [routerLink]="['settings']" routerLinkActive="active">{{'AppComponent.settings' | translate}}</a>
-</div>
-<div class="pusher">
-  <div class="ui segment">
-    <router-outlet></router-outlet>
-  </div>
-</div>
+<app-layout>
+  <mat-sidenav-container>
+    <mat-sidenav #sidenav [mode]="sideNavMode" role="navigation">
+      <app-sidenav (sidenavClose)="closeSideNav($event)"></app-sidenav>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <app-header (sidenavToggle)="toggleSideNav()"></app-header>
+      <main>
+        <router-outlet></router-outlet>
+      </main>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</app-layout>

@@ -17,11 +17,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 import {Meter} from './meter';
-import {S0ElectricityMeter} from '../meter-s0/s0-electricity-meter';
-import {ModbusElectricityMeter} from '../meter-modbus/modbus-electricity-meter';
-import {HttpElectricityMeter} from '../meter-http/http-electricity-meter';
 import {MeterDefaults} from './meter-defaults';
 import {Logger} from '../log/logger';
+import {S0ElectricityMeter} from './s0/s0-electricity-meter';
+import {ModbusElectricityMeter} from './modbus/modbus-electricity-meter';
+import {HttpElectricityMeter} from './http/http-electricity-meter';
 
 export class MeterFactory {
 
@@ -80,19 +80,14 @@ export class MeterFactory {
   }
 
   createS0ElectricityMeter(rawMeter: any): S0ElectricityMeter {
-    const s0ElectricityMeter = new S0ElectricityMeter();
-    s0ElectricityMeter.gpio = rawMeter.gpio;
-    s0ElectricityMeter.pinPullResistance = rawMeter.pinPullResistance;
-    s0ElectricityMeter.impulsesPerKwh = rawMeter.impulsesPerKwh;
-    s0ElectricityMeter.measurementInterval = rawMeter.measurementInterval;
-    return s0ElectricityMeter;
+    return rawMeter;
   }
 
   createModbusElectricityMeter(rawMeter: any): ModbusElectricityMeter {
-    return new ModbusElectricityMeter(...rawMeter);
+    return rawMeter;
   }
 
   createHttpElectricityMeter(rawMeter: any): HttpElectricityMeter {
-    return new HttpElectricityMeter(...rawMeter);
+    return rawMeter;
   }
 }

@@ -1,0 +1,43 @@
+<div class="MeterHttpComponent">
+  <div class="sae__fields">
+    <mat-form-field class="pollInterval">
+      <mat-label>{{'MeterHttpComponent.pollInterval' | translate}}</mat-label>
+      <input matInput type="text" formControlName="pollInterval"
+             required="{{formHandler.isRequired('pollInterval')}}">
+      <mat-error *ngIf="errors.pollInterval">{{errors.pollInterval}}</mat-error>
+    </mat-form-field>
+    <mat-form-field class="measurementInterval">
+      <mat-label>{{'MeterHttpComponent.measurementInterval' | translate}}</mat-label>
+      <input matInput type="text" formControlName="measurementInterval"
+             required="{{formHandler.isRequired('measurementInterval')}}">
+      <mat-error *ngIf="errors.measurementInterval">{{errors.measurementInterval}}</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>{{'MeterHttpComponent.contentProtocol' | translate}}</mat-label>
+      <mat-select formControlName="contentProtocol" required="{{formHandler.isRequired('contentProtocol')}}">
+        <mat-option *ngFor="let contentProtocol of contentProtocols" [value]="contentProtocol">
+          {{contentProtocol}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <app-http-configuration
+    [form]="form"
+    [httpConfiguration]="httpElectricityMeter.httpConfiguration"
+  ></app-http-configuration>
+  <div formArrayName="httpReads">
+    <app-http-read *ngFor="let httpRead of httpElectricityMeter.httpReads; index as i; last as l"
+                   [formGroupName]="i"
+                   [form]="getHttpReadFormGroup(i)"
+                   [httpRead]="httpRead"
+                   [maxValues]="maxValues"
+                   [valueNames]="valueNames"
+                   [translationPrefix]="'MeterHttpComponent.'"
+                   [translationKeys]="valueNameTextKeys"
+                   (remove)="onHttpReadRemove(i)"
+                   #httpReadComponents
+    ></app-http-read>
+    <button mat-raised-button type="button" (click)="addHttpRead()" *ngIf="isAddHttpReadPossible">
+      {{'MeterHttpComponent.button.addHttpRead' | translate}}</button>
+  </div>
+</div>
