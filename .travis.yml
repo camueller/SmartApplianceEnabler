@@ -15,11 +15,28 @@ before_install:
     tar xfz node-v10.17.0-linux-x64.tar.gz &&
     export PATH=$PWD/node-v10.17.0-linux-x64/bin:$PATH
 script:
-  - mvn package -B -Ptravis,web
-  - if [ $TRAVIS_BRANCH == "master" && $TRAVIS_PULL_REQUEST == "false" ]; then
-      echo "*** Pushing";
+  - mvn package -B -Ptravis,web &&
+    pushd docker &&
+    cp ../target/SmartApplianceEnabler*.war sae-ci/SmartApplianceEnabler.war &&
+    echo $DOCKERHUB_ACCESS_TOKEN | docker login --username avanux --password-stdin &&
+    docker build --tag=avanux/smartapplianceenabler-amd64:ci ./sae-ci &&
+    docker push avanux/smartapplianceenabler-amd64:ci &&
+    popd &&
+    pushd ci &&
+    ccrypt -d -K $AWS_CRYPT_KEY aws.pem.cpt >/dev/null 2>&1 &&
+    chmod 400 aws.pem &&
+    ssh -i aws.pem -o StrictHostKeyChecking=no ec2-user@$DEPLOY_HOST 'bash -s' < deploy.sh &&
+    popd &&
+    pushd src/test/angular &&
+    npm i &&
+    export BROWSERSTACK_BUILD_ID=$TRAVIS_COMMIT &&
+    node_modules/.bin/testcafe --page-load-timeout 10000 "browserstack:chrome@79.0:Windows 10,browserstack:firefox@72.0:Windows 10" "src/*.spec.ts" &&
+    popd
+  - |
+    if [ $TRAVIS_BRANCH == "master" && $TRAVIS_PULL_REQUEST == "false" ]; then
+      pushd docker; ./amd64_check.sh
     else
-      echo "*** Not on master branch - skipping docker push";
+      echo "*** Not on master branch - skipping docker push"
     fi
 after_success:
   - bash <(curl -s https://codecov.io/bash)
