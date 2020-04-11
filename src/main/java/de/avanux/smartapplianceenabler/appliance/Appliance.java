@@ -343,14 +343,7 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
                 }
                 ((ElectricVehicleCharger) control).setChargePower(chargePower);
             }
-
-            // only change state if requested state differs from actual state
-            if(control.isOn() ^ switchOn) {
-                control.on(now, switchOn);
-            }
-            else {
-                logger.debug("{}: Requested appliance state already set.", id);
-            }
+            control.on(now, switchOn);
         }
         else {
             logger.warn("{}: Appliance configuration does not contain control.", id);
