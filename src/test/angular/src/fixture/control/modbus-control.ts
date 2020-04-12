@@ -9,7 +9,6 @@ export const modbusSwitch_2modbusWrite_complete = new ModbusSwitch({
     new ModbusWrite({
       address: '0x0A',
       type: 'Holding',
-      factorToValue: 1000,
       writeValues: [
         new ModbusWriteValue({
           name: ControlValueName.On,
@@ -20,7 +19,6 @@ export const modbusSwitch_2modbusWrite_complete = new ModbusSwitch({
     new ModbusWrite({
       address: '0x0E',
       type: 'Coil',
-      factorToValue: 10,
       writeValues: [
         new ModbusWriteValue({
           name: ControlValueName.Off,

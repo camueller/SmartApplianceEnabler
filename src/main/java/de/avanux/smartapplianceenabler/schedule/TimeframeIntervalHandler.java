@@ -121,7 +121,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
                         || timeframeInterval.getInterval().getStart().isAfter(lastTimeframeInterval.getInterval().getEnd()))
                         && timeframeInterval.isIntervalSufficient(now)
                 )
-                .limit(control instanceof StartingCurrentSwitch ? 1 : Integer.MAX_VALUE)
+                .limit(control instanceof StartingCurrentSwitch ? (queue.size() == 0 ? 1 : 0) : Integer.MAX_VALUE)
                 .forEach(timeframeInterval -> {
                     if(control instanceof StartingCurrentSwitch) {
                         timeframeInterval.getRequest().setEnabled(false);

@@ -58,12 +58,26 @@ $ ng serve --host 0.0.0.0 --disable-host-check
 
 ### Tests
 #### Testcafe
-Zum Ausführen von Testcafe-Tests in WebStorm sollte folgendes Plugin über den Marketplace installiert werden:
-https://plugins.jetbrains.com/plugin/13133-testcafe-runner-for-webstorm/
-
-Alternativ können die Tests in der Shell gestartet werden:
+##### Lokal
+Unter Verwendung des lokalen Browsers werden die Tests wie folgt gestartet:
 ```console
-axel@p51:/data/IdeaProjects/SmartApplianceEnabler/src/test/angular$ testcafe "browserstack:chrome@69.0:Windows 10" "src/appliance.spec.ts"
+$ testcafe chrome "src/pump.spec.ts"
+ Running tests in:
+ - Chrome 80.0.3987.149 / Linux 0.0
+
+ Pump
+ ✓ Create appliance
+ ✓ Create Modbus meter
+ ✓ Create Modbus control
+
+
+ 3 passed (30s)
+```
+
+##### Browserstack
+Zur Ausführung der Tests in [BrowserStack](https://www.browserstack.com/) werden die Tests wie folgt gestartet:
+```console
+$ testcafe "browserstack:chrome@69.0:Windows 10" "src/pump.spec.ts"
  Running tests in:
  - Chrome 69.0.3497.92 / Windows 10 (https://automate.browserstack.com/builds/02a07b54c04c76fb251f6d0e3621ab2823fe4421/sessions/69b381846b5b0c0918f0ebfbe5337f1ad2d37473)
 
@@ -91,16 +105,11 @@ axel@p51:/data/IdeaProjects/SmartApplianceEnabler/src/test/angular$ testcafe "br
  3 passed (48s)
 ```
 
-#### Browserstack
-Für die Verwendung von Testcafe mit Browserstack muss ein Plugin installiert werden:
-```console
-npm install --save testcafe-browser-provider-browserstack
-```
-Weitere Infos: https://www.browserstack.com/automate/testcafe
+Weitere Infos zur Verwendung von Browserstack mit Testcafe: https://www.browserstack.com/automate/testcafe
 
 Zum Anzeigen der unterstützten Kombinationen eignet sich der folgende Befehl:
 ```console
-axel@p51:/data/IdeaProjects/SmartApplianceEnabler/src/test/angular$ testcafe -b browserstack
+$ testcafe -b browserstack
 "browserstack:firefox@71.0:OS X Catalina"
 "browserstack:firefox@70.0:OS X Catalina"
 "browserstack:firefox@69.0:OS X Catalina"

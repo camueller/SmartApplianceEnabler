@@ -129,7 +129,7 @@ export class ScheduleRequestRuntimeComponent implements OnChanges, OnInit {
       return undefined;
     }
 
-    this.runtimeRequest.min = TimeUtil.toSeconds(minRuntime);
+    this.runtimeRequest.min = minRuntime && TimeUtil.toSeconds(minRuntime);
     this.runtimeRequest.max = TimeUtil.toSeconds(maxRuntime);
     return this.runtimeRequest;
   }

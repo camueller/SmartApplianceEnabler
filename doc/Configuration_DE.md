@@ -18,7 +18,7 @@ Beim ersten Start ohne vorhandene Konfigurationsdateien wird folgende Seite ange
 
 ![Ohne Konfiguration](../pics/fe/OhneKonfiguration.png)
 
-Im oberen Bereich der Seite findet sich der Menüpunkt zur Verwaltung der zentralen [Einstellungen](Settings_DE.md).
+Im oberen Bereich der Seite findet sich der Menüpunkt zur Verwaltung der zentralen, geräteunabhängigen [Einstellungen](Settings_DE.md).
 
 Das Seitenmenü zur Konfiguration der Geräte, Zähler, Schalter und Schaltzeiten ist nicht sichtbar und muss durch Klick auf ```Geräte``` geöffnet werden. Jetzt sieht die Seite wie folgt aus:
 
@@ -83,7 +83,7 @@ Wenn ein Gerät schaltbar ist, können Zeitpläne konfiguriert werden. Ein Zeitp
 Für einen Tagesplan kann angegeben werden, dass dieser an Feiertagen gelten soll.
 Diese hat Vorrang vor anderen Tagesplänen, die entsprechend des Wochentages gelten würden. Voraussetzung dafür ist, dass das [Feiertagshandling in der Konfiguration aktiviert](Settings_DE.md#Feiertage) wurde.
 
-Neben dem Zeitrahmen hat ein Zeitplan auch eine ```Anforderungsart```, die (abhängig vom Geräte-Typ) meist ```Laufzeit``` ist. In diesem Fall bringt der Zeitplan eine bestimme minimale und/oder maximale gewünschte Laufzeit zum Ausdruck. Wenn die minimale Laufzeit auf ```0``` gesetzt wird und die maximale Laufzeit auf einen größeren Wert, wird damit zum Ausdruck gebracht, dass dieses Gerät *Überschussenenergie* aufnehmen kann bzw. soll. Wenn die minimale Laufzeit auf ```0``` gesetzt wird muss die maximale Laufzeit auf einen Wert größer ```0``` gesetzt werden, ansonsten ignoriert der Sunny Home Manager diesen Zeitplan.
+Neben dem Zeitrahmen hat ein Zeitplan auch eine `Anforderungsart`, die (abhängig vom Geräte-Typ) meist `Laufzeit` ist. Dabei wird über die `Startzeit` und die `Endzeit` ein Zeitfenster definiert, innerhalb dessen der SHM die `maximale Laufzeit` unabhängig vom Vorhandensein von PV-Strom sicherstellen muss. Wird zusätzlich die (optionale) `minimale Laufzeit` angegeben, wird der SHM nur diese Laufzeit sicherstellen, aber bei Vorhandensein von *Überschussenenergie* die Laufzeit bis zur `maximalen Laufzeit` erweitern. Im Extremfall führt das Setzen einer `minimalen Laufzeit` von 0 dazu, dass das Gerät ausschliesslich mit Überschussenergie betrieben wird. Wenn diese nicht vorhanden ist, wird das Gerät nicht eingeschaltet.
 
 ![Schaltzeiten Tagesplan](../pics/fe/SchaltzeitenTagesplanLaufzeit.png)
 Schaltzeiten mit Tagesplan
@@ -109,10 +109,10 @@ In das Fenster *XSD Input* muss der Inhalt (nicht die URL selbst!) der nachfolge
 
 Ist die Prüfung erfolgreich, erscheint oberhalb des *XML Input* eine grün unterlegte Meldung *The XML document is valid.*. Bei Fehlern erscheint eine rot unterlegte Meldung mit entsprechender Fehlerbeschreibung.
 
-## Konfiguration mittels REST
+# Konfiguration mittels REST
 Für die Konfiguration mittels Web-Frontend existieren entsprechende REST-Services. Diese können, wie die SEMP-Schnittstelle selbst, auch unabhängig vom Web-Frontend verwendet werden.
 
-### Schalten eines Gerätes
+## Schalten eines Gerätes
 Zum Einschalten eines Gerätes kann folgender Befehl verwendet werden, wobei die URL un die Device-ID (identisch mit Appliance-ID) anzupassen ist:
 ```console
 curl -X POST -d '<EM2Device xmlns="http://www.sma.de/communication/schema/SEMP/v1"><DeviceControl><DeviceId>F-00000001-000000000002-00</DeviceId><On>true</On></DeviceControl></EM2Device>' --header 'Content-Type: application/xml' http://127.0.0.1:8080/semp
@@ -126,7 +126,7 @@ Zum aktivieren eines zusätzlichen Timeframe für 10 Minuten ab sofort funktioni
 curl -s -X PUT -F id=F-00000001-000000000002-00 -F runtime=600 http://127.0.0.1:8080/sae/runtime
 ```
 
-### Setzen der Schedules
+## Setzen der Schedules
 Normalerweise werden die Schedules aus der Datei `Appliance.xml` gelesen. Es ist jedoch möglich, die Schedules via REST an den SAE zu übergeben. Dazu müssen der/die Schedules in einem Root-Element `Schedules` zusammengefasst werden, das an SAE unter Angabe der Appliance-ID übergeben wird:
 ```console
 curl -s -X POST -d '<Schedules xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.4"><Schedule><RuntimeRequest min="1800" max="3600" /><DayTimeframe><Start hour="0" minute="0" second="0" /><End hour="18" minute="59" second="59" /></DayTimeframe></Schedule></Schedules>' --header 'Content-Type: application/xml' http://localhost:8080/sae/schedules?id=F-00000001-000000000001-00
