@@ -18,6 +18,7 @@
 
 package de.avanux.smartapplianceenabler.http;
 
+import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.control.ev.EVReadValueName;
 import de.avanux.smartapplianceenabler.control.ev.EVWriteValueName;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolType;
@@ -36,7 +37,7 @@ public class EVHttpControlTest {
     private EVHttpControl control;
     private HttpTransactionExecutor executorMock = Mockito.mock(HttpTransactionExecutor.class);
 
-    public EVHttpControlTest() {
+    public EVHttpControlTest() throws ConfigurationException {
         this.control = new EVHttpControl();
         this.control.setHttpTransactionExecutor(executorMock);
         this.control.setContentProtocol(ContentProtocolType.JSON);

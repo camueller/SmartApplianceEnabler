@@ -18,6 +18,7 @@
 
 package de.avanux.smartapplianceenabler.http;
 
+import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.control.ev.EVChargerControl;
 import de.avanux.smartapplianceenabler.control.ev.EVReadValueName;
 import de.avanux.smartapplianceenabler.control.ev.EVWriteValueName;
@@ -113,7 +114,7 @@ public class EVHttpControl implements EVChargerControl {
     }
 
     @Override
-    public void validate() {
+    public void validate() throws ConfigurationException {
         logger.debug("{}: Validating configuration", applianceId);
         boolean valid;
         HttpValidator validator = new HttpValidator(applianceId);
@@ -127,8 +128,7 @@ public class EVHttpControl implements EVChargerControl {
         valid = valid && validator.validateWrites(writeValueNames, this.httpWrites);
 
         if(! valid) {
-            logger.error("{}: Terminating because of incorrect configuration", applianceId);
-            System.exit(-1);
+            throw new ConfigurationException();
         }
     }
 

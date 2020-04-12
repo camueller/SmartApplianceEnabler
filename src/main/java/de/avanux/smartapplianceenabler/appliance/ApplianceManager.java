@@ -21,6 +21,7 @@ import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.GpioFactory;
 import de.avanux.smartapplianceenabler.HolidaysDownloader;
 import de.avanux.smartapplianceenabler.configuration.Configuration;
+import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.configuration.Connectivity;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.meter.Meter;
@@ -161,12 +162,6 @@ public class ApplianceManager implements Runnable {
             }
         }
 
-//        Integer additionRunningTime = null;
-//        String additionRunningTimeString = appliances.getConfigurationValue("TimeframeIntervalAdditionalRunningTime");
-//        if(additionRunningTimeString != null) {
-//            additionRunningTime = Integer.valueOf(additionRunningTimeString);
-//        }
-
         boolean holidaysUsed = false;
         for (Appliance appliance : getAppliances()) {
             if(appliance.hasTimeframeForHolidays()) {
@@ -175,7 +170,12 @@ public class ApplianceManager implements Runnable {
             logger.debug("{}: Initializing appliance ...", appliance.getId());
             appliance.init(getGpioController(), modbusIdWithModbusTcp);
             logger.debug("{}: Validating appliance ...", appliance.getId());
-            appliance.validate();
+            try {
+                appliance.validate();
+            } catch (ConfigurationException e) {
+                logger.error("{}: Terminating because of incorrect configuration", appliance.getId());
+                System.exit(-1);
+            }
             logger.debug("{}: Starting appliance ...", appliance.getId());
             appliance.start(timer);
         }

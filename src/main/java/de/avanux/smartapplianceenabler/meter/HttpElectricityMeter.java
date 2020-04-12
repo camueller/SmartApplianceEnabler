@@ -19,12 +19,13 @@ package de.avanux.smartapplianceenabler.meter;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.appliance.ApplianceLifeCycle;
+import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.http.*;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolHandler;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolType;
 import de.avanux.smartapplianceenabler.protocol.JsonContentProtocolHandler;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
-import de.avanux.smartapplianceenabler.util.Validateable;
+import de.avanux.smartapplianceenabler.configuration.Validateable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -111,7 +112,7 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
     }
 
     @Override
-    public void validate() {
+    public void validate() throws ConfigurationException {
         logger.debug("{}: Validating configuration", applianceId);
         logger.debug("{}: configured: poll interval={}s / measurement interval={}s",
                 applianceId, getPollInterval(), getMeasurementInterval());
@@ -125,9 +126,7 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
         if(! (powerValid || energyValid)) {
             logger.error("{}: Missing configuration for either {} or {}",
                     applianceId, MeterValueName.Power.name(), MeterValueName.Energy.name());
-
-            logger.error("{}: Terminating because of incorrect configuration", applianceId);
-            System.exit(-1);
+            throw new ConfigurationException();
         }
     }
 

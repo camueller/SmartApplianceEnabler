@@ -18,6 +18,7 @@
 package de.avanux.smartapplianceenabler.appliance;
 
 import com.pi4j.io.gpio.GpioController;
+import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.control.*;
 import de.avanux.smartapplianceenabler.control.ev.EVChargerControl;
 import de.avanux.smartapplianceenabler.control.ev.EVChargerState;
@@ -32,7 +33,7 @@ import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
 import de.avanux.smartapplianceenabler.schedule.*;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
-import de.avanux.smartapplianceenabler.util.Validateable;
+import de.avanux.smartapplianceenabler.configuration.Validateable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import org.slf4j.Logger;
@@ -221,7 +222,7 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
     }
 
     @Override
-    public void validate() {
+    public void validate() throws ConfigurationException {
         logger.info("{}: Validating appliance configuration", id);
         if(control instanceof Validateable) {
             ((Validateable) control).validate();
