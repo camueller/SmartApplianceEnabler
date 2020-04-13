@@ -7,8 +7,8 @@ import {
   createComponentAndConfigure,
   debugElementByCss,
   enterAndCheckInputValue,
-  importsFormsAndTranslate,
-  providers
+  defaultImports,
+  defaultProviders
 } from '../../shared/test-util';
 import {FormGroup} from '@angular/forms';
 import {HttpWrite} from './http-write';
@@ -60,8 +60,8 @@ describe('HttpWriteComponent', () => {
         HttpWriteTestHostComponent,
         HttpWriteValueStubComponent,
       ],
-      imports: importsFormsAndTranslate(),
-      providers: providers(),
+      imports: defaultImports(),
+      providers: defaultProviders(),
       schemas: [NO_ERRORS_SCHEMA]
     });
     fixture = createComponentAndConfigure(HttpWriteTestHostComponent);

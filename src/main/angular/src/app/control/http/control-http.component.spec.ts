@@ -2,17 +2,23 @@ import {async, ComponentFixture, fakeAsync, TestBed} from '@angular/core/testing
 import {ControlHttpComponent} from './control-http.component';
 import {Component, EventEmitter, NO_ERRORS_SCHEMA, Output, ViewChild} from '@angular/core';
 import {HttpSwitch} from './http-switch';
-import {click, createComponentAndConfigure, debugElementByCss, importsFormsAndTranslate, providers} from '../../shared/test-util';
+import {click, createComponentAndConfigure, debugElementByCss, defaultImports, defaultProviders} from '../../shared/test-util';
 import {FormGroup} from '@angular/forms';
 import {HttpRead} from '../../http/read/http-read';
 import {HttpWriteValue} from '../../http/write-value/http-write-value';
 import {HttpConfiguration} from '../../http/configuration/http-configuration';
 import {HttpWrite} from '../../http/write/http-write';
+import {HarnessLoader} from '@angular/cdk/testing';
+import {MatButtonHarness} from '@angular/material/button/testing';
+import {MatCheckboxHarness} from '@angular/material/checkbox/testing';
+import {TestbedHarnessEnvironment} from '@angular/cdk/testing/testbed';
 
 const removeHttpWrite = new EventEmitter<any>();
 const httpConfigurationUpdateModelFromFormMock = jest.fn();
 const httpWriteUpdateModelFromFormMock = jest.fn();
 const httpReadUpdateModelFromFormMock = jest.fn();
+
+let loader: HarnessLoader;
 
 @Component({selector: 'app-http-configuration', template: ''})
 class HttpConfigurationStubComponent {
@@ -56,7 +62,7 @@ class ControlHttpTestHostComponent {
 
 describe('ControlHttpComponent', () => {
   const ADD_HTTPWRITE_BUTTON = 'button.addHttpWrite';
-  const READ_CONTROL_STATE_CHECKBOX = 'input.readControlState';
+  const READ_CONTROL_STATE_CHECKBOX = '[formControlName="readControlState"]';
 
   let component: ControlHttpComponent;
   let hostComponent: ControlHttpTestHostComponent;
@@ -71,11 +77,12 @@ describe('ControlHttpComponent', () => {
         HttpReadStubComponent,
         HttpWriteStubComponent
       ],
-      imports: importsFormsAndTranslate(),
-      providers: providers(),
+      imports: defaultImports(),
+      providers: defaultProviders(),
       schemas: [ NO_ERRORS_SCHEMA ]
     });
     fixture = createComponentAndConfigure(ControlHttpTestHostComponent);
+    loader = TestbedHarnessEnvironment.loader(fixture);
     hostComponent = fixture.componentInstance;
     component = hostComponent.testComponent;
 
@@ -101,8 +108,9 @@ describe('ControlHttpComponent', () => {
       expect(component.httpSwitch.httpWrites.length).toBe(1);
     }));
 
-    it('the readControlState checkbox is not checked', () => {
-      expect(debugElementByCss(fixture, READ_CONTROL_STATE_CHECKBOX).nativeElement.checked).toBeFalsy();
+    it('the readControlState checkbox is not checked', async () => {
+      const checkbox = await loader.getHarness(MatCheckboxHarness.with({selector: READ_CONTROL_STATE_CHECKBOX}));
+      expect(await checkbox.isChecked()).toBe(false);
     });
 
     it('the HttpSwitch contains no HttpRead', async( () => {
@@ -123,11 +131,11 @@ describe('ControlHttpComponent', () => {
 
   describe('Button "Weitere URL"', () => {
 
-    it('exists and is enabled', async( () => {
-      const button = debugElementByCss(fixture, ADD_HTTPWRITE_BUTTON);
-      expect(button.nativeElement.innerHTML).toBe('Weitere URL');
-      expect(button.nativeElement.disabled).toBeFalsy();
-    }));
+    it('exists and is enabled', async () => {
+      const button = await loader.getHarness(MatButtonHarness.with({selector: ADD_HTTPWRITE_BUTTON}));
+      expect(await button.getText()).toBe('Weitere URL');
+      expect(await button.isDisabled()).toBeFalsy();
+    });
 
     describe('with one existing HttpWrite', () => {
       it('another HttpRead can be added if it has one HttpReadValue', async( () => {
@@ -153,14 +161,16 @@ describe('ControlHttpComponent', () => {
 
   describe('HttpRead', () => {
 
-    beforeEach(() => {
+    let readControlStateCheckbox: MatCheckboxHarness;
+
+    beforeEach(async () => {
       expect(component.form.dirty).toBeFalsy();
-      debugElementByCss(fixture, READ_CONTROL_STATE_CHECKBOX).nativeElement.click();
-      fixture.detectChanges();
+      readControlStateCheckbox = await loader.getHarness(MatCheckboxHarness.with({selector: READ_CONTROL_STATE_CHECKBOX}));
+      await readControlStateCheckbox.check();
     });
 
-    it('can be enabled', () => {
-      expect(debugElementByCss(fixture, READ_CONTROL_STATE_CHECKBOX).nativeElement.checked).toBeTruthy();
+    it('can be enabled', async () => {
+      expect(await readControlStateCheckbox.isChecked()).toBeTruthy();
     });
 
     it('contains a HttpRead', () => {

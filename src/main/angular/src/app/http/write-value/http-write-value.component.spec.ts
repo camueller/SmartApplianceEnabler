@@ -5,8 +5,8 @@ import {
   createComponentAndConfigure,
   debugElementByCss,
   enterAndCheckInputValue,
-  importsFormsAndTranslate,
-  providers,
+  defaultImports,
+  defaultProviders,
   selectOptionValue
 } from '../../shared/test-util';
 import {HttpWriteValueComponent} from './http-write-value.component';
@@ -55,8 +55,8 @@ describe('HttpWriteValueComponent', () => {
         HttpWriteValueComponent,
         HttpWriteValueTestHostComponent,
       ],
-      imports: importsFormsAndTranslate(),
-      providers: providers(),
+      imports: defaultImports(),
+      providers: defaultProviders(),
       schemas: [NO_ERRORS_SCHEMA]
     });
     fixture = createComponentAndConfigure(HttpWriteValueTestHostComponent);

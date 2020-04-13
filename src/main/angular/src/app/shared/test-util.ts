@@ -6,6 +6,7 @@ import {Level} from '../log/level';
 import {DebugElement, Type} from '@angular/core';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
+import {MaterialModule} from '../material/material.module';
 
 const translations = require('assets/i18n/de.json');
 
@@ -43,14 +44,15 @@ export function createComponentAndConfigure<T>(component: Type<T>): ComponentFix
   return fixture;
 }
 
-export function importsFormsAndTranslate(): any[] {
+export function defaultImports(): any[] {
   return [
     ReactiveFormsModule,
+    MaterialModule,
     TranslateModule.forRoot(translateModuleConfig())
   ];
 }
 
-export function providers() {
+export function defaultProviders() {
   return [
     Logger,
     {provide: Options, useValue: {level: Level.DEBUG}},
