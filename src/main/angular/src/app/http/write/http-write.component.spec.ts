@@ -1,18 +1,22 @@
-import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
-import {Component, DebugElement, NO_ERRORS_SCHEMA, ViewChild} from '@angular/core';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {Component, NO_ERRORS_SCHEMA, ViewChild} from '@angular/core';
 import {HttpWriteComponent} from './http-write.component';
 import {ControlValueName} from '../../control/control-value-name';
 import {
-  click,
   createComponentAndConfigure,
   debugElementByCss,
-  enterAndCheckInputValue,
   defaultImports,
-  defaultProviders
+  defaultProviders,
+  enterAndCheckInputValue
 } from '../../shared/test-util';
 import {FormGroup} from '@angular/forms';
 import {HttpWrite} from './http-write';
 import {HttpWriteValue} from '../write-value/http-write-value';
+import {MatFormFieldHarness} from '@angular/material/form-field/testing';
+import {MatInputHarness} from '@angular/material/input/testing';
+import {TestbedHarnessEnvironment} from '@angular/cdk/testing/testbed';
+import {HarnessLoader} from '@angular/cdk/testing';
+import {MatButtonHarness} from '@angular/material/button/testing';
 
 const httpWriteValueUpdateModelFromFormMock = jest.fn();
 
@@ -35,6 +39,7 @@ class HttpWriteTestHostComponent {
   onHttpWriteRemoveCalled: boolean;
   form = new FormGroup({});
   httpWrite = HttpWrite.createWithSingleChild();
+  translationKeys = [];
 
   onHttpWriteRemove() {
     this.onHttpWriteRemoveCalled = true;
@@ -43,17 +48,24 @@ class HttpWriteTestHostComponent {
 
 describe('HttpWriteComponent', () => {
 
-  const URL_INPUT = 'input[formcontrolname="url"]';
-  const URL_LABEL = 'label.url';
-  const ERROR_ELEMENT = 'div.negative';
-  const ADD_HTTPWRITE_BUTTON = 'button.addValue';
-  const REMOVE_HTTPWRITE_BUTTON = 'i[ng-reflect-ng-class=removeValue0]';
+  const URL_FORM_FIELD = '.sae__url';
+  const URL_INPUT = '[formcontrolname="url"]';
+  const ADD_HTTPWRITEVALUE_BUTTON = 'button.addHttpWriteValue';
+  const REMOVE_HTTPWRITEVALUE_BUTTON = 'button.removeHttpWriteValue';
+  const REMOVE_HTTPWRITE_BUTTON = 'button.removeHttpWrite';
 
   let component: HttpWriteComponent;
   let hostComponent: HttpWriteTestHostComponent;
   let fixture: ComponentFixture<HttpWriteTestHostComponent>;
+  let harnessLoader: HarnessLoader;
 
-  beforeEach(async(() => {
+  let urlFormField: MatFormFieldHarness;
+  let urlInput: MatInputHarness;
+  let addHttpWriteValueButton: MatButtonHarness;
+  let removeHttpWriteValueButton: MatButtonHarness;
+  let removeHttpWriteButton: MatButtonHarness;
+
+  beforeEach(async () => {
     TestBed.configureTestingModule({
       declarations: [
         HttpWriteComponent,
@@ -65,8 +77,15 @@ describe('HttpWriteComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     });
     fixture = createComponentAndConfigure(HttpWriteTestHostComponent);
+    harnessLoader = TestbedHarnessEnvironment.loader(fixture);
     hostComponent = fixture.componentInstance;
     component = hostComponent.testComponent;
+
+    urlFormField = await harnessLoader.getHarness(MatFormFieldHarness.with({selector: URL_FORM_FIELD}));
+    urlInput = await harnessLoader.getHarness(MatInputHarness.with({selector: URL_INPUT}));
+    addHttpWriteValueButton = await harnessLoader.getHarness(MatButtonHarness.with({selector: ADD_HTTPWRITEVALUE_BUTTON}));
+    removeHttpWriteValueButton = await harnessLoader.getHarness(MatButtonHarness.with({selector: REMOVE_HTTPWRITEVALUE_BUTTON}));
+    removeHttpWriteButton = await harnessLoader.getHarness(MatButtonHarness.with({selector: REMOVE_HTTPWRITE_BUTTON}));
 
     component.translationKeys = ['ControlHttpComponent.On', 'ControlHttpComponent.Off'];
 
@@ -79,7 +98,7 @@ describe('HttpWriteComponent', () => {
     // fixture.whenStable().then(() => {
     //   console.log('HTML=', fixture.debugElement.nativeElement.innerHTML);
     // });
-  }));
+  });
 
   describe('bindings', () => {
     it('should emit "remove" event', () => {
@@ -104,68 +123,103 @@ describe('HttpWriteComponent', () => {
 
   describe('fields', () => {
     describe('url', () => {
-      let url: DebugElement;
-
-      beforeEach(() => {
-        url = debugElementByCss(fixture, URL_INPUT);
-      });
 
       it('exists', () => {
-        expect(url).toBeTruthy();
+        expect(urlInput).toBeDefined();
       });
 
-      it('has label', () => {
-        expect(debugElementByCss(fixture, URL_LABEL)).toBeTruthy();
+      it('has label', async () => {
+        expect(await urlFormField.getLabel()).toBe('URL *');
       });
 
-      it('a valid value entered results in a valid form control', () => {
-        enterAndCheckInputValue(component.form, 'url', url, 'http://web.de');
-        expect(component.form.controls.url.valid).toBeTruthy();
+      it('a valid value entered results in a valid form control', async () => {
+        enterAndCheckInputValue(urlInput, 'http://web.de');
+        expect(await urlFormField.hasErrors()).toBe(false);
       });
 
-      it('an invalid value entered results in a invalid form control', () => {
-        enterAndCheckInputValue(component.form, 'url', url, 'http:web.de');
-        expect(component.form.controls.url.valid).toBeFalsy();
+      it('an invalid value entered results in a invalid form control', async () => {
+        enterAndCheckInputValue(urlInput, 'http:web.de');
+        await urlInput.blur();
+        expect(await urlFormField.hasErrors()).toBe(true);
       });
 
-      it('with invalid URL should display an error message', () => {
-        enterAndCheckInputValue(component.form, 'url', url, 'http:web.de');
-        fixture.detectChanges();
-        fixture.whenStable().then(() => {
-          expect(debugElementByCss(fixture, ERROR_ELEMENT).nativeElement.innerHTML).toBe('Die URL muss gültig sein');
-        });
+      it('an invalid URL should display an error message', async () => {
+        enterAndCheckInputValue(urlInput, 'http:web.de');
+        await urlInput.blur();
+        expect(await urlFormField.getTextErrors()).toStrictEqual(['Die URL muss gültig sein']);
       });
     });
   });
 
   describe('buttons', () => {
     describe('Weiterer Zustand/Aktion', () => {
+
       beforeEach(() => {
         expect(component.httpWrite.writeValues.length).toBe(1);
         expect(component.form.dirty).toBeFalsy();
-        click(debugElementByCss(fixture, ADD_HTTPWRITE_BUTTON));
       });
 
-      it('should add a HttpWriteValue', () => {
+      it('exists', async () => {
+        expect(await addHttpWriteValueButton).toBeDefined();
+      });
+
+      it('has label', async () => {
+        expect(await addHttpWriteValueButton.getText()).toBe('Weiterer Zustand/Aktion');
+      });
+
+      it('should add a HttpWriteValue', async () => {
+        await addHttpWriteValueButton.click();
         expect(component.httpWrite.writeValues.length).toBe(2);
       });
 
-      it('set form to dirty', () => {
-        fixture.whenStable().then(() => {
-          expect(component.form.dirty).toBeTruthy();
-        });
+      it('set form to dirty', async () => {
+        await addHttpWriteValueButton.click();
+        expect(component.form.dirty).toBeTruthy();
       });
     });
 
-    describe('X (Remove HttpWriteValue)', () => {
+    describe('Zustand löschen', () => {
+
       beforeEach(() => {
         expect(component.form.dirty).toBeFalsy();
-        click(debugElementByCss(fixture, REMOVE_HTTPWRITE_BUTTON));
-        fixture.detectChanges();
       });
 
-      it('should remove HttpWriteValue', () => {
+      it('exists', async () => {
+        expect(await removeHttpWriteValueButton).toBeDefined();
+      });
+
+      it('has label', async () => {
+        expect(await removeHttpWriteValueButton.getText()).toBe('Zustand löschen');
+      });
+
+      it('should remove a HttpWriteValue', async () => {
+        await removeHttpWriteValueButton.click();
         expect(component.httpWrite.writeValues.length).toBe(0);
+      });
+
+      it('set form to dirty', async () => {
+        await removeHttpWriteValueButton.click();
+        expect(component.form.dirty).toBeTruthy();
+      });
+    });
+
+    describe('URL löschen', () => {
+
+      beforeEach(() => {
+        expect(component.form.dirty).toBeFalsy();
+      });
+
+      it('exists', async () => {
+        expect(await removeHttpWriteButton).toBeDefined();
+      });
+
+      it('has label', async () => {
+        expect(await removeHttpWriteButton.getText()).toBe('URL löschen');
+      });
+
+      it('should remove HttpWrite', async () => {
+        await removeHttpWriteButton.click();
+        expect(hostComponent.onHttpWriteRemoveCalled).toBe(true);
       });
 
       it('set form to dirty', () => {
@@ -177,10 +231,9 @@ describe('HttpWriteComponent', () => {
   });
 
   describe('form', () => {
-    it('filling all required inputs results in a valid form', () => {
+    it('filling all required inputs results in a valid form', async () => {
       expect(component.form.valid).toBeFalsy();
-      enterAndCheckInputValue(component.form, 'url', debugElementByCss(fixture, URL_INPUT),
-        'http://web.de');
+      await enterAndCheckInputValue(urlInput, 'http://web.de');
       expect(component.form.valid).toBeTruthy();
     });
   });
@@ -192,12 +245,11 @@ describe('HttpWriteComponent', () => {
       const httpWriteValueName = 'httpWriteValue.name';
       let httpWrite: HttpWrite;
 
-      beforeEach(fakeAsync(() => {
+      beforeEach(async () => {
         httpWriteValueUpdateModelFromFormMock.mockReturnValue({name: httpWriteValueName} as HttpWriteValue);
-        enterAndCheckInputValue(component.form, 'url', debugElementByCss(fixture, URL_INPUT), inputValue);
-        tick();
+        await enterAndCheckInputValue(urlInput, inputValue);
         httpWrite = component.updateModelFromForm();
-      }));
+      });
 
       it('with URL', () => {
         expect(httpWrite.url).toBe(inputValue);

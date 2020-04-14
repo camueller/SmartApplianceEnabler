@@ -7,6 +7,8 @@ import {DebugElement, Type} from '@angular/core';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {MaterialModule} from '../material/material.module';
+import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import {MatInputHarness} from '@angular/material/input/testing';
 
 const translations = require('assets/i18n/de.json');
 
@@ -48,6 +50,7 @@ export function defaultImports(): any[] {
   return [
     ReactiveFormsModule,
     MaterialModule,
+    NoopAnimationsModule,
     TranslateModule.forRoot(translateModuleConfig())
   ];
 }
@@ -68,8 +71,7 @@ export function translateModuleConfig() {
   };
 }
 
-export function enterAndCheckInputValue(form: FormGroup, formControlName: string, element: DebugElement, inputValue: string) {
-  element.nativeElement.value = inputValue;
-  element.nativeElement.dispatchEvent(new Event('input'));
-  expect(form.controls[formControlName].value).toBe(inputValue);
+export async function enterAndCheckInputValue(valueInput: MatInputHarness, value: string) {
+  await valueInput.setValue(value);
+  expect(await valueInput.getValue()).toBe(value);
 }

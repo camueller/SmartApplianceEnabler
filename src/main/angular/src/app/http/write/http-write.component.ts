@@ -35,7 +35,6 @@ export class HttpWriteComponent implements OnChanges, OnInit {
   translationPrefix: string;
   @Input()
   translationKeys: string[];
-  translatedStrings: string[];
   @Output()
   remove = new EventEmitter<any>();
   errors: { [key: string]: string } = {};
@@ -71,11 +70,6 @@ export class HttpWriteComponent implements OnChanges, OnInit {
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
     });
-    if (this.translate) {
-      this.translate.get(this.translationKeys).subscribe(translatedStrings => {
-        this.translatedStrings = translatedStrings;
-      });
-    }
   }
 
   removeHttpWrite() {

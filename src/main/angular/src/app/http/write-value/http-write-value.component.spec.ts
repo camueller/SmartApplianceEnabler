@@ -1,17 +1,20 @@
 import {Component, DebugElement, NO_ERRORS_SCHEMA, ViewChild} from '@angular/core';
 import {FormGroup} from '@angular/forms';
-import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {
   createComponentAndConfigure,
   debugElementByCss,
-  enterAndCheckInputValue,
   defaultImports,
   defaultProviders,
-  selectOptionValue
+  enterAndCheckInputValue
 } from '../../shared/test-util';
 import {HttpWriteValueComponent} from './http-write-value.component';
 import {HttpWriteValue} from './http-write-value';
-import {By} from '@angular/platform-browser';
+import {HarnessLoader} from '@angular/cdk/testing';
+import {TestbedHarnessEnvironment} from '@angular/cdk/testing/testbed';
+import {MatSelectHarness} from '@angular/material/select/testing';
+import {MatFormFieldHarness} from '@angular/material/form-field/testing';
+import {MatInputHarness} from '@angular/material/input/testing';
 
 @Component({
   template: `
@@ -36,20 +39,30 @@ class HttpWriteValueTestHostComponent {
 
 describe('HttpWriteValueComponent', () => {
 
-  const NAME_SELECT = 'select[formcontrolname="name"]';
-  const NAME_LABEL = 'label.name';
-  const VALUE_INPUT = 'input[formcontrolname="value"]';
-  const VALUE_LABEL = 'label.value';
-  const FACTORTOVALUE_INPUT = 'input[formcontrolname="factorToValue"]';
-  const FACTORTOVALUE_LABEL = 'label.factorToValue';
-  const METHOD_SELECT = 'select[formcontrolname="method"]';
-  const METHOD_LABEL = 'label.method';
+  const NAME_FORM_FIELD = '.sae__value-name';
+  const NAME_SELECT = '[formcontrolname="name"]';
+  const VALUE_FORM_FIELD = '.HttpWriteValueComponent__value';
+  const VALUE_INPUT = '[formcontrolname="value"]';
+  const FACTORTOVALUE_FORM_FIELD = '.sae__factorToValue';
+  const FACTORTOVALUE_INPUT = '[formcontrolname="factorToValue"]';
+  const METHOD_FORM_FIELD = '.sae__http-method';
+  const METHOD_SELECT = '[formcontrolname="method"]';
 
   let component: HttpWriteValueComponent;
   let hostComponent: HttpWriteValueTestHostComponent;
   let fixture: ComponentFixture<HttpWriteValueTestHostComponent>;
+  let harnessLoader: HarnessLoader;
 
-  beforeEach(async(() => {
+  let nameFormField: MatFormFieldHarness;
+  let nameSelect: MatSelectHarness;
+  let valueFormField: MatFormFieldHarness;
+  let valueInput: MatInputHarness;
+  let factorToValueFormField: MatFormFieldHarness;
+  let factorToValueInput: MatInputHarness;
+  let methodFormField: MatFormFieldHarness;
+  let methodSelect: MatSelectHarness;
+
+  beforeEach(async () => {
     TestBed.configureTestingModule({
       declarations: [
         HttpWriteValueComponent,
@@ -60,14 +73,24 @@ describe('HttpWriteValueComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     });
     fixture = createComponentAndConfigure(HttpWriteValueTestHostComponent);
+    harnessLoader = TestbedHarnessEnvironment.loader(fixture);
     hostComponent = fixture.componentInstance;
     component = hostComponent.testComponent;
+
+    nameFormField = await harnessLoader.getHarness(MatFormFieldHarness.with({selector: NAME_FORM_FIELD}));
+    nameSelect = await harnessLoader.getHarness(MatSelectHarness.with({selector: NAME_SELECT}));
+    valueFormField = await harnessLoader.getHarness(MatFormFieldHarness.with({selector: VALUE_FORM_FIELD}));
+    valueInput = await harnessLoader.getHarness(MatInputHarness.with({selector: VALUE_INPUT}));
+    factorToValueFormField = await harnessLoader.getHarness(MatFormFieldHarness.with({selector: FACTORTOVALUE_FORM_FIELD}));
+    factorToValueInput = await harnessLoader.getHarness(MatInputHarness.with({selector: FACTORTOVALUE_INPUT}));
+    methodFormField = await harnessLoader.getHarness(MatFormFieldHarness.with({selector: METHOD_FORM_FIELD}));
+    methodSelect = await harnessLoader.getHarness(MatSelectHarness.with({selector: METHOD_SELECT}));
 
     fixture.detectChanges();
     // fixture.whenStable().then(() => {
     //   console.log('HTML=', fixture.debugElement.nativeElement.innerHTML);
     // });
-  }));
+  });
 
   describe('initially', () => {
     it('a HttpWrite exists', () => {
@@ -77,86 +100,79 @@ describe('HttpWriteValueComponent', () => {
 
   describe('fields', () => {
     describe('name', () => {
-      let element: DebugElement;
 
-      beforeEach(() => {
-        element = debugElementByCss(fixture, NAME_SELECT);
+      beforeEach(async () => {
+        await nameSelect.open();
       });
 
       it('exists', () => {
-        expect(element).toBeTruthy();
+        expect(nameSelect).toBeDefined();
       });
 
-      it('has label', () => {
-        expect(debugElementByCss(fixture, NAME_LABEL)).toBeTruthy();
+      it('has label', async () => {
+        expect(await nameFormField.getLabel()).toBe('Zustand / Aktion *');
       });
 
       it('has no initial value', () => {
         expect(component.form.controls.name.value).toBeFalsy();
       });
 
-      it('should show options', () => {
-        const options = fixture.debugElement.queryAll(By.css(`${NAME_SELECT} option`));
-        expect(options[0].nativeElement.text).toBe('Einschalten');
-        expect(options[1].nativeElement.text).toBe('Ausschalten');
+      it('should show options', async () => {
+        const options = await nameSelect.getOptions();
+        expect(await options[0].getText()).toBe('Einschalten');
+        expect(await options[1].getText()).toBe('Ausschalten');
       });
 
-      it('has the value associated with selected option', () => {
-        selectOptionValue(fixture, NAME_SELECT, '1: Off');
-        expect(component.form.controls.name.value).toEqual('Off');
-        selectOptionValue(fixture, NAME_SELECT, '0: On');
+      it('has the value associated with selected option "Einschalten"', async () => {
+        await nameSelect.clickOptions({text: 'Einschalten'});
         expect(component.form.controls.name.value).toEqual('On');
+      });
+
+      it('has the value associated with selected option "Ausschalten"', async () => {
+        await nameSelect.clickOptions({text: 'Ausschalten'});
+        expect(component.form.controls.name.value).toEqual('Off');
       });
     });
 
     describe('value', () => {
-      let element: DebugElement;
-
-      beforeEach(() => {
-        element = debugElementByCss(fixture, VALUE_INPUT);
-      });
-
       it('exists', () => {
-        expect(element).toBeTruthy();
+        expect(valueInput).toBeDefined();
       });
 
-      it('has label', () => {
-        expect(debugElementByCss(fixture, VALUE_LABEL)).toBeTruthy();
+      it('has label', async () => {
+        expect(await valueFormField.getLabel()).toBe('Wert / Daten');
       });
 
-      it('can have a value entered', () => {
-        enterAndCheckInputValue(component.form, 'value', element, 'on');
+      it('can have a value entered', async () => {
+        enterAndCheckInputValue(valueInput, 'on');
       });
     });
 
     describe('factorToValue', () => {
-      let element: DebugElement;
-
-      beforeEach(() => {
-        element = debugElementByCss(fixture, FACTORTOVALUE_INPUT);
-      });
-
       describe('enabled (default)', () => {
         it('exists', () => {
-          expect(element).toBeTruthy();
+          expect(factorToValueInput).toBeDefined();
         });
 
-        it('has label', () => {
-          expect(debugElementByCss(fixture, FACTORTOVALUE_LABEL)).toBeTruthy();
+        it('has label', async () => {
+          expect(await factorToValueFormField.getLabel()).toBe('Umrechnungsfaktor');
         });
 
-        it('a valid value entered results in a valid form control', () => {
-          enterAndCheckInputValue(component.form, 'factorToValue', element, '1.2345');
-          expect(component.form.controls.factorToValue.valid).toBeTruthy();
+        it('a valid value entered results in a valid form control', async () => {
+          enterAndCheckInputValue(factorToValueInput, '1.2345');
+          expect(await factorToValueFormField.hasErrors()).toBe(false);
         });
 
-        it('an invalid value entered results in a invalid form control', () => {
-          enterAndCheckInputValue(component.form, 'factorToValue', element, 'abc');
-          expect(component.form.controls.factorToValue.valid).toBeFalsy();
+        it('an invalid value entered results in a invalid form control', async () => {
+          enterAndCheckInputValue(factorToValueInput, 'abc');
+          await factorToValueInput.blur();
+          expect(await factorToValueFormField.getTextErrors()).toStrictEqual(['Der Faktor muss eine (Gleitkomma-) Zahl sein']);
         });
       });
 
       describe('disabled', () => {
+        let element: DebugElement;
+
         beforeEach(() => {
           hostComponent.disableFactorToValue = true;
           fixture.detectChanges();
@@ -166,51 +182,50 @@ describe('HttpWriteValueComponent', () => {
         it('does not exist', () => {
           expect(element).toBeFalsy();
         });
-
-        it('has no label', () => {
-          expect(debugElementByCss(fixture, FACTORTOVALUE_LABEL)).toBeFalsy();
-        });
       });
     });
 
     describe('method', () => {
-      let element: DebugElement;
 
-      beforeEach(() => {
-        element = debugElementByCss(fixture, METHOD_SELECT);
+      beforeEach(async () => {
+        await methodSelect.open();
       });
 
       it('exists', () => {
-        expect(element).toBeTruthy();
+        expect(methodSelect).toBeTruthy();
       });
 
-      it('has label', () => {
-        expect(debugElementByCss(fixture, METHOD_LABEL)).toBeTruthy();
+      it('has label', async () => {
+        expect(await methodFormField.getLabel()).toBe('Methode');
       });
 
       it('has no initial value', () => {
         expect(component.form.controls.name.value).toBeFalsy();
       });
 
-      it('should show options', () => {
-        const options = fixture.debugElement.queryAll(By.css(`${METHOD_SELECT} option`));
-        expect(options[0].nativeElement.text).toBe('GET');
-        expect(options[1].nativeElement.text).toBe('POST');
+      it('should show options', async () => {
+        const options = await methodSelect.getOptions();
+        expect(await options[0].getText()).toBe('GET');
+        expect(await options[1].getText()).toBe('POST');
       });
 
-      it('has the value associated with selected option', () => {
-        selectOptionValue(fixture, METHOD_SELECT, '1: POST');
-        expect(component.form.controls.method.value).toEqual('POST');
-        selectOptionValue(fixture, METHOD_SELECT, '0: GET');
+      it('has the value associated with selected option "GET"', async () => {
+        await methodSelect.clickOptions({text: 'GET'});
         expect(component.form.controls.method.value).toEqual('GET');
+      });
+
+      it('has the value associated with selected option "POST"', async () => {
+        await methodSelect.clickOptions({text: 'POST'});
+        expect(component.form.controls.method.value).toEqual('POST');
       });
     });
   });
 
   describe('form', () => {
-    it('filling all required inputs results in a valid form', () => {
+    it('filling all required inputs results in a valid form', async () => {
       expect(component.form.valid).toBeFalsy();
-      selectOptionValue(fixture, NAME_SELECT, '0: On');
+      await nameSelect.open();
+      await nameSelect.clickOptions({text: 'Einschalten'});
       expect(component.form.valid).toBeTruthy();
     });
   });
@@ -223,15 +238,15 @@ describe('HttpWriteValueComponent', () => {
       const factorToValue = '1.2345';
       let httpWriteValue: HttpWriteValue;
 
-      beforeEach(fakeAsync(() => {
-        selectOptionValue(fixture, NAME_SELECT, name);
-        enterAndCheckInputValue(component.form, 'value', debugElementByCss(fixture, VALUE_INPUT), value);
-        enterAndCheckInputValue(component.form, 'factorToValue',
-          debugElementByCss(fixture, FACTORTOVALUE_INPUT), factorToValue);
-        tick();
-        selectOptionValue(fixture, METHOD_SELECT, '1: POST');
+      beforeEach(async () => {
+        await nameSelect.open();
+        await nameSelect.clickOptions({text: 'Einschalten'});
+        enterAndCheckInputValue(valueInput, 'on');
+        enterAndCheckInputValue(factorToValueInput, '1.2345');
+        await methodSelect.open();
+        await methodSelect.clickOptions({text: 'POST'});
         httpWriteValue = component.updateModelFromForm();
-      }));
+      });
 
       it('with name', () => {
         expect(httpWriteValue.name).toBe('On');
