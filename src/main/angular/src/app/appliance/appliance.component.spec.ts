@@ -16,6 +16,11 @@ import {Logger, Options} from '../log/logger';
 import {Location} from '@angular/common';
 import {Appliance} from './appliance';
 import {FormUtil} from '../testing/form-util';
+import {createComponentAndConfigure, defaultImports} from '../shared/test-util';
+import { MatInputHarness } from '@angular/material/input/testing';
+import { MatFormFieldHarness } from '@angular/material/form-field/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 
 const translations: any = {
   'dialog.candeactivate': 'Änderungen verwerfen?',
@@ -52,86 +57,135 @@ it('dummy test', () => {
   expect(true);
 });
 
-// describe('ApplianceComponent', () => {
-//
-//   let component: ApplianceComponent;
-//   let fixture: ComponentFixture<ApplianceComponent>;
-//   let location: LocationMock;
-//   let activatedRoute: ActivatedRouteStub;
-//   let applianceService: ApplianceServiceMock;
-//   let applianceReloadService: ApplianceReloadServiceMock;
-//   let dialogService: DialogService;
-//   let translate: TranslateService;
-//
-//   beforeEach((async() => {
-//     applianceService = new ApplianceServiceMock();
-//     applianceReloadService = new ApplianceReloadServiceMock();
-//     activatedRoute = new ActivatedRouteStub();
-//     dialogService = new DialogService();
-//     location = new LocationMock();
-//     spyOn(dialogService, 'confirm').and.returnValue(of(true));
-//
-//     TestBed.configureTestingModule({
-//       declarations: [ ApplianceComponent ],
-//       imports: [
-//         FormsModule,
-//         RouterTestingModule,
-//         TranslateModule.forRoot({
-//           loader: {
-//             provide: TranslateLoader,
-//             useClass: FakeLoader
-//           }
-//         })
-//       ],
-//       providers: [
-//         {provide: ActivatedRoute, useValue: activatedRoute},
-//         {provide: Location, useValue: location},
-//         {provide: ApplianceService, useValue: applianceService},
-//         {provide: DialogService, useValue: dialogService},
-//         {provide: AppliancesReloadService, useValue: applianceReloadService},
-//         Logger,
-//         {provide: Options, useValue: {level: Level.DEBUG}},
-//       ]
-//     });
-//
-//     translate = TestBed.get(TranslateService);
-//     translate.use('de');
-//   }));
-//
-//   it('should be created', (async() => {
-//     activatedRoute.testParamMap = {};
-//     activatedRoute.testData = {};
-//     fixture = TestBed.createComponent(ApplianceComponent);
-//     component = fixture.componentInstance;
-//     expect(component).toBeTruthy();
-//     fixture.detectChanges();
-//     fixture.whenStable().then(() => {
-//       expect(component.discardChangesMessage).toEqual(translations['dialog.candeactivate']);
-//       expect(component.confirmDeletionMessage).toEqual(translations['ApplianceComponent.confirmDeletion']);
-//     });
-//   }));
-//
-//   it('should provide an empty form for a new appliance', (async() => {
-//     activatedRoute.testParamMap = {};
-//     activatedRoute.testData = {};
-//     fixture = TestBed.createComponent(ApplianceComponent);
-//     component = fixture.componentInstance;
-//     fixture.detectChanges();
-//     fixture.whenStable().then(() => {
-//       expect(component.isNew).toBeTruthy();
-//       expect(component.detailsForm.controls['id'].value).toBeFalsy();
-//       expect(fixture.debugElement.query(By.css('input[name=id]')).nativeElement.placeholder)
-//         .toEqual('F-00000000-000000000000-00');
-//       expect(component.detailsForm.controls['vendor'].value).toBeFalsy();
-//       expect(component.detailsForm.controls['name'].value).toBeFalsy();
-//       expect(component.detailsForm.controls['type'].value).toBeFalsy();
-//       expect(component.detailsForm.controls['serial'].value).toBeFalsy();
-//       expect(component.detailsForm.controls['maxPowerConsumption'].value).toBeFalsy();
-//       expect(component.detailsForm.controls['interruptionsAllowed'].value).toBeFalsy();
-//       expect(fixture.debugElement.query(By.css('button[type=submit]')).nativeElement.disabled).toBeTruthy();
-//       expect(fixture.debugElement.query(By.css('button[type=button]')).nativeElement.disabled).toBeTruthy();
-//     });
-//   }));
+describe('ApplianceComponent', () => {
+
+  const ID_FORM_FIELD = '.ApplianceComponent__id';
+  const ID_INPUT = '[formcontrolname="id"]';
+  const INTERRUPTIONS_ALLOWED_CHECKBOX = '[formControlName="interruptionsAllowed"]';
+  const MIN_ON_TIME_FORM_FIELD = '.ApplianceComponent__minOnTime';
+  const MIN_ON_TIME_INPUT = '[formcontrolname="minOnTime"]';
+
+  let component: ApplianceComponent;
+  let fixture: ComponentFixture<ApplianceComponent>;
+  let location: LocationMock;
+  let activatedRoute: ActivatedRouteStub;
+  let applianceService: ApplianceServiceMock;
+  let applianceReloadService: ApplianceReloadServiceMock;
+  let dialogService: DialogService;
+  // let translate: TranslateService;
+
+  let idInput: MatInputHarness;
+  let idFormField: MatFormFieldHarness;
+  let interruptionsAllowedCheckbox: MatCheckboxHarness;
+  let minOnTimeFormField: MatFormFieldHarness;
+  let minOnTimeInput: MatInputHarness;
+
+  beforeEach((async() => {
+    applianceService = new ApplianceServiceMock();
+    applianceReloadService = new ApplianceReloadServiceMock();
+    activatedRoute = new ActivatedRouteStub();
+    dialogService = new DialogService();
+    location = new LocationMock();
+    spyOn(dialogService, 'confirm').and.returnValue(of(true));
+
+    TestBed.configureTestingModule({
+      declarations: [ ApplianceComponent ],
+      imports: [...defaultImports(), RouterTestingModule],
+      providers: [
+        {provide: ActivatedRoute, useValue: activatedRoute},
+        {provide: Location, useValue: location},
+        {provide: ApplianceService, useValue: applianceService},
+        {provide: DialogService, useValue: dialogService},
+        {provide: AppliancesReloadService, useValue: applianceReloadService},
+        Logger,
+        {provide: Options, useValue: {level: Level.DEBUG}},
+      ]
+    });
+  }));
+
+  async function loadMatHarnesses(componentFixture: ComponentFixture<ApplianceComponent>) {
+    const harnessLoader = TestbedHarnessEnvironment.loader(componentFixture);
+    idFormField = await harnessLoader.getHarness(MatFormFieldHarness.with({selector: ID_FORM_FIELD}));
+    idInput = await harnessLoader.getHarness(MatInputHarness.with({selector: ID_INPUT}));
+
+    interruptionsAllowedCheckbox = await harnessLoader.getHarness(MatCheckboxHarness.with({selector: INTERRUPTIONS_ALLOWED_CHECKBOX}));
+    minOnTimeFormField = await harnessLoader.getHarness(MatFormFieldHarness.with({selector: MIN_ON_TIME_FORM_FIELD}));
+    minOnTimeInput = await harnessLoader.getHarness(MatInputHarness.with({selector: MIN_ON_TIME_INPUT}));
+  }
+
+  describe('create a new appliance', () => {
+
+    beforeEach(async () => {
+      activatedRoute.testParamMap = {};
+      activatedRoute.testData = {};
+      fixture = createComponentAndConfigure(ApplianceComponent);
+      await loadMatHarnesses(fixture);
+      component = fixture.componentInstance;
+      fixture.detectChanges();
+    });
+
+    describe('fields', () => {
+
+      describe('id', () => {
+        it('exists', () => {
+          expect(idInput).toBeDefined();
+        });
+
+        // expect(fixture.debugElement.query(By.css('input[name=id]')).nativeElement.placeholder)
+        //   .toEqual('F-00000000-000000000000-00');
+      });
+
+      describe('interruptionsAllowed', () => {
+        it('exists', () => {
+          expect(interruptionsAllowedCheckbox).toBeDefined();
+        });
+
+        it('is not checked', async () => {
+          expect(await interruptionsAllowedCheckbox.isChecked()).toBeFalsy();
+        });
+
+      });
+
+      describe('minOnTime', () => {
+        it('exists', () => {
+          expect(minOnTimeInput).toBeDefined();
+        });
+
+        it('is not enabled', async () => {
+          expect(await minOnTimeInput.isDisabled()).toBeTruthy();
+        });
+
+        it('is enabled if interruptionsAllowed', async () => {
+          await interruptionsAllowedCheckbox.check();
+          // expect(await interruptionsAllowedCheckbox.isChecked()).toBeTruthy();
+          expect(await minOnTimeInput.isDisabled()).toBeFalsy();
+        });
+      });
+
+    });
+
+    it('should provide an empty form', async() => {
+      // fixture.whenStable().then(() => {
+        expect(component.isNew).toBeTruthy();
+        // expect(component.detailsForm.controls['id'].value).toBeFalsy();
+        // expect(component.detailsForm.controls['vendor'].value).toBeFalsy();
+        // expect(component.detailsForm.controls['name'].value).toBeFalsy();
+        // expect(component.detailsForm.controls['type'].value).toBeFalsy();
+        // expect(component.detailsForm.controls['serial'].value).toBeFalsy();
+        // expect(component.detailsForm.controls['maxPowerConsumption'].value).toBeFalsy();
+        // expect(component.detailsForm.controls['interruptionsAllowed'].value).toBeFalsy();
+        // expect(fixture.debugElement.query(By.css('button[type=submit]')).nativeElement.disabled).toBeTruthy();
+        // expect(fixture.debugElement.query(By.css('button[type=button]')).nativeElement.disabled).toBeTruthy();
+      // });
+    });
+
+  });
+
+  describe('display existing appliance', () => {
+
+  });
+
+
 //
 //   // it('should allow to save a new appliance', (async() => {
 //   //   activatedRoute.testParamMap = {};
@@ -283,5 +337,5 @@ it('dummy test', () => {
 //     input.value = value;
 //     input.dispatchEvent(new Event('change'));
 //   }
-//
-// });
+
+});

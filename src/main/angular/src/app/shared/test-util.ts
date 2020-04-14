@@ -9,6 +9,7 @@ import {By} from '@angular/platform-browser';
 import {MaterialModule} from '../material/material.module';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {MatInputHarness} from '@angular/material/input/testing';
+import {RouterTestingModule} from '@angular/router/testing';
 
 const translations = require('assets/i18n/de.json');
 
@@ -48,9 +49,9 @@ export function createComponentAndConfigure<T>(component: Type<T>): ComponentFix
 
 export function defaultImports(): any[] {
   return [
-    ReactiveFormsModule,
     MaterialModule,
     NoopAnimationsModule,
+    ReactiveFormsModule,
     TranslateModule.forRoot(translateModuleConfig())
   ];
 }

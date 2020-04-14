@@ -77,7 +77,6 @@ export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<Appl
   }
 
   ngOnInit() {
-    this.logger.debug('ApplianceComponent.ngOnInit()');
     this.errorMessages = new ErrorMessages('ApplianceComponent.error.', [
       new ErrorMessage('id', ValidatorType.required),
       new ErrorMessage('id', ValidatorType.pattern),
@@ -193,7 +192,7 @@ export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<Appl
     this.formHandler.addFormControl(this.form, 'maxOffTime',
       this.appliance && this.appliance.maxOffTime,
       Validators.pattern(InputValidatorPatterns.INTEGER));
-    this.setInterruptionAllowed(this.appliance.interruptionsAllowed);
+    this.setInterruptionAllowed(this.appliance ? this.appliance.interruptionsAllowed : false);
   }
 
   updateForm() {
