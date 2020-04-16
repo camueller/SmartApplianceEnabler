@@ -96,6 +96,10 @@ button {
     width: 12rem;
   }
 
+  &__selected-value {
+    display: none;
+  }
+
   &__url {
     width: 35rem;
 
