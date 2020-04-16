@@ -4,11 +4,24 @@ import {TopMenu} from './top-menu.page';
 
 export class SideMenu {
 
+  private static SETTINGS = Selector('app-sidenav a[href="/settings"]');
+  private static STATUS = Selector('app-sidenav a[href="/status"]');
+
   private static async openSideMenuIfClosed(t: TestController) {
     const sideMenuOpen = await SideMenu.newAppliance().visible;
     if (! sideMenuOpen) {
-      await TopMenu.clickAppliances(t);
+      await TopMenu.clickMenu(t);
     }
+  }
+
+  public static async clickSettings(t: TestController) {
+    await SideMenu.openSideMenuIfClosed(t);
+    await t.click(SideMenu.SETTINGS);
+  }
+
+  public static async clickStatus(t: TestController) {
+    await SideMenu.openSideMenuIfClosed(t);
+    await t.click(SideMenu.STATUS);
   }
 
   public static newAppliance(): Selector {

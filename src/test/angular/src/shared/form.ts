@@ -2,17 +2,29 @@ import { Selector } from 'testcafe';
 
 const SELECT_OPTION_MAX_KEY_LEN = 50;
 
-export function selectorInputByFormControlName(formcontrolname: string, selectorPrefix?: string, selectorBase?: string) {
-  return selectorByFormControlName(formcontrolname, 'input', selectorPrefix, selectorBase);
+export function selectorInputByFormControlName(formControlName: string, selectorPrefix?: string, selectorBase?: string) {
+  return selectorByFormControlName(formControlName, 'input', undefined, selectorPrefix, selectorBase);
 }
 
-export function selectorSelectByFormControlName(formcontrolname: string, selectorPrefix?: string, selectorBase?: string) {
-  return selectorByFormControlName(formcontrolname, 'select', selectorPrefix, selectorBase);
+export function selectorCheckboxByFormControlName(formControlName: string, selectorPrefix?: string, selectorBase?: string) {
+  return selectorByFormControlName(formControlName, 'mat-checkbox', undefined, selectorPrefix, selectorBase);
 }
 
-export function selectorByFormControlName(formControlName: string, formcontrolType: string,
+export function selectorCheckboxCheckedByFormControlName(formControlName: string, selectorPrefix?: string, selectorBase?: string) {
+  return selectorByFormControlName(formControlName, 'mat-checkbox', 'input', selectorPrefix, selectorBase);
+}
+
+export function selectorSelectByFormControlName(formControlName: string, selectorPrefix?: string, selectorBase?: string) {
+  return selectorByFormControlName(formControlName, 'mat-select', undefined, selectorPrefix, selectorBase);
+}
+
+export function selectorSelectedByFormControlName(formControlName: string, selectorPrefix?: string, selectorBase?: string) {
+  return selectorByFormControlName(formControlName, 'mat-select', '~ div.sae__selected-value', selectorPrefix, selectorBase);
+}
+
+export function selectorByFormControlName(formControlName: string, formControlNamePrefix: string, formControlNameSuffix?: string,
                                           selectorPrefix?: string, selectorBase?: string) {
-  return Selector(`${selectorPrefix || ''} ${selectorBase || ''} ${formcontrolType}[formcontrolname="${formControlName}"]`);
+  return Selector(`${selectorPrefix || ''} ${selectorBase || ''} ${formControlNamePrefix}[formcontrolname="${formControlName}"] ${formControlNameSuffix || ''}`);
 }
 
 export async function inputText(t: TestController, selector: Selector, text: string | undefined): Promise<TestController> {
@@ -62,10 +74,8 @@ export async function selectOptionByAttribute(t: TestController, selector: Selec
     // <option value="0: de.avanux.smartapplianceenabler.meter.S0Electricit" ...
     valueOrPattern = this.getIndexedSelectOptionValueRegExp(value);
   }
-  await t
-    .click(selector)
-    .click(selector.find('option').withAttribute('value', valueOrPattern));
-  return t;
+  await t.click(selector);
+  await t.click(Selector(`mat-option[ng-reflect-value="${valueOrPattern}"]`));
 }
 
 export function getIndexedSelectOptionValueRegExp(value: string) {

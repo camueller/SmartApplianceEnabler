@@ -1,9 +1,9 @@
 import {Selector} from 'testcafe';
 import {
   inputText,
-  selectOptionByAttribute,
+  selectOptionByAttribute, selectorCheckboxByFormControlName, selectorCheckboxCheckedByFormControlName,
   selectorInputByFormControlName,
-  selectorSelectByFormControlName,
+  selectorSelectByFormControlName, selectorSelectedByFormControlName,
   setCheckboxEnabled
 } from '../../shared/form';
 import {Appliance} from '../../../../../main/angular/src/app/appliance/appliance';
@@ -71,7 +71,7 @@ export class AppliancePage {
   }
 
   public static async assertType(t: TestController, type: string) {
-    await t.expect(selectorSelectByFormControlName('type').value).eql(type);
+    await t.expect(selectorSelectedByFormControlName('type').id).eql(type);
   }
 
   public static async setSerial(t: TestController, serial: string) {
@@ -105,11 +105,11 @@ export class AppliancePage {
   }
 
   public static async setInterruptionsAllowed(t: TestController, interruptionsAllowed: boolean) {
-    await setCheckboxEnabled(t, selectorInputByFormControlName('interruptionsAllowed'), interruptionsAllowed);
+    await setCheckboxEnabled(t, selectorCheckboxByFormControlName('interruptionsAllowed'), interruptionsAllowed);
   }
 
   public static async assertInterruptionsAllowed(t: TestController, interruptionsAllowed: boolean) {
-    await t.expect(selectorInputByFormControlName('interruptionsAllowed').checked).eql(interruptionsAllowed);
+    await t.expect(selectorCheckboxCheckedByFormControlName('interruptionsAllowed').checked).eql(interruptionsAllowed);
   }
 
   public static async setMinOnTime(t: TestController, minOnTime: number) {

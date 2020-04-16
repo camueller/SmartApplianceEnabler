@@ -14,7 +14,6 @@ import {HttpControlPage} from '../page/control/http-control.page';
 import {ModbusElectricityMeter} from '../../../../main/angular/src/app/meter/modbus/modbus-electricity-meter';
 import {ModbusMeterPage} from '../page/meter/modbus-meter.page';
 import {GlobalContext} from './global-context';
-import {TopMenu} from '../page/top-menu.page';
 import {ApplianceConfiguration} from './appliance-configuration';
 import {ModbusControlPage} from '../page/control/modbus-control.page';
 import {HttpSwitch} from '../../../../main/angular/src/app/control/http/http-switch';
@@ -36,19 +35,19 @@ export async function createAndAssertAppliance(t: TestController, configuration:
   t.fixtureCtx[key] = configuration;
   GlobalContext.ctx[key] = configuration;
   await createAppliance(t, configuration.appliance);
-  await TopMenu.clickStatus(t);
+  await SideMenu.clickStatus(t);
   await assertAppliance(t, configuration.appliance);
 }
 
 export async function createAndAssertMeter(t: TestController, configuration: ApplianceConfiguration) {
   await createMeter(t, configuration.appliance.id, configuration.meter);
-  await TopMenu.clickStatus(t);
+  await SideMenu.clickStatus(t);
   await assertMeter(t, configuration.appliance.id, configuration.meter);
 }
 
 export async function createAndAssertControl(t: TestController, configuration: ApplianceConfiguration) {
   await createControl(t, configuration.appliance.id, configuration.control);
-  await TopMenu.clickStatus(t);
+  await SideMenu.clickStatus(t);
   await assertControl(t, configuration.appliance.id, configuration.control);
 }
 

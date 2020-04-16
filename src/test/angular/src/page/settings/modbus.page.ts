@@ -5,7 +5,7 @@ import {assertInput, inputText, selectorInputByFormControlName} from '../../shar
 export class ModbusPage {
 
   private static selectorBase = 'app-settings';
-  private static addModbusButton = Selector(`${ModbusPage.selectorBase} i.green.icon.add`);
+  private static addModbusButton = Selector(`${ModbusPage.selectorBase} button.SettingsComponent__addModbusSetting`);
 
   public static async addModbus(t: TestController, modbusSettings: ModbusSetting) {
     await t.click(ModbusPage.addModbusButton);
