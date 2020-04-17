@@ -7,6 +7,7 @@ import {
   setCheckboxEnabled
 } from '../../shared/form';
 import {Appliance} from '../../../../../main/angular/src/app/appliance/appliance';
+import {getTranslation} from '../../shared/ngx-translate';
 
 export class AppliancePage {
 
@@ -71,7 +72,7 @@ export class AppliancePage {
   }
 
   public static async assertType(t: TestController, type: string) {
-    await t.expect(selectorSelectedByFormControlName('type').id).eql(type);
+    await t.expect(selectorSelectedByFormControlName('type').innerText).eql(getTranslation(type, 'ApplianceComponent.type.'));
   }
 
   public static async setSerial(t: TestController, serial: string) {

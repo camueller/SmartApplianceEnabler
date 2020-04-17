@@ -38,6 +38,7 @@ import {MeterHttpComponent} from './http/meter-http.component';
 import {HttpElectricityMeter} from './http/http-electricity-meter';
 import {MeterS0Component} from './s0/meter-s0.component';
 import {ListItem} from '../shared/list-item';
+import {simpleMeterType} from '../shared/form-util';
 
 @Component({
   selector: 'app-meter',
@@ -89,7 +90,7 @@ export class MeterComponent implements OnChanges, OnInit, CanDeactivate<MeterCom
     const meterTypeKeys = [S0ElectricityMeter.TYPE, ModbusElectricityMeter.TYPE, HttpElectricityMeter.TYPE];
     this.translate.get(meterTypeKeys).subscribe(translatedStrings => {
       Object.keys(translatedStrings).forEach(key => {
-        this.meterTypes.push({value: key, viewValue: translatedStrings[key]} as ListItem);
+        this.meterTypes.push({value: simpleMeterType(key), viewValue: translatedStrings[key]} as ListItem);
       });
     });
     this.route.paramMap.subscribe(() => this.applianceId = this.route.snapshot.paramMap.get('id'));
@@ -111,26 +112,23 @@ export class MeterComponent implements OnChanges, OnInit, CanDeactivate<MeterCom
 
   buildForm() {
     this.form = new FormGroup({});
-    this.formHandler.addFormControl(this.form, 'meterType', this.meter && this.meter.type);
+    this.formHandler.addFormControl(this.form, 'meterType', this.meter && simpleMeterType(this.meter.type));
   }
 
   updateForm() {
-    this.formHandler.setFormControlValue(this.form, 'meterType', this.meter.type);
+    this.formHandler.setFormControlValue(this.form, 'meterType', simpleMeterType(this.meter.type));
   }
 
-  // get meterType() {
-  //   return this.form.controls.meterType.value;
-  // }
   get isS0ElectricityMeter() {
-    return this.form.controls.meterType.value === S0ElectricityMeter.TYPE;
+    return this.form.controls.meterType.value === simpleMeterType(S0ElectricityMeter.TYPE);
   }
 
   get isModbusElectricityMeter() {
-    return this.form.controls.meterType.value === ModbusElectricityMeter.TYPE;
+    return this.form.controls.meterType.value === simpleMeterType(ModbusElectricityMeter.TYPE);
   }
 
   get isHttpElectricityMeter() {
-    return this.form.controls.meterType.value === HttpElectricityMeter.TYPE;
+    return this.form.controls.meterType.value === simpleMeterType(HttpElectricityMeter.TYPE);
   }
 
   canDeactivate(): Observable<boolean> | boolean {
@@ -153,8 +151,7 @@ export class MeterComponent implements OnChanges, OnInit, CanDeactivate<MeterCom
   }
 
   typeChanged(newType?: string) {
-    this.meter.type = newType;
-    this.buildForm();
+    this.meter.type = `de.avanux.smartapplianceenabler.meter.${newType}`;
   }
 
   submitForm() {

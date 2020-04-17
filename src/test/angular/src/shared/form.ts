@@ -19,7 +19,7 @@ export function selectorSelectByFormControlName(formControlName: string, selecto
 }
 
 export function selectorSelectedByFormControlName(formControlName: string, selectorPrefix?: string, selectorBase?: string) {
-  return selectorByFormControlName(formControlName, 'mat-select', '~ div.sae__selected-value', selectorPrefix, selectorBase);
+  return selectorByFormControlName(formControlName, 'mat-select', 'span.mat-select-value-text > span', selectorPrefix, selectorBase);
 }
 
 export function selectorByFormControlName(formControlName: string, formControlNamePrefix: string, formControlNameSuffix?: string,

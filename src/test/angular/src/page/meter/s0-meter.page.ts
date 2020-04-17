@@ -8,6 +8,7 @@ import {
   selectorSelectByFormControlName,
   selectorSelectedByFormControlName
 } from '../../shared/form';
+import {getTranslation} from '../../shared/ngx-translate';
 
 export class S0MeterPage extends MeterPage {
 
@@ -37,7 +38,8 @@ export class S0MeterPage extends MeterPage {
     await selectOptionByAttribute(t, selectorSelectByFormControlName('pinPullResistance'), pinPullResistance);
   }
   public static async assertPinPullResistance(t: TestController, pinPullResistance: string) {
-    await t.expect(selectorSelectedByFormControlName('pinPullResistance').id).eql(pinPullResistance);
+    await t.expect(selectorSelectedByFormControlName('pinPullResistance').innerText)
+      .eql(getTranslation(pinPullResistance, 'MeterS0Component.pinPullResistance.'));
   }
 
   public static async setImpulsesPerKwh(t: TestController, impulsesPerKwh: number) {
