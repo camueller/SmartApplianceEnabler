@@ -10,8 +10,9 @@ export class HttpReadPage {
     return `app-http-read:nth-child(${httpReadIndex + 1})`;
   }
 
-  private static addHttpReadButton(selectorPrefix?: string) {
-    return Selector(`${selectorPrefix || ''}> div > button`);
+  private static addHttpReadButton(selectorPrefix?: string, buttonClass?: string) {
+    const buttonClassResolved = buttonClass ? `.${buttonClass}` : '';
+    return Selector(`${selectorPrefix || ''} button${buttonClassResolved}`);
   }
 
   public static async setHttpRead(t: TestController, httpRead: HttpRead, httpReadIndex: number, selectorPrefix?: string) {
@@ -25,9 +26,10 @@ export class HttpReadPage {
     const httpReadValueSelectorPrefix = `${selectorPrefix} ${HttpReadPage.selectorBase(httpReadIndex)}`;
     await HttpReadValuePage.setHttpReadValue(t, httpReadValue, 0, httpReadValueSelectorPrefix);
   }
-  public static async assertHttpReadValue(t: TestController, httpReadValue: HttpReadValue, httpReadIndex: number, selectorPrefix?: string) {
+  public static async assertHttpReadValue(t: TestController, httpReadValue: HttpReadValue, httpReadIndex: number,
+                                          selectorPrefix?: string, i18nPrefix?: string) {
     const httpReadValueSelectorPrefix = `${selectorPrefix} ${HttpReadPage.selectorBase(httpReadIndex)}`;
-    await HttpReadValuePage.assertHttpReadValue(t, httpReadValue, 0, httpReadValueSelectorPrefix);
+    await HttpReadValuePage.assertHttpReadValue(t, httpReadValue, 0, httpReadValueSelectorPrefix, i18nPrefix);
   }
 
   public static async setUrl(t: TestController, url: string, httpReadIndex: number, selectorPrefix?: string) {
@@ -39,7 +41,7 @@ export class HttpReadPage {
       HttpReadPage.selectorBase(httpReadIndex)), url);
   }
 
-  public static async clickAddHttpRead(t: TestController, selectorPrefix?: string) {
-    await t.click(HttpReadPage.addHttpReadButton(selectorPrefix));
+  public static async clickAddHttpRead(t: TestController, selectorPrefix?: string, buttonClass?: string ) {
+    await t.click(HttpReadPage.addHttpReadButton(selectorPrefix, buttonClass));
   }
 }

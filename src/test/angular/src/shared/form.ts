@@ -56,6 +56,9 @@ export async function assertCheckbox(t: TestController, selector: Selector, enab
   await t.expect(selector.checked).eql(enabled);
 }
 
+/**
+ * FIXME number prefix kann weg
+ */
 export async function selectOptionByAttribute(t: TestController, selector: Selector, value: string, numberPrefix?: boolean) {
   // Angular seems to limit the value length to 50 characters:
   // <option value="de.avanux.smartapplianceenabler.meter.S0Electricit" ...
@@ -81,6 +84,8 @@ export async function assertSelect(t: TestController, selector: Selector, regExp
 }
 
 export async function assertSelectNEW(t: TestController, selector: Selector, optionKey: string, optionKeyPrefix?: string) {
+  console.log('optionKey=', optionKey);
+  console.log('optionKeyPrefix=', optionKeyPrefix);
   await t.expect(selector.innerText).eql(getTranslation(optionKey, optionKeyPrefix));
 }
 

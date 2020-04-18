@@ -6,6 +6,7 @@ import {HttpReadPage} from '../http/http-read.page';
 export class HttpMeterPage extends MeterPage {
 
   private static selectorPrefix = 'app-meter-http';
+  private static i18nPrefix = 'MeterHttpComponent.';
 
   public static async setHttpElectricityMeter(t: TestController, httpElectricityMeter: HttpElectricityMeter) {
     await HttpMeterPage.setType(t, HttpElectricityMeter.TYPE);
@@ -20,7 +21,7 @@ export class HttpMeterPage extends MeterPage {
       httpRead => httpRead.readValues.find(httpReadValue => httpReadValue.name === MeterValueName.Energy));
     if (energyHttpRead) {
       httpReadIndex = 1;
-      await HttpReadPage.clickAddHttpRead(t, this.selectorPrefix);
+      await HttpReadPage.clickAddHttpRead(t, this.selectorPrefix, 'MeterHttpComponent__addHttpRead');
       await HttpReadPage.setHttpRead(t, energyHttpRead, httpReadIndex, this.selectorPrefix);
       await HttpReadPage.setHttpReadValue(t, energyHttpRead.readValues[0], httpReadIndex, this.selectorPrefix);
     }
@@ -32,14 +33,14 @@ export class HttpMeterPage extends MeterPage {
       httpRead => httpRead.readValues.find(httpReadValue => httpReadValue.name === MeterValueName.Power));
     let httpReadIndex = 0;
     await HttpReadPage.assertHttpRead(t, powerHttpRead, httpReadIndex, this.selectorPrefix);
-    await HttpReadPage.assertHttpReadValue(t, powerHttpRead.readValues[0], httpReadIndex, this.selectorPrefix);
+    await HttpReadPage.assertHttpReadValue(t, powerHttpRead.readValues[0], httpReadIndex, this.selectorPrefix, HttpMeterPage.i18nPrefix);
 
     const energyHttpRead = httpElectricityMeter.httpReads.find(
       httpRead => httpRead.readValues.find(httpReadValue => httpReadValue.name === MeterValueName.Energy));
     if (energyHttpRead) {
       httpReadIndex = 1;
       await HttpReadPage.assertHttpRead(t, energyHttpRead, httpReadIndex, this.selectorPrefix);
-      await HttpReadPage.assertHttpReadValue(t, energyHttpRead.readValues[0], httpReadIndex, this.selectorPrefix);
+      await HttpReadPage.assertHttpReadValue(t, energyHttpRead.readValues[0], httpReadIndex, this.selectorPrefix, HttpMeterPage.i18nPrefix);
     }
   }
 
