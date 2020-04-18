@@ -1,5 +1,6 @@
 import {ControlPage} from './control.page';
 import {
+  assertCheckbox,
   assertInput,
   inputText,
   selectorCheckboxByFormControlName,
@@ -33,6 +34,6 @@ export class SwitchPage extends ControlPage {
     await setCheckboxEnabled(t, selectorCheckboxByFormControlName('reverseStates'), reverseStates);
   }
   public static async assertReverseStates(t: TestController, reverseStates: boolean) {
-    await t.expect(selectorCheckboxCheckedByFormControlName('reverseStates').checked).eql(reverseStates);
+    await assertCheckbox(t, selectorCheckboxCheckedByFormControlName('reverseStates'), reverseStates);
   }
 }

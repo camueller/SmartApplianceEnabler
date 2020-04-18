@@ -1,4 +1,5 @@
 import { Selector } from 'testcafe';
+import {getTranslation} from './ngx-translate';
 
 const SELECT_OPTION_MAX_KEY_LEN = 50;
 
@@ -43,26 +44,16 @@ export async function assertInput(t: TestController, selector: Selector, text: s
   return t;
 }
 
-export async function assertSelect(t: TestController, selector: Selector, regExp: RegExp | undefined): Promise<TestController> {
-  if (regExp) {
-    await t.expect(selector.value).match(regExp);
-  }
-  return t;
-}
-
-export async function assertCheckbox(t: TestController, selector: Selector, enabled: boolean | undefined): Promise<TestController> {
-  if (enabled) {
-    await t.expect(selector.checked).eql(enabled);
-  }
-  return t;
-}
-
 export async function setCheckboxEnabled(t: TestController, selector: Selector, enabled: boolean) {
   const checked = await selector.checked;
   if ((enabled && !checked) || (!enabled && checked)) {
     await t.click(selector);
   }
   return t;
+}
+
+export async function assertCheckbox(t: TestController, selector: Selector, enabled: boolean) {
+  await t.expect(selector.checked).eql(enabled);
 }
 
 export async function selectOptionByAttribute(t: TestController, selector: Selector, value: string, numberPrefix?: boolean) {
@@ -76,6 +67,21 @@ export async function selectOptionByAttribute(t: TestController, selector: Selec
   }
   await t.click(selector);
   await t.click(Selector(`mat-option[ng-reflect-value="${valueOrPattern}"]`));
+}
+
+/**
+ * FIXME remove
+ * @deprecated Use assertSelectNEW
+ */
+export async function assertSelect(t: TestController, selector: Selector, regExp: RegExp | undefined): Promise<TestController> {
+  if (regExp) {
+    await t.expect(selector.value).match(regExp);
+  }
+  return t;
+}
+
+export async function assertSelectNEW(t: TestController, selector: Selector, optionKey: string, optionKeyPrefix?: string) {
+  await t.expect(selector.innerText).eql(getTranslation(optionKey, optionKeyPrefix));
 }
 
 export function getIndexedSelectOptionValueRegExp(value: string) {

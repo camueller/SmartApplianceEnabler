@@ -2,13 +2,13 @@ import {MeterPage} from './meter.page';
 import {S0ElectricityMeter} from '../../../../../main/angular/src/app/meter/s0/s0-electricity-meter';
 import {
   assertInput,
+  assertSelectNEW,
   inputText,
   selectOptionByAttribute,
   selectorInputByFormControlName,
   selectorSelectByFormControlName,
   selectorSelectedByFormControlName
 } from '../../shared/form';
-import {getTranslation} from '../../shared/ngx-translate';
 
 export class S0MeterPage extends MeterPage {
 
@@ -38,8 +38,8 @@ export class S0MeterPage extends MeterPage {
     await selectOptionByAttribute(t, selectorSelectByFormControlName('pinPullResistance'), pinPullResistance);
   }
   public static async assertPinPullResistance(t: TestController, pinPullResistance: string) {
-    await t.expect(selectorSelectedByFormControlName('pinPullResistance').innerText)
-      .eql(getTranslation(pinPullResistance, 'MeterS0Component.pinPullResistance.'));
+    await assertSelectNEW(t, selectorSelectedByFormControlName('pinPullResistance'), pinPullResistance,
+      'MeterS0Component.pinPullResistance.');
   }
 
   public static async setImpulsesPerKwh(t: TestController, impulsesPerKwh: number) {
