@@ -45,6 +45,7 @@ import {ControlEvchargerComponent} from './evcharger/control-evcharger.component
 import {ControlStartingcurrentComponent} from './startingcurrent/control-startingcurrent.component';
 import {EvCharger} from './evcharger/ev-charger';
 import {ListItem} from '../shared/list-item';
+import {simpleControlType} from '../shared/form-util';
 
 @Component({
   selector: 'app-control',
@@ -107,7 +108,7 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
     const controlTypeKeys = [Switch.TYPE, ModbusSwitch.TYPE, HttpSwitch.TYPE, AlwaysOnSwitch.TYPE];
     this.translate.get(controlTypeKeys).subscribe(translatedStrings => {
       Object.keys(translatedStrings).forEach(key => {
-        this.controlTypes.push({value: key, viewValue: translatedStrings[key]} as ListItem);
+        this.controlTypes.push({value: simpleControlType(key), viewValue: translatedStrings[key]} as ListItem);
       });
     });
     this.route.paramMap.subscribe(() => this.applianceId = this.route.snapshot.paramMap.get('id'));
@@ -137,7 +138,7 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
 
   buildForm() {
     this.form = new FormGroup({});
-    this.formHandler.addFormControl(this.form, 'controlType', this.control && this.control.type);
+    this.formHandler.addFormControl(this.form, 'controlType', this.control && simpleControlType(this.control.type));
     this.formHandler.addFormControl(this.form, 'startingCurrentDetection',
       this.control && this.control.startingCurrentDetection);
   }
@@ -168,16 +169,16 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
   }
 
   typeChanged(newType?: string | undefined) {
-    if (!newType) {
+    this.control.type = `de.avanux.smartapplianceenabler.control.${newType}`;
+    if (!this.control.type) {
       this.control.startingCurrentDetection = false;
-    } else if (newType === this.TYPE_ALWAYS_ON_SWITCH) {
+    } else if (this.control.type === this.TYPE_ALWAYS_ON_SWITCH) {
       this.control.alwaysOnSwitch = this.controlFactory.createAlwaysOnSwitch();
-    } else if (newType === EvCharger.TYPE) {
+    } else if (this.control.type === EvCharger.TYPE) {
       this.control.startingCurrentDetection = false;
     }
-    this.control.type = newType;
     this.buildForm();
-    if (newType === this.TYPE_ALWAYS_ON_SWITCH) {
+    if (this.control.type === this.TYPE_ALWAYS_ON_SWITCH) {
       this.form.markAsDirty();
     }
   }

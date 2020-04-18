@@ -31,7 +31,7 @@
         <div class="field">
           <mat-form-field>
             <mat-label>{{'ControlComponent.type' | translate}}</mat-label>
-            <mat-select formControlName="controlType" required="{{formHandler.isRequired('controlType')}}">
+            <mat-select formControlName="controlType" required="{{formHandler.isRequired('controlType')}}" (ngModelChange)="typeChanged($event)">
               <mat-option *ngFor="let controlType of controlTypes" [value]="controlType.value">
                 {{controlType.viewValue}}
               </mat-option>
