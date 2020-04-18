@@ -18,7 +18,7 @@
 
 <div class="ControlComponent" *ngIf="control" xmlns="http://www.w3.org/1999/html">
   <form [formGroup]="form" (ngSubmit)="submitForm()">
-    <app-control-evcharger *ngIf="control.type === TYPE_EVCHARGER; else notEvCharger"
+    <app-control-evcharger *ngIf="isEvCharger; else notEvCharger"
                            [evCharger]="control.evCharger"
                            [controlDefaults]="controlDefaults"
                            [applianceId]="applianceId"
@@ -42,19 +42,19 @@
                       *ngIf="canHaveStartingCurrentDetection"
         >{{'ControlStartingcurrentComponent.startingCurrentDetection' | translate}}</mat-checkbox>
       </div>
-      <app-control-switch *ngIf="control.type===TYPE_SWITCH"
+      <app-control-switch *ngIf="isSwitch"
                           [switch_]="control.switch_"
                           [applianceId]="applianceId"
                           [controlDefaults]="controlDefaults"
       ></app-control-switch>
-      <app-control-modbus *ngIf="control.type===TYPE_MODBUS_SWITCH"
+      <app-control-modbus *ngIf="isModbusSwitch"
                           [modbusSwitch]="control.modbusSwitch"
                           [applianceId]="applianceId"
                           [controlDefaults]="controlDefaults"
                           [modbusSettings]="settings.modbusSettings"
                           [settingsDefaults]="settingsDefaults"
       ></app-control-modbus>
-      <app-control-http *ngIf="control.type===TYPE_HTTP_SWITCH"
+      <app-control-http *ngIf="isHttpSwitch"
                         [httpSwitch]="control.httpSwitch"
                         [applianceId]="applianceId"
                         [controlDefaults]="controlDefaults"
