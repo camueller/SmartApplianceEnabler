@@ -1,15 +1,18 @@
 import {Selector} from 'testcafe';
 import {
   assertCheckbox,
-  assertInput, assertSelectNEW,
+  assertInput,
+  assertSelectNEW,
   inputText,
-  selectOptionByAttribute, selectorCheckboxByFormControlName, selectorCheckboxCheckedByFormControlName,
+  selectOptionByAttribute,
+  selectorCheckboxByFormControlName,
+  selectorCheckboxCheckedByFormControlName,
   selectorInputByFormControlName,
-  selectorSelectByFormControlName, selectorSelectedByFormControlName,
+  selectorSelectByFormControlName,
+  selectorSelectedByFormControlName,
   setCheckboxEnabled
 } from '../../shared/form';
 import {Appliance} from '../../../../../main/angular/src/app/appliance/appliance';
-import {getTranslation} from '../../shared/ngx-translate';
 
 export class AppliancePage {
 
