@@ -21,6 +21,10 @@ import {AlwaysOnSwitch} from '../../../../main/angular/src/app/control/alwayson/
 import {ModbusSwitch} from '../../../../main/angular/src/app/control/modbus/modbus-switch';
 import {Switch} from '../../../../main/angular/src/app/control/switch/switch';
 
+export function isDebug() {
+  return !!process.env.DEBUG;
+}
+
 export function fixtureName(t: TestController) {
   // @ts-ignore
   return t.testRun.test.fixture.name;

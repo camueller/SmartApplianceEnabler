@@ -74,6 +74,25 @@ $ testcafe chrome "src/pump.spec.ts"
  3 passed (30s)
 ```
 
+Um mehr Informationen (z.B. CSS-Selectoren) zu sehen, muss `DEBUG=true` gesetzt werden:
+```console
+$ DEBUG=true testcafe chrome "src/washingmachine.spec.ts"
+ Running tests in:
+ - Chrome 81.0.4044.92 / Linux 0.0
+
+ Washing Machine
+Selector:    input[formcontrolname="id"] 
+Selector:    input[formcontrolname="vendor"] 
+Selector:    input[formcontrolname="name"] 
+Selector:    mat-select[formcontrolname="type"] 
+Open select ...
+Option selector:  mat-option[ng-reflect-value="WashingMachine"]
+Option selector exists= true
+clicked
+...
+```
+
+
 ##### Browserstack
 Zur Ausführung der Tests in [BrowserStack](https://www.browserstack.com/) werden die Tests wie folgt gestartet:
 ```console

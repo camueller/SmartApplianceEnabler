@@ -1,5 +1,6 @@
 import {Selector} from 'testcafe';
 import {getTranslation} from './ngx-translate';
+import {isDebug} from './helper';
 
 const SELECT_OPTION_MAX_KEY_LEN = 50;
 
@@ -26,21 +27,21 @@ export function selectorSelectedByFormControlName(formControlName: string, selec
 export function selectorByFormControlName(formControlName: string, formControlNamePrefix: string, formControlNameSuffix?: string,
                                           selectorPrefix?: string, selectorBase?: string) {
   const selectorString = `${selectorPrefix || ''} ${selectorBase || ''} ${formControlNamePrefix}[formcontrolname="${formControlName}"] ${formControlNameSuffix || ''}`;
-  console.log('Selector: ', selectorString);
+  if (isDebug()) { console.log('Selector: ', selectorString); }
   return Selector(selectorString);
 }
 
 export function selectorButton(selectorPrefix?: string, buttonClass?: string) {
   const buttonClassResolved = buttonClass ? `.${buttonClass}` : '';
   const selectorString = `${selectorPrefix || ''} button${buttonClassResolved}`;
-  console.log('Selector: ', selectorString);
+  if (isDebug()) { console.log('Selector: ', selectorString); }
   return Selector(selectorString);
 }
 
 export async function clickButton(t: TestController, selector: Selector) {
-  console.log('Click button ...');
+  if (isDebug()) { console.log('Click button ...'); }
   await t.click(selector);
-  console.log('... button clicked.');
+  if (isDebug()) { console.log('... button clicked.'); }
 }
 
 export async function inputText(t: TestController, selector: Selector, text: string | undefined): Promise<TestController> {
@@ -72,15 +73,15 @@ export async function assertCheckbox(t: TestController, selector: Selector, enab
 }
 
 export async function selectOptionByAttribute(t: TestController, selector: Selector, value: string) {
-  console.log('Open select ...');
+  if (isDebug()) { console.log('Open select ...'); }
   await t.click(selector);
   const optionSelectorString = `mat-option[ng-reflect-value="${value}"]`;
-  console.log('Option selector: ', optionSelectorString);
+  if (isDebug()) { console.log('Option selector: ', optionSelectorString); }
   const optionSelector = Selector(optionSelectorString);
   const optionSelectorExists = await optionSelector.exists;
-  console.log('Option selector exists=', optionSelectorExists);
+  if (isDebug()) { console.log('Option selector exists=', optionSelectorExists); }
   await t.click(optionSelector);
-  console.log('clicked');
+  if (isDebug()) { console.log('clicked'); }
 }
 
 /**
@@ -95,8 +96,8 @@ export async function assertSelect(t: TestController, selector: Selector, regExp
 }
 
 export async function assertSelectNEW(t: TestController, selector: Selector, optionKey: string, i18nPrefix?: string) {
-  console.log('optionKey=', optionKey);
-  console.log('i18nPrefix=', i18nPrefix);
+  if (isDebug()) { console.log('optionKey=', optionKey); }
+  if (isDebug()) { console.log('i18nPrefix=', i18nPrefix); }
   await t.expect(selector.innerText).eql(getTranslation(optionKey, i18nPrefix));
 }
 
