@@ -1,11 +1,11 @@
 import {
   assertInput,
-  assertSelect,
-  getIndexedSelectOptionValueRegExp,
+  assertSelectNEW,
   inputText,
   selectOptionByAttribute,
   selectorInputByFormControlName,
-  selectorSelectByFormControlName
+  selectorSelectByFormControlName,
+  selectorSelectedByFormControlName
 } from '../../shared/form';
 import {ModbusWriteValue} from '../../../../../main/angular/src/app/modbus/write-value/modbus-write-value';
 
@@ -22,19 +22,19 @@ export class ModbusWriteValuePage {
   }
 
   public static async assertModbusWriteValue(t: TestController, modbusWriteValue: ModbusWriteValue,
-                                            modbusWriteValueIndex: number, selectorPrefix?: string) {
-    await ModbusWriteValuePage.assertName(t, modbusWriteValue.name, modbusWriteValueIndex, selectorPrefix);
+                                            modbusWriteValueIndex: number, selectorPrefix?: string, i18nPrefix?: string) {
+    await ModbusWriteValuePage.assertName(t, modbusWriteValue.name, modbusWriteValueIndex, selectorPrefix, i18nPrefix);
     await ModbusWriteValuePage.assertValue(t, modbusWriteValue.value, modbusWriteValueIndex, selectorPrefix);
   }
 
   public static async setName(t: TestController, name: string, modbusWriteValueIndex: number, selectorPrefix?: string) {
     await selectOptionByAttribute(t, selectorSelectByFormControlName('name', selectorPrefix,
-      ModbusWriteValuePage.selectorBase(modbusWriteValueIndex)), name, true);
+      ModbusWriteValuePage.selectorBase(modbusWriteValueIndex)), name);
   }
   public static async assertName(t: TestController, name: string, modbusWriteValueIndex: number,
-                                 selectorPrefix?: string) {
-    await assertSelect(t, selectorSelectByFormControlName('name', selectorPrefix,
-      ModbusWriteValuePage.selectorBase(modbusWriteValueIndex)), getIndexedSelectOptionValueRegExp(name));
+                                 selectorPrefix?: string, i18nPrefix?: string) {
+    await assertSelectNEW(t, selectorSelectedByFormControlName('name', selectorPrefix,
+      ModbusWriteValuePage.selectorBase(modbusWriteValueIndex)), name, i18nPrefix);
   }
 
   public static async setValue(t: TestController, value: string, modbusWriteValueIndex: number, selectorPrefix?: string) {

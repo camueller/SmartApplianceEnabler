@@ -1,11 +1,11 @@
 import {
   assertInput,
-  assertSelect,
-  getIndexedSelectOptionValueRegExp,
+  assertSelectNEW,
   inputText,
   selectOptionByAttribute,
   selectorInputByFormControlName,
-  selectorSelectByFormControlName
+  selectorSelectByFormControlName,
+  selectorSelectedByFormControlName
 } from '../../shared/form';
 import {ModbusReadValue} from '../../../../../main/angular/src/app/modbus/read-value/modbus-read-value';
 
@@ -22,19 +22,19 @@ export class ModbusReadValuePage {
   }
 
   public static async assertModbusReadValue(t: TestController, modbusReadValue: ModbusReadValue,
-                                          modbusReadValueIndex: number, selectorPrefix?: string) {
-    await ModbusReadValuePage.assertName(t, modbusReadValue.name, modbusReadValueIndex, selectorPrefix);
+                                          modbusReadValueIndex: number, selectorPrefix?: string, i18nPrefix?: string) {
+    await ModbusReadValuePage.assertName(t, modbusReadValue.name, modbusReadValueIndex, selectorPrefix, i18nPrefix);
     await ModbusReadValuePage.assertExtractionRegex(t, modbusReadValue.extractionRegex, modbusReadValueIndex, selectorPrefix);
   }
 
   public static async setName(t: TestController, name: string, modbusReadValueIndex: number, selectorPrefix?: string) {
     await selectOptionByAttribute(t, selectorSelectByFormControlName('name', selectorPrefix,
-      ModbusReadValuePage.selectorBase(modbusReadValueIndex)), name, true);
+      ModbusReadValuePage.selectorBase(modbusReadValueIndex)), name);
   }
   public static async assertName(t: TestController, name: string, modbusReadValueIndex: number,
-                                 selectorPrefix?: string) {
-    await assertSelect(t, selectorSelectByFormControlName('name', selectorPrefix,
-      ModbusReadValuePage.selectorBase(modbusReadValueIndex)), getIndexedSelectOptionValueRegExp(name));
+                                 selectorPrefix?: string, i18nPrefix?: string) {
+    await assertSelectNEW(t, selectorSelectedByFormControlName('name', selectorPrefix,
+      ModbusReadValuePage.selectorBase(modbusReadValueIndex)), name, i18nPrefix);
   }
 
   public static async setExtractionRegex(t: TestController, extractionRegex: string, modbusReadValueIndex: number,

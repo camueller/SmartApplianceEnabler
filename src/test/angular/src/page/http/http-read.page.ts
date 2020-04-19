@@ -1,6 +1,5 @@
 import {HttpRead} from '../../../../../main/angular/src/app/http/read/http-read';
-import {assertInput, inputText, selectorInputByFormControlName} from '../../shared/form';
-import {Selector} from 'testcafe';
+import {assertInput, clickButton, inputText, selectorButton, selectorInputByFormControlName} from '../../shared/form';
 import {HttpReadValue} from '../../../../../main/angular/src/app/http/read-value/http-read-value';
 import {HttpReadValuePage} from './http-read-value.page';
 
@@ -8,11 +7,6 @@ export class HttpReadPage {
 
   private static selectorBase(httpReadIndex: number) {
     return `app-http-read:nth-child(${httpReadIndex + 1})`;
-  }
-
-  private static addHttpReadButton(selectorPrefix?: string, buttonClass?: string) {
-    const buttonClassResolved = buttonClass ? `.${buttonClass}` : '';
-    return Selector(`${selectorPrefix || ''} button${buttonClassResolved}`);
   }
 
   public static async setHttpRead(t: TestController, httpRead: HttpRead, httpReadIndex: number, selectorPrefix?: string) {
@@ -41,7 +35,7 @@ export class HttpReadPage {
       HttpReadPage.selectorBase(httpReadIndex)), url);
   }
 
-  public static async clickAddHttpRead(t: TestController, selectorPrefix?: string, buttonClass?: string ) {
-    await t.click(HttpReadPage.addHttpReadButton(selectorPrefix, buttonClass));
+  public static async clickAddHttpRead(t: TestController, selectorPrefix?: string, buttonClass?: string) {
+    await clickButton(t, selectorButton(selectorPrefix, buttonClass));
   }
 }

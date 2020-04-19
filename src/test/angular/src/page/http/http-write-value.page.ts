@@ -33,7 +33,7 @@ export class HttpWriteValuePage {
 
   public static async setName(t: TestController, name: string, httpReadValueIndex: number, selectorPrefix?: string) {
     await selectOptionByAttribute(t, selectorSelectByFormControlName('name', selectorPrefix,
-      HttpWriteValuePage.selectorBase(httpReadValueIndex)), name, true);
+      HttpWriteValuePage.selectorBase(httpReadValueIndex)), name);
   }
   public static async assertName(t: TestController, name: string, httpReadValueIndex: number, selectorPrefix?: string) {
     await assertSelect(t, selectorSelectByFormControlName('name', selectorPrefix,
@@ -51,7 +51,7 @@ export class HttpWriteValuePage {
 
   public static async setMethod(t: TestController, method: string, httpWriteValueIndex: number, selectorPrefix?: string) {
     await selectOptionByAttribute(t, selectorSelectByFormControlName('method', selectorPrefix,
-      HttpWriteValuePage.selectorBase(httpWriteValueIndex)), method, true);
+      HttpWriteValuePage.selectorBase(httpWriteValueIndex)), method);
   }
   public static async assertMethod(t: TestController, method: string, httpWriteValueIndex: number, selectorPrefix?: string) {
     await assertSelect(t, selectorSelectByFormControlName('method', selectorPrefix,

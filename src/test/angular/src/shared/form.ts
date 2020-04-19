@@ -1,4 +1,4 @@
-import { Selector } from 'testcafe';
+import {Selector} from 'testcafe';
 import {getTranslation} from './ngx-translate';
 
 const SELECT_OPTION_MAX_KEY_LEN = 50;
@@ -25,7 +25,22 @@ export function selectorSelectedByFormControlName(formControlName: string, selec
 
 export function selectorByFormControlName(formControlName: string, formControlNamePrefix: string, formControlNameSuffix?: string,
                                           selectorPrefix?: string, selectorBase?: string) {
-  return Selector(`${selectorPrefix || ''} ${selectorBase || ''} ${formControlNamePrefix}[formcontrolname="${formControlName}"] ${formControlNameSuffix || ''}`);
+  const selectorString = `${selectorPrefix || ''} ${selectorBase || ''} ${formControlNamePrefix}[formcontrolname="${formControlName}"] ${formControlNameSuffix || ''}`;
+  console.log('Selector: ', selectorString);
+  return Selector(selectorString);
+}
+
+export function selectorButton(selectorPrefix?: string, buttonClass?: string) {
+  const buttonClassResolved = buttonClass ? `.${buttonClass}` : '';
+  const selectorString = `${selectorPrefix || ''} button${buttonClassResolved}`;
+  console.log('Selector: ', selectorString);
+  return Selector(selectorString);
+}
+
+export async function clickButton(t: TestController, selector: Selector) {
+  console.log('Click button ...');
+  await t.click(selector);
+  console.log('... button clicked.');
 }
 
 export async function inputText(t: TestController, selector: Selector, text: string | undefined): Promise<TestController> {
@@ -56,20 +71,16 @@ export async function assertCheckbox(t: TestController, selector: Selector, enab
   await t.expect(selector.checked).eql(enabled);
 }
 
-/**
- * FIXME number prefix kann weg
- */
-export async function selectOptionByAttribute(t: TestController, selector: Selector, value: string, numberPrefix?: boolean) {
-  // Angular seems to limit the value length to 50 characters:
-  // <option value="de.avanux.smartapplianceenabler.meter.S0Electricit" ...
-  let valueOrPattern: string | RegExp = value.substr(0, SELECT_OPTION_MAX_KEY_LEN);
-  if (numberPrefix) {
-    // Some options have an index prefix:
-    // <option value="0: de.avanux.smartapplianceenabler.meter.S0Electricit" ...
-    valueOrPattern = this.getIndexedSelectOptionValueRegExp(value);
-  }
+export async function selectOptionByAttribute(t: TestController, selector: Selector, value: string) {
+  console.log('Open select ...');
   await t.click(selector);
-  await t.click(Selector(`mat-option[ng-reflect-value="${valueOrPattern}"]`));
+  const optionSelectorString = `mat-option[ng-reflect-value="${value}"]`;
+  console.log('Option selector: ', optionSelectorString);
+  const optionSelector = Selector(optionSelectorString);
+  const optionSelectorExists = await optionSelector.exists;
+  console.log('Option selector exists=', optionSelectorExists);
+  await t.click(optionSelector);
+  console.log('clicked');
 }
 
 /**
@@ -83,10 +94,10 @@ export async function assertSelect(t: TestController, selector: Selector, regExp
   return t;
 }
 
-export async function assertSelectNEW(t: TestController, selector: Selector, optionKey: string, optionKeyPrefix?: string) {
+export async function assertSelectNEW(t: TestController, selector: Selector, optionKey: string, i18nPrefix?: string) {
   console.log('optionKey=', optionKey);
-  console.log('optionKeyPrefix=', optionKeyPrefix);
-  await t.expect(selector.innerText).eql(getTranslation(optionKey, optionKeyPrefix));
+  console.log('i18nPrefix=', i18nPrefix);
+  await t.expect(selector.innerText).eql(getTranslation(optionKey, i18nPrefix));
 }
 
 export function getIndexedSelectOptionValueRegExp(value: string) {

@@ -6,7 +6,6 @@ import {
   selectorSelectedByFormControlName
 } from '../../shared/form';
 import {simpleMeterType} from '../../../../../main/angular/src/app/shared/form-util';
-import {getTranslation} from '../../shared/ngx-translate';
 
 export class MeterPage {
 

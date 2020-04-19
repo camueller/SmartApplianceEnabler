@@ -4,17 +4,19 @@ import {ModbusElectricityMeter} from '../../../../../main/angular/src/app/meter/
 import {ModbusReadPage} from '../modbus/modbus-read.page';
 import {
   assertInput,
-  getIndexedSelectOptionValueRegExp,
+  assertSelectNEW,
   inputText,
   selectOptionByAttribute,
   selectorInputByFormControlName,
-  selectorSelectByFormControlName
+  selectorSelectByFormControlName,
+  selectorSelectedByFormControlName
 } from '../../shared/form';
 import {settings} from '../../fixture/settings/settings';
 
 export class ModbusMeterPage extends MeterPage {
 
   private static selectorPrefix = 'app-meter-modbus';
+  private static i18nPrefix = 'MeterModbusComponent.';
 
   public static async setModbusElectricityMeter(t: TestController, modbusElectricityMeter: ModbusElectricityMeter) {
     await ModbusMeterPage.setType(t, ModbusElectricityMeter.TYPE);
@@ -32,7 +34,7 @@ export class ModbusMeterPage extends MeterPage {
       modbusRead => modbusRead.readValues.find(modbusReadValue => modbusReadValue.name === MeterValueName.Energy));
     if (energyModbusRead) {
       modbusReadIndex = 1;
-      await ModbusReadPage.clickAddModbusRead(t, this.selectorPrefix);
+      await ModbusReadPage.clickAddModbusRead(t, this.selectorPrefix, 'MeterModbusComponent__addModbusRead');
       await ModbusReadPage.setModbusRead(t, energyModbusRead, modbusReadIndex, this.selectorPrefix);
       await ModbusReadPage.setModbusReadValue(t, energyModbusRead.readValues[0], modbusReadIndex, this.selectorPrefix);
     }
@@ -47,22 +49,22 @@ export class ModbusMeterPage extends MeterPage {
       modbusRead => modbusRead.readValues.find(modbusReadValue => modbusReadValue.name === MeterValueName.Power));
     let modbusReadIndex = 0;
     await ModbusReadPage.assertModbusRead(t, powerModbusRead, modbusReadIndex, this.selectorPrefix);
-    await ModbusReadPage.assertModbusReadValue(t, powerModbusRead.readValues[0], modbusReadIndex, this.selectorPrefix);
+    await ModbusReadPage.assertModbusReadValue(t, powerModbusRead.readValues[0], modbusReadIndex, this.selectorPrefix, this.i18nPrefix);
 
     const energyModbusRead = modbusElectricityMeter.modbusReads.find(
       modbusRead => modbusRead.readValues.find(modbusReadValue => modbusReadValue.name === MeterValueName.Energy));
     if (energyModbusRead) {
       modbusReadIndex = 1;
       await ModbusReadPage.assertModbusRead(t, energyModbusRead, modbusReadIndex, this.selectorPrefix);
-      await ModbusReadPage.assertModbusReadValue(t, energyModbusRead.readValues[0], modbusReadIndex, this.selectorPrefix);
+      await ModbusReadPage.assertModbusReadValue(t, energyModbusRead.readValues[0], modbusReadIndex, this.selectorPrefix, this.i18nPrefix);
     }
   }
 
-  public static async setIdRef(t: TestController, idRef: string) {
-    await selectOptionByAttribute(t, selectorSelectByFormControlName('idref'), idRef, true);
+  public static async setIdRef(t: TestController, idref: string) {
+    await selectOptionByAttribute(t, selectorSelectByFormControlName('idref'), idref);
   }
-  public static async assertIdRef(t: TestController, idRef: string) {
-    await t.expect(selectorSelectByFormControlName('idref').value).match(getIndexedSelectOptionValueRegExp(idRef));
+  public static async assertIdRef(t: TestController, idref: string) {
+    await assertSelectNEW(t, selectorSelectedByFormControlName('idref'), idref);
   }
 
   public static async setAddress(t: TestController, address: string) {
