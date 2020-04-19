@@ -5,7 +5,7 @@ export const washingMachine = new Appliance({
   name: 'SuperWash',
   type: 'WashingMachine',
   serial: '1122334455',
-  maxPowerConsumption: 1800,
-  interruptionsAllowed: false,
+  maxPowerConsumption: 2500,
+  interruptionsAllowed: true,
   maxOnTime: 1800,
 });

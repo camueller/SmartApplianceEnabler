@@ -1,8 +1,8 @@
-import {async, ComponentFixture, fakeAsync, TestBed} from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {ControlHttpComponent} from './control-http.component';
 import {Component, EventEmitter, NO_ERRORS_SCHEMA, Output, ViewChild} from '@angular/core';
 import {HttpSwitch} from './http-switch';
-import {click, createComponentAndConfigure, debugElementByCss, defaultImports, defaultProviders} from '../../shared/test-util';
+import {createComponentAndConfigure, debugElementByCss, defaultImports, defaultProviders} from '../../shared/test-util';
 import {FormGroup} from '@angular/forms';
 import {HttpRead} from '../../http/read/http-read';
 import {HttpWriteValue} from '../../http/write-value/http-write-value';
@@ -59,7 +59,7 @@ class ControlHttpTestHostComponent {
 }
 
 describe('ControlHttpComponent', () => {
-  const ADD_HTTPWRITE_BUTTON = 'button.addHttpWrite';
+  const ADD_HTTPWRITE_BUTTON = 'button.ControlHttpComponent__addHttpWrite';
   const READ_CONTROL_STATE_CHECKBOX = '[formControlName="readControlState"]';
 
   let component: ControlHttpComponent;

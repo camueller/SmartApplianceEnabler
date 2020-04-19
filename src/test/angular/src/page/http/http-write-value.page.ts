@@ -1,12 +1,12 @@
 import {HttpWriteValue} from '../../../../../main/angular/src/app/http/write-value/http-write-value';
 import {
   assertInput,
-  assertSelect,
-  getIndexedSelectOptionValueRegExp,
+  assertSelectNEW,
   inputText,
   selectOptionByAttribute,
   selectorInputByFormControlName,
-  selectorSelectByFormControlName
+  selectorSelectByFormControlName,
+  selectorSelectedByFormControlName
 } from '../../shared/form';
 
 export class HttpWriteValuePage {
@@ -24,20 +24,21 @@ export class HttpWriteValuePage {
   }
 
   public static async assertHttpWriteValue(t: TestController, httpWriteValue: HttpWriteValue,
-                                          httpWriteValueIndex: number, selectorPrefix?: string) {
-    await HttpWriteValuePage.assertName(t, httpWriteValue.name, httpWriteValueIndex, selectorPrefix);
+                                          httpWriteValueIndex: number, selectorPrefix?: string, i18nPrefix?: string) {
+    await HttpWriteValuePage.assertName(t, httpWriteValue.name, httpWriteValueIndex, selectorPrefix, i18nPrefix);
     await HttpWriteValuePage.assertValue(t, httpWriteValue.value, httpWriteValueIndex, selectorPrefix);
     await HttpWriteValuePage.assertMethod(t, httpWriteValue.method, httpWriteValueIndex, selectorPrefix);
     await HttpWriteValuePage.assertFactorToValue(t, httpWriteValue.factorToValue, httpWriteValueIndex, selectorPrefix);
   }
 
-  public static async setName(t: TestController, name: string, httpReadValueIndex: number, selectorPrefix?: string) {
+  public static async setName(t: TestController, name: string, httpWriteValueIndex: number, selectorPrefix?: string) {
     await selectOptionByAttribute(t, selectorSelectByFormControlName('name', selectorPrefix,
-      HttpWriteValuePage.selectorBase(httpReadValueIndex)), name);
+      HttpWriteValuePage.selectorBase(httpWriteValueIndex)), name);
   }
-  public static async assertName(t: TestController, name: string, httpReadValueIndex: number, selectorPrefix?: string) {
-    await assertSelect(t, selectorSelectByFormControlName('name', selectorPrefix,
-      HttpWriteValuePage.selectorBase(httpReadValueIndex)), getIndexedSelectOptionValueRegExp(name));
+  public static async assertName(t: TestController, name: string, httpWriteValueIndex: number, selectorPrefix?: string,
+                                 i18nPrefix?: string) {
+    await assertSelectNEW(t, selectorSelectedByFormControlName('name', selectorPrefix,
+      HttpWriteValuePage.selectorBase(httpWriteValueIndex)), name, i18nPrefix);
   }
 
   public static async setValue(t: TestController, value: string, httpWriteValueIndex: number, selectorPrefix?: string) {
@@ -54,8 +55,8 @@ export class HttpWriteValuePage {
       HttpWriteValuePage.selectorBase(httpWriteValueIndex)), method);
   }
   public static async assertMethod(t: TestController, method: string, httpWriteValueIndex: number, selectorPrefix?: string) {
-    await assertSelect(t, selectorSelectByFormControlName('method', selectorPrefix,
-      HttpWriteValuePage.selectorBase(httpWriteValueIndex)), getIndexedSelectOptionValueRegExp(method));
+    await assertSelectNEW(t, selectorSelectedByFormControlName('method', selectorPrefix,
+      HttpWriteValuePage.selectorBase(httpWriteValueIndex)), method);
   }
 
   public static async setFactorToValue(t: TestController, factorToValue: number, httpWriteValueIndex: number, selectorPrefix?: string) {

@@ -28,7 +28,7 @@ export const httpSwitch_2httpWrite_httpRead_complete = new HttpSwitch({
       writeValues: [
         new HttpWriteValue({
           name: ControlValueName.Off,
-          method: 'GET',
+          method: 'POST',
           value: '0',
         })
       ]
