@@ -27,10 +27,12 @@ export class AppliancePage {
     await AppliancePage.setMinPowerConsumption(t, appliance.minPowerConsumption);
     await AppliancePage.setMaxPowerConsumption(t, appliance.maxPowerConsumption);
     await AppliancePage.setInterruptionsAllowed(t, appliance.interruptionsAllowed);
-    await AppliancePage.setMinOnTime(t, appliance.minOnTime);
-    await AppliancePage.setMaxOnTime(t, appliance.maxOnTime);
-    await AppliancePage.setMinOffTime(t, appliance.minOffTime);
-    await AppliancePage.setMaxOffTime(t, appliance.maxOffTime);
+    if (appliance.interruptionsAllowed) {
+      await AppliancePage.setMinOnTime(t, appliance.minOnTime);
+      await AppliancePage.setMaxOnTime(t, appliance.maxOnTime);
+      await AppliancePage.setMinOffTime(t, appliance.minOffTime);
+      await AppliancePage.setMaxOffTime(t, appliance.maxOffTime);
+    }
   }
 
   public static async assertAppliance(t: TestController, appliance: Appliance) {
@@ -113,7 +115,7 @@ export class AppliancePage {
   }
 
   public static async assertInterruptionsAllowed(t: TestController, interruptionsAllowed: boolean) {
-    assertCheckbox(t, selectorCheckboxCheckedByFormControlName('interruptionsAllowed'), interruptionsAllowed);
+    await assertCheckbox(t, selectorCheckboxCheckedByFormControlName('interruptionsAllowed'), interruptionsAllowed);
   }
 
   public static async setMinOnTime(t: TestController, minOnTime: number) {
