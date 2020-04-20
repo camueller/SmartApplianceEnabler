@@ -20,6 +20,8 @@ import {HttpSwitch} from '../../../../main/angular/src/app/control/http/http-swi
 import {AlwaysOnSwitch} from '../../../../main/angular/src/app/control/alwayson/always-on-switch';
 import {ModbusSwitch} from '../../../../main/angular/src/app/control/modbus/modbus-switch';
 import {Switch} from '../../../../main/angular/src/app/control/switch/switch';
+import {ControlPage} from '../page/control/control.page';
+import {StartingCurrentSwitchPage} from '../page/control/starting-current-switch.page';
 
 export function isDebug() {
   return !!process.env.DEBUG;
@@ -97,6 +99,7 @@ export async function assertMeter(t: TestController, applianceId: string, meter:
 
 export async function createControl(t: TestController, applianceId: string, control: Control) {
   await SideMenu.clickControl(t, applianceId);
+  await ControlPage.setStartingCurrentDetection(t, control.startingCurrentDetection);
   if (control.type === AlwaysOnSwitch.TYPE) {
     await AlwaysOnSwitchPage.setAlwaysOnSwitch(t, control.alwaysOnSwitch);
   }
@@ -109,10 +112,14 @@ export async function createControl(t: TestController, applianceId: string, cont
   if (control.type === ModbusSwitch.TYPE) {
     await ModbusControlPage.setModbusSwitch(t, control.modbusSwitch);
   }
-  await SwitchPage.clickSave(t);
+  if (control.startingCurrentDetection) {
+    await StartingCurrentSwitchPage.setStartingCurrentSwitch(t, control.startingCurrentSwitch);
+  }
+  await ControlPage.clickSave(t);
 }
 export async function assertControl(t: TestController, applianceId: string, control: Control) {
   await SideMenu.clickControl(t, applianceId);
+  await ControlPage.assertStartingCurrentDetection(t, control.startingCurrentDetection);
   if (control.type === AlwaysOnSwitch.TYPE) {
     await AlwaysOnSwitchPage.assertAlwaysOnSwitch(t, control.alwaysOnSwitch);
   }
@@ -124,5 +131,8 @@ export async function assertControl(t: TestController, applianceId: string, cont
   }
   if (control.type === ModbusSwitch.TYPE) {
     await ModbusControlPage.assertModbusSwitch(t, control.modbusSwitch);
+  }
+  if (control.startingCurrentDetection) {
+    await StartingCurrentSwitchPage.assertStartingCurrentSwitch(t, control.startingCurrentSwitch);
   }
 }

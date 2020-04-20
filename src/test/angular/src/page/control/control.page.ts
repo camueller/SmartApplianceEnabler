@@ -1,12 +1,16 @@
 import {Selector} from 'testcafe';
 import {
-  assertSelectNEW, clickButton,
+  assertCheckbox,
+  assertSelectNEW,
+  clickButton,
   selectOptionByAttribute,
+  selectorCheckboxByFormControlName,
+  selectorCheckboxCheckedByFormControlName,
   selectorSelectByFormControlName,
-  selectorSelectedByFormControlName
+  selectorSelectedByFormControlName,
+  setCheckboxEnabled
 } from '../../shared/form';
 import {simpleControlType} from '../../../../../main/angular/src/app/shared/form-util';
-import {getTranslation} from '../../shared/ngx-translate';
 
 export class ControlPage {
 
@@ -17,6 +21,13 @@ export class ControlPage {
   }
   public static async assertType(t: TestController, controlType: string) {
     await assertSelectNEW(t, selectorSelectedByFormControlName('controlType'), controlType);
+  }
+
+  public static async setStartingCurrentDetection(t: TestController, startingCurrentDetection: boolean) {
+    await setCheckboxEnabled(t, selectorCheckboxByFormControlName('startingCurrentDetection'), startingCurrentDetection);
+  }
+  public static async assertStartingCurrentDetection(t: TestController, startingCurrentDetection: boolean) {
+    await assertCheckbox(t, selectorCheckboxCheckedByFormControlName('startingCurrentDetection'), startingCurrentDetection);
   }
 
   public static async clickSave(t: TestController) {
