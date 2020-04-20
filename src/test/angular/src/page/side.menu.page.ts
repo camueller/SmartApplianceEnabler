@@ -1,6 +1,7 @@
 import {Selector} from 'testcafe';
 import {saeRestartTimeout} from '../shared/timeout';
 import {TopMenu} from './top-menu.page';
+import {clickButton} from '../shared/form';
 
 export class SideMenu {
 
@@ -16,12 +17,12 @@ export class SideMenu {
 
   public static async clickSettings(t: TestController) {
     await SideMenu.openSideMenuIfClosed(t);
-    await t.click(SideMenu.SETTINGS);
+    await clickButton(t, SideMenu.SETTINGS);
   }
 
   public static async clickStatus(t: TestController) {
     await SideMenu.openSideMenuIfClosed(t);
-    await t.click(SideMenu.STATUS);
+    await clickButton(t, SideMenu.STATUS);
   }
 
   public static newAppliance(): Selector {
@@ -30,7 +31,7 @@ export class SideMenu {
 
   public static async clickNewAppliance(t: TestController) {
     await SideMenu.openSideMenuIfClosed(t);
-    await t.click(SideMenu.newAppliance());
+    await clickButton(t, SideMenu.newAppliance());
   }
 
   public static appliance(id: string): Selector {
@@ -39,7 +40,7 @@ export class SideMenu {
 
   public static async clickAppliance(t: TestController, id: string) {
     await SideMenu.openSideMenuIfClosed(t);
-    await t.click(SideMenu.appliance(id));
+    await clickButton(t, SideMenu.appliance(id));
     await Selector('app-appliance', {timeout: saeRestartTimeout}).exists;
   }
 
@@ -49,7 +50,7 @@ export class SideMenu {
 
   public static async clickMeter(t: TestController, id: string) {
     await SideMenu.openSideMenuIfClosed(t);
-    await t.click(SideMenu.meter(id));
+    await clickButton(t, SideMenu.meter(id));
     await Selector('app-meter', {timeout: saeRestartTimeout}).exists;
   }
 
@@ -59,7 +60,7 @@ export class SideMenu {
 
   public static async clickControl(t: TestController, id: string) {
     await SideMenu.openSideMenuIfClosed(t);
-    await t.click(SideMenu.control(id));
+    await clickButton(t, SideMenu.control(id));
     await Selector('app-control', {timeout: saeRestartTimeout}).exists;
   }
 }

@@ -1,6 +1,6 @@
 import {Selector} from 'testcafe';
 import {
-  assertSelectNEW,
+  assertSelectNEW, clickButton,
   selectOptionByAttribute,
   selectorSelectByFormControlName,
   selectorSelectedByFormControlName
@@ -19,6 +19,6 @@ export class MeterPage {
   }
 
   public static async clickSave(t: TestController) {
-    await t.click(MeterPage.saveButton);
+    await clickButton(t, MeterPage.saveButton);
   }
 }

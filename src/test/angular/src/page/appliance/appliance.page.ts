@@ -2,7 +2,7 @@ import {Selector} from 'testcafe';
 import {
   assertCheckbox,
   assertInput,
-  assertSelectNEW,
+  assertSelectNEW, clickButton,
   inputText,
   selectOptionByAttribute,
   selectorCheckboxByFormControlName,
@@ -151,6 +151,6 @@ export class AppliancePage {
   }
 
   public static async clickSave(t: TestController) {
-    await t.click(AppliancePage.saveButton);
+    await clickButton(t, AppliancePage.saveButton);
   }
 }
