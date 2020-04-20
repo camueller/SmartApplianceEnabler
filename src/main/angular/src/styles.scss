@@ -27,9 +27,10 @@ mat-form-field, mat-checkbox {
 }
 
 button {
-  margin: $field-margin !important;
   height: 2.25rem;
   min-width: fit-content !important;
+  bottom: 0.25rem;
+  margin: 0 $field-margin !important;
 }
 
 .sae {
@@ -54,6 +55,7 @@ button {
   &__fields-with-button {
     display: flex;
     flex-flow: nowrap;
+    align-items: baseline;
   }
 
   &__hostname {
