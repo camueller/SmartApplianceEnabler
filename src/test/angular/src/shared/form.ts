@@ -44,20 +44,18 @@ export async function clickButton(t: TestController, selector: Selector) {
   if (isDebug()) { console.log('... button clicked.'); }
 }
 
-export async function inputText(t: TestController, selector: Selector, text: string | undefined): Promise<TestController> {
+export async function inputText(t: TestController, selector: Selector, text: string | undefined) {
   if (text) {
     await t.typeText(selector, text);
   } else {
     await t.selectText(selector).pressKey('delete');
   }
-  return t;
 }
 
-export async function assertInput(t: TestController, selector: Selector, text: string | undefined): Promise<TestController> {
+export async function assertInput(t: TestController, selector: Selector, text: string | undefined) {
   if (text) {
     await t.expect(selector.value).eql(text);
   }
-  return t;
 }
 
 export async function setCheckboxEnabled(t: TestController, selector: Selector, enabled: boolean) {
@@ -65,7 +63,6 @@ export async function setCheckboxEnabled(t: TestController, selector: Selector, 
   if ((enabled && !checked) || (!enabled && checked)) {
     await t.click(selector);
   }
-  return t;
 }
 
 export async function assertCheckbox(t: TestController, selector: Selector, enabled: boolean) {
