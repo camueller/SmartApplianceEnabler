@@ -99,7 +99,9 @@ export async function assertMeter(t: TestController, applianceId: string, meter:
 
 export async function createControl(t: TestController, applianceId: string, control: Control) {
   await SideMenu.clickControl(t, applianceId);
-  await ControlPage.setStartingCurrentDetection(t, control.startingCurrentDetection);
+  if (control.type !== AlwaysOnSwitch.TYPE) {
+    await ControlPage.setStartingCurrentDetection(t, control.startingCurrentDetection);
+  }
   if (control.type === AlwaysOnSwitch.TYPE) {
     await AlwaysOnSwitchPage.setAlwaysOnSwitch(t, control.alwaysOnSwitch);
   }
@@ -119,7 +121,9 @@ export async function createControl(t: TestController, applianceId: string, cont
 }
 export async function assertControl(t: TestController, applianceId: string, control: Control) {
   await SideMenu.clickControl(t, applianceId);
-  await ControlPage.assertStartingCurrentDetection(t, control.startingCurrentDetection);
+  if (control.type !== AlwaysOnSwitch.TYPE) {
+    await ControlPage.assertStartingCurrentDetection(t, control.startingCurrentDetection);
+  }
   if (control.type === AlwaysOnSwitch.TYPE) {
     await AlwaysOnSwitchPage.assertAlwaysOnSwitch(t, control.alwaysOnSwitch);
   }
