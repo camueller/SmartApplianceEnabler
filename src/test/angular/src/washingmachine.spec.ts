@@ -28,6 +28,6 @@ test('Create HTTP meter', async t => {
   await createAndAssertMeter(t, t.fixtureCtx[configurationKey(t, fixtureName(t))]);
 });
 
-test('Create HTTP switch', async t => {
+test('Create HTTP switch with starting current detection', async t => {
   await createAndAssertControl(t, t.fixtureCtx[configurationKey(t, fixtureName(t))]);
 });

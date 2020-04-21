@@ -18,7 +18,7 @@ function createHeatPump(): ApplianceConfiguration {
   });
 }
 
-test('Create appliance', async t => {
+test('Create appliance with interruptions allowed and min/max on/off timings', async t => {
   await createAndAssertAppliance(t, createHeatPump());
 });
 
