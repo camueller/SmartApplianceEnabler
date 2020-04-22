@@ -245,7 +245,27 @@ pi@raspberrypi:~ $ docker container exec $(docker ps -q) tail -f /tmp/rolling-20
 ```
 
 ## Bekannte Probleme
-### Sunny Home Managaer findet Smart Appliance Enabler nicht ohne --net=host
+### Sunny Home Manager findet Smart Appliance Enabler nicht ohne --net=host
 Der *Smart Appliance Enabler* implementiert das SEMP-Protokoll von SMA. Dieses Protokoll basiert auf UPnP, welches wiederum IP Multicast benötigt.
-Aktuell unterstützt Docker nicht die Weiterleitung der Multicast-Pakete vom Host in die Dokker-Container.
+Aktuell unterstützt Docker nicht die Weiterleitung der Multicast-Pakete vom Host in die Docker-Container.
 Siehe auch https://forums.docker.com/t/multicast-forward-from-host-to-container-for-dlna-discovery/33723
+
+### Sunny Home Manager UPnP redirect zeigt auf die falsche IP
+Wenn der *Smart Appliance Enabler* in Docker läuft, muss die Server-Adresse manuell auf die Host-Adresse gesetzt werden, sonst zeigt der UPnP redirect auf die lokale Container-Adresse.
+
+*Beispiel*
+- Container-Adresse: 172.17.0.40
+- Host-Adresse: 192.168.0.2
+
+Log-Ausgabe:
+```console
+... UPnP will redirect to http://172.17.0.40:8080 ...
+```
+Lösung:
+```console
+... -e "JAVA_OPTS=-Dserver.address=192.168.0.2" ...
+```
+Korrekte Log-Ausgabe:
+```console
+... UPnP will redirect to http://192.168.0.2:8080 ...
+```
