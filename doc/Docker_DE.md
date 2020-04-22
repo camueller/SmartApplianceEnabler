@@ -251,7 +251,8 @@ Aktuell unterstützt Docker nicht die Weiterleitung der Multicast-Pakete vom Hos
 Siehe auch https://forums.docker.com/t/multicast-forward-from-host-to-container-for-dlna-discovery/33723
 
 ### Sunny Home Manager UPnP redirect zeigt auf die falsche IP
-Wenn der *Smart Appliance Enabler* in Docker läuft, muss die Server-Adresse manuell auf die Host-Adresse gesetzt werden, sonst zeigt der UPnP redirect auf die lokale Container-Adresse.
+Wird der *Smart Appliance Enabler* nicht wie oben beschrieben über Systemd gestartet, kann es sein, dass die UPnP Server-Adresse auf die interne Container-Adresse zeigt.
+In diesem Fall muss über die Option `server.address` die Host-Adresse manuell angegeben werden.
 
 *Beispiel*
 - Container-Adresse: 172.17.0.40
