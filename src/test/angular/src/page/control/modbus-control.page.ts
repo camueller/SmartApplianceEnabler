@@ -28,14 +28,12 @@ export class ModbusControlPage extends ControlPage {
       modbusWrite => modbusWrite.writeValues.find(modbusWriteValue => modbusWriteValue.name === ControlValueName.On));
     let modbusWriteIndex = 0;
     await ModbusWritePage.setModbusWrite(t, onModbusWrite, modbusWriteIndex, this.selectorPrefix);
-    await ModbusWritePage.setModbusWriteValue(t, onModbusWrite.writeValues[0], modbusWriteIndex, 0, this.selectorPrefix);
 
     const offModbusWrite = modbusSwitch.modbusWrites.find(
     modbusWrite => modbusWrite.writeValues.find(modbusWriteValue => modbusWriteValue.name === ControlValueName.Off));
     modbusWriteIndex = 1;
     await ModbusWritePage.clickAddModbusWrite(t, this.selectorPrefix, 'ControlModbusComponent__addModbusWrite');
     await ModbusWritePage.setModbusWrite(t, offModbusWrite, modbusWriteIndex, this.selectorPrefix);
-    await ModbusWritePage.setModbusWriteValue(t, offModbusWrite.writeValues[0], modbusWriteIndex, 0, this.selectorPrefix);
   }
   public static async assertModbusSwitch(t: TestController, modbusSwitch: ModbusSwitch) {
     await ModbusControlPage.assertType(t, ModbusSwitch.TYPE);
@@ -46,16 +44,12 @@ export class ModbusControlPage extends ControlPage {
     const onModbusWrite = modbusSwitch.modbusWrites.find(
       modbusWrite => modbusWrite.writeValues.find(modbusWriteValue => modbusWriteValue.name === ControlValueName.On));
     let modbusWriteIndex = 0;
-    await ModbusWritePage.assertModbusWrite(t, onModbusWrite, modbusWriteIndex, this.selectorPrefix);
-    await ModbusWritePage.assertModbusWriteValue(t, onModbusWrite.writeValues[0], modbusWriteIndex, 0,
-      this.selectorPrefix, this.i18nPrefix);
+    await ModbusWritePage.assertModbusWrite(t, onModbusWrite, modbusWriteIndex, this.selectorPrefix, this.i18nPrefix);
 
     const offModbusWrite = modbusSwitch.modbusWrites.find(
       modbusWrite => modbusWrite.writeValues.find(modbusWriteValue => modbusWriteValue.name === ControlValueName.Off));
     modbusWriteIndex = 1;
-    await ModbusWritePage.assertModbusWrite(t, offModbusWrite, modbusWriteIndex, this.selectorPrefix);
-    await ModbusWritePage.assertModbusWriteValue(t, offModbusWrite.writeValues[0], modbusWriteIndex, 0,
-      this.selectorPrefix, this.i18nPrefix);
+    await ModbusWritePage.assertModbusWrite(t, offModbusWrite, modbusWriteIndex, this.selectorPrefix, this.i18nPrefix);
   }
 
   public static async setIdRef(t: TestController, idref: string) {
