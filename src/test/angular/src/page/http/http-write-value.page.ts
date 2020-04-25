@@ -1,7 +1,7 @@
 import {HttpWriteValue} from '../../../../../main/angular/src/app/http/write-value/http-write-value';
 import {
   assertInput,
-  assertSelectNEW,
+  assertSelect,
   inputText,
   selectOptionByAttribute,
   selectorInputByFormControlName,
@@ -37,7 +37,7 @@ export class HttpWriteValuePage {
   }
   public static async assertName(t: TestController, name: string, httpWriteValueIndex: number, selectorPrefix?: string,
                                  i18nPrefix?: string) {
-    await assertSelectNEW(t, selectorSelectedByFormControlName('name', selectorPrefix,
+    await assertSelect(t, selectorSelectedByFormControlName('name', selectorPrefix,
       HttpWriteValuePage.selectorBase(httpWriteValueIndex)), name, i18nPrefix);
   }
 
@@ -55,7 +55,7 @@ export class HttpWriteValuePage {
       HttpWriteValuePage.selectorBase(httpWriteValueIndex)), method);
   }
   public static async assertMethod(t: TestController, method: string, httpWriteValueIndex: number, selectorPrefix?: string) {
-    await assertSelectNEW(t, selectorSelectedByFormControlName('method', selectorPrefix,
+    await assertSelect(t, selectorSelectedByFormControlName('method', selectorPrefix,
       HttpWriteValuePage.selectorBase(httpWriteValueIndex)), method);
   }
 

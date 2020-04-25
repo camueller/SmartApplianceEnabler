@@ -2,7 +2,7 @@ import {Selector} from 'testcafe';
 import {
   assertCheckbox,
   assertInput,
-  assertSelectNEW, clickButton,
+  assertSelect, clickButton,
   inputText,
   selectOptionByAttribute,
   selectorCheckboxByFormControlName,
@@ -79,7 +79,7 @@ export class AppliancePage {
   }
 
   public static async assertType(t: TestController, type: string) {
-    await assertSelectNEW(t, selectorSelectedByFormControlName('type'), type, 'ApplianceComponent.type.');
+    await assertSelect(t, selectorSelectedByFormControlName('type'), type, 'ApplianceComponent.type.');
   }
 
   public static async setSerial(t: TestController, serial: string) {

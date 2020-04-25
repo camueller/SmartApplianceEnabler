@@ -1,7 +1,7 @@
 import {Selector} from 'testcafe';
 import {
   assertCheckbox,
-  assertSelectNEW,
+  assertSelect,
   clickButton,
   selectOptionByAttribute,
   selectorCheckboxByFormControlName,
@@ -20,7 +20,7 @@ export class ControlPage {
     await selectOptionByAttribute(t, selectorSelectByFormControlName('controlType'), simpleControlType(controlType));
   }
   public static async assertType(t: TestController, controlType: string) {
-    await assertSelectNEW(t, selectorSelectedByFormControlName('controlType'), controlType);
+    await assertSelect(t, selectorSelectedByFormControlName('controlType'), controlType);
   }
 
   public static async setStartingCurrentDetection(t: TestController, startingCurrentDetection: boolean) {

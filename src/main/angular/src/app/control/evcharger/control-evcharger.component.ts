@@ -109,8 +109,8 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
 
   useTemplate() {
     const templateName = this.getTemplateNameSelected();
-    this.evCharger = this.templates[templateName];
-    this.setProtocol(this.evChargerProtocol);
+    this.evCharger = new EvCharger(this.templates[templateName]);
+    this.setProtocol(this.evCharger.protocol);
     this.updateForm();
     this.form.markAsDirty();
   }
@@ -119,16 +119,7 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
     return this.evCharger && this.protocol;
   }
 
-  get evChargerProtocol() {
-    if (this.evCharger.modbusControl && this.evCharger.modbusControl['@class'] === EvModbusControl.TYPE) {
-      return EvChargerProtocol.MODBUS;
-    } else if (this.evCharger.httpControl && this.evCharger.httpControl['@class'] === EvHttpControl.TYPE) {
-      return EvChargerProtocol.HTTP;
-    }
-    return undefined;
-  }
-
-  setProtocol(protocol: EvChargerProtocol) {
+  setProtocol(protocol: string) {
     this.form.controls.protocol.setValue(protocol);
   }
 
@@ -196,7 +187,7 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
 
   expandParentForm() {
     this.formHandler.addFormControl(this.form, 'template', undefined);
-    this.formHandler.addFormControl(this.form, 'protocol', this.evChargerProtocol);
+    this.formHandler.addFormControl(this.form, 'protocol', this.evCharger.protocol);
     this.formHandler.addFormControl(this.form, 'voltage', this.evCharger.voltage,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
     this.formHandler.addFormControl(this.form, 'phases', this.evCharger.phases,
@@ -212,9 +203,9 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
   }
 
   updateForm() {
-    if (!(this.evCharger.modbusControl && this.evCharger.httpControl)) {
+    if (!this.evCharger.modbusControl && !this.evCharger.httpControl) {
       this.formHandler.setFormControlValue(this.form, 'template', undefined);
-      this.formHandler.setFormControlValue(this.form, 'protocol', this.evChargerProtocol);
+      this.formHandler.setFormControlValue(this.form, 'protocol', this.evCharger.protocol);
     }
     this.formHandler.setFormControlValue(this.form, 'voltage', this.evCharger.voltage);
     this.formHandler.setFormControlValue(this.form, 'phases', this.evCharger.phases);

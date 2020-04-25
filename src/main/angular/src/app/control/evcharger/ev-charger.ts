@@ -1,6 +1,7 @@
 import {ElectricVehicle} from './electric-vehicle/electric-vehicle';
 import {EvModbusControl} from './modbus/ev-modbus-control';
 import {EvHttpControl} from './http/ev-http-control';
+import {EvChargerProtocol} from './ev-charger-protocol';
 
 export class EvCharger {
 
@@ -21,5 +22,14 @@ export class EvCharger {
 
   public constructor(init?: Partial<EvCharger>) {
     Object.assign(this, init);
+  }
+
+  get protocol(): string {
+    if (this.modbusControl && this.modbusControl['@class'] === EvModbusControl.TYPE) {
+      return EvChargerProtocol.MODBUS;
+    } else if (this.httpControl && this.httpControl['@class'] === EvHttpControl.TYPE) {
+      return EvChargerProtocol.HTTP;
+    }
+    return undefined;
   }
 }

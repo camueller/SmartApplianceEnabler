@@ -1,6 +1,6 @@
 import {Selector} from 'testcafe';
 import {
-  assertSelectNEW, clickButton,
+  assertSelect, clickButton,
   selectOptionByAttribute,
   selectorSelectByFormControlName,
   selectorSelectedByFormControlName
@@ -15,7 +15,7 @@ export class MeterPage {
     await selectOptionByAttribute(t, selectorSelectByFormControlName('meterType'), simpleMeterType(meterType));
   }
   public static async assertType(t: TestController, meterType: string) {
-    await assertSelectNEW(t, selectorSelectedByFormControlName('meterType'), meterType);
+    await assertSelect(t, selectorSelectedByFormControlName('meterType'), meterType);
   }
 
   public static async clickSave(t: TestController) {

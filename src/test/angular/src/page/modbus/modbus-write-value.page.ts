@@ -1,6 +1,6 @@
 import {
   assertInput,
-  assertSelectNEW,
+  assertSelect,
   inputText,
   selectOptionByAttribute,
   selectorInputByFormControlName,
@@ -12,7 +12,7 @@ import {ModbusWriteValue} from '../../../../../main/angular/src/app/modbus/write
 export class ModbusWriteValuePage {
 
   private static selectorBase(modbusWriteValueIndex: number) {
-    return `app-modbus-write-value:nth-child(${modbusWriteValueIndex + 1})`;
+    return `div > div > div:nth-child(${modbusWriteValueIndex + 1}) > div > app-modbus-write-value`;
   }
 
   public static async setModbusWriteValue(t: TestController, modbusWriteValue: ModbusWriteValue,
@@ -33,7 +33,7 @@ export class ModbusWriteValuePage {
   }
   public static async assertName(t: TestController, name: string, modbusWriteValueIndex: number,
                                  selectorPrefix?: string, i18nPrefix?: string) {
-    await assertSelectNEW(t, selectorSelectedByFormControlName('name', selectorPrefix,
+    await assertSelect(t, selectorSelectedByFormControlName('name', selectorPrefix,
       ModbusWriteValuePage.selectorBase(modbusWriteValueIndex)), name, i18nPrefix);
   }
 

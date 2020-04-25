@@ -118,11 +118,10 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
       this.appliance = data.appliance;
       this.settings = data.settings;
       this.settingsDefaults = data.settingsDefaults;
-      this.updateForm();
-      if (this.control && !this.control.evCharger && this.appliance.type === 'EVCharger') {
-        // there is not type change for ev charger since it is determined by appliance type
-        this.typeChanged(EvCharger.TYPE);
+      if (this.appliance.type === 'EVCharger') {
+        this.control.type = EvCharger.TYPE;
       }
+      this.updateForm();
       if (this.form) {
         this.form.markAsPristine();
       }

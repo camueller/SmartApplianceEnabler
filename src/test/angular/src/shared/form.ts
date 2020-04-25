@@ -2,8 +2,6 @@ import {Selector} from 'testcafe';
 import {getTranslation} from './ngx-translate';
 import {isDebug} from './helper';
 
-const SELECT_OPTION_MAX_KEY_LEN = 50;
-
 export function selectorInputByFormControlName(formControlName: string, selectorPrefix?: string, selectorBase?: string) {
   return selectorByFormControlName(formControlName, 'input', undefined, selectorPrefix, selectorBase);
 }
@@ -53,9 +51,9 @@ export async function inputText(t: TestController, selector: Selector, text: str
 }
 
 export async function assertInput(t: TestController, selector: Selector, text: string | undefined) {
-  if (text) {
-    await t.expect(selector.value).eql(text);
-  }
+  const actual = await selector.value;
+  const expected = text || '';
+  await t.expect(actual.toString()).eql(expected.toString());
 }
 
 export async function setCheckboxEnabled(t: TestController, selector: Selector, enabled: boolean) {
@@ -81,25 +79,12 @@ export async function selectOptionByAttribute(t: TestController, selector: Selec
   if (isDebug()) { console.log('clicked'); }
 }
 
-/**
- * FIXME remove
- * @deprecated Use assertSelectNEW
- */
-export async function assertSelect(t: TestController, selector: Selector, regExp: RegExp | undefined): Promise<TestController> {
-  if (regExp) {
-    await t.expect(selector.value).match(regExp);
-  }
-  return t;
-}
-
-export async function assertSelectNEW(t: TestController, selector: Selector, optionKey: string, i18nPrefix?: string) {
+export async function assertSelect(t: TestController, selector: Selector, optionKey: string, i18nPrefix?: string) {
   if (isDebug()) { console.log('optionKey=', optionKey); }
   if (isDebug()) { console.log('i18nPrefix=', i18nPrefix); }
-  await t.expect(selector.innerText).eql(getTranslation(optionKey, i18nPrefix));
-}
-
-export function getIndexedSelectOptionValueRegExp(value: string) {
-  // Angular seems to limit the value length to 50 characters:
-  // <option value="de.avanux.smartapplianceenabler.meter.S0Electricit" ...
-  return new RegExp(`...${value.substr(0, SELECT_OPTION_MAX_KEY_LEN - 3)}`);
+  if (optionKey) {
+    await t.expect(selector.innerText).eql(getTranslation(optionKey, i18nPrefix));
+  } else {
+    await t.expect(selector.exists).notOk();
+  }
 }

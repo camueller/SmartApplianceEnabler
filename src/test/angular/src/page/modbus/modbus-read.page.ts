@@ -1,7 +1,7 @@
 import {ModbusRead} from '../../../../../main/angular/src/app/modbus/read/modbus-read';
 import {
   assertInput,
-  assertSelectNEW,
+  assertSelect,
   clickButton,
   inputText,
   selectOptionByAttribute,
@@ -16,7 +16,7 @@ import {ModbusReadValuePage} from './modbus-read-value.page';
 export class ModbusReadPage {
 
   private static selectorBase(modbusReadIndex: number) {
-    return `app-modbus-read:nth-child(${modbusReadIndex + 1})`;
+    return `> div > *[formarrayname="modbusReads"] > app-modbus-read:nth-child(${modbusReadIndex + 1})`;
   }
 
   public static async setModbusRead(t: TestController, modbusRead: ModbusRead, modbusReadIndex: number, selectorPrefix?: string) {
@@ -26,23 +26,27 @@ export class ModbusReadPage {
     await ModbusReadPage.setByteOrder(t, modbusRead.byteOrder, modbusReadIndex, selectorPrefix);
     await ModbusReadPage.setFactorToValue(t, modbusRead.factorToValue, modbusReadIndex, selectorPrefix);
   }
-  public static async assertModbusRead(t: TestController, modbusRead: ModbusRead, modbusReadIndex: number, selectorPrefix?: string) {
+  public static async assertModbusRead(t: TestController, modbusRead: ModbusRead, modbusReadIndex: number, selectorPrefix?: string,
+                                       i18nPrefix?: string) {
     await ModbusReadPage.assertAddress(t, modbusRead.address, modbusReadIndex, selectorPrefix);
     await ModbusReadPage.assertType(t, modbusRead.type, modbusReadIndex, selectorPrefix);
     await ModbusReadPage.assertBytes(t, modbusRead.bytes, modbusReadIndex, selectorPrefix);
     await ModbusReadPage.assertByteOrder(t, modbusRead.byteOrder, modbusReadIndex, selectorPrefix);
     await ModbusReadPage.assertFactorToValue(t, modbusRead.factorToValue, modbusReadIndex, selectorPrefix);
+    for (let i = 0; i < modbusRead.readValues.length; i++) {
+      await this.assertModbusReadValue(t, modbusRead.readValues[i], modbusReadIndex, i, selectorPrefix, i18nPrefix);
+    }
   }
 
   public static async setModbusReadValue(t: TestController, modbusReadValue: ModbusReadValue, modbusReadIndex: number,
-                                         selectorPrefix?: string) {
+                                         modbusReadValueIndex: number, selectorPrefix?: string) {
     const modbusReadValueSelectorPrefix = `${selectorPrefix} ${ModbusReadPage.selectorBase(modbusReadIndex)}`;
-    await ModbusReadValuePage.setModbusReadValue(t, modbusReadValue, 0, modbusReadValueSelectorPrefix);
+    await ModbusReadValuePage.setModbusReadValue(t, modbusReadValue, modbusReadValueIndex, modbusReadValueSelectorPrefix);
   }
   public static async assertModbusReadValue(t: TestController, modbusReadValue: ModbusReadValue, modbusReadIndex: number,
-                                            selectorPrefix?: string, i18nPrefix?: string) {
+                                            modbusReadValueIndex: number, selectorPrefix?: string, i18nPrefix?: string) {
     const modbusReadValueSelectorPrefix = `${selectorPrefix} ${ModbusReadPage.selectorBase(modbusReadIndex)}`;
-    await ModbusReadValuePage.assertModbusReadValue(t, modbusReadValue, 0, modbusReadValueSelectorPrefix, i18nPrefix);
+    await ModbusReadValuePage.assertModbusReadValue(t, modbusReadValue, modbusReadValueIndex, modbusReadValueSelectorPrefix, i18nPrefix);
   }
 
   public static async setAddress(t: TestController, address: string, modbusReadIndex: number,
@@ -61,7 +65,7 @@ export class ModbusReadPage {
       ModbusReadPage.selectorBase(modbusReadIndex)), type);
   }
   public static async assertType(t: TestController, type: string, modbusReadIndex: number, selectorPrefix?: string) {
-    await assertSelectNEW(t, selectorSelectedByFormControlName('type', selectorPrefix,
+    await assertSelect(t, selectorSelectedByFormControlName('type', selectorPrefix,
       ModbusReadPage.selectorBase(modbusReadIndex)), type);
   }
 
@@ -81,7 +85,7 @@ export class ModbusReadPage {
       ModbusReadPage.selectorBase(modbusReadIndex)), byteOrder);
   }
   public static async assertByteOrder(t: TestController, byteOrder: string, modbusReadIndex: number, selectorPrefix?: string) {
-    await assertSelectNEW(t, selectorSelectedByFormControlName('byteOrder', selectorPrefix,
+    await assertSelect(t, selectorSelectedByFormControlName('byteOrder', selectorPrefix,
       ModbusReadPage.selectorBase(modbusReadIndex)), byteOrder);
   }
 

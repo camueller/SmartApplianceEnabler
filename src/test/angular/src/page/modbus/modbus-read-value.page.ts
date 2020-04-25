@@ -1,6 +1,6 @@
 import {
   assertInput,
-  assertSelectNEW,
+  assertSelect,
   inputText,
   selectOptionByAttribute,
   selectorInputByFormControlName,
@@ -12,7 +12,7 @@ import {ModbusReadValue} from '../../../../../main/angular/src/app/modbus/read-v
 export class ModbusReadValuePage {
 
   private static selectorBase(modbusReadValueIndex: number) {
-    return `app-modbus-read-value:nth-child(${modbusReadValueIndex + 1})`;
+    return `div > div > div:nth-child(${modbusReadValueIndex + 1}) > div > app-modbus-read-value`;
   }
 
   public static async setModbusReadValue(t: TestController, modbusReadValue: ModbusReadValue,
@@ -33,7 +33,7 @@ export class ModbusReadValuePage {
   }
   public static async assertName(t: TestController, name: string, modbusReadValueIndex: number,
                                  selectorPrefix?: string, i18nPrefix?: string) {
-    await assertSelectNEW(t, selectorSelectedByFormControlName('name', selectorPrefix,
+    await assertSelect(t, selectorSelectedByFormControlName('name', selectorPrefix,
       ModbusReadValuePage.selectorBase(modbusReadValueIndex)), name, i18nPrefix);
   }
 

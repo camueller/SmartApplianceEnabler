@@ -1,6 +1,6 @@
 import {
   assertInput,
-  assertSelectNEW,
+  assertSelect,
   inputText,
   selectOptionByAttribute,
   selectorInputByFormControlName,
@@ -40,7 +40,7 @@ export class HttpReadValuePage {
   }
   public static async assertName(t: TestController, name: string, httpReadValueIndex: number,
                                  selectorPrefix?: string, i18nPrefix?: string) {
-    await assertSelectNEW(t, selectorSelectedByFormControlName('name', selectorPrefix,
+    await assertSelect(t, selectorSelectedByFormControlName('name', selectorPrefix,
       HttpReadValuePage.selectorBase(httpReadValueIndex)), name, i18nPrefix);
   }
 
