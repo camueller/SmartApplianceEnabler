@@ -10,7 +10,6 @@ import {
   selectorSelectByFormControlName,
   selectorSelectedByFormControlName
 } from '../../shared/form';
-import {ModbusReadValue} from '../../../../../main/angular/src/app/modbus/read-value/modbus-read-value';
 import {ModbusReadValuePage} from './modbus-read-value.page';
 
 export class ModbusReadPage {
