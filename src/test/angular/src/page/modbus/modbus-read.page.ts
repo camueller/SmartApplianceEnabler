@@ -25,6 +25,10 @@ export class ModbusReadPage {
     await ModbusReadPage.setBytes(t, modbusRead.bytes, modbusReadIndex, selectorPrefix);
     await ModbusReadPage.setByteOrder(t, modbusRead.byteOrder, modbusReadIndex, selectorPrefix);
     await ModbusReadPage.setFactorToValue(t, modbusRead.factorToValue, modbusReadIndex, selectorPrefix);
+    for (let i = 0; i < modbusRead.readValues.length; i++) {
+      const modbusReadValueSelectorPrefix = `${selectorPrefix} ${ModbusReadPage.selectorBase(modbusReadIndex)}`;
+      await ModbusReadValuePage.setModbusReadValue(t, modbusRead.readValues[i], i, modbusReadValueSelectorPrefix);
+    }
   }
   public static async assertModbusRead(t: TestController, modbusRead: ModbusRead, modbusReadIndex: number, selectorPrefix?: string,
                                        i18nPrefix?: string) {
@@ -34,21 +38,10 @@ export class ModbusReadPage {
     await ModbusReadPage.assertByteOrder(t, modbusRead.byteOrder, modbusReadIndex, selectorPrefix);
     await ModbusReadPage.assertFactorToValue(t, modbusRead.factorToValue, modbusReadIndex, selectorPrefix);
     for (let i = 0; i < modbusRead.readValues.length; i++) {
-      await this.assertModbusReadValue(t, modbusRead.readValues[i], modbusReadIndex, i, selectorPrefix, i18nPrefix);
+      const modbusReadValueSelectorPrefix = `${selectorPrefix} ${ModbusReadPage.selectorBase(modbusReadIndex)}`;
+      await ModbusReadValuePage.assertModbusReadValue(t, modbusRead.readValues[i], i, modbusReadValueSelectorPrefix, i18nPrefix);
     }
   }
-
-  public static async setModbusReadValue(t: TestController, modbusReadValue: ModbusReadValue, modbusReadIndex: number,
-                                         modbusReadValueIndex: number, selectorPrefix?: string) {
-    const modbusReadValueSelectorPrefix = `${selectorPrefix} ${ModbusReadPage.selectorBase(modbusReadIndex)}`;
-    await ModbusReadValuePage.setModbusReadValue(t, modbusReadValue, modbusReadValueIndex, modbusReadValueSelectorPrefix);
-  }
-  public static async assertModbusReadValue(t: TestController, modbusReadValue: ModbusReadValue, modbusReadIndex: number,
-                                            modbusReadValueIndex: number, selectorPrefix?: string, i18nPrefix?: string) {
-    const modbusReadValueSelectorPrefix = `${selectorPrefix} ${ModbusReadPage.selectorBase(modbusReadIndex)}`;
-    await ModbusReadValuePage.assertModbusReadValue(t, modbusReadValue, modbusReadValueIndex, modbusReadValueSelectorPrefix, i18nPrefix);
-  }
-
   public static async setAddress(t: TestController, address: string, modbusReadIndex: number,
                                  selectorPrefix?: string) {
     await inputText(t, selectorInputByFormControlName('address', selectorPrefix,
