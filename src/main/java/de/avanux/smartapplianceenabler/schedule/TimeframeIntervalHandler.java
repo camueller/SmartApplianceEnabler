@@ -456,7 +456,12 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
             request.setAcceptControlRecommendations(acceptControlRecommendations);
             Interval interval = new Interval(now, requiredIntervalEnd);
             TimeframeInterval timeframeInterval = new TimeframeInterval(interval, request);
-            queue.forEach(queuedTimeframeInterval -> queuedTimeframeInterval.getRequest().setEnabled(false));
+            if(control instanceof StartingCurrentSwitch) {
+                clearQueue();
+            }
+            else {
+                queue.forEach(queuedTimeframeInterval -> queuedTimeframeInterval.getRequest().setEnabled(false));
+            }
             addTimeframeInterval(now, timeframeInterval, true, true);
         }
     }
