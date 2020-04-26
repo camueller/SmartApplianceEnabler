@@ -143,9 +143,13 @@
 
   "ControlStartingcurrentComponent.startingCurrentDetection": "Anlaufstromerkennung",
   "ControlStartingcurrentComponent.powerThreshold": "Leistungsschaltgrenze [W]",
+  "ControlStartingcurrentComponent.powerThreshold.tooltip": "Diese Leistung muss während der Anlaufstromerkennung dauerhaft überschritten bzw. muss während Endestromerkennung dauerhaft unterschritten werden",
   "ControlStartingcurrentComponent.startingCurrentDetectionDuration": "Überschreitungsdauer beim Einschalten [s]",
+  "ControlStartingcurrentComponent.startingCurrentDetectionDuration.tooltip": "Für diese Dauer muss die Leistung oberhalb der Leistungsschaltgrenze bleiben, damit die Situation als Anlaufstrom gewertet wird",
   "ControlStartingcurrentComponent.finishedCurrentDetectionDuration": "Unterschreitungsdauer beim Ausschalten [s]",
+  "ControlStartingcurrentComponent.finishedCurrentDetectionDuration.tooltip": "Für diese Dauer muss die Leistung unterhalb der Leistungsschaltgrenze bleiben, damit die Situation als Endestrom gewertet wird",
   "ControlStartingcurrentComponent.minRunningTime": "Mindestlaufzeit [s]",
+  "ControlStartingcurrentComponent.minRunningTime.tooltip": "Bevor die Endestromerkennung aktiv ist, muss das Geräte mindestens diese Laufzeit absolviert haben",
   "ControlStartingcurrentComponent.error.powerThreshold_pattern": "Die Leistungsschaltgrenze muss eine Zahl sein",
   "ControlStartingcurrentComponent.error.startingCurrentDetectionDuration_pattern": "Die Überschreitungsdauer beim Einschalten muss eine Zahl sein",
   "ControlStartingcurrentComponent.error.finishedCurrentDetectionDuration_pattern": "Die Unterschreitungsdauer beim Ausschalten muss eine Zahl sein",
