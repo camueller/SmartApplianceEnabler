@@ -22,17 +22,13 @@ import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.meter.PowerUpdateListener;
 import de.avanux.smartapplianceenabler.meter.S0ElectricityMeter;
 import de.avanux.smartapplianceenabler.schedule.DayTimeframeCondition;
-
-import java.time.Duration;
-import java.time.LocalDateTime;
-
-import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
 import de.avanux.smartapplianceenabler.schedule.TimeframeIntervalHandler;
 import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.*;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -71,7 +67,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
     private transient String applianceId;
     private transient TimeframeIntervalHandler timeframeIntervalHandler;
     private transient Meter meter;
-    private transient Map<LocalDateTime, Integer> powerUpdates = new HashMap<>();
+    private transient Map<LocalDateTime, Integer> powerUpdates = new TreeMap<>();
     private transient boolean on;
     private transient boolean startingCurrentDetected;
     private transient LocalDateTime switchOnTime;
