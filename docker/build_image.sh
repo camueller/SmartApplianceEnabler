@@ -16,4 +16,4 @@ echo "Build image $NAME:$VERSION"
 docker image rmi -f $(docker images -qa $NAME | uniq) 2> /dev/null
 docker build --tag=$NAME:$VERSION $DIRECTORY
 docker tag $NAME:$VERSION $NAME:latest
-docker push $NAME
+docker image push $NAME

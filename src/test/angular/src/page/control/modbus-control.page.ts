@@ -1,4 +1,3 @@
-import {MeterValueName} from '../../../../../main/angular/src/app/meter/meter-value-name';
 import {
   assertInput,
   getIndexedSelectOptionValueRegExp,

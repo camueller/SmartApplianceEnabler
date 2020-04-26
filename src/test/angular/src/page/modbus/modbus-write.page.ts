@@ -28,6 +28,7 @@ export class ModbusWritePage {
     ModbusWritePage.setType(t, modbusWrite.type, modbusWriteIndex, selectorPrefix);
     ModbusWritePage.setFactorToValue(t, modbusWrite.factorToValue, modbusWriteIndex, selectorPrefix);
   }
+
   public static async assertModbusWrite(t: TestController, modbusWrite: ModbusWrite, modbusWriteIndex: number, selectorPrefix?: string) {
     ModbusWritePage.assertAddress(t, modbusWrite.address, modbusWriteIndex, selectorPrefix);
     ModbusWritePage.assertType(t, modbusWrite.type, modbusWriteIndex, selectorPrefix);
@@ -35,12 +36,13 @@ export class ModbusWritePage {
   }
 
   public static async setModbusWriteValue(t: TestController, modbusWriteValue: ModbusWriteValue, modbusWriteIndex: number,
-                                         selectorPrefix?: string) {
+                                          selectorPrefix?: string) {
     const modbusWriteValueSelectorPrefix = `${selectorPrefix} ${ModbusWritePage.selectorBase(modbusWriteIndex)}`;
     await ModbusWriteValuePage.setModbusWriteValue(t, modbusWriteValue, 0, modbusWriteValueSelectorPrefix);
   }
+
   public static async assertModbusWriteValue(t: TestController, modbusWriteValue: ModbusWriteValue, modbusWriteIndex: number,
-                                            selectorPrefix?: string) {
+                                             selectorPrefix?: string) {
     const modbusWriteValueSelectorPrefix = `${selectorPrefix} ${ModbusWritePage.selectorBase(modbusWriteIndex)}`;
     await ModbusWriteValuePage.assertModbusWriteValue(t, modbusWriteValue, 0, modbusWriteValueSelectorPrefix);
   }
@@ -50,6 +52,7 @@ export class ModbusWritePage {
     await inputText(t, selectorInputByFormControlName('address', selectorPrefix,
       ModbusWritePage.selectorBase(modbusReadIndex)), address);
   }
+
   public static async assertAddress(t: TestController, address: string, modbusReadIndex: number, selectorPrefix?: string) {
     await assertInput(t, selectorInputByFormControlName('address', selectorPrefix,
       ModbusWritePage.selectorBase(modbusReadIndex)), address);
@@ -60,6 +63,7 @@ export class ModbusWritePage {
     await selectOptionByAttribute(t, selectorSelectByFormControlName('type', selectorPrefix,
       ModbusWritePage.selectorBase(modbusWriteIndex)), method, true);
   }
+
   public static async assertType(t: TestController, method: string, modbusWriteIndex: number, selectorPrefix?: string) {
     await assertSelect(t, selectorSelectByFormControlName('type', selectorPrefix,
       ModbusWritePage.selectorBase(modbusWriteIndex)), getIndexedSelectOptionValueRegExp(method));
@@ -67,12 +71,17 @@ export class ModbusWritePage {
 
   public static async setFactorToValue(t: TestController, factorToValue: number, modbusWriteIndex: number,
                                        selectorPrefix?: string) {
-    await inputText(t, selectorInputByFormControlName('factorToValue', selectorPrefix,
-      ModbusWritePage.selectorBase(modbusWriteIndex)), factorToValue && factorToValue.toString());
+    if (factorToValue) {
+      await inputText(t, selectorInputByFormControlName('factorToValue', selectorPrefix,
+        ModbusWritePage.selectorBase(modbusWriteIndex)), factorToValue && factorToValue.toString());
+    }
   }
+
   public static async assertFactorToValue(t: TestController, factorToValue: number, modbusWriteIndex: number, selectorPrefix?: string) {
-    await assertInput(t, selectorInputByFormControlName('factorToValue', selectorPrefix,
-      ModbusWritePage.selectorBase(modbusWriteIndex)), factorToValue && factorToValue.toString());
+    if (factorToValue) {
+      await assertInput(t, selectorInputByFormControlName('factorToValue', selectorPrefix,
+        ModbusWritePage.selectorBase(modbusWriteIndex)), factorToValue && factorToValue.toString());
+    }
   }
 
   public static async clickAddModbusWrite(t: TestController, selectorPrefix?: string) {

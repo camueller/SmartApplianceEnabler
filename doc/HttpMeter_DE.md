@@ -17,14 +17,11 @@ Ausserdem kann ein ```Messinterval``` angegeben werden für die Durchschnittsber
 Wird ein Zähler über HTTP abgefragt, finden sich in der [Log-Datei](Support.md#Log) für jede Abfrage folgende Zeilen:
 
 ```
-2017-06-03 18:39:55,125 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:101] F-00000001-000000000001-00: Sending HTTP request
-2017-06-03 18:39:55,125 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:102] F-00000001-000000000001-00: url=http://192.168.1.1/cm?cmnd=Status%208
-2017-06-03 18:39:55,126 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:103] F-00000001-000000000001-00: data=null
-2017-06-03 18:39:55,126 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:104] F-00000001-000000000001-00: contentType=null
-2017-06-03 18:39:55,126 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:105] F-00000001-000000000001-00: username=null
-2017-06-03 18:39:55,126 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:106] F-00000001-000000000001-00: password=null
-2017-06-03 18:39:55,146 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:118] F-00000001-000000000001-00: Response code is 200
-2017-06-03 18:39:55,147 DEBUG [Timer-0] d.a.s.a.HttpElectricityMeter [HttpElectricityMeter.java:119] F-00000001-000000000001-00: HTTP response: STATUS8 = {"StatusPWR":{"Total":0.000, "Yesterday":0.000, "Today":0.000, "Power":26, "Factor":0.94, "Voltage":234, "Current":0.122}}
-2017-06-03 18:39:55,147 DEBUG [Timer-0] d.a.s.a.HttpElectricityMeter [HttpElectricityMeter.java:120] F-00000001-000000000001-00: Power value extraction regex: .*Power.:(\d+).*
-2017-06-03 18:39:55,153 DEBUG [Timer-0] d.a.s.a.HttpElectricityMeter [HttpElectricityMeter.java:119] F-00000001-000000000001-00: Power value extracted from HTTP response: 26
+2020-04-11 17:26:52,886 DEBUG [Timer-0] d.a.s.u.GuardedTimerTask [GuardedTimerTask.java:54] F-00000001-000000000001-00: Executing timer task name=PollPowerMeter id=4892940
+2020-04-11 17:26:52,886 DEBUG [Timer-0] d.a.s.h.HttpTransactionExecutor [HttpTransactionExecutor.java:105] F-00000001-000000000001-00: Sending GET request url=http://tasmota/cm?cmnd=Status%208
+2020-04-11 17:26:52,935 DEBUG [Timer-0] d.a.s.h.HttpTransactionExecutor [HttpTransactionExecutor.java:160] F-00000001-000000000001-00: Response code is 200
+2020-04-11 17:26:52,937 DEBUG [Timer-0] d.a.s.h.HttpHandler [HttpHandler.java:86] F-00000001-000000000001-00: url=http://tasmota/cm?cmnd=Status%208 httpMethod=GET data=null path=null
+2020-04-11 17:26:52,938 DEBUG [Timer-0] d.a.s.h.HttpHandler [HttpHandler.java:89] F-00000001-000000000001-00: Response: {"StatusSNS":{"Time":"2020-04-11T16:26:50","ENERGY":{"TotalStartTime":"2020-01-05T17:01:57","Total":0.244,"Yesterday":0.002,"Today":0.013,"Power":780,"ApparentPower":813,"ReactivePower":226,"Factor":0.96,"Voltage":236,"Current":3.446}}}
+2020-04-11 17:26:52,938 DEBUG [Timer-0] d.a.s.h.HttpHandler [HttpHandler.java:58] F-00000001-000000000001-00: value=780.0 protocolHandlerValue={"StatusSNS":{"Time":"2020-04-11T16:26:50","ENERGY":{"TotalStartTime":"2020-01-05T17:01:57","Total":0.244,"Yesterday":0.002,"Today":0.013,"Power":780,"ApparentPower":813,"ReactivePower":226,"Factor":0.96,"Voltage":236,"Current":3.446}}} valueExtractionRegex=,.Power.:(\d+) extractedValue=780
+2020-04-11 17:26:52,939 DEBUG [Timer-0] d.a.s.u.TimestampBasedCache [TimestampBasedCache.java:62] F-00000001-000000000001-00: cache=Power added value=780.0 timestamp=2020-04-11T17:26:52.886886  removed/total: 1/7
 ```

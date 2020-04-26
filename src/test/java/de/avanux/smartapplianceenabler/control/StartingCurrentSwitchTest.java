@@ -55,20 +55,25 @@ public class StartingCurrentSwitchTest {
         assertTrue(startingCurrentSwitch.isApplianceOn());
         // ... but from the outside perspective the control is switched off
         assertFalse(startingCurrentSwitch.isOn());
+        int startingCurrentDetectionDuration = startingCurrentSwitch.getStartingCurrentDetectionDuration();
 
-        startingCurrentSwitch.detectStartingCurrent(now, 0, 0);
+        startingCurrentSwitch.addPowerUpdate(now, 0, startingCurrentDetectionDuration);
+        startingCurrentSwitch.detectStartingCurrent(now);
         verify(startingCurrentSwitchListener, never()).startingCurrentDetected(now);
 
-        startingCurrentSwitch.detectStartingCurrent(now, 10, 0);
+        now = now.plusSeconds(10);
+        startingCurrentSwitch.addPowerUpdate(now, 10, startingCurrentDetectionDuration);
+        startingCurrentSwitch.detectStartingCurrent(now);
         verify(startingCurrentSwitchListener, never()).startingCurrentDetected(now);
 
-        startingCurrentSwitch.detectStartingCurrent(now, 10, 10);
+        now = now.plusSeconds(30);
+        startingCurrentSwitch.addPowerUpdate(now, 20, startingCurrentDetectionDuration);
+        startingCurrentSwitch.detectStartingCurrent(now);
         verify(startingCurrentSwitchListener, never()).startingCurrentDetected(now);
 
-        startingCurrentSwitch.detectStartingCurrent(now, 30, 10);
-        verify(startingCurrentSwitchListener, never()).startingCurrentDetected(now);
-
-        startingCurrentSwitch.detectStartingCurrent(now, 30, 30);
+        now = now.plusSeconds(31);
+        startingCurrentSwitch.addPowerUpdate(now, 20, startingCurrentDetectionDuration);
+        startingCurrentSwitch.detectStartingCurrent(now);
 
         // power threshold exceeded for more than configured starting current detection duration
         // ... causing appliance power off
@@ -94,24 +99,32 @@ public class StartingCurrentSwitchTest {
         assertTrue(startingCurrentSwitch.isApplianceOn());
         // ... from the outside perspective the control is switched on
         assertTrue(startingCurrentSwitch.isOn());
+        int finishedCurrentDetectionDuration = startingCurrentSwitch.getFinishedCurrentDetectionDuration();
 
-        startingCurrentSwitch.detectFinishedCurrent(now, 30, 30);
-        verify(startingCurrentSwitchListener, never()).finishedCurrentDetected();
+        now = now.plusSeconds(10);
+        startingCurrentSwitch.addPowerUpdate(now, 50, finishedCurrentDetectionDuration);
+        startingCurrentSwitch.detectFinishedCurrent(now);
+        verify(startingCurrentSwitchListener, never()).startingCurrentDetected(now);
 
-        startingCurrentSwitch.detectFinishedCurrent(now, 10, 30);
-        verify(startingCurrentSwitchListener, never()).finishedCurrentDetected();
+        now = now.plusSeconds(30);
+        startingCurrentSwitch.addPowerUpdate(now, 10, finishedCurrentDetectionDuration);
+        startingCurrentSwitch.detectFinishedCurrent(now);
+        verify(startingCurrentSwitchListener, never()).startingCurrentDetected(now);
 
-        // last/current average power is below threshold, but minRunningTime has not been reached
-        startingCurrentSwitch.detectFinishedCurrent(now, 10, 10);
+        now = now.plusSeconds(331);
+        startingCurrentSwitch.addPowerUpdate(now, 10, finishedCurrentDetectionDuration);
+        startingCurrentSwitch.detectFinishedCurrent(now);
+        verify(startingCurrentSwitchListener, never()).startingCurrentDetected(now);
+
         // with minRunningTime reached ...
         when(startingCurrentSwitch.isMinRunningTimeExceeded(now)).thenReturn(true);
-        // ... the finished current should be detected
-        startingCurrentSwitch.detectFinishedCurrent(now, 10, 10);
+
+        startingCurrentSwitch.addPowerUpdate(now, 10, finishedCurrentDetectionDuration);
+        startingCurrentSwitch.detectFinishedCurrent(now);
+
         // ... causing power off from the outside perspective
         assertFalse(startingCurrentSwitch.isOn());
         // ... but appliance remaining powered on
-        verify(control, times(2)).on(now, true);
-        when(control.isOn()).thenReturn(true);
         assertTrue(startingCurrentSwitch.isApplianceOn());
         // ... listeners are notified of finish current detection
         verify(startingCurrentSwitchListener).finishedCurrentDetected();
