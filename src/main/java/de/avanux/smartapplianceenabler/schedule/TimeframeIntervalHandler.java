@@ -313,6 +313,18 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
                 .findFirst().orElse(null);
     }
 
+    public TimeframeInterval getFirstTimeframeInterval(TimeframeIntervalState... states) {
+        if(states.length > 0) {
+            return queue.stream()
+                    .filter(timeframeInterval -> Arrays.stream(states).anyMatch(state -> state == timeframeInterval.getState()))
+                    .findFirst().orElse(null);
+        }
+        if(queue.size() > 0) {
+            return queue.get(0);
+        }
+        return null;
+    }
+
     /**
      * Returns timeframe intervals starting within a consideration interval.
      * If not consideration interval is given, all timeframe intervals are returned.
