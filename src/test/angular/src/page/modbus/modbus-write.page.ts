@@ -15,8 +15,8 @@ import {ModbusWriteValuePage} from './modbus-write-value.page';
 
 export class ModbusWritePage {
 
-  private static selectorBase(modbusReadIndex: number) {
-    return `app-modbus-write:nth-child(${modbusReadIndex + 1})`;
+  private static selectorBase(modbusWriteIndex: number) {
+    return `*[formarrayname="modbusWrites"] > app-modbus-write:nth-child(${modbusWriteIndex + 1})`;
   }
 
   public static async setModbusWrite(t: TestController, modbusWrite: ModbusWrite, modbusWriteIndex: number, selectorPrefix?: string) {

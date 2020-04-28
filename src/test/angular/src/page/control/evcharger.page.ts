@@ -16,12 +16,15 @@ import {settings} from '../../fixture/settings/settings';
 import {ControlPage} from './control.page';
 import {EvchargerModbusPage} from './evcharger-modbus.page';
 import {EvChargerProtocol} from '../../../../../main/angular/src/app/control/evcharger/ev-charger-protocol';
+import {EvchargerHttpPage} from './evcharger-http.page';
 
 export class EvchargerPage extends ControlPage {
 
-  public static async setEvChargerFromTemplate(t: TestController, templateName: string) {
+  public static async setEvChargerFromTemplate(t: TestController, evCharger: EvCharger, templateName: string) {
     await selectOptionByAttribute(t, selectorSelectByFormControlName('template'), templateName);
-    await EvchargerModbusPage.setIdRef(t, settings.modbusSettings[0].modbusTcpId);
+    if (evCharger.protocol === EvChargerProtocol.MODBUS) {
+      await EvchargerModbusPage.setIdRef(t, settings.modbusSettings[0].modbusTcpId);
+    }
   }
 
   public static async assertEvCharger(t: TestController, evCharger: EvCharger) {
@@ -34,6 +37,9 @@ export class EvchargerPage extends ControlPage {
     await EvchargerPage.assertForceInitialCharging(t, !!evCharger.forceInitialCharging);
     if (evCharger.protocol === EvChargerProtocol.MODBUS) {
       await EvchargerModbusPage.assertEvChargerModbus(t, evCharger.modbusControl);
+    }
+    if (evCharger.protocol === EvChargerProtocol.HTTP) {
+      await EvchargerHttpPage.assertEvChargerHttp(t, evCharger.httpControl);
     }
   }
 

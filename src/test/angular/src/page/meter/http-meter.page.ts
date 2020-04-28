@@ -14,33 +14,38 @@ export class HttpMeterPage extends MeterPage {
     const powerHttpRead = httpElectricityMeter.httpReads.find(
       httpRead => httpRead.readValues.find(httpReadValue => httpReadValue.name === MeterValueName.Power));
     let httpReadIndex = 0;
-    await HttpReadPage.setHttpRead(t, powerHttpRead, httpReadIndex, this.selectorPrefix);
-    await HttpReadPage.setHttpReadValue(t, powerHttpRead.readValues[0], httpReadIndex, this.selectorPrefix);
+    if (powerHttpRead) {
+      await HttpReadPage.setHttpRead(t, powerHttpRead, httpReadIndex, this.selectorPrefix);
+    }
 
     const energyHttpRead = httpElectricityMeter.httpReads.find(
       httpRead => httpRead.readValues.find(httpReadValue => httpReadValue.name === MeterValueName.Energy));
     if (energyHttpRead) {
-      httpReadIndex = 1;
-      await HttpReadPage.clickAddHttpRead(t, this.selectorPrefix, 'MeterHttpComponent__addHttpRead');
+      if (powerHttpRead) {
+        httpReadIndex += 1;
+        await HttpReadPage.clickAddHttpRead(t, this.selectorPrefix, 'MeterHttpComponent__addHttpRead');
+      }
       await HttpReadPage.setHttpRead(t, energyHttpRead, httpReadIndex, this.selectorPrefix);
-      await HttpReadPage.setHttpReadValue(t, energyHttpRead.readValues[0], httpReadIndex, this.selectorPrefix);
     }
   }
+
   public static async assertHttpElectricityMeter(t: TestController, httpElectricityMeter: HttpElectricityMeter) {
     await HttpMeterPage.assertType(t, HttpElectricityMeter.TYPE);
 
     const powerHttpRead = httpElectricityMeter.httpReads.find(
       httpRead => httpRead.readValues.find(httpReadValue => httpReadValue.name === MeterValueName.Power));
     let httpReadIndex = 0;
-    await HttpReadPage.assertHttpRead(t, powerHttpRead, httpReadIndex, this.selectorPrefix);
-    await HttpReadPage.assertHttpReadValue(t, powerHttpRead.readValues[0], httpReadIndex, this.selectorPrefix, HttpMeterPage.i18nPrefix);
+    if (powerHttpRead) {
+      await HttpReadPage.assertHttpRead(t, powerHttpRead, httpReadIndex, true, this.selectorPrefix, HttpMeterPage.i18nPrefix);
+    }
 
     const energyHttpRead = httpElectricityMeter.httpReads.find(
       httpRead => httpRead.readValues.find(httpReadValue => httpReadValue.name === MeterValueName.Energy));
     if (energyHttpRead) {
-      httpReadIndex = 1;
-      await HttpReadPage.assertHttpRead(t, energyHttpRead, httpReadIndex, this.selectorPrefix);
-      await HttpReadPage.assertHttpReadValue(t, energyHttpRead.readValues[0], httpReadIndex, this.selectorPrefix, HttpMeterPage.i18nPrefix);
+      if (powerHttpRead) {
+        httpReadIndex += 1;
+      }
+      await HttpReadPage.assertHttpRead(t, energyHttpRead, httpReadIndex, true, this.selectorPrefix, HttpMeterPage.i18nPrefix);
     }
   }
 

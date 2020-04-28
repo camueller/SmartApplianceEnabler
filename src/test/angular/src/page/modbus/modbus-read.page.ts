@@ -15,7 +15,7 @@ import {ModbusReadValuePage} from './modbus-read-value.page';
 export class ModbusReadPage {
 
   private static selectorBase(modbusReadIndex: number) {
-    return `> div > *[formarrayname="modbusReads"] > app-modbus-read:nth-child(${modbusReadIndex + 1})`;
+    return `*[formarrayname="modbusReads"] > app-modbus-read:nth-child(${modbusReadIndex + 1})`;
   }
 
   public static async setModbusRead(t: TestController, modbusRead: ModbusRead, modbusReadIndex: number, selectorPrefix?: string) {

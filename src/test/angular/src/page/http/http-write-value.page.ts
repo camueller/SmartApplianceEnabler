@@ -12,7 +12,7 @@ import {
 export class HttpWriteValuePage {
 
   private static selectorBase(httpWriteValueIndex: number) {
-    return `app-http-write-value:nth-child(${httpWriteValueIndex + 1})`;
+    return `div > div > div:nth-child(${httpWriteValueIndex + 1}) > div > app-http-write-value`;
   }
 
   public static async setHttpWriteValue(t: TestController, httpWriteValue: HttpWriteValue,

@@ -12,7 +12,7 @@ import {HttpReadValue} from '../../../../../main/angular/src/app/http/read-value
 export class HttpReadValuePage {
 
   private static selectorBase(httpReadValueIndex: number) {
-    return `app-http-read-value:nth-child(${httpReadValueIndex + 1})`;
+    return `div > div > div:nth-child(${httpReadValueIndex + 1}) > div > app-http-read-value`;
   }
 
   public static async setHttpReadValue(t: TestController, httpReadValue: HttpReadValue,
@@ -25,12 +25,15 @@ export class HttpReadValuePage {
   }
 
   public static async assertHttpReadValue(t: TestController, httpReadValue: HttpReadValue,
-                                          httpReadValueIndex: number, selectorPrefix?: string, i18nPrefix?: string) {
+                                          httpReadValueIndex: number, factorToValue: boolean,
+                                          selectorPrefix?: string, i18nPrefix?: string) {
     await HttpReadValuePage.assertName(t, httpReadValue.name, httpReadValueIndex, selectorPrefix, i18nPrefix);
     await HttpReadValuePage.assertData(t, httpReadValue.data, httpReadValueIndex, selectorPrefix);
     await HttpReadValuePage.assertPath(t, httpReadValue.path, httpReadValueIndex, selectorPrefix);
     await HttpReadValuePage.assertExtractionRegex(t, httpReadValue.extractionRegex, httpReadValueIndex, selectorPrefix);
-    await HttpReadValuePage.assertFactorToValue(t, httpReadValue.factorToValue, httpReadValueIndex, selectorPrefix);
+    if (factorToValue) {
+      await HttpReadValuePage.assertFactorToValue(t, httpReadValue.factorToValue, httpReadValueIndex, selectorPrefix);
+    }
   }
 
   public static async setName(t: TestController, name: string, httpReadValueIndex: number,
@@ -38,6 +41,7 @@ export class HttpReadValuePage {
     await selectOptionByAttribute(t, selectorSelectByFormControlName('name', selectorPrefix,
       HttpReadValuePage.selectorBase(httpReadValueIndex)), name);
   }
+
   public static async assertName(t: TestController, name: string, httpReadValueIndex: number,
                                  selectorPrefix?: string, i18nPrefix?: string) {
     await assertSelect(t, selectorSelectedByFormControlName('name', selectorPrefix,

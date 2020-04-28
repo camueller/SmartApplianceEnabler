@@ -24,6 +24,7 @@ import {ControlPage} from '../page/control/control.page';
 import {StartingCurrentSwitchPage} from '../page/control/starting-current-switch.page';
 import {EvCharger} from '../../../../main/angular/src/app/control/evcharger/ev-charger';
 import {EvchargerPage} from '../page/control/evcharger.page';
+import {MeterPage} from '../page/meter/meter.page';
 
 export function isDebug() {
   return !!process.env.DEBUG;
@@ -84,7 +85,7 @@ export async function createMeter(t: TestController, applianceId: string, meter:
   if (meter.type === ModbusElectricityMeter.TYPE) {
     await ModbusMeterPage.setModbusElectricityMeter(t, meter.modbusElectricityMeter);
   }
-  await S0MeterPage.clickSave(t);
+  await MeterPage.clickSave(t);
 }
 export async function assertMeter(t: TestController, applianceId: string, meter: Meter) {
   await SideMenu.clickMeter(t, applianceId);
@@ -117,7 +118,7 @@ export async function createControl(t: TestController, applianceId: string, cont
     await ModbusControlPage.setModbusSwitch(t, control.modbusSwitch);
   }
   if (control.type === EvCharger.TYPE) {
-    await EvchargerPage.setEvChargerFromTemplate(t, controlTemplate);
+    await EvchargerPage.setEvChargerFromTemplate(t, control.evCharger, controlTemplate);
   }
   if (control.startingCurrentDetection) {
     await StartingCurrentSwitchPage.setStartingCurrentSwitch(t, control.startingCurrentSwitch);
