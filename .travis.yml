@@ -25,13 +25,24 @@ script:
     pushd ci &&
     ccrypt -d -K $AWS_CRYPT_KEY aws.pem.cpt >/dev/null 2>&1 &&
     chmod 400 aws.pem &&
-    ssh -i aws.pem -o StrictHostKeyChecking=no ec2-user@$DEPLOY_HOST 'bash -s' < deploy.sh &&
+    ssh -i aws.pem -o StrictHostKeyChecking=no ec2-user@$DEPLOY_HOST 'bash -s' < pull_image.sh &&
+    ssh -i aws.pem -o StrictHostKeyChecking=no ec2-user@$DEPLOY_HOST 'bash -s' < restart_container.sh &&
     popd &&
     pushd src/test/angular &&
     npm i &&
     export BROWSERSTACK_BUILD_ID=$TRAVIS_COMMIT &&
     node_modules/.bin/testcafe --page-load-timeout 10000 "browserstack:chrome@81.0:Windows 10" "src/*.spec.ts" &&
+    popd &&
+    pushd ci &&
+    ssh -i aws.pem -o StrictHostKeyChecking=no ec2-user@$DEPLOY_HOST 'bash -s' < restart_container.sh &&
+    popd &&
+    pushd src/test/angular &&
     node_modules/.bin/testcafe --page-load-timeout 10000 "browserstack:firefox@75.0:Windows 10" "src/*.spec.ts" &&
+    popd &&
+    pushd ci &&
+    ssh -i aws.pem -o StrictHostKeyChecking=no ec2-user@$DEPLOY_HOST 'bash -s' < restart_container.sh &&
+    popd &&
+    pushd src/test/angular &&
     node_modules/.bin/testcafe --page-load-timeout 10000 "browserstack:safari@13.0:OS X Catalina" "src/*.spec.ts" &&
     popd
   - |
