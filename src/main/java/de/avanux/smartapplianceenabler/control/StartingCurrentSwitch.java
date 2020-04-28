@@ -260,9 +260,10 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
         for(LocalDateTime expiredPowerUpdate: expiredPowerUpdates) {
             this.powerUpdates.remove(expiredPowerUpdate);
         }
-        String powerValuesString = this.powerUpdates.values().stream().map(value -> value.toString() + "W")
-                .collect(Collectors.joining(","));
-        logger.debug("{}: averagePower={}", applianceId, powerValuesString);
+        Integer min = this.powerUpdates.values().stream().mapToInt(v -> v).min().orElseThrow(NoSuchElementException::new);
+        Integer max = this.powerUpdates.values().stream().mapToInt(v -> v).max().orElseThrow(NoSuchElementException::new);
+        logger.debug("{}: power value cache: min={}W max={}W values={} maxAge={}s",
+                applianceId, min, max, this.powerUpdates.size(), maxAgeSeconds);
     }
 
     public void detectStartingCurrent(LocalDateTime now) {
