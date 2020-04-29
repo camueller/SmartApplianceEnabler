@@ -14,12 +14,13 @@ import {evchargerGoe} from './fixture/appliance/evcharger-goe';
 import {httpMeter_goeCharger} from './fixture/meter/goe-meter';
 import {HttpElectricityMeter} from '../../../main/angular/src/app/meter/http/http-electricity-meter';
 import {nissan_leaf} from './fixture/control/electricvehicle/nissan_leaf';
+import {generateApplianceId} from './shared/appliance-id-generator';
 
 fixture('Wallbox go-eCharger').page(baseUrl());
 
 function createApplianceConfiguration(): ApplianceConfiguration {
   const configuration = new ApplianceConfiguration({
-    appliance: {...evchargerGoe, id: 'F-00000001-616078745316-00'},
+    appliance: {...evchargerGoe, id: generateApplianceId()},
     meter: {type: HttpElectricityMeter.TYPE, httpElectricityMeter: httpMeter_goeCharger},
     control: {type: EvCharger.TYPE, evCharger: new EvCharger(EvChargerTemplates.getTemplates()['go-eCharger'])},
     controlTemplate: 'go-eCharger'
