@@ -135,10 +135,13 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
         if(this.control instanceof AlwaysOnSwitch) {
             return false;
         }
-        TimeframeInterval activeOrQueuedTimeframeInterval = this.timeframeIntervalHandler.getFirstTimeframeInterval(
-                TimeframeIntervalState.ACTIVE, TimeframeIntervalState.QUEUED);
-        return activeOrQueuedTimeframeInterval != null
-                && activeOrQueuedTimeframeInterval.getRequest().isAcceptControlRecommendations();
+        if(this.timeframeIntervalHandler != null) {
+            TimeframeInterval activeOrQueuedTimeframeInterval = this.timeframeIntervalHandler.getFirstTimeframeInterval(
+                    TimeframeIntervalState.ACTIVE, TimeframeIntervalState.QUEUED);
+            return activeOrQueuedTimeframeInterval != null
+                    && activeOrQueuedTimeframeInterval.getRequest().isAcceptControlRecommendations();
+        }
+        return false;
     }
 
     public TimeframeIntervalHandler getTimeframeIntervalHandler() {
