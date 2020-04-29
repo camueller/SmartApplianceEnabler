@@ -36,9 +36,9 @@ export function selectorButton(selectorPrefix?: string, buttonClass?: string) {
   return selectorString;
 }
 
-export async function clickButton(t: TestController, selector: string) {
+export async function clickButton(t: TestController, selector: string, options?: any) {
   if (isDebug()) { console.log(`Click button ${selector} ...`); }
-  await t.click(selector);
+  await t.click(selector, options);
   if (isDebug()) { console.log('... button clicked.'); }
 }
 

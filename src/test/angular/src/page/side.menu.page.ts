@@ -40,7 +40,7 @@ export class SideMenu {
 
   public static async clickAppliance(t: TestController, id: string) {
     await SideMenu.openSideMenuIfClosed(t);
-    await clickButton(t, SideMenu.appliance(id));
+    await clickButton(t, SideMenu.appliance(id), {timeout: saeRestartTimeout});
     await Selector('app-appliance', {timeout: saeRestartTimeout}).exists;
   }
 
@@ -50,7 +50,7 @@ export class SideMenu {
 
   public static async clickMeter(t: TestController, id: string) {
     await SideMenu.openSideMenuIfClosed(t);
-    await clickButton(t, SideMenu.meter(id));
+    await clickButton(t, SideMenu.meter(id), {timeout: saeRestartTimeout});
     await Selector('app-meter', {timeout: saeRestartTimeout}).exists;
   }
 
@@ -60,7 +60,7 @@ export class SideMenu {
 
   public static async clickControl(t: TestController, id: string) {
     await SideMenu.openSideMenuIfClosed(t);
-    await clickButton(t, SideMenu.control(id));
+    await clickButton(t, SideMenu.control(id), {timeout: saeRestartTimeout});
     await Selector('app-control', {timeout: saeRestartTimeout}).exists;
   }
 }

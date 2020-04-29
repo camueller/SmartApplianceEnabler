@@ -72,7 +72,7 @@ export async function createAppliance(t: TestController, appliance: Appliance) {
   await AppliancePage.setAppliance(t, appliance);
   await AppliancePage.clickSave(t);
 
-  await t.expect(await Selector(SideMenu.appliance(appliance.id)).exists)
+  await t.expect(Selector(SideMenu.appliance(appliance.id)).exists)
     .ok('The appliance created should show up in the side menu', {timeout: saeRestartTimeout});
 }
 
