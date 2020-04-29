@@ -33,11 +33,11 @@ export function selectorButton(selectorPrefix?: string, buttonClass?: string) {
   const buttonClassResolved = buttonClass ? `.${buttonClass}` : '';
   const selectorString = `${selectorPrefix || ''} button${buttonClassResolved}`;
   if (isDebug()) { console.log('Selector: ', selectorString); }
-  return Selector(selectorString);
+  return selectorString;
 }
 
-export async function clickButton(t: TestController, selector: Selector) {
-  if (isDebug()) { console.log('Click button ...'); }
+export async function clickButton(t: TestController, selector: string) {
+  if (isDebug()) { console.log(`Click button ${selector} ...`); }
   await t.click(selector);
   if (isDebug()) { console.log('... button clicked.'); }
 }

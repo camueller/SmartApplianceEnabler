@@ -1,8 +1,8 @@
-import {Selector} from 'testcafe';
 import {
   assertCheckbox,
   assertInput,
-  assertSelect, clickButton,
+  assertSelect,
+  clickButton,
   inputText,
   selectOptionByAttribute,
   selectorCheckboxByFormControlName,
@@ -16,7 +16,7 @@ import {Appliance} from '../../../../../main/angular/src/app/appliance/appliance
 
 export class AppliancePage {
 
-  private static saveButton = Selector('button[type="submit"]');
+  private static SAVE_BUTTON_SELECTOR = 'button[type="submit"]';
 
   public static async setAppliance(t: TestController, appliance: Appliance) {
     await AppliancePage.setId(t, appliance.id);
@@ -151,6 +151,6 @@ export class AppliancePage {
   }
 
   public static async clickSave(t: TestController) {
-    await clickButton(t, AppliancePage.saveButton);
+    await clickButton(t, AppliancePage.SAVE_BUTTON_SELECTOR);
   }
 }

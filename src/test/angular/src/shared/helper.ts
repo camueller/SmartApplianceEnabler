@@ -25,6 +25,7 @@ import {StartingCurrentSwitchPage} from '../page/control/starting-current-switch
 import {EvCharger} from '../../../../main/angular/src/app/control/evcharger/ev-charger';
 import {EvchargerPage} from '../page/control/evcharger.page';
 import {MeterPage} from '../page/meter/meter.page';
+import {Selector} from 'testcafe';
 
 export function isDebug() {
   return !!process.env.DEBUG;
@@ -65,7 +66,7 @@ export async function createAppliance(t: TestController, appliance: Appliance) {
   await AppliancePage.setAppliance(t, appliance);
   await AppliancePage.clickSave(t);
 
-  await t.expect(SideMenu.appliance(appliance.id).exists)
+  await t.expect(await Selector(SideMenu.appliance(appliance.id)).exists)
     .ok('The appliance created should show up in the side menu', {timeout: saeRestartTimeout});
 }
 

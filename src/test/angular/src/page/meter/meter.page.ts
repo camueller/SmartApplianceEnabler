@@ -1,6 +1,6 @@
-import {Selector} from 'testcafe';
 import {
-  assertSelect, clickButton,
+  assertSelect,
+  clickButton,
   selectOptionByAttribute,
   selectorSelectByFormControlName,
   selectorSelectedByFormControlName
@@ -9,7 +9,7 @@ import {simpleMeterType} from '../../../../../main/angular/src/app/shared/form-u
 
 export class MeterPage {
 
-  private static saveButton = Selector('button[type="submit"]');
+  private static SAVE_BUTTON_SELECTOR = 'button[type="submit"]';
 
   public static async setType(t: TestController, meterType: string) {
     await selectOptionByAttribute(t, selectorSelectByFormControlName('meterType'), simpleMeterType(meterType));
@@ -19,6 +19,6 @@ export class MeterPage {
   }
 
   public static async clickSave(t: TestController) {
-    await clickButton(t, MeterPage.saveButton);
+    await clickButton(t, MeterPage.SAVE_BUTTON_SELECTOR);
   }
 }

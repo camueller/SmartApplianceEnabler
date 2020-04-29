@@ -1,4 +1,3 @@
-import {Selector} from 'testcafe';
 import {
   assertCheckbox,
   assertSelect,
@@ -14,7 +13,7 @@ import {simpleControlType} from '../../../../../main/angular/src/app/shared/form
 
 export class ControlPage {
 
-  private static saveButton = Selector('button[type="submit"]');
+  private static SAVE_BUTTON_SELECTOR = 'button[type="submit"]';
 
   public static async setType(t: TestController, controlType: string) {
     await selectOptionByAttribute(t, selectorSelectByFormControlName('controlType'), simpleControlType(controlType));
@@ -31,6 +30,6 @@ export class ControlPage {
   }
 
   public static async clickSave(t: TestController) {
-    await clickButton(t, ControlPage.saveButton);
+    await clickButton(t, ControlPage.SAVE_BUTTON_SELECTOR);
   }
 }

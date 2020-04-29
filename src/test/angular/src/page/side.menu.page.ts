@@ -5,11 +5,11 @@ import {clickButton} from '../shared/form';
 
 export class SideMenu {
 
-  private static SETTINGS = Selector('app-sidenav a[href="/settings"]');
-  private static STATUS = Selector('app-sidenav a[href="/status"]');
+  private static SETTINGS_SELECTOR = 'app-sidenav a[href="/settings"]';
+  private static STATUS_SELECTOR = 'app-sidenav a[href="/status"]';
 
   private static async openSideMenuIfClosed(t: TestController) {
-    const sideMenuOpen = await SideMenu.newAppliance().visible;
+    const sideMenuOpen = await Selector(SideMenu.newAppliance()).visible;
     if (! sideMenuOpen) {
       await TopMenu.clickMenu(t);
     }
@@ -17,16 +17,16 @@ export class SideMenu {
 
   public static async clickSettings(t: TestController) {
     await SideMenu.openSideMenuIfClosed(t);
-    await clickButton(t, SideMenu.SETTINGS);
+    await clickButton(t, SideMenu.SETTINGS_SELECTOR);
   }
 
   public static async clickStatus(t: TestController) {
     await SideMenu.openSideMenuIfClosed(t);
-    await clickButton(t, SideMenu.STATUS);
+    await clickButton(t, SideMenu.STATUS_SELECTOR);
   }
 
-  public static newAppliance(): Selector {
-    return Selector('a[href="/appliance"]');
+  public static newAppliance(): string {
+    return 'a[href="/appliance"]';
   }
 
   public static async clickNewAppliance(t: TestController) {
@@ -34,8 +34,8 @@ export class SideMenu {
     await clickButton(t, SideMenu.newAppliance());
   }
 
-  public static appliance(id: string): Selector {
-    return Selector(`a[href="/appliance/${id}"]`, {timeout: saeRestartTimeout});
+  public static appliance(id: string): string {
+    return `a[href="/appliance/${id}"]`;
   }
 
   public static async clickAppliance(t: TestController, id: string) {
@@ -44,8 +44,8 @@ export class SideMenu {
     await Selector('app-appliance', {timeout: saeRestartTimeout}).exists;
   }
 
-  public static meter(id: string): Selector {
-    return Selector(`a[href="/meter/${id}"]`, {timeout: saeRestartTimeout});
+  public static meter(id: string): string {
+    return `a[href="/meter/${id}"]`;
   }
 
   public static async clickMeter(t: TestController, id: string) {
@@ -54,8 +54,8 @@ export class SideMenu {
     await Selector('app-meter', {timeout: saeRestartTimeout}).exists;
   }
 
-  public static control(id: string): Selector {
-    return Selector(`a[href="/control/${id}"]`, {timeout: saeRestartTimeout});
+  public static control(id: string): string {
+    return `a[href="/control/${id}"]`;
   }
 
   public static async clickControl(t: TestController, id: string) {
