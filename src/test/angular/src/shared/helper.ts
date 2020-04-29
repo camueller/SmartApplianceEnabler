@@ -61,6 +61,12 @@ export async function createAndAssertControl(t: TestController, configuration: A
   await assertControl(t, configuration.appliance.id, configuration.control);
 }
 
+export async function createAndAssertElectricVehicle(t: TestController, configuration: ApplianceConfiguration) {
+  await EvchargerPage.setElectricVehicles(t, configuration.appliance.id, configuration.control.evCharger.vehicles);
+  await SideMenu.clickStatus(t);
+  await EvchargerPage.assertElectricVehicles(t, configuration.appliance.id, configuration.control.evCharger.vehicles);
+}
+
 export async function createAppliance(t: TestController, appliance: Appliance) {
   await SideMenu.clickNewAppliance(t);
   await AppliancePage.setAppliance(t, appliance);

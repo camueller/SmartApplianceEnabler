@@ -1,24 +1,32 @@
 import {baseUrl} from './page/page';
-import {configurationKey, createAndAssertAppliance, createAndAssertControl, createAndAssertMeter, fixtureName} from './shared/helper';
+import {
+  configurationKey,
+  createAndAssertAppliance,
+  createAndAssertControl,
+  createAndAssertElectricVehicle,
+  createAndAssertMeter,
+  fixtureName
+} from './shared/helper';
 import {ApplianceConfiguration} from './shared/appliance-configuration';
-import {generateApplianceId} from './shared/appliance-id-generator';
 import {EvCharger} from '../../../main/angular/src/app/control/evcharger/ev-charger';
 import {EvChargerTemplates} from '../../../main/angular/src/app/control/evcharger/ev-charger-templates';
 import {evchargerGoe} from './fixture/appliance/evcharger-goe';
 import {httpMeter_goeCharger} from './fixture/meter/goe-meter';
 import {HttpElectricityMeter} from '../../../main/angular/src/app/meter/http/http-electricity-meter';
-import {EvchargerPage} from './page/control/evcharger.page';
+import {nissan_leaf} from './fixture/control/electricvehicle/nissan_leaf';
 
 fixture('Wallbox go-eCharger').page(baseUrl());
 
 function createApplianceConfiguration(): ApplianceConfiguration {
-  const configuration =  new ApplianceConfiguration({
-    appliance: {...evchargerGoe, id: generateApplianceId()},
+  const configuration = new ApplianceConfiguration({
+    appliance: {...evchargerGoe, id: 'F-00000001-616078745316-00'},
     meter: {type: HttpElectricityMeter.TYPE, httpElectricityMeter: httpMeter_goeCharger},
     control: {type: EvCharger.TYPE, evCharger: new EvCharger(EvChargerTemplates.getTemplates()['go-eCharger'])},
     controlTemplate: 'go-eCharger'
   });
-  configuration.control.evCharger.vehicles = [];
+  configuration.control.evCharger.vehicles = [
+    nissan_leaf,
+  ];
   return configuration;
 }
 
@@ -35,5 +43,5 @@ test('Create HTTP control', async t => {
 });
 
 test('Add electric vehicles', async t => {
-  await EvchargerPage.setElectricVehicles(t, t.fixtureCtx[configurationKey(t, fixtureName(t))]);
+  await createAndAssertElectricVehicle(t, t.fixtureCtx[configurationKey(t, fixtureName(t))]);
 });
