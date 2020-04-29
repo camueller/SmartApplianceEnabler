@@ -7,6 +7,7 @@ import {EvChargerTemplates} from '../../../main/angular/src/app/control/evcharge
 import {evchargerGoe} from './fixture/appliance/evcharger-goe';
 import {httpMeter_goeCharger} from './fixture/meter/goe-meter';
 import {HttpElectricityMeter} from '../../../main/angular/src/app/meter/http/http-electricity-meter';
+import {EvchargerPage} from './page/control/evcharger.page';
 
 fixture('Wallbox go-eCharger').page(baseUrl());
 
@@ -17,6 +18,7 @@ function createApplianceConfiguration(): ApplianceConfiguration {
     control: {type: EvCharger.TYPE, evCharger: new EvCharger(EvChargerTemplates.getTemplates()['go-eCharger'])},
     controlTemplate: 'go-eCharger'
   });
+  configuration.control.evCharger.vehicles = [];
   return configuration;
 }
 
@@ -30,4 +32,8 @@ test('Create HTTP meter', async t => {
 
 test('Create HTTP control', async t => {
   await createAndAssertControl(t, t.fixtureCtx[configurationKey(t, fixtureName(t))]);
+});
+
+test('Add electric vehicles', async t => {
+  await EvchargerPage.setElectricVehicles(t, t.fixtureCtx[configurationKey(t, fixtureName(t))]);
 });

@@ -17,6 +17,9 @@ import {ControlPage} from './control.page';
 import {EvchargerModbusPage} from './evcharger-modbus.page';
 import {EvChargerProtocol} from '../../../../../main/angular/src/app/control/evcharger/ev-charger-protocol';
 import {EvchargerHttpPage} from './evcharger-http.page';
+import {ElectricVehicle} from '../../../../../main/angular/src/app/control/evcharger/electric-vehicle/electric-vehicle';
+import {SideMenu} from '../side.menu.page';
+import {ApplianceConfiguration} from '../../shared/appliance-configuration';
 
 export class EvchargerPage extends ControlPage {
 
@@ -41,6 +44,12 @@ export class EvchargerPage extends ControlPage {
     if (evCharger.protocol === EvChargerProtocol.HTTP) {
       await EvchargerHttpPage.assertEvChargerHttp(t, evCharger.httpControl);
     }
+  }
+
+  public static async setElectricVehicles(t: TestController, configuration: ApplianceConfiguration) {
+    await SideMenu.clickControl(t, configuration.appliance.id);
+  }
+  public static async assertElectricVehicles(t: TestController, electricVehicles: ElectricVehicle[]) {
   }
 
   public static async setProtocol(t: TestController, protocol: string) {
