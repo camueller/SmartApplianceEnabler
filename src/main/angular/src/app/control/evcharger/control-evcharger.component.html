@@ -3,7 +3,7 @@
   <div class="sae__fields">
     <mat-form-field class="ControlEvchargerComponent__template">
       <mat-label>{{'ControlEvchargerComponent.template' | translate}}</mat-label>
-      <mat-select formControlName="template"
+      <mat-select formControlName="template" required="true"
                   (selectionChange)="useTemplate()"
                   placeholder="aus vorkonfigurierten Ladengeräten wählen">
         <mat-option *ngFor="let templateName of templateNames" [value]="templateName">
@@ -13,7 +13,7 @@
     </mat-form-field>
     <mat-form-field class="ControlEvchargerComponent__protocol">
       <mat-label>{{'ControlEvchargerComponent.protocol' | translate}}</mat-label>
-      <mat-select formControlName="protocol"
+      <mat-select formControlName="protocol" required="true"
                   placeholder="wählen für manuelle Konfiguration">
         <mat-option *ngFor="let protocol of protocols" [value]="protocol.value">
           {{protocol.viewValue}}
@@ -82,5 +82,5 @@
     </div>
   </div>
   <button mat-raised-button type="button" class="ControlEvchargerComponent__addElectricVehicle" (click)="addElectricVehicle()">
-    {{'ControlEvchargerComponent.button.newEv' | translate}}</button>
+    {{'ControlEvchargerComponent.button.addElectricVehicle' | translate}}</button>
 </div>

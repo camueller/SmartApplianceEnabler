@@ -75,7 +75,7 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
         this.evCharger = changes.evCharger.currentValue;
       } else {
         this.evCharger = new EvCharger();
-        this.evCharger.vehicles = [];
+        this.evCharger.vehicles = [{} as ElectricVehicle];
       }
       this.updateForm();
     }
@@ -109,7 +109,8 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
 
   useTemplate() {
     const templateName = this.getTemplateNameSelected();
-    this.evCharger = new EvCharger(this.templates[templateName]);
+    this.updateModelFromForm(); // preserve configured but unsaved vehicles
+    this.evCharger = new EvCharger({...this.templates[templateName], vehicles: this.evCharger.vehicles});
     this.setProtocol(this.evCharger.protocol);
     this.updateForm();
     this.form.markAsDirty();

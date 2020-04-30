@@ -208,7 +208,7 @@
   "ControlEvchargerComponent.Error": "Ladegerät meldet Fehler",
   "ControlEvchargerComponent.ChargingCurrent": "Ladestromstärke setzen",
   "ControlEvchargerComponent.headingEv": "Fahrzeuge",
-  "ControlEvchargerComponent.button.newEv": "Neues Fahrzeug",
+  "ControlEvchargerComponent.button.addElectricVehicle": "Weiteres Fahrzeug",
 
   "ControlEvchargerModbusComponent.idref": "Modbus",
   "ControlEvchargerModbusComponent.slaveAddress": "Slave-Adresse",
