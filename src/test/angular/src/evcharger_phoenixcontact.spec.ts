@@ -8,6 +8,7 @@ import {evchargerPhoenixContact} from './fixture/appliance/evcharger-phoenixcont
 import {EvCharger} from '../../../main/angular/src/app/control/evcharger/ev-charger';
 import {EvChargerTemplates} from '../../../main/angular/src/app/control/evcharger/ev-charger-templates';
 import {settings} from './fixture/settings/settings';
+import {tesla_model3} from './fixture/control/electricvehicle/tesla_model3';
 
 fixture('Wallbox mit PhoenixContact-Ladecontroller').page(baseUrl());
 
@@ -19,6 +20,9 @@ function createApplianceConfiguration(): ApplianceConfiguration {
     controlTemplate: 'Phoenix Contact EM-CP-PP-ETH'
   });
   configuration.control.evCharger.modbusControl.idref = settings.modbusSettings[0].modbusTcpId;
+  configuration.control.evCharger.vehicles = [
+    tesla_model3,
+  ];
   return configuration;
 }
 

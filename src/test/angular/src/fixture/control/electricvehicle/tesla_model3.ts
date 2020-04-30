@@ -1,13 +1,13 @@
 import {ElectricVehicle} from '../../../../../../main/angular/src/app/control/evcharger/electric-vehicle/electric-vehicle';
 import {SocScript} from '../../../../../../main/angular/src/app/control/evcharger/electric-vehicle/soc-script';
 
-export const nissan_leaf: ElectricVehicle = {
-  name: 'Nissan Leaf',
-  batteryCapacity: 40000,
-  phases: 1,
-  maxChargePower: 7300,
-  chargeLoss: 8,
-  defaultSocManual: 60,
+export const tesla_model3: ElectricVehicle = {
+  name: 'Tesla Model 3',
+  batteryCapacity: 75000,
+  phases: 3,
+  maxChargePower: 11000,
+  chargeLoss: 7,
+  defaultSocManual: 75,
   defaultSocOptionalEnergy: 90,
-  socScript: {script: '/my/script', extractionRegex: '.*(\d+).*'} as SocScript,
+  socScript: {script: '/tesla/model3', extractionRegex: '.*(\d*).*'} as SocScript,
 } as ElectricVehicle;
