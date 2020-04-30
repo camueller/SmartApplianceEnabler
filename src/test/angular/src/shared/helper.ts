@@ -126,6 +126,7 @@ export async function createControl(t: TestController, applianceId: string, cont
   }
   if (control.type === EvCharger.TYPE) {
     await EvchargerPage.setEvChargerFromTemplate(t, control.evCharger, controlTemplate);
+    await EvchargerPage.setElectricVehicles(t, applianceId, control.evCharger.vehicles);
   }
   if (control.startingCurrentDetection) {
     await StartingCurrentSwitchPage.setStartingCurrentSwitch(t, control.startingCurrentSwitch);
@@ -151,6 +152,7 @@ export async function assertControl(t: TestController, applianceId: string, cont
   }
   if (control.type === EvCharger.TYPE) {
     await EvchargerPage.assertEvCharger(t, control.evCharger);
+    await EvchargerPage.assertElectricVehicles(t, applianceId, control.evCharger.vehicles);
   }
   if (control.startingCurrentDetection) {
     await StartingCurrentSwitchPage.assertStartingCurrentSwitch(t, control.startingCurrentSwitch);

@@ -42,7 +42,3 @@ test('Create HTTP meter', async t => {
 test('Create HTTP control', async t => {
   await createAndAssertControl(t, t.fixtureCtx[configurationKey(t, fixtureName(t))]);
 });
-
-test('Add electric vehicles', async t => {
-  await createAndAssertElectricVehicle(t, t.fixtureCtx[configurationKey(t, fixtureName(t))]);
-});

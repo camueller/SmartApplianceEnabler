@@ -75,7 +75,7 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
         this.evCharger = changes.evCharger.currentValue;
       } else {
         this.evCharger = new EvCharger();
-        this.evCharger.vehicles = [{} as ElectricVehicle];
+        this.evCharger.vehicles = [this.createElectricVehicle()];
       }
       this.updateForm();
     }
@@ -151,25 +151,30 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
   }
 
   findNextEvId(evs: ElectricVehicle[]): number {
-    const ids: number[] = evs.map(ev => ev.id);
-    for (let i = 1; i < 100; i++) {
-      if (ids.indexOf(i) < 0) {
-        return i;
+    if (evs) {
+      const ids: number[] = evs.map(ev => ev.id);
+      for (let i = 1; i < 100; i++) {
+        if (ids.indexOf(i) < 0) {
+          return i;
+        }
       }
     }
-    return 0;
+    return 1;
   }
 
   addElectricVehicle() {
     fixExpressionChangedAfterItHasBeenCheckedError(this.form);
-    const newEvId = this.findNextEvId(this.evCharger.vehicles);
-    const newEv = new ElectricVehicle({id: newEvId});
     if (!this.evCharger.vehicles) {
       this.evCharger.vehicles = [];
     }
-    this.evCharger.vehicles.push(newEv);
+    this.evCharger.vehicles.push(this.createElectricVehicle());
     this.electricVehiclesFormArray.push(new FormGroup({}));
     this.form.markAsDirty();
+  }
+
+  createElectricVehicle() {
+    const newEvId = this.findNextEvId(this.evCharger.vehicles);
+    return new ElectricVehicle({id: newEvId});
   }
 
   onElectricVehicleRemove(index: number) {

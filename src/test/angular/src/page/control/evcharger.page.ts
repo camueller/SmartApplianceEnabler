@@ -51,11 +51,12 @@ export class EvchargerPage extends ControlPage {
     }
   }
 
-  public static async setElectricVehicles(t: TestController,  applianceId: string, electricVehicles: ElectricVehicle[]) {
-    await SideMenu.clickControl(t, applianceId);
+  public static async setElectricVehicles(t: TestController, applianceId: string, electricVehicles: ElectricVehicle[]) {
     for (let i = 0; i < electricVehicles.length; i++) {
       const ev = electricVehicles[i];
-      await clickButton(t, selectorButton(undefined, 'ControlEvchargerComponent__addElectricVehicle'));
+      if (i > 0) {
+        await clickButton(t, selectorButton(undefined, 'ControlEvchargerComponent__addElectricVehicle'));
+      }
       await EvchargerPage.setName(t, ev.name, i);
       await EvchargerPage.setBatteryCapacity(t, ev.batteryCapacity && ev.batteryCapacity.toString(), i);
       await EvchargerPage.setPhasesEv(t, ev.phases && ev.phases.toString(), i);
@@ -68,11 +69,10 @@ export class EvchargerPage extends ControlPage {
         await EvchargerPage.setScriptFilename(t, ev.socScript.script, i);
         await EvchargerPage.setScriptExtractionRegex(t, ev.socScript.extractionRegex, i);
       }
-      await this.clickSave(t);
     }
   }
 
-  public static async assertElectricVehicles(t: TestController,  applianceId: string, electricVehicles: ElectricVehicle[]) {
+  public static async assertElectricVehicles(t: TestController, applianceId: string, electricVehicles: ElectricVehicle[]) {
     await SideMenu.clickControl(t, applianceId);
     for (let i = 0; i < electricVehicles.length; i++) {
       const ev = electricVehicles[i];
