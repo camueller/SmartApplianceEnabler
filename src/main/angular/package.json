@@ -31,7 +31,7 @@
     "core-js": "^2.6.11",
     "jest": "^24.9.0",
     "jest-preset-angular": "^8.0.0",
-    "moment": "^2.24.0",
+    "moment": "2.24.0",
     "ng2-semantic-ui": "^0.10.0-alpha.6",
     "rxjs": "^6.5.3",
     "semantic-ui-css": "^2.4.1",
