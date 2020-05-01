@@ -3,7 +3,7 @@
   <div class="sae__fields">
     <mat-form-field class="ControlEvchargerComponent__template">
       <mat-label>{{'ControlEvchargerComponent.template' | translate}}</mat-label>
-      <mat-select formControlName="template" required="true"
+      <mat-select formControlName="template" required="{{!isConfigured}}"
                   (selectionChange)="useTemplate()"
                   placeholder="aus vorkonfigurierten Ladengeräten wählen">
         <mat-option *ngFor="let templateName of templateNames" [value]="templateName">
@@ -21,7 +21,7 @@
       </mat-select>
     </mat-form-field>
   </div>
-  <div *ngIf="isConfigured()">
+  <div *ngIf="isConfigured">
     <div class="sae__fields">
       <mat-form-field class="sae__voltage">
         <mat-label>{{'ControlEvchargerComponent.voltage' | translate}}</mat-label>

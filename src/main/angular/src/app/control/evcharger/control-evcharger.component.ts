@@ -79,6 +79,7 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
       }
       this.updateForm();
     }
+    console.log('FORM=', this.form);
   }
 
   ngOnInit() {
@@ -116,7 +117,7 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
     this.form.markAsDirty();
   }
 
-  isConfigured(): boolean {
+  get isConfigured(): boolean {
     return this.evCharger && this.protocol;
   }
 
@@ -178,9 +179,10 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
   }
 
   onElectricVehicleRemove(index: number) {
-    this.evCharger.vehicles.splice(index, 1);
-    this.electricVehiclesFormArray.removeAt(index);
-    this.form.markAsDirty();
+    // this.evCharger.vehicles.splice(index, 1);
+    // this.electricVehiclesFormArray.removeAt(index);
+    // this.form.markAsDirty();
+    console.log('FORM=', this.form);
   }
 
   get electricVehiclesFormArray() {
