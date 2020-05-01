@@ -70,7 +70,8 @@
   ></app-control-evcharger-http>
   <h2>{{'ControlEvchargerComponent.headingEv' | translate}}</h2>
   <div formArrayName="electricVehicles">
-    <div *ngFor="let electricVehicle of evCharger.vehicles; index as i; last as l">
+    <div *ngFor="let electricVehicle of evCharger.vehicles; index as i; last as l" class="ControlEvchargerComponent__electricVehicle">
+      <mat-divider class="ControlEvchargerComponent__electricVehicleDivider"></mat-divider>
       <app-electric-vehicle
         [formGroupName]="i"
         [form]="getElectricVehicleFormGroup(i)"

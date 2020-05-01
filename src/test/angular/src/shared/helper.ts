@@ -26,6 +26,7 @@ import {EvCharger} from '../../../../main/angular/src/app/control/evcharger/ev-c
 import {EvchargerPage} from '../page/control/evcharger.page';
 import {MeterPage} from '../page/meter/meter.page';
 import {Selector} from 'testcafe';
+import {ElectricVehicle} from '../../../../main/angular/src/app/control/evcharger/electric-vehicle/electric-vehicle';
 
 export function isDebug() {
   return !!process.env.DEBUG;
@@ -61,10 +62,11 @@ export async function createAndAssertControl(t: TestController, configuration: A
   await assertControl(t, configuration.appliance.id, configuration.control);
 }
 
-export async function createAndAssertElectricVehicle(t: TestController, configuration: ApplianceConfiguration) {
-  await EvchargerPage.setElectricVehicles(t, configuration.appliance.id, configuration.control.evCharger.vehicles);
+export async function createAndAssertElectricVehicle(t: TestController, applianceId: string, ev: ElectricVehicle, index: number,
+                                                     clickControl: boolean, clickAdd: boolean, clickSave: boolean) {
+  await EvchargerPage.setElectricVehicle(t, applianceId, ev, index, clickControl, clickAdd, clickSave);
   await SideMenu.clickStatus(t);
-  await EvchargerPage.assertElectricVehicles(t, configuration.appliance.id, configuration.control.evCharger.vehicles);
+  await EvchargerPage.assertElectricVehicle(t, applianceId, ev, index, true);
 }
 
 export async function createAppliance(t: TestController, appliance: Appliance) {

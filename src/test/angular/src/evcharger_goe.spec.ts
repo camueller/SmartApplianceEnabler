@@ -15,6 +15,7 @@ import {httpMeter_goeCharger} from './fixture/meter/goe-meter';
 import {HttpElectricityMeter} from '../../../main/angular/src/app/meter/http/http-electricity-meter';
 import {nissan_leaf} from './fixture/control/electricvehicle/nissan_leaf';
 import {generateApplianceId} from './shared/appliance-id-generator';
+import {tesla_model3} from './fixture/control/electricvehicle/tesla_model3';
 
 fixture('Wallbox go-eCharger').page(baseUrl());
 
@@ -41,4 +42,9 @@ test('Create HTTP meter', async t => {
 
 test('Create HTTP control', async t => {
   await createAndAssertControl(t, t.fixtureCtx[configurationKey(t, fixtureName(t))]);
+});
+
+test('Add electric vehicle', async t => {
+  await createAndAssertElectricVehicle(t, t.fixtureCtx[configurationKey(t, fixtureName(t))].appliance.id, tesla_model3, 1,
+    true, true, true);
 });

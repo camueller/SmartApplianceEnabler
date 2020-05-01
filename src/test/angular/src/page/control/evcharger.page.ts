@@ -25,7 +25,7 @@ import {SideMenu} from '../side.menu.page';
 export class EvchargerPage extends ControlPage {
 
   private static electricVehicleSelectorBase(httpReadIndex: number) {
-    return `*[formarrayname="electricVehicles"] app-electric-vehicle:nth-child(${httpReadIndex + 1})`;
+    return `*[formarrayname="electricVehicles"] div:nth-child(${httpReadIndex + 1}) > app-electric-vehicle`;
   }
 
   public static async setEvChargerFromTemplate(t: TestController, evCharger: EvCharger, templateName: string) {
@@ -53,41 +53,55 @@ export class EvchargerPage extends ControlPage {
 
   public static async setElectricVehicles(t: TestController, applianceId: string, electricVehicles: ElectricVehicle[]) {
     for (let i = 0; i < electricVehicles.length; i++) {
-      const ev = electricVehicles[i];
-      if (i > 0) {
-        await clickButton(t, selectorButton(undefined, 'ControlEvchargerComponent__addElectricVehicle'));
-      }
-      await EvchargerPage.setName(t, ev.name, i);
-      await EvchargerPage.setBatteryCapacity(t, ev.batteryCapacity && ev.batteryCapacity.toString(), i);
-      await EvchargerPage.setPhasesEv(t, ev.phases && ev.phases.toString(), i);
-      await EvchargerPage.setMaxChargePower(t, ev.maxChargePower && ev.maxChargePower.toString(), i);
-      await EvchargerPage.setChargeLoss(t, ev.chargeLoss && ev.chargeLoss.toString(), i);
-      await EvchargerPage.setDefaultSocManual(t, ev.defaultSocManual && ev.defaultSocManual.toString(), i);
-      await EvchargerPage.setDefaultSocOptionalEnergy(t, ev.defaultSocOptionalEnergy && ev.defaultSocOptionalEnergy.toString(), i);
-      await EvchargerPage.setScriptEnabled(t, !!ev.socScript, i);
-      if (ev.socScript) {
-        await EvchargerPage.setScriptFilename(t, ev.socScript.script, i);
-        await EvchargerPage.setScriptExtractionRegex(t, ev.socScript.extractionRegex, i);
-      }
+      await this.setElectricVehicle(t, applianceId, electricVehicles[i], i, true, i > 0, false);
+    }
+  }
+  public static async assertElectricVehicles(t: TestController, applianceId: string, electricVehicles: ElectricVehicle[]) {
+    for (let i = 0; i < electricVehicles.length; i++) {
+      await this.assertElectricVehicle(t, applianceId, electricVehicles[i], i, true);
     }
   }
 
-  public static async assertElectricVehicles(t: TestController, applianceId: string, electricVehicles: ElectricVehicle[]) {
-    await SideMenu.clickControl(t, applianceId);
-    for (let i = 0; i < electricVehicles.length; i++) {
-      const ev = electricVehicles[i];
-      await EvchargerPage.assertName(t, ev.name, i);
-      await EvchargerPage.assertBatteryCapacity(t, ev.batteryCapacity && ev.batteryCapacity.toString(), i);
-      await EvchargerPage.assertPhasesEv(t, ev.phases && ev.phases.toString(), i);
-      await EvchargerPage.assertMaxChargePower(t, ev.maxChargePower && ev.maxChargePower.toString(), i);
-      await EvchargerPage.assertChargeLoss(t, ev.chargeLoss && ev.chargeLoss.toString(), i);
-      await EvchargerPage.assertDefaultSocManual(t, ev.defaultSocManual && ev.defaultSocManual.toString(), i);
-      await EvchargerPage.assertDefaultSocOptionalEnergy(t, ev.defaultSocOptionalEnergy && ev.defaultSocOptionalEnergy.toString(), i);
-      await EvchargerPage.assertScriptEnabled(t, !!ev.socScript, i);
-      if (ev.socScript) {
-        await EvchargerPage.assertScriptFilename(t, ev.socScript.script, i);
-        await EvchargerPage.assertScriptExtractionRegex(t, ev.socScript.extractionRegex, i);
-      }
+  public static async setElectricVehicle(t: TestController, applianceId: string, ev: ElectricVehicle, index: number,
+                                         clickControl: boolean, clickAdd: boolean, clickSave: boolean) {
+    if (clickControl) {
+      await SideMenu.clickControl(t, applianceId);
+    }
+    if (clickAdd) {
+      await clickButton(t, selectorButton(undefined, 'ControlEvchargerComponent__addElectricVehicle'));
+    }
+    await EvchargerPage.setName(t, ev.name, index);
+    await EvchargerPage.setBatteryCapacity(t, ev.batteryCapacity && ev.batteryCapacity.toString(), index);
+    await EvchargerPage.setPhasesEv(t, ev.phases && ev.phases.toString(), index);
+    await EvchargerPage.setMaxChargePower(t, ev.maxChargePower && ev.maxChargePower.toString(), index);
+    await EvchargerPage.setChargeLoss(t, ev.chargeLoss && ev.chargeLoss.toString(), index);
+    await EvchargerPage.setDefaultSocManual(t, ev.defaultSocManual && ev.defaultSocManual.toString(), index);
+    await EvchargerPage.setDefaultSocOptionalEnergy(t, ev.defaultSocOptionalEnergy && ev.defaultSocOptionalEnergy.toString(), index);
+    await EvchargerPage.setScriptEnabled(t, !!ev.socScript, index);
+    if (ev.socScript) {
+      await EvchargerPage.setScriptFilename(t, ev.socScript.script, index);
+      await EvchargerPage.setScriptExtractionRegex(t, ev.socScript.extractionRegex, index);
+    }
+    if (clickSave) {
+      await this.clickSave(t);
+    }
+  }
+  public static async assertElectricVehicle(t: TestController, applianceId: string, ev: ElectricVehicle, index: number,
+                                            clickControl: boolean) {
+    if (clickControl) {
+      await SideMenu.clickControl(t, applianceId);
+    }
+    await EvchargerPage.assertName(t, ev.name, index);
+    await EvchargerPage.assertBatteryCapacity(t, ev.batteryCapacity && ev.batteryCapacity.toString(), index);
+    await EvchargerPage.assertPhasesEv(t, ev.phases && ev.phases.toString(), index);
+    await EvchargerPage.assertMaxChargePower(t, ev.maxChargePower && ev.maxChargePower.toString(), index);
+    await EvchargerPage.assertChargeLoss(t, ev.chargeLoss && ev.chargeLoss.toString(), index);
+    await EvchargerPage.assertDefaultSocManual(t, ev.defaultSocManual && ev.defaultSocManual.toString(), index);
+    await EvchargerPage.assertDefaultSocOptionalEnergy(t, ev.defaultSocOptionalEnergy && ev.defaultSocOptionalEnergy.toString(), index);
+    await EvchargerPage.assertScriptEnabled(t, !!ev.socScript, index);
+    if (ev.socScript) {
+      await EvchargerPage.assertScriptFilename(t, ev.socScript.script, index);
+      await EvchargerPage.assertScriptExtractionRegex(t, ev.socScript.extractionRegex, index);
     }
   }
 
