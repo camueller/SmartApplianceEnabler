@@ -8,6 +8,5 @@ curl -o $TAGS_FILE https://hub.docker.com/v2/repositories/$NAME/tags
 
 if grep -q -v "name\":\"$SAE_VERSION" $TAGS_FILE; then
   echo "No image for version $SAE_VERSION found on dockerhub."
-  cp ../target/SmartApplianceEnabler-$SAE_VERSION.war sae-amd64/
-  ./build_image.sh avanux/smartapplianceenabler-arm32 $LATEST_RELEASE ./sae-arm32
+  ./build_image.sh avanux/smartapplianceenabler-arm32 $SAE_VERSION ./sae-arm32
 fi
