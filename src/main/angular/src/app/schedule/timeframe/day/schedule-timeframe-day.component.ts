@@ -118,6 +118,18 @@ export class ScheduleTimeframeDayComponent implements OnChanges, OnInit, AfterVi
     return this.dayTimeFrame.daysOfWeek && TimeUtil.toDayOfWeekValues(this.dayTimeFrame.daysOfWeek);
   }
 
+  setEnabled(enabled: boolean) {
+    if (enabled) {
+      this.form.controls.startTime.enable();
+      this.form.controls.endTime.enable();
+      this.form.controls.daysOfWeekValues.enable();
+    } else {
+      this.form.controls.startTime.disable();
+      this.form.controls.endTime.disable();
+      this.form.controls.daysOfWeekValues.disable();
+    }
+  }
+
   expandParentForm() {
     this.formHandler.addFormControl(this.form, 'daysOfWeekValues', this.daysOfWeekValues);
     this.formHandler.addFormControl(this.form, 'startTime', this.startTime,

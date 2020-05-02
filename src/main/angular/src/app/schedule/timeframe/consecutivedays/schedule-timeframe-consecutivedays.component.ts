@@ -121,6 +121,20 @@ export class ScheduleTimeframeConsecutivedaysComponent implements OnChanges, OnI
     return this.consecutiveDaysTimeframe.end && TimeUtil.timestringFromTimeOfDay(this.consecutiveDaysTimeframe.end);
   }
 
+  setEnabled(enabled: boolean) {
+    if (enabled) {
+      this.form.controls.startDayOfWeek.enable();
+      this.form.controls.startTime.enable();
+      this.form.controls.endDayOfWeek.enable();
+      this.form.controls.endTime.enable();
+    } else {
+      this.form.controls.startDayOfWeek.disable();
+      this.form.controls.startTime.disable();
+      this.form.controls.endDayOfWeek.disable();
+      this.form.controls.endTime.enable();
+    }
+  }
+
   expandParentForm() {
     this.formHandler.addFormControl(this.form, 'startDayOfWeek', this.startDayOfWeek,
       Validators.required);

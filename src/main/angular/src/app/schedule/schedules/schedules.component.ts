@@ -16,6 +16,7 @@ import {ConsecutiveDaysTimeframe} from '../timeframe/consecutivedays/consecutive
 import {SocRequest} from '../request/soc/soc-request';
 import {ElectricVehicle} from '../../control/evcharger/electric-vehicle/electric-vehicle';
 import {Logger} from '../../log/logger';
+import {simpleTimeframeType} from '../../shared/form-util';
 
 @Component({
   selector: 'app-schedules',
@@ -70,14 +71,23 @@ export class SchedulesComponent implements OnChanges, OnInit {
     const timeframeTypeKeys = this.timeframeTypes.map(timeframeType => timeframeType.key);
     this.translate.get(timeframeTypeKeys).subscribe(
       translatedKeys => {
-        this.timeframeTypes.forEach(timeframeType => timeframeType.value = translatedKeys[timeframeType.key]);
+        this.timeframeTypes.forEach(timeframeType => {
+          timeframeType.value = translatedKeys[timeframeType.key];
+          timeframeType.key = simpleTimeframeType(timeframeType.key);
+        });
       });
 
     const requestTypeKeys = [...this.evRequestTypes, ...this.nonEvRequestTypes].map((requestType) => requestType.key);
     this.translate.get(requestTypeKeys).subscribe(
       translatedKeys => {
-        this.evRequestTypes.forEach(requestType => requestType.value = translatedKeys[requestType.key]);
-        this.nonEvRequestTypes.forEach(requestType => requestType.value = translatedKeys[requestType.key]);
+        this.evRequestTypes.forEach(requestType => {
+          requestType.value = translatedKeys[requestType.key];
+          requestType.key = simpleTimeframeType(requestType.key);
+        });
+        this.nonEvRequestTypes.forEach(requestType => {
+          requestType.value = translatedKeys[requestType.key];
+          requestType.key = simpleTimeframeType(requestType.key);
+        });
       });
   }
 

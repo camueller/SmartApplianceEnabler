@@ -68,6 +68,16 @@ export class ScheduleRequestSocComponent implements OnChanges, OnInit {
     return this.socRequest && this.socRequest.soc;
   }
 
+  setEnabled(enabled: boolean) {
+    if (enabled) {
+      this.form.controls.evId.enable();
+      this.form.controls.soc.enable();
+    } else {
+      this.form.controls.evId.disable();
+      this.form.controls.soc.disable();
+    }
+  }
+
   expandParentForm() {
     this.formHandler.addFormControl(this.form, 'evId', this.evId);
     this.formHandler.addFormControl(this.form, 'soc', this.soc,

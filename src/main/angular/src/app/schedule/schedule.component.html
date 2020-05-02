@@ -19,6 +19,7 @@
   <div class="sae__fields">
     <div class="ScheduleComponent__schedule">{{'ScheduleComponent.schedule' | translate}}</div>
     <mat-checkbox formControlName="enabled"
+                  (click)="toggleEnabled()"
     >{{'ScheduleComponent.enabled' | translate}}</mat-checkbox>
     <div>
       <mat-form-field>

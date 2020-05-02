@@ -16,7 +16,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild} from '@angular/core';
 import {Logger} from '../log/logger';
 import {Schedule} from './schedule';
 import {FormGroup, Validators} from '@angular/forms';
@@ -34,13 +34,14 @@ import {ScheduleRequestRuntimeComponent} from './request/runtime/schedule-reques
 import {ScheduleTimeframeConsecutivedaysComponent} from './timeframe/consecutivedays/schedule-timeframe-consecutivedays.component';
 import {ScheduleRequestSocComponent} from './request/soc/schedule-request-soc.component';
 import {SocRequest} from './request/soc/soc-request';
+import {simpleRequestType, simpleTimeframeType} from '../shared/form-util';
 
 @Component({
   selector: 'app-schedule',
   templateUrl: './schedule.component.html',
   styleUrls: ['./schedule.component.scss'],
 })
-export class ScheduleComponent implements OnChanges {
+export class ScheduleComponent implements OnChanges, AfterViewInit {
   @Input()
   schedule: Schedule;
   @Input()
@@ -88,28 +89,70 @@ export class ScheduleComponent implements OnChanges {
     }
   }
 
+  ngAfterViewInit() {
+    this.setEnabled(this.schedule ? this.schedule.enabled : true);
+  }
+
   isEnabled() {
     return this.form.controls.enabled.value;
   }
 
+  setEnabled(enabled: boolean) {
+    if (enabled) {
+      if (this.form.controls.timeframeType) {
+        this.form.controls.timeframeType.enable();
+      }
+      if (this.form.controls.requestType) {
+        this.form.controls.requestType.enable();
+      }
+    } else {
+      if (this.form.controls.timeframeType) {
+        this.form.controls.timeframeType.disable();
+      }
+      if (this.form.controls.requestType) {
+        this.form.controls.requestType.disable();
+      }
+    }
+    if (this.isDayTimeframe() && this.timeframeDayComp) {
+      this.timeframeDayComp.setEnabled(enabled);
+    }
+    if (this.isConsecutiveDaysTimeframe() && this.timeframeConsecutiveDaysComp) {
+      this.timeframeConsecutiveDaysComp.setEnabled(enabled);
+    }
+    if (this.isRuntimeRequest() && this.requestRuntimeComp) {
+      this.requestRuntimeComp.setEnabled(enabled);
+    }
+    if (this.isEnergyRequest() && this.requestEnergyComp) {
+      this.requestEnergyComp.setEnabled(enabled);
+    }
+    if (this.isSocRequest() && this.requestSocComp) {
+      this.requestSocComp.setEnabled(enabled);
+    }
+  }
+
+  toggleEnabled() {
+    this.setEnabled(!this.isEnabled());
+  }
+
   isDayTimeframe() {
-    return this.form.controls.timeframeType.value === DayTimeframe.TYPE;
+    return this.form.controls.timeframeType && this.form.controls.timeframeType.value === simpleTimeframeType(DayTimeframe.TYPE);
   }
 
   isConsecutiveDaysTimeframe() {
-    return this.form.controls.timeframeType.value === ConsecutiveDaysTimeframe.TYPE;
+    return this.form.controls.timeframeType
+      && this.form.controls.timeframeType.value === simpleTimeframeType(ConsecutiveDaysTimeframe.TYPE);
   }
 
   isRuntimeRequest() {
-    return this.form.controls.requestType.value === RuntimeRequest.TYPE;
+    return this.form.controls.requestType && this.form.controls.requestType.value === simpleRequestType(RuntimeRequest.TYPE);
   }
 
   isEnergyRequest() {
-    return this.form.controls.requestType.value === EnergyRequest.TYPE;
+    return this.form.controls.requestType && this.form.controls.requestType.value === simpleRequestType(EnergyRequest.TYPE);
   }
 
   isSocRequest() {
-    return this.form.controls.requestType.value === SocRequest.TYPE;
+    return this.form.controls.requestType && this.form.controls.requestType.value === simpleRequestType(SocRequest.TYPE);
   }
 
   removeSchedule() {
@@ -119,9 +162,9 @@ export class ScheduleComponent implements OnChanges {
   get timeframeType() {
     if (this.schedule && this.schedule.timeframe) {
       if (this.schedule.timeframe['@class'] === DayTimeframe.TYPE) {
-        return DayTimeframe.TYPE;
+        return simpleTimeframeType(DayTimeframe.TYPE);
       } else if (this.schedule.timeframe['@class'] === ConsecutiveDaysTimeframe.TYPE) {
-        return ConsecutiveDaysTimeframe.TYPE;
+        return simpleTimeframeType(ConsecutiveDaysTimeframe.TYPE);
       }
     }
     return undefined;
@@ -130,11 +173,11 @@ export class ScheduleComponent implements OnChanges {
   get requestType() {
     if (this.schedule && this.schedule.request) {
       if (this.schedule.request['@class'] === RuntimeRequest.TYPE) {
-        return RuntimeRequest.TYPE;
+        return simpleRequestType(RuntimeRequest.TYPE);
       } else if (this.schedule.request['@class'] === EnergyRequest.TYPE) {
-        return EnergyRequest.TYPE;
+        return simpleRequestType(EnergyRequest.TYPE);
       } else if (this.schedule.request['@class'] === SocRequest.TYPE) {
-        return SocRequest.TYPE;
+        return simpleRequestType(SocRequest.TYPE);
       }
     }
     return undefined;
@@ -146,6 +189,7 @@ export class ScheduleComponent implements OnChanges {
       this.timeframeType, [Validators.required]);
     this.formHandler.addFormControl(this.form, 'requestType',
       this.requestType, [Validators.required]);
+    // this.setEnabled(this.schedule ? this.schedule.enabled : true);
   }
 
   updateForm() {
@@ -156,25 +200,23 @@ export class ScheduleComponent implements OnChanges {
 
   updateModelFromForm(): Schedule | undefined {
     const enabled = this.form.controls.enabled.value;
-    const timeframeType = this.form.controls.timeframeType.value;
-    const requestType = this.form.controls.requestType.value;
 
     let timeframe: DayTimeframe | ConsecutiveDaysTimeframe;
-    if (timeframeType === DayTimeframe.TYPE) {
+    if (this.isDayTimeframe()) {
       timeframe = this.timeframeDayComp.updateModelFromForm();
     }
-    if (timeframeType === ConsecutiveDaysTimeframe.TYPE) {
+    if (this.isConsecutiveDaysTimeframe()) {
       timeframe = this.timeframeConsecutiveDaysComp.updateModelFromForm();
     }
 
     let request: RuntimeRequest | EnergyRequest | SocRequest;
-    if (requestType === RuntimeRequest.TYPE) {
+    if (this.isRuntimeRequest()) {
       request = this.requestRuntimeComp.updateModelFromForm();
     }
-    if (requestType === EnergyRequest.TYPE) {
+    if (this.isEnergyRequest()) {
       request = this.requestEnergyComp.updateModelFromForm();
     }
-    if (requestType === SocRequest.TYPE) {
+    if (this.isSocRequest()) {
       request = this.requestSocComp.updateModelFromForm();
     }
 
