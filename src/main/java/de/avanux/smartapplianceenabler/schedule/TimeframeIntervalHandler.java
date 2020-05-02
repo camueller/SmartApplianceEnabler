@@ -313,6 +313,18 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
                 .findFirst().orElse(null);
     }
 
+    public TimeframeInterval getFirstTimeframeInterval(TimeframeIntervalState... states) {
+        if(states.length > 0) {
+            return queue.stream()
+                    .filter(timeframeInterval -> Arrays.stream(states).anyMatch(state -> state == timeframeInterval.getState()))
+                    .findFirst().orElse(null);
+        }
+        if(queue.size() > 0) {
+            return queue.get(0);
+        }
+        return null;
+    }
+
     /**
      * Returns timeframe intervals starting within a consideration interval.
      * If not consideration interval is given, all timeframe intervals are returned.
@@ -456,7 +468,12 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
             request.setAcceptControlRecommendations(acceptControlRecommendations);
             Interval interval = new Interval(now, requiredIntervalEnd);
             TimeframeInterval timeframeInterval = new TimeframeInterval(interval, request);
-            queue.forEach(queuedTimeframeInterval -> queuedTimeframeInterval.getRequest().setEnabled(false));
+            if(control instanceof StartingCurrentSwitch) {
+                clearQueue();
+            }
+            else {
+                queue.forEach(queuedTimeframeInterval -> queuedTimeframeInterval.getRequest().setEnabled(false));
+            }
             addTimeframeInterval(now, timeframeInterval, true, true);
         }
     }

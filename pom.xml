@@ -251,6 +251,7 @@ Caused by: java.lang.ClassNotFoundException: junit.runner.Version
 									<arguments>
 										<argument>-rf</argument>
 										<argument>node_modules</argument>
+										<argument>dist</argument>
 									</arguments>
 								</configuration>
 								<goals>
