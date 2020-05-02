@@ -75,7 +75,7 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
         this.evCharger = changes.evCharger.currentValue;
       } else {
         this.evCharger = new EvCharger();
-        this.evCharger.vehicles = [];
+        this.evCharger.vehicles = [this.createElectricVehicle()];
       }
       this.updateForm();
     }
@@ -109,26 +109,18 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
 
   useTemplate() {
     const templateName = this.getTemplateNameSelected();
-    this.evCharger = this.templates[templateName];
-    this.setProtocol(this.evChargerProtocol);
+    this.updateModelFromForm(); // preserve configured but unsaved vehicles
+    this.evCharger = new EvCharger({...this.templates[templateName], vehicles: this.evCharger.vehicles});
+    this.setProtocol(this.evCharger.protocol);
     this.updateForm();
     this.form.markAsDirty();
   }
 
-  isConfigured(): boolean {
+  get isConfigured(): boolean {
     return this.evCharger && this.protocol;
   }
 
-  get evChargerProtocol() {
-    if (this.evCharger.modbusControl && this.evCharger.modbusControl['@class'] === EvModbusControl.TYPE) {
-      return EvChargerProtocol.MODBUS;
-    } else if (this.evCharger.httpControl && this.evCharger.httpControl['@class'] === EvHttpControl.TYPE) {
-      return EvChargerProtocol.HTTP;
-    }
-    return undefined;
-  }
-
-  setProtocol(protocol: EvChargerProtocol) {
+  setProtocol(protocol: string) {
     this.form.controls.protocol.setValue(protocol);
   }
 
@@ -159,25 +151,30 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
   }
 
   findNextEvId(evs: ElectricVehicle[]): number {
-    const ids: number[] = evs.map(ev => ev.id);
-    for (let i = 1; i < 100; i++) {
-      if (ids.indexOf(i) < 0) {
-        return i;
+    if (evs) {
+      const ids: number[] = evs.map(ev => ev.id);
+      for (let i = 1; i < 100; i++) {
+        if (ids.indexOf(i) < 0) {
+          return i;
+        }
       }
     }
-    return 0;
+    return 1;
   }
 
   addElectricVehicle() {
     fixExpressionChangedAfterItHasBeenCheckedError(this.form);
-    const newEvId = this.findNextEvId(this.evCharger.vehicles);
-    const newEv = new ElectricVehicle({id: newEvId});
     if (!this.evCharger.vehicles) {
       this.evCharger.vehicles = [];
     }
-    this.evCharger.vehicles.push(newEv);
+    this.evCharger.vehicles.push(this.createElectricVehicle());
     this.electricVehiclesFormArray.push(new FormGroup({}));
     this.form.markAsDirty();
+  }
+
+  createElectricVehicle() {
+    const newEvId = this.findNextEvId(this.evCharger.vehicles);
+    return new ElectricVehicle({id: newEvId});
   }
 
   onElectricVehicleRemove(index: number) {
@@ -196,7 +193,7 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
 
   expandParentForm() {
     this.formHandler.addFormControl(this.form, 'template', undefined);
-    this.formHandler.addFormControl(this.form, 'protocol', this.evChargerProtocol);
+    this.formHandler.addFormControl(this.form, 'protocol', this.evCharger.protocol);
     this.formHandler.addFormControl(this.form, 'voltage', this.evCharger.voltage,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
     this.formHandler.addFormControl(this.form, 'phases', this.evCharger.phases,
@@ -212,9 +209,9 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
   }
 
   updateForm() {
-    if (!(this.evCharger.modbusControl && this.evCharger.httpControl)) {
+    if (!this.evCharger.modbusControl && !this.evCharger.httpControl) {
       this.formHandler.setFormControlValue(this.form, 'template', undefined);
-      this.formHandler.setFormControlValue(this.form, 'protocol', this.evChargerProtocol);
+      this.formHandler.setFormControlValue(this.form, 'protocol', this.evCharger.protocol);
     }
     this.formHandler.setFormControlValue(this.form, 'voltage', this.evCharger.voltage);
     this.formHandler.setFormControlValue(this.form, 'phases', this.evCharger.phases);

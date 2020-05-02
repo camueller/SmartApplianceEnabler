@@ -1,18 +1,18 @@
 import {
   assertInput,
   assertSelect,
-  getIndexedSelectOptionValueRegExp,
   inputText,
   selectOptionByAttribute,
   selectorInputByFormControlName,
-  selectorSelectByFormControlName
+  selectorSelectByFormControlName,
+  selectorSelectedByFormControlName
 } from '../../shared/form';
 import {HttpReadValue} from '../../../../../main/angular/src/app/http/read-value/http-read-value';
 
 export class HttpReadValuePage {
 
   private static selectorBase(httpReadValueIndex: number) {
-    return `app-http-read-value:nth-child(${httpReadValueIndex + 1})`;
+    return `div > div > div:nth-child(${httpReadValueIndex + 1}) > div > app-http-read-value`;
   }
 
   public static async setHttpReadValue(t: TestController, httpReadValue: HttpReadValue,
@@ -25,23 +25,27 @@ export class HttpReadValuePage {
   }
 
   public static async assertHttpReadValue(t: TestController, httpReadValue: HttpReadValue,
-                                          httpReadValueIndex: number, selectorPrefix?: string) {
-    await HttpReadValuePage.assertName(t, httpReadValue.name, httpReadValueIndex, selectorPrefix);
+                                          httpReadValueIndex: number, factorToValue: boolean,
+                                          selectorPrefix?: string, i18nPrefix?: string) {
+    await HttpReadValuePage.assertName(t, httpReadValue.name, httpReadValueIndex, selectorPrefix, i18nPrefix);
     await HttpReadValuePage.assertData(t, httpReadValue.data, httpReadValueIndex, selectorPrefix);
     await HttpReadValuePage.assertPath(t, httpReadValue.path, httpReadValueIndex, selectorPrefix);
     await HttpReadValuePage.assertExtractionRegex(t, httpReadValue.extractionRegex, httpReadValueIndex, selectorPrefix);
-    await HttpReadValuePage.assertFactorToValue(t, httpReadValue.factorToValue, httpReadValueIndex, selectorPrefix);
+    if (factorToValue) {
+      await HttpReadValuePage.assertFactorToValue(t, httpReadValue.factorToValue, httpReadValueIndex, selectorPrefix);
+    }
   }
 
   public static async setName(t: TestController, name: string, httpReadValueIndex: number,
                               selectorPrefix?: string) {
     await selectOptionByAttribute(t, selectorSelectByFormControlName('name', selectorPrefix,
-      HttpReadValuePage.selectorBase(httpReadValueIndex)), name, true);
+      HttpReadValuePage.selectorBase(httpReadValueIndex)), name);
   }
+
   public static async assertName(t: TestController, name: string, httpReadValueIndex: number,
-                                 selectorPrefix?: string) {
-    await assertSelect(t, selectorSelectByFormControlName('name', selectorPrefix,
-      HttpReadValuePage.selectorBase(httpReadValueIndex)), getIndexedSelectOptionValueRegExp(name));
+                                 selectorPrefix?: string, i18nPrefix?: string) {
+    await assertSelect(t, selectorSelectedByFormControlName('name', selectorPrefix,
+      HttpReadValuePage.selectorBase(httpReadValueIndex)), name, i18nPrefix);
   }
 
   public static async setData(t: TestController, data: string, httpReadValueIndex: number,

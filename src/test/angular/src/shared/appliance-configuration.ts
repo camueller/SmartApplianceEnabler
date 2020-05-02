@@ -6,6 +6,7 @@ export class ApplianceConfiguration {
   appliance: Appliance;
   meter: Meter;
   control: Control;
+  controlTemplate?: string;
 
   public constructor(init?: Partial<ApplianceConfiguration>) {
     Object.assign(this, init);

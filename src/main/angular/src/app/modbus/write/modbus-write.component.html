@@ -15,7 +15,7 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-form-field class="sae__factorToValue">
+      <mat-form-field class="sae__factorToValue" *ngIf="! disableFactorToValue">
         <mat-label>{{'ModbusReadComponent.factorToValue' | translate}}</mat-label>
         <input matInput type="text" formControlName="factorToValue"
                required="{{formHandler.isRequired('factorToValue')}}">

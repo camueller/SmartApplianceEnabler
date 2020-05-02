@@ -1,3 +1,9 @@
 .ControlStartingcurrentComponent {
+  &__startingCurrentDetectionDuration {
+    width: 15rem;
+  }
 
+  &__finishedCurrentDetectionDuration {
+    width: 15rem;
+  }
 }

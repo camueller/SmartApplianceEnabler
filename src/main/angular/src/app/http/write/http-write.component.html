@@ -6,7 +6,7 @@
              required="{{formHandler.isRequired('url')}}">
       <mat-error *ngIf="errors.url">{{errors.url}}</mat-error>
     </mat-form-field>
-    <button mat-raised-button type="button" (click)="removeHttpWrite()">
+    <button mat-raised-button type="button" class="removeHttpWrite" (click)="removeHttpWrite()">
       {{'HttpWriteComponent.button.remove' | translate}}</button>
   </div>
   <div formArrayName="httpWriteValues">
@@ -23,10 +23,10 @@
           #httpWriteValues
         ></app-http-write-value>
       </div>
-      <button mat-raised-button type="button" (click)="removeValue(i)">
+      <button mat-raised-button type="button" class="removeHttpWriteValue" (click)="removeValue(i)">
         {{'HttpWriteComponent.button.removeValue' | translate}}</button>
     </div>
   </div>
 </div>
-<button mat-raised-button type="button" (click)="addValue()" *ngIf="isAddValuePossible"
+<button mat-raised-button type="button" class="addHttpWriteValue" (click)="addValue()" *ngIf="isAddValuePossible"
 >{{'HttpWriteComponent.button.addValue' | translate}}</button>

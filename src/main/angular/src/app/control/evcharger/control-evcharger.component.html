@@ -3,7 +3,7 @@
   <div class="sae__fields">
     <mat-form-field class="ControlEvchargerComponent__template">
       <mat-label>{{'ControlEvchargerComponent.template' | translate}}</mat-label>
-      <mat-select formControlName="template"
+      <mat-select formControlName="template" required="{{!isConfigured}}"
                   (selectionChange)="useTemplate()"
                   placeholder="aus vorkonfigurierten Ladengeräten wählen">
         <mat-option *ngFor="let templateName of templateNames" [value]="templateName">
@@ -13,7 +13,7 @@
     </mat-form-field>
     <mat-form-field class="ControlEvchargerComponent__protocol">
       <mat-label>{{'ControlEvchargerComponent.protocol' | translate}}</mat-label>
-      <mat-select formControlName="protocol"
+      <mat-select formControlName="protocol" required="true"
                   placeholder="wählen für manuelle Konfiguration">
         <mat-option *ngFor="let protocol of protocols" [value]="protocol.value">
           {{protocol.viewValue}}
@@ -21,7 +21,7 @@
       </mat-select>
     </mat-form-field>
   </div>
-  <div *ngIf="isConfigured()">
+  <div *ngIf="isConfigured">
     <div class="sae__fields">
       <mat-form-field class="sae__voltage">
         <mat-label>{{'ControlEvchargerComponent.voltage' | translate}}</mat-label>
@@ -70,7 +70,8 @@
   ></app-control-evcharger-http>
   <h2>{{'ControlEvchargerComponent.headingEv' | translate}}</h2>
   <div formArrayName="electricVehicles">
-    <div *ngFor="let electricVehicle of evCharger.vehicles; index as i; last as l">
+    <div *ngFor="let electricVehicle of evCharger.vehicles; index as i; last as l" class="ControlEvchargerComponent__electricVehicle">
+      <mat-divider class="ControlEvchargerComponent__electricVehicleDivider"></mat-divider>
       <app-electric-vehicle
         [formGroupName]="i"
         [form]="getElectricVehicleFormGroup(i)"
@@ -81,6 +82,6 @@
       ></app-electric-vehicle>
     </div>
   </div>
-  <button mat-raised-button type="button" (click)="addElectricVehicle()">
-    {{'ControlEvchargerComponent.button.newEv' | translate}}</button>
+  <button mat-raised-button type="button" class="ControlEvchargerComponent__addElectricVehicle" (click)="addElectricVehicle()">
+    {{'ControlEvchargerComponent.button.addElectricVehicle' | translate}}</button>
 </div>

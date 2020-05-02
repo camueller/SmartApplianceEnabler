@@ -14,13 +14,23 @@ import {HttpControlPage} from '../page/control/http-control.page';
 import {ModbusElectricityMeter} from '../../../../main/angular/src/app/meter/modbus/modbus-electricity-meter';
 import {ModbusMeterPage} from '../page/meter/modbus-meter.page';
 import {GlobalContext} from './global-context';
-import {TopMenu} from '../page/top-menu.page';
 import {ApplianceConfiguration} from './appliance-configuration';
 import {ModbusControlPage} from '../page/control/modbus-control.page';
 import {HttpSwitch} from '../../../../main/angular/src/app/control/http/http-switch';
 import {AlwaysOnSwitch} from '../../../../main/angular/src/app/control/alwayson/always-on-switch';
 import {ModbusSwitch} from '../../../../main/angular/src/app/control/modbus/modbus-switch';
 import {Switch} from '../../../../main/angular/src/app/control/switch/switch';
+import {ControlPage} from '../page/control/control.page';
+import {StartingCurrentSwitchPage} from '../page/control/starting-current-switch.page';
+import {EvCharger} from '../../../../main/angular/src/app/control/evcharger/ev-charger';
+import {EvchargerPage} from '../page/control/evcharger.page';
+import {MeterPage} from '../page/meter/meter.page';
+import {Selector} from 'testcafe';
+import {ElectricVehicle} from '../../../../main/angular/src/app/control/evcharger/electric-vehicle/electric-vehicle';
+
+export function isDebug() {
+  return !!process.env.DEBUG;
+}
 
 export function fixtureName(t: TestController) {
   // @ts-ignore
@@ -36,20 +46,27 @@ export async function createAndAssertAppliance(t: TestController, configuration:
   t.fixtureCtx[key] = configuration;
   GlobalContext.ctx[key] = configuration;
   await createAppliance(t, configuration.appliance);
-  await TopMenu.clickStatus(t);
+  await SideMenu.clickStatus(t);
   await assertAppliance(t, configuration.appliance);
 }
 
 export async function createAndAssertMeter(t: TestController, configuration: ApplianceConfiguration) {
   await createMeter(t, configuration.appliance.id, configuration.meter);
-  await TopMenu.clickStatus(t);
+  await SideMenu.clickStatus(t);
   await assertMeter(t, configuration.appliance.id, configuration.meter);
 }
 
 export async function createAndAssertControl(t: TestController, configuration: ApplianceConfiguration) {
-  await createControl(t, configuration.appliance.id, configuration.control);
-  await TopMenu.clickStatus(t);
+  await createControl(t, configuration.appliance.id, configuration.control, configuration.controlTemplate);
+  await SideMenu.clickStatus(t);
   await assertControl(t, configuration.appliance.id, configuration.control);
+}
+
+export async function createAndAssertElectricVehicle(t: TestController, applianceId: string, ev: ElectricVehicle, index: number,
+                                                     clickControl: boolean, clickAdd: boolean, clickSave: boolean) {
+  await EvchargerPage.setElectricVehicle(t, applianceId, ev, index, clickControl, clickAdd, clickSave);
+  await SideMenu.clickStatus(t);
+  await EvchargerPage.assertElectricVehicle(t, applianceId, ev, index, true);
 }
 
 export async function createAppliance(t: TestController, appliance: Appliance) {
@@ -57,7 +74,7 @@ export async function createAppliance(t: TestController, appliance: Appliance) {
   await AppliancePage.setAppliance(t, appliance);
   await AppliancePage.clickSave(t);
 
-  await t.expect(SideMenu.appliance(appliance.id).exists)
+  await t.expect(Selector(SideMenu.appliance(appliance.id)).exists)
     .ok('The appliance created should show up in the side menu', {timeout: saeRestartTimeout});
 }
 
@@ -77,7 +94,7 @@ export async function createMeter(t: TestController, applianceId: string, meter:
   if (meter.type === ModbusElectricityMeter.TYPE) {
     await ModbusMeterPage.setModbusElectricityMeter(t, meter.modbusElectricityMeter);
   }
-  await S0MeterPage.clickSave(t);
+  await MeterPage.clickSave(t);
 }
 export async function assertMeter(t: TestController, applianceId: string, meter: Meter) {
   await SideMenu.clickMeter(t, applianceId);
@@ -92,8 +109,11 @@ export async function assertMeter(t: TestController, applianceId: string, meter:
   }
 }
 
-export async function createControl(t: TestController, applianceId: string, control: Control) {
+export async function createControl(t: TestController, applianceId: string, control: Control, controlTemplate?: string) {
   await SideMenu.clickControl(t, applianceId);
+  if (control.type !== AlwaysOnSwitch.TYPE && control.type !== EvCharger.TYPE) {
+    await ControlPage.setStartingCurrentDetection(t, control.startingCurrentDetection);
+  }
   if (control.type === AlwaysOnSwitch.TYPE) {
     await AlwaysOnSwitchPage.setAlwaysOnSwitch(t, control.alwaysOnSwitch);
   }
@@ -106,10 +126,20 @@ export async function createControl(t: TestController, applianceId: string, cont
   if (control.type === ModbusSwitch.TYPE) {
     await ModbusControlPage.setModbusSwitch(t, control.modbusSwitch);
   }
-  await SwitchPage.clickSave(t);
+  if (control.type === EvCharger.TYPE) {
+    await EvchargerPage.setEvChargerFromTemplate(t, control.evCharger, controlTemplate);
+    await EvchargerPage.setElectricVehicles(t, applianceId, control.evCharger.vehicles);
+  }
+  if (control.startingCurrentDetection) {
+    await StartingCurrentSwitchPage.setStartingCurrentSwitch(t, control.startingCurrentSwitch);
+  }
+  await ControlPage.clickSave(t);
 }
 export async function assertControl(t: TestController, applianceId: string, control: Control) {
   await SideMenu.clickControl(t, applianceId);
+  if (control.type !== AlwaysOnSwitch.TYPE && control.type !== EvCharger.TYPE) {
+    await ControlPage.assertStartingCurrentDetection(t, control.startingCurrentDetection);
+  }
   if (control.type === AlwaysOnSwitch.TYPE) {
     await AlwaysOnSwitchPage.assertAlwaysOnSwitch(t, control.alwaysOnSwitch);
   }
@@ -121,5 +151,12 @@ export async function assertControl(t: TestController, applianceId: string, cont
   }
   if (control.type === ModbusSwitch.TYPE) {
     await ModbusControlPage.assertModbusSwitch(t, control.modbusSwitch);
+  }
+  if (control.type === EvCharger.TYPE) {
+    await EvchargerPage.assertEvCharger(t, control.evCharger);
+    await EvchargerPage.assertElectricVehicles(t, applianceId, control.evCharger.vehicles);
+  }
+  if (control.startingCurrentDetection) {
+    await StartingCurrentSwitchPage.assertStartingCurrentSwitch(t, control.startingCurrentSwitch);
   }
 }

@@ -1,18 +1,24 @@
-import {Selector} from 'testcafe';
-import {getIndexedSelectOptionValueRegExp, selectOptionByAttribute, selectorSelectByFormControlName} from '../../shared/form';
+import {
+  assertSelect,
+  clickButton,
+  selectOptionByAttribute,
+  selectorSelectByFormControlName,
+  selectorSelectedByFormControlName
+} from '../../shared/form';
+import {simpleMeterType} from '../../../../../main/angular/src/app/shared/form-util';
 
 export class MeterPage {
 
-  private static saveButton = Selector('button[type="submit"]');
+  private static SAVE_BUTTON_SELECTOR = 'button[type="submit"]';
 
   public static async setType(t: TestController, meterType: string) {
-    await selectOptionByAttribute(t, selectorSelectByFormControlName('meterType'), meterType, true);
+    await selectOptionByAttribute(t, selectorSelectByFormControlName('meterType'), simpleMeterType(meterType));
   }
   public static async assertType(t: TestController, meterType: string) {
-    await t.expect(selectorSelectByFormControlName('meterType').value).match(getIndexedSelectOptionValueRegExp(meterType));
+    await assertSelect(t, selectorSelectedByFormControlName('meterType'), meterType);
   }
 
   public static async clickSave(t: TestController) {
-    await t.click(MeterPage.saveButton);
+    await clickButton(t, MeterPage.SAVE_BUTTON_SELECTOR);
   }
 }

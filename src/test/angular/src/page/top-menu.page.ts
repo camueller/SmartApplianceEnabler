@@ -1,20 +1,10 @@
-import {Selector} from 'testcafe';
+import {clickButton} from '../shared/form';
 
 export class TopMenu {
 
-  private static APPLIANCES = Selector('a.launch'); // FIXME provide better selector
-  private static STATUS = Selector('a[href="/status"]');
-  private static SETTINGS = Selector('a[href="/settings"]');
+  private static SIDEMENU_SELECTOR = 'mat-toolbar > div > button';
 
-  public static async clickAppliances(t: TestController) {
-    await t.click(TopMenu.APPLIANCES);
-  }
-
-  public static async clickStatus(t: TestController) {
-    await t.click(TopMenu.STATUS);
-  }
-
-  public static async clickSettings(t: TestController) {
-    await t.click(TopMenu.SETTINGS);
+  public static async clickMenu(t: TestController) {
+    await clickButton(t, TopMenu.SIDEMENU_SELECTOR);
   }
 }

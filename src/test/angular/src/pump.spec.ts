@@ -18,7 +18,7 @@ function createPump(): ApplianceConfiguration {
   });
 }
 
-test('Create appliance', async t => {
+test('Create appliance with interruptions allowed without timing specification', async t => {
   await createAndAssertAppliance(t, createPump());
 });
 

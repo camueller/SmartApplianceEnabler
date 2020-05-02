@@ -1,16 +1,22 @@
-import {Selector} from 'testcafe';
 import {
+  assertCheckbox,
+  assertInput,
+  assertSelect,
+  clickButton,
   inputText,
   selectOptionByAttribute,
+  selectorCheckboxByFormControlName,
+  selectorCheckboxCheckedByFormControlName,
   selectorInputByFormControlName,
   selectorSelectByFormControlName,
+  selectorSelectedByFormControlName,
   setCheckboxEnabled
 } from '../../shared/form';
 import {Appliance} from '../../../../../main/angular/src/app/appliance/appliance';
 
 export class AppliancePage {
 
-  private static saveButton = Selector('button[type="submit"]');
+  private static SAVE_BUTTON_SELECTOR = 'button[type="submit"]';
 
   public static async setAppliance(t: TestController, appliance: Appliance) {
     await AppliancePage.setId(t, appliance.id);
@@ -21,10 +27,12 @@ export class AppliancePage {
     await AppliancePage.setMinPowerConsumption(t, appliance.minPowerConsumption);
     await AppliancePage.setMaxPowerConsumption(t, appliance.maxPowerConsumption);
     await AppliancePage.setInterruptionsAllowed(t, appliance.interruptionsAllowed);
-    await AppliancePage.setMinOnTime(t, appliance.minOnTime);
-    await AppliancePage.setMaxOnTime(t, appliance.maxOnTime);
-    await AppliancePage.setMinOffTime(t, appliance.minOffTime);
-    await AppliancePage.setMaxOffTime(t, appliance.maxOffTime);
+    if (appliance.interruptionsAllowed) {
+      await AppliancePage.setMinOnTime(t, appliance.minOnTime);
+      await AppliancePage.setMaxOnTime(t, appliance.maxOnTime);
+      await AppliancePage.setMinOffTime(t, appliance.minOffTime);
+      await AppliancePage.setMaxOffTime(t, appliance.maxOffTime);
+    }
   }
 
   public static async assertAppliance(t: TestController, appliance: Appliance) {
@@ -47,7 +55,7 @@ export class AppliancePage {
   }
 
   public static async assertId(t: TestController, id: string) {
-    await t.expect(selectorInputByFormControlName('id').value).eql(id);
+    await assertInput(t, selectorInputByFormControlName('id'), id);
   }
 
   public static async setVendor(t: TestController, vendor: string) {
@@ -55,7 +63,7 @@ export class AppliancePage {
   }
 
   public static async assertVendor(t: TestController, vendor: string) {
-    await t.expect(selectorInputByFormControlName('vendor').value).eql(vendor);
+    await assertInput(t, selectorInputByFormControlName('vendor'), vendor);
   }
 
   public static async setName(t: TestController, name: string) {
@@ -63,7 +71,7 @@ export class AppliancePage {
   }
 
   public static async assertName(t: TestController, name: string) {
-    await t.expect(selectorInputByFormControlName('name').value).eql(name);
+    await assertInput(t, selectorInputByFormControlName('name'), name);
   }
 
   public static async setType(t: TestController, type: string) {
@@ -71,7 +79,7 @@ export class AppliancePage {
   }
 
   public static async assertType(t: TestController, type: string) {
-    await t.expect(selectorSelectByFormControlName('type').value).eql(type);
+    await assertSelect(t, selectorSelectedByFormControlName('type'), type, 'ApplianceComponent.type.');
   }
 
   public static async setSerial(t: TestController, serial: string) {
@@ -79,7 +87,7 @@ export class AppliancePage {
   }
 
   public static async assertSerial(t: TestController, serial: string) {
-    await t.expect(selectorInputByFormControlName('serial').value).eql(serial);
+    await assertInput(t, selectorInputByFormControlName('serial'), serial);
   }
 
   public static async setMinPowerConsumption(t: TestController, minPowerConsumption: number) {
@@ -90,26 +98,24 @@ export class AppliancePage {
 
   public static async assertMinPowerConsumption(t: TestController, minPowerConsumption: number) {
     if (minPowerConsumption) {
-      await t.expect(selectorInputByFormControlName('minPowerConsumption').value).eql(
-        minPowerConsumption ? minPowerConsumption.toString() : '');
+      await assertInput(t, selectorInputByFormControlName('minPowerConsumption'), minPowerConsumption.toString());
     }
   }
 
   public static async setMaxPowerConsumption(t: TestController, maxPowerConsumption: number) {
-    await inputText(t, selectorInputByFormControlName('maxPowerConsumption'), maxPowerConsumption && maxPowerConsumption.toString());
+    await inputText(t, selectorInputByFormControlName('maxPowerConsumption'), maxPowerConsumption.toString());
   }
 
   public static async assertMaxPowerConsumption(t: TestController, maxPowerConsumption: number) {
-    await t.expect(selectorInputByFormControlName('maxPowerConsumption').value).eql(
-      maxPowerConsumption ? maxPowerConsumption.toString() : '');
+    await assertInput(t, selectorInputByFormControlName('maxPowerConsumption'), maxPowerConsumption.toString());
   }
 
   public static async setInterruptionsAllowed(t: TestController, interruptionsAllowed: boolean) {
-    await setCheckboxEnabled(t, selectorInputByFormControlName('interruptionsAllowed'), interruptionsAllowed);
+    await setCheckboxEnabled(t, selectorCheckboxByFormControlName('interruptionsAllowed'), interruptionsAllowed);
   }
 
   public static async assertInterruptionsAllowed(t: TestController, interruptionsAllowed: boolean) {
-    await t.expect(selectorInputByFormControlName('interruptionsAllowed').checked).eql(interruptionsAllowed);
+    await assertCheckbox(t, selectorCheckboxCheckedByFormControlName('interruptionsAllowed'), interruptionsAllowed);
   }
 
   public static async setMinOnTime(t: TestController, minOnTime: number) {
@@ -117,8 +123,7 @@ export class AppliancePage {
   }
 
   public static async assertMinOnTime(t: TestController, minOnTime: number) {
-    await t.expect(selectorInputByFormControlName('minOnTime').value).eql(
-      minOnTime ? minOnTime.toString() : '');
+    await assertInput(t, selectorInputByFormControlName('minOnTime'), minOnTime ? minOnTime.toString() : '');
   }
 
   public static async setMaxOnTime(t: TestController, maxOnTime: number) {
@@ -126,8 +131,7 @@ export class AppliancePage {
   }
 
   public static async assertMaxOnTime(t: TestController, maxOnTime: number) {
-    await t.expect(selectorInputByFormControlName('maxOnTime').value).eql(
-      maxOnTime ? maxOnTime.toString() : '');
+    await assertInput(t, selectorInputByFormControlName('maxOnTime'), maxOnTime ? maxOnTime.toString() : '');
   }
 
   public static async setMinOffTime(t: TestController, minOffTime: number) {
@@ -135,8 +139,7 @@ export class AppliancePage {
   }
 
   public static async assertMinOffTime(t: TestController, minOffTime: number) {
-    await t.expect(selectorInputByFormControlName('minOffTime').value).eql(
-      minOffTime ? minOffTime.toString() : '');
+    await assertInput(t, selectorInputByFormControlName('minOffTime'), minOffTime ? minOffTime.toString() : '');
   }
 
   public static async setMaxOffTime(t: TestController, maxOffTime: number) {
@@ -144,11 +147,10 @@ export class AppliancePage {
   }
 
   public static async assertMaxOffTime(t: TestController, maxOffTime: number) {
-    await t.expect(selectorInputByFormControlName('maxOffTime').value).eql(
-      maxOffTime ? maxOffTime.toString() : '');
+    await assertInput(t, selectorInputByFormControlName('maxOffTime'), maxOffTime ? maxOffTime.toString() : '');
   }
 
   public static async clickSave(t: TestController) {
-    await t.click(AppliancePage.saveButton);
+    await clickButton(t, AppliancePage.SAVE_BUTTON_SELECTOR);
   }
 }

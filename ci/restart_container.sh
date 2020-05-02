@@ -4,8 +4,6 @@ CONTAINER_NAME="sae"
 SAE_VOLUME="sae"
 SAE_PORT=80
 
-sudo docker system prune -f
-sudo docker pull $REPO_TAG
 sudo docker stop $CONTAINER_NAME
 sudo docker volume rm -f $SAE_VOLUME
 sudo docker volume create $SAE_VOLUME

@@ -40,7 +40,7 @@
                      (remove)="onModbusReadRemove(i)"
                      #modbusReadComponents
     ></app-modbus-read>
-    <button mat-raised-button type="button" (click)="addModbusRead()" *ngIf="isAddModbusReadPossible">
+    <button mat-raised-button type="button" (click)="addModbusRead()" class="MeterModbusComponent__addModbusRead" *ngIf="isAddModbusReadPossible">
       {{'MeterModbusComponent.button.addModbusRead' | translate}}</button>
   </div>
 </div>

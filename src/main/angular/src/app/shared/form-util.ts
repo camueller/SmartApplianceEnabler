@@ -1,4 +1,12 @@
-import {Form, FormGroup} from '@angular/forms';
+import {FormGroup} from '@angular/forms';
+
+export function simpleMeterType(meterType: string) {
+  return meterType && meterType.split('.')[4];
+}
+
+export function simpleControlType(controlType: string) {
+  return controlType && controlType.split('.')[4];
+}
 
 export function getValidString(input: any): string | undefined {
   if (!input) {

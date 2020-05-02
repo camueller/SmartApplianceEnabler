@@ -19,6 +19,7 @@
     <app-modbus-write *ngFor="let modbusWrite of modbusSwitch.modbusWrites; index as i; last as l"
                       [formGroupName]="i"
                       [form]="getModbusWriteFormGroup(i)"
+                      [disableFactorToValue]="true"
                       [modbusWrite]="modbusWrite"
                       [maxValues]="maxValues"
                       [valueNames]="valueNames"
@@ -28,7 +29,7 @@
                       (remove)="onModbusWriteRemove(i)"
                       #modbusWriteComponents
     ></app-modbus-write>
-    <button mat-raised-button type="button" (click)="addModbusWrite()" *ngIf="isAddModbusWritePossible">
+    <button mat-raised-button type="button" (click)="addModbusWrite()" class="ControlModbusComponent__addModbusWrite" *ngIf="isAddModbusWritePossible">
       {{'ControlModbusComponent.button.addModbusWrite' | translate}}</button>
   </div>
 </div>

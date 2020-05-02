@@ -1,18 +1,35 @@
-import {Selector} from 'testcafe';
-import {getIndexedSelectOptionValueRegExp, selectOptionByAttribute, selectorSelectByFormControlName} from '../../shared/form';
+import {
+  assertCheckbox,
+  assertSelect,
+  clickButton,
+  selectOptionByAttribute,
+  selectorCheckboxByFormControlName,
+  selectorCheckboxCheckedByFormControlName,
+  selectorSelectByFormControlName,
+  selectorSelectedByFormControlName,
+  setCheckboxEnabled
+} from '../../shared/form';
+import {simpleControlType} from '../../../../../main/angular/src/app/shared/form-util';
 
 export class ControlPage {
 
-  private static saveButton = Selector('button[type="submit"]');
+  private static SAVE_BUTTON_SELECTOR = 'button[type="submit"]';
 
   public static async setType(t: TestController, controlType: string) {
-    await selectOptionByAttribute(t, selectorSelectByFormControlName('controlType'), controlType, true);
+    await selectOptionByAttribute(t, selectorSelectByFormControlName('controlType'), simpleControlType(controlType));
   }
   public static async assertType(t: TestController, controlType: string) {
-    await t.expect(selectorSelectByFormControlName('controlType').value).match(getIndexedSelectOptionValueRegExp(controlType));
+    await assertSelect(t, selectorSelectedByFormControlName('controlType'), controlType);
+  }
+
+  public static async setStartingCurrentDetection(t: TestController, startingCurrentDetection: boolean) {
+    await setCheckboxEnabled(t, selectorCheckboxByFormControlName('startingCurrentDetection'), startingCurrentDetection);
+  }
+  public static async assertStartingCurrentDetection(t: TestController, startingCurrentDetection: boolean) {
+    await assertCheckbox(t, selectorCheckboxCheckedByFormControlName('startingCurrentDetection'), startingCurrentDetection);
   }
 
   public static async clickSave(t: TestController) {
-    await t.click(ControlPage.saveButton);
+    await clickButton(t, ControlPage.SAVE_BUTTON_SELECTOR);
   }
 }

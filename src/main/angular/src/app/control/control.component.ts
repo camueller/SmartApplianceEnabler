@@ -45,6 +45,7 @@ import {ControlEvchargerComponent} from './evcharger/control-evcharger.component
 import {ControlStartingcurrentComponent} from './startingcurrent/control-startingcurrent.component';
 import {EvCharger} from './evcharger/ev-charger';
 import {ListItem} from '../shared/list-item';
+import {simpleControlType} from '../shared/form-util';
 
 @Component({
   selector: 'app-control',
@@ -74,12 +75,6 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
   discardChangesMessage: string;
   confirmDeleteMessage: string;
   controlTypes: ListItem[] = [];
-  TYPE_ALWAYS_ON_SWITCH = AlwaysOnSwitch.TYPE;
-  TYPE_SWITCH = Switch.TYPE;
-  TYPE_MODBUS_SWITCH = ModbusSwitch.TYPE;
-  TYPE_MOCK_SWITCH = MockSwitch.TYPE;
-  TYPE_HTTP_SWITCH = HttpSwitch.TYPE;
-  TYPE_EVCHARGER = EvCharger.TYPE;
 
   constructor(private logger: Logger,
               private controlService: ControlService,
@@ -107,7 +102,7 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
     const controlTypeKeys = [Switch.TYPE, ModbusSwitch.TYPE, HttpSwitch.TYPE, AlwaysOnSwitch.TYPE];
     this.translate.get(controlTypeKeys).subscribe(translatedStrings => {
       Object.keys(translatedStrings).forEach(key => {
-        this.controlTypes.push({value: key, viewValue: translatedStrings[key]} as ListItem);
+        this.controlTypes.push({value: simpleControlType(key), viewValue: translatedStrings[key]} as ListItem);
       });
     });
     this.route.paramMap.subscribe(() => this.applianceId = this.route.snapshot.paramMap.get('id'));
@@ -123,11 +118,10 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
       this.appliance = data.appliance;
       this.settings = data.settings;
       this.settingsDefaults = data.settingsDefaults;
-      this.updateForm();
-      if (!this.control.evCharger && this.appliance.type === 'EVCharger') {
-        // there is not type change for ev charger since it is determined by appliance type
-        this.typeChanged(EvCharger.TYPE);
+      if (this.appliance.type === 'EVCharger') {
+        this.control.type = EvCharger.TYPE;
       }
+      this.updateForm();
       if (this.form) {
         this.form.markAsPristine();
       }
@@ -137,15 +131,15 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
 
   buildForm() {
     this.form = new FormGroup({});
-    this.formHandler.addFormControl(this.form, 'controlType', this.control && this.control.type);
+    this.formHandler.addFormControl(this.form, 'controlType', this.control && simpleControlType(this.control.type));
     this.formHandler.addFormControl(this.form, 'startingCurrentDetection',
       this.control && this.control.startingCurrentDetection);
   }
 
   updateForm() {
-    this.formHandler.setFormControlValue(this.form, 'controlType', this.control.type);
+    this.formHandler.setFormControlValue(this.form, 'controlType', this.control && this.control.type);
     this.formHandler.setFormControlValue(this.form, 'startingCurrentDetection',
-      this.control.startingCurrentDetection);
+      this.control && this.control.startingCurrentDetection);
   }
 
   canDeactivate(): Observable<boolean> | boolean {
@@ -153,6 +147,26 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
       return true;
     }
     return this.dialogService.confirm(this.discardChangesMessage);
+  }
+
+  get isAlwaysOnSwitch() {
+    return this.control && this.control.type === AlwaysOnSwitch.TYPE;
+  }
+
+  get isSwitch() {
+    return this.control && this.control.type === Switch.TYPE;
+  }
+
+  get isModbusSwitch() {
+    return this.control && this.control.type === ModbusSwitch.TYPE;
+  }
+
+  get isHttpSwitch() {
+    return this.control && this.control.type === HttpSwitch.TYPE;
+  }
+
+  get isEvCharger() {
+    return this.control && this.control.type === EvCharger.TYPE;
   }
 
   delete() {
@@ -168,23 +182,22 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
   }
 
   typeChanged(newType?: string | undefined) {
-    if (!newType) {
+    this.control.type = `de.avanux.smartapplianceenabler.control.${newType}`;
+    if (!this.control.type) {
       this.control.startingCurrentDetection = false;
-    } else if (newType === this.TYPE_ALWAYS_ON_SWITCH) {
+    } else if (this.isAlwaysOnSwitch) {
       this.control.alwaysOnSwitch = this.controlFactory.createAlwaysOnSwitch();
-    } else if (newType === EvCharger.TYPE) {
+    } else if (this.isEvCharger) {
       this.control.startingCurrentDetection = false;
     }
-    this.control.type = newType;
     this.buildForm();
-    if (newType === this.TYPE_ALWAYS_ON_SWITCH) {
+    if (this.isAlwaysOnSwitch) {
       this.form.markAsDirty();
     }
   }
 
   get canHaveStartingCurrentDetection(): boolean {
-    return this.control.type !== AlwaysOnSwitch.TYPE
-      && this.control.type !== MockSwitch.TYPE;
+    return !this.isAlwaysOnSwitch && this.control.type !== MockSwitch.TYPE;
   }
 
   toggleStartingCurrentDetection() {

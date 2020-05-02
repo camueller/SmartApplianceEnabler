@@ -6,7 +6,8 @@ import {
   inputText,
   selectOptionByAttribute,
   selectorInputByFormControlName,
-  selectorSelectByFormControlName
+  selectorSelectByFormControlName,
+  selectorSelectedByFormControlName
 } from '../../shared/form';
 
 export class S0MeterPage extends MeterPage {
@@ -37,7 +38,8 @@ export class S0MeterPage extends MeterPage {
     await selectOptionByAttribute(t, selectorSelectByFormControlName('pinPullResistance'), pinPullResistance);
   }
   public static async assertPinPullResistance(t: TestController, pinPullResistance: string) {
-    await assertSelect(t, selectorSelectByFormControlName('pinPullResistance'), new RegExp(pinPullResistance));
+    await assertSelect(t, selectorSelectedByFormControlName('pinPullResistance'), pinPullResistance,
+      'MeterS0Component.pinPullResistance.');
   }
 
   public static async setImpulsesPerKwh(t: TestController, impulsesPerKwh: number) {

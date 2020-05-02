@@ -20,7 +20,7 @@
     <div class="field">
       <mat-form-field>
         <mat-label>{{'MeterComponent.type' | translate}}</mat-label>
-        <mat-select formControlName="meterType" required="{{formHandler.isRequired('meterType')}}">
+        <mat-select formControlName="meterType" required="{{formHandler.isRequired('meterType')}}" (ngModelChange)="typeChanged($event)">
           <mat-option *ngFor="let meterType of meterTypes" [value]="meterType.value">
             {{meterType.viewValue}}
           </mat-option>

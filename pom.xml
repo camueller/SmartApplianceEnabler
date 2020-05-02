@@ -367,7 +367,7 @@ Caused by: java.lang.ClassNotFoundException: junit.runner.Version
                                     <goal>exec</goal>
                                 </goals>
                             </execution>
-							<!--execution>
+							<execution>
 								<id>ng-test</id>
 								<phase>test</phase>
 								<configuration>
@@ -381,7 +381,7 @@ Caused by: java.lang.ClassNotFoundException: junit.runner.Version
 								<goals>
 									<goal>exec</goal>
 								</goals>
-							</execution-->
+							</execution>
                         </executions>
                     </plugin>
 					<plugin>

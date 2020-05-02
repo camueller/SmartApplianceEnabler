@@ -7,6 +7,7 @@ import {httpMeter_2HttpRead_complete} from './fixture/meter/http-meter';
 import {generateApplianceId} from './shared/appliance-id-generator';
 import {httpSwitch_2httpWrite_httpRead_complete} from './fixture/control/http-control';
 import {HttpSwitch} from '../../../main/angular/src/app/control/http/http-switch';
+import {startingCurrentSwitch} from './fixture/control/starting-current-switch';
 
 fixture('Washing Machine').page(baseUrl());
 
@@ -14,7 +15,8 @@ function createWashingMachine(): ApplianceConfiguration {
   return new ApplianceConfiguration({
     appliance: {...washingMachineAppliance, id: generateApplianceId()},
     meter: {type: HttpElectricityMeter.TYPE, httpElectricityMeter: httpMeter_2HttpRead_complete},
-    control: {type: HttpSwitch.TYPE, startingCurrentDetection: false, httpSwitch: httpSwitch_2httpWrite_httpRead_complete}
+    control: {type: HttpSwitch.TYPE, httpSwitch: httpSwitch_2httpWrite_httpRead_complete,
+      startingCurrentDetection: true, startingCurrentSwitch }
   });
 }
 
@@ -26,6 +28,6 @@ test('Create HTTP meter', async t => {
   await createAndAssertMeter(t, t.fixtureCtx[configurationKey(t, fixtureName(t))]);
 });
 
-test('Create HTTP switch', async t => {
+test('Create HTTP switch with starting current detection', async t => {
   await createAndAssertControl(t, t.fixtureCtx[configurationKey(t, fixtureName(t))]);
 });
