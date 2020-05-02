@@ -133,7 +133,8 @@ public class TimeframeInterval implements ApplianceIdConsumer, TimeframeInterval
     }
 
     public boolean isIntervalSufficient(LocalDateTime now) {
-        LocalDateTime latestStart = getLatestStart(now, LocalDateTime.from(interval.getEnd()), getRequest().getMax(now));
+        Integer runningTime = getRequest().getMin(now) != null ? getRequest().getMin(now) : getRequest().getMax(now);
+        LocalDateTime latestStart = getLatestStart(now, LocalDateTime.from(interval.getEnd()), runningTime);
         return now.isEqual(latestStart) || now.isBefore(latestStart);
     }
 
@@ -153,8 +154,8 @@ public class TimeframeInterval implements ApplianceIdConsumer, TimeframeInterval
         return Long.valueOf(Duration.between(nowBeforeEnd, interval.getEnd()).toSeconds()).intValue();
     }
 
-    public static LocalDateTime getLatestStart(LocalDateTime now, LocalDateTime intervalEnd, Integer maxRunningTime) {
-        return intervalEnd.minusSeconds(maxRunningTime);
+    public static LocalDateTime getLatestStart(LocalDateTime now, LocalDateTime intervalEnd, Integer runningTime) {
+        return intervalEnd.minusSeconds(runningTime);
     }
 
     /**
