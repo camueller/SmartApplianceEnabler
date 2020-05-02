@@ -28,10 +28,12 @@
       ></app-schedule>
     </div>
   </div>
-  <div class="sae__mandatory_fields_hint">{{'dialog.mandatoryfields'|translate}}</div>
+  <div class="sae__mandatory_fields_hint" *ngIf="schedulesFormArray.controls.length > 0">
+    {{'dialog.mandatoryfields'|translate}}</div>
   <button mat-raised-button type="submit" color="primary" [disabled]="form.pristine||form.invalid">
     {{'button.save' | translate}}</button>
-  <button mat-raised-button type="button" (click)="addSchedule()">{{'button.new' | translate}}</button>
+  <button mat-raised-button type="button" (click)="addSchedule()" class="SchedulesComponent__addSchedule"
+          [disabled]="form.invalid">{{'SchedulesComponent.button.addSchedule' | translate}}</button>
 </form>
 <ng-template #notControllable>
   <messagebox [level]="MessageBoxLevel.WARN">{{'SchedulesComponent.message.notControllable' | translate}}</messagebox>
