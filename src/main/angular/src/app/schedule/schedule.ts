@@ -31,4 +31,28 @@ export class Schedule {
   public constructor(init?: Partial<Schedule>) {
     Object.assign(this, init);
   }
+
+  get timeframeType() {
+    if (this.timeframe) {
+      if (this.timeframe['@class'] === DayTimeframe.TYPE) {
+        return DayTimeframe.TYPE;
+      } else if (this.timeframe['@class'] === ConsecutiveDaysTimeframe.TYPE) {
+        return ConsecutiveDaysTimeframe.TYPE;
+      }
+    }
+    return undefined;
+  }
+
+  get requestType() {
+    if (this.request) {
+      if (this.request['@class'] === RuntimeRequest.TYPE) {
+        return RuntimeRequest.TYPE;
+      } else if (this.request['@class'] === EnergyRequest.TYPE) {
+        return EnergyRequest.TYPE;
+      } else if (this.request['@class'] === SocRequest.TYPE) {
+        return SocRequest.TYPE;
+      }
+    }
+    return undefined;
+  }
 }

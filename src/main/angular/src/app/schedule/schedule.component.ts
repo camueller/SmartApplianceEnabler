@@ -160,27 +160,11 @@ export class ScheduleComponent implements OnChanges, AfterViewInit {
   }
 
   get timeframeType() {
-    if (this.schedule && this.schedule.timeframe) {
-      if (this.schedule.timeframe['@class'] === DayTimeframe.TYPE) {
-        return simpleTimeframeType(DayTimeframe.TYPE);
-      } else if (this.schedule.timeframe['@class'] === ConsecutiveDaysTimeframe.TYPE) {
-        return simpleTimeframeType(ConsecutiveDaysTimeframe.TYPE);
-      }
-    }
-    return undefined;
+    return this.schedule && simpleTimeframeType(this.schedule.timeframeType);
   }
 
   get requestType() {
-    if (this.schedule && this.schedule.request) {
-      if (this.schedule.request['@class'] === RuntimeRequest.TYPE) {
-        return simpleRequestType(RuntimeRequest.TYPE);
-      } else if (this.schedule.request['@class'] === EnergyRequest.TYPE) {
-        return simpleRequestType(EnergyRequest.TYPE);
-      } else if (this.schedule.request['@class'] === SocRequest.TYPE) {
-        return simpleRequestType(SocRequest.TYPE);
-      }
-    }
-    return undefined;
+    return this.schedule && simpleRequestType(this.schedule.requestType);
   }
 
   expandParentForm() {
@@ -189,7 +173,6 @@ export class ScheduleComponent implements OnChanges, AfterViewInit {
       this.timeframeType, [Validators.required]);
     this.formHandler.addFormControl(this.form, 'requestType',
       this.requestType, [Validators.required]);
-    // this.setEnabled(this.schedule ? this.schedule.enabled : true);
   }
 
   updateForm() {

@@ -64,7 +64,11 @@ export class SchedulesComponent implements OnChanges, OnInit {
   ngOnInit() {
     this.route.paramMap.subscribe(() => this.applianceId = this.route.snapshot.paramMap.get('id'));
     this.route.data.subscribe((data: { schedules: Schedule[], control: Control }) => {
-      this.schedules = data.schedules;
+      this.schedules = data.schedules.map(schedule => new Schedule({
+        enabled: schedule.enabled,
+        timeframe: schedule.timeframe,
+        request: schedule.request,
+      }));
       this.control = data.control;
       this.form = this.buildForm();
     });
