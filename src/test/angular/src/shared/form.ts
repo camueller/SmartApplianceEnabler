@@ -57,7 +57,7 @@ export async function assertInput(t: TestController, selector: Selector, text: s
 }
 
 export async function setCheckboxEnabled(t: TestController, selector: Selector, enabled: boolean) {
-  const checked = await isCheckboxChecked(t, selector);
+  const checked = await isCheckboxChecked(t, selector.find('input'));
   if ((enabled && !checked) || (!enabled && checked)) {
     await t.click(selector);
   }
