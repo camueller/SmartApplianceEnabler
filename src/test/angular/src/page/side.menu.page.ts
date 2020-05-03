@@ -9,7 +9,7 @@ export class SideMenu {
   private static STATUS_SELECTOR = 'app-sidenav a[href="/status"]';
 
   private static async openSideMenuIfClosed(t: TestController) {
-    const sideMenuOpen = await Selector(SideMenu.newAppliance()).visible;
+    const sideMenuOpen = await Selector('mat-sidenav.mat-drawer-opened').exists;
     if (! sideMenuOpen) {
       await TopMenu.clickMenu(t);
     }
