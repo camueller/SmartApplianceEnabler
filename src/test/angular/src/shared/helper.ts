@@ -27,6 +27,8 @@ import {EvchargerPage} from '../page/control/evcharger.page';
 import {MeterPage} from '../page/meter/meter.page';
 import {Selector} from 'testcafe';
 import {ElectricVehicle} from '../../../../main/angular/src/app/control/evcharger/electric-vehicle/electric-vehicle';
+import {Schedule} from '../../../../main/angular/src/app/schedule/schedule';
+import {SchedulesPage} from '../page/schedule/schedules.page';
 
 export function isDebug() {
   return !!process.env.DEBUG;
@@ -67,6 +69,12 @@ export async function createAndAssertElectricVehicle(t: TestController, applianc
   await EvchargerPage.setElectricVehicle(t, applianceId, ev, index, clickControl, clickAdd, clickSave);
   await SideMenu.clickStatus(t);
   await EvchargerPage.assertElectricVehicle(t, applianceId, ev, index, true);
+}
+
+export async function createAndAssertSchedules(t: TestController, configuration: ApplianceConfiguration) {
+  await createSchedules(t, configuration.appliance.id, configuration.schedules);
+  await SideMenu.clickStatus(t);
+  await assertSchedules(t, configuration.appliance.id, configuration.schedules);
 }
 
 export async function createAppliance(t: TestController, appliance: Appliance) {
@@ -159,4 +167,14 @@ export async function assertControl(t: TestController, applianceId: string, cont
   if (control.startingCurrentDetection) {
     await StartingCurrentSwitchPage.assertStartingCurrentSwitch(t, control.startingCurrentSwitch);
   }
+}
+
+export async function createSchedules(t: TestController, applianceId: string, schedules: Schedule[]) {
+  await SideMenu.clickSchedule(t, applianceId);
+  await SchedulesPage.setSchedules(t, schedules);
+  await SchedulesPage.clickSave(t);
+}
+export async function assertSchedules(t: TestController, applianceId: string, schedules: Schedule[]) {
+  await SideMenu.clickSchedule(t, applianceId);
+  await SchedulesPage.assertSchedules(t, schedules);
 }

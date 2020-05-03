@@ -63,4 +63,14 @@ export class SideMenu {
     await clickButton(t, SideMenu.control(id), {timeout: saeRestartTimeout});
     await Selector('app-control', {timeout: saeRestartTimeout}).exists;
   }
+
+  public static schedule(id: string): string {
+    return `a[href="/schedule/${id}"]`;
+  }
+
+  public static async clickSchedule(t: TestController, id: string) {
+    await SideMenu.openSideMenuIfClosed(t);
+    await clickButton(t, SideMenu.schedule(id), {timeout: saeRestartTimeout});
+    await Selector('app-schedules', {timeout: saeRestartTimeout}).exists;
+  }
 }

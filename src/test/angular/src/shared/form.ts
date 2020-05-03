@@ -57,14 +57,19 @@ export async function assertInput(t: TestController, selector: Selector, text: s
 }
 
 export async function setCheckboxEnabled(t: TestController, selector: Selector, enabled: boolean) {
-  const checked = await selector.checked;
+  const checked = await isCheckboxChecked(t, selector);
   if ((enabled && !checked) || (!enabled && checked)) {
     await t.click(selector);
   }
 }
 
 export async function assertCheckbox(t: TestController, selector: Selector, enabled: boolean) {
-  await t.expect(selector.checked).eql(enabled);
+  // await t.expect(selector.withAttribute('aria-checked', enabled ? 'true' : 'false').exists).ok();
+  await t.expect(await isCheckboxChecked(t, selector)).eql(enabled ? 'true' : 'false');
+}
+
+async function isCheckboxChecked(t: TestController, selector: Selector) {
+  return await selector.getAttribute('aria-checked');
 }
 
 export async function selectOptionByAttribute(t: TestController, selector: Selector, value: string) {
