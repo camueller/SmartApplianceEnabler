@@ -27,9 +27,7 @@ export class DayTimeframe {
 
   '@class' = DayTimeframe.TYPE;
   start: TimeOfDay;
-  startTime: string;
   end: TimeOfDay;
-  endTime: string;
   daysOfWeek: DayOfWeek[];
   daysOfWeekValues: number[];
 

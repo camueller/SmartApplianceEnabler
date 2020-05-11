@@ -8,17 +8,18 @@ import {
 import {DayTimeframe} from '../../../../../main/angular/src/app/schedule/timeframe/day/day-timeframe';
 import {isDebug} from '../../shared/helper';
 import {getTranslation} from '../../shared/ngx-translate';
+import {TimeUtil} from '../../../../../main/angular/src/app/shared/time-util';
 
 export class DayTimeframePage {
 
   public static async setDayTimeframe(t: TestController, dayTimeframe: DayTimeframe, selectorPrefix: string) {
-    await this.setStartTime(t, dayTimeframe.startTime, selectorPrefix);
-    await this.setEndTime(t, dayTimeframe.endTime, selectorPrefix);
+    await this.setStartTime(t, TimeUtil.timestringFromTimeOfDay(dayTimeframe.start), selectorPrefix);
+    await this.setEndTime(t, TimeUtil.timestringFromTimeOfDay(dayTimeframe.end), selectorPrefix);
     await this.setDaysOfWeek(t, dayTimeframe.daysOfWeekValues, selectorPrefix);
   }
   public static async assertDayTimeframe(t: TestController, dayTimeframe: DayTimeframe, selectorPrefix: string) {
-    await this.assertStartTime(t, dayTimeframe.startTime, selectorPrefix);
-    await this.assertEndTime(t, dayTimeframe.endTime, selectorPrefix);
+    await this.assertStartTime(t, TimeUtil.timestringFromTimeOfDay(dayTimeframe.start), selectorPrefix);
+    await this.assertEndTime(t, TimeUtil.timestringFromTimeOfDay(dayTimeframe.end), selectorPrefix);
     await this.assertDaysOfWeek(t, dayTimeframe.daysOfWeekValues, selectorPrefix);
   }
 
