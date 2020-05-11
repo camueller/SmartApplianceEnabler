@@ -16,6 +16,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import {TimeOfDay} from './time-of-day';
+
 export class TimeOfDayOfWeek {
   '@class' = 'de.avanux.smartapplianceenabler.schedule.TimeOfDayOfWeek';
   dayOfWeek: number;
@@ -28,5 +30,15 @@ export class TimeOfDayOfWeek {
     this.hour = hour;
     this.minute = minute;
     this.second = second;
+  }
+
+  public get time(): TimeOfDay {
+    return new TimeOfDay(this.hour, this.minute, this.second);
+  }
+
+  public set time(timeOfDay: TimeOfDay) {
+    this.hour = timeOfDay.hour;
+    this.minute = timeOfDay.minute;
+    this.second = timeOfDay.second;
   }
 }

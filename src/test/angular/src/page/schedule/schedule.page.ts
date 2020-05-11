@@ -14,6 +14,11 @@ import {DayTimeframe} from '../../../../../main/angular/src/app/schedule/timefra
 import {DayTimeframePage} from './day-timeframe.page';
 import {RuntimeRequest} from '../../../../../main/angular/src/app/schedule/request/runtime/runtime-request';
 import {RuntimeRequestPage} from './runtime-request.page';
+import {ConsecutiveDaysTimeframe} from '../../../../../main/angular/src/app/schedule/timeframe/consecutivedays/consecutive-days-timeframe';
+import {ConsecutiveDaysTimeframePage} from './consecutive-days-timeframe.page';
+import {SocRequest} from '../../../../../main/angular/src/app/schedule/request/soc/soc-request';
+import {SocRequestPage} from './soc-request.page';
+import {ElectricVehicle} from '../../../../../main/angular/src/app/control/evcharger/electric-vehicle/electric-vehicle';
 
 export class SchedulePage {
 
@@ -33,12 +38,19 @@ export class SchedulePage {
     if (schedule.timeframeType === DayTimeframe.TYPE) {
       await DayTimeframePage.setDayTimeframe(t, schedule.timeframe as DayTimeframe, this.selectorBase(scheduleIndex));
     }
+    if (schedule.timeframeType === ConsecutiveDaysTimeframe.TYPE) {
+      await ConsecutiveDaysTimeframePage.setConsecutiveDaysTimeframe(t, schedule.timeframe as ConsecutiveDaysTimeframe,
+        this.selectorBase(scheduleIndex));
+    }
 
     if (schedule.requestType === RuntimeRequest.TYPE) {
       await RuntimeRequestPage.setRuntimeRequest(t, schedule.request as RuntimeRequest, this.selectorBase(scheduleIndex));
     }
+    if (schedule.requestType === SocRequest.TYPE) {
+      await SocRequestPage.setSocRequest(t, schedule.request as SocRequest, this.selectorBase(scheduleIndex));
+    }
   }
-  public static async assertSchedule(t: TestController, schedule: Schedule, scheduleIndex: number) {
+  public static async assertSchedule(t: TestController, schedule: Schedule, scheduleIndex: number, evName?: string) {
     await this.assertEnabled(t, schedule.enabled, scheduleIndex);
     if (schedule.timeframeType) {
       await this.assertTimeframeType(t, schedule.timeframeType, scheduleIndex);
@@ -50,9 +62,16 @@ export class SchedulePage {
     if (schedule.timeframeType === DayTimeframe.TYPE) {
       await DayTimeframePage.assertDayTimeframe(t, schedule.timeframe as DayTimeframe, this.selectorBase(scheduleIndex));
     }
+    if (schedule.timeframeType === ConsecutiveDaysTimeframe.TYPE) {
+      await ConsecutiveDaysTimeframePage.assertConsecutiveDaysTimeframe(t, schedule.timeframe as ConsecutiveDaysTimeframe,
+        this.selectorBase(scheduleIndex));
+    }
 
     if (schedule.requestType === RuntimeRequest.TYPE) {
       await RuntimeRequestPage.assertRuntimeRequest(t, schedule.request as RuntimeRequest, this.selectorBase(scheduleIndex));
+    }
+    if (schedule.requestType === SocRequest.TYPE) {
+      await SocRequestPage.assertSocRequest(t, schedule.request as SocRequest, this.selectorBase(scheduleIndex), evName);
     }
   }
 

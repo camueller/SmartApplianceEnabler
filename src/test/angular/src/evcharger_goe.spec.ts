@@ -5,6 +5,7 @@ import {
   createAndAssertControl,
   createAndAssertElectricVehicle,
   createAndAssertMeter,
+  createAndAssertSchedules,
   fixtureName
 } from './shared/helper';
 import {ApplianceConfiguration} from './shared/appliance-configuration';
@@ -16,6 +17,7 @@ import {HttpElectricityMeter} from '../../../main/angular/src/app/meter/http/htt
 import {nissan_leaf} from './fixture/control/electricvehicle/nissan_leaf';
 import {generateApplianceId} from './shared/appliance-id-generator';
 import {tesla_model3} from './fixture/control/electricvehicle/tesla_model3';
+import {socRequest_consecutiveDaysTimeframe} from './fixture/schedule/socRequest_consecutiveDaysTimeframe';
 
 fixture('Wallbox go-eCharger').page(baseUrl());
 
@@ -24,7 +26,8 @@ function createApplianceConfiguration(): ApplianceConfiguration {
     appliance: {...evchargerGoe, id: generateApplianceId()},
     meter: {type: HttpElectricityMeter.TYPE, httpElectricityMeter: httpMeter_goeCharger},
     control: {type: EvCharger.TYPE, evCharger: new EvCharger(EvChargerTemplates.getTemplates()['go-eCharger'])},
-    controlTemplate: 'go-eCharger'
+    controlTemplate: 'go-eCharger',
+    schedules: socRequest_consecutiveDaysTimeframe,
   });
   configuration.control.evCharger.vehicles = [
     nissan_leaf,
@@ -47,4 +50,9 @@ test('Create HTTP control', async t => {
 test('Add electric vehicle', async t => {
   await createAndAssertElectricVehicle(t, t.fixtureCtx[configurationKey(t, fixtureName(t))].appliance.id, tesla_model3, 1,
     true, true, true);
+});
+
+test('Create Schedule with SOC request from friday to sunday', async t => {
+  const configuration: ApplianceConfiguration = t.fixtureCtx[configurationKey(t, fixtureName(t))];
+  await createAndAssertSchedules(t, configuration, configuration.control.evCharger.vehicles[0].name);
 });

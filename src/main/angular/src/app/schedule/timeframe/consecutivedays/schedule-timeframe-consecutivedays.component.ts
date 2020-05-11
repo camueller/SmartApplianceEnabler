@@ -110,7 +110,7 @@ export class ScheduleTimeframeConsecutivedaysComponent implements OnChanges, OnI
   }
 
   get startTime() {
-    return this.consecutiveDaysTimeframe.start && TimeUtil.timestringFromTimeOfDay(this.consecutiveDaysTimeframe.start);
+    return this.consecutiveDaysTimeframe.start?.time && TimeUtil.timestringFromTimeOfDay(this.consecutiveDaysTimeframe.start.time);
   }
 
   get endDayOfWeek() {
@@ -118,7 +118,7 @@ export class ScheduleTimeframeConsecutivedaysComponent implements OnChanges, OnI
   }
 
   get endTime() {
-    return this.consecutiveDaysTimeframe.end && TimeUtil.timestringFromTimeOfDay(this.consecutiveDaysTimeframe.end);
+    return this.consecutiveDaysTimeframe.end?.time && TimeUtil.timestringFromTimeOfDay(this.consecutiveDaysTimeframe.end.time);
   }
 
   setEnabled(enabled: boolean) {

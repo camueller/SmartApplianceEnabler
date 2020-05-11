@@ -13,9 +13,9 @@ export class SchedulesPage {
     }
     await this.clickSave(t);
   }
-  public static async assertSchedules(t: TestController, schedules: Schedule[]) {
+  public static async assertSchedules(t: TestController, schedules: Schedule[], evName?: string) {
     for (let i = 0; i < schedules.length; i++) {
-      await SchedulePage.assertSchedule(t, schedules[i], i);
+      await SchedulePage.assertSchedule(t, schedules[i], i, evName);
     }
   }
 

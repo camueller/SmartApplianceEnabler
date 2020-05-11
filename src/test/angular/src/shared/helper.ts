@@ -71,10 +71,10 @@ export async function createAndAssertElectricVehicle(t: TestController, applianc
   await EvchargerPage.assertElectricVehicle(t, applianceId, ev, index, true);
 }
 
-export async function createAndAssertSchedules(t: TestController, configuration: ApplianceConfiguration) {
+export async function createAndAssertSchedules(t: TestController, configuration: ApplianceConfiguration, evName?: string) {
   await createSchedules(t, configuration.appliance.id, configuration.schedules);
   await SideMenu.clickStatus(t);
-  await assertSchedules(t, configuration.appliance.id, configuration.schedules);
+  await assertSchedules(t, configuration.appliance.id, configuration.schedules, evName);
 }
 
 export async function createAppliance(t: TestController, appliance: Appliance) {
@@ -174,7 +174,7 @@ export async function createSchedules(t: TestController, applianceId: string, sc
   await SchedulesPage.setSchedules(t, schedules);
   await SchedulesPage.clickSave(t);
 }
-export async function assertSchedules(t: TestController, applianceId: string, schedules: Schedule[]) {
+export async function assertSchedules(t: TestController, applianceId: string, schedules: Schedule[], evName?: string) {
   await SideMenu.clickSchedule(t, applianceId);
-  await SchedulesPage.assertSchedules(t, schedules);
+  await SchedulesPage.assertSchedules(t, schedules, evName);
 }

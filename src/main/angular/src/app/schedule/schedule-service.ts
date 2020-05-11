@@ -5,6 +5,8 @@ import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {Logger} from '../log/logger';
 import {map} from 'rxjs/operators';
+import {ConsecutiveDaysTimeframe} from './timeframe/consecutivedays/consecutive-days-timeframe';
+import {TimeOfDayOfWeek} from './time-of-day-of-week';
 
 @Injectable()
 export class ScheduleService extends SaeService {
@@ -20,8 +22,22 @@ export class ScheduleService extends SaeService {
         if (!schedules) {
           return new Array<Schedule>();
         }
-        return schedules.map(schedule => (schedule as Schedule));
+        return schedules.map(schedule => {
+          const mappedSchedule = new Schedule({...schedule});
+          if (mappedSchedule.timeframeType === ConsecutiveDaysTimeframe.TYPE) {
+            (mappedSchedule.timeframe as ConsecutiveDaysTimeframe).start
+              = this.mapTimeOfDayOfWeek((mappedSchedule.timeframe as ConsecutiveDaysTimeframe).start);
+            (mappedSchedule.timeframe as ConsecutiveDaysTimeframe).end
+              = this.mapTimeOfDayOfWeek((mappedSchedule.timeframe as ConsecutiveDaysTimeframe).end);
+          }
+          return mappedSchedule;
+        });
       }));
+  }
+
+  mapTimeOfDayOfWeek(rawTimeOfDayOfWeek: any): TimeOfDayOfWeek {
+    return new TimeOfDayOfWeek(rawTimeOfDayOfWeek.dayOfWeek, rawTimeOfDayOfWeek.hour, rawTimeOfDayOfWeek.minute,
+      rawTimeOfDayOfWeek.second);
   }
 
   setSchedules(id: string, schedules: Schedule[]): Observable<any> {
