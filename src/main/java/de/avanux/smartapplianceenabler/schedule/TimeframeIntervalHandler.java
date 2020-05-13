@@ -471,9 +471,6 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
             if(control instanceof StartingCurrentSwitch) {
                 clearQueue();
             }
-            else {
-                queue.forEach(queuedTimeframeInterval -> queuedTimeframeInterval.getRequest().setEnabled(false));
-            }
             addTimeframeInterval(now, timeframeInterval, true, true);
         }
     }
