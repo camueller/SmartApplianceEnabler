@@ -131,6 +131,7 @@ export class ElectricVehicleComponent implements OnChanges, OnInit, AfterViewChe
   updateModelFromForm(): ElectricVehicle {
     const name = getValidString(this.form.controls.name.value);
     const batteryCapacity = getValidInt(this.form.controls.batteryCapacity.value);
+    const phases = getValidInt(this.form.controls.phases.value);
     const maxChargePower = getValidInt(this.form.controls.maxChargePower.value);
     const chargeLoss = getValidInt(this.form.controls.chargeLoss.value);
     const defaultSocManual = getValidInt(this.form.controls.defaultSocManual.value);
@@ -140,6 +141,7 @@ export class ElectricVehicleComponent implements OnChanges, OnInit, AfterViewChe
 
     this.electricVehicle.name = name;
     this.electricVehicle.batteryCapacity = batteryCapacity;
+    this.electricVehicle.phases = phases;
     this.electricVehicle.maxChargePower = maxChargePower;
     this.electricVehicle.chargeLoss = chargeLoss;
     this.electricVehicle.defaultSocManual = defaultSocManual;
