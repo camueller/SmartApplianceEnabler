@@ -11,12 +11,12 @@ before_install:
     unzip -qq apache-maven-3.3.9-bin.zip &&
     export M2_HOME=$PWD/apache-maven-3.3.9 &&
     export PATH=$M2_HOME/bin:$PATH &&
+    mvn install:install-file -Dfile=lib/cling-core-2.0.0.jar -DpomFile=lib/cling-core-2.0.0.pom &&
     wget https://nodejs.org/dist/v10.17.0/node-v10.17.0-linux-x64.tar.gz &&
     tar xfz node-v10.17.0-linux-x64.tar.gz &&
     export PATH=$PWD/node-v10.17.0-linux-x64/bin:$PATH
 script:
-  - mvn install:install-file -Dfile=lib/cling-core-2.0.0.jar -DpomFile=lib/cling-core-2.0.0.pom &&
-    mvn package -B -Ptravis,web &&
+  - mvn package -B -Ptravis,web &&
     pushd docker &&
     cp ../target/SmartApplianceEnabler*.war sae-ci/SmartApplianceEnabler.war &&
     echo $DOCKERHUB_ACCESS_TOKEN | docker login --username avanux --password-stdin &&
