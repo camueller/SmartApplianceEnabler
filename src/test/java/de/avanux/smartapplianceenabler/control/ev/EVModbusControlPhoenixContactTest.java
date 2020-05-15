@@ -18,6 +18,7 @@
 
 package de.avanux.smartapplianceenabler.control.ev;
 
+import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.modbus.*;
 import de.avanux.smartapplianceenabler.modbus.executor.*;
 import org.junit.jupiter.api.Test;
@@ -38,7 +39,7 @@ public class EVModbusControlPhoenixContactTest {
     private ModbusWriteBooleanTestingExecutor writeBooleanTestingExecutor;
     private ModbusWriteIntegerTestingExecutor writeIntegerTestingExecutor;
 
-    public EVModbusControlPhoenixContactTest() {
+    public EVModbusControlPhoenixContactTest() throws ConfigurationException {
         this.evModbusControl = new EVModbusControl();
         this.evModbusControl.setApplianceId("F-001-01");
         this.evModbusControl.setPollInterval(10);

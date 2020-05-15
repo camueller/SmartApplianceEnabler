@@ -131,7 +131,7 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
                     public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
                         logger.debug("{}: GPIO {} changed to {}", getApplianceId(), event.getPin(), event.getState());
                         if(event.getState() == PinState.HIGH) {
-                            pulsePowerMeter.addTimestampAndMaintain(System.currentTimeMillis());
+                            pulsePowerMeter.addTimestamp(System.currentTimeMillis());
                             pulseEnergyMeter.increasePulseCounter();
                             powerMeterListeners.forEach(listener -> listener.onPowerUpdate(getAveragePower()));
                         }

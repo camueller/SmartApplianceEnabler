@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Axel Müller <axel.mueller@avanux.de>
+ * Copyright (C) 2020 Axel Müller <axel.mueller@avanux.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,29 +16,10 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.avanux.smartapplianceenabler.control.ev;
+package de.avanux.smartapplianceenabler.configuration;
 
-import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
-import de.avanux.smartapplianceenabler.configuration.Validateable;
+public interface Validateable {
 
-public interface EVChargerControl extends ApplianceIdConsumer, Validateable {
-
-    void init();
-
-    void setPollInterval(Integer pollInterval);
-
-    boolean isVehicleNotConnected();
-
-    boolean isVehicleConnected();
-
-    boolean isCharging();
-
-    boolean isInErrorState();
-
-    void setChargeCurrent(int current);
-
-    void startCharging();
-
-    void stopCharging();
+    void validate() throws ConfigurationException;
 
 }

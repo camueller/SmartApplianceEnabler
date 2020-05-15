@@ -18,6 +18,7 @@
 
 package de.avanux.smartapplianceenabler.modbus;
 
+import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.control.ev.EVChargerControl;
 import de.avanux.smartapplianceenabler.control.ev.EVReadValueName;
 import de.avanux.smartapplianceenabler.control.ev.EVWriteValueName;
@@ -79,7 +80,7 @@ public class EVModbusControl extends ModbusSlave implements EVChargerControl {
     }
 
     @Override
-    public void validate() {
+    public void validate() throws ConfigurationException {
         logger.debug("{}: Validating configuration", getApplianceId());
         boolean valid = true;
         ModbusValidator validator = new ModbusValidator(getApplianceId());
@@ -95,8 +96,7 @@ public class EVModbusControl extends ModbusSlave implements EVChargerControl {
             valid = validator.validateWrites(valueName.name(), writes);
         }
         if(! valid) {
-            logger.error("{}: Terminating because of incorrect configuration", getApplianceId());
-            System.exit(-1);
+            throw new ConfigurationException();
         }
     }
 

@@ -18,13 +18,14 @@
 package de.avanux.smartapplianceenabler.meter;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.modbus.*;
 import de.avanux.smartapplianceenabler.modbus.executor.ModbusExecutorFactory;
 import de.avanux.smartapplianceenabler.modbus.executor.ModbusReadTransactionExecutor;
 import de.avanux.smartapplianceenabler.modbus.executor.ReadDecimalInputRegisterExecutor;
 import de.avanux.smartapplianceenabler.modbus.executor.ReadFloatInputRegisterExecutor;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
-import de.avanux.smartapplianceenabler.util.Validateable;
+import de.avanux.smartapplianceenabler.configuration.Validateable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,7 +102,8 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
         this.pollEnergyMeter.setPollEnergyExecutor(this);
     }
 
-    public void validate() {
+    @Override
+    public void validate() throws ConfigurationException {
         logger.debug("{}: Validating configuration", getApplianceId());
         logger.debug("{}: configured: poll interval={}s / measurement interval={}s",
                 getApplianceId(), getPollInterval(), getMeasurementInterval());
@@ -123,8 +125,7 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
         }
 
         if(! valid) {
-            logger.error("{}: Terminating because of incorrect configuration", getApplianceId());
-            System.exit(-1);
+            throw new ConfigurationException();
         }
     }
 

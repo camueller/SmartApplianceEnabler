@@ -32,9 +32,15 @@ Der SHM fragt den *Smart Appliance Enabler* alle 60 Sekunden nach dem Status der
 2019-03-30 00:00:55,174 DEBUG [http-nio-8080-exec-5] d.a.s.s.w.SempController [SempController.java:274] F-00000001-000000000001-00: No planning requests created
 ```
 
-In der Verbraucherbilanz sollte ab jetzt das neue Gerät aufgeführt werden mit seinem Verbrauch:
+In der *Verbraucherbilanz* sollte ab jetzt das neue Gerät aufgeführt werden mit seinem Verbrauch:
 
 ![Verbraucherbilanz](../pics/shm/Verbraucherbilanz.png)
+
+Falls der *Smart Appliance Enabler* für Geräte Timeframes übermittelt werden diese (ca. 10-15 Minuten später) unter *Prognose und Handlungsempfehlung* angezeigt:
+
+![Prognose](../pics/shm/PrognoseMitEingeplantenGeraeten.png)
+
+Das mögliche Zeitfenster wird dabei durchsichtig angezeigt (im Bild der lilane Balken 8:00 bis 17:00), während die darin geplante Laufzeit nicht durchsichtig ist (im Bild der lila-farbene Balken ca. 13:30 bis 16:30). Im Extremfall ist der komplette Balken tansparent, wenn das Gerät ausschließlich optionale Energie konsumieren möchte (im Bild der orange Balken für eine Wallbox).
 
 ## Maximale Anzahl der Geräte im Sunny Portal
 

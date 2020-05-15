@@ -10,6 +10,9 @@ ENV SAE_VERSION=@project.version@
 
 EXPOSE 8080
 
+RUN echo "Europe/Berlin" > /etc/timezone
+RUN cp /usr/share/zoneinfo/Europe/Berlin /etc/localtime
+
 RUN mkdir -p $SAE_INSTALL_DIR && \
     curl -o $SAE_INSTALL_DIR/logback-spring.xml -L -k https://github.com/camueller/SmartApplianceEnabler/raw/master/run/logback-spring.xml
 

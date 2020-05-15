@@ -22,20 +22,15 @@ import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.meter.PowerUpdateListener;
 import de.avanux.smartapplianceenabler.meter.S0ElectricityMeter;
 import de.avanux.smartapplianceenabler.schedule.DayTimeframeCondition;
-
-import java.time.Duration;
-import java.time.LocalDateTime;
-
-import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
 import de.avanux.smartapplianceenabler.schedule.TimeframeIntervalHandler;
 import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Allows to prepare operation of an appliance while only little power is consumed.
@@ -72,8 +67,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
     private transient String applianceId;
     private transient TimeframeIntervalHandler timeframeIntervalHandler;
     private transient Meter meter;
-    private transient Integer lastAveragePower;
-    private transient LocalDateTime lastAveragePowerTime;
+    private transient Map<LocalDateTime, Integer> powerUpdates = new TreeMap<>();
     private transient boolean on;
     private transient boolean startingCurrentDetected;
     private transient LocalDateTime switchOnTime;
@@ -241,45 +235,45 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
         boolean applianceOn = isApplianceOn();
         logger.debug("{}: on={} applianceOn={}", applianceId, on, applianceOn);
         if (applianceOn) {
-            logger.debug("{}: averagePower={} lastAveragePower={} lastAveragePowerTimeAgeSeconds={}",
-                    applianceId, averagePower, lastAveragePower,
-                    lastAveragePowerTime != null ? Duration.between(lastAveragePowerTime, now).toSeconds() : null);
             detectExternalSwitchOn(now);
-            if (lastAveragePower != null) {
-                if (on) {
-                    detectFinishedCurrent(now, averagePower, lastAveragePower);
-                    if(lastAveragePowerTime.plusSeconds(getFinishedCurrentDetectionDuration()).isBefore(now)) {
-                        setLastAveragePower(now, averagePower);
-                    }
-                }
-                else {
-                    detectStartingCurrent(now, averagePower, lastAveragePower);
-                    if(lastAveragePowerTime.plusSeconds(getStartingCurrentDetectionDuration()).isBefore(now)) {
-                        setLastAveragePower(now, averagePower);
-                    }
-                }
-            } else {
-                logger.debug("{}: lastAveragePower has not been set yet", applianceId);
-                setLastAveragePower(now, averagePower);
+            if (on) {
+                addPowerUpdate(now, averagePower, getFinishedCurrentDetectionDuration());
+                detectFinishedCurrent(now);
+            }
+            else {
+                addPowerUpdate(now, averagePower, getStartingCurrentDetectionDuration());
+                detectStartingCurrent(now);
             }
         } else {
             logger.debug("{}: Appliance not switched on.", applianceId);
         }
     }
 
-    private void setLastAveragePower(LocalDateTime now, int averagePower) {
-        lastAveragePower = averagePower;
-        lastAveragePowerTime = now;
+    public void addPowerUpdate(LocalDateTime now, int averagePower, int maxAgeSeconds) {
+        this.powerUpdates.put(now, averagePower);
+        Set<LocalDateTime> expiredPowerUpdates = new HashSet<>();
+        this.powerUpdates.keySet().forEach(timestamp -> {
+            if(now.minusSeconds(maxAgeSeconds).isAfter(timestamp)) {
+                expiredPowerUpdates.add(timestamp);
+            }
+        });
+        for(LocalDateTime expiredPowerUpdate: expiredPowerUpdates) {
+            this.powerUpdates.remove(expiredPowerUpdate);
+        }
+        Integer min = this.powerUpdates.values().stream().mapToInt(v -> v).min().orElseThrow(NoSuchElementException::new);
+        Integer max = this.powerUpdates.values().stream().mapToInt(v -> v).max().orElseThrow(NoSuchElementException::new);
+        logger.debug("{}: power value cache: min={}W max={}W values={} maxAge={}s",
+                applianceId, min, max, this.powerUpdates.size(), maxAgeSeconds);
     }
 
-    public void detectStartingCurrent(LocalDateTime now, int averagePower, int lastAveragePower) {
-        if (!on
-                && averagePower > getPowerThreshold()
-                && lastAveragePower > getPowerThreshold()) {
+    public void detectStartingCurrent(LocalDateTime now) {
+        boolean belowPowerThreshold = this.powerUpdates.values().stream().anyMatch(power -> power < getPowerThreshold());
+        if (!on && !belowPowerThreshold) {
             logger.debug("{}: Starting current detected.", applianceId);
             startingCurrentDetected = true;
             applianceOn(now,false);
             switchOnTime = null;
+            this.powerUpdates.clear();
             for (StartingCurrentSwitchListener listener : startingCurrentSwitchListeners) {
                 logger.debug("{}: Notifying {} {}", applianceId, StartingCurrentSwitchListener.class.getSimpleName(),
                         listener.getClass().getSimpleName());
@@ -290,10 +284,11 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
         }
     }
 
-    public void detectFinishedCurrent(LocalDateTime now, int averagePower, int lastAveragePower) {
-        // requiring minimum running time avoids finish current detection right after power on
-        if (isMinRunningTimeExceeded(now) && averagePower < getPowerThreshold() && lastAveragePower < getPowerThreshold()) {
+    public void detectFinishedCurrent(LocalDateTime now) {
+        boolean abovePowerThreshold = this.powerUpdates.values().stream().anyMatch(power -> power > getPowerThreshold());
+        if (isMinRunningTimeExceeded(now) && !abovePowerThreshold) {
             logger.debug("{}: Finished current detected.", applianceId);
+            this.powerUpdates.clear();
             for (StartingCurrentSwitchListener listener : startingCurrentSwitchListeners) {
                 logger.debug("{}: Notifying {} {}", applianceId, StartingCurrentSwitchListener.class.getSimpleName(),
                         listener.getClass().getSimpleName());

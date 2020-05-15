@@ -17,13 +17,14 @@
  */
 package de.avanux.smartapplianceenabler.control;
 
+import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.modbus.ModbusWrite;
 import de.avanux.smartapplianceenabler.modbus.ModbusWriteValue;
 import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
 import de.avanux.smartapplianceenabler.modbus.ModbusValidator;
 import de.avanux.smartapplianceenabler.modbus.executor.*;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
-import de.avanux.smartapplianceenabler.util.Validateable;
+import de.avanux.smartapplianceenabler.configuration.Validateable;
 import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +47,7 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable {
     }
 
     @Override
-    public void validate() {
+    public void validate() throws ConfigurationException {
         logger.debug("{}: Validating configuration", getApplianceId());
         boolean valid = true;
         ModbusValidator validator = new ModbusValidator(getApplianceId());
@@ -56,8 +57,7 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable {
             valid = validator.validateWrites(valueName.name(), Collections.singletonList(write));
         }
         if(! valid) {
-            logger.error("{}: Terminating because of incorrect configuration", getApplianceId());
-            System.exit(-1);
+            throw new ConfigurationException();
         }
     }
 

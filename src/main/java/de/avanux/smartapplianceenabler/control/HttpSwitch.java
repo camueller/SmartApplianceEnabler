@@ -19,12 +19,13 @@ package de.avanux.smartapplianceenabler.control;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.appliance.ApplianceLifeCycle;
+import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.http.*;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolHandler;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolType;
 import de.avanux.smartapplianceenabler.protocol.JsonContentProtocolHandler;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
-import de.avanux.smartapplianceenabler.util.Validateable;
+import de.avanux.smartapplianceenabler.configuration.Validateable;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.slf4j.Logger;
@@ -89,15 +90,15 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
         this.httpHandler.setHttpTransactionExecutor(httpTransactionExecutor);
     }
 
-    public void validate() {
+
+    @Override
+    public void validate() throws ConfigurationException {
         HttpValidator validator = new HttpValidator(applianceId);
 
         List<String> writeValueNames = Arrays.stream(ControlValueName.values())
                 .map(valueName -> valueName.name()).collect(Collectors.toList());
-        boolean valid = validator.validateWrites(writeValueNames, this.httpWrites);
-        if(! valid) {
-            logger.error("{}: Terminating because of incorrect configuration", applianceId);
-            System.exit(-1);
+        if(validator.validateWrites(writeValueNames, this.httpWrites)) {
+            throw new ConfigurationException();
         }
     }
 

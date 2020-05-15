@@ -38,6 +38,8 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
 
     private Logger logger = LoggerFactory.getLogger(TimeframeIntervalHandler.class);
     public static final int CONSIDERATION_INTERVAL_DAYS = 2;
+    public static final int FILL_QUEUE_INTERVAL_SECONDS = 3600;
+    public static final int UPDATE_QUEUE_INTERVAL_SECONDS = 30;
     private String applianceId;
     private List<Schedule> schedules;
     private GuardedTimerTask fillQueueTimerTask;
@@ -69,7 +71,8 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
 
     public void setTimer(Timer timer) {
         if(control != null) {
-            this.fillQueueTimerTask = new GuardedTimerTask(this.applianceId, "FillQueueTimerTask", 1 * 3600 * 1000) {
+            this.fillQueueTimerTask = new GuardedTimerTask(this.applianceId, "FillQueueTimerTask",
+                    FILL_QUEUE_INTERVAL_SECONDS * 1000) {
                 @Override
                 public void runTask() {
                     fillQueue(LocalDateTime.now());
@@ -80,7 +83,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
             }
 
             this.updateQueueTimerTask = new GuardedTimerTask(this.applianceId,
-                    "UpdateActiveTimeframeInterval", 30000) {
+                    "UpdateActiveTimeframeInterval", UPDATE_QUEUE_INTERVAL_SECONDS * 1000) {
                 @Override
                 public void runTask() {
                     updateQueue(LocalDateTime.now());
@@ -124,7 +127,9 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
                 .limit(control instanceof StartingCurrentSwitch ? (queue.size() == 0 ? 1 : 0) : Integer.MAX_VALUE)
                 .forEach(timeframeInterval -> {
                     if(control instanceof StartingCurrentSwitch) {
-                        timeframeInterval.getRequest().setEnabled(false);
+                        // if appliance is switched off, the starting current has already been detected and the
+                        // request has to be enabled therefore
+                        timeframeInterval.getRequest().setEnabled(! ((StartingCurrentSwitch) control).isApplianceOn());
                     }
                     addTimeframeInterval(now, timeframeInterval, false, true);
                 });
@@ -310,6 +315,18 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
                 .findFirst().orElse(null);
     }
 
+    public TimeframeInterval getFirstTimeframeInterval(TimeframeIntervalState... states) {
+        if(states.length > 0) {
+            return queue.stream()
+                    .filter(timeframeInterval -> Arrays.stream(states).anyMatch(state -> state == timeframeInterval.getState()))
+                    .findFirst().orElse(null);
+        }
+        if(queue.size() > 0) {
+            return queue.get(0);
+        }
+        return null;
+    }
+
     /**
      * Returns timeframe intervals starting within a consideration interval.
      * If not consideration interval is given, all timeframe intervals are returned.
@@ -433,10 +450,16 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
     }
 
     public void setRuntimeDemand(LocalDateTime now, Integer runtime, boolean acceptControlRecommendations) {
+        final int additionalIntervalSeconds = UPDATE_QUEUE_INTERVAL_SECONDS + 1; // in order to make interval sufficient!
+        final LocalDateTime requiredIntervalEnd = now.plusSeconds(runtime + additionalIntervalSeconds);
         TimeframeInterval activeTimeframeInterval = getActiveTimeframeInterval();
         if(activeTimeframeInterval != null) {
             if(activeTimeframeInterval.getRequest() instanceof RuntimeRequest) {
+                if(requiredIntervalEnd.isAfter(activeTimeframeInterval.getInterval().getEnd())) {
+                    activeTimeframeInterval.getInterval().setEnd(requiredIntervalEnd);
+                }
                 RuntimeRequest request = (RuntimeRequest) activeTimeframeInterval.getRequest();
+                request.setEnabled(true);
                 request.setMax(runtime);
                 request.setAcceptControlRecommendations(acceptControlRecommendations);
             }
@@ -445,9 +468,11 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
             RuntimeRequest request = new RuntimeRequest(null, runtime);
             request.setEnabled(true);
             request.setAcceptControlRecommendations(acceptControlRecommendations);
-            Interval interval = new Interval(now, now.plusSeconds(runtime));
+            Interval interval = new Interval(now, requiredIntervalEnd);
             TimeframeInterval timeframeInterval = new TimeframeInterval(interval, request);
-            queue.forEach(queuedTimeframeInterval -> queuedTimeframeInterval.getRequest().setEnabled(false));
+            if(control instanceof StartingCurrentSwitch) {
+                clearQueue();
+            }
             addTimeframeInterval(now, timeframeInterval, true, true);
         }
     }
