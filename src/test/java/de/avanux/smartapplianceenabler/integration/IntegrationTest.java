@@ -318,14 +318,22 @@ public class IntegrationTest extends TestBase {
         assertTimeframeIntervalRuntime(toIntervalToday(17, 30, 0, 18, 30, 31),
                 TimeframeIntervalState.ACTIVE, null, maxRuntime, true, timeframeIntervalHandler.getQueue().get(0));
         assertTimeframeIntervalRuntime(toIntervalTomorrow(10, 0, 0, 18, 0, 0),
-                TimeframeIntervalState.QUEUED, null, maxRuntime, false, timeframeIntervalHandler.getQueue().get(1));
+                TimeframeIntervalState.QUEUED, null, maxRuntime, true, timeframeIntervalHandler.getQueue().get(1));
         assertTimeframeIntervalRuntime(toIntervalDayAfterTomorrow(10, 0, 0, 18, 0, 0),
-                TimeframeIntervalState.QUEUED, null, maxRuntime, false, timeframeIntervalHandler.getQueue().get(2));
+                TimeframeIntervalState.QUEUED, null, maxRuntime, true, timeframeIntervalHandler.getQueue().get(2));
         assertPlanningRequest(timeInitial,
                 new Timeframe(applianceId,
                         0,
                         toSecondsFromNow(timeInitial, 0, 18, 30, 31),
-                        maxRuntime - 1, 3600)
+                        maxRuntime - 1, maxRuntime),
+                new Timeframe(applianceId,
+                        toSecondsFromNow(timeInitial, 1, 10, 0, 0),
+                        toSecondsFromNow(timeInitial, 1, 18, 0, 0),
+                        maxRuntime - 1, maxRuntime),
+                new Timeframe(applianceId,
+                        toSecondsFromNow(timeInitial, 2, 10, 0, 0),
+                        toSecondsFromNow(timeInitial, 2, 18, 0, 0),
+                        maxRuntime - 1, maxRuntime)
         );
         assertTrue(getApplianceStatus(timeInitial).isOn());
 
@@ -338,10 +346,19 @@ public class IntegrationTest extends TestBase {
         tick(appliance, timeAfterExpiration);
         assertEquals(2, timeframeIntervalHandler.getQueue().size());
         assertTimeframeIntervalRuntime(toIntervalTomorrow(10, 0, 0, 18, 0, 0),
-                TimeframeIntervalState.QUEUED, null, maxRuntime, false, timeframeIntervalHandler.getQueue().get(0));
+                TimeframeIntervalState.QUEUED, null, maxRuntime, true, timeframeIntervalHandler.getQueue().get(0));
         assertTimeframeIntervalRuntime(toIntervalDayAfterTomorrow(10, 0, 0, 18, 0, 0),
-                TimeframeIntervalState.QUEUED, null, maxRuntime, false, timeframeIntervalHandler.getQueue().get(1));
-        assertPlanningRequest(timeAfterExpiration);
+                TimeframeIntervalState.QUEUED, null, maxRuntime, true, timeframeIntervalHandler.getQueue().get(1));
+        assertPlanningRequest(timeAfterExpiration,
+                new Timeframe(applianceId,
+                        toSecondsFromNow(timeAfterExpiration, 1, 10, 0, 0),
+                        toSecondsFromNow(timeAfterExpiration, 1, 18, 0, 0),
+                        maxRuntime - 1, maxRuntime),
+                new Timeframe(applianceId,
+                        toSecondsFromNow(timeAfterExpiration, 2, 10, 0, 0),
+                        toSecondsFromNow(timeAfterExpiration, 2, 18, 0, 0),
+                        maxRuntime - 1, maxRuntime)
+        );
         assertFalse(getApplianceStatus(timeAfterExpiration).isOn());
     }
 
@@ -373,14 +390,22 @@ public class IntegrationTest extends TestBase {
         assertTimeframeIntervalRuntime(toIntervalToday(9, 30, 0, 10, 30, 31),
                 TimeframeIntervalState.ACTIVE, null, maxRuntime, true, timeframeIntervalHandler.getQueue().get(0));
         assertTimeframeIntervalRuntime(toIntervalToday(10, 0, 0, 18, 0, 0),
-                TimeframeIntervalState.QUEUED, null, maxRuntime, false, timeframeIntervalHandler.getQueue().get(1));
+                TimeframeIntervalState.QUEUED, null, maxRuntime, true, timeframeIntervalHandler.getQueue().get(1));
         assertTimeframeIntervalRuntime(toIntervalTomorrow(10, 0, 0, 18, 0, 0),
-                TimeframeIntervalState.QUEUED, null, maxRuntime, false, timeframeIntervalHandler.getQueue().get(2));
+                TimeframeIntervalState.QUEUED, null, maxRuntime, true, timeframeIntervalHandler.getQueue().get(2));
         assertPlanningRequest(timeInitial,
                 new Timeframe(applianceId,
                         0,
                         toSecondsFromNow(timeInitial, 0, 10, 30, 31),
-                        3599, maxRuntime)
+                        maxRuntime - 1, maxRuntime),
+                new Timeframe(applianceId,
+                        toSecondsFromNow(timeInitial, 0, 10, 0, 0),
+                        toSecondsFromNow(timeInitial, 0, 18, 0, 0),
+                        maxRuntime - 1, maxRuntime),
+                new Timeframe(applianceId,
+                        toSecondsFromNow(timeInitial, 1, 10, 0, 0),
+                        toSecondsFromNow(timeInitial, 1, 18, 0, 0),
+                        maxRuntime - 1, maxRuntime)
         );
         assertTrue(getApplianceStatus(timeInitial).isOn());
 
@@ -391,9 +416,9 @@ public class IntegrationTest extends TestBase {
         assertTimeframeIntervalRuntime(toIntervalToday(9, 30, 0, 10, 30, 31),
                 TimeframeIntervalState.ACTIVE, null, 1800, true, timeframeIntervalHandler.getQueue().get(0));
         assertTimeframeIntervalRuntime(toIntervalToday(10, 0, 0, 18, 0, 0),
-                TimeframeIntervalState.QUEUED, null, maxRuntime, false, timeframeIntervalHandler.getQueue().get(1));
+                TimeframeIntervalState.QUEUED, null, maxRuntime, true, timeframeIntervalHandler.getQueue().get(1));
         assertTimeframeIntervalRuntime(toIntervalTomorrow(10, 0, 0, 18, 0, 0),
-                TimeframeIntervalState.QUEUED, null, maxRuntime, false, timeframeIntervalHandler.getQueue().get(2));
+                TimeframeIntervalState.QUEUED, null, maxRuntime, true, timeframeIntervalHandler.getQueue().get(2));
 
         LocalDateTime timeBeforeGoLightExpiration = toToday(10, 29, 59);
         log("Before go light timeframe expires", timeBeforeGoLightExpiration);
@@ -411,9 +436,9 @@ public class IntegrationTest extends TestBase {
         tick(appliance, timeAfterGoLightExpiration);
         assertEquals(2, timeframeIntervalHandler.getQueue().size());
         assertTimeframeIntervalRuntime(toIntervalToday(10, 0, 0, 18, 0, 0),
-                TimeframeIntervalState.ACTIVE, null, maxRuntime, false, timeframeIntervalHandler.getQueue().get(0));
+                TimeframeIntervalState.ACTIVE, null, maxRuntime, true, timeframeIntervalHandler.getQueue().get(0));
         assertTimeframeIntervalRuntime(toIntervalTomorrow(10, 0, 0, 18, 0, 0),
-                TimeframeIntervalState.QUEUED, null, maxRuntime, false, timeframeIntervalHandler.getQueue().get(1));
+                TimeframeIntervalState.QUEUED, null, maxRuntime, true, timeframeIntervalHandler.getQueue().get(1));
     }
 
     @Test
