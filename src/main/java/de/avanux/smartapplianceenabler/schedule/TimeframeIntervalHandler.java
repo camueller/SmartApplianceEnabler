@@ -127,7 +127,9 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
                 .limit(control instanceof StartingCurrentSwitch ? (queue.size() == 0 ? 1 : 0) : Integer.MAX_VALUE)
                 .forEach(timeframeInterval -> {
                     if(control instanceof StartingCurrentSwitch) {
-                        timeframeInterval.getRequest().setEnabled(false);
+                        // if appliance is switched off, the starting current has already been detected and the
+                        // request has to be enabled therefore
+                        timeframeInterval.getRequest().setEnabled(! ((StartingCurrentSwitch) control).isApplianceOn());
                     }
                     addTimeframeInterval(now, timeframeInterval, false, true);
                 });
@@ -470,9 +472,6 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
             TimeframeInterval timeframeInterval = new TimeframeInterval(interval, request);
             if(control instanceof StartingCurrentSwitch) {
                 clearQueue();
-            }
-            else {
-                queue.forEach(queuedTimeframeInterval -> queuedTimeframeInterval.getRequest().setEnabled(false));
             }
             addTimeframeInterval(now, timeframeInterval, true, true);
         }
