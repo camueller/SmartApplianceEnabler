@@ -66,12 +66,12 @@
         </developer>
     </developers>
 
-    <distributionManagement>
+    <!--distributionManagement>
         <repository>
             <id>4thline.org</id>
             <url>scpexe://4thline.org/webroot/vhosts/8080/4thline.org/m2/</url>
         </repository>
-    </distributionManagement>
+    </distributionManagement-->
 
     <!-- ##################################################################################################### -->
 
