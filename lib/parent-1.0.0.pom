@@ -92,7 +92,7 @@
 
     <!-- ##################################################################################################### -->
 
-    <repositories>
+    <!--repositories>
         <repository>
             <id>4thline-repo</id>
             <url>http://4thline.org/m2</url>
@@ -110,7 +110,7 @@
                 <enabled>false</enabled>
             </snapshots>
         </pluginRepository>
-    </pluginRepositories>
+    </pluginRepositories-->
 
     <!-- ##################################################################################################### -->
 
