@@ -17,7 +17,7 @@
     <dependencies>
 
         <dependency>
-            <groupId>org.seamless</groupId>
+            <groupId>org.seamless.local</groupId>
             <artifactId>seamless-util</artifactId>
             <version>${project.version}</version>
         </dependency>
