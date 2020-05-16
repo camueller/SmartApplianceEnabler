@@ -18,7 +18,8 @@ import {ConsecutiveDaysTimeframe} from '../../../../../main/angular/src/app/sche
 import {ConsecutiveDaysTimeframePage} from './consecutive-days-timeframe.page';
 import {SocRequest} from '../../../../../main/angular/src/app/schedule/request/soc/soc-request';
 import {SocRequestPage} from './soc-request.page';
-import {ElectricVehicle} from '../../../../../main/angular/src/app/control/evcharger/electric-vehicle/electric-vehicle';
+import {EnergyRequest} from '../../../../../main/angular/src/app/schedule/request/energy/energy-request';
+import {EnergyRequestPage} from './energy-request.page';
 
 export class SchedulePage {
 
@@ -46,6 +47,9 @@ export class SchedulePage {
     if (schedule.requestType === RuntimeRequest.TYPE) {
       await RuntimeRequestPage.setRuntimeRequest(t, schedule.request as RuntimeRequest, this.selectorBase(scheduleIndex));
     }
+    if (schedule.requestType === EnergyRequest.TYPE) {
+      await EnergyRequestPage.setEnergyRequest(t, schedule.request as EnergyRequest, this.selectorBase(scheduleIndex));
+    }
     if (schedule.requestType === SocRequest.TYPE) {
       await SocRequestPage.setSocRequest(t, schedule.request as SocRequest, this.selectorBase(scheduleIndex));
     }
@@ -69,6 +73,9 @@ export class SchedulePage {
 
     if (schedule.requestType === RuntimeRequest.TYPE) {
       await RuntimeRequestPage.assertRuntimeRequest(t, schedule.request as RuntimeRequest, this.selectorBase(scheduleIndex));
+    }
+    if (schedule.requestType === EnergyRequest.TYPE) {
+      await EnergyRequestPage.assertEnergyRequest(t, schedule.request as EnergyRequest, this.selectorBase(scheduleIndex));
     }
     if (schedule.requestType === SocRequest.TYPE) {
       await SocRequestPage.assertSocRequest(t, schedule.request as SocRequest, this.selectorBase(scheduleIndex), evName);
