@@ -1,21 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.5">
     <Appliance id="F-00000001-000000000001-00">
-        <StartingCurrentSwitch finishedCurrentDetectionDuration="20" minRunningTime="2">
             <HttpSwitch>
-                <HttpWrite url="http://tasmota/cm?cmnd=Power%20On">
+                <HttpWrite url="http://192.168.69.75/cm?cmnd=Power%20On">
                     <HttpWriteValue name="On"/>
                 </HttpWrite>
-                <HttpWrite url="http://tasmota/cm?cmnd=Power%20Off">
+                <HttpWrite url="http://192.168.69.75/cm?cmnd=Power%20Off">
                     <HttpWriteValue name="Off"/>
                 </HttpWrite>
-                <HttpRead url="http://tasmota/cm?cmnd=Power">
+                <HttpRead url="http://192.168.69.75/cm?cmnd=Power">
                     <HttpReadValue name="On" extractionRegex=":.ON"/>
                 </HttpRead>
             </HttpSwitch>
-        </StartingCurrentSwitch>
         <HttpElectricityMeter>
-            <HttpRead url="http://tasmota/cm?cmnd=Status%208">
+            <HttpRead url="http://192.168.69.75/cm?cmnd=Status%208">
                 <HttpReadValue name="Power" extractionRegex=",.Power.:(\d+)"/>
             </HttpRead>
         </HttpElectricityMeter>
