@@ -335,7 +335,6 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                 vehicleConnected, charging, errorState, wasInChargingAfterLastVehicleConnected);
 
         // only use variables logged above
-        EVChargerState newState = currenState;
         if(errorState) {
             return EVChargerState.ERROR;
         }
@@ -349,6 +348,10 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         }
         if(vehicleNotConnected) {
             return EVChargerState.VEHICLE_NOT_CONNECTED;
+        }
+        else if(currenState == EVChargerState.VEHICLE_NOT_CONNECTED && charging) {
+            // the charger may start charging right after it has been connected
+            return EVChargerState.CHARGING;
         }
         else if(currenState == EVChargerState.CHARGING_COMPLETED) {
             return EVChargerState.CHARGING_COMPLETED;
@@ -375,7 +378,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                 return EVChargerState.VEHICLE_CONNECTED;
             }
         }
-        return newState;
+        return currenState;
     }
 
     @Override
