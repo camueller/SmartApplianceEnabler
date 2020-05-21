@@ -336,7 +336,6 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                 vehicleConnected, charging, errorState, wasInChargingAfterLastVehicleConnected);
 
         // only use variables logged above
-        EVChargerState newState = currenState;
         if(errorState) {
             return EVChargerState.ERROR;
         }
@@ -350,6 +349,10 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         }
         if(vehicleNotConnected) {
             return EVChargerState.VEHICLE_NOT_CONNECTED;
+        }
+        else if(currenState == EVChargerState.VEHICLE_NOT_CONNECTED && charging) {
+            // the charger may start charging right after it has been connected
+            return EVChargerState.CHARGING;
         }
         else if(currenState == EVChargerState.CHARGING_COMPLETED) {
             return EVChargerState.CHARGING_COMPLETED;
@@ -376,23 +379,29 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                 return EVChargerState.VEHICLE_CONNECTED;
             }
         }
-        return newState;
+        return currenState;
     }
 
     @Override
     public boolean on(LocalDateTime now, boolean switchOn) {
-        if(switchOn) {
-            logger.info("{}: Switching on", applianceId);
-            startCharging();
+        // only change state if requested state differs from actual state
+        if(isOn() ^ switchOn) {
+            if(switchOn) {
+                logger.info("{}: Switching on", applianceId);
+                startCharging();
+            }
+            else {
+                logger.info("{}: Switching off", applianceId);
+                stopCharging();
+            }
+            for(ControlStateChangedListener listener : new ArrayList<>(controlStateChangedListeners)) {
+                logger.debug("{}: Notifying {} {}", applianceId, ControlStateChangedListener.class.getSimpleName(),
+                        listener.getClass().getSimpleName());
+                listener.controlStateChanged(now, switchOn);
+            }
         }
         else {
-            logger.info("{}: Switching off", applianceId);
-            stopCharging();
-        }
-        for(ControlStateChangedListener listener : new ArrayList<>(controlStateChangedListeners)) {
-            logger.debug("{}: Notifying {} {}", applianceId, ControlStateChangedListener.class.getSimpleName(),
-                    listener.getClass().getSimpleName());
-            listener.controlStateChanged(now, switchOn);
+            logger.debug("{}: Already switched on.", applianceId);
         }
         return true;
     }

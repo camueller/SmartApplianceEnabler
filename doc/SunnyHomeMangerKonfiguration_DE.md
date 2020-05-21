@@ -32,6 +32,13 @@ Der SHM fragt den *Smart Appliance Enabler* alle 60 Sekunden nach dem Status der
 2019-03-30 00:00:55,174 DEBUG [http-nio-8080-exec-5] d.a.s.s.w.SempController [SempController.java:274] F-00000001-000000000001-00: No planning requests created
 ```
 
+Sollte stattdessen die Fehlermeldung angezeigt werden
+> Das von Ihrem Sunny Home Manager gefundene Gerät mit der Seriennummer ... ist bereits in einer anderen Anlage registriert und kann deshalb Ihrer Anlage nicht hinzugefügt werden.
+
+ist die von Ihnen für das Gerät gewählte ID bereits vergeben und es muß eine andere [ID konfiguriert](Configuration_DE.md#Gerätekonfiguration) werden. Danach kann man erneut versuchen, dass Gerät im Sunny Home Manager hinzuzufügen.
+
+## Vebraucherbilanz
+
 In der *Verbraucherbilanz* sollte ab jetzt das neue Gerät aufgeführt werden mit seinem Verbrauch:
 
 ![Verbraucherbilanz](../pics/shm/Verbraucherbilanz.png)
