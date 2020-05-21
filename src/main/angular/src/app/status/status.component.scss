@@ -42,11 +42,11 @@
   &__appliance-name {
     font-weight: bold;
     font-size: 1.5rem;
-    padding-bottom: 0.5rem;
+    padding-bottom: 0.3rem;
   }
 
   &__appliance-status {
-    line-height: 1.4rem;
+    line-height: 1.25rem;
     white-space: nowrap;
   }
 
@@ -56,7 +56,7 @@
   }
 
   &__appliance-status-value {
-    line-height: 1.4rem;
+    line-height: 1.25rem;
   }
 
   &__appliance-status-value-indented {
