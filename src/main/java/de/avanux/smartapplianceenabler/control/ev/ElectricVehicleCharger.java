@@ -441,6 +441,9 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
             }
         }
         if(newState == EVChargerState.CHARGING) {
+            if(previousState == EVChargerState.VEHICLE_NOT_CONNECTED) {
+                stopCharging();
+            }
             if(getForceInitialCharging() && wasInStateOneTime(EVChargerState.CHARGING)) {
                 logger.debug("{}: Stopping forced initial charging", applianceId);
                 stopCharging();
