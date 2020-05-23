@@ -651,7 +651,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     public Float getStateOfCharge(ElectricVehicle electricVehicle) {
         if(connectedVehicleSocTimestamp == null
                 || System.currentTimeMillis() - this.connectedVehicleSocTimestamp > 1 * 60 * 60) {
-            logger.debug("{}: Try to retrieve SoC", applianceId);
+            logger.debug("{}: Cached SoC expired", applianceId);
             Float soc = electricVehicle.getStateOfCharge();
             this.connectedVehicleSocTimestamp = System.currentTimeMillis();
             return soc;
