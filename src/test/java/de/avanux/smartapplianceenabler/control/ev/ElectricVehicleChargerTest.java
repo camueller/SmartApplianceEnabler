@@ -19,6 +19,10 @@
 package de.avanux.smartapplianceenabler.control.ev;
 
 import java.time.LocalDateTime;
+
+import de.avanux.smartapplianceenabler.appliance.Appliance;
+import de.avanux.smartapplianceenabler.schedule.TimeframeIntervalHandler;
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
@@ -34,9 +38,12 @@ public class ElectricVehicleChargerTest {
     private LocalDateTime now = LocalDateTime.now();
 
     public ElectricVehicleChargerTest() {
+        Appliance appliance = new Appliance();
+        appliance.setTimeframeIntervalHandler(new TimeframeIntervalHandler(Lists.emptyList(), evCharger));
         evCharger.startChargingStateDetectionDelay = 0;
         evCharger.setControl(evChargerControl);
         evCharger.setApplianceId("TEST");
+        evCharger.setAppliance(appliance);
         evCharger.init();
     }
 
@@ -175,7 +182,7 @@ public class ElectricVehicleChargerTest {
         updateState();
         assertEquals(EVChargerState.CHARGING, evCharger.getState());
         log("Stop charging");
-        evCharger.stopCharging();
+        evCharger.stopCharging(now);
         configureMocks(false, true, false);
         updateState();
         assertEquals(EVChargerState.VEHICLE_CONNECTED, evCharger.getState());
@@ -251,9 +258,9 @@ public class ElectricVehicleChargerTest {
         Mockito.when(evCharger.isWithinSwitchChargingStateDetectionDelay()).thenReturn(true);
         configureMocks(false, true, true);
         updateState();
-        assertEquals(EVChargerState.VEHICLE_CONNECTED, evCharger.getState());
+        assertEquals(EVChargerState.CHARGING, evCharger.getState());
         log("Stop charging during ChargingStateDetectionDelay");
-        evCharger.stopCharging();
+        evCharger.stopCharging(now);
         updateState();
         log("After ChargingStateDetectionDelay");
         Mockito.when(evCharger.isWithinSwitchChargingStateDetectionDelay()).thenReturn(false);

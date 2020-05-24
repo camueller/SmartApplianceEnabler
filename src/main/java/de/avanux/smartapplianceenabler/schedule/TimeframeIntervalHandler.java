@@ -424,7 +424,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
     public void onEVChargerStateChanged(LocalDateTime now, EVChargerState previousState, EVChargerState newState,
                                         ElectricVehicle ev) {
         if(newState == EVChargerState.VEHICLE_CONNECTED) {
-            if(! hasActiveTimeframeInterval()) {
+            if(! hasActiveTimeframeInterval() && ev != null) {
                 TimeframeInterval timeframeInterval = createOptionalEnergyTimeframeIntervalForEVCharger(now, ev.getId());
                 if(timeframeInterval != null) {
                     addTimeframeInterval(now, timeframeInterval, true, true);
