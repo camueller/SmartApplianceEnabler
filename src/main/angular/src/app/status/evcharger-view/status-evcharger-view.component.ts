@@ -1,6 +1,4 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {interval, Subscription} from 'rxjs';
-import {ControlService} from '../../control/control-service';
+import {Component, Input, OnInit} from '@angular/core';
 import {TimeUtil} from '../../shared/time-util';
 import {ElectricVehicle} from '../../control/evcharger/electric-vehicle/electric-vehicle';
 import {Status} from '../status';
@@ -11,32 +9,16 @@ import {DayOfWeek} from '../../shared/days-of-week';
   templateUrl: './status-evcharger-view.component.html',
   styleUrls: ['./status-evcharger-view.component.scss', '../status.component.scss']
 })
-export class StatusEvchargerViewComponent implements OnInit, OnDestroy {
+export class StatusEvchargerViewComponent implements OnInit {
 
   @Input()
   status: Status;
   @Input()
   dows: DayOfWeek[] = [];
+  @Input()
   electricVehicles: ElectricVehicle[];
-  loadVehiclesSubscription: Subscription;
-
-  constructor(private controlService: ControlService) {
-  }
 
   ngOnInit() {
-    this.loadVehicles();
-    this.loadVehiclesSubscription = interval(60 * 1000)
-      .subscribe(() => this.loadVehicles());
-  }
-
-  ngOnDestroy() {
-    this.loadVehiclesSubscription.unsubscribe();
-  }
-
-  loadVehicles() {
-    this.controlService.getElectricVehicles(this.status.id).subscribe(electricVehicles => {
-      this.electricVehicles = electricVehicles;
-    });
   }
 
   get stateKey() {
@@ -45,7 +27,7 @@ export class StatusEvchargerViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  getEvNameCharging(evId: number): string {
+  getEvName(evId: number): string {
     if (this.electricVehicles && evId) {
       return this.electricVehicles.filter(ev => ev.id === evId)[0].name;
     }

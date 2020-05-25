@@ -15,6 +15,7 @@
         <div *ngIf="isEvCharger(applianceStatus); else notEvCharger">
           <app-status-evcharger-edit *ngIf="isEditMode(applianceStatus); else greenNotClickedCharger"
                                      [status]="applianceStatus"
+                                     [electricVehicles]="electricVehicles.get(applianceStatus.id)"
                                      [dows]="dows"
                                      (beforeFormSubmit)="onBeforeFormSubmit()"
                                      (formSubmitted)="onFormSubmitted()"
@@ -23,6 +24,7 @@
           </app-status-evcharger-edit>
           <ng-template #greenNotClickedCharger>
             <app-status-charger-view
+              [electricVehicles]="electricVehicles.get(applianceStatus.id)"
               [status]="applianceStatus"
               [dows]="dows"
             >
