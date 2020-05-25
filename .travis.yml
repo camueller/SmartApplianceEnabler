@@ -49,7 +49,7 @@ script:
     ssh -i aws.pem -o StrictHostKeyChecking=no ec2-user@$DEPLOY_HOST 'bash -s' < restart_container.sh &&
     popd &&
     pushd src/test/angular &&
-    node_modules/.bin/testcafe --page-load-timeout 10000 "browserstack:safari@13.0:OS X Catalina" "src/*.spec.ts" &&
+    node_modules/.bin/testcafe --page-load-timeout 10000 "browserstack:safari@13.1:OS X Catalina" "src/*.spec.ts" &&
     popd
   - |
     if [ $TRAVIS_BRANCH == "master" && $TRAVIS_PULL_REQUEST == "false" ]; then
