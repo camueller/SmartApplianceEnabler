@@ -157,7 +157,7 @@ describe('ApplianceComponent', () => {
 
         it('is enabled if interruptionsAllowed', async () => {
           await interruptionsAllowedCheckbox.check();
-          // expect(await interruptionsAllowedCheckbox.isChecked()).toBeTruthy();
+          expect(await interruptionsAllowedCheckbox.isChecked()).toBeTruthy();
           expect(await minOnTimeInput.isDisabled()).toBeFalsy();
         });
       });
