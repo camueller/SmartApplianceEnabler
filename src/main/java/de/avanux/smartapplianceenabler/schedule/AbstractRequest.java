@@ -149,6 +149,10 @@ abstract public class AbstractRequest implements Request {
         return 0;
     }
 
+    protected void resetRuntime() {
+        runtimeUntilLastStatusChange = 0;
+    }
+
     @Override
     public LocalDateTime getControlStatusChangedAt() {
         return controlStatusChangedAt;
