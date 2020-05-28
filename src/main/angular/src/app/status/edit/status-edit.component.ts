@@ -3,6 +3,9 @@ import {FormControl, FormControlName, FormGroup, Validators} from '@angular/form
 import {StatusService} from '../status.service';
 import {TimeUtil} from '../../shared/time-util';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
+import {FormHandler} from '../../shared/form-handler';
+import {ErrorMessages} from '../../shared/error-messages';
+import {ErrorMessageHandler} from '../../shared/error-message-handler';
 
 declare const $: any;
 
@@ -47,20 +50,22 @@ export class StatusEditComponent implements OnInit, AfterViewChecked {
   formSubmitted = new EventEmitter<any>();
   @Output()
   formCancelled = new EventEmitter<any>();
-  switchOnForm: FormGroup;
+  form: FormGroup;
+  formHandler: FormHandler;
+  errors: { [key: string]: string } = {};
+  errorMessages: ErrorMessages;
+  errorMessageHandler: ErrorMessageHandler;
   initializeOnceAfterViewChecked = false;
 
-  constructor(private statusService: StatusService) { }
+  constructor(private statusService: StatusService) {
+    this.formHandler = new FormHandler();
+  }
 
   ngOnInit() {
-    this.switchOnForm = new FormGroup( {
-      switchOnRunningTime: new FormControl(null, [
-        Validators.required,
-        Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)])
-    });
+    this.buildForm();
     this.statusService.suggestRuntime(this.applianceId).subscribe(suggestedRuntime => {
       const hourMinute = TimeUtil.toHourMinute(Number.parseInt(suggestedRuntime, 10));
-      this.switchOnForm.controls.switchOnRunningTime.setValue(hourMinute);
+      this.form.controls.runTime.setValue(hourMinute);
     });
     this.initializeOnceAfterViewChecked = true;
   }
@@ -76,14 +81,21 @@ export class StatusEditComponent implements OnInit, AfterViewChecked {
     $('.clockpicker').clockpicker({ autoclose: true });
   }
 
+  buildForm() {
+    this.form = new FormGroup( {
+      runTime: new FormControl(null, [
+        Validators.required,
+        Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)])
+    });
+  }
+
   cancelForm() {
     this.formCancelled.emit();
   }
 
   submitForm() {
     this.beforeFormSubmit.emit();
-    const switchOnRunningTime = this.switchOnForm.value.switchOnRunningTime;
-    const seconds = TimeUtil.toSeconds(switchOnRunningTime);
+    const seconds = TimeUtil.toSeconds(this.form.value.runTime);
     this.statusService.setRuntime(this.applianceId, seconds).subscribe(() => {
       this.statusService.toggleAppliance(this.applianceId, true).subscribe(
         () => this.formSubmitted.emit());

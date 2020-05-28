@@ -124,14 +124,11 @@ export class StatusEvchargerEditComponent implements OnInit, AfterViewChecked {
     }, socValidator);
     this.form.get('electricVehicle').valueChanges.subscribe(evIdSelected => {
       this.electricVehicleSelected = this.getElectricVehicle(evIdSelected);
-      console.log('CHANGED', this.electricVehicleSelected);
       this.form.get('stateOfChargeRequested').setValue(this.electricVehicleSelected.defaultSocManual);
       this.retrieveSoc();
     });
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
-      console.log('ERRORS=', this.errors);
-      console.log('hasErrors=', this.hasErrors);
     });
     this.initializeOnceAfterViewChecked = true;
   }
@@ -142,7 +139,6 @@ export class StatusEvchargerEditComponent implements OnInit, AfterViewChecked {
 
   retrieveSoc() {
     this.statusService.getSoc(this.status.id, this.electricVehicleSelected.id).subscribe(soc => {
-      console.log('SOC=', soc);
       if (! Number.isNaN(Number.parseInt(soc, 10))) {
         this.form.get('stateOfChargeCurrent').setValue(Number.parseFloat(soc).toFixed());
       }
