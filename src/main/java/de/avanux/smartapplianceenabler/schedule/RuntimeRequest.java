@@ -96,6 +96,7 @@ public class RuntimeRequest extends AbstractRequest implements StartingCurrentSw
 
     @Override
     public void startingCurrentDetected(LocalDateTime now) {
+        resetRuntime();
         setEnabled(true);
     }
 
