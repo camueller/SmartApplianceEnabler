@@ -376,6 +376,9 @@
   "StatusComponent.explanationSlowLight": "Das Gerät wird in Kürze (wieder) eingeschaltet, weil eine Bedarfsanforderung vorliegt und der frühestmögliche Einschaltzeitpunkt erreicht ist.",
   "StatusComponent.explanationGoLight": "Das Gerät ist eingeschaltet. Falls die Ampel blinkt, wird optionale Energie verwendet.",
 
+  "StatusEditComponent.error.runtime_required": "Die Laufzeit muss angegeben werden",
+  "StatusEditComponent.error.runtime_pattern": "Die minimale Laufzeit muss in 'Stunden:Minuten' angegeben werden",
+
   "StatusEvchargerEditComponent.error.stateOfChargeCurrent_pattern": "Der Ist-Ladezustand (SOC) muss als Prozentwert angegeben werden",
   "StatusEvchargerEditComponent.error.stateOfChargeRequested_pattern": "Der Soll-Ladezustand (SOC) muss als Prozentwert angegeben werden",
   "StatusEvchargerEditComponent.error.chargeEndTime_pattern": "Die Uhrzeit muss in 'Stunden:Minuten' angegeben werden",
