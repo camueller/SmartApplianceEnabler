@@ -50,38 +50,35 @@
       </div>
     </div>
   </div>
-  <h3>{{'StatusComponent.explanation' | translate}}</h3>
+  <h3 class="StatusComponent__explanation_headline">{{'StatusComponent.explanation' | translate}}</h3>
+  <div class="StatusComponent__mandatory_fields_hint">{{'dialog.mandatoryfields'|translate}}</div>
   <div class="StatusComponent__traffic-light-explanation">
     <app-traffic-light [stateHandler]="getTrafficLightStateHandlerForExplanation(false, false, false)"
                        sizeSmall="true">
     </app-traffic-light>
-    <div class="StatusComponent__traffic-light-explanation-text">
-      <p>{{'StatusComponent.explanationNoLight' | translate}}</p>
-    </div>
+    <div class="StatusComponent__traffic-light-explanation-text"
+    >{{'StatusComponent.explanationNoLight' | translate}}</div>
   </div>
   <div class="StatusComponent__traffic-light-explanation">
     <app-traffic-light [stateHandler]="getTrafficLightStateHandlerForExplanation(true, false, false)"
                        sizeSmall="true">
     </app-traffic-light>
-    <div class="StatusComponent__traffic-light-explanation-text">
-      <p>{{'StatusComponent.explanationStopLight' | translate}}</p>
-    </div>
+    <div class="StatusComponent__traffic-light-explanation-text"
+    >{{'StatusComponent.explanationStopLight' | translate}}</div>
   </div>
   <div class="StatusComponent__traffic-light-explanation">
     <app-traffic-light [stateHandler]="getTrafficLightStateHandlerForExplanation(false, true, false)"
                        sizeSmall="true">
     </app-traffic-light>
-    <div class="StatusComponent__traffic-light-explanation-text">
-      <p>{{'StatusComponent.explanationSlowLight' | translate}}</p>
-    </div>
+    <div class="StatusComponent__traffic-light-explanation-text"
+    >{{'StatusComponent.explanationSlowLight' | translate}}</div>
   </div>
   <div class="StatusComponent__traffic-light-explanation">
     <app-traffic-light [stateHandler]="getTrafficLightStateHandlerForExplanation(false, false, true)"
                        sizeSmall="true">
     </app-traffic-light>
-    <div class="StatusComponent__traffic-light-explanation-text">
-      <p>{{'StatusComponent.explanationGoLight' | translate}}</p>
-    </div>
+    <div class="StatusComponent__traffic-light-explanation-text"
+    >{{'StatusComponent.explanationGoLight' | translate}}</div>
   </div>
 </div>
 <!--pre>{{applianceStatuses | json}}</pre-->

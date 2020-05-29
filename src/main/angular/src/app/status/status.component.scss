@@ -1,3 +1,5 @@
+@import '../../styles';
+
 .StatusComponent {
   font-size: 0.875rem;
 
@@ -58,12 +60,25 @@
     padding-left: 1rem;
   }
 
+  &__explanation_headline {
+    margin-bottom: 8px;
+  }
+
+  &__mandatory_fields_hint {
+    @extend .sae__mandatory_fields_hint;
+    margin: 0 $field-margin 0.8rem;
+  }
+
   &__traffic-light-explanation {
-    min-height: 2.375rem;
-    margin: 0.3125rem;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    margin-top: 0.3rem;
+    /* min-height: 2.375rem;
+    margin: 0.3125rem; */
   }
 
   &__traffic-light-explanation-text {
-    margin-left: 1.5rem;
+    /* margin-left: 1.5rem; */
   }
 }
