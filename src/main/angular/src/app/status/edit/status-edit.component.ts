@@ -3,6 +3,12 @@ import {FormControl, FormControlName, FormGroup, Validators} from '@angular/form
 import {StatusService} from '../status.service';
 import {TimeUtil} from '../../shared/time-util';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
+import {FormHandler} from '../../shared/form-handler';
+import {ErrorMessages} from '../../shared/error-messages';
+import {ErrorMessageHandler} from '../../shared/error-message-handler';
+import {ErrorMessage, ValidatorType} from '../../shared/error-message';
+import {TranslateService} from '@ngx-translate/core';
+import {Logger} from '../../log/logger';
 
 declare const $: any;
 
@@ -47,20 +53,29 @@ export class StatusEditComponent implements OnInit, AfterViewChecked {
   formSubmitted = new EventEmitter<any>();
   @Output()
   formCancelled = new EventEmitter<any>();
-  switchOnForm: FormGroup;
+  form: FormGroup;
+  formHandler: FormHandler;
+  errors: { [key: string]: string } = {};
+  errorMessages: ErrorMessages;
+  errorMessageHandler: ErrorMessageHandler;
   initializeOnceAfterViewChecked = false;
 
-  constructor(private statusService: StatusService) { }
+  constructor(private logger: Logger,
+              private statusService: StatusService,
+              private translate: TranslateService) {
+    this.errorMessageHandler = new ErrorMessageHandler(logger);
+    this.formHandler = new FormHandler();
+  }
 
   ngOnInit() {
-    this.switchOnForm = new FormGroup( {
-      switchOnRunningTime: new FormControl(null, [
-        Validators.required,
-        Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)])
-    });
+    this.errorMessages = new ErrorMessages('StatusEditComponent.error.', [
+      new ErrorMessage('runtime', ValidatorType.required),
+      new ErrorMessage('runtime', ValidatorType.pattern),
+    ], this.translate);
+    this.buildForm();
     this.statusService.suggestRuntime(this.applianceId).subscribe(suggestedRuntime => {
       const hourMinute = TimeUtil.toHourMinute(Number.parseInt(suggestedRuntime, 10));
-      this.switchOnForm.controls.switchOnRunningTime.setValue(hourMinute);
+      this.form.controls.runtime.setValue(hourMinute);
     });
     this.initializeOnceAfterViewChecked = true;
   }
@@ -76,14 +91,33 @@ export class StatusEditComponent implements OnInit, AfterViewChecked {
     $('.clockpicker').clockpicker({ autoclose: true });
   }
 
+  buildForm() {
+    this.form = new FormGroup({});
+    this.formHandler.addFormControl(this.form, 'runtime', undefined, [
+      Validators.required,
+      Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]);
+    this.form.statusChanges.subscribe(() => {
+      this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
+      console.log('errors=', this.errors);
+    });
+  }
+
+  get hasErrors(): boolean {
+    return Object.keys(this.errors).length > 0;
+  }
+
+  get error(): string {
+    const errors = Object.values(this.errors);
+    return errors.length > 0 ? errors[0] : undefined;
+  }
+
   cancelForm() {
     this.formCancelled.emit();
   }
 
   submitForm() {
     this.beforeFormSubmit.emit();
-    const switchOnRunningTime = this.switchOnForm.value.switchOnRunningTime;
-    const seconds = TimeUtil.toSeconds(switchOnRunningTime);
+    const seconds = TimeUtil.toSeconds(this.form.value.runtime);
     this.statusService.setRuntime(this.applianceId, seconds).subscribe(() => {
       this.statusService.toggleAppliance(this.applianceId, true).subscribe(
         () => this.formSubmitted.emit());

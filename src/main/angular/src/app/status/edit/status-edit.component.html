@@ -1,11 +1,18 @@
-<form class="StatusEditComponent" [formGroup]="switchOnForm" (ngSubmit)="submitForm()">
+<form class="StatusEditComponent" [formGroup]="form" (ngSubmit)="submitForm()">
   <div class="StatusComponent__appliance-details-row">
-    <span class="StatusComponent__appliance-status-label">{{'StatusComponent.plannedRunningTime' | translate}}</span>
-    <input class="clockpicker" type="text" name="minRunningTime" formControlName="switchOnRunningTime">
+    <mat-form-field class="StatusEditComponent__runTime">
+      <mat-label>{{'StatusComponent.plannedRunningTime' | translate}}</mat-label>
+      <input matInput type="text" class="time-of-day clockpicker" formControlName="runtime"
+             placeholder="00:00"
+             required="{{formHandler.isRequired('runtime')}}">
+    </mat-form-field>
+  </div>
+  <div class="StatusEditComponent__error" *ngIf="hasErrors">
+    <mat-error>{{error}}</mat-error>
   </div>
   <div class="StatusComponent__appliance-details-row StatusComponent__appliance-button-row">
     <button mat-raised-button type="button" (click)="cancelForm()">{{'StatusComponent.buttonCancel' | translate}}</button>
     <button mat-raised-button type="submit" color="primary"
-            [disabled]="switchOnForm.invalid">{{'StatusComponent.buttonStart' | translate}}</button>
+            [disabled]="form.invalid">{{'StatusComponent.buttonStart' | translate}}</button>
   </div>
 </form>

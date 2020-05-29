@@ -1,3 +1,13 @@
 .StatusEditComponent {
+  &__runTime {
+    width: 6rem;
+  }
 
+  &__error {
+    padding-bottom: 0.5rem;
+  }
+}
+
+.mat-form-field {
+  margin: 0 0.3rem;
 }

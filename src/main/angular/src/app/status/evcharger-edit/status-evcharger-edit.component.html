@@ -9,37 +9,38 @@
   </div>
   <div class="StatusComponent__appliance-details-row">
     <span class="StatusComponent__appliance-status-label">{{'StatusComponent.stateOfCharge' | translate}}: </span>
-    <mat-form-field class="stateOfChargeCurrent">
+    <mat-form-field class="StatusEvchargerEditComponent__soc">
       <mat-label>{{'StatusComponent.stateOfChargeCurrent' | translate}}</mat-label>
       <input matInput type="text" formControlName="stateOfChargeCurrent"
-             placeholder="0"
+             class="StatusEvchargerEditComponent__soc-input" placeholder="0"
              required="{{formHandler.isRequired('stateOfChargeCurrent')}}">
-      <mat-error *ngIf="errors.stateOfChargeCurrent">{{errors.stateOfChargeCurrent}}</mat-error>
     </mat-form-field>
     <span class="StatusComponent__appliance-status-label">{{'StatusComponent.stateOfChargeUnit' | translate}}</span>
-    <mat-form-field class="stateOfChargeRequested">
+    <mat-form-field class="StatusEvchargerEditComponent__soc">
       <mat-label>{{'StatusComponent.stateOfChargeRequested' | translate}}</mat-label>
       <input matInput type="text" formControlName="stateOfChargeRequested"
-             placeholder="100"
+             class="StatusEvchargerEditComponent__soc-input" placeholder="100"
              required="{{formHandler.isRequired('stateOfChargeRequested')}}">
-      <mat-error *ngIf="errors.stateOfChargeRequested">{{errors.stateOfChargeRequested}}</mat-error>
     </mat-form-field>
     <span class="StatusComponent__appliance-status-label">{{'StatusComponent.stateOfChargeUnit' | translate}}</span>
   </div>
   <div class="StatusComponent__appliance-details-row">
     <span class="StatusComponent__appliance-status-label">{{'StatusComponent.chargeLatestEndRequested' | translate}}</span>
-    <mat-form-field>
+    <mat-form-field class="StatusEvchargerEditComponent__dayOfWeek">
       <mat-label>{{'dayOfWeek' | translate}}</mat-label>
       <mat-select formControlName="chargeEndDow">
         <mat-option *ngFor="let dow of dows" [value]="dow.id">{{dow.name}}</mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-form-field class="chargeEndTime">
+    <mat-form-field class="StatusEvchargerEditComponent__chargeEndTime">
+      <mat-label>{{'timeOfDay' | translate}}</mat-label>
       <input matInput type="text" class="time-of-day clockpicker" formControlName="chargeEndTime"
              placeholder="00:00"
              required="{{formHandler.isRequired('chargeEndTime')}}">
-      <mat-error *ngIf="errors.chargeEndTime">{{errors.chargeEndTime}}</mat-error>
     </mat-form-field>
+  </div>
+  <div class="StatusEvchargerEditComponent__error" *ngIf="hasErrors">
+    <mat-error>{{error}}</mat-error>
   </div>
   <div class="StatusComponent__appliance-details-row StatusComponent__appliance-button-row">
     <button mat-raised-button type="button" (click)="cancelForm()">{{'StatusComponent.buttonCancel' | translate}}</button>

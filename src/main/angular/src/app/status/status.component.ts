@@ -9,6 +9,8 @@ import { MessageBoxLevel } from '../material/messagebox/messagebox.component';
 import {TrafficLightClick} from './traffic-light/traffic-light-click';
 import {TrafficLightState} from './traffic-light/traffic-light-state';
 import {TrafficLightComponent} from './traffic-light/traffic-light.component';
+import {ApplianceType} from '../appliance/appliance-type';
+import {ElectricVehicle} from '../control/evcharger/electric-vehicle/electric-vehicle';
 
 @Component({
   selector: 'app-status',
@@ -31,10 +33,17 @@ export class StatusComponent implements OnInit, OnDestroy {
   applianceIdClicked: string;
   editMode = false;
   MessageBoxLevel = MessageBoxLevel;
+  electricVehicles = new Map<string, ElectricVehicle[]>();
 
   ngOnInit() {
     DaysOfWeek.getDows(this.translate).subscribe(dows => this.dows = dows);
-    this.loadApplianceStatuses(() => {});
+    this.loadApplianceStatuses(() => {
+      this.applianceStatuses.filter(status => status.type === ApplianceType.EV_CHARGER).forEach(status => {
+        this.controlService.getElectricVehicles(status.id).subscribe(electricVehicles => {
+          this.electricVehicles.set(status.id, electricVehicles);
+        });
+      });
+    });
     this.loadApplianceStatusesSubscription = interval(60 * 1000)
       .subscribe(() => this.loadApplianceStatuses(() => {}));
   }

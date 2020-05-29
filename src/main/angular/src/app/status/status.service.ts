@@ -5,6 +5,7 @@ import {HttpClient} from '@angular/common/http';
 import {Status} from './status';
 import {Logger} from '../log/logger';
 import {map, tap} from 'rxjs/operators';
+// import * as statusFile from './status.json';
 
 @Injectable()
 export class StatusService extends SaeService {
@@ -17,6 +18,9 @@ export class StatusService extends SaeService {
   getStatus(): Observable<Array<Status>> {
     return this.http.get(`${SaeService.API}/status`)
       .pipe(map((statuses: Array<Status>) => statuses));
+    // return new Observable<Array<Status>>(subscriber => {
+    //   subscriber.next((statusFile as any).default);
+    // });
   }
 
   suggestRuntime(id: string): Observable<string> {

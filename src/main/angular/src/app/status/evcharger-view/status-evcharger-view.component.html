@@ -1,5 +1,5 @@
 <div class="StatusEvchargerViewComponent">
-  <div class="StatusComponent__appliance-name">{{getEvNameCharging(status.evIdCharging)}}</div>
+  <div class="StatusComponent__appliance-name">{{getEvName(status.evIdCharging)}}</div>
   <div *ngIf="status.planningRequested">
     <div class="StatusComponent__appliance-status" *ngIf="stateKey">
       <span class="StatusComponent__appliance-status-label">{{'StatusComponent.state' | translate}}:</span>

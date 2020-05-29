@@ -333,8 +333,8 @@
 
   "ScheduleRequestSocComponent.evId": "Fahrzeug",
   "ScheduleRequestSocComponent.soc": "State of Charge (SOC)",
-  "ScheduleRequestSocComponent.error.soc_pattern": "Die State of Charge (SOC) muss als Prozentwert angegeben werden",
-  "ScheduleRequestSocComponent.error.soc_required": "Die State of Charge (SOC) muss angegeben werden",
+  "ScheduleRequestSocComponent.error.soc_pattern": "Der State of Charge (SOC) muss als Prozentwert angegeben werden",
+  "ScheduleRequestSocComponent.error.soc_required": "Der State of Charge (SOC) muss angegeben werden",
 
 
   "StatusComponent.title": "Steuerbare Geräte",
@@ -376,6 +376,13 @@
   "StatusComponent.explanationSlowLight": "Das Gerät wird in Kürze (wieder) eingeschaltet, weil eine Bedarfsanforderung vorliegt und der frühestmögliche Einschaltzeitpunkt erreicht ist.",
   "StatusComponent.explanationGoLight": "Das Gerät ist eingeschaltet. Falls die Ampel blinkt, wird optionale Energie verwendet.",
 
+  "StatusEditComponent.error.runtime_required": "Die Laufzeit muss angegeben werden",
+  "StatusEditComponent.error.runtime_pattern": "Die minimale Laufzeit muss in 'Stunden:Minuten' angegeben werden",
+
+  "StatusEvchargerEditComponent.error.stateOfChargeCurrent_pattern": "Der Ist-Ladezustand (SOC) muss als Prozentwert angegeben werden",
+  "StatusEvchargerEditComponent.error.stateOfChargeRequested_pattern": "Der Soll-Ladezustand (SOC) muss als Prozentwert angegeben werden",
+  "StatusEvchargerEditComponent.error.chargeEndTime_pattern": "Die Uhrzeit muss in 'Stunden:Minuten' angegeben werden",
+
   "SettingsComponent.holidays": "Feiertage",
   "SettingsComponent.holidaysEnabled": "Aktiviert",
   "SettingsComponent.holidaysUrl": "Download URL",
@@ -402,6 +409,8 @@
   "daysOfWeek_saturday": "Samstag",
   "daysOfWeek_sunday": "Sonntag",
   "daysOfWeek_holiday": "Feiertag",
+
+  "timeOfDay": "Uhrzeit",
 
   "button.new": "Hinzufügen",
   "button.save": "Speichern",
