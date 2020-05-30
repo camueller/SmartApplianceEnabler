@@ -5,6 +5,7 @@
       <mat-form-field class="ControlStartingcurrentComponent__powerThreshold">
         <mat-label>{{'ControlStartingcurrentComponent.powerThreshold' | translate}}</mat-label>
         <input matInput type="text" formControlName="powerThreshold"
+               placeholder="{{controlDefaults.startingCurrentSwitchDefaults_powerThreshold}}"
                matTooltip="{{'ControlStartingcurrentComponent.powerThreshold.tooltip' | translate}}"
                required="{{formHandler.isRequired('powerThreshold')}}">
         <mat-error *ngIf="errors.powerThreshold">{{errors.powerThreshold}}</mat-error>
@@ -12,6 +13,7 @@
       <mat-form-field class="ControlStartingcurrentComponent__startingCurrentDetectionDuration">
         <mat-label>{{'ControlStartingcurrentComponent.startingCurrentDetectionDuration' | translate}}</mat-label>
         <input matInput type="text" formControlName="startingCurrentDetectionDuration"
+               placeholder="{{controlDefaults.startingCurrentSwitchDefaults_startingCurrentDetectionDuration}}"
                matTooltip="{{'ControlStartingcurrentComponent.startingCurrentDetectionDuration.tooltip' | translate}}"
                required="{{formHandler.isRequired('startingCurrentDetectionDuration')}}">
         <mat-error *ngIf="errors.startingCurrentDetectionDuration">{{errors.startingCurrentDetectionDuration}}</mat-error>
@@ -19,6 +21,7 @@
       <mat-form-field class="ControlStartingcurrentComponent__finishedCurrentDetectionDuration">
         <mat-label>{{'ControlStartingcurrentComponent.finishedCurrentDetectionDuration' | translate}}</mat-label>
         <input matInput type="text" formControlName="finishedCurrentDetectionDuration"
+               placeholder="{{controlDefaults.startingCurrentSwitchDefaults_finishedCurrentDetectionDuration}}"
                matTooltip="{{'ControlStartingcurrentComponent.finishedCurrentDetectionDuration.tooltip' | translate}}"
                required="{{formHandler.isRequired('finishedCurrentDetectionDuration')}}">
         <mat-error *ngIf="errors.finishedCurrentDetectionDuration">{{errors.finishedCurrentDetectionDuration}}</mat-error>
@@ -26,6 +29,7 @@
       <mat-form-field class="ControlStartingcurrentComponent__minRunningTime">
         <mat-label>{{'ControlStartingcurrentComponent.minRunningTime' | translate}}</mat-label>
         <input matInput type="text" formControlName="minRunningTime"
+               placeholder="{{controlDefaults.startingCurrentSwitchDefaults_minRunningTime}}"
                matTooltip="{{'ControlStartingcurrentComponent.minRunningTime.tooltip' | translate}}"
                required="{{formHandler.isRequired('minRunningTime')}}">
         <mat-error *ngIf="errors.minRunningTime">{{errors.minRunningTime}}</mat-error>
