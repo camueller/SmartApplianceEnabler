@@ -1,5 +1,5 @@
 import {Component, OnChanges, OnInit, QueryList, SimpleChanges, ViewChildren} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, CanDeactivate} from '@angular/router';
 import {FormArray, FormGroup} from '@angular/forms';
 import {DayTimeframe} from '../timeframe/day/day-timeframe';
 import {TranslateService} from '@ngx-translate/core';
@@ -17,13 +17,16 @@ import {SocRequest} from '../request/soc/soc-request';
 import {ElectricVehicle} from '../../control/evcharger/electric-vehicle/electric-vehicle';
 import {Logger} from '../../log/logger';
 import {simpleTimeframeType} from '../../shared/form-util';
+import {ControlComponent} from '../../control/control.component';
+import {Observable} from 'rxjs';
+import {DialogService} from '../../shared/dialog.service';
 
 @Component({
   selector: 'app-schedules',
   templateUrl: './schedules.component.html',
   styleUrls: ['./schedules.component.scss'],
 })
-export class SchedulesComponent implements OnChanges, OnInit {
+export class SchedulesComponent implements OnChanges, OnInit, CanDeactivate<ControlComponent> {
   @ViewChildren('scheduleComponents')
   scheduleComps: QueryList<ScheduleComponent>;
   form: FormGroup;
@@ -42,11 +45,13 @@ export class SchedulesComponent implements OnChanges, OnInit {
   nonEvRequestTypes: { key: string, value?: string }[] = [
     {key: RuntimeRequest.TYPE}
   ];
+  discardChangesMessage: string;
   MessageBoxLevel = MessageBoxLevel;
 
   constructor(private logger: Logger,
               private route: ActivatedRoute,
               private scheduleService: ScheduleService,
+              private dialogService: DialogService,
               private translate: TranslateService
   ) {
     this.formHandler = new FormHandler();
@@ -62,6 +67,7 @@ export class SchedulesComponent implements OnChanges, OnInit {
   }
 
   ngOnInit() {
+    this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.route.paramMap.subscribe(() => this.applianceId = this.route.snapshot.paramMap.get('id'));
     this.route.data.subscribe((data: { schedules: Schedule[], control: Control }) => {
       this.schedules = data.schedules.map(schedule => new Schedule({
@@ -143,6 +149,13 @@ export class SchedulesComponent implements OnChanges, OnInit {
 
   getScheduleFormGroup(index: number) {
     return this.schedulesFormArray.controls[index];
+  }
+
+  canDeactivate(): Observable<boolean> | boolean {
+    if (this.form.pristine) {
+      return true;
+    }
+    return this.dialogService.confirm(this.discardChangesMessage);
   }
 
   buildForm(): FormGroup {
