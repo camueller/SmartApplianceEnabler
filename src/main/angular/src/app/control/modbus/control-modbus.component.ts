@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, QueryList, SimpleChanges, ViewChildren} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnChanges, OnInit, QueryList, SimpleChanges, ViewChildren} from '@angular/core';
 import {ControlDefaults} from '../control-defaults';
 import {ControlContainer, FormArray, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {ErrorMessages} from '../../shared/error-messages';
@@ -11,7 +11,7 @@ import {SettingsDefaults} from '../../settings/settings-defaults';
 import {FormHandler} from '../../shared/form-handler';
 import {ErrorMessage, ValidatorType} from '../../shared/error-message';
 import {ControlValueName} from '../control-value-name';
-import {fixExpressionChangedAfterItHasBeenCheckedError, getValidString} from '../../shared/form-util';
+import {getValidString} from '../../shared/form-util';
 import {ModbusWriteComponent} from '../../modbus/write/modbus-write.component';
 import {ModbusWrite} from '../../modbus/write/modbus-write';
 import {ModbusSetting} from '../../settings/modbus/modbus-setting';
@@ -45,7 +45,8 @@ export class ControlModbusComponent implements OnChanges, OnInit {
 
   constructor(private logger: Logger,
               private parent: FormGroupDirective,
-              private translate: TranslateService
+              private translate: TranslateService,
+              private changeDetectorRef: ChangeDetectorRef
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
     this.formHandler = new FormHandler();
@@ -95,10 +96,10 @@ export class ControlModbusComponent implements OnChanges, OnInit {
   }
 
   addModbusWrite() {
-    fixExpressionChangedAfterItHasBeenCheckedError(this.form);
     this.modbusSwitch.modbusWrites.push(ModbusWrite.createWithSingleChild());
     this.modbusWritesFormArray.push(new FormGroup({}));
     this.form.markAsDirty();
+    this.changeDetectorRef.detectChanges();
   }
 
   onModbusWriteRemove(index: number) {

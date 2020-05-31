@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, QueryList, SimpleChanges, ViewChild, ViewChildren} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnChanges, OnInit, QueryList, SimpleChanges, ViewChild, ViewChildren} from '@angular/core';
 import {ControlDefaults} from '../control-defaults';
 import {ControlContainer, FormArray, FormGroup, FormGroupDirective} from '@angular/forms';
 import {ErrorMessages} from '../../shared/error-messages';
@@ -9,7 +9,6 @@ import {HttpSwitch} from './http-switch';
 import {FormHandler} from '../../shared/form-handler';
 import {ErrorMessage, ValidatorType} from '../../shared/error-message';
 import {ControlValueName} from '../control-value-name';
-import {fixExpressionChangedAfterItHasBeenCheckedError} from '../../shared/form-util';
 import {HttpReadComponent} from '../../http/read/http-read.component';
 import {HttpConfigurationComponent} from '../../http/configuration/http-configuration.component';
 import {HttpWriteComponent} from '../../http/write/http-write.component';
@@ -45,7 +44,8 @@ export class ControlHttpComponent implements OnChanges, OnInit {
 
   constructor(private logger: Logger,
               private parent: FormGroupDirective,
-              private translate: TranslateService
+              private translate: TranslateService,
+              private changeDetectorRef: ChangeDetectorRef
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
     this.formHandler = new FormHandler();
@@ -124,10 +124,10 @@ export class ControlHttpComponent implements OnChanges, OnInit {
   }
 
   addHttpWrite() {
-    fixExpressionChangedAfterItHasBeenCheckedError(this.form);
     this.httpSwitch.httpWrites.push(HttpWrite.createWithSingleChild());
     this.httpWritesFormArray.push(new FormGroup({}));
     this.form.markAsDirty();
+    this.changeDetectorRef.detectChanges();
   }
 
   onHttpWriteRemove(index: number) {

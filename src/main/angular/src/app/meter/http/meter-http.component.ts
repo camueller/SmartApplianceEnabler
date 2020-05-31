@@ -1,10 +1,10 @@
-import {Component, Input, OnChanges, OnInit, QueryList, SimpleChanges, ViewChild, ViewChildren} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnChanges, OnInit, QueryList, SimpleChanges, ViewChild, ViewChildren} from '@angular/core';
 import {ControlContainer, FormArray, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {HttpElectricityMeter} from './http-electricity-meter';
 import {ContentProtocol} from '../../shared/content-protocol';
 import {HttpReadComponent} from '../../http/read/http-read.component';
 import {ErrorMessage, ValidatorType} from '../../shared/error-message';
-import {fixExpressionChangedAfterItHasBeenCheckedError, getValidInt} from '../../shared/form-util';
+import {getValidInt} from '../../shared/form-util';
 import {MeterDefaults} from '../meter-defaults';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
 import {ErrorMessages} from '../../shared/error-messages';
@@ -42,7 +42,8 @@ export class MeterHttpComponent implements OnChanges, OnInit {
 
   constructor(private logger: Logger,
               private parent: FormGroupDirective,
-              private translate: TranslateService
+              private translate: TranslateService,
+              private changeDetectorRef: ChangeDetectorRef
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
     this.formHandler = new FormHandler();
@@ -97,10 +98,10 @@ export class MeterHttpComponent implements OnChanges, OnInit {
   }
 
   addHttpRead() {
-    fixExpressionChangedAfterItHasBeenCheckedError(this.form);
     this.httpElectricityMeter.httpReads.push(HttpRead.createWithSingleChild());
     this.httpReadsFormArray.push(new FormGroup({}));
     this.form.markAsDirty();
+    this.changeDetectorRef.detectChanges();
   }
 
   onHttpReadRemove(index: number) {

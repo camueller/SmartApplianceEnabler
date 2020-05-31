@@ -1,4 +1,15 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, SimpleChanges, ViewChildren} from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  QueryList,
+  SimpleChanges,
+  ViewChildren
+} from '@angular/core';
 import {FormArray, FormGroup, Validators} from '@angular/forms';
 import {FormHandler} from '../../shared/form-handler';
 import {ErrorMessages} from '../../shared/error-messages';
@@ -8,7 +19,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {HttpWrite} from './http-write';
 import {ErrorMessage, ValidatorType} from '../../shared/error-message';
-import {fixExpressionChangedAfterItHasBeenCheckedError, getValidString} from '../../shared/form-util';
+import {getValidString} from '../../shared/form-util';
 import {HttpWriteValueComponent} from '../write-value/http-write-value.component';
 import {HttpWriteValue} from '../write-value/http-write-value';
 
@@ -42,7 +53,8 @@ export class HttpWriteComponent implements OnChanges, OnInit {
   errorMessageHandler: ErrorMessageHandler;
 
   constructor(private logger: Logger,
-              private translate: TranslateService
+              private translate: TranslateService,
+              private changeDetectorRef: ChangeDetectorRef
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
     this.formHandler = new FormHandler();
@@ -81,11 +93,11 @@ export class HttpWriteComponent implements OnChanges, OnInit {
   }
 
   addValue() {
-    fixExpressionChangedAfterItHasBeenCheckedError(this.form);
     const newWriteValue = new HttpWriteValue();
     this.httpWrite.writeValues.push(newWriteValue);
     this.httpWriteValuesFormArray.push(new FormGroup({}));
     this.form.markAsDirty();
+    this.changeDetectorRef.detectChanges();
   }
 
   removeValue(index: number) {

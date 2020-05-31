@@ -1,10 +1,10 @@
-import {Component, Input, OnChanges, OnInit, QueryList, SimpleChanges, ViewChildren} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnChanges, OnInit, QueryList, SimpleChanges, ViewChildren} from '@angular/core';
 import {ControlContainer, FormArray, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {ModbusRead} from '../../modbus/read/modbus-read';
 import {ModbusReadComponent} from '../../modbus/read/modbus-read.component';
 import {ErrorMessage, ValidatorType} from '../../shared/error-message';
-import {fixExpressionChangedAfterItHasBeenCheckedError, getValidInt, getValidString} from '../../shared/form-util';
+import {getValidInt, getValidString} from '../../shared/form-util';
 import {MeterDefaults} from '../meter-defaults';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
 import {ErrorMessages} from '../../shared/error-messages';
@@ -46,7 +46,8 @@ export class MeterModbusComponent implements OnChanges, OnInit {
 
   constructor(private logger: Logger,
               private parent: FormGroupDirective,
-              private translate: TranslateService
+              private translate: TranslateService,
+              private changeDetectorRef: ChangeDetectorRef
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
     this.formHandler = new FormHandler();
@@ -98,10 +99,10 @@ export class MeterModbusComponent implements OnChanges, OnInit {
   }
 
   addModbusRead() {
-    fixExpressionChangedAfterItHasBeenCheckedError(this.form);
     this.modbusElectricityMeter.modbusReads.push(ModbusRead.createWithSingleChild());
     this.modbusReadsFormArray.push(new FormGroup({}));
     this.form.markAsDirty();
+    this.changeDetectorRef.detectChanges();
   }
 
   onModbusReadRemove(index: number) {

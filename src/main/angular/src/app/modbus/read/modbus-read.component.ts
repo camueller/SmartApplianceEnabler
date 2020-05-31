@@ -1,9 +1,20 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, SimpleChanges, ViewChildren} from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  QueryList,
+  SimpleChanges,
+  ViewChildren
+} from '@angular/core';
 import {FormArray, FormGroup, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {ModbusRead} from './modbus-read';
 import {ErrorMessage, ValidatorType} from '../../shared/error-message';
-import {fixExpressionChangedAfterItHasBeenCheckedError, getValidFloat, getValidInt, getValidString} from '../../shared/form-util';
+import {getValidFloat, getValidInt, getValidString} from '../../shared/form-util';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
 import {ErrorMessages} from '../../shared/error-messages';
 import {ModbusReadValue} from '../read-value/modbus-read-value';
@@ -42,7 +53,8 @@ export class ModbusReadComponent implements OnChanges, OnInit {
   errorMessageHandler: ErrorMessageHandler;
 
   constructor(private logger: Logger,
-              private translate: TranslateService
+              private translate: TranslateService,
+              private changeDetectorRef: ChangeDetectorRef
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
     this.formHandler = new FormHandler();
@@ -93,7 +105,6 @@ export class ModbusReadComponent implements OnChanges, OnInit {
   }
 
   addValue() {
-    fixExpressionChangedAfterItHasBeenCheckedError(this.form);
     const newReadValue = new ModbusReadValue();
     if (!this.modbusRead.readValues) {
       this.modbusRead.readValues = [];
@@ -101,6 +112,7 @@ export class ModbusReadComponent implements OnChanges, OnInit {
     this.modbusRead.readValues.push(newReadValue);
     this.modbusReadValuesFormArray.push(this.createModbusReadValueFormGroup());
     this.form.markAsDirty();
+    this.changeDetectorRef.detectChanges();
   }
 
   removeValue(index: number) {

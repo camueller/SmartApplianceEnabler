@@ -16,7 +16,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {Component, OnInit, QueryList, ViewChildren} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit, QueryList, ViewChildren} from '@angular/core';
 import {ActivatedRoute, CanDeactivate} from '@angular/router';
 import {FormArray, FormGroup, Validators} from '@angular/forms';
 import {SettingsService} from './settings-service';
@@ -55,7 +55,8 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
               private settingsService: SettingsService,
               private translate: TranslateService,
               private dialogService: DialogService,
-              private route: ActivatedRoute) {
+              private route: ActivatedRoute,
+              private changeDetectorRef: ChangeDetectorRef) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
     this.formHandler = new FormHandler();
   }
@@ -114,6 +115,7 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
     this.settings.modbusSettings.push(new ModbusSetting());
     this.modbusSettingsFormArray.push(new FormGroup({}));
     this.form.markAsDirty();
+    this.changeDetectorRef.detectChanges();
   }
 
   onModbusSettingRemove(index: number) {

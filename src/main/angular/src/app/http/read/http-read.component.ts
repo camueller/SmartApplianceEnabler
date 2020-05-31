@@ -1,4 +1,15 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, SimpleChanges, ViewChildren} from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  QueryList,
+  SimpleChanges,
+  ViewChildren
+} from '@angular/core';
 import {FormArray, FormGroup, Validators} from '@angular/forms';
 import {FormHandler} from '../../shared/form-handler';
 import {ErrorMessages} from '../../shared/error-messages';
@@ -7,7 +18,7 @@ import {HttpRead} from './http-read';
 import {Logger} from '../../log/logger';
 import {TranslateService} from '@ngx-translate/core';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
-import {fixExpressionChangedAfterItHasBeenCheckedError, getValidString} from '../../shared/form-util';
+import {getValidString} from '../../shared/form-util';
 import {ErrorMessage, ValidatorType} from '../../shared/error-message';
 import {HttpReadValueComponent} from '../read-value/http-read-value.component';
 import {HttpReadValue} from '../read-value/http-read-value';
@@ -48,6 +59,7 @@ export class HttpReadComponent implements OnChanges, OnInit {
 
   constructor(private logger: Logger,
               private translate: TranslateService,
+              private changeDetectorRef: ChangeDetectorRef
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
     this.formHandler = new FormHandler();
@@ -93,7 +105,6 @@ export class HttpReadComponent implements OnChanges, OnInit {
   }
 
   addValue() {
-    fixExpressionChangedAfterItHasBeenCheckedError(this.form);
     const newReadValue = new HttpReadValue();
     if (!this.httpRead.readValues) {
       this.httpRead.readValues = [];
@@ -101,6 +112,7 @@ export class HttpReadComponent implements OnChanges, OnInit {
     this.httpRead.readValues.push(newReadValue);
     this.httpReadValuesFormArray.push(new FormGroup({}));
     this.form.markAsDirty();
+    this.changeDetectorRef.detectChanges();
   }
 
   removeHttpReadValue(index: number) {
