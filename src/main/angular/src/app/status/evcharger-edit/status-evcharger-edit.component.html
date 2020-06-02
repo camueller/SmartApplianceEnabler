@@ -32,12 +32,12 @@
         <mat-option *ngFor="let dow of dows" [value]="dow.id">{{dow.name}}</mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-form-field class="StatusEvchargerEditComponent__chargeEndTime">
-      <mat-label>{{'timeOfDay' | translate}}</mat-label>
-      <input matInput type="text" class="time-of-day clockpicker" formControlName="chargeEndTime"
-             placeholder="00:00"
-             required="{{formHandler.isRequired('chargeEndTime')}}">
-    </mat-form-field>
+    <app-timepicker label="{{'timeOfDay' | translate}}"
+                    formControlNameTP="chargeEndTime"
+                    [width]="'3rem'"
+                    [errorMessages]="errorMessages"
+                    #chargeEndTimeComponent
+    ></app-timepicker>
   </div>
   <div class="StatusEvchargerEditComponent__error" *ngIf="hasErrors">
     <mat-error>{{error}}</mat-error>

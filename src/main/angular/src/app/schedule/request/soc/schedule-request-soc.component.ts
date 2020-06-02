@@ -23,6 +23,8 @@ export class ScheduleRequestSocComponent implements OnChanges, OnInit {
   socRequest: SocRequest;
   @Input()
   electricVehicles: ElectricVehicle[];
+  @Input()
+  enabled: boolean;
   form: FormGroup;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};
@@ -46,6 +48,9 @@ export class ScheduleRequestSocComponent implements OnChanges, OnInit {
         this.socRequest = new SocRequest();
       }
       this.updateForm();
+    }
+    if (changes.enabled && !changes.enabled.firstChange) {
+      this.setEnabled(changes.enabled.currentValue);
     }
   }
 
@@ -79,7 +84,7 @@ export class ScheduleRequestSocComponent implements OnChanges, OnInit {
   }
 
   expandParentForm() {
-    this.formHandler.addFormControl(this.form, 'evId', this.evId);
+    this.formHandler.addFormControl(this.form, 'evId', this.evId, Validators.required);
     this.formHandler.addFormControl(this.form, 'soc', this.soc,
       [Validators.required, Validators.pattern(InputValidatorPatterns.PERCENTAGE)]);
   }

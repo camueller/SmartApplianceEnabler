@@ -20,6 +20,8 @@ import {Logger} from '../../../log/logger';
 export class ScheduleRequestEnergyComponent implements OnChanges, OnInit {
   @Input()
   energyRequest: EnergyRequest;
+  @Input()
+  enabled: boolean;
   form: FormGroup;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};
@@ -43,6 +45,9 @@ export class ScheduleRequestEnergyComponent implements OnChanges, OnInit {
         this.energyRequest = new EnergyRequest();
       }
       this.updateForm();
+    }
+    if (changes.enabled && !changes.enabled.firstChange) {
+      this.setEnabled(changes.enabled.currentValue);
     }
   }
 

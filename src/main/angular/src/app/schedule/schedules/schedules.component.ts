@@ -1,4 +1,4 @@
-import {Component, OnChanges, OnInit, QueryList, SimpleChanges, ViewChildren} from '@angular/core';
+import {ChangeDetectorRef, Component, OnChanges, OnInit, QueryList, SimpleChanges, ViewChildren} from '@angular/core';
 import {ActivatedRoute, CanDeactivate} from '@angular/router';
 import {FormArray, FormGroup} from '@angular/forms';
 import {DayTimeframe} from '../timeframe/day/day-timeframe';
@@ -52,7 +52,8 @@ export class SchedulesComponent implements OnChanges, OnInit, CanDeactivate<Cont
               private route: ActivatedRoute,
               private scheduleService: ScheduleService,
               private dialogService: DialogService,
-              private translate: TranslateService
+              private translate: TranslateService,
+              private changeDetectorRef: ChangeDetectorRef
   ) {
     this.formHandler = new FormHandler();
   }
@@ -131,6 +132,7 @@ export class SchedulesComponent implements OnChanges, OnInit, CanDeactivate<Cont
     this.schedules.push(new Schedule({enabled: true}));
     this.schedulesFormArray.push(this.createSchedulesFormGroup());
     this.form.markAsDirty();
+    this.changeDetectorRef.detectChanges();
   }
 
   onScheduleRemove(index: number) {

@@ -14,11 +14,14 @@ import {MatListModule} from '@angular/material/list';
 import {MatCardModule} from '@angular/material/card';
 import {MessageboxComponent} from './messagebox/messagebox.component';
 import {FlexModule} from '@angular/flex-layout';
+import { TimepickerComponent } from './timepicker/timepicker.component';
+import {ReactiveFormsModule} from '@angular/forms';
 
 
 @NgModule({
   declarations: [
     MessageboxComponent,
+    TimepickerComponent,
   ],
   imports: [
     CommonModule,
@@ -35,6 +38,7 @@ import {FlexModule} from '@angular/flex-layout';
     MatSidenavModule,
     MatToolbarModule,
     MatTooltipModule,
+    ReactiveFormsModule,
   ],
   exports: [
     MatButtonModule,
@@ -50,6 +54,7 @@ import {FlexModule} from '@angular/flex-layout';
     MatToolbarModule,
     MatTooltipModule,
     MessageboxComponent,
+    TimepickerComponent,
   ],
   providers: [
     {provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {floatLabel: 'always'}},

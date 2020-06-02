@@ -1,4 +1,5 @@
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
+@import "~@angular/material/theming";
 @import 'node_modules/include-media/dist/_include-media.scss';
 @import "variables";
 
@@ -25,6 +26,30 @@ h3 {
 mat-form-field, mat-checkbox {
   margin: $field-margin;
 }
+
+/* BEGIN: https://github.com/angular/components/issues/4580 */
+/*mat-form-field.ng-invalid.ng-touched {
+  animation: bigger;
+  animation-duration: 0.3s;
+  margin-bottom: 60px;
+}
+
+@keyframes bigger {
+  from {margin-bottom: 0;}
+  to {margin-bottom: 60px;}
+}
+
+mat-form-field.ng-valid.ng-touched {
+  animation: smaller;
+  animation-duration: 0.3s;
+  margin-bottom: 0px;
+}
+
+@keyframes smaller {
+  from {margin-bottom: 60px;}
+  to {margin-bottom: 0;}
+}*/
+/* END: https://github.com/angular/components/issues/4580 */
 
 button {
   height: 2.25rem;
