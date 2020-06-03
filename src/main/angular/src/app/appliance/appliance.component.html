@@ -76,10 +76,9 @@
       </mat-form-field>
       <mat-checkbox formControlName="interruptionsAllowed"
                     matTooltip="{{'ApplianceComponent.interruptionsAllowed.tooltip' | translate}}"
-                    (click)="toggleInterruptionAllowed()"
       >{{'ApplianceComponent.interruptionsAllowed' | translate}}</mat-checkbox>
     </div>
-    <div class="sae__fields">
+    <div class="sae__fields" *ngIf="isInterruptionAllowed()">
       <mat-form-field class="ApplianceComponent__minOnTime">
         <mat-label>{{'ApplianceComponent.minOnTime' | translate}}</mat-label>
         <input matInput type="text" formControlName="minOnTime"
