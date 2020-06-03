@@ -17,19 +17,12 @@ const originFormControlNameNgOnChanges = FormControlName.prototype.ngOnChanges;
 FormControlName.prototype.ngOnChanges = function () {
   const result = originFormControlNameNgOnChanges.apply(this, arguments);
   this.control.nativeElement = this.valueAccessor._elementRef;
-
   const elementRef = this.valueAccessor._elementRef;
   if (elementRef) {
-    const classAttribute: string = elementRef.nativeElement.attributes.getNamedItem('class');
-    if (classAttribute != null) {
-      const classAttributeValues = classAttribute['nodeValue'];
-      if (classAttributeValues.indexOf('clockpicker') > -1) {
-        $(this.valueAccessor._elementRef.nativeElement).on('change', (event) => {
-          this.control.setValue(event.target.value);
-          this.control.markAsDirty();
-        });
-      }
-    }
+    $(this.valueAccessor._elementRef.nativeElement).on('change', (event) => {
+      this.control.setValue(event.target.value);
+      this.control.markAsDirty();
+    });
   }
   return result;
 };
