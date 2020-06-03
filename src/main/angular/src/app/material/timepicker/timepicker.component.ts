@@ -44,6 +44,8 @@ export class TimepickerComponent implements OnChanges, OnInit, AfterViewChecked 
   @Input()
   enabled = true;
   @Input()
+  noErrorOnField: boolean;
+  @Input()
   width: string;
   form: FormGroup;
   initializeOnceAfterViewChecked = false;
@@ -70,9 +72,11 @@ export class TimepickerComponent implements OnChanges, OnInit, AfterViewChecked 
   ngOnInit(): void {
     this.form.addControl(this.formControlNameTP, new FormControl(undefined, [Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]));
     this.updateForm();
-    this.form.statusChanges.subscribe(() => {
-      this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
-    });
+    if (this.errorMessages) {
+      this.form.statusChanges.subscribe(() => {
+        this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
+      });
+    }
     this.initializeOnceAfterViewChecked = true;
   }
 
@@ -107,6 +111,10 @@ export class TimepickerComponent implements OnChanges, OnInit, AfterViewChecked 
 
   get error() {
     return this.errors[this.formControlNameTP];
+  }
+
+  get cssClasses() {
+    return this.noErrorOnField ? 'no-error-on-field' : '';
   }
 
   updateModelFromForm(): string | undefined {
