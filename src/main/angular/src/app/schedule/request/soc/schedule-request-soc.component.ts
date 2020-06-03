@@ -4,7 +4,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {SocRequest} from './soc-request';
 import {ErrorMessages} from '../../../shared/error-messages';
 import {FormHandler} from '../../../shared/form-handler';
-import {ErrorMessage, ValidatorType} from '../../../shared/error-message';
+import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../../shared/error-message';
 import {InputValidatorPatterns} from '../../../shared/input-validator-patterns';
 import {ElectricVehicle} from '../../../control/evcharger/electric-vehicle/electric-vehicle';
 import {ErrorMessageHandler} from '../../../shared/error-message-handler';
@@ -56,7 +56,8 @@ export class ScheduleRequestSocComponent implements OnChanges, OnInit {
 
   ngOnInit() {
     this.errorMessages = new ErrorMessages('ScheduleRequestSocComponent.error.', [
-      new ErrorMessage('soc', ValidatorType.required),
+      new ErrorMessage('evId', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
+      new ErrorMessage('soc', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('soc', ValidatorType.pattern),
     ], this.translate);
     this.expandParentForm();

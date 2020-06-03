@@ -13,7 +13,7 @@ import {
 import {FormArray, FormGroup, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {ModbusRead} from './modbus-read';
-import {ErrorMessage, ValidatorType} from '../../shared/error-message';
+import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/error-message';
 import {getValidFloat, getValidInt, getValidString} from '../../shared/form-util';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
 import {ErrorMessages} from '../../shared/error-messages';
@@ -76,8 +76,9 @@ export class ModbusReadComponent implements OnChanges, OnInit {
 
   ngOnInit() {
     this.errorMessages = new ErrorMessages('ModbusReadComponent.error.', [
-      new ErrorMessage('address', ValidatorType.required),
+      new ErrorMessage('address', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('address', ValidatorType.pattern),
+      new ErrorMessage('type', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('bytes', ValidatorType.pattern),
       new ErrorMessage('factorToValue', ValidatorType.pattern),
     ], this.translate);

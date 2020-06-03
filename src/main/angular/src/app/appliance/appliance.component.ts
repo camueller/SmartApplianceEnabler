@@ -30,7 +30,7 @@ import {Appliance} from './appliance';
 import {Observable} from 'rxjs';
 import {DialogService} from '../shared/dialog.service';
 import {Logger} from '../log/logger';
-import {ErrorMessage, ValidatorType} from '../shared/error-message';
+import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../shared/error-message';
 import {FormHandler} from '../shared/form-handler';
 import {getValidInt, getValidString} from '../shared/form-util';
 import {ApplianceType} from './appliance-type';
@@ -78,13 +78,13 @@ export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<Appl
 
   ngOnInit() {
     this.errorMessages = new ErrorMessages('ApplianceComponent.error.', [
-      new ErrorMessage('id', ValidatorType.required),
+      new ErrorMessage('id', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('id', ValidatorType.pattern),
-      new ErrorMessage('vendor', ValidatorType.required),
-      new ErrorMessage('name', ValidatorType.required),
-      new ErrorMessage('serial', ValidatorType.required),
+      new ErrorMessage('vendor', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
+      new ErrorMessage('name', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
+      new ErrorMessage('serial', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('minPowerConsumption', ValidatorType.pattern),
-      new ErrorMessage('maxPowerConsumption', ValidatorType.required),
+      new ErrorMessage('maxPowerConsumption', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('maxPowerConsumption', ValidatorType.pattern),
       new ErrorMessage('minOnTime', ValidatorType.pattern),
       new ErrorMessage('maxOnTime', ValidatorType.pattern),
@@ -110,6 +110,7 @@ export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<Appl
     this.buildForm();
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
+      console.log('errors=', this.errors);
     });
   }
 

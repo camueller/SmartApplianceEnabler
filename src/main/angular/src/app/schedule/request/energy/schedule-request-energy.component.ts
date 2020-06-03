@@ -4,7 +4,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {EnergyRequest} from './energy-request';
 import {ErrorMessages} from '../../../shared/error-messages';
 import {FormHandler} from '../../../shared/form-handler';
-import {ErrorMessage, ValidatorType} from '../../../shared/error-message';
+import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../../shared/error-message';
 import {InputValidatorPatterns} from '../../../shared/input-validator-patterns';
 import {ErrorMessageHandler} from '../../../shared/error-message-handler';
 import {Logger} from '../../../log/logger';
@@ -54,7 +54,7 @@ export class ScheduleRequestEnergyComponent implements OnChanges, OnInit {
   ngOnInit() {
     this.errorMessages = new ErrorMessages('ScheduleRequestEnergyComponent.error.', [
       new ErrorMessage('minEnergy', ValidatorType.pattern),
-      new ErrorMessage('maxEnergy', ValidatorType.required),
+      new ErrorMessage('maxEnergy', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('maxEnergy', ValidatorType.pattern),
     ], this.translate);
     this.expandParentForm();

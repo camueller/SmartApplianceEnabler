@@ -10,7 +10,7 @@ import {EvModbusControl} from './ev-modbus-control';
 import {SettingsDefaults} from '../../../settings/settings-defaults';
 import {InputValidatorPatterns} from '../../../shared/input-validator-patterns';
 import {getValidString} from '../../../shared/form-util';
-import {ErrorMessage, ValidatorType} from '../../../shared/error-message';
+import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../../shared/error-message';
 import {ModbusWriteComponent} from '../../../modbus/write/modbus-write.component';
 import {ModbusWrite} from '../../../modbus/write/modbus-write';
 import {ModbusRead} from '../../../modbus/read/modbus-read';
@@ -67,7 +67,8 @@ export class ControlEvchargerModbusComponent implements OnChanges, OnInit {
 
   ngOnInit() {
     this.errorMessages = new ErrorMessages('ControlEvchargerModbusComponent.error.', [
-      new ErrorMessage('slaveAddress', ValidatorType.required),
+      new ErrorMessage('idref', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
+      new ErrorMessage('slaveAddress', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('slaveAddress', ValidatorType.pattern),
     ], this.translate);
     this.expandParentForm();

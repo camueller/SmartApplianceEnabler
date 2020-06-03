@@ -5,7 +5,7 @@ import {TimeUtil} from '../../shared/time-util';
 import {FormHandler} from '../../shared/form-handler';
 import {ErrorMessages} from '../../shared/error-messages';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
-import {ErrorMessage, ValidatorType} from '../../shared/error-message';
+import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/error-message';
 import {TranslateService} from '@ngx-translate/core';
 import {Logger} from '../../log/logger';
 import {TimepickerComponent} from '../../material/timepicker/timepicker.component';
@@ -42,7 +42,7 @@ export class StatusEditComponent implements OnInit {
 
   ngOnInit() {
     this.errorMessages = new ErrorMessages('StatusEditComponent.error.', [
-      new ErrorMessage('runtime', ValidatorType.required),
+      new ErrorMessage('runtime', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('runtime', ValidatorType.pattern),
     ], this.translate);
     this.buildForm();

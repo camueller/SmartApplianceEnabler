@@ -9,7 +9,7 @@ import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {ModbusSwitch} from './modbus-switch';
 import {SettingsDefaults} from '../../settings/settings-defaults';
 import {FormHandler} from '../../shared/form-handler';
-import {ErrorMessage, ValidatorType} from '../../shared/error-message';
+import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/error-message';
 import {ControlValueName} from '../control-value-name';
 import {getValidString} from '../../shared/form-util';
 import {ModbusWriteComponent} from '../../modbus/write/modbus-write.component';
@@ -67,7 +67,8 @@ export class ControlModbusComponent implements OnChanges, OnInit {
 
   ngOnInit() {
     this.errorMessages = new ErrorMessages('ControlModbusComponent.error.', [
-      new ErrorMessage('slaveAddress', ValidatorType.required),
+      new ErrorMessage('idref', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
+      new ErrorMessage('slaveAddress', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('slaveAddress', ValidatorType.pattern),
     ], this.translate);
     this.expandParentForm();

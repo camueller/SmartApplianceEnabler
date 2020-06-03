@@ -4,7 +4,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {ModbusWriteValue} from './modbus-write-value';
 import {ErrorMessages} from '../../shared/error-messages';
 import {FormHandler} from '../../shared/form-handler';
-import {ErrorMessage, ValidatorType} from '../../shared/error-message';
+import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/error-message';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
 import {getValidString} from '../../shared/form-util';
 import {Logger} from '../../log/logger';
@@ -54,7 +54,8 @@ export class ModbusWriteValueComponent implements OnChanges, OnInit {
 
   ngOnInit() {
     this.errorMessages = new ErrorMessages('ModbusReadValueComponent.error.', [
-      new ErrorMessage('factorToValue', ValidatorType.pattern),
+      new ErrorMessage('name', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
+      new ErrorMessage('value', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
     ], this.translate);
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);

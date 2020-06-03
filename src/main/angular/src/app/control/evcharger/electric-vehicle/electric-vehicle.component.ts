@@ -8,7 +8,7 @@ import {ErrorMessages} from '../../../shared/error-messages';
 import {InputValidatorPatterns} from '../../../shared/input-validator-patterns';
 import {ControlDefaults} from '../../control-defaults';
 import {getValidInt, getValidString} from '../../../shared/form-util';
-import {ErrorMessage, ValidatorType} from '../../../shared/error-message';
+import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../../shared/error-message';
 import {SocScript} from './soc-script';
 import {ElectricVehicle} from './electric-vehicle';
 
@@ -53,15 +53,15 @@ export class ElectricVehicleComponent implements OnChanges, OnInit {
 
   ngOnInit() {
     this.errorMessages = new ErrorMessages('ElectricVehicleComponent.error.', [
-      new ErrorMessage('name', ValidatorType.required),
-      new ErrorMessage('batteryCapacity', ValidatorType.required),
+      new ErrorMessage('name', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
+      new ErrorMessage('batteryCapacity', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('batteryCapacity', ValidatorType.pattern),
       new ErrorMessage('phases', ValidatorType.pattern),
       new ErrorMessage('maxChargePower', ValidatorType.pattern, 'maxChargePower'),
       new ErrorMessage('chargeLoss', ValidatorType.pattern),
       new ErrorMessage('defaultSocManual', ValidatorType.pattern),
       new ErrorMessage('defaultSocOptionalEnergy', ValidatorType.pattern),
-      new ErrorMessage('scriptFilename', ValidatorType.required),
+      new ErrorMessage('scriptFilename', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
     ], this.translate);
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);

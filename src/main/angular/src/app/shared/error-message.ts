@@ -21,6 +21,8 @@ export enum ValidatorType {
   pattern
 }
 
+export const ERROR_INPUT_REQUIRED = 'error.input_required';
+
 export class ErrorMessage {
 
   public text: string;
@@ -30,10 +32,12 @@ export class ErrorMessage {
    * @param forControl
    * @param forValidator
    * @param key By default forControl is used to look up the message if no key is specified.
+   * @param keyIsComplete if true, only key is ued to look up message
    */
   constructor(
     public forControl: string,
     public forValidator: ValidatorType,
     public key?: string,
+    public keyIsComplete = false
   ) { }
 }

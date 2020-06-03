@@ -6,7 +6,7 @@ import {ErrorMessages} from '../../../shared/error-messages';
 import {DayOfWeek, DaysOfWeek} from '../../../shared/days-of-week';
 import {TimeUtil} from '../../../shared/time-util';
 import {FormHandler} from '../../../shared/form-handler';
-import {ErrorMessage, ValidatorType} from '../../../shared/error-message';
+import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../../shared/error-message';
 import {ErrorMessageHandler} from '../../../shared/error-message-handler';
 import {Logger} from '../../../log/logger';
 import {TimepickerComponent} from '../../../material/timepicker/timepicker.component';
@@ -61,9 +61,9 @@ export class ScheduleTimeframeConsecutivedaysComponent implements OnChanges, OnI
   ngOnInit() {
     DaysOfWeek.getDows(this.translate).subscribe(daysOfWeek => this.daysOfWeek = daysOfWeek);
     this.errorMessages = new ErrorMessages('ScheduleTimeframeDayComponent.error.', [
-      new ErrorMessage('startTime', ValidatorType.required),
+      new ErrorMessage('startTime', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('startTime', ValidatorType.pattern),
-      new ErrorMessage('endTime', ValidatorType.required),
+      new ErrorMessage('endTime', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('endTime', ValidatorType.pattern),
     ], this.translate);
     this.expandParentForm();

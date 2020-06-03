@@ -5,7 +5,7 @@ import {FormGroup, Validators} from '@angular/forms';
 import {ErrorMessages} from '../../shared/error-messages';
 import {FormHandler} from '../../shared/form-handler';
 import {SettingsService} from '../settings-service';
-import {ErrorMessage, ValidatorType} from '../../shared/error-message';
+import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/error-message';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {getValidInt} from '../../shared/form-util';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
@@ -55,12 +55,13 @@ export class SettingsModbusComponent implements OnChanges, OnInit {
 
   ngOnInit() {
     this.errorMessages = new ErrorMessages('SettingsComponent.error.', [
-      new ErrorMessage('holidaysUrl', ValidatorType.pattern),
+      new ErrorMessage('modbusTcpId', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('modbusTcpHost', ValidatorType.pattern),
       new ErrorMessage('modbusTcpPort', ValidatorType.pattern),
     ], this.translate);
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
+      console.log('errors=', this.errors);
     });
   }
 

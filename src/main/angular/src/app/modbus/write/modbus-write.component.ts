@@ -16,7 +16,7 @@ import {ModbusWrite} from './modbus-write';
 import {ModbusWriteValueComponent} from '../write-value/modbus-write-value.component';
 import {ErrorMessages} from '../../shared/error-messages';
 import {FormHandler} from '../../shared/form-handler';
-import {ErrorMessage, ValidatorType} from '../../shared/error-message';
+import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/error-message';
 import {getValidInt, getValidString} from '../../shared/form-util';
 import {ModbusWriteValue} from '../write-value/modbus-write-value';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
@@ -78,8 +78,9 @@ export class ModbusWriteComponent implements OnChanges, OnInit {
 
   ngOnInit() {
     this.errorMessages = new ErrorMessages('ModbusReadComponent.error.', [
-      new ErrorMessage('address', ValidatorType.required),
+      new ErrorMessage('address', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('address', ValidatorType.pattern),
+      new ErrorMessage('type', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('factorToValue', ValidatorType.pattern),
     ], this.translate);
     this.form.statusChanges.subscribe(() => {

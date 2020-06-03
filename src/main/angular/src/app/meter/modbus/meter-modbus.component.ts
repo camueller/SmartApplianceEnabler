@@ -3,7 +3,7 @@ import {ControlContainer, FormArray, FormGroup, FormGroupDirective, Validators} 
 import {TranslateService} from '@ngx-translate/core';
 import {ModbusRead} from '../../modbus/read/modbus-read';
 import {ModbusReadComponent} from '../../modbus/read/modbus-read.component';
-import {ErrorMessage, ValidatorType} from '../../shared/error-message';
+import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/error-message';
 import {getValidInt, getValidString} from '../../shared/form-util';
 import {MeterDefaults} from '../meter-defaults';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
@@ -68,7 +68,8 @@ export class MeterModbusComponent implements OnChanges, OnInit {
 
   ngOnInit() {
     this.errorMessages = new ErrorMessages('MeterModbusComponent.error.', [
-      new ErrorMessage('slaveAddress', ValidatorType.required),
+      new ErrorMessage('idref', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
+      new ErrorMessage('slaveAddress', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('slaveAddress', ValidatorType.pattern),
       new ErrorMessage('pollInterval', ValidatorType.pattern),
       new ErrorMessage('measurementInterval', ValidatorType.pattern),

@@ -19,7 +19,7 @@ import {Logger} from '../../log/logger';
 import {TranslateService} from '@ngx-translate/core';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {getValidString} from '../../shared/form-util';
-import {ErrorMessage, ValidatorType} from '../../shared/error-message';
+import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/error-message';
 import {HttpReadValueComponent} from '../read-value/http-read-value.component';
 import {HttpReadValue} from '../read-value/http-read-value';
 
@@ -81,7 +81,7 @@ export class HttpReadComponent implements OnChanges, OnInit {
 
   ngOnInit() {
     this.errorMessages = new ErrorMessages('HttpReadComponent.error.', [
-      new ErrorMessage('url', ValidatorType.required),
+      new ErrorMessage('url', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('url', ValidatorType.pattern),
     ], this.translate);
     this.form.statusChanges.subscribe(() => {

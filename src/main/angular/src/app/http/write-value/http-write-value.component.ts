@@ -7,7 +7,7 @@ import {Logger} from '../../log/logger';
 import {TranslateService} from '@ngx-translate/core';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {HttpWriteValue} from './http-write-value';
-import {ErrorMessage, ValidatorType} from '../../shared/error-message';
+import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/error-message';
 import {getValidFloat, getValidString} from '../../shared/form-util';
 import {HttpMethod} from '../http-method';
 
@@ -58,6 +58,7 @@ export class HttpWriteValueComponent implements OnChanges, OnInit {
 
   ngOnInit() {
     this.errorMessages = new ErrorMessages('HttpWriteValueComponent.error.', [
+      new ErrorMessage('name', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('factorToValue', ValidatorType.pattern),
     ], this.translate);
     this.form.statusChanges.subscribe(() => {

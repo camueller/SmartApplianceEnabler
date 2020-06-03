@@ -5,7 +5,7 @@ import {RuntimeRequest} from './runtime-request';
 import {ErrorMessages} from '../../../shared/error-messages';
 import {TimeUtil} from '../../../shared/time-util';
 import {FormHandler} from '../../../shared/form-handler';
-import {ErrorMessage, ValidatorType} from '../../../shared/error-message';
+import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../../shared/error-message';
 import {InputValidatorPatterns} from '../../../shared/input-validator-patterns';
 import {ErrorMessageHandler} from '../../../shared/error-message-handler';
 import {Logger} from '../../../log/logger';
@@ -56,8 +56,8 @@ export class ScheduleRequestRuntimeComponent implements OnChanges, OnInit {
 
   ngOnInit() {
     this.errorMessages = new ErrorMessages('ScheduleRequestRuntimeComponent.error.', [
-      new ErrorMessage('minRuntime', ValidatorType.required),
       new ErrorMessage('minRuntime', ValidatorType.pattern),
+      new ErrorMessage('maxRuntime', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('maxRuntime', ValidatorType.pattern),
     ], this.translate);
     this.expandParentForm();
