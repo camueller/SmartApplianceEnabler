@@ -15,12 +15,14 @@ h1 {
 
 h2 {
   font-size: 1.2rem;
-  margin-top: 2rem;
-  margin-bottom: 1rem;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
 }
 
 h3 {
   font-size: 1rem;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
 }
 
 mat-form-field, mat-checkbox {
@@ -28,7 +30,8 @@ mat-form-field, mat-checkbox {
 }
 
 /* BEGIN: https://github.com/angular/components/issues/4580 */
-mat-form-field:not(.no-error-on-field).ng-invalid.ng-touched {
+//* use .mat-form-field-invalid since it is only set after field had focus */
+mat-form-field:not(.no-error-on-field).ng-touched.mat-form-field-invalid {
   animation: bigger;
   animation-duration: 0.3s;
   margin-bottom: 60px;
@@ -70,6 +73,10 @@ button {
     display: flex;
     flex-flow: nowrap;
     align-items: baseline;
+  }
+
+  &__heading-extra-top-margin {
+    margin-top: 1.25rem;
   }
 
   &__hostname {

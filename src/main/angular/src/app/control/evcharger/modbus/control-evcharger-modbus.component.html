@@ -15,7 +15,7 @@
       <mat-error *ngIf="errors.slaveAddress">{{errors.slaveAddress}}</mat-error>
     </mat-form-field>
   </div>
-  <h2>{{'ControlEvchargerModbusComponent.heading.modbusRead' | translate}}</h2>
+  <h2 class="sae__heading-extra-top-margin">{{'ControlEvchargerModbusComponent.heading.modbusRead' | translate}}</h2>
   <span formArrayName="modbusReads">
   <app-modbus-read *ngFor="let modbusRead of evModbusControl.modbusReads; index as i; last as l"
                    [formGroupName]="i"
@@ -33,7 +33,7 @@
     {{'ControlEvchargerModbusComponent.button.addModbusRead' | translate}}</button>
 
 
-  <h2>{{'ControlEvchargerModbusComponent.heading.modbusWrite' | translate}}</h2>
+  <h2 class="sae__heading-extra-top-margin">{{'ControlEvchargerModbusComponent.heading.modbusWrite' | translate}}</h2>
   <span formArrayName="modbusWrites">
   <app-modbus-write *ngFor="let modbusWrite of evModbusControl.modbusWrites; index as i; last as l"
                     [formGroupName]="i"
