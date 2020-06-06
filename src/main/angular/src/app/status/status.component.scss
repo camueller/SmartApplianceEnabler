@@ -68,7 +68,7 @@
 
   &__mandatory_fields_hint {
     @extend .sae__mandatory_fields_hint;
-    margin: 0 $field-margin 0.8rem;
+    margin: $field-margin 0;
   }
 
   &__traffic-light-explanation {
