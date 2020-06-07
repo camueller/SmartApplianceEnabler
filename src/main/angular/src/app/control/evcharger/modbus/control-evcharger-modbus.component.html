@@ -1,52 +1,56 @@
 <div class="ControlEvchargerModbusComponent">
-  <div class="sae__fields">
-    <mat-form-field class="sae__modbus-name">
-      <mat-label>{{'ControlEvchargerModbusComponent.idref' | translate}}</mat-label>
-      <mat-select formControlName="idref" required="{{formHandler.isRequired('idref')}}">
-        <mat-option *ngFor="let modbusSetting of settings.modbusSettings" [value]="modbusSetting.modbusTcpId">
-          {{modbusSetting.modbusTcpId}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field class="sae__modbus-address">
-      <mat-label>{{'ControlEvchargerModbusComponent.slaveAddress' | translate}}</mat-label>
-      <input matInput type="text" formControlName="slaveAddress"
-             required="{{formHandler.isRequired('slaveAddress')}}">
-      <mat-error *ngIf="errors.slaveAddress">{{errors.slaveAddress}}</mat-error>
-    </mat-form-field>
+  <messagebox [level]="MessageBoxLevel.INFO" *ngIf="settings.modbusSettings.length === 0"
+  >{{'error.modbus_not_configured' | translate}}</messagebox>
+  <div [style]="displayNoneStyle">
+    <div class="sae__fields">
+      <mat-form-field class="sae__modbus-name">
+        <mat-label>{{'ControlEvchargerModbusComponent.idref' | translate}}</mat-label>
+        <mat-select formControlName="idref" required="{{formHandler.isRequired('idref')}}">
+          <mat-option *ngFor="let modbusSetting of settings.modbusSettings" [value]="modbusSetting.modbusTcpId">
+            {{modbusSetting.modbusTcpId}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="sae__modbus-address">
+        <mat-label>{{'ControlEvchargerModbusComponent.slaveAddress' | translate}}</mat-label>
+        <input matInput type="text" formControlName="slaveAddress"
+               required="{{formHandler.isRequired('slaveAddress')}}">
+        <mat-error *ngIf="errors.slaveAddress">{{errors.slaveAddress}}</mat-error>
+      </mat-form-field>
+    </div>
+    <h2 class="sae__heading-extra-top-margin">{{'ControlEvchargerModbusComponent.heading.modbusRead' | translate}}</h2>
+    <span formArrayName="modbusReads">
+      <app-modbus-read *ngFor="let modbusRead of evModbusControl.modbusReads; index as i; last as l"
+                       [formGroupName]="i"
+                       [form]="getModbusReadFormGroup(i)"
+                       [modbusRead]="modbusRead"
+                       [valueNames]="readValueNames"
+                       [translationPrefix]="'ControlEvchargerComponent.'"
+                       [translationKeys]="readValueNameTextKeys"
+                       [readRegisterTypes]="settingsDefaults.modbusReadRegisterTypes"
+                       (remove)="onModbusReadRemove(i)"
+                       #modbusReadComponents
+      ></app-modbus-read>
+    </span>
+    <button mat-raised-button type="button" (click)="addModbusRead()">
+      {{'ControlEvchargerModbusComponent.button.addModbusRead' | translate}}</button>
+
+
+    <h2 class="sae__heading-extra-top-margin">{{'ControlEvchargerModbusComponent.heading.modbusWrite' | translate}}</h2>
+    <span formArrayName="modbusWrites">
+      <app-modbus-write *ngFor="let modbusWrite of evModbusControl.modbusWrites; index as i; last as l"
+                        [formGroupName]="i"
+                        [form]="getModbusWriteFormGroup(i)"
+                        [modbusWrite]="modbusWrite"
+                        [valueNames]="writeValueNames"
+                        [translationPrefix]="'ControlEvchargerComponent.'"
+                        [translationKeys]="writeValueNameTextKeys"
+                        [writeRegisterTypes]="settingsDefaults.modbusReadRegisterTypes"
+                        (remove)="onModbusWriteRemove(i)"
+                        #modbusWriteComponents
+      ></app-modbus-write>
+    </span>
+    <button mat-raised-button type="button" (click)="addModbusWrite()">
+      {{'ControlEvchargerModbusComponent.button.addModbusRead' | translate}}</button>
   </div>
-  <h2 class="sae__heading-extra-top-margin">{{'ControlEvchargerModbusComponent.heading.modbusRead' | translate}}</h2>
-  <span formArrayName="modbusReads">
-  <app-modbus-read *ngFor="let modbusRead of evModbusControl.modbusReads; index as i; last as l"
-                   [formGroupName]="i"
-                   [form]="getModbusReadFormGroup(i)"
-                   [modbusRead]="modbusRead"
-                   [valueNames]="readValueNames"
-                   [translationPrefix]="'ControlEvchargerComponent.'"
-                   [translationKeys]="readValueNameTextKeys"
-                   [readRegisterTypes]="settingsDefaults.modbusReadRegisterTypes"
-                   (remove)="onModbusReadRemove(i)"
-                   #modbusReadComponents
-  ></app-modbus-read>
-</span>
-  <button mat-raised-button type="button" (click)="addModbusRead()">
-    {{'ControlEvchargerModbusComponent.button.addModbusRead' | translate}}</button>
-
-
-  <h2 class="sae__heading-extra-top-margin">{{'ControlEvchargerModbusComponent.heading.modbusWrite' | translate}}</h2>
-  <span formArrayName="modbusWrites">
-  <app-modbus-write *ngFor="let modbusWrite of evModbusControl.modbusWrites; index as i; last as l"
-                    [formGroupName]="i"
-                    [form]="getModbusWriteFormGroup(i)"
-                    [modbusWrite]="modbusWrite"
-                    [valueNames]="writeValueNames"
-                    [translationPrefix]="'ControlEvchargerComponent.'"
-                    [translationKeys]="writeValueNameTextKeys"
-                    [writeRegisterTypes]="settingsDefaults.modbusReadRegisterTypes"
-                    (remove)="onModbusWriteRemove(i)"
-                    #modbusWriteComponents
-  ></app-modbus-write>
-</span>
-  <button mat-raised-button type="button" (click)="addModbusWrite()">
-    {{'ControlEvchargerModbusComponent.button.addModbusRead' | translate}}</button>
 </div>

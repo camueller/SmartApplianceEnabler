@@ -17,6 +17,7 @@ import {ModbusRead} from '../../../modbus/read/modbus-read';
 import {ModbusReadComponent} from '../../../modbus/read/modbus-read.component';
 import {EvReadValueName} from '../ev-read-value-name';
 import {EvWriteValueName} from '../ev-write-value-name';
+import { MessageBoxLevel } from 'src/app/material/messagebox/messagebox.component';
 
 @Component({
   selector: 'app-control-evcharger-modbus',
@@ -45,6 +46,7 @@ export class ControlEvchargerModbusComponent implements OnChanges, OnInit {
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
+  MessageBoxLevel = MessageBoxLevel;
 
   constructor(private logger: Logger,
               private parent: FormGroupDirective,
@@ -78,6 +80,10 @@ export class ControlEvchargerModbusComponent implements OnChanges, OnInit {
     this.translate.get(this.translationKeys).subscribe(translatedStrings => {
       this.translatedStrings = translatedStrings;
     });
+  }
+
+  get displayNoneStyle() {
+    return this.settings.modbusSettings.length === 0 ? {display: 'none'} : undefined;
   }
 
   get readValueNames() {

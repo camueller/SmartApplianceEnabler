@@ -386,6 +386,7 @@
   "timeOfDay": "Uhrzeit",
 
   "error.input_required": "Eingabe erforderlich",
+  "error.modbus_not_configured": "Bevor Modbus verwendet werden kann, muss Modbus unter 'Einstellungen' hinzugefügt werden.",
 
   "button.new": "Hinzufügen",
   "button.save": "Speichern",

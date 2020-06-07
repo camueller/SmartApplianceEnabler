@@ -15,6 +15,7 @@ import {getValidString} from '../../shared/form-util';
 import {ModbusWriteComponent} from '../../modbus/write/modbus-write.component';
 import {ModbusWrite} from '../../modbus/write/modbus-write';
 import {ModbusSetting} from '../../settings/modbus/modbus-setting';
+import { MessageBoxLevel } from 'src/app/material/messagebox/messagebox.component';
 
 @Component({
   selector: 'app-control-modbus',
@@ -42,6 +43,7 @@ export class ControlModbusComponent implements OnChanges, OnInit {
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
+  MessageBoxLevel = MessageBoxLevel;
 
   constructor(private logger: Logger,
               private parent: FormGroupDirective,
@@ -75,6 +77,10 @@ export class ControlModbusComponent implements OnChanges, OnInit {
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
     });
+  }
+
+  get displayNoneStyle() {
+    return this.modbusSettings.length === 0 ? {display: 'none'} : undefined;
   }
 
   get valueNames() {

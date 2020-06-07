@@ -178,7 +178,8 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
   }
 
   isDeleteEnabled() {
-    return this.control != null && this.control.type != null;
+    return this.control && (this.control.switch_ || this.control.httpSwitch || this.control.modbusSwitch
+      || this.control.alwaysOnSwitch || this.control.evCharger);
   }
 
   typeChanged(newType?: string | undefined) {
