@@ -13,7 +13,7 @@
            required="{{formHandler.isRequired('data')}}">
     <mat-error *ngIf="errors.data">{{errors.data}}</mat-error>
   </mat-form-field>
-  <mat-form-field class="sae__contentPath">
+  <mat-form-field class="sae__contentPath" *ngIf="contentProtocol">
     <mat-label>{{'HttpReadValueComponent.path' | translate}}</mat-label>
     <input matInput type="text" formControlName="path"
            required="{{formHandler.isRequired('path')}}">
@@ -28,6 +28,7 @@
   <mat-form-field class="sae__factorToValue" *ngIf="! disableFactorToValue">
     <mat-label>{{'HttpReadValueComponent.factorToValue' | translate}}</mat-label>
     <input matInput type="text" formControlName="factorToValue"
+           placeholder="1"
            required="{{formHandler.isRequired('factorToValue')}}">
     <mat-error *ngIf="errors.factorToValue">{{errors.factorToValue}}</mat-error>
   </mat-form-field>

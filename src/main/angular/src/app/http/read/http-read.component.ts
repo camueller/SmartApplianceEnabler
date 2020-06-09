@@ -40,6 +40,8 @@ export class HttpReadComponent implements OnChanges, OnInit {
   @Input()
   maxValues: number;
   @Input()
+  contentProtocol: string;
+  @Input()
   disableFactorToValue = false;
   @Input()
   disableRemove = false;

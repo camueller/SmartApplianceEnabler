@@ -21,6 +21,8 @@ export class HttpReadValueComponent implements OnChanges, OnInit {
   @Input()
   valueNames: string[];
   @Input()
+  contentProtocol: string;
+  @Input()
   disableFactorToValue = false;
   @Input()
   form: FormGroup;
@@ -56,6 +58,7 @@ export class HttpReadValueComponent implements OnChanges, OnInit {
   }
 
   ngOnInit() {
+    console.log('contentProtocol=', this.contentProtocol);
     this.errorMessages = new ErrorMessages('HttpReadValueComponent.error.', [
       new ErrorMessage('name', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('factorToValue', ValidatorType.pattern),
