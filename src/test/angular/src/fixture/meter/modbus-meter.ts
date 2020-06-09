@@ -10,7 +10,6 @@ export const modbusMeter_complete = new ModbusElectricityMeter({
       type: 'InputFloat',
       address: '0x0C',
       bytes: 2,
-      byteOrder: 'LittleEndian',
       factorToValue: 10,
       readValues: [
         new ModbusReadValue({
@@ -20,10 +19,10 @@ export const modbusMeter_complete = new ModbusElectricityMeter({
       ]
     }),
     new ModbusRead({
-      type: 'InputFloat',
+      type: 'InputDecimal',
       address: '0x0A',
       bytes: 4,
-      byteOrder: 'BigEndian',
+      byteOrder: 'LittleEndian',
       factorToValue: 0.01,
       readValues: [
         new ModbusReadValue({
