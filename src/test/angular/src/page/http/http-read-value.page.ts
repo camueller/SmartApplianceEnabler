@@ -19,7 +19,9 @@ export class HttpReadValuePage {
                                        httpReadValueIndex: number, selectorPrefix?: string) {
     await HttpReadValuePage.setName(t, httpReadValue.name, httpReadValueIndex, selectorPrefix);
     await HttpReadValuePage.setData(t, httpReadValue.data, httpReadValueIndex, selectorPrefix);
-    await HttpReadValuePage.setPath(t, httpReadValue.path, httpReadValueIndex, selectorPrefix);
+    if (httpReadValue.path) {
+      await HttpReadValuePage.setPath(t, httpReadValue.path, httpReadValueIndex, selectorPrefix);
+    }
     await HttpReadValuePage.setExtractionRegex(t, httpReadValue.extractionRegex, httpReadValueIndex, selectorPrefix);
     await HttpReadValuePage.setFactorToValue(t, httpReadValue.factorToValue, httpReadValueIndex, selectorPrefix);
   }
@@ -29,7 +31,9 @@ export class HttpReadValuePage {
                                           selectorPrefix?: string, i18nPrefix?: string) {
     await HttpReadValuePage.assertName(t, httpReadValue.name, httpReadValueIndex, selectorPrefix, i18nPrefix);
     await HttpReadValuePage.assertData(t, httpReadValue.data, httpReadValueIndex, selectorPrefix);
-    await HttpReadValuePage.assertPath(t, httpReadValue.path, httpReadValueIndex, selectorPrefix);
+    if (httpReadValue.path) {
+      await HttpReadValuePage.assertPath(t, httpReadValue.path, httpReadValueIndex, selectorPrefix);
+    }
     await HttpReadValuePage.assertExtractionRegex(t, httpReadValue.extractionRegex, httpReadValueIndex, selectorPrefix);
     if (factorToValue) {
       await HttpReadValuePage.assertFactorToValue(t, httpReadValue.factorToValue, httpReadValueIndex, selectorPrefix);
