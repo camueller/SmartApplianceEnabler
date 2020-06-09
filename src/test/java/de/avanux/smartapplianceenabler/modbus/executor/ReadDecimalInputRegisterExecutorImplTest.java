@@ -31,6 +31,13 @@ public class ReadDecimalInputRegisterExecutorImplTest {
     }
 
     @Test
+    public void getValueBigEndian() {
+        this.executor = new ReadDecimalInputRegisterExecutorImpl("182", 2, null, 0.01);
+        this.executor.setByteValues(new Integer[]{1, 18254});
+        assertEquals(837.90, this.executor.getValue(), 0.0001f);
+    }
+
+    @Test
     public void getValueLittleEndian() {
         this.executor = new ReadDecimalInputRegisterExecutorImpl("182", 2, ByteOrder.LittleEndian, 0.01);
         this.executor.setByteValues(new Integer[]{18254, 1});

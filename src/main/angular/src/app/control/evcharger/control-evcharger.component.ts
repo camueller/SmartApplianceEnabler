@@ -23,6 +23,7 @@ import {ControlEvchargerModbusComponent} from './modbus/control-evcharger-modbus
 import {EvHttpControl} from './http/ev-http-control';
 import {ControlEvchargerHttpComponent} from './http/control-evcharger-http.component';
 import {ListItem} from '../../shared/list-item';
+import {MeterDefaults} from '../../meter/meter-defaults';
 
 @Component({
   selector: 'app-control-evcharger',
@@ -37,6 +38,8 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
   evCharger: EvCharger;
   @Input()
   controlDefaults: ControlDefaults;
+  @Input()
+  meterDefaults: MeterDefaults;
   @Input()
   applianceId: string;
   @Input()
@@ -114,6 +117,7 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
     this.evCharger = new EvCharger({...this.templates[templateName], vehicles: this.evCharger.vehicles});
     this.setProtocol(this.evCharger.protocol);
     this.updateForm();
+    this.changeDetectorRef.detectChanges();
     this.form.markAsDirty();
   }
 

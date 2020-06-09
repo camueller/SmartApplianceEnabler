@@ -15,7 +15,7 @@ import {FormHandler} from '../../shared/form-handler';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {Logger} from '../../log/logger';
 import {ModbusSetting} from '../../settings/modbus/modbus-setting';
-import { MessageBoxLevel } from 'src/app/material/messagebox/messagebox.component';
+import {MessageBoxLevel} from 'src/app/material/messagebox/messagebox.component';
 
 @Component({
   selector: 'app-meter-modbus',
@@ -65,6 +65,9 @@ export class MeterModbusComponent implements OnChanges, OnInit {
         this.modbusElectricityMeter.modbusReads = [ModbusRead.createWithSingleChild()];
       }
       this.updateForm();
+    }
+    if (changes.meterDefaults && changes.meterDefaults.currentValue) {
+      this.meterDefaults = changes.meterDefaults.currentValue;
     }
   }
 

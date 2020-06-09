@@ -57,10 +57,7 @@ public class ModbusRead {
 
     public Integer getBytes() {
         if(bytes == null) {
-            if(getType() == ReadRegisterType.InputFloat) {
-                return 2;
-            }
-            return 1;
+            return ModbusReadDefaults.getBytes(getType());
         }
         return bytes;
     }

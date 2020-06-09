@@ -18,6 +18,7 @@ import {ModbusReadComponent} from '../../../modbus/read/modbus-read.component';
 import {EvReadValueName} from '../ev-read-value-name';
 import {EvWriteValueName} from '../ev-write-value-name';
 import { MessageBoxLevel } from 'src/app/material/messagebox/messagebox.component';
+import {MeterDefaults} from '../../../meter/meter-defaults';
 
 @Component({
   selector: 'app-control-evcharger-modbus',
@@ -34,6 +35,8 @@ export class ControlEvchargerModbusComponent implements OnChanges, OnInit {
   settings: Settings;
   @Input()
   settingsDefaults: SettingsDefaults;
+  @Input()
+  meterDefaults: MeterDefaults;
   @ViewChildren('modbusReadComponents')
   modbusReadComps: QueryList<ModbusReadComponent>;
   @ViewChildren('modbusWriteComponents')

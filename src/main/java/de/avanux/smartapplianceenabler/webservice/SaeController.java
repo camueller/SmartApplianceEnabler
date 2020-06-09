@@ -32,6 +32,7 @@ import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.meter.MeterDefaults;
 import de.avanux.smartapplianceenabler.meter.S0ElectricityMeterDefaults;
 import de.avanux.smartapplianceenabler.modbus.ModbusElectricityMeterDefaults;
+import de.avanux.smartapplianceenabler.modbus.ModbusReadDefaults;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
 import de.avanux.smartapplianceenabler.schedule.*;
 import de.avanux.smartapplianceenabler.semp.webservice.*;
@@ -328,6 +329,7 @@ public class SaeController {
             defaults.setS0ElectricityMeter(new S0ElectricityMeterDefaults());
             defaults.setHttpElectricityMeter(new HttpElectricityMeterDefaults());
             defaults.setModbusElectricityMeter(new ModbusElectricityMeterDefaults());
+            defaults.setModbusReadDefaults(new ModbusReadDefaults());
             return defaults;
         } catch (Throwable e) {
             logger.error("Error in " + getClass().getSimpleName(), e);

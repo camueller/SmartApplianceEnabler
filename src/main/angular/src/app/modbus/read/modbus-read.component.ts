@@ -22,6 +22,7 @@ import {ModbusReadValueComponent} from '../read-value/modbus-read-value.componen
 import {FormHandler} from '../../shared/form-handler';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {Logger} from '../../log/logger';
+import {MeterDefaults} from '../../meter/meter-defaults';
 
 @Component({
   selector: 'app-modbus-read',
@@ -37,6 +38,8 @@ export class ModbusReadComponent implements OnChanges, OnInit {
   valueNames: string[];
   @Input()
   readRegisterTypes: string[];
+  @Input()
+  meterDefaults: MeterDefaults;
   @Input()
   maxValues: number;
   @Input()
@@ -72,6 +75,9 @@ export class ModbusReadComponent implements OnChanges, OnInit {
     if (changes.form) {
       this.expandParentForm();
     }
+    if (changes.meterDefaults && changes.meterDefaults.currentValue) {
+      this.meterDefaults = changes.meterDefaults.currentValue;
+    }
   }
 
   ngOnInit() {
@@ -90,6 +96,14 @@ export class ModbusReadComponent implements OnChanges, OnInit {
   get type(): string {
     const typeControl = this.form.controls.type;
     return (typeControl ? typeControl.value : '');
+  }
+
+  get bytesPlaceholder() {
+    return this.meterDefaults.modbusRead_bytesForRegisterType[this.form.controls.type.value];
+  }
+
+  get isByteOrderDisplayed() {
+    return this.form.controls.type.value === 'InputDecimal' && (this.form.controls.bytes.value > 1 || this.bytesPlaceholder > 1);
   }
 
   // TODO move to config
@@ -145,7 +159,7 @@ export class ModbusReadComponent implements OnChanges, OnInit {
       this.modbusRead && this.modbusRead.bytes,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
     this.formHandler.addFormControl(this.form, 'byteOrder',
-      this.modbusRead && this.modbusRead.byteOrder);
+      this.modbusRead && this.modbusRead.byteOrder || 'BigEndian');
     this.formHandler.addFormControl(this.form, 'factorToValue',
       this.modbusRead && this.modbusRead.factorToValue,
       [Validators.pattern(InputValidatorPatterns.FLOAT)]);
@@ -184,7 +198,7 @@ export class ModbusReadComponent implements OnChanges, OnInit {
     this.modbusRead.address = getValidString(address);
     this.modbusRead.type = getValidString(type);
     this.modbusRead.bytes = getValidInt(bytes);
-    this.modbusRead.byteOrder = getValidString(byteOrder);
+    this.modbusRead.byteOrder = this.isByteOrderDisplayed ? getValidString(byteOrder) : undefined;
     this.modbusRead.factorToValue = getValidFloat(factorToValue);
     return this.modbusRead;
   }
