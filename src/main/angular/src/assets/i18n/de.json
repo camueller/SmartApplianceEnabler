@@ -385,6 +385,8 @@
 
   "timeOfDay": "Uhrzeit",
 
+  "regex.tooltip": "Muss angegeben werden, falls der (Zahlen-) Wert erst aus der Antwort extrahiert werden muss oder auf einen bestimmten Wert geprüft werden soll",
+
   "error.input_required": "Eingabe erforderlich",
   "error.modbus_not_configured": "Bevor Modbus verwendet werden kann, muss Modbus unter 'Einstellungen' hinzugefügt werden.",
 

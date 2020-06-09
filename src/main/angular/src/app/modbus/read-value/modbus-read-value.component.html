@@ -10,6 +10,7 @@
   <mat-form-field class="sae__regex">
     <mat-label>{{'ModbusReadValueComponent.extractionRegex' | translate}}</mat-label>
     <input matInput type="text" formControlName="extractionRegex"
+           matTooltip="{{'regex.tooltip' | translate}}"
            required="{{formHandler.isRequired('extractionRegex')}}">
     <mat-error *ngIf="errors.extractionRegex">{{errors.extractionRegex}}</mat-error>
   </mat-form-field>
