@@ -257,7 +257,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
      * Returns true, if the state update was performed. This does not necessarily mean that the state has changed!
      * @return
      */
-    public boolean updateState(LocalDateTime now) {
+    public synchronized boolean updateState(LocalDateTime now) {
         if(isWithinSwitchChargingStateDetectionDelay()) {
             logger.debug("{}: Skipping state detection for {}s", applianceId, getStartChargingStateDetectionDelay());
             return false;
@@ -556,7 +556,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         return chargeSeconds;
     }
 
-    public void setChargePower(int power) {
+    public synchronized void setChargePower(int power) {
         int phases = getPhases();
         int adjustedPower = power;
         ElectricVehicle chargingVehicle = getConnectedVehicle();
@@ -581,7 +581,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         return chargePower;
     }
 
-    public void startCharging() {
+    public synchronized void startCharging() {
         logger.debug("{}: Start charging process", applianceId);
         this.startChargingRequested = true;
         control.startCharging();
@@ -592,7 +592,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         this.startChargingRequested = startChargingRequested;
     }
 
-    public void stopCharging() {
+    public synchronized void stopCharging() {
         logger.debug("{}: Stop charging process", applianceId);
         control.stopCharging();
         boolean wasInChargingAfterLastVehicleConnected = wasInStateAfterLastState(EVChargerState.CHARGING, EVChargerState.VEHICLE_CONNECTED);
