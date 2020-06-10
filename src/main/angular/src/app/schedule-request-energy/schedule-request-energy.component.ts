@@ -90,7 +90,7 @@ export class ScheduleRequestEnergyComponent implements OnChanges, OnInit, AfterV
       return undefined;
     }
 
-    this.energyRequest.min = minEnergy;
+    this.energyRequest.min = minEnergy && minEnergy.length > 0 ? minEnergy : undefined;
     this.energyRequest.max = maxEnergy;
     return this.energyRequest;
   }
