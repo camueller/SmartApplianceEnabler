@@ -301,10 +301,15 @@ public class SempController {
 
     protected de.avanux.smartapplianceenabler.semp.webservice.Timeframe
     createSempTimeFrame(LocalDateTime now, String deviceId, TimeframeInterval timeframeInterval) {
+        Integer earliestStartSeconds = timeframeInterval.getEarliestStartSeconds(now);
+        Integer latestEndSeconds = timeframeInterval.getLatestEndSeconds(now);
         Integer minRunningTime = timeframeInterval.getRequest().getMin(now);
         Integer maxRunningTime = timeframeInterval.getRequest().getMax(now);
         if (maxRunningTime == null) {
             maxRunningTime = 0;
+        }
+        if(maxRunningTime > latestEndSeconds) {
+            maxRunningTime = latestEndSeconds;
         }
         if (minRunningTime == null) {
             minRunningTime = maxRunningTime;
@@ -325,8 +330,8 @@ public class SempController {
         de.avanux.smartapplianceenabler.semp.webservice.Timeframe timeFrame
                 = new de.avanux.smartapplianceenabler.semp.webservice.Timeframe();
         timeFrame.setDeviceId(deviceId);
-        timeFrame.setEarliestStart(timeframeInterval.getEarliestStartSeconds(now));
-        timeFrame.setLatestEnd(timeframeInterval.getLatestEndSeconds(now));
+        timeFrame.setEarliestStart(earliestStartSeconds);
+        timeFrame.setLatestEnd(latestEndSeconds);
         if (timeframeInterval.getRequest() instanceof AbstractEnergyRequest) {
             timeFrame.setMinEnergy(timeframeInterval.getRequest().getMin(now));
             timeFrame.setMaxEnergy(timeframeInterval.getRequest().getMax(now));
