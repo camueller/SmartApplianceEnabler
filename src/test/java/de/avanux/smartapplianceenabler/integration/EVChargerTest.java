@@ -137,13 +137,11 @@ public class EVChargerTest extends TestBase {
 
         LocalDateTime timeManualStartChargingCompleted = toToday(15, 0, 0);
         log("Charging completed", timeManualStartChargingCompleted);
-        Mockito.when(pollEnergyExecutor.pollEnergy(Mockito.any())).thenReturn(30.0f);
+        Mockito.when(pollEnergyExecutor.pollEnergy(Mockito.any())).thenReturn(54.0f);
         tick(appliance, timeManualStartChargingCompleted, true, false);
         assertTrue(evCharger.isChargingCompleted());
-        assertEquals(1, timeframeIntervalHandler.getQueue().size());
-        assertTimeframeIntervalOptionalEnergy(interval, TimeframeIntervalState.ACTIVE,
-                0, evId, 24000, true, timeframeIntervalHandler.getQueue().get(0));
-        assertEquals(20.0f, mockMeter.getEnergy(), 0.01);
+        assertEquals(0, timeframeIntervalHandler.getQueue().size());
+        assertEquals(44.0f, mockMeter.getEnergy(), 0.01);
     }
 
     @Test

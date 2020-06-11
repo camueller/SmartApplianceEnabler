@@ -185,14 +185,6 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
     }
 
     @Override
-    public void activeIntervalChanged(LocalDateTime now, String applianceId, TimeframeInterval deactivatedInterval, TimeframeInterval activatedInterval, boolean wasRunning) {
-        super.activeIntervalChanged(now, applianceId, deactivatedInterval, activatedInterval, wasRunning);
-        if(activatedInterval != null && activatedInterval.getState() == TimeframeIntervalState.ACTIVE) {
-            ((ElectricVehicleCharger) getControl()).retrieveSoc(now);
-        }
-    }
-
-    @Override
     public void onEVChargerSocChanged(LocalDateTime now, Float soc) {
         getLogger().debug("{}: Using updated SOC={}", getApplianceId(), soc);
         if(! isEnabledBefore()) {

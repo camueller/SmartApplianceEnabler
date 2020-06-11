@@ -18,14 +18,13 @@
 
 package de.avanux.smartapplianceenabler.schedule;
 
-import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.ev.EVChargerState;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
-import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlTransient;
+import java.time.LocalDateTime;
 
 @XmlTransient
 abstract public class AbstractEnergyRequest extends AbstractRequest {
@@ -39,23 +38,12 @@ abstract public class AbstractEnergyRequest extends AbstractRequest {
     }
 
     @Override
-    public void setControl(Control control) {
-        super.setControl(control);
-    }
-
-    @Override
     public void onEVChargerStateChanged(LocalDateTime now, EVChargerState previousState, EVChargerState newState,
                                         ElectricVehicle ev) {
         if(newState == EVChargerState.VEHICLE_CONNECTED && ev.getSocScript() == null) {
             setEnabled(true);
         }
-        else if(newState == EVChargerState.VEHICLE_NOT_CONNECTED) {
-            setEnabled(false);
-            if(getMeter() != null) {
-                getMeter().resetEnergyMeter();
-            }
-        }
-        else if(newState == EVChargerState.CHARGING_COMPLETED) {
+        else if(newState == EVChargerState.VEHICLE_NOT_CONNECTED || newState == EVChargerState.CHARGING_COMPLETED) {
             setEnabled(false);
         }
     }

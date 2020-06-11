@@ -18,18 +18,13 @@
 
 package de.avanux.smartapplianceenabler.control.ev;
 
-import de.avanux.smartapplianceenabler.appliance.Appliance;
-import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
-import de.avanux.smartapplianceenabler.appliance.ApplianceLifeCycle;
-import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
+import de.avanux.smartapplianceenabler.appliance.*;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.ControlStateChangedListener;
 import de.avanux.smartapplianceenabler.http.EVHttpControl;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.modbus.EVModbusControl;
-import de.avanux.smartapplianceenabler.schedule.Interval;
-import de.avanux.smartapplianceenabler.schedule.SocRequest;
-import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
+import de.avanux.smartapplianceenabler.schedule.*;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
 import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
 import de.avanux.smartapplianceenabler.util.Validateable;
@@ -44,7 +39,7 @@ import java.util.Timer;
 import java.util.Vector;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Validateable, ApplianceIdConsumer {
+public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Validateable, ApplianceIdConsumer, TimeframeIntervalChangedListener {
 
     private transient Logger logger = LoggerFactory.getLogger(ElectricVehicleCharger.class);
     @XmlAttribute
@@ -84,6 +79,10 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
 
     public void setAppliance(Appliance appliance) {
         this.appliance = appliance;
+        TimeframeIntervalHandler timeframeIntervalHandler = this.appliance.getTimeframeIntervalHandler();
+        if(timeframeIntervalHandler != null) {
+            timeframeIntervalHandler.addTimeframeIntervalChangedListener(this);
+        }
     }
 
     @Override
@@ -356,14 +355,6 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         else if(currenState == EVChargerState.CHARGING_COMPLETED) {
             return EVChargerState.CHARGING_COMPLETED;
         }
-        else if(this.startChargingRequested && vehicleConnected && !charging) {
-            if(charging) {
-                return EVChargerState.CHARGING;
-            }
-            else {
-                return EVChargerState.CHARGING_COMPLETED;
-            }
-        }
         else if(this.startChargingRequested && charging) {
             return EVChargerState.CHARGING;
         }
@@ -371,12 +362,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
             return EVChargerState.VEHICLE_CONNECTED;
         }
         else if(vehicleConnected && !charging) {
-            if(wasInChargingAfterLastVehicleConnected) {
-                return EVChargerState.CHARGING_COMPLETED;
-            }
-            else {
-                return EVChargerState.VEHICLE_CONNECTED;
-            }
+            return EVChargerState.VEHICLE_CONNECTED;
         }
         return currenState;
     }
@@ -455,6 +441,10 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         if(newState == EVChargerState.VEHICLE_NOT_CONNECTED) {
             if(isOn()) {
                 on(now, false);
+            }
+            Meter meter = appliance.getMeter();
+            if(meter != null) {
+                meter.resetEnergyMeter();
             }
             setConnectedVehicleId(null);
             initStateHistory();
@@ -624,6 +614,20 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                 // for unit tests
                 socRetriever.run();
             }
+        }
+    }
+
+    @Override
+    public void timeframeIntervalCreated(LocalDateTime now, TimeframeInterval timeframeInterval) {
+    }
+
+    @Override
+    public void activeIntervalChanged(LocalDateTime now, String applianceId, TimeframeInterval deactivatedInterval, TimeframeInterval activatedInterval, boolean wasRunning) {
+        if(activatedInterval != null && activatedInterval.getState() == TimeframeIntervalState.ACTIVE) {
+            retrieveSoc(now);
+        }
+        if(deactivatedInterval != null && deactivatedInterval.getRequest().isFinished(now)) {
+            this.setState(EVChargerState.CHARGING_COMPLETED);
         }
     }
 

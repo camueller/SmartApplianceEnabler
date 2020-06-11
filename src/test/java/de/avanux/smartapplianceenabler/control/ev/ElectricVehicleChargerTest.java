@@ -19,6 +19,10 @@
 package de.avanux.smartapplianceenabler.control.ev;
 
 import java.time.LocalDateTime;
+
+import de.avanux.smartapplianceenabler.appliance.Appliance;
+import de.avanux.smartapplianceenabler.schedule.SocRequest;
+import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
@@ -31,12 +35,19 @@ public class ElectricVehicleChargerTest {
     private Logger logger = LoggerFactory.getLogger(ElectricVehicleChargerTest.class);
     private ElectricVehicleCharger evCharger = Mockito.spy(new ElectricVehicleCharger());
     private EVChargerControl evChargerControl = Mockito.mock(EVChargerControl.class);
+    private Appliance appliance = Mockito.mock(Appliance.class);
     private LocalDateTime now = LocalDateTime.now();
+    private String applianceId = "TEST";
+    private TimeframeInterval timeframeInterval;
 
     public ElectricVehicleChargerTest() {
+        SocRequest request = new SocRequest(50, 1, 0);
+        timeframeInterval = new TimeframeInterval(null, request);
+
         evCharger.startChargingStateDetectionDelay = 0;
         evCharger.setControl(evChargerControl);
-        evCharger.setApplianceId("TEST");
+        evCharger.setApplianceId(applianceId);
+        evCharger.setAppliance(appliance);
         evCharger.init();
     }
 
@@ -146,6 +157,7 @@ public class ElectricVehicleChargerTest {
         log("Fully charged now");
         configureMocks(false, true, false);
         updateState();
+        evCharger.activeIntervalChanged(now, applianceId, timeframeInterval, null, false);
         assertEquals(EVChargerState.CHARGING_COMPLETED, evCharger.getState());
         log("Disconnect vehicle");
         configureMocks(true, false, false);
@@ -187,6 +199,7 @@ public class ElectricVehicleChargerTest {
         log("Fully charged now");
         configureMocks(false, true, false);
         updateState();
+        evCharger.activeIntervalChanged(now, applianceId, timeframeInterval, null, false);
         assertEquals(EVChargerState.CHARGING_COMPLETED, evCharger.getState());
         log("Disconnect vehicle");
         configureMocks(true, false, false);
@@ -208,6 +221,7 @@ public class ElectricVehicleChargerTest {
         log("Fully charged now");
         configureMocks(false, true, false);
         updateState();
+        evCharger.activeIntervalChanged(now, applianceId, timeframeInterval, null, false);
         assertEquals(EVChargerState.CHARGING_COMPLETED, evCharger.getState());
         log("Disconnect vehicle");
         configureMocks(true, false, false);
