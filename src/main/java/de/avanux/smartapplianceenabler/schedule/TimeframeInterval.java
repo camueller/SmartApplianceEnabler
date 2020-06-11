@@ -133,6 +133,9 @@ public class TimeframeInterval implements ApplianceIdConsumer, TimeframeInterval
     }
 
     public boolean isIntervalSufficient(LocalDateTime now) {
+        if(getRequest() instanceof AbstractEnergyRequest) {
+            return true;
+        }
         LocalDateTime latestStart = getLatestStart(now, LocalDateTime.from(interval.getEnd()), getRequest().getMax(now));
         return now.isEqual(latestStart) || now.isBefore(latestStart);
     }
