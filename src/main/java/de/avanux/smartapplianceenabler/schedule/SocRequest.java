@@ -94,7 +94,7 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
     }
 
     private Integer getSocInitialOrDefault() {
-        return socInitial != null ? socInitial : 100;
+        return socInitial != null ? socInitial : 0;
     }
 
     public void setSoc(Integer soc) {
