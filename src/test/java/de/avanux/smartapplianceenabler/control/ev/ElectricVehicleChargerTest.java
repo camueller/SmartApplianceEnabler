@@ -71,14 +71,14 @@ public class ElectricVehicleChargerTest {
     public void getNewState_initial() {
         Mockito.when(evChargerControl.isVehicleConnected()).thenReturn(false);
         assertEquals(EVChargerState.VEHICLE_NOT_CONNECTED,
-                evCharger.getNewState(EVChargerState.VEHICLE_NOT_CONNECTED));
+                evCharger.getNewState(EVChargerState.VEHICLE_NOT_CONNECTED, false));
     }
 
     @Test
     public void getNewState_connect() {
         Mockito.when(evChargerControl.isVehicleConnected()).thenReturn(true);
         assertEquals(EVChargerState.VEHICLE_CONNECTED,
-                evCharger.getNewState(EVChargerState.VEHICLE_NOT_CONNECTED));
+                evCharger.getNewState(EVChargerState.VEHICLE_NOT_CONNECTED, false));
     }
 
     @Test
@@ -86,14 +86,22 @@ public class ElectricVehicleChargerTest {
         evCharger.setStartChargingRequested(true);
         Mockito.when(evChargerControl.isCharging()).thenReturn(true);
         assertEquals(EVChargerState.CHARGING,
-                evCharger.getNewState(EVChargerState.VEHICLE_CONNECTED));
+                evCharger.getNewState(EVChargerState.VEHICLE_CONNECTED, false));
+    }
+
+    @Test
+    public void getNewState_chargingCompleted() {
+        evCharger.setStartChargingRequested(true);
+        Mockito.when(evChargerControl.isCharging()).thenReturn(false);
+        assertEquals(EVChargerState.CHARGING_COMPLETED,
+                evCharger.getNewState(EVChargerState.VEHICLE_CONNECTED, true));
     }
 
     @Test
     public void getNewState_disconnect() {
         Mockito.when(evChargerControl.isVehicleNotConnected()).thenReturn(true);
         assertEquals(EVChargerState.VEHICLE_NOT_CONNECTED,
-                evCharger.getNewState(EVChargerState.VEHICLE_CONNECTED));
+                evCharger.getNewState(EVChargerState.VEHICLE_CONNECTED, false));
     }
 
     @Test
@@ -101,7 +109,7 @@ public class ElectricVehicleChargerTest {
         Mockito.when(evChargerControl.isVehicleNotConnected()).thenReturn(true);
         Mockito.when(evChargerControl.isCharging()).thenReturn(false);
         assertEquals(EVChargerState.VEHICLE_NOT_CONNECTED,
-                evCharger.getNewState(EVChargerState.CHARGING));
+                evCharger.getNewState(EVChargerState.CHARGING, false));
     }
 
     @Test
