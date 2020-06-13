@@ -175,8 +175,9 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
                     if(control instanceof ElectricVehicleCharger
                             && !(timeframeInterval.getRequest() instanceof OptionalEnergySocRequest)
                             && queue.size() == 0) {
+                        ElectricVehicle connectedVehicle = ((ElectricVehicleCharger) control).getConnectedVehicle();
                         TimeframeInterval optionalEnergyTimeframeInterval = createOptionalEnergyTimeframeIntervalForEVCharger(now,
-                                ((ElectricVehicleCharger) control).getConnectedVehicleId());
+                                connectedVehicle.getId(), connectedVehicle.getDefaultSocOptionalEnergy());
                         addTimeframeInterval(now, optionalEnergyTimeframeInterval, false, false);
                     }
                 }
@@ -362,13 +363,14 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
         return timeframeIntervals;
     }
 
-    private TimeframeInterval createOptionalEnergyTimeframeIntervalForEVCharger(LocalDateTime now, Integer evId) {
+    private TimeframeInterval createOptionalEnergyTimeframeIntervalForEVCharger(LocalDateTime now, Integer evId, Integer targetSoc) {
         Interval interval = createOptionalEnergyIntervalForEVCharger(now, null,
                 queue.size() > 0 ? queue.get(0) : null);
         if(interval == null) {
             return null;
         }
         OptionalEnergySocRequest request = new OptionalEnergySocRequest(evId);
+        request.setSoc(targetSoc);
 
         TimeframeInterval timeframeInterval = new TimeframeInterval(interval, request);
 
@@ -428,7 +430,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
                                         ElectricVehicle ev) {
         if(newState == EVChargerState.VEHICLE_CONNECTED) {
             if(! hasActiveTimeframeInterval()) {
-                TimeframeInterval timeframeInterval = createOptionalEnergyTimeframeIntervalForEVCharger(now, ev.getId());
+                TimeframeInterval timeframeInterval = createOptionalEnergyTimeframeIntervalForEVCharger(now, ev.getId(), ev.getDefaultSocOptionalEnergy());
                 if(timeframeInterval != null) {
                     addTimeframeInterval(now, timeframeInterval, true, true);
                     updateQueue(now, false);

@@ -101,12 +101,8 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
         this.soc = soc;
     }
 
-    public Integer getSoc() {
-        return soc;
-    }
-
     private Integer getSocOrDefault() {
-        return getSoc() != null ? getSoc() : 100;
+        return this.soc != null ? this.soc : 100;
     }
 
     public Integer getEvId() {
@@ -204,7 +200,7 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
 
         return new EqualsBuilder()
                 .appendSuper(super.equals(o))
-                .append(soc, that.soc)
+                .append(getSocOrDefault(), that.getSocOrDefault())
                 .append(evId, that.evId)
                 .append(energy, that.energy)
                 .isEquals();
@@ -214,7 +210,7 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
                 .appendSuper(super.hashCode())
-                .append(soc)
+                .append(getSocOrDefault())
                 .append(evId)
                 .append(energy)
                 .toHashCode();
@@ -233,7 +229,7 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
         text += "/";
         text += "soc=" + socInitial;
         text += "%=>";
-        text += soc;
+        text += getSocOrDefault();
         text += "%";
         text += "/";
         text += "energy=" + (energy != null ? energy : 0);
