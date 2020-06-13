@@ -521,7 +521,7 @@ public class EVChargerTest extends TestBase {
         evCharger.updateState(now);
 
         TimeframeIntervalHandler timeframeIntervalHandler = appliance.getTimeframeIntervalHandler();
-        timeframeIntervalHandler.updateQueue(now);
+        timeframeIntervalHandler.updateQueue(now, false);
     }
 
     private void log(String message, LocalDateTime now) {

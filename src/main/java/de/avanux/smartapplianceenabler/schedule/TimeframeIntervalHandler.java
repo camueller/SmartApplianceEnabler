@@ -86,7 +86,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
                     "UpdateActiveTimeframeInterval", UPDATE_QUEUE_INTERVAL_SECONDS * 1000) {
                 @Override
                 public void runTask() {
-                    updateQueue(LocalDateTime.now());
+                    updateQueue(LocalDateTime.now(), false);
                 }
             };
             if (timer != null) {
@@ -135,7 +135,10 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
                 });
     }
 
-    public void updateQueue(LocalDateTime now) {
+    public void updateQueue(LocalDateTime now, boolean ignoreStartTime) {
+        if(ignoreStartTime) {
+            logger.warn("{}: Forcing queue update with ignored timeframe interval start time", applianceId);
+        }
         queue.forEach(timeframeInterval -> timeframeInterval.getRequest().update());
         logger.debug("{}: Current Queue:", applianceId);
         logQueue(now);
@@ -150,7 +153,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
             }
         });
 
-        Optional<TimeframeInterval> activatableTimeframeInterval = getActivatableTimeframeInterval(now);
+        Optional<TimeframeInterval> activatableTimeframeInterval = getActivatableTimeframeInterval(now, ignoreStartTime);
         Holder<Boolean> optionalEnergyTimeframeIntervalMoved = new Holder<>(false);
         if(activatableTimeframeInterval.isPresent()) {
             TimeframeInterval activeTimeframeInterval = getActiveTimeframeInterval();
@@ -184,7 +187,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
         });
 
         // re-evaluate after potential de-activation
-        activatableTimeframeInterval = getActivatableTimeframeInterval(now);
+        activatableTimeframeInterval = getActivatableTimeframeInterval(now, ignoreStartTime);
         if(activatableTimeframeInterval.isPresent() && ! removalPending.value) {
             if(! hasActiveTimeframeInterval()) {
                 activateTimeframeInterval(now, activatableTimeframeInterval.get());
@@ -226,12 +229,12 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
                 timeframeInterval.toString(now)));
     }
 
-    private Optional<TimeframeInterval> getActivatableTimeframeInterval(LocalDateTime now) {
+    private Optional<TimeframeInterval> getActivatableTimeframeInterval(LocalDateTime now, boolean ignoreStartTime) {
         if(hasActiveTimeframeInterval()) {
             return Optional.empty();
         }
         return queue.stream()
-                .filter(timeframeInterval -> timeframeInterval.isActivatable(now))
+                .filter(timeframeInterval -> timeframeInterval.isActivatable(now, ignoreStartTime))
                 .findFirst();
     }
 
@@ -279,7 +282,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
         }
         timeframeInterval.stateTransitionTo(now, TimeframeIntervalState.QUEUED);
         if(updateQueue) {
-            updateQueue(now);
+            updateQueue(now, false);
         }
     }
 
@@ -428,7 +431,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
                 TimeframeInterval timeframeInterval = createOptionalEnergyTimeframeIntervalForEVCharger(now, ev.getId());
                 if(timeframeInterval != null) {
                     addTimeframeInterval(now, timeframeInterval, true, true);
-                    updateQueue(now);
+                    updateQueue(now, false);
                     activateTimeframeInterval(now, timeframeInterval);
                 }
             }

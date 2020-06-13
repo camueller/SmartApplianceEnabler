@@ -146,7 +146,7 @@ abstract public class TestBase {
 
     protected void tick(Appliance appliance, LocalDateTime now) {
         TimeframeIntervalHandler timeframeIntervalHandler = appliance.getTimeframeIntervalHandler();
-        timeframeIntervalHandler.updateQueue(now);
+        timeframeIntervalHandler.updateQueue(now, false);
     }
 
     protected Schedule buildScheduleWithRequest() {

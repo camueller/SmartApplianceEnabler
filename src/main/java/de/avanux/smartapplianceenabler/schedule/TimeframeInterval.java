@@ -87,9 +87,9 @@ public class TimeframeInterval implements ApplianceIdConsumer, TimeframeInterval
         return stateHistory.contains(state);
     }
 
-    public boolean isActivatable(LocalDateTime now) {
+    public boolean isActivatable(LocalDateTime now, boolean ignoreStartTime) {
         return getState() == TimeframeIntervalState.QUEUED
-                && (now.isEqual(getInterval().getStart()) || now.isAfter(getInterval().getStart()))
+                && (ignoreStartTime || now.isEqual(getInterval().getStart()) || now.isAfter(getInterval().getStart()))
                 && (!(request instanceof RuntimeRequest) || isIntervalSufficient(now)
         );
     }
