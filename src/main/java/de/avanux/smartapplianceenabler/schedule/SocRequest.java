@@ -136,7 +136,9 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
     @Override
     public void update() {
         this.energy = calculateEnergy(((ElectricVehicleCharger) getControl()).getVehicle(evId));
-        setEnabled(energy > 0);
+        if(energy <= 0) {
+            setEnabled(false);
+        }
     }
 
     private Integer getEnergy() {
