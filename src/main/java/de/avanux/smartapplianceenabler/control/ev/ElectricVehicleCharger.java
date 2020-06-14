@@ -171,6 +171,10 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         return connectedVehicleSocTimestamp;
     }
 
+    public void setConnectedVehicleSocTimestamp(Long connectedVehicleSocTimestamp) {
+        this.connectedVehicleSocTimestamp = connectedVehicleSocTimestamp;
+    }
+
     public ElectricVehicle getConnectedVehicle() {
         Integer evId = getConnectedVehicleId();
         if(evId != null) {
