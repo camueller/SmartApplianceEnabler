@@ -141,10 +141,12 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
 
     public void setConnectedVehicleSoc(LocalDateTime now, Integer connectedVehicleSoc) {
         this.connectedVehicleSoc = connectedVehicleSoc;
-        for(ControlStateChangedListener listener : controlStateChangedListeners) {
-            logger.debug("{}: Notifying {} {} {}", applianceId, ControlStateChangedListener.class.getSimpleName(),
-                    listener.getClass().getSimpleName(), listener);
-            listener.onEVChargerSocChanged(now, Integer.valueOf(connectedVehicleSoc).floatValue());
+        if(connectedVehicleSoc != null) {
+            for(ControlStateChangedListener listener : controlStateChangedListeners) {
+                logger.debug("{}: Notifying {} {} {}", applianceId, ControlStateChangedListener.class.getSimpleName(),
+                        listener.getClass().getSimpleName(), listener);
+                listener.onEVChargerSocChanged(now, Integer.valueOf(connectedVehicleSoc).floatValue());
+            }
         }
     }
 
@@ -457,6 +459,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                 meter.resetEnergyMeter();
             }
             setConnectedVehicleId(null);
+            setConnectedVehicleSoc(now, null);
             initStateHistory();
         }
 
