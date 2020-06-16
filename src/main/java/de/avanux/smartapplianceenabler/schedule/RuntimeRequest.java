@@ -52,7 +52,8 @@ public class RuntimeRequest extends AbstractRequest implements StartingCurrentSw
 
     public Integer getMin(LocalDateTime now) {
         if(min != null && isActive()) {
-            return min - getRuntime(now);
+            int min = this.min - getRuntime(now);
+            return min > 0 ? min : 0;
         }
         return min;
     }
@@ -63,7 +64,8 @@ public class RuntimeRequest extends AbstractRequest implements StartingCurrentSw
 
     public Integer getMax(LocalDateTime now) {
         if(isActive()) {
-            return max - getRuntime(now);
+            int max = this.max - getRuntime(now);
+            return max > 0 ? max : 0;
         }
         return max;
     }
