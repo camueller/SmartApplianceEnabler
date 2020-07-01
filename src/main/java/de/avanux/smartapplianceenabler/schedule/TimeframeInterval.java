@@ -87,9 +87,9 @@ public class TimeframeInterval implements ApplianceIdConsumer, TimeframeInterval
         return stateHistory.contains(state);
     }
 
-    public boolean isActivatable(LocalDateTime now) {
+    public boolean isActivatable(LocalDateTime now, boolean ignoreStartTime) {
         return getState() == TimeframeIntervalState.QUEUED
-                && (now.isEqual(getInterval().getStart()) || now.isAfter(getInterval().getStart()))
+                && (ignoreStartTime || now.isEqual(getInterval().getStart()) || now.isAfter(getInterval().getStart()))
                 && (!(request instanceof RuntimeRequest) || isIntervalSufficient(now)
         );
     }
@@ -133,8 +133,10 @@ public class TimeframeInterval implements ApplianceIdConsumer, TimeframeInterval
     }
 
     public boolean isIntervalSufficient(LocalDateTime now) {
-        Integer runningTime = getRequest().getMin(now) != null ? getRequest().getMin(now) : getRequest().getMax(now);
-        LocalDateTime latestStart = getLatestStart(now, LocalDateTime.from(interval.getEnd()), runningTime);
+        if(getRequest() instanceof AbstractEnergyRequest) {
+            return true;
+        }
+        LocalDateTime latestStart = getLatestStart(now, LocalDateTime.from(interval.getEnd()), getRequest().getMax(now));
         return now.isEqual(latestStart) || now.isBefore(latestStart);
     }
 

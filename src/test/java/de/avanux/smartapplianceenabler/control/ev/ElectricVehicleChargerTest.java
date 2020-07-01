@@ -21,8 +21,8 @@ package de.avanux.smartapplianceenabler.control.ev;
 import java.time.LocalDateTime;
 
 import de.avanux.smartapplianceenabler.appliance.Appliance;
-import de.avanux.smartapplianceenabler.schedule.TimeframeIntervalHandler;
-import org.assertj.core.util.Lists;
+import de.avanux.smartapplianceenabler.schedule.SocRequest;
+import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
@@ -35,14 +35,18 @@ public class ElectricVehicleChargerTest {
     private Logger logger = LoggerFactory.getLogger(ElectricVehicleChargerTest.class);
     private ElectricVehicleCharger evCharger = Mockito.spy(new ElectricVehicleCharger());
     private EVChargerControl evChargerControl = Mockito.mock(EVChargerControl.class);
+    private Appliance appliance = Mockito.mock(Appliance.class);
     private LocalDateTime now = LocalDateTime.now();
+    private String applianceId = "TEST";
+    private TimeframeInterval timeframeInterval;
 
     public ElectricVehicleChargerTest() {
-        Appliance appliance = new Appliance();
-        appliance.setTimeframeIntervalHandler(new TimeframeIntervalHandler(Lists.emptyList(), evCharger));
+        SocRequest request = new SocRequest(50, 1, 0);
+        timeframeInterval = new TimeframeInterval(null, request);
+
         evCharger.startChargingStateDetectionDelay = 0;
         evCharger.setControl(evChargerControl);
-        evCharger.setApplianceId("TEST");
+        evCharger.setApplianceId(applianceId);
         evCharger.setAppliance(appliance);
         evCharger.init();
     }
@@ -67,14 +71,14 @@ public class ElectricVehicleChargerTest {
     public void getNewState_initial() {
         Mockito.when(evChargerControl.isVehicleConnected()).thenReturn(false);
         assertEquals(EVChargerState.VEHICLE_NOT_CONNECTED,
-                evCharger.getNewState(EVChargerState.VEHICLE_NOT_CONNECTED));
+                evCharger.getNewState(EVChargerState.VEHICLE_NOT_CONNECTED, false));
     }
 
     @Test
     public void getNewState_connect() {
         Mockito.when(evChargerControl.isVehicleConnected()).thenReturn(true);
         assertEquals(EVChargerState.VEHICLE_CONNECTED,
-                evCharger.getNewState(EVChargerState.VEHICLE_NOT_CONNECTED));
+                evCharger.getNewState(EVChargerState.VEHICLE_NOT_CONNECTED, false));
     }
 
     @Test
@@ -82,14 +86,22 @@ public class ElectricVehicleChargerTest {
         evCharger.setStartChargingRequested(true);
         Mockito.when(evChargerControl.isCharging()).thenReturn(true);
         assertEquals(EVChargerState.CHARGING,
-                evCharger.getNewState(EVChargerState.VEHICLE_CONNECTED));
+                evCharger.getNewState(EVChargerState.VEHICLE_CONNECTED, false));
+    }
+
+    @Test
+    public void getNewState_chargingCompleted() {
+        evCharger.setStartChargingRequested(true);
+        Mockito.when(evChargerControl.isCharging()).thenReturn(false);
+        assertEquals(EVChargerState.CHARGING_COMPLETED,
+                evCharger.getNewState(EVChargerState.VEHICLE_CONNECTED, true));
     }
 
     @Test
     public void getNewState_disconnect() {
         Mockito.when(evChargerControl.isVehicleNotConnected()).thenReturn(true);
         assertEquals(EVChargerState.VEHICLE_NOT_CONNECTED,
-                evCharger.getNewState(EVChargerState.VEHICLE_CONNECTED));
+                evCharger.getNewState(EVChargerState.VEHICLE_CONNECTED, false));
     }
 
     @Test
@@ -97,7 +109,7 @@ public class ElectricVehicleChargerTest {
         Mockito.when(evChargerControl.isVehicleNotConnected()).thenReturn(true);
         Mockito.when(evChargerControl.isCharging()).thenReturn(false);
         assertEquals(EVChargerState.VEHICLE_NOT_CONNECTED,
-                evCharger.getNewState(EVChargerState.CHARGING));
+                evCharger.getNewState(EVChargerState.CHARGING, false));
     }
 
     @Test
@@ -153,6 +165,7 @@ public class ElectricVehicleChargerTest {
         log("Fully charged now");
         configureMocks(false, true, false);
         updateState();
+        evCharger.activeIntervalChanged(now, applianceId, timeframeInterval, null, false);
         assertEquals(EVChargerState.CHARGING_COMPLETED, evCharger.getState());
         log("Disconnect vehicle");
         configureMocks(true, false, false);
@@ -182,7 +195,7 @@ public class ElectricVehicleChargerTest {
         updateState();
         assertEquals(EVChargerState.CHARGING, evCharger.getState());
         log("Stop charging");
-        evCharger.stopCharging(now);
+        evCharger.stopCharging();
         configureMocks(false, true, false);
         updateState();
         assertEquals(EVChargerState.VEHICLE_CONNECTED, evCharger.getState());
@@ -194,6 +207,7 @@ public class ElectricVehicleChargerTest {
         log("Fully charged now");
         configureMocks(false, true, false);
         updateState();
+        evCharger.activeIntervalChanged(now, applianceId, timeframeInterval, null, false);
         assertEquals(EVChargerState.CHARGING_COMPLETED, evCharger.getState());
         log("Disconnect vehicle");
         configureMocks(true, false, false);
@@ -215,6 +229,7 @@ public class ElectricVehicleChargerTest {
         log("Fully charged now");
         configureMocks(false, true, false);
         updateState();
+        evCharger.activeIntervalChanged(now, applianceId, timeframeInterval, null, false);
         assertEquals(EVChargerState.CHARGING_COMPLETED, evCharger.getState());
         log("Disconnect vehicle");
         configureMocks(true, false, false);
@@ -258,9 +273,9 @@ public class ElectricVehicleChargerTest {
         Mockito.when(evCharger.isWithinSwitchChargingStateDetectionDelay()).thenReturn(true);
         configureMocks(false, true, true);
         updateState();
-        assertEquals(EVChargerState.CHARGING, evCharger.getState());
+        assertEquals(EVChargerState.VEHICLE_CONNECTED, evCharger.getState());
         log("Stop charging during ChargingStateDetectionDelay");
-        evCharger.stopCharging(now);
+        evCharger.stopCharging();
         updateState();
         log("After ChargingStateDetectionDelay");
         Mockito.when(evCharger.isWithinSwitchChargingStateDetectionDelay()).thenReturn(false);

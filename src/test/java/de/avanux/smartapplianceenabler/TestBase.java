@@ -117,6 +117,7 @@ abstract public class TestBase {
     protected void assertTimeframeIntervalOptionalEnergy(Interval interval,
                                                          TimeframeIntervalState state,
                                                          Integer socInitial,
+                                                         Integer socRequested,
                                                          Integer evId,
                                                          Integer energy,
                                                          boolean enabled,
@@ -124,7 +125,7 @@ abstract public class TestBase {
         OptionalEnergySocRequest request = new OptionalEnergySocRequest(evId, energy);
         request.setEnabled(enabled);
         request.setSocInitial(socInitial);
-        request.setSoc(100);
+        request.setSoc(socRequested);
         TimeframeInterval expected = new TimeframeInterval(interval, request);
         expected.initState(state);
         assertEquals(expected, actual);
@@ -146,7 +147,7 @@ abstract public class TestBase {
 
     protected void tick(Appliance appliance, LocalDateTime now) {
         TimeframeIntervalHandler timeframeIntervalHandler = appliance.getTimeframeIntervalHandler();
-        timeframeIntervalHandler.updateQueue(now);
+        timeframeIntervalHandler.updateQueue(now, false);
     }
 
     protected Schedule buildScheduleWithRequest() {

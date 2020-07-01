@@ -94,19 +94,15 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
     }
 
     private Integer getSocInitialOrDefault() {
-        return socInitial != null ? socInitial : 100;
+        return socInitial != null ? socInitial : 0;
     }
 
     public void setSoc(Integer soc) {
         this.soc = soc;
     }
 
-    public Integer getSoc() {
-        return soc;
-    }
-
     private Integer getSocOrDefault() {
-        return getSoc() != null ? getSoc() : 100;
+        return this.soc != null ? this.soc : 100;
     }
 
     public Integer getEvId() {
@@ -140,7 +136,9 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
     @Override
     public void update() {
         this.energy = calculateEnergy(((ElectricVehicleCharger) getControl()).getVehicle(evId));
-        setEnabled(energy > 0);
+        if(energy <= 0) {
+            setEnabled(false);
+        }
     }
 
     private Integer getEnergy() {
@@ -185,14 +183,6 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
     }
 
     @Override
-    public void activeIntervalChanged(LocalDateTime now, String applianceId, TimeframeInterval deactivatedInterval, TimeframeInterval activatedInterval, boolean wasRunning) {
-        super.activeIntervalChanged(now, applianceId, deactivatedInterval, activatedInterval, wasRunning);
-        if(activatedInterval != null && activatedInterval.getState() == TimeframeIntervalState.ACTIVE) {
-            ((ElectricVehicleCharger) getControl()).retrieveSoc(now);
-        }
-    }
-
-    @Override
     public void onEVChargerSocChanged(LocalDateTime now, Float soc) {
         getLogger().debug("{}: Using updated SOC={}", getApplianceId(), soc);
         if(! isEnabledBefore()) {
@@ -212,7 +202,7 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
 
         return new EqualsBuilder()
                 .appendSuper(super.equals(o))
-                .append(soc, that.soc)
+                .append(getSocOrDefault(), that.getSocOrDefault())
                 .append(evId, that.evId)
                 .append(energy, that.energy)
                 .isEquals();
@@ -222,7 +212,7 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
                 .appendSuper(super.hashCode())
-                .append(soc)
+                .append(getSocOrDefault())
                 .append(evId)
                 .append(energy)
                 .toHashCode();
@@ -241,7 +231,7 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
         text += "/";
         text += "soc=" + socInitial;
         text += "%=>";
-        text += soc;
+        text += getSocOrDefault();
         text += "%";
         text += "/";
         text += "energy=" + (energy != null ? energy : 0);

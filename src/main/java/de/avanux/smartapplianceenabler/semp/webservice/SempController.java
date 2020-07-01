@@ -24,6 +24,7 @@ import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.schedule.AbstractEnergyRequest;
 import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
+import de.avanux.smartapplianceenabler.schedule.TimeframeIntervalHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -219,6 +220,17 @@ public class SempController {
             logger.debug("{}: Received control request: {}", deviceControl.getDeviceId(), deviceControl);
             Appliance appliance = ApplianceManager.getInstance().findAppliance(deviceControl.getDeviceId());
             if (appliance != null) {
+                // Work-around: if SHM sends switch-on command before timeframe interval start we have
+                // to force activation of timeframe interval
+                if(deviceControl.isOn()) {
+                    TimeframeIntervalHandler timeframeIntervalHandler = appliance.getTimeframeIntervalHandler();
+                    if(timeframeIntervalHandler != null) {
+                        TimeframeInterval activeTimeframeInterval = timeframeIntervalHandler.getActiveTimeframeInterval();
+                        if(activeTimeframeInterval == null) {
+                            timeframeIntervalHandler.updateQueue(now, true);
+                        }
+                    }
+                }
                 appliance.setApplianceState(now, deviceControl.isOn(),
                         deviceControl.getRecommendedPowerConsumption(),
                         "Setting appliance state to " + (deviceControl.isOn() ? "ON" : "OFF"));
@@ -301,10 +313,15 @@ public class SempController {
 
     protected de.avanux.smartapplianceenabler.semp.webservice.Timeframe
     createSempTimeFrame(LocalDateTime now, String deviceId, TimeframeInterval timeframeInterval) {
+        Integer earliestStartSeconds = timeframeInterval.getEarliestStartSeconds(now);
+        Integer latestEndSeconds = timeframeInterval.getLatestEndSeconds(now);
         Integer minRunningTime = timeframeInterval.getRequest().getMin(now);
         Integer maxRunningTime = timeframeInterval.getRequest().getMax(now);
         if (maxRunningTime == null) {
             maxRunningTime = 0;
+        }
+        if(maxRunningTime > latestEndSeconds) {
+            maxRunningTime = latestEndSeconds;
         }
         if (minRunningTime == null) {
             minRunningTime = maxRunningTime;
@@ -325,8 +342,8 @@ public class SempController {
         de.avanux.smartapplianceenabler.semp.webservice.Timeframe timeFrame
                 = new de.avanux.smartapplianceenabler.semp.webservice.Timeframe();
         timeFrame.setDeviceId(deviceId);
-        timeFrame.setEarliestStart(timeframeInterval.getEarliestStartSeconds(now));
-        timeFrame.setLatestEnd(timeframeInterval.getLatestEndSeconds(now));
+        timeFrame.setEarliestStart(earliestStartSeconds);
+        timeFrame.setLatestEnd(latestEndSeconds);
         if (timeframeInterval.getRequest() instanceof AbstractEnergyRequest) {
             timeFrame.setMinEnergy(timeframeInterval.getRequest().getMin(now));
             timeFrame.setMaxEnergy(timeframeInterval.getRequest().getMax(now));

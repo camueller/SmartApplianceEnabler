@@ -69,6 +69,7 @@ abstract public class AbstractRequest implements Request {
         return meter;
     }
 
+    @Override
     public void setControl(Control control) {
         this.control = control;
     }
