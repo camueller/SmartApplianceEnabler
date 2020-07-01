@@ -260,29 +260,30 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         }
     }
 
-    public synchronized void updateState(LocalDateTime now) {
+    /**
+     * Returns true, if the state update was performed. This does not necessarily mean that the state has changed!
+     * @return
+     */
+    public synchronized boolean updateState(LocalDateTime now) {
         if(isWithinSwitchChargingStateDetectionDelay()) {
             logger.debug("{}: Skipping state detection for {}s", applianceId, getStartChargingStateDetectionDelay());
             this.firstInvocationAfterSkip = true;
+            return false;
         }
         this.switchChargingStateTimestamp = null;
-        EVChargerState currentState = getState();
-        EVChargerState newState = getNewState(currentState, firstInvocationAfterSkip);
-        updateState(now, newState);
-        this.firstInvocationAfterSkip = false;
-    }
-
-    public synchronized void updateState(LocalDateTime now, EVChargerState newState) {
         EVChargerState previousState = getState();
-        if(newState != previousState) {
-            logger.debug("{}: Vehicle state changed: previousState={} newState={}", applianceId, previousState, newState);
-            stateHistory.add(newState);
+        EVChargerState currentState = getNewState(previousState, firstInvocationAfterSkip);
+        if(currentState != previousState) {
+            logger.debug("{}: Vehicle state changed: previousState={} newState={}", applianceId, previousState, currentState);
+            stateHistory.add(currentState);
             stateLastChangedTimestamp = now;
-            onEVChargerStateChanged(now, previousState, newState);
+            onEVChargerStateChanged(now, previousState, currentState);
         }
         else {
-            logger.debug("{}: Vehicle state={}", applianceId, newState);
+            logger.debug("{}: Vehicle state={}", applianceId, currentState);
         }
+        this.firstInvocationAfterSkip = false;
+        return true;
     }
 
     public EVChargerState getState() {
