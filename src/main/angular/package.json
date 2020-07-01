@@ -30,7 +30,6 @@
     "@ngx-translate/core": "^10.0.2",
     "@ngx-translate/http-loader": "^3.0.1",
     "@types/jest": "^24.0.25",
-    "clockpicker": "0.0.7",
     "include-media": "^1.4.9",
     "jest": "^26.0.1",
     "jest-preset-angular": "^8.0.0",

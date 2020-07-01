@@ -1,11 +1,12 @@
 <form class="StatusEditComponent" [formGroup]="form" (ngSubmit)="submitForm()">
   <div class="StatusComponent__appliance-details-row">
-    <mat-form-field class="StatusEditComponent__runTime">
-      <mat-label>{{'StatusComponent.plannedRunningTime' | translate}}</mat-label>
-      <input matInput type="text" class="time-of-day clockpicker" formControlName="runtime"
-             placeholder="00:00"
-             required="{{formHandler.isRequired('runtime')}}">
-    </mat-form-field>
+    <app-timepicker label="{{'StatusComponent.plannedRunningTime' | translate}}"
+                    formControlNameTP="runtime"
+                    [value]="suggestedRuntime"
+                    [width]="'6rem'"
+                    [errorMessages]="errorMessages"
+                    #runtimeComponent
+    ></app-timepicker>
   </div>
   <div class="StatusEditComponent__error" *ngIf="hasErrors">
     <mat-error>{{error}}</mat-error>

@@ -4,7 +4,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {SocRequest} from './soc-request';
 import {ErrorMessages} from '../../../shared/error-messages';
 import {FormHandler} from '../../../shared/form-handler';
-import {ErrorMessage, ValidatorType} from '../../../shared/error-message';
+import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../../shared/error-message';
 import {InputValidatorPatterns} from '../../../shared/input-validator-patterns';
 import {ElectricVehicle} from '../../../control/evcharger/electric-vehicle/electric-vehicle';
 import {ErrorMessageHandler} from '../../../shared/error-message-handler';
@@ -23,6 +23,8 @@ export class ScheduleRequestSocComponent implements OnChanges, OnInit {
   socRequest: SocRequest;
   @Input()
   electricVehicles: ElectricVehicle[];
+  @Input()
+  enabled: boolean;
   form: FormGroup;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};
@@ -47,11 +49,15 @@ export class ScheduleRequestSocComponent implements OnChanges, OnInit {
       }
       this.updateForm();
     }
+    if (changes.enabled && !changes.enabled.firstChange) {
+      this.setEnabled(changes.enabled.currentValue);
+    }
   }
 
   ngOnInit() {
     this.errorMessages = new ErrorMessages('ScheduleRequestSocComponent.error.', [
-      new ErrorMessage('soc', ValidatorType.required),
+      new ErrorMessage('evId', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
+      new ErrorMessage('soc', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('soc', ValidatorType.pattern),
     ], this.translate);
     this.expandParentForm();
@@ -79,7 +85,7 @@ export class ScheduleRequestSocComponent implements OnChanges, OnInit {
   }
 
   expandParentForm() {
-    this.formHandler.addFormControl(this.form, 'evId', this.evId);
+    this.formHandler.addFormControl(this.form, 'evId', this.evId, Validators.required);
     this.formHandler.addFormControl(this.form, 'soc', this.soc,
       [Validators.required, Validators.pattern(InputValidatorPatterns.PERCENTAGE)]);
   }

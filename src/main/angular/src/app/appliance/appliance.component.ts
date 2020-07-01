@@ -30,7 +30,7 @@ import {Appliance} from './appliance';
 import {Observable} from 'rxjs';
 import {DialogService} from '../shared/dialog.service';
 import {Logger} from '../log/logger';
-import {ErrorMessage, ValidatorType} from '../shared/error-message';
+import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../shared/error-message';
 import {FormHandler} from '../shared/form-handler';
 import {getValidInt, getValidString} from '../shared/form-util';
 import {ApplianceType} from './appliance-type';
@@ -78,13 +78,13 @@ export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<Appl
 
   ngOnInit() {
     this.errorMessages = new ErrorMessages('ApplianceComponent.error.', [
-      new ErrorMessage('id', ValidatorType.required),
+      new ErrorMessage('id', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('id', ValidatorType.pattern),
-      new ErrorMessage('vendor', ValidatorType.required),
-      new ErrorMessage('name', ValidatorType.required),
-      new ErrorMessage('serial', ValidatorType.required),
+      new ErrorMessage('vendor', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
+      new ErrorMessage('name', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
+      new ErrorMessage('serial', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('minPowerConsumption', ValidatorType.pattern),
-      new ErrorMessage('maxPowerConsumption', ValidatorType.required),
+      new ErrorMessage('maxPowerConsumption', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('maxPowerConsumption', ValidatorType.pattern),
       new ErrorMessage('minOnTime', ValidatorType.pattern),
       new ErrorMessage('maxOnTime', ValidatorType.pattern),
@@ -110,6 +110,7 @@ export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<Appl
     this.buildForm();
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
+      console.log('errors=', this.errors);
     });
   }
 
@@ -126,28 +127,6 @@ export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<Appl
 
   isInterruptionAllowed() {
     return this.form.controls.interruptionsAllowed.value;
-  }
-
-  setInterruptionAllowed(enabled: boolean) {
-    if (enabled) {
-      this.form.controls.minOnTime.enable();
-      this.form.controls.maxOnTime.enable();
-      this.form.controls.minOffTime.enable();
-      this.form.controls.maxOffTime.enable();
-    } else {
-      this.form.controls.minOnTime.disable();
-      this.form.controls.minOnTime.reset();
-      this.form.controls.maxOnTime.disable();
-      this.form.controls.maxOnTime.reset();
-      this.form.controls.minOffTime.disable();
-      this.form.controls.minOffTime.reset();
-      this.form.controls.maxOffTime.disable();
-      this.form.controls.maxOffTime.reset();
-    }
-  }
-
-  toggleInterruptionAllowed() {
-    this.setInterruptionAllowed(!this.isInterruptionAllowed());
   }
 
   deleteAppliance() {
@@ -192,7 +171,6 @@ export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<Appl
     this.formHandler.addFormControl(this.form, 'maxOffTime',
       this.appliance && this.appliance.maxOffTime,
       Validators.pattern(InputValidatorPatterns.INTEGER));
-    this.setInterruptionAllowed(this.appliance ? this.appliance.interruptionsAllowed : false);
   }
 
   updateForm() {
@@ -222,10 +200,10 @@ export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<Appl
     this.appliance.minPowerConsumption = this.isEvCharger() ? getValidInt(this.form.controls.minPowerConsumption.value) : undefined;
     this.appliance.maxPowerConsumption = getValidInt(this.form.controls.maxPowerConsumption.value);
     this.appliance.interruptionsAllowed = this.form.controls.interruptionsAllowed.value;
-    this.appliance.minOnTime = getValidInt(this.form.controls.minOnTime.value);
-    this.appliance.maxOnTime = getValidInt(this.form.controls.maxOnTime.value);
-    this.appliance.minOffTime = getValidInt(this.form.controls.minOffTime.value);
-    this.appliance.maxOffTime = getValidInt(this.form.controls.maxOffTime.value);
+    this.appliance.minOnTime = this.appliance.interruptionsAllowed ? getValidInt(this.form.controls.minOnTime.value) : undefined;
+    this.appliance.maxOnTime = this.appliance.interruptionsAllowed ? getValidInt(this.form.controls.maxOnTime.value) : undefined;
+    this.appliance.minOffTime = this.appliance.interruptionsAllowed ? getValidInt(this.form.controls.minOffTime.value) : undefined;
+    this.appliance.maxOffTime = this.appliance.interruptionsAllowed ? getValidInt(this.form.controls.maxOffTime.value) : undefined;
   }
 
   submitForm() {

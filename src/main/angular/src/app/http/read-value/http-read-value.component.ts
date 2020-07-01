@@ -8,7 +8,7 @@ import {ErrorMessages} from '../../shared/error-messages';
 import {HttpReadValue} from './http-read-value';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {getValidFloat, getValidString} from '../../shared/form-util';
-import {ErrorMessage, ValidatorType} from '../../shared/error-message';
+import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/error-message';
 
 @Component({
   selector: 'app-http-read-value',
@@ -20,6 +20,8 @@ export class HttpReadValueComponent implements OnChanges, OnInit {
   httpReadValue: HttpReadValue;
   @Input()
   valueNames: string[];
+  @Input()
+  contentProtocol: string;
   @Input()
   disableFactorToValue = false;
   @Input()
@@ -56,7 +58,9 @@ export class HttpReadValueComponent implements OnChanges, OnInit {
   }
 
   ngOnInit() {
+    console.log('contentProtocol=', this.contentProtocol);
     this.errorMessages = new ErrorMessages('HttpReadValueComponent.error.', [
+      new ErrorMessage('name', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('factorToValue', ValidatorType.pattern),
     ], this.translate);
     this.form.statusChanges.subscribe(() => {

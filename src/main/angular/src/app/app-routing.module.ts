@@ -75,6 +75,7 @@ const routes: Routes = [
     resolve: {
       control: ControlResolver,
       controlDefaults: ControlDefaultsResolver,
+      meterDefaults: MeterDefaultsResolver,
       appliance: ApplianceResolver,
       settings: SettingsResolver,
       settingsDefaults: SettingsDefaultsResolver

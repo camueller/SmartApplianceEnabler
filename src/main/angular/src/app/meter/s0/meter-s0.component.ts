@@ -5,7 +5,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {PinPullResistance} from './pin-pull-resistance';
 import {ErrorMessages} from '../../shared/error-messages';
 import {FormHandler} from '../../shared/form-handler';
-import {ErrorMessage, ValidatorType} from '../../shared/error-message';
+import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/error-message';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {getValidInt} from '../../shared/form-util';
 import {MeterDefaults} from '../meter-defaults';
@@ -58,9 +58,9 @@ export class MeterS0Component implements OnChanges, OnInit {
 
   ngOnInit() {
     this.errorMessages = new ErrorMessages('MeterS0Component.error.', [
-      new ErrorMessage('gpio', ValidatorType.required),
+      new ErrorMessage('gpio', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('gpio', ValidatorType.pattern),
-      new ErrorMessage('impulsesPerKwh', ValidatorType.required),
+      new ErrorMessage('impulsesPerKwh', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('impulsesPerKwh', ValidatorType.pattern),
       new ErrorMessage('measurementInterval', ValidatorType.pattern),
     ], this.translate);

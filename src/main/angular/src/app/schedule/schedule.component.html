@@ -44,19 +44,24 @@
   <div>
     <app-schedule-timeframe-day *ngIf="isDayTimeframe()"
                                 [dayTimeFrame]="schedule.timeframe"
+                                [enabled]="isEnabled()"
     ></app-schedule-timeframe-day>
     <app-schedule-timeframe-consecutivedays *ngIf="isConsecutiveDaysTimeframe()"
                                             [consecutiveDaysTimeframe]="schedule.timeframe"
+                                            [enabled]="isEnabled()"
     ></app-schedule-timeframe-consecutivedays>
     <app-schedule-request-runtime *ngIf="isRuntimeRequest()"
                                   [runtimeRequest]="schedule.request"
+                                  [enabled]="isEnabled()"
     ></app-schedule-request-runtime>
     <app-schedule-request-energy *ngIf="isEnergyRequest()"
-                                  [energyRequest]="schedule.request"
+                                 [energyRequest]="schedule.request"
+                                 [enabled]="isEnabled()"
     ></app-schedule-request-energy>
     <app-schedule-request-soc *ngIf="isSocRequest()"
                               [socRequest]="schedule.request"
                               [electricVehicles]="electricVehicles"
+                              [enabled]="isEnabled()"
     ></app-schedule-request-soc>
   </div>
 </div>

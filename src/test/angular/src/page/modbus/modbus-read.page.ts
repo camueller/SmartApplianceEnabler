@@ -22,7 +22,9 @@ export class ModbusReadPage {
     await ModbusReadPage.setAddress(t, modbusRead.address, modbusReadIndex, selectorPrefix);
     await ModbusReadPage.setType(t, modbusRead.type, modbusReadIndex, selectorPrefix);
     await ModbusReadPage.setBytes(t, modbusRead.bytes, modbusReadIndex, selectorPrefix);
-    await ModbusReadPage.setByteOrder(t, modbusRead.byteOrder, modbusReadIndex, selectorPrefix);
+    if (modbusRead.byteOrder) {
+      await ModbusReadPage.setByteOrder(t, modbusRead.byteOrder, modbusReadIndex, selectorPrefix);
+    }
     await ModbusReadPage.setFactorToValue(t, modbusRead.factorToValue, modbusReadIndex, selectorPrefix);
     for (let i = 0; i < modbusRead.readValues.length; i++) {
       const modbusReadValueSelectorPrefix = `${selectorPrefix} ${ModbusReadPage.selectorBase(modbusReadIndex)}`;
@@ -34,7 +36,9 @@ export class ModbusReadPage {
     await ModbusReadPage.assertAddress(t, modbusRead.address, modbusReadIndex, selectorPrefix);
     await ModbusReadPage.assertType(t, modbusRead.type, modbusReadIndex, selectorPrefix);
     await ModbusReadPage.assertBytes(t, modbusRead.bytes, modbusReadIndex, selectorPrefix);
-    await ModbusReadPage.assertByteOrder(t, modbusRead.byteOrder, modbusReadIndex, selectorPrefix);
+    if (modbusRead.byteOrder) {
+      await ModbusReadPage.assertByteOrder(t, modbusRead.byteOrder, modbusReadIndex, selectorPrefix);
+    }
     await ModbusReadPage.assertFactorToValue(t, modbusRead.factorToValue, modbusReadIndex, selectorPrefix);
     for (let i = 0; i < modbusRead.readValues.length; i++) {
       const modbusReadValueSelectorPrefix = `${selectorPrefix} ${ModbusReadPage.selectorBase(modbusReadIndex)}`;
@@ -62,7 +66,7 @@ export class ModbusReadPage {
   }
 
   public static async setBytes(t: TestController, bytes: number, modbusReadIndex: number,
-                                 selectorPrefix?: string) {
+                               selectorPrefix?: string) {
     await inputText(t, selectorInputByFormControlName('bytes', selectorPrefix,
       ModbusReadPage.selectorBase(modbusReadIndex)), bytes && bytes.toString());
   }
@@ -72,7 +76,7 @@ export class ModbusReadPage {
   }
 
   public static async setByteOrder(t: TestController, byteOrder: string, modbusReadIndex: number,
-                              selectorPrefix?: string) {
+                                   selectorPrefix?: string) {
     await selectOptionByAttribute(t, selectorSelectByFormControlName('byteOrder', selectorPrefix,
       ModbusReadPage.selectorBase(modbusReadIndex)), byteOrder);
   }
@@ -82,7 +86,7 @@ export class ModbusReadPage {
   }
 
   public static async setFactorToValue(t: TestController, factorToValue: number, modbusReadIndex: number,
-                               selectorPrefix?: string) {
+                                       selectorPrefix?: string) {
     await inputText(t, selectorInputByFormControlName('factorToValue', selectorPrefix,
       ModbusReadPage.selectorBase(modbusReadIndex)), factorToValue && factorToValue.toString());
   }

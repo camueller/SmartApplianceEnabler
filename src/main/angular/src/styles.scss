@@ -1,4 +1,5 @@
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
+@import "~@angular/material/theming";
 @import 'node_modules/include-media/dist/_include-media.scss';
 @import "variables";
 
@@ -14,17 +15,33 @@ h1 {
 
 h2 {
   font-size: 1.2rem;
-  margin-top: 2rem;
-  margin-bottom: 1rem;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
 }
 
 h3 {
   font-size: 1rem;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
 }
 
 mat-form-field, mat-checkbox {
   margin: $field-margin;
 }
+
+/* BEGIN: https://github.com/angular/components/issues/4580 */
+//* use .mat-form-field-invalid since it is only set after field had focus */
+mat-form-field:not(.no-error-on-field).ng-touched.mat-form-field-invalid {
+  animation: bigger;
+  animation-duration: 0.3s;
+  margin-bottom: 60px;
+}
+
+@keyframes bigger {
+  from {margin-bottom: 0;}
+  to {margin-bottom: 60px;}
+}
+/* END: https://github.com/angular/components/issues/4580 */
 
 button {
   height: 2.25rem;
@@ -58,6 +75,10 @@ button {
     align-items: baseline;
   }
 
+  &__heading-extra-top-margin {
+    margin-top: 1.25rem;
+  }
+
   &__hostname {
     width: 5rem;
   }
@@ -71,7 +92,7 @@ button {
   }
 
   &__modbus-address {
-    width: 6rem;
+    width: 7rem;
   }
 
   &__modbus-name {

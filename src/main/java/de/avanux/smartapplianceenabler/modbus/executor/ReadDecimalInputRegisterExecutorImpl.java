@@ -43,17 +43,17 @@ public class ReadDecimalInputRegisterExecutorImpl extends ReadInputRegisterExecu
     @Override
     public Double getValue() {
         Integer[] byteValues = getByteValues();
-        if (this.byteOrder == ByteOrder.BigEndian) {
-            if (getBytes() == 2) {
-                return Float.valueOf(byteValues[0] << 16 | byteValues[1]).doubleValue() * getInitializedFactorToValue();
-            }
-        }
         if (this.byteOrder == ByteOrder.LittleEndian) {
             if (getBytes() == 2) {
                 return Float.valueOf(byteValues[1] << 16 | byteValues[0]).doubleValue() * getInitializedFactorToValue();
             }
         }
-        logger.error("{}: Float has to be composed of 2 bytes!", getApplianceId());
+        else {
+            if (getBytes() == 2) {
+                return Float.valueOf(byteValues[0] << 16 | byteValues[1]).doubleValue() * getInitializedFactorToValue();
+            }
+        }
+        logger.error("{}: Value has to be composed of 2 bytes!", getApplianceId());
         return null;
     }
 

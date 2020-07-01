@@ -34,7 +34,7 @@
   <mat-divider></mat-divider>
 
   <section>
-    <h2>{{'SettingsComponent.modbus' | translate}}</h2>
+    <h2 class="sae__heading-extra-top-margin">{{'SettingsComponent.modbus' | translate}}</h2>
     <div formArrayName="modbusSettings">
       <div *ngFor="let modbusSetting of settings.modbusSettings; index as i">
         <app-settings-modbus

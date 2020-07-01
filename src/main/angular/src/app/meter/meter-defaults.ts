@@ -2,6 +2,7 @@ export class MeterDefaults {
   s0ElectricityMeter_measurementInterval: number;
   modbusElectricityMeter_pollInterval: number;
   modbusElectricityMeter_measurementInterval: number;
+  modbusRead_bytesForRegisterType: { [type: string]: number };
   httpElectricityMeter_factorToWatt: number;
   httpElectricityMeter_measurementInterval: number;
   httpElectricityMeter_pollInterval: number;

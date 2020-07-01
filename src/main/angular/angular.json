@@ -23,11 +23,11 @@
             ],
             "styles": [
               "src/styles.scss",
-              "node_modules/clockpicker/dist/jquery-clockpicker.min.css"
+              "src/jquery-clockpicker.min.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.js",
-              "node_modules/clockpicker/dist/jquery-clockpicker.min.js"
+              "src/jquery-clockpicker.min.js"
             ]
           },
           "configurations": {

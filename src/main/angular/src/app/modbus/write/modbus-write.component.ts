@@ -1,12 +1,23 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, SimpleChanges, ViewChildren} from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  QueryList,
+  SimpleChanges,
+  ViewChildren
+} from '@angular/core';
 import {FormArray, FormGroup, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {ModbusWrite} from './modbus-write';
 import {ModbusWriteValueComponent} from '../write-value/modbus-write-value.component';
 import {ErrorMessages} from '../../shared/error-messages';
 import {FormHandler} from '../../shared/form-handler';
-import {ErrorMessage, ValidatorType} from '../../shared/error-message';
-import {fixExpressionChangedAfterItHasBeenCheckedError, getValidInt, getValidString} from '../../shared/form-util';
+import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/error-message';
+import {getValidInt, getValidString} from '../../shared/form-util';
 import {ModbusWriteValue} from '../write-value/modbus-write-value';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
@@ -44,7 +55,8 @@ export class ModbusWriteComponent implements OnChanges, OnInit {
   errorMessageHandler: ErrorMessageHandler;
 
   constructor(private logger: Logger,
-              private translate: TranslateService
+              private translate: TranslateService,
+              private changeDetectorRef: ChangeDetectorRef
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
     this.formHandler = new FormHandler();
@@ -66,8 +78,9 @@ export class ModbusWriteComponent implements OnChanges, OnInit {
 
   ngOnInit() {
     this.errorMessages = new ErrorMessages('ModbusReadComponent.error.', [
-      new ErrorMessage('address', ValidatorType.required),
+      new ErrorMessage('address', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('address', ValidatorType.pattern),
+      new ErrorMessage('type', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('factorToValue', ValidatorType.pattern),
     ], this.translate);
     this.form.statusChanges.subscribe(() => {
@@ -89,7 +102,6 @@ export class ModbusWriteComponent implements OnChanges, OnInit {
   }
 
   addValue() {
-    fixExpressionChangedAfterItHasBeenCheckedError(this.form);
     const newWriteValue = new ModbusWriteValue();
     if (!this.modbusWrite.writeValues) {
       this.modbusWrite.writeValues = [];
@@ -97,6 +109,7 @@ export class ModbusWriteComponent implements OnChanges, OnInit {
     this.modbusWrite.writeValues.push(newWriteValue);
     this.modbusWriteValuesFormArray.push(this.createModbusWriteValueFormGroup());
     this.form.markAsDirty();
+    this.changeDetectorRef.detectChanges();
   }
 
   removeValue(index: number) {

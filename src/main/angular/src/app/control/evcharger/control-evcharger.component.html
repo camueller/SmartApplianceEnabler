@@ -63,12 +63,13 @@
                                 [evModbusControl]="evCharger.modbusControl"
                                 [settings]="settings"
                                 [settingsDefaults]="settingsDefaults"
+                                [meterDefaults]="meterDefaults"
                                 [translationKeys]="modbusTranslationKeys"
   ></app-control-evcharger-modbus>
   <app-control-evcharger-http *ngIf="isProtocolHttp"
                               [evHttpControl]="evCharger.httpControl"
   ></app-control-evcharger-http>
-  <h2>{{'ControlEvchargerComponent.headingEv' | translate}}</h2>
+  <h2 class="sae__heading-extra-top-margin">{{'ControlEvchargerComponent.headingEv' | translate}}</h2>
   <div formArrayName="electricVehicles">
     <div *ngFor="let electricVehicle of evCharger.vehicles; index as i; last as l" class="ControlEvchargerComponent__electricVehicle">
       <mat-divider class="ControlEvchargerComponent__electricVehicleDivider"></mat-divider>

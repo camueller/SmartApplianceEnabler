@@ -66,6 +66,7 @@
     <mat-form-field class="sae__regex">
       <mat-label>{{'ElectricVehicleComponent.script.extractionRegex' | translate}}</mat-label>
       <input matInput type="text" formControlName="scriptExtractionRegex"
+             matTooltip="{{'regex.tooltip' | translate}}"
              required="{{formHandler.isRequired('scriptExtractionRegex')}}">
       <mat-error *ngIf="errors.scriptExtractionRegex">{{errors.scriptExtractionRegex}}</mat-error>
     </mat-form-field>

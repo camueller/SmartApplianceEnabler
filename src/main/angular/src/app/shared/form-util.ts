@@ -36,10 +36,3 @@ export function getValidFloat(input: any): number | undefined {
   }
   return input.toString().length > 0 ? Number.parseFloat(input) : undefined;
 }
-
-export function fixExpressionChangedAfterItHasBeenCheckedError(form: FormGroup) {
-  // avoid ExpressionChangedAfterItHasBeenCheckedError when calling this on a valid form
-  if (form.valid) {
-    form.setErrors({'invalid': true});
-  }
-}

@@ -17,7 +17,7 @@
       </mat-form-field>
       <mat-form-field class="sae__factorToValue" *ngIf="! disableFactorToValue">
         <mat-label>{{'ModbusReadComponent.factorToValue' | translate}}</mat-label>
-        <input matInput type="text" formControlName="factorToValue"
+        <input matInput type="text" formControlName="factorToValue" placeholder="1"
                required="{{formHandler.isRequired('factorToValue')}}">
         <mat-error *ngIf="errors.factorToValue">{{errors.factorToValue}}</mat-error>
       </mat-form-field>
@@ -43,5 +43,5 @@
     </div>
   </div>
 </div>
-<button mat-raised-button type="button" (click)="addValue()" *ngIf="isAddValuePossible">
+<button mat-raised-button type="button" class="ModbusWriteComponent__addValue" (click)="addValue()" *ngIf="isAddValuePossible">
   {{'ModbusWriteComponent.button.addValue' | translate}}</button>

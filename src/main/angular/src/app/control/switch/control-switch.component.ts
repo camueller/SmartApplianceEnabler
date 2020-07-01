@@ -9,7 +9,7 @@ import {ControlDefaults} from '../control-defaults';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {FormHandler} from '../../shared/form-handler';
 import {Logger} from '../../log/logger';
-import {ErrorMessage, ValidatorType} from '../../shared/error-message';
+import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/error-message';
 import {getValidInt} from '../../shared/form-util';
 
 @Component({
@@ -57,7 +57,7 @@ export class ControlSwitchComponent implements OnChanges, OnInit {
   ngOnInit() {
     this.expandParentForm();
     this.errorMessages = new ErrorMessages('ControlSwitchComponent.error.', [
-      new ErrorMessage('gpio', ValidatorType.required),
+      new ErrorMessage('gpio', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('gpio', ValidatorType.pattern),
     ], this.translate);
     this.form.statusChanges.subscribe(() => {

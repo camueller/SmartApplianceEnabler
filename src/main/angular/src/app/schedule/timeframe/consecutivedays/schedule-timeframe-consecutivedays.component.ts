@@ -1,44 +1,15 @@
-import {AfterViewChecked, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {ControlContainer, FormControlName, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
+import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {ConsecutiveDaysTimeframe} from './consecutive-days-timeframe';
 import {ErrorMessages} from '../../../shared/error-messages';
 import {DayOfWeek, DaysOfWeek} from '../../../shared/days-of-week';
 import {TimeUtil} from '../../../shared/time-util';
 import {FormHandler} from '../../../shared/form-handler';
-import {ErrorMessage, ValidatorType} from '../../../shared/error-message';
-import {InputValidatorPatterns} from '../../../shared/input-validator-patterns';
+import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../../shared/error-message';
 import {ErrorMessageHandler} from '../../../shared/error-message-handler';
 import {Logger} from '../../../log/logger';
-
-declare const $: any;
-
-/**
- * The time set by clock picker is displayed in input field but not set in the form model.
- * Since there is no direct access to the native element from the form control we have to add a hook to
- * propagate time changes on the native element to the form control.
- * Inspired by https://stackoverflow.com/questions/39642547/is-it-possible-to-get-native-element-for-formcontrol
- */
-const originFormControlNameNgOnChanges = FormControlName.prototype.ngOnChanges;
-FormControlName.prototype.ngOnChanges = function () {
-  const result = originFormControlNameNgOnChanges.apply(this, arguments);
-  this.control.nativeElement = this.valueAccessor._elementRef;
-
-  const elementRef = this.valueAccessor._elementRef;
-  if (elementRef) {
-    const classAttribute: string = elementRef.nativeElement.attributes.getNamedItem('class');
-    if (classAttribute != null) {
-      const classAttributeValues = classAttribute['nodeValue'];
-      if (classAttributeValues.indexOf('clockpicker') > -1) {
-        $(this.valueAccessor._elementRef.nativeElement).on('change', (event) => {
-          this.control.setValue(event.target.value);
-          this.control.markAsDirty();
-        });
-      }
-    }
-  }
-  return result;
-};
+import {TimepickerComponent} from '../../../material/timepicker/timepicker.component';
 
 @Component({
   selector: 'app-schedule-timeframe-consecutivedays',
@@ -48,13 +19,18 @@ FormControlName.prototype.ngOnChanges = function () {
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
 })
-export class ScheduleTimeframeConsecutivedaysComponent implements OnChanges, OnInit, AfterViewChecked {
+export class ScheduleTimeframeConsecutivedaysComponent implements OnChanges, OnInit {
   @Input()
   consecutiveDaysTimeframe: ConsecutiveDaysTimeframe;
+  @Input()
+  enabled: boolean;
+  @ViewChild('startTimeComponent', {static: true})
+  startTimeComp: TimepickerComponent;
+  @ViewChild('endTimeComponent', {static: true})
+  endTimeComp: TimepickerComponent;
   form: FormGroup;
   formHandler: FormHandler;
   daysOfWeek: DayOfWeek[];
-  initializeOnceAfterViewChecked = false;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -77,36 +53,27 @@ export class ScheduleTimeframeConsecutivedaysComponent implements OnChanges, OnI
       }
       this.updateForm();
     }
+    if (changes.enabled && !changes.enabled.firstChange) {
+      this.setEnabled(changes.enabled.currentValue);
+    }
   }
 
   ngOnInit() {
     DaysOfWeek.getDows(this.translate).subscribe(daysOfWeek => this.daysOfWeek = daysOfWeek);
     this.errorMessages = new ErrorMessages('ScheduleTimeframeDayComponent.error.', [
-      new ErrorMessage('startTime', ValidatorType.required),
+      new ErrorMessage('startTime', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('startTime', ValidatorType.pattern),
-      new ErrorMessage('endTime', ValidatorType.required),
+      new ErrorMessage('endTime', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('endTime', ValidatorType.pattern),
     ], this.translate);
     this.expandParentForm();
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
     });
-    this.initializeOnceAfterViewChecked = true;
-  }
-
-  ngAfterViewChecked() {
-    if (this.initializeOnceAfterViewChecked) {
-      this.initializeOnceAfterViewChecked = false;
-      this.initializeClockPicker();
-    }
-  }
-
-  initializeClockPicker() {
-    $('.clockpicker').clockpicker({ autoclose: true });
   }
 
   get startDayOfWeek() {
-    return this.consecutiveDaysTimeframe.start && this.consecutiveDaysTimeframe.start.dayOfWeek;
+    return this.consecutiveDaysTimeframe.start?.dayOfWeek;
   }
 
   get startTime() {
@@ -114,7 +81,7 @@ export class ScheduleTimeframeConsecutivedaysComponent implements OnChanges, OnI
   }
 
   get endDayOfWeek() {
-    return this.consecutiveDaysTimeframe.end && this.consecutiveDaysTimeframe.end.dayOfWeek;
+    return this.consecutiveDaysTimeframe.end?.dayOfWeek;
   }
 
   get endTime() {
@@ -123,41 +90,31 @@ export class ScheduleTimeframeConsecutivedaysComponent implements OnChanges, OnI
 
   setEnabled(enabled: boolean) {
     if (enabled) {
-      this.form.controls.startDayOfWeek.enable();
-      this.form.controls.startTime.enable();
-      this.form.controls.endDayOfWeek.enable();
-      this.form.controls.endTime.enable();
+      this.form.controls.startDayOfWeek?.enable();
+      this.form.controls.endDayOfWeek?.enable();
     } else {
-      this.form.controls.startDayOfWeek.disable();
-      this.form.controls.startTime.disable();
-      this.form.controls.endDayOfWeek.disable();
-      this.form.controls.endTime.enable();
+      this.form.controls.startDayOfWeek?.disable();
+      this.form.controls.endDayOfWeek?.disable();
     }
   }
 
   expandParentForm() {
     this.formHandler.addFormControl(this.form, 'startDayOfWeek', this.startDayOfWeek,
       Validators.required);
-    this.formHandler.addFormControl(this.form, 'startTime', this.startTime,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]);
     this.formHandler.addFormControl(this.form, 'endDayOfWeek', this.endDayOfWeek,
       Validators.required);
-    this.formHandler.addFormControl(this.form, 'endTime', this.endTime,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]);
   }
 
   updateForm() {
     this.formHandler.setFormControlValue(this.form, 'startDayOfWeek', this.startDayOfWeek);
-    this.formHandler.setFormControlValue(this.form, 'startTime', this.startTime);
     this.formHandler.setFormControlValue(this.form, 'endDayOfWeek', this.endDayOfWeek);
-    this.formHandler.setFormControlValue(this.form, 'endTime', this.endTime);
   }
 
   updateModelFromForm(): ConsecutiveDaysTimeframe | undefined {
     const startDayOfWeek = this.form.controls.startDayOfWeek.value;
-    const startTime = this.form.controls.startTime.value;
+    const startTime = this.startTimeComp.updateModelFromForm();
     const endDayOfWeek = this.form.controls.endDayOfWeek.value;
-    const endTime = this.form.controls.endTime.value;
+    const endTime = this.endTimeComp.updateModelFromForm();
 
     if (!(startDayOfWeek || startTime || endDayOfWeek || endTime)) {
       return undefined;

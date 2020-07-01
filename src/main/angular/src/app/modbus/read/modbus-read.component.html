@@ -18,10 +18,11 @@
       <mat-form-field class="ModbusReadComponent__bytes">
         <mat-label>{{'ModbusReadComponent.bytes' | translate}}</mat-label>
         <input matInput type="text" formControlName="bytes"
+               placeholder="{{bytesPlaceholder}}"
                required="{{formHandler.isRequired('bytes')}}">
         <mat-error *ngIf="errors.bytes">{{errors.bytes}}</mat-error>
       </mat-form-field>
-      <mat-form-field class="ModbusReadComponent__byteOrder">
+      <mat-form-field class="ModbusReadComponent__byteOrder" *ngIf="isByteOrderDisplayed">
         <mat-label>{{'ModbusReadComponent.byteOrder' | translate}}</mat-label>
         <mat-select formControlName="byteOrder" required="{{formHandler.isRequired('byteOrder')}}">
           <mat-option *ngFor="let byteOrder of byteOrders" [value]="byteOrder">
@@ -32,6 +33,7 @@
       <mat-form-field class="sae__factorToValue">
         <mat-label>{{'ModbusReadComponent.factorToValue' | translate}}</mat-label>
         <input matInput type="text" formControlName="factorToValue"
+               placeholder="1"
                required="{{formHandler.isRequired('factorToValue')}}">
         <mat-error *ngIf="errors.factorToValue">{{errors.factorToValue}}</mat-error>
       </mat-form-field>

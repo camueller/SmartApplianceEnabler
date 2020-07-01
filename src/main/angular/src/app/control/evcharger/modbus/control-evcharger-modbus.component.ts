@@ -10,13 +10,15 @@ import {EvModbusControl} from './ev-modbus-control';
 import {SettingsDefaults} from '../../../settings/settings-defaults';
 import {InputValidatorPatterns} from '../../../shared/input-validator-patterns';
 import {getValidString} from '../../../shared/form-util';
-import {ErrorMessage, ValidatorType} from '../../../shared/error-message';
+import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../../shared/error-message';
 import {ModbusWriteComponent} from '../../../modbus/write/modbus-write.component';
 import {ModbusWrite} from '../../../modbus/write/modbus-write';
 import {ModbusRead} from '../../../modbus/read/modbus-read';
 import {ModbusReadComponent} from '../../../modbus/read/modbus-read.component';
 import {EvReadValueName} from '../ev-read-value-name';
 import {EvWriteValueName} from '../ev-write-value-name';
+import { MessageBoxLevel } from 'src/app/material/messagebox/messagebox.component';
+import {MeterDefaults} from '../../../meter/meter-defaults';
 
 @Component({
   selector: 'app-control-evcharger-modbus',
@@ -33,6 +35,8 @@ export class ControlEvchargerModbusComponent implements OnChanges, OnInit {
   settings: Settings;
   @Input()
   settingsDefaults: SettingsDefaults;
+  @Input()
+  meterDefaults: MeterDefaults;
   @ViewChildren('modbusReadComponents')
   modbusReadComps: QueryList<ModbusReadComponent>;
   @ViewChildren('modbusWriteComponents')
@@ -45,6 +49,7 @@ export class ControlEvchargerModbusComponent implements OnChanges, OnInit {
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
+  MessageBoxLevel = MessageBoxLevel;
 
   constructor(private logger: Logger,
               private parent: FormGroupDirective,
@@ -67,7 +72,8 @@ export class ControlEvchargerModbusComponent implements OnChanges, OnInit {
 
   ngOnInit() {
     this.errorMessages = new ErrorMessages('ControlEvchargerModbusComponent.error.', [
-      new ErrorMessage('slaveAddress', ValidatorType.required),
+      new ErrorMessage('idref', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
+      new ErrorMessage('slaveAddress', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('slaveAddress', ValidatorType.pattern),
     ], this.translate);
     this.expandParentForm();
@@ -77,6 +83,10 @@ export class ControlEvchargerModbusComponent implements OnChanges, OnInit {
     this.translate.get(this.translationKeys).subscribe(translatedStrings => {
       this.translatedStrings = translatedStrings;
     });
+  }
+
+  get displayNoneStyle() {
+    return this.settings.modbusSettings.length === 0 ? {display: 'none'} : undefined;
   }
 
   get readValueNames() {

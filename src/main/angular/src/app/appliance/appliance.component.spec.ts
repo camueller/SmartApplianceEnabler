@@ -57,7 +57,7 @@ it('dummy test', () => {
   expect(true);
 });
 
-describe('ApplianceComponent', () => {
+xdescribe('ApplianceComponent', () => {
 
   const ID_FORM_FIELD = '.ApplianceComponent__id';
   const ID_INPUT = '[formcontrolname="id"]';

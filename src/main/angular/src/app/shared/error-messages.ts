@@ -33,8 +33,11 @@ export class ErrorMessages {
   }
 
   buildTextKey(errorMessage: ErrorMessage) {
-    const key = this.typePrefix + (errorMessage.key ? errorMessage.key : errorMessage.forControl)
-      + '_' + ValidatorType[errorMessage.forValidator];
+    let key = errorMessage.key;
+    if (!errorMessage.keyIsComplete) {
+      key = this.typePrefix + (errorMessage.key ? errorMessage.key : errorMessage.forControl)
+        + '_' + ValidatorType[errorMessage.forValidator];
+    }
 //    console.log('KEY=' + key);
     return key;
   }

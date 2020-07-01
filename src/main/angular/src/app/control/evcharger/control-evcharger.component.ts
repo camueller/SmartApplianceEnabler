@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, QueryList, SimpleChanges, ViewChild, ViewChildren} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnChanges, OnInit, QueryList, SimpleChanges, ViewChild, ViewChildren} from '@angular/core';
 import {EvCharger} from './ev-charger';
 import {EvChargerTemplates} from './ev-charger-templates';
 import {Settings} from '../../settings/settings';
@@ -16,13 +16,14 @@ import {ControlDefaults} from '../control-defaults';
 import {AppliancesReloadService} from '../../appliance/appliances-reload-service';
 import {EvChargerProtocol} from './ev-charger-protocol';
 import {ErrorMessage, ValidatorType} from '../../shared/error-message';
-import {fixExpressionChangedAfterItHasBeenCheckedError, getValidInt} from '../../shared/form-util';
+import {getValidInt} from '../../shared/form-util';
 import {ElectricVehicleComponent} from './electric-vehicle/electric-vehicle.component';
 import {EvModbusControl} from './modbus/ev-modbus-control';
 import {ControlEvchargerModbusComponent} from './modbus/control-evcharger-modbus.component';
 import {EvHttpControl} from './http/ev-http-control';
 import {ControlEvchargerHttpComponent} from './http/control-evcharger-http.component';
 import {ListItem} from '../../shared/list-item';
+import {MeterDefaults} from '../../meter/meter-defaults';
 
 @Component({
   selector: 'app-control-evcharger',
@@ -37,6 +38,8 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
   evCharger: EvCharger;
   @Input()
   controlDefaults: ControlDefaults;
+  @Input()
+  meterDefaults: MeterDefaults;
   @Input()
   applianceId: string;
   @Input()
@@ -63,7 +66,8 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
               private parent: FormGroupDirective,
               private controlService: ControlService,
               private appliancesReloadService: AppliancesReloadService,
-              private translate: TranslateService) {
+              private translate: TranslateService,
+              private changeDetectorRef: ChangeDetectorRef) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
     this.formHandler = new FormHandler();
   }
@@ -113,6 +117,7 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
     this.evCharger = new EvCharger({...this.templates[templateName], vehicles: this.evCharger.vehicles});
     this.setProtocol(this.evCharger.protocol);
     this.updateForm();
+    this.changeDetectorRef.detectChanges();
     this.form.markAsDirty();
   }
 
@@ -163,13 +168,13 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
   }
 
   addElectricVehicle() {
-    fixExpressionChangedAfterItHasBeenCheckedError(this.form);
     if (!this.evCharger.vehicles) {
       this.evCharger.vehicles = [];
     }
     this.evCharger.vehicles.push(this.createElectricVehicle());
     this.electricVehiclesFormArray.push(new FormGroup({}));
     this.form.markAsDirty();
+    this.changeDetectorRef.detectChanges();
   }
 
   createElectricVehicle() {

@@ -24,7 +24,9 @@ export function selectorSelectedByFormControlName(formControlName: string, selec
 
 export function selectorByFormControlName(formControlName: string, formControlNamePrefix: string, formControlNameSuffix?: string,
                                           selectorPrefix?: string, selectorBase?: string) {
-  const selectorString = `${selectorPrefix || ''} ${selectorBase || ''} ${formControlNamePrefix}[formcontrolname="${formControlName}"] ${formControlNameSuffix || ''}`;
+  const selectorFormControlName = `${selectorPrefix || ''} ${selectorBase || ''} ${formControlNamePrefix}[formcontrolname="${formControlName}"] ${formControlNameSuffix || ''}`;
+  const selectorNgReflectName = `${selectorPrefix || ''} ${selectorBase || ''} ${formControlNamePrefix}[ng-reflect-name="${formControlName}"] ${formControlNameSuffix || ''}`;
+  const selectorString = `${selectorFormControlName}, ${selectorNgReflectName}`;
   if (isDebug()) { console.log('Selector: ', selectorString); }
   return Selector(selectorString);
 }

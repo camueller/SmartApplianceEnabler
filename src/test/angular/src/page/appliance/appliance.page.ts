@@ -44,10 +44,12 @@ export class AppliancePage {
     await AppliancePage.assertMinPowerConsumption(t, appliance.minPowerConsumption);
     await AppliancePage.assertMaxPowerConsumption(t, appliance.maxPowerConsumption);
     await AppliancePage.assertInterruptionsAllowed(t, appliance.interruptionsAllowed);
-    await AppliancePage.assertMinOnTime(t, appliance.minOnTime);
-    await AppliancePage.assertMaxOnTime(t, appliance.maxOnTime);
-    await AppliancePage.assertMinOffTime(t, appliance.minOffTime);
-    await AppliancePage.assertMaxOffTime(t, appliance.maxOffTime);
+    if (appliance.interruptionsAllowed) {
+      await AppliancePage.assertMinOnTime(t, appliance.minOnTime);
+      await AppliancePage.assertMaxOnTime(t, appliance.maxOnTime);
+      await AppliancePage.assertMinOffTime(t, appliance.minOffTime);
+      await AppliancePage.assertMaxOffTime(t, appliance.maxOffTime);
+    }
   }
 
   public static async setId(t: TestController, id: string) {

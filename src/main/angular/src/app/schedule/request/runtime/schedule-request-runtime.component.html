@@ -1,14 +1,20 @@
 <div class="ScheduleRequestRuntimeComponent sae__fields">
-  <mat-form-field class="minRuntime">
-    <mat-label>{{'ScheduleRequestRuntimeComponent.minRuntime' | translate}}</mat-label>
-    <input matInput type="text" formControlName="minRuntime" class="clockpicker"
-           required="{{formHandler.isRequired('minRuntime')}}">
-    <mat-error *ngIf="errors.minRuntime">{{errors.minRuntime}}</mat-error>
-  </mat-form-field>
-  <mat-form-field class="maxRuntime">
-    <mat-label>{{'ScheduleRequestRuntimeComponent.maxRuntime' | translate}}</mat-label>
-    <input matInput type="text" formControlName="maxRuntime" class="clockpicker"
-           required="{{formHandler.isRequired('maxRuntime')}}">
-    <mat-error *ngIf="errors.maxRuntime">{{errors.maxRuntime}}</mat-error>
-  </mat-form-field>
+  <app-timepicker label="{{'ScheduleRequestRuntimeComponent.minRuntime' | translate}}"
+                  formControlNameTP="minRuntime"
+                  [value]="minRuntime"
+                  [required]="false"
+                  [enabled]="enabled"
+                  [width]="'10rem'"
+                  [errorMessages]="errorMessages"
+                  #minRuntimeComponent
+  ></app-timepicker>
+  <app-timepicker label="{{'ScheduleRequestRuntimeComponent.maxRuntime' | translate}}"
+                  formControlNameTP="maxRuntime"
+                  [value]="maxRuntime"
+                  [required]="true"
+                  [enabled]="enabled"
+                  [width]="'10rem'"
+                  [errorMessages]="errorMessages"
+                  #maxRuntimeComponent
+  ></app-timepicker>
 </div>

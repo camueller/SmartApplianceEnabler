@@ -21,6 +21,7 @@
     <app-control-evcharger *ngIf="isEvCharger; else notEvCharger"
                            [evCharger]="control.evCharger"
                            [controlDefaults]="controlDefaults"
+                           [meterDefaults]="meterDefaults"
                            [applianceId]="applianceId"
                            [settings]="settings"
                            [settingsDefaults]="settingsDefaults"

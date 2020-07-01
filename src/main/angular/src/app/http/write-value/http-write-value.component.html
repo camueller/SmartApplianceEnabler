@@ -16,6 +16,7 @@
   <mat-form-field class="sae__factorToValue" *ngIf="! disableFactorToValue">
     <mat-label>{{'HttpWriteValueComponent.factorToValue' | translate}}</mat-label>
     <input matInput type="text" formControlName="factorToValue"
+           placeholder="1"
            required="{{formHandler.isRequired('factorToValue')}}">
     <mat-error *ngIf="errors.factorToValue">{{errors.factorToValue}}</mat-error>
   </mat-form-field>

@@ -45,6 +45,7 @@
     font-weight: bold;
     font-size: 1.5rem;
     padding-bottom: 0.3rem;
+    white-space: nowrap;
   }
 
   &__appliance-status {
@@ -61,12 +62,13 @@
   }
 
   &__explanation_headline {
+    @extend .sae__heading-extra-top-margin;
     margin-bottom: 8px;
   }
 
   &__mandatory_fields_hint {
     @extend .sae__mandatory_fields_hint;
-    margin: 0 $field-margin 0.8rem;
+    margin: $field-margin 0;
   }
 
   &__traffic-light-explanation {
@@ -74,11 +76,8 @@
     flex-direction: row;
     align-items: flex-start;
     margin-top: 0.3rem;
-    /* min-height: 2.375rem;
-    margin: 0.3125rem; */
   }
 
   &__traffic-light-explanation-text {
-    /* margin-left: 1.5rem; */
   }
 }

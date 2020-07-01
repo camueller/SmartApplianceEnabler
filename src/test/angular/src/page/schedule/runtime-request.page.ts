@@ -19,6 +19,8 @@ export class RuntimeRequestPage {
 
   public static async setMinRuntime(t: TestController, minRuntime: string, selectorPrefix: string) {
     await inputText(t, selectorInputByFormControlName('minRuntime', selectorPrefix), minRuntime);
+    await t.pressKey('esc'); // close multi select overlay
+
   }
   public static async assertMinRuntime(t: TestController, minRuntime: string, selectorPrefix: string) {
     await assertInput(t, selectorInputByFormControlName('minRuntime', selectorPrefix), minRuntime);
@@ -26,6 +28,7 @@ export class RuntimeRequestPage {
 
   public static async setMaxRuntime(t: TestController, maxRuntime: string, selectorPrefix: string) {
     await inputText(t, selectorInputByFormControlName('maxRuntime', selectorPrefix), maxRuntime);
+    await t.pressKey('esc'); // close multi select overlay
   }
   public static async assertMaxRuntime(t: TestController, maxRuntime: string, selectorPrefix: string) {
     await assertInput(t, selectorInputByFormControlName('maxRuntime', selectorPrefix), maxRuntime);

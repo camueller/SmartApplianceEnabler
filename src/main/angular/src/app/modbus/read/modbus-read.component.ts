@@ -1,9 +1,20 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, SimpleChanges, ViewChildren} from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  QueryList,
+  SimpleChanges,
+  ViewChildren
+} from '@angular/core';
 import {FormArray, FormGroup, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {ModbusRead} from './modbus-read';
-import {ErrorMessage, ValidatorType} from '../../shared/error-message';
-import {fixExpressionChangedAfterItHasBeenCheckedError, getValidFloat, getValidInt, getValidString} from '../../shared/form-util';
+import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/error-message';
+import {getValidFloat, getValidInt, getValidString} from '../../shared/form-util';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
 import {ErrorMessages} from '../../shared/error-messages';
 import {ModbusReadValue} from '../read-value/modbus-read-value';
@@ -11,6 +22,7 @@ import {ModbusReadValueComponent} from '../read-value/modbus-read-value.componen
 import {FormHandler} from '../../shared/form-handler';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {Logger} from '../../log/logger';
+import {MeterDefaults} from '../../meter/meter-defaults';
 
 @Component({
   selector: 'app-modbus-read',
@@ -27,6 +39,8 @@ export class ModbusReadComponent implements OnChanges, OnInit {
   @Input()
   readRegisterTypes: string[];
   @Input()
+  meterDefaults: MeterDefaults;
+  @Input()
   maxValues: number;
   @Input()
   form: FormGroup;
@@ -42,7 +56,8 @@ export class ModbusReadComponent implements OnChanges, OnInit {
   errorMessageHandler: ErrorMessageHandler;
 
   constructor(private logger: Logger,
-              private translate: TranslateService
+              private translate: TranslateService,
+              private changeDetectorRef: ChangeDetectorRef
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
     this.formHandler = new FormHandler();
@@ -60,12 +75,16 @@ export class ModbusReadComponent implements OnChanges, OnInit {
     if (changes.form) {
       this.expandParentForm();
     }
+    if (changes.meterDefaults && changes.meterDefaults.currentValue) {
+      this.meterDefaults = changes.meterDefaults.currentValue;
+    }
   }
 
   ngOnInit() {
     this.errorMessages = new ErrorMessages('ModbusReadComponent.error.', [
-      new ErrorMessage('address', ValidatorType.required),
+      new ErrorMessage('address', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('address', ValidatorType.pattern),
+      new ErrorMessage('type', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('bytes', ValidatorType.pattern),
       new ErrorMessage('factorToValue', ValidatorType.pattern),
     ], this.translate);
@@ -77,6 +96,14 @@ export class ModbusReadComponent implements OnChanges, OnInit {
   get type(): string {
     const typeControl = this.form.controls.type;
     return (typeControl ? typeControl.value : '');
+  }
+
+  get bytesPlaceholder() {
+    return this.meterDefaults.modbusRead_bytesForRegisterType[this.form.controls.type.value];
+  }
+
+  get isByteOrderDisplayed() {
+    return this.form.controls.type.value === 'InputDecimal' && (this.form.controls.bytes.value > 1 || this.bytesPlaceholder > 1);
   }
 
   // TODO move to config
@@ -93,7 +120,6 @@ export class ModbusReadComponent implements OnChanges, OnInit {
   }
 
   addValue() {
-    fixExpressionChangedAfterItHasBeenCheckedError(this.form);
     const newReadValue = new ModbusReadValue();
     if (!this.modbusRead.readValues) {
       this.modbusRead.readValues = [];
@@ -101,6 +127,7 @@ export class ModbusReadComponent implements OnChanges, OnInit {
     this.modbusRead.readValues.push(newReadValue);
     this.modbusReadValuesFormArray.push(this.createModbusReadValueFormGroup());
     this.form.markAsDirty();
+    this.changeDetectorRef.detectChanges();
   }
 
   removeValue(index: number) {
@@ -132,7 +159,7 @@ export class ModbusReadComponent implements OnChanges, OnInit {
       this.modbusRead && this.modbusRead.bytes,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
     this.formHandler.addFormControl(this.form, 'byteOrder',
-      this.modbusRead && this.modbusRead.byteOrder);
+      this.modbusRead && this.modbusRead.byteOrder || 'BigEndian');
     this.formHandler.addFormControl(this.form, 'factorToValue',
       this.modbusRead && this.modbusRead.factorToValue,
       [Validators.pattern(InputValidatorPatterns.FLOAT)]);
@@ -171,7 +198,7 @@ export class ModbusReadComponent implements OnChanges, OnInit {
     this.modbusRead.address = getValidString(address);
     this.modbusRead.type = getValidString(type);
     this.modbusRead.bytes = getValidInt(bytes);
-    this.modbusRead.byteOrder = getValidString(byteOrder);
+    this.modbusRead.byteOrder = this.isByteOrderDisplayed ? getValidString(byteOrder) : undefined;
     this.modbusRead.factorToValue = getValidFloat(factorToValue);
     return this.modbusRead;
   }

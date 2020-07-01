@@ -147,7 +147,7 @@ export class MeterComponent implements OnChanges, OnInit, CanDeactivate<MeterCom
   }
 
   isDeleteEnabled() {
-    return this.meter != null && this.meter.type != null;
+    return this.meter && (this.meter.s0ElectricityMeter || this.meter.modbusElectricityMeter || this.meter.httpElectricityMeter);
   }
 
   typeChanged(newType?: string) {

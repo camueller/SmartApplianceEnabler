@@ -29,7 +29,7 @@ export class StatusEvchargerViewComponent implements OnInit {
 
   getEvName(evId: number): string {
     if (this.electricVehicles && evId) {
-      return this.electricVehicles.filter(ev => ev.id === evId)[0].name;
+      return this.electricVehicles.filter(ev => ev.id === evId)[0]?.name;
     }
     return undefined;
   }

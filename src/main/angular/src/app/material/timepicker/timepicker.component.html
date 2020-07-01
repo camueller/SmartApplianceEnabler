@@ -1,0 +1,5 @@
+<mat-form-field [style]="{width: width}" [class]="cssClasses" [formGroup]="form">
+  <mat-label *ngIf="label">{{label}}</mat-label>
+  <input matInput type="text" formControlName="{{formControlNameTP}}" class="clockpicker" [required]="required">
+  <mat-error *ngIf="!noErrorOnField && error">{{error}}</mat-error>
+</mat-form-field>

@@ -46,6 +46,7 @@ import {ControlStartingcurrentComponent} from './startingcurrent/control-startin
 import {EvCharger} from './evcharger/ev-charger';
 import {ListItem} from '../shared/list-item';
 import {simpleControlType} from '../shared/form-util';
+import {MeterDefaults} from '../meter/meter-defaults';
 
 @Component({
   selector: 'app-control',
@@ -67,6 +68,7 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
   formHandler: FormHandler;
   applianceId: string;
   controlDefaults: ControlDefaults;
+  meterDefaults: MeterDefaults;
   control: Control;
   controlFactory: ControlFactory;
   appliance: Appliance;
@@ -109,12 +111,14 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
     this.route.data.subscribe((data: {
       control: Control,
       controlDefaults: ControlDefaults,
+      meterDefaults: MeterDefaults,
       appliance: Appliance,
       settings: Settings,
       settingsDefaults: SettingsDefaults
     }) => {
       this.control = data.control;
       this.controlDefaults = data.controlDefaults;
+      this.meterDefaults = data.meterDefaults;
       this.appliance = data.appliance;
       this.settings = data.settings;
       this.settingsDefaults = data.settingsDefaults;
@@ -178,7 +182,8 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
   }
 
   isDeleteEnabled() {
-    return this.control != null && this.control.type != null;
+    return this.control && (this.control.switch_ || this.control.httpSwitch || this.control.modbusSwitch
+      || this.control.alwaysOnSwitch || this.control.evCharger);
   }
 
   typeChanged(newType?: string | undefined) {
