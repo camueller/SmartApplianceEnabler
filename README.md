@@ -101,6 +101,7 @@ Alle Informationen rund um die [Entwicklung](doc/Development_DE.md) des *Smart A
 ## Dank und Anerkennung
 Der *Smart Appliance Enabler* würde so nicht existieren ohne folgende Tools und Frameworks, deren Entwicklern ich Dank und Anerkennung zolle:
 * [Angular](https://angular.io) für das Web-Frontend
+* [Angular Material](https://material.angular.io/) für die Material-Design-Komponenten des Web-Frontends
 * [Amazon AWS](https://aws.amazon.com/de) für die Bereitstellung einer leistungsfähigen Cloud-Platform
 * [Browserstack](https://www.browserstack.com) für automatisierte Multi-Browser-Tests und kostenlose Lizenz für Open-Source-Projekte
 * [Cling](http://4thline.org/projects/cling) für UPnP (SEMP-Protokoll)
@@ -109,7 +110,6 @@ Der *Smart Appliance Enabler* würde so nicht existieren ohne folgende Tools und
 * [GitHub](https://github.com/) für den Betrieb einer Community-Platform für Open-Source-Projekte
 * [IntelliJ](https://www.jetbrains.com/de-de/idea/) für die beste IDE (vor allem auch unter Linux) und kostenlose Lizenz für Open-Source-Projekte
 * [Pi4J](http://pi4j.com) für den Zugriff auf die GPIO-Ports des Raspberry
-* [Semantic UI](https://semantic-ui.com/) für das Web-Frontend
 * [Spring Boot](https://spring.io/projects/spring-boot) für Spring-basierte Anwendungen mit eingebettetem Web-Container
 * [Testcafe](https://devexpress.github.io/testcafe/) für einfaches Testen von Web-Anwendungen
 * [Travis CI](https://www.travis-ci.com/) für den Betrieb einer Continuous Integration-Platform
