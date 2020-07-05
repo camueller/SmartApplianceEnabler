@@ -5,6 +5,6 @@
 
 export const environment = {
   production: false,
-  port: 8080,
-  base_url: undefined
+  port: undefined,
+  base_url: 'http://192.168.69.10:8080'
 };

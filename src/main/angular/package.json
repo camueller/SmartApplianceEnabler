@@ -8,6 +8,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start-raspi2": "ng serve --configuration=raspi2",
     "build": "ng build",
     "test": "jest",
     "test:watch": "jest --watch",
