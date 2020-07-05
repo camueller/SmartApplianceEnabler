@@ -141,7 +141,7 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
   }
 
   updateForm() {
-    this.formHandler.setFormControlValue(this.form, 'controlType', this.control && this.control.type);
+    this.formHandler.setFormControlValue(this.form, 'controlType', simpleControlType(this.control.type));
     this.formHandler.setFormControlValue(this.form, 'startingCurrentDetection',
       this.control && this.control.startingCurrentDetection);
   }
@@ -195,7 +195,6 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
     } else if (this.isEvCharger) {
       this.control.startingCurrentDetection = false;
     }
-    this.buildForm();
     if (this.isAlwaysOnSwitch) {
       this.form.markAsDirty();
     }
