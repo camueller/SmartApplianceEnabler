@@ -45,7 +45,7 @@ import {simpleMeterType} from '../shared/form-util';
   templateUrl: './meter.component.html',
   styleUrls: ['./meter.component.scss'],
 })
-export class MeterComponent implements OnChanges, OnInit, CanDeactivate<MeterComponent> {
+export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
   @ViewChild(MeterS0Component)
   meterS0Comp: MeterS0Component;
   @ViewChild(MeterModbusComponent)
@@ -75,15 +75,6 @@ export class MeterComponent implements OnChanges, OnInit, CanDeactivate<MeterCom
     this.formHandler = new FormHandler();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.control && changes.control.currentValue) {
-      this.meter = changes.meter.currentValue;
-    }
-    if (this.form) {
-      this.updateForm();
-    }
-  }
-
   ngOnInit() {
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.translate.get('dialog.confirmDelete').subscribe(translated => this.confirmDeleteMessage = translated);
@@ -102,21 +93,16 @@ export class MeterComponent implements OnChanges, OnInit, CanDeactivate<MeterCom
       this.meterDefaults = data.meterDefaults;
       this.settings = data.settings;
       this.settingsDefaults = data.settingsDefaults;
-      this.updateForm();
+      this.buildForm();
       if (this.form) {
         this.form.markAsPristine();
       }
     });
-    this.buildForm();
   }
 
   buildForm() {
     this.form = new FormGroup({});
     this.formHandler.addFormControl(this.form, 'meterType', this.meter && simpleMeterType(this.meter.type));
-  }
-
-  updateForm() {
-    this.formHandler.setFormControlValue(this.form, 'meterType', simpleMeterType(this.meter.type));
   }
 
   get isS0ElectricityMeter() {

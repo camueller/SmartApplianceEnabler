@@ -53,7 +53,7 @@ import {MeterDefaults} from '../meter/meter-defaults';
   templateUrl: './control.component.html',
   styleUrls: ['./control.component.scss'],
 })
-export class ControlComponent implements OnChanges, OnInit, CanDeactivate<ControlComponent> {
+export class ControlComponent implements OnInit, CanDeactivate<ControlComponent> {
   @ViewChild(ControlSwitchComponent)
   controlSwitchComp: ControlSwitchComponent;
   @ViewChild(ControlModbusComponent)
@@ -89,15 +89,6 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
     this.formHandler = new FormHandler();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.control && changes.control.currentValue) {
-      this.control = changes.control.currentValue;
-    }
-    if (this.form) {
-      this.updateForm();
-    }
-  }
-
   ngOnInit() {
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.translate.get('dialog.confirmDelete').subscribe(translated => this.confirmDeleteMessage = translated);
@@ -125,24 +116,17 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
       if (this.appliance.type === 'EVCharger') {
         this.control.type = EvCharger.TYPE;
       }
-      this.updateForm();
+      this.buildForm();
       if (this.form) {
         this.form.markAsPristine();
       }
     });
-    this.buildForm();
   }
 
   buildForm() {
     this.form = new FormGroup({});
     this.formHandler.addFormControl(this.form, 'controlType', this.control && simpleControlType(this.control.type));
     this.formHandler.addFormControl(this.form, 'startingCurrentDetection',
-      this.control && this.control.startingCurrentDetection);
-  }
-
-  updateForm() {
-    this.formHandler.setFormControlValue(this.form, 'controlType', simpleControlType(this.control.type));
-    this.formHandler.setFormControlValue(this.form, 'startingCurrentDetection',
       this.control && this.control.startingCurrentDetection);
   }
 
