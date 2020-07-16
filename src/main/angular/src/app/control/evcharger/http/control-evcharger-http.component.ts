@@ -53,7 +53,7 @@ export class ControlEvchargerHttpComponent implements OnChanges, OnInit {
       } else {
         this.evHttpControl = new EvHttpControl();
       }
-      this.updateForm();
+      this.expandParentForm();
     }
   }
 
@@ -136,14 +136,6 @@ export class ControlEvchargerHttpComponent implements OnChanges, OnInit {
     this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'httpReads',
       this.evHttpControl.httpReads);
     this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'httpWrites',
-      this.evHttpControl.httpWrites);
-  }
-
-  updateForm() {
-    this.formHandler.setFormControlValue(this.form, 'contentProtocol', this.evHttpControl.contentProtocol);
-    this.formHandler.setFormArrayControlWithEmptyFormGroups(this.form, 'httpReads',
-      this.evHttpControl.httpReads);
-    this.formHandler.setFormArrayControlWithEmptyFormGroups(this.form, 'httpWrites',
       this.evHttpControl.httpWrites);
   }
 

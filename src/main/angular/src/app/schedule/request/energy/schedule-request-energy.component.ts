@@ -44,7 +44,7 @@ export class ScheduleRequestEnergyComponent implements OnChanges, OnInit {
       } else {
         this.energyRequest = new EnergyRequest();
       }
-      this.updateForm();
+      this.expandParentForm();
     }
     if (changes.enabled && !changes.enabled.firstChange) {
       this.setEnabled(changes.enabled.currentValue);
@@ -86,11 +86,6 @@ export class ScheduleRequestEnergyComponent implements OnChanges, OnInit {
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
     this.formHandler.addFormControl(this.form, 'maxEnergy', this.maxEnergy,
       [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
-  }
-
-  updateForm() {
-    this.formHandler.setFormControlValue(this.form, 'minEnergy', this.minEnergy);
-    this.formHandler.setFormControlValue(this.form, 'maxEnergy', this.maxEnergy);
   }
 
   updateModelFromForm(): EnergyRequest | undefined {

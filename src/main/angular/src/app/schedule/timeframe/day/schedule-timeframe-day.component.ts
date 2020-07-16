@@ -52,7 +52,7 @@ export class ScheduleTimeframeDayComponent implements OnChanges, OnInit {
       } else {
         this.dayTimeFrame = new DayTimeframe();
       }
-      this.updateForm();
+      this.expandParentForm();
     }
     if (changes.enabled && !changes.enabled.firstChange) {
       this.setEnabled(changes.enabled.currentValue);
@@ -95,10 +95,6 @@ export class ScheduleTimeframeDayComponent implements OnChanges, OnInit {
 
   expandParentForm() {
     this.formHandler.addFormControl(this.form, 'daysOfWeekValues', this.daysOfWeekValues);
-  }
-
-  updateForm() {
-    this.formHandler.setFormControlValue(this.form, 'daysOfWeekValues', this.daysOfWeekValues);
   }
 
   updateModelFromForm(): DayTimeframe | undefined {

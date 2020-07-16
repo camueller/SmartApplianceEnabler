@@ -50,7 +50,7 @@ export class ScheduleRequestRuntimeComponent implements OnChanges, OnInit {
       } else {
         this.runtimeRequest = new RuntimeRequest();
       }
-      this.updateForm();
+      this.expandParentForm();
     }
   }
 
@@ -89,11 +89,6 @@ export class ScheduleRequestRuntimeComponent implements OnChanges, OnInit {
       [Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]);
     this.formHandler.addFormControl(this.form, 'maxRuntime', this.maxRuntime,
       [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]);
-  }
-
-  updateForm() {
-    this.formHandler.setFormControlValue(this.form, 'minRuntime', this.minRuntime);
-    this.formHandler.setFormControlValue(this.form, 'maxRuntime', this.maxRuntime);
   }
 
   updateModelFromForm(): RuntimeRequest | undefined {

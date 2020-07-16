@@ -51,7 +51,7 @@ export class ScheduleTimeframeConsecutivedaysComponent implements OnChanges, OnI
       } else {
         this.consecutiveDaysTimeframe = new ConsecutiveDaysTimeframe();
       }
-      this.updateForm();
+      this.expandParentForm();
     }
     if (changes.enabled && !changes.enabled.firstChange) {
       this.setEnabled(changes.enabled.currentValue);
@@ -103,11 +103,6 @@ export class ScheduleTimeframeConsecutivedaysComponent implements OnChanges, OnI
       Validators.required);
     this.formHandler.addFormControl(this.form, 'endDayOfWeek', this.endDayOfWeek,
       Validators.required);
-  }
-
-  updateForm() {
-    this.formHandler.setFormControlValue(this.form, 'startDayOfWeek', this.startDayOfWeek);
-    this.formHandler.setFormControlValue(this.form, 'endDayOfWeek', this.endDayOfWeek);
   }
 
   updateModelFromForm(): ConsecutiveDaysTimeframe | undefined {

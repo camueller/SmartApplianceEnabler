@@ -46,7 +46,7 @@ export class SettingsModbusComponent implements OnChanges, OnInit {
       } else {
         this.modbusSetting = new ModbusSetting();
       }
-      this.updateForm();
+      this.expandParentForm();
     }
     if (changes.form) {
       this.expandParentForm();
@@ -72,15 +72,6 @@ export class SettingsModbusComponent implements OnChanges, OnInit {
       this.modbusSetting && this.modbusSetting.modbusTcpHost, Validators.pattern(InputValidatorPatterns.HOSTNAME));
     this.formHandler.addFormControl(this.form, 'modbusTcpPort',
       this.modbusSetting && this.modbusSetting.modbusTcpPort, Validators.pattern(InputValidatorPatterns.INTEGER));
-  }
-
-  updateForm() {
-    this.formHandler.setFormControlValue(this.form, 'modbusTcpId',
-      this.modbusSetting && this.modbusSetting.modbusTcpId);
-    this.formHandler.setFormControlValue(this.form, 'modbusTcpHost',
-      this.modbusSetting && this.modbusSetting.modbusTcpHost);
-    this.formHandler.setFormControlValue(this.form, 'modbusTcpPort',
-      this.modbusSetting && this.modbusSetting.modbusTcpPort);
   }
 
   removeModbus() {

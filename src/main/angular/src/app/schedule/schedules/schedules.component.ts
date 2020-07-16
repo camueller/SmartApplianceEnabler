@@ -62,9 +62,6 @@ export class SchedulesComponent implements OnChanges, OnInit, CanDeactivate<Cont
     if (changes.control && changes.schedules.currentValue) {
       this.schedules = changes.schedules.currentValue;
     }
-    if (this.form) {
-      this.updateForm();
-    }
   }
 
   ngOnInit() {
@@ -168,9 +165,6 @@ export class SchedulesComponent implements OnChanges, OnInit, CanDeactivate<Cont
       schedules: schedulesFormArray
     });
     return form;
-  }
-
-  updateForm() {
   }
 
   submitForm() {

@@ -69,7 +69,7 @@ export class ModbusWriteComponent implements OnChanges, OnInit {
       } else {
         this.modbusWrite = new ModbusWrite();
       }
-      this.updateForm();
+      this.expandParentForm();
     }
     if (changes.form) {
       this.expandParentForm();
@@ -143,16 +143,6 @@ export class ModbusWriteComponent implements OnChanges, OnInit {
         [Validators.pattern(InputValidatorPatterns.FLOAT)]);
     }
     this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'modbusWriteValues',
-      this.modbusWrite.writeValues);
-  }
-
-  updateForm() {
-    this.formHandler.setFormControlValue(this.form, 'address', this.modbusWrite.address);
-    this.formHandler.setFormControlValue(this.form, 'type', this.modbusWrite.type);
-    if (!this.disableFactorToValue) {
-      this.formHandler.setFormControlValue(this.form, 'factorToValue', this.modbusWrite.factorToValue);
-    }
-    this.formHandler.setFormArrayControlWithEmptyFormGroups(this.form, 'modbusWriteValues',
       this.modbusWrite.writeValues);
   }
 

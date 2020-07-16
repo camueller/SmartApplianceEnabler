@@ -47,7 +47,7 @@ export class ScheduleRequestSocComponent implements OnChanges, OnInit {
       } else {
         this.socRequest = new SocRequest();
       }
-      this.updateForm();
+      this.expandParentForm();
     }
     if (changes.enabled && !changes.enabled.firstChange) {
       this.setEnabled(changes.enabled.currentValue);
@@ -88,11 +88,6 @@ export class ScheduleRequestSocComponent implements OnChanges, OnInit {
     this.formHandler.addFormControl(this.form, 'evId', this.evId, Validators.required);
     this.formHandler.addFormControl(this.form, 'soc', this.soc,
       [Validators.required, Validators.pattern(InputValidatorPatterns.PERCENTAGE)]);
-  }
-
-  updateForm() {
-    this.formHandler.setFormControlValue(this.form, 'evId', this.evId);
-    this.formHandler.setFormControlValue(this.form, 'soc', this.soc);
   }
 
   updateModelFromForm(): SocRequest | undefined {

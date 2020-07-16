@@ -45,7 +45,7 @@ import {simpleMeterType} from '../shared/form-util';
   templateUrl: './meter.component.html',
   styleUrls: ['./meter.component.scss'],
 })
-export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
+export class MeterComponent implements OnChanges, OnInit, CanDeactivate<MeterComponent> {
   @ViewChild(MeterS0Component)
   meterS0Comp: MeterS0Component;
   @ViewChild(MeterModbusComponent)
@@ -73,6 +73,15 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
     this.meterFactory = new MeterFactory(logger);
     this.meter = this.meterFactory.createEmptyMeter();
     this.formHandler = new FormHandler();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.control && changes.control.currentValue) {
+      this.meter = changes.meter.currentValue;
+    }
+    if (this.form) {
+      this.updateForm();
+    }
   }
 
   ngOnInit() {
@@ -103,6 +112,10 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
   buildForm() {
     this.form = new FormGroup({});
     this.formHandler.addFormControl(this.form, 'meterType', this.meter && simpleMeterType(this.meter.type));
+  }
+
+  updateForm() {
+    this.formHandler.setFormControlValue(this.form, 'meterType', simpleMeterType(this.meter.type));
   }
 
   get isS0ElectricityMeter() {

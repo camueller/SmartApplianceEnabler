@@ -64,7 +64,7 @@ export class MeterModbusComponent implements OnChanges, OnInit {
         this.modbusElectricityMeter = new ModbusElectricityMeter();
         this.modbusElectricityMeter.modbusReads = [ModbusRead.createWithSingleChild()];
       }
-      this.updateForm();
+      this.expandParentForm();
     }
     if (changes.meterDefaults && changes.meterDefaults.currentValue) {
       this.meterDefaults = changes.meterDefaults.currentValue;
@@ -139,15 +139,6 @@ export class MeterModbusComponent implements OnChanges, OnInit {
     this.formHandler.addFormControl(this.form, 'measurementInterval', this.modbusElectricityMeter.measurementInterval,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
     this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'modbusReads',
-      this.modbusElectricityMeter.modbusReads);
-  }
-
-  updateForm() {
-    this.formHandler.setFormControlValue(this.form, 'idref', this.modbusElectricityMeter.idref);
-    this.formHandler.setFormControlValue(this.form, 'slaveAddress', this.modbusElectricityMeter.slaveAddress);
-    this.formHandler.setFormControlValue(this.form, 'pollInterval', this.modbusElectricityMeter.pollInterval);
-    this.formHandler.setFormControlValue(this.form, 'measurementInterval', this.modbusElectricityMeter.measurementInterval);
-    this.formHandler.setFormArrayControlWithEmptyFormGroups(this.form, 'modbusReads',
       this.modbusElectricityMeter.modbusReads);
   }
 

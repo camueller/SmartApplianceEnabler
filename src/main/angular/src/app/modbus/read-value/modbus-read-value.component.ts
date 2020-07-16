@@ -45,7 +45,7 @@ export class ModbusReadValueComponent implements OnChanges, OnInit {
       } else {
         this.modbusReadValue = new ModbusReadValue();
       }
-      this.updateForm();
+      this.expandParentForm();
     }
     if (changes.form) {
       this.expandParentForm();
@@ -76,11 +76,6 @@ export class ModbusReadValueComponent implements OnChanges, OnInit {
       [Validators.required]);
     this.formHandler.addFormControl(this.form, 'extractionRegex',
       this.modbusReadValue && this.modbusReadValue.extractionRegex);
-  }
-
-  updateForm() {
-    this.formHandler.setFormControlValue(this.form, 'name', this.modbusReadValue.name);
-    this.formHandler.setFormControlValue(this.form, 'extractionRegex', this.modbusReadValue.extractionRegex);
   }
 
   updateModelFromForm(): ModbusReadValue | undefined {

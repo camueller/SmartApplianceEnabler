@@ -52,7 +52,7 @@ export class MeterS0Component implements OnChanges, OnInit {
       } else {
         this.s0ElectricityMeter = this.s0ElectricityMeter || new S0ElectricityMeter();
       }
-      this.updateForm();
+      this.expandParentForm();
     }
   }
 
@@ -89,13 +89,6 @@ export class MeterS0Component implements OnChanges, OnInit {
     this.formHandler.addFormControl(this.form, 'measurementInterval',
       this.s0ElectricityMeter && this.s0ElectricityMeter.measurementInterval,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-  }
-
-  updateForm() {
-    this.formHandler.setFormControlValue(this.form, 'gpio', this.s0ElectricityMeter.gpio);
-    this.formHandler.setFormControlValue(this.form, 'pinPullResistance', this.s0ElectricityMeter.pinPullResistance);
-    this.formHandler.setFormControlValue(this.form, 'impulsesPerKwh', this.s0ElectricityMeter.impulsesPerKwh);
-    this.formHandler.setFormControlValue(this.form, 'measurementInterval', this.s0ElectricityMeter.measurementInterval);
   }
 
   updateModelFromForm(): S0ElectricityMeter | undefined {

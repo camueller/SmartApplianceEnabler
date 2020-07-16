@@ -83,7 +83,7 @@ export class ScheduleComponent implements OnChanges, AfterViewInit {
       } else {
         this.schedule = new Schedule();
       }
-      this.updateForm();
+      this.expandParentForm();
     }
     if (changes.form) {
       this.expandParentForm();
@@ -151,12 +151,6 @@ export class ScheduleComponent implements OnChanges, AfterViewInit {
       this.timeframeType, [Validators.required]);
     this.formHandler.addFormControl(this.form, 'requestType',
       this.requestType, [Validators.required]);
-  }
-
-  updateForm() {
-    this.formHandler.setFormControlValue(this.form, 'enabled', this.schedule.enabled);
-    this.formHandler.setFormControlValue(this.form, 'timeframeType', this.timeframeType);
-    this.formHandler.setFormControlValue(this.form, 'requestType', this.requestType);
   }
 
   updateModelFromForm(): Schedule | undefined {

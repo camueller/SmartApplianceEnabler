@@ -72,7 +72,7 @@ export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<Appl
       this.appliance = changes.appliance.currentValue;
     }
     if (this.form) {
-      this.updateForm();
+      this.buildForm();
     }
   }
 
@@ -103,15 +103,14 @@ export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<Appl
     this.route.data.subscribe((data: { appliance: Appliance }) => {
       this.appliance = data.appliance;
       if (this.form) {
-        this.updateForm();
+        this.buildForm();
+        this.form.statusChanges.subscribe(() => {
+          this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
+        });
         this.form.markAsPristine();
       }
     });
     this.buildForm();
-    this.form.statusChanges.subscribe(() => {
-      this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
-      console.log('errors=', this.errors);
-    });
   }
 
   canDeactivate(): Observable<boolean> | boolean {
@@ -171,21 +170,6 @@ export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<Appl
     this.formHandler.addFormControl(this.form, 'maxOffTime',
       this.appliance && this.appliance.maxOffTime,
       Validators.pattern(InputValidatorPatterns.INTEGER));
-  }
-
-  updateForm() {
-    this.formHandler.setFormControlValue(this.form, 'id', this.appliance.id);
-    this.formHandler.setFormControlValue(this.form, 'vendor', this.appliance.vendor);
-    this.formHandler.setFormControlValue(this.form, 'name', this.appliance.name);
-    this.formHandler.setFormControlValue(this.form, 'type', this.appliance.type);
-    this.formHandler.setFormControlValue(this.form, 'serial', this.appliance.serial);
-    this.formHandler.setFormControlValue(this.form, 'minPowerConsumption', this.appliance.minPowerConsumption);
-    this.formHandler.setFormControlValue(this.form, 'maxPowerConsumption', this.appliance.maxPowerConsumption);
-    this.formHandler.setFormControlValue(this.form, 'interruptionsAllowed', this.appliance.interruptionsAllowed);
-    this.formHandler.setFormControlValue(this.form, 'minOnTime', this.appliance.minOnTime);
-    this.formHandler.setFormControlValue(this.form, 'maxOnTime', this.appliance.maxOnTime);
-    this.formHandler.setFormControlValue(this.form, 'minOffTime', this.appliance.minOffTime);
-    this.formHandler.setFormControlValue(this.form, 'maxOffTime', this.appliance.maxOffTime);
   }
 
   updateModelFromForm() {

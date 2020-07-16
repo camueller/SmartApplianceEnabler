@@ -60,7 +60,7 @@ export class ControlHttpComponent implements OnChanges, OnInit {
         this.httpSwitch = new HttpSwitch();
         this.httpSwitch.httpWrites = [HttpWrite.createWithSingleChild()];
       }
-      this.updateForm();
+      this.expandParentForm();
     }
   }
 
@@ -152,12 +152,6 @@ export class ControlHttpComponent implements OnChanges, OnInit {
     this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'httpWrites',
       this.httpSwitch.httpWrites);
     this.formHandler.addFormControl(this.form, 'readControlState', this.readControlState);
-    this.updateReadControlState();
-  }
-
-  updateForm() {
-    this.formHandler.setFormArrayControlWithEmptyFormGroups(this.form, 'httpWrites',
-      this.httpSwitch.httpWrites);
     this.updateReadControlState();
   }
 

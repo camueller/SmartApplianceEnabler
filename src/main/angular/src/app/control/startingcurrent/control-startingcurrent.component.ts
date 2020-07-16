@@ -42,7 +42,7 @@ export class ControlStartingcurrentComponent implements OnChanges, OnInit {
       } else {
         this.startingCurrentSwitch = new StartingCurrentSwitch();
       }
-      this.updateForm();
+      this.expandParentForm();
     }
     if (changes.form) {
       this.expandParentForm();
@@ -74,15 +74,6 @@ export class ControlStartingcurrentComponent implements OnChanges, OnInit {
     this.formHandler.addFormControl(this.form, 'minRunningTime',
       this.startingCurrentSwitch && this.startingCurrentSwitch.minRunningTime,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-  }
-
-  updateForm() {
-    this.formHandler.setFormControlValue(this.form, 'powerThreshold', this.startingCurrentSwitch.powerThreshold);
-    this.formHandler.setFormControlValue(this.form, 'startingCurrentDetectionDuration',
-      this.startingCurrentSwitch.startingCurrentDetectionDuration);
-    this.formHandler.setFormControlValue(this.form, 'finishedCurrentDetectionDuration',
-      this.startingCurrentSwitch.finishedCurrentDetectionDuration);
-    this.formHandler.setFormControlValue(this.form, 'minRunningTime', this.startingCurrentSwitch.minRunningTime);
   }
 
   updateModelFromForm(): StartingCurrentSwitch {

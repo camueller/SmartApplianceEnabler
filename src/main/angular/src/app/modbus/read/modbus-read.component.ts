@@ -70,7 +70,7 @@ export class ModbusReadComponent implements OnChanges, OnInit {
       } else {
         this.modbusRead = new ModbusRead();
       }
-      this.updateForm();
+      this.expandParentForm();
     }
     if (changes.form) {
       this.expandParentForm();
@@ -164,16 +164,6 @@ export class ModbusReadComponent implements OnChanges, OnInit {
       this.modbusRead && this.modbusRead.factorToValue,
       [Validators.pattern(InputValidatorPatterns.FLOAT)]);
     this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'modbusReadValues',
-      this.modbusRead.readValues);
-  }
-
-  updateForm() {
-    this.formHandler.setFormControlValue(this.form, 'address', this.modbusRead.address);
-    this.formHandler.setFormControlValue(this.form, 'type', this.modbusRead.type);
-    this.formHandler.setFormControlValue(this.form, 'bytes', this.modbusRead.bytes);
-    this.formHandler.setFormControlValue(this.form, 'byteOrder', this.modbusRead.byteOrder);
-    this.formHandler.setFormControlValue(this.form, 'factorToValue', this.modbusRead.factorToValue);
-    this.formHandler.setFormArrayControlWithEmptyFormGroups(this.form, 'modbusReadValues',
       this.modbusRead.readValues);
   }
 

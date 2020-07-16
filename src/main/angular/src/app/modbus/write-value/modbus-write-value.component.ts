@@ -45,7 +45,7 @@ export class ModbusWriteValueComponent implements OnChanges, OnInit {
       } else {
         this.modbusWriteValue = new ModbusWriteValue();
       }
-      this.updateForm();
+      this.expandParentForm();
     }
     if (changes.form) {
       this.expandParentForm();
@@ -77,11 +77,6 @@ export class ModbusWriteValueComponent implements OnChanges, OnInit {
     this.formHandler.addFormControl(this.form, 'value',
       this.modbusWriteValue && this.modbusWriteValue.value,
       [Validators.required]);
-  }
-
-  updateForm() {
-    this.formHandler.setFormControlValue(this.form, 'name', this.modbusWriteValue.name);
-    this.formHandler.setFormControlValue(this.form, 'value', this.modbusWriteValue.value);
   }
 
   updateModelFromForm(): ModbusWriteValue | undefined {

@@ -51,11 +51,10 @@ export class ControlSwitchComponent implements OnChanges, OnInit {
         this.switch_ = new Switch();
       }
     }
-    this.updateForm(this.form, this.switch_, this.formHandler);
+    this.expandParentForm();
   }
 
   ngOnInit() {
-    this.expandParentForm();
     this.errorMessages = new ErrorMessages('ControlSwitchComponent.error.', [
       new ErrorMessage('gpio', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('gpio', ValidatorType.pattern),
@@ -63,17 +62,13 @@ export class ControlSwitchComponent implements OnChanges, OnInit {
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
     });
+    this.expandParentForm();
   }
 
   expandParentForm() {
     this.formHandler.addFormControl(this.form, 'gpio', this.switch_ && this.switch_.gpio,
       [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
     this.formHandler.addFormControl(this.form, 'reverseStates', this.switch_ && this.switch_.reverseStates);
-  }
-
-  updateForm(form: FormGroup, switch_: Switch, formHandler: FormHandler) {
-    formHandler.setFormControlValue(form, 'gpio', switch_.gpio);
-    formHandler.setFormControlValue(form, 'reverseStates', switch_.reverseStates);
   }
 
   updateModelFromForm(): Switch | undefined {

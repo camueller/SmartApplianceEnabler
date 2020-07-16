@@ -53,7 +53,7 @@ import {MeterDefaults} from '../meter/meter-defaults';
   templateUrl: './control.component.html',
   styleUrls: ['./control.component.scss'],
 })
-export class ControlComponent implements OnInit, CanDeactivate<ControlComponent> {
+export class ControlComponent implements OnChanges, OnInit, CanDeactivate<ControlComponent> {
   @ViewChild(ControlSwitchComponent)
   controlSwitchComp: ControlSwitchComponent;
   @ViewChild(ControlModbusComponent)
@@ -87,6 +87,15 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
     this.controlFactory = new ControlFactory(logger);
     this.control = this.controlFactory.createEmptyControl();
     this.formHandler = new FormHandler();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.control && changes.control.currentValue) {
+      this.control = changes.control.currentValue;
+    }
+    if (this.form) {
+      this.updateForm();
+    }
   }
 
   ngOnInit() {
@@ -127,6 +136,12 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
     this.form = new FormGroup({});
     this.formHandler.addFormControl(this.form, 'controlType', this.control && simpleControlType(this.control.type));
     this.formHandler.addFormControl(this.form, 'startingCurrentDetection',
+      this.control && this.control.startingCurrentDetection);
+  }
+
+  updateForm() {
+    this.formHandler.setFormControlValue(this.form, 'controlType', simpleControlType(this.control.type));
+    this.formHandler.setFormControlValue(this.form, 'startingCurrentDetection',
       this.control && this.control.startingCurrentDetection);
   }
 

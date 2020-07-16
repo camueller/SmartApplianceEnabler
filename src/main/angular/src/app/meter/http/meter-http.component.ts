@@ -58,7 +58,7 @@ export class MeterHttpComponent implements OnChanges, OnInit {
         this.httpElectricityMeter = new HttpElectricityMeter();
         this.httpElectricityMeter.httpReads = [HttpRead.createWithSingleChild()];
       }
-      this.updateForm();
+      this.expandParentForm();
     }
   }
 
@@ -125,14 +125,6 @@ export class MeterHttpComponent implements OnChanges, OnInit {
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
     this.formHandler.addFormControl(this.form, 'contentProtocol', this.httpElectricityMeter.contentProtocol);
     this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'httpReads',
-      this.httpElectricityMeter.httpReads);
-  }
-
-  updateForm() {
-    this.formHandler.setFormControlValue(this.form, 'pollInterval', this.httpElectricityMeter.pollInterval);
-    this.formHandler.setFormControlValue(this.form, 'measurementInterval', this.httpElectricityMeter.measurementInterval);
-    this.formHandler.setFormControlValue(this.form, 'contentProtocol', this.httpElectricityMeter.contentProtocol);
-    this.formHandler.setFormArrayControlWithEmptyFormGroups(this.form, 'httpReads',
       this.httpElectricityMeter.httpReads);
   }
 

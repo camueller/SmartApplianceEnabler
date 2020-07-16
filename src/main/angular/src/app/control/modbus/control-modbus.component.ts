@@ -63,7 +63,7 @@ export class ControlModbusComponent implements OnChanges, OnInit {
         this.modbusSwitch = new ModbusSwitch();
         this.modbusSwitch.modbusWrites = [ModbusWrite.createWithSingleChild()];
       }
-      this.updateForm();
+      this.expandParentForm();
     }
   }
 
@@ -129,13 +129,6 @@ export class ControlModbusComponent implements OnChanges, OnInit {
     this.formHandler.addFormControl(this.form, 'slaveAddress', this.modbusSwitch.slaveAddress,
       [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
     this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'modbusWrites',
-      this.modbusSwitch.modbusWrites);
-  }
-
-  updateForm() {
-    this.formHandler.setFormControlValue(this.form, 'idref', this.modbusSwitch.idref);
-    this.formHandler.setFormControlValue(this.form, 'slaveAddress', this.modbusSwitch.slaveAddress);
-    this.formHandler.setFormArrayControlWithEmptyFormGroups(this.form, 'modbusWrites',
       this.modbusSwitch.modbusWrites);
   }
 
