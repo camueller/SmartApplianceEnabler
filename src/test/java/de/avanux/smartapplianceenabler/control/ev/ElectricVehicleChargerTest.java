@@ -115,35 +115,35 @@ public class ElectricVehicleChargerTest {
     @Test
     public void wasInState() {
         assertFalse(evCharger.wasInState(EVChargerState.VEHICLE_CONNECTED));
-        evCharger.setState(EVChargerState.CHARGING);
+        evCharger.setState(now, EVChargerState.CHARGING);
         assertFalse(evCharger.wasInState(EVChargerState.VEHICLE_CONNECTED));
-        evCharger.setState(EVChargerState.VEHICLE_CONNECTED);
+        evCharger.setState(now, EVChargerState.VEHICLE_CONNECTED);
         assertTrue(evCharger.wasInState(EVChargerState.VEHICLE_CONNECTED));
-        evCharger.setState(EVChargerState.CHARGING);
+        evCharger.setState(now, EVChargerState.CHARGING);
         assertTrue(evCharger.wasInState(EVChargerState.VEHICLE_CONNECTED));
     }
 
     @Test
     public void wasInStateOneTime() {
         assertFalse(evCharger.wasInStateOneTime(EVChargerState.VEHICLE_CONNECTED));
-        evCharger.setState(EVChargerState.CHARGING);
+        evCharger.setState(now, EVChargerState.CHARGING);
         assertFalse(evCharger.wasInStateOneTime(EVChargerState.VEHICLE_CONNECTED));
-        evCharger.setState(EVChargerState.VEHICLE_CONNECTED);
+        evCharger.setState(now, EVChargerState.VEHICLE_CONNECTED);
         assertTrue(evCharger.wasInStateOneTime(EVChargerState.VEHICLE_CONNECTED));
-        evCharger.setState(EVChargerState.CHARGING);
+        evCharger.setState(now, EVChargerState.CHARGING);
         assertTrue(evCharger.wasInStateOneTime(EVChargerState.VEHICLE_CONNECTED));
-        evCharger.setState(EVChargerState.VEHICLE_CONNECTED);
+        evCharger.setState(now, EVChargerState.VEHICLE_CONNECTED);
         assertFalse(evCharger.wasInStateOneTime(EVChargerState.VEHICLE_CONNECTED));
     }
 
     @Test
     public void wasInStateAfterState() {
         assertFalse(evCharger.wasInStateAfterLastState(EVChargerState.CHARGING, EVChargerState.VEHICLE_CONNECTED));
-        evCharger.setState(EVChargerState.VEHICLE_CONNECTED);
+        evCharger.setState(now, EVChargerState.VEHICLE_CONNECTED);
         assertFalse(evCharger.wasInStateAfterLastState(EVChargerState.CHARGING, EVChargerState.VEHICLE_CONNECTED));
-        evCharger.setState(EVChargerState.CHARGING);
+        evCharger.setState(now, EVChargerState.CHARGING);
         assertTrue(evCharger.wasInStateAfterLastState(EVChargerState.CHARGING, EVChargerState.VEHICLE_CONNECTED));
-        evCharger.setState(EVChargerState.VEHICLE_CONNECTED);
+        evCharger.setState(now, EVChargerState.VEHICLE_CONNECTED);
         assertFalse(evCharger.wasInStateAfterLastState(EVChargerState.CHARGING, EVChargerState.VEHICLE_CONNECTED));
     }
 
@@ -324,7 +324,8 @@ public class ElectricVehicleChargerTest {
                 currentMillis,
                 currentMillis - (startChargingStateDetectionDelay + 1) * 1000));
         // state = CHARGING
-        evCharger.setState(EVChargerState.CHARGING);
+        evCharger.setState(now, EVChargerState.VEHICLE_CONNECTED);
+        evCharger.setState(now, EVChargerState.CHARGING);
         assertTrue(evCharger.isOn(
                 startChargingStateDetectionDelay, 0, null));
         assertTrue(evCharger.isOn(

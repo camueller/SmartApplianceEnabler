@@ -452,7 +452,7 @@ public class EVChargerTest extends TestBase {
         tick(appliance, timeVehicleConnected, true, false);
         assertEquals(1, timeframeIntervalHandler.getQueue().size());
         assertTimeframeIntervalOptionalEnergy(optionalEnergyInterval, TimeframeIntervalState.ACTIVE,
-                socInitial, defaultSocOptionalEnergy, evId, 8800, true,
+                socInitial, defaultSocOptionalEnergy, evId, 8800, false,
                 timeframeIntervalHandler.getQueue().get(0));
     }
 
