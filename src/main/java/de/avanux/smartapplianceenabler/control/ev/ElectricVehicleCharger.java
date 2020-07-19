@@ -644,7 +644,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
             retrieveSoc(now);
         }
         if(deactivatedInterval != null && deactivatedInterval.getRequest().isFinished(now)) {
-            this.setState(now, EVChargerState.CHARGING_COMPLETED);
+            stopCharging();
         }
     }
 

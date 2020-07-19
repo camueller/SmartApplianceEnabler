@@ -38,8 +38,7 @@ import org.slf4j.LoggerFactory;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.never;
 
 public class EVChargerTest extends TestBase {
@@ -142,11 +141,11 @@ public class EVChargerTest extends TestBase {
                 timeframeIntervalHandler.getQueue().get(0));
         assertEquals(14.0f, mockMeter.getEnergy(), 0.01);
 
-        LocalDateTime timeManualStartChargingCompleted = toToday(15, 0, 0);
-        log("Charging completed", timeManualStartChargingCompleted);
+        LocalDateTime timeManualStartTimeframeIntervalExpired = toToday(15, 0, 0);
+        log("Timeframe interval expired", timeManualStartTimeframeIntervalExpired);
         Mockito.when(pollEnergyExecutor.pollEnergy(Mockito.any())).thenReturn(54.0f);
-        tick(appliance, timeManualStartChargingCompleted, true, false);
-        assertTrue(evCharger.isChargingCompleted());
+        tick(appliance, timeManualStartTimeframeIntervalExpired, true, false);
+        assertFalse(evCharger.isChargingCompleted());
         assertEquals(0, timeframeIntervalHandler.getQueue().size());
         assertEquals(44.0f, mockMeter.getEnergy(), 0.01);
     }
@@ -206,11 +205,11 @@ public class EVChargerTest extends TestBase {
         Mockito.verify(mockMeter).startEnergyMeter();
         assertEquals(0.0f, mockMeter.getEnergy(), 0.01);
 
-        LocalDateTime timeManualStartChargingCompleted = toToday(15, 0, 0);
-        log("Charging completed", timeManualStartChargingCompleted);
+        LocalDateTime timeManualStartTimeframeIntervalExpired = toToday(15, 0, 0);
+        log("Timeframe interval expired", timeManualStartTimeframeIntervalExpired);
         Mockito.when(pollEnergyExecutor.pollEnergy(Mockito.any())).thenReturn(44.0f);
-        tick(appliance, timeManualStartChargingCompleted, true, false);
-        assertTrue(evCharger.isChargingCompleted());
+        tick(appliance, timeManualStartTimeframeIntervalExpired, true, false);
+        assertFalse(evCharger.isChargingCompleted());
         assertEquals(0, timeframeIntervalHandler.getQueue().size());
     }
 
@@ -452,7 +451,7 @@ public class EVChargerTest extends TestBase {
         tick(appliance, timeVehicleConnected, true, false);
         assertEquals(1, timeframeIntervalHandler.getQueue().size());
         assertTimeframeIntervalOptionalEnergy(optionalEnergyInterval, TimeframeIntervalState.ACTIVE,
-                socInitial, defaultSocOptionalEnergy, evId, 8800, false,
+                socInitial, defaultSocOptionalEnergy, evId, 8800, true,
                 timeframeIntervalHandler.getQueue().get(0));
     }
 
