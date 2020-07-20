@@ -133,7 +133,9 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
                         if(event.getState() == PinState.HIGH) {
                             pulsePowerMeter.addTimestamp(System.currentTimeMillis());
                             pulseEnergyMeter.increasePulseCounter();
-                            powerMeterListeners.forEach(listener -> listener.onPowerUpdate(getAveragePower()));
+                            int averagePower = getAveragePower();
+                            logger.debug("{}: power: {}W", getApplianceId(), averagePower);
+                            powerMeterListeners.forEach(listener -> listener.onPowerUpdate(averagePower));
                         }
                     }
                 });

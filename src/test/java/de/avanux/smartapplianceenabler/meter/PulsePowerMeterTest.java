@@ -78,9 +78,15 @@ public class PulsePowerMeterTest {
     }
 
     @Test
+    public void getAveragePower_3ts_2tsi() {
+        addTimestamps(-999, -60, -30);
+        assertEquals(120, pulsePowerMeter.getAveragePower(currentTimeMillis));
+    }
+
+    @Test
     public void getAveragePower_4ts_3tsi() {
         addTimestamps(-999, -60, -50, -30);
-        assertEquals(220, pulsePowerMeter.getAveragePower(currentTimeMillis));
+        assertEquals(270, pulsePowerMeter.getAveragePower(currentTimeMillis));
     }
 
     @Test

@@ -22,6 +22,7 @@ import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.configuration.Validateable;
+import de.avanux.smartapplianceenabler.schedule.TimeframeIntervalHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,9 +99,7 @@ public class PulsePowerMeter implements ApplianceIdConsumer, Validateable {
     }
 
     protected double calculatePower(long timestamp1, long timestamp2) {
-        double power = 3600.0 * this.impulsesPerKwh / (timestamp2 - timestamp1);
-        System.out.println("Power=" + power + " imp=" + this.impulsesPerKwh + " ts1=" + timestamp1 + " ts2=" + timestamp2);
-        return power;
+        return 3600.0 * this.impulsesPerKwh / (timestamp2 - timestamp1);
     }
 
     public int getAveragePower() {
@@ -112,15 +111,23 @@ public class PulsePowerMeter implements ApplianceIdConsumer, Validateable {
         if(this.impulseTimestamps.size() == 0) {
             return 0;
         }
-
-        List<Long> timestampsAndNow = new ArrayList<>(this.impulseTimestamps);
-        timestampsAndNow.add(timestampNow);
+        List<Long> timestampsToAnalyze = new ArrayList<>(this.impulseTimestamps);
+        if(timestampsToAnalyze.size() == 1) {
+            long ageMillis = timestampNow - this.impulseTimestamps.get(0);
+            if(ageMillis > TimeframeIntervalHandler.UPDATE_QUEUE_INTERVAL_SECONDS * 1000) {
+                // interpret request time as a second timestamp, but only if it is not very recent
+                timestampsToAnalyze.add(timestampNow);
+            }
+            else {
+                return 0;
+            }
+        }
 
         Double powerValuesSum = 0.0;
-        for(int i=0; i<timestampsAndNow.size() - 1; i ++) {
-            powerValuesSum += calculatePower(timestampsAndNow.get(i), timestampsAndNow.get(i + 1));
+        for(int i=0; i<timestampsToAnalyze.size() - 1; i ++) {
+            powerValuesSum += calculatePower(timestampsToAnalyze.get(i), timestampsToAnalyze.get(i + 1));
         }
-        return Double.valueOf(powerValuesSum / (timestampsAndNow.size() - 1)).intValue();
+        return Double.valueOf(powerValuesSum / (timestampsToAnalyze.size() - 1)).intValue();
     }
 
     public int getMinPower() {
