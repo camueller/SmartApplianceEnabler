@@ -275,22 +275,6 @@ Caused by: java.lang.ClassNotFoundException: junit.runner.Version
 								</goals>
 							</execution>
 							<execution>
-								<id>npm-install-clockpicker</id>
-								<phase>generate-sources</phase>
-								<configuration>
-									<workingDirectory>${project.basedir}/src/main/angular</workingDirectory>
-									<executable>npm</executable>
-									<arguments>
-										<argument>install</argument>
-										<argument>clockpicker</argument>
-										<argument>--save</argument>
-									</arguments>
-								</configuration>
-								<goals>
-									<goal>exec</goal>
-								</goals>
-							</execution>
-							<execution>
 								<id>npm-install-ngx-translate-core</id>
 								<phase>generate-sources</phase>
 								<configuration>
