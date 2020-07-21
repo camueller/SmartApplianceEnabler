@@ -112,9 +112,11 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
     }
 
     public Float startEnergyCounter() {
-        this.startEnergyCounter = this.pollEnergyExecutor.pollEnergy(LocalDateTime.now());
-        logger.debug("{}: Start energy counter: {}", applianceId, startEnergyCounter);
-        this.started = true;
+        if(! this.started) {
+            this.startEnergyCounter = this.pollEnergyExecutor.pollEnergy(LocalDateTime.now());
+            logger.debug("{}: Start energy counter: {}", applianceId, startEnergyCounter);
+            this.started = true;
+        }
         return startEnergyCounter;
     }
 
