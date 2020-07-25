@@ -7,14 +7,14 @@
       <option name="url" value="https://repo.maven.apache.org/maven2" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="oss-snapshots-repo" />
+      <option name="name" value="Sonatype OSS Maven Repository" />
+      <option name="url" value="https://oss.sonatype.org/content/groups/public" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="central" />
       <option name="name" value="Maven Central repository" />
       <option name="url" value="https://repo1.maven.org/maven2" />
-    </remote-repository>
-    <remote-repository>
-      <option name="id" value="spring-releases" />
-      <option name="name" value="spring-releases" />
-      <option name="url" value="https://repo.spring.io/libs-release" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="4thline.org-repo" />
@@ -27,9 +27,9 @@
       <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
     </remote-repository>
     <remote-repository>
-      <option name="id" value="oss-snapshots-repo" />
-      <option name="name" value="Sonatype OSS Maven Repository" />
-      <option name="url" value="https://oss.sonatype.org/content/groups/public" />
+      <option name="id" value="spring-releases" />
+      <option name="name" value="spring-releases" />
+      <option name="url" value="https://repo.spring.io/libs-release" />
     </remote-repository>
   </component>
 </project>
