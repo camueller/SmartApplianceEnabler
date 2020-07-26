@@ -21,6 +21,7 @@ import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.appliance.ApplianceLifeCycle;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.http.*;
+import de.avanux.smartapplianceenabler.meter.MeterValueName;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolHandler;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolType;
 import de.avanux.smartapplianceenabler.protocol.JsonContentProtocolHandler;
@@ -93,11 +94,16 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
 
     @Override
     public void validate() throws ConfigurationException {
+        logger.debug("{}: Validating configuration", applianceId);
         HttpValidator validator = new HttpValidator(applianceId);
 
         List<String> writeValueNames = Arrays.stream(ControlValueName.values())
                 .map(valueName -> valueName.name()).collect(Collectors.toList());
-        if(!validator.validateWrites(writeValueNames, this.httpWrites)) {
+        boolean writesValid = validator.validateWrites(writeValueNames, this.httpWrites);
+        boolean readValid = this.httpRead == null || validator.validateReads(
+                Collections.singletonList(ControlValueName.On.name()),
+                Collections.singletonList(this.httpRead), true);
+        if(! (writesValid && readValid)) {
             throw new ConfigurationException();
         }
     }
