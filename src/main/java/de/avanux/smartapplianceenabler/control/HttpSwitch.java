@@ -97,7 +97,7 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
 
         List<String> writeValueNames = Arrays.stream(ControlValueName.values())
                 .map(valueName -> valueName.name()).collect(Collectors.toList());
-        if(validator.validateWrites(writeValueNames, this.httpWrites)) {
+        if(!validator.validateWrites(writeValueNames, this.httpWrites)) {
             throw new ConfigurationException();
         }
     }
