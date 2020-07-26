@@ -35,7 +35,6 @@ export class ControlHttpComponent implements OnChanges, OnInit {
   applianceId: string;
   @Input()
   controlDefaults: ControlDefaults;
-  readControlState: boolean;
   form: FormGroup;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};
@@ -108,19 +107,16 @@ export class ControlHttpComponent implements OnChanges, OnInit {
     this.setReadControlState(!this.readControlState);
   }
 
+  get readControlState() {
+    return !!this.form.controls.httpRead;
+  }
+
   setReadControlState(readControlState: boolean) {
-    this.readControlState = readControlState;
-    if (this.readControlState) {
+    if (readControlState) {
       this.form.addControl('httpRead', new FormGroup({}));
     } else {
       this.form.removeControl('httpRead');
     }
-  }
-
-  updateReadControlState() {
-    this.readControlState = this.httpSwitch.httpRead && this.httpSwitch.httpRead.readValues
-      && this.httpSwitch.httpRead.readValues.length > 0;
-    this.setReadControlState(this.readControlState);
   }
 
   addHttpWrite() {
@@ -151,8 +147,10 @@ export class ControlHttpComponent implements OnChanges, OnInit {
   expandParentForm() {
     this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'httpWrites',
       this.httpSwitch.httpWrites);
-    this.formHandler.addFormControl(this.form, 'readControlState', this.readControlState);
-    this.updateReadControlState();
+    const readControlState = this.httpSwitch.httpRead && this.httpSwitch.httpRead.readValues
+      && this.httpSwitch.httpRead.readValues.length > 0;
+    this.formHandler.addFormControl(this.form, 'readControlState', readControlState);
+    this.setReadControlState(readControlState);
   }
 
   updateModelFromForm(): HttpSwitch | undefined {
