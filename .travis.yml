@@ -52,10 +52,10 @@ script:
     node_modules/.bin/testcafe --page-load-timeout 10000 "browserstack:safari@13.1:OS X Catalina" "src/*.spec.ts" &&
     popd
   - |
-    if [ $TRAVIS_BRANCH = "master" ]; then
+    if [[ $TRAVIS_COMMIT_MESSAGE == *"release 1."* ]]; then
       pushd docker; ./amd64_check.sh
     else
-      echo "*** Skipping docker push: TRAVIS_BRANCH=$TRAVIS_BRANCH"
+      echo "*** Skipping docker push"
     fi
 after_success:
   - bash <(curl -s https://codecov.io/bash)
