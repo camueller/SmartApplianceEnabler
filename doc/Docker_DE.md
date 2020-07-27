@@ -169,7 +169,7 @@ pi@raspberrypi:~ $ docker run -v sae:/opt/sae/data --net=host --device /dev/mem:
 
 Dabei können über die Docker-Variable _JAVA_OPTS_ auch Properties gesetzt werden:
 ```console
-pi@raspberrypi:~ $ docker run -v sae:/opt/sae/data --net=host --device /dev/mem:/dev/mem --privileged --name=sae -e "JAVA_OPTS=-Dsae.discovery.disable=true" avanux/smartapplianceenabler-arm32
+pi@raspberrypi:~ $ docker run -v sae:/opt/sae/data --net=host --device /dev/mem:/dev/mem --privileged --name=sae -e JAVA_OPTS="-Dserver.port=9000" avanux/smartapplianceenabler-arm32
 ```
 
 ### Stoppen des Containers
