@@ -49,15 +49,21 @@ public class PulsePowerMeterTest {
     }
 
     @Test
-    public void isOn_power0W() {
-        addTimestamps(-3601);
+    public void isOn_1ts() {
+        addTimestamps(-3600);
         assertFalse(pulsePowerMeter.isOn(currentTimeMillis));
     }
 
     @Test
-    public void isOn_power1W() {
-        addTimestamps(-3600);
+    public void isOn_2ts() {
+        addTimestamps(-9000, -5400);
         assertTrue(pulsePowerMeter.isOn(currentTimeMillis));
+    }
+
+    @Test
+    public void isOn_2ts_overdue() {
+        addTimestamps(-9001, -5401);
+        assertFalse(pulsePowerMeter.isOn(currentTimeMillis));
     }
 
     @Test
@@ -66,15 +72,21 @@ public class PulsePowerMeterTest {
     }
 
     @Test
-    public void getAveragePower_1ts_0tsi() {
+    public void getAveragePower_1ts() {
         addTimestamps(-3600);
+        assertEquals(0, pulsePowerMeter.getAveragePower(currentTimeMillis));
+    }
+
+    @Test
+    public void getAveragePower_2ts() {
+        addTimestamps(-9000, -5400);
         assertEquals(1, pulsePowerMeter.getAveragePower(currentTimeMillis));
     }
 
     @Test
-    public void getAveragePower_2ts_1tsi() {
-        addTimestamps(-999, -60);
-        assertEquals(60, pulsePowerMeter.getAveragePower(currentTimeMillis));
+    public void getAveragePower_2ts_overdue() {
+        addTimestamps(-9001, -5401);
+        assertEquals(0, pulsePowerMeter.getAveragePower(currentTimeMillis));
     }
 
     @Test
@@ -90,21 +102,9 @@ public class PulsePowerMeterTest {
     }
 
     @Test
-    public void getMinPower_2ts_1tsi() {
-        addTimestamps(-999, -60);
-        assertEquals(60, pulsePowerMeter.getMinPower(currentTimeMillis));
-    }
-
-    @Test
     public void getMinPower_4ts_3tsi() {
         addTimestamps(-999, -60, -50, -30);
         assertEquals(180, pulsePowerMeter.getMinPower(currentTimeMillis));
-    }
-
-    @Test
-    public void getMaxPower_2ts_1tsi() {
-        addTimestamps(-999, -60);
-        assertEquals(60, pulsePowerMeter.getMaxPower(currentTimeMillis));
     }
 
     @Test

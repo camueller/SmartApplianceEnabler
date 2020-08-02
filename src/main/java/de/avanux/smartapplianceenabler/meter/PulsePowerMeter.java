@@ -79,18 +79,31 @@ public class PulsePowerMeter implements ApplianceIdConsumer, Validateable {
 
     private void maintainTimestamps(long timestampNow) {
         List<Long> impulseTimestampsForRemoval = new ArrayList<Long>();
-        this.impulseTimestamps.forEach(timestamp -> {
-            if(timestampNow - timestamp > this.measurementInterval * 1000) {
-                impulseTimestampsForRemoval.add(timestamp);
-            }
-        });
+        this.impulseTimestamps.stream()
+                .filter(timestamp -> isTimestampExpired(timestampNow, timestamp))
+                .forEach(impulseTimestampsForRemoval::add);
 
-        // remove expired timestamps but keep the most recent timestamp
+        // remove expired timestamps but keep the 2 most most recent ones
+        Long secondMostRecentTimestamp = getSecondMostRecentTimestamp();
         Long mostRecentTimestamp = getMostRecentTimestamp();
         this.impulseTimestamps.removeAll(impulseTimestampsForRemoval);
-        if(this.impulseTimestamps.size() == 0 && mostRecentTimestamp != null) {
-            this.impulseTimestamps.add(mostRecentTimestamp);
+        if(this.impulseTimestamps.size() == 1) {
+            if(secondMostRecentTimestamp != null) {
+                this.impulseTimestamps.add(0, secondMostRecentTimestamp);
+            }
         }
+        else if(this.impulseTimestamps.size() == 0) {
+            if(secondMostRecentTimestamp != null) {
+                this.impulseTimestamps.add(secondMostRecentTimestamp);
+            }
+            if(mostRecentTimestamp != null) {
+                this.impulseTimestamps.add(mostRecentTimestamp);
+            }
+        }
+    }
+
+    private boolean isTimestampExpired(long timestampNow, long timestamp) {
+        return timestampNow - timestamp > this.measurementInterval * 1000;
     }
 
     private Long getMostRecentTimestamp() {
@@ -98,7 +111,19 @@ public class PulsePowerMeter implements ApplianceIdConsumer, Validateable {
                 ? this.impulseTimestamps.get(this.impulseTimestamps.size() - 1) : null;
     }
 
-    protected double calculatePower(long timestamp1, long timestamp2) {
+    private Long getSecondMostRecentTimestamp() {
+        return this.impulseTimestamps.size() > 1
+                ? this.impulseTimestamps.get(this.impulseTimestamps.size() - 2) : null;
+    }
+
+    protected double calculatePower(long timestampNow, long timestamp1, long timestamp2) {
+        if(isTimestampExpired(timestampNow, timestamp2)) {
+            long timestampDelta12 = timestamp2 - timestamp1;
+            long timestampDeltaNow2 = timestampNow - timestamp2;
+            if(timestampDeltaNow2 > timestampDelta12 * 1.5) {
+                return 0.0;
+            }
+        }
         return 3600.0 * this.impulsesPerKwh / (timestamp2 - timestamp1);
     }
 
@@ -108,26 +133,15 @@ public class PulsePowerMeter implements ApplianceIdConsumer, Validateable {
 
     int getAveragePower(long timestampNow) {
         this.maintainTimestamps(timestampNow);
-        if(this.impulseTimestamps.size() == 0) {
+        if(this.impulseTimestamps.size() == 0 || this.impulseTimestamps.size() == 1) {
             return 0;
-        }
-        List<Long> timestampsToAnalyze = new ArrayList<>(this.impulseTimestamps);
-        if(timestampsToAnalyze.size() == 1) {
-            long ageMillis = timestampNow - this.impulseTimestamps.get(0);
-            if(ageMillis > TimeframeIntervalHandler.UPDATE_QUEUE_INTERVAL_SECONDS * 1000) {
-                // interpret request time as a second timestamp, but only if it is not very recent
-                timestampsToAnalyze.add(timestampNow);
-            }
-            else {
-                return 0;
-            }
         }
 
         Double powerValuesSum = 0.0;
-        for(int i=0; i<timestampsToAnalyze.size() - 1; i ++) {
-            powerValuesSum += calculatePower(timestampsToAnalyze.get(i), timestampsToAnalyze.get(i + 1));
+        for(int i=0; i<this.impulseTimestamps.size() - 1; i ++) {
+            powerValuesSum += calculatePower(timestampNow, impulseTimestamps.get(i), impulseTimestamps.get(i + 1));
         }
-        return Double.valueOf(powerValuesSum / (timestampsToAnalyze.size() - 1)).intValue();
+        return Double.valueOf(powerValuesSum / (impulseTimestamps.size() - 1)).intValue();
     }
 
     public int getMinPower() {
@@ -145,7 +159,7 @@ public class PulsePowerMeter implements ApplianceIdConsumer, Validateable {
 
         double minPower = Double.MAX_VALUE;
         for(int i=0; i<this.impulseTimestamps.size() - 1; i ++) {
-            double power = calculatePower(this.impulseTimestamps.get(i), this.impulseTimestamps.get(i + 1));
+            double power = calculatePower(timestampNow, this.impulseTimestamps.get(i), this.impulseTimestamps.get(i + 1));
             if(power < minPower) {
                 minPower = power;
             }
@@ -168,7 +182,7 @@ public class PulsePowerMeter implements ApplianceIdConsumer, Validateable {
 
         double maxPower = Double.MIN_VALUE;
         for(int i=0; i<this.impulseTimestamps.size() - 1; i ++) {
-            double power = calculatePower(this.impulseTimestamps.get(i), this.impulseTimestamps.get(i + 1));
+            double power = calculatePower(timestampNow, this.impulseTimestamps.get(i), this.impulseTimestamps.get(i + 1));
             if(power > maxPower) {
                 maxPower = power;
             }
@@ -184,8 +198,7 @@ public class PulsePowerMeter implements ApplianceIdConsumer, Validateable {
         if(control != null) {
             return control.isOn();
         }
-        Long mostRecentTimestamp = getMostRecentTimestamp();
-        return mostRecentTimestamp != null && calculatePower(mostRecentTimestamp, timestampNow) >= 1;
+        return getAveragePower(timestampNow) >= 1;
     }
 
 }
