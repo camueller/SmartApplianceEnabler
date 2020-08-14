@@ -208,6 +208,23 @@ openjdk version "11.0.5" 2019-10-15
 OpenJDK Runtime Environment (build 11.0.5+10-post-Raspbian-1deb10u1)
 OpenJDK Server VM (build 11.0.5+10-post-Raspbian-1deb10u1, mixed mode)
 ```
+#### Smart Appliancer Enabler ab Version 1.5 (Raspberry Pi 1, 2B und Pi Zero-Modelle mit ARMv6 und ARMv7)
+Open_JDK 11 ist mit ARMv6 und ARMv7 leider nicht kompatibel. Dafür besteht die Möglichkeit über "Zulu Build for OpenJDK" von Azul eine Alternative zu installieren.
+Dafür zuerst ein Verzeichnis erstellen und anschließend die Architektur (Soft Float (armsf) oder Hard Float (armhf)) des OS bestimmen:
+```console
+pi@raspberrypi:~ $ sudo mkdir /opt/jdk
+pi@raspberrypi:~ $ cd /opt/jdk
+pi@raspberrypi:~ $ dpkg --print-architecture
+```
+Auf der [Downloadseite](https://www.azul.com/downloads/zulu-community/?version=java-11-lts&package=jdk) von Azul den Downloadlink der aktuellen Version für die passende Architektur (armsf oder armhf) kopieren. Danach downloaden, entpacken, aufräumen und verlinken:
+```console
+pi@raspberrypi:~ $ sudo wget https://cdn.azul.com/zulu-embedded/bin/zulu11.41.75-ca-jdk11.0.8-linux_aarch32hf.tar.gz
+pi@raspberrypi:~ $ sudo tar -xzvf zulu11.41.75-ca-jdk11.0.8-linux_aarch32hf.tar.gz
+pi@raspberrypi:~ $ sudo rm *.tar.gz
+pi@raspberrypi:~ $ sudo update-alternatives --install /usr/bin/java java /opt/jdk/zulu11.41.75-ca-jdk11.0.8-linux_aarch32hf/bin/java 1
+pi@raspberrypi:~ $ sudo update-alternatives --install /usr/bin/javac javac /opt/jdk/zulu11.41.75-ca-jdk11.0.8-linux_aarch32hf/bin/javac 1
+```
+Da die alten Pi-Modell bzw. die Pi-Zero weniger Rechnen-Leistung bereitstellen, dauert der Start des SAE im Allgmeinen etwas länger, so dass die "Time-out-Zeiten" noch angepasst werden müssen, um einen Abbruch beim Programmstart zu verhindern. Dafür mit einem Editor in /opt/sae/smartapplianceenabler den "sleep 1" durch "sleep 3" ersetzen und in /lib/systemd/system/smartapplicanceenabler.service "TimeoutStartSec=90s" auf "TimeoutStartSec=180s" ändern.
 
 ## Wiring-Pi installieren
 Falls der *Smart Appliance Enabler* auf die GPIO-Anschlüsse des Raspberry Pi zugreifen soll, muss die Biliothek [Wiring Pi](http://wiringpi.com/) installiert sein. Das lässt sich mit folgendem Befehl erreichen:
