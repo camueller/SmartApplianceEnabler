@@ -28,11 +28,12 @@ Dec 23 18:06:40 raspberrypi systemd[1]: Started Smart Appliance Enabler.
 Der *Smart Appliance Enabler* läuft, wenn in der mit `Active:` beginnenden Zeile steht `active (running)`.
 
 ## Fehler beim Start
-Falls sich der *Smart Appliance Enabler* nicht starten läßt und man keine Hinweise im [Log](#log) findet, ist es sinnvoll, ihn testweise in der aktuellen Shell zu starten. Dadurch kann man leichter Fehler auf der Konsole sehen. Der Befehl dafür entspricht genau dem, was sonst das Start-Script macht und sieht wie folgt aus:
+Falls sich der *Smart Appliance Enabler* nicht starten läßt und man keine Hinweise im [Log](#log) findet, ist es sinnvoll, ihn testweise in der aktuellen Shell zu starten. Dadurch kann man etwaige Fehler auf der Konsole sehen. Die Shell muss dabei dem User gehören, der auch sonst für den *Smart Appliance Enabler*-Prozess verwendet wird - normalerweise ist das der User `sae`.
+Der Befehl dafür entspricht genau dem, was sonst das Start-Script macht und sieht wie folgt aus:
 ```console
 sae@raspberrypi:~ $ /usr/bin/java -Djava.awt.headless=true -Xmx256m -Dlogging.config=/opt/sae/logback-spring.xml -Dsae.pidfile=/var/run/sae/smartapplianceenabler.pid -Dsae.home=/opt/sae -jar /opt/sae/SmartApplianceEnabler-1.6.1.war
 ```  
-Die Versionsnummer im Namen der war-Datei muss natürlich entsprechend der verwendeten Version angepasst werden.
+Die Versionsnummer im Namen der war-Datei muss natürlich entsprechend der verwendeten Version angepasst werden!
 
 ## Log
 Der *Smart Appliance Enabler* schreibt seine Log-Daten in das Verzeichnis ```/tmp```, wobei die Dateinamen mit ```rolling``` beginnen gefolgt vom jeweilgen Datum.
