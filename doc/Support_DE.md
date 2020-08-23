@@ -29,7 +29,7 @@ Der *Smart Appliance Enabler* läuft, wenn in der mit `Active:` beginnenden Zeil
 
 ## Fehler beim Start
 Falls sich der *Smart Appliance Enabler* nicht starten läßt und man keine Hinweise im [Log](#log) findet, ist es sinnvoll, ihn testweise in der aktuellen Shell zu starten. Dadurch kann man leichter Fehler auf der Konsole sehen. Der Befehl dafür entspricht genau dem, was sonst das Start-Script macht und sieht wie folgt aus:
-```
+```console
 sae@raspberrypi:~ $ /usr/bin/java -Djava.awt.headless=true -Xmx256m -Dlogging.config=/opt/sae/logback-spring.xml -Dsae.pidfile=/var/run/sae/smartapplianceenabler.pid -Dsae.home=/opt/sae -jar /opt/sae/SmartApplianceEnabler-1.6.1.war
 ```  
 Die Versionsnummer im Namen der war-Datei muss natürlich entsprechend der verwendeten Version angepasst werden.
@@ -37,7 +37,7 @@ Die Versionsnummer im Namen der war-Datei muss natürlich entsprechend der verwe
 ## Log
 Der *Smart Appliance Enabler* schreibt seine Log-Daten in das Verzeichnis ```/tmp```, wobei die Dateinamen mit ```rolling``` beginnen gefolgt vom jeweilgen Datum.
 Mit dem folgenden Befehl kann man die Log-Dtei _live_ verfolgen, d.h. neue Einträge erscheinen automatisch:
-```
+```console
 pi@raspi ~ $ tail -f /tmp/rolling-2019-12-30.log
 2019-12-30 11:46:51,367 DEBUG [Timer-0] d.a.s.u.TimestampBasedCache [TimestampBasedCache.java:62] F-00000001-000000000014-00: cache=Power added value=1.0 timestamp=1577702811300  removed/total: 1/6
 2019-12-30 11:46:51,408 DEBUG [Timer-0] d.a.s.u.GuardedTimerTask [GuardedTimerTask.java:54] F-00000001-000000000015-00: Executing timer task name=PollEnergyMeter id=4447659
@@ -54,7 +54,7 @@ pi@raspi ~ $ tail -f /tmp/rolling-2019-12-30.log
 2019-12-30 11:46:51,779 DEBUG [Timer-0] d.a.s.m.ModbusElectricityMeter [ModbusElectricityMeter.java:196] F-00000001-000000000019-00: Float value=0.0
 ```
 Um nur die Einträge für ein bestimmtes Gerät zu sehen, eignet sich der folgende Befehl:
-```
+```console
 pi@raspi ~ $ tail -f /tmp/rolling-2019-12-30.log | grep --line-buffered F-00000001-000000000019-00
 2019-12-30 11:41:41,109 DEBUG [http-nio-8080-exec-8] d.a.s.s.w.SempController [SempController.java:221] F-00000001-000000000019-00: Received control request: on=false
 2019-12-30 11:41:41,111 DEBUG [http-nio-8080-exec-8] d.a.s.a.Appliance [Appliance.java:379] F-00000001-000000000019-00: Setting appliance state to OFF
