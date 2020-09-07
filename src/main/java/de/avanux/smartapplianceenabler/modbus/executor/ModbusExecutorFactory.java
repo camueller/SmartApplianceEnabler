@@ -90,6 +90,11 @@ public class ModbusExecutorFactory {
                     executor = new ReadDecimalInputRegisterExecutorImpl(address, bytes, byteOrder, factorToValue);
                 }
                 break;
+            case Holding:
+            {
+                executor = new ReadFloatHoldingRegisterExecutorImpl(address, bytes, factorToValue.floatValue());
+            }
+            break;
             case Coil:
                 if(testingReadBooleanExecutor != null) {
                     executor = testingReadBooleanExecutor;
