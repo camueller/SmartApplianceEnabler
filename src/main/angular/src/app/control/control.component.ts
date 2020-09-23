@@ -38,6 +38,7 @@ import {ControlSwitchComponent} from './switch/control-switch.component';
 import {ControlHttpComponent} from './http/control-http.component';
 import {HttpSwitch} from './http/http-switch';
 import {AlwaysOnSwitch} from './alwayson/always-on-switch';
+import {PartnerSwitch} from './partner/partner-switch';
 import {ModbusSwitch} from './modbus/modbus-switch';
 import {StartingCurrentSwitch} from './startingcurrent/starting-current-switch';
 import {ControlModbusComponent} from './modbus/control-modbus.component';
@@ -101,7 +102,7 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
   ngOnInit() {
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.translate.get('dialog.confirmDelete').subscribe(translated => this.confirmDeleteMessage = translated);
-    const controlTypeKeys = [Switch.TYPE, ModbusSwitch.TYPE, HttpSwitch.TYPE, AlwaysOnSwitch.TYPE];
+    const controlTypeKeys = [Switch.TYPE, ModbusSwitch.TYPE, HttpSwitch.TYPE, AlwaysOnSwitch.TYPE, PartnerSwitch.TYPE];
     this.translate.get(controlTypeKeys).subscribe(translatedStrings => {
       Object.keys(translatedStrings).forEach(key => {
         this.controlTypes.push({value: simpleControlType(key), viewValue: translatedStrings[key]} as ListItem);
@@ -156,6 +157,10 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
     return this.control && this.control.type === AlwaysOnSwitch.TYPE;
   }
 
+  get isPartnerSwitch() {
+    return this.control && this.control.type === PartnerSwitch.TYPE;
+  }
+
   get isSwitch() {
     return this.control && this.control.type === Switch.TYPE;
   }
@@ -182,7 +187,7 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
 
   isDeleteEnabled() {
     return this.control && (this.control.switch_ || this.control.httpSwitch || this.control.modbusSwitch
-      || this.control.alwaysOnSwitch || this.control.evCharger);
+      || this.control.alwaysOnSwitch || this.control.evCharger || this.control.partnerSwitch);
   }
 
   typeChanged(newType?: string | undefined) {
@@ -191,6 +196,8 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
       this.control.startingCurrentDetection = false;
     } else if (this.isAlwaysOnSwitch) {
       this.control.alwaysOnSwitch = this.controlFactory.createAlwaysOnSwitch();
+    } else if (this.isPartnerSwitch) {
+      this.control.partnerSwitch = this.controlFactory.createPartnerSwitch();
     } else if (this.isEvCharger) {
       this.control.startingCurrentDetection = false;
     }
@@ -200,7 +207,7 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
   }
 
   get canHaveStartingCurrentDetection(): boolean {
-    return !this.isAlwaysOnSwitch && this.control.type !== MockSwitch.TYPE;
+    return !this.isAlwaysOnSwitch && !this.isPartnerSwitch && this.control.type !== MockSwitch.TYPE;
   }
 
   toggleStartingCurrentDetection() {

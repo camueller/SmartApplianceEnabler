@@ -20,6 +20,7 @@ import {MockSwitch} from './mock-switch';
 import {HttpSwitch} from './http/http-switch';
 import {StartingCurrentSwitch} from './startingcurrent/starting-current-switch';
 import {AlwaysOnSwitch} from './alwayson/always-on-switch';
+import {PartnerSwitch} from './partner/partner-switch';
 import {ModbusSwitch} from './modbus/modbus-switch';
 import {Switch} from './switch/switch';
 import {EvCharger} from './evcharger/ev-charger';
@@ -29,6 +30,7 @@ export class Control {
   startingCurrentDetection?: boolean;
   startingCurrentSwitch?: StartingCurrentSwitch;
   alwaysOnSwitch?: AlwaysOnSwitch;
+  partnerSwitch?: PartnerSwitch;
   switch_?: Switch;
   modbusSwitch?: ModbusSwitch;
   mockSwitch?: MockSwitch;

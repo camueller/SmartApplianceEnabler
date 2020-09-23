@@ -54,6 +54,7 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
     // http://stackoverflow.com/questions/25374375/jaxb-wont-unmarshal-my-previously-marshalled-interface-impls
     @XmlElements({
             @XmlElement(name = "AlwaysOnSwitch", type = AlwaysOnSwitch.class),
+            @XmlElement(name = "PartnerSwitch", type = PartnerSwitch.class),
             @XmlElement(name = "HttpSwitch", type = HttpSwitch.class),
             @XmlElement(name = "MockSwitch", type = MockSwitch.class),
             @XmlElement(name = "ModbusSwitch", type = ModbusSwitch.class),
@@ -134,6 +135,9 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
 
     public boolean isAcceptControlRecommendations() {
         if(this.control instanceof AlwaysOnSwitch) {
+            return false;
+        }
+        if(this.control instanceof PartnerSwitch) {
             return false;
         }
         if(this.timeframeIntervalHandler != null) {

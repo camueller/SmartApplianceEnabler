@@ -128,6 +128,7 @@
   "de.avanux.smartapplianceenabler.control.ModbusSwitch": "Modbus",
   "de.avanux.smartapplianceenabler.control.HttpSwitch": "HTTP",
   "de.avanux.smartapplianceenabler.control.AlwaysOnSwitch": "Immer eingeschaltet",
+  "de.avanux.smartapplianceenabler.control.PartnerSwitch": "Invertiert zum Partner",
   "de.avanux.smartapplianceenabler.control.MockSwitch": "Testschalter",
 
   "ControlStartingcurrentComponent.startingCurrentDetection": "Anlaufstromerkennung",

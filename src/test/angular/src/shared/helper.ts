@@ -10,6 +10,7 @@ import {Control} from '../../../../main/angular/src/app/control/control';
 import {HttpElectricityMeter} from '../../../../main/angular/src/app/meter/http/http-electricity-meter';
 import {HttpMeterPage} from '../page/meter/http-meter.page';
 import {AlwaysOnSwitchPage} from '../page/control/always-on-switch.page';
+import {PartnerSwitchPage} from '../page/control/partner-switch.page';
 import {HttpControlPage} from '../page/control/http-control.page';
 import {ModbusElectricityMeter} from '../../../../main/angular/src/app/meter/modbus/modbus-electricity-meter';
 import {ModbusMeterPage} from '../page/meter/modbus-meter.page';
@@ -18,6 +19,7 @@ import {ApplianceConfiguration} from './appliance-configuration';
 import {ModbusControlPage} from '../page/control/modbus-control.page';
 import {HttpSwitch} from '../../../../main/angular/src/app/control/http/http-switch';
 import {AlwaysOnSwitch} from '../../../../main/angular/src/app/control/alwayson/always-on-switch';
+import {PartnerSwitch} from '../../../../main/angular/src/app/control/partner/partner-switch';
 import {ModbusSwitch} from '../../../../main/angular/src/app/control/modbus/modbus-switch';
 import {Switch} from '../../../../main/angular/src/app/control/switch/switch';
 import {ControlPage} from '../page/control/control.page';
@@ -119,11 +121,14 @@ export async function assertMeter(t: TestController, applianceId: string, meter:
 
 export async function createControl(t: TestController, applianceId: string, control: Control, controlTemplate?: string) {
   await SideMenu.clickControl(t, applianceId);
-  if (control.type !== AlwaysOnSwitch.TYPE && control.type !== EvCharger.TYPE) {
+  if (control.type !== AlwaysOnSwitch.TYPE && control.type !== PartnerSwitch.TYPE && control.type !== EvCharger.TYPE) {
     await ControlPage.setStartingCurrentDetection(t, control.startingCurrentDetection);
   }
   if (control.type === AlwaysOnSwitch.TYPE) {
     await AlwaysOnSwitchPage.setAlwaysOnSwitch(t, control.alwaysOnSwitch);
+  }
+  if (control.type === PartnerSwitch.TYPE) {
+    await PartnerSwitchPage.setPartnerSwitch(t, control.partnerSwitch);
   }
   if (control.type === Switch.TYPE) {
     await SwitchPage.setSwitch(t, control.switch_);
@@ -145,11 +150,14 @@ export async function createControl(t: TestController, applianceId: string, cont
 }
 export async function assertControl(t: TestController, applianceId: string, control: Control) {
   await SideMenu.clickControl(t, applianceId);
-  if (control.type !== AlwaysOnSwitch.TYPE && control.type !== EvCharger.TYPE) {
+  if (control.type !== AlwaysOnSwitch.TYPE && control.type !== PartnerSwitch.TYPE && control.type !== EvCharger.TYPE) {
     await ControlPage.assertStartingCurrentDetection(t, control.startingCurrentDetection);
   }
   if (control.type === AlwaysOnSwitch.TYPE) {
     await AlwaysOnSwitchPage.assertAlwaysOnSwitch(t, control.alwaysOnSwitch);
+  }
+  if (control.type === PartnerSwitch.TYPE) {
+    await PartnerSwitchPage.assertPartnerSwitch(t, control.partnerSwitch);
   }
   if (control.type === Switch.TYPE) {
     await SwitchPage.assertSwitch(t, control.switch_);

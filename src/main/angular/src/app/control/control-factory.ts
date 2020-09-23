@@ -25,6 +25,7 @@ import {HttpSwitch} from './http/http-switch';
 import {EvModbusControl} from './evcharger/modbus/ev-modbus-control';
 import {StartingCurrentSwitch} from './startingcurrent/starting-current-switch';
 import {AlwaysOnSwitch} from './alwayson/always-on-switch';
+import {PartnerSwitch} from './partner/partner-switch';
 import {ModbusSwitch} from './modbus/modbus-switch';
 import {EvHttpControl} from './evcharger/http/ev-http-control';
 import {EvCharger} from './evcharger/ev-charger';
@@ -89,6 +90,8 @@ export class ControlFactory {
     control.type = type;
     if (control.type === AlwaysOnSwitch.TYPE) {
       control.alwaysOnSwitch = this.createAlwaysOnSwitch(rawControl);
+    } else if (control.type === PartnerSwitch.TYPE) {
+      control.partnerSwitch = this.createPartnerSwitch(rawControl);
     } else if (control.type === MockSwitch.TYPE) {
       control.mockSwitch = this.createMockSwitch(rawControl);
     } else if (control.type === Switch.TYPE) {
@@ -105,6 +108,8 @@ export class ControlFactory {
   getControlByType(control: Control): any {
     if (control.type === AlwaysOnSwitch.TYPE) {
       return control.alwaysOnSwitch;
+    } else if (control.type === PartnerSwitch.TYPE) {
+      return control.partnerSwitch;
     } else if (control.type === MockSwitch.TYPE) {
       return control.mockSwitch;
     } else if (control.type === Switch.TYPE) {
@@ -121,6 +126,10 @@ export class ControlFactory {
 
   createAlwaysOnSwitch(rawAlwaysOnSwitch?: any): AlwaysOnSwitch {
     return new AlwaysOnSwitch();
+  }
+
+  createPartnerSwitch(rawPartnerSwitch?: any): PartnerSwitch {
+    return new PartnerSwitch();
   }
 
   createMockSwitch(rawMockSwitch?: any): MockSwitch {
