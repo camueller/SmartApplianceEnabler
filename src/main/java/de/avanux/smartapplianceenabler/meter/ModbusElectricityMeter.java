@@ -24,6 +24,7 @@ import de.avanux.smartapplianceenabler.modbus.executor.ModbusExecutorFactory;
 import de.avanux.smartapplianceenabler.modbus.executor.ModbusReadTransactionExecutor;
 import de.avanux.smartapplianceenabler.modbus.executor.ReadDecimalInputRegisterExecutor;
 import de.avanux.smartapplianceenabler.modbus.executor.ReadFloatInputRegisterExecutor;
+import de.avanux.smartapplianceenabler.modbus.executor.ReadFloatHoldingRegisterExecutor;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import de.avanux.smartapplianceenabler.configuration.Validateable;
 import org.slf4j.Logger;
@@ -196,6 +197,9 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
                 }
                 if(executor instanceof ReadDecimalInputRegisterExecutor) {
                     registerValue = ((ReadDecimalInputRegisterExecutor) executor).getValue().floatValue();
+                }
+                if(executor instanceof ReadFloatHoldingRegisterExecutor) {
+                    registerValue = ((ReadFloatHoldingRegisterExecutor) executor).getValue().floatValue();
                 }
                 if(registerValue != null) {
                     logger.debug("{}: Float value={}", getApplianceId(), registerValue);
