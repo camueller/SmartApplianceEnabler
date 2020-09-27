@@ -836,13 +836,13 @@ public class SaeController {
                             applianceStatus.setCurrentChargePower(chargePower);
                         }
                         applianceStatus.setChargedEnergyAmount(whAlreadyCharged);
-                        int chargeAmount = 0;
+                        int whRemainingToCharge = 0;
                         if(nextTimeframeInterval != null
                                 && nextTimeframeInterval.getRequest() instanceof AbstractEnergyRequest) {
-                            chargeAmount = nextTimeframeInterval.getRequest().getMax(now);
+                            whRemainingToCharge = nextTimeframeInterval.getRequest().getMax(now);
                         }
                         if (nextTimeframeInterval != null && !nextTimeframeInterval.getRequest().isUsingOptionalEnergy()) {
-                            applianceStatus.setPlannedEnergyAmount(chargeAmount);
+                            applianceStatus.setPlannedEnergyAmount(whAlreadyCharged + whRemainingToCharge);
                             applianceStatus.setLatestEnd(nextTimeframeInterval.getLatestEndSeconds(now));
                         }
                     }
