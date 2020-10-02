@@ -120,9 +120,13 @@ Jedes Gerät wird über eine **DeviceId** identifiziert - das ist die (Appliance
 
 Bei der Fehlersuche wird man also denjenigen *DeviceStatus* betrachten, in dem die *DeviceId* des problematischen Gerätes enthalten ist.
 
-Wenn **Zählerwerte nicht im Sunny Portal** angezeigt werden, müssen zwei Dinge geprüft werden:
+Wenn **Zählerwerte nicht im Sunny Portal** angezeigt werden, müssen folgende Dinge geprüft werden:
 - Im *DeviceStatus* unter *PowerInfo* muss bei *AveragePower* die aktuelle Leistungsaufnahme enthalten sein, die größer als 0 sein muss
 - Im *DeviceStatus* muss der *Status* auf _On_ stehen, sonst werden die Leistungswerte vom Sunny Home Manager ignoriert
+- Der *Sunny Home Manager* muss die Werte vom *Smart Appliance Enabler*. Das passiert alle 60s und wird im Log protokolliert:
+```
+2020-09-26 23:50:55,965 DEBUG [http-nio-8080-exec-8] d.a.s.s.w.SempController [SempController.java:119] Device info requested of all devices
+``` 
 
 Wenn Geräte vom Sunny Home Manager **nicht geschaltet werden**, müssen folgende Dinge geprüft werden:
 - Im *DeviceStatus* muss *EMSignalsAccepted* auf _true_ stehen
