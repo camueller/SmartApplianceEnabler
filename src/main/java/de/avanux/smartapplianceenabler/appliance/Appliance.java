@@ -332,24 +332,21 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
         return this.control instanceof ElectricVehicleCharger;
     }
 
-    public void setApplianceState(LocalDateTime now, boolean switchOn, Integer recommendedPowerConsumption,
-                                  String logMessage) {
+    public void setApplianceState(LocalDateTime now, boolean switchOn, Integer chargePower, String logMessage) {
         if(control != null) {
             logger.debug("{}: {}", id, logMessage);
             if(switchOn && isEvCharger()) {
-                int chargePower = 0;
-                if(recommendedPowerConsumption != null) {
-                    chargePower = recommendedPowerConsumption;
-                    logger.debug("{}: setting charge power to recommendation: {}W", id, chargePower);
+                if(chargePower != null) {
+                    ((ElectricVehicleCharger) control).setChargePower(chargePower);
+                    control.on(now, switchOn);
                 }
                 else {
-                    DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(this.id);
-                    chargePower = deviceInfo.getCharacteristics().getMaxPowerConsumption();
-                    logger.debug("{}: setting charge power to maximum: {}W", id, chargePower);
+                    logger.debug("{}: charge power not provided - not switching on", id);
                 }
-                ((ElectricVehicleCharger) control).setChargePower(chargePower);
             }
-            control.on(now, switchOn);
+            else {
+                control.on(now, switchOn);
+            }
         }
         else {
             logger.warn("{}: Appliance configuration does not contain control.", id);
@@ -372,9 +369,10 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
             timeframeIntervalHandler.addTimeframeInterval(now, timeframeInterval, true, true);
 
             if(chargeEnd == null) {
-                // if no charge end is provided we switch on immediatly with full power and don't accept
-                // any control recommendations
-                setApplianceState(now, true, null,"Switching on charger");
+                // if no charge end is provided we switch on immediately with full power
+                DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(this.id);
+                int chargePower = deviceInfo.getCharacteristics().getMaxPowerConsumption();
+                setApplianceState(now, true, chargePower,"Switching on charger with maximum power");
             }
         }
     }
