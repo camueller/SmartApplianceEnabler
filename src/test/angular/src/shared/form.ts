@@ -55,7 +55,7 @@ export async function inputText(t: TestController, selector: Selector, text: str
 export async function assertInput(t: TestController, selector: Selector, text: string | undefined) {
   const actual = await selector.value;
   const expected = text || '';
-  t.expect(actual.toString()).eql(expected.toString());
+  await t.expect(actual.toString()).eql(expected.toString());
 }
 
 export async function setCheckboxEnabled(t: TestController, selector: Selector, enabled: boolean) {
@@ -90,8 +90,8 @@ export async function assertSelect(t: TestController, selector: Selector, option
   if (isDebug()) { console.log('optionKey=', optionKey); }
   if (isDebug()) { console.log('i18nPrefix=', i18nPrefix); }
   if (optionKey) {
-    t.expect(selector.innerText).eql(getTranslation(optionKey, i18nPrefix));
+    await t.expect(selector.innerText).eql(getTranslation(optionKey, i18nPrefix));
   } else {
-    t.expect(selector.exists).notOk();
+    await t.expect(selector.exists).notOk();
   }
 }
