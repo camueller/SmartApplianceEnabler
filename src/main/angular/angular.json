@@ -103,7 +103,7 @@
       "inlineStyle": true,
       "prefix": "app",
       "style": "css",
-      "styleext": "scss"
+      "style": "scss"
     },
     "@schematics/angular:directive": {
       "prefix": "app"
