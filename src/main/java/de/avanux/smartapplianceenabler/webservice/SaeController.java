@@ -814,12 +814,9 @@ public class SaeController {
                 }
                 if (control instanceof ElectricVehicleCharger) {
                     ElectricVehicleCharger evCharger = (ElectricVehicleCharger) control;
-                    if(evCharger.isVehicleNotConnected()) {
-                        applianceStatus.setControllable(false);
-                    }
-                    else {
+                    applianceStatus.setState(evCharger.getState().name());
+                    if(!evCharger.isVehicleNotConnected()) {
                         applianceStatus.setEvIdCharging(evCharger.getConnectedVehicleId());
-                        applianceStatus.setState(evCharger.getState().name());
                         ZonedDateTime zdt = ZonedDateTime.of(evCharger.getStateLastChangedTimestamp(), ZoneId.systemDefault());
                         applianceStatus.setStateLastChangedTimestamp(zdt.toInstant().toEpochMilli());
                         applianceStatus.setSocInitial(evCharger.getConnectedVehicleSoc());

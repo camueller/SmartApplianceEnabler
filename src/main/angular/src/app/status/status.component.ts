@@ -11,6 +11,7 @@ import {TrafficLightState} from './traffic-light/traffic-light-state';
 import {TrafficLightComponent} from './traffic-light/traffic-light.component';
 import {ApplianceType} from '../appliance/appliance-type';
 import {ElectricVehicle} from '../control/evcharger/electric-vehicle/electric-vehicle';
+import {EvChargerState} from '../control/evcharger/ev-charger-state';
 
 @Component({
   selector: 'app-status',
@@ -106,7 +107,7 @@ export class StatusComponent implements OnInit, OnDestroy {
       },
 
       isGreenClickable(): boolean {
-        return ! this_.editMode && ! stateHandler.isGreen();
+        return applianceStatus.state !== EvChargerState.VEHICLE_NOT_CONNECTED && ! this_.editMode && ! stateHandler.isGreen();
       },
 
       onGreenClicked(status: Status, onActionCompleted: Subject<any>) {

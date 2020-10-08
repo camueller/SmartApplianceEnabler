@@ -1,12 +1,12 @@
 <div class="StatusEvchargerViewComponent">
   <div class="StatusComponent__appliance-name">{{getEvName(status.evIdCharging)}}</div>
+  <div class="StatusComponent__appliance-status" *ngIf="stateKey">
+    <span class="StatusComponent__appliance-status-label">{{'StatusComponent.state' | translate}}:</span>
+    <span class="StatusComponent__appliance-status-value"> {{stateKey | translate}}</span>
+    <span class="StatusComponent__appliance-status-value" *ngIf="status.stateLastChangedTimestamp"
+    > (seit {{toHHmmFromTimestamp(status.stateLastChangedTimestamp)}} Uhr)</span>
+  </div>
   <div *ngIf="status.planningRequested">
-    <div class="StatusComponent__appliance-status" *ngIf="stateKey">
-      <span class="StatusComponent__appliance-status-label">{{'StatusComponent.state' | translate}}:</span>
-      <span class="StatusComponent__appliance-status-value"> {{stateKey | translate}}</span>
-      <span class="StatusComponent__appliance-status-value" *ngIf="status.stateLastChangedTimestamp"
-      > (seit {{toHHmmFromTimestamp(status.stateLastChangedTimestamp)}} Uhr)</span>
-    </div>
     <div *ngIf="status.evIdCharging">
       <span class="StatusComponent__appliance-status-label">{{'StatusComponent.stateOfCharge' | translate}}:</span>
       <div class="StatusComponent__appliance-status-value-indented">
