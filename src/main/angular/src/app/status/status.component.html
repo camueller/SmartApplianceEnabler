@@ -52,6 +52,23 @@
   </div>
   <h3 class="StatusComponent__explanation_headline">{{'StatusComponent.explanation' | translate}}</h3>
   <div class="StatusComponent__mandatory_fields_hint">{{'dialog.mandatoryfields'|translate}}</div>
+  <div *ngIf="hasEvChargerInEditMode()">
+    <h4 class="StatusComponent__explanation_headline">{{'StatusComponent.chargeMode' | translate}}</h4>
+    <table>
+      <tr class="StatusComponent__explanation_chargemode_row">
+        <td class="StatusComponent__explanation_chargemode_label">{{'StatusComponent.chargeMode.FAST' | translate}}</td>
+        <td>{{'StatusComponent.chargeMode.FAST.description' | translate}}</td>
+      </tr>
+      <tr class="StatusComponent__explanation_chargemode_row">
+        <td class="StatusComponent__explanation_chargemode_label">{{'StatusComponent.chargeMode.OPTIMIZED' | translate}}</td>
+        <td>{{'StatusComponent.chargeMode.OPTIMIZED.description' | translate}}</td>
+      </tr>
+      <tr class="StatusComponent__explanation_chargemode_row">
+        <td class="StatusComponent__explanation_chargemode_label">{{'StatusComponent.chargeMode.EXCESS_ENERGY' | translate}}</td>
+        <td>{{'StatusComponent.chargeMode.EXCESS_ENERGY.description' | translate}}</td>
+      </tr>
+    </table>
+  </div>
   <div class="StatusComponent__traffic-light-explanation">
     <app-traffic-light [stateHandler]="getTrafficLightStateHandlerForExplanation(false, false, false)"
                        sizeSmall="true">

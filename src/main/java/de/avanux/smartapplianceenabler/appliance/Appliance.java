@@ -375,6 +375,18 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
                 setApplianceState(now, true, chargePower,"Switching on charger with maximum power");
             }
         }
+        else {
+            logger.warn("{}: Energy demand can only be set for ev charger!", id);
+        }
+    }
+
+    public void updateSoc(LocalDateTime now, Integer socCurrent, Integer socRequested) {
+        if (isEvCharger()) {
+            timeframeIntervalHandler.updateSocOfOptionalEnergyTimeframeIntervalForEVCharger(now, socCurrent, socRequested);
+        }
+        else {
+            logger.warn("{}: SOC can only be set for ev charger!", id);
+        }
     }
 
     private Set<ModbusSlave> getModbusSlaves() {

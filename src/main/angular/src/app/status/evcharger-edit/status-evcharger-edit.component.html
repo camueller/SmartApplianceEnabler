@@ -1,6 +1,14 @@
 <form class="StatusEvchargerEditComponent" [formGroup]="form" (ngSubmit)="submitForm()">
   <div class="StatusComponent__appliance-details-row">
     <mat-form-field>
+      <mat-label>{{'StatusComponent.chargeMode' | translate}}</mat-label>
+      <mat-select formControlName="chargeMode" (ngModelChange)="chargeModeChanged($event)">
+        <mat-option *ngFor="let chargeMode of chargeModes" [value]="chargeMode.value">{{chargeMode.viewValue}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div class="StatusComponent__appliance-details-row">
+    <mat-form-field>
       <mat-label>{{'StatusComponent.ev' | translate}}</mat-label>
       <mat-select formControlName="electricVehicle">
         <mat-option *ngFor="let electricVehicle of electricVehicles" [value]="electricVehicle.id">{{electricVehicle.name}}</mat-option>
@@ -24,11 +32,11 @@
     </mat-form-field>
     <span class="StatusComponent__appliance-status-label">{{'StatusComponent.stateOfChargeUnit' | translate}}</span>
   </div>
-  <div class="StatusComponent__appliance-details-row">
+  <div class="StatusComponent__appliance-details-row" *ngIf="isChargeModeOptimized">
     <span class="StatusComponent__appliance-status-label">{{'StatusComponent.chargeLatestEndRequested' | translate}}</span>
     <mat-form-field class="StatusEvchargerEditComponent__dayOfWeek">
       <mat-label>{{'dayOfWeek' | translate}}</mat-label>
-      <mat-select formControlName="chargeEndDow">
+      <mat-select formControlName="chargeEndDow" required="{{formHandler.isRequired('chargeEndDow')}}">
         <mat-option *ngFor="let dow of dows" [value]="dow.id">{{dow.name}}</mat-option>
       </mat-select>
     </mat-form-field>
@@ -36,6 +44,7 @@
                     formControlNameTP="chargeEndTime"
                     [width]="'3rem'"
                     [noErrorOnField]="true"
+                    required="true"
                     #chargeEndTimeComponent
     ></app-timepicker>
   </div>
@@ -45,6 +54,6 @@
   <div class="StatusComponent__appliance-details-row StatusComponent__appliance-button-row">
     <button mat-raised-button type="button" (click)="cancelForm()">{{'StatusComponent.buttonCancel' | translate}}</button>
     <button mat-raised-button type="submit" color="primary"
-            [disabled]="form.invalid">{{'StatusComponent.buttonStart' | translate}}</button>
+            [disabled]="form.invalid">{{submitButtonText}}</button>
   </div>
 </form>

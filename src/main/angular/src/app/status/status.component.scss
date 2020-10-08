@@ -66,6 +66,14 @@
     margin-bottom: 8px;
   }
 
+  &__explanation_chargemode_row {
+    vertical-align: top;
+  }
+
+  &__explanation_chargemode_label {
+    font-style: italic;
+  }
+
   &__mandatory_fields_hint {
     @extend .sae__mandatory_fields_hint;
     margin: $field-margin 0;

@@ -72,7 +72,7 @@ public class SaeController {
     private static final String CROSS_ORIGIN_URL = "http://localhost:4200";
     private Logger logger = LoggerFactory.getLogger(SaeController.class);
     // the lock ensures that no data is changed or read while appliances are restarted
-    private Object lock = new Object();
+    private final Object lock = new Object();
 
     public SaeController() {
         logger.info("SAE controller created.");
@@ -614,6 +614,30 @@ public class SaeController {
                 Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
                 if (appliance != null) {
                     appliance.setEnergyDemand(LocalDateTime.now(), evId, socCurrent, socRequested, chargeEnd);
+                } else {
+                    logger.error("{}: Appliance not found", applianceId);
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                }
+            } catch (Throwable e) {
+                logger.error("Error in " + getClass().getSimpleName(), e);
+            }
+        }
+    }
+
+    @RequestMapping(value = EVCHARGE_URL, method = RequestMethod.PATCH)
+    @CrossOrigin(origins = CROSS_ORIGIN_URL)
+    public void updateSoc(HttpServletResponse response,
+                          @RequestParam(value = "applianceid") String applianceId,
+                          @RequestParam(value = "socCurrent", required = false) Integer socCurrent,
+                          @RequestParam(value = "socRequested", required = false) Integer socRequested
+    ) {
+        synchronized (lock) {
+            try {
+                logger.debug("{}: Received request to update SOC: socCurrent={} socRequested={}",
+                        applianceId, socCurrent, socRequested);
+                Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
+                if (appliance != null) {
+                    appliance.updateSoc(LocalDateTime.now(), socCurrent, socRequested);
                 } else {
                     logger.error("{}: Appliance not found", applianceId);
                     response.setStatus(HttpServletResponse.SC_NOT_FOUND);

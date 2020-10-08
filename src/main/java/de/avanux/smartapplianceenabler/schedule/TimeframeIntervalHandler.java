@@ -394,6 +394,16 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
         return null;
     }
 
+    public void updateSocOfOptionalEnergyTimeframeIntervalForEVCharger(LocalDateTime now,
+                                                                       Integer socCurrent, Integer socRequested) {
+        TimeframeInterval timeframeInterval = getActiveTimeframeInterval();
+        if(timeframeInterval.getRequest() instanceof OptionalEnergySocRequest) {
+            OptionalEnergySocRequest request = (OptionalEnergySocRequest) timeframeInterval.getRequest();
+            request.setSocInitial(socCurrent);
+            request.setSoc(socRequested);
+        }
+    }
+
     private boolean prolongOptionalEnergyTimeframeIntervalForEVCharger(
             LocalDateTime now, TimeframeInterval timeframeInterval, TimeframeInterval successor) {
         if(timeframeInterval.getRequest() instanceof OptionalEnergySocRequest) {

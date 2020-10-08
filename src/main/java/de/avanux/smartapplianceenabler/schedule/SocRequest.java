@@ -55,11 +55,13 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
 
     private class EnergyCalculationVariables {
         public float energyCharged;
-        private Integer socInitial = 0;
+        private final Integer socInitial;
+        private final Integer soc;
 
-        public EnergyCalculationVariables(float energyCharged, Integer socInitial) {
+        public EnergyCalculationVariables(float energyCharged, Integer socInitial, Integer soc) {
             this.energyCharged = energyCharged;
             this.socInitial = socInitial;
+            this.soc = soc;
         }
 
         @Override
@@ -68,11 +70,12 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
 
             if (o == null || getClass() != o.getClass()) return false;
 
-            EnergyCalculationVariables variables = (EnergyCalculationVariables) o;
+            EnergyCalculationVariables that = (EnergyCalculationVariables) o;
 
             return new EqualsBuilder()
-                    .append(energyCharged, variables.energyCharged)
-                    .append(socInitial, variables.socInitial)
+                    .append(energyCharged, that.energyCharged)
+                    .append(socInitial, that.socInitial)
+                    .append(soc, that.soc)
                     .isEquals();
         }
 
@@ -81,6 +84,7 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
             return new HashCodeBuilder(17, 37)
                     .append(energyCharged)
                     .append(socInitial)
+                    .append(soc)
                     .toHashCode();
         }
     }
@@ -151,7 +155,7 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
 
     public Integer calculateEnergy(ElectricVehicle vehicle) {
         EnergyCalculationVariables variables =
-                new EnergyCalculationVariables(getMeter() != null ? getMeter().getEnergy() : 0.0f, socInitial);
+                new EnergyCalculationVariables(getMeter() != null ? getMeter().getEnergy() : 0.0f, socInitial, soc);
         if(this.lastEnergyCalculationVariables == null || !this.lastEnergyCalculationVariables.equals(variables)) {
             this.lastEnergyCalculationVariables = variables;
             getLogger().debug("{}: energy charged: {} kWh", getApplianceId(), variables.energyCharged);

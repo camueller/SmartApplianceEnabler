@@ -45,11 +45,22 @@ export class StatusComponent implements OnInit, OnDestroy {
         });
       });
     });
+    this.startRefreshStatus();
+  }
+
+  ngOnDestroy() {
+    this.stopRefreshStatus();
+  }
+
+  startRefreshStatus(immediateRefresh = false) {
+    if (immediateRefresh) {
+      this.loadApplianceStatuses(() => {});
+    }
     this.loadApplianceStatusesSubscription = interval(60 * 1000)
       .subscribe(() => this.loadApplianceStatuses(() => {}));
   }
 
-  ngOnDestroy() {
+  stopRefreshStatus() {
     this.loadApplianceStatusesSubscription.unsubscribe();
   }
 
@@ -123,6 +134,7 @@ export class StatusComponent implements OnInit, OnDestroy {
         } else {
           // display form to request runtime parameters
           this_.editMode = true;
+          this_.stopRefreshStatus();
           onActionCompleted.next();
         }
       }
@@ -138,6 +150,10 @@ export class StatusComponent implements OnInit, OnDestroy {
       return this.translatedTypes[this.typePrefix + type];
     }
     return '';
+  }
+
+  hasEvChargerInEditMode(): boolean {
+    return this.applianceStatuses.some(status => status.type === 'EVCharger' && this.isEditMode(status));
   }
 
   isEvCharger(applianceStatus: Status): boolean {
@@ -157,10 +173,12 @@ export class StatusComponent implements OnInit, OnDestroy {
     this.loadApplianceStatuses(() => this.getTrafficLightComponent(applianceIdClicked).showLoadingIndicator = false);
     this.applianceIdClicked = null;
     this.editMode = false;
+    this.startRefreshStatus(true);
   }
 
   onFormCancel() {
     this.editMode = false;
+    this.startRefreshStatus(true);
   }
 
   getTrafficLightStateHandlerForExplanation(red: boolean, yellow: boolean, green: boolean): TrafficLightState {

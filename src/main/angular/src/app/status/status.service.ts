@@ -59,6 +59,18 @@ export class StatusService extends SaeService {
     return this.http.put(url, '', {responseType: 'text'});
   }
 
+  updateSoc(applianceid: string, socCurrent: number|undefined, socRequested: number|undefined): Observable<any> {
+    let url = `${SaeService.API}/evcharge?applianceid=${applianceid}`;
+    if (socCurrent) {
+      url += `&socCurrent=${socCurrent}`;
+    }
+    if (socRequested) {
+      url += `&socRequested=${socRequested}`;
+    }
+    this.logger.debug('Update SOC using ' + url);
+    return this.http.patch(url, '', {responseType: 'text'});
+  }
+
   toggleAppliance(id: string, turnOn: boolean): Observable<any> {
     const url = `${SaeService.SEMP_API}`;
     const content = '<EM2Device xmlns="http://www.sma.de/communication/schema/SEMP/v1"><DeviceControl>' +
