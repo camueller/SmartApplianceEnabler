@@ -219,7 +219,7 @@
   "ElectricVehicleComponent.chargeLoss": "Ladeverluste [%]",
   "ElectricVehicleComponent.soc": "Standardwerte für Sollwert des State of Charge (SOC)",
   "ElectricVehicleComponent.defaultSocManual": "Manuell [%]",
-  "ElectricVehicleComponent.defaultSocOptionalEnergy": "Optionale Energie [%]",
+  "ElectricVehicleComponent.defaultSocOptionalEnergy": "Überschussenergie [%]",
   "ElectricVehicleComponent.script.heading": "Script zum Auslesen des State of Charge (SOC)",
   "ElectricVehicleComponent.script.enabled": "Verwenden",
   "ElectricVehicleComponent.script.filename": "Dateiname mit Pfad",

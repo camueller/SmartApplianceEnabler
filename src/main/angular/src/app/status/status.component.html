@@ -52,7 +52,7 @@
   </div>
   <h3 class="StatusComponent__explanation_headline">{{'StatusComponent.explanation' | translate}}</h3>
   <div class="StatusComponent__mandatory_fields_hint">{{'dialog.mandatoryfields'|translate}}</div>
-  <div *ngIf="hasEvChargerInEditMode()">
+  <div class="StatusComponent__explanation_chargemode" *ngIf="hasEvChargerInEditMode()">
     <h4 class="StatusComponent__explanation_headline">{{'StatusComponent.chargeMode' | translate}}</h4>
     <table>
       <tr class="StatusComponent__explanation_chargemode_row">

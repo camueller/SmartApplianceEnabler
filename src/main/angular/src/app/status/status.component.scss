@@ -63,7 +63,11 @@
 
   &__explanation_headline {
     @extend .sae__heading-extra-top-margin;
-    margin-bottom: 8px;
+    margin-bottom: 0.5rem;
+  }
+
+  &__explanation_chargemode {
+    margin-bottom: 1.5rem;
   }
 
   &__explanation_chargemode_row {
@@ -72,6 +76,7 @@
 
   &__explanation_chargemode_label {
     font-style: italic;
+    padding-right: 1rem;
   }
 
   &__mandatory_fields_hint {
