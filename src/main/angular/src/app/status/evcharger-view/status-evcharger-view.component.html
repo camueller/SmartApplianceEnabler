@@ -6,32 +6,30 @@
     <span class="StatusComponent__appliance-status-value" *ngIf="status.stateLastChangedTimestamp"
     > (seit {{toHHmmFromTimestamp(status.stateLastChangedTimestamp)}} Uhr)</span>
   </div>
-  <div *ngIf="status.planningRequested">
-    <div *ngIf="status.evIdCharging">
-      <span class="StatusComponent__appliance-status-label">{{'StatusComponent.stateOfCharge' | translate}}:</span>
-      <div class="StatusComponent__appliance-status-value-indented">
-        <span class="StatusComponent__appliance-status-value">{{status.soc}}{{'StatusComponent.stateOfChargeUnit' | translate}} (aktuell)</span>
-      </div>
-      <div class="StatusComponent__appliance-status-value-indented" *ngIf="status.socInitial">
-      <span class="StatusComponent__appliance-status-value">{{status.socInitial}}{{'StatusComponent.stateOfChargeUnit' | translate
-        }} ({{toWeekdayStringFromTimestamp(status.socInitialTimestamp)}} {{toHHmmFromTimestamp(status.socInitialTimestamp)}} Uhr)</span>
-      </div>
+  <div *ngIf="status.evIdCharging">
+    <span class="StatusComponent__appliance-status-label">{{'StatusComponent.stateOfCharge' | translate}}:</span>
+    <div class="StatusComponent__appliance-status-value-indented">
+      <span class="StatusComponent__appliance-status-value">{{status.soc}}{{'StatusComponent.stateOfChargeUnit' | translate}} (aktuell)</span>
     </div>
-    <div class="StatusComponent__appliance-status" *ngIf="status.currentChargePower != null">
-      <span class="StatusComponent__appliance-status-label">{{'StatusComponent.energyChargePower' | translate}}</span>
-      <span class="StatusComponent__appliance-status-value">{{getCurrentChargePower(status)}} kW</span>
+    <div class="StatusComponent__appliance-status-value-indented" *ngIf="status.socInitial">
+    <span class="StatusComponent__appliance-status-value">{{status.socInitial}}{{'StatusComponent.stateOfChargeUnit' | translate
+      }} ({{toWeekdayStringFromTimestamp(status.socInitialTimestamp)}} {{toHHmmFromTimestamp(status.socInitialTimestamp)}} Uhr)</span>
     </div>
-    <div class="StatusComponent__appliance-status" *ngIf="status.chargedEnergyAmount != null">
-      <span class="StatusComponent__appliance-status-label">{{'StatusComponent.energyCharged' | translate}}</span>
-      <span class="StatusComponent__appliance-status-value">{{toKWh(status.chargedEnergyAmount)}} kWh</span>
-    </div>
-    <div class="StatusComponent__appliance-status" *ngIf="status.plannedEnergyAmount != null">
-      <span class="StatusComponent__appliance-status-label">{{'StatusComponent.energyPlanned' | translate}}</span>
-      <span class="StatusComponent__appliance-status-value">{{toKWh(status.plannedEnergyAmount)}} kWh</span>
-    </div>
-    <div class="StatusComponent__appliance-status" *ngIf="status.latestEnd != null">
-      <span class="StatusComponent__appliance-status-label">{{'StatusComponent.energyLatestEnd' | translate}}</span>
-      <span class="StatusComponent__appliance-status-value">{{toWeekdayStringFromDelta(status.latestEnd)}} {{toHHmmFromDelta(status.latestEnd)}} Uhr</span>
-    </div>
+  </div>
+  <div class="StatusComponent__appliance-status" *ngIf="status.currentChargePower != null">
+    <span class="StatusComponent__appliance-status-label">{{'StatusComponent.energyChargePower' | translate}}</span>
+    <span class="StatusComponent__appliance-status-value">{{getCurrentChargePower(status)}} kW</span>
+  </div>
+  <div class="StatusComponent__appliance-status" *ngIf="status.chargedEnergyAmount != null">
+    <span class="StatusComponent__appliance-status-label">{{'StatusComponent.energyCharged' | translate}}</span>
+    <span class="StatusComponent__appliance-status-value">{{toKWh(status.chargedEnergyAmount)}} kWh</span>
+  </div>
+  <div class="StatusComponent__appliance-status" *ngIf="status.plannedEnergyAmount != null">
+    <span class="StatusComponent__appliance-status-label">{{'StatusComponent.energyPlanned' | translate}}</span>
+    <span class="StatusComponent__appliance-status-value">{{toKWh(status.plannedEnergyAmount)}} kWh</span>
+  </div>
+  <div class="StatusComponent__appliance-status" *ngIf="status.latestEnd != null">
+    <span class="StatusComponent__appliance-status-label">{{'StatusComponent.energyLatestEnd' | translate}}</span>
+    <span class="StatusComponent__appliance-status-value">{{toWeekdayStringFromDelta(status.latestEnd)}} {{toHHmmFromDelta(status.latestEnd)}} Uhr</span>
   </div>
 </div>
