@@ -24,10 +24,10 @@ Darüber hinaus sollte auch die Verwendung von anderen Ladegeräten möglich sei
 #### Fahrzeuge
 Die Konfiguration von Fahrzeugen beinhaltet Parameter zur Steuerung des Ladevorgangs und Standardwerte für Dialoge.
 
-Für den Ladezustand bzw. SOC können Standardwerte festgelegt werden.
+Für den Ziel-Ladezustand können Standardwerte festgelegt werden.
 Der Standartwert für manuelles Laden beinhaltet lediglich die Vorbelegung des Feldes für den Soll-Ladezustand in der Eingabemaske, die nach Klick auf die grüne Ampelleuchte angezeigt wird.
-Wird ein Standardwert für Optionale Energie gesetzt, wird nach dem Verbinden des Fahrzeugs nur bis zu diesem Wert mit Optionaler Energie geladen und danach der Ladevorgang gestoppt.  
-Für eine möglichst genaue Ermittlung des Energiebedarfs muss der Ladezustand (State of Charge bzw. SOC) beim Verbinden des Fahrzeugs mit dem Ladegerät bekannt sein. Während dieser Wert beim [manuellen Start des Ladevorganges](#status-anzeige-und-manuelle-steuerung) auch eingegeben werden kann, kann dieser Wert bei Verwendung von [Zeitplänen](#Zeitpläne) nur durch ein [Script zum automatisierten Abfragen des SOC](soc/SOC_DE.md) ermittelt werden. Wird kein solches Script konfiguriert, wird beim Verbinden des Fahrzeugs mit dem Ladegerät der SOC mit 0 angenommen und ein entsprechend großer Energiebedarf gemeldet.
+Wird ein Standardwert für Optionale Energie gesetzt, wird nach dem Verbinden des Fahrzeugs nur bis zu diesem Wert mit Optionaler Energie geladen und danach der Ladevorgang gestoppt.
+Für eine möglichst genaue Ermittlung des Energiebedarfs muss der Ist-Ladezustand beim Verbinden des Fahrzeugs mit dem Ladegerät bekannt sein. Dieser kann nicht vom Ladegerät geliefert werden! Während dieser Wert beim [manuellen Start des Ladevorganges](#status-anzeige-und-manuelle-steuerung) auch eingegeben werden kann, kann dieser Wert bei Verwendung von [Zeitplänen](#Zeitpläne) nur durch ein [Script zum automatisierten Abfragen des SOC](soc/SOC_DE.md) ermittelt werden. Wird kein solches Script konfiguriert, wird beim Verbinden des Fahrzeugs mit dem Ladegerät der SOC mit 0 angenommen und ein entsprechend großer Energiebedarf gemeldet.
 
 ![Fahrzeugkonfiguration](../pics/fe/EV.png)
 
