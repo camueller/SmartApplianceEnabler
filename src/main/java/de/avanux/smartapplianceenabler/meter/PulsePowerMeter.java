@@ -117,14 +117,15 @@ public class PulsePowerMeter implements ApplianceIdConsumer, Validateable {
     }
 
     protected double calculatePower(long timestampNow, long timestamp1, long timestamp2) {
+        long timestampDelta12 = timestamp2 - timestamp1;
         if(isTimestampExpired(timestampNow, timestamp2)) {
-            long timestampDelta12 = timestamp2 - timestamp1;
             long timestampDeltaNow2 = timestampNow - timestamp2;
             if(timestampDeltaNow2 > timestampDelta12 * 1.5) {
                 return 0.0;
             }
         }
-        return 3600.0 * this.impulsesPerKwh / (timestamp2 - timestamp1);
+        // 3600s * 1000 W/Kw / (timestampDelta ms * 1s/1000ms * imp/KWh)
+        return 3600.0 * 1000 / (timestampDelta12 / 1000.0 * this.impulsesPerKwh);
     }
 
     public int getAveragePower() {
