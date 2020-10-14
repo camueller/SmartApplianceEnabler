@@ -660,7 +660,7 @@ public class SaeController {
             if (appliance != null) {
                 if (appliance.getControl() instanceof ElectricVehicleCharger) {
                     ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
-                    Integer soc = evCharger.getCurrentSoc(appliance.getMeter());
+                    Integer soc = evCharger.getSocCurrent();
                     if (soc != null) {
                         logger.debug("{}: Return SOC={}", applianceId, soc);
                         return Integer.valueOf(soc).floatValue();
@@ -843,9 +843,9 @@ public class SaeController {
                         applianceStatus.setEvIdCharging(evCharger.getConnectedVehicleId());
                         ZonedDateTime zdt = ZonedDateTime.of(evCharger.getStateLastChangedTimestamp(), ZoneId.systemDefault());
                         applianceStatus.setStateLastChangedTimestamp(zdt.toInstant().toEpochMilli());
-                        applianceStatus.setSocInitial(evCharger.getConnectedVehicleSoc());
-                        applianceStatus.setSocInitialTimestamp(evCharger.getConnectedVehicleSocTimestamp());
-                        applianceStatus.setSoc(evCharger.getCurrentSoc(meter));
+                        applianceStatus.setSocInitial(evCharger.getSocInitial());
+                        applianceStatus.setSocInitialTimestamp(evCharger.getSocInitialTimestamp());
+                        applianceStatus.setSoc(evCharger.getSocCurrent());
 
                         int whAlreadyCharged = 0;
                         Integer chargePower = evCharger.getChargePower();

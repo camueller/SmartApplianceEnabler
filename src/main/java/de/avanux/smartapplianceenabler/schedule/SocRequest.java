@@ -20,6 +20,7 @@ package de.avanux.smartapplianceenabler.schedule;
 
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
+import de.avanux.smartapplianceenabler.control.ev.SocValues;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.time.LocalDateTime;
@@ -36,9 +37,9 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
     private Integer soc;
     @XmlAttribute
     private Integer evId;
-    private transient Integer socInitial = 0;
     private transient Integer energy;
-    private transient EnergyCalculationVariables lastEnergyCalculationVariables;
+    private transient SocValues receivedSocVariables;
+    private transient SocValues lastEnergyCalculationVariables;
 
     public SocRequest() {
     }
@@ -53,52 +54,27 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
         this.energy = energy;
     }
 
-    private class EnergyCalculationVariables {
-        public float energyCharged;
-        private final Integer socInitial;
-        private final Integer soc;
-
-        public EnergyCalculationVariables(float energyCharged, Integer socInitial, Integer soc) {
-            this.energyCharged = energyCharged;
-            this.socInitial = socInitial;
-            this.soc = soc;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-
-            if (o == null || getClass() != o.getClass()) return false;
-
-            EnergyCalculationVariables that = (EnergyCalculationVariables) o;
-
-            return new EqualsBuilder()
-                    .append(energyCharged, that.energyCharged)
-                    .append(socInitial, that.socInitial)
-                    .append(soc, that.soc)
-                    .isEquals();
-        }
-
-        @Override
-        public int hashCode() {
-            return new HashCodeBuilder(17, 37)
-                    .append(energyCharged)
-                    .append(socInitial)
-                    .append(soc)
-                    .toHashCode();
-        }
-    }
-
     protected Logger getLogger() {
         return LoggerFactory.getLogger(SocRequest.class);
     }
 
     public void setSocInitial(Integer socInitial) {
-        this.socInitial = socInitial;
+        if(this.receivedSocVariables == null) {
+            this.receivedSocVariables = new SocValues();
+        }
+        this.receivedSocVariables.initial = socInitial;
     }
 
-    private Integer getSocInitialOrDefault() {
-        return socInitial != null ? socInitial : 0;
+    public void setSocCurrent(Integer socCurrent) {
+        if(this.receivedSocVariables == null) {
+            this.receivedSocVariables = new SocValues();
+        }
+        this.receivedSocVariables.current = socCurrent;
+    }
+
+    private Integer getSocCurrentOrDefault() {
+        return this.lastEnergyCalculationVariables != null && this.lastEnergyCalculationVariables.current != null
+                ? this.lastEnergyCalculationVariables.current : 0;
     }
 
     public void setSoc(Integer soc) {
@@ -139,7 +115,10 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
 
     @Override
     public void update() {
-        this.energy = calculateEnergy(((ElectricVehicleCharger) getControl()).getVehicle(evId));
+        if(this.lastEnergyCalculationVariables == null || !this.lastEnergyCalculationVariables.equals(this.receivedSocVariables)) {
+            this.lastEnergyCalculationVariables = this.receivedSocVariables;
+            this.energy = calculateEnergy();
+        }
         if(energy <= 0) {
             setEnabled(false);
         }
@@ -153,31 +132,15 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
         this.energy = energy;
     }
 
-    public Integer calculateEnergy(ElectricVehicle vehicle) {
-        EnergyCalculationVariables variables =
-                new EnergyCalculationVariables(getMeter() != null ? getMeter().getEnergy() : 0.0f, socInitial, soc);
-        if(this.lastEnergyCalculationVariables == null || !this.lastEnergyCalculationVariables.equals(variables)) {
-            this.lastEnergyCalculationVariables = variables;
-            getLogger().debug("{}: energy charged: {} kWh", getApplianceId(), variables.energyCharged);
-
-            int batteryCapacity = 100000; // default is 100 kWh
-            int chargeLoss = 10; // default is 10%
-            if(vehicle != null) {
-                batteryCapacity = vehicle.getBatteryCapacity();
-                chargeLoss = vehicle.getChargeLoss();
-            }
-            else {
-                getLogger().warn("{}: evId not set - using defaults", getApplianceId());
-            }
-            Integer initialSoc = getSocInitialOrDefault();
-            Integer targetSoc = getSocOrDefault();
-            getLogger().debug("{}: energyCharged calculation using evId={} batteryCapactiy={} chargeLoss={}% initialSoc={} targetSoc={}",
-                    getApplianceId(), evId, batteryCapacity, chargeLoss, initialSoc, targetSoc);
-            energy = Float.valueOf((targetSoc - initialSoc)/100.0f
-                    * (100 + chargeLoss)/100.0f * batteryCapacity).intValue()
-                    - Float.valueOf(variables.energyCharged * 1000).intValue();
-            getLogger().debug("{}: energyCharged calculated={}Wh", getApplianceId(), energy);
+    public Integer calculateEnergy() {
+        if(lastEnergyCalculationVariables == null) {
+            return null;
         }
+        Integer currentSoc = getSocCurrentOrDefault();
+        Integer targetSoc = getSocOrDefault();
+        int energy = Float.valueOf((targetSoc - currentSoc)/100.0f * lastEnergyCalculationVariables.batteryCapacity).intValue();
+        getLogger().debug("{}: energy calculation: {}Wh evId={} batteryCapactiy={} currentSoc={} targetSoc={}",
+                getApplianceId(), energy, evId, lastEnergyCalculationVariables.batteryCapacity, currentSoc, targetSoc);
         return energy;
     }
 
@@ -187,12 +150,12 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
     }
 
     @Override
-    public void onEVChargerSocChanged(LocalDateTime now, Float soc) {
-        getLogger().debug("{}: Using updated SOC={}", getApplianceId(), soc);
+    public void onEVChargerSocChanged(LocalDateTime now, SocValues socValues) {
+        getLogger().debug("{}: Using updated SOC values: {}", getApplianceId(), socValues);
         if(! isEnabledBefore()) {
             setEnabled(true);
         }
-        setSocInitial(Float.valueOf(soc).intValue());
+        this.receivedSocVariables = new SocValues(socValues.batteryCapacity, socValues.initial, socValues.retrieved, socValues.current);
         update();
     }
 
@@ -233,7 +196,7 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
         text += "/";
         text += "evId=" + evId;
         text += "/";
-        text += "soc=" + socInitial;
+        text += "soc=" + getSocCurrentOrDefault();
         text += "%=>";
         text += getSocOrDefault();
         text += "%";

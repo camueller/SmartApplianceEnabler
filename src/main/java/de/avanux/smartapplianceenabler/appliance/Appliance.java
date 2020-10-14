@@ -20,10 +20,7 @@ package de.avanux.smartapplianceenabler.appliance;
 import com.pi4j.io.gpio.GpioController;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.control.*;
-import de.avanux.smartapplianceenabler.control.ev.EVChargerControl;
-import de.avanux.smartapplianceenabler.control.ev.EVChargerState;
-import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
-import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
+import de.avanux.smartapplianceenabler.control.ev.*;
 import de.avanux.smartapplianceenabler.meter.HttpElectricityMeter;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.meter.ModbusElectricityMeter;
@@ -361,11 +358,11 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
             }
 
             ElectricVehicleCharger evCharger = (ElectricVehicleCharger) this.control;
-            evCharger.setConnectedVehicleId(evId);
-            evCharger.setConnectedVehicleSoc(now, socCurrent);
-            evCharger.setConnectedVehicleSocTimestamp(System.currentTimeMillis());
             TimeframeInterval timeframeInterval =
                     evCharger.createTimeframeInterval(now, evId, socCurrent, socRequested, chargeEnd);
+            evCharger.setConnectedVehicleId(evId);
+            evCharger.setSocInitial(socCurrent);
+            evCharger.setSocInitialTimestamp(System.currentTimeMillis());
             timeframeIntervalHandler.addTimeframeInterval(now, timeframeInterval, true, true);
 
             if(chargeEnd == null) {
@@ -444,7 +441,7 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
     }
 
     @Override
-    public void onEVChargerSocChanged(LocalDateTime now, Float soc) {
+    public void onEVChargerSocChanged(LocalDateTime now, SocValues socValues) {
     }
 
     @Override

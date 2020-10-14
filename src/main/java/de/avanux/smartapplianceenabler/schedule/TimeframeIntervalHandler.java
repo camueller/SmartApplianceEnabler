@@ -26,6 +26,7 @@ import de.avanux.smartapplianceenabler.control.StartingCurrentSwitch;
 import de.avanux.smartapplianceenabler.control.ev.EVChargerState;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
+import de.avanux.smartapplianceenabler.control.ev.SocValues;
 import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
 import de.avanux.smartapplianceenabler.util.Holder;
 import org.slf4j.Logger;
@@ -451,7 +452,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
     }
 
     @Override
-    public void onEVChargerSocChanged(LocalDateTime now, Float soc) {
+    public void onEVChargerSocChanged(LocalDateTime now, SocValues socValues) {
 //        queue.forEach(timeframeInterval -> timeframeInterval.getRequest().onEVChargerSocChanged(now ,soc));
     }
 

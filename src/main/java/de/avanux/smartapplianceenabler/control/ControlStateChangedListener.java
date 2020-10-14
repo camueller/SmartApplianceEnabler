@@ -19,6 +19,8 @@ package de.avanux.smartapplianceenabler.control;
 
 import de.avanux.smartapplianceenabler.control.ev.EVChargerState;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
+import de.avanux.smartapplianceenabler.control.ev.SocValues;
+
 import java.time.LocalDateTime;
 
 public interface ControlStateChangedListener {
@@ -28,5 +30,5 @@ public interface ControlStateChangedListener {
     void onEVChargerStateChanged(LocalDateTime now, EVChargerState previousState, EVChargerState newState,
                                  ElectricVehicle ev);
 
-    void onEVChargerSocChanged(LocalDateTime now, Float soc);
+    void onEVChargerSocChanged(LocalDateTime now, SocValues socValues);
 }

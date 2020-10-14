@@ -2,15 +2,15 @@
 <Device2EM xmlns="http://www.sma.de/communication/schema/SEMP/v1">
     <DeviceInfo>
         <Identification>
-            <DeviceId>F-00000001-000000000001-00</DeviceId>
-            <DeviceName>Gerät 1</DeviceName>
-            <DeviceType>Heater</DeviceType>
-            <DeviceSerial>4158934</DeviceSerial>
-            <DeviceVendor>Speck</DeviceVendor>
+            <DeviceId>F-28091971-000000000019-00</DeviceId>
+            <DeviceName>Wallbox</DeviceName>
+            <DeviceType>EVCharger</DeviceType>
+            <DeviceSerial>20180623</DeviceSerial>
+            <DeviceVendor>ESL</DeviceVendor>
         </Identification>
         <Characteristics>
-            <MaxPowerConsumption>960</MaxPowerConsumption>
-            <MinOnTime>900</MinOnTime>
+            <MaxPowerConsumption>22000</MaxPowerConsumption>
+            <MinPowerConsumption>1380</MinPowerConsumption>
         </Characteristics>
         <Capabilities>
             <CurrentPower>
@@ -23,34 +23,7 @@
                 <InterruptionsAllowed>true</InterruptionsAllowed>
             </Interruptions>
             <Requests>
-                <OptionalEnergy>false</OptionalEnergy>
-            </Requests>
-        </Capabilities>
-    </DeviceInfo>
-    <DeviceInfo>
-        <Identification>
-            <DeviceId>F-00000001-000000000002-00</DeviceId>
-            <DeviceName>Gerät 1</DeviceName>
-            <DeviceType>Heater</DeviceType>
-            <DeviceSerial>4158934</DeviceSerial>
-            <DeviceVendor>Speck</DeviceVendor>
-        </Identification>
-        <Characteristics>
-            <MaxPowerConsumption>960</MaxPowerConsumption>
-            <MinOnTime>900</MinOnTime>
-        </Characteristics>
-        <Capabilities>
-            <CurrentPower>
-                <Method>Measurement</Method>
-            </CurrentPower>
-            <Timestamps>
-                <AbsoluteTimestamps>false</AbsoluteTimestamps>
-            </Timestamps>
-            <Interruptions>
-                <InterruptionsAllowed>true</InterruptionsAllowed>
-            </Interruptions>
-            <Requests>
-                <OptionalEnergy>false</OptionalEnergy>
+                <OptionalEnergy>true</OptionalEnergy>
             </Requests>
         </Capabilities>
     </DeviceInfo>
