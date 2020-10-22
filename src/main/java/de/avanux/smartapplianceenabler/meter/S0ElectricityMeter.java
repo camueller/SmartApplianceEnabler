@@ -167,12 +167,12 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
     }
 
     protected synchronized void handleEvent(GpioPin pin, PinState state, PinPullResistance pinPullResistance, Long timestamp) {
-        logger.debug("{}: GPIO {} changed to {}", getApplianceId(), pin.getPin().getAddress(), state);
         if((pinPullResistance == PinPullResistance.PULL_DOWN && state == PinState.HIGH)
                 || (pinPullResistance == PinPullResistance.PULL_UP && state == PinState.LOW)) {
             pulseTimestamp = timestamp;
         }
         else if (pulseTimestamp != null && (timestamp - pulseTimestamp) > getMinPulseDuration()) {
+            logger.debug("{}: S0 impulse detected on GPIO {}", getApplianceId(), pin.getPin().getAddress());
             pulsePowerMeter.addTimestamp(pulseTimestamp);
             pulseEnergyMeter.increasePulseCounter();
             int averagePower = getAveragePower();
