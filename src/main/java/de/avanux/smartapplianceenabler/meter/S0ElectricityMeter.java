@@ -18,7 +18,6 @@
 package de.avanux.smartapplianceenabler.meter;
 
 import com.pi4j.io.gpio.*;
-import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.GpioControllable;
@@ -41,7 +40,7 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
     @XmlAttribute
     private Integer measurementInterval; // seconds
     @XmlAttribute
-    private Integer pulseDuration; // milliseconds
+    private Integer minPulseDuration; // milliseconds
     private transient Long pulseTimestamp;
     private transient GpioPinDigitalInput inputPin;
     private transient PulsePowerMeter pulsePowerMeter = new PulsePowerMeter();
@@ -57,8 +56,8 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
         return measurementInterval != null ? measurementInterval : S0ElectricityMeterDefaults.getMeasurementInterval();
     }
 
-    public Integer getPulseDuration() {
-        return pulseDuration != null ? pulseDuration : S0ElectricityMeterDefaults.getPulseDuration();
+    public Integer getMinPulseDuration() {
+        return minPulseDuration != null ? minPulseDuration : S0ElectricityMeterDefaults.getMinPulseDuration();
     }
 
     public void setControl(Control control) {
@@ -130,8 +129,8 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
         pulsePowerMeter.setImpulsesPerKwh(impulsesPerKwh);
         pulsePowerMeter.setMeasurementInterval(getMeasurementInterval());
         pulseEnergyMeter.setImpulsesPerKwh(impulsesPerKwh);
-        logger.debug("{}: configured: GPIO={} impulsesPerKwh={} pulseDuration={} pinPullResistance={}",
-                getApplianceId(), getGpio().getAddress(), getImpulsesPerKwh(), getPulseDuration(),
+        logger.debug("{}: configured: GPIO={} impulsesPerKwh={} minPulseDuration={} pinPullResistance={}",
+                getApplianceId(), getGpio().getAddress(), getImpulsesPerKwh(), getMinPulseDuration(),
                 getPinPullResistance().name());
     }
 
@@ -167,13 +166,13 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
         }
     }
 
-    protected void handleEvent(GpioPin pin, PinState state, PinPullResistance pinPullResistance, Long timestamp) {
+    protected synchronized void handleEvent(GpioPin pin, PinState state, PinPullResistance pinPullResistance, Long timestamp) {
         logger.debug("{}: GPIO {} changed to {}", getApplianceId(), pin.getPin().getAddress(), state);
         if((pinPullResistance == PinPullResistance.PULL_DOWN && state == PinState.HIGH)
                 || (pinPullResistance == PinPullResistance.PULL_UP && state == PinState.LOW)) {
             pulseTimestamp = timestamp;
         }
-        else if (pulseTimestamp != null && (timestamp - pulseTimestamp) > getPulseDuration()) {
+        else if (pulseTimestamp != null && (timestamp - pulseTimestamp) > getMinPulseDuration()) {
             pulsePowerMeter.addTimestamp(pulseTimestamp);
             pulseEnergyMeter.increasePulseCounter();
             int averagePower = getAveragePower();
