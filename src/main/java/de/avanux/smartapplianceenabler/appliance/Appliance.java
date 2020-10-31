@@ -206,7 +206,7 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
         if(getGpioControllables().size() > 0) {
             if(gpioController != null) {
                 for(GpioControllable gpioControllable : getGpioControllables()) {
-                    logger.info("{}: Configuring {}", id, gpioControllable.getClass().getSimpleName());
+                    logger.info("{}: Configuring GPIO for {}", id, gpioControllable.getClass().getSimpleName());
                     gpioControllable.setGpioController(gpioController);
                 }
             }

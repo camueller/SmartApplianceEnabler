@@ -23,6 +23,4 @@ public interface ContentProtocolHandler {
     void parse(String content);
 
     String readValue(String selector);
-
-    Integer readIntegerValue(String selector);
 }

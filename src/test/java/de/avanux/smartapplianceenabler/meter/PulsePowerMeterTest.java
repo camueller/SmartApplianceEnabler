@@ -91,6 +91,13 @@ public class PulsePowerMeterTest {
     }
 
     @Test
+    public void getAveragePower_2000impKwh_2ts() {
+        pulsePowerMeter.setImpulsesPerKwh(2000);
+        addTimestamps(-3600, -1800);
+        assertEquals(1, pulsePowerMeter.getAveragePower(currentTimeMillis));
+    }
+
+    @Test
     public void getAveragePower_2ts_overdue() {
         addTimestamps(-9001, -5401);
         assertEquals(0, pulsePowerMeter.getAveragePower(currentTimeMillis));

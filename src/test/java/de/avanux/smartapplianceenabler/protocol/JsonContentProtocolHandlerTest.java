@@ -30,10 +30,10 @@ public class JsonContentProtocolHandlerTest {
     }
 
     @Test
-    public void readIntegerValue() {
-        String content = "{ \"car\": \"3\" }";
-        String selector = "$.car";
+    public void readTasmotaEnergy() {
+        String content = "{\"StatusSNS\":{\"Time\":\"2020-10-26T09:44:31\",\"ENERGY\":{\"TotalStartTime\":\"2020-10-25T20:39:07\",\"Total\":0.329,\"Yesterday\":0.329,\"Today\":0.123,\"Power\":0,\"ApparentPower\":0,\"ReactivePower\":0,\"Factor\":0.00,\"Voltage\":0,\"Current\":0.000}}}";
+        String selector = "$.StatusSNS.ENERGY.Today";
         this.contentProtocolHandler.parse(content);
-        assertEquals(3, this.contentProtocolHandler.readIntegerValue(selector).intValue());
+        assertEquals("0.123", this.contentProtocolHandler.readValue(selector));
     }
 }

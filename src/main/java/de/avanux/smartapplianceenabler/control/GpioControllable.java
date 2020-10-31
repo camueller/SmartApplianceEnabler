@@ -55,16 +55,15 @@ abstract public class GpioControllable implements ApplianceIdConsumer {
     }
 
     protected PinPullResistance getPinPullResistance() {
-        if(PinPullResistance.OFF.getName().equals(pinPullResistance)) {
-            return PinPullResistance.OFF;
+        if(pinPullResistance != null) {
+            if (pinPullResistance.equals("PULL_DOWN")) {
+                return PinPullResistance.PULL_DOWN;
+            }
+            if (pinPullResistance.equals("PULL_UP")) {
+                return PinPullResistance.PULL_UP;
+            }
         }
-        else if(PinPullResistance.PULL_DOWN.getName().equals(pinPullResistance)) {
-            return PinPullResistance.PULL_DOWN;
-        }
-        else if(PinPullResistance.PULL_UP.getName().equals(pinPullResistance)) {
-            return PinPullResistance.PULL_UP;
-        }
-        return null;
+        return PinPullResistance.OFF;
     }
 
     protected void logGpioAccessDisabled(Logger logger) {
