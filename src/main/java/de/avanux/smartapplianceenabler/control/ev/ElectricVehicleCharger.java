@@ -69,7 +69,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     private transient Long socInitialTimestamp;
     private transient boolean socScriptAsync = true;
     private transient boolean socScriptRunning;
-    private transient Float chargeLossMeasured;
+    private transient Float chargeLoss;
     private transient Appliance appliance;
     private transient String applianceId;
     private transient Vector<EVChargerState> stateHistory = new Vector<>();
@@ -159,7 +159,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                         listener.getClass().getSimpleName(), listener);
                 listener.onEVChargerSocChanged(now, socValues);
             }
-            socValuesSentToListeners = new SocValues(socValues.batteryCapacity, socValues.initial, socValues.retrieved, socValues.current);
+            socValuesSentToListeners = new SocValues(socValues);
         }
     }
 
@@ -171,8 +171,6 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
 
         ElectricVehicle vehicle = getConnectedVehicle();
         if (vehicle != null) {
-            float chargeLoss = this.chargeLossMeasured != null ? this.chargeLossMeasured :
-                    vehicle.getChargeLoss() != null ? vehicle.getChargeLoss().floatValue() : 0.0f;
             int soc = Float.valueOf(getSocInitial()
                     + whAlreadyCharged / Float.valueOf(vehicle.getBatteryCapacity())
                     * (100 - chargeLoss)).intValue();
@@ -505,7 +503,9 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         // SOC has to be retrieved after listener notification in order to allow for new listeners interested in SOC
         if(previousState == EVChargerState.VEHICLE_NOT_CONNECTED && newState == EVChargerState.VEHICLE_CONNECTED) {
             this.socValues = new SocValues();
-            this.chargeLossMeasured = null;
+            this.socValues.batteryCapacity = getConnectedVehicle().getBatteryCapacity();
+            this.chargeLoss = getConnectedVehicle().getChargeLoss() != null
+                    ? getConnectedVehicle().getChargeLoss().floatValue() : 0.0f;
             updateSoc(now);
         }
     }
@@ -557,16 +557,20 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
 
     public TimeframeInterval createTimeframeInterval(LocalDateTime now, Integer evId, Integer socCurrent, Integer socRequested,
                                              LocalDateTime chargeEnd) {
+        ElectricVehicle vehicle = getVehicle(evId);
+
         SocRequest request = new SocRequest();
+        request.setApplianceId(applianceId);
         request.setEvId(evId);
+        request.setBatteryCapacity(vehicle.getBatteryCapacity());
         request.setSoc(socRequested);
         request.setSocInitial(socCurrent);
         request.setSocCurrent(socCurrent);
         request.setEnabled(true);
 
         if(chargeEnd == null) {
-            Integer energy = request.calculateEnergy();
-            chargeEnd = now.plusSeconds(calculateChargeSeconds(getVehicle(evId), energy));
+            Integer energy = request.calculateEnergy(vehicle.getBatteryCapacity());
+            chargeEnd = now.plusSeconds(calculateChargeSeconds(vehicle, energy));
         }
 
         Interval interval = new Interval(now, chargeEnd);
@@ -664,47 +668,36 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         }
     }
 
-    private void updateSoc(LocalDateTime now) {
+    private synchronized void updateSoc(LocalDateTime now) {
         this.socValues.current = calculateCurrentSoc(this.appliance.getMeter());
-        if(this.socValues.batteryCapacity == null) {
-            ElectricVehicle electricVehicle = getConnectedVehicle();
-            if(electricVehicle != null) {
-                this.socValues.batteryCapacity = electricVehicle.getBatteryCapacity();
-            }
-        }
-
         ElectricVehicle electricVehicle = getConnectedVehicle();
         if(electricVehicle != null && electricVehicle.getSocScript() != null) {
             Integer updateAfterIncrease = electricVehicle.getSocScript().getUpdateAfterIncrease();
             if(this.socValues.initial == null
                     || (updateAfterIncrease != null
                     && this.socValues.retrieved + updateAfterIncrease <= this.socValues.current)) {
-                logger.debug("{}: SOC retrieval is required: {}", applianceId, this.socValues);
-                retrieveSoc(now, electricVehicle);
+                if(!this.socScriptRunning) {
+                    logger.debug( "{}: SOC retrieval is required: {}", applianceId, this.socValues);
+                    this.socScriptRunning = true;
+                    SocRetriever socRetriever = new SocRetriever(now, electricVehicle);
+                    if(socScriptAsync) {
+                        Thread managerThread = new Thread(socRetriever);
+                        managerThread.start();
+                    }
+                    else {
+                        // for unit tests
+                        socRetriever.run();
+                    }
+                }
+                else {
+                    logger.debug("{}: SOC retrieval already running: {}", applianceId, this.socValues);
+                }
             }
             else {
                 logger.debug("{}: SOC retrieval is NOT required: {}", applianceId, this.socValues);
             }
         }
         updateSocOnControlStateChangedListeners(now, this.socValues);
-    }
-
-    private void retrieveSoc(LocalDateTime now, ElectricVehicle electricVehicle) {
-        synchronized (this) {
-            if(this.socScriptRunning) {
-                return;
-            }
-            this.socScriptRunning = true;
-        }
-        SocRetriever socRetriever = new SocRetriever(now, electricVehicle);
-        if(socScriptAsync) {
-            Thread managerThread = new Thread(socRetriever);
-            managerThread.start();
-        }
-        else {
-            // for unit tests
-            socRetriever.run();
-        }
     }
 
     private class SocRetriever implements Runnable {
@@ -726,7 +719,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                 }
                 socValues.retrieved = soc.intValue();
                 if(socValues.current != null) {
-                    chargeLossMeasured = calculateChargeLoss(appliance.getMeter(), socValues.current, socValues.retrieved);
+                    chargeLoss += calculateChargeLoss(appliance.getMeter(), socValues.current, socValues.retrieved);
                 }
                 socValues.current = soc.intValue();
                 socScriptRunning = false;

@@ -41,7 +41,7 @@ public class ElectricVehicleChargerTest {
     private TimeframeInterval timeframeInterval;
 
     public ElectricVehicleChargerTest() {
-        SocRequest request = new SocRequest(50, 1, 0);
+        SocRequest request = new SocRequest(50, 1);
         timeframeInterval = new TimeframeInterval(null, request);
 
         evCharger.startChargingStateDetectionDelay = 0;

@@ -122,7 +122,7 @@ abstract public class TestBase {
                                                          Integer energy,
                                                          boolean enabled,
                                                          TimeframeInterval actual) {
-        OptionalEnergySocRequest request = new OptionalEnergySocRequest(evId, energy);
+        OptionalEnergySocRequest request = new OptionalEnergySocRequest(evId);
         request.setEnabled(enabled);
         request.setSocInitial(socInitial);
         request.setSoc(socRequested);
@@ -139,7 +139,7 @@ abstract public class TestBase {
                                                      Integer energy,
                                                      boolean enabled,
                                                      TimeframeInterval actual) {
-        SocRequest request = new SocRequest(soc, evId, energy);
+        SocRequest request = new SocRequest(soc, evId);
         request.setSocInitial(socInitial);
         request.setEnabled(enabled);
         assertEquals(new TimeframeInterval(state, interval, request), actual);

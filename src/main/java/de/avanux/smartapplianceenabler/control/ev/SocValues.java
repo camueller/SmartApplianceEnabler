@@ -30,6 +30,10 @@ public class SocValues {
     public SocValues() {
     }
 
+    public SocValues(SocValues input) {
+        this(input.batteryCapacity, input.initial, input.retrieved, input.current);
+    }
+
     public SocValues(Integer batteryCapacity, Integer initial, Integer retrieved, Integer current) {
         this.initial = initial;
         this.retrieved = retrieved;

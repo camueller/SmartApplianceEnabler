@@ -30,11 +30,6 @@ public class OptionalEnergySocRequest extends SocRequest {
         setSoc(100);
     }
 
-    public OptionalEnergySocRequest(Integer evId, Integer energy) {
-        setEvId(evId);
-        setEnergy(energy);
-    }
-
     protected Logger getLogger() {
         return LoggerFactory.getLogger(OptionalEnergySocRequest.class);
     }

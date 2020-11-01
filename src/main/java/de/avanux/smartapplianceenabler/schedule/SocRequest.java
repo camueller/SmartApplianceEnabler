@@ -39,7 +39,7 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
     private Integer evId;
     private transient Integer energy;
     private transient SocValues receivedSocVariables;
-    private transient SocValues lastEnergyCalculationVariables;
+    private transient SocValues lastEnergyCalculationVariables = new SocValues();
 
     public SocRequest() {
     }
@@ -47,11 +47,6 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
     public SocRequest(Integer soc, Integer evId) {
         this.soc = soc;
         this.evId = evId;
-    }
-
-    public SocRequest(Integer soc, Integer evId, Integer energy) {
-        this(soc, evId);
-        this.energy = energy;
     }
 
     protected Logger getLogger() {
@@ -73,8 +68,7 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
     }
 
     private Integer getSocCurrentOrDefault() {
-        return this.lastEnergyCalculationVariables != null && this.lastEnergyCalculationVariables.current != null
-                ? this.lastEnergyCalculationVariables.current : 0;
+        return this.lastEnergyCalculationVariables.current != null ? this.lastEnergyCalculationVariables.current : 0;
     }
 
     public void setSoc(Integer soc) {
@@ -91,6 +85,10 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
 
     public void setEvId(Integer evId) {
         this.evId = evId;
+    }
+
+    public void setBatteryCapacity(Integer batteryCapacity) {
+        this.lastEnergyCalculationVariables.batteryCapacity = batteryCapacity;
     }
 
     @Override
@@ -115,9 +113,15 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
 
     @Override
     public void update() {
-        if(this.lastEnergyCalculationVariables == null || !this.lastEnergyCalculationVariables.equals(this.receivedSocVariables)) {
-            this.lastEnergyCalculationVariables = this.receivedSocVariables;
-            this.energy = calculateEnergy();
+        if(!this.lastEnergyCalculationVariables.equals(this.receivedSocVariables)) {
+            Integer batteryCapacity = this.lastEnergyCalculationVariables.batteryCapacity;
+            if(batteryCapacity == null) {
+                batteryCapacity = this.receivedSocVariables.batteryCapacity;
+            }
+            if(this.receivedSocVariables != null) {
+                this.lastEnergyCalculationVariables = new SocValues(receivedSocVariables);
+            }
+            this.energy = calculateEnergy(batteryCapacity);
         }
         if(energy != null && energy <= 0) {
             setEnabled(false);
@@ -128,19 +132,12 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
         return this.energy;
     }
 
-    protected void setEnergy(Integer energy) {
-        this.energy = energy;
-    }
-
-    public Integer calculateEnergy() {
-        if(lastEnergyCalculationVariables == null || lastEnergyCalculationVariables.batteryCapacity == null) {
-            return null;
-        }
+    public Integer calculateEnergy(int batteryCapacity) {
         Integer currentSoc = getSocCurrentOrDefault();
         Integer targetSoc = getSocOrDefault();
-        int energy = Float.valueOf((targetSoc - currentSoc)/100.0f * lastEnergyCalculationVariables.batteryCapacity).intValue();
+        int energy = Float.valueOf((targetSoc - currentSoc)/100.0f * batteryCapacity).intValue();
         getLogger().debug("{}: energy calculation: {}Wh evId={} batteryCapactiy={} currentSoc={} targetSoc={}",
-                getApplianceId(), energy, evId, lastEnergyCalculationVariables.batteryCapacity, currentSoc, targetSoc);
+                getApplianceId(), energy, evId, batteryCapacity, currentSoc, targetSoc);
         return energy;
     }
 
@@ -156,7 +153,7 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
         if(! isEnabledBefore()) {
             setEnabled(true);
         }
-        this.receivedSocVariables = new SocValues(socValues.batteryCapacity, socValues.initial, socValues.retrieved, socValues.current);
+        this.receivedSocVariables = new SocValues(socValues);
         update();
     }
 
