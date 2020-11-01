@@ -38,6 +38,10 @@ public class SocScript implements ApplianceIdConsumer {
     @XmlAttribute
     private String script;
     @XmlAttribute
+    private Integer updateAfterIncrease;
+    @XmlAttribute
+    private Integer updateAfterSeconds;
+    @XmlAttribute
     private String extractionRegex;
     private transient Pattern socValueExtractionPattern;
     private transient String applianceId;
@@ -49,6 +53,14 @@ public class SocScript implements ApplianceIdConsumer {
 
     public void setScript(String script) {
         this.script = script;
+    }
+
+    public Integer getUpdateAfterIncrease() {
+        return updateAfterIncrease;
+    }
+
+    public int getUpdateAfterSeconds() {
+        return updateAfterSeconds != null ? updateAfterSeconds : 60;
     }
 
     public String getExtractionRegex() {
@@ -127,8 +139,10 @@ public class SocScript implements ApplianceIdConsumer {
 
     @Override
     public String toString() {
-        return "SocScript {" +
+        return "SocScript{" +
                 "script='" + script + '\'' +
+                ", updateAfterIncrease=" + updateAfterIncrease +
+                ", updateAfterSeconds=" + updateAfterSeconds +
                 ", extractionRegex='" + extractionRegex + '\'' +
                 '}';
     }

@@ -131,6 +131,20 @@ public class ElectricVehicle implements ApplianceIdConsumer {
         return null;
     }
 
+    public Integer getUpdateAfterIncrease() {
+        if(socScript != null) {
+            return socScript.getUpdateAfterIncrease();
+        }
+        return null;
+    }
+
+    public Integer getUpdateAfterSeconds() {
+        if(socScript != null) {
+            return socScript.getUpdateAfterSeconds();
+        }
+        return null;
+    }
+
     @Override
     public String toString() {
         return "ElectricVehicle{" +

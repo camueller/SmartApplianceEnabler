@@ -506,7 +506,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         if(previousState == EVChargerState.VEHICLE_NOT_CONNECTED && newState == EVChargerState.VEHICLE_CONNECTED) {
             this.socValues = new SocValues();
             this.chargeLossMeasured = null;
-            retrieveSoc(now);
+            updateSoc(now);
         }
     }
 
@@ -657,7 +657,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     @Override
     public void activeIntervalChanged(LocalDateTime now, String applianceId, TimeframeInterval deactivatedInterval, TimeframeInterval activatedInterval, boolean wasRunning) {
         if(activatedInterval != null && activatedInterval.getState() == TimeframeIntervalState.ACTIVE) {
-            retrieveSoc(now);
+            updateSoc(now);
         }
         if(deactivatedInterval != null && deactivatedInterval.getRequest().isFinished(now)) {
             stopCharging();
@@ -672,35 +672,38 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                 this.socValues.batteryCapacity = electricVehicle.getBatteryCapacity();
             }
         }
-        if(this.socValues.retrieved != null && this.socValues.retrieved + 1 <= this.socValues.current) {
-            // SOC increased 10% since last retrieval - let's retrieve SOC again
-            logger.debug("{}: SOC retrieval is required: {}", applianceId, this.socValues);
-            retrieveSoc(now);
-        }
-        else {
-            logger.debug("{}: SOC retrieval is NOT required: {}", applianceId, this.socValues);
+
+        ElectricVehicle electricVehicle = getConnectedVehicle();
+        if(electricVehicle != null && electricVehicle.getSocScript() != null) {
+            Integer updateAfterIncrease = electricVehicle.getSocScript().getUpdateAfterIncrease();
+            if(this.socValues.initial == null
+                    || (updateAfterIncrease != null
+                    && this.socValues.retrieved + updateAfterIncrease <= this.socValues.current)) {
+                logger.debug("{}: SOC retrieval is required: {}", applianceId, this.socValues);
+                retrieveSoc(now, electricVehicle);
+            }
+            else {
+                logger.debug("{}: SOC retrieval is NOT required: {}", applianceId, this.socValues);
+            }
         }
         updateSocOnControlStateChangedListeners(now, this.socValues);
     }
 
-    private void retrieveSoc(LocalDateTime now) {
+    private void retrieveSoc(LocalDateTime now, ElectricVehicle electricVehicle) {
         synchronized (this) {
             if(this.socScriptRunning) {
                 return;
             }
             this.socScriptRunning = true;
         }
-        ElectricVehicle electricVehicle = getConnectedVehicle();
-        if(electricVehicle != null) {
-            SocRetriever socRetriever = new SocRetriever(now, electricVehicle);
-            if(socScriptAsync) {
-                Thread managerThread = new Thread(socRetriever);
-                managerThread.start();
-            }
-            else {
-                // for unit tests
-                socRetriever.run();
-            }
+        SocRetriever socRetriever = new SocRetriever(now, electricVehicle);
+        if(socScriptAsync) {
+            Thread managerThread = new Thread(socRetriever);
+            managerThread.start();
+        }
+        else {
+            // for unit tests
+            socRetriever.run();
         }
     }
 
@@ -737,7 +740,8 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
      * @return
      */
     public Float getStateOfCharge(ElectricVehicle electricVehicle) {
-        if(socTimestamp == null || System.currentTimeMillis() - this.socTimestamp > 60 * 1000) {
+        if(socTimestamp == null
+                || System.currentTimeMillis() - this.socTimestamp > electricVehicle.getUpdateAfterSeconds() * 1000) {
             logger.debug("{}: Try to retrieve SoC", applianceId);
             Float soc = electricVehicle.getStateOfCharge();
             this.socTimestamp = System.currentTimeMillis();

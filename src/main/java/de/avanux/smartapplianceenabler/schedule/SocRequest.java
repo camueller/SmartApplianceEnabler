@@ -119,7 +119,7 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
             this.lastEnergyCalculationVariables = this.receivedSocVariables;
             this.energy = calculateEnergy();
         }
-        if(energy <= 0) {
+        if(energy != null && energy <= 0) {
             setEnabled(false);
         }
     }
@@ -133,7 +133,7 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
     }
 
     public Integer calculateEnergy() {
-        if(lastEnergyCalculationVariables == null) {
+        if(lastEnergyCalculationVariables == null || lastEnergyCalculationVariables.batteryCapacity == null) {
             return null;
         }
         Integer currentSoc = getSocCurrentOrDefault();
@@ -146,7 +146,8 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
 
     @Override
     public boolean isFinished(LocalDateTime now) {
-        return getEnergy() <= 0;
+        Integer energy = getEnergy();
+        return energy != null && energy <= 0;
     }
 
     @Override

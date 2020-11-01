@@ -19,7 +19,9 @@
             </EVModbusControl>
             <ElectricVehicle id="1" name="Nissan Leaf" batteryCapacity="40000" phases="1" maxChargePower="7400"
                              defaultSocManual="90" defaultSocOptionalEnergy="80" chargeLoss="11">
-                <SocScript script="/data/projects/pycarwings2/soc.sh" extractionRegex=".*state_of_charge (\d+)"/>
+                <SocScript script="/data/projects/pycarwings2/soc.sh"
+                           updateAfterIncrease="4"
+                           extractionRegex=".*state_of_charge (\d+)"/>
             </ElectricVehicle>
         </ElectricVehicleCharger>
         <ModbusElectricityMeter idref="modbus" slaveAddress="1">
