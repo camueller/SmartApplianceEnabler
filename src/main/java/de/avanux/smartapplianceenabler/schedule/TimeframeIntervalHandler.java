@@ -364,6 +364,12 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
         return timeframeIntervals;
     }
 
+    private TimeframeInterval findOptionalEnergyIntervalForEVCharger() {
+        return queue.stream()
+                .filter(timeframeInterval -> timeframeInterval.getRequest() instanceof OptionalEnergySocRequest)
+                .findFirst().orElse(null);
+    }
+
     private TimeframeInterval createOptionalEnergyTimeframeIntervalForEVCharger(LocalDateTime now, ElectricVehicle connectedVehicle) {
         Interval interval = createOptionalEnergyIntervalForEVCharger(now, null,
                 queue.size() > 0 ? queue.get(0) : null);
@@ -397,13 +403,24 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
         return null;
     }
 
-    public void updateSocOfOptionalEnergyTimeframeIntervalForEVCharger(LocalDateTime now,
+    public void updateSocOfOptionalEnergyTimeframeIntervalForEVCharger(LocalDateTime now,  Integer evId,
                                                                        Integer socCurrent, Integer socRequested) {
-        TimeframeInterval timeframeInterval = getActiveTimeframeInterval();
-        if(timeframeInterval.getRequest() instanceof OptionalEnergySocRequest) {
+        TimeframeInterval timeframeInterval = findOptionalEnergyIntervalForEVCharger();
+        if(timeframeInterval != null) {
             OptionalEnergySocRequest request = (OptionalEnergySocRequest) timeframeInterval.getRequest();
             request.setSocInitial(socCurrent);
             request.setSoc(socRequested);
+        }
+        else {
+            timeframeInterval = createOptionalEnergyTimeframeIntervalForEVCharger(now, evId, socRequested);
+            if(timeframeInterval != null) {
+                OptionalEnergySocRequest request = (OptionalEnergySocRequest) timeframeInterval.getRequest();
+                request.setSocInitial(socCurrent);
+                request.setEnabled(true);
+                addTimeframeInterval(now, timeframeInterval, true, true);
+                updateQueue(now, false);
+                activateTimeframeInterval(now, timeframeInterval);
+            }
         }
     }
 
