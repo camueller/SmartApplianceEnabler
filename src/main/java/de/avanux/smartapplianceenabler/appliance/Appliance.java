@@ -380,9 +380,11 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
         }
     }
 
-    public void updateSoc(LocalDateTime now, Integer socCurrent, Integer socRequested) {
+    public void updateSoc(LocalDateTime now,  Integer socCurrent, Integer socRequested) {
         if (isEvCharger()) {
-            timeframeIntervalHandler.updateSocOfOptionalEnergyTimeframeIntervalForEVCharger(now, socCurrent, socRequested);
+            ElectricVehicleCharger evCharger = (ElectricVehicleCharger) this.control;
+            timeframeIntervalHandler.updateSocOfOptionalEnergyTimeframeIntervalForEVCharger(now,
+                    evCharger.getConnectedVehicleId(), socCurrent, socRequested);
         }
         else {
             logger.warn("{}: SOC can only be set for ev charger!", id);
