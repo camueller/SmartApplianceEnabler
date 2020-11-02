@@ -69,7 +69,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     private transient Long socInitialTimestamp;
     private transient boolean socScriptAsync = true;
     private transient boolean socScriptRunning;
-    private transient Float chargeLoss;
+    private transient float chargeLoss = 0.0f;
     private transient Appliance appliance;
     private transient String applianceId;
     private transient Vector<EVChargerState> stateHistory = new Vector<>();
@@ -182,7 +182,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         return 0;
     }
 
-    private Float calculateChargeLoss(Meter meter, int socCurrent, int socRetrieved) {
+    private Float calculateChargeLossDelta(Meter meter, int socCurrent, int socRetrieved) {
         int whAlreadyCharged = 0;
         if (meter != null) {
             whAlreadyCharged = Float.valueOf(meter.getEnergy() * 1000.0f).intValue();
@@ -719,7 +719,10 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                 }
                 socValues.retrieved = soc.intValue();
                 if(socValues.current != null) {
-                    chargeLoss += calculateChargeLoss(appliance.getMeter(), socValues.current, socValues.retrieved);
+                    Float chargeLossDelta = calculateChargeLossDelta(appliance.getMeter(), socValues.current, socValues.retrieved);
+                    if(chargeLossDelta != null) {
+                        chargeLoss += chargeLossDelta;
+                    }
                 }
                 socValues.current = soc.intValue();
                 socScriptRunning = false;
