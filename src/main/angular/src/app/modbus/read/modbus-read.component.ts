@@ -111,6 +111,10 @@ export class ModbusReadComponent implements OnChanges, OnInit {
     return ['BigEndian', 'LittleEndian'];
   }
 
+  get isRemoveModbusPossible() {
+    return !this.maxValues || this.maxValues > 1;
+  }
+
   removeModbusRead() {
     this.remove.emit();
   }
@@ -128,6 +132,10 @@ export class ModbusReadComponent implements OnChanges, OnInit {
     this.modbusReadValuesFormArray.push(this.createModbusReadValueFormGroup());
     this.form.markAsDirty();
     this.changeDetectorRef.detectChanges();
+  }
+
+  get isRemoveValuePossible() {
+    return !this.maxValues || this.maxValues > 1;
   }
 
   removeValue(index: number) {

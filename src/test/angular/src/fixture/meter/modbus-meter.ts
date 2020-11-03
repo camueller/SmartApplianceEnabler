@@ -3,7 +3,7 @@ import {ModbusElectricityMeter} from '../../../../../main/angular/src/app/meter/
 import {ModbusRead} from '../../../../../main/angular/src/app/modbus/read/modbus-read';
 import {ModbusReadValue} from '../../../../../main/angular/src/app/modbus/read-value/modbus-read-value';
 
-export const modbusMeter_complete = new ModbusElectricityMeter({
+export const modbusMeter_1ModbusRead_complete = new ModbusElectricityMeter({
   slaveAddress: '100',
   modbusReads: [
     new ModbusRead({
@@ -18,6 +18,13 @@ export const modbusMeter_complete = new ModbusElectricityMeter({
         })
       ]
     }),
+  ]
+});
+
+export const modbusMeter_2ModbusRead_complete = new ModbusElectricityMeter({
+  slaveAddress: '100',
+  modbusReads: [
+    ...modbusMeter_1ModbusRead_complete.modbusReads,
     new ModbusRead({
       type: 'InputDecimal',
       address: '0x0A',

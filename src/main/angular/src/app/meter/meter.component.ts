@@ -39,6 +39,8 @@ import {HttpElectricityMeter} from './http/http-electricity-meter';
 import {MeterS0Component} from './s0/meter-s0.component';
 import {ListItem} from '../shared/list-item';
 import {simpleMeterType} from '../shared/form-util';
+import {Appliance} from '../appliance/appliance';
+import {ApplianceType} from '../appliance/appliance-type';
 
 @Component({
   selector: 'app-meter',
@@ -60,6 +62,7 @@ export class MeterComponent implements OnChanges, OnInit, CanDeactivate<MeterCom
   meter: Meter;
   settingsDefaults: SettingsDefaults;
   settings: Settings;
+  isEvCharger: boolean;
   discardChangesMessage: string;
   confirmDeleteMessage: string;
   meterTypes: ListItem[] = [];
@@ -96,12 +99,14 @@ export class MeterComponent implements OnChanges, OnInit, CanDeactivate<MeterCom
     this.route.paramMap.subscribe(() => this.applianceId = this.route.snapshot.paramMap.get('id'));
     this.route.data.subscribe((data: {
       meter: Meter, meterDefaults: MeterDefaults,
-      settings: Settings, settingsDefaults: SettingsDefaults
+      settings: Settings, settingsDefaults: SettingsDefaults,
+      appliance: Appliance
     }) => {
       this.meter = data.meter;
       this.meterDefaults = data.meterDefaults;
       this.settings = data.settings;
       this.settingsDefaults = data.settingsDefaults;
+      this.isEvCharger = data.appliance.type === ApplianceType.EV_CHARGER.toString();
       this.buildForm();
       if (this.form) {
         this.form.markAsPristine();

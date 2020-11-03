@@ -58,6 +58,9 @@ export class HttpReadValueComponent implements OnChanges, OnInit {
   }
 
   ngOnInit() {
+    if (this.form && !this.form.controls.name.value && this.valueNames.length === 1) {
+      this.formHandler.setFormControlValue(this.form, 'name', this.valueNames[0]);
+    }
     this.errorMessages = new ErrorMessages('HttpReadValueComponent.error.', [
       new ErrorMessage('name', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('factorToValue', ValidatorType.pattern),

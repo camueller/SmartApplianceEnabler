@@ -37,6 +37,8 @@ export class MeterModbusComponent implements OnChanges, OnInit {
   @Input()
   modbusSettings: ModbusSetting[];
   @Input()
+  isEvCharger: boolean;
+  @Input()
   applianceId: string;
   form: FormGroup;
   formHandler: FormHandler;
@@ -90,22 +92,34 @@ export class MeterModbusComponent implements OnChanges, OnInit {
   }
 
   get valueNames() {
-    return [MeterValueName.Power, MeterValueName.Energy];
+    if (this.isEvCharger) {
+      return [MeterValueName.Power, MeterValueName.Energy];
+    }
+    return [MeterValueName.Power];
   }
 
   get valueNameTextKeys() {
-    return ['MeterModbusComponent.Power', 'MeterModbusComponent.Energy'];
+    if (this.isEvCharger) {
+      return ['MeterModbusComponent.Power', 'MeterModbusComponent.Energy'];
+    }
+    return ['MeterModbusComponent.Power'];
   }
 
   get isAddModbusReadPossible() {
-    if (this.modbusElectricityMeter.modbusReads.length === 1) {
-      return this.modbusElectricityMeter.modbusReads[0].readValues.length < 2;
+    if (this.isEvCharger) {
+      if (this.modbusElectricityMeter.modbusReads.length === 1) {
+        return this.modbusElectricityMeter.modbusReads[0].readValues.length < 2;
+      }
+      return this.modbusElectricityMeter.modbusReads.length < 2;
     }
-    return this.modbusElectricityMeter.modbusReads.length < 2;
+    return false;
   }
 
   get maxValues() {
-    return this.modbusElectricityMeter.modbusReads.length === 2 ? 1 : 2;
+    if (this.isEvCharger) {
+      return this.modbusElectricityMeter.modbusReads.length === 2 ? 1 : 2;
+    }
+    return 1;
   }
 
   addModbusRead() {
