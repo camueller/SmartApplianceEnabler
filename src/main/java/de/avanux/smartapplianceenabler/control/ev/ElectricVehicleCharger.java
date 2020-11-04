@@ -34,6 +34,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.*;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -65,8 +67,8 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     private transient Integer connectedVehicleId;
     private transient SocValues socValues = new SocValues();;
     private transient SocValues socValuesSentToListeners;
-    private transient Long socTimestamp;
-    private transient Long socInitialTimestamp;
+    private transient LocalDateTime socTimestamp;
+    private transient LocalDateTime socInitialTimestamp;
     private transient boolean socScriptAsync = true;
     private transient boolean socScriptRunning;
     private transient float chargeLoss = 0.0f;
@@ -199,10 +201,11 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     }
 
     public Long getSocInitialTimestamp() {
-        return socInitialTimestamp;
+        ZoneOffset zoneOffset = ZoneId.systemDefault().getRules().getOffset(LocalDateTime.now());
+        return socInitialTimestamp != null ? socInitialTimestamp.toEpochSecond(zoneOffset) * 1000 : null;
     }
 
-    public void setSocInitialTimestamp(Long socInitialTimestamp) {
+    public void setSocInitialTimestamp(LocalDateTime socInitialTimestamp) {
         this.socInitialTimestamp = socInitialTimestamp;
     }
 
@@ -673,9 +676,14 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         ElectricVehicle electricVehicle = getConnectedVehicle();
         if(electricVehicle != null && electricVehicle.getSocScript() != null) {
             Integer updateAfterIncrease = electricVehicle.getSocScript().getUpdateAfterIncrease();
-            if(this.socValues.initial == null
-                    || (updateAfterIncrease != null
-                    && this.socValues.retrieved + updateAfterIncrease <= this.socValues.current)) {
+            if(updateAfterIncrease == null) {
+                updateAfterIncrease = ElectricVehicleChargerDefaults.getUpdateSocAfterIncrease();
+            }
+            Integer updateAfterSeconds = electricVehicle.getSocScript().getUpdateAfterSeconds();
+            if(this.socValues.initial == null || (
+                    (this.socValues.retrieved + updateAfterIncrease <= this.socValues.current)
+                    && (updateAfterSeconds == null || now.minusSeconds(updateAfterSeconds).isAfter(this.socTimestamp))
+            )) {
                 if(!this.socScriptRunning) {
                     logger.debug( "{}: SOC retrieval is required: {}", applianceId, this.socValues);
                     this.socScriptRunning = true;
@@ -711,7 +719,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
 
         @Override
         public void run() {
-            Float soc = getStateOfCharge(electricVehicle);
+            Float soc = getStateOfCharge(now, electricVehicle);
             if(soc != null) {
                 logger.debug("{}: Retrieved SOC={}%", applianceId, soc);
                 if(socValues.initial == null) {
@@ -735,18 +743,12 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
      * @param electricVehicle
      * @return
      */
-    public Float getStateOfCharge(ElectricVehicle electricVehicle) {
-        if(socTimestamp == null
-                || System.currentTimeMillis() - this.socTimestamp > electricVehicle.getUpdateAfterSeconds() * 1000) {
-            logger.debug("{}: Try to retrieve SoC", applianceId);
-            Float soc = electricVehicle.getStateOfCharge();
-            this.socTimestamp = System.currentTimeMillis();
-            if(this.socInitialTimestamp == null) {
-                this.socInitialTimestamp = this.socTimestamp;
-            }
-            return soc;
+    public Float getStateOfCharge(LocalDateTime now, ElectricVehicle electricVehicle) {
+        Float soc = electricVehicle.getStateOfCharge();
+        this.socTimestamp = now;
+        if(this.socInitialTimestamp == null) {
+            this.socInitialTimestamp = this.socTimestamp;
         }
-        logger.debug("{}: Using cached SoC", applianceId);
-        return getSocInitial().floatValue();
+        return soc;
     }
 }

@@ -26,6 +26,7 @@ public class ElectricVehicleChargerDefaults {
     private Integer pollInterval = 10; // seconds
     private Integer startChargingStateDetectionDelay = 300;
     private Boolean forceInitialCharging = false;
+    private Integer updateSocAfterIncrease = 20;
     private static ElectricVehicleChargerDefaults instance = new ElectricVehicleChargerDefaults();
 
     public static Integer getVoltage() {
@@ -50,5 +51,9 @@ public class ElectricVehicleChargerDefaults {
 
     public static Boolean getForceInitialCharging() {
         return instance.forceInitialCharging;
+    }
+
+    public static Integer getUpdateSocAfterIncrease() {
+        return instance.updateSocAfterIncrease;
     }
 }

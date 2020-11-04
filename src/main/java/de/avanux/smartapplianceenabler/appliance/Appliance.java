@@ -362,7 +362,7 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
                     evCharger.createTimeframeInterval(now, evId, socCurrent, socRequested, chargeEnd);
             evCharger.setConnectedVehicleId(evId);
             evCharger.setSocInitial(socCurrent);
-            evCharger.setSocInitialTimestamp(System.currentTimeMillis());
+            evCharger.setSocInitialTimestamp(now);
             timeframeIntervalHandler.addTimeframeInterval(now, timeframeInterval, true, true);
 
             if(chargeEnd == null) {

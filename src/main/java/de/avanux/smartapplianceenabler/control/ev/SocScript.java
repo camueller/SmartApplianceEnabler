@@ -59,8 +59,8 @@ public class SocScript implements ApplianceIdConsumer {
         return updateAfterIncrease;
     }
 
-    public int getUpdateAfterSeconds() {
-        return updateAfterSeconds != null ? updateAfterSeconds : 60;
+    public Integer getUpdateAfterSeconds() {
+        return updateAfterSeconds;
     }
 
     public String getExtractionRegex() {
