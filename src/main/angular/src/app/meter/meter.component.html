@@ -37,11 +37,13 @@
                     [meterDefaults]="meterDefaults"
                     [settingsDefaults]="settingsDefaults"
                     [modbusSettings]="settings.modbusSettings"
+                    [isEvCharger]="isEvCharger"
                     [applianceId]="applianceId"
   ></app-meter-modbus>
   <app-meter-http *ngIf="isHttpElectricityMeter"
                   [httpElectricityMeter]="meter.httpElectricityMeter"
                   [meterDefaults]="meterDefaults"
+                  [isEvCharger]="isEvCharger"
   ></app-meter-http>
 
   <div class="sae__mandatory_fields_hint">{{'dialog.mandatoryfields'|translate}}</div>

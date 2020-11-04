@@ -94,8 +94,8 @@ export class HttpReadComponent implements OnChanges, OnInit {
     });
   }
 
-  get isRemoveValuePossible() {
-    return !this.minValues || this.httpRead.readValues.length > this.minValues;
+  get isRemoveHttpReadPossible() {
+    return !this.disableRemove && this.maxValues > 1;
   }
 
   removeHttpRead() {
@@ -115,6 +115,10 @@ export class HttpReadComponent implements OnChanges, OnInit {
     this.httpReadValuesFormArray.push(new FormGroup({}));
     this.form.markAsDirty();
     this.changeDetectorRef.detectChanges();
+  }
+
+  get isRemoveValuePossible() {
+    return (!this.minValues || this.httpRead.readValues.length > this.minValues) && this.maxValues > 1;
   }
 
   removeHttpReadValue(index: number) {

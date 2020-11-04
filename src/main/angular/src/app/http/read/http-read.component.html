@@ -6,7 +6,7 @@
              required="{{formHandler.isRequired('url')}}">
       <mat-error *ngIf="errors.url">{{errors.url}}</mat-error>
     </mat-form-field>
-    <button mat-raised-button type="button" (click)="removeHttpRead()" *ngIf="! disableRemove">
+    <button mat-raised-button type="button" (click)="removeHttpRead()" *ngIf="isRemoveHttpReadPossible">
       {{'HttpReadComponent.button.remove' | translate}}</button>
   </div>
   <div formArrayName="httpReadValues">

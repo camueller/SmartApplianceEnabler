@@ -65,7 +65,8 @@ const routes: Routes = [
       meter: MeterResolver,
       meterDefaults: MeterDefaultsResolver,
       settings: SettingsResolver,
-      settingsDefaults: SettingsDefaultsResolver
+      settingsDefaults: SettingsDefaultsResolver,
+      appliance: ApplianceResolver
     },
     canDeactivate: [CanDeactivateGuard]
   },

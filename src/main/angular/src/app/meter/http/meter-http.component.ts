@@ -33,6 +33,8 @@ export class MeterHttpComponent implements OnChanges, OnInit {
   httpReadComps: QueryList<HttpReadComponent>;
   @Input()
   meterDefaults: MeterDefaults;
+  @Input()
+  isEvCharger: boolean;
   contentProtocols = [undefined, ContentProtocol.JSON.toUpperCase()];
   form: FormGroup;
   formHandler: FormHandler;
@@ -74,11 +76,17 @@ export class MeterHttpComponent implements OnChanges, OnInit {
   }
 
   get valueNames() {
-    return [MeterValueName.Power, MeterValueName.Energy];
+    if (this.isEvCharger) {
+      return [MeterValueName.Power, MeterValueName.Energy];
+    }
+    return [MeterValueName.Power];
   }
 
   get valueNameTextKeys() {
-    return ['MeterHttpComponent.Power', 'MeterHttpComponent.Energy'];
+    if (this.isEvCharger) {
+      return ['MeterHttpComponent.Power', 'MeterHttpComponent.Energy'];
+    }
+    return ['MeterHttpComponent.Power'];
   }
 
   get contentProtocol(): string {
@@ -87,14 +95,20 @@ export class MeterHttpComponent implements OnChanges, OnInit {
   }
 
   get isAddHttpReadPossible() {
-    if (this.httpElectricityMeter.httpReads.length === 1) {
-      return this.httpElectricityMeter.httpReads[0].readValues.length < 2;
+    if (this.isEvCharger) {
+      if (this.httpElectricityMeter.httpReads.length === 1) {
+        return this.httpElectricityMeter.httpReads[0].readValues.length < 2;
+      }
+      return this.httpElectricityMeter.httpReads.length < 2;
     }
-    return this.httpElectricityMeter.httpReads.length < 2;
+    return false;
   }
 
   get maxValues() {
-    return this.httpElectricityMeter.httpReads.length === 2 ? 1 : 2;
+    if (this.isEvCharger) {
+      return this.httpElectricityMeter.httpReads.length === 2 ? 1 : 2;
+    }
+    return 1;
   }
 
   addHttpRead() {
