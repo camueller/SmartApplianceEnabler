@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Validateable, ApplianceIdConsumer, TimeframeIntervalChangedListener {
@@ -272,7 +273,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         }
         this.switchChargingStateTimestamp = null;
         EVChargerState previousState = getState();
-        EVChargerState currentState = getNewState(previousState, firstInvocationAfterSkip);
+        EVChargerState currentState = getNewState(now, previousState, firstInvocationAfterSkip);
         setState(now, currentState);
         this.firstInvocationAfterSkip = false;
         return true;
@@ -333,15 +334,16 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         stateHistory.add(EVChargerState.VEHICLE_NOT_CONNECTED);
     }
 
-    protected EVChargerState getNewState(EVChargerState currenState, boolean firstInvocationAfterSkip) {
+    protected EVChargerState getNewState(LocalDateTime now, EVChargerState currenState, boolean firstInvocationAfterSkip) {
         boolean vehicleNotConnected = control.isVehicleNotConnected();
         boolean vehicleConnected = control.isVehicleConnected();
         boolean charging = control.isCharging();
         boolean errorState = control.isInErrorState();
+        boolean hasOnlyEmptyRequestsBeforeTimeGap = hasOnlyEmptyRequestsBeforeTimeGap(now);
         logger.debug("{}: currenState={} startChargingRequested={} stopChargingRequested={} vehicleNotConnected={} " +
-                        "vehicleConnected={} charging={} errorState={} firstInvocationAfterSkip={}",
+                        "vehicleConnected={} charging={} errorState={} firstInvocationAfterSkip={} hasOnlyEmptyRequestsBeforeTimeGap={}",
                 applianceId, currenState, startChargingRequested, stopChargingRequested, vehicleNotConnected,
-                vehicleConnected, charging, errorState, firstInvocationAfterSkip);
+                vehicleConnected, charging, errorState, firstInvocationAfterSkip, hasOnlyEmptyRequestsBeforeTimeGap);
 
         // only use variables logged above
         if(errorState) {
@@ -373,12 +375,24 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
             }
         }
         else if(this.stopChargingRequested && vehicleConnected) {
+            if(hasOnlyEmptyRequestsBeforeTimeGap) {
+                return EVChargerState.CHARGING_COMPLETED;
+            }
             return EVChargerState.VEHICLE_CONNECTED;
         }
         else if(vehicleConnected && !charging) {
             return EVChargerState.VEHICLE_CONNECTED;
         }
         return currenState;
+    }
+
+    protected boolean hasOnlyEmptyRequestsBeforeTimeGap(LocalDateTime now) {
+        // aktueller Request hat fast keine Energie mehr und es gibt keinen direkten Folge-Request
+        List<TimeframeInterval> timeframeIntervalsUntilFirstGap
+                = this.appliance.getTimeframeIntervalHandler().findTimeframeIntervalsUntilFirstGap();
+        int maxEnergieUntilFirstGap = timeframeIntervalsUntilFirstGap.stream()
+                .mapToInt(interval -> interval.getRequest().getMax(now)).sum();
+        return maxEnergieUntilFirstGap < 100; // Wh
     }
 
     @Override
