@@ -108,7 +108,11 @@ public class SocScript implements ApplianceIdConsumer {
                 scriptOutput = scriptOutput.append(line);
             }
             logger.debug("{}: SoC script output: {}", applianceId, scriptOutput.toString());
-            return scriptOutput.toString();
+            int rc = p.exitValue();
+            logger.debug("{}: SoC script exited with return code {}", applianceId, rc);
+            if(rc == 0) {
+                return scriptOutput.toString();
+            }
         } catch (IOException e) {
             logger.error("{}: Error executing SoC script {}", applianceId, scriptToExecute, e);
         }

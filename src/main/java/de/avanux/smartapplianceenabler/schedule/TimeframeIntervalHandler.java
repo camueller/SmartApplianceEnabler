@@ -365,6 +365,21 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
         return timeframeIntervals;
     }
 
+    public List<TimeframeInterval> findTimeframeIntervalsUntilFirstGap() {
+        List<TimeframeInterval> intervals = new ArrayList<>();
+        TimeframeInterval firstTimeframeInterval = getFirstTimeframeInterval();
+        if(firstTimeframeInterval != null) {
+            intervals.add(firstTimeframeInterval);
+            if(queue.size() > 1) {
+                TimeframeInterval secondTimeframeInterval = queue.get(1);
+                if(secondTimeframeInterval.getInterval().getStart().isEqual(firstTimeframeInterval.getInterval().getEnd().plusSeconds(1))) {
+                    intervals.add(secondTimeframeInterval);
+                }
+            }
+        }
+        return intervals;
+    }
+
     private TimeframeInterval findOptionalEnergyIntervalForEVCharger() {
         return queue.stream()
                 .filter(timeframeInterval -> timeframeInterval.getRequest() instanceof OptionalEnergySocRequest)
