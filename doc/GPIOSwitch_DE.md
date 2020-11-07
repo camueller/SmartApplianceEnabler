@@ -31,6 +31,8 @@ Um das Risiko einer Überhitzung zu minimieren habe ich gleich [passende Kühlk�
 ![SSR mit Kühlkörper auf DIN-Schienenhalter](../pics/SsrMitKuehlkoerperDinHalter2.jpg)
 <br>SSR mit Kühlkörper auf DIN-Schienenhalter von Rückseite
 
+Bei [Pohltechnik](https://www.pohltechnik.com/de/ssr-relais) gibt es ebenfalls geeignete SSRs und passende Kühlkörper. 
+
 #### Schaltbeispiel 1: Schaltung eines 240V-Gerätes mittels Solid-State-Relais
 Der Aufbau zum Schalten eines 240V-Gerätes (z.B. Pumpe) mittels Solid-State-Relais könnte wie folgt aussehen:
 
