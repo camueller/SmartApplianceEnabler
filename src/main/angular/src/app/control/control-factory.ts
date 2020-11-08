@@ -55,6 +55,8 @@ export class ControlFactory {
       electricVehicleChargerDefaults.startChargingStateDetectionDelay;
     controlDefaults.electricVehicleChargerDefaults_forceInitialCharging =
       electricVehicleChargerDefaults.forceInitialCharging;
+    controlDefaults.electricVehicleChargerDefaults_updateSocAfterIncrease =
+      electricVehicleChargerDefaults.updateSocAfterIncrease;
 
 
     this.logger.debug('ControlDefaults (TYPE): ' + JSON.stringify(controlDefaults));

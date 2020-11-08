@@ -20,6 +20,19 @@
   }
 
   &__scriptFilename {
-    width: 14rem;
+    width: 18rem;
+  }
+
+  &__scriptUpdateSocHeading {
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+    color: rgba(0, 0, 0, 0.54);
+  }
+
+  &__scriptUpdateSocAfterIncrease {
+    width: 9rem;
+  }
+
+  &__scriptUpdateSocAfterSeconds {
+    width: 6rem;
   }
 }

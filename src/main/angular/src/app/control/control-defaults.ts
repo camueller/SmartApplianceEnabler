@@ -9,6 +9,7 @@ export class ControlDefaults {
   electricVehicleChargerDefaults_pollInterval: number;
   electricVehicleChargerDefaults_startChargingStateDetectionDelay: number;
   electricVehicleChargerDefaults_forceInitialCharging: boolean;
+  electricVehicleChargerDefaults_updateSocAfterIncrease: number;
 
   public constructor(init?: Partial<ControlDefaults>) {
     Object.assign(this, init);

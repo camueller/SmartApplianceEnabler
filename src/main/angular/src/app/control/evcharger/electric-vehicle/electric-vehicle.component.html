@@ -54,21 +54,38 @@
   </div>
   <h3>{{'ElectricVehicleComponent.script.heading' | translate}}</h3>
   <div class="sae__fields">
-    <mat-checkbox formControlName="scriptEnabled"
-                  (click)="onScriptEnabledToggle()"
-    >{{'ElectricVehicleComponent.script.enabled' | translate}}</mat-checkbox>
     <mat-form-field class="ElectricVehicleComponent__scriptFilename">
       <mat-label>{{'ElectricVehicleComponent.script.filename' | translate}}</mat-label>
       <input matInput type="text" formControlName="scriptFilename"
              required="{{formHandler.isRequired('scriptFilename')}}">
       <mat-error *ngIf="errors.scriptFilename">{{errors.scriptFilename}}</mat-error>
     </mat-form-field>
+  </div>
+  <div class="sae__fields">
     <mat-form-field class="sae__regex">
       <mat-label>{{'ElectricVehicleComponent.script.extractionRegex' | translate}}</mat-label>
       <input matInput type="text" formControlName="scriptExtractionRegex"
              matTooltip="{{'regex.tooltip' | translate}}"
              required="{{formHandler.isRequired('scriptExtractionRegex')}}">
       <mat-error *ngIf="errors.scriptExtractionRegex">{{errors.scriptExtractionRegex}}</mat-error>
+    </mat-form-field>
+  </div>
+  <div class="ElectricVehicleComponent__scriptUpdateSocHeading">{{'ElectricVehicleComponent.script.update.heading' | translate}}</div>
+  <div class="sae__fields">
+    <mat-form-field class="ElectricVehicleComponent__scriptUpdateSocAfterIncrease">
+      <mat-label>{{'ElectricVehicleComponent.script.update.afterIncrease' | translate}}</mat-label>
+      <input matInput type="text" formControlName="scriptUpdateSocAfterIncrease"
+             placeholder="{{controlDefaults.electricVehicleChargerDefaults_updateSocAfterIncrease}}"
+             matTooltip="{{'ElectricVehicleComponent.script.update.afterIncrease.tooltip' | translate}}"
+             required="{{formHandler.isRequired('scriptUpdateSocAfterIncrease')}}">
+      <mat-error *ngIf="errors.scriptUpdateSocAfterIncrease">{{errors.scriptUpdateSocAfterIncrease}}</mat-error>
+    </mat-form-field>
+    <mat-form-field class="ElectricVehicleComponent__scriptUpdateSocAfterSeconds">
+      <mat-label>{{'ElectricVehicleComponent.script.update.afterSeconds' | translate}}</mat-label>
+      <input matInput type="text" formControlName="scriptUpdateSocAfterSeconds"
+             matTooltip="{{'ElectricVehicleComponent.script.update.afterSeconds.tooltip' | translate}}"
+             required="{{formHandler.isRequired('scriptUpdateSocAfterSeconds')}}">
+      <mat-error *ngIf="errors.scriptUpdateSocAfterSeconds">{{errors.scriptUpdateSocAfterSeconds}}</mat-error>
     </mat-form-field>
   </div>
 </div>

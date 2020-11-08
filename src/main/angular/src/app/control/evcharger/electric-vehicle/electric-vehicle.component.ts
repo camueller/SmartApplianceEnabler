@@ -61,7 +61,8 @@ export class ElectricVehicleComponent implements OnChanges, OnInit {
       new ErrorMessage('chargeLoss', ValidatorType.pattern),
       new ErrorMessage('defaultSocManual', ValidatorType.pattern),
       new ErrorMessage('defaultSocOptionalEnergy', ValidatorType.pattern),
-      new ErrorMessage('scriptFilename', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
+      new ErrorMessage('scriptUpdateSocAfterIncrease', ValidatorType.pattern),
+      new ErrorMessage('scriptUpdateSocAfterSeconds', ValidatorType.pattern),
     ], this.translate);
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
@@ -73,7 +74,7 @@ export class ElectricVehicleComponent implements OnChanges, OnInit {
       this.electricVehicle && this.electricVehicle.id);
     this.formHandler.addFormControl(this.form, 'name',
       this.electricVehicle && this.electricVehicle.name,
-      [Validators.required]);
+      Validators.required);
     this.formHandler.addFormControl(this.form, 'batteryCapacity',
       this.electricVehicle && this.electricVehicle.batteryCapacity,
       [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
@@ -88,18 +89,20 @@ export class ElectricVehicleComponent implements OnChanges, OnInit {
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
     this.formHandler.addFormControl(this.form, 'defaultSocManual',
       this.electricVehicle && this.electricVehicle.defaultSocManual,
-      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
+      [Validators.pattern(InputValidatorPatterns.PERCENTAGE)]);
     this.formHandler.addFormControl(this.form, 'defaultSocOptionalEnergy',
       this.electricVehicle && this.electricVehicle.defaultSocOptionalEnergy,
-      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    const scriptEnabled: boolean = this.electricVehicle && this.electricVehicle.socScript
-      && (this.electricVehicle.socScript.script !== undefined);
-    this.formHandler.addFormControl(this.form, 'scriptEnabled', scriptEnabled);
+      [Validators.pattern(InputValidatorPatterns.PERCENTAGE)]);
     this.formHandler.addFormControl(this.form, 'scriptFilename',
       this.electricVehicle && this.electricVehicle.socScript && this.electricVehicle.socScript.script);
     this.formHandler.addFormControl(this.form, 'scriptExtractionRegex',
       this.electricVehicle && this.electricVehicle.socScript && this.electricVehicle.socScript.extractionRegex);
-    this.setScriptEnabled(scriptEnabled);
+    this.formHandler.addFormControl(this.form, 'scriptUpdateSocAfterIncrease',
+      this.electricVehicle && this.electricVehicle.socScript && this.electricVehicle.socScript.updateAfterIncrease,
+      Validators.pattern(InputValidatorPatterns.PERCENTAGE));
+    this.formHandler.addFormControl(this.form, 'scriptUpdateSocAfterSeconds',
+      this.electricVehicle && this.electricVehicle.socScript && this.electricVehicle.socScript.updateAfterSeconds,
+      Validators.pattern(InputValidatorPatterns.INTEGER));
   }
 
   updateForm() {
@@ -113,6 +116,8 @@ export class ElectricVehicleComponent implements OnChanges, OnInit {
     if (this.electricVehicle && this.electricVehicle.socScript) {
       this.formHandler.setFormControlValue(this.form, 'scriptFilename', this.electricVehicle.socScript.script);
       this.formHandler.setFormControlValue(this.form, 'scriptExtractionRegex', this.electricVehicle.socScript.extractionRegex);
+      this.formHandler.setFormControlValue(this.form, 'scriptUpdateSocAfterIncrease', this.electricVehicle.socScript.updateAfterIncrease);
+      this.formHandler.setFormControlValue(this.form, 'scriptUpdateSocAfterSeconds', this.electricVehicle.socScript.updateAfterSeconds);
     }
   }
 
@@ -126,6 +131,8 @@ export class ElectricVehicleComponent implements OnChanges, OnInit {
     const defaultSocOptionalEnergy = getValidInt(this.form.controls.defaultSocOptionalEnergy.value);
     const scriptFilename = this.form.controls.scriptFilename.value;
     const extractionRegex = this.form.controls.scriptExtractionRegex.value;
+    const updateSocAfterIncrease = this.form.controls.scriptUpdateSocAfterIncrease.value;
+    const updateSocAfterSeconds = this.form.controls.scriptUpdateSocAfterSeconds.value;
 
     this.electricVehicle.name = name;
     this.electricVehicle.batteryCapacity = batteryCapacity;
@@ -135,7 +142,7 @@ export class ElectricVehicleComponent implements OnChanges, OnInit {
     this.electricVehicle.defaultSocManual = defaultSocManual;
     this.electricVehicle.defaultSocOptionalEnergy = defaultSocOptionalEnergy;
 
-    if (!(scriptFilename || extractionRegex)) {
+    if (!scriptFilename) {
       this.electricVehicle.socScript = undefined;
     } else {
       if (!this.electricVehicle.socScript && scriptFilename) {
@@ -143,28 +150,10 @@ export class ElectricVehicleComponent implements OnChanges, OnInit {
       }
       this.electricVehicle.socScript.script = scriptFilename;
       this.electricVehicle.socScript.extractionRegex = extractionRegex;
+      this.electricVehicle.socScript.updateAfterIncrease = updateSocAfterIncrease;
+      this.electricVehicle.socScript.updateAfterSeconds = updateSocAfterSeconds;
     }
     return this.electricVehicle;
-  }
-
-  onScriptEnabledToggle() {
-    this.setScriptEnabled(! this.isScriptEnabled());
-  }
-
-  setScriptEnabled(enabled: boolean) {
-    const scriptFilenameControl = this.form.controls.scriptFilename;
-    const scriptExtractionRegexControl = this.form.controls.scriptExtractionRegex;
-    if (enabled) {
-      scriptFilenameControl.enable();
-      scriptExtractionRegexControl.enable();
-    } else {
-      scriptFilenameControl.disable();
-      scriptExtractionRegexControl.disable();
-    }
-  }
-
-  isScriptEnabled() {
-    return this.form.controls.scriptEnabled.value;
   }
 
   removeElectricVehicle() {

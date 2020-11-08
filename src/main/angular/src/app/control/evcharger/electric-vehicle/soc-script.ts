@@ -7,6 +7,8 @@ export class SocScript {
 
   script: string;
   extractionRegex: string;
+  updateAfterIncrease: number;
+  updateAfterSeconds: number;
 
   public constructor(init?: Partial<SocScript>) {
     Object.assign(this, init);
