@@ -47,6 +47,8 @@ export class TimepickerComponent implements OnChanges, OnInit, AfterViewChecked 
   @Input()
   label: string;
   @Input()
+  tooltip: string;
+  @Input()
   required: boolean;
   @Input()
   enabled = true;

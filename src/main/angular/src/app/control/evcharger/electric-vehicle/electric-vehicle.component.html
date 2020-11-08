@@ -80,12 +80,15 @@
              required="{{formHandler.isRequired('scriptUpdateSocAfterIncrease')}}">
       <mat-error *ngIf="errors.scriptUpdateSocAfterIncrease">{{errors.scriptUpdateSocAfterIncrease}}</mat-error>
     </mat-form-field>
-    <mat-form-field class="ElectricVehicleComponent__scriptUpdateSocAfterSeconds">
-      <mat-label>{{'ElectricVehicleComponent.script.update.afterSeconds' | translate}}</mat-label>
-      <input matInput type="text" formControlName="scriptUpdateSocAfterSeconds"
-             matTooltip="{{'ElectricVehicleComponent.script.update.afterSeconds.tooltip' | translate}}"
-             required="{{formHandler.isRequired('scriptUpdateSocAfterSeconds')}}">
-      <mat-error *ngIf="errors.scriptUpdateSocAfterSeconds">{{errors.scriptUpdateSocAfterSeconds}}</mat-error>
-    </mat-form-field>
+    <app-timepicker label="{{'ElectricVehicleComponent.script.update.afterSeconds' | translate}}"
+                    tooltip="{{'ElectricVehicleComponent.script.update.afterSeconds.tooltip' | translate}}"
+                    formControlNameTP="scriptUpdateSocAfterTime"
+                    [value]="updateAfterTime"
+                    [required]="false"
+                    [enabled]="true"
+                    [width]="'8rem'"
+                    [errorMessages]="errorMessages"
+                    #updateAfterSecondsComponent
+    ></app-timepicker>
   </div>
 </div>

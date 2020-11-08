@@ -11,6 +11,9 @@ import {getValidInt, getValidString} from '../../../shared/form-util';
 import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../../shared/error-message';
 import {SocScript} from './soc-script';
 import {ElectricVehicle} from './electric-vehicle';
+import {TimeUtil} from '../../../shared/time-util';
+import {TimepickerComponent} from '../../../material/timepicker/timepicker.component';
+import { ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-electric-vehicle',
@@ -27,6 +30,8 @@ export class ElectricVehicleComponent implements OnChanges, OnInit {
   formHandler: FormHandler;
   @Output()
   remove = new EventEmitter<any>();
+  @ViewChild('updateAfterSecondsComponent', {static: true})
+  updateAfterSecondsComponent: TimepickerComponent;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -62,11 +67,16 @@ export class ElectricVehicleComponent implements OnChanges, OnInit {
       new ErrorMessage('defaultSocManual', ValidatorType.pattern),
       new ErrorMessage('defaultSocOptionalEnergy', ValidatorType.pattern),
       new ErrorMessage('scriptUpdateSocAfterIncrease', ValidatorType.pattern),
-      new ErrorMessage('scriptUpdateSocAfterSeconds', ValidatorType.pattern),
+      new ErrorMessage('scriptUpdateSocAfterTime', ValidatorType.pattern),
     ], this.translate);
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
     });
+  }
+
+  get updateAfterTime() {
+    return this.electricVehicle.socScript && this.electricVehicle.socScript.updateAfterSeconds
+      && TimeUtil.toHourMinute(this.electricVehicle.socScript.updateAfterSeconds);
   }
 
   expandParentForm() {
@@ -132,7 +142,7 @@ export class ElectricVehicleComponent implements OnChanges, OnInit {
     const scriptFilename = this.form.controls.scriptFilename.value;
     const extractionRegex = this.form.controls.scriptExtractionRegex.value;
     const updateSocAfterIncrease = this.form.controls.scriptUpdateSocAfterIncrease.value;
-    const updateSocAfterSeconds = this.form.controls.scriptUpdateSocAfterSeconds.value;
+    const updateSocAfterTime = this.updateAfterSecondsComponent.updateModelFromForm();
 
     this.electricVehicle.name = name;
     this.electricVehicle.batteryCapacity = batteryCapacity;
@@ -151,7 +161,8 @@ export class ElectricVehicleComponent implements OnChanges, OnInit {
       this.electricVehicle.socScript.script = scriptFilename;
       this.electricVehicle.socScript.extractionRegex = extractionRegex;
       this.electricVehicle.socScript.updateAfterIncrease = updateSocAfterIncrease;
-      this.electricVehicle.socScript.updateAfterSeconds = updateSocAfterSeconds;
+      this.electricVehicle.socScript.updateAfterSeconds = updateSocAfterTime
+        && updateSocAfterTime.length > 0 ? TimeUtil.toSeconds(updateSocAfterTime) : undefined;
     }
     return this.electricVehicle;
   }
