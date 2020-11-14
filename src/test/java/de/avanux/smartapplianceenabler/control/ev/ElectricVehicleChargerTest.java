@@ -20,6 +20,7 @@ package de.avanux.smartapplianceenabler.control.ev;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import de.avanux.smartapplianceenabler.appliance.Appliance;
@@ -39,6 +40,7 @@ public class ElectricVehicleChargerTest {
     private Logger logger = LoggerFactory.getLogger(ElectricVehicleChargerTest.class);
     private ElectricVehicleCharger evCharger = Mockito.spy(new ElectricVehicleCharger());
     private EVChargerControl evChargerControl = mock(EVChargerControl.class);
+    private ElectricVehicle ev;
     private Appliance appliance = mock(Appliance.class);
     private TimeframeIntervalHandler timeframeIntervalHandler = mock(TimeframeIntervalHandler.class);
     private Request request = mock(Request.class);
@@ -50,10 +52,16 @@ public class ElectricVehicleChargerTest {
         SocRequest request = new SocRequest(50, 1);
         timeframeInterval = new TimeframeInterval(null, request);
 
+        ev = new ElectricVehicle();
+        ev.setName("Nissan Leaf");
+        ev.setId(1);
+        ev.setBatteryCapacity(40000);
+
         evCharger.startChargingStateDetectionDelay = 0;
         evCharger.setControl(evChargerControl);
         evCharger.setApplianceId(applianceId);
         evCharger.setAppliance(appliance);
+        evCharger.setVehicles(Collections.singletonList(ev));
         evCharger.init();
 
         when(appliance.getTimeframeIntervalHandler()).thenReturn(timeframeIntervalHandler);
