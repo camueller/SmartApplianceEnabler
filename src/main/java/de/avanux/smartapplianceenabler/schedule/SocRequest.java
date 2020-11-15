@@ -38,7 +38,7 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
     @XmlAttribute
     private Integer evId;
     private transient Integer energy;
-    private transient SocValues receivedSocVariables;
+    private transient SocValues receivedSocVariables = new SocValues();
     private transient SocValues lastEnergyCalculationVariables = new SocValues();
 
     public SocRequest() {
@@ -88,7 +88,7 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
     }
 
     public void setBatteryCapacity(Integer batteryCapacity) {
-        this.lastEnergyCalculationVariables.batteryCapacity = batteryCapacity;
+        this.receivedSocVariables.batteryCapacity = batteryCapacity;
     }
 
     @Override
@@ -103,12 +103,12 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
 
     @Override
     public Integer getMin(LocalDateTime now) {
-        return getEnergy();
+        return energy;
     }
 
     @Override
     public Integer getMax(LocalDateTime now) {
-        return getEnergy();
+        return energy;
     }
 
     @Override
@@ -118,18 +118,12 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
             if(batteryCapacity == null) {
                 batteryCapacity = this.receivedSocVariables.batteryCapacity;
             }
-            if(this.receivedSocVariables != null) {
-                this.lastEnergyCalculationVariables = new SocValues(receivedSocVariables);
-            }
+            this.lastEnergyCalculationVariables = new SocValues(receivedSocVariables);
             this.energy = calculateEnergy(batteryCapacity);
         }
         if(energy != null && energy <= 0) {
             setEnabled(false);
         }
-    }
-
-    private Integer getEnergy() {
-        return this.energy;
     }
 
     public Integer calculateEnergy(int batteryCapacity) {
@@ -143,7 +137,6 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
 
     @Override
     public boolean isFinished(LocalDateTime now) {
-        Integer energy = getEnergy();
         return energy != null && energy <= 0;
     }
 

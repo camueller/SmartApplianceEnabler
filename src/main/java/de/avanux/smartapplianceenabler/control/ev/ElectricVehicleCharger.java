@@ -155,7 +155,11 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         return this.socValues.current != null ? this.socValues.current : 0;
     }
 
-    private void updateSocOnControlStateChangedListeners(LocalDateTime now, SocValues socValues) {
+    public SocValues getSocValues() {
+        return socValues;
+    }
+
+    public void updateSocOnControlStateChangedListeners(LocalDateTime now, SocValues socValues) {
         if(socValuesSentToListeners == null || !socValuesSentToListeners.equals(socValues)) {
             for(ControlStateChangedListener listener : controlStateChangedListeners) {
                 logger.debug("{}: Notifying {} {} {}", applianceId, ControlStateChangedListener.class.getSimpleName(),
@@ -174,9 +178,9 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
 
         ElectricVehicle vehicle = getConnectedVehicle();
         if (vehicle != null) {
-            int soc = Float.valueOf(getSocInitial()
-                    + whAlreadyCharged / Float.valueOf(vehicle.getBatteryCapacity())
-                    * (100 - chargeLoss)).intValue();
+            int soc = Long.valueOf(Math.round(getSocInitial()
+                    + whAlreadyCharged / Double.valueOf(vehicle.getBatteryCapacity())
+                    * (100 - chargeLoss))).intValue();
             int currentSoc = Math.min(soc, 100);
             logger.debug("{}: SOC calculation: currentSoc={} socInitial={} batteryCapacity={} whAlreadyCharged={} chargeLoss={}",
                     applianceId, currentSoc, getSocInitial(), vehicle.getBatteryCapacity(), whAlreadyCharged, chargeLoss);
@@ -481,6 +485,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                 if (getConnectedVehicleId() == null) {
                     setConnectedVehicleId(firstVehicle.getId());
                 }
+                socValues.batteryCapacity = firstVehicle.getBatteryCapacity();
             }
             if(getForceInitialCharging() && wasInStateOneTime(EVChargerState.VEHICLE_CONNECTED)) {
                 startCharging();
@@ -507,7 +512,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                 meter.resetEnergyMeter();
             }
             setConnectedVehicleId(null);
-            setSocInitial(null);
+            this.socValues = new SocValues();
             initStateHistory();
         }
 
@@ -519,7 +524,6 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
 
         // SOC has to be retrieved after listener notification in order to allow for new listeners interested in SOC
         if(previousState == EVChargerState.VEHICLE_NOT_CONNECTED && newState == EVChargerState.VEHICLE_CONNECTED) {
-            this.socValues = new SocValues();
             this.socValues.batteryCapacity = getConnectedVehicle().getBatteryCapacity();
             this.chargeLoss = getConnectedVehicle().getChargeLoss() != null
                     ? getConnectedVehicle().getChargeLoss().floatValue() : 0.0f;
@@ -685,7 +689,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         }
     }
 
-    private synchronized void updateSoc(LocalDateTime now) {
+    public synchronized void updateSoc(LocalDateTime now) {
         this.socValues.current = calculateCurrentSoc(this.appliance.getMeter());
         ElectricVehicle electricVehicle = getConnectedVehicle();
         if(electricVehicle != null && electricVehicle.getSocScript() != null) {

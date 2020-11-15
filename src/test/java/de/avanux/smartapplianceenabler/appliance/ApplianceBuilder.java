@@ -21,10 +21,7 @@ package de.avanux.smartapplianceenabler.appliance;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.MockSwitch;
 import de.avanux.smartapplianceenabler.control.StartingCurrentSwitch;
-import de.avanux.smartapplianceenabler.control.ev.EVChargerControl;
-import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
-import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
-import de.avanux.smartapplianceenabler.control.ev.SocScript;
+import de.avanux.smartapplianceenabler.control.ev.*;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.schedule.*;
 import de.avanux.smartapplianceenabler.semp.webservice.Device2EM;
@@ -134,8 +131,9 @@ public class ApplianceBuilder {
     }
 
     public ApplianceBuilder withSocRequest(LocalDateTime now, Interval interval,
-                                           Integer evId, Integer soc, boolean enabled) {
+                                           Integer evId, Integer batteryCapacity, Integer soc, boolean enabled) {
         SocRequest request = new SocRequest(soc, evId);
+        request.onEVChargerSocChanged(now, new SocValues(batteryCapacity, soc, null, null));
         request.setEnabled(enabled);
         TimeframeInterval timeframeInterval = new TimeframeInterval(interval, request);
         getTimeframeIntervalHandler().addTimeframeInterval(now, timeframeInterval, false, true);
