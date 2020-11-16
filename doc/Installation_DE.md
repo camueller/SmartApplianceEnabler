@@ -224,7 +224,7 @@ pi@raspberrypi:~ $ sudo rm *.tar.gz
 pi@raspberrypi:~ $ sudo update-alternatives --install /usr/bin/java java /opt/jdk/zulu11.41.75-ca-jdk11.0.8-linux_aarch32hf/bin/java 1
 pi@raspberrypi:~ $ sudo update-alternatives --install /usr/bin/javac javac /opt/jdk/zulu11.41.75-ca-jdk11.0.8-linux_aarch32hf/bin/javac 1
 ```
-Da die alten Pi-Modell bzw. die Pi-Zero weniger Rechnen-Leistung bereitstellen, dauert der Start des SAE im Allgmeinen etwas länger, so dass die "Time-out-Zeiten" noch angepasst werden müssen, um einen Abbruch beim Programmstart zu verhindern. Dafür mit einem Editor in /opt/sae/smartapplianceenabler den "sleep 1" durch "sleep 3" ersetzen und in /lib/systemd/system/smartapplicanceenabler.service "TimeoutStartSec=90s" auf "TimeoutStartSec=180s" ändern.
+Da die alten Pi-Modell bzw. die Pi-Zero weniger Rechnen-Leistung bereitstellen, dauert der Start des SAE im Allgmeinen etwas länger, so dass die "Time-out-Zeiten" noch angepasst werden müssen, um einen Abbruch beim Programmstart zu verhindern. Dafür mit einem Editor in /opt/sae/smartapplianceenabler den "sleep 1" durch "sleep 3" ersetzen und in /lib/systemd/system/smartapplianceenabler.service "TimeoutStartSec=90s" auf "TimeoutStartSec=180s" ändern.
 
 ## Wiring-Pi installieren
 Falls der *Smart Appliance Enabler* auf die GPIO-Anschlüsse des Raspberry Pi zugreifen soll, muss die Biliothek [Wiring Pi](http://wiringpi.com/) installiert sein. Das lässt sich mit folgendem Befehl erreichen:
