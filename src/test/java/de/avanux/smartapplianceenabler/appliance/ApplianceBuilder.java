@@ -71,11 +71,11 @@ public class ApplianceBuilder {
     }
 
     public ApplianceBuilder withElectricVehicle(Integer evId, Integer batteryCapacity) {
-        ElectricVehicle vehicle = new ElectricVehicle();
-        vehicle.setId(evId);
-        vehicle.setBatteryCapacity(batteryCapacity);
-        addVehicle(vehicle);
-        return this;
+        return withElectricVehicle(evId, batteryCapacity, null, null);
+    }
+
+    public ApplianceBuilder withElectricVehicle(Integer evId, Integer batteryCapacity, SocScript socScript) {
+        return withElectricVehicle(evId, batteryCapacity, null, socScript);
     }
 
     public ApplianceBuilder withElectricVehicle(Integer evId, Integer batteryCapacity, Integer defaultSocOptionalEnergy, SocScript socScript) {

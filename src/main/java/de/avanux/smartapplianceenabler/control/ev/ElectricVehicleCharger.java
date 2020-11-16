@@ -72,7 +72,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     private transient LocalDateTime socInitialTimestamp;
     private transient boolean socScriptAsync = true;
     private transient boolean socScriptRunning;
-    private transient float chargeLoss = 0.0f;
+    private transient double chargeLoss = 0.0;
     private transient Appliance appliance;
     private transient String applianceId;
     private transient Vector<EVChargerState> stateHistory = new Vector<>();
@@ -178,9 +178,9 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
 
         ElectricVehicle vehicle = getConnectedVehicle();
         if (vehicle != null) {
-            int soc = Long.valueOf(Math.round(getSocInitial()
-                    + whAlreadyCharged / Double.valueOf(vehicle.getBatteryCapacity())
-                    * (100 - chargeLoss))).intValue();
+            int soc = Long.valueOf(Math.round(
+                    getSocInitial() + whAlreadyCharged / (vehicle.getBatteryCapacity() *  (1 + chargeLoss/100)) * 100
+            )).intValue();
             int currentSoc = Math.min(soc, 100);
             logger.debug("{}: SOC calculation: currentSoc={} socInitial={} batteryCapacity={} whAlreadyCharged={} chargeLoss={}",
                     applianceId, currentSoc, getSocInitial(), vehicle.getBatteryCapacity(), whAlreadyCharged, chargeLoss);
@@ -189,7 +189,11 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         return 0;
     }
 
-    private Float calculateChargeLossDelta(Meter meter, int socCurrent, int socRetrieved) {
+    public double getChargeLoss() {
+        return chargeLoss;
+    }
+
+    private Double calculateChargeLossDelta(Meter meter, int socCurrent, int socRetrieved) {
         int whAlreadyCharged = 0;
         if (meter != null) {
             whAlreadyCharged = Float.valueOf(meter.getEnergy() * 1000.0f).intValue();
@@ -197,10 +201,10 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
 
         ElectricVehicle vehicle = getConnectedVehicle();
         if (vehicle != null && whAlreadyCharged > 0) {
-            float chargeLoss = ((float) socCurrent - (float) socRetrieved) * Float.valueOf(vehicle.getBatteryCapacity()) / whAlreadyCharged;
-            logger.debug("{}: chargeLoss calculation: chargeLoss={}% socCurrent={} socRetrieved={} batteryCapacity={} whAlreadyCharged={}",
-                    applianceId, chargeLoss, socCurrent, socRetrieved, vehicle.getBatteryCapacity(), whAlreadyCharged);
-            return chargeLoss;
+            double chargeLossDelta = (socCurrent - socRetrieved) * vehicle.getBatteryCapacity() / (double) whAlreadyCharged;
+            logger.debug("{}: charge loss calculation: chargeLossDelta={}% socCurrent={} socRetrieved={} batteryCapacity={} whAlreadyCharged={}",
+                    applianceId, chargeLossDelta, socCurrent, socRetrieved, vehicle.getBatteryCapacity(), whAlreadyCharged);
+            return chargeLossDelta;
         }
         return null;
     }
@@ -737,7 +741,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
 
         @Override
         public void run() {
-            Float soc = getStateOfCharge(now, electricVehicle);
+            Double soc = getStateOfCharge(now, electricVehicle);
             if(soc != null) {
                 logger.debug("{}: Retrieved SOC={}%", applianceId, soc);
                 if(socValues.initial == null) {
@@ -745,7 +749,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                 }
                 socValues.retrieved = soc.intValue();
                 if(socValues.current != null) {
-                    Float chargeLossDelta = calculateChargeLossDelta(appliance.getMeter(), socValues.current, socValues.retrieved);
+                    Double chargeLossDelta = calculateChargeLossDelta(appliance.getMeter(), socValues.current, socValues.retrieved);
                     if(chargeLossDelta != null) {
                         chargeLoss += chargeLossDelta;
                     }
@@ -761,8 +765,8 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
      * @param electricVehicle
      * @return
      */
-    public Float getStateOfCharge(LocalDateTime now, ElectricVehicle electricVehicle) {
-        Float soc = electricVehicle.getStateOfCharge();
+    public Double getStateOfCharge(LocalDateTime now, ElectricVehicle electricVehicle) {
+        Double soc = electricVehicle.getStateOfCharge();
         this.socTimestamp = now;
         if(this.socInitialTimestamp == null) {
             this.socInitialTimestamp = this.socTimestamp;

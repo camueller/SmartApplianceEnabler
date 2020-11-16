@@ -129,7 +129,7 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
     public Integer calculateEnergy(int batteryCapacity) {
         Integer currentSoc = getSocCurrentOrDefault();
         Integer targetSoc = getSocOrDefault();
-        int energy = Float.valueOf((targetSoc - currentSoc)/100.0f * batteryCapacity).intValue();
+        int energy = Double.valueOf((targetSoc - currentSoc)/100.0 * batteryCapacity).intValue();
         getLogger().debug("{}: energy calculation: {}Wh evId={} batteryCapactiy={} currentSoc={} targetSoc={}",
                 getApplianceId(), energy, evId, batteryCapacity, currentSoc, targetSoc);
         return energy;

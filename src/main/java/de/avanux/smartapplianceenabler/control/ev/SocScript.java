@@ -76,12 +76,12 @@ public class SocScript implements ApplianceIdConsumer {
         this.applianceId = applianceId;
     }
 
-    public Float getStateOfCharge() {
+    public Double getStateOfCharge() {
         if(this.script != null) {
             String output = getScriptOutput(this.script);
             if(output != null && output.length() > 0) {
                 String socValueString = extractSoCValue(output, this.extractionRegex);
-                Float soc = Float.parseFloat(socValueString.replace(',', '.'));
+                Double soc = Double.parseDouble(socValueString.replace(',', '.'));
                 logger.debug("{}: SoC: {}", applianceId, soc);
                 return soc;
             }
