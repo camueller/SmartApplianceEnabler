@@ -27,7 +27,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -93,28 +95,32 @@ public class SocScript implements ApplianceIdConsumer {
     }
 
     private String getScriptOutput(String scriptToExecute) {
+        InputStream inputStream = null;
         try {
             logger.debug("{}: Executing SoC script: {}", applianceId, scriptToExecute);
             ProcessBuilder builder = new ProcessBuilder(scriptToExecute);
             builder.redirectErrorStream(true);
             Process p = builder.start();
-            BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
             StringBuffer scriptOutput = new StringBuffer();
-            while (true) {
-                String line = r.readLine();
-                if (line == null) {
-                    break;
-                }
-                scriptOutput = scriptOutput.append(line);
+            inputStream = p.getInputStream();
+            int c;
+            while ((c = inputStream.read()) != -1) {
+                scriptOutput.append((char) c);
             }
             logger.debug("{}: SoC script output: {}", applianceId, scriptOutput.toString());
-            int rc = p.exitValue();
+            int rc = p.waitFor();
             logger.debug("{}: SoC script exited with return code {}", applianceId, rc);
             if(rc == 0) {
                 return scriptOutput.toString();
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.error("{}: Error executing SoC script {}", applianceId, scriptToExecute, e);
+        } finally {
+            try {
+                Objects.requireNonNull(inputStream).close();
+            } catch (IOException e) {
+                logger.error("{}: Error closing input stream of SoC script {}", applianceId, scriptToExecute, e);
+            }
         }
         return null;
     }
