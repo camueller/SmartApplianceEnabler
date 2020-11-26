@@ -38,8 +38,8 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
     @XmlAttribute
     private Integer evId;
     private transient Integer energy;
-    private transient SocValues receivedSocVariables = new SocValues();
-    private transient SocValues lastEnergyCalculationVariables = new SocValues();
+    private transient SocValues receivedSocVariables;
+    private transient SocValues lastEnergyCalculationVariables;
 
     public SocRequest() {
     }
@@ -53,22 +53,31 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
         return LoggerFactory.getLogger(SocRequest.class);
     }
 
-    public void setSocInitial(Integer socInitial) {
-        if(this.receivedSocVariables == null) {
-            this.receivedSocVariables = new SocValues();
+    public SocValues receivedSocVariablesInitialized() {
+        if(receivedSocVariables == null) {
+            receivedSocVariables = new SocValues();
         }
-        this.receivedSocVariables.initial = socInitial;
+        return receivedSocVariables;
+    }
+
+    public SocValues lastEnergyCalculationVariablesInitialized() {
+        if(lastEnergyCalculationVariables == null) {
+            lastEnergyCalculationVariables = new SocValues();
+        }
+        return lastEnergyCalculationVariables;
+    }
+
+    public void setSocInitial(Integer socInitial) {
+        receivedSocVariablesInitialized().initial = socInitial;
     }
 
     public void setSocCurrent(Integer socCurrent) {
-        if(this.receivedSocVariables == null) {
-            this.receivedSocVariables = new SocValues();
-        }
-        this.receivedSocVariables.current = socCurrent;
+        receivedSocVariablesInitialized().current = socCurrent;
     }
 
     private Integer getSocCurrentOrDefault() {
-        return this.lastEnergyCalculationVariables.current != null ? this.lastEnergyCalculationVariables.current : 0;
+        return lastEnergyCalculationVariablesInitialized().current != null
+                ? lastEnergyCalculationVariablesInitialized().current : 0;
     }
 
     public void setSoc(Integer soc) {
@@ -88,7 +97,7 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
     }
 
     public void setBatteryCapacity(Integer batteryCapacity) {
-        this.receivedSocVariables.batteryCapacity = batteryCapacity;
+        receivedSocVariablesInitialized().batteryCapacity = batteryCapacity;
     }
 
     @Override
@@ -113,12 +122,12 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
 
     @Override
     public void update() {
-        if(!this.lastEnergyCalculationVariables.equals(this.receivedSocVariables)) {
-            Integer batteryCapacity = this.lastEnergyCalculationVariables.batteryCapacity;
+        if(!lastEnergyCalculationVariablesInitialized().equals(receivedSocVariablesInitialized())) {
+            Integer batteryCapacity = lastEnergyCalculationVariablesInitialized().batteryCapacity;
             if(batteryCapacity == null) {
-                batteryCapacity = this.receivedSocVariables.batteryCapacity;
+                batteryCapacity = receivedSocVariablesInitialized().batteryCapacity;
             }
-            this.lastEnergyCalculationVariables = new SocValues(receivedSocVariables);
+            this.lastEnergyCalculationVariables = new SocValues(receivedSocVariablesInitialized());
             this.energy = calculateEnergy(batteryCapacity);
         }
         if(energy != null && energy <= 0) {

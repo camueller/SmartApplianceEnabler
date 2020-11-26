@@ -431,7 +431,10 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         List<TimeframeInterval> timeframeIntervalsUntilFirstGap
                 = this.appliance.getTimeframeIntervalHandler().findTimeframeIntervalsUntilFirstGap();
         int maxEnergieUntilFirstGap = timeframeIntervalsUntilFirstGap.stream()
-                .mapToInt(interval -> interval.getRequest().getMax(now)).sum();
+                .mapToInt(interval -> {
+                    Integer max = interval.getRequest().getMax(now);
+                    return max != null ? max : 0;
+                }).sum();
         return maxEnergieUntilFirstGap < 100; // Wh
     }
 
