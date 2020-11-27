@@ -124,15 +124,15 @@ WARNING: No cpu cfs period support
 
 ## Images installieren 
 
-Für den *Smart Appliance Enabler* gibt es Images für Raspberry Pi und x86, die jeweils die passende Java-Version beinhalten (deshalb Plaform-spezifische Images).
+Für den *Smart Appliance Enabler* gibt es Images für Raspberry Pi und amd64, die jeweils die passende Java-Version beinhalten (deshalb Plaform-spezifische Images).
 Zum Installieren des Images für den Raspberry Pi folgender Befehl:
 ```console
 pi@raspberrypi:~ $ docker pull avanux/smartapplianceenabler-arm32
 ```
 
-Für x86 muss der Befehl wie folgt aussehen:
+Für amd64 muss der Befehl wie folgt aussehen:
 ```console
-pi@raspberrypi:~ $ docker pull avanux/smartapplianceenabler-x86
+pi@raspberrypi:~ $ docker pull avanux/smartapplianceenabler-amd64
 ```
 
 Im Image befinden sich der *Smart Appliance Enabler* im Verzeichnis `/opt/sae`.
