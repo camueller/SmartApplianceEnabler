@@ -113,7 +113,7 @@ Ist die Prüfung erfolgreich, erscheint oberhalb des *XML Input* eine grün unte
 Für die Konfiguration mittels Web-Frontend existieren entsprechende REST-Services. Diese können, wie die SEMP-Schnittstelle selbst, auch unabhängig vom Web-Frontend verwendet werden.
 
 ## Schalten eines Gerätes
-Zum Einschalten eines Gerätes kann folgender Befehl verwendet werden, wobei die URL un die Device-ID (identisch mit Appliance-ID) anzupassen ist:
+Zum Einschalten eines Gerätes kann folgender Befehl verwendet werden, wobei die URL und die Device-ID (identisch mit Appliance-ID) anzupassen ist:
 ```console
 curl -X POST -d '<EM2Device xmlns="http://www.sma.de/communication/schema/SEMP/v1"><DeviceControl><DeviceId>F-00000001-000000000002-00</DeviceId><On>true</On></DeviceControl></EM2Device>' --header 'Content-Type: application/xml' http://127.0.0.1:8080/semp
 ```
