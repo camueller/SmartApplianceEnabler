@@ -1,53 +1,48 @@
-# Installation als Docker-Container
+- [Images](#images)
+- [Docker-Installation](#docker-installation)
+  - [Allgemeine Anleitung](#allgemeine-anleitung)
+  - [Raspberrypi](#raspberrypi)
+- [Docker-Konfiguration](#docker-konfiguration)
+  - [Via docker-compose](#via-docker-compose)
+    - [Starten des Containers](#starten-des-containers)
+    - [Stoppen des Containers](#stoppen-des-containers)
+    - [Anzeige der Consolen-Ausgabe (Logs)](#anzeige-der-consolen-ausgabe-logs)
+  - [Via docker](#via-docker)
+    - [SAE-Volume](#sae-volume)
+    - [Starten des Containers](#starten-des-containers-1)
+    - [Stoppen des Containers](#stoppen-des-containers-1)
+    - [Status des Containers](#status-des-containers)
+    - [Automatisches Starten des Containers durch Systemd](#automatisches-starten-des-containers-durch-systemd)
+- [Hilfreiche Befehle](#hilfreiche-befehle)
+  - [Shell im laufenden Smart Appliance Enabler-Container ausführen](#shell-im-laufenden-smart-appliance-enabler-container-ausführen)
+  - [Konsole-Log anzeigen](#konsole-log-anzeigen)
+  - [Smart Appliance Enabler-Logdatei anzeigen](#smart-appliance-enabler-logdatei-anzeigen)
+- [Bekannte Probleme](#bekannte-probleme)
+  - [Sunny Home Managaer findet Smart Appliance Enabler nicht ohne --net=host](#sunny-home-managaer-findet-smart-appliance-enabler-nicht-ohne---nethost)
 
-Die nachfolgenden Kapitel beschreiben die Installation des *Smart Appliance Enabler* als __Docker Container__ und sollten in der angegebenen Reihenfolge umgesetzt werden.
 
-## Docker-Installation
-Bevor der *Smart Appliance Enabler* als Docker-Container betrieben werden kann, muss zunächt Docker selbst installiert sein.
+# Images 
 
+Für den *Smart Appliance Enabler* gibt es Images für Raspberry Pi und amd64, die jeweils die passende Java-Version beinhalten (deshalb Plaform-spezifische Images).
+
+[avanux/smartapplianceenabler-arm32](https://hub.docker.com/r/avanux/smartapplianceenabler-arm32)
+[avanux/smartapplianceenabler-amd64](https://hub.docker.com/r/avanux/smartapplianceenabler-amd64)
+
+
+# Docker-Installation
+Bevor der *Smart Appliance Enabler* als Docker-Container betrieben werden kann, muss Docker installiert sein.
+
+## Allgemeine Anleitung
+Eine allgemeine Anleitung für alle offiziell unterstützen Plattformen findet sich bei Docker unter https://docs.docker.com/get-docker/
+
+## Raspberrypi
 Die Docker-Installation ist denkbar einfach, muss aber in einer Root-Shell erfolgen:
 
 ```console
 pi@raspberrypi:~ $ sudo bash
 root@raspberrypi:/home/pi# curl -sSL https://get.docker.com | sh
 # Executing docker install script, commit: 6bf300318ebaab958c4adc341a8c7bb9f3a54a1a
-+ sh -c apt-get update -qq >/dev/null
-+ sh -c apt-get install -y -qq apt-transport-https ca-certificates curl >/dev/null
-+ sh -c curl -fsSL "https://download.docker.com/linux/raspbian/gpg" | apt-key add -qq - >/dev/null
-Warning: apt-key output should not be parsed (stdout is not a terminal)
-+ sh -c echo "deb [arch=armhf] https://download.docker.com/linux/raspbian stretch stable" > /etc/apt/sources.list.d/docker.list
-+ sh -c apt-get update -qq >/dev/null
-+ [ -n  ]
-+ sh -c apt-get install -y -qq --no-install-recommends docker-ce >/dev/null
-+ sh -c docker version
-Client: Docker Engine - Community
- Version:           19.03.2
- API version:       1.40
- Go version:        go1.12.8
- Git commit:        6a30dfc
- Built:             Thu Aug 29 06:18:10 2019
- OS/Arch:           linux/arm
- Experimental:      false
-
-Server: Docker Engine - Community
- Engine:
-  Version:          19.03.2
-  Version:          19.03.2
-  API version:      1.40 (minimum version 1.12)
-  Go version:       go1.12.8
-  Git commit:       6a30dfc
-  Built:            Thu Aug 29 06:12:07 2019
-  OS/Arch:          linux/arm
-  Experimental:     false
- containerd:
-  Version:          1.2.6
-  GitCommit:        894b81a4b802e4eb2a91d1ce216b8817763c29fb
- runc:
-  Version:          1.0.0-rc8
-  GitCommit:        425e105d5a03fabd737a126ad93d62a9eeede87f
- docker-init:
-  Version:          0.18.0
-  GitCommit:        fec3683
+[...]
 If you would like to use Docker as a non-root user, you should now consider
 adding your user to the "docker" group with something like:
 
@@ -62,82 +57,82 @@ WARNING: Adding a user to the "docker" group will grant the ability to run
          for more information.
 ```
 
-Nachdem man entsprechend des Vorschlags der Docker-Installation dem User die Rolle `docker` gegeben hat, muss man sich aus- und einloggen, bevor man die Dokcer-Installation überprüfen kan: 
+Nachdem man entsprechend des Vorschlags der Docker-Installation dem User die Rolle `docker` gegeben hat, muss man sich aus- und einloggen, bevor man die Docker-Installation überprüfen kan: 
 
 ```console
-$ docker info
-Client:
- Debug Mode: false
+$ docker version
+Client: Docker Engine - Community
+ Version:           19.03.13
+[...]
 
-Server:
- Containers: 0
-  Running: 0
-  Paused: 0
-  Stopped: 0
- Images: 0
- Server Version: 19.03.2
- Storage Driver: overlay2
-  Backing Filesystem: extfs
-  Supports d_type: true
-  Native Overlay Diff: true
- Logging Driver: json-file
- Cgroup Driver: cgroupfs
- Plugins:
-  Volume: local
-  Network: bridge host ipvlan macvlan null overlay
-  Log: awslogs fluentd gcplogs gelf journald json-file local logentries splunk syslog
- Swarm: inactive
- Runtimes: runc
- Default Runtime: runc
- Init Binary: docker-init
- containerd version: 894b81a4b802e4eb2a91d1ce216b8817763c29fb
- runc version: 425e105d5a03fabd737a126ad93d62a9eeede87f
- init version: fec3683
- Security Options:
-  seccomp
-   Profile: default
- Kernel Version: 4.9.80-v7+
- Operating System: Raspbian GNU/Linux 9 (stretch)
- OSType: linux
- Architecture: armv7l
- CPUs: 4
- Total Memory: 927.3MiB
- Name: raspberrypi
- ID: N46Q:WC5N:PZRB:UHCB:XKJQ:6QH3:XUAJ:6Q77:WDUA:NIVX:37UD:UNHW
- Docker Root Dir: /var/lib/docker
- Debug Mode: false
- Registry: https://index.docker.io/v1/
- Labels:
- Experimental: false
- Insecure Registries:
-  127.0.0.0/8
- Live Restore Enabled: false
+Server: Docker Engine - Community
+ Engine:
+  Version:          19.03.13
+[...]
 
-WARNING: No memory limit support
-WARNING: No swap limit support
-WARNING: No kernel memory limit support
-WARNING: No kernel memory TCP limit support
-WARNING: No oom kill disable support
-WARNING: No cpu cfs quota support
-WARNING: No cpu cfs period support
 ```
 
-## Images installieren 
-
-Für den *Smart Appliance Enabler* gibt es Images für Raspberry Pi und x86, die jeweils die passende Java-Version beinhalten (deshalb Plaform-spezifische Images).
-Zum Installieren des Images für den Raspberry Pi folgender Befehl:
-```console
-pi@raspberrypi:~ $ docker pull avanux/smartapplianceenabler-arm32
-```
-
-Für x86 muss der Befehl wie folgt aussehen:
-```console
-pi@raspberrypi:~ $ docker pull avanux/smartapplianceenabler-x86
-```
+# Docker-Konfiguration
 
 Im Image befinden sich der *Smart Appliance Enabler* im Verzeichnis `/opt/sae`.
+Für die Konfiguration als Container gibt es zwei Möglichkeiten:
+ * Via docker-compose (Konfiguration über YAML-Datei)
+ * Via docker (Konfiguration über CLI-Parameter)
+ 
+## Via docker-compose
 
-## Docker-Konfiguration
+docker-compose ermöglicht eine komfortable Konfiguration des Containers über eine YAML-Datei.
+
+Im folgenden wird die Definition eines Containers beschrieben, welcher ähnlich wie ein Systemdienst nach Neustart des Hosts automatisch startet und auf Port 9000 erreichbar ist. Der Container läuft mit der Zeitzone des Hosts. Die Konfiguration befindet sich auf dem Host im Unterverzeichnis data.
+
+Auf dem Host wird in einem Ordner für SAE die Datei ```docker-compose.yaml``` mit folgendem Inhalt angelegt:
+
+```yaml
+version: '3'
+services:
+  sae:
+     image: avanux/smartapplianceenabler-amd64
+     container_name: sae
+     restart: unless-stopped
+     network_mode: host
+     environment:
+       JAVA_OPTS: '-Dserver.port=9000'
+     volumes:
+        - ./data:/opt/sae/data
+        - /etc/localtime:/etc/localtime
+```
+
+Anschließend wird ein Unterverzeichnis ```data``` erstellt, in dem die Dateien ```Appliances.xml``` und ```Device2EM.xml`` abgelegt werden.
+
+### Starten des Containers
+```console
+$ docker-compose up -d
+Creating sae ... done
+```
+
+### Stoppen des Containers
+```console
+$ docker-compose down
+Stopping sae ... done
+Removing sae ... done
+```
+### Anzeige der Consolen-Ausgabe (Logs)
+```console
+$ docker-compose logs
+[...]
+sae    | 09:59:45.898 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 9000 (http)
+sae    | 09:59:45.961 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-9000"]
+sae    | 09:59:45.964 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+sae    | 09:59:45.964 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.29]
+sae    | 09:59:47.339 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+sae    | 09:59:47.339 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 4403 ms
+sae    | 09:59:48.377 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-9000"]
+sae    | 09:59:48.425 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 9000 (http) with context path ''
+[...]
+```
+
+## Via docker
+
 ### SAE-Volume
 Der *Smart Appliance Enabler* benötigt ein schreibbares Verzeichnis, in dem er seine Dateien ablegen kann. Dazu wird in Docker das Volume *sae* erzeugt.
 ```console
@@ -160,8 +155,7 @@ docker cp Appliances.xml sae:/opt/sae/data/
 docker cp Device2EM.xml sae:/opt/sae/data/
 ```
 
-## Betrieb
-### Erzeugen eines Containers und Start
+### Starten des Containers
 Zum direkten Starten des *Smart Appliance Enabler* in einem neuen Container mit dem Namen _sae_ eignet sich folgender Befehl:
 ```console
 pi@raspberrypi:~ $ docker run -v sae:/opt/sae/data --net=host --device /dev/mem:/dev/mem --privileged --name=sae avanux/smartapplianceenabler-arm32
@@ -223,29 +217,29 @@ Nach diesen Änderungen muss der Systemd dazu gebracht werden, die Service-Konfi
 pi@raspberrypi ~ $ sudo systemctl daemon-reload
 ```
 
-## Hilfreiche Befehle
+# Hilfreiche Befehle
 
-### Shell im laufenden Smart Appliance Enabler-Container ausführen
+## Shell im laufenden Smart Appliance Enabler-Container ausführen
 Falls man einen Befehl im laufenden Container des *Smart Appliance Enabler* ausführen möchte, kann man mit nachfolgendem Befehl eine entsprechend Shell erzeugen:
 ```console
 pi@raspberrypi:~ $ docker exec -it sae bash
 ```
 
-### Konsole-Log anzeigen
+## Konsole-Log anzeigen
 Folgender Befehl zeigt die Ausgaben des *Smart Appliance Enabler* auf der Konsole an:
 ```console
-pi@raspberrypi:~ $ docker logs $(docker ps -q)
+pi@raspberrypi:~ $ docker logs sae
 ```
 
-### Smart Appliance Enabler-Logdatei anzeigen
+## Smart Appliance Enabler-Logdatei anzeigen
 Zusätzlich zum Konsole-Log erzeugt der *Smart Appliance Enabler* für jeden Tag eine Log-Datei im ```/tmp```-Verzeichnis.
 Mit dem nachfolgenden Befehl kann dieses angezeigt werden, wobei das Datum entsprechend angepasst werden muss:
 ```console
-pi@raspberrypi:~ $ docker container exec $(docker ps -q) tail -f /tmp/rolling-2019-12-25.log
+pi@raspberrypi:~ $ docker container exec sae tail -f /tmp/rolling-2019-12-25.log
 ```
 
-## Bekannte Probleme
-### Sunny Home Managaer findet Smart Appliance Enabler nicht ohne --net=host
+# Bekannte Probleme
+## Sunny Home Managaer findet Smart Appliance Enabler nicht ohne --net=host
 Der *Smart Appliance Enabler* implementiert das SEMP-Protokoll von SMA. Dieses Protokoll basiert auf UPnP, welches wiederum IP Multicast benötigt.
 Aktuell unterstützt Docker nicht die Weiterleitung der Multicast-Pakete vom Host in die Dokker-Container.
 Siehe auch https://forums.docker.com/t/multicast-forward-from-host-to-container-for-dlna-discovery/33723
