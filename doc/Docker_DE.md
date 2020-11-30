@@ -180,49 +180,49 @@ DRIVER              VOLUME NAME
 local               sae
 ```
 
-### Direkte Interaktion mit `docker`
+### `macvlan`-Netz einrichten
+Die nachfolgenden Befehle (ausser `docker create network ...`) sind nur bis zum nächsten Reboot aktiv und müssen ggf. in einem Init-Script platziert werden.
+
+Zunächst wird ein `macvlan`-Interface mit der Bezeichnung `macvlan0` als Link auf das physische Interface (hier eth0) erstellt:
+```console
+sudo ip link add macvlan0 link eth0 type macvlan mode bridge
+```
+Für die IP-Adressen der Docker-Container muss ein Overlay-Netz von IP-Adressen definiert werden, welches den Adressbereich des physischen Interfaces überlagert. Dieser Adressbereich muss vom DHCP-Server ignoriert werden, d.h. er darf diesen Adressen niemandem zusteilen!!
+Zur Bestimmung geeignete Netze eignet sich der [IP Calculator](http://jodies.de/ipcalc).
+Nachfolgend wird das `macvlan`-Interface konfiguriert auf eine IP-Adresse aus dem Adressbereich des Overlay-Netzes.
+```console
+sudo ifconfig macvlan0 192.168.0.223 netmask 255.255.255.0 up
+```
+Abschließend muss ein Routing-Eintrag für das Overlay-Netz hinzugefügt werden:
+```console
+sudo ip route add 192.168.0.192/27 dev macvlan
+```
+
+Jetzt kann das Docker-Netzwerk `macvlan0` erstellt werden. Der Parameter `subnet` entspricht dem Netz des physischen Inteerfaces. Beim Parameter `gateway` handelt sich es um das Ziel der Default-Route (meist die interne IP-Adresses des Internet-Routers). Als Parameter `ip-range` wird das Overlay-Netz angegegeben, wobei der Parameter `aux-address` bestimmt, dass die dort angegebene IP-Adresse keinem Docker-Container zugewiesen wird.  Beim Parameter `parent` wird das physische Interface angegeben.
+Damit sieht der Befehl wie folgt aus:
+
+```console
+docker network create -d macvlan --subnet=192.168.0.0/24 --gateway=192.168.0.1 --ip-range 192.168.0.192/27 --aux-address 'host=192.168.0.223' -o parent=eth0 -o macvlan_mode=bridge macvlan0
+```
+
+### Start/Stop/Status mit `docker`
 
 #### Starten des Containers
-Zum direkten Starten des *Smart Appliance Enabler* in einem neuen Container mit dem Namen _sae_ eignet sich folgender Befehl:
+Beim Starten des *Smart Appliance Enabler* in einem neuen Container mit dem Namen _sae_ muss das in Docker angelegte `macvlan`-Netzwerk (Parameter `--network`) sowie die dem Docker-Container zuzuweisende IP-Adresse (Parameter `--ip`) angegeben werden.  
+Damit sieht der Befehl wie folgt aus:
 ```console
-pi@raspberrypi:~ $ docker run -v sae:/opt/sae/data --net=host --device /dev/mem:/dev/mem --privileged --name=sae avanux/smartapplianceenabler-arm32
+pi@raspberrypi:~ $ docker run -v sae:/opt/sae/data --network macvlan0 --ip 192.168.0.211 --publish 8080:8080 --device /dev/mem:/dev/mem --privileged --name=sae avanux/smartapplianceenabler-arm32
 ```
 
 Dabei können über die Docker-Variable _JAVA_OPTS_ auch Properties gesetzt werden:
 ```console
-pi@raspberrypi:~ $ docker run -v sae:/opt/sae/data --net=host --device /dev/mem:/dev/mem --privileged --name=sae -e JAVA_OPTS="-Dserver.port=9000" avanux/smartapplianceenabler-arm32
+pi@raspberrypi:~ $ docker run -v sae:/opt/sae/data --network macvlan0 --ip 192.168.0.211 --publish 8080:8080 --device /dev/mem:/dev/mem --privileged --name=sae -e JAVA_OPTS="-Dserver.port=9000" avanux/smartapplianceenabler-arm32
 ```
 
 #### Stoppen des Containers
 ```console
 pi@raspberrypi:~ $ docker stop sae
 sae
-```
-
-#### Status des Containers
-Zum Anzeigen des Status des Containers mit dem *Smart Appliance Enabler* eignet sich folgender Befehl:
-```console
-sae@raspberrypi:~/docker $ sudo systemctl status smartapplianceenabler-docker.service
-● smartapplianceenabler-docker.service - Smart Appliance Enabler Container
-   Loaded: loaded (/lib/systemd/system/smartapplianceenabler-docker.service; enabled; vendor preset: enabled)
-   Active: active (running) since Wed 2019-12-25 17:18:25 CET; 2min 38s ago
-  Process: 9566 ExecStartPre=/bin/sleep 1 (code=exited, status=0/SUCCESS)
- Main PID: 9567 (docker)
-    Tasks: 11 (limit: 2200)
-   Memory: 23.0M
-   CGroup: /system.slice/smartapplianceenabler-docker.service
-           └─9567 /usr/bin/docker run -v sae:/opt/sae/data --net=host --device /dev/mem:/dev/mem --privileged --name=sae avanux/smartapplianceenabler-arm32
-
-Dec 25 17:19:13 raspberrypi docker[9567]: 16:19:13.925 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
-Dec 25 17:19:13 raspberrypi docker[9567]: 16:19:13.930 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-Dec 25 17:19:13 raspberrypi docker[9567]: 16:19:13.933 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.29]
-Dec 25 17:19:20 raspberrypi docker[9567]: 16:19:20.991 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-Dec 25 17:19:20 raspberrypi docker[9567]: 16:19:20.992 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 20208 ms
-Dec 25 17:19:25 raspberrypi docker[9567]: 16:19:25.964 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
-Dec 25 17:19:26 raspberrypi docker[9567]: 16:19:26.183 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
-Dec 25 17:19:38 raspberrypi docker[9567]: 16:19:38.878 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
-Dec 25 17:19:38 raspberrypi docker[9567]: 16:19:38.879 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
-Dec 25 17:19:38 raspberrypi docker[9567]: 16:19:38.952 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 69 ms
 ```
 
 ### Automatisches Starten des Containers durch Systemd
@@ -253,9 +253,29 @@ sudo systemctl start smartapplianceenabler-docker
 sudo systemctl stop smartapplianceenabler-docker
 ```
 
-#### Anzeige der Consolen-Ausgabe
+#### Status des Containers
 ```console
-pi@raspi:/etc/docker/compose/smartapplianceenabler $ sudo systemctl status smartapplianceenabler-docker
+sae@raspberrypi:~/docker $ sudo systemctl status smartapplianceenabler-docker
+● smartapplianceenabler-docker.service - Smart Appliance Enabler Container
+   Loaded: loaded (/lib/systemd/system/smartapplianceenabler-docker.service; enabled; vendor preset: enabled)
+   Active: active (running) since Wed 2019-12-25 17:18:25 CET; 2min 38s ago
+  Process: 9566 ExecStartPre=/bin/sleep 1 (code=exited, status=0/SUCCESS)
+ Main PID: 9567 (docker)
+    Tasks: 11 (limit: 2200)
+   Memory: 23.0M
+   CGroup: /system.slice/smartapplianceenabler-docker.service
+           └─9567 /usr/bin/docker run -v sae:/opt/sae/data --net=host --device /dev/mem:/dev/mem --privileged --name=sae avanux/smartapplianceenabler-arm32
+
+Dec 25 17:19:13 raspberrypi docker[9567]: 16:19:13.925 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+Dec 25 17:19:13 raspberrypi docker[9567]: 16:19:13.930 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+Dec 25 17:19:13 raspberrypi docker[9567]: 16:19:13.933 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.29]
+Dec 25 17:19:20 raspberrypi docker[9567]: 16:19:20.991 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+Dec 25 17:19:20 raspberrypi docker[9567]: 16:19:20.992 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 20208 ms
+Dec 25 17:19:25 raspberrypi docker[9567]: 16:19:25.964 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+Dec 25 17:19:26 raspberrypi docker[9567]: 16:19:26.183 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+Dec 25 17:19:38 raspberrypi docker[9567]: 16:19:38.878 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+Dec 25 17:19:38 raspberrypi docker[9567]: 16:19:38.879 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+Dec 25 17:19:38 raspberrypi docker[9567]: 16:19:38.952 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 69 ms
 ```
 
 # Hilfreiche Befehle
