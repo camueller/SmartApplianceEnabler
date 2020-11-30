@@ -3,6 +3,7 @@ Description=Smart Appliance Enabler Container
 Requires=docker.service
 After=docker.service
 
+[Service]
 WorkingDirectory=/etc/docker/compose/smartapplianceenabler
 
 # Compose up

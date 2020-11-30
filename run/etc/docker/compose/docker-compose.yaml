@@ -19,6 +19,11 @@ services:
       - /etc/timezone:/etc/timezone
     devices:
       - /dev/mem:/dev/mem
+    environment:
+# in der nachfolgenden Zeile können Konfigurationsparameter an den Smart Appliance Enabler übergeben werden
+# Für mögliche Parameter siehe mit JAVA_OPTS beginnende Zeilen in https://github.com/camueller/SmartApplianceEnabler/blob/master/run/etc/default/smartapplianceenabler
+# Beispiel: JAVA_OPTS: '-Dserver.port=9000'
+      JAVA_OPTS: ''
     privileged: true
 volumes:
   sae:
