@@ -8,8 +8,8 @@
     <a href="https://codecov.io/gh/camueller/SmartApplianceEnabler">
       <img src="https://codecov.io/gh/camueller/SmartApplianceEnabler/coverage.svg">
     </a>
-    <a href="https://github.com/camueller/SmartApplianceEnabler/releases/download/1.5.11/SmartApplianceEnabler-1.5.11.war">
-      <img src="https://img.shields.io/badge/Download-1.5.11-brightgreen.svg">
+    <a href="https://github.com/camueller/SmartApplianceEnabler/releases/download/1.6.5/SmartApplianceEnabler-1.6.5.war">
+      <img src="https://img.shields.io/badge/Download-1.6.5-brightgreen.svg">
     </a>
     <a href="https://hub.docker.com/repository/docker/avanux/smartapplianceenabler-arm32">
       <img src="https://img.shields.io/badge/Docker-arm32-blue">
