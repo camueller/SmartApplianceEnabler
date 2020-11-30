@@ -1,0 +1,15 @@
+[Unit]
+Description=Smart Appliance Enabler Container
+Requires=docker.service
+After=docker.service
+
+WorkingDirectory=/etc/docker/compose/smartapplianceenabler
+
+# Compose up
+ExecStart=/usr/local/bin/docker-compose up
+
+# Compose down, remove containers and volumes
+ExecStop=/usr/local/bin/docker-compose down
+
+[Install]
+WantedBy=multi-user.target
