@@ -2,15 +2,12 @@
 
 Für den *Smart Appliance Enabler* gibt es Images für Raspberry Pi und amd64, die jeweils die passende Java-Version beinhalten (deshalb Plaform-spezifische Images).
 
-[avanux/smartapplianceenabler-arm32](https://hub.docker.com/r/avanux/smartapplianceenabler-arm32)
-[avanux/smartapplianceenabler-amd64](https://hub.docker.com/r/avanux/smartapplianceenabler-amd64)
+* [avanux/smartapplianceenabler-arm32](https://hub.docker.com/r/avanux/smartapplianceenabler-arm32)
+* [avanux/smartapplianceenabler-amd64](https://hub.docker.com/r/avanux/smartapplianceenabler-amd64)
 
 
 # Docker-Installation
 Bevor der *Smart Appliance Enabler* als Docker-Container betrieben werden kann, muss Docker installiert sein.
-
-## Allgemeine Anleitung
-Eine allgemeine Anleitung für alle offiziell unterstützen Plattformen findet sich bei Docker unter https://docs.docker.com/get-docker/
 
 ## Raspberry Pi
 Die Docker-Installation ist denkbar einfach, muss aber in einer Root-Shell erfolgen:
@@ -48,6 +45,9 @@ Server: Docker Engine - Community
 [...]
 
 ```
+
+## Sonstige Platformen
+Eine allgemeine Anleitung für die Installation auf allen offiziell unterstützen Plattformen findet sich unter https://docs.docker.com/get-docker/
 
 # Docker-Konfiguration
 
