@@ -132,6 +132,9 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
                         // request has to be enabled therefore
                         timeframeInterval.getRequest().setEnabled(! ((StartingCurrentSwitch) control).isApplianceOn());
                     }
+                    if(control instanceof ElectricVehicleCharger) {
+                        timeframeInterval.getRequest().setEnabled(((ElectricVehicleCharger) control).isVehicleConnected());
+                    }
                     addTimeframeInterval(now, timeframeInterval, false, true);
                 });
     }

@@ -286,7 +286,9 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                 @Override
                 public void runTask() {
                     updateState(LocalDateTime.now());
-                    updateSoc(LocalDateTime.now());
+                    if(isVehicleConnected()) {
+                        updateSoc(LocalDateTime.now());
+                    }
                 }
             };
             timer.schedule(this.updateStateTimerTask, 0, this.updateStateTimerTask.getPeriod());
