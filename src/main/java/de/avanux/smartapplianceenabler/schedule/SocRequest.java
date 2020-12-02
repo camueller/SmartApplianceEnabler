@@ -128,7 +128,9 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
                 batteryCapacity = receivedSocVariablesInitialized().batteryCapacity;
             }
             this.lastEnergyCalculationVariables = new SocValues(receivedSocVariablesInitialized());
-            this.energy = calculateEnergy(batteryCapacity);
+            if(batteryCapacity != null) {
+                this.energy = calculateEnergy(batteryCapacity);
+            }
         }
         if(energy != null && energy <= 0) {
             setEnabled(false);
