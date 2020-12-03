@@ -410,7 +410,7 @@ public class EVChargerTest extends TestBase {
 
         LocalDateTime timeStartCharging = toToday(10, 0, 0);
         log("Start charging", timeStartCharging);
-        optionalEnergyInterval = new Interval(timeStartCharging, timeStartCharging.plusDays(2));
+        optionalEnergyInterval = new Interval(interval.getEnd().plusSeconds(1), interval.getEnd().plusDays(2).plusSeconds(1));
         tick(appliance, timeInitial, true, true, socInitial, socInitial);
         appliance.setApplianceState(timeStartCharging,
                 true, 4000, "Switch on");
@@ -440,7 +440,7 @@ public class EVChargerTest extends TestBase {
                 false, null, "Switch off");
         tick(appliance, timeSwitchOff, true, true, 4.4f);
         assertEquals(1, timeframeIntervalHandler.getQueue().size());
-        assertTimeframeIntervalOptionalEnergy(optionalEnergyInterval, TimeframeIntervalState.ACTIVE,
+        assertTimeframeIntervalOptionalEnergy(optionalEnergyInterval, TimeframeIntervalState.QUEUED,
                 socInitial, socRequested, defaultSocOptionalEnergy, evId, batteryCapacity, true,
                 timeframeIntervalHandler.getQueue().get(0));
     }

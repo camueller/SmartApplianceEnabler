@@ -465,7 +465,8 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
         queue.add(1, activeTimeframeInterval);
         activeTimeframeInterval.stateTransitionTo(now, TimeframeIntervalState.QUEUED);
         activeTimeframeInterval.setInterval(
-                createOptionalEnergyIntervalForEVCharger(now, null, queue.size() > 2 ? queue.get(2) : null));
+                createOptionalEnergyIntervalForEVCharger(queue.get(0).getInterval().getEnd().plusSeconds(1),
+                        null, queue.size() > 2 ? queue.get(2) : null));
     }
 
     private void updateSocRequest(SocRequest request, Integer batteryCapacity, Integer soc) {
