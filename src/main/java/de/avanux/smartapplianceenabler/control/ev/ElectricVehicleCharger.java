@@ -286,7 +286,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                 @Override
                 public void runTask() {
                     updateState(LocalDateTime.now());
-                    if(isVehicleConnected()) {
+                    if(! isVehicleNotConnected()) {
                         updateSoc(LocalDateTime.now());
                     }
                 }
