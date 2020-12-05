@@ -57,6 +57,16 @@ $ ng serve --host 0.0.0.0 --disable-host-check
 ```
 
 ### Tests
+#### Simulation der Interaktion durch den Sunny Home Manager
+Zum Einschalten eines Gerätes eignet sich folgender Befehl, wobei die der Parameter `RecommendedPowerConsumption` nur für Wallboxen relevant ist:
+```console
+curl -X POST -d '<EM2Device xmlns="http://www.sma.de/communication/schema/SEMP/v1"><DeviceControl><DeviceId>F-00000001-000000000099-00</DeviceId><On>true</On><RecommendedPowerConsumption>6000</RecommendedPowerConsumption></DeviceControl></EM2Device>' --header 'Content-Type: application/xml' http://raspi:8080/semp
+```
+Zum Ausschalten eignet sich der folgende Befehl:
+```console
+curl -X POST -d '<EM2Device xmlns="http://www.sma.de/communication/schema/SEMP/v1"><DeviceControl><DeviceId>F-00000001-000000000099-00</DeviceId><On>false</On></DeviceControl></EM2Device>' --header 'Content-Type: application/xml' http://raspi:8080/semp
+```
+
 #### Testcafe
 ##### Lokal
 Unter Verwendung des lokalen Browsers werden die Tests wie folgt gestartet:
