@@ -18,8 +18,6 @@
 
 package de.avanux.smartapplianceenabler.schedule;
 
-import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
-import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
 import de.avanux.smartapplianceenabler.control.ev.SocValues;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -38,8 +36,7 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
     @XmlAttribute
     private Integer evId;
     private transient Integer energy;
-    private transient SocValues receivedSocVariables;
-    private transient SocValues lastEnergyCalculationVariables;
+    private transient SocValues socVariables;
 
     public SocRequest() {
     }
@@ -53,31 +50,24 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
         return LoggerFactory.getLogger(SocRequest.class);
     }
 
-    public SocValues receivedSocVariablesInitialized() {
-        if(receivedSocVariables == null) {
-            receivedSocVariables = new SocValues();
+    public SocValues socVariablesInitialized() {
+        if(socVariables == null) {
+            socVariables = new SocValues();
         }
-        return receivedSocVariables;
-    }
-
-    public SocValues lastEnergyCalculationVariablesInitialized() {
-        if(lastEnergyCalculationVariables == null) {
-            lastEnergyCalculationVariables = new SocValues();
-        }
-        return lastEnergyCalculationVariables;
+        return socVariables;
     }
 
     public void setSocInitial(Integer socInitial) {
-        receivedSocVariablesInitialized().initial = socInitial;
+        socVariablesInitialized().initial = socInitial;
     }
 
     public void setSocCurrent(Integer socCurrent) {
-        receivedSocVariablesInitialized().current = socCurrent;
+        socVariablesInitialized().current = socCurrent;
     }
 
     private Integer getSocCurrentOrDefault() {
-        return lastEnergyCalculationVariablesInitialized().current != null
-                ? lastEnergyCalculationVariablesInitialized().current : 0;
+        return socVariablesInitialized().current != null
+                ? socVariablesInitialized().current : 0;
     }
 
     public void setSoc(Integer soc) {
@@ -97,7 +87,7 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
     }
 
     public void setBatteryCapacity(Integer batteryCapacity) {
-        receivedSocVariablesInitialized().batteryCapacity = batteryCapacity;
+        socVariablesInitialized().batteryCapacity = batteryCapacity;
     }
 
     @Override
@@ -122,19 +112,6 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
 
     @Override
     public void update() {
-        if(!lastEnergyCalculationVariablesInitialized().equals(receivedSocVariablesInitialized())) {
-            Integer batteryCapacity = lastEnergyCalculationVariablesInitialized().batteryCapacity;
-            if(batteryCapacity == null) {
-                batteryCapacity = receivedSocVariablesInitialized().batteryCapacity;
-            }
-            this.lastEnergyCalculationVariables = new SocValues(receivedSocVariablesInitialized());
-            if(batteryCapacity != null) {
-                this.energy = calculateEnergy(batteryCapacity);
-            }
-        }
-        if(energy != null && energy <= 0) {
-            setEnabled(false);
-        }
     }
 
     public Integer calculateEnergy(int batteryCapacity) {
@@ -157,8 +134,14 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
         if(! isEnabledBefore()) {
             setEnabled(true);
         }
-        this.receivedSocVariables = new SocValues(socValues);
-        update();
+        this.socVariables = new SocValues(socValues);
+        Integer batteryCapacity = socVariablesInitialized().batteryCapacity;
+        if(batteryCapacity != null) {
+            this.energy = calculateEnergy(batteryCapacity);
+        }
+        if(energy != null && energy <= 0) {
+            setEnabled(false);
+        }
     }
 
     @Override
