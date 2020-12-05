@@ -393,7 +393,7 @@ public class EVChargerTest extends TestBase {
         log("Vehicle not connected", timeInitial);
         tick(appliance, timeInitial, false, false);
         assertTimeframeIntervalSocRequest(TimeframeIntervalState.QUEUED, interval,
-                0, 0, socRequested, evId, batteryCapacity, true,
+                0, 0, socRequested, evId, null, true,
                 timeframeIntervalHandler.getQueue().get(0));
 
         LocalDateTime timeVehicleConnected = toToday(9, 55, 0);
@@ -467,7 +467,7 @@ public class EVChargerTest extends TestBase {
         log("Vehicle not connected", timeInitial);
         tick(appliance, timeInitial, false, false);
         assertTimeframeIntervalSocRequest(TimeframeIntervalState.ACTIVE, interval,
-                0, 0, socRequested, evId, batteryCapacity, true,
+                0, 0, socRequested, evId, null, true,
                 timeframeIntervalHandler.getQueue().get(0));
 
         LocalDateTime timeVehicleConnected = toToday(12, 0, 0);
@@ -493,7 +493,7 @@ public class EVChargerTest extends TestBase {
                 .withEvCharger(evChargerControl)
                 .withElectricVehicle(evId, batteryCapacity, null, socScript)
                 .withMeter(mockMeter)
-                .withSempBuilderOperation(sempBuilder -> sempBuilder.withMaxPowerConsumption(applianceId, 20000))
+                .withSempBuilderOperation(sempBuilder -> sempBuilder.withMaxPowerConsumption(applianceId, 4000))
                 .build(true);
         TimeframeIntervalHandler timeframeIntervalHandler = appliance.getTimeframeIntervalHandler();
         ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();

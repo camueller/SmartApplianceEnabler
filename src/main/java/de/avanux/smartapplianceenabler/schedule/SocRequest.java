@@ -36,7 +36,8 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
     @XmlAttribute
     private Integer evId;
     private transient Integer energy;
-    private transient SocValues socVariables;
+    private transient SocValues socValues;
+    private transient boolean forceEnergyCalculation;
 
     public SocRequest() {
     }
@@ -50,11 +51,15 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
         return LoggerFactory.getLogger(SocRequest.class);
     }
 
+    public void setForceEnergyCalculation(boolean forceEnergyCalculation) {
+        this.forceEnergyCalculation = forceEnergyCalculation;
+    }
+
     public SocValues socVariablesInitialized() {
-        if(socVariables == null) {
-            socVariables = new SocValues();
+        if(socValues == null) {
+            socValues = new SocValues();
         }
-        return socVariables;
+        return socValues;
     }
 
     public void setSocInitial(Integer socInitial) {
@@ -112,6 +117,14 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
 
     @Override
     public void update() {
+        Integer batteryCapacity = socVariablesInitialized().batteryCapacity;
+        if(batteryCapacity != null && this.forceEnergyCalculation) {
+            this.energy = calculateEnergy(batteryCapacity);
+            this.forceEnergyCalculation = false;
+        }
+        if(energy != null && energy <= 0) {
+            setEnabled(false);
+        }
     }
 
     public Integer calculateEnergy(int batteryCapacity) {
@@ -134,14 +147,9 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
         if(! isEnabledBefore()) {
             setEnabled(true);
         }
-        this.socVariables = new SocValues(socValues);
-        Integer batteryCapacity = socVariablesInitialized().batteryCapacity;
-        if(batteryCapacity != null) {
-            this.energy = calculateEnergy(batteryCapacity);
-        }
-        if(energy != null && energy <= 0) {
-            setEnabled(false);
-        }
+        this.socValues = new SocValues(socValues);
+        this.forceEnergyCalculation = true;
+        update();
     }
 
     @Override

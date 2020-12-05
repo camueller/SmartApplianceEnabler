@@ -129,6 +129,7 @@ abstract public class TestBase {
         request.setSocInitial(socInitial);
         request.setSocCurrent(socCurrent);
         request.setSoc(socRequested);
+        request.setForceEnergyCalculation(true);
         request.update();
         TimeframeInterval expected = new TimeframeInterval(interval, request);
         expected.initState(state);
@@ -149,6 +150,7 @@ abstract public class TestBase {
         request.setSocInitial(socInitial);
         request.setSocCurrent(socCurrent);
         request.setEnabled(enabled);
+        request.setForceEnergyCalculation(true);
         request.update();
         assertEquals(new TimeframeInterval(state, interval, request), actual);
     }

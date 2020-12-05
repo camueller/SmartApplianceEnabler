@@ -133,7 +133,6 @@ public class ApplianceBuilder {
     public ApplianceBuilder withSocRequest(LocalDateTime now, Interval interval,
                                            Integer evId, Integer batteryCapacity, Integer soc, boolean enabled) {
         SocRequest request = new SocRequest(soc, evId);
-        request.onEVChargerSocChanged(now, new SocValues(batteryCapacity, soc, null, null));
         request.setEnabled(enabled);
         TimeframeInterval timeframeInterval = new TimeframeInterval(interval, request);
         getTimeframeIntervalHandler().addTimeframeInterval(now, timeframeInterval, false, true);

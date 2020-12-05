@@ -598,9 +598,11 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         request.setSocCurrent(socCurrent);
         request.setEnabled(true);
 
+        request.setForceEnergyCalculation(true);
+        request.update();
+
         if(chargeEnd == null) {
-            Integer energy = request.calculateEnergy(vehicle.getBatteryCapacity());
-            chargeEnd = now.plusSeconds(calculateChargeSeconds(vehicle, energy));
+            chargeEnd = now.plusSeconds(calculateChargeSeconds(vehicle, request.getMax(now)));
         }
 
         Interval interval = new Interval(now, chargeEnd);
