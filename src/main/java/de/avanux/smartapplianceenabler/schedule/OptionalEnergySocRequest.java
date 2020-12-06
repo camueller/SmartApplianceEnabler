@@ -19,6 +19,9 @@
 package de.avanux.smartapplianceenabler.schedule;
 
 import java.time.LocalDateTime;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +50,22 @@ public class OptionalEnergySocRequest extends SocRequest {
     @Override
     public Integer getMin(LocalDateTime now) {
         return 0;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        // there should always only be one instance of this request
+        // therefore multiple instances should considered to be equal
+        // this behaviour is also required to be able to remove itself as listener successfully
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 47)
+                .toHashCode();
     }
 
     @Override
