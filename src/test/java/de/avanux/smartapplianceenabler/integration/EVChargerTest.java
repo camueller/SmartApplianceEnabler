@@ -385,7 +385,7 @@ public class EVChargerTest extends TestBase {
                 .withEvCharger(evChargerControl)
                 .withElectricVehicle(evId, batteryCapacity)
                 .withMeter(mockMeter)
-                .withSocRequest(timeInitial, interval, evId, batteryCapacity, socRequested, true)
+                .withSocRequest(timeInitial, interval, evId, batteryCapacity, socRequested, false)
                 .build(false);
         TimeframeIntervalHandler timeframeIntervalHandler = appliance.getTimeframeIntervalHandler();
         ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
@@ -393,7 +393,7 @@ public class EVChargerTest extends TestBase {
         log("Vehicle not connected", timeInitial);
         tick(appliance, timeInitial, false, false);
         assertTimeframeIntervalSocRequest(TimeframeIntervalState.QUEUED, interval,
-                0, 0, socRequested, evId, null, true,
+                0, 0, socRequested, evId, null, false,
                 timeframeIntervalHandler.getQueue().get(0));
 
         LocalDateTime timeVehicleConnected = toToday(9, 55, 0);
@@ -597,8 +597,7 @@ public class EVChargerTest extends TestBase {
         if(socCurrent != null) {
             evCharger.getSocValues().current = socCurrent;
         }
-        evCharger.updateState(now);
-        evCharger.updateSoc(now);
+        evCharger.updateStateTimerTaskImpl(now);
 
         TimeframeIntervalHandler timeframeIntervalHandler = appliance.getTimeframeIntervalHandler();
         timeframeIntervalHandler.updateQueue(now, false);

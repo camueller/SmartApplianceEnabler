@@ -285,13 +285,19 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                     getPollInterval() * 1000) {
                 @Override
                 public void runTask() {
-                    updateState(LocalDateTime.now());
-                    if(! isVehicleNotConnected()) {
-                        updateSoc(LocalDateTime.now());
-                    }
+                    // don't add code here since it is not used by integration tests
+                    // add it in updateStateTimerTaskImpl()
+                    updateStateTimerTaskImpl(LocalDateTime.now());
                 }
             };
             timer.schedule(this.updateStateTimerTask, 0, this.updateStateTimerTask.getPeriod());
+        }
+    }
+
+    public void updateStateTimerTaskImpl(LocalDateTime now) {
+        updateState(now);
+        if(! isVehicleNotConnected()) {
+            updateSoc(now);
         }
     }
 
