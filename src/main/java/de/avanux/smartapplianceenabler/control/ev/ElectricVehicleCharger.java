@@ -296,9 +296,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
 
     public void updateStateTimerTaskImpl(LocalDateTime now) {
         updateState(now);
-        if(! isVehicleNotConnected()) {
-            updateSoc(now);
-        }
+        updateSoc(now);
     }
 
     @Override
@@ -707,40 +705,42 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     }
 
     public synchronized void updateSoc(LocalDateTime now) {
-        this.socValues.current = calculateCurrentSoc(this.appliance.getMeter());
-        ElectricVehicle electricVehicle = getConnectedVehicle();
-        if(electricVehicle != null && electricVehicle.getSocScript() != null) {
-            Integer updateAfterIncrease = electricVehicle.getSocScript().getUpdateAfterIncrease();
-            if(updateAfterIncrease == null) {
-                updateAfterIncrease = ElectricVehicleChargerDefaults.getUpdateSocAfterIncrease();
-            }
-            Integer updateAfterSeconds = electricVehicle.getSocScript().getUpdateAfterSeconds();
-            if(this.socValues.initial == null || (
-                    (this.socValues.retrieved + updateAfterIncrease <= this.socValues.current)
-                    && (updateAfterSeconds == null || now.minusSeconds(updateAfterSeconds).isAfter(this.socTimestamp))
-            )) {
-                if(!this.socScriptRunning) {
-                    logger.debug( "{}: SOC retrieval is required: {}", applianceId, this.socValues);
-                    this.socScriptRunning = true;
-                    SocRetriever socRetriever = new SocRetriever(now, electricVehicle);
-                    if(socScriptAsync) {
-                        Thread managerThread = new Thread(socRetriever);
-                        managerThread.start();
+        if(! isVehicleNotConnected()) {
+            this.socValues.current = calculateCurrentSoc(this.appliance.getMeter());
+            ElectricVehicle electricVehicle = getConnectedVehicle();
+            if(electricVehicle != null && electricVehicle.getSocScript() != null) {
+                Integer updateAfterIncrease = electricVehicle.getSocScript().getUpdateAfterIncrease();
+                if(updateAfterIncrease == null) {
+                    updateAfterIncrease = ElectricVehicleChargerDefaults.getUpdateSocAfterIncrease();
+                }
+                Integer updateAfterSeconds = electricVehicle.getSocScript().getUpdateAfterSeconds();
+                if(this.socValues.initial == null || (
+                        (this.socValues.retrieved + updateAfterIncrease <= this.socValues.current)
+                                && (updateAfterSeconds == null || now.minusSeconds(updateAfterSeconds).isAfter(this.socTimestamp))
+                )) {
+                    if(!this.socScriptRunning) {
+                        logger.debug( "{}: SOC retrieval is required: {}", applianceId, this.socValues);
+                        this.socScriptRunning = true;
+                        SocRetriever socRetriever = new SocRetriever(now, electricVehicle);
+                        if(socScriptAsync) {
+                            Thread managerThread = new Thread(socRetriever);
+                            managerThread.start();
+                        }
+                        else {
+                            // for unit tests
+                            socRetriever.run();
+                        }
                     }
                     else {
-                        // for unit tests
-                        socRetriever.run();
+                        logger.debug("{}: SOC retrieval already running: {}", applianceId, this.socValues);
                     }
                 }
                 else {
-                    logger.debug("{}: SOC retrieval already running: {}", applianceId, this.socValues);
+                    logger.debug("{}: SOC retrieval is NOT required: {}", applianceId, this.socValues);
                 }
             }
-            else {
-                logger.debug("{}: SOC retrieval is NOT required: {}", applianceId, this.socValues);
-            }
+            updateSocOnControlStateChangedListeners(now, this.socValues);
         }
-        updateSocOnControlStateChangedListeners(now, this.socValues);
     }
 
     private class SocRetriever implements Runnable {
