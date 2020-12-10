@@ -426,12 +426,14 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
             OptionalEnergySocRequest request = (OptionalEnergySocRequest) timeframeInterval.getRequest();
             request.setSocInitial(socCurrent);
             request.setSoc(socRequested);
+            request.setEnabled(true);
         }
         else {
             timeframeInterval = createOptionalEnergyTimeframeIntervalForEVCharger(now, evId);
             if(timeframeInterval != null) {
                 OptionalEnergySocRequest request = (OptionalEnergySocRequest) timeframeInterval.getRequest();
                 request.setSocInitial(socCurrent);
+                request.setSocCurrent(socCurrent);
                 request.setEnabled(true);
                 updateSocRequest((SocRequest) timeframeInterval.getRequest(), batteryCapacity, socRequested);
                 addTimeframeInterval(now, timeframeInterval, true, true);
@@ -477,7 +479,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
             request.setBatteryCapacity(batteryCapacity);
         }
         if(soc != null || batteryCapacity != null) {
-            request.update();
+            request.updateForced();
         }
     }
 

@@ -51,10 +51,6 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
         return LoggerFactory.getLogger(SocRequest.class);
     }
 
-    public void setForceEnergyCalculation(boolean forceEnergyCalculation) {
-        this.forceEnergyCalculation = forceEnergyCalculation;
-    }
-
     public SocValues socVariablesInitialized() {
         if(socValues == null) {
             socValues = new SocValues();
@@ -121,10 +117,19 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
         if(batteryCapacity != null && this.forceEnergyCalculation) {
             this.energy = calculateEnergy(batteryCapacity);
             this.forceEnergyCalculation = false;
+            if(energy != null && energy <= 0) {
+                // make sure we rely on up-to-date values
+                this.energy = calculateEnergy(batteryCapacity);
+                if(energy <= 0) {
+                    setEnabled(false);
+                }
+            }
         }
-        if(energy != null && energy <= 0) {
-            setEnabled(false);
-        }
+    }
+
+    public void updateForced() {
+        this.forceEnergyCalculation = true;
+        update();
     }
 
     public Integer calculateEnergy(int batteryCapacity) {
