@@ -432,6 +432,12 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         return currenState;
     }
 
+    public void resetChargingCompletedToVehicleConnected(LocalDateTime now) {
+        if(isChargingCompleted()) {
+            setState(now, EVChargerState.VEHICLE_CONNECTED);
+        }
+    }
+
     protected boolean hasOnlyEmptyRequestsBeforeTimeGap(LocalDateTime now) {
         // aktueller Request hat fast keine Energie mehr und es gibt keinen direkten Folge-Request
         List<TimeframeInterval> timeframeIntervalsUntilFirstGap
