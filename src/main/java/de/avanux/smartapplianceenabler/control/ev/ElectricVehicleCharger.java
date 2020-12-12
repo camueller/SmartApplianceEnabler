@@ -772,8 +772,8 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                     }
                 }
                 socValues.current = soc.intValue();
-                socScriptRunning = false;
             }
+            socScriptRunning = false;
         }
     }
 
