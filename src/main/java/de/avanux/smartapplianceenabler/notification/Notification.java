@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Axel Müller <axel.mueller@avanux.de>
+ * Copyright (C) 2020 Axel Müller <axel.mueller@avanux.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,43 +15,23 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package de.avanux.smartapplianceenabler.configuration;
+
+package de.avanux.smartapplianceenabler.notification;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name = "Configuration")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Configuration {
-    public static final String DEFAULT_HOLIDAYS_URL = "http://feiertage.jarmedia.de/api/?jahr={0}&#038;nur_land=HE";
+public class Notification {
     @XmlAttribute
-    private String param;
-    @XmlAttribute
-    private String value;
+    private String senderId;
 
-    public Configuration() {
+    public String getSenderId() {
+        return senderId;
     }
 
-    public Configuration(String param, String value) {
-        this.param = param;
-        this.value = value;
-    }
-
-    public String getParam() {
-        return param;
-    }
-
-    public void setParam(String param) {
-        this.param = param;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
+    public void setSenderId(String senderId) {
+        this.senderId = senderId;
     }
 }

@@ -170,6 +170,7 @@ export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<Appl
     this.formHandler.addFormControl(this.form, 'maxOffTime',
       this.appliance && this.appliance.maxOffTime,
       Validators.pattern(InputValidatorPatterns.INTEGER));
+    this.formHandler.addFormControl(this.form, 'notificationSenderId', this.appliance && this.appliance.notificationSenderId);
   }
 
   updateModelFromForm() {
@@ -188,6 +189,7 @@ export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<Appl
     this.appliance.maxOnTime = this.appliance.interruptionsAllowed ? getValidInt(this.form.controls.maxOnTime.value) : undefined;
     this.appliance.minOffTime = this.appliance.interruptionsAllowed ? getValidInt(this.form.controls.minOffTime.value) : undefined;
     this.appliance.maxOffTime = this.appliance.interruptionsAllowed ? getValidInt(this.form.controls.maxOffTime.value) : undefined;
+    this.appliance.notificationSenderId = getValidString(this.form.controls.notificationToken.value);
   }
 
   submitForm() {

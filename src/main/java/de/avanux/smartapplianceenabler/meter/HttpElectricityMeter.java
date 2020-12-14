@@ -21,6 +21,10 @@ import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.appliance.ApplianceLifeCycle;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.http.*;
+import de.avanux.smartapplianceenabler.notification.NotificationHandler;
+import de.avanux.smartapplianceenabler.notification.NotificationKey;
+import de.avanux.smartapplianceenabler.notification.NotificationProvider;
+import de.avanux.smartapplianceenabler.notification.Notifications;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolHandler;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolType;
 import de.avanux.smartapplianceenabler.protocol.JsonContentProtocolHandler;
@@ -44,7 +48,7 @@ import java.util.*;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validateable, PollPowerExecutor, PollEnergyExecutor,
-        ApplianceIdConsumer {
+        ApplianceIdConsumer, NotificationProvider {
 
     private transient Logger logger = LoggerFactory.getLogger(HttpElectricityMeter.class);
     @XmlAttribute
@@ -57,13 +61,15 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
     private HttpConfiguration httpConfiguration;
     @XmlElement(name = "HttpRead")
     private List<HttpRead> httpReads;
+    @XmlElement(name = "Notifications")
+    private Notifications notifications;
     private transient String applianceId;
     private transient HttpTransactionExecutor httpTransactionExecutor = new HttpTransactionExecutor();
     private transient PollPowerMeter pollPowerMeter = new PollPowerMeter();
     private transient PollEnergyMeter pollEnergyMeter = new PollEnergyMeter();
     private transient HttpHandler httpHandler = new HttpHandler();
     private transient ContentProtocolHandler contentContentProtocolHandler;
-
+    private transient NotificationHandler notificationHandler;
 
     @Override
     public void setApplianceId(String applianceId) {
@@ -72,6 +78,14 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
         this.pollEnergyMeter.setApplianceId(applianceId);
         this.httpHandler.setApplianceId(applianceId);
         this.httpTransactionExecutor.setApplianceId(applianceId);
+    }
+
+    @Override
+    public void setNotificationHandler(NotificationHandler notificationHandler) {
+        this.notificationHandler = notificationHandler;
+        if(this.notificationHandler != null) {
+            this.notificationHandler.addRequestedNotifications(notifications);
+        }
     }
 
     public void setHttpTransactionExecutor(HttpTransactionExecutor httpTransactionExecutor) {
@@ -265,7 +279,13 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
     }
 
     private float getValue(ParentWithChild<HttpRead, HttpReadValue> read) {
-        return this.httpHandler.getFloatValue(read, getContentContentProtocolHandler());
+        try {
+            return this.httpHandler.getFloatValue(read, getContentContentProtocolHandler());
+        }
+        catch(Exception e) {
+            this.notificationHandler.sendNotification(NotificationKey.METER_COMMUNICATION_ERROR);
+            throw e;
+        }
     }
 
     public ContentProtocolHandler getContentContentProtocolHandler() {

@@ -60,21 +60,7 @@ export class SettingsFactory {
 
   fromJSON(rawSettings: any): Settings {
     this.logger.debug('Settings (JSON): ' + JSON.stringify(rawSettings));
-    const settings = new Settings();
-    settings.holidaysEnabled = rawSettings.holidaysEnabled;
-    settings.holidaysUrl = rawSettings.holidaysUrl;
-
-    settings.modbusSettings = [] as ModbusSetting[];
-    if (rawSettings.modbusSettings) {
-      (rawSettings.modbusSettings as any[]).forEach((rawModbusSettings) => {
-        const modbusSettings = new ModbusSetting();
-        modbusSettings.modbusTcpId = rawModbusSettings.modbusTcpId;
-        modbusSettings.modbusTcpHost = rawModbusSettings.modbusTcpHost;
-        modbusSettings.modbusTcpPort = rawModbusSettings.modbusTcpPort;
-        settings.modbusSettings.push(modbusSettings);
-      });
-    }
-
+    const settings = new Settings({... rawSettings});
     this.logger.debug('Settings (TYPE): ' + JSON.stringify(settings));
     return settings;
   }

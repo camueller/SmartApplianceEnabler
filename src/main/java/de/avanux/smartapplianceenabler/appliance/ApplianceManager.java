@@ -26,6 +26,7 @@ import de.avanux.smartapplianceenabler.configuration.Connectivity;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
+import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.schedule.Schedule;
 import de.avanux.smartapplianceenabler.semp.webservice.Device2EM;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
@@ -168,7 +169,8 @@ public class ApplianceManager implements Runnable {
                 holidaysUsed = true;
             }
             logger.debug("{}: Initializing appliance ...", appliance.getId());
-            appliance.init(getGpioController(), modbusIdWithModbusTcp);
+            appliance.init(getGpioController(), modbusIdWithModbusTcp,
+                    appliances.getConfigurationValue(NotificationHandler.CONFIGURATION_KEY_NOTIFICATION_COMMAND));
             logger.debug("{}: Validating appliance ...", appliance.getId());
             try {
                 appliance.validate();
@@ -332,19 +334,35 @@ public class ApplianceManager implements Runnable {
      * @param deviceInfo
      * @return true, if the update was successful; false, if the appliance with the given id was not found
      */
-    public boolean updateAppliance(DeviceInfo deviceInfo) {
-        logger.debug("{}: Update appliance", deviceInfo.getIdentification().getDeviceId());
-        Integer replaceIndex = null;
-        for(int i=0;i<device2EM.getDeviceInfo().size();i++) {
-            if(deviceInfo.getIdentification().getDeviceId().equals(device2EM.getDeviceInfo().get(i).getIdentification().getDeviceId())) {
-                replaceIndex = i;
+    public boolean updateAppliance(Appliance appliance, DeviceInfo deviceInfo) {
+        logger.debug("{}: Update appliance", appliance.getId());
+
+        Integer applianceReplaceIndex = null;
+        for(int i=0;i<this.appliances.getAppliances().size();i++) {
+            if(appliance.getId().equals(this.appliances.getAppliances().get(i).getId())) {
+                applianceReplaceIndex = i;
                 break;
             }
         }
-        if(replaceIndex != null) {
-            device2EM.getDeviceInfo().remove(replaceIndex.intValue());
-            device2EM.getDeviceInfo().add(replaceIndex, deviceInfo);
-            save(true, false);
+        if(applianceReplaceIndex != null) {
+            this.appliances.getAppliances().remove(applianceReplaceIndex.intValue());
+            this.appliances.getAppliances().add(applianceReplaceIndex, appliance);
+        }
+
+        Integer device2EMReplaceIndex = null;
+        for(int i=0;i<device2EM.getDeviceInfo().size();i++) {
+            if(appliance.getId().equals(device2EM.getDeviceInfo().get(i).getIdentification().getDeviceId())) {
+                device2EMReplaceIndex = i;
+                break;
+            }
+        }
+        if(device2EMReplaceIndex != null) {
+            device2EM.getDeviceInfo().remove(device2EMReplaceIndex.intValue());
+            device2EM.getDeviceInfo().add(device2EMReplaceIndex, deviceInfo);
+        }
+
+        if(applianceReplaceIndex != null || device2EMReplaceIndex != null) {
+            save(device2EMReplaceIndex != null, applianceReplaceIndex != null);
             return true;
         }
         return false;

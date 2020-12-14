@@ -22,23 +22,40 @@ import com.pi4j.io.gpio.GpioPinDigitalOutput;
 import com.pi4j.io.gpio.PinState;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import java.time.LocalDateTime;
+
+import de.avanux.smartapplianceenabler.notification.NotificationHandler;
+import de.avanux.smartapplianceenabler.notification.NotificationKey;
+import de.avanux.smartapplianceenabler.notification.NotificationProvider;
+import de.avanux.smartapplianceenabler.notification.Notifications;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Switch extends GpioControllable implements Control, ApplianceIdConsumer {
+public class Switch extends GpioControllable implements Control, ApplianceIdConsumer, NotificationProvider {
     private transient Logger logger = LoggerFactory.getLogger(Switch.class);
     @XmlAttribute
     private boolean reverseStates;
+    @XmlElement(name = "Notifications")
+    private Notifications notifications;
     private transient GpioPinDigitalOutput outputPin;
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
+    private transient NotificationHandler notificationHandler;
+
+    @Override
+    public void setNotificationHandler(NotificationHandler notificationHandler) {
+        this.notificationHandler = notificationHandler;
+        if(this.notificationHandler != null) {
+            this.notificationHandler.addRequestedNotifications(notifications);
+        }
+    }
 
     @Override
     public void init() {
@@ -79,6 +96,9 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
             outputPin.setState(adjustState(switchOn ? PinState.HIGH : PinState.LOW));
         } else {
             logGpioAccessDisabled(logger);
+        }
+        if(this.notificationHandler != null) {
+            this.notificationHandler.sendNotification(switchOn ? NotificationKey.CONTROL_ON : NotificationKey.CONTROL_OFF);
         }
         for (ControlStateChangedListener listener : new ArrayList<>(controlStateChangedListeners)) {
             listener.controlStateChanged(now, switchOn);

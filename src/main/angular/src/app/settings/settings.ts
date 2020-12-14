@@ -21,8 +21,8 @@ import {ModbusSetting} from './modbus/modbus-setting';
 export class Settings {
   holidaysEnabled: boolean;
   holidaysUrl: string;
-
   modbusSettings: ModbusSetting[];
+  notificationCommand: string;
 
   public constructor(init?: Partial<Settings>) {
     Object.assign(this, init);

@@ -23,6 +23,10 @@ import de.avanux.smartapplianceenabler.modbus.ModbusWriteValue;
 import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
 import de.avanux.smartapplianceenabler.modbus.ModbusValidator;
 import de.avanux.smartapplianceenabler.modbus.executor.*;
+import de.avanux.smartapplianceenabler.notification.NotificationHandler;
+import de.avanux.smartapplianceenabler.notification.NotificationKey;
+import de.avanux.smartapplianceenabler.notification.NotificationProvider;
+import de.avanux.smartapplianceenabler.notification.Notifications;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import de.avanux.smartapplianceenabler.configuration.Validateable;
 import java.time.LocalDateTime;
@@ -35,12 +39,23 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Timer;
 
-public class ModbusSwitch extends ModbusSlave implements Control, Validateable {
+public class ModbusSwitch extends ModbusSlave implements Control, Validateable, NotificationProvider {
 
     private transient Logger logger = LoggerFactory.getLogger(ModbusSwitch.class);
     @XmlElement(name = "ModbusWrite")
     private List<ModbusWrite> modbusWrites;
+    @XmlElement(name = "Notifications")
+    private Notifications notifications;
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
+    private transient NotificationHandler notificationHandler;
+
+    @Override
+    public void setNotificationHandler(NotificationHandler notificationHandler) {
+        this.notificationHandler = notificationHandler;
+        if(this.notificationHandler != null) {
+            this.notificationHandler.addRequestedNotifications(notifications);
+        }
+    }
 
     @Override
     public void init() {
@@ -87,12 +102,17 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable {
                 else if(executor instanceof WriteHoldingRegisterExecutor) {
                     result = 1 == ((WriteHoldingRegisterExecutor) executor).getResult();
                 }
-
+                if(this.notificationHandler != null) {
+                    this.notificationHandler.sendNotification(switchOn ? NotificationKey.CONTROL_ON : NotificationKey.CONTROL_OFF);
+                }
                 for(ControlStateChangedListener listener : new ArrayList<>(controlStateChangedListeners)) {
                     listener.controlStateChanged(now, switchOn);
                 }
             }
             catch (Exception e) {
+                if(this.notificationHandler != null) {
+                    this.notificationHandler.sendNotification(NotificationKey.CONTROL_COMMUNICATION_ERROR);
+                }
                 logger.error("{}: Error switching {} using register {}", getApplianceId(),  (switchOn ? "on" : "off"),
                         registerWrite.getAddress(), e);
             }

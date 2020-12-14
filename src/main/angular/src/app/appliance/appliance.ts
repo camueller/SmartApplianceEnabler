@@ -29,6 +29,7 @@ export class Appliance {
   minOffTime?: number;
   maxOffTime?: number;
   interruptionsAllowed?: boolean;
+  notificationSenderId?: string;
 
   public constructor(init?: Partial<Appliance>) {
     Object.assign(this, init);

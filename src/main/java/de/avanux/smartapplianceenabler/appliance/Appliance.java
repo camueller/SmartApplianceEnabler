@@ -28,6 +28,9 @@ import de.avanux.smartapplianceenabler.meter.S0ElectricityMeter;
 import de.avanux.smartapplianceenabler.modbus.EVModbusControl;
 import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
+import de.avanux.smartapplianceenabler.notification.Notification;
+import de.avanux.smartapplianceenabler.notification.NotificationHandler;
+import de.avanux.smartapplianceenabler.notification.NotificationProvider;
 import de.avanux.smartapplianceenabler.schedule.*;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
 import de.avanux.smartapplianceenabler.configuration.Validateable;
@@ -67,6 +70,9 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
     private Meter meter;
     @XmlElement(name = "Schedule")
     private List<Schedule> schedules;
+    @XmlElement(name = "Notification")
+    private Notification notification;
+    private transient NotificationHandler notificationHandler;
     private transient TimeframeIntervalHandler timeframeIntervalHandler;
     private transient static final int CONSIDERATION_INTERVAL_DAYS = 2;
 
@@ -129,6 +135,14 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
         this.schedules = schedules;
     }
 
+    public Notification getNotification() {
+        return notification;
+    }
+
+    public void setNotification(Notification notification) {
+        this.notification = notification;
+    }
+
     public boolean isAcceptControlRecommendations() {
         if(this.control instanceof AlwaysOnSwitch) {
             return false;
@@ -154,14 +168,20 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
         this.timeframeIntervalHandler.addTimeframeIntervalChangedListener(this);
     }
 
-    public void init(GpioController gpioController, Map<String, ModbusTcp> modbusIdWithModbusTcp) {
+    public void init(GpioController gpioController, Map<String, ModbusTcp> modbusIdWithModbusTcp, String notificationCommand) {
         logger.debug("{}: Initializing appliance", id);
+        if(notificationCommand != null && this.notification != null) {
+            this.notificationHandler = new NotificationHandler(id, notificationCommand, this.notification.getSenderId());
+        }
         if(getTimeframeIntervalHandler() == null) {
             setTimeframeIntervalHandler(new TimeframeIntervalHandler(this.schedules, this.control));
         }
         if(control != null) {
             if(control instanceof ApplianceIdConsumer) {
                 ((ApplianceIdConsumer) control).setApplianceId(id);
+            }
+            if(control instanceof NotificationProvider) {
+                ((NotificationProvider) control).setNotificationHandler(notificationHandler);
             }
             if(isEvCharger()) {
                 ((ElectricVehicleCharger) control).setAppliance(this);
@@ -175,7 +195,7 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
                 logger.debug("{}: Registered as {} with {}", id, ControlStateChangedListener.class.getSimpleName(),
                         control.getClass().getSimpleName());
             }
-            if(control instanceof ApplianceLifeCycle && !(control instanceof  StartingCurrentSwitch)) {
+            if(!(control instanceof  StartingCurrentSwitch)) {
                 control.init();
             }
         }
@@ -184,9 +204,10 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
             if(meter instanceof ApplianceIdConsumer) {
                 ((ApplianceIdConsumer) meter).setApplianceId(id);
             }
-            if(meter instanceof ApplianceLifeCycle) {
-                meter.init();
+            if(meter instanceof NotificationProvider) {
+                ((NotificationProvider) meter).setNotificationHandler(notificationHandler);
             }
+            meter.init();
             if(control != null) {
                 if(meter instanceof S0ElectricityMeter) {
                     ((S0ElectricityMeter) meter).setControl(control);

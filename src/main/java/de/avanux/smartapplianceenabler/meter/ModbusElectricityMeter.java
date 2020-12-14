@@ -25,6 +25,10 @@ import de.avanux.smartapplianceenabler.modbus.executor.ModbusReadTransactionExec
 import de.avanux.smartapplianceenabler.modbus.executor.ReadDecimalInputRegisterExecutor;
 import de.avanux.smartapplianceenabler.modbus.executor.ReadFloatInputRegisterExecutor;
 import de.avanux.smartapplianceenabler.modbus.executor.ReadFloatHoldingRegisterExecutor;
+import de.avanux.smartapplianceenabler.notification.NotificationHandler;
+import de.avanux.smartapplianceenabler.notification.NotificationKey;
+import de.avanux.smartapplianceenabler.notification.NotificationProvider;
+import de.avanux.smartapplianceenabler.notification.Notifications;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import de.avanux.smartapplianceenabler.configuration.Validateable;
 import org.slf4j.Logger;
@@ -43,7 +47,7 @@ import java.util.Timer;
  * The TCP connection to the device remains established across the polls.
  */
 public class ModbusElectricityMeter extends ModbusSlave implements Meter, ApplianceIdConsumer,
-        Validateable, PollPowerExecutor, PollEnergyExecutor {
+        Validateable, PollPowerExecutor, PollEnergyExecutor, NotificationProvider {
 
     private transient Logger logger = LoggerFactory.getLogger(ModbusElectricityMeter.class);
     @XmlElement(name = "ModbusRead")
@@ -52,14 +56,25 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     private Integer pollInterval; // seconds
     @XmlAttribute
     private Integer measurementInterval; // seconds
+    @XmlElement(name = "Notifications")
+    private Notifications notifications;
     private transient PollPowerMeter pollPowerMeter = new PollPowerMeter();
     private transient PollEnergyMeter pollEnergyMeter = new PollEnergyMeter();
+    private transient NotificationHandler notificationHandler;
 
     @Override
     public void setApplianceId(String applianceId) {
         super.setApplianceId(applianceId);
         this.pollPowerMeter.setApplianceId(applianceId);
         this.pollEnergyMeter.setApplianceId(applianceId);
+    }
+
+    @Override
+    public void setNotificationHandler(NotificationHandler notificationHandler) {
+        this.notificationHandler = notificationHandler;
+        if(this.notificationHandler != null) {
+            this.notificationHandler.addRequestedNotifications(notifications);
+        }
     }
 
     @Override
@@ -209,6 +224,9 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
         }
         catch(Exception e) {
             logger.error("{}: Error reading input register {}", getApplianceId(), registerRead.getAddress(), e);
+            if(this.notificationHandler != null) {
+                this.notificationHandler.sendNotification(NotificationKey.METER_COMMUNICATION_ERROR);
+            }
         }
         return 0;
     }

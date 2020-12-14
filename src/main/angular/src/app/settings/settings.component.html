@@ -51,6 +51,20 @@
     </div>
   </section>
 
+  <mat-divider></mat-divider>
+
+  <section>
+    <h2 class="sae__heading-extra-top-margin">{{'SettingsComponent.notification.heading' | translate}}</h2>
+    <div class="sae__fields">
+      <mat-form-field class="sae__url">
+        <mat-label>{{'SettingsComponent.notification.command' | translate}}</mat-label>
+        <input matInput type="text" formControlName="notificationCommand"
+               required="{{formHandler.isRequired('notificationCommand')}}">
+        <mat-error *ngIf="errors.notificationCommand">{{errors.notificationCommand}}</mat-error>
+      </mat-form-field>
+    </div>
+  </section>
+
   <div class="sae__mandatory_fields_hint">{{'dialog.mandatoryfields'|translate}}</div>
   <button mat-raised-button type="submit" color="primary" [disabled]="form.pristine||form.invalid">
     {{'button.save' | translate}}</button>

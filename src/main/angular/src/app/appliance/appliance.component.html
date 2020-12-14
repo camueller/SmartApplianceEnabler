@@ -109,6 +109,18 @@
       </mat-form-field>
     </div>
   </section>
+  <section>
+    <h2>{{'ApplianceComponent.notification.heading' | translate}}</h2>
+    <div class="sae__fields">
+      <mat-form-field class="ApplianceComponent__notificationSenderId">
+        <mat-label>{{'ApplianceComponent.notification.senderId' | translate}}</mat-label>
+        <input matInput type="text" formControlName="notificationSenderId"
+               placeholder="{{appliance.id}}"
+               required="{{formHandler.isRequired('notificationSenderId')}}">
+        <mat-error *ngIf="errors.notificationSenderId">{{errors.notificationSenderId}}</mat-error>
+      </mat-form-field>
+    </div>
+  </section>
   <div class="sae__mandatory_fields_hint">{{'dialog.mandatoryfields'|translate}}</div>
   <button mat-raised-button type="submit" color="primary" [disabled]="form.pristine||form.invalid">
     {{'button.save' | translate}}</button>

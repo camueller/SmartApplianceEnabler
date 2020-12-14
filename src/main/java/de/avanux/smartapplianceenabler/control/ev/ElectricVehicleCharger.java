@@ -25,6 +25,7 @@ import de.avanux.smartapplianceenabler.control.ControlStateChangedListener;
 import de.avanux.smartapplianceenabler.http.EVHttpControl;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.modbus.EVModbusControl;
+import de.avanux.smartapplianceenabler.notification.*;
 import de.avanux.smartapplianceenabler.schedule.*;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
 import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
@@ -40,10 +41,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.Vector;
-import java.util.stream.Collectors;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Validateable, ApplianceIdConsumer, TimeframeIntervalChangedListener {
+public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Validateable, ApplianceIdConsumer,
+        TimeframeIntervalChangedListener, NotificationProvider {
 
     private transient Logger logger = LoggerFactory.getLogger(ElectricVehicleCharger.class);
     @XmlAttribute
@@ -56,6 +57,8 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     protected Integer startChargingStateDetectionDelay;
     @XmlAttribute
     protected Boolean forceInitialCharging;
+    @XmlElement(name = "Notifications")
+    private Notifications notifications;
     @XmlElements({
         @XmlElement(name = "EVModbusControl", type = EVModbusControl.class),
         @XmlElement(name = "EVHttpControl", type = EVHttpControl.class),
@@ -85,6 +88,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     private transient boolean startChargingRequested;
     private transient boolean stopChargingRequested;
     private transient boolean firstInvocationAfterSkip;
+    private transient NotificationHandler notificationHandler;
 
     public void setAppliance(Appliance appliance) {
         this.appliance = appliance;
@@ -102,6 +106,14 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
             for(ElectricVehicle vehicle: this.vehicles) {
                 vehicle.setApplianceId(applianceId);
             }
+        }
+    }
+
+    @Override
+    public void setNotificationHandler(NotificationHandler notificationHandler) {
+        this.notificationHandler = notificationHandler;
+        if(this.notificationHandler != null) {
+            this.notificationHandler.addRequestedNotifications(notifications);
         }
     }
 
@@ -462,6 +474,9 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                 logger.info("{}: Switching off", applianceId);
                 stopCharging();
             }
+            if(this.notificationHandler != null) {
+                this.notificationHandler.sendNotification(switchOn ? NotificationKey.CONTROL_ON : NotificationKey.CONTROL_OFF);
+            }
             for(ControlStateChangedListener listener : new ArrayList<>(controlStateChangedListeners)) {
                 logger.debug("{}: Notifying {} {}", applianceId, ControlStateChangedListener.class.getSimpleName(),
                         listener.getClass().getSimpleName());
@@ -497,6 +512,10 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     private void onEVChargerStateChanged(LocalDateTime now, EVChargerState previousState, EVChargerState newState) {
         this.startChargingRequested = false;
         this.stopChargingRequested = false;
+        NotificationKey notificationKey = NotificationKey.valueOf("EVCHARGER_" + newState);
+        if(this.notificationHandler != null) {
+            this.notificationHandler.sendNotification(notificationKey);
+        }
         if(newState == EVChargerState.VEHICLE_CONNECTED) {
             if (this.vehicles != null && this.vehicles.size() > 0) {
                 // sadly, we don't know, which ev has been connected, so we will assume the first one if any

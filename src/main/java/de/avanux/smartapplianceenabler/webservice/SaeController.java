@@ -34,6 +34,8 @@ import de.avanux.smartapplianceenabler.meter.S0ElectricityMeterDefaults;
 import de.avanux.smartapplianceenabler.modbus.ModbusElectricityMeterDefaults;
 import de.avanux.smartapplianceenabler.modbus.ModbusReadDefaults;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
+import de.avanux.smartapplianceenabler.notification.Notification;
+import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.schedule.*;
 import de.avanux.smartapplianceenabler.semp.webservice.*;
 
@@ -195,6 +197,11 @@ public class SaeController {
                 for (DeviceInfo deviceInfo : device2EM.getDeviceInfo()) {
                     if (deviceInfo.getIdentification().getDeviceId().equals(applianceId)) {
                         ApplianceInfo applianceInfo = toApplianceInfo(deviceInfo);
+
+                        Appliance appliance = getAppliance(applianceId);
+                        if(appliance != null && appliance.getNotification() != null) {
+                            applianceInfo.setNotificationSenderId(appliance.getNotification().getSenderId());
+                        }
                         logger.debug("{}: Returning ApplianceInfo {}", applianceId, applianceInfo);
                         return applianceInfo;
                     }
@@ -217,17 +224,27 @@ public class SaeController {
             try {
                 logger.debug("{}: Received request to set ApplianceInfo (create={}): {}", applianceId, create, applianceInfo);
                 LocalDateTime now = LocalDateTime.now();
+
+                Notification notification = null;
+                if(applianceInfo.getNotificationSenderId() != null) {
+                    notification = new Notification();
+                    notification.setSenderId(applianceInfo.getNotificationSenderId());
+                }
+
                 DeviceInfo deviceInfo = toDeviceInfo(applianceInfo);
                 if (create) {
                     Appliance appliance = new Appliance();
                     appliance.setId(applianceId);
+                    appliance.setNotification(notification);
                     ApplianceManager.getInstance().addAppliance(appliance, deviceInfo);
                 } else {
                     Appliance appliance = getAppliance(applianceId);
                     if (appliance != null) {
                         deviceInfo.getCapabilities().setOptionalEnergy(appliance.canConsumeOptionalEnergy(now));
+                        appliance.setNotification(notification);
+                        ApplianceManager.getInstance().updateAppliance(appliance, deviceInfo);
                     }
-                    if (!ApplianceManager.getInstance().updateAppliance(deviceInfo)) {
+                    else {
                         logger.error("{}: Appliance not found.", applianceId);
                         response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                     }
@@ -734,6 +751,9 @@ public class SaeController {
             settings.setHolidaysEnabled(holidaysUrl != null);
             settings.setHolidaysUrl(holidaysUrl);
 
+            String notificationCommand = appliances.getConfigurationValue(NotificationHandler.CONFIGURATION_KEY_NOTIFICATION_COMMAND);
+            settings.setNotificationCommand(notificationCommand);
+
             logger.debug("Returning Settings " + settings);
             return settings;
         } catch (Throwable e) {
@@ -768,12 +788,15 @@ public class SaeController {
             }
             ApplianceManager.getInstance().setConnectivity(connectivity);
 
-            List<Configuration> configurations = null;
+            List<Configuration> configurations = new ArrayList<>();
             if (settings.isHolidaysEnabled()) {
-                Configuration configuration = new Configuration();
-                configuration.setParam(HolidaysDownloader.urlConfigurationParamName);
-                configuration.setValue(settings.getHolidaysUrl());
-                configurations = Collections.singletonList(configuration);
+                configurations.add(
+                        new Configuration(HolidaysDownloader.urlConfigurationParamName, settings.getHolidaysUrl()));
+            }
+            if(settings.getNotificationCommand() != null) {
+                configurations.add(
+                        new Configuration(NotificationHandler.CONFIGURATION_KEY_NOTIFICATION_COMMAND,
+                                settings.getNotificationCommand()));
             }
             ApplianceManager.getInstance().setConfiguration(configurations);
         } catch (Throwable e) {

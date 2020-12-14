@@ -22,17 +22,20 @@ import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.GpioControllable;
 import java.time.LocalDateTime;
+
+import de.avanux.smartapplianceenabler.notification.NotificationHandler;
+import de.avanux.smartapplianceenabler.notification.NotificationKey;
+import de.avanux.smartapplianceenabler.notification.NotificationProvider;
+import de.avanux.smartapplianceenabler.notification.Notifications;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 
-@XmlType(propOrder={"gpio", "pinPullResistance", "impulsesPerKwh", "measurementInterval"})
-public class S0ElectricityMeter extends GpioControllable implements Meter {
+public class S0ElectricityMeter extends GpioControllable implements Meter, NotificationProvider {
 
     private transient Logger logger = LoggerFactory.getLogger(S0ElectricityMeter.class);
     @XmlAttribute
@@ -41,12 +44,22 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
     private Integer measurementInterval; // seconds
     @XmlAttribute
     private Integer minPulseDuration; // milliseconds
+    @XmlElement(name = "Notifications")
+    private Notifications notifications;
     private transient Long pulseTimestamp;
     private transient GpioPinDigitalInput inputPin;
     private transient PulsePowerMeter pulsePowerMeter = new PulsePowerMeter();
     private transient PulseEnergyMeter pulseEnergyMeter = new PulseEnergyMeter();
     private transient List<PowerUpdateListener> powerMeterListeners = new ArrayList<>();
+    private transient NotificationHandler notificationHandler;
 
+    @Override
+    public void setNotificationHandler(NotificationHandler notificationHandler) {
+        this.notificationHandler = notificationHandler;
+        if(this.notificationHandler != null) {
+            this.notificationHandler.addRequestedNotifications(notifications);
+        }
+    }
 
     public Integer getImpulsesPerKwh() {
         return impulsesPerKwh;
@@ -147,6 +160,9 @@ public class S0ElectricityMeter extends GpioControllable implements Meter {
             }
             catch(Exception e) {
                 logger.error("{}: Error start metering using {}", getApplianceId(), getGpio(), e);
+                if(this.notificationHandler != null) {
+                    this.notificationHandler.sendNotification(NotificationKey.METER_COMMUNICATION_ERROR);
+                }
             }
         }
         else {

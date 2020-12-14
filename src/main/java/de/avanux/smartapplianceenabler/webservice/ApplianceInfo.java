@@ -35,6 +35,7 @@ public class ApplianceInfo {
     private Integer maxOffTime;
     private String currentPowerMethod;
     private boolean interruptionsAllowed;
+    private String notificationSenderId;
 
     public String getId() {
         return id;
@@ -140,13 +141,21 @@ public class ApplianceInfo {
         this.interruptionsAllowed = interruptionsAllowed;
     }
 
+    public String getNotificationSenderId() {
+        return notificationSenderId;
+    }
+
+    public void setNotificationSenderId(String notificationSenderId) {
+        this.notificationSenderId = notificationSenderId;
+    }
+
     @Override
     public String toString() {
         return "ApplianceInfo{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", serial='" + serial + '\'' +
-                ", type='" + type + '\'' +
+                ", type=" + type +
                 ", vendor='" + vendor + '\'' +
                 ", minPowerConsumption=" + minPowerConsumption +
                 ", maxPowerConsumption=" + maxPowerConsumption +
@@ -154,8 +163,9 @@ public class ApplianceInfo {
                 ", maxOnTime=" + maxOnTime +
                 ", minOffTime=" + minOffTime +
                 ", maxOffTime=" + maxOffTime +
-                ", currentPowerMethod='" + currentPowerMethod + '\'' +
+                ", currentPowerMethod=" + currentPowerMethod +
                 ", interruptionsAllowed=" + interruptionsAllowed +
+                ", notificationSenderId=" + notificationSenderId +
                 '}';
     }
 }

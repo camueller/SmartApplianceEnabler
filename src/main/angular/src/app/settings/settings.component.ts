@@ -33,6 +33,7 @@ import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {FormHandler} from '../shared/form-handler';
 import {SettingsModbusComponent} from './modbus/settings-modbus.component';
 import {ModbusSetting} from './modbus/modbus-setting';
+import {getValidString} from '../shared/form-util';
 
 @Component({
   selector: 'app-settings',
@@ -84,6 +85,7 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
     this.formHandler.addFormControl(this.form, 'holidaysUrl', this.settings.holidaysUrl,
       [Validators.pattern(InputValidatorPatterns.URL)]);
     this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'modbusSettings', this.settings.modbusSettings);
+    this.formHandler.addFormControl(this.form, 'notificationCommand', this.settings.notificationCommand);
     this.setHolidaysUrlEnabled(this.settings.holidaysEnabled);
   }
 
@@ -133,7 +135,7 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
 
   updateModelFromForm() {
     this.settings.holidaysEnabled = this.form.controls.holidaysEnabled.value;
-    this.settings.holidaysUrl = this.form.controls.holidaysUrl.value;
+    this.settings.holidaysUrl = getValidString(this.form.controls.holidaysUrl.value);
     this.settings.modbusSettings = [];
     this.modbusSettingComps.forEach(modbusSettingComponent => {
       const modbusSetting = modbusSettingComponent.updateModelFromForm();
@@ -141,6 +143,7 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
         this.settings.modbusSettings.push(modbusSetting);
       }
     });
+    this.settings.notificationCommand = getValidString(this.form.controls.notificationCommand.value);
   }
 
   submitForm() {
