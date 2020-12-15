@@ -18,6 +18,16 @@
 
 package de.avanux.smartapplianceenabler.control;
 
+import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import de.avanux.smartapplianceenabler.notification.NotificationHandler;
+import de.avanux.smartapplianceenabler.notification.NotificationProvider;
+import de.avanux.smartapplianceenabler.notification.Notifications;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import java.time.LocalDateTime;
 
 import java.util.Timer;
@@ -25,7 +35,27 @@ import java.util.Timer;
 /**
  * A switch which is always switched on.
  */
-public class AlwaysOnSwitch implements Control {
+@XmlAccessorType(XmlAccessType.FIELD)
+public class AlwaysOnSwitch implements Control, ApplianceIdConsumer, NotificationProvider {
+
+    private transient Logger logger = LoggerFactory.getLogger(AlwaysOnSwitch.class);
+    @XmlElement(name = "Notifications")
+    private Notifications notifications;
+    private transient String applianceId;
+    private transient NotificationHandler notificationHandler;
+
+    @Override
+    public void setApplianceId(String applianceId) {
+        this.applianceId = applianceId;
+    }
+
+    @Override
+    public void setNotificationHandler(NotificationHandler notificationHandler) {
+        this.notificationHandler = notificationHandler;
+        if(this.notificationHandler != null) {
+            this.notificationHandler.addRequestedNotifications(notifications);
+        }
+    }
 
     @Override
     public void init() {
