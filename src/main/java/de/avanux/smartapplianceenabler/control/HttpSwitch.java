@@ -85,6 +85,11 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
         }
     }
 
+    @Override
+    public Notifications getNotifications() {
+        return notifications;
+    }
+
     public void setHttpConfiguration(HttpConfiguration httpConfiguration) {
         this.httpConfiguration = httpConfiguration;
     }

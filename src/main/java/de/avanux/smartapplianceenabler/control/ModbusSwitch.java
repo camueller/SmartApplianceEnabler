@@ -58,6 +58,11 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
     }
 
     @Override
+    public Notifications getNotifications() {
+        return notifications;
+    }
+
+    @Override
     public void init() {
     }
 

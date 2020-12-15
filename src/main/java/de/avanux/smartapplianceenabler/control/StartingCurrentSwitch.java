@@ -21,6 +21,10 @@ import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.meter.PowerUpdateListener;
 import de.avanux.smartapplianceenabler.meter.S0ElectricityMeter;
+import de.avanux.smartapplianceenabler.notification.NotificationHandler;
+import de.avanux.smartapplianceenabler.notification.NotificationKey;
+import de.avanux.smartapplianceenabler.notification.NotificationProvider;
+import de.avanux.smartapplianceenabler.notification.Notifications;
 import de.avanux.smartapplianceenabler.schedule.DayTimeframeCondition;
 import de.avanux.smartapplianceenabler.schedule.TimeframeIntervalHandler;
 import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
@@ -45,7 +49,7 @@ import java.util.stream.Collectors;
  * The latter is only powered off after the starting current has been detected until the "on" command is received.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, PowerUpdateListener {
+public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, PowerUpdateListener, NotificationProvider {
     private transient Logger logger = LoggerFactory.getLogger(StartingCurrentSwitch.class);
     @XmlAttribute
     private Integer powerThreshold;
@@ -56,6 +60,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
     @XmlAttribute
     private Integer minRunningTime; // seconds
     @XmlElements({
+            @XmlElement(name = "MeterReportingSwitch", type = MeterReportingSwitch.class),
             @XmlElement(name = "HttpSwitch", type = HttpSwitch.class),
             @XmlElement(name = "MockSwitch", type = MockSwitch.class),
             @XmlElement(name = "ModbusSwitch", type = ModbusSwitch.class),
@@ -74,6 +79,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
     private transient List<StartingCurrentSwitchListener> startingCurrentSwitchListeners = new ArrayList<>();
     private transient GuardedTimerTask powerUpdateTimerTask;
+    private transient NotificationHandler notificationHandler;
 
 
     @Override
@@ -91,6 +97,19 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
 
     public void setMeter(Meter meter) {
         this.meter = meter;
+    }
+
+    @Override
+    public void setNotificationHandler(NotificationHandler notificationHandler) {
+        this.notificationHandler = notificationHandler;
+        if(control instanceof NotificationProvider && notificationHandler != null) {
+            this.notificationHandler.addRequestedNotifications(((NotificationProvider) control).getNotifications());
+        }
+    }
+
+    @Override
+    public Notifications getNotifications() {
+        return control instanceof NotificationProvider ? ((NotificationProvider) control).getNotifications() : null;
     }
 
     public void setTimeframeIntervalHandler(TimeframeIntervalHandler timeframeIntervalHandler) {
@@ -199,6 +218,9 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
             applianceOn(now,true);
             switchOnTime = now;
             startingCurrentDetected = false;
+        }
+        if(this.notificationHandler != null) {
+            this.notificationHandler.sendNotification(switchOn ? NotificationKey.CONTROL_ON : NotificationKey.CONTROL_OFF);
         }
         updateControlStateChangedListeners(now, switchOn);
         return on;

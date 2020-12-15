@@ -20,4 +20,6 @@ package de.avanux.smartapplianceenabler.notification;
 
 public interface NotificationProvider {
     void setNotificationHandler(NotificationHandler notificationHandler);
+
+    public Notifications getNotifications();
 }

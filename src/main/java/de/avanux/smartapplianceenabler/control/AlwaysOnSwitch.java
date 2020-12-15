@@ -58,6 +58,11 @@ public class AlwaysOnSwitch implements Control, ApplianceIdConsumer, Notificatio
     }
 
     @Override
+    public Notifications getNotifications() {
+        return notifications;
+    }
+
+    @Override
     public void init() {
     }
 

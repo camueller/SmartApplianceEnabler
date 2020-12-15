@@ -78,6 +78,11 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     }
 
     @Override
+    public Notifications getNotifications() {
+        return notifications;
+    }
+
+    @Override
     public int getAveragePower() {
         int power = pollPowerMeter.getAveragePower();
         logger.debug("{}: average power = {}W", getApplianceId(), power);

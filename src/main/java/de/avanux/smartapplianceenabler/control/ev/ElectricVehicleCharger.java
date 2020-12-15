@@ -117,6 +117,11 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         }
     }
 
+    @Override
+    public Notifications getNotifications() {
+        return notifications;
+    }
+
     public EVChargerControl getControl() {
         return control;
     }

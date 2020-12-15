@@ -61,6 +61,11 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
         }
     }
 
+    @Override
+    public Notifications getNotifications() {
+        return notifications;
+    }
+
     public Integer getImpulsesPerKwh() {
         return impulsesPerKwh;
     }

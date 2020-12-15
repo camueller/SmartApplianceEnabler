@@ -58,6 +58,11 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
     }
 
     @Override
+    public Notifications getNotifications() {
+        return notifications;
+    }
+
+    @Override
     public void init() {
     }
 

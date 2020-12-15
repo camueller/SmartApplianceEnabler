@@ -88,6 +88,11 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
         }
     }
 
+    @Override
+    public Notifications getNotifications() {
+        return notifications;
+    }
+
     public void setHttpTransactionExecutor(HttpTransactionExecutor httpTransactionExecutor) {
         this.httpTransactionExecutor = httpTransactionExecutor;
     }
