@@ -126,6 +126,7 @@
   "HttpWriteValueComponent.error.factorToValue_pattern": "Der Faktor muss eine (Gleitkomma-) Zahl sein",
 
   "ControlComponent.type": "Typ",
+  "de.avanux.smartapplianceenabler.control.MeterReportingSwitch": "Zählerbasierter Zustandsmelder",
   "de.avanux.smartapplianceenabler.control.Switch": "GPIO",
   "de.avanux.smartapplianceenabler.control.ModbusSwitch": "Modbus",
   "de.avanux.smartapplianceenabler.control.HttpSwitch": "HTTP",

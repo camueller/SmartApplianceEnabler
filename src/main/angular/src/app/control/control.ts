@@ -26,6 +26,7 @@ import {EvCharger} from './evcharger/ev-charger';
 
 export class Control {
   type: string;
+  meterReportingSwitch?: boolean;
   startingCurrentDetection?: boolean;
   startingCurrentSwitch?: StartingCurrentSwitch;
   alwaysOnSwitch?: AlwaysOnSwitch;

@@ -30,7 +30,7 @@
     <ng-template #notEvCharger>
       <div class="sae__fields">
         <div class="field">
-          <mat-form-field>
+          <mat-form-field class="ControlComponent__controlType">
             <mat-label>{{'ControlComponent.type' | translate}}</mat-label>
             <mat-select formControlName="controlType" required="{{formHandler.isRequired('controlType')}}" (ngModelChange)="typeChanged($event)">
               <mat-option *ngFor="let controlType of controlTypes" [value]="controlType.value">

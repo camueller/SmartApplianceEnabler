@@ -90,12 +90,6 @@ export class MeterComponent implements OnChanges, OnInit, CanDeactivate<MeterCom
   ngOnInit() {
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.translate.get('dialog.confirmDelete').subscribe(translated => this.confirmDeleteMessage = translated);
-    const meterTypeKeys = [S0ElectricityMeter.TYPE, ModbusElectricityMeter.TYPE, HttpElectricityMeter.TYPE];
-    this.translate.get(meterTypeKeys).subscribe(translatedStrings => {
-      Object.keys(translatedStrings).forEach(key => {
-        this.meterTypes.push({value: simpleMeterType(key), viewValue: translatedStrings[key]} as ListItem);
-      });
-    });
     this.route.paramMap.subscribe(() => this.applianceId = this.route.snapshot.paramMap.get('id'));
     this.route.data.subscribe((data: {
       meter: Meter, meterDefaults: MeterDefaults,
@@ -107,6 +101,14 @@ export class MeterComponent implements OnChanges, OnInit, CanDeactivate<MeterCom
       this.settings = data.settings;
       this.settingsDefaults = data.settingsDefaults;
       this.isEvCharger = data.appliance.type === ApplianceType.EV_CHARGER.toString();
+      const meterTypeKeys = this.settings.modbusSettings
+        ? [S0ElectricityMeter.TYPE, ModbusElectricityMeter.TYPE, HttpElectricityMeter.TYPE]
+        : [S0ElectricityMeter.TYPE, HttpElectricityMeter.TYPE];
+      this.translate.get(meterTypeKeys).subscribe(translatedStrings => {
+        Object.keys(translatedStrings).forEach(key => {
+          this.meterTypes.push({value: simpleMeterType(key), viewValue: translatedStrings[key]} as ListItem);
+        });
+      });
       this.buildForm();
       if (this.form) {
         this.form.markAsPristine();

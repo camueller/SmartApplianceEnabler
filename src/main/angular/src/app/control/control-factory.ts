@@ -29,6 +29,7 @@ import {ModbusSwitch} from './modbus/modbus-switch';
 import {EvHttpControl} from './evcharger/http/ev-http-control';
 import {EvCharger} from './evcharger/ev-charger';
 import {ElectricVehicle} from './evcharger/electric-vehicle/electric-vehicle';
+import {MeterReportingSwitch} from './meterreporting/meter-reporting-switch';
 
 export class ControlFactory {
 
@@ -89,7 +90,8 @@ export class ControlFactory {
 
   initializeByType(control: Control, rawControl: any, type: string) {
     control.type = type;
-    if (control.type === AlwaysOnSwitch.TYPE) {
+    if (control.type === MeterReportingSwitch.TYPE) {
+    } else if (control.type === AlwaysOnSwitch.TYPE) {
       control.alwaysOnSwitch = this.createAlwaysOnSwitch(rawControl);
     } else if (control.type === MockSwitch.TYPE) {
       control.mockSwitch = this.createMockSwitch(rawControl);
@@ -105,7 +107,9 @@ export class ControlFactory {
   }
 
   getControlByType(control: Control): any {
-    if (control.type === AlwaysOnSwitch.TYPE) {
+    if (control.type === MeterReportingSwitch.TYPE) {
+      return control.meterReportingSwitch;
+    } else if (control.type === AlwaysOnSwitch.TYPE) {
       return control.alwaysOnSwitch;
     } else if (control.type === MockSwitch.TYPE) {
       return control.mockSwitch;
@@ -121,12 +125,16 @@ export class ControlFactory {
     return null;
   }
 
+  createMeterReportingSwitch(rawMeterReportingSwitch?: any): MeterReportingSwitch {
+    return rawMeterReportingSwitch;
+  }
+
   createAlwaysOnSwitch(rawAlwaysOnSwitch?: any): AlwaysOnSwitch {
-    return new AlwaysOnSwitch();
+    return rawAlwaysOnSwitch;
   }
 
   createMockSwitch(rawMockSwitch?: any): MockSwitch {
-    return new MockSwitch();
+    return rawMockSwitch;
   }
 
   createStartingCurrentSwitch(rawStartingCurrentSwitch: any): StartingCurrentSwitch {
@@ -138,11 +146,11 @@ export class ControlFactory {
   }
 
   createModbusSwitch(rawModbusSwitch: any): ModbusSwitch {
-    return {...rawModbusSwitch};
+    return rawModbusSwitch;
   }
 
   createHttpSwitch(rawHttpSwitch: any): HttpSwitch {
-    return {...rawHttpSwitch};
+    return rawHttpSwitch;
   }
 
   createEvCharger(rawEvCharger: any): EvCharger {

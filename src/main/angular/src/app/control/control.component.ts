@@ -47,6 +47,7 @@ import {EvCharger} from './evcharger/ev-charger';
 import {ListItem} from '../shared/list-item';
 import {simpleControlType} from '../shared/form-util';
 import {MeterDefaults} from '../meter/meter-defaults';
+import {MeterReportingSwitch} from './meterreporting/meter-reporting-switch';
 
 @Component({
   selector: 'app-control',
@@ -101,12 +102,6 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
   ngOnInit() {
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.translate.get('dialog.confirmDelete').subscribe(translated => this.confirmDeleteMessage = translated);
-    const controlTypeKeys = [Switch.TYPE, ModbusSwitch.TYPE, HttpSwitch.TYPE, AlwaysOnSwitch.TYPE];
-    this.translate.get(controlTypeKeys).subscribe(translatedStrings => {
-      Object.keys(translatedStrings).forEach(key => {
-        this.controlTypes.push({value: simpleControlType(key), viewValue: translatedStrings[key]} as ListItem);
-      });
-    });
     this.route.paramMap.subscribe(() => this.applianceId = this.route.snapshot.paramMap.get('id'));
     this.route.data.subscribe((data: {
       control: Control,
@@ -125,6 +120,14 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
       if (this.appliance.type === 'EVCharger') {
         this.control.type = EvCharger.TYPE;
       }
+      const controlTypeKeys = this.settings.modbusSettings
+        ? [MeterReportingSwitch.TYPE, Switch.TYPE, ModbusSwitch.TYPE, HttpSwitch.TYPE, AlwaysOnSwitch.TYPE]
+        : [MeterReportingSwitch.TYPE, Switch.TYPE, HttpSwitch.TYPE, AlwaysOnSwitch.TYPE];
+      this.translate.get(controlTypeKeys).subscribe(translatedStrings => {
+        Object.keys(translatedStrings).forEach(key => {
+          this.controlTypes.push({value: simpleControlType(key), viewValue: translatedStrings[key]} as ListItem);
+        });
+      });
       this.buildForm();
       if (this.form) {
         this.form.markAsPristine();
@@ -150,6 +153,10 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
       return true;
     }
     return this.dialogService.confirm(this.discardChangesMessage);
+  }
+
+  get isMeterReportingSwitch() {
+    return this.control && this.control.type === MeterReportingSwitch.TYPE;
   }
 
   get isAlwaysOnSwitch() {
@@ -194,13 +201,14 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
     } else if (this.isEvCharger) {
       this.control.startingCurrentDetection = false;
     }
-    if (this.isAlwaysOnSwitch) {
+    // FIXME remove this once notifications are handled for those types
+    if (this.isAlwaysOnSwitch || this.isMeterReportingSwitch) {
       this.form.markAsDirty();
     }
   }
 
   get canHaveStartingCurrentDetection(): boolean {
-    return !this.isAlwaysOnSwitch && this.control.type !== MockSwitch.TYPE;
+    return !(this.isMeterReportingSwitch || this.isAlwaysOnSwitch || this.control.type === MockSwitch.TYPE);
   }
 
   toggleStartingCurrentDetection() {
