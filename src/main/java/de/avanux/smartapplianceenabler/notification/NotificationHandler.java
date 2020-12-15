@@ -32,7 +32,7 @@ public class NotificationHandler implements ApplianceIdConsumer {
     private String applianceId;
     private String command;
     private String senderId;
-    private Set<String> requestedNotifications = new HashSet<>();
+    private Set<String> requestedNotifications = null;
 
     public NotificationHandler(String applianceId, String command, String senderId) {
         this.applianceId = applianceId;
@@ -48,19 +48,27 @@ public class NotificationHandler implements ApplianceIdConsumer {
 
     public void addRequestedNotifications(Notifications requestedNotifications) {
         if(requestedNotifications != null) {
-            this.requestedNotifications.addAll(requestedNotifications.getKeys());
-            logger.debug("{}: added notifications {}", applianceId, requestedNotifications.getKeys());
+            if(this.requestedNotifications == null) {
+                this.requestedNotifications = new HashSet<>();
+            }
+            List<String> keys = requestedNotifications.getKeys();
+            if(keys != null) {
+                this.requestedNotifications.addAll(keys);
+                logger.debug("{}: enabled notifications {}", applianceId, requestedNotifications.getKeys());
+            }
+            else {
+                logger.debug("{}: all notifications enabled", applianceId);
+            }
         }
     }
 
     protected boolean isRequestedNotification(NotificationKey key) {
-        return this.requestedNotifications.size() == 0 || this.requestedNotifications.contains(key.name());
+        return this.requestedNotifications != null
+                && (this.requestedNotifications.size() == 0 || this.requestedNotifications.contains(key.name()));
     }
 
     public void sendNotification(NotificationKey key) {
         if(isRequestedNotification(key)) {
-            // FIXME Locale.getDefault() testen auf Raspi
-            logger.debug("{}: ****** Default locale: {}", applianceId, Locale.getDefault());
             ResourceBundle messages = ResourceBundle.getBundle("messages", new Locale("de", "DE"));
             String message = messages.getString(key.name());
             try {
