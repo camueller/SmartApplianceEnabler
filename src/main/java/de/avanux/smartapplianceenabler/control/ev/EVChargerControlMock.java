@@ -136,11 +136,6 @@ public class EVChargerControlMock implements EVChargerControl, Meter {
     }
 
     @Override
-    public boolean isOn() {
-        return false;
-    }
-
-    @Override
     public int getAveragePower() {
         return 6800;
     }

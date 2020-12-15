@@ -45,15 +45,20 @@ public class AlwaysOnSwitch implements Control {
     }
 
     @Override
+    public boolean isOn() {
+        return true;
+    }
+
+    @Override
+    public boolean isControllable() {
+        return false;
+    }
+
+    @Override
     public void addControlStateChangedListener(ControlStateChangedListener listener) {
     }
 
     @Override
     public void removeControlStateChangedListener(ControlStateChangedListener listener) {
-    }
-
-    @Override
-    public boolean isOn() {
-        return true;
     }
 }

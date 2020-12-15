@@ -193,11 +193,6 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
     }
 
     @Override
-    public boolean isOn() {
-        return getAveragePower() > 0;
-    }
-
-    @Override
     public void init() {
         this.pollEnergyMeter.setPollEnergyExecutor(this);
         if(this.httpConfiguration != null) {

@@ -210,6 +210,11 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
     }
 
     @Override
+    public boolean isControllable() {
+        return true;
+    }
+
+    @Override
     public boolean isOn() {
         return on;
     }

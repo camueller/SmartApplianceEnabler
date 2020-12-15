@@ -36,7 +36,6 @@ public class PulsePowerMeter implements ApplianceIdConsumer, Validateable {
     private List<Long> impulseTimestamps = Collections.synchronizedList(new ArrayList<Long>());
     private Integer measurementInterval; // seconds
     private Integer impulsesPerKwh;
-    private Control control;
 
     @Override
     public void validate() throws ConfigurationException {
@@ -62,10 +61,6 @@ public class PulsePowerMeter implements ApplianceIdConsumer, Validateable {
 
     public Integer getMeasurementInterval() {
         return measurementInterval;
-    }
-
-    public void setControl(Control control) {
-        this.control = control;
     }
 
     @Override
@@ -190,16 +185,4 @@ public class PulsePowerMeter implements ApplianceIdConsumer, Validateable {
         }
         return Double.valueOf(maxPower).intValue();
     }
-
-    public boolean isOn() {
-        return isOn(System.currentTimeMillis());
-    }
-
-    boolean isOn(long timestampNow) {
-        if(control != null) {
-            return control.isOn();
-        }
-        return getAveragePower(timestampNow) >= 1;
-    }
-
 }

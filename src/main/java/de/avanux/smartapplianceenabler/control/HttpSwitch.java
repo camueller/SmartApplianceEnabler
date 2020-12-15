@@ -131,6 +131,11 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
     }
 
     @Override
+    public boolean isControllable() {
+        return true;
+    }
+
+    @Override
     public boolean isOn() {
         if(this.httpRead != null) {
             ParentWithChild<HttpRead, HttpReadValue> onRead = HttpRead.getFirstHttpRead(ControlValueName.On.name(),

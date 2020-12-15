@@ -85,6 +85,11 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
     }
 
     @Override
+    public boolean isControllable() {
+        return true;
+    }
+
+    @Override
     public boolean on(LocalDateTime now, boolean switchOn) {
         boolean result = false;
         logger.info("{}: Switching {}", getApplianceId(), (switchOn ? "on" : "off"));

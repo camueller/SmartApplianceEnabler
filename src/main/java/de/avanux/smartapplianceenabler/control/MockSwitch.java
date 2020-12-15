@@ -50,6 +50,11 @@ public class MockSwitch implements Control, ApplianceIdConsumer {
     }
 
     @Override
+    public boolean isControllable() {
+        return true;
+    }
+
+    @Override
     public boolean on(LocalDateTime now, boolean switchOn) {
         logger.info("{}: Switching {}", applianceId, (switchOn ? "on" : "off"));
         on = switchOn;

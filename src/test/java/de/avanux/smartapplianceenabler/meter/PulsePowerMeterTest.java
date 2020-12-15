@@ -38,35 +38,6 @@ public class PulsePowerMeterTest {
     }
 
     @Test
-    public void isOn_powerOnAlways() {
-        pulsePowerMeter.setControl(new AlwaysOnSwitch());
-        assertTrue(pulsePowerMeter.isOn(currentTimeMillis));
-    }
-
-    @Test
-    public void isOn_0ts() {
-        assertFalse(pulsePowerMeter.isOn(currentTimeMillis));
-    }
-
-    @Test
-    public void isOn_1ts() {
-        addTimestamps(-3600);
-        assertFalse(pulsePowerMeter.isOn(currentTimeMillis));
-    }
-
-    @Test
-    public void isOn_2ts() {
-        addTimestamps(-9000, -5400);
-        assertTrue(pulsePowerMeter.isOn(currentTimeMillis));
-    }
-
-    @Test
-    public void isOn_2ts_overdue() {
-        addTimestamps(-9001, -5401);
-        assertFalse(pulsePowerMeter.isOn(currentTimeMillis));
-    }
-
-    @Test
     public void getAveragePower_0ts() {
         assertEquals(0, pulsePowerMeter.getAveragePower(currentTimeMillis));
     }

@@ -251,16 +251,9 @@ public class SempController {
             deviceStatus.setEMSignalsAccepted(appliance.isAcceptControlRecommendations());
             logger.debug("{}: Reporting device status from control", appliance.getId());
         } else {
-            // there is no control for the appliance ...
-            if (meter != null) {
-                // ... but we can derive the status from power consumption
-                deviceStatus.setStatus(meter.isOn() ? Status.On : Status.Off);
-                logger.debug("{}: Reporting device status based on power consumption", appliance.getId());
-            } else {
-                // ... and no meter; we have to assume the appliance is switched off
-                deviceStatus.setStatus(Status.Offline);
-                logger.debug("{}: Appliance has neither control nor meter.", appliance.getId());
-            }
+            // ... and no meter; we have to assume the appliance is switched off
+            deviceStatus.setStatus(Status.Offline);
+            logger.debug("{}: Appliance has neither control nor meter.", appliance.getId());
 
             // an appliance without control cannot be controlled ;-)
             deviceStatus.setEMSignalsAccepted(false);

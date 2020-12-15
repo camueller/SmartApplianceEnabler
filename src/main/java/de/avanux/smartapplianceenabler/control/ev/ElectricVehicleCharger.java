@@ -463,6 +463,11 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     }
 
     @Override
+    public boolean isControllable() {
+        return true;
+    }
+
+    @Override
     public boolean on(LocalDateTime now, boolean switchOn) {
         // only change state if requested state differs from actual state
         if(isOn() ^ switchOn) {

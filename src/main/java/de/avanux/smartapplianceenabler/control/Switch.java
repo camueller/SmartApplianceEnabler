@@ -90,6 +90,11 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
     }
 
     @Override
+    public boolean isControllable() {
+        return true;
+    }
+
+    @Override
     public boolean on(LocalDateTime now, boolean switchOn) {
         logger.info("{}: Switching {} {}", getApplianceId(), (switchOn ? "on" : "off"), getGpio());
         if (outputPin != null) {

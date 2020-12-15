@@ -73,10 +73,6 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
         return minPulseDuration != null ? minPulseDuration : S0ElectricityMeterDefaults.getMinPulseDuration();
     }
 
-    public void setControl(Control control) {
-        this.pulsePowerMeter.setControl(control);
-    }
-
     @Override
     public void setApplianceId(String applianceId) {
         super.setApplianceId(applianceId);
@@ -130,11 +126,6 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
     @Override
     public void addPowerUpdateListener(PowerUpdateListener listener) {
         this.powerMeterListeners.add(listener);
-    }
-
-    @Override
-    public boolean isOn() {
-        return pulsePowerMeter.isOn();
     }
 
     @Override

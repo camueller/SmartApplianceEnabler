@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 /**
  * A control can change the on/off state of an appliance.
  */
-public interface Control extends ApplianceLifeCycle, ControlMonitor {
+public interface Control extends ApplianceLifeCycle {
 
     /**
      * Set the the appliance state.
@@ -32,6 +32,14 @@ public interface Control extends ApplianceLifeCycle, ControlMonitor {
      * @return true, if the requested state was set; otherwise false
      */
     boolean on(LocalDateTime now, boolean switchOn);
+
+    /**
+     * Returns the state of the control.
+     * @return true, if the control state is "on"; otherwise false
+     */
+    boolean isOn();
+
+    boolean isControllable();
 
     void addControlStateChangedListener(ControlStateChangedListener listener);
 

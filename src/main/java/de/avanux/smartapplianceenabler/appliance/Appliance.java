@@ -55,6 +55,7 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
     @XmlElements({
             @XmlElement(name = "AlwaysOnSwitch", type = AlwaysOnSwitch.class),
             @XmlElement(name = "HttpSwitch", type = HttpSwitch.class),
+            @XmlElement(name = "MeterReportingSwitch", type = MeterReportingSwitch.class),
             @XmlElement(name = "MockSwitch", type = MockSwitch.class),
             @XmlElement(name = "ModbusSwitch", type = ModbusSwitch.class),
             @XmlElement(name = "StartingCurrentSwitch", type = StartingCurrentSwitch.class),
@@ -144,7 +145,7 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
     }
 
     public boolean isAcceptControlRecommendations() {
-        if(this.control instanceof AlwaysOnSwitch) {
+        if(!this.control.isControllable()) {
             return false;
         }
         if(this.timeframeIntervalHandler != null) {
@@ -176,29 +177,6 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
         if(getTimeframeIntervalHandler() == null) {
             setTimeframeIntervalHandler(new TimeframeIntervalHandler(this.schedules, this.control));
         }
-        if(control != null) {
-            if(control instanceof ApplianceIdConsumer) {
-                ((ApplianceIdConsumer) control).setApplianceId(id);
-            }
-            if(control instanceof NotificationProvider) {
-                ((NotificationProvider) control).setNotificationHandler(notificationHandler);
-            }
-            if(isEvCharger()) {
-                ((ElectricVehicleCharger) control).setAppliance(this);
-            }
-            if(control instanceof StartingCurrentSwitch) {
-                Control wrappedControl = ((StartingCurrentSwitch) control).getControl();
-                ((ApplianceIdConsumer) wrappedControl).setApplianceId(id);
-            }
-            else {
-                control.addControlStateChangedListener(this);
-                logger.debug("{}: Registered as {} with {}", id, ControlStateChangedListener.class.getSimpleName(),
-                        control.getClass().getSimpleName());
-            }
-            if(!(control instanceof  StartingCurrentSwitch)) {
-                control.init();
-            }
-        }
         Meter meter = getMeter();
         if(meter != null) {
             if(meter instanceof ApplianceIdConsumer) {
@@ -208,12 +186,33 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
                 ((NotificationProvider) meter).setNotificationHandler(notificationHandler);
             }
             meter.init();
-            if(control != null) {
-                if(meter instanceof S0ElectricityMeter) {
-                    ((S0ElectricityMeter) meter).setControl(control);
-                }
-                logger.debug("{}: {} uses {}", id, meter.getClass().getSimpleName(), control.getClass().getSimpleName());
-            }
+        }
+        if(control == null) {
+            control = new MeterReportingSwitch();
+        }
+        if(control instanceof ApplianceIdConsumer) {
+            ((ApplianceIdConsumer) control).setApplianceId(id);
+        }
+        if(control instanceof NotificationProvider) {
+            ((NotificationProvider) control).setNotificationHandler(notificationHandler);
+        }
+        if(isEvCharger()) {
+            ((ElectricVehicleCharger) control).setAppliance(this);
+        }
+        if(control instanceof MeterReportingSwitch) {
+            ((MeterReportingSwitch) control).setMeter(meter);
+        }
+        if(control instanceof StartingCurrentSwitch) {
+            Control wrappedControl = ((StartingCurrentSwitch) control).getControl();
+            ((ApplianceIdConsumer) wrappedControl).setApplianceId(id);
+        }
+        else {
+            control.addControlStateChangedListener(this);
+            logger.debug("{}: Registered as {} with {}", id, ControlStateChangedListener.class.getSimpleName(),
+                    control.getClass().getSimpleName());
+        }
+        if(!(control instanceof StartingCurrentSwitch)) {
+            control.init();
         }
 
         if(control instanceof StartingCurrentSwitch) {
