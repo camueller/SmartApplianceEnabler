@@ -115,7 +115,7 @@
       <mat-form-field class="ApplianceComponent__notificationSenderId">
         <mat-label>{{'ApplianceComponent.notification.senderId' | translate}}</mat-label>
         <input matInput type="text" formControlName="notificationSenderId"
-               placeholder="{{appliance.id}}"
+               placeholder="{{form.controls.id?.value}}"
                required="{{formHandler.isRequired('notificationSenderId')}}">
         <mat-error *ngIf="errors.notificationSenderId">{{errors.notificationSenderId}}</mat-error>
       </mat-form-field>
