@@ -212,17 +212,17 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
     @Override
     public boolean on(LocalDateTime now, boolean switchOn) {
         logger.debug("{}: Setting switch state to {}", applianceId, (switchOn ? "on" : "off"));
-        on = switchOn;
         if (switchOn) {
             // don't switch off appliance - otherwise it cannot be operated
             applianceOn(now,true);
             switchOnTime = now;
             startingCurrentDetected = false;
         }
-        if(this.notificationHandler != null) {
+        if(this.notificationHandler != null && switchOn != on) {
             this.notificationHandler.sendNotification(switchOn ? NotificationKey.CONTROL_ON : NotificationKey.CONTROL_OFF);
         }
         updateControlStateChangedListeners(now, switchOn);
+        on = switchOn;
         return on;
     }
 

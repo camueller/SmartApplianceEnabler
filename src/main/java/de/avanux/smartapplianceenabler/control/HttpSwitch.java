@@ -167,13 +167,13 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
                 int statusCode = response.getStatusLine().getStatusCode();
                 this.httpTransactionExecutor.closeResponse(response);
                 if(statusCode == HttpStatus.SC_OK) {
-                    on = switchOn;
-                    if(this.notificationHandler != null) {
+                    if(this.notificationHandler != null && switchOn != on) {
                         this.notificationHandler.sendNotification(switchOn ? NotificationKey.CONTROL_ON : NotificationKey.CONTROL_OFF);
                     }
                     for(ControlStateChangedListener listener : new ArrayList<>(controlStateChangedListeners)) {
                         listener.controlStateChanged(now, switchOn);
                     }
+                    on = switchOn;
                     return true;
                 }
             }

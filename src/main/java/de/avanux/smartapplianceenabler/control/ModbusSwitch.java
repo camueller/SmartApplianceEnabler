@@ -103,6 +103,10 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
         if (write != null) {
             ModbusWrite registerWrite = write.parent();
             try {
+                boolean on = false;
+                if(this.notificationHandler != null) {
+                    on = isOn();
+                }
                 ModbusWriteTransactionExecutor executor = ModbusExecutorFactory.getWriteExecutor(getApplianceId(),
                         registerWrite.getType(), registerWrite.getAddress(),registerWrite.getFactorToValue());
                 executeTransaction(executor, true);
@@ -112,7 +116,7 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
                 else if(executor instanceof WriteHoldingRegisterExecutor) {
                     result = 1 == ((WriteHoldingRegisterExecutor) executor).getResult();
                 }
-                if(this.notificationHandler != null) {
+                if(this.notificationHandler != null && switchOn != on) {
                     this.notificationHandler.sendNotification(switchOn ? NotificationKey.CONTROL_ON : NotificationKey.CONTROL_OFF);
                 }
                 for(ControlStateChangedListener listener : new ArrayList<>(controlStateChangedListeners)) {

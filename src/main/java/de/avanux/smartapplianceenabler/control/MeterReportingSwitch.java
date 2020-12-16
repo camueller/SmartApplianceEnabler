@@ -100,13 +100,19 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
     public boolean isOn() {
         if(this.meter != null) {
             // FIXME konfigurierbar machen
-            boolean on =  this.meter.getAveragePower() > 5;
+            int power = this.meter.getAveragePower();
+            boolean on = power > 5;
+            logger.debug("{}: power={} on={} onBefore={} notificationHandlerSet={}", applianceId, power, on, onBefore,
+                    this.notificationHandler != null);
             if(onBefore != null && this.notificationHandler != null && on != onBefore) {
                 logger.info("{}: Switch {} detected.", applianceId, (on ? "on" : "off"));
                 this.notificationHandler.sendNotification(on ? NotificationKey.CONTROL_ON : NotificationKey.CONTROL_OFF);
             }
             onBefore = on;
             return on;
+        }
+        else {
+            logger.error("{}: Meter not set.", applianceId);
         }
         return false;
     }
