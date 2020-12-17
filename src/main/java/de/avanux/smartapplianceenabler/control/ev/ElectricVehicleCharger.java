@@ -484,9 +484,6 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                 logger.info("{}: Switching off", applianceId);
                 stopCharging();
             }
-            if(this.notificationHandler != null) {
-                this.notificationHandler.sendNotification(switchOn ? NotificationKey.CONTROL_ON : NotificationKey.CONTROL_OFF);
-            }
             for(ControlStateChangedListener listener : new ArrayList<>(controlStateChangedListeners)) {
                 logger.debug("{}: Notifying {} {}", applianceId, ControlStateChangedListener.class.getSimpleName(),
                         listener.getClass().getSimpleName());
