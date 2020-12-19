@@ -114,6 +114,9 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
   }
 
   addModbusSetting() {
+    if (! this.settings.modbusSettings) {
+      this.settings.modbusSettings = [];
+    }
     this.settings.modbusSettings.push(new ModbusSetting());
     this.modbusSettingsFormArray.push(new FormGroup({}));
     this.form.markAsDirty();
