@@ -6,7 +6,8 @@
   "author": "Axel Müller <axel.mueller@avanux.de>",
   "license": "GPL",
   "scripts": {
-    "debug": "testcafe $NODE_DEBUG_OPTION chrome"
+    "debug": "testcafe $NODE_DEBUG_OPTION chrome",
+    "test": "testcafe chrome \"src/*.spec.ts\""
   },
   "private": true,
   "dependencies": {
