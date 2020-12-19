@@ -138,7 +138,7 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
         pulsePowerMeter.setMeasurementInterval(getMeasurementInterval());
         pulseEnergyMeter.setImpulsesPerKwh(impulsesPerKwh);
         logger.debug("{}: configured: GPIO={} impulsesPerKwh={} minPulseDuration={} pinPullResistance={}",
-                getApplianceId(), getGpio().getAddress(), getImpulsesPerKwh(), getMinPulseDuration(),
+                getApplianceId(), getGpio() != null ? getGpio().getAddress() : null, getImpulsesPerKwh(), getMinPulseDuration(),
                 getPinPullResistance().name());
     }
 

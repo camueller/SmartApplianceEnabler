@@ -290,15 +290,16 @@ public class SempController {
     private PlanningRequest createPlanningRequest(LocalDateTime now, Appliance appliance) {
         List<de.avanux.smartapplianceenabler.semp.webservice.Timeframe> sempTimeFrames
                 = new ArrayList<de.avanux.smartapplianceenabler.semp.webservice.Timeframe>();
-        List<TimeframeInterval> queue = appliance.getTimeframeIntervalHandler().getQueue();
-        queue.stream()
-                .filter(timeframeInterval -> timeframeInterval.getRequest().isEnabled())
-                .forEach(timeframeInterval -> {
-                    Timeframe sempTimeFrame = createSempTimeFrame(now, appliance.getId(), timeframeInterval);
-                    sempTimeFrames.add(sempTimeFrame);
-                    logger.debug("{}: Timeframe added to PlanningRequest: {}", appliance.getId(), sempTimeFrame);
-                });
-
+        if(appliance.getTimeframeIntervalHandler() != null) {
+            List<TimeframeInterval> queue = appliance.getTimeframeIntervalHandler().getQueue();
+            queue.stream()
+                    .filter(timeframeInterval -> timeframeInterval.getRequest().isEnabled())
+                    .forEach(timeframeInterval -> {
+                        Timeframe sempTimeFrame = createSempTimeFrame(now, appliance.getId(), timeframeInterval);
+                        sempTimeFrames.add(sempTimeFrame);
+                        logger.debug("{}: Timeframe added to PlanningRequest: {}", appliance.getId(), sempTimeFrame);
+                    });
+        }
         final PlanningRequest planningRequest = new PlanningRequest();
         planningRequest.setTimeframes(sempTimeFrames);
         return sempTimeFrames.size() > 0 ? planningRequest : null;
