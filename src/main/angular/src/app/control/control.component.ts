@@ -225,7 +225,6 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
     } else if (this.isEvCharger) {
       this.control.startingCurrentDetection = false;
     }
-    // FIXME remove this once notifications are handled for those types
     if (this.isAlwaysOnSwitch || this.isMeterReportingSwitch) {
       this.form.markAsDirty();
     }
