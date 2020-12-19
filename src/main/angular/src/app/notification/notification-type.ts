@@ -16,23 +16,13 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.avanux.smartapplianceenabler.notification;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import java.util.List;
-
-@XmlAccessorType(XmlAccessType.FIELD)
-public class Notifications {
-    @XmlElement(name = "Type")
-    private List<String> types;
-
-    public List<String> getTypes() {
-        return types;
-    }
-
-    public void setTypes(List<String> types) {
-        this.types = types;
-    }
+export enum NotificationType {
+  CONTROL_ON = 'CONTROL_ON',
+  CONTROL_OFF = 'CONTROL_OFF',
+  EVCHARGER_VEHICLE_NOT_CONNECTED = 'EVCHARGER_VEHICLE_NOT_CONNECTED',
+  EVCHARGER_VEHICLE_CONNECTED = 'EVCHARGER_VEHICLE_CONNECTED',
+  EVCHARGER_CHARGING = 'EVCHARGER_CHARGING',
+  EVCHARGER_CHARGING_COMPLETED = 'EVCHARGER_CHARGING_COMPLETED',
+  EVCHARGER_ERROR = 'EVCHARGER_ERROR',
+  COMMUNICATION_ERROR = 'COMMUNICATION_ERROR',
 }

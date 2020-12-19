@@ -19,12 +19,11 @@ package de.avanux.smartapplianceenabler.meter;
 
 import com.pi4j.io.gpio.*;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
-import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.GpioControllable;
 import java.time.LocalDateTime;
 
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
-import de.avanux.smartapplianceenabler.notification.NotificationKey;
+import de.avanux.smartapplianceenabler.notification.NotificationType;
 import de.avanux.smartapplianceenabler.notification.NotificationProvider;
 import de.avanux.smartapplianceenabler.notification.Notifications;
 import org.slf4j.Logger;
@@ -157,7 +156,7 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
             catch(Exception e) {
                 logger.error("{}: Error start metering using {}", getApplianceId(), getGpio(), e);
                 if(this.notificationHandler != null) {
-                    this.notificationHandler.sendNotification(NotificationKey.METER_COMMUNICATION_ERROR);
+                    this.notificationHandler.sendNotification(NotificationType.COMMUNICATION_ERROR);
                 }
             }
         }

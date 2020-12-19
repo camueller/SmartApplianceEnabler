@@ -21,7 +21,7 @@ package de.avanux.smartapplianceenabler.control;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
-import de.avanux.smartapplianceenabler.notification.NotificationKey;
+import de.avanux.smartapplianceenabler.notification.NotificationType;
 import de.avanux.smartapplianceenabler.notification.NotificationProvider;
 import de.avanux.smartapplianceenabler.notification.Notifications;
 import org.slf4j.Logger;
@@ -106,7 +106,7 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
                     this.notificationHandler != null);
             if(onBefore != null && this.notificationHandler != null && on != onBefore) {
                 logger.info("{}: Switch {} detected.", applianceId, (on ? "on" : "off"));
-                this.notificationHandler.sendNotification(on ? NotificationKey.CONTROL_ON : NotificationKey.CONTROL_OFF);
+                this.notificationHandler.sendNotification(on ? NotificationType.CONTROL_ON : NotificationType.CONTROL_OFF);
             }
             onBefore = on;
             return on;

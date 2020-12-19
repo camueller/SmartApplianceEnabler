@@ -90,7 +90,9 @@ export class ControlFactory {
 
   initializeByType(control: Control, rawControl: any, type: string) {
     control.type = type;
+    control.notifications = rawControl.notifications;
     if (control.type === MeterReportingSwitch.TYPE) {
+      control.meterReportingSwitch = this.createMeterReportingSwitch(rawControl);
     } else if (control.type === AlwaysOnSwitch.TYPE) {
       control.alwaysOnSwitch = this.createAlwaysOnSwitch(rawControl);
     } else if (control.type === MockSwitch.TYPE) {
@@ -191,6 +193,7 @@ export class ControlFactory {
   }
 
   toJSON(control: Control): string {
+    console.log('control=', control);
     this.logger.debug('Control (TYPE): ' + JSON.stringify(control));
     let controlUsed: any;
     if (control.startingCurrentDetection) {
@@ -213,12 +216,14 @@ export class ControlFactory {
     }
     let rawControl: string;
     if (controlUsed) {
+      controlUsed.notifications = control.notifications;
       if (control.type === EvCharger.TYPE) {
         this.toJSONEvCharger(control);
       }
       rawControl = JSON.stringify(controlUsed);
     }
     this.logger.debug('Control (JSON): ' + rawControl);
+    console.log('rawControl=', rawControl);
     return rawControl;
   }
 

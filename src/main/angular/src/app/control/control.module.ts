@@ -20,6 +20,7 @@ import {ControlService} from './control-service';
 import {ControlResolver} from './control-resolver.service';
 import {ControlDefaultsResolver} from './control-defaults-resolver.service';
 import {HttpLoaderFactory} from '../shared/http-loader-factory';
+import {NotificationModule} from '../notification/notification.module';
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import {HttpLoaderFactory} from '../shared/http-loader-factory';
     HttpModule,
     HttpClientModule,
     ModbusModule,
+    NotificationModule,
     ReactiveFormsModule,
     TranslateModule.forRoot({
       loader: {
@@ -46,7 +48,7 @@ import {HttpLoaderFactory} from '../shared/http-loader-factory';
         useFactory: HttpLoaderFactory,
         deps: [HttpClient]
       }
-    })
+    }),
   ],
   providers: [
     ControlService,

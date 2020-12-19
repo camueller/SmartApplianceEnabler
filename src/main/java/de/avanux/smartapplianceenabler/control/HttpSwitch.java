@@ -22,7 +22,7 @@ import de.avanux.smartapplianceenabler.appliance.ApplianceLifeCycle;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.http.*;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
-import de.avanux.smartapplianceenabler.notification.NotificationKey;
+import de.avanux.smartapplianceenabler.notification.NotificationType;
 import de.avanux.smartapplianceenabler.notification.NotificationProvider;
 import de.avanux.smartapplianceenabler.notification.Notifications;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolHandler;
@@ -168,7 +168,7 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
                 this.httpTransactionExecutor.closeResponse(response);
                 if(statusCode == HttpStatus.SC_OK) {
                     if(this.notificationHandler != null && switchOn != on) {
-                        this.notificationHandler.sendNotification(switchOn ? NotificationKey.CONTROL_ON : NotificationKey.CONTROL_OFF);
+                        this.notificationHandler.sendNotification(switchOn ? NotificationType.CONTROL_ON : NotificationType.CONTROL_OFF);
                     }
                     for(ControlStateChangedListener listener : new ArrayList<>(controlStateChangedListeners)) {
                         listener.controlStateChanged(now, switchOn);
@@ -179,7 +179,7 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
             }
             else {
                 if(this.notificationHandler != null) {
-                    this.notificationHandler.sendNotification(NotificationKey.CONTROL_COMMUNICATION_ERROR);
+                    this.notificationHandler.sendNotification(NotificationType.COMMUNICATION_ERROR);
                 }
             }
         }

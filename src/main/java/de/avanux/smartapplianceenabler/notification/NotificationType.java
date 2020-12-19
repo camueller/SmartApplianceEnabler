@@ -18,14 +18,13 @@
 
 package de.avanux.smartapplianceenabler.notification;
 
-public enum NotificationKey {
+public enum NotificationType {
     CONTROL_ON,
     CONTROL_OFF,
-    CONTROL_COMMUNICATION_ERROR,
+    COMMUNICATION_ERROR,
     EVCHARGER_VEHICLE_NOT_CONNECTED,
     EVCHARGER_VEHICLE_CONNECTED,
     EVCHARGER_CHARGING,
     EVCHARGER_CHARGING_COMPLETED,
     EVCHARGER_ERROR,
-    METER_COMMUNICATION_ERROR,
 }

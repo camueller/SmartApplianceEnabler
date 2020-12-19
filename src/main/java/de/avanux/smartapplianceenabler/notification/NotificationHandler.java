@@ -51,10 +51,10 @@ public class NotificationHandler implements ApplianceIdConsumer {
             if(this.requestedNotifications == null) {
                 this.requestedNotifications = new HashSet<>();
             }
-            List<String> keys = requestedNotifications.getKeys();
+            List<String> keys = requestedNotifications.getTypes();
             if(keys != null) {
                 this.requestedNotifications.addAll(keys);
-                logger.debug("{}: enabled notifications {}", applianceId, requestedNotifications.getKeys());
+                logger.debug("{}: enabled notifications {}", applianceId, requestedNotifications.getTypes());
             }
             else {
                 logger.debug("{}: all notifications enabled", applianceId);
@@ -62,21 +62,21 @@ public class NotificationHandler implements ApplianceIdConsumer {
         }
     }
 
-    protected boolean isRequestedNotification(NotificationKey key) {
+    protected boolean isRequestedNotification(NotificationType type) {
         return this.requestedNotifications != null
-                && (this.requestedNotifications.size() == 0 || this.requestedNotifications.contains(key.name()));
+                && (this.requestedNotifications.size() == 0 || this.requestedNotifications.contains(type.name()));
     }
 
-    public void sendNotification(NotificationKey key) {
-        if(isRequestedNotification(key)) {
+    public void sendNotification(NotificationType type) {
+        if(isRequestedNotification(type)) {
             ResourceBundle messages = ResourceBundle.getBundle("messages", new Locale("de", "DE"));
-            String message = messages.getString(key.name());
+            String message = messages.getString(type.name());
             try {
                 logger.debug("{}: Executing notification command: {}", applianceId, command);
                 ProcessBuilder builder = new ProcessBuilder(
                         command,
                         senderId != null ? senderId : applianceId,
-                        key.name(),
+                        type.name(),
                         message);
                 Process p = builder.start();
                 int rc = p.waitFor();

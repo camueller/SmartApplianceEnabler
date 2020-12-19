@@ -50,7 +50,7 @@ import {ScheduleModule} from './schedule/schedule.module';
 import {StatusModule} from './status/status.module';
 import {HttpLoaderFactory} from './shared/http-loader-factory';
 import {SettingsModbusComponent} from './settings/modbus/settings-modbus.component';
-import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
+import {NotificationModule} from './notification/notification.module';
 
 @NgModule({
   declarations: [
@@ -72,6 +72,7 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
     HttpClientModule,
     MaterialModule,
     MeterModule,
+    NotificationModule,
     ReactiveFormsModule,
     ScheduleModule,
     StatusModule,

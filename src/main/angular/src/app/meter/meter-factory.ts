@@ -58,6 +58,7 @@ export class MeterFactory {
     } else if (meter.type === HttpElectricityMeter.TYPE) {
       meter.httpElectricityMeter = this.createHttpElectricityMeter(rawMeter);
     }
+    meter.notifications = rawMeter.notifications;
     this.logger.debug('Meter (TYPE): ', meter);
     return meter;
   }
@@ -71,6 +72,9 @@ export class MeterFactory {
       meterUsed = meter.modbusElectricityMeter;
     } else if (meter.type === HttpElectricityMeter.TYPE) {
       meterUsed = meter.httpElectricityMeter;
+    }
+    if (meterUsed) {
+      meterUsed.notifications = meter.notifications;
     }
     let meterRaw: string;
     if (meterUsed != null) {

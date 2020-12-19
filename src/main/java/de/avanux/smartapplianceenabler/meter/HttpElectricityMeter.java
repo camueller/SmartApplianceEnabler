@@ -22,7 +22,7 @@ import de.avanux.smartapplianceenabler.appliance.ApplianceLifeCycle;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.http.*;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
-import de.avanux.smartapplianceenabler.notification.NotificationKey;
+import de.avanux.smartapplianceenabler.notification.NotificationType;
 import de.avanux.smartapplianceenabler.notification.NotificationProvider;
 import de.avanux.smartapplianceenabler.notification.Notifications;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolHandler;
@@ -283,7 +283,7 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
             return this.httpHandler.getFloatValue(read, getContentContentProtocolHandler());
         }
         catch(Exception e) {
-            this.notificationHandler.sendNotification(NotificationKey.METER_COMMUNICATION_ERROR);
+            this.notificationHandler.sendNotification(NotificationType.COMMUNICATION_ERROR);
             throw e;
         }
     }

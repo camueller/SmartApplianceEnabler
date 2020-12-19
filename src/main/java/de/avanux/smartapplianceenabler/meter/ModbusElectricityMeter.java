@@ -26,7 +26,7 @@ import de.avanux.smartapplianceenabler.modbus.executor.ReadDecimalInputRegisterE
 import de.avanux.smartapplianceenabler.modbus.executor.ReadFloatInputRegisterExecutor;
 import de.avanux.smartapplianceenabler.modbus.executor.ReadFloatHoldingRegisterExecutor;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
-import de.avanux.smartapplianceenabler.notification.NotificationKey;
+import de.avanux.smartapplianceenabler.notification.NotificationType;
 import de.avanux.smartapplianceenabler.notification.NotificationProvider;
 import de.avanux.smartapplianceenabler.notification.Notifications;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
@@ -224,7 +224,7 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
         catch(Exception e) {
             logger.error("{}: Error reading input register {}", getApplianceId(), registerRead.getAddress(), e);
             if(this.notificationHandler != null) {
-                this.notificationHandler.sendNotification(NotificationKey.METER_COMMUNICATION_ERROR);
+                this.notificationHandler.sendNotification(NotificationType.COMMUNICATION_ERROR);
             }
         }
         return 0;

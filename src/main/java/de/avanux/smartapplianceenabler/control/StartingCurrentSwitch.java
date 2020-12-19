@@ -22,7 +22,7 @@ import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.meter.PowerUpdateListener;
 import de.avanux.smartapplianceenabler.meter.S0ElectricityMeter;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
-import de.avanux.smartapplianceenabler.notification.NotificationKey;
+import de.avanux.smartapplianceenabler.notification.NotificationType;
 import de.avanux.smartapplianceenabler.notification.NotificationProvider;
 import de.avanux.smartapplianceenabler.notification.Notifications;
 import de.avanux.smartapplianceenabler.schedule.DayTimeframeCondition;
@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 import javax.xml.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Allows to prepare operation of an appliance while only little power is consumed.
@@ -219,7 +218,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
             startingCurrentDetected = false;
         }
         if(this.notificationHandler != null && switchOn != on) {
-            this.notificationHandler.sendNotification(switchOn ? NotificationKey.CONTROL_ON : NotificationKey.CONTROL_OFF);
+            this.notificationHandler.sendNotification(switchOn ? NotificationType.CONTROL_ON : NotificationType.CONTROL_OFF);
         }
         updateControlStateChangedListeners(now, switchOn);
         on = switchOn;

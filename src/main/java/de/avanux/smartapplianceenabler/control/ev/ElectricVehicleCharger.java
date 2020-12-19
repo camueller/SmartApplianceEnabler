@@ -519,9 +519,9 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     private void onEVChargerStateChanged(LocalDateTime now, EVChargerState previousState, EVChargerState newState) {
         this.startChargingRequested = false;
         this.stopChargingRequested = false;
-        NotificationKey notificationKey = NotificationKey.valueOf("EVCHARGER_" + newState);
+        NotificationType notificationType = NotificationType.valueOf("EVCHARGER_" + newState);
         if(this.notificationHandler != null) {
-            this.notificationHandler.sendNotification(notificationKey);
+            this.notificationHandler.sendNotification(notificationType);
         }
         if(newState == EVChargerState.VEHICLE_CONNECTED) {
             if (this.vehicles != null && this.vehicles.size() > 0) {

@@ -48,6 +48,8 @@ import {ListItem} from '../shared/list-item';
 import {simpleControlType} from '../shared/form-util';
 import {MeterDefaults} from '../meter/meter-defaults';
 import {MeterReportingSwitch} from './meterreporting/meter-reporting-switch';
+import {NotificationComponent} from '../notification/notification.component';
+import {NotificationType} from '../notification/notification-type';
 
 @Component({
   selector: 'app-control',
@@ -65,6 +67,8 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
   controlEvchargerComp: ControlEvchargerComponent;
   @ViewChild(ControlStartingcurrentComponent)
   controlStartingcurrentComp: ControlStartingcurrentComponent;
+  @ViewChild(NotificationComponent)
+  notificationComp: NotificationComponent;
   form: FormGroup;
   formHandler: FormHandler;
   applianceId: string;
@@ -155,6 +159,26 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
     return this.dialogService.confirm(this.discardChangesMessage);
   }
 
+  get notficationTypes() {
+    return this.isEvCharger
+      ? [
+        NotificationType.EVCHARGER_VEHICLE_NOT_CONNECTED,
+        NotificationType.EVCHARGER_VEHICLE_CONNECTED,
+        NotificationType.EVCHARGER_CHARGING,
+        NotificationType.EVCHARGER_CHARGING_COMPLETED,
+        NotificationType.EVCHARGER_ERROR
+      ]
+      : [
+        NotificationType.CONTROL_ON,
+        NotificationType.CONTROL_OFF,
+        NotificationType.COMMUNICATION_ERROR
+      ];
+  }
+
+  get isNotifcationEnabled() {
+    return !!this.settings.notificationCommand;
+  }
+
   get isMeterReportingSwitch() {
     return this.control && this.control.type === MeterReportingSwitch.TYPE;
   }
@@ -241,6 +265,9 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
     }
     if (this.control.startingCurrentDetection) {
       this.control.startingCurrentSwitch = this.controlStartingcurrentComp.updateModelFromForm();
+    }
+    if (this.notificationComp) {
+      this.control.notifications = this.notificationComp.updateModelFromForm();
     }
     this.controlService.updateControl(this.control, this.applianceId).subscribe(
       () => this.appliancesReloadService.reload());

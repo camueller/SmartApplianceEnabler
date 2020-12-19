@@ -24,7 +24,7 @@ import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import java.time.LocalDateTime;
 
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
-import de.avanux.smartapplianceenabler.notification.NotificationKey;
+import de.avanux.smartapplianceenabler.notification.NotificationType;
 import de.avanux.smartapplianceenabler.notification.NotificationProvider;
 import de.avanux.smartapplianceenabler.notification.Notifications;
 import org.slf4j.Logger;
@@ -108,7 +108,7 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
             logGpioAccessDisabled(logger);
         }
         if(this.notificationHandler != null) {
-            this.notificationHandler.sendNotification(switchOn ? NotificationKey.CONTROL_ON : NotificationKey.CONTROL_OFF);
+            this.notificationHandler.sendNotification(switchOn ? NotificationType.CONTROL_ON : NotificationType.CONTROL_OFF);
         }
         for (ControlStateChangedListener listener : new ArrayList<>(controlStateChangedListeners)) {
             listener.controlStateChanged(now, switchOn);

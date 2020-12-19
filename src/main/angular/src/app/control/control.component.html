@@ -66,6 +66,10 @@
                                    [controlDefaults]="controlDefaults"
       ></app-control-startingcurrent>
     </ng-template>
+    <app-notification [types]="notficationTypes"
+                      [notifications]="control.notifications"
+                      [configured]="isNotifcationEnabled"
+    ></app-notification>
     <div class="sae__mandatory_fields_hint">{{'dialog.mandatoryfields'|translate}}</div>
     <button mat-raised-button type="submit" color="primary" [disabled]="form.pristine||form.invalid">
       {{'button.save' | translate}}</button>

@@ -24,7 +24,7 @@ import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
 import de.avanux.smartapplianceenabler.modbus.ModbusValidator;
 import de.avanux.smartapplianceenabler.modbus.executor.*;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
-import de.avanux.smartapplianceenabler.notification.NotificationKey;
+import de.avanux.smartapplianceenabler.notification.NotificationType;
 import de.avanux.smartapplianceenabler.notification.NotificationProvider;
 import de.avanux.smartapplianceenabler.notification.Notifications;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
@@ -117,7 +117,7 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
                     result = 1 == ((WriteHoldingRegisterExecutor) executor).getResult();
                 }
                 if(this.notificationHandler != null && switchOn != on) {
-                    this.notificationHandler.sendNotification(switchOn ? NotificationKey.CONTROL_ON : NotificationKey.CONTROL_OFF);
+                    this.notificationHandler.sendNotification(switchOn ? NotificationType.CONTROL_ON : NotificationType.CONTROL_OFF);
                 }
                 for(ControlStateChangedListener listener : new ArrayList<>(controlStateChangedListeners)) {
                     listener.controlStateChanged(now, switchOn);
@@ -125,7 +125,7 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
             }
             catch (Exception e) {
                 if(this.notificationHandler != null) {
-                    this.notificationHandler.sendNotification(NotificationKey.CONTROL_COMMUNICATION_ERROR);
+                    this.notificationHandler.sendNotification(NotificationType.COMMUNICATION_ERROR);
                 }
                 logger.error("{}: Error switching {} using register {}", getApplianceId(),  (switchOn ? "on" : "off"),
                         registerWrite.getAddress(), e);

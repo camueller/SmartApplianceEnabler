@@ -266,6 +266,20 @@
   "ModbusWriteValueComponent.name": "Zustand / Aktion",
   "ModbusWriteValueComponent.value": "Wert",
 
+  "NotificationComponent.heading": "Benachrichtigungen",
+  "NotificationComponent.notConfigured": "Benachrichtigungen können nur genutzt werden, nachdem sie konfiguriert wurden: ",
+  "NotificationComponent.enabled": "Aktiviert",
+  "NotificationComponent.types": "Ereignisse",
+  "NotificationComponent.type.placeholder": "alle",
+  "NotificationComponent.type.CONTROL_ON": "Einschalten",
+  "NotificationComponent.type.CONTROL_OFF": "Ausschalten",
+  "NotificationComponent.type.EVCHARGER_VEHICLE_NOT_CONNECTED": "Fahrzeug nicht verbunden",
+  "NotificationComponent.type.EVCHARGER_VEHICLE_CONNECTED": "Fahrzeug verbunden",
+  "NotificationComponent.type.EVCHARGER_CHARGING": "Fahrzeug lädt",
+  "NotificationComponent.type.EVCHARGER_CHARGING_COMPLETED": "Laden beendet",
+  "NotificationComponent.type.EVCHARGER_ERROR": "Ladegerätfehler",
+  "NotificationComponent.type.COMMUNICATION_ERROR": "Kommunikationsfehler",
+
   "SchedulesComponent.button.addSchedule": "Weiterer Zeitplan",
   "SchedulesComponent.message.notControllable": "Schaltzeiten können nur für Geräte mit Schalter konfiguriert werden.",
 

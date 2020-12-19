@@ -41,6 +41,8 @@ import {ListItem} from '../shared/list-item';
 import {simpleMeterType} from '../shared/form-util';
 import {Appliance} from '../appliance/appliance';
 import {ApplianceType} from '../appliance/appliance-type';
+import {NotificationType} from '../notification/notification-type';
+import {NotificationComponent} from '../notification/notification.component';
 
 @Component({
   selector: 'app-meter',
@@ -54,6 +56,8 @@ export class MeterComponent implements OnChanges, OnInit, CanDeactivate<MeterCom
   meterModbusComp: MeterModbusComponent;
   @ViewChild(MeterHttpComponent)
   meterHttpComp: MeterHttpComponent;
+  @ViewChild(NotificationComponent)
+  notificationComp: NotificationComponent;
   form: FormGroup;
   formHandler: FormHandler;
   applianceId: string;
@@ -125,6 +129,14 @@ export class MeterComponent implements OnChanges, OnInit, CanDeactivate<MeterCom
     this.formHandler.setFormControlValue(this.form, 'meterType', simpleMeterType(this.meter.type));
   }
 
+  get notficationTypes() {
+    return [NotificationType.COMMUNICATION_ERROR];
+  }
+
+  get isNotifcationEnabled() {
+    return !!this.settings.notificationCommand;
+  }
+
   get isS0ElectricityMeter() {
     return this.form.controls.meterType.value === simpleMeterType(S0ElectricityMeter.TYPE);
   }
@@ -169,6 +181,9 @@ export class MeterComponent implements OnChanges, OnInit, CanDeactivate<MeterCom
     }
     if (this.meterHttpComp) {
       this.meter.httpElectricityMeter = this.meterHttpComp.updateModelFromForm();
+    }
+    if (this.notificationComp) {
+      this.meter.notifications = this.notificationComp.updateModelFromForm();
     }
     this.meterService.updateMeter(this.meter, this.applianceId).subscribe(
       () => this.appliancesReloadService.reload());
