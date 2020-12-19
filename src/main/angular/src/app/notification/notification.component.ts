@@ -84,7 +84,7 @@ export class NotificationComponent implements OnChanges, OnInit {
   }
 
   expandParentForm() {
-    this.formHandler.addFormControl(this.form, 'enabled', !!this.notifications);
+    this.formHandler.addFormControl(this.form, 'enabled', {value: !!this.notifications, disabled: !this.configured});
     this.formHandler.addFormControl(this.form, 'types', this.notifications?.types);
     this.setEnabled(!!this.notifications);
   }

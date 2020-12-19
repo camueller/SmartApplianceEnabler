@@ -1,24 +1,25 @@
 <div class="NotificationComponent" [formGroup]="form">
   <section>
     <h2>{{'NotificationComponent.heading' | translate}}</h2>
-    <div *ngIf="configured; else notConfigured">
-      <div class="sae__fields">
-        <mat-checkbox formControlName="enabled"
-                      (click)="toggleEnabled()"
-        >{{'NotificationComponent.enabled' | translate}}</mat-checkbox>
-      </div>
-      <div class="sae__fields">
-        <mat-form-field class="NotificationComponent__types">
-          <mat-label>{{'NotificationComponent.types' | translate}}</mat-label>
-          <mat-select formControlName="types" multiple
-                      placeholder="{{typesPlaceholder | translate}}"
-                      required="{{formHandler.isRequired('types')}}">
-            <mat-option *ngFor="let typeListItem of typeListItems" [value]="typeListItem.value">
-              {{typeListItem.viewValue}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
+    <div *ngIf="!configured">
+      <p>{{'NotificationComponent.notConfigured' | translate }}<a routerLink="/settings">Einstellungen</a></p>
+    </div>
+    <div class="sae__fields">
+      <mat-checkbox formControlName="enabled"
+                    (click)="toggleEnabled()"
+      >{{'NotificationComponent.enabled' | translate}}</mat-checkbox>
+    </div>
+    <div class="sae__fields">
+      <mat-form-field class="NotificationComponent__types">
+        <mat-label>{{'NotificationComponent.types' | translate}}</mat-label>
+        <mat-select formControlName="types" multiple
+                    placeholder="{{typesPlaceholder | translate}}"
+                    required="{{formHandler.isRequired('types')}}">
+          <mat-option *ngFor="let typeListItem of typeListItems" [value]="typeListItem.value">
+            {{typeListItem.viewValue}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
     </div>
     <ng-template #notConfigured>
       <p>{{'NotificationComponent.notConfigured' | translate }}<a routerLink="/settings">Einstellungen</a></p>
