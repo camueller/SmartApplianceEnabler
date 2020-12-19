@@ -1,16 +1,27 @@
 import {StartingCurrentSwitch} from '../../../../../main/angular/src/app/control/startingcurrent/starting-current-switch';
-import {assertInput, inputText, selectorInputByFormControlName} from '../../shared/form';
+import {
+  assertCheckbox,
+  assertInput,
+  inputText,
+  selectorCheckboxByFormControlName, selectorCheckboxCheckedByFormControlName,
+  selectorInputByFormControlName,
+  setCheckboxEnabled
+} from '../../shared/form';
 
 export class StartingCurrentSwitchPage {
 
-  public static async setStartingCurrentSwitch(t: TestController, startingCurrentSwitch: StartingCurrentSwitch) {
+  public static async setStartingCurrentSwitch(t: TestController, startingCurrentDetection: boolean,
+                                               startingCurrentSwitch: StartingCurrentSwitch) {
+    await setCheckboxEnabled(t, selectorCheckboxByFormControlName('startingCurrentDetection'), startingCurrentDetection);
     await StartingCurrentSwitchPage.setPowerThreshold(t, startingCurrentSwitch.powerThreshold);
     await StartingCurrentSwitchPage.setStartingCurrentDetectionDuration(t, startingCurrentSwitch.startingCurrentDetectionDuration);
     await StartingCurrentSwitchPage.setFinishedCurrentDetectionDuration(t, startingCurrentSwitch.finishedCurrentDetectionDuration);
     await StartingCurrentSwitchPage.setMinRunningTime(t, startingCurrentSwitch.minRunningTime);
   }
 
-  public static async assertStartingCurrentSwitch(t: TestController, startingCurrentSwitch: StartingCurrentSwitch) {
+  public static async assertStartingCurrentSwitch(t: TestController, startingCurrentDetection: boolean,
+                                                  startingCurrentSwitch: StartingCurrentSwitch) {
+    await assertCheckbox(t, selectorCheckboxCheckedByFormControlName('startingCurrentDetection'), startingCurrentDetection);
     await StartingCurrentSwitchPage.assertPowerThreshold(t, startingCurrentSwitch.powerThreshold);
     await StartingCurrentSwitchPage.assertStartingCurrentDetectionDuration(t, startingCurrentSwitch.startingCurrentDetectionDuration);
     await StartingCurrentSwitchPage.assertFinishedCurrentDetectionDuration(t, startingCurrentSwitch.finishedCurrentDetectionDuration);
