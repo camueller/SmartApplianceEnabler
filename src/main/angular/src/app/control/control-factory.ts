@@ -132,27 +132,27 @@ export class ControlFactory {
   }
 
   createAlwaysOnSwitch(rawAlwaysOnSwitch?: any): AlwaysOnSwitch {
-    return rawAlwaysOnSwitch;
+    return new AlwaysOnSwitch(rawAlwaysOnSwitch);
   }
 
   createMockSwitch(rawMockSwitch?: any): MockSwitch {
-    return rawMockSwitch;
+    return new MockSwitch(rawMockSwitch);
   }
 
   createStartingCurrentSwitch(rawStartingCurrentSwitch: any): StartingCurrentSwitch {
-    return rawStartingCurrentSwitch;
+    return new StartingCurrentSwitch(rawStartingCurrentSwitch);
   }
 
   createSwitch(rawSwitch: any): Switch {
-    return rawSwitch;
+    return new Switch(rawSwitch);
   }
 
   createModbusSwitch(rawModbusSwitch: any): ModbusSwitch {
-    return rawModbusSwitch;
+    return new ModbusSwitch(rawModbusSwitch);
   }
 
   createHttpSwitch(rawHttpSwitch: any): HttpSwitch {
-    return rawHttpSwitch;
+    return new HttpSwitch(rawHttpSwitch);
   }
 
   createEvCharger(rawEvCharger: any): EvCharger {
