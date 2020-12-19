@@ -10,7 +10,7 @@
   },
   "private": true,
   "dependencies": {
-    "testcafe": "^1.9.4",
+    "testcafe": "^1.10.0",
     "testcafe-browser-provider-browserstack": "^1.13.1",
     "ts-node": "~9.0.0",
     "tslint": "~6.1.3",
