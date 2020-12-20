@@ -102,7 +102,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
     public void setNotificationHandler(NotificationHandler notificationHandler) {
         this.notificationHandler = notificationHandler;
         if(control instanceof NotificationProvider && notificationHandler != null) {
-            this.notificationHandler.addRequestedNotifications(((NotificationProvider) control).getNotifications());
+            this.notificationHandler.setRequestedNotifications(((NotificationProvider) control).getNotifications());
         }
     }
 

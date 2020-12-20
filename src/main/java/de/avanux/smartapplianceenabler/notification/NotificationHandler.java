@@ -32,7 +32,7 @@ public class NotificationHandler implements ApplianceIdConsumer {
     private String applianceId;
     private String command;
     private String senderId;
-    private Set<String> requestedNotifications = null;
+    private Notifications requestedNotifications = null;
 
     public NotificationHandler(String applianceId, String command, String senderId) {
         this.applianceId = applianceId;
@@ -46,14 +46,10 @@ public class NotificationHandler implements ApplianceIdConsumer {
         this.applianceId = applianceId;
     }
 
-    public void addRequestedNotifications(Notifications requestedNotifications) {
+    public void setRequestedNotifications(Notifications requestedNotifications) {
+        this.requestedNotifications = requestedNotifications;
         if(requestedNotifications != null) {
-            if(this.requestedNotifications == null) {
-                this.requestedNotifications = new HashSet<>();
-            }
-            List<String> keys = requestedNotifications.getTypes();
-            if(keys != null) {
-                this.requestedNotifications.addAll(keys);
+            if(requestedNotifications.getTypes() != null) {
                 logger.debug("{}: enabled notifications {}", applianceId, requestedNotifications.getTypes());
             }
             else {
@@ -64,7 +60,8 @@ public class NotificationHandler implements ApplianceIdConsumer {
 
     protected boolean isRequestedNotification(NotificationType type) {
         return this.requestedNotifications != null
-                && (this.requestedNotifications.size() == 0 || this.requestedNotifications.contains(type.name()));
+                && (this.requestedNotifications.getTypes().size() == 0
+                || this.requestedNotifications.getTypes().contains(type.name()));
     }
 
     public void sendNotification(NotificationType type) {

@@ -84,7 +84,7 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
     public void setNotificationHandler(NotificationHandler notificationHandler) {
         this.notificationHandler = notificationHandler;
         if(this.notificationHandler != null) {
-            this.notificationHandler.addRequestedNotifications(notifications);
+            this.notificationHandler.setRequestedNotifications(notifications);
         }
     }
 

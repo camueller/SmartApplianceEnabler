@@ -53,7 +53,7 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
     public void setNotificationHandler(NotificationHandler notificationHandler) {
         this.notificationHandler = notificationHandler;
         if(this.notificationHandler != null) {
-            this.notificationHandler.addRequestedNotifications(notifications);
+            this.notificationHandler.setRequestedNotifications(notifications);
         }
     }
 

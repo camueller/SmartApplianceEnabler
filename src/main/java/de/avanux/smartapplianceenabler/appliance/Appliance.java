@@ -73,7 +73,6 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
     private List<Schedule> schedules;
     @XmlElement(name = "Notification")
     private Notification notification;
-    private transient NotificationHandler notificationHandler;
     private transient TimeframeIntervalHandler timeframeIntervalHandler;
     private transient static final int CONSIDERATION_INTERVAL_DAYS = 2;
 
@@ -171,9 +170,6 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
 
     public void init(GpioController gpioController, Map<String, ModbusTcp> modbusIdWithModbusTcp, String notificationCommand) {
         logger.debug("{}: Initializing appliance", id);
-        if(notificationCommand != null && this.notification != null) {
-            this.notificationHandler = new NotificationHandler(id, notificationCommand, this.notification.getSenderId());
-        }
         if(getTimeframeIntervalHandler() == null) {
             setTimeframeIntervalHandler(new TimeframeIntervalHandler(this.schedules, this.control));
         }
@@ -182,7 +178,9 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
             if(meter instanceof ApplianceIdConsumer) {
                 ((ApplianceIdConsumer) meter).setApplianceId(id);
             }
-            if(meter instanceof NotificationProvider) {
+            if(meter instanceof NotificationProvider && notificationCommand != null && this.notification != null) {
+                NotificationHandler notificationHandler
+                        = new NotificationHandler(id, notificationCommand, this.notification.getSenderId());
                 ((NotificationProvider) meter).setNotificationHandler(notificationHandler);
             }
             meter.init();
@@ -193,7 +191,9 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
         if(control instanceof ApplianceIdConsumer) {
             ((ApplianceIdConsumer) control).setApplianceId(id);
         }
-        if(control instanceof NotificationProvider) {
+        if(control instanceof NotificationProvider && notificationCommand != null && this.notification != null) {
+            NotificationHandler notificationHandler
+                    = new NotificationHandler(id, notificationCommand, this.notification.getSenderId());
             ((NotificationProvider) control).setNotificationHandler(notificationHandler);
         }
         if(isEvCharger()) {

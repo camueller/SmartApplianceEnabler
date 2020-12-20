@@ -113,7 +113,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     public void setNotificationHandler(NotificationHandler notificationHandler) {
         this.notificationHandler = notificationHandler;
         if(this.notificationHandler != null) {
-            this.notificationHandler.addRequestedNotifications(notifications);
+            this.notificationHandler.setRequestedNotifications(notifications);
         }
     }
 
