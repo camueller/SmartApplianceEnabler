@@ -210,7 +210,7 @@ describe('ControlHttpComponent', () => {
       });
 
       it('with HttpRead', () => {
-        debugElementByCss(fixture, READ_CONTROL_STATE_CHECKBOX).nativeElement.click();
+        debugElementByCss(fixture, `${READ_CONTROL_STATE_CHECKBOX} label`).nativeElement.click();
         fixture.detectChanges();
         httpSwitch = component.updateModelFromForm();
         expect(httpSwitch.httpRead.url).toBe(httpReadUrl);
