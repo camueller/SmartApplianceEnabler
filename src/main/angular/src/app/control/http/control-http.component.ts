@@ -103,10 +103,6 @@ export class ControlHttpComponent implements OnChanges, OnInit {
     return this.httpSwitch.httpWrites.length === 2 ? 1 : 2;
   }
 
-  toggleReadControlState() {
-    this.setReadControlState(!this.readControlState);
-  }
-
   get readControlState() {
     return !!this.form.controls.httpRead;
   }
@@ -151,6 +147,10 @@ export class ControlHttpComponent implements OnChanges, OnInit {
       && this.httpSwitch.httpRead.readValues.length > 0;
     this.formHandler.addFormControl(this.form, 'readControlState', readControlState);
     this.setReadControlState(readControlState);
+    this.form.controls.readControlState.valueChanges.subscribe(value => {
+      this.setReadControlState(value);
+      this.form.markAsDirty();
+    });
   }
 
   updateModelFromForm(): HttpSwitch | undefined {

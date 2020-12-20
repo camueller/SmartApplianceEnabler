@@ -108,11 +108,6 @@ export class ScheduleComponent implements OnChanges, AfterViewInit {
     }
   }
 
-  toggleEnabled() {
-    this.setEnabled(!this.isEnabled());
-    this.form.markAsDirty();
-  }
-
   isDayTimeframe() {
     return this.form.controls.timeframeType?.value === simpleTimeframeType(DayTimeframe.TYPE);
   }
@@ -151,6 +146,10 @@ export class ScheduleComponent implements OnChanges, AfterViewInit {
       this.timeframeType, [Validators.required]);
     this.formHandler.addFormControl(this.form, 'requestType',
       this.requestType, [Validators.required]);
+    this.form.controls.enabled.valueChanges.subscribe(value => {
+      this.setEnabled(value);
+      this.form.markAsDirty();
+    });
   }
 
   updateModelFromForm(): Schedule | undefined {

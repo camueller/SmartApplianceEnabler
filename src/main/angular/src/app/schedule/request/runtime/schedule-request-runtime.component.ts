@@ -74,16 +74,6 @@ export class ScheduleRequestRuntimeComponent implements OnChanges, OnInit {
     return this.runtimeRequest.max && TimeUtil.toHourMinute(this.runtimeRequest.max);
   }
 
-  setEnabled(enabled: boolean) {
-    if (enabled) {
-      this.form.controls.minRuntime.enable();
-      this.form.controls.maxRuntime.enable();
-    } else {
-      this.form.controls.minRuntime.disable();
-      this.form.controls.maxRuntime.disable();
-    }
-  }
-
   expandParentForm() {
     this.formHandler.addFormControl(this.form, 'minRuntime', this.minRuntime,
       [Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]);

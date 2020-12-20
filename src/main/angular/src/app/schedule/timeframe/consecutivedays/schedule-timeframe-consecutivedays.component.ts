@@ -53,7 +53,7 @@ export class ScheduleTimeframeConsecutivedaysComponent implements OnChanges, OnI
       }
       this.expandParentForm();
     }
-    if (changes.enabled && !changes.enabled.firstChange) {
+    if (changes.enabled) {
       this.setEnabled(changes.enabled.currentValue);
     }
   }

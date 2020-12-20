@@ -46,9 +46,6 @@ export class ScheduleRequestEnergyComponent implements OnChanges, OnInit {
       }
       this.expandParentForm();
     }
-    if (changes.enabled && !changes.enabled.firstChange) {
-      this.setEnabled(changes.enabled.currentValue);
-    }
   }
 
   ngOnInit() {
@@ -69,16 +66,6 @@ export class ScheduleRequestEnergyComponent implements OnChanges, OnInit {
 
   get maxEnergy() {
     return this.energyRequest && this.energyRequest.max;
-  }
-
-  setEnabled(enabled: boolean) {
-    if (enabled) {
-      this.form.controls.minEnergy.enable();
-      this.form.controls.maxEnergy.enable();
-    } else {
-      this.form.controls.minEnergy.disable();
-      this.form.controls.maxEnergy.disable();
-    }
   }
 
   expandParentForm() {

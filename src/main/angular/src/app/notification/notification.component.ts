@@ -18,6 +18,7 @@ export class NotificationComponent implements OnChanges, OnInit {
   types: string[];
   @Input()
   configured: boolean;
+  enabled: boolean;
   form: FormGroup;
   typeListItems: ListItem[] = [];
   formHandler: FormHandler;
@@ -68,11 +69,6 @@ export class NotificationComponent implements OnChanges, OnInit {
     }
   }
 
-  toggleEnabled() {
-    this.setEnabled(!this.isEnabled());
-    this.form.markAsDirty();
-  }
-
   buildTypeList() {
     const typeKeys = this.types.map(key => `NotificationComponent.type.${key}`);
     this.translate.get(typeKeys).subscribe(translatedStrings => {
@@ -86,7 +82,10 @@ export class NotificationComponent implements OnChanges, OnInit {
   expandParentForm() {
     this.formHandler.addFormControl(this.form, 'enabled', {value: !!this.notifications, disabled: !this.configured});
     this.formHandler.addFormControl(this.form, 'types', this.notifications?.types);
-    this.setEnabled(!!this.notifications);
+    this.form.controls.enabled.valueChanges.subscribe(value => {
+      this.setEnabled(value);
+      this.form.markAsDirty();
+    });
   }
 
   updateModelFromForm(): Notifications | undefined {

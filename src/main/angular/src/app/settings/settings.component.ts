@@ -87,6 +87,10 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
     this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'modbusSettings', this.settings.modbusSettings);
     this.formHandler.addFormControl(this.form, 'notificationCommand', this.settings.notificationCommand);
     this.setHolidaysUrlEnabled(this.settings.holidaysEnabled);
+    this.form.controls.holidaysEnabled.valueChanges.subscribe(value => {
+      this.setHolidaysUrlEnabled(value);
+      this.form.markAsDirty();
+    });
   }
 
   isHolidaysEnabled() {
@@ -99,10 +103,6 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
     } else {
       this.form.controls.holidaysUrl.disable();
     }
-  }
-
-  toggleHolidaysEnabled() {
-    this.setHolidaysUrlEnabled(!this.isHolidaysEnabled());
   }
 
   get modbusSettingsFormArray() {
