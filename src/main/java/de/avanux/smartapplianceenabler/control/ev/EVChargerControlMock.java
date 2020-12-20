@@ -22,6 +22,7 @@ import de.avanux.smartapplianceenabler.meter.Meter;
 import java.time.LocalDateTime;
 
 import de.avanux.smartapplianceenabler.meter.PowerUpdateListener;
+import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,6 +63,10 @@ public class EVChargerControlMock implements EVChargerControl, Meter {
     @Override
     public void setApplianceId(String applianceId) {
         logDebug("setApplianceId=" + applianceId);
+    }
+
+    @Override
+    public void setNotificationHandler(NotificationHandler notificationHandler) {
     }
 
     @Override

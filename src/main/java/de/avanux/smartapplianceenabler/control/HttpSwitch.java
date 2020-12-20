@@ -82,6 +82,7 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
         this.notificationHandler = notificationHandler;
         if(this.notificationHandler != null) {
             this.notificationHandler.setRequestedNotifications(notifications);
+            this.httpTransactionExecutor.setNotificationHandler(notificationHandler);
         }
     }
 
@@ -175,11 +176,6 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
                     }
                     on = switchOn;
                     return true;
-                }
-            }
-            else {
-                if(this.notificationHandler != null) {
-                    this.notificationHandler.sendNotification(NotificationType.COMMUNICATION_ERROR);
                 }
             }
         }

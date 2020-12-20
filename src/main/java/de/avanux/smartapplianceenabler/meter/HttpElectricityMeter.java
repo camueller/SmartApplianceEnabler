@@ -69,7 +69,6 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
     private transient PollEnergyMeter pollEnergyMeter = new PollEnergyMeter();
     private transient HttpHandler httpHandler = new HttpHandler();
     private transient ContentProtocolHandler contentContentProtocolHandler;
-    private transient NotificationHandler notificationHandler;
 
     @Override
     public void setApplianceId(String applianceId) {
@@ -82,9 +81,9 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
 
     @Override
     public void setNotificationHandler(NotificationHandler notificationHandler) {
-        this.notificationHandler = notificationHandler;
-        if(this.notificationHandler != null) {
-            this.notificationHandler.setRequestedNotifications(notifications);
+        if(notificationHandler != null) {
+            notificationHandler.setRequestedNotifications(notifications);
+            this.httpTransactionExecutor.setNotificationHandler(notificationHandler);
         }
     }
 
@@ -279,13 +278,7 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
     }
 
     private float getValue(ParentWithChild<HttpRead, HttpReadValue> read) {
-        try {
-            return this.httpHandler.getFloatValue(read, getContentContentProtocolHandler());
-        }
-        catch(Exception e) {
-            this.notificationHandler.sendNotification(NotificationType.COMMUNICATION_ERROR);
-            throw e;
-        }
+        return this.httpHandler.getFloatValue(read, getContentContentProtocolHandler());
     }
 
     public ContentProtocolHandler getContentContentProtocolHandler() {

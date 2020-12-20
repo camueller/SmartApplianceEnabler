@@ -22,6 +22,7 @@ import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.control.ev.EVChargerControl;
 import de.avanux.smartapplianceenabler.control.ev.EVReadValueName;
 import de.avanux.smartapplianceenabler.control.ev.EVWriteValueName;
+import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolHandler;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolType;
 import de.avanux.smartapplianceenabler.protocol.JsonContentProtocolHandler;
@@ -64,6 +65,11 @@ public class EVHttpControl implements EVChargerControl {
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
         this.httpTransactionExecutor.setApplianceId(applianceId);
+    }
+
+    @Override
+    public void setNotificationHandler(NotificationHandler notificationHandler) {
+        this.httpTransactionExecutor.setNotificationHandler(notificationHandler);
     }
 
     public void setHttpTransactionExecutor(HttpTransactionExecutor httpTransactionExecutor) {
