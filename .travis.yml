@@ -19,9 +19,13 @@ before_install:
     mvn install:install-file -Dfile=lib/cling-core-2.0.0.jar -DpomFile=lib/cling-core-2.0.0.pom &&
     wget https://nodejs.org/dist/v10.17.0/node-v10.17.0-linux-x64.tar.gz &&
     tar xfz node-v10.17.0-linux-x64.tar.gz &&
+    wget https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip &&
+    unzip awscli-exe-linux-x86_64.zip &&
+    sudo ./aws/install &&
     export PATH=$PWD/node-v10.17.0-linux-x64/bin:$PATH
 script:
   - mvn package -B -Ptravis,web &&
+    aws ec2 start-instances --instance-ids $AWS_INSTANCE_ID &&
     pushd docker &&
     cp ../target/SmartApplianceEnabler*.war sae-ci/SmartApplianceEnabler.war &&
     echo $DOCKERHUB_ACCESS_TOKEN | docker login --username avanux --password-stdin &&
@@ -31,6 +35,9 @@ script:
     pushd ci &&
     ccrypt -d -K $AWS_CRYPT_KEY aws.pem.cpt >/dev/null 2>&1 &&
     chmod 400 aws.pem &&
+    export DEPLOY_HOST=`aws ec2 describe-instances | grep -m 1 PublicDnsName | awk -F '"' '{print $4}'` &&
+    echo "DEPLOY_HOST=$DEPLOY_HOST" &&
+    export E2E_TEST_URL=http://$DEPLOY_HOST &&
     ssh -i aws.pem -o StrictHostKeyChecking=no ec2-user@$DEPLOY_HOST 'bash -s' < pull_image.sh &&
     ssh -i aws.pem -o StrictHostKeyChecking=no ec2-user@$DEPLOY_HOST 'bash -s' < restart_container.sh &&
     popd &&
@@ -57,5 +64,7 @@ script:
     else
       echo "*** Skipping docker push"
     fi
+after_script:
+  - aws ec2 stop-instances --instance-ids $AWS_INSTANCE_ID
 after_success:
   - bash <(curl -s https://codecov.io/bash)
