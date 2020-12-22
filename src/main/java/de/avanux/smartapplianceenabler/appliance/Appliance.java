@@ -179,8 +179,9 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
                 ((ApplianceIdConsumer) meter).setApplianceId(id);
             }
             if(meter instanceof NotificationProvider && notificationCommand != null && this.notification != null) {
-                NotificationHandler notificationHandler
-                        = new NotificationHandler(id, notificationCommand, this.notification.getSenderId());
+                NotificationHandler notificationHandler = new NotificationHandler(
+                        id, notificationCommand, this.notification.getSenderId(),
+                        this.notification.getMaxCommunicationErrors());
                 ((NotificationProvider) meter).setNotificationHandler(notificationHandler);
             }
             meter.init();
@@ -192,8 +193,9 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
             ((ApplianceIdConsumer) control).setApplianceId(id);
         }
         if(control instanceof NotificationProvider && notificationCommand != null && this.notification != null) {
-            NotificationHandler notificationHandler
-                    = new NotificationHandler(id, notificationCommand, this.notification.getSenderId());
+            NotificationHandler notificationHandler = new NotificationHandler(
+                    id, notificationCommand, this.notification.getSenderId(),
+                    this.notification.getMaxCommunicationErrors());
             ((NotificationProvider) control).setNotificationHandler(notificationHandler);
         }
         if(isEvCharger()) {

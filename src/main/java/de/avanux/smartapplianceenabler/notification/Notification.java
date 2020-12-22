@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 public class Notification {
     @XmlAttribute
     private String senderId;
+    @XmlAttribute
+    private Integer maxCommunicationErrors;
 
     public String getSenderId() {
         return senderId;
@@ -33,5 +35,13 @@ public class Notification {
 
     public void setSenderId(String senderId) {
         this.senderId = senderId;
+    }
+
+    public Integer getMaxCommunicationErrors() {
+        return maxCommunicationErrors;
+    }
+
+    public void setMaxCommunicationErrors(Integer maxCommunicationErrors) {
+        this.maxCommunicationErrors = maxCommunicationErrors;
     }
 }

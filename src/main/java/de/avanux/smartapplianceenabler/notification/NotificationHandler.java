@@ -22,28 +22,34 @@ import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
 public class NotificationHandler implements ApplianceIdConsumer {
     public static final String CONFIGURATION_KEY_NOTIFICATION_COMMAND = "Notification.Commmand";
-    private static final int MAX_ERRORS_PER_DAY = 3;
 
     private transient Logger logger = LoggerFactory.getLogger(NotificationHandler.class);
 
     private String applianceId;
     private String command;
     private String senderId;
+    private int maxCommunicationErrors = 10;
     private Notifications requestedNotifications = null;
     private int errorCountPerDay = 0;
     private LocalDate errorDate;
+    private boolean communicationErrorNotificationSentToday;
 
-    public NotificationHandler(String applianceId, String command, String senderId) {
+    public NotificationHandler(String applianceId, String command, String senderId, Integer maxCommunicationErrors) {
         this.applianceId = applianceId;
         this.command = command;
         this.senderId = senderId;
-        logger.debug("{}: command={} senderId={}", applianceId, command, senderId);
+        if(maxCommunicationErrors != null) {
+            this.maxCommunicationErrors = maxCommunicationErrors;
+        }
+        logger.debug("{}: command={} senderId={} maxCommunicationErrors={}",
+                applianceId, command, senderId, this.maxCommunicationErrors);
     }
 
     @Override
@@ -79,16 +85,19 @@ public class NotificationHandler implements ApplianceIdConsumer {
         }
         else if(!errorDate.equals(LocalDateTime.now().toLocalDate())) {
             errorCountPerDay = 0;
+            communicationErrorNotificationSentToday = false;
         }
         errorCountPerDay++;
-        return errorCountPerDay <= MAX_ERRORS_PER_DAY;
+        return errorCountPerDay > maxCommunicationErrors && !communicationErrorNotificationSentToday;
     }
 
     public void sendNotification(NotificationType type) {
         if(isRequestedNotification(type)) {
             if(!isErrorNotification(type) || shouldSendErrorNotification()) {
-                ResourceBundle messages = ResourceBundle.getBundle("messages", new Locale("de", "DE"));
-                String message = messages.getString(type.name());
+                String message = Messages.getString(type.name());
+                if(type == NotificationType.COMMUNICATION_ERROR) {
+                    message = Messages.getString(NotificationType.COMMUNICATION_ERROR.name(), maxCommunicationErrors);
+                }
                 try {
                     logger.debug("{}: Executing notification command: {} errorCountPerDay={}", applianceId, command, errorCountPerDay);
                     ProcessBuilder builder = new ProcessBuilder(
@@ -99,10 +108,42 @@ public class NotificationHandler implements ApplianceIdConsumer {
                     Process p = builder.start();
                     int rc = p.waitFor();
                     logger.debug("{}: Notification command exited with return code {}", applianceId, rc);
+                    if(type == NotificationType.COMMUNICATION_ERROR) {
+                        communicationErrorNotificationSentToday = true;
+                    }
                 } catch (Exception e) {
                     logger.error("{}: Error executing notification command {}", applianceId, command, e);
                 }
             }
         }
+    }
+}
+
+class Messages {
+    private static final Locale LOCALE = new Locale("de", "DE");
+    private static final String BUNDLE_NAME = "messages";
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME, LOCALE);
+
+    private Messages() {
+    }
+
+    public static String getString(String key) {
+        try {
+            return RESOURCE_BUNDLE.getString(key);
+        } catch (MissingResourceException e) {
+            return buildErrorMessage(key);
+        }
+    }
+
+    public static String getString(String key, Object... params) {
+        try {
+            return MessageFormat.format(RESOURCE_BUNDLE.getString(key), params);
+        } catch (MissingResourceException e) {
+            return buildErrorMessage(key);
+        }
+    }
+
+    private static String buildErrorMessage(String key) {
+        return "Key " + key + " not found in resource bundle " + BUNDLE_NAME + " for locale " + LOCALE;
     }
 }

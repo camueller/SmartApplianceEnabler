@@ -361,6 +361,7 @@
 
     <xs:complexType name="NotificationType">
         <xs:attribute name="senderId" type="xs:string" />
+        <xs:attribute name="maxCommunicationErrors" type="xs:int" />
     </xs:complexType>
 
     <xs:complexType name="NotificationsType">
