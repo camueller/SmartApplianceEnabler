@@ -18,12 +18,11 @@
 
 package de.avanux.smartapplianceenabler.schedule;
 
-import java.time.LocalDateTime;
-
-import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.time.LocalDateTime;
 
 public class OptionalEnergySocRequest extends SocRequest {
 
