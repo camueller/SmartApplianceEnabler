@@ -26,6 +26,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
+import org.springframework.http.CacheControl;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -66,24 +67,29 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        CacheControl noCache = CacheControl.noCache().cachePublic();
 
         /**
          * Angular artefacts must not be mapped to index.html
          */
         registry.addResourceHandler("*.js", "*.css", "*.map", "flags.*", "icons.*", "favicon.ico")
-                .addResourceLocations("classpath:/static/");
+                .addResourceLocations("classpath:/static/")
+                .setCacheControl(noCache);
 
         registry.addResourceHandler("assets/**")
-                .addResourceLocations("classpath:/static/assets/");
+                .addResourceLocations("classpath:/static/assets/")
+                .setCacheControl(noCache);
 
         registry.addResourceHandler("/static/**")
-                .addResourceLocations("classpath:/static/");
+                .addResourceLocations("classpath:/static/")
+                .setCacheControl(noCache);
 
         /**
          * For Angular all requests have to go to index.html
          */
         registry.addResourceHandler("/**")
                 .addResourceLocations("classpath:/static/index.html")
+                .setCacheControl(noCache)
                 .resourceChain(true)
                 .addResolver(new PathResourceResolver() {
                     @Override
