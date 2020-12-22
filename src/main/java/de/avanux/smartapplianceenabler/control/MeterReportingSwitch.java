@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import java.time.LocalDateTime;
 import java.util.Timer;
@@ -37,6 +38,8 @@ import java.util.Timer;
 public class MeterReportingSwitch implements Control, ApplianceIdConsumer, NotificationProvider {
 
     private transient Logger logger = LoggerFactory.getLogger(MeterReportingSwitch.class);
+    @XmlAttribute
+    private Integer powerThreshold;
     @XmlElement(name = "Notifications")
     private Notifications notifications;
     private transient String applianceId;
@@ -62,6 +65,10 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
         return notifications;
     }
 
+    public Integer getPowerThreshold() {
+        return powerThreshold != null ? powerThreshold : StartingCurrentSwitchDefaults.getPowerThreshold();
+    }
+
     public void setMeter(Meter meter) {
         this.meter = meter;
     }
@@ -72,6 +79,8 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
 
     @Override
     public void start(LocalDateTime now, Timer timer) {
+        logger.info("{}: Starting: powerThreshold={} notificationHandlerSet={}",
+                applianceId, powerThreshold, this.notificationHandler != null);
     }
 
     @Override
@@ -99,11 +108,9 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
     @Override
     public boolean isOn() {
         if(this.meter != null) {
-            // FIXME konfigurierbar machen
             int power = this.meter.getAveragePower();
-            boolean on = power > 5;
-            logger.debug("{}: power={} on={} onBefore={} notificationHandlerSet={}", applianceId, power, on, onBefore,
-                    this.notificationHandler != null);
+            boolean on = power > getPowerThreshold();
+            logger.debug("{}: power={} on={} onBefore={}", applianceId, power, on, onBefore);
             if(onBefore != null && this.notificationHandler != null && on != onBefore) {
                 logger.info("{}: Switch {} detected.", applianceId, (on ? "on" : "off"));
                 this.notificationHandler.sendNotification(on ? NotificationType.CONTROL_ON : NotificationType.CONTROL_OFF);
