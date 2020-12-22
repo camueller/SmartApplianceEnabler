@@ -21,8 +21,8 @@ package de.avanux.smartapplianceenabler.control;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
-import de.avanux.smartapplianceenabler.notification.NotificationType;
 import de.avanux.smartapplianceenabler.notification.NotificationProvider;
+import de.avanux.smartapplianceenabler.notification.NotificationType;
 import de.avanux.smartapplianceenabler.notification.Notifications;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +32,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -40,12 +42,16 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
     private transient Logger logger = LoggerFactory.getLogger(MeterReportingSwitch.class);
     @XmlAttribute
     private Integer powerThreshold;
+    @XmlAttribute
+    private Integer offDetectionDelay; // seconds
     @XmlElement(name = "Notifications")
     private Notifications notifications;
     private transient String applianceId;
     private transient NotificationHandler notificationHandler;
     private transient Meter meter;
+    private transient LocalDateTime lastOn;
     private transient Boolean onBefore;
+    private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
 
     @Override
     public void setApplianceId(String applianceId) {
@@ -66,7 +72,11 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
     }
 
     public Integer getPowerThreshold() {
-        return powerThreshold != null ? powerThreshold : StartingCurrentSwitchDefaults.getPowerThreshold();
+        return powerThreshold != null ? powerThreshold : MeterReportingSwitchDefaults.getPowerThreshold();
+    }
+
+    public int getOffDetectionDelay() {
+        return offDetectionDelay != null ? offDetectionDelay : 0;
     }
 
     public void setMeter(Meter meter) {
@@ -79,8 +89,8 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
 
     @Override
     public void start(LocalDateTime now, Timer timer) {
-        logger.info("{}: Starting: powerThreshold={} notificationHandlerSet={}",
-                applianceId, powerThreshold, this.notificationHandler != null);
+        logger.info("{}: Starting: powerThreshold={} offDetectionDelay={} notificationHandlerSet={}",
+                applianceId, getPowerThreshold(), getOffDetectionDelay(), this.notificationHandler != null);
     }
 
     @Override
@@ -99,18 +109,29 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
 
     @Override
     public void addControlStateChangedListener(ControlStateChangedListener listener) {
+        this.controlStateChangedListeners.add(listener);
     }
 
     @Override
     public void removeControlStateChangedListener(ControlStateChangedListener listener) {
+        this.controlStateChangedListeners.remove(listener);
     }
 
     @Override
     public boolean isOn() {
         if(this.meter != null) {
             int power = this.meter.getAveragePower();
-            boolean on = power > getPowerThreshold();
-            logger.debug("{}: power={} on={} onBefore={}", applianceId, power, on, onBefore);
+            boolean powerReachesThreshold = power >= getPowerThreshold();
+            if(powerReachesThreshold) {
+                lastOn = LocalDateTime.now();
+            }
+            boolean onWithinCheckInterval = lastOn != null && lastOn.plusSeconds(getOffDetectionDelay()).isAfter(LocalDateTime.now());
+            boolean on = powerReachesThreshold;
+            if(onWithinCheckInterval) {
+                on = true;
+            }
+            logger.debug("{}: power={} powerReachesThreshold={} on={} onBefore={} onWithinCheckInterval={}",
+                    applianceId, power, powerReachesThreshold, on, onBefore, onWithinCheckInterval);
             if(onBefore != null && this.notificationHandler != null && on != onBefore) {
                 logger.info("{}: Switch {} detected.", applianceId, (on ? "on" : "off"));
                 this.notificationHandler.sendNotification(on ? NotificationType.CONTROL_ON : NotificationType.CONTROL_OFF);
