@@ -147,6 +147,12 @@
   "ControlStartingcurrentComponent.error.finishedCurrentDetectionDuration_pattern": "Die Unterschreitungsdauer beim Ausschalten muss eine Zahl sein",
   "ControlStartingcurrentComponent.error.minRunningTime_pattern": "Die Mindestlaufzeit muss eine Zahl sein",
 
+  "ControlMeterreportingComponent.powerThreshold": "Leistungsgrenze [W]",
+  "ControlMeterreportingComponent.offDetectionDelay": "Ausschaltverzögerung [s]",
+  "ControlMeterreportingComponent.offDetectionDelay.tooltip": "Für diese Dauer muss die Leistung unterhalb der Leistungsgrenze bleiben, damit die Situation als Ausschalten gewertet wird",
+  "ControlMeterreportingComponent.error.powerThreshold_pattern": "Die Leistungsgrenze muss eine Zahl sein",
+  "ControlMeterreportingComponent.error.offDetectionDelay_pattern": "Die Ausschaltverzögerung muss eine Zahl sein",
+
   "ControlSwitchComponent.gpio": "GPIO-Anschluss",
   "ControlSwitchComponent.reverseStates": "GPIO-Status invers",
   "ControlSwitchComponent.error.gpio_pattern": "Der GPIO-Anschluss muss eine Zahl sein",

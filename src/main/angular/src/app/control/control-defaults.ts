@@ -1,15 +1,11 @@
+import {MeterReportingSwitchDefaults} from './meterreporting/meter-reporting-switch-defaults';
+import {StartingCurrentSwitchDefaults} from './startingcurrent/starting-current-switch-defaults';
+import {EvChargerDefaults} from './evcharger/ev-charger-defaults';
+
 export class ControlDefaults {
-  startingCurrentSwitchDefaults_powerThreshold: number;
-  startingCurrentSwitchDefaults_startingCurrentDetectionDuration: number;
-  startingCurrentSwitchDefaults_finishedCurrentDetectionDuration: number;
-  startingCurrentSwitchDefaults_minRunningTime: number;
-  electricVehicleChargerDefaults_voltage: number;
-  electricVehicleChargerDefaults_phases: number;
-  electricVehicleChargerDefaults_chargeLoss: number;
-  electricVehicleChargerDefaults_pollInterval: number;
-  electricVehicleChargerDefaults_startChargingStateDetectionDelay: number;
-  electricVehicleChargerDefaults_forceInitialCharging: boolean;
-  electricVehicleChargerDefaults_updateSocAfterIncrease: number;
+  meterReportingSwitchDefaults: MeterReportingSwitchDefaults;
+  startingCurrentSwitchDefaults: StartingCurrentSwitchDefaults;
+  evChargerDefaults: EvChargerDefaults;
 
   public constructor(init?: Partial<ControlDefaults>) {
     Object.assign(this, init);

@@ -76,7 +76,7 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
     }
 
     public int getOffDetectionDelay() {
-        return offDetectionDelay != null ? offDetectionDelay : 0;
+        return offDetectionDelay != null ? offDetectionDelay : MeterReportingSwitchDefaults.getOffDetectionDelay();
     }
 
     public void setMeter(Meter meter) {

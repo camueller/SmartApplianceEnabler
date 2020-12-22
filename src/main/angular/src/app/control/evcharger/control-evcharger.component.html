@@ -26,28 +26,28 @@
       <mat-form-field class="sae__voltage">
         <mat-label>{{'ControlEvchargerComponent.voltage' | translate}}</mat-label>
         <input matInput type="text" formControlName="voltage"
-               placeholder="{{controlDefaults.electricVehicleChargerDefaults_voltage}}"
+               placeholder="{{controlDefaults.evChargerDefaults.voltage}}"
                required="{{formHandler.isRequired('voltage')}}">
         <mat-error *ngIf="errors.voltage">{{errors.voltage}}</mat-error>
       </mat-form-field>
       <mat-form-field class="sae__phases">
         <mat-label>{{'ControlEvchargerComponent.phases' | translate}}</mat-label>
         <input matInput type="text" formControlName="phases"
-               placeholder="{{controlDefaults.electricVehicleChargerDefaults_phases}}"
+               placeholder="{{controlDefaults.evChargerDefaults.phases}}"
                required="{{formHandler.isRequired('phases')}}">
         <mat-error *ngIf="errors.phases">{{errors.phases}}</mat-error>
       </mat-form-field>
       <mat-form-field class="sae__pollInterval">
         <mat-label>{{'ControlEvchargerComponent.pollInterval' | translate}}</mat-label>
         <input matInput type="text" formControlName="pollInterval"
-               placeholder="{{controlDefaults.electricVehicleChargerDefaults_pollInterval}}"
+               placeholder="{{controlDefaults.evChargerDefaults.pollInterval}}"
                required="{{formHandler.isRequired('pollInterval')}}">
         <mat-error *ngIf="errors.pollInterval">{{errors.pollInterval}}</mat-error>
       </mat-form-field>
       <mat-form-field class="ControlEvchargerComponent__startChargingStateDetectionDelay">
         <mat-label>{{'ControlEvchargerComponent.startChargingStateDetectionDelay' | translate}}</mat-label>
         <input matInput type="text" formControlName="startChargingStateDetectionDelay"
-               placeholder="{{controlDefaults.electricVehicleChargerDefaults_startChargingStateDetectionDelay}}"
+               placeholder="{{controlDefaults.evChargerDefaults.startChargingStateDetectionDelay}}"
                matTooltip="{{'ControlEvchargerComponent.startChargingStateDetectionDelay.tooltip' | translate}}"
                required="{{formHandler.isRequired('startChargingStateDetectionDelay')}}">
         <mat-error *ngIf="errors.startChargingStateDetectionDelay">{{errors.startChargingStateDetectionDelay}}</mat-error>

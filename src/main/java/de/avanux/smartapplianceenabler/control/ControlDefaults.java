@@ -21,6 +21,7 @@ package de.avanux.smartapplianceenabler.control;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleChargerDefaults;
 
 public class ControlDefaults {
+    MeterReportingSwitchDefaults meterReportingSwitchDefaults = new MeterReportingSwitchDefaults();
     StartingCurrentSwitchDefaults startingCurrentSwitchDefaults = new StartingCurrentSwitchDefaults();
-    ElectricVehicleChargerDefaults electricVehicleChargerDefaults = new ElectricVehicleChargerDefaults();
+    ElectricVehicleChargerDefaults evChargerDefaults = new ElectricVehicleChargerDefaults();
 }

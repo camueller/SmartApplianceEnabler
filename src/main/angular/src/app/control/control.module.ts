@@ -21,6 +21,7 @@ import {ControlResolver} from './control-resolver.service';
 import {ControlDefaultsResolver} from './control-defaults-resolver.service';
 import {HttpLoaderFactory} from '../shared/http-loader-factory';
 import {NotificationModule} from '../notification/notification.module';
+import { ControlMeterreportingComponent } from './meterreporting/control-meterreporting.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import {NotificationModule} from '../notification/notification.module';
     ControlEvchargerHttpComponent,
     ControlEvchargerModbusComponent,
     ControlHttpComponent,
+    ControlMeterreportingComponent,
     ControlModbusComponent,
     ControlStartingcurrentComponent,
     ControlSwitchComponent,

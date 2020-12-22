@@ -21,4 +21,6 @@ export class MeterReportingSwitch {
     return 'de.avanux.smartapplianceenabler.control.MeterReportingSwitch';
   }
   '@class' = MeterReportingSwitch.TYPE;
+  powerThreshold: number;
+  offDetectionDelay: number;
 }

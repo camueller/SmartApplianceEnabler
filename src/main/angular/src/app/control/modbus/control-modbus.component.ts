@@ -31,8 +31,6 @@ export class ControlModbusComponent implements OnChanges, OnInit {
   @ViewChildren('modbusWriteComponents')
   modbusWriteComps: QueryList<ModbusWriteComponent>;
   @Input()
-  applianceId: string;
-  @Input()
   controlDefaults: ControlDefaults;
   @Input()
   modbusSettings: ModbusSetting[];

@@ -50,6 +50,7 @@ import {MeterDefaults} from '../meter/meter-defaults';
 import {MeterReportingSwitch} from './meterreporting/meter-reporting-switch';
 import {NotificationComponent} from '../notification/notification.component';
 import {NotificationType} from '../notification/notification-type';
+import {ControlMeterreportingComponent} from './meterreporting/control-meterreporting.component';
 
 @Component({
   selector: 'app-control',
@@ -57,6 +58,8 @@ import {NotificationType} from '../notification/notification-type';
   styleUrls: ['./control.component.scss'],
 })
 export class ControlComponent implements OnChanges, OnInit, CanDeactivate<ControlComponent> {
+  @ViewChild(ControlMeterreportingComponent)
+  controlMeterreportingComp: ControlMeterreportingComponent;
   @ViewChild(ControlSwitchComponent)
   controlSwitchComp: ControlSwitchComponent;
   @ViewChild(ControlModbusComponent)
@@ -250,6 +253,9 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
   }
 
   submitForm() {
+    if (this.controlMeterreportingComp) {
+      this.control.meterReportingSwitch = this.controlMeterreportingComp.updateModelFromForm();
+    }
     if (this.controlSwitchComp) {
       this.control.switch_ = this.controlSwitchComp.updateModelFromForm();
     }

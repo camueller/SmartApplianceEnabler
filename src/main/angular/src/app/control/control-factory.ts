@@ -38,28 +38,7 @@ export class ControlFactory {
 
   defaultsFromJSON(rawControlDefaults: any): ControlDefaults {
     this.logger.debug('ControlDefaults (JSON): ' + JSON.stringify(rawControlDefaults));
-    const controlDefaults = new ControlDefaults();
-    controlDefaults.startingCurrentSwitchDefaults_powerThreshold
-      = rawControlDefaults.startingCurrentSwitchDefaults.powerThreshold;
-    controlDefaults.startingCurrentSwitchDefaults_startingCurrentDetectionDuration
-      = rawControlDefaults.startingCurrentSwitchDefaults.startingCurrentDetectionDuration;
-    controlDefaults.startingCurrentSwitchDefaults_finishedCurrentDetectionDuration
-      = rawControlDefaults.startingCurrentSwitchDefaults.finishedCurrentDetectionDuration;
-    controlDefaults.startingCurrentSwitchDefaults_minRunningTime
-      = rawControlDefaults.startingCurrentSwitchDefaults.minRunningTime;
-    const electricVehicleChargerDefaults = rawControlDefaults.electricVehicleChargerDefaults;
-    controlDefaults.electricVehicleChargerDefaults_voltage = electricVehicleChargerDefaults.voltage;
-    controlDefaults.electricVehicleChargerDefaults_phases = electricVehicleChargerDefaults.phases;
-    controlDefaults.electricVehicleChargerDefaults_chargeLoss = electricVehicleChargerDefaults.chargeLoss;
-    controlDefaults.electricVehicleChargerDefaults_pollInterval = electricVehicleChargerDefaults.pollInterval;
-    controlDefaults.electricVehicleChargerDefaults_startChargingStateDetectionDelay =
-      electricVehicleChargerDefaults.startChargingStateDetectionDelay;
-    controlDefaults.electricVehicleChargerDefaults_forceInitialCharging =
-      electricVehicleChargerDefaults.forceInitialCharging;
-    controlDefaults.electricVehicleChargerDefaults_updateSocAfterIncrease =
-      electricVehicleChargerDefaults.updateSocAfterIncrease;
-
-
+    const controlDefaults = new ControlDefaults(rawControlDefaults);
     this.logger.debug('ControlDefaults (TYPE): ' + JSON.stringify(controlDefaults));
     return controlDefaults;
   }

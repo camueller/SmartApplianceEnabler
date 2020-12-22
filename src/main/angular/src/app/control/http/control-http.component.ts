@@ -32,8 +32,6 @@ export class ControlHttpComponent implements OnChanges, OnInit {
   @ViewChild('httpReadComponent')
   httpReadComp: HttpReadComponent;
   @Input()
-  applianceId: string;
-  @Input()
   controlDefaults: ControlDefaults;
   form: FormGroup;
   formHandler: FormHandler;

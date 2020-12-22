@@ -16,19 +16,16 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.avanux.smartapplianceenabler.control;
+export class EvChargerDefaults {
+  voltage: number;
+  phases: number;
+  chargeLoss: number;
+  pollInterval: number;
+  startChargingStateDetectionDelay: number;
+  forceInitialCharging: boolean;
+  updateSocAfterIncrease: number;
 
-public class MeterReportingSwitchDefaults {
-    // static members won't be serialized but we need those values on the client
-    private Integer powerThreshold = 10;
-    private Integer offDetectionDelay = 0;
-    private static MeterReportingSwitchDefaults instance = new MeterReportingSwitchDefaults();
-
-    public static Integer getPowerThreshold() {
-        return instance.powerThreshold;
-    }
-
-    public static Integer getOffDetectionDelay() {
-        return instance.offDetectionDelay;
-    }
+  public constructor(init?: Partial<EvChargerDefaults>) {
+    Object.assign(this, init);
+  }
 }

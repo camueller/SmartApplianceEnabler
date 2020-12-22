@@ -99,7 +99,7 @@ export class ModbusReadComponent implements OnChanges, OnInit {
   }
 
   get bytesPlaceholder() {
-    return this.meterDefaults.modbusRead_bytesForRegisterType[this.form.controls.type.value];
+    return this.meterDefaults.modbusReadDefaults.bytesForRegisterType[this.form.controls.type.value];
   }
 
   get isByteOrderDisplayed() {

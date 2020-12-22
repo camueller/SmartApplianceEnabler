@@ -43,21 +43,22 @@
                       *ngIf="canHaveStartingCurrentDetection"
         >{{'ControlStartingcurrentComponent.startingCurrentDetection' | translate}}</mat-checkbox>
       </div>
+      <app-control-meterreporting *ngIf="isMeterReportingSwitch"
+                                  [meterReportingSwitch]="control.meterReportingSwitch"
+                                  [controlDefaults]="controlDefaults"
+      ></app-control-meterreporting>
       <app-control-switch *ngIf="isSwitch"
                           [switch_]="control.switch_"
-                          [applianceId]="applianceId"
                           [controlDefaults]="controlDefaults"
       ></app-control-switch>
       <app-control-modbus *ngIf="isModbusSwitch"
                           [modbusSwitch]="control.modbusSwitch"
-                          [applianceId]="applianceId"
                           [controlDefaults]="controlDefaults"
                           [modbusSettings]="settings.modbusSettings"
                           [settingsDefaults]="settingsDefaults"
       ></app-control-modbus>
       <app-control-http *ngIf="isHttpSwitch"
                         [httpSwitch]="control.httpSwitch"
-                        [applianceId]="applianceId"
                         [controlDefaults]="controlDefaults"
       ></app-control-http>
       <app-control-startingcurrent *ngIf="control.startingCurrentDetection"
