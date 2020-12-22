@@ -18,6 +18,9 @@
 package de.avanux.smartapplianceenabler.util;
 
 import java.time.LocalDate;
+
+import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
+import org.apache.poi.util.ReplacingInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +61,13 @@ public class FileHandler {
         if(file.exists()) {
             InputStream is = null;
             try {
-                is = new FileInputStream(file);
+                // pretend XSD version to be current version
+                // this allows for seamless update if there are no structural changes
+                is = new ReplacingInputStream(
+                        new FileInputStream(file),
+                        "http://github.com/camueller/SmartApplianceEnabler/v1.5",
+                        ApplianceManager.SCHEMA_LOCATION
+                );
                 return load(rootElementType, is);
             }
             catch(Exception e) {
