@@ -325,6 +325,9 @@
     </xs:complexType>
 
     <xs:complexType name="S0ElectricityMeterType">
+        <xs:sequence>
+            <xs:element name="Notifications" type="NotificationsType" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
         <xs:attribute name="gpio" type="xs:int" use="required"/>
         <xs:attribute name="pinPullResistance" type="PinPullResistanceType" />
         <xs:attribute name="impulsesPerKwh" type="xs:int" use="required"/>
@@ -342,6 +345,7 @@
     <xs:complexType name="ModbusElectricityMeterType">
         <xs:sequence>
             <xs:element name="ModbusRead" type="ModbusReadType" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="Notifications" type="NotificationsType" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
         <xs:attribute name="idref" type="xs:NCName" use="required" />
         <xs:attribute name="slaveAddress" type="xs:int" use="required" />
@@ -353,6 +357,7 @@
         <xs:sequence>
             <xs:element name="HttpConfiguration" type="HttpConfigurationType" minOccurs="0" />
             <xs:element name="HttpRead" type="HttpReadType" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="Notifications" type="NotificationsType" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
         <xs:attribute name="contentProtocol" type="ContentProtcolType" />
         <xs:attribute name="pollInterval" type="xs:int" />
