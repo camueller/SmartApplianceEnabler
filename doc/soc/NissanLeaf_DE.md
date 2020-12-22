@@ -43,7 +43,7 @@ Installing collected packages: pycryptodome, chardet, certifi, urllib3, idna, re
 Successfully installed PyYAML-5.1.2 certifi-2019.6.16 chardet-3.0.4 idna-2.8 iso8601-0.1.12 pycarwings2-2.9 pycryptodome-3.9.0 requests-2.22.0 urllib3-1.25.3
 ```
 
-Jetzt kann das Verzeichnis für das SOC-Script und Konfigurationsdatei angelegt werden:
+Jetzt kann das Verzeichnis für das SOC-Script und Konfigurationsdatei angelegt und dorthin gewechselt werden:
 ```console
 pi@raspberrypi ~ $ mkdir /opt/sae/soc
 pi@raspberrypi ~ $ cd /opt/sae/soc
