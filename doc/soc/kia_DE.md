@@ -41,22 +41,22 @@ datei = open('soc.ini','r')
 fertig = 0
 temp = ""
 while fertig == 0:
-temp = datei.readline()
-temp=temp.rstrip("\n")
-if temp == "#email":
-email = datei.readline()
-email=email.rstrip("\n")
-if temp == '#password':
-password = datei.readline()
-password=password.rstrip("\n")
-if temp == '#pin':
-pin = datei.readline()
-pin=pin.rstrip("\n")
-if temp == '#vin':
-vin = datei.readline()
-vin=vin.rstrip("\n")
-if temp == '#end':
-fertig=1
+    temp = datei.readline()
+    temp=temp.rstrip("\n")
+    if temp == "#email":
+        email = datei.readline()
+        email=email.rstrip("\n")
+    if temp == '#password':
+        password = datei.readline()
+        password=password.rstrip("\n")
+    if temp == '#pin':
+        pin = datei.readline()
+        pin=pin.rstrip("\n")
+    if temp == '#vin':
+        vin = datei.readline()
+        vin=vin.rstrip("\n")
+    if temp == '#end':
+        fertig=1
 datei.close()
 
 
@@ -216,7 +216,7 @@ def main():
         return
 
 if __name__ == '__main__':
-main()
+    main()
 ```
 
 Damit das SOC-Python-Script von überall aus aufgerufen werden kann und trotzdem die ```soc.ini``` gefunden wird, hilft folgendes kleine Shell-Script ```/opt/sae/soc/soc.sh```, das vom *Smart Appliance Enabler* aufgerufen wird:
