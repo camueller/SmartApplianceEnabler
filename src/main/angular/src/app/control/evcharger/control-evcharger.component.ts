@@ -130,7 +130,7 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
   }
 
   get protocol() {
-    return this.form.controls.protocol.value;
+    return this.form.controls.protocol?.value;
   }
 
   get isProtocolModbus() {
