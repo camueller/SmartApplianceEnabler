@@ -169,7 +169,7 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
     public void stop(LocalDateTime now) {
         logger.debug("{}: Stopping {}", getApplianceId(), getClass().getSimpleName());
         GpioController gpioController = getGpioController();
-        if(gpioController != null) {
+        if(gpioController != null && inputPin != null) {
             gpioController.unprovisionPin(inputPin);
         }
         else {

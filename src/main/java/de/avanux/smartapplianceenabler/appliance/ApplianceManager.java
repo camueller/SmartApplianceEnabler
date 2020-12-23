@@ -139,7 +139,12 @@ public class ApplianceManager implements Runnable {
             if(appliances.getAppliances() != null) {
                 for(Appliance appliance : appliances.getAppliances()) {
                     logger.info("{}: Stopping appliance ...", appliance.getId());
-                    appliance.stop();
+                    try {
+                        appliance.stop();
+                    }
+                    catch(Exception e) {
+                        logger.error("{}: Error stopping appliance", appliance.getId(), e);
+                    }
                 }
             }
         }
@@ -169,8 +174,13 @@ public class ApplianceManager implements Runnable {
                 holidaysUsed = true;
             }
             logger.debug("{}: Initializing appliance ...", appliance.getId());
-            appliance.init(getGpioController(), modbusIdWithModbusTcp,
-                    appliances.getConfigurationValue(NotificationHandler.CONFIGURATION_KEY_NOTIFICATION_COMMAND));
+            try {
+                appliance.init(getGpioController(), modbusIdWithModbusTcp,
+                        appliances.getConfigurationValue(NotificationHandler.CONFIGURATION_KEY_NOTIFICATION_COMMAND));
+            }
+            catch (Exception e) {
+                logger.error("{}: Error initializing appliance", appliance.getId(), e);
+            }
             logger.debug("{}: Validating appliance ...", appliance.getId());
             try {
                 appliance.validate();
@@ -179,7 +189,12 @@ public class ApplianceManager implements Runnable {
                 System.exit(-1);
             }
             logger.debug("{}: Starting appliance ...", appliance.getId());
-            appliance.start(timer);
+            try {
+                appliance.start(timer);
+            }
+            catch(Exception e) {
+                logger.error("{}: Error starting appliance", appliance.getId(), e);
+            }
         }
 
         if(holidaysUsed) {
