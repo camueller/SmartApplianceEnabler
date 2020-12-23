@@ -154,15 +154,22 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   }
 
   get notficationTypes() {
-    return this.isEvCharger
-      ? [
+    if (this.isAlwaysOnSwitch) {
+      return [
+        NotificationType.COMMUNICATION_ERROR
+      ];
+    }
+    if (this.isEvCharger) {
+      return [
         NotificationType.EVCHARGER_VEHICLE_NOT_CONNECTED,
         NotificationType.EVCHARGER_VEHICLE_CONNECTED,
         NotificationType.EVCHARGER_CHARGING,
         NotificationType.EVCHARGER_CHARGING_COMPLETED,
-        NotificationType.EVCHARGER_ERROR
-      ]
-      : [
+        NotificationType.EVCHARGER_ERROR,
+        NotificationType.COMMUNICATION_ERROR
+      ];
+    }
+    return [
         NotificationType.CONTROL_ON,
         NotificationType.CONTROL_OFF,
         NotificationType.COMMUNICATION_ERROR
