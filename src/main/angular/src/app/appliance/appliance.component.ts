@@ -70,8 +70,9 @@ export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<Appl
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.appliance && changes.appliance.currentValue) {
       this.appliance = changes.appliance.currentValue;
+      this.buildForm();
     }
-    if (this.form) {
+    if (changes.form) {
       this.buildForm();
     }
   }
@@ -102,15 +103,14 @@ export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<Appl
     this.route.paramMap.subscribe(() => this.isNew = this.route.snapshot.paramMap.get('id') == null);
     this.route.data.subscribe((data: { appliance: Appliance }) => {
       this.appliance = data.appliance;
+      this.buildForm();
+      this.form.statusChanges.subscribe(() => {
+        this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
+      });
       if (this.form) {
-        this.buildForm();
-        this.form.statusChanges.subscribe(() => {
-          this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
-        });
         this.form.markAsPristine();
       }
     });
-    this.buildForm();
   }
 
   canDeactivate(): Observable<boolean> | boolean {

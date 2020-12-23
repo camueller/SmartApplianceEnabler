@@ -57,7 +57,7 @@ import {ControlMeterreportingComponent} from './meterreporting/control-meterrepo
   templateUrl: './control.component.html',
   styleUrls: ['./control.component.scss'],
 })
-export class ControlComponent implements OnChanges, OnInit, CanDeactivate<ControlComponent> {
+export class ControlComponent implements OnInit, CanDeactivate<ControlComponent> {
   @ViewChild(ControlMeterreportingComponent)
   controlMeterreportingComp: ControlMeterreportingComponent;
   @ViewChild(ControlSwitchComponent)
@@ -95,15 +95,6 @@ export class ControlComponent implements OnChanges, OnInit, CanDeactivate<Contro
     this.controlFactory = new ControlFactory(logger);
     this.control = this.controlFactory.createEmptyControl();
     this.formHandler = new FormHandler();
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.control && changes.control.currentValue) {
-      this.control = changes.control.currentValue;
-    }
-    if (this.form) {
-      this.updateForm();
-    }
   }
 
   ngOnInit() {

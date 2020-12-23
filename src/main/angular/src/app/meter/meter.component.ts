@@ -49,7 +49,7 @@ import {NotificationComponent} from '../notification/notification.component';
   templateUrl: './meter.component.html',
   styleUrls: ['./meter.component.scss'],
 })
-export class MeterComponent implements OnChanges, OnInit, CanDeactivate<MeterComponent> {
+export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
   @ViewChild(MeterS0Component)
   meterS0Comp: MeterS0Component;
   @ViewChild(MeterModbusComponent)
@@ -80,15 +80,6 @@ export class MeterComponent implements OnChanges, OnInit, CanDeactivate<MeterCom
     this.meterFactory = new MeterFactory(logger);
     this.meter = this.meterFactory.createEmptyMeter();
     this.formHandler = new FormHandler();
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.control && changes.control.currentValue) {
-      this.meter = changes.meter.currentValue;
-    }
-    if (this.form) {
-      this.updateForm();
-    }
   }
 
   ngOnInit() {
