@@ -31,3 +31,11 @@ Für jeden Modbus/TCP muss eine eindeutige ID festgelegt werden, die bei der Kon
 Die Angabe von Hostname bzw. IP-Adresse und Port ist optional möglich.
 
 ![Einstellungen Modbus](../pics/fe/SettingsModbus.png)
+
+## Benachrichtigungen
+Zur Verwendung von Benachrichtigungen muss ein Shell-Script angegeben werden, das beim Auftreten eines konfigurierten Ereignisses aufgerufen wird.
+
+![Einstellungen Modbus](../pics/fe/SettingsNotifications.png)
+
+Die Installation von bereitgestellten Shell-Scripts ist [hier](Installation_DE.md#Benachrichtigungen) beschrieben.
+
