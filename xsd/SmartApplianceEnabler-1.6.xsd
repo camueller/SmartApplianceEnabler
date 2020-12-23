@@ -27,7 +27,7 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="Configuration" type="ConfigurationType" minOccurs="0" maxOccurs="unbounded" />
-                <xs:element name="Appliance" type="ApplianceType" minOccurs="1" maxOccurs="unbounded" />
+                <xs:element name="Appliance" type="ApplianceType" minOccurs="0" maxOccurs="unbounded" />
                 <xs:element name="Connectivity" type="ConnectivityType" minOccurs="0" maxOccurs="1" />
             </xs:sequence>
         </xs:complexType>
@@ -67,14 +67,14 @@
     <xs:complexType name="ApplianceType">
         <xs:sequence>
             <xs:choice>
-                <xs:element name="MeterReportingSwitch" type="MeterReportingSwitchType" minOccurs="0" />
-                <xs:element name="AlwaysOnSwitch" type="AlwaysOnSwitchType" minOccurs="0" />
-                <xs:element name="Switch" type="SwitchType" minOccurs="0" />
-                <xs:element name="HttpSwitch" type="HttpSwitchType" minOccurs="0" />
-                <xs:element name="MockSwitch" type="MockSwitchType" minOccurs="0" />
-                <xs:element name="ModbusSwitch" type="ModbusSwitchType" minOccurs="0" />
-                <xs:element name="ElectricVehicleCharger" type="ElectricVehicleChargerType" minOccurs="0" />
-                <xs:element name="StartingCurrentSwitch" type="StartingCurrentSwitchType" minOccurs="0" />
+                <xs:element name="MeterReportingSwitch" type="MeterReportingSwitchType" />
+                <xs:element name="AlwaysOnSwitch" type="AlwaysOnSwitchType" />
+                <xs:element name="Switch" type="SwitchType" />
+                <xs:element name="HttpSwitch" type="HttpSwitchType" />
+                <xs:element name="MockSwitch" type="MockSwitchType" />
+                <xs:element name="ModbusSwitch" type="ModbusSwitchType" />
+                <xs:element name="ElectricVehicleCharger" type="ElectricVehicleChargerType" />
+                <xs:element name="StartingCurrentSwitch" type="StartingCurrentSwitchType" />
             </xs:choice>
             <xs:choice>
                 <xs:element name="S0ElectricityMeter" type="S0ElectricityMeterType" minOccurs="0" />
