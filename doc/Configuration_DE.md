@@ -69,10 +69,9 @@ Derzeit unterstützt der *Smart Appliance Enabler* folgende Schalter:
 * [GPIO](GPIOSwitch_DE.md)
 * [Modbus](ModbusSwitch_DE.md)
 * [HTTP](HttpSwitch_DE.md)
+* [Immer eingeschaltet](AlwaysOnSwitch_DE.md)
 
 Falls der gewählte Schalter-Typ mit [Anlaufstromerkennung](Anlaufstromerkennung_DE.md) kombiniert werden kann und diese durch Anklicken der Checkbox aktiviert wurde, werden weitere Felder mit Konfigurationsparametern der Anlaufstromerkennung eingeblendet.
-
-Ein besonderer Schalter-Typ ist ```Immer eingeschaltet```. Dieser eignet sich für Geräte, die immer eingeschaltet sind (z.B. Kühlschrank) und bei denen lediglich der Verbrauch überwacht werden soll. Die Konfiguration dieses Schalters ist erforderlich, weil nur Verbräuche eingeschalteter Geräte berücksichtigt werden.
 
 Nachdem alle erforderlichen Eingaben erfolgt sind, wird die ```Speichern```-Schaltfläche freigegeben. Falls ein Schalter konfiguriert wurden, erscheint nach dem Drücken dieser Schaltfläche erscheinen im Seitenmenü der Unterpunkt ```Schaltzeiten```.
 

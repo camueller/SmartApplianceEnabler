@@ -1,5 +1,6 @@
 # Zählerbasierter Zustandsmelder
-Wie der Name bereits vermuten läßt, wird dieser Schalter nicht aktiv geschaltet, sondern es wird lediglich der Schaltzustand auf Basis der aktuellen Leistungsaufnahme bestimmt.
+
+Wie der Name bereits vermuten läßt, wird dieser Schalter nicht aktiv geschaltet, sondern es wird lediglich der Schaltzustand auf Basis der aktuellen Leistungsaufnahme gemeldet.
 
 Dementsprechend gibt es einen Parameter zur Festlegung der Leistungsaufnahme, oberhalb derer der Status als "eingeschaltet" gewertet wird. Standardwert sind 10W.
 
