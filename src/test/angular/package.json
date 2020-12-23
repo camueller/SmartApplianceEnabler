@@ -7,7 +7,8 @@
   "license": "GPL",
   "scripts": {
     "debug": "testcafe $NODE_DEBUG_OPTION chrome",
-    "test": "testcafe chrome \"src/*.spec.ts\""
+    "test": "testcafe chrome \"src/*.spec.ts\"",
+    "test8080": "E2E_TEST_URL=http://localhost:8080 testcafe chrome \"src/*.spec.ts\""
   },
   "private": true,
   "dependencies": {
