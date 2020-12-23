@@ -11,7 +11,7 @@ import {Notifications} from './notifications';
   templateUrl: './notification.component.html',
   styleUrls: ['./notification.component.scss'],
 })
-export class NotificationComponent implements OnChanges, OnInit {
+export class NotificationComponent implements OnChanges {
   @Input()
   notifications: Notifications;
   @Input()
@@ -42,11 +42,6 @@ export class NotificationComponent implements OnChanges, OnInit {
       }
       this.expandParentForm();
     }
-  }
-
-  ngOnInit(): void {
-    this.buildTypeList();
-    this.expandParentForm();
   }
 
   public get typesPlaceholder() {
@@ -82,6 +77,7 @@ export class NotificationComponent implements OnChanges, OnInit {
   expandParentForm() {
     this.formHandler.addFormControl(this.form, 'enabled', {value: !!this.notifications, disabled: !this.configured});
     this.formHandler.addFormControl(this.form, 'types', this.notifications?.types);
+    this.setEnabled(this.isEnabled());
     this.form.controls.enabled.valueChanges.subscribe(value => {
       this.setEnabled(value);
       this.form.markAsDirty();
