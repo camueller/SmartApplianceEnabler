@@ -37,5 +37,5 @@ Zur Verwendung von Benachrichtigungen muss ein Shell-Script angegeben werden, da
 
 ![Einstellungen Modbus](../pics/fe/SettingsNotifications.png)
 
-Die Installation von bereitgestellten Shell-Scripts ist [hier](Installation_DE.md#Benachrichtigungen) beschrieben.
+Die Installation von bereitgestellten Shell-Scripts für den *Smart Appliance Enabler* ist [hier](Installation_DE.md#benachrichtigungen) beschrieben.
 

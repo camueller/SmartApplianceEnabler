@@ -9,7 +9,7 @@ Grundsätzlich gilt, dass Eingaben/Änderungen erst nach dem Klicken der ```Spei
 Beim Speichern werden die Daten in zwei [XML](https://de.wikipedia.org/wiki/Extensible_Markup_Language)-Dateien geschrieben, die sich in dem Verzeichnis befinden, auf das die Variable SAE_HOME verweist (normalerweise ```/opt/sae```):
 * die Datei `Device2EM.xml` enthält Gerätebeschreibung für den EnergyManager
 * die Datei `Appliances.xml` enthält die Gerätekonfiguration für den *Smart Appliance Enabler*
-Die Groß-/Kleinschreibung der Dateinamen muss genau so sein, wie hier angegeben!
+  Die Groß-/Kleinschreibung der Dateinamen muss genau so sein, wie hier angegeben!
 
 Beim Speichern wird außerdem der *Smart Appliance Enabler* intern neu gestartet, damit die geänderte Konfiguration wirksam wird. Aktuell laufende Geräte werden in diesem Moment immer gestoppt/ausgeschalten um einen definierten Zustand zu erhalten. Auch werden bereits in Anspruch genommene Energiemengen/Laufzeiten von Geräten zurück gesetzt und neu eingeplant.
 Ist dies nicht gewünscht, empfiehlt es sich Konfigurationsänderungen außerhalb der üblichen Zeitfenster vorzunehmen, zB Abends.
@@ -35,7 +35,7 @@ Ein sehr wichtiges Attribut der Gerätekonfiguration ist die ```ID```. Der Aufba
 * 00000001 ersetzen durch einen 8-stelligen Wert, der den eigenen Bereich definiert, z.B. das Geburtsdatum in der Form 25021964 für den 25. Februar 1964
 * 000000000001 für jedes verwaltete Gerät hochzählen bzw. eine individuelle 12-stellige Zahl verwenden
 * 00 unverändert lassen (sub device id)
-Die Device-IDs werden vom Sunny-Portal direkt verwendet, d.h. wenn jemand anderes bereits diese ID verwendet, kann das Gerät nicht im Sunny-Portal angelegt werden. Durch die Verwendung individueller Bestandteile wie Geburtsdatum sollte das Risiko dafür jedoch gering sein.
+  Die Device-IDs werden vom Sunny-Portal direkt verwendet, d.h. wenn jemand anderes bereits diese ID verwendet, kann das Gerät nicht im Sunny-Portal angelegt werden. Durch die Verwendung individueller Bestandteile wie Geburtsdatum sollte das Risiko dafür jedoch gering sein.
 
 Außer der Device-ID müssen allgemeine Angaben und Eigenschaften des Gerätes eingegeben werden. Wenn alle erforderlichen Eingaben erfolgt sind, wird die ```Speichern```-Schaltfläche freigegeben. Erst nach dem Drücken dieser Schaltfläche erscheinen im Seitenmenü die Unterpunkte ```Zähler``` und ```Schalter```.
 
@@ -95,11 +95,11 @@ Der *Smart Appliance Enabler* meldet dem Sunny Home Manager den Geräte-Laufzeit
 
 ## Benachrichtigungen
 
-Durch Benachrichtigungen kann der *Smart Appliance Enabler* über Ereignisse ("Gerät wurde eingeschaltet", "Kommunikationsfehler") informieren. 
+Durch Benachrichtigungen kann der *Smart Appliance Enabler* über Ereignisse ("Gerät wurde eingeschaltet", "Kommunikationsfehler") informieren.
 
-Für die Nutzung von Benachrichtigungen muss ein [Shell-Script in den Einstellungen konfiguriert](Settings_DE.md#Benachrichtigungen)) sein.
+Für die Nutzung von Benachrichtigungen muss ein [Shell-Script in den Einstellungen konfiguriert](Settings_DE.md#benachrichtigungen) sein.
 
-Nachdem ein Shell-Script konfuguriert wurden, kann für Zähler und Schalter konfiguriert werden, durch Aktivieren der Checkbox `Aktiviert` das Versenden von Benachrichtigungen für dieses Gerät aktiviert werden.
+Nachdem ein Shell-Script konfiguriert wurde, kann für Zähler und Schalter durch Aktivieren der Checkbox `Aktiviert` das Versenden von Benachrichtigungen gerätespezifisch aktiviert werden.
 
 Ohne Auswahl einzelner Ereignisse erfolgt die Benachrichtiung für alle Ereignisse:
 
@@ -138,7 +138,7 @@ Die XML-Dateien kann man entweder auf dem Raspberry Pi bearbeiten oder man trans
 ## Überprüfung der Dateien
 Die angepassten XML-Dateien sollten hinsichtlich ihrer Gültigkeit überprüft werden.
 Dazu ist die Seite http://www.freeformatter.com/xml-validator-xsd.html besonders geeignet:
-Der Inhalt der XML-Datei wird in das Fenster *XML Input* kopiert. 
+Der Inhalt der XML-Datei wird in das Fenster *XML Input* kopiert.
 In das Fenster *XSD Input* muss der Inhalt (nicht die URL selbst!) der nachfolgenden URL kopiert werden:
 * beim Prüfen von Device2EM.xml: https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/xsd/SEMP-1.1.5.xsd
 * beim Prüfen von Appliances.xml: https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/xsd/SmartApplianceEnabler-1.4.xsd
@@ -167,7 +167,7 @@ Normalerweise werden die Schedules aus der Datei `Appliance.xml` gelesen. Es ist
 ```console
 curl -s -X POST -d '<Schedules xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.4"><Schedule><RuntimeRequest min="1800" max="3600" /><DayTimeframe><Start hour="0" minute="0" second="0" /><End hour="18" minute="59" second="59" /></DayTimeframe></Schedule></Schedules>' --header 'Content-Type: application/xml' http://localhost:8080/sae/schedules?id=F-00000001-000000000001-00
 ```
-Das ```xmlns```-Attribut (insbesondere die Version des *Smart Appliance Enabler* am Ende) muss dabei übereinstimmen mit dem ```xmlns```-Attribut in der Datei ```Appliances.xml```. 
+Das ```xmlns```-Attribut (insbesondere die Version des *Smart Appliance Enabler* am Ende) muss dabei übereinstimmen mit dem ```xmlns```-Attribut in der Datei ```Appliances.xml```.
 
 Im Log des SAE sollte sich danach folgendes finden:
 ```console
