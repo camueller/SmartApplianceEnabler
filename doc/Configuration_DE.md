@@ -128,7 +128,7 @@ chat=-123456789
 
 Jetzt steht dem Empfang von Benachrichtigungen nichts mehr im Wege:
 
-![Telegram](../pics/Telegram.png)
+![Telegram](../pics/Telegram.jpg)
 
 # Konfiguration mittels XML-Dateien
 
