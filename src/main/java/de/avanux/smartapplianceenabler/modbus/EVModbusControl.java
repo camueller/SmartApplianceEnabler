@@ -174,7 +174,9 @@ public class EVModbusControl extends ModbusSlave implements EVChargerControl {
                     }
                 } catch (Exception e) {
                     logger.error("{}: Error reading register {}", getApplianceId(), registerRead.getAddress(), e);
-                    this.notificationHandler.sendNotification(NotificationType.COMMUNICATION_ERROR);
+                    if(this.notificationHandler != null) {
+                        this.notificationHandler.sendNotification(NotificationType.COMMUNICATION_ERROR);
+                    }
                 }
             }
             return result;
@@ -204,7 +206,9 @@ public class EVModbusControl extends ModbusSlave implements EVChargerControl {
             catch(Exception e) {
                 logger.error("{}: Error setting charge current in register {}", getApplianceId(),
                         registerWrite.getAddress(), e);
-                this.notificationHandler.sendNotification(NotificationType.COMMUNICATION_ERROR);
+                if(this.notificationHandler != null) {
+                    this.notificationHandler.sendNotification(NotificationType.COMMUNICATION_ERROR);
+                }
             }
         }
     }
@@ -246,7 +250,9 @@ public class EVModbusControl extends ModbusSlave implements EVChargerControl {
             catch(Exception e) {
                 logger.error("{}: Error enable/disable charging process in register {}", getApplianceId(),
                         registerWrite.getAddress(), e);
-                this.notificationHandler.sendNotification(NotificationType.COMMUNICATION_ERROR);
+                if(this.notificationHandler != null) {
+                    this.notificationHandler.sendNotification(NotificationType.COMMUNICATION_ERROR);
+                }
             }
         }
     }
