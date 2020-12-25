@@ -18,7 +18,6 @@ export class NotificationComponent implements OnChanges {
   types: string[];
   @Input()
   configured: boolean;
-  enabled: boolean;
   form: FormGroup;
   typeListItems: ListItem[] = [];
   formHandler: FormHandler;
@@ -49,18 +48,18 @@ export class NotificationComponent implements OnChanges {
   }
 
   isEnabled() {
-    return this.form.controls.enabled?.value;
+    return this.form.controls.notificationsEnabled?.value;
   }
 
   setEnabled(enabled: boolean) {
     if (enabled) {
-      this.form.controls.types.enable();
+      this.form.controls.notificationTypes.enable();
       if (!this.notifications) {
         this.notifications = new Notifications();
       }
     } else {
       this.notifications = undefined;
-      this.form.controls.types.disable();
+      this.form.controls.notificationTypes.disable();
     }
   }
 
@@ -75,24 +74,24 @@ export class NotificationComponent implements OnChanges {
   }
 
   expandParentForm() {
-    this.formHandler.addFormControl(this.form, 'enabled', {value: !!this.notifications, disabled: !this.configured});
-    this.formHandler.addFormControl(this.form, 'types', this.notifications?.types);
+    this.formHandler.addFormControl(this.form, 'notificationsEnabled', {value: !!this.notifications, disabled: !this.configured});
+    this.formHandler.addFormControl(this.form, 'notificationTypes', this.notifications?.types);
     this.setEnabled(this.isEnabled());
-    this.form.controls.enabled.valueChanges.subscribe(value => {
+    this.form.controls.notificationsEnabled.valueChanges.subscribe(value => {
       this.setEnabled(value);
       this.form.markAsDirty();
     });
   }
 
   updateModelFromForm(): Notifications | undefined {
-    const enabled = this.form.controls.enabled.value;
-    const types = this.form.controls.types.value;
+    const notificationsEnabled = this.form.controls.notificationsEnabled.value;
+    const notificationTypes = this.form.controls.notificationTypes.value;
 
-    if (!enabled) {
+    if (!notificationsEnabled) {
       return undefined;
     }
 
-    this.notifications.types = types;
+    this.notifications.types = notificationTypes;
     return this.notifications;
   }
 }
