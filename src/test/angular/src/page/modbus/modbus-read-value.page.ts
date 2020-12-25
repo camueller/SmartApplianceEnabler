@@ -1,8 +1,8 @@
 import {
   assertInput,
-  assertSelect,
+  assertSelectOption,
   inputText,
-  selectOptionByAttribute,
+  selectOption,
   selectorInputByFormControlName,
   selectorSelectByFormControlName,
   selectorSelectedByFormControlName
@@ -28,12 +28,12 @@ export class ModbusReadValuePage {
   }
 
   public static async setName(t: TestController, name: string, modbusReadValueIndex: number, selectorPrefix?: string) {
-    await selectOptionByAttribute(t, selectorSelectByFormControlName('name', selectorPrefix,
+    await selectOption(t, selectorSelectByFormControlName('name', selectorPrefix,
       ModbusReadValuePage.selectorBase(modbusReadValueIndex)), name);
   }
   public static async assertName(t: TestController, name: string, modbusReadValueIndex: number,
                                  selectorPrefix?: string, i18nPrefix?: string) {
-    await assertSelect(t, selectorSelectedByFormControlName('name', selectorPrefix,
+    await assertSelectOption(t, selectorSelectedByFormControlName('name', selectorPrefix,
       ModbusReadValuePage.selectorBase(modbusReadValueIndex)), name, i18nPrefix);
   }
 

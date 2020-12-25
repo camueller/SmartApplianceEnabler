@@ -4,9 +4,9 @@ import {ModbusElectricityMeter} from '../../../../../main/angular/src/app/meter/
 import {ModbusReadPage} from '../modbus/modbus-read.page';
 import {
   assertInput,
-  assertSelect,
+  assertSelectOption,
   inputText,
-  selectOptionByAttribute,
+  selectOption,
   selectorInputByFormControlName,
   selectorSelectByFormControlName,
   selectorSelectedByFormControlName
@@ -57,10 +57,10 @@ export class ModbusMeterPage extends MeterPage {
   }
 
   public static async setIdRef(t: TestController, idref: string) {
-    await selectOptionByAttribute(t, selectorSelectByFormControlName('idref'), idref);
+    await selectOption(t, selectorSelectByFormControlName('idref'), idref);
   }
   public static async assertIdRef(t: TestController, idref: string) {
-    await assertSelect(t, selectorSelectedByFormControlName('idref'), idref);
+    await assertSelectOption(t, selectorSelectedByFormControlName('idref'), idref);
   }
 
   public static async setAddress(t: TestController, address: string) {

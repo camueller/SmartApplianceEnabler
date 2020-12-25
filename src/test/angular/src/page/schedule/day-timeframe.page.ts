@@ -1,6 +1,6 @@
 import {
-  assertInput,
-  inputText,
+  assertInput, assertSelectOptionMulti,
+  inputText, selectOptionMulti,
   selectorInputByFormControlName,
   selectorSelectByFormControlName,
   selectorSelectedByFormControlName
@@ -41,46 +41,34 @@ export class DayTimeframePage {
   }
 
   public static async setDaysOfWeek(t: TestController, daysOfWeek: number[], selectorPrefix: string) {
-    await t.click(selectorSelectByFormControlName('daysOfWeekValues', selectorPrefix));
-    for (let i = 1; i <= 8; i++) {
-      if (daysOfWeek.includes(i)) {
-        const selectorString = `mat-option:nth-child(${i}) mat-pseudo-checkbox`;
-        if (isDebug()) {
-          console.log('Selector: ', selectorString);
-        }
-        await t.click(selectorString);
-      }
-    }
-    await t.pressKey('esc'); // close multi select overlay
+    await selectOptionMulti(t, selectorSelectByFormControlName('daysOfWeekValues', selectorPrefix), daysOfWeek);
   }
   public static async assertDaysOfWeek(t: TestController, daysOfWeek: number[], selectorPrefix: string) {
-    const actualDaysOfWeek = await selectorSelectedByFormControlName('daysOfWeekValues', selectorPrefix).innerText;
-    const expectedDaysOfWeek = [];
+    const dayOfWeekNames = [];
     if (daysOfWeek.includes(1)) {
-      expectedDaysOfWeek.push(getTranslation('monday', 'daysOfWeek_'));
+      dayOfWeekNames.push('monday');
     }
     if (daysOfWeek.includes(2)) {
-      expectedDaysOfWeek.push(getTranslation('tuesday', 'daysOfWeek_'));
+      dayOfWeekNames.push('tuesday');
     }
     if (daysOfWeek.includes(3)) {
-      expectedDaysOfWeek.push(getTranslation('wednesday', 'daysOfWeek_'));
+      dayOfWeekNames.push('wednesday');
     }
     if (daysOfWeek.includes(4)) {
-      expectedDaysOfWeek.push(getTranslation('thursday', 'daysOfWeek_'));
+      dayOfWeekNames.push('thursday');
     }
     if (daysOfWeek.includes(5)) {
-      expectedDaysOfWeek.push(getTranslation('friday', 'daysOfWeek_'));
+      dayOfWeekNames.push('friday');
     }
     if (daysOfWeek.includes(6)) {
-      expectedDaysOfWeek.push(getTranslation('saturday', 'daysOfWeek_'));
+      dayOfWeekNames.push('saturday');
     }
     if (daysOfWeek.includes(7)) {
-      expectedDaysOfWeek.push(getTranslation('sunday', 'daysOfWeek_'));
+      dayOfWeekNames.push('sunday');
     }
     if (daysOfWeek.includes(8)) {
-      expectedDaysOfWeek.push(getTranslation('holiday', 'daysOfWeek_'));
+      dayOfWeekNames.push('holiday');
     }
-    const expectedDaysOfWeekString = expectedDaysOfWeek.join(', ');
-    await t.expect(actualDaysOfWeek).eql(expectedDaysOfWeekString);
+    await assertSelectOptionMulti(t, selectorSelectByFormControlName('daysOfWeekValues', selectorPrefix), dayOfWeekNames, 'daysOfWeek_');
   }
 }

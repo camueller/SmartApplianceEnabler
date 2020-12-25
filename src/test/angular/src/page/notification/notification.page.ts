@@ -18,24 +18,29 @@
 
 import {
   assertCheckbox,
+  assertSelectOptionMulti,
+  selectOptionMulti,
   selectorCheckboxByFormControlName,
-  selectorCheckboxCheckedByFormControlName, selectorSelectByFormControlName, selectorSelectedByFormControlName,
+  selectorCheckboxCheckedByFormControlName,
+  selectorSelectByFormControlName,
   setCheckboxEnabled
 } from '../../shared/form';
 import {Notifications} from '../../../../../main/angular/src/app/notification/notifications';
-import {isDebug} from '../../shared/helper';
 import {NotificationType} from '../../../../../main/angular/src/app/notification/notification-type';
-import {getTranslation} from '../../shared/ngx-translate';
 
 export class NotificationPage {
 
   public static async setNotifications(t: TestController, notifications: Notifications) {
     await NotificationPage.setNotificationEnabled(t, !! notifications);
-    await NotificationPage.setNotificationTypes(t, notifications.types);
+    if (notifications) {
+      await NotificationPage.setNotificationTypes(t, notifications.types);
+    }
   }
   public static async assertNotifications(t: TestController, notifications: Notifications) {
     await NotificationPage.assertNotificationEnabled(t, !! notifications);
-    await NotificationPage.assertNotificationTypes(t, notifications.types);
+    if (notifications) {
+      await NotificationPage.assertNotificationTypes(t, notifications.types);
+    }
   }
 
   public static async setNotificationEnabled(t: TestController, enabled: boolean) {
@@ -46,26 +51,11 @@ export class NotificationPage {
   }
 
   public static async setNotificationTypes(t: TestController, notificationTypes: NotificationType[]) {
-    await t.click(selectorSelectByFormControlName('notificationTypes'));
-    notificationTypes?.forEach(async notificationType => {
-      const selectorString = `mat-option[ng-reflect-value="${notificationType}"]`;
-      if (isDebug()) {
-        console.log('Selector: ', selectorString);
-      }
-      await t.click(selectorString);
-    });
-    await t.pressKey('esc'); // close multi select overlay
+    await selectOptionMulti(t, selectorSelectByFormControlName('notificationTypes'), notificationTypes);
   }
 
   public static async assertNotificationTypes(t: TestController, notificationTypes: NotificationType[]) {
-    if (notificationTypes) {
-      const actualNotificationTypesString = await selectorSelectedByFormControlName('notificationTypes').innerText;
-      const expectedNotificationTypes = [];
-      notificationTypes?.forEach(notificationType => {
-        expectedNotificationTypes.push(getTranslation(notificationType, 'NotificationComponent.type.'));
-      });
-      const expectedNotificationTypesString = expectedNotificationTypes.join(', ');
-      await t.expect(actualNotificationTypesString).eql(expectedNotificationTypesString);
-    }
+    await assertSelectOptionMulti(t, selectorSelectByFormControlName('notificationTypes'), notificationTypes,
+      'NotificationComponent.type.');
   }
 }

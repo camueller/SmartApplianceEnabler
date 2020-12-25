@@ -2,9 +2,9 @@ import {MeterPage} from './meter.page';
 import {S0ElectricityMeter} from '../../../../../main/angular/src/app/meter/s0/s0-electricity-meter';
 import {
   assertInput,
-  assertSelect,
+  assertSelectOption,
   inputText,
-  selectOptionByAttribute,
+  selectOption,
   selectorInputByFormControlName,
   selectorSelectByFormControlName,
   selectorSelectedByFormControlName
@@ -35,10 +35,10 @@ export class S0MeterPage extends MeterPage {
   }
 
   public static async setPinPullResistance(t: TestController, pinPullResistance: string) {
-    await selectOptionByAttribute(t, selectorSelectByFormControlName('pinPullResistance'), pinPullResistance);
+    await selectOption(t, selectorSelectByFormControlName('pinPullResistance'), pinPullResistance);
   }
   public static async assertPinPullResistance(t: TestController, pinPullResistance: string) {
-    await assertSelect(t, selectorSelectedByFormControlName('pinPullResistance'), pinPullResistance,
+    await assertSelectOption(t, selectorSelectedByFormControlName('pinPullResistance'), pinPullResistance,
       'MeterS0Component.pinPullResistance.');
   }
 

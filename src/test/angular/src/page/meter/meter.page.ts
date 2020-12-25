@@ -1,7 +1,7 @@
 import {
-  assertSelect,
+  assertSelectOption,
   clickButton,
-  selectOptionByAttribute,
+  selectOption,
   selectorSelectByFormControlName,
   selectorSelectedByFormControlName
 } from '../../shared/form';
@@ -12,10 +12,10 @@ export class MeterPage {
   private static SAVE_BUTTON_SELECTOR = 'button[type="submit"]';
 
   public static async setType(t: TestController, meterType: string) {
-    await selectOptionByAttribute(t, selectorSelectByFormControlName('meterType'), simpleMeterType(meterType));
+    await selectOption(t, selectorSelectByFormControlName('meterType'), simpleMeterType(meterType));
   }
   public static async assertType(t: TestController, meterType: string) {
-    await assertSelect(t, selectorSelectedByFormControlName('meterType'), meterType);
+    await assertSelectOption(t, selectorSelectedByFormControlName('meterType'), meterType);
   }
 
   public static async clickSave(t: TestController) {

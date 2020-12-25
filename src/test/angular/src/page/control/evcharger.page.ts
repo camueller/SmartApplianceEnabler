@@ -2,10 +2,10 @@ import {EvCharger} from '../../../../../main/angular/src/app/control/evcharger/e
 import {
   assertCheckbox,
   assertInput,
-  assertSelect,
+  assertSelectOption,
   clickButton,
   inputText,
-  selectOptionByAttribute,
+  selectOption,
   selectorButton,
   selectorCheckboxByFormControlName,
   selectorCheckboxCheckedByFormControlName,
@@ -29,7 +29,7 @@ export class EvchargerPage extends ControlPage {
   }
 
   public static async setEvChargerFromTemplate(t: TestController, evCharger: EvCharger, templateName: string) {
-    await selectOptionByAttribute(t, selectorSelectByFormControlName('template'), templateName);
+    await selectOption(t, selectorSelectByFormControlName('template'), templateName);
     if (evCharger.protocol === EvChargerProtocol.MODBUS) {
       await EvchargerModbusPage.setIdRef(t, settings.modbusSettings[0].modbusTcpId);
     }
@@ -104,10 +104,10 @@ export class EvchargerPage extends ControlPage {
   }
 
   public static async setProtocol(t: TestController, protocol: string) {
-    await selectOptionByAttribute(t, selectorSelectByFormControlName('protocol'), protocol);
+    await selectOption(t, selectorSelectByFormControlName('protocol'), protocol);
   }
   public static async assertProtocol(t: TestController, protocol: string) {
-    await assertSelect(t, selectorSelectedByFormControlName('protocol'), protocol, 'ControlEvchargerComponent.protocol.');
+    await assertSelectOption(t, selectorSelectedByFormControlName('protocol'), protocol, 'ControlEvchargerComponent.protocol.');
   }
 
   public static async setVoltage(t: TestController, voltage: string) {

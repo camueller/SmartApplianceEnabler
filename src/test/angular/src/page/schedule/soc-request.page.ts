@@ -1,9 +1,9 @@
 import {SocRequest} from '../../../../../main/angular/src/app/schedule/request/soc/soc-request';
 import {
   assertInput,
-  assertSelect,
+  assertSelectOption,
   inputText,
-  selectOptionByAttribute,
+  selectOption,
   selectorInputByFormControlName,
   selectorSelectByFormControlName,
   selectorSelectedByFormControlName
@@ -21,10 +21,10 @@ export class SocRequestPage {
   }
 
   public static async setEvId(t: TestController, evId: number, selectorPrefix: string) {
-    await selectOptionByAttribute(t, selectorSelectByFormControlName('evId', selectorPrefix), evId.toString());
+    await selectOption(t, selectorSelectByFormControlName('evId', selectorPrefix), evId.toString());
   }
   public static async assertEvId(t: TestController, evId: number, selectorPrefix: string, evName: string) {
-    await assertSelect(t, selectorSelectedByFormControlName('evId', selectorPrefix), evName);
+    await assertSelectOption(t, selectorSelectedByFormControlName('evId', selectorPrefix), evName);
   }
 
   public static async setSoc(t: TestController, soc: number, selectorPrefix: string) {

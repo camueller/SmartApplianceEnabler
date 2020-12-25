@@ -1,10 +1,10 @@
 import {ModbusRead} from '../../../../../main/angular/src/app/modbus/read/modbus-read';
 import {
   assertInput,
-  assertSelect,
+  assertSelectOption,
   clickButton,
   inputText,
-  selectOptionByAttribute,
+  selectOption,
   selectorButton,
   selectorInputByFormControlName,
   selectorSelectByFormControlName,
@@ -57,11 +57,11 @@ export class ModbusReadPage {
 
   public static async setType(t: TestController, type: string, modbusReadIndex: number,
                               selectorPrefix?: string) {
-    await selectOptionByAttribute(t, selectorSelectByFormControlName('type', selectorPrefix,
+    await selectOption(t, selectorSelectByFormControlName('type', selectorPrefix,
       ModbusReadPage.selectorBase(modbusReadIndex)), type);
   }
   public static async assertType(t: TestController, type: string, modbusReadIndex: number, selectorPrefix?: string) {
-    await assertSelect(t, selectorSelectedByFormControlName('type', selectorPrefix,
+    await assertSelectOption(t, selectorSelectedByFormControlName('type', selectorPrefix,
       ModbusReadPage.selectorBase(modbusReadIndex)), type);
   }
 
@@ -77,11 +77,11 @@ export class ModbusReadPage {
 
   public static async setByteOrder(t: TestController, byteOrder: string, modbusReadIndex: number,
                                    selectorPrefix?: string) {
-    await selectOptionByAttribute(t, selectorSelectByFormControlName('byteOrder', selectorPrefix,
+    await selectOption(t, selectorSelectByFormControlName('byteOrder', selectorPrefix,
       ModbusReadPage.selectorBase(modbusReadIndex)), byteOrder);
   }
   public static async assertByteOrder(t: TestController, byteOrder: string, modbusReadIndex: number, selectorPrefix?: string) {
-    await assertSelect(t, selectorSelectedByFormControlName('byteOrder', selectorPrefix,
+    await assertSelectOption(t, selectorSelectedByFormControlName('byteOrder', selectorPrefix,
       ModbusReadPage.selectorBase(modbusReadIndex)), byteOrder);
   }
 
