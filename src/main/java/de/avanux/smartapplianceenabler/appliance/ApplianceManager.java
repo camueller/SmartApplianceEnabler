@@ -138,8 +138,9 @@ public class ApplianceManager implements Runnable {
         logger.info(getAppliances().size() + " appliance(s) configured.");
     }
 
-    private void restartAppliances() {
-        logger.debug("Restarting ...");
+    private void stopAppliances() {
+        logger.info("Stopping appliances ...");
+        initializationCompleted = false;
         if(this.appliances != null) {
             if(appliances.getAppliances() != null) {
                 for(Appliance appliance : appliances.getAppliances()) {
@@ -153,7 +154,11 @@ public class ApplianceManager implements Runnable {
                 }
             }
         }
+    }
+
+    private void restartAppliances() {
         logger.info("Restarting appliances ...");
+        stopAppliances();
         this.appliances = null;
         this.device2EM = null;
         startAppliances();
