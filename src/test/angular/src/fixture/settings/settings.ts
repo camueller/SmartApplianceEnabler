@@ -7,5 +7,6 @@ export const settings = new Settings({
       modbusTcpHost: 'localhost',
       modbusTcpPort: 502
     }
-  ]
+  ],
+  notificationCommand: '/opt/sae/notifyWithTelegram.sh',
 });

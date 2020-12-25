@@ -16,10 +16,16 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+import {NotificationType} from './notification-type';
+
 export class Notifications {
   static get TYPE(): string {
     return 'de.avanux.smartapplianceenabler.notification.Notifications';
   }
   '@class' = Notifications.TYPE;
-  types: string[];
+  types?: NotificationType[];
+
+  public constructor(init?: Partial<Notifications>) {
+    Object.assign(this, init);
+  }
 }

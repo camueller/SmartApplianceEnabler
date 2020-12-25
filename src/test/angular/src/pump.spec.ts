@@ -7,14 +7,18 @@ import {generateApplianceId} from './shared/appliance-id-generator';
 import {ModbusElectricityMeter} from '../../../main/angular/src/app/meter/modbus/modbus-electricity-meter';
 import {modbusSwitch_2modbusWrite_complete} from './fixture/control/modbus-control';
 import {ModbusSwitch} from '../../../main/angular/src/app/control/modbus/modbus-switch';
+import {Notifications} from '../../../main/angular/src/app/notification/notifications';
+import {NotificationType} from '../../../main/angular/src/app/notification/notification-type';
 
 fixture('Pump').page(baseUrl());
 
 function createPump(): ApplianceConfiguration {
   return new ApplianceConfiguration({
-    appliance: {...pumpAppliance, id: generateApplianceId()},
-    meter: {type: ModbusElectricityMeter.TYPE, modbusElectricityMeter: modbusMeter_1ModbusRead_complete},
-    control: {type: ModbusSwitch.TYPE, startingCurrentDetection: false, modbusSwitch: modbusSwitch_2modbusWrite_complete}
+    appliance: {...pumpAppliance, id: generateApplianceId(), notificationSenderId: 'myNotificationId'},
+    meter: {type: ModbusElectricityMeter.TYPE, modbusElectricityMeter: modbusMeter_1ModbusRead_complete,
+      notifications: new Notifications()},
+    control: {type: ModbusSwitch.TYPE, startingCurrentDetection: false, modbusSwitch: modbusSwitch_2modbusWrite_complete,
+      notifications: new Notifications({types: [NotificationType.CONTROL_ON]})},
   });
 }
 
