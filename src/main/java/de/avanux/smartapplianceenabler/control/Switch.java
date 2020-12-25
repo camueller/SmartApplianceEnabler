@@ -72,7 +72,10 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
         GpioController gpioController = getGpioController();
         if (gpioController != null) {
             try {
-                outputPin = gpioController.provisionDigitalOutputPin(getGpio(), adjustState(PinState.LOW));
+                outputPin = (GpioPinDigitalOutput) gpioController.getProvisionedPin(getGpio());
+                if(outputPin == null) {
+                    outputPin = gpioController.provisionDigitalOutputPin(getGpio(), adjustState(PinState.LOW));
+                }
                 logger.debug("{}: {} uses {} reverseStates={}", getApplianceId(), getClass().getSimpleName(),
                         getGpio(), reverseStates);
             } catch (Exception e) {
@@ -86,12 +89,6 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
     @Override
     public void stop(LocalDateTime now) {
         logger.debug("{}: Stopping {} for {}", getApplianceId(), getClass().getSimpleName(), getGpio());
-        GpioController gpioController = getGpioController();
-        if (gpioController != null) {
-            gpioController.unprovisionPin(outputPin);
-        } else {
-            logGpioAccessDisabled(logger);
-        }
     }
 
     @Override

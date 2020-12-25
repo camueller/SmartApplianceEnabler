@@ -46,7 +46,7 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
     @XmlElement(name = "Notifications")
     private Notifications notifications;
     private transient Long pulseTimestamp;
-    private transient GpioPinDigitalInput inputPin;
+    private transient GpioPin inputPin;
     private transient PulsePowerMeter pulsePowerMeter = new PulsePowerMeter();
     private transient PulseEnergyMeter pulseEnergyMeter = new PulseEnergyMeter();
     private transient List<PowerUpdateListener> powerMeterListeners = new ArrayList<>();
@@ -148,7 +148,10 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
         GpioController gpioController = getGpioController();
         if(gpioController != null) {
             try {
-                inputPin = gpioController.provisionDigitalInputPin(getGpio(), getPinPullResistance());
+                inputPin = gpioController.getProvisionedPin(getGpio());
+                if(inputPin == null) {
+                    inputPin = gpioController.provisionDigitalInputPin(getGpio(), getPinPullResistance());
+                }
                 inputPin.addListener((GpioPinListenerDigital) event -> {
                     handleEvent(event.getPin(), event.getState(), getPinPullResistance(), System.currentTimeMillis());
                 });
@@ -170,7 +173,7 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
         logger.debug("{}: Stopping {}", getApplianceId(), getClass().getSimpleName());
         GpioController gpioController = getGpioController();
         if(gpioController != null && inputPin != null) {
-            gpioController.unprovisionPin(inputPin);
+            inputPin.removeAllListeners();
         }
         else {
             logGpioAccessDisabled(logger);
