@@ -52,6 +52,7 @@ public class ApplianceManager implements Runnable {
     private Timer timer;
     private GuardedTimerTask holidaysDownloaderTimerTask;
     private Integer autoclearSeconds;
+    private boolean initializationCompleted;
     
     private ApplianceManager() {
     }
@@ -68,6 +69,10 @@ public class ApplianceManager implements Runnable {
             }
         }
         return instance;
+    }
+
+    public boolean isInitializationCompleted() {
+        return initializationCompleted;
     }
 
     public static ApplianceManager getInstanceWithoutTimer() {
@@ -232,6 +237,7 @@ public class ApplianceManager implements Runnable {
         else {
             logger.debug("Holidays are NOT used.");
         }
+        initializationCompleted = true;
     }
 
     public void save(boolean writeDevice2EM, boolean writeAppliances) {
