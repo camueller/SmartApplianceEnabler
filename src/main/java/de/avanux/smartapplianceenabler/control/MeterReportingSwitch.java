@@ -79,8 +79,20 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
         return offDetectionDelay != null ? offDetectionDelay : MeterReportingSwitchDefaults.getOffDetectionDelay();
     }
 
+    public void setOffDetectionDelay(Integer offDetectionDelay) {
+        this.offDetectionDelay = offDetectionDelay;
+    }
+
     public void setMeter(Meter meter) {
         this.meter = meter;
+    }
+
+    protected void setLastOn(LocalDateTime lastOn) {
+        this.lastOn = lastOn;
+    }
+
+    protected void setOnBefore(Boolean onBefore) {
+        this.onBefore = onBefore;
     }
 
     @Override
@@ -109,33 +121,32 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
 
     @Override
     public void addControlStateChangedListener(ControlStateChangedListener listener) {
-        this.controlStateChangedListeners.add(listener);
+        controlStateChangedListeners.add(listener);
     }
 
     @Override
     public void removeControlStateChangedListener(ControlStateChangedListener listener) {
-        this.controlStateChangedListeners.remove(listener);
+        controlStateChangedListeners.remove(listener);
     }
 
     @Override
     public boolean isOn() {
+        return this.isOn(LocalDateTime.now());
+    }
+
+    public boolean isOn(LocalDateTime now) {
         if(this.meter != null) {
             int power = this.meter.getAveragePower();
             boolean powerReachesThreshold = power >= getPowerThreshold();
             if(powerReachesThreshold) {
-                lastOn = LocalDateTime.now();
+                lastOn = now;
             }
-            boolean onWithinCheckInterval = lastOn != null && lastOn.plusSeconds(getOffDetectionDelay()).isAfter(LocalDateTime.now());
+            boolean onWithinCheckInterval = lastOn != null && lastOn.plusSeconds(getOffDetectionDelay()).isAfter(now);
             boolean on = powerReachesThreshold;
             if(onWithinCheckInterval) {
                 on = true;
             }
-            logger.debug("{}: power={} powerReachesThreshold={} on={} onBefore={} onWithinCheckInterval={}",
-                    applianceId, power, powerReachesThreshold, on, onBefore, onWithinCheckInterval);
-            if(onBefore != null && this.notificationHandler != null && on != onBefore) {
-                logger.info("{}: Switch {} detected.", applianceId, (on ? "on" : "off"));
-                this.notificationHandler.sendNotification(on ? NotificationType.CONTROL_ON : NotificationType.CONTROL_OFF);
-            }
+            onControlStateChanged(now, on);
             onBefore = on;
             return on;
         }
@@ -143,5 +154,15 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
             logger.error("{}: Meter not set.", applianceId);
         }
         return false;
+    }
+
+    protected void onControlStateChanged(LocalDateTime now, boolean on) {
+        if(onBefore != null && on != onBefore) {
+            logger.info("{}: Switch {} detected.", applianceId, (on ? "on" : "off"));
+            controlStateChangedListeners.forEach(listener -> listener.controlStateChanged(now, on));
+            if(this.notificationHandler != null) {
+                this.notificationHandler.sendNotification(on ? NotificationType.CONTROL_ON : NotificationType.CONTROL_OFF);
+            }
+        }
     }
 }
