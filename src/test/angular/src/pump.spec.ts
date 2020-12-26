@@ -26,10 +26,10 @@ test('Create appliance with interruptions allowed without timing specification',
   await createAndAssertAppliance(t, createPump());
 });
 
-test('Create Modbus meter', async t => {
+test('Create Modbus meter with all notifications enabled', async t => {
   await createAndAssertMeter(t, t.fixtureCtx[configurationKey(t, fixtureName(t))]);
 });
 
-test('Create Modbus control', async t => {
+test('Create Modbus control with selected notifications enabled', async t => {
   await createAndAssertControl(t, t.fixtureCtx[configurationKey(t, fixtureName(t))]);
 });
