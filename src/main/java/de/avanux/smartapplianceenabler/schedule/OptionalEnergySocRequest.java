@@ -37,7 +37,7 @@ public class OptionalEnergySocRequest extends SocRequest {
     }
 
     @Override
-    public boolean isUsingOptionalEnergy() {
+    public boolean isUsingOptionalEnergy(LocalDateTime now) {
         return true;
     }
 

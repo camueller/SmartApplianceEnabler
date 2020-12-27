@@ -75,8 +75,9 @@ public class RuntimeRequest extends AbstractRequest implements StartingCurrentSw
     }
 
     @Override
-    public boolean isUsingOptionalEnergy() {
-        return (this.min != null && this.min == 0 && this.max > 0);
+    public boolean isUsingOptionalEnergy(LocalDateTime now) {
+        Integer min = getMin(now);
+        return min != null && min == 0 && getMax(now) > 0;
     }
 
     @Override

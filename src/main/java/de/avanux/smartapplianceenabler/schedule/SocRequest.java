@@ -92,7 +92,7 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
     }
 
     @Override
-    public boolean isUsingOptionalEnergy() {
+    public boolean isUsingOptionalEnergy(LocalDateTime now) {
         return false;
     }
 

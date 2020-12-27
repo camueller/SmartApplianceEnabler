@@ -887,7 +887,7 @@ public class SaeController {
                         applianceStatus.setLatestStart(nextTimeframeInterval.getLatestStartSeconds(now));
                     }
                     if (control.isOn()) {
-                        applianceStatus.setOptionalEnergy(nextTimeframeInterval.getRequest().isUsingOptionalEnergy());
+                        applianceStatus.setOptionalEnergy(nextTimeframeInterval.getRequest().isUsingOptionalEnergy(now));
                     }
                     if (nextTimeframeInterval.getState() == TimeframeIntervalState.QUEUED) {
                         applianceStatus.setRunningTime(0);
@@ -921,7 +921,7 @@ public class SaeController {
                                 && nextTimeframeInterval.getRequest() instanceof AbstractEnergyRequest) {
                             whRemainingToCharge = nextTimeframeInterval.getRequest().getMax(now);
                         }
-                        if (nextTimeframeInterval != null && !nextTimeframeInterval.getRequest().isUsingOptionalEnergy()) {
+                        if (nextTimeframeInterval != null && !nextTimeframeInterval.getRequest().isUsingOptionalEnergy(now)) {
                             applianceStatus.setPlannedEnergyAmount(whAlreadyCharged + whRemainingToCharge);
                             applianceStatus.setLatestEnd(nextTimeframeInterval.getLatestEndSeconds(now));
                         }
