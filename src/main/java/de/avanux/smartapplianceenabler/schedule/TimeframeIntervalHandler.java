@@ -525,9 +525,10 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
         return null;
     }
 
-    public void setRuntimeDemand(LocalDateTime now, Integer runtime, boolean acceptControlRecommendations) {
+    public void setRuntimeDemand(LocalDateTime now, Integer runtime, Integer latestEnd, boolean acceptControlRecommendations) {
         final int additionalIntervalSeconds = UPDATE_QUEUE_INTERVAL_SECONDS + 1; // in order to make interval sufficient!
-        final LocalDateTime requiredIntervalEnd = now.plusSeconds(runtime + additionalIntervalSeconds);
+        final LocalDateTime requiredIntervalEnd = now.plusSeconds(
+                latestEnd != null ? latestEnd : runtime + additionalIntervalSeconds);
         TimeframeInterval activeTimeframeInterval = getActiveTimeframeInterval();
         if(activeTimeframeInterval != null) {
             if(activeTimeframeInterval.getRequest() instanceof RuntimeRequest) {

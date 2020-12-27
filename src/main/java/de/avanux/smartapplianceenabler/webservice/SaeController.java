@@ -70,6 +70,7 @@ public class SaeController {
     private static final String EV_URL = BASE_URL + "/ev";
     private static final String EVCHARGE_URL = BASE_URL + "/evcharge";
     private static final String INFO_URL = BASE_URL + "/info";
+    private static final String TASMOTA_COMMAND_URL = "/cm";
     // only required for development if running via "ng serve"
     private static final String CROSS_ORIGIN_URL = "http://localhost:4200";
     private Logger logger = LoggerFactory.getLogger(SaeController.class);
@@ -556,6 +557,41 @@ public class SaeController {
         return null;
     }
 
+    // Refer to https://tasmota.github.io/docs/Commands
+    @RequestMapping(value = TASMOTA_COMMAND_URL, method = RequestMethod.GET)
+    @CrossOrigin(origins = CROSS_ORIGIN_URL)
+    public void executeTasmotaCommand(HttpServletResponse response,
+                                   @RequestParam(value = "cmnd") String command) {
+        synchronized (lock) {
+            try {
+                logger.debug("Received Tasmota Web request {}", command);
+                String[] commandParts = command.split(" ");
+                if(commandParts.length < 3) {
+                    logger.error("Required Syntax is: ID F-xxxxxxxx-xxxxxxxxxxxx-xx RUNTIME ...");
+                }
+                if ("ID".equals(commandParts[0])) {
+                    String applianceId = commandParts[1];
+
+                    if ("RUNTIME".equals(commandParts[2])) {
+                        if(commandParts.length < 5) {
+                            logger.error("{}: Required Syntax is: RUNTIME <runtime in s> <latestEnd in s from now>",
+                                    applianceId);
+                        }
+                        int runtimeSeconds = Integer.parseInt(commandParts[3]);
+                        int latestEndSeconds = Integer.parseInt(commandParts[4]);
+                        logger.debug("{}: Set runtime demand: runtime={}s latestEnd={}s",
+                                applianceId, runtimeSeconds, latestEndSeconds);
+                        if (!setRuntimeDemand(LocalDateTime.now(), applianceId, runtimeSeconds, latestEndSeconds)) {
+                            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                        }
+                    }
+                }
+            } catch (Throwable e) {
+                logger.error("Error in " + getClass().getSimpleName(), e);
+            }
+        }
+    }
+
     @RequestMapping(value = RUNTIME_URL, method = RequestMethod.PUT)
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public void setRuntimeDemand(HttpServletResponse response,
@@ -563,7 +599,7 @@ public class SaeController {
                                  @RequestParam(value = "runtime") Integer runtime) {
         synchronized (lock) {
             try {
-                if (!setRuntimeDemand(LocalDateTime.now(), applianceId, runtime)) {
+                if (!setRuntimeDemand(LocalDateTime.now(), applianceId, runtime, null)) {
                     response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 }
             } catch (Throwable e) {
@@ -580,9 +616,9 @@ public class SaeController {
      * @param runtime
      * @return true, if the appliance was found; false if no appliance with the given id was found
      */
-    public boolean setRuntimeDemand(LocalDateTime now, String applianceId, Integer runtime) {
+    public boolean setRuntimeDemand(LocalDateTime now, String applianceId, Integer runtime, Integer latestEnd) {
         logger.debug("{}: Received request to set runtime to {}s", applianceId, runtime);
-        return activateTimeframe(now, applianceId, runtime, false);
+        return activateTimeframe(now, applianceId, runtime, latestEnd, false);
     }
 
     @RequestMapping(value = EV_URL, method = RequestMethod.GET, produces = "application/json")
@@ -700,11 +736,11 @@ public class SaeController {
         return null;
     }
 
-    public boolean activateTimeframe(LocalDateTime now, String applianceId, Integer runtime,
+    public boolean activateTimeframe(LocalDateTime now, String applianceId, Integer runtime, Integer latestEnd,
                                      boolean acceptControlRecommendations) {
         Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
         if (appliance != null) {
-            appliance.getTimeframeIntervalHandler().setRuntimeDemand(now, runtime, acceptControlRecommendations);
+            appliance.getTimeframeIntervalHandler().setRuntimeDemand(now, runtime, latestEnd, acceptControlRecommendations);
             return true;
         }
         logger.error("{}: Appliance not found", applianceId);

@@ -117,3 +117,40 @@ Für jeden Schaltvorgang finden sich in der [Log-Datei](Support.md#Log) folgende
 2020-01-06 14:51:22,817 DEBUG [http-nio-8080-exec-4] d.a.s.h.HttpTransactionExecutor [HttpTransactionExecutor.java:105] F-00000001-000000000001-00: Sending GET request url=http://192.168.1.1/cm?cmnd=Power%20On
 2020-01-06 14:51:22,984 DEBUG [http-nio-8080-exec-4] d.a.s.h.HttpTransactionExecutor [HttpTransactionExecutor.java:160] F-00000001-000000000001-00: Response code is 200
 ```
+
+## Laufzeitanforderung bei Tastendruck erstellen
+Tasmota ermöglicht das Anlegen von Regeln, die bei bestimmten Ereignissen ausgelöst werden.
+Entsprechend kann man eine Regel definieren, dass beim Druck auf eine Taste des Tasmota-Adapters eine Laufzeitanforderung an den *Smart Appliance Enabler* übermittelt wird. Dadurch kann (und muss!) die Verwendung der Anlaufstromerkennung entfallen. Ohne diese würde das Gerät immer entsprechend konfigurierter Zeitpläne eingeschaltet werden, weshalb diese ebenfalls nicht verwendet werden sollten. Als Konsequenz müssen beim Druck auf die Tasts des Tasmota-Adapters alle Angaben übermittelt werden, die sonst über Zeitpläne bereitgestellt werden.  
+
+Zum Anlegen einer Regel muss man auf der Tasmota-Konsole eingeben:
+```
+Rule1 ON Button1#State=2 DO WebSend [192.168.0.1:8080] ID F-xxxxxxxx-xxxxxxxxxxxx-xx RUNTIME 3600 21600 ENDON
+```
+... wobei
+- `Button1` ist der Name des Tasters, mit dem das Ereignis verknüpft wird
+- `State=2` definiert, dass das Ereignis beim Zustandswechsel (Toggle) ausgelöst wird
+- `192.168.0.1` die IP-Adresse ist, unter welcher der *Smart Appliance Enabler* erreichbar ist
+- `F-xxxxxxxx-xxxxxxxxxxxx-xx` die Appliance-ID ist
+- `3600` die gewünschte Laufzeit in Sekunden ist
+- `21600` der späteste Zeitpunkt in Sekunden ab jetzt ist, zu dem die Laufzeit beendet sein muss
+
+Diese Regel muss jetzt noch aktiviert werden:
+```
+Rule1 1
+```
+
+Bei Drücken des Tasters erfolgt jetzt die gewünschte Laufzeitanforderung:
+```
+11:01:28 APP: Knopf1 Mehrfachdruck 1
+11:01:29 WIF: Prüfe Verbindung...
+11:01:29 WIF: verbunden
+11:01:29 RUL: BUTTON1#STATE=2 performs "WebSend [192.168.0.1:8080] ID F-xxxxxxxx-xxxxxxxxxxxx-xx RUNTIME 3600 21600"
+11:01:29 SRC: Rule
+11:01:29 CMD: Gruppe 0, Index 1, Befehl "WEBSEND", Daten "[192.168.0.1:8080] ID F-xxxxxxxx-xxxxxxxxxxxx-xx RUNTIME 3600 21600"
+11:01:29 RSL: RESULT = {"WebSend":"Done"}
+```
+
+Bei Bedarf kann die Regel jederzeit wieder deaktiviert werden:
+```
+Rule1 0
+```

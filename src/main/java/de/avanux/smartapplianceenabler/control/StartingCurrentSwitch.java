@@ -333,7 +333,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
             on = true;
             switchOnTime = now;
             Integer runtime = timeframeIntervalHandler.suggestRuntime();
-            timeframeIntervalHandler.setRuntimeDemand(now, runtime, false);
+            timeframeIntervalHandler.setRuntimeDemand(now, runtime, null, false);
             updateControlStateChangedListeners(now, on);
         }
     }

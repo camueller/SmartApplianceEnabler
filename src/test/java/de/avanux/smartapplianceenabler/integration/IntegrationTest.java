@@ -183,7 +183,7 @@ public class IntegrationTest extends TestBase {
 
         log("Click go light", timeInitial);
         assertEquals(maxRuntime, saeController.suggestRuntime(applianceId).intValue());
-        saeController.setRuntimeDemand(timeInitial, applianceId, maxRuntime);
+        saeController.setRuntimeDemand(timeInitial, applianceId, maxRuntime, null);
         sempController.em2Device(timeInitial, createEM2Device(applianceId,true));
         assertTimeframeIntervalRuntime(toIntervalToday(10, 0, 0, 18, 0, 0),
                 TimeframeIntervalState.ACTIVE, null, maxRuntime, true, timeframeIntervalHandler.getQueue().get(0));
@@ -208,7 +208,7 @@ public class IntegrationTest extends TestBase {
 
         log("Click go light", timeInitial);
         assertEquals(maxRuntimeSchedule, saeController.suggestRuntime(applianceId).intValue());
-        saeController.setRuntimeDemand(timeInitial, applianceId, maxRuntimeSet);
+        saeController.setRuntimeDemand(timeInitial, applianceId, maxRuntimeSet, null);
         sempController.em2Device(timeInitial, createEM2Device(applianceId,true));
         assertTimeframeIntervalRuntime(toIntervalToday(10, 0, 0, 18, 0, 0),
                 TimeframeIntervalState.ACTIVE, null, maxRuntimeSet, true, timeframeIntervalHandler.getQueue().get(0));
@@ -238,7 +238,7 @@ public class IntegrationTest extends TestBase {
                 TimeframeIntervalState.QUEUED, null, maxRuntime, true, timeframeIntervalHandler.getQueue().get(2));
 
         log("Click go light", timeInitial);
-        saeController.setRuntimeDemand(timeInitial, applianceId, maxRuntime);
+        saeController.setRuntimeDemand(timeInitial, applianceId, maxRuntime, null);
         sempController.em2Device(timeInitial, createEM2Device(applianceId,true));
         assertEquals(3, timeframeIntervalHandler.getQueue().size());
         assertTimeframeIntervalRuntime(toIntervalToday(10, 0, 0, 18, 0, 0),
@@ -310,7 +310,7 @@ public class IntegrationTest extends TestBase {
                 TimeframeIntervalState.QUEUED, null, maxRuntime, true, timeframeIntervalHandler.getQueue().get(1));
 
         log("Click go light", timeInitial);
-        saeController.setRuntimeDemand(timeInitial, applianceId, maxRuntime);
+        saeController.setRuntimeDemand(timeInitial, applianceId, maxRuntime, null);
         sempController.em2Device(timeInitial, createEM2Device(applianceId,true));
         assertEquals(3, timeframeIntervalHandler.getQueue().size());
         assertTimeframeIntervalRuntime(toIntervalToday(17, 30, 0, 18, 30, 31),
@@ -382,7 +382,7 @@ public class IntegrationTest extends TestBase {
                 TimeframeIntervalState.QUEUED, null, maxRuntime, true, timeframeIntervalHandler.getQueue().get(1));
 
         log("Click go light - ", timeInitial);
-        saeController.setRuntimeDemand(timeInitial, applianceId, maxRuntime);
+        saeController.setRuntimeDemand(timeInitial, applianceId, maxRuntime, null);
         sempController.em2Device(timeInitial, createEM2Device(applianceId,true));
         assertEquals(3, timeframeIntervalHandler.getQueue().size());
         assertTimeframeIntervalRuntime(toIntervalToday(9, 30, 0, 10, 30, 31),
