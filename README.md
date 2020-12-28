@@ -82,9 +82,7 @@ Der Status aller steuerbaren Geräte wird in der [Status-Anzeige](doc/Status_DE.
 
 Durch Klick auf das folgende Bild kann man in einem Video die Konfiguration des *Smart Appliance Enabler* verfolgen. Dieses Video wurde durch automatisierte Tests erstellt.
 
-![Web-Oberfläche](pics/fe/BrowserstackPreview.png)
-
-<video src="https://drive.google.com/file/d/1QvQyfMDz514xT38WGvoujXsIrrr750C4/view?usp=sharing" controls>Video mit Konfiguration des Smart Appliance Enabler</video>
+[![Web-Oberfläche](pics/fe/BrowserstackPreview.png)](https://drive.google.com/file/d/1QvQyfMDz514xT38WGvoujXsIrrr750C4/view)
 
 ## [Integration in den Sunny Home Manager](doc/SunnyHomeMangerKonfiguration_DE.md)
 Der eigentliche Zweck des *Smart Appliance Enabler* besteht in der Integration von Geräten in den [Sunny Home Manager konfiguriert](doc/SunnyHomeMangerKonfiguration_DE.md).
