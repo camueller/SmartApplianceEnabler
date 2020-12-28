@@ -93,13 +93,14 @@ public class NotificationHandler implements ApplianceIdConsumer {
 
     public void sendNotification(NotificationType type) {
         if(isRequestedNotification(type)) {
+            logger.debug("{}: Checking notification preconditions: errorCountPerDay={}", applianceId, errorCountPerDay);
             if(!isErrorNotification(type) || shouldSendErrorNotification()) {
                 String message = Messages.getString(type.name());
                 if(type == NotificationType.COMMUNICATION_ERROR) {
                     message = Messages.getString(NotificationType.COMMUNICATION_ERROR.name(), maxCommunicationErrors);
                 }
                 try {
-                    logger.debug("{}: Executing notification command: {} errorCountPerDay={}", applianceId, command, errorCountPerDay);
+                    logger.debug("{}: Executing notification command: {}", applianceId, command);
                     ProcessBuilder builder = new ProcessBuilder(
                             command,
                             senderId != null ? senderId : applianceId,
