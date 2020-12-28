@@ -68,23 +68,25 @@ Alle aufgeführten Schalter (außer Wallboxen) können mit einer [Anlaufstromerk
 ### [Montage](doc/Montage_DE.md)
 Für den reibungslosen Einsatz des *Smart Appliance Enabler* sollten die [Montage-Hinweise](doc/Montage_DE.md) beachtet werden.
 
-## Software
-In den nachfolgenden Kapiteln ist Installation und Konfiguration des *Smart Appliance Enabler* beschrieben. Gegebenenfalls sollte auch das Kapitel [Fragen / Probleme](doc/Support_DE.md) konsultiert werden.
-
-### [Installation](doc/Installation_DE.md)
+## [Installation](doc/Installation_DE.md)
 Der einfachste Weg zu einem lauffähigen *Smart Appliance Enabler* besteht in der [Installation](doc/Installation_DE.md) einer releasten Version.
 
 ![Docker](pics/Docker.png)
 
 Alternativ kann *Smart Appliance Enabler* auch als [Docker-Container](doc/Docker_DE.md) betrieben werden.
 
-### [Konfiguration](doc/Configuration_DE.md)
-Nach der Installation müssen die zu messenden und zu steuernden Geräte im *Smart Appliance Enabler* [konfiguriert](doc/Configuration_DE.md) werden.
+## Konfiguration über Browser
+Die [Konfiguration](doc/Configuration_DE.md) des *Smart Appliance Enabler* kann über eine komfortable Web-Oberfläche erfolgen.
 
-### [Status-Anzeige](doc/Status_DE.md)
 Der Status aller steuerbaren Geräte wird in der [Status-Anzeige](doc/Status_DE.md) übersichtlich dargestellt, wobei der Status jedes Gerätes durch eine **Ampel** visualisiert wird. Die Ampel kann auch zur **manuellen Steuerung** verwendet werden.
 
-### [Integration in den Sunny Home Manager](doc/SunnyHomeMangerKonfiguration_DE.md)
+Durch Klick auf das folgende Bild kann man in einem Video die Konfiguration des *Smart Appliance Enabler* verfolgen. Dieses Video wurde durch automatisierte Tests erstellt.
+
+![Web-Oberfläche](pics/fe/BrowserstackPreview.png)
+
+<video src="https://drive.google.com/file/d/1QvQyfMDz514xT38WGvoujXsIrrr750C4/view?usp=sharing" controls>Video mit Konfiguration des Smart Appliance Enabler</video>
+
+## [Integration in den Sunny Home Manager](doc/SunnyHomeMangerKonfiguration_DE.md)
 Der eigentliche Zweck des *Smart Appliance Enabler* besteht in der Integration von Geräten in den [Sunny Home Manager konfiguriert](doc/SunnyHomeMangerKonfiguration_DE.md).
 
 ## [Fragen / Probleme](doc/Support_DE.md)
