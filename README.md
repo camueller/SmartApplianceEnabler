@@ -27,8 +27,8 @@
 
 **Seit mehreren Jahren habe ich einen Grossteil meiner Freizeit in Entwicklung, Dokumentation und Support dieses Open-Source-Projektes gesteckt. Ich habe mich bewusst dazu entschieden, diese Software kostenfrei zur Verfügung zu stellen und kontinuierlich um Features zu erweitern, die für möglichst viele Nutzer von Interesse sein könnten. Durch die Nutzung dieser Software lassen sich die Stromkosten signifikant senken, indem die Nutzung des selbst erzeugten Stroms maximiert wird. Ich würde es als Anerkennung meiner Arbeit betrachten, wenn ein Teil dieser Ersparnis als Beitrag zur Förderung dieses Projekts verwendet werden würde. Das geht ganz einfach per [Paypal](https://paypal.me/CarlAxelMueller) oder als klassische Banküberweisung (Kontoinhaber: Axel Müller, IBAN: DE83 5185 0079 1140 0764 37, BIC: HELADEF1FRI, Verwendungszweck: Förderbeitrag Smart Appliance Enabler)**
 
-## Wozu?
-Der *Smart Appliance Enabler* dient dazu, beliebige Geräte ([Wallbox](doc/EVCharger_DE.md), Wärmepumpe, Waschmaschine, Geschirrspüler, ...) mit dem [Sunny Home Manager (SHM)](http://www.sma.de/produkte/monitoring-control/sunny-home-manager.html) von [SMA](http://www.sma.de) zu integrieren, um eine **Maximierung des Eigenverbrauchs von Photovoltaik-Anlagen** zu ermöglichen.
+## Überblick
+**Der *Smart Appliance Enabler* ist eine Software zur Integration beliebiger Geräte ([Wallbox](doc/EVCharger_DE.md), Wärmepumpe, Waschmaschine, Geschirrspüler, ...) mit dem [Sunny Home Manager (SHM)](https://www.sma.de/produkte/monitoring-control/sunny-home-manager-20.html) von [SMA](http://www.sma.de), um eine **Maximierung des Eigenverbrauchs von Photovoltaik-Anlagen** zu ermöglichen.**
 
 ![SmartHomeEnablerSchema](pics/SmartApplianceEnabler.png)
 
@@ -51,7 +51,7 @@ Aktuell unterstützt der *Smart Appliance Enabler* folgende Möglichkeiten, den 
 | ------------- | ------------- |
 | GPIO | [S0-Zähler](doc/S0Meter_DE.md) |
 | Modbus | [Modbus-basierte Zähler](doc/ModbusMeter_DE.md) |
-| HTTP | [HTTP-basierte Zähler](doc/HttpMeter_DE.md) allgemein<ul></ul>kompatible Produkte<ul><li>[Shelly Plug](doc/ShellyPlug_DE.md)</li><li>[Shelly 4 Pro](doc/Shelly4Pro_DE.md)</li><li>[Edimax SP-2101W](doc/EdimaxSP2101W_DE.md)</li></ul>mit [Tasmota-Firmware](doc/Tasmota_DE.md) nutzbare Produkte<ul><li>[Gosund SP111](doc/GosundSP111_DE.md)</li><li>[Sonoff Pow](doc/SonoffPow_DE.md)</li></ul>nicht kompatible Produkte<ul><li>Shelly 3EM</li></ul>|
+| HTTP | [HTTP-basierte Zähler](doc/HttpMeter_DE.md) allgemein<ul></ul>kompatible Produkte<ul><li>[Shelly Plug](doc/ShellyPlug_DE.md)</li><li>[Shelly 4 Pro](doc/Shelly4Pro_DE.md)</li><li>[Edimax SP-2101W](doc/EdimaxSP2101W_DE.md)</li></ul>mit [Tasmota-Firmware](doc/Tasmota_DE.md) nutzbare Produkte<ul><li>[Gosund SP111](doc/GosundSP111_DE.md)</li><li>[Sonoff Pow](doc/SonoffPow_DE.md)</li></ul>|
 
 ### Schalter
 
@@ -73,14 +73,14 @@ Der einfachste Weg zu einem lauffähigen *Smart Appliance Enabler* besteht in de
 
 ![Docker](pics/Docker.png)
 
-Alternativ kann *Smart Appliance Enabler* auch als [Docker-Container](doc/Docker_DE.md) betrieben werden.
+Für den *Smart Appliance Enabler* sind [Docker-Images](doc/Docker_DE.md) verfügbar.
 
-## Konfiguration über Browser
+## Browser-basierte [Konfiguration](doc/Configuration_DE.md) und [Steuerung](doc/Status_DE.md)
 Die [Konfiguration](doc/Configuration_DE.md) des *Smart Appliance Enabler* kann über eine komfortable Web-Oberfläche erfolgen.
 
 Der Status aller steuerbaren Geräte wird in der [Status-Anzeige](doc/Status_DE.md) übersichtlich dargestellt, wobei der Status jedes Gerätes durch eine **Ampel** visualisiert wird. Die Ampel kann auch zur **manuellen Steuerung** verwendet werden.
 
-Durch Klick auf das folgende Bild kann man in einem Video die Konfiguration des *Smart Appliance Enabler* verfolgen. Dieses Video wurde durch automatisierte Tests erstellt.
+In dem nachfolgenden Video kann man einen Eindruck von der Konfiguration des *Smart Appliance Enabler* gewinnen. Dieses Video wurde im Rahmen der Durchführung automatisierter Tests erstellt, welche die Qualität des *Smart Appliance Enabler* sicherstellen sollen.
 
 [![Web-Oberfläche](pics/fe/BrowserstackPreview.png)](https://drive.google.com/file/d/1QvQyfMDz514xT38WGvoujXsIrrr750C4/view)
 
