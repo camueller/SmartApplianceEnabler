@@ -1,23 +1,23 @@
-# Ladegeräte für Elektro-Fahrzeuge (Wallboxen)
+# Wallboxen
 
-Damit der Sunny Home Manager die Leistung von Ladegeräten für Elekto-Fahrzeuge steuern kann, **muss zur Bestimmung der aktuellen Leistungsaufnahme ein Stromzähler im Smart Appliance Enabler konfiguriert werden**!
+Damit der Sunny Home Manager die Leistung von Wallboxen steuern kann, **muss zur Bestimmung der aktuellen Leistungsaufnahme ein Stromzähler im Smart Appliance Enabler konfiguriert werden**!
 
 ## Konfiguration
 ### Appliance
-Um ein Gerät zum Laden von Elektroautos konfigurieren zu können, muss als Typ des Gerätes ```Elektroauto-Ladegerät``` eingestellt werden.
+Um ein Gerät als Wallbox konfigurieren zu können, muss als Typ des Gerätes ```Elektroauto-Ladegerät``` eingestellt werden.
 
-![Elektroauto-Ladegerät](../pics/fe/GeraetEV.png)
+![Wallbox](../pics/fe/GeraetEV.png)
 
 ### Schalter
-Im *Smart Appliance Enabler* wird ein Ladegerät für Elektro-Autos als komplexer Schalter mit diversen Konfigurationsparametern und die Fahrzeuge repräsentiert.
+Im *Smart Appliance Enabler* wird eine Wallbox als komplexer Schalter mit diversen Konfigurationsparametern und die Fahrzeuge repräsentiert.
 
-Momentan unterstützt der *Smart Appliance Enabler* folgende Ladegeräte für Elektro-Fahrzeuge:
-* [Ladegeräte mit Phoenix Contact EM-CP-PP-ETH-Controller](PhoenixContactEMCPPPETH_DE.md) wie z.B. Walli
+Momentan unterstützt der *Smart Appliance Enabler* folgende Wallboxen:
+* [Wallboxen mit Phoenix Contact EM-CP-PP-ETH-Controller](PhoenixContactEMCPPPETH_DE.md) wie z.B. Walli
 * [go-eCharger](GoeCharger_DE.md)
 * wallbe
 
-Der *Smart Appliance Enabler* stellt Vorlagen bereit, welche die Konfiguration für die genannt Ladegeräte beinhalten.
-Darüber hinaus sollte auch die Verwendung von anderen Ladegeräten möglich sein, solange diese über ein unterstütztes Protokoll angebunden werden:
+Der *Smart Appliance Enabler* stellt Vorlagen bereit, welche die Konfiguration für die genannten Wallboxen beinhalten.
+Darüber hinaus sollte auch die Verwendung von anderen Wallboxen möglich sein, solange diese über ein unterstütztes Protokoll angebunden werden:
 * [Modbus/TCP](Modbus_DE.md)
 * HTTP
 
@@ -25,10 +25,10 @@ Darüber hinaus sollte auch die Verwendung von anderen Ladegeräten möglich sei
 Die Konfiguration von Fahrzeugen beinhaltet Parameter zur Steuerung des Ladevorgangs und Standardwerte für Dialoge.
 
 Für den Ziel-Ladezustand können Standardwerte festgelegt werden.
-Der Standartwert für manuelles Laden beinhaltet lediglich die Vorbelegung des Feldes für den Soll-Ladezustand in der Eingabemaske, die nach Klick auf die grüne Ampelleuchte angezeigt wird.
-Wird ein Standardwert für Optionale Energie gesetzt, wird nach dem Verbinden des Fahrzeugs nur bis zu diesem Wert mit Optionaler Energie geladen und danach der Ladevorgang gestoppt.
+Der Standardwert für manuelles Laden beinhaltet lediglich die Vorbelegung des Feldes für den Soll-Ladezustand in der Eingabemaske, die nach Klick auf die grüne Ampelleuchte angezeigt wird.
+Wird ein Standardwert für Überschussenergie gesetzt, wird nach dem Verbinden des Fahrzeugs nur bis zu diesem Wert mit Überschussenergie geladen und danach der Ladevorgang gestoppt.
 
-Die vom *Smart Appliance Enabler* unterstützten Wechselstrom-Ladegeräte können nicht den aktuellen Ist-Ladezustand vom Fahrzeug ermitteln und an den *Smart Appliance Enabler* kommunizieren! Für eine möglichst genaue Ermittlung des Energiebedarfs muss dieser Wert aber bekannt sein. Der *Smart Appliance Enabler* bietet deshalb die Möglichkeit der Einbindung eines [Scripts zum automatisierten Abfragen des SOC](soc/SOC_DE.md), sofern dies vom Fahrzeug-Hersteller unterstützt wird. Zusätzlich besteht die Möglichkeit, den Ist- und Soll-Ladezustand einzugeben beim [manuellen Start des Ladevorganges](#status-anzeige-und-manuelle-steuerung). Ohne SOC-Script und ohne Eingabe des aktuellen Ist-Ladezustands geht der *Smart Appliance Enabler* von einem Ist-Ladezustand von 0% aus und meldet einen entsprechend großen Energiebedarf. Das verschlechtert zwar die Planung des *Sunny Home Manager*, aber unabhängig davon beendet das Ladegerät das Laden spätestens, wenn das Fahrzeug voll geladen ist.
+Die vom *Smart Appliance Enabler* unterstützten Wechselstrom-Wallboxen können nicht den aktuellen Ist-Ladezustand vom Fahrzeug ermitteln und an den *Smart Appliance Enabler* kommunizieren! Für eine möglichst genaue Ermittlung des Energiebedarfs muss dieser Wert aber bekannt sein. Der *Smart Appliance Enabler* bietet deshalb die Möglichkeit der Einbindung eines [Scripts zum automatisierten Abfragen des SOC](soc/SOC_DE.md), sofern dies vom Fahrzeug-Hersteller unterstützt wird. Zusätzlich besteht die Möglichkeit, den Ist- und Soll-Ladezustand einzugeben beim [manuellen Start des Ladevorganges](#status-anzeige-und-manuelle-steuerung). Ohne SOC-Script und ohne Eingabe des aktuellen Ist-Ladezustands geht der *Smart Appliance Enabler* von einem Ist-Ladezustand von 0% aus und meldet einen entsprechend großen Energiebedarf. Das verschlechtert zwar die Planung des *Sunny Home Manager*, aber unabhängig davon beendet die Wallbox das Laden spätestens, wenn das Fahrzeug voll geladen ist.
 
 Wenn vom SOC-Script nicht nur eine Zahl ohne weitere Zeichen geliefert wird, sondern der Verbrauchswert irgendwo in einem Text (XML, JSON, ...) enthalten ist, muss ein [Regulärer Ausdruck/Regex](WertExtraktion_DE.md) zum Extrahieren der Leistung mit angegeben werden.
 
@@ -36,7 +36,7 @@ Wenn vom SOC-Script nicht nur eine Zahl ohne weitere Zeichen geliefert wird, son
 
 ### Zeitpläne
 Die grundsätzliche Konfiguration der Zeitpläne ist [hier](Configuration_DE.md#zeitpläne) beschrieben.
-Abweichend davon existiert bei E-Auto-Ladegeräten nicht nur die **Anforderungsart** mit dem Wert ```Laufzeit```, sondern zwei weitere Optionen:
+Abweichend davon existieren bei Wallboxen als **Anforderungsart** zwei Optionen:
 
 Mit der Anforderungsart ```Energiemenge``` kann eine bestimmte minimale und/oder maximale Energiemenge (in Wh) zum Ausdruck gebracht werden. Wenn die minimale Energiemenge auf ```0``` gesetzt wird und die maximale Energiemenge auf einen größeren Wert, wird damit zum Ausdruck gebracht, dass für die angeforderte Energiemenge *Überschussenenergie* genutzt soll.
 
@@ -48,7 +48,7 @@ Mit der Anforderungsart ```Laden bis SOC``` wird genau die Energiemenge angeford
 
 ## Status-Anzeige und manuelle Steuerung
 
-Für Geräte vom Typ ```Elektroauto-Ladegerät``` unterscheiden sich die Eingabe-Felder zum manuellen Schalten, die nach einem **Klick auf die grüne Lampe der Ampel** angezeigt werden, von den Feldern, die bei anderen Geräten angezeigt werden.
+Für Wallboxen unterscheiden sich die Eingabe-Felder zum manuellen Schalten, die nach einem **Klick auf das grüne Ampellicht** angezeigt werden, von den Feldern, die bei anderen Geräten angezeigt werden.
 
 ![Eingabefelder manueller Start](../pics/fe/StatusEVAmpelEdit.png)
 
@@ -56,9 +56,9 @@ Wenn ein [SOC-Script](soc/SOC_DE.md) für das ausgewählte Fahrzeug angegeben wu
 
 Wird im Eingabefeld ```Ladezustand: Soll``` kein Wert eingegeben, wird 100% angenommen und ein entsprechend hoher Energiebedarf gemeldet.
 
-Wenn im Eingabefeld ``bis`` ein Wochentag/Zeit eingegeben, wird dem SHM der Bedarf gemeldet aber der SAE schaltet das Ladegerät nicht selbst an, d.h. das Laden beginnt erst, wenn der SHM einen Einschaltbefehl schickt, wobei auch die Ladeleistung von ihm vorgegeben wird. Der SAE schaltet den Lader sofort ein, wenn kein Wochentag/Zeit eingegeben werden. Weil der SAE in diesem Fall die Ladeleistung nicht reduziert, lädt das Ladegerät mit voller Leistung.
+Wenn im Eingabefeld ``bis`` ein Wochentag/Zeit eingegeben, wird dem SHM der Bedarf gemeldet aber der *Smart Appliance Enabler*, aber das Laden beginnt erst, wenn der SHM einen Einschaltbefehl mit Vorgabe der Ladeleistung sendet. Wird kein Wochentag/Zeit eingegeben, schaltet der *Smart Appliance Enabler* die Wallbox sofort ein, wobei mit voller Leistung geladen wird.
 
-Auch die Status-Anzeige sieht bei Geräten vom Typ ```Elektroauto-Ladegerät``` anders aus. Nachfolgendes Bild zeigt einen manuell gestarteten Ladevorgang:
+Auch die Status-Anzeige sieht bei Wallboxen anders aus. Nachfolgendes Bild zeigt einen manuell gestarteten Ladevorgang:
 
 ![Statusanzeige Laden Manuell](../pics/fe/StatusEVAmpelView.png)
 

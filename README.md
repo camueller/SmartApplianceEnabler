@@ -28,7 +28,7 @@
 **Seit mehreren Jahren habe ich einen Grossteil meiner Freizeit in Entwicklung, Dokumentation und Support dieses Open-Source-Projektes gesteckt. Ich habe mich bewusst dazu entschieden, diese Software kostenfrei zur Verfügung zu stellen und kontinuierlich um Features zu erweitern, die für möglichst viele Nutzer von Interesse sein könnten. Durch die Nutzung dieser Software lassen sich die Stromkosten signifikant senken, indem die Nutzung des selbst erzeugten Stroms maximiert wird. Ich würde es als Anerkennung meiner Arbeit betrachten, wenn ein Teil dieser Ersparnis als Beitrag zur Förderung dieses Projekts verwendet werden würde. Das geht ganz einfach per [Paypal](https://paypal.me/CarlAxelMueller) oder als klassische Banküberweisung (Kontoinhaber: Axel Müller, IBAN: DE83 5185 0079 1140 0764 37, BIC: HELADEF1FRI, Verwendungszweck: Förderbeitrag Smart Appliance Enabler)**
 
 ## Wozu?
-Der *Smart Appliance Enabler* dient dazu, beliebige Geräte ([Ladegeräte/Wallboxen für E-Autos](doc/EVCharger_DE.md), Wärmepumpe, Waschmaschine, Geschirrspüler, ...) mit dem [Sunny Home Manager (SHM)](http://www.sma.de/produkte/monitoring-control/sunny-home-manager.html) von [SMA](http://www.sma.de) zu integrieren, um eine **Maximierung des Eigenverbrauchs von Photovoltaik-Anlagen** zu ermöglichen.
+Der *Smart Appliance Enabler* dient dazu, beliebige Geräte ([Wallbox](doc/EVCharger_DE.md), Wärmepumpe, Waschmaschine, Geschirrspüler, ...) mit dem [Sunny Home Manager (SHM)](http://www.sma.de/produkte/monitoring-control/sunny-home-manager.html) von [SMA](http://www.sma.de) zu integrieren, um eine **Maximierung des Eigenverbrauchs von Photovoltaik-Anlagen** zu ermöglichen.
 
 ![SmartHomeEnablerSchema](pics/SmartApplianceEnabler.png)
 
@@ -60,10 +60,10 @@ Zum Ein-/Ausschalten eines Gerätes unterstützt der *Smart Appliance Enabler* d
 | Protokolle    | Produkte      |
 | ------------- | ------------- |
 | GPIO | [GPIO-basierte Schalter](doc/GPIOSwitch_DE.md) |
-| Modbus | [Modbus-basierte Schalter](doc/ModbusSwitch_DE.md)<br><br>[Modbus-basierte Ladegeräte für Elektroautos](doc/EVCharger_DE.md)|
-| HTTP | [HTTP-basierte Schalter](doc/HttpSwitch_DE.md) allgemein<ul></ul>kompatible Produkte<ul><li>[Shelly Plug](doc/ShellyPlug_DE.md)</li><li>[Shelly 4 Pro](doc/Shelly4Pro_DE.md)</li><li>[Edimax SP-2101W](doc/EdimaxSP2101W_DE.md)</li></ul>mit [Tasmota-Firmware](doc/Tasmota_DE.md) nutzbare Produkte<ul><li>[Gosund SP111](doc/GosundSP111_DE.md)</li><li>[Sonoff Pow](doc/SonoffPow_DE.md)</li></ul>[HTTP-basierte Ladegeräte für Elektroautos](doc/EVCharger_DE.md)|
+| Modbus | [Modbus-basierte Schalter](doc/ModbusSwitch_DE.md)<br><br>[Wallboxen mit Modbus-Schnittstelle](doc/EVCharger_DE.md)|
+| HTTP | [HTTP-basierte Schalter](doc/HttpSwitch_DE.md) allgemein<ul></ul>kompatible Produkte<ul><li>[Shelly Plug](doc/ShellyPlug_DE.md)</li><li>[Shelly 4 Pro](doc/Shelly4Pro_DE.md)</li><li>[Edimax SP-2101W](doc/EdimaxSP2101W_DE.md)</li></ul>mit [Tasmota-Firmware](doc/Tasmota_DE.md) nutzbare Produkte<ul><li>[Gosund SP111](doc/GosundSP111_DE.md)</li><li>[Sonoff Pow](doc/SonoffPow_DE.md)</li></ul>[Wallboxen mit HTTP-Schnittstelle](doc/EVCharger_DE.md)|
 
-Alle aufgeführten Schalter (außer Ladegeräte für Elektro-Autos) können mit einer [Anlaufstromerkennung](doc/Anlaufstromerkennung_DE.md) verwendet werden, um die Programmierung des Gerätes zu ermöglichen.
+Alle aufgeführten Schalter (außer Wallboxen) können mit einer [Anlaufstromerkennung](doc/Anlaufstromerkennung_DE.md) verwendet werden, um die Programmierung des Gerätes zu ermöglichen.
 
 ### [Montage](doc/Montage_DE.md)
 Für den reibungslosen Einsatz des *Smart Appliance Enabler* sollten die [Montage-Hinweise](doc/Montage_DE.md) beachtet werden.
