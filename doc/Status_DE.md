@@ -11,7 +11,7 @@ Durch einen Klick auf die grüne Lampe kann das Gerät unabhängig von den konfi
 
 ![Klick auf grünes Ampellicht](../pics/fe/StatusViewGreenHover.png)
 
-Ein Klick auf die rote Lampe bewirkt das Ausschalten des Gerätes, wobei auch das Wiedereinschalten durch den SHM für den aktiven Timeframe-Interval unterbunden wird.
+Ein Klick auf die rote Lampe bewirkt das Ausschalten des Gerätes, wobei auch das Wiedereinschalten durch den *Sunny Home Manager* für den aktiven Timeframe-Interval unterbunden wird.
 
 ![Klick auf rotes Ampellicht](../pics/fe/StatusViewRedHover.png)
 
