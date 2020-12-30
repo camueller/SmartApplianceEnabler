@@ -4,25 +4,34 @@ Die Konfiguration erfolgt über das Web-Frontend des *Smart Appliance Enabler*. 
 
 Die Web-Oberfläche ist bewusst einfach und dennoch komfortabel gehalten, um Browser auf PC, Tablett und Handy gleichermaßen zu unterstützen.
 
-Grundsätzlich gilt, dass Eingaben/Änderungen erst nach dem Klicken der ```Speichern```-Schaltfläche gespeichert sind. Beim Wechsel auf ein andere Seite erfolgt eine Warnung, wenn nicht gespeicherte Eingaben/Änderungen vorhanden sind. Werden bei Eingabefeldern Inhalte mit grauer Schrift angezeigt, so handelt es sich um Voreinstellungen, d.h. wenn kein Wert eingegeben wird, gilt dieser Wert.
+Grundsätzlich gilt, dass Eingaben/Änderungen erst nach dem Klicken der ```Speichern```-Schaltfläche gespeichert sind. Beim Wechsel auf ein andere Seite erfolgt eine Warnung, wenn nicht gespeicherte Eingaben/Änderungen vorhanden sind.
 
-Beim Speichern werden die Daten in zwei [XML](https://de.wikipedia.org/wiki/Extensible_Markup_Language)-Dateien geschrieben, die sich in dem Verzeichnis befinden, auf das die Variable SAE_HOME verweist (normalerweise ```/opt/sae```):
+Werden bei Eingabefeldern Inhalte mit grauer Schrift angezeigt, so handelt es sich um Voreinstellungen, d.h. wenn kein Wert eingegeben wird, gilt dieser Wert.
+
+Pflichtfelder sind mit einem `*` hinter der Feldbezeichnung gekennzeichnet. Solange nicht alle Pflichtfelder ausgefüllt sind, ist die ```Speichern```-Schaltfläche nicht aktiv. 
+
+Beim Speichern werden die Daten in zwei [XML](https://de.wikipedia.org/wiki/Extensible_Markup_Language)-Dateien geschrieben, die sich in dem Verzeichnis befinden, auf das die Variable `SAE_HOME` verweist (normalerweise ```/opt/sae```):
 * die Datei `Device2EM.xml` enthält Gerätebeschreibung für den EnergyManager
 * die Datei `Appliances.xml` enthält die Gerätekonfiguration für den *Smart Appliance Enabler*
   Die Groß-/Kleinschreibung der Dateinamen muss genau so sein, wie hier angegeben!
 
-Beim Speichern wird außerdem der *Smart Appliance Enabler* intern neu gestartet, damit die geänderte Konfiguration wirksam wird. Aktuell laufende Geräte werden in diesem Moment immer gestoppt/ausgeschalten um einen definierten Zustand zu erhalten. Auch werden bereits in Anspruch genommene Energiemengen/Laufzeiten von Geräten zurück gesetzt und neu eingeplant.
-Ist dies nicht gewünscht, empfiehlt es sich Konfigurationsänderungen außerhalb der üblichen Zeitfenster vorzunehmen, zB Abends.
+Beim Speichern wird der *Smart Appliance Enabler* intern neu gestartet, damit die geänderte Konfiguration wirksam wird. Aktuell laufende Geräte werden in diesem Moment immer gestoppt/ausgeschalten um einen definierten Zustand zu erhalten. Auch werden bereits in Anspruch genommene Energiemengen/Laufzeiten von Geräten zurück gesetzt und neu eingeplant. Um das zu vermeiden sollte man die Konfiguration möglichst dann ändern, wenn die zu steuernden Geräte gerade nicht laufen.
 
 Beim ersten Start ohne vorhandene Konfigurationsdateien wird folgende Seite angezeigt:
 
 ![Ohne Konfiguration](../pics/fe/OhneKonfiguration.png)
 
-Im oberen Bereich der Seite findet sich der Menüpunkt zur Verwaltung der zentralen, geräteunabhängigen [Einstellungen](Settings_DE.md).
+Über das Menü-Symbol (die drei Striche links vom Titel "Smart Appliance Enabler") lässt sich jederzeit das Menü öffnen und schliessen.
 
-Das Seitenmenü zur Konfiguration der Geräte, Zähler, Schalter und Schaltzeiten ist nicht sichtbar und muss durch Klick auf ```Geräte``` geöffnet werden. Jetzt sieht die Seite wie folgt aus:
+![Menü ohne Konfiguration](../pics/fe/OhneKonfigurationSeitenmenu.png)
+ 
+Im Menü findet sich ein Eintrag für die [Status](Status_DE.md)-Anzeige, die initial immer angezeigt wird.
 
-![Ohne Konfiguration Seitenmenü](../pics/fe/OhneKonfigurationSeitenmenu.png)
+Darunter findet sich ein Eintrag zur Verwaltung der zentralen, geräteunabhängigen [Einstellungen](Settings_DE.md).
+
+Unterhalb des Eintrags für ```Neues Gerät``` werden die konfigurierten Geräte mit [Zähler](#zähler), [Schalter](#schalter) und [Schaltzeiten](#schaltzeiten) angezeigt, wenn sie vorhanden sind.
+
+![Menü mit Geräten](../pics/fe/MenueMitGeraeten.png)
 
 Durch Klick auf ```Neues Gerät``` wird die Konfiguration eines neuen Geräte begonnen und es öffnet sich folgende Seite:
 
@@ -37,60 +46,70 @@ Ein sehr wichtiges Attribut der Gerätekonfiguration ist die ```ID```. Der Aufba
 * 00 unverändert lassen (sub device id)
   Die Device-IDs werden vom Sunny-Portal direkt verwendet, d.h. wenn jemand anderes bereits diese ID verwendet, kann das Gerät nicht im Sunny-Portal angelegt werden. Durch die Verwendung individueller Bestandteile wie Geburtsdatum sollte das Risiko dafür jedoch gering sein.
 
-Außer der Device-ID müssen allgemeine Angaben und Eigenschaften des Gerätes eingegeben werden. Wenn alle erforderlichen Eingaben erfolgt sind, wird die ```Speichern```-Schaltfläche freigegeben. Erst nach dem Drücken dieser Schaltfläche erscheinen im Seitenmenü die Unterpunkte ```Zähler``` und ```Schalter```.
+Das Ändern der ```ID``` führt dazu, dass der SHM das Gerät als Neugerät betrachtet.
 
-Die Konfiguration eines gespeicherten Gerätes kann man durch auf den Geräte-Typ und -Namen im Seitenmenü ansehen und ändern.
+Außer der Device-ID müssen allgemeine Angaben und Eigenschaften des Gerätes eingegeben werden.Minimal sind das folgende Angaben:
 
 ![Gerät](../pics/fe/Geraet.png)
 
-Das Ändern der ```ID``` führt alledings dazu, dass der SHM das Gerät als Neugerät betrachtet.
+Wenn alle erforderlichen Eingaben erfolgt sind, wird die ```Speichern```-Schaltfläche freigegeben.
 
-Sobald Änderungen vorgenommen wurden und die Korrektheit der Eingaben überprüft wurde, wird wiederum die ```Speichern```-Schaltfläche freigegeben und die Änderungen können gespeichert werden. Außerdem kann das Gerät durch Klicken der ```Löschen```-Schaltfläche gelöscht werden.
+Nach dem Drücken dieser Schaltfläche erscheint im Menü ein Eintrag für das angelegte Gerät. Zusätzlich erscheinen die Unterpunkte [Zähler](#zähler), [Schalter](#schalter) und [Schaltzeiten](#schaltzeiten).
+
+Durch Klicken der ```Löschen```-Schaltfläche und Bestätigung der Löschabsicht wird das Gerät gelöscht.
 
 ## Zähler
 
-Um einen Zähler zu konfigurieren muss in der ```Typ```-Auswahlbox der Typ des Zählers ausgewählt werden. Entsprechend dieser Auswahl werden die für den gewählten Zähler-Typ konfigurierbaren Felder eingeblendet.
-
-Derzeit unterstützt der *Smart Appliance Enabler* Zähler mit folgenden Protokollen:
+Um einen Zähler zu konfigurieren muss in der ```Typ```-Auswahlbox der Typ des Zählers ausgewählt werden:
 
 * [S0](SOMeter_DE.md)
-* [Modbus](ModbusMeter_DE.md)
 * [HTTP](HttpMeter_DE.md)
+* [Modbus](ModbusMeter_DE.md) erscheint nur, wenn in den [Einstellungen](Settings_DE.md#modbus) mindesten ein Modbus konfiguriert wurde
 
-Nachdem alle erforderlichen Eingaben erfolgt sind, wird die ```Speichern```-Schaltfläche freigegeben.
+Entsprechend dieser Auswahl werden die für den gewählten Zähler-Typ konfigurierbaren Felder eingeblendet.
 
 ## Schalter
 
-Um einen Schalter zu konfigurieren muss in der ```Typ```-Auswahlbox der Typ des Schalters ausgewählt werden. Entsprechend dieser Auswahl werden die für den gewählten Schalter-Typ konfigurierbaren Felder eingeblendet.
+Um einen Schalter zu konfigurieren muss in der ```Typ```-Auswahlbox der Typ des Schalters ausgewählt werden. 
 
 Derzeit unterstützt der *Smart Appliance Enabler* folgende Schalter:
 
 * [Zählerbasierter Zustandsmelder](MeterReportingSwitch_DE.md) ist automatisch aktiv, wenn kein anderer Schalter konfiguriert wird
 * [GPIO](GPIOSwitch_DE.md)
-* [Modbus](ModbusSwitch_DE.md)
+* [Modbus](ModbusSwitch_DE.md) erscheint nur, wenn in den [Einstellungen](Settings_DE.md#modbus) mindesten ein Modbus konfiguriert wurde
 * [HTTP](HttpSwitch_DE.md)
 * [Immer eingeschaltet](AlwaysOnSwitch_DE.md)
 
-Falls der gewählte Schalter-Typ mit [Anlaufstromerkennung](Anlaufstromerkennung_DE.md) kombiniert werden kann und diese durch Anklicken der Checkbox aktiviert wurde, werden weitere Felder mit Konfigurationsparametern der Anlaufstromerkennung eingeblendet.
+Entsprechend dieser Auswahl werden die für den gewählten Schalter-Typ konfigurierbaren Felder eingeblendet.
 
-Nachdem alle erforderlichen Eingaben erfolgt sind, wird die ```Speichern```-Schaltfläche freigegeben. Falls ein Schalter konfiguriert wurden, erscheint nach dem Drücken dieser Schaltfläche erscheinen im Seitenmenü der Unterpunkt ```Schaltzeiten```.
+Falls der gewählte Schalter-Typ mit [Anlaufstromerkennung](Anlaufstromerkennung_DE.md) kombiniert werden kann und diese durch Anklicken der Checkbox aktiviert wurde, werden weitere Felder mit Konfigurationsparametern der Anlaufstromerkennung eingeblendet.
 
 Wenn als Gerätetyp ```Elektroauto-Ladegerät``` angegeben ist, kann auf dieser Seite die [Konfiguration des Lade-Controllers sowie die Verwaltung der Fahrzeuge](EVCharger_DE.md) vorgenommen werden.
 
 ## Zeitpläne
 
-Wenn ein Gerät schaltbar ist, können Zeitpläne konfiguriert werden. Ein Zeitplan hat einen Zeitrahmen, auf den er sich bezieht. Das kann entweder ein ```Tagesplan``` (bezieht sich auf Kalendertag) oder ein ```Mehrtagesplan``` (dauert länger als 24 Stunden aber höchstens eine Woche) sein.
+Der *Sunny Home Manager* wird nur dann Geräte einplanen und einschalten, wenn eine Anforderung vorliegt. Neben Ad-Hoc-Anforderungen über die [Ampel](Status_DE.md) sind Zeitpläne das zentrale Element für (potentiell) regelmäßige Anforderungen (z.B. für Gschirrspüler, Waschmaschine, ...)
+
+Falls ein Schalter-Typ konfiguriert wurde, der die Steuerung des Gerätes erlaubt, können Zeitpläne konfiguriert werden.
+
+Ein Zeitplan hat einen Zeitrahmen, auf den er sich bezieht:
+- `Tagesplan`: bezieht sich auf einen/alle Wochentage
+- `Mehrtagesplan`: bezieht sich auf eine Dauer länger als 24 Stunden aber höchstens eine Woche
 
 Für einen Tagesplan kann angegeben werden, dass dieser an Feiertagen gelten soll.
-Diese hat Vorrang vor anderen Tagesplänen, die entsprechend des Wochentages gelten würden. Voraussetzung dafür ist, dass das [Feiertagshandling in der Konfiguration aktiviert](Settings_DE.md#Feiertage) wurde.
+Dieser hat Vorrang vor anderen Tagesplänen, die entsprechend des Wochentages gelten würden. Voraussetzung dafür ist, dass das [Feiertagshandling in der Konfiguration aktiviert](Settings_DE.md#Feiertage) wurde.
 
-Neben dem Zeitrahmen hat ein Zeitplan auch eine `Anforderungsart`, die (abhängig vom Geräte-Typ) meist `Laufzeit` ist. Dabei wird über die `Startzeit` und die `Endzeit` ein Zeitfenster definiert, innerhalb dessen der SHM die `maximale Laufzeit` unabhängig vom Vorhandensein von PV-Strom sicherstellen muss. Wird zusätzlich die (optionale) `minimale Laufzeit` angegeben, wird der SHM nur diese Laufzeit sicherstellen, aber bei Vorhandensein von *Überschussenenergie* die Laufzeit bis zur `maximalen Laufzeit` erweitern. Im Extremfall führt das Setzen einer `minimalen Laufzeit` von 0 dazu, dass das Gerät ausschliesslich mit Überschussenergie betrieben wird. Wenn diese nicht vorhanden ist, wird das Gerät nicht eingeschaltet.
+Neben dem Zeitrahmen hat ein Zeitplan auch eine `Anforderungsart`, die (außer für Wallboxen) immer `Laufzeit` ist. Dabei wird über die `Startzeit` und die `Endzeit` ein Zeitfenster definiert, innerhalb dessen der *Sunny Home Manager* die `maximale Laufzeit` unabhängig vom Vorhandensein von PV-Strom sicherstellen muss. Wird zusätzlich die (optionale) `minimale Laufzeit` angegeben, wird der *Sunny Home Manager* nur diese Laufzeit sicherstellen, aber bei Vorhandensein von *Überschussenenergie* die Laufzeit bis zur `maximalen Laufzeit` erweitern. Im Extremfall führt das Setzen einer `minimalen Laufzeit` von 0 dazu, dass das Gerät ausschliesslich mit Überschussenergie betrieben wird. Wenn diese nicht vorhanden ist, wird das Gerät nicht eingeschaltet.
+
+Beispiel für einen Tagesplan:
 
 ![Schaltzeiten Tagesplan](../pics/fe/SchaltzeitenTagesplanLaufzeit.png)
-Schaltzeiten mit Tagesplan
+
+
+Beispiel für einen Mehrtagesplan:
 
 ![Schaltzeiten Mehrtagesplan](../pics/fe/SchaltzeitenMehrtagesplanLaufzeit.png)
-Schaltzeiten mit Mehrtagesplan
+
 
 Der *Smart Appliance Enabler* meldet dem Sunny Home Manager den Geräte-Laufzeitbedarf für die nächsten 48 Stunden, damit er auf dieser Basis optimal planen kann.
 
