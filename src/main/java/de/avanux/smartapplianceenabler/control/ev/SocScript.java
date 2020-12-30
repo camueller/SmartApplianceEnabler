@@ -25,10 +25,7 @@ import org.slf4j.LoggerFactory;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -80,12 +77,23 @@ public class SocScript implements ApplianceIdConsumer {
 
     public Double getStateOfCharge() {
         if(this.script != null) {
-            String output = getScriptOutput(this.script);
-            if(output != null && output.length() > 0) {
-                String socValueString = extractSoCValue(output, this.extractionRegex);
-                Double soc = Double.parseDouble(socValueString.replace(',', '.'));
-                logger.debug("{}: SoC: {}", applianceId, soc);
-                return soc;
+            File scriptFile = new File(this.script);
+            if(scriptFile.exists()) {
+                if(scriptFile.canExecute()) {
+                    String output = getScriptOutput(this.script);
+                    if(output != null && output.length() > 0) {
+                        String socValueString = extractSoCValue(output, this.extractionRegex);
+                        Double soc = Double.parseDouble(socValueString.replace(',', '.'));
+                        logger.debug("{}: SoC: {}", applianceId, soc);
+                        return soc;
+                    }
+                }
+                else {
+                    logger.error("{}: SoC script file is not executable: {}", applianceId, this.script);
+                }
+            }
+            else {
+                logger.error("{}: SoC script file not found: {}", applianceId, this.script);
             }
         }
         else {
