@@ -51,6 +51,12 @@ button {
 }
 
 .sae {
+  &__helpLink {
+    color: red;
+    vertical-align: text-top;
+    padding-left: 0.5rem;
+  }
+
   &__contentPath {
     width: 6rem;
   }
