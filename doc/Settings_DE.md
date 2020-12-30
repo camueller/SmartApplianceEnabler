@@ -20,7 +20,7 @@ Sofern der Raspberry Zugang zum Internet hat, werden die Feiertage einmal jährl
   </Appliance>
 </Appliances>
 ```
-HE steht dabei für Hessen, die Abkürzung für andere Bundesländer und die vollständige API-Dokumentation findet sich auf http://feiertage.jarmedia.de. Anstelle der Jahreszahl muss "{0}" (ohne Anführungszeichen) verwendet werden, was zum Ausführungszeitpunkt durch die aktuelle Jahreszahl erstzt wird. Außerdem muss statt des "&"-Zeichens der Ausruck ```"&#038;"```  (ohne Anführungszeichen) verwendet werden.
+HE steht dabei für Hessen, die Abkürzung für andere Bundesländer und die vollständige API-Dokumentation findet sich auf http://feiertage.jarmedia.de. Anstelle der Jahreszahl muss "{0}" (ohne Anführungszeichen) verwendet werden, was zum Ausführungszeitpunkt durch die aktuelle Jahreszahl erstzt wird. Außerdem muss statt des `&`-Zeichens der Ausruck `"&#038;"` (ohne Anführungszeichen) verwendet werden.
 
 ![Einstellungen Feiertage](../pics/fe/SettingsFeiertage.png)
 

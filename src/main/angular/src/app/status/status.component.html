@@ -1,5 +1,5 @@
 <div class="StatusComponent">
-  <h1>{{'StatusComponent.title' | translate }}<a href="https://github.com/camueller/SmartApplianceEnabler/blob/master/doc/Status_DE.md" class="sae__helpLink"><mat-icon>help</mat-icon></a></h1>
+  <h1>{{'StatusComponent.title' | translate }}<a href="https://github.com/camueller/SmartApplianceEnabler/blob/master/doc/Status_DE.md" target="_blank" class="sae__helpLink"><mat-icon>help</mat-icon></a></h1>
   <messagebox [level]="MessageBoxLevel.INFO" *ngIf="!hasControllableAppliances"
   >{{'StatusComponent.message.noControllableAppliances' | translate}}</messagebox>
   <div class="StatusComponent__appliances">
