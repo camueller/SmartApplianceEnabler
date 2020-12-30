@@ -15,7 +15,7 @@
   ~ with this program; if not, write to the Free Software Foundation, Inc.,
   ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
   -->
-<form class="SchedulesComponent" [formGroup]="form" (ngSubmit)="submitForm()" *ngIf="hasControl; else notControllable">
+<form class="SchedulesComponent" [formGroup]="form" (ngSubmit)="submitForm()" *ngIf="isControlable; else notControllable">
   <div formArrayName="schedules">
     <div *ngFor="let scheduleFormGroup of schedulesFormArray.controls;let i = index" [formGroupName]="i">
       <app-schedule [schedule]="schedules[i]"

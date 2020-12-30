@@ -287,7 +287,7 @@
   "NotificationComponent.type.COMMUNICATION_ERROR": "Kommunikationsfehler",
 
   "SchedulesComponent.button.addSchedule": "Weiterer Zeitplan",
-  "SchedulesComponent.message.notControllable": "Schaltzeiten können nur für Geräte mit Schalter konfiguriert werden.",
+  "SchedulesComponent.message.notControllable": "Schaltzeiten können nur für Geräte konfiguriert werden, deren Schalter-Typ die Steuerung des Gerätes erlaubt.",
 
   "ScheduleComponent.schedule": "Zeitplan",
   "ScheduleComponent.enabled": "aktiviert",
