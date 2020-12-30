@@ -139,8 +139,8 @@ export class ElectricVehicleComponent implements OnChanges, OnInit {
     const chargeLoss = getValidInt(this.form.controls.chargeLoss.value);
     const defaultSocManual = getValidInt(this.form.controls.defaultSocManual.value);
     const defaultSocOptionalEnergy = getValidInt(this.form.controls.defaultSocOptionalEnergy.value);
-    const scriptFilename = this.form.controls.scriptFilename.value;
-    const extractionRegex = this.form.controls.scriptExtractionRegex.value;
+    const scriptFilename = getValidString(this.form.controls.scriptFilename.value);
+    const extractionRegex = getValidString(this.form.controls.scriptExtractionRegex.value);
     const updateSocAfterIncrease = this.form.controls.scriptUpdateSocAfterIncrease.value;
     const updateSocAfterTime = this.updateAfterSecondsComponent.updateModelFromForm();
 

@@ -141,7 +141,7 @@ public class SocScript implements ApplianceIdConsumer {
      * @return the SOC value extracted or the full text if the regular expression is null or could not be matched
      */
     protected String extractSoCValue(String text, String regex)  {
-        if(regex == null) {
+        if(regex == null || regex.length() == 0) {
             return text;
         }
         logger.debug("{}: SoC extraction regex: {}", applianceId, regex);
