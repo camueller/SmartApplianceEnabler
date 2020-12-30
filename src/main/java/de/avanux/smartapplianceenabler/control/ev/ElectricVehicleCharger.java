@@ -559,6 +559,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
             }
             setConnectedVehicleId(null);
             this.socValues = new SocValues();
+            this.socInitialTimestamp = null;
             initStateHistory();
         }
 
