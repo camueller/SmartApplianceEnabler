@@ -745,7 +745,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                     updateAfterIncrease = ElectricVehicleChargerDefaults.getUpdateSocAfterIncrease();
                 }
                 Integer updateAfterSeconds = electricVehicle.getSocScript().getUpdateAfterSeconds();
-                if(this.socValues.initial == null || (
+                if(this.socValues.initial == null || this.socValues.retrieved == null || (
                         (this.socValues.retrieved + updateAfterIncrease <= this.socValues.current)
                                 && (updateAfterSeconds == null || now.minusSeconds(updateAfterSeconds).isAfter(this.socTimestamp))
                 )) {
