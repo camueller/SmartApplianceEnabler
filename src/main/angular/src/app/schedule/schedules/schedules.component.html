@@ -19,7 +19,7 @@
   <h1>{{'SchedulesComponent.title' | translate }}<app-help [helpfile]="'Schedules'" [cssClass]="'text-top'"></app-help></h1>
   <div *ngIf="isControlable; else notControllable">
     <div formArrayName="schedules">
-      <div *ngFor="let scheduleFormGroup of schedulesFormArray.controls;let i = index" [formGroupName]="i">
+      <div *ngFor="let scheduleFormGroup of schedulesFormArray.controls;let i = index; last as last" [formGroupName]="i">
         <app-schedule [schedule]="schedules[i]"
                       [form]="getScheduleFormGroup(i)"
                       [electricVehicles]="electricVehicles"
@@ -28,6 +28,7 @@
                       (remove)="onScheduleRemove(i)"
                       #scheduleComponents
         ></app-schedule>
+        <mat-divider class="SchedulesComponent__scheduleDivider" *ngIf="!last"></mat-divider>
       </div>
     </div>
     <div class="sae__mandatory_fields_hint" *ngIf="schedulesFormArray.controls.length > 0">
