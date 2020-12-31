@@ -1,9 +1,6 @@
 <div class="NotificationComponent" [formGroup]="form">
   <section>
-    <h2>{{'NotificationComponent.heading' | translate}}</h2>
-    <div *ngIf="!configured">
-      <p>{{'NotificationComponent.notConfigured' | translate }}<a routerLink="/settings">Einstellungen</a></p>
-    </div>
+    <h2>{{'NotificationComponent.heading' | translate}}<app-help [helpfile]="'Notifications'"></app-help></h2>
     <div class="sae__fields">
       <mat-checkbox formControlName="notificationsEnabled"
       >{{'NotificationComponent.enabled' | translate}}</mat-checkbox>
@@ -20,8 +17,5 @@
         </mat-select>
       </mat-form-field>
     </div>
-    <ng-template #notConfigured>
-      <p>{{'NotificationComponent.notConfigured' | translate }}<a routerLink="/settings">Einstellungen</a></p>
-    </ng-template>
   </section>
 </div>

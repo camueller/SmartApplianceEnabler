@@ -16,11 +16,15 @@ import {MessageboxComponent} from './messagebox/messagebox.component';
 import {FlexModule} from '@angular/flex-layout';
 import { TimepickerComponent } from './timepicker/timepicker.component';
 import {ReactiveFormsModule} from '@angular/forms';
+import {HelpComponent} from './help/help.component';
+import {SafeurlPipe} from './safe-url.pipe';
 
 
 @NgModule({
   declarations: [
+    HelpComponent,
     MessageboxComponent,
+    SafeurlPipe,
     TimepickerComponent,
   ],
   imports: [
@@ -41,6 +45,7 @@ import {ReactiveFormsModule} from '@angular/forms';
     ReactiveFormsModule,
   ],
   exports: [
+    HelpComponent,
     MatButtonModule,
     MatCardModule,
     MatCheckboxModule,

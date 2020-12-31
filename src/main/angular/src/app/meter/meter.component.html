@@ -27,6 +27,7 @@
         </mat-select>
       </mat-form-field>
     </div>
+    <app-help [helpfile]="'Meter'"></app-help>
   </div>
   <app-meter-s0 *ngIf="isS0ElectricityMeter"
                 [s0ElectricityMeter]="meter.s0ElectricityMeter"

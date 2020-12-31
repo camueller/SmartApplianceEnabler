@@ -1,11 +1,11 @@
 <div class="ControlEvchargerComponent">
-  <h2>{{'ControlEvchargerComponent.heading' | translate}}</h2>
+  <h2>{{'ControlEvchargerComponent.heading' | translate}}<app-help [helpfile]="'EVCharger'"></app-help></h2>
   <div class="sae__fields">
     <mat-form-field class="ControlEvchargerComponent__template">
       <mat-label>{{'ControlEvchargerComponent.template' | translate}}</mat-label>
       <mat-select formControlName="template" required="{{!isConfigured}}"
                   (selectionChange)="useTemplate()"
-                  placeholder="aus vorkonfigurierten Ladengeräten wählen">
+                  placeholder="{{'ControlEvchargerComponent.template.placeholder' | translate }}">
         <mat-option *ngFor="let templateName of templateNames" [value]="templateName">
           {{templateName}}
         </mat-option>
@@ -14,7 +14,7 @@
     <mat-form-field class="ControlEvchargerComponent__protocol">
       <mat-label>{{'ControlEvchargerComponent.protocol' | translate}}</mat-label>
       <mat-select formControlName="protocol" required="true"
-                  placeholder="wählen für manuelle Konfiguration">
+                  placeholder="{{'ControlEvchargerComponent.protocol.placeholder' | translate }}">
         <mat-option *ngFor="let protocol of protocols" [value]="protocol.value">
           {{protocol.viewValue}}
         </mat-option>
@@ -69,7 +69,7 @@
   <app-control-evcharger-http *ngIf="isProtocolHttp"
                               [evHttpControl]="evCharger.httpControl"
   ></app-control-evcharger-http>
-  <h2 class="sae__heading-extra-top-margin">{{'ControlEvchargerComponent.headingEv' | translate}}</h2>
+  <h2 class="sae__heading-extra-top-margin">{{'ControlEvchargerComponent.headingEv' | translate}}<app-help [helpfile]="'EVCharger'" [anchor]="'ev'"></app-help></h2>
   <div class="ControlEvchargerComponent__electricVehicles" formArrayName="electricVehicles">
     <div *ngFor="let electricVehicle of evCharger.vehicles; index as i; last as l" class="ControlEvchargerComponent__electricVehicle">
       <mat-divider class="ControlEvchargerComponent__electricVehicleDivider"></mat-divider>

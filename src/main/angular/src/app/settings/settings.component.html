@@ -17,7 +17,8 @@
   -->
 <form class="SettingsComponent" [formGroup]="form" (ngSubmit)="submitForm()">
   <section>
-    <h2>{{'SettingsComponent.holidays' | translate}}</h2>
+    <h2>{{'SettingsComponent.holidays' | translate}}
+      <app-help [helpfile]="'Settings'" [anchor]="'holidays'"></app-help></h2>
     <div class="sae__fields">
       <mat-checkbox formControlName="holidaysEnabled"
       >{{'SettingsComponent.holidaysEnabled' | translate}}</mat-checkbox>
@@ -34,7 +35,8 @@
   <mat-divider></mat-divider>
 
   <section>
-    <h2 class="sae__heading-extra-top-margin">{{'SettingsComponent.modbus' | translate}}</h2>
+    <h2 class="sae__heading-extra-top-margin">{{'SettingsComponent.modbus' | translate}}
+      <app-help [helpfile]="'Settings'" [anchor]="'modbus'"></app-help></h2>
     <div formArrayName="modbusSettings">
       <div *ngFor="let modbusSetting of settings.modbusSettings; index as i">
         <app-settings-modbus
@@ -54,7 +56,8 @@
   <mat-divider></mat-divider>
 
   <section>
-    <h2 class="sae__heading-extra-top-margin">{{'SettingsComponent.notification.heading' | translate}}</h2>
+    <h2 class="sae__heading-extra-top-margin">{{'SettingsComponent.notification.heading' | translate}}
+      <app-help [helpfile]="'Settings'" [anchor]="'notifications'"></app-help></h2>
     <p>{{'SettingsComponent.notification.params' | translate}}</p>
     <ol>
       <li><i>senderId</i>: {{'SettingsComponent.notification.params.senderId' | translate }}</li>

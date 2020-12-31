@@ -74,6 +74,10 @@ Dieses Feld ist nur aktiv, wenn `Unterbrechnung erlaubt` aktiviert wurde.
 
 Wenn das Gerät ausgeschaltet ist, darf der *Sunny Home Manager* es in diesem Zustand nicht länger als die angegebene Dauer lassen.
 
+### Geräte-ID für Benachrichtigungen
+
+Der Wert dieses Feldes wird beim Versenden von Benachrichtigungen als Absender verwendet. Wenn kein Wert eingetragen ist, wird stattdessen der Wert des Feldes `ID` verwendet. 
+
 ## Beispiel
 Die Eingabe für Minimal müssen für ein Gerät folgende Angaben gemacht werden:
 

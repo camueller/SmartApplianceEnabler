@@ -24,7 +24,7 @@
            required="{{formHandler.isRequired('id')}}">
     <mat-error *ngIf="errors.id">{{errors.id}}</mat-error>
   </mat-form-field>
-
+  <app-help [helpfile]="'Appliance'"></app-help>
   <section>
     <h2>{{'ApplianceComponent.general' | translate}}</h2>
     <div class="sae__fields">
