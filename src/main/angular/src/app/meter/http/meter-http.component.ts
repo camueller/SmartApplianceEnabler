@@ -19,7 +19,7 @@ import {TranslateService} from '@ngx-translate/core';
 @Component({
   selector: 'app-meter-http',
   templateUrl: './meter-http.component.html',
-  styleUrls: ['./http-electricity-meter.scss'],
+  styleUrls: ['./meter-http-component.scss'],
   viewProviders: [
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ]
