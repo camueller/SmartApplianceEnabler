@@ -39,8 +39,9 @@
             </mat-select>
           </mat-form-field>
         </div>
-        <mat-checkbox formControlName="startingCurrentDetection" (click)="toggleStartingCurrentDetection()"
-                      *ngIf="canHaveStartingCurrentDetection"
+        <app-help [helpfile]="'Control'"></app-help>
+        <mat-checkbox class="ControlComponent__startingCurrentDetection" formControlName="startingCurrentDetection"
+                      (click)="toggleStartingCurrentDetection()" *ngIf="canHaveStartingCurrentDetection"
         >{{'ControlStartingcurrentComponent.startingCurrentDetection' | translate}}</mat-checkbox>
       </div>
       <app-control-meterreporting *ngIf="isMeterReportingSwitch"
