@@ -35,6 +35,7 @@ script:
     pushd ci &&
     ccrypt -d -K $AWS_CRYPT_KEY aws.pem.cpt >/dev/null 2>&1 &&
     chmod 400 aws.pem &&
+    sleep 20 &&
     export DEPLOY_HOST=`aws ec2 describe-instances | grep -m 1 PublicDnsName | awk -F '"' '{print $4}'` &&
     echo "DEPLOY_HOST=$DEPLOY_HOST" &&
     export E2E_TEST_URL=http://$DEPLOY_HOST &&
