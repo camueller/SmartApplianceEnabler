@@ -1,4 +1,4 @@
-## Status-Anzeige
+# Status-Anzeige
 
 Beim Öffnen der Web-Anwendung oder durch Klick auf den Menüpunkt `Status` gelangt man auf die Statusseite.
 
@@ -21,3 +21,53 @@ Damit der *Smart Appliance Enabler* dem *Sunny Home Manager* die geplante Laufze
 ![Eingabe der Laufzeit bei Ampel](../pics/fe/StatusEdit.png)
 
 Durch Klick auf die `Starten`-Schaltfläche wird das Gerät sofort eingeschaltet.
+
+## Besonderheiten für Wallboxen
+
+Nach einen **Klick auf das grüne Ampellicht** kann man den `Lademodus` für den aktuellen Ladevorgang festelegen.
+
+In Abhängigkeit des gewählten Lademodus werden die Felder `Ladezustand: Ist` und/oder `Ladezustand: Soll` angzeigt, wobei Folgendes gilt:
+- wenn ein [SOC-Script](soc/SOC_DE.md) für das ausgewählte Fahrzeug angegeben wurde, wird das Eingabefeld ```Ladezustand: Ist``` vorbelegt mit dem aktuellen Wert zu diesem Zeitpunkt. Ohne SOC-Script kann er im Auto abgelesen und hier eingegeben werden, wenn man dem *Sunny Home Manager* eine gute Planung ermöglichen will. Ansonsten wird 0 angenommen und ein entsprechend hoher Energiebedarf gemeldet.
+- wird im Eingabefeld ```Ladezustand: Soll``` kein Wert eingegeben, wird 100% angenommen und ein entsprechend hoher Energiebedarf an den *Sunny Home Manager* gemeldet.
+
+### Lademodus: Schnell
+Das Fahrzeug wird sofort mit der konfigurierten, maximalen Leistung geladen. Es erfolgt keine Optimierung hinsichtlich Stromkosten und der Nutzung von PV-Strom.
+![Eingabefelder Lademodus Schnell](../pics/fe/StatusEVAmpelEdit.png)
+
+### Lademodus: Optimiert
+
+Das Ladegerät wird mit so viel überschüssigem PV-Strom wie möglich betrieben. Dabei wird sichergestellt, dass der vorgegebene Ladezustand (SOC) zum eingegebenen Zeitpunkt erreicht ist, notfalls durch Bezug von Strom aus den Netz. Danach wird automatisch in den Lademodus "PV-Überschuss" gewechselt.
+![Eingabefelder Lademodus Optimiert](../pics/fe/StatusEVAmpelEditOptimized.png)
+
+### Lademodus: PV-Überschuss
+
+Das Fahrzeug wird mit überschüssigem PV-Strom, der andernfalls ins Netz eingespeist oder abgeregelt werden würde, geladen. Dieser Lademodus ist automatisch aktiv, sobald das Fahrzeug mit dem Ladegerät verbunden ist und solange kein anderer Lademodus aktiviert wurde. Insofern dient die Auswahl dieses Lademodus nur dazu, einen Soll-SOC festzulegen, der von den in der Konfiguration des Fahrzeugs festgelegten Werten abweicht. In diesem Lademodus kann die Ladung des Fahrzeugs nicht in allen Fällen sichergestellt werden. Reicht der überschüssige PV-Strom nicht zur Ladung aus, findet keine Ladung statt.
+![Eingabefelder Lademodus PV-Überschuss](../pics/fe/StatusEVAmpelEditExcessEnergy.png)
+
+### Zeitpläne
+Abweichend von der [Konfiguration von Zeitplänen für andere Geräte](Configuration_DE.md#zeitpläne) existieren bei Wallboxen als **Anforderungsart** zwei Optionen:
+
+#### Laden bis SOC
+Mit der Anforderungsart `Laden bis SOC` wird genau die Energiemenge angefordert, die notwendig ist, um einen bestimmten SOC zu erreichen. Zur Berechnung dieser Energiemenge wird die Batteriekapazität und der SOC des Fahrzeugs bei Ladebeginn herangezogen. Für letzteres ist es notwendig, dass der [SOC des Fahrzeugs via Script](soc/SOC_DE.md) abgefragt werden kann.
+![Anforderungsart SOC](../pics/fe/SchaltzeitenTagesplanSOC.png)
+
+#### Laden einer Energiemenge
+
+Mit der Anforderungsart `Energiemenge` kann eine bestimmte Energiemenge (in Wh) angefordert werden. Normalerweise wird nur die `max. Ernergiemenge` angegeben, die auf jeden Fall geladen werden soll.
+
+Optional kann für die `min. Energiemenge` ein kleinerer Wert angegeben werden. Falls er angegeben ist, wird nur dieser Wert auf jeden Fall geladen und die darüber hinausgehende Energiemenge bis zur `max. Ernergiemenge` nur dann, wenn **Überschussenergie** verfügbar ist.
+![Anforderungsart Energiemenge](../pics/fe/SchaltzeitenTagesplanEnergiemenge.png)
+
+### Status-Anzeige
+
+Wenn das Fahrzeug nicht mit der Wallbox verbunden ist, wird lediglich der Status angezeigt:
+![Statusanzeige ohne verbundenes Fahrzeug](../pics/fe/StatusEVAmpelViewNotConnected.png)
+
+Nachdem das Fahrzeug verbunden wurde, werde weitere Details angezeigt. Der SOC wird mit "0%" angezeigt, falls kein [SOC-Script](#fahrzeuge) konfiguriert wurde.
+![Statusanzeige ohne verbundenes Fahrzeug](../pics/fe/StatusEVAmpelViewConnected.png)
+
+Wenn ein Ladevorgang aktiv ist, sieht die Statusanzeige wie folgt aus:
+![Statusanzeige ohne verbundenes Fahrzeug](../pics/fe/StatusEVAmpelViewCharging.png)
+
+Nach einer Status-Änderung (Ladebeginn, Ladeende) wird der Status nur dann korrekt angezeigt, wenn die für `Statuserkennung-Unterbrechung` konfigurierte Dauer (Standardwert: 300s) abgelaufen ist.
+

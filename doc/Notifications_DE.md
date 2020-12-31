@@ -2,7 +2,7 @@
 
 Durch Benachrichtigungen kann der *Smart Appliance Enabler* über Ereignisse ("Gerät wurde eingeschaltet", "Kommunikationsfehler") informieren.
 
-Für die Nutzung von Benachrichtigungen muss ein [Shell-Script in den Einstellungen konfiguriert](Settings_DE.md#benachrichtigungen) sein.
+Bevor Benachrichtigungen konfiguriert werden könen muss ein [Shell-Script in den Einstellungen konfiguriert](Settings_DE.md#benachrichtigungen) sein, über das der *Smart Appliance Enabler* die Benachrichtigungen versendet.
 
 Nachdem ein Shell-Script konfiguriert wurde, kann für Zähler und Schalter durch Aktivieren der Checkbox `Aktiviert` das Versenden von Benachrichtigungen gerätespezifisch aktiviert werden.
 
@@ -13,6 +13,10 @@ Ohne Auswahl einzelner Ereignisse erfolgt die Benachrichtiung für alle Ereignis
 Alternativ kann die Benachrichtiung auf einzlene Ereignisse beschränkt werden:
 
 ![Ausgewählte Ereignisse](../pics/fe/NotificationsSome.png)
+
+## Benachrichtigungskanäle
+
+Für den *Smart Appliance Enabler* existieren Shell-Scripts zur Nutzung der nachfolgend beschriebenen Benachrichtigungskanäle. Mit wenig Shell-Script-Know-How sollte es möglich sein, auf Basis der vorhanden Shell-Scripts solche für andere Benachrichtigungskanäle zu erstellen. Bitte diese Scripts als **Pull-Request** auch den anderen *Smart Appliance Enabler*-Usern zur Verfügung stellen!  
 
 ### Telegram
 Zunächst muss in Telegram eine [Gruppe erstellt](https://telegram.org/faq/de#f-wie-kann-ich-eine-gruppe-erstellen) werden, die man z.B. "Haus" nennen könnte.
