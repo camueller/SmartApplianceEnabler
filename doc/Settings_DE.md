@@ -1,8 +1,7 @@
 # Einstellungen
 Das Menü ```Einstellungen``` findet sich oben auf der Seite.
 
-<a name="holidays">
-## Feiertage<a name="holidays2">
+## Feiertage
 
 Die Feiertage werden aus der Datei ```Holidays-JJJJ.txt``` gelesen, wobei JJJJ durch die Jahreszahl ersetzt wird, d.h. die Feiertag für 2017 finden sich in der Datei ```Holidays-2017.txt```. Die Datei muss sich im gleichen Verzeichnis wie die Datei ```Appliances.xml``` befinden und ist wie folgt aufgebaut:
 ```
@@ -26,6 +25,7 @@ HE steht dabei für Hessen, die Abkürzung für andere Bundesländer und die vol
 ![Einstellungen Feiertage](../pics/fe/SettingsFeiertage.png)
 
 ## Modbus
+<a name="modbus">
 Bevor Modbus für Zähler oder Schalter verwendet werden kann, müssen ein oder mehrer Modbus/TCP konfiguriert werden.
 
 Für jeden Modbus/TCP muss eine eindeutige ID festgelegt werden, die bei der Konfiguration von Modbus-Zählern und Schaltern angegeben werden müss (z.B. "wallbox").
