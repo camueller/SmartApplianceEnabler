@@ -95,7 +95,7 @@ export class HttpReadComponent implements OnChanges, OnInit {
   }
 
   get isRemoveHttpReadPossible() {
-    return !this.disableRemove && this.maxValues > 1;
+    return !this.disableRemove;
   }
 
   removeHttpRead() {
