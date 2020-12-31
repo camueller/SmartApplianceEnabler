@@ -44,20 +44,6 @@ Das Ladegerät wird mit so viel überschüssigem PV-Strom wie möglich betrieben
 Das Fahrzeug wird mit überschüssigem PV-Strom, der andernfalls ins Netz eingespeist oder abgeregelt werden würde, geladen. Dieser Lademodus ist automatisch aktiv, sobald das Fahrzeug mit dem Ladegerät verbunden ist und solange kein anderer Lademodus aktiviert wurde. Insofern dient die Auswahl dieses Lademodus nur dazu, einen Soll-SOC festzulegen, der von den in der Konfiguration des Fahrzeugs festgelegten Werten abweicht. In diesem Lademodus kann die Ladung des Fahrzeugs nicht in allen Fällen sichergestellt werden. Reicht der überschüssige PV-Strom nicht zur Ladung aus, findet keine Ladung statt.
 ![Eingabefelder Lademodus PV-Überschuss](../pics/fe/StatusEVAmpelEditExcessEnergy.png)
 
-### Zeitpläne
-Abweichend von der [Konfiguration von Zeitplänen für andere Geräte](Configuration_DE.md#zeitpläne) existieren bei Wallboxen als **Anforderungsart** zwei Optionen:
-
-#### Laden bis SOC
-Mit der Anforderungsart `Laden bis SOC` wird genau die Energiemenge angefordert, die notwendig ist, um einen bestimmten SOC zu erreichen. Zur Berechnung dieser Energiemenge wird die Batteriekapazität und der SOC des Fahrzeugs bei Ladebeginn herangezogen. Für letzteres ist es notwendig, dass der [SOC des Fahrzeugs via Script](soc/SOC_DE.md) abgefragt werden kann.
-![Anforderungsart SOC](../pics/fe/SchaltzeitenTagesplanSOC.png)
-
-#### Laden einer Energiemenge
-
-Mit der Anforderungsart `Energiemenge` kann eine bestimmte Energiemenge (in Wh) angefordert werden. Normalerweise wird nur die `max. Ernergiemenge` angegeben, die auf jeden Fall geladen werden soll.
-
-Optional kann für die `min. Energiemenge` ein kleinerer Wert angegeben werden. Falls er angegeben ist, wird nur dieser Wert auf jeden Fall geladen und die darüber hinausgehende Energiemenge bis zur `max. Ernergiemenge` nur dann, wenn **Überschussenergie** verfügbar ist.
-![Anforderungsart Energiemenge](../pics/fe/SchaltzeitenTagesplanEnergiemenge.png)
-
 ### Status-Anzeige
 
 Wenn das Fahrzeug nicht mit der Wallbox verbunden ist, wird lediglich der Status angezeigt:
