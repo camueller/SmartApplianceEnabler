@@ -268,9 +268,9 @@ Der *Smart Appliance Enabler* wird normalerweise als Service des [Systemd](https
 
 Die Datei ```/opt/sae/smartapplianceenabler``` ist das eigentliche Start-Script für den *Smart Appliance Enabler*. Man kann es zwar direkt aufrufen, aber eigentlich sollte es nur vom _Systemd_ verwendet werden.
 
-In der Datei ```/etc/default/smartapplianceenabler``` finden sich die Konfigurationseinstellungen für den *Smart Appliance Enabler*. Die darin befindlichen Parameter (z.B. Netzwerk-Adresse, Port, Java-Einstellungen, ...) sind in der Datei selbst dokumentiert. Normalerweise sollte man die Datei unverändert lassen können.
-
-Die Konfiguration des Loggings erfolgt in der Datei ```/opt/sae/logback-spring.xml```.
+Siehe auch:
+- [Konfigurationseinstellungen](ConfigurationFiles_DE.md#server-konfiguration)
+- [Konfiguration des Loggings](ConfigurationFiles_DE.md#log-konfiguration)
 
 Damit der *Smart Appliance Enabler* beim Systemstart ebenfalls gestartet wird (via Systemd), muss folgender Befehl ausgeführt werden:
 ```console

@@ -20,4 +20,4 @@ Damit der *Smart Appliance Enabler* dem *Sunny Home Manager* die geplante Laufze
 
 ![Eingabe der Laufzeit bei Ampel](../pics/fe/StatusEdit.png)
 
-Durch Klick auf die ```Starten```-Schaltfläche wird das Gerät sofort eingeschaltet.
+Durch Klick auf die `Starten`-Schaltfläche wird das Gerät sofort eingeschaltet.
