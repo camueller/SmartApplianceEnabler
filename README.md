@@ -89,8 +89,11 @@ Der eigentliche Zweck des *Smart Appliance Enabler* besteht in der Integration v
 
 ![Verbraucherbilanz](pics/shm/Verbraucherbilanz.png)
 
-## [Fragen / Probleme](doc/Support_DE.md)
-Durch die Vielzahl von Hard- und Softwarekomponenten können bei der Verwendung des *Smart Appliance Enabler* naturgemäß Fragen oder Probleme auftreten. In diesem Fall sollten [diese Hinweise](doc/Support_DE.md) beachtet werden.
+## [Fragen und Antworten](doc/QA_DE.md)
+Diese Seite führt bei Problemen hoffentlich zur Lösung. Ausgehend von häufig gestellten Fragen werden Antworten gegeben sowie Verweise zu relevanten Teilen der Dokumentation.
+
+## [Unterstützung](doc/Support_DE.md)
+Hier finden sich Informationen zur Unterstützung bei Fragen und Problemen, falls die Informationen in [Fragen und Antworten](doc/QA_DE.md) nicht zum Erfolg geführt haben.
 
 ## Mitmachen
 <img align="left" src="pics/IWantYou.png">Zum Mitmachen muss man **kein Programmierer** sein! Auch die **Dokumentation** oder **Support von anderen Anwendern** im [Forum](https://www.photovoltaikforum.com/geraete-mit-home-manager-koppeln-via-semp-ethernet-t104060.html) sind Bereiche, in denen man helfen kann, den *Smart Appliance Enabler* besser zu machen. Der *Smart Appliance Enabler* ist für einige Einsatzzwecke "Out-of-the-box" geeignet. Viel interessanter sind aber oft Ideen, an die bei der Entwicklung des *Smart Appliance Enabler* gar nicht gedacht wurde, die ihr aber damit umgesetzt habt. Es wäre doch schön, wenn andere auch **von Euren Ideen profitieren** würden oder vielleicht sogar dazu beitragen könnten, sie noch besser zu machen.

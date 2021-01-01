@@ -121,6 +121,22 @@ sudo systemctl start smartapplianceenabler-docker-compose
 sudo systemctl stop smartapplianceenabler-docker-compose
 ```
 
+#### Status des Containers
+Wenn der Container mit dem *Smart Appliance Enabler* läuft, sollte der Status `active (running)` sein:
+```console
+sae@raspi:~ $ sudo systemctl status smartapplianceenabler-docker-compose.service
+● smartapplianceenabler-docker-compose.service - Smart Appliance Enabler Container
+Loaded: loaded (/lib/systemd/system/smartapplianceenabler-docker-compose.service; enabled; vendor preset: enabled)
+Active: active (running) since Sat 2020-12-26 13:04:45 CET; 5 days ago
+Main PID: 30810 (docker-compose)
+Tasks: 3 (limit: 2063)
+CGroup: /system.slice/smartapplianceenabler-docker-compose.service
+└─30810 /usr/bin/python3 /usr/local/bin/docker-compose up
+
+Dec 26 13:05:40 raspi docker-compose[30810]: sae    | 13:05:40.622 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+Dec 26 13:05:40 raspi docker-compose[30810]: sae    | 13:05:40.696 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 73 ms
+```
+
 #### Anzeige der Consolen-Ausgabe
 ```console
 pi@raspi:/etc/docker/compose/smartapplianceenabler $ sudo systemctl status smartapplianceenabler-docker-compose

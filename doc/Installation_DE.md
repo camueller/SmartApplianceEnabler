@@ -317,6 +317,21 @@ Das Stoppen des  *Smart Appliance Enabler* erfolgt so:
 pi@raspberrypi:~ $ sudo systemctl stop smartapplianceenabler.service
 ```
 
+#### Status
+Mit folgendem Befehl lässt sich üprüfen, ob der *Smart Appliance Enabler* läuft:
+```console
+pi@raspberrypi ~ $ sudo systemctl status smartapplianceenabler.service
+● smartapplianceenabler.service - Smart Appliance Enabler
+   Loaded: loaded (/lib/systemd/system/smartapplianceenabler.service; enabled; vendor preset: enabled)
+   Active: active (running) since Thu 2020-12-31 15:35:13 CET; 20h ago
+  Process: 24019 ExecStart=/opt/sae/smartapplianceenabler start (code=exited, status=0/SUCCESS)
+ Main PID: 24026 (sudo)
+    Tasks: 48 (limit: 2063)
+   CGroup: /system.slice/smartapplianceenabler.service
+           ├─24026 sudo -u sae /usr/bin/java -Djava.awt.headless=true -Xmx256m -Duser.language=de -Duser.country=DE -Dlogging.config=/opt/sae/logback-spring.xml -Dsae.pidfile=/var/run/sae/smartapplianceenabler.pid -Dsae.home=
+           └─24028 /usr/bin/java -Djava.awt.headless=true -Xmx256m -Duser.language=de -Duser.country=DE -Dlogging.config=/opt/sae/logback-spring.xml -Dsae.pidfile=/var/run/sae/smartapplianceenabler.pid -Dsae.home=/opt/sae -ja
+```
+
 ### Update
 Das Update einer vorhandenen Version besteht darin, zunächst das alte Programm zu löschen:
 ```console

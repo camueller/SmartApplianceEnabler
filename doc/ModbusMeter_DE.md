@@ -11,13 +11,15 @@ Der *Smart Appliance Enabler* verwendet den Modbus-Zähler sowohl zur Bestimmung
 
 ![Modbus-basierter Zähler](../pics/fe/ModbusMeter.png)
 
-Wird ein Zähler über Modbus abgefragt, finden sich in der [Log-Datei](Support.md#Log) für jede Abfrage folgende Zeilen:
-```
-2019-03-21 00:02:55,700 DEBUG [http-nio-8080-exec-5] d.a.s.m.ModbusSlave [ModbusSlave.java:76] F-00000001-000000000006-00: Connecting to modbus modbus@127.0.0.1:502
-2019-03-21 00:02:55,744 DEBUG [http-nio-8080-exec-5] d.a.s.m.e.ReadFloatInputRegisterExecutorImpl [ReadInputRegisterExecutor.java:57] F-00000001-000000000006-00: Input register=72 value=[17975, 11024]
-2019-03-21 00:02:55,748 DEBUG [http-nio-8080-exec-5] d.a.s.m.ModbusElectricityMeter [ModbusElectricityMeter.java:180] F-00000001-000000000006-00: Float value=11722.766
-2019-03-21 00:02:55,750 DEBUG [http-nio-8080-exec-5] d.a.s.m.PollEnergyMeter [PollEnergyMeter.java:62] F-00000001-000000000006-00: energy=0.0kWh totalEnergy=null startEnergyCounter=null currentEnergyCounter=11722.766 started=false
-2019-03-21 00:02:55,751 DEBUG [http-nio-8080-exec-5] d.a.s.a.Appliance [Appliance.java:625] F-00000001-000000000006-00: energy metered: 0.0 kWh
+## Log
+Wird ein Modbus-Zähler für das Gerät `F-00000001-000000000005-00` verwendet, kann man die ermittelte Leistungsaufnahme im [Log](Logging_DE.md) mit folgendem Befehl anzeigen:
+
+```console
+sae@raspi2:~ $ grep 'Modbus\|Register' /tmp/rolling-2020-12-30.log | grep F-00000001-000000000019-00
+2020-12-30 14:33:51,483 DEBUG [http-nio-8080-exec-7] d.a.s.m.ModbusSlave [ModbusSlave.java:76] F-00000001-000000000019-00: Connecting to modbus modbus@127.0.0.1:502
+2020-12-30 14:33:51,546 DEBUG [http-nio-8080-exec-7] d.a.s.m.e.ReadFloatInputRegisterExecutorImpl [ReadInputRegisterExecutor.java:57] F-00000001-000000000019-00: Input register=342 value=[17668, 65470, 0, 0]
+2020-12-30 14:33:51,550 DEBUG [http-nio-8080-exec-7] d.a.s.m.ModbusElectricityMeter [ModbusElectricityMeter.java:219] F-00000001-000000000019-00: Float value=2127.984
+2020-12-30 14:33:51,551 DEBUG [http-nio-8080-exec-7] d.a.s.m.ModbusElectricityMeter [ModbusElectricityMeter.java:88] F-00000001-000000000019-00: average power = 6895W
 ```
 
 ## Schaltbeispiel 1: 240V-Gerät mit Stromverbrauchsmessung
