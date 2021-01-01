@@ -64,7 +64,7 @@ Beim erstmaligen Aufruf von Maven werden dabei alle benötigten Bibliotheken aus
 
 
 #### UPnP Deaktivierung
-In der Regel ist es nicht erwünscht, dass der Sunny Home Manager (SHM) die für die Entwicklung verwendete SAE-Instanz (in der IDE oder auf einem Entwicklungs-Raspi) per UPnP "entdeckt" und die Geräte übernimmt.
+In der Regel ist es nicht erwünscht, dass der Sunny Home Manager die für die Entwicklung verwendete SAE-Instanz (in der IDE oder auf einem Entwicklungs-Raspi) per UPnP "entdeckt" und die Geräte übernimmt.
 Deshalb kann das UPnP des SAE mit einem Property deaktiviert werden:
 ```console
 -Dsae.discovery.disable=true

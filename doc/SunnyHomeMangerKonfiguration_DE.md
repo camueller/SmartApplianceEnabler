@@ -1,6 +1,6 @@
 # Sunny Home Manager
 
-## Hinzugfügen neuer Geräte in den Sunny Home Manager (SHM)
+## Hinzugfügen neuer Geräte in den Sunny Home Manager
 
 Zum Hinzufügen neuer Geräte in den Sunny Home Manager muss auf der Seite
 ```
@@ -20,7 +20,7 @@ Im zweiten Schritt wird lediglich eine Zusammenfassung angezeigt:
 
 Nach Drücken von ```Fertigstellen``` wird noch eine Bestätigung angezeigt, dass das Gerät hinzugefügt wurde.
 
-Der SHM fragt den *Smart Appliance Enabler* alle 60 Sekunden nach dem Status der verwaltenden Geräte zugehörigen Schaltzeiten. In der [Log-Datei](Support.md#Log) sollten für jede Abfrage in etwa folgende Zeilen stehen: 
+Der *Sunny Home Manager* fragt den *Smart Appliance Enabler* alle 60 Sekunden nach dem Status der verwaltenden Geräte zugehörigen Schaltzeiten. In der [Log-Datei](Support.md#Log) sollten für jede Abfrage in etwa folgende Zeilen stehen: 
 ```
 2019-03-30 00:00:55,154 DEBUG [http-nio-8080-exec-5] d.a.s.s.w.SempController [SempController.java:55] Device info/status/planning requested.
 2019-03-30 00:00:55,156 DEBUG [http-nio-8080-exec-5] d.a.s.s.w.SempController [SempController.java:218] F-00000001-000000000001-00: Reporting device status based on power consumption

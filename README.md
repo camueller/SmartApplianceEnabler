@@ -45,7 +45,7 @@ Der *Smart Appliance Enabler* wurde in **Java** implementiert und läuft grunds�
 
 ### Stromzähler
 
-Aktuell unterstützt der *Smart Appliance Enabler* folgende Möglichkeiten, den Stromverbrauch eines Gerätes zu messen, um ihn an die (Smart-Home-) Steuerung zu melden:
+Aktuell unterstützt der *Smart Appliance Enabler* folgende Möglichkeiten, den Stromverbrauch eines Gerätes zu messen, um ihn an den *Sunny Home Manager* zu melden:
 
 | Protokolle    | Produkte      |
 | ------------- | ------------- |
@@ -66,7 +66,7 @@ Zum Ein-/Ausschalten eines Gerätes unterstützt der *Smart Appliance Enabler* d
 Alle aufgeführten Schalter (außer Wallboxen) können mit einer [Anlaufstromerkennung](doc/Anlaufstromerkennung_DE.md) verwendet werden, um die Programmierung des Gerätes zu ermöglichen.
 
 ### [Montage](doc/Montage_DE.md)
-Falls der *Smart Appliance Enabler* auf einem Raspberry Pi betrieben werdeb soll, sollten für diesen die [Montage-Hinweise](doc/Montage_DE.md) beachtet werden.
+Falls der *Smart Appliance Enabler* auf einem Raspberry Pi betrieben werden soll, sollten dafür die [Montage-Hinweise](doc/Montage_DE.md) beachtet werden.
 
 ## [Installation](doc/Installation_DE.md)
 Die [Installation des *Smart Appliance Enabler* ist Schritt für Schritt beschrieben](doc/Installation_DE.md) und sollte auch Linux-Neulinge nicht überfordern, wenn sie erstmalig mit einem Raspberry Pi in Berührung kommen. 
