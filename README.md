@@ -66,14 +66,12 @@ Zum Ein-/Ausschalten eines Gerätes unterstützt der *Smart Appliance Enabler* d
 Alle aufgeführten Schalter (außer Wallboxen) können mit einer [Anlaufstromerkennung](doc/Anlaufstromerkennung_DE.md) verwendet werden, um die Programmierung des Gerätes zu ermöglichen.
 
 ### [Montage](doc/Montage_DE.md)
-Für den reibungslosen Einsatz des *Smart Appliance Enabler* sollten die [Montage-Hinweise](doc/Montage_DE.md) beachtet werden.
+Falls der *Smart Appliance Enabler* auf einem Raspberry Pi betrieben werdeb soll, sollten für diesen die [Montage-Hinweise](doc/Montage_DE.md) beachtet werden.
 
 ## [Installation](doc/Installation_DE.md)
-Der einfachste Weg zu einem lauffähigen *Smart Appliance Enabler* besteht in der [Installation](doc/Installation_DE.md) einer releasten Version.
+Die [Installation des *Smart Appliance Enabler* ist Schritt für Schritt beschrieben](doc/Installation_DE.md) und sollte auch Linux-Neulinge nicht überfordern, wenn sie erstmalig mit einem Raspberry Pi in Berührung kommen. 
 
-![Docker](pics/Docker.png)
-
-Für den *Smart Appliance Enabler* sind [Docker-Images](doc/Docker_DE.md) verfügbar.
+<a href="doc/Docker_DE.md"><img align="left" src="pics/Docker.png"></a> Bei Bedarf lässt sich der *Smart Appliance Enabler* auch im Container mit den bereitgestellten [Docker-Images](doc/Docker_DE.md) betreiben.<br><br>
 
 ## Browser-basierte [Konfiguration](doc/Configuration_DE.md) und [Steuerung](doc/Status_DE.md)
 Die [Konfiguration](doc/Configuration_DE.md) des *Smart Appliance Enabler* kann über eine komfortable Web-Oberfläche erfolgen.
@@ -91,11 +89,11 @@ Der eigentliche Zweck des *Smart Appliance Enabler* besteht in der Integration v
 
 ## [Fragen und Antworten](doc/QA_DE.md)
 <a href="doc/QA_DE.md"><img align="left" src="pics/fragen_antworten.jpeg"></a>[Diese Seite führt bei Problemen hoffentlich zur Lösung](doc/QA_DE.md). Ausgehend von häufig gestellten Fragen werden Antworten gegeben sowie Verweise zu relevanten Teilen der Dokumentation.
-<br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br>
 
 ## [Unterstützung](doc/Support_DE.md)
 <a href="doc/Support_DE.md"><img align="left" src="pics/support.jpeg"></a>[Hier finden sich Informationen zur Unterstützung bei Fragen und Problemen](doc/Support_DE.md), falls die Informationen in [Fragen und Antworten](doc/QA_DE.md) nicht zum Erfolg geführt haben.
-<br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br>
 
 ## Mitmachen
 <img align="left" src="pics/IWantYou.png">Zum Mitmachen muss man **kein Programmierer** sein! Auch die **Dokumentation** oder **Support von anderen Anwendern** im [Forum](https://www.photovoltaikforum.com/geraete-mit-home-manager-koppeln-via-semp-ethernet-t104060.html) sind Bereiche, in denen man helfen kann, den *Smart Appliance Enabler* besser zu machen. Der *Smart Appliance Enabler* ist für einige Einsatzzwecke "Out-of-the-box" geeignet. Viel interessanter sind aber oft Ideen, an die bei der Entwicklung des *Smart Appliance Enabler* gar nicht gedacht wurde, die ihr aber damit umgesetzt habt. Es wäre doch schön, wenn andere auch **von Euren Ideen profitieren** würden oder vielleicht sogar dazu beitragen könnten, sie noch besser zu machen.
