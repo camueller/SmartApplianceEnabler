@@ -123,3 +123,11 @@ sae@raspi:~ $ grep "SEMP UPnP" /tmp/rolling-2020-12-31.log
 2020-12-31 14:36:22,744 INFO [main] d.a.s.s.d.SempDiscovery [SempDiscovery.java:57] SEMP UPnP will redirect to http://192.168.1.1:8080
 ```
 
+## Schaltbefehl vom Sunny Home Manager
+
+Wenn ein Schaltbefehl vom *Sunny Home Manager* für ein Gerät empfangen wird, führt das zu einem entsprechenden Log-Eintrag, der mit folgendem Befehl angezeigt werden kann:
+
+```console
+sae@raspi:~ $ grep "control request" /tmp/rolling-2020-12-30.log
+2020-12-30 14:30:09,977 DEBUG [http-nio-8080-exec-9] d.a.s.s.w.SempController [SempController.java:235] F-00000001-000000000019-00: Received control request: on=true, recommendedPowerConsumption=22000W
+```

@@ -7,7 +7,7 @@
 - Wie kann ich den Verbraucher im Sunny Portal schalten? ---> [SP2](#sp2)
 
 ### Sunny Home Manager
-- Das Gerät wird nicht eingeschaltet ---> [SEMP3](#semp3)
+- Das Gerät wird nicht eingeschaltet ---> [SEMP3](#semp3), [SAE4](#sae4)
 
 ### Smart Appliance Enabler
 - Läuft der *Smart Appliance Enabler*? ---> [SAE1](#sae1)
@@ -51,6 +51,12 @@ Wenn Geräte vom *Sunny Home Manager* nicht geschaltet werden, muss das [SEMP-XM
   - `EarliestStart` den Wert `0` hat
   - `minRunningTime` grösser als `0` ist  
 
+Sind diese Vorausetzungen erfüllt, **kann** der *Sunny Home Manager* einen Einschaltbefehl jederzeit senden.
+
+**Spätestens** dann wird er einen Einschaltbefehl senden, wenn im `Timeframe` des `PlanningRequest` der Wert von `LatestEnd` nur unwesentlich (ca. 60-300) grösser ist, als der Wert von `minRunningTime`.
+
+Wird ein Schaltbefehl vom *Sunny Home Manager*, [wird dafür ein Log-Eintrag erzeugt](Logging_DE.md#schaltbefehl-vom-sunny-home-manager).
+
 ### SAE1
 Der Befehl zur Prüfung, ob der *Smart Appliance Enabler* läuft, findet sich in der [Installationsanleitung](Installation_DE.md#status) bzw. in der [Docker-Anleitung](Docker_DE.md#status-des-containers).
 
@@ -63,7 +69,13 @@ sae@raspberrypi:~ $ /usr/bin/java -Djava.awt.headless=true -Xmx256m -Dlogging.co
 Die Versionsnummer im Namen der war-Datei muss natürlich entsprechend der verwendeten Version angepasst werden!
 
 ### SAE3
-Die Leistungaufname des Gerätes wird über den im *Smart Appliance Enabler* konfigurierten Zähler bestimmt. In Abhängkeit von dessen Typ kann man im Log die Leistungaufname sehen:
+Die Leistungaufname des Gerätes, die an den *Sunny Home Manager* übermittelt wird, wird über den im *Smart Appliance Enabler* konfigurierten Zähler bestimmt. In Abhängkeit von dessen Typ kann man im Log die Leistungaufname sehen:
 - [S0](SOMeter_DE.md#log)
 - [HTTP](HttpMeter_DE.md#log)
 - [Modbus](ModbusMeter_DE.md#log)
+
+### SAE4
+Wenn ein Schaltbefehl vom *Sunny Home Manager* empfangen wird, wird dieser an den für das Gerät im *Smart Appliance Enabler* konfigurierten Schalter weitergegeben. In Abhängigkeit In Abhängkeit von dessen Typ kann man im Log den Schaltbefehl sehen:  
+- [GPIO-Switch](GPIOSwitch_DE.md#log)
+- [HTTP](HttpSwitch_DE.md#log)
+- [Modbus](ModbusSwitch_DE.md#log)
