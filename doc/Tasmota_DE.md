@@ -64,10 +64,10 @@ curl http://192.168.1.1/cm?cmnd=Status%208
 
 Aus obigem Beispiel ergeben sich folgende Feld-Inhalte im *Smart Appliance Enabler*:
 
-| Feld         | Wert |
-| ----         | ---- |
-| URL          | http://192.168.1.1/cm?cmnd=Status%208 |
-| Regulärer Ausdruck zum Extrahieren der Leistung | ,.*Power.:(\d+).* |
+| Feld                                            | Wert                                  |
+| ----------------------------------------------- | ------------------------------------- |
+| URL                                             | http://192.168.1.1/cm?cmnd=Status%208 |
+| Regulärer Ausdruck zum Extrahieren der Leistung | .\*\&quot;Power\&quot;:(\d+).\*       |
 
 Für jede Zähler-Abfrage finden sich in der [Log-Datei](Support.md#Log) folgende Zeilen:
 ```

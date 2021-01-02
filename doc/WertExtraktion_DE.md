@@ -1,28 +1,32 @@
 # Wert-Extraktion mittels Regulärem Ausdruck
 
-Bei Abfragen erhält der *Smart Appliance Enabler* oft eine umfangreiche Antwort (XML, JSON, ...), aus der der eigentlich benötigte Zahlenwert erst extrahiert werden muss. Dazu kann an diversen Stellen im *Smart Appliance Enabler* ein regulärer Ausdruck konfiguriert werden.
-Am Beispiel der XML-Antwort eines Edimax SP2101W soll gezeigt werden, wie man mit dem Java-Regex-Tester https://www.freeformatter.com/java-regex-tester.html arbeitet, um einen funktionierenden Regulären Ausdruck zu bestimmen. Die kursiv dargestellten Bezeichnung beziehen sich auf die entsprechenden Felder der Regex-Tester-Seite.
+Bei Abfragen erhält der *Smart Appliance Enabler* oft eine umfangreiche Antwort (XML, JSON, ...), aus der der eigentlich benötigte Zahlenwert erst extrahiert werden muss.
 
-_Java Regular Expression_
-```.*NowPower>(\d*.{0,1}\d+).*```
+Dazu kann an diversen Stellen im *Smart Appliance Enabler* ein regulärer Ausdruck konfiguriert werden.
+
+Am Beispiel der Antwort eines [Adapters mit Tasmota-Firmware](Tasmota_DE.md) soll gezeigt werden, wie man mit dem Java-Regex-Tester https://www.freeformatter.com/java-regex-tester.html arbeitet, um einen funktionierenden Regulären Ausdruck zu bestimmen. Die kursiv dargestellten Bezeichnung beziehen sich auf die entsprechenden Felder der Regex-Tester-Seite.
+
+_Java Regular Expression_: `.*"Power":(\d+).*`
 
 _Entry to test against_
 ```
-<?xml version="1.0" encoding="UTF8"?><SMARTPLUG id="edimax"><CMD id="get"><NOW_POWER><Device.System.Power.NowCurrent>0.2871</Device.System.Power.NowCurrent><Device.System.Power.NowPower>52.49</Device.System.Power.NowPower></NOW_POWER></CMD></SMARTPLUG>
+{"StatusSNS":{"Time":"2019-09-06T20:06:19","ENERGY":{"TotalStartTime":"2019-08-18T11:07:55","Total":0.003,"Yesterday":0.000,"Today":0.003,"Power":26,"ApparentPower":25,"ReactivePower":25,"Factor":0.06,"Voltage":239,"Current":0.106}}}
 ```
 
-_Replace with (Optional)_
-```$1```
+_Replace with (Optional)_: `$1`
 
-_Flags_
-```
-[x] Dotall
-```
-Nach Klick auf ```REPLACE FIRST``` wird angezeigt:
+_Flags_: `[x] Dotall`
+
+Nach Klick auf `REPLACE FIRST` wird angezeigt:
+
 ```
 Results
 .matches() method: true
 .lookingAt() method: true
 String replacement result:
-52.49
+26
 ```
+
+Die Leistung von 26W wurde also erfolgreich mit obigem Regulären Ausdruck aus der Antwort der Tasmota-Firmware extrahiert. Dieser Ausdruck enthält `"`-Zeichen - deshalb unbedingt beachten:
+
+**Sollte ein Regulärer Ausdruck `"`-Zeichen enthalten, müssen diese unbedingt bei der Eingabe in die Eingabefelder des *Smart Appliance Enabler* durch `&quot;` ersetzt werden, weil sonst die `Appliances.xml` ungültig wird.**

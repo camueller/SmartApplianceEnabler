@@ -12,6 +12,7 @@
 ### Smart Appliance Enabler
 - Läuft der *Smart Appliance Enabler*? ---> [SAE1](#sae1)
 - Fehler beim Start des *Smart Appliance Enabler* ---> [SAE2](#sae2)
+- Wo kann man einen anderen Port als 8080 einstellen? ---> [SAE5](#sae5)
 
 ## Antworten
 
@@ -31,7 +32,7 @@ Wenn der *Sunny Home Manager* den *Smart Appliance Enabler* im Netz gefunden hat
 Wenn diese Einträge nicht vorhanden sind, funktioniert die Kommunikation zwischen *Sunny Home Manager* und *Smart Appliance Enabler* nicht.
 
 Folgende Punkte prüfen:
-- Funktioniert das [SEMP-Protokoll](SEMP_DE.md) korrekt?
+- Funktioniert das [SEMP-Protokoll](SEMP_DE.md) und ist insbesondere die [SEMP-URL](SEMP_DE.md#url) korrekt?
 - Ist der *Smart Appliance Enabler* gestartet?
 - Läßt sich der Host mit *Smart Appliance Enabler* pingen?
 - Läßt sich der *Sunny Home Manager* pingen?
@@ -39,7 +40,7 @@ Folgende Punkte prüfen:
 ### SEMP2
 Zunächst muss sichergestellt sein, dass der *Smart Appliance Enabler* vom *Sunny Home Manager* gefunden wird ---> [SEMP1](#semp1)
 
-Wenn Zählerwerte nicht im *Sunny Portal* angezeigt werden, müssen folgende Werte in der [SEMP-Schnittstelle](SEMP_DE.md) geprüft werden:
+Wenn Zählerwerte nicht im *Sunny Portal* angezeigt werden, müssen folgende Werte in der [SEMP-Schnittstelle](SEMP_DE.md#xml) geprüft werden:
 - im `DeviceStatus` unter `PowerInfo` muss `AveragePower` grösser als 0 sein. Falls das nicht so ist, kann die Leisungsaufnahme möglicherweise nicht bestimmt werden. ---> [SAE3](#sae3)
 - im `DeviceStatus` muss der `Status` den Wert `On` haben, sonst werden die Leistungswerte vom *Sunny Home Manager* ignoriert
 
@@ -77,11 +78,16 @@ Die Versionsnummer im Namen der war-Datei muss natürlich entsprechend der verwe
 ### SAE3
 Die Leistungaufname des Gerätes, die an den *Sunny Home Manager* übermittelt wird, wird über den im *Smart Appliance Enabler* konfigurierten Zähler bestimmt. In Abhängkeit von dessen Typ kann man im Log die Leistungaufname sehen:
 - [S0](SOMeter_DE.md#log)
-- [HTTP](HttpMeter_DE.md#log)
+- [HTTP](HttpMeter_DE.md#log): wenn die HTTP-Response mehr als den "nackten" Zahlenwert enthält, muss ein [Regulärer Ausdruck zum Extrahieren](WertExtraktion_DE.md) konfiguriert werden!
 - [Modbus](ModbusMeter_DE.md#log)
+
 
 ### SAE4
 Wenn ein Schaltbefehl vom *Sunny Home Manager* empfangen wird, wird dieser an den für das Gerät im *Smart Appliance Enabler* konfigurierten Schalter weitergegeben. In Abhängigkeit In Abhängkeit von dessen Typ kann man im Log den Schaltbefehl sehen:  
 - [GPIO-Switch](GPIOSwitch_DE.md#log)
 - [HTTP](HttpSwitch_DE.md#log)
 - [Modbus](ModbusSwitch_DE.md#log)
+
+### SAE5
+In der [Server-Konfiguration](ConfigurationFiles_DE.md#etc-default-smartapplianceenabler) kann der Standardport geändert werden.
+
