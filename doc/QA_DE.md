@@ -2,7 +2,7 @@
 
 ## Fragen / Probleme
 ### Sunny Portal
-- Verbraucher läßt sich nicht im Sunny Portal hinzufügen ---> [SP1](#sp1)
+- Verbraucher läßt sich nicht im Sunny Portal hinzufügen ---> [SEMP1](#semp1), [SP1](#sp1)
 - Leistung des Verbrauchers wird nicht im Sunny Portal angezeigt ---> [SEMP2](#semp2)
 - Wie kann ich den Verbraucher im Sunny Portal schalten? ---> [SP2](#sp2)
 
@@ -13,11 +13,10 @@
 - Läuft der *Smart Appliance Enabler*? ---> [SAE1](#sae1)
 - Fehler beim Start des *Smart Appliance Enabler* ---> [SAE2](#sae2)
 
-
 ## Antworten
 
 ### SP1
-... fehlt noch
+Um den *Sunny Home Manager* zu zwingen, erneut nach neuen Geräten lokalen Netz zu suchen, kann man diesen kurz stromlos machen. Wenn er wieder vollsändig gestartet ist, muss im *Sunny Portal* [erneut der Prozess zum Hinzufügen neuer Geräte durchlaufen werden](SunnyHomeMangerKonfiguration_DE.md).
 
 ### SP2
 Geräte, die über den *Smart Appliance Enabler* verwaltet werden, sind aus Sicht des *Sunny Home Manager* **Verbraucher**. Einige Parameter dieser Verbaucher (z.B. Anteil der PV-Energie) können über das *Sunny Portal* konfiguriert werden, aber geschaltet werden kann das Gerät nicht über das *Sunny Portal*. Stattdessen kann das Gerät aber über [Status-Seite](Status_DE.md) der Web-Oberfläche des *Smart Appliance Enabler* geschaltet werden.
@@ -45,7 +44,12 @@ Wenn Zählerwerte nicht im *Sunny Portal* angezeigt werden, müssen folgende Wer
 ### SEMP3
 Zunächst muss sichergestellt sein, dass der *Smart Appliance Enabler* vom *Sunny Home Manager* gefunden wird ---> [SEMP1](#semp1)
 
-Wenn Geräte vom *Sunny Home Manager* nicht geschaltet werden, muss das [SEMP-XML](SEMP_DE.md#xml) geprüft werden:
+Der *Sunny Home Manager* wird nur dann einen Einschaltbefehl für eine Gerät senden, wenn ihm ein (Laufzeit-/Energie-) Bedarf gemeldet wurde. Der *Smart Appliance Enabler* macht das, wenn 
+
+- [Zeitplan angelegt wurde](Schedules_DE.md), der **aktiv** und **zutreffend (Wochentag und Zeit)** ist
+- oder durch [Klick auf das grüne Ampel-Licht](Status_DE.md#click-green) ein **ad-hoc Bedarf** entsteht
+
+Ob dem *Sunny Home Manager* ein Bedarf gemeldet wird, kann im [SEMP-XML](SEMP_DE.md#xml) geprüft werden:
 - im `DeviceStatus` muss `EMSignalsAccepted` auf `true` stehen
 - es muss ein `PlanningRequest` mit einem `Timeframe` existieren, bei dem
   - `EarliestStart` den Wert `0` hat
@@ -55,10 +59,10 @@ Sind diese Vorausetzungen erfüllt, **kann** der *Sunny Home Manager* einen Eins
 
 **Spätestens** dann wird er einen Einschaltbefehl senden, wenn im `Timeframe` des `PlanningRequest` der Wert von `LatestEnd` nur unwesentlich (ca. 60-300) grösser ist, als der Wert von `minRunningTime`.
 
-Wird ein Schaltbefehl vom *Sunny Home Manager*, [wird dafür ein Log-Eintrag erzeugt](Logging_DE.md#schaltbefehl-vom-sunny-home-manager).
+Ob ein Schaltbefehl vom *Sunny Home Manager* empfangen wird, kann man [im Log prüfen](Logging_DE.md#control-request). Wenn sich ein entsprechender Log-Eintrag findet und trotzdem das Gerät nicht geschaltet wird, liegt es nicht am *Sunny Home Manager*.  ---> [SAE4](#sae4)
 
 ### SAE1
-Der Befehl zur Prüfung, ob der *Smart Appliance Enabler* läuft, findet sich in der [Installationsanleitung](Installation_DE.md#status) bzw. in der [Docker-Anleitung](Docker_DE.md#status-des-containers).
+Der Befehl zur Prüfung, ob der *Smart Appliance Enabler* läuft, findet sich in der [Installationsanleitung](Installation_DE.md#status) bzw. in der [Docker-Anleitung](Docker_DE.md#container-status).
 
 ### SAE2
 Falls sich der *Smart Appliance Enabler* nicht starten läßt und man keine Hinweise im [Log](Logging_DE.md) findet, ist es sinnvoll, ihn testweise in der aktuellen Shell zu starten. Dadurch kann man etwaige Fehler auf der Konsole sehen. Die Shell muss dabei dem User gehören, der auch sonst für den *Smart Appliance Enabler*-Prozess verwendet wird - normalerweise ist das der User `sae`.

@@ -122,6 +122,8 @@ sudo systemctl stop smartapplianceenabler-docker-compose
 ```
 
 #### Status des Containers
+<a name="container-status">
+
 Wenn der Container mit dem *Smart Appliance Enabler* läuft, sollte der Status `active (running)` sein:
 ```console
 sae@raspi:~ $ sudo systemctl status smartapplianceenabler-docker-compose.service

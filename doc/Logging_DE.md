@@ -124,6 +124,7 @@ sae@raspi:~ $ grep "SEMP UPnP" /tmp/rolling-2020-12-31.log
 ```
 
 ## Schaltbefehl vom Sunny Home Manager
+<a name="control-request">
 
 Wenn ein Schaltbefehl vom *Sunny Home Manager* für ein Gerät empfangen wird, führt das zu einem entsprechenden Log-Eintrag, der mit folgendem Befehl angezeigt werden kann:
 

@@ -1,4 +1,6 @@
-# Status-Anzeige
+# Status
+
+## Anzeige
 
 Beim Öffnen der Web-Anwendung oder durch Klick auf den Menüpunkt `Status` gelangt man auf die Statusseite.
 
@@ -6,9 +8,10 @@ Die Statusseite zeigt den Status jedes schaltbaren Gerätes in Form einer **Ampe
 
 ![Statusanzeige](../pics/fe/StatusView.png)
 
-Die Ampel dient nicht nur der Status-Anzeige, sondern auch zum **manuellen Schalten** von Geräten.
+## Manuelles Schalten
+<a name="click-green">
 
-Durch einen Klick auf die grüne Lampe kann das Gerät unabhängig von konfigurierten Zeitplänen sofort eingeschaltet werden:
+Die Ampel auch zum **manuellen Schalten** von Geräten. Durch einen **Klick auf die grüne Lampe** kann das Gerät unabhängig von konfigurierten Zeitplänen sofort eingeschaltet werden:
 
 ![Klick auf grünes Ampellicht](../pics/fe/StatusViewGreenHover.png)
 
