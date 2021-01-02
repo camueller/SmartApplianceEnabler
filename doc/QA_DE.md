@@ -16,7 +16,9 @@
 ## Antworten
 
 ### SP1
-Um den *Sunny Home Manager* zu zwingen, erneut nach neuen Geräten lokalen Netz zu suchen, kann man diesen kurz stromlos machen. Wenn er wieder vollsändig gestartet ist, muss im *Sunny Portal* [erneut der Prozess zum Hinzufügen neuer Geräte durchlaufen werden](SunnyHomeMangerKonfiguration_DE.md).
+Neue Geräte können nur hinzugefügt werden, solange die [maximale Anzahl von Geräten nicht überschritten wird](SunnyPortal_DE.md#max-devices).
+
+Um den *Sunny Home Manager* zu zwingen, erneut nach neuen Geräten lokalen Netz zu suchen, kann man diesen kurz stromlos machen. Wenn er wieder vollsändig gestartet ist, muss im *Sunny Portal* [erneut der Prozess zum Hinzufügen neuer Geräte durchlaufen werden](SunnyPortal_DE.md).
 
 ### SP2
 Geräte, die über den *Smart Appliance Enabler* verwaltet werden, sind aus Sicht des *Sunny Home Manager* **Verbraucher**. Einige Parameter dieser Verbaucher (z.B. Anteil der PV-Energie) können über das *Sunny Portal* konfiguriert werden, aber geschaltet werden kann das Gerät nicht über das *Sunny Portal*. Stattdessen kann das Gerät aber über [Status-Seite](Status_DE.md) der Web-Oberfläche des *Smart Appliance Enabler* geschaltet werden.

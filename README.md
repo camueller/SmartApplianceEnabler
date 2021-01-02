@@ -82,8 +82,8 @@ In dem nachfolgenden Video kann man einen Eindruck von der Konfiguration des *Sm
 
 [![Web-Oberfläche](pics/fe/BrowserstackPreview.png)](https://drive.google.com/file/d/1QvQyfMDz514xT38WGvoujXsIrrr750C4/view)
 
-## [Integration in den Sunny Home Manager](doc/SunnyHomeMangerKonfiguration_DE.md)
-Der eigentliche Zweck des *Smart Appliance Enabler* besteht in der Integration von Geräten in den [Sunny Home Manager](doc/SunnyHomeMangerKonfiguration_DE.md) und dadurch in das [Sunny Portal](https://www.sunnyportal.com/).
+## [Integration in Sunny Portal](doc/SunnyPortal_DE.md)
+Der eigentliche Zweck des *Smart Appliance Enabler* besteht in der Integration von Geräten in das [Sunny Portal](doc/SunnyPortal_DE.md).
 
 ![Verbraucherbilanz](pics/shm/Verbraucherbilanz.png)
 
