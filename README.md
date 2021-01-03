@@ -89,16 +89,14 @@ Der eigentliche Zweck des *Smart Appliance Enabler* besteht in der Integration v
 
 ## [Fragen und Antworten](doc/QA_DE.md)
 <a href="doc/QA_DE.md"><img align="left" src="pics/fragen_antworten.jpeg"></a>[Diese Seite führt bei Problemen hoffentlich zur Lösung](doc/QA_DE.md). Ausgehend von häufig gestellten Fragen werden Antworten gegeben sowie Verweise zu relevanten Teilen der Dokumentation.
-<br><br><br><br><br><br><br><br>
+<br><br><br><br>
 
 ## [Unterstützung](doc/Support_DE.md)
 <a href="doc/Support_DE.md"><img align="left" src="pics/support.jpeg"></a>[Hier finden sich Informationen zur Unterstützung bei Fragen und Problemen](doc/Support_DE.md), falls die Informationen in [Fragen und Antworten](doc/QA_DE.md) nicht zum Erfolg geführt haben.
-<br><br><br><br><br><br><br><br>
+<br><br><br><br>
 
-## Mitmachen
-<img align="left" src="pics/IWantYou.png">Zum Mitmachen muss man **kein Programmierer** sein! Auch die **Dokumentation** oder **Support von anderen Anwendern** im [Forum](https://www.photovoltaikforum.com/geraete-mit-home-manager-koppeln-via-semp-ethernet-t104060.html) sind Bereiche, in denen man helfen kann, den *Smart Appliance Enabler* besser zu machen. Der *Smart Appliance Enabler* ist für einige Einsatzzwecke "Out-of-the-box" geeignet. Viel interessanter sind aber oft Ideen, an die bei der Entwicklung des *Smart Appliance Enabler* gar nicht gedacht wurde, die ihr aber damit umgesetzt habt. Es wäre doch schön, wenn andere auch **von Euren Ideen profitieren** würden oder vielleicht sogar dazu beitragen könnten, sie noch besser zu machen.
-
-Wenn Ihr zum *Smart Appliance Enabler* inkl. Dokumenation beitragen wollt, solltet Ihr das **Smart Appliance Enabler-Repository clonen**. Ihr könnte dann in Eurer Kopie z.B. die Dokumentation erweitern oder korrigieren und mir dann einen **Pull-Request** schicken, mit dem ich Eure Änderungen direkt in das *Smart Appliance Enabler*-Repository übernehmen kann.
+## [Mitmachen](doc/Contribute_DE.md)
+<a href="doc/Contribute_DE.md"><img align="left" src="pics/IWantYou.png"></a>Zum [Mitmachen](doc/Contribute_DE.md) muss man **kein Programmierer** sein! [Mitmachen](doc/Contribute_DE.md) kann **jeder** auf vielfältige Weise! [Eure Anwendunsszenarien für den *Smart Appliance Enabler*](doc/ApplicationScenarios_DE.md) helfen anderen weiter!
 
 ### [Entwicklung](doc/Development_DE.md)
 Alle Informationen rund um die [Entwicklung](doc/Development_DE.md) des *Smart Appliance Enabler* einschliesslich der Dokumentation der Build- und Testumgebungen.
