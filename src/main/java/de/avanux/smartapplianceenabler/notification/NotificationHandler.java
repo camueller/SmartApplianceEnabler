@@ -18,7 +18,11 @@
 
 package de.avanux.smartapplianceenabler.notification;
 
+import de.avanux.smartapplianceenabler.appliance.Appliance;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
+import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
+import de.avanux.smartapplianceenabler.semp.webservice.Identification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,11 +105,18 @@ public class NotificationHandler implements ApplianceIdConsumer {
                 }
                 try {
                     logger.debug("{}: Executing notification command: {}", applianceId, command);
+                    DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(applianceId);
+                    Identification identification = deviceInfo.getIdentification();
                     ProcessBuilder builder = new ProcessBuilder(
                             command,
-                            senderId != null ? senderId : applianceId,
-                            type.name(),
-                            message);
+                            senderId != null ? senderId : applianceId, // $1
+                            identification.getDeviceName(), // $2
+                            identification.getDeviceType(), // $3
+                            identification.getDeviceVendor(), // $4
+                            identification.getDeviceSerial(), // $5
+                            type.name(), // $6
+                            message // $7
+                    );
                     Process p = builder.start();
                     int rc = p.waitFor();
                     logger.debug("{}: Notification command exited with return code {}", applianceId, rc);

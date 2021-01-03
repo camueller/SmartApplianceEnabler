@@ -19,11 +19,19 @@
 
 # für Telegram muss die senderId auf den von BotFather für den Bot zugewiesener Token gesetzt sein
 senderId=$1
+# Name des Gerätes in Device2EM.xml
+deviceName=$2
+# Typ des Gerätes in Device2EM.xml
+deviceType=$3
+# Hersteller des Gerätes in Device2EM.xml
+deviceVendor=$4
+# Seriennummer des Gerätes in Device2EM.xml
+deviceSerial=$5
 # vom @getidsbot ermittelte ID des Chats (bzw. der Gruppe) in den die Benachrichtigungen gepostet werden sollen
 chat=
 # Benachrichtigungs-Key des Ereignisses (z.B. CONTROL_OFF)
-key=$2
+key=$6
 # Benachrichtigungs-Text des Ereignisses (z.B. "Das Gerät wurde ausgeschaltet")
-text=$3
+text=$7
 
 curl -d chat_id=$chat -d text="$text" https://api.telegram.org/bot$senderId/sendMessage
