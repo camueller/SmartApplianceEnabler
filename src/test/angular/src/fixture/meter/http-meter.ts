@@ -11,7 +11,7 @@ export const httpMeter_1HttpRead_complete = new HttpElectricityMeter({
         new HttpReadValue({
           name: MeterValueName.Power,
           data: 'GET_POWER',
-          extractionRegex: ',.Power.:(\\d+)',
+          extractionRegex: '.*"Power":(\\d+).*',
           factorToValue: 10
         })
       ]
@@ -28,7 +28,7 @@ export const httpMeter_2HttpRead_complete = new HttpElectricityMeter({
         new HttpReadValue({
           name: MeterValueName.Energy,
           data: 'GET_ENERGY',
-          extractionRegex: ',.Energy.:(\\d+)',
+          extractionRegex: '.*"Power":(\\d+).*',
           factorToValue: 0.1
         })
       ]

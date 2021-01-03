@@ -18,12 +18,7 @@ export function getValidString(input: any): string | undefined {
   if (!input || input.length === 0) {
     return undefined;
   }
-  return input.toString()
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&apos;');
+  return input.toString();
 }
 
 export function getValidInt(input: any): number | undefined {

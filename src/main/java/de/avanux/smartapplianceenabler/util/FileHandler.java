@@ -19,6 +19,7 @@ package de.avanux.smartapplianceenabler.util;
 
 import java.time.LocalDate;
 
+import com.sun.xml.bind.marshaller.MinimumEscapeHandler;
 import com.sun.xml.bind.marshaller.NoEscapeHandler;
 import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
 import org.apache.poi.util.ReplacingInputStream;
@@ -104,7 +105,7 @@ public class FileHandler {
             JAXBContext context = JAXBContext.newInstance(object.getClass());
             Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            marshaller.setProperty("com.sun.xml.bind.characterEscapeHandler", NoEscapeHandler.theInstance);
+            marshaller.setProperty("com.sun.xml.bind.characterEscapeHandler", MinimumEscapeHandler.theInstance);
             marshaller.marshal(object, stringWriter);
 
             // this is a hack to remove default namespace ns2 but I did not find any other way that worked :-(

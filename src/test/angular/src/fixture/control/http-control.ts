@@ -41,7 +41,7 @@ export const httpSwitch_2httpWrite_httpRead_complete = new HttpSwitch({
         name: ControlValueName.On,
         data: 'POWER',
         path: '$.power',
-        extractionRegex: ',.Power.:(\\d+)',
+        extractionRegex: '.*"Power":(\\d+).*',
       })
     ]
   })
