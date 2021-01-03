@@ -8,8 +8,10 @@ Von [Johannes78](https://www.photovoltaikforum.com/core/user/123174-johannes78/)
 
 Da meine uralte Warmwasser-Wärmepumpe keinen Steuereingang hat, stellt ein Servomotor am Drehschalter arduinobetrieben die Solltemperatur bei Vorhandensein von PV-Strom für mich auf 60 Grad. An dunklen Tagen habe ich dann immer noch 40 Grad Soll, was zum warm duschen reicht. Der Arduino kann sein „Go!“ über einen GPIO des Raspberry bekommen, auf dem der *Smart Appliance Enabler* läuft.
 
-<a href="../pics/IMG_0733.jpeg"><img align="left" src="../pics/IMG_0733.jpeg" width="400"></a>
-<a href="../pics/IMG_0736.jpeg"><img align="left" src="../pics/IMG_0736.jpeg" width="400"></a>
+<div>
+<a href="../pics/user/IMG_0733.jpeg"><img align="left" src="../pics/user/IMG_0733.jpeg" width="400"></a>
+<a href="../pics/user/IMG_0736.jpeg"><img align="left" src="../pics/user/IMG_0736.jpeg" width="400"></a>
+</div><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
 Ganz oben der Arduino und ein Relais, das zwei Pins (3,3 V und Pin 7) des Arduino verbindet, wenn es anzieht. Wichtig ist ein Pull-Down-Widerstand zwischen den beiden Pins, sonst zittert der Servo.
 
