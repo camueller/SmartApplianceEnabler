@@ -97,6 +97,7 @@ Der eigentliche Zweck des *Smart Appliance Enabler* besteht in der Integration v
 
 ## [Mitmachen](doc/Contribute_DE.md)
 <a href="doc/Contribute_DE.md"><img align="left" src="pics/IWantYou.png"></a>Zum [Mitmachen](doc/Contribute_DE.md) muss man **kein Programmierer** sein! [Mitmachen](doc/Contribute_DE.md) kann **jeder** auf vielfältige Weise! [Eure Anwendunsszenarien für den *Smart Appliance Enabler*](doc/ApplicationScenarios_DE.md) helfen anderen weiter!
+<br><br><br><br><br><br>
 
 ### [Entwicklung](doc/Development_DE.md)
 Alle Informationen rund um die [Entwicklung](doc/Development_DE.md) des *Smart Appliance Enabler* einschliesslich der Dokumentation der Build- und Testumgebungen.
