@@ -82,15 +82,15 @@ export class ModbusReadValueComponent implements OnChanges, OnInit {
   }
 
   updateModelFromForm(): ModbusReadValue | undefined {
-    const name = this.form.controls.name.value;
-    const extractionRegex = this.form.controls.extractionRegex.value;
+    const name = getValidString(this.form.controls.name.value);
+    const extractionRegex = getValidString(this.form.controls.extractionRegex.value);
 
     if (!(name || extractionRegex)) {
       return undefined;
     }
 
-    this.modbusReadValue.name = getValidString(name);
-    this.modbusReadValue.extractionRegex = getValidString(extractionRegex);
+    this.modbusReadValue.name = name;
+    this.modbusReadValue.extractionRegex = extractionRegex;
     return this.modbusReadValue;
   }
 }

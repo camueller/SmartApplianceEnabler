@@ -133,7 +133,7 @@ export class HttpWriteComponent implements OnChanges, OnInit {
   }
 
   updateModelFromForm(): HttpWrite | undefined {
-    const url = this.form.controls.url.value;
+    const url = getValidString(this.form.controls.url.value);
     const httpWriteValues = [];
     this.httpWriteValueComps.forEach(httpWriteValueComp => {
       const httpWriteValue = httpWriteValueComp.updateModelFromForm();
@@ -146,7 +146,7 @@ export class HttpWriteComponent implements OnChanges, OnInit {
       return undefined;
     }
 
-    this.httpWrite.url = getValidString(url);
+    this.httpWrite.url = url;
     this.httpWrite.writeValues = httpWriteValues;
     return this.httpWrite;
   }

@@ -10,6 +10,7 @@ import {InputValidatorPatterns} from '../../../shared/input-validator-patterns';
 import {ErrorMessageHandler} from '../../../shared/error-message-handler';
 import {Logger} from '../../../log/logger';
 import {TimepickerComponent} from '../../../material/timepicker/timepicker.component';
+import {getValidInt} from '../../../shared/form-util';
 
 @Component({
   selector: 'app-schedule-request-runtime',

@@ -149,7 +149,7 @@ export class HttpReadComponent implements OnChanges, OnInit {
   }
 
   updateModelFromForm(): HttpRead | undefined {
-    const url = this.form.controls.url.value;
+    const url = getValidString(this.form.controls.url.value);
     const httpReadValues = [];
     this.httpReadValueComps.forEach(httpReadValueComp => {
       const httpReadValue = httpReadValueComp.updateModelFromForm();
@@ -162,7 +162,7 @@ export class HttpReadComponent implements OnChanges, OnInit {
       return undefined;
     }
 
-    this.httpRead.url = getValidString(url);
+    this.httpRead.url = url;
     return this.httpRead;
   }
 }

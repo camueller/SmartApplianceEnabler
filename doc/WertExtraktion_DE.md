@@ -28,5 +28,3 @@ String replacement result:
 ```
 
 Die Leistung von 26W wurde also erfolgreich mit obigem Regulären Ausdruck aus der Antwort der Tasmota-Firmware extrahiert. Dieser Ausdruck enthält `"`-Zeichen - deshalb unbedingt beachten:
-
-**Sollte ein Regulärer Ausdruck `"`-Zeichen enthalten, müssen diese unbedingt bei der Eingabe in die Eingabefelder des *Smart Appliance Enabler* durch `&quot;` ersetzt werden, weil sonst die `Appliances.xml` ungültig wird.**

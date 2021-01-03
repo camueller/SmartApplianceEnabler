@@ -4,6 +4,7 @@ import {ErrorMessages} from '../../shared/error-messages';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
 import {Logger} from '../../log/logger';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
+import {getValidString} from '../../shared/form-util';
 
 declare const $: any;
 
@@ -129,7 +130,7 @@ export class TimepickerComponent implements OnChanges, OnInit, AfterViewChecked 
   updateModelFromForm(): string | undefined {
     const control = this.form.controls[this.formControlNameTP];
     if (control) {
-      return control.value;
+      return getValidString(control.value);
     }
   }
 }

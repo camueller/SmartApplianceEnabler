@@ -17,7 +17,7 @@ import {ModbusWriteValueComponent} from '../write-value/modbus-write-value.compo
 import {ErrorMessages} from '../../shared/error-messages';
 import {FormHandler} from '../../shared/form-handler';
 import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/error-message';
-import {getValidInt, getValidString} from '../../shared/form-util';
+import {getValidFloat, getValidInt, getValidString} from '../../shared/form-util';
 import {ModbusWriteValue} from '../write-value/modbus-write-value';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
@@ -147,9 +147,9 @@ export class ModbusWriteComponent implements OnChanges, OnInit {
   }
 
   updateModelFromForm(): ModbusWrite | undefined {
-    const address = this.form.controls.address.value;
-    const type = this.form.controls.type.value;
-    const factorToValue = this.form.controls.factorToValue && this.form.controls.factorToValue.value;
+    const address = getValidString(this.form.controls.address.value);
+    const type = getValidString(this.form.controls.type.value);
+    const factorToValue = this.form.controls.factorToValue && getValidFloat(this.form.controls.factorToValue.value);
     const modbusWriteValues = [];
     this.modbusWriteValueComps.forEach(modbusWriteValueComp => {
       const modbusWriteValue = modbusWriteValueComp.updateModelFromForm();
@@ -162,9 +162,9 @@ export class ModbusWriteComponent implements OnChanges, OnInit {
       return undefined;
     }
 
-    this.modbusWrite.address = getValidString(address);
-    this.modbusWrite.type = getValidString(type);
-    this.modbusWrite.factorToValue = getValidInt(factorToValue);
+    this.modbusWrite.address = address;
+    this.modbusWrite.type = type;
+    this.modbusWrite.factorToValue = factorToValue;
     return this.modbusWrite;
   }
 }

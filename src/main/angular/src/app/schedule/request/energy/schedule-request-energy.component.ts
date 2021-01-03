@@ -8,6 +8,7 @@ import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../../shared
 import {InputValidatorPatterns} from '../../../shared/input-validator-patterns';
 import {ErrorMessageHandler} from '../../../shared/error-message-handler';
 import {Logger} from '../../../log/logger';
+import {getValidInt} from '../../../shared/form-util';
 
 @Component({
   selector: 'app-schedule-request-energy',
@@ -76,14 +77,14 @@ export class ScheduleRequestEnergyComponent implements OnChanges, OnInit {
   }
 
   updateModelFromForm(): EnergyRequest | undefined {
-    const minEnergy = this.form.controls.minEnergy.value;
-    const maxEnergy = this.form.controls.maxEnergy.value;
+    const minEnergy = getValidInt(this.form.controls.minEnergy.value);
+    const maxEnergy = getValidInt(this.form.controls.maxEnergy.value);
 
     if (!(minEnergy || maxEnergy)) {
       return undefined;
     }
 
-    this.energyRequest.min = minEnergy && minEnergy.length > 0 ? minEnergy : undefined;
+    this.energyRequest.min = minEnergy;
     this.energyRequest.max = maxEnergy;
     return this.energyRequest;
   }

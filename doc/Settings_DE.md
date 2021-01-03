@@ -20,14 +20,13 @@ Der Inhalt der Datei ist wie folgt aufgebaut:
 Sofern der Raspberry Zugang zum Internet hat, erfolgt einmal jährlich ein Download dieser Datei. Wenn die Datei vorhanden ist (entweder von einem vorangegangenen Download oder weil sie manuell dort erstellt wurde), erfolgt keine Abfrage im Internet. Standardmäßig werden nur die bundesweiten Feiertage berücksichtigt. Durch Angabe des folgenden Konfigurationsparameters kann sowohl die URL des Dienstes geändert als auch bundeslandspezifische Feiertage berücksichtigt werden:
 ```
 <Appliances>
-  <Configuration param="Holidays.Url" value="http://feiertage.jarmedia.de/api/?jahr={0}&#038;nur_land=HE"/>
+  <Configuration param="Holidays.Url" value="http://feiertage.jarmedia.de/api/?jahr={0}&nur_land=HE"/>
   <Appliance>
   ...
   </Appliance>
 </Appliances>
 ```
-HE steht dabei für Hessen, die Abkürzung für andere Bundesländer und die vollständige API-Dokumentation findet sich auf http://feiertage.jarmedia.de. Anstelle der Jahreszahl muss "{0}" (ohne Anführungszeichen) verwendet werden, was zum Ausführungszeitpunkt durch die aktuelle Jahreszahl erstzt wird. Außerdem muss statt des `&`-Zeichens der Ausruck `"&#038;"` (ohne Anführungszeichen) verwendet werden.
-
+HE steht dabei für Hessen, die Abkürzung für andere Bundesländer und die vollständige API-Dokumentation findet sich auf http://feiertage.jarmedia.de. Anstelle der Jahreszahl muss "{0}" (ohne Anführungszeichen) verwendet werden, was zum Ausführungszeitpunkt durch die aktuelle Jahreszahl ersetzt wird.
 
 ## Modbus
 <a name="modbus">

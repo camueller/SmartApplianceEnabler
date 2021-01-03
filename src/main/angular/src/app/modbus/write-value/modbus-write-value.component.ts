@@ -80,15 +80,15 @@ export class ModbusWriteValueComponent implements OnChanges, OnInit {
   }
 
   updateModelFromForm(): ModbusWriteValue | undefined {
-    const name = this.form.controls.name.value;
-    const value = this.form.controls.value.value;
+    const name = getValidString(this.form.controls.name.value);
+    const value = getValidString(this.form.controls.value.value);
 
     if (!(name || value)) {
       return undefined;
     }
 
-    this.modbusWriteValue.name = getValidString(name);
-    this.modbusWriteValue.value = getValidString(value);
+    this.modbusWriteValue.name = name;
+    this.modbusWriteValue.value = value;
     return this.modbusWriteValue;
   }
 }

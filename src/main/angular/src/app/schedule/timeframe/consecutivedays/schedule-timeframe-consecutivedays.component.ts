@@ -10,6 +10,7 @@ import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../../shared
 import {ErrorMessageHandler} from '../../../shared/error-message-handler';
 import {Logger} from '../../../log/logger';
 import {TimepickerComponent} from '../../../material/timepicker/timepicker.component';
+import {getValidInt} from '../../../shared/form-util';
 
 @Component({
   selector: 'app-schedule-timeframe-consecutivedays',
@@ -106,9 +107,9 @@ export class ScheduleTimeframeConsecutivedaysComponent implements OnChanges, OnI
   }
 
   updateModelFromForm(): ConsecutiveDaysTimeframe | undefined {
-    const startDayOfWeek = this.form.controls.startDayOfWeek.value;
+    const startDayOfWeek = getValidInt(this.form.controls.startDayOfWeek.value);
     const startTime = this.startTimeComp.updateModelFromForm();
-    const endDayOfWeek = this.form.controls.endDayOfWeek.value;
+    const endDayOfWeek = getValidInt(this.form.controls.endDayOfWeek.value);
     const endTime = this.endTimeComp.updateModelFromForm();
 
     if (!(startDayOfWeek || startTime || endDayOfWeek || endTime)) {

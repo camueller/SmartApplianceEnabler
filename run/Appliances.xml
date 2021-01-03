@@ -1,37 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.5">
-    <Appliance id="F-28091971-000000000019-00">
-        <ElectricVehicleCharger>
-            <EVModbusControl idref="wallbox" slaveAddress="180">
-                <ModbusRead address="100" type="InputString">
-                    <ModbusReadValue name="VehicleNotConnected" extractionRegex="(A)"/>
-                    <ModbusReadValue name="VehicleConnected" extractionRegex="(B)"/>
-                    <ModbusReadValue name="Charging" extractionRegex="(C|D)"/>
-                    <ModbusReadValue name="Error" extractionRegex="(E|F)"/>
-                </ModbusRead>
-                <ModbusWrite address="400" type="Coil">
-                    <ModbusWriteValue name="StartCharging" value="1"/>
-                    <ModbusWriteValue name="StopCharging" value="0"/>
-                </ModbusWrite>
-                <ModbusWrite address="300" type="Holding">
-                    <ModbusWriteValue name="ChargingCurrent" value="0"/>
-                </ModbusWrite>
-            </EVModbusControl>
-            <ElectricVehicle id="1" name="Nissan Leaf" batteryCapacity="40000" phases="1" maxChargePower="7400"
-                             defaultSocManual="90" defaultSocOptionalEnergy="80" chargeLoss="11">
-                <SocScript script="/data/projects/pycarwings2/soc.sh"
-                           updateAfterIncrease="4"
-                           extractionRegex=".*state_of_charge (\d+)"/>
-            </ElectricVehicle>
-        </ElectricVehicleCharger>
-        <ModbusElectricityMeter idref="modbus" slaveAddress="1">
-            <ModbusRead address="0x0034" bytes="4" type="InputFloat">
-                <ModbusReadValue name="Power"/>
-            </ModbusRead>
-            <ModbusRead address="0x0156" bytes="4" type="InputFloat">
-                <ModbusReadValue name="Energy"/>
-            </ModbusRead>
-        </ModbusElectricityMeter>
+<Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.6">
+    <Appliance id="F-28091971-000000000002-00">
+        <HttpSwitch>
+            <HttpWrite url="http://192.168.69.51/cm?cmnd=Power%20On">
+                <HttpWriteValue name="On"/>
+            </HttpWrite>
+            <HttpWrite url="http://192.168.69.51/cm?cmnd=Power%20Off">
+                <HttpWriteValue name="Off"/>
+            </HttpWrite>
+        </HttpSwitch>
+        <HttpElectricityMeter>
+            <HttpRead url="http://192.168.69.51/cm?cmnd=Status%208">
+                <HttpReadValue name="Power" extractionRegex=".*&quot;Power&quot;:(\d+).*"/>
+            </HttpRead>
+            <Notifications/>
+        </HttpElectricityMeter>
+        <Schedule enabled="true">
+            <RuntimeRequest min="120" max="300"/>
+            <DayTimeframe>
+                <Start hour="17" minute="0" second="0"/>
+                <End hour="23" minute="0" second="0"/>
+            </DayTimeframe>
+        </Schedule>
     </Appliance>
     <Connectivity>
         <ModbusTCP id="modbus" host="192.168.69.10" port="502"/>

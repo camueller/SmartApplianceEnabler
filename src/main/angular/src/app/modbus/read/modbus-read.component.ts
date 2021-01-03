@@ -176,11 +176,11 @@ export class ModbusReadComponent implements OnChanges, OnInit {
   }
 
   updateModelFromForm(): ModbusRead | undefined {
-    const address = this.form.controls.address.value;
-    const type = this.form.controls.type.value;
-    const bytes = this.form.controls.bytes.value;
-    const byteOrder = this.form.controls.byteOrder.value;
-    const factorToValue = this.form.controls.factorToValue.value;
+    const address = getValidString(this.form.controls.address.value);
+    const type = getValidString(this.form.controls.type.value);
+    const bytes = getValidInt(this.form.controls.bytes.value);
+    const byteOrder = this.isByteOrderDisplayed ? getValidString(this.form.controls.byteOrder.value) : undefined;;
+    const factorToValue = getValidFloat(this.form.controls.factorToValue.value);
     const modbusReadValues = [];
     this.modbusReadValueComps.forEach(modbusReadValueComp => {
       const modbusReadValue = modbusReadValueComp.updateModelFromForm();
@@ -193,11 +193,11 @@ export class ModbusReadComponent implements OnChanges, OnInit {
       return undefined;
     }
 
-    this.modbusRead.address = getValidString(address);
-    this.modbusRead.type = getValidString(type);
-    this.modbusRead.bytes = getValidInt(bytes);
-    this.modbusRead.byteOrder = this.isByteOrderDisplayed ? getValidString(byteOrder) : undefined;
-    this.modbusRead.factorToValue = getValidFloat(factorToValue);
+    this.modbusRead.address = address;
+    this.modbusRead.type = type;
+    this.modbusRead.bytes = bytes;
+    this.modbusRead.byteOrder = byteOrder;
+    this.modbusRead.factorToValue = factorToValue;
     return this.modbusRead;
   }
 }

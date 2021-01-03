@@ -2,9 +2,9 @@
 <Device2EM xmlns="http://www.sma.de/communication/schema/SEMP/v1">
     <DeviceInfo>
         <Identification>
-            <DeviceId>F-28091971-000000000019-00</DeviceId>
+            <DeviceId>F-28091971-000000000002-00</DeviceId>
             <DeviceName>Wallbox</DeviceName>
-            <DeviceType>EVCharger</DeviceType>
+            <DeviceType>Other</DeviceType>
             <DeviceSerial>20180623</DeviceSerial>
             <DeviceVendor>ESL</DeviceVendor>
         </Identification>
