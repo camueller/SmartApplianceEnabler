@@ -178,10 +178,13 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
             if(meter instanceof ApplianceIdConsumer) {
                 ((ApplianceIdConsumer) meter).setApplianceId(id);
             }
-            if(meter instanceof NotificationProvider && notificationCommand != null && this.notification != null) {
+            if(meter instanceof NotificationProvider && notificationCommand != null) {
                 NotificationHandler notificationHandler = new NotificationHandler(
-                        id, notificationCommand, this.notification.getSenderId(),
-                        this.notification.getMaxCommunicationErrors());
+                        id,
+                        notificationCommand,
+                        this.notification != null ? this.notification.getSenderId() : null,
+                        this.notification != null ? this.notification.getMaxCommunicationErrors() : null
+                );
                 ((NotificationProvider) meter).setNotificationHandler(notificationHandler);
             }
             meter.init();
@@ -192,10 +195,13 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
         if(control instanceof ApplianceIdConsumer) {
             ((ApplianceIdConsumer) control).setApplianceId(id);
         }
-        if(control instanceof NotificationProvider && notificationCommand != null && this.notification != null) {
+        if(control instanceof NotificationProvider && notificationCommand != null) {
             NotificationHandler notificationHandler = new NotificationHandler(
-                    id, notificationCommand, this.notification.getSenderId(),
-                    this.notification.getMaxCommunicationErrors());
+                    id,
+                    notificationCommand,
+                    this.notification != null ? this.notification.getSenderId() : null,
+                    this.notification != null ? this.notification.getMaxCommunicationErrors() : null
+            );
             ((NotificationProvider) control).setNotificationHandler(notificationHandler);
         }
         if(isEvCharger()) {
