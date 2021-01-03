@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.6">
+    <Configuration param="Notification.Commmand" value="/data/IdeaProjects/SmartApplianceEnabler/run/notifyWithTelegram.sh"/>
     <Appliance id="F-28091971-000000000002-00">
         <HttpSwitch>
             <HttpWrite url="http://192.168.69.51/cm?cmnd=Power%20On">
@@ -8,6 +9,7 @@
             <HttpWrite url="http://192.168.69.51/cm?cmnd=Power%20Off">
                 <HttpWriteValue name="Off"/>
             </HttpWrite>
+            <Notifications/>
         </HttpSwitch>
         <HttpElectricityMeter>
             <HttpRead url="http://192.168.69.51/cm?cmnd=Status%208">
