@@ -80,7 +80,7 @@ Der Status aller steuerbaren Geräte wird in der [Status-Anzeige](doc/Status_DE.
 
 In dem nachfolgenden Video kann man einen Eindruck von der Konfiguration des *Smart Appliance Enabler* gewinnen. Dieses Video wurde im Rahmen der Durchführung automatisierter Tests erstellt, welche die Qualität des *Smart Appliance Enabler* sicherstellen sollen.
 
-[![Web-Oberfläche](pics/fe/BrowserstackPreview.png)](https://drive.google.com/file/d/1QvQyfMDz514xT38WGvoujXsIrrr750C4/view)
+[![Web-Oberfläche](pics/fe/BrowserstackPreview.png)](https://drive.google.com/file/d/1g7mgRbnyaPVroLKrlPBE5j1Jmu51WwqD/view)
 
 ## [Integration in Sunny Portal](doc/SunnyPortal_DE.md)
 Der eigentliche Zweck des *Smart Appliance Enabler* besteht in der Integration von Geräten in das [Sunny Portal](doc/SunnyPortal_DE.md).
