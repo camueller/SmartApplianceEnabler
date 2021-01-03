@@ -111,7 +111,7 @@ Install the project...
 -- Installing: /lib/systemd/system/mbusd@.service
 ```
 
-Der ```systemd``` muss reinitialisiert werden, damit er die gerade installierte Service-Definition des ```mbusd``` finden kann:
+Der `systemd` muss reinitialisiert werden, damit er die gerade installierte Service-Definition des `mbusd` finden kann:
 ```console
 pi@raspberrypi:/tmp/mbusd/build $ sudo systemctl daemon-reload
 ```
@@ -122,7 +122,7 @@ cd /etc/mbusd/
 sudo cp mbusd.conf.example mbusd-ttyUSB0.conf
 ```
 
-Jetzt steht einem Start des ```mbusd``` nichts mehr im Wege:
+Jetzt steht einem Start des `mbusd` nichts mehr im Wege:
 ```console
 pi@raspberrypi:/etc/mbusd $ sudo systemctl start mbusd@ttyUSB0.service
 ```
@@ -141,15 +141,15 @@ Mar 24 18:33:53 raspberrypi systemd[1]: Started Modbus TCP to Modbus RTU (RS-232
 Mar 24 18:33:53 raspberrypi mbusd[2807]: 24 Mar 2019 18:33:53 mbusd-0.3.1 started...
 ```
 
-Damit der ```mbusd``` direkt beim Booten gestartet wird, muss der Service noch aktiviert werden:
+Damit der `mbusd` direkt beim Booten gestartet wird, muss der Service noch aktiviert werden:
 ```console
 pi@raspberrypi:/etc/mbusd $ sudo systemctl enable mbusd@ttyUSB0.service
 Created symlink /etc/systemd/system/multi-user.target.wants/mbusd@ttyUSB0.service → /lib/systemd/system/mbusd@.service.
 ```
 
-Falls es Probleme mit ```mbusd``` gibt, kann man den Log-Level erhöhen und die Ausgaben in eine Datei leiten, in dem man in der Datei ```/lib/systemd/system/mbusd@.service``` die ```ExecStart```-Zeile wie folgt ändert:
+Falls es Probleme mit `mbusd` gibt, kann man den Log-Level erhöhen und die Ausgaben in eine Datei leiten, in dem man in der Datei `/lib/systemd/system/mbusd@.service` die `ExecStart`-Zeile wie folgt ändert:
 ```
 ExecStart=/usr/bin/mbusd -d -v9 -c /etc/mbusd/mbusd-%i.conf -p /dev/%i
 ```
 
-Danach finden sich sehr detaillierte Log-Ausgaben in der Datei ```/var/log/mbus.log```.
+Danach finden sich sehr detaillierte Log-Ausgaben in der Datei `/var/log/mbus.log`.

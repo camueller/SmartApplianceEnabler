@@ -1,10 +1,11 @@
 # GPIO-basiertes Schalten
 
 Der Raspberry Pi verfügt über **GPIO-Anschlüsse** die ein- und ausgeschaltet werden können.
-Dabei sollten unbedingt die Hinweise im Kapitel zum [Raspberry Pi](Raspberry_DE.md) beachtet werden, insbesondere auch zur **Numerierung der GPIO-Anschlüsse**.
+Dabei sollten unbedingt die [Hinweise zum Raspberry Pi und zur Numerierung der GPIO-Anschlüsse](Raspberry_DE.md) beachtet werden! 
 
 Zur Konfiguration eines GPIO-basierten Schalters gehört die Nummer des GPIO-Anschlusses und die Angabe, ob der Schalter-Status invertiert werden soll.
-Außerdem kann die [Anlaufstromerkennung](Anlaufstromerkennung_DE.md) aktiviert werden.
+
+Optional kann die [Anlaufstromerkennung](Anlaufstromerkennung_DE.md) aktiviert werden.
 
 ![GPIO Switch](../pics/fe/GPIOSwitch.png)
 

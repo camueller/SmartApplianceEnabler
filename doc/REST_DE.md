@@ -7,7 +7,7 @@ Zum Einschalten eines Gerätes kann folgender Befehl verwendet werden, wobei die
 ```console
 curl -X POST -d '<EM2Device xmlns="http://www.sma.de/communication/schema/SEMP/v1"><DeviceControl><DeviceId>F-00000001-000000000002-00</DeviceId><On>true</On></DeviceControl></EM2Device>' --header 'Content-Type: application/xml' http://127.0.0.1:8080/semp
 ```
-Zum Ausschalten muss lediglich ```<On>false</On>``` statt ```<On>true</On>``` gesetzt werden.
+Zum Ausschalten muss lediglich `<On>false</On>` statt `<On>true</On>` gesetzt werden.
 
 Ein Gerät, das manuell eingeschaltet wird bleibt nur dann in diesem Zustand wenn es sich in einem aktiven Timeframe befindet. Andernfalls schaltet es der SAE wieder aus.
 Um vor dem Einschalten zusätzlich einen Timeframe für eine bestimmte Laufzeit zu erzeugen ist ein zweiter Befehl notwendig. Beide Befehle direkt hintereinander abgesetzt (zuerst Timeframe, dann Einschalten) bewirken das selbe was die Ampelfunktion zur Verfügung stellt (Klick für sofortigen Start + Auswahl der entsprechenden Laufzeit).
@@ -21,7 +21,7 @@ Normalerweise werden die Schedules aus der Datei `Appliance.xml` gelesen. Es ist
 ```console
 curl -s -X POST -d '<Schedules xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.4"><Schedule><RuntimeRequest min="1800" max="3600" /><DayTimeframe><Start hour="0" minute="0" second="0" /><End hour="18" minute="59" second="59" /></DayTimeframe></Schedule></Schedules>' --header 'Content-Type: application/xml' http://localhost:8080/sae/schedules?id=F-00000001-000000000001-00
 ```
-Das ```xmlns```-Attribut (insbesondere die Version des *Smart Appliance Enabler* am Ende) muss dabei übereinstimmen mit dem ```xmlns```-Attribut in der Datei ```Appliances.xml```.
+Das `xmlns`-Attribut (insbesondere die Version des *Smart Appliance Enabler* am Ende) muss dabei übereinstimmen mit dem `xmlns`-Attribut in der Datei `Appliances.xml`.
 
 Im Log des SAE sollte sich danach folgendes finden:
 ```console

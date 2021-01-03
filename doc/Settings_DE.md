@@ -1,5 +1,8 @@
 # Einstellungen
-Das Menü `Einstellungen` findet sich oben auf der Seite.
+
+Über den Menüpunkt `Einstellungen` gelangt man zur Verwaltung der zentralen, geräteunabhängigen Einstellungen.
+
+![Einstellungen](../pics/fe/Settings.png)
 
 ## Feiertage
 <a name="holidays">
@@ -25,7 +28,6 @@ Sofern der Raspberry Zugang zum Internet hat, erfolgt einmal jährlich ein Downl
 ```
 HE steht dabei für Hessen, die Abkürzung für andere Bundesländer und die vollständige API-Dokumentation findet sich auf http://feiertage.jarmedia.de. Anstelle der Jahreszahl muss "{0}" (ohne Anführungszeichen) verwendet werden, was zum Ausführungszeitpunkt durch die aktuelle Jahreszahl erstzt wird. Außerdem muss statt des `&`-Zeichens der Ausruck `"&#038;"` (ohne Anführungszeichen) verwendet werden.
 
-![Einstellungen Feiertage](../pics/fe/SettingsFeiertage.png)
 
 ## Modbus
 <a name="modbus">
@@ -35,14 +37,10 @@ Bevor Modbus für Zähler oder Schalter verwendet werden kann, müssen ein oder 
 Für jeden Modbus/TCP muss eine eindeutige ID festgelegt werden, die bei der Konfiguration von Modbus-Zählern und Schaltern angegeben werden müss (z.B. "wallbox").
 Die Angabe von Hostname bzw. IP-Adresse und Port ist optional möglich.
 
-![Einstellungen Modbus](../pics/fe/SettingsModbus.png)
-
 ## Benachrichtigungen
 <a name="notifications">
 
 Zur Verwendung von Benachrichtigungen muss ein Shell-Script angegeben werden, das beim Auftreten eines konfigurierten Ereignisses aufgerufen wird.
-
-![Einstellungen Modbus](../pics/fe/SettingsNotifications.png)
 
 Die Installation von bereitgestellten Shell-Scripts für den *Smart Appliance Enabler* ist [hier](Installation_DE.md#benachrichtigungen) beschrieben.
 

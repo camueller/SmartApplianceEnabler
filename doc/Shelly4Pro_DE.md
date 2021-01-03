@@ -8,19 +8,27 @@ Damit der *Smart Appliance Enabler* in der JSON-Antwort den eigentlichen Wert f√
 
 ### Ausgang 1
 
-```"power":([\.\d]+).+"power":.+"power":.+"power":.+```
+```
+"power":([\.\d]+).+"power":.+"power":.+"power":.+
+```
 
 ### Ausgang 2
 
-```"power":.+"power":([\.\d]+).+"power":.+"power":.+```
+```
+"power":.+"power":([\.\d]+).+"power":.+"power":.+
+```
 
 ### Ausgang 3
 
-```"power":.+"power":.+"power":([\.\d]+).+"power":.+```
+```
+"power":.+"power":.+"power":([\.\d]+).+"power":.+
+```
 
 ### Ausgang 4
 
-```"power":.+"power":.+"power":.+"power":([\.\d]+).+```
+```
+"power":.+"power":.+"power":.+"power":([\.\d]+).+
+```
 
 ## Shelly 4 Pro als Schalter
 

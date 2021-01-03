@@ -22,21 +22,6 @@ Aus obigem Beispiel ergeben sich folgende Feld-Inhalte im *Smart Appliance Enabl
 | Content-Type | application/xml |
 | Regulärer Ausdruck zum Extrahieren der Leistung | .*NowPower>(\d*.{0,1}\d+).* |
 
-Wird ein Edimax SP2101W abgefragt, finden sich in der [Log-Datei](Support.md#Log) für jede Abfrage folgende Zeilen:
-```
-2017-06-03 18:53:37,627 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:101] F-00000001-000000000001-00: Sending HTTP request
-2017-06-03 18:53:37,627 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:102] F-00000001-000000000001-00: url=http://192.168.69.74:10000/smartplug.cgi
-2017-06-03 18:53:37,627 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:103] F-00000001-000000000001-00: data=<?xml version="1.0" encoding="UTF8"?><SMARTPLUG id="edimax"><CMD id="get"><NOW_POWER><Device.System.Power.NowCurrent></Device.System.Power.NowCurrent><Device.System.Power.NowPower></Device.System.Power.NowPower></NOW_POWER></CMD></SMARTPLUG>
-2017-06-03 18:53:37,628 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:104] F-00000001-000000000001-00: contentType=application/xml
-2017-06-03 18:53:37,628 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:105] F-00000001-000000000001-00: username=admin
-2017-06-03 18:53:37,628 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:106] F-00000001-000000000001-00: password=12345678
-2017-06-03 18:53:37,743 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:118] F-00000001-000000000001-00: Response code is 200
-2017-06-03 18:53:37,744 DEBUG [Timer-0] d.a.s.a.HttpElectricityMeter [HttpElectricityMeter.java:119] F-00000001-000000000001-00: HTTP response: <?xml version="1.0" encoding="UTF8"?><SMARTPLUG id="edimax"><CMD id="get"><NOW_POWER><Device.System.Power.NowCurrent>0.2871</Device.System.Power.NowCurrent><Device.System.Power.NowPower>52.49</Device.System.Power.NowPower></NOW_POWER></CMD></SMARTPLUG>
-2017-06-03 18:53:37,744 DEBUG [Timer-0] d.a.s.a.HttpElectricityMeter [HttpElectricityMeter.java:120] F-00000001-000000000001-00: Power value extraction regex: .*NowPower>(\d*.{0,1}\d+).*
-2017-06-03 18:53:37,744 DEBUG [Timer-0] d.a.s.a.HttpElectricityMeter [HttpElectricityMeter.java:122] F-00000001-000000000001-00: Power value extracted from HTTP response: 52.49
-2017-06-03 18:53:37,745 DEBUG [Timer-0] d.a.s.a.PollElectricityMeter [PollElectricityMeter.java:63] F-00000001-000000000001-00: timestamps added/removed/total: 1/1/7
-```
-
 ## SP-2101W als Schalter
 Der Schaltzustand des SP-2101W kann wie folgt geändert werden (Passwort hier 12345678):
 

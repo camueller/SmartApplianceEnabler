@@ -48,7 +48,7 @@ https://kofler.info/geaenderte-ssh-server-konfiguration-von-raspbian), wobei ich
 ```console
 axel@tpw520:~$ sudo mount /dev/mmcblk0p1 /mnt
 ```
-2. Erzeugen einer leeren Datei mit dem Namen ```ssh```:
+2. Erzeugen einer leeren Datei mit dem Namen `ssh`:
 ```console
 axel@tpw520:~$ sudo touch /mnt/ssh
 ```
@@ -58,7 +58,7 @@ axel@tpw520:~$ sudo umount /mnt
 ```
 Nachdem der Raspberry Pi mit der so modifizierten SD-Karte gebootet wurde, sollte der Zugriff mit SSH möglich sein.
 Dabei nicht vergessen, den Raspberry Pi über ein Ethernet-Kabel mit dem Router zu verbinden!
-Für den zugriff benötigt man natürllich die IP-Adresse oder den Hostnamen, der dem Raspberry Pi vom Router zugewiesen wurde (in meinem Beispiel ist das ```raspi```)
+Für den zugriff benötigt man natürllich die IP-Adresse oder den Hostnamen, der dem Raspberry Pi vom Router zugewiesen wurde (in meinem Beispiel ist das `raspi`)
 ```console
 axel@p51:~$ ssh pi@raspi
 pi@raspi's password: 
@@ -77,7 +77,7 @@ This is a security risk - please login as the 'pi' user and type 'passwd' to set
 pi@raspberrypi:~ $
 ```
 ### Root-Filesystem vergrößern
-Die Raspbian-Images werde in der Regel für SD-Karten mit einer Größe von 2 GB erstellt. Wenn die verwendete SD-Karte größer ist, bleibt der darüber hinausgehene Speicherplatz unbenutzt. Raspbian enthält jedoch das Utility ```raspi-config```, mit dem man ganz einfach das Root-Filesystem so vergrößern kann, dass die gesamte SD-Karte genutzt wird (hier wurde eine 16 GB SD-Karte verwendet):
+Die Raspbian-Images werde in der Regel für SD-Karten mit einer Größe von 2 GB erstellt. Wenn die verwendete SD-Karte größer ist, bleibt der darüber hinausgehene Speicherplatz unbenutzt. Raspbian enthält jedoch das Utility `raspi-config`, mit dem man ganz einfach das Root-Filesystem so vergrößern kann, dass die gesamte SD-Karte genutzt wird (hier wurde eine 16 GB SD-Karte verwendet):
 
 ```console
 pi@raspberrypi:~ $ sudo raspi-config --expand-rootfs
@@ -164,12 +164,12 @@ Get:3 http://archive.raspberrypi.org/debian buster/main armhf firmware-atheros a
 ```
 
 ### WLAN einrichten (nicht verfügbar bei Raspberry Pi 2)
-Soll der Raspberry Pi über WLAN statt über Ethernet angebunden werden, müssen SSID und Passwort in die Datei ```/etc/wpa_supplicant/wpa_supplicant.conf``` eingetragen werden. Eine genaue Beschreibung findet sich in [Setting WiFi up via the command line](https://www.raspberrypi.org/documentation/configuration/wireless/wireless-cli.md).
+Soll der Raspberry Pi über WLAN statt über Ethernet angebunden werden, müssen SSID und Passwort in die Datei `/etc/wpa_supplicant/wpa_supplicant.conf` eingetragen werden. Eine genaue Beschreibung findet sich in [Setting WiFi up via the command line](https://www.raspberrypi.org/documentation/configuration/wireless/wireless-cli.md).
 
 ### Hostnamen ändern
-Unabhängig von dem Hostnamen, über den der Raspberry im lokalen Netzwerk erreicht werden kann, ist sein Hostname standardmäßig ```raspberry``` (auch sichtbar am Prompt: ```pi@raspberrypi:~ $```). Vor allem, wenn man mehrere Raspberries im Netz hat, will man auch am Prompt sehen, auf welchem Raspberry man gerade die Befehle eingibt.
+Unabhängig von dem Hostnamen, über den der Raspberry im lokalen Netzwerk erreicht werden kann, ist sein Hostname standardmäßig `raspberry` (auch sichtbar am Prompt: `pi@raspberrypi:~ $`). Vor allem, wenn man mehrere Raspberries im Netz hat, will man auch am Prompt sehen, auf welchem Raspberry man gerade die Befehle eingibt.
 
-Zum Ändern des Hostnames kann das Tool ```raspi-config``` verwendet werden, wobei der Menüpunkt _Network Options_ und dann der Menüpunkt _Hostname_ gewählt werden muss:
+Zum Ändern des Hostnames kann das Tool `raspi-config` verwendet werden, wobei der Menüpunkt _Network Options_ und dann der Menüpunkt _Hostname_ gewählt werden muss:
 ```console
 pi@raspberrypi:~ $ sudo raspi-config
 ```
@@ -264,9 +264,9 @@ pi@raspberrypi ~ $ sudo chmod 644 /opt/sae/logback-spring.xml
 pi@raspberrypi ~ $ sudo chown -R sae:sae /opt/sae
 ```
 
-Der *Smart Appliance Enabler* wird normalerweise als Service des [Systemd](https://de.wikipedia.org/wiki/Systemd) verwaltet. Dazu dient die Datei ```/lib/systemd/system/smartapplianceenabler.service```.
+Der *Smart Appliance Enabler* wird normalerweise als Service des [Systemd](https://de.wikipedia.org/wiki/Systemd) verwaltet. Dazu dient die Datei `/lib/systemd/system/smartapplianceenabler.service`.
 
-Die Datei ```/opt/sae/smartapplianceenabler``` ist das eigentliche Start-Script für den *Smart Appliance Enabler*. Man kann es zwar direkt aufrufen, aber eigentlich sollte es nur vom _Systemd_ verwendet werden.
+Die Datei `/opt/sae/smartapplianceenabler` ist das eigentliche Start-Script für den *Smart Appliance Enabler*. Man kann es zwar direkt aufrufen, aber eigentlich sollte es nur vom _Systemd_ verwendet werden.
 
 Siehe auch:
 - [Konfigurationseinstellungen](ConfigurationFiles_DE.md#server-konfiguration)
@@ -289,7 +289,7 @@ smartapplianceenabler.service                                                   
 Falls die zweite Zeile nicht angezeigt wird, sollte der Raspberry neu gestartet werden.
 
 #### Programm-Download
-Der eigentliche Programmcode befindet sich in der Datei ```SmartApplianceEnabler-X.Y.Z.war```, die ebenfalls heruntergeladen werden muss. *X.Y.Z* steht dabei für die aktuelle Versionsnummer (z.B. 1.3.50), die [hinter dem Download-Button](https://github.com/camueller/SmartApplianceEnabler#smart-appliance-enabler) angezeigt wird. Entsprechend dieser Hinweise muss die Version im nachfolgenden Befehl angepasst werden an 2 Stellen (*v1.3.501* und *SmartApplianceEnabler-1.3.50.war*):
+Der eigentliche Programmcode befindet sich in der Datei `SmartApplianceEnabler-X.Y.Z.war`, die ebenfalls heruntergeladen werden muss. *X.Y.Z* steht dabei für die aktuelle Versionsnummer (z.B. 1.3.50), die [hinter dem Download-Button](https://github.com/camueller/SmartApplianceEnabler#smart-appliance-enabler) angezeigt wird. Entsprechend dieser Hinweise muss die Version im nachfolgenden Befehl angepasst werden an 2 Stellen (*v1.3.501* und *SmartApplianceEnabler-1.3.50.war*):
 ```console
 pi@raspberrypi ~ $ sudo wget https://github.com/camueller/SmartApplianceEnabler/releases/download/1.4.19/SmartApplianceEnabler-1.4.19.war -P /opt/sae
 pi@raspberrypi ~ $ sudo chown -R sae:sae /opt/sae
@@ -338,7 +338,7 @@ Das Update einer vorhandenen Version besteht darin, zunächst das alte Programm 
 pi@raspberrypi ~ $ rm /opt/sae/*.war
 ```
 Jetzt kann die gewünschte Version des Programms heruntergeladen werden, wie im Erstinstallations-Kapitel [Programm-Download](#programm-download) beschrieben.
-Falls das Format der Konfigurationsdatei ```Appliances.xml``` in der neuen Programmversion nicht mehr kompatibel zur alten Version ist oder man sich diesbezüglich unsicher ist, müssen die alten Konfigurationsdateien gelöscht werden:
+Falls das Format der Konfigurationsdatei `Appliances.xml` in der neuen Programmversion nicht mehr kompatibel zur alten Version ist oder man sich diesbezüglich unsicher ist, müssen die alten Konfigurationsdateien gelöscht werden:
 ```console
 pi@raspberrypi ~ $ rm /opt/sae/Appliances.xml
 pi@raspberrypi ~ $ rm /opt/sae/Device2EM.xml

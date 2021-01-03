@@ -15,7 +15,7 @@ pi@raspberrypi ~ $ mkdir /opt/sae/soc
 pi@raspberrypi ~ $ cd /opt/sae/soc
 ```
 
-Die Konfigurationsdatei muss den Namen ```soc.ini``` haben mit folgendem Inhalt (Zeilen, die mit # beginnen, nicht ändern!):
+Die Konfigurationsdatei muss den Namen `soc.ini` haben mit folgendem Inhalt (Zeilen, die mit # beginnen, nicht ändern!):
 ```
 #email
 DeineUVO-Mailadresse
@@ -28,7 +28,7 @@ DieKompletteFahrgestell-Nr.deinesNiro
 #end
 ```
 
-Das eigentliche SOC-Python-Script sollte mit dem Namen ```soc.py``` und folgendem Inhalt angelegt werden:
+Das eigentliche SOC-Python-Script sollte mit dem Namen `soc.py` und folgendem Inhalt angelegt werden:
 ```console
 import sys
 import requests
@@ -219,7 +219,7 @@ if __name__ == '__main__':
     main()
 ```
 
-Damit das SOC-Python-Script von überall aus aufgerufen werden kann und trotzdem die ```soc.ini``` gefunden wird, hilft folgendes kleine Shell-Script ```/opt/sae/soc/soc.sh```, das vom *Smart Appliance Enabler* aufgerufen wird:
+Damit das SOC-Python-Script von überall aus aufgerufen werden kann und trotzdem die `soc.ini` gefunden wird, hilft folgendes kleine Shell-Script `/opt/sae/soc/soc.sh`, das vom *Smart Appliance Enabler* aufgerufen wird:
 
 ```console
 #!/bin/sh
@@ -240,7 +240,7 @@ pi@raspberrypi:/opt/sae/soc $ ./soc.sh
 soc: 65
 ```
 
-Im *Smart Appliance Enabler* wird als SOC-Script angegeben: ```/opt/sae/soc/soc.sh```.
+Im *Smart Appliance Enabler* wird als SOC-Script angegeben: `/opt/sae/soc/soc.sh`.
 Außerdem muss der nachfolgende *Reguläre Ausdruck* angegeben werden, um aus den Ausgaben den eigentlichen Zahlenwert zu extrahieren:
 ```
 .*soc: (\d+).*

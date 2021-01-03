@@ -244,7 +244,7 @@ sae
 ```
 
 ### Automatisches Starten des Containers durch Systemd
-Auch wenn der *Smart Appliance Enabler* als Docker-Container betrieben wird, bietet es sich an, den Container als Service des [Systemd](https://de.wikipedia.org/wiki/Systemd) zu verwalten. Dazu dient die Datei ```/lib/systemd/system/smartapplianceenabler-docker.service```, die nachfolgend heruntergeladen und konfiguriert wird:
+Auch wenn der *Smart Appliance Enabler* als Docker-Container betrieben wird, bietet es sich an, den Container als Service des [Systemd](https://de.wikipedia.org/wiki/Systemd) zu verwalten. Dazu dient die Datei `/lib/systemd/system/smartapplianceenabler-docker.service`, die nachfolgend heruntergeladen und konfiguriert wird:
 ```console
 pi@raspberrypi ~ $ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/lib/systemd/system/smartapplianceenabler-docker.service -P /lib/systemd/system
 pi@raspberrypi ~ $ sudo chown root.root /lib/systemd/system/smartapplianceenabler-docker.service
@@ -311,7 +311,7 @@ pi@raspberrypi:~ $ docker logs sae
 ```
 
 ## Smart Appliance Enabler-Logdatei anzeigen
-Zusätzlich zum Konsole-Log erzeugt der *Smart Appliance Enabler* für jeden Tag eine Log-Datei im ```/tmp```-Verzeichnis.
+Zusätzlich zum Konsole-Log erzeugt der *Smart Appliance Enabler* für jeden Tag eine Log-Datei im `/tmp`-Verzeichnis.
 Mit dem nachfolgenden Befehl kann dieses angezeigt werden, wobei das Datum entsprechend angepasst werden muss:
 ```console
 pi@raspberrypi:~ $ docker container exec sae tail -f /tmp/rolling-2019-12-25.log

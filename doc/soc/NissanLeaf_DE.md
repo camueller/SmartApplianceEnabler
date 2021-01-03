@@ -49,7 +49,7 @@ pi@raspberrypi ~ $ mkdir /opt/sae/soc
 pi@raspberrypi ~ $ cd /opt/sae/soc
 ```
 
-Die Konfigurationsdatei muss den Namen ```config.ini``` haben mit folgendem Inhalt:
+Die Konfigurationsdatei muss den Namen `config.ini` haben mit folgendem Inhalt:
 ```console
 [get-leaf-info]
 username = IhrNissan+YOUUsername
@@ -57,7 +57,7 @@ password = IhrNissan+YOUPasswort
 region = NE
 ```
 
-Das eigentliche SOC-Python-Script sollte mit dem Namen ```soc.py``` und folgendem Inhalt angelegt werden:
+Das eigentliche SOC-Python-Script sollte mit dem Namen `soc.py` und folgendem Inhalt angelegt werden:
 ```console
 #!/usr/bin/env python
   
@@ -122,7 +122,7 @@ latest_leaf_info = leaf.get_latest_battery_status()
 print("state_of_charge %s" % latest_leaf_info.state_of_charge)
 ```
 
-Damit das SOC-Python-Script von überall aus aufgerufen werden kann und trotzdem die ```config.ini``` gefunden wird, hilft folgendes kleine Shell-Script ```/opt/sae/soc/soc.sh```, das vom *Smart Appliance Enabler* aufgerufen wird:
+Damit das SOC-Python-Script von überall aus aufgerufen werden kann und trotzdem die `config.ini` gefunden wird, hilft folgendes kleine Shell-Script `/opt/sae/soc/soc.sh`, das vom *Smart Appliance Enabler* aufgerufen wird:
 
 ```console
 #!/bin/sh
@@ -143,15 +143,15 @@ Login...
 state_of_charge 19
 ```
 
-Im *Smart Appliance Enabler* wird als SOC-Script angegeben: ```/opt/sae/soc/soc.sh```.
+Im *Smart Appliance Enabler* wird als SOC-Script angegeben: `/opt/sae/soc/soc.sh`.
 Außerdem muss der nachfolgende *Reguläre Ausdruck* angegeben werden, um aus den Ausgaben den eigentlichen Zahlenwert zu extrahieren:
 ```
 .*state_of_charge (\d+)
 ```
 
 ### Hinweis
-In der Datei ```~/.local/lib/python3.5/site-packages/pycarwings2/pycarwings2.py``` muss ggf. die Carwings-URL angepasst werden, da diese sich von Zeit zu Zeit ändert. Diese kann man ggf. von der "My Leaf"-App abschauen: https://gitlab.com/tobiaswkjeldsen/carwingsflutter/blob/master/android/app/src/main/java/dk/kjeldsen/carwingsflutter/CarwingsSession.java 
-Dazu nach einer Zeile mit ```BASE_URL``` am Zeilenanfang suchen und die URL auf folgenden Wert anpassen:
+In der Datei `~/.local/lib/python3.5/site-packages/pycarwings2/pycarwings2.py` muss ggf. die Carwings-URL angepasst werden, da diese sich von Zeit zu Zeit ändert. Diese kann man ggf. von der "My Leaf"-App abschauen: https://gitlab.com/tobiaswkjeldsen/carwingsflutter/blob/master/android/app/src/main/java/dk/kjeldsen/carwingsflutter/CarwingsSession.java 
+Dazu nach einer Zeile mit `BASE_URL` am Zeilenanfang suchen und die URL auf folgenden Wert anpassen:
 ```console
 BASE_URL = "https://gdcportalgw.its-mo.com/api_v181217_NE/gdc/"
 ```
@@ -186,7 +186,7 @@ Precompiled test:test.
 $
 ```
 
-Im Verzeichnis ```dartcarwings``` muss jetzt noch das SOC-Script ```soc.dart``` mit folgendem Inhalt angelegt werden, wobei username/password zu ersetzen sind:
+Im Verzeichnis `dartcarwings` muss jetzt noch das SOC-Script `soc.dart` mit folgendem Inhalt angelegt werden, wobei username/password zu ersetzen sind:
 ```console
 import 'package:http/http.dart' as http;
 import 'package:dartcarwings/dartcarwings.dart';

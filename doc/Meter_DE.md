@@ -1,6 +1,6 @@
 # Zähler
 
-Um einen Zähler zu konfigurieren muss in der ```Typ```-Auswahlbox der Typ des Zählers ausgewählt werden:
+Um einen Zähler zu konfigurieren muss in der `Typ`-Auswahlbox der Typ des Zählers ausgewählt werden:
 
 * [S0](SOMeter_DE.md)
 * [HTTP](HttpMeter_DE.md)

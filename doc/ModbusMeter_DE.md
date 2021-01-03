@@ -4,10 +4,13 @@ Stromzähler mit [Modbus](https://de.wikipedia.org/wiki/Modbus)-Protokoll erlaub
 
 Für Modbus-Schalter gelten die allgemeinen Hinweise zur Verwendung von [Modbus im SmartApplianceEnabler](Modbus_DE.md).
 
-Bevor ein Modbus-basierter Zähler konfiguriert werden kann, muss ein [Modbus/TCP](Settings_DE.md#Modbus) konfiguriert werden, der dann in der Konfiguration des Modbus-Stromzählers ausgewählt wird. Auch Slave-Adresse muss angegeben werden.
-Ausserdem kann ein ```Messinterval``` angegeben werden für die Durchschnittsberechnung der Leistungsaufnahme.
+Mit dem `Abfrage-Intervall` kann festgelegt werden, in welchen Abständen die aktuelle Leistungsaufnahme bei der Datenquelle abgefragt wird.
 
-Der *Smart Appliance Enabler* verwendet den Modbus-Zähler sowohl zur Bestimmung der aktuellen Leistungsaufnahme als auch zum Messen von Energiemengen. Dafür muß jeweils die Register-Adresse und der Register-Typ eingegeben werden. Die restlichen Felder sind optional.
+Ausserdem kann ein `Messinterval` angegeben werden für die Durchschnittsberechnung der Leistungsaufnahme.
+
+Der `Zustand` bezeichnet die Messgrösse, die vom Zähler gelesen werden soll - normalerweise immer die `Leistung`. Bei Geräten mit steuerbarer Leistung (z.B. Wallboxen) kann ausserdem die `Energiemenge` vom Zähler gelesen werden, wenn dieser diese Messgrösse liefert.
+
+Falls der über HTTP gelieferte Verbrauchswert nicht in Watt geliefert wird, muss ein `Umrechnungsfaktor` angegeben werden, mit dem der gelieferte Wert multipliziert werden muss, um den Verbrauch in Watt zu erhalten. Wird beispielsweise der Verbrauch in mW geliefert, muss dieser Faktor mit dem Wert `1000` angegeben werden.
 
 ![Modbus-basierter Zähler](../pics/fe/ModbusMeter.png)
 

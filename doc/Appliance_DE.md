@@ -1,10 +1,10 @@
 # Gerät
 
-Durch Klick auf ```Neues Gerät``` wird die Konfiguration eines neuen Geräte begonnen und es öffnet sich folgende Seite:
+Durch Klick auf `Neues Gerät` wird die Konfiguration eines neuen Geräte begonnen und es öffnet sich folgende Seite:
 
 ![Neues Gerät](../pics/fe/NeuesGeraet.png)
 
-Nach dem Speichern des Geätes erscheint im Menü ein Eintrag für das angelegte Gerät. Zusätzlich erscheinen die Unterpunkte [Zähler](#zähler), [Schalter](#schalter) und [Schaltzeiten](#schaltzeiten).
+Nach dem Speichern des Geätes erscheint im Menü ein Eintrag für das angelegte Gerät. Zusätzlich erscheinen die Unterpunkte Zähler, Schalter und Schaltzeiten.
 
 Durch Klicken der `Löschen`-Schaltfläche und Bestätigung der Löschabsicht wird das Gerät gelöscht.
 
@@ -18,7 +18,7 @@ Ein sehr wichtiges Attribut der Gerätekonfiguration ist die `ID`. Der Aufbau de
 * 00 unverändert lassen (sub device id)
   Die Device-IDs werden vom Sunny-Portal direkt verwendet, d.h. wenn jemand anderes bereits diese ID verwendet, kann das Gerät nicht im Sunny-Portal angelegt werden. Durch die Verwendung individueller Bestandteile wie Geburtsdatum sollte das Risiko dafür jedoch gering sein.
 
-Das Ändern der ```ID``` führt dazu, dass der *Sunny Home Manager* das Gerät als Neugerät betrachtet.
+Das Ändern der `ID` führt dazu, dass der *Sunny Home Manager* das Gerät als Neugerät betrachtet.
 
 ### Hersteller
 

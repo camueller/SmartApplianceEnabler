@@ -9,7 +9,7 @@ Grundsätzlich gilt, dass Eingaben/Änderungen erst nach dem [Klicken der `Speic
 
 Werden bei Eingabefeldern Inhalte mit grauer Schrift angezeigt, so handelt es sich um Voreinstellungen, d.h. wenn kein Wert eingegeben wird, gilt dieser Wert.
 
-Pflichtfelder sind mit einem `*` hinter der Feldbezeichnung gekennzeichnet. Solange nicht alle Pflichtfelder ausgefüllt sind, ist die ```Speichern```-Schaltfläche nicht aktiv. 
+Pflichtfelder sind mit einem `*` hinter der Feldbezeichnung gekennzeichnet. Solange nicht alle Pflichtfelder ausgefüllt sind, ist die `Speichern`-Schaltfläche nicht aktiv. 
 
 Beim ersten Start ohne vorhandene Konfigurationsdateien wird folgende Seite angezeigt:
 
@@ -23,7 +23,7 @@ Im Menü findet sich ein Eintrag für die [Status](Status_DE.md)-Anzeige, die in
 
 Darunter findet sich ein Eintrag zur Verwaltung der zentralen, geräteunabhängigen [Einstellungen](Settings_DE.md).
 
-Unterhalb des Eintrags für ```Neues Gerät``` werden die konfigurierten Geräte mit [Zähler](#zähler), [Schalter](#schalter) und [Schaltzeiten](#schaltzeiten) angezeigt, wenn sie vorhanden sind.
+Unterhalb des Eintrags für `Neues Gerät` werden die konfigurierten Geräte mit Zähler, Schalter und Schaltzeiten angezeigt, wenn sie vorhanden sind.
 
 ![Menü mit Geräten](../pics/fe/MenueMitGeraeten.png)
 
