@@ -81,15 +81,6 @@ public class SaeController {
         logger.info("SAE controller created.");
     }
 
-    private Appliance getAppliance(String applianceId) {
-        for (Appliance appliance : ApplianceManager.getInstance().getAppliances()) {
-            if (appliance.getId().equals(applianceId)) {
-                return appliance;
-            }
-        }
-        return null;
-    }
-
     /**
      * Return the corresponding DeviceInfo for an appliance.
      *
@@ -199,7 +190,7 @@ public class SaeController {
                     if (deviceInfo.getIdentification().getDeviceId().equals(applianceId)) {
                         ApplianceInfo applianceInfo = toApplianceInfo(deviceInfo);
 
-                        Appliance appliance = getAppliance(applianceId);
+                        Appliance appliance = ApplianceManager.getInstance().getAppliance(applianceId);
                         if(appliance != null && appliance.getNotification() != null) {
                             applianceInfo.setNotificationSenderId(appliance.getNotification().getSenderId());
                         }
@@ -239,7 +230,7 @@ public class SaeController {
                     appliance.setNotification(notification);
                     ApplianceManager.getInstance().addAppliance(appliance, deviceInfo);
                 } else {
-                    Appliance appliance = getAppliance(applianceId);
+                    Appliance appliance = ApplianceManager.getInstance().getAppliance(applianceId);
                     if (appliance != null) {
                         deviceInfo.getCapabilities().setOptionalEnergy(appliance.canConsumeOptionalEnergy(now));
                         appliance.setNotification(notification);
@@ -288,7 +279,7 @@ public class SaeController {
         synchronized (lock) {
             try {
                 logger.debug("{}: Received request for control", applianceId);
-                Appliance appliance = getAppliance(applianceId);
+                Appliance appliance = ApplianceManager.getInstance().getAppliance(applianceId);
                 if (appliance != null) {
                     Control control = appliance.getControl();
                     logger.debug("{}: Returning control {}", applianceId, control);
@@ -361,7 +352,7 @@ public class SaeController {
         synchronized (lock) {
             try {
                 logger.debug("{}: Received request for meter", applianceId);
-                Appliance appliance = getAppliance(applianceId);
+                Appliance appliance = ApplianceManager.getInstance().getAppliance(applianceId);
                 if (appliance != null) {
                     Meter meter = appliance.getMeter();
                     logger.debug("{}: Returning meter {}", applianceId, meter);
@@ -418,7 +409,7 @@ public class SaeController {
         synchronized (lock) {
             try {
                 logger.debug("{}: Received request for schedules", applianceId);
-                Appliance appliance = getAppliance(applianceId);
+                Appliance appliance = ApplianceManager.getInstance().getAppliance(applianceId);
                 if (appliance != null) {
                     List<Schedule> schedules = appliance.getSchedules();
                     if (schedules == null) {
