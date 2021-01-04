@@ -23,6 +23,11 @@ Im Menü findet sich ein Eintrag für die [Status](Status_DE.md)-Anzeige, die in
 
 Darunter findet sich ein Eintrag zur Verwaltung der zentralen, geräteunabhängigen [Einstellungen](Settings_DE.md).
 
+Nachfolgend finden sich Links
+- zur [Seite mit Fragen / Probleme und Antworten](QA_DE.md)
+- zur [Projekt-Hompage](https://github.com/camueller/SmartApplianceEnabler)
+- zum [Anwender-Forum](https://www.photovoltaikforum.com/thread/104060-ger%C3%A4te-mit-home-manager-koppeln-via-semp-ethernet/?pageNo=1000)
+
 Unterhalb des Eintrags für `Neues Gerät` werden die konfigurierten Geräte mit Zähler, Schalter und Schaltzeiten angezeigt, wenn sie vorhanden sind.
 
 ![Menü mit Geräten](../pics/fe/MenueMitGeraeten.png)

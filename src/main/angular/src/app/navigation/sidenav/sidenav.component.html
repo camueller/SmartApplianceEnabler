@@ -15,12 +15,37 @@
     <mat-icon>settings</mat-icon><span class="SidenavComponent__nav-caption">{{'AppComponent.settings' | translate}}</span>
   </a>
   <a mat-list-item
+     href="https://github.com/camueller/SmartApplianceEnabler/blob/master/doc/QA_DE.md"
+     class="SidenavComponent__menu-item"
+     target="_blank">
+    <mat-icon>build</mat-icon>
+    <span class="SidenavComponent__nav-caption">{{'AppComponent.help' | translate}}</span>
+    <mat-icon class="SidenavComponent__external_link">open_in_new</mat-icon>
+  </a>
+  <a mat-list-item
+     href="https://www.photovoltaikforum.com/thread/104060-ger%C3%A4te-mit-home-manager-koppeln-via-semp-ethernet/?pageNo=1000"
+     class="SidenavComponent__menu-item"
+     target="_blank"
+     routerLinkActive="SidenavComponent__router-link-active">
+    <mat-icon>comment_blanc</mat-icon>
+    <span class="SidenavComponent__nav-caption">{{'AppComponent.forum' | translate}}</span>
+    <mat-icon class="SidenavComponent__external_link">open_in_new</mat-icon>
+  </a>
+  <a mat-list-item
+     href="https://github.com/camueller/SmartApplianceEnabler"
+     class="SidenavComponent__menu-item"
+     target="_blank">
+    <mat-icon>home</mat-icon>
+    <span class="SidenavComponent__nav-caption">{{'AppComponent.project' | translate}}</span>
+    <mat-icon class="SidenavComponent__external_link">open_in_new</mat-icon>
+  </a>
+
+  <a mat-list-item
      routerLink="/appliance"
      (click)="onSidenavClose()">
     <mat-icon>add</mat-icon><span class="SidenavComponent__nav-caption">{{'AppComponent.appliance.new' | translate}}</span>
   </a>
   <mat-divider *ngIf="hasAppliances"></mat-divider>
-
   <div *ngFor="let applianceHeader of applianceHeaders; last as last">
     <a mat-list-item
        [routerLink]="['appliance', applianceHeader.id]"
