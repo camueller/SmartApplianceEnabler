@@ -17,10 +17,7 @@
  */
 package de.avanux.smartapplianceenabler.util;
 
-import java.time.LocalDate;
-
 import com.sun.xml.bind.marshaller.MinimumEscapeHandler;
-import com.sun.xml.bind.marshaller.NoEscapeHandler;
 import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
 import org.apache.poi.util.ReplacingInputStream;
 import org.slf4j.Logger;
@@ -33,6 +30,7 @@ import javax.xml.bind.Unmarshaller;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -170,5 +168,23 @@ public class FileHandler {
     private File getHolidayFile() {
         int year = LocalDate.now().getYear();
         return new File(getHomeDir(), "Holidays-" + year + ".txt");
+    }
+
+    public int getFileAttributes(String pathname) {
+        int mode = -1;
+        File file = new File(pathname);
+        if(file.exists()) {
+            mode = 0;
+            if(file.canRead()) {
+                mode += 1;
+            }
+            if(file.canWrite()) {
+                mode += 2;
+            }
+            if(file.canExecute()) {
+                mode += 4;
+            }
+        }
+        return mode;
     }
 }

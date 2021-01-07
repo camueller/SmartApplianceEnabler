@@ -16,7 +16,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {ChangeDetectorRef, Component, OnInit, QueryList, ViewChildren} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {ActivatedRoute, CanDeactivate} from '@angular/router';
 import {FormArray, FormGroup, Validators} from '@angular/forms';
 import {SettingsService} from './settings-service';
@@ -34,6 +34,8 @@ import {FormHandler} from '../shared/form-handler';
 import {SettingsModbusComponent} from './modbus/settings-modbus.component';
 import {ModbusSetting} from './modbus/modbus-setting';
 import {getValidString} from '../shared/form-util';
+import {FileMode} from '../material/filenameinput/file-mode';
+import {FilenameInputComponent} from '../material/filenameinput/filename-input.component';
 
 @Component({
   selector: 'app-settings',
@@ -45,6 +47,8 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
   settingsDefaults: SettingsDefaults;
   @ViewChildren('modbusSettings')
   modbusSettingComps: QueryList<SettingsModbusComponent>;
+  @ViewChild(FilenameInputComponent, {static: true})
+  notificationCommandInput: FilenameInputComponent;
   form: FormGroup;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};
@@ -85,7 +89,7 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
     this.formHandler.addFormControl(this.form, 'holidaysUrl', this.settings.holidaysUrl,
       [Validators.pattern(InputValidatorPatterns.URL)]);
     this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'modbusSettings', this.settings.modbusSettings);
-    this.formHandler.addFormControl(this.form, 'notificationCommand', this.settings.notificationCommand);
+    // this.formHandler.addFormControl(this.form, 'notificationCommand', this.settings.notificationCommand);
     this.setHolidaysUrlEnabled(this.settings.holidaysEnabled);
     this.form.controls.holidaysEnabled.valueChanges.subscribe(value => {
       this.setHolidaysUrlEnabled(value);
@@ -129,6 +133,10 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
     this.form.markAsDirty();
   }
 
+  public get notificationScriptFileModes() {
+    return [FileMode.read, FileMode.execute];
+  }
+
   canDeactivate(): Observable<boolean> | boolean {
     if (this.form.pristine) {
       return true;
@@ -146,7 +154,7 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
         this.settings.modbusSettings.push(modbusSetting);
       }
     });
-    this.settings.notificationCommand = getValidString(this.form.controls.notificationCommand.value);
+    this.settings.notificationCommand = this.notificationCommandInput.updateModelFromForm();
   }
 
   submitForm() {

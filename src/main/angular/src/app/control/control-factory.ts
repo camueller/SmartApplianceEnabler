@@ -172,7 +172,6 @@ export class ControlFactory {
   }
 
   toJSON(control: Control): string {
-    console.log('control=', control);
     this.logger.debug('Control (TYPE): ' + JSON.stringify(control));
     let controlUsed: any;
     if (control.startingCurrentDetection) {
@@ -202,7 +201,6 @@ export class ControlFactory {
       rawControl = JSON.stringify(controlUsed);
     }
     this.logger.debug('Control (JSON): ' + rawControl);
-    console.log('rawControl=', rawControl);
     return rawControl;
   }
 

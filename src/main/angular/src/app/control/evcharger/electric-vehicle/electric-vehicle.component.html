@@ -54,12 +54,12 @@
   </div>
   <h3>{{'ElectricVehicleComponent.script.heading' | translate}}</h3>
   <div class="sae__fields">
-    <mat-form-field class="ElectricVehicleComponent__scriptFilename">
-      <mat-label>{{'ElectricVehicleComponent.script.filename' | translate}}</mat-label>
-      <input matInput type="text" formControlName="scriptFilename"
-             required="{{formHandler.isRequired('scriptFilename')}}">
-      <mat-error *ngIf="errors.scriptFilename">{{errors.scriptFilename}}</mat-error>
-    </mat-form-field>
+    <app-filenameinput
+      formControlNameInput="scriptFilename"
+      label="{{'ElectricVehicleComponent.script.filename' | translate}}"
+      value="{{socScriptFilename}}"
+      [requiredFileModes]="socScriptFileModes"
+    ></app-filenameinput>
   </div>
   <div class="sae__fields">
     <mat-form-field class="sae__regex">

@@ -58,6 +58,11 @@
   "ApplianceComponent.error.maxOffTime_pattern": "Die maximale Ausschaltdauer muss in Sekunden angegeben werden",
   "ApplianceComponent.confirmDeletion": "Wirklich löschen?",
 
+  "FilenameInputComponent.error.missing": "Die Datei exisiert nicht.",
+  "FilenameInputComponent.error.not-readable": "Die Datei kann nicht gelesen werden.",
+  "FilenameInputComponent.error.not-writable": "Die Datei kann nicht geschrieben werden.",
+  "FilenameInputComponent.error.not-executable": "Die Datei kann nicht ausgeführt werden.",
+
   "MeterComponent.type": "Typ",
   "de.avanux.smartapplianceenabler.meter.S0ElectricityMeter": "S0",
   "de.avanux.smartapplianceenabler.meter.ModbusElectricityMeter": "Modbus",

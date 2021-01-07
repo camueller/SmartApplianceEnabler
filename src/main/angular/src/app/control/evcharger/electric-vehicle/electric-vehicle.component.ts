@@ -14,6 +14,8 @@ import {ElectricVehicle} from './electric-vehicle';
 import {TimeUtil} from '../../../shared/time-util';
 import {TimepickerComponent} from '../../../material/timepicker/timepicker.component';
 import { ViewChild } from '@angular/core';
+import {FileMode} from '../../../material/filenameinput/file-mode';
+import {FilenameInputComponent} from '../../../material/filenameinput/filename-input.component';
 
 @Component({
   selector: 'app-electric-vehicle',
@@ -32,6 +34,8 @@ export class ElectricVehicleComponent implements OnChanges, OnInit {
   remove = new EventEmitter<any>();
   @ViewChild('updateAfterSecondsComponent', {static: true})
   updateAfterSecondsComponent: TimepickerComponent;
+  @ViewChild(FilenameInputComponent, {static: true})
+  socScriptFilenameInput: FilenameInputComponent;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -103,8 +107,6 @@ export class ElectricVehicleComponent implements OnChanges, OnInit {
     this.formHandler.addFormControl(this.form, 'defaultSocOptionalEnergy',
       this.electricVehicle && this.electricVehicle.defaultSocOptionalEnergy,
       [Validators.pattern(InputValidatorPatterns.PERCENTAGE)]);
-    this.formHandler.addFormControl(this.form, 'scriptFilename',
-      this.electricVehicle && this.electricVehicle.socScript && this.electricVehicle.socScript.script);
     this.formHandler.addFormControl(this.form, 'scriptExtractionRegex',
       this.electricVehicle && this.electricVehicle.socScript && this.electricVehicle.socScript.extractionRegex);
     this.formHandler.addFormControl(this.form, 'scriptUpdateSocAfterIncrease',
@@ -124,7 +126,6 @@ export class ElectricVehicleComponent implements OnChanges, OnInit {
     this.formHandler.setFormControlValue(this.form, 'defaultSocOptionalEnergy',
       this.electricVehicle.defaultSocOptionalEnergy);
     if (this.electricVehicle && this.electricVehicle.socScript) {
-      this.formHandler.setFormControlValue(this.form, 'scriptFilename', this.electricVehicle.socScript.script);
       this.formHandler.setFormControlValue(this.form, 'scriptExtractionRegex', this.electricVehicle.socScript.extractionRegex);
       this.formHandler.setFormControlValue(this.form, 'scriptUpdateSocAfterIncrease', this.electricVehicle.socScript.updateAfterIncrease);
       this.formHandler.setFormControlValue(this.form, 'scriptUpdateSocAfterSeconds', this.electricVehicle.socScript.updateAfterSeconds);
@@ -139,7 +140,7 @@ export class ElectricVehicleComponent implements OnChanges, OnInit {
     const chargeLoss = getValidInt(this.form.controls.chargeLoss.value);
     const defaultSocManual = getValidInt(this.form.controls.defaultSocManual.value);
     const defaultSocOptionalEnergy = getValidInt(this.form.controls.defaultSocOptionalEnergy.value);
-    const scriptFilename = getValidString(this.form.controls.scriptFilename.value);
+    const scriptFilename = this.socScriptFilenameInput.updateModelFromForm();
     const extractionRegex = getValidString(this.form.controls.scriptExtractionRegex.value);
     const updateSocAfterIncrease = this.form.controls.scriptUpdateSocAfterIncrease.value;
     const updateSocAfterTime = this.updateAfterSecondsComponent.updateModelFromForm();
@@ -165,6 +166,14 @@ export class ElectricVehicleComponent implements OnChanges, OnInit {
         && updateSocAfterTime.length > 0 ? TimeUtil.toSeconds(updateSocAfterTime) : undefined;
     }
     return this.electricVehicle;
+  }
+
+  public get socScriptFilename() {
+    return this.electricVehicle?.socScript?.script;
+  }
+
+  public get socScriptFileModes() {
+    return [FileMode.read, FileMode.execute];
   }
 
   removeElectricVehicle() {

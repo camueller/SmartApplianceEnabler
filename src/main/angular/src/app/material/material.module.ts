@@ -18,6 +18,7 @@ import { TimepickerComponent } from './timepicker/timepicker.component';
 import {ReactiveFormsModule} from '@angular/forms';
 import {HelpComponent} from './help/help.component';
 import {SafeurlPipe} from './safe-url.pipe';
+import { FilenameInputComponent } from './filenameinput/filename-input.component';
 
 
 @NgModule({
@@ -26,6 +27,7 @@ import {SafeurlPipe} from './safe-url.pipe';
     MessageboxComponent,
     SafeurlPipe,
     TimepickerComponent,
+    FilenameInputComponent,
   ],
   imports: [
     CommonModule,
@@ -60,6 +62,7 @@ import {SafeurlPipe} from './safe-url.pipe';
     MatTooltipModule,
     MessageboxComponent,
     TimepickerComponent,
+    FilenameInputComponent,
   ],
   providers: [
     {provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {floatLabel: 'always'}},

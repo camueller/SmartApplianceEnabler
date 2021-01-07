@@ -41,6 +41,8 @@ import de.avanux.smartapplianceenabler.semp.webservice.*;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+
+import de.avanux.smartapplianceenabler.util.FileHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -69,6 +71,7 @@ public class SaeController {
     private static final String CONTROLRECOMMENDATIONS_URL = BASE_URL + "/controlrecommendations";
     private static final String EV_URL = BASE_URL + "/ev";
     private static final String EVCHARGE_URL = BASE_URL + "/evcharge";
+    private static final String FILE_URL = BASE_URL + "/file";
     private static final String INFO_URL = BASE_URL + "/info";
     private static final String TASMOTA_COMMAND_URL = "/cm";
     // only required for development if running via "ng serve"
@@ -935,6 +938,20 @@ public class SaeController {
             applianceStatuses.add(applianceStatus);
         }
         return applianceStatuses;
+    }
+
+    @RequestMapping(value = FILE_URL, method = RequestMethod.GET)
+    @CrossOrigin(origins = CROSS_ORIGIN_URL)
+    public Integer getFileAttributes(@RequestParam(value = "pathname") String pathname) {
+        // http://localhost:8080/sae/file?pathname=%2Ftmp%2Frolling-2021-01-05.log
+        try {
+            logger.debug("Received request for attritbutes of file " + pathname);
+            FileHandler fileHandler = new FileHandler();
+            return fileHandler.getFileAttributes(pathname);
+        } catch (Throwable e) {
+            logger.error("Error in " + getClass().getSimpleName(), e);
+        }
+        return null;
     }
 
     @RequestMapping(value = INFO_URL, method = RequestMethod.GET, produces = "application/json")

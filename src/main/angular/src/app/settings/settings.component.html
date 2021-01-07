@@ -59,12 +59,12 @@
     <h2 class="sae__heading-extra-top-margin">{{'SettingsComponent.notification.heading' | translate}}
       <app-help [helpfile]="'Settings'" [anchor]="'notifications'"></app-help></h2>
     <div class="sae__fields">
-      <mat-form-field class="sae__url">
-        <mat-label>{{'SettingsComponent.notification.command' | translate}}</mat-label>
-        <input matInput type="text" formControlName="notificationCommand"
-               required="{{formHandler.isRequired('notificationCommand')}}">
-        <mat-error *ngIf="errors.notificationCommand">{{errors.notificationCommand}}</mat-error>
-      </mat-form-field>
+      <app-filenameinput
+        formControlNameInput="notificationCommand"
+        label="{{'SettingsComponent.notification.command' | translate}}"
+        value="{{settings.notificationCommand}}"
+        [requiredFileModes]="notificationScriptFileModes"
+      ></app-filenameinput>
     </div>
   </section>
 

@@ -41,4 +41,9 @@ export class SettingsService extends SaeService {
     return this.http.get(`${SaeService.API}/info`)
       .pipe(map(info => this.settingsFactory.infoFromJSON(info)));
   }
+
+  getFileAttributes(pathname: string): Observable<number> {
+    const url = `${SaeService.API}/file?pathname=${pathname}`;
+    return this.http.get(encodeURI(url)).pipe(map(filemode => Number.parseInt(filemode.toString(), 10)));
+  }
 }
