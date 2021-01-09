@@ -21,6 +21,12 @@
     line-height: normal;
     padding: 0.2rem;
     border-radius: 2px;
+    margin-right: 0.3rem;
+  }
+
+  &__linkboxes {
+    display: flex;
+    flex-direction: row;
   }
 
   &__title {
@@ -29,6 +35,14 @@
     @include media("<=xs") {
       margin-right: 0;
     }
+  }
+
+  &__versionQualifier {
+    background-color: orange;
+    font-weight: bold;
+    padding: 0.1rem;
+    margin-right: 0.2rem;
+    border-radius: 2px;
   }
 }
 

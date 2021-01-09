@@ -24,6 +24,11 @@ import {HttpClient} from '@angular/common/http';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {Octokit} from '@octokit/rest';
 
+export interface AvailableVersion {
+  version: string;
+  prerelease: boolean;
+}
+
 @Injectable()
 export class VersionService {
 
@@ -45,13 +50,7 @@ export class VersionService {
     }));
   }
 
-  /**
-   * The most recent available version is:
-   * - the version of the most recent release NOT being a pre-release if the current version is NOT a pre-release
-   * - the version of the most recent release being a pre-release if the current version is a pre-release
-   * If the current version differs from the most recent available version the latter is returned, otherweise undefined.
-   */
-  public getAvailableVersion(): Observable<string | undefined> {
+  public getAvailableVersion(): Observable<AvailableVersion[] | undefined> {
       const resultSubject = new BehaviorSubject(undefined);
       this.getCurrentVersion().subscribe(async (currentVersion) => {
         if (this.availableVersion) {
@@ -59,15 +58,27 @@ export class VersionService {
           return;
         }
         const releases = await this.octo.repos.listReleases({owner: 'camueller', repo: 'SmartApplianceEnabler'});
-        const currentRelease = releases.data.find(release => release.tag_name === currentVersion.version);
-        let availableVersion;
-        // Previous pre-releases have been deleted => if we don't find a release for the current version it is a pre-release
-        if (!currentRelease || currentRelease.prerelease) {
-          availableVersion = releases.data.find(release => release.prerelease)?.tag_name;
-        } else {
-          availableVersion = releases.data.find(release => !release.prerelease)?.tag_name;
+        const orderedReleasesMostRecentFirst = releases.data.sort((release1, release2) =>
+          release1.published_at < release2.published_at ? 1 : release1.published_at > release2.published_at ? -1 : 0);
+        const availableVersions = [];
+        if (orderedReleasesMostRecentFirst && orderedReleasesMostRecentFirst.length > 0) {
+          const currentVersionRelease = orderedReleasesMostRecentFirst.find(release => release.tag_name === currentVersion?.version);
+          const mostRecentStableRelease = orderedReleasesMostRecentFirst.find(release => !release.prerelease);
+          const mostRecentRelease = orderedReleasesMostRecentFirst[0];
+          if (currentVersionRelease && mostRecentStableRelease && mostRecentStableRelease.tag_name > currentVersion?.version) {
+            availableVersions.push({
+              version: mostRecentStableRelease.tag_name,
+              prerelease: mostRecentStableRelease.prerelease
+            });
+          }
+          if (currentVersion?.version !== mostRecentRelease.tag_name) {
+            availableVersions.push({
+              version: orderedReleasesMostRecentFirst[0].tag_name,
+              prerelease: orderedReleasesMostRecentFirst[0].prerelease
+            });
+          }
         }
-        resultSubject.next(availableVersion && availableVersion !== currentVersion.version ? availableVersion : undefined);
+        resultSubject.next(availableVersions ? availableVersions : undefined);
       });
       return resultSubject;
   }
