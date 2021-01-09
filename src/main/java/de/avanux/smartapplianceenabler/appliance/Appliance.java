@@ -409,9 +409,14 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
         if (isEvCharger()) {
             ElectricVehicleCharger evCharger = (ElectricVehicleCharger) this.control;
             ElectricVehicle ev = evCharger.getConnectedVehicle();
-            timeframeIntervalHandler.updateSocOfOptionalEnergyTimeframeIntervalForEVCharger(now,
-                    ev.getId(), ev.getBatteryCapacity(), socCurrent, socRequested);
-            evCharger.resetChargingCompletedToVehicleConnected(now);
+            if(ev != null) {
+                timeframeIntervalHandler.updateSocOfOptionalEnergyTimeframeIntervalForEVCharger(now,
+                        ev.getId(), ev.getBatteryCapacity(), socCurrent, socRequested);
+                evCharger.resetChargingCompletedToVehicleConnected(now);
+            }
+            else {
+                logger.warn("{}: no ev connected", id);
+            }
         }
         else {
             logger.warn("{}: SOC can only be set for ev charger!", id);
