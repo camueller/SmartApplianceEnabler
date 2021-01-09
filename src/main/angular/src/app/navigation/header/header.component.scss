@@ -2,15 +2,40 @@
 @import 'node_modules/include-media/dist/_include-media.scss';
 
 .HeaderComponent {
+  &__layout {
+    display: flex;
+    align-items: center;
 
+    @include media("<=xs") {
+      flex-direction: column;
+    }
+  }
+
+  &__link {
+    text-decoration: none;
+  }
+
+  &__linkbox {
+    background-color: white;
+    font-size: 0.8rem;
+    line-height: normal;
+    padding: 0.2rem;
+    border-radius: 2px;
+  }
+
+  &__title {
+    margin-right: 1rem;
+
+    @include media("<=xs") {
+      margin-right: 0;
+    }
+  }
 }
 
-mat-toolbar{
+mat-toolbar {
   border-radius: 3px;
-}
 
-@include media("<=xs") {
-  mat-toolbar{
+  @include media("<=xs") {
     border-radius: 0;
   }
 }

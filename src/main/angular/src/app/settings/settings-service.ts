@@ -6,7 +6,6 @@ import {SettingsFactory} from './settings-factory';
 import {Settings} from './settings';
 import {HttpClient} from '@angular/common/http';
 import {Logger} from '../log/logger';
-import {Info} from './info';
 import {map} from 'rxjs/operators';
 
 @Injectable()
@@ -35,11 +34,6 @@ export class SettingsService extends SaeService {
     const content = this.settingsFactory.toJSON(settings);
     this.logger.debug('Update settings using ' + url);
     return this.http.put(url, content, {headers: this.headersContentTypeJson, responseType: 'text'});
-  }
-
-  getInfo(): Observable<Info> {
-    return this.http.get(`${SaeService.API}/info`)
-      .pipe(map(info => this.settingsFactory.infoFromJSON(info)));
   }
 
   getFileAttributes(pathname: string): Observable<number> {

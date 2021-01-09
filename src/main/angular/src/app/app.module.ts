@@ -51,6 +51,7 @@ import {StatusModule} from './status/status.module';
 import {HttpLoaderFactory} from './shared/http-loader-factory';
 import {SettingsModbusComponent} from './settings/modbus/settings-modbus.component';
 import {NotificationModule} from './notification/notification.module';
+import {VersionService} from './shared/version-service';
 
 @NgModule({
   declarations: [
@@ -100,6 +101,7 @@ import {NotificationModule} from './notification/notification.module';
     SettingsService,
     SettingsResolver,
     SettingsDefaultsResolver,
+    VersionService,
   ],
   bootstrap: [AppComponent]
 })

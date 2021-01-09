@@ -4,7 +4,13 @@
       <mat-icon>menu</mat-icon>
     </button>
   </div>
-  <div>
-    <div>{{'HeaderComponent.title' | translate}} {{version}}</div>
+  <div class="HeaderComponent__layout">
+    <div class="HeaderComponent__title">{{'HeaderComponent.title' | translate}} {{version}}</div>
+    <div class="HeaderComponent__linkbox" *ngIf="availableVersion">
+      <a [href]="updateUrl"
+         class="HeaderComponent__link"
+         target="_blank"
+      >{{'HeaderComponent.newVersionAvailable' | translate: {version: this.availableVersion} }}</a>
+    </div>
   </div>
 </mat-toolbar>

@@ -100,6 +100,7 @@
   "MeterHttpComponent.error.measurementInterval_pattern": "Das Messintervall muss eine Zahl sein",
 
   "HeaderComponent.title": "Smart Appliance Enabler",
+  "HeaderComponent.newVersionAvailable": "Version {{version}} verfügbar",
 
   "HttpReadComponent.url": "URL",
   "HttpReadComponent.contentType": "Content-Type",
