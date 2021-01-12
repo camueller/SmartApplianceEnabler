@@ -17,9 +17,14 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
 
-LOG=/tmp/sae-install.log
-PREFIX="**********"
-PASSWORD="sae"
+set -x
+
+INSTALL_CONFIG=/usr/local/etc/install.config
+. $INSTALL_CONFIG
+
+if [ "$INSTALL_WEBMIN" = true ] ; then
+  PACKAGES="$PACKAGES perl libnet-ssleay-perl openssl libauthen-pam-perl libpam-runtime libio-pty-perl apt-show-versions python"
+fi
 
 echo "$PREFIX Update software catalog ..." >> $LOG
 apt update 2>&1 >> $LOG
@@ -28,24 +33,21 @@ echo "$PREFIX Upgrading system ..." >> $LOG
 apt upgrade -y 2>&1 >> $LOG
 
 echo "$PREFIX Setting time zone ..." >> $LOG
-echo 'Europe/Berlin' > /etc/timezone
+echo $TIMEZONE > /etc/timezone
 echo /etc/timezone >> $LOG
 
 echo "$PREFIX Copy zoneinfo ..." >> $LOG
-cp /usr/share/zoneinfo/Europe/Berlin /etc/localtime 2>&1 >> $LOG
+cp /usr/share/zoneinfo/$TIMEZONE /etc/localtime 2>&1 >> $LOG
 
-echo "$PREFIX Install OpenJDK 11 ..." >> $LOG
-apt install openjdk-11-jre-headless -y 2>&1 >> $LOG
-
-echo "$PREFIX Install Wiring Pi ..." >> $LOG
-apt install wiringpi -y 2>&1 >> $LOG
+echo "$PREFIX Install required packages ..." >> $LOG
+apt install $PACKAGES -y 2>&1 >> $LOG
 
 echo "$PREFIX Setting up user ..." >> $LOG
 mkdir /opt/sae 2>&1 >> $LOG
 groupadd sae 2>&1 >> $LOG
 useradd -d /opt/sae -c "SmartApplianceEnabler" -g sae -M sae -s /bin/bash 2>&1 >> $LOG
 usermod -a -G gpio,sudo sae 2>&1 >> $LOG
-echo $PASSWORD | passwd sae --stdin 2>&1 >> $LOG
+(echo $PASSWORD; echo $PASSWORD) | passwd sae 2>&1 >> $LOG
 cp /home/pi/.profile /opt/sae 2>&1 >> $LOG
 cp /home/pi/.bashrc /opt/sae 2>&1 >> $LOG
 
@@ -74,5 +76,14 @@ systemctl daemon-reload 2>&1 >> $LOG
 
 echo "$PREFIX Starting SAE ..." >> $LOG
 systemctl start smartapplianceenabler.service 2>&1 >> $LOG
+
+echo "$PREFIX Installing Webmin ..." >> $LOG
+wget "http://prdownloads.sourceforge.net/webadmin/webmin_"$WEBMIN_VERSION"_all.deb" -P /tmp 2>>$LOG
+dpkg -i "/tmp/webmin_"$WEBMIN_VERSION"_all.deb"
+
+echo "$PREFIX Clean up installation files ..." >> $LOG
+rm $PARENT_SCRIPT
+mv $PARENT_SCRIPT_BACKUP $PARENT_SCRIPT
+rm $INSTALL_CONFIG
 
 echo "$PREFIX $0 finished" >> $LOG
