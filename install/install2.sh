@@ -87,3 +87,6 @@ mv $PARENT_SCRIPT_BACKUP $PARENT_SCRIPT
 rm $INSTALL_CONFIG
 
 echo "$PREFIX $0 finished" >> $LOG
+echo 0 > $POWER_LED
+sleep 3600
+echo 255 > $POWER_LED
