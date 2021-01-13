@@ -23,7 +23,7 @@ INSTALL_CONFIG=/usr/local/etc/install.config
 . $INSTALL_CONFIG
 
 if [ "$INSTALL_WEBMIN" = true ] ; then
-  PACKAGES="$PACKAGES perl libnet-ssleay-perl openssl libauthen-pam-perl libpam-runtime libio-pty-perl apt-show-versions python"
+  PACKAGES="$PACKAGES perl libnet-ssleay-perl openssl libauthen-pam-perl libpam-runtime libio-pty-perl apt-show-versions python mon"
 fi
 if [ -n "$WIFI_SSID" ] ; then
   IP_ADDRESS=`ip addr | grep wlan0 | grep inet | awk '{print $2}' | awk -F '/' '{print $1}'`
@@ -83,9 +83,11 @@ systemctl daemon-reload 2>&1 >> $LOG
 echo "$PREFIX Starting SAE ..." >> $LOG
 systemctl start smartapplianceenabler.service 2>&1 >> $LOG
 
-echo "$PREFIX Installing Webmin ..." >> $LOG
-wget "http://prdownloads.sourceforge.net/webadmin/webmin_"$WEBMIN_VERSION"_all.deb" -P /tmp 2>>$LOG
-dpkg -i "/tmp/webmin_"$WEBMIN_VERSION"_all.deb"
+if [ "$INSTALL_WEBMIN" = true ] ; then
+  echo "$PREFIX Installing Webmin ..." >> $LOG
+  wget "http://prdownloads.sourceforge.net/webadmin/webmin_"$WEBMIN_VERSION"_all.deb" -P /tmp 2>>$LOG
+  dpkg -i "/tmp/webmin_"$WEBMIN_VERSION"_all.deb"
+fi
 
 echo "$PREFIX Clean up installation files ..." >> $LOG
 rm $PARENT_SCRIPT
