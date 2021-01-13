@@ -27,6 +27,7 @@ if [ "$INSTALL_WEBMIN" = true ] ; then
 fi
 if [ -n "$WIFI_SSID" ] ; then
   IP_ADDRESS=`ip addr | grep wlan0 | grep inet | awk '{print $2}' | awk -F '/' '{print $1}'`
+  echo "IP_ADDRESS=$IP_ADDRESS" >> $LOG
 fi
 
 echo "$PREFIX Update software catalog ..." >> $LOG
@@ -62,7 +63,7 @@ wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/etc/defau
 chown root.root /etc/default/smartapplianceenabler 2>&1 >> $LOG
 chmod 644 /etc/default/smartapplianceenabler 2>&1 >> $LOG
 if [ -n "$IP_ADDRESS" ] ; then
-  sed -i "s/#JAVA_OPTS=...JAVA_OPTS. -Dserver.address=192.168.178.33./JAVA_OPTS=\"\${JAVA_OPTS} -Dserver.address=$IP_ADDRESS\"/g" /tmp/smartapplianceenabler
+  sed -i "s/#JAVA_OPTS=...JAVA_OPTS. -Dserver.address=.*$/JAVA_OPTS=\"\${JAVA_OPTS} -Dserver.address=$IP_ADDRESS\"/g" /etc/default/smartapplianceenabler
 fi
 
 wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/logback-spring.xml -P /opt/sae 2>>$LOG
