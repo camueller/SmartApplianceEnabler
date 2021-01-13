@@ -25,6 +25,9 @@ INSTALL_CONFIG=/usr/local/etc/install.config
 if [ "$INSTALL_WEBMIN" = true ] ; then
   PACKAGES="$PACKAGES perl libnet-ssleay-perl openssl libauthen-pam-perl libpam-runtime libio-pty-perl apt-show-versions python"
 fi
+if [ -n "$WIFI_SSID" ] ; then
+  IP_ADDRESS=`ip addr | grep wlan0 | grep inet | awk '{print $2}' | awk -F '/' '{print $1}'`
+fi
 
 echo "$PREFIX Update software catalog ..." >> $LOG
 apt update 2>&1 >> $LOG
@@ -58,6 +61,9 @@ chmod 755 /opt/sae/smartapplianceenabler 2>&1 >> $LOG
 wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/etc/default/smartapplianceenabler -P /etc/default 2>>$LOG
 chown root.root /etc/default/smartapplianceenabler 2>&1 >> $LOG
 chmod 644 /etc/default/smartapplianceenabler 2>&1 >> $LOG
+if [ -n "$IP_ADDRESS" ] ; then
+  sed -i "s/#JAVA_OPTS=...JAVA_OPTS. -Dserver.address=192.168.178.33./JAVA_OPTS=\"\${JAVA_OPTS} -Dserver.address=$IP_ADDRESS\"/g" /tmp/smartapplianceenabler
+fi
 
 wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/logback-spring.xml -P /opt/sae 2>>$LOG
 chmod 644 /opt/sae/logback-spring.xml 2>&1 >> $LOG
