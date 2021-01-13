@@ -87,7 +87,7 @@ systemctl start smartapplianceenabler.service 2>&1 >> $LOG
 if [ "$INSTALL_WEBMIN" = true ] ; then
   echo "$PREFIX Installing Webmin ..." >> $LOG
   wget "http://prdownloads.sourceforge.net/webadmin/webmin_"$WEBMIN_VERSION"_all.deb" -P /tmp 2>>$LOG
-  dpkg -i "/tmp/webmin_"$WEBMIN_VERSION"_all.deb"
+  dpkg -i "/tmp/webmin_"$WEBMIN_VERSION"_all.deb" 2>&1 >> $LOG
 fi
 
 echo "$PREFIX Clean up installation files ..." >> $LOG
