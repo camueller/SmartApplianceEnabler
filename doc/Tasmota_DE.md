@@ -83,6 +83,8 @@ Für jede Zähler-Abfrage finden sich in der [Log-Datei](Support.md#Log) folgend
 2017-06-03 18:39:55,153 DEBUG [Timer-0] d.a.s.a.HttpElectricityMeter [HttpElectricityMeter.java:119] F-00000001-000000000001-00: Power value extracted from HTTP response: 26
 ```
 
+*Webmin*: In [View Logfile](Logging_DE.md#webmin-logs) gibt man hinter `Only show lines with text` ein `Http` und drückt Refresh.
+
 ## Geräte mit Tasmota-Firmware als Schalter
 
 Der Schaltzustand kann wie folgt geändert werden:
@@ -117,6 +119,8 @@ Für jeden Schaltvorgang finden sich in der [Log-Datei](Support.md#Log) folgende
 2020-01-06 14:51:22,817 DEBUG [http-nio-8080-exec-4] d.a.s.h.HttpTransactionExecutor [HttpTransactionExecutor.java:105] F-00000001-000000000001-00: Sending GET request url=http://192.168.1.1/cm?cmnd=Power%20On
 2020-01-06 14:51:22,984 DEBUG [http-nio-8080-exec-4] d.a.s.h.HttpTransactionExecutor [HttpTransactionExecutor.java:160] F-00000001-000000000001-00: Response code is 200
 ```
+
+*Webmin*: In [View Logfile](Logging_DE.md#webmin-logs) gibt man hinter `Only show lines with text` ein `Http` und drückt Refresh.
 
 ## Laufzeitanforderung bei Tastendruck erstellen
 Tasmota ermöglicht das Anlegen von Regeln, die bei bestimmten Ereignissen ausgelöst werden.

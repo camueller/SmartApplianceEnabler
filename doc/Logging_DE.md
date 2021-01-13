@@ -37,6 +37,7 @@ Für die Log-Analyse haben sich einige Befehle als sehr hilfreich erwiesen.
 Bei den beispielhaft gezeigten Befehlen muss das Datum im Dateinamen der Log-Datei immer angepasst werden!
 
 ### Log live verfolgen
+#### Console
 Mit dem folgenden Befehl werden kontinuierlich Log-Ausgaben für alle Geräte angezeigt, sobald sie in die Log-Datei geschrieben werden: 
 ```console
 sae@raspi ~ $ tail -f /tmp/rolling-2020-12-31.log
@@ -53,6 +54,22 @@ pi@raspi ~ $ tail -f /tmp/rolling-2020-12-31.log | grep --line-buffered F-000000
 2020-12-31 11:23:19,841 DEBUG [Timer-0] d.a.s.h.HttpTransactionExecutor [HttpTransactionExecutor.java:168] F-00000001-000000000002-00: Response code is 200
 ```
 
+#### Webmin
+<a name="webmin-logs">
+
+System -> System Logs
+Die Schaltfläche zur Dateiauswahl rechts von `View log file` anklicken.
+
+In dem Dateiauswahl-Dialog nach `tmp` navigieren und die Datei entsprechende Datei auswählen.
+
+Jetzt sollte hinter `View log file` der Name der ausgewählten Log-Datei stehen.
+
+Nach Klick auf die Schaltfälche `View` werden die letzten 100 Zeilen der Datei angezeigt.
+
+Durch Klick auf den Pfeil rechts in der Schaltfläche `View` kann das automatische Aktualisieren der Anzeige aktiviert werden.
+
+Um nur die Log-Einträge des interssierenden Gerätes zu sehen gibt man hinter `Only show lines with text` die ID des Gerätes ein z.B. `F-00000001-000000000002-00`.
+
 ## Log auf Fehler durchsuchen
 
 Bei Verdacht auf Fehlverhalten des *Smart Appliance Enabler* sollte das Log gezielt nach Fehlern durchsucht werden.
@@ -62,7 +79,9 @@ Der *Smart Appliance Enabler* loggt Fehler mit dem Log-Level `ERROR`. d.h. diese
 sae@raspi:~ $ grep ERROR /tmp/rolling-2020-12-31.log
 ```
 
-Wenn dieser Befehl keine Ausgaben liefen, enthält das Log fürr diesen Tag keine Fehler. 
+*Webmin*: In [View Logfile](#webmin-logs) gibt man hinter `Only show lines with text` ein `error ` mit einem Leerzeichen am Ende (weil die Suche leider nicht Gross-/Kleinschriebung unterscheidet)!
+
+Wenn dieser Befehl keine Ausgaben liefen, enthält das Log für diesen Tag keine Fehler. 
 Zusammen mit dem Fehler wird meist die Ursache des Fehlers in das Log geschrieben. Um diese Fehlerursache mit anzuzeigen muss der Befehl erweitert werden, sodass er die 2 Zeilen vor dem Fehler und 35 Zeilen nach dem Fehler ebenfalls ausgibt:
 
 ```console
@@ -107,6 +126,8 @@ java.net.SocketTimeoutException: Read timed out
 2020-12-31 16:49:03,487 DEBUG [Timer-0] d.a.s.n.NotificationHandler [NotificationHandler.java:96] F-00000001-000000000006-00: Checking notification preconditions: errorCountPerDay=0
 ```
 
+*Webmin*: Wenn sich in [View Logfile](#webmin-logs) sich ein Fehler findet, koptiert man sich die Zeit des Log-Eintrages (z.B. `15:37:22`) und fügt diesen für eine erneute Suche `Only show lines with text` ein, wobei man aber den letzten Sekundenwert weglässt (damit wird das vorgenannte Beispiel zu `15:37:2`), damit man auch die Log-Einträge von den Sekunden vor dem Fehler angezeigt bekommt.
+
 ## Version des Smart Appliance Enabler
 
 Direkt nach dem Start loggt der *Smart Appliance Enabler* seine Version. Mit folgendem Befehl kann man diesen Eintrag anzeigen:
@@ -115,6 +136,8 @@ sae@raspi:~ $ grep "Running version" /tmp/rolling-2020-12-31.log
 2020-12-31 14:36:22,435 INFO [main] d.a.s.Application [Application.java:49] Running version 1.6.7 2020-12-31 13:31
 ```
 
+*Webmin*: In [View Logfile](#webmin-logs) gibt man hinter `Only show lines with text` ein `Running version` und drückt Refresh.
+
 ## Anzeige der SEMP-URL
 
 Direkt nach dem Start loggt der *Smart Appliance Enabler* die [SEMP-URL](SEMP_DE.md), welche er an den *Sunny Home Manager* kommuniziert. Mit folgendem Befehl kann man diesen Eintrag anzeigen:
@@ -122,6 +145,8 @@ Direkt nach dem Start loggt der *Smart Appliance Enabler* die [SEMP-URL](SEMP_DE
 sae@raspi:~ $ grep "SEMP UPnP" /tmp/rolling-2020-12-31.log
 2020-12-31 14:36:22,744 INFO [main] d.a.s.s.d.SempDiscovery [SempDiscovery.java:57] SEMP UPnP will redirect to http://192.168.1.1:8080
 ```
+
+*Webmin*: In [View Logfile](#webmin-logs) gibt man hinter `Only show lines with text` ein `SEMP UPnP` und drückt Refresh.
 
 ## Schaltbefehl vom Sunny Home Manager
 <a name="control-request">
@@ -132,3 +157,5 @@ Wenn ein Schaltbefehl vom *Sunny Home Manager* für ein Gerät empfangen wird, f
 sae@raspi:~ $ grep "control request" /tmp/rolling-2020-12-30.log
 2020-12-30 14:30:09,977 DEBUG [http-nio-8080-exec-9] d.a.s.s.w.SempController [SempController.java:235] F-00000001-000000000019-00: Received control request: on=true, recommendedPowerConsumption=22000W
 ```
+
+*Webmin*: In [View Logfile](#webmin-logs) gibt man hinter `Only show lines with text` ein `control request` und drückt Refresh.

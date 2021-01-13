@@ -19,6 +19,8 @@ sae@raspi2:~ $ grep "c.Switch" /tmp/rolling-2020-12-30.log | grep F-00000001-000
 2020-12-30 11:05:59,820 INFO [http-nio-8080-exec-6] d.a.s.c.Switch [Switch.java:101] F-00000001-000000000013-00: Switching on GPIO 3
 ```
 
+*Webmin*: In [View Logfile](Logging_DE.md#webmin-logs) gibt man hinter `Only show lines with text` ein `c.Switch` und drückt Refresh.
+
 ## Solid-State-Relais
 
 Zum Schalten von 240V-Geräten eignen sich [**Solid-State-Relais**](https://de.wikipedia.org/wiki/Relais#Halbleiterrelais).

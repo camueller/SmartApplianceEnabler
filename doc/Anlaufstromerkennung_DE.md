@@ -13,3 +13,22 @@ Genauso wird der **Abschaltstrom** als Übergang zurück erkannt, wenn der Strom
 ![Anlaufstromerkennung](../pics/fe/Anlaufstromerkennung.png)
 
 Nach Erkennung des Abschaltstromes wird direkt wieder die Anlaufstromerkennung aktiviert. Dadurch ist es möglich das Gerät innerhalb eines [Zeitplanes](Schedules_DE.md) mehrmals hintereinander laufen zu lassen.
+
+## Log
+Wird der Anlaufstrom erkannt, findet sich im Log ein entsprechender Eintrag:
+
+```console
+$ grep "Starting current detected" /tmp/rolling-2021-01-08.log
+2021-01-08 10:43:57,469 DEBUG [pi4j-gpio-event-executor-2] d.a.s.c.StartingCurrentSwitch [StartingCurrentSwitch.java:298] F-00000001-000000000012-00: Starting current detected.
+```
+
+*Webmin*: In [View Logfile](Logging_DE.md#webmin-logs) gibt man hinter `Only show lines with text` ein `Starting current detected` und drückt Refresh.
+
+Entsprechend findet sich im Log auch ein Eintrag, sobald der Abschaltstrom erkannt wurde:
+
+```console
+$ grep "Finished current detected" /tmp/rolling-2021-01-08.log
+2021-01-08 13:04:25,374 DEBUG [Timer-0] d.a.s.c.StartingCurrentSwitch [StartingCurrentSwitch.java:316] F-00000001-000000000012-00: Finished current detected.
+```
+
+*Webmin*: In [View Logfile](Logging_DE.md#webmin-logs) gibt man hinter `Only show lines with text` ein `Finished current detected` und drückt Refresh.

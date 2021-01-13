@@ -24,6 +24,8 @@ sae@raspi:~ $ grep S0ElectricityMeter /tmp/rolling-2021-01-01.log | grep F-00000
 2021-01-01 13:05:47,604 DEBUG [pi4j-gpio-event-executor-47] d.a.s.m.S0ElectricityMeter [S0ElectricityMeter.java:193] F-00000001-000000000012-00: power: 10W
 ```
 
+*Webmin*: In [View Logfile](Logging_DE.md#webmin-logs) gibt man hinter `Only show lines with text` ein `S0ElectricityMeter` und drückt Refresh.
+
 ## Schaltung
 Der für den Zähler verwendete GPIO-Eingang muß auf einen definierten Grundzustand gesetzt werden, um den Einfluss von Störungen zu minimieren. Dabei unterscheidet man zwischen **Pull-Up** und **Pull-Down** (für Details siehe https://www.elektronik-kompendium.de/sites/raspberry-pi/2006051.htm).
 
