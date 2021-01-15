@@ -84,9 +84,10 @@ Die Leistungaufname des Gerätes, die an den *Sunny Home Manager* übermittelt w
 
 ### SAE4
 Wenn ein Schaltbefehl vom *Sunny Home Manager* empfangen wird, wird dieser an den für das Gerät im *Smart Appliance Enabler* konfigurierten Schalter weitergegeben. In Abhängigkeit In Abhängkeit von dessen Typ kann man im Log den Schaltbefehl sehen:  
-- [GPIO-Switch](GPIOSwitch_DE.md#log)
-- [HTTP](HttpSwitch_DE.md#log)
-- [Modbus](ModbusSwitch_DE.md#log)
+- [GPIO-basierter Schalter](GPIOSwitch_DE.md#log)
+- [HTTP-basierter Schalter](HttpSwitch_DE.md#log)
+- [Modbus-basierter Schalter](ModbusSwitch_DE.md#log)
+- [Wallbox](EVCharger_DE.md#log)
 
 ### SAE5
 In der [Server-Konfiguration](ConfigurationFiles_DE.md#etc-default-smartapplianceenabler) kann der Standardport geändert werden.

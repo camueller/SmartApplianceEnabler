@@ -68,6 +68,6 @@ Jetzt muss der **USB-Stick entfernt** werden. Dadurch wird der Raspberry Pi (dan
 
 Falls eine WLAN konfiguriert wurde (in dem für `WIFI_SSID` ein Wert angegeben wurde in der Datei der `install.config`), verwendet der *Smart Appliance Enabler* das WLAN-Netzwerkinterface. In diesem Fall sollte jetzt das **Netzwerkkabel entfernt** werden vom der Raspberry Pi.   
 
-Der *Smart Appliance Enabler* läuft jetzt und es kann der [Konfiguration](Configuration_DE.md) fortgefahren werden werden.
+Der *Smart Appliance Enabler* läuft jetzt und es kann mit der [Konfiguration](Configuration_DE.md) fortgefahren werden werden.
 
 Auch die Software zur Administration via Web-Browser (*webmin*) soll jetzt laufen - siehe [Hinweise zur Nutzung von webmin für *Smart Appliance Enabler*](Webmin_DE.md).

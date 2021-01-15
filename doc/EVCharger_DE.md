@@ -1,9 +1,13 @@
 # Wallboxen
 
-## Konfiguration
 Im *Smart Appliance Enabler* wird eine Wallbox als komplexer Schalter mit diversen Konfigurationsparametern und die Fahrzeuge repräsentiert.
 
 Damit der Sunny Home Manager die Leistung von Wallboxen steuern kann, **muss zur Bestimmung der aktuellen Leistungsaufnahme ein Stromzähler im Smart Appliance Enabler konfiguriert werden**!
+
+Der *Sunny Home Manager* gibt dabei die aktuell einzustellende **Leistung in W** vor. Falls sie den im *Smart Appliance Enabler* für das Fahrzeug eingegebenen Wert für `Max. Leistung` übersteigt, wird sie auf diesen **Wert begrenzt**. 
+Der *Smart Appliance Enabler* **errechnet die an der Wallbox einzustellende Stromstärke** aus der Leistung und der Phasenanzahl. Massgeblich dabei ist die für das Fahrzeug eingestellte Phasenanzahl, ansonsten die für die Wallbox eingestellte Phasenanzahl. 
+
+## Konfiguration
 
 Momentan unterstützt der *Smart Appliance Enabler* folgende Wallboxen:
 * [Wallboxen mit Phoenix Contact EM-CP-PP-ETH-Controller](PhoenixContactEMCPPPETH_DE.md) wie z.B. Walli
@@ -35,21 +39,6 @@ Wird ein Standardwert für Überschussenergie gesetzt, wird nach dem Verbinden d
 
 Die vom *Smart Appliance Enabler* unterstützten Wechselstrom-Wallboxen können nicht den aktuellen Ist-Ladezustand vom Fahrzeug ermitteln und an den *Smart Appliance Enabler* kommunizieren! Für eine möglichst genaue Ermittlung des Energiebedarfs muss dieser Wert aber bekannt sein. Der *Smart Appliance Enabler* bietet deshalb die Möglichkeit der Einbindung eines [Scripts zum automatisierten Abfragen des SOC](soc/SOC_DE.md), sofern dies vom Fahrzeug-Hersteller unterstützt wird. Zusätzlich besteht die Möglichkeit, den Ist- und Soll-Ladezustand einzugeben beim [manuellen Start des Ladevorganges](#status-anzeige-und-manuelle-steuerung).
 
-Wenn ein *SOC-Script* konfiguriert wurde, wird dieses **automatisch nach dem Verbinden des Fahrzeuges mit der Wallbox** ausgeführt.
-Für jede Ausführung des SOC-Scripts finden sich im [Log](Support_DE.md#log) folgende Zeilen:
-```
-2020-12-30 16:54:30,502 DEBUG [Thread-4] d.a.s.c.e.SocScript [SocScript.java:108] F-00000001-000000000019-00: Executing SoC script: /opt/sae/soc.sh
-[...]
-2020-12-30 16:55:21,121 DEBUG [Thread-4] d.a.s.c.e.SocScript [SocScript.java:118] F-00000001-000000000019-00: SoC script output: Prepare Session
-Login...
-state_of_charge 63
-
-2020-12-30 16:55:21,122 DEBUG [Thread-4] d.a.s.c.e.SocScript [SocScript.java:120] F-00000001-000000000019-00: SoC script exited with return code 0
-2020-12-30 16:55:21,122 DEBUG [Thread-4] d.a.s.c.e.SocScript [SocScript.java:147] F-00000001-000000000019-00: SoC extraction regex: .*state_of_charge (\d+)
-2020-12-30 16:55:21,123 DEBUG [Thread-4] d.a.s.c.e.SocScript [SocScript.java:87] F-00000001-000000000019-00: SoC: 63.0
-2020-12-30 16:55:21,123 DEBUG [Thread-4] d.a.s.c.e.ElectricVehicleCharger [ElectricVehicleCharger.java:791] F-00000001-000000000019-00: Retrieved SOC=63.0%
-```
-
 Auf Basis der Werte für
 - `Batteriekapazität`: aus der Fahrzeug-Konfiguration
 - `Ladeverluste`: aus der Fahrzeug-Konfiguration
@@ -57,6 +46,8 @@ Auf Basis der Werte für
 - `Soll-SOC` Standardwert aus der Fahrzeug-Konfiguration oder eingegeben über [Ampel-Steuerung](#manuelle-steuerung))
 
 wird die initial vom *Sunny Home Manager* anzufordernde Energiemenge berechnet. 
+
+Wenn ein *SOC-Script* konfiguriert wurde, wird dieses **automatisch nach dem Verbinden des Fahrzeuges mit der Wallbox** ausgeführt.
 
 Der *Smart Appliance Enabler* **berechnet fortlaufend den SOC** entsprechend der bereits geladenen Energiemenge. Von dieser Energiemenge müssen aber die Ladeverluste abgezogen werden, weil sie nicht zu einer Erhöhung des SOC im Fahrzeug führen. Aus diesem Grund sollte hier ein möglichst zutreffender Wert eingetragen werden, der Standardwert beträgt 10%.
 
@@ -72,3 +63,34 @@ Wenn vom SOC-Script nicht nur eine Zahl ohne weitere Zeichen geliefert wird, son
 
 Im *Sunny Home Manager* sollte die Verbraucher-Konfiguration für eine Wallbox wie folgt aussehen: 
 ![Vebraucherkonfiguration Wallbox](../pics/shm/VerbraucherKonfigurationEVCharger.png)
+
+## Log
+
+### Schaltbefehl
+
+Wird vom *Sunny Home Manager* ein Schaltbefehl für eine Wallbox (hier `F-00000001-000000000019-00`) empfangen, kann man das im [Log](Logging_DE.md) mit folgendem Befehl anzeigen:
+
+```console
+sae@raspi:~ $ grep "Received control" -A 3 /tmp/rolling-2020-11-18.log
+2020-11-18 09:36:10,008 DEBUG [http-nio-8080-exec-3] d.a.s.s.w.SempController [SempController.java:220] F-00000001-000000000019-00: Received control request: on=true, recommendedPowerConsumption=3442W
+2020-11-18 09:36:10,060 DEBUG [http-nio-8080-exec-3] d.a.s.a.Appliance [Appliance.java:334] F-00000001-000000000019-00: Setting appliance state to ON
+2020-11-18 09:36:10,062 DEBUG [http-nio-8080-exec-3] d.a.s.c.e.ElectricVehicleCharger [ElectricVehicleCharger.java:642] F-00000001-000000000019-00: Set charge power: 3442W corresponds to 14A using 1 phases
+2020-11-18 09:36:10,063 DEBUG [http-nio-8080-exec-3] d.a.s.m.EVModbusControl [EVModbusControl.java:178] F-00000001-000000000019-00: Set charge current 14A
+```
+
+*Webmin*: In [View Logfile](Logging_DE.md#webmin-logs) gibt man hinter `Only show lines with text` ein `Received control` und drückt Refresh.
+
+### SOC-Script
+
+Für jede Ausführung des SOC-Scripts finden sich im [Log](Support_DE.md#log) folgende Zeilen:
+
+```console
+sae@raspi:~ $ grep "SocScript" /tmp/rolling-2021-01-09.log
+2021-01-09 08:50:23,205 DEBUG [Thread-7] d.a.s.c.e.SocScript [SocScript.java:108] F-00000001-000000000019-00: Executing SoC script: /opt/sae/soc/soc.sh
+2021-01-09 08:51:15,495 DEBUG [Thread-7] d.a.s.c.e.SocScript [SocScript.java:118] F-00000001-000000000019-00: SoC script output: Prepare Session
+2021-01-09 08:51:15,499 DEBUG [Thread-7] d.a.s.c.e.SocScript [SocScript.java:120] F-00000001-000000000019-00: SoC script exited with return code 0
+2021-01-09 08:51:15,502 DEBUG [Thread-7] d.a.s.c.e.SocScript [SocScript.java:147] F-00000001-000000000019-00: SoC extraction regex: .*state_of_charge (\d+)
+2021-01-09 08:51:15,503 DEBUG [Thread-7] d.a.s.c.e.SocScript [SocScript.java:87] F-00000001-000000000019-00: SoC: 94.0
+```
+
+*Webmin*: In [View Logfile](Logging_DE.md#webmin-logs) gibt man hinter `Only show lines with text` ein `SocScript` und drückt Refresh.
