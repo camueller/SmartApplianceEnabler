@@ -62,16 +62,16 @@ export class VersionService {
           release1.published_at < release2.published_at ? 1 : release1.published_at > release2.published_at ? -1 : 0);
         const availableVersions = [];
         if (orderedReleasesMostRecentFirst && orderedReleasesMostRecentFirst.length > 0) {
-          const currentVersionRelease = orderedReleasesMostRecentFirst.find(release => release.tag_name === currentVersion?.version);
           const mostRecentStableRelease = orderedReleasesMostRecentFirst.find(release => !release.prerelease);
           const mostRecentRelease = orderedReleasesMostRecentFirst[0];
-          if (currentVersionRelease && mostRecentStableRelease && mostRecentStableRelease.tag_name > currentVersion?.version) {
+          if (mostRecentStableRelease
+            && this.versionTagToNumber(mostRecentStableRelease.tag_name) > this.versionTagToNumber(currentVersion?.version)) {
             availableVersions.push({
               version: mostRecentStableRelease.tag_name,
               prerelease: mostRecentStableRelease.prerelease
             });
           }
-          if (currentVersion?.version !== mostRecentRelease.tag_name) {
+          if (this.versionTagToNumber(mostRecentRelease.tag_name) > this.versionTagToNumber(currentVersion?.version)) {
             availableVersions.push({
               version: orderedReleasesMostRecentFirst[0].tag_name,
               prerelease: orderedReleasesMostRecentFirst[0].prerelease
@@ -81,5 +81,18 @@ export class VersionService {
         resultSubject.next(availableVersions ? availableVersions : undefined);
       });
       return resultSubject;
+  }
+
+  private versionTagToNumber(versionTag: string): number {
+    const versionTagParts = versionTag.split('.');
+    let versionString = '';
+    versionTagParts.forEach(versionTagPart => {
+      if (versionTagPart.length < 2) {
+        versionString = `${versionString}0${versionTagPart}`;
+      } else {
+        versionString = `${versionString}${versionTagPart}`;
+      }
+    });
+    return Number.parseInt(versionString, 10);
   }
 }
