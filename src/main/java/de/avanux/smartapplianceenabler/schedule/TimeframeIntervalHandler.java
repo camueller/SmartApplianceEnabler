@@ -306,7 +306,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
         timeframeInterval.stateTransitionTo(now, TimeframeIntervalState.QUEUED);
     }
 
-    private void removeTimeframeInterval(LocalDateTime now, TimeframeInterval timeframeInterval) {
+    public void removeTimeframeInterval(LocalDateTime now, TimeframeInterval timeframeInterval) {
         logger.debug("{}: Remove timeframe interval: {}", applianceId, timeframeInterval.toString(now));
         queue.remove(timeframeInterval);
         removeTimeframeIntervalChangedListener(timeframeInterval.getRequest());
@@ -423,12 +423,19 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
                                                                        Integer socCurrent, Integer socRequested) {
         TimeframeInterval timeframeInterval = findOptionalEnergyIntervalForEVCharger();
         if(timeframeInterval != null) {
+            logger.debug("{}: update optional energy timeframe interval with socCurrent={} socRequested={}",
+                    applianceId, socCurrent, socRequested);
+            if(timeframeInterval == getFirstTimeframeInterval()) {
+                timeframeInterval.getInterval().setStart(now);
+            }
             OptionalEnergySocRequest request = (OptionalEnergySocRequest) timeframeInterval.getRequest();
             request.setSocInitial(socCurrent);
             request.setSoc(socRequested);
             request.setEnabled(true);
         }
         else {
+            logger.debug("{}: create optional energy timeframe interval with evId={} batteryCapacity={} socCurrent={} socRequested={}",
+                    applianceId, evId, batteryCapacity, socCurrent, socRequested);
             timeframeInterval = createOptionalEnergyTimeframeIntervalForEVCharger(now, evId);
             if(timeframeInterval != null) {
                 OptionalEnergySocRequest request = (OptionalEnergySocRequest) timeframeInterval.getRequest();

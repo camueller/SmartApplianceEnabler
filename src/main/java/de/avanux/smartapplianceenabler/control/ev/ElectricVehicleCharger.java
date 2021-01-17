@@ -452,6 +452,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
 
     public void resetChargingCompletedToVehicleConnected(LocalDateTime now) {
         if(isChargingCompleted()) {
+            logger.debug("{}: Enforcing state {}", applianceId, EVChargerState.VEHICLE_CONNECTED.name());
             setState(now, EVChargerState.VEHICLE_CONNECTED);
         }
     }
