@@ -69,7 +69,7 @@ fi
 wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/logback-spring.xml -P /opt/sae 2>>$LOG
 chmod 644 /opt/sae/logback-spring.xml 2>&1 >> $LOG
 
-wget https://github.com/camueller/SmartApplianceEnabler/releases/download/1.6.8/SmartApplianceEnabler-1.6.8.war -P /opt/sae 2>>$LOG
+wget "https://github.com/camueller/SmartApplianceEnabler/releases/download/"$SAE_VERSION"/SmartApplianceEnabler-"$SAE_VERSION".war" -P /opt/sae 2>>$LOG
 
 chown -R sae:sae /opt/sae 2>&1 >> $LOG
 
