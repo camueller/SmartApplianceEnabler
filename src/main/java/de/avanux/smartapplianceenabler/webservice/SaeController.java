@@ -652,12 +652,12 @@ public class SaeController {
     ) {
         synchronized (lock) {
             try {
+                logger.debug("{}: Received energy request: evId={} socCurrent={} socRequested={} chargeEnd={}",
+                        applianceId, evId, socCurrent, socRequested, chargeEndString);
                 LocalDateTime chargeEnd = null;
                 if (chargeEndString != null) {
-                    chargeEnd = LocalDateTime.parse(chargeEndString);
+                    chargeEnd = ZonedDateTime.parse(chargeEndString).withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
                 }
-                logger.debug("{}: Received energy request: evId={} socCurrent={} socRequested={} chargeEnd={}",
-                        applianceId, evId, socCurrent, socRequested, chargeEnd);
                 Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
                 if (appliance != null) {
                     appliance.setEnergyDemand(LocalDateTime.now(), evId, socCurrent, socRequested, chargeEnd);
