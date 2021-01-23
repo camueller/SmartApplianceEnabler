@@ -224,7 +224,7 @@ export class EvChargerTemplates {
       '            "factorToValue": null,\n' +
       '            "method": "GET",\n' +
       '            "name": "ChargingCurrent",\n' +
-      '            "value": "amp={0}"\n' +
+      '            "value": "amx={0}"\n' +
       '          },\n' +
       '          {\n' +
       '            "@class": "de.avanux.smartapplianceenabler.http.HttpWriteValue",\n' +
