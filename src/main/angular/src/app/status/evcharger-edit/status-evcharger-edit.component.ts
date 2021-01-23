@@ -99,7 +99,7 @@ export class StatusEvchargerEditComponent implements OnInit {
         Validators.pattern(InputValidatorPatterns.PERCENTAGE)),
     }, socValidator);
     if (this.chargeModeSelected === ChargeMode.OPTIMIZED) {
-      this.form.addControl('chargeEndDow', new FormControl(undefined, Validators.required));
+      this.formHandler.addFormControl(this.form, 'chargeEndDow', undefined, Validators.required);
     } else if (this.chargeModeSelected === ChargeMode.EXCESS_ENERGY) {
       this.form.get('stateOfChargeRequested').setValue(this.electricVehicleSelected.defaultSocOptionalEnergy);
     }
