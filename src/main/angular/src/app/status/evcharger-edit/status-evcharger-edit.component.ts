@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild} from '@angular/core';
 import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ErrorMessages} from '../../shared/error-messages';
 import {StatusService} from '../status.service';
@@ -16,6 +16,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {TimepickerComponent} from '../../material/timepicker/timepicker.component';
 import {ChargeMode} from './charge-mode';
 import {ListItem} from '../../shared/list-item';
+import { ElementRef } from '@angular/core';
 
 const socValidator = (control: AbstractControl): { [key: string]: boolean } => {
   const stateOfChargeCurrent = control.get('stateOfChargeCurrent');
@@ -110,6 +111,13 @@ export class StatusEvchargerEditComponent implements OnInit {
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
     });
+  }
+
+  @ViewChild('chargeEndTimeComponent')
+  set chargeEndTimeComponent(chargeEndTimeComponent: ElementRef) {
+    if (chargeEndTimeComponent instanceof TimepickerComponent) {
+      this.chargeEndTimeComp = chargeEndTimeComponent;
+    }
   }
 
   chargeModeChanged(newMode?: string | undefined) {
