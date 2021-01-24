@@ -404,10 +404,13 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         boolean charging = control.isCharging();
         boolean errorState = control.isInErrorState();
         boolean hasOnlyEmptyRequestsBeforeTimeGap = hasOnlyEmptyRequestsBeforeTimeGap(now);
-        logger.debug("{}: currenState={} startChargingRequested={} stopChargingRequested={} vehicleNotConnected={} " +
-                        "vehicleConnected={} charging={} errorState={} firstInvocationAfterSkip={} hasOnlyEmptyRequestsBeforeTimeGap={}",
+        boolean wasInStateVehicleConnected = wasInState(EVChargerState.VEHICLE_CONNECTED);
+        logger.debug("{}: currentState={} startChargingRequested={} stopChargingRequested={} vehicleNotConnected={} " +
+                        "vehicleConnected={} charging={} errorState={} wasInStateVehicleConnected={} " +
+                        "firstInvocationAfterSkip={} hasOnlyEmptyRequestsBeforeTimeGap={}",
                 applianceId, currenState, startChargingRequested, stopChargingRequested, vehicleNotConnected,
-                vehicleConnected, charging, errorState, firstInvocationAfterSkip, hasOnlyEmptyRequestsBeforeTimeGap);
+                vehicleConnected, charging, errorState, wasInStateVehicleConnected, firstInvocationAfterSkip,
+                hasOnlyEmptyRequestsBeforeTimeGap);
 
         // only use variables logged above
         if(errorState) {
@@ -439,7 +442,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
             }
         }
         else if(this.stopChargingRequested && vehicleConnected) {
-            if(hasOnlyEmptyRequestsBeforeTimeGap) {
+            if(hasOnlyEmptyRequestsBeforeTimeGap && wasInStateVehicleConnected) {
                 return EVChargerState.CHARGING_COMPLETED;
             }
             return EVChargerState.VEHICLE_CONNECTED;
