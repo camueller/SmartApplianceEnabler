@@ -575,7 +575,15 @@ public class SaeController {
                         int latestEndSeconds = Integer.parseInt(commandParts[4]);
                         logger.debug("{}: Set runtime demand: runtime={}s latestEnd={}s",
                                 applianceId, runtimeSeconds, latestEndSeconds);
-                        if (!setRuntimeDemand(LocalDateTime.now(), applianceId, runtimeSeconds, latestEndSeconds)) {
+                        Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
+                        if(appliance != null) {
+                            LocalDateTime now = LocalDateTime.now();
+                            Control control = appliance.getControl();
+                            if(control != null) {
+                                control.on(now, false);
+                            }
+                            activateTimeframe(now, applianceId, runtimeSeconds, latestEndSeconds, true);
+                        } else {
                             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                         }
                     }
