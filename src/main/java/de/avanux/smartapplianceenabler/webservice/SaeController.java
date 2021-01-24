@@ -911,7 +911,8 @@ public class SaeController {
                         int whRemainingToCharge = 0;
                         if(nextTimeframeInterval != null
                                 && nextTimeframeInterval.getRequest() instanceof AbstractEnergyRequest) {
-                            whRemainingToCharge = nextTimeframeInterval.getRequest().getMax(now);
+                            Integer max = nextTimeframeInterval.getRequest().getMax(now);
+                            whRemainingToCharge = max != null ? max : 0;
                         }
                         if (nextTimeframeInterval != null && !nextTimeframeInterval.getRequest().isUsingOptionalEnergy(now)) {
                             applianceStatus.setPlannedEnergyAmount(whAlreadyCharged + whRemainingToCharge);
