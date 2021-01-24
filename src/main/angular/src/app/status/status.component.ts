@@ -89,7 +89,11 @@ export class StatusComponent implements OnInit, OnDestroy {
 
       isYellow(): boolean {
         return applianceStatus.earliestStart === 0 && !applianceStatus.on
-          && (applianceStatus.type !== ApplianceType.EV_CHARGER || !!applianceStatus.plannedEnergyAmount);
+          && (!applianceStatus.optionalEnergy || !!applianceStatus.plannedEnergyAmount);
+      },
+
+      isYellowBlink(): boolean {
+        return applianceStatus.earliestStart === 0 && !applianceStatus.on && !!applianceStatus.optionalEnergy;
       },
 
       isGreen(): boolean {
@@ -190,6 +194,10 @@ export class StatusComponent implements OnInit, OnDestroy {
 
       isYellow(): boolean {
         return yellow;
+      },
+
+      isYellowBlink(): boolean {
+        return false;
       },
 
       isGreen(): boolean {

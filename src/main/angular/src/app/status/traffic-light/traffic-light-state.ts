@@ -4,6 +4,8 @@ export interface TrafficLightState {
 
   isYellow(): boolean;
 
+  isYellowBlink(): boolean;
+
   isGreen(): boolean;
 
   isGreenBlink(): boolean;

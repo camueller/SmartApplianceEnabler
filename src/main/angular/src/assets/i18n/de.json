@@ -395,7 +395,7 @@
   "StatusComponent.explanation": "Hinweise",
   "StatusComponent.explanationNoLight": "Das Gerät ist nicht eingeschaltet, weil keine Bedarfsanforderung vorliegt.",
   "StatusComponent.explanationStopLight": "Das Gerät ist nicht eingeschaltet, weil zwar eine Bedarfsanforderung vorliegt, aber der frühestmögliche Einschaltzeitpunkt noch nicht erreicht ist.",
-  "StatusComponent.explanationSlowLight": "Das Gerät wird in Kürze (wieder) eingeschaltet, weil eine Bedarfsanforderung vorliegt und der frühestmögliche Einschaltzeitpunkt erreicht ist.",
+  "StatusComponent.explanationSlowLight": "Das Gerät kann jederzeit (wieder) eingeschaltet werden, weil eine Bedarfsanforderung vorliegt (bei blinkender Leuchte lediglich für Überschussenergie) und der frühestmögliche Einschaltzeitpunkt erreicht ist.",
   "StatusComponent.explanationGoLight": "Das Gerät ist eingeschaltet. Falls die grüne Leuchte blinkt, wird Überschussenergie verwendet.",
 
   "StatusEditComponent.error.runtime_pattern": "Die minimale Laufzeit muss in 'Stunden:Minuten' angegeben werden",
