@@ -136,7 +136,7 @@ public class TimeframeInterval implements ApplianceIdConsumer, TimeframeInterval
         if(getRequest() instanceof AbstractEnergyRequest) {
             return true;
         }
-        LocalDateTime latestStart = getLatestStart(now, LocalDateTime.from(interval.getEnd()), getRequest().getMax(now));
+        LocalDateTime latestStart = getLatestStart(now, LocalDateTime.from(interval.getEnd()), getRequestMinOrMax(now));
         return now.isEqual(latestStart) || now.isBefore(latestStart);
     }
 
@@ -166,11 +166,16 @@ public class TimeframeInterval implements ApplianceIdConsumer, TimeframeInterval
      * null if input values are null or latest start would be in the past
      */
     public Integer getLatestStartSeconds(LocalDateTime now) {
-        LocalDateTime latestStart = interval.getEnd().minusSeconds(getRequest().getMax(now));
+        LocalDateTime latestStart = interval.getEnd().minusSeconds(getRequestMinOrMax(now));
         if(now.isBefore(latestStart)) {
             return Long.valueOf(Duration.between(now, latestStart).toSeconds()).intValue();
         }
         return null;
+    }
+
+    private int getRequestMinOrMax(LocalDateTime now) {
+        Integer minOrMax = getRequest().getMin(now) != null ? getRequest().getMin(now) : getRequest().getMax(now);
+        return minOrMax !=null ? minOrMax : 0;
     }
 
     @Override
