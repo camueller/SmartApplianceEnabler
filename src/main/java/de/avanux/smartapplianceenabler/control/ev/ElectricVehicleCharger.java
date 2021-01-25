@@ -643,6 +643,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
 
         if(chargeEnd == null) {
             chargeEnd = now.plusSeconds(calculateChargeSeconds(vehicle, request.getMax(now)));
+            request.setAcceptControlRecommendations(false);
         }
 
         Interval interval = new Interval(now, chargeEnd);
