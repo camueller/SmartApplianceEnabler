@@ -128,12 +128,12 @@ Entsprechend kann man eine Regel definieren, dass beim Druck auf eine Taste des 
 
 Zum Anlegen einer Regel muss man auf der Tasmota-Konsole eingeben:
 ```
-Rule1 ON Button1#State=2 DO WebSend [192.168.0.1:8080] ID F-xxxxxxxx-xxxxxxxxxxxx-xx RUNTIME 3600 21600 ENDON
+Rule1 ON Button1#State=3 DO WebSend [192.168.0.1:8080] ID F-xxxxxxxx-xxxxxxxxxxxx-xx RUNTIME 3600 21600 ENDON
 ```
 ... wobei
 - `Button1` ist der Name des Tasters, mit dem das Ereignis verknüpft wird
-- `State=2` definiert, dass das Ereignis beim Zustandswechsel (Toggle) ausgelöst wird
-- `192.168.0.1` die IP-Adresse ist, unter welcher der *Smart Appliance Enabler* erreichbar ist
+- `State=3` definiert, dass das Ereignis bei einem langen Tastendruck (Hold) ausgelöst wird
+- `192.168.0.1` der Hostname oder die IP-Adresse ist, unter welcher der *Smart Appliance Enabler* erreichbar ist
 - `F-xxxxxxxx-xxxxxxxxxxxx-xx` die Appliance-ID ist
 - `3600` die gewünschte Laufzeit in Sekunden ist
 - `21600` der späteste Zeitpunkt in Sekunden ab jetzt ist, zu dem die Laufzeit beendet sein muss
@@ -143,12 +143,12 @@ Diese Regel muss jetzt noch aktiviert werden:
 Rule1 1
 ```
 
-Bei Drücken des Tasters erfolgt jetzt die gewünschte Laufzeitanforderung:
+Bei langem Drücken (> 4 Sekunden) des Tasters erfolgt jetzt die gewünschte Laufzeitanforderung:
 ```
 11:01:28 APP: Knopf1 Mehrfachdruck 1
 11:01:29 WIF: Prüfe Verbindung...
 11:01:29 WIF: verbunden
-11:01:29 RUL: BUTTON1#STATE=2 performs "WebSend [192.168.0.1:8080] ID F-xxxxxxxx-xxxxxxxxxxxx-xx RUNTIME 3600 21600"
+11:01:29 RUL: BUTTON1#STATE=3 performs "WebSend [192.168.0.1:8080] ID F-xxxxxxxx-xxxxxxxxxxxx-xx RUNTIME 3600 21600"
 11:01:29 SRC: Rule
 11:01:29 CMD: Gruppe 0, Index 1, Befehl "WEBSEND", Daten "[192.168.0.1:8080] ID F-xxxxxxxx-xxxxxxxxxxxx-xx RUNTIME 3600 21600"
 11:01:29 RSL: RESULT = {"WebSend":"Done"}
@@ -158,3 +158,5 @@ Bei Bedarf kann die Regel jederzeit wieder deaktiviert werden:
 ```
 Rule1 0
 ```
+
+Weitere Möglichkeiten und eine genaue Beschreibung der Parameter findet man in der Tasmota-Dokumentation unter https://tasmota.github.io/docs/Buttons-and-Switches/#button
