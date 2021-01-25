@@ -5,7 +5,7 @@ All wesentlichen Änderungen an diesem Projekt werden in dieser Datei dokumentie
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 und das Projekt folgt den Leitlinien des [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.6.9] - 17.01.2021
+## [1.6.9](https://github.com/camueller/SmartApplianceEnabler/releases/tag/1.6.9) - 17.01.2021
 
 ### Neu
 - im Menü finden sich Links zur Fragen&Antworen, zum Forum und zur Projekt-Homepage
@@ -17,14 +17,14 @@ und das Projekt folgt den Leitlinien des [Semantic Versioning](https://semver.or
 ### Geändert
 - Nach dem Abbrechen einer Sofortladung durch Klick auf die rote Ampel war es nicht möglich, den SOC für Überschussladen wirksam zu ändern. Das ist jetzt möglich.
 
-## [1.6.8] - 04.01.2021
+## [1.6.8](https://github.com/camueller/SmartApplianceEnabler/releases/tag/1.6.8) - 04.01.2021
 
 ### Neu
-- Geräte mit Tasmota-Firmware können via Tastendruck eine Laufzeitanforderung stellen - siehe #111
+- Geräte mit Tasmota-Firmware können via Tastendruck eine Laufzeitanforderung stellen - siehe [#111](https://github.com/camueller/SmartApplianceEnabler/issues/111)
 - Auf der Projekt-Homepage findet sich jetzt auch ein Video der Web-Oberfläche "in Action", dass regelmässig im Rahmen der automatsierten Tests entsteht. Ich habe es dort verlinkt, damit sich Neu-User einen besseren Eindruck von der Web-Oberfläche verschaffen können.
 
 ### Geändert
-- das grüne Ampellicht blinkt nicht nur, wenn Wallboxen Überschussenergie laden, sodern auch bei allen anderen Geräte, sobald diese Überschussenergie verwenden - siehe #107
+- das grüne Ampellicht blinkt nicht nur, wenn Wallboxen Überschussenergie laden, sodern auch bei allen anderen Geräte, sobald diese Überschussenergie verwenden - siehe [#107](https://github.com/camueller/SmartApplianceEnabler/issues/107)
 - vor der Ausführung eines SOC-Scripts wird geprüft, ob dieses vorhanden und ausführbar ist; falls nicht, werden hilfereiche Meldungen geloggt
 - ein regulärer Ausdruck für ein SOC-Script kann wieder gelöscht werden, ohne dass das als leere Regex interpretiert wird
 - bei mehrmaligem Verbinden des Fahrzeugs mit der Wallbox wurde der Zeitpunkt des erstmaligen Verbindens angezeigt; jetzt immer der Zeitpunkt des letzten Verbindens
@@ -33,7 +33,7 @@ und das Projekt folgt den Leitlinien des [Semantic Versioning](https://semver.or
 - die Eingabe von Zeichen wie "<> in die Eingabefelder der Web-Oberfläche konnte dazu führen, dass die `Appliances.xml` ungültig wird. Ab sofort werden solche Zeichen automatisch "escaped", d.h. der Anwender muss sich darüber keine Gedanken machen (entsprechende Hinweise wurden aus der Dokumentation entfernt)
 - an das Shell-Script, dass für Benachrichtigungen aufgerufen wird, werden jetzt neben der ID auch Name, Hersteller, Typ und Seriennummer übergeben. Falls jemand bereits die Benachrichtigungen per Telegram verwendet muss das aktualisierte Script verwendet werden!
 
-## [1.6.7] - 26.12.2020
+## [1.6.7](https://github.com/camueller/SmartApplianceEnabler/releases/tag/1.6.7) - 26.12.2020
 
 ### Neu
 - Für Ereignisse ("Einschalten", "Ausschalten", "Kommunikationsstörung", ...) können Benachrichtigungen versendet werden (siehe doc/Configuration_DE.md#benachrichtigungen )
@@ -46,7 +46,7 @@ und das Projekt folgt den Leitlinien des [Semantic Versioning](https://semver.or
 - Wenn der SHM den SAE abfragt, während er gerade startet (das ist auch der Fall nach dem Speichern einer Konfigurationsänderung in der Web-Oberfläche), kam es zu Fehlern. Jetzt wird dem SHM währenddessen signalisiert, dass der SAE noch nicht läuft (HTTP 503).
 - Bei Wallboxen wird das gelbe Ampellicht nicht mehr im Kontext des Überschußladens verwendet
 
-## [1.6.6] - 12.12.2020
+## [1.6.6](https://github.com/camueller/SmartApplianceEnabler/releases/tag/1.6.6) - 12.12.2020
 
 ### Neu
 - Wallboxen: Ändern des SOC für Überschussladen mit nachfolgendem Laden auf den neuen SOC ist auch möglich, wenn zuvor bereits CHARGING_COMPLETED erreicht wurde.
@@ -54,10 +54,10 @@ und das Projekt folgt den Leitlinien des [Semantic Versioning](https://semver.or
 ### Geändert
 - Wallboxen: diverse Fehler im Bereich zeitplangesteuertes Laden
 
-## [1.6.5] - 23.11.2020
+## [1.6.5](https://github.com/camueller/SmartApplianceEnabler/releases/tag/1.6.5) - 23.11.2020
 
 ### Neu
-- wenn für ein Fahrzeug einer Wallbox ein SOC-Script konfiguriert wurde, wird dieses automatisch erneut ausgeführt (siehe #90), wenn sich der SOC rechnerisch um 20% erhöht hat. Dieser Default kann umkonfiguriert werden bzw. es kann zusätzlich auch ein Mindest-Zeitabstand zwischen zwei SOC-Abfragen angegeben werden. Wichtig ist, dass bei einer Abfrage wirklilch der aktuelle SOC des Fahrzeugs geliefert wird, nicht irgendein alter SOC-Wert. Aus der Differenz zwischen berechnetem SOC-Wert und abgefragtem SOC-Wert werden die Ladeverluste ermittelt, wobei ein initial konfigurierter Wert für die Ladeverluste berücksichtigt wird.
+- wenn für ein Fahrzeug einer Wallbox ein SOC-Script konfiguriert wurde, wird dieses automatisch erneut ausgeführt (siehe [#90](https://github.com/camueller/SmartApplianceEnabler/issues/90) ), wenn sich der SOC rechnerisch um 20% erhöht hat. Dieser Default kann umkonfiguriert werden bzw. es kann zusätzlich auch ein Mindest-Zeitabstand zwischen zwei SOC-Abfragen angegeben werden. Wichtig ist, dass bei einer Abfrage wirklilch der aktuelle SOC des Fahrzeugs geliefert wird, nicht irgendein alter SOC-Wert. Aus der Differenz zwischen berechnetem SOC-Wert und abgefragtem SOC-Wert werden die Ladeverluste ermittelt, wobei ein initial konfigurierter Wert für die Ladeverluste berücksichtigt wird.
 - wenn für ein Fahrzeug einer Wallbox ein SOC-Script konfiguriert wurde, wird dessen Ausgabe nur interpretiert, wenn der Prozess mit Return-Code 0 beendet wird
 
 ### Geändert
@@ -67,7 +67,7 @@ und das Projekt folgt den Leitlinien des [Semantic Versioning](https://semver.or
 - Die Konfiguration der Energiemenge bei Zählern ist nur noch für Wallboxen möglich
 - bei Wallboxen wurde die Erkennung des Lade-Ende verbessert
 
-## [1.6.4] - 16.10.2020
+## [1.6.4](https://github.com/camueller/SmartApplianceEnabler/releases/tag/1.6.4) - 16.10.2020
 
 ### Neu
 - Wallboxen werden in der Status-Übersicht immer angezeigt (bisher nur bei verbundenem Fahrzeug)
@@ -76,7 +76,7 @@ und das Projekt folgt den Leitlinien des [Semantic Versioning](https://semver.or
 ### Geändert
 - die Leistungsberechnung für Zähler mit anderen Impuls-Raten als 1000 imp/kWh war falsch - das wurde korrigiert
 
-## [1.6.3] - 05.10.2020
+## [1.6.3](https://github.com/camueller/SmartApplianceEnabler/releases/tag/1.6.3) - 05.10.2020
 
 ### Neu
 - Holding-Register können gelesen werden (Dank an DNATW für die Implementierung :-) )
@@ -86,18 +86,17 @@ und das Projekt folgt den Leitlinien des [Semantic Versioning](https://semver.or
 - bei S0-Zählern wurde die Leistung nicht richtig berechnet bei Geräten mit geringer Leistungsaufnahme
 - in der Status-Anzeige bei Wallboxen entsprach der Wert für "Geplante Energeimenge" der noch zu ladenen Energeimenge. Jetzt wird die insgesamt "Geplante Energiemenge" angezeigt.
 
-## [1.6.2] - 26.07.2020
+## [1.6.2](https://github.com/camueller/SmartApplianceEnabler/releases/tag/1.6.2) - 26.07.2020
 
 ### Geändert
 - Konfiguration von HTTP-Schaltern wurde als falsch erkannt, obwohl gültig
 - die Checkbox "Statusabfrage" bei HTTP-Schaltern hat nicht den richtigen Zustand angezeigt
 
-
-## [1.6.1] - 25.07.2020
+## [1.6.1](https://github.com/camueller/SmartApplianceEnabler/releases/tag/1.6.1) - 25.07.2020
 
 ### Neu
 - komplett neue Web-Oberfläche auf Basis von Angular Material
-- neue Implementierung von S0-Zählern - siehe #92
+- neue Implementierung von S0-Zählern - siehe [#92](https://github.com/camueller/SmartApplianceEnabler/issues/92)
 
 ### Geändert
 - diverse Verbesserungen für Wallboxen
