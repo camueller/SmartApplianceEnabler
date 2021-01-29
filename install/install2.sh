@@ -30,19 +30,22 @@ if [ -n "$WIFI_SSID" ] ; then
   echo "IP_ADDRESS=$IP_ADDRESS" >> $LOG
 fi
 
+echo "$PREFIX Waiting before updating the software catalog ..." >> $LOG
+sleep 30
+
 echo "$PREFIX Update software catalog ..." >> $LOG
 apt update 2>&1 >> $LOG
 
 echo "$PREFIX Upgrading system ..." >> $LOG
 apt upgrade -y 2>&1 >> $LOG
 
-echo "Allow shared mounts by udevd (possibly reset by system upgrade) ..."
+echo "Allow shared mounts by udevd (possibly reset by system upgrade) ..."  >> $LOG
 # Refer to https://raspberrypi.stackexchange.com/questions/100312/raspberry-4-usbmount-not-working/100375#100375
-sed -i 's/PrivateMounts\=yes/PrivateMounts\=no/g' /lib/systemd/system/systemd-udevd.service
+sed -i 's/PrivateMounts\=yes/PrivateMounts\=no/g' /lib/systemd/system/systemd-udevd.service 2>&1 >> $LOG
 
 echo "$PREFIX Setting time zone ..." >> $LOG
 echo $TIMEZONE > /etc/timezone
-echo /etc/timezone >> $LOG
+cat /etc/timezone >> $LOG
 
 echo "$PREFIX Copy zoneinfo ..." >> $LOG
 cp /usr/share/zoneinfo/$TIMEZONE /etc/localtime 2>&1 >> $LOG
