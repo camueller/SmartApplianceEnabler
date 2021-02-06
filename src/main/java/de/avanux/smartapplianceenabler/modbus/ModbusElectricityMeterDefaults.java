@@ -21,7 +21,7 @@ package de.avanux.smartapplianceenabler.modbus;
 public class ModbusElectricityMeterDefaults {
     // static members won't be serialized but we need those valus on the client
     private Integer measurementInterval = 60; // seconds
-    private Integer pollInterval = 10;
+    private Integer pollInterval = 20;
     private static ModbusElectricityMeterDefaults instance = new ModbusElectricityMeterDefaults();
 
     public static Integer getMeasurementInterval() {

@@ -22,7 +22,7 @@ public class HttpElectricityMeterDefaults {
     // static members won't be serialized but we need those valus on the client
     private Float factorToWatt = 1.0f;
     private Integer measurementInterval = 60; // seconds
-    private Integer pollInterval = 10; // seconds
+    private Integer pollInterval = 20; // seconds
 
     private static HttpElectricityMeterDefaults instance = new HttpElectricityMeterDefaults();
 
