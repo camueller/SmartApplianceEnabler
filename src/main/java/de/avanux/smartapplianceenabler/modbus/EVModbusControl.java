@@ -136,8 +136,11 @@ public class EVModbusControl extends ModbusSlave implements EVChargerControl {
             for (ParentWithChild<ModbusRead, ModbusReadValue> read : reads) {
                 ModbusRead registerRead = read.parent();
                 try {
+                    Object registerAddress = null;
+                    boolean fromCache = false;
                     ModbusReadTransactionExecutor executor = this.requestCache.get(registerRead);
                     if (executor == null) {
+                        registerAddress = registerRead.getAddress();
                         executor = ModbusExecutorFactory.getReadExecutor(getApplianceId(),
                                 registerRead.getType(), registerRead.getAddress(), registerRead.getBytes());
                         executeTransaction(executor, true);
@@ -146,25 +149,25 @@ public class EVModbusControl extends ModbusSlave implements EVChargerControl {
                     else {
                         if(executor instanceof BaseTransactionExecutor) {
                             BaseTransactionExecutor readInputRegisterExecutor = (BaseTransactionExecutor) executor;
-                            logger.debug("{}: Using cached input register={}", getApplianceId(),
-                                    readInputRegisterExecutor.getAddress());
+                            registerAddress = readInputRegisterExecutor.getAddress();
+                            fromCache = true;
                         }
                     }
                     if (result) {
                         if (executor != null) {
+                            Object registerValue = null;
                             if (executor instanceof ReadStringInputRegisterExecutor) {
-                                String registerValue = ((ReadStringInputRegisterExecutor) executor).getValue();
-                                logger.debug("{}: Register value={}", getApplianceId(), registerValue);
-                                result &= registerValue.matches(read.child().getExtractionRegex());
+                                registerValue = ((ReadStringInputRegisterExecutor) executor).getValue();
+                                result &= ((String) registerValue).matches(read.child().getExtractionRegex());
                             } else if (executor instanceof ReadCoilExecutor) {
-                                Boolean registerValue = ((ReadCoilExecutor) executor).getValue();
-                                logger.debug("{}: Register value={}", getApplianceId(), registerValue);
-                                result &= registerValue;
+                                registerValue = ((ReadCoilExecutor) executor).getValue();
+                                result &= (Boolean) registerValue;
                             } else if (executor instanceof ReadDiscreteInputExecutor) {
-                                Boolean registerValue = ((ReadDiscreteInputExecutor) executor).getValue();
-                                logger.debug("{}: Register value={}", getApplianceId(), registerValue);
-                                result &= registerValue;
+                                registerValue = ((ReadDiscreteInputExecutor) executor).getValue();
+                                result &= (Boolean) registerValue;
                             }
+                            logger.debug("{}: Read modbus register={} value={} fromCache={}", getApplianceId(),
+                                    registerAddress != null ? registerAddress.toString() : null, registerValue, fromCache);
                         }
                         else {
                             logger.error("{}: no input register executor available", getApplianceId());
