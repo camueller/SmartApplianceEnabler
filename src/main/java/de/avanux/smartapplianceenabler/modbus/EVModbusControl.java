@@ -166,7 +166,7 @@ public class EVModbusControl extends ModbusSlave implements EVChargerControl {
                                 registerValue = ((ReadDiscreteInputExecutor) executor).getValue();
                                 result &= (Boolean) registerValue;
                             }
-                            logger.debug("{}: Read modbus register={} value={} fromCache={}", getApplianceId(),
+                            logger.trace("{}: Read modbus register={} value={} fromCache={}", getApplianceId(),
                                     registerAddress != null ? registerAddress.toString() : null, registerValue, fromCache);
                         }
                         else {
