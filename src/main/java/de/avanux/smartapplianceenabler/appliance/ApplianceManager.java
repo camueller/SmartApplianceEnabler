@@ -164,6 +164,23 @@ public class ApplianceManager implements Runnable {
         startAppliances();
     }
 
+    public void startMeterAveragingInterval(LocalDateTime now, int nextPollCompletedSecondsFromNow) {
+        logger.info("Start meter averaging interval ...");
+        if(this.appliances != null && appliances.getAppliances() != null) {
+            for(Appliance appliance : appliances.getAppliances()) {
+                try {
+                    Meter meter = appliance.getMeter();
+                    if(meter != null) {
+                        meter.startAveragingInterval(now, timer, nextPollCompletedSecondsFromNow);
+                    }
+                }
+                catch(Exception e) {
+                    logger.error("{}: Error stopping appliance", appliance.getId(), e);
+                }
+            }
+        }
+    }
+
     public void init() {
         logger.debug("Initializing ...");
         Map<String,ModbusTcp> modbusIdWithModbusTcp = new HashMap<String,ModbusTcp>();

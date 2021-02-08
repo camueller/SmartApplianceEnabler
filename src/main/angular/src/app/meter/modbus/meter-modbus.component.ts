@@ -16,6 +16,8 @@ import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {Logger} from '../../log/logger';
 import {ModbusSetting} from '../../settings/modbus/modbus-setting';
 import {MessageBoxLevel} from 'src/app/material/messagebox/messagebox.component';
+import {MeterReadNameChangedEvent} from '../meter-read-name-changed-event';
+import {ReadValueMapKey} from '../../shared/read-value-map-key';
 
 @Component({
   selector: 'app-meter-modbus',
@@ -46,6 +48,7 @@ export class MeterModbusComponent implements OnChanges, OnInit {
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
+  readValueNames = new Map<ReadValueMapKey, string>();
   MessageBoxLevel = MessageBoxLevel;
 
   constructor(private logger: Logger,
@@ -79,7 +82,6 @@ export class MeterModbusComponent implements OnChanges, OnInit {
       new ErrorMessage('slaveAddress', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('slaveAddress', ValidatorType.pattern),
       new ErrorMessage('pollInterval', ValidatorType.pattern),
-      new ErrorMessage('measurementInterval', ValidatorType.pattern),
     ], this.translate);
     this.expandParentForm();
     this.form.statusChanges.subscribe(() => {
@@ -92,34 +94,45 @@ export class MeterModbusComponent implements OnChanges, OnInit {
   }
 
   get valueNames() {
-    if (this.isEvCharger) {
-      return [MeterValueName.Power, MeterValueName.Energy];
-    }
-    return [MeterValueName.Power];
+    return [MeterValueName.Energy, MeterValueName.Power];
   }
 
   get valueNameTextKeys() {
-    if (this.isEvCharger) {
-      return ['MeterModbusComponent.Power', 'MeterModbusComponent.Energy'];
+    return ['MeterModbusComponent.Energy', 'MeterModbusComponent.Power'];
+  }
+
+  onNameChanged(index: number, event: MeterReadNameChangedEvent) {
+    const key: ReadValueMapKey = {readIndex: index, readValueIndex: event.readValueIndex};
+    if (event.name) {
+      this.readValueNames.set(key, event.name);
+    } else {
+      Array.from(this.readValueNames.keys()).forEach(aKey => {
+        if (aKey.readIndex === key.readIndex && aKey.readValueIndex === key.readValueIndex) {
+          this.readValueNames.delete(aKey);
+        }
+      });
     }
-    return ['MeterModbusComponent.Power'];
+  }
+
+  get displayPollInterval(): boolean {
+    let display = false;
+    this.readValueNames.forEach(value => {
+      if (!display && value === MeterValueName.Power) {
+        display = true;
+      }
+    });
+    return display;
   }
 
   get isAddModbusReadPossible() {
-    if (this.isEvCharger) {
-      if (this.modbusElectricityMeter.modbusReads.length === 1) {
-        return this.modbusElectricityMeter.modbusReads[0].readValues.length < 2;
-      }
-      return this.modbusElectricityMeter.modbusReads.length < 2;
+    if (this.modbusElectricityMeter.modbusReads.length === 1) {
+      return this.modbusElectricityMeter.modbusReads[0].readValues.length < 2;
     }
-    return false;
+    return this.modbusElectricityMeter.modbusReads.length < 2;
   }
 
   get maxValues() {
-    if (this.isEvCharger) {
-      return this.modbusElectricityMeter.modbusReads.length === 2 ? 1 : 2;
-    }
-    return 1;
+    return 2;
   }
 
   addModbusRead() {
@@ -132,6 +145,13 @@ export class MeterModbusComponent implements OnChanges, OnInit {
   onModbusReadRemove(index: number) {
     this.modbusElectricityMeter.modbusReads.splice(index, 1);
     this.modbusReadsFormArray.removeAt(index);
+
+    Array.from(this.readValueNames.keys()).forEach(aKey => {
+      if (aKey.readIndex === index) {
+        this.readValueNames.delete(aKey);
+      }
+    });
+
     this.form.markAsDirty();
   }
 
@@ -150,8 +170,6 @@ export class MeterModbusComponent implements OnChanges, OnInit {
       [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER_OR_HEX)]);
     this.formHandler.addFormControl(this.form, 'pollInterval', this.modbusElectricityMeter.pollInterval,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(this.form, 'measurementInterval', this.modbusElectricityMeter.measurementInterval,
-      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
     this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'modbusReads',
       this.modbusElectricityMeter.modbusReads);
   }
@@ -160,7 +178,6 @@ export class MeterModbusComponent implements OnChanges, OnInit {
     const idref = getValidString(this.form.controls.idref.value);
     const slaveAddress = getValidString(this.form.controls.slaveAddress.value);
     const pollInterval = getValidInt(this.form.controls.pollInterval.value);
-    const measurementInterval = getValidInt(this.form.controls.measurementInterval.value);
     const modbusReads = [];
     this.modbusReadComps.forEach(modbusReadComponent => {
       const modbusRead = modbusReadComponent.updateModelFromForm();
@@ -169,14 +186,13 @@ export class MeterModbusComponent implements OnChanges, OnInit {
       }
     });
 
-    if (!(idref || slaveAddress || pollInterval || measurementInterval || modbusReads.length > 0)) {
+    if (!(idref || slaveAddress || pollInterval || modbusReads.length > 0)) {
       return undefined;
     }
 
     this.modbusElectricityMeter.idref = idref;
     this.modbusElectricityMeter.slaveAddress = slaveAddress;
     this.modbusElectricityMeter.pollInterval = pollInterval;
-    this.modbusElectricityMeter.measurementInterval = measurementInterval;
     this.modbusElectricityMeter.modbusReads = modbusReads;
     return this.modbusElectricityMeter;
   }

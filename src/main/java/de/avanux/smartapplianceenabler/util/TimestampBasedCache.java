@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class TimestampBasedCache<T> implements ApplianceIdConsumer {
 
@@ -33,14 +34,22 @@ public class TimestampBasedCache<T> implements ApplianceIdConsumer {
     private TreeMap<LocalDateTime,T> timestampWithValue = new TreeMap<>();
     private String applianceId;
     private int maxAgeSeconds;
+    private int keepLastExpired;
 
     public TimestampBasedCache(String name) {
         this.name = name;
     }
 
     public void setMaxAgeSeconds(int maxAgeSeconds) {
-        logger.debug("{}: maxAgeSeconds={}", applianceId, maxAgeSeconds);
         this.maxAgeSeconds = maxAgeSeconds;
+    }
+
+    public int getMaxAgeSeconds() {
+        return maxAgeSeconds;
+    }
+
+    public void setKeepLastExpired(int entriesToKeep) {
+        this.keepLastExpired = entriesToKeep;
     }
 
     @Override
@@ -50,35 +59,33 @@ public class TimestampBasedCache<T> implements ApplianceIdConsumer {
 
     public void addValue(LocalDateTime timestamp, T value) {
         // remove expired values
-        Set<LocalDateTime> expiredTimestamps = new HashSet<LocalDateTime>();
+        List<LocalDateTime> expiredTimestamps = new ArrayList<>();
         timestampWithValue.keySet().forEach(cachedTimeStamp -> {
             if(Duration.between(cachedTimeStamp, timestamp).toSeconds() > maxAgeSeconds) {
                 expiredTimestamps.add(cachedTimeStamp);
             }
         });
+        if(keepLastExpired > 0 && expiredTimestamps.size() > 0) {
+            List<LocalDateTime> expiredTimestampsToKeep = new ArrayList<>();
+            Collections.reverse(expiredTimestamps);
+            for(int i=0; i<keepLastExpired; i++) {
+                expiredTimestampsToKeep.add(expiredTimestamps.get(i));
+            }
+            expiredTimestamps.removeAll(expiredTimestampsToKeep);
+        }
         expiredTimestamps.forEach(expiredTimestamp -> timestampWithValue.remove(expiredTimestamp));
         // add new value
         timestampWithValue.put(timestamp, value);
-        logger.debug("{}: cache={} added value={} timestamp={}  removed/total: {}/{}",
+        logger.trace("{}: cache={} added value={} timestamp={}  removed/total: {}/{}",
                 applianceId, name, value, timestamp, expiredTimestamps.size(), timestampWithValue.size());
-    }
-
-    public boolean isEmpty() {
-        return this.timestampWithValue.isEmpty();
     }
 
     public void clear() {
         this.timestampWithValue.clear();
     }
 
-    public List<T> values() {
-        List<T> values = new ArrayList<>();
-        values.addAll(this.timestampWithValue.values());
-        return values;
-    }
-
     public T getLastValue() {
-        if(size() == 0) {
+        if(this.timestampWithValue.size() == 0) {
             return null;
         }
         Vector<LocalDateTime> keys = new Vector<>(this.timestampWithValue.keySet());
@@ -89,7 +96,9 @@ public class TimestampBasedCache<T> implements ApplianceIdConsumer {
         return timestampWithValue;
     }
 
-    public int size() {
-        return this.timestampWithValue.size();
+    public Map<LocalDateTime, T> getNotExpiredTimestampWithValue(LocalDateTime now) {
+        return timestampWithValue.entrySet().stream()
+                .filter(entry -> entry.getKey().isAfter(now.minusSeconds(maxAgeSeconds)))
+                .collect(Collectors.toMap(entry -> entry.getKey(), entry -> entry.getValue()));
     }
 }

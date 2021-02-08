@@ -61,7 +61,6 @@ export class SettingsModbusComponent implements OnChanges, OnInit {
     ], this.translate);
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
-      console.log('errors=', this.errors);
     });
   }
 

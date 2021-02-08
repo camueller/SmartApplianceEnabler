@@ -76,14 +76,14 @@ public class GensonHttpMessageConverter implements HttpMessageConverter {
 
     @Override
     public Object read(Class toType, HttpInputMessage httpInputMessage) throws IOException, HttpMessageNotReadableException {
-        logger.debug("Deserializing JSON to " + toType);
+        logger.trace("Deserializing JSON to " + toType);
         String body = StreamUtils.copyToString(httpInputMessage.getBody(), Charset.defaultCharset());
         return this.genson.deserialize(body, toType);
     }
 
     @Override
     public void write(Object object, MediaType mediaType, HttpOutputMessage httpOutputMessage) throws IOException, HttpMessageNotWritableException {
-        logger.debug("Serializing " + object.getClass() + " to JSON");
+        logger.trace("Serializing " + object.getClass() + " to JSON");
         String json = this.genson.serialize(object);
         httpOutputMessage.getBody().write(json.getBytes());
     }

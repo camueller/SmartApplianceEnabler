@@ -6,7 +6,7 @@ Meist können diese Geräte nur mit den Cloud-Diensten des Adapter-Herstellers v
 Dazu muss die Tasmota-Firmware allerdings in den Flash-Speicher des Mikrokontrollers geschrieben ("geflasht") werden. Um den Mikrocontroller zum Flashen mit einem PC oder Raspberry Pi zu verbinden ist ein FT232RL-Adapters (kostet zwischen 2 und 5 Euro ) erforderlich.
 
 ## Flashen
-Zum eigentlichen Flashen benötigt man ein Programm wie [ESPEasy](https://www.heise.de/ct/artikel/ESPEasy-installieren-4076214.html).
+Zum eigentlichen Flashen benötigt man ein Programm wie [ESPEasy](https://www.heise.de/ct/artikel/ESPEasy-installieren-4076214.html) oder das darauf aufbauende [Tasmotizer](https://github.com/tasmota/tasmotizer).
 
 Vor dem Flashen löscht man zunächst die alte Firmware:
 ```console
@@ -56,31 +56,57 @@ Wenn sich auf dem Adapter bereits Tasmota-Firmware befindet, kann man diese übe
 
 ## Geräte mit Tasmota-Firmware als Stromzähler 
 
-Die aktuelle Leistungsaufnahme kann wie folgt abgefragt werden:
+Mit dem folgenden Befehl kann der Status von Tasmota-Adaptern abgefragt werden, der auch den Zählerstand und die Leistung beinhaltet:
+```console
+pi@raspberrypi:~ $ curl http://192.168.1.1/cm?cmnd=Status%208
 ```
-curl http://192.168.1.1/cm?cmnd=Status%208
-{"StatusSNS":{"Time":"2019-09-06T20:06:19","ENERGY":{"TotalStartTime":"2019-08-18T11:07:55","Total":0.003,"Yesterday":0.000,"Today":0.003,"Power":26,"ApparentPower":25,"ReactivePower":25,"Factor":0.06,"Voltage":239,"Current":0.106}}}
+
+Tasmota liefert die Antwort im JSON-Format, die formatiert wie folgt aussieht:
+```
+{
+  "StatusSNS": {
+    "Time": "2021-02-03T15:12:52",
+    "Switch1": "ON",
+    "ENERGY": {
+      "TotalStartTime": "2020-01-05T12:41:22",
+      "Total": 13.48712,
+      "Yesterday": 0.000,
+      "Today": 0.000,
+      "Power": 0,
+      "ApparentPower": 0,
+      "ReactivePower": 0,
+      "Factor": 0.00,
+      "Voltage": 0,
+      "Current": 0.000
+    }
+  }
+}
 ```
 
 Aus obigem Beispiel ergeben sich folgende Feld-Inhalte im *Smart Appliance Enabler*:
 
 | Feld                                            | Wert                                  |
 | ----------------------------------------------- | ------------------------------------- |
+| Format                                          | JSON                                  |
 | URL                                             | http://192.168.1.1/cm?cmnd=Status%208 |
-| Regulärer Ausdruck zum Extrahieren der Leistung | .\*"Power":(\d+).\*       |
+| Pfad (für Zustand `Zählerstand`)                | $.StatusSNS.ENERGY.Total              |
+| Pfad (für Zustand `Leistung`)                   | $.StatusSNS.ENERGY.Power              |
+
+Der `Zählerstand` wird standardmässig von Tasmota nur mit 3 Nachkommastellen geliefert. Damit der *Smart Appliance Enabler* aus Zählertandsdifferenzen die Leistung möglich genau berechnen kann, muss der Tasmota-Adapter **auf 5 Nachkomstellen konfiguriert** werden.
+Dazu geht man auf die Tasmota-Web-Konsole des Adapters und gibt den Befehl `EnergyRes 5` ein und schliesst die Eingabe mit `Enter` ab:
+```
+17:14:25 RSL: RESULT = {"EnergyRes":5}
+```
 
 Für jede Zähler-Abfrage finden sich in der [Log-Datei](Support.md#Log) folgende Zeilen:
 ```
-2017-06-03 18:39:55,125 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:101] F-00000001-000000000001-00: Sending HTTP request
-2017-06-03 18:39:55,125 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:102] F-00000001-000000000001-00: url=http://192.168.1.1/cm?cmnd=Status%208
-2017-06-03 18:39:55,126 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:103] F-00000001-000000000001-00: data=null
-2017-06-03 18:39:55,126 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:104] F-00000001-000000000001-00: contentType=null
-2017-06-03 18:39:55,126 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:105] F-00000001-000000000001-00: username=null
-2017-06-03 18:39:55,126 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:106] F-00000001-000000000001-00: password=null
-2017-06-03 18:39:55,146 DEBUG [Timer-0] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:118] F-00000001-000000000001-00: Response code is 200
-2017-06-03 18:39:55,147 DEBUG [Timer-0] d.a.s.a.HttpElectricityMeter [HttpElectricityMeter.java:119] F-00000001-000000000001-00: HTTP response: STATUS8 = {"StatusSNS":{"Time":"2019-09-06T19:19:50","ENERGY":{"TotalStartTime":"2019-08-18T11:30:33","Total":27.772,"Yesterday":1.046,"Today":0.980,"Power":26,"ApparentPower":47,"ReactivePower":47,"Factor":0.05,"Voltage":231,"Current":0.204}}}
-2017-06-03 18:39:55,147 DEBUG [Timer-0] d.a.s.a.HttpElectricityMeter [HttpElectricityMeter.java:120] F-00000001-000000000001-00: Power value extraction regex: .*"Power":(\d+).*
-2017-06-03 18:39:55,153 DEBUG [Timer-0] d.a.s.a.HttpElectricityMeter [HttpElectricityMeter.java:119] F-00000001-000000000001-00: Power value extracted from HTTP response: 26
+2021-02-08 00:09:54,324 DEBUG [Timer-0] d.a.s.u.GuardedTimerTask [GuardedTimerTask.java:54] F-00000001-000000000014-00: Executing timer task name=PollEnergyMeter id=13049675
+2021-02-08 00:09:54,324 DEBUG [Timer-0] d.a.s.h.HttpTransactionExecutor [HttpTransactionExecutor.java:107] F-00000001-000000000014-00: Sending GET request url=http://kuehltruhe/cm?cmnd=Status%208
+2021-02-08 00:09:54,459 DEBUG [Timer-0] d.a.s.h.HttpTransactionExecutor [HttpTransactionExecutor.java:168] F-00000001-000000000014-00: Response code is 200
+2021-02-08 00:09:54,462 DEBUG [Timer-0] d.a.s.h.HttpHandler [HttpHandler.java:86] F-00000001-000000000014-00: url=http://kuehltruhe/cm?cmnd=Status%208 httpMethod=GET data=null path=$.StatusSNS.ENERGY.Total
+2021-02-08 00:09:54,463 DEBUG [Timer-0] d.a.s.h.HttpHandler [HttpHandler.java:89] F-00000001-000000000014-00: Response: {"StatusSNS":{"Time":"2021-02-08T00:09:54","ENERGY":{"TotalStartTime":"2020-01-05T17:01:57","Total":56.00865,"Yesterday":0.53820,"Today":0.00005,"Power":0,"ApparentPower":5,"ReactivePower":5,"Factor":0.06,"Voltage":237,"Current":0.021}}}
+2021-02-08 00:09:54,464 DEBUG [Timer-0] d.a.s.h.HttpHandler [HttpHandler.java:58] F-00000001-000000000014-00: value=56.00865 protocolHandlerValue=56.00865 valueExtractionRegex=null extractedValue=56.00865
+2021-02-08 00:09:54,465 DEBUG [Timer-0] d.a.s.m.PollEnergyMeter [PollEnergyMeter.java:120] F-00000001-000000000014-00: Adding value: timestamp=2021-02-08T00:09:54.324795 value=56.00865
 ```
 
 *Webmin*: In [View Logfile](Logging_DE.md#webmin-logs) gibt man hinter `Only show lines with text` ein `Http` und drückt Refresh.

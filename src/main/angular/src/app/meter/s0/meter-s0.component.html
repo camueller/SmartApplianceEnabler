@@ -19,11 +19,11 @@
            required="{{formHandler.isRequired('impulsesPerKwh')}}">
     <mat-error *ngIf="errors.impulsesPerKwh">{{errors.impulsesPerKwh}}</mat-error>
   </mat-form-field>
-  <mat-form-field class="measurementInterval">
-    <mat-label>{{'MeterS0Component.measurementInterval' | translate}}</mat-label>
-    <input matInput type="text" formControlName="measurementInterval"
-           placeholder="{{meterDefaults.s0ElectricityMeterDefaults.measurementInterval}}"
-           required="{{formHandler.isRequired('measurementInterval')}}">
-    <mat-error *ngIf="errors.measurementInterval">{{errors.measurementInterval}}</mat-error>
+  <mat-form-field class="minPulseDuration">
+    <mat-label>{{'MeterS0Component.minPulseDuration' | translate}}</mat-label>
+    <input matInput type="text" formControlName="minPulseDuration"
+           placeholder="{{meterDefaults.s0ElectricityMeterDefaults.minPulseDuration}}"
+           required="{{formHandler.isRequired('minPulseDuration')}}">
+    <mat-error *ngIf="errors.minPulseDuration">{{errors.minPulseDuration}}</mat-error>
   </mat-form-field>
 </div>

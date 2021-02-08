@@ -4,13 +4,11 @@ Stromzähler mit [Modbus](https://de.wikipedia.org/wiki/Modbus)-Protokoll erlaub
 
 Für Modbus-Schalter gelten die allgemeinen Hinweise zur Verwendung von [Modbus im SmartApplianceEnabler](Modbus_DE.md).
 
-Mit dem `Abfrage-Intervall` kann festgelegt werden, in welchen Abständen die aktuelle Leistungsaufnahme bei der Datenquelle abgefragt wird.
+Nach Möglichkeit sollte die Messgrösse `Zählerstand` eingstellt werden, weil der *Smart Appliance Enabler* dann diesen Wert **nur einmal pro Minute abfragen** muss und aus der Differenz zur vorangegangen Anfrage die Leistung sehr genau berechnet kann.
 
-Ausserdem kann ein `Messinterval` angegeben werden für die Durchschnittsberechnung der Leistungsaufnahme.
+Wird die Messgrösse `Leistung` eingestellt, erfolgt die Abfrage dieses Wertes mehrmals pro Minute, um aus diesen Werten den Durschnitt zu berechnen. Der zeitliche Abstand zwischen diesen Abfragen kann mit dem `Abfrage-Intervall` festgelegt werden - der Standardwert sind 20 Sekunden.
 
-Der `Zustand` bezeichnet die Messgrösse, die vom Zähler gelesen werden soll - normalerweise immer die `Leistung`. Bei Geräten mit steuerbarer Leistung (z.B. Wallboxen) kann ausserdem die `Energiemenge` vom Zähler gelesen werden, wenn dieser diese Messgrösse liefert.
-
-Falls der über HTTP gelieferte Verbrauchswert nicht in Watt geliefert wird, muss ein `Umrechnungsfaktor` angegeben werden, mit dem der gelieferte Wert multipliziert werden muss, um den Verbrauch in Watt zu erhalten. Wird beispielsweise der Verbrauch in mW geliefert, muss dieser Faktor mit dem Wert `1000` angegeben werden.
+Für die Messgrösse `Zählerstand` wird der Wert in kWh und für die Messgrösse `Leistung` in W benötigt. Falls die Werte in anderen Einheiten geliefert werden, muss ein muss ein `Umrechnungsfaktor` angegeben werden, mit dem der gelieferte Wert multipliziert werden muss, um ihn in die benötigte Einheit umzurechnen. Wird beispielsweise der Verbrauch in mW geliefert, muss dieser Faktor mit dem Wert `1000` angegeben werden.
 
 ![Modbus-basierter Zähler](../pics/fe/ModbusMeter.png)
 

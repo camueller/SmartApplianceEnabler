@@ -40,8 +40,6 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
     @XmlAttribute
     private Integer impulsesPerKwh;
     @XmlAttribute
-    private Integer measurementInterval; // seconds
-    @XmlAttribute
     private Integer minPulseDuration; // milliseconds
     @XmlElement(name = "Notifications")
     private Notifications notifications;
@@ -67,10 +65,6 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
 
     public Integer getImpulsesPerKwh() {
         return impulsesPerKwh;
-    }
-
-    public Integer getMeasurementInterval() {
-        return measurementInterval != null ? measurementInterval : S0ElectricityMeterDefaults.getMeasurementInterval();
     }
 
     public Integer getMinPulseDuration() {
@@ -135,7 +129,6 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
     @Override
     public void init() {
         pulsePowerMeter.setImpulsesPerKwh(impulsesPerKwh);
-        pulsePowerMeter.setMeasurementInterval(getMeasurementInterval());
         pulseEnergyMeter.setImpulsesPerKwh(impulsesPerKwh);
         logger.debug("{}: configured: GPIO={} impulsesPerKwh={} minPulseDuration={} pinPullResistance={}",
                 getApplianceId(), getGpio() != null ? getGpio().getAddress() : null, getImpulsesPerKwh(), getMinPulseDuration(),
@@ -178,6 +171,10 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
         else {
             logGpioAccessDisabled(logger);
         }
+    }
+
+    @Override
+    public void startAveragingInterval(LocalDateTime now, Timer timer, int nextPollCompletedSecondsFromNow) {
     }
 
     protected synchronized void handleEvent(GpioPin pin, PinState state, PinPullResistance pinPullResistance, Long timestamp) {

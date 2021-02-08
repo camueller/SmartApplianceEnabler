@@ -17,7 +17,7 @@
  */
 
 export class S0ElectricityMeterDefaults {
-  measurementInterval: number;
+  minPulseDuration: number;
 
   public constructor(init?: Partial<S0ElectricityMeterDefaults>) {
     Object.assign(this, init);

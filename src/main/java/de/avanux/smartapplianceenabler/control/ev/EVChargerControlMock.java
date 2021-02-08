@@ -141,6 +141,10 @@ public class EVChargerControlMock implements EVChargerControl, Meter {
     }
 
     @Override
+    public void startAveragingInterval(LocalDateTime now, Timer timer, int nextPollCompletedSecondsFromNow) {
+    }
+
+    @Override
     public int getAveragePower() {
         return 6800;
     }
@@ -153,11 +157,6 @@ public class EVChargerControlMock implements EVChargerControl, Meter {
     @Override
     public int getMaxPower() {
         return 0;
-    }
-
-    @Override
-    public Integer getMeasurementInterval() {
-        return null;
     }
 
     @Override

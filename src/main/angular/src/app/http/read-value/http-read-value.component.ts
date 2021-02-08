@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {Logger} from '../../log/logger';
 import {FormGroup, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
@@ -9,6 +9,8 @@ import {HttpReadValue} from './http-read-value';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {getValidFloat, getValidString} from '../../shared/form-util';
 import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/error-message';
+import { EventEmitter } from '@angular/core';
+import {MeterReadNameChangedEvent} from '../../meter/meter-read-name-changed-event';
 
 @Component({
   selector: 'app-http-read-value',
@@ -35,6 +37,8 @@ export class HttpReadValueComponent implements OnChanges, OnInit {
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
+  @Output()
+  nameChanged = new EventEmitter<any>();
 
   constructor(private logger: Logger,
               private translate: TranslateService
@@ -78,10 +82,20 @@ export class HttpReadValueComponent implements OnChanges, OnInit {
     return this.translatedStrings[textKey];
   }
 
+  onNameChanged(newName?: string) {
+    if (newName) {
+      const event: MeterReadNameChangedEvent = {name: newName};
+      this.nameChanged.emit(event);
+    }
+  }
+
   expandParentForm() {
     this.formHandler.addFormControl(this.form, 'name',
       this.httpReadValue && this.httpReadValue.name,
       [Validators.required]);
+    if (this.httpReadValue) {
+      this.onNameChanged(this.httpReadValue.name);
+    }
     this.formHandler.addFormControl(this.form, 'data',
       this.httpReadValue && this.httpReadValue.data);
     this.formHandler.addFormControl(this.form, 'path',

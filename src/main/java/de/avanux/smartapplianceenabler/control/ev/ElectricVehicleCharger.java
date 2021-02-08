@@ -75,6 +75,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     private transient LocalDateTime socInitialTimestamp;
     private transient boolean socScriptAsync = true;
     private transient boolean socScriptRunning;
+    private transient boolean socCalculationRequired;
     private transient double chargeLoss = 0.0;
     private transient Appliance appliance;
     private transient String applianceId;
@@ -353,6 +354,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
             logger.debug("{}: Vehicle state changed: previousState={} newState={}", applianceId, previousState, currentState);
             stateHistory.add(currentState);
             stateLastChangedTimestamp = now;
+            socCalculationRequired = true;
             onEVChargerStateChanged(now, previousState, currentState);
         }
         else {
@@ -743,7 +745,10 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
 
     public synchronized void updateSoc(LocalDateTime now) {
         if(! isVehicleNotConnected()) {
-            this.socValues.current = calculateCurrentSoc(this.appliance.getMeter());
+            if(this.socCalculationRequired || isCharging()) {
+                this.socValues.current = calculateCurrentSoc(this.appliance.getMeter());
+                this.socCalculationRequired = false;
+            }
             ElectricVehicle electricVehicle = getConnectedVehicle();
             if(electricVehicle != null && electricVehicle.getSocScript() != null) {
                 Integer updateAfterIncrease = electricVehicle.getSocScript().getUpdateAfterIncrease();

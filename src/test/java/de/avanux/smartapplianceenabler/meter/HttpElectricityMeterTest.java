@@ -38,7 +38,10 @@ public class HttpElectricityMeterTest extends TestBase {
     private HttpTransactionExecutor executorMock = Mockito.mock(HttpTransactionExecutor.class);
 
     public HttpElectricityMeterTest() {
+        PollEnergyMeter pollEnergyMeter = new PollEnergyMeter();
         this.meter = new HttpElectricityMeter();
+        pollEnergyMeter.setPollEnergyExecutor(this.meter);
+        this.meter.setPollEnergyMeter(pollEnergyMeter);
         this.meter.setApplianceId("F-001");
         this.meter.setHttpTransactionExecutor(this.executorMock);
         this.meter.init();
@@ -78,30 +81,25 @@ public class HttpElectricityMeterTest extends TestBase {
     @Test
     public void getPower_goECharger() {
         meter.setContentProtocol(ContentProtocolType.JSON);
-        meter.setMeasurementInterval(7200);
 
         HttpRead energyReadSpy = Mockito.spy(new HttpRead("http://127.0.0.1:8999"));
-        HttpReadValue powerReadValue = new HttpReadValue(MeterValueName.Energy.name(), "$.dws", null, null, 0.001);
+        HttpReadValue powerReadValue = new HttpReadValue(MeterValueName.Energy.name(), "$.dws", null, null, 0.0000027778);
         energyReadSpy.setReadValues(Collections.singletonList(powerReadValue));
         meter.setHttpReads(Collections.singletonList(energyReadSpy));
 
-        meter.start(LocalDateTime.now(), null);
+        LocalDateTime now = LocalDateTime.now();
 
-        LocalDateTime timestamp = LocalDateTime.now().plusHours(1);
-        String response = goEChargerStatus.replace((CharSequence) "dws\":\"0", (CharSequence) "dws\":\"2500");
+        String response = goEChargerStatus.replace((CharSequence) "dws\":\"0", (CharSequence) "dws\":\"360000"); // 1.0 kWh
         Mockito.doReturn(response).when(executorMock).execute(Mockito.any(), Mockito.any(), Mockito.any());
-        meter.getPollEnergyMeter().addValue(timestamp); // simulate timer task
-        meter.getPollPowerMeter().addValue(timestamp, meter); // simulate timer task
+        meter.getPollEnergyMeter().addValue(now);
 
-        timestamp = LocalDateTime.now().plusHours(2);
-        response = goEChargerStatus.replace((CharSequence) "dws\":\"0", (CharSequence) "dws\":\"5900");
+        response = goEChargerStatus.replace((CharSequence) "dws\":\"0", (CharSequence) "dws\":\"366000");  // (1 + 1/60) * 1.0 kWh
         Mockito.doReturn(response).when(executorMock).execute(Mockito.any(), Mockito.any(), Mockito.any());
-        meter.getPollEnergyMeter().addValue(timestamp); // simulate timer task
-        meter.getPollPowerMeter().addValue(timestamp, meter); // simulate timer task
+        meter.getPollEnergyMeter().addValue(now.plusSeconds(60));
 
-        assertEquals(3400, this.meter.getAveragePower());
-        assertEquals(3400, this.meter.getMaxPower());
-        assertEquals(3400, this.meter.getMinPower());
+        assertEquals(1000, this.meter.getAveragePower());
+        assertEquals(1000, this.meter.getMaxPower());
+        assertEquals(1000, this.meter.getMinPower());
     }
 
     @Test
@@ -113,59 +111,19 @@ public class HttpElectricityMeterTest extends TestBase {
     public void getEnergy_goECharger() {
         this.meter.setContentProtocol(ContentProtocolType.JSON);
         HttpRead energyReadSpy = Mockito.spy(new HttpRead("http://127.0.0.1:8999"));
-        HttpReadValue powerReadValue = new HttpReadValue(MeterValueName.Energy.name(), "$.dws", null, null, 0.001);
+        HttpReadValue powerReadValue = new HttpReadValue(MeterValueName.Energy.name(), "$.dws", null, null, 0.0000027778);
         energyReadSpy.setReadValues(Collections.singletonList(powerReadValue));
         meter.setHttpReads(Collections.singletonList(energyReadSpy));
 
-        String startResponse = goEChargerStatus.replace((CharSequence) "dws\":\"0", (CharSequence) "dws\":\"2500");
+        String startResponse = goEChargerStatus.replace((CharSequence) "dws\":\"0", (CharSequence) "dws\":\"360000"); // 1.0 kWh
         Mockito.doReturn(startResponse).when(executorMock).execute(Mockito.any(), Mockito.any(), Mockito.any());
 
         this.meter.startEnergyMeter();
-        String stopResponse = goEChargerStatus.replace((CharSequence) "dws\":\"0", (CharSequence) "dws\":\"5900");
+        String stopResponse = goEChargerStatus.replace((CharSequence) "dws\":\"0", (CharSequence) "dws\":\"720000"); // 2.0 kWh
         Mockito.doReturn(stopResponse).when(executorMock).execute(Mockito.any(), Mockito.any(), Mockito.any());
         this.meter.stopEnergyMeter();
 
-        assertEquals(3.4f, this.meter.getEnergy(), 0.01);
-    }
-
-    @Test
-    public void calculatePower_2energyValues() {
-        TreeMap<LocalDateTime, Float> energyValues = new TreeMap<>();
-        LocalDateTime now = LocalDateTime.now();
-        energyValues.put(now.plusHours(1), 5.0f); // after 1h: 5 kWh
-        energyValues.put(now.plusHours(2), 8.0f); // after 2h: 8 kWh
-
-        List<Float> powerValues = this.meter.calculatePower(energyValues);
-        assertEquals(1, powerValues.size());
-        assertEquals(3000, powerValues.get(0).floatValue(), 0.01);
-    }
-
-    @Test
-    public void calculatePower_4energyValues() {
-        TreeMap<LocalDateTime, Float> energyValues = new TreeMap<>();
-        LocalDateTime now = LocalDateTime.now();
-        energyValues.put(now.plusHours(1), 5.0f);  // after 1h: 5 kWh
-        energyValues.put(now.plusHours(2), 8.0f);  // after 2h: 8 kWh
-        energyValues.put(now.plusHours(3), 12.0f); // after 3h: 12 kWh
-        energyValues.put(now.plusHours(4), 17.0f); // after 4h: 17 kWh
-
-        List<Float> powerValues = this.meter.calculatePower(energyValues);
-        assertEquals(3, powerValues.size());
-        assertEquals(3000, powerValues.get(0).floatValue(), 0.01);
-        assertEquals(4000, powerValues.get(1).floatValue(), 0.01);
-        assertEquals(5000, powerValues.get(2).floatValue(), 0.01);
-    }
-
-    @Test
-    public void calculatePower_afterReset() {
-        TreeMap<LocalDateTime, Float> energyValues = new TreeMap<>();
-        LocalDateTime now = LocalDateTime.now();
-        energyValues.put(now.plusHours(1), 5.0f); // after 1h: 5 kWh
-        energyValues.put(now.plusHours(1).plusSeconds(10), 0.0f); // after 1h and 10s: 0 kWh
-
-        List<Float> powerValues = this.meter.calculatePower(energyValues);
-        assertEquals(1, powerValues.size());
-        assertEquals(0, powerValues.get(0).floatValue(), 0.01);
+        assertEquals(1, this.meter.getEnergy(), 0.01);
     }
 
     private final static String goEChargerStatus = "{\"version\":\"B\",\"rbc\":\"251\",\"rbt\":\"2208867\",\"car\":\"1\",\"amp\":\"10\",\"err\":\"0\",\"ast\"\n" +

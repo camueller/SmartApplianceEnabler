@@ -19,6 +19,9 @@
 package de.avanux.smartapplianceenabler.meter;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.TreeMap;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,6 +40,15 @@ public class PollEnergyMeterTest {
     @Test
     public void getEnergy_initial() {
         assertEquals(0.0f, this.pollEnergyMeter.getEnergy(), 0.01f);
+    }
+
+    @Test
+    public void getAveragePower() {
+        LocalDateTime now = LocalDateTime.now();
+        // 0.1 kWh/min = 6 kWh/h = 6000W
+        this.pollEnergyMeter.addValue(now                , 1.1);
+        this.pollEnergyMeter.addValue(now.plusSeconds(60), 1.2);
+        assertEquals(6000, this.pollEnergyMeter.getAveragePower(), 1.5);
     }
 
     @Test
@@ -65,19 +77,27 @@ public class PollEnergyMeterTest {
         assertEquals(15.0f, this.pollEnergyMeter.getEnergy(), 0.01f);
     }
 
+    @Test
+    public void calculatePower_afterReset() {
+        LocalDateTime now = LocalDateTime.now();
+        this.pollEnergyMeter.addValue(now.plusHours(1), 5.0f); // after 1h: 5 kWh
+        this.pollEnergyMeter.addValue(now.plusHours(1).plusSeconds(10), 0.0f); // after 1h and 10s: 0 kWh
+
+        assertEquals(0, this.pollEnergyMeter.getEnergy(), 0.01);
+    }
 
     private class TestPollEnergyExecutor implements PollEnergyExecutor {
 
         public static final float INITIAL_POLL_VALUE = 100.0f;
-        private float value = INITIAL_POLL_VALUE;
+        private double value = INITIAL_POLL_VALUE;
 
 
-        public void addEnergy(float energy) {
+        public void addEnergy(double energy) {
             this.value += energy;
         }
 
         @Override
-        public Float pollEnergy(LocalDateTime now) {
+        public Double pollEnergy(LocalDateTime now) {
             return this.value;
         }
     }

@@ -23,6 +23,7 @@ import {FormHandler} from '../../shared/form-handler';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {Logger} from '../../log/logger';
 import {MeterDefaults} from '../../meter/meter-defaults';
+import {MeterReadNameChangedEvent} from '../../meter/meter-read-name-changed-event';
 
 @Component({
   selector: 'app-modbus-read',
@@ -51,6 +52,8 @@ export class ModbusReadComponent implements OnChanges, OnInit {
   translationKeys: string[];
   @Output()
   remove = new EventEmitter<any>();
+  @Output()
+  nameChanged = new EventEmitter<any>();
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -91,6 +94,11 @@ export class ModbusReadComponent implements OnChanges, OnInit {
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
     });
+  }
+
+  onNameChanged(index: number, event: MeterReadNameChangedEvent) {
+    event.readValueIndex = index;
+    this.nameChanged.emit(event);
   }
 
   get type(): string {
@@ -141,6 +149,10 @@ export class ModbusReadComponent implements OnChanges, OnInit {
   removeValue(index: number) {
     this.modbusRead.readValues.splice(index, 1);
     this.modbusReadValuesFormArray.removeAt(index);
+
+    const event: MeterReadNameChangedEvent = {readValueIndex: index};
+    this.nameChanged.emit(event);
+
     this.form.markAsDirty();
   }
 

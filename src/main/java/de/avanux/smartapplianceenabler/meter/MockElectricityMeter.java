@@ -59,6 +59,10 @@ public class MockElectricityMeter implements Meter, ApplianceIdConsumer {
     }
 
     @Override
+    public void startAveragingInterval(LocalDateTime now, Timer timer, int nextPollCompletedSecondsFromNow) {
+    }
+
+    @Override
     public int getAveragePower() {
         return 0;
     }
@@ -74,13 +78,8 @@ public class MockElectricityMeter implements Meter, ApplianceIdConsumer {
     }
 
     @Override
-    public Integer getMeasurementInterval() {
-        return null;
-    }
-
-    @Override
     public float getEnergy() {
-        return this.pollEnergyMeter.getEnergy();
+        return (float) this.pollEnergyMeter.getEnergy();
     }
 
     @Override

@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {FormGroup, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {ModbusReadValue} from './modbus-read-value';
@@ -8,6 +8,7 @@ import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/er
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
 import {getValidString} from '../../shared/form-util';
 import {Logger} from '../../log/logger';
+import {MeterReadNameChangedEvent} from '../../meter/meter-read-name-changed-event';
 
 @Component({
   selector: 'app-modbus-read-value',
@@ -30,6 +31,8 @@ export class ModbusReadValueComponent implements OnChanges, OnInit {
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
+  @Output()
+  nameChanged = new EventEmitter<any>();
 
   constructor(private logger: Logger,
               private translate: TranslateService
@@ -73,10 +76,20 @@ export class ModbusReadValueComponent implements OnChanges, OnInit {
     return this.translatedStrings[textKey];
   }
 
+  onNameChanged(newName?: string) {
+    if (newName) {
+      const event: MeterReadNameChangedEvent = {name: newName};
+      this.nameChanged.emit(event);
+    }
+  }
+
   expandParentForm() {
     this.formHandler.addFormControl(this.form, 'name',
       this.modbusReadValue && this.modbusReadValue.name,
       [Validators.required]);
+    if (this.modbusReadValue) {
+      this.onNameChanged(this.modbusReadValue.name);
+    }
     this.formHandler.addFormControl(this.form, 'extractionRegex',
       this.modbusReadValue && this.modbusReadValue.extractionRegex);
   }

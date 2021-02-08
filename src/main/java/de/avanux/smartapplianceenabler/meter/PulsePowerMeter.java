@@ -20,9 +20,7 @@ package de.avanux.smartapplianceenabler.meter;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
-import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.configuration.Validateable;
-import de.avanux.smartapplianceenabler.schedule.TimeframeIntervalHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,33 +32,20 @@ public class PulsePowerMeter implements ApplianceIdConsumer, Validateable {
     private Logger logger = LoggerFactory.getLogger(PulsePowerMeter.class);
     private String applianceId;
     private List<Long> impulseTimestamps = Collections.synchronizedList(new ArrayList<Long>());
-    private Integer measurementInterval; // seconds
     private Integer impulsesPerKwh;
 
     @Override
     public void validate() throws ConfigurationException {
         logger.debug("{}: Validating configuration", applianceId);
-        if(measurementInterval == null) {
-            logger.error("{}: measurement interval not set", applianceId);
-            throw new ConfigurationException();
-        }
         if(impulsesPerKwh == null) {
             logger.error("{}: impulses per kwh not set", applianceId);
             throw new ConfigurationException();
         }
-        logger.debug("{}: configured: impulsesPerKwh={} measurementInterval={}s", applianceId, impulsesPerKwh, measurementInterval);
+        logger.debug("{}: configured: impulsesPerKwh={}", applianceId, impulsesPerKwh);
     }
 
     void setImpulsesPerKwh(Integer impulsesPerKwh) {
         this.impulsesPerKwh = impulsesPerKwh;
-    }
-
-    void setMeasurementInterval(Integer measurementInterval) {
-        this.measurementInterval = measurementInterval;
-    }
-
-    public Integer getMeasurementInterval() {
-        return measurementInterval;
     }
 
     @Override
@@ -98,7 +83,7 @@ public class PulsePowerMeter implements ApplianceIdConsumer, Validateable {
     }
 
     private boolean isTimestampExpired(long timestampNow, long timestamp) {
-        return timestampNow - timestamp > this.measurementInterval * 1000;
+        return timestampNow - timestamp > Meter.averagingInterval * 1000;
     }
 
     private Long getMostRecentTimestamp() {

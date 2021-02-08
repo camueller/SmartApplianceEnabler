@@ -21,6 +21,7 @@
           [valueNames]="valueNames"
           [translationPrefix]="translationPrefix"
           [translationKeys]="translationKeys"
+          (nameChanged)="onNameChanged(i, $event)"
           #httpReadValues
         ></app-http-read-value>
       </div>

@@ -19,7 +19,6 @@
 export class HttpElectricityMeterDefaults {
   factorToWatt: number;
   pollInterval: number;
-  measurementInterval: number;
 
   public constructor(init?: Partial<HttpElectricityMeterDefaults>) {
     Object.assign(this, init);

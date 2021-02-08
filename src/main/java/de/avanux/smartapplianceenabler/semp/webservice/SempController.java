@@ -34,6 +34,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.StringWriter;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -78,6 +79,8 @@ public class SempController {
                     planningRequests.add(planningRequest);
                 }
             }
+            ApplianceManager.getInstance().startMeterAveragingInterval(now,
+                    Meter.averagingInterval - (int) Duration.between(now, LocalDateTime.now()).toSeconds() - 2);
         }
         Device2EM device2EM = ApplianceManager.getInstance().getDevice2EM();
         device2EM.setDeviceInfo(createDeviceInfo(now));
@@ -125,7 +128,6 @@ public class SempController {
     }
 
     private List<DeviceInfo> createDeviceInfo(LocalDateTime now) {
-        logger.debug("Device info requested of all devices");
         List<DeviceInfo> deviceInfos = new ArrayList<DeviceInfo>();
         List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
         for (Appliance appliance : appliances) {

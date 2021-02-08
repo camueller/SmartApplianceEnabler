@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Axel Müller <axel.mueller@avanux.de>
+ * Copyright (C) 2021 Axel Müller <axel.mueller@avanux.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,13 +15,8 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package de.avanux.smartapplianceenabler.meter;
 
-/**
- * Poll power consumption from a appliance.
- */
-public interface PollPowerExecutor {
-
-    Double pollPower();
-
+export interface MeterReadNameChangedEvent {
+  readValueIndex?: number;
+  name?: string;
 }

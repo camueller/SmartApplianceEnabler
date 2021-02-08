@@ -34,7 +34,6 @@ public class PulsePowerMeterTest {
         pulsePowerMeter = new PulsePowerMeter();
         pulsePowerMeter.setApplianceId(getClass().getSimpleName());
         pulsePowerMeter.setImpulsesPerKwh(1000);
-        pulsePowerMeter.setMeasurementInterval(60);
     }
 
     @Test

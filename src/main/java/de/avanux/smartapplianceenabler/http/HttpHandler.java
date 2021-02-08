@@ -40,26 +40,26 @@ public class HttpHandler implements ApplianceIdConsumer {
         this.httpTransactionExecutor = httpTransactionExecutor;
     }
 
-    public float getFloatValue(ParentWithChild<HttpRead, HttpReadValue> read,
+    public double getDoubleValue(ParentWithChild<HttpRead, HttpReadValue> read,
                                ContentProtocolHandler contentProtocolHandler) {
         String protocolHandlerValue = getValue(read, contentProtocolHandler);
         if(protocolHandlerValue != null) {
             String valueExtractionRegex = read.child().getExtractionRegex();
             String extractedValue = RegexUtil.getMatchingGroup1(protocolHandlerValue, valueExtractionRegex);
             String parsableString = extractedValue.replace(',', '.');
-            Float value;
+            Double value;
             Double factorToValue = read.child().getFactorToValue();
             if(factorToValue != null) {
-                value = Double.valueOf(Double.parseDouble(parsableString) * factorToValue).floatValue();
+                value = Double.parseDouble(parsableString) * factorToValue;
             }
             else {
-                value = Double.valueOf(Double.parseDouble(parsableString)).floatValue();
+                value = Double.parseDouble(parsableString);
             }
             logger.debug("{}: value={} protocolHandlerValue={} valueExtractionRegex={} extractedValue={}",
                     applianceId, value, protocolHandlerValue, valueExtractionRegex, extractedValue);
             return value;
         }
-        return 0.0f;
+        return 0.0;
     }
 
     public boolean getBooleanValue(ParentWithChild<HttpRead, HttpReadValue> read,

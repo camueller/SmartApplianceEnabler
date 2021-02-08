@@ -331,7 +331,6 @@
         <xs:attribute name="gpio" type="xs:int" use="required"/>
         <xs:attribute name="pinPullResistance" type="PinPullResistanceType" />
         <xs:attribute name="impulsesPerKwh" type="xs:int" use="required"/>
-        <xs:attribute name="measurementInterval" type="xs:int" />
         <xs:attribute name="minPulseDuration" type="xs:int" />
     </xs:complexType>
 
@@ -350,7 +349,6 @@
         <xs:attribute name="idref" type="xs:NCName" use="required" />
         <xs:attribute name="slaveAddress" type="xs:int" use="required" />
         <xs:attribute name="pollInterval" type="xs:int" />
-        <xs:attribute name="measurementInterval" type="xs:int"/>
     </xs:complexType>
 
     <xs:complexType name="HttpElectricityMeterType">
@@ -361,7 +359,6 @@
         </xs:sequence>
         <xs:attribute name="contentProtocol" type="ContentProtcolType" />
         <xs:attribute name="pollInterval" type="xs:int" />
-        <xs:attribute name="measurementInterval" type="xs:int" />
     </xs:complexType>
 
     <xs:complexType name="NotificationType">

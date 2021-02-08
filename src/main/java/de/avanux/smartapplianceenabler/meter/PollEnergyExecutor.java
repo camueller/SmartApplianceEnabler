@@ -22,5 +22,5 @@ import java.time.LocalDateTime;
 
 public interface PollEnergyExecutor {
 
-    Float pollEnergy(LocalDateTime now);
+    Double pollEnergy(LocalDateTime now);
 }

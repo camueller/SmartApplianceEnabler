@@ -18,7 +18,6 @@
 
 export class ModbusElectricityMeterDefaults {
   pollInterval: number;
-  measurementInterval: number;
 
   public constructor(init?: Partial<ModbusElectricityMeterDefaults>) {
     Object.assign(this, init);

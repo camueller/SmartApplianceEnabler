@@ -21,17 +21,12 @@ package de.avanux.smartapplianceenabler.meter;
 public class HttpElectricityMeterDefaults {
     // static members won't be serialized but we need those valus on the client
     private Float factorToWatt = 1.0f;
-    private Integer measurementInterval = 60; // seconds
     private Integer pollInterval = 20; // seconds
 
     private static HttpElectricityMeterDefaults instance = new HttpElectricityMeterDefaults();
 
     public static Float getFactorToWatt() {
         return instance.factorToWatt;
-    }
-
-    public static Integer getMeasurementInterval() {
-        return instance.measurementInterval;
     }
 
     public static Integer getPollInterval() {
