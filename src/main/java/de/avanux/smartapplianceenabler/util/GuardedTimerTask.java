@@ -63,7 +63,7 @@ abstract public class GuardedTimerTask extends TimerTask {
 
     @Override
     public boolean cancel() {
-        logger.debug("{}: Cancel timer task name={} id={}", this.applianceId != null ? this.applianceId : "",
+        logger.trace("{}: Cancel timer task name={} id={}", this.applianceId != null ? this.applianceId : "",
                 taskName, this.hashCode());
         return super.cancel();
     }
