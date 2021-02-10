@@ -80,7 +80,7 @@ public class SempController {
                 }
             }
             ApplianceManager.getInstance().startMeterAveragingInterval(now,
-                    Meter.averagingInterval - (int) Duration.between(now, LocalDateTime.now()).toSeconds() - 2);
+                    Meter.averagingInterval - (int) Duration.between(now, LocalDateTime.now()).toSeconds() - 3);
         }
         Device2EM device2EM = ApplianceManager.getInstance().getDevice2EM();
         device2EM.setDeviceInfo(createDeviceInfo(now));
