@@ -144,7 +144,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
             logger.warn("{}: Forcing queue update with ignored timeframe interval start time", applianceId);
         }
         queue.forEach(timeframeInterval -> timeframeInterval.getRequest().update());
-        logger.debug("{}: Current Queue:", applianceId);
+        logger.debug("{}: Current Queue{}", applianceId, queue.size() > 0 ? ":" : " is empty");
         logQueue(now);
 
         Optional<TimeframeInterval> prolongableTimeframeInterval = getProlongableTimeframeInterval(now);
