@@ -125,14 +125,11 @@ export class MeterModbusComponent implements OnChanges, OnInit {
   }
 
   get isAddModbusReadPossible() {
-    if (this.modbusElectricityMeter.modbusReads.length === 1) {
-      return this.modbusElectricityMeter.modbusReads[0].readValues.length < 2;
-    }
-    return this.modbusElectricityMeter.modbusReads.length < 2;
+    return this.modbusElectricityMeter.modbusReads.length === 0;
   }
 
   get maxValues() {
-    return 2;
+    return 1;
   }
 
   addModbusRead() {

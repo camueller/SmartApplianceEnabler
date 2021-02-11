@@ -2,7 +2,14 @@ import {MeterPage} from './meter.page';
 import {HttpElectricityMeter} from '../../../../../main/angular/src/app/meter/http/http-electricity-meter';
 import {MeterValueName} from '../../../../../main/angular/src/app/meter/meter-value-name';
 import {HttpReadPage} from '../http/http-read.page';
-import {assertSelectOption, selectOption, selectorSelectByFormControlName, selectorSelectedByFormControlName} from '../../shared/form';
+import {
+  assertInput,
+  assertSelectOption,
+  inputText,
+  selectOption, selectorInputByFormControlName,
+  selectorSelectByFormControlName,
+  selectorSelectedByFormControlName
+} from '../../shared/form';
 
 export class HttpMeterPage extends MeterPage {
 
@@ -31,12 +38,19 @@ export class HttpMeterPage extends MeterPage {
       }
       await HttpReadPage.setHttpRead(t, energyHttpRead, httpReadIndex, this.selectorPrefix);
     }
+
+    if (httpElectricityMeter.pollInterval) {
+      await HttpMeterPage.setPollInterval(t, httpElectricityMeter.pollInterval);
+    }
   }
 
   public static async assertHttpElectricityMeter(t: TestController, httpElectricityMeter: HttpElectricityMeter) {
     await HttpMeterPage.assertType(t, HttpElectricityMeter.TYPE);
     if (httpElectricityMeter.contentProtocol) {
       await HttpMeterPage.assertContentProtocol(t, httpElectricityMeter.contentProtocol);
+    }
+    if (httpElectricityMeter.pollInterval) {
+      await HttpMeterPage.assertPollInterval(t, httpElectricityMeter.pollInterval);
     }
 
     const powerHttpRead = httpElectricityMeter.httpReads.find(
@@ -61,5 +75,12 @@ export class HttpMeterPage extends MeterPage {
   }
   public static async assertContentProtocol(t: TestController, contentProtocol: string) {
     await assertSelectOption(t, selectorSelectedByFormControlName('contentProtocol'), contentProtocol);
+  }
+
+  public static async setPollInterval(t: TestController, pollInterval: number) {
+    await inputText(t, selectorInputByFormControlName('pollInterval'), pollInterval && pollInterval.toString());
+  }
+  public static async assertPollInterval(t: TestController, pollInterval: number) {
+    await assertInput(t, selectorInputByFormControlName('pollInterval'), pollInterval && pollInterval.toString());
   }
 }

@@ -114,14 +114,11 @@ export class MeterHttpComponent implements OnChanges, OnInit {
   }
 
   get isAddHttpReadPossible() {
-    if (this.httpElectricityMeter.httpReads.length === 1) {
-      return this.httpElectricityMeter.httpReads[0].readValues.length < 2;
-    }
-    return this.httpElectricityMeter.httpReads.length < 2;
+    return this.httpElectricityMeter.httpReads.length === 0;
   }
 
   get maxValues() {
-    return this.httpElectricityMeter.httpReads.length === 2 ? 1 : 2;
+    return 1;
   }
 
   addHttpRead() {

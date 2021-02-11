@@ -24,7 +24,13 @@ import de.avanux.smartapplianceenabler.configuration.Configuration;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.configuration.Connectivity;
 import de.avanux.smartapplianceenabler.control.Control;
+import de.avanux.smartapplianceenabler.http.HttpRead;
+import de.avanux.smartapplianceenabler.meter.HttpElectricityMeter;
 import de.avanux.smartapplianceenabler.meter.Meter;
+import de.avanux.smartapplianceenabler.meter.MeterValueName;
+import de.avanux.smartapplianceenabler.meter.ModbusElectricityMeter;
+import de.avanux.smartapplianceenabler.modbus.ModbusRead;
+import de.avanux.smartapplianceenabler.modbus.ModbusReadValue;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.schedule.Schedule;
@@ -40,6 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class ApplianceManager implements Runnable {
@@ -115,6 +122,40 @@ public class ApplianceManager implements Runnable {
             if(appliances == null) {
                 this.appliances = new Appliances();
                 this.appliances.setAppliances(new ArrayList<>());
+            }
+
+            if(appliances.getAppliances() != null) {
+                // FIXME remove migration code to one Read/Read value for Meter
+                appliances.getAppliances().stream().forEach(appliance -> {
+                    Meter meter = appliance.getMeter();
+                    if(meter instanceof HttpElectricityMeter) {
+                        HttpElectricityMeter httpMeter = ((HttpElectricityMeter) meter);
+                        List<HttpRead> httpReads = httpMeter.getHttpReads();
+                        if(httpReads != null) {
+                            if(httpReads.size() == 1) {
+                                HttpRead httpRead = httpReads.get(0);
+                                if(httpRead.getReadValues() != null && httpRead.getReadValues().size() == 2) {
+                                    httpRead.setReadValues(httpRead.getReadValues().stream().filter(readValue -> readValue.getName().equals(MeterValueName.Energy.name()))
+                                            .collect(Collectors.toList()));
+                                }
+                            }
+                            else if(httpReads.size() == 2) {
+                                httpMeter.setHttpReads(httpReads.stream()
+                                        .filter(httpRead -> httpRead.getReadValues().stream().anyMatch(readValue -> readValue.getName().equals(MeterValueName.Energy.name())))
+                                        .collect(Collectors.toList()));
+                            }
+                        }
+                    }
+                    if(meter instanceof ModbusElectricityMeter) {
+                        ModbusElectricityMeter modbusMeter = ((ModbusElectricityMeter) meter);
+                        List<ModbusRead> modbusReads = modbusMeter.getModbusReads();
+                        if(modbusReads.size() == 2) {
+                            modbusMeter.setModbusReads(modbusReads.stream()
+                                    .filter(modbusRead -> modbusRead.getReadValues().stream().anyMatch(readValue -> readValue.getName().equals(MeterValueName.Energy.name())))
+                                    .collect(Collectors.toList()));
+                        }
+                    }
+                });
             }
         }
         if(this.device2EM == null) {

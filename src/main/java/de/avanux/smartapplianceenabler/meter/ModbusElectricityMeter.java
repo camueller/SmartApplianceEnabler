@@ -78,6 +78,14 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
         return notifications;
     }
 
+    public List<ModbusRead> getModbusReads() {
+        return modbusReads;
+    }
+
+    public void setModbusReads(List<ModbusRead> modbusReads) {
+        this.modbusReads = modbusReads;
+    }
+
     public Integer getPollInterval() {
         return pollInterval != null ? pollInterval : ModbusElectricityMeterDefaults.getPollInterval();
     }

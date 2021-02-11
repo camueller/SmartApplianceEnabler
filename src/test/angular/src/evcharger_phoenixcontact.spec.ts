@@ -8,7 +8,6 @@ import {
   fixtureName
 } from './shared/helper';
 import {ApplianceConfiguration} from './shared/appliance-configuration';
-import {modbusMeter_2ModbusRead_complete} from './fixture/meter/modbus-meter';
 import {generateApplianceId} from './shared/appliance-id-generator';
 import {ModbusElectricityMeter} from '../../../main/angular/src/app/meter/modbus/modbus-electricity-meter';
 import {evchargerPhoenixContact} from './fixture/appliance/evcharger-phoenixcontact';
@@ -17,13 +16,14 @@ import {EvChargerTemplates} from '../../../main/angular/src/app/control/evcharge
 import {settings} from './fixture/settings/settings';
 import {tesla_model3} from './fixture/control/electricvehicle/tesla_model3';
 import {energyRequest_dayTimeframe_nighthly} from './fixture/schedule/energyRequest_dayTimeframe_nightly';
+import {modbusMeter_complete} from './fixture/meter/modbus-meter';
 
 fixture('Wallbox mit PhoenixContact-Ladecontroller').page(baseUrl());
 
 function createApplianceConfiguration(): ApplianceConfiguration {
   const configuration =  new ApplianceConfiguration({
     appliance: {...evchargerPhoenixContact, id: generateApplianceId()},
-    meter: {type: ModbusElectricityMeter.TYPE, modbusElectricityMeter: modbusMeter_2ModbusRead_complete},
+    meter: {type: ModbusElectricityMeter.TYPE, modbusElectricityMeter: modbusMeter_complete},
     control: {type: EvCharger.TYPE, evCharger: new EvCharger(EvChargerTemplates.getTemplates()['Phoenix Contact EM-CP-PP-ETH'])},
     controlTemplate: 'Phoenix Contact EM-CP-PP-ETH',
     schedules: energyRequest_dayTimeframe_nighthly,

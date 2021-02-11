@@ -96,6 +96,10 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
         this.httpConfiguration = httpConfiguration;
     }
 
+    public List<HttpRead> getHttpReads() {
+        return httpReads;
+    }
+
     public void setHttpReads(List<HttpRead> httpReads) {
         this.httpReads = httpReads;
     }

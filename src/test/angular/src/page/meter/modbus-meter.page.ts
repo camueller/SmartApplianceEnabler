@@ -26,15 +26,18 @@ export class ModbusMeterPage extends MeterPage {
 
     const powerModbusRead = modbusElectricityMeter.modbusReads.find(
       modbusRead => modbusRead.readValues.find(modbusReadValue => modbusReadValue.name === MeterValueName.Power));
-    let modbusReadIndex = 0;
-    await ModbusReadPage.setModbusRead(t, powerModbusRead, modbusReadIndex, this.selectorPrefix);
+    if (powerModbusRead) {
+      await ModbusReadPage.setModbusRead(t, powerModbusRead, 0, this.selectorPrefix);
+    }
 
     const energyModbusRead = modbusElectricityMeter.modbusReads.find(
       modbusRead => modbusRead.readValues.find(modbusReadValue => modbusReadValue.name === MeterValueName.Energy));
     if (energyModbusRead) {
-      modbusReadIndex = 1;
-      await ModbusReadPage.clickAddModbusRead(t, this.selectorPrefix, 'MeterModbusComponent__addModbusRead');
-      await ModbusReadPage.setModbusRead(t, energyModbusRead, modbusReadIndex, this.selectorPrefix);
+      await ModbusReadPage.setModbusRead(t, energyModbusRead, 0, this.selectorPrefix);
+    }
+
+    if (modbusElectricityMeter.pollInterval) {
+      await ModbusMeterPage.setPollInterval(t, modbusElectricityMeter.pollInterval);
     }
   }
   public static async assertModbusElectricityMeter(t: TestController, modbusElectricityMeter: ModbusElectricityMeter) {
@@ -42,17 +45,20 @@ export class ModbusMeterPage extends MeterPage {
 
     await ModbusMeterPage.assertIdRef(t, settings.modbusSettings[0].modbusTcpId);
     await ModbusMeterPage.assertAddress(t, modbusElectricityMeter.slaveAddress);
+    if (modbusElectricityMeter.pollInterval) {
+      await ModbusMeterPage.assertPollInterval(t, modbusElectricityMeter.pollInterval);
+    }
 
     const powerModbusRead = modbusElectricityMeter.modbusReads.find(
       modbusRead => modbusRead.readValues.find(modbusReadValue => modbusReadValue.name === MeterValueName.Power));
-    let modbusReadIndex = 0;
-    await ModbusReadPage.assertModbusRead(t, powerModbusRead, modbusReadIndex, this.selectorPrefix, this.i18nPrefix);
+    if (powerModbusRead) {
+      await ModbusReadPage.assertModbusRead(t, powerModbusRead, 0, this.selectorPrefix, this.i18nPrefix);
+    }
 
     const energyModbusRead = modbusElectricityMeter.modbusReads.find(
       modbusRead => modbusRead.readValues.find(modbusReadValue => modbusReadValue.name === MeterValueName.Energy));
     if (energyModbusRead) {
-      modbusReadIndex = 1;
-      await ModbusReadPage.assertModbusRead(t, energyModbusRead, modbusReadIndex, this.selectorPrefix, this.i18nPrefix);
+      await ModbusReadPage.assertModbusRead(t, energyModbusRead, 0, this.selectorPrefix, this.i18nPrefix);
     }
   }
 
@@ -68,5 +74,12 @@ export class ModbusMeterPage extends MeterPage {
   }
   public static async assertAddress(t: TestController, address: string) {
     await assertInput(t, selectorInputByFormControlName('slaveAddress'), address);
+  }
+
+  public static async setPollInterval(t: TestController, pollInterval: number) {
+    await inputText(t, selectorInputByFormControlName('pollInterval'), pollInterval && pollInterval.toString());
+  }
+  public static async assertPollInterval(t: TestController, pollInterval: number) {
+    await assertInput(t, selectorInputByFormControlName('pollInterval'), pollInterval && pollInterval.toString());
   }
 }
