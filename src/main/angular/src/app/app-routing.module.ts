@@ -34,6 +34,7 @@ import {SettingsResolver} from './settings/settings-resolver.service';
 import {SettingsDefaultsResolver} from './settings/settings-defaults-resolver.service';
 import {CanDeactivateGuard} from './shared/can-deactivate-guard.service';
 import {SchedulesComponent} from './schedule/schedules/schedules.component';
+import {ApplianceIdsResolver} from './appliance/appliance-ids-resolver';
 
 const routes: Routes = [
   {
@@ -45,7 +46,8 @@ const routes: Routes = [
     path: 'appliance/:id',
     component: ApplianceComponent,
     resolve: {
-      appliance: ApplianceResolver
+      appliance: ApplianceResolver,
+      applianceIds: ApplianceIdsResolver
     },
     canDeactivate: [CanDeactivateGuard]
   },

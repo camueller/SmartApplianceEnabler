@@ -21,7 +21,7 @@ import {ApplianceService} from './appliance.service';
 import {ActivatedRoute, CanDeactivate, Router} from '@angular/router';
 import {AppliancesReloadService} from './appliances-reload-service';
 import {Location} from '@angular/common';
-import {FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
@@ -43,6 +43,7 @@ import {ListItem} from '../shared/list-item';
 })
 export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<ApplianceComponent> {
   appliance: Appliance;
+  applianceIdsUsedElsewhere: string[];
   form: FormGroup;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};
@@ -81,6 +82,7 @@ export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<Appl
     this.errorMessages = new ErrorMessages('ApplianceComponent.error.', [
       new ErrorMessage('id', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('id', ValidatorType.pattern),
+      new ErrorMessage('id', ValidatorType.custom),
       new ErrorMessage('vendor', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('name', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('serial', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
@@ -101,8 +103,9 @@ export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<Appl
       });
     });
     this.route.paramMap.subscribe(() => this.isNew = this.route.snapshot.paramMap.get('id') == null);
-    this.route.data.subscribe((data: { appliance: Appliance }) => {
+    this.route.data.subscribe((data: { appliance: Appliance, applianceIds: string[] }) => {
       this.appliance = data.appliance;
+      this.applianceIdsUsedElsewhere = data.applianceIds && data.applianceIds.filter(id => id !== data.appliance.id);
       this.buildForm();
       this.form.statusChanges.subscribe(() => {
         this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
@@ -141,7 +144,8 @@ export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<Appl
   buildForm() {
     this.form = new FormGroup({});
     this.formHandler.addFormControl(this.form, 'id', this.appliance && this.appliance.id,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.APPLIANCE_ID)]);
+      [Validators.required, Validators.pattern(InputValidatorPatterns.APPLIANCE_ID),
+        this.isApplianceIdValid(this.applianceIdsUsedElsewhere)]);
     this.formHandler.addFormControl(this.form, 'vendor', this.appliance && this.appliance.vendor,
       Validators.required);
     this.formHandler.addFormControl(this.form, 'name', this.appliance && this.appliance.name,
@@ -190,6 +194,14 @@ export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<Appl
     this.appliance.minOffTime = this.appliance.interruptionsAllowed ? getValidInt(this.form.controls.minOffTime.value) : undefined;
     this.appliance.maxOffTime = this.appliance.interruptionsAllowed ? getValidInt(this.form.controls.maxOffTime.value) : undefined;
     this.appliance.notificationSenderId = getValidString(this.form.controls.notificationSenderId.value);
+  }
+
+  isApplianceIdValid(applianceIdsUsedElsewhere: string[]): ValidatorFn {
+    return (control: AbstractControl): {[key: string]: any} | null => {
+      if (applianceIdsUsedElsewhere && applianceIdsUsedElsewhere.find(id => id === control.value)) {
+        return {['custom']: true};
+      }
+    };
   }
 
   submitForm() {

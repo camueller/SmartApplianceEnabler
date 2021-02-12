@@ -16,29 +16,20 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export enum ValidatorType {
-  required,
-  pattern,
-  custom
-}
+import {ActivatedRouteSnapshot, Resolve} from '@angular/router';
+import {Injectable} from '@angular/core';
+import {ApplianceService} from './appliance.service';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
 
-export const ERROR_INPUT_REQUIRED = 'error.input_required';
+@Injectable()
+export class ApplianceIdsResolver implements Resolve<string[]> {
 
-export class ErrorMessage {
+  constructor(private applianceService: ApplianceService) {
+  }
 
-  public text: string;
+  resolve(route: ActivatedRouteSnapshot): Observable<string[]> {
+    return this.applianceService.getApplianceHeaders().pipe(map(applianceHeaders => applianceHeaders.map(header => header.id)));
+  }
 
-  /**
-   * Creates a new error message.
-   * @param forControl
-   * @param forValidator
-   * @param key By default forControl is used to look up the message if no key is specified.
-   * @param keyIsComplete if true, only key is ued to look up message
-   */
-  constructor(
-    public forControl: string,
-    public forValidator: ValidatorType,
-    public key?: string,
-    public keyIsComplete = false
-  ) { }
 }

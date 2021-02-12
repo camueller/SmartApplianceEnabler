@@ -50,6 +50,7 @@
   "ApplianceComponent.notification.heading": "Benachrichtigungen",
   "ApplianceComponent.notification.senderId": "Geräte-ID für Benachrichtigungen",
   "ApplianceComponent.error.id_pattern": "Die ID muss folgendem Schema entsprechen, wobei nur die Ziffern geändert werden dürfen:\nF-00000001-000000000001-00",
+  "ApplianceComponent.error.id_custom": "Diese ID wird bereits von einem anderen Gerät verwendet",
   "ApplianceComponent.error.minPowerConsumption_pattern": "Die minimale Leistungsaufnahme muss in Watt angegeben werden",
   "ApplianceComponent.error.maxPowerConsumption_pattern": "Die maximale Leistungsaufnahme muss in Watt angegeben werden",
   "ApplianceComponent.error.minOnTime_pattern": "Die minimale Einschaltdauer muss in Sekunden angegeben werden",

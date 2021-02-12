@@ -52,6 +52,7 @@ import {HttpLoaderFactory} from './shared/http-loader-factory';
 import {SettingsModbusComponent} from './settings/modbus/settings-modbus.component';
 import {NotificationModule} from './notification/notification.module';
 import {VersionService} from './shared/version-service';
+import {ApplianceIdsResolver} from './appliance/appliance-ids-resolver';
 
 @NgModule({
   declarations: [
@@ -94,6 +95,7 @@ import {VersionService} from './shared/version-service';
     ApplianceService,
     AppliancesReloadService,
     ApplianceResolver,
+    ApplianceIdsResolver,
     CanDeactivateGuard,
     DialogService,
     Logger,
