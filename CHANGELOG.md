@@ -12,6 +12,18 @@ und das Projekt folgt den Leitlinien des [Semantic Versioning](https://semver.or
 | SAE         | Smart Appliance Enabler |
 | SHM         | Sunny Home Manager |
 
+## [1.6.11](https://github.com/camueller/SmartApplianceEnabler/releases/tag/1.6.11) - 13.02.2021
+
+### Geändert
+- die Messgrösse `Energie` bei HTTP-/Modbus-basierten Zählern wurde in `Zählerstand` umbenannt
+- für HTTP-/Modbus-basierte Zähler kann nur noch eine Messgrösse (entweder `Energie` oder `Leistung`) angegeben werden. Wird diese auf `Energie` gesetzt (bevorzugte Einstellung), wird der Zählerstand nur noch alle 60 Sekunden abgefragt und die an den SHM gemeldete Leisung aus Zählerstandsdifferenz und Zeitdifferenz berechnet. Wird die Messgrösse `Leistung` konfiguriert, erfolgt die Abfrage des Zählers weiterhin entsprechend des konfigurierten Abfrageintervals (Standardwert: alle 20 Sekunden), wobei die an den SHM gemeldete Leistung als Durchschnitt der Werte in den letzten 60 Sekunden berechnet wird. Falls für einen Zähler bisher `Energie` und `Leistung` konfiguriert waren, wird die Konfiguration für `Leistung` automatisch ignoriert und verschwindet beim nächsten Speichern der Konfiguration aus der `Appliances.xml`. Bei Verwendung von Geräten mit [Tasmota-Firmware bitte die Hinweise bzgl. der Einstellung der Zählergenauigkeit](doc/Tasmota_DE.md) beachten.
+- das `Messinterval` bei Zählern (müsste eigentlich `Durchschnittsberechnungsinterval` heissen) ist grundsätzlich nicht mehr konfiguriertbar und intern auf das Abfrageinterval des SHM (60 Sekunden) gesetzt.
+- einige Log-Meldungen wurden zusammenfasst
+- einige Log-Meldungen wurden umklassifiziert für Level `TRACE` und sollten daher im Normalfall (d.h. also Level `DEBUG`) nicht im Log erscheinen
+
+### Neu
+-  bei der Eingabe der `ID` eines Gerätes wird geprüft, ob diese bereits von einem anderen Gerät in diesem *Smart Appliance Enabler** verwendet wird. Ist das der Fall, wird ein Fehlermeldung angezeigt und das Speichern der Konfiguration ist nicht möglich. Siehe [#127](https://github.com/camueller/SmartApplianceEnabler/issues/127)
+
 ## [1.6.10](https://github.com/camueller/SmartApplianceEnabler/releases/tag/1.6.10) - 26.01.2021
 
 ### Geändert
