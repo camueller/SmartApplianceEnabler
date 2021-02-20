@@ -8,22 +8,26 @@ Voraussetzung ist ein Account, der via www.skoda-connect.com genutzt werden kann
 ## Python-Implementierung
 ### Installation
 Zunächst muss der Python-Package-Manager installiert werden.  
-Entweder man arbeitet direkt auf dem Raspberry oder man nutzt den Webmin Zugang https://raspberrypi:10000 und startet dort die Command Shell, um die folgenden zwei Befehle nacheinander auszuführen. Die jeweilige installation kann durchaus etwas dauern, da die Packages erst aus dem Internet geladen werden müssen: 
+Entweder man arbeitet direkt auf dem Raspberry oder man nutzt den Webmin Zugang https://raspberrypi:10000 und startet dort die Command Shell, um die folgenden zwei Befehle nacheinander auszuführen. Die jeweilige Installation kann durchaus etwas dauern, da die Packages erst aus dem Internet geladen werden müssen: 
 ```console
 yes | sudo apt install python3-pip
-```
+``` 
+Und nun noch die genutzt Bibliothek skodaconnect installieren:  
 ```console
 sudo pip3 install skodaconnect
-```
-Jetzt kann das Verzeichnis für das SOC-Script und Konfigurationsdatei angelegt und dorthin gewechselt werden:
+``` 
+
+### Script ###
+
+Jetzt kann das Verzeichnis für das SOC-Script und Konfigurationsdatei angelegt und dorthin gewechselt werden:  
 ```console
 sae@raspberrypi ~ $ mkdir /opt/sae/soc
 sae@raspberrypi ~ $ cd /opt/sae/soc
-```
-Das eigentliche SOC-Python-Script sollte mit dem Namen `Skoda_soc.py` und folgendem Inhalt angelegt werden (Username und Password noch anpassen!):
+```  
+Das eigentliche SOC-Python-Script sollte mit dem Namen [`Skoda_soc.py`](Skoda_soc.py) und folgendem Inhalt angelegt werden (Username und Password noch anpassen!):
 ```console
 #!/usr/bin/env python
-# coding: utf8
+#coding: utf8
 
 import asyncio
 import logging
@@ -52,7 +56,7 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
-Damit das SOC-Python-Script von überall aus aufgerufen werden kann, hilft folgendes kleine Shell-Script `/opt/sae/soc/Skoda_soc.sh`, das vom *Smart Appliance Enabler* aufgerufen wird:
+Damit das SOC-Python-Script aufgerufen werden kann, hilft folgendes kleine Shell-Script `/opt/sae/soc/Skoda_soc.sh`, das später vom *Smart Appliance Enabler* aufgerufen wird:
 
 ```console
 #!/bin/sh
@@ -61,5 +65,19 @@ python3 /opt/sae/soc/Skoda_soc.py
 
 Das Script muss noch ausführbar gemacht werden:
 ```console
-sae@raspberrypi:/opt/sae/soc $ chmod +x soc.sh
+sae@raspberrypi:/opt/sae/soc $ chmod +x Skoda_soc.sh
+```
+
+### Ausführung
+Um zu testen, ob alles korrekt ist, kann folgendes Aufruf ausgeführt werden:  
+```console
+sae@raspberrypi:/opt/sae/soc $ ./Skoda_soc.sh
+Initiating new session to Skoda Connect with XXX as username
+state_of_charge 66
+```
+
+Im *Smart Appliance Enabler* wird als SOC-Script angegeben: `/opt/sae/soc/Skoda_soc.sh`.
+Außerdem muss der nachfolgende *Reguläre Ausdruck* angegeben werden, um aus den Ausgaben den eigentlichen Zahlenwert zu extrahieren:
+```
+.*state_of_charge (\d+)
 ```
