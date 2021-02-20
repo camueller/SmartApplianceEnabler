@@ -70,7 +70,7 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
     public void start(Timer timer, PollEnergyExecutor pollEnergyExecutor) {
         if(timer != null) {
             this.pollTimerTask = buildPollTimerTask();
-            timer.schedule(this.pollTimerTask, 0, Meter.averagingInterval * 1000);
+            timer.schedule(this.pollTimerTask, 0, this.pollTimerTask.getPeriod());
         }
     }
 
@@ -85,7 +85,7 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
     }
 
     private GuardedTimerTask buildPollTimerTask() {
-        return new GuardedTimerTask(this.applianceId, "PollEnergyMeter",  1000) {
+        return new GuardedTimerTask(this.applianceId, "PollEnergyMeter", Meter.averagingInterval * 1000) {
             @Override
             public void runTask() {
                 LocalDateTime now = LocalDateTime.now();
@@ -128,10 +128,10 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
         for(LocalDateTime timestamp: this.cache.getTimestampWithValue().keySet()) {
             Double energy = this.cache.getTimestampWithValue().get(timestamp);
             if(previousTimestamp != null && previousEnergy != null) {
-                long diffTime = Duration.between(previousTimestamp, timestamp).toSeconds();
+                long diffTime = Duration.between(previousTimestamp, timestamp).toMillis();
                 double diffEnergy = energy - previousEnergy;
-                // diffEnergy kWh * 1000W/kW * 3600s/1h / diffTime ms
-                double power = diffEnergy * 1000.0 * 3600.0 / diffTime;
+                // diffEnergy kWh * 1000W/kW * 3600s/1h * 1000ms/1s / diffTime ms
+                double power = diffEnergy * 1000.0 * 3600.0 * 1000.0 / diffTime;
                 logger.trace("{}: Calculating power from energy: power={} energy={} previousEnergy={} diffEnergy={} diffTime={}",
                         applianceId, (int) power, energyFormat.format(energy), energyFormat.format(previousEnergy),
                         energyFormat.format(diffEnergy), diffTime);
