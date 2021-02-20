@@ -1,14 +1,14 @@
 # Skoda
-Skoda stellt leider auch kein offizielles API zur Verfügung, jedoch kann mittels Skoda Connect / MySkoda auf die Daten der Fahrzeugs zugegriffen werden.
+Skoda stellt leider kein offizielles API zur Verfügung, jedoch kann mittels Skoda Connect / MySkoda auf die Daten der Fahrzeugs zugegriffen werden.
 Voraussetzung ist ein Account, der via www.skoda-connect.com genutzt werden kann. Dies gilt auch für den Citigo E iV, bei dem im Portal nichts angezeigt wird.  
 
 **Hinweis:** Die Tests wurde mit einem Citigo E iV durchgeführt!  
-**Dank an:** Die hier vorgestellte Lösung nutzt das API skodaconnect https://pypi.org/project/skodaconnect/, da die Authentisierung bei Skoda deutlich anders durchgeführt wird als bei Volkswagen: 
+**Dank an:** Die hier vorgestellte Lösung nutzt das API skodaconnect www.pypi.org/project/skodaconnect, da die Authentisierung und Autorisierung bei Skoda deutlich anders durchgeführt werden muss als bei Volkswagen: 
 
 ## Python-Implementierung
 ### Installation
 Zunächst muss der Python-Package-Manager installiert werden.  
-Entweder man arbeitet direkt auf dem Raspberry oder man nutzt den Webmin Zugang https://raspberrypi:10000 und startet dort die Command Shell, um die folgenden zwei Befehle nacheinander auszuführen. Die jeweilige Installation kann durchaus etwas dauern, da die Packages erst aus dem Internet geladen werden müssen: 
+Entweder man arbeitet direkt auf dem Raspberry oder man nutzt den Webmin Zugang https://raspberrypi:10000 und startet dort die Command Shell, um die folgenden zwei Befehle nacheinander auszuführen: 
 ```console
 yes | sudo apt install python3-pip
 ``` 
@@ -16,13 +16,14 @@ Und nun noch die genutzt Bibliothek skodaconnect installieren:
 ```console
 sudo pip3 install skodaconnect
 ``` 
+Die jeweilige Installation kann durchaus etwas dauern, da die Packages erst aus dem Internet geladen werden müssen.  
 
 ### Script ###
 
 Jetzt kann das Verzeichnis für das SOC-Script und Konfigurationsdatei angelegt und dorthin gewechselt werden:  
 ```console
-sae@raspberrypi ~ $ mkdir /opt/sae/soc
-sae@raspberrypi ~ $ cd /opt/sae/soc
+mkdir /opt/sae/soc
+cd /opt/sae/soc
 ```  
 Das eigentliche SOC-Python-Script sollte mit dem Namen [`Skoda_soc.py`](Skoda_soc.py) und folgendem Inhalt angelegt werden (Username und Password noch anpassen!):
 ```console
@@ -65,18 +66,18 @@ python3 /opt/sae/soc/Skoda_soc.py
 
 Das Script muss noch ausführbar gemacht werden:
 ```console
-sae@raspberrypi:/opt/sae/soc $ chmod +x Skoda_soc.sh
+chmod +x Skoda_soc.sh
 ```
 
 ### Ausführung
-Um zu testen, ob alles korrekt ist, kann folgendes Aufruf ausgeführt werden:  
+Um zu testen, ob alles korrekt ist, kann folgender Aufruf ausgeführt werden:  
 ```console
-sae@raspberrypi:/opt/sae/soc $ ./Skoda_soc.sh
+./Skoda_soc.sh
 Initiating new session to Skoda Connect with XXX as username
 state_of_charge 66
 ```
 
-Im *Smart Appliance Enabler* wird als SOC-Script angegeben: `/opt/sae/soc/Skoda_soc.sh`.
+Im *Smart Appliance Enabler* wird das SOC-Script `/opt/sae/soc/Skoda_soc.sh` angegeben.
 Außerdem muss der nachfolgende *Reguläre Ausdruck* angegeben werden, um aus den Ausgaben den eigentlichen Zahlenwert zu extrahieren:
 ```
 .*state_of_charge (\d+)
