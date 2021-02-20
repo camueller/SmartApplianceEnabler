@@ -5,5 +5,6 @@ Das Verwenden dieser fahrzeug-spezifischen Scripts ist in den nachfolgenden Kapi
 * [Kia](kia_DE.md)
 * [Nissan](NissanLeaf_DE.md)
 * [Volkswagen](VW.md)
+* [Skoda](Skoda.md)
 
 **Diese Dokumentation ist darauf angewiesen, dass *Smart Appliance Enabler*-Anwender, die entsprechende Scripts für ihre Fahrzeuge nutzen, mir entsprechende Ergänzungen und Aktualisierungen bereitstellen.**
