@@ -41,6 +41,10 @@ JAVA_BIN=/usr/bin/java
 # inside a Docker container.
 #JAVA_OPTS="${JAVA_OPTS} -Dsemp.gateway.address=10.0.0.3"
 
+# The UPnP part of the SEMP protocol requires a stream server which by default uses a random unused port.
+# If you would like to use a dedicated port it can be specified here.
+#JAVA_OPTS="${JAVA_OPTS} -Dsemp.streamserver.port=55555"
+
 # Enable this line to have the Smart Appliance Enabler use a different port. By default port 8080 is used.
 #JAVA_OPTS="${JAVA_OPTS} -Dserver.port=8080"
 

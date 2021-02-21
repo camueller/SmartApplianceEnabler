@@ -32,6 +32,7 @@ import org.fourthline.cling.transport.impl.apache.StreamServerConfigurationImpl;
 import org.fourthline.cling.transport.spi.NetworkAddressFactory;
 import org.fourthline.cling.transport.spi.StreamClient;
 import org.fourthline.cling.transport.spi.StreamServer;
+import org.fourthline.cling.transport.spi.StreamServerConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,6 +94,17 @@ public class SempDiscovery implements Runnable {
             public StreamClient createStreamClient() {
                 // disable the client in order to avoid requesting descriptors from UPnP devices
                 return null;
+            }
+
+            @Override
+            public StreamServer createStreamServer(NetworkAddressFactory networkAddressFactory) {
+                StreamServerConfigurationImpl configuration = new StreamServerConfigurationImpl();
+                String sempStreamServerPort = System.getProperty("semp.streamserver.port");
+                if(sempStreamServerPort != null) {
+                    int port = Integer.parseInt(sempStreamServerPort);
+                    configuration = new StreamServerConfigurationImpl(port);
+                }
+                return new org.fourthline.cling.transport.impl.apache.StreamServerImpl(configuration);
             }
         };
     }
