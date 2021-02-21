@@ -94,13 +94,6 @@ public class SempDiscovery implements Runnable {
                 // disable the client in order to avoid requesting descriptors from UPnP devices
                 return null;
             }
-
-            @Override
-            public StreamServer createStreamServer(NetworkAddressFactory networkAddressFactory) {
-                return new org.fourthline.cling.transport.impl.apache.StreamServerImpl(
-                        new StreamServerConfigurationImpl()
-                );
-            }
         };
     }
 
