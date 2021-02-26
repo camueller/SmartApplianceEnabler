@@ -38,7 +38,8 @@ public class ReadDiscreteInputExecutorImpl extends BaseTransactionExecutor
 
     @Override
     public void execute(TCPMasterConnection con, int slaveAddress) throws ModbusException {
-        ReadInputDiscretesRequest req = new ReadInputDiscretesRequest(getAddress(), getBytes());
+        logger.trace("{}: Reading discrete input register={} requestWords={}", getApplianceId(), getAddress(), getRequestWords());
+        ReadInputDiscretesRequest req = new ReadInputDiscretesRequest(getAddress(), getRequestWords());
         req.setUnitID(slaveAddress);
 
         ModbusTCPTransaction trans = new ModbusTCPTransaction(con);

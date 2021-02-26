@@ -15,12 +15,12 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-form-field class="ModbusReadComponent__bytes">
-        <mat-label>{{'ModbusReadComponent.bytes' | translate}}</mat-label>
-        <input matInput type="text" formControlName="bytes"
-               placeholder="{{bytesPlaceholder}}"
-               required="{{formHandler.isRequired('bytes')}}">
-        <mat-error *ngIf="errors.bytes">{{errors.bytes}}</mat-error>
+      <mat-form-field class="ModbusReadComponent__words">
+        <mat-label>{{'ModbusReadComponent.words' | translate}}</mat-label>
+        <input matInput type="text" formControlName="words"
+               placeholder="{{wordsPlaceholder}}"
+               required="{{formHandler.isRequired('words')}}">
+        <mat-error *ngIf="errors.words">{{errors.words}}</mat-error>
       </mat-form-field>
       <mat-form-field class="ModbusReadComponent__byteOrder" *ngIf="isByteOrderDisplayed">
         <mat-label>{{'ModbusReadComponent.byteOrder' | translate}}</mat-label>

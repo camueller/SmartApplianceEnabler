@@ -197,7 +197,7 @@
             <xs:element name="ModbusReadValue" type="ModbusReadValueType" maxOccurs="unbounded" />
         </xs:sequence>
         <xs:attribute name="address" type="xs:string" use="required" />
-        <xs:attribute name="bytes" type="xs:int" />
+        <xs:attribute name="words" type="xs:int" />
         <xs:attribute name="byteOrder" type="ByteOrderType" />
         <xs:attribute name="type" type="ModbusRegisterTypeType" use="required" />
         <xs:attribute name="factorToValue" type="xs:double" />

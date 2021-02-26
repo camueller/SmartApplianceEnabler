@@ -9,7 +9,7 @@ export const modbusMeter_complete = new ModbusElectricityMeter({
     new ModbusRead({
       type: 'InputDecimal',
       address: '0x0A',
-      bytes: 4,
+      words: 4,
       byteOrder: 'LittleEndian',
       factorToValue: 0.01,
       readValues: [

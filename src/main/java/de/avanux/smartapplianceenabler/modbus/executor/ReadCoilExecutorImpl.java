@@ -41,7 +41,8 @@ public class ReadCoilExecutorImpl extends BaseTransactionExecutor
 
     @Override
     public void execute(TCPMasterConnection con, int slaveAddress) throws ModbusException {
-        ReadCoilsRequest req = new ReadCoilsRequest(getAddress(), getBytes());
+        logger.trace("{}: Reading coil register={} requestWords={}", getApplianceId(), getAddress(), getRequestWords());
+        ReadCoilsRequest req = new ReadCoilsRequest(getAddress(), getRequestWords());
         req.setUnitID(slaveAddress);
         
         ModbusTCPTransaction trans = new ModbusTCPTransaction(con);

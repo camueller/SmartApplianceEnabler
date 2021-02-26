@@ -23,7 +23,6 @@ import com.ghgande.j2mod.modbus.msg.ReadInputRegistersRequest;
 import com.ghgande.j2mod.modbus.msg.ReadInputRegistersResponse;
 import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Implements a <tt>ReadInputRegistersRequest</tt>.
@@ -32,15 +31,16 @@ import org.slf4j.LoggerFactory;
 abstract public class ReadInputRegisterExecutor<V> extends BaseTransactionExecutor implements ModbusReadTransactionExecutor<V> {
     private Integer[] byteValues;
 
-    public ReadInputRegisterExecutor(String address, int bytes) {
-        super(address, bytes);
+    public ReadInputRegisterExecutor(String address, int requestWords) {
+        super(address, requestWords);
     }
 
     abstract Logger getLogger();
 
     @Override
     public void execute(TCPMasterConnection con, int slaveAddress) throws ModbusException {
-        ReadInputRegistersRequest req = new ReadInputRegistersRequest(getAddress(), getBytes());
+        getLogger().trace("{}: Reading input register={} requestWords={}", getApplianceId(), getAddress(), getRequestWords());
+        ReadInputRegistersRequest req = new ReadInputRegistersRequest(getAddress(), getRequestWords());
         req.setUnitID(slaveAddress);
 
         ModbusTCPTransaction trans = new ModbusTCPTransaction(con);
@@ -50,8 +50,8 @@ abstract public class ReadInputRegisterExecutor<V> extends BaseTransactionExecut
         ReadInputRegistersResponse res = (ReadInputRegistersResponse) trans.getResponse();
         this.byteValues = null;
         if (res != null) {
-            this.byteValues = new Integer[getBytes()];
-            for (int i = 0; i < getBytes(); i++) {
+            this.byteValues = new Integer[res.getWordCount()];
+            for (int i = 0; i < res.getWordCount(); i++) {
                 this.byteValues[i] = res.getRegisterValue(i);
             }
             getLogger().debug("{}: Input register={} value={}", getApplianceId(), getAddress(), this.byteValues);
@@ -60,7 +60,7 @@ abstract public class ReadInputRegisterExecutor<V> extends BaseTransactionExecut
         }
     }
 
-    public Integer[] getByteValues() {
+    protected Integer[] getByteValues() {
         return byteValues;
     }
 

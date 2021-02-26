@@ -21,7 +21,7 @@ export class ModbusReadPage {
   public static async setModbusRead(t: TestController, modbusRead: ModbusRead, modbusReadIndex: number, selectorPrefix?: string) {
     await ModbusReadPage.setAddress(t, modbusRead.address, modbusReadIndex, selectorPrefix);
     await ModbusReadPage.setType(t, modbusRead.type, modbusReadIndex, selectorPrefix);
-    await ModbusReadPage.setBytes(t, modbusRead.bytes, modbusReadIndex, selectorPrefix);
+    await ModbusReadPage.setBytes(t, modbusRead.words, modbusReadIndex, selectorPrefix);
     if (modbusRead.byteOrder) {
       await ModbusReadPage.setByteOrder(t, modbusRead.byteOrder, modbusReadIndex, selectorPrefix);
     }
@@ -35,7 +35,7 @@ export class ModbusReadPage {
                                        i18nPrefix?: string) {
     await ModbusReadPage.assertAddress(t, modbusRead.address, modbusReadIndex, selectorPrefix);
     await ModbusReadPage.assertType(t, modbusRead.type, modbusReadIndex, selectorPrefix);
-    await ModbusReadPage.assertBytes(t, modbusRead.bytes, modbusReadIndex, selectorPrefix);
+    await ModbusReadPage.assertBytes(t, modbusRead.words, modbusReadIndex, selectorPrefix);
     if (modbusRead.byteOrder) {
       await ModbusReadPage.assertByteOrder(t, modbusRead.byteOrder, modbusReadIndex, selectorPrefix);
     }

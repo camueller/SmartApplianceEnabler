@@ -142,7 +142,7 @@ public class EVModbusControl extends ModbusSlave implements EVChargerControl {
                     if (executor == null) {
                         registerAddress = registerRead.getAddress();
                         executor = ModbusExecutorFactory.getReadExecutor(getApplianceId(),
-                                registerRead.getType(), registerRead.getAddress(), registerRead.getBytes());
+                                registerRead.getType(), registerRead.getAddress(), registerRead.getWords());
                         executeTransaction(executor, true);
                         this.requestCache.put(registerRead, executor);
                     }

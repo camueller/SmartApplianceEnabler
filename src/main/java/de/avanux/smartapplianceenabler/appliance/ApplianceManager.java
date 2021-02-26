@@ -37,6 +37,7 @@ import de.avanux.smartapplianceenabler.schedule.Schedule;
 import de.avanux.smartapplianceenabler.semp.webservice.Device2EM;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceStatus;
+import de.avanux.smartapplianceenabler.util.FileContentPreProcessor;
 import de.avanux.smartapplianceenabler.util.FileHandler;
 import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
 
@@ -114,11 +115,19 @@ public class ApplianceManager implements Runnable {
         }
     }
 
+    private Appliances loadAppliances() {
+        return fileHandler.load(Appliances.class, content -> {
+            content = content.replaceAll("bytes=", "words=");
+            content = content.replace("http://github.com/camueller/SmartApplianceEnabler/v1.5", ApplianceManager.SCHEMA_LOCATION);
+            return content;
+        });
+    }
+
     private void startAppliances() {
         logger.info("Starting appliances ...");
         if(appliances == null) {
             logger.debug("Loading Appliances.xml ...");
-            appliances = fileHandler.load(Appliances.class);
+            appliances = loadAppliances();
             if(appliances == null) {
                 this.appliances = new Appliances();
                 this.appliances.setAppliances(new ArrayList<>());
@@ -160,7 +169,7 @@ public class ApplianceManager implements Runnable {
         }
         if(this.device2EM == null) {
             logger.debug("Loading Appliances.xml ...");
-            this.device2EM = fileHandler.load(Device2EM.class);
+            this.device2EM = fileHandler.load(Device2EM.class, null);
             if(device2EM == null) {
                 this.device2EM = new Device2EM();
             }

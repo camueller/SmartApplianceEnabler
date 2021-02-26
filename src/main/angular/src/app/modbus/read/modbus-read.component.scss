@@ -1,7 +1,7 @@
 .ModbusReadComponent {
 
-  &__bytes {
-    width: 4rem;
+  &__words {
+    width: 5rem;
   }
 
   &__byteOrder {

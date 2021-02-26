@@ -134,7 +134,7 @@ public class FileHandlerTest {
     private Appliances loadAppliances(String filename) throws Exception {
         InputStream is = getClass().getClassLoader().getResourceAsStream(filename);
         assertTrue(is.available() > 0);
-        Appliances appliances = fileHandler.load(Appliances.class, is);
+        Appliances appliances = fileHandler.load(Appliances.class, is, null);
         is.close();
         return appliances;
     }

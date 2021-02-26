@@ -57,12 +57,12 @@ public class ModbusExecutorFactory {
     }
 
     public static ModbusReadTransactionExecutor getReadExecutor(String applianceId, ReadRegisterType type,
-                                                                String address, int bytes) {
-        return getReadExecutor(applianceId, type, address, bytes, ByteOrder.BigEndian, 1.0);
+                                                                String address, int requestWords) {
+        return getReadExecutor(applianceId, type, address, requestWords, ByteOrder.BigEndian, 1.0);
     }
 
     public static ModbusReadTransactionExecutor getReadExecutor(String applianceId, ReadRegisterType type,
-                                                                String address, int bytes, ByteOrder byteOrder,
+                                                                String address, int requestWords, ByteOrder byteOrder,
                                                                 Double factorToValue) {
         ModbusReadTransactionExecutor executor;
         switch (type) {
@@ -71,7 +71,7 @@ public class ModbusExecutorFactory {
                     executor = testingReadStringExecutor;
                 }
                 else {
-                    executor = new ReadStringInputRegisterExecutorImpl(address, bytes);
+                    executor = new ReadStringInputRegisterExecutorImpl(address, requestWords);
                 }
                 break;
             case InputFloat:
@@ -79,7 +79,7 @@ public class ModbusExecutorFactory {
                     executor = testingReadFloatExecutor;
                 }
                 else {
-                    executor = new ReadFloatInputRegisterExecutorImpl(address, bytes);
+                    executor = new ReadFloatInputRegisterExecutorImpl(address, requestWords);
                 }
                 break;
             case InputDecimal:
@@ -87,12 +87,12 @@ public class ModbusExecutorFactory {
                     executor = testingReadFloatExecutor;
                 }
                 else {
-                    executor = new ReadDecimalInputRegisterExecutorImpl(address, bytes, byteOrder, factorToValue);
+                    executor = new ReadDecimalInputRegisterExecutorImpl(address, requestWords, byteOrder, factorToValue);
                 }
                 break;
             case Holding:
             {
-                executor = new ReadFloatHoldingRegisterExecutorImpl(address, bytes, factorToValue.floatValue());
+                executor = new ReadFloatHoldingRegisterExecutorImpl(address, requestWords, factorToValue.floatValue());
             }
             break;
             case Coil:

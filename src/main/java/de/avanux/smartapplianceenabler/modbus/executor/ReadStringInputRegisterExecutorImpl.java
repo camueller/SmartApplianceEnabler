@@ -26,8 +26,8 @@ public class ReadStringInputRegisterExecutorImpl extends ReadInputRegisterExecut
 
     private Logger logger = LoggerFactory.getLogger(ReadStringInputRegisterExecutorImpl.class);
 
-    public ReadStringInputRegisterExecutorImpl(String address, int bytes) {
-        super(address, bytes);
+    public ReadStringInputRegisterExecutorImpl(String address, int requestWords) {
+        super(address, requestWords);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class ReadStringInputRegisterExecutorImpl extends ReadInputRegisterExecut
     public String getValue() {
         StringBuilder stringValue = new StringBuilder();
         for(Integer byteValue : getByteValues()) {
-            stringValue.append(new Character((char) byteValue.intValue()));
+            stringValue.append(Character.valueOf((char) byteValue.intValue()));
         }
         return stringValue.toString();
     }

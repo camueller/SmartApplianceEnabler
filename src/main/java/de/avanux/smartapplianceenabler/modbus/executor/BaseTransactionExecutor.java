@@ -23,17 +23,21 @@ import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 abstract public class BaseTransactionExecutor implements ApplianceIdConsumer {
 
     private String applianceId;
-    private Integer address;
-    private int bytes = 1;
+    private final Integer address;
+    private final int requestWords;
 
-    public BaseTransactionExecutor(String address, int bytes) {
+    public BaseTransactionExecutor(String address) {
+        this(address, 1);
+    }
+
+    public BaseTransactionExecutor(String address, int requestWords) {
         if(address.startsWith("0x")) {
             this.address = Integer.parseInt(address.substring(2), 16);
         }
         else {
             this.address = Integer.parseInt(address);
         }
-        this.bytes = bytes;
+        this.requestWords = requestWords;
     }
 
 
@@ -50,7 +54,7 @@ abstract public class BaseTransactionExecutor implements ApplianceIdConsumer {
         return address;
     }
 
-    protected int getBytes() {
-        return bytes;
+    protected int getRequestWords() {
+        return requestWords;
     }
 }

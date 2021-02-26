@@ -198,7 +198,7 @@
   "ControlEvchargerComponent.registerAddress": "Register-Adresse",
   "ControlEvchargerComponent.write": "Schreibzugriff",
   "ControlEvchargerComponent.registerType": "Register-Typ",
-  "ControlEvchargerComponent.bytes": "Bytes",
+  "ControlEvchargerComponent.words": "Datenwörter",
   "ControlEvchargerComponent.byteOrder": "Byte Reihenfolge",
   "ControlEvchargerComponent.extractionRegex": "Regex für Extraktion",
   "ControlEvchargerComponent.value": "Wert",
@@ -256,7 +256,7 @@
 
   "ModbusReadComponent.address": "Register-Adresse",
   "ModbusReadComponent.type": "Register-Typ",
-  "ModbusReadComponent.bytes": "Bytes",
+  "ModbusReadComponent.words": "Datenwörter",
   "ModbusReadComponent.byteOrder": "Byte Reihenfolge",
   "ModbusReadComponent.factorToValue": "Umrechnungsfaktor",
   "ModbusReadComponent.button.addValue": "Weiterer Zustand",

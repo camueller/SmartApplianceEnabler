@@ -23,19 +23,19 @@ import java.util.TreeMap;
 
 public class ModbusReadDefaults {
     // static members won't be serialized but we need those valus on the client
-    private Map<ReadRegisterType, Integer> bytesForRegisterType = new TreeMap<>();
+    private Map<ReadRegisterType, Integer> wordsForRegisterType = new TreeMap<>();
     private static ModbusReadDefaults instance = new ModbusReadDefaults();
 
     public ModbusReadDefaults() {
-        this.bytesForRegisterType.put(ReadRegisterType.InputFloat, 2);
-        this.bytesForRegisterType.put(ReadRegisterType.InputDecimal, 1);
-        this.bytesForRegisterType.put(ReadRegisterType.InputString, 1);
-        this.bytesForRegisterType.put(ReadRegisterType.Holding, 1);
-        this.bytesForRegisterType.put(ReadRegisterType.Coil, 1);
-        this.bytesForRegisterType.put(ReadRegisterType.Discrete, 1);
+        this.wordsForRegisterType.put(ReadRegisterType.InputFloat, 2);
+        this.wordsForRegisterType.put(ReadRegisterType.InputDecimal, 1);
+        this.wordsForRegisterType.put(ReadRegisterType.InputString, 1);
+        this.wordsForRegisterType.put(ReadRegisterType.Holding, 1);
+        this.wordsForRegisterType.put(ReadRegisterType.Coil, 1);
+        this.wordsForRegisterType.put(ReadRegisterType.Discrete, 1);
     }
 
-    public static Integer getBytes(ReadRegisterType registerType) {
-        return instance.bytesForRegisterType.get(registerType);
+    public static Integer getWords(ReadRegisterType registerType) {
+        return instance.wordsForRegisterType.get(registerType);
     }
 }

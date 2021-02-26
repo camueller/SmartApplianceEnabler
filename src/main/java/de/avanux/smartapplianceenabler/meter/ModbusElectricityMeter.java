@@ -249,7 +249,7 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     private double readRegister(ModbusRead registerRead) {
         try {
             ModbusReadTransactionExecutor executor = ModbusExecutorFactory.getReadExecutor(getApplianceId(),
-                    registerRead.getType(), registerRead.getAddress(), registerRead.getBytes(),
+                    registerRead.getType(), registerRead.getAddress(), registerRead.getWords(),
                     registerRead.getByteOrder(), registerRead.getFactorToValue());
             if(executor != null) {
                 Double registerValue = null;

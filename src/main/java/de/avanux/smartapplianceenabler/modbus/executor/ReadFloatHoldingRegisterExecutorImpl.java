@@ -27,8 +27,8 @@ public class ReadFloatHoldingRegisterExecutorImpl extends ReadHoldingRegisterExe
     private Logger logger = LoggerFactory.getLogger(ReadFloatHoldingRegisterExecutorImpl.class);
     private Float factorToValue;
 
-    public ReadFloatHoldingRegisterExecutorImpl(String address, int bytes, Float factorToValue) {
-        super(address, bytes);
+    public ReadFloatHoldingRegisterExecutorImpl(String address, int requestWords, Float factorToValue) {
+        super(address, requestWords);
         this.factorToValue = factorToValue;
     }
 
@@ -40,9 +40,9 @@ public class ReadFloatHoldingRegisterExecutorImpl extends ReadHoldingRegisterExe
     @Override
     public Float getValue() {
         Integer[] byteValues = getByteValues();
-        if(getBytes() == 2) {
+        if(getRequestWords() == 2) {
             return Float.intBitsToFloat(byteValues[0] << 16 | byteValues[1]) * getInitializedFactorToValue();
-        } else if(getBytes() == 4) {
+        } else if(getRequestWords() == 4) {
             return Float.intBitsToFloat(byteValues[0] << 48 | byteValues[1] << 32 | byteValues[2] << 16 | byteValues[3]) * getInitializedFactorToValue();
         }
         logger.error("{}: Float has to be composed of 2 or 4 bytes!", getApplianceId());

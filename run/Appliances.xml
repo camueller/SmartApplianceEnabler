@@ -44,10 +44,7 @@
             <ElectricVehicle id="1" name="Nissan Leaf" batteryCapacity="40000" phases="1" maxChargePower="7400" chargeLoss="12"/>
         </ElectricVehicleCharger>
         <ModbusElectricityMeter idref="modbus" slaveAddress="1">
-            <ModbusRead address="0x0034" bytes="4" type="InputFloat">
-                <ModbusReadValue name="Power"/>
-            </ModbusRead>
-            <ModbusRead address="0x0156" bytes="4" type="InputFloat">
+            <ModbusRead address="0x0156" type="InputFloat">
                 <ModbusReadValue name="Energy"/>
             </ModbusRead>
         </ModbusElectricityMeter>

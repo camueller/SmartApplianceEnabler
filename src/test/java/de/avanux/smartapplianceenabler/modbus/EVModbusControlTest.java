@@ -60,7 +60,7 @@ public class EVModbusControlTest {
         ModbusRead registerRead = new ModbusRead();
         registerRead.setAddress("42");
         registerRead.setType(ReadRegisterType.InputString.name());
-        registerRead.setBytes(1);
+        registerRead.setWords(1);
 
         ModbusReadValue registerReadValue = new ModbusReadValue(registerName.name(), extractionRegex);
         registerRead.setReadValues(Collections.singletonList(registerReadValue));

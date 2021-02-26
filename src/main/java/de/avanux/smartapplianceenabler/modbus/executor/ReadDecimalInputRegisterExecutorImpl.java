@@ -29,8 +29,8 @@ public class ReadDecimalInputRegisterExecutorImpl extends ReadInputRegisterExecu
     private ByteOrder byteOrder;
     private Double factorToValue;
 
-    public ReadDecimalInputRegisterExecutorImpl(String address, int bytes, ByteOrder byteOrder, Double factorToValue) {
-        super(address, bytes);
+    public ReadDecimalInputRegisterExecutorImpl(String address, int requestWords, ByteOrder byteOrder, Double factorToValue) {
+        super(address, requestWords);
         this.byteOrder = byteOrder;
         this.factorToValue = factorToValue;
     }
@@ -44,12 +44,12 @@ public class ReadDecimalInputRegisterExecutorImpl extends ReadInputRegisterExecu
     public Double getValue() {
         Integer[] byteValues = getByteValues();
         if (this.byteOrder == ByteOrder.LittleEndian) {
-            if (getBytes() == 2) {
+            if (byteValues.length == 2) {
                 return Float.valueOf(byteValues[1] << 16 | byteValues[0]).doubleValue() * getInitializedFactorToValue();
             }
         }
         else {
-            if (getBytes() == 2) {
+            if (byteValues.length == 2) {
                 return Float.valueOf(byteValues[0] << 16 | byteValues[1]).doubleValue() * getInitializedFactorToValue();
             }
         }

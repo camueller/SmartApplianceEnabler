@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Axel Müller <axel.mueller@avanux.de>
+ * Copyright (C) 2021 Axel Müller <axel.mueller@avanux.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,10 +16,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-export class ModbusReadDefaults {
-  wordsForRegisterType: { [type: string]: number };
+package de.avanux.smartapplianceenabler.util;
 
-  public constructor(init?: Partial<ModbusReadDefaults>) {
-    Object.assign(this, init);
-  }
+public interface FileContentPreProcessor {
+    String process(String input);
 }

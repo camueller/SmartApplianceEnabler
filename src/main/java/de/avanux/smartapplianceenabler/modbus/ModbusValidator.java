@@ -41,7 +41,7 @@ public class ModbusValidator {
                         applianceId,
                         valueName,
                         registerRead.getAddress(),
-                        registerRead.getBytes(),
+                        registerRead.getWords(),
                         registerRead.getByteOrder(),
                         registerRead.getType(),
                         read.child().getExtractionRegex(),
