@@ -13,6 +13,7 @@ import {HttpReadComponent} from '../../http/read/http-read.component';
 import {HttpConfigurationComponent} from '../../http/configuration/http-configuration.component';
 import {HttpWriteComponent} from '../../http/write/http-write.component';
 import {HttpWrite} from '../../http/write/http-write';
+import {isControlValid} from '../control-validator';
 
 @Component({
   selector: 'app-control-http',
@@ -149,6 +150,7 @@ export class ControlHttpComponent implements OnChanges, OnInit {
       this.setReadControlState(value);
       this.form.markAsDirty();
     });
+    this.form.setValidators(isControlValid(this.form, 'httpWrites', 'httpWriteValues'));
   }
 
   updateModelFromForm(): HttpSwitch | undefined {
