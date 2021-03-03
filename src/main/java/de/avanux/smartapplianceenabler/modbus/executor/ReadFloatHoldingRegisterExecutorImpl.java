@@ -40,12 +40,14 @@ public class ReadFloatHoldingRegisterExecutorImpl extends ReadHoldingRegisterExe
     @Override
     public Float getValue() {
         Integer[] byteValues = getByteValues();
-        if(getRequestWords() == 2) {
-            return Float.intBitsToFloat(byteValues[0] << 16 | byteValues[1]) * getInitializedFactorToValue();
-        } else if(getRequestWords() == 4) {
-            return Float.intBitsToFloat(byteValues[0] << 48 | byteValues[1] << 32 | byteValues[2] << 16 | byteValues[3]) * getInitializedFactorToValue();
+        if(byteValues != null) {
+            if(byteValues.length == 2) {
+                return Float.intBitsToFloat(byteValues[0] << 16 | byteValues[1]) * getInitializedFactorToValue();
+            } else if(byteValues.length == 4) {
+                return Float.intBitsToFloat(byteValues[0] << 48 | byteValues[1] << 32 | byteValues[2] << 16 | byteValues[3]) * getInitializedFactorToValue();
+            }
+            logger.error("{}: Cannot handle response composed of {} bytes", getApplianceId(), byteValues.length);
         }
-        logger.error("{}: Float has to be composed of 2 or 4 bytes!", getApplianceId());
         return null;
     }
 
