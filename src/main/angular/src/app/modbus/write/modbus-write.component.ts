@@ -22,6 +22,7 @@ import {ModbusWriteValue} from '../write-value/modbus-write-value';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
 import {Logger} from '../../log/logger';
+import {ValueNameChangedEvent} from '../../meter/value-name-changed-event';
 
 @Component({
   selector: 'app-modbus-write',
@@ -50,6 +51,8 @@ export class ModbusWriteComponent implements OnChanges, OnInit {
   translationKeys: string[];
   @Output()
   remove = new EventEmitter<any>();
+  @Output()
+  nameChanged = new EventEmitter<any>();
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -88,6 +91,11 @@ export class ModbusWriteComponent implements OnChanges, OnInit {
     });
   }
 
+  onNameChanged(index: number, event: ValueNameChangedEvent) {
+    event.valueIndex = index;
+    this.nameChanged.emit(event);
+  }
+
   get type(): string {
     const typeControl = this.form.controls.type;
     return (typeControl ? typeControl.value : '');
@@ -115,6 +123,10 @@ export class ModbusWriteComponent implements OnChanges, OnInit {
   removeValue(index: number) {
     this.modbusWrite.writeValues.splice(index, 1);
     this.modbusWriteValuesFormArray.removeAt(index);
+
+    const event: ValueNameChangedEvent = {valueIndex: index};
+    this.nameChanged.emit(event);
+
     this.form.markAsDirty();
   }
 

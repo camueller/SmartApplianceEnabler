@@ -22,6 +22,7 @@ import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/er
 import {getValidString} from '../../shared/form-util';
 import {HttpWriteValueComponent} from '../write-value/http-write-value.component';
 import {HttpWriteValue} from '../write-value/http-write-value';
+import {ValueNameChangedEvent} from '../../meter/value-name-changed-event';
 
 @Component({
   selector: 'app-http-write',
@@ -51,6 +52,8 @@ export class HttpWriteComponent implements OnChanges, OnInit {
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
+  @Output()
+  nameChanged = new EventEmitter<any>();
 
   constructor(private logger: Logger,
               private translate: TranslateService,
@@ -84,6 +87,11 @@ export class HttpWriteComponent implements OnChanges, OnInit {
     });
   }
 
+  onNameChanged(index: number, event: ValueNameChangedEvent) {
+    event.valueIndex = index;
+    this.nameChanged.emit(event);
+  }
+
   removeHttpWrite() {
     this.remove.emit();
   }
@@ -103,6 +111,10 @@ export class HttpWriteComponent implements OnChanges, OnInit {
   removeValue(index: number) {
     this.httpWrite.writeValues.splice(index, 1);
     this.httpWriteValuesFormArray.removeAt(index);
+
+    const event: ValueNameChangedEvent = {valueIndex: index};
+    this.nameChanged.emit(event);
+
     this.form.markAsDirty();
   }
 

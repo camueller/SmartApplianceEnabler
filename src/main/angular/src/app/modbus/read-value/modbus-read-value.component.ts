@@ -8,7 +8,7 @@ import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/er
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
 import {getValidString} from '../../shared/form-util';
 import {Logger} from '../../log/logger';
-import {MeterReadNameChangedEvent} from '../../meter/meter-read-name-changed-event';
+import {ValueNameChangedEvent} from '../../meter/value-name-changed-event';
 
 @Component({
   selector: 'app-modbus-read-value',
@@ -78,7 +78,7 @@ export class ModbusReadValueComponent implements OnChanges, OnInit {
 
   onNameChanged(newName?: string) {
     if (newName) {
-      const event: MeterReadNameChangedEvent = {name: newName};
+      const event: ValueNameChangedEvent = {name: newName};
       this.nameChanged.emit(event);
     }
   }

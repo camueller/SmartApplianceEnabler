@@ -4,7 +4,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {ErrorMessageHandler} from '../../../shared/error-message-handler';
 import {FormHandler} from '../../../shared/form-handler';
 import {ErrorMessages} from '../../../shared/error-messages';
-import {ControlContainer, FormArray, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {ControlContainer, FormArray, FormGroup, FormGroupDirective, ValidatorFn, Validators} from '@angular/forms';
 import {Settings} from '../../../settings/settings';
 import {EvModbusControl} from './ev-modbus-control';
 import {SettingsDefaults} from '../../../settings/settings-defaults';
@@ -17,8 +17,10 @@ import {ModbusRead} from '../../../modbus/read/modbus-read';
 import {ModbusReadComponent} from '../../../modbus/read/modbus-read.component';
 import {EvReadValueName} from '../ev-read-value-name';
 import {EvWriteValueName} from '../ev-write-value-name';
-import { MessageBoxLevel } from 'src/app/material/messagebox/messagebox.component';
+import {MessageBoxLevel} from 'src/app/material/messagebox/messagebox.component';
 import {MeterDefaults} from '../../../meter/meter-defaults';
+import {ValueNameChangedEvent} from '../../../meter/value-name-changed-event';
+import {getValueNamesNotConfigured} from '../../../shared/get-value-names-not-configured';
 
 @Component({
   selector: 'app-control-evcharger-modbus',
@@ -50,6 +52,7 @@ export class ControlEvchargerModbusComponent implements OnChanges, OnInit {
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
   MessageBoxLevel = MessageBoxLevel;
+  private readonly valueNameMissingError = 'valueNameMissingError';
 
   constructor(private logger: Logger,
               private parent: FormGroupDirective,
@@ -87,6 +90,33 @@ export class ControlEvchargerModbusComponent implements OnChanges, OnInit {
 
   get displayNoneStyle() {
     return this.settings.modbusSettings.length === 0 ? {display: 'none'} : undefined;
+  }
+
+  get readValueNamesNotConfigured() {
+    const valueNamesNotConfigured = getValueNamesNotConfigured(
+      this.modbusReadsFormArray, 'modbusReadValues', Object.keys(EvReadValueName));
+    return this.translatedStrings
+      ? valueNamesNotConfigured.map(name => this.translatedStrings[`ControlEvchargerComponent.${name}`]) : undefined;
+  }
+
+  get writeValueNamesNotConfigured() {
+    const valueNamesNotConfigured = getValueNamesNotConfigured(
+      this.modbusWritesFormArray, 'modbusWriteValues', Object.keys(EvWriteValueName));
+    return this.translatedStrings
+      ? valueNamesNotConfigured.map(name => this.translatedStrings[`ControlEvchargerComponent.${name}`]) : undefined;
+  }
+
+  onValueNameChanged(index: number, event: ValueNameChangedEvent) {
+    this.form.updateValueAndValidity();
+  }
+
+  isAllValueNamesConfigured(): ValidatorFn {
+    return () => {
+      if ((this.readValueNamesNotConfigured && this.readValueNamesNotConfigured.length)
+        || (this.writeValueNamesNotConfigured && this.writeValueNamesNotConfigured.length)) {
+        return {[this.valueNameMissingError]: true};
+      }
+    };
   }
 
   get readValueNames() {
@@ -164,6 +194,7 @@ export class ControlEvchargerModbusComponent implements OnChanges, OnInit {
       this.evModbusControl.modbusReads);
     this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'modbusWrites',
       this.evModbusControl.modbusWrites);
+    this.form.setValidators(this.isAllValueNamesConfigured());
   }
 
   updateModelFromForm(): EvModbusControl | undefined {

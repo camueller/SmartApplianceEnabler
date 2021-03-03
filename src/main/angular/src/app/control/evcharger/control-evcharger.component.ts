@@ -24,6 +24,8 @@ import {EvHttpControl} from './http/ev-http-control';
 import {ControlEvchargerHttpComponent} from './http/control-evcharger-http.component';
 import {ListItem} from '../../shared/list-item';
 import {MeterDefaults} from '../../meter/meter-defaults';
+import {EvReadValueName} from './ev-read-value-name';
+import {EvWriteValueName} from './ev-write-value-name';
 
 @Component({
   selector: 'app-control-evcharger',
@@ -141,18 +143,11 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
     return this.protocol === EvChargerProtocol.HTTP;
   }
 
-  // FIXME: alle Enums indirect liefern
-  get modbusTranslationKeys() {
+  get valueNames() {
     return [
-      'ControlEvchargerComponent.VehicleNotConnected',
-      'ControlEvchargerComponent.VehicleConnected',
-      'ControlEvchargerComponent.Charging',
-      'ControlEvchargerComponent.ChargingCompleted',
-      'ControlEvchargerComponent.Error',
-      'ControlEvchargerComponent.StartCharging',
-      'ControlEvchargerComponent.StopCharging',
-      'ControlEvchargerComponent.ChargingCurrent'
-    ];
+      ...Object.keys(EvReadValueName),
+      ...Object.keys(EvWriteValueName),
+    ].map(key => `ControlEvchargerComponent.${key}`);
   }
 
   findNextEvId(evs: ElectricVehicle[]): number {

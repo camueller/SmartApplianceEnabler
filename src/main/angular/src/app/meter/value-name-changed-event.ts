@@ -16,7 +16,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-export interface MeterReadNameChangedEvent {
-  readValueIndex?: number;
+export interface ValueNameChangedEvent {
+  valueIndex?: number;
   name?: string;
 }

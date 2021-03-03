@@ -35,6 +35,7 @@
           [valueNames]="valueNames"
           [translationPrefix]="translationPrefix"
           [translationKeys]="translationKeys"
+          (nameChanged)="onNameChanged(i, $event)"
           #modbusWriteValues
         ></app-modbus-write-value>
       </div>

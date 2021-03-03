@@ -10,7 +10,7 @@ import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {getValidFloat, getValidString} from '../../shared/form-util';
 import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/error-message';
 import { EventEmitter } from '@angular/core';
-import {MeterReadNameChangedEvent} from '../../meter/meter-read-name-changed-event';
+import {ValueNameChangedEvent} from '../../meter/value-name-changed-event';
 
 @Component({
   selector: 'app-http-read-value',
@@ -84,7 +84,7 @@ export class HttpReadValueComponent implements OnChanges, OnInit {
 
   onNameChanged(newName?: string) {
     if (newName) {
-      const event: MeterReadNameChangedEvent = {name: newName};
+      const event: ValueNameChangedEvent = {name: newName};
       this.nameChanged.emit(event);
     }
   }

@@ -23,7 +23,7 @@ import {FormHandler} from '../../shared/form-handler';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {Logger} from '../../log/logger';
 import {MeterDefaults} from '../../meter/meter-defaults';
-import {MeterReadNameChangedEvent} from '../../meter/meter-read-name-changed-event';
+import {ValueNameChangedEvent} from '../../meter/value-name-changed-event';
 
 @Component({
   selector: 'app-modbus-read',
@@ -96,8 +96,8 @@ export class ModbusReadComponent implements OnChanges, OnInit {
     });
   }
 
-  onNameChanged(index: number, event: MeterReadNameChangedEvent) {
-    event.readValueIndex = index;
+  onNameChanged(index: number, event: ValueNameChangedEvent) {
+    event.valueIndex = index;
     this.nameChanged.emit(event);
   }
 
@@ -150,7 +150,7 @@ export class ModbusReadComponent implements OnChanges, OnInit {
     this.modbusRead.readValues.splice(index, 1);
     this.modbusReadValuesFormArray.removeAt(index);
 
-    const event: MeterReadNameChangedEvent = {readValueIndex: index};
+    const event: ValueNameChangedEvent = {valueIndex: index};
     this.nameChanged.emit(event);
 
     this.form.markAsDirty();

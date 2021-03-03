@@ -64,10 +64,11 @@
                                 [settings]="settings"
                                 [settingsDefaults]="settingsDefaults"
                                 [meterDefaults]="meterDefaults"
-                                [translationKeys]="modbusTranslationKeys"
+                                [translationKeys]="valueNames"
   ></app-control-evcharger-modbus>
   <app-control-evcharger-http *ngIf="isProtocolHttp"
                               [evHttpControl]="evCharger.httpControl"
+                              [translationKeys]="valueNames"
   ></app-control-evcharger-http>
   <h2 class="sae__heading-extra-top-margin">{{'ControlEvchargerComponent.headingEv' | translate}}<app-help [helpfile]="'EVCharger'" [anchor]="'ev'"></app-help></h2>
   <div class="ControlEvchargerComponent__electricVehicles" formArrayName="electricVehicles">

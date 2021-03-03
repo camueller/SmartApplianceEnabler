@@ -22,7 +22,7 @@ import {getValidString} from '../../shared/form-util';
 import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/error-message';
 import {HttpReadValueComponent} from '../read-value/http-read-value.component';
 import {HttpReadValue} from '../read-value/http-read-value';
-import {MeterReadNameChangedEvent} from '../../meter/meter-read-name-changed-event';
+import {ValueNameChangedEvent} from '../../meter/value-name-changed-event';
 
 export interface NameChangedEvent {
   r
@@ -40,8 +40,6 @@ export class HttpReadComponent implements OnChanges, OnInit {
   httpReadValueComps: QueryList<HttpReadValueComponent>;
   @Input()
   valueNames: string[];
-  @Input()
-  minValues: number;
   @Input()
   maxValues: number;
   @Input()
@@ -101,8 +99,8 @@ export class HttpReadComponent implements OnChanges, OnInit {
     });
   }
 
-  onNameChanged(index: number, event: MeterReadNameChangedEvent) {
-    event.readValueIndex = index;
+  onNameChanged(index: number, event: ValueNameChangedEvent) {
+    event.valueIndex = index;
     this.nameChanged.emit(event);
   }
 
@@ -130,14 +128,14 @@ export class HttpReadComponent implements OnChanges, OnInit {
   }
 
   get isRemoveValuePossible() {
-    return (!this.minValues || this.httpRead.readValues.length > this.minValues) && this.maxValues > 1;
+    return !this.maxValues || this.maxValues > 1;
   }
 
   removeHttpReadValue(index: number) {
     this.httpRead.readValues.splice(index, 1);
     this.httpReadValuesFormArray.removeAt(index);
 
-    const event: MeterReadNameChangedEvent = {readValueIndex: index};
+    const event: ValueNameChangedEvent = {valueIndex: index};
     this.nameChanged.emit(event);
 
     this.form.markAsDirty();

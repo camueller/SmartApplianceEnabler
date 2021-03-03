@@ -15,7 +15,7 @@ import {HttpConfigurationComponent} from '../../http/configuration/http-configur
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {Logger} from '../../log/logger';
 import {TranslateService} from '@ngx-translate/core';
-import {MeterReadNameChangedEvent} from '../meter-read-name-changed-event';
+import {ValueNameChangedEvent} from '../value-name-changed-event';
 import {ReadValueMapKey} from '../../shared/read-value-map-key';
 
 @Component({
@@ -85,8 +85,8 @@ export class MeterHttpComponent implements OnChanges, OnInit {
     return ['MeterHttpComponent.Energy', 'MeterHttpComponent.Power'];
   }
 
-  onNameChanged(index: number, event: MeterReadNameChangedEvent) {
-    const key: ReadValueMapKey = {readIndex: index, readValueIndex: event.readValueIndex};
+  onNameChanged(index: number, event: ValueNameChangedEvent) {
+    const key: ReadValueMapKey = {readIndex: index, readValueIndex: event.valueIndex};
     if (event.name) {
       this.readValueNames.set(key, event.name);
     } else {
