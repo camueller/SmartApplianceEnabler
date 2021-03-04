@@ -42,9 +42,9 @@ public class ReadFloatHoldingRegisterExecutorImpl extends ReadHoldingRegisterExe
         Integer[] byteValues = getByteValues();
         if(byteValues != null) {
             if(byteValues.length == 2) {
-                return Float.intBitsToFloat(byteValues[0] << 16 | byteValues[1]) * getInitializedFactorToValue();
+                return (float) (byteValues[0] << 16 | byteValues[1]) * getInitializedFactorToValue();
             } else if(byteValues.length == 4) {
-                return Float.intBitsToFloat(byteValues[0] << 48 | byteValues[1] << 32 | byteValues[2] << 16 | byteValues[3]) * getInitializedFactorToValue();
+                return (float) (byteValues[0] << 48 | byteValues[1] << 32 | byteValues[2] << 16 | byteValues[3]) * getInitializedFactorToValue();
             }
             logger.error("{}: Cannot handle response composed of {} bytes", getApplianceId(), byteValues.length);
         }
