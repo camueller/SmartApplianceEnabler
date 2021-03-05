@@ -260,6 +260,10 @@ public class EVModbusControl extends ModbusSlave implements EVChargerControl {
                     if(WriteRegisterType.Coil.equals(registerWrite.getType())) {
                         value = "1".equals(stringValue);
                     }
+                    else if(WriteRegisterType.Holding.equals(registerWrite.getType())) {
+                        value = Integer.valueOf(stringValue);
+                    }
+                    // FIXME Fehler werfen bei unbehandelten Typen
                     executor.setValue(value);
                     executeTransaction(executor, true);
                 }
