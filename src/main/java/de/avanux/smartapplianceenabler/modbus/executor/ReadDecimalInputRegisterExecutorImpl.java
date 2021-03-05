@@ -44,13 +44,15 @@ public class ReadDecimalInputRegisterExecutorImpl extends ReadInputRegisterExecu
     public Double getValue() {
         Integer[] byteValues = getByteValues();
         if(byteValues != null) {
-            if (this.byteOrder == ByteOrder.LittleEndian) {
-                if (byteValues.length == 2) {
+            if (byteValues.length == 1) {
+                // TODO support Integer
+                return Float.valueOf(byteValues[0]).doubleValue() * getInitializedFactorToValue();
+            }
+            if (byteValues.length == 2) {
+                if (this.byteOrder == ByteOrder.LittleEndian) {
                     return Float.valueOf(byteValues[1] << 16 | byteValues[0]).doubleValue() * getInitializedFactorToValue();
                 }
-            }
-            else {
-                if (byteValues.length == 2) {
+                else {
                     return Float.valueOf(byteValues[0] << 16 | byteValues[1]).doubleValue() * getInitializedFactorToValue();
                 }
             }
