@@ -20,8 +20,9 @@ package de.avanux.smartapplianceenabler.modbus.executor;
 
 import com.ghgande.j2mod.modbus.ModbusException;
 import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
+import de.avanux.smartapplianceenabler.modbus.transformer.ValueTransformer;
 
-public class ModbusReadBooleanTestingExecutor implements ModbusReadTransactionExecutor<Boolean>,
+public class ModbusReadBooleanTestingExecutor implements ModbusReadTransactionExecutor,
         ReadCoilExecutor, ReadDiscreteInputExecutor, ModbusTestingExecutor {
 
     private Boolean value;
@@ -43,5 +44,10 @@ public class ModbusReadBooleanTestingExecutor implements ModbusReadTransactionEx
     @Override
     public void setApplianceId(String applianceId) {
 
+    }
+
+    @Override
+    public ValueTransformer getValueTransformer() {
+        return null;
     }
 }

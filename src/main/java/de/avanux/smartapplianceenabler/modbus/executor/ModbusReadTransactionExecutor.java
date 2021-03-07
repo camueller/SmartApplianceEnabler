@@ -18,8 +18,10 @@
 
 package de.avanux.smartapplianceenabler.modbus.executor;
 
-public interface ModbusReadTransactionExecutor<V> extends ModbusTransactionExecutor {
+import de.avanux.smartapplianceenabler.modbus.transformer.ValueTransformer;
 
-    V getValue();
+public interface ModbusReadTransactionExecutor extends ModbusTransactionExecutor {
+
+    ValueTransformer getValueTransformer();
 
 }

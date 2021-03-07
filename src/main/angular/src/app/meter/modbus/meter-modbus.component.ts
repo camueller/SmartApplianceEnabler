@@ -44,7 +44,7 @@ export class MeterModbusComponent implements OnChanges, OnInit {
   applianceId: string;
   form: FormGroup;
   formHandler: FormHandler;
-  translatedStrings: string[];
+  translatedStrings: { [key: string]: string } = {};
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;

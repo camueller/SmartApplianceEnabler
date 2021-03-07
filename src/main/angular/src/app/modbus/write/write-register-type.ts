@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Axel Müller <axel.mueller@avanux.de>
+ * Copyright (C) 2021 Axel Müller <axel.mueller@avanux.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,11 +16,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.avanux.smartapplianceenabler.modbus;
-
-public enum ReadRegisterType {
-    Coil,     // FC=1
-    Discrete, // FC=2
-    Holding,  // FC=3
-    Input     // FC=4
+export enum WriteRegisterType {
+  Coil = 'Coil',
+  Holding = 'Holding',
 }

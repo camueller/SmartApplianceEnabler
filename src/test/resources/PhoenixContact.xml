@@ -21,7 +21,7 @@
     <Appliance id="F-00000001-000000000001-00">
         <ElectricVehicleCharger startChargingStateDetectionDelay="300">
             <EVModbusControl idref="wallbox" slaveAddress="180">
-                <ModbusRead address="100" type="InputString">
+                <ModbusRead address="100" type="Input" valueType="String">
                     <ModbusReadValue name="VehicleNotConnected" extractionRegex="(A)"/>
                     <ModbusReadValue name="VehicleConnected" extractionRegex="(B)"/>
                     <ModbusReadValue name="Charging" extractionRegex="(C|D)"/>

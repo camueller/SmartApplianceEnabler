@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Axel Müller <axel.mueller@avanux.de>
+ * Copyright (C) 2019 Axel Müller <axel.mueller@avanux.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,29 +18,33 @@
 
 package de.avanux.smartapplianceenabler.modbus.executor;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.ghgande.j2mod.modbus.ModbusException;
+import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
 
-public class ReadStringInputRegisterExecutorImpl extends ReadInputRegisterExecutor<String>
-        implements ReadStringInputRegisterExecutor {
+public class ModbusWriteHoldingTestingExecutor implements ModbusWriteTransactionExecutor<Integer>,
+        WriteHoldingRegisterExecutor, ModbusTestingExecutor {
 
-    private Logger logger = LoggerFactory.getLogger(ReadStringInputRegisterExecutorImpl.class);
+    private Integer value;
 
-    public ReadStringInputRegisterExecutorImpl(String address, int requestWords) {
-        super(address, requestWords);
+    public Integer getValue() {
+        return value;
     }
 
     @Override
-    public Logger getLogger() {
-        return logger;
+    public void setValue(Integer value) {
+        this.value = value;
     }
 
     @Override
-    public String getValue() {
-        StringBuilder stringValue = new StringBuilder();
-        for(Integer byteValue : getByteValues()) {
-            stringValue.append(Character.valueOf((char) byteValue.intValue()));
-        }
-        return stringValue.toString();
+    public Integer getResult() {
+        return null;
+    }
+
+    @Override
+    public void execute(TCPMasterConnection con, int slaveAddress) throws ModbusException {
+    }
+
+    @Override
+    public void setApplianceId(String applianceId) {
     }
 }

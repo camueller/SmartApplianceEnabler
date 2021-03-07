@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Axel Müller <axel.mueller@avanux.de>
+ * Copyright (C) 2019 Axel Müller <axel.mueller@avanux.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,33 @@
 
 package de.avanux.smartapplianceenabler.modbus.executor;
 
-public interface ReadDecimalInputRegisterExecutor {
-    Double getValue();
+import com.ghgande.j2mod.modbus.ModbusException;
+import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
+
+public class ModbusWriteCoilTestingExecutor implements ModbusWriteTransactionExecutor<Boolean>,
+        WriteCoilExecutor, ModbusTestingExecutor {
+
+    private Boolean value;
+
+    public Boolean getValue() {
+        return value;
+    }
+
+    @Override
+    public void setValue(Boolean value) {
+        this.value = value;
+    }
+
+    @Override
+    public Boolean getResult() {
+        return null;
+    }
+
+    @Override
+    public void execute(TCPMasterConnection con, int slaveAddress) throws ModbusException {
+    }
+
+    @Override
+    public void setApplianceId(String applianceId) {
+    }
 }

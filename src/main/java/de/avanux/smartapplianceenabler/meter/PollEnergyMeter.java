@@ -125,20 +125,26 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
         Vector<Integer> powerValues = new Vector<>();
         LocalDateTime previousTimestamp = null;
         Double previousEnergy = null;
-        for(LocalDateTime timestamp: this.cache.getTimestampWithValue().keySet()) {
-            Double energy = this.cache.getTimestampWithValue().get(timestamp);
-            if(previousTimestamp != null && previousEnergy != null) {
-                long diffTime = Duration.between(previousTimestamp, timestamp).toMillis();
-                double diffEnergy = energy - previousEnergy;
-                // diffEnergy kWh * 1000W/kW * 3600s/1h * 1000ms/1s / diffTime ms
-                double power = diffEnergy * 1000.0 * 3600.0 * 1000.0 / diffTime;
-                logger.debug("{}: Calculating power from energy: power={} energy={} previousEnergy={} diffEnergy={} diffTime={}",
-                        applianceId, (int) power, energyFormat.format(energy), energyFormat.format(previousEnergy),
-                        energyFormat.format(diffEnergy), diffTime);
-                powerValues.add(power > 0 ? Double.valueOf(power).intValue() : 0);
+        if(this.cache.getTimestampWithValue().size() == 0) {
+            logger.debug("{}: Energy cache is empty", applianceId);
+        }
+        else {
+            for(LocalDateTime timestamp: this.cache.getTimestampWithValue().keySet()) {
+                Double energy = this.cache.getTimestampWithValue().get(timestamp);
+                logger.trace("{}: Energy timestamp={} energy={}", applianceId, timestamp, energy);
+                if (previousTimestamp != null && previousEnergy != null) {
+                    long diffTime = Duration.between(previousTimestamp, timestamp).toMillis();
+                    double diffEnergy = energy - previousEnergy;
+                    // diffEnergy kWh * 1000W/kW * 3600s/1h * 1000ms/1s / diffTime ms
+                    double power = diffEnergy * 1000.0 * 3600.0 * 1000.0 / diffTime;
+                    logger.debug("{}: Calculating power from energy: power={} energy={} previousEnergy={} diffEnergy={} diffTime={}",
+                            applianceId, (int) power, energyFormat.format(energy), energyFormat.format(previousEnergy),
+                            energyFormat.format(diffEnergy), diffTime);
+                    powerValues.add(power > 0 ? Double.valueOf(power).intValue() : 0);
+                }
+                previousTimestamp = timestamp;
+                previousEnergy = energy;
             }
-            previousTimestamp = timestamp;
-            previousEnergy = energy;
         }
         return powerValues.size() > 0 ? powerValues.lastElement() : 0;
     }

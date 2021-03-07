@@ -23,6 +23,7 @@ import de.avanux.smartapplianceenabler.control.ev.EVChargerControl;
 import de.avanux.smartapplianceenabler.control.ev.EVReadValueName;
 import de.avanux.smartapplianceenabler.control.ev.EVWriteValueName;
 import de.avanux.smartapplianceenabler.modbus.executor.*;
+import de.avanux.smartapplianceenabler.modbus.transformer.ValueTransformer;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.notification.NotificationType;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
@@ -132,7 +133,7 @@ public class EVModbusControl extends ModbusSlave implements EVChargerControl {
         List<ParentWithChild<ModbusRead, ModbusReadValue>> reads
                 = ModbusRead.getRegisterReads(valueName.name(), this.modbusReads);
         if (reads.size() > 0) {
-            boolean statusMatch = false;
+            boolean match = false;
             for (ParentWithChild<ModbusRead, ModbusReadValue> read : reads) {
                 ModbusRead registerRead = read.parent();
                 try {
@@ -142,7 +143,7 @@ public class EVModbusControl extends ModbusSlave implements EVChargerControl {
                     if (executor == null) {
                         registerAddress = registerRead.getAddress();
                         executor = ModbusExecutorFactory.getReadExecutor(getApplianceId(),
-                                registerRead.getType(), registerRead.getAddress(), registerRead.getWords());
+                                registerRead.getAddress(), registerRead.getType(), registerRead.getValueType(), registerRead.getWords());
                         executeTransaction(executor, true);
                         this.requestCache.put(registerRead, executor);
                     }
@@ -153,41 +154,28 @@ public class EVModbusControl extends ModbusSlave implements EVChargerControl {
                             fromCache = true;
                         }
                     }
-                    if (executor != null) {
-                        Object registerValue = null;
-                        String regex = read.child().getExtractionRegex();
-                        Boolean regexMatch = null;
-                        if (executor instanceof ReadStringInputRegisterExecutor) {
-                            registerValue = ((ReadStringInputRegisterExecutor) executor).getValue();
-                            regexMatch = regex != null && ((String) registerValue).matches(regex);
-                        } else if (executor instanceof ReadFloatHoldingRegisterExecutor) {
-                            registerValue = ((ReadFloatHoldingRegisterExecutor) executor).getValue();
-                            regexMatch = regex != null && ((Float) registerValue).toString().matches(regex);
-                        } else if (executor instanceof ReadDecimalInputRegisterExecutor) {
-                            registerValue = ((ReadDecimalInputRegisterExecutor) executor).getValue();
-                            regexMatch = regex != null && ((Double) registerValue).toString().matches(regex);
-                        } else if (executor instanceof ReadFloatInputRegisterExecutor) {
-                            registerValue = ((ReadFloatInputRegisterExecutor) executor).getValue();
-                            regexMatch = ((Float) registerValue).toString().matches(regex);
-                        } else if (executor instanceof ReadCoilExecutor) {
-                            registerValue = ((ReadCoilExecutor) executor).getValue();
-                            statusMatch |= (Boolean) registerValue;
-                        } else if (executor instanceof ReadDiscreteInputExecutor) {
-                            registerValue = ((ReadDiscreteInputExecutor) executor).getValue();
-                            statusMatch |= (Boolean) registerValue;
-                        }
-                        if(regexMatch != null) {
-                            statusMatch |= regexMatch;
-                        }
-                        logger.trace("{}: Read modbus register={} valueName={} value={} regexMatch={} statusMatch={} fromCache={}",
-                                getApplianceId(), registerAddress != null ? registerAddress.toString() : null, valueName,
-                                registerValue, regexMatch, statusMatch, fromCache);
-                        if(statusMatch) {
-                            break;
-                        }
+
+                    Object value;
+                    if(executor instanceof ReadCoilExecutor) {
+                        match = ((ReadCoilExecutor) executor).getValue();
+                        value = match;
+                    }
+                    else if(executor instanceof ReadDiscreteInputExecutorImpl) {
+                        match = ((ReadDiscreteInputExecutorImpl) executor).getValue();
+                        value = match;
                     }
                     else {
-                        logger.error("{}: no input register executor available", getApplianceId());
+                        ValueTransformer<?> transformer = executor.getValueTransformer();
+                        String regex = read.child().getExtractionRegex();
+                        match = transformer.valueMatches(regex);
+                        value = transformer.getValue();
+                    }
+
+                    logger.trace("{}: Read modbus register={} valueName={} value={} match={} fromCache={}",
+                            getApplianceId(), registerAddress != null ? registerAddress.toString() : null, valueName,
+                            value, match, fromCache);
+                    if(match) {
+                        break;
                     }
                 } catch (Exception e) {
                     logger.error("{}: Error reading register {}", getApplianceId(), registerRead.getAddress(), e);
@@ -196,7 +184,7 @@ public class EVModbusControl extends ModbusSlave implements EVChargerControl {
                     }
                 }
             }
-            return statusMatch;
+            return match;
         }
         return false;
     }
@@ -263,7 +251,6 @@ public class EVModbusControl extends ModbusSlave implements EVChargerControl {
                     else if(WriteRegisterType.Holding.equals(registerWrite.getType())) {
                         value = Integer.valueOf(stringValue);
                     }
-                    // FIXME Fehler werfen bei unbehandelten Typen
                     executor.setValue(value);
                     executeTransaction(executor, true);
                 }

@@ -19,18 +19,20 @@
 package de.avanux.smartapplianceenabler.modbus.executor;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import de.avanux.smartapplianceenabler.modbus.transformer.ValueTransformer;
 
 abstract public class BaseTransactionExecutor implements ApplianceIdConsumer {
 
     private String applianceId;
     private final Integer address;
     private final int requestWords;
+    private final ValueTransformer<?> transformer;
 
-    public BaseTransactionExecutor(String address) {
-        this(address, 1);
+    public BaseTransactionExecutor(String address, ValueTransformer<?> transformer) {
+        this(address, 1, transformer);
     }
 
-    public BaseTransactionExecutor(String address, int requestWords) {
+    public BaseTransactionExecutor(String address, int requestWords, ValueTransformer<?> transformer) {
         if(address.startsWith("0x")) {
             this.address = Integer.parseInt(address.substring(2), 16);
         }
@@ -38,6 +40,7 @@ abstract public class BaseTransactionExecutor implements ApplianceIdConsumer {
             this.address = Integer.parseInt(address);
         }
         this.requestWords = requestWords;
+        this.transformer = transformer;
     }
 
 
@@ -56,5 +59,9 @@ abstract public class BaseTransactionExecutor implements ApplianceIdConsumer {
 
     protected int getRequestWords() {
         return requestWords;
+    }
+
+    public ValueTransformer<?> getValueTransformer() {
+        return transformer;
     }
 }

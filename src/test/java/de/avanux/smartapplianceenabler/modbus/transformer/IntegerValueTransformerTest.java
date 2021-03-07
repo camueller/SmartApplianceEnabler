@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Axel Müller <axel.mueller@avanux.de>
+ * Copyright (C) 2021 Axel Müller <axel.mueller@avanux.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,8 +16,25 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.avanux.smartapplianceenabler.modbus.executor;
+package de.avanux.smartapplianceenabler.modbus.transformer;
 
-public interface ReadFloatHoldingRegisterExecutor {
-    Float getValue();
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class IntegerValueTransformerTest {
+    private IntegerValueTransformer sut;
+
+    @BeforeEach
+    public void setup() throws Exception {
+        sut = new IntegerValueTransformer();
+    }
+
+    @Test
+    public void getValue() {
+        Integer[] byteValues = {0, 3};
+        sut.setByteValues(byteValues);
+        assertEquals(3, sut.getValue());
+    }
 }

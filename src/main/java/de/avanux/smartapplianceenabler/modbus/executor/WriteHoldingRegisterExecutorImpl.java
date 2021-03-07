@@ -35,7 +35,7 @@ public class WriteHoldingRegisterExecutorImpl extends BaseTransactionExecutor
     private Double factorToValue;
 
     public WriteHoldingRegisterExecutorImpl(String address, Double factorToValue) {
-        super(address, 1);
+        super(address, 1, null);
         this.factorToValue = factorToValue;
     }
 

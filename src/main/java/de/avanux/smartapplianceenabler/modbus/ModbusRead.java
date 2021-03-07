@@ -40,6 +40,8 @@ public class ModbusRead {
     @XmlAttribute
     private String type;
     @XmlAttribute
+    private String valueType;
+    @XmlAttribute
     private Double factorToValue;
     @XmlElement(name = "ModbusReadValue")
     private List<ModbusReadValue> readValues;
@@ -57,7 +59,7 @@ public class ModbusRead {
 
     public Integer getWords() {
         if(words == null) {
-            return ModbusReadDefaults.getWords(getType());
+            return ModbusReadDefaults.getWords(getType(), getValueType());
         }
         return words;
     }
@@ -80,6 +82,14 @@ public class ModbusRead {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public RegisterValueType getValueType() {
+        return this.valueType != null ? RegisterValueType.valueOf(this.valueType) : null;
+    }
+
+    public void setValueType(String valueType) {
+        this.valueType = valueType;
     }
 
     public Double getFactorToValue() {

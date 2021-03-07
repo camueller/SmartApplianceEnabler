@@ -1,11 +1,15 @@
 .ModbusReadComponent {
 
+  &__value-type {
+    width: 9rem;
+  }
+
   &__words {
     width: 5rem;
   }
 
   &__byteOrder {
-    width: 7rem;
+    width: 11rem;
   }
 
 }

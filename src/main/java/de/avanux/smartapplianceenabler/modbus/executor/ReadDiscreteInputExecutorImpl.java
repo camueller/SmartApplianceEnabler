@@ -23,23 +23,24 @@ import com.ghgande.j2mod.modbus.io.ModbusTCPTransaction;
 import com.ghgande.j2mod.modbus.msg.ReadInputDiscretesRequest;
 import com.ghgande.j2mod.modbus.msg.ReadInputDiscretesResponse;
 import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
+import de.avanux.smartapplianceenabler.modbus.transformer.ValueTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ReadDiscreteInputExecutorImpl extends BaseTransactionExecutor
-        implements ModbusReadTransactionExecutor<Boolean>, ReadDiscreteInputExecutor {
+        implements ModbusReadTransactionExecutor, ReadDiscreteInputExecutor {
 
     private Logger logger = LoggerFactory.getLogger(ReadCoilExecutorImpl.class);
     private boolean discrete;
 
     public ReadDiscreteInputExecutorImpl(String registerAddress) {
-        super(registerAddress, 1);
+        super(registerAddress, 1, null);
     }
 
     @Override
     public void execute(TCPMasterConnection con, int slaveAddress) throws ModbusException {
-        logger.trace("{}: Reading discrete input register={} requestWords={}", getApplianceId(), getAddress(), getRequestWords());
-        ReadInputDiscretesRequest req = new ReadInputDiscretesRequest(getAddress(), getRequestWords());
+        logger.trace("{}: Reading discrete input register={}", getApplianceId(), getAddress());
+        ReadInputDiscretesRequest req = new ReadInputDiscretesRequest(getAddress(), 1);
         req.setUnitID(slaveAddress);
 
         ModbusTCPTransaction trans = new ModbusTCPTransaction(con);
@@ -49,7 +50,7 @@ public class ReadDiscreteInputExecutorImpl extends BaseTransactionExecutor
         ReadInputDiscretesResponse res = (ReadInputDiscretesResponse) trans.getResponse();
         if(res != null) {
             discrete = res.getDiscreteStatus(0);
-            logger.debug("{}: Read discrete register={} discrete={}", getApplianceId(), getAddress(), discrete);
+            logger.debug("{}: Discrete input register={} value={}", getApplianceId(), getAddress(), discrete);
         }
         else {
             logger.error("{}: No response received.", getApplianceId());

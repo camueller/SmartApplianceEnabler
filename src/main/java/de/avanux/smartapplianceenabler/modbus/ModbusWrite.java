@@ -34,6 +34,8 @@ public class ModbusWrite {
     @XmlAttribute
     private String type;
     @XmlAttribute
+    private String valueType;
+    @XmlAttribute
     private Double factorToValue;
     @XmlElement(name = "ModbusWriteValue")
     private List<ModbusWriteValue> writeValues;
@@ -53,16 +55,24 @@ public class ModbusWrite {
         this.type = type;
     }
 
+    public ReadRegisterType getReadRegisterType() {
+        return ReadRegisterType.valueOf(this.type);
+    }
+
+    public RegisterValueType getValueType() {
+        return RegisterValueType.valueOf(this.valueType);
+    }
+
+    public void setValueType(String valueType) {
+        this.valueType = valueType;
+    }
+
     public Double getFactorToValue() {
         return factorToValue;
     }
 
     public void setFactorToValue(Double factorToValue) {
         this.factorToValue = factorToValue;
-    }
-
-    public ReadRegisterType getReadRegisterType() {
-        return ReadRegisterType.valueOf(this.type);
     }
 
     public List<ModbusWriteValue> getWriteValues() {

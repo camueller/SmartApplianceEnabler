@@ -337,12 +337,7 @@ public class SaeController {
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public MeterDefaults getMeterDefaults() {
         try {
-            MeterDefaults defaults = new MeterDefaults();
-            defaults.setS0ElectricityMeter(new S0ElectricityMeterDefaults());
-            defaults.setHttpElectricityMeter(new HttpElectricityMeterDefaults());
-            defaults.setModbusElectricityMeter(new ModbusElectricityMeterDefaults());
-            defaults.setModbusReadDefaults(new ModbusReadDefaults());
-            return defaults;
+            return new MeterDefaults();
         } catch (Throwable e) {
             logger.error("Error in " + getClass().getSimpleName(), e);
         }

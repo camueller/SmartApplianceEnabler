@@ -19,6 +19,8 @@ export class EvChargerTemplates {
       '      {\n' +
       '        "@class": "de.avanux.smartapplianceenabler.modbus.ModbusRead",\n' +
       '        "address": "100",\n' +
+      '        "type": "Input",\n' +
+      '        "valueType": "String",\n' +
       '        "byteOrder": null,\n' +
       '        "bytes": null,\n' +
       '        "factorToValue": null,\n' +
@@ -43,8 +45,7 @@ export class EvChargerTemplates {
       '            "extractionRegex": "(E|F)",\n' +
       '            "name": "Error"\n' +
       '          }\n' +
-      '        ],\n' +
-      '        "type": "InputString"\n' +
+      '        ]\n' +
       '      }\n' +
       '    ],\n' +
       '    "modbusWrites": [\n' +
@@ -98,6 +99,8 @@ export class EvChargerTemplates {
       '      {\n' +
       '        "@class": "de.avanux.smartapplianceenabler.modbus.ModbusRead",\n' +
       '        "address": "100",\n' +
+      '        "type": "Input",\n' +
+      '        "valueType": "String",\n' +
       '        "byteOrder": null,\n' +
       '        "bytes": null,\n' +
       '        "factorToValue": null,\n' +
@@ -122,8 +125,7 @@ export class EvChargerTemplates {
       '            "extractionRegex": "(E|F)",\n' +
       '            "name": "Error"\n' +
       '          }\n' +
-      '        ],\n' +
-      '        "type": "InputString"\n' +
+      '        ]\n' +
       '      }\n' +
       '    ],\n' +
       '    "modbusWrites": [\n' +

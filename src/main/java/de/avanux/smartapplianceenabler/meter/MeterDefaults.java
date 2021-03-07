@@ -22,25 +22,8 @@ import de.avanux.smartapplianceenabler.modbus.ModbusElectricityMeterDefaults;
 import de.avanux.smartapplianceenabler.modbus.ModbusReadDefaults;
 
 public class MeterDefaults {
-
-    S0ElectricityMeterDefaults s0ElectricityMeterDefaults;
-    HttpElectricityMeterDefaults httpElectricityMeterDefaults;
-    ModbusElectricityMeterDefaults modbusElectricityMeterDefaults;
-    ModbusReadDefaults modbusReadDefaults;
-
-    public void setS0ElectricityMeter(S0ElectricityMeterDefaults s0ElectricityMeterDefaults) {
-        this.s0ElectricityMeterDefaults = s0ElectricityMeterDefaults;
-    }
-
-    public void setHttpElectricityMeter(HttpElectricityMeterDefaults httpElectricityMeterDefaults) {
-        this.httpElectricityMeterDefaults = httpElectricityMeterDefaults;
-    }
-
-    public void setModbusElectricityMeter(ModbusElectricityMeterDefaults modbusElectricityMeterDefaults) {
-        this.modbusElectricityMeterDefaults = modbusElectricityMeterDefaults;
-    }
-
-    public void setModbusReadDefaults(ModbusReadDefaults modbusReadDefaults) {
-        this.modbusReadDefaults = modbusReadDefaults;
-    }
+    S0ElectricityMeterDefaults s0ElectricityMeterDefaults = new S0ElectricityMeterDefaults();
+    HttpElectricityMeterDefaults httpElectricityMeterDefaults = new HttpElectricityMeterDefaults();
+    ModbusElectricityMeterDefaults modbusElectricityMeterDefaults = new ModbusElectricityMeterDefaults();
+    ModbusReadDefaults modbusReadDefaults = new ModbusReadDefaults();
 }

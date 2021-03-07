@@ -22,6 +22,9 @@ import {ModbusWriteValue} from '../write-value/modbus-write-value';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
 import {Logger} from '../../log/logger';
+import {ReadRegisterType} from '../read/read-register-type';
+import {WriteRegisterType} from './write-register-type';
+import {ValueType} from '../read/value-type';
 
 @Component({
   selector: 'app-modbus-write',
@@ -35,8 +38,6 @@ export class ModbusWriteComponent implements OnChanges, OnInit {
   modbusWriteValueComps: QueryList<ModbusWriteValueComponent>;
   @Input()
   valueNames: string[];
-  @Input()
-  writeRegisterTypes: string[];
   @Input()
   maxValues: number;
   @Input()
@@ -53,6 +54,7 @@ export class ModbusWriteComponent implements OnChanges, OnInit {
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
+  translatedStrings: { [key: string]: string } = {};
 
   constructor(private logger: Logger,
               private translate: TranslateService,
@@ -86,11 +88,32 @@ export class ModbusWriteComponent implements OnChanges, OnInit {
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
     });
+    this.translate.get([
+      ...this.registerTypes.map(regType => this.toRegisterTypeKey(regType)),
+    ]).subscribe(translatedStrings => {
+      this.translatedStrings = translatedStrings;
+    });
   }
 
   get type(): string {
     const typeControl = this.form.controls.type;
     return (typeControl ? typeControl.value : '');
+  }
+
+  get registerTypes(): string[] {
+    return Object.values(WriteRegisterType);
+  }
+
+  toRegisterTypeKey(registerType: string): string {
+    return `ModbusWriteComponent.type.${registerType}`;
+  }
+
+  public getTranslatedRegisterType(registerType: string) {
+    return this.translatedStrings[this.toRegisterTypeKey(registerType)];
+  }
+
+  get isFactorToValueDisplayed() {
+    return this.form.controls.type.value === ReadRegisterType.Holding && !this.disableFactorToValue;
   }
 
   removeModbusWrite() {

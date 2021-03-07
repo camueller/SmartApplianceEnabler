@@ -19,9 +19,11 @@
 package de.avanux.smartapplianceenabler.control;
 
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleChargerDefaults;
+import de.avanux.smartapplianceenabler.modbus.ModbusWriteDefaults;
 
 public class ControlDefaults {
     MeterReportingSwitchDefaults meterReportingSwitchDefaults = new MeterReportingSwitchDefaults();
     StartingCurrentSwitchDefaults startingCurrentSwitchDefaults = new StartingCurrentSwitchDefaults();
     ElectricVehicleChargerDefaults evChargerDefaults = new ElectricVehicleChargerDefaults();
+    ModbusWriteDefaults modbusWriteDefaults = new ModbusWriteDefaults();
 }
