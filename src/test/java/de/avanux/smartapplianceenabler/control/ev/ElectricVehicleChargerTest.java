@@ -338,6 +338,7 @@ public class ElectricVehicleChargerTest {
         assertEquals(EVChargerState.VEHICLE_CONNECTED, evCharger.getState());
         log("Stop charging during ChargingStateDetectionDelay");
         evCharger.stopCharging();
+        configureMocks(false, true, false);
         updateState();
         log("After ChargingStateDetectionDelay");
         when(evCharger.isWithinSwitchChargingStateDetectionDelay()).thenReturn(false);

@@ -411,7 +411,7 @@ public class EVChargerTest extends TestBase {
         LocalDateTime timeStartCharging = toToday(10, 0, 0);
         log("Start charging", timeStartCharging);
         optionalEnergyInterval = new Interval(interval.getEnd().plusSeconds(1), interval.getEnd().plusDays(2).plusSeconds(1));
-        tick(appliance, timeInitial, true, true, socInitial, socInitial);
+        tick(appliance, timeInitial, true, false, socInitial, socInitial);
         appliance.setApplianceState(timeStartCharging,
                 true, 4000, "Switch on");
         tick(appliance, timeStartCharging, true, true, socInitial, socInitial);
