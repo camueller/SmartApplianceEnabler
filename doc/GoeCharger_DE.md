@@ -1,7 +1,8 @@
 # go-eCharger
 
 Ein sehr vielseitiges, kompaktes Ladegerät, das auch für den mobilen Einsatz geeignet ist, ist der [go-eCharger](https://go-e.co/go-echarger-home/).
-Bei Verwendung des go-eCharger ist kein separater Stromzähler erforderlich, weil der Zählerwert vom go-eCharger mit hoher Genauigkeit bereitgestellt wird und der *Smart Appliance Enabler* daraus die aktuelle Leistungsaufnahme berechnet.
+
+Bei Verwendung dieser Wallbox ist kein separater Stromzähler erforderlich, weil der Zählerwert von der Wallbox selbst mit hoher Genauigkeit bereitgestellt wird und der *Smart Appliance Enabler* daraus die aktuelle Leistungsaufnahme berechnet.
 
 ## Geräte-Konfiguration
 
@@ -27,6 +28,6 @@ Das Feld `Pfad` muss den Wert `$.dws` enthalten, damit der *Smart Appliance Enab
 
 Im Feld `Umrechnungsfaktor` muss die Zahl `0.0000027778` eingegeben werden, weil der go-eCharger die Energiemenge in 10 Deka-Watt-Sekunden liefert.
 
-Der Zustand `Leistung` darf für den go-eCharger nicht konfiguriert werden, damit der *Smart Appliance Enabler* die aktuelle Leistung aus Energiemengendifferenz bezogen auf die Zeitdifferenz berechnet.
+Als Zustand ist `Zählerwert` zu wählen.
 
 ![Konfiguration des go-eCharger als Zähler](../pics/fe/EVChargerGoeChargerMeter.png)
