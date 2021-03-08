@@ -72,14 +72,16 @@ abstract public class ModbusSlave implements ApplianceIdConsumer {
     protected synchronized void executeTransaction(ModbusTransactionExecutor modbusTransactionExecutor, boolean closeConnection) throws Exception {
         if(! (modbusTransactionExecutor instanceof ModbusTestingExecutor)) {
             ModbusTcp modbusTcp = getModbusTcp();
-            if(connection == null) {
-                logger.debug("{}: Connecting to modbus {}", applianceId, modbusTcp.toString());
-                connection = modbusTcp.getConnection();
+            if(modbusTcp != null) {
+                if(connection == null) {
+                    logger.debug("{}: Connecting to modbus {}", applianceId, modbusTcp.toString());
+                    connection = modbusTcp.getConnection();
+                }
+                if(! connection.isConnected()) {
+                    connection.connect();
+                }
             }
-            if(! connection.isConnected()) {
-                connection.connect();
-            }
-            if(connection.isConnected()) {
+            if(connection != null && connection.isConnected()) {
                 modbusTransactionExecutor.execute(connection, slaveAddress);
                 if(closeConnection) {
                     connection.close();
@@ -87,7 +89,7 @@ abstract public class ModbusSlave implements ApplianceIdConsumer {
                 }
             }
             else {
-                logger.error("{}: Cannot connect to modbus {}", applianceId, modbusTcp.toString());
+                logger.error("{}: Cannot connect to modbus {}", applianceId, idref);
             }
         }
     }
