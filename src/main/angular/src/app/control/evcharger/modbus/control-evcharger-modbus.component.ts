@@ -69,7 +69,7 @@ export class ControlEvchargerModbusComponent implements OnChanges, OnInit {
       } else {
         this.evModbusControl = new EvModbusControl();
       }
-      this.expandParentForm();
+      this.updateForm();
     }
   }
 
@@ -167,6 +167,12 @@ export class ControlEvchargerModbusComponent implements OnChanges, OnInit {
       this.evModbusControl.modbusReads);
     this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'modbusWrites',
       this.evModbusControl.modbusWrites);
+  }
+
+  updateForm() {
+    this.form.removeControl('modbusReads');
+    this.form.removeControl('modbusWrites');
+    this.expandParentForm();
   }
 
   updateModelFromForm(): EvModbusControl | undefined {
