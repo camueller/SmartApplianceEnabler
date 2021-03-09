@@ -140,7 +140,7 @@ public class EVChargerTest extends TestBase {
         LocalDateTime timeManualStartTimeframeIntervalExpired = toToday(14, 0, 0);
         log("Timeframe interval expired", timeManualStartTimeframeIntervalExpired);
         tick(appliance, timeManualStartTimeframeIntervalExpired, true, false, 54.0);
-        assertFalse(evCharger.isChargingCompleted());
+        assertTrue(evCharger.isChargingCompleted());
         assertEquals(0, timeframeIntervalHandler.getQueue().size());
         assertEquals(44.0f, mockMeter.getEnergy(), 0.01);
     }
@@ -238,7 +238,7 @@ public class EVChargerTest extends TestBase {
         log("Timeframe interval expired", timeManualStartTimeframeIntervalExpired);
         socCurrent = 80;
         tick(appliance, timeManualStartTimeframeIntervalExpired, true, false, 44.0, socCurrent);
-        assertFalse(evCharger.isChargingCompleted());
+        assertTrue(evCharger.isChargingCompleted());
         assertEquals(0, timeframeIntervalHandler.getQueue().size());
         assertEquals(34.0f, mockMeter.getEnergy(), 0.01);
     }
@@ -300,7 +300,7 @@ public class EVChargerTest extends TestBase {
         log("Timeframe interval expired", timeManualStartTimeframeIntervalExpired);
         Mockito.when(pollEnergyExecutor.pollEnergy(Mockito.any())).thenReturn(44.0);
         tick(appliance, timeManualStartTimeframeIntervalExpired, true, false);
-        assertFalse(evCharger.isChargingCompleted());
+        assertTrue(evCharger.isChargingCompleted());
         assertEquals(0, timeframeIntervalHandler.getQueue().size());
     }
 
