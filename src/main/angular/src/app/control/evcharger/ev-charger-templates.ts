@@ -89,14 +89,22 @@ export class EvChargerTemplates {
       '}');
     templates['Keba P30 c-series >3.10.16 / x-series >1.11'] = JSON.parse('{\n' +
       '  "@class": "de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger",\n' +
+      '  "voltage": null,\n' +
+      '  "phases": null,\n' +
+      '  "pollInterval": null,\n' +
+      '  "startChargingStateDetectionDelay": 60,\n' +
+      '  "forceInitialCharging": null,\n' +
+      '  "vehicles": [],\n' +
       '  "modbusControl": {\n' +
       '    "@class": "de.avanux.smartapplianceenabler.modbus.EVModbusControl",\n' +
-      '    "idref": "wallbox2",\n' +
       '    "modbusReads": [\n' +
       '      {\n' +
       '        "@class": "de.avanux.smartapplianceenabler.modbus.ModbusRead",\n' +
       '        "address": "1000",\n' +
+      '        "type": "Holding",\n' +
+      '        "valueType": "Integer",\n' +
       '        "byteOrder": null,\n' +
+      '        "words": null,\n' +
       '        "factorToValue": null,\n' +
       '        "readValues": [\n' +
       '          {\n' +
@@ -114,15 +122,15 @@ export class EvChargerTemplates {
       '            "extractionRegex": "(4)",\n' +
       '            "name": "Error"\n' +
       '          }\n' +
-      '        ],\n' +
-      '        "type": "Holding",\n' +
-      '        "valueType": "Integer",\n' +
-      '        "words": null\n' +
+      '        ]\n' +
       '      },\n' +
       '      {\n' +
       '        "@class": "de.avanux.smartapplianceenabler.modbus.ModbusRead",\n' +
       '        "address": "1004",\n' +
+      '        "type": "Holding",\n' +
+      '        "valueType": "Integer",\n' +
       '        "byteOrder": null,\n' +
+      '        "words": null,\n' +
       '        "factorToValue": null,\n' +
       '        "readValues": [\n' +
       '          {\n' +
@@ -135,10 +143,7 @@ export class EvChargerTemplates {
       '            "extractionRegex": "(7|5)",\n' +
       '            "name": "VehicleConnected"\n' +
       '          }\n' +
-      '        ],\n' +
-      '        "type": "Holding",\n' +
-      '        "valueType": "Integer",\n' +
-      '        "words": null\n' +
+      '        ]\n' +
       '      }\n' +
       '    ],\n' +
       '    "modbusWrites": [\n' +
@@ -147,7 +152,6 @@ export class EvChargerTemplates {
       '        "address": "5014",\n' +
       '        "factorToValue": null,\n' +
       '        "type": "Holding",\n' +
-      '        "valueType": null,\n' +
       '        "writeValues": [\n' +
       '          {\n' +
       '            "@class": "de.avanux.smartapplianceenabler.modbus.ModbusWriteValue",\n' +
@@ -166,7 +170,6 @@ export class EvChargerTemplates {
       '        "address": "5004",\n' +
       '        "factorToValue": 1000.0,\n' +
       '        "type": "Holding",\n' +
-      '        "valueType": null,\n' +
       '        "writeValues": [\n' +
       '          {\n' +
       '            "@class": "de.avanux.smartapplianceenabler.modbus.ModbusWriteValue",\n' +
@@ -177,14 +180,7 @@ export class EvChargerTemplates {
       '      }\n' +
       '    ],\n' +
       '    "slaveAddress": 255\n' +
-      '  },\n' +
-      '  "forceInitialCharging": null,\n' +
-      '  "notifications": null,\n' +
-      '  "phases": null,\n' +
-      '  "pollInterval": null,\n' +
-      '  "startChargingStateDetectionDelay": 60,\n' +
-      '  "vehicles": null,\n' +
-      '  "voltage": null\n' +
+      '  }\n' +
       '}');
     templates['Phoenix Contact EM-CP-PP-ETH'] = JSON.parse('{\n' +
       '  "@class": "de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger",\n' +
@@ -196,7 +192,6 @@ export class EvChargerTemplates {
       '  "vehicles": [],\n' +
       '  "modbusControl": {\n' +
       '    "@class": "de.avanux.smartapplianceenabler.modbus.EVModbusControl",\n' +
-      '    "idref": "wallbox",\n' +
       '    "modbusReads": [\n' +
       '      {\n' +
       '        "@class": "de.avanux.smartapplianceenabler.modbus.ModbusRead",\n' +
@@ -204,7 +199,7 @@ export class EvChargerTemplates {
       '        "type": "Input",\n' +
       '        "valueType": "String",\n' +
       '        "byteOrder": null,\n' +
-      '        "bytes": null,\n' +
+      '        "words": null,\n' +
       '        "factorToValue": null,\n' +
       '        "readValues": [\n' +
       '          {\n' +
@@ -276,7 +271,6 @@ export class EvChargerTemplates {
       '  "vehicles": [],\n' +
       '  "modbusControl": {\n' +
       '    "@class": "de.avanux.smartapplianceenabler.modbus.EVModbusControl",\n' +
-      '    "idref": "wallbox",\n' +
       '    "modbusReads": [\n' +
       '      {\n' +
       '        "@class": "de.avanux.smartapplianceenabler.modbus.ModbusRead",\n' +
@@ -284,7 +278,7 @@ export class EvChargerTemplates {
       '        "type": "Input",\n' +
       '        "valueType": "String",\n' +
       '        "byteOrder": null,\n' +
-      '        "bytes": null,\n' +
+      '        "words": null,\n' +
       '        "factorToValue": null,\n' +
       '        "readValues": [\n' +
       '          {\n' +
