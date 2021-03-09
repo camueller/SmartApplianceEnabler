@@ -10,8 +10,10 @@ Am Controller befinden sich *DIP-Schalter*, die wie folgt eingestellt sein müss
 
 ## Konfiguration im Smart Appliance Enabler
 
+### Wallbox
+
 Für neuere Wallbe-Wallboxen sollte die Vorlage `wallbe (neuer Controller)` verwendet werden.
-Alle anderen, oben genannten Wallboxen werden durch die Vorlage `Phoenix Contact EM-CP-PP-ETH` konfiguriert.
+Alle anderen, oben genannten Wallboxen werden durch die Vorlage `Phoenix Contact EM-CP-PP-ETH` konfiguriert. Dadurch werden alle Felder korrekt ausgefüllt. Lediglich die Modbus-Instanz muss noch gewählt werden.
 
 ![Konfiguration Phoenix Contact](../pics/fe/EVChargerPhoenixContact.png)
  

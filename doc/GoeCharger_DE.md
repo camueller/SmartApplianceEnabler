@@ -11,7 +11,7 @@ Die HTTP-Schnittstelle des go-eCharger muss aktiviert werden, damit der *Smart A
 
 ## Konfiguration im Smart Appliance Enabler
 
-### Schalter
+### Wallbox
 
 Für die Konfiguration sollte die Vorlage `go-eCharger` verwendet werden - dadurch werden alle Felder korrekt ausgefüllt. Lediglich die IP-Adresse bzw. der Hostname in den URL-Feldern muss auf die des go-eChargers angepasst werden. 
 

@@ -9,6 +9,8 @@ Die Firmware-Version muss mindestens den o.g. Stand haben.
 
 ## Konfiguration im Smart Appliance Enabler
 
+### Wallbox
+
 Für die Konfiguration sollte die Vorlage `Keba P30 c-series >3.10.16 / x-series >1.11` verwendet werden - dadurch werden alle Felder korrekt ausgefüllt. Lediglich die Modbus-Instanz muss noch gewählt werden.
 
 ![Konfiguration des go-eCharger als Schalter](../pics/fe/EVChargerKeba.png)
