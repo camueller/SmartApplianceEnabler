@@ -56,7 +56,7 @@ export class ModbusWritePage {
   }
   public static async assertType(t: TestController, type: string, modbusWriteIndex: number, selectorPrefix?: string) {
     await assertSelectOption(t, selectorSelectedByFormControlName('type', selectorPrefix,
-      ModbusWritePage.selectorBase(modbusWriteIndex)), type);
+      ModbusWritePage.selectorBase(modbusWriteIndex)), type, 'ModbusWriteComponent.type.');
   }
 
   public static async setFactorToValue(t: TestController, factorToValue: number, modbusWriteIndex: number,
