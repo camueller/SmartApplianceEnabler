@@ -38,7 +38,7 @@ Usage: java ... -Dlogging.config=/path/logback-spring.xml
         </encoder>
     </appender>
 
-    <logger name="de.avanux" level="trace" additivity="false">
+    <logger name="de.avanux" level="debug" additivity="false">
         <appender-ref ref="FILEROLLING" />
     </logger>
 
