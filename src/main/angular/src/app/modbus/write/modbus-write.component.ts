@@ -17,14 +17,13 @@ import {ModbusWriteValueComponent} from '../write-value/modbus-write-value.compo
 import {ErrorMessages} from '../../shared/error-messages';
 import {FormHandler} from '../../shared/form-handler';
 import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/error-message';
-import {getValidFloat, getValidInt, getValidString} from '../../shared/form-util';
+import {getValidFloat, getValidString} from '../../shared/form-util';
 import {ModbusWriteValue} from '../write-value/modbus-write-value';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
 import {Logger} from '../../log/logger';
 import {ValueNameChangedEvent} from '../../meter/value-name-changed-event';
 import {WriteRegisterType} from './write-register-type';
-import {ValueType} from '../read/value-type';
 
 @Component({
   selector: 'app-modbus-write',
@@ -120,7 +119,7 @@ export class ModbusWriteComponent implements OnChanges, OnInit {
   }
 
   get isFactorToValueDisplayed() {
-    return this.form.controls.type.value === ReadRegisterType.Holding && !this.disableFactorToValue;
+    return this.form.controls.type.value === WriteRegisterType.Holding && !this.disableFactorToValue;
   }
 
   removeModbusWrite() {
