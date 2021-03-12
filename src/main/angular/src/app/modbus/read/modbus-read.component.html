@@ -10,27 +10,35 @@
       <mat-form-field class="sae__modbus-register-type">
         <mat-label>{{'ModbusReadComponent.type' | translate}}</mat-label>
         <mat-select formControlName="type" required="{{formHandler.isRequired('type')}}">
-          <mat-option *ngFor="let readRegisterType of readRegisterTypes" [value]="readRegisterType">
-            {{readRegisterType}}
+          <mat-option *ngFor="let registerType of registerTypes" [value]="registerType">
+            {{getTranslatedRegisterType(registerType)}}
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-form-field class="ModbusReadComponent__bytes">
-        <mat-label>{{'ModbusReadComponent.bytes' | translate}}</mat-label>
-        <input matInput type="text" formControlName="bytes"
-               placeholder="{{bytesPlaceholder}}"
-               required="{{formHandler.isRequired('bytes')}}">
-        <mat-error *ngIf="errors.bytes">{{errors.bytes}}</mat-error>
+      <mat-form-field class="ModbusReadComponent__value-type" *ngIf="isValueTypeDisplayed">
+        <mat-label>{{'ModbusReadComponent.valueType' | translate}}</mat-label>
+        <mat-select formControlName="valueType" required="{{formHandler.isRequired('valueType')}}">
+          <mat-option *ngFor="let valueType of valueTypes" [value]="valueType">
+            {{getTranslatedValueType(valueType)}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="ModbusReadComponent__words" *ngIf="isWordsDisplayed">
+        <mat-label>{{'ModbusReadComponent.words' | translate}}</mat-label>
+        <input matInput type="text" formControlName="words"
+               placeholder="{{wordsPlaceholder}}"
+               required="{{formHandler.isRequired('words')}}">
+        <mat-error *ngIf="errors.words">{{errors.words}}</mat-error>
       </mat-form-field>
       <mat-form-field class="ModbusReadComponent__byteOrder" *ngIf="isByteOrderDisplayed">
         <mat-label>{{'ModbusReadComponent.byteOrder' | translate}}</mat-label>
         <mat-select formControlName="byteOrder" required="{{formHandler.isRequired('byteOrder')}}">
           <mat-option *ngFor="let byteOrder of byteOrders" [value]="byteOrder">
-            {{byteOrder}}
+            {{getTranslatedByteOrder(byteOrder)}}
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-form-field class="sae__factorToValue">
+      <mat-form-field class="sae__factorToValue" *ngIf="isFactorToValueDisplayed">
         <mat-label>{{'ModbusReadComponent.factorToValue' | translate}}</mat-label>
         <input matInput type="text" formControlName="factorToValue"
                placeholder="1"

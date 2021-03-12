@@ -18,9 +18,10 @@
 
 package de.avanux.smartapplianceenabler.control.ev;
 
-import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.modbus.*;
 import de.avanux.smartapplianceenabler.modbus.executor.*;
+import de.avanux.smartapplianceenabler.modbus.transformer.StringValueTransformer;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -29,23 +30,26 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class EVModbusControlPhoenixContactTest {
 
     private EVModbusControl evModbusControl;
-    private ModbusReadStringTestingExecutor readStringTestingExecutor;
-    private ModbusReadBooleanTestingExecutor readBooleanTestingExecutor;
-    private ModbusReadFloatTestingExecutor readFloatTestingExecutor;
-    private ModbusWriteBooleanTestingExecutor writeBooleanTestingExecutor;
-    private ModbusWriteIntegerTestingExecutor writeIntegerTestingExecutor;
+    private StringValueTransformer strinValueTransformer;
+    private ModbusReadTransactionExecutor readInputExecutor;
+    private ModbusWriteCoilTestingExecutor writeCoilExecutor;
+    private ModbusWriteHoldingTestingExecutor writeHoldingExecutor;
 
-    public EVModbusControlPhoenixContactTest() throws ConfigurationException {
+    @BeforeEach
+    public void beforeEach() throws Exception {
         this.evModbusControl = new EVModbusControl();
         this.evModbusControl.setApplianceId("F-001-01");
         this.evModbusControl.setPollInterval(10);
 
         ModbusRead register100 = new ModbusRead();
-        register100.setType(ReadRegisterType.InputString.name());
+        register100.setType(ReadRegisterType.Input.name());
+        register100.setValueType(RegisterValueType.String.name());
         List<ModbusReadValue> register100ReadValues = new ArrayList<>();
         register100ReadValues.add(new ModbusReadValue("VehicleNotConnected", "(A)"));
         register100ReadValues.add(new ModbusReadValue("VehicleConnected", "(B)"));
@@ -76,92 +80,88 @@ public class EVModbusControlPhoenixContactTest {
         this.evModbusControl.init();
         this.evModbusControl.validate();
 
-        this.readStringTestingExecutor = new ModbusReadStringTestingExecutor();
-        ModbusExecutorFactory.setTestingReadStringExecutor(this.readStringTestingExecutor);
+        strinValueTransformer = new StringValueTransformer();
 
-        this.readBooleanTestingExecutor = new ModbusReadBooleanTestingExecutor();
-        ModbusExecutorFactory.setTestingReadBooleanExecutor(this.readBooleanTestingExecutor);
+        this.readInputExecutor = mock(ModbusReadInputTestingExecutor.class);
+        when(readInputExecutor.getValueTransformer()).thenReturn(strinValueTransformer);
+        ModbusExecutorFactory.setReadInputExecutor(this.readInputExecutor);
 
-        this.readFloatTestingExecutor = new ModbusReadFloatTestingExecutor();
-        ModbusExecutorFactory.setTestingReadFloatExecutor(this.readFloatTestingExecutor);
+        this.writeCoilExecutor = new ModbusWriteCoilTestingExecutor();
+        ModbusExecutorFactory.setWriteCoilExecutor(this.writeCoilExecutor);
 
-        this.writeBooleanTestingExecutor = new ModbusWriteBooleanTestingExecutor();
-        ModbusExecutorFactory.setTestingWriteBooleanExecutor(this.writeBooleanTestingExecutor);
-
-        this.writeIntegerTestingExecutor = new ModbusWriteIntegerTestingExecutor();
-        ModbusExecutorFactory.setTestingWriteIntegerExecutor(this.writeIntegerTestingExecutor);
+        this.writeHoldingExecutor = new ModbusWriteHoldingTestingExecutor();
+        ModbusExecutorFactory.setWriteHoldingExecutor(this.writeHoldingExecutor);
     }
-
 
     @Test
     public void isVehicleNotConnected_A() {
-        this.readStringTestingExecutor.setValue("A");
+        strinValueTransformer.setByteValues(toIntegerArray("A"));
         assertTrue(this.evModbusControl.isVehicleNotConnected());
     }
 
     @Test
     public void isVehicleNotConnected_B() {
-        this.readStringTestingExecutor.setValue("B");
+        strinValueTransformer.setByteValues(toIntegerArray("B"));
         assertFalse(this.evModbusControl.isVehicleNotConnected());
     }
 
     @Test
     public void isVehicleNotConnected_C() {
-        this.readStringTestingExecutor.setValue("C");
+        strinValueTransformer.setByteValues(toIntegerArray("C"));
         assertFalse(this.evModbusControl.isVehicleNotConnected());
     }
 
     @Test
     public void isVehicleNotConnected_D() {
-        this.readStringTestingExecutor.setValue("D");
+        strinValueTransformer.setByteValues(toIntegerArray("D"));
         assertFalse(this.evModbusControl.isVehicleNotConnected());
     }
 
     @Test
     public void isVehicleConnected_A() {
-        this.readStringTestingExecutor.setValue("A");
+        strinValueTransformer.setByteValues(toIntegerArray("A"));
         assertFalse(this.evModbusControl.isVehicleConnected());
     }
 
     @Test
     public void isVehicleConnected_B() {
-        this.readStringTestingExecutor.setValue("B");
+        strinValueTransformer.setByteValues(toIntegerArray("B"));
         assertTrue(this.evModbusControl.isVehicleConnected());
     }
 
     @Test
     public void isVehicleConnected_C() {
-        this.readStringTestingExecutor.setValue("C");
+        strinValueTransformer.setByteValues(toIntegerArray("C"));
         assertFalse(this.evModbusControl.isVehicleConnected());
     }
 
     @Test
     public void isVehicleConnected_D() {
-        this.readStringTestingExecutor.setValue("D");
+        strinValueTransformer.setByteValues(toIntegerArray("D"));
         assertFalse(this.evModbusControl.isVehicleConnected());
     }
 
     @Test
     public void isCharging_C() {
-        this.readStringTestingExecutor.setValue("C");
+        strinValueTransformer.setByteValues(toIntegerArray("C"));
         assertTrue(this.evModbusControl.isCharging());
     }
 
     @Test
     public void isCharging_D() {
-        this.readStringTestingExecutor.setValue("D");
+        strinValueTransformer.setByteValues(toIntegerArray("D"));
         assertTrue(this.evModbusControl.isCharging());
     }
 
     @Test
     public void isCharging_A() {
-        this.readStringTestingExecutor.setValue("A");
+        strinValueTransformer.setByteValues(toIntegerArray("A"));
         assertFalse(this.evModbusControl.isCharging());
     }
 
     @Test
     public void isCharging_B() {
-        this.readStringTestingExecutor.setValue("B");
+        strinValueTransformer.setByteValues(toIntegerArray("B"));
         assertFalse(this.evModbusControl.isCharging());
     }
 
@@ -169,19 +169,28 @@ public class EVModbusControlPhoenixContactTest {
     public void setChargeCurrent() {
         int chargeCurrent = 13;
         this.evModbusControl.setChargeCurrent(chargeCurrent);
-        assertEquals(chargeCurrent, this.writeIntegerTestingExecutor.getValue().intValue());
+        assertEquals(chargeCurrent, this.writeHoldingExecutor.getValue().intValue());
     }
 
     @Test
     public void startCharging() {
         this.evModbusControl.startCharging();
-        assertTrue(this.writeBooleanTestingExecutor.getValue());
+        assertTrue(this.writeCoilExecutor.getValue());
     }
 
     @Test
     public void stopCharging() {
         this.evModbusControl.startCharging();
         this.evModbusControl.stopCharging();
-        assertFalse(this.writeBooleanTestingExecutor.getValue());
+        assertFalse(this.writeCoilExecutor.getValue());
+    }
+
+    private Integer[] toIntegerArray(String input) {
+        byte[] byteArray = input.getBytes();
+        Integer[] intArray = new Integer[byteArray.length];
+        for (int i = 0; i < byteArray.length; i++) {
+            intArray[i] = (int) byteArray[i];
+        }
+        return intArray;
     }
 }

@@ -58,7 +58,7 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
   formHandler: FormHandler;
   templates: { [name: string]: EvCharger };
   templateNames: string[];
-  translatedStrings: string[];
+  translatedStrings: { [key: string]: string } = {};
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;

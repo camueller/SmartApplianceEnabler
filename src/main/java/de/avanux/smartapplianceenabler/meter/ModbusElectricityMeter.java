@@ -19,18 +19,15 @@ package de.avanux.smartapplianceenabler.meter;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
+import de.avanux.smartapplianceenabler.configuration.Validateable;
 import de.avanux.smartapplianceenabler.modbus.*;
 import de.avanux.smartapplianceenabler.modbus.executor.ModbusExecutorFactory;
 import de.avanux.smartapplianceenabler.modbus.executor.ModbusReadTransactionExecutor;
-import de.avanux.smartapplianceenabler.modbus.executor.ReadDecimalInputRegisterExecutor;
-import de.avanux.smartapplianceenabler.modbus.executor.ReadFloatInputRegisterExecutor;
-import de.avanux.smartapplianceenabler.modbus.executor.ReadFloatHoldingRegisterExecutor;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
-import de.avanux.smartapplianceenabler.notification.NotificationType;
 import de.avanux.smartapplianceenabler.notification.NotificationProvider;
+import de.avanux.smartapplianceenabler.notification.NotificationType;
 import de.avanux.smartapplianceenabler.notification.Notifications;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
-import de.avanux.smartapplianceenabler.configuration.Validateable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -249,24 +246,17 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     private double readRegister(ModbusRead registerRead) {
         try {
             ModbusReadTransactionExecutor executor = ModbusExecutorFactory.getReadExecutor(getApplianceId(),
-                    registerRead.getType(), registerRead.getAddress(), registerRead.getBytes(),
+                    registerRead.getAddress(), registerRead.getType(), registerRead.getValueType(), registerRead.getWords(),
                     registerRead.getByteOrder(), registerRead.getFactorToValue());
             if(executor != null) {
-                Double registerValue = null;
                 executeTransaction(executor, true);
-                if(executor instanceof ReadFloatInputRegisterExecutor) {
-                    registerValue = ((ReadFloatInputRegisterExecutor) executor).getValue().doubleValue();
+                Object registerValue = executor.getValueTransformer().getValue();
+                if(registerValue instanceof Double) {
+                    return (Double) registerValue;
                 }
-                if(executor instanceof ReadDecimalInputRegisterExecutor) {
-                    registerValue = ((ReadDecimalInputRegisterExecutor) executor).getValue();
-                }
-                if(executor instanceof ReadFloatHoldingRegisterExecutor) {
-                    registerValue = ((ReadFloatHoldingRegisterExecutor) executor).getValue().doubleValue();
-                }
-                if(registerValue != null) {
-                    logger.debug("{}: Float value={}", getApplianceId(), registerValue);
-                    return registerValue;
-                }
+            }
+            else {
+                logger.error("{}: No executor found", getApplianceId());
             }
         }
         catch(Exception e) {

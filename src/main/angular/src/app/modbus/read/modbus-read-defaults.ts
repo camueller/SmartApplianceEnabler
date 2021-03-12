@@ -17,7 +17,8 @@
  */
 
 export class ModbusReadDefaults {
-  bytesForRegisterType: { [type: string]: number };
+  byteOrders: string[];
+  wordsForRegisterType: { [type: string]: number };
 
   public constructor(init?: Partial<ModbusReadDefaults>) {
     Object.assign(this, init);

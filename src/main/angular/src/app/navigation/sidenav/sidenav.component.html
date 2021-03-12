@@ -71,7 +71,7 @@
        class="SidenavComponent__submenu-item"
        (click)="onSidenavClose()">
       <mat-icon class="SidenavComponent__submenu-icon" [inline]="true">power_settings_new</mat-icon>
-      <span class="SidenavComponent__nav-caption">{{'AppComponent.control' | translate}}</span>
+      <span class="SidenavComponent__nav-caption">{{getTranslatedControlLabel(applianceHeader.type)}}</span>
     </a>
     <a mat-list-item
        [routerLink]="['schedule', applianceHeader.id]"

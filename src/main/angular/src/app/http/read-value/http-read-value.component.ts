@@ -33,7 +33,7 @@ export class HttpReadValueComponent implements OnChanges, OnInit {
   translationPrefix = '';
   @Input()
   translationKeys: string[];
-  translatedStrings: string[];
+  translatedStrings: { [key: string]: string } = {};
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;

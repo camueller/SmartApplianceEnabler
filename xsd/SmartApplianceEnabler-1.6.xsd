@@ -197,9 +197,10 @@
             <xs:element name="ModbusReadValue" type="ModbusReadValueType" maxOccurs="unbounded" />
         </xs:sequence>
         <xs:attribute name="address" type="xs:string" use="required" />
-        <xs:attribute name="bytes" type="xs:int" />
-        <xs:attribute name="byteOrder" type="ByteOrderType" />
         <xs:attribute name="type" type="ModbusRegisterTypeType" use="required" />
+        <xs:attribute name="valueType" type="ModbusRegisterValueTypeType" use="required" />
+        <xs:attribute name="words" type="xs:int" />
+        <xs:attribute name="byteOrder" type="ByteOrderType" />
         <xs:attribute name="factorToValue" type="xs:double" />
     </xs:complexType>
 
@@ -252,12 +253,19 @@
 
     <xs:simpleType name="ModbusRegisterTypeType">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="InputFloat" />
-            <xs:enumeration value="InputDecimal" />
-            <xs:enumeration value="InputString" />
-            <xs:enumeration value="Holding" />
             <xs:enumeration value="Coil" />
             <xs:enumeration value="Discrete" />
+            <xs:enumeration value="Holding" />
+            <xs:enumeration value="Input" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ModbusRegisterValueTypeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Float" />
+            <xs:enumeration value="Integer" />
+            <xs:enumeration value="Integer2Float" />
+            <xs:enumeration value="String" />
         </xs:restriction>
     </xs:simpleType>
 

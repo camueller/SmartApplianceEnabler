@@ -15,7 +15,7 @@ export class StatusViewComponent implements OnInit {
   status: Status;
   @Input()
   trafficLightStateHandler: TrafficLightState;
-  translatedStrings: string[];
+  translatedStrings: { [key: string]: string } = {};
 
   constructor(private translate: TranslateService) { }
 

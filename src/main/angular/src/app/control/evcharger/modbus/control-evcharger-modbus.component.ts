@@ -21,6 +21,7 @@ import {MessageBoxLevel} from 'src/app/material/messagebox/messagebox.component'
 import {MeterDefaults} from '../../../meter/meter-defaults';
 import {ValueNameChangedEvent} from '../../../meter/value-name-changed-event';
 import {getValueNamesNotConfigured} from '../../../shared/get-value-names-not-configured';
+import {ControlDefaults} from '../../control-defaults';
 
 @Component({
   selector: 'app-control-evcharger-modbus',
@@ -39,6 +40,8 @@ export class ControlEvchargerModbusComponent implements OnChanges, OnInit {
   settingsDefaults: SettingsDefaults;
   @Input()
   meterDefaults: MeterDefaults;
+  @Input()
+  controlDefaults: ControlDefaults;
   @ViewChildren('modbusReadComponents')
   modbusReadComps: QueryList<ModbusReadComponent>;
   @ViewChildren('modbusWriteComponents')
@@ -47,7 +50,7 @@ export class ControlEvchargerModbusComponent implements OnChanges, OnInit {
   formHandler: FormHandler;
   @Input()
   translationKeys: string[];
-  translatedStrings: string[];
+  translatedStrings: { [key: string]: string } = {};
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -69,7 +72,7 @@ export class ControlEvchargerModbusComponent implements OnChanges, OnInit {
       } else {
         this.evModbusControl = new EvModbusControl();
       }
-      this.expandParentForm();
+      this.updateForm();
     }
   }
 
@@ -195,6 +198,12 @@ export class ControlEvchargerModbusComponent implements OnChanges, OnInit {
     this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'modbusWrites',
       this.evModbusControl.modbusWrites);
     this.form.setValidators(this.isAllValueNamesConfigured());
+  }
+
+  updateForm() {
+    this.form.removeControl('modbusReads');
+    this.form.removeControl('modbusWrites');
+    this.expandParentForm();
   }
 
   updateModelFromForm(): EvModbusControl | undefined {

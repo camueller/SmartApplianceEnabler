@@ -63,7 +63,7 @@ export class ControlEvchargerHttpComponent implements OnChanges, OnInit {
       } else {
         this.evHttpControl = new EvHttpControl();
       }
-      this.expandParentForm();
+      this.updateForm();
     }
   }
 
@@ -178,6 +178,12 @@ export class ControlEvchargerHttpComponent implements OnChanges, OnInit {
     this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'httpWrites',
       this.evHttpControl.httpWrites);
     this.form.setValidators(this.isAllValueNamesConfigured());
+  }
+
+  updateForm() {
+    this.form.removeControl('httpReads');
+    this.form.removeControl('httpWrites');
+    this.expandParentForm();
   }
 
   updateModelFromForm(): EvHttpControl | undefined {

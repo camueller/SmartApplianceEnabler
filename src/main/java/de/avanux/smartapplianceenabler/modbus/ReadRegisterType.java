@@ -19,10 +19,8 @@
 package de.avanux.smartapplianceenabler.modbus;
 
 public enum ReadRegisterType {
-    InputFloat,
-    InputDecimal,
-    InputString,
-    Holding,
-    Coil,
-    Discrete
+    Coil,     // FC=1
+    Discrete, // FC=2
+    Holding,  // FC=3
+    Input     // FC=4
 }

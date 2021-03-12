@@ -433,21 +433,22 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
             // the charger may start charging right after it has been connected
             return EVChargerState.CHARGING;
         }
-        else if(currenState == EVChargerState.CHARGING_COMPLETED) {
-            return EVChargerState.CHARGING_COMPLETED;
-        }
-        else if(this.startChargingRequested) {
-            if(charging) {
-                return EVChargerState.CHARGING;
-            } else if(firstInvocationAfterSkip) {
-                return EVChargerState.CHARGING_COMPLETED;
-            }
-        }
+//        else if(currenState == EVChargerState.CHARGING_COMPLETED) {
+//            return EVChargerState.CHARGING_COMPLETED;
+//        }
         else if(this.stopChargingRequested && vehicleConnected) {
             if(hasOnlyEmptyRequestsBeforeTimeGap && wasInStateVehicleConnected) {
                 return EVChargerState.CHARGING_COMPLETED;
             }
             return EVChargerState.VEHICLE_CONNECTED;
+        }
+        else if(charging) {
+            return EVChargerState.CHARGING;
+        }
+        else if(this.startChargingRequested) {
+            if(!charging && firstInvocationAfterSkip) {
+                return EVChargerState.CHARGING_COMPLETED;
+            }
         }
         else if(vehicleConnected && !charging) {
             return EVChargerState.VEHICLE_CONNECTED;
@@ -739,7 +740,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
             updateSoc(now);
         }
         if(deactivatedInterval != null && deactivatedInterval.getRequest().isFinished(now)) {
-            stopCharging();
+            setState(now, EVChargerState.CHARGING_COMPLETED);
         }
     }
 

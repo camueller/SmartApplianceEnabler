@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Axel Müller <axel.mueller@avanux.de>
+ * Copyright (C) 2021 Axel Müller <axel.mueller@avanux.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,30 +16,25 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.avanux.smartapplianceenabler.modbus.executor;
+package de.avanux.smartapplianceenabler.modbus.transformer;
 
-import com.ghgande.j2mod.modbus.ModbusException;
-import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class ModbusReadStringTestingExecutor implements ModbusReadTransactionExecutor<String>,
-        ReadStringInputRegisterExecutor, ModbusTestingExecutor {
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-    private String value;
+public class FloatValueTransformerTest {
+    private FloatValueTransformer sut;
 
-    @Override
-    public String getValue() {
-        return value;
+    @BeforeEach
+    public void setup() throws Exception {
+        sut = new FloatValueTransformer();
     }
 
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    @Override
-    public void execute(TCPMasterConnection con, int slaveAddress) throws ModbusException {
-    }
-
-    @Override
-    public void setApplianceId(String applianceId) {
+    @Test
+    public void getValue() {
+        Integer[] byteValues = {17676, 21823};
+        sut.setByteValues(byteValues);
+        assertEquals(2245.328, sut.getValue(), 0.001);
     }
 }

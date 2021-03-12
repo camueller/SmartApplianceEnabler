@@ -37,7 +37,7 @@ public class WriteCoilExecutorImpl extends BaseTransactionExecutor
     private Boolean result;
     
     public WriteCoilExecutorImpl(String address) {
-        super(address, 1);
+        super(address, 1, null);
     }
 
     @Override

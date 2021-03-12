@@ -22,21 +22,21 @@ import com.ghgande.j2mod.modbus.io.ModbusTCPTransaction;
 import com.ghgande.j2mod.modbus.msg.ReadMultipleRegistersRequest;
 import com.ghgande.j2mod.modbus.msg.ReadMultipleRegistersResponse;
 import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
+import de.avanux.smartapplianceenabler.modbus.transformer.ValueTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract public class ReadHoldingRegisterExecutor<V> extends BaseTransactionExecutor implements ModbusReadTransactionExecutor<V> {
-    public Integer[] byteValues;
+public class ReadHoldingRegisterExecutor extends BaseTransactionExecutor implements ModbusReadTransactionExecutor {
+    private Logger logger = LoggerFactory.getLogger(ReadHoldingRegisterExecutor.class);
 
-    public ReadHoldingRegisterExecutor(String address, int bytes) {
-        super(address, bytes);
+    public ReadHoldingRegisterExecutor(String address, int requestWords, ValueTransformer transformer) {
+        super(address, requestWords, transformer);
     }
-
-    abstract Logger getLogger();
 
     @Override
     public void execute(TCPMasterConnection con, int slaveAddress) throws ModbusException {
-        ReadMultipleRegistersRequest req = new ReadMultipleRegistersRequest(getAddress(), getBytes());
+        logger.trace("{}: Reading holding register={} requestWords={}", getApplianceId(), getAddress(), getRequestWords());
+        ReadMultipleRegistersRequest req = new ReadMultipleRegistersRequest(getAddress(), getRequestWords());
         req.setUnitID(slaveAddress);
 
         ModbusTCPTransaction trans = new ModbusTCPTransaction(con);
@@ -44,24 +44,15 @@ abstract public class ReadHoldingRegisterExecutor<V> extends BaseTransactionExec
         trans.execute();
 
         ReadMultipleRegistersResponse res = (ReadMultipleRegistersResponse) trans.getResponse();
-        this.byteValues = null;
         if (res != null) {
-            this.byteValues = new Integer[getBytes()];
-            for (int i = 0; i < getBytes(); i++) {
-                this.byteValues[i] = res.getRegisterValue(i);
+            Integer[] byteValues = new Integer[res.getWordCount()];
+            for (int i = 0; i < res.getWordCount(); i++) {
+                byteValues[i] = res.getRegisterValue(i);
             }
-            getLogger().debug("{}: Input register={} value={}", getApplianceId(), getAddress(), this.byteValues);
+            logger.debug("{}: Holding register={} value={}", getApplianceId(), getAddress(), byteValues);
+            getValueTransformer().setByteValues(byteValues);
         } else {
-            getLogger().error("{}: No response received.", getApplianceId());
+            logger.error("{}: No response received.", getApplianceId());
         }
-    }
-
-    public Integer[] getByteValues() {
-        return byteValues;
-    }
-
-    // Should only be used for testing.
-    public void setByteValues(Integer[] byteValues) {
-        this.byteValues = byteValues;
     }
 }

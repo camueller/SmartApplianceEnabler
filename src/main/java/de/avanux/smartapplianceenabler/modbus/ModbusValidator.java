@@ -37,13 +37,14 @@ public class ModbusValidator {
         if(reads.size() > 0) {
             for(ParentWithChild<ModbusRead, ModbusReadValue> read: reads) {
                 ModbusRead registerRead = read.parent();
-                logger.debug("{}: {} configured: read register={} / bytes={} / byte order={} / type={} / extraction regex={} / factorToValue={}",
+                logger.debug("{}: {} configured: read register={} / words={} / byte order={} / type={} / valueType={} / extractionRegex={} / factorToValue={}",
                         applianceId,
                         valueName,
                         registerRead.getAddress(),
-                        registerRead.getBytes(),
+                        registerRead.getWords(),
                         registerRead.getByteOrder(),
                         registerRead.getType(),
+                        registerRead.getValueType(),
                         read.child().getExtractionRegex(),
                         registerRead.getFactorToValue());
             }

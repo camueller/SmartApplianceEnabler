@@ -18,8 +18,6 @@
 package de.avanux.smartapplianceenabler.util;
 
 import com.sun.xml.bind.marshaller.MinimumEscapeHandler;
-import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
-import org.apache.poi.util.ReplacingInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +33,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 public class FileHandler {
@@ -56,19 +55,13 @@ public class FileHandler {
         return homeDir;
     }
 
-    public <R extends Object> R load(Class<R> rootElementType) {
+    public <R extends Object> R load(Class<R> rootElementType, FileContentPreProcessor preProcessor) {
         File file = getFile(rootElementType);
         if(file.exists()) {
             InputStream is = null;
             try {
-                // pretend XSD version to be current version
-                // this allows for seamless update if there are no structural changes
-                is = new ReplacingInputStream(
-                        new FileInputStream(file),
-                        "http://github.com/camueller/SmartApplianceEnabler/v1.5",
-                        ApplianceManager.SCHEMA_LOCATION
-                );
-                return load(rootElementType, is);
+                is = new FileInputStream(file);
+                return load(rootElementType, is, preProcessor);
             }
             catch(Exception e) {
                 logger.error("Error unmarshalling file " + file, e);
@@ -87,11 +80,15 @@ public class FileHandler {
         return null;
     }
 
-    public <R extends Object> R load(Class<R> rootElementType, InputStream is) throws JAXBException, IOException {
+    public <R extends Object> R load(Class<R> rootElementType, InputStream is, FileContentPreProcessor preProcessor) throws JAXBException, IOException {
         if(is.available() > 0) {
+            String inputString = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8)).lines()
+                    .collect(Collectors.joining("\n"));
+            String processedInputString = preProcessor != null ? preProcessor.process(inputString) : inputString;
+            Reader stringReader = new StringReader(processedInputString);
             JAXBContext context = JAXBContext.newInstance(rootElementType);
             Unmarshaller unmarshaller = context.createUnmarshaller();
-            return (R) unmarshaller.unmarshal(is);
+            return (R) unmarshaller.unmarshal(stringReader);
         }
         return null;
     }

@@ -7,9 +7,10 @@ export const modbusMeter_complete = new ModbusElectricityMeter({
   slaveAddress: '100',
   modbusReads: [
     new ModbusRead({
-      type: 'InputDecimal',
-      address: '0x0A',
-      bytes: 4,
+      address: '0x0156',
+      type: 'Input',
+      valueType: 'Float',
+      words: 2,
       byteOrder: 'LittleEndian',
       factorToValue: 0.01,
       readValues: [
@@ -27,7 +28,8 @@ export const modbusMeter_pollInterval = new ModbusElectricityMeter({
   slaveAddress: '100',
   modbusReads: [
     new ModbusRead({
-      type: 'InputDecimal',
+      type: 'Input',
+      valueType: 'Integer2Float',
       address: '0x0A',
       readValues: [
         new ModbusReadValue({

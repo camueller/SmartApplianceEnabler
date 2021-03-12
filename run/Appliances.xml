@@ -27,7 +27,7 @@
     <Appliance id="F-00000001-000000000019-00">
         <ElectricVehicleCharger>
             <EVModbusControl idref="wallbox" slaveAddress="180">
-                <ModbusRead address="100" type="InputString">
+                <ModbusRead address="100" type="Input" valueType="String">
                     <ModbusReadValue name="VehicleNotConnected" extractionRegex="(A)"/>
                     <ModbusReadValue name="VehicleConnected" extractionRegex="(B)"/>
                     <ModbusReadValue name="Charging" extractionRegex="(C|D)"/>
@@ -44,8 +44,8 @@
             <ElectricVehicle id="1" name="Nissan Leaf" batteryCapacity="40000" phases="1" maxChargePower="7400" chargeLoss="12"/>
         </ElectricVehicleCharger>
         <ModbusElectricityMeter idref="modbus" slaveAddress="1">
-            <ModbusRead address="0x0034" bytes="4" type="InputFloat">
-                <ModbusReadValue name="Power"/>
+            <ModbusRead address="0x0156" type="Input" valueType="Float" words="2">
+                <ModbusReadValue name="Energy"/>
             </ModbusRead>
         </ModbusElectricityMeter>
     </Appliance>

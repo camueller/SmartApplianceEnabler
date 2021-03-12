@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Axel Müller <axel.mueller@avanux.de>
+ * Copyright (C) 2021 Axel Müller <axel.mueller@avanux.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,37 +16,17 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.avanux.smartapplianceenabler.modbus.executor;
+package de.avanux.smartapplianceenabler.modbus.transformer;
 
-import com.ghgande.j2mod.modbus.ModbusException;
-import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
+public class ValueTransformerBase {
+    protected String applianceId;
+    protected Integer[] byteValues;
 
-public class ModbusWriteIntegerTestingExecutor implements ModbusWriteTransactionExecutor<Integer>,
-        WriteHoldingRegisterExecutor, ModbusTestingExecutor {
-
-    private Integer value;
-
-    public Integer getValue() {
-        return value;
-    }
-
-    @Override
-    public void setValue(Integer value) {
-        this.value = value;
-    }
-
-    @Override
-    public Integer getResult() {
-        return null;
-    }
-
-    @Override
-    public void execute(TCPMasterConnection con, int slaveAddress) throws ModbusException {
-
-    }
-
-    @Override
     public void setApplianceId(String applianceId) {
+        this.applianceId = applianceId;
+    }
 
+    public void setByteValues(Integer[] byteValues) {
+        this.byteValues = byteValues;
     }
 }

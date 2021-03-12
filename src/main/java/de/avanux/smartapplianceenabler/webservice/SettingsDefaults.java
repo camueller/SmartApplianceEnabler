@@ -19,10 +19,7 @@
 package de.avanux.smartapplianceenabler.webservice;
 
 import de.avanux.smartapplianceenabler.HolidaysDownloader;
-import de.avanux.smartapplianceenabler.modbus.ByteOrder;
-import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
-import de.avanux.smartapplianceenabler.modbus.ReadRegisterType;
-import de.avanux.smartapplianceenabler.modbus.WriteRegisterType;
+import de.avanux.smartapplianceenabler.modbus.*;
 
 public class SettingsDefaults {
     private static SettingsDefaults instance = new SettingsDefaults();
@@ -31,9 +28,6 @@ public class SettingsDefaults {
     private String holidaysUrl = HolidaysDownloader.DEFAULT_URL;
     private String modbusTcpHost = ModbusTcp.DEFAULT_HOST;
     private Integer modbusTcpPort = ModbusTcp.DEFAULT_PORT;
-    private ReadRegisterType[] modbusReadRegisterTypes = ReadRegisterType.values();
-    private WriteRegisterType[] modbusWriteRegisterTypes = WriteRegisterType.values();
-    private ByteOrder[] byteOrders = ByteOrder.values();
 
     public static String getHolidaysUrl() {
         return instance.holidaysUrl;
@@ -47,15 +41,4 @@ public class SettingsDefaults {
         return instance.modbusTcpPort;
     }
 
-    public ReadRegisterType[] getModbusReadRegisterTypes() {
-        return modbusReadRegisterTypes;
-    }
-
-    public WriteRegisterType[] getModbusWriteRegisterTypes() {
-        return modbusWriteRegisterTypes;
-    }
-
-    public ByteOrder[] getByteOrders() {
-        return byteOrders;
-    }
 }

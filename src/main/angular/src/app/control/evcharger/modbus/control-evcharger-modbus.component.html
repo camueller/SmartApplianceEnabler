@@ -32,7 +32,6 @@
                        [meterDefaults]="meterDefaults"
                        [translationPrefix]="'ControlEvchargerComponent.'"
                        [translationKeys]="readValueNameTextKeys"
-                       [readRegisterTypes]="settingsDefaults.modbusReadRegisterTypes"
                        (remove)="onModbusReadRemove(i)"
                        (nameChanged)="onValueNameChanged(i, $event)"
                        #modbusReadComponents
@@ -55,7 +54,6 @@
                         [valueNames]="writeValueNames"
                         [translationPrefix]="'ControlEvchargerComponent.'"
                         [translationKeys]="writeValueNameTextKeys"
-                        [writeRegisterTypes]="settingsDefaults.modbusReadRegisterTypes"
                         (remove)="onModbusWriteRemove(i)"
                         (nameChanged)="onValueNameChanged(i, $event)"
                         #modbusWriteComponents
