@@ -19,6 +19,9 @@
 import {FormArray, FormGroup} from '@angular/forms';
 
 export function getValueNamesNotConfigured(outerFormArray: FormArray, valueFormControlName: string, allNames: string[]) {
+  if (!outerFormArray) {
+    return [];
+  }
   const valueNamesFound = new Set();
   for (let index = 0; index < outerFormArray.length; index++) {
     const valueFormArray = (outerFormArray.at(index) as FormGroup).controls[valueFormControlName] as FormArray;
