@@ -12,6 +12,22 @@ und das Projekt folgt den Leitlinien des [Semantic Versioning](https://semver.or
 | SAE         | Smart Appliance Enabler |
 | SHM         | Sunny Home Manager |
 
+## [1.6.12](https://github.com/camueller/SmartApplianceEnabler/releases/tag/1.6.12) - 13.03.2021
+
+### Geändert
+- bei der Konfiguration von **Modbus**-Geräten war bisher der Register-Typ und das Format der Modbus-Antwort nicht klar getrennt (z.B. `InputFloat`). Das hat es den Anwendern unnötig erschwert, die korrekten Modbus-Einstellungen zu festzulegen. Deshalb wurde in der `Appliances.xml` für das Element `ModbusRead` das Attribut `type` um das Attribut `valueType` ergänzt, sodass in `type` nur noch der Typ laut Modbus-Spezifikation (Coil, Discrete, Holding, Input) steht und in `valueType` das Format der Modbus-Antwort (Float, Integer, Integer2Float, String). Beim Laden der `Appliance.xml` erfolgt automatisch ein Konvertierung in das neue Format, wobei die Änderungen erst bei der nächsten Änderung der Konfiguration tatsächlich in die `Appliance.xml` geschrieben werden. Trotzdem ist keine manuelle Anpassung erforderlich. In der Web-Oberfläche werden die Register-Typen mit ihrem Function-Code angezeigt, um Anwendern dabei zu helfen, die korrekten Modbus-Einstellungen zu festzulegen.
+
+### Gefixt
+- die Genauigkeit der Leistungsberechung aus Zählerstandsdifferenzen wurde verbessert durch die Berechnung der Zeitdifferenz in Millisekunden anstatt Sekunden
+- die bisherige Verwendung des **Modbus-Protokolls** war fehlerhaft, weil nicht klar zwischen der Anzahl der angeforderten Datenwörter und der tatsächlichen Anzahl der Datenwörter in der Modbus-Antwort unterschieden wurde. In diesem Zusammenhang wurde in der Web-Oberfläche das Feld `Bytes` in `Datenwörter` umbenannt. Dementsprechend wurde auch in der `Appliance.xml` das Attribut `bytes` in `words` umbenannt. Beim Laden der `Appliance.xml` erfolgt automatisch ein Konvertierung in das neue Format, wobei die Änderungen erst bei der nächsten Änderung der Konfiguration tatsächlich in die `Appliance.xml` geschrieben werden. Trotzdem ist keine manuelle Anpassung erforderlich.
+- Beim Konfigurieren von HTTP/Modbus-Schaltern und Wallboxen über die Web-Oberfläche konnte eine ungültige Konfiguration gespeichert werden, die erst beim nachfolgenden Start des SAE als ungültig erkannt wurde. Jetzt ist das Speichern nur möglich, wenn die Konfiguration auch gültig ist. Siehe [#136](https://github.com/camueller/SmartApplianceEnabler/issues/136)
+- wenn bei Wallboxen der Ladevorgang extern (z.B durch das Auto oder die Web-Oberfläche des Ladecontrollers/Wallbox) gestartet oder gestoppt wird, erkennt der SAE diese Statusänderung jetzt und stellt sicher, das auch der SHM mit korrekten Informationen versorgt wird
+- wenn bei Wallboxen das Ladeziel eines Fahrzeugs erreicht war, konnte nachfolgend kein manueller Ladevorgang mit höherem SOC als Ladeziel gestartet werden - das wurde jetzt korrigiert.
+
+### Neu
+- die Wallboxen [KeContact P30 c-series / x-series des Herstellers Keba werden voll unterstützt inkl. einer Vorlage für Konfiguration mit allen relevanten Einstellungen](https://github.com/camueller/SmartApplianceEnabler/blob/master/doc/Keba_DE.md)
+- der für den Stream-Server verwendete Port kann mittels der Variable `semp.streamserver.port` festgelegt werden - normalerweise wird ein freier Port dynamisch bestimmt 
+
 ## [1.6.11](https://github.com/camueller/SmartApplianceEnabler/releases/tag/1.6.11) - 13.02.2021
 
 ### Geändert
