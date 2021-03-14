@@ -105,7 +105,10 @@ public class PulsePowerMeter implements ApplianceIdConsumer, Validateable {
             }
         }
         // 3600s * 1000 W/Kw / (timestampDelta ms * 1s/1000ms * imp/KWh)
-        return 3600.0 * 1000 / (timestampDelta12 / 1000.0 * this.impulsesPerKwh);
+        double power = 3600.0 * 1000.0 / (timestampDelta12 / 1000.0 * this.impulsesPerKwh);
+//        logger.debug("{}: timestamp1={} timestamp2={} timestampDelta12={} power={}",
+//                applianceId, timestamp1, timestamp2, timestampDelta12, power);
+        return power;
     }
 
     public int getAveragePower() {
@@ -122,7 +125,10 @@ public class PulsePowerMeter implements ApplianceIdConsumer, Validateable {
         for(int i=0; i<this.impulseTimestamps.size() - 1; i ++) {
             powerValuesSum += calculatePower(timestampNow, impulseTimestamps.get(i), impulseTimestamps.get(i + 1));
         }
-        return Double.valueOf(powerValuesSum / (impulseTimestamps.size() - 1)).intValue();
+        int power = Double.valueOf(powerValuesSum / (impulseTimestamps.size() - 1)).intValue();
+//        logger.debug("{}: impulseTimestamps-1={} powerValuesSum={} power={}",
+//                applianceId, impulseTimestamps.size() - 1, powerValuesSum, power);
+        return power;
     }
 
     public int getMinPower() {
