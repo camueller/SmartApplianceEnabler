@@ -20,7 +20,10 @@ Alternativ kann die Benachrichtiung auf einzlene Ereignisse beschränkt werden:
 
 Für den *Smart Appliance Enabler* existieren Shell-Scripts zur Nutzung der nachfolgend beschriebenen Benachrichtigungskanäle. Mit wenig Shell-Script-Know-How sollte es möglich sein, auf Basis der vorhanden Shell-Scripts solche für andere Benachrichtigungskanäle zu erstellen. Bitte diese Scripts als **Pull-Request** auch den anderen *Smart Appliance Enabler*-Usern zur Verfügung stellen!  
 
-### Telegram
+### Telegram (https://telegram.org)
+
+Das Shell-Script für die Nutzung als Benachrichtigungskanal im *Smart Appliance Enabler* ist https://github.com/camueller/SmartApplianceEnabler/blob/master/run/notifyWithTelegram.sh.
+
 Zunächst muss in Telegram eine [Gruppe erstellt](https://telegram.org/faq/de#f-wie-kann-ich-eine-gruppe-erstellen) werden, die man z.B. "Haus" nennen könnte.
 
 Dieser Gruppe fügt man ganz normal die Personen hinzu, welche die Benachrichtigungen empfangen sollen. 
@@ -41,3 +44,7 @@ chat=-123456789
 Jetzt steht dem Empfang von Benachrichtigungen nichts mehr im Wege:
 
 ![Telegram](../pics/Telegram.jpg)
+
+### Prowl (www.prowlapp.com)
+
+Das Shell-Script für die Nutzung als Benachrichtigungskanal im *Smart Appliance Enabler* ist https://github.com/camueller/SmartApplianceEnabler/blob/master/run/notifyWithProwl.sh.
