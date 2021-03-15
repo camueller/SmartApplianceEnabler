@@ -802,6 +802,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                 logger.debug("{}: Retrieved SOC={}%", applianceId, soc);
                 if(socValues.initial == null) {
                     socValues.initial = soc.intValue();
+                    socValues.current = soc.intValue();
                 }
                 socValues.retrieved = soc.intValue();
                 if(socValues.current != null) {
