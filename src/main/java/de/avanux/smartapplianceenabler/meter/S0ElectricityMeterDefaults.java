@@ -20,7 +20,7 @@ package de.avanux.smartapplianceenabler.meter;
 
 public class S0ElectricityMeterDefaults {
     // static members won't be serialized but we need those valus on the client
-    private Integer minPulseDuration = 20;
+    private Integer minPulseDuration = 15;
     private static S0ElectricityMeterDefaults instance = new S0ElectricityMeterDefaults();
 
     public static Integer getMinPulseDuration() {
