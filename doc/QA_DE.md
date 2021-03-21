@@ -56,11 +56,11 @@ Ob dem *Sunny Home Manager* ein Bedarf gemeldet wird, kann im [SEMP-XML](SEMP_DE
 - im `DeviceStatus` muss `EMSignalsAccepted` auf `true` stehen
 - es muss ein `PlanningRequest` mit einem `Timeframe` existieren, bei dem
   - `EarliestStart` den Wert `0` hat
-  - `minRunningTime` grösser als `0` ist  
+  - `minRunningTime` (bzw. `minEnergy` bei Wallboxen) grösser als `0` ist, wenn der Verbraucher laufen **muss**. Wenn er laufen **kann** (zur Nutzung von Überschussenergie) muss `minRunningTime` (bzw. `minEnergy` bei Wallboxen) gleich `0` sein
 
 Sind diese Vorausetzungen erfüllt, **kann** der *Sunny Home Manager* einen Einschaltbefehl jederzeit senden.
 
-**Spätestens** dann wird er einen Einschaltbefehl senden, wenn im `Timeframe` des `PlanningRequest` der Wert von `LatestEnd` nur unwesentlich (ca. 60-300) grösser ist, als der Wert von `minRunningTime`.
+Wenn der Verbraucher laufen **muss**, wird er **spätestens** dann einen Einschaltbefehl senden, wenn im `Timeframe` des `PlanningRequest` der Wert von `LatestEnd` nur unwesentlich (ca. 60-300) grösser ist, als der Wert von `minRunningTime`.
 
 Ob ein Schaltbefehl vom *Sunny Home Manager* empfangen wird, kann man [im Log prüfen](Logging_DE.md#control-request). Wenn sich ein entsprechender Log-Eintrag findet und trotzdem das Gerät nicht geschaltet wird, liegt es nicht am *Sunny Home Manager*.  ---> [SAE4](#sae4)
 

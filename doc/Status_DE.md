@@ -8,6 +8,8 @@ Die Statusseite zeigt den Status jedes schaltbaren Gerätes in Form einer **Ampe
 
 ![Statusanzeige](../pics/fe/StatusView.png)
 
+Bei Geräten mit aktivierter [Anlaufstromerkennung](Anlaufstromerkennung_DE.md) geht die Ampel abhängig vom Zeitplan und der aktuellen Uhrzeit auf rot oder gelb, sobald der Anlaufstrom erkannt wurde.  
+
 ## Manuelles Schalten
 <a name="click-green">
 
