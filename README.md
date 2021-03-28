@@ -64,7 +64,7 @@ Zum Ein-/Ausschalten eines Gerätes unterstützt der *Smart Appliance Enabler* d
 | Modbus | [Modbus-basierte Schalter](doc/ModbusSwitch_DE.md)<br><br>[Wallboxen mit Modbus-Schnittstelle](doc/EVCharger_DE.md)|
 | HTTP | [HTTP-basierte Schalter](doc/HttpSwitch_DE.md) allgemein<ul></ul>kompatible Produkte<ul><li>[Shelly Plug](doc/ShellyPlug_DE.md)</li><li>[Shelly 4 Pro](doc/Shelly4Pro_DE.md)</li><li>[Edimax SP-2101W](doc/EdimaxSP2101W_DE.md)</li></ul>mit [Tasmota-Firmware](doc/Tasmota_DE.md) nutzbare Produkte<ul><li>Nous A1</li><li>[Gosund SP111](doc/GosundSP111_DE.md)</li><li>[Sonoff Pow](doc/SonoffPow_DE.md)</li></ul>[Wallboxen mit HTTP-Schnittstelle](doc/EVCharger_DE.md)|
 
-Alle aufgeführten Schalter (außer Wallboxen) können mit einer [Anlaufstromerkennung](doc/Anlaufstromerkennung_DE.md) verwendet werden, um die Programmierung des Gerätes zu ermöglichen.
+[Details zu diesen Schaltern und weiteren Software-basierten Schalten (z.B. Anlaufstromerkennung)](doc/Control_DE.md)
 
 ### [Montage](doc/Montage_DE.md)
 
