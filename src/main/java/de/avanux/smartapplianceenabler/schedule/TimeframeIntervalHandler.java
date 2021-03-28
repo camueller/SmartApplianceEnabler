@@ -504,7 +504,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
                         .filter(timeframeInterval -> !(timeframeInterval.getRequest() instanceof OptionalEnergySocRequest))
                         .forEach(timeframeInterval ->
                                 updateSocRequest((SocRequest) timeframeInterval.getRequest(), ev.getBatteryCapacity(), null));
-                if(! hasActiveTimeframeInterval()) {
+                if(findOptionalEnergyIntervalForEVCharger() == null) {
                     TimeframeInterval timeframeInterval = createOptionalEnergyTimeframeIntervalForEVCharger(now, ev.getId());
                     if(timeframeInterval != null) {
                         updateSocRequest((SocRequest) timeframeInterval.getRequest(),
