@@ -1,7 +1,6 @@
 [Unit]
 Description=Smart Appliance Enabler
-Wants=network.target
-Before=network.target
+Requires=network.target
 
 [Service]
 Type=forking
