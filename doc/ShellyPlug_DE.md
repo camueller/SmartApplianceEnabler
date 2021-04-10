@@ -1,6 +1,6 @@
-# Shelly Plug
+# Shelly Plug (S)
 
-Mit dem [Shelly plug](https://shelly.cloud/shelly-plug/), der mit dem WLAN verbunden ist, lässt sich ein Gerät schalten auch dessen aktueller Stromverbrauch messen.
+Mit dem [Shelly plug](https://shelly.cloud/shelly-plug/) oder dem [Shelly Plug S](https://shelly.cloud/knowledge-base/devices/shelly-plug-s/), der mit dem WLAN verbunden ist, lässt sich ein Gerät schalten auch dessen aktueller Stromverbrauch messen.
 
 ## Shelly Plug als Stromzähler
 
