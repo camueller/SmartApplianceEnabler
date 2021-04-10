@@ -1,4 +1,14 @@
-import {ChangeDetectorRef, Component, Input, OnChanges, OnInit, QueryList, SimpleChanges, ViewChildren} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  QueryList,
+  SimpleChanges,
+  ViewChildren
+} from '@angular/core';
 import {ControlDefaults} from '../control-defaults';
 import {ControlContainer, FormArray, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {ErrorMessages} from '../../shared/error-messages';
@@ -24,7 +34,8 @@ import {isControlValid} from '../control-validator';
   styleUrls: ['./control-modbus.component.scss'],
   viewProviders: [
     {provide: ControlContainer, useExisting: FormGroupDirective}
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ControlModbusComponent implements OnChanges, OnInit {
   @Input()

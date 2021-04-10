@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   EventEmitter,
@@ -31,6 +32,7 @@ import {ReadRegisterType} from './read-register-type';
   selector: 'app-modbus-read',
   templateUrl: './modbus-read.component.html',
   styleUrls: ['./modbus-read.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ModbusReadComponent implements OnChanges, OnInit {
   @Input()

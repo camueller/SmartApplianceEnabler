@@ -1,4 +1,14 @@
-import {ChangeDetectorRef, Component, Input, OnChanges, OnInit, QueryList, SimpleChanges, ViewChildren} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  QueryList,
+  SimpleChanges,
+  ViewChildren
+} from '@angular/core';
 import {ControlContainer, FormArray, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {ModbusRead} from '../../modbus/read/modbus-read';
@@ -25,7 +35,8 @@ import {ReadValueMapKey} from '../../shared/read-value-map-key';
   styleUrls: ['./meter-modbus.component.scss'],
   viewProviders: [
     {provide: ControlContainer, useExisting: FormGroupDirective}
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MeterModbusComponent implements OnChanges, OnInit {
   @Input()

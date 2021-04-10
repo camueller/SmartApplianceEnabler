@@ -1,4 +1,15 @@
-import {ChangeDetectorRef, Component, Input, OnChanges, OnInit, QueryList, SimpleChanges, ViewChild, ViewChildren} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  QueryList,
+  SimpleChanges,
+  ViewChild,
+  ViewChildren
+} from '@angular/core';
 import {ControlDefaults} from '../control-defaults';
 import {ControlContainer, FormArray, FormGroup, FormGroupDirective} from '@angular/forms';
 import {ErrorMessages} from '../../shared/error-messages';
@@ -21,7 +32,8 @@ import {isControlValid} from '../control-validator';
   styleUrls: ['./control-http.component.scss'],
   viewProviders: [
     {provide: ControlContainer, useExisting: FormGroupDirective}
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ControlHttpComponent implements OnChanges, OnInit {
   @Input()

@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   EventEmitter,
@@ -29,6 +30,7 @@ import {WriteRegisterType} from './write-register-type';
   selector: 'app-modbus-write',
   templateUrl: './modbus-write.component.html',
   styleUrls: ['./modbus-write.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ModbusWriteComponent implements OnChanges, OnInit {
   @Input()

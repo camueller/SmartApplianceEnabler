@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, QueryList, SimpleChanges, ViewChildren} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, QueryList, SimpleChanges, ViewChildren} from '@angular/core';
 import {Logger} from '../../../log/logger';
 import {TranslateService} from '@ngx-translate/core';
 import {ErrorMessageHandler} from '../../../shared/error-message-handler';
@@ -29,7 +29,8 @@ import {ControlDefaults} from '../../control-defaults';
   styleUrls: ['./control-evcharger-modbus.component.scss'],
   viewProviders: [
     {provide: ControlContainer, useExisting: FormGroupDirective}
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ControlEvchargerModbusComponent implements OnChanges, OnInit {
   @Input()

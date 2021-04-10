@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   EventEmitter,
@@ -28,6 +29,7 @@ import {ValueNameChangedEvent} from '../../meter/value-name-changed-event';
   selector: 'app-http-write',
   templateUrl: './http-write.component.html',
   styleUrls: ['./http-write.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HttpWriteComponent implements OnChanges, OnInit {
   @Input()

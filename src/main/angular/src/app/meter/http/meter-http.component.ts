@@ -1,4 +1,15 @@
-import {ChangeDetectorRef, Component, Input, OnChanges, OnInit, QueryList, SimpleChanges, ViewChild, ViewChildren} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  QueryList,
+  SimpleChanges,
+  ViewChild,
+  ViewChildren
+} from '@angular/core';
 import {ControlContainer, FormArray, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {HttpElectricityMeter} from './http-electricity-meter';
 import {ContentProtocol} from '../../shared/content-protocol';
@@ -24,7 +35,8 @@ import {ReadValueMapKey} from '../../shared/read-value-map-key';
   styleUrls: ['./meter-http-component.scss'],
   viewProviders: [
     {provide: ControlContainer, useExisting: FormGroupDirective}
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MeterHttpComponent implements OnChanges, OnInit {
   @Input()

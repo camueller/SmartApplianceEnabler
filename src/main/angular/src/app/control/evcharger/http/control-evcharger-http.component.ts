@@ -1,4 +1,14 @@
-import {Component, Input, OnChanges, OnInit, QueryList, SimpleChanges, ViewChild, ViewChildren} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  QueryList,
+  SimpleChanges,
+  ViewChild,
+  ViewChildren
+} from '@angular/core';
 import {Settings} from '../../../settings/settings';
 import {SettingsDefaults} from '../../../settings/settings-defaults';
 import {ControlContainer, FormArray, FormGroup, FormGroupDirective, ValidatorFn} from '@angular/forms';
@@ -24,7 +34,8 @@ import {getValueNamesNotConfigured} from '../../../shared/get-value-names-not-co
   styleUrls: ['./control-evcharger-http.component.scss'],
   viewProviders: [
     {provide: ControlContainer, useExisting: FormGroupDirective}
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ControlEvchargerHttpComponent implements OnChanges, OnInit {
 

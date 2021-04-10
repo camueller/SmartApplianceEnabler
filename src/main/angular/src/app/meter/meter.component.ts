@@ -16,7 +16,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {Component, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, CanDeactivate} from '@angular/router';
 import {MeterFactory} from './meter-factory';
 import {TranslateService} from '@ngx-translate/core';
@@ -48,6 +48,7 @@ import {NotificationComponent} from '../notification/notification.component';
   selector: 'app-meter',
   templateUrl: './meter.component.html',
   styleUrls: ['./meter.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
   @ViewChild(MeterS0Component)
