@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   EventEmitter,
@@ -24,14 +25,11 @@ import {HttpReadValueComponent} from '../read-value/http-read-value.component';
 import {HttpReadValue} from '../read-value/http-read-value';
 import {ValueNameChangedEvent} from '../../meter/value-name-changed-event';
 
-export interface NameChangedEvent {
-  r
-}
-
 @Component({
   selector: 'app-http-read',
   templateUrl: './http-read.component.html',
   styleUrls: ['./http-read.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HttpReadComponent implements OnChanges, OnInit {
   @Input()
