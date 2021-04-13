@@ -78,7 +78,7 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
         if(timer != null) {
             cancelTimer();
             long nextPollMillisFromNow = nextPollCompletedSecondsFromNow * 1000L - lastPollDurationMillis;
-            logger.debug("{}: Schedule next poll in {}ms lastPollDuration={}ms", applianceId, nextPollMillisFromNow, lastPollDurationMillis);
+            logger.trace("{}: Schedule next poll in {}ms lastPollDuration={}ms", applianceId, nextPollMillisFromNow, lastPollDurationMillis);
             this.pollTimerTask = buildPollTimerTask();
             timer.schedule(this.pollTimerTask, nextPollMillisFromNow, averagingInterval * 1000L);
         }

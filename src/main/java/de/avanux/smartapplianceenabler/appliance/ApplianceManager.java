@@ -30,22 +30,20 @@ import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.meter.MeterValueName;
 import de.avanux.smartapplianceenabler.meter.ModbusElectricityMeter;
 import de.avanux.smartapplianceenabler.modbus.ModbusRead;
-import de.avanux.smartapplianceenabler.modbus.ModbusReadValue;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.schedule.Schedule;
 import de.avanux.smartapplianceenabler.semp.webservice.Device2EM;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceStatus;
-import de.avanux.smartapplianceenabler.util.FileContentPreProcessor;
 import de.avanux.smartapplianceenabler.util.FileHandler;
 import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -61,6 +59,7 @@ public class ApplianceManager implements Runnable {
     private GuardedTimerTask holidaysDownloaderTimerTask;
     private Integer autoclearSeconds;
     private boolean initializationCompleted;
+    private LocalDateTime currentMeterAveragingIntervalStartTime;
     
     private ApplianceManager() {
     }
@@ -217,19 +216,29 @@ public class ApplianceManager implements Runnable {
         startAppliances();
     }
 
-    public void startMeterAveragingInterval(LocalDateTime now, int nextPollCompletedSecondsFromNow) {
-        logger.info("Start meter averaging interval ...");
+    public void startMeterAveragingInterval(LocalDateTime now, int secondsForDeviceStatusAndPlanningRequests) {
         if(this.appliances != null && appliances.getAppliances() != null) {
-            for(Appliance appliance : appliances.getAppliances()) {
-                try {
-                    Meter meter = appliance.getMeter();
-                    if(meter != null) {
-                        meter.startAveragingInterval(now, timer, nextPollCompletedSecondsFromNow);
+            if(this.currentMeterAveragingIntervalStartTime == null
+                    || Duration.between(this.currentMeterAveragingIntervalStartTime, now).toSeconds() > 50) {
+                this.currentMeterAveragingIntervalStartTime = now;
+                int nextPollCompletedSecondsFromNow = Meter.averagingInterval - secondsForDeviceStatusAndPlanningRequests - 3;
+                logger.debug("Start meter averaging interval: secondsForDeviceStatusAndPlanningRequests={} nextPollCompletedSecondsFromNow={}",
+                        secondsForDeviceStatusAndPlanningRequests, nextPollCompletedSecondsFromNow);
+                for(Appliance appliance : appliances.getAppliances()) {
+                    try {
+                        Meter meter = appliance.getMeter();
+                        if(meter != null) {
+                            meter.startAveragingInterval(now, timer, nextPollCompletedSecondsFromNow);
+                        }
+                    }
+                    catch(Exception e) {
+                        logger.error("{}: Error during startAveragingInterval", appliance.getId(), e);
                     }
                 }
-                catch(Exception e) {
-                    logger.error("{}: Error stopping appliance", appliance.getId(), e);
-                }
+            }
+            else {
+                logger.debug("Current meter averaging interval was started only {} seconds ago - skipping",
+                        Duration.between(this.currentMeterAveragingIntervalStartTime, now).toSeconds());
             }
         }
     }

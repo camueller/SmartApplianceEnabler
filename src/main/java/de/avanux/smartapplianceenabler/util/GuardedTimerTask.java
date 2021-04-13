@@ -37,7 +37,7 @@ abstract public class GuardedTimerTask extends TimerTask {
         this.applianceId = applianceId;
         this.taskName = taskName;
         this.period = period;
-        logger.debug("{}: Created timer task name={} period={}ms id={}", this.applianceId != null ? this.applianceId : "",
+        logger.trace("{}: Created timer task name={} period={}ms id={}", this.applianceId != null ? this.applianceId : "",
                 taskName, period, this.hashCode());
     }
 
@@ -51,7 +51,7 @@ abstract public class GuardedTimerTask extends TimerTask {
 
     @Override
     public void run() {
-        logger.debug("{}: Executing timer task name={} id={}", this.applianceId != null ? this.applianceId : "",
+        logger.trace("{}: Executing timer task name={} id={}", this.applianceId != null ? this.applianceId : "",
                 this.taskName, this.hashCode());
         try  {
             runTask();

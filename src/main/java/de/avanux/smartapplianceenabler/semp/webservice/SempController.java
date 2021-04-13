@@ -79,8 +79,8 @@ public class SempController {
                     planningRequests.add(planningRequest);
                 }
             }
-            ApplianceManager.getInstance().startMeterAveragingInterval(now,
-                    Meter.averagingInterval - (int) Duration.between(now, LocalDateTime.now()).toSeconds() - 3);
+            ApplianceManager.getInstance().startMeterAveragingInterval(LocalDateTime.now(),
+                    (int) Duration.between(now, LocalDateTime.now()).toSeconds());
         }
         Device2EM device2EM = ApplianceManager.getInstance().getDevice2EM();
         device2EM.setDeviceInfo(createDeviceInfo(now));
