@@ -5,7 +5,7 @@
 - Verbraucher läßt sich nicht im Sunny Portal hinzufügen ---> [SEMP1](#semp1), [SP1](#sp1)
 - Leistung des Verbrauchers wird nicht im Sunny Portal angezeigt ---> [SEMP2](#semp2)
 - Wie kann ich den Verbraucher im Sunny Portal schalten? ---> [SP2](#sp2)
-
+- Im Anlagenlogbuch erscheinen oft Einträge wie z.B.: "EM-Gateway nicht gefunden", "EM-Gerät nicht gefunden". ---> [SP3](#sp3)
 ### Sunny Home Manager
 - Das Gerät wird nicht eingeschaltet ---> [SEMP3](#semp3), [SAE4](#sae4)
 
@@ -23,6 +23,9 @@ Um den *Sunny Home Manager* zu zwingen, erneut nach neuen Geräten lokalen Netz 
 
 ### SP2
 Geräte, die über den *Smart Appliance Enabler* verwaltet werden, sind aus Sicht des *Sunny Home Manager* **Verbraucher**. Einige Parameter dieser Verbaucher (z.B. Anteil der PV-Energie) können über das *Sunny Portal* konfiguriert werden, aber geschaltet werden kann das Gerät nicht über das *Sunny Portal*. Stattdessen kann das Gerät aber über [Status-Seite](Status_DE.md) der Web-Oberfläche des *Smart Appliance Enabler* geschaltet werden.
+
+### SP3
+Im Anlangenlogbuch wird das Gateway und werden die Geräte dauern nicht gefunden und anschließend wieder gefunden. Wenn sich dieser Porzess öfters wiederholt liegt es meistens daran, dass eins der anzusteuernden (mit WLAN eingebundenen) Geräte einen schlechten Empfang hat und somit im ganzen Porzess einen Timeout produziert. Durch WLAN-Repeater oder Umstellung auf kabelgebundene Kommunikation lässt sich dieses Problem in der Regel beheben.
 
 ### SEMP1
 Wenn der *Sunny Home Manager* den *Smart Appliance Enabler* im Netz gefunden hat, fragt er nachfolgend dessen Status **alle 60 Sekunden** ab. Diese Abfragen werden der Log-Datei des *Smart Appliance Enabler* protokolliert und sehen so aus:
