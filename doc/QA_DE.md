@@ -2,10 +2,11 @@
 
 ## Fragen / Probleme
 ### Sunny Portal
-- Verbraucher läßt sich nicht im Sunny Portal hinzufügen ---> [SEMP1](#semp1), [SP1](#sp1)
+- Verbraucher lässt sich nicht im Sunny Portal hinzufügen ---> [SEMP1](#semp1), [SP1](#sp1)
 - Leistung des Verbrauchers wird nicht im Sunny Portal angezeigt ---> [SEMP2](#semp2)
 - Wie kann ich den Verbraucher im Sunny Portal schalten? ---> [SP2](#sp2)
 - Im Anlagenlogbuch erscheinen oft Einträge wie z.B.: "EM-Gateway nicht gefunden", "EM-Gerät nicht gefunden". ---> [SP3](#sp3)
+
 ### Sunny Home Manager
 - Das Gerät wird nicht eingeschaltet ---> [SEMP3](#semp3), [SAE4](#sae4)
 
