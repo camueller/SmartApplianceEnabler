@@ -21,6 +21,7 @@ package de.avanux.smartapplianceenabler.schedule;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.ev.EVChargerState;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
+import de.avanux.smartapplianceenabler.control.ev.SocValues;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -197,7 +198,7 @@ abstract public class AbstractRequest implements Request {
     }
 
     @Override
-    public void onEVChargerSocChanged(LocalDateTime now, Float soc) {
+    public void onEVChargerSocChanged(LocalDateTime now, SocValues socValues) {
     }
 
     @Override

@@ -16,6 +16,7 @@ import {ModbusWriteComponent} from '../../modbus/write/modbus-write.component';
 import {ModbusWrite} from '../../modbus/write/modbus-write';
 import {ModbusSetting} from '../../settings/modbus/modbus-setting';
 import { MessageBoxLevel } from 'src/app/material/messagebox/messagebox.component';
+import {isControlValid} from '../control-validator';
 
 @Component({
   selector: 'app-control-modbus',
@@ -30,8 +31,6 @@ export class ControlModbusComponent implements OnChanges, OnInit {
   modbusSwitch: ModbusSwitch;
   @ViewChildren('modbusWriteComponents')
   modbusWriteComps: QueryList<ModbusWriteComponent>;
-  @Input()
-  applianceId: string;
   @Input()
   controlDefaults: ControlDefaults;
   @Input()
@@ -130,6 +129,7 @@ export class ControlModbusComponent implements OnChanges, OnInit {
       [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
     this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'modbusWrites',
       this.modbusSwitch.modbusWrites);
+    this.form.setValidators(isControlValid(this.form, 'modbusWrites', 'modbusWriteValues'));
   }
 
   updateModelFromForm(): ModbusSwitch | undefined {

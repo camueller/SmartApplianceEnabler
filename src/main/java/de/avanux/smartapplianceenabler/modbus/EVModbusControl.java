@@ -23,6 +23,9 @@ import de.avanux.smartapplianceenabler.control.ev.EVChargerControl;
 import de.avanux.smartapplianceenabler.control.ev.EVReadValueName;
 import de.avanux.smartapplianceenabler.control.ev.EVWriteValueName;
 import de.avanux.smartapplianceenabler.modbus.executor.*;
+import de.avanux.smartapplianceenabler.modbus.transformer.ValueTransformer;
+import de.avanux.smartapplianceenabler.notification.NotificationHandler;
+import de.avanux.smartapplianceenabler.notification.NotificationType;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import de.avanux.smartapplianceenabler.util.RequestCache;
 import org.slf4j.Logger;
@@ -43,6 +46,7 @@ public class EVModbusControl extends ModbusSlave implements EVChargerControl {
     private List<ModbusWrite> modbusWrites;
     private transient Integer pollInterval; // seconds
     private transient RequestCache<ModbusRead, ModbusReadTransactionExecutor> requestCache;
+    private transient NotificationHandler notificationHandler;
 
     public List<ModbusRead> getModbusReads() {
         return modbusReads;
@@ -58,6 +62,11 @@ public class EVModbusControl extends ModbusSlave implements EVChargerControl {
 
     public void setModbusWrites(List<ModbusWrite> modbusWrites) {
         this.modbusWrites = modbusWrites;
+    }
+
+    @Override
+    public void setNotificationHandler(NotificationHandler notificationHandler) {
+        this.notificationHandler = notificationHandler;
     }
 
     public void setPollInterval(Integer pollInterval) {
@@ -120,55 +129,62 @@ public class EVModbusControl extends ModbusSlave implements EVChargerControl {
         return isMatchingVehicleStatus(EVReadValueName.Error);
     }
 
-    public boolean isMatchingVehicleStatus(EVReadValueName registerName) {
+    public boolean isMatchingVehicleStatus(EVReadValueName valueName) {
         List<ParentWithChild<ModbusRead, ModbusReadValue>> reads
-                = ModbusRead.getRegisterReads(registerName.name(), this.modbusReads);
+                = ModbusRead.getRegisterReads(valueName.name(), this.modbusReads);
         if (reads.size() > 0) {
-            boolean result = true;
+            boolean match = false;
             for (ParentWithChild<ModbusRead, ModbusReadValue> read : reads) {
                 ModbusRead registerRead = read.parent();
                 try {
+                    Object registerAddress = null;
+                    boolean fromCache = false;
                     ModbusReadTransactionExecutor executor = this.requestCache.get(registerRead);
                     if (executor == null) {
+                        registerAddress = registerRead.getAddress();
                         executor = ModbusExecutorFactory.getReadExecutor(getApplianceId(),
-                                registerRead.getType(), registerRead.getAddress(), registerRead.getBytes());
+                                registerRead.getAddress(), registerRead.getType(), registerRead.getValueType(), registerRead.getWords());
                         executeTransaction(executor, true);
                         this.requestCache.put(registerRead, executor);
                     }
                     else {
                         if(executor instanceof BaseTransactionExecutor) {
                             BaseTransactionExecutor readInputRegisterExecutor = (BaseTransactionExecutor) executor;
-                            logger.debug("{}: Using cached input register={}", getApplianceId(),
-                                    readInputRegisterExecutor.getAddress());
+                            registerAddress = readInputRegisterExecutor.getAddress();
+                            fromCache = true;
                         }
                     }
-                    if (result) {
-                        if (executor != null) {
-                            if (executor instanceof ReadStringInputRegisterExecutor) {
-                                String registerValue = ((ReadStringInputRegisterExecutor) executor).getValue();
-                                logger.debug("{}: Register value={}", getApplianceId(), registerValue);
-                                result &= registerValue.matches(read.child().getExtractionRegex());
-                            } else if (executor instanceof ReadCoilExecutor) {
-                                Boolean registerValue = ((ReadCoilExecutor) executor).getValue();
-                                logger.debug("{}: Register value={}", getApplianceId(), registerValue);
-                                result &= registerValue;
-                            } else if (executor instanceof ReadDiscreteInputExecutor) {
-                                Boolean registerValue = ((ReadDiscreteInputExecutor) executor).getValue();
-                                logger.debug("{}: Register value={}", getApplianceId(), registerValue);
-                                result &= registerValue;
-                            }
-                        }
-                        else {
-                            logger.error("{}: no input register executor available", getApplianceId());
-                        }
-                    } else {
-                        logger.debug("{}: Skipping read register {}", getApplianceId(), registerRead.getAddress());
+
+                    Object value;
+                    if(executor instanceof ReadCoilExecutor) {
+                        match = ((ReadCoilExecutor) executor).getValue();
+                        value = match;
+                    }
+                    else if(executor instanceof ReadDiscreteInputExecutorImpl) {
+                        match = ((ReadDiscreteInputExecutorImpl) executor).getValue();
+                        value = match;
+                    }
+                    else {
+                        ValueTransformer<?> transformer = executor.getValueTransformer();
+                        String regex = read.child().getExtractionRegex();
+                        match = transformer.valueMatches(regex);
+                        value = transformer.getValue();
+                    }
+
+                    logger.trace("{}: Read modbus register={} valueName={} value={} match={} fromCache={}",
+                            getApplianceId(), registerAddress != null ? registerAddress.toString() : null, valueName,
+                            value, match, fromCache);
+                    if(match) {
+                        break;
                     }
                 } catch (Exception e) {
                     logger.error("{}: Error reading register {}", getApplianceId(), registerRead.getAddress(), e);
+                    if(this.notificationHandler != null) {
+                        this.notificationHandler.sendNotification(NotificationType.COMMUNICATION_ERROR);
+                    }
                 }
             }
-            return result;
+            return match;
         }
         return false;
     }
@@ -195,6 +211,9 @@ public class EVModbusControl extends ModbusSlave implements EVChargerControl {
             catch(Exception e) {
                 logger.error("{}: Error setting charge current in register {}", getApplianceId(),
                         registerWrite.getAddress(), e);
+                if(this.notificationHandler != null) {
+                    this.notificationHandler.sendNotification(NotificationType.COMMUNICATION_ERROR);
+                }
             }
         }
     }
@@ -229,6 +248,9 @@ public class EVModbusControl extends ModbusSlave implements EVChargerControl {
                     if(WriteRegisterType.Coil.equals(registerWrite.getType())) {
                         value = "1".equals(stringValue);
                     }
+                    else if(WriteRegisterType.Holding.equals(registerWrite.getType())) {
+                        value = Integer.valueOf(stringValue);
+                    }
                     executor.setValue(value);
                     executeTransaction(executor, true);
                 }
@@ -236,6 +258,9 @@ public class EVModbusControl extends ModbusSlave implements EVChargerControl {
             catch(Exception e) {
                 logger.error("{}: Error enable/disable charging process in register {}", getApplianceId(),
                         registerWrite.getAddress(), e);
+                if(this.notificationHandler != null) {
+                    this.notificationHandler.sendNotification(NotificationType.COMMUNICATION_ERROR);
+                }
             }
         }
     }

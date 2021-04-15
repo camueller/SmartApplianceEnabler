@@ -23,6 +23,10 @@ import de.avanux.smartapplianceenabler.modbus.ModbusWriteValue;
 import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
 import de.avanux.smartapplianceenabler.modbus.ModbusValidator;
 import de.avanux.smartapplianceenabler.modbus.executor.*;
+import de.avanux.smartapplianceenabler.notification.NotificationHandler;
+import de.avanux.smartapplianceenabler.notification.NotificationType;
+import de.avanux.smartapplianceenabler.notification.NotificationProvider;
+import de.avanux.smartapplianceenabler.notification.Notifications;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import de.avanux.smartapplianceenabler.configuration.Validateable;
 import java.time.LocalDateTime;
@@ -35,12 +39,28 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Timer;
 
-public class ModbusSwitch extends ModbusSlave implements Control, Validateable {
+public class ModbusSwitch extends ModbusSlave implements Control, Validateable, NotificationProvider {
 
     private transient Logger logger = LoggerFactory.getLogger(ModbusSwitch.class);
     @XmlElement(name = "ModbusWrite")
     private List<ModbusWrite> modbusWrites;
+    @XmlElement(name = "Notifications")
+    private Notifications notifications;
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
+    private transient NotificationHandler notificationHandler;
+
+    @Override
+    public void setNotificationHandler(NotificationHandler notificationHandler) {
+        this.notificationHandler = notificationHandler;
+        if(this.notificationHandler != null) {
+            this.notificationHandler.setRequestedNotifications(notifications);
+        }
+    }
+
+    @Override
+    public Notifications getNotifications() {
+        return notifications;
+    }
 
     @Override
     public void init() {
@@ -70,6 +90,11 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable {
     }
 
     @Override
+    public boolean isControllable() {
+        return true;
+    }
+
+    @Override
     public boolean on(LocalDateTime now, boolean switchOn) {
         boolean result = false;
         logger.info("{}: Switching {}", getApplianceId(), (switchOn ? "on" : "off"));
@@ -78,6 +103,10 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable {
         if (write != null) {
             ModbusWrite registerWrite = write.parent();
             try {
+                boolean on = false;
+                if(this.notificationHandler != null) {
+                    on = isOn();
+                }
                 ModbusWriteTransactionExecutor executor = ModbusExecutorFactory.getWriteExecutor(getApplianceId(),
                         registerWrite.getType(), registerWrite.getAddress(),registerWrite.getFactorToValue());
                 executeTransaction(executor, true);
@@ -87,12 +116,17 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable {
                 else if(executor instanceof WriteHoldingRegisterExecutor) {
                     result = 1 == ((WriteHoldingRegisterExecutor) executor).getResult();
                 }
-
+                if(this.notificationHandler != null && switchOn != on) {
+                    this.notificationHandler.sendNotification(switchOn ? NotificationType.CONTROL_ON : NotificationType.CONTROL_OFF);
+                }
                 for(ControlStateChangedListener listener : new ArrayList<>(controlStateChangedListeners)) {
                     listener.controlStateChanged(now, switchOn);
                 }
             }
             catch (Exception e) {
+                if(this.notificationHandler != null) {
+                    this.notificationHandler.sendNotification(NotificationType.COMMUNICATION_ERROR);
+                }
                 logger.error("{}: Error switching {} using register {}", getApplianceId(),  (switchOn ? "on" : "off"),
                         registerWrite.getAddress(), e);
             }
@@ -109,7 +143,7 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable {
             ModbusWrite registerWrite = write.parent();
             try {
                 ModbusReadTransactionExecutor executor = ModbusExecutorFactory.getReadExecutor(getApplianceId(),
-                        registerWrite.getReadRegisterType(), registerWrite.getAddress());
+                        registerWrite.getAddress(), registerWrite.getReadRegisterType(), registerWrite.getValueType());
                 executeTransaction(executor, true);
                 if(executor instanceof ReadCoilExecutorImpl) {
                     on = ((ReadCoilExecutorImpl) executor).getValue();

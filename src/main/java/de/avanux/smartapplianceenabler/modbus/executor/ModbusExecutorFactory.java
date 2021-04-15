@@ -20,123 +20,126 @@ package de.avanux.smartapplianceenabler.modbus.executor;
 
 import de.avanux.smartapplianceenabler.modbus.ByteOrder;
 import de.avanux.smartapplianceenabler.modbus.ReadRegisterType;
+import de.avanux.smartapplianceenabler.modbus.RegisterValueType;
 import de.avanux.smartapplianceenabler.modbus.WriteRegisterType;
+import de.avanux.smartapplianceenabler.modbus.transformer.*;
 
 public class ModbusExecutorFactory {
 
-    private static ModbusReadTransactionExecutor testingReadStringExecutor;
-    private static ModbusReadTransactionExecutor testingReadBooleanExecutor;
-    private static ModbusReadTransactionExecutor testingReadFloatExecutor;
-    private static ModbusWriteTransactionExecutor testingWriteBooleanExecutor;
-    private static ModbusWriteTransactionExecutor testingWriteIntegerExecutor;
+    private static ModbusReadTransactionExecutor readCoilExecutor;
+    private static ModbusReadTransactionExecutor readDiscreteInputExecutor;
+    private static ModbusReadTransactionExecutor readHoldingExecutor;
+    private static ModbusReadTransactionExecutor readInputExecutor;
+    private static ModbusWriteTransactionExecutor<Boolean> writeCoilExecutor;
+    private static ModbusWriteTransactionExecutor<Integer> writeHoldingExecutor;
 
-    public static void setTestingReadStringExecutor(ModbusReadTransactionExecutor testingReadStringExecutor) {
-        ModbusExecutorFactory.testingReadStringExecutor = testingReadStringExecutor;
+    public static void setReadCoilExecutor(ModbusReadTransactionExecutor testingReadCoilExecutor) {
+        ModbusExecutorFactory.readCoilExecutor = testingReadCoilExecutor;
     }
 
-    public static void setTestingReadBooleanExecutor(ModbusReadTransactionExecutor testingReadBooleanExecutor) {
-        ModbusExecutorFactory.testingReadBooleanExecutor = testingReadBooleanExecutor;
+    public static void setReadDiscreteInputExecutor(ModbusReadTransactionExecutor readDiscreteInputExecutor) {
+        ModbusExecutorFactory.readDiscreteInputExecutor = readDiscreteInputExecutor;
     }
 
-    public static void setTestingReadFloatExecutor(ModbusReadTransactionExecutor testingReadFloatExecutor) {
-        ModbusExecutorFactory.testingReadFloatExecutor = testingReadFloatExecutor;
+    public static void setReadHoldingExecutor(ModbusReadTransactionExecutor readHoldingExecutor) {
+        ModbusExecutorFactory.readHoldingExecutor = readHoldingExecutor;
     }
 
-    public static void setTestingWriteBooleanExecutor(ModbusWriteTransactionExecutor testingWriteBooleanExecutor) {
-        ModbusExecutorFactory.testingWriteBooleanExecutor = testingWriteBooleanExecutor;
+    public static void setReadInputExecutor(ModbusReadTransactionExecutor readInputExecutor) {
+        ModbusExecutorFactory.readInputExecutor = readInputExecutor;
     }
 
-    public static void setTestingWriteIntegerExecutor(ModbusWriteTransactionExecutor testingWriteIntegerExecutor) {
-        ModbusExecutorFactory.testingWriteIntegerExecutor = testingWriteIntegerExecutor;
+    public static void setWriteCoilExecutor(ModbusWriteTransactionExecutor<Boolean> writeCoilExecutor) {
+        ModbusExecutorFactory.writeCoilExecutor = writeCoilExecutor;
+    }
+
+    public static void setWriteHoldingExecutor(ModbusWriteTransactionExecutor<Integer> writeHoldingExecutor) {
+        ModbusExecutorFactory.writeHoldingExecutor = writeHoldingExecutor;
     }
 
 
-    public static ModbusReadTransactionExecutor getReadExecutor(String applianceId, ReadRegisterType type,
-                                                                String address) {
-        return getReadExecutor(applianceId, type, address, 1, ByteOrder.BigEndian, 1.0);
+    public static ModbusReadTransactionExecutor getReadExecutor(String applianceId, String address, ReadRegisterType type,
+                                                                RegisterValueType valueType) {
+        return getReadExecutor(applianceId, address, type, valueType, 1, ByteOrder.BigEndian, 1.0);
     }
 
-    public static ModbusReadTransactionExecutor getReadExecutor(String applianceId, ReadRegisterType type,
-                                                                String address, int bytes) {
-        return getReadExecutor(applianceId, type, address, bytes, ByteOrder.BigEndian, 1.0);
+    public static ModbusReadTransactionExecutor getReadExecutor(String applianceId, String address, ReadRegisterType type,
+                                                                RegisterValueType valueType,
+                                                                int requestWords) {
+        return getReadExecutor(applianceId, address, type, valueType, requestWords, ByteOrder.BigEndian, 1.0);
     }
 
-    public static ModbusReadTransactionExecutor getReadExecutor(String applianceId, ReadRegisterType type,
-                                                                String address, int bytes, ByteOrder byteOrder,
+    public static ModbusReadTransactionExecutor getReadExecutor(String applianceId,
+                                                                String address, ReadRegisterType type,
+                                                                RegisterValueType valueType,
+                                                                int requestWords, ByteOrder byteOrder,
                                                                 Double factorToValue) {
         ModbusReadTransactionExecutor executor;
         switch (type) {
-            case InputString:
-                if(testingReadStringExecutor != null) {
-                    executor = testingReadStringExecutor;
-                }
-                else {
-                    executor = new ReadStringInputRegisterExecutorImpl(address, bytes);
-                }
-                break;
-            case InputFloat:
-                if(testingReadFloatExecutor != null) {
-                    executor = testingReadFloatExecutor;
-                }
-                else {
-                    executor = new ReadFloatInputRegisterExecutorImpl(address, bytes);
-                }
-                break;
-            case InputDecimal:
-                if(testingReadFloatExecutor != null) {
-                    executor = testingReadFloatExecutor;
-                }
-                else {
-                    executor = new ReadDecimalInputRegisterExecutorImpl(address, bytes, byteOrder, factorToValue);
-                }
-                break;
             case Coil:
-                if(testingReadBooleanExecutor != null) {
-                    executor = testingReadBooleanExecutor;
-                }
-                else {
-                    executor = new ReadCoilExecutorImpl(address);
-                }
+                executor = readCoilExecutor != null ? readCoilExecutor :
+                        new ReadCoilExecutorImpl(address);
                 break;
             case Discrete:
-                if(testingReadBooleanExecutor != null) {
-                    executor = testingReadBooleanExecutor;
-                }
-                else {
-                    executor = new ReadDiscreteInputExecutorImpl(address);
-                }
+                executor = readDiscreteInputExecutor != null ? readDiscreteInputExecutor :
+                        new ReadDiscreteInputExecutorImpl(address);
+                break;
+            case Holding:
+                executor = readHoldingExecutor != null ? readHoldingExecutor :
+                        new ReadHoldingRegisterExecutor(address, requestWords,
+                            getValueTransformer(applianceId, valueType, byteOrder, factorToValue));
+                break;
+            case Input:
+                executor = readInputExecutor != null ? readInputExecutor :
+                        new ReadInputRegisterExecutor(address, requestWords,
+                                getValueTransformer(applianceId, valueType, byteOrder, factorToValue));
                 break;
             default:
-                return null;
+                throw new RuntimeException("Unsupported register type: " + type.name());
         }
         executor.setApplianceId(applianceId);
         return executor;
     }
 
-    public static ModbusWriteTransactionExecutor getWriteExecutor(String applianceId, WriteRegisterType type,
+    public static ModbusWriteTransactionExecutor<?> getWriteExecutor(String applianceId, WriteRegisterType type,
                                                                   String address, Double factorToValue) {
-        ModbusWriteTransactionExecutor executor;
+        ModbusWriteTransactionExecutor<?> executor;
         switch (type) {
             case Holding:
-                if(testingWriteIntegerExecutor != null) {
-                    executor = testingWriteIntegerExecutor;
-                }
-                else {
-                    executor = new WriteHoldingRegisterExecutorImpl(address, factorToValue);
-                }
+                executor = writeHoldingExecutor != null ? writeHoldingExecutor :
+                        new WriteHoldingRegisterExecutorImpl(address, factorToValue);
                 break;
             case Coil:
-                if(testingWriteBooleanExecutor != null) {
-                    executor = testingWriteBooleanExecutor;
-                }
-                else {
-                    executor = new WriteCoilExecutorImpl(address);
-                }
+                executor = writeCoilExecutor != null ? writeCoilExecutor :
+                        new WriteCoilExecutorImpl(address);
                 break;
             default:
-                return null;
+                throw new RuntimeException("Unsupported register type: " + type.name());
         }
         executor.setApplianceId(applianceId);
         return executor;
+    }
+
+    private static ValueTransformer<?> getValueTransformer(String applianceId, RegisterValueType registerValueType,
+                                                           ByteOrder byteOrder, Double factorToValue) {
+        ValueTransformer<?> transformer = null;
+        switch (registerValueType) {
+            case Float:
+                transformer = new FloatValueTransformer();
+                break;
+            case Integer2Float:
+                transformer = new Integer2FloatValueTransformer(byteOrder, factorToValue);
+                break;
+            case Integer:
+                transformer = new IntegerValueTransformer();
+                break;
+            case String:
+                transformer = new StringValueTransformer();
+                break;
+            default:
+                throw new RuntimeException("Unsupported register value type: " + registerValueType.name());
+        }
+        transformer.setApplianceId(applianceId);
+        return transformer;
     }
 }

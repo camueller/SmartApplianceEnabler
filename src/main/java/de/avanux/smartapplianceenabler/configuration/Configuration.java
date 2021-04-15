@@ -31,6 +31,14 @@ public class Configuration {
     @XmlAttribute
     private String value;
 
+    public Configuration() {
+    }
+
+    public Configuration(String param, String value) {
+        this.param = param;
+        this.value = value;
+    }
+
     public String getParam() {
         return param;
     }

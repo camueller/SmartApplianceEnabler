@@ -10,6 +10,7 @@ import {InputValidatorPatterns} from '../../../shared/input-validator-patterns';
 import {ErrorMessageHandler} from '../../../shared/error-message-handler';
 import {Logger} from '../../../log/logger';
 import {TimepickerComponent} from '../../../material/timepicker/timepicker.component';
+import {getValidInt} from '../../../shared/form-util';
 
 @Component({
   selector: 'app-schedule-request-runtime',
@@ -67,21 +68,11 @@ export class ScheduleRequestRuntimeComponent implements OnChanges, OnInit {
   }
 
   get minRuntime() {
-    return this.runtimeRequest.min && TimeUtil.toHourMinute(this.runtimeRequest.min);
+    return this.runtimeRequest.min !== undefined ? TimeUtil.toHourMinute(this.runtimeRequest.min) : undefined;
   }
 
   get maxRuntime() {
     return this.runtimeRequest.max && TimeUtil.toHourMinute(this.runtimeRequest.max);
-  }
-
-  setEnabled(enabled: boolean) {
-    if (enabled) {
-      this.form.controls.minRuntime.enable();
-      this.form.controls.maxRuntime.enable();
-    } else {
-      this.form.controls.minRuntime.disable();
-      this.form.controls.maxRuntime.disable();
-    }
   }
 
   expandParentForm() {

@@ -21,6 +21,10 @@ import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.meter.PowerUpdateListener;
 import de.avanux.smartapplianceenabler.meter.S0ElectricityMeter;
+import de.avanux.smartapplianceenabler.notification.NotificationHandler;
+import de.avanux.smartapplianceenabler.notification.NotificationType;
+import de.avanux.smartapplianceenabler.notification.NotificationProvider;
+import de.avanux.smartapplianceenabler.notification.Notifications;
 import de.avanux.smartapplianceenabler.schedule.DayTimeframeCondition;
 import de.avanux.smartapplianceenabler.schedule.TimeframeIntervalHandler;
 import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
@@ -30,7 +34,6 @@ import org.slf4j.LoggerFactory;
 import javax.xml.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Allows to prepare operation of an appliance while only little power is consumed.
@@ -45,7 +48,7 @@ import java.util.stream.Collectors;
  * The latter is only powered off after the starting current has been detected until the "on" command is received.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, PowerUpdateListener {
+public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, PowerUpdateListener, NotificationProvider {
     private transient Logger logger = LoggerFactory.getLogger(StartingCurrentSwitch.class);
     @XmlAttribute
     private Integer powerThreshold;
@@ -56,6 +59,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
     @XmlAttribute
     private Integer minRunningTime; // seconds
     @XmlElements({
+            @XmlElement(name = "MeterReportingSwitch", type = MeterReportingSwitch.class),
             @XmlElement(name = "HttpSwitch", type = HttpSwitch.class),
             @XmlElement(name = "MockSwitch", type = MockSwitch.class),
             @XmlElement(name = "ModbusSwitch", type = ModbusSwitch.class),
@@ -74,6 +78,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
     private transient List<StartingCurrentSwitchListener> startingCurrentSwitchListeners = new ArrayList<>();
     private transient GuardedTimerTask powerUpdateTimerTask;
+    private transient NotificationHandler notificationHandler;
 
 
     @Override
@@ -91,6 +96,19 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
 
     public void setMeter(Meter meter) {
         this.meter = meter;
+    }
+
+    @Override
+    public void setNotificationHandler(NotificationHandler notificationHandler) {
+        this.notificationHandler = notificationHandler;
+        if(control instanceof NotificationProvider && notificationHandler != null) {
+            this.notificationHandler.setRequestedNotifications(((NotificationProvider) control).getNotifications());
+        }
+    }
+
+    @Override
+    public Notifications getNotifications() {
+        return control instanceof NotificationProvider ? ((NotificationProvider) control).getNotifications() : null;
     }
 
     public void setTimeframeIntervalHandler(TimeframeIntervalHandler timeframeIntervalHandler) {
@@ -193,20 +211,28 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
     @Override
     public boolean on(LocalDateTime now, boolean switchOn) {
         logger.debug("{}: Setting switch state to {}", applianceId, (switchOn ? "on" : "off"));
-        on = switchOn;
         if (switchOn) {
             // don't switch off appliance - otherwise it cannot be operated
             applianceOn(now,true);
             switchOnTime = now;
             startingCurrentDetected = false;
         }
+        if(this.notificationHandler != null && switchOn != on) {
+            this.notificationHandler.sendNotification(switchOn ? NotificationType.CONTROL_ON : NotificationType.CONTROL_OFF);
+        }
         updateControlStateChangedListeners(now, switchOn);
+        on = switchOn;
         return on;
     }
 
     private boolean applianceOn(LocalDateTime now, boolean switchOn) {
         logger.debug("{}: Setting wrapped appliance switch to {}", applianceId, (switchOn ? "on" : "off"));
         return control.on(now, switchOn);
+    }
+
+    @Override
+    public boolean isControllable() {
+        return true;
     }
 
     @Override
@@ -307,7 +333,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
             on = true;
             switchOnTime = now;
             Integer runtime = timeframeIntervalHandler.suggestRuntime();
-            timeframeIntervalHandler.setRuntimeDemand(now, runtime, false);
+            timeframeIntervalHandler.setRuntimeDemand(now, runtime, null, false);
             updateControlStateChangedListeners(now, on);
         }
     }

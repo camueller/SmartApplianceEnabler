@@ -5,5 +5,5 @@ import {SettingsPage} from './page/settings/settings.page';
 fixture('Settings').page(baseUrl());
 
 test('Modbus', async t => {
-  await SettingsPage.addModbus(t, settings.modbusSettings[0]);
+  await SettingsPage.createAndAssertSettings(t, settings);
 });

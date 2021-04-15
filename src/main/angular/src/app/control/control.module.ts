@@ -20,6 +20,8 @@ import {ControlService} from './control-service';
 import {ControlResolver} from './control-resolver.service';
 import {ControlDefaultsResolver} from './control-defaults-resolver.service';
 import {HttpLoaderFactory} from '../shared/http-loader-factory';
+import {NotificationModule} from '../notification/notification.module';
+import { ControlMeterreportingComponent } from './meterreporting/control-meterreporting.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +30,7 @@ import {HttpLoaderFactory} from '../shared/http-loader-factory';
     ControlEvchargerHttpComponent,
     ControlEvchargerModbusComponent,
     ControlHttpComponent,
+    ControlMeterreportingComponent,
     ControlModbusComponent,
     ControlStartingcurrentComponent,
     ControlSwitchComponent,
@@ -39,6 +42,7 @@ import {HttpLoaderFactory} from '../shared/http-loader-factory';
     HttpModule,
     HttpClientModule,
     ModbusModule,
+    NotificationModule,
     ReactiveFormsModule,
     TranslateModule.forRoot({
       loader: {
@@ -46,7 +50,7 @@ import {HttpLoaderFactory} from '../shared/http-loader-factory';
         useFactory: HttpLoaderFactory,
         deps: [HttpClient]
       }
-    })
+    }),
   ],
   providers: [
     ControlService,

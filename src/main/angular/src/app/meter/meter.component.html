@@ -27,6 +27,7 @@
         </mat-select>
       </mat-form-field>
     </div>
+    <app-help [helpfile]="'Meter'"></app-help>
   </div>
   <app-meter-s0 *ngIf="isS0ElectricityMeter"
                 [s0ElectricityMeter]="meter.s0ElectricityMeter"
@@ -37,12 +38,18 @@
                     [meterDefaults]="meterDefaults"
                     [settingsDefaults]="settingsDefaults"
                     [modbusSettings]="settings.modbusSettings"
+                    [isEvCharger]="isEvCharger"
                     [applianceId]="applianceId"
   ></app-meter-modbus>
   <app-meter-http *ngIf="isHttpElectricityMeter"
                   [httpElectricityMeter]="meter.httpElectricityMeter"
                   [meterDefaults]="meterDefaults"
+                  [isEvCharger]="isEvCharger"
   ></app-meter-http>
+  <app-notification [types]="notficationTypes"
+                    [notifications]="meter.notifications"
+                    [configured]="isNotifcationEnabled"
+  ></app-notification>
 
   <div class="sae__mandatory_fields_hint">{{'dialog.mandatoryfields'|translate}}</div>
   <button mat-raised-button type="submit" color="primary" [disabled]="form.pristine||form.invalid">{{'button.save' | translate}}</button>

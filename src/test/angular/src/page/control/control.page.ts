@@ -1,13 +1,9 @@
 import {
-  assertCheckbox,
-  assertSelect,
+  assertSelectOption,
   clickButton,
-  selectOptionByAttribute,
-  selectorCheckboxByFormControlName,
-  selectorCheckboxCheckedByFormControlName,
+  selectOption,
   selectorSelectByFormControlName,
-  selectorSelectedByFormControlName,
-  setCheckboxEnabled
+  selectorSelectedByFormControlName
 } from '../../shared/form';
 import {simpleControlType} from '../../../../../main/angular/src/app/shared/form-util';
 
@@ -16,17 +12,10 @@ export class ControlPage {
   private static SAVE_BUTTON_SELECTOR = 'button[type="submit"]';
 
   public static async setType(t: TestController, controlType: string) {
-    await selectOptionByAttribute(t, selectorSelectByFormControlName('controlType'), simpleControlType(controlType));
+    await selectOption(t, selectorSelectByFormControlName('controlType'), simpleControlType(controlType));
   }
   public static async assertType(t: TestController, controlType: string) {
-    await assertSelect(t, selectorSelectedByFormControlName('controlType'), controlType);
-  }
-
-  public static async setStartingCurrentDetection(t: TestController, startingCurrentDetection: boolean) {
-    await setCheckboxEnabled(t, selectorCheckboxByFormControlName('startingCurrentDetection'), startingCurrentDetection);
-  }
-  public static async assertStartingCurrentDetection(t: TestController, startingCurrentDetection: boolean) {
-    await assertCheckbox(t, selectorCheckboxCheckedByFormControlName('startingCurrentDetection'), startingCurrentDetection);
+    await assertSelectOption(t, selectorSelectedByFormControlName('controlType'), controlType);
   }
 
   public static async clickSave(t: TestController) {

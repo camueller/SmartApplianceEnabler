@@ -23,17 +23,21 @@ import {AlwaysOnSwitch} from './alwayson/always-on-switch';
 import {ModbusSwitch} from './modbus/modbus-switch';
 import {Switch} from './switch/switch';
 import {EvCharger} from './evcharger/ev-charger';
+import {Notifications} from '../notification/notifications';
+import {MeterReportingSwitch} from './meterreporting/meter-reporting-switch';
 
 export class Control {
   type: string;
   startingCurrentDetection?: boolean;
   startingCurrentSwitch?: StartingCurrentSwitch;
+  meterReportingSwitch?: MeterReportingSwitch;
   alwaysOnSwitch?: AlwaysOnSwitch;
   switch_?: Switch;
   modbusSwitch?: ModbusSwitch;
   mockSwitch?: MockSwitch;
   httpSwitch?: HttpSwitch;
   evCharger?: EvCharger;
+  notifications?: Notifications;
 
   public constructor(init?: Partial<Control>) {
     Object.assign(this, init);

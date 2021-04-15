@@ -7,27 +7,33 @@ export const modbusMeter_complete = new ModbusElectricityMeter({
   slaveAddress: '100',
   modbusReads: [
     new ModbusRead({
-      type: 'InputFloat',
-      address: '0x0C',
-      bytes: 2,
-      factorToValue: 10,
-      readValues: [
-        new ModbusReadValue({
-          name: MeterValueName.Power,
-          extractionRegex: ',.Power.:(\\d+)',
-        })
-      ]
-    }),
-    new ModbusRead({
-      type: 'InputDecimal',
-      address: '0x0A',
-      bytes: 4,
+      address: '0x0156',
+      type: 'Input',
+      valueType: 'Float',
+      words: 2,
       byteOrder: 'LittleEndian',
       factorToValue: 0.01,
       readValues: [
         new ModbusReadValue({
           name: MeterValueName.Energy,
           extractionRegex: ',.Energy.:(\\d+)',
+        })
+      ]
+    }),
+  ]
+});
+
+export const modbusMeter_pollInterval = new ModbusElectricityMeter({
+  pollInterval: 30,
+  slaveAddress: '100',
+  modbusReads: [
+    new ModbusRead({
+      type: 'Input',
+      valueType: 'Integer2Float',
+      address: '0x0A',
+      readValues: [
+        new ModbusReadValue({
+          name: MeterValueName.Power,
         })
       ]
     }),

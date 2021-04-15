@@ -2,9 +2,9 @@ import {MeterPage} from './meter.page';
 import {S0ElectricityMeter} from '../../../../../main/angular/src/app/meter/s0/s0-electricity-meter';
 import {
   assertInput,
-  assertSelect,
+  assertSelectOption,
   inputText,
-  selectOptionByAttribute,
+  selectOption,
   selectorInputByFormControlName,
   selectorSelectByFormControlName,
   selectorSelectedByFormControlName
@@ -17,14 +17,14 @@ export class S0MeterPage extends MeterPage {
     await S0MeterPage.setGpio(t, s0ElectricityMeter.gpio);
     await S0MeterPage.setPinPullResistance(t, s0ElectricityMeter.pinPullResistance);
     await S0MeterPage.setImpulsesPerKwh(t, s0ElectricityMeter.impulsesPerKwh);
-    await S0MeterPage.setMeasurementInterval(t, s0ElectricityMeter.measurementInterval);
+    await S0MeterPage.setMinPulseDuration(t, s0ElectricityMeter.minPulseDuration);
   }
   public static async assertS0ElectricityMeter(t: TestController, s0ElectricityMeter: S0ElectricityMeter) {
     await S0MeterPage.assertType(t, S0ElectricityMeter.TYPE);
     await S0MeterPage.assertGpio(t, s0ElectricityMeter.gpio);
     await S0MeterPage.assertPinPullResistance(t, s0ElectricityMeter.pinPullResistance);
     await S0MeterPage.assertImpulsesPerKwh(t, s0ElectricityMeter.impulsesPerKwh);
-    await S0MeterPage.assertMeasurementInterval(t, s0ElectricityMeter.measurementInterval);
+    await S0MeterPage.assertMinPulseDuration(t, s0ElectricityMeter.minPulseDuration);
   }
 
   public static async setGpio(t: TestController, gpio: number) {
@@ -35,10 +35,10 @@ export class S0MeterPage extends MeterPage {
   }
 
   public static async setPinPullResistance(t: TestController, pinPullResistance: string) {
-    await selectOptionByAttribute(t, selectorSelectByFormControlName('pinPullResistance'), pinPullResistance);
+    await selectOption(t, selectorSelectByFormControlName('pinPullResistance'), pinPullResistance);
   }
   public static async assertPinPullResistance(t: TestController, pinPullResistance: string) {
-    await assertSelect(t, selectorSelectedByFormControlName('pinPullResistance'), pinPullResistance,
+    await assertSelectOption(t, selectorSelectedByFormControlName('pinPullResistance'), pinPullResistance,
       'MeterS0Component.pinPullResistance.');
   }
 
@@ -49,10 +49,10 @@ export class S0MeterPage extends MeterPage {
     await assertInput(t, selectorInputByFormControlName('impulsesPerKwh'), impulsesPerKwh && impulsesPerKwh.toString());
   }
 
-  public static async setMeasurementInterval(t: TestController, measurementInterval: number) {
-    await inputText(t, selectorInputByFormControlName('measurementInterval'), measurementInterval && measurementInterval.toString());
+  public static async setMinPulseDuration(t: TestController, minPulseDuration: number) {
+    await inputText(t, selectorInputByFormControlName('minPulseDuration'), minPulseDuration && minPulseDuration.toString());
   }
-  public static async assertMeasurementInterval(t: TestController, measurementInterval: number) {
-    await assertInput(t, selectorInputByFormControlName('measurementInterval'), measurementInterval && measurementInterval.toString());
+  public static async assertMinPulseDuration(t: TestController, minPulseDuration: number) {
+    await assertInput(t, selectorInputByFormControlName('minPulseDuration'), minPulseDuration && minPulseDuration.toString());
   }
 }

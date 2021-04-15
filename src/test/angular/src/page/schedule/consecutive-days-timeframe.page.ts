@@ -1,9 +1,9 @@
 import {ConsecutiveDaysTimeframe} from '../../../../../main/angular/src/app/schedule/timeframe/consecutivedays/consecutive-days-timeframe';
 import {
   assertInput,
-  assertSelect,
+  assertSelectOption,
   inputText,
-  selectOptionByAttribute,
+  selectOption,
   selectorInputByFormControlName,
   selectorSelectByFormControlName, selectorSelectedByFormControlName
 } from '../../shared/form';
@@ -30,10 +30,10 @@ export class ConsecutiveDaysTimeframePage {
   }
 
   public static async setStartDayOfWeek(t: TestController, startDayOfWeek: number, selectorPrefix: string) {
-    await selectOptionByAttribute(t, selectorSelectByFormControlName('startDayOfWeek', selectorPrefix), startDayOfWeek.toString());
+    await selectOption(t, selectorSelectByFormControlName('startDayOfWeek', selectorPrefix), startDayOfWeek.toString());
   }
   public static async assertStartDayOfWeek(t: TestController, startDayOfWeek: number, selectorPrefix: string) {
-    await assertSelect(t, selectorSelectedByFormControlName('startDayOfWeek', selectorPrefix),
+    await assertSelectOption(t, selectorSelectedByFormControlName('startDayOfWeek', selectorPrefix),
       ConsecutiveDaysTimeframePage.toDayOfWeekString(startDayOfWeek));
   }
 
@@ -46,10 +46,10 @@ export class ConsecutiveDaysTimeframePage {
   }
 
   public static async setEndDayOfWeek(t: TestController, endDayOfWeek: number, selectorPrefix: string) {
-    await selectOptionByAttribute(t, selectorSelectByFormControlName('endDayOfWeek', selectorPrefix), endDayOfWeek.toString());
+    await selectOption(t, selectorSelectByFormControlName('endDayOfWeek', selectorPrefix), endDayOfWeek.toString());
   }
   public static async assertEndDayOfWeek(t: TestController, endDayOfWeek: number, selectorPrefix: string) {
-    await assertSelect(t, selectorSelectedByFormControlName('endDayOfWeek', selectorPrefix),
+    await assertSelectOption(t, selectorSelectedByFormControlName('endDayOfWeek', selectorPrefix),
       ConsecutiveDaysTimeframePage.toDayOfWeekString(endDayOfWeek));
   }
 

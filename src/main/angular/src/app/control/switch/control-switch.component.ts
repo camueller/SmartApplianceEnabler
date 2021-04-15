@@ -3,7 +3,6 @@ import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angu
 import {Switch} from './switch';
 import {ErrorMessages} from '../../shared/error-messages';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
-import {ControlService} from '../control-service';
 import {TranslateService} from '@ngx-translate/core';
 import {ControlDefaults} from '../control-defaults';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
@@ -25,8 +24,6 @@ export class ControlSwitchComponent implements OnChanges, OnInit {
   switch_: Switch;
   @Input()
   controlDefaults: ControlDefaults;
-  @Input()
-  applianceId: string;
   form: FormGroup;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};
@@ -35,7 +32,6 @@ export class ControlSwitchComponent implements OnChanges, OnInit {
 
   constructor(private logger: Logger,
               private parent: FormGroupDirective,
-              private controlService: ControlService,
               private translate: TranslateService
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);

@@ -1,11 +1,13 @@
+import {S0ElectricityMeterDefaults} from './s0/s0-electricity-meter-defaults';
+import {HttpElectricityMeterDefaults} from './http/http-electricity-meter-defaults';
+import {ModbusElectricityMeterDefaults} from './modbus/modbus-electricity-meter-defaults';
+import {ModbusReadDefaults} from '../modbus/read/modbus-read-defaults';
+
 export class MeterDefaults {
-  s0ElectricityMeter_measurementInterval: number;
-  modbusElectricityMeter_pollInterval: number;
-  modbusElectricityMeter_measurementInterval: number;
-  modbusRead_bytesForRegisterType: { [type: string]: number };
-  httpElectricityMeter_factorToWatt: number;
-  httpElectricityMeter_measurementInterval: number;
-  httpElectricityMeter_pollInterval: number;
+  s0ElectricityMeterDefaults: S0ElectricityMeterDefaults;
+  httpElectricityMeterDefaults: HttpElectricityMeterDefaults;
+  modbusElectricityMeterDefaults: ModbusElectricityMeterDefaults;
+  modbusReadDefaults: ModbusReadDefaults;
 
   public constructor(init?: Partial<MeterDefaults>) {
     Object.assign(this, init);

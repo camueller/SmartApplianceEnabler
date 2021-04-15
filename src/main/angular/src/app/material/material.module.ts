@@ -16,12 +16,18 @@ import {MessageboxComponent} from './messagebox/messagebox.component';
 import {FlexModule} from '@angular/flex-layout';
 import { TimepickerComponent } from './timepicker/timepicker.component';
 import {ReactiveFormsModule} from '@angular/forms';
+import {HelpComponent} from './help/help.component';
+import {SafeurlPipe} from './safe-url.pipe';
+import { FilenameInputComponent } from './filenameinput/filename-input.component';
 
 
 @NgModule({
   declarations: [
+    HelpComponent,
     MessageboxComponent,
+    SafeurlPipe,
     TimepickerComponent,
+    FilenameInputComponent,
   ],
   imports: [
     CommonModule,
@@ -41,6 +47,7 @@ import {ReactiveFormsModule} from '@angular/forms';
     ReactiveFormsModule,
   ],
   exports: [
+    HelpComponent,
     MatButtonModule,
     MatCardModule,
     MatCheckboxModule,
@@ -55,6 +62,7 @@ import {ReactiveFormsModule} from '@angular/forms';
     MatTooltipModule,
     MessageboxComponent,
     TimepickerComponent,
+    FilenameInputComponent,
   ],
   providers: [
     {provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {floatLabel: 'always'}},

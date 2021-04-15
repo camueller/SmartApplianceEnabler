@@ -1,5 +1,5 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
-import {SettingsService} from '../../settings/settings-service';
+import {AvailableVersion, VersionService} from '../../shared/version-service';
 
 @Component({
   selector: 'app-header',
@@ -11,13 +11,35 @@ export class HeaderComponent implements OnInit {
   @Output()
   public sidenavToggle = new EventEmitter();
   version: string;
+  availableVersions: AvailableVersion[];
 
   constructor(
-    private settingsService: SettingsService
+    private versionService: VersionService
   ) { }
 
   ngOnInit() {
-    this.settingsService.getInfo().subscribe(info => this.version = info.version);
+    this.versionService.getCurrentVersion().subscribe(info => {
+      this.version = info.version;
+      this.versionService.getAvailableVersion().subscribe(availableVersions => {
+        this.availableVersions = availableVersions;
+      });
+    });
+  }
+
+  public get betaUpdateVersion() {
+    return this.availableVersions && this.availableVersions.find(version => version.prerelease)?.version;
+  }
+
+  public get stableUpdateVersion() {
+    return this.availableVersions && this.availableVersions.find(version => !version.prerelease)?.version;
+  }
+
+  public get betaUpdateUrl() {
+    return `https://github.com/camueller/SmartApplianceEnabler/releases/tag/${this.betaUpdateVersion}`;
+  }
+
+  public get stableUpdateUrl() {
+    return `https://github.com/camueller/SmartApplianceEnabler/releases/tag/${this.stableUpdateVersion}`;
   }
 
   public onToggleSidenav = () => {

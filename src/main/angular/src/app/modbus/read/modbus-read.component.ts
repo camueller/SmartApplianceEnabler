@@ -23,6 +23,9 @@ import {FormHandler} from '../../shared/form-handler';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {Logger} from '../../log/logger';
 import {MeterDefaults} from '../../meter/meter-defaults';
+import {ValueNameChangedEvent} from '../../meter/value-name-changed-event';
+import {ValueType} from './value-type';
+import {ReadRegisterType} from './read-register-type';
 
 @Component({
   selector: 'app-modbus-read',
@@ -37,8 +40,6 @@ export class ModbusReadComponent implements OnChanges, OnInit {
   @Input()
   valueNames: string[];
   @Input()
-  readRegisterTypes: string[];
-  @Input()
   meterDefaults: MeterDefaults;
   @Input()
   maxValues: number;
@@ -51,9 +52,12 @@ export class ModbusReadComponent implements OnChanges, OnInit {
   translationKeys: string[];
   @Output()
   remove = new EventEmitter<any>();
+  @Output()
+  nameChanged = new EventEmitter<any>();
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
+  translatedStrings: { [key: string]: string } = {};
 
   constructor(private logger: Logger,
               private translate: TranslateService,
@@ -85,30 +89,87 @@ export class ModbusReadComponent implements OnChanges, OnInit {
       new ErrorMessage('address', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('address', ValidatorType.pattern),
       new ErrorMessage('type', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
-      new ErrorMessage('bytes', ValidatorType.pattern),
+      new ErrorMessage('valueType', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
+      new ErrorMessage('words', ValidatorType.pattern),
       new ErrorMessage('factorToValue', ValidatorType.pattern),
     ], this.translate);
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
     });
+    this.translate.get([
+      ...this.registerTypes.map(regType => this.toRegisterTypeKey(regType)),
+      ...this.valueTypes.map(valueType => this.toValueTypeKey(valueType)),
+      ...this.byteOrders.map(byteOrder => this.toByteOrderKey(byteOrder))
+    ]).subscribe(translatedStrings => {
+      this.translatedStrings = translatedStrings;
+    });
   }
 
-  get type(): string {
-    const typeControl = this.form.controls.type;
-    return (typeControl ? typeControl.value : '');
+  onNameChanged(index: number, event: ValueNameChangedEvent) {
+    event.valueIndex = index;
+    this.nameChanged.emit(event);
   }
 
-  get bytesPlaceholder() {
-    return this.meterDefaults.modbusRead_bytesForRegisterType[this.form.controls.type.value];
+  get registerTypes(): string[] {
+    return Object.values(ReadRegisterType);
+  }
+
+  toRegisterTypeKey(registerType: string): string {
+    return `ModbusReadComponent.type.${registerType}`;
+  }
+
+  public getTranslatedRegisterType(registerType: string) {
+    return this.translatedStrings[this.toRegisterTypeKey(registerType)];
+  }
+
+  get valueTypes(): string[] {
+    return Object.values(ValueType);
+  }
+
+  toValueTypeKey(valueType: string): string {
+    return `ModbusReadComponent.valueType.${valueType}`;
+  }
+
+  public getTranslatedValueType(valueType: string) {
+    return this.translatedStrings[this.toValueTypeKey(valueType)];
+  }
+
+  get isValueTypeDisplayed() {
+    return this.form.controls.type.value === ReadRegisterType.Input || this.form.controls.type.value === ReadRegisterType.Holding;
+  }
+
+  get wordsPlaceholder() {
+    const key = `(${this.form.controls.type.value},${this.form.controls.valueType.value ? this.form.controls.valueType.value : null})`;
+    return this.meterDefaults.modbusReadDefaults.wordsForRegisterType[key];
+  }
+
+  get isWordsDisplayed() {
+    return this.form.controls.type.value === ReadRegisterType.Input || this.form.controls.type.value === ReadRegisterType.Holding;
+  }
+
+  get byteOrders(): string[] {
+    return this.meterDefaults.modbusReadDefaults.byteOrders;
+  }
+
+  public getTranslatedByteOrder(byteOrder: string) {
+    return this.translatedStrings[this.toByteOrderKey(byteOrder)];
+  }
+
+  toByteOrderKey(valueType: string): string {
+    return `ModbusReadComponent.byteOrder.${valueType}`;
   }
 
   get isByteOrderDisplayed() {
-    return this.form.controls.type.value === 'InputDecimal' && (this.form.controls.bytes.value > 1 || this.bytesPlaceholder > 1);
+    return (this.form.controls.words.value > 1 || this.wordsPlaceholder > 1) && this.form.controls.valueType.value !== ValueType.String;
   }
 
-  // TODO move to config
-  get byteOrders(): string[] {
-    return ['BigEndian', 'LittleEndian'];
+  get isFactorToValueDisplayed() {
+    return (this.form.controls.type.value === ReadRegisterType.Input || this.form.controls.type.value === ReadRegisterType.Holding)
+      && this.form.controls.valueType.value !== ValueType.String;
+  }
+
+  get isRemoveModbusPossible() {
+    return !this.maxValues || this.maxValues > 1;
   }
 
   removeModbusRead() {
@@ -130,9 +191,17 @@ export class ModbusReadComponent implements OnChanges, OnInit {
     this.changeDetectorRef.detectChanges();
   }
 
+  get isRemoveValuePossible() {
+    return !this.maxValues || this.maxValues > 1;
+  }
+
   removeValue(index: number) {
     this.modbusRead.readValues.splice(index, 1);
     this.modbusReadValuesFormArray.removeAt(index);
+
+    const event: ValueNameChangedEvent = {valueIndex: index};
+    this.nameChanged.emit(event);
+
     this.form.markAsDirty();
   }
 
@@ -155,8 +224,11 @@ export class ModbusReadComponent implements OnChanges, OnInit {
     this.formHandler.addFormControl(this.form, 'type',
       this.modbusRead && this.modbusRead.type,
       [Validators.required]);
-    this.formHandler.addFormControl(this.form, 'bytes',
-      this.modbusRead && this.modbusRead.bytes,
+    this.formHandler.addFormControl(this.form, 'valueType',
+      this.modbusRead && this.modbusRead.valueType,
+      [Validators.required]);
+    this.formHandler.addFormControl(this.form, 'words',
+      this.modbusRead && this.modbusRead.words,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
     this.formHandler.addFormControl(this.form, 'byteOrder',
       this.modbusRead && this.modbusRead.byteOrder || 'BigEndian');
@@ -168,11 +240,12 @@ export class ModbusReadComponent implements OnChanges, OnInit {
   }
 
   updateModelFromForm(): ModbusRead | undefined {
-    const address = this.form.controls.address.value;
-    const type = this.form.controls.type.value;
-    const bytes = this.form.controls.bytes.value;
-    const byteOrder = this.form.controls.byteOrder.value;
-    const factorToValue = this.form.controls.factorToValue.value;
+    const address = getValidString(this.form.controls.address.value);
+    const type = getValidString(this.form.controls.type.value);
+    const valueType = getValidString(this.form.controls.valueType.value);
+    const words = getValidInt(this.form.controls.words.value);
+    const byteOrder = this.isByteOrderDisplayed ? getValidString(this.form.controls.byteOrder.value) : undefined;
+    const factorToValue = getValidFloat(this.form.controls.factorToValue.value);
     const modbusReadValues = [];
     this.modbusReadValueComps.forEach(modbusReadValueComp => {
       const modbusReadValue = modbusReadValueComp.updateModelFromForm();
@@ -181,15 +254,16 @@ export class ModbusReadComponent implements OnChanges, OnInit {
       }
     });
 
-    if (!(address || type || bytes || byteOrder || factorToValue || modbusReadValues.length > 0)) {
+    if (!(address || type || valueType || words || byteOrder || factorToValue || modbusReadValues.length > 0)) {
       return undefined;
     }
 
-    this.modbusRead.address = getValidString(address);
-    this.modbusRead.type = getValidString(type);
-    this.modbusRead.bytes = getValidInt(bytes);
-    this.modbusRead.byteOrder = this.isByteOrderDisplayed ? getValidString(byteOrder) : undefined;
-    this.modbusRead.factorToValue = getValidFloat(factorToValue);
+    this.modbusRead.address = address;
+    this.modbusRead.type = type;
+    this.modbusRead.valueType = valueType;
+    this.modbusRead.words = words;
+    this.modbusRead.byteOrder = byteOrder;
+    this.modbusRead.factorToValue = factorToValue;
     return this.modbusRead;
   }
 }

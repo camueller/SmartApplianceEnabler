@@ -10,6 +10,9 @@
     "curly": true,
     "eofline": true,
     "forin": true,
+    "deprecation": {
+      "severity": "warning"
+    },
     "import-blacklist": [
       true
     ],
@@ -65,7 +68,6 @@
     "no-trailing-whitespace": true,
     "no-unnecessary-initializer": true,
     "no-unused-expression": true,
-    "no-use-before-declare": true,
     "no-var-keyword": true,
     "object-literal-sort-keys": false,
     "one-line": [

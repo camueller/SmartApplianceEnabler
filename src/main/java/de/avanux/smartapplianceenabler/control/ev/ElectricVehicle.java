@@ -123,10 +123,24 @@ public class ElectricVehicle implements ApplianceIdConsumer {
         this.socScript = socScript;
     }
 
-    public Float getStateOfCharge() {
+    public Double getStateOfCharge() {
         if(socScript != null) {
             socScript.setApplianceId(this.applianceId);
             return socScript.getStateOfCharge();
+        }
+        return null;
+    }
+
+    public Integer getUpdateAfterIncrease() {
+        if(socScript != null) {
+            return socScript.getUpdateAfterIncrease();
+        }
+        return null;
+    }
+
+    public Integer getUpdateAfterSeconds() {
+        if(socScript != null) {
+            return socScript.getUpdateAfterSeconds();
         }
         return null;
     }

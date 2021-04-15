@@ -29,13 +29,13 @@ import org.slf4j.LoggerFactory;
 public class WriteHoldingRegisterExecutorImpl extends BaseTransactionExecutor
         implements ModbusWriteTransactionExecutor<Integer>, WriteHoldingRegisterExecutor {
 
-    private Logger logger = LoggerFactory.getLogger(ReadInputRegisterExecutor.class);
+    private Logger logger = LoggerFactory.getLogger(WriteHoldingRegisterExecutorImpl.class);
     private Integer value;
     private Integer result;
     private Double factorToValue;
 
     public WriteHoldingRegisterExecutorImpl(String address, Double factorToValue) {
-        super(address, 1);
+        super(address, 1, null);
         this.factorToValue = factorToValue;
     }
 
@@ -51,7 +51,9 @@ public class WriteHoldingRegisterExecutorImpl extends BaseTransactionExecutor
 
     @Override
     public void execute(TCPMasterConnection con, int slaveAddress) throws ModbusException {
-        Integer factoredValue = Double.valueOf(value * getInitializedFactorToValue()).intValue();
+        logger.debug("{}: Write holding register={} value={}", getApplianceId(), getAddress(), this.value);
+        Integer factoredValue = factorToValue != null ? Double.valueOf(this.value * this.factorToValue).intValue() : this.value;
+        logger.debug("{}: Write holding register={} factoredValue={}", getApplianceId(), getAddress(), factoredValue);
         SimpleRegister register = new SimpleRegister(factoredValue);
 
         WriteSingleRegisterRequest req = new WriteSingleRegisterRequest(getAddress(), register);
@@ -64,19 +66,11 @@ public class WriteHoldingRegisterExecutorImpl extends BaseTransactionExecutor
         WriteSingleRegisterResponse res = (WriteSingleRegisterResponse) trans.getResponse();
         if(res != null) {
             this.result = res.getRegisterValue();
-            logger.debug("{}: Write holding register={} value={} confirmedValue={}", getApplianceId(), getAddress(),
-                    factoredValue, this.result);
+            logger.debug("{}: Write holding register={} confirmedValue={}", getApplianceId(), getAddress(), this.result);
         }
         else {
             logger.error("{}: No response received: register={} value={} ", getApplianceId(), getAddress(),
                     factoredValue);
         }
-    }
-
-    private Double getInitializedFactorToValue() {
-        if(this.factorToValue == null) {
-            return 1.0;
-        }
-        return this.factorToValue;
     }
 }

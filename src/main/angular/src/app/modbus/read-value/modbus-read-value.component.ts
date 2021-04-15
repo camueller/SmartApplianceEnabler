@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {FormGroup, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {ModbusReadValue} from './modbus-read-value';
@@ -8,6 +8,7 @@ import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/er
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
 import {getValidString} from '../../shared/form-util';
 import {Logger} from '../../log/logger';
+import {ValueNameChangedEvent} from '../../meter/value-name-changed-event';
 
 @Component({
   selector: 'app-modbus-read-value',
@@ -26,10 +27,12 @@ export class ModbusReadValueComponent implements OnChanges, OnInit {
   translationPrefix = '';
   @Input()
   translationKeys: string[];
-  translatedStrings: string[];
+  translatedStrings: { [key: string]: string } = {};
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
+  @Output()
+  nameChanged = new EventEmitter<any>();
 
   constructor(private logger: Logger,
               private translate: TranslateService
@@ -53,6 +56,9 @@ export class ModbusReadValueComponent implements OnChanges, OnInit {
   }
 
   ngOnInit() {
+    if (this.form && !this.form.controls.name.value && this.valueNames.length === 1) {
+      this.formHandler.setFormControlValue(this.form, 'name', this.valueNames[0]);
+    }
     this.errorMessages = new ErrorMessages('ModbusReadValueComponent.error.', [
       new ErrorMessage('name', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('factorToValue', ValidatorType.pattern),
@@ -70,24 +76,34 @@ export class ModbusReadValueComponent implements OnChanges, OnInit {
     return this.translatedStrings[textKey];
   }
 
+  onNameChanged(newName?: string) {
+    if (newName) {
+      const event: ValueNameChangedEvent = {name: newName};
+      this.nameChanged.emit(event);
+    }
+  }
+
   expandParentForm() {
     this.formHandler.addFormControl(this.form, 'name',
       this.modbusReadValue && this.modbusReadValue.name,
       [Validators.required]);
+    if (this.modbusReadValue) {
+      this.onNameChanged(this.modbusReadValue.name);
+    }
     this.formHandler.addFormControl(this.form, 'extractionRegex',
       this.modbusReadValue && this.modbusReadValue.extractionRegex);
   }
 
   updateModelFromForm(): ModbusReadValue | undefined {
-    const name = this.form.controls.name.value;
-    const extractionRegex = this.form.controls.extractionRegex.value;
+    const name = getValidString(this.form.controls.name.value);
+    const extractionRegex = getValidString(this.form.controls.extractionRegex.value);
 
     if (!(name || extractionRegex)) {
       return undefined;
     }
 
-    this.modbusReadValue.name = getValidString(name);
-    this.modbusReadValue.extractionRegex = getValidString(extractionRegex);
+    this.modbusReadValue.name = name;
+    this.modbusReadValue.extractionRegex = extractionRegex;
     return this.modbusReadValue;
   }
 }

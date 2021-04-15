@@ -21,9 +21,10 @@ package de.avanux.smartapplianceenabler.webservice;
 import java.util.List;
 
 public class Settings {
-    boolean holidaysEnabled;
-    String holidaysUrl;
-    List<ModbusSettings> modbusSettings;
+    private boolean holidaysEnabled;
+    private String holidaysUrl;
+    private List<ModbusSettings> modbusSettings;
+    private String notificationCommand;
 
     public boolean isHolidaysEnabled() {
         return holidaysEnabled;
@@ -49,12 +50,21 @@ public class Settings {
         this.modbusSettings = modbusSettings;
     }
 
+    public String getNotificationCommand() {
+        return notificationCommand;
+    }
+
+    public void setNotificationCommand(String notificationCommand) {
+        this.notificationCommand = notificationCommand;
+    }
+
     @Override
     public String toString() {
         return "Settings{" +
                 "holidaysEnabled=" + holidaysEnabled +
-                ", holidaysUrl='" + holidaysUrl + '\'' +
+                ", holidaysUrl=" + holidaysUrl +
                 ", modbusSettings=" + modbusSettings +
+                ", notificationCommand=" + notificationCommand +
                 '}';
     }
 }

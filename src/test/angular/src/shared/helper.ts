@@ -29,6 +29,7 @@ import {Selector} from 'testcafe';
 import {ElectricVehicle} from '../../../../main/angular/src/app/control/evcharger/electric-vehicle/electric-vehicle';
 import {Schedule} from '../../../../main/angular/src/app/schedule/schedule';
 import {SchedulesPage} from '../page/schedule/schedules.page';
+import {NotificationPage} from '../page/notification/notification.page';
 
 export function isDebug() {
   return !!process.env.DEBUG;
@@ -102,6 +103,7 @@ export async function createMeter(t: TestController, applianceId: string, meter:
   if (meter.type === ModbusElectricityMeter.TYPE) {
     await ModbusMeterPage.setModbusElectricityMeter(t, meter.modbusElectricityMeter);
   }
+  await NotificationPage.setNotifications(t, meter.notifications);
   await MeterPage.clickSave(t);
 }
 export async function assertMeter(t: TestController, applianceId: string, meter: Meter) {
@@ -115,13 +117,11 @@ export async function assertMeter(t: TestController, applianceId: string, meter:
   if (meter.type === ModbusElectricityMeter.TYPE) {
     await ModbusMeterPage.assertModbusElectricityMeter(t, meter.modbusElectricityMeter);
   }
+  await NotificationPage.assertNotifications(t, meter.notifications);
 }
 
 export async function createControl(t: TestController, applianceId: string, control: Control, controlTemplate?: string) {
   await SideMenu.clickControl(t, applianceId);
-  if (control.type !== AlwaysOnSwitch.TYPE && control.type !== EvCharger.TYPE) {
-    await ControlPage.setStartingCurrentDetection(t, control.startingCurrentDetection);
-  }
   if (control.type === AlwaysOnSwitch.TYPE) {
     await AlwaysOnSwitchPage.setAlwaysOnSwitch(t, control.alwaysOnSwitch);
   }
@@ -139,15 +139,13 @@ export async function createControl(t: TestController, applianceId: string, cont
     await EvchargerPage.setElectricVehicles(t, applianceId, control.evCharger.vehicles);
   }
   if (control.startingCurrentDetection) {
-    await StartingCurrentSwitchPage.setStartingCurrentSwitch(t, control.startingCurrentSwitch);
+    await StartingCurrentSwitchPage.setStartingCurrentSwitch(t, control.startingCurrentDetection, control.startingCurrentSwitch);
   }
+  await NotificationPage.setNotifications(t, control.notifications);
   await ControlPage.clickSave(t);
 }
 export async function assertControl(t: TestController, applianceId: string, control: Control) {
   await SideMenu.clickControl(t, applianceId);
-  if (control.type !== AlwaysOnSwitch.TYPE && control.type !== EvCharger.TYPE) {
-    await ControlPage.assertStartingCurrentDetection(t, control.startingCurrentDetection);
-  }
   if (control.type === AlwaysOnSwitch.TYPE) {
     await AlwaysOnSwitchPage.assertAlwaysOnSwitch(t, control.alwaysOnSwitch);
   }
@@ -165,8 +163,9 @@ export async function assertControl(t: TestController, applianceId: string, cont
     await EvchargerPage.assertElectricVehicles(t, applianceId, control.evCharger.vehicles);
   }
   if (control.startingCurrentDetection) {
-    await StartingCurrentSwitchPage.assertStartingCurrentSwitch(t, control.startingCurrentSwitch);
+    await StartingCurrentSwitchPage.assertStartingCurrentSwitch(t, control.startingCurrentDetection, control.startingCurrentSwitch);
   }
+  await NotificationPage.assertNotifications(t, control.notifications);
 }
 
 export async function createSchedules(t: TestController, applianceId: string, schedules: Schedule[]) {

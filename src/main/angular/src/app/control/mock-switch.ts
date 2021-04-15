@@ -23,4 +23,8 @@ export class MockSwitch {
   }
 
   '@class' = MockSwitch.TYPE;
+
+  public constructor(init?: Partial<MockSwitch>) {
+    Object.assign(this, init);
+  }
 }

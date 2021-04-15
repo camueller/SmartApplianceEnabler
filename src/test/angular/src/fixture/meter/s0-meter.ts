@@ -4,5 +4,5 @@ export const s0Meter = new S0ElectricityMeter({
   gpio: 1,
   pinPullResistance: 'PULL_DOWN',
   impulsesPerKwh: 1000,
-  measurementInterval: 60
+  minPulseDuration: 25
 });

@@ -34,11 +34,15 @@ import de.avanux.smartapplianceenabler.meter.S0ElectricityMeterDefaults;
 import de.avanux.smartapplianceenabler.modbus.ModbusElectricityMeterDefaults;
 import de.avanux.smartapplianceenabler.modbus.ModbusReadDefaults;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
+import de.avanux.smartapplianceenabler.notification.Notification;
+import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.schedule.*;
 import de.avanux.smartapplianceenabler.semp.webservice.*;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+
+import de.avanux.smartapplianceenabler.util.FileHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -67,24 +71,17 @@ public class SaeController {
     private static final String CONTROLRECOMMENDATIONS_URL = BASE_URL + "/controlrecommendations";
     private static final String EV_URL = BASE_URL + "/ev";
     private static final String EVCHARGE_URL = BASE_URL + "/evcharge";
+    private static final String FILE_URL = BASE_URL + "/file";
     private static final String INFO_URL = BASE_URL + "/info";
+    private static final String TASMOTA_COMMAND_URL = "/cm";
     // only required for development if running via "ng serve"
     private static final String CROSS_ORIGIN_URL = "http://localhost:4200";
     private Logger logger = LoggerFactory.getLogger(SaeController.class);
     // the lock ensures that no data is changed or read while appliances are restarted
-    private Object lock = new Object();
+    private final Object lock = new Object();
 
     public SaeController() {
         logger.info("SAE controller created.");
-    }
-
-    private Appliance getAppliance(String applianceId) {
-        for (Appliance appliance : ApplianceManager.getInstance().getAppliances()) {
-            if (appliance.getId().equals(applianceId)) {
-                return appliance;
-            }
-        }
-        return null;
     }
 
     /**
@@ -195,6 +192,11 @@ public class SaeController {
                 for (DeviceInfo deviceInfo : device2EM.getDeviceInfo()) {
                     if (deviceInfo.getIdentification().getDeviceId().equals(applianceId)) {
                         ApplianceInfo applianceInfo = toApplianceInfo(deviceInfo);
+
+                        Appliance appliance = ApplianceManager.getInstance().getAppliance(applianceId);
+                        if(appliance != null && appliance.getNotification() != null) {
+                            applianceInfo.setNotificationSenderId(appliance.getNotification().getSenderId());
+                        }
                         logger.debug("{}: Returning ApplianceInfo {}", applianceId, applianceInfo);
                         return applianceInfo;
                     }
@@ -217,17 +219,27 @@ public class SaeController {
             try {
                 logger.debug("{}: Received request to set ApplianceInfo (create={}): {}", applianceId, create, applianceInfo);
                 LocalDateTime now = LocalDateTime.now();
+
+                Notification notification = null;
+                if(applianceInfo.getNotificationSenderId() != null) {
+                    notification = new Notification();
+                    notification.setSenderId(applianceInfo.getNotificationSenderId());
+                }
+
                 DeviceInfo deviceInfo = toDeviceInfo(applianceInfo);
                 if (create) {
                     Appliance appliance = new Appliance();
                     appliance.setId(applianceId);
+                    appliance.setNotification(notification);
                     ApplianceManager.getInstance().addAppliance(appliance, deviceInfo);
                 } else {
-                    Appliance appliance = getAppliance(applianceId);
+                    Appliance appliance = ApplianceManager.getInstance().getAppliance(applianceId);
                     if (appliance != null) {
                         deviceInfo.getCapabilities().setOptionalEnergy(appliance.canConsumeOptionalEnergy(now));
+                        appliance.setNotification(notification);
+                        ApplianceManager.getInstance().updateAppliance(appliance, deviceInfo);
                     }
-                    if (!ApplianceManager.getInstance().updateAppliance(deviceInfo)) {
+                    else {
                         logger.error("{}: Appliance not found.", applianceId);
                         response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                     }
@@ -270,7 +282,7 @@ public class SaeController {
         synchronized (lock) {
             try {
                 logger.debug("{}: Received request for control", applianceId);
-                Appliance appliance = getAppliance(applianceId);
+                Appliance appliance = ApplianceManager.getInstance().getAppliance(applianceId);
                 if (appliance != null) {
                     Control control = appliance.getControl();
                     logger.debug("{}: Returning control {}", applianceId, control);
@@ -325,12 +337,7 @@ public class SaeController {
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public MeterDefaults getMeterDefaults() {
         try {
-            MeterDefaults defaults = new MeterDefaults();
-            defaults.setS0ElectricityMeter(new S0ElectricityMeterDefaults());
-            defaults.setHttpElectricityMeter(new HttpElectricityMeterDefaults());
-            defaults.setModbusElectricityMeter(new ModbusElectricityMeterDefaults());
-            defaults.setModbusReadDefaults(new ModbusReadDefaults());
-            return defaults;
+            return new MeterDefaults();
         } catch (Throwable e) {
             logger.error("Error in " + getClass().getSimpleName(), e);
         }
@@ -343,7 +350,7 @@ public class SaeController {
         synchronized (lock) {
             try {
                 logger.debug("{}: Received request for meter", applianceId);
-                Appliance appliance = getAppliance(applianceId);
+                Appliance appliance = ApplianceManager.getInstance().getAppliance(applianceId);
                 if (appliance != null) {
                     Meter meter = appliance.getMeter();
                     logger.debug("{}: Returning meter {}", applianceId, meter);
@@ -400,7 +407,7 @@ public class SaeController {
         synchronized (lock) {
             try {
                 logger.debug("{}: Received request for schedules", applianceId);
-                Appliance appliance = getAppliance(applianceId);
+                Appliance appliance = ApplianceManager.getInstance().getAppliance(applianceId);
                 if (appliance != null) {
                     List<Schedule> schedules = appliance.getSchedules();
                     if (schedules == null) {
@@ -539,6 +546,49 @@ public class SaeController {
         return null;
     }
 
+    // Refer to https://tasmota.github.io/docs/Commands
+    @RequestMapping(value = TASMOTA_COMMAND_URL, method = RequestMethod.GET)
+    @CrossOrigin(origins = CROSS_ORIGIN_URL)
+    public void executeTasmotaCommand(HttpServletResponse response,
+                                   @RequestParam(value = "cmnd") String command) {
+        synchronized (lock) {
+            try {
+                logger.debug("Received Tasmota Web request {}", command);
+                String[] commandParts = command.split(" ");
+                if(commandParts.length < 3) {
+                    logger.error("Required Syntax is: ID F-xxxxxxxx-xxxxxxxxxxxx-xx RUNTIME ...");
+                }
+                if ("ID".equals(commandParts[0])) {
+                    String applianceId = commandParts[1];
+
+                    if ("RUNTIME".equals(commandParts[2])) {
+                        if(commandParts.length < 5) {
+                            logger.error("{}: Required Syntax is: RUNTIME <runtime in s> <latestEnd in s from now>",
+                                    applianceId);
+                        }
+                        int runtimeSeconds = Integer.parseInt(commandParts[3]);
+                        int latestEndSeconds = Integer.parseInt(commandParts[4]);
+                        logger.debug("{}: Set runtime demand: runtime={}s latestEnd={}s",
+                                applianceId, runtimeSeconds, latestEndSeconds);
+                        Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
+                        if(appliance != null) {
+                            LocalDateTime now = LocalDateTime.now();
+                            Control control = appliance.getControl();
+                            if(control != null) {
+                                control.on(now, false);
+                            }
+                            activateTimeframe(now, applianceId, runtimeSeconds, latestEndSeconds, true);
+                        } else {
+                            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                        }
+                    }
+                }
+            } catch (Throwable e) {
+                logger.error("Error in " + getClass().getSimpleName(), e);
+            }
+        }
+    }
+
     @RequestMapping(value = RUNTIME_URL, method = RequestMethod.PUT)
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public void setRuntimeDemand(HttpServletResponse response,
@@ -546,7 +596,7 @@ public class SaeController {
                                  @RequestParam(value = "runtime") Integer runtime) {
         synchronized (lock) {
             try {
-                if (!setRuntimeDemand(LocalDateTime.now(), applianceId, runtime)) {
+                if (!setRuntimeDemand(LocalDateTime.now(), applianceId, runtime, null)) {
                     response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 }
             } catch (Throwable e) {
@@ -563,9 +613,9 @@ public class SaeController {
      * @param runtime
      * @return true, if the appliance was found; false if no appliance with the given id was found
      */
-    public boolean setRuntimeDemand(LocalDateTime now, String applianceId, Integer runtime) {
+    public boolean setRuntimeDemand(LocalDateTime now, String applianceId, Integer runtime, Integer latestEnd) {
         logger.debug("{}: Received request to set runtime to {}s", applianceId, runtime);
-        return activateTimeframe(now, applianceId, runtime, false);
+        return activateTimeframe(now, applianceId, runtime, latestEnd, false);
     }
 
     @RequestMapping(value = EV_URL, method = RequestMethod.GET, produces = "application/json")
@@ -605,15 +655,39 @@ public class SaeController {
     ) {
         synchronized (lock) {
             try {
+                logger.debug("{}: Received energy request: evId={} socCurrent={} socRequested={} chargeEnd={}",
+                        applianceId, evId, socCurrent, socRequested, chargeEndString);
                 LocalDateTime chargeEnd = null;
                 if (chargeEndString != null) {
-                    chargeEnd = LocalDateTime.parse(chargeEndString);
+                    chargeEnd = ZonedDateTime.parse(chargeEndString).withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
                 }
-                logger.debug("{}: Received energy request: evId={} socCurrent={} socRequested={} chargeEnd={}",
-                        applianceId, evId, socCurrent, socRequested, chargeEnd);
                 Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
                 if (appliance != null) {
                     appliance.setEnergyDemand(LocalDateTime.now(), evId, socCurrent, socRequested, chargeEnd);
+                } else {
+                    logger.error("{}: Appliance not found", applianceId);
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                }
+            } catch (Throwable e) {
+                logger.error("Error in " + getClass().getSimpleName(), e);
+            }
+        }
+    }
+
+    @RequestMapping(value = EVCHARGE_URL, method = RequestMethod.PATCH)
+    @CrossOrigin(origins = CROSS_ORIGIN_URL)
+    public void updateSoc(HttpServletResponse response,
+                          @RequestParam(value = "applianceid") String applianceId,
+                          @RequestParam(value = "socCurrent", required = false) Integer socCurrent,
+                          @RequestParam(value = "socRequested", required = false) Integer socRequested
+    ) {
+        synchronized (lock) {
+            try {
+                logger.debug("{}: Received request to update SOC: socCurrent={} socRequested={}",
+                        applianceId, socCurrent, socRequested);
+                Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
+                if (appliance != null) {
+                    appliance.updateSoc(LocalDateTime.now(), socCurrent, socRequested);
                 } else {
                     logger.error("{}: Appliance not found", applianceId);
                     response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -636,7 +710,7 @@ public class SaeController {
             if (appliance != null) {
                 if (appliance.getControl() instanceof ElectricVehicleCharger) {
                     ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
-                    Integer soc = evCharger.getCurrentSoc(appliance.getMeter());
+                    Integer soc = evCharger.getSocCurrent();
                     if (soc != null) {
                         logger.debug("{}: Return SOC={}", applianceId, soc);
                         return Integer.valueOf(soc).floatValue();
@@ -659,11 +733,11 @@ public class SaeController {
         return null;
     }
 
-    public boolean activateTimeframe(LocalDateTime now, String applianceId, Integer runtime,
+    public boolean activateTimeframe(LocalDateTime now, String applianceId, Integer runtime, Integer latestEnd,
                                      boolean acceptControlRecommendations) {
         Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
         if (appliance != null) {
-            appliance.getTimeframeIntervalHandler().setRuntimeDemand(now, runtime, acceptControlRecommendations);
+            appliance.getTimeframeIntervalHandler().setRuntimeDemand(now, runtime, latestEnd, acceptControlRecommendations);
             return true;
         }
         logger.error("{}: Appliance not found", applianceId);
@@ -710,6 +784,9 @@ public class SaeController {
             settings.setHolidaysEnabled(holidaysUrl != null);
             settings.setHolidaysUrl(holidaysUrl);
 
+            String notificationCommand = appliances.getConfigurationValue(NotificationHandler.CONFIGURATION_KEY_NOTIFICATION_COMMAND);
+            settings.setNotificationCommand(notificationCommand);
+
             logger.debug("Returning Settings " + settings);
             return settings;
         } catch (Throwable e) {
@@ -744,12 +821,15 @@ public class SaeController {
             }
             ApplianceManager.getInstance().setConnectivity(connectivity);
 
-            List<Configuration> configurations = null;
+            List<Configuration> configurations = new ArrayList<>();
             if (settings.isHolidaysEnabled()) {
-                Configuration configuration = new Configuration();
-                configuration.setParam(HolidaysDownloader.urlConfigurationParamName);
-                configuration.setValue(settings.getHolidaysUrl());
-                configurations = Collections.singletonList(configuration);
+                configurations.add(
+                        new Configuration(HolidaysDownloader.urlConfigurationParamName, settings.getHolidaysUrl()));
+            }
+            if(settings.getNotificationCommand() != null) {
+                configurations.add(
+                        new Configuration(NotificationHandler.CONFIGURATION_KEY_NOTIFICATION_COMMAND,
+                                settings.getNotificationCommand()));
             }
             ApplianceManager.getInstance().setConfiguration(configurations);
         } catch (Throwable e) {
@@ -803,9 +883,7 @@ public class SaeController {
                         applianceStatus.setEarliestStart(nextTimeframeInterval.getEarliestStartSeconds(now));
                         applianceStatus.setLatestStart(nextTimeframeInterval.getLatestStartSeconds(now));
                     }
-                    if (control.isOn()) {
-                        applianceStatus.setOptionalEnergy(nextTimeframeInterval.getRequest().isUsingOptionalEnergy());
-                    }
+                    applianceStatus.setOptionalEnergy(nextTimeframeInterval.getRequest().isUsingOptionalEnergy(now));
                     if (nextTimeframeInterval.getState() == TimeframeIntervalState.QUEUED) {
                         applianceStatus.setRunningTime(0);
                         applianceStatus.setRemainingMinRunningTime(nextTimeframeInterval.getRequest().getMin(now));
@@ -814,17 +892,14 @@ public class SaeController {
                 }
                 if (control instanceof ElectricVehicleCharger) {
                     ElectricVehicleCharger evCharger = (ElectricVehicleCharger) control;
-                    if(evCharger.isVehicleNotConnected()) {
-                        applianceStatus.setControllable(false);
-                    }
-                    else {
+                    applianceStatus.setState(evCharger.getState().name());
+                    if(!evCharger.isVehicleNotConnected()) {
                         applianceStatus.setEvIdCharging(evCharger.getConnectedVehicleId());
-                        applianceStatus.setState(evCharger.getState().name());
                         ZonedDateTime zdt = ZonedDateTime.of(evCharger.getStateLastChangedTimestamp(), ZoneId.systemDefault());
                         applianceStatus.setStateLastChangedTimestamp(zdt.toInstant().toEpochMilli());
-                        applianceStatus.setSocInitial(evCharger.getConnectedVehicleSoc());
-                        applianceStatus.setSocInitialTimestamp(evCharger.getConnectedVehicleSocTimestamp());
-                        applianceStatus.setSoc(evCharger.getCurrentSoc(meter));
+                        applianceStatus.setSocInitial(evCharger.getSocInitial());
+                        applianceStatus.setSocInitialTimestamp(evCharger.getSocInitialTimestamp());
+                        applianceStatus.setSoc(evCharger.getSocCurrent());
 
                         int whAlreadyCharged = 0;
                         Integer chargePower = evCharger.getChargePower();
@@ -836,13 +911,14 @@ public class SaeController {
                             applianceStatus.setCurrentChargePower(chargePower);
                         }
                         applianceStatus.setChargedEnergyAmount(whAlreadyCharged);
-                        int chargeAmount = 0;
+                        int whRemainingToCharge = 0;
                         if(nextTimeframeInterval != null
                                 && nextTimeframeInterval.getRequest() instanceof AbstractEnergyRequest) {
-                            chargeAmount = nextTimeframeInterval.getRequest().getMax(now);
+                            Integer max = nextTimeframeInterval.getRequest().getMax(now);
+                            whRemainingToCharge = max != null ? max : 0;
                         }
-                        if (nextTimeframeInterval != null && !nextTimeframeInterval.getRequest().isUsingOptionalEnergy()) {
-                            applianceStatus.setPlannedEnergyAmount(chargeAmount);
+                        if (nextTimeframeInterval != null && !nextTimeframeInterval.getRequest().isUsingOptionalEnergy(now)) {
+                            applianceStatus.setPlannedEnergyAmount(whAlreadyCharged + whRemainingToCharge);
                             applianceStatus.setLatestEnd(nextTimeframeInterval.getLatestEndSeconds(now));
                         }
                     }
@@ -864,6 +940,20 @@ public class SaeController {
             applianceStatuses.add(applianceStatus);
         }
         return applianceStatuses;
+    }
+
+    @RequestMapping(value = FILE_URL, method = RequestMethod.GET)
+    @CrossOrigin(origins = CROSS_ORIGIN_URL)
+    public Integer getFileAttributes(@RequestParam(value = "pathname") String pathname) {
+        // http://localhost:8080/sae/file?pathname=%2Ftmp%2Frolling-2021-01-05.log
+        try {
+            logger.debug("Received request for attritbutes of file " + pathname);
+            FileHandler fileHandler = new FileHandler();
+            return fileHandler.getFileAttributes(pathname);
+        } catch (Throwable e) {
+            logger.error("Error in " + getClass().getSimpleName(), e);
+        }
+        return null;
     }
 
     @RequestMapping(value = INFO_URL, method = RequestMethod.GET, produces = "application/json")

@@ -8,6 +8,7 @@ import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../../shared
 import {InputValidatorPatterns} from '../../../shared/input-validator-patterns';
 import {ErrorMessageHandler} from '../../../shared/error-message-handler';
 import {Logger} from '../../../log/logger';
+import {getValidInt} from '../../../shared/form-util';
 
 @Component({
   selector: 'app-schedule-request-energy',
@@ -46,9 +47,6 @@ export class ScheduleRequestEnergyComponent implements OnChanges, OnInit {
       }
       this.expandParentForm();
     }
-    if (changes.enabled && !changes.enabled.firstChange) {
-      this.setEnabled(changes.enabled.currentValue);
-    }
   }
 
   ngOnInit() {
@@ -71,16 +69,6 @@ export class ScheduleRequestEnergyComponent implements OnChanges, OnInit {
     return this.energyRequest && this.energyRequest.max;
   }
 
-  setEnabled(enabled: boolean) {
-    if (enabled) {
-      this.form.controls.minEnergy.enable();
-      this.form.controls.maxEnergy.enable();
-    } else {
-      this.form.controls.minEnergy.disable();
-      this.form.controls.maxEnergy.disable();
-    }
-  }
-
   expandParentForm() {
     this.formHandler.addFormControl(this.form, 'minEnergy', this.minEnergy,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
@@ -89,14 +77,14 @@ export class ScheduleRequestEnergyComponent implements OnChanges, OnInit {
   }
 
   updateModelFromForm(): EnergyRequest | undefined {
-    const minEnergy = this.form.controls.minEnergy.value;
-    const maxEnergy = this.form.controls.maxEnergy.value;
+    const minEnergy = getValidInt(this.form.controls.minEnergy.value);
+    const maxEnergy = getValidInt(this.form.controls.maxEnergy.value);
 
     if (!(minEnergy || maxEnergy)) {
       return undefined;
     }
 
-    this.energyRequest.min = minEnergy && minEnergy.length > 0 ? minEnergy : undefined;
+    this.energyRequest.min = minEnergy;
     this.energyRequest.max = maxEnergy;
     return this.energyRequest;
   }

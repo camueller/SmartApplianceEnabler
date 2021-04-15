@@ -29,6 +29,7 @@ import {ModbusSwitch} from './modbus/modbus-switch';
 import {EvHttpControl} from './evcharger/http/ev-http-control';
 import {EvCharger} from './evcharger/ev-charger';
 import {ElectricVehicle} from './evcharger/electric-vehicle/electric-vehicle';
+import {MeterReportingSwitch} from './meterreporting/meter-reporting-switch';
 
 export class ControlFactory {
 
@@ -37,26 +38,7 @@ export class ControlFactory {
 
   defaultsFromJSON(rawControlDefaults: any): ControlDefaults {
     this.logger.debug('ControlDefaults (JSON): ' + JSON.stringify(rawControlDefaults));
-    const controlDefaults = new ControlDefaults();
-    controlDefaults.startingCurrentSwitchDefaults_powerThreshold
-      = rawControlDefaults.startingCurrentSwitchDefaults.powerThreshold;
-    controlDefaults.startingCurrentSwitchDefaults_startingCurrentDetectionDuration
-      = rawControlDefaults.startingCurrentSwitchDefaults.startingCurrentDetectionDuration;
-    controlDefaults.startingCurrentSwitchDefaults_finishedCurrentDetectionDuration
-      = rawControlDefaults.startingCurrentSwitchDefaults.finishedCurrentDetectionDuration;
-    controlDefaults.startingCurrentSwitchDefaults_minRunningTime
-      = rawControlDefaults.startingCurrentSwitchDefaults.minRunningTime;
-    const electricVehicleChargerDefaults = rawControlDefaults.electricVehicleChargerDefaults;
-    controlDefaults.electricVehicleChargerDefaults_voltage = electricVehicleChargerDefaults.voltage;
-    controlDefaults.electricVehicleChargerDefaults_phases = electricVehicleChargerDefaults.phases;
-    controlDefaults.electricVehicleChargerDefaults_chargeLoss = electricVehicleChargerDefaults.chargeLoss;
-    controlDefaults.electricVehicleChargerDefaults_pollInterval = electricVehicleChargerDefaults.pollInterval;
-    controlDefaults.electricVehicleChargerDefaults_startChargingStateDetectionDelay =
-      electricVehicleChargerDefaults.startChargingStateDetectionDelay;
-    controlDefaults.electricVehicleChargerDefaults_forceInitialCharging =
-      electricVehicleChargerDefaults.forceInitialCharging;
-
-
+    const controlDefaults = new ControlDefaults(rawControlDefaults);
     this.logger.debug('ControlDefaults (TYPE): ' + JSON.stringify(controlDefaults));
     return controlDefaults;
   }
@@ -87,7 +69,10 @@ export class ControlFactory {
 
   initializeByType(control: Control, rawControl: any, type: string) {
     control.type = type;
-    if (control.type === AlwaysOnSwitch.TYPE) {
+    control.notifications = rawControl.notifications;
+    if (control.type === MeterReportingSwitch.TYPE) {
+      control.meterReportingSwitch = this.createMeterReportingSwitch(rawControl);
+    } else if (control.type === AlwaysOnSwitch.TYPE) {
       control.alwaysOnSwitch = this.createAlwaysOnSwitch(rawControl);
     } else if (control.type === MockSwitch.TYPE) {
       control.mockSwitch = this.createMockSwitch(rawControl);
@@ -103,7 +88,9 @@ export class ControlFactory {
   }
 
   getControlByType(control: Control): any {
-    if (control.type === AlwaysOnSwitch.TYPE) {
+    if (control.type === MeterReportingSwitch.TYPE) {
+      return control.meterReportingSwitch;
+    } else if (control.type === AlwaysOnSwitch.TYPE) {
       return control.alwaysOnSwitch;
     } else if (control.type === MockSwitch.TYPE) {
       return control.mockSwitch;
@@ -119,28 +106,32 @@ export class ControlFactory {
     return null;
   }
 
+  createMeterReportingSwitch(rawMeterReportingSwitch?: any): MeterReportingSwitch {
+    return rawMeterReportingSwitch;
+  }
+
   createAlwaysOnSwitch(rawAlwaysOnSwitch?: any): AlwaysOnSwitch {
-    return new AlwaysOnSwitch();
+    return new AlwaysOnSwitch(rawAlwaysOnSwitch);
   }
 
   createMockSwitch(rawMockSwitch?: any): MockSwitch {
-    return new MockSwitch();
+    return new MockSwitch(rawMockSwitch);
   }
 
   createStartingCurrentSwitch(rawStartingCurrentSwitch: any): StartingCurrentSwitch {
-    return rawStartingCurrentSwitch;
+    return new StartingCurrentSwitch(rawStartingCurrentSwitch);
   }
 
   createSwitch(rawSwitch: any): Switch {
-    return rawSwitch;
+    return new Switch(rawSwitch);
   }
 
   createModbusSwitch(rawModbusSwitch: any): ModbusSwitch {
-    return {...rawModbusSwitch};
+    return new ModbusSwitch(rawModbusSwitch);
   }
 
   createHttpSwitch(rawHttpSwitch: any): HttpSwitch {
-    return {...rawHttpSwitch};
+    return new HttpSwitch(rawHttpSwitch);
   }
 
   createEvCharger(rawEvCharger: any): EvCharger {
@@ -203,6 +194,7 @@ export class ControlFactory {
     }
     let rawControl: string;
     if (controlUsed) {
+      controlUsed.notifications = control.notifications;
       if (control.type === EvCharger.TYPE) {
         this.toJSONEvCharger(control);
       }

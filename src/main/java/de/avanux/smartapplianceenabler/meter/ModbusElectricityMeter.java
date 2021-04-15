@@ -19,13 +19,15 @@ package de.avanux.smartapplianceenabler.meter;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
+import de.avanux.smartapplianceenabler.configuration.Validateable;
 import de.avanux.smartapplianceenabler.modbus.*;
 import de.avanux.smartapplianceenabler.modbus.executor.ModbusExecutorFactory;
 import de.avanux.smartapplianceenabler.modbus.executor.ModbusReadTransactionExecutor;
-import de.avanux.smartapplianceenabler.modbus.executor.ReadDecimalInputRegisterExecutor;
-import de.avanux.smartapplianceenabler.modbus.executor.ReadFloatInputRegisterExecutor;
+import de.avanux.smartapplianceenabler.notification.NotificationHandler;
+import de.avanux.smartapplianceenabler.notification.NotificationProvider;
+import de.avanux.smartapplianceenabler.notification.NotificationType;
+import de.avanux.smartapplianceenabler.notification.Notifications;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
-import de.avanux.smartapplianceenabler.configuration.Validateable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,111 +40,169 @@ import java.util.Timer;
 
 /**
  * Represents a ModBus electricity meter device accessible by ModBus TCP.
- * The device is polled according to poll interval in order to provide min/avg/max values of the measurement interval.
+ * The device is polled according to poll interval in order to provide min/avg/max values of the averaging interval.
  * The TCP connection to the device remains established across the polls.
  */
 public class ModbusElectricityMeter extends ModbusSlave implements Meter, ApplianceIdConsumer,
-        Validateable, PollPowerExecutor, PollEnergyExecutor {
+        Validateable, PollPowerExecutor, PollEnergyExecutor, NotificationProvider {
 
     private transient Logger logger = LoggerFactory.getLogger(ModbusElectricityMeter.class);
     @XmlElement(name = "ModbusRead")
     private List<ModbusRead> modbusReads;
     @XmlAttribute
     private Integer pollInterval; // seconds
-    @XmlAttribute
-    private Integer measurementInterval; // seconds
-    private transient PollPowerMeter pollPowerMeter = new PollPowerMeter();
-    private transient PollEnergyMeter pollEnergyMeter = new PollEnergyMeter();
+    @XmlElement(name = "Notifications")
+    private Notifications notifications;
+    private transient PollPowerMeter pollPowerMeter;
+    private transient PollEnergyMeter pollEnergyMeter;
+    private transient NotificationHandler notificationHandler;
 
     @Override
     public void setApplianceId(String applianceId) {
         super.setApplianceId(applianceId);
-        this.pollPowerMeter.setApplianceId(applianceId);
-        this.pollEnergyMeter.setApplianceId(applianceId);
     }
 
     @Override
-    public int getAveragePower() {
-        int power = pollPowerMeter.getAveragePower();
-        logger.debug("{}: average power = {}W", getApplianceId(), power);
-        return power;
+    public void setNotificationHandler(NotificationHandler notificationHandler) {
+        this.notificationHandler = notificationHandler;
+        if(this.notificationHandler != null) {
+            this.notificationHandler.setRequestedNotifications(notifications);
+        }
     }
 
     @Override
-    public int getMinPower() {
-        int power = pollPowerMeter.getMinPower();
-        logger.debug("{}: min power = {}W", getApplianceId(), power);
-        return power;
+    public Notifications getNotifications() {
+        return notifications;
     }
 
-    @Override
-    public int getMaxPower() {
-        int power =  pollPowerMeter.getMaxPower();
-        logger.debug("{}: max power = {}W", getApplianceId(), power);
-        return power;
+    public List<ModbusRead> getModbusReads() {
+        return modbusReads;
     }
 
-    @Override
-    public boolean isOn() {
-        Float power = pollPower();
-        return power != null && power > 0;
+    public void setModbusReads(List<ModbusRead> modbusReads) {
+        this.modbusReads = modbusReads;
     }
 
     public Integer getPollInterval() {
-        return pollInterval != null ? pollInterval : HttpElectricityMeterDefaults.getPollInterval();
-    }
-
-    @Override
-    public Integer getMeasurementInterval() {
-        return measurementInterval != null ? measurementInterval : ModbusElectricityMeterDefaults.getMeasurementInterval();
-    }
-
-    @Override
-    public void init() {
-        this.pollEnergyMeter.setPollEnergyExecutor(this);
+        return pollInterval != null ? pollInterval : ModbusElectricityMeterDefaults.getPollInterval();
     }
 
     @Override
     public void validate() throws ConfigurationException {
         logger.debug("{}: Validating configuration", getApplianceId());
-        logger.debug("{}: configured: poll interval={}s / measurement interval={}s",
-                getApplianceId(), getPollInterval(), getMeasurementInterval());
-        boolean valid = true;
+        logger.debug("{}: configured: poll interval={}s", getApplianceId(), getPollInterval());
         ModbusValidator validator = new ModbusValidator(getApplianceId());
 
         MeterValueName power = MeterValueName.Power;
         ParentWithChild<ModbusRead, ModbusReadValue> powerRead
                 = ModbusRead.getFirstRegisterRead(power.name(), modbusReads);
-        valid = validator.validateReads(power.name(), Collections.singletonList(powerRead));
-
-        if(valid) {
-            MeterValueName energy = MeterValueName.Energy;
-            ParentWithChild<ModbusRead, ModbusReadValue> energyRead
-                    = ModbusRead.getFirstRegisterRead(energy.name(), modbusReads);
-            if(energyRead != null) {
-                valid = validator.validateReads(energy.name(), Collections.singletonList(energyRead));
-            }
+        boolean powerReadValid = false;
+        if(powerRead != null) {
+            powerReadValid = validator.validateReads(power.name(), Collections.singletonList(powerRead));
         }
 
-        if(! valid) {
+        MeterValueName energy = MeterValueName.Energy;
+        ParentWithChild<ModbusRead, ModbusReadValue> energyRead
+                = ModbusRead.getFirstRegisterRead(energy.name(), modbusReads);
+        boolean energyReadValid = false;
+        if(energyRead != null) {
+            energyReadValid = validator.validateReads(energy.name(), Collections.singletonList(energyRead));
+        }
+
+        if(! (powerReadValid || energyReadValid)) {
+            logger.error("{}: Configuration missing for either {} or {}",
+                    getApplianceId(), MeterValueName.Power.name(), MeterValueName.Energy.name());
             throw new ConfigurationException();
+        }
+    }
+
+    @Override
+    public void init() {
+        if(ModbusRead.getFirstRegisterRead(MeterValueName.Power.name(), modbusReads) != null) {
+            this.pollPowerMeter = new PollPowerMeter();
+            this.pollPowerMeter.setApplianceId(getApplianceId());
+        }
+        if(ModbusRead.getFirstRegisterRead(MeterValueName.Energy.name(), modbusReads) != null) {
+            this.pollEnergyMeter = new PollEnergyMeter();
+            this.pollEnergyMeter.setApplianceId(getApplianceId());
+            this.pollEnergyMeter.setPollEnergyExecutor(this);
         }
     }
 
     @Override
     public void start(LocalDateTime now, Timer timer) {
         logger.debug("{}: Starting ...", getApplianceId());
-        pollPowerMeter.start(timer, getPollInterval(), getMeasurementInterval(), this);
+        if(pollPowerMeter != null) {
+            pollPowerMeter.start(timer, getPollInterval(), this);
+        }
+        if(pollEnergyMeter != null) {
+            pollEnergyMeter.start(timer, this);
+        }
     }
 
     @Override
     public void stop(LocalDateTime now) {
         logger.debug("{}: Stopping ...", getApplianceId());
-        pollPowerMeter.cancelTimer();
+        if(pollPowerMeter != null) {
+            pollPowerMeter.cancelTimer();
+        }
+        if(pollEnergyMeter != null) {
+            pollEnergyMeter.cancelTimer();
+        }
     }
 
     @Override
-    public Float pollPower() {
+    public void startAveragingInterval(LocalDateTime now, Timer timer, int nextPollCompletedSecondsFromNow) {
+        if(pollEnergyMeter != null) {
+            pollEnergyMeter.scheduleNext(timer, nextPollCompletedSecondsFromNow, averagingInterval);
+        }
+        if(pollPowerMeter != null) {
+            pollPowerMeter.setAveragingIntervalBegin(now);
+        }
+    }
+
+    @Override
+    public int getAveragePower() {
+        int power = 0;
+        if(pollEnergyMeter != null) {
+            power = pollEnergyMeter.getAveragePower();
+        }
+        else if(pollPowerMeter != null) {
+            power = pollPowerMeter.getAveragePower(LocalDateTime.now());
+        }
+        logger.debug("{}: average power = {}W", getApplianceId(), power);
+        return power;
+    }
+
+    @Override
+    public int getMinPower() {
+        int power = 0;
+        if(pollEnergyMeter != null) {
+            power = pollEnergyMeter.getAveragePower();
+        }
+        else if(pollPowerMeter != null) {
+            power = pollPowerMeter.getMinPower(LocalDateTime.now());
+        }
+        logger.debug("{}: min power = {}W", getApplianceId(), power);
+        return power;
+    }
+
+    @Override
+    public int getMaxPower() {
+        int power = 0;
+        if(pollEnergyMeter != null) {
+            power = pollEnergyMeter.getAveragePower();
+        }
+        else if(pollPowerMeter != null) {
+            power = pollPowerMeter.getMaxPower(LocalDateTime.now());
+        }
+        logger.debug("{}: max power = {}W", getApplianceId(), power);
+        return power;
+    }
+
+
+    @Override
+    public Double pollPower() {
         ParentWithChild<ModbusRead, ModbusReadValue> read
                 = ModbusRead.getFirstRegisterRead(MeterValueName.Power.name(), modbusReads);
         return readRegister(read.parent());
@@ -150,7 +210,7 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
 
     @Override
     public float getEnergy() {
-        return this.pollEnergyMeter.getEnergy();
+        return pollEnergyMeter != null ? (float) this.pollEnergyMeter.getEnergy() : 0.0f;
     }
 
     @Override
@@ -177,34 +237,33 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     }
 
     @Override
-    public Float pollEnergy(LocalDateTime now) {
+    public Double pollEnergy(LocalDateTime now) {
         ParentWithChild<ModbusRead, ModbusReadValue> read
                 = ModbusRead.getFirstRegisterRead(MeterValueName.Energy.name(), modbusReads);
         return readRegister(read.parent());
     }
 
-    private float readRegister(ModbusRead registerRead) {
+    private double readRegister(ModbusRead registerRead) {
         try {
             ModbusReadTransactionExecutor executor = ModbusExecutorFactory.getReadExecutor(getApplianceId(),
-                    registerRead.getType(), registerRead.getAddress(), registerRead.getBytes(),
+                    registerRead.getAddress(), registerRead.getType(), registerRead.getValueType(), registerRead.getWords(),
                     registerRead.getByteOrder(), registerRead.getFactorToValue());
             if(executor != null) {
-                Float registerValue = null;
                 executeTransaction(executor, true);
-                if(executor instanceof ReadFloatInputRegisterExecutor) {
-                    registerValue = ((ReadFloatInputRegisterExecutor) executor).getValue();
+                Object registerValue = executor.getValueTransformer().getValue();
+                if(registerValue instanceof Double) {
+                    return (Double) registerValue;
                 }
-                if(executor instanceof ReadDecimalInputRegisterExecutor) {
-                    registerValue = ((ReadDecimalInputRegisterExecutor) executor).getValue().floatValue();
-                }
-                if(registerValue != null) {
-                    logger.debug("{}: Float value={}", getApplianceId(), registerValue);
-                    return registerValue;
-                }
+            }
+            else {
+                logger.error("{}: No executor found", getApplianceId());
             }
         }
         catch(Exception e) {
             logger.error("{}: Error reading input register {}", getApplianceId(), registerRead.getAddress(), e);
+            if(this.notificationHandler != null) {
+                this.notificationHandler.sendNotification(NotificationType.COMMUNICATION_ERROR);
+            }
         }
         return 0;
     }

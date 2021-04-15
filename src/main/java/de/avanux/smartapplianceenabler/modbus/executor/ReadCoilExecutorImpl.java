@@ -22,6 +22,7 @@ import com.ghgande.j2mod.modbus.io.ModbusTCPTransaction;
 import com.ghgande.j2mod.modbus.msg.ReadCoilsRequest;
 import com.ghgande.j2mod.modbus.msg.ReadCoilsResponse;
 import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
+import de.avanux.smartapplianceenabler.modbus.transformer.ValueTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,18 +31,19 @@ import org.slf4j.LoggerFactory;
  * The implementation directly correlates with the class 1 function <i>read coils (FC 1)</i>. 
  */
 public class ReadCoilExecutorImpl extends BaseTransactionExecutor
-        implements ModbusReadTransactionExecutor<Boolean>, ReadCoilExecutor {
+        implements ModbusReadTransactionExecutor, ReadCoilExecutor {
     
     private Logger logger = LoggerFactory.getLogger(ReadCoilExecutorImpl.class);
     private boolean coil;
 
     public ReadCoilExecutorImpl(String registerAddress) {
-        super(registerAddress, 1);
+        super(registerAddress, 1, null);
     }
 
     @Override
     public void execute(TCPMasterConnection con, int slaveAddress) throws ModbusException {
-        ReadCoilsRequest req = new ReadCoilsRequest(getAddress(), getBytes());
+        logger.trace("{}: Reading coil register={}", getApplianceId(), getAddress());
+        ReadCoilsRequest req = new ReadCoilsRequest(getAddress(), 1);
         req.setUnitID(slaveAddress);
         
         ModbusTCPTransaction trans = new ModbusTCPTransaction(con);
@@ -51,7 +53,7 @@ public class ReadCoilExecutorImpl extends BaseTransactionExecutor
         ReadCoilsResponse res = (ReadCoilsResponse) trans.getResponse();
         if(res != null) {
             coil = res.getCoils().getBit(0);
-            logger.debug("{}: Read coil register={} coil={}", getApplianceId(), getAddress(), coil);
+            logger.debug("{}: Coil register={} value={}", getApplianceId(), getAddress(), coil);
         }
         else {
             logger.error("{}: No response received.", getApplianceId());

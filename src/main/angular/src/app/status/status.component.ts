@@ -11,6 +11,7 @@ import {TrafficLightState} from './traffic-light/traffic-light-state';
 import {TrafficLightComponent} from './traffic-light/traffic-light.component';
 import {ApplianceType} from '../appliance/appliance-type';
 import {ElectricVehicle} from '../control/evcharger/electric-vehicle/electric-vehicle';
+import {EvChargerState} from '../control/evcharger/ev-charger-state';
 
 @Component({
   selector: 'app-status',
@@ -44,11 +45,22 @@ export class StatusComponent implements OnInit, OnDestroy {
         });
       });
     });
+    this.startRefreshStatus();
+  }
+
+  ngOnDestroy() {
+    this.stopRefreshStatus();
+  }
+
+  startRefreshStatus(immediateRefresh = false) {
+    if (immediateRefresh) {
+      this.loadApplianceStatuses(() => {});
+    }
     this.loadApplianceStatusesSubscription = interval(60 * 1000)
       .subscribe(() => this.loadApplianceStatuses(() => {}));
   }
 
-  ngOnDestroy() {
+  stopRefreshStatus() {
     this.loadApplianceStatusesSubscription.unsubscribe();
   }
 
@@ -76,7 +88,12 @@ export class StatusComponent implements OnInit, OnDestroy {
       },
 
       isYellow(): boolean {
-        return applianceStatus.earliestStart === 0 && !applianceStatus.on;
+        return applianceStatus.earliestStart === 0 && !applianceStatus.on
+          && (!applianceStatus.optionalEnergy || !!applianceStatus.plannedEnergyAmount);
+      },
+
+      isYellowBlink(): boolean {
+        return applianceStatus.earliestStart === 0 && !applianceStatus.on && !!applianceStatus.optionalEnergy;
       },
 
       isGreen(): boolean {
@@ -106,7 +123,7 @@ export class StatusComponent implements OnInit, OnDestroy {
       },
 
       isGreenClickable(): boolean {
-        return ! this_.editMode && ! stateHandler.isGreen();
+        return applianceStatus.state !== EvChargerState.VEHICLE_NOT_CONNECTED && ! this_.editMode && ! stateHandler.isGreen();
       },
 
       onGreenClicked(status: Status, onActionCompleted: Subject<any>) {
@@ -122,6 +139,7 @@ export class StatusComponent implements OnInit, OnDestroy {
         } else {
           // display form to request runtime parameters
           this_.editMode = true;
+          this_.stopRefreshStatus();
           onActionCompleted.next();
         }
       }
@@ -137,6 +155,10 @@ export class StatusComponent implements OnInit, OnDestroy {
       return this.translatedTypes[this.typePrefix + type];
     }
     return '';
+  }
+
+  hasEvChargerInEditMode(): boolean {
+    return this.applianceStatuses.some(status => status.type === 'EVCharger' && this.isEditMode(status));
   }
 
   isEvCharger(applianceStatus: Status): boolean {
@@ -156,10 +178,12 @@ export class StatusComponent implements OnInit, OnDestroy {
     this.loadApplianceStatuses(() => this.getTrafficLightComponent(applianceIdClicked).showLoadingIndicator = false);
     this.applianceIdClicked = null;
     this.editMode = false;
+    this.startRefreshStatus(true);
   }
 
   onFormCancel() {
     this.editMode = false;
+    this.startRefreshStatus(true);
   }
 
   getTrafficLightStateHandlerForExplanation(red: boolean, yellow: boolean, green: boolean): TrafficLightState {
@@ -170,6 +194,10 @@ export class StatusComponent implements OnInit, OnDestroy {
 
       isYellow(): boolean {
         return yellow;
+      },
+
+      isYellowBlink(): boolean {
+        return false;
       },
 
       isGreen(): boolean {

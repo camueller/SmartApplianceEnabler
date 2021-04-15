@@ -20,9 +20,9 @@ package de.avanux.smartapplianceenabler.modbus.executor;
 
 import com.ghgande.j2mod.modbus.ModbusException;
 import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
+import de.avanux.smartapplianceenabler.modbus.transformer.ValueTransformer;
 
-public class ModbusReadFloatTestingExecutor implements ModbusReadTransactionExecutor<Float>, ModbusTestingExecutor {
-    @Override
+public class ModbusReadFloatTestingExecutor implements ModbusReadTransactionExecutor, ModbusTestingExecutor {
     public Float getValue() {
         return null;
     }
@@ -35,5 +35,10 @@ public class ModbusReadFloatTestingExecutor implements ModbusReadTransactionExec
     @Override
     public void setApplianceId(String applianceId) {
 
+    }
+
+    @Override
+    public ValueTransformer getValueTransformer() {
+        return null;
     }
 }

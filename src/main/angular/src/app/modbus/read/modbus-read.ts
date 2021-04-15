@@ -7,7 +7,8 @@ export class ModbusRead {
   '@class' = ModbusRead.TYPE;
   address: string;
   type: string;
-  bytes: number;
+  valueType: string;
+  words: number;
   byteOrder: string;
   factorToValue: number;
   readValues: ModbusReadValue[];

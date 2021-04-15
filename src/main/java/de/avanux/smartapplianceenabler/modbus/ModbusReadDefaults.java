@@ -18,24 +18,36 @@
 
 package de.avanux.smartapplianceenabler.modbus;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.util.Map;
 import java.util.TreeMap;
 
 public class ModbusReadDefaults {
-    // static members won't be serialized but we need those valus on the client
-    private Map<ReadRegisterType, Integer> bytesForRegisterType = new TreeMap<>();
     private static ModbusReadDefaults instance = new ModbusReadDefaults();
 
+    // static members won't be serialized but we need those valus on the client
+    private ByteOrder[] byteOrders = ByteOrder.values();
+    private Map<Pair<ReadRegisterType, RegisterValueType>, Integer> wordsForRegisterType = new TreeMap<>();
+
     public ModbusReadDefaults() {
-        this.bytesForRegisterType.put(ReadRegisterType.InputFloat, 2);
-        this.bytesForRegisterType.put(ReadRegisterType.InputDecimal, 1);
-        this.bytesForRegisterType.put(ReadRegisterType.InputString, 1);
-        this.bytesForRegisterType.put(ReadRegisterType.Holding, 1);
-        this.bytesForRegisterType.put(ReadRegisterType.Coil, 1);
-        this.bytesForRegisterType.put(ReadRegisterType.Discrete, 1);
+        this.wordsForRegisterType.put(Pair.of(ReadRegisterType.Input, RegisterValueType.Float), 1);
+        this.wordsForRegisterType.put(Pair.of(ReadRegisterType.Input, RegisterValueType.Integer), 1);
+        this.wordsForRegisterType.put(Pair.of(ReadRegisterType.Input, RegisterValueType.Integer2Float), 1);
+        this.wordsForRegisterType.put(Pair.of(ReadRegisterType.Input, RegisterValueType.String), 1);
+        this.wordsForRegisterType.put(Pair.of(ReadRegisterType.Holding, RegisterValueType.Float), 1);
+        this.wordsForRegisterType.put(Pair.of(ReadRegisterType.Holding, RegisterValueType.Integer), 1);
+        this.wordsForRegisterType.put(Pair.of(ReadRegisterType.Holding, RegisterValueType.Integer2Float), 1);
+        this.wordsForRegisterType.put(Pair.of(ReadRegisterType.Holding, RegisterValueType.String), 1);
+        this.wordsForRegisterType.put(Pair.of(ReadRegisterType.Coil, null), 1);
+        this.wordsForRegisterType.put(Pair.of(ReadRegisterType.Discrete, null), 1);
     }
 
-    public static Integer getBytes(ReadRegisterType registerType) {
-        return instance.bytesForRegisterType.get(registerType);
+    public static Integer getWords(ReadRegisterType registerType, RegisterValueType valueType) {
+        return instance.wordsForRegisterType.get(Pair.of(registerType, valueType));
+    }
+
+    public ByteOrder[] getByteOrders() {
+        return byteOrders;
     }
 }

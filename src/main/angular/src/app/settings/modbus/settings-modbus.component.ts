@@ -7,7 +7,7 @@ import {FormHandler} from '../../shared/form-handler';
 import {SettingsService} from '../settings-service';
 import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/error-message';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
-import {getValidInt} from '../../shared/form-util';
+import {getValidInt, getValidString} from '../../shared/form-util';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
 import {Logger} from '../../log/logger';
 import {SettingsDefaults} from '../settings-defaults';
@@ -61,7 +61,6 @@ export class SettingsModbusComponent implements OnChanges, OnInit {
     ], this.translate);
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
-      console.log('errors=', this.errors);
     });
   }
 
@@ -79,8 +78,8 @@ export class SettingsModbusComponent implements OnChanges, OnInit {
   }
 
   updateModelFromForm(): ModbusSetting | undefined {
-    const modbusTcpId = this.form.controls.modbusTcpId.value;
-    const modbusTcpHost = this.form.controls.modbusTcpHost.value;
+    const modbusTcpId = getValidString(this.form.controls.modbusTcpId.value);
+    const modbusTcpHost = getValidString(this.form.controls.modbusTcpHost.value);
     const modbusTcpPort = getValidInt(this.form.controls.modbusTcpPort.value);
 
     if (!(modbusTcpId || modbusTcpHost || modbusTcpPort)) {

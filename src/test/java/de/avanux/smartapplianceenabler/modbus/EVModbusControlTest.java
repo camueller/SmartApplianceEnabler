@@ -19,11 +19,11 @@
 package de.avanux.smartapplianceenabler.modbus;
 
 import de.avanux.smartapplianceenabler.control.ev.EVReadValueName;
-import de.avanux.smartapplianceenabler.modbus.executor.ModbusWriteIntegerTestingExecutor;
 import de.avanux.smartapplianceenabler.modbus.executor.ModbusExecutorFactory;
 import de.avanux.smartapplianceenabler.modbus.executor.ModbusReadTransactionExecutor;
+import de.avanux.smartapplianceenabler.modbus.executor.ModbusWriteHoldingTestingExecutor;
 import de.avanux.smartapplianceenabler.modbus.executor.ReadInputRegisterExecutor;
-import de.avanux.smartapplianceenabler.modbus.executor.ReadStringInputRegisterExecutorImpl;
+import de.avanux.smartapplianceenabler.modbus.transformer.StringValueTransformer;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -32,15 +32,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EVModbusControlTest {
     private EVModbusControl evModbusControl;
-    private ModbusWriteIntegerTestingExecutor writeIntegerTestingExecutor;
+    private ModbusWriteHoldingTestingExecutor writeHoldingTestingExecutor;
 
     public EVModbusControlTest() {
         this.evModbusControl = new EVModbusControl();
         this.evModbusControl.setApplianceId("F-001");
         this.evModbusControl.setPollInterval(10);
 
-        this.writeIntegerTestingExecutor = new ModbusWriteIntegerTestingExecutor();
-        ModbusExecutorFactory.setTestingWriteIntegerExecutor(this.writeIntegerTestingExecutor);
+        this.writeHoldingTestingExecutor = new ModbusWriteHoldingTestingExecutor();
+        ModbusExecutorFactory.setWriteHoldingExecutor(this.writeHoldingTestingExecutor);
     }
 
     @Test
@@ -59,8 +59,9 @@ public class EVModbusControlTest {
                                                    String extractionRegex, Integer[] byteValues) {
         ModbusRead registerRead = new ModbusRead();
         registerRead.setAddress("42");
-        registerRead.setType(ReadRegisterType.InputString.name());
-        registerRead.setBytes(1);
+        registerRead.setType(ReadRegisterType.Input.name());
+        registerRead.setValueType(RegisterValueType.String.name());
+        registerRead.setWords(1);
 
         ModbusReadValue registerReadValue = new ModbusReadValue(registerName.name(), extractionRegex);
         registerRead.setReadValues(Collections.singletonList(registerReadValue));
@@ -69,8 +70,8 @@ public class EVModbusControlTest {
         this.evModbusControl.init();
 
         ModbusReadTransactionExecutor executor
-                = new ReadStringInputRegisterExecutorImpl(registerRead.getAddress(), byteValues.length);
-        ((ReadInputRegisterExecutor) executor).setByteValues(byteValues);
+                = new ReadInputRegisterExecutor(registerRead.getAddress(), byteValues.length, new StringValueTransformer());
+        executor.getValueTransformer().setByteValues(byteValues);
         this.evModbusControl.getRequestCache().put(registerRead, executor);
 
         assertEquals(expectedResult, this.evModbusControl.isMatchingVehicleStatus(registerName));

@@ -15,6 +15,25 @@ Um die Funktionalität insgesamt (d.h. Web-Anwendung und Spring Boot-Anwendung) 
 
 Für den Betrieb des *Smart Appliance Enabler* als Docker-Container auf einem *Raspberry Pi* muss für jedes Release (nicht für jeden Push zu Github!) ein **Docker-Image** mit einer Java-Runtime für **arm32**-Architektur erstellt werden. Was liegt näher, als diese Aufgabe von einem meiner Raspberry Pi's automatisch erledigen zu lassen. Auch dieses Image wird zu [Docker-Hub](https://hub.docker.com/) gepusht. 
 
+## AWS Setup
+
+- EC2 Instance anlegen:
+    - Amazon Linux 2 AMI (HVM), SSD Volume Type
+    - Type: t2.micro
+- ggf. Keypair erzeugen
+- Security Group anlegen mit Inbound Access für SSH + HTTP (Source: Anywhere)
+- Security Group zuweisen: Actions -> Networking -> Change Security Groups
+
+In der gestarteten Instanz folgende Befehle ausführen:
+```console
+sudo yum update -y
+sudo yum install docker -y
+sudo service docker start
+sudo service docker status
+```
+
+Falls das _EC2 Dashboard_ laufende Instanzen nicht anzeigt, stimmt möglicherweise die Region nicht mit der Region überein, in der die Instanzen angelegt wurden (z.B. us-east-2).
+
 ## Lokales Entwickeln
 ### Source-Download
 Für alle nachfolgenden Schritte müssen die Sourcen lokal vorhanden sein.
@@ -45,7 +64,7 @@ Beim erstmaligen Aufruf von Maven werden dabei alle benötigten Bibliotheken aus
 
 
 #### UPnP Deaktivierung
-In der Regel ist es nicht erwünscht, dass der Sunny Home Manager (SHM) die für die Entwicklung verwendete SAE-Instanz (in der IDE oder auf einem Entwicklungs-Raspi) per UPnP "entdeckt" und die Geräte übernimmt.
+In der Regel ist es nicht erwünscht, dass der Sunny Home Manager die für die Entwicklung verwendete SAE-Instanz (in der IDE oder auf einem Entwicklungs-Raspi) per UPnP "entdeckt" und die Geräte übernimmt.
 Deshalb kann das UPnP des SAE mit einem Property deaktiviert werden:
 ```console
 -Dsae.discovery.disable=true
@@ -57,6 +76,16 @@ $ ng serve --host 0.0.0.0 --disable-host-check
 ```
 
 ### Tests
+#### Simulation der Interaktion durch den Sunny Home Manager
+Zum Einschalten eines Gerätes eignet sich folgender Befehl, wobei die der Parameter `RecommendedPowerConsumption` nur für Wallboxen relevant ist:
+```console
+curl -X POST -d '<EM2Device xmlns="http://www.sma.de/communication/schema/SEMP/v1"><DeviceControl><DeviceId>F-00000001-000000000099-00</DeviceId><On>true</On><RecommendedPowerConsumption>6000</RecommendedPowerConsumption></DeviceControl></EM2Device>' --header 'Content-Type: application/xml' http://raspi:8080/semp
+```
+Zum Ausschalten eignet sich der folgende Befehl:
+```console
+curl -X POST -d '<EM2Device xmlns="http://www.sma.de/communication/schema/SEMP/v1"><DeviceControl><DeviceId>F-00000001-000000000099-00</DeviceId><On>false</On></DeviceControl></EM2Device>' --header 'Content-Type: application/xml' http://raspi:8080/semp
+```
+
 #### Testcafe
 ##### Lokal
 Unter Verwendung des lokalen Browsers werden die Tests wie folgt gestartet:

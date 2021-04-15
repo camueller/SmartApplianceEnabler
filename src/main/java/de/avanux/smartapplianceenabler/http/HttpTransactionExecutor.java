@@ -17,8 +17,8 @@
  */
 package de.avanux.smartapplianceenabler.http;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import de.avanux.smartapplianceenabler.notification.NotificationHandler;
+import de.avanux.smartapplianceenabler.notification.NotificationType;
 import org.apache.http.HttpStatus;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -32,15 +32,12 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlTransient;
 import java.io.IOException;
 
 /**
@@ -51,6 +48,7 @@ public class HttpTransactionExecutor {
     private String applianceId;
     private RequestConfig requestConfig;
     private HttpConfiguration configuration = new HttpConfiguration();
+    private NotificationHandler notificationHandler = null;
 
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
@@ -58,6 +56,10 @@ public class HttpTransactionExecutor {
 
     public void setConfiguration(HttpConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    public void setNotificationHandler(NotificationHandler notificationHandler) {
+        this.notificationHandler = notificationHandler;
     }
 
     public String executeGet(String url) {
@@ -105,7 +107,10 @@ public class HttpTransactionExecutor {
         logger.debug("{}: Sending GET request url={}", applianceId, url);
         HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
         withUsernameAndPassword(httpClientBuilder, username, password);
-        CloseableHttpClient client = httpClientBuilder.setDefaultRequestConfig(getRequestConfig()).build();
+        CloseableHttpClient client = httpClientBuilder
+                .setDefaultRequestConfig(getRequestConfig())
+                .setRetryHandler(new DefaultHttpRequestRetryHandler(0, false))
+                .build();
         try {
             HttpRequestBase request = new HttpGet(url);
             CloseableHttpResponse response = client.execute(request);
@@ -113,6 +118,9 @@ public class HttpTransactionExecutor {
         }
         catch(IOException e) {
             logger.error("{}: Error executing GET request.", applianceId, e);
+            if(this.notificationHandler != null) {
+                this.notificationHandler.sendNotification(NotificationType.COMMUNICATION_ERROR);
+            }
             return null;
         }
     }

@@ -4,7 +4,21 @@
       <mat-icon>menu</mat-icon>
     </button>
   </div>
-  <div>
-    <div>{{'HeaderComponent.title' | translate}} {{version}}</div>
+  <div class="HeaderComponent__layout">
+    <div class="HeaderComponent__title">{{'HeaderComponent.title' | translate}} {{version}}</div>
+    <div class="HeaderComponent__linkboxes">
+      <div class="HeaderComponent__linkbox" *ngIf="stableUpdateVersion">
+        <a [href]="stableUpdateUrl"
+           class="HeaderComponent__link"
+           target="_blank"
+        >{{'HeaderComponent.newVersionAvailable' | translate: {version: stableUpdateVersion} }}</a>
+      </div>
+      <div class="HeaderComponent__linkbox" *ngIf="betaUpdateVersion">
+        <a [href]="betaUpdateUrl"
+           class="HeaderComponent__link"
+           target="_blank"
+        ><span class="HeaderComponent__versionQualifier">BETA</span>{{'HeaderComponent.newVersionAvailable' | translate: {version: betaUpdateVersion} }}</a>
+      </div>
+    </div>
   </div>
 </mat-toolbar>

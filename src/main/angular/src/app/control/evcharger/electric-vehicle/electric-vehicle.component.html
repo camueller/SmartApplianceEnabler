@@ -32,7 +32,7 @@
     <mat-form-field class="ElectricVehicleComponent__chargeLoss">
       <mat-label>{{'ElectricVehicleComponent.chargeLoss' | translate}}</mat-label>
       <input matInput type="text" formControlName="chargeLoss"
-             placeholder="{{controlDefaults.electricVehicleChargerDefaults_chargeLoss}}"
+             placeholder="{{controlDefaults.evChargerDefaults.chargeLoss}}"
              required="{{formHandler.isRequired('chargeLoss')}}">
       <mat-error *ngIf="errors.chargeLoss">{{errors.chargeLoss}}</mat-error>
     </mat-form-field>
@@ -54,15 +54,14 @@
   </div>
   <h3>{{'ElectricVehicleComponent.script.heading' | translate}}</h3>
   <div class="sae__fields">
-    <mat-checkbox formControlName="scriptEnabled"
-                  (click)="onScriptEnabledToggle()"
-    >{{'ElectricVehicleComponent.script.enabled' | translate}}</mat-checkbox>
-    <mat-form-field class="ElectricVehicleComponent__scriptFilename">
-      <mat-label>{{'ElectricVehicleComponent.script.filename' | translate}}</mat-label>
-      <input matInput type="text" formControlName="scriptFilename"
-             required="{{formHandler.isRequired('scriptFilename')}}">
-      <mat-error *ngIf="errors.scriptFilename">{{errors.scriptFilename}}</mat-error>
-    </mat-form-field>
+    <app-filenameinput
+      formControlNameInput="scriptFilename"
+      label="{{'ElectricVehicleComponent.script.filename' | translate}}"
+      value="{{socScriptFilename}}"
+      [requiredFileModes]="socScriptFileModes"
+    ></app-filenameinput>
+  </div>
+  <div class="sae__fields">
     <mat-form-field class="sae__regex">
       <mat-label>{{'ElectricVehicleComponent.script.extractionRegex' | translate}}</mat-label>
       <input matInput type="text" formControlName="scriptExtractionRegex"
@@ -70,5 +69,26 @@
              required="{{formHandler.isRequired('scriptExtractionRegex')}}">
       <mat-error *ngIf="errors.scriptExtractionRegex">{{errors.scriptExtractionRegex}}</mat-error>
     </mat-form-field>
+  </div>
+  <div class="ElectricVehicleComponent__scriptUpdateSocHeading">{{'ElectricVehicleComponent.script.update.heading' | translate}}</div>
+  <div class="sae__fields">
+    <mat-form-field class="ElectricVehicleComponent__scriptUpdateSocAfterIncrease">
+      <mat-label>{{'ElectricVehicleComponent.script.update.afterIncrease' | translate}}</mat-label>
+      <input matInput type="text" formControlName="scriptUpdateSocAfterIncrease"
+             placeholder="{{controlDefaults.evChargerDefaults.updateSocAfterIncrease}}"
+             matTooltip="{{'ElectricVehicleComponent.script.update.afterIncrease.tooltip' | translate}}"
+             required="{{formHandler.isRequired('scriptUpdateSocAfterIncrease')}}">
+      <mat-error *ngIf="errors.scriptUpdateSocAfterIncrease">{{errors.scriptUpdateSocAfterIncrease}}</mat-error>
+    </mat-form-field>
+    <app-timepicker label="{{'ElectricVehicleComponent.script.update.afterSeconds' | translate}}"
+                    tooltip="{{'ElectricVehicleComponent.script.update.afterSeconds.tooltip' | translate}}"
+                    formControlNameTP="scriptUpdateSocAfterTime"
+                    [value]="updateAfterTime"
+                    [required]="false"
+                    [enabled]="true"
+                    [width]="'8rem'"
+                    [errorMessages]="errorMessages"
+                    #updateAfterSecondsComponent
+    ></app-timepicker>
   </div>
 </div>

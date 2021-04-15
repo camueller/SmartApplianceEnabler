@@ -1,60 +1,56 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.5">
-    <Appliance id="F-00000001-000000000001-00">
-        <!--StartingCurrentSwitch finishedCurrentDetectionDuration="20" minRunningTime="2">
-            <HttpSwitch>
-                <HttpWrite url="http://tasmota/cm?cmnd=Power%20On">
-                    <HttpWriteValue name="On"/>
-                </HttpWrite>
-                <HttpWrite url="http://tasmota/cm?cmnd=Power%20Off">
-                    <HttpWriteValue name="Off"/>
-                </HttpWrite>
-                <HttpRead url="http://tasmota/cm?cmnd=Power">
-                    <HttpReadValue name="On" extractionRegex=":.ON"/>
-                </HttpRead>
-            </HttpSwitch>
-        </StartingCurrentSwitch-->
-        <HttpElectricityMeter>
-            <HttpRead url="http://tasmota/cm?cmnd=Status%208">
-                <HttpReadValue name="Power" extractionRegex=",.Power.:(\d+)"/>
-            </HttpRead>
-        </HttpElectricityMeter>
-        <!--Schedule enabled="true">
-            <RuntimeRequest max="300"/>
-            <DayTimeframe>
-                <Start hour="17" minute="39" second="0"/>
-                <End hour="22" minute="0" second="0"/>
-            </DayTimeframe>
-        </Schedule-->
-    </Appliance>
+<Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.6">
     <Appliance id="F-00000001-000000000002-00">
-        <StartingCurrentSwitch finishedCurrentDetectionDuration="20" minRunningTime="2">
-            <HttpSwitch>
-                <HttpWrite url="http://tasmota/cm?cmnd=Power%20On">
-                    <HttpWriteValue name="On"/>
-                </HttpWrite>
-                <HttpWrite url="http://tasmota/cm?cmnd=Power%20Off">
-                    <HttpWriteValue name="Off"/>
-                </HttpWrite>
-                <HttpRead url="http://tasmota/cm?cmnd=Power">
-                    <HttpReadValue name="On" extractionRegex=":.ON"/>
-                </HttpRead>
-            </HttpSwitch>
-        </StartingCurrentSwitch>
+        <HttpSwitch>
+            <HttpWrite url="http://tasmota/cm?cmnd=Power%20On">
+                <HttpWriteValue name="On"/>
+            </HttpWrite>
+            <HttpWrite url="http://tasmota/cm?cmnd=Power%20Off">
+                <HttpWriteValue name="Off"/>
+            </HttpWrite>
+            <Notifications/>
+        </HttpSwitch>
         <HttpElectricityMeter>
             <HttpRead url="http://tasmota/cm?cmnd=Status%208">
-                <HttpReadValue name="Power" extractionRegex=",.Power.:(\d+)"/>
+                <HttpReadValue name="Power" extractionRegex=".*&quot;Power&quot;:(\d+).*"/>
             </HttpRead>
+            <Notifications/>
         </HttpElectricityMeter>
         <Schedule enabled="true">
-            <RuntimeRequest max="300"/>
+            <RuntimeRequest min="60" max="300"/>
             <DayTimeframe>
-                <Start hour="17" minute="39" second="0"/>
-                <End hour="22" minute="0" second="0"/>
+                <Start hour="8" minute="0" second="0"/>
+                <End hour="16" minute="0" second="0"/>
             </DayTimeframe>
         </Schedule>
     </Appliance>
+    <Appliance id="F-00000001-000000000019-00">
+        <ElectricVehicleCharger>
+            <EVModbusControl idref="wallbox" slaveAddress="180">
+                <ModbusRead address="100" type="Input" valueType="String">
+                    <ModbusReadValue name="VehicleNotConnected" extractionRegex="(A)"/>
+                    <ModbusReadValue name="VehicleConnected" extractionRegex="(B)"/>
+                    <ModbusReadValue name="Charging" extractionRegex="(C|D)"/>
+                    <ModbusReadValue name="Error" extractionRegex="(E|F)"/>
+                </ModbusRead>
+                <ModbusWrite address="400" type="Coil">
+                    <ModbusWriteValue name="StartCharging" value="1"/>
+                    <ModbusWriteValue name="StopCharging" value="0"/>
+                </ModbusWrite>
+                <ModbusWrite address="300" type="Holding">
+                    <ModbusWriteValue name="ChargingCurrent" value="0"/>
+                </ModbusWrite>
+            </EVModbusControl>
+            <ElectricVehicle id="1" name="Nissan Leaf" batteryCapacity="40000" phases="1" maxChargePower="7400" chargeLoss="12"/>
+        </ElectricVehicleCharger>
+        <ModbusElectricityMeter idref="modbus" slaveAddress="1">
+            <ModbusRead address="0x0156" type="Input" valueType="Float" words="2">
+                <ModbusReadValue name="Energy"/>
+            </ModbusRead>
+        </ModbusElectricityMeter>
+    </Appliance>
     <Connectivity>
-        <ModbusTCP id="wallbox" host="wallbox"/>
+        <ModbusTCP id="modbus" host="raspi2" port="502"/>
+        <ModbusTCP id="wallbox" host="wallbox" port="502"/>
     </Connectivity>
 </Appliances>

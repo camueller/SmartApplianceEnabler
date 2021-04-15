@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.PrintWriter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class SocScriptTest {
 
@@ -31,17 +32,25 @@ public class SocScriptTest {
 
     @Test
     public void getStateOfCharge() throws Exception {
-        File socScriptFile = writeSocScriptFile();
+        File socScriptFile = writeSocScriptFile("#!/bin/sh\necho \"Car SOC is 42.7 percent.\"\n");
         socScript.setScript(socScriptFile.getAbsolutePath());
         socScript.setExtractionRegex(".*is (\\d*.{0,1}\\d+).*");
         assertEquals(42.7f, socScript.getStateOfCharge(), 0.01f);
     }
 
-    private File writeSocScriptFile() throws Exception {
+    @Test
+    public void getStateOfCharge_negativeReturnCode() throws Exception {
+        File socScriptFile = writeSocScriptFile("#!/bin/sh\necho \"Car SOC is 42.7 percent.\"\nexit 1\\n");
+        socScript.setScript(socScriptFile.getAbsolutePath());
+        socScript.setExtractionRegex(".*is (\\d*.{0,1}\\d+).*");
+        assertNull(socScript.getStateOfCharge());
+    }
+
+    private File writeSocScriptFile(String content) throws Exception {
         File socScriptFile = File.createTempFile("soc", ".sh");
         socScriptFile.setExecutable(true);
         PrintWriter out = new PrintWriter(socScriptFile);
-        out.print("#!/bin/sh\necho \"Car SOC is 42.7 percent.\"\n");
+        out.print(content);
         out.close();
         return socScriptFile;
     }

@@ -17,9 +17,10 @@
   -->
 <form class="SettingsComponent" [formGroup]="form" (ngSubmit)="submitForm()">
   <section>
-    <h2>{{'SettingsComponent.holidays' | translate}}</h2>
+    <h2>{{'SettingsComponent.holidays' | translate}}
+      <app-help [helpfile]="'Settings'" [anchor]="'holidays'"></app-help></h2>
     <div class="sae__fields">
-      <mat-checkbox formControlName="holidaysEnabled" (click)="toggleHolidaysEnabled()"
+      <mat-checkbox formControlName="holidaysEnabled"
       >{{'SettingsComponent.holidaysEnabled' | translate}}</mat-checkbox>
       <mat-form-field class="sae__url">
         <mat-label>{{'SettingsComponent.holidaysUrl' | translate}}</mat-label>
@@ -34,7 +35,8 @@
   <mat-divider></mat-divider>
 
   <section>
-    <h2 class="sae__heading-extra-top-margin">{{'SettingsComponent.modbus' | translate}}</h2>
+    <h2 class="sae__heading-extra-top-margin">{{'SettingsComponent.modbus' | translate}}
+      <app-help [helpfile]="'Settings'" [anchor]="'modbus'"></app-help></h2>
     <div formArrayName="modbusSettings">
       <div *ngFor="let modbusSetting of settings.modbusSettings; index as i">
         <app-settings-modbus
@@ -48,6 +50,21 @@
       </div>
       <button mat-raised-button type="button" class="SettingsComponent__addModbusSetting"
               (click)="addModbusSetting()">{{'button.new' | translate}}</button>
+    </div>
+  </section>
+
+  <mat-divider></mat-divider>
+
+  <section>
+    <h2 class="sae__heading-extra-top-margin">{{'SettingsComponent.notification.heading' | translate}}
+      <app-help [helpfile]="'Settings'" [anchor]="'notifications'"></app-help></h2>
+    <div class="sae__fields">
+      <app-filenameinput
+        formControlNameInput="notificationCommand"
+        label="{{'SettingsComponent.notification.command' | translate}}"
+        value="{{settings.notificationCommand}}"
+        [requiredFileModes]="notificationScriptFileModes"
+      ></app-filenameinput>
     </div>
   </section>
 

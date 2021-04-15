@@ -14,6 +14,16 @@
     background: rgba(0, 0, 0, 0.06);
   }
 
+  &__external_link {
+    font-size: 0.8rem;
+    padding-left: 0.1rem;
+    line-height: 1.5rem;
+  }
+
+  &__menu-item {
+    vertical-align: middle;
+  }
+
   &__submenu-item {
     height: 2rem !important;
     font-size: 0.875rem;

@@ -1,0 +1,21 @@
+<div class="NotificationComponent" [formGroup]="form">
+  <section>
+    <h2>{{'NotificationComponent.heading' | translate}}<app-help [helpfile]="'Notifications'"></app-help></h2>
+    <div class="sae__fields">
+      <mat-checkbox formControlName="notificationsEnabled"
+      >{{'NotificationComponent.enabled' | translate}}</mat-checkbox>
+    </div>
+    <div class="sae__fields">
+      <mat-form-field class="NotificationComponent__types">
+        <mat-label>{{'NotificationComponent.types' | translate}}</mat-label>
+        <mat-select formControlName="notificationTypes" multiple
+                    placeholder="{{typesPlaceholder | translate}}"
+                    required="{{formHandler.isRequired('types')}}">
+          <mat-option *ngFor="let typeListItem of typeListItems" [value]="typeListItem.value">
+            {{typeListItem.viewValue}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </section>
+</div>

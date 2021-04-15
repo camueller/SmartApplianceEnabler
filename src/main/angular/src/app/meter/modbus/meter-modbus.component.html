@@ -17,22 +17,15 @@
                required="{{formHandler.isRequired('slaveAddress')}}">
         <mat-error *ngIf="errors.slaveAddress">{{errors.slaveAddress}}</mat-error>
       </mat-form-field>
-      <mat-form-field class="pollInterval">
+      <mat-form-field class="pollInterval" *ngIf="displayPollInterval">
         <mat-label>{{'MeterModbusComponent.pollInterval' | translate}}</mat-label>
         <input matInput type="text" formControlName="pollInterval"
-               placeholder="{{meterDefaults.modbusElectricityMeter_pollInterval}}"
+               placeholder="{{meterDefaults.modbusElectricityMeterDefaults.pollInterval}}"
                required="{{formHandler.isRequired('pollInterval')}}">
         <mat-error *ngIf="errors.pollInterval">{{errors.pollInterval}}</mat-error>
       </mat-form-field>
-      <mat-form-field class="measurementInterval">
-        <mat-label>{{'MeterModbusComponent.measurementInterval' | translate}}</mat-label>
-        <input matInput type="text" formControlName="measurementInterval"
-               placeholder="{{meterDefaults.modbusElectricityMeter_measurementInterval}}"
-               required="{{formHandler.isRequired('measurementInterval')}}">
-        <mat-error *ngIf="errors.measurementInterval">{{errors.measurementInterval}}</mat-error>
-      </mat-form-field>
     </div>
-    <div formArrayName="modbusReads">
+    <div class="MeterModbusComponent__modbusReads"  formArrayName="modbusReads">
       <app-modbus-read *ngFor="let modbusRead of modbusElectricityMeter.modbusReads; index as i; last as l"
                        [formGroupName]="i"
                        [form]="getModbusReadFormGroup(i)"
@@ -40,10 +33,10 @@
                        [meterDefaults]="meterDefaults"
                        [maxValues]="maxValues"
                        [valueNames]="valueNames"
-                       [readRegisterTypes]="settingsDefaults.modbusReadRegisterTypes"
                        [translationPrefix]="'MeterModbusComponent.'"
                        [translationKeys]="valueNameTextKeys"
                        (remove)="onModbusReadRemove(i)"
+                       (nameChanged)="onNameChanged(i, $event)"
                        #modbusReadComponents
       ></app-modbus-read>
       <button mat-raised-button type="button" (click)="addModbusRead()" class="MeterModbusComponent__addModbusRead" *ngIf="isAddModbusReadPossible">

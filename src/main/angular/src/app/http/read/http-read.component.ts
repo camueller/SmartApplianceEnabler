@@ -22,6 +22,11 @@ import {getValidString} from '../../shared/form-util';
 import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/error-message';
 import {HttpReadValueComponent} from '../read-value/http-read-value.component';
 import {HttpReadValue} from '../read-value/http-read-value';
+import {ValueNameChangedEvent} from '../../meter/value-name-changed-event';
+
+export interface NameChangedEvent {
+  r
+}
 
 @Component({
   selector: 'app-http-read',
@@ -35,8 +40,6 @@ export class HttpReadComponent implements OnChanges, OnInit {
   httpReadValueComps: QueryList<HttpReadValueComponent>;
   @Input()
   valueNames: string[];
-  @Input()
-  minValues: number;
   @Input()
   maxValues: number;
   @Input()
@@ -55,6 +58,8 @@ export class HttpReadComponent implements OnChanges, OnInit {
   translatedStrings: string[];
   @Output()
   remove = new EventEmitter<any>();
+  @Output()
+  nameChanged = new EventEmitter<any>();
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -94,8 +99,13 @@ export class HttpReadComponent implements OnChanges, OnInit {
     });
   }
 
-  get isRemoveValuePossible() {
-    return !this.minValues || this.httpRead.readValues.length > this.minValues;
+  onNameChanged(index: number, event: ValueNameChangedEvent) {
+    event.valueIndex = index;
+    this.nameChanged.emit(event);
+  }
+
+  get isRemoveHttpReadPossible() {
+    return !this.disableRemove;
   }
 
   removeHttpRead() {
@@ -117,9 +127,17 @@ export class HttpReadComponent implements OnChanges, OnInit {
     this.changeDetectorRef.detectChanges();
   }
 
+  get isRemoveValuePossible() {
+    return !this.maxValues || this.maxValues > 1;
+  }
+
   removeHttpReadValue(index: number) {
     this.httpRead.readValues.splice(index, 1);
     this.httpReadValuesFormArray.removeAt(index);
+
+    const event: ValueNameChangedEvent = {valueIndex: index};
+    this.nameChanged.emit(event);
+
     this.form.markAsDirty();
   }
 
@@ -145,7 +163,7 @@ export class HttpReadComponent implements OnChanges, OnInit {
   }
 
   updateModelFromForm(): HttpRead | undefined {
-    const url = this.form.controls.url.value;
+    const url = getValidString(this.form.controls.url.value);
     const httpReadValues = [];
     this.httpReadValueComps.forEach(httpReadValueComp => {
       const httpReadValue = httpReadValueComp.updateModelFromForm();
@@ -158,7 +176,7 @@ export class HttpReadComponent implements OnChanges, OnInit {
       return undefined;
     }
 
-    this.httpRead.url = getValidString(url);
+    this.httpRead.url = url;
     return this.httpRead;
   }
 }

@@ -43,13 +43,13 @@ Installing collected packages: pycryptodome, chardet, certifi, urllib3, idna, re
 Successfully installed PyYAML-5.1.2 certifi-2019.6.16 chardet-3.0.4 idna-2.8 iso8601-0.1.12 pycarwings2-2.9 pycryptodome-3.9.0 requests-2.22.0 urllib3-1.25.3
 ```
 
-Jetzt kann das Verzeichnis für das SOC-Script und Konfigurationsdatei angelegt werden:
+Jetzt kann das Verzeichnis für das SOC-Script und Konfigurationsdatei angelegt und dorthin gewechselt werden:
 ```console
 pi@raspberrypi ~ $ mkdir /opt/sae/soc
 pi@raspberrypi ~ $ cd /opt/sae/soc
 ```
 
-Die Konfigurationsdatei muss den Namen ```config.ini``` haben mit folgendem Inhalt:
+Die Konfigurationsdatei muss den Namen `config.ini` haben mit folgendem Inhalt:
 ```console
 [get-leaf-info]
 username = IhrNissan+YOUUsername
@@ -57,10 +57,10 @@ password = IhrNissan+YOUPasswort
 region = NE
 ```
 
-Das eigentliche SOC-Python-Script sollte mit dem Namen ```soc.py``` und folgendem Inhalt angelegt werden:
+Das eigentliche SOC-Python-Script sollte mit dem Namen `soc.py` und folgendem Inhalt angelegt werden:
 ```console
 #!/usr/bin/env python
-
+  
 import pycarwings2
 import time
 from configparser import ConfigParser
@@ -85,7 +85,7 @@ def update_battery_status(leaf, wait_time=1):
     # Currently the nissan servers eventually return status 200 from get_status_from_update(), previously
     # they did not, and it was necessary to check the date returned within get_latest_battery_status().
     while status is None:
-        print("Waiting {0} seconds".format(sleepsecs))
+#        print("Waiting {0} seconds".format(sleepsecs))
         time.sleep(wait_time)
         status = leaf.get_status_from_update(key)
     return status
@@ -103,11 +103,26 @@ leaf = s.get_leaf()
 # Give the nissan servers a bit of a delay so that we don't get stale data
 time.sleep(1)
 
+#print("get_latest_battery_status from servers")
 leaf_info = leaf.get_latest_battery_status()
-print("state_of_charge %s" % leaf_info.state_of_charge)
+#start_date = leaf_info.answer["BatteryStatusRecords"]["OperationDateAndTime"]
+#print("start_date=", start_date)
+
+# Give the nissan servers a bit of a delay so that we don't get stale data
+time.sleep(1)
+
+# print("request an update from the car itself")
+
+update_status = update_battery_status(leaf, sleepsecs)
+
+latest_leaf_info = leaf.get_latest_battery_status()
+#latest_date = latest_leaf_info.answer["BatteryStatusRecords"]["OperationDateAndTime"]
+#print("latest_date=", latest_date)
+#print_info(latest_leaf_info)
+print("state_of_charge %s" % latest_leaf_info.state_of_charge)
 ```
 
-Damit das SOC-Python-Script von überall aus aufgerufen werden kann und trotzdem die ```config.ini``` gefunden wird, hilft folgendes kleine Shell-Script ```/opt/sae/soc/soc.sh```, das vom *Smart Appliance Enabler* aufgerufen wird:
+Damit das SOC-Python-Script von überall aus aufgerufen werden kann und trotzdem die `config.ini` gefunden wird, hilft folgendes kleine Shell-Script `/opt/sae/soc/soc.sh`, das vom *Smart Appliance Enabler* aufgerufen wird:
 
 ```console
 #!/bin/sh
@@ -128,15 +143,15 @@ Login...
 state_of_charge 19
 ```
 
-Im *Smart Appliance Enabler* wird als SOC-Script angegeben: ```/opt/sae/soc/soc.sh```.
+Im *Smart Appliance Enabler* wird als SOC-Script angegeben: `/opt/sae/soc/soc.sh`.
 Außerdem muss der nachfolgende *Reguläre Ausdruck* angegeben werden, um aus den Ausgaben den eigentlichen Zahlenwert zu extrahieren:
 ```
 .*state_of_charge (\d+)
 ```
 
 ### Hinweis
-In der Datei ```~/.local/lib/python3.5/site-packages/pycarwings2/pycarwings2.py``` muss ggf. die Carwings-URL angepasst werden, da diese sich von Zeit zu Zeit ändert. Diese kann man ggf. von der "My Leaf"-App abschauen: https://gitlab.com/tobiaswkjeldsen/carwingsflutter/blob/master/android/app/src/main/java/dk/kjeldsen/carwingsflutter/CarwingsSession.java 
-Dazu nach einer Zeile mit ```BASE_URL``` am Zeilenanfang suchen und die URL auf folgenden Wert anpassen:
+In der Datei `~/.local/lib/python3.5/site-packages/pycarwings2/pycarwings2.py` muss ggf. die Carwings-URL angepasst werden, da diese sich von Zeit zu Zeit ändert. Diese kann man ggf. von der "My Leaf"-App abschauen: https://gitlab.com/tobiaswkjeldsen/carwingsflutter/blob/master/android/app/src/main/java/dk/kjeldsen/carwingsflutter/CarwingsSession.java 
+Dazu nach einer Zeile mit `BASE_URL` am Zeilenanfang suchen und die URL auf folgenden Wert anpassen:
 ```console
 BASE_URL = "https://gdcportalgw.its-mo.com/api_v181217_NE/gdc/"
 ```
@@ -171,7 +186,7 @@ Precompiled test:test.
 $
 ```
 
-Im Verzeichnis ```dartcarwings``` muss jetzt noch das SOC-Script ```soc.dart``` mit folgendem Inhalt angelegt werden, wobei username/password zu ersetzen sind:
+Im Verzeichnis `dartcarwings` muss jetzt noch das SOC-Script `soc.dart` mit folgendem Inhalt angelegt werden, wobei username/password zu ersetzen sind:
 ```console
 import 'package:http/http.dart' as http;
 import 'package:dartcarwings/dartcarwings.dart';

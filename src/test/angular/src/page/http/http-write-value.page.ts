@@ -1,9 +1,9 @@
 import {HttpWriteValue} from '../../../../../main/angular/src/app/http/write-value/http-write-value';
 import {
   assertInput,
-  assertSelect,
+  assertSelectOption,
   inputText,
-  selectOptionByAttribute,
+  selectOption,
   selectorInputByFormControlName,
   selectorSelectByFormControlName,
   selectorSelectedByFormControlName
@@ -32,12 +32,12 @@ export class HttpWriteValuePage {
   }
 
   public static async setName(t: TestController, name: string, httpWriteValueIndex: number, selectorPrefix?: string) {
-    await selectOptionByAttribute(t, selectorSelectByFormControlName('name', selectorPrefix,
+    await selectOption(t, selectorSelectByFormControlName('name', selectorPrefix,
       HttpWriteValuePage.selectorBase(httpWriteValueIndex)), name);
   }
   public static async assertName(t: TestController, name: string, httpWriteValueIndex: number, selectorPrefix?: string,
                                  i18nPrefix?: string) {
-    await assertSelect(t, selectorSelectedByFormControlName('name', selectorPrefix,
+    await assertSelectOption(t, selectorSelectedByFormControlName('name', selectorPrefix,
       HttpWriteValuePage.selectorBase(httpWriteValueIndex)), name, i18nPrefix);
   }
 
@@ -51,11 +51,11 @@ export class HttpWriteValuePage {
   }
 
   public static async setMethod(t: TestController, method: string, httpWriteValueIndex: number, selectorPrefix?: string) {
-    await selectOptionByAttribute(t, selectorSelectByFormControlName('method', selectorPrefix,
+    await selectOption(t, selectorSelectByFormControlName('method', selectorPrefix,
       HttpWriteValuePage.selectorBase(httpWriteValueIndex)), method);
   }
   public static async assertMethod(t: TestController, method: string, httpWriteValueIndex: number, selectorPrefix?: string) {
-    await assertSelect(t, selectorSelectedByFormControlName('method', selectorPrefix,
+    await assertSelectOption(t, selectorSelectedByFormControlName('method', selectorPrefix,
       HttpWriteValuePage.selectorBase(httpWriteValueIndex)), method);
   }
 

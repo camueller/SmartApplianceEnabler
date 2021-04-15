@@ -17,11 +17,13 @@ import {ModbusWriteValueComponent} from '../write-value/modbus-write-value.compo
 import {ErrorMessages} from '../../shared/error-messages';
 import {FormHandler} from '../../shared/form-handler';
 import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/error-message';
-import {getValidInt, getValidString} from '../../shared/form-util';
+import {getValidFloat, getValidString} from '../../shared/form-util';
 import {ModbusWriteValue} from '../write-value/modbus-write-value';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
 import {Logger} from '../../log/logger';
+import {ValueNameChangedEvent} from '../../meter/value-name-changed-event';
+import {WriteRegisterType} from './write-register-type';
 
 @Component({
   selector: 'app-modbus-write',
@@ -36,8 +38,6 @@ export class ModbusWriteComponent implements OnChanges, OnInit {
   @Input()
   valueNames: string[];
   @Input()
-  writeRegisterTypes: string[];
-  @Input()
   maxValues: number;
   @Input()
   disableFactorToValue = false;
@@ -50,9 +50,12 @@ export class ModbusWriteComponent implements OnChanges, OnInit {
   translationKeys: string[];
   @Output()
   remove = new EventEmitter<any>();
+  @Output()
+  nameChanged = new EventEmitter<any>();
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
+  translatedStrings: { [key: string]: string } = {};
 
   constructor(private logger: Logger,
               private translate: TranslateService,
@@ -86,11 +89,37 @@ export class ModbusWriteComponent implements OnChanges, OnInit {
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
     });
+    this.translate.get([
+      ...this.registerTypes.map(regType => this.toRegisterTypeKey(regType)),
+    ]).subscribe(translatedStrings => {
+      this.translatedStrings = translatedStrings;
+    });
+  }
+
+  onNameChanged(index: number, event: ValueNameChangedEvent) {
+    event.valueIndex = index;
+    this.nameChanged.emit(event);
   }
 
   get type(): string {
     const typeControl = this.form.controls.type;
     return (typeControl ? typeControl.value : '');
+  }
+
+  get registerTypes(): string[] {
+    return Object.values(WriteRegisterType);
+  }
+
+  toRegisterTypeKey(registerType: string): string {
+    return `ModbusWriteComponent.type.${registerType}`;
+  }
+
+  public getTranslatedRegisterType(registerType: string) {
+    return this.translatedStrings[this.toRegisterTypeKey(registerType)];
+  }
+
+  get isFactorToValueDisplayed() {
+    return this.form.controls.type.value === WriteRegisterType.Holding && !this.disableFactorToValue;
   }
 
   removeModbusWrite() {
@@ -115,6 +144,10 @@ export class ModbusWriteComponent implements OnChanges, OnInit {
   removeValue(index: number) {
     this.modbusWrite.writeValues.splice(index, 1);
     this.modbusWriteValuesFormArray.removeAt(index);
+
+    const event: ValueNameChangedEvent = {valueIndex: index};
+    this.nameChanged.emit(event);
+
     this.form.markAsDirty();
   }
 
@@ -147,9 +180,9 @@ export class ModbusWriteComponent implements OnChanges, OnInit {
   }
 
   updateModelFromForm(): ModbusWrite | undefined {
-    const address = this.form.controls.address.value;
-    const type = this.form.controls.type.value;
-    const factorToValue = this.form.controls.factorToValue && this.form.controls.factorToValue.value;
+    const address = getValidString(this.form.controls.address.value);
+    const type = getValidString(this.form.controls.type.value);
+    const factorToValue = this.form.controls.factorToValue && getValidFloat(this.form.controls.factorToValue.value);
     const modbusWriteValues = [];
     this.modbusWriteValueComps.forEach(modbusWriteValueComp => {
       const modbusWriteValue = modbusWriteValueComp.updateModelFromForm();
@@ -162,9 +195,9 @@ export class ModbusWriteComponent implements OnChanges, OnInit {
       return undefined;
     }
 
-    this.modbusWrite.address = getValidString(address);
-    this.modbusWrite.type = getValidString(type);
-    this.modbusWrite.factorToValue = getValidInt(factorToValue);
+    this.modbusWrite.address = address;
+    this.modbusWrite.type = type;
+    this.modbusWrite.factorToValue = factorToValue;
     return this.modbusWrite;
   }
 }

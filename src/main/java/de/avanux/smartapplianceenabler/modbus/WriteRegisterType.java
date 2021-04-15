@@ -19,6 +19,6 @@
 package de.avanux.smartapplianceenabler.modbus;
 
 public enum WriteRegisterType {
-    Holding,
-    Coil
+    Coil,    // FC=5
+    Holding, // FC=6
 }

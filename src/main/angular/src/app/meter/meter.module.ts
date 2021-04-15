@@ -14,6 +14,7 @@ import {MeterService} from './meter-service';
 import {MeterResolver} from './meter-resolver.service';
 import {MeterDefaultsResolver} from './meter-defaults-resolver.service';
 import { HttpLoaderFactory } from '../shared/http-loader-factory';
+import {NotificationModule} from '../notification/notification.module';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { HttpLoaderFactory } from '../shared/http-loader-factory';
     HttpModule,
     HttpClientModule,
     ModbusModule,
+    NotificationModule,
     ReactiveFormsModule,
     TranslateModule.forRoot({
       loader: {

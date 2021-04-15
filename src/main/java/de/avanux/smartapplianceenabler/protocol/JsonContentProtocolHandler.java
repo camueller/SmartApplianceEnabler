@@ -35,16 +35,10 @@ public class JsonContentProtocolHandler implements ContentProtocolHandler {
     @Override
     public String readValue(String selector) {
         if(this.context != null) {
-            return this.context.read(selector);
-        }
-        return null;
-    }
-
-    @Override
-    public Integer readIntegerValue(String selector) {
-        if(this.context != null) {
-            String valueString = this.context.read(selector);
-            return Integer.valueOf(valueString);
+            Object value = this.context.read(selector);
+            if(value != null) {
+                return value.toString();
+            }
         }
         return null;
     }

@@ -24,7 +24,7 @@
            required="{{formHandler.isRequired('id')}}">
     <mat-error *ngIf="errors.id">{{errors.id}}</mat-error>
   </mat-form-field>
-
+  <app-help [helpfile]="'Appliance'"></app-help>
   <section>
     <h2>{{'ApplianceComponent.general' | translate}}</h2>
     <div class="sae__fields">
@@ -106,6 +106,18 @@
                matTooltip="{{'ApplianceComponent.maxOffTime.tooltip' | translate}}"
                required="{{formHandler.isRequired('maxOffTime')}}">
         <mat-error *ngIf="errors.maxOffTime">{{errors.maxOffTime}}</mat-error>
+      </mat-form-field>
+    </div>
+  </section>
+  <section>
+    <h2>{{'ApplianceComponent.notification.heading' | translate}}</h2>
+    <div class="sae__fields">
+      <mat-form-field class="ApplianceComponent__notificationSenderId">
+        <mat-label>{{'ApplianceComponent.notification.senderId' | translate}}</mat-label>
+        <input matInput type="text" formControlName="notificationSenderId"
+               placeholder="{{form.controls.id?.value}}"
+               required="{{formHandler.isRequired('notificationSenderId')}}">
+        <mat-error *ngIf="errors.notificationSenderId">{{errors.notificationSenderId}}</mat-error>
       </mat-form-field>
     </div>
   </section>

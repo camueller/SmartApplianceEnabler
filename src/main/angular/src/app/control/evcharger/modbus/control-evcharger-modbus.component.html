@@ -19,6 +19,10 @@
       </mat-form-field>
     </div>
     <h2 class="sae__heading-extra-top-margin">{{'ControlEvchargerModbusComponent.heading.modbusRead' | translate}}</h2>
+    <div class="ControlEvchargerModbusComponent__missingNames" *ngIf="readValueNamesNotConfigured?.length > 0">
+      <messagebox [level]="MessageBoxLevel.ERROR"
+      >{{'ControlEvchargerComponent.message.missingRead' | translate}}: {{readValueNamesNotConfigured}}</messagebox>
+    </div>
     <span formArrayName="modbusReads">
       <app-modbus-read *ngFor="let modbusRead of evModbusControl.modbusReads; index as i; last as l"
                        [formGroupName]="i"
@@ -28,8 +32,8 @@
                        [meterDefaults]="meterDefaults"
                        [translationPrefix]="'ControlEvchargerComponent.'"
                        [translationKeys]="readValueNameTextKeys"
-                       [readRegisterTypes]="settingsDefaults.modbusReadRegisterTypes"
                        (remove)="onModbusReadRemove(i)"
+                       (nameChanged)="onValueNameChanged(i, $event)"
                        #modbusReadComponents
       ></app-modbus-read>
     </span>
@@ -38,6 +42,10 @@
 
 
     <h2 class="sae__heading-extra-top-margin">{{'ControlEvchargerModbusComponent.heading.modbusWrite' | translate}}</h2>
+    <div class="ControlEvchargerModbusComponent__missingNames" *ngIf="writeValueNamesNotConfigured?.length > 0">
+      <messagebox [level]="MessageBoxLevel.ERROR"
+      >{{'ControlEvchargerComponent.message.missingWrite' | translate}}: {{writeValueNamesNotConfigured}}</messagebox>
+    </div>
     <span formArrayName="modbusWrites">
       <app-modbus-write *ngFor="let modbusWrite of evModbusControl.modbusWrites; index as i; last as l"
                         [formGroupName]="i"
@@ -46,8 +54,8 @@
                         [valueNames]="writeValueNames"
                         [translationPrefix]="'ControlEvchargerComponent.'"
                         [translationKeys]="writeValueNameTextKeys"
-                        [writeRegisterTypes]="settingsDefaults.modbusReadRegisterTypes"
                         (remove)="onModbusWriteRemove(i)"
+                        (nameChanged)="onValueNameChanged(i, $event)"
                         #modbusWriteComponents
       ></app-modbus-write>
     </span>

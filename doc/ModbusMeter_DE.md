@@ -4,21 +4,26 @@ Stromzähler mit [Modbus](https://de.wikipedia.org/wiki/Modbus)-Protokoll erlaub
 
 Für Modbus-Schalter gelten die allgemeinen Hinweise zur Verwendung von [Modbus im SmartApplianceEnabler](Modbus_DE.md).
 
-Bevor ein Modbus-basierter Zähler konfiguriert werden kann, muss ein [Modbus/TCP](Settings_DE.md#Modbus) konfiguriert werden, der dann in der Konfiguration des Modbus-Stromzählers ausgewählt wird. Auch Slave-Adresse muss angegeben werden.
-Ausserdem kann ein ```Messinterval``` angegeben werden für die Durchschnittsberechnung der Leistungsaufnahme.
+Nach Möglichkeit sollte die Messgrösse `Zählerstand` eingstellt werden, weil der *Smart Appliance Enabler* dann diesen Wert **nur einmal pro Minute abfragen** muss und aus der Differenz zur vorangegangen Anfrage die Leistung sehr genau berechnet kann.
 
-Der *Smart Appliance Enabler* verwendet den Modbus-Zähler sowohl zur Bestimmung der aktuellen Leistungsaufnahme als auch zum Messen von Energiemengen. Dafür muß jeweils die Register-Adresse und der Register-Typ eingegeben werden. Die restlichen Felder sind optional.
+Wird die Messgrösse `Leistung` eingestellt, erfolgt die Abfrage dieses Wertes mehrmals pro Minute, um aus diesen Werten den Durschnitt zu berechnen. Der zeitliche Abstand zwischen diesen Abfragen kann mit dem `Abfrage-Intervall` festgelegt werden - der Standardwert sind 20 Sekunden.
+
+Für die Messgrösse `Zählerstand` wird der Wert in kWh und für die Messgrösse `Leistung` in W benötigt. Falls die Werte in anderen Einheiten geliefert werden, muss ein muss ein `Umrechnungsfaktor` angegeben werden, mit dem der gelieferte Wert multipliziert werden muss, um ihn in die benötigte Einheit umzurechnen. Wird beispielsweise der Verbrauch in mW geliefert, muss dieser Faktor mit dem Wert `1000` angegeben werden.
 
 ![Modbus-basierter Zähler](../pics/fe/ModbusMeter.png)
 
-Wird ein Zähler über Modbus abgefragt, finden sich in der [Log-Datei](Support.md#Log) für jede Abfrage folgende Zeilen:
+## Log
+Wird ein Modbus-Zähler für das Gerät `F-00000001-000000000005-00` verwendet, kann man die ermittelte Leistungsaufnahme im [Log](Logging_DE.md) mit folgendem Befehl anzeigen:
+
+```console
+sae@raspi:~ $ grep 'Modbus\|Register' /tmp/rolling-2020-12-30.log | grep F-00000001-000000000019-00
+2020-12-30 14:33:51,483 DEBUG [http-nio-8080-exec-7] d.a.s.m.ModbusSlave [ModbusSlave.java:76] F-00000001-000000000019-00: Connecting to modbus modbus@127.0.0.1:502
+2020-12-30 14:33:51,546 DEBUG [http-nio-8080-exec-7] d.a.s.m.e.ReadFloatInputRegisterExecutorImpl [ReadInputRegisterExecutor.java:57] F-00000001-000000000019-00: Input register=342 value=[17668, 65470, 0, 0]
+2020-12-30 14:33:51,550 DEBUG [http-nio-8080-exec-7] d.a.s.m.ModbusElectricityMeter [ModbusElectricityMeter.java:219] F-00000001-000000000019-00: Float value=2127.984
+2020-12-30 14:33:51,551 DEBUG [http-nio-8080-exec-7] d.a.s.m.ModbusElectricityMeter [ModbusElectricityMeter.java:88] F-00000001-000000000019-00: average power = 6895W
 ```
-2019-03-21 00:02:55,700 DEBUG [http-nio-8080-exec-5] d.a.s.m.ModbusSlave [ModbusSlave.java:76] F-00000001-000000000006-00: Connecting to modbus modbus@127.0.0.1:502
-2019-03-21 00:02:55,744 DEBUG [http-nio-8080-exec-5] d.a.s.m.e.ReadFloatInputRegisterExecutorImpl [ReadInputRegisterExecutor.java:57] F-00000001-000000000006-00: Input register=72 value=[17975, 11024]
-2019-03-21 00:02:55,748 DEBUG [http-nio-8080-exec-5] d.a.s.m.ModbusElectricityMeter [ModbusElectricityMeter.java:180] F-00000001-000000000006-00: Float value=11722.766
-2019-03-21 00:02:55,750 DEBUG [http-nio-8080-exec-5] d.a.s.m.PollEnergyMeter [PollEnergyMeter.java:62] F-00000001-000000000006-00: energy=0.0kWh totalEnergy=null startEnergyCounter=null currentEnergyCounter=11722.766 started=false
-2019-03-21 00:02:55,751 DEBUG [http-nio-8080-exec-5] d.a.s.a.Appliance [Appliance.java:625] F-00000001-000000000006-00: energy metered: 0.0 kWh
-```
+
+*Webmin*: In [View Logfile](Logging_DE.md#webmin-logs) gibt man hinter `Only show lines with text` ein `Modbus` und drückt Refresh.
 
 ## Schaltbeispiel 1: 240V-Gerät mit Stromverbrauchsmessung
 Der Aufbau zum Messen des Stromverbrauchs eines 240V-Gerätes (z.B. Pumpe) könnte wie folgt aussehen, wobei diese Schaltung natürlich um einen [Schalter](https://github.com/camueller/SmartApplianceEnabler/blob/master/README.md#schalter) erweitert werden kann, wenn neben dem Messen auch geschaltet werden soll.

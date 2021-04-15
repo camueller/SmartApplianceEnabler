@@ -17,7 +17,7 @@
  */
 package de.avanux.smartapplianceenabler.util;
 
-import java.time.LocalDate;
+import com.sun.xml.bind.marshaller.MinimumEscapeHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,10 +28,12 @@ import javax.xml.bind.Unmarshaller;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 public class FileHandler {
@@ -53,13 +55,13 @@ public class FileHandler {
         return homeDir;
     }
 
-    public <R extends Object> R load(Class<R> rootElementType) {
+    public <R extends Object> R load(Class<R> rootElementType, FileContentPreProcessor preProcessor) {
         File file = getFile(rootElementType);
         if(file.exists()) {
             InputStream is = null;
             try {
                 is = new FileInputStream(file);
-                return load(rootElementType, is);
+                return load(rootElementType, is, preProcessor);
             }
             catch(Exception e) {
                 logger.error("Error unmarshalling file " + file, e);
@@ -78,11 +80,15 @@ public class FileHandler {
         return null;
     }
 
-    public <R extends Object> R load(Class<R> rootElementType, InputStream is) throws JAXBException, IOException {
+    public <R extends Object> R load(Class<R> rootElementType, InputStream is, FileContentPreProcessor preProcessor) throws JAXBException, IOException {
         if(is.available() > 0) {
+            String inputString = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8)).lines()
+                    .collect(Collectors.joining("\n"));
+            String processedInputString = preProcessor != null ? preProcessor.process(inputString) : inputString;
+            Reader stringReader = new StringReader(processedInputString);
             JAXBContext context = JAXBContext.newInstance(rootElementType);
             Unmarshaller unmarshaller = context.createUnmarshaller();
-            return (R) unmarshaller.unmarshal(is);
+            return (R) unmarshaller.unmarshal(stringReader);
         }
         return null;
     }
@@ -94,6 +100,7 @@ public class FileHandler {
             JAXBContext context = JAXBContext.newInstance(object.getClass());
             Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            marshaller.setProperty("com.sun.xml.bind.characterEscapeHandler", MinimumEscapeHandler.theInstance);
             marshaller.marshal(object, stringWriter);
 
             // this is a hack to remove default namespace ns2 but I did not find any other way that worked :-(
@@ -158,5 +165,23 @@ public class FileHandler {
     private File getHolidayFile() {
         int year = LocalDate.now().getYear();
         return new File(getHomeDir(), "Holidays-" + year + ".txt");
+    }
+
+    public int getFileAttributes(String pathname) {
+        int mode = -1;
+        File file = new File(pathname);
+        if(file.exists()) {
+            mode = 0;
+            if(file.canRead()) {
+                mode += 1;
+            }
+            if(file.canWrite()) {
+                mode += 2;
+            }
+            if(file.canExecute()) {
+                mode += 4;
+            }
+        }
+        return mode;
     }
 }

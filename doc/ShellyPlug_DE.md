@@ -6,7 +6,7 @@ Mit dem [Shelly plug](https://shelly.cloud/shelly-plug/), der mit dem WLAN verbu
 
 Damit der *Smart Appliance Enabler* in der JSON-Antwort den eigentlichen Wert für die Leistungsaufnahme findet, muss folgender Regulärer Ausdruck angegeben werden:
 
-```.*power.:(\d+).*```
+`.*power.:(\d+).*`
 
 ## Shelly Plug als Schalter
 

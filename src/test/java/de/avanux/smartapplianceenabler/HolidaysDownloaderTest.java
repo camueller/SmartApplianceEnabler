@@ -19,7 +19,6 @@ package de.avanux.smartapplianceenabler;
 
 import java.time.LocalDate;
 
-import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;

@@ -6,15 +6,17 @@
   "author": "Axel Müller <axel.mueller@avanux.de>",
   "license": "GPL",
   "scripts": {
-    "debug": "testcafe $NODE_DEBUG_OPTION chrome"
+    "debug": "testcafe $NODE_DEBUG_OPTION chrome",
+    "test": "testcafe chrome \"src/*.spec.ts\"",
+    "test8080": "E2E_TEST_URL=http://localhost:8080 testcafe chrome \"src/*.spec.ts\""
   },
   "private": true,
   "dependencies": {
-    "testcafe": "^1.8.4",
-    "testcafe-browser-provider-browserstack": "^1.13.0-alpha.1",
-    "ts-node": "~7.0.0",
-    "tslint": "~5.20.1",
-    "typescript": "~3.5.3",
-    "typescript-tslint-plugin": "~0.5.5"
+    "testcafe": "^1.10.0",
+    "testcafe-browser-provider-browserstack": "^1.13.1",
+    "ts-node": "^9.1.1",
+    "tslint": "^6.1.3",
+    "typescript": "^4.1.3",
+    "typescript-tslint-plugin": "^1.0.1"
   }
 }

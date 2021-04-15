@@ -3,12 +3,21 @@
 Für Modbus-Schalter gelten die allgemeinen Hinweise zur Verwendung von [Modbus im SmartApplianceEnabler](Modbus_DE.md).
 
 Bevor ein Modbus-basierter Schalter konfiguriert werden kann, muss ein [Modbus/TCP](Settings_DE.md#Modbus) konfiguriert werden, der dann in der Konfiguration des Modbus-basierten Schalters ausgewählt wird.
-Außerdem müssen Slave-Adresse, sowie  Register-Adresse und -Typ eingegeben werden. Auch die Werte zum Ein- bzw. Ausschalten müssen angegeben werden.
+Außerdem müssen Slave-Adresse, sowie  Register-Adresse und -Typ eingegeben werden.
+
+Für Modbus-basierter Schalter müssen die Aktionen `Einschalten` und `Auschalten` konfiguriert werden. Das kann wahlweise über ein Register mit unterschiedlichen Werten oder über zwei Register erreicht werden.
 
 ![Modbus Switch](../pics/fe/ModbusSwitch.png)
 
-Wird ein Gerät über Modbus geschaltet, findet sich in der [Log-Datei](Support.md#Log) für jeden Schaltvorgang folgende Zeile:
+## Log
 
+Wird ein Gerät (hier `F-00000001-000000000019-00`) mittels HTTP-Schalter geschaltet, kann man den Schaltbefehl im [Log](Logging_DE.md) mit folgendem Befehl anzeigen:
+
+```console
+sae@raspi:~ $ grep 'Modbus\|Register' /tmp/rolling-2020-12-30.log | grep F-00000001-000000000019-00
+2020-12-30 14:30:09,982 DEBUG [http-nio-8080-exec-9] d.a.s.c.ModbusSwitch [ModbusSwitch.java:100] F-00000001-000000000019-00: Switching on
+2020-12-30 14:30:09,983 DEBUG [http-nio-8080-exec-9] d.a.s.m.ModbusSlave [ModbusSlave.java:76] F-00000001-000000000019-00: Connecting to modbus wallbox@modbus:502
+2020-12-30 14:30:09,991 DEBUG [http-nio-8080-exec-9] d.a.s.m.e.ReadInputRegisterExecutor [WriteHoldingRegisterExecutorImpl.java:67] F-00000001-000000000019-00: Write holding register=300 value=1 confirmedValue=1
 ```
-FIXME Hier fehlen noch die passenden Log-Zeilen
-```
+
+*Webmin*: In [View Logfile](Logging_DE.md#webmin-logs) gibt man hinter `Only show lines with text` ein `Modbus` und drückt Refresh.

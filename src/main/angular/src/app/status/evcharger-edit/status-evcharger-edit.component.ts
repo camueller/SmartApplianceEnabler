@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild} from '@angular/core';
 import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ErrorMessages} from '../../shared/error-messages';
 import {StatusService} from '../status.service';
@@ -14,6 +14,9 @@ import {Logger} from '../../log/logger';
 import {ErrorMessage, ValidatorType} from '../../shared/error-message';
 import {TranslateService} from '@ngx-translate/core';
 import {TimepickerComponent} from '../../material/timepicker/timepicker.component';
+import {ChargeMode} from './charge-mode';
+import {ListItem} from '../../shared/list-item';
+import { ElementRef } from '@angular/core';
 
 const socValidator = (control: AbstractControl): { [key: string]: boolean } => {
   const stateOfChargeCurrent = control.get('stateOfChargeCurrent');
@@ -51,7 +54,12 @@ export class StatusEvchargerEditComponent implements OnInit {
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
+  chargeModes: ListItem[] = [];
+  chargeModeSelected = ChargeMode.FAST;
   electricVehicleSelected: ElectricVehicle;
+  soc: string;
+  submitButtonTextStart: string;
+  submitButtonTextSave: string;
 
   constructor(private logger: Logger,
               private controlService: ControlService,
@@ -67,21 +75,34 @@ export class StatusEvchargerEditComponent implements OnInit {
       new ErrorMessage('stateOfChargeRequested', ValidatorType.pattern),
       new ErrorMessage('chargeEndTime', ValidatorType.pattern),
     ], this.translate);
-    this.buildForm();
-  }
-
-  buildForm() {
+    this.translate.get('StatusComponent.buttonStart').subscribe(translated => this.submitButtonTextStart = translated);
+    this.translate.get('button.save').subscribe(translated => this.submitButtonTextSave = translated);
+    const chargeModeKeys = Object.keys(ChargeMode).map(key => `StatusComponent.chargeMode.${key}`);
+    this.translate.get(chargeModeKeys).subscribe(translatedStrings => {
+      Object.keys(translatedStrings).forEach(key => {
+        this.chargeModes.push({value: key.split('.')[2], viewValue: translatedStrings[key] });
+      });
+    });
     if (this.electricVehicles.length > 0) {
       this.electricVehicleSelected = this.electricVehicles[0];
       this.retrieveSoc();
     }
+    this.buildForm();
+  }
+
+  buildForm() {
     this.form = new FormGroup({
+      chargeMode: new FormControl(this.chargeModeSelected),
       electricVehicle: new FormControl(this.electricVehicleSelected && this.electricVehicleSelected.id),
-      stateOfChargeCurrent: new FormControl(undefined, Validators.pattern(InputValidatorPatterns.PERCENTAGE)),
+      stateOfChargeCurrent: new FormControl(this.soc, Validators.pattern(InputValidatorPatterns.PERCENTAGE)),
       stateOfChargeRequested: new FormControl(this.electricVehicleSelected && this.electricVehicleSelected.defaultSocManual,
         Validators.pattern(InputValidatorPatterns.PERCENTAGE)),
-      chargeEndDow: new FormControl(),
     }, socValidator);
+    if (this.chargeModeSelected === ChargeMode.OPTIMIZED) {
+      this.formHandler.addFormControl(this.form, 'chargeEndDow', undefined, Validators.required);
+    } else if (this.chargeModeSelected === ChargeMode.EXCESS_ENERGY) {
+      this.form.get('stateOfChargeRequested').setValue(this.electricVehicleSelected.defaultSocOptionalEnergy);
+    }
     this.form.get('electricVehicle').valueChanges.subscribe(evIdSelected => {
       this.electricVehicleSelected = this.getElectricVehicle(evIdSelected);
       this.form.get('stateOfChargeRequested').setValue(this.electricVehicleSelected.defaultSocManual);
@@ -92,6 +113,18 @@ export class StatusEvchargerEditComponent implements OnInit {
     });
   }
 
+  @ViewChild('chargeEndTimeComponent')
+  set chargeEndTimeComponent(chargeEndTimeComponent: ElementRef) {
+    if (chargeEndTimeComponent instanceof TimepickerComponent) {
+      this.chargeEndTimeComp = chargeEndTimeComponent;
+    }
+  }
+
+  chargeModeChanged(newMode?: string | undefined) {
+    this.chargeModeSelected = ChargeMode[newMode];
+    this.buildForm();
+  }
+
   getElectricVehicle(id: number): ElectricVehicle {
     return id && this.electricVehicles.find(ev => ev.id === id);
   }
@@ -99,9 +132,22 @@ export class StatusEvchargerEditComponent implements OnInit {
   retrieveSoc() {
     this.statusService.getSoc(this.status.id, this.electricVehicleSelected.id).subscribe(soc => {
       if (! Number.isNaN(Number.parseInt(soc, 10))) {
-        this.form.get('stateOfChargeCurrent').setValue(Number.parseFloat(soc).toFixed());
+        this.soc = Number.parseFloat(soc).toFixed();
+        this.form.get('stateOfChargeCurrent').setValue(this.soc);
       }
     });
+  }
+
+  get isChargeModeFast() {
+    return this.chargeModeSelected === ChargeMode.FAST;
+  }
+
+  get isChargeModeOptimized() {
+    return this.chargeModeSelected === ChargeMode.OPTIMIZED;
+  }
+
+  get isChargeModeExcessEnergy() {
+    return this.chargeModeSelected === ChargeMode.EXCESS_ENERGY;
   }
 
   get hasErrors(): boolean {
@@ -113,6 +159,13 @@ export class StatusEvchargerEditComponent implements OnInit {
     return errors.length > 0 ? errors[0] : undefined;
   }
 
+  get submitButtonText() {
+    if (this.isChargeModeExcessEnergy) {
+      return this.submitButtonTextSave;
+    }
+    return this.submitButtonTextStart;
+  }
+
   cancelForm() {
     this.formCancelled.emit();
   }
@@ -122,11 +175,17 @@ export class StatusEvchargerEditComponent implements OnInit {
     const evid = this.form.value.electricVehicle;
     const socCurrent = this.form.value.stateOfChargeCurrent;
     const socRequested = this.form.value.stateOfChargeRequested;
-    const chargeEndTime = this.chargeEndTimeComp.updateModelFromForm();
-    const chargeEnd = TimeUtil.timestringOfNextMatchingDow(
-      this.form.value.chargeEndDow,
-      chargeEndTime);
-    this.statusService.requestEvCharge(this.status.id, evid, socCurrent, socRequested, chargeEnd)
-      .subscribe(() => this.formSubmitted.emit());
+    if (this.isChargeModeExcessEnergy) {
+      this.statusService.updateSoc(this.status.id, socCurrent, socRequested).subscribe(() => this.formSubmitted.emit());
+    } else {
+      let chargeEndTime: string|undefined;
+      let chargeEnd: string|undefined;
+      if (this.isChargeModeOptimized) {
+        chargeEndTime = this.chargeEndTimeComp.updateModelFromForm();
+        chargeEnd = TimeUtil.timestringOfNextMatchingDow(this.form.value.chargeEndDow, chargeEndTime);
+      }
+      this.statusService.requestEvCharge(this.status.id, evid, socCurrent, socRequested, chargeEnd)
+        .subscribe(() => this.formSubmitted.emit());
+    }
   }
 }

@@ -20,6 +20,7 @@
           [valueNames]="valueNames"
           [translationPrefix]="translationPrefix"
           [translationKeys]="translationKeys"
+          (nameChanged)="onNameChanged(i, $event)"
           #httpWriteValues
         ></app-http-write-value>
       </div>

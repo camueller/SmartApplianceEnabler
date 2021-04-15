@@ -22,6 +22,6 @@ package de.avanux.smartapplianceenabler.meter;
  */
 public interface PollPowerExecutor {
 
-    Float pollPower();
+    Double pollPower();
 
 }

@@ -20,12 +20,15 @@ package de.avanux.smartapplianceenabler.control.ev;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.configuration.Validateable;
+import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 
 public interface EVChargerControl extends ApplianceIdConsumer, Validateable {
 
     void init();
 
     void setPollInterval(Integer pollInterval);
+
+    void setNotificationHandler(NotificationHandler notificationHandler);
 
     boolean isVehicleNotConnected();
 

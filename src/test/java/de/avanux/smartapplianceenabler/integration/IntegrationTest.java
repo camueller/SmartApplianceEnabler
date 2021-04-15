@@ -24,19 +24,17 @@ import de.avanux.smartapplianceenabler.appliance.ApplianceBuilder;
 import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.StartingCurrentSwitch;
-import de.avanux.smartapplianceenabler.control.StartingCurrentSwitchDefaults;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.schedule.TimeframeIntervalHandler;
 import de.avanux.smartapplianceenabler.schedule.TimeframeIntervalState;
 import de.avanux.smartapplianceenabler.semp.webservice.*;
 import de.avanux.smartapplianceenabler.webservice.ApplianceStatus;
 import de.avanux.smartapplianceenabler.webservice.SaeController;
-import java.time.LocalDateTime;
-import org.junit.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -185,7 +183,7 @@ public class IntegrationTest extends TestBase {
 
         log("Click go light", timeInitial);
         assertEquals(maxRuntime, saeController.suggestRuntime(applianceId).intValue());
-        saeController.setRuntimeDemand(timeInitial, applianceId, maxRuntime);
+        saeController.setRuntimeDemand(timeInitial, applianceId, maxRuntime, null);
         sempController.em2Device(timeInitial, createEM2Device(applianceId,true));
         assertTimeframeIntervalRuntime(toIntervalToday(10, 0, 0, 18, 0, 0),
                 TimeframeIntervalState.ACTIVE, null, maxRuntime, true, timeframeIntervalHandler.getQueue().get(0));
@@ -210,7 +208,7 @@ public class IntegrationTest extends TestBase {
 
         log("Click go light", timeInitial);
         assertEquals(maxRuntimeSchedule, saeController.suggestRuntime(applianceId).intValue());
-        saeController.setRuntimeDemand(timeInitial, applianceId, maxRuntimeSet);
+        saeController.setRuntimeDemand(timeInitial, applianceId, maxRuntimeSet, null);
         sempController.em2Device(timeInitial, createEM2Device(applianceId,true));
         assertTimeframeIntervalRuntime(toIntervalToday(10, 0, 0, 18, 0, 0),
                 TimeframeIntervalState.ACTIVE, null, maxRuntimeSet, true, timeframeIntervalHandler.getQueue().get(0));
@@ -240,7 +238,7 @@ public class IntegrationTest extends TestBase {
                 TimeframeIntervalState.QUEUED, null, maxRuntime, true, timeframeIntervalHandler.getQueue().get(2));
 
         log("Click go light", timeInitial);
-        saeController.setRuntimeDemand(timeInitial, applianceId, maxRuntime);
+        saeController.setRuntimeDemand(timeInitial, applianceId, maxRuntime, null);
         sempController.em2Device(timeInitial, createEM2Device(applianceId,true));
         assertEquals(3, timeframeIntervalHandler.getQueue().size());
         assertTimeframeIntervalRuntime(toIntervalToday(10, 0, 0, 18, 0, 0),
@@ -312,7 +310,7 @@ public class IntegrationTest extends TestBase {
                 TimeframeIntervalState.QUEUED, null, maxRuntime, true, timeframeIntervalHandler.getQueue().get(1));
 
         log("Click go light", timeInitial);
-        saeController.setRuntimeDemand(timeInitial, applianceId, maxRuntime);
+        saeController.setRuntimeDemand(timeInitial, applianceId, maxRuntime, null);
         sempController.em2Device(timeInitial, createEM2Device(applianceId,true));
         assertEquals(3, timeframeIntervalHandler.getQueue().size());
         assertTimeframeIntervalRuntime(toIntervalToday(17, 30, 0, 18, 30, 31),
@@ -384,7 +382,7 @@ public class IntegrationTest extends TestBase {
                 TimeframeIntervalState.QUEUED, null, maxRuntime, true, timeframeIntervalHandler.getQueue().get(1));
 
         log("Click go light - ", timeInitial);
-        saeController.setRuntimeDemand(timeInitial, applianceId, maxRuntime);
+        saeController.setRuntimeDemand(timeInitial, applianceId, maxRuntime, null);
         sempController.em2Device(timeInitial, createEM2Device(applianceId,true));
         assertEquals(3, timeframeIntervalHandler.getQueue().size());
         assertTimeframeIntervalRuntime(toIntervalToday(9, 30, 0, 10, 30, 31),

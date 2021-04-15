@@ -25,9 +25,8 @@ import org.slf4j.LoggerFactory;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,6 +36,10 @@ public class SocScript implements ApplianceIdConsumer {
     private transient Logger logger = LoggerFactory.getLogger(SocScript.class);
     @XmlAttribute
     private String script;
+    @XmlAttribute
+    private Integer updateAfterIncrease;
+    @XmlAttribute
+    private Integer updateAfterSeconds;
     @XmlAttribute
     private String extractionRegex;
     private transient Pattern socValueExtractionPattern;
@@ -49,6 +52,14 @@ public class SocScript implements ApplianceIdConsumer {
 
     public void setScript(String script) {
         this.script = script;
+    }
+
+    public Integer getUpdateAfterIncrease() {
+        return updateAfterIncrease;
+    }
+
+    public Integer getUpdateAfterSeconds() {
+        return updateAfterSeconds;
     }
 
     public String getExtractionRegex() {
@@ -64,14 +75,25 @@ public class SocScript implements ApplianceIdConsumer {
         this.applianceId = applianceId;
     }
 
-    public Float getStateOfCharge() {
+    public Double getStateOfCharge() {
         if(this.script != null) {
-            String output = getScriptOutput(this.script);
-            if(output != null && output.length() > 0) {
-                String socValueString = extractSoCValue(output, this.extractionRegex);
-                Float soc = Float.parseFloat(socValueString.replace(',', '.'));
-                logger.debug("{}: SoC: {}", applianceId, soc);
-                return soc;
+            File scriptFile = new File(this.script);
+            if(scriptFile.exists()) {
+                if(scriptFile.canExecute()) {
+                    String output = getScriptOutput(this.script);
+                    if(output != null && output.length() > 0) {
+                        String socValueString = extractSoCValue(output, this.extractionRegex);
+                        Double soc = Double.parseDouble(socValueString.replace(',', '.'));
+                        logger.debug("{}: SoC: {}", applianceId, soc);
+                        return soc;
+                    }
+                }
+                else {
+                    logger.error("{}: SoC script file is not executable: {}", applianceId, this.script);
+                }
+            }
+            else {
+                logger.error("{}: SoC script file not found: {}", applianceId, this.script);
             }
         }
         else {
@@ -81,24 +103,32 @@ public class SocScript implements ApplianceIdConsumer {
     }
 
     private String getScriptOutput(String scriptToExecute) {
+        InputStream inputStream = null;
         try {
             logger.debug("{}: Executing SoC script: {}", applianceId, scriptToExecute);
             ProcessBuilder builder = new ProcessBuilder(scriptToExecute);
             builder.redirectErrorStream(true);
             Process p = builder.start();
-            BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
             StringBuffer scriptOutput = new StringBuffer();
-            while (true) {
-                String line = r.readLine();
-                if (line == null) {
-                    break;
-                }
-                scriptOutput = scriptOutput.append(line);
+            inputStream = p.getInputStream();
+            int c;
+            while ((c = inputStream.read()) != -1) {
+                scriptOutput.append((char) c);
             }
             logger.debug("{}: SoC script output: {}", applianceId, scriptOutput.toString());
-            return scriptOutput.toString();
-        } catch (IOException e) {
+            int rc = p.waitFor();
+            logger.debug("{}: SoC script exited with return code {}", applianceId, rc);
+            if(rc == 0) {
+                return scriptOutput.toString();
+            }
+        } catch (Exception e) {
             logger.error("{}: Error executing SoC script {}", applianceId, scriptToExecute, e);
+        } finally {
+            try {
+                Objects.requireNonNull(inputStream).close();
+            } catch (IOException e) {
+                logger.error("{}: Error closing input stream of SoC script {}", applianceId, scriptToExecute, e);
+            }
         }
         return null;
     }
@@ -111,7 +141,7 @@ public class SocScript implements ApplianceIdConsumer {
      * @return the SOC value extracted or the full text if the regular expression is null or could not be matched
      */
     protected String extractSoCValue(String text, String regex)  {
-        if(regex == null) {
+        if(regex == null || regex.length() == 0) {
             return text;
         }
         logger.debug("{}: SoC extraction regex: {}", applianceId, regex);
@@ -127,8 +157,10 @@ public class SocScript implements ApplianceIdConsumer {
 
     @Override
     public String toString() {
-        return "SocScript {" +
+        return "SocScript{" +
                 "script='" + script + '\'' +
+                ", updateAfterIncrease=" + updateAfterIncrease +
+                ", updateAfterSeconds=" + updateAfterSeconds +
                 ", extractionRegex='" + extractionRegex + '\'' +
                 '}';
     }

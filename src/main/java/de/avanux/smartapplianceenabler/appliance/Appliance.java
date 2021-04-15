@@ -20,10 +20,7 @@ package de.avanux.smartapplianceenabler.appliance;
 import com.pi4j.io.gpio.GpioController;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.control.*;
-import de.avanux.smartapplianceenabler.control.ev.EVChargerControl;
-import de.avanux.smartapplianceenabler.control.ev.EVChargerState;
-import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
-import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
+import de.avanux.smartapplianceenabler.control.ev.*;
 import de.avanux.smartapplianceenabler.meter.HttpElectricityMeter;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.meter.ModbusElectricityMeter;
@@ -31,6 +28,9 @@ import de.avanux.smartapplianceenabler.meter.S0ElectricityMeter;
 import de.avanux.smartapplianceenabler.modbus.EVModbusControl;
 import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
+import de.avanux.smartapplianceenabler.notification.Notification;
+import de.avanux.smartapplianceenabler.notification.NotificationHandler;
+import de.avanux.smartapplianceenabler.notification.NotificationProvider;
 import de.avanux.smartapplianceenabler.schedule.*;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
 import de.avanux.smartapplianceenabler.configuration.Validateable;
@@ -55,6 +55,7 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
     @XmlElements({
             @XmlElement(name = "AlwaysOnSwitch", type = AlwaysOnSwitch.class),
             @XmlElement(name = "HttpSwitch", type = HttpSwitch.class),
+            @XmlElement(name = "MeterReportingSwitch", type = MeterReportingSwitch.class),
             @XmlElement(name = "MockSwitch", type = MockSwitch.class),
             @XmlElement(name = "ModbusSwitch", type = ModbusSwitch.class),
             @XmlElement(name = "StartingCurrentSwitch", type = StartingCurrentSwitch.class),
@@ -70,6 +71,8 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
     private Meter meter;
     @XmlElement(name = "Schedule")
     private List<Schedule> schedules;
+    @XmlElement(name = "Notification")
+    private Notification notification;
     private transient TimeframeIntervalHandler timeframeIntervalHandler;
     private transient static final int CONSIDERATION_INTERVAL_DAYS = 2;
 
@@ -132,8 +135,16 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
         this.schedules = schedules;
     }
 
+    public Notification getNotification() {
+        return notification;
+    }
+
+    public void setNotification(Notification notification) {
+        this.notification = notification;
+    }
+
     public boolean isAcceptControlRecommendations() {
-        if(this.control instanceof AlwaysOnSwitch) {
+        if(!this.control.isControllable()) {
             return false;
         }
         if(this.timeframeIntervalHandler != null) {
@@ -157,45 +168,59 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
         this.timeframeIntervalHandler.addTimeframeIntervalChangedListener(this);
     }
 
-    public void init(GpioController gpioController, Map<String, ModbusTcp> modbusIdWithModbusTcp) {
+    public void init(GpioController gpioController, Map<String, ModbusTcp> modbusIdWithModbusTcp, String notificationCommand) {
         logger.debug("{}: Initializing appliance", id);
         if(getTimeframeIntervalHandler() == null) {
             setTimeframeIntervalHandler(new TimeframeIntervalHandler(this.schedules, this.control));
-        }
-        if(control != null) {
-            if(control instanceof ApplianceIdConsumer) {
-                ((ApplianceIdConsumer) control).setApplianceId(id);
-            }
-            if(isEvCharger()) {
-                ((ElectricVehicleCharger) control).setAppliance(this);
-            }
-            if(control instanceof StartingCurrentSwitch) {
-                Control wrappedControl = ((StartingCurrentSwitch) control).getControl();
-                ((ApplianceIdConsumer) wrappedControl).setApplianceId(id);
-            }
-            else {
-                control.addControlStateChangedListener(this);
-                logger.debug("{}: Registered as {} with {}", id, ControlStateChangedListener.class.getSimpleName(),
-                        control.getClass().getSimpleName());
-            }
-            if(control instanceof ApplianceLifeCycle && !(control instanceof  StartingCurrentSwitch)) {
-                control.init();
-            }
         }
         Meter meter = getMeter();
         if(meter != null) {
             if(meter instanceof ApplianceIdConsumer) {
                 ((ApplianceIdConsumer) meter).setApplianceId(id);
             }
-            if(meter instanceof ApplianceLifeCycle) {
-                meter.init();
+            if(meter instanceof NotificationProvider && notificationCommand != null) {
+                NotificationHandler notificationHandler = new NotificationHandler(
+                        id,
+                        notificationCommand,
+                        this.notification != null ? this.notification.getSenderId() : null,
+                        this.notification != null ? this.notification.getMaxCommunicationErrors() : null
+                );
+                ((NotificationProvider) meter).setNotificationHandler(notificationHandler);
             }
-            if(control != null) {
-                if(meter instanceof S0ElectricityMeter) {
-                    ((S0ElectricityMeter) meter).setControl(control);
-                }
-                logger.debug("{}: {} uses {}", id, meter.getClass().getSimpleName(), control.getClass().getSimpleName());
-            }
+            meter.init();
+        }
+        if(control == null) {
+            control = new MeterReportingSwitch();
+        }
+        if(control instanceof ApplianceIdConsumer) {
+            ((ApplianceIdConsumer) control).setApplianceId(id);
+        }
+        if(control instanceof NotificationProvider && notificationCommand != null) {
+            NotificationHandler notificationHandler = new NotificationHandler(
+                    id,
+                    notificationCommand,
+                    this.notification != null ? this.notification.getSenderId() : null,
+                    this.notification != null ? this.notification.getMaxCommunicationErrors() : null
+            );
+            ((NotificationProvider) control).setNotificationHandler(notificationHandler);
+        }
+        if(isEvCharger()) {
+            ((ElectricVehicleCharger) control).setAppliance(this);
+        }
+        if(control instanceof MeterReportingSwitch) {
+            ((MeterReportingSwitch) control).setMeter(meter);
+        }
+        if(control instanceof StartingCurrentSwitch) {
+            Control wrappedControl = ((StartingCurrentSwitch) control).getControl();
+            ((ApplianceIdConsumer) wrappedControl).setApplianceId(id);
+        }
+        else {
+            control.addControlStateChangedListener(this);
+            logger.debug("{}: Registered as {} with {}", id, ControlStateChangedListener.class.getSimpleName(),
+                    control.getClass().getSimpleName());
+        }
+        if(!(control instanceof StartingCurrentSwitch)) {
+            control.init();
         }
 
         if(control instanceof StartingCurrentSwitch) {
@@ -209,7 +234,7 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
         if(getGpioControllables().size() > 0) {
             if(gpioController != null) {
                 for(GpioControllable gpioControllable : getGpioControllables()) {
-                    logger.info("{}: Configuring {}", id, gpioControllable.getClass().getSimpleName());
+                    logger.info("{}: Configuring GPIO for {}", id, gpioControllable.getClass().getSimpleName());
                     gpioControllable.setGpioController(gpioController);
                 }
             }
@@ -332,24 +357,21 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
         return this.control instanceof ElectricVehicleCharger;
     }
 
-    public void setApplianceState(LocalDateTime now, boolean switchOn, Integer recommendedPowerConsumption,
-                                  String logMessage) {
+    public void setApplianceState(LocalDateTime now, boolean switchOn, Integer chargePower, String logMessage) {
         if(control != null) {
             logger.debug("{}: {}", id, logMessage);
             if(switchOn && isEvCharger()) {
-                int chargePower = 0;
-                if(recommendedPowerConsumption != null) {
-                    chargePower = recommendedPowerConsumption;
-                    logger.debug("{}: setting charge power to recommendation: {}W", id, chargePower);
+                if(chargePower != null) {
+                    ((ElectricVehicleCharger) control).setChargePower(chargePower);
+                    control.on(now, switchOn);
                 }
                 else {
-                    DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(this.id);
-                    chargePower = deviceInfo.getCharacteristics().getMaxPowerConsumption();
-                    logger.debug("{}: setting charge power to maximum: {}W", id, chargePower);
+                    logger.debug("{}: charge power not provided - not switching on", id);
                 }
-                ((ElectricVehicleCharger) control).setChargePower(chargePower);
             }
-            control.on(now, switchOn);
+            else {
+                control.on(now, switchOn);
+            }
         }
         else {
             logger.warn("{}: Appliance configuration does not contain control.", id);
@@ -364,18 +386,45 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
             }
 
             ElectricVehicleCharger evCharger = (ElectricVehicleCharger) this.control;
-            evCharger.setConnectedVehicleId(evId);
-            evCharger.setConnectedVehicleSoc(now, socCurrent);
-            evCharger.setConnectedVehicleSocTimestamp(System.currentTimeMillis());
             TimeframeInterval timeframeInterval =
                     evCharger.createTimeframeInterval(now, evId, socCurrent, socRequested, chargeEnd);
+            evCharger.setConnectedVehicleId(evId);
+            evCharger.setSocInitial(socCurrent);
+            evCharger.setSocInitialTimestamp(now);
             timeframeIntervalHandler.addTimeframeInterval(now, timeframeInterval, true, true);
 
             if(chargeEnd == null) {
-                // if no charge end is provided we switch on immediatly with full power and don't accept
-                // any control recommendations
-                setApplianceState(now, true, null,"Switching on charger");
+                // if no charge end is provided we switch on immediately with full power
+                DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(this.id);
+                int chargePower = deviceInfo.getCharacteristics().getMaxPowerConsumption();
+                setApplianceState(now, true, chargePower,"Switching on charger with maximum power");
             }
+        }
+        else {
+            logger.warn("{}: Energy demand can only be set for ev charger!", id);
+        }
+    }
+
+    public void updateSoc(LocalDateTime now,  Integer socCurrent, Integer socRequested) {
+        if (isEvCharger()) {
+            ElectricVehicleCharger evCharger = (ElectricVehicleCharger) this.control;
+            ElectricVehicle ev = evCharger.getConnectedVehicle();
+            if(ev != null) {
+                if(!evCharger.isOn() && !isAcceptControlRecommendations()) {
+                    logger.debug("{}: Removing timeframe interval of stopped charging process", id);
+                    TimeframeInterval activeTimeframeInterval = timeframeIntervalHandler.getActiveTimeframeInterval();
+                    timeframeIntervalHandler.removeTimeframeInterval(now, activeTimeframeInterval);
+                }
+                timeframeIntervalHandler.updateSocOfOptionalEnergyTimeframeIntervalForEVCharger(now,
+                        ev.getId(), ev.getBatteryCapacity(), socCurrent, socRequested);
+                evCharger.resetChargingCompletedToVehicleConnected(now);
+            }
+            else {
+                logger.warn("{}: no ev connected", id);
+            }
+        }
+        else {
+            logger.warn("{}: SOC can only be set for ev charger!", id);
         }
     }
 
@@ -434,7 +483,7 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
     }
 
     @Override
-    public void onEVChargerSocChanged(LocalDateTime now, Float soc) {
+    public void onEVChargerSocChanged(LocalDateTime now, SocValues socValues) {
     }
 
     @Override

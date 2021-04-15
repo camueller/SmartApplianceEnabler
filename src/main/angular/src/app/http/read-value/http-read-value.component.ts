@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {Logger} from '../../log/logger';
 import {FormGroup, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
@@ -9,6 +9,8 @@ import {HttpReadValue} from './http-read-value';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {getValidFloat, getValidString} from '../../shared/form-util';
 import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/error-message';
+import { EventEmitter } from '@angular/core';
+import {ValueNameChangedEvent} from '../../meter/value-name-changed-event';
 
 @Component({
   selector: 'app-http-read-value',
@@ -31,10 +33,12 @@ export class HttpReadValueComponent implements OnChanges, OnInit {
   translationPrefix = '';
   @Input()
   translationKeys: string[];
-  translatedStrings: string[];
+  translatedStrings: { [key: string]: string } = {};
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
+  @Output()
+  nameChanged = new EventEmitter<any>();
 
   constructor(private logger: Logger,
               private translate: TranslateService
@@ -58,6 +62,9 @@ export class HttpReadValueComponent implements OnChanges, OnInit {
   }
 
   ngOnInit() {
+    if (this.form && !this.form.controls.name.value && this.valueNames.length === 1) {
+      this.formHandler.setFormControlValue(this.form, 'name', this.valueNames[0]);
+    }
     this.errorMessages = new ErrorMessages('HttpReadValueComponent.error.', [
       new ErrorMessage('name', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('factorToValue', ValidatorType.pattern),
@@ -75,10 +82,20 @@ export class HttpReadValueComponent implements OnChanges, OnInit {
     return this.translatedStrings[textKey];
   }
 
+  onNameChanged(newName?: string) {
+    if (newName) {
+      const event: ValueNameChangedEvent = {name: newName};
+      this.nameChanged.emit(event);
+    }
+  }
+
   expandParentForm() {
     this.formHandler.addFormControl(this.form, 'name',
       this.httpReadValue && this.httpReadValue.name,
       [Validators.required]);
+    if (this.httpReadValue) {
+      this.onNameChanged(this.httpReadValue.name);
+    }
     this.formHandler.addFormControl(this.form, 'data',
       this.httpReadValue && this.httpReadValue.data);
     this.formHandler.addFormControl(this.form, 'path',

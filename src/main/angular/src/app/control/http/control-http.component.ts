@@ -13,6 +13,7 @@ import {HttpReadComponent} from '../../http/read/http-read.component';
 import {HttpConfigurationComponent} from '../../http/configuration/http-configuration.component';
 import {HttpWriteComponent} from '../../http/write/http-write.component';
 import {HttpWrite} from '../../http/write/http-write';
+import {isControlValid} from '../control-validator';
 
 @Component({
   selector: 'app-control-http',
@@ -31,8 +32,6 @@ export class ControlHttpComponent implements OnChanges, OnInit {
   httpWriteComps: QueryList<HttpWriteComponent>;
   @ViewChild('httpReadComponent')
   httpReadComp: HttpReadComponent;
-  @Input()
-  applianceId: string;
   @Input()
   controlDefaults: ControlDefaults;
   form: FormGroup;
@@ -103,10 +102,6 @@ export class ControlHttpComponent implements OnChanges, OnInit {
     return this.httpSwitch.httpWrites.length === 2 ? 1 : 2;
   }
 
-  toggleReadControlState() {
-    this.setReadControlState(!this.readControlState);
-  }
-
   get readControlState() {
     return !!this.form.controls.httpRead;
   }
@@ -151,6 +146,11 @@ export class ControlHttpComponent implements OnChanges, OnInit {
       && this.httpSwitch.httpRead.readValues.length > 0;
     this.formHandler.addFormControl(this.form, 'readControlState', readControlState);
     this.setReadControlState(readControlState);
+    this.form.controls.readControlState.valueChanges.subscribe(value => {
+      this.setReadControlState(value);
+      this.form.markAsDirty();
+    });
+    this.form.setValidators(isControlValid(this.form, 'httpWrites', 'httpWriteValues'));
   }
 
   updateModelFromForm(): HttpSwitch | undefined {

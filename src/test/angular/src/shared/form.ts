@@ -1,6 +1,7 @@
 import {Selector} from 'testcafe';
 import {getTranslation} from './ngx-translate';
 import {isDebug} from './helper';
+import {NotificationType} from '../../../../main/angular/src/app/notification/notification-type';
 
 export function selectorInputByFormControlName(formControlName: string, selectorPrefix?: string, selectorBase?: string) {
   return selectorByFormControlName(formControlName, 'input', undefined, selectorPrefix, selectorBase);
@@ -74,7 +75,7 @@ async function isCheckboxChecked(t: TestController, selector: Selector) {
   return await selector.getAttribute('aria-checked');
 }
 
-export async function selectOptionByAttribute(t: TestController, selector: Selector, value: string) {
+export async function selectOption(t: TestController, selector: Selector, value: string) {
   if (isDebug()) { console.log('Open select ...'); }
   await t.click(selector);
   const optionSelectorString = `mat-option[ng-reflect-value="${value}"]`;
@@ -86,7 +87,7 @@ export async function selectOptionByAttribute(t: TestController, selector: Selec
   if (isDebug()) { console.log('clicked'); }
 }
 
-export async function assertSelect(t: TestController, selector: Selector, optionKey: string, i18nPrefix?: string) {
+export async function assertSelectOption(t: TestController, selector: Selector, optionKey: string, i18nPrefix?: string) {
   if (isDebug()) { console.log('optionKey=', optionKey); }
   if (isDebug()) { console.log('i18nPrefix=', i18nPrefix); }
   if (optionKey) {
@@ -95,3 +96,28 @@ export async function assertSelect(t: TestController, selector: Selector, option
     await t.expect(selector.exists).notOk();
   }
 }
+
+export async function selectOptionMulti(t: TestController, selector: Selector, values: any[]) {
+  await t.click(selector);
+  values?.forEach(async value => {
+    const selectorString = `mat-option[ng-reflect-value="${value.toString()}"]`;
+    if (isDebug()) {
+      console.log('Selector: ', selectorString);
+    }
+    await t.click(selectorString);
+  });
+  await t.pressKey('esc'); // close multi select overlay
+}
+
+export async function assertSelectOptionMulti(t: TestController, selector: Selector, values: any[], i18nPrefix?: string) {
+  if (values) {
+    const actualSelectedOptionsString = await selector.innerText;
+    const expectedNotificationTypes = [];
+    values?.forEach(value => {
+      expectedNotificationTypes.push(getTranslation(value, i18nPrefix));
+    });
+    const expectedNotificationTypesString = expectedNotificationTypes.join(', ');
+    await t.expect(actualSelectedOptionsString.trim()).eql(expectedNotificationTypesString);
+  }
+}
+

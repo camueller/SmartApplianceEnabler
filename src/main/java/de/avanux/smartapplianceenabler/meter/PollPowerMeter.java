@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Timer;
 
@@ -34,11 +35,15 @@ import java.util.Timer;
 public class PollPowerMeter implements ApplianceIdConsumer {
 
     private Logger logger = LoggerFactory.getLogger(PollPowerMeter.class);
-    private TimestampBasedCache<Float> cache = new TimestampBasedCache<>("Power");
+    private TimestampBasedCache<Double> cache = new TimestampBasedCache<Double>("Power");
     private String applianceId;
     private GuardedTimerTask pollTimerTask;
-    private transient List<PowerUpdateListener> powerUpdateListeners = new ArrayList<>();
+    private List<PowerUpdateListener> powerUpdateListeners = new ArrayList<>();
+    private LocalDateTime averagingIntervalBegin;
 
+    public PollPowerMeter() {
+        this.cache.setMaxAgeSeconds(Meter.averagingInterval);
+    }
 
     @Override
     public void setApplianceId(String applianceId) {
@@ -46,13 +51,17 @@ public class PollPowerMeter implements ApplianceIdConsumer {
         this.cache.setApplianceId(applianceId);
     }
 
-    public void start(Timer timer, Integer pollInterval, Integer measurementInterval, PollPowerExecutor pollPowerExecutor) {
-        this.cache.setMaxAgeSeconds(measurementInterval);
+    public void setAveragingIntervalBegin(LocalDateTime averagingIntervalBegin) {
+        this.averagingIntervalBegin = averagingIntervalBegin;
+    }
+
+    public void start(Timer timer, Integer pollInterval, PollPowerExecutor pollPowerExecutor) {
         this.pollTimerTask = new GuardedTimerTask(this.applianceId, "PollPowerMeter", pollInterval * 1000) {
             @Override
             public void runTask() {
-                addValue(LocalDateTime.now(), pollPowerExecutor);
-                powerUpdateListeners.forEach(listener -> listener.onPowerUpdate(getAveragePower()));
+                LocalDateTime now = LocalDateTime.now();
+                addValue(now, pollPowerExecutor);
+                powerUpdateListeners.forEach(listener -> listener.onPowerUpdate(getAveragePower(now)));
             }
         };
         if(timer != null) {
@@ -67,13 +76,13 @@ public class PollPowerMeter implements ApplianceIdConsumer {
     }
 
     public void addValue(LocalDateTime timestamp, PollPowerExecutor pollPowerExecutor) {
-        Float power = pollPowerExecutor.pollPower();
+        Double power = pollPowerExecutor.pollPower();
         if(power != null) {
-            cache.addValue(timestamp, power);
+            addValue(timestamp, power);
         }
     }
 
-    public void addValue(LocalDateTime timestamp, float power) {
+    public void addValue(LocalDateTime timestamp, double power) {
         cache.addValue(timestamp, power);
     }
 
@@ -81,41 +90,28 @@ public class PollPowerMeter implements ApplianceIdConsumer {
         this.cache.clear();
     }
 
-    public int getAveragePower() {
-        double sum = 0.0f;
-        if(!cache.isEmpty()) {
-            for (Float value : cache.values()) {
-                sum += value;
-            }
-            return Double.valueOf(sum / cache.size()).intValue();
+    public int getAveragePower(LocalDateTime now) {
+        List<Double> powerValues = new ArrayList<>(cache.getNotExpiredTimestampWithValue(now).values());
+        if(powerValues.size() == 0) {
+            return 0;
         }
-        return 0;
+        int sum = 0;
+        for (double value : powerValues) {
+            sum += value;
+        }
+        return sum / powerValues.size();
     }
 
-    public int getMinPower() {
-        float minValue = Float.MAX_VALUE;
-        if(!cache.isEmpty()) {
-            for (Float value : cache.values()) {
-                if(value < minValue) {
-                    minValue = value;
-                }
-            }
-            return Float.valueOf(minValue).intValue();
-        }
-        return 0;
+    public int getMinPower(LocalDateTime now) {
+        List<Double> powerValues = new ArrayList<>(cache.getNotExpiredTimestampWithValue(now).values());
+        Collections.sort(powerValues);
+        return powerValues.size() > 0 ? powerValues.get(0).intValue() : 0;
     }
 
-    public int getMaxPower() {
-        float maxValue = Float.MIN_VALUE;
-        if(!cache.isEmpty()) {
-            for (Float value : cache.values()) {
-                if(value > maxValue) {
-                    maxValue = value;
-                }
-            }
-            return Float.valueOf(maxValue).intValue();
-        }
-        return 0;
+    public int getMaxPower(LocalDateTime now) {
+        List<Double> powerValues = new ArrayList<>(cache.getNotExpiredTimestampWithValue(now).values());
+        Collections.sort(powerValues);
+        return powerValues.size() > 0 ? powerValues.get(powerValues.size() - 1).intValue() : 0;
     }
 
     public void addPowerUpateListener(PowerUpdateListener listener) {

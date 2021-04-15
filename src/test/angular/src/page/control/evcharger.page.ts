@@ -2,10 +2,10 @@ import {EvCharger} from '../../../../../main/angular/src/app/control/evcharger/e
 import {
   assertCheckbox,
   assertInput,
-  assertSelect,
+  assertSelectOption,
   clickButton,
   inputText,
-  selectOptionByAttribute,
+  selectOption,
   selectorButton,
   selectorCheckboxByFormControlName,
   selectorCheckboxCheckedByFormControlName,
@@ -29,7 +29,7 @@ export class EvchargerPage extends ControlPage {
   }
 
   public static async setEvChargerFromTemplate(t: TestController, evCharger: EvCharger, templateName: string) {
-    await selectOptionByAttribute(t, selectorSelectByFormControlName('template'), templateName);
+    await selectOption(t, selectorSelectByFormControlName('template'), templateName);
     if (evCharger.protocol === EvChargerProtocol.MODBUS) {
       await EvchargerModbusPage.setIdRef(t, settings.modbusSettings[0].modbusTcpId);
     }
@@ -77,7 +77,6 @@ export class EvchargerPage extends ControlPage {
     await EvchargerPage.setChargeLoss(t, ev.chargeLoss && ev.chargeLoss.toString(), index);
     await EvchargerPage.setDefaultSocManual(t, ev.defaultSocManual && ev.defaultSocManual.toString(), index);
     await EvchargerPage.setDefaultSocOptionalEnergy(t, ev.defaultSocOptionalEnergy && ev.defaultSocOptionalEnergy.toString(), index);
-    await EvchargerPage.setScriptEnabled(t, !!ev.socScript, index);
     if (ev.socScript) {
       await EvchargerPage.setScriptFilename(t, ev.socScript.script, index);
       await EvchargerPage.setScriptExtractionRegex(t, ev.socScript.extractionRegex, index);
@@ -98,7 +97,6 @@ export class EvchargerPage extends ControlPage {
     await EvchargerPage.assertChargeLoss(t, ev.chargeLoss && ev.chargeLoss.toString(), index);
     await EvchargerPage.assertDefaultSocManual(t, ev.defaultSocManual && ev.defaultSocManual.toString(), index);
     await EvchargerPage.assertDefaultSocOptionalEnergy(t, ev.defaultSocOptionalEnergy && ev.defaultSocOptionalEnergy.toString(), index);
-    await EvchargerPage.assertScriptEnabled(t, !!ev.socScript, index);
     if (ev.socScript) {
       await EvchargerPage.assertScriptFilename(t, ev.socScript.script, index);
       await EvchargerPage.assertScriptExtractionRegex(t, ev.socScript.extractionRegex, index);
@@ -106,10 +104,10 @@ export class EvchargerPage extends ControlPage {
   }
 
   public static async setProtocol(t: TestController, protocol: string) {
-    await selectOptionByAttribute(t, selectorSelectByFormControlName('protocol'), protocol);
+    await selectOption(t, selectorSelectByFormControlName('protocol'), protocol);
   }
   public static async assertProtocol(t: TestController, protocol: string) {
-    await assertSelect(t, selectorSelectedByFormControlName('protocol'), protocol, 'ControlEvchargerComponent.protocol.');
+    await assertSelectOption(t, selectorSelectedByFormControlName('protocol'), protocol, 'ControlEvchargerComponent.protocol.');
   }
 
   public static async setVoltage(t: TestController, voltage: string) {
@@ -212,15 +210,6 @@ export class EvchargerPage extends ControlPage {
   public static async assertDefaultSocOptionalEnergy(t: TestController, defaultSocOptionalEnergy: string, evIndex: number) {
     await assertInput(t, selectorInputByFormControlName('defaultSocOptionalEnergy', undefined,
       EvchargerPage.electricVehicleSelectorBase(evIndex)), defaultSocOptionalEnergy);
-  }
-
-  public static async setScriptEnabled(t: TestController, scriptEnabled: boolean, evIndex: number) {
-    await setCheckboxEnabled(t, selectorCheckboxByFormControlName('scriptEnabled', undefined,
-      EvchargerPage.electricVehicleSelectorBase(evIndex)), scriptEnabled);
-  }
-  public static async assertScriptEnabled(t: TestController, scriptEnabled: boolean, evIndex: number) {
-    await assertCheckbox(t, selectorCheckboxCheckedByFormControlName('scriptEnabled', undefined,
-      EvchargerPage.electricVehicleSelectorBase(evIndex)), scriptEnabled);
   }
 
   public static async setScriptFilename(t: TestController, scriptFilename: string, evIndex: number) {

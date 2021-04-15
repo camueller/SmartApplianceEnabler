@@ -21,7 +21,10 @@ import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.appliance.ApplianceLifeCycle;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.http.*;
-import de.avanux.smartapplianceenabler.meter.MeterValueName;
+import de.avanux.smartapplianceenabler.notification.NotificationHandler;
+import de.avanux.smartapplianceenabler.notification.NotificationType;
+import de.avanux.smartapplianceenabler.notification.NotificationProvider;
+import de.avanux.smartapplianceenabler.notification.Notifications;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolHandler;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolType;
 import de.avanux.smartapplianceenabler.protocol.JsonContentProtocolHandler;
@@ -46,7 +49,7 @@ import java.util.stream.Collectors;
  * IMPORTANT: The URLs in Appliance.xml have to be escaped (e.g. use "&amp;" instead of "&")
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, ApplianceIdConsumer {
+public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, ApplianceIdConsumer, NotificationProvider {
 
     private transient Logger logger = LoggerFactory.getLogger(HttpSwitch.class);
     @XmlElement(name = "HttpConfiguration")
@@ -57,18 +60,35 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
     private HttpRead httpRead;
     @XmlAttribute
     private String contentProtocol;
+    @XmlElement(name = "Notifications")
+    private Notifications notifications;
     private transient String applianceId;
     private transient HttpHandler httpHandler = new HttpHandler();
     private transient HttpTransactionExecutor httpTransactionExecutor = new HttpTransactionExecutor();
     private transient ContentProtocolHandler contentContentProtocolHandler;
     protected transient boolean on;
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
+    private transient NotificationHandler notificationHandler;
 
     @Override
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
         this.httpTransactionExecutor.setApplianceId(applianceId);
         this.httpHandler.setApplianceId(applianceId);
+    }
+
+    @Override
+    public void setNotificationHandler(NotificationHandler notificationHandler) {
+        this.notificationHandler = notificationHandler;
+        if(this.notificationHandler != null) {
+            this.notificationHandler.setRequestedNotifications(notifications);
+            this.httpTransactionExecutor.setNotificationHandler(notificationHandler);
+        }
+    }
+
+    @Override
+    public Notifications getNotifications() {
+        return notifications;
     }
 
     public void setHttpConfiguration(HttpConfiguration httpConfiguration) {
@@ -117,6 +137,11 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
     }
 
     @Override
+    public boolean isControllable() {
+        return true;
+    }
+
+    @Override
     public boolean isOn() {
         if(this.httpRead != null) {
             ParentWithChild<HttpRead, HttpReadValue> onRead = HttpRead.getFirstHttpRead(ControlValueName.On.name(),
@@ -143,10 +168,13 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
                 int statusCode = response.getStatusLine().getStatusCode();
                 this.httpTransactionExecutor.closeResponse(response);
                 if(statusCode == HttpStatus.SC_OK) {
-                    on = switchOn;
+                    if(this.notificationHandler != null && switchOn != on) {
+                        this.notificationHandler.sendNotification(switchOn ? NotificationType.CONTROL_ON : NotificationType.CONTROL_OFF);
+                    }
                     for(ControlStateChangedListener listener : new ArrayList<>(controlStateChangedListeners)) {
                         listener.controlStateChanged(now, switchOn);
                     }
+                    on = switchOn;
                     return true;
                 }
             }

@@ -1,10 +1,10 @@
 import {ModbusWrite} from '../../../../../main/angular/src/app/modbus/write/modbus-write';
 import {
   assertInput,
-  assertSelect,
+  assertSelectOption,
   clickButton,
   inputText,
-  selectOptionByAttribute,
+  selectOption,
   selectorButton,
   selectorInputByFormControlName,
   selectorSelectByFormControlName,
@@ -51,12 +51,12 @@ export class ModbusWritePage {
 
   public static async setType(t: TestController, type: string, modbusWriteIndex: number,
                               selectorPrefix?: string) {
-    await selectOptionByAttribute(t, selectorSelectByFormControlName('type', selectorPrefix,
+    await selectOption(t, selectorSelectByFormControlName('type', selectorPrefix,
       ModbusWritePage.selectorBase(modbusWriteIndex)), type);
   }
   public static async assertType(t: TestController, type: string, modbusWriteIndex: number, selectorPrefix?: string) {
-    await assertSelect(t, selectorSelectedByFormControlName('type', selectorPrefix,
-      ModbusWritePage.selectorBase(modbusWriteIndex)), type);
+    await assertSelectOption(t, selectorSelectedByFormControlName('type', selectorPrefix,
+      ModbusWritePage.selectorBase(modbusWriteIndex)), type, 'ModbusWriteComponent.type.');
   }
 
   public static async setFactorToValue(t: TestController, factorToValue: number, modbusWriteIndex: number,

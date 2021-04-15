@@ -32,7 +32,7 @@ public interface Request extends Serializable, ApplianceIdConsumer, TimeframeInt
 
     void setMeter(Meter meter);
 
-    boolean isUsingOptionalEnergy();
+    boolean isUsingOptionalEnergy(LocalDateTime now);
 
     void setControl(Control control);
 

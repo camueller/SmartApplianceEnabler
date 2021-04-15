@@ -1,4 +1,4 @@
-import {assertSelect, selectOptionByAttribute, selectorSelectByFormControlName, selectorSelectedByFormControlName} from '../../shared/form';
+import {assertSelectOption, selectOption, selectorSelectByFormControlName, selectorSelectedByFormControlName} from '../../shared/form';
 import {EvHttpControl} from '../../../../../main/angular/src/app/control/evcharger/http/ev-http-control';
 import {HttpRead} from '../../../../../main/angular/src/app/http/read/http-read';
 import {HttpReadPage} from '../http/http-read.page';
@@ -19,11 +19,11 @@ export class EvchargerHttpPage {
 
 
   public static async setContentProtocol(t: TestController, contentProtocol: string) {
-    await selectOptionByAttribute(t, selectorSelectByFormControlName('contentProtocol'), contentProtocol);
+    await selectOption(t, selectorSelectByFormControlName('contentProtocol'), contentProtocol);
   }
 
   public static async assertContentProtocol(t: TestController, contentProtocol: string) {
-    await assertSelect(t, selectorSelectedByFormControlName('contentProtocol'), contentProtocol);
+    await assertSelectOption(t, selectorSelectedByFormControlName('contentProtocol'), contentProtocol);
   }
 
   public static async setHttpReads(t: TestController, httpReads: HttpRead[]) {

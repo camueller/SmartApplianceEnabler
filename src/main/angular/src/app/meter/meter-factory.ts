@@ -30,15 +30,7 @@ export class MeterFactory {
 
   defaultsFromJSON(rawMeterDefaults: any): MeterDefaults {
     this.logger.debug('MeterDefaults (JSON): ' + JSON.stringify(rawMeterDefaults));
-    const meterDefaults = new MeterDefaults();
-    meterDefaults.s0ElectricityMeter_measurementInterval
-      = rawMeterDefaults.s0ElectricityMeter.measurementInterval;
-    meterDefaults.httpElectricityMeter_factorToWatt = rawMeterDefaults.httpElectricityMeter.factorToWatt;
-    meterDefaults.httpElectricityMeter_pollInterval = rawMeterDefaults.httpElectricityMeter.pollInterval;
-    meterDefaults.httpElectricityMeter_measurementInterval = rawMeterDefaults.httpElectricityMeter.measurementInterval;
-    meterDefaults.modbusElectricityMeter_pollInterval = rawMeterDefaults.modbusElectricityMeter.pollInterval;
-    meterDefaults.modbusElectricityMeter_measurementInterval = rawMeterDefaults.modbusElectricityMeter.measurementInterval;
-    meterDefaults.modbusRead_bytesForRegisterType = rawMeterDefaults.modbusReadDefaults.bytesForRegisterType;
+    const meterDefaults = new MeterDefaults(rawMeterDefaults);
     this.logger.debug('MeterDefaults (TYPE): ' + JSON.stringify(meterDefaults));
     return meterDefaults;
   }
@@ -58,6 +50,7 @@ export class MeterFactory {
     } else if (meter.type === HttpElectricityMeter.TYPE) {
       meter.httpElectricityMeter = this.createHttpElectricityMeter(rawMeter);
     }
+    meter.notifications = rawMeter.notifications;
     this.logger.debug('Meter (TYPE): ', meter);
     return meter;
   }
@@ -71,6 +64,9 @@ export class MeterFactory {
       meterUsed = meter.modbusElectricityMeter;
     } else if (meter.type === HttpElectricityMeter.TYPE) {
       meterUsed = meter.httpElectricityMeter;
+    }
+    if (meterUsed) {
+      meterUsed.notifications = meter.notifications;
     }
     let meterRaw: string;
     if (meterUsed != null) {

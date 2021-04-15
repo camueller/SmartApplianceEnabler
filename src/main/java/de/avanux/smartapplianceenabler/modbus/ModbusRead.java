@@ -34,11 +34,13 @@ public class ModbusRead {
     @XmlAttribute
     private String address;
     @XmlAttribute
-    private Integer bytes;
+    private Integer words;
     @XmlAttribute
     private String byteOrder;
     @XmlAttribute
     private String type;
+    @XmlAttribute
+    private String valueType;
     @XmlAttribute
     private Double factorToValue;
     @XmlElement(name = "ModbusReadValue")
@@ -55,15 +57,15 @@ public class ModbusRead {
         this.address = address;
     }
 
-    public Integer getBytes() {
-        if(bytes == null) {
-            return ModbusReadDefaults.getBytes(getType());
+    public Integer getWords() {
+        if(words == null) {
+            return ModbusReadDefaults.getWords(getType(), getValueType());
         }
-        return bytes;
+        return words;
     }
 
-    public void setBytes(Integer bytes) {
-        this.bytes = bytes;
+    public void setWords(Integer words) {
+        this.words = words;
     }
 
     public ByteOrder getByteOrder() {
@@ -80,6 +82,14 @@ public class ModbusRead {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public RegisterValueType getValueType() {
+        return this.valueType != null ? RegisterValueType.valueOf(this.valueType) : null;
+    }
+
+    public void setValueType(String valueType) {
+        this.valueType = valueType;
     }
 
     public Double getFactorToValue() {
@@ -130,7 +140,7 @@ public class ModbusRead {
 
         return new EqualsBuilder()
                 .append(address, that.address)
-                .append(bytes, that.bytes)
+                .append(words, that.words)
                 .append(byteOrder, that.byteOrder)
                 .append(type, that.type)
                 .append(factorToValue, that.factorToValue)
@@ -141,7 +151,7 @@ public class ModbusRead {
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
                 .append(address)
-                .append(bytes)
+                .append(words)
                 .append(byteOrder)
                 .append(type)
                 .append(factorToValue)

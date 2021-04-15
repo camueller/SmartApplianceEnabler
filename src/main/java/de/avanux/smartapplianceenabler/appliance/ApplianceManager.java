@@ -24,12 +24,20 @@ import de.avanux.smartapplianceenabler.configuration.Configuration;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.configuration.Connectivity;
 import de.avanux.smartapplianceenabler.control.Control;
+import de.avanux.smartapplianceenabler.http.HttpRead;
+import de.avanux.smartapplianceenabler.meter.HttpElectricityMeter;
 import de.avanux.smartapplianceenabler.meter.Meter;
+import de.avanux.smartapplianceenabler.meter.MeterValueName;
+import de.avanux.smartapplianceenabler.meter.ModbusElectricityMeter;
+import de.avanux.smartapplianceenabler.modbus.ModbusRead;
+import de.avanux.smartapplianceenabler.modbus.ModbusReadValue;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
+import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.schedule.Schedule;
 import de.avanux.smartapplianceenabler.semp.webservice.Device2EM;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceStatus;
+import de.avanux.smartapplianceenabler.util.FileContentPreProcessor;
 import de.avanux.smartapplianceenabler.util.FileHandler;
 import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
 
@@ -39,10 +47,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class ApplianceManager implements Runnable {
-    public static final String SCHEMA_LOCATION = "http://github.com/camueller/SmartApplianceEnabler/v1.5";
+    public static final String SCHEMA_LOCATION = "http://github.com/camueller/SmartApplianceEnabler/v1.6";
     private Logger logger = LoggerFactory.getLogger(ApplianceManager.class);
     private static ApplianceManager instance;
     private FileHandler fileHandler = new FileHandler();
@@ -51,6 +60,7 @@ public class ApplianceManager implements Runnable {
     private Timer timer;
     private GuardedTimerTask holidaysDownloaderTimerTask;
     private Integer autoclearSeconds;
+    private boolean initializationCompleted;
     
     private ApplianceManager() {
     }
@@ -67,6 +77,10 @@ public class ApplianceManager implements Runnable {
             }
         }
         return instance;
+    }
+
+    public boolean isInitializationCompleted() {
+        return initializationCompleted;
     }
 
     public static ApplianceManager getInstanceWithoutTimer() {
@@ -101,19 +115,64 @@ public class ApplianceManager implements Runnable {
         }
     }
 
+    private Appliances loadAppliances() {
+        return fileHandler.load(Appliances.class, content -> {
+            content = content.replace("http://github.com/camueller/SmartApplianceEnabler/v1.5", ApplianceManager.SCHEMA_LOCATION);
+            content = content.replaceAll("type=\"InputString\"", "type=\"Input\" valueType=\"String\"");
+            content = content.replaceAll("type=\"InputFloat\"", "type=\"Input\" valueType=\"Float\"");
+            content = content.replaceAll("type=\"InputDecimal\"", "type=\"Input\" valueType=\"Integer2Float\"");
+            content = content.replaceAll("bytes=", "words=");
+            return content;
+        });
+    }
+
     private void startAppliances() {
         logger.info("Starting appliances ...");
         if(appliances == null) {
             logger.debug("Loading Appliances.xml ...");
-            appliances = fileHandler.load(Appliances.class);
+            appliances = loadAppliances();
             if(appliances == null) {
                 this.appliances = new Appliances();
                 this.appliances.setAppliances(new ArrayList<>());
             }
+
+            if(appliances.getAppliances() != null) {
+                // FIXME remove migration code to one Read/Read value for Meter
+                appliances.getAppliances().stream().forEach(appliance -> {
+                    Meter meter = appliance.getMeter();
+                    if(meter instanceof HttpElectricityMeter) {
+                        HttpElectricityMeter httpMeter = ((HttpElectricityMeter) meter);
+                        List<HttpRead> httpReads = httpMeter.getHttpReads();
+                        if(httpReads != null) {
+                            if(httpReads.size() == 1) {
+                                HttpRead httpRead = httpReads.get(0);
+                                if(httpRead.getReadValues() != null && httpRead.getReadValues().size() == 2) {
+                                    httpRead.setReadValues(httpRead.getReadValues().stream().filter(readValue -> readValue.getName().equals(MeterValueName.Energy.name()))
+                                            .collect(Collectors.toList()));
+                                }
+                            }
+                            else if(httpReads.size() == 2) {
+                                httpMeter.setHttpReads(httpReads.stream()
+                                        .filter(httpRead -> httpRead.getReadValues().stream().anyMatch(readValue -> readValue.getName().equals(MeterValueName.Energy.name())))
+                                        .collect(Collectors.toList()));
+                            }
+                        }
+                    }
+                    if(meter instanceof ModbusElectricityMeter) {
+                        ModbusElectricityMeter modbusMeter = ((ModbusElectricityMeter) meter);
+                        List<ModbusRead> modbusReads = modbusMeter.getModbusReads();
+                        if(modbusReads.size() == 2) {
+                            modbusMeter.setModbusReads(modbusReads.stream()
+                                    .filter(modbusRead -> modbusRead.getReadValues().stream().anyMatch(readValue -> readValue.getName().equals(MeterValueName.Energy.name())))
+                                    .collect(Collectors.toList()));
+                        }
+                    }
+                });
+            }
         }
         if(this.device2EM == null) {
             logger.debug("Loading Appliances.xml ...");
-            this.device2EM = fileHandler.load(Device2EM.class);
+            this.device2EM = fileHandler.load(Device2EM.class, null);
             if(device2EM == null) {
                 this.device2EM = new Device2EM();
             }
@@ -132,20 +191,47 @@ public class ApplianceManager implements Runnable {
         logger.info(getAppliances().size() + " appliance(s) configured.");
     }
 
-    private void restartAppliances() {
-        logger.debug("Restarting ...");
+    private void stopAppliances() {
+        logger.info("Stopping appliances ...");
+        initializationCompleted = false;
         if(this.appliances != null) {
             if(appliances.getAppliances() != null) {
                 for(Appliance appliance : appliances.getAppliances()) {
                     logger.info("{}: Stopping appliance ...", appliance.getId());
-                    appliance.stop();
+                    try {
+                        appliance.stop();
+                    }
+                    catch(Exception e) {
+                        logger.error("{}: Error stopping appliance", appliance.getId(), e);
+                    }
                 }
             }
         }
+    }
+
+    private void restartAppliances() {
         logger.info("Restarting appliances ...");
+        stopAppliances();
         this.appliances = null;
         this.device2EM = null;
         startAppliances();
+    }
+
+    public void startMeterAveragingInterval(LocalDateTime now, int nextPollCompletedSecondsFromNow) {
+        logger.info("Start meter averaging interval ...");
+        if(this.appliances != null && appliances.getAppliances() != null) {
+            for(Appliance appliance : appliances.getAppliances()) {
+                try {
+                    Meter meter = appliance.getMeter();
+                    if(meter != null) {
+                        meter.startAveragingInterval(now, timer, nextPollCompletedSecondsFromNow);
+                    }
+                }
+                catch(Exception e) {
+                    logger.error("{}: Error stopping appliance", appliance.getId(), e);
+                }
+            }
+        }
     }
 
     public void init() {
@@ -168,7 +254,13 @@ public class ApplianceManager implements Runnable {
                 holidaysUsed = true;
             }
             logger.debug("{}: Initializing appliance ...", appliance.getId());
-            appliance.init(getGpioController(), modbusIdWithModbusTcp);
+            try {
+                appliance.init(getGpioController(), modbusIdWithModbusTcp,
+                        appliances.getConfigurationValue(NotificationHandler.CONFIGURATION_KEY_NOTIFICATION_COMMAND));
+            }
+            catch (Exception e) {
+                logger.error("{}: Error initializing appliance", appliance.getId(), e);
+            }
             logger.debug("{}: Validating appliance ...", appliance.getId());
             try {
                 appliance.validate();
@@ -177,7 +269,12 @@ public class ApplianceManager implements Runnable {
                 System.exit(-1);
             }
             logger.debug("{}: Starting appliance ...", appliance.getId());
-            appliance.start(timer);
+            try {
+                appliance.start(timer);
+            }
+            catch(Exception e) {
+                logger.error("{}: Error starting appliance", appliance.getId(), e);
+            }
         }
 
         if(holidaysUsed) {
@@ -215,6 +312,7 @@ public class ApplianceManager implements Runnable {
         else {
             logger.debug("Holidays are NOT used.");
         }
+        initializationCompleted = true;
     }
 
     public void save(boolean writeDevice2EM, boolean writeAppliances) {
@@ -332,19 +430,35 @@ public class ApplianceManager implements Runnable {
      * @param deviceInfo
      * @return true, if the update was successful; false, if the appliance with the given id was not found
      */
-    public boolean updateAppliance(DeviceInfo deviceInfo) {
-        logger.debug("{}: Update appliance", deviceInfo.getIdentification().getDeviceId());
-        Integer replaceIndex = null;
-        for(int i=0;i<device2EM.getDeviceInfo().size();i++) {
-            if(deviceInfo.getIdentification().getDeviceId().equals(device2EM.getDeviceInfo().get(i).getIdentification().getDeviceId())) {
-                replaceIndex = i;
+    public boolean updateAppliance(Appliance appliance, DeviceInfo deviceInfo) {
+        logger.debug("{}: Update appliance", appliance.getId());
+
+        Integer applianceReplaceIndex = null;
+        for(int i=0;i<this.appliances.getAppliances().size();i++) {
+            if(appliance.getId().equals(this.appliances.getAppliances().get(i).getId())) {
+                applianceReplaceIndex = i;
                 break;
             }
         }
-        if(replaceIndex != null) {
-            device2EM.getDeviceInfo().remove(replaceIndex.intValue());
-            device2EM.getDeviceInfo().add(replaceIndex, deviceInfo);
-            save(true, false);
+        if(applianceReplaceIndex != null) {
+            this.appliances.getAppliances().remove(applianceReplaceIndex.intValue());
+            this.appliances.getAppliances().add(applianceReplaceIndex, appliance);
+        }
+
+        Integer device2EMReplaceIndex = null;
+        for(int i=0;i<device2EM.getDeviceInfo().size();i++) {
+            if(appliance.getId().equals(device2EM.getDeviceInfo().get(i).getIdentification().getDeviceId())) {
+                device2EMReplaceIndex = i;
+                break;
+            }
+        }
+        if(device2EMReplaceIndex != null) {
+            device2EM.getDeviceInfo().remove(device2EMReplaceIndex.intValue());
+            device2EM.getDeviceInfo().add(device2EMReplaceIndex, deviceInfo);
+        }
+
+        if(applianceReplaceIndex != null || device2EMReplaceIndex != null) {
+            save(device2EMReplaceIndex != null, applianceReplaceIndex != null);
             return true;
         }
         return false;

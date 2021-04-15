@@ -54,7 +54,7 @@ public class FileHandlerTest {
         assertEquals(1, registerReads.size());
 
         ModbusRead r100 = registerReads.get(0);
-        assertModbusRead(r100, "100", ReadRegisterType.InputString);
+        assertModbusRead(r100, "100", ReadRegisterType.Input, RegisterValueType.String);
         List<ModbusReadValue> r100Values = r100.getReadValues();
         assertEquals(4, r100Values.size());
         assertModbusReadValue(r100Values.get(0), EVReadValueName.VehicleNotConnected, "(A)");
@@ -134,7 +134,7 @@ public class FileHandlerTest {
     private Appliances loadAppliances(String filename) throws Exception {
         InputStream is = getClass().getClassLoader().getResourceAsStream(filename);
         assertTrue(is.available() > 0);
-        Appliances appliances = fileHandler.load(Appliances.class, is);
+        Appliances appliances = fileHandler.load(Appliances.class, is, null);
         is.close();
         return appliances;
     }
@@ -159,9 +159,10 @@ public class FileHandlerTest {
         assertEquals(method, writeValue.getMethod());
     }
 
-    private void assertModbusRead(ModbusRead registerRead, String address, ReadRegisterType registerType) {
+    private void assertModbusRead(ModbusRead registerRead, String address, ReadRegisterType registerType, RegisterValueType registerValueType) {
         assertEquals(address, registerRead.getAddress());
         assertEquals(registerType, registerRead.getType());
+        assertEquals(registerValueType, registerRead.getValueType());
     }
 
     private void assertModbusReadValue(ModbusReadValue registerReadValue, EVReadValueName name, String extractionRegex) {

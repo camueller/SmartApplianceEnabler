@@ -21,4 +21,8 @@ export class AlwaysOnSwitch {
     return 'de.avanux.smartapplianceenabler.control.AlwaysOnSwitch';
   }
   '@class' = AlwaysOnSwitch.TYPE;
+
+  public constructor(init?: Partial<AlwaysOnSwitch>) {
+    Object.assign(this, init);
+  }
 }

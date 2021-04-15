@@ -1,7 +1,7 @@
 # Gosund SP111
 Der *Gosund SP111* ist ein formschöner und kompakter Steckdosenadapter, der via WLAN geschaltet und auch den aktuellen Stromverbrauch des geschalteten Gerätes messen kann.
 
-Die Nutzung mit dem *Smart Appliance Enabler* ist nur möglich, wenn der Adapter mit der [Tasmota-Firmware](doc/Tasmota_DE.md) geflasht wird.
+Die Nutzung mit dem *Smart Appliance Enabler* ist nur möglich, wenn der Adapter mit der [Tasmota-Firmware geflasht und im *Smart Appliance Enabler* entsprechend konfiguriert wird](doc/Tasmota_DE.md).
 
 **Zu beachten ist, dass nach dem Flashen der Gosund SP111 vom FT232RL-Adapter getrennt und in eine 240V-Steckdose gesteckt wird. Erst danach kann das WLAN konfiguriert werden, mit dem sich der Gosund SP111 verbinden soll.**
 

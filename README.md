@@ -8,8 +8,8 @@
     <a href="https://codecov.io/gh/camueller/SmartApplianceEnabler">
       <img src="https://codecov.io/gh/camueller/SmartApplianceEnabler/coverage.svg">
     </a>
-    <a href="https://github.com/camueller/SmartApplianceEnabler/releases/download/1.5.11/SmartApplianceEnabler-1.5.11.war">
-      <img src="https://img.shields.io/badge/Download-1.5.11-brightgreen.svg">
+    <a href="https://github.com/camueller/SmartApplianceEnabler/releases/download/1.6.10/SmartApplianceEnabler-1.6.10.war">
+      <img src="https://img.shields.io/badge/Download-1.6.10-brightgreen.svg">
     </a>
     <a href="https://hub.docker.com/repository/docker/avanux/smartapplianceenabler-arm32">
       <img src="https://img.shields.io/badge/Docker-arm32-blue">
@@ -27,31 +27,32 @@
 
 **Seit mehreren Jahren habe ich einen Grossteil meiner Freizeit in Entwicklung, Dokumentation und Support dieses Open-Source-Projektes gesteckt. Ich habe mich bewusst dazu entschieden, diese Software kostenfrei zur Verfügung zu stellen und kontinuierlich um Features zu erweitern, die für möglichst viele Nutzer von Interesse sein könnten. Durch die Nutzung dieser Software lassen sich die Stromkosten signifikant senken, indem die Nutzung des selbst erzeugten Stroms maximiert wird. Ich würde es als Anerkennung meiner Arbeit betrachten, wenn ein Teil dieser Ersparnis als Beitrag zur Förderung dieses Projekts verwendet werden würde. Das geht ganz einfach per [Paypal](https://paypal.me/CarlAxelMueller) oder als klassische Banküberweisung (Kontoinhaber: Axel Müller, IBAN: DE83 5185 0079 1140 0764 37, BIC: HELADEF1FRI, Verwendungszweck: Förderbeitrag Smart Appliance Enabler)**
 
-## Wozu?
-Der *Smart Appliance Enabler* dient dazu, beliebige Geräte ([Ladegeräte/Wallboxen für E-Autos](doc/EVCharger_DE.md), Wärmepumpe, Waschmaschine, Geschirrspüler, ...) mit dem [Sunny Home Manager (SHM)](http://www.sma.de/produkte/monitoring-control/sunny-home-manager.html) von [SMA](http://www.sma.de) zu integrieren, um eine **Maximierung des Eigenverbrauchs von Photovoltaik-Anlagen** zu ermöglichen.
+## Überblick
+**Der *Smart Appliance Enabler* ist eine Software zur Integration beliebiger Geräte ([Wallbox](doc/EVCharger_DE.md), Wärmepumpe, Waschmaschine, Geschirrspüler, ...) mit dem [Sunny Home Manager](https://www.sma.de/produkte/monitoring-control/sunny-home-manager-20.html) von [SMA](http://www.sma.de), um eine **Maximierung des Eigenverbrauchs von Photovoltaik-Anlagen** zu ermöglichen.**
 
 ![SmartHomeEnablerSchema](pics/SmartApplianceEnabler.png)
 
-Dazu meldet der *Smart Appliance Enabler* dem SHM **Bedarfsanforderungen** dieser Geräte um diesem eine optimale Planung des Eigenverbrauchs zu ermöglichen. Entsprechend dieser Planung empfängt der *Smart Appliance Enabler* **Schaltbefehle**, die er an die von ihm verwalteten Geräte weiterleitet. Falls für diese Geräte individuelle, **digitale Stromzähler** verwendet werden, können diese ausgelesen werden und der Stromverbrauch an den SHM gemeldet werden, um diesen beim Lernen der Verbrauchscharakteristik zu unterstüzen und Verbräuche zu visualieren.
+Dazu meldet der *Smart Appliance Enabler* dem *Sunny Home Manager* **Bedarfsanforderungen** dieser Geräte um diesem eine optimale Planung des Eigenverbrauchs zu ermöglichen. Entsprechend dieser Planung empfängt der *Smart Appliance Enabler* **Schaltbefehle**, die er an die von ihm verwalteten Geräte weiterleitet. Falls für diese Geräte individuelle, **digitale Stromzähler** verwendet werden, können diese ausgelesen werden und der Stromverbrauch an den *Sunny Home Manager* gemeldet werden, um diesen beim Lernen der Verbrauchscharakteristik zu unterstüzen und Verbräuche im [Sunny Portal](https://www.sunnyportal.com/) zu visualieren.
 
-Die nachfolgende Grafik des [Sunny Home Manager (SHM)](http://www.sma.de/produkte/monitoring-control/sunny-home-manager.html) zeigt einen sonnigen Herbstag, an dem die [Wallbox](doc/EVCharger_DE.md) optimal angesteuert wurde, um das E-Auto so zu laden, dass Netzbezug vermieden wird. Gleichzeitig musste der SHM den Geschirrspüler und die Waschmaschine entsprechend der eingestellten Anforderungen laufen lassen. Zusätzlich waren auch die Wärmepumpe (Warmwasser und Heizung) und die Espressomaschine zeitweise eingeschaltet, die nicht durch den SHM gesteuert werden, aber natürlich auch Strom verbrauchen.
+Die nachfolgende Grafik aus dem [Sunny Portal](https://www.sunnyportal.com/) zeigt einen sonnigen Herbstag, an dem die [Wallbox](doc/EVCharger_DE.md) optimal angesteuert wurde, um das E-Auto so zu laden, dass Netzbezug vermieden wird. Gleichzeitig musste der *Sunny Home Manager* den Geschirrspüler und die Waschmaschine entsprechend der eingestellten Anforderungen laufen lassen. Zusätzlich waren auch die Wärmepumpe (Warmwasser und Heizung) und die Espressomaschine zeitweise eingeschaltet, die nicht durch den *Sunny Home Manager* gesteuert werden, aber natürlich auch Strom verbrauchen.
 
 ![SHM_Verbraucherbilanz_GuterTag](pics/shm/Verbraucherbilanz_GuterTag.png)
 
 ## Hardware
 
 ### Anforderungen
+
 Der *Smart Appliance Enabler* wurde in **Java** implementiert und läuft grundsätzlich auf jedem Gerät, für das eine Java Virtual Machine mit Java 11 existiert. Neben dem compilierten Code werden diverse Scripts bereitgestellt in denen von **Linux** als Betriebssystem ausgegangen wird. Falls Geräte über [GPIO](https://www.itwissen.info/GPIO-general-purpose-input-output.html) angebunden werden sollen, benötigt der *Smart Appliance Enabler* einen [**Raspberry Pi**](doc/Raspberry_DE.md) als Hardware. 
 
 ### Stromzähler
 
-Aktuell unterstützt der *Smart Appliance Enabler* folgende Möglichkeiten, den Stromverbrauch eines Gerätes zu messen, um ihn an die (Smart-Home-) Steuerung zu melden:
+Aktuell unterstützt der *Smart Appliance Enabler* folgende Möglichkeiten, den Stromverbrauch eines Gerätes zu messen, um ihn an den *Sunny Home Manager* zu melden:
 
 | Protokolle    | Produkte      |
 | ------------- | ------------- |
 | GPIO | [S0-Zähler](doc/S0Meter_DE.md) |
 | Modbus | [Modbus-basierte Zähler](doc/ModbusMeter_DE.md) |
-| HTTP | [HTTP-basierte Zähler](doc/HttpMeter_DE.md) allgemein<ul></ul>kompatible Produkte<ul><li>[Shelly Plug](doc/ShellyPlug_DE.md)</li><li>[Shelly 4 Pro](doc/Shelly4Pro_DE.md)</li><li>[Edimax SP-2101W](doc/EdimaxSP2101W_DE.md)</li></ul>mit [Tasmota-Firmware](doc/Tasmota_DE.md) nutzbare Produkte<ul><li>[Gosund SP111](doc/GosundSP111_DE.md)</li><li>[Sonoff Pow](doc/SonoffPow_DE.md)</li></ul>|
+| HTTP | [HTTP-basierte Zähler](doc/HttpMeter_DE.md) allgemein<ul></ul>kompatible Produkte<ul><li>[Shelly Plug](doc/ShellyPlug_DE.md)</li><li>[Shelly 4 Pro](doc/Shelly4Pro_DE.md)</li><li>[Edimax SP-2101W](doc/EdimaxSP2101W_DE.md)</li></ul>mit [Tasmota-Firmware](doc/Tasmota_DE.md) nutzbare Produkte<ul><li>Nous A1</li><li>[Gosund SP111](doc/GosundSP111_DE.md)</li><li>[Sonoff Pow](doc/SonoffPow_DE.md)</li></ul>|
 
 ### Schalter
 
@@ -60,42 +61,51 @@ Zum Ein-/Ausschalten eines Gerätes unterstützt der *Smart Appliance Enabler* d
 | Protokolle    | Produkte      |
 | ------------- | ------------- |
 | GPIO | [GPIO-basierte Schalter](doc/GPIOSwitch_DE.md) |
-| Modbus | [Modbus-basierte Schalter](doc/ModbusSwitch_DE.md)<br><br>[Modbus-basierte Ladegeräte für Elektroautos](doc/EVCharger_DE.md)|
-| HTTP | [HTTP-basierte Schalter](doc/HttpSwitch_DE.md) allgemein<ul></ul>kompatible Produkte<ul><li>[Shelly Plug](doc/ShellyPlug_DE.md)</li><li>[Shelly 4 Pro](doc/Shelly4Pro_DE.md)</li><li>[Edimax SP-2101W](doc/EdimaxSP2101W_DE.md)</li></ul>mit [Tasmota-Firmware](doc/Tasmota_DE.md) nutzbare Produkte<ul><li>[Gosund SP111](doc/GosundSP111_DE.md)</li><li>[Sonoff Pow](doc/SonoffPow_DE.md)</li></ul>[HTTP-basierte Ladegeräte für Elektroautos](doc/EVCharger_DE.md)|
+| Modbus | [Modbus-basierte Schalter](doc/ModbusSwitch_DE.md)<br><br>[Wallboxen mit Modbus-Schnittstelle](doc/EVCharger_DE.md)|
+| HTTP | [HTTP-basierte Schalter](doc/HttpSwitch_DE.md) allgemein<ul></ul>kompatible Produkte<ul><li>[Shelly Plug](doc/ShellyPlug_DE.md)</li><li>[Shelly 4 Pro](doc/Shelly4Pro_DE.md)</li><li>[Edimax SP-2101W](doc/EdimaxSP2101W_DE.md)</li></ul>mit [Tasmota-Firmware](doc/Tasmota_DE.md) nutzbare Produkte<ul><li>Nous A1</li><li>[Gosund SP111](doc/GosundSP111_DE.md)</li><li>[Sonoff Pow](doc/SonoffPow_DE.md)</li></ul>[Wallboxen mit HTTP-Schnittstelle](doc/EVCharger_DE.md)|
 
-Alle aufgeführten Schalter (außer Ladegeräte für Elektro-Autos) können mit einer [Anlaufstromerkennung](doc/Anlaufstromerkennung_DE.md) verwendet werden, um die Programmierung des Gerätes zu ermöglichen.
+[Details zu diesen Schaltern und weiteren Software-basierten Schalten (z.B. Anlaufstromerkennung)](doc/Control_DE.md)
 
 ### [Montage](doc/Montage_DE.md)
-Für den reibungslosen Einsatz des *Smart Appliance Enabler* sollten die [Montage-Hinweise](doc/Montage_DE.md) beachtet werden.
 
-## Software
-In den nachfolgenden Kapiteln ist Installation und Konfiguration des *Smart Appliance Enabler* beschrieben. Gegebenenfalls sollte auch das Kapitel [Fragen / Probleme](doc/Support_DE.md) konsultiert werden.
+Falls der *Smart Appliance Enabler* auf einem Raspberry Pi betrieben werden soll, sollten dafür die [Montage-Hinweise](doc/Montage_DE.md) beachtet werden.
 
-### [Installation](doc/Installation_DE.md)
-Der einfachste Weg zu einem lauffähigen *Smart Appliance Enabler* besteht in der [Installation](doc/Installation_DE.md) einer releasten Version.
+## Installation
 
-![Docker](pics/Docker.png)
+Die [Standard-Installation](doc/Installation_DE.md) läuft automatisch ab und erfordert keine Linux-Kenntnisse.
 
-Alternativ kann *Smart Appliance Enabler* auch als [Docker-Container](doc/Docker_DE.md) betrieben werden.
+Falls notwendig, kann alternativ auch die [manuelle Installation](doc/ManualInstallation_DE.md) gewählt werden, bei der sämtliche Befehle der Dokumentation manuell auszuführen sind. 
 
-### [Konfiguration](doc/Configuration_DE.md)
-Nach der Installation müssen die zu messenden und zu steuernden Geräte im *Smart Appliance Enabler* [konfiguriert](doc/Configuration_DE.md) werden.
+<a href="doc/Docker_DE.md"><img align="left" src="pics/Docker.png"></a> Bei Bedarf lässt sich der *Smart Appliance Enabler* auch im Container mit den bereitgestellten [Docker-Images](doc/Docker_DE.md) betreiben.<br><br>
 
-### [Status-Anzeige](doc/Status_DE.md)
+## [Konfiguration](doc/Configuration_DE.md) und [Steuerung](doc/Status_DE.md)
+
+Die [Konfiguration](doc/Configuration_DE.md) des *Smart Appliance Enabler* erfolgt mit dem **Web-Browser**.
+
 Der Status aller steuerbaren Geräte wird in der [Status-Anzeige](doc/Status_DE.md) übersichtlich dargestellt, wobei der Status jedes Gerätes durch eine **Ampel** visualisiert wird. Die Ampel kann auch zur **manuellen Steuerung** verwendet werden.
 
-### [Integration in den Sunny Home Manager](doc/SunnyHomeMangerKonfiguration_DE.md)
-Der eigentliche Zweck des *Smart Appliance Enabler* besteht in der Integration von Geräten in den [Sunny Home Manager konfiguriert](doc/SunnyHomeMangerKonfiguration_DE.md).
+In dem nachfolgenden Video kann man einen Eindruck von der Konfiguration des *Smart Appliance Enabler* gewinnen. Dieses Video wurde im Rahmen der Durchführung automatisierter Tests erstellt, welche die Qualität des *Smart Appliance Enabler* sicherstellen sollen.
 
-## [Fragen / Probleme](doc/Support_DE.md)
-Durch die Vielzahl von Hard- und Softwarekomponenten können bei der Verwendung des *Smart Appliance Enabler* naturgemäß Fragen oder Probleme auftreten. In diesem Fall sollten [diese Hinweise](doc/Support_DE.md) beachtet werden.
+[![Web-Oberfläche](pics/fe/BrowserstackPreview.png)](https://drive.google.com/file/d/1g7mgRbnyaPVroLKrlPBE5j1Jmu51WwqD/view)
 
-## Mitmachen
-<img align="left" src="pics/IWantYou.png">Zum Mitmachen muss man **kein Programmierer** sein! Auch die **Dokumentation** oder **Support von anderen Anwendern** im [Forum](https://www.photovoltaikforum.com/geraete-mit-home-manager-koppeln-via-semp-ethernet-t104060.html) sind Bereiche, in denen man helfen kann, den *Smart Appliance Enabler* besser zu machen. Der *Smart Appliance Enabler* ist für einige Einsatzzwecke "Out-of-the-box" geeignet. Viel interessanter sind aber oft Ideen, an die bei der Entwicklung des *Smart Appliance Enabler* gar nicht gedacht wurde, die ihr aber damit umgesetzt habt. Es wäre doch schön, wenn andere auch **von Euren Ideen profitieren** würden oder vielleicht sogar dazu beitragen könnten, sie noch besser zu machen.
+## [Integration in das Sunny Portal](doc/SunnyPortal_DE.md)
+Der eigentliche Zweck des *Smart Appliance Enabler* besteht in der Integration von Geräten in das [Sunny Portal](doc/SunnyPortal_DE.md).
 
-Wenn Ihr zum *Smart Appliance Enabler* inkl. Dokumenation beitragen wollt, solltet Ihr das **Smart Appliance Enabler-Repository clonen**. Ihr könnte dann in Eurer Kopie z.B. die Dokumentation erweitern oder korrigieren und mir dann einen **Pull-Request** schicken, mit dem ich Eure Änderungen direkt in das *Smart Appliance Enabler*-Repository übernehmen kann.
+![Verbraucherbilanz](pics/shm/Verbraucherbilanz.png)
 
-### [Entwicklung](doc/Development_DE.md)
+## [Fragen und Antworten](doc/QA_DE.md)
+<a href="doc/QA_DE.md"><img align="left" src="pics/fragen_antworten.jpeg"></a>[Diese Seite führt bei Problemen hoffentlich zur Lösung](doc/QA_DE.md). Ausgehend von häufig gestellten Fragen werden Antworten gegeben sowie Verweise zu relevanten Teilen der Dokumentation.
+<br><br><br><br>
+
+## [Unterstützung](doc/Support_DE.md)
+<a href="doc/Support_DE.md"><img align="left" src="pics/support.jpeg"></a>[Hier finden sich Informationen zur Unterstützung bei Fragen und Problemen](doc/Support_DE.md), falls die Informationen in [Fragen und Antworten](doc/QA_DE.md) nicht zum Erfolg geführt haben.
+<br><br><br><br>
+
+## [Mitmachen](doc/Contribute_DE.md)
+<a href="doc/Contribute_DE.md"><img align="left" src="pics/IWantYou.png"></a>Zum [Mitmachen](doc/Contribute_DE.md) muss man **kein Programmierer** sein! [Mitmachen](doc/Contribute_DE.md) kann **jeder** auf vielfältige Weise! [Eure Anwendunsszenarien für den *Smart Appliance Enabler*](doc/ApplicationScenarios_DE.md) helfen anderen weiter!
+<br><br><br><br><br>
+
+## [Entwicklung](doc/Development_DE.md)
 Alle Informationen rund um die [Entwicklung](doc/Development_DE.md) des *Smart Appliance Enabler* einschliesslich der Dokumentation der Build- und Testumgebungen.
 
 ## Dank und Anerkennung

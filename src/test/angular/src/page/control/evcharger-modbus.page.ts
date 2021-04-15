@@ -1,8 +1,8 @@
 import {
   assertInput,
-  assertSelect,
+  assertSelectOption,
   inputText,
-  selectOptionByAttribute, selectorInputByFormControlName,
+  selectOption, selectorInputByFormControlName,
   selectorSelectByFormControlName,
   selectorSelectedByFormControlName
 } from '../../shared/form';
@@ -28,11 +28,11 @@ export class EvchargerModbusPage {
 
 
   public static async setIdRef(t: TestController, idref: string) {
-    await selectOptionByAttribute(t, selectorSelectByFormControlName('idref'), idref);
+    await selectOption(t, selectorSelectByFormControlName('idref'), idref);
   }
 
   public static async assertIdRef(t: TestController, idref: string) {
-    await assertSelect(t, selectorSelectedByFormControlName('idref'), idref);
+    await assertSelectOption(t, selectorSelectedByFormControlName('idref'), idref);
   }
 
   public static async setSlaveAddress(t: TestController, slaveAddress: string) {

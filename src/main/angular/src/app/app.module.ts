@@ -50,7 +50,9 @@ import {ScheduleModule} from './schedule/schedule.module';
 import {StatusModule} from './status/status.module';
 import {HttpLoaderFactory} from './shared/http-loader-factory';
 import {SettingsModbusComponent} from './settings/modbus/settings-modbus.component';
-import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
+import {NotificationModule} from './notification/notification.module';
+import {VersionService} from './shared/version-service';
+import {ApplianceIdsResolver} from './appliance/appliance-ids-resolver';
 
 @NgModule({
   declarations: [
@@ -72,6 +74,7 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
     HttpClientModule,
     MaterialModule,
     MeterModule,
+    NotificationModule,
     ReactiveFormsModule,
     ScheduleModule,
     StatusModule,
@@ -92,6 +95,7 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
     ApplianceService,
     AppliancesReloadService,
     ApplianceResolver,
+    ApplianceIdsResolver,
     CanDeactivateGuard,
     DialogService,
     Logger,
@@ -99,6 +103,7 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
     SettingsService,
     SettingsResolver,
     SettingsDefaultsResolver,
+    VersionService,
   ],
   bootstrap: [AppComponent]
 })

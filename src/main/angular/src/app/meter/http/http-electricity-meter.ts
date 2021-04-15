@@ -24,7 +24,6 @@ export class HttpElectricityMeter {
     return 'de.avanux.smartapplianceenabler.meter.HttpElectricityMeter';
   }
   '@class' = HttpElectricityMeter.TYPE;
-  measurementInterval: number;
   pollInterval: number;
   contentProtocol: string;
   httpConfiguration: HttpConfiguration;

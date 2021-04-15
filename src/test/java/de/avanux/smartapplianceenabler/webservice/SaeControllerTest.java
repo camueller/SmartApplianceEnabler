@@ -4,6 +4,7 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import de.avanux.smartapplianceenabler.appliance.Appliance;
 import de.avanux.smartapplianceenabler.appliance.ApplianceBuilder;
+import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
 import de.avanux.smartapplianceenabler.schedule.*;
 import de.avanux.smartapplianceenabler.util.FileHandler;
 import java.time.LocalDateTime;
@@ -33,7 +34,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 public class SaeControllerTest {
 
     private final static String SCHEDULE_RUNTIME_REQUEST_DAY_TIMEFRAME =
-            "<Schedules xmlns=\"http://github.com/camueller/SmartApplianceEnabler/v1.5\">\n" +
+            "<Schedules xmlns=\"" + ApplianceManager.SCHEMA_LOCATION + "\">\n" +
             "  <Schedule>\n" +
             "    <RuntimeRequest min=\"7200\" max=\"10800\" />\n" +
             "    <DayTimeframe>\n" +
@@ -47,7 +48,7 @@ public class SaeControllerTest {
             ;
 
     private  final static String SCHEDULE_CONSECUTIVE_DAYS_TIMEFRAME =
-            "<Schedules xmlns=\"http://github.com/camueller/SmartApplianceEnabler/v1.5\">\n" +
+            "<Schedules xmlns=\"" + ApplianceManager.SCHEMA_LOCATION + "\">\n" +
             "  <Schedule>\n" +
             "    <RuntimeRequest min=\"36000\" max=\"43200\" />\n" +
             "    <ConsecutiveDaysTimeframe>\n" +
@@ -59,17 +60,17 @@ public class SaeControllerTest {
             ;
 
     private final static String SCHEDULE_ENERGY_REQUEST_DAY_TIMEFRAME =
-            "<Schedules xmlns=\"http://github.com/camueller/SmartApplianceEnabler/v1.5\">\n" +
-                    "  <Schedule>\n" +
-                    "    <EnergyRequest min=\"1380\" max=\"7360\" />\n" +
-                    "    <DayTimeframe>\n" +
-                    "      <Start hour=\"10\" minute=\"0\" second=\"0\"/>\n" +
-                    "      <End hour=\"14\" minute=\"0\" second=\"0\"/>\n" +
-                    "      <DayOfWeek>6</DayOfWeek>\n" +
-                    "      <DayOfWeek>7</DayOfWeek>\n" +
-                    "    </DayTimeframe>\n" +
-                    "  </Schedule>\n" +
-                    "</Schedules>\n"
+            "<Schedules xmlns=\"" + ApplianceManager.SCHEMA_LOCATION + "\">\n" +
+            "  <Schedule>\n" +
+            "    <EnergyRequest min=\"1380\" max=\"7360\" />\n" +
+            "    <DayTimeframe>\n" +
+            "      <Start hour=\"10\" minute=\"0\" second=\"0\"/>\n" +
+            "      <End hour=\"14\" minute=\"0\" second=\"0\"/>\n" +
+            "      <DayOfWeek>6</DayOfWeek>\n" +
+            "      <DayOfWeek>7</DayOfWeek>\n" +
+            "    </DayTimeframe>\n" +
+            "  </Schedule>\n" +
+            "</Schedules>\n"
             ;
 
     private MediaType contentType = new MediaType(MediaType.APPLICATION_XML.getType(),

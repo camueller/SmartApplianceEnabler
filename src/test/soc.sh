@@ -1,2 +1,3 @@
 #!/bin/sh
-echo "Car SOC is 42.7 percent."
+# sleep 10
+echo "state_of_charge 78"

@@ -22,6 +22,9 @@ import com.pi4j.io.gpio.Pin;
 import com.pi4j.io.gpio.PinPullResistance;
 import com.pi4j.io.gpio.RaspiPin;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
+import de.avanux.smartapplianceenabler.configuration.Validateable;
+import de.avanux.smartapplianceenabler.meter.MeterValueName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +35,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 @XmlTransient
 @XmlAccessorType(XmlAccessType.FIELD)
-abstract public class GpioControllable implements ApplianceIdConsumer {
+abstract public class GpioControllable implements ApplianceIdConsumer, Validateable {
     private transient Logger logger = LoggerFactory.getLogger(GpioControllable.class);
     @XmlAttribute
     private Integer gpio;
@@ -55,16 +58,15 @@ abstract public class GpioControllable implements ApplianceIdConsumer {
     }
 
     protected PinPullResistance getPinPullResistance() {
-        if(PinPullResistance.OFF.getName().equals(pinPullResistance)) {
-            return PinPullResistance.OFF;
+        if(pinPullResistance != null) {
+            if (pinPullResistance.equals("PULL_DOWN")) {
+                return PinPullResistance.PULL_DOWN;
+            }
+            if (pinPullResistance.equals("PULL_UP")) {
+                return PinPullResistance.PULL_UP;
+            }
         }
-        else if(PinPullResistance.PULL_DOWN.getName().equals(pinPullResistance)) {
-            return PinPullResistance.PULL_DOWN;
-        }
-        else if(PinPullResistance.PULL_UP.getName().equals(pinPullResistance)) {
-            return PinPullResistance.PULL_UP;
-        }
-        return null;
+        return PinPullResistance.OFF;
     }
 
     protected void logGpioAccessDisabled(Logger logger) {
@@ -78,5 +80,14 @@ abstract public class GpioControllable implements ApplianceIdConsumer {
 
     protected String getApplianceId() {
         return applianceId;
+    }
+
+    @Override
+    public void validate() throws ConfigurationException {
+        logger.debug("{}: Validating configuration", applianceId);
+        if(gpio == null) {
+            logger.error("{}: Missing 'gpio' property", applianceId);
+            throw new ConfigurationException();
+        }
     }
 }

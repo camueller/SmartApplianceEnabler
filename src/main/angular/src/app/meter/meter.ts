@@ -19,12 +19,14 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 import {S0ElectricityMeter} from './s0/s0-electricity-meter';
 import {ModbusElectricityMeter} from './modbus/modbus-electricity-meter';
 import {HttpElectricityMeter} from './http/http-electricity-meter';
+import {Notifications} from '../notification/notifications';
 
 export class Meter {
   type: string;
   s0ElectricityMeter?: S0ElectricityMeter;
   modbusElectricityMeter?: ModbusElectricityMeter;
   httpElectricityMeter?: HttpElectricityMeter;
+  notifications?: Notifications;
 
   public constructor(init?: Partial<Meter>) {
     Object.assign(this, init);

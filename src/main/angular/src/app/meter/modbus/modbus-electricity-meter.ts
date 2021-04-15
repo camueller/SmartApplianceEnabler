@@ -26,7 +26,6 @@ export class ModbusElectricityMeter {
   idref: string;
   slaveAddress: string;
   pollInterval: number;
-  measurementInterval: number;
   modbusReads: ModbusRead[];
 
   public constructor(init?: Partial<ModbusElectricityMeter>) {

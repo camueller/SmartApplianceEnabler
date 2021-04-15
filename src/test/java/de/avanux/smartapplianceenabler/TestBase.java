@@ -117,15 +117,19 @@ abstract public class TestBase {
     protected void assertTimeframeIntervalOptionalEnergy(Interval interval,
                                                          TimeframeIntervalState state,
                                                          Integer socInitial,
+                                                         Integer socCurrent,
                                                          Integer socRequested,
                                                          Integer evId,
-                                                         Integer energy,
+                                                         Integer batteryCapacity,
                                                          boolean enabled,
                                                          TimeframeInterval actual) {
-        OptionalEnergySocRequest request = new OptionalEnergySocRequest(evId, energy);
+        OptionalEnergySocRequest request = new OptionalEnergySocRequest(evId);
         request.setEnabled(enabled);
+        request.setBatteryCapacity(batteryCapacity);
         request.setSocInitial(socInitial);
+        request.setSocCurrent(socCurrent);
         request.setSoc(socRequested);
+        request.updateForced();
         TimeframeInterval expected = new TimeframeInterval(interval, request);
         expected.initState(state);
         assertEquals(expected, actual);
@@ -134,14 +138,18 @@ abstract public class TestBase {
     protected void assertTimeframeIntervalSocRequest(TimeframeIntervalState state,
                                                      Interval interval,
                                                      Integer socInitial,
-                                                     Integer soc,
+                                                     Integer socCurrent,
+                                                     Integer socRequested,
                                                      Integer evId,
-                                                     Integer energy,
+                                                     Integer batteryCapacity,
                                                      boolean enabled,
                                                      TimeframeInterval actual) {
-        SocRequest request = new SocRequest(soc, evId, energy);
+        SocRequest request = new SocRequest(socRequested, evId);
+        request.setBatteryCapacity(batteryCapacity);
         request.setSocInitial(socInitial);
+        request.setSocCurrent(socCurrent);
         request.setEnabled(enabled);
+        request.updateForced();
         assertEquals(new TimeframeInterval(state, interval, request), actual);
     }
 

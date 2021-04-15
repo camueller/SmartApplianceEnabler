@@ -10,29 +10,33 @@ export class MeterTestdata {
       'httpElectricityMeter': {
         '@class': 'de.avanux.smartapplianceenabler.meter.HttpElectricityMeterDefaults',
         'factorToWatt': 1,
-        'measurementInterval': 60,
+        'minPulseDuration': 20,
         'pollInterval': 10
       },
       'modbusElectricityMeter': {
         '@class': 'de.avanux.smartapplianceenabler.modbus.ModbusElectricityMeterDefaults',
-        'measurementInterval': 60,
+        'minPulseDuration': 20,
         'pollInterval': 10
       },
       's0ElectricityMeter': {
         '@class': 'de.avanux.smartapplianceenabler.meter.S0ElectricityMeterDefaults',
-        'measurementInterval': 60
+        'minPulseDuration': 20
       }
     };
   }
 
   public static meterdefaults_type(): MeterDefaults {
     return new MeterDefaults({
-      s0ElectricityMeter_measurementInterval: 60,
-      httpElectricityMeter_factorToWatt: 1,
-      httpElectricityMeter_measurementInterval: 60,
-      httpElectricityMeter_pollInterval: 10,
-      modbusElectricityMeter_pollInterval: 10,
-      modbusElectricityMeter_measurementInterval: 60,
+      s0ElectricityMeterDefaults: {
+        minPulseDuration: 20,
+      },
+      httpElectricityMeterDefaults: {
+        factorToWatt: 1,
+        pollInterval: 10,
+      },
+      modbusElectricityMeterDefaults: {
+        pollInterval: 10,
+      },
     });
   }
 
@@ -52,7 +56,7 @@ export class MeterTestdata {
       'gpio': 1,
       'pinPullResistance': 'PULL_DOWN',
       'impulsesPerKwh': 1000,
-      'measurementInterval': 60
+      'minPulseDuration': 20
     };
   }
 
@@ -64,7 +68,7 @@ export class MeterTestdata {
         gpio: 1,
         pinPullResistance: 'PULL_DOWN',
         impulsesPerKwh: 1000,
-        measurementInterval: 60,
+        minPulseDuration: 20,
       })
     });
   }

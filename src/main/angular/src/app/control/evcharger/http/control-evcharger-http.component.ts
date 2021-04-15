@@ -1,7 +1,7 @@
 import {Component, Input, OnChanges, OnInit, QueryList, SimpleChanges, ViewChild, ViewChildren} from '@angular/core';
 import {Settings} from '../../../settings/settings';
 import {SettingsDefaults} from '../../../settings/settings-defaults';
-import {ControlContainer, FormArray, FormGroup, FormGroupDirective} from '@angular/forms';
+import {ControlContainer, FormArray, FormGroup, FormGroupDirective, ValidatorFn} from '@angular/forms';
 import {Logger} from '../../../log/logger';
 import {EvHttpControl} from './ev-http-control';
 import {ContentProtocol} from '../../../shared/content-protocol';
@@ -13,6 +13,10 @@ import {HttpWriteComponent} from '../../../http/write/http-write.component';
 import {HttpWrite} from '../../../http/write/http-write';
 import {EvReadValueName} from '../ev-read-value-name';
 import {EvWriteValueName} from '../ev-write-value-name';
+import {ValueNameChangedEvent} from '../../../meter/value-name-changed-event';
+import { MessageBoxLevel } from 'src/app/material/messagebox/messagebox.component';
+import {TranslateService} from '@ngx-translate/core';
+import {getValueNamesNotConfigured} from '../../../shared/get-value-names-not-configured';
 
 @Component({
   selector: 'app-control-evcharger-http',
@@ -39,8 +43,14 @@ export class ControlEvchargerHttpComponent implements OnChanges, OnInit {
   httpWriteComps: QueryList<HttpWriteComponent>;
   form: FormGroup;
   formHandler: FormHandler;
+  @Input()
+  translationKeys: string[];
+  translatedStrings: string[];
+  MessageBoxLevel = MessageBoxLevel;
+  private readonly valueNameMissingError = 'valueNameMissingError';
 
   constructor(private logger: Logger,
+              private translate: TranslateService,
               private parent: FormGroupDirective) {
     this.formHandler = new FormHandler();
   }
@@ -53,17 +63,47 @@ export class ControlEvchargerHttpComponent implements OnChanges, OnInit {
       } else {
         this.evHttpControl = new EvHttpControl();
       }
-      this.expandParentForm();
+      this.updateForm();
     }
   }
 
   ngOnInit() {
     this.expandParentForm();
+    this.translate.get(this.translationKeys).subscribe(translatedStrings => {
+      this.translatedStrings = translatedStrings;
+    });
   }
 
   get contentProtocol(): string {
     const contentProtocolControl = this.form.controls.contentProtocol;
     return (contentProtocolControl.value ? contentProtocolControl.value.toUpperCase() : '');
+  }
+
+  get readValueNamesNotConfigured() {
+    const valueNamesNotConfigured = getValueNamesNotConfigured(
+      this.httpReadsFormArray, 'httpReadValues', Object.keys(EvReadValueName));
+    return this.translatedStrings
+      ? valueNamesNotConfigured.map(name => this.translatedStrings[`ControlEvchargerComponent.${name}`]) : undefined;
+  }
+
+  get writeValueNamesNotConfigured() {
+    const valueNamesNotConfigured = getValueNamesNotConfigured(
+      this.httpWritesFormArray, 'httpWriteValues', Object.keys(EvWriteValueName));
+    return this.translatedStrings
+      ? valueNamesNotConfigured.map(name => this.translatedStrings[`ControlEvchargerComponent.${name}`]) : undefined;
+  }
+
+  onValueNameChanged(index: number, event: ValueNameChangedEvent) {
+    this.form.updateValueAndValidity();
+  }
+
+  isAllValueNamesConfigured(): ValidatorFn {
+    return () => {
+      if ((this.readValueNamesNotConfigured && this.readValueNamesNotConfigured.length)
+        || (this.writeValueNamesNotConfigured && this.writeValueNamesNotConfigured.length)) {
+        return {[this.valueNameMissingError]: true};
+      }
+    };
   }
 
   get readValueNames() {
@@ -137,6 +177,13 @@ export class ControlEvchargerHttpComponent implements OnChanges, OnInit {
       this.evHttpControl.httpReads);
     this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'httpWrites',
       this.evHttpControl.httpWrites);
+    this.form.setValidators(this.isAllValueNamesConfigured());
+  }
+
+  updateForm() {
+    this.form.removeControl('httpReads');
+    this.form.removeControl('httpWrites');
+    this.expandParentForm();
   }
 
   updateModelFromForm(): EvHttpControl | undefined {

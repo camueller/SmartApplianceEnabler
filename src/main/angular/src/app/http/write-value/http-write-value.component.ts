@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {FormGroup, Validators} from '@angular/forms';
 import {FormHandler} from '../../shared/form-handler';
 import {ErrorMessages} from '../../shared/error-messages';
@@ -10,6 +10,8 @@ import {HttpWriteValue} from './http-write-value';
 import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/error-message';
 import {getValidFloat, getValidString} from '../../shared/form-util';
 import {HttpMethod} from '../http-method';
+import {ValueNameChangedEvent} from '../../meter/value-name-changed-event';
+import { EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-http-write-value',
@@ -30,10 +32,12 @@ export class HttpWriteValueComponent implements OnChanges, OnInit {
   translationPrefix = '';
   @Input()
   translationKeys: string[];
-  translatedStrings: string[];
+  translatedStrings: { [key: string]: string } = {};
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
+  @Output()
+  nameChanged = new EventEmitter<any>();
 
   constructor(private logger: Logger,
               private translate: TranslateService
@@ -86,9 +90,19 @@ export class HttpWriteValueComponent implements OnChanges, OnInit {
     return `HttpMethod.${method}`;
   }
 
+  onNameChanged(newName?: string) {
+    if (newName) {
+      const event: ValueNameChangedEvent = {name: newName};
+      this.nameChanged.emit(event);
+    }
+  }
+
   expandParentForm() {
     this.formHandler.addFormControl(this.form, 'name',
       this.httpWriteValue && this.httpWriteValue.name, [Validators.required]);
+    if (this.httpWriteValue) {
+      this.onNameChanged(this.httpWriteValue.name);
+    }
     this.formHandler.addFormControl(this.form, 'value',
       this.httpWriteValue && this.httpWriteValue.value);
     if (!this.disableFactorToValue) {

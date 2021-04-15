@@ -30,7 +30,7 @@
     <ng-template #notEvCharger>
       <div class="sae__fields">
         <div class="field">
-          <mat-form-field>
+          <mat-form-field class="ControlComponent__controlType">
             <mat-label>{{'ControlComponent.type' | translate}}</mat-label>
             <mat-select formControlName="controlType" required="{{formHandler.isRequired('controlType')}}" (ngModelChange)="typeChanged($event)">
               <mat-option *ngFor="let controlType of controlTypes" [value]="controlType.value">
@@ -39,25 +39,27 @@
             </mat-select>
           </mat-form-field>
         </div>
-        <mat-checkbox formControlName="startingCurrentDetection" (click)="toggleStartingCurrentDetection()"
-                      *ngIf="canHaveStartingCurrentDetection"
+        <app-help [helpfile]="'Control'"></app-help>
+        <mat-checkbox class="ControlComponent__startingCurrentDetection" formControlName="startingCurrentDetection"
+                      (click)="toggleStartingCurrentDetection()" *ngIf="canHaveStartingCurrentDetection"
         >{{'ControlStartingcurrentComponent.startingCurrentDetection' | translate}}</mat-checkbox>
       </div>
+      <app-control-meterreporting *ngIf="isMeterReportingSwitch"
+                                  [meterReportingSwitch]="control.meterReportingSwitch"
+                                  [controlDefaults]="controlDefaults"
+      ></app-control-meterreporting>
       <app-control-switch *ngIf="isSwitch"
                           [switch_]="control.switch_"
-                          [applianceId]="applianceId"
                           [controlDefaults]="controlDefaults"
       ></app-control-switch>
       <app-control-modbus *ngIf="isModbusSwitch"
                           [modbusSwitch]="control.modbusSwitch"
-                          [applianceId]="applianceId"
                           [controlDefaults]="controlDefaults"
                           [modbusSettings]="settings.modbusSettings"
                           [settingsDefaults]="settingsDefaults"
       ></app-control-modbus>
       <app-control-http *ngIf="isHttpSwitch"
                         [httpSwitch]="control.httpSwitch"
-                        [applianceId]="applianceId"
                         [controlDefaults]="controlDefaults"
       ></app-control-http>
       <app-control-startingcurrent *ngIf="control.startingCurrentDetection"
@@ -66,6 +68,10 @@
                                    [controlDefaults]="controlDefaults"
       ></app-control-startingcurrent>
     </ng-template>
+    <app-notification [types]="notficationTypes"
+                      [notifications]="control.notifications"
+                      [configured]="isNotifcationEnabled"
+    ></app-notification>
     <div class="sae__mandatory_fields_hint">{{'dialog.mandatoryfields'|translate}}</div>
     <button mat-raised-button type="submit" color="primary" [disabled]="form.pristine||form.invalid">
       {{'button.save' | translate}}</button>

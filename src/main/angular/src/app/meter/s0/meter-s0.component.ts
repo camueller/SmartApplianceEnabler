@@ -62,7 +62,7 @@ export class MeterS0Component implements OnChanges, OnInit {
       new ErrorMessage('gpio', ValidatorType.pattern),
       new ErrorMessage('impulsesPerKwh', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('impulsesPerKwh', ValidatorType.pattern),
-      new ErrorMessage('measurementInterval', ValidatorType.pattern),
+      new ErrorMessage('minPulseDuration', ValidatorType.pattern),
     ], this.translate);
     const pinPullResistanceTypeKeys = Object.keys(PinPullResistance)
       .map(key => `MeterS0Component.pinPullResistance.${PinPullResistance[key]}`);
@@ -86,8 +86,8 @@ export class MeterS0Component implements OnChanges, OnInit {
     this.formHandler.addFormControl(this.form, 'impulsesPerKwh',
       this.s0ElectricityMeter && this.s0ElectricityMeter.impulsesPerKwh,
       [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(this.form, 'measurementInterval',
-      this.s0ElectricityMeter && this.s0ElectricityMeter.measurementInterval,
+    this.formHandler.addFormControl(this.form, 'minPulseDuration',
+      this.s0ElectricityMeter && this.s0ElectricityMeter.minPulseDuration,
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
   }
 
@@ -95,16 +95,16 @@ export class MeterS0Component implements OnChanges, OnInit {
     const gpio = getValidInt(this.form.controls.gpio.value);
     const pinPullResistance = this.form.controls.pinPullResistance.value;
     const impulsesPerKwh = getValidInt(this.form.controls.impulsesPerKwh.value);
-    const measurementInterval = getValidInt(this.form.controls.measurementInterval.value);
+    const minPulseDuration = getValidInt(this.form.controls.minPulseDuration.value);
 
-    if (!(gpio || pinPullResistance || impulsesPerKwh || measurementInterval)) {
+    if (!(gpio || pinPullResistance || impulsesPerKwh || minPulseDuration)) {
       return undefined;
     }
 
     this.s0ElectricityMeter.gpio = gpio;
     this.s0ElectricityMeter.pinPullResistance = pinPullResistance;
     this.s0ElectricityMeter.impulsesPerKwh = impulsesPerKwh;
-    this.s0ElectricityMeter.measurementInterval = measurementInterval;
+    this.s0ElectricityMeter.minPulseDuration = minPulseDuration;
     return this.s0ElectricityMeter;
   }
 }

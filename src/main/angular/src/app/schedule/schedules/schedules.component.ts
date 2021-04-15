@@ -20,6 +20,8 @@ import {simpleTimeframeType} from '../../shared/form-util';
 import {ControlComponent} from '../../control/control.component';
 import {Observable} from 'rxjs';
 import {DialogService} from '../../shared/dialog.service';
+import {MeterReportingSwitch} from '../../control/meterreporting/meter-reporting-switch';
+import {AlwaysOnSwitch} from '../../control/alwayson/always-on-switch';
 
 @Component({
   selector: 'app-schedules',
@@ -109,8 +111,8 @@ export class SchedulesComponent implements OnChanges, OnInit, CanDeactivate<Cont
     return this.nonEvRequestTypes;
   }
 
-  get hasControl(): boolean {
-    return this.control ? this.control.type !== undefined : false;
+  get isControlable(): boolean {
+    return this.control && this.control.type !== MeterReportingSwitch.TYPE && this.control.type !== AlwaysOnSwitch.TYPE;
   }
 
   get isEvCharger(): boolean {

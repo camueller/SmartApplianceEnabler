@@ -29,10 +29,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.StringWriter;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,27 +53,34 @@ public class SempController {
     }
 
     @RequestMapping(value = BASE_URL, method = RequestMethod.GET, produces = "application/xml")
-    public String device2EM() {
-        try {
-            logger.debug("Device info/status/planning requested.");
-            return marshall(createDevice2EM(LocalDateTime.now()));
-        } catch (Throwable e) {
-            logger.error("Error in " + getClass().getSimpleName(), e);
+    public String device2EM(HttpServletResponse response) {
+        if(ApplianceManager.getInstance().isInitializationCompleted()) {
+            try {
+                logger.debug("Device info/status/planning requested.");
+                return marshall(createDevice2EM(LocalDateTime.now()));
+            } catch (Throwable e) {
+                logger.error("Error in " + getClass().getSimpleName(), e);
+            }
         }
+        response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
         return null;
     }
 
     public Device2EM createDevice2EM(LocalDateTime now) {
         List<DeviceStatus> deviceStatuses = new ArrayList<DeviceStatus>();
         List<PlanningRequest> planningRequests = new ArrayList<PlanningRequest>();
-        List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
-        for (Appliance appliance : appliances) {
-            DeviceStatus deviceStatus = createDeviceStatus(appliance);
-            deviceStatuses.add(deviceStatus);
-            PlanningRequest planningRequest = createPlanningRequest(now, appliance);
-            if (planningRequest != null) {
-                planningRequests.add(planningRequest);
+        if(ApplianceManager.getInstance().isInitializationCompleted()) {
+            List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
+            for (Appliance appliance : appliances) {
+                DeviceStatus deviceStatus = createDeviceStatus(appliance);
+                deviceStatuses.add(deviceStatus);
+                PlanningRequest planningRequest = createPlanningRequest(now, appliance);
+                if (planningRequest != null) {
+                    planningRequests.add(planningRequest);
+                }
             }
+            ApplianceManager.getInstance().startMeterAveragingInterval(now,
+                    Meter.averagingInterval - (int) Duration.between(now, LocalDateTime.now()).toSeconds() - 3);
         }
         Device2EM device2EM = ApplianceManager.getInstance().getDevice2EM();
         device2EM.setDeviceInfo(createDeviceInfo(now));
@@ -81,26 +90,29 @@ public class SempController {
     }
 
     @RequestMapping(value = BASE_URL + "/DeviceInfo", method = RequestMethod.GET, produces = "application/xml")
-    public String deviceInfo(@RequestParam(value = "DeviceId", required = false) String deviceId) {
-        try {
-            LocalDateTime now = LocalDateTime.now();
-            List<DeviceInfo> deviceInfos = new ArrayList<>();
-            if (deviceId != null) {
-                logger.debug("{}: Device info requested", deviceId);
-                deviceInfos.add(createDeviceInfo(now, deviceId));
-            } else {
-                logger.debug("Device info requested of all devices");
-                List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
-                for (Appliance appliance : appliances) {
-                    deviceInfos.add(createDeviceInfo(now, appliance.getId()));
+    public String deviceInfo(HttpServletResponse response, @RequestParam(value = "DeviceId", required = false) String deviceId) {
+        if(ApplianceManager.getInstance().isInitializationCompleted()) {
+            try {
+                LocalDateTime now = LocalDateTime.now();
+                List<DeviceInfo> deviceInfos = new ArrayList<>();
+                if (deviceId != null) {
+                    logger.debug("{}: Device info requested", deviceId);
+                    deviceInfos.add(createDeviceInfo(now, deviceId));
+                } else {
+                    logger.debug("Device info requested of all devices");
+                    List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
+                    for (Appliance appliance : appliances) {
+                        deviceInfos.add(createDeviceInfo(now, appliance.getId()));
+                    }
                 }
+                Device2EM device2EM = new Device2EM();
+                device2EM.setDeviceInfo(deviceInfos);
+                return marshall(device2EM);
+            } catch (Throwable e) {
+                logger.error("Error in " + getClass().getSimpleName(), e);
             }
-            Device2EM device2EM = new Device2EM();
-            device2EM.setDeviceInfo(deviceInfos);
-            return marshall(device2EM);
-        } catch (Throwable e) {
-            logger.error("Error in " + getClass().getSimpleName(), e);
         }
+        response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
         return null;
     }
 
@@ -116,7 +128,6 @@ public class SempController {
     }
 
     private List<DeviceInfo> createDeviceInfo(LocalDateTime now) {
-        logger.debug("Device info requested of all devices");
         List<DeviceInfo> deviceInfos = new ArrayList<DeviceInfo>();
         List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
         for (Appliance appliance : appliances) {
@@ -144,57 +155,63 @@ public class SempController {
     }
 
     @RequestMapping(value = BASE_URL + "/DeviceStatus", method = RequestMethod.GET, produces = "application/xml")
-    public String deviceStatus(@RequestParam(value = "DeviceId", required = false) String deviceId) {
-        try {
-            List<DeviceStatus> deviceStatuses = new ArrayList<DeviceStatus>();
-            if (deviceId != null) {
-                logger.debug("{}: Device status requested", deviceId);
-                Appliance appliance = ApplianceManager.getInstance().findAppliance(deviceId);
-                DeviceStatus deviceStatus = createDeviceStatus(appliance);
-                deviceStatuses.add(deviceStatus);
-            } else {
-                logger.debug("Device status requested of all devices");
-                List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
-                for (Appliance appliance : appliances) {
+    public String deviceStatus(HttpServletResponse response, @RequestParam(value = "DeviceId", required = false) String deviceId) {
+        if(ApplianceManager.getInstance().isInitializationCompleted()) {
+            try {
+                List<DeviceStatus> deviceStatuses = new ArrayList<DeviceStatus>();
+                if (deviceId != null) {
+                    logger.debug("{}: Device status requested", deviceId);
+                    Appliance appliance = ApplianceManager.getInstance().findAppliance(deviceId);
                     DeviceStatus deviceStatus = createDeviceStatus(appliance);
                     deviceStatuses.add(deviceStatus);
+                } else {
+                    logger.debug("Device status requested of all devices");
+                    List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
+                    for (Appliance appliance : appliances) {
+                        DeviceStatus deviceStatus = createDeviceStatus(appliance);
+                        deviceStatuses.add(deviceStatus);
+                    }
                 }
+                Device2EM device2EM = new Device2EM();
+                device2EM.setDeviceStatus(deviceStatuses);
+                return marshall(device2EM);
+            } catch (Throwable e) {
+                logger.error("Error in " + getClass().getSimpleName(), e);
             }
-            Device2EM device2EM = new Device2EM();
-            device2EM.setDeviceStatus(deviceStatuses);
-            return marshall(device2EM);
-        } catch (Throwable e) {
-            logger.error("Error in " + getClass().getSimpleName(), e);
         }
+        response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
         return null;
     }
 
     @RequestMapping(value = BASE_URL + "/PlanningRequest", method = RequestMethod.GET, produces = "application/xml")
-    public String planningRequest(@RequestParam(value = "DeviceId", required = false) String deviceId) {
-        try {
-            LocalDateTime now = LocalDateTime.now();
-            List<PlanningRequest> planningRequests = new ArrayList<PlanningRequest>();
-            if (deviceId != null) {
-                logger.debug("{}: Planning request requested", deviceId);
-                Appliance appliance = ApplianceManager.getInstance().findAppliance(deviceId);
-                PlanningRequest planningRequest = createPlanningRequest(now, appliance);
-                addPlanningRequest(planningRequests, planningRequest);
-            } else {
-                logger.debug("Planning request requested of all devices");
-                List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
-                for (Appliance appliance : appliances) {
+    public String planningRequest(HttpServletResponse response, @RequestParam(value = "DeviceId", required = false) String deviceId) {
+        if(ApplianceManager.getInstance().isInitializationCompleted()) {
+            try {
+                LocalDateTime now = LocalDateTime.now();
+                List<PlanningRequest> planningRequests = new ArrayList<PlanningRequest>();
+                if (deviceId != null) {
+                    logger.debug("{}: Planning request requested", deviceId);
+                    Appliance appliance = ApplianceManager.getInstance().findAppliance(deviceId);
                     PlanningRequest planningRequest = createPlanningRequest(now, appliance);
                     addPlanningRequest(planningRequests, planningRequest);
+                } else {
+                    logger.debug("Planning request requested of all devices");
+                    List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
+                    for (Appliance appliance : appliances) {
+                        PlanningRequest planningRequest = createPlanningRequest(now, appliance);
+                        addPlanningRequest(planningRequests, planningRequest);
+                    }
                 }
+                Device2EM device2EM = new Device2EM();
+                if (planningRequests.size() > 0) {
+                    device2EM.setPlanningRequest(planningRequests);
+                }
+                return marshall(device2EM);
+            } catch (Throwable e) {
+                logger.error("Error in " + getClass().getSimpleName(), e);
             }
-            Device2EM device2EM = new Device2EM();
-            if (planningRequests.size() > 0) {
-                device2EM.setPlanningRequest(planningRequests);
-            }
-            return marshall(device2EM);
-        } catch (Throwable e) {
-            logger.error("Error in " + getClass().getSimpleName(), e);
         }
+        response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
         return null;
     }
 
@@ -251,16 +268,9 @@ public class SempController {
             deviceStatus.setEMSignalsAccepted(appliance.isAcceptControlRecommendations());
             logger.debug("{}: Reporting device status from control", appliance.getId());
         } else {
-            // there is no control for the appliance ...
-            if (meter != null) {
-                // ... but we can derive the status from power consumption
-                deviceStatus.setStatus(meter.isOn() ? Status.On : Status.Off);
-                logger.debug("{}: Reporting device status based on power consumption", appliance.getId());
-            } else {
-                // ... and no meter; we have to assume the appliance is switched off
-                deviceStatus.setStatus(Status.Offline);
-                logger.debug("{}: Appliance has neither control nor meter.", appliance.getId());
-            }
+            // ... and no meter; we have to assume the appliance is switched off
+            deviceStatus.setStatus(Status.Offline);
+            logger.debug("{}: Appliance has neither control nor meter.", appliance.getId());
 
             // an appliance without control cannot be controlled ;-)
             deviceStatus.setEMSignalsAccepted(false);
@@ -297,15 +307,16 @@ public class SempController {
     private PlanningRequest createPlanningRequest(LocalDateTime now, Appliance appliance) {
         List<de.avanux.smartapplianceenabler.semp.webservice.Timeframe> sempTimeFrames
                 = new ArrayList<de.avanux.smartapplianceenabler.semp.webservice.Timeframe>();
-        List<TimeframeInterval> queue = appliance.getTimeframeIntervalHandler().getQueue();
-        queue.stream()
-                .filter(timeframeInterval -> timeframeInterval.getRequest().isEnabled())
-                .forEach(timeframeInterval -> {
-                    Timeframe sempTimeFrame = createSempTimeFrame(now, appliance.getId(), timeframeInterval);
-                    sempTimeFrames.add(sempTimeFrame);
-                    logger.debug("{}: Timeframe added to PlanningRequest: {}", appliance.getId(), sempTimeFrame);
-                });
-
+        if(appliance.getTimeframeIntervalHandler() != null) {
+            List<TimeframeInterval> queue = appliance.getTimeframeIntervalHandler().getQueue();
+            queue.stream()
+                    .filter(timeframeInterval -> timeframeInterval.getRequest().isEnabled())
+                    .forEach(timeframeInterval -> {
+                        Timeframe sempTimeFrame = createSempTimeFrame(now, appliance.getId(), timeframeInterval);
+                        sempTimeFrames.add(sempTimeFrame);
+                        logger.debug("{}: Timeframe added to PlanningRequest: {}", appliance.getId(), sempTimeFrame);
+                    });
+        }
         final PlanningRequest planningRequest = new PlanningRequest();
         planningRequest.setTimeframes(sempTimeFrames);
         return sempTimeFrames.size() > 0 ? planningRequest : null;

@@ -32,6 +32,7 @@ import org.fourthline.cling.transport.impl.apache.StreamServerConfigurationImpl;
 import org.fourthline.cling.transport.spi.NetworkAddressFactory;
 import org.fourthline.cling.transport.spi.StreamClient;
 import org.fourthline.cling.transport.spi.StreamServer;
+import org.fourthline.cling.transport.spi.StreamServerConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,9 +98,13 @@ public class SempDiscovery implements Runnable {
 
             @Override
             public StreamServer createStreamServer(NetworkAddressFactory networkAddressFactory) {
-                return new org.fourthline.cling.transport.impl.apache.StreamServerImpl(
-                        new StreamServerConfigurationImpl()
-                );
+                StreamServerConfigurationImpl configuration = new StreamServerConfigurationImpl();
+                String sempStreamServerPort = System.getProperty("semp.streamserver.port");
+                if(sempStreamServerPort != null) {
+                    int port = Integer.parseInt(sempStreamServerPort);
+                    configuration = new StreamServerConfigurationImpl(port);
+                }
+                return new org.fourthline.cling.transport.impl.apache.StreamServerImpl(configuration);
             }
         };
     }

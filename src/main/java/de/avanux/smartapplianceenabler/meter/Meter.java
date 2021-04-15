@@ -18,33 +18,31 @@
 package de.avanux.smartapplianceenabler.meter;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceLifeCycle;
-import de.avanux.smartapplianceenabler.control.ControlMonitor;
 
-public interface Meter extends ApplianceLifeCycle, ControlMonitor {
+import java.time.LocalDateTime;
+import java.util.Timer;
+
+public interface Meter extends ApplianceLifeCycle {
+
+    int averagingInterval = 60;
 
     /**
-     * Average power consumption during measurement interval in watt.
+     * Average power consumption during averaging interval in watt.
      * @return
      */
     int getAveragePower();
 
     /**
-     * Minimum power consumption during measurement interval in watt.
+     * Minimum power consumption during averaging interval in watt.
      * @return
      */
     int getMinPower();
 
     /**
-     * Maximum power consumption during measurement interval in watt.
+     * Maximum power consumption during averaging interval in watt.
      * @return
      */
     int getMaxPower();
-
-    /**
-     * Interval for which average power will be calculated. 
-     * @return
-     */
-    Integer getMeasurementInterval();
 
     /**
      * Returns the energy metered since energy counter was started.
@@ -67,6 +65,8 @@ public interface Meter extends ApplianceLifeCycle, ControlMonitor {
      * Reset energy counter to 0.
      */
     void resetEnergyMeter();
+
+    void startAveragingInterval(LocalDateTime now, Timer timer, int nextPollCompletedSecondsFromNow);
 
     void addPowerUpdateListener(PowerUpdateListener listener);
 }

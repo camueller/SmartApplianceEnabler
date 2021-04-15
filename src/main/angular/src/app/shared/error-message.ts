@@ -18,7 +18,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 export enum ValidatorType {
   required,
-  pattern
+  pattern,
+  custom
 }
 
 export const ERROR_INPUT_REQUIRED = 'error.input_required';

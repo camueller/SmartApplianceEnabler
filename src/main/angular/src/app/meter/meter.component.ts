@@ -39,19 +39,25 @@ import {HttpElectricityMeter} from './http/http-electricity-meter';
 import {MeterS0Component} from './s0/meter-s0.component';
 import {ListItem} from '../shared/list-item';
 import {simpleMeterType} from '../shared/form-util';
+import {Appliance} from '../appliance/appliance';
+import {ApplianceType} from '../appliance/appliance-type';
+import {NotificationType} from '../notification/notification-type';
+import {NotificationComponent} from '../notification/notification.component';
 
 @Component({
   selector: 'app-meter',
   templateUrl: './meter.component.html',
   styleUrls: ['./meter.component.scss'],
 })
-export class MeterComponent implements OnChanges, OnInit, CanDeactivate<MeterComponent> {
+export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
   @ViewChild(MeterS0Component)
   meterS0Comp: MeterS0Component;
   @ViewChild(MeterModbusComponent)
   meterModbusComp: MeterModbusComponent;
   @ViewChild(MeterHttpComponent)
   meterHttpComp: MeterHttpComponent;
+  @ViewChild(NotificationComponent)
+  notificationComp: NotificationComponent;
   form: FormGroup;
   formHandler: FormHandler;
   applianceId: string;
@@ -60,6 +66,7 @@ export class MeterComponent implements OnChanges, OnInit, CanDeactivate<MeterCom
   meter: Meter;
   settingsDefaults: SettingsDefaults;
   settings: Settings;
+  isEvCharger: boolean;
   discardChangesMessage: string;
   confirmDeleteMessage: string;
   meterTypes: ListItem[] = [];
@@ -75,33 +82,28 @@ export class MeterComponent implements OnChanges, OnInit, CanDeactivate<MeterCom
     this.formHandler = new FormHandler();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.control && changes.control.currentValue) {
-      this.meter = changes.meter.currentValue;
-    }
-    if (this.form) {
-      this.updateForm();
-    }
-  }
-
   ngOnInit() {
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.translate.get('dialog.confirmDelete').subscribe(translated => this.confirmDeleteMessage = translated);
-    const meterTypeKeys = [S0ElectricityMeter.TYPE, ModbusElectricityMeter.TYPE, HttpElectricityMeter.TYPE];
-    this.translate.get(meterTypeKeys).subscribe(translatedStrings => {
-      Object.keys(translatedStrings).forEach(key => {
-        this.meterTypes.push({value: simpleMeterType(key), viewValue: translatedStrings[key]} as ListItem);
-      });
-    });
     this.route.paramMap.subscribe(() => this.applianceId = this.route.snapshot.paramMap.get('id'));
     this.route.data.subscribe((data: {
       meter: Meter, meterDefaults: MeterDefaults,
-      settings: Settings, settingsDefaults: SettingsDefaults
+      settings: Settings, settingsDefaults: SettingsDefaults,
+      appliance: Appliance
     }) => {
       this.meter = data.meter;
       this.meterDefaults = data.meterDefaults;
       this.settings = data.settings;
       this.settingsDefaults = data.settingsDefaults;
+      this.isEvCharger = data.appliance.type === ApplianceType.EV_CHARGER.toString();
+      const meterTypeKeys = this.settings.modbusSettings
+        ? [S0ElectricityMeter.TYPE, ModbusElectricityMeter.TYPE, HttpElectricityMeter.TYPE]
+        : [S0ElectricityMeter.TYPE, HttpElectricityMeter.TYPE];
+      this.translate.get(meterTypeKeys).subscribe(translatedStrings => {
+        Object.keys(translatedStrings).forEach(key => {
+          this.meterTypes.push({value: simpleMeterType(key), viewValue: translatedStrings[key]} as ListItem);
+        });
+      });
       this.buildForm();
       if (this.form) {
         this.form.markAsPristine();
@@ -116,6 +118,14 @@ export class MeterComponent implements OnChanges, OnInit, CanDeactivate<MeterCom
 
   updateForm() {
     this.formHandler.setFormControlValue(this.form, 'meterType', simpleMeterType(this.meter.type));
+  }
+
+  get notficationTypes() {
+    return [NotificationType.COMMUNICATION_ERROR];
+  }
+
+  get isNotifcationEnabled() {
+    return !!this.settings.notificationCommand;
   }
 
   get isS0ElectricityMeter() {
@@ -162,6 +172,9 @@ export class MeterComponent implements OnChanges, OnInit, CanDeactivate<MeterCom
     }
     if (this.meterHttpComp) {
       this.meter.httpElectricityMeter = this.meterHttpComp.updateModelFromForm();
+    }
+    if (this.notificationComp) {
+      this.meter.notifications = this.notificationComp.updateModelFromForm();
     }
     this.meterService.updateMeter(this.meter, this.applianceId).subscribe(
       () => this.appliancesReloadService.reload());

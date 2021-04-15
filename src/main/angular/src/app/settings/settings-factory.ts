@@ -46,10 +46,6 @@ export class SettingsFactory {
     settings.holidaysUrl = rawSettings.holidaysUrl;
     settings.modbusTcpHost = rawSettings.modbusTcpHost;
     settings.modbusTcpPort = Number.parseInt(rawSettings.modbusTcpPort, 10);
-    settings.modbusReadRegisterTypes = rawSettings.modbusReadRegisterTypes;
-    settings.modbusWriteRegisterTypes = rawSettings.modbusWriteRegisterTypes;
-    settings.byteOrders = rawSettings.byteOrders;
-    settings.pulseReceiverPort = Number.parseInt(rawSettings.pulseReceiverPort, 10);
     this.logger.debug('SettingsDefaults (TYPE): ' + JSON.stringify(settings));
     return settings;
   }
@@ -60,21 +56,7 @@ export class SettingsFactory {
 
   fromJSON(rawSettings: any): Settings {
     this.logger.debug('Settings (JSON): ' + JSON.stringify(rawSettings));
-    const settings = new Settings();
-    settings.holidaysEnabled = rawSettings.holidaysEnabled;
-    settings.holidaysUrl = rawSettings.holidaysUrl;
-
-    settings.modbusSettings = [] as ModbusSetting[];
-    if (rawSettings.modbusSettings) {
-      (rawSettings.modbusSettings as any[]).forEach((rawModbusSettings) => {
-        const modbusSettings = new ModbusSetting();
-        modbusSettings.modbusTcpId = rawModbusSettings.modbusTcpId;
-        modbusSettings.modbusTcpHost = rawModbusSettings.modbusTcpHost;
-        modbusSettings.modbusTcpPort = rawModbusSettings.modbusTcpPort;
-        settings.modbusSettings.push(modbusSettings);
-      });
-    }
-
+    const settings = new Settings({... rawSettings});
     this.logger.debug('Settings (TYPE): ' + JSON.stringify(settings));
     return settings;
   }

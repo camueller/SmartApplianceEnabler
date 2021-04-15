@@ -1,7 +1,7 @@
 <div class="HttpReadValueComponent sae__fields" [formGroup]="form">
   <mat-form-field class="sae__value-name">
     <mat-label>{{'HttpReadValueComponent.name' | translate}}</mat-label>
-    <mat-select formControlName="name" required="{{formHandler.isRequired('name')}}">
+    <mat-select formControlName="name" required="{{formHandler.isRequired('name')}}" (ngModelChange)="onNameChanged($event)">
       <mat-option *ngFor="let valueName of valueNames" [value]="valueName">
         {{getTranslatedValueName(valueName)}}
       </mat-option>

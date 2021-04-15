@@ -1,8 +1,8 @@
 import {Schedule} from '../../../../../main/angular/src/app/schedule/schedule';
 import {
   assertCheckbox,
-  assertSelect,
-  selectOptionByAttribute,
+  assertSelectOption,
+  selectOption,
   selectorCheckboxByFormControlName,
   selectorCheckboxCheckedByFormControlName,
   selectorSelectByFormControlName,
@@ -92,20 +92,20 @@ export class SchedulePage {
   }
 
   public static async setTimeframeType(t: TestController, timeframeType: string, scheduleIndex: number) {
-    await selectOptionByAttribute(t, selectorSelectByFormControlName('timeframeType', undefined,
+    await selectOption(t, selectorSelectByFormControlName('timeframeType', undefined,
       SchedulePage.selectorBase(scheduleIndex)), simpleTimeframeType(timeframeType));
   }
   public static async assertTimeframeType(t: TestController, timeframeType: string, scheduleIndex: number) {
-    await assertSelect(t, selectorSelectedByFormControlName('timeframeType', undefined,
+    await assertSelectOption(t, selectorSelectedByFormControlName('timeframeType', undefined,
       SchedulePage.selectorBase(scheduleIndex)), timeframeType);
   }
 
   public static async setRequestType(t: TestController, requestType: string, scheduleIndex: number) {
-    await selectOptionByAttribute(t, selectorSelectByFormControlName('requestType', undefined,
+    await selectOption(t, selectorSelectByFormControlName('requestType', undefined,
       SchedulePage.selectorBase(scheduleIndex)), simpleRequestType(requestType));
   }
   public static async assertRequestType(t: TestController, requestType: string, scheduleIndex: number) {
-    await assertSelect(t, selectorSelectedByFormControlName('requestType', undefined,
+    await assertSelectOption(t, selectorSelectedByFormControlName('requestType', undefined,
       SchedulePage.selectorBase(scheduleIndex)), requestType);
   }
 }

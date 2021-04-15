@@ -1,10 +1,10 @@
 import {
   assertCheckbox,
   assertInput,
-  assertSelect,
+  assertSelectOption,
   clickButton,
   inputText,
-  selectOptionByAttribute,
+  selectOption,
   selectorCheckboxByFormControlName,
   selectorCheckboxCheckedByFormControlName,
   selectorInputByFormControlName,
@@ -33,6 +33,7 @@ export class AppliancePage {
       await AppliancePage.setMinOffTime(t, appliance.minOffTime);
       await AppliancePage.setMaxOffTime(t, appliance.maxOffTime);
     }
+    await AppliancePage.setNotificationSenderId(t, appliance.notificationSenderId);
   }
 
   public static async assertAppliance(t: TestController, appliance: Appliance) {
@@ -50,6 +51,7 @@ export class AppliancePage {
       await AppliancePage.assertMinOffTime(t, appliance.minOffTime);
       await AppliancePage.assertMaxOffTime(t, appliance.maxOffTime);
     }
+    await AppliancePage.assertNotificationSenderId(t, appliance.notificationSenderId);
   }
 
   public static async setId(t: TestController, id: string) {
@@ -74,10 +76,10 @@ export class AppliancePage {
   }
 
   public static async setType(t: TestController, type: string) {
-    await selectOptionByAttribute(t, selectorSelectByFormControlName('type'), type);
+    await selectOption(t, selectorSelectByFormControlName('type'), type);
   }
   public static async assertType(t: TestController, type: string) {
-    await assertSelect(t, selectorSelectedByFormControlName('type'), type, 'ApplianceComponent.type.');
+    await assertSelectOption(t, selectorSelectedByFormControlName('type'), type, 'ApplianceComponent.type.');
   }
 
   public static async setSerial(t: TestController, serial: string) {
@@ -138,6 +140,13 @@ export class AppliancePage {
   }
   public static async assertMaxOffTime(t: TestController, maxOffTime: number) {
     await assertInput(t, selectorInputByFormControlName('maxOffTime'), maxOffTime ? maxOffTime.toString() : '');
+  }
+
+  public static async setNotificationSenderId(t: TestController, notificationSenderId: string) {
+    await inputText(t, selectorInputByFormControlName('notificationSenderId'), notificationSenderId);
+  }
+  public static async assertNotificationSenderId(t: TestController, notificationSenderId: string) {
+    await assertInput(t, selectorInputByFormControlName('notificationSenderId'), notificationSenderId);
   }
 
   public static async clickSave(t: TestController) {

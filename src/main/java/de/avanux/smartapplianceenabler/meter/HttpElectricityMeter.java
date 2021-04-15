@@ -21,6 +21,10 @@ import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.appliance.ApplianceLifeCycle;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.http.*;
+import de.avanux.smartapplianceenabler.notification.NotificationHandler;
+import de.avanux.smartapplianceenabler.notification.NotificationType;
+import de.avanux.smartapplianceenabler.notification.NotificationProvider;
+import de.avanux.smartapplianceenabler.notification.Notifications;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolHandler;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolType;
 import de.avanux.smartapplianceenabler.protocol.JsonContentProtocolHandler;
@@ -44,11 +48,9 @@ import java.util.*;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validateable, PollPowerExecutor, PollEnergyExecutor,
-        ApplianceIdConsumer {
+        ApplianceIdConsumer, NotificationProvider {
 
     private transient Logger logger = LoggerFactory.getLogger(HttpElectricityMeter.class);
-    @XmlAttribute
-    private Integer measurementInterval; // seconds
     @XmlAttribute
     private Integer pollInterval; // seconds
     @XmlAttribute
@@ -57,21 +59,33 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
     private HttpConfiguration httpConfiguration;
     @XmlElement(name = "HttpRead")
     private List<HttpRead> httpReads;
+    @XmlElement(name = "Notifications")
+    private Notifications notifications;
     private transient String applianceId;
     private transient HttpTransactionExecutor httpTransactionExecutor = new HttpTransactionExecutor();
-    private transient PollPowerMeter pollPowerMeter = new PollPowerMeter();
-    private transient PollEnergyMeter pollEnergyMeter = new PollEnergyMeter();
+    private transient PollPowerMeter pollPowerMeter;
+    private transient PollEnergyMeter pollEnergyMeter;
     private transient HttpHandler httpHandler = new HttpHandler();
     private transient ContentProtocolHandler contentContentProtocolHandler;
-
 
     @Override
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
-        this.pollPowerMeter.setApplianceId(applianceId);
-        this.pollEnergyMeter.setApplianceId(applianceId);
         this.httpHandler.setApplianceId(applianceId);
         this.httpTransactionExecutor.setApplianceId(applianceId);
+    }
+
+    @Override
+    public void setNotificationHandler(NotificationHandler notificationHandler) {
+        if(notificationHandler != null) {
+            notificationHandler.setRequestedNotifications(notifications);
+            this.httpTransactionExecutor.setNotificationHandler(notificationHandler);
+        }
+    }
+
+    @Override
+    public Notifications getNotifications() {
+        return notifications;
     }
 
     public void setHttpTransactionExecutor(HttpTransactionExecutor httpTransactionExecutor) {
@@ -82,21 +96,16 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
         this.httpConfiguration = httpConfiguration;
     }
 
+    public List<HttpRead> getHttpReads() {
+        return httpReads;
+    }
+
     public void setHttpReads(List<HttpRead> httpReads) {
         this.httpReads = httpReads;
     }
 
     public void setContentProtocol(ContentProtocolType contentProtocolType) {
         this.contentProtocol = contentProtocolType != null ? contentProtocolType.name() : null;
-    }
-
-    @Override
-    public Integer getMeasurementInterval() {
-        return measurementInterval != null ? measurementInterval : HttpElectricityMeterDefaults.getMeasurementInterval();
-    }
-
-    public void setMeasurementInterval(Integer measurementInterval) {
-        this.measurementInterval = measurementInterval;
     }
 
     public Integer getPollInterval() {
@@ -107,15 +116,22 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
         return pollPowerMeter;
     }
 
+    public void setPollPowerMeter(PollPowerMeter pollPowerMeter) {
+        this.pollPowerMeter = pollPowerMeter;
+    }
+
     protected PollEnergyMeter getPollEnergyMeter() {
         return pollEnergyMeter;
+    }
+
+    public void setPollEnergyMeter(PollEnergyMeter pollEnergyMeter) {
+        this.pollEnergyMeter = pollEnergyMeter;
     }
 
     @Override
     public void validate() throws ConfigurationException {
         logger.debug("{}: Validating configuration", applianceId);
-        logger.debug("{}: configured: poll interval={}s / measurement interval={}s",
-                applianceId, getPollInterval(), getMeasurementInterval());
+        logger.debug("{}: configured: poll interval={}s", applianceId, getPollInterval());
         HttpValidator validator = new HttpValidator(applianceId);
 
         // Meter should meter either Power or Energy or both
@@ -124,68 +140,23 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
         boolean energyValid = validator.validateReads(
                 Collections.singletonList(MeterValueName.Energy.name()), this.httpReads, false);
         if(! (powerValid || energyValid)) {
-            logger.error("{}: Missing configuration for either {} or {}",
+            logger.error("{}: Configuration missing for either {} or {}",
                     applianceId, MeterValueName.Power.name(), MeterValueName.Energy.name());
             throw new ConfigurationException();
         }
     }
 
     @Override
-    public int getAveragePower() {
-        int power = pollPowerMeter.getAveragePower();
-        logger.debug("{}: average power = {}W", applianceId, power);
-        return power;
-    }
-
-    @Override
-    public int getMinPower() {
-        int power = pollPowerMeter.getMinPower();
-        logger.debug("{}: min power = {}W", applianceId, power);
-        return power;
-    }
-
-    @Override
-    public int getMaxPower() {
-        int power = pollPowerMeter.getMaxPower();
-        logger.debug("{}: max power = {}W", applianceId, power);
-        return power;
-    }
-
-    @Override
-    public float getEnergy() {
-        return this.pollEnergyMeter.getEnergy();
-    }
-
-    @Override
-    public void startEnergyMeter() {
-        logger.debug("{}: Start energy meter ...", applianceId);
-        Float energy = this.pollEnergyMeter.startEnergyCounter();
-        logger.debug("{}: Current energy meter value: {} kWh", applianceId, energy);
-    }
-
-    @Override
-    public void stopEnergyMeter() {
-        logger.debug("{}: Stop energy meter ...", applianceId);
-        Float energy = this.pollEnergyMeter.stopEnergyCounter();
-        logger.debug("{}: Current energy meter value: {} kWh", applianceId, energy);
-    }
-
-    @Override
-    public void resetEnergyMeter() {
-        logger.debug("{}: Reset energy meter ...", applianceId);
-        this.pollEnergyMeter.reset();
-        // TODO rename method to reset since we are resetting not just energy but also power
-        this.pollPowerMeter.reset();
-    }
-
-    @Override
-    public boolean isOn() {
-        return getAveragePower() > 0;
-    }
-
-    @Override
     public void init() {
-        this.pollEnergyMeter.setPollEnergyExecutor(this);
+        if(HttpRead.getFirstHttpRead(MeterValueName.Power.name(), this.httpReads) != null) {
+            pollPowerMeter = new PollPowerMeter();
+            pollPowerMeter.setApplianceId(applianceId);
+        }
+        if(HttpRead.getFirstHttpRead(MeterValueName.Energy.name(), this.httpReads) != null) {
+            pollEnergyMeter = new PollEnergyMeter();
+            pollEnergyMeter.setApplianceId(applianceId);
+            pollEnergyMeter.setPollEnergyExecutor(this);
+        }
         if(this.httpConfiguration != null) {
             this.httpTransactionExecutor.setConfiguration(this.httpConfiguration);
         }
@@ -195,77 +166,133 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
     @Override
     public void start(LocalDateTime now, Timer timer) {
         logger.debug("{}: Starting ...", applianceId);
-        pollEnergyMeter.start(timer, getPollInterval(), getMeasurementInterval(), this);
-        pollPowerMeter.start(timer, getPollInterval(), getMeasurementInterval(), this);
+        if(pollPowerMeter != null) {
+            pollPowerMeter.start(timer, getPollInterval(), this);
+        }
+        if(pollEnergyMeter != null) {
+            pollEnergyMeter.start(timer, this);
+        }
     }
 
     @Override
     public void stop(LocalDateTime now) {
         logger.debug("{}: Stopping ...", applianceId);
-        pollEnergyMeter.cancelTimer();
-        pollPowerMeter.cancelTimer();
-    }
-
-    private boolean isCalculatePowerFromEnergy() {
-        return HttpRead.getFirstHttpRead(MeterValueName.Power.name(), this.httpReads) == null;
-    }
-
-    /**
-     * Calculates power values from energy differences and time differences.
-     * @param timestampWithEnergyValue a collection of timestamp with energy value
-     * @return the power values in W
-     */
-    protected Vector<Float> calculatePower(TreeMap<LocalDateTime, Float> timestampWithEnergyValue) {
-        Vector<Float> powerValues = new Vector<>();
-        LocalDateTime previousTimestamp = null;
-        Float previousEnergy = null;
-        for(LocalDateTime timestamp: timestampWithEnergyValue.keySet()) {
-            Float energy = timestampWithEnergyValue.get(timestamp);
-            if(previousTimestamp != null && previousEnergy != null) {
-                long diffTime = Duration.between(previousTimestamp, timestamp).toSeconds();
-                Float diffEnergy = energy - previousEnergy;
-                // diffEnergy kWh * 1000W/kW * 3600s/1h / diffTime ms
-                float power = diffEnergy * 1000.0f * 3600.0f / diffTime;
-                powerValues.add(power > 0 ? power : 0.0f);
-            }
-            previousTimestamp = timestamp;
-            previousEnergy = energy;
+        if(pollEnergyMeter != null) {
+            pollEnergyMeter.cancelTimer();
         }
-        return powerValues;
+        if(pollPowerMeter != null) {
+            pollPowerMeter.cancelTimer();
+        }
+    }
+
+    @Override
+    public void startAveragingInterval(LocalDateTime now, Timer timer, int nextPollCompletedSecondsFromNow) {
+        if(pollEnergyMeter != null) {
+            pollEnergyMeter.scheduleNext(timer, nextPollCompletedSecondsFromNow, averagingInterval);
+        }
+        if(pollPowerMeter != null) {
+            pollPowerMeter.setAveragingIntervalBegin(now);
+        }
     }
 
     @Override
     public void addPowerUpdateListener(PowerUpdateListener listener) {
-        this.pollPowerMeter.addPowerUpateListener(listener);
+        if(pollPowerMeter != null) {
+            this.pollPowerMeter.addPowerUpateListener(listener);
+        }
     }
 
     @Override
-    public Float pollPower() {
+    public int getAveragePower() {
+        int power = 0;
+        if(pollEnergyMeter != null) {
+            power = pollEnergyMeter.getAveragePower();
+        }
+        else if(pollPowerMeter != null) {
+            power = pollPowerMeter.getAveragePower(LocalDateTime.now());
+        }
+        logger.debug("{}: average power = {}W", applianceId, power);
+        return power;
+    }
+
+    @Override
+    public int getMinPower() {
+        int power = 0;
+        if(pollEnergyMeter != null) {
+            power = pollEnergyMeter.getAveragePower();
+        }
+        else if(pollPowerMeter != null) {
+            power = pollPowerMeter.getMinPower(LocalDateTime.now());
+        }
+        logger.debug("{}: min power = {}W", applianceId, power);
+        return power;
+    }
+
+    @Override
+    public int getMaxPower() {
+        int power = 0;
+        if(pollEnergyMeter != null) {
+            power = pollEnergyMeter.getAveragePower();
+        }
+        else if(pollPowerMeter != null) {
+            power = pollPowerMeter.getMaxPower(LocalDateTime.now());
+        }
+        logger.debug("{}: max power = {}W", applianceId, power);
+        return power;
+    }
+
+    @Override
+    public Double pollPower() {
         ParentWithChild<HttpRead, HttpReadValue> powerRead = HttpRead.getFirstHttpRead(MeterValueName.Power.name(), this.httpReads);
-        if(powerRead != null) {
-            return getValue(powerRead);
-        }
-        Vector<Float> powerValues = calculatePower(this.pollEnergyMeter.getValuesInMeasurementInterval());
-        if(powerValues.size() > 0) {
-            Float power = powerValues.lastElement();
-            logger.debug("{}: Calculated power from energy: {}W", applianceId, power);
-            return power;
-        }
-        return null;
+        return getValue(powerRead);
     }
 
     @Override
-    public Float pollEnergy(LocalDateTime now) {
+    public float getEnergy() {
+        return pollEnergyMeter != null ? (float) this.pollEnergyMeter.getEnergy() : 0.0f;
+    }
+
+    @Override
+    public void startEnergyMeter() {
+        if(pollEnergyMeter != null) {
+            logger.debug("{}: Start energy meter ...", applianceId);
+            Double energy = this.pollEnergyMeter.startEnergyCounter();
+            logger.debug("{}: Current energy meter value: {} kWh", applianceId, energy);
+        }
+    }
+
+    @Override
+    public void stopEnergyMeter() {
+        if(pollEnergyMeter != null) {
+            logger.debug("{}: Stop energy meter ...", applianceId);
+            Double energy = this.pollEnergyMeter.stopEnergyCounter();
+            logger.debug("{}: Current energy meter value: {} kWh", applianceId, energy);
+        }
+    }
+
+    @Override
+    public void resetEnergyMeter() {
+        logger.debug("{}: Reset energy meter ...", applianceId);
+        if(pollEnergyMeter != null) {
+            this.pollEnergyMeter.reset();
+        }
+        if(pollPowerMeter != null) {
+            this.pollPowerMeter.reset();
+        }
+    }
+
+    @Override
+    public Double pollEnergy(LocalDateTime now) {
         return pollEnergy();
     }
 
-    protected float pollEnergy() {
+    protected double pollEnergy() {
         ParentWithChild<HttpRead, HttpReadValue> energyRead = HttpRead.getFirstHttpRead(MeterValueName.Energy.name(), this.httpReads);
         return getValue(energyRead);
     }
 
-    private float getValue(ParentWithChild<HttpRead, HttpReadValue> read) {
-        return this.httpHandler.getFloatValue(read, getContentContentProtocolHandler());
+    private double getValue(ParentWithChild<HttpRead, HttpReadValue> read) {
+        return this.httpHandler.getDoubleValue(read, getContentContentProtocolHandler());
     }
 
     public ContentProtocolHandler getContentContentProtocolHandler() {
