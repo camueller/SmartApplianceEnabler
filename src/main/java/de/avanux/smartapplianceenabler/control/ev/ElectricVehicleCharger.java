@@ -315,6 +315,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
 
     public void updateStateTimerTaskImpl(LocalDateTime now) {
         updateState(now);
+        updateActiveTimeframeIntervalFromRequest(now);
         updateSoc(now);
     }
 
@@ -645,7 +646,9 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         request.updateForced();
 
         if(chargeEnd == null) {
-            chargeEnd = now.plusSeconds(calculateChargeSeconds(vehicle, request.getMax(now)));
+            DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(applianceId);
+            int maxChargePower = deviceInfo.getCharacteristics().getMaxPowerConsumption();
+            chargeEnd = now.plusSeconds(calculateChargeSeconds(vehicle, request.getMax(now), maxChargePower));
             request.setAcceptControlRecommendations(false);
         }
 
@@ -656,21 +659,41 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         return timeframeInterval;
     }
 
-    public int calculateChargeSeconds(ElectricVehicle vehicle, Integer energy) {
-        DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(applianceId);
-        int maxChargePower = deviceInfo.getCharacteristics().getMaxPowerConsumption();
+    private void updateActiveTimeframeIntervalFromRequest(LocalDateTime now) {
+        if(isCharging()) {
+            TimeframeInterval activeTimeframeInterval = this.appliance.getTimeframeIntervalHandler().getActiveTimeframeInterval();
+            if(activeTimeframeInterval != null) {
+                Request request = activeTimeframeInterval.getRequest();
+                int chargePower = this.appliance.getMeter().getAveragePower();
+                if(!(request instanceof OptionalEnergySocRequest) && chargePower > 0) {
+                    int chargeSeconds = calculateChargeSeconds(
+                            getConnectedVehicle(),
+                            activeTimeframeInterval.getRequest().getMax(now),
+                            chargePower);
+                    LocalDateTime chargeEnd = now.plusSeconds(chargeSeconds);
+                    Interval interval = activeTimeframeInterval.getInterval();
+                    if(!interval.getEnd().equals(chargeEnd)) {
+                        logger.debug("{}: Adjust timeframe interval end to: {}", applianceId, chargeEnd);
+                        interval.setEnd(chargeEnd);
+                    }
+                }
+            }
+        }
+    }
+
+    public int calculateChargeSeconds(ElectricVehicle vehicle, Integer energy, Integer chargePower) {
         if(vehicle != null) {
             Integer maxVehicleChargePower = vehicle.getMaxChargePower();
-            if(maxVehicleChargePower != null && maxVehicleChargePower < maxChargePower) {
-                maxChargePower = maxVehicleChargePower;
+            if(maxVehicleChargePower != null && maxVehicleChargePower < chargePower) {
+                chargePower = maxVehicleChargePower;
             }
         }
         else {
             logger.warn("{}: evId not set - using defaults", applianceId);
         }
-        int chargeSeconds = Float.valueOf((float) energy / maxChargePower * 3600).intValue();
-        logger.debug("{}: Calculated duration: {}s energy={} maxChargePower={}",
-                applianceId, chargeSeconds, energy, maxChargePower);
+        int chargeSeconds = Float.valueOf((float) energy / chargePower * 3600).intValue();
+        logger.debug("{}: Calculated duration: {}s energy={} chargePower={}",
+                applianceId, chargeSeconds, energy, chargePower);
 
         return chargeSeconds;
     }
