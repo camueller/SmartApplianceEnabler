@@ -20,5 +20,8 @@ package de.avanux.smartapplianceenabler.http;
 
 public enum HttpMethod {
     GET,
-    POST
+    POST,
+    PUT,
+    PATCH,
+    DELETE
 }

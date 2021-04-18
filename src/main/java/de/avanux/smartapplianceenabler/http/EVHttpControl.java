@@ -163,7 +163,7 @@ public class EVHttpControl implements EVChargerControl {
         if(read != null) {
             String response = this.requestCache.get(read);
             if(response == null) {
-                response = this.httpTransactionExecutor.executeGet(read.parent().getUrl());
+                response = this.httpTransactionExecutor.execute(HttpMethod.GET, read.parent().getUrl(), null);
                 this.requestCache.put(read, response);
             }
             else {

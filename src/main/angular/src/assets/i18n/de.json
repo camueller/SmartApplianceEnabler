@@ -433,6 +433,9 @@
   "HttpMethod": "HTTP-Methode",
   "HttpMethod.GET": "GET",
   "HttpMethod.POST": "POST",
+  "HttpMethod.PUT": "PUT",
+  "HttpMethod.PATCH": "PATCH",
+  "HttpMethod.DELETE": "DELETE",
 
   "dayOfWeek": "Wochentag",
   "daysOfWeek_monday": "Montag",

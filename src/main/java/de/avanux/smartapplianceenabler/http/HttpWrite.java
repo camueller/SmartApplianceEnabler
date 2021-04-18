@@ -69,9 +69,7 @@ public class HttpWrite {
     public void writeValue(HttpTransactionExecutor executor, HttpWriteValue value, Object ... arguments) {
         String urlWithPlaceholder = buildUrl(this.url, value.getValue(), value.getMethod());
         String resolvedUrl = MessageFormat.format(urlWithPlaceholder, arguments);
-        if(value.getMethod() == HttpMethod.GET) {
-            String response = executor.executeGet(resolvedUrl);
-        }
+        executor.execute(value.getMethod(), resolvedUrl, value.getValue());
     }
 
     protected String buildUrl(String url, String value, HttpMethod httpMethod) {
