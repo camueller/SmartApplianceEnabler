@@ -174,7 +174,7 @@ public class TimeframeInterval implements ApplianceIdConsumer, TimeframeInterval
     }
 
     private int getRequestMinOrMax(LocalDateTime now) {
-        Integer minOrMax = getRequest().getMin(now) != null ? getRequest().getMin(now) : getRequest().getMax(now);
+        Integer minOrMax = getRequest().getMinOrMax(now);
         return minOrMax !=null ? minOrMax : 0;
     }
 

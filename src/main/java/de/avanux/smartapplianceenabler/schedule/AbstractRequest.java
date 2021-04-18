@@ -83,6 +83,15 @@ abstract public class AbstractRequest implements Request {
         this.timeframeIntervalStateProvider = timeframeIntervalStateProvider;
     }
 
+    abstract public Integer getMin(LocalDateTime now);
+
+    abstract public Integer getMax(LocalDateTime now);
+
+    @Override
+    public Integer getMinOrMax(LocalDateTime now) {
+        return getMin(now) != null ? getMin(now) : getMax(now);
+    }
+
     @Override
     public boolean isNext() {
         return next;

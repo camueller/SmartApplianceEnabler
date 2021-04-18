@@ -42,6 +42,8 @@ public interface Request extends Serializable, ApplianceIdConsumer, TimeframeInt
 
     Integer getMax(LocalDateTime now);
 
+    Integer getMinOrMax(LocalDateTime now);
+
     boolean isNext();
 
     void setNext(boolean next);
