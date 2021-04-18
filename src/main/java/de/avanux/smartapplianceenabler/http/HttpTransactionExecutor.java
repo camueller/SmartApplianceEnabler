@@ -75,6 +75,7 @@ public class HttpTransactionExecutor {
     }
 
     public CloseableHttpResponse executeLeaveOpen(HttpMethod httpMethod, String url, String data) {
+        logger.debug("{}: HTTP request: method={} url={} data={}", applianceId, httpMethod, url, data);
         CloseableHttpResponse response = null;
         try {
             HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
