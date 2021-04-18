@@ -130,6 +130,6 @@ public class EVHttpControlTest {
     public void setChargeCurrent() {
         Mockito.doReturn("this is the SET CHARGE CURRENT response").when(executorMock).execute(Mockito.any(), Mockito.any(), Mockito.any());
         this.control.setChargeCurrent(6);;
-        Mockito.verify(executorMock).execute(HttpMethod.GET,BASE_URL + "/mqtt=amp=6", "amp={0}");
+        Mockito.verify(executorMock).execute(HttpMethod.GET,BASE_URL + "/mqtt=amp=6", "amp=6");
     }
 }

@@ -20,6 +20,20 @@ Darüber hinaus sollte auch die Verwendung von anderen Wallboxen möglich sein, 
 * [Modbus/TCP](Modbus_DE.md)
 * HTTP
 
+_Hinweis für HTTP-basierte Wallboxen:_
+
+Die Konfiguration des Schreibzugriffs für das Setzen der Ladestromstärke muss in der URL oder den Daten den Platzhalter `{0}` enthalten, der durch die zu setzende Stromstärke in Ampere ersetzt wird.
+
+Falls der Wert in Milliampere gesetzt werden muss, kann diese ganz normal mittels `factorToValue="1000"` erfolgen. Der Zahlenwert der zu setzenden Stromstärke wird dadurch grösser also 1000 sein, weshalb in diesem Fall als Platzhalter `{0,number,#}` verwendet werden muss, damit kein Tausender-Trennzeichnen eingefügt wird.
+
+Falls der Wert selbst die Zeichen `{` oder `}` enthält, müssen diese in einfachen Anführungszeichen "maskiert" werden.
+
+Die Konfiguration mit der Kombination der zuvor beschriebenen Besondernheiten könnte also wie folgt aussehen:
+```
+<HttpWriteValue name="ChargingCurrent" value="'{'current:{0,number,#}'}'" method="POST" factorToValue="1000"/>
+```
+
+### Protokoll-unabhängige Einstellungen für Wallboxen
 ![Fahrzeugkonfiguration](../pics/fe/EVChargerCommon.png)
 
 Unabhängig von der spezifischen Wallbox gibt folgende Einstellungen, die für alle Wallboxen gelten:
