@@ -413,7 +413,9 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
                 if(!evCharger.isOn() && !isAcceptControlRecommendations()) {
                     logger.debug("{}: Removing timeframe interval of stopped charging process", id);
                     TimeframeInterval activeTimeframeInterval = timeframeIntervalHandler.getActiveTimeframeInterval();
-                    timeframeIntervalHandler.removeTimeframeInterval(now, activeTimeframeInterval);
+                    if(activeTimeframeInterval != null) {
+                        timeframeIntervalHandler.removeTimeframeInterval(now, activeTimeframeInterval);
+                    }
                 }
                 timeframeIntervalHandler.updateSocOfOptionalEnergyTimeframeIntervalForEVCharger(now,
                         ev.getId(), ev.getBatteryCapacity(), socCurrent, socRequested);
