@@ -340,6 +340,107 @@ export class EvChargerTemplates {
       '    "slaveAddress": 255\n' +
       '  }\n' +
       '}\n');
+    templates['WARP Charger'] = JSON.parse('{\n' +
+      '  "@class": "de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger",\n' +
+      '  "httpControl": {\n' +
+      '    "@class": "de.avanux.smartapplianceenabler.http.EVHttpControl",\n' +
+      '    "contentProtocol": "JSON",\n' +
+      '    "httpConfiguration": {\n' +
+      '      "@class": "de.avanux.smartapplianceenabler.http.HttpConfiguration",\n' +
+      '      "contentType": "application/json",\n' +
+      '      "password": null,\n' +
+      '      "username": null\n' +
+      '    },\n' +
+      '    "httpReads": [\n' +
+      '      {\n' +
+      '        "@class": "de.avanux.smartapplianceenabler.http.HttpRead",\n' +
+      '        "readValues": [\n' +
+      '          {\n' +
+      '            "@class": "de.avanux.smartapplianceenabler.http.HttpReadValue",\n' +
+      '            "data": null,\n' +
+      '            "extractionRegex": "(0)",\n' +
+      '            "factorToValue": null,\n' +
+      '            "name": "VehicleNotConnected",\n' +
+      '            "path": "$.vehicle_state"\n' +
+      '          },\n' +
+      '          {\n' +
+      '            "@class": "de.avanux.smartapplianceenabler.http.HttpReadValue",\n' +
+      '            "data": null,\n' +
+      '            "extractionRegex": "(1)",\n' +
+      '            "factorToValue": null,\n' +
+      '            "name": "VehicleConnected",\n' +
+      '            "path": "$.vehicle_state"\n' +
+      '          },\n' +
+      '          {\n' +
+      '            "@class": "de.avanux.smartapplianceenabler.http.HttpReadValue",\n' +
+      '            "data": null,\n' +
+      '            "extractionRegex": "(2)",\n' +
+      '            "factorToValue": null,\n' +
+      '            "name": "Charging",\n' +
+      '            "path": "$.vehicle_state"\n' +
+      '          },\n' +
+      '          {\n' +
+      '            "@class": "de.avanux.smartapplianceenabler.http.HttpReadValue",\n' +
+      '            "data": null,\n' +
+      '            "extractionRegex": "(3)",\n' +
+      '            "factorToValue": null,\n' +
+      '            "name": "Error",\n' +
+      '            "path": "$.vehicle_state"\n' +
+      '          }\n' +
+      '        ],\n' +
+      '        "url": "http://192.168.1.1/evse/state"\n' +
+      '      }\n' +
+      '    ],\n' +
+      '    "httpWrites": [\n' +
+      '      {\n' +
+      '        "@class": "de.avanux.smartapplianceenabler.http.HttpWrite",\n' +
+      '        "url": "http://192.168.1.1/evse/stop_charging",\n' +
+      '        "writeValues": [\n' +
+      '          {\n' +
+      '            "@class": "de.avanux.smartapplianceenabler.http.HttpWriteValue",\n' +
+      '            "factorToValue": null,\n' +
+      '            "method": "POST",\n' +
+      '            "name": "StopCharging",\n' +
+      '            "value": "null"\n' +
+      '          }\n' +
+      '        ]\n' +
+      '      },\n' +
+      '      {\n' +
+      '        "@class": "de.avanux.smartapplianceenabler.http.HttpWrite",\n' +
+      '        "url": "http://192.168.1.1/evse/start_charging",\n' +
+      '        "writeValues": [\n' +
+      '          {\n' +
+      '            "@class": "de.avanux.smartapplianceenabler.http.HttpWriteValue",\n' +
+      '            "factorToValue": null,\n' +
+      '            "method": "POST",\n' +
+      '            "name": "StartCharging",\n' +
+      '            "value": "null"\n' +
+      '          }\n' +
+      '        ]\n' +
+      '      },\n' +
+      '      {\n' +
+      '        "@class": "de.avanux.smartapplianceenabler.http.HttpWrite",\n' +
+      '        "url": "http://192.168.1.1/evse/current_limit",\n' +
+      '        "writeValues": [\n' +
+      '          {\n' +
+      '            "@class": "de.avanux.smartapplianceenabler.http.HttpWriteValue",\n' +
+      '            "factorToValue": 1000.0,\n' +
+      '            "method": "POST",\n' +
+      '            "name": "ChargingCurrent",\n' +
+      '            "value": "\'{\'current:{0,number,#}\'}\'"\n' +
+      '          }\n' +
+      '        ]\n' +
+      '      }\n' +
+      '    ]\n' +
+      '  },\n' +
+      '  "forceInitialCharging": null,\n' +
+      '  "notifications": null,\n' +
+      '  "phases": null,\n' +
+      '  "pollInterval": null,\n' +
+      '  "startChargingStateDetectionDelay": 40,\n' +
+      '  "vehicles": null,\n' +
+      '  "voltage": null\n' +
+      '}');
     return templates;
   }
 }

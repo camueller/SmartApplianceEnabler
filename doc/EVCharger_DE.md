@@ -14,6 +14,7 @@ Momentan unterstützt der *Smart Appliance Enabler* folgende Wallboxen:
 * [Keba KeContact P30 c-series / x-series](Keba_DE.md)  
 * [Phoenix Contact EM-CP-PP-ETH-Controller](PhoenixContactEMCPPPETH_DE.md) wie z.B. Walli, wallbe mit altem Controller
 * wallbe mit neuem Controller
+* [Warp Charger Smart / Pro](WarpCharger_DE.md)
 
 Der *Smart Appliance Enabler* stellt Vorlagen bereit, welche die Konfiguration für die genannten Wallboxen beinhalten.
 Darüber hinaus sollte auch die Verwendung von anderen Wallboxen möglich sein, solange diese über ein unterstütztes Protokoll angebunden werden:
