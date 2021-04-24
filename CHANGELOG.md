@@ -12,6 +12,23 @@ und das Projekt folgt den Leitlinien des [Semantic Versioning](https://semver.or
 | SAE         | Smart Appliance Enabler |
 | SHM         | Sunny Home Manager |
 
+## [1.6.13](https://github.com/camueller/SmartApplianceEnabler/releases/tag/1.6.13) - 24.04.2021
+
+### Geändert
+- bei S0-Zählern wurde der Standart-Wert für die minimale Pulsdauer wurde von 15 ms auf 20 ms erhöht, um Streuungen bei der Genauigkeit der Pluselänge zu eliminieren
+- zur Vermeidung von Problemen durch das Monitoren aktueller Geräteverbräuche im Sunny Portal wertet der SAE die Abfrage durch das Portal nur dann als Trigger für das rechtzeitige Auslesen vor der nächsten Abfrage durch das Portal, wenn seit der letzten Abfrage mindestens 50 s vergangen sind 
+
+### Gefixt
+- die Änderung der Ladeverluste wurde als negativer Wert berechnet, wenn das (Überschuss)-Laden bereits begonnen hat bevor das SOC-Script einen Wert geliefert hat
+- es konnte passieren, dass zwei Timeframe-Intervalle für Überschussenergie erzeugt wurde (der SAE geht davon aus, dass es immer nur einen solchen gibt)
+- bei der Erzeugung der SEMP-Timeframes ist jetzt sichergestellt, dass nur solche mit einem max-Wert > 0 an den SHM übermittel werden
+- das Ändern des SOC für Überschussenergie via Ampel-Steuerung war aufgrund eines Fehler nicht möglich, wenn der Zustand der Wallbox bereits CHARGING_COMPLETED war und keine Zeitpläne konfiguriert waren
+
+### Neu
+- für HTTP-basierte Geräte wird neben GET und POST jetzt auch PUT, PATCH und DELETE unterstützt
+- die Wallboxen [WARP Charger Smart / Pro werden unterstützt inkl. einer Vorlage für Konfiguration mit allen relevanten Einstellungen](https://github.com/camueller/SmartApplianceEnabler/blob/master/doc/WarpCharger_DE.md)
+- bei Wallboxen wird beim Nicht-Überschuss-Laden das Ende des Timeframe-Intervals während des Ladens auf Basis der verbleibenden Energiemenge und der aktuellen Ladeleistung ständig neu berechnet (bisher nur einmal zu Ladebeginn). Dadurch sollte auch die Ladekurve bei fast vollem Akku besser abgebildet sein und das zu zeitige Beenden des Ladevorgangs verhindert werden. 
+
 ## [1.6.12](https://github.com/camueller/SmartApplianceEnabler/releases/tag/1.6.12) - 13.03.2021
 
 ### Geändert
