@@ -675,6 +675,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                     if(!interval.getEnd().equals(chargeEnd)) {
                         logger.debug("{}: Adjust timeframe interval end to: {}", applianceId, chargeEnd);
                         interval.setEnd(chargeEnd);
+                        this.appliance.getTimeframeIntervalHandler().adjustOptionalEnergyTimeframeIntervalStart();
                     }
                 }
             }

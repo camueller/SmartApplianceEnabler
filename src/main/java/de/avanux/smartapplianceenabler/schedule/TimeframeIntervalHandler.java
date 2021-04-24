@@ -478,6 +478,20 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
                         null, queue.size() > 2 ? queue.get(2) : null));
     }
 
+    public void adjustOptionalEnergyTimeframeIntervalStart() {
+        if(queue.size() > 1) {
+            TimeframeInterval secondTimeframeInterval = queue.get(1);
+            if(secondTimeframeInterval.getRequest() instanceof OptionalEnergySocRequest) {
+                TimeframeInterval firstTimeframeInterval = queue.get(0);
+                LocalDateTime expectedStart = firstTimeframeInterval.getInterval().getEnd().plusSeconds(1);
+                if(!secondTimeframeInterval.getInterval().getStart().equals(expectedStart)) {
+                    logger.debug("{}: Adjust start of optional energy timeframe interval to: {}", applianceId, expectedStart);
+                    secondTimeframeInterval.getInterval().setStart(expectedStart);
+                }
+            }
+        }
+    }
+
     private void updateSocRequest(SocRequest request, Integer batteryCapacity, Integer soc) {
         if(soc != null) {
             request.setSoc(soc);
