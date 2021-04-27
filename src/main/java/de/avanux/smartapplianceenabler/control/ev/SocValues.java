@@ -71,9 +71,9 @@ public class SocValues {
     public String toString() {
         return "SocValues{" +
                 "batteryCapacity=" + batteryCapacity +
-                ", initial=" + initial +
-                ", retrieved=" + retrieved +
-                ", current=" + current +
-                '}';
+                "Wh, initial=" + initial +
+                "%, retrieved=" + retrieved +
+                "%, current=" + current +
+                "%}";
     }
 }

@@ -34,13 +34,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.*;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.Vector;
+import java.util.*;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Validateable, ApplianceIdConsumer,
@@ -76,6 +75,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     private transient boolean socScriptAsync = true;
     private transient boolean socScriptRunning;
     private transient boolean socCalculationRequired;
+    private transient float socScriptEnergyMeter = 0.0f;
     private transient double chargeLoss = 0.0;
     private transient Appliance appliance;
     private transient String applianceId;
@@ -90,6 +90,13 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     private transient boolean stopChargingRequested;
     private transient boolean firstInvocationAfterSkip;
     private transient NotificationHandler notificationHandler;
+    private transient DecimalFormat percentageFormat;
+
+    public ElectricVehicleCharger() {
+        NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
+        percentageFormat = (DecimalFormat) nf;
+        percentageFormat.applyPattern("#'%'");
+    }
 
     public void setAppliance(Appliance appliance) {
         this.appliance = appliance;
@@ -190,19 +197,20 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     }
 
     private int calculateCurrentSoc(Meter meter) {
-        int whAlreadyCharged = 0;
+        int  energyMetered = 0;
         if (meter != null) {
-            whAlreadyCharged = Float.valueOf(meter.getEnergy() * 1000.0f).intValue();
+             energyMetered = Float.valueOf(meter.getEnergy() * 1000.0f).intValue();
         }
 
         ElectricVehicle vehicle = getConnectedVehicle();
         if (vehicle != null) {
             int soc = Long.valueOf(Math.round(
-                    getSocInitial() + whAlreadyCharged / (vehicle.getBatteryCapacity() *  (1 + chargeLoss/100)) * 100
+                    getSocInitial() +  energyMetered / (vehicle.getBatteryCapacity() *  (1 + chargeLoss/100)) * 100
             )).intValue();
             int currentSoc = Math.min(soc, 100);
-            logger.debug("{}: SOC calculation: currentSoc={} socInitial={} batteryCapacity={} whAlreadyCharged={} chargeLoss={}",
-                    applianceId, currentSoc, getSocInitial(), vehicle.getBatteryCapacity(), whAlreadyCharged, chargeLoss);
+            logger.debug("{}: SOC calculation: currentSoc={} socInitial={} batteryCapacity={}Wh energyMetered={}Wh chargeLoss={}",
+                    applianceId, percentageFormat.format(currentSoc), percentageFormat.format(getSocInitial()),
+                    vehicle.getBatteryCapacity(),  energyMetered, percentageFormat.format(chargeLoss));
             return currentSoc;
         }
         return 0;
@@ -212,18 +220,15 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         return chargeLoss;
     }
 
-    private Double calculateChargeLossDelta(Meter meter, int socCurrent, int socRetrieved) {
-        int whAlreadyCharged = 0;
-        if (meter != null) {
-            whAlreadyCharged = Float.valueOf(meter.getEnergy() * 1000.0f).intValue();
-        }
-
+    private Double calculateChargeLoss(int energyMeteredSinceLastSocScriptExecution, int socCurrent, int socLastRetrieval) {
         ElectricVehicle vehicle = getConnectedVehicle();
-        if (vehicle != null && whAlreadyCharged > 0) {
-            double chargeLossDelta = (socCurrent - socRetrieved) * vehicle.getBatteryCapacity() / (double) whAlreadyCharged;
-            logger.debug("{}: charge loss calculation: chargeLossDelta={}% socCurrent={} socRetrieved={} batteryCapacity={} whAlreadyCharged={}",
-                    applianceId, chargeLossDelta, socCurrent, socRetrieved, vehicle.getBatteryCapacity(), whAlreadyCharged);
-            return chargeLossDelta;
+        if (vehicle != null && energyMeteredSinceLastSocScriptExecution > 0) {
+            double energyReceivedByEv = (socCurrent - socLastRetrieval)/100.0 * vehicle.getBatteryCapacity();
+            double chargeLoss = energyMeteredSinceLastSocScriptExecution * 100.0 / energyReceivedByEv - 100.0;
+            logger.debug("{}: charge loss calculation: chargeLoss={} socCurrent={} socLastRetrieval={} batteryCapacity={}Wh energyMeteredSinceLastSocScriptExecution={}Wh energyReceivedByEv={}Wh",
+                    applianceId, percentageFormat.format(chargeLoss), percentageFormat.format(socCurrent), percentageFormat.format(socLastRetrieval),
+                    vehicle.getBatteryCapacity(), energyMeteredSinceLastSocScriptExecution, (int) energyReceivedByEv);
+            return chargeLoss;
         }
         return null;
     }
@@ -823,19 +828,23 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         public void run() {
             Double soc = getStateOfCharge(now, electricVehicle);
             if(soc != null) {
-                logger.debug("{}: Retrieved SOC={}%", applianceId, soc);
+                logger.debug("{}: Retrieved SOC={}", applianceId, percentageFormat.format(soc));
+                Integer socLastRetrieved = socValues.retrieved != null ? socValues.retrieved : socValues.initial;
                 if(socValues.initial == null) {
                     socValues.initial = soc.intValue();
                     socValues.current = soc.intValue();
                 }
                 socValues.retrieved = soc.intValue();
-                if(socValues.current != null) {
-                    Double chargeLossDelta = calculateChargeLossDelta(appliance.getMeter(), socValues.current, socValues.retrieved);
-                    if(chargeLossDelta != null) {
-                        chargeLoss += chargeLossDelta;
+                if(socLastRetrieved != null) {
+                    int whMeteredSinceLastSocScriptExecution = Float.valueOf((appliance.getMeter().getEnergy() - socScriptEnergyMeter) * 1000.0f).intValue();
+                    Double chargeLossCalculated = calculateChargeLoss(whMeteredSinceLastSocScriptExecution,
+                            socValues.retrieved, socLastRetrieved);
+                    if(chargeLossCalculated != null) {
+                        chargeLoss = chargeLossCalculated > 0 ? chargeLossCalculated : 0.0 ;
                     }
                 }
                 socValues.current = soc.intValue();
+                socScriptEnergyMeter = appliance.getMeter().getEnergy();
             }
             socScriptRunning = false;
         }
