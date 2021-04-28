@@ -839,10 +839,10 @@ public class SaeController {
 
     @RequestMapping(value = STATUS_URL, method = RequestMethod.GET, produces = "application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    public List<ApplianceStatus> getApplianceStatus() {
+    public List<ApplianceStatus> getApplianceStatus(HttpServletResponse response) {
         synchronized (lock) {
             try {
-                return getApplianceStatus(LocalDateTime.now());
+                return getApplianceStatus(LocalDateTime.now(), response);
             } catch (Throwable e) {
                 logger.error("Error in " + getClass().getSimpleName(), e);
             }
@@ -850,9 +850,15 @@ public class SaeController {
         return null;
     }
 
-    public List<ApplianceStatus> getApplianceStatus(LocalDateTime now) {
+    public List<ApplianceStatus> getApplianceStatus(LocalDateTime now, HttpServletResponse response) {
         logger.debug("Received request for ApplianceStatus");
         List<ApplianceStatus> applianceStatuses = new ArrayList<>();
+        if(!ApplianceManager.getInstance().isInitializationCompleted()) {
+            if(response != null) {
+                response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+            }
+            return applianceStatuses;
+        }
         for (Appliance appliance : ApplianceManager.getInstance().getAppliances()) {
             DeviceInfo deviceInfo = getDeviceInfo(appliance.getId());
             Identification identification = null;

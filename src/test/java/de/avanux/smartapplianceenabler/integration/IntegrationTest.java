@@ -628,7 +628,7 @@ public class IntegrationTest extends TestBase {
     }
 
     private ApplianceStatus getApplianceStatus(LocalDateTime now) {
-        List<ApplianceStatus> applianceStatuses = saeController.getApplianceStatus(now);
+        List<ApplianceStatus> applianceStatuses = saeController.getApplianceStatus(now, null);
         return applianceStatuses.get(0);
     }
 
