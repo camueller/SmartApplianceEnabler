@@ -2,8 +2,7 @@
 
 Für Modbus-Schalter gelten die allgemeinen Hinweise zur Verwendung von [Modbus im SmartApplianceEnabler](Modbus_DE.md).
 
-Bevor ein Modbus-basierter Schalter konfiguriert werden kann, muss ein [Modbus/TCP](Settings_DE.md#Modbus) konfiguriert werden, der dann in der Konfiguration des Modbus-basierten Schalters ausgewählt wird.
-Außerdem müssen Slave-Adresse, sowie  Register-Adresse und -Typ eingegeben werden.
+Für einen Modbus-basierter Schalter müssen Register-Adresse und -Typ eingegeben werden.
 
 Für Modbus-basierter Schalter müssen die Aktionen `Einschalten` und `Auschalten` konfiguriert werden. Das kann wahlweise über ein Register mit unterschiedlichen Werten oder über zwei Register erreicht werden.
 

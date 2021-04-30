@@ -1,9 +1,16 @@
-# Modbus-Unterstützung
+# Modbus
+## Allgemein
+Für jeden Zähler/Schalter/Wallbox muss ein konfigurierter [Modbus/TCP](Settings_DE.md#Modbus) ausgewählt werden.
 
-## Modbus/TCP
+Ausserdem muss die **Slave-Adresse** des Modbus-Gerätes angegeben werden.
+
+Grundsätzlich ist die Angabe von Slave-Adresse oder Register-Adressen als Hexadezimalzahl (mit "0x" am Anfang) oder als Dezimalzahl (ohne "0x" am Anfang) möglich. 
+
+## Modbus-Protokoll
+### Modbus/TCP
 Die Konfiguration von Modbus/TCP erfolgt in den [Einstellungen](Settings_DE.md#Modbus).
 
-## Modbus/RTU
+### Modbus/RTU
 *Smart Appliance Enabler* unterstützt das [Modbus](https://de.wikipedia.org/wiki/Modbus)-Protokoll lediglich in der Ausprägung Modbus/TCP. Allerdings können Modbus/RTU-Geräte verwendet werden mittels eines Modbus/TCP zu Modbus/RTU Gateway wie z.B. des frei verfügbaren [mbusd](https://sourceforge.net/projects/mbus), dessen Installation nachfolgend beschrieben ist.
 
 Falls noch nicht installiert, muss als Git und cmake installiert werden:
