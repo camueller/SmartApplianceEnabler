@@ -49,27 +49,15 @@ Unabhängig von der spezifischen Wallbox gibt folgende Einstellungen, die für a
 
 Die Konfiguration von Fahrzeugen beinhaltet Parameter zur Steuerung des Ladevorgangs und Standardwerte für Dialoge.
 
-Für den Ziel-Ladezustand können Standardwerte festgelegt werden.
-Der Standardwert für manuelles Laden beinhaltet lediglich die Vorbelegung des Feldes für den Soll-Ladezustand in der Eingabemaske, die nach Klick auf die grüne Ampelleuchte angezeigt wird.
-Wird ein Standardwert für Überschussenergie gesetzt, wird nach dem Verbinden des Fahrzeugs nur bis zu diesem Wert mit Überschussenergie geladen und danach der Ladevorgang gestoppt.
+Beim Laden des Fahrzeugs entstehen Ladeverluste, die vom Zähler gezählt werden, aber nicht zu einer Erhöhung der im Fahrzeug gespeicherten Energiemenge führen. Deshalb kann ein Wert für die `Ladeverluste` konfiguriert werden (Standardwert: 10%), der bei der Berechnung der angeforderten Energiemenge verwendet wird. 
 
-Die vom *Smart Appliance Enabler* unterstützten Wechselstrom-Wallboxen können nicht den aktuellen Ist-Ladezustand vom Fahrzeug ermitteln und an den *Smart Appliance Enabler* kommunizieren! Für eine möglichst genaue Ermittlung des Energiebedarfs muss dieser Wert aber bekannt sein. Der *Smart Appliance Enabler* bietet deshalb die Möglichkeit der Einbindung eines [Scripts zum automatisierten Abfragen des SOC](soc/SOC_DE.md), sofern dies vom Fahrzeug-Hersteller unterstützt wird. Zusätzlich besteht die Möglichkeit, den Ist- und Soll-Ladezustand einzugeben beim [manuellen Start des Ladevorganges](#status-anzeige-und-manuelle-steuerung).
+Für den Sollwert des Ladezustands können Standardwerte festgelegt werden:
 
-Auf Basis der Werte für
-- `Batteriekapazität`: aus der Fahrzeug-Konfiguration
-- `Ladeverluste`: aus der Fahrzeug-Konfiguration
-- `Ist-SOC`: geliefert vom SOC-Script oder eingegeben über die [Ampel-Steuerung]
-- `Soll-SOC` Standardwert aus der Fahrzeug-Konfiguration oder eingegeben über [Ampel-Steuerung](#manuelle-steuerung))
+Der *Standardwert für manuelles Laden* beinhaltet lediglich die Vorbelegung des Feldes für den Soll-Ladezustand in der Eingabemaske, die nach Klick auf die grüne Ampelleuchte angezeigt wird.
 
-wird die initial vom *Sunny Home Manager* anzufordernde Energiemenge berechnet. 
+Wird ein *Standardwert für Überschussenergie* gesetzt, wird nach dem Verbinden des Fahrzeugs nur bis zu diesem Wert mit Überschussenergie geladen und danach der Ladevorgang gestoppt.
 
-Wenn ein *SOC-Script* konfiguriert wurde, wird dieses **automatisch nach dem Verbinden des Fahrzeuges mit der Wallbox** ausgeführt.
-
-Der *Smart Appliance Enabler* **berechnet fortlaufend den SOC** entsprechend der bereits geladenen Energiemenge. Von dieser Energiemenge müssen aber die Ladeverluste abgezogen werden, weil sie nicht zu einer Erhöhung des SOC im Fahrzeug führen. Aus diesem Grund sollte hier ein möglichst zutreffender Wert eingetragen werden, der Standardwert beträgt 10%.
-
-Wenn ein SOC-Script konfiguriert wurde und sich der berechnete SOC entweder um den konfigurierte Wert (Standard: 20%) erhöht oder seit der letzten Ausführung des SOC-Script die konfigurierte Zeit vergangen ist, wird das **SOC-Script erneut ausgeführt**. Der berechnete SOC wird mit dem tatsächlichen SOC verglichen und daraus die tatsächlichen Ladeverluste berechnet. Für alle nachfolgenden Berechnungen des SOC bis zur nächsten Ausführung des SOC-Scripts während des aktuellen Ladevorganges werden die tatsächlichen Ladeverluste berücksichtigt.
-
-**Ohne SOC-Script** und ohne Eingabe des aktuellen Ist-Ladezustands geht der *Smart Appliance Enabler* von einem Ist-Ladezustand von 0% aus und meldet einen entsprechend großen Energiebedarf. Das verschlechtert zwar die Planung des *Sunny Home Manager*, aber unabhängig davon beendet die Wallbox das Laden spätestens, wenn das Fahrzeug voll geladen ist.
+Die vom *Smart Appliance Enabler* unterstützten Wechselstrom-Wallboxen können nicht den aktuellen Ist-Ladezustand vom Fahrzeug ermitteln und an den *Smart Appliance Enabler* kommunizieren! Für eine möglichst genaue Ermittlung des Energiebedarfs muss dieser Wert aber bekannt sein. Der *Smart Appliance Enabler* bietet deshalb die Möglichkeit der Einbindung eines [Scripts zum automatisierten Abfragen des SOC](soc/SOC_DE.md), sofern dies vom Fahrzeug-Hersteller unterstützt wird. 
 
 Wenn vom SOC-Script nicht nur eine Zahl ohne weitere Zeichen geliefert wird, sondern der Verbrauchswert irgendwo in einem Text (XML, JSON, ...) enthalten ist, muss ein [Regulärer Ausdruck/Regex](WertExtraktion_DE.md) zum Extrahieren der Leistung mit angegeben werden.
 
@@ -79,6 +67,109 @@ Wenn vom SOC-Script nicht nur eine Zahl ohne weitere Zeichen geliefert wird, son
 
 Im *Sunny Home Manager* sollte die Verbraucher-Konfiguration für eine Wallbox wie folgt aussehen: 
 ![Vebraucherkonfiguration Wallbox](../pics/shm/VerbraucherKonfigurationEVCharger.png)
+
+## Ladevorgang
+
+Wenn ein *SOC-Script* konfiguriert wurde, wird dieses **automatisch nach dem Verbinden des Fahrzeuges mit der Wallbox** ausgeführt.
+
+Zusätzlich besteht die Möglichkeit, den Ist- und Soll-Ladezustand einzugeben beim [manuellen Start des Ladevorganges](#status-anzeige-und-manuelle-steuerung).
+
+Auf Basis der Werte für
+- `Batteriekapazität`: aus der Fahrzeug-Konfiguration
+- `Ist-SOC`: geliefert vom SOC-Script oder eingegeben über die [Ampel-Steuerung]
+- `Soll-SOC` Standardwert aus der Fahrzeug-Konfiguration oder eingegeben über [Ampel-Steuerung](#manuelle-steuerung))
+wird die *initial Energiemenge* berechnet, die vom *Sunny Home Manager* anzufordern ist.
+
+Während des Ladenvorgangs wird der *aktuelle SOC berechnet* aus:
+- `letzter bekannter SOC`: vom SOC-Script (Ladebeginn bzw. letzte Ausführung) bzw. Eingabe via Ampel (bei Ladebeginn)
+- `Energiemenge`:  vom Zähler
+- `Batteriekapazität`: aus der Fahrzeug-Konfiguration
+- `Ladeverluste`: aus der Fahrzeug-Konfiguration
+
+Aus der Differenz von berechnetem SOC und Soll-SOC wird die *Energiemenge berechnet*, die vom *Sunny Home Manager* angefordert wird.
+
+Wenn ein SOC-Script konfiguriert wurde und sich der berechnete SOC entweder um den konfigurierte Wert (Standard: 20%) erhöht oder seit der letzten Ausführung des SOC-Script die konfigurierte Zeit vergangen ist, wird das **SOC-Script erneut ausgeführt**. Der berechnete SOC wird mit dem tatsächlichen SOC verglichen und daraus die tatsächlichen Ladeverluste berechnet. Für alle nachfolgenden Berechnungen des SOC bis zur nächsten Ausführung des SOC-Scripts während des aktuellen Ladevorganges werden die tatsächlichen Ladeverluste berücksichtigt.
+
+**Ohne SOC-Script** und ohne Eingabe des aktuellen Ist-Ladezustands geht der *Smart Appliance Enabler* von einem Ist-Ladezustand von 0% aus und meldet einen entsprechend großen Energiebedarf. Das verschlechtert zwar die Planung des *Sunny Home Manager*, aber unabhängig davon beendet die Wallbox das Laden spätestens, wenn das Fahrzeug voll geladen ist.
+
+### Beipiel:
+Der Ablauf eines (Überschuss-) Ladevorgangs soll hier anhand von Auszügen aus dem Log veranschaulicht werden:
+
+Nachdem das Fahrzeug mit der Wallbox verbunden wurde:
+```
+2021-05-02 13:04:04,740 DEBUG: Vehicle state changed: previousState=VEHICLE_NOT_CONNECTED newState=VEHICLE_CONNECTED
+```
+... wurde das SOC-Script ausgeführt und liefert 51%:
+```
+2021-05-02 13:04:05,048 DEBUG: Executing SoC script: /opt/sae/soc/soc.sh
+2021-05-02 13:04:59,092 DEBUG: SoC: 51.0
+```
+Aus dem Ist-SOC (51%), Soll-SOC (80% laut Fahrzeug-Konfguration) und Netto-Batteriekapzität (36 kWh) wird die benötige Menge Überschussenergie (ohne Berücksichtigung von Ladeverlusten) berechnet:
+```
+2021-05-02 13:05:04,747 DEBUG: energy calculation: 10440Wh evId=1 batteryCapactiy=36000Wh currentSoc=51% targetSoc=80%
+2021-05-02 13:05:32,404 DEBUG: ACTIVE/2021-05-02T13:04:04/2021-05-04T13:04:04::ENABLED/evId=1/soc=51%=>80%/energy=10440Wh/Optional Energy
+```
+Für die Berechnung des SOC wird zunächst der für das Fahrzeug konfigurierte Wert für die Ladeverluste (`chargeLoss`) herangezogen - hier 11%:
+```
+2021-05-02 13:06:25,018 DEBUG: SOC calculation: socCurrent=51% socRetrievedOrInitial=51% batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=0Wh chargeLoss=11%
+```
+Der Ladevorgang ist vorangeschritten und der berechnete SOC liegt um 20% (Standardwert der Konfiguration) über dem SOC der letzten Ausführung des SOC-Scripts - also ist eine erneute Ausführung notwendig:
+```
+2021-05-03 09:26:45,464 DEBUG: SOC calculation: socCurrent=71% socRetrievedOrInitial=51% batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=7796Wh chargeLoss=11%
+2021-05-03 09:26:45,468 DEBUG: Executing SoC script: /opt/sae/soc/soc.sh
+2021-05-03 09:27:37,613 DEBUG: SoC: 72.0
+```
+Der berechnete SOC ist 71%, der vom SOC-Script gelieferte Wert ist 72%. Aus der SOC-Änderung läßt sich die Energiemenge berechnen, die im Fahrzeug "angekommen" ist (`energyReceivedByEv`). Aus dieser und der laut Zähler dafür aufgewendeten Energiemenge lassen sich die tatsächlichen Ladeverluste berechnen - hier 4%:
+```
+2021-05-03 09:27:37,674 DEBUG: charge loss calculation: chargeLoss=4% socCurrent=72% socLastRetrieval=51% batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=7844Wh energyReceivedByEv=7560Wh
+```
+Ab jetzt wird für die Berechnung des SOC anstelle des für das Fahrzeug konfigurierten Wertes für die Ladeverlust der zuvor berechnet Wert für die tatsächlichen Ladeverluste verwendet:
+```
+2021-05-03 09:27:45,461 DEBUG: SOC calculation: socCurrent=72% socRetrievedOrInitial=72% batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=7Wh chargeLoss=4%
+```
+An dieser Stelle wurde der Soll-SOC für diesen Ladevorgang manuell via Ampel auf 100% erhöht:
+```
+2021-05-03 09:56:15,985 DEBUG: Received request to update SOC: socCurrent=74 socRequested=100
+```
+Der berechnete SOC liegt abermals 20% über dem SOC der letzten Ausführung des SOC-Scripts - also ist eine erneute Ausführung notwendig:
+```
+2021-05-03 11:47:05,529 DEBUG: SOC retrieval is required: SocValues{batteryCapacity=36000Wh, initial=51%, retrieved=72%, current=92%}
+2021-05-03 11:47:05,532 DEBUG: Executing SoC script: /opt/sae/soc/soc.sh
+2021-05-03 11:47:59,060 DEBUG: SoC: 90.0
+```
+Der berechnete SOC war 92%, der vom SOC-Script gelieferte Wert war 90%. Wie weiter oben beschrieben, lassen sich die tatsächlichen Ladeverluste berechnen - hier 14%:
+```
+2021-05-03 11:47:59,119 DEBUG: charge loss calculation: chargeLoss=14% socCurrent=90% socLastRetrieval=72% batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=7416Wh energyReceivedByEv=6480Wh
+```
+Ab jetzt wird für die Berechnung des SOC der neu berechnet Wert für die tatsächlichen Ladeverluste (14%) verwendet:
+```
+2021-05-03 11:48:05,532 DEBUG: SOC calculation: socCurrent=90% socRetrievedOrInitial=90% batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=10Wh chargeLoss=14%
+```
+Die berechnete Restmenge der benötigen Energie zur Erreichung des Soll-SOC ist erstmals kleiner 1 kWh - deshalb wird eine weitere Ausführung des SOC-Script angestossen um sicherzustellen, dass das Fahrzeug tatsählich kurz davor ist, den Soll-SOC zu erreichen:
+```
+2021-05-03 12:55:05,777 DEBUG: energy calculation: 360Wh evId=1 batteryCapactiy=36000Wh currentSoc=99% targetSoc=100%
+2021-05-03 12:55:05,767 DEBUG: SOC calculation: socCurrent=99% socRetrievedOrInitial=90% batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=3515Wh chargeLoss=14%
+2021-05-03 12:55:05,768 DEBUG: SOC retrieval: socCalculationRequired=false socChanged=true chargingAlmostCompleted=true socRetrievalForChargingAlmostCompleted=false
+2021-05-03 12:55:05,769 DEBUG: SOC retrieval is required: SocValues{batteryCapacity=36000Wh, initial=51%, retrieved=90%, current=99%}
+2021-05-03 12:55:05,772 DEBUG: Executing SoC script: /opt/sae/soc/soc.sh
+2021-05-03 12:55:58,372 DEBUG: SoC: 98.0
+```
+Der berechnete SOC ist 99%, der vom SOC-Script gelieferte Wert ist 98%. Wie weiter oben beschrieben, lassen sich die tatsächlichen Ladeverluste berechnen - in dieser Phase des Ladens 23%:
+```
+2021-05-03 12:55:58,436 DEBUG: charge loss calculation: chargeLoss=23% socCurrent=98% socLastRetrieval=90% batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=3552Wh energyReceivedByEv=2880Wh
+```
+Auch die noch benötigte Energie wird auf Basis des tatsächlichen SOC korrigiert - von 360 Wh auf 720 Wh:
+```
+2021-05-03 12:56:05,778 DEBUG: energy calculation: 720Wh evId=1 batteryCapactiy=36000Wh currentSoc=98% targetSoc=100%
+2021-05-03 12:56:35,676 DEBUG: ACTIVE/2021-05-03T09:56:15/2021-05-04T13:04:04::ENABLED/evId=1/soc=98%=>100%/energy=720Wh/Optional Energy
+```
+Sobald diese Energiemenge geladen wurde, wurde der Soll-SOC erreicht und das Laden wird beendet:
+```
+2021-05-03 13:23:25,811 DEBUG: SOC calculation: socCurrent=100% socRetrievedOrInitial=98% 
+batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=666Wh chargeLoss=23%
+2021-05-03 13:23:35,691 DEBUG: EXPIRED/2021-05-03T09:56:15/2021-05-04T13:04:04::DISABLED/evId=1/soc=100%=>100%/energy=0Wh/Optional Energy
+2021-05-03 13:23:35,694 DEBUG: Vehicle state changed: previousState=CHARGING newState=CHARGING_COMPLETED
+```
 
 ## Log
 
