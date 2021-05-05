@@ -93,7 +93,7 @@ Während des Ladevorgangs wird das **SOC-Script periodisch ausgeführt**. Wenn s
 
 **Ohne SOC-Script** und ohne [Eingabe des aktuellen Ist-Ladezustands](Status_DE.md#click-green-ev) geht der *Smart Appliance Enabler* von einem Ist-Ladezustand von 0% aus und meldet einen entsprechend großen Energiebedarf. Das verschlechtert zwar die Planung des *Sunny Home Manager*, aber unabhängig davon beendet die Wallbox das Laden spätestens, wenn das Fahrzeug voll geladen ist.
 
-### Beipiel:
+### Beispiel:
 Der Ablauf eines (Überschuss-) Ladevorgangs soll hier anhand von Auszügen aus dem Log veranschaulicht werden:
 
 Nachdem das Fahrzeug mit der Wallbox verbunden wurde:
