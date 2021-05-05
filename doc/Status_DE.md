@@ -28,6 +28,7 @@ Damit der *Smart Appliance Enabler* dem *Sunny Home Manager* die geplante Laufze
 Durch Klick auf die `Starten`-Schaltfläche wird das Gerät sofort eingeschaltet.
 
 ## Besonderheiten für Wallboxen
+<a name="click-green-ev">
 
 Nach einen **Klick auf das grüne Ampellicht** kann man den `Lademodus` für den aktuellen Ladevorgang festelegen.
 

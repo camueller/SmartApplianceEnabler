@@ -72,12 +72,12 @@ Im *Sunny Home Manager* sollte die Verbraucher-Konfiguration für eine Wallbox w
 
 Wenn ein *SOC-Script* konfiguriert wurde, wird dieses **automatisch nach dem Verbinden des Fahrzeuges mit der Wallbox** ausgeführt.
 
-Zusätzlich besteht die Möglichkeit, den Ist- und Soll-Ladezustand einzugeben beim [manuellen Start des Ladevorganges](#status-anzeige-und-manuelle-steuerung).
+Zusätzlich besteht die Möglichkeit, den Ist- und Soll-Ladezustand einzugeben beim [manuellen Start des Ladevorganges]((Status_DE.md#click-green-ev).
 
 Auf Basis der Werte für
 - `Batteriekapazität`: aus der Fahrzeug-Konfiguration
-- `Ist-SOC`: geliefert vom SOC-Script oder eingegeben über die [Ampel-Steuerung]
-- `Soll-SOC` Standardwert aus der Fahrzeug-Konfiguration oder eingegeben über [Ampel-Steuerung](#manuelle-steuerung))
+- `Ist-SOC`: geliefert vom SOC-Script oder eingegeben über die [Ampel-Steuerung](#manuelle-steuerung)
+- `Soll-SOC` Standardwert aus der Fahrzeug-Konfiguration oder eingegeben über [Ampel-Steuerung](#manuelle-steuerung)
 wird die *initial Energiemenge* berechnet, die vom *Sunny Home Manager* anzufordern ist.
 
 Während des Ladenvorgangs wird der *aktuelle SOC berechnet* aus:
@@ -104,7 +104,7 @@ Nachdem das Fahrzeug mit der Wallbox verbunden wurde:
 2021-05-02 13:04:05,048 DEBUG: Executing SoC script: /opt/sae/soc/soc.sh
 2021-05-02 13:04:59,092 DEBUG: SoC: 51.0
 ```
-Aus dem Ist-SOC (51%), Soll-SOC (80% laut Fahrzeug-Konfguration) und Netto-Batteriekapzität (36 kWh) wird die benötige Menge Überschussenergie (ohne Berücksichtigung von Ladeverlusten) berechnet:
+Aus dem Ist-SOC (51%), Soll-SOC (80% laut Fahrzeug-Konfguration) und Netto-Batteriekapzität (36 kWh) wird die benötige Menge Überschussenergie (ohne Berücksichtigung von Ladeverlusten) mit 10,4 kWh berechnet:
 ```
 2021-05-02 13:05:04,747 DEBUG: energy calculation: 10440Wh evId=1 batteryCapactiy=36000Wh currentSoc=51% targetSoc=80%
 2021-05-02 13:05:32,404 DEBUG: ACTIVE/2021-05-02T13:04:04/2021-05-04T13:04:04::ENABLED/evId=1/soc=51%=>80%/energy=10440Wh/Optional Energy
@@ -123,7 +123,7 @@ Der berechnete SOC ist 71%, der vom SOC-Script gelieferte Wert ist 72%. Aus der 
 ```
 2021-05-03 09:27:37,674 DEBUG: charge loss calculation: chargeLoss=4% socCurrent=72% socLastRetrieval=51% batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=7844Wh energyReceivedByEv=7560Wh
 ```
-Ab jetzt wird für die Berechnung des SOC anstelle des für das Fahrzeug konfigurierten Wertes für die Ladeverlust der zuvor berechnet Wert für die tatsächlichen Ladeverluste verwendet:
+Ab jetzt wird für die Berechnung des SOC für die Ladeverluste anstelle des für das Fahrzeug konfigurierten Wertes der zuvor berechnete Wert für die tatsächlichen Ladeverluste verwendet:
 ```
 2021-05-03 09:27:45,461 DEBUG: SOC calculation: socCurrent=72% socRetrievedOrInitial=72% batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=7Wh chargeLoss=4%
 ```
@@ -137,15 +137,15 @@ Der berechnete SOC liegt abermals 20% über dem SOC der letzten Ausführung des 
 2021-05-03 11:47:05,532 DEBUG: Executing SoC script: /opt/sae/soc/soc.sh
 2021-05-03 11:47:59,060 DEBUG: SoC: 90.0
 ```
-Der berechnete SOC war 92%, der vom SOC-Script gelieferte Wert war 90%. Wie weiter oben beschrieben, lassen sich die tatsächlichen Ladeverluste berechnen - hier 14%:
+Der berechnete SOC war 92%, der vom SOC-Script gelieferte Wert war 90%. Die Berechnung der tatsächlichen Ladeverluste ergibt 14%:
 ```
 2021-05-03 11:47:59,119 DEBUG: charge loss calculation: chargeLoss=14% socCurrent=90% socLastRetrieval=72% batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=7416Wh energyReceivedByEv=6480Wh
 ```
-Ab jetzt wird für die Berechnung des SOC der neu berechnet Wert für die tatsächlichen Ladeverluste (14%) verwendet:
+Ab jetzt wird für die Berechnung des SOC für die Ladeverluste der neu berechnete Wert von 14% verwendet:
 ```
 2021-05-03 11:48:05,532 DEBUG: SOC calculation: socCurrent=90% socRetrievedOrInitial=90% batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=10Wh chargeLoss=14%
 ```
-Die berechnete Restmenge der benötigen Energie zur Erreichung des Soll-SOC ist erstmals kleiner 1 kWh - deshalb wird eine weitere Ausführung des SOC-Script angestossen um sicherzustellen, dass das Fahrzeug tatsählich kurz davor ist, den Soll-SOC zu erreichen:
+Die berechnete Restmenge der benötigen Energie zur Erreichung des Soll-SOC ist erstmals kleiner 1 kWh - deshalb wird eine weitere Ausführung des SOC-Scripts angestossen um sicherzustellen, dass das Fahrzeug tatsächlich kurz davor ist, den Soll-SOC zu erreichen:
 ```
 2021-05-03 12:55:05,777 DEBUG: energy calculation: 360Wh evId=1 batteryCapactiy=36000Wh currentSoc=99% targetSoc=100%
 2021-05-03 12:55:05,767 DEBUG: SOC calculation: socCurrent=99% socRetrievedOrInitial=90% batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=3515Wh chargeLoss=14%
@@ -154,7 +154,7 @@ Die berechnete Restmenge der benötigen Energie zur Erreichung des Soll-SOC ist 
 2021-05-03 12:55:05,772 DEBUG: Executing SoC script: /opt/sae/soc/soc.sh
 2021-05-03 12:55:58,372 DEBUG: SoC: 98.0
 ```
-Der berechnete SOC ist 99%, der vom SOC-Script gelieferte Wert ist 98%. Wie weiter oben beschrieben, lassen sich die tatsächlichen Ladeverluste berechnen - in dieser Phase des Ladens 23%:
+Der berechnete SOC ist 99%, der vom SOC-Script gelieferte Wert ist 98%. Daraus lassen sich die Ladeverluste berechnen: 23% in dieser Phase des Ladens:
 ```
 2021-05-03 12:55:58,436 DEBUG: charge loss calculation: chargeLoss=23% socCurrent=98% socLastRetrieval=90% batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=3552Wh energyReceivedByEv=2880Wh
 ```
