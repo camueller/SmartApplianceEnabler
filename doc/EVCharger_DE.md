@@ -78,19 +78,20 @@ Auf Basis der Werte für
 - `Batteriekapazität`: aus der Fahrzeug-Konfiguration
 - `Ist-SOC`: geliefert vom SOC-Script oder eingegeben über die [Ampel-Steuerung](Status_DE.md#click-green-ev)
 - `Soll-SOC` Standardwert aus der Fahrzeug-Konfiguration oder eingegeben über [Ampel-Steuerung](Status_DE.md#click-green-ev)
-wird die *initial Energiemenge* berechnet, die vom *Sunny Home Manager* anzufordern ist.
 
-Während des Ladenvorgangs wird der *aktuelle SOC berechnet* aus:
+... wird die **initiale Energiemenge** berechnet, die vom *Sunny Home Manager* anzufordern ist.
+
+Während des Ladenvorgangs wird der **aktuelle SOC berechnet** aus:
 - `letzter bekannter SOC`: vom SOC-Script (Ladebeginn bzw. letzte Ausführung) bzw. Eingabe via Ampel (bei Ladebeginn)
-- `Energiemenge`:  vom Zähler
+- `Energiemenge`:  gemessen vom Zähler
 - `Batteriekapazität`: aus der Fahrzeug-Konfiguration
-- `Ladeverluste`: aus der Fahrzeug-Konfiguration
+- `Ladeverluste`: initial aus der Fahrzeug-Konfiguration; bei konfiguriertem SOC-Script werden die tatsächlichen Ladeverluste berechnet und verwendet
 
-Aus der Differenz von berechnetem SOC und Soll-SOC wird die *Energiemenge berechnet*, die vom *Sunny Home Manager* angefordert wird.
+Aus der Differenz von berechnetem SOC und Soll-SOC wird **kontinuierlich die Energiemenge berechnet**, die vom *Sunny Home Manager* angefordert wird.
 
-Wenn ein SOC-Script konfiguriert wurde und sich der berechnete SOC entweder um den konfigurierte Wert (Standard: 20%) erhöht oder seit der letzten Ausführung des SOC-Script die konfigurierte Zeit vergangen ist, wird das **SOC-Script erneut ausgeführt**. Der berechnete SOC wird mit dem tatsächlichen SOC verglichen und daraus die tatsächlichen Ladeverluste berechnet. Für alle nachfolgenden Berechnungen des SOC bis zur nächsten Ausführung des SOC-Scripts während des aktuellen Ladevorganges werden die tatsächlichen Ladeverluste berücksichtigt.
+Während des Ladevorgangs wird das **SOC-Script periodisch ausgeführt**. Wenn sich der berechnete SOC entweder um einen konfigurierten Wert (Standard: 20%) erhöht oder seit der letzten Ausführung des SOC-Script eine konfigurierte Zeit vergangen ist, wird das SOC-Script erneut ausgeführt. Der berechnete SOC wird mit dem tatsächlichen SOC verglichen und daraus die tatsächlichen Ladeverluste berechnet. Für alle nachfolgenden Berechnungen des SOC bis zur nächsten Ausführung des SOC-Scripts während des aktuellen Ladevorganges werden die tatsächlichen Ladeverluste berücksichtigt.
 
-**Ohne SOC-Script** und ohne Eingabe des aktuellen Ist-Ladezustands geht der *Smart Appliance Enabler* von einem Ist-Ladezustand von 0% aus und meldet einen entsprechend großen Energiebedarf. Das verschlechtert zwar die Planung des *Sunny Home Manager*, aber unabhängig davon beendet die Wallbox das Laden spätestens, wenn das Fahrzeug voll geladen ist.
+**Ohne SOC-Script** und ohne [Eingabe des aktuellen Ist-Ladezustands](Status_DE.md#click-green-ev) geht der *Smart Appliance Enabler* von einem Ist-Ladezustand von 0% aus und meldet einen entsprechend großen Energiebedarf. Das verschlechtert zwar die Planung des *Sunny Home Manager*, aber unabhängig davon beendet die Wallbox das Laden spätestens, wenn das Fahrzeug voll geladen ist.
 
 ### Beipiel:
 Der Ablauf eines (Überschuss-) Ladevorgangs soll hier anhand von Auszügen aus dem Log veranschaulicht werden:
