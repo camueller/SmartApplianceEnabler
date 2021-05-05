@@ -72,12 +72,12 @@ Im *Sunny Home Manager* sollte die Verbraucher-Konfiguration für eine Wallbox w
 
 Wenn ein *SOC-Script* konfiguriert wurde, wird dieses **automatisch nach dem Verbinden des Fahrzeuges mit der Wallbox** ausgeführt.
 
-Zusätzlich besteht die Möglichkeit, den Ist- und Soll-Ladezustand einzugeben beim [manuellen Start des Ladevorganges]((Status_DE.md#click-green-ev).
+Zusätzlich besteht die Möglichkeit, den Ist- und Soll-Ladezustand einzugeben beim [manuellen Start des Ladevorganges](Status_DE.md#click-green-ev).
 
 Auf Basis der Werte für
 - `Batteriekapazität`: aus der Fahrzeug-Konfiguration
-- `Ist-SOC`: geliefert vom SOC-Script oder eingegeben über die [Ampel-Steuerung](#manuelle-steuerung)
-- `Soll-SOC` Standardwert aus der Fahrzeug-Konfiguration oder eingegeben über [Ampel-Steuerung](#manuelle-steuerung)
+- `Ist-SOC`: geliefert vom SOC-Script oder eingegeben über die [Ampel-Steuerung](Status_DE.md#click-green-ev)
+- `Soll-SOC` Standardwert aus der Fahrzeug-Konfiguration oder eingegeben über [Ampel-Steuerung](Status_DE.md#click-green-ev)
 wird die *initial Energiemenge* berechnet, die vom *Sunny Home Manager* anzufordern ist.
 
 Während des Ladenvorgangs wird der *aktuelle SOC berechnet* aus:
