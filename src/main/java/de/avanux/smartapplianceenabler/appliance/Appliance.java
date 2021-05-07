@@ -380,24 +380,26 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
 
     public void setEnergyDemand(LocalDateTime now, Integer evId, Integer socCurrent, Integer socRequested, LocalDateTime chargeEnd) {
         if (isEvCharger()) {
-            Meter meter = getMeter();
-            if(meter != null) {
-                meter.resetEnergyMeter();
+            ElectricVehicleCharger evCharger = (ElectricVehicleCharger) this.control;
+            if(getMeter().getEnergy() > 0.1) {
+                logger.debug("{}: skipping ev charger configuration to continue charging process already started", id);
+            }
+            else {
+                logger.debug("{}: will do ev charger configuration", id);
+                evCharger.setConnectedVehicleId(evId);
+                evCharger.setSocInitial(socCurrent);
+                evCharger.setSocInitialTimestamp(now);
             }
 
-            ElectricVehicleCharger evCharger = (ElectricVehicleCharger) this.control;
             TimeframeInterval timeframeInterval =
                     evCharger.createTimeframeInterval(now, evId, socCurrent, socRequested, chargeEnd);
-            evCharger.setConnectedVehicleId(evId);
-            evCharger.setSocInitial(socCurrent);
-            evCharger.setSocInitialTimestamp(now);
             timeframeIntervalHandler.addTimeframeInterval(now, timeframeInterval, true, true);
 
             if(chargeEnd == null) {
                 // if no charge end is provided we switch on immediately with full power
                 DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(this.id);
                 int chargePower = deviceInfo.getCharacteristics().getMaxPowerConsumption();
-                setApplianceState(now, true, chargePower,"Switching on charger with maximum power");
+                setApplianceState(now, true, chargePower,"Switching on ev charger with maximum power");
             }
         }
         else {
