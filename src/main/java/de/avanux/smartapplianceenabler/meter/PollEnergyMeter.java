@@ -75,12 +75,15 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
     }
 
     public void scheduleNext(Timer timer, int nextPollCompletedSecondsFromNow, int averagingInterval) {
-        if(timer != null) {
-            cancelTimer();
-            long nextPollMillisFromNow = nextPollCompletedSecondsFromNow * 1000L - lastPollDurationMillis;
+        long nextPollMillisFromNow = nextPollCompletedSecondsFromNow * 1000L - lastPollDurationMillis;
+        if(timer != null && nextPollMillisFromNow > 0) {
             logger.trace("{}: Schedule next poll in {}ms lastPollDuration={}ms", applianceId, nextPollMillisFromNow, lastPollDurationMillis);
+            cancelTimer();
             this.pollTimerTask = buildPollTimerTask();
             timer.schedule(this.pollTimerTask, nextPollMillisFromNow, averagingInterval * 1000L);
+        }
+        else {
+            logger.error("{}: Skipping rescheduling of next poll due to negative value for nextPollMillisFromNow={}ms", applianceId, nextPollMillisFromNow);
         }
     }
 
