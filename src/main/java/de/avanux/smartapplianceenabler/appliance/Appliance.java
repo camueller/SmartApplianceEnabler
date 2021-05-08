@@ -205,7 +205,13 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
             ((NotificationProvider) control).setNotificationHandler(notificationHandler);
         }
         if(isEvCharger()) {
-            ((ElectricVehicleCharger) control).setAppliance(this);
+            ElectricVehicleCharger evCharger = ((ElectricVehicleCharger) control);
+            evCharger.setAppliance(this);
+
+            DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(this.id);
+            if(deviceInfo.getCharacteristics() != null && deviceInfo.getCharacteristics().getMinPowerConsumption() != null) {
+                evCharger.setMinPowerConsumption(deviceInfo.getCharacteristics().getMinPowerConsumption());
+            }
         }
         if(control instanceof MeterReportingSwitch) {
             ((MeterReportingSwitch) control).setMeter(meter);

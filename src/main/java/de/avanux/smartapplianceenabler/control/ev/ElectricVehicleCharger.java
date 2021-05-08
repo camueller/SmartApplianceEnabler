@@ -90,6 +90,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     private transient boolean startChargingRequested;
     private transient boolean stopChargingRequested;
     private transient boolean firstInvocationAfterSkip;
+    private transient Integer minPowerConsumption;
     private transient NotificationHandler notificationHandler;
     private transient DecimalFormat percentageFormat;
 
@@ -164,6 +165,10 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     public Boolean getForceInitialCharging() {
         return forceInitialCharging != null ? forceInitialCharging :
                 ElectricVehicleChargerDefaults.getForceInitialCharging();
+    }
+
+    public void setMinPowerConsumption(Integer minPowerConsumption) {
+        this.minPowerConsumption = minPowerConsumption;
     }
 
     public void setSocScriptAsync(boolean socScriptAsync) {
@@ -545,6 +550,9 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                 socValues.batteryCapacity = firstVehicle.getBatteryCapacity();
             }
             if(getForceInitialCharging() && wasInStateOneTime(EVChargerState.VEHICLE_CONNECTED)) {
+                if(this.minPowerConsumption != null && this.minPowerConsumption > 0) {
+                    setChargePower(this.minPowerConsumption);
+                }
                 startCharging();
             }
         }
