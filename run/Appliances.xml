@@ -25,7 +25,7 @@
         </Schedule>
     </Appliance>
     <Appliance id="F-00000001-000000000019-00">
-        <ElectricVehicleCharger>
+        <ElectricVehicleCharger startChargingStateDetectionDelay="60">
             <EVModbusControl idref="wallbox" slaveAddress="180">
                 <ModbusRead address="100" type="Input" valueType="String">
                     <ModbusReadValue name="VehicleNotConnected" extractionRegex="(A)"/>
@@ -41,7 +41,7 @@
                     <ModbusWriteValue name="ChargingCurrent" value="0"/>
                 </ModbusWrite>
             </EVModbusControl>
-            <ElectricVehicle id="1" name="Nissan Leaf" batteryCapacity="40000" phases="1" maxChargePower="7400" chargeLoss="12"/>
+            <ElectricVehicle id="1" name="Nissan Leaf" batteryCapacity="36000" phases="1" maxChargePower="6600" chargeLoss="11"/>
         </ElectricVehicleCharger>
         <ModbusElectricityMeter idref="modbus" slaveAddress="1">
             <ModbusRead address="0x0156" type="Input" valueType="Float" words="2">
