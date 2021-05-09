@@ -11,7 +11,7 @@ Grundsätzlich ist die Angabe von Slave-Adresse oder Register-Adressen als Hexad
 Die Konfiguration von Modbus/TCP erfolgt in den [Einstellungen](Settings_DE.md#Modbus).
 
 ### Modbus/RTU
-*Smart Appliance Enabler* unterstützt das [Modbus](https://de.wikipedia.org/wiki/Modbus)-Protokoll lediglich in der Ausprägung Modbus/TCP. Allerdings können Modbus/RTU-Geräte verwendet werden mittels eines Modbus/TCP zu Modbus/RTU Gateway wie z.B. des frei verfügbaren [mbusd](https://sourceforge.net/projects/mbus), dessen Installation nachfolgend beschrieben ist.
+*Smart Appliance Enabler* unterstützt das [Modbus](https://de.wikipedia.org/wiki/Modbus)-Protokoll lediglich in der Ausprägung Modbus/TCP. Allerdings können Modbus/RTU-Geräte angeschlossen werden, wenn man einen **USB-Modbus-Adapter** (manchmal auch als USB-RS485-Adapter bezeichnet) verwendet. In diesem Fall benötigt man allerdings zusätzlich ein Modbus/TCP zu Modbus/RTU Gateway wie z.B. das frei verfügbare [mbusd](https://sourceforge.net/projects/mbus), dessen Installation nachfolgend beschrieben ist.
 
 Falls noch nicht installiert, muss als Git und cmake installiert werden:
 ```console
@@ -160,3 +160,83 @@ ExecStart=/usr/bin/mbusd -d -v9 -c /etc/mbusd/mbusd-%i.conf -p /dev/%i
 ```
 
 Danach finden sich sehr detaillierte Log-Ausgaben in der Datei `/var/log/mbus.log`.
+
+### Überprüfung der Modbus-Installation und der mbusd-Installation
+
+Bei Modbus-Problemen sollten zunächst folgende Punkte geprüft werden:
+- Wurde bei der Modbus-Verkabelung Plus und Minus nicht vertauscht?
+- Hat der Modbus einen 100-Ohm-Widerstand mindestens an einem Ende?
+
+Nach der Hardware-Überprüfung sollte zunächst die Modbus/RTU-Funktion überprüft werden, bevor Modbus/TCP geprüft wird.
+
+#### Installation von mbpoll
+
+Für die Überprüfung von Modbus/RTU und Modbus/TCP eignet sich das Command-Line-Tool [mbpoll](https://github.com/epsilonrt/mbpoll), das wie folgt installiert wird:
+```
+wget -O- http://www.piduino.org/piduino-key.asc | sudo apt-key add -
+echo 'deb http://raspbian.piduino.org stretch piduino' | sudo tee /etc/apt/sources.list.d/piduino.list
+sudo apt update
+sudo apt install mbpoll
+```
+
+`mbpoll -h` liefert Hinweise zur Verwendung. Alternativ finden sich diese auch auf der [Projekt-Homepage](https://github.com/epsilonrt/mbpoll#help).
+
+#### Überprüfung Modbus/RTU
+
+*Vor der Überprüfung von Modbus/RTU sollte unbedingt der `mbusd` gestoppt werden, damit `mbpoll` auf den USB-Modbus-Adapter zugreifen kann!*
+
+Danach sollte es möglich sein, beispielsweise das Register für den Zählerstand auszulesen.
+Der Aufruf dazu sieht z.B. für den `SDM220-Modbus` wie folgt aus, wobei folgende Parameter für andere Modbus-Geräte anzupassen sind:
+- Slave-Adresse (`-a`), hier im Beispiel: 1
+- Register (`-r`), hier im Beispiel: 342 (Dezimal!) 
+- Register-Typ (`-t`), hier im Beispiel: Input-Register mit Float-Wert
+
+Der Aufruf sorgt dafür, dass das Register einmal ausgelesen wird und der Register-Wert (hier im Beispiel: 334) angezeigt wird.
+```
+pi@raspberrypi:~ $ mbpoll -b 9600 -P none -a 1 -r 342 -t 3:float -1 /dev/ttyUSB0
+mbpoll 1.4-12 - FieldTalk(tm) Modbus(R) Master Simulator
+Copyright © 2015-2019 Pascal JEAN, https://github.com/epsilonrt/mbpoll
+This program comes with ABSOLUTELY NO WARRANTY.
+This is free software, and you are welcome to redistribute it
+under certain conditions; type 'mbpoll -w' for details.
+
+Protocol configuration: Modbus RTU
+Slave configuration...: address = [1]
+                        start reference = 342, count = 1
+Communication.........: /dev/ttyUSB0,       9600-8N1 
+                        t/o 1.00 s, poll rate 1000 ms
+Data type.............: 32-bit float (little endian), input register table
+
+-- Polling slave 1...
+[342]:  334
+```
+
+#### Überprüfung Modbus/TCP
+
+*Vor der Überprüfung von Modbus/TCP muss sichergestellt sein, dass der `mbusd` läuft!*
+
+Danach sollte es möglich sein, beispielsweise das Register für den Zählerstand auszulesen.
+Der Aufruf dazu sieht z.B. für den `SDM220-Modbus` wie folgt aus, wobei folgende Parameter für andere Modbus-Geräte anzupassen sind:
+- Slave-Adresse (`-a`), hier im Beispiel: 1
+- Register (`-r`), hier im Beispiel: 342 (Dezimal!)
+- Register-Typ (`-t`), hier im Beispiel: Input-Register mit Float-Wert
+
+Der Aufruf sorgt dafür, dass das Register einmal ausgelesen wird und der Register-Wert (hier im Beispiel: 334) angezeigt wird.
+
+```
+pi@raspberrypi:~ $ mbpoll -a 1 -r 342 -t 3:float -1 localhost
+mbpoll 1.4-12 - FieldTalk(tm) Modbus(R) Master Simulator
+Copyright © 2015-2019 Pascal JEAN, https://github.com/epsilonrt/mbpoll
+This program comes with ABSOLUTELY NO WARRANTY.
+This is free software, and you are welcome to redistribute it
+under certain conditions; type 'mbpoll -w' for details.
+
+Protocol configuration: Modbus TCP
+Slave configuration...: address = [1]
+                        start reference = 342, count = 1
+Communication.........: localhost, port 502, t/o 1.00 s, poll rate 1000 ms
+Data type.............: 32-bit float (little endian), input register table
+
+-- Polling slave 1...
+[342]:  334
+```
