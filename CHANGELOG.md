@@ -12,6 +12,18 @@ und das Projekt folgt den Leitlinien des [Semantic Versioning](https://semver.or
 | SAE         | Smart Appliance Enabler |
 | SHM         | Sunny Home Manager |
 
+## [1.6.14](https://github.com/camueller/SmartApplianceEnabler/releases/tag/1.6.14) - 09.05.2021
+
+### Gefixt
+- Berechnung der Ladeverluste und Berücksichtigung bei der Berechnung des aktuellen SOC während des Ladens
+- falls beim Berechnen der Dauer bis zur nächsten Zählerabfrage ein negativer Wert berechnet wird, erfolgt einmalig keine Synchronisation der Zählerabfrage mit der Abfrage durch den SHM. Bisher konnte dieser Fehler dazu führen, dass der Zähler nachfolgend nicht mehr abgefragt wurde 
+- beim Starten eines Ladevorgangs via Ampel erfolgt keine initialisierung des Zählers mehr, wenn bereits Energie geladen wurde seit dem Verbinden des Fahrzeugs. Durch die bisher erfolgte Initialisierung wurde nachfolgend der SOC falsch berechnet.
+- bei Wallboxen wurde der Status nach dem Einschalten nach Ablauf der konfigurierten `Statuserkennung-Unterbrechung` bis zur nächsten Abfrage des Wallbox-Status falsch angezeigt. Das wurde gefixt.
+
+### Geändert
+- wenn die Energiemenge bis zur Erreichung des Soll-SOC kleienr als 1 kWh ist, wird zusätzlich das SOC-Script ausgeführt, um sicherzustellen, dass der Soll-SOC erreicht wird
+- wenn `Ladestatuserkennung abwarten` aktiv ist, wird vor dem kurzzeitigen Einschalten der Wallbox die Ladestromstärke auf den Wert gesetzt, welcher der konfigurierten `minimalen Leistungsaufnahme` entspricht
+
 ## [1.6.13](https://github.com/camueller/SmartApplianceEnabler/releases/tag/1.6.13) - 24.04.2021
 
 ### Geändert
