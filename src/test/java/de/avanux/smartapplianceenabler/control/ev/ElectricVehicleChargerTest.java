@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
 
 import de.avanux.smartapplianceenabler.appliance.Appliance;
 import de.avanux.smartapplianceenabler.schedule.*;
@@ -332,7 +333,7 @@ public class ElectricVehicleChargerTest {
         assertEquals(EVChargerState.VEHICLE_CONNECTED, evCharger.getState());
         log("Start charging");
         evCharger.startCharging();
-        when(evCharger.isWithinSwitchChargingStateDetectionDelay()).thenReturn(true);
+        when(evCharger.isWithinSwitchChargingStateDetectionDelay(false)).thenReturn(true);
         configureMocks(false, true, true);
         updateState();
         assertEquals(EVChargerState.VEHICLE_CONNECTED, evCharger.getState());
@@ -341,7 +342,7 @@ public class ElectricVehicleChargerTest {
         configureMocks(false, true, false);
         updateState();
         log("After ChargingStateDetectionDelay");
-        when(evCharger.isWithinSwitchChargingStateDetectionDelay()).thenReturn(false);
+        when(evCharger.isWithinSwitchChargingStateDetectionDelay(false)).thenReturn(false);
         updateState();
         assertEquals(EVChargerState.VEHICLE_CONNECTED, evCharger.getState());
     }
@@ -364,10 +365,12 @@ public class ElectricVehicleChargerTest {
     public void isWithinStartChargingStateDetectionDelay() {
         int startChargingStateDetectionDelay = 300;
         long currentMillis = 1000000;
-        assertFalse(evCharger.isWithinSwitchChargingStateDetectionDelay(
+        assertFalse(evCharger.isWithinSwitchChargingStateDetectionDelay(false,
                 startChargingStateDetectionDelay, currentMillis, null));
-        assertTrue(evCharger.isWithinSwitchChargingStateDetectionDelay(startChargingStateDetectionDelay, currentMillis, currentMillis - (startChargingStateDetectionDelay - 1) * 1000));
-        assertFalse(evCharger.isWithinSwitchChargingStateDetectionDelay(startChargingStateDetectionDelay, currentMillis, currentMillis - (startChargingStateDetectionDelay + 1) * 1000));
+        assertTrue(evCharger.isWithinSwitchChargingStateDetectionDelay(false,
+                startChargingStateDetectionDelay, currentMillis, currentMillis - (startChargingStateDetectionDelay - 1) * 1000));
+        assertFalse(evCharger.isWithinSwitchChargingStateDetectionDelay(false,
+                startChargingStateDetectionDelay, currentMillis, currentMillis - (startChargingStateDetectionDelay + 1) * 1000));
     }
 
     @Test
@@ -382,7 +385,7 @@ public class ElectricVehicleChargerTest {
                 startChargingStateDetectionDelay,
                 currentMillis,
                 currentMillis - (startChargingStateDetectionDelay - 1) * 1000));
-        assertFalse(evCharger.isOn(
+        assertTrue(evCharger.isOn(
                 startChargingStateDetectionDelay,
                 currentMillis,
                 currentMillis - (startChargingStateDetectionDelay + 1) * 1000));

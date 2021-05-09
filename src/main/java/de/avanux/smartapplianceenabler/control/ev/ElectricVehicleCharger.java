@@ -340,7 +340,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
      * @return
      */
     public synchronized boolean updateState(LocalDateTime now) {
-        if(isWithinSwitchChargingStateDetectionDelay()) {
+        if(isWithinSwitchChargingStateDetectionDelay(false)) {
             logger.debug("{}: Skipping state detection for {}s", applianceId, getStartChargingStateDetectionDelay());
             this.firstInvocationAfterSkip = true;
             return false;
@@ -521,7 +521,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
 
     protected boolean isOn(Integer startChargingStateDetectionDelay,
                         long currentMillis, Long startChargingTimestamp) {
-        if(isWithinSwitchChargingStateDetectionDelay(startChargingStateDetectionDelay, currentMillis,
+        if(isWithinSwitchChargingStateDetectionDelay(true, startChargingStateDetectionDelay, currentMillis,
                 startChargingTimestamp)) {
             if(this.startChargingRequested) {
                 return true;
@@ -609,15 +609,16 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         this.controlStateChangedListeners.remove(listener);
     }
 
-    protected boolean isWithinSwitchChargingStateDetectionDelay() {
-        return isWithinSwitchChargingStateDetectionDelay(getStartChargingStateDetectionDelay(),
+    protected boolean isWithinSwitchChargingStateDetectionDelay(boolean addPollInterval) {
+        return isWithinSwitchChargingStateDetectionDelay(addPollInterval, getStartChargingStateDetectionDelay(),
                 System.currentTimeMillis(), this.switchChargingStateTimestamp);
     }
 
-    protected boolean isWithinSwitchChargingStateDetectionDelay(Integer switchChargingStateDetectionDelay,
+    protected boolean isWithinSwitchChargingStateDetectionDelay(boolean addPollInterval, Integer switchChargingStateDetectionDelay,
                                                                 long currentMillis, Long switchChargingStateTimestamp) {
+        int consideredPollInterval = addPollInterval && getPollInterval() != null ? getPollInterval() * 2 * 1000 : 0;
         return (switchChargingStateTimestamp != null
-                && currentMillis - switchChargingStateTimestamp < switchChargingStateDetectionDelay * 1000);
+                && currentMillis - switchChargingStateTimestamp - consideredPollInterval < switchChargingStateDetectionDelay * 1000);
     }
 
     public boolean isVehicleNotConnected() {
