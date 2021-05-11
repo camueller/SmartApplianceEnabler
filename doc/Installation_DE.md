@@ -81,7 +81,7 @@ Zur Vorbereitung der Installation muss die Konfigurationsdatei für das Update [
 Hinweise und Beispiele zu den wenigen Konfigurationsparametern finden sich in der Datei selbst.
 
 Für das Update muss ein USB-Stick mit folgenden Dateien (und nur diesen!) vorbereitet werden:
-- `update.config` mit den vorgenannten Anpassungen
+- `update.config` mit den anpassten Konfigurationsparametern
 - [update.sh](https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/install/update.sh)
 - [update2.sh](https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/install/update2.sh)
 

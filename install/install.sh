@@ -19,14 +19,15 @@
 set -x
 
 MOUNT_POINT=/media
-CONFIG_FILE=$MOUNT_POINT/install.config
+CONFIG_FILE=/usr/local/etc/install.config
+
+cat $MOUNT_POINT/install.config | tr -d '\r' > $CONFIG_FILE
 
 . $CONFIG_FILE
 
 echo "$PREFIX Copy installation files ..." >> $LOG
-cp $MOUNT_POINT/$SCRIPT2 $INSTALL_DIR/
+cat $MOUNT_POINT/$SCRIPT2 | tr -d '\r' > $INSTALL_DIR/$SCRIPT2
 chmod +x $INSTALL_DIR/$SCRIPT2
-cp $CONFIG_FILE /usr/local/etc
 
 echo "$PREFIX Add install script to rc.local ..." >> $LOG
 mv $PARENT_SCRIPT $PARENT_SCRIPT_BACKUP
