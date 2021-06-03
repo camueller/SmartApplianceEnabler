@@ -454,11 +454,6 @@ public class SaeController {
                         appliance.getMeter().resetEnergyMeter();
                     }
                     appliance.setSchedules(schedulesToSet);
-                    TimeframeIntervalHandler timeframeIntervalHandler = appliance.getTimeframeIntervalHandler();
-                    if(timeframeIntervalHandler != null) {
-                        timeframeIntervalHandler.clearQueue();
-                        timeframeIntervalHandler.fillQueue(now);
-                    }
                     return;
                 }
                 logger.error("{}: Appliance not found", applianceId);

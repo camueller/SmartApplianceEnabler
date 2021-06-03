@@ -133,6 +133,11 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
 
     public void setSchedules(List<Schedule> schedules) {
         this.schedules = schedules;
+        if(timeframeIntervalHandler != null) {
+            timeframeIntervalHandler.setSchedules(schedules);
+            timeframeIntervalHandler.clearQueue();
+            timeframeIntervalHandler.fillQueue(LocalDateTime.now());
+        }
     }
 
     public Notification getNotification() {

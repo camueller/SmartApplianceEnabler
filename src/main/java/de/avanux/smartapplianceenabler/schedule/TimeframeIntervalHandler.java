@@ -62,6 +62,10 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
         this.applianceId = applianceId;
     }
 
+    public void setSchedules(List<Schedule> schedules) {
+        this.schedules = schedules;
+    }
+
     public void addTimeframeIntervalChangedListener(TimeframeIntervalChangedListener listener) {
         this.timeframeIntervalChangedListeners.add(listener);
     }
