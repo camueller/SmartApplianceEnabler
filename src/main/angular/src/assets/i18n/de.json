@@ -110,7 +110,7 @@
 
   "HttpReadValueComponent.name": "Zustand",
   "HttpReadValueComponent.data": "Daten",
-  "HttpReadValueComponent.path": "Pfad",
+  "HttpReadValueComponent.path": "Pfad für Extraktion",
   "HttpReadValueComponent.extractionRegex": "Regex für Extraktion",
   "HttpReadValueComponent.factorToValue": "Umrechnungsfaktor",
   "HttpReadValueComponent.error.factorToValue_pattern": "Der Faktor muss eine (Gleitkomma-) Zahl sein",
