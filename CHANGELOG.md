@@ -12,6 +12,12 @@ und das Projekt folgt den Leitlinien des [Semantic Versioning](https://semver.or
 | SAE         | Smart Appliance Enabler |
 | SHM         | Sunny Home Manager |
 
+## [1.6.15](https://github.com/camueller/SmartApplianceEnabler/releases/tag/1.6.15) - 06.06.2021
+
+### Gefixt
+- Bei Zeitplänen konnte der Wert für die minimale Laufzeit nicht gelöscht werden, was dazu geführt hat, dass dieser Zeitplan ungewollt die Verwendung von Überschussenergie anfordert hat
+- Zeitpläne über REST-API wurden nicht eingeplant. Siehe [#149](https://github.com/camueller/SmartApplianceEnabler/issues/149) 
+
 ## [1.6.14](https://github.com/camueller/SmartApplianceEnabler/releases/tag/1.6.14) - 09.05.2021
 
 ### Gefixt

@@ -17,12 +17,12 @@ before_install:
     mvn install:install-file -Dfile=lib/seamless-util-1.0.0.jar -DpomFile=lib/seamless-util-1.0.0.pom &&
     mvn install:install-file -Dfile=lib/cling-2.0.0.pom -DpomFile=lib/cling-2.0.0.pom -Dpackaging=pom &&
     mvn install:install-file -Dfile=lib/cling-core-2.0.0.jar -DpomFile=lib/cling-core-2.0.0.pom &&
-    wget https://nodejs.org/dist/v10.17.0/node-v10.17.0-linux-x64.tar.gz &&
-    tar xfz node-v10.17.0-linux-x64.tar.gz &&
+    wget https://nodejs.org/dist/v14.17.0/node-v14.17.0-linux-x64.tar.gz &&
+    tar xfz node-v14.17.0-linux-x64.tar.gz &&
     wget https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip &&
     unzip awscli-exe-linux-x86_64.zip &&
     sudo ./aws/install &&
-    export PATH=$PWD/node-v10.17.0-linux-x64/bin:$PATH
+    export PATH=$PWD/node-v14.17.0-linux-x64/bin:$PATH
 script:
   - mvn package -B -Ptravis,web &&
     aws ec2 start-instances --instance-ids $AWS_INSTANCE_ID &&
