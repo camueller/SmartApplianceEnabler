@@ -21,10 +21,10 @@
     [httpConfiguration]="httpElectricityMeter.httpConfiguration"
   ></app-http-configuration>
   <div class="MeterHttpComponent__httpReads" formArrayName="httpReads">
-    <app-http-read *ngFor="let httpRead of httpElectricityMeter.httpReads; index as i; last as l"
+    <app-http-read *ngFor="let httpReadFormGroup of httpElectricityMeter.httpReads; index as i; last as l"
                    [formGroupName]="i"
                    [form]="getHttpReadFormGroup(i)"
-                   [httpRead]="httpRead"
+                   [httpRead]="httpElectricityMeter.httpReads[i]"
                    [maxValues]="maxValues"
                    [valueNames]="valueNames"
                    [contentProtocol]="contentProtocol"

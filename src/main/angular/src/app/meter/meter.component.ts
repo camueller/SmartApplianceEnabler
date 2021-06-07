@@ -48,7 +48,6 @@ import {NotificationComponent} from '../notification/notification.component';
   selector: 'app-meter',
   templateUrl: './meter.component.html',
   styleUrls: ['./meter.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
   @ViewChild(MeterS0Component)

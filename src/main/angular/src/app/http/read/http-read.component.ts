@@ -71,6 +71,9 @@ export class HttpReadComponent implements OnChanges, OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    if (changes.form) {
+      this.expandParentForm();
+    }
     if (changes.httpRead) {
       if (changes.httpRead.currentValue) {
         this.httpRead = changes.httpRead.currentValue;
@@ -78,9 +81,6 @@ export class HttpReadComponent implements OnChanges, OnInit {
         this.httpRead = HttpRead.createWithSingleChild();
       }
       this.updateForm();
-    }
-    if (changes.form) {
-      this.expandParentForm();
     }
   }
 
@@ -148,7 +148,8 @@ export class HttpReadComponent implements OnChanges, OnInit {
   }
 
   expandParentForm() {
-    this.formHandler.addFormControl(this.form, 'url', this.httpRead.url,
+    this.formHandler.addFormControl(this.form, 'url',
+      this.httpRead && this.httpRead.url,
       [Validators.required, Validators.pattern(InputValidatorPatterns.URL)]);
     this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'httpReadValues',
       this.httpRead.readValues);
