@@ -550,9 +550,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                 socValues.batteryCapacity = firstVehicle.getBatteryCapacity();
             }
             if(getForceInitialCharging() && wasInStateOneTime(EVChargerState.VEHICLE_CONNECTED)) {
-                if(this.minPowerConsumption != null && this.minPowerConsumption > 0) {
-                    setChargePower(this.minPowerConsumption);
-                }
+                setChargePowerToMinimum();
                 startCharging();
             }
         }
@@ -719,6 +717,13 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
             return Float.valueOf((appliance.getMeter().getEnergy() - socRetrievalEnergyMeterValue) * 1000.0f).intValue();
         }
         return 0;
+    }
+
+    public void setChargePowerToMinimum() {
+        logger.debug("{}: Set minimum charge power", applianceId);
+        if(this.minPowerConsumption != null && this.minPowerConsumption > 0) {
+            setChargePower(this.minPowerConsumption);
+        }
     }
 
     public synchronized void setChargePower(int power) {
