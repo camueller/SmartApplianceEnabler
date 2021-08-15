@@ -341,12 +341,13 @@ Das Update einer vorhandenen Version besteht darin, zunächst das alte Programm 
 pi@raspberrypi ~ $ rm /opt/sae/*.war
 ```
 Jetzt kann die gewünschte Version des Programms heruntergeladen werden, wie im Erstinstallations-Kapitel [Programm-Download](#programm-download) beschrieben.
-Falls das Format der Konfigurationsdatei `Appliances.xml` in der neuen Programmversion nicht mehr kompatibel zur alten Version ist oder man sich diesbezüglich unsicher ist, müssen die alten Konfigurationsdateien gelöscht werden:
+
+In den allermeisten Fällen kann die neues Version des *Smart Appliance Enabler* die Konfigurationsdateien der alten Version migrieren auf die neue Version. Falls sich beim Starten der neuen Version des *Smart Appliance Enabler* im Log Fehlermeldungen finden, die eindeutig auf Probleme mit der Konfigurationsdatei hindeuten, sollten die Dateien so umbenannt werden, dass sie nicht verwendet werden aber ggf. wieder reaktiviert werden können:
 ```console
-pi@raspberrypi ~ $ rm /opt/sae/Appliances.xml
-pi@raspberrypi ~ $ rm /opt/sae/Device2EM.xml
+pi@raspberrypi ~ $ mv /opt/sae/Appliances.xml /opt/sae/Appliances.xml.old
+pi@raspberrypi ~ $ mv /opt/sae/Device2EM.xml /opt/sae/Device2EM.xml.old
 ```
-Nach dem Löschen dieser beiden Datei muss die Konfiguration neu erstellt werden, wie im Kapitel [Konfiguration](Configuration_DE.md) beschrieben.
+Danach muss die Konfiguration neu erstellt werden, wie im Kapitel [Konfiguration](Configuration_DE.md) beschrieben.
 
 ### Benachrichtigungen
 Für den optionalen Versand von Benachrichtigungen via [Telegram](http://www.telegram.org) wird ein Script bereitgestellt, das mit den folgenden Befehlen heruntergeladen und ausführbar gemacht wird:
