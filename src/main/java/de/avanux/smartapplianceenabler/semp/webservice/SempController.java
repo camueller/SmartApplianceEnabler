@@ -311,7 +311,9 @@ public class SempController {
             List<TimeframeInterval> queue = appliance.getTimeframeIntervalHandler().getQueue();
             queue.stream()
                     .filter(timeframeInterval -> timeframeInterval.getRequest().isEnabled()
-                            && timeframeInterval.getRequest().getMax(now) > 0)
+                            && timeframeInterval.getRequest().getMax(now) != null
+                            && timeframeInterval.getRequest().getMax(now) > 0
+                    )
                     .forEach(timeframeInterval -> {
                         Timeframe sempTimeFrame = createSempTimeFrame(now, appliance.getId(), timeframeInterval);
                         sempTimeFrames.add(sempTimeFrame);
