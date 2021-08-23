@@ -176,6 +176,7 @@ export class ControlFactory {
     let controlUsed: any;
     if (control.startingCurrentDetection) {
       control.startingCurrentSwitch['control'] = this.getControlByType(control);
+      control.startingCurrentSwitch['control'].notifications = control.notifications;
       controlUsed = control.startingCurrentSwitch;
       if (controlUsed.powerThreshold === '') {
         controlUsed.powerThreshold = null;
