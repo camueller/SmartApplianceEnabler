@@ -379,7 +379,7 @@
 
     <xs:complexType name="NotificationsType">
         <xs:sequence>
-            <xs:element name="Type" type="NotificationsTypeType" minOccurs="0" />
+            <xs:element name="Type" type="NotificationsTypeType" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
     </xs:complexType>
 
