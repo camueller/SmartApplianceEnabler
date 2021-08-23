@@ -11,7 +11,7 @@ import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {MatInputHarness} from '@angular/material/input/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 
-const translations = require('assets/i18n/de.json');
+const translations = {}; // require('assets/i18n/de.json');
 
 /** Button events to pass to `DebugElement.triggerEventHandler` for RouterLink event handler */
 export const ButtonClickEvents = {
