@@ -25,6 +25,7 @@ import {HttpConfigurationComponent} from '../../http/configuration/http-configur
 import {HttpWriteComponent} from '../../http/write/http-write.component';
 import {HttpWrite} from '../../http/write/http-write';
 import {isControlValid} from '../control-validator';
+import {HttpRead} from '../../http/read/http-read';
 
 @Component({
   selector: 'app-control-http',
@@ -159,6 +160,9 @@ export class ControlHttpComponent implements OnChanges, OnInit {
     this.formHandler.addFormControl(this.form, 'readControlState', readControlState);
     this.setReadControlState(readControlState);
     this.form.controls.readControlState.valueChanges.subscribe(value => {
+      if (value && !this.httpSwitch.httpRead) {
+        this.httpSwitch.httpRead = HttpRead.createWithSingleChild();
+      }
       this.setReadControlState(value);
       this.form.markAsDirty();
     });
