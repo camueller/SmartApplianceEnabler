@@ -14,6 +14,6 @@ export class HttpWrite {
   }
 
   public static createWithSingleChild() {
-    return new HttpWrite({writeValues: [new HttpWriteValue()]});
+    return new HttpWrite({writeValues: [HttpWriteValue.createWithSingleChild()]});
   }
 }
