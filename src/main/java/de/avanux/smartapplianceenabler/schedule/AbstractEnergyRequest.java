@@ -29,12 +29,23 @@ import java.time.LocalDateTime;
 @XmlTransient
 abstract public class AbstractEnergyRequest extends AbstractRequest {
 
+    private transient boolean updateTimeframeIntervalEnd;
+
     public AbstractEnergyRequest() {
         setEnabled(false);
     }
 
     protected Logger getLogger() {
         return LoggerFactory.getLogger(AbstractEnergyRequest.class);
+    }
+
+
+    public void setUpdateTimeframeIntervalEnd(boolean updateTimeframeIntervalEnd) {
+        this.updateTimeframeIntervalEnd = updateTimeframeIntervalEnd;
+    }
+
+    public boolean isUpdateTimeframeIntervalEnd() {
+        return updateTimeframeIntervalEnd;
     }
 
     @Override

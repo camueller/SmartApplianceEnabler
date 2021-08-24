@@ -323,7 +323,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
 
     public void updateStateTimerTaskImpl(LocalDateTime now) {
         updateState(now);
-        updateActiveTimeframeIntervalFromRequest(now);
+        updateActiveTimeframeIntervalRequest(now);
         updateSoc(now);
     }
 
@@ -655,6 +655,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         request.setSocInitial(socCurrent);
         request.setSocCurrent(socCurrent);
         request.setEnabled(true);
+        request.setUpdateTimeframeIntervalEnd(chargeEnd == null);
         request.updateForced();
 
         if(chargeEnd == null) {
@@ -671,13 +672,13 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         return timeframeInterval;
     }
 
-    private void updateActiveTimeframeIntervalFromRequest(LocalDateTime now) {
+    private void updateActiveTimeframeIntervalRequest(LocalDateTime now) {
         if(isCharging()) {
             TimeframeInterval activeTimeframeInterval = this.appliance.getTimeframeIntervalHandler().getActiveTimeframeInterval();
-            if(activeTimeframeInterval != null) {
-                Request request = activeTimeframeInterval.getRequest();
+            if(activeTimeframeInterval != null && activeTimeframeInterval.getRequest() instanceof AbstractEnergyRequest) {
+                AbstractEnergyRequest request = (AbstractEnergyRequest) activeTimeframeInterval.getRequest();
                 int chargePower = this.appliance.getMeter().getAveragePower();
-                if(!(request instanceof OptionalEnergySocRequest) && chargePower > 0) {
+                if(request.isUpdateTimeframeIntervalEnd() && chargePower > 0) {
                     int chargeSeconds = calculateChargeSeconds(
                             getConnectedVehicle(),
                             activeTimeframeInterval.getRequest().getMax(now),
