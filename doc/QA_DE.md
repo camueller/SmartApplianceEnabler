@@ -14,6 +14,7 @@
 - Läuft der *Smart Appliance Enabler*? ---> [SAE1](#sae1)
 - Fehler beim Start des *Smart Appliance Enabler* ---> [SAE2](#sae2)
 - Wo kann man einen anderen Port als 8080 einstellen? ---> [SAE5](#sae5)
+- Wie kann man die Konfiguration des *Smart Appliance Enabler* sichern und wiederherstellen, beispielsweise für eine Neuinstallation? ---> [SAE6](#sae6)
 
 ## Antworten
 
@@ -99,3 +100,5 @@ Wenn ein Schaltbefehl vom *Sunny Home Manager* empfangen wird, wird dieser an de
 ### SAE5
 In der [Server-Konfiguration](ConfigurationFiles_DE.md#etc-default-smartapplianceenabler) kann der Standardport geändert werden.
 
+### SAE6
+Die gesamte Konfiguration des *Smart Appliance Enabler* ist in [zwei XML-Dateien enthalten](ConfigurationFiles_DE.md). Diese kann man [auf einen anderen Computer sichern](ConfigurationFiles_DE.md#scp).
