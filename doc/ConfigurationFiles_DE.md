@@ -37,5 +37,6 @@ Zum Transferieren der Dateien zwischen Raspberry Pi und PC kann man unter Linux 
 In der Datei `/etc/default/smartapplianceenabler` finden sich die Konfigurationseinstellungen für den *Smart Appliance Enabler*. Die darin befindlichen Parameter (z.B. Netzwerk-Adresse, Port, Java-Einstellungen, ...) sind in der Datei selbst dokumentiert. Normalerweise sollte man die Datei unverändert lassen können.
 
 ## Log-Konfiguration
+<a name="log-konfiguration">
 
 Die Konfiguration des Loggings erfolgt in der Datei `/opt/sae/logback-spring.xml`.

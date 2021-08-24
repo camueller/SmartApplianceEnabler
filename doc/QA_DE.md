@@ -98,7 +98,7 @@ Wenn ein Schaltbefehl vom *Sunny Home Manager* empfangen wird, wird dieser an de
 - [Wallbox](EVCharger_DE.md#log)
 
 ### SAE5
-In der [Server-Konfiguration](ConfigurationFiles_DE.md#etc-default-smartapplianceenabler) kann der Standardport geändert werden.
+In der [Server-Konfiguration](ConfigurationFiles_DE.md#user-content-etc-default-smartapplianceenabler) kann der Standardport geändert werden.
 
 ### SAE6
-Die gesamte Konfiguration des *Smart Appliance Enabler* ist in [zwei XML-Dateien enthalten](ConfigurationFiles_DE.md). Diese kann man [auf einen anderen Computer sichern](ConfigurationFiles_DE.md#scp).
+Die gesamte Konfiguration des *Smart Appliance Enabler* ist in [zwei XML-Dateien enthalten](ConfigurationFiles_DE.md). Diese kann man [auf einen anderen Computer sichern](ConfigurationFiles_DE.md#user-content-scp).

@@ -22,7 +22,7 @@ $ grep "Starting current detected" /tmp/rolling-2021-01-08.log
 2021-01-08 10:43:57,469 DEBUG [pi4j-gpio-event-executor-2] d.a.s.c.StartingCurrentSwitch [StartingCurrentSwitch.java:298] F-00000001-000000000012-00: Starting current detected.
 ```
 
-*Webmin*: In [View Logfile](Logging_DE.md#webmin-logs) gibt man hinter `Only show lines with text` ein `Starting current detected` und drückt Refresh.
+*Webmin*: In [View Logfile](Logging_DE.md#user-content-webmin-logs) gibt man hinter `Only show lines with text` ein `Starting current detected` und drückt Refresh.
 
 Entsprechend findet sich im Log auch ein Eintrag, sobald der Abschaltstrom erkannt wurde:
 
@@ -31,4 +31,4 @@ $ grep "Finished current detected" /tmp/rolling-2021-01-08.log
 2021-01-08 13:04:25,374 DEBUG [Timer-0] d.a.s.c.StartingCurrentSwitch [StartingCurrentSwitch.java:316] F-00000001-000000000012-00: Finished current detected.
 ```
 
-*Webmin*: In [View Logfile](Logging_DE.md#webmin-logs) gibt man hinter `Only show lines with text` ein `Finished current detected` und drückt Refresh.
+*Webmin*: In [View Logfile](Logging_DE.md#user-content-webmin-logs) gibt man hinter `Only show lines with text` ein `Finished current detected` und drückt Refresh.

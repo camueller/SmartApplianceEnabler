@@ -30,4 +30,4 @@ sae@raspi:~ $ grep 'Http' /tmp/rolling-2021-01-01.log | grep F-00000001-00000000
 2021-01-01 09:42:55,636 DEBUG [http-nio-8080-exec-9] d.a.s.m.HttpElectricityMeter [HttpElectricityMeter.java:154] F-00000001-000000000005-00: average power = 1280W
 ```
 
-*Webmin*: In [View Logfile](Logging_DE.md#webmin-logs) gibt man hinter `Only show lines with text` ein `F-00000001-000000000005-00` und drückt Refresh.
+*Webmin*: In [View Logfile](Logging_DE.md#user-content-webmin-logs) gibt man hinter `Only show lines with text` ein `F-00000001-000000000005-00` und drückt Refresh.

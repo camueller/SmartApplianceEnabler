@@ -272,8 +272,8 @@ Der *Smart Appliance Enabler* wird normalerweise als Service des [Systemd](https
 Die Datei `/opt/sae/smartapplianceenabler` ist das eigentliche Start-Script für den *Smart Appliance Enabler*. Man kann es zwar direkt aufrufen, aber eigentlich sollte es nur vom _Systemd_ verwendet werden.
 
 Siehe auch:
-- [Konfigurationseinstellungen](ConfigurationFiles_DE.md#server-konfiguration)
-- [Konfiguration des Loggings](ConfigurationFiles_DE.md#log-konfiguration)
+- [Konfigurationseinstellungen](ConfigurationFiles_DE.md#user-content-etc-default-smartapplianceenabler)
+- [Konfiguration des Loggings](ConfigurationFiles_DE.md#user-content-log-konfiguration)
 
 Damit der *Smart Appliance Enabler* beim Systemstart ebenfalls gestartet wird (via Systemd), muss folgender Befehl ausgeführt werden:
 ```console
@@ -310,7 +310,6 @@ Jetzt sollte man den *Smart Appliance Enabler* starten können:
 pi@raspberrypi:~ $ sudo systemctl start smartapplianceenabler.service
 ```
 Je nach Raspberry Pi-Model dauert der Start bis zu 60 Sekunden.
-Weil bei diesem Befehl keine Ausgaben auf der Konsole erfolgen, sollte [überprüft werden, ob der *Smart Appliance Enabler* tatsächlich läuft](Support_DE.md#l%C3%A4uft-der-smart-appliance-enabler). Auf dieser Seite finden sich auch Hinweise, falls es Probleme gibt.
 
 Wenn der *Smart Appliance Enabler* läuft, muss als Nächstes die [Konfiguration](Configuration_DE.md) vorgenommen werden.
 
@@ -350,6 +349,7 @@ pi@raspberrypi ~ $ mv /opt/sae/Device2EM.xml /opt/sae/Device2EM.xml.old
 Danach muss die Konfiguration neu erstellt werden, wie im Kapitel [Konfiguration](Configuration_DE.md) beschrieben.
 
 ### Benachrichtigungen
+<a name="notifications">
 Für den optionalen Versand von Benachrichtigungen via [Telegram](http://www.telegram.org) wird ein Script bereitgestellt, das mit den folgenden Befehlen heruntergeladen und ausführbar gemacht wird:
 ```console
 pi@raspberrypi ~ $ wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/notifyWithTelegram.sh -P /opt/sae

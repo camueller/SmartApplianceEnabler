@@ -4,7 +4,7 @@ Durch Benachrichtigungen informiert der *Smart Appliance Enabler* über Ereignis
 
 Ein Hauptanwendungsfall für mich ist die Benachrichtigung, wenn Geräte nicht erreichbar sind. Bei mir kommt es immer wieder vor, dass Geräte mit Tasmota irgendwann nicht mehr im WLAN sind und ich das nicht gleich bemerke. Dann fehlen natürlich die Verbräuche im *Sunny Home Manager*. Aber es ist auch ganz nett, wenn man eine Benachrichtigung bekommt, wenn die Waschmaschine fertig ist oder das Auto voll geladen.
 
-Bevor Benachrichtigungen konfiguriert werden können muss ein [Shell-Script in den Einstellungen konfiguriert](Settings_DE.md#benachrichtigungen) sein, über das der *Smart Appliance Enabler* die Benachrichtigungen versendet.
+Bevor Benachrichtigungen konfiguriert werden können muss ein [Shell-Script in den Einstellungen konfiguriert](Settings_DE.md#user-content-notifications) sein, über das der *Smart Appliance Enabler* die Benachrichtigungen versendet.
 
 Nachdem ein Shell-Script konfiguriert wurde, kann für Zähler und Schalter durch Aktivieren der Checkbox `Aktiviert` das Versenden von Benachrichtigungen gerätespezifisch aktiviert werden.
 
@@ -36,7 +36,7 @@ Diese [Bots müssen der zuvor angelegten Gruppe hinzugefügt](https://telegram.o
 
 Zum Versenden von Benachrichtigungen wird die Chat ID der Gruppe benötigt. Diese wird angezeigt, wenn man den Bot `@getidsbot` zur Gruppe hinzufügt. Wenn man die ID ermittelt hat, kann der `@getidsbot` wieder aus der Gruppe entfernt werden.
 
-Für die Nutzung von [Benachrichtigungen via Telegram wird ein Shell-Script](ManualInstallation_DE.md#Benachrichtigungen) bereitgestellt. In diesem Shell-Script muss die zuvor ermittelte Chat ID eingetragen werden (ggf. vorhandenes Minus-Zeichen muss übernommen werden):
+Für die Nutzung von [Benachrichtigungen via Telegram wird ein Shell-Script](ManualInstallation_DE.md#user-content-notifications) bereitgestellt. In diesem Shell-Script muss die zuvor ermittelte Chat ID eingetragen werden (ggf. vorhandenes Minus-Zeichen muss übernommen werden):
 ```
 chat=-123456789
 ```

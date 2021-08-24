@@ -14,7 +14,7 @@ Nachdem der *Sunny Home Manager* den *Smart Appliance Enabler* gefunden hat, bes
 ```
 http://raspi:8080/semp
 ```
-Die vom *Smart Appliance Enabler* an den *Sunny Home Manager* kommunizierte [SEMP-URL findet sich im Log](Logging_DE.md#anzeige-der-semp-url). Wenn diese URL nicht korrekt ist, kann der *Sunny Home Manager* nicht mit dem *Smart Appliance Enabler* kommunizieren, d.h es können keine Geräte im *Sunny Portal* hinzugefügt werden und Geräte werden nicht gemessen und geschaltet!
+Die vom *Smart Appliance Enabler* an den *Sunny Home Manager* kommunizierte [SEMP-URL findet sich im Log](SEMP_DE.md#user-content-url). Wenn diese URL nicht korrekt ist, kann der *Sunny Home Manager* nicht mit dem *Smart Appliance Enabler* kommunizieren, d.h es können keine Geräte im *Sunny Portal* hinzugefügt werden und Geräte werden nicht gemessen und geschaltet!
 
 ## SEMP-XML
 <a name="xml">

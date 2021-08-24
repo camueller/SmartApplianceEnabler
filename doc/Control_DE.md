@@ -6,7 +6,7 @@ Derzeit unterstützt der *Smart Appliance Enabler* folgende Schalter:
 
 * [Zählerbasierter Zustandsmelder](MeterReportingSwitch_DE.md) ist automatisch aktiv, wenn kein anderer Schalter konfiguriert wird
 * [GPIO](GPIOSwitch_DE.md)
-* [Modbus](ModbusSwitch_DE.md) erscheint nur, wenn in den [Einstellungen](Settings_DE.md#modbus) mindesten ein Modbus konfiguriert wurde
+* [Modbus](ModbusSwitch_DE.md) erscheint nur, wenn in den [Einstellungen](Settings_DE.md#user-content-modbus) mindesten ein Modbus konfiguriert wurde
 * [HTTP](HttpSwitch_DE.md)
 * [Immer eingeschaltet](AlwaysOnSwitch_DE.md)
 

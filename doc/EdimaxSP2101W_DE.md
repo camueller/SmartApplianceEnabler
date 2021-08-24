@@ -47,7 +47,7 @@ Aus obigem Beispiel ergeben sich folgende Feld-Inhalte im *Smart Appliance Enabl
 | Password              | 12345678 |
 | Content-Type          | application/xml |
 
-Wird ein Edimax SP2101W geschaltet, finden sich in der [Log-Datei](Support.md#Log) für jeden Schaltvorgang folgende Zeilen:
+Wird ein Edimax SP2101W geschaltet, finden sich im im [Log](Logging_DE.md) für jeden Schaltvorgang folgende Zeilen:
 ```
 2017-06-03 18:54:03,193 DEBUG [http-nio-8080-exec-5] d.a.s.s.w.SempController [SempController.java:192] F-00000001-000000000001-00: Received control request
 2017-06-03 18:54:03,197 DEBUG [http-nio-8080-exec-5] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:101] F-00000001-000000000001-00: Sending HTTP request

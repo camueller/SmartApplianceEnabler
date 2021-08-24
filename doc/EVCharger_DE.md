@@ -72,12 +72,12 @@ Im *Sunny Home Manager* sollte die Verbraucher-Konfiguration für eine Wallbox w
 
 Wenn ein *SOC-Script* konfiguriert wurde, wird dieses **automatisch nach dem Verbinden des Fahrzeuges mit der Wallbox** ausgeführt.
 
-Zusätzlich besteht die Möglichkeit, den Ist- und Soll-Ladezustand einzugeben beim [manuellen Start des Ladevorganges](Status_DE.md#click-green-ev).
+Zusätzlich besteht die Möglichkeit, den Ist- und Soll-Ladezustand einzugeben beim [manuellen Start des Ladevorganges](Status_DE.md#user-content-click-green-ev).
 
 Auf Basis der Werte für
 - `Batteriekapazität`: aus der Fahrzeug-Konfiguration
-- `Ist-SOC`: geliefert vom SOC-Script oder eingegeben über die [Ampel-Steuerung](Status_DE.md#click-green-ev)
-- `Soll-SOC` Standardwert aus der Fahrzeug-Konfiguration oder eingegeben über [Ampel-Steuerung](Status_DE.md#click-green-ev)
+- `Ist-SOC`: geliefert vom SOC-Script oder eingegeben über die [Ampel-Steuerung](Status_DE.md#user-content-click-green-ev)
+- `Soll-SOC` Standardwert aus der Fahrzeug-Konfiguration oder eingegeben über [Ampel-Steuerung](Status_DE.md#user-content-click-green-ev)
 
 ... wird die **initiale Energiemenge** berechnet, die vom *Sunny Home Manager* anzufordern ist.
 
@@ -91,7 +91,7 @@ Aus der Differenz von berechnetem SOC und Soll-SOC wird **kontinuierlich die Ene
 
 Während des Ladevorgangs wird das **SOC-Script periodisch ausgeführt**. Wenn sich der berechnete SOC entweder um einen konfigurierten Wert (Standard: 20%) erhöht oder seit der letzten Ausführung des SOC-Script eine konfigurierte Zeit vergangen ist, wird das SOC-Script erneut ausgeführt. Der berechnete SOC wird mit dem tatsächlichen SOC verglichen und daraus die tatsächlichen Ladeverluste berechnet. Für alle nachfolgenden Berechnungen des SOC bis zur nächsten Ausführung des SOC-Scripts während des aktuellen Ladevorganges werden die tatsächlichen Ladeverluste berücksichtigt.
 
-**Ohne SOC-Script** und ohne [Eingabe des aktuellen Ist-Ladezustands](Status_DE.md#click-green-ev) geht der *Smart Appliance Enabler* von einem Ist-Ladezustand von 0% aus und meldet einen entsprechend großen Energiebedarf. Das verschlechtert zwar die Planung des *Sunny Home Manager*, aber unabhängig davon beendet die Wallbox das Laden spätestens, wenn das Fahrzeug voll geladen ist.
+**Ohne SOC-Script** und ohne [Eingabe des aktuellen Ist-Ladezustands](Status_DE.md#user-content-click-green-ev) geht der *Smart Appliance Enabler* von einem Ist-Ladezustand von 0% aus und meldet einen entsprechend großen Energiebedarf. Das verschlechtert zwar die Planung des *Sunny Home Manager*, aber unabhängig davon beendet die Wallbox das Laden spätestens, wenn das Fahrzeug voll geladen ist.
 
 ### Beispiel:
 Der Ablauf eines (Überschuss-) Ladevorgangs soll hier anhand von Auszügen aus dem Log veranschaulicht werden:
@@ -186,11 +186,11 @@ sae@raspi:~ $ grep "Received control" -A 3 /tmp/rolling-2020-11-18.log
 2020-11-18 09:36:10,063 DEBUG [http-nio-8080-exec-3] d.a.s.m.EVModbusControl [EVModbusControl.java:178] F-00000001-000000000019-00: Set charge current 14A
 ```
 
-*Webmin*: In [View Logfile](Logging_DE.md#webmin-logs) gibt man hinter `Only show lines with text` ein `Received control` und drückt Refresh.
+*Webmin*: In [View Logfile](Logging_DE.md#user-content-webmin-logs) gibt man hinter `Only show lines with text` ein `Received control` und drückt Refresh.
 
 ### SOC-Script
 
-Für jede Ausführung des SOC-Scripts finden sich im [Log](Support_DE.md#log) folgende Zeilen:
+Für jede Ausführung des SOC-Scripts finden sich im [Log](Logging_DE.md) folgende Zeilen:
 
 ```console
 sae@raspi:~ $ grep "SocScript" /tmp/rolling-2021-01-09.log
@@ -201,4 +201,4 @@ sae@raspi:~ $ grep "SocScript" /tmp/rolling-2021-01-09.log
 2021-01-09 08:51:15,503 DEBUG [Thread-7] d.a.s.c.e.SocScript [SocScript.java:87] F-00000001-000000000019-00: SoC: 94.0
 ```
 
-*Webmin*: In [View Logfile](Logging_DE.md#webmin-logs) gibt man hinter `Only show lines with text` ein `SocScript` und drückt Refresh.
+*Webmin*: In [View Logfile](Logging_DE.md#user-content-webmin-logs) gibt man hinter `Only show lines with text` ein `SocScript` und drückt Refresh.

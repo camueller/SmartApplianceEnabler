@@ -98,7 +98,7 @@ Dazu geht man auf die Tasmota-Web-Konsole des Adapters und gibt den Befehl `Ener
 17:14:25 RSL: RESULT = {"EnergyRes":5}
 ```
 
-Für jede Zähler-Abfrage finden sich in der [Log-Datei](Support.md#Log) folgende Zeilen:
+Für jede Zähler-Abfrage finden sich im [Log](Logging_DE.md) folgende Zeilen:
 ```
 2021-02-08 00:09:54,324 DEBUG [Timer-0] d.a.s.u.GuardedTimerTask [GuardedTimerTask.java:54] F-00000001-000000000014-00: Executing timer task name=PollEnergyMeter id=13049675
 2021-02-08 00:09:54,324 DEBUG [Timer-0] d.a.s.h.HttpTransactionExecutor [HttpTransactionExecutor.java:107] F-00000001-000000000014-00: Sending GET request url=http://kuehltruhe/cm?cmnd=Status%208
@@ -109,7 +109,7 @@ Für jede Zähler-Abfrage finden sich in der [Log-Datei](Support.md#Log) folgend
 2021-02-08 00:09:54,465 DEBUG [Timer-0] d.a.s.m.PollEnergyMeter [PollEnergyMeter.java:120] F-00000001-000000000014-00: Adding value: timestamp=2021-02-08T00:09:54.324795 value=56.00865
 ```
 
-*Webmin*: In [View Logfile](Logging_DE.md#webmin-logs) gibt man hinter `Only show lines with text` ein `Http` und drückt Refresh.
+*Webmin*: In [View Logfile](Logging_DE.md#user-content-webmin-logs) gibt man hinter `Only show lines with text` ein `Http` und drückt Refresh.
 
 ## Geräte mit Tasmota-Firmware als Schalter
 
@@ -139,7 +139,7 @@ Aus obigem Beispiel ergeben sich folgende Feld-Inhalte im *Smart Appliance Enabl
 | Ausschalten      | http://192.168.1.1/cm?cmnd=Power%20Off |
 | Eingeschaltet    | http://192.168.1.1/cm?cmnd=Power       | :.ON
 
-Für jeden Schaltvorgang finden sich in der [Log-Datei](Support.md#Log) folgende Zeilen:
+Für jeden Schaltvorgang finden sich im [Log](Logging_DE.md) folgende Zeilen:
 ```
 2020-01-06 14:51:22,817 INFO [http-nio-8080-exec-4] d.a.s.c.HttpSwitch [HttpSwitch.java:128] F-00000001-000000000001-00: Switching on
 2020-01-06 14:51:22,817 DEBUG [http-nio-8080-exec-4] d.a.s.h.HttpTransactionExecutor [HttpTransactionExecutor.java:105] F-00000001-000000000001-00: Sending GET request url=http://192.168.1.1/cm?cmnd=Power%20On
