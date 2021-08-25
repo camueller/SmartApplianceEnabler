@@ -90,17 +90,49 @@ curl -X POST -d '<EM2Device xmlns="http://www.sma.de/communication/schema/SEMP/v
 ##### Lokal
 Unter Verwendung des lokalen Browsers werden die Tests wie folgt gestartet:
 ```console
-$ testcafe chrome "src/pump.spec.ts"
+$ ./node_modules/.bin/testcafe chrome "src/*.spec.ts"
  Running tests in:
- - Chrome 80.0.3987.149 / Linux 0.0
+ - Chrome 92.0.4515.159 / Linux 0.0
 
- Pump
- ✓ Create appliance
+ Settings
+ ✓ Modbus
+
+ Wallbox go-eCharger
+ ✓ Create appliance with interruptions allowed without timing specification
+ ✓ Create HTTP meter
+ ✓ Create HTTP control
+ ✓ Add electric vehicle
+ ✓ Create Schedule with SOC request from friday to sunday
+
+ Wallbox mit PhoenixContact-Ladecontroller
+ ✓ Create appliance with interruptions allowed without timing specification
  ✓ Create Modbus meter
  ✓ Create Modbus control
+ ✓ Create Schedule with nightly energy request
+
+ Fridge
+ ✓ Create appliance
+ ✓ Create HTTP meter
+ ✓ Create always-on-switch
+
+ Heat pump
+ ✓ Create appliance with interruptions allowed and min/max on/off timings
+ ✓ Create S0 meter
+ ✓ Create GPIO switch
+
+ Pump
+ ✓ Create appliance with interruptions allowed without timing specification
+ ✓ Create Modbus meter with specific poll interval and all notifications enabled
+ ✓ Create Modbus control with selected notifications enabled
+
+ Washing Machine
+ ✓ Create appliance
+ ✓ Create HTTP meter with specifc poll interval
+ ✓ Create HTTP switch with starting current detection
+ ✓ Create Schedules for weekdays and weekend
 
 
- 3 passed (30s)
+ 23 passed (3m 02s)
 ```
 
 Um mehr Informationen (z.B. CSS-Selectoren) zu sehen, muss `DEBUG=true` gesetzt werden:
