@@ -161,6 +161,8 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
 
   typeChanged(newType?: string) {
     this.meter.type = `de.avanux.smartapplianceenabler.meter.${newType}`;
+    // make form invalid initially in order to avoid "NG0100: Expression has changed after it was checked"
+    this.form.setErrors({'typeChanged': true});
   }
 
   submitForm() {

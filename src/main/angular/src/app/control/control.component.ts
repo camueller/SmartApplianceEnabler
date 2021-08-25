@@ -140,12 +140,6 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
       this.control && this.control.startingCurrentDetection);
   }
 
-  updateForm() {
-    this.formHandler.setFormControlValue(this.form, 'controlType', simpleControlType(this.control.type));
-    this.formHandler.setFormControlValue(this.form, 'startingCurrentDetection',
-      this.control && this.control.startingCurrentDetection);
-  }
-
   canDeactivate(): Observable<boolean> | boolean {
     if (this.form.pristine) {
       return true;
@@ -219,6 +213,10 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
 
   typeChanged(newType?: string | undefined) {
     this.control.type = `de.avanux.smartapplianceenabler.control.${newType}`;
+    // make form invalid initially in order to avoid "NG0100: Expression has changed after it was checked"
+    if (!this.isAlwaysOnSwitch) {
+      this.form.setErrors({'typeChanged': true});
+    }
     if (!this.control.type) {
       this.control.startingCurrentDetection = false;
     } else if (this.isAlwaysOnSwitch) {
