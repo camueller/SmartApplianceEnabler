@@ -309,7 +309,7 @@
 
   "SchedulesComponent.title": "Schedules",
   "SchedulesComponent.button.addSchedule": "Add schedule",
-  "SchedulesComponent.message.notControllable": "Schedules are only available for appliances with a control type which can be controlled.",
+  "SchedulesComponent.message.notControllable": "Schedules are only available for appliances with a control of a type which can be controlled.",
 
   "ScheduleComponent.schedule": "Schedule",
   "ScheduleComponent.enabled": "enabled",
@@ -387,7 +387,7 @@
   "StatusComponent.state.CHARGING": "Charging",
   "StatusComponent.state.CHARGING_COMPLETED": "Charging completed",
   "StatusComponent.state.ERROR": "Error",
-  "StatusComponent.stateOfCharge": "State of charge",
+  "StatusComponent.stateOfCharge": "State of charge (SOC)",
   "StatusComponent.stateOfChargeCurrent": "Current ",
   "StatusComponent.stateOfChargeRequested": "Requested ",
   "StatusComponent.stateOfChargeUnit": "%",
@@ -405,6 +405,7 @@
   "StatusEvchargerViewComponent.since": "since",
   "StatusEvchargerViewComponent.currently": "currently",
 
+  "StatusEvchargerEditComponent.stateOfCharge": "SOC",
   "StatusEvchargerEditComponent.error.stateOfChargeCurrent_pattern": "The current state of charge has to be a percentage",
   "StatusEvchargerEditComponent.error.stateOfChargeRequested_pattern": "The requested state of charge has to be a percentage",
   "StatusEvchargerEditComponent.error.chargeEndTime_pattern": "The charge end time has to be specified as 'Hours:Minutes'",
@@ -440,7 +441,7 @@
   "daysOfWeek_sunday": "Sunday",
   "daysOfWeek_holiday": "Holiday",
 
-  "timeOfDay": "Time of day",
+  "timeOfDay": "Time",
 
   "regex.tooltip": "Has to be specified if the value has to be extracted from the response or the response has to match a value",
 

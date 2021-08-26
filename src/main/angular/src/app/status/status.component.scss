@@ -84,6 +84,10 @@
     margin: $field-margin 0;
   }
 
+  &__traffic-light-explanations {
+    margin-top: 1rem;
+  }
+
   &__traffic-light-explanation {
     display: flex;
     flex-direction: row;
