@@ -314,15 +314,6 @@
   "ScheduleComponent.schedule": "Zeitplan",
   "ScheduleComponent.enabled": "aktiviert",
 
-  "ScheduleComponent.daysOfWeek_monday": "Montag",
-  "ScheduleComponent.daysOfWeek_tuesday": "Dienstag",
-  "ScheduleComponent.daysOfWeek_wednesday": "Mittwoch",
-  "ScheduleComponent.daysOfWeek_thursday": "Donnerstag",
-  "ScheduleComponent.daysOfWeek_friday": "Freitag",
-  "ScheduleComponent.daysOfWeek_saturday": "Samstag",
-  "ScheduleComponent.daysOfWeek_sunday": "Sonntag",
-  "ScheduleComponent.daysOfWeek_holiday": "Feiertag",
-
   "ScheduleComponent.timeframeType": "Zeitrahmen",
   "de.avanux.smartapplianceenabler.schedule.DayTimeframe": "Tagesplan",
   "de.avanux.smartapplianceenabler.schedule.ConsecutiveDaysTimeframe": "Mehrtagesplan",
