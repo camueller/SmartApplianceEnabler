@@ -402,6 +402,9 @@
 
   "StatusEditComponent.error.runtime_pattern": "Die minimale Laufzeit muss in 'Stunden:Minuten' angegeben werden",
 
+  "StatusEvchargerViewComponent.since": "seit",
+  "StatusEvchargerViewComponent.currently": "aktuell",
+
   "StatusEvchargerEditComponent.error.stateOfChargeCurrent_pattern": "Der Ist-Ladezustand (SOC) muss als Prozentwert angegeben werden",
   "StatusEvchargerEditComponent.error.stateOfChargeRequested_pattern": "Der Soll-Ladezustand (SOC) muss als Prozentwert angegeben werden",
   "StatusEvchargerEditComponent.error.chargeEndTime_pattern": "Die Uhrzeit muss in 'Stunden:Minuten' angegeben werden",

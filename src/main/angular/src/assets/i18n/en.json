@@ -402,6 +402,9 @@
 
   "StatusEditComponent.error.runtime_pattern": "The minimal runtime has to be specified as 'Hours:Minutes'",
 
+  "StatusEvchargerViewComponent.since": "since",
+  "StatusEvchargerViewComponent.currently": "currently",
+
   "StatusEvchargerEditComponent.error.stateOfChargeCurrent_pattern": "The current state of charge has to be a percentage",
   "StatusEvchargerEditComponent.error.stateOfChargeRequested_pattern": "The requested state of charge has to be a percentage",
   "StatusEvchargerEditComponent.error.chargeEndTime_pattern": "The charge end time has to be specified as 'Hours:Minutes'",

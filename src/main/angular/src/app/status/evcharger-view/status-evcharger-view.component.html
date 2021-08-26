@@ -4,16 +4,16 @@
     <span class="StatusComponent__appliance-status-label">{{'StatusComponent.state' | translate}}:</span>
     <span class="StatusComponent__appliance-status-value"> {{stateKey | translate}}</span>
     <span class="StatusComponent__appliance-status-value" *ngIf="status.stateLastChangedTimestamp"
-    > (seit {{toHHmmFromTimestamp(status.stateLastChangedTimestamp)}} Uhr)</span>
+    > ({{'StatusEvchargerViewComponent.since' | translate}} {{toHHmmFromTimestamp(status.stateLastChangedTimestamp)}})</span>
   </div>
   <div *ngIf="status.evIdCharging">
     <span class="StatusComponent__appliance-status-label">{{'StatusComponent.stateOfCharge' | translate}}:</span>
     <div class="StatusComponent__appliance-status-value-indented">
-      <span class="StatusComponent__appliance-status-value">{{status.soc}}{{'StatusComponent.stateOfChargeUnit' | translate}} (aktuell)</span>
+      <span class="StatusComponent__appliance-status-value">{{status.soc}}{{'StatusComponent.stateOfChargeUnit' | translate}} ({{'StatusEvchargerViewComponent.currently' | translate}})</span>
     </div>
     <div class="StatusComponent__appliance-status-value-indented" *ngIf="status.socInitial">
     <span class="StatusComponent__appliance-status-value">{{status.socInitial}}{{'StatusComponent.stateOfChargeUnit' | translate
-      }} ({{toWeekdayStringFromTimestamp(status.socInitialTimestamp)}} {{toHHmmFromTimestamp(status.socInitialTimestamp)}} Uhr)</span>
+      }} ({{toWeekdayStringFromTimestamp(status.socInitialTimestamp)}} {{toHHmmFromTimestamp(status.socInitialTimestamp)}})</span>
     </div>
   </div>
   <div class="StatusComponent__appliance-status" *ngIf="status.currentChargePower != null">
@@ -30,6 +30,6 @@
   </div>
   <div class="StatusComponent__appliance-status" *ngIf="status.latestEnd != null">
     <span class="StatusComponent__appliance-status-label">{{'StatusComponent.energyLatestEnd' | translate}}</span>
-    <span class="StatusComponent__appliance-status-value">{{toWeekdayStringFromDelta(status.latestEnd)}} {{toHHmmFromDelta(status.latestEnd)}} Uhr</span>
+    <span class="StatusComponent__appliance-status-value">{{toWeekdayStringFromDelta(status.latestEnd)}} {{toHHmmFromDelta(status.latestEnd)}}</span>
   </div>
 </div>
