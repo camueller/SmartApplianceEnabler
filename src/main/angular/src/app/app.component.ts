@@ -40,7 +40,9 @@ export class AppComponent implements OnInit {
     translate.setDefaultLang('de');
     translate.addLangs(['en']);
     const  currentLanguage  =  this.translate.getBrowserLang();
-    if (currentLanguage !== 'de') {
+    // For "en" we have to force German since Browserstack does not support setting the accepted languages in the browser.
+    // This would cause the tests to fail since they expect German string from Drop-Downs etc.
+    if (currentLanguage !== 'de' && currentLanguage !== 'en') {
       translate.use('en');
     }
   }
