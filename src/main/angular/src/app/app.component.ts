@@ -38,6 +38,11 @@ export class AppComponent implements OnInit {
     private translate: TranslateService
   ) {
     translate.setDefaultLang('de');
+    translate.addLangs(['en']);
+    const  currentLanguage  =  this.translate.getBrowserLang();
+    if (currentLanguage !== 'de') {
+      translate.use('en');
+    }
   }
 
   ngOnInit(): void {
