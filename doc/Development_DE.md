@@ -157,17 +157,15 @@ clicked
 ##### Browserstack
 Zur Ausführung der Tests in [BrowserStack](https://www.browserstack.com/) werden die Tests wie folgt gestartet:
 ```console
-$ testcafe "browserstack:chrome@69.0:Windows 10" "src/pump.spec.ts"
+$ node_modules/.bin/testcafe "browserstack:chrome@92.0:Windows 10" "src/aa_settings.spec.ts"
  Running tests in:
- - Chrome 69.0.3497.92 / Windows 10 (https://automate.browserstack.com/builds/02a07b54c04c76fb251f6d0e3621ab2823fe4421/sessions/69b381846b5b0c0918f0ebfbe5337f1ad2d37473)
+ - Chrome 92.0.4515.107 / Windows 10 (https://automate.browserstack.com/builds/a3d339b91d11e8b07134e05b1cb29050a74dfb64/sessions/f8f5d223d8317b22e989cf9f98f501e9bea56901)
 
- Appliance
- ✓ Create appliance
- ✓ Create meter
- ✓ Create control
+ Settings
+ ✓ Modbus
 
 
- 1 passed (27s)
+ 1 passed (17s)
 ```
 ... auch mit mehreren Browsern:
 ```console
