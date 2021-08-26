@@ -57,7 +57,7 @@ export class StatusEvchargerEditComponent implements OnInit {
   chargeModes: ListItem[] = [];
   chargeModeSelected = ChargeMode.FAST;
   electricVehicleSelected: ElectricVehicle;
-  soc: string;
+  socString: string;
   submitButtonTextStart: string;
   submitButtonTextSave: string;
 
@@ -94,7 +94,7 @@ export class StatusEvchargerEditComponent implements OnInit {
     this.form = new FormGroup({
       chargeMode: new FormControl(this.chargeModeSelected),
       electricVehicle: new FormControl(this.electricVehicleSelected && this.electricVehicleSelected.id),
-      stateOfChargeCurrent: new FormControl(this.soc, Validators.pattern(InputValidatorPatterns.PERCENTAGE)),
+      stateOfChargeCurrent: new FormControl(this.socString, Validators.pattern(InputValidatorPatterns.PERCENTAGE)),
       stateOfChargeRequested: new FormControl(this.electricVehicleSelected && this.electricVehicleSelected.defaultSocManual,
         Validators.pattern(InputValidatorPatterns.PERCENTAGE)),
     }, socValidator);
@@ -130,10 +130,12 @@ export class StatusEvchargerEditComponent implements OnInit {
   }
 
   retrieveSoc() {
-    this.statusService.getSoc(this.status.id, this.electricVehicleSelected.id).subscribe(soc => {
-      if (! Number.isNaN(Number.parseInt(soc, 10))) {
-        this.soc = Number.parseFloat(soc).toFixed();
-        this.form.get('stateOfChargeCurrent').setValue(this.soc);
+    this.statusService.getSoc(this.status.id, this.electricVehicleSelected.id).subscribe(socString => {
+      if (! Number.isNaN(Number.parseInt(socString, 10))) {
+        const soc = Number.parseFloat(socString);
+        if (soc > 0) {
+          this.socString = soc.toFixed();
+        }
       }
     });
   }
