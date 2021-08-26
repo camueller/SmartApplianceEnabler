@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/logo.png">
+  <img src="https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/logo-384x384.png">
   <h3 align="center">Smart Appliance Enabler</h3>
   <p align="center">
     <a href="https://travis-ci.org/camueller/SmartApplianceEnabler">
