@@ -187,6 +187,10 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         return this.socValues.current != null ? this.socValues.current : 0;
     }
 
+    public void setSocCurrent(Integer socCurrent) {
+        this.socValues.current = socCurrent;
+    }
+
     public SocValues getSocValues() {
         return socValues;
     }
