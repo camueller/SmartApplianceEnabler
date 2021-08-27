@@ -72,7 +72,7 @@ public class WebConfig implements WebMvcConfigurer {
         /**
          * Angular artefacts must not be mapped to index.html
          */
-        registry.addResourceHandler("*.js", "*.css", "*.map", "flags.*", "icons.*", "favicon.ico")
+        registry.addResourceHandler("*.js", "*.css", "*.map", "flags.*", "icons.*", "favicon.ico", "manifest.json")
                 .addResourceLocations("classpath:/static/")
                 .setCacheControl(noCache);
 

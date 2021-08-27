@@ -210,6 +210,27 @@
             <id>web</id>
             <build>
                 <plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>generate-sources</phase>
+								<configuration>
+									<tasks>
+										<copy todir="${project.basedir}/src/main/angular/src/assets/icons">
+											<fileset dir="${project.basedir}/pics">
+												<include name="logo**.png"/>
+											</fileset>
+
+										</copy>
+									</tasks>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>

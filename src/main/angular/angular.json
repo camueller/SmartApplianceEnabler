@@ -18,6 +18,7 @@
             "polyfills": "src/polyfills.ts",
             "assets": [
               "src/assets",
+              "src/manifest.json",
               "src/favicon.ico"
             ],
             "styles": [
