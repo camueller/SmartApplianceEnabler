@@ -12,6 +12,27 @@ und das Projekt folgt den Leitlinien des [Semantic Versioning](https://semver.or
 | SAE         | Smart Appliance Enabler |
 | SHM         | Sunny Home Manager |
 
+## [1.6.16](https://github.com/camueller/SmartApplianceEnabler/releases/tag/1.6.15) - 28.08.2021
+
+### Gefixt
+- WEB: Beim Wechseln zwischen den Zählern verschiedener Geräte wird der Inhaltkorrekt aktualisiert
+- WEB: Benachrichtigungen konnten nicht gespeichert werden, wenn bei Schaltern die Anlaufstromerkennung aktiviert war
+- WEB: bei HTTP-Schaltern kam es zu einem Fehler nach Klick auf "Status via HTTP abfragen"
+- WEB: beim Laden im Mode "Optimiert" wurde der eingegebene Ist-SOC nicht korrekt gespeichert, was eine fehlerhafte Energieberechnung nach sich zog
+- WEB: die Steuerung zum Einblenden des Feldes "Abfrageintervall" bei HTTP-/Modbus-Zählern hat nicht immer funktioniert
+
+### Geändert
+- Wenn der SHM mit dem Einschaltbefehl für Wallboxen keine Leistungsvorgabe sendet, wird jetzt mit der als minimal konfigurierten Leistung eingeschaltet
+- Wenn das Fahrzeug von der Wallbox getrennt wird, werden die Queue geleert; bisher blieben Anforderungen für die Folgetage in der Queue, wenn Zeitpläne konfiguriert waren.
+- WEB: bei HTTP-Zählern wurde bisher keine HTTP-Methode als Standard angezeigt, obwohl implizit GET verwendet wurde. Jetzt kann nur zwischen vorhandenen HTTP-Methoden gewählt werden, d.h. eine Leer-Auswahl ist nicht mehr möglich.
+- kleinere Änderungen an Texten und am Layout, die im Rahmen der Englisch-Übersetzung aufgefallen sind
+- Dokumentation aktualisiert
+
+### Neu
+- WEB: alle Texte sind jetzt in Englisch verfügbar. Wenn die laut Web-Browser gewünschte Sprache Deutsch ist, werden deutsche Texte angezeigt, in allen anderen Fällen die englischen Texte.
+- WEB: Unterstützung von "Zur Startseite hinzufügen", was besonders zum direkten Aufruf der SAE-Seite auf Handies hilfreich ist; dazu habe ich das Logo endlich mal als Vektorgrafik erstellt und dafür sowie für die Homepage in verschiedenen Auflösungen verwendet
+
+
 ## [1.6.15](https://github.com/camueller/SmartApplianceEnabler/releases/tag/1.6.15) - 06.06.2021
 
 ### Gefixt
