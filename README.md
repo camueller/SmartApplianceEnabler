@@ -109,6 +109,8 @@ Der eigentliche Zweck des *Smart Appliance Enabler* besteht in der Integration v
 Alle Informationen rund um die [Entwicklung](doc/Development_DE.md) des *Smart Appliance Enabler* einschliesslich der Dokumentation der Build- und Testumgebungen.
 
 ## Dank und Anerkennung
+Das Projekt *Smart Appliance Enabler* wurde **von [SMA](http://www.sma.de) unterstützt** durch die kostenfreie Bereitstellung eines [Sunny Home Manager 2.0](https://www.sma.de/produkte/monitoring-control/sunny-home-manager-20.html)!
+
 Der *Smart Appliance Enabler* würde so nicht existieren ohne folgende Tools und Frameworks, deren Entwicklern ich Dank und Anerkennung zolle:
 * [Angular](https://angular.io) für das Web-Frontend
 * [Angular Material](https://material.angular.io/) für die Material-Design-Komponenten des Web-Frontends

@@ -5,9 +5,7 @@ Dabei sollten unbedingt die Hinweise im Kapitel zum [Raspberry Pi](Raspberry_DE.
 
 Zur Konfiguration eines S0-Stromzählers gehört die Nummer des GPIO-Anschlusses, die Konfiguration des internen Widerstands (Pull-Up / Pull-Down - siehe unten) sowie die Anzahl der Impulse pro kWh.
 
-Ausserdem kann ein `Messinterval` angegeben werden für die Durchschnittsberechnung der Leistungsaufnahme.
-
-Für die Genauigkeit des Zählers ist die Anzahl der Impulse pro kWh wichtig. Die meisten aktuellen Zähler bieten hier 1000imp. Persönlich bin ich sehr zufrieden mit den Zählern von [B+G E-Tech](http://www.bg-etech.de/), die zudem recht günstig sind.
+Für die Genauigkeit des Zählers ist die Anzahl der Impulse pro kWh wichtig. Die meisten aktuellen Zähler bieten hier 1000 Impulse je kWh. Persönlich bin ich sehr zufrieden mit den Zählern von [B+G E-Tech](http://www.bg-etech.de/), die zudem recht günstig sind.
 
 ![S0 Meter](../pics/fe/S0Meter.png)
 

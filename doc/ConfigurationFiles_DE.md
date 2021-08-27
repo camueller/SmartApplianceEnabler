@@ -9,7 +9,7 @@ Die Groß-/Kleinschreibung der Dateinamen muss genau so sein, wie hier angegeben
 Die Dateien müssen sich in dem Verzeichnis befinden, auf das die Variable `SAE_HOME` verweist (normalerweise `/opt/sae`)
 
 ### Speichern
-Beim Klick auf die Speichern-Schaltfäche der Web-Oberfläche werden diese Daten geschrieben. Dadurch wird der *Smart Appliance Enabler* intern neu gestartet, damit die geänderte Konfiguration wirksam wird. Aktuell laufende Geräte werden in diesem Moment immer gestoppt/ausgeschalten um einen definierten Zustand zu erhalten. Auch werden bereits in Anspruch genommene Energiemengen/Laufzeiten von Geräten zurück gesetzt und neu eingeplant. Um das zu vermeiden sollte man die Konfiguration möglichst dann ändern, wenn die zu steuernden Geräte gerade nicht laufen.
+Beim Klick auf die Speichern-Schaltfäche der Web-Oberfläche werden diese Daten geschrieben. Dadurch wird der *Smart Appliance Enabler* intern neu gestartet, damit die geänderte Konfiguration wirksam wird. Aktuell laufende Geräte werden in diesem Moment immer gestoppt/ausgeschalten um einen definierten Zustand zu erhalten. Auch werden bereits in Anspruch genommene Energie/Laufzeiten von Geräten zurück gesetzt und neu eingeplant. Um das zu vermeiden sollte man die Konfiguration möglichst dann ändern, wenn die zu steuernden Geräte gerade nicht laufen.
 
 ### Direkte Änderungen in den Konfigurationsdateien
 

@@ -30,14 +30,14 @@ Der *Smart Appliance Enabler* meldet dem Sunny Home Manager den Geräte-Laufzeit
 Bei Wallboxen existieren als **Anforderungsart** zwei Optionen:
 
 ### Laden bis SOC
-Mit der Anforderungsart `Laden bis SOC` wird genau die Energiemenge angefordert, die notwendig ist, um einen bestimmten SOC zu erreichen. Zur Berechnung dieser Energiemenge wird die Batteriekapazität und der SOC des Fahrzeugs bei Ladebeginn herangezogen. Für letzteres ist es notwendig, dass der [SOC des Fahrzeugs via Script](soc/SOC_DE.md) abgefragt werden kann.
+Mit der Anforderungsart `Laden bis SOC` wird genau die Energie angefordert, die notwendig ist, um einen bestimmten SOC zu erreichen. Zur Berechnung dieser Energiemenge wird die Batteriekapazität und der SOC des Fahrzeugs bei Ladebeginn herangezogen. Für letzteres ist es notwendig, dass der [SOC des Fahrzeugs via Script](soc/SOC_DE.md) abgefragt werden kann.
 ![Anforderungsart SOC](../pics/fe/SchaltzeitenTagesplanSOC.png)
 
-### Laden einer Energiemenge
+### Energie
 
-Mit der Anforderungsart `Energiemenge` kann eine bestimmte Energiemenge (in Wh) angefordert werden. Normalerweise wird nur die `max. Ernergiemenge` angegeben, die auf jeden Fall geladen werden soll.
+Mit der Anforderungsart `Energie` kann wird anzufordernde Energie direkt vorgegeben. Normalerweise wird nur die `max. Energie` angegeben, die auf jeden Fall geladen werden soll.
 
-Optional kann für die `min. Energiemenge` ein kleinerer Wert angegeben werden. Falls er angegeben ist, wird nur dieser Wert auf jeden Fall geladen und die darüber hinausgehende Energiemenge bis zur `max. Ernergiemenge` nur dann, wenn **Überschussenergie** verfügbar ist.
-![Anforderungsart Energiemenge](../pics/fe/SchaltzeitenTagesplanEnergiemenge.png)
+Optional kann für die `min. Energie` ein kleinerer Wert angegeben werden. Falls er angegeben ist, wird nur dieser Wert auf jeden Fall geladen und die darüber hinausgehende Energiemenge bis zur `max. Ernergie` nur dann, wenn **Überschussenergie** verfügbar ist.
+![Anforderungsart Energie](../pics/fe/SchaltzeitenTagesplanEnergie.png)
 
 Siehe auch: [Allgemeine Hinweise zur Konfiguration](Configuration_DE.md)

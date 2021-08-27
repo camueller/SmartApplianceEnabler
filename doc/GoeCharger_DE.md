@@ -24,9 +24,9 @@ die IP-Adresse bzw. der Hostname in den URL-Feldern muss auf die des go-eCharger
 
 Als `Format` muss `JSON` ausgewählt werden, damit die Antworten des go-eCharger korrekt interpretiert werden können.
 
-Das Feld `Pfad` muss den Wert `$.dws` enthalten, damit der *Smart Appliance Enabler* weiss, an welcher Stelle in der Antwort des go-eChargers der Wert für die Energiemenge enthalten ist. 
+Das Feld `Pfad` muss den Wert `$.dws` enthalten, damit der *Smart Appliance Enabler* weiss, an welcher Stelle in der Antwort des go-eChargers der Wert für die Energie enthalten ist. 
 
-Im Feld `Umrechnungsfaktor` muss die Zahl `0.0000027778` eingegeben werden, weil der go-eCharger die Energiemenge in 10 Deka-Watt-Sekunden liefert.
+Im Feld `Umrechnungsfaktor` muss die Zahl `0.0000027778` eingegeben werden, weil der go-eCharger die Energie in 10 Deka-Watt-Sekunden liefert.
 
 Als Zustand ist `Zählerwert` zu wählen.
 

@@ -4,7 +4,7 @@ Für [HTTP-basierte Geräte sind diese allgemeinen Hinweise](Http_DE.md) zu beac
 
 Für HTTP-basierte Schalter müssen die Aktionen `Einschalten` und `Auschalten` konfiguriert werden. Das kann wahlweise durch zwei unterschiedlicher URLs oder eine URL mit unterschiedlicher Konfiguration erreicht werden.
 
-Optional kann eine weitere URL angegeben werden, die zur Bestimmung des Schaltzustandes abgefragt wird. Das kann notwendig sein, wenn das Gerät nicht nur über den *Smart Appliance Enabler* gesteuert wird. Dabei muss ein [Regulärer Ausdruck](WertExtraktion_DE.md) angegeben werden, der "matchen" muss, wenn der Schaltzustand "eingeschaltet" ist. Liefert dieser besipielsweise "true" (ohne Anführungszeichen), so muss als Regulärer Ausdruck "(true)" (ohne Anführungszeichen) eingetragen werden.
+Normalerweise kennt der *Smart Appliance Enabler* den Zustand des Gerätes, weil er die Befehle zum Ein- und Ausschalten sendet und sich den Zustand merkt. Das funktioniert allerdings nicht, wenn das Gerät auch auf anderem Weg geschaltet wird. In dieser Fall muss `Status über HTTP abfragen` aktiviert werden und es kann eine weitere URL zur Bestimmung des Schaltzustandes angegeben werden. Dabei muss ein [Regulärer Ausdruck](WertExtraktion_DE.md) angegeben werden, der "matchen" muss, wenn der Schaltzustand "eingeschaltet" ist. Liefert dieser beispielsweise "true" (ohne Anführungszeichen), so muss als Regulärer Ausdruck "(true)" (ohne Anführungszeichen) eingetragen werden.
 
 Für alle URLs lassen sich `Daten` angeben, die mit der Anfrage gesendet werden. Wenn Daten angegeben werden, sollte auch der `Content-Type` dieser Daten in dem entsprechenden Eingabefeld angegeben werden.
 
