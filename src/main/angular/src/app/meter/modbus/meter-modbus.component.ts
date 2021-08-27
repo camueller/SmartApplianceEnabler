@@ -1,14 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  Input,
-  OnChanges,
-  OnInit,
-  QueryList,
-  SimpleChanges,
-  ViewChildren
-} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, QueryList, SimpleChanges, ViewChildren} from '@angular/core';
 import {ControlContainer, FormArray, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {ModbusRead} from '../../modbus/read/modbus-read';
@@ -27,7 +17,6 @@ import {Logger} from '../../log/logger';
 import {ModbusSetting} from '../../settings/modbus/modbus-setting';
 import {MessageBoxLevel} from 'src/app/material/messagebox/messagebox.component';
 import {ValueNameChangedEvent} from '../value-name-changed-event';
-import {ReadValueMapKey} from '../../shared/read-value-map-key';
 
 @Component({
   selector: 'app-meter-modbus',
@@ -59,13 +48,12 @@ export class MeterModbusComponent implements OnChanges, OnInit {
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
-  readValueNames = new Map<ReadValueMapKey, string>();
+  readValueName: MeterValueName;
   MessageBoxLevel = MessageBoxLevel;
 
   constructor(private logger: Logger,
               private parent: FormGroupDirective,
               private translate: TranslateService,
-              private changeDetectorRef: ChangeDetectorRef
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
     this.formHandler = new FormHandler();
@@ -113,26 +101,15 @@ export class MeterModbusComponent implements OnChanges, OnInit {
   }
 
   onNameChanged(index: number, event: ValueNameChangedEvent) {
-    const key: ReadValueMapKey = {readIndex: index, readValueIndex: event.valueIndex};
-    if (event.name) {
-      this.readValueNames.set(key, event.name);
-    } else {
-      Array.from(this.readValueNames.keys()).forEach(aKey => {
-        if (aKey.readIndex === key.readIndex && aKey.readValueIndex === key.readValueIndex) {
-          this.readValueNames.delete(aKey);
-        }
-      });
+    if (event.name === MeterValueName.Energy) {
+      this.readValueName = MeterValueName.Energy;
+    } else if (event.name === MeterValueName.Power) {
+      this.readValueName = MeterValueName.Power;
     }
   }
 
   get displayPollInterval(): boolean {
-    let display = false;
-    this.readValueNames.forEach(value => {
-      if (!display && value === MeterValueName.Power) {
-        display = true;
-      }
-    });
-    return display;
+    return this.readValueName === MeterValueName.Power;
   }
 
   get isAddModbusReadPossible() {
@@ -141,26 +118,6 @@ export class MeterModbusComponent implements OnChanges, OnInit {
 
   get maxValues() {
     return 1;
-  }
-
-  addModbusRead() {
-    this.modbusElectricityMeter.modbusReads.push(ModbusRead.createWithSingleChild());
-    this.modbusReadsFormArray.push(new FormGroup({}));
-    this.form.markAsDirty();
-    this.changeDetectorRef.detectChanges();
-  }
-
-  onModbusReadRemove(index: number) {
-    this.modbusElectricityMeter.modbusReads.splice(index, 1);
-    this.modbusReadsFormArray.removeAt(index);
-
-    Array.from(this.readValueNames.keys()).forEach(aKey => {
-      if (aKey.readIndex === index) {
-        this.readValueNames.delete(aKey);
-      }
-    });
-
-    this.form.markAsDirty();
   }
 
   get modbusReadsFormArray() {

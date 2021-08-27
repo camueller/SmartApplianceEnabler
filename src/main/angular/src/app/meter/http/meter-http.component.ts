@@ -1,6 +1,5 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   Input,
   OnChanges,
@@ -27,7 +26,6 @@ import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {Logger} from '../../log/logger';
 import {TranslateService} from '@ngx-translate/core';
 import {ValueNameChangedEvent} from '../value-name-changed-event';
-import {ReadValueMapKey} from '../../shared/read-value-map-key';
 
 @Component({
   selector: 'app-meter-http',
@@ -49,7 +47,7 @@ export class MeterHttpComponent implements OnChanges, OnInit {
   meterDefaults: MeterDefaults;
   @Input()
   isEvCharger: boolean;
-  readValueNames = new Map<ReadValueMapKey, string>();
+  readValueName: MeterValueName;
   contentProtocols = [undefined, ContentProtocol.JSON.toUpperCase()];
   form: FormGroup;
   formHandler: FormHandler;
@@ -60,7 +58,6 @@ export class MeterHttpComponent implements OnChanges, OnInit {
   constructor(private logger: Logger,
               private parent: FormGroupDirective,
               private translate: TranslateService,
-              private changeDetectorRef: ChangeDetectorRef
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
     this.formHandler = new FormHandler();
@@ -98,26 +95,15 @@ export class MeterHttpComponent implements OnChanges, OnInit {
   }
 
   onNameChanged(index: number, event: ValueNameChangedEvent) {
-    const key: ReadValueMapKey = {readIndex: index, readValueIndex: event.valueIndex};
-    if (event.name) {
-      this.readValueNames.set(key, event.name);
-    } else {
-      Array.from(this.readValueNames.keys()).forEach(aKey => {
-        if (aKey.readIndex === key.readIndex && aKey.readValueIndex === key.readValueIndex) {
-          this.readValueNames.delete(aKey);
-        }
-      });
+    if (event.name === MeterValueName.Energy) {
+      this.readValueName = MeterValueName.Energy;
+    } else if (event.name === MeterValueName.Power) {
+      this.readValueName = MeterValueName.Power;
     }
   }
 
   get displayPollInterval(): boolean {
-    let display = false;
-    this.readValueNames.forEach(value => {
-      if (!display && value === MeterValueName.Power) {
-        display = true;
-      }
-    });
-    return display;
+    return this.readValueName === MeterValueName.Power;
   }
 
   get contentProtocol(): string {
@@ -131,26 +117,6 @@ export class MeterHttpComponent implements OnChanges, OnInit {
 
   get maxValues() {
     return 1;
-  }
-
-  addHttpRead() {
-    this.httpElectricityMeter.httpReads.push(HttpRead.createWithSingleChild());
-    this.httpReadsFormArray.push(new FormGroup({}));
-    this.form.markAsDirty();
-    this.changeDetectorRef.detectChanges();
-  }
-
-  onHttpReadRemove(index: number) {
-    this.httpElectricityMeter.httpReads.splice(index, 1);
-    this.httpReadsFormArray.removeAt(index);
-
-    Array.from(this.readValueNames.keys()).forEach(aKey => {
-      if (aKey.readIndex === index) {
-        this.readValueNames.delete(aKey);
-      }
-    });
-
-    this.form.markAsDirty();
   }
 
   get httpReadsFormArray() {
