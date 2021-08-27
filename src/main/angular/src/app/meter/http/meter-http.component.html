@@ -20,21 +20,14 @@
     [form]="form"
     [httpConfiguration]="httpElectricityMeter.httpConfiguration"
   ></app-http-configuration>
-  <div class="MeterHttpComponent__httpReads" formArrayName="httpReads">
-    <app-http-read *ngFor="let httpReadFormGroup of httpElectricityMeter.httpReads; index as i; last as l"
-                   [formGroupName]="i"
-                   [form]="getHttpReadFormGroup(i)"
-                   [httpRead]="httpElectricityMeter.httpReads[i]"
-                   [maxValues]="maxValues"
-                   [valueNames]="valueNames"
-                   [contentProtocol]="contentProtocol"
-                   [translationPrefix]="'MeterHttpComponent.'"
-                   [translationKeys]="valueNameTextKeys"
-                   (remove)="onHttpReadRemove(i)"
-                   (nameChanged)="onNameChanged(i, $event)"
-                   #httpReadComponents
-    ></app-http-read>
-    <button mat-raised-button type="button" (click)="addHttpRead()" class="MeterHttpComponent__addHttpRead" *ngIf="isAddHttpReadPossible">
-      {{'MeterHttpComponent.button.addHttpRead' | translate}}</button>
-  </div>
+  <app-http-read [form]="form"
+                 [httpRead]="httpElectricityMeter.httpReads[0]"
+                 [maxValues]="maxValues"
+                 [disableRemove]="true"
+                 [valueNames]="valueNames"
+                 [contentProtocol]="contentProtocol"
+                 [translationPrefix]="'MeterHttpComponent.'"
+                 [translationKeys]="valueNameTextKeys"
+                 (nameChanged)="onNameChanged($event)"
+  ></app-http-read>
 </div>

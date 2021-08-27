@@ -1,14 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  Input,
-  OnChanges,
-  OnInit,
-  QueryList,
-  SimpleChanges,
-  ViewChild,
-  ViewChildren
-} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {ControlContainer, FormArray, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {HttpElectricityMeter} from './http-electricity-meter';
 import {ContentProtocol} from '../../shared/content-protocol';
@@ -41,8 +31,8 @@ export class MeterHttpComponent implements OnChanges, OnInit {
   httpElectricityMeter: HttpElectricityMeter;
   @ViewChild(HttpConfigurationComponent, {static: true})
   httpConfigurationComp: HttpConfigurationComponent;
-  @ViewChildren('httpReadComponents')
-  httpReadComps: QueryList<HttpReadComponent>;
+  @ViewChild(HttpReadComponent, {static: true})
+  httpReadComp: HttpReadComponent;
   @Input()
   meterDefaults: MeterDefaults;
   @Input()
@@ -94,7 +84,7 @@ export class MeterHttpComponent implements OnChanges, OnInit {
     return ['MeterHttpComponent.Energy', 'MeterHttpComponent.Power'];
   }
 
-  onNameChanged(index: number, event: ValueNameChangedEvent) {
+  onNameChanged(event: ValueNameChangedEvent) {
     if (event.name === MeterValueName.Energy) {
       this.readValueName = MeterValueName.Energy;
     } else if (event.name === MeterValueName.Power) {
@@ -139,22 +129,16 @@ export class MeterHttpComponent implements OnChanges, OnInit {
     const pollInterval = getValidInt(this.form.controls.pollInterval.value);
     const contentProtocol = this.form.controls.contentProtocol.value;
     const httpConfiguration = this.httpConfigurationComp.updateModelFromForm();
-    const httpReads = [];
-    this.httpReadComps.forEach(httpReadComponent => {
-      const httpRead = httpReadComponent.updateModelFromForm();
-      if (httpRead) {
-        httpReads.push(httpRead);
-      }
-    });
+    const httpRead = this.httpReadComp.updateModelFromForm();
 
-    if (!(pollInterval || contentProtocol || httpConfiguration || httpReads.length > 0)) {
+    if (!(pollInterval || contentProtocol || httpConfiguration || httpRead)) {
       return undefined;
     }
 
     this.httpElectricityMeter.pollInterval = pollInterval;
     this.httpElectricityMeter.contentProtocol = contentProtocol;
     this.httpElectricityMeter.httpConfiguration = httpConfiguration;
-    this.httpElectricityMeter.httpReads = httpReads;
+    this.httpElectricityMeter.httpReads = httpRead ? [httpRead] : undefined;
     return this.httpElectricityMeter;
   }
 }

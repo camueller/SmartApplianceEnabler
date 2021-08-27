@@ -24,17 +24,7 @@ export class ModbusMeterPage extends MeterPage {
     await ModbusMeterPage.setIdRef(t, settings.modbusSettings[0].modbusTcpId);
     await ModbusMeterPage.setAddress(t, modbusElectricityMeter.slaveAddress);
 
-    const powerModbusRead = modbusElectricityMeter.modbusReads.find(
-      modbusRead => modbusRead.readValues.find(modbusReadValue => modbusReadValue.name === MeterValueName.Power));
-    if (powerModbusRead) {
-      await ModbusReadPage.setModbusRead(t, powerModbusRead, 0, this.selectorPrefix);
-    }
-
-    const energyModbusRead = modbusElectricityMeter.modbusReads.find(
-      modbusRead => modbusRead.readValues.find(modbusReadValue => modbusReadValue.name === MeterValueName.Energy));
-    if (energyModbusRead) {
-      await ModbusReadPage.setModbusRead(t, energyModbusRead, 0, this.selectorPrefix);
-    }
+    await ModbusReadPage.setModbusRead(t, modbusElectricityMeter.modbusReads[0]);
 
     if (modbusElectricityMeter.pollInterval) {
       await ModbusMeterPage.setPollInterval(t, modbusElectricityMeter.pollInterval);

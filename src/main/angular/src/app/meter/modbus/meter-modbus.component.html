@@ -25,22 +25,14 @@
         <mat-error *ngIf="errors.pollInterval">{{errors.pollInterval}}</mat-error>
       </mat-form-field>
     </div>
-    <div class="MeterModbusComponent__modbusReads"  formArrayName="modbusReads">
-      <app-modbus-read *ngFor="let modbusRead of modbusElectricityMeter.modbusReads; index as i; last as l"
-                       [formGroupName]="i"
-                       [form]="getModbusReadFormGroup(i)"
-                       [modbusRead]="modbusRead"
-                       [meterDefaults]="meterDefaults"
-                       [maxValues]="maxValues"
-                       [valueNames]="valueNames"
-                       [translationPrefix]="'MeterModbusComponent.'"
-                       [translationKeys]="valueNameTextKeys"
-                       (remove)="onModbusReadRemove(i)"
-                       (nameChanged)="onNameChanged(i, $event)"
-                       #modbusReadComponents
-      ></app-modbus-read>
-      <button mat-raised-button type="button" (click)="addModbusRead()" class="MeterModbusComponent__addModbusRead" *ngIf="isAddModbusReadPossible">
-        {{'MeterModbusComponent.button.addModbusRead' | translate}}</button>
-    </div>
+    <app-modbus-read [form]="form"
+                     [modbusRead]="modbusElectricityMeter.modbusReads[0]"
+                     [meterDefaults]="meterDefaults"
+                     [maxValues]="maxValues"
+                     [valueNames]="valueNames"
+                     [translationPrefix]="'MeterModbusComponent.'"
+                     [translationKeys]="valueNameTextKeys"
+                     (nameChanged)="onNameChanged($event)"
+    ></app-modbus-read>
   </div>
 </div>

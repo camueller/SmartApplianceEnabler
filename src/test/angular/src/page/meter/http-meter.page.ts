@@ -22,22 +22,7 @@ export class HttpMeterPage extends MeterPage {
       await HttpMeterPage.setContentProtocol(t, httpElectricityMeter.contentProtocol);
     }
 
-    const powerHttpRead = httpElectricityMeter.httpReads.find(
-      httpRead => httpRead.readValues.find(httpReadValue => httpReadValue.name === MeterValueName.Power));
-    let httpReadIndex = 0;
-    if (powerHttpRead) {
-      await HttpReadPage.setHttpRead(t, powerHttpRead, httpReadIndex, this.selectorPrefix);
-    }
-
-    const energyHttpRead = httpElectricityMeter.httpReads.find(
-      httpRead => httpRead.readValues.find(httpReadValue => httpReadValue.name === MeterValueName.Energy));
-    if (energyHttpRead) {
-      if (powerHttpRead) {
-        httpReadIndex += 1;
-        await HttpReadPage.clickAddHttpRead(t, this.selectorPrefix, 'MeterHttpComponent__addHttpRead');
-      }
-      await HttpReadPage.setHttpRead(t, energyHttpRead, httpReadIndex, this.selectorPrefix);
-    }
+    await HttpReadPage.setHttpRead(t, httpElectricityMeter.httpReads[0]);
 
     if (httpElectricityMeter.pollInterval) {
       await HttpMeterPage.setPollInterval(t, httpElectricityMeter.pollInterval);

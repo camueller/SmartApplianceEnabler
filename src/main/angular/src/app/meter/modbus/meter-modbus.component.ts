@@ -1,4 +1,14 @@
-import {ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, QueryList, SimpleChanges, ViewChildren} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  QueryList,
+  SimpleChanges,
+  ViewChild,
+  ViewChildren
+} from '@angular/core';
 import {ControlContainer, FormArray, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {ModbusRead} from '../../modbus/read/modbus-read';
@@ -30,8 +40,8 @@ import {ValueNameChangedEvent} from '../value-name-changed-event';
 export class MeterModbusComponent implements OnChanges, OnInit {
   @Input()
   modbusElectricityMeter: ModbusElectricityMeter;
-  @ViewChildren('modbusReadComponents')
-  modbusReadComps: QueryList<ModbusReadComponent>;
+  @ViewChild(ModbusReadComponent, {static: true})
+  modbusReadComp: ModbusReadComponent;
   @Input()
   meterDefaults: MeterDefaults;
   @Input()
@@ -100,7 +110,7 @@ export class MeterModbusComponent implements OnChanges, OnInit {
     return ['MeterModbusComponent.Energy', 'MeterModbusComponent.Power'];
   }
 
-  onNameChanged(index: number, event: ValueNameChangedEvent) {
+  onNameChanged(event: ValueNameChangedEvent) {
     if (event.name === MeterValueName.Energy) {
       this.readValueName = MeterValueName.Energy;
     } else if (event.name === MeterValueName.Power) {
@@ -143,22 +153,16 @@ export class MeterModbusComponent implements OnChanges, OnInit {
     const idref = getValidString(this.form.controls.idref.value);
     const slaveAddress = getValidString(this.form.controls.slaveAddress.value);
     const pollInterval = getValidInt(this.form.controls.pollInterval.value);
-    const modbusReads = [];
-    this.modbusReadComps.forEach(modbusReadComponent => {
-      const modbusRead = modbusReadComponent.updateModelFromForm();
-      if (modbusRead) {
-        modbusReads.push(modbusRead);
-      }
-    });
+    const modbusRead = this.modbusReadComp.updateModelFromForm();
 
-    if (!(idref || slaveAddress || pollInterval || modbusReads.length > 0)) {
+    if (!(idref || slaveAddress || pollInterval || modbusRead)) {
       return undefined;
     }
 
     this.modbusElectricityMeter.idref = idref;
     this.modbusElectricityMeter.slaveAddress = slaveAddress;
     this.modbusElectricityMeter.pollInterval = pollInterval;
-    this.modbusElectricityMeter.modbusReads = modbusReads;
+    this.modbusElectricityMeter.modbusReads = modbusRead ? [modbusRead] : undefined;
     return this.modbusElectricityMeter;
   }
 }
