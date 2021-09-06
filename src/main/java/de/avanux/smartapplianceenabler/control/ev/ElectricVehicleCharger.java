@@ -583,6 +583,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
             this.socValues = new SocValues();
             this.socInitialTimestamp = null;
             this.socRetrievalForChargingAlmostCompleted = false;
+            this.socRetrievalEnergyMeterValue = 0.0f;
             this.appliance.getTimeframeIntervalHandler().clearQueue();
             initStateHistory();
         }
