@@ -114,7 +114,8 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
                     result = switchOn == ((WriteCoilExecutor) executor).getResult();
                 }
                 else if(executor instanceof WriteHoldingRegisterExecutor) {
-                    result = 1 == ((WriteHoldingRegisterExecutor) executor).getResult();
+                    executor.setValue(write.child().getValue());
+                    result = Integer.valueOf(write.child().getValue()).equals(((WriteHoldingRegisterExecutor) executor).getResult());
                 }
                 if(this.notificationHandler != null && switchOn != on) {
                     this.notificationHandler.sendNotification(switchOn ? NotificationType.CONTROL_ON : NotificationType.CONTROL_OFF);
@@ -124,11 +125,11 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
                 }
             }
             catch (Exception e) {
+                logger.error("{}: Error switching {} using register {}", getApplianceId(),  (switchOn ? "on" : "off"),
+                        registerWrite.getAddress(), e);
                 if(this.notificationHandler != null) {
                     this.notificationHandler.sendNotification(NotificationType.COMMUNICATION_ERROR);
                 }
-                logger.error("{}: Error switching {} using register {}", getApplianceId(),  (switchOn ? "on" : "off"),
-                        registerWrite.getAddress(), e);
             }
         }
         return result;
@@ -148,9 +149,16 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
                 if(executor instanceof ReadCoilExecutorImpl) {
                     on = ((ReadCoilExecutorImpl) executor).getValue();
                 }
+                else if(executor instanceof ReadHoldingRegisterExecutor) {
+                    Object registerValue = ((ReadHoldingRegisterExecutor) executor).getValueTransformer().getValue();
+                    if(registerValue instanceof Integer) {
+                        on = 1 == (Integer) registerValue;
+                    }
+                }
             }
             catch (Exception e) {
-                logger.error("{}: Error reading coil register {}", getApplianceId(), registerWrite.getAddress(), e);
+                logger.error("{}: Error reading {} register {}", getApplianceId(), registerWrite.getReadRegisterType(),
+                        registerWrite.getAddress(), e);
             }
         }
         return on;
