@@ -18,10 +18,7 @@
 package de.avanux.smartapplianceenabler.control;
 
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
-import de.avanux.smartapplianceenabler.modbus.ModbusWrite;
-import de.avanux.smartapplianceenabler.modbus.ModbusWriteValue;
-import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
-import de.avanux.smartapplianceenabler.modbus.ModbusValidator;
+import de.avanux.smartapplianceenabler.modbus.*;
 import de.avanux.smartapplianceenabler.modbus.executor.*;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.notification.NotificationType;
@@ -109,14 +106,18 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
                 }
                 ModbusWriteTransactionExecutor executor = ModbusExecutorFactory.getWriteExecutor(getApplianceId(),
                         registerWrite.getType(), registerWrite.getAddress(),registerWrite.getFactorToValue());
-                executeTransaction(executor, true);
+
                 if(executor instanceof WriteCoilExecutor) {
+                    executor.setValue(1 == Integer.valueOf(write.child().getValue()));
+                    executeTransaction(executor, true);
                     result = switchOn == ((WriteCoilExecutor) executor).getResult();
                 }
                 else if(executor instanceof WriteHoldingRegisterExecutor) {
-                    executor.setValue(write.child().getValue());
+                    executor.setValue(Integer.valueOf(write.child().getValue()));
+                    executeTransaction(executor, true);
                     result = Integer.valueOf(write.child().getValue()).equals(((WriteHoldingRegisterExecutor) executor).getResult());
                 }
+
                 if(this.notificationHandler != null && switchOn != on) {
                     this.notificationHandler.sendNotification(switchOn ? NotificationType.CONTROL_ON : NotificationType.CONTROL_OFF);
                 }
@@ -143,8 +144,9 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
         if(write != null) {
             ModbusWrite registerWrite = write.parent();
             try {
+                //TODO: Replace RegisterValueType.Integer with original call getValueTyp() after fixing frontend
                 ModbusReadTransactionExecutor executor = ModbusExecutorFactory.getReadExecutor(getApplianceId(),
-                        registerWrite.getAddress(), registerWrite.getReadRegisterType(), registerWrite.getValueType());
+                        registerWrite.getAddress(), registerWrite.getReadRegisterType(), RegisterValueType.Integer);//registerWrite.getValueType());
                 executeTransaction(executor, true);
                 if(executor instanceof ReadCoilExecutorImpl) {
                     on = ((ReadCoilExecutorImpl) executor).getValue();
@@ -152,7 +154,7 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
                 else if(executor instanceof ReadHoldingRegisterExecutor) {
                     Object registerValue = ((ReadHoldingRegisterExecutor) executor).getValueTransformer().getValue();
                     if(registerValue instanceof Integer) {
-                        on = 1 == (Integer) registerValue;
+                        on = Integer.valueOf(write.child().getValue()) == (Integer) registerValue;
                     }
                 }
             }
