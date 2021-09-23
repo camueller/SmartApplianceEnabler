@@ -7,6 +7,7 @@ export class ModbusWrite {
   '@class' = ModbusWrite.TYPE;
   address: string;
   type: string;
+  valueType: string;
   factorToValue: number;
   writeValues: ModbusWriteValue[];
 
@@ -15,6 +16,6 @@ export class ModbusWrite {
   }
 
   public static createWithSingleChild() {
-    return new ModbusWrite({writeValues: [new ModbusWriteValue()]});
+    return new ModbusWrite({valueType: 'Integer', writeValues: [new ModbusWriteValue()]});
   }
 }

@@ -15,6 +15,14 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
+      <mat-form-field class="ModbusReadComponent__value-type" *ngIf="isValueTypeDisplayed">
+        <mat-label>{{'ModbusReadComponent.valueType' | translate}}</mat-label>
+        <mat-select formControlName="valueType" required="{{formHandler.isRequired('valueType')}}">
+          <mat-option *ngFor="let valueType of valueTypes" [value]="valueType">
+            {{getTranslatedValueType(valueType)}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
       <mat-form-field class="sae__factorToValue" *ngIf="isFactorToValueDisplayed">
         <mat-label>{{'ModbusReadComponent.factorToValue' | translate}}</mat-label>
         <input matInput type="text" formControlName="factorToValue" placeholder="1"

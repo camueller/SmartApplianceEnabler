@@ -25,6 +25,8 @@ import {ErrorMessageHandler} from '../../shared/error-message-handler';
 import {Logger} from '../../log/logger';
 import {ValueNameChangedEvent} from '../../meter/value-name-changed-event';
 import {WriteRegisterType} from './write-register-type';
+import {ReadRegisterType} from '../read/read-register-type';
+import {ValueType} from '../read/value-type';
 
 @Component({
   selector: 'app-modbus-write',
@@ -72,7 +74,7 @@ export class ModbusWriteComponent implements OnChanges, OnInit {
       if (changes.modbusWrite.currentValue) {
         this.modbusWrite = changes.modbusWrite.currentValue;
       } else {
-        this.modbusWrite = new ModbusWrite();
+        this.modbusWrite = new ModbusWrite({valueType: 'Integer'});
       }
       this.expandParentForm();
     }
@@ -86,6 +88,7 @@ export class ModbusWriteComponent implements OnChanges, OnInit {
       new ErrorMessage('address', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('address', ValidatorType.pattern),
       new ErrorMessage('type', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
+      new ErrorMessage('valueType', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('factorToValue', ValidatorType.pattern),
     ], this.translate);
     this.form.statusChanges.subscribe(() => {
@@ -93,6 +96,7 @@ export class ModbusWriteComponent implements OnChanges, OnInit {
     });
     this.translate.get([
       ...this.registerTypes.map(regType => this.toRegisterTypeKey(regType)),
+      ...this.valueTypes.map(valueType => this.toValueTypeKey(valueType)),
     ]).subscribe(translatedStrings => {
       this.translatedStrings = translatedStrings;
     });
@@ -118,6 +122,22 @@ export class ModbusWriteComponent implements OnChanges, OnInit {
 
   public getTranslatedRegisterType(registerType: string) {
     return this.translatedStrings[this.toRegisterTypeKey(registerType)];
+  }
+
+  get valueTypes(): string[] {
+    return Object.values(ValueType);
+  }
+
+  public getTranslatedValueType(valueType: string) {
+    return this.translatedStrings[this.toValueTypeKey(valueType)];
+  }
+
+  toValueTypeKey(valueType: string): string {
+    return `ModbusReadComponent.valueType.${valueType}`;
+  }
+
+  get isValueTypeDisplayed() {
+    return this.form.controls.type.value === ReadRegisterType.Holding;
   }
 
   get isFactorToValueDisplayed() {
@@ -172,6 +192,9 @@ export class ModbusWriteComponent implements OnChanges, OnInit {
     this.formHandler.addFormControl(this.form, 'type',
       this.modbusWrite && this.modbusWrite.type,
       [Validators.required]);
+    this.formHandler.addFormControl(this.form, 'valueType',
+      this.modbusWrite && this.modbusWrite.valueType,
+      [Validators.required]);
     if (!this.disableFactorToValue) {
       this.formHandler.addFormControl(this.form, 'factorToValue',
         this.modbusWrite && this.modbusWrite.factorToValue,
@@ -184,6 +207,7 @@ export class ModbusWriteComponent implements OnChanges, OnInit {
   updateModelFromForm(): ModbusWrite | undefined {
     const address = getValidString(this.form.controls.address.value);
     const type = getValidString(this.form.controls.type.value);
+    const valueType = getValidString(this.form.controls.valueType.value);
     const factorToValue = this.form.controls.factorToValue && getValidFloat(this.form.controls.factorToValue.value);
     const modbusWriteValues = [];
     this.modbusWriteValueComps.forEach(modbusWriteValueComp => {
@@ -193,12 +217,13 @@ export class ModbusWriteComponent implements OnChanges, OnInit {
       }
     });
 
-    if (!(address || type || factorToValue || modbusWriteValues.length > 0)) {
+    if (!(address || type || valueType || factorToValue || modbusWriteValues.length > 0)) {
       return undefined;
     }
 
     this.modbusWrite.address = address;
     this.modbusWrite.type = type;
+    this.modbusWrite.valueType = valueType;
     this.modbusWrite.factorToValue = factorToValue;
     return this.modbusWrite;
   }
