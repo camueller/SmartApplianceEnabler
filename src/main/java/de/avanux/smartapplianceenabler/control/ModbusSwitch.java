@@ -110,12 +110,12 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
                 ModbusWriteTransactionExecutor executor = ModbusExecutorFactory.getWriteExecutor(getApplianceId(),
                         registerWrite.getType(), registerWrite.getAddress(),registerWrite.getFactorToValue());
                 if(executor instanceof WriteCoilExecutor) {
-                    executor.setValue(write.child().getValue());
+                    executor.setValue(1 == Integer.valueOf(write.child().getValue()));
                     executeTransaction(executor, true);
                     result = switchOn == ((WriteCoilExecutor) executor).getResult();
                 }
                 else if(executor instanceof WriteHoldingRegisterExecutor) {
-                    executor.setValue(write.child().getValue());
+                    executor.setValue(Integer.valueOf(write.child().getValue()));
                     executeTransaction(executor, true);
                     result = Integer.valueOf(write.child().getValue()).equals(((WriteHoldingRegisterExecutor) executor).getResult());
                 }
