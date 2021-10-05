@@ -27,11 +27,11 @@ public class HttpWriteValue {
     @XmlAttribute
     private String name;
     @XmlAttribute
+    private String method;
+    @XmlAttribute
     private String value; // can be query parameter or data
     @XmlAttribute
     private Double factorToValue;
-    @XmlAttribute
-    private String method;
 
     public HttpWriteValue() {
     }

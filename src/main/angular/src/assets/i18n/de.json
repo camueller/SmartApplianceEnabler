@@ -109,6 +109,7 @@
   "HttpReadComponent.error.url_pattern": "Die URL muss gültig sein",
 
   "HttpReadValueComponent.name": "Parameter",
+  "HttpReadValueComponent.method": "Methode",
   "HttpReadValueComponent.data": "Daten",
   "HttpReadValueComponent.path": "Pfad für Extraktion",
   "HttpReadValueComponent.extractionRegex": "Regex für Extraktion",
@@ -126,8 +127,8 @@
 
   "HttpWriteValueComponent.enabled": "Aktiv",
   "HttpWriteValueComponent.name": "Parameter / Aktion",
-  "HttpWriteValueComponent.value": "Wert",
   "HttpWriteValueComponent.method": "Methode",
+  "HttpWriteValueComponent.value": "Wert",
   "HttpWriteValueComponent.factorToValue": "Umrechnungsfaktor",
   "HttpWriteValueComponent.error.factorToValue_pattern": "Der Faktor muss eine (Gleitkomma-) Zahl sein",
 

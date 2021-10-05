@@ -11,6 +11,7 @@ import {getValidFloat, getValidString} from '../../shared/form-util';
 import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/error-message';
 import { EventEmitter } from '@angular/core';
 import {ValueNameChangedEvent} from '../../meter/value-name-changed-event';
+import {HttpMethod} from '../http-method';
 
 @Component({
   selector: 'app-http-read-value',
@@ -82,6 +83,18 @@ export class HttpReadValueComponent implements OnChanges, OnInit {
     return this.translatedStrings[textKey];
   }
 
+  get method() {
+    return this.form.controls.method && this.form.controls.method.value;
+  }
+
+  get methods() {
+    return Object.keys(HttpMethod);
+  }
+
+  getMethodTranslationKey(method: string) {
+    return `HttpMethod.${method}`;
+  }
+
   onNameChanged(newName?: string) {
     if (newName) {
       const event: ValueNameChangedEvent = {name: newName};
@@ -96,6 +109,8 @@ export class HttpReadValueComponent implements OnChanges, OnInit {
     if (this.httpReadValue) {
       this.onNameChanged(this.httpReadValue.name);
     }
+    this.formHandler.addFormControl(this.form, 'method',
+      this.httpReadValue && this.httpReadValue.method || HttpMethod.GET);
     this.formHandler.addFormControl(this.form, 'data',
       this.httpReadValue && this.httpReadValue.data);
     this.formHandler.addFormControl(this.form, 'path',
@@ -111,6 +126,7 @@ export class HttpReadValueComponent implements OnChanges, OnInit {
 
   updateForm() {
     this.formHandler.setFormControlValue(this.form, 'name', this.httpReadValue.name);
+    this.formHandler.setFormControlValue(this.form, 'method', this.httpReadValue.method);
     this.formHandler.setFormControlValue(this.form, 'data', this.httpReadValue.data);
     this.formHandler.setFormControlValue(this.form, 'path', this.httpReadValue.path);
     this.formHandler.setFormControlValue(this.form, 'extractionRegex', this.httpReadValue.extractionRegex);
@@ -121,6 +137,7 @@ export class HttpReadValueComponent implements OnChanges, OnInit {
 
   updateModelFromForm(): HttpReadValue | undefined {
     const name = getValidString(this.form.controls.name.value);
+    const method = getValidString(this.form.controls.method.value);
     const data = getValidString(this.form.controls.data.value);
     const path = getValidString(this.form.controls.path.value);
     const extractionRegex = getValidString(this.form.controls.extractionRegex.value);
@@ -129,11 +146,12 @@ export class HttpReadValueComponent implements OnChanges, OnInit {
       factorToValue = getValidFloat(this.form.controls.factorToValue.value);
     }
 
-    if (!(name || data || path || extractionRegex || factorToValue)) {
+    if (!(name || method || data || path || extractionRegex || factorToValue)) {
       return undefined;
     }
 
     this.httpReadValue.name = name;
+    this.httpReadValue.method = method;
     this.httpReadValue.data = data;
     this.httpReadValue.path = path;
     this.httpReadValue.extractionRegex = extractionRegex;

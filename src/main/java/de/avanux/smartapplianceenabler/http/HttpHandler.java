@@ -79,9 +79,11 @@ public class HttpHandler implements ApplianceIdConsumer {
                                ContentProtocolHandler contentProtocolHandler) {
         if(read != null) {
             String url = read.parent().getUrl();
+            HttpMethod method = read.child().getMethod() != null ? read.child().getMethod() : HttpMethod.GET;
+            String data = method == HttpMethod.POST ? read.child().getData() : null;
+            String response = this.httpTransactionExecutor.execute(method, url, data);
             String path = read.child().getPath();
-            String response = this.httpTransactionExecutor.execute(HttpMethod.GET, url, null);
-            logger.debug("{}: url={} path={}", applianceId, url, path);
+            logger.debug("{}: url={} method={} data={} path={}", applianceId, url, method, data, path);
             if(response != null) {
                 logger.debug("{}: Response: {}", applianceId, response);
                 String protocolHandlerValue = response;

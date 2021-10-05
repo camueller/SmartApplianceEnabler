@@ -27,6 +27,8 @@ public class HttpReadValue {
     @XmlAttribute
     private String name;
     @XmlAttribute
+    private String method;
+    @XmlAttribute
     private String data;
     @XmlAttribute
     private String path;
@@ -56,6 +58,10 @@ public class HttpReadValue {
 
     public String getPath() {
         return path;
+    }
+
+    public HttpMethod getMethod() {
+        return method != null ? HttpMethod.valueOf(method) : null;
     }
 
     public String getData() {

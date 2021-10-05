@@ -103,6 +103,8 @@ export class HttpWriteValueComponent implements OnChanges, OnInit {
     if (this.httpWriteValue) {
       this.onNameChanged(this.httpWriteValue.name);
     }
+    this.formHandler.addFormControl(this.form, 'method',
+      this.httpWriteValue && this.httpWriteValue.method || HttpMethod.GET);
     this.formHandler.addFormControl(this.form, 'value',
       this.httpWriteValue && this.httpWriteValue.value);
     if (!this.disableFactorToValue) {
@@ -110,33 +112,31 @@ export class HttpWriteValueComponent implements OnChanges, OnInit {
         this.httpWriteValue && this.httpWriteValue.factorToValue,
         [Validators.pattern(InputValidatorPatterns.FLOAT)]);
     }
-    this.formHandler.addFormControl(this.form, 'method',
-      this.httpWriteValue && this.httpWriteValue.method);
   }
 
   updateForm() {
     this.formHandler.setFormControlValue(this.form, 'name', this.httpWriteValue.name);
+    this.formHandler.setFormControlValue(this.form, 'method', this.httpWriteValue.method);
     this.formHandler.setFormControlValue(this.form, 'value', this.httpWriteValue.value);
     if (!this.disableFactorToValue) {
       this.formHandler.setFormControlValue(this.form, 'factorToValue', this.httpWriteValue.factorToValue);
     }
-    this.formHandler.setFormControlValue(this.form, 'method', this.httpWriteValue.method);
   }
 
   updateModelFromForm(): HttpWriteValue | undefined {
     const name = getValidString(this.form.controls.name.value);
+    const method = getValidString(this.form.controls.method.value);
     const value = getValidString(this.form.controls.value.value);
     const factorToValue = this.form.controls.factorToValue && getValidFloat(this.form.controls.factorToValue.value);
-    const method = getValidString(this.form.controls.method.value);
 
-    if (!(name || value || factorToValue || method)) {
+    if (!(name || method || value || factorToValue)) {
       return undefined;
     }
 
     this.httpWriteValue.name = name;
+    this.httpWriteValue.method = method;
     this.httpWriteValue.value = value;
     this.httpWriteValue.factorToValue = factorToValue;
-    this.httpWriteValue.method = method;
     return this.httpWriteValue;
   }
 }

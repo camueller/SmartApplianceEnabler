@@ -7,6 +7,14 @@
       </mat-option>
     </mat-select>
   </mat-form-field>
+  <mat-form-field class="sae__http-method">
+    <mat-label>{{'HttpWriteValueComponent.method' | translate}}</mat-label>
+    <mat-select formControlName="method" required="{{formHandler.isRequired('method')}}">
+      <mat-option *ngFor="let method of methods" [value]="method">
+        {{getMethodTranslationKey(method)| translate}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
   <mat-form-field class="HttpWriteValueComponent__value">
     <mat-label>{{'HttpWriteValueComponent.value' | translate}}</mat-label>
     <input matInput type="text" formControlName="value"
@@ -19,13 +27,5 @@
            placeholder="1"
            required="{{formHandler.isRequired('factorToValue')}}">
     <mat-error *ngIf="errors.factorToValue">{{errors.factorToValue}}</mat-error>
-  </mat-form-field>
-  <mat-form-field class="sae__http-method">
-    <mat-label>{{'HttpWriteValueComponent.method' | translate}}</mat-label>
-    <mat-select formControlName="method" required="{{formHandler.isRequired('method')}}">
-      <mat-option *ngFor="let method of methods" [value]="method">
-        {{getMethodTranslationKey(method)| translate}}
-      </mat-option>
-    </mat-select>
   </mat-form-field>
 </div>

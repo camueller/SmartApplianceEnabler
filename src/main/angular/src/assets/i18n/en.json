@@ -109,6 +109,7 @@
   "HttpReadComponent.error.url_pattern": "The URL has to be valid",
 
   "HttpReadValueComponent.name": "Parameter",
+  "HttpReadValueComponent.method": "Method",
   "HttpReadValueComponent.data": "Data",
   "HttpReadValueComponent.path": "Extraction path",
   "HttpReadValueComponent.extractionRegex": "Extraction regex",
@@ -126,8 +127,8 @@
 
   "HttpWriteValueComponent.enabled": "Enabled",
   "HttpWriteValueComponent.name": "Parameter / Action",
-  "HttpWriteValueComponent.value": "Value",
   "HttpWriteValueComponent.method": "Method",
+  "HttpWriteValueComponent.value": "Value",
   "HttpWriteValueComponent.factorToValue": "Factor to value",
   "HttpWriteValueComponent.error.factorToValue_pattern": "The factor-to-value has to be a (float) number",
 

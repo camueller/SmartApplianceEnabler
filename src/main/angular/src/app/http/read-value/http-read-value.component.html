@@ -7,6 +7,14 @@
       </mat-option>
     </mat-select>
   </mat-form-field>
+  <mat-form-field class="sae__http-method">
+    <mat-label>{{'HttpReadValueComponent.method' | translate}}</mat-label>
+    <mat-select formControlName="method" required="{{formHandler.isRequired('method')}}">
+      <mat-option *ngFor="let method of methods" [value]="method">
+        {{getMethodTranslationKey(method)| translate}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
   <mat-form-field class="HttpReadValueComponent__data">
     <mat-label>{{'HttpReadValueComponent.data' | translate}}</mat-label>
     <input matInput type="text" formControlName="data"

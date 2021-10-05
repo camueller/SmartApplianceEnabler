@@ -14,6 +14,6 @@ export class HttpRead {
   }
 
   public static createWithSingleChild() {
-    return new HttpRead({readValues: [new HttpReadValue()]});
+    return new HttpRead({readValues: [HttpReadValue.createWithSingleChild()]});
   }
 }

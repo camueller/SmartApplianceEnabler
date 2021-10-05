@@ -286,6 +286,7 @@
 
     <xs:complexType name="HttpReadValueType">
         <xs:attribute name="name" type="ReadValueNameType" use="required" />
+        <xs:attribute name="method" type="HttpMethodType" />
         <xs:attribute name="data" type="xs:string" />
         <xs:attribute name="path" type="xs:string" />
         <xs:attribute name="extractionRegex" type="xs:string" />
@@ -301,9 +302,9 @@
 
     <xs:complexType name="HttpWriteValueType">
         <xs:attribute name="name" type="WriteValueNameType" use="required" />
+        <xs:attribute name="method" type="HttpMethodType" />
         <xs:attribute name="value" type="xs:string" />
         <xs:attribute name="factorToValue" type="xs:double" />
-        <xs:attribute name="method" type="HttpMethodType" />
     </xs:complexType>
 
     <xs:complexType name="HttpConfigurationType">
