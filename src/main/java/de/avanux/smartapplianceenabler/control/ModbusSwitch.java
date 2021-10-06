@@ -18,10 +18,7 @@
 package de.avanux.smartapplianceenabler.control;
 
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
-import de.avanux.smartapplianceenabler.modbus.ModbusWrite;
-import de.avanux.smartapplianceenabler.modbus.ModbusWriteValue;
-import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
-import de.avanux.smartapplianceenabler.modbus.ModbusValidator;
+import de.avanux.smartapplianceenabler.modbus.*;
 import de.avanux.smartapplianceenabler.modbus.executor.*;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.notification.NotificationType;
@@ -145,8 +142,10 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
         if(write != null) {
             ModbusWrite registerWrite = write.parent();
             try {
+                RegisterValueType registerValueType = getRegisterValueType(
+                        registerWrite.getReadRegisterType(), registerWrite.getValueType());
                 ModbusReadTransactionExecutor executor = ModbusExecutorFactory.getReadExecutor(getApplianceId(),
-                        registerWrite.getAddress(), registerWrite.getReadRegisterType(), registerWrite.getValueType());
+                        registerWrite.getAddress(), registerWrite.getReadRegisterType(), registerValueType);
                 executeTransaction(executor, true);
                 if(executor instanceof ReadCoilExecutorImpl) {
                     on = ((ReadCoilExecutorImpl) executor).getValue();
@@ -164,6 +163,13 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
             }
         }
         return on;
+    }
+
+    private RegisterValueType getRegisterValueType(ReadRegisterType registerType, RegisterValueType defaultRegisterValueType) {
+        if(registerType == ReadRegisterType.Coil) {
+            return RegisterValueType.Integer;
+        }
+        return defaultRegisterValueType;
     }
 
     private ControlValueName getValueName(boolean switchOn) {
