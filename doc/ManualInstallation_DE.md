@@ -349,7 +349,7 @@ pi@raspberrypi ~ $ mv /opt/sae/Device2EM.xml /opt/sae/Device2EM.xml.old
 Danach muss die Konfiguration neu erstellt werden, wie im Kapitel [Konfiguration](Configuration_DE.md) beschrieben.
 
 ### Benachrichtigungen
-<a name="notifications">
+<a name="notifications"></a>
 Für den optionalen Versand von Benachrichtigungen via [Telegram](http://www.telegram.org) wird ein Script bereitgestellt, das mit den folgenden Befehlen heruntergeladen und ausführbar gemacht wird:
 ```console
 pi@raspberrypi ~ $ wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/notifyWithTelegram.sh -P /opt/sae
