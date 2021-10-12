@@ -396,8 +396,8 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
                 logger.debug("{}: will do ev charger configuration", id);
                 evCharger.setConnectedVehicleId(evId);
                 evCharger.setSocInitial(socCurrent);
-                evCharger.setSocInitialTimestamp(now);
                 evCharger.setSocCurrent(socCurrent);
+                evCharger.setSocInitialTimestamp(now);
             }
 
             TimeframeInterval timeframeInterval =
@@ -430,6 +430,9 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
                 }
                 timeframeIntervalHandler.updateSocOfOptionalEnergyTimeframeIntervalForEVCharger(now,
                         ev.getId(), ev.getBatteryCapacity(), socCurrent, socRequested);
+                evCharger.setSocInitial(socCurrent);
+                evCharger.setSocInitialTimestamp(now);
+                evCharger.setSocCurrent(socCurrent);
                 evCharger.resetChargingCompletedToVehicleConnected(now);
             }
             else {
