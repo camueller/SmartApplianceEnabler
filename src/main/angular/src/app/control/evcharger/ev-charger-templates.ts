@@ -150,8 +150,9 @@ export class EvChargerTemplates {
       '      {\n' +
       '        "@class": "de.avanux.smartapplianceenabler.modbus.ModbusWrite",\n' +
       '        "address": "5014",\n' +
-      '        "factorToValue": null,\n' +
       '        "type": "Holding",\n' +
+      '        "valueType": "Integer",\n' +
+      '        "factorToValue": null,\n' +
       '        "writeValues": [\n' +
       '          {\n' +
       '            "@class": "de.avanux.smartapplianceenabler.modbus.ModbusWriteValue",\n' +
@@ -168,8 +169,9 @@ export class EvChargerTemplates {
       '      {\n' +
       '        "@class": "de.avanux.smartapplianceenabler.modbus.ModbusWrite",\n' +
       '        "address": "5004",\n' +
-      '        "factorToValue": 1000.0,\n' +
       '        "type": "Holding",\n' +
+      '        "valueType": "Integer",\n' +
+      '        "factorToValue": 1000.0,\n' +
       '        "writeValues": [\n' +
       '          {\n' +
       '            "@class": "de.avanux.smartapplianceenabler.modbus.ModbusWriteValue",\n' +
@@ -247,8 +249,9 @@ export class EvChargerTemplates {
       '      {\n' +
       '        "@class": "de.avanux.smartapplianceenabler.modbus.ModbusWrite",\n' +
       '        "address": "300",\n' +
-      '        "factorToValue": null,\n' +
       '        "type": "Holding",\n' +
+      '        "valueType": "Integer",\n' +
+      '        "factorToValue": null,\n' +
       '        "writeValues": [\n' +
       '          {\n' +
       '            "@class": "de.avanux.smartapplianceenabler.modbus.ModbusWriteValue",\n' +
@@ -326,8 +329,9 @@ export class EvChargerTemplates {
       '      {\n' +
       '        "@class": "de.avanux.smartapplianceenabler.modbus.ModbusWrite",\n' +
       '        "address": "528",\n' +
-      '        "factorToValue": 10,\n' +
       '        "type": "Holding",\n' +
+      '        "valueType": "Integer",\n' +
+      '        "factorToValue": 10,\n' +
       '        "writeValues": [\n' +
       '          {\n' +
       '            "@class": "de.avanux.smartapplianceenabler.modbus.ModbusWriteValue",\n' +

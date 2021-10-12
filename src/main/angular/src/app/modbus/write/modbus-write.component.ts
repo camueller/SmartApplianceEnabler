@@ -77,8 +77,7 @@ export class ModbusWriteComponent implements OnChanges, OnInit {
         this.modbusWrite = new ModbusWrite({valueType: 'Integer'});
       }
       this.expandParentForm();
-    }
-    if (changes.form) {
+    } else if (changes.form) {
       this.expandParentForm();
     }
   }
@@ -185,6 +184,15 @@ export class ModbusWriteComponent implements OnChanges, OnInit {
     return this.modbusWriteValuesFormArray.controls[index];
   }
 
+  updateValueTypeValidator(readRegisterType: string) {
+    if (readRegisterType  === ReadRegisterType.Holding) {
+      this.form.controls.valueType.setValidators(Validators.required);
+    } else {
+      this.form.controls.valueType.removeValidators(Validators.required);
+      this.form.controls.valueType.setErrors(null);
+    }
+  }
+
   expandParentForm() {
     this.formHandler.addFormControl(this.form, 'address',
       this.modbusWrite && this.modbusWrite.address,
@@ -193,12 +201,17 @@ export class ModbusWriteComponent implements OnChanges, OnInit {
       this.modbusWrite && this.modbusWrite.type,
       [Validators.required]);
     this.formHandler.addFormControl(this.form, 'valueType',
-      this.modbusWrite && this.modbusWrite.valueType,
-      [Validators.required]);
+      this.modbusWrite && this.modbusWrite.valueType);
     if (!this.disableFactorToValue) {
       this.formHandler.addFormControl(this.form, 'factorToValue',
         this.modbusWrite && this.modbusWrite.factorToValue,
         [Validators.pattern(InputValidatorPatterns.FLOAT)]);
+    }
+    this.form.controls.type.valueChanges.subscribe(value => {
+      this.updateValueTypeValidator(value);
+    });
+    if (this.modbusWrite) {
+      this.updateValueTypeValidator(this.form.controls.type.value);
     }
     this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'modbusWriteValues',
       this.modbusWrite.writeValues);

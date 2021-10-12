@@ -17,7 +17,7 @@
       </mat-form-field>
       <mat-form-field class="ModbusReadComponent__value-type" *ngIf="isValueTypeDisplayed">
         <mat-label>{{'ModbusReadComponent.valueType' | translate}}</mat-label>
-        <mat-select formControlName="valueType" required="{{formHandler.isRequired('valueType')}}">
+        <mat-select formControlName="valueType" required="true">
           <mat-option *ngFor="let valueType of valueTypes" [value]="valueType">
             {{getTranslatedValueType(valueType)}}
           </mat-option>
