@@ -233,7 +233,12 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
 
     @Override
     public void addPowerUpdateListener(PowerUpdateListener listener) {
-        this.pollPowerMeter.addPowerUpateListener(listener);
+        if(pollEnergyMeter != null) {
+            this.pollPowerMeter.addPowerUpateListener(listener);
+        }
+        if(pollEnergyMeter != null) {
+            this.pollEnergyMeter.addPowerUpateListener(listener);
+        }
     }
 
     @Override

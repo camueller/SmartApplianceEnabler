@@ -29,10 +29,7 @@ import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Locale;
-import java.util.Timer;
-import java.util.TreeMap;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * A PollEnergyMeter meters energy by polling the energy count.
@@ -48,6 +45,7 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
     private GuardedTimerTask pollTimerTask;
     private long lastPollDurationMillis = 0;
     private boolean started;
+    private List<PowerUpdateListener> powerUpdateListeners = new ArrayList<>();
     private DecimalFormat energyFormat;
 
     public PollEnergyMeter() {
@@ -98,6 +96,7 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
                     // the energy counter we poll might already have been reset and we don't want to add 0 to the cache
                     // except we reset the counter ourselves
                     addValue(now, energy);
+                    powerUpdateListeners.forEach(listener -> listener.onPowerUpdate(getAveragePower()));
                 }
             }
         };
@@ -215,5 +214,9 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
 
     public boolean isStarted() {
         return started;
+    }
+
+    public void addPowerUpateListener(PowerUpdateListener listener) {
+        this.powerUpdateListeners.add(listener);
     }
 }

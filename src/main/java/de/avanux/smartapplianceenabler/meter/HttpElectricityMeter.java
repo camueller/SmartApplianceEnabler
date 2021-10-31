@@ -200,6 +200,9 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
         if(pollPowerMeter != null) {
             this.pollPowerMeter.addPowerUpateListener(listener);
         }
+        if(pollEnergyMeter != null) {
+            this.pollEnergyMeter.addPowerUpateListener(listener);
+        }
     }
 
     @Override

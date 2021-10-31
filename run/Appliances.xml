@@ -3,16 +3,16 @@
     <Appliance id="F-00000001-000000000002-00">
         <HttpSwitch>
             <HttpWrite url="http://tasmota/cm?cmnd=Power%20On">
-                <HttpWriteValue name="On"/>
+                <HttpWriteValue name="On" method="GET"/>
             </HttpWrite>
             <HttpWrite url="http://tasmota/cm?cmnd=Power%20Off">
-                <HttpWriteValue name="Off"/>
+                <HttpWriteValue name="Off" method="GET"/>
             </HttpWrite>
             <Notifications/>
         </HttpSwitch>
-        <HttpElectricityMeter>
+        <HttpElectricityMeter contentProtocol="JSON">
             <HttpRead url="http://tasmota/cm?cmnd=Status%208">
-                <HttpReadValue name="Power" extractionRegex=".*&quot;Power&quot;:(\d+).*"/>
+                <HttpReadValue name="Energy" method="GET" path="$.StatusSNS.ENERGY.Total"/>
             </HttpRead>
             <Notifications/>
         </HttpElectricityMeter>
