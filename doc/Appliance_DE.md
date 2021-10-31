@@ -11,9 +11,11 @@ Durch Klicken der `Löschen`-Schaltfläche und Bestätigung der Löschabsicht wi
 ## Felder
 
 ### ID
-Ein sehr wichtiges Attribut der Gerätekonfiguration ist die `ID`. Der Aufbau der Device-ID ist in der SEMP-Spezifikation vorgegeben. Für den *Smart Appliance Enabler* bedeutet das:
+Ein sehr wichtiges Attribut der Gerätekonfiguration ist die `ID`. Der Aufbau der Device-ID ist in der SEMP-Spezifikation vorgegeben und **muss über alle von SMA verwalteten *Sunny Home Manager* hinweg eindeutig sein!!** 
+
+Für den *Smart Appliance Enabler* bedeutet das:
 * F unverändert lassen ("local scope")
-* 00000001 ersetzen durch einen 8-stelligen Wert, der den eigenen Bereich definiert, z.B. das Geburtsdatum in der Form 25021964 für den 25. Februar 1964
+* 00000001 ersetzen durch einen 8-stelligen Wert, der den eigenen Bereich definiert (in der Hoffnung, damit eine eindeutige ID zu erreichen - siehe oben), z.B. das Geburtsdatum in der Form 25021964 für den 25. Februar 1964
 * 000000000001 für jedes verwaltete Gerät hochzählen bzw. eine individuelle 12-stellige Zahl verwenden
 * 00 unverändert lassen (sub device id)
   Die Device-IDs werden vom Sunny-Portal direkt verwendet, d.h. wenn jemand anderes bereits diese ID verwendet, kann das Gerät nicht im Sunny-Portal angelegt werden. Durch die Verwendung individueller Bestandteile wie Geburtsdatum sollte das Risiko dafür jedoch gering sein.
