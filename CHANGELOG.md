@@ -12,7 +12,18 @@ und das Projekt folgt den Leitlinien des [Semantic Versioning](https://semver.or
 | SAE         | Smart Appliance Enabler |
 | SHM         | Sunny Home Manager |
 
-## [1.6.16](https://github.com/camueller/SmartApplianceEnabler/releases/tag/1.6.15) - 28.08.2021
+## [1.6.17](https://github.com/camueller/SmartApplianceEnabler/releases/tag/1.6.17) - 01.11.2021
+
+### Gefixt
+- nach dem erneuten Verbinden des Fahrzeugs mit der Wallbox wurde manchmal ein negativer SOC ermittelt
+- diverse Fehler bei Modbus-Schaltern gefixt
+- WEB: ein über die Ampelsteuerung geänderter SOC wurde nicht übernommen
+- Bei HTTP-basierten Schaltern hat die Anlaufstromerkennung nicht funktioniert, wenn als Parameter "Zählerstand" konfiguriert ist
+
+### Geändert
+- beim Lesen von HTTP-Werten kann jetzt immer die HTTP-Methode konfiguriert werden 
+
+## [1.6.16](https://github.com/camueller/SmartApplianceEnabler/releases/tag/1.6.16) - 28.08.2021
 
 ### Gefixt
 - WEB: Beim Wechseln zwischen den Zählern verschiedener Geräte wird der Inhaltkorrekt aktualisiert
