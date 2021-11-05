@@ -2,9 +2,9 @@
 <Device2EM xmlns="http://www.sma.de/communication/schema/SEMP/v1">
     <DeviceInfo>
         <Identification>
-            <DeviceId>F-00000001-000000000002-00</DeviceId>
-            <DeviceName>Tasmota</DeviceName>
-            <DeviceType>Other</DeviceType>
+            <DeviceId>F-00000001-000000000001-00</DeviceId>
+            <DeviceName>Wärmepumpe</DeviceName>
+            <DeviceType>Heater</DeviceType>
             <DeviceSerial>123456</DeviceSerial>
             <DeviceVendor>Tasmota</DeviceVendor>
         </Identification>
@@ -29,11 +29,11 @@
     </DeviceInfo>
     <DeviceInfo>
         <Identification>
-            <DeviceId>F-00000001-000000000019-00</DeviceId>
-            <DeviceName>Wallbox</DeviceName>
-            <DeviceType>EVCharger</DeviceType>
-            <DeviceSerial>20180623</DeviceSerial>
-            <DeviceVendor>ESL</DeviceVendor>
+            <DeviceId>F-00000001-000000000001-01</DeviceId>
+            <DeviceName>Speicher-Überladung</DeviceName>
+            <DeviceType>Heater</DeviceType>
+            <DeviceSerial>654321</DeviceSerial>
+            <DeviceVendor>Tasmota</DeviceVendor>
         </Identification>
         <Characteristics>
             <MaxPowerConsumption>22000</MaxPowerConsumption>

@@ -84,6 +84,9 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
     @Override
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
+        if(this.control instanceof ApplianceIdConsumer) {
+            ((ApplianceIdConsumer) this.control).setApplianceId(applianceId);
+        }
     }
 
     public void setControl(Control control) {

@@ -21,10 +21,7 @@ import com.pi4j.io.gpio.GpioController;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.control.*;
 import de.avanux.smartapplianceenabler.control.ev.*;
-import de.avanux.smartapplianceenabler.meter.HttpElectricityMeter;
-import de.avanux.smartapplianceenabler.meter.Meter;
-import de.avanux.smartapplianceenabler.meter.ModbusElectricityMeter;
-import de.avanux.smartapplianceenabler.meter.S0ElectricityMeter;
+import de.avanux.smartapplianceenabler.meter.*;
 import de.avanux.smartapplianceenabler.modbus.EVModbusControl;
 import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
@@ -67,6 +64,8 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
             @XmlElement(name = "HttpElectricityMeter", type = HttpElectricityMeter.class),
             @XmlElement(name = "ModbusElectricityMeter", type = ModbusElectricityMeter.class),
             @XmlElement(name = "S0ElectricityMeter", type = S0ElectricityMeter.class),
+            @XmlElement(name = "MasterElectricityMeter", type = MasterElectricityMeter.class),
+            @XmlElement(name = "SlaveElectricityMeter", type = SlaveElectricityMeter.class),
     })
     private Meter meter;
     @XmlElement(name = "Schedule")
@@ -221,11 +220,7 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
         if(control instanceof MeterReportingSwitch) {
             ((MeterReportingSwitch) control).setMeter(meter);
         }
-        if(control instanceof StartingCurrentSwitch) {
-            Control wrappedControl = ((StartingCurrentSwitch) control).getControl();
-            ((ApplianceIdConsumer) wrappedControl).setApplianceId(id);
-        }
-        else {
+        if(!(control instanceof StartingCurrentSwitch)) {
             control.addControlStateChangedListener(this);
             logger.debug("{}: Registered as {} with {}", id, ControlStateChangedListener.class.getSimpleName(),
                     control.getClass().getSimpleName());
@@ -240,6 +235,19 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
             startingCurrentSwitch.setTimeframeIntervalHandler(timeframeIntervalHandler);
             startingCurrentSwitch.init();
             logger.debug("{}: {} uses {}", id, control.getClass().getSimpleName(), meter.getClass().getSimpleName());
+        }
+
+        if(meter instanceof MasterElectricityMeter) {
+            MasterElectricityMeter masterMeter = (MasterElectricityMeter) meter;
+            masterMeter.setMasterControl(control);
+        }
+        if(meter instanceof SlaveElectricityMeter) {
+            SlaveElectricityMeter slaveMeter = (SlaveElectricityMeter) meter;
+            Appliance masterAppliance = ApplianceManager.getInstance().getAppliance(slaveMeter.getMasterId());
+            MasterElectricityMeter masterMeter = (MasterElectricityMeter) masterAppliance.getMeter();
+            masterMeter.setSlaveElectricityMeter((SlaveElectricityMeter) meter);
+            masterMeter.setSlaveControl(control);
+            slaveMeter.setMasterElectricityMeter(masterMeter);
         }
 
         if(getGpioControllables().size() > 0) {
@@ -524,6 +532,6 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
 
     @Override
     public String toString() {
-        return "";
+        return id;
     }
 }
