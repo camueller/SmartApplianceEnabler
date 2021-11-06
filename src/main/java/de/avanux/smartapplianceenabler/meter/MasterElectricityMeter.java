@@ -96,7 +96,8 @@ public class MasterElectricityMeter implements ApplianceIdConsumer, Meter, Power
         else if(slaveSwitchOn != null) {
             meteringForSlave = slaveSwitchOn == this.slaveControl.isOn();
         }
-        logger.debug("{}: isMeteringForSlave={}", applianceId, meteringForSlave);
+        logger.debug("{}: isMeteringForSlave={} masterSwitchOn={} slaveSwitchOn={}",
+                applianceId, meteringForSlave, masterSwitchOn, slaveSwitchOn);
         return meteringForSlave;
     }
 

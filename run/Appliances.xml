@@ -12,15 +12,7 @@
         </MasterElectricityMeter>
     </Appliance>
     <Appliance id="F-00000001-000000000001-01">
-        <HttpSwitch>
-            <HttpWrite url="http://tasmota/cm?cmnd=Power%20On">
-                <HttpWriteValue name="On" method="GET"/>
-            </HttpWrite>
-            <HttpWrite url="http://tasmota/cm?cmnd=Power%20Off">
-                <HttpWriteValue name="Off" method="GET"/>
-            </HttpWrite>
-            <Notifications/>
-        </HttpSwitch>
+        <MockSwitch/>
         <SlaveElectricityMeter masterId="F-00000001-000000000001-00"/>
     </Appliance>
     <Connectivity>
