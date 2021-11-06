@@ -116,7 +116,7 @@ public class ApplianceManager implements Runnable {
 
     private Appliances loadAppliances() {
         return fileHandler.load(Appliances.class, content -> {
-            content = content.replace("http://github.com/camueller/SmartApplianceEnabler/v1.5", ApplianceManager.SCHEMA_LOCATION);
+            content = content.replaceAll("http://github.com/camueller/SmartApplianceEnabler/v[0-9.]*", ApplianceManager.SCHEMA_LOCATION);
             content = content.replaceAll("type=\"InputString\"", "type=\"Input\" valueType=\"String\"");
             content = content.replaceAll("type=\"InputFloat\"", "type=\"Input\" valueType=\"Float\"");
             content = content.replaceAll("type=\"InputDecimal\"", "type=\"Input\" valueType=\"Integer2Float\"");
