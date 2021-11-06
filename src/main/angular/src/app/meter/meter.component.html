@@ -28,6 +28,9 @@
       </mat-form-field>
     </div>
     <app-help [helpfile]="'Meter'"></app-help>
+    <mat-checkbox class="MeterComponent__masterMeter" formControlName="isMasterMeter"
+                  (click)="toggleIsMasterMeter()"
+    >{{'MeterComponent.isMasterMeter' | translate}}</mat-checkbox>
   </div>
   <app-meter-s0 *ngIf="isS0ElectricityMeter"
                 [s0ElectricityMeter]="meter.s0ElectricityMeter"
@@ -46,6 +49,10 @@
                   [meterDefaults]="meterDefaults"
                   [isEvCharger]="isEvCharger"
   ></app-meter-http>
+  <app-meter-master *ngIf="meter.isMasterMeter"
+                    [form]="form"
+                    [masterMeter]="meter.masterElectricityMeter"
+  ></app-meter-master>
   <app-notification [types]="notficationTypes"
                     [notifications]="meter.notifications"
                     [configured]="isNotifcationEnabled"

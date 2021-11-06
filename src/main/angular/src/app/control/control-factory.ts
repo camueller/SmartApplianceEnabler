@@ -178,18 +178,6 @@ export class ControlFactory {
       control.startingCurrentSwitch['control'] = this.getControlByType(control);
       control.startingCurrentSwitch['control'].notifications = control.notifications;
       controlUsed = control.startingCurrentSwitch;
-      if (controlUsed.powerThreshold === '') {
-        controlUsed.powerThreshold = null;
-      }
-      if (controlUsed.startingCurrentDetectionDuration === '') {
-        controlUsed.startingCurrentDetectionDuration = null;
-      }
-      if (controlUsed.finishedCurrentDetectionDuration === '') {
-        controlUsed.finishedCurrentDetectionDuration = null;
-      }
-      if (controlUsed.minRunningTime === '') {
-        controlUsed.minRunningTime = null;
-      }
     } else {
       controlUsed = this.getControlByType(control);
     }

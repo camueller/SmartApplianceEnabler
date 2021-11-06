@@ -65,6 +65,7 @@
   "FilenameInputComponent.error.not-executable": "Die Datei kann nicht ausgeführt werden.",
 
   "MeterComponent.type": "Typ",
+  "MeterComponent.isMasterMeter": "Master-Zähler",
   "de.avanux.smartapplianceenabler.meter.S0ElectricityMeter": "S0",
   "de.avanux.smartapplianceenabler.meter.ModbusElectricityMeter": "Modbus",
   "de.avanux.smartapplianceenabler.meter.HttpElectricityMeter": "HTTP",
@@ -95,6 +96,12 @@
   "MeterHttpComponent.Energy": "Zählerstand",
   "MeterHttpComponent.button.addHttpRead": "Weitere URL",
   "MeterHttpComponent.error.pollInterval_pattern": "Das Abfrage-Intervall muss eine Zahl sein",
+
+  "MeterMasterComponent.meterMaster": "Master-Zähler",
+  "MeterMasterComponent.masterSwitchOn": "Master-Schalter",
+  "MeterMasterComponent.slaveSwitchOn": "Slave-Schalter",
+  "MeterMasterComponent.switchOn.true": "muss eingeschaltet sein",
+  "MeterMasterComponent.switchOn.false": "muss ausgeschaltet sein",
 
   "HeaderComponent.title": "Smart Appliance Enabler",
   "HeaderComponent.newVersionAvailable": "Version {{version}} verfügbar",

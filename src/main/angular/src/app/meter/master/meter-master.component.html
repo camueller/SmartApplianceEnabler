@@ -1,0 +1,40 @@
+<!--
+  ~ Copyright (C) 2021 Axel Müller <axel.mueller@avanux.de>
+  ~
+  ~ This program is free software; you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation; either version 2 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along
+  ~ with this program; if not, write to the Free Software Foundation, Inc.,
+  ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+  -->
+
+<div class="MeterMasterComponent" [formGroup]="form">
+  <h2 class="sae__heading-extra-top-margin">{{'MeterMasterComponent.meterMaster' | translate}}
+    <app-help [helpfile]="'Anlaufstromerkennung'"></app-help></h2>
+  <div class="sae__fields">
+    <mat-form-field class="MeterMasterComponent__masterSwitchOn">
+      <mat-label>{{'MeterMasterComponent.masterSwitchOn' | translate}}</mat-label>
+      <mat-select formControlName="masterSwitchOn">
+        <mat-option *ngFor="let switchOnOption of switchOnOptions" [value]="switchOnOption.value">
+          {{switchOnOption.viewValue}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="MeterMasterComponent__slaveSwitchOn">
+      <mat-label>{{'MeterMasterComponent.slaveSwitchOn' | translate}}</mat-label>
+      <mat-select formControlName="slaveSwitchOn">
+        <mat-option *ngFor="let switchOnOption of switchOnOptions" [value]="switchOnOption.value">
+          {{switchOnOption.viewValue}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+</div>

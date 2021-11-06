@@ -65,6 +65,7 @@
   "FilenameInputComponent.error.not-executable": "The file is not executable.",
 
   "MeterComponent.type": "Type",
+  "MeterComponent.isMasterMeter": "Master Meter",
   "de.avanux.smartapplianceenabler.meter.S0ElectricityMeter": "S0",
   "de.avanux.smartapplianceenabler.meter.ModbusElectricityMeter": "Modbus",
   "de.avanux.smartapplianceenabler.meter.HttpElectricityMeter": "HTTP",
@@ -95,6 +96,12 @@
   "MeterHttpComponent.Energy": "Meter reading",
   "MeterHttpComponent.button.addHttpRead": "Add URL",
   "MeterHttpComponent.error.pollInterval_pattern": "The poll interval has to be a number",
+
+  "MeterMasterComponent.meterMaster": "Master meter",
+  "MeterMasterComponent.masterSwitchOn": "Master control",
+  "MeterMasterComponent.slaveSwitchOn": "Slave control",
+  "MeterMasterComponent.switchOn.true": "has to be switched on",
+  "MeterMasterComponent.switchOn.false": "has to be switched off",
 
   "HeaderComponent.title": "Smart Appliance Enabler",
   "HeaderComponent.newVersionAvailable": "Version {{version}} available",

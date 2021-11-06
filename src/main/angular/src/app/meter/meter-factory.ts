@@ -22,6 +22,7 @@ import {Logger} from '../log/logger';
 import {S0ElectricityMeter} from './s0/s0-electricity-meter';
 import {ModbusElectricityMeter} from './modbus/modbus-electricity-meter';
 import {HttpElectricityMeter} from './http/http-electricity-meter';
+import {MasterElectricityMeter} from './master/master-electricity-meter';
 
 export class MeterFactory {
 
@@ -42,7 +43,27 @@ export class MeterFactory {
   fromJSON(rawMeter: any): Meter {
     this.logger.debug('Meter (JSON): ', rawMeter);
     const meter = new Meter();
-    meter.type = rawMeter['@class'];
+    if (rawMeter['@class'] === MasterElectricityMeter.TYPE) {
+      meter.isMasterMeter = true;
+      meter.masterElectricityMeter = this.createMasterElectricityMeter(rawMeter);
+      this.fromJSONbyType(meter, rawMeter.meter);
+    } else {
+      this.fromJSONbyType(meter, rawMeter);
+    }
+    meter.notifications = rawMeter.notifications;
+    this.logger.debug('Meter (TYPE): ', meter);
+    return meter;
+  }
+
+  fromJSONbyType(meter: Meter, rawMeter: any) {
+    if (rawMeter != null) {
+      this.initializeByType(meter, rawMeter, rawMeter['@class']);
+    }
+  }
+
+  initializeByType(meter: Meter, rawMeter: any, type: string) {
+    meter.type = type;
+    meter.notifications = rawMeter.notifications;
     if (meter.type === S0ElectricityMeter.TYPE) {
       meter.s0ElectricityMeter = this.createS0ElectricityMeter(rawMeter);
     } else if (meter.type === ModbusElectricityMeter.TYPE) {
@@ -50,23 +71,28 @@ export class MeterFactory {
     } else if (meter.type === HttpElectricityMeter.TYPE) {
       meter.httpElectricityMeter = this.createHttpElectricityMeter(rawMeter);
     }
-    meter.notifications = rawMeter.notifications;
-    this.logger.debug('Meter (TYPE): ', meter);
-    return meter;
+  }
+
+  getMeterByType(meter: Meter): any {
+    if (meter.type === S0ElectricityMeter.TYPE) {
+      return meter.s0ElectricityMeter;
+    } else if (meter.type === ModbusElectricityMeter.TYPE) {
+      return meter.modbusElectricityMeter;
+    } else if (meter.type === HttpElectricityMeter.TYPE) {
+      return meter.httpElectricityMeter;
+    }
+    return null;
   }
 
   toJSON(meter: Meter): string {
     this.logger.debug('Meter (TYPE): ' + JSON.stringify(meter));
     let meterUsed: any;
-    if (meter.type === S0ElectricityMeter.TYPE) {
-      meterUsed = meter.s0ElectricityMeter;
-    } else if (meter.type === ModbusElectricityMeter.TYPE) {
-      meterUsed = meter.modbusElectricityMeter;
-    } else if (meter.type === HttpElectricityMeter.TYPE) {
-      meterUsed = meter.httpElectricityMeter;
-    }
-    if (meterUsed) {
-      meterUsed.notifications = meter.notifications;
+    if (meter.isMasterMeter) {
+      meter.masterElectricityMeter['meter'] = this.getMeterByType(meter);
+      meter.masterElectricityMeter['meter'].notifications = meter.notifications;
+      meterUsed = meter.masterElectricityMeter;
+    } else {
+      meterUsed = this.getMeterByType(meter);
     }
     let meterRaw: string;
     if (meterUsed != null) {
@@ -85,6 +111,10 @@ export class MeterFactory {
   }
 
   createHttpElectricityMeter(rawMeter: any): HttpElectricityMeter {
+    return rawMeter;
+  }
+
+  createMasterElectricityMeter(rawMeter: any): MasterElectricityMeter {
     return rawMeter;
   }
 }

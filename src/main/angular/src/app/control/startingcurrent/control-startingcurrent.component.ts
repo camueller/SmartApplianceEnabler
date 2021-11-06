@@ -84,10 +84,10 @@ export class ControlStartingcurrentComponent implements OnChanges, OnInit {
 
     // all properties are optional; therefore we always have to return an instance
 
-    this.startingCurrentSwitch.powerThreshold = powerThreshold;
-    this.startingCurrentSwitch.startingCurrentDetectionDuration = startingCurrentDetectionDuration;
-    this.startingCurrentSwitch.finishedCurrentDetectionDuration = finishedCurrentDetectionDuration;
-    this.startingCurrentSwitch.minRunningTime = minRunningTime;
+    this.startingCurrentSwitch.powerThreshold = powerThreshold ?? null;
+    this.startingCurrentSwitch.startingCurrentDetectionDuration = startingCurrentDetectionDuration ?? null;
+    this.startingCurrentSwitch.finishedCurrentDetectionDuration = finishedCurrentDetectionDuration ?? null;
+    this.startingCurrentSwitch.minRunningTime = minRunningTime ?? null;
     return this.startingCurrentSwitch;
   }
 }
