@@ -199,7 +199,7 @@ export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<Appl
   isApplianceIdValid(applianceIdsUsedElsewhere: string[]): ValidatorFn {
     return (control: AbstractControl): {[key: string]: any} | null => {
       if (applianceIdsUsedElsewhere && applianceIdsUsedElsewhere.find(id => id === control.value)) {
-        return {['custom']: true};
+        return {custom: true};
       }
     };
   }

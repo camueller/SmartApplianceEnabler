@@ -25,6 +25,7 @@ import {FormHandler} from '../../shared/form-handler';
 import {ErrorMessages} from '../../shared/error-messages';
 import {MasterElectricityMeter} from './master-electricity-meter';
 import {ListItem} from '../../shared/list-item';
+import {ErrorMessage, ValidatorType} from '../../shared/error-message';
 
 @Component({
   selector: 'app-meter-master',
@@ -43,6 +44,15 @@ export class MeterMasterComponent implements OnChanges, OnInit {
   switchOnOptions: ListItem[] = [];
   private readonly switchOnTrue = 'MeterMasterComponent.switchOn.true';
   private readonly switchOnFalse = 'MeterMasterComponent.switchOn.false';
+
+  private masterSlaveControlValidator = (): { [key: string]: boolean } => {
+    const masterSwitchOn = this.form.get('masterSwitchOn');
+    const slaveSwitchOn = this.form.get('slaveSwitchOn');
+    masterSwitchOn?.setErrors(null);
+    slaveSwitchOn?.setErrors(null);
+    const valid = !!masterSwitchOn?.value || !!slaveSwitchOn?.value;
+    return !valid ? {custom: true} : null;
+  }
 
   constructor(private logger: Logger,
               private translate: TranslateService
@@ -66,12 +76,19 @@ export class MeterMasterComponent implements OnChanges, OnInit {
   }
 
   ngOnInit() {
+    this.errorMessages = new ErrorMessages('MeterMasterComponent.error.', [
+      new ErrorMessage('masterSwitchOn', ValidatorType.custom),
+      new ErrorMessage('slaveSwitchOn', ValidatorType.custom),
+    ], this.translate);
     const switchOnKeys = [this.switchOnTrue, this.switchOnFalse];
     this.translate.get(switchOnKeys).subscribe(translatedStrings => {
       this.switchOnOptions.push({value: null, viewValue: ''} as ListItem);
       Object.keys(translatedStrings).forEach(key => {
         this.switchOnOptions.push({value: key, viewValue: translatedStrings[key]} as ListItem);
       });
+    });
+    this.form.statusChanges.subscribe(() => {
+      this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
     });
   }
 
@@ -93,8 +110,10 @@ export class MeterMasterComponent implements OnChanges, OnInit {
   }
 
   expandParentForm() {
-    this.formHandler.addFormControl(this.form, 'masterSwitchOn', this.toSwitchOnKey(this.masterMeter?.masterSwitchOn));
-    this.formHandler.addFormControl(this.form, 'slaveSwitchOn', this.toSwitchOnKey(this.masterMeter?.slaveSwitchOn));
+    this.formHandler.addFormControl(this.form, 'masterSwitchOn', this.toSwitchOnKey(this.masterMeter?.masterSwitchOn),
+      this.masterSlaveControlValidator);
+    this.formHandler.addFormControl(this.form, 'slaveSwitchOn', this.toSwitchOnKey(this.masterMeter?.slaveSwitchOn),
+      this.masterSlaveControlValidator);
   }
 
   updateModelFromForm(): MasterElectricityMeter {

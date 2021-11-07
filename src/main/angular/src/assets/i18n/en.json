@@ -103,6 +103,8 @@
   "MeterMasterComponent.slaveSwitchOn": "Slave control",
   "MeterMasterComponent.switchOn.true": "has to be switched on",
   "MeterMasterComponent.switchOn.false": "has to be switched off",
+  "MeterMasterComponent.error.masterSwitchOn_custom": "Master control oder slave control has to be configured",
+  "MeterMasterComponent.error.slaveSwitchOn_custom": "Master control oder slave control has to be configured",
 
   "MeterSlaveComponent.masterMeterApplianceName": "Master meter",
 

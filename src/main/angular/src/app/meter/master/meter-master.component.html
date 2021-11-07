@@ -27,6 +27,7 @@
           {{switchOnOption.viewValue}}
         </mat-option>
       </mat-select>
+      <mat-error *ngIf="errors.masterSwitchOn">{{errors.masterSwitchOn}}</mat-error>
     </mat-form-field>
     <mat-form-field class="MeterMasterComponent__slaveSwitchOn">
       <mat-label>{{'MeterMasterComponent.slaveSwitchOn' | translate}}</mat-label>
@@ -35,6 +36,7 @@
           {{switchOnOption.viewValue}}
         </mat-option>
       </mat-select>
+      <mat-error *ngIf="errors.slaveSwitchOn">{{errors.slaveSwitchOn}}</mat-error>
     </mat-form-field>
   </div>
 </div>

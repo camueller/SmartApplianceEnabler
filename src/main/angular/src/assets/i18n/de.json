@@ -103,6 +103,8 @@
   "MeterMasterComponent.slaveSwitchOn": "Slave-Schalter",
   "MeterMasterComponent.switchOn.true": "muss eingeschaltet sein",
   "MeterMasterComponent.switchOn.false": "muss ausgeschaltet sein",
+  "MeterMasterComponent.error.masterSwitchOn_custom": "Master-Schalter oder Slave-Schalter muss konfiguriert sein",
+  "MeterMasterComponent.error.slaveSwitchOn_custom": "Master-Schalter oder Slave-Schalter muss konfiguriert sein",
 
   "MeterSlaveComponent.masterMeterApplianceName": "Master-Zähler",
 
