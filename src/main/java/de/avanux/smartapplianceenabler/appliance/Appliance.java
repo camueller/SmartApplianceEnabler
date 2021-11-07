@@ -243,7 +243,7 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
         }
         if(meter instanceof SlaveElectricityMeter) {
             SlaveElectricityMeter slaveMeter = (SlaveElectricityMeter) meter;
-            Appliance masterAppliance = ApplianceManager.getInstance().getAppliance(slaveMeter.getMasterId());
+            Appliance masterAppliance = ApplianceManager.getInstance().getAppliance(slaveMeter.getMasterElectricityMeterApplianceId());
             MasterElectricityMeter masterMeter = (MasterElectricityMeter) masterAppliance.getMeter();
             masterMeter.setSlaveElectricityMeter((SlaveElectricityMeter) meter);
             masterMeter.setSlaveControl(control);

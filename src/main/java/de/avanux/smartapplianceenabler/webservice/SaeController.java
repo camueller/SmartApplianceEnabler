@@ -27,10 +27,7 @@ import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.ControlDefaults;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
-import de.avanux.smartapplianceenabler.meter.HttpElectricityMeterDefaults;
-import de.avanux.smartapplianceenabler.meter.Meter;
-import de.avanux.smartapplianceenabler.meter.MeterDefaults;
-import de.avanux.smartapplianceenabler.meter.S0ElectricityMeterDefaults;
+import de.avanux.smartapplianceenabler.meter.*;
 import de.avanux.smartapplianceenabler.modbus.ModbusElectricityMeterDefaults;
 import de.avanux.smartapplianceenabler.modbus.ModbusReadDefaults;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
@@ -50,9 +47,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+
+import static java.util.stream.Collectors.toMap;
 
 @RestController
 public class SaeController {
@@ -337,7 +334,14 @@ public class SaeController {
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public MeterDefaults getMeterDefaults() {
         try {
-            return new MeterDefaults();
+            Map<String, String> masterElectricityMeterApplianceIdWithApplianceName =
+                    ApplianceManager.getInstance().getAppliances().stream()
+                            .filter(appliance -> appliance.getMeter() instanceof MasterElectricityMeter)
+                            .collect(toMap(
+                                    appliance -> appliance.getId(),
+                                    appliance -> ApplianceManager.getInstance().getDeviceInfo(
+                                            appliance.getId()).getIdentification().getDeviceName()));
+            return new MeterDefaults(masterElectricityMeterApplianceIdWithApplianceName);
         } catch (Throwable e) {
             logger.error("Error in " + getClass().getSimpleName(), e);
         }

@@ -28,7 +28,7 @@
       </mat-form-field>
     </div>
     <app-help [helpfile]="'Meter'"></app-help>
-    <mat-checkbox class="MeterComponent__masterMeter" formControlName="isMasterMeter"
+    <mat-checkbox *ngIf="!isSlaveElectricityMeter" class="MeterComponent__masterMeter" formControlName="isMasterMeter"
                   (click)="toggleIsMasterMeter()"
     >{{'MeterComponent.isMasterMeter' | translate}}</mat-checkbox>
   </div>
@@ -53,6 +53,11 @@
                     [form]="form"
                     [masterMeter]="meter.masterElectricityMeter"
   ></app-meter-master>
+  <app-meter-slave *ngIf="isSlaveElectricityMeter"
+                   [form]="form"
+                   [masterElectricityMeterApplianceIdWithApplianceName]="meterDefaults.masterElectricityMeterApplianceIdWithApplianceName"
+                   [slaveMeter]="meter.slaveElectricityMeter"
+  ></app-meter-slave>
   <app-notification [types]="notficationTypes"
                     [notifications]="meter.notifications"
                     [configured]="isNotifcationEnabled"

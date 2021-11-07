@@ -7,13 +7,12 @@
                 <HttpRead url="http://tasmota/cm?cmnd=Status%208">
                     <HttpReadValue name="Energy" method="GET" path="$.StatusSNS.ENERGY.Total"/>
                 </HttpRead>
-                <Notifications/>
             </HttpElectricityMeter>
         </MasterElectricityMeter>
     </Appliance>
     <Appliance id="F-00000001-000000000001-01">
         <MockSwitch/>
-        <SlaveElectricityMeter masterId="F-00000001-000000000001-00"/>
+        <SlaveElectricityMeter masterElectricityMeterApplianceId="F-00000001-000000000001-00"/>
     </Appliance>
     <Connectivity>
         <ModbusTCP id="modbus" host="raspi2" port="502"/>

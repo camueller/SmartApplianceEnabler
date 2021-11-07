@@ -45,6 +45,8 @@ import {NotificationType} from '../notification/notification-type';
 import {NotificationComponent} from '../notification/notification.component';
 import {MasterElectricityMeter} from './master/master-electricity-meter';
 import {MeterMasterComponent} from './master/meter-master.component';
+import {SlaveElectricityMeter} from './slave/master-electricity-meter';
+import {MeterSlaveComponent} from './slave/meter-slave.component';
 
 @Component({
   selector: 'app-meter',
@@ -60,6 +62,8 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
   meterHttpComp: MeterHttpComponent;
   @ViewChild(MeterMasterComponent)
   meterMasterComp: MeterMasterComponent;
+  @ViewChild(MeterSlaveComponent)
+  meterSlaveComp: MeterSlaveComponent;
   @ViewChild(NotificationComponent)
   notificationComp: NotificationComponent;
   form: FormGroup;
@@ -100,9 +104,15 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
       this.settings = data.settings;
       this.settingsDefaults = data.settingsDefaults;
       this.isEvCharger = data.appliance.type === ApplianceType.EV_CHARGER.toString();
-      const meterTypeKeys = this.settings.modbusSettings
-        ? [S0ElectricityMeter.TYPE, ModbusElectricityMeter.TYPE, HttpElectricityMeter.TYPE]
-        : [S0ElectricityMeter.TYPE, HttpElectricityMeter.TYPE];
+
+      const meterTypeKeys = [S0ElectricityMeter.TYPE, HttpElectricityMeter.TYPE];
+      if (this.settings.modbusSettings) {
+        meterTypeKeys.push(ModbusElectricityMeter.TYPE);
+      }
+      if (this.meterDefaults.masterElectricityMeterApplianceIdWithApplianceName) {
+        meterTypeKeys.push(SlaveElectricityMeter.TYPE);
+      }
+
       this.translate.get(meterTypeKeys).subscribe(translatedStrings => {
         Object.keys(translatedStrings).forEach(key => {
           this.meterTypes.push({value: simpleMeterType(key), viewValue: translatedStrings[key]} as ListItem);
@@ -143,6 +153,10 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
 
   get isHttpElectricityMeter() {
     return this.form.controls.meterType.value === simpleMeterType(HttpElectricityMeter.TYPE);
+  }
+
+  get isSlaveElectricityMeter() {
+    return this.form.controls.meterType.value === simpleMeterType(SlaveElectricityMeter.TYPE);
   }
 
   toggleIsMasterMeter() {
@@ -197,6 +211,9 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
     }
     if (this.meterMasterComp) {
       this.meter.masterElectricityMeter = this.meterMasterComp.updateModelFromForm();
+    }
+    if (this.meterSlaveComp) {
+      this.meter.slaveElectricityMeter = this.meterSlaveComp.updateModelFromForm();
     }
     if (this.notificationComp) {
       this.meter.notifications = this.notificationComp.updateModelFromForm();

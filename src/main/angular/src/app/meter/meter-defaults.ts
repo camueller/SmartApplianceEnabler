@@ -8,6 +8,7 @@ export class MeterDefaults {
   httpElectricityMeterDefaults: HttpElectricityMeterDefaults;
   modbusElectricityMeterDefaults: ModbusElectricityMeterDefaults;
   modbusReadDefaults: ModbusReadDefaults;
+  masterElectricityMeterApplianceIdWithApplianceName: Object;
 
   public constructor(init?: Partial<MeterDefaults>) {
     Object.assign(this, init);

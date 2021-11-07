@@ -34,7 +34,7 @@ import java.util.Timer;
 public class SlaveElectricityMeter implements ApplianceIdConsumer, Meter, PowerUpdateListener {
     private transient Logger logger = LoggerFactory.getLogger(SlaveElectricityMeter.class);
     @XmlAttribute
-    private String masterId;
+    private String masterElectricityMeterApplianceId;
     private transient String applianceId;
     private transient MasterElectricityMeter masterMeter;
     private transient List<PowerUpdateListener> powerUpdateListeners = new ArrayList<>();
@@ -48,13 +48,13 @@ public class SlaveElectricityMeter implements ApplianceIdConsumer, Meter, PowerU
         this.masterMeter = masterMeter;
     }
 
-    public String getMasterId() {
-        return masterId;
+    public String getMasterElectricityMeterApplianceId() {
+        return masterElectricityMeterApplianceId;
     }
 
     @Override
     public void init() {
-        logger.debug("{}: configured: masterId={}", applianceId, masterId);
+        logger.debug("{}: configured: masterElectricityMeterApplianceId={}", applianceId, masterElectricityMeterApplianceId);
     }
 
     @Override

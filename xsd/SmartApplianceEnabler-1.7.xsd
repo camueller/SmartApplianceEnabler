@@ -57,10 +57,10 @@
             <xs:selector xpath="sae:Appliance/sae:ModbusSwitch" />
             <xs:field xpath="@idref" />
         </xs:keyref>
-        <!-- SlaveElectricityMeter masterId -->
+        <!-- SlaveElectricityMeter masterElectricityMeterApplianceId -->
         <xs:keyref name="SlaveElectricityMeterMasterIdRef" refer="ApplianceID">
             <xs:selector xpath="sae:Appliance/sae:SlaveElectricityMeter" />
-            <xs:field xpath="@masterId" />
+            <xs:field xpath="@masterElectricityMeterApplianceId" />
         </xs:keyref>
     </xs:element>
 
@@ -392,7 +392,7 @@
     </xs:complexType>
 
     <xs:complexType name="SlaveElectricityMeterType">
-        <xs:attribute name="masterId" type="xs:NCName" use="required" />
+        <xs:attribute name="masterElectricityMeterApplianceId" type="xs:NCName" use="required" />
     </xs:complexType>
 
     <xs:complexType name="NotificationType">

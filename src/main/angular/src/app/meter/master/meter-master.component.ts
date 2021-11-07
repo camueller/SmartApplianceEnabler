@@ -75,8 +75,8 @@ export class MeterMasterComponent implements OnChanges, OnInit {
     });
   }
 
-  toSwitchOnKey(switchOn: boolean | null): string | undefined {
-    if (switchOn !== null) {
+  toSwitchOnKey(switchOn: boolean | null | undefined): string | undefined {
+    if (switchOn !== null && switchOn !== undefined) {
       return switchOn ? this.switchOnTrue : this.switchOnFalse;
     }
     return undefined;

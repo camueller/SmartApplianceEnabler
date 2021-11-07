@@ -69,6 +69,7 @@
   "de.avanux.smartapplianceenabler.meter.S0ElectricityMeter": "S0",
   "de.avanux.smartapplianceenabler.meter.ModbusElectricityMeter": "Modbus",
   "de.avanux.smartapplianceenabler.meter.HttpElectricityMeter": "HTTP",
+  "de.avanux.smartapplianceenabler.meter.SlaveElectricityMeter": "Slave-Zähler",
 
   "MeterS0Component.gpio": "GPIO-Anschluss",
   "MeterS0Component.pinPullResistance": "Interner Widerstand",
@@ -102,6 +103,8 @@
   "MeterMasterComponent.slaveSwitchOn": "Slave-Schalter",
   "MeterMasterComponent.switchOn.true": "muss eingeschaltet sein",
   "MeterMasterComponent.switchOn.false": "muss ausgeschaltet sein",
+
+  "MeterSlaveComponent.masterMeterApplianceName": "Master-Zähler",
 
   "HeaderComponent.title": "Smart Appliance Enabler",
   "HeaderComponent.newVersionAvailable": "Version {{version}} verfügbar",
