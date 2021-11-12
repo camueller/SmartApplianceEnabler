@@ -23,7 +23,7 @@ Von den [Raspberry Pi OS](https://www.raspberrypi.org/software) Images ist die *
 
 _**Für Smart Appliancer Enabler bis einschliesslich Version 1.4 gilt:**_ Es muss Rasbian Stretch verwendet werden (Raspbian Buster oder neuer ist nicht geeignet!!!). Download: https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2019-04-09/
 
-_**Für Smart Appliancer Enabler ab Version 1.5 gilt:**_ Es ist mindestens Raspbian Buster erforderlich.
+_**Für Smart Appliancer Enabler ab Version 1.5 gilt:**_ Es ist Raspbian Buster erforderlich. **!!! Raspbian Bullseye wird aktuell noch nicht unterstützt !!!**
 
 Zum Schreiben des Images auf eine SD-Karte eignet sich der [Raspberry Pi Imager](https://www.raspberrypi.org/software) 
 Alternativ kann man mit dem nachfolgenden Befehl unter Linux das Image auf eine SD-Karte schreiben:
