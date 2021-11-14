@@ -186,14 +186,17 @@ sudo apt install mbpoll
 *Vor der Überprüfung von Modbus/RTU sollte unbedingt der `mbusd` gestoppt werden, damit `mbpoll` auf den USB-Modbus-Adapter zugreifen kann!*
 
 Danach sollte es möglich sein, beispielsweise das Register für den Zählerstand auszulesen.
-Der Aufruf dazu sieht z.B. für den `SDM220-Modbus` wie folgt aus, wobei folgende Parameter für andere Modbus-Geräte anzupassen sind:
+Der Aufruf dazu sieht z.B. für den `SDM220-Modbus` wie folgt aus:
 - Slave-Adresse (`-a`), hier im Beispiel: 1
-- Register (`-r`), hier im Beispiel: 342 (Dezimal!) 
-- Register-Typ (`-t`), hier im Beispiel: Input-Register mit Float-Wert
+- Register (`-r`), hier im Beispiel: 342 (Dezimal! - entspricht 156 hex)
+- Register-Typ (`-t`), hier im Beispiel: 32bit Input-Register mit Float-Wert
+- Byte-Reihenfolge "Big endian" (`-B`)
+- erste Adresse is 0 anstatt 1 (`-0`)
+- Register nur einmal auslesen (`-1`)
 
-Der Aufruf sorgt dafür, dass das Register einmal ausgelesen wird und der Register-Wert (hier im Beispiel: 334) angezeigt wird.
+Der Aufruf sorgt dafür, dass das Register einmal ausgelesen wird und der Register-Wert (hier im Beispiel: 2952.21) angezeigt wird.
 ```
-pi@raspberrypi:~ $ mbpoll -b 9600 -P none -a 1 -r 342 -t 3:float -1 /dev/ttyUSB0
+pi@raspberrypi:~ $ mbpoll -b 9600 -P none -a 1 -r 342 -t 3:float -B -0 -1 /dev/ttyUSB0
 mbpoll 1.4-12 - FieldTalk(tm) Modbus(R) Master Simulator
 Copyright © 2015-2019 Pascal JEAN, https://github.com/epsilonrt/mbpoll
 This program comes with ABSOLUTELY NO WARRANTY.
@@ -205,10 +208,10 @@ Slave configuration...: address = [1]
                         start reference = 342, count = 1
 Communication.........: /dev/ttyUSB0,       9600-8N1 
                         t/o 1.00 s, poll rate 1000 ms
-Data type.............: 32-bit float (little endian), input register table
+Data type.............: 32-bit float (big endian), input register table
 
 -- Polling slave 1...
-[342]:  334
+[342]:  2952.21
 ```
 
 #### Überprüfung Modbus/TCP
@@ -216,15 +219,17 @@ Data type.............: 32-bit float (little endian), input register table
 *Vor der Überprüfung von Modbus/TCP muss sichergestellt sein, dass der `mbusd` läuft!*
 
 Danach sollte es möglich sein, beispielsweise das Register für den Zählerstand auszulesen.
-Der Aufruf dazu sieht z.B. für den `SDM220-Modbus` wie folgt aus, wobei folgende Parameter für andere Modbus-Geräte anzupassen sind:
+Der Aufruf dazu sieht z.B. für den `SDM220-Modbus` wie folgt aus:
 - Slave-Adresse (`-a`), hier im Beispiel: 1
-- Register (`-r`), hier im Beispiel: 342 (Dezimal!)
-- Register-Typ (`-t`), hier im Beispiel: Input-Register mit Float-Wert
+- Register (`-r`), hier im Beispiel: 342 (Dezimal! - entspricht 156 hex)
+- Register-Typ (`-t`), hier im Beispiel: 32bit Input-Register mit Float-Wert
+- Byte-Reihenfolge "Big endian" (`-B`) 
+- erste Adresse is 0 anstatt 1 (`-0`)
+- Register nur einmal auslesen (`-1`)
 
-Der Aufruf sorgt dafür, dass das Register einmal ausgelesen wird und der Register-Wert (hier im Beispiel: 334) angezeigt wird.
-
+Der Aufruf sorgt dafür, dass das Register einmal ausgelesen wird und der Register-Wert (hier im Beispiel: 2952.21) angezeigt wird.
 ```
-pi@raspberrypi:~ $ mbpoll -a 1 -r 342 -t 3:float -1 localhost
+pi@raspberrypi:~ $ mbpoll -a 1 -r 342 -t 3:float -B -0 -1 localhost
 mbpoll 1.4-12 - FieldTalk(tm) Modbus(R) Master Simulator
 Copyright © 2015-2019 Pascal JEAN, https://github.com/epsilonrt/mbpoll
 This program comes with ABSOLUTELY NO WARRANTY.
@@ -235,8 +240,8 @@ Protocol configuration: Modbus TCP
 Slave configuration...: address = [1]
                         start reference = 342, count = 1
 Communication.........: localhost, port 502, t/o 1.00 s, poll rate 1000 ms
-Data type.............: 32-bit float (little endian), input register table
+Data type.............: 32-bit float (big endian), input register table
 
 -- Polling slave 1...
-[342]:  334
+[342]:  2952.21
 ```
