@@ -17,17 +17,6 @@
  */
 package de.avanux.smartapplianceenabler;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.pi4j.io.gpio.GpioController;
-import com.pi4j.io.gpio.GpioFactory;
-import com.pi4j.io.gpio.GpioPinDigitalInput;
-import com.pi4j.io.gpio.PinPullResistance;
-import com.pi4j.io.gpio.RaspiPin;
-import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
-import com.pi4j.io.gpio.event.GpioPinListenerDigital;
-
 public class SmartApplianceEnabler {
     public static final String MANUFACTURER_NAME = "avanux.de";
     public static final String MANUFACTURER_URI = "http://www.avanux.de";

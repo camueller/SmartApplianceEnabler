@@ -17,8 +17,8 @@
  */
 package de.avanux.smartapplianceenabler.appliance;
 
-import com.pi4j.io.gpio.GpioController;
-import com.pi4j.io.gpio.GpioFactory;
+import com.pi4j.Pi4J;
+import com.pi4j.context.Context;
 import de.avanux.smartapplianceenabler.HolidaysDownloader;
 import de.avanux.smartapplianceenabler.configuration.Configuration;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
@@ -90,18 +90,19 @@ public class ApplianceManager implements Runnable {
         return instance;
     }
 
-    private GpioController getGpioController() {
-        if(System.getProperty("os.arch").equals("arm")) {
-            try {
-                return GpioFactory.getInstance();
-            }
-            catch(Error e) {
-                // warning will be logged later on only if GPIO access is required
-            }
-        }
-        else {
-            logger.warn("GPIO access disabled - not running on Raspberry Pi.");
-        }
+    private Context getGpioContext() {
+//        if(System.getProperty("os.arch").equals("arm")) {
+//            try {
+//                return Pi4J.newAutoContext();
+//            }
+//            catch(Error e) {
+//                // warning will be logged later on only if GPIO access is required
+//                logger.error("Error creating Pi4J context.", e);
+//            }
+//        }
+//        else {
+//            logger.warn("GPIO access disabled - not running on Raspberry Pi.");
+//        }
         return null;
     }
 
@@ -264,7 +265,7 @@ public class ApplianceManager implements Runnable {
             }
             logger.debug("{}: Initializing appliance ...", appliance.getId());
             try {
-                appliance.init(getGpioController(), modbusIdWithModbusTcp,
+                appliance.init(getGpioContext(), modbusIdWithModbusTcp,
                         appliances.getConfigurationValue(NotificationHandler.CONFIGURATION_KEY_NOTIFICATION_COMMAND));
             }
             catch (Exception e) {

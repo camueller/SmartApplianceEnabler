@@ -17,14 +17,11 @@
  */
 package de.avanux.smartapplianceenabler.control;
 
-import com.pi4j.io.gpio.GpioController;
-import com.pi4j.io.gpio.Pin;
-import com.pi4j.io.gpio.PinPullResistance;
-import com.pi4j.io.gpio.RaspiPin;
+import com.pi4j.context.Context;
+import com.pi4j.io.gpio.digital.PullResistance;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.configuration.Validateable;
-import de.avanux.smartapplianceenabler.meter.MeterValueName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,36 +38,36 @@ abstract public class GpioControllable implements ApplianceIdConsumer, Validatea
     private Integer gpio;
     @XmlAttribute
     private String pinPullResistance;
-    private transient GpioController gpioController;
+    private transient Context gpioController;
     private transient String applianceId;
 
 
-    protected GpioController getGpioController() {
+    protected Context getGpioContext() {
         return gpioController;
     }
 
-    public void setGpioController(GpioController gpioController) {
+    public void setGpioContext(Context gpioController) {
         this.gpioController = gpioController;
     }
 
-    protected Pin getGpio() {
-       return RaspiPin.getPinByName("GPIO " + gpio);
+    protected Integer getPin() {
+       return gpio;
     }
 
-    protected PinPullResistance getPinPullResistance() {
+    protected PullResistance getPinPullResistance() {
         if(pinPullResistance != null) {
             if (pinPullResistance.equals("PULL_DOWN")) {
-                return PinPullResistance.PULL_DOWN;
+                return PullResistance.PULL_DOWN;
             }
             if (pinPullResistance.equals("PULL_UP")) {
-                return PinPullResistance.PULL_UP;
+                return PullResistance.PULL_UP;
             }
         }
-        return PinPullResistance.OFF;
+        return PullResistance.OFF;
     }
 
     protected void logGpioAccessDisabled(Logger logger) {
-        logger.warn("{}: Configured for {}, but GPIO access disabled.", applianceId, getGpio());
+        logger.warn("{}: Configured for {}, but GPIO access disabled.", applianceId, getPin());
     }
 
     @Override

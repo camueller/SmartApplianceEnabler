@@ -17,8 +17,9 @@
  */
 package de.avanux.smartapplianceenabler.appliance;
 
-import com.pi4j.io.gpio.GpioController;
+import com.pi4j.context.Context;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
+import de.avanux.smartapplianceenabler.configuration.Validateable;
 import de.avanux.smartapplianceenabler.control.*;
 import de.avanux.smartapplianceenabler.control.ev.*;
 import de.avanux.smartapplianceenabler.meter.HttpElectricityMeter;
@@ -33,13 +34,12 @@ import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.notification.NotificationProvider;
 import de.avanux.smartapplianceenabler.schedule.*;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
-import de.avanux.smartapplianceenabler.configuration.Validateable;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @XmlRootElement
@@ -173,7 +173,7 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
         this.timeframeIntervalHandler.addTimeframeIntervalChangedListener(this);
     }
 
-    public void init(GpioController gpioController, Map<String, ModbusTcp> modbusIdWithModbusTcp, String notificationCommand) {
+    public void init(Context gpioContext, Map<String, ModbusTcp> modbusIdWithModbusTcp, String notificationCommand) {
         logger.debug("{}: Initializing appliance", id);
         if(getTimeframeIntervalHandler() == null) {
             setTimeframeIntervalHandler(new TimeframeIntervalHandler(this.schedules, this.control));
@@ -243,14 +243,14 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
         }
 
         if(getGpioControllables().size() > 0) {
-            if(gpioController != null) {
+            if(gpioContext != null) {
                 for(GpioControllable gpioControllable : getGpioControllables()) {
                     logger.info("{}: Configuring GPIO for {}", id, gpioControllable.getClass().getSimpleName());
-                    gpioControllable.setGpioController(gpioController);
+                    gpioControllable.setGpioContext(gpioContext);
                 }
             }
             else {
-                logger.error("Error initializing pi4j. Most likely libwiringPi.so is missing. In order to install it use the following command: sudo apt-get install wiringpi");
+                logger.error("Error initializing pi4j.");
             }
         }
 
@@ -286,8 +286,8 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
         if(control != null) {
             logger.info("{}: Starting {}", id, control.getClass().getSimpleName());
             control.start(LocalDateTime.now(), timer);
-            logger.info("{}: Switch off appliance initially", id);
-            control.on(now, false);
+//            logger.info("{}: Switch off appliance initially", id);
+//            control.on(now, false);
         }
     }
 

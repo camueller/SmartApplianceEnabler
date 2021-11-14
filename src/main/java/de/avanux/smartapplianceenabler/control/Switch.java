@@ -17,9 +17,12 @@
  */
 package de.avanux.smartapplianceenabler.control;
 
-import com.pi4j.io.gpio.GpioController;
-import com.pi4j.io.gpio.GpioPinDigitalOutput;
-import com.pi4j.io.gpio.PinState;
+import com.pi4j.Pi4J;
+import com.pi4j.context.Context;
+import com.pi4j.io.gpio.digital.DigitalOutput;
+import com.pi4j.io.gpio.digital.DigitalOutputConfig;
+import com.pi4j.io.gpio.digital.DigitalState;
+import com.pi4j.plugin.raspberrypi.RaspberryPi;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import java.time.LocalDateTime;
 
@@ -45,7 +48,7 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
     private boolean reverseStates;
     @XmlElement(name = "Notifications")
     private Notifications notifications;
-    private transient GpioPinDigitalOutput outputPin;
+    private transient DigitalOutput output;
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
     private transient NotificationHandler notificationHandler;
 
@@ -68,27 +71,37 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
 
     @Override
     public void start(LocalDateTime now, Timer timer) {
-        logger.debug("{}: Starting {} for {}", getApplianceId(), getClass().getSimpleName(), getGpio());
-        GpioController gpioController = getGpioController();
-        if (gpioController != null) {
+        logger.debug("{}: Starting {} for {}", getApplianceId(), getClass().getSimpleName(), getPin());
+//        Context gpioContext = getGpioContext();
+//        if (gpioContext != null) {
             try {
-                outputPin = (GpioPinDigitalOutput) gpioController.getProvisionedPin(getGpio());
-                if(outputPin == null) {
-                    outputPin = gpioController.provisionDigitalOutputPin(getGpio(), adjustState(PinState.LOW));
+                if(output == null) {
+                    logger.debug("{}: ****** Switch on", getApplianceId());
+                    int pin = 26;
+                    Context context = Pi4J.newAutoContext();
+                    DigitalOutputConfig config = DigitalOutput.newConfigBuilder(context)
+                            .id("BCM" + pin)
+                            .name("Tester")
+                            .address(pin)
+                            .provider(RaspberryPi.DIGITAL_OUTPUT_PROVIDER_ID)
+                            .build();
+                    DigitalOutput output = context.create(config);
+                    output.state(DigitalState.HIGH);
+                    logger.debug("{}: ****** Switched on", getApplianceId());
                 }
                 logger.debug("{}: {} uses {} reverseStates={}", getApplianceId(), getClass().getSimpleName(),
-                        getGpio(), reverseStates);
+                        getPin(), reverseStates);
             } catch (Exception e) {
-                logger.error("{}: Error starting {} for {}", getApplianceId(), getClass().getSimpleName(), getGpio(), e);
+                logger.error("{}: Error starting {} for {}", getApplianceId(), getClass().getSimpleName(), getPin(), e);
             }
-        } else {
-            logGpioAccessDisabled(logger);
-        }
+//        } else {
+//            logGpioAccessDisabled(logger);
+//        }
     }
 
     @Override
     public void stop(LocalDateTime now) {
-        logger.debug("{}: Stopping {} for {}", getApplianceId(), getClass().getSimpleName(), getGpio());
+        logger.debug("{}: Stopping {} for {}", getApplianceId(), getClass().getSimpleName(), getPin());
     }
 
     @Override
@@ -98,9 +111,9 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
 
     @Override
     public boolean on(LocalDateTime now, boolean switchOn) {
-        logger.info("{}: Switching {} {}", getApplianceId(), (switchOn ? "on" : "off"), getGpio());
-        if (outputPin != null) {
-            outputPin.setState(adjustState(switchOn ? PinState.HIGH : PinState.LOW));
+        logger.info("{}: Switching {} {}", getApplianceId(), (switchOn ? "on" : "off"), getPin());
+        if (output != null) {
+            output.state(switchOn ? DigitalState.HIGH : DigitalState.LOW);
         } else {
             logGpioAccessDisabled(logger);
         }
@@ -115,19 +128,19 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
 
     @Override
     public boolean isOn() {
-        if (outputPin != null) {
-            return adjustState(outputPin.getState()) == PinState.HIGH;
+        if (output != null) {
+            return adjustState(output.state()) == DigitalState.HIGH;
         }
         logGpioAccessDisabled(logger);
         return false;
     }
 
-    private PinState adjustState(PinState pinState) {
+    private DigitalState adjustState(DigitalState pinState) {
         if (reverseStates) {
-            if (pinState == PinState.HIGH) {
-                return PinState.LOW;
+            if (pinState == DigitalState.HIGH) {
+                return DigitalState.LOW;
             }
-            return PinState.HIGH;
+            return DigitalState.HIGH;
         }
         return pinState;
     }
