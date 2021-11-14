@@ -23,7 +23,7 @@ Von den [Raspberry Pi OS](https://www.raspberrypi.org/software) Images ist die *
 
 _**Für Smart Appliancer Enabler bis einschliesslich Version 1.4 gilt:**_ Es muss Rasbian Stretch verwendet werden (Raspbian Buster oder neuer ist nicht geeignet!!!). Download: https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2019-04-09/
 
-_**Für Smart Appliancer Enabler ab Version 1.5 gilt:**_ Es ist Raspbian Buster erforderlich. **!!! Raspbian Bullseye wird aktuell noch nicht unterstützt !!!**
+_**Für Smart Appliancer Enabler ab Version 1.5 gilt:**_ Es ist mindestens Raspbian Buster erforderlich.
 
 Zum Schreiben des Images auf eine SD-Karte eignet sich der [Raspberry Pi Imager](https://www.raspberrypi.org/software) 
 Alternativ kann man mit dem nachfolgenden Befehl unter Linux das Image auf eine SD-Karte schreiben:
@@ -230,9 +230,11 @@ pi@raspberrypi:~ $ sudo update-alternatives --install /usr/bin/javac javac /opt/
 Da die alten Pi-Modelle bzw. die Pi-Zero weniger Rechnen-Leistung bereitstellen, dauert der Start des SAE im Allgmeinen etwas länger, so dass die Timeout-Zeiten noch angepasst werden müssen, um einen Abbruch beim Programmstart zu verhindern. Dafür mit einem Editor in `/opt/sae/smartapplianceenabler` den `sleep 1` durch `sleep 3` ersetzen und in /lib/systemd/system/smartapplianceenabler.service `TimeoutStartSec=90s` auf `TimeoutStartSec=180s` ändern.
 
 ## Wiring-Pi installieren
-Falls der *Smart Appliance Enabler* auf die GPIO-Anschlüsse des Raspberry Pi zugreifen soll, muss die Biliothek [Wiring Pi](http://wiringpi.com/) installiert sein. Das lässt sich mit folgendem Befehl erreichen:
+Falls der *Smart Appliance Enabler* auf die GPIO-Anschlüsse des Raspberry Pi zugreifen soll, muss die Bibliothek [Wiring Pi](http://wiringpi.com/) installiert sein. Das lässt sich mit folgendem Befehlen erreichen:
 ```console
-pi@raspberrypi ~ $ sudo apt install wiringpi
+pi@raspberrypi ~ $ cd /tmp
+pi@raspberrypi ~ $ wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/wiringpi-latest.deb
+pi@raspberrypi ~ $ sudo dpkg -i wiringpi-latest.deb
 ```
 
 ## Smart Appliance Enabler
