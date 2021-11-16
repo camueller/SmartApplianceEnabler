@@ -25,26 +25,26 @@
         </Schedule>
     </Appliance>
     <Appliance id="F-00000001-000000000019-00">
-        <ElectricVehicleCharger startChargingStateDetectionDelay="60">
-            <EVModbusControl idref="wallbox" slaveAddress="180">
-                <ModbusRead address="100" type="Input" valueType="String">
-                    <ModbusReadValue name="VehicleNotConnected" extractionRegex="(A)"/>
-                    <ModbusReadValue name="VehicleConnected" extractionRegex="(B)"/>
-                    <ModbusReadValue name="Charging" extractionRegex="(C|D)"/>
-                    <ModbusReadValue name="Error" extractionRegex="(E|F)"/>
+        <ElectricVehicleCharger>
+            <EVModbusControl idref="modbus" slaveAddress="255">
+                <ModbusRead address="0x0305" type="Input" valueType="Integer">
+                    <ModbusReadValue name="VehicleNotConnected" extractionRegex="(0)"/>
+                    <ModbusReadValue name="VehicleConnected" extractionRegex="(1|2|4|5)"/>
+                    <ModbusReadValue name="Charging" extractionRegex="(3)"/>
+                    <ModbusReadValue name="Error" extractionRegex="(6)"/>
                 </ModbusRead>
-                <ModbusWrite address="400" type="Coil">
-                    <ModbusWriteValue name="StartCharging" value="1"/>
-                    <ModbusWriteValue name="StopCharging" value="0"/>
+                <ModbusWrite address="0x0400" type="Holding" valueType="Integer">
+                    <ModbusWriteValue name="StartCharging" value="4"/>
+                    <ModbusWriteValue name="StopCharging" value="3"/>
                 </ModbusWrite>
-                <ModbusWrite address="300" type="Holding">
+                <ModbusWrite address="0x0401" type="Holding" valueType="Integer">
                     <ModbusWriteValue name="ChargingCurrent" value="0"/>
                 </ModbusWrite>
             </EVModbusControl>
-            <ElectricVehicle id="1" name="Nissan Leaf" batteryCapacity="36000" phases="1" maxChargePower="6600" chargeLoss="11"/>
+            <ElectricVehicle id="1" name="Nissan Leaf" batteryCapacity="36000"/>
         </ElectricVehicleCharger>
         <ModbusElectricityMeter idref="modbus" slaveAddress="1">
-            <ModbusRead address="0x0156" type="Input" valueType="Float" words="2">
+            <ModbusRead address="0x030d" words="2" byteOrder="BigEndian" type="Input" valueType="Float">
                 <ModbusReadValue name="Energy"/>
             </ModbusRead>
         </ModbusElectricityMeter>

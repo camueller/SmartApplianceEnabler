@@ -4,7 +4,17 @@ Für jeden Zähler/Schalter/Wallbox muss ein konfigurierter [Modbus/TCP](Setting
 
 Ausserdem muss die **Slave-Adresse** des Modbus-Gerätes angegeben werden.
 
-Grundsätzlich ist die Angabe von Slave-Adresse oder Register-Adressen als Hexadezimalzahl (mit "0x" am Anfang) oder als Dezimalzahl (ohne "0x" am Anfang) möglich. 
+Grundsätzlich ist die Angabe von Slave-Adresse oder Register-Adressen als Hexadezimalzahl (mit "0x" am Anfang) oder als Dezimalzahl (ohne "0x" am Anfang) möglich.
+
+Für jedes Modbus-Register sind folgende Angaben erforderlich, welche sich der Modbus-Beschreibung des jeweiligen Geätes entnehmen lassen:
+- Register-Adresse
+- Register-Typ bzw. Function-Code
+- Wert-Typ: legt fest, welches Format der Wert im Register hat
+Zahlenwerte mit hoher Genauigkeit benötigen manchmal 2 Datenwörter. In diesen Fällen kann auch die Byte-Reihenfolge (Big Endian / Little Endian) konfiguriert werden.
+
+Außerdem kann ein Umrechnungsfaktor angegeben werden, mit dem der gelieferte Wert multipliziert werden muss, um ihn in die benötigte Einheit umzurechnen.
+
+Beim Finden der richtigen Konfiguration hilft Ausprobieren: Eine zu testende Kombination aus Register-Adresse, Register-Typ und Wert-Typ einstellen und im Log prüfen, welcher Wert aus dem Registerinhalt ermittelt wurde. Ggf. muss auch die Anzahl der Datenwörter und die Byte-Reihefolge variiert werden. Ziel ist, zumindest die richtige Ziffernfolge zu ermitteln, bei der nur noch das Komma an der falschen Stelle steht. Dies kann man abschliessend durch Setzen eines Umrechnungsfaktors korrigieren. 
 
 ## Modbus-Protokoll
 ### Modbus/TCP
