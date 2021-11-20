@@ -41,7 +41,11 @@
                     <ModbusWriteValue name="ChargingCurrent" value="0"/>
                 </ModbusWrite>
             </EVModbusControl>
-            <ElectricVehicle id="1" name="Nissan Leaf" batteryCapacity="36000" phases="1" maxChargePower="6600" chargeLoss="11"/>
+            <ElectricVehicle id="1" name="Nissan Leaf" batteryCapacity="36000" phases="1" maxChargePower="6600" chargeLoss="11">
+                <!--SocScript script="/data/projects/pycarwings2/soc.sh"
+                           updateAfterIncrease="4"
+                           extractionRegex=".*state_of_charge (\d+)"/-->
+            </ElectricVehicle>
         </ElectricVehicleCharger>
         <ModbusElectricityMeter idref="modbus" slaveAddress="1">
             <ModbusRead address="0x0156" type="Input" valueType="Float" words="2">
