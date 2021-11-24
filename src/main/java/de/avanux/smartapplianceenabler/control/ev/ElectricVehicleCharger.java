@@ -246,7 +246,9 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     }
 
     public void setSocInitialTimestamp(LocalDateTime socInitialTimestamp) {
-        this.socInitialTimestamp = socInitialTimestamp;
+        if(this.socInitialTimestamp == null) {
+            this.socInitialTimestamp = socInitialTimestamp;
+        }
     }
 
     public ElectricVehicle getConnectedVehicle() {
