@@ -96,12 +96,12 @@ export class TimeUtil {
 
   static toWeekdayFromDelta_(m: Moment, seconds: number): number {
     m.add(seconds, 'second');
-    return m.weekday();
+    return m.isoWeekday();
   }
 
   static toWeekdayFromTimestamp(timestamp: number): number {
     const m = moment(timestamp);
-    return m.weekday();
+    return m.isoWeekday();
   }
 
   static toDayOfWeekValue(rawDayOfWeek: { value: number }): number {
