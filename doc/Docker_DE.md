@@ -213,7 +213,7 @@ sudo ifconfig macvlan0 192.168.0.223 netmask 255.255.255.0 up
 ```
 Abschließend muss ein Routing-Eintrag für das Overlay-Netz hinzugefügt werden:
 ```console
-sudo ip route add 192.168.0.192/27 dev macvlan
+sudo ip route add 192.168.0.192/27 dev macvlan0
 ```
 
 Jetzt kann das Docker-Netzwerk `macvlan0` erstellt werden. Der Parameter `subnet` entspricht dem Netz des physischen Inteerfaces. Beim Parameter `gateway` handelt sich es um das Ziel der Default-Route (meist die interne IP-Adresses des Internet-Routers). Als Parameter `ip-range` wird das Overlay-Netz angegegeben, wobei im Parameter `aux-address` die IP-Adresse des `macvlan`-Interfaces angegeben wird, damit sie keinem Docker-Container zugewiesen wird.  Beim Parameter `parent` wird das physische Interface angegeben.
