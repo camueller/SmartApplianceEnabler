@@ -721,11 +721,15 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     }
 
     private int getEnergyMeteredSinceLastSocScriptExecution() {
+        int energyMeteredSinceLastSocScriptExecution = 0; // in Wh
+        Float energyMetered = null;
         if(appliance.getMeter() != null) {
-            // in Wh
-            return Float.valueOf((appliance.getMeter().getEnergy() - socRetrievalEnergyMeterValue) * 1000.0f).intValue();
+            energyMetered = appliance.getMeter().getEnergy();
+            energyMeteredSinceLastSocScriptExecution = Float.valueOf((energyMetered - socRetrievalEnergyMeterValue) * 1000.0f).intValue();
         }
-        return 0;
+        logger.trace("{}: Calculate energyMeteredSinceLastSocScriptExecution={} applianceHasMeter={} energyMetered={} socRetrievalEnergyMeterValue={}",
+                applianceId, energyMeteredSinceLastSocScriptExecution, appliance.getMeter() != null, energyMetered, socRetrievalEnergyMeterValue);
+        return energyMeteredSinceLastSocScriptExecution;
     }
 
     public void setChargePowerToMinimum() {
