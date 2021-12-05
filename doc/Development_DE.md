@@ -75,6 +75,44 @@ Normalerweise kann aus Sicherheistgründen nur lokal auf den Entwicklungs-Web-Se
 $ ng serve --host 0.0.0.0 --disable-host-check
 ```
 
+#### MQTT Broker
+Für die Kommunikation über MQTT muss ein MQTT-Broker verwendet werden. Dazu eignet sich [Eclipse Mosquito](https://mosquitto.org/), der auch als Docker-Container verfügbar ist:
+```console
+docker pull eclipse-mosquitto
+```
+Zum Starten ohne Authentifizierung eignet sich folgender Befehl: 
+```console
+$ docker run -it --rm -p 1883:1883 --name mosquitto eclipse-mosquitto mosquitto -c /mosquitto-no-auth.conf
+```
+
+#### Node RED
+[Node-RED](https://nodered.org/) kann verwendet werden, um den *Smart Appliance Enabler* mit anderen Hausautomatisierungen zu integrieren oder den MQTT-Nachrichten zu visualisieren (Dashboard). Die Installation des entsprechenden Docker-Containers erfolgt mit:
+```console
+docker pull nodered/node-red
+```
+Es ist ein Volume erforderlich zum Speichern der Daten:
+```console
+docker volume create node_red_data
+```
+Zum Starten eignet sich folgender Befehl:
+```console
+$ docker run -it --rm -p 1880:1880 -v node_red_data:/data --name nodered nodered/node-red
+```
+In Node RED muss der MQTT-Server konfiguriert werden. Wenn dieser ebenfalls als Docker-Container betrieben wird, muss beachtet werden, dass für die Container-zu-Container-Kommunkation dessen IP-Adresse im Docker-Bridge-Netzwerk verwendet wird. Diese kann wie folgt ermittelt werden ([siehe auch](https://www.tutorialworks.com/container-networking/)): 
+
+```console
+$ docker inspect mosquitto | grep IPAddress
+            "SecondaryIPAddresses": null,
+            "IPAddress": "172.17.0.2",
+                    "IPAddress": "172.17.0.2",
+```
+
+#### MQTT Explorer
+Zum testweisen Senden und Empfangen von MQTT-Nachrichten eignet sich der [MQTT Explorer](http://mqtt-explorer.com/), der auch als Paket für diverse Linux-Distributionen verfübar ist.
+```console
+$ mqtt-explorer
+```
+
 ### Tests
 #### Simulation der Interaktion durch den Sunny Home Manager
 Zum Einschalten eines Gerätes eignet sich folgender Befehl, wobei die der Parameter `RecommendedPowerConsumption` nur für Wallboxen relevant ist:
