@@ -24,7 +24,8 @@ import java.util.Timer;
 
 public interface Meter extends ApplianceLifeCycle {
 
-    int averagingInterval = 60;
+    String TOPIC = "meter";
+    int AVERAGING_INTERVAL = 60;
 
     /**
      * Average power consumption during averaging interval in watt.

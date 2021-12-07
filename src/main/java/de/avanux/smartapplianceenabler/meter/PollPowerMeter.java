@@ -42,7 +42,7 @@ public class PollPowerMeter implements ApplianceIdConsumer {
     private LocalDateTime averagingIntervalBegin;
 
     public PollPowerMeter() {
-        this.cache.setMaxAgeSeconds(Meter.averagingInterval);
+        this.cache.setMaxAgeSeconds(Meter.AVERAGING_INTERVAL);
     }
 
     @Override
@@ -61,7 +61,7 @@ public class PollPowerMeter implements ApplianceIdConsumer {
             public void runTask() {
                 LocalDateTime now = LocalDateTime.now();
                 addValue(now, pollPowerExecutor);
-                powerUpdateListeners.forEach(listener -> listener.onPowerUpdate(getAveragePower(now)));
+                powerUpdateListeners.forEach(listener -> listener.onPowerUpdate(now, getAveragePower(now)));
             }
         };
         if(timer != null) {

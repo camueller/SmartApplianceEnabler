@@ -20,16 +20,18 @@ package de.avanux.smartapplianceenabler.meter;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.appliance.ApplianceLifeCycle;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
+import de.avanux.smartapplianceenabler.configuration.Validateable;
 import de.avanux.smartapplianceenabler.http.*;
+import de.avanux.smartapplianceenabler.mqtt.MeterMessage;
+import de.avanux.smartapplianceenabler.mqtt.MqttClient;
+import de.avanux.smartapplianceenabler.mqtt.MqttMessage;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
-import de.avanux.smartapplianceenabler.notification.NotificationType;
 import de.avanux.smartapplianceenabler.notification.NotificationProvider;
 import de.avanux.smartapplianceenabler.notification.Notifications;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolHandler;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolType;
 import de.avanux.smartapplianceenabler.protocol.JsonContentProtocolHandler;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
-import de.avanux.smartapplianceenabler.configuration.Validateable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,9 +39,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Timer;
 
 /**
  * Electricity meter reading current power and energy from the response of a HTTP request.
@@ -48,7 +51,7 @@ import java.util.*;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validateable, PollPowerExecutor, PollEnergyExecutor,
-        ApplianceIdConsumer, NotificationProvider {
+        ApplianceIdConsumer, NotificationProvider, PowerUpdateListener {
 
     private transient Logger logger = LoggerFactory.getLogger(HttpElectricityMeter.class);
     @XmlAttribute
@@ -67,6 +70,7 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
     private transient PollEnergyMeter pollEnergyMeter;
     private transient HttpHandler httpHandler = new HttpHandler();
     private transient ContentProtocolHandler contentContentProtocolHandler;
+    private transient MqttClient mqttClient;
 
     @Override
     public void setApplianceId(String applianceId) {
@@ -148,14 +152,17 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
 
     @Override
     public void init() {
+        mqttClient = new MqttClient(applianceId, getClass());
         if(HttpRead.getFirstHttpRead(MeterValueName.Power.name(), this.httpReads) != null) {
             pollPowerMeter = new PollPowerMeter();
             pollPowerMeter.setApplianceId(applianceId);
+            pollPowerMeter.addPowerUpateListener(this);
         }
         if(HttpRead.getFirstHttpRead(MeterValueName.Energy.name(), this.httpReads) != null) {
             pollEnergyMeter = new PollEnergyMeter();
             pollEnergyMeter.setApplianceId(applianceId);
             pollEnergyMeter.setPollEnergyExecutor(this);
+            pollEnergyMeter.addPowerUpateListener(this);
         }
         if(this.httpConfiguration != null) {
             this.httpTransactionExecutor.setConfiguration(this.httpConfiguration);
@@ -188,7 +195,7 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
     @Override
     public void startAveragingInterval(LocalDateTime now, Timer timer, int nextPollCompletedSecondsFromNow) {
         if(pollEnergyMeter != null) {
-            pollEnergyMeter.scheduleNext(timer, nextPollCompletedSecondsFromNow, averagingInterval);
+            pollEnergyMeter.scheduleNext(timer, nextPollCompletedSecondsFromNow, AVERAGING_INTERVAL);
         }
         if(pollPowerMeter != null) {
             pollPowerMeter.setAveragingIntervalBegin(now);
@@ -305,5 +312,11 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
             }
         }
         return this.contentContentProtocolHandler;
+    }
+
+    @Override
+    public void onPowerUpdate(LocalDateTime now, int averagePower) {
+        MqttMessage message = new MeterMessage(now, averagePower);
+        mqttClient.send(Meter.TOPIC, message);
     }
 }

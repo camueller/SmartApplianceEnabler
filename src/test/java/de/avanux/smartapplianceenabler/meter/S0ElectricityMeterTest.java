@@ -24,6 +24,9 @@ import com.pi4j.io.gpio.PinPullResistance;
 import com.pi4j.io.gpio.PinState;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
+import java.time.temporal.TemporalUnit;
+
 import static org.mockito.Mockito.*;
 
 public class S0ElectricityMeterTest {
@@ -33,7 +36,7 @@ public class S0ElectricityMeterTest {
     private int gpioNumber = 3;
     private PulsePowerMeter pulsePowerMeter = mock(PulsePowerMeter.class);
     private PulseEnergyMeter pulseEnergyMeter = mock(PulseEnergyMeter.class);
-    private long timestamp = 0l;
+    private LocalDateTime now = LocalDateTime.now();
 
 
     public S0ElectricityMeterTest() {
@@ -48,33 +51,33 @@ public class S0ElectricityMeterTest {
 
     @Test
     public void handleEvent_PullDown() {
-        this.meter.handleEvent(gpioPin, PinState.HIGH, PinPullResistance.PULL_DOWN, timestamp);
-        this.meter.handleEvent(gpioPin, PinState.LOW, PinPullResistance.PULL_DOWN, 90l);
-        verify(pulsePowerMeter).addTimestamp(timestamp);
+        this.meter.handleEvent(now, gpioPin, PinState.HIGH, PinPullResistance.PULL_DOWN);
+        this.meter.handleEvent(now.plusNanos(90 * 1000000), gpioPin, PinState.LOW, PinPullResistance.PULL_DOWN);
+        verify(pulsePowerMeter).addTimestamp(now);
         verify(pulseEnergyMeter).increasePulseCounter();
     }
 
     @Test
     public void handleEvent_PullUp() {
-        this.meter.handleEvent(gpioPin, PinState.LOW, PinPullResistance.PULL_UP, timestamp);
-        this.meter.handleEvent(gpioPin, PinState.HIGH, PinPullResistance.PULL_UP, 90l);
-        verify(pulsePowerMeter).addTimestamp(timestamp);
+        this.meter.handleEvent(now, gpioPin, PinState.LOW, PinPullResistance.PULL_UP);
+        this.meter.handleEvent(now.plusNanos(90 * 1000000), gpioPin, PinState.HIGH, PinPullResistance.PULL_UP);
+        verify(pulsePowerMeter).addTimestamp(now);
         verify(pulseEnergyMeter).increasePulseCounter();
     }
 
     @Test
     public void handleEvent_PullDown_ImpulseDurationTooShort() {
-        this.meter.handleEvent(gpioPin, PinState.HIGH, PinPullResistance.PULL_DOWN, timestamp);
-        this.meter.handleEvent(gpioPin, PinState.LOW, PinPullResistance.PULL_DOWN, 10l);
-        verify(pulsePowerMeter, never()).addTimestamp(timestamp);
+        this.meter.handleEvent(now, gpioPin, PinState.HIGH, PinPullResistance.PULL_DOWN);
+        this.meter.handleEvent(now.plusNanos(10 * 1000000), gpioPin, PinState.LOW, PinPullResistance.PULL_DOWN);
+        verify(pulsePowerMeter, never()).addTimestamp(now);
         verify(pulseEnergyMeter, never()).increasePulseCounter();
     }
 
     @Test
     public void handleEvent_PullUp_ImpulseDurationTooShort() {
-        this.meter.handleEvent(gpioPin, PinState.LOW, PinPullResistance.PULL_UP, timestamp);
-        this.meter.handleEvent(gpioPin, PinState.HIGH, PinPullResistance.PULL_UP, 10l);
-        verify(pulsePowerMeter, never()).addTimestamp(timestamp);
+        this.meter.handleEvent(now, gpioPin, PinState.LOW, PinPullResistance.PULL_UP);
+        this.meter.handleEvent(now.plusNanos(10 * 1000000), gpioPin, PinState.HIGH, PinPullResistance.PULL_UP);
+        verify(pulsePowerMeter, never()).addTimestamp(now);
         verify(pulseEnergyMeter, never()).increasePulseCounter();
     }
 }

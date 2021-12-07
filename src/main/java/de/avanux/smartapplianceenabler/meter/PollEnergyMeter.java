@@ -49,7 +49,7 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
     private DecimalFormat energyFormat;
 
     public PollEnergyMeter() {
-        this.cache.setMaxAgeSeconds(Double.valueOf(1.9 * Meter.averagingInterval).intValue());
+        this.cache.setMaxAgeSeconds(Double.valueOf(1.9 * Meter.AVERAGING_INTERVAL).intValue());
         NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
         energyFormat = (DecimalFormat) nf;
         energyFormat.applyPattern("#.#####");
@@ -86,7 +86,7 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
     }
 
     private GuardedTimerTask buildPollTimerTask() {
-        return new GuardedTimerTask(this.applianceId, "PollEnergyMeter", Meter.averagingInterval * 1000) {
+        return new GuardedTimerTask(this.applianceId, "PollEnergyMeter", Meter.AVERAGING_INTERVAL * 1000) {
             @Override
             public void runTask() {
                 LocalDateTime now = LocalDateTime.now();
@@ -96,7 +96,7 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
                     // the energy counter we poll might already have been reset and we don't want to add 0 to the cache
                     // except we reset the counter ourselves
                     addValue(now, energy);
-                    powerUpdateListeners.forEach(listener -> listener.onPowerUpdate(getAveragePower()));
+                    powerUpdateListeners.forEach(listener -> listener.onPowerUpdate(now, getAveragePower()));
                 }
             }
         };

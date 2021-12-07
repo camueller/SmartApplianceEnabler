@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Axel Müller <axel.mueller@avanux.de>
+ * Copyright (C) 2021 Axel Müller <axel.mueller@avanux.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,12 +16,19 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.avanux.smartapplianceenabler.meter;
+package de.avanux.smartapplianceenabler.mqtt;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
-public interface PowerUpdateListener {
+public class MqttMessage {
+    private String timestamp;
 
-    void onPowerUpdate(LocalDateTime now, int averagePower);
+    public LocalDateTime getTimestamp() {
+        return LocalDateTime.parse(timestamp);
+    }
 
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp.format(DateTimeFormatter.ISO_DATE_TIME);
+    }
 }

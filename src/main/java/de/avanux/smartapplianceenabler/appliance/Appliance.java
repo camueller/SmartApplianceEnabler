@@ -19,6 +19,7 @@ package de.avanux.smartapplianceenabler.appliance;
 
 import com.pi4j.io.gpio.GpioController;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
+import de.avanux.smartapplianceenabler.configuration.Validateable;
 import de.avanux.smartapplianceenabler.control.*;
 import de.avanux.smartapplianceenabler.control.ev.*;
 import de.avanux.smartapplianceenabler.meter.HttpElectricityMeter;
@@ -33,13 +34,12 @@ import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.notification.NotificationProvider;
 import de.avanux.smartapplianceenabler.schedule.*;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
-import de.avanux.smartapplianceenabler.configuration.Validateable;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @XmlRootElement
@@ -236,7 +236,7 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
 
         if(control instanceof StartingCurrentSwitch) {
             StartingCurrentSwitch startingCurrentSwitch = (StartingCurrentSwitch) control;
-            startingCurrentSwitch.setMeter(meter);
+//            startingCurrentSwitch.setMeter(meter);
             startingCurrentSwitch.setTimeframeIntervalHandler(timeframeIntervalHandler);
             startingCurrentSwitch.init();
             logger.debug("{}: {} uses {}", id, control.getClass().getSimpleName(), meter.getClass().getSimpleName());

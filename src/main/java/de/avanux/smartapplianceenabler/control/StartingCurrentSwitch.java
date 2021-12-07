@@ -21,6 +21,7 @@ import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.meter.PowerUpdateListener;
 import de.avanux.smartapplianceenabler.meter.S0ElectricityMeter;
+import de.avanux.smartapplianceenabler.mqtt.*;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.notification.NotificationType;
 import de.avanux.smartapplianceenabler.notification.NotificationProvider;
@@ -70,15 +71,14 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
     private DayTimeframeCondition dayTimeframeCondition;
     private transient String applianceId;
     private transient TimeframeIntervalHandler timeframeIntervalHandler;
-    private transient Meter meter;
     private transient Map<LocalDateTime, Integer> powerUpdates = new TreeMap<>();
     private transient boolean on;
     private transient boolean startingCurrentDetected;
     private transient LocalDateTime switchOnTime;
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
     private transient List<StartingCurrentSwitchListener> startingCurrentSwitchListeners = new ArrayList<>();
-    private transient GuardedTimerTask powerUpdateTimerTask;
     private transient NotificationHandler notificationHandler;
+    private transient MqttClient mqttClient;
 
 
     @Override
@@ -92,10 +92,6 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
 
     public Control getControl() {
         return control;
-    }
-
-    public void setMeter(Meter meter) {
-        this.meter = meter;
     }
 
     @Override
@@ -159,11 +155,9 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
 
     @Override
     public void init() {
+        mqttClient = new MqttClient(applianceId, getClass());
         if(this.control != null) {
             this.control.init();
-        }
-        if(this.meter != null) {
-            this.meter.addPowerUpdateListener(this);
         }
     }
 
@@ -177,23 +171,13 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
             this.control.start(now, timer);
         }
         applianceOn(now, true);
-        if (timer != null && meter instanceof S0ElectricityMeter) {
-            logger.debug("{}: Creating timer task to trigger power updates for finished current detection", this.applianceId);
-            // for PulsePowerMeter the finished current cannot be detected if there are no pulses anymore
-            // therefore this time task is needed
-            this.powerUpdateTimerTask = new GuardedTimerTask(applianceId, "StartingCurrentSwitchPowerUpdate",
-                    getFinishedCurrentDetectionDuration() * 1000) {
-                @Override
-                public void runTask() {
-                    if(on) {
-                        int averagePower = meter.getAveragePower();
-                        if(averagePower < getPowerThreshold()) {
-                            onPowerUpdate(averagePower);
-                        }
-                    }
+        if(mqttClient != null) {
+            mqttClient.subscribe("meter", MeterMessage.class, (topic, message) -> {
+                logger.debug("{}: messageArrived={} ", applianceId,  message);
+                if(message instanceof MeterMessage) {
+                    onPowerUpdate(message.getTimestamp(), ((MeterMessage) message).power);
                 }
-            };
-            timer.schedule(this.powerUpdateTimerTask, 0, this.powerUpdateTimerTask.getPeriod());
+            });
         }
     }
 
@@ -202,9 +186,6 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
         logger.debug("{}: Stopping ...", this.applianceId);
         if(this.control != null) {
             this.control.stop(now);
-        }
-        if(this.powerUpdateTimerTask != null) {
-            this.powerUpdateTimerTask.cancel();
         }
     }
 
@@ -256,10 +237,9 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
     }
 
     @Override
-    public void onPowerUpdate(int averagePower) {
-        LocalDateTime now = LocalDateTime.now();
+    public void onPowerUpdate(LocalDateTime now, int averagePower) {
         boolean applianceOn = isApplianceOn();
-        logger.debug("{}: on={} applianceOn={}", applianceId, on, applianceOn);
+        logger.debug("{}: on={} applianceOn={} averagePower={}", applianceId, on, applianceOn, averagePower);
         if (applianceOn) {
             detectExternalSwitchOn(now);
             if (on) {

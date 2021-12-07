@@ -18,9 +18,9 @@
 
 package de.avanux.smartapplianceenabler.control;
 
-import de.avanux.smartapplianceenabler.meter.Meter;
-import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
+
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -30,13 +30,11 @@ public class StartingCurrentSwitchTest {
 
     private StartingCurrentSwitch startingCurrentSwitch;
     private StartingCurrentSwitchListener startingCurrentSwitchListener;
-    private Meter meter;
     private Control control;
 
     public StartingCurrentSwitchTest() {
         startingCurrentSwitch = spy(new StartingCurrentSwitch());
         startingCurrentSwitch.setApplianceId(getClass().getSimpleName());
-        meter = mock(Meter.class);
         control = mock(Control.class);
         startingCurrentSwitchListener = mock(StartingCurrentSwitchListener.class);
         startingCurrentSwitch.setControl(control);
@@ -46,7 +44,6 @@ public class StartingCurrentSwitchTest {
     @Test
     public void detectStartingCurrent() throws Exception {
         LocalDateTime now = LocalDateTime.now();
-        startingCurrentSwitch.setMeter(meter);
         startingCurrentSwitch.start(now, null);
 
         // test fixture
@@ -89,7 +86,6 @@ public class StartingCurrentSwitchTest {
     @Test
     public void detectFinishedCurrent() throws Exception {
         LocalDateTime now = LocalDateTime.now();
-        startingCurrentSwitch.setMeter(meter);
         startingCurrentSwitch.start(now, null);
         startingCurrentSwitch.on(now, true);
 

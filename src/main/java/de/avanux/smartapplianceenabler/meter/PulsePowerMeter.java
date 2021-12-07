@@ -24,6 +24,8 @@ import de.avanux.smartapplianceenabler.configuration.Validateable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -31,7 +33,7 @@ import java.util.List;
 public class PulsePowerMeter implements ApplianceIdConsumer, Validateable {
     private Logger logger = LoggerFactory.getLogger(PulsePowerMeter.class);
     private String applianceId;
-    private List<Long> impulseTimestamps = Collections.synchronizedList(new ArrayList<Long>());
+    private List<LocalDateTime> impulseTimestamps = Collections.synchronizedList(new ArrayList<LocalDateTime>());
     private Integer impulsesPerKwh;
 
     @Override
@@ -53,19 +55,19 @@ public class PulsePowerMeter implements ApplianceIdConsumer, Validateable {
         this.applianceId = applianceId;
     }
 
-    protected void addTimestamp(long timestampMillis) {
-        impulseTimestamps.add(timestampMillis);
+    protected void addTimestamp(LocalDateTime timestamp) {
+        impulseTimestamps.add(timestamp);
     }
 
-    private void maintainTimestamps(long timestampNow) {
-        List<Long> impulseTimestampsForRemoval = new ArrayList<Long>();
+    private void maintainTimestamps(LocalDateTime now) {
+        List<LocalDateTime> impulseTimestampsForRemoval = new ArrayList<LocalDateTime>();
         this.impulseTimestamps.stream()
-                .filter(timestamp -> isTimestampExpired(timestampNow, timestamp))
+                .filter(timestamp -> isTimestampExpired(now, timestamp))
                 .forEach(impulseTimestampsForRemoval::add);
 
         // remove expired timestamps but keep the 2 most most recent ones
-        Long secondMostRecentTimestamp = getSecondMostRecentTimestamp();
-        Long mostRecentTimestamp = getMostRecentTimestamp();
+        LocalDateTime secondMostRecentTimestamp = getSecondMostRecentTimestamp();
+        LocalDateTime mostRecentTimestamp = getMostRecentTimestamp();
         this.impulseTimestamps.removeAll(impulseTimestampsForRemoval);
         if(this.impulseTimestamps.size() == 1) {
             if(secondMostRecentTimestamp != null) {
@@ -82,24 +84,24 @@ public class PulsePowerMeter implements ApplianceIdConsumer, Validateable {
         }
     }
 
-    private boolean isTimestampExpired(long timestampNow, long timestamp) {
-        return timestampNow - timestamp > Meter.averagingInterval * 1000;
+    private boolean isTimestampExpired(LocalDateTime now, LocalDateTime timestamp) {
+        return Duration.between(timestamp, now).toMillis() > Meter.AVERAGING_INTERVAL * 1000;
     }
 
-    private Long getMostRecentTimestamp() {
+    private LocalDateTime getMostRecentTimestamp() {
         return this.impulseTimestamps.size() > 0
                 ? this.impulseTimestamps.get(this.impulseTimestamps.size() - 1) : null;
     }
 
-    private Long getSecondMostRecentTimestamp() {
+    private LocalDateTime getSecondMostRecentTimestamp() {
         return this.impulseTimestamps.size() > 1
                 ? this.impulseTimestamps.get(this.impulseTimestamps.size() - 2) : null;
     }
 
-    protected double calculatePower(long timestampNow, long timestamp1, long timestamp2) {
-        long timestampDelta12 = timestamp2 - timestamp1;
-        if(isTimestampExpired(timestampNow, timestamp2)) {
-            long timestampDeltaNow2 = timestampNow - timestamp2;
+    protected double calculatePower(LocalDateTime now, LocalDateTime timestamp1, LocalDateTime timestamp2) {
+        long timestampDelta12 = Duration.between(timestamp1, timestamp2).toMillis();
+        if(isTimestampExpired(now, timestamp2)) {
+            long timestampDeltaNow2 = Duration.between(timestamp2, now).toMillis();
             if(timestampDeltaNow2 > timestampDelta12 * 1.5) {
                 return 0.0;
             }
@@ -112,18 +114,18 @@ public class PulsePowerMeter implements ApplianceIdConsumer, Validateable {
     }
 
     public int getAveragePower() {
-        return getAveragePower(System.currentTimeMillis());
+        return getAveragePower(LocalDateTime.now());
     }
 
-    int getAveragePower(long timestampNow) {
-        this.maintainTimestamps(timestampNow);
+    int getAveragePower(LocalDateTime now) {
+        this.maintainTimestamps(now);
         if(this.impulseTimestamps.size() == 0 || this.impulseTimestamps.size() == 1) {
             return 0;
         }
 
         Double powerValuesSum = 0.0;
         for(int i=0; i<this.impulseTimestamps.size() - 1; i ++) {
-            powerValuesSum += calculatePower(timestampNow, impulseTimestamps.get(i), impulseTimestamps.get(i + 1));
+            powerValuesSum += calculatePower(now, impulseTimestamps.get(i), impulseTimestamps.get(i + 1));
         }
         int power = Double.valueOf(powerValuesSum / (impulseTimestamps.size() - 1)).intValue();
 //        logger.debug("{}: impulseTimestamps-1={} powerValuesSum={} power={}",
@@ -132,21 +134,21 @@ public class PulsePowerMeter implements ApplianceIdConsumer, Validateable {
     }
 
     public int getMinPower() {
-        return getMinPower(System.currentTimeMillis());
+        return getMinPower(LocalDateTime.now());
     }
 
-    int getMinPower(long timestampNow) {
-        this.maintainTimestamps(timestampNow);
+    int getMinPower(LocalDateTime now) {
+        this.maintainTimestamps(now);
         if(this.impulseTimestamps.size() == 0) {
             return 0;
         }
         if(this.impulseTimestamps.size() == 1) {
-            return getAveragePower(timestampNow);
+            return getAveragePower(now);
         }
 
         double minPower = Double.MAX_VALUE;
         for(int i=0; i<this.impulseTimestamps.size() - 1; i ++) {
-            double power = calculatePower(timestampNow, this.impulseTimestamps.get(i), this.impulseTimestamps.get(i + 1));
+            double power = calculatePower(now, this.impulseTimestamps.get(i), this.impulseTimestamps.get(i + 1));
             if(power < minPower) {
                 minPower = power;
             }
@@ -155,21 +157,21 @@ public class PulsePowerMeter implements ApplianceIdConsumer, Validateable {
     }
 
     public int getMaxPower() {
-        return getMaxPower(System.currentTimeMillis());
+        return getMaxPower(LocalDateTime.now());
     }
 
-    int getMaxPower(long timestampNow) {
-        this.maintainTimestamps(timestampNow);
+    int getMaxPower(LocalDateTime now) {
+        this.maintainTimestamps(now);
         if(this.impulseTimestamps.size() == 0) {
             return 0;
         }
         if(this.impulseTimestamps.size() == 1) {
-            return getAveragePower(timestampNow);
+            return getAveragePower(now);
         }
 
         double maxPower = Double.MIN_VALUE;
         for(int i=0; i<this.impulseTimestamps.size() - 1; i ++) {
-            double power = calculatePower(timestampNow, this.impulseTimestamps.get(i), this.impulseTimestamps.get(i + 1));
+            double power = calculatePower(now, this.impulseTimestamps.get(i), this.impulseTimestamps.get(i + 1));
             if(power > maxPower) {
                 maxPower = power;
             }

@@ -221,7 +221,7 @@ public class ApplianceManager implements Runnable {
             if(this.currentMeterAveragingIntervalStartTime == null
                     || Duration.between(this.currentMeterAveragingIntervalStartTime, now).toSeconds() > 50) {
                 this.currentMeterAveragingIntervalStartTime = now;
-                int nextPollCompletedSecondsFromNow = Meter.averagingInterval - secondsForDeviceStatusAndPlanningRequests - 3;
+                int nextPollCompletedSecondsFromNow = Meter.AVERAGING_INTERVAL - secondsForDeviceStatusAndPlanningRequests - 3;
                 logger.debug("Start meter averaging interval: secondsForDeviceStatusAndPlanningRequests={} nextPollCompletedSecondsFromNow={}",
                         secondsForDeviceStatusAndPlanningRequests, nextPollCompletedSecondsFromNow);
                 for(Appliance appliance : appliances.getAppliances()) {
