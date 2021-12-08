@@ -20,6 +20,8 @@ package de.avanux.smartapplianceenabler.control;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.meter.Meter;
+import de.avanux.smartapplianceenabler.mqtt.MeterMessage;
+import de.avanux.smartapplianceenabler.mqtt.MqttClient;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.notification.NotificationProvider;
 import de.avanux.smartapplianceenabler.notification.NotificationType;
@@ -48,10 +50,11 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
     private Notifications notifications;
     private transient String applianceId;
     private transient NotificationHandler notificationHandler;
-    private transient Meter meter;
     private transient LocalDateTime lastOn;
     private transient Boolean onBefore;
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
+    private transient MqttClient mqttClient;
+    private transient MeterMessage meterMessage;
 
     @Override
     public void setApplianceId(String applianceId) {
@@ -83,10 +86,6 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
         this.offDetectionDelay = offDetectionDelay;
     }
 
-    public void setMeter(Meter meter) {
-        this.meter = meter;
-    }
-
     protected void setLastOn(LocalDateTime lastOn) {
         this.lastOn = lastOn;
     }
@@ -97,12 +96,19 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
 
     @Override
     public void init() {
+        mqttClient = new MqttClient(applianceId, getClass());
     }
 
     @Override
     public void start(LocalDateTime now, Timer timer) {
         logger.info("{}: Starting: powerThreshold={} offDetectionDelay={} notificationHandlerSet={}",
                 applianceId, getPowerThreshold(), getOffDetectionDelay(), this.notificationHandler != null);
+        if(mqttClient != null) {
+            mqttClient.subscribe(Meter.TOPIC, true, MeterMessage.class, (topic, message) -> {
+                logger.debug("{}: messageArrived={} ", applianceId,  message);
+                meterMessage = (MeterMessage) message;
+            });
+        }
     }
 
     @Override
@@ -135,8 +141,8 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
     }
 
     public boolean isOn(LocalDateTime now) {
-        if(this.meter != null) {
-            int power = this.meter.getAveragePower();
+        if(meterMessage != null) {
+            int power = meterMessage.power;
             boolean powerReachesThreshold = power >= getPowerThreshold();
             if(powerReachesThreshold) {
                 lastOn = now;

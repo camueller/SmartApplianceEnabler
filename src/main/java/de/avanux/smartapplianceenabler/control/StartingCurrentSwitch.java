@@ -20,7 +20,6 @@ package de.avanux.smartapplianceenabler.control;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.meter.PowerUpdateListener;
-import de.avanux.smartapplianceenabler.meter.S0ElectricityMeter;
 import de.avanux.smartapplianceenabler.mqtt.*;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.notification.NotificationType;
@@ -28,7 +27,6 @@ import de.avanux.smartapplianceenabler.notification.NotificationProvider;
 import de.avanux.smartapplianceenabler.notification.Notifications;
 import de.avanux.smartapplianceenabler.schedule.DayTimeframeCondition;
 import de.avanux.smartapplianceenabler.schedule.TimeframeIntervalHandler;
-import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -172,10 +170,10 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
         }
         applianceOn(now, true);
         if(mqttClient != null) {
-            mqttClient.subscribe("meter", MeterMessage.class, (topic, message) -> {
+            mqttClient.subscribe(Meter.TOPIC, true, MeterMessage.class, (topic, message) -> {
                 logger.debug("{}: messageArrived={} ", applianceId,  message);
                 if(message instanceof MeterMessage) {
-                    onPowerUpdate(message.getTimestamp(), ((MeterMessage) message).power);
+                    onPowerUpdate(message.getTime(), ((MeterMessage) message).power);
                 }
             });
         }

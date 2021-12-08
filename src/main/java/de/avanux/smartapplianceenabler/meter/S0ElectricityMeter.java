@@ -95,25 +95,25 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
         this.pulseEnergyMeter = pulseEnergyMeter;
     }
 
-    @Override
-    public int getAveragePower() {
-        return pulsePowerMeter.getAveragePower();
-    }
-
-    @Override
-    public int getMinPower() {
-        return pulsePowerMeter.getMinPower();
-    }
-
-    @Override
-    public int getMaxPower() {
-        return pulsePowerMeter.getMaxPower();
-    }
-
-    @Override
-    public float getEnergy() {
-        return this.pulseEnergyMeter.getEnergy();
-    }
+//    @Override
+//    public int getAveragePower() {
+//        return pulsePowerMeter.getAveragePower();
+//    }
+//
+//    @Override
+//    public int getMinPower() {
+//        return pulsePowerMeter.getMinPower();
+//    }
+//
+//    @Override
+//    public int getMaxPower() {
+//        return pulsePowerMeter.getMaxPower();
+//    }
+//
+//    @Override
+//    public float getEnergy() {
+//        return this.pulseEnergyMeter.getEnergy();
+//    }
 
     @Override
     public void startEnergyMeter() {
@@ -173,7 +173,10 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
                 updatePeriod * 1000) {
             @Override
             public void runTask() {
-                MqttMessage message = new MeterMessage(now, getAveragePower());
+                MqttMessage message = new MeterMessage(now,
+                        pulsePowerMeter != null ? pulsePowerMeter.getAveragePower() : 0,
+                        pulseEnergyMeter != null ? pulseEnergyMeter.getEnergy() : 0
+                );
                 mqttClient.send(Meter.TOPIC, message);
             }
         };
@@ -205,7 +208,7 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
             logger.debug("{}: S0 impulse detected on GPIO {}", getApplianceId(), pin.getPin().getAddress());
             pulsePowerMeter.addTimestamp(pulseTimestamp);
             pulseEnergyMeter.increasePulseCounter();
-            int averagePower = getAveragePower();
+            int averagePower = pulsePowerMeter.getAveragePower();
             logger.debug("{}: power: {}W", getApplianceId(), averagePower);
             powerMeterListeners.forEach(listener -> listener.onPowerUpdate(now, averagePower));
             pulseTimestamp = null;

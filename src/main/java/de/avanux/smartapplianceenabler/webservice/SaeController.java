@@ -34,6 +34,8 @@ import de.avanux.smartapplianceenabler.meter.S0ElectricityMeterDefaults;
 import de.avanux.smartapplianceenabler.modbus.ModbusElectricityMeterDefaults;
 import de.avanux.smartapplianceenabler.modbus.ModbusReadDefaults;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
+import de.avanux.smartapplianceenabler.mqtt.MeterMessage;
+import de.avanux.smartapplianceenabler.mqtt.MqttClient;
 import de.avanux.smartapplianceenabler.notification.Notification;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.schedule.*;
@@ -50,9 +52,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @RestController
 public class SaeController {
@@ -79,9 +79,17 @@ public class SaeController {
     private Logger logger = LoggerFactory.getLogger(SaeController.class);
     // the lock ensures that no data is changed or read while appliances are restarted
     private final Object lock = new Object();
+    private MqttClient mqttClient;
+    private Map<String, MeterMessage> meterMessages = new HashMap<>();
 
     public SaeController() {
         logger.info("SAE controller created.");
+        mqttClient = new MqttClient("", getClass());
+        String meterTopic = mqttClient.getTopicPrefix() + "/+/" + Meter.TOPIC;
+        mqttClient.subscribe(meterTopic, false, MeterMessage.class, (topic, message) -> {
+            logger.debug("messageArrived={} ", message);
+            this.meterMessages.put(topic, (MeterMessage) message);
+        });
     }
 
     /**
@@ -905,8 +913,10 @@ public class SaeController {
                         int whAlreadyCharged = 0;
                         Integer chargePower = evCharger.getChargePower();
                         if (meter != null) {
-                            whAlreadyCharged = Float.valueOf(meter.getEnergy() * 1000.0f).intValue();
-                            chargePower = meter.getAveragePower();
+                            String applianceMeterTopic = MqttClient.getApplianceTopic(appliance.getId(), Meter.TOPIC);
+                            MeterMessage meterMessage = this.meterMessages.get(applianceMeterTopic);
+                            whAlreadyCharged = Double.valueOf(meterMessage.energy * 1000.0f).intValue();
+                            chargePower = meterMessage.power;
                         }
                         if (control.isOn()) {
                             applianceStatus.setCurrentChargePower(chargePower);

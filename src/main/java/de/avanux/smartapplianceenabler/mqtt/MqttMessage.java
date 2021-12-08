@@ -22,13 +22,13 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class MqttMessage {
-    private String timestamp;
+    private String time;
 
-    public LocalDateTime getTimestamp() {
-        return LocalDateTime.parse(timestamp);
+    public LocalDateTime getTime() {
+        return LocalDateTime.parse(time);
     }
 
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp.format(DateTimeFormatter.ISO_DATE_TIME);
+    public void setTime(LocalDateTime time) {
+        this.time = time.format(DateTimeFormatter.ISO_DATE_TIME);
     }
 }

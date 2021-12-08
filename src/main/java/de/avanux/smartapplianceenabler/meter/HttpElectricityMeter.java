@@ -212,44 +212,44 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
         }
     }
 
-    @Override
-    public int getAveragePower() {
-        int power = 0;
-        if(pollEnergyMeter != null) {
-            power = pollEnergyMeter.getAveragePower();
-        }
-        else if(pollPowerMeter != null) {
-            power = pollPowerMeter.getAveragePower(LocalDateTime.now());
-        }
-        logger.debug("{}: average power = {}W", applianceId, power);
-        return power;
-    }
-
-    @Override
-    public int getMinPower() {
-        int power = 0;
-        if(pollEnergyMeter != null) {
-            power = pollEnergyMeter.getAveragePower();
-        }
-        else if(pollPowerMeter != null) {
-            power = pollPowerMeter.getMinPower(LocalDateTime.now());
-        }
-        logger.debug("{}: min power = {}W", applianceId, power);
-        return power;
-    }
-
-    @Override
-    public int getMaxPower() {
-        int power = 0;
-        if(pollEnergyMeter != null) {
-            power = pollEnergyMeter.getAveragePower();
-        }
-        else if(pollPowerMeter != null) {
-            power = pollPowerMeter.getMaxPower(LocalDateTime.now());
-        }
-        logger.debug("{}: max power = {}W", applianceId, power);
-        return power;
-    }
+//    @Override
+//    public int getAveragePower() {
+//        int power = 0;
+//        if(pollEnergyMeter != null) {
+//            power = pollEnergyMeter.getAveragePower();
+//        }
+//        else if(pollPowerMeter != null) {
+//            power = pollPowerMeter.getAveragePower(LocalDateTime.now());
+//        }
+//        logger.debug("{}: average power = {}W", applianceId, power);
+//        return power;
+//    }
+//
+//    @Override
+//    public int getMinPower() {
+//        int power = 0;
+//        if(pollEnergyMeter != null) {
+//            power = pollEnergyMeter.getAveragePower();
+//        }
+//        else if(pollPowerMeter != null) {
+//            power = pollPowerMeter.getMinPower(LocalDateTime.now());
+//        }
+//        logger.debug("{}: min power = {}W", applianceId, power);
+//        return power;
+//    }
+//
+//    @Override
+//    public int getMaxPower() {
+//        int power = 0;
+//        if(pollEnergyMeter != null) {
+//            power = pollEnergyMeter.getAveragePower();
+//        }
+//        else if(pollPowerMeter != null) {
+//            power = pollPowerMeter.getMaxPower(LocalDateTime.now());
+//        }
+//        logger.debug("{}: max power = {}W", applianceId, power);
+//        return power;
+//    }
 
     @Override
     public Double pollPower() {
@@ -257,10 +257,10 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
         return getValue(powerRead);
     }
 
-    @Override
-    public float getEnergy() {
-        return pollEnergyMeter != null ? (float) this.pollEnergyMeter.getEnergy() : 0.0f;
-    }
+//    @Override
+//    public float getEnergy() {
+//        return pollEnergyMeter != null ? (float) this.pollEnergyMeter.getEnergy() : 0.0f;
+//    }
 
     @Override
     public void startEnergyMeter() {
@@ -316,7 +316,7 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
 
     @Override
     public void onPowerUpdate(LocalDateTime now, int averagePower) {
-        MqttMessage message = new MeterMessage(now, averagePower);
+        MqttMessage message = new MeterMessage(now, averagePower, pollEnergyMeter != null ? this.pollEnergyMeter.getEnergy() : 0.0);
         mqttClient.send(Meter.TOPIC, message);
     }
 }

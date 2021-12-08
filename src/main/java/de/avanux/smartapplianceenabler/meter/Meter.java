@@ -28,30 +28,6 @@ public interface Meter extends ApplianceLifeCycle {
     int AVERAGING_INTERVAL = 60;
 
     /**
-     * Average power consumption during averaging interval in watt.
-     * @return
-     */
-    int getAveragePower();
-
-    /**
-     * Minimum power consumption during averaging interval in watt.
-     * @return
-     */
-    int getMinPower();
-
-    /**
-     * Maximum power consumption during averaging interval in watt.
-     * @return
-     */
-    int getMaxPower();
-
-    /**
-     * Returns the energy metered since energy counter was started.
-     * @return energy in kWh
-     */
-    float getEnergy();
-
-    /**
      * Start counting energy.
      */
     void startEnergyMeter();

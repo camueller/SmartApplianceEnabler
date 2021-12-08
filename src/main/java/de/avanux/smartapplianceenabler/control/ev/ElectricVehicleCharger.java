@@ -25,6 +25,8 @@ import de.avanux.smartapplianceenabler.control.ControlStateChangedListener;
 import de.avanux.smartapplianceenabler.http.EVHttpControl;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.modbus.EVModbusControl;
+import de.avanux.smartapplianceenabler.mqtt.MeterMessage;
+import de.avanux.smartapplianceenabler.mqtt.MqttClient;
 import de.avanux.smartapplianceenabler.notification.*;
 import de.avanux.smartapplianceenabler.schedule.*;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
@@ -75,7 +77,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     private transient boolean socScriptAsync = true;
     private transient boolean socScriptRunning;
     private transient boolean socCalculationRequired;
-    private transient float socRetrievalEnergyMeterValue = 0.0f;
+    private transient double socRetrievalEnergyMeterValue = 0.0;
     private transient boolean socRetrievalForChargingAlmostCompleted;
     private transient double chargeLoss = 0.0;
     private transient Appliance appliance;
@@ -93,6 +95,8 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     private transient Integer minPowerConsumption;
     private transient NotificationHandler notificationHandler;
     private transient DecimalFormat percentageFormat;
+    private transient MqttClient mqttClient;
+    private transient MeterMessage meterMessage;
 
     public ElectricVehicleCharger() {
         NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
@@ -288,6 +292,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
 
     @Override
     public void init() {
+        mqttClient = new MqttClient(applianceId, getClass());
         boolean useEvControlMock = Boolean.parseBoolean(System.getProperty("sae.evcontrol.mock", "false"));
         if(useEvControlMock) {
             this.control= new EVChargerControlMock();
@@ -313,6 +318,12 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     @Override
     public void start(LocalDateTime now, Timer timer) {
         logger.debug("{}: Starting ...", this.applianceId);
+        if(mqttClient != null) {
+            mqttClient.subscribe(Meter.TOPIC, true, MeterMessage.class, (topic, message) -> {
+                logger.debug("{}: messageArrived={} ", applianceId,  message);
+                meterMessage = (MeterMessage) message;
+            });
+        }
         if(timer != null) {
             this.updateStateTimerTask = new GuardedTimerTask(this.applianceId,"UpdateState",
                     getPollInterval() * 1000) {
@@ -685,7 +696,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
             TimeframeInterval activeTimeframeInterval = this.appliance.getTimeframeIntervalHandler().getActiveTimeframeInterval();
             if(activeTimeframeInterval != null && activeTimeframeInterval.getRequest() instanceof AbstractEnergyRequest) {
                 AbstractEnergyRequest request = (AbstractEnergyRequest) activeTimeframeInterval.getRequest();
-                int chargePower = this.appliance.getMeter().getAveragePower();
+                int chargePower = meterMessage != null ? meterMessage.power : 0;
                 if(request.isUpdateTimeframeIntervalEnd() && chargePower > 0) {
                     int chargeSeconds = calculateChargeSeconds(
                             getConnectedVehicle(),
@@ -722,10 +733,10 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
 
     private int getEnergyMeteredSinceLastSocScriptExecution() {
         int energyMeteredSinceLastSocScriptExecution = 0; // in Wh
-        Float energyMetered = null;
+        Double energyMetered = null;
         if(appliance.getMeter() != null) {
-            energyMetered = appliance.getMeter().getEnergy();
-            energyMeteredSinceLastSocScriptExecution = Float.valueOf((energyMetered - socRetrievalEnergyMeterValue) * 1000.0f).intValue();
+            energyMetered = meterMessage != null ? meterMessage.energy : 0.0;
+            energyMeteredSinceLastSocScriptExecution = Double.valueOf((energyMetered - socRetrievalEnergyMeterValue) * 1000.0f).intValue();
         }
         logger.trace("{}: Calculate energyMeteredSinceLastSocScriptExecution={} applianceHasMeter={} energyMetered={} socRetrievalEnergyMeterValue={}",
                 applianceId, energyMeteredSinceLastSocScriptExecution, appliance.getMeter() != null, energyMetered, socRetrievalEnergyMeterValue);
@@ -895,7 +906,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                     }
                 }
                 socValues.current = soc.intValue();
-                socRetrievalEnergyMeterValue = appliance.getMeter().getEnergy();
+                socRetrievalEnergyMeterValue = meterMessage != null ? meterMessage.energy : 0.0;
                 if(this.chargingAlmostCompleted) {
                     socRetrievalForChargingAlmostCompleted = true;
                 }

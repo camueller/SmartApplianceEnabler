@@ -22,6 +22,8 @@ import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
 import de.avanux.smartapplianceenabler.meter.Meter;
+import de.avanux.smartapplianceenabler.mqtt.MeterMessage;
+import de.avanux.smartapplianceenabler.mqtt.MqttClient;
 import de.avanux.smartapplianceenabler.schedule.AbstractEnergyRequest;
 import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
 import de.avanux.smartapplianceenabler.schedule.TimeframeIntervalHandler;
@@ -36,9 +38,7 @@ import javax.xml.bind.Marshaller;
 import java.io.StringWriter;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @RestController
 public class SempController {
@@ -47,9 +47,17 @@ public class SempController {
     private static final String CROSS_ORIGIN_URL = "http://localhost:4200";
     public static final String SCHEMA_LOCATION = "http://www.sma.de/communication/schema/SEMP/v1";
     private Logger logger = LoggerFactory.getLogger(SempController.class);
+    private MqttClient mqttClient;
+    private Map<String, MeterMessage> meterMessages = new HashMap<>();
 
     public SempController() {
         logger.info("SEMP controller created.");
+        mqttClient = new MqttClient("", getClass());
+        String meterTopic = mqttClient.getTopicPrefix() + "/+/" + Meter.TOPIC;
+        mqttClient.subscribe(meterTopic, false, MeterMessage.class, (topic, message) -> {
+            logger.debug("messageArrived={} ", message);
+            this.meterMessages.put(topic, (MeterMessage) message);
+        });
     }
 
     @RequestMapping(value = BASE_URL, method = RequestMethod.GET, produces = "application/xml")
@@ -260,7 +268,6 @@ public class SempController {
     private DeviceStatus createDeviceStatus(Appliance appliance) {
         DeviceStatus deviceStatus = new DeviceStatus();
         deviceStatus.setDeviceId(appliance.getId());
-        Meter meter = appliance.getMeter();
 
         Control control = appliance.getControl();
         if (control != null) {
@@ -278,16 +285,16 @@ public class SempController {
         logger.debug("{}: {}", appliance.getId(), deviceStatus.toString());
 
         PowerInfo powerInfo = new PowerInfo();
-        if (meter != null) {
+        String applianceMeterTopic = MqttClient.getApplianceTopic(appliance.getId(), Meter.TOPIC);
+        MeterMessage meterMessage = this.meterMessages.get(applianceMeterTopic);
+        if (meterMessage != null) {
             logger.debug("{}: Reporting power info from meter.", appliance.getId());
-            powerInfo.setAveragePower(meter.getAveragePower());
-//            powerInfo.setMinPower(meter.getMinPower());
-//            powerInfo.setMaxPower(meter.getMaxPower());
+            powerInfo.setAveragePower(meterMessage.power);
             powerInfo.setAveragingInterval(60); // always report 60 for SEMP regardless of real averaging interval
         } else {
             logger.debug("{}: Reporting power info from device characteristics.", appliance.getId());
             DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(appliance.getId());
-            if (deviceStatus.getStatus() == Status.On) {
+            if (deviceStatus.getStatus() == Status.On && deviceInfo.getCharacteristics() != null) {
                 powerInfo.setAveragePower(deviceInfo.getCharacteristics().getMaxPowerConsumption());
             } else {
                 powerInfo.setAveragePower(0);

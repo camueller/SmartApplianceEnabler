@@ -30,7 +30,7 @@ public class MqttClient {
 
     private transient Logger logger = LoggerFactory.getLogger(MqttClient.class);
     private String applianceId;
-    private String prefix = "sae";
+    private static String topicPrefix = "sae";
     private IMqttClient client;
     private Genson genson;
 
@@ -45,7 +45,7 @@ public class MqttClient {
                 .useRuntimeType(true)
                 .create();
 
-        String clientId = applianceId + "-" + clazz.getSimpleName();
+        String clientId = applianceId.length() > 0 ? applianceId + "-" + clazz.getSimpleName() : clazz.getSimpleName();
         try {
             client = new org.eclipse.paho.client.mqttv3.MqttClient("tcp://localhost:1883", clientId);
             logger.debug("{}: Created MQTT client {}", applianceId, clientId);
@@ -63,8 +63,12 @@ public class MqttClient {
         return options;
     }
 
-    public String getFullTopic(String topic) {
-        return prefix + "/" + applianceId + "/" + topic;
+    public String getTopicPrefix() {
+        return topicPrefix;
+    }
+
+    public static String getApplianceTopic(String applianceId, String subLevels) {
+        return topicPrefix + "/" + applianceId + "/" + subLevels;
     }
 
     public boolean connect() {
@@ -84,7 +88,7 @@ public class MqttClient {
         return false;
     }
 
-    public synchronized void send(String topic, MqttMessage message) {
+    public void send(String topic, MqttMessage message) {
         try {
             if(connect()) {
                 String serializedMessage = this.genson.serialize(message);
@@ -92,7 +96,7 @@ public class MqttClient {
                         = new org.eclipse.paho.client.mqttv3.MqttMessage(serializedMessage.getBytes());
                 pahoMessage.setQos(0);
 //                pahoMessage.setRetained(true);
-                String fullTopic = getFullTopic(topic);
+                String fullTopic = getApplianceTopic(applianceId, topic);
                 logger.debug("{}: Publish MQTT message: topic={} payload={}", applianceId, fullTopic, serializedMessage);
                 client.publish(fullTopic, pahoMessage);
             }
@@ -102,8 +106,8 @@ public class MqttClient {
         }
     }
 
-    public synchronized void subscribe(String topic, Class toType, MqttMessageHandler messageHandler) {
-        String fullTopic = getFullTopic(topic);
+    public void subscribe(String topic, boolean expandTopic, Class toType, MqttMessageHandler messageHandler) {
+        String fullTopic = expandTopic ? getApplianceTopic(applianceId, topic) : topic;
         try {
             if(connect()) {
                 client.subscribe(fullTopic, (receivedTopic, receivedMessage) -> {

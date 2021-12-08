@@ -22,12 +22,22 @@ import java.time.LocalDateTime;
 
 public class MeterMessage extends MqttMessage {
     public int power;
+    public double energy;
 
     public MeterMessage() {
     }
 
-    public MeterMessage(LocalDateTime timestamp, int power) {
-        setTimestamp(timestamp);
+    public MeterMessage(LocalDateTime time, int power, double energy) {
+        setTime(time);
         this.power = power;
+        this.energy = energy;
+    }
+
+    @Override
+    public String toString() {
+        return "MeterMessage{" +
+                "power=" + power +
+                ", energy=" + energy +
+                '}';
     }
 }

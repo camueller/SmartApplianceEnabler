@@ -29,6 +29,8 @@ import de.avanux.smartapplianceenabler.meter.S0ElectricityMeter;
 import de.avanux.smartapplianceenabler.modbus.EVModbusControl;
 import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
+import de.avanux.smartapplianceenabler.mqtt.MeterMessage;
+import de.avanux.smartapplianceenabler.mqtt.MqttClient;
 import de.avanux.smartapplianceenabler.notification.Notification;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.notification.NotificationProvider;
@@ -74,6 +76,8 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
     @XmlElement(name = "Notification")
     private Notification notification;
     private transient TimeframeIntervalHandler timeframeIntervalHandler;
+    private transient MqttClient mqttClient;
+    private transient MeterMessage meterMessage;
     private transient static final int CONSIDERATION_INTERVAL_DAYS = 2;
 
     public void setId(String id) {
@@ -175,6 +179,7 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
 
     public void init(GpioController gpioController, Map<String, ModbusTcp> modbusIdWithModbusTcp, String notificationCommand) {
         logger.debug("{}: Initializing appliance", id);
+        mqttClient = new MqttClient(id, getClass());
         if(getTimeframeIntervalHandler() == null) {
             setTimeframeIntervalHandler(new TimeframeIntervalHandler(this.schedules, this.control));
         }
@@ -217,9 +222,6 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
             if(deviceInfo.getCharacteristics() != null && deviceInfo.getCharacteristics().getMinPowerConsumption() != null) {
                 evCharger.setMinPowerConsumption(deviceInfo.getCharacteristics().getMinPowerConsumption());
             }
-        }
-        if(control instanceof MeterReportingSwitch) {
-            ((MeterReportingSwitch) control).setMeter(meter);
         }
         if(control instanceof StartingCurrentSwitch) {
             Control wrappedControl = ((StartingCurrentSwitch) control).getControl();
@@ -278,6 +280,12 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
         LocalDateTime now = LocalDateTime.now();
         if(timeframeIntervalHandler != null) {
             timeframeIntervalHandler.setTimer(timer);
+        }
+        if(mqttClient != null) {
+            mqttClient.subscribe(Meter.TOPIC, true, MeterMessage.class, (topic, message) -> {
+                logger.debug("{}: messageArrived={} ", id,  message);
+                meterMessage = (MeterMessage) message;
+            });
         }
         if(meter != null) {
             logger.info("{}: Starting {}", id, meter.getClass().getSimpleName());
@@ -389,7 +397,7 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
     public void setEnergyDemand(LocalDateTime now, Integer evId, Integer socCurrent, Integer socRequested, LocalDateTime chargeEnd) {
         if (isEvCharger()) {
             ElectricVehicleCharger evCharger = (ElectricVehicleCharger) this.control;
-            if(getMeter().getEnergy() > 0.1) {
+            if(meterMessage != null && meterMessage.energy > 0.1) {
                 logger.debug("{}: skipping ev charger configuration to continue charging process already started", id);
             }
             else {

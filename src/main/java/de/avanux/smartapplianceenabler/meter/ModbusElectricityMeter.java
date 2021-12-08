@@ -23,6 +23,9 @@ import de.avanux.smartapplianceenabler.configuration.Validateable;
 import de.avanux.smartapplianceenabler.modbus.*;
 import de.avanux.smartapplianceenabler.modbus.executor.ModbusExecutorFactory;
 import de.avanux.smartapplianceenabler.modbus.executor.ModbusReadTransactionExecutor;
+import de.avanux.smartapplianceenabler.mqtt.MeterMessage;
+import de.avanux.smartapplianceenabler.mqtt.MqttClient;
+import de.avanux.smartapplianceenabler.mqtt.MqttMessage;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.notification.NotificationProvider;
 import de.avanux.smartapplianceenabler.notification.NotificationType;
@@ -44,7 +47,7 @@ import java.util.Timer;
  * The TCP connection to the device remains established across the polls.
  */
 public class ModbusElectricityMeter extends ModbusSlave implements Meter, ApplianceIdConsumer,
-        Validateable, PollPowerExecutor, PollEnergyExecutor, NotificationProvider {
+        Validateable, PollPowerExecutor, PollEnergyExecutor, NotificationProvider, PowerUpdateListener {
 
     private transient Logger logger = LoggerFactory.getLogger(ModbusElectricityMeter.class);
     @XmlElement(name = "ModbusRead")
@@ -56,6 +59,7 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     private transient PollPowerMeter pollPowerMeter;
     private transient PollEnergyMeter pollEnergyMeter;
     private transient NotificationHandler notificationHandler;
+    private transient MqttClient mqttClient;
 
     @Override
     public void setApplianceId(String applianceId) {
@@ -118,14 +122,17 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
 
     @Override
     public void init() {
+        mqttClient = new MqttClient(getApplianceId(), getClass());
         if(ModbusRead.getFirstRegisterRead(MeterValueName.Power.name(), modbusReads) != null) {
-            this.pollPowerMeter = new PollPowerMeter();
-            this.pollPowerMeter.setApplianceId(getApplianceId());
+            pollPowerMeter = new PollPowerMeter();
+            pollPowerMeter.setApplianceId(getApplianceId());
+            pollPowerMeter.addPowerUpateListener(this);
         }
         if(ModbusRead.getFirstRegisterRead(MeterValueName.Energy.name(), modbusReads) != null) {
-            this.pollEnergyMeter = new PollEnergyMeter();
-            this.pollEnergyMeter.setApplianceId(getApplianceId());
-            this.pollEnergyMeter.setPollEnergyExecutor(this);
+            pollEnergyMeter = new PollEnergyMeter();
+            pollEnergyMeter.setApplianceId(getApplianceId());
+            pollEnergyMeter.setPollEnergyExecutor(this);
+            pollEnergyMeter.addPowerUpateListener(this);
         }
     }
 
@@ -161,44 +168,44 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
         }
     }
 
-    @Override
-    public int getAveragePower() {
-        int power = 0;
-        if(pollEnergyMeter != null) {
-            power = pollEnergyMeter.getAveragePower();
-        }
-        else if(pollPowerMeter != null) {
-            power = pollPowerMeter.getAveragePower(LocalDateTime.now());
-        }
-        logger.debug("{}: average power = {}W", getApplianceId(), power);
-        return power;
-    }
-
-    @Override
-    public int getMinPower() {
-        int power = 0;
-        if(pollEnergyMeter != null) {
-            power = pollEnergyMeter.getAveragePower();
-        }
-        else if(pollPowerMeter != null) {
-            power = pollPowerMeter.getMinPower(LocalDateTime.now());
-        }
-        logger.debug("{}: min power = {}W", getApplianceId(), power);
-        return power;
-    }
-
-    @Override
-    public int getMaxPower() {
-        int power = 0;
-        if(pollEnergyMeter != null) {
-            power = pollEnergyMeter.getAveragePower();
-        }
-        else if(pollPowerMeter != null) {
-            power = pollPowerMeter.getMaxPower(LocalDateTime.now());
-        }
-        logger.debug("{}: max power = {}W", getApplianceId(), power);
-        return power;
-    }
+//    @Override
+//    public int getAveragePower() {
+//        int power = 0;
+//        if(pollEnergyMeter != null) {
+//            power = pollEnergyMeter.getAveragePower();
+//        }
+//        else if(pollPowerMeter != null) {
+//            power = pollPowerMeter.getAveragePower(LocalDateTime.now());
+//        }
+//        logger.debug("{}: average power = {}W", getApplianceId(), power);
+//        return power;
+//    }
+//
+//    @Override
+//    public int getMinPower() {
+//        int power = 0;
+//        if(pollEnergyMeter != null) {
+//            power = pollEnergyMeter.getAveragePower();
+//        }
+//        else if(pollPowerMeter != null) {
+//            power = pollPowerMeter.getMinPower(LocalDateTime.now());
+//        }
+//        logger.debug("{}: min power = {}W", getApplianceId(), power);
+//        return power;
+//    }
+//
+//    @Override
+//    public int getMaxPower() {
+//        int power = 0;
+//        if(pollEnergyMeter != null) {
+//            power = pollEnergyMeter.getAveragePower();
+//        }
+//        else if(pollPowerMeter != null) {
+//            power = pollPowerMeter.getMaxPower(LocalDateTime.now());
+//        }
+//        logger.debug("{}: max power = {}W", getApplianceId(), power);
+//        return power;
+//    }
 
 
     @Override
@@ -208,10 +215,10 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
         return readRegister(read.parent());
     }
 
-    @Override
-    public float getEnergy() {
-        return pollEnergyMeter != null ? (float) this.pollEnergyMeter.getEnergy() : 0.0f;
-    }
+//    @Override
+//    public float getEnergy() {
+//        return pollEnergyMeter != null ? (float) this.pollEnergyMeter.getEnergy() : 0.0f;
+//    }
 
     @Override
     public void startEnergyMeter() {
@@ -271,5 +278,11 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
             }
         }
         return 0;
+    }
+
+    @Override
+    public void onPowerUpdate(LocalDateTime now, int averagePower) {
+        MqttMessage message = new MeterMessage(now, averagePower, pollEnergyMeter != null ? this.pollEnergyMeter.getEnergy() : 0.0);
+        mqttClient.send(Meter.TOPIC, message);
     }
 }
