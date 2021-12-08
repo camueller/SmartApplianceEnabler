@@ -184,8 +184,8 @@ pi@raspberrypi ~ $ sudo /bin/bash -c "echo 'Europe/Berlin' > /etc/timezone"
 pi@raspberrypi ~ $ sudo cp /usr/share/zoneinfo/Europe/Berlin /etc/localtime
 ```
 
-### Java installieren
-#### Smart Appliancer Enabler bis einschliesslich Version 1.4
+## Java installieren
+### Smart Appliancer Enabler bis einschliesslich Version 1.4
 Die Installation des vom *Smart Appliance Enabler* benötigten Java 8 erfolgt ganz einfach mit
 ```console
 pi@raspberrypi ~ $ sudo apt install oracle-java8-jdk
@@ -197,7 +197,7 @@ java version "1.8.0_65"
 Java(TM) SE Runtime Environment (build 1.8.0_65-b17)
 Java HotSpot(TM) Client VM (build 25.65-b01, mixed mode)
 ```
-#### Smart Appliancer Enabler ab Version 1.5
+### Smart Appliancer Enabler ab Version 1.5
 
 ```console
 pi@raspberrypi:~ $ sudo apt install openjdk-11-jre-headless
@@ -209,7 +209,7 @@ openjdk version "11.0.5" 2019-10-15
 OpenJDK Runtime Environment (build 11.0.5+10-post-Raspbian-1deb10u1)
 OpenJDK Server VM (build 11.0.5+10-post-Raspbian-1deb10u1, mixed mode)
 ```
-##### Besonderheiten Raspberry Pi Zero
+#### Besonderheiten Raspberry Pi Zero
 **Die nachfolgenden Hinweise stammen von Usern, die den *Smart Appliance Enabler* auf einem Raspberry Pi Zero betreiben. Diese Platform ist offiziell nicht unterstützt, also bitte keinen Support bei Problemen erwarten.**
 
 OpenJDK 11 ist mit ARMv6 und ARMv7 leider nicht kompatibel. Dafür besteht die Möglichkeit über "Zulu Build for OpenJDK" von Azul eine Alternative zu installieren.
@@ -236,6 +236,24 @@ pi@raspberrypi ~ $ cd /tmp
 pi@raspberrypi ~ $ wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/wiringpi-latest.deb
 pi@raspberrypi ~ $ sudo dpkg -i wiringpi-latest.deb
 ```
+
+## MQTT-Broker
+Der *Smart Appliance Enabler* benötigt einen MQTT-Broker, wobei ein bereits vorhandener MQTT-Broker genutzt werden kann. Falls noch kein MQTT-Broker vorhanden ist, lässt sich der [Eclipse Mosquitto](https://mosquitto.org/) direkt aus Raspbian-Repository installieren:
+```console
+sudo apt install mosquitto
+```
+In der Konfigurationsdatei `/etc/mosquitto/mosquitto.conf` sollte die Speicherung der MQTT-Nachrichten auf der SD-Karte deaktiviert werden. Dazu muss die entsprechende Zeile wie folgt aussehen:
+```
+persistence false
+```
+Um nicht-authentifizierten Zugriff auf den MQTT-Broker zuzulassen muss die Datei `/etc/mosquitto/conf.d/smartapplianceenabler.conf` mit folgendem Inhalt erstellt werden:
+```
+listener 1883
+allow_anonymous true
+```
+
+## Node-RED
+
 
 ## Smart Appliance Enabler
 ### Erstinstallation
