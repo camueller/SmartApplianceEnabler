@@ -23,6 +23,7 @@ import com.owlike.genson.GensonBuilder;
 import com.owlike.genson.reflect.VisibilityFilter;
 import org.eclipse.paho.client.mqttv3.IMqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +48,11 @@ public class MqttClient {
 
         String clientId = applianceId.length() > 0 ? applianceId + "-" + clazz.getSimpleName() : clazz.getSimpleName();
         try {
-            client = new org.eclipse.paho.client.mqttv3.MqttClient("tcp://localhost:1883", clientId);
+            client = new org.eclipse.paho.client.mqttv3.MqttClient(
+                    "tcp://localhost:1883",
+                    clientId,
+                    new MemoryPersistence()
+            );
             logger.debug("{}: Created MQTT client {}", applianceId, clientId);
         }
         catch (Exception e) {
