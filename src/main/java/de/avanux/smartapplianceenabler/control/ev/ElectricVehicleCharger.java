@@ -320,7 +320,6 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         logger.debug("{}: Starting ...", this.applianceId);
         if(mqttClient != null) {
             mqttClient.subscribe(Meter.TOPIC, true, MeterMessage.class, (topic, message) -> {
-                logger.debug("{}: messageArrived={} ", applianceId,  message);
                 meterMessage = (MeterMessage) message;
             });
         }

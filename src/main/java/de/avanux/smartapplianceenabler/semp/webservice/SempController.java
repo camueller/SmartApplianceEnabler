@@ -55,7 +55,6 @@ public class SempController {
         mqttClient = new MqttClient("", getClass());
         String meterTopic = mqttClient.getTopicPrefix() + "/+/" + Meter.TOPIC;
         mqttClient.subscribe(meterTopic, false, MeterMessage.class, (topic, message) -> {
-            logger.debug("messageArrived={} ", message);
             this.meterMessages.put(topic, (MeterMessage) message);
         });
     }

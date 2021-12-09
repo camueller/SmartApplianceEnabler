@@ -105,7 +105,6 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
                 applianceId, getPowerThreshold(), getOffDetectionDelay(), this.notificationHandler != null);
         if(mqttClient != null) {
             mqttClient.subscribe(Meter.TOPIC, true, MeterMessage.class, (topic, message) -> {
-                logger.debug("{}: messageArrived={} ", applianceId,  message);
                 meterMessage = (MeterMessage) message;
             });
         }

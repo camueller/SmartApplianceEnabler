@@ -283,7 +283,6 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
         }
         if(mqttClient != null) {
             mqttClient.subscribe(Meter.TOPIC, true, MeterMessage.class, (topic, message) -> {
-                logger.debug("{}: messageArrived={} ", id,  message);
                 meterMessage = (MeterMessage) message;
             });
         }

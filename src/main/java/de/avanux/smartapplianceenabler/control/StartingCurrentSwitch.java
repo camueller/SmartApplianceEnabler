@@ -171,7 +171,6 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
         applianceOn(now, true);
         if(mqttClient != null) {
             mqttClient.subscribe(Meter.TOPIC, true, MeterMessage.class, (topic, message) -> {
-                logger.debug("{}: messageArrived={} ", applianceId,  message);
                 if(message instanceof MeterMessage) {
                     onPowerUpdate(message.getTime(), ((MeterMessage) message).power);
                 }

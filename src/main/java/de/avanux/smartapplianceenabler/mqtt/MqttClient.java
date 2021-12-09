@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 public class MqttClient {
 
     private transient Logger logger = LoggerFactory.getLogger(MqttClient.class);
+    private String loggerId;
     private String applianceId;
     private static String topicPrefix = "sae";
     private IMqttClient client;
@@ -38,6 +39,7 @@ public class MqttClient {
 
     public MqttClient(String applianceId, Class clazz) {
         this.applianceId = applianceId;
+        loggerId = applianceId.length() > 0 ? applianceId + "-MQTT-" + clazz.getSimpleName() : clazz.getSimpleName();
 
         this.genson = new GensonBuilder()
                 .useFields(true, VisibilityFilter.PRIVATE)
@@ -53,10 +55,10 @@ public class MqttClient {
                     clientId,
                     new MemoryPersistence()
             );
-            logger.debug("{}: Created MQTT client {}", applianceId, clientId);
+            logger.debug("{}: Created MQTT client {}", loggerId, clientId);
         }
         catch (Exception e) {
-            logger.error("{}: Error creating MQTT client {}", applianceId, clientId, e);
+            logger.error("{}: Error creating MQTT client {}", loggerId, clientId, e);
         }
     }
 
@@ -76,19 +78,19 @@ public class MqttClient {
         return topicPrefix + "/" + applianceId + "/" + subLevels;
     }
 
-    public boolean connect() {
+    private boolean connect() {
         try {
             if(! client.isConnected()) {
                 client.connect(getOptions());
             }
             boolean connectResult = client.isConnected();
             if(! connectResult) {
-                logger.error("{}: Connection to MQTT server failed", applianceId);
+                logger.error("{}: Connection to MQTT broker failed", loggerId);
             }
             return connectResult;
         }
         catch (Exception e) {
-            logger.error("{}: Error connecting to MQTT server", applianceId, e);
+            logger.error("{}: Error connecting to MQTT broker", loggerId, e);
         }
         return false;
     }
@@ -102,12 +104,12 @@ public class MqttClient {
                 pahoMessage.setQos(0);
 //                pahoMessage.setRetained(true);
                 String fullTopic = getApplianceTopic(applianceId, topic);
-                logger.debug("{}: Publish MQTT message: topic={} payload={}", applianceId, fullTopic, serializedMessage);
+                logger.debug("{}: Publish message: topic={} payload={}", loggerId, fullTopic, serializedMessage);
                 client.publish(fullTopic, pahoMessage);
             }
         }
         catch (Exception e) {
-            logger.error("{}: Error sending MQTT message", applianceId, e);
+            logger.error("{}: Error sending message", loggerId, e);
         }
     }
 
@@ -117,19 +119,19 @@ public class MqttClient {
             if(connect()) {
                 client.subscribe(fullTopic, (receivedTopic, receivedMessage) -> {
                     try {
-                        logger.debug("{}: MQTT message received: topic={} payload={}", applianceId, receivedTopic, receivedMessage);
+                        logger.debug("{}: Message received: topic={} payload={}", loggerId, receivedTopic, receivedMessage);
                         MqttMessage message = (MqttMessage) this.genson.deserialize(receivedMessage.getPayload(), toType);
                         messageHandler.messageArrived(receivedTopic, message);
                     }
                     catch(Exception e) {
-                        logger.error("{}: Error receiving MQTT message", applianceId, e);
+                        logger.error("{}: Error receiving message", loggerId, e);
                     }
                 });
-                logger.debug("{}: MQTT messages subscribed: topic={}", applianceId, fullTopic);
+                logger.debug("{}: Messages subscribed: topic={}", loggerId, fullTopic);
             }
         }
         catch (Exception e) {
-            logger.error("{}: Error subscribing to MQTT messages topic={}", applianceId, fullTopic, e);
+            logger.error("{}: Error subscribing to messages topic={}", loggerId, fullTopic, e);
         }
     }
 }
