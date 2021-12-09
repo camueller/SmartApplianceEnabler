@@ -173,7 +173,7 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
                 updatePeriod * 1000) {
             @Override
             public void runTask() {
-                MqttMessage message = new MeterMessage(now,
+                MqttMessage message = new MeterMessage(LocalDateTime.now(),
                         pulsePowerMeter != null ? pulsePowerMeter.getAveragePower() : 0,
                         pulseEnergyMeter != null ? pulseEnergyMeter.getEnergy() : 0
                 );
