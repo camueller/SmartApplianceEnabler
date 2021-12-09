@@ -25,8 +25,7 @@ import de.avanux.smartapplianceenabler.control.ControlStateChangedListener;
 import de.avanux.smartapplianceenabler.http.EVHttpControl;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.modbus.EVModbusControl;
-import de.avanux.smartapplianceenabler.mqtt.MeterMessage;
-import de.avanux.smartapplianceenabler.mqtt.MqttClient;
+import de.avanux.smartapplianceenabler.mqtt.*;
 import de.avanux.smartapplianceenabler.notification.*;
 import de.avanux.smartapplianceenabler.schedule.*;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
@@ -121,6 +120,10 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                 vehicle.setApplianceId(applianceId);
             }
         }
+    }
+
+    @Override
+    public void setMqttPublishDisabled(boolean mqttPublishDisabled) {
     }
 
     @Override
@@ -341,6 +344,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         updateState(now);
         updateActiveTimeframeIntervalRequest(now);
         updateSoc(now);
+        publishControlMessage();
     }
 
     @Override
@@ -873,6 +877,25 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
             }
             updateSocOnControlStateChangedListeners(now, this.socValues);
         }
+    }
+
+    private void publishControlMessage() {
+        EvChargerMessage message = new EvChargerMessage(
+                LocalDateTime.now(),
+                isOn(),
+                getState().name(),
+                stateLastChangedTimestamp,
+                socValues.initial,
+                socInitialTimestamp,
+                socValues.retrieved,
+                socTimestamp,
+                socValues.current,
+                socValues.batteryCapacity,
+                chargeLoss,
+                chargePower,
+                useOptionalEnergy
+        );
+        mqttClient.send(Control.TOPIC, message, true);
     }
 
     private class SocRetriever implements Runnable {

@@ -19,6 +19,10 @@
 package de.avanux.smartapplianceenabler.control;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import de.avanux.smartapplianceenabler.mqtt.ControlMessage;
+import de.avanux.smartapplianceenabler.mqtt.MqttClient;
+import de.avanux.smartapplianceenabler.mqtt.MqttMessage;
+import de.avanux.smartapplianceenabler.mqtt.StartingCurrentSwitchMessage;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.notification.NotificationProvider;
 import de.avanux.smartapplianceenabler.notification.Notifications;
@@ -43,10 +47,15 @@ public class AlwaysOnSwitch implements Control, ApplianceIdConsumer, Notificatio
     private Notifications notifications;
     private transient String applianceId;
     private transient NotificationHandler notificationHandler;
+    private transient MqttClient mqttClient;
 
     @Override
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
+    }
+
+    @Override
+    public void setMqttPublishDisabled(boolean mqttPublishDisabled) {
     }
 
     @Override
@@ -68,6 +77,8 @@ public class AlwaysOnSwitch implements Control, ApplianceIdConsumer, Notificatio
 
     @Override
     public void start(LocalDateTime now, Timer timer) {
+        MqttMessage message = new ControlMessage(LocalDateTime.now(), true);
+        mqttClient.send(Control.TOPIC, message, true);
     }
 
     @Override

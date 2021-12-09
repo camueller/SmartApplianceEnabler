@@ -55,10 +55,16 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
     private transient MqttClient mqttClient;
     private transient MeterMessage meterMessage;
+    private transient boolean mqttPublishDisabled;
 
     @Override
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
+    }
+
+    @Override
+    public void setMqttPublishDisabled(boolean mqttPublishDisabled) {
+        this.mqttPublishDisabled = mqttPublishDisabled;
     }
 
     @Override

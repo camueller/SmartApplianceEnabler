@@ -48,6 +48,12 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
     private transient GpioPinDigitalOutput outputPin;
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
     private transient NotificationHandler notificationHandler;
+    private transient boolean mqttPublishDisabled;
+
+    @Override
+    public void setMqttPublishDisabled(boolean mqttPublishDisabled) {
+        this.mqttPublishDisabled = mqttPublishDisabled;
+    }
 
     @Override
     public void setNotificationHandler(NotificationHandler notificationHandler) {

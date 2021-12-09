@@ -33,6 +33,7 @@ public class MqttClient {
     private String loggerId;
     private String applianceId;
     private static String topicPrefix = "sae";
+    public final static int MQTT_PUBLISH_PERIOD = 20;
     private IMqttClient client;
     private Genson genson;
 
@@ -95,14 +96,14 @@ public class MqttClient {
         return false;
     }
 
-    public void send(String topic, MqttMessage message) {
+    public void send(String topic, MqttMessage message, boolean retained) {
         try {
             if(connect()) {
                 String serializedMessage = this.genson.serialize(message);
                 org.eclipse.paho.client.mqttv3.MqttMessage pahoMessage
                         = new org.eclipse.paho.client.mqttv3.MqttMessage(serializedMessage.getBytes());
                 pahoMessage.setQos(0);
-//                pahoMessage.setRetained(true);
+                pahoMessage.setRetained(retained);
                 String fullTopic = getApplianceTopic(applianceId, topic);
                 logger.debug("{}: Publish message: topic={} payload={}", loggerId, fullTopic, serializedMessage);
                 client.publish(fullTopic, pahoMessage);

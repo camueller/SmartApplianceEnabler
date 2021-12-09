@@ -20,10 +20,14 @@ package de.avanux.smartapplianceenabler.control;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.modbus.*;
 import de.avanux.smartapplianceenabler.modbus.executor.*;
+import de.avanux.smartapplianceenabler.mqtt.ControlMessage;
+import de.avanux.smartapplianceenabler.mqtt.MqttClient;
+import de.avanux.smartapplianceenabler.mqtt.MqttMessage;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.notification.NotificationType;
 import de.avanux.smartapplianceenabler.notification.NotificationProvider;
 import de.avanux.smartapplianceenabler.notification.Notifications;
+import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import de.avanux.smartapplianceenabler.configuration.Validateable;
 import java.time.LocalDateTime;
@@ -45,6 +49,14 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
     private Notifications notifications;
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
     private transient NotificationHandler notificationHandler;
+    private transient GuardedTimerTask mqttPublishTimerTask;
+    private transient MqttClient mqttClient;
+    private transient boolean mqttPublishDisabled;
+
+    @Override
+    public void setMqttPublishDisabled(boolean mqttPublishDisabled) {
+        this.mqttPublishDisabled = mqttPublishDisabled;
+    }
 
     @Override
     public void setNotificationHandler(NotificationHandler notificationHandler) {
@@ -61,6 +73,9 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
 
     @Override
     public void init() {
+        if (! mqttPublishDisabled) {
+            mqttClient = new MqttClient(getApplianceId(), getClass());
+        }
     }
 
     @Override
@@ -80,6 +95,16 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
 
     @Override
     public void start(LocalDateTime now, Timer timer) {
+        if(! mqttPublishDisabled) {
+            this.mqttPublishTimerTask = new GuardedTimerTask(getApplianceId(), "MqttPublish",
+                    MqttClient.MQTT_PUBLISH_PERIOD * 1000) {
+                @Override
+                public void runTask() {
+                    publishControlMessage(isOn());
+                }
+            };
+            timer.schedule(this.mqttPublishTimerTask, 0, this.mqttPublishTimerTask.getPeriod());
+        }
     }
 
     @Override
@@ -163,6 +188,13 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
             }
         }
         return on;
+    }
+
+    private void publishControlMessage(boolean on) {
+        if(! mqttPublishDisabled) {
+            MqttMessage message = new ControlMessage(LocalDateTime.now(), on);
+            mqttClient.send(Control.TOPIC, message, true);
+        }
     }
 
     private RegisterValueType getRegisterValueType(ReadRegisterType registerType, RegisterValueType defaultRegisterValueType) {

@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
  * A control can change the on/off state of an appliance.
  */
 public interface Control extends ApplianceLifeCycle {
+    String TOPIC = "control";
 
     /**
      * Set the the appliance state.
@@ -40,6 +41,8 @@ public interface Control extends ApplianceLifeCycle {
     boolean isOn();
 
     boolean isControllable();
+
+    void setMqttPublishDisabled(boolean mqttPublishDisabled);
 
     void addControlStateChangedListener(ControlStateChangedListener listener);
 

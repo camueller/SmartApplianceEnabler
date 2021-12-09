@@ -226,6 +226,7 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
         if(control instanceof StartingCurrentSwitch) {
             Control wrappedControl = ((StartingCurrentSwitch) control).getControl();
             ((ApplianceIdConsumer) wrappedControl).setApplianceId(id);
+            wrappedControl.setMqttPublishDisabled(true);
         }
         else {
             control.addControlStateChangedListener(this);
@@ -238,7 +239,6 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
 
         if(control instanceof StartingCurrentSwitch) {
             StartingCurrentSwitch startingCurrentSwitch = (StartingCurrentSwitch) control;
-//            startingCurrentSwitch.setMeter(meter);
             startingCurrentSwitch.setTimeframeIntervalHandler(timeframeIntervalHandler);
             startingCurrentSwitch.init();
             logger.debug("{}: {} uses {}", id, control.getClass().getSimpleName(), meter.getClass().getSimpleName());

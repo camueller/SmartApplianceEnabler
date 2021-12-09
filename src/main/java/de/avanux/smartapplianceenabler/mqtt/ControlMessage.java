@@ -19,24 +19,22 @@
 package de.avanux.smartapplianceenabler.mqtt;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
-public class MqttMessage {
-    private String time;
+public class ControlMessage extends MqttMessage{
+    public boolean on;
 
-    public LocalDateTime getTime() {
-        return toLocalDateTime(time);
+    public ControlMessage() {
     }
 
-    public void setTime(LocalDateTime time) {
-        this.time = toString(time);
+    public ControlMessage(LocalDateTime time, boolean on) {
+        setTime(time);
+        this.on = on;
     }
 
-    protected String toString(LocalDateTime time) {
-        return time != null ? time.format(DateTimeFormatter.ISO_DATE_TIME) : null;
-    }
-
-    protected LocalDateTime toLocalDateTime(String time) {
-        return time != null ? LocalDateTime.parse(time) : null;
+    @Override
+    public String toString() {
+        return "ControlMessage{" +
+                "on=" + on +
+                '}';
     }
 }

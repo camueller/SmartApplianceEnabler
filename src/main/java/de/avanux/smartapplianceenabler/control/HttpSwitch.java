@@ -20,16 +20,20 @@ package de.avanux.smartapplianceenabler.control;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.appliance.ApplianceLifeCycle;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
+import de.avanux.smartapplianceenabler.configuration.Validateable;
 import de.avanux.smartapplianceenabler.http.*;
+import de.avanux.smartapplianceenabler.mqtt.ControlMessage;
+import de.avanux.smartapplianceenabler.mqtt.MqttClient;
+import de.avanux.smartapplianceenabler.mqtt.MqttMessage;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
-import de.avanux.smartapplianceenabler.notification.NotificationType;
 import de.avanux.smartapplianceenabler.notification.NotificationProvider;
+import de.avanux.smartapplianceenabler.notification.NotificationType;
 import de.avanux.smartapplianceenabler.notification.Notifications;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolHandler;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolType;
 import de.avanux.smartapplianceenabler.protocol.JsonContentProtocolHandler;
+import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
-import de.avanux.smartapplianceenabler.configuration.Validateable;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.slf4j.Logger;
@@ -69,12 +73,20 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
     protected transient boolean on;
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
     private transient NotificationHandler notificationHandler;
+    private transient GuardedTimerTask mqttPublishTimerTask;
+    private transient MqttClient mqttClient;
+    private transient boolean mqttPublishDisabled;
 
     @Override
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
         this.httpTransactionExecutor.setApplianceId(applianceId);
         this.httpHandler.setApplianceId(applianceId);
+    }
+
+    @Override
+    public void setMqttPublishDisabled(boolean mqttPublishDisabled) {
+        this.mqttPublishDisabled = mqttPublishDisabled;
     }
 
     @Override
@@ -105,6 +117,9 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
 
     @Override
     public void init() {
+        if (! mqttPublishDisabled) {
+            mqttClient = new MqttClient(applianceId, getClass());
+        }
         if(this.httpConfiguration != null) {
             this.httpTransactionExecutor.setConfiguration(this.httpConfiguration);
         }
@@ -130,6 +145,16 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
 
     @Override
     public void start(LocalDateTime now, Timer timer) {
+        if(! mqttPublishDisabled) {
+            this.mqttPublishTimerTask = new GuardedTimerTask(applianceId, "MqttPublish",
+                    MqttClient.MQTT_PUBLISH_PERIOD * 1000) {
+                @Override
+                public void runTask() {
+                    publishControlMessage(isOn());
+                }
+            };
+            timer.schedule(this.mqttPublishTimerTask, 0, this.mqttPublishTimerTask.getPeriod());
+        }
     }
 
     @Override
@@ -175,11 +200,19 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
                         listener.controlStateChanged(now, switchOn);
                     }
                     on = switchOn;
+                    publishControlMessage(on);
                     return true;
                 }
             }
         }
         return false;
+    }
+
+    private void publishControlMessage(boolean on) {
+        if(! mqttPublishDisabled) {
+            MqttMessage message = new ControlMessage(LocalDateTime.now(), on);
+            mqttClient.send(Control.TOPIC, message, true);
+        }
     }
 
     public ContentProtocolHandler getContentContentProtocolHandler() {

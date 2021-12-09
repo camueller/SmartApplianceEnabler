@@ -49,12 +49,11 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
     private Integer minPulseDuration; // milliseconds
     @XmlElement(name = "Notifications")
     private Notifications notifications;
-    private transient Integer updatePeriod = 20;
     private transient LocalDateTime pulseTimestamp;
     private transient GpioPin inputPin;
     private transient PulsePowerMeter pulsePowerMeter = new PulsePowerMeter();
     private transient PulseEnergyMeter pulseEnergyMeter = new PulseEnergyMeter();
-    private transient GuardedTimerTask powerUpdateTimerTask;
+    private transient GuardedTimerTask mqttPublishTimerTask;
     private transient List<PowerUpdateListener> powerMeterListeners = new ArrayList<>();
     private transient NotificationHandler notificationHandler;
     private transient MqttClient mqttClient;
@@ -169,18 +168,18 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
         else {
             logGpioAccessDisabled(logger);
         }
-        this.powerUpdateTimerTask = new GuardedTimerTask(getApplianceId(), "PowerUpdate",
-                updatePeriod * 1000) {
+        this.mqttPublishTimerTask = new GuardedTimerTask(getApplianceId(), "MqttPublish",
+                MqttClient.MQTT_PUBLISH_PERIOD * 1000) {
             @Override
             public void runTask() {
                 MqttMessage message = new MeterMessage(LocalDateTime.now(),
                         pulsePowerMeter != null ? pulsePowerMeter.getAveragePower() : 0,
                         pulseEnergyMeter != null ? pulseEnergyMeter.getEnergy() : 0
                 );
-                mqttClient.send(Meter.TOPIC, message);
+                mqttClient.send(Meter.TOPIC, message, false);
             }
         };
-        timer.schedule(this.powerUpdateTimerTask, 0, this.powerUpdateTimerTask.getPeriod());
+        timer.schedule(this.mqttPublishTimerTask, 0, this.mqttPublishTimerTask.getPeriod());
     }
 
     @Override

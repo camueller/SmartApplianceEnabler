@@ -27,6 +27,7 @@ import de.avanux.smartapplianceenabler.notification.NotificationProvider;
 import de.avanux.smartapplianceenabler.notification.Notifications;
 import de.avanux.smartapplianceenabler.schedule.DayTimeframeCondition;
 import de.avanux.smartapplianceenabler.schedule.TimeframeIntervalHandler;
+import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,6 +77,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
     private transient List<StartingCurrentSwitchListener> startingCurrentSwitchListeners = new ArrayList<>();
     private transient NotificationHandler notificationHandler;
+    private transient GuardedTimerTask mqttPublishTimerTask;
     private transient MqttClient mqttClient;
 
 
@@ -90,6 +92,10 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
 
     public Control getControl() {
         return control;
+    }
+
+    @Override
+    public void setMqttPublishDisabled(boolean mqttPublishDisabled) {
     }
 
     @Override
@@ -176,6 +182,14 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
                 }
             });
         }
+        this.mqttPublishTimerTask = new GuardedTimerTask(applianceId, "MqttPublish",
+                MqttClient.MQTT_PUBLISH_PERIOD * 1000) {
+            @Override
+            public void runTask() {
+                publishControlMessage(isOn());
+            }
+        };
+        timer.schedule(this.mqttPublishTimerTask, 0, this.mqttPublishTimerTask.getPeriod());
     }
 
     @Override
@@ -213,7 +227,6 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
         return true;
     }
 
-    @Override
     public boolean isOn() {
         return on;
     }
@@ -223,6 +236,12 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
             return control.isOn();
         }
         return false;
+    }
+
+    private void publishControlMessage(boolean on) {
+        MqttMessage message = new StartingCurrentSwitchMessage(LocalDateTime.now(), on, isApplianceOn(),
+                getPowerThreshold(), getStartingCurrentDetectionDuration(), getFinishedCurrentDetectionDuration());
+        mqttClient.send(Control.TOPIC, message, true);
     }
 
     private void updateControlStateChangedListeners(LocalDateTime now, boolean switchOn) {
