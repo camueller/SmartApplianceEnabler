@@ -51,11 +51,10 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
     private transient NotificationHandler notificationHandler;
     private transient GuardedTimerTask mqttPublishTimerTask;
     private transient MqttClient mqttClient;
-    private transient boolean mqttPublishDisabled;
+    private transient String mqttPublishTopic = Control.TOPIC;
 
-    @Override
-    public void setMqttPublishDisabled(boolean mqttPublishDisabled) {
-        this.mqttPublishDisabled = mqttPublishDisabled;
+    public void setMqttPublishTopic(String mqttPublishTopic) {
+        this.mqttPublishTopic = mqttPublishTopic;
     }
 
     @Override
@@ -73,9 +72,7 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
 
     @Override
     public void init() {
-        if (! mqttPublishDisabled) {
-            mqttClient = new MqttClient(getApplianceId(), getClass());
-        }
+        mqttClient = new MqttClient(getApplianceId(), getClass());
     }
 
     @Override
@@ -95,16 +92,19 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
 
     @Override
     public void start(LocalDateTime now, Timer timer) {
-        if(! mqttPublishDisabled) {
-            this.mqttPublishTimerTask = new GuardedTimerTask(getApplianceId(), "MqttPublish",
-                    MqttClient.MQTT_PUBLISH_PERIOD * 1000) {
-                @Override
-                public void runTask() {
+        this.mqttPublishTimerTask = new GuardedTimerTask(getApplianceId(), "MqttPublish-" + getClass().getSimpleName(),
+                MqttClient.MQTT_PUBLISH_PERIOD * 1000) {
+            @Override
+            public void runTask() {
+                try {
                     publishControlMessage(isOn());
                 }
-            };
-            timer.schedule(this.mqttPublishTimerTask, 0, this.mqttPublishTimerTask.getPeriod());
-        }
+                catch(Exception e) {
+                    logger.error("{}: Error publishing MQTT message", getApplianceId(), e);
+                }
+            }
+        };
+        timer.schedule(this.mqttPublishTimerTask, 0, this.mqttPublishTimerTask.getPeriod());
     }
 
     @Override
@@ -142,6 +142,7 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
                     result = Integer.valueOf(write.child().getValue()).equals(((WriteHoldingRegisterExecutor) executor).getResult());
                 }
                 if(this.notificationHandler != null && switchOn != on) {
+                    publishControlMessage(switchOn);
                     this.notificationHandler.sendNotification(switchOn ? NotificationType.CONTROL_ON : NotificationType.CONTROL_OFF);
                 }
                 for(ControlStateChangedListener listener : new ArrayList<>(controlStateChangedListeners)) {
@@ -159,7 +160,6 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
         return result;
     }
 
-    @Override
     public boolean isOn() {
         boolean on = false;
         ParentWithChild<ModbusWrite, ModbusWriteValue> write
@@ -191,10 +191,8 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
     }
 
     private void publishControlMessage(boolean on) {
-        if(! mqttPublishDisabled) {
-            MqttMessage message = new ControlMessage(LocalDateTime.now(), on);
-            mqttClient.send(Control.TOPIC, message, true);
-        }
+        MqttMessage message = new ControlMessage(LocalDateTime.now(), on);
+        mqttClient.publish(mqttPublishTopic, message, true);
     }
 
     private RegisterValueType getRegisterValueType(ReadRegisterType registerType, RegisterValueType defaultRegisterValueType) {

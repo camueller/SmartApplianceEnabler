@@ -21,7 +21,6 @@ package de.avanux.smartapplianceenabler.mqtt;
 import java.time.LocalDateTime;
 
 public class StartingCurrentSwitchMessage extends ControlMessage {
-    public boolean wrappedControlOn;
     public Integer powerThreshold;
     public Integer startingCurrentDetectionDuration;
     public Integer finishedCurrentDetectionDuration;
@@ -29,10 +28,9 @@ public class StartingCurrentSwitchMessage extends ControlMessage {
     public StartingCurrentSwitchMessage() {
     }
 
-    public StartingCurrentSwitchMessage(LocalDateTime time, boolean on, boolean wrappedControlOn, Integer powerThreshold,
+    public StartingCurrentSwitchMessage(LocalDateTime time, boolean on, Integer powerThreshold,
                                         Integer startingCurrentDetectionDuration, Integer finishedCurrentDetectionDuration) {
         super(time, on);
-        this.wrappedControlOn = wrappedControlOn;
         this.powerThreshold = powerThreshold;
         this.startingCurrentDetectionDuration = startingCurrentDetectionDuration;
         this.finishedCurrentDetectionDuration = finishedCurrentDetectionDuration;
@@ -42,7 +40,6 @@ public class StartingCurrentSwitchMessage extends ControlMessage {
     public String toString() {
         return "StartingCurrentSwitchMessage{" +
                 "on=" + on +
-                ", wrappedControlOn=" + wrappedControlOn +
                 ", powerThreshold=" + powerThreshold +
                 ", startingCurrentDetectionDuration=" + startingCurrentDetectionDuration +
                 ", finishedCurrentDetectionDuration=" + finishedCurrentDetectionDuration +

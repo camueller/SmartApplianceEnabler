@@ -18,15 +18,14 @@
 package de.avanux.smartapplianceenabler.schedule;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
-import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
+import de.avanux.smartapplianceenabler.control.ev.EVChargerState;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-
-import java.time.Duration;
-import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Vector;
 
 /**
@@ -100,7 +99,7 @@ public class TimeframeInterval implements ApplianceIdConsumer, TimeframeInterval
                        now.isAfter(getInterval().getEnd())
                     || request.isFinished(now)
                     || (request instanceof RuntimeRequest && ((RuntimeRequest) request).hasStartingCurrentSwitch()
-                                && !((RuntimeRequest) request).getControl().isOn() && !isIntervalSufficient(now))
+                                && !request.isControlOn() && !isIntervalSufficient(now))
                 );
     }
 
@@ -119,8 +118,7 @@ public class TimeframeInterval implements ApplianceIdConsumer, TimeframeInterval
         )
         || (
                 getRequest() instanceof OptionalEnergySocRequest
-                        && ((ElectricVehicleCharger) ((OptionalEnergySocRequest) getRequest()).getControl())
-                        .isVehicleNotConnected()
+                        && ((OptionalEnergySocRequest) getRequest()).getEvChargerState() == EVChargerState.VEHICLE_NOT_CONNECTED
         );
     }
 

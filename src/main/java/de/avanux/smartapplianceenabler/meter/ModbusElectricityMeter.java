@@ -283,6 +283,6 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     @Override
     public void onPowerUpdate(LocalDateTime now, int averagePower) {
         MqttMessage message = new MeterMessage(now, averagePower, pollEnergyMeter != null ? this.pollEnergyMeter.getEnergy() : 0.0);
-        mqttClient.send(Meter.TOPIC, message, false);
+        mqttClient.publish(Meter.TOPIC, message, false);
     }
 }

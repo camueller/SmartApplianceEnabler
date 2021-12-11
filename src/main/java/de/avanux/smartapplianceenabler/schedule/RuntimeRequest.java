@@ -19,8 +19,9 @@
 package de.avanux.smartapplianceenabler.schedule;
 
 import de.avanux.smartapplianceenabler.control.Control;
-import de.avanux.smartapplianceenabler.control.StartingCurrentSwitch;
-import de.avanux.smartapplianceenabler.control.StartingCurrentSwitchListener;
+import de.avanux.smartapplianceenabler.mqtt.ControlMessage;
+import de.avanux.smartapplianceenabler.mqtt.MqttEvent;
+import de.avanux.smartapplianceenabler.mqtt.StartingCurrentSwitchMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,11 +33,12 @@ import java.time.LocalDateTime;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "min", "max" })
-public class RuntimeRequest extends AbstractRequest implements StartingCurrentSwitchListener {
+public class RuntimeRequest extends AbstractRequest {
     @XmlAttribute
     private Integer min;
     @XmlAttribute
     private int max;
+    private transient boolean startingCurrentSwitch;
 
     public RuntimeRequest() {
     }
@@ -44,6 +46,40 @@ public class RuntimeRequest extends AbstractRequest implements StartingCurrentSw
     public RuntimeRequest(Integer min, int max) {
         setMin(min);
         setMax(max);
+    }
+
+    @Override
+    public void init() {
+        super.init();
+        getMqttClient().subscribe(Control.TOPIC, true, ControlMessage.class, (topic, message) -> {
+            if(message instanceof  StartingCurrentSwitchMessage) {
+                startingCurrentSwitch = true;
+                getMqttClient().unsubscribe(Control.TOPIC);
+            }
+        });
+        subscribeStartingCurrentEvents();
+    }
+
+    private void subscribeStartingCurrentEvents() {
+        getMqttClient().subscribe(MqttEvent.StartingCurrentDetected, ControlMessage.class, (topic, message) -> {
+            if(isActive()) {
+                getLogger().debug("{} Handling event StartingCurrentDetected", getApplianceId());
+                resetRuntime();
+                setEnabled(true);
+            }
+        });
+        getMqttClient().subscribe(MqttEvent.FinishedCurrentDetected, ControlMessage.class, (topic, message) -> {
+            if(isActive()) {
+                getLogger().debug("{} Handling event FinishedCurrentDetected", getApplianceId());
+                setEnabled(false);
+                resetEnabledBefore();
+            }
+        });
+    }
+
+    public void unsubscribeStartingCurrentEvents() {
+        getMqttClient().unsubscribe(MqttEvent.StartingCurrentDetected);
+        getMqttClient().unsubscribe(MqttEvent.FinishedCurrentDetected);
     }
 
     protected Logger getLogger() {
@@ -86,27 +122,7 @@ public class RuntimeRequest extends AbstractRequest implements StartingCurrentSw
     }
 
     public boolean hasStartingCurrentSwitch() {
-        return getControl() instanceof StartingCurrentSwitch;
-    }
-
-    @Override
-    public void setControl(Control control) {
-        super.setControl(control);
-        if (control instanceof StartingCurrentSwitch) {
-            ((StartingCurrentSwitch) control).addStartingCurrentSwitchListener(this);
-        }
-    }
-
-    @Override
-    public void startingCurrentDetected(LocalDateTime now) {
-        resetRuntime();
-        setEnabled(true);
-    }
-
-    @Override
-    public void finishedCurrentDetected() {
-        setEnabled(false);
-        resetEnabledBefore();
+        return startingCurrentSwitch;
     }
 
     @Override

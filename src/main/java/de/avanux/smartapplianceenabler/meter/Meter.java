@@ -24,7 +24,7 @@ import java.util.Timer;
 
 public interface Meter extends ApplianceLifeCycle {
 
-    String TOPIC = "meter";
+    String TOPIC = "Meter";
     int AVERAGING_INTERVAL = 60;
 
     /**

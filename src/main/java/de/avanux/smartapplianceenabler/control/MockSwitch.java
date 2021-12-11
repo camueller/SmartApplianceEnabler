@@ -82,11 +82,6 @@ public class MockSwitch implements Control, ApplianceIdConsumer {
     }
 
     @Override
-    public void setMqttPublishDisabled(boolean mqttPublishDisabled) {
-    }
-
-    @Override
-    public boolean isOn() {
-        return on;
+    public void setMqttPublishTopic(String mqttPublishTopic) {
     }
 }

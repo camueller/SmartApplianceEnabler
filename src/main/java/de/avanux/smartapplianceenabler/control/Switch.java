@@ -23,10 +23,14 @@ import com.pi4j.io.gpio.PinState;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import java.time.LocalDateTime;
 
+import de.avanux.smartapplianceenabler.mqtt.ControlMessage;
+import de.avanux.smartapplianceenabler.mqtt.MqttClient;
+import de.avanux.smartapplianceenabler.mqtt.MqttMessage;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.notification.NotificationType;
 import de.avanux.smartapplianceenabler.notification.NotificationProvider;
 import de.avanux.smartapplianceenabler.notification.Notifications;
+import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,11 +52,13 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
     private transient GpioPinDigitalOutput outputPin;
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
     private transient NotificationHandler notificationHandler;
-    private transient boolean mqttPublishDisabled;
+    private transient GuardedTimerTask mqttPublishTimerTask;
+    private transient MqttClient mqttClient;
+    private transient String mqttPublishTopic = Control.TOPIC;
 
     @Override
-    public void setMqttPublishDisabled(boolean mqttPublishDisabled) {
-        this.mqttPublishDisabled = mqttPublishDisabled;
+    public void setMqttPublishTopic(String mqttPublishTopic) {
+        this.mqttPublishTopic = mqttPublishTopic;
     }
 
     @Override
@@ -70,6 +76,7 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
 
     @Override
     public void init() {
+        mqttClient = new MqttClient(getApplianceId(), getClass());
     }
 
     @Override
@@ -87,6 +94,19 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
             } catch (Exception e) {
                 logger.error("{}: Error starting {} for {}", getApplianceId(), getClass().getSimpleName(), getGpio(), e);
             }
+            this.mqttPublishTimerTask = new GuardedTimerTask(getApplianceId(), "MqttPublish-" + getClass().getSimpleName(),
+                    MqttClient.MQTT_PUBLISH_PERIOD * 1000) {
+                @Override
+                public void runTask() {
+                    try {
+                        publishControlMessage(isOn());
+                    }
+                    catch(Exception e) {
+                        logger.error("{}: Error publishing MQTT message", getApplianceId(), e);
+                    }
+                }
+            };
+            timer.schedule(this.mqttPublishTimerTask, 0, this.mqttPublishTimerTask.getPeriod());
         } else {
             logGpioAccessDisabled(logger);
         }
@@ -119,7 +139,6 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
         return true;
     }
 
-    @Override
     public boolean isOn() {
         if (outputPin != null) {
             return adjustState(outputPin.getState()) == PinState.HIGH;
@@ -136,6 +155,11 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
             return PinState.HIGH;
         }
         return pinState;
+    }
+
+    private void publishControlMessage(boolean on) {
+        MqttMessage message = new ControlMessage(LocalDateTime.now(), isOn());
+        mqttClient.publish(mqttPublishTopic, message, true);
     }
 
     @Override

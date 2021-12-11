@@ -23,21 +23,20 @@ import de.avanux.smartapplianceenabler.control.ev.EVChargerState;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import de.avanux.smartapplianceenabler.control.ev.SocValues;
 import de.avanux.smartapplianceenabler.meter.Meter;
+import de.avanux.smartapplianceenabler.mqtt.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-
-import java.time.Duration;
-import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlTransient;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 @XmlTransient
 abstract public class AbstractRequest implements Request {
     private transient String applianceId;
     private transient Meter meter;
-    private transient Control control;
     private transient boolean next;
     private transient boolean enabled;
     private transient boolean enabledBefore;
@@ -45,13 +44,30 @@ abstract public class AbstractRequest implements Request {
     private transient LocalDateTime controlStatusChangedAt;
     private transient Boolean acceptControlRecommendations;
     private transient TimeframeIntervalStateProvider timeframeIntervalStateProvider;
-
+    private transient MqttClient mqttClient;
+    private transient ControlMessage controlMessage;
 
     public AbstractRequest() {
     }
 
+    @Override
+    public void init() {
+        getMqttClient().subscribe(Control.TOPIC, true, ControlMessage.class, (topic, message) -> {
+            if(message instanceof ControlMessage) {
+                controlMessage = (ControlMessage) message;
+            }
+        });
+    }
+
     protected Logger getLogger() {
         return LoggerFactory.getLogger(AbstractRequest.class);
+    }
+
+    protected MqttClient getMqttClient() {
+        if(mqttClient == null) {
+            mqttClient = new MqttClient(applianceId, getClass(), true);
+        }
+        return mqttClient;
     }
 
     public void setApplianceId(String applianceId) {
@@ -68,15 +84,6 @@ abstract public class AbstractRequest implements Request {
 
     protected Meter getMeter() {
         return meter;
-    }
-
-    @Override
-    public void setControl(Control control) {
-        this.control = control;
-    }
-
-    protected Control getControl() {
-        return control;
     }
 
     public void setTimeframeIntervalStateProvider(TimeframeIntervalStateProvider timeframeIntervalStateProvider) {
@@ -127,7 +134,7 @@ abstract public class AbstractRequest implements Request {
     }
 
     public boolean isControlOn() {
-        return control.isOn();
+        return controlMessage != null && controlMessage.on;
     }
 
     @Override
@@ -155,7 +162,7 @@ abstract public class AbstractRequest implements Request {
     @Override
     public Integer getRuntime(LocalDateTime now) {
         if(isEnabledBefore()) {
-            return runtimeUntilLastStatusChange + (control.isOn() ? getSecondsSinceStatusChange(now) : 0);
+            return runtimeUntilLastStatusChange + (isControlOn() ? getSecondsSinceStatusChange(now) : 0);
         }
         return 0;
     }

@@ -27,6 +27,8 @@ import de.avanux.smartapplianceenabler.control.ev.EVChargerState;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
 import de.avanux.smartapplianceenabler.control.ev.SocValues;
+import de.avanux.smartapplianceenabler.mqtt.ControlMessage;
+import de.avanux.smartapplianceenabler.mqtt.MqttClient;
 import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
 import de.avanux.smartapplianceenabler.util.Holder;
 import org.slf4j.Logger;
@@ -46,6 +48,8 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
     private GuardedTimerTask fillQueueTimerTask;
     private GuardedTimerTask updateQueueTimerTask;
     private LinkedList<TimeframeInterval> queue = new LinkedList<>();
+    private transient MqttClient mqttClient;
+    private transient ControlMessage wrappedControlMessage;
     private Set<TimeframeIntervalChangedListener> timeframeIntervalChangedListeners = new HashSet<>();
     private Control control;
 
@@ -60,6 +64,16 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
     @Override
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
+    }
+
+    public void setMqttClient(MqttClient mqttClient) {
+        this.mqttClient = mqttClient;
+        mqttClient.subscribe(StartingCurrentSwitch.WRAPPED_CONTROL_TOPIC, true, ControlMessage.class, (topic, message) -> {
+            if(message instanceof ControlMessage && topic.equals(StartingCurrentSwitch.WRAPPED_CONTROL_TOPIC)) {
+                wrappedControlMessage = (ControlMessage) message;
+            }
+        });
+
     }
 
     public void setSchedules(List<Schedule> schedules) {
@@ -123,18 +137,18 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
         logger.debug("{}: Starting to fill queue", applianceId);
         Interval considerationInterval = new Interval(now, now.plusDays(CONSIDERATION_INTERVAL_DAYS));
         TimeframeInterval lastTimeframeInterval = queue.peekLast();
-        List<TimeframeInterval> timeframeIntervals = findTimeframeIntervals(now, considerationInterval);
+        List<TimeframeInterval> timeframeIntervals = findTimeframeIntervals(now, considerationInterval,
+                control instanceof StartingCurrentSwitch ? (queue.size() == 0 ? 1 : 0) : Integer.MAX_VALUE);
         timeframeIntervals.stream()
                 .filter(timeframeInterval -> (lastTimeframeInterval == null
                         || timeframeInterval.getInterval().getStart().isAfter(lastTimeframeInterval.getInterval().getEnd()))
                         && timeframeInterval.isIntervalSufficient(now)
                 )
-                .limit(control instanceof StartingCurrentSwitch ? (queue.size() == 0 ? 1 : 0) : Integer.MAX_VALUE)
                 .forEach(timeframeInterval -> {
                     if(control instanceof StartingCurrentSwitch) {
                         // if appliance is switched off, the starting current has already been detected and the
                         // request has to be enabled therefore
-                        timeframeInterval.getRequest().setEnabled(! ((StartingCurrentSwitch) control).isApplianceOn());
+                        timeframeInterval.getRequest().setEnabled(wrappedControlMessage != null && ! wrappedControlMessage.on);
                     }
                     if(control instanceof ElectricVehicleCharger) {
                         timeframeInterval.getRequest().setEnabled(((ElectricVehicleCharger) control).isVehicleConnected());
@@ -316,8 +330,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
         removeTimeframeIntervalChangedListener(timeframeInterval.getRequest());
         control.removeControlStateChangedListener(timeframeInterval.getRequest());
         if(control instanceof StartingCurrentSwitch && timeframeInterval.getRequest() instanceof RuntimeRequest) {
-            ((StartingCurrentSwitch) control)
-                    .removeStartingCurrentSwitchListener((RuntimeRequest) timeframeInterval.getRequest());
+            ((RuntimeRequest) timeframeInterval.getRequest()).unsubscribeStartingCurrentEvents();
             fillQueue(now);
         }
     }
@@ -352,7 +365,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
      * @param considerationInterval timeframe intervals have to start within this interval
      * @return a (possibly empty) list of timeframes sorted by starting time
      */
-    protected List<TimeframeInterval> findTimeframeIntervals(LocalDateTime now, Interval considerationInterval) {
+    protected List<TimeframeInterval> findTimeframeIntervals(LocalDateTime now, Interval considerationInterval, Integer limit) {
         List<TimeframeInterval> timeframeIntervals = new ArrayList<>();
         if (schedules != null) {
             schedules
@@ -360,13 +373,14 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
                     .filter(Schedule::isEnabled)
                     .forEach(schedule -> {
                         Timeframe timeframe = schedule.getTimeframe();
-                        timeframe.getIntervals(now).forEach(timeframeInterval -> {
+                        timeframe.getIntervals(now).stream().limit(limit).forEach(timeframeInterval -> {
                             if (considerationInterval == null
                                     || considerationInterval.contains(timeframeInterval.getInterval().getStart())
                                     || timeframeInterval.getInterval().contains(considerationInterval.getStart())
                             ) {
                                 timeframeInterval.setApplianceId(applianceId);
                                 timeframeInterval.getRequest().setApplianceId(applianceId);
+                                timeframeInterval.getRequest().init();
                                 timeframeIntervals.add(timeframeInterval);
                             }
                         });

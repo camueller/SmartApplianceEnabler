@@ -123,7 +123,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     }
 
     @Override
-    public void setMqttPublishDisabled(boolean mqttPublishDisabled) {
+    public void setMqttPublishTopic(String mqttPublishTopic) {
     }
 
     @Override
@@ -533,7 +533,6 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         return true;
     }
 
-    @Override
     public boolean isOn() {
         return isOn(getStartChargingStateDetectionDelay(),
                 System.currentTimeMillis(), this.switchChargingStateTimestamp);
@@ -895,7 +894,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                 chargePower,
                 useOptionalEnergy
         );
-        mqttClient.send(Control.TOPIC, message, true);
+        mqttClient.publish(Control.TOPIC, message, true);
     }
 
     private class SocRetriever implements Runnable {

@@ -29,8 +29,7 @@ import de.avanux.smartapplianceenabler.meter.S0ElectricityMeter;
 import de.avanux.smartapplianceenabler.modbus.EVModbusControl;
 import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
-import de.avanux.smartapplianceenabler.mqtt.MeterMessage;
-import de.avanux.smartapplianceenabler.mqtt.MqttClient;
+import de.avanux.smartapplianceenabler.mqtt.*;
 import de.avanux.smartapplianceenabler.notification.Notification;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.notification.NotificationProvider;
@@ -174,6 +173,7 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
             this.timeframeIntervalHandler = timeframeIntervalHandler;
         }
         this.timeframeIntervalHandler.setApplianceId(id);
+        this.timeframeIntervalHandler.setMqttClient(mqttClient);
         this.timeframeIntervalHandler.addTimeframeIntervalChangedListener(this);
     }
 
@@ -226,7 +226,7 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
         if(control instanceof StartingCurrentSwitch) {
             Control wrappedControl = ((StartingCurrentSwitch) control).getControl();
             ((ApplianceIdConsumer) wrappedControl).setApplianceId(id);
-            wrappedControl.setMqttPublishDisabled(true);
+            wrappedControl.setMqttPublishTopic(StartingCurrentSwitch.WRAPPED_CONTROL_TOPIC);
         }
         else {
             control.addControlStateChangedListener(this);
@@ -525,7 +525,6 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
         timeframeInterval.setApplianceId(id);
         timeframeInterval.getRequest().setApplianceId(id);
         timeframeInterval.getRequest().setMeter(meter);
-        timeframeInterval.getRequest().setControl(control);
         control.addControlStateChangedListener(timeframeInterval.getRequest());
     }
 

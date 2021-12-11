@@ -22,6 +22,7 @@ import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
 import de.avanux.smartapplianceenabler.meter.Meter;
+import de.avanux.smartapplianceenabler.mqtt.ControlMessage;
 import de.avanux.smartapplianceenabler.mqtt.MeterMessage;
 import de.avanux.smartapplianceenabler.mqtt.MqttClient;
 import de.avanux.smartapplianceenabler.schedule.AbstractEnergyRequest;
@@ -49,13 +50,20 @@ public class SempController {
     private Logger logger = LoggerFactory.getLogger(SempController.class);
     private MqttClient mqttClient;
     private Map<String, MeterMessage> meterMessages = new HashMap<>();
+    private Map<String, ControlMessage> controlMessages = new HashMap<>();
 
     public SempController() {
         logger.info("SEMP controller created.");
         mqttClient = new MqttClient("", getClass());
+
         String meterTopic = mqttClient.getTopicPrefix() + "/+/" + Meter.TOPIC;
         mqttClient.subscribe(meterTopic, false, MeterMessage.class, (topic, message) -> {
             this.meterMessages.put(topic, (MeterMessage) message);
+        });
+
+        String controlTopic = mqttClient.getTopicPrefix() + "/+/" + Control.TOPIC;
+        mqttClient.subscribe(controlTopic, false, ControlMessage.class, (topic, message) -> {
+            this.controlMessages.put(topic, (ControlMessage) message);
         });
     }
 
@@ -268,9 +276,11 @@ public class SempController {
         DeviceStatus deviceStatus = new DeviceStatus();
         deviceStatus.setDeviceId(appliance.getId());
 
+        String applianceControlTopic = MqttClient.getApplianceTopic(appliance.getId(), Control.TOPIC);
+        ControlMessage controlMessage = this.controlMessages.get(applianceControlTopic);
         Control control = appliance.getControl();
         if (control != null) {
-            deviceStatus.setStatus(control.isOn() ? Status.On : Status.Off);
+            deviceStatus.setStatus(controlMessage.on ? Status.On : Status.Off);
             deviceStatus.setEMSignalsAccepted(appliance.isAcceptControlRecommendations());
             logger.debug("{}: Reporting device status from control", appliance.getId());
         } else {

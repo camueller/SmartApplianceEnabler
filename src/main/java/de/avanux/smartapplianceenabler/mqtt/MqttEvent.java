@@ -18,32 +18,18 @@
 
 package de.avanux.smartapplianceenabler.mqtt;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+public class MqttEvent {
+    public static final String TOPIC = "Event";
 
-public class MqttMessage {
-    private String time;
+    public static final MqttEvent StartingCurrentDetected = new MqttEvent("StartingCurrentDetected");
+    public static final MqttEvent FinishedCurrentDetected = new MqttEvent("FinishedCurrentDetected");
+    private String name;
 
-    public MqttMessage() {
+    public MqttEvent(String name) {
+        this.name = name;
     }
 
-    public MqttMessage(LocalDateTime time) {
-        setTime(time);
-    }
-
-    public LocalDateTime getTime() {
-        return toLocalDateTime(time);
-    }
-
-    public void setTime(LocalDateTime time) {
-        this.time = toString(time);
-    }
-
-    protected String toString(LocalDateTime time) {
-        return time != null ? time.format(DateTimeFormatter.ISO_DATE_TIME) : null;
-    }
-
-    protected LocalDateTime toLocalDateTime(String time) {
-        return time != null ? LocalDateTime.parse(time) : null;
+    public String getName() {
+        return name;
     }
 }

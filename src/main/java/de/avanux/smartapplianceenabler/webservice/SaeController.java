@@ -20,39 +20,39 @@ package de.avanux.smartapplianceenabler.webservice;
 
 import de.avanux.smartapplianceenabler.Application;
 import de.avanux.smartapplianceenabler.HolidaysDownloader;
-import de.avanux.smartapplianceenabler.appliance.*;
+import de.avanux.smartapplianceenabler.appliance.Appliance;
+import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
+import de.avanux.smartapplianceenabler.appliance.Appliances;
 import de.avanux.smartapplianceenabler.configuration.Configuration;
 import de.avanux.smartapplianceenabler.configuration.Connectivity;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.ControlDefaults;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
-import de.avanux.smartapplianceenabler.meter.HttpElectricityMeterDefaults;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.meter.MeterDefaults;
-import de.avanux.smartapplianceenabler.meter.S0ElectricityMeterDefaults;
-import de.avanux.smartapplianceenabler.modbus.ModbusElectricityMeterDefaults;
-import de.avanux.smartapplianceenabler.modbus.ModbusReadDefaults;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
+import de.avanux.smartapplianceenabler.mqtt.ControlMessage;
 import de.avanux.smartapplianceenabler.mqtt.MeterMessage;
 import de.avanux.smartapplianceenabler.mqtt.MqttClient;
 import de.avanux.smartapplianceenabler.notification.Notification;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.schedule.*;
 import de.avanux.smartapplianceenabler.semp.webservice.*;
-
-import java.time.Duration;
-import java.time.LocalDateTime;
-
 import de.avanux.smartapplianceenabler.util.FileHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 public class SaeController {
@@ -81,13 +81,20 @@ public class SaeController {
     private final Object lock = new Object();
     private MqttClient mqttClient;
     private Map<String, MeterMessage> meterMessages = new HashMap<>();
+    private Map<String, ControlMessage> controlMessages = new HashMap<>();
 
     public SaeController() {
         logger.info("SAE controller created.");
         mqttClient = new MqttClient("", getClass());
+
         String meterTopic = mqttClient.getTopicPrefix() + "/+/" + Meter.TOPIC;
         mqttClient.subscribe(meterTopic, false, MeterMessage.class, (topic, message) -> {
             this.meterMessages.put(topic, (MeterMessage) message);
+        });
+
+        String controlTopic = mqttClient.getTopicPrefix() + "/+/" + Control.TOPIC;
+        mqttClient.subscribe(controlTopic, false, ControlMessage.class, (topic, message) -> {
+            this.controlMessages.put(topic, (ControlMessage) message);
         });
     }
 
@@ -877,10 +884,13 @@ public class SaeController {
             }
 
             if (appliance.isControllable()) {
+                String applianceControlTopic = MqttClient.getApplianceTopic(appliance.getId(), Control.TOPIC);
+                ControlMessage controlMessage = this.controlMessages.get(applianceControlTopic);
+
                 applianceStatus.setControllable(true);
                 Control control = appliance.getControl();
                 Meter meter = appliance.getMeter();
-                applianceStatus.setOn(control.isOn());
+                applianceStatus.setOn(controlMessage.on);
                 TimeframeInterval nextTimeframeInterval
                         = appliance.getTimeframeIntervalHandler().getQueue().size() > 0
                         ? appliance.getTimeframeIntervalHandler().getQueue().get(0)
@@ -917,7 +927,7 @@ public class SaeController {
                             whAlreadyCharged = Double.valueOf(meterMessage.energy * 1000.0f).intValue();
                             chargePower = meterMessage.power;
                         }
-                        if (control.isOn()) {
+                        if (controlMessage.on) {
                             applianceStatus.setCurrentChargePower(chargePower);
                         }
                         applianceStatus.setChargedEnergyAmount(whAlreadyCharged);

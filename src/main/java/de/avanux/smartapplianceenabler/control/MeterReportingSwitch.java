@@ -20,12 +20,15 @@ package de.avanux.smartapplianceenabler.control;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.meter.Meter;
+import de.avanux.smartapplianceenabler.mqtt.ControlMessage;
 import de.avanux.smartapplianceenabler.mqtt.MeterMessage;
 import de.avanux.smartapplianceenabler.mqtt.MqttClient;
+import de.avanux.smartapplianceenabler.mqtt.MqttMessage;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.notification.NotificationProvider;
 import de.avanux.smartapplianceenabler.notification.NotificationType;
 import de.avanux.smartapplianceenabler.notification.Notifications;
+import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,17 +57,17 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
     private transient Boolean onBefore;
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
     private transient MqttClient mqttClient;
+    private transient GuardedTimerTask mqttPublishTimerTask;
     private transient MeterMessage meterMessage;
-    private transient boolean mqttPublishDisabled;
+    private transient String mqttPublishTopic = Control.TOPIC;
 
     @Override
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
     }
 
-    @Override
-    public void setMqttPublishDisabled(boolean mqttPublishDisabled) {
-        this.mqttPublishDisabled = mqttPublishDisabled;
+    public void setMqttPublishTopic(String mqttPublishTopic) {
+        this.mqttPublishTopic = mqttPublishTopic;
     }
 
     @Override
@@ -113,6 +116,19 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
             mqttClient.subscribe(Meter.TOPIC, true, MeterMessage.class, (topic, message) -> {
                 meterMessage = (MeterMessage) message;
             });
+            this.mqttPublishTimerTask = new GuardedTimerTask(applianceId, "MqttPublish-" + getClass().getSimpleName(),
+                    MqttClient.MQTT_PUBLISH_PERIOD * 1000) {
+                @Override
+                public void runTask() {
+                    try {
+                        publishControlMessage();
+                    }
+                    catch(Exception e) {
+                        logger.error("{}: Error publishing MQTT message", applianceId, e);
+                    }
+                }
+            };
+            timer.schedule(this.mqttPublishTimerTask, 0, this.mqttPublishTimerTask.getPeriod());
         }
     }
 
@@ -138,11 +154,6 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
     @Override
     public void removeControlStateChangedListener(ControlStateChangedListener listener) {
         controlStateChangedListeners.remove(listener);
-    }
-
-    @Override
-    public boolean isOn() {
-        return this.isOn(LocalDateTime.now());
     }
 
     public boolean isOn(LocalDateTime now) {
@@ -175,5 +186,11 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
                 this.notificationHandler.sendNotification(on ? NotificationType.CONTROL_ON : NotificationType.CONTROL_OFF);
             }
         }
+    }
+
+    private void publishControlMessage() {
+        LocalDateTime now = LocalDateTime.now();
+        MqttMessage message = new ControlMessage(now, isOn(now));
+        mqttClient.publish(mqttPublishTopic, message, true);
     }
 }

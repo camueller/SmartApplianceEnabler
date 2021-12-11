@@ -22,7 +22,6 @@ import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.mqtt.ControlMessage;
 import de.avanux.smartapplianceenabler.mqtt.MqttClient;
 import de.avanux.smartapplianceenabler.mqtt.MqttMessage;
-import de.avanux.smartapplianceenabler.mqtt.StartingCurrentSwitchMessage;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.notification.NotificationProvider;
 import de.avanux.smartapplianceenabler.notification.Notifications;
@@ -55,7 +54,7 @@ public class AlwaysOnSwitch implements Control, ApplianceIdConsumer, Notificatio
     }
 
     @Override
-    public void setMqttPublishDisabled(boolean mqttPublishDisabled) {
+    public void setMqttPublishTopic(String mqttPublishTopic) {
     }
 
     @Override
@@ -78,7 +77,7 @@ public class AlwaysOnSwitch implements Control, ApplianceIdConsumer, Notificatio
     @Override
     public void start(LocalDateTime now, Timer timer) {
         MqttMessage message = new ControlMessage(LocalDateTime.now(), true);
-        mqttClient.send(Control.TOPIC, message, true);
+        mqttClient.publish(Control.TOPIC, message, true);
     }
 
     @Override
@@ -87,11 +86,6 @@ public class AlwaysOnSwitch implements Control, ApplianceIdConsumer, Notificatio
 
     @Override
     public boolean on(LocalDateTime now, boolean switchOn) {
-        return true;
-    }
-
-    @Override
-    public boolean isOn() {
         return true;
     }
 

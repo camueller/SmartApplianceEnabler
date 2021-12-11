@@ -9,7 +9,9 @@
                 <HttpWrite url="http://tasmota/cm?cmnd=Power%20Off">
                     <HttpWriteValue name="Off" method="GET"/>
                 </HttpWrite>
-                <Notifications/>
+                <HttpRead url="http://tasmota/cm?cmnd=Power">
+                    <HttpReadValue name="On" method="GET" extractionRegex=":.ON"/>
+                </HttpRead>
             </HttpSwitch>
         </StartingCurrentSwitch>
         <HttpElectricityMeter contentProtocol="JSON">
@@ -18,6 +20,13 @@
             </HttpRead>
             <Notifications/>
         </HttpElectricityMeter>
+        <Schedule enabled="true">
+            <RuntimeRequest min="60" max="300"/>
+            <DayTimeframe>
+                <Start hour="8" minute="0" second="0"/>
+                <End hour="22" minute="0" second="0"/>
+            </DayTimeframe>
+        </Schedule>
     </Appliance>
     <!--Appliance id="F-00000001-000000000019-00">
         <ElectricVehicleCharger startChargingStateDetectionDelay="60">

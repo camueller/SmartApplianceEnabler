@@ -31,6 +31,7 @@ import de.avanux.smartapplianceenabler.meter.MeterValueName;
 import de.avanux.smartapplianceenabler.meter.ModbusElectricityMeter;
 import de.avanux.smartapplianceenabler.modbus.ModbusRead;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
+import de.avanux.smartapplianceenabler.mqtt.MqttClient;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.schedule.Schedule;
 import de.avanux.smartapplianceenabler.semp.webservice.Device2EM;
@@ -107,6 +108,7 @@ public class ApplianceManager implements Runnable {
 
     public void run() {
         try {
+            MqttClient.start();
             startAppliances();
         }
         catch(Throwable e) {
@@ -211,8 +213,10 @@ public class ApplianceManager implements Runnable {
     private void restartAppliances() {
         logger.info("Restarting appliances ...");
         stopAppliances();
+        MqttClient.stop();
         this.appliances = null;
         this.device2EM = null;
+        MqttClient.start();
         startAppliances();
     }
 

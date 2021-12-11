@@ -72,13 +72,14 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
     private transient TimeframeIntervalHandler timeframeIntervalHandler;
     private transient Map<LocalDateTime, Integer> powerUpdates = new TreeMap<>();
     private transient boolean on;
+    private transient boolean applianceOn;
     private transient boolean startingCurrentDetected;
     private transient LocalDateTime switchOnTime;
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
-    private transient List<StartingCurrentSwitchListener> startingCurrentSwitchListeners = new ArrayList<>();
     private transient NotificationHandler notificationHandler;
     private transient GuardedTimerTask mqttPublishTimerTask;
     private transient MqttClient mqttClient;
+    final static public String WRAPPED_CONTROL_TOPIC = "Wrapped" + Control.TOPIC;
 
 
     @Override
@@ -95,7 +96,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
     }
 
     @Override
-    public void setMqttPublishDisabled(boolean mqttPublishDisabled) {
+    public void setMqttPublishTopic(String mqttPublishTopic) {
     }
 
     @Override
@@ -181,12 +182,22 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
                     onPowerUpdate(message.getTime(), ((MeterMessage) message).power);
                 }
             });
+            mqttClient.subscribe(WRAPPED_CONTROL_TOPIC, true, ControlMessage.class, (topic, message) -> {
+                if(message instanceof ControlMessage) {
+                    applianceOn = ((ControlMessage) message).on;
+                }
+            });
         }
-        this.mqttPublishTimerTask = new GuardedTimerTask(applianceId, "MqttPublish",
+        this.mqttPublishTimerTask = new GuardedTimerTask(applianceId, "MqttPublish-" + getClass().getSimpleName(),
                 MqttClient.MQTT_PUBLISH_PERIOD * 1000) {
             @Override
             public void runTask() {
-                publishControlMessage(isOn());
+                try {
+                    publishControlMessage(isOn());
+                }
+                catch(Exception e) {
+                    logger.error("{}: Error publishing MQTT message", applianceId, e);
+                }
             }
         };
         timer.schedule(this.mqttPublishTimerTask, 0, this.mqttPublishTimerTask.getPeriod());
@@ -212,6 +223,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
         if(this.notificationHandler != null && switchOn != on) {
             this.notificationHandler.sendNotification(switchOn ? NotificationType.CONTROL_ON : NotificationType.CONTROL_OFF);
         }
+        publishControlMessage(switchOn);
         updateControlStateChangedListeners(now, switchOn);
         on = switchOn;
         return on;
@@ -231,17 +243,10 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
         return on;
     }
 
-    public boolean isApplianceOn() {
-        if (control != null) {
-            return control.isOn();
-        }
-        return false;
-    }
-
     private void publishControlMessage(boolean on) {
-        MqttMessage message = new StartingCurrentSwitchMessage(LocalDateTime.now(), on, isApplianceOn(),
+        MqttMessage message = new StartingCurrentSwitchMessage(LocalDateTime.now(), on,
                 getPowerThreshold(), getStartingCurrentDetectionDuration(), getFinishedCurrentDetectionDuration());
-        mqttClient.send(Control.TOPIC, message, true);
+        mqttClient.publish(Control.TOPIC, message, true);
     }
 
     private void updateControlStateChangedListeners(LocalDateTime now, boolean switchOn) {
@@ -254,7 +259,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
 
     @Override
     public void onPowerUpdate(LocalDateTime now, int averagePower) {
-        boolean applianceOn = isApplianceOn();
+        boolean applianceOn = this.applianceOn;
         logger.debug("{}: on={} applianceOn={} averagePower={}", applianceId, on, applianceOn, averagePower);
         if (applianceOn) {
             detectExternalSwitchOn(now);
@@ -296,11 +301,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
             applianceOn(now,false);
             switchOnTime = null;
             this.powerUpdates.clear();
-            for (StartingCurrentSwitchListener listener : startingCurrentSwitchListeners) {
-                logger.debug("{}: Notifying {} {}", applianceId, StartingCurrentSwitchListener.class.getSimpleName(),
-                        listener.getClass().getSimpleName());
-                listener.startingCurrentDetected(now);
-            }
+            mqttClient.publish(MqttEvent.StartingCurrentDetected, new MqttMessage(now));
         } else {
             logger.debug("{}: Starting current not detected.", applianceId);
         }
@@ -311,11 +312,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
         if (isMinRunningTimeExceeded(now) && !abovePowerThreshold) {
             logger.debug("{}: Finished current detected.", applianceId);
             this.powerUpdates.clear();
-            for (StartingCurrentSwitchListener listener : startingCurrentSwitchListeners) {
-                logger.debug("{}: Notifying {} {}", applianceId, StartingCurrentSwitchListener.class.getSimpleName(),
-                        listener.getClass().getSimpleName());
-                listener.finishedCurrentDetected();
-            }
+            mqttClient.publish(MqttEvent.FinishedCurrentDetected, new MqttMessage(now));
             on(now, false);
         } else {
             logger.debug("{}: Finished current not detected.", applianceId);
@@ -351,13 +348,5 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
     @Override
     public void removeControlStateChangedListener(ControlStateChangedListener listener) {
         this.controlStateChangedListeners.remove(listener);
-    }
-
-    public void addStartingCurrentSwitchListener(StartingCurrentSwitchListener listener) {
-        this.startingCurrentSwitchListeners.add(listener);
-    }
-
-    public void removeStartingCurrentSwitchListener(StartingCurrentSwitchListener listener) {
-        this.startingCurrentSwitchListeners.remove(listener);
     }
 }

@@ -75,7 +75,7 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
     private transient NotificationHandler notificationHandler;
     private transient GuardedTimerTask mqttPublishTimerTask;
     private transient MqttClient mqttClient;
-    private transient boolean mqttPublishDisabled;
+    private transient String mqttPublishTopic = Control.TOPIC;
 
     @Override
     public void setApplianceId(String applianceId) {
@@ -85,8 +85,8 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
     }
 
     @Override
-    public void setMqttPublishDisabled(boolean mqttPublishDisabled) {
-        this.mqttPublishDisabled = mqttPublishDisabled;
+    public void setMqttPublishTopic(String mqttPublishTopic) {
+        this.mqttPublishTopic = mqttPublishTopic;
     }
 
     @Override
@@ -117,9 +117,7 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
 
     @Override
     public void init() {
-        if (! mqttPublishDisabled) {
-            mqttClient = new MqttClient(applianceId, getClass());
-        }
+        mqttClient = new MqttClient(applianceId, getClass());
         if(this.httpConfiguration != null) {
             this.httpTransactionExecutor.setConfiguration(this.httpConfiguration);
         }
@@ -145,16 +143,19 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
 
     @Override
     public void start(LocalDateTime now, Timer timer) {
-        if(! mqttPublishDisabled) {
-            this.mqttPublishTimerTask = new GuardedTimerTask(applianceId, "MqttPublish",
-                    MqttClient.MQTT_PUBLISH_PERIOD * 1000) {
-                @Override
-                public void runTask() {
+        this.mqttPublishTimerTask = new GuardedTimerTask(applianceId, "MqttPublish-" + getClass().getSimpleName(),
+                MqttClient.MQTT_PUBLISH_PERIOD * 1000) {
+            @Override
+            public void runTask() {
+                try {
                     publishControlMessage(isOn());
                 }
-            };
-            timer.schedule(this.mqttPublishTimerTask, 0, this.mqttPublishTimerTask.getPeriod());
-        }
+                catch(Exception e) {
+                    logger.error("{}: Error publishing MQTT message", applianceId, e);
+                }
+            }
+        };
+        timer.schedule(this.mqttPublishTimerTask, 0, this.mqttPublishTimerTask.getPeriod());
     }
 
     @Override
@@ -166,8 +167,7 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
         return true;
     }
 
-    @Override
-    public boolean isOn() {
+    private boolean isOn() {
         if(this.httpRead != null) {
             ParentWithChild<HttpRead, HttpReadValue> onRead = HttpRead.getFirstHttpRead(ControlValueName.On.name(),
                     Collections.singletonList(this.httpRead));
@@ -209,10 +209,8 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
     }
 
     private void publishControlMessage(boolean on) {
-        if(! mqttPublishDisabled) {
-            MqttMessage message = new ControlMessage(LocalDateTime.now(), on);
-            mqttClient.send(Control.TOPIC, message, true);
-        }
+        MqttMessage message = new ControlMessage(LocalDateTime.now(), on);
+        mqttClient.publish(mqttPublishTopic, message, true);
     }
 
     public ContentProtocolHandler getContentContentProtocolHandler() {

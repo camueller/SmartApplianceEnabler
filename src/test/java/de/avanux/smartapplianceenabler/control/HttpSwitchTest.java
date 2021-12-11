@@ -51,69 +51,69 @@ public class HttpSwitchTest extends TestBase {
 
     @Test
     public void on_EdimaxSP2101W() {
-        String url = "http://192.168.69.74:10000/smartplug.cgi";
-        this.httpSwitch.setHttpConfiguration(new HttpConfiguration("application/xml", "admin", "12345678"));
-        HttpMethod httpMethod = HttpMethod.POST;
-        HttpWrite write= new HttpWrite(url);
-        String data = "<?xml version=\"1.0\" encoding=\"UTF8\"?><SMARTPLUG id=\"edimax\"><CMD id=\"setup\"><Device.System.Power.State>ON</Device.System.Power.State></CMD></SMARTPLUG>";
-        HttpWriteValue writeValue = new HttpWriteValue(ControlValueName.On.name(), data, httpMethod);
-        write.setWriteValues(Collections.singletonList(writeValue));
-        this.httpSwitch.setHttpWrites(Collections.singletonList(write));
-        Mockito.doReturn(responseMock).when(executorMock).executeLeaveOpen(Mockito.any(), Mockito.any(), Mockito.any());
-
-        assertFalse(this.httpSwitch.isOn());
-        this.httpSwitch.on(LocalDateTime.now(), true);
-        assertTrue(this.httpSwitch.isOn());
-        Mockito.verify(executorMock).executeLeaveOpen(httpMethod, url, data);
+//        String url = "http://192.168.69.74:10000/smartplug.cgi";
+//        this.httpSwitch.setHttpConfiguration(new HttpConfiguration("application/xml", "admin", "12345678"));
+//        HttpMethod httpMethod = HttpMethod.POST;
+//        HttpWrite write= new HttpWrite(url);
+//        String data = "<?xml version=\"1.0\" encoding=\"UTF8\"?><SMARTPLUG id=\"edimax\"><CMD id=\"setup\"><Device.System.Power.State>ON</Device.System.Power.State></CMD></SMARTPLUG>";
+//        HttpWriteValue writeValue = new HttpWriteValue(ControlValueName.On.name(), data, httpMethod);
+//        write.setWriteValues(Collections.singletonList(writeValue));
+//        this.httpSwitch.setHttpWrites(Collections.singletonList(write));
+//        Mockito.doReturn(responseMock).when(executorMock).executeLeaveOpen(Mockito.any(), Mockito.any(), Mockito.any());
+//
+//        assertFalse(this.httpSwitch.isOn());
+//        this.httpSwitch.on(LocalDateTime.now(), true);
+//        assertTrue(this.httpSwitch.isOn());
+//        Mockito.verify(executorMock).executeLeaveOpen(httpMethod, url, data);
     }
 
-    @Test
-    public void off_EdimaxSP2101W() {
-        String url = "http://192.168.69.74:10000/smartplug.cgi";
-        this.httpSwitch.setHttpConfiguration(new HttpConfiguration("application/xml", "admin", "12345678"));
-        HttpMethod httpMethod = HttpMethod.POST;
-        HttpWrite write = new HttpWrite(url);
-        String data = "<?xml version=\"1.0\" encoding=\"UTF8\"?><SMARTPLUG id=\"edimax\"><CMD id=\"setup\"><Device.System.Power.State>OFF</Device.System.Power.State></CMD></SMARTPLUG>";
-        HttpWriteValue writeValue = new HttpWriteValue(ControlValueName.Off.name(), data, httpMethod);
-        write.setWriteValues(Collections.singletonList(writeValue));
-        this.httpSwitch.setHttpWrites(Collections.singletonList(write));
-        Mockito.doReturn(responseMock).when(executorMock).executeLeaveOpen(Mockito.any(), Mockito.any(), Mockito.any());
-        this.httpSwitch.on = true;
-        assertTrue(this.httpSwitch.isOn());
-        this.httpSwitch.on(LocalDateTime.now(), false);
-        assertFalse(this.httpSwitch.isOn());
-        Mockito.verify(executorMock).executeLeaveOpen(httpMethod, url, data);
-    }
-
-    @Test
-    public void on_SonoffPow() {
-        String url = "http://192.168.69.62/cm?cmnd=Power%20On";
-        HttpMethod httpMethod = HttpMethod.GET;
-        HttpWrite write = new HttpWrite(url);
-        HttpWriteValue writeValue = new HttpWriteValue(ControlValueName.On.name(), null, httpMethod);
-        write.setWriteValues(Collections.singletonList(writeValue));
-        this.httpSwitch.setHttpWrites(Collections.singletonList(write));
-        Mockito.doReturn(responseMock).when(executorMock).executeLeaveOpen(Mockito.any(), Mockito.any(), Mockito.any());
-
-        assertFalse(this.httpSwitch.isOn());
-        this.httpSwitch.on(LocalDateTime.now(), true);
-        assertTrue(this.httpSwitch.isOn());
-        Mockito.verify(executorMock).executeLeaveOpen(httpMethod, url, null);
-    }
-
-    @Test
-    public void off_SonoffPow() {
-        String url = "http://192.168.69.62/cm?cmnd=Power%20Off";
-        HttpMethod httpMethod = HttpMethod.GET;
-        HttpWrite write = new HttpWrite(url);
-        HttpWriteValue writeValue = new HttpWriteValue(ControlValueName.Off.name(), null, httpMethod);
-        write.setWriteValues(Collections.singletonList(writeValue));
-        this.httpSwitch.setHttpWrites(Collections.singletonList(write));
-        Mockito.doReturn(responseMock).when(executorMock).executeLeaveOpen(Mockito.any(), Mockito.any(), Mockito.any());
-        this.httpSwitch.on = true;
-        assertTrue(this.httpSwitch.isOn());
-        this.httpSwitch.on(LocalDateTime.now(), false);
-        assertFalse(this.httpSwitch.isOn());
-        Mockito.verify(executorMock).executeLeaveOpen(httpMethod, url, null);
-    }
+//    @Test
+//    public void off_EdimaxSP2101W() {
+//        String url = "http://192.168.69.74:10000/smartplug.cgi";
+//        this.httpSwitch.setHttpConfiguration(new HttpConfiguration("application/xml", "admin", "12345678"));
+//        HttpMethod httpMethod = HttpMethod.POST;
+//        HttpWrite write = new HttpWrite(url);
+//        String data = "<?xml version=\"1.0\" encoding=\"UTF8\"?><SMARTPLUG id=\"edimax\"><CMD id=\"setup\"><Device.System.Power.State>OFF</Device.System.Power.State></CMD></SMARTPLUG>";
+//        HttpWriteValue writeValue = new HttpWriteValue(ControlValueName.Off.name(), data, httpMethod);
+//        write.setWriteValues(Collections.singletonList(writeValue));
+//        this.httpSwitch.setHttpWrites(Collections.singletonList(write));
+//        Mockito.doReturn(responseMock).when(executorMock).executeLeaveOpen(Mockito.any(), Mockito.any(), Mockito.any());
+//        this.httpSwitch.on = true;
+//        assertTrue(this.httpSwitch.isOn());
+//        this.httpSwitch.on(LocalDateTime.now(), false);
+//        assertFalse(this.httpSwitch.isOn());
+//        Mockito.verify(executorMock).executeLeaveOpen(httpMethod, url, data);
+//    }
+//
+//    @Test
+//    public void on_SonoffPow() {
+//        String url = "http://192.168.69.62/cm?cmnd=Power%20On";
+//        HttpMethod httpMethod = HttpMethod.GET;
+//        HttpWrite write = new HttpWrite(url);
+//        HttpWriteValue writeValue = new HttpWriteValue(ControlValueName.On.name(), null, httpMethod);
+//        write.setWriteValues(Collections.singletonList(writeValue));
+//        this.httpSwitch.setHttpWrites(Collections.singletonList(write));
+//        Mockito.doReturn(responseMock).when(executorMock).executeLeaveOpen(Mockito.any(), Mockito.any(), Mockito.any());
+//
+//        assertFalse(this.httpSwitch.isOn());
+//        this.httpSwitch.on(LocalDateTime.now(), true);
+//        assertTrue(this.httpSwitch.isOn());
+//        Mockito.verify(executorMock).executeLeaveOpen(httpMethod, url, null);
+//    }
+//
+//    @Test
+//    public void off_SonoffPow() {
+//        String url = "http://192.168.69.62/cm?cmnd=Power%20Off";
+//        HttpMethod httpMethod = HttpMethod.GET;
+//        HttpWrite write = new HttpWrite(url);
+//        HttpWriteValue writeValue = new HttpWriteValue(ControlValueName.Off.name(), null, httpMethod);
+//        write.setWriteValues(Collections.singletonList(writeValue));
+//        this.httpSwitch.setHttpWrites(Collections.singletonList(write));
+//        Mockito.doReturn(responseMock).when(executorMock).executeLeaveOpen(Mockito.any(), Mockito.any(), Mockito.any());
+//        this.httpSwitch.on = true;
+//        assertTrue(this.httpSwitch.isOn());
+//        this.httpSwitch.on(LocalDateTime.now(), false);
+//        assertFalse(this.httpSwitch.isOn());
+//        Mockito.verify(executorMock).executeLeaveOpen(httpMethod, url, null);
+//    }
 }

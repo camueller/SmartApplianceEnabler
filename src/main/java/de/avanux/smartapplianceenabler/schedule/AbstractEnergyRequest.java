@@ -30,6 +30,7 @@ import java.time.LocalDateTime;
 abstract public class AbstractEnergyRequest extends AbstractRequest {
 
     private transient boolean updateTimeframeIntervalEnd;
+    private transient EVChargerState evChargerState;
 
     public AbstractEnergyRequest() {
         setEnabled(false);
@@ -48,9 +49,14 @@ abstract public class AbstractEnergyRequest extends AbstractRequest {
         return updateTimeframeIntervalEnd;
     }
 
+    public EVChargerState getEvChargerState() {
+        return evChargerState;
+    }
+
     @Override
     public void onEVChargerStateChanged(LocalDateTime now, EVChargerState previousState, EVChargerState newState,
                                         ElectricVehicle ev) {
+        this.evChargerState = newState;
         if(newState == EVChargerState.VEHICLE_CONNECTED && ev.getSocScript() == null) {
             setEnabled(true);
         }
