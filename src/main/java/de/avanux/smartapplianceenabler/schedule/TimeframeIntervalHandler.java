@@ -137,13 +137,13 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
         logger.debug("{}: Starting to fill queue", applianceId);
         Interval considerationInterval = new Interval(now, now.plusDays(CONSIDERATION_INTERVAL_DAYS));
         TimeframeInterval lastTimeframeInterval = queue.peekLast();
-        List<TimeframeInterval> timeframeIntervals = findTimeframeIntervals(now, considerationInterval,
-                control instanceof StartingCurrentSwitch ? (queue.size() == 0 ? 1 : 0) : Integer.MAX_VALUE);
+        List<TimeframeInterval> timeframeIntervals = findTimeframeIntervals(now, considerationInterval);
         timeframeIntervals.stream()
                 .filter(timeframeInterval -> (lastTimeframeInterval == null
                         || timeframeInterval.getInterval().getStart().isAfter(lastTimeframeInterval.getInterval().getEnd()))
                         && timeframeInterval.isIntervalSufficient(now)
                 )
+                .limit(control instanceof StartingCurrentSwitch ? (queue.size() == 0 ? 1 : 0) : Integer.MAX_VALUE)
                 .forEach(timeframeInterval -> {
                     if(control instanceof StartingCurrentSwitch) {
                         // if appliance is switched off, the starting current has already been detected and the
@@ -287,7 +287,9 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
     public void addTimeframeInterval(LocalDateTime now, TimeframeInterval timeframeInterval, boolean asFirst, boolean updateQueue) {
         logger.debug("{}: Adding timeframeInterval to queue: {}", applianceId, timeframeInterval.toString(now));
 
-        addTimeframeIntervalChangedListener(timeframeInterval.getRequest());
+        Request request = timeframeInterval.getRequest();
+        request.init();
+        addTimeframeIntervalChangedListener(request);
         timeframeIntervalChangedListeners.forEach(
                 listener -> listener.timeframeIntervalCreated(now, timeframeInterval));
 
@@ -365,7 +367,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
      * @param considerationInterval timeframe intervals have to start within this interval
      * @return a (possibly empty) list of timeframes sorted by starting time
      */
-    protected List<TimeframeInterval> findTimeframeIntervals(LocalDateTime now, Interval considerationInterval, Integer limit) {
+    protected List<TimeframeInterval> findTimeframeIntervals(LocalDateTime now, Interval considerationInterval) {
         List<TimeframeInterval> timeframeIntervals = new ArrayList<>();
         if (schedules != null) {
             schedules
@@ -373,14 +375,13 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer, ControlSta
                     .filter(Schedule::isEnabled)
                     .forEach(schedule -> {
                         Timeframe timeframe = schedule.getTimeframe();
-                        timeframe.getIntervals(now).stream().limit(limit).forEach(timeframeInterval -> {
+                        timeframe.getIntervals(now).forEach(timeframeInterval -> {
                             if (considerationInterval == null
                                     || considerationInterval.contains(timeframeInterval.getInterval().getStart())
                                     || timeframeInterval.getInterval().contains(considerationInterval.getStart())
                             ) {
                                 timeframeInterval.setApplianceId(applianceId);
                                 timeframeInterval.getRequest().setApplianceId(applianceId);
-                                timeframeInterval.getRequest().init();
                                 timeframeIntervals.add(timeframeInterval);
                             }
                         });
