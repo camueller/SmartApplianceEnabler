@@ -52,9 +52,8 @@ public class RuntimeRequest extends AbstractRequest {
     public void init() {
         super.init();
         getMqttClient().subscribe(Control.TOPIC, true, ControlMessage.class, (topic, message) -> {
-            if(message instanceof  StartingCurrentSwitchMessage) {
+            if(message instanceof StartingCurrentSwitchMessage) {
                 startingCurrentSwitch = true;
-                getMqttClient().unsubscribe(Control.TOPIC);
             }
         });
         subscribeStartingCurrentEvents();
@@ -62,18 +61,14 @@ public class RuntimeRequest extends AbstractRequest {
 
     private void subscribeStartingCurrentEvents() {
         getMqttClient().subscribe(MqttEvent.StartingCurrentDetected, ControlMessage.class, (topic, message) -> {
-            if(isActive()) {
-                getLogger().debug("{} Handling event StartingCurrentDetected", getApplianceId());
-                resetRuntime();
-                setEnabled(true);
-            }
+            getLogger().debug("{} Handling event StartingCurrentDetected", getApplianceId());
+            resetRuntime();
+            setEnabled(true);
         });
         getMqttClient().subscribe(MqttEvent.FinishedCurrentDetected, ControlMessage.class, (topic, message) -> {
-            if(isActive()) {
-                getLogger().debug("{} Handling event FinishedCurrentDetected", getApplianceId());
-                setEnabled(false);
-                resetEnabledBefore();
-            }
+            getLogger().debug("{} Handling event FinishedCurrentDetected", getApplianceId());
+            setEnabled(false);
+            resetEnabledBefore();
         });
     }
 
