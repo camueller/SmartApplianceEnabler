@@ -276,9 +276,6 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
     public void start(Timer timer) {
         logger.info("{}: Starting appliance", id);
         LocalDateTime now = LocalDateTime.now();
-        if(timeframeIntervalHandler != null) {
-            timeframeIntervalHandler.setTimer(timer);
-        }
         if(meter != null) {
             logger.info("{}: Starting {}", id, meter.getClass().getSimpleName());
             meter.start(now, timer);
@@ -288,6 +285,9 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
             control.start(LocalDateTime.now(), timer);
             logger.info("{}: Switch off appliance initially", id);
             control.on(now, false);
+        }
+        if(timeframeIntervalHandler != null) {
+            timeframeIntervalHandler.setTimer(timer);
         }
     }
 
