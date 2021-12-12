@@ -35,7 +35,7 @@ public class TimeframeInterval implements ApplianceIdConsumer, TimeframeInterval
     private transient Logger logger = LoggerFactory.getLogger(TimeframeInterval.class);
     private Interval interval;
     private Request request;
-    private transient Vector<TimeframeIntervalState> stateHistory = new Vector<>();
+    private transient Vector<TimeframeIntervalState> stateHistory;
     private transient String applianceId;
 
     public TimeframeInterval(Interval interval, Request request) {
@@ -49,7 +49,7 @@ public class TimeframeInterval implements ApplianceIdConsumer, TimeframeInterval
         this.interval = interval;
         this.request = request;
         this.request.setTimeframeIntervalStateProvider(this);
-        stateHistory.add(state);
+        initState(state);
     }
 
     public void setApplianceId(String applianceId) {
@@ -69,7 +69,7 @@ public class TimeframeInterval implements ApplianceIdConsumer, TimeframeInterval
     }
 
     public void initState(TimeframeIntervalState initialState) {
-        this.stateHistory.clear();
+        stateHistory = new Vector<>();
         stateHistory.add(initialState != null ? initialState : TimeframeIntervalState.CREATED);
     }
 
@@ -79,7 +79,7 @@ public class TimeframeInterval implements ApplianceIdConsumer, TimeframeInterval
 
     @Override
     public TimeframeIntervalState getState() {
-        return stateHistory.lastElement();
+        return stateHistory != null ? stateHistory.lastElement() : null;
     }
 
     public boolean wasInState(TimeframeIntervalState state) {
@@ -215,7 +215,9 @@ public class TimeframeInterval implements ApplianceIdConsumer, TimeframeInterval
             text += interval.toString();
         }
         text += "::";
-        text += request.toString(now);
+        if(request != null){
+            text += request.toString(now);
+        }
         return text;
     }
 }
