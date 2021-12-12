@@ -480,14 +480,10 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
         if(isEvCharger()) {
             return ((ElectricVehicleCharger) this.control).isUseOptionalEnergy();
         }
-        else if(schedules != null) {
-            for (Schedule schedule : schedules) {
-                if (schedule.getRequest() != null
-                        && schedule.getRequest().getMin(now) != null
-                        && schedule.getRequest().getMax(now) > schedule.getRequest().getMin(now)) {
-                    return true;
-                }
-            }
+        TimeframeInterval activeTimeframeInterval = timeframeIntervalHandler.getActiveTimeframeInterval();
+        if(activeTimeframeInterval != null) {
+            Request request = activeTimeframeInterval.getRequest();
+            return request.getMin(now) != null && request.getMax(now) > request.getMin(now);
         }
         return false;
     }
