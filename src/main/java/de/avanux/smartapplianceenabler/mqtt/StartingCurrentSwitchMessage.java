@@ -39,7 +39,8 @@ public class StartingCurrentSwitchMessage extends ControlMessage {
     @Override
     public String toString() {
         return "StartingCurrentSwitchMessage{" +
-                "on=" + on +
+                "time=" + getTime() +
+                ", on=" + on +
                 ", powerThreshold=" + powerThreshold +
                 ", startingCurrentDetectionDuration=" + startingCurrentDetectionDuration +
                 ", finishedCurrentDetectionDuration=" + finishedCurrentDetectionDuration +

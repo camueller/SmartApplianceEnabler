@@ -34,7 +34,8 @@ public class ControlMessage extends MqttMessage{
     @Override
     public String toString() {
         return "ControlMessage{" +
-                "on=" + on +
+                "time=" + getTime() +
+                ", on=" + on +
                 '}';
     }
 }

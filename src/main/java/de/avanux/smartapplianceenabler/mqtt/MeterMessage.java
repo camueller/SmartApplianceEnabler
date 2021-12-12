@@ -36,7 +36,8 @@ public class MeterMessage extends MqttMessage {
     @Override
     public String toString() {
         return "MeterMessage{" +
-                "power=" + power +
+                "time=" + getTime() +
+                ", power=" + power +
                 ", energy=" + energy +
                 '}';
     }
