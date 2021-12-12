@@ -84,7 +84,8 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
                                 .forEach(timeframeInterval ->
                                         updateSocRequest((SocRequest) timeframeInterval.getRequest(), ev.getBatteryCapacity(), null));
                         if(findOptionalEnergyIntervalForEVCharger() == null) {
-                            TimeframeInterval timeframeInterval = createOptionalEnergyTimeframeIntervalForEVCharger(event.getTime(), ev.getId());
+                            TimeframeInterval timeframeInterval = createOptionalEnergyTimeframeIntervalForEVCharger(
+                                    event.getTime(), ev.getId(), applianceId);
                             if(timeframeInterval != null) {
                                 updateSocRequest((SocRequest) timeframeInterval.getRequest(),
                                         ev.getBatteryCapacity(), ev.getDefaultSocOptionalEnergy());
@@ -222,7 +223,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
                             && queue.size() == 0) {
                         ElectricVehicle connectedVehicle = ((ElectricVehicleCharger) control).getConnectedVehicle();
                         TimeframeInterval optionalEnergyTimeframeInterval = createOptionalEnergyTimeframeIntervalForEVCharger(
-                                now, connectedVehicle.getId());
+                                now, connectedVehicle.getId(), applianceId);
                         if(optionalEnergyTimeframeInterval != null) {
                             updateSocRequest((SocRequest) optionalEnergyTimeframeInterval.getRequest(),
                                     connectedVehicle.getBatteryCapacity(),
@@ -439,13 +440,15 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
                 .findFirst().orElse(null);
     }
 
-    private TimeframeInterval createOptionalEnergyTimeframeIntervalForEVCharger(LocalDateTime now, Integer evId) {
+    private TimeframeInterval createOptionalEnergyTimeframeIntervalForEVCharger(LocalDateTime now, Integer evId, String applianceId) {
         Interval interval = createOptionalEnergyIntervalForEVCharger(now, null,
                 queue.size() > 0 ? queue.get(0) : null);
         if(interval == null) {
             return null;
         }
-        return new TimeframeInterval(interval, new OptionalEnergySocRequest(evId));
+        Request request = new OptionalEnergySocRequest(evId);
+        request.setApplianceId(applianceId);
+        return new TimeframeInterval(interval, request);
     }
 
     private Interval createOptionalEnergyIntervalForEVCharger(LocalDateTime now,
@@ -482,7 +485,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
         else {
             logger.debug("{}: create optional energy timeframe interval with evId={} batteryCapacity={} socCurrent={} socRequested={}",
                     applianceId, evId, batteryCapacity, socCurrent, socRequested);
-            timeframeInterval = createOptionalEnergyTimeframeIntervalForEVCharger(now, evId);
+            timeframeInterval = createOptionalEnergyTimeframeIntervalForEVCharger(now, evId, applianceId);
             if(timeframeInterval != null) {
                 OptionalEnergySocRequest request = (OptionalEnergySocRequest) timeframeInterval.getRequest();
                 request.setSocInitial(socCurrent);
