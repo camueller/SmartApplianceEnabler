@@ -20,7 +20,7 @@ package de.avanux.smartapplianceenabler.schedule;
 
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.mqtt.ControlMessage;
-import de.avanux.smartapplianceenabler.mqtt.MqttEvent;
+import de.avanux.smartapplianceenabler.mqtt.MqttEventName;
 import de.avanux.smartapplianceenabler.mqtt.StartingCurrentSwitchMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +38,6 @@ public class RuntimeRequest extends AbstractRequest {
     private Integer min;
     @XmlAttribute
     private int max;
-    private transient boolean startingCurrentSwitch;
 
     public RuntimeRequest() {
     }
@@ -51,21 +50,16 @@ public class RuntimeRequest extends AbstractRequest {
     @Override
     public void init() {
         super.init();
-        getMqttClient().subscribe(Control.TOPIC, true, ControlMessage.class, (topic, message) -> {
-            if(message instanceof StartingCurrentSwitchMessage) {
-                startingCurrentSwitch = true;
-            }
-        });
         subscribeStartingCurrentEvents();
     }
 
     private void subscribeStartingCurrentEvents() {
-        getMqttClient().subscribe(MqttEvent.StartingCurrentDetected, ControlMessage.class, (topic, message) -> {
+        getMqttClient().subscribe(MqttEventName.StartingCurrentDetected, ControlMessage.class, (topic, message) -> {
             getLogger().debug("{} Handling event StartingCurrentDetected", getApplianceId());
             resetRuntime();
             setEnabled(true);
         });
-        getMqttClient().subscribe(MqttEvent.FinishedCurrentDetected, ControlMessage.class, (topic, message) -> {
+        getMqttClient().subscribe(MqttEventName.FinishedCurrentDetected, ControlMessage.class, (topic, message) -> {
             getLogger().debug("{} Handling event FinishedCurrentDetected", getApplianceId());
             setEnabled(false);
             resetEnabledBefore();
@@ -73,8 +67,8 @@ public class RuntimeRequest extends AbstractRequest {
     }
 
     public void unsubscribeStartingCurrentEvents() {
-        getMqttClient().unsubscribe(MqttEvent.StartingCurrentDetected);
-        getMqttClient().unsubscribe(MqttEvent.FinishedCurrentDetected);
+        getMqttClient().unsubscribe(MqttEventName.StartingCurrentDetected);
+        getMqttClient().unsubscribe(MqttEventName.FinishedCurrentDetected);
     }
 
     protected Logger getLogger() {
@@ -117,7 +111,7 @@ public class RuntimeRequest extends AbstractRequest {
     }
 
     public boolean hasStartingCurrentSwitch() {
-        return startingCurrentSwitch;
+        return getControlMessage() instanceof StartingCurrentSwitchMessage;
     }
 
     @Override

@@ -19,11 +19,11 @@
 package de.avanux.smartapplianceenabler.schedule;
 
 import de.avanux.smartapplianceenabler.control.Control;
-import de.avanux.smartapplianceenabler.control.ev.EVChargerState;
-import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
-import de.avanux.smartapplianceenabler.control.ev.SocValues;
 import de.avanux.smartapplianceenabler.meter.Meter;
-import de.avanux.smartapplianceenabler.mqtt.*;
+import de.avanux.smartapplianceenabler.mqtt.ControlMessage;
+import de.avanux.smartapplianceenabler.mqtt.ControlStateChangedEvent;
+import de.avanux.smartapplianceenabler.mqtt.MqttClient;
+import de.avanux.smartapplianceenabler.mqtt.MqttEventName;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.slf4j.Logger;
@@ -48,15 +48,6 @@ abstract public class AbstractRequest implements Request {
     private transient ControlMessage controlMessage;
 
     public AbstractRequest() {
-    }
-
-    @Override
-    public void init() {
-        getMqttClient().subscribe(Control.TOPIC, true, ControlMessage.class, (topic, message) -> {
-            if(message instanceof ControlMessage) {
-                controlMessage = (ControlMessage) message;
-            }
-        });
     }
 
     protected Logger getLogger() {
@@ -84,6 +75,10 @@ abstract public class AbstractRequest implements Request {
 
     protected Meter getMeter() {
         return meter;
+    }
+
+    protected ControlMessage getControlMessage() {
+        return controlMessage;
     }
 
     public void setTimeframeIntervalStateProvider(TimeframeIntervalStateProvider timeframeIntervalStateProvider) {
@@ -148,7 +143,41 @@ abstract public class AbstractRequest implements Request {
     }
 
     @Override
+    public void init() {
+        getMqttClient().subscribe(Control.TOPIC, true, ControlMessage.class, (topic, message) -> {
+            if(message instanceof ControlMessage) {
+                controlMessage = (ControlMessage) message;
+            }
+        });
+        getMqttClient().subscribe(MqttEventName.ControlStateChanged, ControlStateChangedEvent.class, (topic, message) -> {
+            if(message instanceof ControlStateChangedEvent) {
+                getLogger().debug("{} Handling event ControlStateChanged", getApplianceId());
+                ControlStateChangedEvent event = (ControlStateChangedEvent) message;
+                if (isActive()) {
+                    if (event.on) {
+                        enabledBefore = true;
+                        if (meter != null) {
+                            meter.startEnergyMeter();
+                        }
+                    } else {
+                        if (meter != null) {
+                            meter.stopEnergyMeter();
+                        }
+                        runtimeUntilLastStatusChange += getSecondsSinceStatusChange(event.getTime());
+                    }
+                    controlStatusChangedAt = event.getTime();
+                }
+            }
+        });
+    }
+
+    @Override
     public void update() {
+    }
+
+    @Override
+    public void remove() {
+        getMqttClient().unsubscribe(MqttEventName.ControlStateChanged);
     }
 
     @Override
@@ -188,33 +217,6 @@ abstract public class AbstractRequest implements Request {
                     now);
         }
         return 0;
-    }
-
-    @Override
-    public void controlStateChanged(LocalDateTime now, boolean switchOn) {
-        if (isActive()) {
-            if (switchOn) {
-                enabledBefore = true;
-                if (meter != null) {
-                    meter.startEnergyMeter();
-                }
-            } else {
-                if (meter != null) {
-                    meter.stopEnergyMeter();
-                }
-                runtimeUntilLastStatusChange += getSecondsSinceStatusChange(now);
-            }
-            controlStatusChangedAt = now;
-        }
-    }
-
-    @Override
-    public void onEVChargerStateChanged(LocalDateTime now, EVChargerState previousState, EVChargerState newState,
-                                        ElectricVehicle ev) {
-    }
-
-    @Override
-    public void onEVChargerSocChanged(LocalDateTime now, SocValues socValues) {
     }
 
     @Override

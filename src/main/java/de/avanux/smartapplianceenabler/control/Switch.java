@@ -23,9 +23,7 @@ import com.pi4j.io.gpio.PinState;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import java.time.LocalDateTime;
 
-import de.avanux.smartapplianceenabler.mqtt.ControlMessage;
-import de.avanux.smartapplianceenabler.mqtt.MqttClient;
-import de.avanux.smartapplianceenabler.mqtt.MqttMessage;
+import de.avanux.smartapplianceenabler.mqtt.*;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.notification.NotificationType;
 import de.avanux.smartapplianceenabler.notification.NotificationProvider;
@@ -50,7 +48,6 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
     @XmlElement(name = "Notifications")
     private Notifications notifications;
     private transient GpioPinDigitalOutput outputPin;
-    private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
     private transient NotificationHandler notificationHandler;
     private transient GuardedTimerTask mqttPublishTimerTask;
     private transient MqttClient mqttClient;
@@ -130,11 +127,10 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
         } else {
             logGpioAccessDisabled(logger);
         }
+        publishControlStateChangedEvent(switchOn);
+        publishControlMessage(switchOn);
         if(this.notificationHandler != null) {
             this.notificationHandler.sendNotification(switchOn ? NotificationType.CONTROL_ON : NotificationType.CONTROL_OFF);
-        }
-        for (ControlStateChangedListener listener : new ArrayList<>(controlStateChangedListeners)) {
-            listener.controlStateChanged(now, switchOn);
         }
         return true;
     }
@@ -162,13 +158,8 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
         mqttClient.publish(mqttPublishTopic, message, true);
     }
 
-    @Override
-    public void addControlStateChangedListener(ControlStateChangedListener listener) {
-        this.controlStateChangedListeners.add(listener);
-    }
-
-    @Override
-    public void removeControlStateChangedListener(ControlStateChangedListener listener) {
-        this.controlStateChangedListeners.remove(listener);
+    private void publishControlStateChangedEvent(boolean on) {
+        ControlStateChangedEvent event = new ControlStateChangedEvent(LocalDateTime.now(), on);
+        mqttClient.publish(MqttEventName.ControlStateChanged, event);
     }
 }

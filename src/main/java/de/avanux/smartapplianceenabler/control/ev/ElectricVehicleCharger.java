@@ -20,17 +20,19 @@ package de.avanux.smartapplianceenabler.control.ev;
 
 import de.avanux.smartapplianceenabler.appliance.*;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
+import de.avanux.smartapplianceenabler.configuration.Validateable;
 import de.avanux.smartapplianceenabler.control.Control;
-import de.avanux.smartapplianceenabler.control.ControlStateChangedListener;
 import de.avanux.smartapplianceenabler.http.EVHttpControl;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.modbus.EVModbusControl;
 import de.avanux.smartapplianceenabler.mqtt.*;
-import de.avanux.smartapplianceenabler.notification.*;
+import de.avanux.smartapplianceenabler.notification.NotificationHandler;
+import de.avanux.smartapplianceenabler.notification.NotificationProvider;
+import de.avanux.smartapplianceenabler.notification.NotificationType;
+import de.avanux.smartapplianceenabler.notification.Notifications;
 import de.avanux.smartapplianceenabler.schedule.*;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
 import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
-import de.avanux.smartapplianceenabler.configuration.Validateable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +42,10 @@ import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.util.*;
+import java.util.List;
+import java.util.Locale;
+import java.util.Timer;
+import java.util.Vector;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Validateable, ApplianceIdConsumer,
@@ -84,7 +89,6 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     private transient Vector<EVChargerState> stateHistory = new Vector<>();
     private transient LocalDateTime stateLastChangedTimestamp;
     private transient boolean useOptionalEnergy = true;
-    private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
     private transient Long switchChargingStateTimestamp;
     private transient Integer chargePower;
     private transient GuardedTimerTask updateStateTimerTask;
@@ -200,17 +204,6 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
 
     public SocValues getSocValues() {
         return socValues;
-    }
-
-    public void updateSocOnControlStateChangedListeners(LocalDateTime now, SocValues socValues) {
-        if(socValuesSentToListeners == null || !socValuesSentToListeners.equals(socValues)) {
-            for(ControlStateChangedListener listener : controlStateChangedListeners) {
-                logger.debug("{}: Notifying {} {} {}", applianceId, ControlStateChangedListener.class.getSimpleName(),
-                        listener.getClass().getSimpleName(), listener);
-                listener.onEVChargerSocChanged(now, socValues);
-            }
-            socValuesSentToListeners = new SocValues(socValues);
-        }
     }
 
     private int calculateCurrentSoc() {
@@ -521,11 +514,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                 logger.info("{}: Switching off", applianceId);
                 stopCharging();
             }
-            for(ControlStateChangedListener listener : new ArrayList<>(controlStateChangedListeners)) {
-                logger.debug("{}: Notifying {} {}", applianceId, ControlStateChangedListener.class.getSimpleName(),
-                        listener.getClass().getSimpleName());
-                listener.controlStateChanged(now, switchOn);
-            }
+            publishControlStateChangedEvent(switchOn);
         }
         else {
             logger.debug("{}: Requested state already set.", applianceId);
@@ -603,11 +592,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
             initStateHistory();
         }
 
-        for(ControlStateChangedListener listener : new ArrayList<>(controlStateChangedListeners)) {
-            logger.debug("{}: Notifying {} {}", applianceId, ControlStateChangedListener.class.getSimpleName(),
-                    listener.getClass().getSimpleName());
-            listener.onEVChargerStateChanged(now, previousState, newState, getConnectedVehicle());
-        }
+        publishEVChargerStateChangedEvent(now, previousState, newState, getConnectedVehicleId());
 
         // SOC has to be retrieved after listener notification in order to allow for new listeners interested in SOC
         if(previousState == EVChargerState.VEHICLE_NOT_CONNECTED && newState == EVChargerState.VEHICLE_CONNECTED) {
@@ -616,16 +601,6 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                     ? getConnectedVehicle().getChargeLoss().floatValue() : 0.0f;
             updateSoc(now);
         }
-    }
-
-    @Override
-    public void addControlStateChangedListener(ControlStateChangedListener listener) {
-        this.controlStateChangedListeners.add(listener);
-    }
-
-    @Override
-    public void removeControlStateChangedListener(ControlStateChangedListener listener) {
-        this.controlStateChangedListeners.remove(listener);
     }
 
     protected boolean isWithinSwitchChargingStateDetectionDelay(boolean addPollInterval) {
@@ -874,7 +849,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                     logger.debug("{}: SOC retrieval is NOT required: {}", applianceId, this.socValues);
                 }
             }
-            updateSocOnControlStateChangedListeners(now, this.socValues);
+            publishEVChargerSocChangedEvent(now, this.socValues);
         }
     }
 
@@ -895,6 +870,22 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                 useOptionalEnergy
         );
         mqttClient.publish(Control.TOPIC, message, true);
+    }
+
+    private void publishControlStateChangedEvent(boolean on) {
+        ControlStateChangedEvent event = new ControlStateChangedEvent(LocalDateTime.now(), on);
+        mqttClient.publish(MqttEventName.ControlStateChanged, event);
+    }
+
+    private void publishEVChargerStateChangedEvent(LocalDateTime now, EVChargerState previousState,
+                                                   EVChargerState newState, Integer evId) {
+        EVChargerStateChangedEvent event = new EVChargerStateChangedEvent(now, previousState, newState, evId);
+        mqttClient.publish(MqttEventName.EVChargerStateChanged, event);
+    }
+
+    private void publishEVChargerSocChangedEvent(LocalDateTime now, SocValues socValues) {
+        EVChargerSocChangedEvent event = new EVChargerSocChangedEvent(now, socValues);
+        mqttClient.publish(MqttEventName.EVChargerSocChanged, event);
     }
 
     private class SocRetriever implements Runnable {

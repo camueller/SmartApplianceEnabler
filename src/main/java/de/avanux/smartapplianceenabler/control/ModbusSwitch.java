@@ -20,9 +20,7 @@ package de.avanux.smartapplianceenabler.control;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.modbus.*;
 import de.avanux.smartapplianceenabler.modbus.executor.*;
-import de.avanux.smartapplianceenabler.mqtt.ControlMessage;
-import de.avanux.smartapplianceenabler.mqtt.MqttClient;
-import de.avanux.smartapplianceenabler.mqtt.MqttMessage;
+import de.avanux.smartapplianceenabler.mqtt.*;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.notification.NotificationType;
 import de.avanux.smartapplianceenabler.notification.NotificationProvider;
@@ -47,7 +45,6 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
     private List<ModbusWrite> modbusWrites;
     @XmlElement(name = "Notifications")
     private Notifications notifications;
-    private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
     private transient NotificationHandler notificationHandler;
     private transient GuardedTimerTask mqttPublishTimerTask;
     private transient MqttClient mqttClient;
@@ -141,12 +138,11 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
                     executeTransaction(executor, true);
                     result = Integer.valueOf(write.child().getValue()).equals(((WriteHoldingRegisterExecutor) executor).getResult());
                 }
+                publishControlStateChangedEvent(switchOn);
+                publishControlMessage(switchOn);
                 if(this.notificationHandler != null && switchOn != on) {
                     publishControlMessage(switchOn);
                     this.notificationHandler.sendNotification(switchOn ? NotificationType.CONTROL_ON : NotificationType.CONTROL_OFF);
-                }
-                for(ControlStateChangedListener listener : new ArrayList<>(controlStateChangedListeners)) {
-                    listener.controlStateChanged(now, switchOn);
                 }
             }
             catch (Exception e) {
@@ -195,6 +191,11 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
         mqttClient.publish(mqttPublishTopic, message, true);
     }
 
+    private void publishControlStateChangedEvent(boolean on) {
+        ControlStateChangedEvent event = new ControlStateChangedEvent(LocalDateTime.now(), on);
+        mqttClient.publish(MqttEventName.ControlStateChanged, event);
+    }
+
     private RegisterValueType getRegisterValueType(ReadRegisterType registerType, RegisterValueType defaultRegisterValueType) {
         if(registerType == ReadRegisterType.Coil) {
             return RegisterValueType.Integer;
@@ -204,15 +205,5 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
 
     private ControlValueName getValueName(boolean switchOn) {
         return switchOn ? ControlValueName.On : ControlValueName.Off;
-    }
-
-    @Override
-    public void addControlStateChangedListener(ControlStateChangedListener listener) {
-        this.controlStateChangedListeners.add(listener);
-    }
-
-    @Override
-    public void removeControlStateChangedListener(ControlStateChangedListener listener) {
-        this.controlStateChangedListeners.remove(listener);
     }
 }

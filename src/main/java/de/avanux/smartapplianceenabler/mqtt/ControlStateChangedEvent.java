@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Axel Müller <axel.mueller@avanux.de>
+ * Copyright (C) 2021 Axel Müller <axel.mueller@avanux.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,20 +15,27 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package de.avanux.smartapplianceenabler.control;
 
-import de.avanux.smartapplianceenabler.control.ev.EVChargerState;
-import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
-import de.avanux.smartapplianceenabler.control.ev.SocValues;
+package de.avanux.smartapplianceenabler.mqtt;
 
 import java.time.LocalDateTime;
 
-public interface ControlStateChangedListener {
+public class ControlStateChangedEvent extends MqttEvent {
+    public boolean on;
 
-    void controlStateChanged(LocalDateTime now, boolean switchOn);
+    public ControlStateChangedEvent() {
+    }
 
-    void onEVChargerStateChanged(LocalDateTime now, EVChargerState previousState, EVChargerState newState,
-                                 ElectricVehicle ev);
+    public ControlStateChangedEvent(LocalDateTime time, boolean on) {
+        setTime(time);
+        this.on = on;
+    }
 
-    void onEVChargerSocChanged(LocalDateTime now, SocValues socValues);
+    @Override
+    public String toString() {
+        return "ControlStateChangedEvent{" +
+                "time=" + getTime() +
+                ", on=" + on +
+                '}';
+    }
 }

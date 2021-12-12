@@ -75,7 +75,6 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
     private transient boolean applianceOn;
     private transient boolean startingCurrentDetected;
     private transient LocalDateTime switchOnTime;
-    private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
     private transient NotificationHandler notificationHandler;
     private transient GuardedTimerTask mqttPublishTimerTask;
     private transient MqttClient mqttClient;
@@ -220,12 +219,12 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
             switchOnTime = now;
             startingCurrentDetected = false;
         }
+        on = switchOn;
+        publishControlStateChangedEvent(switchOn);
+        publishControlMessage(switchOn);
         if(this.notificationHandler != null && switchOn != on) {
             this.notificationHandler.sendNotification(switchOn ? NotificationType.CONTROL_ON : NotificationType.CONTROL_OFF);
         }
-        publishControlMessage(switchOn);
-        updateControlStateChangedListeners(now, switchOn);
-        on = switchOn;
         return on;
     }
 
@@ -249,12 +248,9 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
         mqttClient.publish(Control.TOPIC, message, true);
     }
 
-    private void updateControlStateChangedListeners(LocalDateTime now, boolean switchOn) {
-        for(ControlStateChangedListener listener : new ArrayList<>(controlStateChangedListeners)) {
-            logger.debug("{}: Notifying {} {}", applianceId, ControlStateChangedListener.class.getSimpleName(),
-                    listener.getClass().getSimpleName());
-            listener.controlStateChanged(now, switchOn);
-        }
+    private void publishControlStateChangedEvent(boolean on) {
+        ControlStateChangedEvent event = new ControlStateChangedEvent(LocalDateTime.now(), on);
+        mqttClient.publish(MqttEventName.ControlStateChanged, event);
     }
 
     @Override
@@ -301,7 +297,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
             applianceOn(now,false);
             switchOnTime = null;
             this.powerUpdates.clear();
-            mqttClient.publish(MqttEvent.StartingCurrentDetected, new MqttMessage(now));
+            mqttClient.publish(MqttEventName.StartingCurrentDetected, new MqttMessage(now));
         } else {
             logger.debug("{}: Starting current not detected.", applianceId);
         }
@@ -312,7 +308,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
         if (isMinRunningTimeExceeded(now) && !abovePowerThreshold) {
             logger.debug("{}: Finished current detected.", applianceId);
             this.powerUpdates.clear();
-            mqttClient.publish(MqttEvent.FinishedCurrentDetected, new MqttMessage(now));
+            mqttClient.publish(MqttEventName.FinishedCurrentDetected, new MqttMessage(now));
             on(now, false);
         } else {
             logger.debug("{}: Finished current not detected.", applianceId);
@@ -327,7 +323,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
             switchOnTime = now;
             Integer runtime = timeframeIntervalHandler.suggestRuntime();
             timeframeIntervalHandler.setRuntimeDemand(now, runtime, null, false);
-            updateControlStateChangedListeners(now, on);
+            publishControlStateChangedEvent(on);
         }
     }
 
@@ -338,15 +334,5 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
      */
     protected boolean isMinRunningTimeExceeded(LocalDateTime now) {
         return switchOnTime != null && switchOnTime.plusSeconds(getMinRunningTime()).isBefore(now);
-    }
-
-    @Override
-    public void addControlStateChangedListener(ControlStateChangedListener listener) {
-        this.controlStateChangedListeners.add(listener);
-    }
-
-    @Override
-    public void removeControlStateChangedListener(ControlStateChangedListener listener) {
-        this.controlStateChangedListeners.remove(listener);
     }
 }

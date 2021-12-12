@@ -109,8 +109,8 @@ public class MqttClient {
         return topicPrefix + "/" + applianceId + "/" + subLevels;
     }
 
-    public static String getEventTopic(String applianceId, MqttEvent event) {
-        return topicPrefix + "/" + applianceId + "/" + MqttEvent.TOPIC + "/" + event.getName();
+    public static String getEventTopic(String applianceId, MqttEventName event) {
+        return topicPrefix + "/" + applianceId + "/" + MqttEventName.TOPIC + "/" + event.getName();
     }
 
     private boolean connect() {
@@ -135,7 +135,7 @@ public class MqttClient {
         publishMessage(fullTopic, message, retained);
     }
 
-    public void publish(MqttEvent event, MqttMessage message) {
+    public void publish(MqttEventName event, MqttMessage message) {
         String fullTopic = getEventTopic(applianceId, event);
         publishMessage(fullTopic, message, false);
     }
@@ -160,7 +160,7 @@ public class MqttClient {
         });
     }
 
-    public void subscribe(MqttEvent event, Class toType, MqttMessageHandler messageHandler) {
+    public void subscribe(MqttEventName event, Class toType, MqttMessageHandler messageHandler) {
         String fullTopic = getEventTopic(applianceId, event);
         subscribe(fullTopic, false, toType, messageHandler);
     }
@@ -197,7 +197,7 @@ public class MqttClient {
         unsubscribeMessage(fullTopic);
     }
 
-    public void unsubscribe(MqttEvent event) {
+    public void unsubscribe(MqttEventName event) {
         String fullTopic = getEventTopic(applianceId, event);
         unsubscribeMessage(fullTopic);
     }

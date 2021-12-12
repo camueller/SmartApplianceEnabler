@@ -93,12 +93,4 @@ public class AlwaysOnSwitch implements Control, ApplianceIdConsumer, Notificatio
     public boolean isControllable() {
         return false;
     }
-
-    @Override
-    public void addControlStateChangedListener(ControlStateChangedListener listener) {
-    }
-
-    @Override
-    public void removeControlStateChangedListener(ControlStateChangedListener listener) {
-    }
 }

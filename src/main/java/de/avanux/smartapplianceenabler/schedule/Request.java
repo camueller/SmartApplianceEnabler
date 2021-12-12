@@ -20,14 +20,12 @@ package de.avanux.smartapplianceenabler.schedule;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.appliance.TimeframeIntervalChangedListener;
-import de.avanux.smartapplianceenabler.control.ControlStateChangedListener;
 import de.avanux.smartapplianceenabler.meter.Meter;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public interface Request extends Serializable, ApplianceIdConsumer, TimeframeIntervalChangedListener,
-        ControlStateChangedListener {
+public interface Request extends Serializable, ApplianceIdConsumer, TimeframeIntervalChangedListener {
 
     void setMeter(Meter meter);
 
@@ -66,6 +64,8 @@ public interface Request extends Serializable, ApplianceIdConsumer, TimeframeInt
     void init();
 
     void update();
+
+    void remove();
 
     String toString(LocalDateTime now);
 }

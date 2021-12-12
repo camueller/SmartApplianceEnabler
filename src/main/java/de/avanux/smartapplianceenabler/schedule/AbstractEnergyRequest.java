@@ -19,18 +19,19 @@
 package de.avanux.smartapplianceenabler.schedule;
 
 import de.avanux.smartapplianceenabler.control.ev.EVChargerState;
-import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
+import de.avanux.smartapplianceenabler.mqtt.EVChargerStateChangedEvent;
+import de.avanux.smartapplianceenabler.mqtt.MqttEventName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlTransient;
-import java.time.LocalDateTime;
 
 @XmlTransient
 abstract public class AbstractEnergyRequest extends AbstractRequest {
 
     private transient boolean updateTimeframeIntervalEnd;
     private transient EVChargerState evChargerState;
+    private transient boolean socScript;
 
     public AbstractEnergyRequest() {
         setEnabled(false);
@@ -40,6 +41,28 @@ abstract public class AbstractEnergyRequest extends AbstractRequest {
         return LoggerFactory.getLogger(AbstractEnergyRequest.class);
     }
 
+    public void setSocScript(boolean socScript) {
+        this.socScript = socScript;
+    }
+
+    @Override
+    public void init() {
+        super.init();
+        getMqttClient().subscribe(MqttEventName.EVChargerStateChanged, EVChargerStateChangedEvent.class, (topic, message) -> {
+            if(message instanceof EVChargerStateChangedEvent) {
+                getLogger().debug("{} Handling event ControlStateChanged", getApplianceId());
+                EVChargerStateChangedEvent event = (EVChargerStateChangedEvent) message;
+                this.evChargerState = event.newState;
+                if(event.newState == EVChargerState.VEHICLE_CONNECTED && !socScript) {
+                    setEnabled(true);
+                }
+                else if(isActive() && (event.newState == EVChargerState.VEHICLE_NOT_CONNECTED
+                        || event.newState == EVChargerState.CHARGING_COMPLETED)) {
+                    setEnabled(false);
+                }
+            }
+        });
+    }
 
     public void setUpdateTimeframeIntervalEnd(boolean updateTimeframeIntervalEnd) {
         this.updateTimeframeIntervalEnd = updateTimeframeIntervalEnd;
@@ -51,18 +74,6 @@ abstract public class AbstractEnergyRequest extends AbstractRequest {
 
     public EVChargerState getEvChargerState() {
         return evChargerState;
-    }
-
-    @Override
-    public void onEVChargerStateChanged(LocalDateTime now, EVChargerState previousState, EVChargerState newState,
-                                        ElectricVehicle ev) {
-        this.evChargerState = newState;
-        if(newState == EVChargerState.VEHICLE_CONNECTED && ev.getSocScript() == null) {
-            setEnabled(true);
-        }
-        else if(isActive() && (newState == EVChargerState.VEHICLE_NOT_CONNECTED || newState == EVChargerState.CHARGING_COMPLETED)) {
-            setEnabled(false);
-        }
     }
 
 }

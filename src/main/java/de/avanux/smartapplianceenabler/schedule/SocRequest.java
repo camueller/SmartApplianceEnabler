@@ -18,7 +18,11 @@
 
 package de.avanux.smartapplianceenabler.schedule;
 
+import de.avanux.smartapplianceenabler.control.ev.EVChargerState;
 import de.avanux.smartapplianceenabler.control.ev.SocValues;
+import de.avanux.smartapplianceenabler.mqtt.EVChargerSocChangedEvent;
+import de.avanux.smartapplianceenabler.mqtt.EVChargerStateChangedEvent;
+import de.avanux.smartapplianceenabler.mqtt.MqttEventName;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.time.LocalDateTime;
@@ -112,6 +116,23 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
     }
 
     @Override
+    public void init() {
+        super.init();
+        getMqttClient().subscribe(MqttEventName.EVChargerSocChanged, EVChargerSocChangedEvent.class, (topic, message) -> {
+            if(message instanceof EVChargerSocChangedEvent) {
+                EVChargerSocChangedEvent event = (EVChargerSocChangedEvent) message;
+                getLogger().debug("{}: Using updated SOC values: {}", getApplianceId(), event.socValues);
+                if(! isEnabledBefore()) {
+                    setEnabled(true);
+                }
+                this.socValues = new SocValues(event.socValues);
+                this.forceEnergyCalculation = true;
+                update();
+            }
+        });
+    }
+
+    @Override
     public void update() {
         Integer batteryCapacity = socVariablesInitialized().batteryCapacity;
         if(batteryCapacity != null && this.forceEnergyCalculation) {
@@ -144,17 +165,6 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
     @Override
     public boolean isFinished(LocalDateTime now) {
         return energy != null && energy <= 0;
-    }
-
-    @Override
-    public void onEVChargerSocChanged(LocalDateTime now, SocValues socValues) {
-        getLogger().debug("{}: Using updated SOC values: {}", getApplianceId(), socValues);
-        if(! isEnabledBefore()) {
-            setEnabled(true);
-        }
-        this.socValues = new SocValues(socValues);
-        this.forceEnergyCalculation = true;
-        update();
     }
 
     @Override

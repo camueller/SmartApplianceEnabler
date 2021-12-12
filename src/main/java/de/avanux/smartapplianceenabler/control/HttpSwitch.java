@@ -22,9 +22,7 @@ import de.avanux.smartapplianceenabler.appliance.ApplianceLifeCycle;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.configuration.Validateable;
 import de.avanux.smartapplianceenabler.http.*;
-import de.avanux.smartapplianceenabler.mqtt.ControlMessage;
-import de.avanux.smartapplianceenabler.mqtt.MqttClient;
-import de.avanux.smartapplianceenabler.mqtt.MqttMessage;
+import de.avanux.smartapplianceenabler.mqtt.*;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.notification.NotificationProvider;
 import de.avanux.smartapplianceenabler.notification.NotificationType;
@@ -71,7 +69,6 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
     private transient HttpTransactionExecutor httpTransactionExecutor = new HttpTransactionExecutor();
     private transient ContentProtocolHandler contentContentProtocolHandler;
     protected transient boolean on;
-    private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
     private transient NotificationHandler notificationHandler;
     private transient GuardedTimerTask mqttPublishTimerTask;
     private transient MqttClient mqttClient;
@@ -193,14 +190,12 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
                 int statusCode = response.getStatusLine().getStatusCode();
                 this.httpTransactionExecutor.closeResponse(response);
                 if(statusCode == HttpStatus.SC_OK) {
+                    on = switchOn;
+                    publishControlStateChangedEvent(switchOn);
+                    publishControlMessage(switchOn);
                     if(this.notificationHandler != null && switchOn != on) {
                         this.notificationHandler.sendNotification(switchOn ? NotificationType.CONTROL_ON : NotificationType.CONTROL_OFF);
                     }
-                    for(ControlStateChangedListener listener : new ArrayList<>(controlStateChangedListeners)) {
-                        listener.controlStateChanged(now, switchOn);
-                    }
-                    on = switchOn;
-                    publishControlMessage(on);
                     return true;
                 }
             }
@@ -211,6 +206,11 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
     private void publishControlMessage(boolean on) {
         MqttMessage message = new ControlMessage(LocalDateTime.now(), on);
         mqttClient.publish(mqttPublishTopic, message, true);
+    }
+
+    private void publishControlStateChangedEvent(boolean on) {
+        ControlStateChangedEvent event = new ControlStateChangedEvent(LocalDateTime.now(), on);
+        mqttClient.publish(MqttEventName.ControlStateChanged, event);
     }
 
     public ContentProtocolHandler getContentContentProtocolHandler() {
@@ -224,15 +224,5 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
 
     private ControlValueName getValueName(boolean switchOn) {
         return switchOn ? ControlValueName.On : ControlValueName.Off;
-    }
-
-    @Override
-    public void addControlStateChangedListener(ControlStateChangedListener listener) {
-        this.controlStateChangedListeners.add(listener);
-    }
-
-    @Override
-    public void removeControlStateChangedListener(ControlStateChangedListener listener) {
-        this.controlStateChangedListeners.remove(listener);
     }
 }

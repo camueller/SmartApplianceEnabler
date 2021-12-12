@@ -18,5 +18,26 @@
 
 package de.avanux.smartapplianceenabler.mqtt;
 
-public class MqttEvent extends MqttMessage {
+import de.avanux.smartapplianceenabler.control.ev.SocValues;
+
+import java.time.LocalDateTime;
+
+public class EVChargerSocChangedEvent extends MqttEvent {
+    public SocValues socValues;
+
+    public EVChargerSocChangedEvent() {
+    }
+
+    public EVChargerSocChangedEvent(LocalDateTime time, SocValues socValues) {
+        setTime(time);
+        this.socValues = socValues;
+    }
+
+    @Override
+    public String toString() {
+        return "ControlStateChangedEvent{" +
+                "time=" + getTime() +
+                ", socValues=" + socValues +
+                '}';
+    }
 }

@@ -35,7 +35,6 @@ public class MockSwitch implements Control, ApplianceIdConsumer {
     private transient Logger logger = LoggerFactory.getLogger(MockSwitch.class);
     private transient String applianceId;
     private transient boolean on;
-    transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
 
     @Override
     public void init() {
@@ -58,22 +57,12 @@ public class MockSwitch implements Control, ApplianceIdConsumer {
     public boolean on(LocalDateTime now, boolean switchOn) {
         logger.info("{}: Switching {}", applianceId, (switchOn ? "on" : "off"));
         on = switchOn;
-        for(ControlStateChangedListener listener : new ArrayList<>(controlStateChangedListeners)) {
-            logger.debug("{}: Notifying {} {}", applianceId, ControlStateChangedListener.class.getSimpleName(),
-                    listener.getClass().getSimpleName());
-            listener.controlStateChanged(now, switchOn);
-        }
+//        for(ControlStateChangedListener listener : new ArrayList<>(controlStateChangedListeners)) {
+//            logger.debug("{}: Notifying {} {}", applianceId, ControlStateChangedListener.class.getSimpleName(),
+//                    listener.getClass().getSimpleName());
+//            listener.controlStateChanged(now, switchOn);
+//        }
         return true;
-    }
-
-    @Override
-    public void addControlStateChangedListener(ControlStateChangedListener listener) {
-        this.controlStateChangedListeners.add(listener);
-    }
-
-    @Override
-    public void removeControlStateChangedListener(ControlStateChangedListener listener) {
-        this.controlStateChangedListeners.remove(listener);
     }
 
     @Override

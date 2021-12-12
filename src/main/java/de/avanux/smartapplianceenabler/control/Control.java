@@ -37,8 +37,4 @@ public interface Control extends ApplianceLifeCycle {
     boolean isControllable();
 
     void setMqttPublishTopic(String mqttPublishTopic);
-
-    void addControlStateChangedListener(ControlStateChangedListener listener);
-
-    void removeControlStateChangedListener(ControlStateChangedListener listener);
 }

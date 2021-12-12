@@ -33,7 +33,6 @@ import static org.mockito.Mockito.*;
 public class MeterReportingSwitchTest {
     private MeterReportingSwitch meterReportingSwitch;
     private Meter meter = mock(Meter.class);
-    private ControlStateChangedListener controlStateChangedListener = mock(ControlStateChangedListener.class);
     private NotificationHandler notificationHandler = mock(NotificationHandler.class);
     private LocalDateTime now = LocalDateTime.now();
 
@@ -41,7 +40,7 @@ public class MeterReportingSwitchTest {
     void beforeEach() {
 //        when(meter.getAveragePower()).thenReturn(0);
         meterReportingSwitch = new MeterReportingSwitch();
-        meterReportingSwitch.addControlStateChangedListener(controlStateChangedListener);
+//        meterReportingSwitch.addControlStateChangedListener(controlStateChangedListener);
         meterReportingSwitch.setNotificationHandler(notificationHandler);
         meterReportingSwitch.setApplianceId("F-001");
         meterReportingSwitch.init();
@@ -51,7 +50,7 @@ public class MeterReportingSwitchTest {
     @AfterEach
     void afterEach() {
         meterReportingSwitch.stop(now);
-        meterReportingSwitch.removeControlStateChangedListener(controlStateChangedListener);
+//        meterReportingSwitch.removeControlStateChangedListener(controlStateChangedListener);
     }
 
     @Nested
@@ -73,7 +72,7 @@ public class MeterReportingSwitchTest {
         @DisplayName("it does not call ControlStateChangedListener")
         void isOn_doesNotCallControlStateChangedListener() {
             meterReportingSwitch.isOn(now);
-            verify(controlStateChangedListener, never()).controlStateChanged(any(), anyBoolean());
+//            verify(controlStateChangedListener, never()).controlStateChanged(any(), anyBoolean());
         }
 
 //        @Test

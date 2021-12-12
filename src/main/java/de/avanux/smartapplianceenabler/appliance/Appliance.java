@@ -45,7 +45,7 @@ import java.util.*;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Appliance implements Validateable, ControlStateChangedListener, TimeframeIntervalChangedListener {
+public class Appliance implements Validateable, TimeframeIntervalChangedListener {
 
     private transient Logger logger = LoggerFactory.getLogger(Appliance.class);
     @XmlAttribute
@@ -227,11 +227,6 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
             Control wrappedControl = ((StartingCurrentSwitch) control).getControl();
             ((ApplianceIdConsumer) wrappedControl).setApplianceId(id);
             wrappedControl.setMqttPublishTopic(StartingCurrentSwitch.WRAPPED_CONTROL_TOPIC);
-        }
-        else {
-            control.addControlStateChangedListener(this);
-            logger.debug("{}: Registered as {} with {}", id, ControlStateChangedListener.class.getSimpleName(),
-                    control.getClass().getSimpleName());
         }
         if(!(control instanceof StartingCurrentSwitch)) {
             control.init();
@@ -493,19 +488,6 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
     }
 
     @Override
-    public void controlStateChanged(LocalDateTime now, boolean switchOn) {
-    }
-
-    @Override
-    public void onEVChargerStateChanged(LocalDateTime now, EVChargerState previousState, EVChargerState newState,
-                                        ElectricVehicle ev) {
-    }
-
-    @Override
-    public void onEVChargerSocChanged(LocalDateTime now, SocValues socValues) {
-    }
-
-    @Override
     public void activeIntervalChanged(LocalDateTime now, String applianceId, TimeframeInterval deactivatedInterval,
                                       TimeframeInterval activatedInterval, boolean wasRunning) {
         if(deactivatedInterval != null) {
@@ -521,7 +503,6 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
         timeframeInterval.setApplianceId(id);
         timeframeInterval.getRequest().setApplianceId(id);
         timeframeInterval.getRequest().setMeter(meter);
-        control.addControlStateChangedListener(timeframeInterval.getRequest());
     }
 
     @Override

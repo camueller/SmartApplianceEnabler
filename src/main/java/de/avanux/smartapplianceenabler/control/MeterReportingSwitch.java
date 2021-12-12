@@ -20,10 +20,7 @@ package de.avanux.smartapplianceenabler.control;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.meter.Meter;
-import de.avanux.smartapplianceenabler.mqtt.ControlMessage;
-import de.avanux.smartapplianceenabler.mqtt.MeterMessage;
-import de.avanux.smartapplianceenabler.mqtt.MqttClient;
-import de.avanux.smartapplianceenabler.mqtt.MqttMessage;
+import de.avanux.smartapplianceenabler.mqtt.*;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.notification.NotificationProvider;
 import de.avanux.smartapplianceenabler.notification.NotificationType;
@@ -37,8 +34,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Timer;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -55,7 +50,6 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
     private transient NotificationHandler notificationHandler;
     private transient LocalDateTime lastOn;
     private transient Boolean onBefore;
-    private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
     private transient MqttClient mqttClient;
     private transient GuardedTimerTask mqttPublishTimerTask;
     private transient MeterMessage meterMessage;
@@ -121,7 +115,8 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
                 @Override
                 public void runTask() {
                     try {
-                        publishControlMessage();
+                        LocalDateTime now = LocalDateTime.now();
+                        publishControlMessage(now, isOn(now));
                     }
                     catch(Exception e) {
                         logger.error("{}: Error publishing MQTT message", applianceId, e);
@@ -144,16 +139,6 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
     @Override
     public boolean isControllable() {
         return false;
-    }
-
-    @Override
-    public void addControlStateChangedListener(ControlStateChangedListener listener) {
-        controlStateChangedListeners.add(listener);
-    }
-
-    @Override
-    public void removeControlStateChangedListener(ControlStateChangedListener listener) {
-        controlStateChangedListeners.remove(listener);
     }
 
     public boolean isOn(LocalDateTime now) {
@@ -181,16 +166,21 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
     protected void onControlStateChanged(LocalDateTime now, boolean on) {
         if(onBefore != null && on != onBefore) {
             logger.info("{}: Switch {} detected.", applianceId, (on ? "on" : "off"));
-            controlStateChangedListeners.forEach(listener -> listener.controlStateChanged(now, on));
+            publishControlStateChangedEvent(now, on);
+            publishControlMessage(now, on);
             if(this.notificationHandler != null) {
                 this.notificationHandler.sendNotification(on ? NotificationType.CONTROL_ON : NotificationType.CONTROL_OFF);
             }
         }
     }
 
-    private void publishControlMessage() {
-        LocalDateTime now = LocalDateTime.now();
-        MqttMessage message = new ControlMessage(now, isOn(now));
+    private void publishControlMessage(LocalDateTime now, boolean on) {
+        MqttMessage message = new ControlMessage(now, on);
         mqttClient.publish(mqttPublishTopic, message, true);
+    }
+
+    private void publishControlStateChangedEvent(LocalDateTime now, boolean on) {
+        ControlStateChangedEvent event = new ControlStateChangedEvent(now, on);
+        mqttClient.publish(MqttEventName.ControlStateChanged, event);
     }
 }
