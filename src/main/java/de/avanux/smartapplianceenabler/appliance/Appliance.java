@@ -226,7 +226,8 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
         if(control instanceof StartingCurrentSwitch) {
             Control wrappedControl = ((StartingCurrentSwitch) control).getControl();
             ((ApplianceIdConsumer) wrappedControl).setApplianceId(id);
-            wrappedControl.setMqttPublishTopic(StartingCurrentSwitch.WRAPPED_CONTROL_TOPIC);
+            wrappedControl.setMqttTopic(StartingCurrentSwitch.WRAPPED_CONTROL_TOPIC);
+            wrappedControl.setPublishControlStateChangedEvent(false);
         }
         if(!(control instanceof StartingCurrentSwitch)) {
             control.init();
@@ -287,9 +288,9 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
         }
         if(control != null) {
             logger.info("{}: Starting {}", id, control.getClass().getSimpleName());
-            control.start(LocalDateTime.now(), timer);
+            control.start(now, timer);
             logger.info("{}: Switch off appliance initially", id);
-            control.on(now, false);
+            publishControlMessage(now, false);
         }
     }
 
@@ -307,6 +308,10 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
         if(timeframeIntervalHandler != null) {
             timeframeIntervalHandler.cancelTimer();
         }
+    }
+
+    private void publishControlMessage(LocalDateTime now, boolean on) {
+        mqttClient.publish(Control.TOPIC, new ControlMessage(now, on), true, true);
     }
 
     public void setHolidays(List<LocalDate> holidays) {
@@ -381,7 +386,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
                     ((ElectricVehicleCharger) control).setChargePowerToMinimum();
                 }
             }
-            control.on(now, switchOn);
+            publishControlMessage(now, switchOn);
         }
         else {
             logger.warn("{}: Appliance configuration does not contain control.", id);

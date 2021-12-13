@@ -33,7 +33,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlElement;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Timer;
@@ -48,10 +47,15 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
     private transient NotificationHandler notificationHandler;
     private transient GuardedTimerTask mqttPublishTimerTask;
     private transient MqttClient mqttClient;
-    private transient String mqttPublishTopic = Control.TOPIC;
+    private transient String mqttTopic = Control.TOPIC;
+    private transient boolean publishControlStateChangedEvent = true;
 
-    public void setMqttPublishTopic(String mqttPublishTopic) {
-        this.mqttPublishTopic = mqttPublishTopic;
+    public void setMqttTopic(String mqttTopic) {
+        this.mqttTopic = mqttTopic;
+    }
+
+    public void setPublishControlStateChangedEvent(boolean publishControlStateChangedEvent) {
+        this.publishControlStateChangedEvent = publishControlStateChangedEvent;
     }
 
     @Override
@@ -102,6 +106,13 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
             }
         };
         timer.schedule(this.mqttPublishTimerTask, 0, this.mqttPublishTimerTask.getPeriod());
+
+        mqttClient.subscribe(mqttTopic, true, true, ControlMessage.class, (topic, message) -> {
+            if(message instanceof ControlMessage) {
+                ControlMessage controlMessage = (ControlMessage) message;
+                this.on(controlMessage.getTime(), controlMessage.on);
+            }
+        });
     }
 
     @Override
@@ -113,7 +124,6 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
         return true;
     }
 
-    @Override
     public boolean on(LocalDateTime now, boolean switchOn) {
         boolean result = false;
         logger.info("{}: Switching {}", getApplianceId(), (switchOn ? "on" : "off"));
@@ -188,12 +198,14 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
 
     private void publishControlMessage(boolean on) {
         MqttMessage message = new ControlMessage(LocalDateTime.now(), on);
-        mqttClient.publish(mqttPublishTopic, message, true);
+        mqttClient.publish(mqttTopic, message, true);
     }
 
     private void publishControlStateChangedEvent(boolean on) {
-        ControlStateChangedEvent event = new ControlStateChangedEvent(LocalDateTime.now(), on);
-        mqttClient.publish(MqttEventName.ControlStateChanged, event);
+        if(publishControlStateChangedEvent) {
+            ControlStateChangedEvent event = new ControlStateChangedEvent(LocalDateTime.now(), on);
+            mqttClient.publish(MqttEventName.ControlStateChanged, event);
+        }
     }
 
     private RegisterValueType getRegisterValueType(ReadRegisterType registerType, RegisterValueType defaultRegisterValueType) {

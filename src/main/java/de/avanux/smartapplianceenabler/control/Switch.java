@@ -36,8 +36,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Timer;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -51,11 +49,16 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
     private transient NotificationHandler notificationHandler;
     private transient GuardedTimerTask mqttPublishTimerTask;
     private transient MqttClient mqttClient;
-    private transient String mqttPublishTopic = Control.TOPIC;
+    private transient String mqttTopic = Control.TOPIC;
+    private transient boolean publishControlStateChangedEvent = true;
 
     @Override
-    public void setMqttPublishTopic(String mqttPublishTopic) {
-        this.mqttPublishTopic = mqttPublishTopic;
+    public void setMqttTopic(String mqttTopic) {
+        this.mqttTopic = mqttTopic;
+    }
+
+    public void setPublishControlStateChangedEvent(boolean publishControlStateChangedEvent) {
+        this.publishControlStateChangedEvent = publishControlStateChangedEvent;
     }
 
     @Override
@@ -96,7 +99,7 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
                 @Override
                 public void runTask() {
                     try {
-                        publishControlMessage(isOn());
+                        publishControlMessage(LocalDateTime.now(), isOn());
                     }
                     catch(Exception e) {
                         logger.error("{}: Error publishing MQTT message", getApplianceId(), e);
@@ -104,6 +107,13 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
                 }
             };
             timer.schedule(this.mqttPublishTimerTask, 0, this.mqttPublishTimerTask.getPeriod());
+
+            mqttClient.subscribe(mqttTopic, true, true, ControlMessage.class, (topic, message) -> {
+                if(message instanceof ControlMessage) {
+                    ControlMessage controlMessage = (ControlMessage) message;
+                    this.on(controlMessage.getTime(), controlMessage.on);
+                }
+            });
         } else {
             logGpioAccessDisabled(logger);
         }
@@ -119,7 +129,6 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
         return true;
     }
 
-    @Override
     public boolean on(LocalDateTime now, boolean switchOn) {
         logger.info("{}: Switching {} {}", getApplianceId(), (switchOn ? "on" : "off"), getGpio());
         if (outputPin != null) {
@@ -127,8 +136,8 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
         } else {
             logGpioAccessDisabled(logger);
         }
-        publishControlStateChangedEvent(switchOn);
-        publishControlMessage(switchOn);
+        publishControlStateChangedEvent(now, switchOn);
+        publishControlMessage(now, switchOn);
         if(this.notificationHandler != null) {
             this.notificationHandler.sendNotification(switchOn ? NotificationType.CONTROL_ON : NotificationType.CONTROL_OFF);
         }
@@ -153,13 +162,15 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
         return pinState;
     }
 
-    private void publishControlMessage(boolean on) {
-        MqttMessage message = new ControlMessage(LocalDateTime.now(), isOn());
-        mqttClient.publish(mqttPublishTopic, message, true);
+    private void publishControlMessage(LocalDateTime now, boolean on) {
+        MqttMessage message = new ControlMessage(now, isOn());
+        mqttClient.publish(mqttTopic, message, true);
     }
 
-    private void publishControlStateChangedEvent(boolean on) {
-        ControlStateChangedEvent event = new ControlStateChangedEvent(LocalDateTime.now(), on);
-        mqttClient.publish(MqttEventName.ControlStateChanged, event);
+    private void publishControlStateChangedEvent(LocalDateTime now, boolean on) {
+        if(publishControlStateChangedEvent) {
+            ControlStateChangedEvent event = new ControlStateChangedEvent(now, on);
+            mqttClient.publish(MqttEventName.ControlStateChanged, event);
+        }
     }
 }

@@ -26,15 +26,9 @@ import java.time.LocalDateTime;
 public interface Control extends ApplianceLifeCycle {
     String TOPIC = "Control";
 
-    /**
-     * Set the the appliance state.
-     * @param now current time
-     * @param switchOn true, if the appliance state should be "on"
-     * @return true, if the requested state was set; otherwise false
-     */
-    boolean on(LocalDateTime now, boolean switchOn);
-
     boolean isControllable();
 
-    void setMqttPublishTopic(String mqttPublishTopic);
+    void setMqttTopic(String mqttTopic);
+
+    void setPublishControlStateChangedEvent(boolean publishControlStateChangedEvent);
 }

@@ -53,7 +53,6 @@ public class MockSwitch implements Control, ApplianceIdConsumer {
         return true;
     }
 
-    @Override
     public boolean on(LocalDateTime now, boolean switchOn) {
         logger.info("{}: Switching {}", applianceId, (switchOn ? "on" : "off"));
         on = switchOn;
@@ -71,6 +70,9 @@ public class MockSwitch implements Control, ApplianceIdConsumer {
     }
 
     @Override
-    public void setMqttPublishTopic(String mqttPublishTopic) {
+    public void setMqttTopic(String mqttTopic) {
+    }
+
+    public void setPublishControlStateChangedEvent(boolean publishControlStateChangedEvent) {
     }
 }

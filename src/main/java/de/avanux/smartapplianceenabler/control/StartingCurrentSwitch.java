@@ -95,7 +95,10 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
     }
 
     @Override
-    public void setMqttPublishTopic(String mqttPublishTopic) {
+    public void setMqttTopic(String mqttTopic) {
+    }
+
+    public void setPublishControlStateChangedEvent(boolean publishControlStateChangedEvent) {
     }
 
     @Override
@@ -186,6 +189,12 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
                     applianceOn = ((ControlMessage) message).on;
                 }
             });
+            mqttClient.subscribe(Control.TOPIC, true, true, ControlMessage.class, (topic, message) -> {
+                if(message instanceof ControlMessage) {
+                    ControlMessage controlMessage = (ControlMessage) message;
+                    this.on(controlMessage.getTime(), controlMessage.on);
+                }
+            });
         }
         this.mqttPublishTimerTask = new GuardedTimerTask(applianceId, "MqttPublish-" + getClass().getSimpleName(),
                 MqttClient.MQTT_PUBLISH_PERIOD * 1000) {
@@ -210,12 +219,11 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
         }
     }
 
-    @Override
     public boolean on(LocalDateTime now, boolean switchOn) {
         logger.debug("{}: Setting switch state to {}", applianceId, (switchOn ? "on" : "off"));
         if (switchOn) {
             // don't switch off appliance - otherwise it cannot be operated
-            applianceOn(now,true);
+            applianceOn(now, true);
             switchOnTime = now;
             startingCurrentDetected = false;
         }
@@ -228,9 +236,9 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
         return on;
     }
 
-    private boolean applianceOn(LocalDateTime now, boolean switchOn) {
+    private void applianceOn(LocalDateTime now, boolean switchOn) {
         logger.debug("{}: Setting wrapped appliance switch to {}", applianceId, (switchOn ? "on" : "off"));
-        return control.on(now, switchOn);
+        mqttClient.publish(WRAPPED_CONTROL_TOPIC, new ControlMessage(now, switchOn), true, true);
     }
 
     @Override

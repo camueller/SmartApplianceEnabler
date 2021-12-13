@@ -72,7 +72,8 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
     private transient NotificationHandler notificationHandler;
     private transient GuardedTimerTask mqttPublishTimerTask;
     private transient MqttClient mqttClient;
-    private transient String mqttPublishTopic = Control.TOPIC;
+    private transient String mqttTopic = Control.TOPIC;
+    private transient boolean publishControlStateChangedEvent = true;
 
     @Override
     public void setApplianceId(String applianceId) {
@@ -82,8 +83,12 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
     }
 
     @Override
-    public void setMqttPublishTopic(String mqttPublishTopic) {
-        this.mqttPublishTopic = mqttPublishTopic;
+    public void setMqttTopic(String mqttTopic) {
+        this.mqttTopic = mqttTopic;
+    }
+
+    public void setPublishControlStateChangedEvent(boolean publishControlStateChangedEvent) {
+        this.publishControlStateChangedEvent = publishControlStateChangedEvent;
     }
 
     @Override
@@ -145,7 +150,7 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
             @Override
             public void runTask() {
                 try {
-                    publishControlMessage(isOn());
+                    publishControlMessage(LocalDateTime.now(), isOn());
                 }
                 catch(Exception e) {
                     logger.error("{}: Error publishing MQTT message", applianceId, e);
@@ -153,6 +158,13 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
             }
         };
         timer.schedule(this.mqttPublishTimerTask, 0, this.mqttPublishTimerTask.getPeriod());
+
+        mqttClient.subscribe(mqttTopic, true, true, ControlMessage.class, (topic, message) -> {
+            if(message instanceof ControlMessage) {
+                ControlMessage controlMessage = (ControlMessage) message;
+                this.on(controlMessage.getTime(), controlMessage.on);
+            }
+        });
     }
 
     @Override
@@ -176,7 +188,6 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
         return on;
     }
 
-    @Override
     public boolean on(LocalDateTime now, boolean switchOn) {
         logger.info("{}: Switching {}", applianceId, (switchOn ? "on" : "off"));
         ParentWithChild<HttpWrite, HttpWriteValue> write
@@ -191,8 +202,8 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
                 this.httpTransactionExecutor.closeResponse(response);
                 if(statusCode == HttpStatus.SC_OK) {
                     on = switchOn;
-                    publishControlStateChangedEvent(switchOn);
-                    publishControlMessage(switchOn);
+                    publishControlStateChangedEvent(now, switchOn);
+                    publishControlMessage(now, switchOn);
                     if(this.notificationHandler != null && switchOn != on) {
                         this.notificationHandler.sendNotification(switchOn ? NotificationType.CONTROL_ON : NotificationType.CONTROL_OFF);
                     }
@@ -203,14 +214,16 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
         return false;
     }
 
-    private void publishControlMessage(boolean on) {
-        MqttMessage message = new ControlMessage(LocalDateTime.now(), on);
-        mqttClient.publish(mqttPublishTopic, message, true);
+    private void publishControlMessage(LocalDateTime now, boolean on) {
+        MqttMessage message = new ControlMessage(now, on);
+        mqttClient.publish(mqttTopic, message, true);
     }
 
-    private void publishControlStateChangedEvent(boolean on) {
-        ControlStateChangedEvent event = new ControlStateChangedEvent(LocalDateTime.now(), on);
-        mqttClient.publish(MqttEventName.ControlStateChanged, event);
+    private void publishControlStateChangedEvent(LocalDateTime now, boolean on) {
+        if(publishControlStateChangedEvent) {
+            ControlStateChangedEvent event = new ControlStateChangedEvent(now, on);
+            mqttClient.publish(MqttEventName.ControlStateChanged, event);
+        }
     }
 
     public ContentProtocolHandler getContentContentProtocolHandler() {

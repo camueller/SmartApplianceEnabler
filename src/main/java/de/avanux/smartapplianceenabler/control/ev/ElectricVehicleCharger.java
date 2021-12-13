@@ -127,7 +127,10 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     }
 
     @Override
-    public void setMqttPublishTopic(String mqttPublishTopic) {
+    public void setMqttTopic(String mqttTopic) {
+    }
+
+    public void setPublishControlStateChangedEvent(boolean publishControlStateChangedEvent) {
     }
 
     @Override
@@ -319,6 +322,12 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                 meterMessage = (MeterMessage) message;
             });
         }
+        mqttClient.subscribe(Control.TOPIC,true, true, ControlMessage.class, (topic, message) -> {
+            if(message instanceof ControlMessage) {
+                ControlMessage controlMessage = (ControlMessage) message;
+                this.on(controlMessage.getTime(), controlMessage.on);
+            }
+        });
         if(timer != null) {
             this.updateStateTimerTask = new GuardedTimerTask(this.applianceId,"UpdateState",
                     getPollInterval() * 1000) {
@@ -502,7 +511,6 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         return true;
     }
 
-    @Override
     public boolean on(LocalDateTime now, boolean switchOn) {
         // only change state if requested state differs from actual state
         if(isOn() ^ switchOn) {

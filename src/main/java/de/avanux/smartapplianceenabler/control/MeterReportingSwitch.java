@@ -54,14 +54,19 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
     private transient GuardedTimerTask mqttPublishTimerTask;
     private transient MeterMessage meterMessage;
     private transient String mqttPublishTopic = Control.TOPIC;
+    private transient boolean publishControlStateChangedEvent = true;
 
     @Override
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
     }
 
-    public void setMqttPublishTopic(String mqttPublishTopic) {
-        this.mqttPublishTopic = mqttPublishTopic;
+    public void setMqttTopic(String mqttTopic) {
+        this.mqttPublishTopic = mqttTopic;
+    }
+
+    public void setPublishControlStateChangedEvent(boolean publishControlStateChangedEvent) {
+        this.publishControlStateChangedEvent = publishControlStateChangedEvent;
     }
 
     @Override
@@ -132,11 +137,6 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
     }
 
     @Override
-    public boolean on(LocalDateTime now, boolean switchOn) {
-        return false;
-    }
-
-    @Override
     public boolean isControllable() {
         return false;
     }
@@ -180,7 +180,9 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
     }
 
     private void publishControlStateChangedEvent(LocalDateTime now, boolean on) {
-        ControlStateChangedEvent event = new ControlStateChangedEvent(now, on);
-        mqttClient.publish(MqttEventName.ControlStateChanged, event);
+        if(publishControlStateChangedEvent) {
+            ControlStateChangedEvent event = new ControlStateChangedEvent(now, on);
+            mqttClient.publish(MqttEventName.ControlStateChanged, event);
+        }
     }
 }

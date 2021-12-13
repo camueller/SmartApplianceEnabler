@@ -109,11 +109,15 @@ public class MqttClient {
         return topicPrefix + "/" + applianceId + "/" + subLevels;
     }
 
+    public static String getApplianceTopicForSet(String applianceId, String subLevels) {
+        return getApplianceTopic(applianceId, subLevels) + "/set";
+    }
+
     public static String getEventTopic(String applianceId, MqttEventName event) {
         return topicPrefix + "/" + applianceId + "/" + MqttEventName.TOPIC + "/" + event.getName();
     }
 
-    private boolean connect() {
+    private synchronized boolean connect() {
         try {
             if(! client.isConnected()) {
                 client.connect(getOptions());
@@ -131,7 +135,11 @@ public class MqttClient {
     }
 
     public void publish(String topic, MqttMessage message, boolean retained) {
-        String fullTopic = getApplianceTopic(applianceId, topic);
+        publish(topic, message, false, retained);
+    }
+
+    public void publish(String topic, MqttMessage message, boolean set, boolean retained) {
+        String fullTopic = set ? getApplianceTopicForSet(applianceId, topic) : getApplianceTopic(applianceId, topic);
         publishMessage(fullTopic, message, retained);
     }
 
@@ -166,7 +174,13 @@ public class MqttClient {
     }
 
     public void subscribe(String topic, boolean expandTopic, Class toType, MqttMessageHandler messageHandler) {
-        String fullTopic = expandTopic ? getApplianceTopic(applianceId, topic) : topic;
+        subscribe(topic, expandTopic, false, toType, messageHandler);
+    }
+
+    public void subscribe(String topic, boolean expandTopic, boolean set, Class toType, MqttMessageHandler messageHandler) {
+        String fullTopic = expandTopic
+                ? (set ? getApplianceTopicForSet(applianceId, topic) : getApplianceTopic(applianceId, topic))
+                : topic;
         try {
             if(connect()) {
                 client.subscribe(fullTopic, (receivedTopic, receivedMessage) -> {
