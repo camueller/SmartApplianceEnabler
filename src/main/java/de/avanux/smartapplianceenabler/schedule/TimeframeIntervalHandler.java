@@ -25,21 +25,20 @@ import de.avanux.smartapplianceenabler.control.StartingCurrentSwitch;
 import de.avanux.smartapplianceenabler.control.ev.EVChargerState;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
-import de.avanux.smartapplianceenabler.mqtt.ControlMessage;
-import de.avanux.smartapplianceenabler.mqtt.EVChargerStateChangedEvent;
-import de.avanux.smartapplianceenabler.mqtt.MqttClient;
-import de.avanux.smartapplianceenabler.mqtt.MqttEventName;
+import de.avanux.smartapplianceenabler.mqtt.*;
 import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
 import de.avanux.smartapplianceenabler.util.Holder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class TimeframeIntervalHandler implements ApplianceIdConsumer {
 
     private Logger logger = LoggerFactory.getLogger(TimeframeIntervalHandler.class);
+    String TOPIC = "TimeframeIntervalQueue";
     public static final int CONSIDERATION_INTERVAL_DAYS = 2;
     public static final int FILL_QUEUE_INTERVAL_SECONDS = 3600;
     public static final int UPDATE_QUEUE_INTERVAL_SECONDS = 30;
@@ -273,12 +272,27 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
                                 .orElse(false));
             }
         }
+
+        publishQueue(now);
     }
 
     private void logQueue(LocalDateTime now) {
         queue.forEach(timeframeInterval -> logger.debug("{}: {}",
                 applianceId,
                 timeframeInterval.toString(now)));
+    }
+
+    private void publishQueue(LocalDateTime now) {
+        TimeframeIntervalQueueEntry[] queueEntries = queue.stream().map(timeframeInterval -> new TimeframeIntervalQueueEntry(
+                timeframeInterval.getInterval().getStart().format(DateTimeFormatter.ISO_DATE_TIME),
+                timeframeInterval.getInterval().getEnd().format(DateTimeFormatter.ISO_DATE_TIME),
+                timeframeInterval.getRequest().getClass().getSimpleName(),
+                timeframeInterval.getRequest().getMin(now),
+                timeframeInterval.getRequest().getMax(now)
+        )).toArray(TimeframeIntervalQueueEntry[]::new);
+
+        TimeframeIntervalQueueMessage message = new TimeframeIntervalQueueMessage(now, queueEntries);
+        mqttClient.publish(TOPIC, message, false);
     }
 
     private Optional<TimeframeInterval> getActivatableTimeframeInterval(LocalDateTime now, boolean ignoreStartTime) {
