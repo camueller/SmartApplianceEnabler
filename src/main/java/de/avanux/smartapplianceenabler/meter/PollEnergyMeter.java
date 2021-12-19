@@ -131,7 +131,8 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
             logger.debug("{}: Energy cache is empty", applianceId);
         }
         else {
-            for(LocalDateTime timestamp: this.cache.getTimestampWithValue().keySet()) {
+            List<LocalDateTime> timestamps = new ArrayList<>(this.cache.getTimestampWithValue().keySet());
+            for(LocalDateTime timestamp: timestamps) {
                 Double energy = this.cache.getTimestampWithValue().get(timestamp);
                 logger.trace("{}: Energy timestamp={} energy={}", applianceId, timestamp, energy);
                 if (previousTimestamp != null && previousEnergy != null) {
