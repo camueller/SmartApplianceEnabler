@@ -75,6 +75,7 @@ public class AlwaysOnSwitch implements Control, ApplianceIdConsumer, Notificatio
 
     @Override
     public void init() {
+        mqttClient = new MqttClient(applianceId, getClass());
     }
 
     @Override
