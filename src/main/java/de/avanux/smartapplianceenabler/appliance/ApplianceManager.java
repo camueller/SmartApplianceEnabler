@@ -31,14 +31,15 @@ import de.avanux.smartapplianceenabler.meter.MeterValueName;
 import de.avanux.smartapplianceenabler.meter.ModbusElectricityMeter;
 import de.avanux.smartapplianceenabler.modbus.ModbusRead;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
+import de.avanux.smartapplianceenabler.mqtt.ApplianceInfoMessage;
+import de.avanux.smartapplianceenabler.mqtt.ControlMessage;
 import de.avanux.smartapplianceenabler.mqtt.MqttClient;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.schedule.Schedule;
-import de.avanux.smartapplianceenabler.semp.webservice.Device2EM;
-import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
-import de.avanux.smartapplianceenabler.semp.webservice.DeviceStatus;
+import de.avanux.smartapplianceenabler.semp.webservice.*;
 import de.avanux.smartapplianceenabler.util.FileHandler;
 import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
+import de.avanux.smartapplianceenabler.webservice.ApplianceInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,6 +52,7 @@ import java.util.stream.Collectors;
 
 public class ApplianceManager implements Runnable {
     public static final String SCHEMA_LOCATION = "http://github.com/camueller/SmartApplianceEnabler/v1.6";
+    private String TOPIC = "ApplianceInfo";
     private Logger logger = LoggerFactory.getLogger(ApplianceManager.class);
     private static ApplianceManager instance;
     private FileHandler fileHandler = new FileHandler();
@@ -61,7 +63,8 @@ public class ApplianceManager implements Runnable {
     private Integer autoclearSeconds;
     private boolean initializationCompleted;
     private LocalDateTime currentMeterAveragingIntervalStartTime;
-    
+    private transient MqttClient mqttClient;
+
     private ApplianceManager() {
     }
     
@@ -249,6 +252,7 @@ public class ApplianceManager implements Runnable {
 
     public void init() {
         logger.debug("Initializing ...");
+        mqttClient = new MqttClient("", getClass());
         Map<String,ModbusTcp> modbusIdWithModbusTcp = new HashMap<String,ModbusTcp>();
         Connectivity connectivity = appliances.getConnectivity();
         if(connectivity != null) {
@@ -263,6 +267,7 @@ public class ApplianceManager implements Runnable {
 
         boolean holidaysUsed = false;
         for (Appliance appliance : getAppliances()) {
+            publishApplianceInfoMessage(appliance.getId());
             if(appliance.hasTimeframeForHolidays()) {
                 holidaysUsed = true;
             }
@@ -618,5 +623,62 @@ public class ApplianceManager implements Runnable {
         logger.debug("Set configuration");
         this.appliances.setConfigurations(configurations);
         save(false, true);
+    }
+
+    private void publishApplianceInfoMessage(String applianceId) {
+        ApplianceInfo applianceInfo = getApplianceInfo(applianceId);
+        ApplianceInfoMessage message = new ApplianceInfoMessage(LocalDateTime.now(), applianceInfo);
+        String topic = MqttClient.getApplianceTopic(applianceId, TOPIC);
+        mqttClient.publish(topic, false, message, false, true);
+    }
+
+    public ApplianceInfo getApplianceInfo(String applianceId) {
+        DeviceInfo deviceInfo = getDeviceInfo(applianceId);
+        ApplianceInfo applianceInfo = new ApplianceInfo();
+        applianceInfo.setId(deviceInfo.getIdentification().getDeviceId());
+        applianceInfo.setName(deviceInfo.getIdentification().getDeviceName());
+        applianceInfo.setVendor(deviceInfo.getIdentification().getDeviceVendor());
+        applianceInfo.setSerial(deviceInfo.getIdentification().getDeviceSerial());
+        applianceInfo.setType(deviceInfo.getIdentification().getDeviceType());
+        applianceInfo.setMinPowerConsumption(deviceInfo.getCharacteristics().getMinPowerConsumption());
+        applianceInfo.setMaxPowerConsumption(deviceInfo.getCharacteristics().getMaxPowerConsumption());
+        applianceInfo.setMinOnTime(deviceInfo.getCharacteristics().getMinOnTime());
+        applianceInfo.setMaxOnTime(deviceInfo.getCharacteristics().getMaxOnTime());
+        applianceInfo.setMinOffTime(deviceInfo.getCharacteristics().getMinOffTime());
+        applianceInfo.setMaxOffTime(deviceInfo.getCharacteristics().getMaxOffTime());
+        if (deviceInfo.getCapabilities().getCurrentPowerMethod() != null) {
+            applianceInfo.setCurrentPowerMethod(deviceInfo.getCapabilities().getCurrentPowerMethod().name());
+        }
+        applianceInfo.setInterruptionsAllowed(deviceInfo.getCapabilities().getInterruptionsAllowed());
+        return applianceInfo;
+    }
+
+    public DeviceInfo getDeviceInfo(ApplianceInfo applianceInfo) {
+        Identification identification = new Identification();
+        identification.setDeviceId(applianceInfo.getId());
+        identification.setDeviceName(applianceInfo.getName());
+        identification.setDeviceVendor(applianceInfo.getVendor());
+        identification.setDeviceType(applianceInfo.getType());
+        identification.setDeviceSerial(applianceInfo.getSerial());
+
+        Characteristics characteristics = new Characteristics();
+        characteristics.setMinPowerConsumption(applianceInfo.getMinPowerConsumption());
+        characteristics.setMaxPowerConsumption(applianceInfo.getMaxPowerConsumption());
+        characteristics.setMinOnTime(applianceInfo.getMinOnTime());
+        characteristics.setMaxOnTime(applianceInfo.getMaxOnTime());
+        characteristics.setMinOffTime(applianceInfo.getMinOffTime());
+        characteristics.setMaxOffTime(applianceInfo.getMaxOffTime());
+
+        Capabilities capabilities = new Capabilities();
+        capabilities.setCurrentPowerMethod(applianceInfo.getCurrentPowerMethod() != null ?
+                CurrentPowerMethod.valueOf(applianceInfo.getCurrentPowerMethod()) : CurrentPowerMethod.Estimation);
+        capabilities.setInterruptionsAllowed(applianceInfo.isInterruptionsAllowed());
+        capabilities.setOptionalEnergy(false);
+
+        DeviceInfo deviceInfo = new DeviceInfo();
+        deviceInfo.setIdentification(identification);
+        deviceInfo.setCharacteristics(characteristics);
+        deviceInfo.setCapabilities(capabilities);
+        return deviceInfo;
     }
 }

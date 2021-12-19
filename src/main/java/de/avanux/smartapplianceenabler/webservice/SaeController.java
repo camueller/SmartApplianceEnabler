@@ -123,55 +123,6 @@ public class SaeController {
         return header;
     }
 
-    private ApplianceInfo toApplianceInfo(DeviceInfo deviceInfo) {
-        ApplianceInfo applianceInfo = new ApplianceInfo();
-        applianceInfo.setId(deviceInfo.getIdentification().getDeviceId());
-        applianceInfo.setName(deviceInfo.getIdentification().getDeviceName());
-        applianceInfo.setVendor(deviceInfo.getIdentification().getDeviceVendor());
-        applianceInfo.setSerial(deviceInfo.getIdentification().getDeviceSerial());
-        applianceInfo.setType(deviceInfo.getIdentification().getDeviceType());
-        applianceInfo.setMinPowerConsumption(deviceInfo.getCharacteristics().getMinPowerConsumption());
-        applianceInfo.setMaxPowerConsumption(deviceInfo.getCharacteristics().getMaxPowerConsumption());
-        applianceInfo.setMinOnTime(deviceInfo.getCharacteristics().getMinOnTime());
-        applianceInfo.setMaxOnTime(deviceInfo.getCharacteristics().getMaxOnTime());
-        applianceInfo.setMinOffTime(deviceInfo.getCharacteristics().getMinOffTime());
-        applianceInfo.setMaxOffTime(deviceInfo.getCharacteristics().getMaxOffTime());
-        if (deviceInfo.getCapabilities().getCurrentPowerMethod() != null) {
-            applianceInfo.setCurrentPowerMethod(deviceInfo.getCapabilities().getCurrentPowerMethod().name());
-        }
-        applianceInfo.setInterruptionsAllowed(deviceInfo.getCapabilities().getInterruptionsAllowed());
-        return applianceInfo;
-    }
-
-    private DeviceInfo toDeviceInfo(ApplianceInfo applianceInfo) {
-        Identification identification = new Identification();
-        identification.setDeviceId(applianceInfo.getId());
-        identification.setDeviceName(applianceInfo.getName());
-        identification.setDeviceVendor(applianceInfo.getVendor());
-        identification.setDeviceType(applianceInfo.getType());
-        identification.setDeviceSerial(applianceInfo.getSerial());
-
-        Characteristics characteristics = new Characteristics();
-        characteristics.setMinPowerConsumption(applianceInfo.getMinPowerConsumption());
-        characteristics.setMaxPowerConsumption(applianceInfo.getMaxPowerConsumption());
-        characteristics.setMinOnTime(applianceInfo.getMinOnTime());
-        characteristics.setMaxOnTime(applianceInfo.getMaxOnTime());
-        characteristics.setMinOffTime(applianceInfo.getMinOffTime());
-        characteristics.setMaxOffTime(applianceInfo.getMaxOffTime());
-
-        Capabilities capabilities = new Capabilities();
-        capabilities.setCurrentPowerMethod(applianceInfo.getCurrentPowerMethod() != null ?
-                CurrentPowerMethod.valueOf(applianceInfo.getCurrentPowerMethod()) : CurrentPowerMethod.Estimation);
-        capabilities.setInterruptionsAllowed(applianceInfo.isInterruptionsAllowed());
-        capabilities.setOptionalEnergy(false);
-
-        DeviceInfo deviceInfo = new DeviceInfo();
-        deviceInfo.setIdentification(identification);
-        deviceInfo.setCharacteristics(characteristics);
-        deviceInfo.setCapabilities(capabilities);
-        return deviceInfo;
-    }
-
     @RequestMapping(value = APPLIANCES_URL, method = RequestMethod.GET, produces = "application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public List<ApplianceHeader> getAppliances() {
@@ -205,7 +156,7 @@ public class SaeController {
                 Device2EM device2EM = ApplianceManager.getInstance().getDevice2EM();
                 for (DeviceInfo deviceInfo : device2EM.getDeviceInfo()) {
                     if (deviceInfo.getIdentification().getDeviceId().equals(applianceId)) {
-                        ApplianceInfo applianceInfo = toApplianceInfo(deviceInfo);
+                        ApplianceInfo applianceInfo = ApplianceManager.getInstance().getApplianceInfo(applianceId);
 
                         Appliance appliance = ApplianceManager.getInstance().getAppliance(applianceId);
                         if(appliance != null && appliance.getNotification() != null) {
@@ -240,7 +191,7 @@ public class SaeController {
                     notification.setSenderId(applianceInfo.getNotificationSenderId());
                 }
 
-                DeviceInfo deviceInfo = toDeviceInfo(applianceInfo);
+                DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(applianceInfo);
                 if (create) {
                     Appliance appliance = new Appliance();
                     appliance.setId(applianceId);

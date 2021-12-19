@@ -98,6 +98,34 @@ Zum Starten eignet sich folgender Befehl:
 ```console
 $ docker run -it --rm -p 1880:1880 -v node_red_data:/data --name nodered nodered/node-red
 ```
+Folgende Module müssen über `Manage Palette -> Install` installiert werden:
+- node-red-contrib-tableify
+- node-red-contrib-ui-timelines-chart
+- node-red-dashboard
+
+Ausserdem muss die Bibliothek `date-fns` installiert werden:
+- ohne Docker
+```console
+$ npm i date-fns
+```
+- mit Docker (Installation muss in /data erfolgen!)
+```console
+$ docker exec -it nodered bash
+bash-5.0$ cd /data
+bash-5.0$ npm i date-fns
++ date-fns@2.27.0
+added 1 package from 2 contributors and audited 98 packages in 20.153s
+```
+
+Die Bibliothek `date-fns` muss noch in der Datei `settings.js` (`/data/settings.js` bei Docker-Containern) eingetragen werden. Dazu in der Datei suchen nach `functionGlobalContext`) und ändern wie folgt:
+```console
+functionGlobalContext: {                                                         
+  datefns:require('date-fns')                                                  
+},
+```
+
+Erst danach kann der Flow importiert werden.
+
 In Node RED muss der MQTT-Server konfiguriert werden. Wenn dieser ebenfalls als Docker-Container betrieben wird, muss beachtet werden, dass für die Container-zu-Container-Kommunkation dessen IP-Adresse im Docker-Bridge-Netzwerk verwendet wird. Diese kann wie folgt ermittelt werden ([siehe auch](https://www.tutorialworks.com/container-networking/)): 
 
 ```console

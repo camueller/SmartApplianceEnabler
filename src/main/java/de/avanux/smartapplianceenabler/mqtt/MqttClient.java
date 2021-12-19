@@ -135,11 +135,17 @@ public class MqttClient {
     }
 
     public void publish(String topic, MqttMessage message, boolean retained) {
-        publish(topic, message, false, retained);
+        publish(topic, true, message, false, retained);
     }
 
     public void publish(String topic, MqttMessage message, boolean set, boolean retained) {
-        String fullTopic = set ? getApplianceTopicForSet(applianceId, topic) : getApplianceTopic(applianceId, topic);
+        publish(topic, true, message, set, retained);
+    }
+
+    public void publish(String topic, boolean expandTopic, MqttMessage message, boolean set, boolean retained) {
+        String fullTopic = expandTopic
+                ? (set ? getApplianceTopicForSet(applianceId, topic) : getApplianceTopic(applianceId, topic))
+                : topic;
         publishMessage(fullTopic, message, retained);
     }
 
