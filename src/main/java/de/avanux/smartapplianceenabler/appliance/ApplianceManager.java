@@ -635,21 +635,27 @@ public class ApplianceManager implements Runnable {
     public ApplianceInfo getApplianceInfo(String applianceId) {
         DeviceInfo deviceInfo = getDeviceInfo(applianceId);
         ApplianceInfo applianceInfo = new ApplianceInfo();
-        applianceInfo.setId(deviceInfo.getIdentification().getDeviceId());
-        applianceInfo.setName(deviceInfo.getIdentification().getDeviceName());
-        applianceInfo.setVendor(deviceInfo.getIdentification().getDeviceVendor());
-        applianceInfo.setSerial(deviceInfo.getIdentification().getDeviceSerial());
-        applianceInfo.setType(deviceInfo.getIdentification().getDeviceType());
-        applianceInfo.setMinPowerConsumption(deviceInfo.getCharacteristics().getMinPowerConsumption());
-        applianceInfo.setMaxPowerConsumption(deviceInfo.getCharacteristics().getMaxPowerConsumption());
-        applianceInfo.setMinOnTime(deviceInfo.getCharacteristics().getMinOnTime());
-        applianceInfo.setMaxOnTime(deviceInfo.getCharacteristics().getMaxOnTime());
-        applianceInfo.setMinOffTime(deviceInfo.getCharacteristics().getMinOffTime());
-        applianceInfo.setMaxOffTime(deviceInfo.getCharacteristics().getMaxOffTime());
-        if (deviceInfo.getCapabilities().getCurrentPowerMethod() != null) {
-            applianceInfo.setCurrentPowerMethod(deviceInfo.getCapabilities().getCurrentPowerMethod().name());
+        if(deviceInfo.getIdentification() != null) {
+            applianceInfo.setId(deviceInfo.getIdentification().getDeviceId());
+            applianceInfo.setName(deviceInfo.getIdentification().getDeviceName());
+            applianceInfo.setVendor(deviceInfo.getIdentification().getDeviceVendor());
+            applianceInfo.setSerial(deviceInfo.getIdentification().getDeviceSerial());
+            applianceInfo.setType(deviceInfo.getIdentification().getDeviceType());
         }
-        applianceInfo.setInterruptionsAllowed(deviceInfo.getCapabilities().getInterruptionsAllowed());
+        if(deviceInfo.getCharacteristics() != null) {
+            applianceInfo.setMinPowerConsumption(deviceInfo.getCharacteristics().getMinPowerConsumption());
+            applianceInfo.setMaxPowerConsumption(deviceInfo.getCharacteristics().getMaxPowerConsumption());
+            applianceInfo.setMinOnTime(deviceInfo.getCharacteristics().getMinOnTime());
+            applianceInfo.setMaxOnTime(deviceInfo.getCharacteristics().getMaxOnTime());
+            applianceInfo.setMinOffTime(deviceInfo.getCharacteristics().getMinOffTime());
+            applianceInfo.setMaxOffTime(deviceInfo.getCharacteristics().getMaxOffTime());
+        }
+        if(deviceInfo.getCapabilities() != null) {
+            if (deviceInfo.getCapabilities().getCurrentPowerMethod() != null) {
+                applianceInfo.setCurrentPowerMethod(deviceInfo.getCapabilities().getCurrentPowerMethod().name());
+            }
+            applianceInfo.setInterruptionsAllowed(deviceInfo.getCapabilities().getInterruptionsAllowed());
+        }
         return applianceInfo;
     }
 

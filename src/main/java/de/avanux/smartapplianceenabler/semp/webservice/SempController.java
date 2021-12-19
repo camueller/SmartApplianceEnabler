@@ -280,7 +280,7 @@ public class SempController {
         ControlMessage controlMessage = this.controlMessages.get(applianceControlTopic);
         Control control = appliance.getControl();
         if (control != null) {
-            deviceStatus.setStatus(controlMessage.on ? Status.On : Status.Off);
+            deviceStatus.setStatus(controlMessage != null && controlMessage.on ? Status.On : Status.Off);
             deviceStatus.setEMSignalsAccepted(appliance.isAcceptControlRecommendations());
             logger.debug("{}: Reporting device status from control", appliance.getId());
         } else {

@@ -155,23 +155,24 @@ public class MqttClient {
     }
 
     private void publishMessage(String fullTopic, MqttMessage message, boolean retained) {
-        // in Queue übernehmen und abarbeiten
-        executor.submit(() -> {
-            try {
-                if(connect()) {
-                    String serializedMessage = genson.serialize(message);
-                    org.eclipse.paho.client.mqttv3.MqttMessage pahoMessage
-                            = new org.eclipse.paho.client.mqttv3.MqttMessage(serializedMessage.getBytes());
-                    pahoMessage.setQos(0);
-                    pahoMessage.setRetained(retained);
-                    logger.trace("{}: Publish message: topic={} payload={}", loggerId, fullTopic, serializedMessage);
-                    client.publish(fullTopic, pahoMessage);
+        if(executor != null) {
+            executor.submit(() -> {
+                try {
+                    if(connect()) {
+                        String serializedMessage = genson.serialize(message);
+                        org.eclipse.paho.client.mqttv3.MqttMessage pahoMessage
+                                = new org.eclipse.paho.client.mqttv3.MqttMessage(serializedMessage.getBytes());
+                        pahoMessage.setQos(0);
+                        pahoMessage.setRetained(retained);
+                        logger.trace("{}: Publish message: topic={} payload={}", loggerId, fullTopic, serializedMessage);
+                        client.publish(fullTopic, pahoMessage);
+                    }
                 }
-            }
-            catch (Exception e) {
-                logger.error("{}: Error sending message", loggerId, e);
-            }
-        });
+                catch (Exception e) {
+                    logger.error("{}: Error sending message", loggerId, e);
+                }
+            });
+        }
     }
 
     public void subscribe(MqttEventName event, Class toType, MqttMessageHandler messageHandler) {

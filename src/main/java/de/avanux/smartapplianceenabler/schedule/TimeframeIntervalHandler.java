@@ -324,7 +324,8 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
 
     public void addTimeframeInterval(LocalDateTime now, TimeframeInterval timeframeInterval, boolean asFirst, boolean updateQueue) {
         logger.debug("{}: Adding timeframeInterval to queue: {}", applianceId, timeframeInterval.toString(now));
-
+        timeframeInterval.setApplianceId(applianceId);
+        timeframeInterval.getRequest().setApplianceId(applianceId);
         Request request = timeframeInterval.getRequest();
         request.init();
         if(request instanceof EnergyRequest) {
