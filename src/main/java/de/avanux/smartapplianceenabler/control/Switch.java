@@ -18,12 +18,16 @@
 package de.avanux.smartapplianceenabler.control;
 
 import com.pi4j.Pi4J;
+import com.pi4j.common.Descriptor;
 import com.pi4j.context.Context;
 import com.pi4j.io.gpio.digital.DigitalOutput;
 import com.pi4j.io.gpio.digital.DigitalOutputConfig;
 import com.pi4j.io.gpio.digital.DigitalState;
 import com.pi4j.plugin.raspberrypi.RaspberryPi;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.time.LocalDateTime;
 
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
@@ -77,7 +81,7 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
             try {
                 if(output == null) {
                     logger.debug("{}: ****** Switch on", getApplianceId());
-                    int pin = 26;
+                    int pin = 17;
                     Context context = Pi4J.newAutoContext();
                     DigitalOutputConfig config = DigitalOutput.newConfigBuilder(context)
                             .id("BCM" + pin)
@@ -88,6 +92,10 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
                     DigitalOutput output = context.create(config);
                     output.state(DigitalState.HIGH);
                     logger.debug("{}: ****** Switched on", getApplianceId());
+
+                    logger.debug("{}: ****** Platforms", print(context.platforms().describe()));
+                    logger.debug("{}: ****** Platform", print(context.platform().describe()));
+                    logger.debug("{}: ****** Providers", print(context.providers().describe()));
                 }
                 logger.debug("{}: {} uses {} reverseStates={}", getApplianceId(), getClass().getSimpleName(),
                         getPin(), reverseStates);
@@ -97,6 +105,13 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
 //        } else {
 //            logGpioAccessDisabled(logger);
 //        }
+    }
+
+    private String print(Descriptor descriptor) {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        descriptor.print(ps);
+        return os.toString();
     }
 
     @Override
