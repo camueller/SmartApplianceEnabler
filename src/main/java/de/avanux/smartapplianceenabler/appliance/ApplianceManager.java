@@ -17,8 +17,6 @@
  */
 package de.avanux.smartapplianceenabler.appliance;
 
-import com.pi4j.Pi4J;
-import com.pi4j.context.Context;
 import de.avanux.smartapplianceenabler.HolidaysDownloader;
 import de.avanux.smartapplianceenabler.configuration.Configuration;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
@@ -40,6 +38,8 @@ import de.avanux.smartapplianceenabler.util.FileHandler;
 import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.pigpioj.PigpioInterface;
+import uk.pigpioj.PigpioJ;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -90,19 +90,19 @@ public class ApplianceManager implements Runnable {
         return instance;
     }
 
-    private Context getGpioContext() {
-//        if(System.getProperty("os.arch").equals("arm")) {
-//            try {
-//                return Pi4J.newAutoContext();
-//            }
-//            catch(Error e) {
-//                // warning will be logged later on only if GPIO access is required
-//                logger.error("Error creating Pi4J context.", e);
-//            }
-//        }
-//        else {
-//            logger.warn("GPIO access disabled - not running on Raspberry Pi.");
-//        }
+    private PigpioInterface getPigpioInterface() {
+        if(System.getProperty("os.arch").equals("arm")) {
+            try {
+                return PigpioJ.autoDetectedImplementation();
+            }
+            catch(Error e) {
+                // warning will be logged later on only if GPIO access is required
+                logger.error("Error creating PigpioInterface.", e);
+            }
+        }
+        else {
+            logger.warn("GPIO access disabled - not running on Raspberry Pi.");
+        }
         return null;
     }
 
@@ -265,7 +265,7 @@ public class ApplianceManager implements Runnable {
             }
             logger.debug("{}: Initializing appliance ...", appliance.getId());
             try {
-                appliance.init(getGpioContext(), modbusIdWithModbusTcp,
+                appliance.init(getPigpioInterface(), modbusIdWithModbusTcp,
                         appliances.getConfigurationValue(NotificationHandler.CONFIGURATION_KEY_NOTIFICATION_COMMAND));
             }
             catch (Exception e) {

@@ -63,24 +63,9 @@
 			<!-- <version>4.2</version> -->
 		</dependency>
 		<dependency>
-			<groupId>com.pi4j</groupId>
-			<artifactId>pi4j-core</artifactId>
-			<version>2.1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.pi4j</groupId>
-			<artifactId>pi4j-library-pigpio</artifactId>
-			<version>2.1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.pi4j</groupId>
-			<artifactId>pi4j-plugin-pigpio</artifactId>
-			<version>2.1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.pi4j</groupId>
-			<artifactId>pi4j-plugin-raspberrypi</artifactId>
-			<version>2.1.0</version>
+			<groupId>uk.pigpioj</groupId>
+			<artifactId>pigpioj-java</artifactId>
+			<version>2.6.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.ghgande</groupId>

@@ -17,24 +17,26 @@
  */
 package de.avanux.smartapplianceenabler.meter;
 
-import com.pi4j.context.Context;
-import com.pi4j.io.gpio.digital.*;
 import de.avanux.smartapplianceenabler.control.GpioControllable;
-import java.time.LocalDateTime;
-
+import de.avanux.smartapplianceenabler.gpio.PinEdge;
+import de.avanux.smartapplianceenabler.gpio.PinMode;
+import de.avanux.smartapplianceenabler.gpio.PinPullResistance;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
-import de.avanux.smartapplianceenabler.notification.NotificationType;
 import de.avanux.smartapplianceenabler.notification.NotificationProvider;
+import de.avanux.smartapplianceenabler.notification.NotificationType;
 import de.avanux.smartapplianceenabler.notification.Notifications;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.pigpioj.PigpioCallback;
 
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 
-public class S0ElectricityMeter extends GpioControllable implements Meter, NotificationProvider, DigitalStateChangeListener {
+public class S0ElectricityMeter extends GpioControllable implements Meter, NotificationProvider, PigpioCallback {
 
     private transient Logger logger = LoggerFactory.getLogger(S0ElectricityMeter.class);
     @XmlAttribute
@@ -44,7 +46,6 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
     @XmlElement(name = "Notifications")
     private Notifications notifications;
     private transient Long pulseTimestamp;
-    private transient DigitalInput input;
     private transient PulsePowerMeter pulsePowerMeter = new PulsePowerMeter();
     private transient PulseEnergyMeter pulseEnergyMeter = new PulseEnergyMeter();
     private transient List<PowerUpdateListener> powerMeterListeners = new ArrayList<>();
@@ -138,15 +139,11 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
     @Override
     public void start(LocalDateTime now, Timer timer) {
         logger.debug("{}: Starting {}", getApplianceId(), getClass().getSimpleName());
-        Context gpioContext = getGpioContext();
-        if(gpioContext != null) {
+        if(isPigpioInterfaceAvailable()) {
             try {
-                DigitalInputConfig config = DigitalInput.newConfigBuilder(getGpioContext())
-                        .address(getPin())
-                        .pull(getPinPullResistance())
-                        .build();
-                input = gpioContext.digitalInput().create(config);
-                input.addListener(this);
+                setMode(PinMode.INPUT);
+                setPinPullResistance(getPinPullResistance());
+                enableListener(this, PinEdge.EITHER);
             }
             catch(Exception e) {
                 logger.error("{}: Error start metering using {}", getApplianceId(), getPin(), e);
@@ -163,9 +160,13 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
     @Override
     public void stop(LocalDateTime now) {
         logger.debug("{}: Stopping {}", getApplianceId(), getClass().getSimpleName());
-        Context gpioContext = getGpioContext();
-        if(gpioContext != null && input != null) {
-            input.removeListener(this);
+        if(isPigpioInterfaceAvailable()) {
+            try {
+                disableListener();
+            }
+            catch(Exception e) {
+                logger.error("{}: Error stop metering using {}", getApplianceId(), getPin(), e);
+            }
         }
         else {
             logGpioAccessDisabled(logger);
@@ -177,10 +178,10 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
     }
 
     @Override
-    public void onDigitalStateChange(DigitalStateChangeEvent event) {
+    public void callback(int pin, boolean value, long epochTime, long nanoTime) {
         long timestamp = System.currentTimeMillis();
-        if((getPinPullResistance() == PullResistance.PULL_DOWN && event.state() == DigitalState.HIGH)
-                || (getPinPullResistance() == PullResistance.PULL_UP && event.state() == DigitalState.LOW)) {
+        if((getPinPullResistance() == PinPullResistance.PULL_DOWN && value)
+                || (getPinPullResistance() == PinPullResistance.PULL_UP && !value)) {
             pulseTimestamp = timestamp;
         }
         else if (pulseTimestamp != null && (timestamp - pulseTimestamp) > getMinPulseDuration()) {

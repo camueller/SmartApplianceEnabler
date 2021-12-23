@@ -17,53 +17,92 @@
  */
 package de.avanux.smartapplianceenabler.control;
 
-import com.pi4j.context.Context;
-import com.pi4j.io.gpio.digital.PullResistance;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.configuration.Validateable;
+import de.avanux.smartapplianceenabler.gpio.PinEdge;
+import de.avanux.smartapplianceenabler.gpio.PinMode;
+import de.avanux.smartapplianceenabler.gpio.PinPullResistance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.pigpioj.PigpioCallback;
+import uk.pigpioj.PigpioConstants;
+import uk.pigpioj.PigpioInterface;
+import uk.pigpioj.test.PigpioInputTest;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
+import java.io.IOException;
 
 @XmlTransient
 @XmlAccessorType(XmlAccessType.FIELD)
 abstract public class GpioControllable implements ApplianceIdConsumer, Validateable {
     private transient Logger logger = LoggerFactory.getLogger(GpioControllable.class);
+    // FIXME rename to pin
     @XmlAttribute
     private Integer gpio;
     @XmlAttribute
     private String pinPullResistance;
-    private transient Context gpioController;
+    private transient PigpioInterface pigpioInterface;
     private transient String applianceId;
 
 
-    protected Context getGpioContext() {
-        return gpioController;
+    protected PigpioInterface getPigpioInterface() {
+        return pigpioInterface;
     }
 
-    public void setGpioContext(Context gpioController) {
-        this.gpioController = gpioController;
+    public void setPigpioInterface(PigpioInterface piGpio) {
+        this.pigpioInterface = piGpio;
+    }
+
+    protected boolean isPigpioInterfaceAvailable() {
+        return this.pigpioInterface != null;
     }
 
     protected Integer getPin() {
        return gpio;
     }
 
-    protected PullResistance getPinPullResistance() {
+    protected void setMode(PinMode mode) throws IOException {
+        int rc = pigpioInterface.setMode(getPin(), mode.getNumVal());
+        if (rc < 0) {
+            throw new IOException("pigpioInterface.setMode returned " + rc);
+        }
+    }
+
+    protected void setPinPullResistance(PinPullResistance pinPullResistance) throws IOException {
+        int rc = pigpioInterface.setPullUpDown(getPin(), pinPullResistance.getNumVal());
+        if (rc < 0) {
+            throw new IOException("pigpioInterface.setPinPullResistance returned " + rc);
+        }
+    }
+
+    protected PinPullResistance getPinPullResistance() {
         if(pinPullResistance != null) {
             if (pinPullResistance.equals("PULL_DOWN")) {
-                return PullResistance.PULL_DOWN;
+                return PinPullResistance.PULL_DOWN;
             }
             if (pinPullResistance.equals("PULL_UP")) {
-                return PullResistance.PULL_UP;
+                return PinPullResistance.PULL_UP;
             }
         }
-        return PullResistance.OFF;
+        return PinPullResistance.OFF;
+    }
+
+    protected void enableListener(PigpioCallback listener, PinEdge edge) throws IOException {
+        int rc = pigpioInterface.enableListener(getPin(), edge.getNumVal(), listener);
+        if (rc < 0) {
+            throw new IOException("pigpioInterface.enableListener returned " + rc);
+        }
+    }
+
+    protected void disableListener() throws IOException {
+        int rc = pigpioInterface.disableListener(getPin());
+        if (rc < 0) {
+            throw new IOException("pigpioInterface.disableListener returned " + rc);
+        }
     }
 
     protected void logGpioAccessDisabled(Logger logger) {
