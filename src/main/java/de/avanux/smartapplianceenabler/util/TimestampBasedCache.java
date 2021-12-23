@@ -60,7 +60,8 @@ public class TimestampBasedCache<T> implements ApplianceIdConsumer {
     public void addValue(LocalDateTime timestamp, T value) {
         // remove expired values
         List<LocalDateTime> expiredTimestamps = new ArrayList<>();
-        timestampWithValue.keySet().forEach(cachedTimeStamp -> {
+        List<LocalDateTime> timestamps = new ArrayList<>(timestampWithValue.keySet());
+        timestamps.forEach(cachedTimeStamp -> {
             if(Duration.between(cachedTimeStamp, timestamp).toSeconds() > maxAgeSeconds) {
                 expiredTimestamps.add(cachedTimeStamp);
             }

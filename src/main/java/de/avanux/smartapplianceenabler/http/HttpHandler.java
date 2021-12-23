@@ -45,8 +45,12 @@ public class HttpHandler implements ApplianceIdConsumer {
         String protocolHandlerValue = getValue(read, contentProtocolHandler);
         if(protocolHandlerValue != null) {
             String valueExtractionRegex = read.child().getExtractionRegex();
-            String extractedValue = RegexUtil.getMatchingGroup1(protocolHandlerValue, valueExtractionRegex);
-            String parsableString = extractedValue.replace(',', '.');
+            String extractedValue = null;
+            if(valueExtractionRegex != null) {
+                extractedValue = RegexUtil.getMatchingGroup1(protocolHandlerValue, valueExtractionRegex);
+            }
+            String parsableString = (extractedValue != null ? extractedValue : protocolHandlerValue)
+                    .replace(',', '.');
             Double value;
             Double factorToValue = read.child().getFactorToValue();
             if(factorToValue != null) {
@@ -55,8 +59,8 @@ public class HttpHandler implements ApplianceIdConsumer {
             else {
                 value = Double.parseDouble(parsableString);
             }
-            logger.debug("{}: value={} protocolHandlerValue={} valueExtractionRegex={} extractedValue={}",
-                    applianceId, value, protocolHandlerValue, valueExtractionRegex, extractedValue);
+            logger.debug("{}: value={} protocolHandlerValue={} valueExtractionRegex={} extractedValue={} factorToValue={}",
+                    applianceId, value, protocolHandlerValue, valueExtractionRegex, extractedValue, factorToValue);
             return value;
         }
         return 0.0;

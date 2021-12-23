@@ -135,6 +135,9 @@ export class StatusEvchargerEditComponent implements OnInit {
         const soc = Number.parseFloat(socString);
         if (soc > 0) {
           this.socString = soc.toFixed();
+          if (this.form.controls.stateOfChargeCurrent) {
+            this.form.controls.stateOfChargeCurrent.setValue(soc.toFixed());
+          }
         }
       }
     });

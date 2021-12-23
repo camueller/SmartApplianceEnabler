@@ -53,11 +53,11 @@ public class PulsePowerMeter implements ApplianceIdConsumer, Validateable {
         this.applianceId = applianceId;
     }
 
-    protected void addTimestamp(long timestampMillis) {
+    protected synchronized void addTimestamp(long timestampMillis) {
         impulseTimestamps.add(timestampMillis);
     }
 
-    private void maintainTimestamps(long timestampNow) {
+    private synchronized void maintainTimestamps(long timestampNow) {
         List<Long> impulseTimestampsForRemoval = new ArrayList<Long>();
         this.impulseTimestamps.stream()
                 .filter(timestamp -> isTimestampExpired(timestampNow, timestamp))
