@@ -22,6 +22,7 @@ import com.pi4j.common.Descriptor;
 import com.pi4j.context.Context;
 import com.pi4j.io.gpio.digital.DigitalOutput;
 import com.pi4j.io.gpio.digital.DigitalOutputConfig;
+import com.pi4j.io.gpio.digital.DigitalOutputConfigBuilder;
 import com.pi4j.io.gpio.digital.DigitalState;
 import com.pi4j.plugin.raspberrypi.RaspberryPi;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
@@ -81,7 +82,7 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
             try {
                 if(output == null) {
                     logger.debug("{}: ****** Switch on", getApplianceId());
-                    int pin = 17;
+                    int pin = 22;
                     Context context = Pi4J.newAutoContext();
                     DigitalOutputConfig config = DigitalOutput.newConfigBuilder(context)
                             .id("BCM" + pin)
@@ -91,11 +92,19 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
                             .build();
                     DigitalOutput output = context.create(config);
                     output.state(DigitalState.HIGH);
-                    logger.debug("{}: ****** Switched on", getApplianceId());
 
-                    logger.debug("{}: ****** Platforms", print(context.platforms().describe()));
-                    logger.debug("{}: ****** Platform", print(context.platform().describe()));
-                    logger.debug("{}: ****** Providers", print(context.providers().describe()));
+                    Context pi4j = Pi4J.newAutoContext();
+                    DigitalOutputConfigBuilder ledConfig = DigitalOutput.newConfigBuilder(pi4j)
+                            .id("led")
+                            .name("LED Flasher")
+                            .address(pin)
+                            .shutdown(DigitalState.LOW)
+                            .initial(DigitalState.LOW)
+                            .provider("pigpio-digital-output");
+                    DigitalOutput led = pi4j.create(ledConfig);
+                    led.high();
+
+                    logger.debug("{}: ****** Switched on", getApplianceId());
                 }
                 logger.debug("{}: {} uses {} reverseStates={}", getApplianceId(), getClass().getSimpleName(),
                         getPin(), reverseStates);
