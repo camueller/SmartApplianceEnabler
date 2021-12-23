@@ -229,12 +229,15 @@ pi@raspberrypi:~ $ sudo update-alternatives --install /usr/bin/javac javac /opt/
 ```
 Da die alten Pi-Modelle bzw. die Pi-Zero weniger Rechnen-Leistung bereitstellen, dauert der Start des SAE im Allgmeinen etwas länger, so dass die Timeout-Zeiten noch angepasst werden müssen, um einen Abbruch beim Programmstart zu verhindern. Dafür mit einem Editor in `/opt/sae/smartapplianceenabler` den `sleep 1` durch `sleep 3` ersetzen und in /lib/systemd/system/smartapplianceenabler.service `TimeoutStartSec=90s` auf `TimeoutStartSec=180s` ändern.
 
-## Wiring-Pi installieren
-Falls der *Smart Appliance Enabler* auf die GPIO-Anschlüsse des Raspberry Pi zugreifen soll, muss die Bibliothek [Wiring Pi](http://wiringpi.com/) installiert sein. Das lässt sich mit folgendem Befehlen erreichen:
+## pigpiod installieren
+Falls der *Smart Appliance Enabler* auf die GPIO-Anschlüsse des Raspberry Pi zugreifen soll, muss die Bibliothek [pigpiod](http://abyz.me.uk/rpi/pigpio/) installiert sein. Das lässt sich mit folgendem Befehlen erreichen:
 ```console
-pi@raspberrypi ~ $ cd /tmp
-pi@raspberrypi ~ $ wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/wiringpi-latest.deb
-pi@raspberrypi ~ $ sudo dpkg -i wiringpi-latest.deb
+pi@raspberrypi ~ $ sudo apt install pigpiod
+```
+Damit der Deamon beim Systemstart ebenfalls gestartet wird (via Systemd), muss folgender Befehl ausgeführt werden:
+```console
+pi@raspberrypi ~ $ sudo systemctl enable pigpiod
+Created symlink /etc/systemd/system/multi-user.target.wants/pigpiod.service → /lib/systemd/system/pigpiod.service.
 ```
 
 ## Smart Appliance Enabler
