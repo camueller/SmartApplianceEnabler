@@ -234,6 +234,11 @@ Falls der *Smart Appliance Enabler* auf die GPIO-Anschlüsse des Raspberry Pi zu
 ```console
 pi@raspberrypi ~ $ sudo apt install pigpiod
 ```
+Der `pigpiod` ist standardmässig so installiert, dass er nur lokale Zugriffe akzeptiert. Obwohl der *Smart Appliance Enabler* tatsächlich via `localhost` zugreift, ist der Zugriff auf den `pigpiod` nicht möglich, wenn er mit dieser Einschränkung gestartet wird. Zur Deaktivierung dieser Einschränkung muss in in der Datei `/lib/systemd/system/pigpiod.service` in der Zeile mit `ExecStart` der Parameter `-l` entfernt werden, sdoass sie wie folgt aussieht:
+```console
+ExecStart=/usr/bin/pigpiod
+```
+
 Damit der Deamon beim Systemstart ebenfalls gestartet wird (via Systemd), muss folgender Befehl ausgeführt werden:
 ```console
 pi@raspberrypi ~ $ sudo systemctl enable pigpiod
