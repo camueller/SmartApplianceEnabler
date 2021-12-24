@@ -68,6 +68,7 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
         if(isPigpioInterfaceAvailable()) {
             try {
                 setMode(PinMode.OUTPUT);
+                on(now,false);
                 logger.debug("{}: {} uses {} reverseStates={}", getApplianceId(), getClass().getSimpleName(),
                         getPin(), reverseStates);
             } catch (Exception e) {
@@ -93,7 +94,7 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
         logger.info("{}: Switching {} {}", getApplianceId(), (switchOn ? "on" : "off"), getPin());
         var pigpioInterface = getPigpioInterface();
         if (pigpioInterface != null) {
-            pigpioInterface.write(getPin(), switchOn);
+            pigpioInterface.write(getPin(), adjustState(switchOn));
         } else {
             logGpioAccessDisabled(logger);
         }
