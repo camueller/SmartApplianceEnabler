@@ -117,6 +117,35 @@ public class ApplianceManager implements Runnable {
 
     private Appliances loadAppliances() {
         return fileHandler.load(Appliances.class, content -> {
+            if(content.contains("SmartApplianceEnabler/v1.5") || content.contains("SmartApplianceEnabler/v1.6")) {
+                content = content.replaceAll("gpio=\"0\"", "gpio=\"17\"");
+                content = content.replaceAll("gpio=\"1\"", "gpio=\"18\"");
+                content = content.replaceAll("gpio=\"2\"", "gpio=\"27\"");
+                content = content.replaceAll("gpio=\"3\"", "gpio=\"22\"");
+                content = content.replaceAll("gpio=\"4\"", "gpio=\"23\"");
+                content = content.replaceAll("gpio=\"5\"", "gpio=\"24\"");
+                content = content.replaceAll("gpio=\"6\"", "gpio=\"25\"");
+                content = content.replaceAll("gpio=\"7\"", "gpio=\"4\"");
+                content = content.replaceAll("gpio=\"8\"", "gpio=\"2\"");
+                content = content.replaceAll("gpio=\"9\"", "gpio=\"3\"");
+                content = content.replaceAll("gpio=\"10\"", "gpio=\"8\"");
+                content = content.replaceAll("gpio=\"11\"", "gpio=\"7\"");
+                content = content.replaceAll("gpio=\"12\"", "gpio=\"10\"");
+                content = content.replaceAll("gpio=\"13\"", "gpio=\"9\"");
+                content = content.replaceAll("gpio=\"14\"", "gpio=\"11\"");
+                content = content.replaceAll("gpio=\"15\"", "gpio=\"14\"");
+                content = content.replaceAll("gpio=\"16\"", "gpio=\"15\"");
+                content = content.replaceAll("gpio=\"21\"", "gpio=\"5\"");
+                content = content.replaceAll("gpio=\"22\"", "gpio=\"6\"");
+                content = content.replaceAll("gpio=\"23\"", "gpio=\"13\"");
+                content = content.replaceAll("gpio=\"24\"", "gpio=\"19\"");
+                content = content.replaceAll("gpio=\"25\"", "gpio=\"26\"");
+                content = content.replaceAll("gpio=\"26\"", "gpio=\"12\"");
+                content = content.replaceAll("gpio=\"27\"", "gpio=\"16\"");
+                content = content.replaceAll("gpio=\"28\"", "gpio=\"20\"");
+                content = content.replaceAll("gpio=\"29\"", "gpio=\"21\"");
+                content = content.replaceAll("gpio=\"31\"", "gpio=\"1\"");
+            }
             content = content.replace("http://github.com/camueller/SmartApplianceEnabler/v1.5", ApplianceManager.SCHEMA_LOCATION);
             content = content.replaceAll("type=\"InputString\"", "type=\"Input\" valueType=\"String\"");
             content = content.replaceAll("type=\"InputFloat\"", "type=\"Input\" valueType=\"Float\"");
