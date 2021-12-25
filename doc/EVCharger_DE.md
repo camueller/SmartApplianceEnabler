@@ -17,7 +17,7 @@ Momentan stellt der *Smart Appliance Enabler* Konfigurationen für die folgende 
 * [Warp Charger Smart / Pro](WarpCharger_DE.md)
 
 Darüber hinaus sollte auch die Verwendung von anderen Wallboxen möglich sein, solange diese über ein unterstütztes Protokoll angebunden werden:
-* [Modbus/TCP](Modbus_DE.md)
+* [Modbus/TCP](EVChargerModbus_DE.md)
 * HTTP
 
 _Hinweis für HTTP-basierte Wallboxen:_
@@ -28,7 +28,7 @@ Falls der Wert in Milliampere gesetzt werden muss, kann diese ganz normal mittel
 
 Falls der Wert selbst die Zeichen `{` oder `}` enthält, müssen diese in einfachen Anführungszeichen "maskiert" werden.
 
-Die Konfiguration mit der Kombination der zuvor beschriebenen Besondernheiten könnte also wie folgt aussehen:
+Die Konfiguration mit der Kombination der zuvor beschriebenen Besonderheiten könnte also wie folgt aussehen:
 ```
 <HttpWriteValue name="ChargingCurrent" value="'{'current:{0,number,#}'}'" method="POST" factorToValue="1000"/>
 ```

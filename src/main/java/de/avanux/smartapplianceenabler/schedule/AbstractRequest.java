@@ -126,6 +126,11 @@ abstract public class AbstractRequest implements Request {
                 && this.timeframeIntervalStateProvider.getState() == TimeframeIntervalState.ACTIVE;
     }
 
+    protected boolean isExpired() {
+        return this.timeframeIntervalStateProvider != null
+                && this.timeframeIntervalStateProvider.getState() == TimeframeIntervalState.EXPIRED;
+    }
+
     public boolean isControlOn() {
         return control.isOn();
     }
@@ -185,7 +190,7 @@ abstract public class AbstractRequest implements Request {
 
     @Override
     public void controlStateChanged(LocalDateTime now, boolean switchOn) {
-        if (isActive()) {
+        if (isActive() || isExpired()) {
             if (switchOn) {
                 enabledBefore = true;
                 if (meter != null) {

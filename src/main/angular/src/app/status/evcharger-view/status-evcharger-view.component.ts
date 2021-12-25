@@ -55,11 +55,7 @@ export class StatusEvchargerViewComponent implements OnInit {
   }
 
   toWeekdayString(weekday: number): string | undefined {
-    const dowMatches = this.dows.filter(dow => dow.id === weekday);
-    if (dowMatches && dowMatches.length > 0) {
-      return dowMatches[0].name;
-    }
-    return undefined;
+    return this.dows.find(dow => dow.id === weekday)?.name;
   }
 
   toKWh(wh: number): number {

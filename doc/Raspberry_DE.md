@@ -3,6 +3,14 @@ Der *Smart Appliance Enabler* benötigt einen **[Raspberry Pi](https://de.wikipe
 
 An die GPIO-Pins des Raspberry können diverse Schalter und/oder Stromzähler angeschlossen werden, d.h. ein einziger Raspberry Pi kann eine Vielzahl von Geräten verwalten. Dabei darf jedoch die **Stromstärke** am 5V-Pin den Wert von 300 mA (Model B) bzw. 500mA (Model A) und am 3,3V-Pin den Wert von 50mA nicht überschreiten ([Quelle](http://elinux.org/RPi_Low-level_peripherals#General_Purpose_Input.2FOutput_.28GPIO.29))!
 
-Der *Smart Appliance Enabler* verwendet intern [Pi4J](https://pi4j.com) um auf die GPIO-Pins zuzugreifen. Diese Bibliothek verwendet eine eigene Numerierung der GPIO-Pins, die ungleich der Pin-Nummer ist! Demzufolge muss im *Smart Appliance Enabler* diese Nummer als *GPIO-Anschluss* eingegeben werden.
+Um auf die GPIO-Pins zuzugreifen verwendet der *Smart Appliance Enabler* intern die Java-Bibliothek [pigpioj](https://github.com/mattjlewis/pigpioj). Dabei wird der Socket-Mode der Bibliothek verwendet, damit der *Smart Appliance Enabler* auch ohne root-Privilegien auf die GPIO-Pins zugreifen kann. 
 
-Die GPIO-Nummern sind abhängig vom konkreten Raspberry Pi-Model. Für alle unterstützten Modelle findet sich auf [Pi4J-Homepage](https://pi4j.com) links unter **Pin Numbering** eine Grafik mit dem Mapping der Pin-Nummer auf die vom *Smart Appliance Enabler* benötigte GPIO-Nummer.  
+[pigpioj](https://github.com/mattjlewis/pigpioj) wiederum verwendet [pigpio](https://abyz.me.uk/rpi/pigpio/). Von dieser Bibliothek gibt es auch einen Daemon `pigpiod`, auf den [pigpioj](https://github.com/mattjlewis/pigpioj) im Socket-Mode zugreift. Voraussetzung dafür ist, dass [pigpiod installiert wurde](ManualInstallation_DE.md)!
+
+Für die [Numerierung der Anschlusse wird dabei nicht die Pin-Nummer auf dem Raspberry Pi verwendet, sondern die GPIO-Nummer des Broadcom-Prozessors](https://raspberrypi.stackexchange.com/questions/12966/what-is-the-difference-between-board-and-bcm-for-gpio-pin-numbering).
+
+Demzufolge muss im *Smart Appliance Enabler* diese Nummer als *GPIO-Anschluss* eingegeben werden.
+
+![Raspberry Pi Pinout](../pics/raspberry-pi-15b.jpg)
+
+
