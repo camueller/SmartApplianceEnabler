@@ -18,6 +18,7 @@
 package de.avanux.smartapplianceenabler.control;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import de.avanux.smartapplianceenabler.gpio.GpioControllable;
 import de.avanux.smartapplianceenabler.gpio.PinMode;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.notification.NotificationProvider;
@@ -64,7 +65,7 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
 
     @Override
     public void start(LocalDateTime now, Timer timer) {
-        logger.debug("{}: Starting {} for {}", getApplianceId(), getClass().getSimpleName(), getPin());
+        logger.debug("{}: Starting {} for GPIO {}", getApplianceId(), getClass().getSimpleName(), getPin());
         if(isPigpioInterfaceAvailable()) {
             try {
                 setMode(PinMode.OUTPUT);
@@ -72,7 +73,7 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
                 logger.debug("{}: {} uses {} reverseStates={}", getApplianceId(), getClass().getSimpleName(),
                         getPin(), reverseStates);
             } catch (Exception e) {
-                logger.error("{}: Error starting {} for {}", getApplianceId(), getClass().getSimpleName(), getPin(), e);
+                logger.error("{}: Error starting {} for GPIO {}", getApplianceId(), getClass().getSimpleName(), getPin(), e);
             }
         } else {
             logGpioAccessDisabled(logger);
@@ -91,7 +92,7 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
 
     @Override
     public boolean on(LocalDateTime now, boolean switchOn) {
-        logger.info("{}: Switching {} {}", getApplianceId(), (switchOn ? "on" : "off"), getPin());
+        logger.info("{}: Switching {} GPIO {}", getApplianceId(), (switchOn ? "on" : "off"), getPin());
         var pigpioInterface = getPigpioInterface();
         if (pigpioInterface != null) {
             pigpioInterface.write(getPin(), adjustState(switchOn));

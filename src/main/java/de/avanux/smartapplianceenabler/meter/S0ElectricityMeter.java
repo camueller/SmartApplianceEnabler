@@ -17,7 +17,7 @@
  */
 package de.avanux.smartapplianceenabler.meter;
 
-import de.avanux.smartapplianceenabler.control.GpioControllable;
+import de.avanux.smartapplianceenabler.gpio.GpioControllable;
 import de.avanux.smartapplianceenabler.gpio.PinEdge;
 import de.avanux.smartapplianceenabler.gpio.PinMode;
 import de.avanux.smartapplianceenabler.gpio.PinPullResistance;
@@ -146,7 +146,7 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
                 enableListener(this, PinEdge.EITHER);
             }
             catch(Exception e) {
-                logger.error("{}: Error start metering using {}", getApplianceId(), getPin(), e);
+                logger.error("{}: Error start metering using GPIO {}", getApplianceId(), getPin(), e);
                 if(this.notificationHandler != null) {
                     this.notificationHandler.sendNotification(NotificationType.COMMUNICATION_ERROR);
                 }
@@ -165,7 +165,7 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
                 disableListener();
             }
             catch(Exception e) {
-                logger.error("{}: Error stop metering using {}", getApplianceId(), getPin(), e);
+                logger.error("{}: Error stop metering using GPIO {}", getApplianceId(), getPin(), e);
             }
         }
         else {
