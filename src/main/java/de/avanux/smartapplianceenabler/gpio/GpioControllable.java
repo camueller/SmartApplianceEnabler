@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Axel Müller <axel.mueller@avanux.de>
+ * Copyright (C) 2021 Axel Müller <axel.mueller@avanux.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,46 +15,63 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package de.avanux.smartapplianceenabler.control;
+package de.avanux.smartapplianceenabler.gpio;
 
-import com.pi4j.io.gpio.GpioController;
-import com.pi4j.io.gpio.Pin;
-import com.pi4j.io.gpio.PinPullResistance;
-import com.pi4j.io.gpio.RaspiPin;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.configuration.Validateable;
-import de.avanux.smartapplianceenabler.meter.MeterValueName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.pigpioj.PigpioCallback;
+import uk.pigpioj.PigpioInterface;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
+import java.io.IOException;
 
 @XmlTransient
 @XmlAccessorType(XmlAccessType.FIELD)
 abstract public class GpioControllable implements ApplianceIdConsumer, Validateable {
     private transient Logger logger = LoggerFactory.getLogger(GpioControllable.class);
+    // FIXME rename to pin
     @XmlAttribute
     private Integer gpio;
     @XmlAttribute
     private String pinPullResistance;
-    private transient GpioController gpioController;
+    private transient PigpioInterface pigpioInterface;
     private transient String applianceId;
 
 
-    protected GpioController getGpioController() {
-        return gpioController;
+    protected PigpioInterface getPigpioInterface() {
+        return pigpioInterface;
     }
 
-    public void setGpioController(GpioController gpioController) {
-        this.gpioController = gpioController;
+    public void setPigpioInterface(PigpioInterface piGpio) {
+        this.pigpioInterface = piGpio;
     }
 
-    protected Pin getGpio() {
-       return RaspiPin.getPinByName("GPIO " + gpio);
+    protected boolean isPigpioInterfaceAvailable() {
+        return this.pigpioInterface != null;
+    }
+
+    protected Integer getPin() {
+       return gpio;
+    }
+
+    protected void setMode(PinMode mode) throws IOException {
+        int rc = pigpioInterface.setMode(getPin(), mode.getNumVal());
+        if (rc < 0) {
+            throw new IOException("pigpioInterface.setMode returned " + rc);
+        }
+    }
+
+    protected void setPinPullResistance(PinPullResistance pinPullResistance) throws IOException {
+        int rc = pigpioInterface.setPullUpDown(getPin(), pinPullResistance.getNumVal());
+        if (rc < 0) {
+            throw new IOException("pigpioInterface.setPinPullResistance returned " + rc);
+        }
     }
 
     protected PinPullResistance getPinPullResistance() {
@@ -69,8 +86,22 @@ abstract public class GpioControllable implements ApplianceIdConsumer, Validatea
         return PinPullResistance.OFF;
     }
 
+    protected void enableListener(PigpioCallback listener, PinEdge edge) throws IOException {
+        int rc = pigpioInterface.enableListener(getPin(), edge.getNumVal(), listener);
+        if (rc < 0) {
+            throw new IOException("pigpioInterface.enableListener returned " + rc);
+        }
+    }
+
+    protected void disableListener() throws IOException {
+        int rc = pigpioInterface.disableListener(getPin());
+        if (rc < 0) {
+            throw new IOException("pigpioInterface.disableListener returned " + rc);
+        }
+    }
+
     protected void logGpioAccessDisabled(Logger logger) {
-        logger.warn("{}: Configured for {}, but GPIO access disabled.", applianceId, getGpio());
+        logger.warn("{}: Configured for {}, but GPIO access disabled.", applianceId, getPin());
     }
 
     @Override

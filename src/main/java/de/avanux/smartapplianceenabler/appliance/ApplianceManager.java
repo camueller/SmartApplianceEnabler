@@ -17,8 +17,6 @@
  */
 package de.avanux.smartapplianceenabler.appliance;
 
-import com.pi4j.io.gpio.GpioController;
-import com.pi4j.io.gpio.GpioFactory;
 import de.avanux.smartapplianceenabler.HolidaysDownloader;
 import de.avanux.smartapplianceenabler.configuration.Configuration;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
@@ -42,6 +40,8 @@ import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
 import de.avanux.smartapplianceenabler.webservice.ApplianceInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.pigpioj.PigpioInterface;
+import uk.pigpioj.PigpioJ;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -51,8 +51,7 @@ import java.util.stream.Collectors;
 
 
 public class ApplianceManager implements Runnable {
-    public static final String SCHEMA_LOCATION = "http://github.com/camueller/SmartApplianceEnabler/v1.6";
-    private String TOPIC = "ApplianceInfo";
+    public static final String SCHEMA_LOCATION = "http://github.com/camueller/SmartApplianceEnabler/v1.7";
     private Logger logger = LoggerFactory.getLogger(ApplianceManager.class);
     private static ApplianceManager instance;
     private FileHandler fileHandler = new FileHandler();
@@ -94,13 +93,14 @@ public class ApplianceManager implements Runnable {
         return instance;
     }
 
-    private GpioController getGpioController() {
+    private PigpioInterface getPigpioInterface() {
         if(System.getProperty("os.arch").equals("arm")) {
             try {
-                return GpioFactory.getInstance();
+                return PigpioJ.autoDetectedImplementation();
             }
             catch(Error e) {
                 // warning will be logged later on only if GPIO access is required
+                logger.error("Error creating PigpioInterface.", e);
             }
         }
         else {
@@ -121,7 +121,37 @@ public class ApplianceManager implements Runnable {
 
     private Appliances loadAppliances() {
         return fileHandler.load(Appliances.class, content -> {
-            content = content.replace("http://github.com/camueller/SmartApplianceEnabler/v1.5", ApplianceManager.SCHEMA_LOCATION);
+            if(content.contains("SmartApplianceEnabler/v1.5") || content.contains("SmartApplianceEnabler/v1.6")) {
+                content = content.replaceAll("gpio=\"0\"", "gpioNew=\"17\"");
+                content = content.replaceAll("gpio=\"1\"", "gpioNew=\"18\"");
+                content = content.replaceAll("gpio=\"2\"", "gpioNew=\"27\"");
+                content = content.replaceAll("gpio=\"3\"", "gpioNew=\"22\"");
+                content = content.replaceAll("gpio=\"4\"", "gpioNew=\"23\"");
+                content = content.replaceAll("gpio=\"5\"", "gpioNew=\"24\"");
+                content = content.replaceAll("gpio=\"6\"", "gpioNew=\"25\"");
+                content = content.replaceAll("gpio=\"7\"", "gpioNew=\"4\"");
+                content = content.replaceAll("gpio=\"8\"", "gpioNew=\"2\"");
+                content = content.replaceAll("gpio=\"9\"", "gpioNew=\"3\"");
+                content = content.replaceAll("gpio=\"10\"", "gpioNew=\"8\"");
+                content = content.replaceAll("gpio=\"11\"", "gpioNew=\"7\"");
+                content = content.replaceAll("gpio=\"12\"", "gpioNew=\"10\"");
+                content = content.replaceAll("gpio=\"13\"", "gpioNew=\"9\"");
+                content = content.replaceAll("gpio=\"14\"", "gpioNew=\"11\"");
+                content = content.replaceAll("gpio=\"15\"", "gpioNew=\"14\"");
+                content = content.replaceAll("gpio=\"16\"", "gpioNew=\"15\"");
+                content = content.replaceAll("gpio=\"21\"", "gpioNew=\"5\"");
+                content = content.replaceAll("gpio=\"22\"", "gpioNew=\"6\"");
+                content = content.replaceAll("gpio=\"23\"", "gpioNew=\"13\"");
+                content = content.replaceAll("gpio=\"24\"", "gpioNew=\"19\"");
+                content = content.replaceAll("gpio=\"25\"", "gpioNew=\"26\"");
+                content = content.replaceAll("gpio=\"26\"", "gpioNew=\"12\"");
+                content = content.replaceAll("gpio=\"27\"", "gpioNew=\"16\"");
+                content = content.replaceAll("gpio=\"28\"", "gpioNew=\"20\"");
+                content = content.replaceAll("gpio=\"29\"", "gpioNew=\"21\"");
+                content = content.replaceAll("gpio=\"31\"", "gpioNew=\"1\"");
+                content = content.replaceAll("gpioNew", "gpio");
+            }
+            content = content.replaceAll("http://github.com/camueller/SmartApplianceEnabler/v[0-9.]*", ApplianceManager.SCHEMA_LOCATION);
             content = content.replaceAll("type=\"InputString\"", "type=\"Input\" valueType=\"String\"");
             content = content.replaceAll("type=\"InputFloat\"", "type=\"Input\" valueType=\"Float\"");
             content = content.replaceAll("type=\"InputDecimal\"", "type=\"Input\" valueType=\"Integer2Float\"");
@@ -273,7 +303,7 @@ public class ApplianceManager implements Runnable {
             }
             logger.debug("{}: Initializing appliance ...", appliance.getId());
             try {
-                appliance.init(getGpioController(), modbusIdWithModbusTcp,
+                appliance.init(getPigpioInterface(), modbusIdWithModbusTcp,
                         appliances.getConfigurationValue(NotificationHandler.CONFIGURATION_KEY_NOTIFICATION_COMMAND));
             }
             catch (Exception e) {

@@ -12,6 +12,15 @@ und das Projekt folgt den Leitlinien des [Semantic Versioning](https://semver.or
 | SAE         | Smart Appliance Enabler |
 | SHM         | Sunny Home Manager |
 
+## [1.6.18](https://github.com/camueller/SmartApplianceEnabler/releases/tag/1.6.18) - 20.12.2021
+
+### Gefixt
+- beim Abfragen von Zählern über HTTP konnte es zu Ungeauigkeiten kommen, wenn keine Regex angegeben war
+- Wallbox: beim Steuern über die Ampel wird der aktuelle SOC wieder im entsprechenden Eingabefeld vorbelegt
+- Wallbox: beim Ändern des Ziel-SOC der Überschussladung über die Ampel bleibt der Zeitpunkt des Beginn erhalten
+- Wallbox: wenn das Fahrtzeug an einem Sonntag mit der Wallbox verbunden wurde, wurde der Wochentag nicht angezeigt
+- Wallbox: beim Zeitplan-basierten Laden wurde der Energiemengenzähler nur beim ersten Mal korrekt initialisiert, danach nicht mehr
+
 ## [1.6.17](https://github.com/camueller/SmartApplianceEnabler/releases/tag/1.6.17) - 01.11.2021
 
 ### Gefixt

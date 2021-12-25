@@ -21,9 +21,17 @@ package de.avanux.smartapplianceenabler.meter;
 import de.avanux.smartapplianceenabler.modbus.ModbusElectricityMeterDefaults;
 import de.avanux.smartapplianceenabler.modbus.ModbusReadDefaults;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class MeterDefaults {
     S0ElectricityMeterDefaults s0ElectricityMeterDefaults = new S0ElectricityMeterDefaults();
     HttpElectricityMeterDefaults httpElectricityMeterDefaults = new HttpElectricityMeterDefaults();
     ModbusElectricityMeterDefaults modbusElectricityMeterDefaults = new ModbusElectricityMeterDefaults();
     ModbusReadDefaults modbusReadDefaults = new ModbusReadDefaults();
+    Map<String, String> masterElectricityMeterApplianceIdWithApplianceName = new HashMap();
+
+    public MeterDefaults(Map<String, String> masterElectricityMeterApplianceIdWithApplianceName) {
+        this.masterElectricityMeterApplianceIdWithApplianceName = masterElectricityMeterApplianceIdWithApplianceName;
+    }
 }

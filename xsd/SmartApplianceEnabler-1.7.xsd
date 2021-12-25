@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2020 Axel Müller <axel.mueller@avanux.de>
+  ~
+  ~ This program is free software; you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation; either version 2 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along
+  ~ with this program; if not, write to the Free Software Foundation, Inc.,
+  ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+  -->
+
+<xs:schema targetNamespace="http://github.com/camueller/SmartApplianceEnabler/v1.7"
+           xmlns:sae="http://github.com/camueller/SmartApplianceEnabler/v1.7"
+           xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.7"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified">
+
+    <xs:element name="Appliances">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Configuration" type="ConfigurationType" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element name="Appliance" type="ApplianceType" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element name="Connectivity" type="ConnectivityType" minOccurs="0" maxOccurs="1" />
+            </xs:sequence>
+        </xs:complexType>
+        <xs:unique name="ApplianceID">
+            <xs:selector xpath="sae:Appliance"/>
+            <xs:field xpath="@id"/>
+        </xs:unique>
+        <!-- (Force)Schedule id/idref : id is optional! -->
+        <xs:unique name="ScheduleID">
+            <xs:selector xpath="sae:Appliance/sae:Schedule" />
+            <xs:field xpath="@id" />
+        </xs:unique>
+        <xs:keyref name="ForceScheduleIDRef" refer="ScheduleID">
+            <xs:selector xpath="sae:Appliance/sae:StartingCurrentSwitch/sae:ForceSchedule" />
+            <xs:field xpath="@idref" />
+        </xs:keyref>
+        <!-- ModbusTCP id/idref -->
+        <xs:key name="ModbusTcpID">
+            <xs:selector xpath="sae:Connectivity/sae:ModbusTCP" />
+            <xs:field xpath="@id" />
+        </xs:key>
+        <xs:keyref name="ModbusElectricityMeterIDRef" refer="ModbusTcpID">
+            <xs:selector xpath="sae:Appliance/sae:ModbusElectricityMeter" />
+            <xs:field xpath="@idref" />
+        </xs:keyref>
+        <xs:keyref name="ModbusSwitchIDRef" refer="ModbusTcpID">
+            <xs:selector xpath="sae:Appliance/sae:ModbusSwitch" />
+            <xs:field xpath="@idref" />
+        </xs:keyref>
+        <!-- SlaveElectricityMeter masterElectricityMeterApplianceId -->
+        <xs:keyref name="SlaveElectricityMeterMasterIdRef" refer="ApplianceID">
+            <xs:selector xpath="sae:Appliance/sae:SlaveElectricityMeter" />
+            <xs:field xpath="@masterElectricityMeterApplianceId" />
+        </xs:keyref>
+    </xs:element>
+
+    <xs:complexType name="ConfigurationType">
+        <xs:attribute name="param" type="xs:string" use="required" />
+        <xs:attribute name="value" type="xs:string" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="ApplianceType">
+        <xs:sequence>
+            <xs:choice>
+                <xs:element name="MeterReportingSwitch" type="MeterReportingSwitchType" />
+                <xs:element name="AlwaysOnSwitch" type="AlwaysOnSwitchType" />
+                <xs:element name="Switch" type="SwitchType" />
+                <xs:element name="HttpSwitch" type="HttpSwitchType" />
+                <xs:element name="MockSwitch" type="MockSwitchType" />
+                <xs:element name="ModbusSwitch" type="ModbusSwitchType" />
+                <xs:element name="ElectricVehicleCharger" type="ElectricVehicleChargerType" />
+                <xs:element name="StartingCurrentSwitch" type="StartingCurrentSwitchType" />
+            </xs:choice>
+            <xs:choice>
+                <xs:element name="S0ElectricityMeter" type="S0ElectricityMeterType" minOccurs="0" />
+                <xs:element name="ModbusElectricityMeter" type="ModbusElectricityMeterType" minOccurs="0" />
+                <xs:element name="HttpElectricityMeter" type="HttpElectricityMeterType" minOccurs="0" />
+                <xs:element name="MasterElectricityMeter" type="MasterElectricityMeterType" minOccurs="0" />
+                <xs:element name="SlaveElectricityMeter" type="SlaveElectricityMeterType" minOccurs="0" />
+            </xs:choice>
+            <xs:element name="Schedule" type="ScheduleType" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="Notification" type="NotificationType" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:string" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="MeterReportingSwitchType">
+        <xs:sequence>
+            <xs:element name="Notifications" type="NotificationsType" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="powerThreshold" type="xs:int" />
+        <xs:attribute name="offDetectionDelay" type="xs:int" />
+    </xs:complexType>
+
+    <xs:complexType name="AlwaysOnSwitchType">
+        <xs:sequence>
+            <xs:element name="Notifications" type="NotificationsType" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="SwitchType">
+        <xs:sequence>
+            <xs:element name="Notifications" type="NotificationsType" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="gpio" type="xs:int" use="required" />
+        <xs:attribute name="reverseStates" type="xs:boolean" />
+    </xs:complexType>
+
+    <xs:complexType name="ModbusSwitchType">
+        <xs:sequence>
+            <xs:element name="ModbusWrite" type="ModbusWriteType" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="Notifications" type="NotificationsType" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="idref" type="xs:NCName" use="required" />
+        <xs:attribute name="slaveAddress" type="xs:int" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="HttpSwitchType">
+        <xs:sequence>
+            <xs:element name="HttpConfiguration" type="HttpConfigurationType" minOccurs="0" />
+            <xs:element name="HttpWrite" type="HttpWriteType" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="HttpRead" type="HttpReadType" minOccurs="0" maxOccurs="1" />
+            <xs:element name="Notifications" type="NotificationsType" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="contentProtocol" type="ContentProtcolType" />
+    </xs:complexType>
+
+    <xs:complexType name="MockSwitchType">
+    </xs:complexType>
+
+    <xs:complexType name="ElectricVehicleChargerType">
+        <xs:sequence>
+            <xs:choice>
+                <xs:element name="EVModbusControl" type="EVModbusControlType" />
+                <xs:element name="EVHttpControl" type="EVHttpControlType" />
+            </xs:choice>
+            <xs:element name="ElectricVehicle" type="ElectricVehicleType" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="Notifications" type="NotificationsType" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="voltage" type="xs:int" />
+        <xs:attribute name="phases" type="xs:int" />
+        <xs:attribute name="pollInterval" type="xs:int" />
+        <xs:attribute name="startChargingStateDetectionDelay" type="xs:int" />
+        <xs:attribute name="forceInitialCharging" type="xs:boolean" />
+    </xs:complexType>
+
+    <xs:complexType name="EVModbusControlType">
+        <xs:sequence>
+            <xs:element name="ModbusRead" type="ModbusReadType" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="ModbusWrite" type="ModbusWriteType" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="idref" type="xs:NCName" use="required" />
+        <xs:attribute name="slaveAddress" type="xs:int" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="EVHttpControlType">
+        <xs:sequence>
+            <xs:element name="HttpConfiguration" type="HttpConfigurationType" minOccurs="0" />
+            <xs:element name="HttpRead" type="HttpReadType" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="HttpWrite" type="HttpWriteType" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="contentProtocol" type="ContentProtcolType" use="required" />
+    </xs:complexType>
+
+    <xs:simpleType name="ContentProtcolType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="JSON" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="ElectricVehicleType">
+        <xs:sequence>
+            <xs:element name="SocScript" type="SocScriptType" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:int" use="required" />
+        <xs:attribute name="name" type="xs:string" use="required" />
+        <xs:attribute name="batteryCapacity" type="xs:int" use="required" />
+        <xs:attribute name="phases" type="xs:int" />
+        <xs:attribute name="maxChargePower" type="xs:int" />
+        <xs:attribute name="chargeLoss" type="xs:int" />
+        <xs:attribute name="defaultSocOptionalEnergy" type="xs:int" />
+        <xs:attribute name="defaultSocManual" type="xs:int" />
+    </xs:complexType>
+
+    <xs:complexType name="SocScriptType">
+        <xs:attribute name="script" type="xs:string" />
+        <xs:attribute name="extractionRegex" type="xs:string" />
+        <xs:attribute name="updateAfterIncrease" type="xs:int" />
+        <xs:attribute name="updateAfterSeconds" type="xs:int" />
+    </xs:complexType>
+
+    <xs:complexType name="ModbusReadType">
+        <xs:sequence>
+            <xs:element name="ModbusReadValue" type="ModbusReadValueType" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="address" type="xs:string" use="required" />
+        <xs:attribute name="type" type="ModbusRegisterTypeType" use="required" />
+        <xs:attribute name="valueType" type="ModbusRegisterValueTypeType" use="required" />
+        <xs:attribute name="words" type="xs:int" />
+        <xs:attribute name="byteOrder" type="ByteOrderType" />
+        <xs:attribute name="factorToValue" type="xs:double" />
+    </xs:complexType>
+
+    <xs:complexType name="ModbusReadValueType">
+        <xs:attribute name="name" type="ReadValueNameType" use="required" />
+        <xs:attribute name="extractionRegex" type="xs:string" />
+    </xs:complexType>
+
+    <xs:simpleType name="ReadValueNameType">
+        <xs:restriction base="xs:string">
+            <!-- ModbusElectricityMeter -->
+            <xs:enumeration value="Power" />
+            <xs:enumeration value="Energy" />
+            <!-- HttpSwitch -->
+            <xs:enumeration value="On" />
+            <xs:enumeration value="Off" />
+            <!-- EVModbusControl -->
+            <xs:enumeration value="VehicleNotConnected" />
+            <xs:enumeration value="VehicleConnected" />
+            <xs:enumeration value="Charging" />
+            <xs:enumeration value="Error" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="WriteValueNameType">
+        <xs:restriction base="xs:string">
+            <!-- ModbusSwitch -->
+            <xs:enumeration value="On" />
+            <xs:enumeration value="Off" />
+            <!-- EVModbusControl -->
+            <xs:enumeration value="StartCharging" />
+            <xs:enumeration value="StopCharging" />
+            <xs:enumeration value="ChargingCurrent" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="ModbusWriteType">
+        <xs:sequence>
+            <xs:element name="ModbusWriteValue" type="ModbusWriteValueType" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="address" type="xs:string" use="required" />
+        <xs:attribute name="type" type="ModbusRegisterTypeType" use="required" />
+        <xs:attribute name="valueType" type="ModbusRegisterValueTypeType" />
+        <xs:attribute name="factorToValue" type="xs:double" />
+    </xs:complexType>
+
+    <xs:complexType name="ModbusWriteValueType">
+        <xs:attribute name="name" type="WriteValueNameType" use="required" />
+        <xs:attribute name="value" type="xs:string" use="required" />
+    </xs:complexType>
+
+    <xs:simpleType name="ModbusRegisterTypeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Coil" />
+            <xs:enumeration value="Discrete" />
+            <xs:enumeration value="Holding" />
+            <xs:enumeration value="Input" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ModbusRegisterValueTypeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Float" />
+            <xs:enumeration value="Integer" />
+            <xs:enumeration value="Integer2Float" />
+            <xs:enumeration value="String" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ByteOrderType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="BigEndian" />
+            <xs:enumeration value="LittleEndian" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="HttpReadType">
+        <xs:sequence>
+            <xs:element name="HttpReadValue" type="HttpReadValueType" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="url" type="xs:string" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="HttpReadValueType">
+        <xs:attribute name="name" type="ReadValueNameType" use="required" />
+        <xs:attribute name="method" type="HttpMethodType" />
+        <xs:attribute name="data" type="xs:string" />
+        <xs:attribute name="path" type="xs:string" />
+        <xs:attribute name="extractionRegex" type="xs:string" />
+        <xs:attribute name="factorToValue" type="xs:double" />
+    </xs:complexType>
+
+    <xs:complexType name="HttpWriteType">
+        <xs:sequence>
+            <xs:element name="HttpWriteValue" type="HttpWriteValueType" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="url" type="xs:string" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="HttpWriteValueType">
+        <xs:attribute name="name" type="WriteValueNameType" use="required" />
+        <xs:attribute name="method" type="HttpMethodType" />
+        <xs:attribute name="value" type="xs:string" />
+        <xs:attribute name="factorToValue" type="xs:double" />
+    </xs:complexType>
+
+    <xs:complexType name="HttpConfigurationType">
+        <xs:attribute name="contentType" type="xs:string" />
+        <xs:attribute name="username" type="xs:string" />
+        <xs:attribute name="password" type="xs:string" />
+    </xs:complexType>
+
+    <xs:simpleType name="HttpMethodType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="GET" />
+            <xs:enumeration value="POST" />
+            <xs:enumeration value="PUT" />
+            <xs:enumeration value="PATCH" />
+            <xs:enumeration value="DELETE" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="StartingCurrentSwitchType">
+        <xs:sequence>
+            <xs:element name="HttpSwitch" type="HttpSwitchType" minOccurs="0" />
+            <xs:element name="MockSwitch" type="MockSwitchType" minOccurs="0" />
+            <xs:element name="ModbusSwitch" type="ModbusSwitchType" minOccurs="0" />
+            <xs:element name="Switch" type="SwitchType" minOccurs="0" />
+            <xs:element name="ForceSchedule" type="DayTimeframeConditionType" minOccurs="0" />
+        </xs:sequence>
+        <xs:attribute name="powerThreshold" type="xs:int" />
+        <xs:attribute name="startingCurrentDetectionDuration" type="xs:int" />
+        <xs:attribute name="finishedCurrentDetectionDuration" type="xs:int" />
+        <xs:attribute name="minRunningTime" type="xs:int" />
+    </xs:complexType>
+
+    <xs:complexType name="S0ElectricityMeterType">
+        <xs:sequence>
+            <xs:element name="Notifications" type="NotificationsType" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="gpio" type="xs:int" use="required"/>
+        <xs:attribute name="pinPullResistance" type="PinPullResistanceType" />
+        <xs:attribute name="impulsesPerKwh" type="xs:int" use="required"/>
+        <xs:attribute name="minPulseDuration" type="xs:int" />
+    </xs:complexType>
+
+    <xs:simpleType name="PinPullResistanceType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="PULL_DOWN" />
+            <xs:enumeration value="PULL_UP" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="ModbusElectricityMeterType">
+        <xs:sequence>
+            <xs:element name="ModbusRead" type="ModbusReadType" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="Notifications" type="NotificationsType" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="idref" type="xs:NCName" use="required" />
+        <xs:attribute name="slaveAddress" type="xs:int" use="required" />
+        <xs:attribute name="pollInterval" type="xs:int" />
+    </xs:complexType>
+
+    <xs:complexType name="HttpElectricityMeterType">
+        <xs:sequence>
+            <xs:element name="HttpConfiguration" type="HttpConfigurationType" minOccurs="0" />
+            <xs:element name="HttpRead" type="HttpReadType" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="Notifications" type="NotificationsType" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="contentProtocol" type="ContentProtcolType" />
+        <xs:attribute name="pollInterval" type="xs:int" />
+    </xs:complexType>
+
+    <xs:complexType name="MasterElectricityMeterType">
+        <xs:sequence>
+            <xs:element name="S0ElectricityMeter" type="S0ElectricityMeterType" minOccurs="0" />
+            <xs:element name="ModbusElectricityMeter" type="ModbusElectricityMeterType" minOccurs="0" />
+            <xs:element name="HttpElectricityMeter" type="HttpElectricityMeterType" minOccurs="0" />
+        </xs:sequence>
+        <xs:attribute name="masterSwitchOn" type="xs:boolean" />
+        <xs:attribute name="slaveSwitchOn" type="xs:boolean" />
+    </xs:complexType>
+
+    <xs:complexType name="SlaveElectricityMeterType">
+        <xs:attribute name="masterElectricityMeterApplianceId" type="xs:NCName" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="NotificationType">
+        <xs:attribute name="senderId" type="xs:string" />
+        <xs:attribute name="maxCommunicationErrors" type="xs:int" />
+    </xs:complexType>
+
+    <xs:complexType name="NotificationsType">
+        <xs:sequence>
+            <xs:element name="Type" type="NotificationsTypeType" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="NotificationsTypeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="CONTROL_ON" />
+            <xs:enumeration value="CONTROL_OFF" />
+            <xs:enumeration value="COMMUNICATION_ERROR" />
+            <xs:enumeration value="EVCHARGER_VEHICLE_NOT_CONNECTED" />
+            <xs:enumeration value="EVCHARGER_VEHICLE_CONNECTED" />
+            <xs:enumeration value="EVCHARGER_CHARGING" />
+            <xs:enumeration value="EVCHARGER_CHARGING_COMPLETED" />
+            <xs:enumeration value="EVCHARGER_ERROR" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="ScheduleType">
+        <xs:sequence>
+            <xs:choice minOccurs="1" maxOccurs="1">
+                <xs:element name="RuntimeRequest" type="RuntimeRequestType" />
+                <xs:element name="EnergyRequest" type="EnergyRequestType" />
+                <xs:element name="SocRequest" type="SocRequestType" />
+            </xs:choice>
+            <xs:choice minOccurs="1" maxOccurs="1">
+                <xs:element name="DayTimeframe" type="DayTimeframeType" />
+                <xs:element name="ConsecutiveDaysTimeframe" type="ConsecutiveDaysTimeframeType" />
+            </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:NCName" />
+        <xs:attribute name="enabled" type="xs:boolean" />
+    </xs:complexType>
+
+    <xs:complexType name="DayTimeframeConditionType">
+        <xs:sequence>
+            <xs:element name="Start" type="TimeOfDayType" />
+            <xs:element name="End" type="TimeOfDayType" />
+        </xs:sequence>
+        <xs:attribute name="idref" type="xs:NCName" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="DayTimeframeType">
+        <xs:sequence>
+            <xs:element name="Start" type="TimeOfDayType" />
+            <xs:element name="End" type="TimeOfDayType" />
+            <xs:element name="DayOfWeek" type="xs:int" minOccurs="0" maxOccurs="7" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ConsecutiveDaysTimeframeType">
+        <xs:sequence>
+            <xs:element name="Start" type="TimeOfDayOfWeekType" />
+            <xs:element name="End" type="TimeOfDayOfWeekType" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="TimeOfDayType">
+        <xs:attribute name="hour" type="xs:int" use="required"/>
+        <xs:attribute name="minute" type="xs:int" use="required"/>
+        <xs:attribute name="second" type="xs:int" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="TimeOfDayOfWeekType">
+        <xs:attribute name="dayOfWeek" type="xs:int" use="required"/>
+        <xs:attribute name="hour" type="xs:int" use="required"/>
+        <xs:attribute name="minute" type="xs:int" use="required"/>
+        <xs:attribute name="second" type="xs:int" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="RuntimeRequestType">
+        <xs:attribute name="min" type="xs:int"/>
+        <xs:attribute name="max" type="xs:int" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="EnergyRequestType">
+        <xs:attribute name="min" type="xs:int"/>
+        <xs:attribute name="max" type="xs:int" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="SocRequestType">
+        <xs:attribute name="evId" type="xs:int" use="required"/>
+        <xs:attribute name="soc" type="xs:int" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="ConnectivityType">
+        <xs:sequence>
+            <xs:element name="ModbusTCP" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:attribute name="id" type="xs:NCName" />
+                    <xs:attribute name="host" type="xs:string" />
+                    <xs:attribute name="port" type="xs:int" />
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>

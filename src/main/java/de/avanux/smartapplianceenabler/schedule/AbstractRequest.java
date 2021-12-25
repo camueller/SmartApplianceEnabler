@@ -128,6 +128,11 @@ abstract public class AbstractRequest implements Request {
                 && this.timeframeIntervalStateProvider.getState() == TimeframeIntervalState.ACTIVE;
     }
 
+    protected boolean isExpired() {
+        return this.timeframeIntervalStateProvider != null
+                && this.timeframeIntervalStateProvider.getState() == TimeframeIntervalState.EXPIRED;
+    }
+
     public boolean isControlOn() {
         return controlMessage != null && controlMessage.on;
     }
@@ -153,7 +158,7 @@ abstract public class AbstractRequest implements Request {
             if(message instanceof ControlStateChangedEvent) {
                 getLogger().debug("{} Handling event ControlStateChanged", getApplianceId());
                 ControlStateChangedEvent event = (ControlStateChangedEvent) message;
-                if (isActive()) {
+                if (isActive() || isExpired()) {
                     if (event.on) {
                         enabledBefore = true;
                         if (meter != null) {

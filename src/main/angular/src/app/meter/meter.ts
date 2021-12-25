@@ -20,9 +20,14 @@ import {S0ElectricityMeter} from './s0/s0-electricity-meter';
 import {ModbusElectricityMeter} from './modbus/modbus-electricity-meter';
 import {HttpElectricityMeter} from './http/http-electricity-meter';
 import {Notifications} from '../notification/notifications';
+import {MasterElectricityMeter} from './master/master-electricity-meter';
+import {SlaveElectricityMeter} from './slave/master-electricity-meter';
 
 export class Meter {
   type: string;
+  isMasterMeter?: boolean;
+  masterElectricityMeter?: MasterElectricityMeter;
+  slaveElectricityMeter?: SlaveElectricityMeter;
   s0ElectricityMeter?: S0ElectricityMeter;
   modbusElectricityMeter?: ModbusElectricityMeter;
   httpElectricityMeter?: HttpElectricityMeter;

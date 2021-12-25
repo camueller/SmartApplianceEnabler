@@ -15,13 +15,17 @@ import {MeterResolver} from './meter-resolver.service';
 import {MeterDefaultsResolver} from './meter-defaults-resolver.service';
 import { HttpLoaderFactory } from '../shared/http-loader-factory';
 import {NotificationModule} from '../notification/notification.module';
+import {MeterMasterComponent} from './master/meter-master.component';
+import {MeterSlaveComponent} from './slave/meter-slave.component';
 
 @NgModule({
   declarations: [
     MeterComponent,
+    MeterMasterComponent,
     MeterModbusComponent,
     MeterHttpComponent,
     MeterS0Component,
+    MeterSlaveComponent,
   ],
   imports: [
     CommonModule,

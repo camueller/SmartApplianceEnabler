@@ -18,10 +18,6 @@
 
 package de.avanux.smartapplianceenabler.meter;
 
-import com.pi4j.io.gpio.GpioPin;
-import com.pi4j.io.gpio.Pin;
-import com.pi4j.io.gpio.PinPullResistance;
-import com.pi4j.io.gpio.PinState;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;

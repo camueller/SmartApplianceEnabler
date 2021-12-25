@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Axel Müller <axel.mueller@avanux.de>
+ * Copyright (C) 2021 Axel Müller <axel.mueller@avanux.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,12 +15,23 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package de.avanux.smartapplianceenabler;
 
-public class SmartApplianceEnabler {
-    public static final String MANUFACTURER_NAME = "avanux.de";
-    public static final String MANUFACTURER_URI = "http://www.avanux.de";
-    public static final String VERSION = "0.1";
-    public static final String DESCRIPTION = "Enable smart appliance behaviour of legacy devices";
-    public static final String MODEL_URI = "http://www.avanux.de/SmartApplianceEnablerV1";
+package de.avanux.smartapplianceenabler.gpio;
+
+import uk.pigpioj.PigpioConstants;
+
+public enum PinPullResistance {
+    OFF(PigpioConstants.PI_PUD_OFF),
+    PULL_DOWN(PigpioConstants.PI_PUD_DOWN),
+    PULL_UP(PigpioConstants.PI_PUD_UP);
+
+    public int numVal;
+
+    PinPullResistance(int numVal) {
+        this.numVal = numVal;
+    }
+
+    public int getNumVal() {
+        return numVal;
+    }
 }

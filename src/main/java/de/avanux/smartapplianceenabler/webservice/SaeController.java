@@ -302,7 +302,14 @@ public class SaeController {
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public MeterDefaults getMeterDefaults() {
         try {
-            return new MeterDefaults();
+            Map<String, String> masterElectricityMeterApplianceIdWithApplianceName =
+                    ApplianceManager.getInstance().getAppliances().stream()
+                            .filter(appliance -> appliance.getMeter() instanceof MasterElectricityMeter)
+                            .collect(toMap(
+                                    appliance -> appliance.getId(),
+                                    appliance -> ApplianceManager.getInstance().getDeviceInfo(
+                                            appliance.getId()).getIdentification().getDeviceName()));
+            return new MeterDefaults(masterElectricityMeterApplianceIdWithApplianceName);
         } catch (Throwable e) {
             logger.error("Error in " + getClass().getSimpleName(), e);
         }

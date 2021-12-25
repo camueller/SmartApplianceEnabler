@@ -1,62 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.6">
-    <Appliance id="F-00000001-000000000002-00">
-        <StartingCurrentSwitch>
-            <HttpSwitch>
-                <HttpWrite url="http://tasmota/cm?cmnd=Power%20On">
-                    <HttpWriteValue name="On" method="GET"/>
-                </HttpWrite>
-                <HttpWrite url="http://tasmota/cm?cmnd=Power%20Off">
-                    <HttpWriteValue name="Off" method="GET"/>
-                </HttpWrite>
-                <HttpRead url="http://tasmota/cm?cmnd=Power">
-                    <HttpReadValue name="On" method="GET" extractionRegex=":.ON"/>
+<Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.7">
+    <Appliance id="F-00000001-000000000001-00">
+        <MeterReportingSwitch/>
+        <MasterElectricityMeter slaveSwitchOn="true">
+            <HttpElectricityMeter contentProtocol="JSON">
+                <HttpRead url="http://tasmota/cm?cmnd=Status%208">
+                    <HttpReadValue name="Energy" method="GET" path="$.StatusSNS.ENERGY.Total"/>
                 </HttpRead>
-            </HttpSwitch>
-        </StartingCurrentSwitch>
-        <HttpElectricityMeter contentProtocol="JSON">
-            <HttpRead url="http://tasmota/cm?cmnd=Status%208">
-                <HttpReadValue name="Energy" method="GET" path="$.StatusSNS.ENERGY.Total"/>
-            </HttpRead>
-            <Notifications/>
-        </HttpElectricityMeter>
-        <Schedule enabled="true">
-            <RuntimeRequest min="60" max="300"/>
-            <DayTimeframe>
-                <Start hour="8" minute="0" second="0"/>
-                <End hour="22" minute="0" second="0"/>
-            </DayTimeframe>
-        </Schedule>
+            </HttpElectricityMeter>
+        </MasterElectricityMeter>
     </Appliance>
-    <!--Appliance id="F-00000001-000000000019-00">
-        <ElectricVehicleCharger startChargingStateDetectionDelay="60">
-            <EVModbusControl idref="wallbox" slaveAddress="180">
-                <ModbusRead address="100" type="Input" valueType="String">
-                    <ModbusReadValue name="VehicleNotConnected" extractionRegex="(A)"/>
-                    <ModbusReadValue name="VehicleConnected" extractionRegex="(B)"/>
-                    <ModbusReadValue name="Charging" extractionRegex="(C|D)"/>
-                    <ModbusReadValue name="Error" extractionRegex="(E|F)"/>
-                </ModbusRead>
-                <ModbusWrite address="400" type="Coil">
-                    <ModbusWriteValue name="StartCharging" value="1"/>
-                    <ModbusWriteValue name="StopCharging" value="0"/>
-                </ModbusWrite>
-                <ModbusWrite address="300" type="Holding">
-                    <ModbusWriteValue name="ChargingCurrent" value="0"/>
-                </ModbusWrite>
-            </EVModbusControl>
-            <ElectricVehicle id="1" name="Nissan Leaf" batteryCapacity="36000" phases="1" maxChargePower="6600" chargeLoss="11">
-                <SocScript script="/data/IdeaProjects/SmartApplianceEnabler/src/test/soc.sh"
-                           updateAfterIncrease="4"
-                           extractionRegex=".*state_of_charge (\d+)"/>
-            </ElectricVehicle>
-        </ElectricVehicleCharger>
-        <ModbusElectricityMeter idref="modbus" slaveAddress="1">
-            <ModbusRead address="0x0156" type="Input" valueType="Float" words="2">
-                <ModbusReadValue name="Energy"/>
-            </ModbusRead>
-        </ModbusElectricityMeter>
-    </Appliance-->
+    <Appliance id="F-00000001-000000000001-01">
+        <MockSwitch/>
+        <SlaveElectricityMeter masterElectricityMeterApplianceId="F-00000001-000000000001-00"/>
+    </Appliance>
     <Connectivity>
         <ModbusTCP id="modbus" host="raspi2" port="502"/>
         <ModbusTCP id="wallbox" host="wallbox" port="502"/>
