@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Axel Müller <axel.mueller@avanux.de>
+ * Copyright (C) 2021 Axel Müller <axel.mueller@avanux.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,20 +15,15 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package de.avanux.smartapplianceenabler.control;
+package de.avanux.smartapplianceenabler.gpio;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.configuration.Validateable;
-import de.avanux.smartapplianceenabler.gpio.PinEdge;
-import de.avanux.smartapplianceenabler.gpio.PinMode;
-import de.avanux.smartapplianceenabler.gpio.PinPullResistance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.pigpioj.PigpioCallback;
-import uk.pigpioj.PigpioConstants;
 import uk.pigpioj.PigpioInterface;
-import uk.pigpioj.test.PigpioInputTest;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
