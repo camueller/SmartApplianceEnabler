@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.7">
+<Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v2.0">
     <Appliance id="F-00000001-000000000001-00">
         <MeterReportingSwitch/>
         <MasterElectricityMeter slaveSwitchOn="true">
