@@ -19,12 +19,11 @@
 package de.avanux.smartapplianceenabler.control;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
-import java.time.LocalDateTime;
+import de.avanux.smartapplianceenabler.mqtt.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
 import java.util.Timer;
 
 /**
@@ -34,14 +33,37 @@ import java.util.Timer;
 public class MockSwitch implements Control, ApplianceIdConsumer {
     private transient Logger logger = LoggerFactory.getLogger(MockSwitch.class);
     private transient String applianceId;
-    private transient boolean on;
+    private transient MqttClient mqttClient;
+    private transient String mqttTopic = Control.TOPIC;
+    private transient boolean publishControlStateChangedEvent = true;
+
+    @Override
+    public void setApplianceId(String applianceId) {
+        this.applianceId = applianceId;
+    }
+
+    @Override
+    public void setMqttTopic(String mqttTopic) {
+    }
+
+    @Override
+    public void setPublishControlStateChangedEvent(boolean publishControlStateChangedEvent) {
+        this.publishControlStateChangedEvent = publishControlStateChangedEvent;
+    }
 
     @Override
     public void init() {
+        mqttClient = new MqttClient(applianceId, getClass());
     }
 
     @Override
     public void start(LocalDateTime now, Timer timer) {
+        mqttClient.subscribe(mqttTopic, true, true, ControlMessage.class, (topic, message) -> {
+            if(message instanceof ControlMessage) {
+                ControlMessage controlMessage = (ControlMessage) message;
+                this.on(controlMessage.getTime(), controlMessage.on);
+            }
+        });
     }
 
     @Override
@@ -55,24 +77,20 @@ public class MockSwitch implements Control, ApplianceIdConsumer {
 
     public boolean on(LocalDateTime now, boolean switchOn) {
         logger.info("{}: Switching {}", applianceId, (switchOn ? "on" : "off"));
-        on = switchOn;
-//        for(ControlStateChangedListener listener : new ArrayList<>(controlStateChangedListeners)) {
-//            logger.debug("{}: Notifying {} {}", applianceId, ControlStateChangedListener.class.getSimpleName(),
-//                    listener.getClass().getSimpleName());
-//            listener.controlStateChanged(now, switchOn);
-//        }
+        publishControlStateChangedEvent(now, switchOn);
+        publishControlMessage(now, switchOn);
         return true;
     }
 
-    @Override
-    public void setApplianceId(String applianceId) {
-        this.applianceId = applianceId;
+    private void publishControlMessage(LocalDateTime now, boolean on) {
+        MqttMessage message = new ControlMessage(now, on);
+        mqttClient.publish(mqttTopic, message, true);
     }
 
-    @Override
-    public void setMqttTopic(String mqttTopic) {
-    }
-
-    public void setPublishControlStateChangedEvent(boolean publishControlStateChangedEvent) {
+    private void publishControlStateChangedEvent(LocalDateTime now, boolean on) {
+        if(publishControlStateChangedEvent) {
+            ControlStateChangedEvent event = new ControlStateChangedEvent(now, on);
+            mqttClient.publish(MqttEventName.ControlStateChanged, event);
+        }
     }
 }

@@ -60,10 +60,15 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     private transient PollEnergyMeter pollEnergyMeter;
     private transient NotificationHandler notificationHandler;
     private transient MqttClient mqttClient;
+    private transient String mqttPublishTopic = Meter.TOPIC;
 
     @Override
     public void setApplianceId(String applianceId) {
         super.setApplianceId(applianceId);
+    }
+
+    public void setMqttTopic(String mqttTopic) {
+        this.mqttPublishTopic = mqttTopic;
     }
 
     @Override
@@ -168,57 +173,12 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
         }
     }
 
-//    @Override
-//    public int getAveragePower() {
-//        int power = 0;
-//        if(pollEnergyMeter != null) {
-//            power = pollEnergyMeter.getAveragePower();
-//        }
-//        else if(pollPowerMeter != null) {
-//            power = pollPowerMeter.getAveragePower(LocalDateTime.now());
-//        }
-//        logger.debug("{}: average power = {}W", getApplianceId(), power);
-//        return power;
-//    }
-//
-//    @Override
-//    public int getMinPower() {
-//        int power = 0;
-//        if(pollEnergyMeter != null) {
-//            power = pollEnergyMeter.getAveragePower();
-//        }
-//        else if(pollPowerMeter != null) {
-//            power = pollPowerMeter.getMinPower(LocalDateTime.now());
-//        }
-//        logger.debug("{}: min power = {}W", getApplianceId(), power);
-//        return power;
-//    }
-//
-//    @Override
-//    public int getMaxPower() {
-//        int power = 0;
-//        if(pollEnergyMeter != null) {
-//            power = pollEnergyMeter.getAveragePower();
-//        }
-//        else if(pollPowerMeter != null) {
-//            power = pollPowerMeter.getMaxPower(LocalDateTime.now());
-//        }
-//        logger.debug("{}: max power = {}W", getApplianceId(), power);
-//        return power;
-//    }
-
-
     @Override
     public Double pollPower() {
         ParentWithChild<ModbusRead, ModbusReadValue> read
                 = ModbusRead.getFirstRegisterRead(MeterValueName.Power.name(), modbusReads);
         return readRegister(read.parent());
     }
-
-//    @Override
-//    public float getEnergy() {
-//        return pollEnergyMeter != null ? (float) this.pollEnergyMeter.getEnergy() : 0.0f;
-//    }
 
     @Override
     public void startEnergyMeter() {
@@ -236,16 +196,6 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     public void resetEnergyMeter() {
         logger.debug("{}: Reset energy meter ...", getApplianceId());
         this.pollEnergyMeter.reset();
-    }
-
-    @Override
-    public void addPowerUpdateListener(PowerUpdateListener listener) {
-        if(pollEnergyMeter != null) {
-            this.pollPowerMeter.addPowerUpateListener(listener);
-        }
-        if(pollEnergyMeter != null) {
-            this.pollEnergyMeter.addPowerUpateListener(listener);
-        }
     }
 
     @Override
@@ -283,6 +233,6 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     @Override
     public void onPowerUpdate(LocalDateTime now, int averagePower) {
         MqttMessage message = new MeterMessage(now, averagePower, pollEnergyMeter != null ? this.pollEnergyMeter.getEnergy() : 0.0);
-        mqttClient.publish(Meter.TOPIC, message, false);
+        mqttClient.publish(mqttPublishTopic, message, false);
     }
 }

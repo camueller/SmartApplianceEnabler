@@ -21,6 +21,7 @@ import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.configuration.Validateable;
 import de.avanux.smartapplianceenabler.control.*;
 import de.avanux.smartapplianceenabler.control.ev.*;
+import de.avanux.smartapplianceenabler.gpio.GpioControllable;
 import de.avanux.smartapplianceenabler.meter.HttpElectricityMeter;
 import de.avanux.smartapplianceenabler.meter.MasterElectricityMeter;
 import de.avanux.smartapplianceenabler.meter.Meter;
@@ -192,6 +193,17 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
             if(meter instanceof ApplianceIdConsumer) {
                 ((ApplianceIdConsumer) meter).setApplianceId(id);
             }
+            if(meter instanceof MasterElectricityMeter) {
+                MasterElectricityMeter masterMeter = (MasterElectricityMeter) meter;
+                var wrappedMeter = masterMeter.getWrappedMeter();
+                wrappedMeter.setMqttTopic(MasterElectricityMeter.WRAPPED_METER_TOPIC);
+            }
+            if(meter instanceof SlaveElectricityMeter) {
+                SlaveElectricityMeter slaveMeter = (SlaveElectricityMeter) meter;
+                Appliance masterAppliance = ApplianceManager.getInstance().getAppliance(slaveMeter.getMasterElectricityMeterApplianceId());
+                MasterElectricityMeter masterMeter = (MasterElectricityMeter) masterAppliance.getMeter();
+                masterMeter.setSlaveElectricityMeter((SlaveElectricityMeter) meter);
+            }
             if(meter instanceof NotificationProvider && notificationCommand != null) {
                 NotificationHandler notificationHandler = new NotificationHandler(
                         id,
@@ -244,19 +256,6 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
             logger.debug("{}: {} uses {}", id, control.getClass().getSimpleName(), meter.getClass().getSimpleName());
         }
 
-        if(meter instanceof MasterElectricityMeter) {
-            MasterElectricityMeter masterMeter = (MasterElectricityMeter) meter;
-            masterMeter.setMasterControl(control);
-        }
-        if(meter instanceof SlaveElectricityMeter) {
-            SlaveElectricityMeter slaveMeter = (SlaveElectricityMeter) meter;
-            Appliance masterAppliance = ApplianceManager.getInstance().getAppliance(slaveMeter.getMasterElectricityMeterApplianceId());
-            MasterElectricityMeter masterMeter = (MasterElectricityMeter) masterAppliance.getMeter();
-            masterMeter.setSlaveElectricityMeter((SlaveElectricityMeter) meter);
-            masterMeter.setSlaveControl(control);
-            slaveMeter.setMasterElectricityMeter(masterMeter);
-        }
-
         if(getGpioControllables().size() > 0) {
             if(pigpioInterface != null) {
                 for(GpioControllable gpioControllable : getGpioControllables()) {
@@ -265,7 +264,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
                 }
             }
             else {
-                logger.error("Error initializing pi4j.");
+                logger.error("pigpioInterface not available.");
             }
         }
 

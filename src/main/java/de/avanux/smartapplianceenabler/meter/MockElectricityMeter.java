@@ -62,25 +62,9 @@ public class MockElectricityMeter implements Meter, ApplianceIdConsumer {
     public void startAveragingInterval(LocalDateTime now, Timer timer, int nextPollCompletedSecondsFromNow) {
     }
 
-//    @Override
-//    public int getAveragePower() {
-//        return 0;
-//    }
-//
-//    @Override
-//    public int getMinPower() {
-//        return 0;
-//    }
-//
-//    @Override
-//    public int getMaxPower() {
-//        return 0;
-//    }
-//
-//    @Override
-//    public float getEnergy() {
-//        return (float) this.pollEnergyMeter.getEnergy();
-//    }
+    @Override
+    public void setMqttTopic(String mqttTopic) {
+    }
 
     @Override
     public void startEnergyMeter() {
@@ -98,10 +82,5 @@ public class MockElectricityMeter implements Meter, ApplianceIdConsumer {
     public void resetEnergyMeter() {
         logger.debug("{}: Reset energy meter ...", applianceId);
         this.pollEnergyMeter.reset();
-    }
-
-    @Override
-    public void addPowerUpdateListener(PowerUpdateListener listener) {
-
     }
 }

@@ -29,6 +29,7 @@ import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.ControlDefaults;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
+import de.avanux.smartapplianceenabler.meter.MasterElectricityMeter;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.meter.MeterDefaults;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
@@ -53,6 +54,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static java.util.stream.Collectors.toMap;
 
 @RestController
 public class SaeController {

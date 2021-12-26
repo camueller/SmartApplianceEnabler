@@ -87,6 +87,7 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
         this.mqttTopic = mqttTopic;
     }
 
+    @Override
     public void setPublishControlStateChangedEvent(boolean publishControlStateChangedEvent) {
         this.publishControlStateChangedEvent = publishControlStateChangedEvent;
     }

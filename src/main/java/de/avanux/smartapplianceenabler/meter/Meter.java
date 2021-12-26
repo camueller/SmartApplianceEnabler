@@ -45,5 +45,5 @@ public interface Meter extends ApplianceLifeCycle {
 
     void startAveragingInterval(LocalDateTime now, Timer timer, int nextPollCompletedSecondsFromNow);
 
-    void addPowerUpdateListener(PowerUpdateListener listener);
+    void setMqttTopic(String mqttTopic);
 }

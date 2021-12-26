@@ -19,18 +19,21 @@
 package de.avanux.smartapplianceenabler.meter;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
+import de.avanux.smartapplianceenabler.configuration.Validateable;
 import de.avanux.smartapplianceenabler.control.Control;
+import de.avanux.smartapplianceenabler.mqtt.ControlMessage;
+import de.avanux.smartapplianceenabler.mqtt.MeterMessage;
+import de.avanux.smartapplianceenabler.mqtt.MqttClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Timer;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class MasterElectricityMeter implements ApplianceIdConsumer, Meter, PowerUpdateListener {
+public class MasterElectricityMeter implements ApplianceIdConsumer, Validateable, Meter {
     private transient Logger logger = LoggerFactory.getLogger(MasterElectricityMeter.class);
     @XmlAttribute
     private Boolean masterSwitchOn;
@@ -44,9 +47,10 @@ public class MasterElectricityMeter implements ApplianceIdConsumer, Meter, Power
     private Meter meter;
     private transient SlaveElectricityMeter slaveMeter;
     private transient String applianceId;
-    private transient Control masterControl;
-    private transient Control slaveControl;
-    private transient List<PowerUpdateListener> powerUpdateListeners = new ArrayList<>();
+    private transient boolean isMasterControlOn;
+    private transient boolean isSlaveControlOn;
+    private transient MqttClient mqttClient;
+    final static public String WRAPPED_METER_TOPIC = "Wrapped" + Meter.TOPIC;
 
     @Override
     public void setApplianceId(String applianceId) {
@@ -56,93 +60,76 @@ public class MasterElectricityMeter implements ApplianceIdConsumer, Meter, Power
         }
     }
 
+    public Meter getWrappedMeter() {
+        return meter;
+    }
+
     public void setSlaveElectricityMeter(SlaveElectricityMeter slaveMeter) {
         this.slaveMeter = slaveMeter;
     }
 
-    public void setMasterControl(Control masterControl) {
-        this.masterControl = masterControl;
+    @Override
+    public void setMqttTopic(String mqttTopic) {
     }
 
-    public void setSlaveControl(Control slaveControl) {
-        this.slaveControl = slaveControl;
+    @Override
+    public void validate() throws ConfigurationException {
+        logger.debug("{}: configured: masterSwitchOn={} slaveSwitchOn={}", applianceId, masterSwitchOn, slaveSwitchOn);
     }
 
     @Override
     public void init() {
-        logger.debug("{}: configured: masterSwitchOn={} slaveSwitchOn={}", applianceId, masterSwitchOn, slaveSwitchOn);
-        this.meter.init();
-        this.meter.addPowerUpdateListener(this);
+        mqttClient = new MqttClient(applianceId, getClass());
+        if(this.meter != null) {
+            this.meter.init();
+        }
     }
 
     @Override
     public void start(LocalDateTime now, Timer timer) {
-        this.meter.start(now, timer);
+        if (mqttClient != null) {
+            var masterControlTopic = MqttClient.getApplianceTopic(applianceId, Control.TOPIC);
+            mqttClient.subscribe(masterControlTopic, false, ControlMessage.class, (topic, message) -> {
+                if(message instanceof ControlMessage) {
+                    isMasterControlOn = ((ControlMessage) message).on;
+                }
+            });
+
+            var slaveControlTopic = MqttClient.getApplianceTopic(slaveMeter.getApplianceId(), Control.TOPIC);
+            mqttClient.subscribe(slaveControlTopic, false, ControlMessage.class, (topic, message) -> {
+                if(message instanceof ControlMessage) {
+                    isSlaveControlOn = ((ControlMessage) message).on;
+                }
+            });
+
+            mqttClient.subscribe(WRAPPED_METER_TOPIC, true, MeterMessage.class, (topic, message) -> {
+                publishMeterMessage((MeterMessage) message);
+            });
+        }
+        if(this.meter != null) {
+            this.meter.start(now, timer);
+        }
     }
 
     @Override
     public void stop(LocalDateTime now) {
-        this.meter.stop(now);
+        meter.stop(now);
     }
 
     private boolean isMeteringForSlave() {
         boolean meteringForSlave = false;
         if(masterSwitchOn != null && slaveSwitchOn != null) {
-            meteringForSlave = masterSwitchOn == this.masterControl.isOn() && slaveSwitchOn == this.slaveControl.isOn();
+            meteringForSlave = masterSwitchOn == this.isMasterControlOn && slaveSwitchOn == this.isSlaveControlOn;
         }
         else if(masterSwitchOn != null) {
-            meteringForSlave = masterSwitchOn == this.masterControl.isOn();
+            meteringForSlave = masterSwitchOn == this.isMasterControlOn;
         }
         else if(slaveSwitchOn != null) {
-            meteringForSlave = slaveSwitchOn == this.slaveControl.isOn();
+            meteringForSlave = slaveSwitchOn == this.isSlaveControlOn;
         }
-        logger.debug("{}: isMeteringForSlave={} masterSwitchOn={} slaveSwitchOn={}",
-                applianceId, meteringForSlave, masterSwitchOn, slaveSwitchOn);
+        logger.debug("{}: isMeteringForSlave={} masterSwitchOn={} isMasterControlOn={} slaveSwitchOn={} isSlaveControlOn={}",
+                applianceId, meteringForSlave, masterSwitchOn, isMasterControlOn, slaveSwitchOn, isSlaveControlOn);
         return meteringForSlave;
-    }
-
-    @Override
-    public int getAveragePower() {
-        return getAveragePower(false);
-    }
-    public int getAveragePower(boolean slaveIsRequesting) {
-        if(slaveIsRequesting) {
-            return isMeteringForSlave() ? meter.getAveragePower() : 0;
-        }
-        return !isMeteringForSlave() ? meter.getAveragePower() : 0;
-    }
-
-    @Override
-    public int getMinPower() {
-        return getMinPower(false);
-    }
-    public int getMinPower(boolean slaveIsRequesting) {
-        if(slaveIsRequesting) {
-            return isMeteringForSlave() ? meter.getMinPower() : 0;
-        }
-        return !isMeteringForSlave() ? meter.getMinPower() : 0;
-    }
-
-    @Override
-    public int getMaxPower() {
-        return getMaxPower(false);
-    }
-    public int getMaxPower(boolean slaveIsRequesting) {
-        if(slaveIsRequesting) {
-            return isMeteringForSlave() ? meter.getMaxPower() : 0;
-        }
-        return !isMeteringForSlave() ? meter.getMaxPower() : 0;
-    }
-
-    @Override
-    public float getEnergy() {
-        return 0;
-    }
-    public float getEnergy(boolean slaveIsRequesting) {
-        if(slaveIsRequesting) {
-            return isMeteringForSlave() ? meter.getEnergy() : 0;
-        }
-        return !isMeteringForSlave() ? meter.getEnergy() : 0;
     }
 
     @Override
@@ -165,18 +152,22 @@ public class MasterElectricityMeter implements ApplianceIdConsumer, Meter, Power
         meter.startAveragingInterval(now, timer, nextPollCompletedSecondsFromNow);
     }
 
-    @Override
-    public void addPowerUpdateListener(PowerUpdateListener listener) {
-        this.powerUpdateListeners.add(listener);
-    }
-
-    @Override
-    public void onPowerUpdate(int averagePower) {
+    private void publishMeterMessage(MeterMessage message) {
+        MeterMessage masterMeterMessage = null;
+        MeterMessage slaveMeterMessage = null;
         if(isMeteringForSlave()) {
-            slaveMeter.onPowerUpdate(averagePower);
+            masterMeterMessage = new MeterMessage(message.getTime(), 0, 0);
+            slaveMeterMessage = message;
         }
         else {
-            powerUpdateListeners.forEach(listener -> listener.onPowerUpdate(getAveragePower()));
+            masterMeterMessage = message;
+            slaveMeterMessage = new MeterMessage(message.getTime(), 0, 0);
         }
+
+        var masterMeterPublishTopic = MqttClient.getApplianceTopic(applianceId, Meter.TOPIC);
+        mqttClient.publish(masterMeterPublishTopic, false, masterMeterMessage, false,false);
+
+        var slaveMeterPublishTopic = MqttClient.getApplianceTopic(slaveMeter.getApplianceId(), Meter.TOPIC);
+        mqttClient.publish(slaveMeterPublishTopic, false, slaveMeterMessage, false,false);
     }
 }

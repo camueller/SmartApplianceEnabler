@@ -19,6 +19,8 @@
 package de.avanux.smartapplianceenabler.meter;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
+import de.avanux.smartapplianceenabler.configuration.Validateable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,26 +28,22 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Timer;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SlaveElectricityMeter implements ApplianceIdConsumer, Meter, PowerUpdateListener {
+public class SlaveElectricityMeter implements ApplianceIdConsumer, Meter, Validateable {
     private transient Logger logger = LoggerFactory.getLogger(SlaveElectricityMeter.class);
     @XmlAttribute
     private String masterElectricityMeterApplianceId;
     private transient String applianceId;
-    private transient MasterElectricityMeter masterMeter;
-    private transient List<PowerUpdateListener> powerUpdateListeners = new ArrayList<>();
 
     @Override
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
     }
 
-    public void setMasterElectricityMeter(MasterElectricityMeter masterMeter) {
-        this.masterMeter = masterMeter;
+    public String getApplianceId() {
+        return applianceId;
     }
 
     public String getMasterElectricityMeterApplianceId() {
@@ -53,8 +51,16 @@ public class SlaveElectricityMeter implements ApplianceIdConsumer, Meter, PowerU
     }
 
     @Override
-    public void init() {
+    public void setMqttTopic(String mqttTopic) {
+    }
+
+    @Override
+    public void validate() throws ConfigurationException {
         logger.debug("{}: configured: masterElectricityMeterApplianceId={}", applianceId, masterElectricityMeterApplianceId);
+    }
+
+    @Override
+    public void init() {
     }
 
     @Override
@@ -63,26 +69,6 @@ public class SlaveElectricityMeter implements ApplianceIdConsumer, Meter, PowerU
 
     @Override
     public void stop(LocalDateTime now) {
-    }
-
-    @Override
-    public int getAveragePower() {
-        return this.masterMeter.getAveragePower(true);
-    }
-
-    @Override
-    public int getMinPower() {
-        return this.masterMeter.getMinPower(true);
-    }
-
-    @Override
-    public int getMaxPower() {
-        return this.masterMeter.getMaxPower(true);
-    }
-
-    @Override
-    public float getEnergy() {
-        return this.masterMeter.getEnergy(true);
     }
 
     @Override
@@ -99,15 +85,5 @@ public class SlaveElectricityMeter implements ApplianceIdConsumer, Meter, PowerU
 
     @Override
     public void startAveragingInterval(LocalDateTime now, Timer timer, int nextPollCompletedSecondsFromNow) {
-    }
-
-    @Override
-    public void addPowerUpdateListener(PowerUpdateListener listener) {
-        this.powerUpdateListeners.add(listener);
-    }
-
-    @Override
-    public void onPowerUpdate(int averagePower) {
-        powerUpdateListeners.forEach(listener -> listener.onPowerUpdate(getAveragePower()));
     }
 }

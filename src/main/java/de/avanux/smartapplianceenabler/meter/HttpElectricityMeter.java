@@ -71,12 +71,17 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
     private transient HttpHandler httpHandler = new HttpHandler();
     private transient ContentProtocolHandler contentContentProtocolHandler;
     private transient MqttClient mqttClient;
+    private transient String mqttPublishTopic = Meter.TOPIC;
 
     @Override
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
         this.httpHandler.setApplianceId(applianceId);
         this.httpTransactionExecutor.setApplianceId(applianceId);
+    }
+
+    public void setMqttTopic(String mqttTopic) {
+        this.mqttPublishTopic = mqttTopic;
     }
 
     @Override
@@ -203,16 +208,6 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
     }
 
     @Override
-    public void addPowerUpdateListener(PowerUpdateListener listener) {
-        if(pollPowerMeter != null) {
-            this.pollPowerMeter.addPowerUpateListener(listener);
-        }
-        if(pollEnergyMeter != null) {
-            this.pollEnergyMeter.addPowerUpateListener(listener);
-        }
-    }
-
-    @Override
     public Double pollPower() {
         ParentWithChild<HttpRead, HttpReadValue> powerRead = HttpRead.getFirstHttpRead(MeterValueName.Power.name(), this.httpReads);
         return getValue(powerRead);
@@ -273,6 +268,6 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
     @Override
     public void onPowerUpdate(LocalDateTime now, int averagePower) {
         MqttMessage message = new MeterMessage(now, averagePower, pollEnergyMeter != null ? this.pollEnergyMeter.getEnergy() : 0.0);
-        mqttClient.publish(Meter.TOPIC, message, false);
+        mqttClient.publish(mqttPublishTopic, message, false);
     }
 }

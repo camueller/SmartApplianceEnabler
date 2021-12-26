@@ -21,13 +21,6 @@ import de.avanux.smartapplianceenabler.gpio.GpioControllable;
 import de.avanux.smartapplianceenabler.gpio.PinEdge;
 import de.avanux.smartapplianceenabler.gpio.PinMode;
 import de.avanux.smartapplianceenabler.gpio.PinPullResistance;
-import com.pi4j.io.gpio.*;
-import com.pi4j.io.gpio.event.GpioPinListenerDigital;
-import de.avanux.smartapplianceenabler.control.GpioControllable;
-
-import java.time.Duration;
-import java.time.LocalDateTime;
-
 import de.avanux.smartapplianceenabler.mqtt.MeterMessage;
 import de.avanux.smartapplianceenabler.mqtt.MqttClient;
 import de.avanux.smartapplianceenabler.mqtt.MqttMessage;
@@ -42,9 +35,8 @@ import uk.pigpioj.PigpioCallback;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Timer;
 
 public class S0ElectricityMeter extends GpioControllable implements Meter, NotificationProvider, PigpioCallback {
@@ -57,13 +49,12 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
     @XmlElement(name = "Notifications")
     private Notifications notifications;
     private transient LocalDateTime pulseTimestamp;
-    private transient GpioPin inputPin;
     private transient PulsePowerMeter pulsePowerMeter = new PulsePowerMeter();
     private transient PulseEnergyMeter pulseEnergyMeter = new PulseEnergyMeter();
     private transient GuardedTimerTask mqttPublishTimerTask;
-    private transient List<PowerUpdateListener> powerMeterListeners = new ArrayList<>();
     private transient NotificationHandler notificationHandler;
     private transient MqttClient mqttClient;
+    private transient String mqttPublishTopic = Meter.TOPIC;
 
     @Override
     public void setNotificationHandler(NotificationHandler notificationHandler) {
@@ -93,6 +84,10 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
         this.pulseEnergyMeter.setApplianceId(applianceId);
     }
 
+    public void setMqttTopic(String mqttTopic) {
+        this.mqttPublishTopic = mqttTopic;
+    }
+
     protected void setPulsePowerMeter(PulsePowerMeter pulsePowerMeter) {
         this.pulsePowerMeter = pulsePowerMeter;
     }
@@ -100,26 +95,6 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
     protected void setPulseEnergyMeter(PulseEnergyMeter pulseEnergyMeter) {
         this.pulseEnergyMeter = pulseEnergyMeter;
     }
-
-//    @Override
-//    public int getAveragePower() {
-//        return pulsePowerMeter.getAveragePower();
-//    }
-//
-//    @Override
-//    public int getMinPower() {
-//        return pulsePowerMeter.getMinPower();
-//    }
-//
-//    @Override
-//    public int getMaxPower() {
-//        return pulsePowerMeter.getMaxPower();
-//    }
-//
-//    @Override
-//    public float getEnergy() {
-//        return this.pulseEnergyMeter.getEnergy();
-//    }
 
     @Override
     public void startEnergyMeter() {
@@ -134,11 +109,6 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
     @Override
     public void resetEnergyMeter() {
         this.pulseEnergyMeter.resetEnergyCounter();
-    }
-
-    @Override
-    public void addPowerUpdateListener(PowerUpdateListener listener) {
-        this.powerMeterListeners.add(listener);
     }
 
     @Override
@@ -179,7 +149,7 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
                             pulsePowerMeter != null ? pulsePowerMeter.getAveragePower() : 0,
                             pulseEnergyMeter != null ? pulseEnergyMeter.getEnergy() : 0
                     );
-                    mqttClient.publish(Meter.TOPIC, message, false);
+                    mqttClient.publish(mqttPublishTopic, message, false);
                 }
                 catch(Exception e) {
                     logger.error("{}: Error publishing MQTT message", getApplianceId(), e);
@@ -211,18 +181,17 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
 
     @Override
     public void callback(int pin, boolean value, long epochTime, long nanoTime) {
-        long timestamp = System.currentTimeMillis();
+        LocalDateTime now = LocalDateTime.now();
         if((getPinPullResistance() == PinPullResistance.PULL_DOWN && value)
                 || (getPinPullResistance() == PinPullResistance.PULL_UP && !value)) {
-            pulseTimestamp = timestamp;
+            pulseTimestamp = now;
         }
-        else if (pulseTimestamp != null && (timestamp - pulseTimestamp) > getMinPulseDuration()) {
+        else if (pulseTimestamp != null && Duration.between(pulseTimestamp, now).toMillis() > getMinPulseDuration()) {
             logger.debug("{}: S0 impulse detected on GPIO {}", getApplianceId(), getPin());
             pulsePowerMeter.addTimestamp(pulseTimestamp);
             pulseEnergyMeter.increasePulseCounter();
             int averagePower = pulsePowerMeter.getAveragePower();
             logger.debug("{}: power: {}W", getApplianceId(), averagePower);
-            powerMeterListeners.forEach(listener -> listener.onPowerUpdate(now, averagePower));
             pulseTimestamp = null;
         }
     }
