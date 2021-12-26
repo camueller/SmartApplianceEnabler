@@ -30,7 +30,6 @@ import de.avanux.smartapplianceenabler.meter.ModbusElectricityMeter;
 import de.avanux.smartapplianceenabler.modbus.ModbusRead;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
 import de.avanux.smartapplianceenabler.mqtt.ApplianceInfoMessage;
-import de.avanux.smartapplianceenabler.mqtt.ControlMessage;
 import de.avanux.smartapplianceenabler.mqtt.MqttClient;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.schedule.Schedule;
@@ -52,6 +51,7 @@ import java.util.stream.Collectors;
 
 public class ApplianceManager implements Runnable {
     public static final String SCHEMA_LOCATION = "http://github.com/camueller/SmartApplianceEnabler/v1.7";
+    private String TOPIC = "ApplianceInfo";
     private Logger logger = LoggerFactory.getLogger(ApplianceManager.class);
     private static ApplianceManager instance;
     private FileHandler fileHandler = new FileHandler();
@@ -316,6 +316,9 @@ public class ApplianceManager implements Runnable {
                 logger.error("{}: Terminating because of incorrect configuration", appliance.getId());
                 System.exit(-1);
             }
+        }
+
+        for (Appliance appliance : getAppliances()) {
             logger.debug("{}: Starting appliance ...", appliance.getId());
             try {
                 appliance.start(timer);
