@@ -51,7 +51,7 @@ import java.util.Timer;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validateable, PollPowerExecutor, PollEnergyExecutor,
-        ApplianceIdConsumer, NotificationProvider, PowerUpdateListener {
+        ApplianceIdConsumer, NotificationProvider, MeterUpdateListener {
 
     private transient Logger logger = LoggerFactory.getLogger(HttpElectricityMeter.class);
     @XmlAttribute
@@ -266,8 +266,8 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
     }
 
     @Override
-    public void onPowerUpdate(LocalDateTime now, int averagePower) {
-        MqttMessage message = new MeterMessage(now, averagePower, pollEnergyMeter != null ? this.pollEnergyMeter.getEnergy() : 0.0);
+    public void onMeterUpdate(LocalDateTime now, int averagePower, Double energy) {
+        MqttMessage message = new MeterMessage(now, averagePower, energy);
         mqttClient.publish(mqttPublishTopic, message, false);
     }
 }

@@ -45,7 +45,7 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
     private GuardedTimerTask pollTimerTask;
     private long lastPollDurationMillis = 0;
     private boolean started;
-    private List<PowerUpdateListener> powerUpdateListeners = new ArrayList<>();
+    private List<MeterUpdateListener> meterUpdateListeners = new ArrayList<>();
     private DecimalFormat energyFormat;
 
     public PollEnergyMeter() {
@@ -96,7 +96,7 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
                     // the energy counter we poll might already have been reset and we don't want to add 0 to the cache
                     // except we reset the counter ourselves
                     addValue(now, energy);
-                    powerUpdateListeners.forEach(listener -> listener.onPowerUpdate(now, getAveragePower()));
+                    meterUpdateListeners.forEach(listener -> listener.onMeterUpdate(now, getAveragePower(), energy));
                 }
             }
         };
@@ -217,7 +217,7 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
         return started;
     }
 
-    public void addPowerUpateListener(PowerUpdateListener listener) {
-        this.powerUpdateListeners.add(listener);
+    public void addPowerUpateListener(MeterUpdateListener listener) {
+        this.meterUpdateListeners.add(listener);
     }
 }

@@ -19,7 +19,7 @@ package de.avanux.smartapplianceenabler.control;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.meter.Meter;
-import de.avanux.smartapplianceenabler.meter.PowerUpdateListener;
+import de.avanux.smartapplianceenabler.meter.MeterUpdateListener;
 import de.avanux.smartapplianceenabler.mqtt.*;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.notification.NotificationType;
@@ -48,7 +48,7 @@ import java.util.*;
  * The latter is only powered off after the starting current has been detected until the "on" command is received.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, PowerUpdateListener, NotificationProvider {
+public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, MeterUpdateListener, NotificationProvider {
     private transient Logger logger = LoggerFactory.getLogger(StartingCurrentSwitch.class);
     @XmlAttribute
     private Integer powerThreshold;
@@ -184,7 +184,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
         if(mqttClient != null) {
             mqttClient.subscribe(Meter.TOPIC, true, MeterMessage.class, (topic, message) -> {
                 if(message instanceof MeterMessage) {
-                    onPowerUpdate(message.getTime(), ((MeterMessage) message).power);
+                    onMeterUpdate(message.getTime(), ((MeterMessage) message).power, ((MeterMessage) message).energy);
                 }
             });
             mqttClient.subscribe(WRAPPED_CONTROL_TOPIC, true, ControlMessage.class, (topic, message) -> {
@@ -265,7 +265,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Powe
     }
 
     @Override
-    public void onPowerUpdate(LocalDateTime now, int averagePower) {
+    public void onMeterUpdate(LocalDateTime now, int averagePower, Double energy) {
         boolean applianceOn = this.applianceOn;
         logger.debug("{}: on={} applianceOn={} averagePower={}", applianceId, on, applianceOn, averagePower);
         if (applianceOn) {

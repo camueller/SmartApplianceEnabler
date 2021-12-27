@@ -21,7 +21,6 @@ package de.avanux.smartapplianceenabler.control.ev;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import java.time.LocalDateTime;
 
-import de.avanux.smartapplianceenabler.meter.PowerUpdateListener;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

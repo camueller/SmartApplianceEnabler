@@ -47,7 +47,7 @@ import java.util.Timer;
  * The TCP connection to the device remains established across the polls.
  */
 public class ModbusElectricityMeter extends ModbusSlave implements Meter, ApplianceIdConsumer,
-        Validateable, PollPowerExecutor, PollEnergyExecutor, NotificationProvider, PowerUpdateListener {
+        Validateable, PollPowerExecutor, PollEnergyExecutor, NotificationProvider, MeterUpdateListener {
 
     private transient Logger logger = LoggerFactory.getLogger(ModbusElectricityMeter.class);
     @XmlElement(name = "ModbusRead")
@@ -231,8 +231,8 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     }
 
     @Override
-    public void onPowerUpdate(LocalDateTime now, int averagePower) {
-        MqttMessage message = new MeterMessage(now, averagePower, pollEnergyMeter != null ? this.pollEnergyMeter.getEnergy() : 0.0);
+    public void onMeterUpdate(LocalDateTime now, int averagePower, Double energy) {
+        MqttMessage message = new MeterMessage(now, averagePower, energy);
         mqttClient.publish(mqttPublishTopic, message, false);
     }
 }

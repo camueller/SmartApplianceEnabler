@@ -20,8 +20,8 @@ package de.avanux.smartapplianceenabler.meter;
 
 import java.time.LocalDateTime;
 
-public interface PowerUpdateListener {
+public interface MeterUpdateListener {
 
-    void onPowerUpdate(LocalDateTime now, int averagePower);
+    void onMeterUpdate(LocalDateTime now, int averagePower, Double energy);
 
 }

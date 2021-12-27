@@ -38,7 +38,7 @@ public class PollPowerMeter implements ApplianceIdConsumer {
     private TimestampBasedCache<Double> cache = new TimestampBasedCache<Double>("Power");
     private String applianceId;
     private GuardedTimerTask pollTimerTask;
-    private List<PowerUpdateListener> powerUpdateListeners = new ArrayList<>();
+    private List<MeterUpdateListener> meterUpdateListeners = new ArrayList<>();
     private LocalDateTime averagingIntervalBegin;
 
     public PollPowerMeter() {
@@ -61,7 +61,7 @@ public class PollPowerMeter implements ApplianceIdConsumer {
             public void runTask() {
                 LocalDateTime now = LocalDateTime.now();
                 addValue(now, pollPowerExecutor);
-                powerUpdateListeners.forEach(listener -> listener.onPowerUpdate(now, getAveragePower(now)));
+                meterUpdateListeners.forEach(listener -> listener.onMeterUpdate(now, getAveragePower(now), null));
             }
         };
         if(timer != null) {
@@ -114,7 +114,7 @@ public class PollPowerMeter implements ApplianceIdConsumer {
         return powerValues.size() > 0 ? powerValues.get(powerValues.size() - 1).intValue() : 0;
     }
 
-    public void addPowerUpateListener(PowerUpdateListener listener) {
-        this.powerUpdateListeners.add(listener);
+    public void addPowerUpateListener(MeterUpdateListener listener) {
+        this.meterUpdateListeners.add(listener);
     }
 }
