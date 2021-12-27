@@ -18,34 +18,38 @@
 
 package de.avanux.smartapplianceenabler.mqtt;
 
-import java.time.LocalDateTime;
-
 public class TimeframeIntervalQueueEntry {
+    private String state;
     private String start;
     private String end;
     private String type;
     private Integer min;
     private Integer max;
+    private Boolean enabled;
 
     public TimeframeIntervalQueueEntry() {
     }
 
-    public TimeframeIntervalQueueEntry(String start, String end, String type, Integer min, Integer max) {
+    public TimeframeIntervalQueueEntry(String state, String start, String end, String type, Integer min, Integer max, Boolean enabled) {
+        this.state = state;
         this.start = start;
         this.end = end;
         this.type = type;
         this.min = min;
         this.max = max;
+        this.enabled = enabled;
     }
 
     @Override
     public String toString() {
         return "TimeframeIntervalQueueEntry{" +
+                "state=" + state +
                 "start=" + start +
                 ", end=" + end +
                 ", type='" + type + '\'' +
                 ", min=" + min +
                 ", max=" + max +
+                ", enabled=" + enabled +
                 '}';
     }
 }

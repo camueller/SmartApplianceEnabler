@@ -284,11 +284,13 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
 
     private void publishQueue(LocalDateTime now) {
         TimeframeIntervalQueueEntry[] queueEntries = queue.stream().map(timeframeInterval -> new TimeframeIntervalQueueEntry(
+                timeframeInterval.getState().toString(),
                 timeframeInterval.getInterval().getStart().format(DateTimeFormatter.ISO_DATE_TIME),
                 timeframeInterval.getInterval().getEnd().format(DateTimeFormatter.ISO_DATE_TIME),
                 timeframeInterval.getRequest().getClass().getSimpleName(),
                 timeframeInterval.getRequest().getMin(now),
-                timeframeInterval.getRequest().getMax(now)
+                timeframeInterval.getRequest().getMax(now),
+                timeframeInterval.getRequest().isEnabled()
         )).toArray(TimeframeIntervalQueueEntry[]::new);
 
         TimeframeIntervalQueueMessage message = new TimeframeIntervalQueueMessage(now, queueEntries);
