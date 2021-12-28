@@ -178,6 +178,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
                     }
                     addTimeframeInterval(now, timeframeInterval, false, true);
                 });
+        publishQueue(now);
     }
 
     public void updateQueue(LocalDateTime now, boolean ignoreStartTime) {
@@ -258,6 +259,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
             queue.forEach(timeframeInterval -> timeframeInterval.getRequest().update());
             logger.debug("{}: Updated queue:", applianceId);
             logQueue(now);
+            publishQueue(now);
         }
 
         if(deactivatableTimeframeInterval.isPresent() || activatableTimeframeInterval.isPresent()) {
@@ -272,8 +274,6 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
                                 .orElse(false));
             }
         }
-
-        publishQueue(now);
     }
 
     private void logQueue(LocalDateTime now) {
@@ -294,7 +294,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
         )).toArray(TimeframeIntervalQueueEntry[]::new);
 
         TimeframeIntervalQueueMessage message = new TimeframeIntervalQueueMessage(now, queueEntries);
-        mqttClient.publish(TOPIC, message, false);
+        mqttClient.publish(TOPIC, message, true);
     }
 
     private Optional<TimeframeInterval> getActivatableTimeframeInterval(LocalDateTime now, boolean ignoreStartTime) {

@@ -150,8 +150,12 @@ public class MqttClient {
     }
 
     public void publish(MqttEventName event, MqttMessage message) {
+        publish(event, message, false);
+    }
+
+    public void publish(MqttEventName event, MqttMessage message, boolean retained) {
         String fullTopic = getEventTopic(applianceId, event);
-        publishMessage(fullTopic, message, false);
+        publishMessage(fullTopic, message, retained);
     }
 
     private void publishMessage(String fullTopic, MqttMessage message, boolean retained) {

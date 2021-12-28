@@ -340,13 +340,13 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
             };
             timer.schedule(this.updateStateTimerTask, 0, this.updateStateTimerTask.getPeriod());
         }
+        publishControlMessage();
     }
 
     public void updateStateTimerTaskImpl(LocalDateTime now) {
         updateState(now);
         updateActiveTimeframeIntervalRequest(now);
         updateSoc(now);
-        publishControlMessage();
     }
 
     @Override
@@ -523,6 +523,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                 stopCharging();
             }
             publishControlStateChangedEvent(switchOn);
+            publishControlMessage();
         }
         else {
             logger.debug("{}: Requested state already set.", applianceId);
@@ -600,6 +601,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
             initStateHistory();
         }
 
+        publishEVChargerSocChangedEvent(now, this.socValues);
         publishEVChargerStateChangedEvent(now, previousState, newState, getConnectedVehicleId());
 
         // SOC has to be retrieved after listener notification in order to allow for new listeners interested in SOC
@@ -812,12 +814,15 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                 int calculatedCurrentSoc = calculateCurrentSoc();
                 socChanged = this.socValues.current != null && this.socValues.current != calculatedCurrentSoc;
                 this.socValues.current = calculatedCurrentSoc;
-                if(socChanged && appliance.getTimeframeIntervalHandler() != null
-                        && appliance.getTimeframeIntervalHandler().getActiveTimeframeInterval() != null) {
-                    Integer max = appliance.getTimeframeIntervalHandler().getActiveTimeframeInterval().getRequest().getMax(now);
-                    if(max < 1000) {
-                        chargingAlmostCompleted = true;
+                if(socChanged) {
+                    publishEVChargerSocChangedEvent(now, this.socValues);
+                    if(appliance.getTimeframeIntervalHandler() != null && appliance.getTimeframeIntervalHandler().getActiveTimeframeInterval() != null) {
+                        Integer max = appliance.getTimeframeIntervalHandler().getActiveTimeframeInterval().getRequest().getMax(now);
+                        if(max < 1000) {
+                            chargingAlmostCompleted = true;
+                        }
                     }
+
                 }
                 this.socCalculationRequired = false;
             }
@@ -857,7 +862,6 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                     logger.debug("{}: SOC retrieval is NOT required: {}", applianceId, this.socValues);
                 }
             }
-            publishEVChargerSocChangedEvent(now, this.socValues);
         }
     }
 
@@ -882,18 +886,18 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
 
     private void publishControlStateChangedEvent(boolean on) {
         ControlStateChangedEvent event = new ControlStateChangedEvent(LocalDateTime.now(), on);
-        mqttClient.publish(MqttEventName.ControlStateChanged, event);
+        mqttClient.publish(MqttEventName.ControlStateChanged, event, true);
     }
 
     private void publishEVChargerStateChangedEvent(LocalDateTime now, EVChargerState previousState,
                                                    EVChargerState newState, Integer evId) {
         EVChargerStateChangedEvent event = new EVChargerStateChangedEvent(now, previousState, newState, evId);
-        mqttClient.publish(MqttEventName.EVChargerStateChanged, event);
+        mqttClient.publish(MqttEventName.EVChargerStateChanged, event, true);
     }
 
     private void publishEVChargerSocChangedEvent(LocalDateTime now, SocValues socValues) {
         EVChargerSocChangedEvent event = new EVChargerSocChangedEvent(now, socValues);
-        mqttClient.publish(MqttEventName.EVChargerSocChanged, event);
+        mqttClient.publish(MqttEventName.EVChargerSocChanged, event, true);
     }
 
     private class SocRetriever implements Runnable {
@@ -927,6 +931,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                 }
                 socValues.current = soc.intValue();
                 socRetrievalEnergyMeterValue = meterMessage != null ? meterMessage.energy : 0.0;
+                publishEVChargerSocChangedEvent(now, socValues);
                 if(this.chargingAlmostCompleted) {
                     socRetrievalForChargingAlmostCompleted = true;
                 }
