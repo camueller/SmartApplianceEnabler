@@ -203,7 +203,6 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
                 this.httpTransactionExecutor.closeResponse(response);
                 if(statusCode == HttpStatus.SC_OK) {
                     on = switchOn;
-                    publishControlStateChangedEvent(now, switchOn);
                     publishControlMessage(now, switchOn);
                     if(this.notificationHandler != null && switchOn != on) {
                         this.notificationHandler.sendNotification(switchOn ? NotificationType.CONTROL_ON : NotificationType.CONTROL_OFF);
@@ -218,13 +217,6 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
     private void publishControlMessage(LocalDateTime now, boolean on) {
         MqttMessage message = new ControlMessage(now, on);
         mqttClient.publish(mqttTopic, message, true);
-    }
-
-    private void publishControlStateChangedEvent(LocalDateTime now, boolean on) {
-        if(publishControlStateChangedEvent) {
-            ControlStateChangedEvent event = new ControlStateChangedEvent(now, on);
-            mqttClient.publish(MqttEventName.ControlStateChanged, event);
-        }
     }
 
     public ContentProtocolHandler getContentContentProtocolHandler() {

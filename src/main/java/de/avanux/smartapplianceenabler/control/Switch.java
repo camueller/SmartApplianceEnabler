@@ -135,7 +135,6 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
         } else {
             logGpioAccessDisabled(logger);
         }
-        publishControlStateChangedEvent(now, switchOn);
         publishControlMessage(now, switchOn);
         if(this.notificationHandler != null) {
             this.notificationHandler.sendNotification(switchOn ? NotificationType.CONTROL_ON : NotificationType.CONTROL_OFF);
@@ -165,12 +164,5 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
     private void publishControlMessage(LocalDateTime now, boolean on) {
         MqttMessage message = new ControlMessage(now, isOn());
         mqttClient.publish(mqttTopic, message, true);
-    }
-
-    private void publishControlStateChangedEvent(LocalDateTime now, boolean on) {
-        if(publishControlStateChangedEvent) {
-            ControlStateChangedEvent event = new ControlStateChangedEvent(now, on);
-            mqttClient.publish(MqttEventName.ControlStateChanged, event);
-        }
     }
 }

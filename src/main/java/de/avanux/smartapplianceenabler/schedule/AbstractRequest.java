@@ -21,9 +21,7 @@ package de.avanux.smartapplianceenabler.schedule;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.mqtt.ControlMessage;
-import de.avanux.smartapplianceenabler.mqtt.ControlStateChangedEvent;
 import de.avanux.smartapplianceenabler.mqtt.MqttClient;
-import de.avanux.smartapplianceenabler.mqtt.MqttEventName;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.slf4j.Logger;
@@ -152,14 +150,8 @@ abstract public class AbstractRequest implements Request {
         getMqttClient().subscribe(Control.TOPIC, true, ControlMessage.class, (topic, message) -> {
             if(message instanceof ControlMessage) {
                 controlMessage = (ControlMessage) message;
-            }
-        });
-        getMqttClient().subscribe(MqttEventName.ControlStateChanged, ControlStateChangedEvent.class, (topic, message) -> {
-            if(message instanceof ControlStateChangedEvent) {
-                getLogger().debug("{} Handling event ControlStateChanged", getApplianceId());
-                ControlStateChangedEvent event = (ControlStateChangedEvent) message;
                 if (isActive() || isExpired()) {
-                    if (event.on) {
+                    if (controlMessage.on) {
                         enabledBefore = true;
                         if (meter != null) {
                             meter.startEnergyMeter();
@@ -168,9 +160,9 @@ abstract public class AbstractRequest implements Request {
                         if (meter != null) {
                             meter.stopEnergyMeter();
                         }
-                        runtimeUntilLastStatusChange += getSecondsSinceStatusChange(event.getTime());
+                        runtimeUntilLastStatusChange += getSecondsSinceStatusChange(controlMessage.getTime());
                     }
-                    controlStatusChangedAt = event.getTime();
+                    controlStatusChangedAt = controlMessage.getTime();
                 }
             }
         });
@@ -182,7 +174,7 @@ abstract public class AbstractRequest implements Request {
 
     @Override
     public void remove() {
-        getMqttClient().unsubscribe(MqttEventName.ControlStateChanged);
+        getMqttClient().unsubscribe(Control.TOPIC);
     }
 
     @Override

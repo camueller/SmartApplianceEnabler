@@ -340,7 +340,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
             };
             timer.schedule(this.updateStateTimerTask, 0, this.updateStateTimerTask.getPeriod());
         }
-        publishControlMessage();
+        publishControlMessage(isOn());
     }
 
     public void updateStateTimerTaskImpl(LocalDateTime now) {
@@ -522,8 +522,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                 logger.info("{}: Switching off", applianceId);
                 stopCharging();
             }
-            publishControlStateChangedEvent(switchOn);
-            publishControlMessage();
+            publishControlMessage(switchOn);
         }
         else {
             logger.debug("{}: Requested state already set.", applianceId);
@@ -603,6 +602,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
 
         publishEVChargerSocChangedEvent(now, this.socValues);
         publishEVChargerStateChangedEvent(now, previousState, newState, getConnectedVehicleId());
+        publishControlMessage(isOn());
 
         // SOC has to be retrieved after listener notification in order to allow for new listeners interested in SOC
         if(previousState == EVChargerState.VEHICLE_NOT_CONNECTED && newState == EVChargerState.VEHICLE_CONNECTED) {
@@ -865,10 +865,10 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         }
     }
 
-    private void publishControlMessage() {
+    private void publishControlMessage(boolean on) {
         EvChargerMessage message = new EvChargerMessage(
                 LocalDateTime.now(),
-                isOn(),
+                on,
                 getState().name(),
                 stateLastChangedTimestamp,
                 socValues.initial,
@@ -882,11 +882,6 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                 useOptionalEnergy
         );
         mqttClient.publish(Control.TOPIC, message, true);
-    }
-
-    private void publishControlStateChangedEvent(boolean on) {
-        ControlStateChangedEvent event = new ControlStateChangedEvent(LocalDateTime.now(), on);
-        mqttClient.publish(MqttEventName.ControlStateChanged, event, true);
     }
 
     private void publishEVChargerStateChangedEvent(LocalDateTime now, EVChargerState previousState,

@@ -148,7 +148,6 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
                     executeTransaction(executor, true);
                     result = Integer.valueOf(write.child().getValue()).equals(((WriteHoldingRegisterExecutor) executor).getResult());
                 }
-                publishControlStateChangedEvent(switchOn);
                 publishControlMessage(switchOn);
                 if(this.notificationHandler != null && switchOn != on) {
                     publishControlMessage(switchOn);
@@ -199,13 +198,6 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
     private void publishControlMessage(boolean on) {
         MqttMessage message = new ControlMessage(LocalDateTime.now(), on);
         mqttClient.publish(mqttTopic, message, true);
-    }
-
-    private void publishControlStateChangedEvent(boolean on) {
-        if(publishControlStateChangedEvent) {
-            ControlStateChangedEvent event = new ControlStateChangedEvent(LocalDateTime.now(), on);
-            mqttClient.publish(MqttEventName.ControlStateChanged, event);
-        }
     }
 
     private RegisterValueType getRegisterValueType(ReadRegisterType registerType, RegisterValueType defaultRegisterValueType) {

@@ -23,7 +23,6 @@ public class MqttEventName {
 
     public static final MqttEventName StartingCurrentDetected = new MqttEventName("StartingCurrentDetected");
     public static final MqttEventName FinishedCurrentDetected = new MqttEventName("FinishedCurrentDetected");
-    public static final MqttEventName ControlStateChanged = new MqttEventName("ControlStateChanged");
     public static final MqttEventName EVChargerStateChanged = new MqttEventName("EVChargerStateChanged");
     public static final MqttEventName EVChargerSocChanged = new MqttEventName("EVChargerSocChanged");
     private String name;

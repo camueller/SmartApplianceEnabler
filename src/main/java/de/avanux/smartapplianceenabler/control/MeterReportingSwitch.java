@@ -166,7 +166,6 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
     protected void onControlStateChanged(LocalDateTime now, boolean on) {
         if(onBefore != null && on != onBefore) {
             logger.info("{}: Switch {} detected.", applianceId, (on ? "on" : "off"));
-            publishControlStateChangedEvent(now, on);
             publishControlMessage(now, on);
             if(this.notificationHandler != null) {
                 this.notificationHandler.sendNotification(on ? NotificationType.CONTROL_ON : NotificationType.CONTROL_OFF);
@@ -177,12 +176,5 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
     private void publishControlMessage(LocalDateTime now, boolean on) {
         MqttMessage message = new ControlMessage(now, on);
         mqttClient.publish(mqttPublishTopic, message, true);
-    }
-
-    private void publishControlStateChangedEvent(LocalDateTime now, boolean on) {
-        if(publishControlStateChangedEvent) {
-            ControlStateChangedEvent event = new ControlStateChangedEvent(now, on);
-            mqttClient.publish(MqttEventName.ControlStateChanged, event);
-        }
     }
 }

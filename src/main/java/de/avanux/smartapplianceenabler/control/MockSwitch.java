@@ -77,7 +77,6 @@ public class MockSwitch implements Control, ApplianceIdConsumer {
 
     public boolean on(LocalDateTime now, boolean switchOn) {
         logger.info("{}: Switching {}", applianceId, (switchOn ? "on" : "off"));
-        publishControlStateChangedEvent(now, switchOn);
         publishControlMessage(now, switchOn);
         return true;
     }
@@ -85,12 +84,5 @@ public class MockSwitch implements Control, ApplianceIdConsumer {
     private void publishControlMessage(LocalDateTime now, boolean on) {
         MqttMessage message = new ControlMessage(now, on);
         mqttClient.publish(mqttTopic, message, true);
-    }
-
-    private void publishControlStateChangedEvent(LocalDateTime now, boolean on) {
-        if(publishControlStateChangedEvent) {
-            ControlStateChangedEvent event = new ControlStateChangedEvent(now, on);
-            mqttClient.publish(MqttEventName.ControlStateChanged, event);
-        }
     }
 }

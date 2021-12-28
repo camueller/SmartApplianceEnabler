@@ -231,7 +231,6 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Mete
             startingCurrentDetected = false;
         }
         on = switchOn;
-        publishControlStateChangedEvent(switchOn);
         publishControlMessage(switchOn);
         if(this.notificationHandler != null && switchOn != on) {
             this.notificationHandler.sendNotification(switchOn ? NotificationType.CONTROL_ON : NotificationType.CONTROL_OFF);
@@ -257,11 +256,6 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Mete
         MqttMessage message = new StartingCurrentSwitchMessage(LocalDateTime.now(), on,
                 getPowerThreshold(), getStartingCurrentDetectionDuration(), getFinishedCurrentDetectionDuration());
         mqttClient.publish(Control.TOPIC, message, true);
-    }
-
-    private void publishControlStateChangedEvent(boolean on) {
-        ControlStateChangedEvent event = new ControlStateChangedEvent(LocalDateTime.now(), on);
-        mqttClient.publish(MqttEventName.ControlStateChanged, event);
     }
 
     @Override
@@ -334,7 +328,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Mete
             switchOnTime = now;
             Integer runtime = timeframeIntervalHandler.suggestRuntime();
             timeframeIntervalHandler.setRuntimeDemand(now, runtime, null, false);
-            publishControlStateChangedEvent(on);
+            publishControlMessage(on);
         }
     }
 
