@@ -869,15 +869,6 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         EvChargerMessage message = new EvChargerMessage(
                 LocalDateTime.now(),
                 on,
-                getState().name(),
-                stateLastChangedTimestamp,
-                socValues.initial,
-                socInitialTimestamp,
-                socValues.retrieved,
-                socTimestamp,
-                socValues.current,
-                socValues.batteryCapacity,
-                chargeLoss,
                 chargePower,
                 useOptionalEnergy
         );
@@ -891,7 +882,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     }
 
     private void publishEVChargerSocChangedEvent(LocalDateTime now, SocValues socValues) {
-        EVChargerSocChangedEvent event = new EVChargerSocChangedEvent(now, socValues);
+        EVChargerSocChangedEvent event = new EVChargerSocChangedEvent(now, socValues, chargeLoss);
         mqttClient.publish(MqttEventName.EVChargerSocChanged, event, true);
     }
 

@@ -21,43 +21,16 @@ package de.avanux.smartapplianceenabler.mqtt;
 import java.time.LocalDateTime;
 
 public class EvChargerMessage extends ControlMessage {
-    private String state;
-    private String stateSinceTime;
-    private Integer socInitial;
-    private String socInitialTime;
-    private Integer socRetrieved;
-    private String socRetrievedTime;
-    private Integer socCurrent;
-    private Integer batteryCapacity;
-    private Double chargeLoss;
     private Integer chargePower;
     private Boolean useOptionalEnergy;
 
     public EvChargerMessage(
             LocalDateTime time,
             boolean on,
-            String state,
-            LocalDateTime stateSinceTime,
-            Integer socInitial,
-            LocalDateTime socInitialTime,
-            Integer socRetrieved,
-            LocalDateTime socRetrievedTime,
-            Integer socCurrent,
-            Integer batteryCapacity,
-            Double chargeLoss,
             Integer chargePower,
             Boolean useOptionalEnergy
     ) {
         super(time, on);
-        this.state = state;
-        this.stateSinceTime = toString(stateSinceTime);
-        this.socInitial = socInitial;
-        this.socInitialTime = toString(socInitialTime);
-        this.socRetrieved = socRetrieved;
-        this.socRetrievedTime = toString(socRetrievedTime);
-        this.socCurrent = socCurrent;
-        this.batteryCapacity = batteryCapacity;
-        this.chargeLoss = chargeLoss;
         this.chargePower = chargePower;
         this.useOptionalEnergy = useOptionalEnergy;
     }
@@ -66,15 +39,6 @@ public class EvChargerMessage extends ControlMessage {
     public String toString() {
         return "EvChargerMessage{" +
                 "on=" + on +
-                ", state='" + state + '\'' +
-                ", stateSinceTime='" + stateSinceTime + '\'' +
-                ", socInitial=" + socInitial +
-                ", socInitialTime='" + socInitialTime + '\'' +
-                ", socRetrieved=" + socRetrieved +
-                ", socRetrievedTime='" + socRetrievedTime + '\'' +
-                ", socCurrent=" + socCurrent +
-                ", batteryCapacity=" + batteryCapacity +
-                ", chargeLoss=" + chargeLoss +
                 ", chargePower=" + chargePower +
                 ", useOptionalEnergy=" + useOptionalEnergy +
                 '}';

@@ -24,13 +24,15 @@ import java.time.LocalDateTime;
 
 public class EVChargerSocChangedEvent extends MqttEvent {
     public SocValues socValues;
+    private Double chargeLoss;
 
     public EVChargerSocChangedEvent() {
     }
 
-    public EVChargerSocChangedEvent(LocalDateTime time, SocValues socValues) {
+    public EVChargerSocChangedEvent(LocalDateTime time, SocValues socValues, Double chargeLoss) {
         setTime(time);
         this.socValues = socValues;
+        this.chargeLoss = chargeLoss;
     }
 
     @Override
@@ -38,6 +40,7 @@ public class EVChargerSocChangedEvent extends MqttEvent {
         return "ControlStateChangedEvent{" +
                 "time=" + getTime() +
                 ", socValues=" + socValues +
+                ", chargeLoss=" + chargeLoss +
                 '}';
     }
 }
