@@ -47,6 +47,7 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
     private transient NotificationHandler notificationHandler;
     private transient GuardedTimerTask mqttPublishTimerTask;
     private transient MqttClient mqttClient;
+    private transient MqttMessage mqttMessageSent;
     private transient String mqttTopic = Control.TOPIC;
     private transient boolean publishControlStateChangedEvent = true;
 
@@ -197,7 +198,10 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
 
     private void publishControlMessage(boolean on) {
         MqttMessage message = new ControlMessage(LocalDateTime.now(), on);
-        mqttClient.publish(mqttTopic, message, true);
+        if(!message.equals(mqttMessageSent)) {
+            mqttClient.publish(mqttTopic, message, true);
+            mqttMessageSent = message;
+        }
     }
 
     private RegisterValueType getRegisterValueType(ReadRegisterType registerType, RegisterValueType defaultRegisterValueType) {

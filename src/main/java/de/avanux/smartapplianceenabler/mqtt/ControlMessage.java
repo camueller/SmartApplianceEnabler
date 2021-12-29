@@ -18,6 +18,9 @@
 
 package de.avanux.smartapplianceenabler.mqtt;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.time.LocalDateTime;
 
 public class ControlMessage extends MqttMessage{
@@ -29,6 +32,22 @@ public class ControlMessage extends MqttMessage{
     public ControlMessage(LocalDateTime time, boolean on) {
         setTime(time);
         this.on = on;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ControlMessage that = (ControlMessage) o;
+
+        return new EqualsBuilder().append(on, that.on).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37).append(on).toHashCode();
     }
 
     @Override

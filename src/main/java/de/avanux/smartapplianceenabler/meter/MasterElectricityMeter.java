@@ -25,6 +25,7 @@ import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.mqtt.ControlMessage;
 import de.avanux.smartapplianceenabler.mqtt.MeterMessage;
 import de.avanux.smartapplianceenabler.mqtt.MqttClient;
+import de.avanux.smartapplianceenabler.mqtt.MqttMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,6 +51,8 @@ public class MasterElectricityMeter implements ApplianceIdConsumer, Validateable
     private transient boolean isMasterControlOn;
     private transient boolean isSlaveControlOn;
     private transient MqttClient mqttClient;
+    private transient MqttMessage masterMeterMessageSent;
+    private transient MqttMessage slaveMeterMessageSent;
     final static public String WRAPPED_METER_TOPIC = "Wrapped" + Meter.TOPIC;
 
     @Override
@@ -165,9 +168,15 @@ public class MasterElectricityMeter implements ApplianceIdConsumer, Validateable
         }
 
         var masterMeterPublishTopic = MqttClient.getApplianceTopic(applianceId, Meter.TOPIC);
-        mqttClient.publish(masterMeterPublishTopic, false, masterMeterMessage, false,false);
+        if(!masterMeterMessage.equals(masterMeterMessageSent)) {
+            mqttClient.publish(masterMeterPublishTopic, false, masterMeterMessage, false, true);
+            masterMeterMessageSent = masterMeterMessage;
+        }
 
         var slaveMeterPublishTopic = MqttClient.getApplianceTopic(slaveMeter.getApplianceId(), Meter.TOPIC);
-        mqttClient.publish(slaveMeterPublishTopic, false, slaveMeterMessage, false,false);
+        if(!slaveMeterMessage.equals(slaveMeterMessageSent)) {
+            mqttClient.publish(slaveMeterPublishTopic, false, slaveMeterMessage, false, true);
+            slaveMeterMessageSent = slaveMeterMessage;
+        }
     }
 }

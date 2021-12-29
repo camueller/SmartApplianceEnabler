@@ -78,6 +78,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Mete
     private transient NotificationHandler notificationHandler;
     private transient GuardedTimerTask mqttPublishTimerTask;
     private transient MqttClient mqttClient;
+    private transient MqttMessage mqttMessageSent;
     final static public String WRAPPED_CONTROL_TOPIC = "Wrapped" + Control.TOPIC;
 
 
@@ -255,7 +256,10 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Mete
     private void publishControlMessage(boolean on) {
         MqttMessage message = new StartingCurrentSwitchMessage(LocalDateTime.now(), on,
                 getPowerThreshold(), getStartingCurrentDetectionDuration(), getFinishedCurrentDetectionDuration());
-        mqttClient.publish(Control.TOPIC, message, true);
+        if(!message.equals(mqttMessageSent)) {
+            mqttClient.publish(Control.TOPIC, message, true);
+            mqttMessageSent = message;
+        }
     }
 
     @Override

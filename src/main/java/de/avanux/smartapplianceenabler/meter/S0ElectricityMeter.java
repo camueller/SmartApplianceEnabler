@@ -54,6 +54,7 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
     private transient GuardedTimerTask mqttPublishTimerTask;
     private transient NotificationHandler notificationHandler;
     private transient MqttClient mqttClient;
+    private transient MqttMessage mqttMessageSent;
     private transient String mqttPublishTopic = Meter.TOPIC;
 
     @Override
@@ -149,7 +150,10 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
                             pulsePowerMeter != null ? pulsePowerMeter.getAveragePower() : 0,
                             pulseEnergyMeter != null ? pulseEnergyMeter.getEnergy() : 0
                     );
-                    mqttClient.publish(mqttPublishTopic, message, false);
+                    if(!message.equals(mqttMessageSent)) {
+                        mqttClient.publish(mqttPublishTopic, message, true);
+                        mqttMessageSent = message;
+                    }
                 }
                 catch(Exception e) {
                     logger.error("{}: Error publishing MQTT message", getApplianceId(), e);

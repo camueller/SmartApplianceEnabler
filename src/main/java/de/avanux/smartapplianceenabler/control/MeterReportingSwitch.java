@@ -51,6 +51,7 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
     private transient LocalDateTime lastOn;
     private transient Boolean onBefore;
     private transient MqttClient mqttClient;
+    private transient MqttMessage mqttMessageSent;
     private transient GuardedTimerTask mqttPublishTimerTask;
     private transient MeterMessage meterMessage;
     private transient String mqttPublishTopic = Control.TOPIC;
@@ -175,6 +176,9 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
 
     private void publishControlMessage(LocalDateTime now, boolean on) {
         MqttMessage message = new ControlMessage(now, on);
-        mqttClient.publish(mqttPublishTopic, message, true);
+        if(!message.equals(mqttMessageSent)) {
+            mqttClient.publish(mqttPublishTopic, message, true);
+            mqttMessageSent = message;
+        }
     }
 }

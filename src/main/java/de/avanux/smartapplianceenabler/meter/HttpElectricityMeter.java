@@ -71,6 +71,7 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
     private transient HttpHandler httpHandler = new HttpHandler();
     private transient ContentProtocolHandler contentContentProtocolHandler;
     private transient MqttClient mqttClient;
+    private transient MqttMessage mqttMessageSent;
     private transient String mqttPublishTopic = Meter.TOPIC;
 
     @Override
@@ -268,6 +269,9 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
     @Override
     public void onMeterUpdate(LocalDateTime now, int averagePower, Double energy) {
         MqttMessage message = new MeterMessage(now, averagePower, energy);
-        mqttClient.publish(mqttPublishTopic, message, false);
+        if(!message.equals(mqttMessageSent)) {
+            mqttClient.publish(mqttPublishTopic, message, true);
+            mqttMessageSent = message;
+        }
     }
 }

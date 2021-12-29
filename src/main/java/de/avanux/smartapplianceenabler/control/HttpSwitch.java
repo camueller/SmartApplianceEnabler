@@ -72,6 +72,7 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
     private transient NotificationHandler notificationHandler;
     private transient GuardedTimerTask mqttPublishTimerTask;
     private transient MqttClient mqttClient;
+    private transient MqttMessage mqttMessageSent;
     private transient String mqttTopic = Control.TOPIC;
     private transient boolean publishControlStateChangedEvent = true;
 
@@ -216,7 +217,10 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
 
     private void publishControlMessage(LocalDateTime now, boolean on) {
         MqttMessage message = new ControlMessage(now, on);
-        mqttClient.publish(mqttTopic, message, true);
+        if(!message.equals(mqttMessageSent)) {
+            mqttClient.publish(mqttTopic, message, true);
+            mqttMessageSent = message;
+        }
     }
 
     public ContentProtocolHandler getContentContentProtocolHandler() {

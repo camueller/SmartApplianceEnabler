@@ -18,6 +18,9 @@
 
 package de.avanux.smartapplianceenabler.mqtt;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.time.LocalDateTime;
 
 public class MeterMessage extends MqttMessage {
@@ -31,6 +34,22 @@ public class MeterMessage extends MqttMessage {
         setTime(time);
         this.power = power;
         this.energy = energy;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        MeterMessage that = (MeterMessage) o;
+
+        return new EqualsBuilder().append(power, that.power).append(energy, that.energy).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37).append(power).append(energy).toHashCode();
     }
 
     @Override
