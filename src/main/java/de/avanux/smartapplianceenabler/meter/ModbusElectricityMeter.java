@@ -60,7 +60,6 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     private transient PollEnergyMeter pollEnergyMeter;
     private transient NotificationHandler notificationHandler;
     private transient MqttClient mqttClient;
-    private transient MqttMessage mqttMessageSent;
     private transient String mqttPublishTopic = Meter.TOPIC;
 
     @Override
@@ -234,9 +233,6 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     @Override
     public void onMeterUpdate(LocalDateTime now, int averagePower, Double energy) {
         MqttMessage message = new MeterMessage(now, averagePower, energy);
-        if(!message.equals(mqttMessageSent)) {
-            mqttClient.publish(mqttPublishTopic, message, true);
-            mqttMessageSent = message;
-        }
+        mqttClient.publish(mqttPublishTopic, message, false);
     }
 }
