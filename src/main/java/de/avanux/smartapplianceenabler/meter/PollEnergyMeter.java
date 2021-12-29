@@ -90,14 +90,14 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
             @Override
             public void runTask() {
                 LocalDateTime now = LocalDateTime.now();
-                Double energy = pollEnergyExecutor.pollEnergy(now);
+                double energy = getEnergy();
                 setLastPollDurationMillis(Duration.between(now, LocalDateTime.now()).toMillis());
-                if (energy != null && energy.floatValue() > 0.0f) {
+                if (energy > 0.0f) {
                     // the energy counter we poll might already have been reset and we don't want to add 0 to the cache
                     // except we reset the counter ourselves
                     addValue(now, energy);
-                    meterUpdateListeners.forEach(listener -> listener.onMeterUpdate(now, getAveragePower(), energy));
                 }
+                meterUpdateListeners.forEach(listener -> listener.onMeterUpdate(now, getAveragePower(), energy));
             }
         };
     }
