@@ -21,22 +21,28 @@ package de.avanux.smartapplianceenabler.control.ev;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import java.time.LocalDateTime;
+
 public class SocValues {
     public Integer batteryCapacity;
     public Integer initial;
+    public transient LocalDateTime initialTimestamp;
     public Integer retrieved;
+    public transient LocalDateTime retrievedTimestamp;
     public Integer current;
 
     public SocValues() {
     }
 
     public SocValues(SocValues input) {
-        this(input.batteryCapacity, input.initial, input.retrieved, input.current);
+        this(input.batteryCapacity, input.initial, input.initialTimestamp, input.retrieved, input.retrievedTimestamp, input.current);
     }
 
-    public SocValues(Integer batteryCapacity, Integer initial, Integer retrieved, Integer current) {
+    public SocValues(Integer batteryCapacity, Integer initial, LocalDateTime initialTimestamp, Integer retrieved, LocalDateTime retrievedTimestamp, Integer current) {
         this.initial = initial;
+        this.initialTimestamp = initialTimestamp;
         this.retrieved = retrieved;
+        this.retrievedTimestamp = retrievedTimestamp;
         this.current = current;
         this.batteryCapacity = batteryCapacity;
     }

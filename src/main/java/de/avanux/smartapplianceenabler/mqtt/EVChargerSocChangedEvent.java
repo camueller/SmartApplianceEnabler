@@ -24,6 +24,8 @@ import java.time.LocalDateTime;
 
 public class EVChargerSocChangedEvent extends MqttEvent {
     public SocValues socValues;
+    public String socInitialTime;
+    public String socRetrievedTime;
     private Double chargeLoss;
 
     public EVChargerSocChangedEvent() {
@@ -32,6 +34,8 @@ public class EVChargerSocChangedEvent extends MqttEvent {
     public EVChargerSocChangedEvent(LocalDateTime time, SocValues socValues, Double chargeLoss) {
         setTime(time);
         this.socValues = socValues;
+        this.socInitialTime = toString(socValues.initialTimestamp);
+        this.socRetrievedTime = toString(socValues.retrievedTimestamp);
         this.chargeLoss = chargeLoss;
     }
 
@@ -40,6 +44,8 @@ public class EVChargerSocChangedEvent extends MqttEvent {
         return "ControlStateChangedEvent{" +
                 "time=" + getTime() +
                 ", socValues=" + socValues +
+                ", socInitialTime=" + socInitialTime +
+                ", socRetrievedTime=" + socRetrievedTime +
                 ", chargeLoss=" + chargeLoss +
                 '}';
     }

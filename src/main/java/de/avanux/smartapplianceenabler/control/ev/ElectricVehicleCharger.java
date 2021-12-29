@@ -75,9 +75,6 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     private List<ElectricVehicle> vehicles;
     private transient Integer connectedVehicleId;
     private transient SocValues socValues = new SocValues();;
-    private transient SocValues socValuesSentToListeners;
-    private transient LocalDateTime socTimestamp;
-    private transient LocalDateTime socInitialTimestamp;
     private transient boolean socScriptAsync = true;
     private transient boolean socScriptRunning;
     private transient boolean socCalculationRequired;
@@ -245,12 +242,12 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
 
     public Long getSocInitialTimestamp() {
         ZoneOffset zoneOffset = ZoneId.systemDefault().getRules().getOffset(LocalDateTime.now());
-        return socInitialTimestamp != null ? socInitialTimestamp.toEpochSecond(zoneOffset) * 1000 : null;
+        return socValues.initialTimestamp != null ? socValues.initialTimestamp.toEpochSecond(zoneOffset) * 1000 : null;
     }
 
     public void setSocInitialTimestamp(LocalDateTime socInitialTimestamp) {
-        if(this.socInitialTimestamp == null) {
-            this.socInitialTimestamp = socInitialTimestamp;
+        if(this.socValues.initialTimestamp == null) {
+            this.socValues.initialTimestamp = socInitialTimestamp;
         }
     }
 
@@ -593,7 +590,6 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
             }
             setConnectedVehicleId(null);
             this.socValues = new SocValues();
-            this.socInitialTimestamp = null;
             this.socRetrievalForChargingAlmostCompleted = false;
             this.socRetrievalEnergyMeterValue = 0.0f;
             this.appliance.getTimeframeIntervalHandler().clearQueue();
@@ -839,7 +835,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                         || this.socValues.retrieved == null
                         || (chargingAlmostCompleted && !socRetrievalForChargingAlmostCompleted)
                         || ((this.socValues.retrieved + updateAfterIncrease <= this.socValues.current)
-                            && (updateAfterSeconds == null || now.minusSeconds(updateAfterSeconds).isAfter(this.socTimestamp)))
+                            && (updateAfterSeconds == null || now.minusSeconds(updateAfterSeconds).isAfter(this.socValues.retrievedTimestamp)))
                 ) {
                     if(!this.socScriptRunning) {
                         logger.debug( "{}: SOC retrieval is required: {}", applianceId, this.socValues);
@@ -933,9 +929,9 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
      */
     public Double getStateOfCharge(LocalDateTime now, ElectricVehicle electricVehicle) {
         Double soc = electricVehicle.getStateOfCharge();
-        this.socTimestamp = now;
-        if(this.socInitialTimestamp == null) {
-            this.socInitialTimestamp = this.socTimestamp;
+        this.socValues.retrievedTimestamp = now;
+        if(this.socValues.initialTimestamp == null) {
+            this.socValues.initialTimestamp = this.socValues.retrievedTimestamp;
         }
         return soc;
     }
