@@ -168,7 +168,7 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
             pollEnergyMeter = new PollEnergyMeter();
             pollEnergyMeter.setApplianceId(applianceId);
             pollEnergyMeter.setPollEnergyExecutor(this);
-            pollEnergyMeter.addPowerUpateListener(this);
+            pollEnergyMeter.addMeterUpateListener(this);
         }
         if(this.httpConfiguration != null) {
             this.httpTransactionExecutor.setConfiguration(this.httpConfiguration);

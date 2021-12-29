@@ -217,7 +217,7 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
         return started;
     }
 
-    public void addPowerUpateListener(MeterUpdateListener listener) {
+    public void addMeterUpateListener(MeterUpdateListener listener) {
         this.meterUpdateListeners.add(listener);
     }
 }
