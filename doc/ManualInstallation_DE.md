@@ -185,23 +185,11 @@ pi@raspberrypi ~ $ sudo cp /usr/share/zoneinfo/Europe/Berlin /etc/localtime
 ```
 
 ## Java installieren
-### Smart Appliancer Enabler bis einschliesslich Version 1.4
-Die Installation des vom *Smart Appliance Enabler* benötigten Java 8 erfolgt ganz einfach mit
-```console
-pi@raspberrypi ~ $ sudo apt install oracle-java8-jdk
-```
-Die erfolgreiche Installation läßt sich mit folgendem Befehl überprüfen:
-```console
-pi@raspberrypi:~ $ java -version
-java version "1.8.0_65"
-Java(TM) SE Runtime Environment (build 1.8.0_65-b17)
-Java HotSpot(TM) Client VM (build 25.65-b01, mixed mode)
-```
-### Smart Appliancer Enabler ab Version 1.5
-
+Zur Installation von Java ist folgender Befehl erforderlich:
 ```console
 pi@raspberrypi:~ $ sudo apt install openjdk-11-jre-headless
 ```
+
 Die erfolgreiche Installation läßt sich mit folgendem Befehl überprüfen:
 ```console
 pi@raspberrypi:~ $ java -version
@@ -232,7 +220,7 @@ Da die alten Pi-Modelle bzw. die Pi-Zero weniger Rechnen-Leistung bereitstellen,
 ## pigpiod installieren
 Falls der *Smart Appliance Enabler* auf die GPIO-Anschlüsse des Raspberry Pi zugreifen soll, muss die Bibliothek [pigpiod](http://abyz.me.uk/rpi/pigpio/) installiert sein. Das lässt sich mit folgendem Befehlen erreichen:
 ```console
-pi@raspberrypi ~ $ sudo apt install pigpiod
+pi@raspberrypi:~ $ sudo apt install pigpiod
 ```
 Der `pigpiod` ist standardmässig so installiert, dass er nur lokale Zugriffe akzeptiert. Obwohl der *Smart Appliance Enabler* tatsächlich via `localhost` zugreift, ist der Zugriff auf den `pigpiod` nicht möglich, wenn er mit dieser Einschränkung gestartet wird. Zur Deaktivierung dieser Einschränkung muss in in der Datei `/lib/systemd/system/pigpiod.service` in der Zeile mit `ExecStart` der Parameter `-l` entfernt werden, sdoass sie wie folgt aussieht:
 ```console
@@ -252,7 +240,7 @@ Falls noch kein MQTT-Broker vorhanden ist, empfiehlt sich die Verwendung von [Ec
 ### Installation und Konfiguration
 [Eclipse Mosquitto](https://mosquitto.org/) lässt sich direkt aus Raspbian-Repository installieren:
 ```console
-sudo apt install mosquitto
+pi@raspberrypi:~ $ sudo apt install mosquitto
 ```
 In der Konfigurationsdatei `/etc/mosquitto/mosquitto.conf` sollte die Speicherung der MQTT-Nachrichten auf der SD-Karte deaktiviert werden. Dazu muss die entsprechende Zeile wie folgt aussehen:
 ```
@@ -262,6 +250,16 @@ Um nicht-authentifizierten Zugriff auf den MQTT-Broker zuzulassen muss die Datei
 ```
 listener 1883
 allow_anonymous true
+```
+Zum Starten eignet sich folgender Befehl:
+```console
+pi@raspberrypi:~ $ sudo systemctl start mosquitto
+```
+Damit der MQTT-Broker beim Systemstart ebenfalls gestartet wird (via Systemd), muss folgender Befehl ausgeführt werden:
+```console
+pi@raspberrypi ~ $ sudo systemctl enable mosquitto
+Synchronizing state of mosquitto.service with SysV service script with /lib/systemd/systemd-sysv-install.
+Executing: /lib/systemd/systemd-sysv-install enable mosquitto
 ```
 
 ### Installation und Konfiguration mit Docker
@@ -275,16 +273,60 @@ $ docker run -it --rm -p 1883:1883 --name mosquitto eclipse-mosquitto mosquitto 
 ```
 
 ## Node-RED
-[Node-RED](https://nodered.org/) kann verwendet werden, um den *Smart Appliance Enabler* mit anderen Hausautomatisierungen zu integrieren oder den MQTT-Nachrichten zu visualisieren (Dashboard).
+[Node-RED](https://nodered.org/) kann verwendet werden, um die MQTT-Nachrichten des *Smart Appliance Enabler* zu visualisieren oder ihn mit anderen Hausautomatisierungen zu integrieren.
 
 ### Installation ohne Docker
-Node-RED kann über das Raspbian-Repository mit `apt install ...` installiert werden, aber man erhält dann eine veraltete Version von Node-RED und Node.js. Eine relativ aktuelle Version von Node.js ist beispielsweise erforderlich für die nachfolgende Installation von Bibliotheken direkt aus `github`. Deshalb sollte die Installation von Node-RED und auch node.js entsprechend der [Anleitung auf der Node-RED-Homepage](https://nodered.org/docs/getting-started/raspberrypi) erfolgen:
+Für Node-RED sollte ein eigener User verwendet werden, der zur `sudo`-Gruppe hinzugefügrt wird und dessen Passwort danach noch gesetzt wird:
 ```console
-$ bash <(curl -sL https://raw.githubusercontent.com/node-red/linux-installers/master/deb/update-nodejs-and-nodered)
+pi@raspberrypi ~ $ sudo useradd -d /opt/nodered -m -s /bin/bash nodered
+pi@raspberrypi ~ $ sudo usermod -a -G sudo nodered
+pi@raspberrypi ~ $ sudo passwd nodered
+```
+
+Ab jetzt sollte mit diesem User gearbeitet werden.
+
+Node-RED kann über das Raspbian-Repository mit `apt install ...` installiert werden, aber man erhält dann eine veraltete Version von Node-RED und Node.js, wobei letztere möglicherweise deshalb nicht in der lage dazu ist, Bibliotheken direkt von `github` zu installieren. Deshalb sollte die Installation von Node-RED und auch node.js entsprechend der [Anleitung auf der Node-RED-Homepage](https://nodered.org/docs/getting-started/raspberrypi) erfolgen:
+```console
+nodered@raspberrypi ~ $ bash <(curl -sL https://raw.githubusercontent.com/node-red/linux-installers/master/deb/update-nodejs-and-nodered)
+Running Node-RED update for user nodered at /opt/nodered on raspbian
+
+[sudo] password for nodered: 
+
+This can take 20-30 minutes on the slower Pi versions - please wait.
+
+  Stop Node-RED                       ✔
+  Remove old version of Node-RED      ✔
+  Remove old version of Node.js       ✔   
+  Install Node.js 14 LTS              ✔   v14.18.2   Npm 6.14.15
+  Clean npm cache                     ✔
+  Install Node-RED core               ✔   2.1.4 
+  Move global nodes to local          -
+  Npm rebuild existing nodes          ✔
+  Install extra Pi nodes              -
+  Add shortcut commands               ✔
+  Update systemd script               ✔
+                                      
+
+Any errors will be logged to   /var/log/nodered-install.log
+All done.
+You can now start Node-RED with the command  node-red-start
+  or using the icon under   Menu / Programming / Node-RED
+Then point your browser to localhost:1880 or http://{your_pi_ip-address}:1880
+
+Started :  Sat Jan  1 15:32:31 CET 2022 
+Finished:  Sat Jan  1 15:35:15 CET 2022
+ 
+You may want to run   node-red admin init
+to configure your initial options and settings.
 ```
 Zum Starten eignet sich folgender Befehl:
 ```console
-$ sudo systemctl start nodered.service
+nodered@raspberrypi ~ $ sudo systemctl start nodered
+```
+Damit Node-RED beim Systemstart ebenfalls gestartet wird (via Systemd), muss folgender Befehl ausgeführt werden:
+```console
+pi@raspberrypi ~ $ sudo systemctl enable nodered
+Created symlink /etc/systemd/system/multi-user.target.wants/nodered.service → /lib/systemd/system/nodered.service.
 ```
 
 ### Installation mit Docker
@@ -308,11 +350,11 @@ Folgende Module müssen über `Manage Palette -> Install` installiert werden:
 
 Für die nachfolgende Installation von `camueller/node-red-contrib-ui-timelines-chart` muss `git` installiert sein, was sich durch den Befehl `sudo apt install git` erreichen lässt.
 
-Einige weitere Bibliotheken müssen manuell in der Shell via `npm` installiert werden:
+Einige weitere Bibliotheken müssen manuell in der Shell installiert werden, während man sich im Verzeichnis `~/.node-red` (Docker: `/data`) befindet:
 - camueller/node-red-contrib-ui-timelines-chart
 - date-fns
 
-Dazu muss in das Verzeichnis `~/.node-red` (Docker: `/data`) gewechselt werden und dort der nachfolgende Befehl für jeden Namen aus der vorangegangen Liste einmal ausgeführt werden, wobei `<name>` jeweils durch den Listeneintrag ersetz werden muss:
+Dazu muss der nachfolgende Befehl für jeden Namen aus der vorangegangen Liste einmal ausgeführt werden, wobei `<name>` jeweils durch den Listeneintrag ersetz werden muss:
 ```console
 $ npm i <name>
 ```
@@ -343,13 +385,9 @@ $ docker inspect mosquitto | grep IPAddress
 Zunächst werden User und Gruppe angelegt, die beim Starten des *Smart Appliance Enabler* verwendet werden und denen bestimmte Dateien/Verzeichnisse gehören.
 Danach werden Start-Script und zugehörige Konfigurationsdateien heruntergeladen und gleich die Berechtigungen für diese Dateien gesetzt.
 ```console
-pi@raspberrypi ~ $ sudo mkdir /opt/sae
-pi@raspberrypi ~ $ sudo groupadd sae
-pi@raspberrypi ~ $ sudo useradd -d /opt/sae -c "SmartApplianceEnabler" -g sae -M sae -s /bin/bash
-pi@raspberrypi ~ $ sudo usermod -a -G gpio,sudo sae
+pi@raspberrypi ~ $ sudo useradd -d /opt/sae -m -s /bin/bash sae
+pi@raspberrypi ~ $ sudo usermod -a -G sudo sae
 pi@raspberrypi ~ $ sudo passwd sae
-pi@raspberrypi ~ $ sudo cp /home/pi/.profile /opt/sae
-pi@raspberrypi ~ $ sudo cp /home/pi/.bashrc /opt/sae
 
 pi@raspberrypi ~ $ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/smartapplianceenabler -P /opt/sae
 pi@raspberrypi ~ $ sudo chmod 755 /opt/sae/smartapplianceenabler
@@ -378,7 +416,7 @@ Siehe auch:
 
 Damit der *Smart Appliance Enabler* beim Systemstart ebenfalls gestartet wird (via Systemd), muss folgender Befehl ausgeführt werden:
 ```console
-pi@raspberrypi ~ $ sudo systemctl enable smartapplianceenabler.service
+pi@raspberrypi ~ $ sudo systemctl enable smartapplianceenabler
 Created symlink /etc/systemd/system/multi-user.target.wants/smartapplianceenabler.service → /lib/systemd/system/smartapplianceenabler.service.
 ```
 Nach diesen Änderungen muss der Systemd dazu gebracht werden, die Service-Konfigurationen neu zu lesen:
@@ -408,7 +446,7 @@ pi@raspberrypi ~ $ ls -al /opt/sae/*.war
 #### Start
 Jetzt sollte man den *Smart Appliance Enabler* starten können:
 ```console
-pi@raspberrypi:~ $ sudo systemctl start smartapplianceenabler.service
+pi@raspberrypi:~ $ sudo systemctl start smartapplianceenabler
 ```
 Je nach Raspberry Pi-Model dauert der Start bis zu 60 Sekunden.
 
