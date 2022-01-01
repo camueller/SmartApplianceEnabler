@@ -5,15 +5,15 @@ import {interval, Subject, Subscription} from 'rxjs';
 import {StatusService} from './status.service';
 import {DayOfWeek, DaysOfWeek} from '../shared/days-of-week';
 import {ControlService} from '../control/control-service';
-import { MessageBoxLevel } from '../material/messagebox/messagebox.component';
+import {MessageBoxLevel} from '../material/messagebox/messagebox.component';
 import {TrafficLightClick} from './traffic-light/traffic-light-click';
 import {TrafficLightState} from './traffic-light/traffic-light-state';
 import {TrafficLightComponent} from './traffic-light/traffic-light.component';
 import {ApplianceType} from '../appliance/appliance-type';
 import {ElectricVehicle} from '../control/evcharger/electric-vehicle/electric-vehicle';
 import {EvChargerState} from '../control/evcharger/ev-charger-state';
-import {FlowExportContentComponent} from '../nodered/flow-export-content/flow-export-content.component';
 import {MatDialog} from '@angular/material/dialog';
+import {FlowExportComponent} from '../nodered/flow-export/flow-export.component';
 
 @Component({
   selector: 'app-status',
@@ -214,7 +214,7 @@ export class StatusComponent implements OnInit, OnDestroy {
   }
 
   openDialog() {
-    this.dialog.open(FlowExportContentComponent);
+    this.dialog.open(FlowExportComponent);
   }
 
   public get nodeRedDashboardUrl() {

@@ -13,13 +13,11 @@ import {StatusEvchargerViewComponent} from './evcharger-view/status-evcharger-vi
 import {TrafficLightComponent} from './traffic-light/traffic-light.component';
 import {HttpLoaderFactory} from '../shared/http-loader-factory';
 import {FlowExportComponent} from '../nodered/flow-export/flow-export.component';
-import {FlowExportContentComponent} from '../nodered/flow-export-content/flow-export-content.component';
 import {ClipboardModule} from '@angular/cdk/clipboard';
 
 @NgModule({
   declarations: [
     FlowExportComponent,
-    FlowExportContentComponent,
     StatusComponent,
     StatusEditComponent,
     StatusEvchargerEditComponent,
