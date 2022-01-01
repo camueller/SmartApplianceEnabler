@@ -17,9 +17,9 @@ import {FlexModule} from '@angular/flex-layout';
 import {TimepickerComponent} from './timepicker/timepicker.component';
 import {ReactiveFormsModule} from '@angular/forms';
 import {HelpComponent} from './help/help.component';
-import {SafeurlPipe} from './safe-url.pipe';
 import {FilenameInputComponent} from './filenameinput/filename-input.component';
 import {MatDialogModule} from '@angular/material/dialog';
+import {SafeurlPipe} from '../shared/safe-url.pipe';
 
 
 @NgModule({
@@ -64,6 +64,7 @@ import {MatDialogModule} from '@angular/material/dialog';
     MatToolbarModule,
     MatTooltipModule,
     MessageboxComponent,
+    SafeurlPipe,
     TimepickerComponent,
     FilenameInputComponent,
   ],

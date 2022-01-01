@@ -369,6 +369,8 @@
 
   "StatusComponent.title": "Steuerbare Geräte",
   "StatusComponent.message.noControllableAppliances": "Keine steuerbaren Geräte vorhanden.",
+  "StatusComponent.dashboard.export": "Node-RED Flows exportieren",
+  "StatusComponent.dashboard.open": "Node-RED Dashboard öffnen",
   "StatusComponent.tooltipStopLight": "Klick für sofortigen Stop",
   "StatusComponent.tooltipGoLight": "Klick für sofortigen Start",
   "StatusComponent.earliestStart": "Start frühestens in ",

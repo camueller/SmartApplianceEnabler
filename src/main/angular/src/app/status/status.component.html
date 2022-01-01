@@ -1,7 +1,18 @@
 <div class="StatusComponent">
   <h1>{{'StatusComponent.title' | translate }}
     <app-help [helpfile]="'Status'" [cssClass]="'text-top'"></app-help>
-    <app-flow-export></app-flow-export>
+    <!--app-flow-export></app-flow-export-->
+    <!--button mat-icon-button type="button" (click)="openDialog()"><mat-icon>redo</mat-icon></button>
+    <button mat-icon-button type="button" (click)="openDialog()"><mat-icon>open_in_new</mat-icon></button-->
+    <a class="StatusComponent__nodered-export-button"
+       (click)="openDialog()"
+       matTooltip="{{'StatusComponent.dashboard.export' | translate}}"
+    ><mat-icon>redo</mat-icon></a>
+    <a class="StatusComponent__nodered-export-button"
+       [href]="nodeRedDashboardUrl | safeurl"
+       target="_blank"
+       matTooltip="{{'StatusComponent.dashboard.open' | translate}}"
+    ><mat-icon>open_in_new</mat-icon></a>
   </h1>
   <messagebox [level]="MessageBoxLevel.INFO" *ngIf="!hasControllableAppliances"
   >{{'StatusComponent.message.noControllableAppliances' | translate}}</messagebox>

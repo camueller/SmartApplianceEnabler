@@ -369,6 +369,8 @@
 
   "StatusComponent.title": "Controllable appliances",
   "StatusComponent.message.noControllableAppliances": "No controllable appliances",
+  "StatusComponent.dashboard.export": "Export Node-RED flows",
+  "StatusComponent.dashboard.open": "Open Node-RED dashboard",
   "StatusComponent.tooltipStopLight": "Click for immediate stop",
   "StatusComponent.tooltipGoLight": "Click for immediate start",
   "StatusComponent.earliestStart": "Earliest start in ",

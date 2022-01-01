@@ -12,6 +12,8 @@ import {TrafficLightComponent} from './traffic-light/traffic-light.component';
 import {ApplianceType} from '../appliance/appliance-type';
 import {ElectricVehicle} from '../control/evcharger/electric-vehicle/electric-vehicle';
 import {EvChargerState} from '../control/evcharger/ev-charger-state';
+import {FlowExportContentComponent} from '../nodered/flow-export-content/flow-export-content.component';
+import {MatDialog} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-status',
@@ -22,7 +24,8 @@ export class StatusComponent implements OnInit, OnDestroy {
 
   constructor(private statusService: StatusService,
               private controlService: ControlService,
-              private translate: TranslateService) {
+              private translate: TranslateService,
+              public dialog: MatDialog) {
   }
   applianceStatuses: Status[] = [];
   typePrefix = 'ApplianceComponent.type.';
@@ -208,5 +211,13 @@ export class StatusComponent implements OnInit, OnDestroy {
         return false;
       }
     };
+  }
+
+  openDialog() {
+    this.dialog.open(FlowExportContentComponent);
+  }
+
+  public get nodeRedDashboardUrl() {
+    return 'http://raspberrypi:1880/ui';
   }
 }
