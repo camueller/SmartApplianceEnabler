@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
+import {MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {FlowExportData} from './flow-export-data';
 
 @Component({
   selector: 'app-flow-export',
@@ -8,7 +10,6 @@ import { Component, OnInit } from '@angular/core';
 })
 export class FlowExportComponent implements OnInit {
 
-  appliances = [{id: 'F-28091971-000000000004-00'}, {id: 'F-28091971-000000000019-00'}];
   exportJson: string;
   row1 = 40;
   row2 = 100;
@@ -23,14 +24,14 @@ export class FlowExportComponent implements OnInit {
   col4 = 890;
   col5 = 1120;
 
-  constructor() { }
+  constructor(@Inject(MAT_DIALOG_DATA) public data: FlowExportData) { }
 
   ngOnInit(): void {
     const mqttBrokerId = this.generateId();
     const generalTabId = this.generateId();
     const generalUiGroupId = this.generateId();
     const uiTabId = this.generateId();
-    const applianceNodes = this.appliances.flatMap(appliance => this.createApplianceNodes(appliance.id, mqttBrokerId, uiTabId));
+    const applianceNodes = this.data.applianceIds.flatMap(applianceId => this.createApplianceNodes(applianceId, mqttBrokerId, uiTabId));
     this.exportJson = JSON.stringify([
       this.mqttBroker(mqttBrokerId),
       this.dashboard(),

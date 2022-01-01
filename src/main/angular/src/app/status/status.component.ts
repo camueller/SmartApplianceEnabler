@@ -14,6 +14,7 @@ import {ElectricVehicle} from '../control/evcharger/electric-vehicle/electric-ve
 import {EvChargerState} from '../control/evcharger/ev-charger-state';
 import {MatDialog} from '@angular/material/dialog';
 import {FlowExportComponent} from '../nodered/flow-export/flow-export.component';
+import {FlowExportData} from '../nodered/flow-export/flow-export-data';
 
 @Component({
   selector: 'app-status',
@@ -214,10 +215,11 @@ export class StatusComponent implements OnInit, OnDestroy {
   }
 
   openDialog() {
-    this.dialog.open(FlowExportComponent);
+    const data: FlowExportData = {applianceIds: this.applianceStatuses.map(status => status.id)};
+    this.dialog.open(FlowExportComponent, {data});
   }
 
   public get nodeRedDashboardUrl() {
-    return 'http://raspberrypi:1880/ui';
+    return 'http://localhost:1880/ui';
   }
 }
