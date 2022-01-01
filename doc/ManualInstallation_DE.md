@@ -170,7 +170,7 @@ Soll der Raspberry Pi über WLAN statt über Ethernet angebunden werden, müssen
 ### Hostnamen ändern
 Unabhängig von dem Hostnamen, über den der Raspberry im lokalen Netzwerk erreicht werden kann, ist sein Hostname standardmäßig `raspberry` (auch sichtbar am Prompt: `pi@raspberrypi:~ $`). Vor allem, wenn man mehrere Raspberries im Netz hat, will man auch am Prompt sehen, auf welchem Raspberry man gerade die Befehle eingibt.
 
-Zum Ändern des Hostnames kann das Tool `raspi-config` verwendet werden, wobei der Menüpunkt _Network Options_ und dann der Menüpunkt _Hostname_ gewählt werden muss:
+Zum Ändern des Hostnames kann das Tool `raspi-config` verwendet werden, wobei der Menüpunkt _System Options_ und dann der Menüpunkt _Hostname_ gewählt werden muss:
 ```console
 pi@raspberrypi:~ $ sudo raspi-config
 ```
