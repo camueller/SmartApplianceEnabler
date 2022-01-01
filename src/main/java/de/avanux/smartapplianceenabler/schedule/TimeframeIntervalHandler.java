@@ -259,7 +259,6 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
             queue.forEach(timeframeInterval -> timeframeInterval.getRequest().update());
             logger.debug("{}: Updated queue:", applianceId);
             logQueue(now);
-            publishQueue(now);
         }
 
         if(deactivatableTimeframeInterval.isPresent() || activatableTimeframeInterval.isPresent()) {
@@ -274,6 +273,8 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
                                 .orElse(false));
             }
         }
+
+        publishQueue(now);
     }
 
     private void logQueue(LocalDateTime now) {
