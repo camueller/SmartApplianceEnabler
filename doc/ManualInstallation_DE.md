@@ -275,7 +275,20 @@ $ docker run -it --rm -p 1883:1883 --name mosquitto eclipse-mosquitto mosquitto 
 ```
 
 ## Node-RED
-[Node-RED](https://nodered.org/) kann verwendet werden, um den *Smart Appliance Enabler* mit anderen Hausautomatisierungen zu integrieren oder den MQTT-Nachrichten zu visualisieren (Dashboard). Die Installation des entsprechenden Docker-Containers erfolgt mit:
+[Node-RED](https://nodered.org/) kann verwendet werden, um den *Smart Appliance Enabler* mit anderen Hausautomatisierungen zu integrieren oder den MQTT-Nachrichten zu visualisieren (Dashboard).
+
+### Installation ohne Docker
+Node-RED kann über das Raspbian-Repository mit `apt install ...` installiert werden, aber man erhält dann eine veraltete Version von Node-RED und Node.js. Eine relativ aktuelle Version von Node.js ist beispielsweise erforderlich für die nachfolgende Installation von Bibliotheken direkt aus `github`. Deshalb sollte die Installation von Node-RED und auch node.js entsprechend der [Anleitung auf der Node-RED-Homepage](https://nodered.org/docs/getting-started/raspberrypi) erfolgen:
+```console
+$ bash <(curl -sL https://raw.githubusercontent.com/node-red/linux-installers/master/deb/update-nodejs-and-nodered)
+```
+Zum Starten eignet sich folgender Befehl:
+```console
+$ sudo systemctl start nodered.service
+```
+
+### Installation mit Docker
+Die Installation des entsprechenden Docker-Containers erfolgt mit:
 ```console
 docker pull nodered/node-red
 ```
@@ -287,32 +300,31 @@ Zum Starten eignet sich folgender Befehl:
 ```console
 $ docker run -it --rm -p 1880:1880 -v node_red_data:/data --name nodered nodered/node-red
 ```
+
+### Installation benötiger Bibliotheken
 Folgende Module müssen über `Manage Palette -> Install` installiert werden:
-- node-red-contrib-tableify
-- node-red-contrib-ui-timelines-chart
+- node-red-node-ui-table
 - node-red-dashboard
 
-Ausserdem muss die Bibliothek `date-fns` installiert werden:
-- ohne Docker
+Für die nachfolgende Installation von `camueller/node-red-contrib-ui-timelines-chart` muss `git` installiert sein, was sich durch den Befehl `sudo apt install git` erreichen lässt.
+
+Einige weitere Bibliotheken müssen manuell in der Shell via `npm` installiert werden:
+- camueller/node-red-contrib-ui-timelines-chart
+- date-fns
+
+Dazu muss in das Verzeichnis `~/.node-red` (Docker: `/data`) gewechselt werden und dort der nachfolgende Befehl für jeden Namen aus der vorangegangen Liste einmal ausgeführt werden, wobei `<name>` jeweils durch den Listeneintrag ersetz werden muss:
 ```console
-$ npm i date-fns
-```
-- mit Docker (Installation muss in /data erfolgen!)
-```console
-$ docker exec -it nodered bash
-bash-5.0$ cd /data
-bash-5.0$ npm i date-fns
-+ date-fns@2.27.0
-added 1 package from 2 contributors and audited 98 packages in 20.153s
+$ npm i <name>
 ```
 
-Die Bibliothek `date-fns` muss noch in der Datei `settings.js` (`/data/settings.js` bei Docker-Containern) eingetragen werden. Dazu in der Datei suchen nach `functionGlobalContext`) und ändern wie folgt:
+Die Bibliothek `date-fns` muss noch in der Datei `~/.node-red/settings.js` (Docker: `/data/settings.js`) eingetragen werden. Dazu in der Datei suchen nach `functionGlobalContext`) und ändern wie folgt:
 ```console
 functionGlobalContext: {                                                         
   datefns:require('date-fns')                                                  
 },
 ```
 
+### Import der Flows
 Erst danach kann der Flow importiert werden.
 
 In Node RED muss der MQTT-Server konfiguriert werden. Wenn dieser ebenfalls als Docker-Container betrieben wird, muss beachtet werden, dass für die Container-zu-Container-Kommunkation dessen IP-Adresse im Docker-Bridge-Netzwerk verwendet wird. Diese kann wie folgt ermittelt werden ([siehe auch](https://www.tutorialworks.com/container-networking/)):

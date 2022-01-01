@@ -1,5 +1,8 @@
 <div class="StatusComponent">
-  <h1>{{'StatusComponent.title' | translate }}<app-help [helpfile]="'Status'" [cssClass]="'text-top'"></app-help></h1>
+  <h1>{{'StatusComponent.title' | translate }}
+    <app-help [helpfile]="'Status'" [cssClass]="'text-top'"></app-help>
+    <app-flow-export></app-flow-export>
+  </h1>
   <messagebox [level]="MessageBoxLevel.INFO" *ngIf="!hasControllableAppliances"
   >{{'StatusComponent.message.noControllableAppliances' | translate}}</messagebox>
   <div class="StatusComponent__appliances">
