@@ -29,6 +29,7 @@ export class StatusComponent implements OnInit, OnDestroy {
               public dialog: MatDialog) {
   }
   applianceStatuses: Status[] = [];
+  applianceIds: string[];
   typePrefix = 'ApplianceComponent.type.';
   translatedTypes = {};
   dows: DayOfWeek[] = [];
@@ -70,6 +71,7 @@ export class StatusComponent implements OnInit, OnDestroy {
 
   loadApplianceStatuses(onComplete: () => void) {
     this.statusService.getStatus().subscribe(applianceStatuses => {
+      this.applianceIds = applianceStatuses.map(status => status.id);
       this.applianceStatuses = applianceStatuses.filter(applianceStatus => applianceStatus.controllable);
 
       const types = [];
@@ -215,11 +217,11 @@ export class StatusComponent implements OnInit, OnDestroy {
   }
 
   openDialog() {
-    const data: FlowExportData = {applianceIds: this.applianceStatuses.map(status => status.id)};
+    const data: FlowExportData = {applianceIds: this.applianceIds};
     this.dialog.open(FlowExportComponent, {data});
   }
 
   public get nodeRedDashboardUrl() {
-    return 'http://localhost:1880/ui';
+    return 'http://raspi2:1880/ui';
   }
 }
