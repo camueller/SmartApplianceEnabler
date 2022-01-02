@@ -735,36 +735,21 @@ public class SaeController {
             Appliances appliances = ApplianceManager.getInstance().getAppliancesRoot();
 
             Connectivity connectivity = appliances.getConnectivity();
-            MqttBroker mqttBroker = null;
-            if (connectivity != null) {
-                mqttBroker = connectivity.getMqttBroker();
-                if(mqttBroker != null) {
-                    MqttSettings mqttSettings = new MqttSettings();
-                    mqttSettings.setMqttBrokerHost(mqttBroker.getHost());
-                    mqttSettings.setMqttBrokerPort(mqttBroker.getPort());
-                    settings.setMqttSettings(mqttSettings);
-                }
-
-                List<ModbusTcp> modbusTCPs = connectivity.getModbusTCPs();
-                if (modbusTCPs != null) {
-                    List<ModbusSettings> modbusSettingsList = new ArrayList<>();
-                    for (ModbusTcp modbusTcp : modbusTCPs) {
-                        ModbusSettings modbusSettings = new ModbusSettings();
-                        modbusSettings.setModbusTcpId(modbusTcp.getId());
-                        modbusSettings.setModbusTcpHost(modbusTcp.getHost());
-                        modbusSettings.setModbusTcpPort(modbusTcp.getPort());
-                        modbusSettingsList.add(modbusSettings);
-                    }
-                    settings.setModbusSettings(modbusSettingsList);
-                }
+            if(connectivity == null) {
+                connectivity = new Connectivity();
             }
-
+            MqttBroker mqttBroker = connectivity.getMqttBroker();
             if(mqttBroker == null) {
                 mqttBroker = new MqttBroker();
             }
+            var mqttBrokerHost = mqttBroker.getResolvedHost();
+            var mqttBrokerPort = mqttBroker.getResolvedPort();
+            MqttSettings mqttSettings = new MqttSettings();
+            mqttSettings.setMqttBrokerHost(mqttBrokerHost);
+            mqttSettings.setMqttBrokerPort(mqttBrokerPort);
+            settings.setMqttSettings(mqttSettings);
             var client = new MqttClient("", getClass());
-            settings.setMqttBrokerAvailable(client.isMqttBrokerAvailable(
-                    mqttBroker.getResolvedHost(), mqttBroker.getResolvedPort()));
+            mqttSettings.setMqttBrokerAvailable(client.isMqttBrokerAvailable(mqttBrokerHost, mqttBrokerPort));
 
             String nodeRedDashboardUrl = appliances.getConfigurationValue(ConfigurationParam.NODERED_DASHBOARD_URL.getVal());
             settings.setNodeRedDashboardUrl(nodeRedDashboardUrl);
@@ -772,6 +757,19 @@ public class SaeController {
             String holidaysUrl = appliances.getConfigurationValue(ConfigurationParam.HOLIDAYS_URL.getVal());
             settings.setHolidaysEnabled(holidaysUrl != null);
             settings.setHolidaysUrl(holidaysUrl);
+
+            List<ModbusTcp> modbusTCPs = connectivity.getModbusTCPs();
+            if (modbusTCPs != null) {
+                List<ModbusSettings> modbusSettingsList = new ArrayList<>();
+                for (ModbusTcp modbusTcp : modbusTCPs) {
+                    ModbusSettings modbusSettings = new ModbusSettings();
+                    modbusSettings.setModbusTcpId(modbusTcp.getId());
+                    modbusSettings.setModbusTcpHost(modbusTcp.getHost());
+                    modbusSettings.setModbusTcpPort(modbusTcp.getPort());
+                    modbusSettingsList.add(modbusSettings);
+                }
+                settings.setModbusSettings(modbusSettingsList);
+            }
 
             String notificationCommand = appliances.getConfigurationValue(ConfigurationParam.NOTIFICATION_COMMAND.getVal());
             settings.setNotificationCommand(notificationCommand);
@@ -882,7 +880,7 @@ public class SaeController {
                 applianceStatus.setControllable(true);
                 Control control = appliance.getControl();
                 Meter meter = appliance.getMeter();
-                applianceStatus.setOn(controlMessage.on);
+                applianceStatus.setOn(controlMessage != null && controlMessage.on);
                 TimeframeInterval nextTimeframeInterval
                         = appliance.getTimeframeIntervalHandler().getQueue().size() > 0
                         ? appliance.getTimeframeIntervalHandler().getQueue().get(0)

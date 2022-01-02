@@ -1,6 +1,7 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {FlowExportData} from './flow-export-data';
+import {MqttSettings} from '../../settings/mqtt-settings';
 
 @Component({
   selector: 'app-flow-export',
@@ -33,7 +34,7 @@ export class FlowExportComponent implements OnInit {
     const uiTabId = this.generateId();
     const applianceNodes = this.data.applianceIds.flatMap(applianceId => this.createApplianceNodes(applianceId, mqttBrokerId, uiTabId));
     this.exportJson = JSON.stringify([
-      this.mqttBroker(mqttBrokerId),
+      this.mqttBroker(mqttBrokerId, this.data.mqttSettings),
       this.dashboard(),
       this.tab(generalTabId, 'General'),
       this.uiTab(uiTabId),
@@ -132,13 +133,13 @@ export class FlowExportComponent implements OnInit {
     };
   }
 
-  private mqttBroker(id: string) {
+  private mqttBroker(id: string, mqttSettings: MqttSettings) {
     return {
       id,
       'type': 'mqtt-broker',
-      'name': 'MQTT Broker',
-      'broker': 'raspi2',
-      'port': '1883',
+      'name': 'MQTT Broker (SAE)',
+      'broker': mqttSettings.mqttBrokerHost,
+      'port': mqttSettings.mqttBrokerPort,
       'clientid': '',
       'autoConnect': true,
       'usetls': false,

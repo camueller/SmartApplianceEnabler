@@ -18,6 +18,7 @@ import {FlowExportData} from '../nodered/flow-export/flow-export-data';
 import {ActivatedRoute} from '@angular/router';
 import {Settings} from '../settings/settings';
 import {SettingsDefaults} from '../settings/settings-defaults';
+import {MqttSettings} from '../settings/mqtt-settings';
 
 @Component({
   selector: 'app-status',
@@ -45,6 +46,7 @@ export class StatusComponent implements OnInit, OnDestroy {
   MessageBoxLevel = MessageBoxLevel;
   electricVehicles = new Map<string, ElectricVehicle[]>();
   mqttBrokerAvailable = false;
+  mqttSettings: MqttSettings;
   nodeRedDashboardUrl: string | undefined;
 
   ngOnInit() {
@@ -57,8 +59,9 @@ export class StatusComponent implements OnInit, OnDestroy {
       });
     });
     this.route.data.subscribe((data: { settings: Settings, settingsDefaults: SettingsDefaults }) => {
+      this.mqttSettings = data.settings.mqttSettings,
       this.nodeRedDashboardUrl = data.settings.nodeRedDashboardUrl ?? data.settingsDefaults.nodeRedDashboardUrl;
-      this.mqttBrokerAvailable = data.settings.mqttBrokerAvailable;
+      this.mqttBrokerAvailable = data.settings.mqttSettings.mqttBrokerAvailable;
     });
     this.startRefreshStatus();
   }
@@ -227,7 +230,7 @@ export class StatusComponent implements OnInit, OnDestroy {
   }
 
   openDialog() {
-    const data: FlowExportData = {applianceIds: this.applianceIds};
+    const data: FlowExportData = {applianceIds: this.applianceIds, mqttSettings: this.mqttSettings};
     this.dialog.open(FlowExportComponent, {data});
   }
 }

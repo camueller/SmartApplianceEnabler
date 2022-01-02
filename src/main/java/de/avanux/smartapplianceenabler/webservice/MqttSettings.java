@@ -21,6 +21,7 @@ package de.avanux.smartapplianceenabler.webservice;
 public class MqttSettings {
     String mqttBrokerHost;
     Integer mqttBrokerPort;
+    Boolean mqttBrokerAvailable;
 
     public String getMqttBrokerHost() {
         return mqttBrokerHost;
@@ -38,11 +39,20 @@ public class MqttSettings {
         this.mqttBrokerPort = mqttBrokerPort;
     }
 
+    public Boolean getMqttBrokerAvailable() {
+        return mqttBrokerAvailable;
+    }
+
+    public void setMqttBrokerAvailable(Boolean mqttBrokerAvailable) {
+        this.mqttBrokerAvailable = mqttBrokerAvailable;
+    }
+
     @Override
     public String toString() {
         return "MqttSettings{" +
                 "mqttBrokerHost='" + mqttBrokerHost + '\'' +
                 ", mqttBrokerPort=" + mqttBrokerPort +
+                ", mqttBrokerAvailable=" + mqttBrokerAvailable +
                 '}';
     }
 }

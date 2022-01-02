@@ -19,6 +19,7 @@
 export class MqttSettings {
   mqttBrokerHost: string;
   mqttBrokerPort: number;
+  mqttBrokerAvailable?: boolean;
 
   public constructor(init?: Partial<MqttSettings>) {
     Object.assign(this, init);
