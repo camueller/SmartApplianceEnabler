@@ -1,4 +1,6 @@
 export class SettingsDefaults {
+  mqttBrokerHost: string;
+  mqttBrokerPort: number;
   holidaysUrl: string;
   modbusTcpHost: string;
   modbusTcpPort: number;

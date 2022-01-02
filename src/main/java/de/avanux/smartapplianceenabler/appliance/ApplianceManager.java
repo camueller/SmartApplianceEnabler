@@ -286,6 +286,9 @@ public class ApplianceManager implements Runnable {
         Map<String,ModbusTcp> modbusIdWithModbusTcp = new HashMap<String,ModbusTcp>();
         Connectivity connectivity = appliances.getConnectivity();
         if(connectivity != null) {
+           if(connectivity.getMqttBroker() != null) {
+               MqttClient.setMqttBroker(connectivity.getMqttBroker());
+           }
             // make ModbusTcp accessible by id
             if(connectivity.getModbusTCPs() != null) {
                 for(ModbusTcp modbusTCP : connectivity.getModbusTCPs()) {

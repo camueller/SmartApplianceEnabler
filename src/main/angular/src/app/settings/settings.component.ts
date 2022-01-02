@@ -33,7 +33,7 @@ import {ErrorMessage, ValidatorType} from '../shared/error-message';
 import {FormHandler} from '../shared/form-handler';
 import {SettingsModbusComponent} from './modbus/settings-modbus.component';
 import {ModbusSetting} from './modbus/modbus-setting';
-import {getValidString} from '../shared/form-util';
+import {getValidInt, getValidString} from '../shared/form-util';
 import {FileMode} from '../material/filenameinput/file-mode';
 import {FilenameInputComponent} from '../material/filenameinput/filename-input.component';
 
@@ -69,8 +69,8 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
   ngOnInit() {
     this.errorMessages = new ErrorMessages('SettingsComponent.error.', [
       new ErrorMessage('holidaysUrl', ValidatorType.pattern),
-      new ErrorMessage('modbusTcpHost', ValidatorType.pattern),
-      new ErrorMessage('modbusTcpPort', ValidatorType.pattern),
+      new ErrorMessage('mqttBrokerHost', ValidatorType.pattern),
+      new ErrorMessage('mqttBrokerPort', ValidatorType.pattern),
     ], this.translate);
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.route.data.subscribe((data: { settings: Settings, settingsDefaults: SettingsDefaults }) => {
@@ -85,20 +85,19 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
 
   buildForm() {
     this.form = new FormGroup({});
+    this.formHandler.addFormControl(this.form, 'mqttBrokerHost', this.settings.mqttSettings?.mqttBrokerHost,
+      Validators.pattern(InputValidatorPatterns.HOSTNAME)),
+    this.formHandler.addFormControl(this.form, 'mqttBrokerPort', this.settings.mqttSettings?.mqttBrokerPort,
+      Validators.pattern(InputValidatorPatterns.INTEGER)),
     this.formHandler.addFormControl(this.form, 'holidaysEnabled', this.settings.holidaysEnabled);
     this.formHandler.addFormControl(this.form, 'holidaysUrl', this.settings.holidaysUrl,
       [Validators.pattern(InputValidatorPatterns.URL)]);
-    this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'modbusSettings', this.settings.modbusSettings);
-    // this.formHandler.addFormControl(this.form, 'notificationCommand', this.settings.notificationCommand);
+    this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'modbusSettings', this.settings?.modbusSettings);
     this.setHolidaysUrlEnabled(this.settings.holidaysEnabled);
     this.form.controls.holidaysEnabled.valueChanges.subscribe(value => {
       this.setHolidaysUrlEnabled(value);
       this.form.markAsDirty();
     });
-  }
-
-  isHolidaysEnabled() {
-    return this.form.controls.holidaysEnabled.value;
   }
 
   setHolidaysUrlEnabled(enabled: boolean) {
@@ -145,6 +144,11 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
   }
 
   updateModelFromForm() {
+    const mqttBrokerHost = getValidString(this.form.controls.mqttBrokerHost.value);
+    const mqttBrokerPort = getValidInt(this.form.controls.mqttBrokerPort.value);
+    if (mqttBrokerHost) {
+      this.settings.mqttSettings = {mqttBrokerHost, mqttBrokerPort};
+    }
     this.settings.holidaysEnabled = this.form.controls.holidaysEnabled.value;
     this.settings.holidaysUrl = getValidString(this.form.controls.holidaysUrl.value);
     this.settings.modbusSettings = [];

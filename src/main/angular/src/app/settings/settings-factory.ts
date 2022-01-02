@@ -27,36 +27,14 @@ export class SettingsFactory {
   constructor(private logger: Logger) {
   }
 
-  createEmptySettingsDefaults(): SettingsDefaults {
-    return new SettingsDefaults();
-  }
-
-  infoFromJSON(rawInfo: any): Info {
-    this.logger.debug('Info (JSON): ' + JSON.stringify(rawInfo));
-    const info = new Info();
-    info.version = rawInfo.version;
-    info.buildDate = rawInfo.buildDate;
-    this.logger.debug('Info (TYPE): ' + JSON.stringify(info));
-    return info;
-  }
-
   defaultsFromJSON(rawSettings: any): SettingsDefaults {
-    this.logger.debug('SettingsDefaults (JSON): ' + JSON.stringify(rawSettings));
-    const settings = new SettingsDefaults();
-    settings.holidaysUrl = rawSettings.holidaysUrl;
-    settings.modbusTcpHost = rawSettings.modbusTcpHost;
-    settings.modbusTcpPort = Number.parseInt(rawSettings.modbusTcpPort, 10);
-    this.logger.debug('SettingsDefaults (TYPE): ' + JSON.stringify(settings));
-    return settings;
-  }
-
-  createEmptySettings(): Settings {
-    return new Settings();
+    this.logger.debug('SettingsDefaults: ' + JSON.stringify(rawSettings));
+    return rawSettings;
   }
 
   fromJSON(rawSettings: any): Settings {
     this.logger.debug('Settings (JSON): ' + JSON.stringify(rawSettings));
-    const settings = new Settings({... rawSettings});
+    const settings = new Settings({...rawSettings});
     this.logger.debug('Settings (TYPE): ' + JSON.stringify(settings));
     return settings;
   }

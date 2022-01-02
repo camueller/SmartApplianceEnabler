@@ -425,6 +425,9 @@
   "StatusEvchargerEditComponent.error.stateOfChargeRequested_pattern": "The requested state of charge has to be a percentage",
   "StatusEvchargerEditComponent.error.chargeEndTime_pattern": "The charge end time has to be specified as 'Hours:Minutes'",
 
+  "SettingsComponent.mqttBroker": "MQTT Broker",
+  "SettingsComponent.mqttBrokerHost": "Host",
+  "SettingsComponent.mqttBrokerPort": "Port",
   "SettingsComponent.holidays": "Holidays",
   "SettingsComponent.holidaysEnabled": "Enabled",
   "SettingsComponent.holidaysUrl": "Download URL",
@@ -435,6 +438,8 @@
   "SettingsComponent.modbusTcpPort": "Port",
   "SettingsComponent.notification.heading": "Notifications",
   "SettingsComponent.notification.command": "Shell script",
+  "SettingsComponent.error.mqttBrokerHost_pattern": "The value has to be specified as hostname or an IP address",
+  "SettingsComponent.error.mqttBrokerPort_pattern": "The port number has to be valid",
   "SettingsComponent.error.holidaysUrl_pattern": "The URL has to be valid",
   "SettingsComponent.error.modbusTcpHost_pattern": "The value has to be specified as hostname or an IP address",
   "SettingsComponent.error.modbusTcpPort_pattern": "The port number has to be valid",

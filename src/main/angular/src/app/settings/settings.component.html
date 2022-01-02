@@ -16,8 +16,32 @@
   ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
   -->
 <form class="SettingsComponent" [formGroup]="form" (ngSubmit)="submitForm()">
+
   <section>
-    <h2>{{'SettingsComponent.holidays' | translate}}
+    <h2>{{'SettingsComponent.mqttBroker' | translate}}
+      <app-help [helpfile]="'Settings'" [anchor]="'mqttBroker'"></app-help></h2>
+    <div class="sae__fields">
+      <mat-form-field class="sae__hostname">
+        <mat-label>{{'SettingsComponent.mqttBrokerHost' | translate}}</mat-label>
+        <input matInput type="text" formControlName="mqttBrokerHost"
+               placeholder="{{settingsDefaults.mqttBrokerHost}}"
+               required="{{formHandler.isRequired('mqttBrokerHost')}}">
+        <mat-error *ngIf="errors.mqttBrokerHost">{{errors.mqttBrokerHost}}</mat-error>
+      </mat-form-field>
+      <mat-form-field class="sae__port">
+        <mat-label>{{'SettingsComponent.mqttBrokerPort' | translate}}</mat-label>
+        <input matInput type="text" formControlName="mqttBrokerPort"
+               placeholder="{{settingsDefaults.mqttBrokerPort}}"
+               required="{{formHandler.isRequired('mqttBrokerPort')}}">
+        <mat-error *ngIf="errors.mqttBrokerPort">{{errors.mqttBrokerPort}}</mat-error>
+      </mat-form-field>
+    </div>
+  </section>
+
+  <mat-divider></mat-divider>
+
+  <section>
+    <h2 class="sae__heading-extra-top-margin">{{'SettingsComponent.holidays' | translate}}
       <app-help [helpfile]="'Settings'" [anchor]="'holidays'"></app-help></h2>
     <div class="sae__fields">
       <mat-checkbox formControlName="holidaysEnabled"

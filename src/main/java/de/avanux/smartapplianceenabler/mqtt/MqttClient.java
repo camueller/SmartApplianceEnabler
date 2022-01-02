@@ -34,6 +34,7 @@ public class MqttClient {
 
     private static transient Logger logger = LoggerFactory.getLogger(MqttClient.class);
     private static String topicPrefix = "sae";
+    private static MqttBroker mqttBroker = new MqttBroker();
     private String loggerId;
     private String applianceId;
     private static int counter;
@@ -70,7 +71,7 @@ public class MqttClient {
 
         try {
             client = new org.eclipse.paho.client.mqttv3.MqttClient(
-                    "tcp://localhost:1883",
+                    buildBrokerUri(),
                     clientId,
                     new MemoryPersistence()
             );
@@ -79,6 +80,14 @@ public class MqttClient {
         catch (Exception e) {
             logger.error("{}: Error creating MQTT client {}", loggerId, clientId, e);
         }
+    }
+
+    public static void setMqttBroker(MqttBroker mqttBroker) {
+        MqttClient.mqttBroker = mqttBroker;
+    }
+
+    private String buildBrokerUri() {
+        return "tcp://" + mqttBroker.getResolvedHost() + ":" + mqttBroker.getResolvedPort();
     }
 
     public static void start() {

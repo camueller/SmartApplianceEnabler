@@ -425,6 +425,9 @@
   "StatusEvchargerEditComponent.error.stateOfChargeRequested_pattern": "Der Soll-Ladezustand (SOC) muss als Prozentwert angegeben werden",
   "StatusEvchargerEditComponent.error.chargeEndTime_pattern": "Die Uhrzeit muss in 'Stunden:Minuten' angegeben werden",
 
+  "SettingsComponent.mqttBroker": "MQTT Broker",
+  "SettingsComponent.mqttBrokerHost": "Host",
+  "SettingsComponent.mqttBrokerPort": "Port",
   "SettingsComponent.holidays": "Feiertage",
   "SettingsComponent.holidaysEnabled": "Aktiviert",
   "SettingsComponent.holidaysUrl": "Download URL",
@@ -435,6 +438,8 @@
   "SettingsComponent.modbusTcpPort": "Port",
   "SettingsComponent.notification.heading": "Benachrichtigungen",
   "SettingsComponent.notification.command": "Shell-Script",
+  "SettingsComponent.error.mqttBrokerHost_pattern": "Der Wert muss als Hostname oder IP-Adresse eingegeben werden",
+  "SettingsComponent.error.mqttBrokerPort_pattern": "Die Portnummer muss gültig sein",
   "SettingsComponent.error.holidaysUrl_pattern": "Die URL muss gültig sein",
   "SettingsComponent.error.modbusTcpHost_pattern": "Der Wert muss als Hostname oder IP-Adresse eingegeben werden",
   "SettingsComponent.error.modbusTcpPort_pattern": "Die Portnummer muss gültig sein",

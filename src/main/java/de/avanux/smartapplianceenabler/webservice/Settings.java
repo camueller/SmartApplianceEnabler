@@ -21,10 +21,19 @@ package de.avanux.smartapplianceenabler.webservice;
 import java.util.List;
 
 public class Settings {
+    private MqttSettings mqttSettings;
     private boolean holidaysEnabled;
     private String holidaysUrl;
     private List<ModbusSettings> modbusSettings;
     private String notificationCommand;
+
+    public MqttSettings getMqttSettings() {
+        return mqttSettings;
+    }
+
+    public void setMqttSettings(MqttSettings mqttSettings) {
+        this.mqttSettings = mqttSettings;
+    }
 
     public boolean isHolidaysEnabled() {
         return holidaysEnabled;
@@ -61,7 +70,8 @@ public class Settings {
     @Override
     public String toString() {
         return "Settings{" +
-                "holidaysEnabled=" + holidaysEnabled +
+                "mqttSettings=" + mqttSettings +
+                ", holidaysEnabled=" + holidaysEnabled +
                 ", holidaysUrl=" + holidaysUrl +
                 ", modbusSettings=" + modbusSettings +
                 ", notificationCommand=" + notificationCommand +

@@ -18,6 +18,7 @@
 package de.avanux.smartapplianceenabler.configuration;
 
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
+import de.avanux.smartapplianceenabler.mqtt.MqttBroker;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -28,8 +29,18 @@ import java.util.List;
 @XmlRootElement(name = "Connectivity")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Connectivity {
+    @XmlElement(name = "MqttBroker")
+    private MqttBroker mqttBroker;
     @XmlElement(name = "ModbusTCP")
     private List<ModbusTcp> modbusTCPs;
+
+    public MqttBroker getMqttBroker() {
+        return mqttBroker;
+    }
+
+    public void setMqttBroker(MqttBroker mqttBroker) {
+        this.mqttBroker = mqttBroker;
+    }
 
     public List<ModbusTcp> getModbusTCPs() {
         return modbusTCPs;

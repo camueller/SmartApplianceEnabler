@@ -17,12 +17,14 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 import {ModbusSetting} from './modbus/modbus-setting';
+import {MqttSettings} from './mqtt-settings';
 
 export class Settings {
+  mqttSettings?: MqttSettings;
   holidaysEnabled: boolean;
-  holidaysUrl: string;
-  modbusSettings: ModbusSetting[];
-  notificationCommand: string;
+  holidaysUrl?: string;
+  modbusSettings?: ModbusSetting[];
+  notificationCommand?: string;
 
   public constructor(init?: Partial<Settings>) {
     Object.assign(this, init);

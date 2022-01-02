@@ -1,20 +1,31 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v2.0">
-    <Appliance id="F-00000001-000000000001-00">
-        <MeterReportingSwitch/>
-        <MasterElectricityMeter slaveSwitchOn="true">
-            <HttpElectricityMeter contentProtocol="JSON">
-                <HttpRead url="http://tasmota/cm?cmnd=Status%208">
-                    <HttpReadValue name="Energy" method="GET" path="$.StatusSNS.ENERGY.Total"/>
-                </HttpRead>
-            </HttpElectricityMeter>
-        </MasterElectricityMeter>
-    </Appliance>
-    <Appliance id="F-00000001-000000000001-01">
-        <MockSwitch/>
-        <SlaveElectricityMeter masterElectricityMeterApplianceId="F-00000001-000000000001-00"/>
+    <Appliance id="F-00000001-000000000002-00">
+        <HttpSwitch>
+            <HttpWrite url="http://tasmota/cm?cmnd=Power%20On">
+                <HttpWriteValue name="On" method="GET"/>
+            </HttpWrite>
+            <HttpWrite url="http://tasmota/cm?cmnd=Power%20Off">
+                <HttpWriteValue name="Off" method="GET"/>
+            </HttpWrite>
+            <Notifications/>
+        </HttpSwitch>
+        <HttpElectricityMeter contentProtocol="JSON">
+            <HttpRead url="http://tasmota/cm?cmnd=Status%208">
+                <HttpReadValue name="Energy" method="GET" path="$.StatusSNS.ENERGY.Total"/>
+            </HttpRead>
+            <Notifications/>
+        </HttpElectricityMeter>
+        <Schedule enabled="true">
+            <RuntimeRequest min="60" max="300"/>
+            <DayTimeframe>
+                <Start hour="8" minute="0" second="0"/>
+                <End hour="16" minute="0" second="0"/>
+            </DayTimeframe>
+        </Schedule>
     </Appliance>
     <Connectivity>
+        <!--MqttBroker host="localhost"/-->
         <ModbusTCP id="modbus" host="raspi2" port="502"/>
         <ModbusTCP id="wallbox" host="wallbox" port="502"/>
     </Connectivity>

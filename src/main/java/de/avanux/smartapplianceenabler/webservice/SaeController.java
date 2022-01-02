@@ -35,6 +35,7 @@ import de.avanux.smartapplianceenabler.meter.MeterDefaults;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
 import de.avanux.smartapplianceenabler.mqtt.ControlMessage;
 import de.avanux.smartapplianceenabler.mqtt.MeterMessage;
+import de.avanux.smartapplianceenabler.mqtt.MqttBroker;
 import de.avanux.smartapplianceenabler.mqtt.MqttClient;
 import de.avanux.smartapplianceenabler.notification.Notification;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
@@ -736,6 +737,14 @@ public class SaeController {
 
             Connectivity connectivity = appliances.getConnectivity();
             if (connectivity != null) {
+                MqttBroker mqttBroker = connectivity.getMqttBroker();
+                if(mqttBroker != null) {
+                    MqttSettings mqttSettings = new MqttSettings();
+                    mqttSettings.setMqttBrokerHost(mqttBroker.getHost());
+                    mqttSettings.setMqttBrokerPort(mqttBroker.getPort());
+                    settings.setMqttSettings(mqttSettings);
+                }
+
                 List<ModbusTcp> modbusTCPs = connectivity.getModbusTCPs();
                 if (modbusTCPs != null) {
                     List<ModbusSettings> modbusSettingsList = new ArrayList<>();
@@ -771,6 +780,14 @@ public class SaeController {
         try {
             logger.debug("Received request to set " + settings);
 
+            MqttSettings mqttSettings = settings.getMqttSettings();
+            MqttBroker mqttBroker = null;
+            if(mqttSettings != null) {
+                mqttBroker = new MqttBroker();
+                mqttBroker.setHost(mqttSettings.getMqttBrokerHost());
+                mqttBroker.setPort(mqttSettings.getMqttBrokerPort());
+            }
+
             List<ModbusTcp> modbusTCPs = null;
             List<ModbusSettings> modbusSettingsList = settings.getModbusSettings();
             if (modbusSettingsList != null) {
@@ -785,8 +802,9 @@ public class SaeController {
             }
 
             Connectivity connectivity = null;
-            if (modbusTCPs != null) {
+            if (mqttBroker != null || modbusTCPs != null) {
                 connectivity = new Connectivity();
+                connectivity.setMqttBroker(mqttBroker);
                 connectivity.setModbusTCPs(modbusTCPs);
             }
             ApplianceManager.getInstance().setConnectivity(connectivity);

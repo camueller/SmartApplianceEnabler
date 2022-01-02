@@ -488,14 +488,20 @@
 
     <xs:complexType name="ConnectivityType">
         <xs:sequence>
-            <xs:element name="ModbusTCP" minOccurs="0" maxOccurs="unbounded">
-                <xs:complexType>
-                    <xs:attribute name="id" type="xs:NCName" />
-                    <xs:attribute name="host" type="xs:string" />
-                    <xs:attribute name="port" type="xs:int" />
-                </xs:complexType>
-            </xs:element>
+            <xs:element name="MqttBroker" type="MqttBrokerType" />
+            <xs:element name="ModbusTCP" type="ModbusTCPType" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="MqttBrokerType">
+        <xs:attribute name="host" type="xs:string" use="required"/>
+        <xs:attribute name="port" type="xs:int" />
+    </xs:complexType>
+
+    <xs:complexType name="ModbusTCPType">
+        <xs:attribute name="id" type="xs:NCName" />
+        <xs:attribute name="host" type="xs:string" />
+        <xs:attribute name="port" type="xs:int" />
     </xs:complexType>
 
 </xs:schema>
