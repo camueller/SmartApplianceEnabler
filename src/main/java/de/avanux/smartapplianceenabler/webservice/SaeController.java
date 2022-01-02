@@ -735,8 +735,9 @@ public class SaeController {
             Appliances appliances = ApplianceManager.getInstance().getAppliancesRoot();
 
             Connectivity connectivity = appliances.getConnectivity();
+            MqttBroker mqttBroker = null;
             if (connectivity != null) {
-                MqttBroker mqttBroker = connectivity.getMqttBroker();
+                mqttBroker = connectivity.getMqttBroker();
                 if(mqttBroker != null) {
                     MqttSettings mqttSettings = new MqttSettings();
                     mqttSettings.setMqttBrokerHost(mqttBroker.getHost());
@@ -757,6 +758,13 @@ public class SaeController {
                     settings.setModbusSettings(modbusSettingsList);
                 }
             }
+
+            if(mqttBroker == null) {
+                mqttBroker = new MqttBroker();
+            }
+            var client = new MqttClient("", getClass());
+            settings.setMqttBrokerAvailable(client.isMqttBrokerAvailable(
+                    mqttBroker.getResolvedHost(), mqttBroker.getResolvedPort()));
 
             String nodeRedDashboardUrl = appliances.getConfigurationValue(ConfigurationParam.NODERED_DASHBOARD_URL.getVal());
             settings.setNodeRedDashboardUrl(nodeRedDashboardUrl);

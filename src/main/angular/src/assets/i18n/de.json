@@ -368,6 +368,7 @@
 
 
   "StatusComponent.title": "Steuerbare Geräte",
+  "StatusComponent.message.mqttBrokerNotAvailable": "Aktuell ist kein MQTT-Broker konfiguriert oder dieser ist nicht erreichbar. Solange dieses Problem nicht behoben ist, kann der Smart Appliance Enabler nicht funktionieren.",
   "StatusComponent.message.noControllableAppliances": "Keine steuerbaren Geräte vorhanden.",
   "StatusComponent.dashboard.export": "Node-RED Flows exportieren",
   "StatusComponent.dashboard.open": "Node-RED Dashboard öffnen",

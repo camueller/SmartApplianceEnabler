@@ -22,6 +22,7 @@ import java.util.List;
 
 public class Settings {
     private MqttSettings mqttSettings;
+    private Boolean mqttBrokerAvailable;
     private String nodeRedDashboardUrl;
     private boolean holidaysEnabled;
     private String holidaysUrl;
@@ -34,6 +35,14 @@ public class Settings {
 
     public void setMqttSettings(MqttSettings mqttSettings) {
         this.mqttSettings = mqttSettings;
+    }
+
+    public Boolean getMqttBrokerAvailable() {
+        return mqttBrokerAvailable;
+    }
+
+    public void setMqttBrokerAvailable(Boolean mqttBrokerAvailable) {
+        this.mqttBrokerAvailable = mqttBrokerAvailable;
     }
 
     public String getNodeRedDashboardUrl() {
@@ -80,6 +89,7 @@ public class Settings {
     public String toString() {
         return "Settings{" +
                 "mqttSettings=" + mqttSettings +
+                ", mqttBrokerAvailable=" + mqttBrokerAvailable +
                 ", holidaysEnabled=" + holidaysEnabled +
                 ", holidaysUrl=" + holidaysUrl +
                 ", modbusSettings=" + modbusSettings +

@@ -58,7 +58,6 @@ public class MqttClient {
                 .useRuntimeType(true)
                 .create();
 
-
         StringBuilder clientIdBuilder = new StringBuilder();
         if(applianceId.length() > 0) {
             clientIdBuilder.append(applianceId + "-");
@@ -68,26 +67,16 @@ public class MqttClient {
             clientIdBuilder.append("-" + counter++);
         }
         String clientId = clientIdBuilder.toString();
-
-        try {
-            client = new org.eclipse.paho.client.mqttv3.MqttClient(
-                    buildBrokerUri(),
-                    clientId,
-                    new MemoryPersistence()
-            );
-            logger.debug("{}: Created MQTT client {}", loggerId, clientId);
-        }
-        catch (Exception e) {
-            logger.error("{}: Error creating MQTT client {}", loggerId, clientId, e);
-        }
+        var brokerUri = buildBrokerUri(mqttBroker.getResolvedHost(), mqttBroker.getResolvedPort());
+        client = createClient(clientId, brokerUri);
     }
 
     public static void setMqttBroker(MqttBroker mqttBroker) {
         MqttClient.mqttBroker = mqttBroker;
     }
 
-    private String buildBrokerUri() {
-        return "tcp://" + mqttBroker.getResolvedHost() + ":" + mqttBroker.getResolvedPort();
+    private String buildBrokerUri(String host, Integer port) {
+        return "tcp://" + host + ":" + port;
     }
 
     public static void start() {
@@ -126,6 +115,22 @@ public class MqttClient {
         return topicPrefix + "/" + applianceId + "/" + MqttEventName.TOPIC + "/" + event.getName();
     }
 
+    private org.eclipse.paho.client.mqttv3.MqttClient createClient(String clientId, String brokerUri) {
+        org.eclipse.paho.client.mqttv3.MqttClient client = null;
+        try {
+            client = new org.eclipse.paho.client.mqttv3.MqttClient(
+                    brokerUri,
+                    clientId,
+                    new MemoryPersistence()
+            );
+            logger.debug("{}: Created MQTT client {}", loggerId, clientId);
+        }
+        catch (Exception e) {
+            logger.error("{}: Error creating MQTT client {}", loggerId, clientId, e);
+        }
+        return client;
+    }
+
     private synchronized boolean connect() {
         try {
             if(! client.isConnected()) {
@@ -139,6 +144,22 @@ public class MqttClient {
         }
         catch (Exception e) {
             logger.error("{}: Error connecting to MQTT broker", loggerId, e);
+        }
+        return false;
+    }
+
+    public boolean isMqttBrokerAvailable(String host, Integer port) {
+        var brokerUri = buildBrokerUri(host, port);
+        try {
+            var client = createClient(getClass().getSimpleName(), brokerUri);
+            client.connect(getOptions());
+            var connected = client.isConnected();
+            logger.debug("{}: MQTT connection available: {}", loggerId, connected);
+            client.disconnect();
+            return connected;
+        }
+        catch(Exception e) {
+            logger.error("{}: Error testing connection to MQTT broker", loggerId, e);
         }
         return false;
     }

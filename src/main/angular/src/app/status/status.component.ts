@@ -44,6 +44,7 @@ export class StatusComponent implements OnInit, OnDestroy {
   editMode = false;
   MessageBoxLevel = MessageBoxLevel;
   electricVehicles = new Map<string, ElectricVehicle[]>();
+  mqttBrokerAvailable = false;
   nodeRedDashboardUrl: string | undefined;
 
   ngOnInit() {
@@ -57,6 +58,7 @@ export class StatusComponent implements OnInit, OnDestroy {
     });
     this.route.data.subscribe((data: { settings: Settings, settingsDefaults: SettingsDefaults }) => {
       this.nodeRedDashboardUrl = data.settings.nodeRedDashboardUrl ?? data.settingsDefaults.nodeRedDashboardUrl;
+      this.mqttBrokerAvailable = data.settings.mqttBrokerAvailable;
     });
     this.startRefreshStatus();
   }

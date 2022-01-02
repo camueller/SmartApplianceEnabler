@@ -368,6 +368,7 @@
 
 
   "StatusComponent.title": "Controllable appliances",
+  "StatusComponent.message.mqttBrokerNotAvailable": "Currently no MQTT broker is configured or no connection can be established. While this problem persists the Smart Appliance Enabler will not function.",
   "StatusComponent.message.noControllableAppliances": "No controllable appliances",
   "StatusComponent.dashboard.export": "Export Node-RED flows",
   "StatusComponent.dashboard.open": "Open Node-RED dashboard",
