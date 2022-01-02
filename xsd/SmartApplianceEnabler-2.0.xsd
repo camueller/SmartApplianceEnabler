@@ -66,7 +66,7 @@
 
     <xs:complexType name="ConfigurationType">
         <xs:attribute name="param" type="xs:string" use="required" />
-        <xs:attribute name="value" type="xs:string" use="required" />
+        <xs:attribute name="value" type="xs:string" />
     </xs:complexType>
 
     <xs:complexType name="ApplianceType">

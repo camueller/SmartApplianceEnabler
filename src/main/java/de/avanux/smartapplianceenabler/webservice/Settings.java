@@ -22,6 +22,7 @@ import java.util.List;
 
 public class Settings {
     private MqttSettings mqttSettings;
+    private String nodeRedDashboardUrl;
     private boolean holidaysEnabled;
     private String holidaysUrl;
     private List<ModbusSettings> modbusSettings;
@@ -33,6 +34,14 @@ public class Settings {
 
     public void setMqttSettings(MqttSettings mqttSettings) {
         this.mqttSettings = mqttSettings;
+    }
+
+    public String getNodeRedDashboardUrl() {
+        return nodeRedDashboardUrl;
+    }
+
+    public void setNodeRedDashboardUrl(String nodeRedDashboardUrl) {
+        this.nodeRedDashboardUrl = nodeRedDashboardUrl;
     }
 
     public boolean isHolidaysEnabled() {

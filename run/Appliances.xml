@@ -25,7 +25,7 @@
         </Schedule>
     </Appliance>
     <Connectivity>
-        <!--MqttBroker host="localhost"/-->
+        <MqttBroker host="localhost"/>
         <ModbusTCP id="modbus" host="raspi2" port="502"/>
         <ModbusTCP id="wallbox" host="wallbox" port="502"/>
     </Connectivity>

@@ -41,6 +41,22 @@
   <mat-divider></mat-divider>
 
   <section>
+    <h2 class="sae__heading-extra-top-margin">{{'SettingsComponent.nodeRed' | translate}}
+      <app-help [helpfile]="'Settings'" [anchor]="'nodered'"></app-help></h2>
+    <div class="sae__fields">
+      <mat-form-field class="sae__url">
+        <mat-label>{{'SettingsComponent.nodeRedDashboardUrl' | translate}}</mat-label>
+        <input matInput type="text" formControlName="nodeRedDashboardUrl"
+               placeholder="{{settingsDefaults.nodeRedDashboardUrl}}"
+               required="{{formHandler.isRequired('nodeRedDashboardUrl')}}">
+        <mat-error *ngIf="errors.nodeRedDashboardUrl">{{errors.nodeRedDashboardUrl}}</mat-error>
+      </mat-form-field>
+    </div>
+  </section>
+
+  <mat-divider></mat-divider>
+
+  <section>
     <h2 class="sae__heading-extra-top-margin">{{'SettingsComponent.holidays' | translate}}
       <app-help [helpfile]="'Settings'" [anchor]="'holidays'"></app-help></h2>
     <div class="sae__fields">

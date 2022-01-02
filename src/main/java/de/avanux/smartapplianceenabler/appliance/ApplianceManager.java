@@ -20,6 +20,7 @@ package de.avanux.smartapplianceenabler.appliance;
 import de.avanux.smartapplianceenabler.HolidaysDownloader;
 import de.avanux.smartapplianceenabler.configuration.Configuration;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
+import de.avanux.smartapplianceenabler.configuration.ConfigurationParam;
 import de.avanux.smartapplianceenabler.configuration.Connectivity;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.http.HttpRead;
@@ -307,7 +308,7 @@ public class ApplianceManager implements Runnable {
             logger.debug("{}: Initializing appliance ...", appliance.getId());
             try {
                 appliance.init(getPigpioInterface(), modbusIdWithModbusTcp,
-                        appliances.getConfigurationValue(NotificationHandler.CONFIGURATION_KEY_NOTIFICATION_COMMAND));
+                        appliances.getConfigurationValue(ConfigurationParam.NOTIFICATION_COMMAND.getVal()));
             }
             catch (Exception e) {
                 logger.error("{}: Error initializing appliance", appliance.getId(), e);
@@ -345,7 +346,7 @@ public class ApplianceManager implements Runnable {
                     FileHandler fileHandler = new FileHandler();
                     if(! fileHandler.isHolidayFileAvailable()) {
                         HolidaysDownloader downloader = new HolidaysDownloader();
-                        String downloadUrl = appliances.getConfigurationValue(HolidaysDownloader.urlConfigurationParamName);
+                        String downloadUrl = appliances.getConfigurationValue(ConfigurationParam.HOLIDAYS_URL.getVal());
                         if(downloadUrl != null) {
                             downloader.setUrl(downloadUrl);
                         }

@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MqttBroker {
     public transient static final String DEFAULT_HOST = "127.0.0.1";
+    public transient static final String DEFAULT_NODERED_DASHBOARD_URL = "http://localhost:1880/ui";
     @XmlAttribute
     private String host;
     public transient static final int DEFAULT_PORT = 1883;

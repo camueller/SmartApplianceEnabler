@@ -36,7 +36,6 @@ import java.util.Scanner;
 
 public class HolidaysDownloader {
     private Logger logger = LoggerFactory.getLogger(HolidaysDownloader.class);
-    public static final String urlConfigurationParamName = "Holidays.Url";
     public transient static final String DEFAULT_URL = "https://feiertage-api.de/api/?jahr={0}&nur_land=NATIONAL";
     private String url;
 

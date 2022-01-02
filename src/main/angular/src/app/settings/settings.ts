@@ -21,6 +21,7 @@ import {MqttSettings} from './mqtt-settings';
 
 export class Settings {
   mqttSettings?: MqttSettings;
+  nodeRedDashboardUrl?: string;
   holidaysEnabled: boolean;
   holidaysUrl?: string;
   modbusSettings?: ModbusSetting[];

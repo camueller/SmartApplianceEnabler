@@ -68,6 +68,7 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
 
   ngOnInit() {
     this.errorMessages = new ErrorMessages('SettingsComponent.error.', [
+      new ErrorMessage('nodeRedDashboardUrl', ValidatorType.pattern),
       new ErrorMessage('holidaysUrl', ValidatorType.pattern),
       new ErrorMessage('mqttBrokerHost', ValidatorType.pattern),
       new ErrorMessage('mqttBrokerPort', ValidatorType.pattern),
@@ -89,6 +90,8 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
       Validators.pattern(InputValidatorPatterns.HOSTNAME)),
     this.formHandler.addFormControl(this.form, 'mqttBrokerPort', this.settings.mqttSettings?.mqttBrokerPort,
       Validators.pattern(InputValidatorPatterns.INTEGER)),
+      this.formHandler.addFormControl(this.form, 'nodeRedDashboardUrl', this.settings.nodeRedDashboardUrl,
+        [Validators.pattern(InputValidatorPatterns.URL)]);
     this.formHandler.addFormControl(this.form, 'holidaysEnabled', this.settings.holidaysEnabled);
     this.formHandler.addFormControl(this.form, 'holidaysUrl', this.settings.holidaysUrl,
       [Validators.pattern(InputValidatorPatterns.URL)]);
@@ -149,6 +152,7 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
     if (mqttBrokerHost) {
       this.settings.mqttSettings = {mqttBrokerHost, mqttBrokerPort};
     }
+    this.settings.nodeRedDashboardUrl = getValidString(this.form.controls.nodeRedDashboardUrl.value);
     this.settings.holidaysEnabled = this.form.controls.holidaysEnabled.value;
     this.settings.holidaysUrl = getValidString(this.form.controls.holidaysUrl.value);
     this.settings.modbusSettings = [];

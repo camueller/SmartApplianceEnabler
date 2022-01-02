@@ -32,8 +32,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 public class NotificationHandler implements ApplianceIdConsumer {
-    public static final String CONFIGURATION_KEY_NOTIFICATION_COMMAND = "Notification.Commmand";
-
     private transient Logger logger = LoggerFactory.getLogger(NotificationHandler.class);
 
     private String applianceId;

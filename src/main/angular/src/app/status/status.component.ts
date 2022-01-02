@@ -15,6 +15,9 @@ import {EvChargerState} from '../control/evcharger/ev-charger-state';
 import {MatDialog} from '@angular/material/dialog';
 import {FlowExportComponent} from '../nodered/flow-export/flow-export.component';
 import {FlowExportData} from '../nodered/flow-export/flow-export-data';
+import {ActivatedRoute} from '@angular/router';
+import {Settings} from '../settings/settings';
+import {SettingsDefaults} from '../settings/settings-defaults';
 
 @Component({
   selector: 'app-status',
@@ -25,6 +28,7 @@ export class StatusComponent implements OnInit, OnDestroy {
 
   constructor(private statusService: StatusService,
               private controlService: ControlService,
+              private route: ActivatedRoute,
               private translate: TranslateService,
               public dialog: MatDialog) {
   }
@@ -40,6 +44,7 @@ export class StatusComponent implements OnInit, OnDestroy {
   editMode = false;
   MessageBoxLevel = MessageBoxLevel;
   electricVehicles = new Map<string, ElectricVehicle[]>();
+  nodeRedDashboardUrl: string | undefined;
 
   ngOnInit() {
     DaysOfWeek.getDows(this.translate).subscribe(dows => this.dows = dows);
@@ -49,6 +54,9 @@ export class StatusComponent implements OnInit, OnDestroy {
           this.electricVehicles.set(status.id, electricVehicles);
         });
       });
+    });
+    this.route.data.subscribe((data: { settings: Settings, settingsDefaults: SettingsDefaults }) => {
+      this.nodeRedDashboardUrl = data.settings.nodeRedDashboardUrl ?? data.settingsDefaults.nodeRedDashboardUrl;
     });
     this.startRefreshStatus();
   }
@@ -219,9 +227,5 @@ export class StatusComponent implements OnInit, OnDestroy {
   openDialog() {
     const data: FlowExportData = {applianceIds: this.applianceIds};
     this.dialog.open(FlowExportComponent, {data});
-  }
-
-  public get nodeRedDashboardUrl() {
-    return 'http://raspi2:1880/ui';
   }
 }

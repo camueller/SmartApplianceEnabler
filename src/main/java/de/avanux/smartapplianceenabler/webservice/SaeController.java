@@ -19,11 +19,11 @@
 package de.avanux.smartapplianceenabler.webservice;
 
 import de.avanux.smartapplianceenabler.Application;
-import de.avanux.smartapplianceenabler.HolidaysDownloader;
 import de.avanux.smartapplianceenabler.appliance.Appliance;
 import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
 import de.avanux.smartapplianceenabler.appliance.Appliances;
 import de.avanux.smartapplianceenabler.configuration.Configuration;
+import de.avanux.smartapplianceenabler.configuration.ConfigurationParam;
 import de.avanux.smartapplianceenabler.configuration.Connectivity;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.ControlDefaults;
@@ -38,7 +38,6 @@ import de.avanux.smartapplianceenabler.mqtt.MeterMessage;
 import de.avanux.smartapplianceenabler.mqtt.MqttBroker;
 import de.avanux.smartapplianceenabler.mqtt.MqttClient;
 import de.avanux.smartapplianceenabler.notification.Notification;
-import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.schedule.*;
 import de.avanux.smartapplianceenabler.semp.webservice.*;
 import de.avanux.smartapplianceenabler.util.FileHandler;
@@ -759,11 +758,14 @@ public class SaeController {
                 }
             }
 
-            String holidaysUrl = appliances.getConfigurationValue(HolidaysDownloader.urlConfigurationParamName);
+            String nodeRedDashboardUrl = appliances.getConfigurationValue(ConfigurationParam.NODERED_DASHBOARD_URL.getVal());
+            settings.setNodeRedDashboardUrl(nodeRedDashboardUrl);
+
+            String holidaysUrl = appliances.getConfigurationValue(ConfigurationParam.HOLIDAYS_URL.getVal());
             settings.setHolidaysEnabled(holidaysUrl != null);
             settings.setHolidaysUrl(holidaysUrl);
 
-            String notificationCommand = appliances.getConfigurationValue(NotificationHandler.CONFIGURATION_KEY_NOTIFICATION_COMMAND);
+            String notificationCommand = appliances.getConfigurationValue(ConfigurationParam.NOTIFICATION_COMMAND.getVal());
             settings.setNotificationCommand(notificationCommand);
 
             logger.debug("Returning Settings " + settings);
@@ -810,14 +812,17 @@ public class SaeController {
             ApplianceManager.getInstance().setConnectivity(connectivity);
 
             List<Configuration> configurations = new ArrayList<>();
+            if(settings.getNodeRedDashboardUrl() != null) {
+                configurations.add(new Configuration(ConfigurationParam.NODERED_DASHBOARD_URL.getVal(),
+                        settings.getNodeRedDashboardUrl()));
+            }
             if (settings.isHolidaysEnabled()) {
-                configurations.add(
-                        new Configuration(HolidaysDownloader.urlConfigurationParamName, settings.getHolidaysUrl()));
+                configurations.add(new Configuration(ConfigurationParam.HOLIDAYS_URL.getVal(),
+                        settings.getHolidaysUrl()));
             }
             if(settings.getNotificationCommand() != null) {
-                configurations.add(
-                        new Configuration(NotificationHandler.CONFIGURATION_KEY_NOTIFICATION_COMMAND,
-                                settings.getNotificationCommand()));
+                configurations.add(new Configuration(ConfigurationParam.NOTIFICATION_COMMAND.getVal(),
+                        settings.getNotificationCommand()));
             }
             ApplianceManager.getInstance().setConfiguration(configurations);
         } catch (Throwable e) {

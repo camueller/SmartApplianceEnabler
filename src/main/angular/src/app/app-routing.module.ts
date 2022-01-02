@@ -56,9 +56,12 @@ const routes: Routes = [
     component: ApplianceComponent
   },
   {
-    /* FIXME: Resolver verwenden */
     path: 'status',
-    component: StatusComponent
+    component: StatusComponent,
+    resolve: {
+      settings: SettingsResolver,
+      settingsDefaults: SettingsDefaultsResolver,
+    },
   },
   {
     path: 'meter/:id',
