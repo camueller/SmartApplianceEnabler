@@ -84,6 +84,8 @@ Die [Konfiguration](doc/Configuration_DE.md) des *Smart Appliance Enabler* erfol
 
 Der Status aller steuerbaren Geräte wird in der [Status-Anzeige](doc/Status_DE.md) übersichtlich dargestellt, wobei der Status jedes Gerätes durch eine **Ampel** visualisiert wird. Die Ampel kann auch zur **manuellen Steuerung** verwendet werden.
 
+Zusätzlich unterstützt der *Smart Appliance Enabler* [Node-RED indem er für die konfigurierten Geräte Flows exportiert, damit diese im Dashboard von Node-RED visualisiert werden](doc/NodeRED_DE.md).
+
 In dem nachfolgenden Video kann man einen Eindruck von der Konfiguration des *Smart Appliance Enabler* gewinnen. Dieses Video wurde im Rahmen der Durchführung automatisierter Tests erstellt, welche die Qualität des *Smart Appliance Enabler* sicherstellen sollen.
 
 [![Web-Oberfläche](pics/fe/BrowserstackPreview.png)](https://drive.google.com/file/d/1g7mgRbnyaPVroLKrlPBE5j1Jmu51WwqD/view)

@@ -1,0 +1,147 @@
+# Node-RED
+[Node-RED](https://nodered.org/) kann verwendet werden, um die MQTT-Nachrichten des *Smart Appliance Enabler* im Node-RED-Dashboard zu visualisieren. Insbesondere die Leistungs-Diagramme können dabei helfen, das Verhalten des *Smart Appliance Enabler* zu verstehen und zu optimieren.
+
+## Installation ohne Docker
+Für Node-RED sollte ein eigener User verwendet werden, der zur `sudo`-Gruppe hinzugefügrt wird und dessen Passwort danach noch gesetzt wird:
+```console
+pi@raspberrypi ~ $ sudo useradd -d /opt/nodered -m -s /bin/bash nodered
+pi@raspberrypi ~ $ sudo usermod -a -G sudo nodered
+pi@raspberrypi ~ $ sudo passwd nodered
+```
+
+Ab jetzt sollte mit diesem User gearbeitet werden.
+
+Node-RED kann über das Raspbian-Repository mit `apt install ...` installiert werden, aber man erhält dann eine veraltete Version von Node-RED und Node.js, wobei letztere möglicherweise deshalb nicht in der lage dazu ist, Bibliotheken direkt von `github` zu installieren. Deshalb sollte die Installation von Node-RED und auch node.js entsprechend der [Anleitung auf der Node-RED-Homepage](https://nodered.org/docs/getting-started/raspberrypi) erfolgen:
+```console
+nodered@raspberrypi ~ $ bash <(curl -sL https://raw.githubusercontent.com/node-red/linux-installers/master/deb/update-nodejs-and-nodered)
+Running Node-RED update for user nodered at /opt/nodered on raspbian
+
+[sudo] password for nodered: 
+
+This can take 20-30 minutes on the slower Pi versions - please wait.
+
+  Stop Node-RED                       ✔
+  Remove old version of Node-RED      ✔
+  Remove old version of Node.js       ✔   
+  Install Node.js 14 LTS              ✔   v14.18.2   Npm 6.14.15
+  Clean npm cache                     ✔
+  Install Node-RED core               ✔   2.1.4 
+  Move global nodes to local          -
+  Npm rebuild existing nodes          ✔
+  Install extra Pi nodes              -
+  Add shortcut commands               ✔
+  Update systemd script               ✔
+                                      
+
+Any errors will be logged to   /var/log/nodered-install.log
+All done.
+You can now start Node-RED with the command  node-red-start
+  or using the icon under   Menu / Programming / Node-RED
+Then point your browser to localhost:1880 or http://{your_pi_ip-address}:1880
+
+Started :  Sat Jan  1 15:32:31 CET 2022 
+Finished:  Sat Jan  1 15:35:15 CET 2022
+ 
+You may want to run   node-red admin init
+to configure your initial options and settings.
+```
+Zum Starten eignet sich folgender Befehl:
+```console
+nodered@raspberrypi ~ $ sudo systemctl start nodered
+```
+Damit Node-RED beim Systemstart ebenfalls gestartet wird (via Systemd), muss folgender Befehl ausgeführt werden:
+```console
+pi@raspberrypi ~ $ sudo systemctl enable nodered
+Created symlink /etc/systemd/system/multi-user.target.wants/nodered.service → /lib/systemd/system/nodered.service.
+```
+
+## Installation mit Docker
+Die Installation des entsprechenden Docker-Containers erfolgt mit:
+```console
+docker pull nodered/node-red
+```
+Es ist ein Volume erforderlich zum Speichern der Daten:
+```console
+docker volume create node_red_data
+```
+Zum Starten eignet sich folgender Befehl:
+```console
+$ docker run -it --rm -p 1880:1880 -v node_red_data:/data --name nodered nodered/node-red
+```
+
+## Installation benötiger Bibliotheken
+Folgende Module müssen über `Manage Palette -> Install` installiert werden:
+- node-red-node-ui-table
+- node-red-dashboard
+
+Für die nachfolgende Installation von `camueller/node-red-contrib-ui-timelines-chart` muss `git` installiert sein, was sich durch den Befehl `sudo apt install git` erreichen lässt.
+
+Einige weitere Bibliotheken müssen manuell in der Shell installiert werden, während man sich im Verzeichnis `~/.node-red` (Docker: `/data`) befindet:
+- camueller/node-red-contrib-ui-timelines-chart
+- date-fns
+
+Dazu muss der nachfolgende Befehl für jeden Namen aus der vorangegangen Liste einmal ausgeführt werden, wobei `<name>` jeweils durch den Listeneintrag ersetz werden muss:
+```console
+$ npm i <name>
+```
+
+Die Bibliothek `date-fns` muss noch in der Datei `~/.node-red/settings.js` (Docker: `/data/settings.js`) eingetragen werden. Dazu in der Datei suchen nach `functionGlobalContext`) und ändern wie folgt:
+```console
+functionGlobalContext: {                                                         
+  datefns:require('date-fns')                                                  
+},
+```
+
+## Export der Flows
+![Export der Flows](../pics/nodered/StatusExport.png)
+
+Durch Klick auf den Export-Button wird der Export-Dialog geöffnet:
+
+![Export der Flows](../pics/nodered/ExportDialog.png)
+
+Im Export-Dialog kann direkt der Button `Inhalt in die Zwischenablage kopieren` gedrückt werden, um das angezeigte Node-RED Flow-JSON in die Zwischenablage zu kopieren. Damit ist der Export abgeschlossen.
+
+## Import der Flows
+
+Der Import der Flows in Node-RED erfolgt über das Menü `Import`:
+
+![Menu Import](../pics/nodered/MenuImport.png)
+
+Nach Klick  in den zentralen, roten Bereich des Import-Dialoges kann dort das Node-RED Flow-JSON aus der Zwischenablage eingefügt werden. Durch Klicken des `Import`-Buttons werden die Flows in Node-RED importiert.
+
+Für jedes Gerät im *Smart Appliance Enabler* wird ein Tab mit einem Flow angelegt:
+
+![Flow](../pics/nodered/Flow.png)
+
+### Anpassung des konfigurierten MQTT-Brokers
+Nach dem Import gibt es einen globalen Konfiguration-Node mit dem Namen `MQTT-Broker (SAE)`. Dieser enthält Hostname und Port des MQTT-Brokers, wie in den Einstellungen des *Smart Appliance Enabler* angegeben. Normalerweise sollte es nicht notwendig sein, diese Werte in Node-RED anders zu konfigurieren.
+
+Falls Node-RED und MQTT-Server als Docker-Container betrieben werden, muss beachtet werden, dass für die Container-zu-Container-Kommunkation dessen IP-Adresse im Docker-Bridge-Netzwerk verwendet wird. Diese kann wie folgt ermittelt werden ([siehe auch](https://www.tutorialworks.com/container-networking/)):
+
+```console
+$ docker inspect mosquitto | grep IPAddress
+            "SecondaryIPAddresses": null,
+            "IPAddress": "172.17.0.2",
+                    "IPAddress": "172.17.0.2",
+```
+
+### Übernahme der Flows
+Normalerweise sollte es möglich sein, die importierten Flows ohne Anpassungen direkt zu übernehmen, weil die vom *Smart Appliance Enabler* exportierte Flow-JSON vollständig ist.
+
+Zur Übernahme muss lediglich der `Übernahme`-Button gedrück werden:
+![Flow](../pics/nodered/Deploy.png)
+
+## Dashboard
+In den Einstellungen des *Smart Appliance Enabler* muss die `Dashboard URL` von Node-RED konfiguriert werden, weil diese davon abhängt, wie Node-RED installiert.
+
+![Einstellungen Dashboard URL](../pics/nodered/EinstellungenDashboardUrl.png)
+
+Fast immer wird man die als Platzhalter angezeigte Default-URL `http://localhost:1880/ui` so anpassen müssen, dass `localhost` durch den Hostnamen ersetzt wird, unter dem Node-RED erreichbar ist. 
+
+Danach kann das Node-RED-Dashboard über den Link-Button in der Status-Anzeige des *Smart Appliance Enabler* aufgerufen werden:
+![Aufruf des Dashboards](../pics/nodered/StatusDashboard.png)
+
+Das Dashboad selbst zeigt alle vom *Smart Appliance Enabler* verwalteten Geräte auf einem Tab mit dem Namen `Smart Appliance Enabler` an:
+![Dashboard](../pics/nodered/Dashboard.png)
+
+Das Dashboard empfängt alle MQTT-Nachrichten des *Smart Appliance Enabler* und aktualisiert sich selbständig. Dadurch bietet es eine Echtezit-Anzeige auf den Zustand des *Smart Appliance Enabler*. 
