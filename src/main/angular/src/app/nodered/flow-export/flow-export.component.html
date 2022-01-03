@@ -1,9 +1,9 @@
-<h2 mat-dialog-title>Export NodeRED Flow-JSON</h2>
+<h2 mat-dialog-title>{{'StatusComponent.exportDialog.title' | translate}}</h2>
 <mat-dialog-content class="mat-typography">
   <pre>{{exportJson}}</pre>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-button [mat-dialog-close]="true">Close</button>
-  <button mat-button [cdkCopyToClipboard]="exportJson" mat-dialog-close cdkFocusInitial>Copy to clipboard</button>
+  <button mat-button [mat-dialog-close]="true">{{'StatusComponent.exportDialog.close' | translate}}</button>
+  <button mat-button [cdkCopyToClipboard]="exportJson" mat-dialog-close cdkFocusInitial>{{'StatusComponent.exportDialog.copyToClipboard' | translate}}</button>
 </mat-dialog-actions>
 
