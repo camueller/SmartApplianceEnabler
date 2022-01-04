@@ -140,23 +140,25 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
         else {
             logGpioAccessDisabled(logger);
         }
-        this.mqttPublishTimerTask = new GuardedTimerTask(getApplianceId(), "MqttPublish-" + getClass().getSimpleName(),
-                MqttClient.MQTT_PUBLISH_PERIOD * 1000) {
-            @Override
-            public void runTask() {
-                try {
-                    MqttMessage message = new MeterMessage(LocalDateTime.now(),
-                            pulsePowerMeter != null ? pulsePowerMeter.getAveragePower() : 0,
-                            pulseEnergyMeter != null ? pulseEnergyMeter.getEnergy() : 0
-                    );
-                    mqttClient.publish(mqttPublishTopic, message, false);
+        if(mqttClient != null) {
+            this.mqttPublishTimerTask = new GuardedTimerTask(getApplianceId(), "MqttPublish-" + getClass().getSimpleName(),
+                    MqttClient.MQTT_PUBLISH_PERIOD * 1000) {
+                @Override
+                public void runTask() {
+                    try {
+                        MqttMessage message = new MeterMessage(LocalDateTime.now(),
+                                pulsePowerMeter != null ? pulsePowerMeter.getAveragePower() : 0,
+                                pulseEnergyMeter != null ? pulseEnergyMeter.getEnergy() : 0
+                        );
+                        mqttClient.publish(mqttPublishTopic, message, false);
+                    }
+                    catch(Exception e) {
+                        logger.error("{}: Error publishing MQTT message", getApplianceId(), e);
+                    }
                 }
-                catch(Exception e) {
-                    logger.error("{}: Error publishing MQTT message", getApplianceId(), e);
-                }
-            }
-        };
-        timer.schedule(this.mqttPublishTimerTask, 0, this.mqttPublishTimerTask.getPeriod());
+            };
+            timer.schedule(this.mqttPublishTimerTask, 0, this.mqttPublishTimerTask.getPeriod());
+        }
     }
 
     @Override
@@ -172,6 +174,9 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
         }
         else {
             logGpioAccessDisabled(logger);
+        }
+        if(mqttClient != null) {
+            mqttClient.disconnect();
         }
     }
 

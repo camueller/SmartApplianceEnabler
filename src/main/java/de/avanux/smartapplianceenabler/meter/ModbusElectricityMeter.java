@@ -161,6 +161,9 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
         if(pollEnergyMeter != null) {
             pollEnergyMeter.cancelTimer();
         }
+        if(mqttClient != null) {
+            mqttClient.disconnect();
+        }
     }
 
     @Override

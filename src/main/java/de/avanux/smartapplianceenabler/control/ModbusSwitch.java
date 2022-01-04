@@ -94,30 +94,34 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
 
     @Override
     public void start(LocalDateTime now, Timer timer) {
-        this.mqttPublishTimerTask = new GuardedTimerTask(getApplianceId(), "MqttPublish-" + getClass().getSimpleName(),
-                MqttClient.MQTT_PUBLISH_PERIOD * 1000) {
-            @Override
-            public void runTask() {
-                try {
-                    publishControlMessage(isOn());
+        if(mqttClient != null) {
+            this.mqttPublishTimerTask = new GuardedTimerTask(getApplianceId(), "MqttPublish-" + getClass().getSimpleName(),
+                    MqttClient.MQTT_PUBLISH_PERIOD * 1000) {
+                @Override
+                public void runTask() {
+                    try {
+                        publishControlMessage(isOn());
+                    }
+                    catch(Exception e) {
+                        logger.error("{}: Error publishing MQTT message", getApplianceId(), e);
+                    }
                 }
-                catch(Exception e) {
-                    logger.error("{}: Error publishing MQTT message", getApplianceId(), e);
+            };
+            timer.schedule(this.mqttPublishTimerTask, 0, this.mqttPublishTimerTask.getPeriod());
+            mqttClient.subscribe(mqttTopic, true, true, ControlMessage.class, (topic, message) -> {
+                if(message instanceof ControlMessage) {
+                    ControlMessage controlMessage = (ControlMessage) message;
+                    this.on(controlMessage.getTime(), controlMessage.on);
                 }
-            }
-        };
-        timer.schedule(this.mqttPublishTimerTask, 0, this.mqttPublishTimerTask.getPeriod());
-
-        mqttClient.subscribe(mqttTopic, true, true, ControlMessage.class, (topic, message) -> {
-            if(message instanceof ControlMessage) {
-                ControlMessage controlMessage = (ControlMessage) message;
-                this.on(controlMessage.getTime(), controlMessage.on);
-            }
-        });
+            });
+        }
     }
 
     @Override
     public void stop(LocalDateTime now) {
+        if(mqttClient != null) {
+            mqttClient.disconnect();
+        }
     }
 
     @Override

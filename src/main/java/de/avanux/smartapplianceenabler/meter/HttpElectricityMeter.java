@@ -195,6 +195,9 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
         if(pollPowerMeter != null) {
             pollPowerMeter.cancelTimer();
         }
+        if(mqttClient != null) {
+            mqttClient.disconnect();
+        }
     }
 
     @Override

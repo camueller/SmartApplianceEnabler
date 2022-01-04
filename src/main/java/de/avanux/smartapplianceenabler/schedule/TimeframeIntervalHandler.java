@@ -99,6 +99,13 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
         });
     }
 
+    public void disconnectMqttClient() {
+        queue.forEach(timeframeInterval -> timeframeInterval.getRequest().disconnectMqttClient());
+        if(mqttClient != null) {
+            mqttClient.disconnect();
+        }
+    }
+
     public void setSchedules(List<Schedule> schedules) {
         this.schedules = schedules;
     }

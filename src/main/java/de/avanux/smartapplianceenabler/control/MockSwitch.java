@@ -68,6 +68,9 @@ public class MockSwitch implements Control, ApplianceIdConsumer {
 
     @Override
     public void stop(LocalDateTime now) {
+        if(mqttClient != null) {
+            mqttClient.disconnect();
+        }
     }
 
     @Override

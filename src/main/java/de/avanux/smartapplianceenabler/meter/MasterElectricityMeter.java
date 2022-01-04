@@ -114,6 +114,9 @@ public class MasterElectricityMeter implements ApplianceIdConsumer, Validateable
     @Override
     public void stop(LocalDateTime now) {
         meter.stop(now);
+        if(mqttClient != null) {
+            mqttClient.disconnect();
+        }
     }
 
     private boolean isMeteringForSlave() {

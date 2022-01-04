@@ -86,6 +86,9 @@ public class AlwaysOnSwitch implements Control, ApplianceIdConsumer, Notificatio
 
     @Override
     public void stop(LocalDateTime now) {
+        if(mqttClient != null) {
+            mqttClient.disconnect();
+        }
     }
 
     @Override

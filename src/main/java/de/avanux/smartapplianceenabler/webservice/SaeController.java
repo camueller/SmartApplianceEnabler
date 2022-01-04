@@ -815,7 +815,6 @@ public class SaeController {
                 connectivity.setMqttBroker(mqttBroker);
                 connectivity.setModbusTCPs(modbusTCPs);
             }
-            ApplianceManager.getInstance().setConnectivity(connectivity);
 
             List<Configuration> configurations = new ArrayList<>();
             if(settings.getNodeRedDashboardUrl() != null) {
@@ -830,7 +829,7 @@ public class SaeController {
                 configurations.add(new Configuration(ConfigurationParam.NOTIFICATION_COMMAND.getVal(),
                         settings.getNotificationCommand()));
             }
-            ApplianceManager.getInstance().setConfiguration(configurations);
+            ApplianceManager.getInstance().setConfiguration(configurations, connectivity);
         } catch (Throwable e) {
             logger.error("Error in " + getClass().getSimpleName(), e);
         }

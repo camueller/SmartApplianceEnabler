@@ -42,6 +42,7 @@ public class MqttClient {
     private IMqttClient client;
     private Genson genson;
     private static ExecutorService executor;
+    private boolean shutdownInProgress = false;
 
     public MqttClient(String applianceId, Class clazz) {
         this(applianceId, clazz, false);
@@ -132,30 +133,47 @@ public class MqttClient {
     }
 
     private synchronized boolean connect() {
-        try {
-            if(! client.isConnected()) {
-                client.connect(getOptions());
+        if(! shutdownInProgress) {
+            try {
+                if(! client.isConnected()) {
+                    client.connect(getOptions());
+                }
+                boolean connectResult = client.isConnected();
+                if(! connectResult) {
+                    logger.error("{}: Connection to MQTT broker failed", loggerId);
+                }
+                return connectResult;
             }
-            boolean connectResult = client.isConnected();
-            if(! connectResult) {
-                logger.error("{}: Connection to MQTT broker failed", loggerId);
+            catch (Exception e) {
+                logger.error("{}: Error connecting to MQTT broker", loggerId, e);
             }
-            return connectResult;
-        }
-        catch (Exception e) {
-            logger.error("{}: Error connecting to MQTT broker", loggerId, e);
         }
         return false;
     }
 
-    public boolean isMqttBrokerAvailable(String host, Integer port) {
+
+    public synchronized void disconnect() {
+        shutdownInProgress = true;
+        try {
+            var connected = client.isConnected();
+            if(connected) {
+                client.disconnect();
+            }
+            logger.debug("{}: disconnected from MQTT broker - was connected={}", loggerId, connected);
+        }
+        catch(Exception e) {
+            logger.error("{}: Error disconnecting from MQTT broker", loggerId, e);
+        }
+    }
+
+    public synchronized boolean isMqttBrokerAvailable(String host, Integer port) {
         var brokerUri = buildBrokerUri(host, port);
         try {
             var client = createClient(getClass().getSimpleName(), brokerUri);
             client.connect(getOptions());
             var connected = client.isConnected();
             logger.debug("{}: MQTT connection available: {}", loggerId, connected);
-            client.disconnect();
+            disconnect();
             return connected;
         }
         catch(Exception e) {

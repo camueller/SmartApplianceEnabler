@@ -352,6 +352,9 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         if(this.updateStateTimerTask != null) {
             this.updateStateTimerTask.cancel();
         }
+        if(mqttClient != null) {
+            mqttClient.disconnect();
+        }
     }
 
     /**

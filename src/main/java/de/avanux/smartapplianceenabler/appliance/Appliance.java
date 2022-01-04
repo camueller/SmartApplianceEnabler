@@ -326,6 +326,10 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
         }
         if(timeframeIntervalHandler != null) {
             timeframeIntervalHandler.cancelTimer();
+            timeframeIntervalHandler.disconnectMqttClient();
+        }
+        if(mqttClient != null) {
+            mqttClient.disconnect();
         }
     }
 

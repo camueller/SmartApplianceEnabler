@@ -93,26 +93,27 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
             } catch (Exception e) {
                 logger.error("{}: Error starting {} for GPIO {}", getApplianceId(), getClass().getSimpleName(), getPin(), e);
             }
-            this.mqttPublishTimerTask = new GuardedTimerTask(getApplianceId(), "MqttPublish-" + getClass().getSimpleName(),
-                    MqttClient.MQTT_PUBLISH_PERIOD * 1000) {
-                @Override
-                public void runTask() {
-                    try {
-                        publishControlMessage(LocalDateTime.now(), isOn());
+            if(mqttClient != null) {
+                this.mqttPublishTimerTask = new GuardedTimerTask(getApplianceId(), "MqttPublish-" + getClass().getSimpleName(),
+                        MqttClient.MQTT_PUBLISH_PERIOD * 1000) {
+                    @Override
+                    public void runTask() {
+                        try {
+                            publishControlMessage(LocalDateTime.now(), isOn());
+                        }
+                        catch(Exception e) {
+                            logger.error("{}: Error publishing MQTT message", getApplianceId(), e);
+                        }
                     }
-                    catch(Exception e) {
-                        logger.error("{}: Error publishing MQTT message", getApplianceId(), e);
+                };
+                timer.schedule(this.mqttPublishTimerTask, 0, this.mqttPublishTimerTask.getPeriod());
+                mqttClient.subscribe(mqttTopic, true, true, ControlMessage.class, (topic, message) -> {
+                    if(message instanceof ControlMessage) {
+                        ControlMessage controlMessage = (ControlMessage) message;
+                        this.on(controlMessage.getTime(), controlMessage.on);
                     }
-                }
-            };
-            timer.schedule(this.mqttPublishTimerTask, 0, this.mqttPublishTimerTask.getPeriod());
-
-            mqttClient.subscribe(mqttTopic, true, true, ControlMessage.class, (topic, message) -> {
-                if(message instanceof ControlMessage) {
-                    ControlMessage controlMessage = (ControlMessage) message;
-                    this.on(controlMessage.getTime(), controlMessage.on);
-                }
-            });
+                });
+            }
         } else {
             logGpioAccessDisabled(logger);
         }
@@ -121,6 +122,9 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
     @Override
     public void stop(LocalDateTime now) {
         logger.debug("{}: Stopping {} for {}", getApplianceId(), getClass().getSimpleName(), getPin());
+        if(mqttClient != null) {
+            mqttClient.disconnect();
+        }
     }
 
     @Override

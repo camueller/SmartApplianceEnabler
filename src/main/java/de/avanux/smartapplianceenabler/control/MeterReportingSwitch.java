@@ -135,6 +135,9 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
 
     @Override
     public void stop(LocalDateTime now) {
+        if(mqttClient != null) {
+            mqttClient.disconnect();
+        }
     }
 
     @Override

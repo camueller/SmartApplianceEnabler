@@ -247,6 +247,9 @@ public class ApplianceManager implements Runnable {
     private void restartAppliances() {
         logger.info("Restarting appliances ...");
         stopAppliances();
+        if(mqttClient != null) {
+            mqttClient.disconnect();
+        }
         MqttClient.stop();
         this.appliances = null;
         this.device2EM = null;
@@ -650,15 +653,10 @@ public class ApplianceManager implements Runnable {
         return this.appliances;
     }
 
-    public void setConnectivity(Connectivity connectivity) {
-        logger.debug("Set connectivity");
-        this.appliances.setConnectivity(connectivity);
-        save(false, true);
-    }
-
-    public void setConfiguration(List<Configuration> configurations) {
-        logger.debug("Set configuration");
+    public void setConfiguration(List<Configuration> configurations, Connectivity connectivity) {
+        logger.debug("Set configuration and connectivity");
         this.appliances.setConfigurations(configurations);
+        this.appliances.setConnectivity(connectivity);
         save(false, true);
     }
 

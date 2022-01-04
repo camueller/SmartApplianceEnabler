@@ -27,6 +27,8 @@ import java.time.LocalDateTime;
 
 public interface Request extends Serializable, ApplianceIdConsumer, TimeframeIntervalChangedListener {
 
+    void disconnectMqttClient();
+
     void setMeter(Meter meter);
 
     boolean isUsingOptionalEnergy(LocalDateTime now);

@@ -199,20 +199,20 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Mete
                     this.on(controlMessage.getTime(), controlMessage.on);
                 }
             });
+            this.mqttPublishTimerTask = new GuardedTimerTask(applianceId, "MqttPublish-" + getClass().getSimpleName(),
+                    MqttClient.MQTT_PUBLISH_PERIOD * 1000) {
+                @Override
+                public void runTask() {
+                    try {
+                        publishControlMessage(isOn());
+                    }
+                    catch(Exception e) {
+                        logger.error("{}: Error publishing MQTT message", applianceId, e);
+                    }
+                }
+            };
+            timer.schedule(this.mqttPublishTimerTask, 0, this.mqttPublishTimerTask.getPeriod());
         }
-        this.mqttPublishTimerTask = new GuardedTimerTask(applianceId, "MqttPublish-" + getClass().getSimpleName(),
-                MqttClient.MQTT_PUBLISH_PERIOD * 1000) {
-            @Override
-            public void runTask() {
-                try {
-                    publishControlMessage(isOn());
-                }
-                catch(Exception e) {
-                    logger.error("{}: Error publishing MQTT message", applianceId, e);
-                }
-            }
-        };
-        timer.schedule(this.mqttPublishTimerTask, 0, this.mqttPublishTimerTask.getPeriod());
     }
 
     @Override
@@ -220,6 +220,9 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Mete
         logger.debug("{}: Stopping ...", this.applianceId);
         if(this.control != null) {
             this.control.stop(now);
+        }
+        if(mqttClient != null) {
+            mqttClient.disconnect();
         }
     }
 
