@@ -97,6 +97,7 @@ public class MqttClient {
         options.setAutomaticReconnect(true);
         options.setCleanSession(true);
         options.setConnectionTimeout(1000);
+        options.setWill(getApplianceTopic(applianceId, "will"), "unexpected error".getBytes(), 0 ,true);
         return options;
     }
 
@@ -212,12 +213,8 @@ public class MqttClient {
                 try {
                     if(connect()) {
                         String serializedMessage = genson.serialize(message);
-                        org.eclipse.paho.client.mqttv3.MqttMessage pahoMessage
-                                = new org.eclipse.paho.client.mqttv3.MqttMessage(serializedMessage.getBytes());
-                        pahoMessage.setQos(0);
-                        pahoMessage.setRetained(retained);
                         logger.trace("{}: Publish message: topic={} payload={}", loggerId, fullTopic, serializedMessage);
-                        client.publish(fullTopic, pahoMessage);
+                        client.publish(fullTopic, createMessage(serializedMessage.getBytes(), retained));
                     }
                 }
                 catch (Exception e) {
@@ -225,6 +222,13 @@ public class MqttClient {
                 }
             });
         }
+    }
+
+    private org.eclipse.paho.client.mqttv3.MqttMessage createMessage(byte[] payload, boolean retained) {
+        org.eclipse.paho.client.mqttv3.MqttMessage message = new org.eclipse.paho.client.mqttv3.MqttMessage(payload);
+        message.setQos(0);
+        message.setRetained(retained);
+        return message;
     }
 
     public void subscribe(MqttEventName event, Class toType, MqttMessageHandler messageHandler) {
