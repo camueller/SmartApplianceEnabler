@@ -286,7 +286,6 @@ public class ApplianceManager implements Runnable {
 
     public void init() {
         logger.debug("Initializing ...");
-        mqttClient = new MqttClient("", getClass());
         Map<String,ModbusTcp> modbusIdWithModbusTcp = new HashMap<String,ModbusTcp>();
         Connectivity connectivity = appliances.getConnectivity();
         if(connectivity != null) {
@@ -301,6 +300,7 @@ public class ApplianceManager implements Runnable {
                 }
             }
         }
+        mqttClient = new MqttClient("", getClass());
 
         boolean holidaysUsed = false;
         for (Appliance appliance : getAppliances()) {

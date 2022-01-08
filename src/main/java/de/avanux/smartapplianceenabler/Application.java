@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -34,6 +35,7 @@ import java.lang.management.ManagementFactory;
 import java.util.Properties;
 
 @SpringBootApplication
+@EnableScheduling
 public class Application {
     private static Logger logger = LoggerFactory.getLogger(Application.class);
     private static ConfigurableApplicationContext applicationContext;

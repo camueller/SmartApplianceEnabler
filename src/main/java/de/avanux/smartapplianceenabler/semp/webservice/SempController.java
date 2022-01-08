@@ -30,6 +30,7 @@ import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
 import de.avanux.smartapplianceenabler.schedule.TimeframeIntervalHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -54,17 +55,23 @@ public class SempController {
 
     public SempController() {
         logger.info("SEMP controller created.");
-        mqttClient = new MqttClient("", getClass());
+    }
 
-        String meterTopic = mqttClient.getTopicPrefix() + "/+/" + Meter.TOPIC;
-        mqttClient.subscribe(meterTopic, false, MeterMessage.class, (topic, message) -> {
-            this.meterMessages.put(topic, (MeterMessage) message);
-        });
+    @Scheduled(fixedRate = 1000)
+    public void scheduleFixedRateTask() {
+        if(mqttClient == null && ApplianceManager.getInstance().isInitializationCompleted()) {
+            mqttClient = new MqttClient("", getClass());
 
-        String controlTopic = mqttClient.getTopicPrefix() + "/+/" + Control.TOPIC;
-        mqttClient.subscribe(controlTopic, false, ControlMessage.class, (topic, message) -> {
-            this.controlMessages.put(topic, (ControlMessage) message);
-        });
+            String meterTopic = mqttClient.getTopicPrefix() + "/+/" + Meter.TOPIC;
+            mqttClient.subscribe(meterTopic, false, MeterMessage.class, (topic, message) -> {
+                this.meterMessages.put(topic, (MeterMessage) message);
+            });
+
+            String controlTopic = mqttClient.getTopicPrefix() + "/+/" + Control.TOPIC;
+            mqttClient.subscribe(controlTopic, false, ControlMessage.class, (topic, message) -> {
+                this.controlMessages.put(topic, (ControlMessage) message);
+            });
+        }
     }
 
     @RequestMapping(value = BASE_URL, method = RequestMethod.GET, produces = "application/xml")

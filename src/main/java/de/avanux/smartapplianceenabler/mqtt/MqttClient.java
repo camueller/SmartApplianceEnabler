@@ -69,6 +69,7 @@ public class MqttClient {
         }
         String clientId = clientIdBuilder.toString();
         var brokerUri = buildBrokerUri(mqttBroker.getResolvedHost(), mqttBroker.getResolvedPort());
+        logger.info("Using MQTT broker " + brokerUri);
         client = createClient(clientId, brokerUri);
     }
 
