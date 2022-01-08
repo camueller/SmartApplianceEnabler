@@ -335,7 +335,9 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                     updateStateTimerTaskImpl(LocalDateTime.now());
                 }
             };
-            timer.schedule(this.updateStateTimerTask, 0, this.updateStateTimerTask.getPeriod());
+            // the initial delay is needed in order to have regular timeframe intervals created by TimeframeIntervalHandler
+            // before OptionalEnergyInterval is created by onEVChargerStateChanged
+            timer.schedule(this.updateStateTimerTask, this.updateStateTimerTask.getPeriod(), this.updateStateTimerTask.getPeriod());
         }
         publishControlMessage(isOn());
     }
