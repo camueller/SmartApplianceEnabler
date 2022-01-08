@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v2.0">
+    <Configuration param="NodeRED.Dashboard.Url" value="http://localhost:1880"/>
     <Appliance id="F-00000001-000000000002-00">
         <HttpSwitch>
             <HttpWrite url="http://tasmota/cm?cmnd=Power%20On">
@@ -25,7 +26,7 @@
         </Schedule>
     </Appliance>
     <Connectivity>
-        <MqttBroker host="localhost"/>
+        <MqttBroker host="localhost" port="1883"/>
         <ModbusTCP id="modbus" host="raspi2" port="502"/>
         <ModbusTCP id="wallbox" host="wallbox" port="502"/>
     </Connectivity>
