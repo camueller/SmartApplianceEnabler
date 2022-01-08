@@ -378,7 +378,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     }
 
     public EVChargerState getState() {
-        return stateHistory.lastElement();
+        return stateHistory != null ? stateHistory.lastElement() : EVChargerState.VEHICLE_NOT_CONNECTED;
     }
 
     protected void setState(LocalDateTime now, EVChargerState currentState) {
