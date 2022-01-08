@@ -916,14 +916,16 @@ public class SaeController {
                         applianceStatus.setSoc(evCharger.getSocCurrent());
 
                         int whAlreadyCharged = 0;
-                        Integer chargePower = evCharger.getChargePower();
+                        int chargePower = 0;
                         if (meter != null) {
                             String applianceMeterTopic = MqttClient.getApplianceTopic(appliance.getId(), Meter.TOPIC);
                             MeterMessage meterMessage = this.meterMessages.get(applianceMeterTopic);
-                            whAlreadyCharged = Double.valueOf(meterMessage.energy * 1000.0f).intValue();
-                            chargePower = meterMessage.power;
+                            if(meterMessage != null) {
+                                whAlreadyCharged = Double.valueOf(meterMessage.energy * 1000.0f).intValue();
+                                chargePower = meterMessage.power;
+                            }
                         }
-                        if (controlMessage.on) {
+                        if (controlMessage != null && controlMessage.on) {
                             applianceStatus.setCurrentChargePower(chargePower);
                         }
                         applianceStatus.setChargedEnergyAmount(whAlreadyCharged);
