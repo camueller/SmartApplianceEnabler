@@ -132,7 +132,7 @@ Zur Übernahme muss lediglich der `Übernahme`-Button gedrück werden:
 ![Flow](../pics/nodered/Deploy.png)
 
 ## Dashboard
-In den Einstellungen des *Smart Appliance Enabler* muss die `Dashboard URL` von Node-RED konfiguriert werden, weil diese davon abhängt, wie Node-RED installiert.
+In den Einstellungen des *Smart Appliance Enabler* kann die `Dashboard URL` von Node-RED konfiguriert werden, welche beim Klick auf den Link-Button in der Status-Anzeige aufgerufen wird.
 
 ![Einstellungen Dashboard URL](../pics/nodered/EinstellungenDashboardUrl.png)
 
@@ -144,4 +144,4 @@ Danach kann das Node-RED-Dashboard über den Link-Button in der Status-Anzeige d
 Das Dashboad selbst zeigt alle vom *Smart Appliance Enabler* verwalteten Geräte auf einem Tab mit dem Namen `Smart Appliance Enabler` an:
 ![Dashboard](../pics/nodered/Dashboard.png)
 
-Das Dashboard empfängt alle MQTT-Nachrichten des *Smart Appliance Enabler* und aktualisiert sich selbständig. Dadurch bietet es eine Echtezit-Anzeige auf den Zustand des *Smart Appliance Enabler*. 
+Das Dashboard empfängt alle MQTT-Nachrichten des *Smart Appliance Enabler* und aktualisiert sich selbständig. Dadurch bietet es eine Echtzeit-Anzeige auf den Zustand des *Smart Appliance Enabler*. 
