@@ -24,6 +24,13 @@ Für den Betrieb des *Smart Appliance Enabler* als Docker-Container auf einem *R
 - Security Group anlegen mit Inbound Access für SSH + HTTP (Source: Anywhere)
 - Security Group zuweisen: Actions -> Networking -> Change Security Groups
 
+Falls das _EC2 Dashboard_ laufende Instanzen nicht anzeigt, stimmt möglicherweise die Region nicht mit der Region überein, in der die Instanzen angelegt wurden (z.B. us-east-2).
+
+Der Button `Verbinden` zeigt den SSH-Aufruf für die aktuelle IP-Adresse, z.B.
+```console
+ssh -i "aws-avanux.pem" ec2-user@ec2-3-133-83-241.us-east-2.compute.amazonaws.com
+```
+
 In der gestarteten Instanz folgende Befehle ausführen:
 ```console
 sudo yum update -y
@@ -32,7 +39,7 @@ sudo service docker start
 sudo service docker status
 ```
 
-Falls das _EC2 Dashboard_ laufende Instanzen nicht anzeigt, stimmt möglicherweise die Region nicht mit der Region überein, in der die Instanzen angelegt wurden (z.B. us-east-2).
+In der EC2 console wird der Link zur Instanz des *Smart Appliance Enabler* unter `Öffentlicher IPv4-DNS`. Dieser Link beinhaltet `https` als Protokoll und funktioniert aktuell nicht, weil der *Smart Appliance Enabler* nur `http` unterstützt. Beim Klick auf den Link zeigt Chrome `This site can’t be reached` an.   
 
 ### Setup des Raspberry Pi zum Bauen der arm32-Docker-Images
 
