@@ -3,6 +3,7 @@ import {ModbusPage} from './modbus.page';
 import {SideMenu} from '../side.menu.page';
 import {assertInput, clickButton, inputText, selectorInputByFormControlName} from '../../shared/form';
 import {Settings} from '../../../../../main/angular/src/app/settings/settings';
+import {MqttSettings} from '../../../../../main/angular/src/app/settings/mqtt-settings';
 
 export class SettingsPage {
   private static selectorBase = 'app-settings';
@@ -17,6 +18,7 @@ export class SettingsPage {
 
   public static async createSettings(t: TestController, settings: Settings) {
     await SideMenu.clickSettings(t);
+    await SettingsPage.setMqttBroker(t, settings.mqttSettings);
     await SettingsPage.addModbus(t, settings.modbusSettings[0]);
     await SettingsPage.setNotificationCommand(t, settings.notificationCommand);
     await clickButton(t, SettingsPage.SAVE_BUTTON_SELECTOR);
@@ -27,6 +29,25 @@ export class SettingsPage {
     const modbusSettingsIndex = await ModbusPage.getModbusSettingsCount() - 1;
     await ModbusPage.assertModbus(t, settings.modbusSettings[0], modbusSettingsIndex);
     await SettingsPage.assertNotificationCommand(t, settings.notificationCommand);
+  }
+
+  private static async setMqttBroker(t: TestController, mqttSettings: MqttSettings) {
+    await inputText(t, selectorInputByFormControlName('mqttBrokerHost'), undefined);
+    if (mqttSettings.mqttBrokerHost) {
+      await inputText(t, selectorInputByFormControlName('mqttBrokerHost'), mqttSettings.mqttBrokerHost);
+    }
+    await inputText(t, selectorInputByFormControlName('mqttBrokerPort'), undefined);
+    if (mqttSettings.mqttBrokerPort) {
+      await inputText(t, selectorInputByFormControlName('mqttBrokerPort'), mqttSettings.mqttBrokerPort.toString());
+    }
+  }
+  private static async assertMqttBroker(t: TestController, mqttSettings: MqttSettings) {
+    if (mqttSettings.mqttBrokerHost) {
+      await assertInput(t, selectorInputByFormControlName('mqttBrokerHost'), mqttSettings.mqttBrokerHost);
+    }
+    if (mqttSettings.mqttBrokerPort) {
+      await assertInput(t, selectorInputByFormControlName('mqttBrokerPort'), mqttSettings.mqttBrokerPort.toString());
+    }
   }
 
   private static async addModbus(t: TestController, modbusSettings: ModbusSetting) {
