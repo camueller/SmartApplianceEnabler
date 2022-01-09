@@ -8,8 +8,8 @@
     <a href="https://codecov.io/gh/camueller/SmartApplianceEnabler">
       <img src="https://codecov.io/gh/camueller/SmartApplianceEnabler/coverage.svg">
     </a>
-    <a href="https://github.com/camueller/SmartApplianceEnabler/releases/download/1.6.10/SmartApplianceEnabler-1.6.10.war">
-      <img src="https://img.shields.io/badge/Download-1.6.10-brightgreen.svg">
+    <a href="https://github.com/camueller/SmartApplianceEnabler/releases/download/1.6.18/SmartApplianceEnabler-1.6.18.war">
+      <img src="https://img.shields.io/badge/Download-1.6.18-brightgreen.svg">
     </a>
     <a href="https://hub.docker.com/repository/docker/avanux/smartapplianceenabler-arm32">
       <img src="https://img.shields.io/badge/Docker-arm32-blue">
@@ -102,7 +102,7 @@ Der eigentliche Zweck des *Smart Appliance Enabler* besteht in der Integration v
 <br><br><br><br>
 
 ## [Mitmachen](doc/Contribute_DE.md)
-<a href="doc/Contribute_DE.md"><img align="left" src="pics/IWantYou.png"></a>Zum [Mitmachen](doc/Contribute_DE.md) muss man **kein Programmierer** sein! [Mitmachen](doc/Contribute_DE.md) kann **jeder** auf vielfältige Weise! [Eure Anwendunsszenarien für den *Smart Appliance Enabler*](doc/ApplicationScenarios_DE.md) helfen anderen weiter!
+<a href="doc/Contribute_DE.md"><img align="left" src="pics/IWantYou.png"></a>Zum [Mitmachen](doc/Contribute_DE.md) muss man **kein Programmierer** sein! [Mitmachen](doc/Contribute_DE.md) kann **jeder** auf vielfältige Weise! [Eure Anwendunsszenarien für den *Smart Appliance Enabler*](doc/ApplicationScenarios_DE.md) helfen Anderen weiter!
 <br><br><br><br><br>
 
 ## [Entwicklung](doc/Development_DE.md)

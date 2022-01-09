@@ -28,6 +28,6 @@ Das Feld `Pfad` muss den Wert `$.dws` enthalten, damit der *Smart Appliance Enab
 
 Im Feld `Umrechnungsfaktor` muss die Zahl `0.0000027778` eingegeben werden, weil der go-eCharger die Energie in 10 Deka-Watt-Sekunden liefert.
 
-Als Zustand ist `Zählerwert` zu wählen.
+Als Parameter ist `Zählerstand` zu wählen.
 
 ![Konfiguration des go-eCharger als Zähler](../pics/fe/EVChargerGoeChargerMeter.png)

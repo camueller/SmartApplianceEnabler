@@ -2,17 +2,19 @@
 
 Für [HTTP-basierte Geräte sind diese allgemeinen Hinweise](Http_DE.md) zu beachten!
 
-Der `Zustand` bezeichnet die Messgrösse, welche der Zähler dem *Smart Appliance Enabler* zur Leistungsbestimmung liefert.
+Der `Parameter` bezeichnet die Messgrösse, welche der Zähler dem *Smart Appliance Enabler* zur Leistungsbestimmung liefert.
 
-Nach Möglichkeit sollte die Messgrösse `Zählerstand` eingstellt werden, weil der *Smart Appliance Enabler* dann diesen Wert **nur einmal pro Minute abfragen** muss und aus der Differenz zur vorangegangen Anfrage die Leistung sehr genau berechnet kann. Dazu muss aber der Zählerstand in kWh mit mindestens **4 Nachkommstellen** (besser 5) geliefert werden. Bei manchen Adapter muss diese Genauigkeit erst eingestellt werden (siehe [Tasmota](Tasmota_DE.md)).
+Nach Möglichkeit sollte als Parameter `Zählerstand` eingstellt werden, weil der *Smart Appliance Enabler* dann diesen Wert **nur einmal pro Minute abfragen** muss und aus der Differenz zur vorangegangen Anfrage die Leistung sehr genau berechnet kann. Dazu muss aber der Zählerstand in kWh mit mindestens **4 Nachkommstellen** (besser 5) geliefert werden. Bei manchen Adapter muss diese Genauigkeit erst eingestellt werden (siehe [Tasmota](Tasmota_DE.md)).
 
-Wird die Messgrösse `Leistung` eingestellt, erfolgt die Abfrage dieses Wertes mehrmals pro Minute, um aus diesen Werten den Durschnitt zu berechnen. Der zeitliche Abstand zwischen diesen Abfragen kann mit dem `Abfrage-Intervall` festgelegt werden - der Standardwert sind 20 Sekunden. 
+Wird als Parameter `Leistung` eingestellt, erfolgt die Abfrage dieses Wertes mehrmals pro Minute, um aus diesen Werten den Durschnitt zu berechnen. Der zeitliche Abstand zwischen diesen Abfragen kann mit dem `Abfrage-Intervall` festgelegt werden - der Standardwert sind 20 Sekunden. 
 
 Wenn die HTTP-Antwort im **JSON-Format** geliefert wird, sollte das als `Format` eingestellt werden, weil dann durch die Angabe des `Pfad` der Zahlenwert sehr leicht aus der HTTP-Anwort extrahieren lässt.
 
 Alternativ (oder auch nachgelagert zur JSON-Interpretation) kann ein [Regulärer Ausdruck zum Extrahieren](WertExtraktion_DE.md) angegeben werden, falls der Zahlenwert aus einem Text (XML, ...) extrahiert werden muss. Dies gilt auch, wenn die HTTP-Antwort scheinbar nur die Zahl enthält, diese aber auch einen Zeilenumbruch (CR/LF) beinhaltet.
 
-Durch die Konfiguration der zuvor beschriebenen Parameter muss sichergestellt sein, dass der *Smart Appliance Enabler* aus der HTTP-Antwort die richtige Zahl extrahieren kann. Für die Messgrösse `Zählerstand` wird der Wert in kWh und für die Messgrösse `Leistung` in W benötigt. Falls die Werte in anderen Einheiten geliefert werden, muss ein muss ein `Umrechnungsfaktor` angegeben werden, mit dem der gelieferte Wert multipliziert werden muss, um ihn in die benötigte Einheit umzurechnen. Wird beispielsweise der Verbrauch in mW geliefert, muss dieser Faktor mit dem Wert `1000` angegeben werden.
+Durch die Konfiguration der zuvor beschriebenen Parameter muss sichergestellt sein, dass der *Smart Appliance Enabler* aus der HTTP-Antwort die richtige Zahl extrahieren kann.
+
+Für den Parameter `Zählerstand` wird der Wert in kWh und für den Parameter `Leistung` in W benötigt. Falls die Werte in anderen Einheiten geliefert werden, muss ein muss ein `Umrechnungsfaktor` angegeben werden, der mit dem gelieferten Wert multipliziert wird, um ihn in die benötigte Einheit umzurechnen. Wird beispielsweise der Parameter `Leistung` in mW geliefert, muss als `Umrechnungsfaktor` der Wert `1000` angegeben werden.
 
 ![HTTP-basierter Zähler](../pics/fe/HttpMeter.png)
 
