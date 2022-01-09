@@ -22,6 +22,7 @@ und das Projekt folgt den Leitlinien des [Semantic Versioning](https://semver.or
   - Es ist ein neuer Parameter in `/etc/default/smartapplianceenabler` hinzugekommen (`-DPIGPIOD_HOST=localhost"`): die neue Datei installieren oder die neuen Zeilen hinzufügen
   - Durch den Wechsel wird `libwiringpi` nicht mehr benötigt, die ab Raspbian Bullseye nicht mehr im offiziellen Raspbian-Repository enthalten ist.
   - Durch den Wechsel ändert sich auch das [Nummern-Schema der GPIOs](doc/Raspberry_DE.md). Bereits konfigurierte GPIO-Nummer werden automatisch migriert.
+- zwei Appliances können sich einen Zähler teilen - [Master-/Slave-Zähler](doc/MasterSlaveMeter_DE.md) 
 
 ## [1.6.18](https://github.com/camueller/SmartApplianceEnabler/releases/tag/1.6.18) - 20.12.2021
 
