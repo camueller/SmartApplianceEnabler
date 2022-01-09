@@ -99,6 +99,7 @@
   "MeterHttpComponent.error.pollInterval_pattern": "Das Abfrage-Intervall muss eine Zahl sein",
 
   "MeterMasterComponent.meterMaster": "Master-Zähler",
+  "MeterMasterComponent.hint": "Wenn Master-Schalter oder/und Slave-Schalter die nachfolgend konfigurierten Zustände haben, wird die Leistungsaufnahme dieses Zählers dem Slave zugeordnet.",
   "MeterMasterComponent.masterSwitchOn": "Master-Schalter",
   "MeterMasterComponent.slaveSwitchOn": "Slave-Schalter",
   "MeterMasterComponent.switchOn.true": "muss eingeschaltet sein",

@@ -161,11 +161,14 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
 
   toggleIsMasterMeter() {
     this.setMasterMeter(!this.meter.isMasterMeter);
+    this.form.markAsDirty();
   }
 
   setMasterMeter(isMasterMeter: boolean) {
     if (isMasterMeter) {
-      this.meter.masterElectricityMeter = new MasterElectricityMeter();
+      if (!this.meter.masterElectricityMeter) {
+        this.meter.masterElectricityMeter = new MasterElectricityMeter();
+      }
       this.meter.isMasterMeter = true;
     } else {
       this.meter.masterElectricityMeter = null;

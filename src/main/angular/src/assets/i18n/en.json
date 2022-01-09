@@ -99,6 +99,7 @@
   "MeterHttpComponent.error.pollInterval_pattern": "The poll interval has to be a number",
 
   "MeterMasterComponent.meterMaster": "Master meter",
+  "MeterMasterComponent.hint": "If master control or/and slave control have the configured state the power consumption of this meter is assigned to the slave.",
   "MeterMasterComponent.masterSwitchOn": "Master control",
   "MeterMasterComponent.slaveSwitchOn": "Slave control",
   "MeterMasterComponent.switchOn.true": "has to be switched on",

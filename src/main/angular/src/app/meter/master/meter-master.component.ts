@@ -90,6 +90,8 @@ export class MeterMasterComponent implements OnChanges, OnInit {
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
     });
+    // form is already invalid even without status changes
+    this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
   }
 
   toSwitchOnKey(switchOn: boolean | null | undefined): string | undefined {

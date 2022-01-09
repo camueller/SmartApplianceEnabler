@@ -54,6 +54,8 @@ Aktuell unterstützt der *Smart Appliance Enabler* folgende Möglichkeiten, den 
 | Modbus | [Modbus-basierte Zähler](doc/ModbusMeter_DE.md) |
 | HTTP | [HTTP-basierte Zähler](doc/HttpMeter_DE.md) allgemein<ul></ul>kompatible Produkte<ul><li>[Shelly Plug (S)](doc/ShellyPlug_DE.md)</li><li>[Shelly 4 Pro](doc/Shelly4Pro_DE.md)</li><li>[Edimax SP-2101W](doc/EdimaxSP2101W_DE.md)</li></ul>mit [Tasmota-Firmware](doc/Tasmota_DE.md) nutzbare Produkte<ul><li>Nous A1</li><li>[Gosund SP111](doc/GosundSP111_DE.md)</li><li>[Sonoff Pow](doc/SonoffPow_DE.md)</li></ul>|
 
+[Details zu diesen Zählern und weiteren Software-basierten Zählern (z.B. Master/Slave)](doc/Meter_DE.md)
+
 ### Schalter
 
 Zum Ein-/Ausschalten eines Gerätes unterstützt der *Smart Appliance Enabler* derzeit folgende Möglichkeiten:

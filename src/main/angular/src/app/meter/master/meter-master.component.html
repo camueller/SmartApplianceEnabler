@@ -18,7 +18,9 @@
 
 <div class="MeterMasterComponent" [formGroup]="form">
   <h2 class="sae__heading-extra-top-margin">{{'MeterMasterComponent.meterMaster' | translate}}
-    <app-help [helpfile]="'Anlaufstromerkennung'"></app-help></h2>
+    <app-help [helpfile]="'MasterSlaveMeter'"></app-help>
+  </h2>
+  <div class="MeterMasterComponent__hint">{{'MeterMasterComponent.hint'|translate}}</div>
   <div class="sae__fields">
     <mat-form-field class="MeterMasterComponent__masterSwitchOn">
       <mat-label>{{'MeterMasterComponent.masterSwitchOn' | translate}}</mat-label>

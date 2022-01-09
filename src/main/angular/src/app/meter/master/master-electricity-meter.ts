@@ -22,8 +22,8 @@ export class MasterElectricityMeter {
   }
 
   '@class' = MasterElectricityMeter.TYPE;
-  masterSwitchOn: boolean;
-  slaveSwitchOn: boolean;
+  masterSwitchOn?: boolean | undefined;
+  slaveSwitchOn?: boolean | undefined = true;
 
   public constructor(init?: Partial<MasterElectricityMeter>) {
     Object.assign(this, init);
