@@ -2,7 +2,7 @@
 [Node-RED](https://nodered.org/) kann verwendet werden, um die MQTT-Nachrichten des *Smart Appliance Enabler* im Node-RED-Dashboard zu visualisieren. Insbesondere die Leistungs-Diagramme können dabei helfen, das Verhalten des *Smart Appliance Enabler* zu verstehen und zu optimieren.
 
 ## Installation ohne Docker
-Für Node-RED sollte ein eigener User verwendet werden, der zur `sudo`-Gruppe hinzugefügrt wird und dessen Passwort danach noch gesetzt wird:
+Für Node-RED sollte ein eigener User verwendet werden, der zur `sudo`-Gruppe hinzugefügt wird und dessen Passwort auch gesetzt ist:
 ```console
 pi@raspberrypi ~ $ sudo useradd -d /opt/nodered -m -s /bin/bash nodered
 pi@raspberrypi ~ $ sudo usermod -a -G sudo nodered
@@ -56,7 +56,7 @@ Created symlink /etc/systemd/system/multi-user.target.wants/nodered.service → 
 ```
 
 ## Installation mit Docker
-Die Installation des entsprechenden Docker-Containers erfolgt mit:
+Alternativ kann Node-RED auch als Docker-Container installiert werden. Die Installation des entsprechenden Docker-Containers erfolgt mit:
 ```console
 docker pull nodered/node-red
 ```
@@ -113,6 +113,8 @@ Für jedes Gerät im *Smart Appliance Enabler* wird ein Tab mit einem Flow angel
 
 ![Flow](../pics/nodered/Flow.png)
 
+Ausserdem wird ein `General`-Tab für Geräte-unabhängige Nodes angelegt.
+
 ### Anpassung des konfigurierten MQTT-Brokers
 Nach dem Import gibt es einen globalen Konfiguration-Node mit dem Namen `MQTT-Broker (SAE)`. Dieser enthält Hostname und Port des MQTT-Brokers, wie in den Einstellungen des *Smart Appliance Enabler* angegeben. Normalerweise sollte es nicht notwendig sein, diese Werte in Node-RED anders zu konfigurieren.
 
@@ -130,6 +132,12 @@ Normalerweise sollte es möglich sein, die importierten Flows ohne Anpassungen d
 
 Zur Übernahme muss lediglich der `Übernahme`-Button gedrück werden:
 ![Flow](../pics/nodered/Deploy.png)
+
+Nach der Übernahme muss in allen Tabs unterhalb des `MQTT in`-Nodes `Verbunden` stehen:
+
+![MQTT connected](../pics/nodered/MqttConnected.png)
+
+Falls das nicht so ist, dann konnte Node-RED keine Verbindung mit dem MQTT-Broker herstellen.
 
 ## Dashboard
 In den Einstellungen des *Smart Appliance Enabler* kann die `Dashboard URL` von Node-RED konfiguriert werden, welche beim Klick auf den Link-Button in der Status-Anzeige aufgerufen wird.
