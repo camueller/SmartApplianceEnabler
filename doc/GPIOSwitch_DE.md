@@ -91,4 +91,4 @@ Bei [Pohltechnik](https://www.pohltechnik.com/de/ssr-relais) gibt es ebenfalls g
 #### Schaltbeispiel 1: Schaltung eines 240V-Gerätes mittels Solid-State-Relais
 Der Aufbau zum Schalten eines 240V-Gerätes (z.B. Pumpe) mittels Solid-State-Relais könnte wie folgt aussehen:
 
-![Schaltbeispiel](https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/SchaltungSSR.jpg)
+![Schaltbeispiel](../pics/SchaltungSSR.jpg)
