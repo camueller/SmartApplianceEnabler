@@ -15,6 +15,7 @@ export class SideMenu {
       await TopMenu.clickMenu(t);
       await Selector('mat-sidenav.mat-drawer-opened').exists;
     }
+    await t.wait(500);
   }
 
   public static async clickSettings(t: TestController) {
