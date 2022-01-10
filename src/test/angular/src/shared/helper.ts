@@ -53,16 +53,28 @@ export async function createAndAssertAppliance(t: TestController, configuration:
   await assertAppliance(t, configuration.appliance);
 }
 
+export async function waitForApplianceToExist() {
+  await Selector('app-appliance', {timeout: saeRestartTimeout}).exists;
+}
+
 export async function createAndAssertMeter(t: TestController, configuration: ApplianceConfiguration) {
   await createMeter(t, configuration.appliance.id, configuration.meter);
   await SideMenu.clickStatus(t);
   await assertMeter(t, configuration.appliance.id, configuration.meter);
 }
 
+export async function waitForMeterToExist() {
+  await Selector('app-meter', {timeout: saeRestartTimeout}).exists;
+}
+
 export async function createAndAssertControl(t: TestController, configuration: ApplianceConfiguration) {
   await createControl(t, configuration.appliance.id, configuration.control, configuration.controlTemplate);
   await SideMenu.clickStatus(t);
   await assertControl(t, configuration.appliance.id, configuration.control);
+}
+
+export async function waitForControlToExist() {
+  await Selector('app-control', {timeout: saeRestartTimeout}).exists;
 }
 
 export async function createAndAssertElectricVehicle(t: TestController, applianceId: string, ev: ElectricVehicle, index: number,
@@ -80,6 +92,7 @@ export async function createAndAssertSchedules(t: TestController, configuration:
 
 export async function createAppliance(t: TestController, appliance: Appliance) {
   await SideMenu.clickNewAppliance(t);
+  await waitForApplianceToExist();
   await AppliancePage.setAppliance(t, appliance);
   await AppliancePage.clickSave(t);
 
@@ -89,11 +102,13 @@ export async function createAppliance(t: TestController, appliance: Appliance) {
 
 export async function assertAppliance(t: TestController, appliance: Appliance) {
   await SideMenu.clickAppliance(t, appliance.id);
+  await waitForApplianceToExist();
   await AppliancePage.assertAppliance(t, appliance);
 }
 
 export async function createMeter(t: TestController, applianceId: string, meter: Meter) {
   await SideMenu.clickMeter(t, applianceId);
+  await waitForMeterToExist();
   if (meter.type === S0ElectricityMeter.TYPE) {
     await S0MeterPage.setS0ElectricityMeter(t, meter.s0ElectricityMeter);
   }
@@ -108,6 +123,7 @@ export async function createMeter(t: TestController, applianceId: string, meter:
 }
 export async function assertMeter(t: TestController, applianceId: string, meter: Meter) {
   await SideMenu.clickMeter(t, applianceId);
+  await waitForMeterToExist();
   if (meter.type === S0ElectricityMeter.TYPE) {
     await S0MeterPage.assertS0ElectricityMeter(t, meter.s0ElectricityMeter);
   }
@@ -122,6 +138,7 @@ export async function assertMeter(t: TestController, applianceId: string, meter:
 
 export async function createControl(t: TestController, applianceId: string, control: Control, controlTemplate?: string) {
   await SideMenu.clickControl(t, applianceId);
+  await waitForControlToExist();
   if (control.type === AlwaysOnSwitch.TYPE) {
     await AlwaysOnSwitchPage.setAlwaysOnSwitch(t, control.alwaysOnSwitch);
   }
@@ -146,6 +163,7 @@ export async function createControl(t: TestController, applianceId: string, cont
 }
 export async function assertControl(t: TestController, applianceId: string, control: Control) {
   await SideMenu.clickControl(t, applianceId);
+  await waitForControlToExist();
   if (control.type === AlwaysOnSwitch.TYPE) {
     await AlwaysOnSwitchPage.assertAlwaysOnSwitch(t, control.alwaysOnSwitch);
   }

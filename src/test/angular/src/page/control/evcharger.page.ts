@@ -21,6 +21,7 @@ import {EvChargerProtocol} from '../../../../../main/angular/src/app/control/evc
 import {EvchargerHttpPage} from './evcharger-http.page';
 import {ElectricVehicle} from '../../../../../main/angular/src/app/control/evcharger/electric-vehicle/electric-vehicle';
 import {SideMenu} from '../side.menu.page';
+import {waitForControlToExist} from '../../shared/helper';
 
 export class EvchargerPage extends ControlPage {
 
@@ -67,6 +68,7 @@ export class EvchargerPage extends ControlPage {
     if (clickControl) {
       await SideMenu.clickControl(t, applianceId);
     }
+    await waitForControlToExist();
     if (clickAdd) {
       await clickButton(t, selectorButton(undefined, 'ControlEvchargerComponent__addElectricVehicle'));
     }
@@ -90,6 +92,7 @@ export class EvchargerPage extends ControlPage {
     if (clickControl) {
       await SideMenu.clickControl(t, applianceId);
     }
+    await waitForControlToExist();
     await EvchargerPage.assertName(t, ev.name, index);
     await EvchargerPage.assertBatteryCapacity(t, ev.batteryCapacity && ev.batteryCapacity.toString(), index);
     await EvchargerPage.assertPhasesEv(t, ev.phases && ev.phases.toString(), index);
