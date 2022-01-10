@@ -94,13 +94,13 @@ export class MeterFactory {
     let meterUsed: any;
     if (meter.isMasterMeter) {
       meter.masterElectricityMeter['meter'] = this.getMeterByType(meter);
-      meter.masterElectricityMeter['meter'].notifications = meter.notifications;
       meterUsed = meter.masterElectricityMeter;
     } else {
       meterUsed = this.getMeterByType(meter);
     }
     let meterRaw: string;
     if (meterUsed != null) {
+      meterUsed.notifications = meter.notifications;
       meterRaw = JSON.stringify(meterUsed);
     }
     this.logger.debug('Meter (JSON): ' + meterRaw);
