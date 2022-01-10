@@ -90,6 +90,11 @@ export async function createAndAssertSchedules(t: TestController, configuration:
   await assertSchedules(t, configuration.appliance.id, configuration.schedules, evName);
 }
 
+
+export async function waitForSchedulesToExist() {
+  await Selector('app-schedules', {timeout: saeRestartTimeout}).exists;
+}
+
 export async function createAppliance(t: TestController, appliance: Appliance) {
   await SideMenu.clickNewAppliance(t);
   await waitForApplianceToExist();
@@ -188,6 +193,7 @@ export async function assertControl(t: TestController, applianceId: string, cont
 
 export async function createSchedules(t: TestController, applianceId: string, schedules: Schedule[]) {
   await SideMenu.clickSchedule(t, applianceId);
+  await waitForSchedulesToExist();
   await SchedulesPage.setSchedules(t, schedules);
   await SchedulesPage.clickSave(t);
 }
