@@ -54,7 +54,7 @@ export async function createAndAssertAppliance(t: TestController, configuration:
 }
 
 export async function waitForApplianceToExist() {
-  await Selector('app-appliance', {timeout: saeRestartTimeout}).exists;
+  await Selector('form.ApplianceComponent', {timeout: saeRestartTimeout}).exists;
 }
 
 export async function createAndAssertMeter(t: TestController, configuration: ApplianceConfiguration) {
@@ -64,7 +64,7 @@ export async function createAndAssertMeter(t: TestController, configuration: App
 }
 
 export async function waitForMeterToExist() {
-  await Selector('app-meter', {timeout: saeRestartTimeout}).exists;
+  await Selector('mat-select[formcontrolname="meterType"]', {timeout: saeRestartTimeout}).exists;
 }
 
 export async function createAndAssertControl(t: TestController, configuration: ApplianceConfiguration) {
@@ -74,7 +74,7 @@ export async function createAndAssertControl(t: TestController, configuration: A
 }
 
 export async function waitForControlToExist() {
-  await Selector('app-control', {timeout: saeRestartTimeout}).exists;
+  await Selector('mat-select[formcontrolname="controlType"],mat-select[formcontrolname="template"]', {timeout: saeRestartTimeout}).exists;
 }
 
 export async function createAndAssertElectricVehicle(t: TestController, applianceId: string, ev: ElectricVehicle, index: number,
@@ -92,7 +92,7 @@ export async function createAndAssertSchedules(t: TestController, configuration:
 
 
 export async function waitForSchedulesToExist() {
-  await Selector('app-schedules', {timeout: saeRestartTimeout}).exists;
+  await Selector('form.SchedulesComponent', {timeout: saeRestartTimeout}).exists;
 }
 
 export async function createAppliance(t: TestController, appliance: Appliance) {
