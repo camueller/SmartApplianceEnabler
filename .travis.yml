@@ -60,7 +60,7 @@ script:
     node_modules/.bin/testcafe --page-load-timeout 10000 "browserstack:safari@14.1:OS X Big Sur" "src/*.spec.ts" &&
     popd
   - |
-    if [[ $TRAVIS_COMMIT_MESSAGE == *"release 2."* ]]; then
+    if [[ $TRAVIS_COMMIT_MESSAGE == *"[docker push]"* ]]; then
       pushd docker; ./amd64_check.sh
     else
       echo "*** Skipping docker push"
