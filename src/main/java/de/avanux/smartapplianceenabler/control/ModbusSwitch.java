@@ -25,6 +25,7 @@ import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.notification.NotificationType;
 import de.avanux.smartapplianceenabler.notification.NotificationProvider;
 import de.avanux.smartapplianceenabler.notification.Notifications;
+import de.avanux.smartapplianceenabler.util.Environment;
 import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import de.avanux.smartapplianceenabler.configuration.Validateable;
@@ -130,8 +131,11 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
     }
 
     public boolean on(LocalDateTime now, boolean switchOn) {
-        boolean result = false;
         logger.info("{}: Switching {}", getApplianceId(), (switchOn ? "on" : "off"));
+        if(Environment.isModbusDisabled()) {
+            return true;
+        }
+        boolean result = false;
         ParentWithChild<ModbusWrite, ModbusWriteValue> write
                 = ModbusWrite.getFirstRegisterWrite(getValueName(switchOn).name(), this.modbusWrites);
         if (write != null) {
@@ -171,6 +175,9 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
     }
 
     public boolean isOn() {
+        if(Environment.isModbusDisabled()) {
+            return false;
+        }
         boolean on = false;
         ParentWithChild<ModbusWrite, ModbusWriteValue> write
                 = ModbusWrite.getFirstRegisterWrite(ControlValueName.On.name(), this.modbusWrites);

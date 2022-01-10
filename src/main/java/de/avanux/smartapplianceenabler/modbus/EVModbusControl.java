@@ -26,6 +26,7 @@ import de.avanux.smartapplianceenabler.modbus.executor.*;
 import de.avanux.smartapplianceenabler.modbus.transformer.ValueTransformer;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.notification.NotificationType;
+import de.avanux.smartapplianceenabler.util.Environment;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import de.avanux.smartapplianceenabler.util.RequestCache;
 import org.slf4j.Logger;
@@ -111,25 +112,28 @@ public class EVModbusControl extends ModbusSlave implements EVChargerControl {
 
     @Override
     public boolean isVehicleNotConnected() {
-        return isMatchingVehicleStatus(EVReadValueName.VehicleNotConnected);
+        return isMatchingVehicleStatus(EVReadValueName.VehicleNotConnected, true);
     }
 
     @Override
     public boolean isVehicleConnected() {
-        return isMatchingVehicleStatus(EVReadValueName.VehicleConnected);
+        return isMatchingVehicleStatus(EVReadValueName.VehicleConnected, false);
     }
 
     @Override
     public boolean isCharging() {
-        return isMatchingVehicleStatus(EVReadValueName.Charging);
+        return isMatchingVehicleStatus(EVReadValueName.Charging, false);
     }
 
     @Override
     public boolean isInErrorState()  {
-        return isMatchingVehicleStatus(EVReadValueName.Error);
+        return isMatchingVehicleStatus(EVReadValueName.Error, false);
     }
 
-    public boolean isMatchingVehicleStatus(EVReadValueName valueName) {
+    public boolean isMatchingVehicleStatus(EVReadValueName valueName, boolean defaultValue) {
+        if(Environment.isModbusDisabled()) {
+            return defaultValue;
+        }
         List<ParentWithChild<ModbusRead, ModbusReadValue>> reads
                 = ModbusRead.getRegisterReads(valueName.name(), this.modbusReads);
         if (reads.size() > 0) {

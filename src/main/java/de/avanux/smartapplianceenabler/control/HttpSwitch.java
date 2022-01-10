@@ -30,6 +30,7 @@ import de.avanux.smartapplianceenabler.notification.Notifications;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolHandler;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolType;
 import de.avanux.smartapplianceenabler.protocol.JsonContentProtocolHandler;
+import de.avanux.smartapplianceenabler.util.Environment;
 import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import org.apache.http.HttpStatus;
@@ -187,7 +188,7 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
             ParentWithChild<HttpRead, HttpReadValue> onRead = HttpRead.getFirstHttpRead(ControlValueName.On.name(),
                     Collections.singletonList(this.httpRead));
             if(onRead != null) {
-                return this.httpHandler.getBooleanValue(onRead, getContentContentProtocolHandler());
+                return this.httpHandler.getBooleanValue(onRead, getContentContentProtocolHandler(), false);
             }
         }
         // fall back to internal state if no HttpRead is configured
@@ -196,6 +197,9 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
 
     public boolean on(LocalDateTime now, boolean switchOn) {
         logger.info("{}: Switching {}", applianceId, (switchOn ? "on" : "off"));
+        if(Environment.isHttpDisabled()) {
+            return true;
+        }
         ParentWithChild<HttpWrite, HttpWriteValue> write
                 = HttpWrite.getFirstHttpWrite(getValueName(switchOn).name(), this.httpWrites);
         if(write != null) {

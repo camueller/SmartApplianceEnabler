@@ -26,6 +26,7 @@ import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolHandler;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolType;
 import de.avanux.smartapplianceenabler.protocol.JsonContentProtocolHandler;
+import de.avanux.smartapplianceenabler.util.Environment;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import de.avanux.smartapplianceenabler.util.RequestCache;
 import org.slf4j.Logger;
@@ -140,25 +141,28 @@ public class EVHttpControl implements EVChargerControl {
 
     @Override
     public boolean isVehicleNotConnected() {
-        return readValue(EVReadValueName.VehicleNotConnected);
+        return readValue(EVReadValueName.VehicleNotConnected, true);
     }
 
     @Override
     public boolean isVehicleConnected() {
-        return readValue(EVReadValueName.VehicleConnected);
+        return readValue(EVReadValueName.VehicleConnected, false);
     }
 
     @Override
     public boolean isCharging() {
-        return readValue(EVReadValueName.Charging);
+        return readValue(EVReadValueName.Charging, false);
     }
 
     @Override
     public boolean isInErrorState() {
-        return readValue(EVReadValueName.Error);
+        return readValue(EVReadValueName.Error, false);
     }
 
-    protected boolean readValue(EVReadValueName valueName) {
+    protected boolean readValue(EVReadValueName valueName, boolean defaultValue) {
+        if(Environment.isHttpDisabled()) {
+            return defaultValue;
+        }
         ParentWithChild<HttpRead, HttpReadValue> read = getReadValue(valueName);
         if(read != null) {
             String response = this.requestCache.get(read);

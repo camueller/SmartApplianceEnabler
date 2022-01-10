@@ -30,6 +30,7 @@ import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.notification.NotificationProvider;
 import de.avanux.smartapplianceenabler.notification.NotificationType;
 import de.avanux.smartapplianceenabler.notification.Notifications;
+import de.avanux.smartapplianceenabler.util.Environment;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -178,6 +179,9 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
 
     @Override
     public Double pollPower() {
+        if(Environment.isModbusDisabled()) {
+            return 0.0;
+        }
         ParentWithChild<ModbusRead, ModbusReadValue> read
                 = ModbusRead.getFirstRegisterRead(MeterValueName.Power.name(), modbusReads);
         return readRegister(read.parent());
@@ -186,23 +190,32 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     @Override
     public void startEnergyMeter() {
         logger.debug("{}: Start energy meter ...", getApplianceId());
-        this.pollEnergyMeter.startEnergyCounter();
+        if(this.pollEnergyMeter != null) {
+            this.pollEnergyMeter.startEnergyCounter();
+        }
     }
 
     @Override
     public void stopEnergyMeter() {
         logger.debug("{}: Stop energy meter ...", getApplianceId());
-        this.pollEnergyMeter.stopEnergyCounter();
+        if(this.pollEnergyMeter != null) {
+            this.pollEnergyMeter.stopEnergyCounter();
+        }
     }
 
     @Override
     public void resetEnergyMeter() {
         logger.debug("{}: Reset energy meter ...", getApplianceId());
-        this.pollEnergyMeter.reset();
+        if(this.pollEnergyMeter != null) {
+            this.pollEnergyMeter.reset();
+        }
     }
 
     @Override
     public Double pollEnergy(LocalDateTime now) {
+        if(Environment.isModbusDisabled()) {
+            return 0.0;
+        }
         ParentWithChild<ModbusRead, ModbusReadValue> read
                 = ModbusRead.getFirstRegisterRead(MeterValueName.Energy.name(), modbusReads);
         return readRegister(read.parent());
@@ -235,7 +248,7 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
 
     @Override
     public void onMeterUpdate(LocalDateTime now, int averagePower, Double energy) {
-        MqttMessage message = new MeterMessage(now, averagePower, energy);
+        MqttMessage message = new MeterMessage(now, averagePower, energy != null ? energy : 0.0);
         mqttClient.publish(mqttPublishTopic, message, false);
     }
 }

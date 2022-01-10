@@ -256,7 +256,7 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
     }
 
     private double getValue(ParentWithChild<HttpRead, HttpReadValue> read) {
-        return this.httpHandler.getDoubleValue(read, getContentContentProtocolHandler());
+        return this.httpHandler.getDoubleValue(read, getContentContentProtocolHandler(), 0.0);
     }
 
     public ContentProtocolHandler getContentContentProtocolHandler() {
@@ -270,7 +270,7 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
 
     @Override
     public void onMeterUpdate(LocalDateTime now, int averagePower, Double energy) {
-        MqttMessage message = new MeterMessage(now, averagePower, energy);
+        MqttMessage message = new MeterMessage(now, averagePower, energy != null ? energy : 0.0);
         mqttClient.publish(mqttPublishTopic, message, false);
     }
 }

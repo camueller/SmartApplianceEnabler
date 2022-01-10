@@ -74,6 +74,6 @@ public class EVModbusControlTest {
         executor.getValueTransformer().setByteValues(byteValues);
         this.evModbusControl.getRequestCache().put(registerRead, executor);
 
-        assertEquals(expectedResult, this.evModbusControl.isMatchingVehicleStatus(registerName));
+        assertEquals(expectedResult, this.evModbusControl.isMatchingVehicleStatus(registerName, false));
     }
 }

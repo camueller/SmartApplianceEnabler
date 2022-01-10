@@ -20,6 +20,7 @@ package de.avanux.smartapplianceenabler.http;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolHandler;
+import de.avanux.smartapplianceenabler.util.Environment;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import de.avanux.smartapplianceenabler.util.RegexUtil;
 import org.slf4j.Logger;
@@ -41,7 +42,11 @@ public class HttpHandler implements ApplianceIdConsumer {
     }
 
     public double getDoubleValue(ParentWithChild<HttpRead, HttpReadValue> read,
-                               ContentProtocolHandler contentProtocolHandler) {
+                                 ContentProtocolHandler contentProtocolHandler,
+                                 double defaultValue) {
+        if(Environment.isHttpDisabled()) {
+            return defaultValue;
+        }
         String protocolHandlerValue = getValue(read, contentProtocolHandler);
         if(protocolHandlerValue != null) {
             String valueExtractionRegex = read.child().getExtractionRegex();
@@ -67,7 +72,11 @@ public class HttpHandler implements ApplianceIdConsumer {
     }
 
     public boolean getBooleanValue(ParentWithChild<HttpRead, HttpReadValue> read,
-                                   ContentProtocolHandler contentProtocolHandler) {
+                                   ContentProtocolHandler contentProtocolHandler,
+                                   boolean defaultValue) {
+        if(Environment.isHttpDisabled()) {
+            return defaultValue;
+        }
         String protocolHandlerValue = getValue(read, contentProtocolHandler);
         if(protocolHandlerValue != null) {
             String valueExtractionRegex = read.child().getExtractionRegex();

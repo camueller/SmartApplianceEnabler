@@ -10,4 +10,4 @@ sudo docker stop $SAE_CONTAINER_NAME
 sudo docker volume rm -f $SAE_VOLUME
 sudo docker volume create $SAE_VOLUME
 sudo docker run -d --rm -p 1883:1883 --name=$MOSQUITTO_CONTAINER_NAME eclipse-mosquitto mosquitto -c /mosquitto-no-auth.conf
-sudo docker run -d --rm -v $SAE_VOLUME:/opt/sae/data -p$SAE_PORT:8080 --name=$SAE_CONTAINER_NAME $REPO_TAG
+sudo docker run -d --rm -v $SAE_VOLUME:/opt/sae/data -p$SAE_PORT:8080 --name=$SAE_CONTAINER_NAME -e JAVA_OPTS="-Dsae.http.disabled=true -Dsae.modbus.disabled=true" $REPO_TAG
