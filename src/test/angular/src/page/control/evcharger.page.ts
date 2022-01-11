@@ -21,7 +21,8 @@ import {EvChargerProtocol} from '../../../../../main/angular/src/app/control/evc
 import {EvchargerHttpPage} from './evcharger-http.page';
 import {ElectricVehicle} from '../../../../../main/angular/src/app/control/evcharger/electric-vehicle/electric-vehicle';
 import {SideMenu} from '../side.menu.page';
-import {waitForControlToExist} from '../../shared/helper';
+import {Selector} from 'testcafe';
+import {saeRestartTimeout} from '../../shared/timeout';
 
 export class EvchargerPage extends ControlPage {
 
@@ -29,7 +30,12 @@ export class EvchargerPage extends ControlPage {
     return `*[formarrayname="electricVehicles"] div:nth-child(${httpReadIndex + 1}) > app-electric-vehicle`;
   }
 
+  public static async waitForPage() {
+    await Selector(selectorSelectByFormControlName('template'), {timeout: saeRestartTimeout}).exists;
+  }
+
   public static async setEvChargerFromTemplate(t: TestController, evCharger: EvCharger, templateName: string) {
+    await this.waitForPage();
     await selectOption(t, selectorSelectByFormControlName('template'), templateName);
     if (evCharger.protocol === EvChargerProtocol.MODBUS) {
       await EvchargerModbusPage.setIdRef(t, settings.modbusSettings[0].modbusTcpId);
@@ -37,6 +43,7 @@ export class EvchargerPage extends ControlPage {
   }
 
   public static async assertEvCharger(t: TestController, evCharger: EvCharger) {
+    await this.waitForPage();
     await EvchargerPage.assertProtocol(t, evCharger.protocol);
     await EvchargerPage.assertVoltage(t, evCharger.voltage && evCharger.voltage.toString());
     await EvchargerPage.assertPhases(t, evCharger.phases && evCharger.phases.toString());
@@ -65,10 +72,10 @@ export class EvchargerPage extends ControlPage {
 
   public static async setElectricVehicle(t: TestController, applianceId: string, ev: ElectricVehicle, index: number,
                                          clickControl: boolean, clickAdd: boolean, clickSave: boolean) {
+    await this.waitForPage();
     if (clickControl) {
       await SideMenu.clickControl(t, applianceId);
     }
-    await waitForControlToExist();
     if (clickAdd) {
       await clickButton(t, selectorButton(undefined, 'ControlEvchargerComponent__addElectricVehicle'));
     }
@@ -89,10 +96,10 @@ export class EvchargerPage extends ControlPage {
   }
   public static async assertElectricVehicle(t: TestController, applianceId: string, ev: ElectricVehicle, index: number,
                                             clickControl: boolean) {
+    await this.waitForPage();
     if (clickControl) {
       await SideMenu.clickControl(t, applianceId);
     }
-    await waitForControlToExist();
     await EvchargerPage.assertName(t, ev.name, index);
     await EvchargerPage.assertBatteryCapacity(t, ev.batteryCapacity && ev.batteryCapacity.toString(), index);
     await EvchargerPage.assertPhasesEv(t, ev.phases && ev.phases.toString(), index);

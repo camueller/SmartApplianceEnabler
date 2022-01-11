@@ -2,13 +2,7 @@ import {Selector} from 'testcafe';
 import {saeRestartTimeout} from '../shared/timeout';
 import {TopMenu} from './top-menu.page';
 import {clickButton} from '../shared/form';
-import {
-  waitForApplianceToExist,
-  waitForControlToExist,
-  waitForMeterToExist,
-  waitForSchedulesToExist,
-  waitForStatusToExist
-} from '../shared/helper';
+import {StatusPage} from './status.page';
 
 export class SideMenu {
 
@@ -21,7 +15,6 @@ export class SideMenu {
       await TopMenu.clickMenu(t);
       await Selector('mat-sidenav.mat-drawer-opened').exists;
     }
-    await t.wait(500);
   }
 
   public static async clickSettings(t: TestController) {
@@ -32,7 +25,7 @@ export class SideMenu {
   public static async clickStatus(t: TestController) {
     await SideMenu.openSideMenuIfClosed(t);
     await clickButton(t, SideMenu.STATUS_SELECTOR);
-    await waitForStatusToExist();
+    await StatusPage.waitForPage();
   }
 
   public static newAppliance(): string {
@@ -51,7 +44,6 @@ export class SideMenu {
   public static async clickAppliance(t: TestController, id: string) {
     await SideMenu.openSideMenuIfClosed(t);
     await clickButton(t, SideMenu.appliance(id), {timeout: saeRestartTimeout});
-    await waitForApplianceToExist();
   }
 
   public static meter(id: string): string {
@@ -61,7 +53,6 @@ export class SideMenu {
   public static async clickMeter(t: TestController, id: string) {
     await SideMenu.openSideMenuIfClosed(t);
     await clickButton(t, SideMenu.meter(id), {timeout: saeRestartTimeout});
-    await waitForMeterToExist();
   }
 
   public static control(id: string): string {
@@ -71,7 +62,6 @@ export class SideMenu {
   public static async clickControl(t: TestController, id: string) {
     await SideMenu.openSideMenuIfClosed(t);
     await clickButton(t, SideMenu.control(id), {timeout: saeRestartTimeout});
-    await waitForControlToExist();
   }
 
   public static schedule(id: string): string {
@@ -81,6 +71,5 @@ export class SideMenu {
   public static async clickSchedule(t: TestController, id: string) {
     await SideMenu.openSideMenuIfClosed(t);
     await clickButton(t, SideMenu.schedule(id), {timeout: saeRestartTimeout});
-    await waitForSchedulesToExist();
   }
 }

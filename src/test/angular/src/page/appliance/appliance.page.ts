@@ -13,12 +13,19 @@ import {
   setCheckboxEnabled
 } from '../../shared/form';
 import {Appliance} from '../../../../../main/angular/src/app/appliance/appliance';
+import {Selector} from 'testcafe';
+import {saeRestartTimeout} from '../../shared/timeout';
 
 export class AppliancePage {
 
   private static SAVE_BUTTON_SELECTOR = 'button[type="submit"]';
 
+  private static async waitForPage() {
+    await Selector('form.ApplianceComponent', {timeout: saeRestartTimeout}).exists;
+  }
+
   public static async setAppliance(t: TestController, appliance: Appliance) {
+    await this.waitForPage();
     await AppliancePage.setId(t, appliance.id);
     await AppliancePage.setVendor(t, appliance.vendor);
     await AppliancePage.setName(t, appliance.name);
@@ -37,6 +44,7 @@ export class AppliancePage {
   }
 
   public static async assertAppliance(t: TestController, appliance: Appliance) {
+    await this.waitForPage();
     await AppliancePage.assertId(t, appliance.id);
     await AppliancePage.assertVendor(t, appliance.vendor);
     await AppliancePage.assertName(t, appliance.name);
