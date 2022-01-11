@@ -41,6 +41,10 @@ export function fixtureName(t: TestController) {
   return t.testRun.test.fixture.name;
 }
 
+export async function waitForStatusToExist() {
+  await Selector('.StatusComponent', {timeout: saeRestartTimeout}).exists;
+}
+
 export function configurationKey(t: TestController, configurationName: string) {
   return JSON.stringify({configurationName, userAgent: t.browser.name});
 }

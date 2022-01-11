@@ -2,7 +2,13 @@ import {Selector} from 'testcafe';
 import {saeRestartTimeout} from '../shared/timeout';
 import {TopMenu} from './top-menu.page';
 import {clickButton} from '../shared/form';
-import {waitForApplianceToExist, waitForControlToExist, waitForMeterToExist, waitForSchedulesToExist} from '../shared/helper';
+import {
+  waitForApplianceToExist,
+  waitForControlToExist,
+  waitForMeterToExist,
+  waitForSchedulesToExist,
+  waitForStatusToExist
+} from '../shared/helper';
 
 export class SideMenu {
 
@@ -26,6 +32,7 @@ export class SideMenu {
   public static async clickStatus(t: TestController) {
     await SideMenu.openSideMenuIfClosed(t);
     await clickButton(t, SideMenu.STATUS_SELECTOR);
+    await waitForStatusToExist();
   }
 
   public static newAppliance(): string {
