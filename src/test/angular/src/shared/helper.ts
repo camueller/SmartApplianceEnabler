@@ -30,6 +30,7 @@ import {ElectricVehicle} from '../../../../main/angular/src/app/control/evcharge
 import {Schedule} from '../../../../main/angular/src/app/schedule/schedule';
 import {SchedulesPage} from '../page/schedule/schedules.page';
 import {NotificationPage} from '../page/notification/notification.page';
+import {selectorSelectedByFormControlName} from './form';
 
 export function isDebug() {
   return !!process.env.DEBUG;
@@ -64,7 +65,7 @@ export async function createAndAssertMeter(t: TestController, configuration: App
 }
 
 export async function waitForMeterToExist() {
-  await Selector('mat-select[formcontrolname="meterType"]', {timeout: saeRestartTimeout}).exists;
+  await Selector(selectorSelectedByFormControlName('meterType'), {timeout: saeRestartTimeout}).exists;
 }
 
 export async function createAndAssertControl(t: TestController, configuration: ApplianceConfiguration) {
@@ -74,7 +75,7 @@ export async function createAndAssertControl(t: TestController, configuration: A
 }
 
 export async function waitForControlToExist() {
-  await Selector('mat-select[formcontrolname="controlType"],mat-select[formcontrolname="template"]', {timeout: saeRestartTimeout}).exists;
+  await Selector(selectorSelectedByFormControlName('controlType'), {timeout: saeRestartTimeout}).exists;
 }
 
 export async function createAndAssertElectricVehicle(t: TestController, applianceId: string, ev: ElectricVehicle, index: number,
