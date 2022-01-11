@@ -14,7 +14,7 @@ export class ControlPage {
   private static SAVE_BUTTON_SELECTOR = 'button[type="submit"]';
 
   public static async waitForPage() {
-    await Selector(selectorSelectedByFormControlName('controlType'), {timeout: saeRestartTimeout}).exists;
+    await Selector(selectorSelectByFormControlName('controlType'), {timeout: saeRestartTimeout}).exists;
   }
 
   public static async setType(t: TestController, controlType: string) {

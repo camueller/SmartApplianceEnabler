@@ -14,7 +14,7 @@ export class MeterPage {
   private static SAVE_BUTTON_SELECTOR = 'button[type="submit"]';
 
   private static async waitForPage() {
-    await Selector(selectorSelectedByFormControlName('meterType'), {timeout: saeRestartTimeout}).exists;
+    await Selector(selectorSelectByFormControlName('meterType'), {timeout: saeRestartTimeout}).exists;
   }
 
   public static async setType(t: TestController, meterType: string) {
