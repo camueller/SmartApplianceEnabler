@@ -8,12 +8,12 @@ export class SchedulesPage {
 
   private static SAVE_BUTTON_SELECTOR = 'button[type="submit"]';
 
-  private static async waitForPage() {
-    await Selector('form.SchedulesComponent', {timeout: saeRestartTimeout}).exists;
+  private static async waitForPage(t: TestController) {
+    await t.expect(Selector('form.SchedulesComponent').exists).ok({timeout: saeRestartTimeout});
   }
 
   public static async setSchedules(t: TestController, schedules: Schedule[]) {
-    await this.waitForPage();
+    await this.waitForPage(t);
     for (let i = 0; i < schedules.length; i++) {
       await this.clickAddSchedule(t);
       await SchedulePage.setSchedule(t, schedules[i], i);
@@ -21,7 +21,7 @@ export class SchedulesPage {
     await this.clickSave(t);
   }
   public static async assertSchedules(t: TestController, schedules: Schedule[], evName?: string) {
-    await this.waitForPage();
+    await this.waitForPage(t);
     for (let i = 0; i < schedules.length; i++) {
       await SchedulePage.assertSchedule(t, schedules[i], i, evName);
     }

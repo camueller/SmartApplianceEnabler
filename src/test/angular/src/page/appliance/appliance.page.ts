@@ -20,12 +20,12 @@ export class AppliancePage {
 
   private static SAVE_BUTTON_SELECTOR = 'button[type="submit"]';
 
-  private static async waitForPage() {
-    await Selector('form.ApplianceComponent', {timeout: saeRestartTimeout}).exists;
+  private static async waitForPage(t: TestController) {
+    await t.expect(Selector('form.ApplianceComponent').exists).ok({timeout: saeRestartTimeout});
   }
 
   public static async setAppliance(t: TestController, appliance: Appliance) {
-    await this.waitForPage();
+    await this.waitForPage(t);
     await AppliancePage.setId(t, appliance.id);
     await AppliancePage.setVendor(t, appliance.vendor);
     await AppliancePage.setName(t, appliance.name);
@@ -44,7 +44,7 @@ export class AppliancePage {
   }
 
   public static async assertAppliance(t: TestController, appliance: Appliance) {
-    await this.waitForPage();
+    await this.waitForPage(t);
     await AppliancePage.assertId(t, appliance.id);
     await AppliancePage.assertVendor(t, appliance.vendor);
     await AppliancePage.assertName(t, appliance.name);

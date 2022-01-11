@@ -21,8 +21,7 @@ import {saeRestartTimeout} from '../shared/timeout';
 
 export class StatusPage {
 
-  public static async waitForPage() {
-    await Selector('.StatusComponent', {timeout: saeRestartTimeout}).exists;
+  public static async waitForPage(t: TestController) {
+    await t.expect(Selector('.StatusComponent').exists).ok({timeout: saeRestartTimeout});
   }
-
 }

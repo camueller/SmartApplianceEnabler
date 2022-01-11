@@ -25,7 +25,7 @@ export class SideMenu {
   public static async clickStatus(t: TestController) {
     await SideMenu.openSideMenuIfClosed(t);
     await clickButton(t, SideMenu.STATUS_SELECTOR);
-    await StatusPage.waitForPage();
+    await StatusPage.waitForPage(t);
   }
 
   public static newAppliance(): string {
