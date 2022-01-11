@@ -24,6 +24,7 @@ export class SideMenu {
 
   public static async clickStatus(t: TestController) {
     await SideMenu.openSideMenuIfClosed(t);
+    await t.expect(Selector(SideMenu.STATUS_SELECTOR).exists).ok({timeout: saeRestartTimeout});
     await clickButton(t, SideMenu.STATUS_SELECTOR);
     await StatusPage.waitForPage(t);
   }
