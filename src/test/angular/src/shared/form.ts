@@ -22,11 +22,18 @@ export function selectorSelectedByFormControlName(formControlName: string, selec
   return selectorByFormControlName(formControlName, 'mat-select', 'span.mat-select-value-text > span', selectorPrefix, selectorBase);
 }
 
+export function selectorStringByFormControlNameOrNgReflectName(formControlName: string, formControlNamePrefix?: string,
+                                                               formControlNameSuffix?: string, selectorPrefix?: string,
+                                                               selectorBase?: string) {
+  const selectorFormControlName = `${selectorPrefix ?? ''} ${selectorBase ?? ''} ${formControlNamePrefix ?? ''}[formcontrolname="${formControlName}"] ${formControlNameSuffix || ''}`;
+  const selectorNgReflectName = `${selectorPrefix ?? ''} ${selectorBase ?? ''} ${formControlNamePrefix ?? ''}[ng-reflect-name="${formControlName}"] ${formControlNameSuffix || ''}`;
+  return `${selectorFormControlName}, ${selectorNgReflectName}`;
+}
+
 export function selectorByFormControlName(formControlName: string, formControlNamePrefix: string, formControlNameSuffix?: string,
                                           selectorPrefix?: string, selectorBase?: string) {
-  const selectorFormControlName = `${selectorPrefix || ''} ${selectorBase || ''} ${formControlNamePrefix}[formcontrolname="${formControlName}"] ${formControlNameSuffix || ''}`;
-  const selectorNgReflectName = `${selectorPrefix || ''} ${selectorBase || ''} ${formControlNamePrefix}[ng-reflect-name="${formControlName}"] ${formControlNameSuffix || ''}`;
-  const selectorString = `${selectorFormControlName}, ${selectorNgReflectName}`;
+  const selectorString = selectorStringByFormControlNameOrNgReflectName(formControlName, formControlNamePrefix, formControlNameSuffix,
+    selectorPrefix, selectorBase);
   if (isDebug()) { console.log('Selector: ', selectorString); }
   return Selector(selectorString);
 }

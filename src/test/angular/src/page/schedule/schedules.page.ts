@@ -7,8 +7,16 @@ export class SchedulesPage {
 
   private static SAVE_BUTTON_SELECTOR = 'button[type="submit"]';
 
-  private static async waitForPage(t: TestController) {
-    await t.expect(Selector('form.SchedulesComponent').exists).ok();
+  public static pageSelector(t: TestController): Selector {
+    return Selector('form.SchedulesComponent');
+  }
+
+  public static async waitForPage(t: TestController): Promise<void> {
+    await t.expect(await this.pageExists(t)).ok();
+  }
+
+  public static async pageExists(t: TestController): Promise<boolean> {
+    return (await this.pageSelector(t)).exists;
   }
 
   public static async setSchedules(t: TestController, schedules: Schedule[]) {

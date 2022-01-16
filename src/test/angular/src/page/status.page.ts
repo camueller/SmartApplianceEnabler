@@ -20,7 +20,15 @@ import {Selector} from 'testcafe';
 
 export class StatusPage {
 
-  public static async waitForPage(t: TestController) {
-    await t.expect(Selector('.StatusComponent').exists).ok();
+  public static pageSelector(t: TestController): Selector {
+    return Selector('.StatusComponent');
+  }
+
+  public static async waitForPage(t: TestController): Promise<void> {
+    await t.expect(this. pageExists(t)).ok();
+  }
+
+  public static async pageExists(t: TestController): Promise<boolean> {
+    return (await this.pageSelector(t)).exists;
   }
 }
