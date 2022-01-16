@@ -6,14 +6,13 @@ import {
   selectorSelectedByFormControlName
 } from '../../shared/form';
 import {simpleControlType} from '../../../../../main/angular/src/app/shared/form-util';
-import {saeRestartTimeout} from '../../shared/timeout';
 
 export class ControlPage {
 
   private static SAVE_BUTTON_SELECTOR = 'button[type="submit"]';
 
   public static async waitForPage(t: TestController) {
-    await t.expect(selectorSelectByFormControlName('controlType').exists).ok({timeout: saeRestartTimeout});
+    await t.expect(selectorSelectByFormControlName('controlType').exists).ok();
   }
 
   public static async setType(t: TestController, controlType: string) {

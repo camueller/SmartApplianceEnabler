@@ -1,5 +1,4 @@
 import {Selector} from 'testcafe';
-import {saeRestartTimeout} from '../shared/timeout';
 import {TopMenu} from './top-menu.page';
 import {clickButton} from '../shared/form';
 import {StatusPage} from './status.page';
@@ -19,7 +18,7 @@ export class SideMenu {
 
   private static async clickEntry(t: TestController, selector: string) {
     await SideMenu.openSideMenuIfClosed(t);
-    await t.expect(Selector(selector).exists).ok({timeout: saeRestartTimeout});
+    await t.expect(Selector(selector).exists).ok();
     await clickButton(t, selector);
   }
 

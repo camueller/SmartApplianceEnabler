@@ -45,19 +45,19 @@ script:
     pushd src/test/angular &&
     npm i &&
     export BROWSERSTACK_BUILD_ID=$TRAVIS_COMMIT &&
-    node_modules/.bin/testcafe --page-load-timeout 10000 "browserstack:chrome@92.0:Windows 10" "src/*.spec.ts" &&
+    node_modules/.bin/testcafe --page-load-timeout 10000 --selector-timeout=10000 "browserstack:chrome@97.0:Windows 10" "src/*.spec.ts" &&
     popd &&
     pushd ci &&
     ssh -i aws.pem -o StrictHostKeyChecking=no ec2-user@$DEPLOY_HOST 'bash -s' < restart_container.sh &&
     popd &&
     pushd src/test/angular &&
-    node_modules/.bin/testcafe --page-load-timeout 10000 "browserstack:firefox@91.0:Windows 10" "src/*.spec.ts" &&
+    node_modules/.bin/testcafe --page-load-timeout 10000 --selector-timeout=10000 "browserstack:firefox@96.0:Windows 10" "src/*.spec.ts" &&
     popd &&
     pushd ci &&
     ssh -i aws.pem -o StrictHostKeyChecking=no ec2-user@$DEPLOY_HOST 'bash -s' < restart_container.sh &&
     popd &&
     pushd src/test/angular &&
-    node_modules/.bin/testcafe --page-load-timeout 10000 "browserstack:safari@14.1:OS X Big Sur" "src/*.spec.ts" &&
+    node_modules/.bin/testcafe --page-load-timeout 10000 --selector-timeout=10000 "browserstack:safari@14.1:OS X Big Sur" "src/*.spec.ts" &&
     popd
   - |
     if [[ $TRAVIS_COMMIT_MESSAGE == *"[docker push]"* ]]; then

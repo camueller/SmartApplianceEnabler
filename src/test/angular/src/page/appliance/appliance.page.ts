@@ -14,14 +14,13 @@ import {
 } from '../../shared/form';
 import {Appliance} from '../../../../../main/angular/src/app/appliance/appliance';
 import {Selector} from 'testcafe';
-import {saeRestartTimeout} from '../../shared/timeout';
 
 export class AppliancePage {
 
   private static SAVE_BUTTON_SELECTOR = 'button[type="submit"]';
 
   private static async waitForPage(t: TestController) {
-    await t.expect(Selector('form.ApplianceComponent').exists).ok({timeout: saeRestartTimeout});
+    await t.expect(Selector('form.ApplianceComponent').exists).ok();
   }
 
   public static async setAppliance(t: TestController, appliance: Appliance) {

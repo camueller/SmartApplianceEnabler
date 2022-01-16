@@ -17,11 +17,10 @@
  */
 
 import {Selector} from 'testcafe';
-import {saeRestartTimeout} from '../shared/timeout';
 
 export class StatusPage {
 
   public static async waitForPage(t: TestController) {
-    await t.expect(Selector('.StatusComponent').exists).ok({timeout: saeRestartTimeout});
+    await t.expect(Selector('.StatusComponent').exists).ok();
   }
 }

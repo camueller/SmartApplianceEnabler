@@ -21,7 +21,6 @@ import {EvChargerProtocol} from '../../../../../main/angular/src/app/control/evc
 import {EvchargerHttpPage} from './evcharger-http.page';
 import {ElectricVehicle} from '../../../../../main/angular/src/app/control/evcharger/electric-vehicle/electric-vehicle';
 import {SideMenu} from '../side.menu.page';
-import {saeRestartTimeout} from '../../shared/timeout';
 
 export class EvchargerPage extends ControlPage {
 
@@ -30,7 +29,7 @@ export class EvchargerPage extends ControlPage {
   }
 
   public static async waitForPage(t: TestController) {
-    await t.expect(selectorSelectByFormControlName('template').exists).ok({timeout: saeRestartTimeout});
+    await t.expect(selectorSelectByFormControlName('template').exists).ok();
   }
 
   public static async setEvChargerFromTemplate(t: TestController, evCharger: EvCharger, templateName: string) {

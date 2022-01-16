@@ -5,7 +5,6 @@ import {assertInput, clickButton, inputText, selectorInputByFormControlName} fro
 import {Settings} from '../../../../../main/angular/src/app/settings/settings';
 import {MqttSettings} from '../../../../../main/angular/src/app/settings/mqtt-settings';
 import {Selector} from 'testcafe';
-import {saeRestartTimeout} from '../../shared/timeout';
 
 export class SettingsPage {
   private static selectorBase = 'app-settings';
@@ -13,7 +12,7 @@ export class SettingsPage {
   private static ADD_MODBUS_BUTTON_SELECTOR = `${SettingsPage.selectorBase} button.SettingsComponent__addModbusSetting`;
 
   private static async waitForPage(t: TestController) {
-    await t.expect(Selector('form.SettingsComponent').exists).ok({timeout: saeRestartTimeout});
+    await t.expect(Selector('form.SettingsComponent').exists).ok();
   }
 
   public static async createAndAssertSettings(t: TestController, settings: Settings) {
