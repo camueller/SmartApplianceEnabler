@@ -12,7 +12,7 @@
   },
   "private": true,
   "dependencies": {
-    "testcafe": "^1.15.3",
+    "testcafe": "^1.18.1",
     "testcafe-browser-provider-browserstack": "^1.13.1",
     "ts-node": "^10.2.1",
     "tslint": "^6.1.3",
