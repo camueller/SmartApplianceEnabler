@@ -2,6 +2,7 @@ import {Selector} from 'testcafe';
 import {getTranslation} from './ngx-translate';
 import {isDebug} from './helper';
 import {NotificationType} from '../../../../main/angular/src/app/notification/notification-type';
+import {saeRestartTimeout} from './timeout';
 
 export function selectorInputByFormControlName(formControlName: string, selectorPrefix?: string, selectorBase?: string) {
   return selectorByFormControlName(formControlName, 'input', undefined, selectorPrefix, selectorBase);
@@ -41,11 +42,13 @@ export function selectorButton(selectorPrefix?: string, buttonClass?: string) {
 
 export async function clickButton(t: TestController, selector: string, options?: any) {
   if (isDebug()) { console.log(`Click button ${selector} ...`); }
+  await t.expect(await Selector(selector).exists).ok({timeout: saeRestartTimeout});
   await t.click(selector, options);
   if (isDebug()) { console.log('... button clicked.'); }
 }
 
 export async function inputText(t: TestController, selector: Selector, text: string | undefined) {
+  await t.expect(await Selector(selector).exists).ok({timeout: saeRestartTimeout});
   if (text) {
     await t.typeText(selector, text);
   } else {
@@ -54,12 +57,14 @@ export async function inputText(t: TestController, selector: Selector, text: str
 }
 
 export async function assertInput(t: TestController, selector: Selector, text: string | undefined) {
+  await t.expect(await Selector(selector).exists).ok({timeout: saeRestartTimeout});
   const actual = await selector.value;
   const expected = text || '';
   await t.expect(actual.toString()).eql(expected.toString());
 }
 
 export async function setCheckboxEnabled(t: TestController, selector: Selector, enabled: boolean) {
+  await t.expect(await Selector(selector).exists).ok({timeout: saeRestartTimeout});
   const checked = JSON.parse(await isCheckboxChecked(t, selector.find('input')));
   if ((enabled && !checked) || (!enabled && checked)) {
     await t.click(selector);
@@ -67,8 +72,7 @@ export async function setCheckboxEnabled(t: TestController, selector: Selector, 
 }
 
 export async function assertCheckbox(t: TestController, selector: Selector, enabled: boolean) {
-  // await t.expect(selector.withAttribute('aria-checked', enabled ? 'true' : 'false').exists).ok();
-  await t.expect(await isCheckboxChecked(t, selector)).eql(enabled ? 'true' : 'false');
+  await t.expect(selector.withAttribute('aria-checked', enabled ? 'true' : 'false').exists).ok({timeout: saeRestartTimeout});
 }
 
 async function isCheckboxChecked(t: TestController, selector: Selector) {
@@ -77,6 +81,7 @@ async function isCheckboxChecked(t: TestController, selector: Selector) {
 
 export async function selectOption(t: TestController, selector: Selector, value: string) {
   if (isDebug()) { console.log('Open select ...'); }
+  await t.expect(await Selector(selector).exists).ok({timeout: saeRestartTimeout});
   await t.click(selector);
   const optionSelectorString = `mat-option[ng-reflect-value="${value}"]`;
   if (isDebug()) { console.log('Option selector: ', optionSelectorString); }
@@ -90,6 +95,7 @@ export async function selectOption(t: TestController, selector: Selector, value:
 export async function assertSelectOption(t: TestController, selector: Selector, optionKey: string, i18nPrefix?: string) {
   if (isDebug()) { console.log('optionKey=', optionKey); }
   if (isDebug()) { console.log('i18nPrefix=', i18nPrefix); }
+  await t.expect(await Selector(selector).exists).ok({timeout: saeRestartTimeout});
   if (optionKey) {
     await t.expect(selector.innerText).eql(getTranslation(optionKey, i18nPrefix));
   } else {
@@ -99,18 +105,20 @@ export async function assertSelectOption(t: TestController, selector: Selector, 
 
 export async function selectOptionMulti(t: TestController, selector: Selector, values: any[]) {
   await t.click(selector);
-  values?.forEach(async value => {
+  for (const value of values) {
     const selectorString = `mat-option[ng-reflect-value="${value.toString()}"]`;
     if (isDebug()) {
       console.log('Selector: ', selectorString);
     }
+    await t.expect(await Selector(selectorString).exists).ok({timeout: saeRestartTimeout});
     await t.click(selectorString);
-  });
+  }
   await t.pressKey('esc'); // close multi select overlay
 }
 
 export async function assertSelectOptionMulti(t: TestController, selector: Selector, values: any[], i18nPrefix?: string) {
   if (values) {
+    await t.expect(await Selector(selector).exists).ok({timeout: saeRestartTimeout});
     const actualSelectedOptionsString = await selector.innerText;
     const expectedNotificationTypes = [];
     values?.forEach(value => {

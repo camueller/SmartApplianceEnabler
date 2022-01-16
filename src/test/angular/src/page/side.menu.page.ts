@@ -17,15 +17,19 @@ export class SideMenu {
     }
   }
 
+  private static async clickEntry(t: TestController, selector: string) {
+    await SideMenu.openSideMenuIfClosed(t);
+    await t.expect(Selector(selector).exists).ok({timeout: saeRestartTimeout});
+    await clickButton(t, selector);
+  }
+
   public static async clickSettings(t: TestController) {
     await SideMenu.openSideMenuIfClosed(t);
     await clickButton(t, SideMenu.SETTINGS_SELECTOR);
   }
 
   public static async clickStatus(t: TestController) {
-    await SideMenu.openSideMenuIfClosed(t);
-    await t.expect(Selector(SideMenu.STATUS_SELECTOR).exists).ok({timeout: saeRestartTimeout});
-    await clickButton(t, SideMenu.STATUS_SELECTOR);
+    await this.clickEntry(t, SideMenu.STATUS_SELECTOR);
     await StatusPage.waitForPage(t);
   }
 
@@ -34,8 +38,7 @@ export class SideMenu {
   }
 
   public static async clickNewAppliance(t: TestController) {
-    await SideMenu.openSideMenuIfClosed(t);
-    await clickButton(t, SideMenu.newAppliance());
+    await this.clickEntry(t, SideMenu.newAppliance());
   }
 
   public static appliance(id: string): string {
@@ -43,8 +46,7 @@ export class SideMenu {
   }
 
   public static async clickAppliance(t: TestController, id: string) {
-    await SideMenu.openSideMenuIfClosed(t);
-    await clickButton(t, SideMenu.appliance(id), {timeout: saeRestartTimeout});
+    await this.clickEntry(t, SideMenu.appliance(id));
   }
 
   public static meter(id: string): string {
@@ -52,8 +54,7 @@ export class SideMenu {
   }
 
   public static async clickMeter(t: TestController, id: string) {
-    await SideMenu.openSideMenuIfClosed(t);
-    await clickButton(t, SideMenu.meter(id), {timeout: saeRestartTimeout});
+    await this.clickEntry(t, SideMenu.meter(id));
   }
 
   public static control(id: string): string {
@@ -61,8 +62,7 @@ export class SideMenu {
   }
 
   public static async clickControl(t: TestController, id: string) {
-    await SideMenu.openSideMenuIfClosed(t);
-    await clickButton(t, SideMenu.control(id), {timeout: saeRestartTimeout});
+    await this.clickEntry(t, SideMenu.control(id));
   }
 
   public static schedule(id: string): string {
@@ -70,7 +70,6 @@ export class SideMenu {
   }
 
   public static async clickSchedule(t: TestController, id: string) {
-    await SideMenu.openSideMenuIfClosed(t);
-    await clickButton(t, SideMenu.schedule(id), {timeout: saeRestartTimeout});
+    await this.clickEntry(t, SideMenu.schedule(id));
   }
 }
