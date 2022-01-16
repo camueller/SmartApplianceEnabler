@@ -17,4 +17,4 @@ RUN mkdir -p $SAE_INSTALL_DIR && \
 
 COPY SmartApplianceEnabler.war $SAE_INSTALL_DIR
 
-CMD java $JAVA_OPTS -Djava.awt.headless=true -Xmx256m -Dsae.home=$SAE_HOME -Dlogging.config=$SAE_INSTALL_DIR/logback-spring.xml -jar $SAE_INSTALL_DIR/SmartApplianceEnabler.war
+CMD java $JAVA_OPTS -Djava.awt.headless=true -Xmx256m -Dsae.home=$SAE_HOME -Dsae.http.disabled=true -Dsae.modbus.disabled=true -Dlogging.config=$SAE_INSTALL_DIR/logback-spring.xml -jar $SAE_INSTALL_DIR/SmartApplianceEnabler.war
