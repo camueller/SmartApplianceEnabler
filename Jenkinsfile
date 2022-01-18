@@ -24,7 +24,7 @@ pipeline {
         }
         stage('Launch') {
             steps {
-                sh "Launched"
+                sh "echo Launched"
                 // sh "docker run -d --rm -v sae:/opt/sae/data -p 8081:8080 --name sae avanux/smartapplianceenabler-amd64:ci"
             }
         }
