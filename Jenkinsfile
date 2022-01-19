@@ -9,14 +9,14 @@ pipeline {
         stage('Build') {
             steps {
                 git 'https://github.com/camueller/SmartApplianceEnabler.git'
-                //sh "mvn package -B -Pweb"
+                sh "mvn package -B -Pweb"
             }
         }
         stage('Deploy') {
             steps {
                 dir('docker') {
                     sh "cp ../target/SmartApplianceEnabler*.war sae-ci/SmartApplianceEnabler.war"
-                    // sh "docker build --tag=avanux/smartapplianceenabler-amd64:ci ./sae-ci"
+                    sh "docker build --tag=avanux/smartapplianceenabler-amd64:ci ./sae-ci"
                 }
             }
         }
@@ -36,7 +36,7 @@ pipeline {
             steps {
                 dir('src/test/angular') {
                     sh "npm i"
-                    sh "npm run chrome"
+                    sh "npm run test:chrome"
                 }
             }
         }

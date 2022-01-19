@@ -7,9 +7,9 @@
   "license": "GPL",
   "scripts": {
     "debug": "testcafe $NODE_DEBUG_OPTION chrome",
-    "test": "testcafe chrome \"src/*.spec.ts\"",
-    "test8080": "E2E_TEST_URL=http://localhost:8080 testcafe chrome \"src/*.spec.ts\"",
-    "chrome": "testcafe --page-load-timeout 10000 \"browserstack:chrome@92.0:Windows 10\" \"src/aa_settings.spec.ts\""
+    "test:default": "testcafe chrome \"src/*.spec.ts\"",
+    "test:localhost8080": "E2E_TEST_URL=http://localhost:8080 testcafe chrome \"src/*.spec.ts\"",
+    "test:chrome": "testcafe --page-load-timeout 10000 \"browserstack:chrome@92.0:Windows 10\" \"src/*.spec.ts\""
   },
   "private": true,
   "dependencies": {
