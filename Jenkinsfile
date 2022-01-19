@@ -31,7 +31,7 @@ pipeline {
         stage('Test') {
             environment {
                 BROWSERSTACK_USERNAME = credentials('BROWSERSTACK_USERNAME')
-                ROWSERSTACK_ACCESS_KEY = credentials('BROWSERSTACK_ACCESS_KEY')
+                BROWSERSTACK_ACCESS_KEY = credentials('BROWSERSTACK_ACCESS_KEY')
             }
             steps {
                 dir('src/test/angular') {
