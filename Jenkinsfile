@@ -36,7 +36,7 @@ pipeline {
             steps {
                 dir('src/test/angular') {
                     sh "npm i"
-                    sh "node_modules/.bin/testcafe --page-load-timeout 10000 \"browserstack:chrome@92.0:Windows 10\" \"src/aa_settings.spec.ts\""
+                    sh "npm run chrome"
                 }
             }
         }
