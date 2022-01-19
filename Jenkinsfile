@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                //git 'https://github.com/camueller/SmartApplianceEnabler.git'
+                git 'https://github.com/camueller/SmartApplianceEnabler.git'
                 //sh "mvn package -B -Pweb"
                 sh "echo Build"
             }
