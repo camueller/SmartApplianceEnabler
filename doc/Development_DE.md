@@ -28,7 +28,7 @@ Error: spawn ps ENOENT
 ```
 Aufgrund eines [Hinweises](https://github.com/bahmutov/start-server-and-test/issues/132#issuecomment-448581335) habe ich versucht `procps` zu installieren. Leider wird in Containern auf Basis des `lts-jdk11`-Images kein Paket diesen Namens in den Paketquellen gefunden. Anders dagegen das `alpine`-Image, bei dem ich das Paket als `root` problemlos installieren konnte:
 ```console
-sudo docker exec -u 0 -it jenkins bash
+$ sudo docker exec -u 0 -it jenkins bash
 bash-5.1# apk add procps
 bash-5.1# ps
     PID TTY          TIME CMD
