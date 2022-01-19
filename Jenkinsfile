@@ -28,5 +28,13 @@ pipeline {
                 // sh "docker run -d --rm -v sae:/opt/sae/data -p 8081:8080 --name sae avanux/smartapplianceenabler-amd64:ci"
             }
         }
+        stage('Test') {
+            steps {
+                dir('src/test/angular') {
+                    sh "npm i"
+                    sh "node_modules/.bin/testcafe --page-load-timeout 10000 \"browserstack:chrome@92.0:Windows 10\" \"src/*.spec.ts\""
+                }
+            }
+        }
     }
 }
