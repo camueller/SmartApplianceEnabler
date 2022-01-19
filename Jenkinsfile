@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     tools {
-        // Install the Maven version configured and add it to the path.
         maven "Maven"
     }
 
@@ -11,7 +10,6 @@ pipeline {
             steps {
                 git 'https://github.com/camueller/SmartApplianceEnabler.git'
                 //sh "mvn package -B -Pweb"
-                sh "echo Build"
             }
         }
         stage('Deploy') {
@@ -24,15 +22,21 @@ pipeline {
         }
         stage('Launch') {
             steps {
-                sh "echo Launched 16:36"
-                // sh "docker run -d --rm -v sae:/opt/sae/data -p 8081:8080 --name sae avanux/smartapplianceenabler-amd64:ci"
+                sh "docker stop sae"
+                sh "docker volume rm -f sae"
+                sh "docker volume create sae"
+                sh "docker run -d --rm -v sae:/opt/sae/data -p 8081:8080 --name sae avanux/smartapplianceenabler-amd64:ci"
             }
         }
         stage('Test') {
+            environment {
+                BROWSERSTACK_USERNAME = credentials('BROWSERSTACK_USERNAME')
+                ROWSERSTACK_ACCESS_KEY = credentials('BROWSERSTACK_ACCESS_KEY')
+            }
             steps {
                 dir('src/test/angular') {
                     sh "npm i"
-                    sh "node_modules/.bin/testcafe --page-load-timeout 10000 \"browserstack:chrome@92.0:Windows 10\" \"src/*.spec.ts\""
+                    sh "node_modules/.bin/testcafe --page-load-timeout 10000 \"browserstack:chrome@92.0:Windows 10\" \"src/aa_settings.spec.ts\""
                 }
             }
         }
