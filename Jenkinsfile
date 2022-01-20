@@ -6,7 +6,7 @@ pipeline {
     }
 
     stages {
-        /* stage('Build') {
+        stage('Build') {
             steps {
                 cleanWs()
                 git 'https://github.com/camueller/SmartApplianceEnabler.git'
@@ -38,9 +38,11 @@ pipeline {
                 dir('src/test/angular') {
                     sh "npm i"
                     sh "npm run test:chrome"
+                    sh "npm run test:firefox"
+                    sh "npm run test:safari"
                 }
             }
-        } */
+        }
         stage('Publish') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
