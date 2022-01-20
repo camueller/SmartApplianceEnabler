@@ -9,7 +9,7 @@ Für den *Smart Appliance Enabler* existiert eine [Continuous Integration](https
 
 Als Automatisierungswerkzeug wird [Jenkins](https://www.jenkins.io/) eingesetzt, der aktuell aus Kostengründen auf meinem 24x7-Server läuft und nicht aus dem Internet erreichbar ist. Er läuft als Docker-Container und wird wie folgt gestartet:
 ```console
-sudo docker run --name jenkins --rm --publish 8080:8080 --volume jenkins-docker-certs:/certs/client --volume jenkins-data:/var/jenkins_home -v /var/run/docker.sock:/var/run/docker.sock -v $(which docker):$(which docker) -e PATH=/var/jenkins_home/.local/bin:/opt/java/openjdk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin jenkins/jenkins:alpine
+sudo docker run --name jenkins --rm --publish 8080:8080 --volume jenkins-docker-certs:/certs/client --volume jenkins-data:/var/jenkins_home -v /var/run/docker.sock:/var/run/docker.sock -v $(which docker):$(which docker) -e PATH=/var/jenkins_home/.local/bin:/opt/java/openjdk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin -e TZ=Europe/Berlin jenkins/jenkins:alpine
 ```
 Eine Shell im Jenkins-Docker-Container öffnet:
 ```console
