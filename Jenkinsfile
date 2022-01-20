@@ -20,7 +20,7 @@ pipeline {
                     env.IMAGE_VERSION = readCommitVar('version')
                     println env.IMAGE_VERSION
                 }
-                sh "echo Version=$IMAGE_VERSION"
+                sh "echo VersionX=$IMAGE_VERSION"
             }
         }
         /*stage('Build') {
