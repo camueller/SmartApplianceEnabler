@@ -18,15 +18,6 @@ pipeline {
     }
 
     stages {
-        stage('Build') {
-            steps {
-                script {
-                    env.COMMIT_MSG_CMD = readCommitVar('cmd')
-                }
-                sh "echo cmd=$COMMIT_MSG_CMD"
-                sh "echo Version=$VERSION"
-            }
-        }
         /*stage('Build') {
             steps {
                 cleanWs()
@@ -90,6 +81,11 @@ pipeline {
         }
         stage('Publish') {
             steps {
+                dir('docker') {
+                    sh "cp ../target/SmartApplianceEnabler*.war sae-ci/SmartApplianceEnabler.war"
+                    sh "docker build --tag=avanux/smartapplianceenabler-amd64:ci ./sae-amd64"
+                    sh "./build_image.sh avanux/smartapplianceenabler-amd64 $VERSION ./sae-amd64"
+                }
                 withCredentials([usernamePassword(credentialsId: 'docker', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                     sh "echo $PASSWORD | docker login --username $USERNAME --password-stdin"
                     dir('docker') {
@@ -97,6 +93,32 @@ pipeline {
                     }
                 }
             }
-        }*/
+        } */
+        stage('Build') {
+            steps {
+                script {
+                    env.COMMIT_MSG_CMD = readCommitVar('cmd')
+                }
+                sh "echo cmd=$COMMIT_MSG_CMD"
+                sh "echo Version=$VERSION"
+                sh "echo DockerPush=$DOCKER_PUSH"
+            }
+        }
+        stage('Build 18') {
+            steps {
+                when {
+                    environment name: 'Version', value: '1.6.18'
+                }
+                sh "echo Execute"
+            }
+        }
+        stage('Build 19') {
+            steps {
+                when {
+                    environment name: 'Version', value: '1.6.19'
+                }
+                sh "echo Execute"
+            }
+        }
     }
 }
