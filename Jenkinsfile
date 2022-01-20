@@ -37,7 +37,7 @@ pipeline {
         }
         stage('Chrome') {
             steps {
-                sh "docker stop sae"
+                sh "docker stop sae || true"
                 sh "docker volume rm -f sae"
                 sh "docker volume create sae"
                 sh "docker run -d --rm -v sae:/opt/sae/data -p 8081:8080 --name sae avanux/smartapplianceenabler-amd64:ci"
