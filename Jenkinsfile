@@ -15,12 +15,14 @@ pipeline {
 
     stages {
         stage('Build') {
+            pom = readMavenPom file: 'pom.xml'
+            env.POM_VERSION = pom.version
             steps {
                 script {
-                    env.IMAGE_VERSION = readCommitVar('version')
-                    println env.IMAGE_VERSION
+                    env.COMMIT_MSG_CMD = readCommitVar('cmd')
                 }
-                sh "echo VersionX=$IMAGE_VERSION"
+                sh "echo cmd=$COMMIT_MSG_CMD"
+                sh "echo POM-Version=$POM_VERSION"
             }
         }
         /*stage('Build') {
