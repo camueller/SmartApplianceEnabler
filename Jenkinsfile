@@ -2,7 +2,7 @@ library identifier: 'icheko-jenkins-shared-lib@master',
         retriever: modernSCM([
             $class: 'GitSCMSource',
             id: '13ebda5f-2be5-4751-83d4-4d4500603cc5',
-            remote: 'https://github.com/icheko/jenkins-shared-lib',
+            remote: 'https://github.com/camueller/jenkins-shared-lib',
             traits: [[$class: 'jenkins.plugins.git.traits.BranchDiscoveryTrait']]
         ]) _
 
