@@ -85,8 +85,7 @@ pipeline {
             }
             steps {
                 dir('docker') {
-                    sh "cp ../target/SmartApplianceEnabler*.war sae-ci/SmartApplianceEnabler.war"
-                    /*sh "./build_image.sh avanux/smartapplianceenabler-amd64 $VERSION ./sae-amd64"*/
+                    sh "cp ../target/SmartApplianceEnabler*.war sae-amd64/SmartApplianceEnabler.war"
                     sh "docker build --tag=avanux/smartapplianceenabler-amd64:$VERSION ./sae-amd64"
                     sh "docker tag avanux/smartapplianceenabler-amd64:$VERSION avanux/smartapplianceenabler-amd64:latest"
                     /* sh "docker image push avanux/smartapplianceenabler-amd64:$VERSION"
