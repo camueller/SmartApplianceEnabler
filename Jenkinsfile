@@ -69,7 +69,7 @@ pipeline {
                 }
             }
         }
-        stage('Publish') {
+        stage('Publish X') {
             when {
                 environment name: 'DOCKER_PUSH', value: 'true'
             }
