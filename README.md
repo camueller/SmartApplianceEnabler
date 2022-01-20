@@ -2,12 +2,6 @@
   <img src="https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/logo-384x384.png">
   <h3 align="center">Smart Appliance Enabler</h3>
   <p align="center">
-    <a href="https://travis-ci.org/camueller/SmartApplianceEnabler">
-      <img src="https://travis-ci.org/camueller/SmartApplianceEnabler.svg?branch=master">
-    </a>
-    <a href="https://codecov.io/gh/camueller/SmartApplianceEnabler">
-      <img src="https://codecov.io/gh/camueller/SmartApplianceEnabler/coverage.svg">
-    </a>
     <a href="https://github.com/camueller/SmartApplianceEnabler/releases/download/1.6.18/SmartApplianceEnabler-1.6.18.war">
       <img src="https://img.shields.io/badge/Download-1.6.18-brightgreen.svg">
     </a>
