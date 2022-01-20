@@ -15,10 +15,10 @@ pipeline {
 
     stages {
         stage('Build') {
-            pom = readMavenPom file: 'pom.xml'
-            env.POM_VERSION = pom.version
             steps {
                 script {
+                    pom = readMavenPom file: 'pom.xml'
+                    env.POM_VERSION = pom.version
                     env.COMMIT_MSG_CMD = readCommitVar('cmd')
                 }
                 sh "echo cmd=$COMMIT_MSG_CMD"
