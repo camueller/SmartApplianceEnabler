@@ -18,7 +18,7 @@ pipeline {
     }
 
     stages {
-        /*stage('Build') {
+        stage('Build') {
             steps {
                 cleanWs()
                 git 'https://github.com/camueller/SmartApplianceEnabler.git'
@@ -78,7 +78,7 @@ pipeline {
                     sh "npm run test:safari"
                 }
             }
-        } */
+        }
         stage('Publish') {
             when {
                 environment name: 'DOCKER_PUSH', value: 'true'
@@ -88,8 +88,8 @@ pipeline {
                     sh "cp ../target/SmartApplianceEnabler*.war sae-amd64/"
                     sh "docker build --tag=avanux/smartapplianceenabler-amd64:$VERSION ./sae-amd64"
                     sh "docker tag avanux/smartapplianceenabler-amd64:$VERSION avanux/smartapplianceenabler-amd64:latest"
-                    /* sh "docker image push avanux/smartapplianceenabler-amd64:$VERSION"
-                    sh "docker image push avanux/smartapplianceenabler-amd64" */
+                    sh "docker image push avanux/smartapplianceenabler-amd64:$VERSION"
+                    sh "docker image push avanux/smartapplianceenabler-amd64"
                 }
                 withCredentials([usernamePassword(credentialsId: 'docker', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                     sh "echo $PASSWORD | docker login --username $USERNAME --password-stdin"
@@ -99,33 +99,5 @@ pipeline {
                 }
             }
         }
-        /*
-        stage('Build') {
-            steps {
-                script {
-                    env.COMMIT_MSG_CMD = readCommitVar('cmd')
-                }
-                sh "echo cmd=$COMMIT_MSG_CMD"
-                sh "echo Version=$VERSION"
-                sh "echo DockerPush=$DOCKER_PUSH"
-            }
-        }
-        stage('Build 18') {
-            when {
-                environment name: 'Version', value: '1.6.18'
-            }
-            steps {
-                sh "echo Execute"
-            }
-        }
-        stage('Build 19') {
-            when {
-                environment name: 'Version', value: '1.6.19'
-            }
-            steps {
-                sh "echo Execute"
-            }
-        }
-        */
     }
 }
