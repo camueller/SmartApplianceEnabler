@@ -105,18 +105,18 @@ pipeline {
             }
         }
         stage('Build 18') {
+            when {
+                environment name: 'Version', value: '1.6.18'
+            }
             steps {
-                when {
-                    environment name: 'Version', value: '1.6.18'
-                }
                 sh "echo Execute"
             }
         }
         stage('Build 19') {
+            when {
+                environment name: 'Version', value: '1.6.19'
+            }
             steps {
-                when {
-                    environment name: 'Version', value: '1.6.19'
-                }
                 sh "echo Execute"
             }
         }
