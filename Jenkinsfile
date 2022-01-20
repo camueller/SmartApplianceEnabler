@@ -15,6 +15,8 @@ pipeline {
 
     environment {
         VERSION = readMavenPom().getVersion()
+        BROWSERSTACK_USERNAME = credentials('BROWSERSTACK_USERNAME')
+        BROWSERSTACK_ACCESS_KEY = credentials('BROWSERSTACK_ACCESS_KEY')
     }
 
     stages {
@@ -34,10 +36,6 @@ pipeline {
             }
         }
         stage('Chrome') {
-            environment {
-                BROWSERSTACK_USERNAME = credentials('BROWSERSTACK_USERNAME')
-                BROWSERSTACK_ACCESS_KEY = credentials('BROWSERSTACK_ACCESS_KEY')
-            }
             steps {
                 sh "docker stop sae"
                 sh "docker volume rm -f sae"
@@ -50,25 +48,17 @@ pipeline {
             }
         }
         stage('Firefox') {
-            environment {
-                BROWSERSTACK_USERNAME = credentials('BROWSERSTACK_USERNAME')
-                BROWSERSTACK_ACCESS_KEY = credentials('BROWSERSTACK_ACCESS_KEY')
-            }
             steps {
                 sh "docker stop sae"
                 sh "docker volume rm -f sae"
                 sh "docker volume create sae"
                 sh "docker run -d --rm -v sae:/opt/sae/data -p 8081:8080 --name sae avanux/smartapplianceenabler-amd64:ci"
                 dir('src/test/angular') {
-                    sh "npm run test:fixefox"
+                    sh "npm run test:firefox"
                 }
             }
         }
         stage('Safari') {
-            environment {
-                BROWSERSTACK_USERNAME = credentials('BROWSERSTACK_USERNAME')
-                BROWSERSTACK_ACCESS_KEY = credentials('BROWSERSTACK_ACCESS_KEY')
-            }
             steps {
                 sh "docker stop sae"
                 sh "docker volume rm -f sae"
