@@ -78,13 +78,19 @@ pipeline {
                     sh "npm run test:safari"
                 }
             }
-        }
+        } */
         stage('Publish') {
+            when {
+                environment name: 'DOCKER_PUSH', value: 'true'
+            }
             steps {
                 dir('docker') {
                     sh "cp ../target/SmartApplianceEnabler*.war sae-ci/SmartApplianceEnabler.war"
-                    sh "docker build --tag=avanux/smartapplianceenabler-amd64:ci ./sae-amd64"
-                    sh "./build_image.sh avanux/smartapplianceenabler-amd64 $VERSION ./sae-amd64"
+                    /*sh "./build_image.sh avanux/smartapplianceenabler-amd64 $VERSION ./sae-amd64"*/
+                    sh "docker build --tag=avanux/smartapplianceenabler-amd64:$VERSION ./sae-amd64"
+                    sh "docker tag avanux/smartapplianceenabler-amd64:$VERSION avanux/smartapplianceenabler-amd64:latest"
+                    /* sh "docker image push avanux/smartapplianceenabler-amd64:$VERSION"
+                    sh "docker image push avanux/smartapplianceenabler-amd64" */
                 }
                 withCredentials([usernamePassword(credentialsId: 'docker', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                     sh "echo $PASSWORD | docker login --username $USERNAME --password-stdin"
@@ -93,7 +99,8 @@ pipeline {
                     }
                 }
             }
-        } */
+        }
+        /*
         stage('Build') {
             steps {
                 script {
@@ -120,5 +127,6 @@ pipeline {
                 sh "echo Execute"
             }
         }
+        */
     }
 }
