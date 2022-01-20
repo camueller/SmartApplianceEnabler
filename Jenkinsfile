@@ -6,8 +6,9 @@ pipeline {
     }
 
     stages {
-        stage('Build') {
+        /* stage('Build') {
             steps {
+                cleanWs()
                 git 'https://github.com/camueller/SmartApplianceEnabler.git'
                 sh "mvn package -B -Pweb"
             }
@@ -37,6 +38,16 @@ pipeline {
                 dir('src/test/angular') {
                     sh "npm i"
                     sh "npm run test:chrome"
+                }
+            }
+        } */
+        stage('Publish') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'docker', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                    sh "echo $PASSWORD | docker login --username $USERNAME --password-stdin"
+                    dir('docker') {
+                        sh "docker push avanux/smartapplianceenabler-amd64:ci"
+                    }
                 }
             }
         }
