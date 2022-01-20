@@ -23,7 +23,8 @@ pipeline {
         stage('Build') {
             steps {
                 cleanWs()
-                git 'https://github.com/camueller/SmartApplianceEnabler.git'
+                git branch: '2.0',
+                    url: 'https://github.com/camueller/SmartApplianceEnabler.git'
                 sh "mvn package -B -Pweb"
             }
         }
