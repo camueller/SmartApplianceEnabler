@@ -47,8 +47,14 @@ public class SempController {
     private static final String CROSS_ORIGIN_URL = "http://localhost:4200";
     public static final String SCHEMA_LOCATION = "http://www.sma.de/communication/schema/SEMP/v1";
     private Logger logger = LoggerFactory.getLogger(SempController.class);
+    private JAXBContext jaxbContext;
 
     public SempController() {
+        try {
+            jaxbContext = JAXBContext.newInstance(Device2EM.class);
+        } catch (Throwable e) {
+            logger.error("Error in JAXBContext", e);
+        }
         logger.info("SEMP controller created.");
     }
 
@@ -372,8 +378,7 @@ public class SempController {
     private String marshall(Device2EM device2EM) {
         StringWriter writer = new StringWriter();
         try {
-            JAXBContext context = JAXBContext.newInstance(Device2EM.class);
-            Marshaller marshaller = context.createMarshaller();
+            Marshaller marshaller = jaxbContext.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             marshaller.marshal(device2EM, writer);
             return writer.toString();
