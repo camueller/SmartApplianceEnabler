@@ -20,7 +20,7 @@ pipeline {
     }
 
     stages {
-        stage('Build') {
+        /*stage('Build') {
             steps {
                 cleanWs()
                 git branch: '2.0',
@@ -74,7 +74,7 @@ pipeline {
             steps {
                 sh "docker stop sae || true"
             }
-        }
+        } */
         stage('Publish') {
             when {
                 environment name: 'DOCKER_PUSH', value: 'true'
@@ -82,6 +82,7 @@ pipeline {
             steps {
                 dir('docker') {
                     sh "cp ../target/SmartApplianceEnabler*.war sae-amd64/"
+                    sh "sed -i 's#@project.version@#'\"$VERSION\"'#' ./sae-amd64/Dockerfile"
                     sh "docker build --tag=avanux/smartapplianceenabler-amd64:$VERSION ./sae-amd64"
                     sh "docker tag avanux/smartapplianceenabler-amd64:$VERSION avanux/smartapplianceenabler-amd64:latest"
                     sh "docker image push avanux/smartapplianceenabler-amd64:$VERSION"
