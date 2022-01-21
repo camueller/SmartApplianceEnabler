@@ -12,6 +12,13 @@ und das Projekt folgt den Leitlinien des [Semantic Versioning](https://semver.or
 | SAE         | Smart Appliance Enabler |
 | SHM         | Sunny Home Manager |
 
+## [2.0.1](https://github.com/camueller/SmartApplianceEnabler/releases/tag/2.0.1) - 21.01.2022
+
+### Gefixt
+- Verwendung von HTTP-Zählern mit Parameter "Leistung" hatte zu einem Fehler geführt
+- Speichern der Benachrichtigungen ohne Angabe von Ereignisarten bei Zählern funktioniert wieder 
+- Node-RED: Flow-Export korrigiert für bessere Berücksichtigung der Request-Art im Timeframe-Diagramm
+
 ## [2.0.0](https://github.com/camueller/SmartApplianceEnabler/releases/tag/2.0.0) - 09.01.2022
 
 ### Neu
