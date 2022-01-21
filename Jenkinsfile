@@ -20,7 +20,7 @@ pipeline {
     }
 
     stages {
-        /*stage('Build') {
+        stage('Build') {
             steps {
                 cleanWs()
                 git branch: '2.0',
@@ -74,7 +74,7 @@ pipeline {
             steps {
                 sh "docker stop sae || true"
             }
-        } */
+        }
         stage('Publish') {
             when {
                 environment name: 'DOCKER_PUSH', value: 'true'
