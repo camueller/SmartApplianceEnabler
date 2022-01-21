@@ -36,4 +36,12 @@ public class JsonContentProtocolHandlerTest {
         this.contentProtocolHandler.parse(content);
         assertEquals("0.123", this.contentProtocolHandler.readValue(selector));
     }
+
+    @Test
+    public void readJsonArray() {
+        String content = "{\"StatusSNS\":[212,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0]}";
+        String selector = "$.StatusSNS[3]";
+        this.contentProtocolHandler.parse(content);
+        assertEquals("1", this.contentProtocolHandler.readValue(selector));
+    }
 }
