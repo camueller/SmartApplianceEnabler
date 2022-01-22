@@ -6,13 +6,6 @@ pipeline {
     }
 
     stages {
-        stage('Git') {
-            steps {
-                cleanWs()
-                git branch: '2.0',
-                    url: 'https://github.com/camueller/SmartApplianceEnabler.git'
-            }
-        }
         stage('Dockerize') {
             steps {
                 echo 'Version=$VERSION'
