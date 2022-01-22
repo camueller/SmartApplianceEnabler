@@ -98,7 +98,7 @@ public class MqttClient {
         options.setAutomaticReconnect(true);
         options.setCleanSession(true);
         options.setConnectionTimeout(1000);
-        options.setWill(getApplianceTopic(applianceId, "will"), "unexpected error".getBytes(), 0 ,true);
+//        options.setWill(getApplianceTopic(applianceId, "will"), "unexpected error".getBytes(), 0 ,true);
         return options;
     }
 
