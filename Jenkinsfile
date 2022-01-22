@@ -96,7 +96,7 @@ pipeline {
                     }
                 }
                 */
-                sh "scp target/SmartApplianceEnabler-$VERSION.war jenkins@raspi2:/home/jenkins/"
+                sh 'scp target/SmartApplianceEnabler-"$VERSION".war jenkins@raspi2:/home/jenkins/'
                 build 'SmartApplianceEnabler-arm32'
             }
         }
