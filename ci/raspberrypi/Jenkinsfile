@@ -1,6 +1,10 @@
 pipeline {
     agent { label 'raspi2' }
 
+    tools {
+        maven "Maven"
+    }
+
     environment {
         VERSION = readMavenPom().getVersion()
     }
