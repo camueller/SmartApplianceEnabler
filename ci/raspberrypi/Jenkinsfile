@@ -10,7 +10,7 @@ pipeline {
             steps {
                 sh "echo Version=$VERSION"
                 dir('docker') {
-                    sh 'cp ../../../SmartApplianceEnabler-"$VERSION".war sae-arm32/''
+                    sh 'cp ../../../SmartApplianceEnabler-"$VERSION".war sae-arm32/'
                     sh "sed -i 's#@project.version@#'\"$VERSION\"'#' ./sae-arm32/Dockerfile"
                     sh "docker build --tag=avanux/smartapplianceenabler-arm32:$VERSION ./sae-arm32"
                     /*
