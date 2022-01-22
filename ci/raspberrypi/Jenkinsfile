@@ -1,10 +1,6 @@
 pipeline {
     agent { label 'raspi2' }
 
-    tools {
-        maven "Maven"
-    }
-
     environment {
         VERSION = readMavenPom().getVersion()
     }
@@ -13,14 +9,16 @@ pipeline {
         stage('Dockerize') {
             steps {
                 sh "echo Version=$VERSION"
-                /*dir('docker') {
-                    sh "cp ../target/SmartApplianceEnabler*.war sae-amd64/"
-                    sh "sed -i 's#@project.version@#'\"$VERSION\"'#' ./sae-amd64/Dockerfile"
-                    sh "docker build --tag=avanux/smartapplianceenabler-amd64:$VERSION ./sae-amd64"
-                    sh "docker tag avanux/smartapplianceenabler-amd64:$VERSION avanux/smartapplianceenabler-amd64:latest"
-                    sh "docker image push avanux/smartapplianceenabler-amd64:$VERSION"
-                    sh "docker image push avanux/smartapplianceenabler-amd64"
-                }*/
+                dir('docker') {
+                    sh "cp ../../../SmartApplianceEnabler-$VERSION.war sae-arm32/"
+                    sh "sed -i 's#@project.version@#'\"$VERSION\"'#' ./sae-arm32/Dockerfile"
+                    sh "docker build --tag=avanux/smartapplianceenabler-arm32:$VERSION ./sae-arm32"
+                    /*
+                    sh "docker tag avanux/smartapplianceenabler-arm32:$VERSION avanux/smartapplianceenabler-arm32:latest"
+                    sh "docker image push avanux/smartapplianceenabler-arm32:$VERSION"
+                    sh "docker image push avanux/smartapplianceenabler-arm32"
+                    */
+                }
             }
         }
     }
