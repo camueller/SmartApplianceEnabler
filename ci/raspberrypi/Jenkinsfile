@@ -12,7 +12,7 @@ pipeline {
     stages {
         stage('Dockerize') {
             steps {
-                echo 'Version=$VERSION'
+                sh "echo Version=$VERSION"
                 /*dir('docker') {
                     sh "cp ../target/SmartApplianceEnabler*.war sae-amd64/"
                     sh "sed -i 's#@project.version@#'\"$VERSION\"'#' ./sae-amd64/Dockerfile"
