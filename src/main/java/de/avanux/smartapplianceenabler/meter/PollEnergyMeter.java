@@ -127,14 +127,16 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
         Vector<Integer> powerValues = new Vector<>();
         LocalDateTime previousTimestamp = null;
         Double previousEnergy = null;
-        if(this.cache.getTimestampWithValue().size() == 0) {
+        TreeMap<LocalDateTime, Double> timestampWithValue = this.cache.getTimestampWithValue();
+        if(timestampWithValue.size() == 0) {
             logger.debug("{}: Energy cache is empty", applianceId);
         }
         else {
-            List<LocalDateTime> timestamps = new ArrayList<>(this.cache.getTimestampWithValue().keySet());
+            List<LocalDateTime> timestamps = new ArrayList<>(timestampWithValue.keySet());
             for(LocalDateTime timestamp: timestamps) {
                 Double energy = this.cache.getTimestampWithValue().get(timestamp);
-                logger.trace("{}: Energy timestamp={} energy={}", applianceId, timestamp, energy);
+                logger.trace("{}: Energy timestamp={} previousTimestamp={} previousEnergy={}",
+                        applianceId, timestamp, previousTimestamp, previousEnergy);
                 if (previousTimestamp != null && previousEnergy != null) {
                     long diffTime = Duration.between(previousTimestamp, timestamp).toMillis();
                     double diffEnergy = energy - previousEnergy;
