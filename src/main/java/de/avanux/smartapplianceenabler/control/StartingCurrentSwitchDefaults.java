@@ -24,6 +24,7 @@ public class StartingCurrentSwitchDefaults {
     private Integer startingCurrentDetectionDuration = 30; // seconds
     private Integer finishedCurrentDetectionDuration = 300; // seconds
     private Integer minRunningTime = 600; // seconds
+    private Integer pollInterval = 20; // seconds
     private static StartingCurrentSwitchDefaults instance = new StartingCurrentSwitchDefaults();
 
     public static Integer getPowerThreshold() {
@@ -40,5 +41,9 @@ public class StartingCurrentSwitchDefaults {
 
     public static Integer getMinRunningTime() {
         return instance.minRunningTime;
+    }
+
+    public static Integer getPollInterval() {
+        return instance.pollInterval;
     }
 }

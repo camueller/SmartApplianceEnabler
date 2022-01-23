@@ -109,7 +109,12 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
     }
 
     public Integer getPollInterval() {
-        return pollInterval != null ? pollInterval : HttpElectricityMeterDefaults.getPollInterval();
+        return pollInterval;
+    }
+    public void setPollInterval(Integer pollInterval) {
+        if(this.pollInterval == null) {
+            this.pollInterval = pollInterval;
+        }
     }
 
     protected PollPowerMeter getPollPowerMeter() {

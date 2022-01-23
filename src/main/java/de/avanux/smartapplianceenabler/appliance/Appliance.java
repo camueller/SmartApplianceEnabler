@@ -21,11 +21,9 @@ import com.pi4j.io.gpio.GpioController;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.control.*;
 import de.avanux.smartapplianceenabler.control.ev.*;
-import de.avanux.smartapplianceenabler.meter.HttpElectricityMeter;
-import de.avanux.smartapplianceenabler.meter.Meter;
-import de.avanux.smartapplianceenabler.meter.ModbusElectricityMeter;
-import de.avanux.smartapplianceenabler.meter.S0ElectricityMeter;
+import de.avanux.smartapplianceenabler.meter.*;
 import de.avanux.smartapplianceenabler.modbus.EVModbusControl;
+import de.avanux.smartapplianceenabler.modbus.ModbusElectricityMeterDefaults;
 import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
 import de.avanux.smartapplianceenabler.notification.Notification;
@@ -182,6 +180,18 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
         if(meter != null) {
             if(meter instanceof ApplianceIdConsumer) {
                 ((ApplianceIdConsumer) meter).setApplianceId(id);
+            }
+            if(meter instanceof HttpElectricityMeter) {
+                ((HttpElectricityMeter) meter).setPollInterval(
+                        control instanceof StartingCurrentSwitch
+                                ? StartingCurrentSwitchDefaults.getPollInterval()
+                                : HttpElectricityMeterDefaults.getPollInterval());
+            }
+            if(meter instanceof ModbusElectricityMeter) {
+                ((ModbusElectricityMeter) meter).setPollInterval(
+                        control instanceof StartingCurrentSwitch
+                                ? StartingCurrentSwitchDefaults.getPollInterval()
+                                : ModbusElectricityMeterDefaults.getPollInterval());
             }
             if(meter instanceof NotificationProvider && notificationCommand != null) {
                 NotificationHandler notificationHandler = new NotificationHandler(
