@@ -76,7 +76,6 @@ public class PollPowerMeterTest {
     }
 
     private int getAveragePower(int secondsAfterNow) {
-        cut.setAveragingIntervalBegin(now.plusSeconds(secondsAfterNow).minusSeconds(Meter.averagingInterval));
         return cut.getAveragePower(now.plusSeconds(secondsAfterNow));
     }
 

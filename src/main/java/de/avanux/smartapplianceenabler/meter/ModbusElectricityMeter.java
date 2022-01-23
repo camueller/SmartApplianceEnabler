@@ -152,16 +152,6 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     }
 
     @Override
-    public void startAveragingInterval(LocalDateTime now, Timer timer, int nextPollCompletedSecondsFromNow) {
-        if(pollEnergyMeter != null) {
-            pollEnergyMeter.scheduleNext(timer, nextPollCompletedSecondsFromNow, averagingInterval);
-        }
-        if(pollPowerMeter != null) {
-            pollPowerMeter.setAveragingIntervalBegin(now);
-        }
-    }
-
-    @Override
     public int getAveragePower() {
         int power = 0;
         if(pollEnergyMeter != null) {

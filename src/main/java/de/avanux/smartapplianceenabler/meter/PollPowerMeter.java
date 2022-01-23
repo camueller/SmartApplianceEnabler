@@ -39,7 +39,6 @@ public class PollPowerMeter implements ApplianceIdConsumer {
     private String applianceId;
     private GuardedTimerTask pollTimerTask;
     private List<PowerUpdateListener> powerUpdateListeners = new ArrayList<>();
-    private LocalDateTime averagingIntervalBegin;
 
     public PollPowerMeter() {
         this.cache.setMaxAgeSeconds(Meter.averagingInterval);
@@ -49,10 +48,6 @@ public class PollPowerMeter implements ApplianceIdConsumer {
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
         this.cache.setApplianceId(applianceId);
-    }
-
-    public void setAveragingIntervalBegin(LocalDateTime averagingIntervalBegin) {
-        this.averagingIntervalBegin = averagingIntervalBegin;
     }
 
     public void start(Timer timer, Integer pollInterval, PollPowerExecutor pollPowerExecutor) {

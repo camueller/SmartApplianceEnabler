@@ -59,8 +59,7 @@ public class ApplianceManager implements Runnable {
     private GuardedTimerTask holidaysDownloaderTimerTask;
     private Integer autoclearSeconds;
     private boolean initializationCompleted;
-    private LocalDateTime currentMeterAveragingIntervalStartTime;
-    
+
     private ApplianceManager() {
     }
     
@@ -214,33 +213,6 @@ public class ApplianceManager implements Runnable {
         this.appliances = null;
         this.device2EM = null;
         startAppliances();
-    }
-
-    public void startMeterAveragingInterval(LocalDateTime now, int secondsForDeviceStatusAndPlanningRequests) {
-        if(this.appliances != null && appliances.getAppliances() != null) {
-            if(this.currentMeterAveragingIntervalStartTime == null
-                    || Duration.between(this.currentMeterAveragingIntervalStartTime, now).toSeconds() > 50) {
-                this.currentMeterAveragingIntervalStartTime = now;
-                int nextPollCompletedSecondsFromNow = Meter.averagingInterval - secondsForDeviceStatusAndPlanningRequests - 3;
-                logger.debug("Start meter averaging interval: secondsForDeviceStatusAndPlanningRequests={} nextPollCompletedSecondsFromNow={}",
-                        secondsForDeviceStatusAndPlanningRequests, nextPollCompletedSecondsFromNow);
-                for(Appliance appliance : appliances.getAppliances()) {
-                    try {
-                        Meter meter = appliance.getMeter();
-                        if(meter != null) {
-                            meter.startAveragingInterval(now, timer, nextPollCompletedSecondsFromNow);
-                        }
-                    }
-                    catch(Exception e) {
-                        logger.error("{}: Error during startAveragingInterval", appliance.getId(), e);
-                    }
-                }
-            }
-            else {
-                logger.debug("Current meter averaging interval was started only {} seconds ago - skipping",
-                        Duration.between(this.currentMeterAveragingIntervalStartTime, now).toSeconds());
-            }
-        }
     }
 
     public void init() {

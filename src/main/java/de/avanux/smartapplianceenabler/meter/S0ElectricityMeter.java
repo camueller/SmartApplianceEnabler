@@ -173,10 +173,6 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
         }
     }
 
-    @Override
-    public void startAveragingInterval(LocalDateTime now, Timer timer, int nextPollCompletedSecondsFromNow) {
-    }
-
     protected synchronized void handleEvent(GpioPin pin, PinState state, PinPullResistance pinPullResistance, Long timestamp) {
         if((pinPullResistance == PinPullResistance.PULL_DOWN && state == PinState.HIGH)
                 || (pinPullResistance == PinPullResistance.PULL_UP && state == PinState.LOW)) {
