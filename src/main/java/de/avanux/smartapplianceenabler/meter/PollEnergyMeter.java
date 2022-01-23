@@ -61,11 +61,8 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
         this.applianceId = applianceId;
     }
 
-    public void setPollEnergyExecutor(PollEnergyExecutor pollEnergyExecutor) {
-        this.pollEnergyExecutor = pollEnergyExecutor;
-    }
-
     public void start(Timer timer, PollEnergyExecutor pollEnergyExecutor) {
+        this.pollEnergyExecutor = pollEnergyExecutor;
         if(timer != null) {
             this.pollTimerTask = buildPollTimerTask();
             timer.schedule(this.pollTimerTask, 0, this.pollTimerTask.getPeriod());
@@ -79,8 +76,10 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
                 LocalDateTime now = LocalDateTime.now();
                 previousEnergyCounter = currentEnergyCounter;
                 previousEnergyCounterTimestamp = currentEnergyCounterTimestamp;
-                currentEnergyCounter = pollEnergyExecutor.pollEnergy(now);
-                currentEnergyCounterTimestamp = now;
+                if(pollEnergyExecutor != null) {
+                    currentEnergyCounter = pollEnergyExecutor.pollEnergy(now);
+                    currentEnergyCounterTimestamp = now;
+                }
                 meterUpdateListeners.forEach(listener -> listener.onMeterUpdate(now, getAveragePower(), getEnergy()));
             }
         };

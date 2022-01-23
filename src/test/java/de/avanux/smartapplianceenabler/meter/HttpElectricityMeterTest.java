@@ -40,7 +40,7 @@ public class HttpElectricityMeterTest extends TestBase {
     public HttpElectricityMeterTest() {
         PollEnergyMeter pollEnergyMeter = new PollEnergyMeter();
         this.meter = new HttpElectricityMeter();
-        pollEnergyMeter.setPollEnergyExecutor(this.meter);
+        pollEnergyMeter.start(null, this.meter);
         this.meter.setPollEnergyMeter(pollEnergyMeter);
         this.meter.setApplianceId("F-001");
         this.meter.setHttpTransactionExecutor(this.executorMock);
