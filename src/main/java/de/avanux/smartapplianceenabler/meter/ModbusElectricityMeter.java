@@ -94,7 +94,12 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
     }
 
     public Integer getPollInterval() {
-        return pollInterval != null ? pollInterval : ModbusElectricityMeterDefaults.getPollInterval();
+        return pollInterval;
+    }
+    public void setPollInterval(Integer pollInterval) {
+        if(this.pollInterval == null) {
+            this.pollInterval = pollInterval;
+        }
     }
 
     @Override
