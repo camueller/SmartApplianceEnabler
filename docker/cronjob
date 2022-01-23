@@ -1,2 +1,0 @@
-#!/bin/sh
-sudo -u sae -i sh -c "cd /opt/sae/SmartApplianceEnabler; git reset --hard origin; git pull; cd /opt/sae/docker; ./arm32_check.sh"

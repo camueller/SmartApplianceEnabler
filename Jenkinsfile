@@ -22,13 +22,11 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                cleanWs()
-                git branch: 'master',
-                    url: 'https://github.com/camueller/SmartApplianceEnabler.git'
+                sh "mvn clean -B -Pweb"
                 sh "mvn package -B -Pweb"
             }
         }
-        stage('Deploy') {
+        stage('Dockerize') {
             steps {
                 dir('docker') {
                     sh "cp ../target/SmartApplianceEnabler*.war sae-ci/SmartApplianceEnabler.war"
@@ -82,6 +80,7 @@ pipeline {
             steps {
                 dir('docker') {
                     sh "cp ../target/SmartApplianceEnabler*.war sae-amd64/"
+                    sh "sed -i 's#@project.version@#'\"$VERSION\"'#' ./sae-amd64/Dockerfile"
                     sh "docker build --tag=avanux/smartapplianceenabler-amd64:$VERSION ./sae-amd64"
                     sh "docker tag avanux/smartapplianceenabler-amd64:$VERSION avanux/smartapplianceenabler-amd64:latest"
                     sh "docker image push avanux/smartapplianceenabler-amd64:$VERSION"
@@ -93,6 +92,8 @@ pipeline {
                         sh "docker push avanux/smartapplianceenabler-amd64:ci"
                     }
                 }
+                sh 'scp target/SmartApplianceEnabler-"$VERSION".war jenkins@raspi2:/home/jenkins/'
+                build 'SmartApplianceEnabler-arm32'
             }
         }
     }

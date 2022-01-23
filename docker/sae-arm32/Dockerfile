@@ -6,7 +6,7 @@ ENV PATH="/usr/bin:${PATH}"
 ENV JAVA_OPTS="-Duser.language=de -Duser.country=DE"
 ENV SAE_INSTALL_DIR=/opt/sae
 ENV SAE_HOME=/opt/sae/data
-ENV SAE_VERSION=1.6.18
+ENV SAE_VERSION=@project.version@
 
 EXPOSE 8080
 
@@ -14,9 +14,9 @@ RUN echo "Europe/Berlin" > /etc/timezone
 RUN cp /usr/share/zoneinfo/Europe/Berlin /etc/localtime
 
 RUN mkdir -p $SAE_INSTALL_DIR && \
-    curl -o $SAE_INSTALL_DIR/logback-spring.xml -L -k https://github.com/camueller/SmartApplianceEnabler/raw/master/run/logback-spring.xml && \
-    curl -o $SAE_INSTALL_DIR/SmartApplianceEnabler-$SAE_VERSION.war -L -k https://github.com/camueller/SmartApplianceEnabler/releases/download/$SAE_VERSION/SmartApplianceEnabler-$SAE_VERSION.war
+    curl -o $SAE_INSTALL_DIR/logback-spring.xml -L -k https://github.com/camueller/SmartApplianceEnabler/raw/master/run/logback-spring.xml
 
+COPY SmartApplianceEnabler-$SAE_VERSION.war $SAE_INSTALL_DIR/SmartApplianceEnabler-$SAE_VERSION.war
 COPY libwiringPi.so.2.50 /lib/arm-linux-gnueabihf/libwiringPi.so
 COPY libwiringPiDev.so.2.50 /lib/arm-linux-gnueabihf/libwiringPiDev.so
 COPY gpio /usr/bin
