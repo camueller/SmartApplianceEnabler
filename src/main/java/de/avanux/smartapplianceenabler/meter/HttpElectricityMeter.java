@@ -269,9 +269,6 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
         if(pollEnergyMeter != null) {
             this.pollEnergyMeter.reset();
         }
-        if(pollPowerMeter != null) {
-            this.pollPowerMeter.reset();
-        }
     }
 
     @Override
