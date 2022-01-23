@@ -41,14 +41,16 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
     private PollEnergyExecutor pollEnergyExecutor;
     private transient Double startEnergyCounter;
     private transient Double totalEnergy;
-    private TimestampBasedCache<Double> cache = new TimestampBasedCache<>("Energy");
+    private transient Double currentEnergyCounter;
+    private transient LocalDateTime currentEnergyCounterTimestamp;
+    private transient Double previousEnergyCounter;
+    private transient LocalDateTime previousEnergyCounterTimestamp;
     private GuardedTimerTask pollTimerTask;
     private boolean started;
     private List<MeterUpdateListener> meterUpdateListeners = new ArrayList<>();
     private DecimalFormat energyFormat;
 
     public PollEnergyMeter() {
-        this.cache.setMaxAgeSeconds(Double.valueOf(1.9 * Meter.AVERAGING_INTERVAL).intValue());
         NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
         energyFormat = (DecimalFormat) nf;
         energyFormat.applyPattern("#.#####");
@@ -57,7 +59,6 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
     @Override
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
-        this.cache.setApplianceId(applianceId);
     }
 
     public void setPollEnergyExecutor(PollEnergyExecutor pollEnergyExecutor) {
@@ -76,13 +77,11 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
             @Override
             public void runTask() {
                 LocalDateTime now = LocalDateTime.now();
-                double energy = getEnergy();
-                if (energy > 0.0f) {
-                    // the energy counter we poll might already have been reset and we don't want to add 0 to the cache
-                    // except we reset the counter ourselves
-                    addValue(now, energy);
-                }
-                meterUpdateListeners.forEach(listener -> listener.onMeterUpdate(now, getAveragePower(), energy));
+                previousEnergyCounter = currentEnergyCounter;
+                previousEnergyCounterTimestamp = currentEnergyCounterTimestamp;
+                currentEnergyCounter = pollEnergyExecutor.pollEnergy(now);
+                currentEnergyCounterTimestamp = now;
+                meterUpdateListeners.forEach(listener -> listener.onMeterUpdate(now, getAveragePower(), getEnergy()));
             }
         };
     }
@@ -94,49 +93,22 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
         }
     }
 
-    public void addValue(LocalDateTime now) {
-        Double value = pollEnergyExecutor.pollEnergy(now);
-        addValue(now, value);
-    }
-
-    public void addValue(LocalDateTime now, double value) {
-        logger.debug("{}: Adding value: timestamp={} value={}", applianceId, now, value);
-        cache.addValue(now, value);
-    }
-
     public int getAveragePower() {
-        Vector<Integer> powerValues = new Vector<>();
-        LocalDateTime previousTimestamp = null;
-        Double previousEnergy = null;
-        TreeMap<LocalDateTime, Double> timestampWithValue = this.cache.getTimestampWithValue();
-        if(timestampWithValue.size() == 0) {
-            logger.debug("{}: Energy cache is empty", applianceId);
+        if(this.previousEnergyCounter != null && this.previousEnergyCounterTimestamp != null
+                && this.currentEnergyCounter != null && this.currentEnergyCounterTimestamp != null) {
+            double diffEnergy = currentEnergyCounter - previousEnergyCounter;
+            long diffTime = Duration.between(previousEnergyCounterTimestamp, currentEnergyCounterTimestamp).toMillis();
+            // diffEnergy kWh * 1000W/kW * 3600s/1h * 1000ms/1s / diffTime ms
+            double power = diffEnergy * 1000.0 * 3600.0 * 1000.0 / diffTime;
+            logger.debug("{}: Calculating power from energy: power={} currentEnergyCounter={} previousEnergyCounter={} diffEnergy={} diffTime={}",
+                    applianceId, (int) power, energyFormat.format(currentEnergyCounter), energyFormat.format(previousEnergyCounter),
+                    energyFormat.format(diffEnergy), diffTime);
+            return Double.valueOf(power).intValue();
         }
-        else {
-            List<LocalDateTime> timestamps = new ArrayList<>(timestampWithValue.keySet());
-            for(LocalDateTime timestamp: timestamps) {
-                Double energy = this.cache.getTimestampWithValue().get(timestamp);
-                logger.trace("{}: Energy timestamp={} previousTimestamp={} previousEnergy={}",
-                        applianceId, timestamp, previousTimestamp, previousEnergy);
-                if (previousTimestamp != null && previousEnergy != null) {
-                    long diffTime = Duration.between(previousTimestamp, timestamp).toMillis();
-                    double diffEnergy = energy - previousEnergy;
-                    // diffEnergy kWh * 1000W/kW * 3600s/1h * 1000ms/1s / diffTime ms
-                    double power = diffEnergy * 1000.0 * 3600.0 * 1000.0 / diffTime;
-                    logger.debug("{}: Calculating power from energy: power={} energy={} previousEnergy={} diffEnergy={} diffTime={}",
-                            applianceId, (int) power, energyFormat.format(energy), energyFormat.format(previousEnergy),
-                            energyFormat.format(diffEnergy), diffTime);
-                    powerValues.add(power > 0 ? Double.valueOf(power).intValue() : 0);
-                }
-                previousTimestamp = timestamp;
-                previousEnergy = energy;
-            }
-        }
-        return powerValues.size() > 0 ? powerValues.lastElement() : 0;
+        return 0;
     }
 
     public double getEnergy() {
-        double currentEnergyCounter = this.pollEnergyExecutor.pollEnergy(LocalDateTime.now());
         double energy = 0.0f;
         if(this.startEnergyCounter != null) {
             if(this.totalEnergy != null) {
@@ -167,14 +139,6 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
 
     public Double stopEnergyCounter() {
         double stopEnergyCounter = this.pollEnergyExecutor.pollEnergy(LocalDateTime.now());
-        if(stopEnergyCounter == 0.0f) {
-            // the event causing the the counter to stop may have already reset the counter we poll
-            // in this case we use the last value from cache
-            Double lastValue = this.cache.getLastValue();
-            if(lastValue != null) {
-                stopEnergyCounter = lastValue;
-            }
-        }
         if(this.startEnergyCounter != null) {
             if(this.totalEnergy != null) {
                 this.totalEnergy += stopEnergyCounter - this.startEnergyCounter;
@@ -193,7 +157,6 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
     public void reset() {
         this.startEnergyCounter = null;
         this.totalEnergy = null;
-        this.cache.clear();
     }
 
     public boolean isStarted() {

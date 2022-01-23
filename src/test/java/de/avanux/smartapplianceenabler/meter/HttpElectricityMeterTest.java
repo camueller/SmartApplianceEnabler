@@ -91,11 +91,11 @@ public class HttpElectricityMeterTest extends TestBase {
 
         String response = goEChargerStatus.replace((CharSequence) "dws\":\"0", (CharSequence) "dws\":\"360000"); // 1.0 kWh
         Mockito.doReturn(response).when(executorMock).execute(Mockito.any(), Mockito.any(), Mockito.any());
-        meter.getPollEnergyMeter().addValue(now);
+//        meter.getPollEnergyMeter().addValue(now);
 
         response = goEChargerStatus.replace((CharSequence) "dws\":\"0", (CharSequence) "dws\":\"366000");  // (1 + 1/60) * 1.0 kWh
         Mockito.doReturn(response).when(executorMock).execute(Mockito.any(), Mockito.any(), Mockito.any());
-        meter.getPollEnergyMeter().addValue(now.plusSeconds(60));
+//        meter.getPollEnergyMeter().addValue(now.plusSeconds(60));
 
 //        assertEquals(1000, this.meter.getAveragePower());
 //        assertEquals(1000, this.meter.getMaxPower());
