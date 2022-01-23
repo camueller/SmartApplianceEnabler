@@ -140,10 +140,6 @@ public class EVChargerControlMock implements EVChargerControl, Meter {
     }
 
     @Override
-    public void startAveragingInterval(LocalDateTime now, Timer timer, int nextPollCompletedSecondsFromNow) {
-    }
-
-    @Override
     public void setMqttTopic(String mqttTopic) {
     }
 

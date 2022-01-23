@@ -43,7 +43,6 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
     private transient Double totalEnergy;
     private TimestampBasedCache<Double> cache = new TimestampBasedCache<>("Energy");
     private GuardedTimerTask pollTimerTask;
-    private long lastPollDurationMillis = 0;
     private boolean started;
     private List<MeterUpdateListener> meterUpdateListeners = new ArrayList<>();
     private DecimalFormat energyFormat;
@@ -72,26 +71,12 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
         }
     }
 
-    public void scheduleNext(Timer timer, int nextPollCompletedSecondsFromNow, int averagingInterval) {
-        long nextPollMillisFromNow = nextPollCompletedSecondsFromNow * 1000L - lastPollDurationMillis;
-        if(timer != null && nextPollMillisFromNow > 0) {
-            logger.trace("{}: Schedule next poll in {}ms lastPollDuration={}ms", applianceId, nextPollMillisFromNow, lastPollDurationMillis);
-            cancelTimer();
-            this.pollTimerTask = buildPollTimerTask();
-            timer.schedule(this.pollTimerTask, nextPollMillisFromNow, averagingInterval * 1000L);
-        }
-        else {
-            logger.error("{}: Skipping rescheduling of next poll due to negative value for nextPollMillisFromNow={}ms", applianceId, nextPollMillisFromNow);
-        }
-    }
-
     private GuardedTimerTask buildPollTimerTask() {
         return new GuardedTimerTask(this.applianceId, "PollEnergyMeter", Meter.AVERAGING_INTERVAL * 1000) {
             @Override
             public void runTask() {
                 LocalDateTime now = LocalDateTime.now();
                 double energy = getEnergy();
-                setLastPollDurationMillis(Duration.between(now, LocalDateTime.now()).toMillis());
                 if (energy > 0.0f) {
                     // the energy counter we poll might already have been reset and we don't want to add 0 to the cache
                     // except we reset the counter ourselves
@@ -107,10 +92,6 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
             this.pollTimerTask.cancel();
             this.pollTimerTask = null;
         }
-    }
-
-    public void setLastPollDurationMillis(long lastPollDurationMillis) {
-        this.lastPollDurationMillis = lastPollDurationMillis;
     }
 
     public void addValue(LocalDateTime now) {

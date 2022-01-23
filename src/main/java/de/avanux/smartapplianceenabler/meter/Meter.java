@@ -43,7 +43,5 @@ public interface Meter extends ApplianceLifeCycle {
      */
     void resetEnergyMeter();
 
-    void startAveragingInterval(LocalDateTime now, Timer timer, int nextPollCompletedSecondsFromNow);
-
     void setMqttTopic(String mqttTopic);
 }

@@ -181,10 +181,6 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
     }
 
     @Override
-    public void startAveragingInterval(LocalDateTime now, Timer timer, int nextPollCompletedSecondsFromNow) {
-    }
-
-    @Override
     public void callback(int pin, boolean value, long epochTime, long nanoTime) {
         LocalDateTime now = LocalDateTime.now();
         if((getPinPullResistance() == PinPullResistance.PULL_DOWN && value)

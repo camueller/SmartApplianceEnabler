@@ -82,8 +82,4 @@ public class SlaveElectricityMeter implements ApplianceIdConsumer, Meter, Valida
     @Override
     public void resetEnergyMeter() {
     }
-
-    @Override
-    public void startAveragingInterval(LocalDateTime now, Timer timer, int nextPollCompletedSecondsFromNow) {
-    }
 }

@@ -150,11 +150,6 @@ public class MasterElectricityMeter implements ApplianceIdConsumer, Validateable
         meter.resetEnergyMeter();
     }
 
-    @Override
-    public void startAveragingInterval(LocalDateTime now, Timer timer, int nextPollCompletedSecondsFromNow) {
-        meter.startAveragingInterval(now, timer, nextPollCompletedSecondsFromNow);
-    }
-
     private void publishMeterMessage(MeterMessage message) {
         MeterMessage masterMeterMessage = null;
         MeterMessage slaveMeterMessage = null;

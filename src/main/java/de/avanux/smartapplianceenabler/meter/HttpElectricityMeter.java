@@ -201,16 +201,6 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
     }
 
     @Override
-    public void startAveragingInterval(LocalDateTime now, Timer timer, int nextPollCompletedSecondsFromNow) {
-        if(pollEnergyMeter != null) {
-            pollEnergyMeter.scheduleNext(timer, nextPollCompletedSecondsFromNow, AVERAGING_INTERVAL);
-        }
-        if(pollPowerMeter != null) {
-            pollPowerMeter.setAveragingIntervalBegin(now);
-        }
-    }
-
-    @Override
     public Double pollPower() {
         ParentWithChild<HttpRead, HttpReadValue> powerRead = HttpRead.getFirstHttpRead(MeterValueName.Power.name(), this.httpReads);
         return getValue(powerRead);
