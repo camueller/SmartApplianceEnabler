@@ -61,11 +61,8 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
         this.applianceId = applianceId;
     }
 
-    public void setPollEnergyExecutor(PollEnergyExecutor pollEnergyExecutor) {
-        this.pollEnergyExecutor = pollEnergyExecutor;
-    }
-
     public void start(Timer timer, PollEnergyExecutor pollEnergyExecutor) {
+        this.pollEnergyExecutor = pollEnergyExecutor;
         if(timer != null) {
             this.pollTimerTask = buildPollTimerTask();
             timer.schedule(this.pollTimerTask, 0, this.pollTimerTask.getPeriod());
@@ -79,8 +76,10 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
                 LocalDateTime now = LocalDateTime.now();
                 previousEnergyCounter = currentEnergyCounter;
                 previousEnergyCounterTimestamp = currentEnergyCounterTimestamp;
-                currentEnergyCounter = pollEnergyExecutor.pollEnergy(now);
-                currentEnergyCounterTimestamp = now;
+                if(pollEnergyExecutor != null) {
+                    currentEnergyCounter = pollEnergyExecutor.pollEnergy(now);
+                    currentEnergyCounterTimestamp = now;
+                }
                 powerUpdateListeners.forEach(listener -> listener.onPowerUpdate(getAveragePower()));
             }
         };
@@ -110,16 +109,18 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
 
     public double getEnergy() {
         double energy = 0.0f;
-        if(this.startEnergyCounter != null) {
-            if(this.totalEnergy != null) {
-                energy = this.totalEnergy + currentEnergyCounter - this.startEnergyCounter;
+        if(currentEnergyCounter != null) {
+            if(this.startEnergyCounter != null) {
+                if(this.totalEnergy != null) {
+                    energy = this.totalEnergy + currentEnergyCounter - this.startEnergyCounter;
+                }
+                else {
+                    energy = currentEnergyCounter - this.startEnergyCounter;
+                }
             }
-            else {
-                energy = currentEnergyCounter - this.startEnergyCounter;
+            else if (this.totalEnergy != null) {
+                energy = this.totalEnergy;
             }
-        }
-        else if (this.totalEnergy != null) {
-            energy = this.totalEnergy;
         }
 
         logger.trace("{}: energy={}kWh totalEnergy={} startEnergyCounter={} currentEnergyCounter={} started={}",

@@ -34,7 +34,7 @@ public class PollEnergyMeterTest {
     public PollEnergyMeterTest() {
         this.pollEnergyMeter = new PollEnergyMeter();
         this.pollEnergyMeter.setApplianceId(getClass().getSimpleName());
-        this.pollEnergyMeter.setPollEnergyExecutor(this.testPollEnergyExecutor);
+//        this.pollEnergyMeter.setPollEnergyExecutor(this.testPollEnergyExecutor);
     }
 
     @Test

@@ -130,7 +130,6 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
         if(ModbusRead.getFirstRegisterRead(MeterValueName.Energy.name(), modbusReads) != null) {
             this.pollEnergyMeter = new PollEnergyMeter();
             this.pollEnergyMeter.setApplianceId(getApplianceId());
-            this.pollEnergyMeter.setPollEnergyExecutor(this);
         }
     }
 
