@@ -125,6 +125,16 @@ Notfalls kann man die Sourcen auch als [ZIP-Datei](https://github.com/camueller/
 
 Zum Bauen ist das Build-Tool [Maven](https://maven.apache.org) erforderlich, das gegebenenfalls noch [installiert](https://maven.apache.org/install.html) werden muss.
 
+Maven lädt alle benötigen Bibliotheken aus dem zentralen Maven-Repository. Einige Bibliotheken sind jedoch dort nicht mehr verfügbar und deshalb im Git-Repository des *Smart Appliance Enabler* enthalten. Diese müssen zunächst in das lokale Maven-Repository installiert werden:
+```console
+mvn install:install-file -Dfile=lib/parent-1.0.0.pom -DpomFile=lib/parent-1.0.0.pom -Dpackaging=pom
+mvn install:install-file -Dfile=lib/seamless-http-1.0.0.jar -DpomFile=lib/seamless-http-1.0.0.pom
+mvn install:install-file -Dfile=lib/seamless-xml-1.0.0.jar -DpomFile=lib/seamless-xml-1.0.0.pom
+mvn install:install-file -Dfile=lib/seamless-util-1.0.0.jar -DpomFile=lib/seamless-util-1.0.0.pom
+mvn install:install-file -Dfile=lib/cling-2.0.0.pom -DpomFile=lib/cling-2.0.0.pom -Dpackaging=pom
+mvn install:install-file -Dfile=lib/cling-core-2.0.0.jar -DpomFile=lib/cling-core-2.0.0.pom
+```
+
 Um den *Smart Appliance Enabler* ohne Web-Oberfläche zu bauen, ruft man Maven im Verzeichnis *SmartApplianceEnabler* wie folgt auf:
 ```console
 mvn clean package
