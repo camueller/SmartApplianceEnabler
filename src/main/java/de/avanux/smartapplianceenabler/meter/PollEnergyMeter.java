@@ -74,11 +74,14 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
             @Override
             public void runTask() {
                 LocalDateTime now = LocalDateTime.now();
-                previousEnergyCounter = currentEnergyCounter;
-                previousEnergyCounterTimestamp = currentEnergyCounterTimestamp;
                 if(pollEnergyExecutor != null) {
-                    currentEnergyCounter = pollEnergyExecutor.pollEnergy(now);
-                    currentEnergyCounterTimestamp = now;
+                    Double polledEnergy = pollEnergyExecutor.pollEnergy(now);
+                    if(polledEnergy != null) {
+                        previousEnergyCounter = currentEnergyCounter;
+                        previousEnergyCounterTimestamp = currentEnergyCounterTimestamp;
+                        currentEnergyCounter = polledEnergy;
+                        currentEnergyCounterTimestamp = now;
+                    }
                 }
                 meterUpdateListeners.forEach(listener -> listener.onMeterUpdate(now, getAveragePower(), getEnergy()));
             }
