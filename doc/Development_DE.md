@@ -111,6 +111,38 @@ sae@raspi3:~ $ cd /etc/cron.hourly/
 sae@raspi3:/etc/cron.hourly $ sudo ln -s /opt/sae/docker/cronjob 
 ```
 
+### Testen der automatischen Installation
+
+Die automatische Installation soll es Nutzern ohne Linux Know-How ermöglichen, den *Smart Appliance Enabler* ohne Nutzung einer SSH-Shell und Eingabe von Befehlen zu installieren. Während der automatischen Installation werden die im Image enthaltenen Pakete aktualisiert und auch Pakete (z.B. Java) nachinstalliert. Dabei kann es zu Problemen kommen, z.B. weil die benötigten Pakete nicht mehr im Repository enthalten sind oder das Repository nicht mehr existiert. Um diese Problem zu erkennen und zu beheben (z.B. durch Bereitstellung eines neueren Images) muss die automatische Installation automatisiert getestet werden.  
+
+Das automatisierte Testen der automatischen Installation erfolgt durch Eumlation eines Raspberry Pi mittels QEMU:
+```console
+sudo apt install qemu-system-arm
+```
+
+Die benötigten Kernel finden sich auf: https://github.com/dhruvvyas90/qemu-rpi-kernel
+```console
+axel@p51:/data/Downloads/raspberry$ git clone https://github.com/dhruvvyas90/qemu-rpi-kernel
+Cloning into 'qemu-rpi-kernel'...
+remote: Enumerating objects: 470, done.
+remote: Counting objects: 100% (93/93), done.
+remote: Compressing objects: 100% (77/77), done.
+remote: Total 470 (delta 44), reused 40 (delta 16), pack-reused 377
+Receiving objects: 100% (470/470), 88.77 MiB | 6.82 MiB/s, done.
+Resolving deltas: 100% (241/241), done.
+```
+
+Ich habe ein [Script erstellt](../src/test/install2-test.sh), welches
+- ein Raspbian-Image vergössert
+- die Installationsdateien hineinkopiert, sodass die Installation nach dem Booten startet
+- den virtuellen Raspberry Pi startet
+
+Die Installation funktioniert zwar prinzipiell, aber
+- Java wird zwar installiert, aber es fehler die Links unter `/etc/alternatves`
+- wenn man das Java-Binary direkt aufruft, kommt ein Hinweis, dass die VM nur unter `v7l` läuft, nicht unter `v6l`. In `qemu-system-arm` scheint zwar Support für anderer ARM-Prozesssoren (z.B. cortex-v7) enthalten zu sein, aber ich konnte mit keinem (außer `versatilepb`) ein Raspbian erfolgreich booten. `versatilepb` untersützt nur `v6l` und ist auf 256 MB begrenzt. 
+
+Angesichts dieser Probleme stoppe ich hier erstmal den Versuch, das Testen der automatische Installation automatisiert zu testen.
+
 ## Lokales Entwickeln
 ### Source-Download
 Für alle nachfolgenden Schritte müssen die Sourcen lokal vorhanden sein.
