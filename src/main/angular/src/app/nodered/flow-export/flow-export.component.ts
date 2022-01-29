@@ -29,19 +29,34 @@ export class FlowExportComponent implements OnInit {
 
   ngOnInit(): void {
     const mqttBrokerId = this.generateId();
-    const generalTabId = this.generateId();
-    const generalUiGroupId = this.generateId();
     const uiTabId = this.generateId();
+    const generalNodes = this.createGeneralNodes(mqttBrokerId, uiTabId);
     const applianceNodes = this.data.applianceIds.flatMap(applianceId => this.createApplianceNodes(applianceId, mqttBrokerId, uiTabId));
     this.exportJson = JSON.stringify([
       this.mqttBroker(mqttBrokerId, this.data.mqttSettings),
       this.dashboard(),
-      this.tab(generalTabId, 'General'),
       this.uiTab(uiTabId),
-      this.uiGroup(generalUiGroupId, 'General', uiTabId),
-      this.styleTemplate(generalTabId, generalUiGroupId),
+      ...generalNodes,
       ...applianceNodes,
     ], null, 2);
+  }
+
+  private createGeneralNodes(mqttBrokerId: string, uiTabId: string) {
+    const tabId = this.generateId();
+    const uiGroupId = this.generateId();
+    const eventJoinId = this.generateId();
+    const eventPrepareDataId = this.generateId();
+    const eventDashboardId = this.generateId();
+    return [
+      this.tab(tabId, 'General'),
+      this.uiGroup(uiGroupId, 'General', uiTabId),
+      this.styleTemplate(this.col1, this.row1, tabId, uiGroupId),
+
+      this.mqttIn(this.col1, this.row2, tabId, mqttBrokerId, 'sae/Event/#', [eventJoinId]),
+      this.join(this.col2, this.row2, eventJoinId, tabId, 'object', 1, [eventPrepareDataId]),
+      this.generalEventPrepareData(this.col3, this.row2, eventPrepareDataId, tabId, [eventDashboardId]),
+      this.uiTable(this.col4, this.row2, eventDashboardId, tabId, uiGroupId, 'Events', 0, 0),
+    ];
   }
 
   private createApplianceNodes(applianceId: string, mqttBrokerId: string, uiTabId: string) {
@@ -68,7 +83,7 @@ export class FlowExportComponent implements OnInit {
     return [
       this.tab(tabId, applianceId),
       this.uiGroup(uiGroupId, applianceId, uiTabId),
-      this.mqttIn(tabId, mqttBrokerId, applianceId, [
+      this.mqttIn(this.col1, this.row5, tabId, mqttBrokerId, `sae/${applianceId}/#`, [
         evChargerSocChangedMqttFilterId,
         evChargerStatehangedMqttFilterId,
         applianceInfoMqttFilterId,
@@ -84,9 +99,9 @@ export class FlowExportComponent implements OnInit {
         '.*\\/EVChargerStateChanged$', [applianceJoinId]),
 
       this.topicFilter(this.col2, this.row3, applianceInfoMqttFilterId, tabId, 'ApplianceInfo', '.*\\/ApplianceInfo$', [applianceJoinId]),
-      this.join(this.col3, this.row3, applianceJoinId, tabId, [appliancePrepareDataId]),
+      this.join(this.col3, this.row3, applianceJoinId, tabId, 'merged', 2, [appliancePrepareDataId]),
       this.appliancePrepareData(this.col4, this.row3, appliancePrepareDataId, tabId, [applianceInDashboardId]),
-      this.applianceInDashboard(this.col5, this.row3, applianceInDashboardId, tabId, uiGroupId),
+      this.uiTable(this.col5, this.row3, applianceInDashboardId, tabId, uiGroupId, 'Appliance', 8, 8),
 
       this.topicFilter(this.col2, this.row4, controlMqttFilterId, tabId, 'Control', '.*\\/Control$',
         [applianceJoinId, controlChangedId, meterJoinId]),
@@ -94,7 +109,7 @@ export class FlowExportComponent implements OnInit {
       this.controlInDashboard(this.col5, this.row4, controlInDashboardId, tabId, uiGroupId),
 
       this.topicFilter(this.col2, this.row5, meterMqttFilterId, tabId, 'Meter', '.*\\/Meter$', [meterJoinId, meterFiguresPrepareDataId]),
-      this.join(this.col3, this.row5, meterJoinId, tabId, [meterPrepareDataId, meterFiguresPrepareDataId]),
+      this.join(this.col3, this.row5, meterJoinId, tabId, 'merged', 2, [meterPrepareDataId, meterFiguresPrepareDataId]),
       this.meterChartPrepareData(this.col4, this.row5, meterPrepareDataId, tabId, meterChartInDashboardId),
       this.meterChartInDashboard(this.col5, this.row5, meterChartInDashboardId, tabId, uiGroupId),
 
@@ -109,7 +124,7 @@ export class FlowExportComponent implements OnInit {
     ];
   }
 
-  private styleTemplate(tabId: string, uiGroupId: string) {
+  private styleTemplate(x: number, y: number, tabId: string, uiGroupId: string) {
     return {
       'id': this.generateId(),
       'type': 'ui_template',
@@ -125,8 +140,8 @@ export class FlowExportComponent implements OnInit {
       'resendOnRefresh': true,
       'templateScope': 'global',
       'className': '',
-      'x': 120,
-      'y': 60,
+      x,
+      y,
       'wires': [
         []
       ]
@@ -297,13 +312,13 @@ export class FlowExportComponent implements OnInit {
     };
   }
 
-  private mqttIn(tabId: string, mqttBrokerId: string, applianceId: string, wires: string[]) {
+  private mqttIn(x: number, y: number, tabId: string, mqttBrokerId: string, topic: string, wires: string[]) {
     return {
       'id': this.generateId(),
       'type': 'mqtt in',
       'z': tabId,
       'name': '',
-      'topic': `sae/${applianceId}/#`,
+      topic,
       'qos': '2',
       'datatype': 'json',
       'broker': mqttBrokerId,
@@ -311,8 +326,8 @@ export class FlowExportComponent implements OnInit {
       'rap': true,
       'rh': 0,
       'inputs': 0,
-      'x': this.col1,
-      'y': this.row5,
+      x,
+      y,
       wires: [wires]
     };
   }
@@ -342,14 +357,14 @@ export class FlowExportComponent implements OnInit {
     };
   }
 
-  private join(x: number, y: number, id: string, tabId: string, wires: string[]) {
+  private join(x: number, y: number, id: string, tabId: string, build: string, count: number, wires: string[]) {
     return  {
       id,
       'type': 'join',
       'z': tabId,
       'name': '',
       'mode': 'custom',
-      'build': 'merged',
+      build,
       'property': 'payload',
       'propertyType': 'msg',
       'key': 'topic',
@@ -357,12 +372,49 @@ export class FlowExportComponent implements OnInit {
       'joinerType': 'str',
       'accumulate': true,
       'timeout': '',
-      'count': '2',
+      count,
       'reduceRight': false,
       'reduceExp': '',
       'reduceInit': '',
       'reduceInitType': '',
       'reduceFixup': '',
+      x,
+      y,
+      wires: [wires]
+    };
+  }
+
+  private uiTable(x: number, y: number, id: string, tabId: string, uiGroupId: string, name: string, width: number, height: number) {
+    return     {
+      id,
+      'type': 'ui_table',
+      'z': tabId,
+      'group': uiGroupId,
+      name,
+      'order': 1,
+      width,
+      height,
+      'columns': [],
+      'outputs': 0,
+      'cts': false,
+      x,
+      y,
+      'wires': []
+    };
+  }
+
+  private generalEventPrepareData(x: number, y: number, id: string, tabId: string, wires: string[]) {
+    return {
+      id,
+      'type': 'function',
+      'z': tabId,
+      'name': 'prepareData',
+      'func': 'return {\n    topic: msg.topic,\n    payload: [\n        {\'Parameter\': \'Letzte Abfrage durch Sunny Home Manager\', \'Wert\': msg.payload[\'sae/Event/SempDevice2EM\']?.time ?? \'-\'},\n        {\'Parameter\': \'Letzter Befehl vom Sunny Home Manager\', \'Wert\': msg.payload[\'sae/Event/SempEM2Device\']?.time ?? \'-\'}\n    ]\n}\n',
+      'outputs': 1,
+      'noerr': 0,
+      'initialize': '',
+      'finalize': '',
+      'libs': [],
       x,
       y,
       wires: [wires]
@@ -384,25 +436,6 @@ export class FlowExportComponent implements OnInit {
       x,
       y,
       wires: [wires]
-    };
-  }
-
-  private applianceInDashboard(x: number, y: number, id: string, tabId: string, uiGroupId: string) {
-    return     {
-      id,
-      'type': 'ui_table',
-      'z': tabId,
-      'group': uiGroupId,
-      'name': 'Appliance',
-      'order': 1,
-      'width': '8',
-      'height': '8',
-      'columns': [],
-      'outputs': 0,
-      'cts': false,
-      x,
-      y,
-      'wires': []
     };
   }
 

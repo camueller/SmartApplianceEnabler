@@ -22,9 +22,7 @@ import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
 import de.avanux.smartapplianceenabler.meter.Meter;
-import de.avanux.smartapplianceenabler.mqtt.ControlMessage;
-import de.avanux.smartapplianceenabler.mqtt.MeterMessage;
-import de.avanux.smartapplianceenabler.mqtt.MqttClient;
+import de.avanux.smartapplianceenabler.mqtt.*;
 import de.avanux.smartapplianceenabler.schedule.AbstractEnergyRequest;
 import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
 import de.avanux.smartapplianceenabler.schedule.TimeframeIntervalHandler;
@@ -82,13 +80,17 @@ public class SempController {
 
     @RequestMapping(value = BASE_URL, method = RequestMethod.GET, produces = "application/xml")
     public String device2EM(HttpServletResponse response) {
-        if(ApplianceManager.getInstance().isInitializationCompleted()) {
-            try {
-                logger.debug("Device info/status/planning requested.");
-                return marshall(createDevice2EM(LocalDateTime.now()));
-            } catch (Throwable e) {
-                logger.error("Error in " + getClass().getSimpleName(), e);
+        try {
+            LocalDateTime now = LocalDateTime.now();
+            if (mqttClient != null) {
+                mqttClient.publish(MqttEventName.SempDevice2EM, new MqttMessage(now));
             }
+            if(ApplianceManager.getInstance().isInitializationCompleted()) {
+                    logger.debug("Device info/status/planning requested.");
+                    return marshall(createDevice2EM(now));
+            }
+        } catch (Throwable e) {
+            logger.error("Error in " + getClass().getSimpleName(), e);
         }
         response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
         return null;
@@ -117,26 +119,29 @@ public class SempController {
 
     @RequestMapping(value = BASE_URL + "/DeviceInfo", method = RequestMethod.GET, produces = "application/xml")
     public String deviceInfo(HttpServletResponse response, @RequestParam(value = "DeviceId", required = false) String deviceId) {
-        if(ApplianceManager.getInstance().isInitializationCompleted()) {
-            try {
-                LocalDateTime now = LocalDateTime.now();
-                List<DeviceInfo> deviceInfos = new ArrayList<>();
-                if (deviceId != null) {
-                    logger.debug("{}: Device info requested", deviceId);
-                    deviceInfos.add(createDeviceInfo(now, deviceId));
-                } else {
-                    logger.debug("Device info requested of all devices");
-                    List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
-                    for (Appliance appliance : appliances) {
-                        deviceInfos.add(createDeviceInfo(now, appliance.getId()));
-                    }
-                }
-                Device2EM device2EM = new Device2EM();
-                device2EM.setDeviceInfo(deviceInfos);
-                return marshall(device2EM);
-            } catch (Throwable e) {
-                logger.error("Error in " + getClass().getSimpleName(), e);
+        try {
+            LocalDateTime now = LocalDateTime.now();
+            if (mqttClient != null) {
+                mqttClient.publish(MqttEventName.SempGetDeviceInfo, new MqttMessage(now));
             }
+            if(ApplianceManager.getInstance().isInitializationCompleted()) {
+                    List<DeviceInfo> deviceInfos = new ArrayList<>();
+                    if (deviceId != null) {
+                        logger.debug("{}: Device info requested", deviceId);
+                        deviceInfos.add(createDeviceInfo(now, deviceId));
+                    } else {
+                        logger.debug("Device info requested of all devices");
+                        List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
+                        for (Appliance appliance : appliances) {
+                            deviceInfos.add(createDeviceInfo(now, appliance.getId()));
+                        }
+                    }
+                    Device2EM device2EM = new Device2EM();
+                    device2EM.setDeviceInfo(deviceInfos);
+                    return marshall(device2EM);
+            }
+        } catch (Throwable e) {
+            logger.error("Error in " + getClass().getSimpleName(), e);
         }
         response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
         return null;
@@ -182,8 +187,12 @@ public class SempController {
 
     @RequestMapping(value = BASE_URL + "/DeviceStatus", method = RequestMethod.GET, produces = "application/xml")
     public String deviceStatus(HttpServletResponse response, @RequestParam(value = "DeviceId", required = false) String deviceId) {
-        if(ApplianceManager.getInstance().isInitializationCompleted()) {
-            try {
+        try {
+            LocalDateTime now = LocalDateTime.now();
+            if (mqttClient != null) {
+                mqttClient.publish(MqttEventName.SempGetDeviceStatus, new MqttMessage(now));
+            }
+            if(ApplianceManager.getInstance().isInitializationCompleted()) {
                 List<DeviceStatus> deviceStatuses = new ArrayList<DeviceStatus>();
                 if (deviceId != null) {
                     logger.debug("{}: Device status requested", deviceId);
@@ -201,9 +210,9 @@ public class SempController {
                 Device2EM device2EM = new Device2EM();
                 device2EM.setDeviceStatus(deviceStatuses);
                 return marshall(device2EM);
-            } catch (Throwable e) {
-                logger.error("Error in " + getClass().getSimpleName(), e);
             }
+        } catch (Throwable e) {
+            logger.error("Error in " + getClass().getSimpleName(), e);
         }
         response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
         return null;
@@ -251,6 +260,10 @@ public class SempController {
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public void em2Device(@RequestBody EM2Device em2Device) {
         try {
+            LocalDateTime now = LocalDateTime.now();
+            if (mqttClient != null) {
+                mqttClient.publish(MqttEventName.SempEM2Device, new MqttMessage(now));
+            }
             em2Device(LocalDateTime.now(), em2Device);
         } catch (Throwable e) {
             logger.error("Error in " + getClass().getSimpleName(), e);

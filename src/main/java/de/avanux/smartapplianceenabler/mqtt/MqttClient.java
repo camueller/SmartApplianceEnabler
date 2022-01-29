@@ -118,6 +118,10 @@ public class MqttClient {
         return topicPrefix + "/" + applianceId + "/" + MqttEventName.TOPIC + "/" + event.getName();
     }
 
+    public static String getEventTopic(MqttEventName event) {
+        return topicPrefix + "/" + MqttEventName.TOPIC + "/" + event.getName();
+    }
+
     private org.eclipse.paho.client.mqttv3.MqttClient createClient(String clientId, String brokerUri) {
         org.eclipse.paho.client.mqttv3.MqttClient client = null;
         try {
@@ -204,7 +208,7 @@ public class MqttClient {
     }
 
     public void publish(MqttEventName event, MqttMessage message, boolean retained) {
-        String fullTopic = getEventTopic(applianceId, event);
+        String fullTopic = applianceId.length() > 0 ? getEventTopic(applianceId, event) : getEventTopic(event);
         publishMessage(fullTopic, message, retained);
     }
 

@@ -25,6 +25,10 @@ public class MqttEventName {
     public static final MqttEventName FinishedCurrentDetected = new MqttEventName("FinishedCurrentDetected");
     public static final MqttEventName EVChargerStateChanged = new MqttEventName("EVChargerStateChanged");
     public static final MqttEventName EVChargerSocChanged = new MqttEventName("EVChargerSocChanged");
+    public static final MqttEventName SempDevice2EM = new MqttEventName("SempDevice2EM");
+    public static final MqttEventName SempEM2Device = new MqttEventName("SempEM2Device");
+    public static final MqttEventName SempGetDeviceInfo = new MqttEventName("SempGetDeviceInfo");
+    public static final MqttEventName SempGetDeviceStatus = new MqttEventName("SempGetDeviceStatus");
     private String name;
 
     public MqttEventName(String name) {
