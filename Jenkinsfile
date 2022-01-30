@@ -83,13 +83,12 @@ pipeline {
                     sh "sed -i 's#@project.version@#'\"$VERSION\"'#' ./sae-amd64/Dockerfile"
                     sh "docker build --tag=avanux/smartapplianceenabler-amd64:$VERSION ./sae-amd64"
                     sh "docker tag avanux/smartapplianceenabler-amd64:$VERSION avanux/smartapplianceenabler-amd64:latest"
-                    sh "docker image push avanux/smartapplianceenabler-amd64:$VERSION"
-                    sh "docker image push avanux/smartapplianceenabler-amd64"
                 }
                 withCredentials([usernamePassword(credentialsId: 'docker', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                     sh "echo $PASSWORD | docker login --username $USERNAME --password-stdin"
                     dir('docker') {
-                        sh "docker push avanux/smartapplianceenabler-amd64:ci"
+                        sh "docker push avanux/smartapplianceenabler-amd64:$VERSION"
+                        sh "docker push avanux/smartapplianceenabler-amd64:latest"
                     }
                 }
                 sh 'scp target/SmartApplianceEnabler-"$VERSION".war jenkins@raspi2:/home/jenkins/'
