@@ -76,6 +76,13 @@ Für den Betrieb des *Smart Appliance Enabler* als Docker-Container auf einem *R
 - Security Group anlegen mit Inbound Access für SSH + HTTP (Source: Anywhere)
 - Security Group zuweisen: Actions -> Networking -> Change Security Groups
 
+Falls das _EC2 Dashboard_ laufende Instanzen nicht anzeigt, stimmt möglicherweise die Region nicht mit der Region überein, in der die Instanzen angelegt wurden (z.B. us-east-2).
+
+Der Button `Verbinden` zeigt den SSH-Aufruf für die aktuelle IP-Adresse, z.B.
+```console
+ssh -i "aws-avanux.pem" ec2-user@ec2-3-133-83-241.us-east-2.compute.amazonaws.com
+```
+
 In der gestarteten Instanz folgende Befehle ausführen:
 ```console
 sudo yum update -y
@@ -84,7 +91,7 @@ sudo service docker start
 sudo service docker status
 ```
 
-Falls das _EC2 Dashboard_ laufende Instanzen nicht anzeigt, stimmt möglicherweise die Region nicht mit der Region überein, in der die Instanzen angelegt wurden (z.B. us-east-2).
+In der EC2 console wird der Link zur Instanz des *Smart Appliance Enabler* unter `Öffentlicher IPv4-DNS`. Dieser Link beinhaltet `https` als Protokoll und funktioniert aktuell nicht, weil der *Smart Appliance Enabler* nur `http` unterstützt. Beim Klick auf den Link zeigt Chrome `This site can’t be reached` an.   
 
 ### Setup des Raspberry Pi zum Bauen der arm32-Docker-Images
 
@@ -104,6 +111,60 @@ sae@raspi3:~ $ cd /etc/cron.hourly/
 sae@raspi3:/etc/cron.hourly $ sudo ln -s /opt/sae/docker/cronjob 
 ```
 
+### Testen der automatischen Installation
+
+Die automatische Installation soll es Nutzern ohne Linux Know-How ermöglichen, den *Smart Appliance Enabler* ohne Nutzung einer SSH-Shell und Eingabe von Befehlen zu installieren. Während der automatischen Installation werden die im Image enthaltenen Pakete aktualisiert und auch Pakete (z.B. Java) nachinstalliert. Dabei kann es zu Problemen kommen, z.B. weil die benötigten Pakete nicht mehr im Repository enthalten sind oder das Repository nicht mehr existiert. Um diese Problem zu erkennen und zu beheben (z.B. durch Bereitstellung eines neueren Images) muss die automatische Installation automatisiert getestet werden.  
+
+Das automatisierte Testen der automatischen Installation erfolgt durch Eumlation eines Raspberry Pi mittels QEMU:
+```console
+sudo apt install qemu-system-arm
+```
+
+Die benötigten Kernel finden sich auf: https://github.com/dhruvvyas90/qemu-rpi-kernel
+```console
+axel@p51:/data/Downloads/raspberry$ git clone https://github.com/dhruvvyas90/qemu-rpi-kernel
+Cloning into 'qemu-rpi-kernel'...
+remote: Enumerating objects: 470, done.
+remote: Counting objects: 100% (93/93), done.
+remote: Compressing objects: 100% (77/77), done.
+remote: Total 470 (delta 44), reused 40 (delta 16), pack-reused 377
+Receiving objects: 100% (470/470), 88.77 MiB | 6.82 MiB/s, done.
+Resolving deltas: 100% (241/241), done.
+```
+
+Ich habe ein [Script erstellt](../src/test/install2-test.sh), welches
+- ein Raspbian-Image vergössert
+- die Installationsdateien hineinkopiert, sodass die Installation nach dem Booten startet
+- den virtuellen Raspberry Pi startet
+
+Die Installation funktioniert zwar prinzipiell, aber
+- Java wird zwar installiert, aber es fehler die Links unter `/etc/alternatves`
+- wenn man das Java-Binary direkt aufruft, kommt ein Hinweis, dass die VM nur unter `v7l` läuft, nicht unter `v6l`. In `qemu-system-arm` scheint zwar Support für anderer ARM-Prozesssoren (z.B. cortex-v7) enthalten zu sein, aber ich konnte mit keinem (außer `versatilepb`) ein Raspbian erfolgreich booten. `versatilepb` untersützt nur `v6l` und ist auf 256 MB begrenzt. 
+
+Angesichts dieser Probleme stoppe ich hier erstmal den Versuch, das Testen der automatische Installation automatisiert zu testen.
+
+## Erstellen eines neuen Releases
+
+1. `CHANGELOG.md` aktualisieren
+2. Version in `pom.xml` erhöhen
+3. Tag mit neuer Version erstellen, z.B. `2.0.2`
+4. Änderungen inkl. Tags zu Github pushen
+5. Jenkins-Build manuell starten und Docker-Push aktivieren (dauert inkl. Browserstack-Tests aktuell ca. 50 Minuten)
+   1. compiliert Source-Files und baut Java-Backend und Angular-Webanwendung
+   2. führt Unit-Tests aus
+   3. führt Browserstack-Tests in verschiedenen Browsern aus
+      1. baut Docker-Image des *Smart Appliance Enabler* für Browserstack-Tests
+      2. startet gebauten Docker-Container, wobei HTTP/Modbus-Aufrufe der während der Tests erstellten Schalter/Zähler unterdrückt werden
+      3. führt Browserstack-Tests in verschiedenen Browser aus
+   4. erstellt Docker-Image für amd64 und pusht es zu Dockerhub
+   5. erstellt Docker-Image für arm32 und pusht es zu Dockerhub
+6. Kopieren des Build-Artefakts aus dem Jenkins-Docker-Container auf den Host:
+  `docker cp jenkins:/var/jenkins_home/workspace/SmartApplianceEnabler2/target/SmartApplianceEnabler-2.0.2.war /tmp`
+7. Kopieren des Build-Artefakts vom Server auf den lokalen Rechner: 
+  `scp server:/tmp/SmartApplianceEnabler-2.0.2.war /tmp`
+8. Erstellen eines neuen Releases auf Github unter Verwendung des bereits angelegten Tags
+9. Bekanntmachen des neuen Releases auf Gihub-Discussions
+
 ## Lokales Entwickeln
 ### Source-Download
 Für alle nachfolgenden Schritte müssen die Sourcen lokal vorhanden sein.
@@ -118,6 +179,16 @@ Notfalls kann man die Sourcen auch als [ZIP-Datei](https://github.com/camueller/
 
 Zum Bauen ist das Build-Tool [Maven](https://maven.apache.org) erforderlich, das gegebenenfalls noch [installiert](https://maven.apache.org/install.html) werden muss.
 
+Maven lädt alle benötigen Bibliotheken aus dem zentralen Maven-Repository. Einige Bibliotheken sind jedoch dort nicht mehr verfügbar und deshalb im Git-Repository des *Smart Appliance Enabler* enthalten. Diese müssen zunächst in das lokale Maven-Repository installiert werden:
+```console
+mvn install:install-file -Dfile=lib/parent-1.0.0.pom -DpomFile=lib/parent-1.0.0.pom -Dpackaging=pom
+mvn install:install-file -Dfile=lib/seamless-http-1.0.0.jar -DpomFile=lib/seamless-http-1.0.0.pom
+mvn install:install-file -Dfile=lib/seamless-xml-1.0.0.jar -DpomFile=lib/seamless-xml-1.0.0.pom
+mvn install:install-file -Dfile=lib/seamless-util-1.0.0.jar -DpomFile=lib/seamless-util-1.0.0.pom
+mvn install:install-file -Dfile=lib/cling-2.0.0.pom -DpomFile=lib/cling-2.0.0.pom -Dpackaging=pom
+mvn install:install-file -Dfile=lib/cling-core-2.0.0.jar -DpomFile=lib/cling-core-2.0.0.pom
+```
+
 Um den *Smart Appliance Enabler* ohne Web-Oberfläche zu bauen, ruft man Maven im Verzeichnis *SmartApplianceEnabler* wie folgt auf:
 ```console
 mvn clean package
@@ -131,8 +202,6 @@ mvn clean package -Pweb
 Beim erstmaligen Aufruf von Maven werden dabei alle benötigten Bibliotheken aus dem offiziellen Maven-Repository heruntergeladen. Das Bauen war nur dann erfolgreich, wenn *BUILD SUCCESS* erscheint! In diesem Fall findet sich die Datei `SmartApplianceEnabler-*.war` im Unterverzeichnis `target`.
 
 ### Starten
-
-
 #### UPnP Deaktivierung
 In der Regel ist es nicht erwünscht, dass der Sunny Home Manager die für die Entwicklung verwendete SAE-Instanz (in der IDE oder auf einem Entwicklungs-Raspi) per UPnP "entdeckt" und die Geräte übernimmt.
 Deshalb kann das UPnP des SAE mit einem Property deaktiviert werden:
