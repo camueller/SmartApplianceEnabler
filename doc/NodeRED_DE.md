@@ -102,7 +102,26 @@ Durch Klick auf den Export-Button wird der Export-Dialog geöffnet:
 Im Export-Dialog kann direkt der Button `Inhalt in die Zwischenablage kopieren` gedrückt werden, um das angezeigte Node-RED Flow-JSON in die Zwischenablage zu kopieren. Damit ist der Export abgeschlossen.
 
 ## Import der Flows
+### Löschen der vorhandenen Flows
+Die vom *Smart Appliance Enabler* exportierte Flow-JSON ist vollständig, d.h. sie beinhaltet neben den Flows auch die globalen Configuration Nodes.
+Um doppelte Nodes und damit verbundene Fehler oder Performance-Einbussen zu vermeiden, sollten die von einem vorherigen Import des vom *Smart Appliance Enabler* exportierten Flow-JSON stammenden Nodes vor einem erneuten Import gelöscht werden.
 
+Wenn Node-RED nur für den *Smart Appliance Enabler* verwendet wird, kann sämtliche Flows einfach dadurch löschen, indem man die Datei `~/.node-red/flows.json` löscht und Node-RED neu startet - fertig!
+
+Alternativ kann man selektiv die folgende Dinge löschen:
+- Flows
+  - `Allgemein`
+  - alle Flows mit Namen entsprechend der Geräte-IDs `F-.....`
+- Dashboard
+  - `Allgemein`
+  - alle Dashboard-Gruppen mit Namen entsprechend der Geräte-IDs `F-.....` 
+- Globale Konfigurations-Nodes
+  - mqtt-broker: `MQTT Broker (SAE)`
+  - [falls das Node-RED Dashboard nur vom *Smart Appliance Enabler* verwendet wird] ui_base: `Node-RED Dashboard`
+  - ui-tab: `Smart Appliance Enabler`
+  - ui-group: alle Einträge mit `[Smart Appliance Enabler]`
+
+### Import
 Der Import der Flows in Node-RED erfolgt über das Menü `Import`:
 
 ![Menu Import](../pics/nodered/MenuImport.png)
@@ -128,7 +147,7 @@ $ docker inspect mosquitto | grep IPAddress
 ```
 
 ### Übernahme der Flows
-Normalerweise sollte es möglich sein, die importierten Flows ohne Anpassungen direkt zu übernehmen, weil die vom *Smart Appliance Enabler* exportierte Flow-JSON vollständig ist.
+Normalerweise sollte es möglich sein, die importierten Flows ohne Anpassungen direkt zu übernehmen.
 
 Zur Übernahme muss lediglich der `Übernahme`-Button gedrück werden:
 ![Flow](../pics/nodered/Deploy.png)
@@ -149,7 +168,10 @@ Fast immer wird man die als Platzhalter angezeigte Default-URL `http://localhost
 Danach kann das Node-RED-Dashboard über den Link-Button in der Status-Anzeige des *Smart Appliance Enabler* aufgerufen werden:
 ![Aufruf des Dashboards](../pics/nodered/StatusDashboard.png)
 
-Das Dashboad selbst zeigt alle vom *Smart Appliance Enabler* verwalteten Geräte auf einem Tab mit dem Namen `Smart Appliance Enabler` an:
+Das Dashboad selbst zeigt auf einem Tab mit dem Namen `Smart Appliance Enabler` folgene Informationen an:
+- Zeitpunkt der letzten Abfrage des *Smart Appliance Enabler* durch den *Sunny Home Manager*
+- alle vom *Smart Appliance Enabler* verwalteten Geräte
+
 ![Dashboard](../pics/nodered/Dashboard.png)
 
 Das Dashboard empfängt alle MQTT-Nachrichten des *Smart Appliance Enabler* und aktualisiert sich selbständig. Dadurch bietet es eine Echtzeit-Anzeige auf den Zustand des *Smart Appliance Enabler*. 
