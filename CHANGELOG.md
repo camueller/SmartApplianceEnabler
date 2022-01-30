@@ -12,6 +12,23 @@ und das Projekt folgt den Leitlinien des [Semantic Versioning](https://semver.or
 | SAE         | Smart Appliance Enabler |
 | SHM         | Sunny Home Manager |
 
+## [2.0.2](https://github.com/camueller/SmartApplianceEnabler/releases/tag/2.0.2) - 30.01.2022
+
+### Neu
+- im Node-RED-Dashboard wird jetzt auch angezeigt, wann der SAE das letzte Mal vom SHM abgefragt wurde - siehe [#159](https://github.com/camueller/SmartApplianceEnabler/issues/159). Dazu müssen allerdings die Flows neu importiert werden. Zuvor müssen die alten Flows gelöscht werden - siehe [Löschen der vorhandenen Flows](doc/NodeRED_DE.md)
+
+### Gefixt
+- bei HTTP-Zählern mit Parameter "Zählerstand" konnte die Leistungsberechnung zu falschen Werten führen, wenn bei der vorangegangenen Abfrage ein HTTP-Fehler aufgetreten war
+- beim Schalten via Ampel hat diese direkt nach dem Schalten den neuen Status zunächst nicht richtig angezeigt
+- bei HTTP-Schaltern wurden keine Benachrichtigungen verschickt - siehe [#171](https://github.com/camueller/SmartApplianceEnabler/issues/171)
+
+### Geändert
+- es werden keine "last will" MQTT-Nachrichten mehr verschickt
+- Abfrage der Zähler wird nicht mehr durch SEMP-Abfrage des SHM getriggert
+- HTTP/Modbus-Zähler werden (unabhängig von Parameter "Zählerstand" oder "Leistung") alle 60s abfragt; falls der Zähler zur Anlaufstromerkennung verwendet wir, erfolgt die Abfrage alle 20s
+- für die Zähler werden keine Durchschnitte berechnet: der letzte abfragte (Parameter "Leistung") oder berechnete (Parameter "Zählerstand") Leistungswert wird an den SHM übermittelt
+- der `Forum`-Link zeigt jetzt auf Github-Discussions
+
 ## [2.0.1](https://github.com/camueller/SmartApplianceEnabler/releases/tag/2.0.1) - 21.01.2022
 
 ### Gefixt
