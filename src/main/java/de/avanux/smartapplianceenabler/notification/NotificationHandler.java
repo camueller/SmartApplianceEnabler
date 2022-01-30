@@ -18,7 +18,6 @@
 
 package de.avanux.smartapplianceenabler.notification;
 
-import de.avanux.smartapplianceenabler.appliance.Appliance;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
@@ -29,7 +28,9 @@ import org.slf4j.LoggerFactory;
 import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 public class NotificationHandler implements ApplianceIdConsumer {
     private transient Logger logger = LoggerFactory.getLogger(NotificationHandler.class);
@@ -124,7 +125,13 @@ public class NotificationHandler implements ApplianceIdConsumer {
                 } catch (Exception e) {
                     logger.error("{}: Error executing notification command {}", applianceId, command, e);
                 }
+            } else {
+                logger.debug("{}: Ignoring notification: errorNotification={} shouldSendErrorNotification={}",
+                        applianceId, isErrorNotification(type), shouldSendErrorNotification());
             }
+        }
+        else {
+            logger.debug("{}: Ignoring notification of type {}", applianceId, type);
         }
     }
 }
