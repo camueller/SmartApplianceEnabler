@@ -48,8 +48,8 @@ export class FlowExportComponent implements OnInit {
     const eventPrepareDataId = this.generateId();
     const eventDashboardId = this.generateId();
     return [
-      this.tab(tabId, 'General'),
-      this.uiGroup(uiGroupId, 'General', uiTabId),
+      this.tab(tabId, 'Allgemein'),
+      this.uiGroup(uiGroupId, 'Allgemein', uiTabId),
       this.styleTemplate(this.col1, this.row1, tabId, uiGroupId),
 
       this.mqttIn(this.col1, this.row2, tabId, mqttBrokerId, 'sae/Event/#', [eventJoinId]),
