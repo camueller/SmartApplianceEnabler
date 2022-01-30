@@ -18,7 +18,7 @@
                                      [electricVehicles]="electricVehicles.get(applianceStatus.id)"
                                      [dows]="dows"
                                      (beforeFormSubmit)="onBeforeFormSubmit()"
-                                     (formSubmitted)="onFormSubmitted()"
+                                     (formSubmitted)="onFormSubmitted($event)"
                                      (formCancelled)="onFormCancel()"
           >
           </app-status-evcharger-edit>
@@ -35,7 +35,7 @@
           <app-status-edit *ngIf="isEditMode(applianceStatus); else greenNotClicked"
                            [applianceId]="applianceStatus.id"
                            (beforeFormSubmit)="onBeforeFormSubmit()"
-                           (formSubmitted)="onFormSubmitted()"
+                           (formSubmitted)="onFormSubmitted($event)"
                            (formCancelled)="onFormCancel()"
           >
           </app-status-edit>
@@ -100,4 +100,3 @@
     </div>
   </div>
 </div>
-<!--pre>{{applianceStatuses | json}}</pre-->

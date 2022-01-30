@@ -74,7 +74,7 @@ export class StatusEditComponent implements OnInit {
     const seconds = TimeUtil.toSeconds(runtime);
     this.statusService.setRuntime(this.applianceId, seconds).subscribe(() => {
       this.statusService.toggleAppliance(this.applianceId, true).subscribe(
-        () => this.formSubmitted.emit());
+        () => this.formSubmitted.emit(true));
     });
   }
 }
