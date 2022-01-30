@@ -39,6 +39,7 @@ export class StatusComponent implements OnInit, OnDestroy {
   translatedTypes = {};
   dows: DayOfWeek[] = [];
   loadApplianceStatusesSubscription: Subscription;
+  readonly loadApplianceStatusesRetries = 10;
   @ViewChildren('trafficLights')
   trafficLightComps: QueryList<TrafficLightComponent>;
   applianceIdClicked: string;
@@ -59,7 +60,7 @@ export class StatusComponent implements OnInit, OnDestroy {
       });
     });
     this.route.data.subscribe((data: { settings: Settings, settingsDefaults: SettingsDefaults }) => {
-      this.mqttSettings = data.settings.mqttSettings,
+      this.mqttSettings = data.settings.mqttSettings;
       this.nodeRedDashboardUrl = data.settings.nodeRedDashboardUrl ?? data.settingsDefaults.nodeRedDashboardUrl;
       this.mqttBrokerAvailable = data.settings.mqttSettings.mqttBrokerAvailable;
     });
@@ -84,16 +85,20 @@ export class StatusComponent implements OnInit, OnDestroy {
 
   loadApplianceStatuses(onComplete: () => void) {
     this.statusService.getStatus().subscribe(applianceStatuses => {
-      this.applianceIds = applianceStatuses.map(status => status.id);
-      this.applianceStatuses = applianceStatuses.filter(applianceStatus => applianceStatus.controllable);
-
-      const types = [];
-      this.applianceStatuses.forEach(applianceStatus => types.push(this.typePrefix + applianceStatus.type));
-      if (types.length > 0) {
-        this.translate.get(types).subscribe(translatedTypes => this.translatedTypes = translatedTypes);
-      }
+      this.applianceStatusesLoaded(applianceStatuses);
       onComplete();
     });
+  }
+
+  applianceStatusesLoaded(applianceStatuses: Status[]) {
+    this.applianceIds = applianceStatuses.map(status => status.id);
+    this.applianceStatuses = applianceStatuses.filter(applianceStatus => applianceStatus.controllable);
+
+    const types = [];
+    this.applianceStatuses.forEach(applianceStatus => types.push(this.typePrefix + applianceStatus.type));
+    if (types.length > 0) {
+      this.translate.get(types).subscribe(translatedTypes => this.translatedTypes = translatedTypes);
+    }
   }
 
   get hasControllableAppliances() {
@@ -137,7 +142,7 @@ export class StatusComponent implements OnInit, OnDestroy {
         this_.applianceIdClicked = status.id;
         this_.statusService.toggleAppliance(status.id, false).subscribe(() => {
           this_.statusService.setAcceptControlRecommendations(status.id, false).subscribe();
-          this_.loadApplianceStatuses(() => onActionCompleted.next());
+          this_.retryLoadApplianceStatuses(this.loadApplianceStatusesRetries, status.id, false, () => onActionCompleted.next());
         });
       },
 
@@ -152,7 +157,7 @@ export class StatusComponent implements OnInit, OnDestroy {
           // only switch on again
           this_.statusService.resetAcceptControlRecommendations(status.id).subscribe(() => {
             this_.statusService.toggleAppliance(status.id, true).subscribe(() => {
-              this_.loadApplianceStatuses(() => onActionCompleted.next());
+              this_.retryLoadApplianceStatuses(this.loadApplianceStatusesRetries, status.id, true, () => onActionCompleted.next());
             });
           });
         } else {
@@ -192,12 +197,26 @@ export class StatusComponent implements OnInit, OnDestroy {
     this.getTrafficLightComponent(this.applianceIdClicked).showLoadingIndicator = true;
   }
 
-  onFormSubmitted() {
+  onFormSubmitted(switchOn: boolean) {
     const applianceIdClicked = this.applianceIdClicked;
-    this.loadApplianceStatuses(() => this.getTrafficLightComponent(applianceIdClicked).showLoadingIndicator = false);
-    this.applianceIdClicked = null;
-    this.editMode = false;
-    this.startRefreshStatus(true);
+    this.retryLoadApplianceStatuses(this.loadApplianceStatusesRetries, applianceIdClicked, switchOn);
+  }
+
+  retryLoadApplianceStatuses(retries: number, applianceId: string, switchOn: boolean, onComplete?: () => void) {
+    this.statusService.getStatus().subscribe(applianceStatuses => {
+      const expectedSwitchOnStateMet = applianceStatuses.find(status => status.id === applianceId).on === switchOn;
+      if (expectedSwitchOnStateMet || retries === 0) {
+        this.applianceStatusesLoaded(applianceStatuses);
+        this.applianceIdClicked = null;
+        this.editMode = false;
+        this.startRefreshStatus(true);
+        if (onComplete) {
+          onComplete();
+        }
+      } else {
+        setTimeout(() => this.retryLoadApplianceStatuses(--retries, applianceId, switchOn), 1000);
+      }
+    });
   }
 
   onFormCancel() {
