@@ -142,7 +142,7 @@ export class StatusComponent implements OnInit, OnDestroy {
         this_.applianceIdClicked = status.id;
         this_.statusService.toggleAppliance(status.id, false).subscribe(() => {
           this_.statusService.setAcceptControlRecommendations(status.id, false).subscribe();
-          this_.retryLoadApplianceStatuses(this.loadApplianceStatusesRetries, status.id, false, () => onActionCompleted.next());
+          this_.retryLoadApplianceStatuses(this.loadApplianceStatusesRetries, status.id, false, () => onActionCompleted.next(true));
         });
       },
 
@@ -157,14 +157,14 @@ export class StatusComponent implements OnInit, OnDestroy {
           // only switch on again
           this_.statusService.resetAcceptControlRecommendations(status.id).subscribe(() => {
             this_.statusService.toggleAppliance(status.id, true).subscribe(() => {
-              this_.retryLoadApplianceStatuses(this.loadApplianceStatusesRetries, status.id, true, () => onActionCompleted.next());
+              this_.retryLoadApplianceStatuses(this.loadApplianceStatusesRetries, status.id, true, () => onActionCompleted.next(true));
             });
           });
         } else {
           // display form to request runtime parameters
           this_.editMode = true;
           this_.stopRefreshStatus();
-          onActionCompleted.next();
+          onActionCompleted.next(true);
         }
       }
     };
