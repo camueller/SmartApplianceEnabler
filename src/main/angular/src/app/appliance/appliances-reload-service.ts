@@ -25,6 +25,6 @@ export class AppliancesReloadService {
   triggered: Subject<any> = new Subject();
 
   reload() {
-    this.triggered.next();
+    this.triggered.next(true);
   }
 }
