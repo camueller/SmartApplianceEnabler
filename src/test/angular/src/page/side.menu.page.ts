@@ -1,7 +1,12 @@
 import {Selector} from 'testcafe';
-import {saeRestartTimeout} from '../shared/timeout';
 import {TopMenu} from './top-menu.page';
 import {clickButton} from '../shared/form';
+import {StatusPage} from './status.page';
+import {AppliancePage} from './appliance/appliance.page';
+import {MeterPage} from './meter/meter.page';
+import {ControlPage} from './control/control.page';
+import {SchedulesPage} from './schedule/schedules.page';
+import {isDebug} from '../shared/helper';
 
 export class SideMenu {
 
@@ -12,6 +17,21 @@ export class SideMenu {
     const sideMenuOpen = await Selector('mat-sidenav.mat-drawer-opened').exists;
     if (! sideMenuOpen) {
       await TopMenu.clickMenu(t);
+      await Selector('mat-sidenav.mat-drawer-opened').exists;
+    }
+  }
+
+  private static async clickEntry(t: TestController, clickSelectorString: string, successFunction: () => Promise<boolean>) {
+    await SideMenu.openSideMenuIfClosed(t);
+    await t.expect(Selector(clickSelectorString).exists).ok();
+    let success = false;
+    let retries = 10;
+    while (!success && retries > 0) {
+      if (isDebug()) { console.log(`Click menu entry ${clickSelectorString} ...`); }
+      await clickButton(t, clickSelectorString);
+      success = await successFunction();
+      retries--;
+      if (isDebug()) { console.log(`success=${success} retries=${retries}`); }
     }
   }
 
@@ -21,8 +41,7 @@ export class SideMenu {
   }
 
   public static async clickStatus(t: TestController) {
-    await SideMenu.openSideMenuIfClosed(t);
-    await clickButton(t, SideMenu.STATUS_SELECTOR);
+    await this.clickEntry(t, SideMenu.STATUS_SELECTOR, async () => await StatusPage.pageExists(t));
   }
 
   public static newAppliance(): string {
@@ -30,8 +49,7 @@ export class SideMenu {
   }
 
   public static async clickNewAppliance(t: TestController) {
-    await SideMenu.openSideMenuIfClosed(t);
-    await clickButton(t, SideMenu.newAppliance());
+    await this.clickEntry(t, SideMenu.newAppliance(), async () => await AppliancePage.pageExists(t));
   }
 
   public static appliance(id: string): string {
@@ -39,9 +57,7 @@ export class SideMenu {
   }
 
   public static async clickAppliance(t: TestController, id: string) {
-    await SideMenu.openSideMenuIfClosed(t);
-    await clickButton(t, SideMenu.appliance(id), {timeout: saeRestartTimeout});
-    await Selector('app-appliance', {timeout: saeRestartTimeout}).exists;
+    await this.clickEntry(t, SideMenu.appliance(id), async () => await AppliancePage.pageExists(t));
   }
 
   public static meter(id: string): string {
@@ -49,9 +65,7 @@ export class SideMenu {
   }
 
   public static async clickMeter(t: TestController, id: string) {
-    await SideMenu.openSideMenuIfClosed(t);
-    await clickButton(t, SideMenu.meter(id), {timeout: saeRestartTimeout});
-    await Selector('app-meter', {timeout: saeRestartTimeout}).exists;
+    await this.clickEntry(t, SideMenu.meter(id), async () => await MeterPage.pageExists(t));
   }
 
   public static control(id: string): string {
@@ -59,9 +73,7 @@ export class SideMenu {
   }
 
   public static async clickControl(t: TestController, id: string) {
-    await SideMenu.openSideMenuIfClosed(t);
-    await clickButton(t, SideMenu.control(id), {timeout: saeRestartTimeout});
-    await Selector('app-control', {timeout: saeRestartTimeout}).exists;
+    await this.clickEntry(t, SideMenu.control(id), async () => await ControlPage.pageExists(t));
   }
 
   public static schedule(id: string): string {
@@ -69,8 +81,6 @@ export class SideMenu {
   }
 
   public static async clickSchedule(t: TestController, id: string) {
-    await SideMenu.openSideMenuIfClosed(t);
-    await clickButton(t, SideMenu.schedule(id), {timeout: saeRestartTimeout});
-    await Selector('app-schedules', {timeout: saeRestartTimeout}).exists;
+    await this.clickEntry(t, SideMenu.schedule(id), async () => await SchedulesPage.pageExists(t));
   }
 }

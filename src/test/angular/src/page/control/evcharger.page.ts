@@ -28,7 +28,12 @@ export class EvchargerPage extends ControlPage {
     return `*[formarrayname="electricVehicles"] div:nth-child(${httpReadIndex + 1}) > app-electric-vehicle`;
   }
 
+  public static async waitForPage(t: TestController) {
+    await t.expect(selectorSelectByFormControlName('template').exists).ok();
+  }
+
   public static async setEvChargerFromTemplate(t: TestController, evCharger: EvCharger, templateName: string) {
+    await this.waitForPage(t);
     await selectOption(t, selectorSelectByFormControlName('template'), templateName);
     if (evCharger.protocol === EvChargerProtocol.MODBUS) {
       await EvchargerModbusPage.setIdRef(t, settings.modbusSettings[0].modbusTcpId);
@@ -36,6 +41,7 @@ export class EvchargerPage extends ControlPage {
   }
 
   public static async assertEvCharger(t: TestController, evCharger: EvCharger) {
+    await this.waitForPage(t);
     await EvchargerPage.assertProtocol(t, evCharger.protocol);
     await EvchargerPage.assertVoltage(t, evCharger.voltage && evCharger.voltage.toString());
     await EvchargerPage.assertPhases(t, evCharger.phases && evCharger.phases.toString());
@@ -67,6 +73,7 @@ export class EvchargerPage extends ControlPage {
     if (clickControl) {
       await SideMenu.clickControl(t, applianceId);
     }
+    await this.waitForPage(t);
     if (clickAdd) {
       await clickButton(t, selectorButton(undefined, 'ControlEvchargerComponent__addElectricVehicle'));
     }
@@ -90,6 +97,7 @@ export class EvchargerPage extends ControlPage {
     if (clickControl) {
       await SideMenu.clickControl(t, applianceId);
     }
+    await this.waitForPage(t);
     await EvchargerPage.assertName(t, ev.name, index);
     await EvchargerPage.assertBatteryCapacity(t, ev.batteryCapacity && ev.batteryCapacity.toString(), index);
     await EvchargerPage.assertPhasesEv(t, ev.phases && ev.phases.toString(), index);

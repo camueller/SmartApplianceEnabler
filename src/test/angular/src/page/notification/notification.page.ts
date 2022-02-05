@@ -32,13 +32,13 @@ export class NotificationPage {
 
   public static async setNotifications(t: TestController, notifications: Notifications) {
     await NotificationPage.setNotificationEnabled(t, !! notifications);
-    if (notifications) {
+    if (notifications?.types) {
       await NotificationPage.setNotificationTypes(t, notifications.types);
     }
   }
   public static async assertNotifications(t: TestController, notifications: Notifications) {
     await NotificationPage.assertNotificationEnabled(t, !! notifications);
-    if (notifications) {
+    if (notifications?.types) {
       await NotificationPage.assertNotificationTypes(t, notifications.types);
     }
   }

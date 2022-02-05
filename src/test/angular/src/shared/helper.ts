@@ -1,7 +1,6 @@
 import {Appliance} from '../../../../main/angular/src/app/appliance/appliance';
 import {SideMenu} from '../page/side.menu.page';
 import {AppliancePage} from '../page/appliance/appliance.page';
-import {saeRestartTimeout} from './timeout';
 import {Meter} from '../../../../main/angular/src/app/meter/meter';
 import {S0MeterPage} from '../page/meter/s0-meter.page';
 import {S0ElectricityMeter} from '../../../../main/angular/src/app/meter/s0/s0-electricity-meter';
@@ -83,8 +82,7 @@ export async function createAppliance(t: TestController, appliance: Appliance) {
   await AppliancePage.setAppliance(t, appliance);
   await AppliancePage.clickSave(t);
 
-  await t.expect(Selector(SideMenu.appliance(appliance.id)).exists)
-    .ok('The appliance created should show up in the side menu', {timeout: saeRestartTimeout});
+  await t.expect(Selector(SideMenu.appliance(appliance.id)).exists).ok('The appliance created should show up in the side menu');
 }
 
 export async function assertAppliance(t: TestController, appliance: Appliance) {

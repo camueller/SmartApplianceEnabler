@@ -13,12 +13,26 @@ import {
   setCheckboxEnabled
 } from '../../shared/form';
 import {Appliance} from '../../../../../main/angular/src/app/appliance/appliance';
+import {Selector} from 'testcafe';
 
 export class AppliancePage {
 
   private static SAVE_BUTTON_SELECTOR = 'button[type="submit"]';
 
+  public static pageSelector(t: TestController): Selector {
+    return Selector('form.ApplianceComponent');
+  }
+
+  public static async waitForPage(t: TestController): Promise<void> {
+    await t.expect(await this.pageExists(t)).ok();
+  }
+
+  public static async pageExists(t: TestController): Promise<boolean> {
+    return (await this.pageSelector(t)).exists;
+  }
+
   public static async setAppliance(t: TestController, appliance: Appliance) {
+    await this.waitForPage(t);
     await AppliancePage.setId(t, appliance.id);
     await AppliancePage.setVendor(t, appliance.vendor);
     await AppliancePage.setName(t, appliance.name);
@@ -37,6 +51,7 @@ export class AppliancePage {
   }
 
   public static async assertAppliance(t: TestController, appliance: Appliance) {
+    await this.waitForPage(t);
     await AppliancePage.assertId(t, appliance.id);
     await AppliancePage.assertVendor(t, appliance.vendor);
     await AppliancePage.assertName(t, appliance.name);
