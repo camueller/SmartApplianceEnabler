@@ -51,7 +51,7 @@
     animation:         yellow-blink 1s infinite; /* IE 10+, Fx 29+ */
   }
 
-  @-webkit-keyframes yellow-blink {
+  @keyframes yellow-blink {
     0%, 49% {
       background-color: yellow;
     }
@@ -71,7 +71,7 @@
     animation:         green-blink 1s infinite; /* IE 10+, Fx 29+ */
   }
 
-  @-webkit-keyframes green-blink {
+  @keyframes green-blink {
     0%, 49% {
       background-color: #14ff08;
     }
