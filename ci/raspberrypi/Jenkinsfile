@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         VERSION = readMavenPom().getVersion()
+        DOCKER_TAG = "${env.BETA_RELEASE == "true" ? "beta" : "latest"}"
     }
 
     stages {
@@ -13,14 +14,14 @@ pipeline {
                     sh 'mv ../../../SmartApplianceEnabler-"$VERSION".war sae-arm32/'
                     sh "sed -i 's#@project.version@#'\"$VERSION\"'#' ./sae-arm32/Dockerfile"
                     sh "docker build --tag=avanux/smartapplianceenabler-arm32:$VERSION ./sae-arm32"
-                    sh "docker tag avanux/smartapplianceenabler-arm32:$VERSION avanux/smartapplianceenabler-arm32:latest"
+                    sh "docker tag avanux/smartapplianceenabler-arm32:$VERSION avanux/smartapplianceenabler-arm32:$DOCKER_TAG"
                     sh "git reset --hard" /* revert changes on Dockerfile */
                 }
                 withCredentials([usernamePassword(credentialsId: 'docker', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                     sh "echo $PASSWORD | docker login --username $USERNAME --password-stdin"
                     dir('docker') {
                         sh "docker push avanux/smartapplianceenabler-arm32:$VERSION"
-                        sh "docker push avanux/smartapplianceenabler-arm32"
+                        sh "docker push avanux/smartapplianceenabler-arm32:$DOCKER_TAG"
                     }
                 }
 

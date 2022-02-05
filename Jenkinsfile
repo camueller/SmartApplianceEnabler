@@ -13,10 +13,16 @@ pipeline {
         maven "Maven"
     }
 
+    parameters {
+        booleanParam(name: 'DOCKER_PUSH', defaultValue: false, description: 'Push docker image to Dockerhub?')
+        booleanParam(name: 'BETA_RELEASE', defaultValue: false, description: 'Is this a beta release?')
+    }
+
     environment {
         VERSION = readMavenPom().getVersion()
         BROWSERSTACK_USERNAME = credentials('BROWSERSTACK_USERNAME')
         BROWSERSTACK_ACCESS_KEY = credentials('BROWSERSTACK_ACCESS_KEY')
+        DOCKER_TAG = "${env.BETA_RELEASE == "true" ? "beta" : "latest"}"
     }
 
     stages {
@@ -75,20 +81,20 @@ pipeline {
         }
         stage('Publish') {
             when {
-                environment name: 'DOCKER_PUSH', value: 'true'
+                expression { params.DOCKER_PUSH }
             }
             steps {
                 dir('docker') {
                     sh "cp ../target/SmartApplianceEnabler*.war sae-amd64/"
                     sh "sed -i 's#@project.version@#'\"$VERSION\"'#' ./sae-amd64/Dockerfile"
                     sh "docker build --tag=avanux/smartapplianceenabler-amd64:$VERSION ./sae-amd64"
-                    sh "docker tag avanux/smartapplianceenabler-amd64:$VERSION avanux/smartapplianceenabler-amd64:latest"
+                    sh "docker tag avanux/smartapplianceenabler-amd64:$VERSION avanux/smartapplianceenabler-amd64:$DOCKER_TAG"
                 }
                 withCredentials([usernamePassword(credentialsId: 'docker', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                     sh "echo $PASSWORD | docker login --username $USERNAME --password-stdin"
                     dir('docker') {
                         sh "docker push avanux/smartapplianceenabler-amd64:$VERSION"
-                        sh "docker push avanux/smartapplianceenabler-amd64:latest"
+                        sh "docker push avanux/smartapplianceenabler-amd64:$DOCKER_TAG"
                     }
                 }
                 sh 'scp target/SmartApplianceEnabler-"$VERSION".war jenkins@raspi2:/home/jenkins/'
