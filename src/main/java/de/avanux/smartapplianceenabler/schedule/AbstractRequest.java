@@ -190,6 +190,7 @@ abstract public class AbstractRequest implements Request {
 
     @Override
     public void controlStateChanged(LocalDateTime now, boolean switchOn) {
+        getLogger().trace("{} request={} switchOn={} active={} expired={}", getApplianceId(), toString(now), switchOn, isActive(), isExpired());
         if (isActive() || isExpired()) {
             if (switchOn) {
                 enabledBefore = true;
