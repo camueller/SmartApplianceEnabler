@@ -524,7 +524,6 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                 logger.info("{}: Switching off", applianceId);
                 stopCharging();
             }
-            publishControlMessage(switchOn);
         }
         else {
             logger.debug("{}: Requested state already set.", applianceId);
@@ -770,6 +769,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
             this.stopChargingRequested = false;
             control.startCharging();
             this.switchChargingStateTimestamp = System.currentTimeMillis();
+            publishControlMessage(true);
         }
     }
 
@@ -780,6 +780,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     public synchronized void stopCharging() {
         if(!stopChargingRequested) {
             logger.debug("{}: Stop charging process", applianceId);
+            publishControlMessage(false);
             this.startChargingRequested = false;
             this.stopChargingRequested = true;
             control.stopCharging();
