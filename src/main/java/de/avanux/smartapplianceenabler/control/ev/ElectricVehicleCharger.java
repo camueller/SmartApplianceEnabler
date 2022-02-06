@@ -206,6 +206,14 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         }
     }
 
+    private void updateControlStateChangedListeners(LocalDateTime now, boolean switchOn) {
+        for(ControlStateChangedListener listener : new ArrayList<>(controlStateChangedListeners)) {
+            logger.debug("{}: Notifying {} {}", applianceId, ControlStateChangedListener.class.getSimpleName(),
+                    listener.getClass().getSimpleName());
+            listener.controlStateChanged(now, switchOn);
+        }
+    }
+
     private int calculateCurrentSoc() {
         ElectricVehicle vehicle = getConnectedVehicle();
         if (vehicle != null) {
@@ -509,11 +517,6 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                 logger.info("{}: Switching off", applianceId);
                 stopCharging();
             }
-            for(ControlStateChangedListener listener : new ArrayList<>(controlStateChangedListeners)) {
-                logger.debug("{}: Notifying {} {}", applianceId, ControlStateChangedListener.class.getSimpleName(),
-                        listener.getClass().getSimpleName());
-                listener.controlStateChanged(now, switchOn);
-            }
         }
         else {
             logger.debug("{}: Requested state already set.", applianceId);
@@ -773,6 +776,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
             this.stopChargingRequested = false;
             control.startCharging();
             this.switchChargingStateTimestamp = System.currentTimeMillis();
+            updateControlStateChangedListeners(LocalDateTime.now(), true);
         }
     }
 
@@ -783,6 +787,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     public synchronized void stopCharging() {
         if(!stopChargingRequested) {
             logger.debug("{}: Stop charging process", applianceId);
+            updateControlStateChangedListeners(LocalDateTime.now(), false);
             this.startChargingRequested = false;
             this.stopChargingRequested = true;
             control.stopCharging();
