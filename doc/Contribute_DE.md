@@ -3,7 +3,7 @@
 Jeder von Euch kann helfen, den *Smart Appliance Enabler* besser zu machen:
 
 - Unterstützung anderer Anwender durch Beantwortung von deren Fragen im [Forum](https://www.photovoltaikforum.com/geraete-mit-home-manager-koppeln-via-semp-ethernet-t104060.html)
-- Ihr habt Ideen, was den *Smart Appliance Enabler* noch nützlicher machen würde? Kommuniziert diese Ideen im [Forum](https://www.photovoltaikforum.com/geraete-mit-home-manager-koppeln-via-semp-ethernet-t104060.html) oder [erstellt einen Issue auf Github](https://github.com/camueller/SmartApplianceEnabler/issues).
+- Ihr habt Ideen, was den *Smart Appliance Enabler* noch nützlicher machen würde? Kommuniziert diese Ideen im [Forum](https://github.com/camueller/SmartApplianceEnabler/discussions) oder [erstellt einen Issue auf Github](https://github.com/camueller/SmartApplianceEnabler/issues).
 - Verbesserung der vorhandenen Dokumentation oder Erstellung neuer Dokumentation, insbesondere Eure [Anwendungsszenarien](ApplicationScenarios_DE.md)
 
 ## Github

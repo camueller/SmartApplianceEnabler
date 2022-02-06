@@ -1,7 +1,7 @@
 # Support
 ## Anwender-Forum
 
-Fragen zur Verwendung des *Smart Appliance Enabler* sollten im SEMP-Thread des *photovoltaik-forums* im SMA Herstellerbereich gestellt werden: https://www.photovoltaikforum.com/geraete-mit-home-manager-koppeln-via-semp-ethernet-t104060.html.
+Fragen zur Verwendung des *Smart Appliance Enabler* sollten im [Forum](https://github.com/camueller/SmartApplianceEnabler/discussions) gestellt werden.
 
 **Bitte keine Fragen direkt per Email an mich stellen!** Wenn die Fragen im Forum gestellt werden, haben alle was davon und die Chance auf Antworten ist deutlich größer.
 
