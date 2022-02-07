@@ -29,25 +29,12 @@ die IP-Adresse bzw. der Hostname in den URL-Feldern muss auf die des go-eCharger
 
 Als `Format` muss `JSON` ausgewählt werden, damit die Antworten des go-eCharger korrekt interpretiert werden können.
 
-Das Feld `Pfad` muss den Wert `$.dws` enthalten, damit der *Smart Appliance Enabler* weiss, an welcher Stelle in der Antwort des go-eChargers der Wert für die Energie enthalten ist. 
+Das Feld `Pfad für Extraktion` muss den Wert `$.dws` enthalten, damit der *Smart Appliance Enabler* weiss, an welcher Stelle in der Antwort des go-eChargers der Wert für die Energie enthalten ist. 
 
 Im Feld `Umrechnungsfaktor` muss die Zahl `0.0000027778` eingegeben werden, weil der go-eCharger die Energie in 10 Deka-Watt-Sekunden liefert.
 
-Als Parameter ist `Zählerstand` zu wählen.
+Es wird empfohlen, den Parameter `Zählerstand` zu wählen. Dadurch wird der go-eCharger weniger oft (alles 60 Sekunden) abgfragt und die Leistung wird aus der Zählerstandsdifferenz berechnet.
 
 ![Konfiguration des go-eCharger als Zähler](../pics/fe/EVChargerGoeChargerMeter.png)
 
-### Leistung
-
-Der go-eCharger kann auch seine aktuell gemessene Leistung ausgeben, d.h. er kann auch als `Leistung` im *Smart Appliance Enabler*
-konfiguriert werden, dies hat jedoch zur folge das die Abfrage des go-eCharger öfter erfolgen muss als in der Konfiguration oben mit `Zählerstand`.
-Die IP-Adresse bzw. der Hostname in den URL-Feldern muss auf die des go-eChargers angepasst werden. 
-
-Als `Format` muss `JSON` ausgewählt werden, damit die Antworten des go-eCharger korrekt interpretiert werden können.
-
-Das Feld `Pfad` muss den Wert `$.nrg[11]` enthalten, damit der *Smart Appliance Enabler* weiss, an welcher Stelle in der Antwort des go-eChargers der Wert für die Energie enthalten ist, in diesem Fall findet sich der Wert in dem Array nrg auf der Stelle 12. 
-
-Im Feld `Umrechnungsfaktor` muss die Zahl `10` eingegeben werden, weil der go-eCharger die Leistung in 0.01kW liefert.
-Da die erste Generation go-eCharger relativ ungenau messen, habe ich den Faktor 11.4 eingetragen und komme so annährend auf realistische Werte.
-
-Als Parameter ist `Leistung` zu wählen.
+Alternativ kann als Parameter `Leistung` konfiguriert werden, um direkt den vom go-eCharger gemeldete Leistung zu übernehmen anstatt sie aus Zählerstandsdifferenzen zu berechnen. Dazu muss im Feld `Pfad für Extraktion` der Wert `$.nrg[11]` eingetragen werden. Im Feld `Umrechnungsfaktor` muss die Zahl `10` eingegeben werden, weil der go-eCharger die Leistung in 0.01kW liefert.

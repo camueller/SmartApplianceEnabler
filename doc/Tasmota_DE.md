@@ -85,12 +85,12 @@ Tasmota liefert die Antwort im JSON-Format, die formatiert wie folgt aussieht:
 
 Aus obigem Beispiel ergeben sich folgende Feld-Inhalte im *Smart Appliance Enabler*:
 
-| Feld                                            | Wert                                  |
-| ----------------------------------------------- | ------------------------------------- |
-| Format                                          | JSON                                  |
-| URL                                             | http://192.168.1.1/cm?cmnd=Status%208 |
-| Pfad (für Zustand `Zählerstand`)                | $.StatusSNS.ENERGY.Total              |
-| Pfad (für Zustand `Leistung`)                   | $.StatusSNS.ENERGY.Power              |
+| Feld                                              | Wert                                  |
+|---------------------------------------------------| ------------------------------------- |
+| Format                                            | JSON                                  |
+| URL                                               | http://192.168.1.1/cm?cmnd=Status%208 |
+| Pfad für Extraktion (bei Parameter `Zählerstand`) | $.StatusSNS.ENERGY.Total              |
+| Pfad für Extraktion (bei Parameter `Leistung`)    | $.StatusSNS.ENERGY.Power              |
 
 Der `Zählerstand` wird standardmässig von Tasmota nur mit 3 Nachkommastellen geliefert. Damit der *Smart Appliance Enabler* aus Zählertandsdifferenzen die Leistung möglich genau berechnen kann, muss der Tasmota-Adapter **auf 5 Nachkomstellen konfiguriert** werden.
 Dazu geht man auf die Tasmota-Web-Konsole des Adapters und gibt den Befehl `EnergyRes 5` ein und schliesst die Eingabe mit `Enter` ab:
@@ -133,11 +133,11 @@ $ curl http://192.168.1.1/cm?cmnd=Power
 
 Aus obigem Beispiel ergeben sich folgende Feld-Inhalte im *Smart Appliance Enabler*:
 
-| Zustand / Aktion | URL                                    | Regex für Extraktion
-| ----             | ----                                   | ----
-| Einschalten      | http://192.168.1.1/cm?cmnd=Power%20On  |
-| Ausschalten      | http://192.168.1.1/cm?cmnd=Power%20Off |
-| Eingeschaltet    | http://192.168.1.1/cm?cmnd=Power       | :.ON
+| Feld                      | URL                                    | Regex für Extraktion |
+|---------------------------| ----                                   | ----                 |
+| Aktion "Einschalten"      | http://192.168.1.1/cm?cmnd=Power%20On  |                      |
+| Aktion "Ausschalten"      | http://192.168.1.1/cm?cmnd=Power%20Off |                      |
+| Parameter "Eingeschaltet" | http://192.168.1.1/cm?cmnd=Power       | :.ON                 |
 
 Für jeden Schaltvorgang finden sich im [Log](Logging_DE.md) folgende Zeilen:
 ```

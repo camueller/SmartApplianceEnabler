@@ -18,7 +18,7 @@ Wie oben geschrieben muss der WARP Charger selbst als Zähler angegeben werden, 
 
 Als `Format` muss `JSON` ausgewählt werden, damit die Antworten des WARP Charger korrekt interpretiert werden können.
 
-Das Feld `Pfad` muss den Wert `$.energy_abs` enthalten, damit der *Smart Appliance Enabler* weiss, an welcher Stelle in der Antwort des WARP-Chargers der Wert für die Energie enthalten ist.
+Das Feld `Pfad für Extraktion` muss den Wert `$.energy_abs` enthalten, damit der *Smart Appliance Enabler* weiss, an welcher Stelle in der Antwort des WARP-Chargers der Wert für die Energie enthalten ist.
 
 Als Zustand ist `Zählerwert` zu wählen.
 
