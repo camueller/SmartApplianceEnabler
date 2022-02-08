@@ -354,12 +354,16 @@
   "ScheduleTimeframeConsecutivedaysComponent.error.endTime_pattern": "Die Endzeit muss in 'Stunden:Minuten' angegeben werden",
 
   "ScheduleRequestRuntimeComponent.minRuntime": "Mindestlaufzeit [HH:MM]",
+  "ScheduleRequestRuntimeComponent.minRuntime.tooltip": "Wenn eine Mindestlaufzeit angegeben wird, wird diese Laufzeit sichergestellt. Sie kann bei vorhandenem PV-Überschuss bis zur maximalen Laufzeit erweitert werden. Bei Angabe von 0:00 wird das Gerät ausschliesslich bei vorhandenem PV-Überschuss laufen.",
   "ScheduleRequestRuntimeComponent.maxRuntime": "Maximale Laufzeit [HH:MM]",
+  "ScheduleRequestRuntimeComponent.maxRuntime.tooltip": "Die maximale Laufzeit wird gerantiert, wenn keine Mindestlaufzeit angegeben ist. Wenn eine Mindestlaufzeit angegeben ist, kann bei vorhandenem PV-Überschuss die Laufzeit bis zur maximalen Laufzeit erweitert werden.",
   "ScheduleRequestRuntimeComponent.error.minRuntime_pattern": "Die minimale Laufzeit muss in 'Stunden:Minuten' angegeben werden",
   "ScheduleRequestRuntimeComponent.error.maxRuntime_pattern": "Die maximale Laufzeit muss in 'Stunden:Minuten' angegeben werden",
 
   "ScheduleRequestEnergyComponent.minEnergy": "Min. Energie [Wh]",
+  "ScheduleRequestEnergyComponent.minEnergy.tooltip": "Wenn eine Mindestenergiemenge angegeben wird, wird diese Energiemenge sichergestellt. Sie kann bei vorhandenem PV-Überschuss bis zur maximalen Energiemenge erweitert werden. Bei Angabe von 0 wird ausschliesslich bei vorhandenem PV-Überschuss geladen.",
   "ScheduleRequestEnergyComponent.maxEnergy": "Max. Energie [Wh]",
+  "ScheduleRequestEnergyComponent.maxEnergy.tooltip": "Die maximale Energiemenge wird gerantiert, wenn keine Mindestenergiemenge angegeben ist. Wenn eine Mindestenergiemenge angegeben ist, kann bei vorhandenem PV-Überschuss die Energiemenge bis zur maximalen Energiemenge erweitert werden.",
   "ScheduleRequestEnergyComponent.error.minEnergy_pattern": "Die minimale Energie muss in Wh angegeben werden",
   "ScheduleRequestEnergyComponent.error.maxEnergy_pattern": "Die maximale Energie muss in Wh angegeben werden",
 
