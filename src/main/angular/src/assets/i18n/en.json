@@ -341,12 +341,16 @@
   "ScheduleTimeframeConsecutivedaysComponent.error.endTime_pattern": "The end time has to be specified as 'Hours:Minutes'",
 
   "ScheduleRequestRuntimeComponent.minRuntime": "Min. runtime [HH:MM]",
+  "ScheduleRequestRuntimeComponent.minRuntime.tooltip": "If a minimal runtime is configured this runtime will be guaranteed. It may be extended up to the maximum runtime if excess energy is available. If a value of 0:00 is configured the device will only run if excess energy is available.",
   "ScheduleRequestRuntimeComponent.maxRuntime": "Max. runtime [HH:MM]",
+  "ScheduleRequestRuntimeComponent.maxRuntime.tooltip": "The maximum runtime will be guaranteed if no minimal runtime is configured. If a minimal runtime is configured it may be extended up to the maximum runtime if excess energy is available.",
   "ScheduleRequestRuntimeComponent.error.minRuntime_pattern": "The minimal runtime has to be specified as 'Hours:Minutes'",
   "ScheduleRequestRuntimeComponent.error.maxRuntime_pattern": "The maximum runtime has to be specified as 'Hours:Minutes'",
 
   "ScheduleRequestEnergyComponent.minEnergy": "Min. Energy [Wh]",
+  "ScheduleRequestEnergyComponent.minEnergy.tooltip": "If minimal energy is configured this energy will be guaranteed. It may be extended up to the maximum energy if excess energy is available. If a value of 0:00 is configured the device will only run if excess energy is available.",
   "ScheduleRequestEnergyComponent.maxEnergy": "Max. Energy [Wh]",
+  "ScheduleRequestEnergyComponent.maxEnergy.tooltip": "The maximum energy will be guaranteed if no minimal energy is configured. If a minimal energy is configured it may be extended up to the maximum energy if excess energy is available.",
   "ScheduleRequestEnergyComponent.error.minEnergy_pattern": "The minimal energy has to be specified in Wh",
   "ScheduleRequestEnergyComponent.error.maxEnergy_pattern": "The maximum energy has to be specified in Wh",
 
