@@ -1,11 +1,13 @@
 <div class="ControlEvchargerModbusComponent">
-  <messagebox [level]="MessageBoxLevel.INFO" *ngIf="settings.modbusSettings.length === 0"
+  <messagebox [level]="MessageBoxLevel.INFO" *ngIf="settings.modbusSettings?.length === 0"
   >{{'error.modbus_not_configured' | translate}}</messagebox>
   <div [style]="displayNoneStyle">
     <div class="sae__fields">
       <mat-form-field class="sae__modbus-name">
         <mat-label>{{'ControlEvchargerModbusComponent.idref' | translate}}</mat-label>
-        <mat-select formControlName="idref" required="{{formHandler.isRequired('idref')}}">
+        <mat-select formControlName="idref"
+                    matTooltip="{{'ControlEvchargerModbusComponent.idref.tooltip' | translate}}"
+                    required="{{formHandler.isRequired('idref')}}">
           <mat-option *ngFor="let modbusSetting of settings.modbusSettings" [value]="modbusSetting.modbusTcpId">
             {{modbusSetting.modbusTcpId}}
           </mat-option>
