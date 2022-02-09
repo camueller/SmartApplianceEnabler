@@ -230,6 +230,7 @@
   "ControlEvchargerComponent.message.missingWrite": "Write access for the following parameters/actions has not yet been configured",
 
   "ControlEvchargerModbusComponent.idref": "Modbus",
+  "ControlEvchargerModbusComponent.idref.tooltip": "Selection of Modbus/TCP configured in \"Settings\"",
   "ControlEvchargerModbusComponent.slaveAddress": "Slave address",
   "ControlEvchargerModbusComponent.heading.modbusRead": "Read access",
   "ControlEvchargerModbusComponent.heading.modbusWrite": "Write access",

@@ -230,6 +230,7 @@
   "ControlEvchargerComponent.message.missingWrite": "Der Schreibzugriff für folgende Zustände/Aktionen muss noch konfiguriert werden",
 
   "ControlEvchargerModbusComponent.idref": "Modbus",
+  "ControlEvchargerModbusComponent.idref.tooltip": "Auswahl eines in den \"Einstellungen\" konfigurierten Modbus/TCP.",
   "ControlEvchargerModbusComponent.slaveAddress": "Slave-Adresse",
   "ControlEvchargerModbusComponent.heading.modbusRead": "Lesezugriff",
   "ControlEvchargerModbusComponent.heading.modbusWrite": "Schreibzugriff",

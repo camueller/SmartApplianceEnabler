@@ -93,7 +93,7 @@ export class ControlEvchargerModbusComponent implements OnChanges, OnInit {
   }
 
   get displayNoneStyle() {
-    return this.settings.modbusSettings.length === 0 ? {display: 'none'} : undefined;
+    return this.settings.modbusSettings?.length === 0 ? {display: 'none'} : undefined;
   }
 
   get readValueNamesNotConfigured() {
