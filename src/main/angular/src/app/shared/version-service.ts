@@ -71,7 +71,8 @@ export class VersionService {
               prerelease: mostRecentStableRelease.prerelease
             });
           }
-          if (this.versionTagToNumber(mostRecentRelease.tag_name) > this.versionTagToNumber(currentVersion?.version)) {
+          const currentVersionIsStableRelease = !orderedReleasesMostRecentFirst.find(release => this.versionTagToNumber(release.tag_name) === this.versionTagToNumber(currentVersion?.version)).prerelease ?? false;
+          if (!availableVersions.length && !currentVersionIsStableRelease && this.versionTagToNumber(mostRecentRelease.tag_name) > this.versionTagToNumber(currentVersion?.version)) {
             availableVersions.push({
               version: orderedReleasesMostRecentFirst[0].tag_name,
               prerelease: orderedReleasesMostRecentFirst[0].prerelease
