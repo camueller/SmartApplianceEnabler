@@ -233,6 +233,14 @@ pi@raspberrypi ~ $ sudo systemctl enable pigpiod
 Created symlink /etc/systemd/system/multi-user.target.wants/pigpiod.service → /lib/systemd/system/pigpiod.service.
 ```
 
+### Hinweis bei Update des Smart Appliance Enabler von Version < 2.x 
+
+Damit `pigpiod` verwendet wird, ist der neue Parameter `-DPIGPIOD_HOST=localhost` erforderlich. Dementsprechend wurde die Datei `/etc/default/smartapplianceenabler` geändert, welche bei einer neuen Installation installiert wird. Wenn bei einer vorhandenen Installation ein Update durchgeführt wird fehlt dann natürlich der Parameter. Man kann aber einfach selbst die folgende Zeilen an die Datei anhängen:
+```console
+# Configure pigpioj to use pigpiod daemon in order to avoid forcing the Smart Appliance Enabler to run as root
+JAVA_OPTS="${JAVA_OPTS} -DPIGPIOD_HOST=localhost"
+```
+
 ## MQTT-Broker
 Der *Smart Appliance Enabler* benötigt einen MQTT-Broker, wobei ein bereits vorhandener MQTT-Broker genutzt werden kann.
 Falls noch kein MQTT-Broker vorhanden ist, empfiehlt sich die Verwendung von [Eclipse Mosquitto](https://mosquitto.org/).
