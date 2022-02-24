@@ -12,6 +12,21 @@ und das Projekt folgt den Leitlinien des [Semantic Versioning](https://semver.or
 | SAE         | Smart Appliance Enabler |
 | SHM         | Sunny Home Manager |
 
+## [1.6.19](https://github.com/camueller/SmartApplianceEnabler/releases/tag/1.6.19) - 24.02.2022
+
+### Gefixt
+- Wallbox: Zeitpläne wurde nicht richtig in Intervalle umgesetzt wegen Überlagerung mit Überschuss-Intervall
+- Wallbox: die Auswahl einer Vorlage mit Modbus-Protokoll führt nicht mehr zu einem Fehler, wenn kein Modbus/TCP konfiguriert wurde. Ausserdem wird ein entsprechender Tool-Tip am Feld zur Auswahhl des Modbus angezeigt.
+
+### Geändert
+- Abfrage der Zähler wird nicht mehr durch SEMP-Abfrage des SHM getriggert
+- HTTP/Modbus-Zähler werden (unabhängig von Parameter "Zählerstand" oder "Leistung") alle 60s abfragt; falls der Zähler zur Anlaufstromerkennung verwendet wir, erfolgt die Abfrage alle 20s
+- für die Zähler werden keine Durchschnitte berechnet: der letzte abfragte (Parameter "Leistung") oder berechnete (Parameter "Zählerstand") Leistungswert wird an den SHM übermittelt
+- der `Forum`-Link zeigt jetzt auf Github-Discussions
+
+### Neu
+- in den Zeitplängen haben die min/max-Felder für Laufzeit und Energie jetzt Tool-Tips  
+
 ## [1.6.18](https://github.com/camueller/SmartApplianceEnabler/releases/tag/1.6.18) - 20.12.2021
 
 ### Gefixt
