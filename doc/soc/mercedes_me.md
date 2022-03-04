@@ -1,6 +1,7 @@
 # Mercedes Me
 Mercedes stellt eine API bereit, die es erlaubt verschiedene Daten wie z.B. SoC oder Restreichweite des eigenen Fahrzeugs auszulesen. Anbei findet sich ein shellbasiertes Skript, das an das Projekt "Mercedes_me_Api" angelehnt ist (https://github.com/xraver/mercedes_me_api).
-Voraussetzung ist, dass man einen Mercedes Me Account erstellt hat und dort in der Diensteverwaltung für das Auto den Dienst "Schnittstelle Drittanbieter: Fahrzeugdaten" aktiviert hat. Nun loggt man sich im Developer-Portal ein (https://developer.mercedes-benz.com/). Dort muss ein Projekt erstellt werden, dem dann verschiedene Dienste zugeorndet werden können. Für den SoC ist der Dienst "Electric Vehicle Status" wichtig. Unter der "Bring your own car"-Option ist der Zugriff aufs eigene Fahrzeug kostenlos möglich. Beim Anlegen des Projekts wird eine Client Id und ein Client Secret erzeugt, die man für die später für die Authentisierung braucht.
+
+Voraussetzung ist, dass man einen Mercedes Me Account erstellt hat und dort in der Diensteverwaltung für das Auto den Dienst "Schnittstelle Drittanbieter: Fahrzeugdaten" aktiviert hat. Nun loggt man sich im Developer-Portal ein (https://developer.mercedes-benz.com/). Dort muss ein Projekt erstellt werden, dem dann verschiedene Dienste zugeorndet werden können. Für den SoC ist der Dienst "Electric Vehicle Status" wichtig. Unter der "Bring your own car"-Option ist der Zugriff aufs eigene Fahrzeug kostenlos möglich. Beim Anlegen des Projekts wird eine Client Id und ein Client Secret erzeugt, die man später für die Authentisierung braucht.
 Die API verwendet das OAUTH2.0 Verfahren. Vereinzelte Nutzer berichten aber davon, dass nach einigen Tagen die initiale Tokengenerierung erneut manuell durchgeführt werden muss.
 
 Im Folgenden werden mehrere Skripte erstellt. Eines stellt die Verbindung zur API von Mercedes her und dient gleichzeitig der Generierung von Access- und Refreshtoken. Ein zweites Skript ruft das erste in Verbindung mit einem Argument auf um den SoC zu erhalten. Dieses Skript wird vom SAE ausgeführt. Ein drittes wird als Cronjob eingerichtet, um alle zwei Stunden den Token zu erneuern.
@@ -201,16 +202,18 @@ echo
 parse_options $@
 ```
 
-Damit das SOC-Python-Script von überall aus aufgerufen werden kann und trotzdem die `soc.ini` gefunden wird, hilft folgendes kleine Shell-Script `/opt/sae/soc/soc.sh`, das vom *Smart Appliance Enabler* aufgerufen wird:
+Nun legen wird das eigentliche Skript "soc.sh" an, das vom *Smart Appliance Enabler* aufgerufen wird.
 
 ```console
 #!/bin/sh
 cd /opt/sae/soc
-python3 ./soc.py
+./mercedes_me_api.sh -e
 ```
 
-Das Script muss noch ausführbar gemacht werden:
+Beide Skripte müssen ggf. noch sae:sae zugewiesen und ausführbar gemacht werden:
 ```console
+pi@raspberrypi:/opt/sae/soc $ chown sae:sae -R /opt/sae/soc/
+pi@raspberrypi:/opt/sae/soc $ chmod +x mercedes_me_api.sh
 pi@raspberrypi:/opt/sae/soc $ chmod +x soc.sh
 ```
 
@@ -225,5 +228,5 @@ soc: 65
 Im *Smart Appliance Enabler* wird als SOC-Script angegeben: `/opt/sae/soc/soc.sh`.
 Außerdem muss der nachfolgende *Reguläre Ausdruck* angegeben werden, um aus den Ausgaben den eigentlichen Zahlenwert zu extrahieren:
 ```
-.*soc: (\d+).*
+.*soc":\{"value":"([0-9.]+).*
 ```
