@@ -245,7 +245,7 @@ Außerdem muss der nachfolgende *Reguläre Ausdruck* angegeben werden, um aus de
 ```
 
 ### Cronjob zur Generierung des Accesstoken
-Da der Accesstoken nach 7200 Sekunden abläuft, wird ein Cronjob eingerichtet, der alle zwei Stunden mit Hilfe des Refreshtokens einen neuen Accesstoken erzeugt.
+Da der Accesstoken nach 7200 Sekunden abläuft, muss ein Cronjob eingerichtet werden, der alle zwei Stunden mit Hilfe des Refreshtokens einen neuen Accesstoken erzeugt.
 Dafür wird ein Skript mit dem Namen `token_refresh.sh` und diesem Inhalt angelegt und über crontab aufgerufen:
 ```console
 #!/bin/sh
