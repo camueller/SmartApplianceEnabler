@@ -19,7 +19,7 @@ CLIENT_ID=<INSERT_YOUR_CLIENT_ID>
 CLIENT_SECRET=<INSERT_YOUR_CLIENT_SECRET>
 VEHICLE_ID=<INSERT_YOUR_VEHICLE_ID>
 ```
-Entsprechende Felder in <> sind mit der Client ID und dem Client Secret des Developer-Projekts zu ersetzen. VEHICLE_ID ist die Fahrzeugidentifikationsnummer.
+Entsprechende Felder in `<>` sind mit der Client ID und dem Client Secret des Developer-Projekts zu ersetzen. VEHICLE_ID ist die Fahrzeugidentifikationsnummer.
 
 Das eigentliche Mercedes Me API-Script wird mit dem Namen `mercedes_me_api.sh` und folgendem Inhalt angelegt:
 ```console
@@ -202,7 +202,7 @@ echo
 parse_options $@
 ```
 
-Nun wird das eigentliche Skript 'soc.sh' angelegt, das dann vom *Smart Appliance Enabler* aufgerufen wird. Es hat diesen Inhalt:
+Nun wird das eigentliche Skript `soc.sh` angelegt, das dann vom *Smart Appliance Enabler* aufgerufen wird. Es hat diesen Inhalt:
 
 ```console
 #!/bin/sh
@@ -218,12 +218,12 @@ pi@raspberrypi:/opt/sae/soc $ chmod +x soc.sh
 ```
 
 ### Erstmalige Generierung von Access- und Refreshtoken
-Um einen Accesstoken zu erhalten, muss das Skript mercedes_me_api.sh manuell mit dem Argument '-t' ausgeführt werden. 
+Um einen Accesstoken zu erhalten, muss das Skript `mercedes_me_api.sh` manuell mit dem Argument `-t` ausgeführt werden. 
 
 ```console
 pi@raspberrypi:/opt/sae/soc $ ./mercedes_me_api.sh -t
 ```
-Man wird nun aufgefordert, eine URL aufzurufen. Diese einfach kopieren und mit einem Browser öffnen. Nun gelangt man zur Authentifizierung der angefragten Dienste. Dort muss der Zugriff bestätigt werden. Anschließend erfolgt ein redirect auf eine Seite mit der url https://localhost/, was verständlicherweise zu einer Fehlermeldung führt. Hier ist aber der "Code" wichtig, der sich in dieser URL verbirgt. Diesen Code kopieren und in das laufende Skript einfügen. Mit Bestätigung durch die Eingabetaste ist die Tokengenerierung erfolgt. Im Hintergrund wird dabei eine Datei namens '.mercedesme_token' angelegt.
+Man wird nun aufgefordert, eine URL aufzurufen. Diese einfach kopieren und mit einem Browser öffnen. Nun gelangt man zur Authentifizierung der angefragten Dienste. Dort muss der Zugriff bestätigt werden. Anschließend erfolgt ein redirect auf eine Seite mit der url https://localhost, was verständlicherweise zu einer Fehlermeldung führt. Hier ist aber der "Code" wichtig, der sich in dieser URL verbirgt. Diesen Code kopieren und in das laufende Skript einfügen. Mit Bestätigung durch die Eingabetaste ist die Tokengenerierung erfolgt. Im Hintergrund wird dabei eine Datei namens `.mercedesme_token` angelegt.
 
 ### Ausführung
 Nun kann das angelegte Skript gestestet werden und sollte Soc und Restreichweite zurückgeben.
