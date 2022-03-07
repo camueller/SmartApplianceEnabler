@@ -1,7 +1,7 @@
 # Mercedes Me
 Mercedes stellt eine API bereit, die es erlaubt verschiedene Daten wie z.B. SoC oder Restreichweite des eigenen Fahrzeugs auszulesen. Anbei findet sich ein shellbasiertes Skript, das an das Projekt "Mercedes_me_Api" angelehnt ist (https://github.com/xraver/mercedes_me_api).
 
-Voraussetzung ist, dass man einen Mercedes Me Account erstellt hat und dort in der Diensteverwaltung für das Auto den Dienst "Schnittstelle Drittanbieter: Fahrzeugdaten" aktiviert hat. Nun loggt man sich im Developer-Portal ein (https://developer.mercedes-benz.com/). Dort muss ein Projekt erstellt werden, dem dann verschiedene Dienste zugeorndet werden können. Für den SoC ist der Dienst "Electric Vehicle Status" wichtig. Unter der "Bring your own car"-Option ist der Zugriff aufs eigene Fahrzeug kostenlos möglich. Beim Anlegen des Projekts wird eine Client Id und ein Client Secret erzeugt, die man später für die Authentisierung braucht.
+Voraussetzung ist, dass man einen Mercedes Me Account erstellt hat und dort in der Diensteverwaltung für das Auto den Dienst "Schnittstelle Drittanbieter: Fahrzeugdaten" aktiviert hat. Nun loggt man sich im Developer-Portal ein (https://developer.mercedes-benz.com/). Dort muss ein Projekt erstellt werden, dem dann verschiedene Dienste zugeordnet werden können. Für den SoC ist der Dienst "Electric Vehicle Status" wichtig. Unter der "Bring your own car"-Option ist der Zugriff aufs eigene Fahrzeug kostenlos möglich. Beim Anlegen des Projekts wird eine Client Id und ein Client Secret erzeugt, die man später für die Authentisierung braucht.
 Die API verwendet das OAUTH2.0 Verfahren. Vereinzelte Nutzer berichten aber davon, dass nach einigen Tagen die initiale Tokengenerierung erneut manuell durchgeführt werden muss.
 
 Im Folgenden werden mehrere Skripte erstellt. Eines stellt die Verbindung zur API von Mercedes her und dient gleichzeitig der Generierung von Access- und Refreshtoken. Ein zweites Skript ruft das erste in Verbindung mit einem Argument auf um den SoC zu erhalten. Dieses Skript wird vom SAE ausgeführt. Ein drittes wird als Cronjob eingerichtet, um alle zwei Stunden den Token zu erneuern.
@@ -246,5 +246,10 @@ Außerdem muss der nachfolgende *Reguläre Ausdruck* angegeben werden, um aus de
 
 ### Cronjob zur Generierung des Accesstoken
 Da der Accesstoken nach 7200 Sekunden abläuft, wird ein Cronjob eingerichtet, der alle zwei Stunden mit Hilfe des Refreshtokens einen neuen Accesstoken erzeugt.
-
+Dafür wird ein Skript mit dem Namen `token_refresh.sh` und diesem Inhalt angelegt und über crontab aufgerufen:
+```console
+#!/bin/sh
+cd /opt/sae/soc
+./mercedes_me_api.sh -r
+```
 
