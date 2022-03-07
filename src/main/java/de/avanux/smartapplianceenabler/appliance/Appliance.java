@@ -373,8 +373,15 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
 
     private Set<GpioControllable> getGpioControllables() {
         Set<GpioControllable> controllables = new HashSet<GpioControllable>();
-        if(meter != null && meter instanceof S0ElectricityMeter) {
-            controllables.add((S0ElectricityMeter) meter);
+        if(meter != null) {
+            if(meter instanceof S0ElectricityMeter) {
+                controllables.add((S0ElectricityMeter) meter);
+            } else if(meter instanceof MasterElectricityMeter) {
+                Meter wrappedMeter = ((MasterElectricityMeter) meter).getWrappedMeter();
+                if(wrappedMeter instanceof GpioControllable) {
+                    controllables.add((GpioControllable) wrappedMeter);
+                }
+            }
         }
         if(control != null) {
             if(control instanceof GpioControllable) {

@@ -95,12 +95,14 @@ public class MasterElectricityMeter implements ApplianceIdConsumer, Validateable
                 }
             });
 
-            var slaveControlTopic = MqttClient.getApplianceTopic(slaveMeter.getApplianceId(), Control.TOPIC);
-            mqttClient.subscribe(slaveControlTopic, false, ControlMessage.class, (topic, message) -> {
-                if(message instanceof ControlMessage) {
-                    isSlaveControlOn = ((ControlMessage) message).on;
-                }
-            });
+            if(slaveMeter != null) {
+                var slaveControlTopic = MqttClient.getApplianceTopic(slaveMeter.getApplianceId(), Control.TOPIC);
+                mqttClient.subscribe(slaveControlTopic, false, ControlMessage.class, (topic, message) -> {
+                    if(message instanceof ControlMessage) {
+                        isSlaveControlOn = ((ControlMessage) message).on;
+                    }
+                });
+            }
 
             mqttClient.subscribe(WRAPPED_METER_TOPIC, true, MeterMessage.class, (topic, message) -> {
                 publishMeterMessage((MeterMessage) message);
