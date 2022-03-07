@@ -226,7 +226,7 @@ pi@raspberrypi:/opt/sae/soc $ ./mercedes_me_api.sh -t
 Man wird nun aufgefordert, eine URL aufzurufen. Diese einfach kopieren und mit einem Browser öffnen. Nun gelangt man zur Authentifizierung der angefragten Dienste. Dort muss der Zugriff bestätigt werden. Anschließend erfolgt ein redirect auf eine Seite mit der url https://localhost, was verständlicherweise zu einer Fehlermeldung führt. Hier ist aber der "Code" wichtig, der sich in dieser URL verbirgt. Diesen Code kopieren und in das laufende Skript einfügen. Mit Bestätigung durch die Eingabetaste ist die Tokengenerierung erfolgt. Im Hintergrund wird dabei eine Datei namens `.mercedesme_token` angelegt.
 
 ### Ausführung
-Nun kann das angelegte Skript gestestet werden und sollte Soc und Restreichweite zurückgeben.
+Nun kann das angelegte Skript gestestet werden und sollte SoC und Restreichweite zurückgeben.
 
 ```console
 pi@raspberrypi:/opt/sae/soc $ ./soc.sh
@@ -238,7 +238,7 @@ Retrieving rangeelectric:
 {"rangeelectric":{"value":"227","timestamp":1646666769000}}
 ```
 
-Im *Smart Appliance Enabler* wird als SOC-Script angegeben: `/opt/sae/soc/soc.sh`.
+Im *Smart Appliance Enabler* wird als SoC-Script angegeben: `/opt/sae/soc/soc.sh`.
 Außerdem muss der nachfolgende *Reguläre Ausdruck* angegeben werden, um aus den Ausgaben den eigentlichen Zahlenwert zu extrahieren:
 ```
 .*soc":\{"value":"([0-9.]+).*
