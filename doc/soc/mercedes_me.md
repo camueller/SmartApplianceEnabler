@@ -13,15 +13,15 @@ pi@raspberrypi ~ $ mkdir /opt/sae/soc
 pi@raspberrypi ~ $ cd /opt/sae/soc
 ```
 
-Die Konfigurationsdatei muss den Namen `.mercedesme_config` haben mit folgendem Inhalt (Zeilen, die mit # beginnen, nicht ändern!):
+Die Konfigurationsdatei mit den auf der Developer-Seite erhaltenen IDs wird mit dem Namen `.mercedesme_config` im selben Verzeichnis erstellt und hat folgenden Inhalt:
 ```
 CLIENT_ID=<INSERT_YOUR_CLIENT_ID>
 CLIENT_SECRET=<INSERT_YOUR_CLIENT_SECRET>
 VEHICLE_ID=<INSERT_YOUR_VEHICLE_ID>
 ```
-Entsprechende Felder sind mit der Client ID und dem Client Secret des Developer-Projekts zu ersetzen. VEHICLE_ID ist die Fahrzeugidentifikationsnummer.
+Entsprechende Felder in <> sind mit der Client ID und dem Client Secret des Developer-Projekts zu ersetzen. VEHICLE_ID ist die Fahrzeugidentifikationsnummer.
 
-Das eigentliche Mercedes Me API-Script sollte mit dem Namen `mercedes_me_api.sh` und folgendem Inhalt angelegt werden:
+Das eigentliche Mercedes Me API-Script wird mit dem Namen `mercedes_me_api.sh` und folgendem Inhalt angelegt:
 ```console
 #!/bin/bash
 
@@ -202,7 +202,7 @@ echo
 parse_options $@
 ```
 
-Nun legen wird das eigentliche Skript "soc.sh" an, das vom *Smart Appliance Enabler* aufgerufen wird.
+Nun wird das eigentliche Skript 'soc.sh' angelegt, das dann vom *Smart Appliance Enabler* aufgerufen wird. Es hat diesen Inhalt:
 
 ```console
 #!/bin/sh
@@ -217,12 +217,25 @@ pi@raspberrypi:/opt/sae/soc $ chmod +x mercedes_me_api.sh
 pi@raspberrypi:/opt/sae/soc $ chmod +x soc.sh
 ```
 
+### Erstmalige Generierung von Access- und Refreshtoken
+Um einen Accesstoken zu erhalten, muss das Skript mercedes_me_api.sh manuell mit dem Argument '-t' ausgeführt werden. 
+
+```console
+pi@raspberrypi:/opt/sae/soc $ ./mercedes_me_api.sh -t
+```
+Man wird nun aufgefordert, eine URL aufzurufen. Diese einfach kopieren und mit einem Browser öffnen. Nun gelangt man zur Authentifizierung der angefragten Dienste. Dort muss der Zugriff bestätigt werden. Anschließend erfolgt ein redirect auf eine Seite mit der url https://localhost/, was verständlicherweise zu einer Fehlermeldung führt. Hier ist aber der "Code" wichtig, der sich in dieser URL verbirgt. Diesen Code kopieren und in das laufende Skript einfügen. Mit Bestätigung durch die Eingabetaste ist die Tokengenerierung erfolgt. Im Hintergrund wird dabei eine Datei namens '.mercedesme_token' angelegt.
+
 ### Ausführung
-Die Antwortzeit kann sehr unterschiedlich sein (1 bis 30 Sekunden).
+Nun kann das angelegte Skript gestestet werden und sollte Soc und Restreichweite zurückgeben.
 
 ```console
 pi@raspberrypi:/opt/sae/soc $ ./soc.sh
-soc: 65
+mercedes_me_api.sh - 0.7
+
+Retrieving soc:
+{"soc":{"value":"56","timestamp":1646662088000}}
+Retrieving rangeelectric:
+{"rangeelectric":{"value":"227","timestamp":1646666769000}}
 ```
 
 Im *Smart Appliance Enabler* wird als SOC-Script angegeben: `/opt/sae/soc/soc.sh`.
@@ -230,3 +243,8 @@ Außerdem muss der nachfolgende *Reguläre Ausdruck* angegeben werden, um aus de
 ```
 .*soc":\{"value":"([0-9.]+).*
 ```
+
+### Cronjob zur Generierung des Accesstoken
+Da der Accesstoken nach 7200 Sekunden abläuft, wird ein Cronjob eingerichtet, der alle zwei Stunden mit Hilfe des Refreshtokens einen neuen Accesstoken erzeugt.
+
+
