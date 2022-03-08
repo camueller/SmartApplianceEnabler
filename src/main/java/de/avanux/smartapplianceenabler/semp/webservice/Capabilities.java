@@ -127,4 +127,14 @@ public class Capabilities {
             this.optionalEnergy = null;
         }
     }
+
+    @Override
+    public String toString() {
+        return "Capabilities{" +
+                "currentPowerMethod=" + getCurrentPowerMethod() +
+                ", absoluteTimestamps=" + getAbsoluteTimestamps() +
+                ", interruptionsAllowed=" + getInterruptionsAllowed() +
+                ", optionalEnergy=" + getOptionalEnergy() +
+                '}';
+    }
 }

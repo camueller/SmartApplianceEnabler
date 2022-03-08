@@ -97,6 +97,7 @@ public class SempController {
     }
 
     public Device2EM createDevice2EM(LocalDateTime now) {
+        List<DeviceInfo> deviceInfos = createDeviceInfo(now);
         List<DeviceStatus> deviceStatuses = new ArrayList<DeviceStatus>();
         List<PlanningRequest> planningRequests = new ArrayList<PlanningRequest>();
         if(ApplianceManager.getInstance().isInitializationCompleted()) {
@@ -111,7 +112,7 @@ public class SempController {
             }
         }
         Device2EM device2EM = ApplianceManager.getInstance().getDevice2EM();
-        device2EM.setDeviceInfo(createDeviceInfo(now));
+        device2EM.setDeviceInfo(deviceInfos);
         device2EM.setDeviceStatus(deviceStatuses);
         device2EM.setPlanningRequest(planningRequests);
         return device2EM;
@@ -153,6 +154,7 @@ public class SempController {
             Appliance appliance = ApplianceManager.getInstance().findAppliance(deviceId);
             deviceInfo.setCapabilities(createCapabilities(deviceInfo, appliance.getMeter() != null,
                     appliance.canConsumeOptionalEnergy(now), appliance.getControl() instanceof ElectricVehicleCharger));
+            logger.debug("{}: {}", deviceId, deviceInfo.toString());
             return deviceInfo;
         }
         return null;
@@ -162,10 +164,7 @@ public class SempController {
         List<DeviceInfo> deviceInfos = new ArrayList<DeviceInfo>();
         List<Appliance> appliances = ApplianceManager.getInstance().getAppliances();
         for (Appliance appliance : appliances) {
-            DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(appliance.getId());
-            deviceInfo.setCapabilities(createCapabilities(deviceInfo, appliance.getMeter() != null,
-                    appliance.canConsumeOptionalEnergy(now), appliance.getControl() instanceof ElectricVehicleCharger));
-            deviceInfos.add(deviceInfo);
+            deviceInfos.add(createDeviceInfo(now, appliance.getId()));
         }
         return deviceInfos;
     }

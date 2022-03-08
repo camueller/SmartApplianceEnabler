@@ -54,4 +54,12 @@ public class DeviceInfo {
     public void setCapabilities(Capabilities capabilities) {
         this.capabilities = capabilities;
     }
+
+    @Override
+    public String toString() {
+        return "DeviceInfo{" +
+                "characteristics=" + characteristics +
+                ", capabilities=" + capabilities +
+                '}';
+    }
 }

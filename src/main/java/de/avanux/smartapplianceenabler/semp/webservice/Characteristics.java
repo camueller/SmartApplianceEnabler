@@ -94,4 +94,16 @@ public class Characteristics {
     public void setPowerLevels(PowerLevels powerLevels) {
         this.powerLevels = powerLevels;
     }
+
+    @Override
+    public String toString() {
+        return "Characteristics{" +
+                "maxPowerConsumption=" + maxPowerConsumption +
+                ", minPowerConsumption=" + minPowerConsumption +
+                ", minOnTime=" + minOnTime +
+                ", maxOnTime=" + maxOnTime +
+                ", minOffTime=" + minOffTime +
+                ", maxOffTime=" + maxOffTime +
+                '}';
+    }
 }
