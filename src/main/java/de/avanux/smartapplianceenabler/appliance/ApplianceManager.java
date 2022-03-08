@@ -348,6 +348,7 @@ public class ApplianceManager implements Runnable {
     public void save(boolean writeDevice2EM, boolean writeAppliances) {
         logger.debug("Saving to file: writeDevice2EM=" + writeDevice2EM + " writeAppliances=" + writeAppliances);
         if(writeDevice2EM) {
+            this.device2EM.setPlanningRequest(null);
             fileHandler.save(this.device2EM);
         }
         if(writeAppliances) {
