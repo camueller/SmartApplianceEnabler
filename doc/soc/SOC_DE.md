@@ -3,6 +3,7 @@ Zum automatisierten Auslesen des SOC existieren für die meisten Fahrzeuge Scrip
 Das Verwenden dieser fahrzeug-spezifischen Scripts ist in den nachfolgenden Kapiteln beschrieben.
 
 * [Kia](kia_DE.md)
+* [Mercedes](mercedes_me.md)
 * [Nissan](NissanLeaf_DE.md)
 * [Volkswagen](VW.md)
 * [Skoda](Skoda.md)
