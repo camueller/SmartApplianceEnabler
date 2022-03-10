@@ -63,6 +63,12 @@ tar xvfz node-v14.17.0-linux-x64.tar.gz
 ln -s node-v14.17.0-linux-x64 node
 ```
 
+### Mosquitto
+Damit der *Smart Appliance Enabler* getestet werden kann, ist ein MQTT-Broker erforderlich. Hie wird dazu Mosquitto eingesetzt, der ebenfalls als Docker-Container läuft und wie folgt gestartet wird:
+```console
+sudo docker run -it -d --rm -p 1883:1883 --name mosquitto eclipse-mosquitto mosquitto -c /mosquitto-no-auth.conf
+```
+
 ### Testen der automatischen Installation
 
 Die automatische Installation soll es Nutzern ohne Linux Know-How ermöglichen, den *Smart Appliance Enabler* ohne Nutzung einer SSH-Shell und Eingabe von Befehlen zu installieren. Während der automatischen Installation werden die im Image enthaltenen Pakete aktualisiert und auch Pakete (z.B. Java) nachinstalliert. Dabei kann es zu Problemen kommen, z.B. weil die benötigten Pakete nicht mehr im Repository enthalten sind oder das Repository nicht mehr existiert. Um diese Problem zu erkennen und zu beheben (z.B. durch Bereitstellung eines neueren Images) muss die automatische Installation automatisiert getestet werden.  
