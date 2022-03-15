@@ -12,6 +12,11 @@ und das Projekt folgt den Leitlinien des [Semantic Versioning](https://semver.or
 | SAE         | Smart Appliance Enabler |
 | SHM         | Sunny Home Manager |
 
+## [1.6.20](https://github.com/camueller/SmartApplianceEnabler/releases/tag/1.6.20) - 15.03.2022
+
+### Gefixt
+- Wallbox: [Ladeleistung auf Minimum reduziert trotz deutlich höherem Überschuss](https://github.com/camueller/SmartApplianceEnabler/issues/219)
+
 ## [1.6.19](https://github.com/camueller/SmartApplianceEnabler/releases/tag/1.6.19) - 24.02.2022
 
 ### Gefixt
