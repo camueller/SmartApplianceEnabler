@@ -72,6 +72,18 @@ Der *Smart Appliance Enabler* läuft jetzt und es kann mit der [Konfiguration](C
 
 Auch die Software zur Administration via Web-Browser (*webmin*) soll jetzt laufen - siehe [Hinweise zur Nutzung von webmin für *Smart Appliance Enabler*](Webmin_DE.md).
 
+### Fehler bei der Installation
+
+Eine nicht erfolgreiche Installation lag nach meinen bisherigen Erfahrungen zu 90% daran, dass die **Anleitung nicht exakt befolgt wurde**. Insofern kann es duchaus sinnvoll sein, die Installation mit mehr Aufmerksamkeit zu wiederholen.
+
+Die Installation wird in der Datei `/tmp/install.log` protokolliert. Bei einer fehlerhaften Installation würde es bei der Fehleranalyse sehr helfen, wenn diese Datei vom Raspberry Pi gesichert wird (mit `scp` oder `WinSCP`). Vor der Sicherung darf der Raspberry Pi nicht vom Strom getrennt oder rebootet werden, weil die Datei sonst nicht mehr vorhanden ist! Vorausetzung für das Herunterladen der Datei ist natürlich, dass der Raspberry Pi über LAN oder WLAN erreichbar ist. 
+
+Die Datei `/tmp/install.log` [einer erfolgreichen Installation sieht so aus](../install/install.log). Interessant sind vor allem die mit `**********` beginnenden Zeilen, welche jeweils den Beginn eines Installationsschrittes markieren. Und hier ist insbesondere die Zeile
+```console
+********** Starting SAE ...
+```
+interessant, die besagt, dass der *Smart Appliance Enabler* jetzt laufen sollte.
+
 # Update
 
 ## Vorbereitung des Updates
