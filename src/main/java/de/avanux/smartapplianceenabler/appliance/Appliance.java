@@ -382,11 +382,12 @@ public class Appliance implements Validateable, ControlStateChangedListener, Tim
         if(control != null) {
             logger.debug("{}: {}", id, logMessage);
             if(switchOn && isEvCharger()) {
+                ElectricVehicleCharger evCharger = (ElectricVehicleCharger) control;
                 if(chargePower != null) {
-                    ((ElectricVehicleCharger) control).setChargePower(chargePower);
+                    evCharger.setChargePower(chargePower);
                 }
-                else {
-                    ((ElectricVehicleCharger) control).setChargePowerToMinimum();
+                else if(!evCharger.isOn()) {
+                    evCharger.setChargePowerToMinimum();
                 }
             }
             control.on(now, switchOn);
