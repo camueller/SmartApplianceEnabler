@@ -167,7 +167,9 @@ public class MasterElectricityMeter implements ApplianceIdConsumer, Validateable
         var masterMeterPublishTopic = MqttClient.getApplianceTopic(applianceId, Meter.TOPIC);
         mqttClient.publish(masterMeterPublishTopic, false, masterMeterMessage, false,false);
 
-        var slaveMeterPublishTopic = MqttClient.getApplianceTopic(slaveMeter.getApplianceId(), Meter.TOPIC);
-        mqttClient.publish(slaveMeterPublishTopic, false, slaveMeterMessage, false,false);
+        if(slaveMeter != null) {
+            var slaveMeterPublishTopic = MqttClient.getApplianceTopic(slaveMeter.getApplianceId(), Meter.TOPIC);
+            mqttClient.publish(slaveMeterPublishTopic, false, slaveMeterMessage, false,false);
+        }
     }
 }
