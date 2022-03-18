@@ -153,7 +153,7 @@ public class SempController {
             DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(deviceId);
             Appliance appliance = ApplianceManager.getInstance().findAppliance(deviceId);
             deviceInfo.setCapabilities(createCapabilities(deviceInfo, appliance.getMeter() != null,
-                    appliance.canConsumeOptionalEnergy(now), appliance.getControl() instanceof ElectricVehicleCharger));
+                    appliance.canConsumeOptionalEnergy(now)));
             logger.debug("{}: {}", deviceId, deviceInfo.toString());
             return deviceInfo;
         }
@@ -169,7 +169,7 @@ public class SempController {
         return deviceInfos;
     }
 
-    private Capabilities createCapabilities(DeviceInfo deviceInfo, boolean hasMeter, boolean canConsumeOptionalEnergy, boolean isEvCharger) {
+    private Capabilities createCapabilities(DeviceInfo deviceInfo, boolean hasMeter, boolean canConsumeOptionalEnergy) {
         Capabilities capabilities = deviceInfo.getCapabilities();
         if (capabilities == null) {
             capabilities = new Capabilities();

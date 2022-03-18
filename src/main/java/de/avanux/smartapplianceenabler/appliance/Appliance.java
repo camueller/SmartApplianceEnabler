@@ -371,6 +371,17 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
         return false;
     }
 
+    public boolean hasTimeframesWithOptionalEnergyRequests() {
+        LocalDateTime now = LocalDateTime.now();
+        if(schedules != null) {
+            return schedules.stream().anyMatch(schedule -> {
+                int min = schedule.getRequest().getMin(now) != null ? schedule.getRequest().getMin(now) : 0;
+                return min < schedule.getRequest().getMax(now);
+            });
+        }
+        return false;
+    }
+
     private Set<GpioControllable> getGpioControllables() {
         Set<GpioControllable> controllables = new HashSet<GpioControllable>();
         if(meter != null) {
@@ -517,14 +528,9 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
 
     public boolean canConsumeOptionalEnergy(LocalDateTime now) {
         if(isEvCharger()) {
-            return ((ElectricVehicleCharger) this.control).isUseOptionalEnergy();
+            return true;
         }
-        TimeframeInterval activeTimeframeInterval = timeframeIntervalHandler.getActiveTimeframeInterval();
-        if(activeTimeframeInterval != null) {
-            Request request = activeTimeframeInterval.getRequest();
-            return request.getMin(now) != null && request.getMax(now) > request.getMin(now);
-        }
-        return false;
+        return hasTimeframesWithOptionalEnergyRequests();
     }
 
     private boolean hasStartingCurrentDetection() {
