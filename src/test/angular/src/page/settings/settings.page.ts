@@ -33,27 +33,32 @@ export class SettingsPage {
   public static async assertSettings(t: TestController, settings: Settings) {
     await SideMenu.clickSettings(t);
     await this.waitForPage(t);
+    await SettingsPage.assertMqttBroker(t, settings.mqttSettings);
     const modbusSettingsIndex = await ModbusPage.getModbusSettingsCount() - 1;
     await ModbusPage.assertModbus(t, settings.modbusSettings[0], modbusSettingsIndex);
     await SettingsPage.assertNotificationCommand(t, settings.notificationCommand);
   }
 
   private static async setMqttBroker(t: TestController, mqttSettings: MqttSettings) {
-    await inputText(t, selectorInputByFormControlName('mqttBrokerHost'), undefined);
-    if (mqttSettings.mqttBrokerHost) {
-      await inputText(t, selectorInputByFormControlName('mqttBrokerHost'), mqttSettings.mqttBrokerHost);
-    }
-    await inputText(t, selectorInputByFormControlName('mqttBrokerPort'), undefined);
-    if (mqttSettings.mqttBrokerPort) {
-      await inputText(t, selectorInputByFormControlName('mqttBrokerPort'), mqttSettings.mqttBrokerPort.toString());
+    if(mqttSettings) {
+      await inputText(t, selectorInputByFormControlName('mqttBrokerHost'), undefined);
+      if (mqttSettings.mqttBrokerHost) {
+        await inputText(t, selectorInputByFormControlName('mqttBrokerHost'), mqttSettings.mqttBrokerHost);
+      }
+      await inputText(t, selectorInputByFormControlName('mqttBrokerPort'), undefined);
+      if (mqttSettings.mqttBrokerPort) {
+        await inputText(t, selectorInputByFormControlName('mqttBrokerPort'), mqttSettings.mqttBrokerPort.toString());
+      }
     }
   }
   private static async assertMqttBroker(t: TestController, mqttSettings: MqttSettings) {
-    if (mqttSettings.mqttBrokerHost) {
-      await assertInput(t, selectorInputByFormControlName('mqttBrokerHost'), mqttSettings.mqttBrokerHost);
-    }
-    if (mqttSettings.mqttBrokerPort) {
-      await assertInput(t, selectorInputByFormControlName('mqttBrokerPort'), mqttSettings.mqttBrokerPort.toString());
+    if(mqttSettings) {
+      if (mqttSettings.mqttBrokerHost) {
+        await assertInput(t, selectorInputByFormControlName('mqttBrokerHost'), mqttSettings.mqttBrokerHost);
+      }
+      if (mqttSettings.mqttBrokerPort) {
+        await assertInput(t, selectorInputByFormControlName('mqttBrokerPort'), mqttSettings.mqttBrokerPort.toString());
+      }
     }
   }
 

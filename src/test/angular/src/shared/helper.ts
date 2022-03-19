@@ -29,6 +29,9 @@ import {ElectricVehicle} from '../../../../main/angular/src/app/control/evcharge
 import {Schedule} from '../../../../main/angular/src/app/schedule/schedule';
 import {SchedulesPage} from '../page/schedule/schedules.page';
 import {NotificationPage} from '../page/notification/notification.page';
+import {MasterMeterPage} from '../page/meter/master-meter.page';
+import {SlaveElectricityMeter} from '../../../../main/angular/src/app/meter/slave/master-electricity-meter';
+import {SlaveMeterPage} from '../page/meter/slave-meter.page';
 
 export function isDebug() {
   return !!process.env.DEBUG;
@@ -101,6 +104,11 @@ export async function createMeter(t: TestController, applianceId: string, meter:
   if (meter.type === ModbusElectricityMeter.TYPE) {
     await ModbusMeterPage.setModbusElectricityMeter(t, meter.modbusElectricityMeter);
   }
+  if (meter.type === SlaveElectricityMeter.TYPE) {
+    await SlaveMeterPage.setSlaveMeter(t, meter.slaveElectricityMeter);
+  } else {
+    await MasterMeterPage.setMasterMeter(t, meter.isMasterMeter, meter.masterElectricityMeter);
+  }
   await NotificationPage.setNotifications(t, meter.notifications);
   await MeterPage.clickSave(t);
 }
@@ -114,6 +122,11 @@ export async function assertMeter(t: TestController, applianceId: string, meter:
   }
   if (meter.type === ModbusElectricityMeter.TYPE) {
     await ModbusMeterPage.assertModbusElectricityMeter(t, meter.modbusElectricityMeter);
+  }
+  if (meter.type === SlaveElectricityMeter.TYPE) {
+    await SlaveMeterPage.assertSlaveMeter(t, meter.slaveElectricityMeter);
+  } else {
+    await MasterMeterPage.assertMasterMeter(t, meter.isMasterMeter, meter.masterElectricityMeter);
   }
   await NotificationPage.assertNotifications(t, meter.notifications);
 }

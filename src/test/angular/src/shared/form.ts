@@ -98,11 +98,11 @@ export async function selectOption(t: TestController, selector: Selector, value:
 }
 
 export async function assertSelectOption(t: TestController, selector: Selector, optionKey: string, i18nPrefix?: string) {
-  if (isDebug()) { console.log('optionKey=', optionKey); }
-  if (isDebug()) { console.log('i18nPrefix=', i18nPrefix); }
+  if (isDebug()) { console.log(`optionKey=${optionKey} i18nPrefix=${i18nPrefix}`); }
   await t.expect(await Selector(selector).exists).ok();
   if (optionKey) {
-    await t.expect(selector.innerText).eql(getTranslation(optionKey, i18nPrefix));
+    const escapedRegex = getTranslation(optionKey, i18nPrefix).replace(/[.*+?^${}()|[\]\\]/g, '.'); // replace regex syntax characters with "."
+    await t.expect(selector.innerText).match(new RegExp(`${escapedRegex}\s?`)); // innertext may return a string with trailing \t - https://github.com/DevExpress/testcafe/issues/5011
   } else {
     await t.expect(selector.exists).notOk();
   }
@@ -112,9 +112,7 @@ export async function selectOptionMulti(t: TestController, selector: Selector, v
   await t.click(selector);
   for (const value of values) {
     const selectorString = `mat-option[ng-reflect-value="${value.toString()}"]`;
-    if (isDebug()) {
-      console.log('Selector: ', selectorString);
-    }
+    if (isDebug()) { console.log('Selector: ', selectorString); }
     await t.expect(await Selector(selectorString).exists).ok();
     await t.click(selectorString);
   }

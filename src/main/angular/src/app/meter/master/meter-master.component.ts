@@ -42,8 +42,9 @@ export class MeterMasterComponent implements OnChanges, OnInit {
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
   switchOnOptions: ListItem[] = [];
-  private readonly switchOnTrue = 'MeterMasterComponent.switchOn.true';
-  private readonly switchOnFalse = 'MeterMasterComponent.switchOn.false';
+  private readonly switchOnUndefined = 'switchOn.undefined';
+  private readonly switchOnTrue = 'switchOn.true';
+  private readonly switchOnFalse = 'switchOn.false';
 
   private masterSlaveControlValidator = (): { [key: string]: boolean } => {
     const masterSwitchOn = this.form.get('masterSwitchOn');
@@ -81,10 +82,11 @@ export class MeterMasterComponent implements OnChanges, OnInit {
       new ErrorMessage('slaveSwitchOn', ValidatorType.custom),
     ], this.translate);
     const switchOnKeys = [this.switchOnTrue, this.switchOnFalse];
-    this.translate.get(switchOnKeys).subscribe(translatedStrings => {
-      this.switchOnOptions.push({value: null, viewValue: ''} as ListItem);
-      Object.keys(translatedStrings).forEach(key => {
-        this.switchOnOptions.push({value: key, viewValue: translatedStrings[key]} as ListItem);
+    const translateKeys = [...switchOnKeys].map(key => this.toTranslateKey(key));
+    this.translate.get(translateKeys).subscribe(translatedStrings => {
+      this.switchOnOptions.push({value: this.switchOnUndefined, viewValue: ''} as ListItem);
+      switchOnKeys.forEach(key => {
+        this.switchOnOptions.push({value: key, viewValue: translatedStrings[this.toTranslateKey(key)]} as ListItem);
       });
     });
     this.form.statusChanges.subscribe(() => {
@@ -92,6 +94,11 @@ export class MeterMasterComponent implements OnChanges, OnInit {
     });
     // form is already invalid even without status changes
     this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
+  }
+
+  toTranslateKey(key: string): string {
+    // full key is too long for Angular (max. length seems to be 36)
+    return `MeterMasterComponent.${key}`;
   }
 
   toSwitchOnKey(switchOn: boolean | null | undefined): string | undefined {
