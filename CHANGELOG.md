@@ -12,6 +12,16 @@ und das Projekt folgt den Leitlinien des [Semantic Versioning](https://semver.or
 | SAE         | Smart Appliance Enabler |
 | SHM         | Sunny Home Manager |
 
+## [2.0.3](https://github.com/camueller/SmartApplianceEnabler/releases/tag/2.0.3) - 20.03.2022
+
+### Gefixt
+- Wallbox: [Ladeleistung auf Minimum reduziert trotz deutlich höherem Überschuss](https://github.com/camueller/SmartApplianceEnabler/issues/219)
+- verschiedene Fixes für Master/Slave-Zähler
+- zu häufiger Verbindungsaufbau zum MQTT-Broker wird vermieden 
+
+### Geändert
+- Logging erweitert für Inhalte, die an der SEMP-Schnittstelle an den SHM gemeldet werden
+
 ## [2.0.2](https://github.com/camueller/SmartApplianceEnabler/releases/tag/2.0.2) - 30.01.2022
 
 ### Neu
