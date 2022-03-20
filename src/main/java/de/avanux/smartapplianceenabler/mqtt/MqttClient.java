@@ -40,6 +40,7 @@ public class MqttClient {
     private static int counter;
     public final static int MQTT_PUBLISH_PERIOD = 20;
     private IMqttClient client;
+    private static org.eclipse.paho.client.mqttv3.MqttClient instance;
     private Genson genson;
     private static ExecutorService executor;
     private boolean shutdownInProgress = false;
@@ -70,14 +71,14 @@ public class MqttClient {
         String clientId = clientIdBuilder.toString();
         var brokerUri = buildBrokerUri(mqttBroker.getResolvedHost(), mqttBroker.getResolvedPort());
         logger.info("Using MQTT broker " + brokerUri);
-        client = createClient(clientId, brokerUri);
+        client = createClient(clientId, brokerUri, loggerId);
     }
 
     public static void setMqttBroker(MqttBroker mqttBroker) {
         MqttClient.mqttBroker = mqttBroker;
     }
 
-    private String buildBrokerUri(String host, Integer port) {
+    private static String buildBrokerUri(String host, Integer port) {
         return "tcp://" + host + ":" + port;
     }
 
@@ -93,7 +94,7 @@ public class MqttClient {
         }
     }
 
-    private MqttConnectOptions getOptions() {
+    private static MqttConnectOptions getOptions() {
         MqttConnectOptions options = new MqttConnectOptions();
         options.setAutomaticReconnect(true);
         options.setCleanSession(true);
@@ -122,7 +123,7 @@ public class MqttClient {
         return topicPrefix + "/" + MqttEventName.TOPIC + "/" + event.getName();
     }
 
-    private org.eclipse.paho.client.mqttv3.MqttClient createClient(String clientId, String brokerUri) {
+    private static org.eclipse.paho.client.mqttv3.MqttClient createClient(String clientId, String brokerUri, String loggerId) {
         org.eclipse.paho.client.mqttv3.MqttClient client = null;
         try {
             client = new org.eclipse.paho.client.mqttv3.MqttClient(
@@ -172,14 +173,18 @@ public class MqttClient {
         }
     }
 
-    public synchronized boolean isMqttBrokerAvailable(String host, Integer port) {
+    public static boolean isMqttBrokerAvailable(String host, Integer port) {
         var brokerUri = buildBrokerUri(host, port);
+        var loggerId = MqttClient.class.getSimpleName();
         try {
-            var client = createClient(getClass().getSimpleName(), brokerUri);
-            client.connect(getOptions());
-            var connected = client.isConnected();
+            if(instance == null) {
+                instance = createClient(MqttClient.class.getSimpleName(), brokerUri, loggerId);
+            }
+            if(! instance.isConnected()) {
+                instance.connect(getOptions());
+            }
+            var connected = instance.isConnected();
             logger.debug("{}: MQTT connection available: {}", loggerId, connected);
-            disconnect();
             return connected;
         }
         catch(Exception e) {

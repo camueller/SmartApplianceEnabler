@@ -755,8 +755,7 @@ public class SaeController {
             mqttSettings.setMqttBrokerHost(mqttBrokerHost);
             mqttSettings.setMqttBrokerPort(mqttBrokerPort);
             settings.setMqttSettings(mqttSettings);
-            var client = new MqttClient("", getClass());
-            mqttSettings.setMqttBrokerAvailable(client.isMqttBrokerAvailable(mqttBrokerHost, mqttBrokerPort));
+            mqttSettings.setMqttBrokerAvailable(MqttClient.isMqttBrokerAvailable(mqttBrokerHost, mqttBrokerPort));
 
             String nodeRedDashboardUrl = appliances.getConfigurationValue(ConfigurationParam.NODERED_DASHBOARD_URL.getVal());
             settings.setNodeRedDashboardUrl(nodeRedDashboardUrl);
