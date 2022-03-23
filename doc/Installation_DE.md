@@ -83,26 +83,3 @@ Die Datei `/tmp/install.log` [einer erfolgreichen Installation sieht so aus](../
 ********** Starting SAE ...
 ```
 interessant, die besagt, dass der *Smart Appliance Enabler* jetzt laufen sollte.
-
-# Update
-
-## Vorbereitung des Updates
-
-Zur Vorbereitung der Installation muss die Konfigurationsdatei für das Update [update.config](https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/install/update.config) heruntergeladen und für die nachfolgenden Änderungen lokal gespeichert werden.
-
-Hinweise und Beispiele zu den wenigen Konfigurationsparametern finden sich in der Datei selbst.
-
-Für das Update muss ein USB-Stick mit folgenden Dateien (und nur diesen!) vorbereitet werden:
-- `update.config` mit den anpassten Konfigurationsparametern
-- [update.sh](https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/install/update.sh)
-- [update2.sh](https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/install/update2.sh)
-
-Die Dateinamen dürfen nicht verändert werden (Gross-Kleinschreibung, Dateiendungen). Darauf ist insbesondere unter Windows zu achten, wenn dieses so eingestellt ist, dass sie nicht angezeigt werden!  
-
-## Durchführung des Updates
-
-Das Update kann nur durchgeführt werden, wenn der Raspberry Pi mit dem WLAN oder Ethernet verbunden ist.
-
-Zur Starten des Updates muss der **USB-Stick** in den Raspberry Pi gesteckt werden (egal, welche USB-Buchse). Sobald der Raspberry Pi (dank des modifizieren Images) den USB-Stick erkennt, wird er die **erste Phase des Updates** ausführen. Diese dauert nur einige Sekunden, wobei des Ende durch das **Erlöschen der roten LED** signalisiert wird.
-
-Jetzt muss der **USB-Stick entfernt** werden. Dadurch wird der Raspberry Pi (dank des modifizieren Images) **automatisch neu gestartet**, die rote LED geht wieder an und die **zweite Phase des Updates**  beginnt. Dabei wird die neueste Version des *Smart Appliance Enabler* heruntergeladen und installiert. Anschliessend wird der *Smart Appliance Enabler* neu gestartet. Diese Phase sollte nur wenige Minuten dauern. Wenn das Update beendet ist, wird die **rote LED für eine Stunde ausgeschaltet**.

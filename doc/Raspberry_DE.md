@@ -5,4 +5,20 @@ An die GPIO-Pins des Raspberry können diverse Schalter und/oder Stromzähler an
 
 Der *Smart Appliance Enabler* verwendet intern [Pi4J](https://pi4j.com) um auf die GPIO-Pins zuzugreifen. Diese Bibliothek verwendet eine eigene Numerierung der GPIO-Pins, die ungleich der Pin-Nummer ist! Demzufolge muss im *Smart Appliance Enabler* diese Nummer als *GPIO-Anschluss* eingegeben werden.
 
-Die GPIO-Nummern sind abhängig vom konkreten Raspberry Pi-Model. Für alle unterstützten Modelle findet sich auf [Pi4J-Homepage](https://pi4j.com) links unter **Pin Numbering** eine Grafik mit dem Mapping der Pin-Nummer auf die vom *Smart Appliance Enabler* benötigte GPIO-Nummer.  
+![Pin Layout](../pics/RaspberryPiPinsPi4J.png)
+
+## Ausschalten / Neu starten
+
+Wie jeder Computer mit einem Speichermedium mit Schreibzugriff sollte der Raspberry Pi nicht einfach von der Stromquelle getrennt werden, um ihn auszuschalten oder neu zu starten. Dabei kann das Dateisystem oder die SD-Karte kaputt gehen.
+
+Das Herunterfahren mit nachfolgendem Ausschalten erfolgt mit dem Befehl:
+```console
+sudo shutdown now
+```
+
+Das Herunterfahren mit nachfolgendem Neustart erfolgt mit dem Befehl:
+```console
+sudo shutdown -r now
+```
+
+*Webmin*: Wenn man im Seiten-Menü den Punkt `System` wählt und den Unterpunkt `Bootup and Shutdown` anklickt, finden sich ganz unten auf der Seite Schaltflächen für `Reboot System` und `Shutdown System`.

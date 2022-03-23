@@ -21,8 +21,17 @@ Beim Finden der richtigen Konfiguration hilft Ausprobieren: Eine zu testende Kom
 Die Konfiguration von Modbus/TCP erfolgt in den [Einstellungen](Settings_DE.md#user-content-modbus).
 
 ### Modbus/RTU
-*Smart Appliance Enabler* unterstützt das [Modbus](https://de.wikipedia.org/wiki/Modbus)-Protokoll lediglich in der Ausprägung Modbus/TCP. Allerdings können Modbus/RTU-Geräte angeschlossen werden, wenn man einen **USB-Modbus-Adapter** (manchmal auch als USB-RS485-Adapter bezeichnet) verwendet. In diesem Fall benötigt man allerdings zusätzlich ein Modbus/TCP zu Modbus/RTU Gateway wie z.B. das frei verfügbare [mbusd](https://sourceforge.net/projects/mbus), dessen Installation nachfolgend beschrieben ist.
+*Smart Appliance Enabler* unterstützt das [Modbus](https://de.wikipedia.org/wiki/Modbus)-Protokoll lediglich in der Ausprägung Modbus/TCP. Allerdings können Modbus/RTU-Geräte angeschlossen werden, wenn man einen **USB-Modbus-Adapter** (manchmal auch als USB-RS485-Adapter bezeichnet) verwendet. In diesem Fall benötigt man allerdings zusätzlich ein Modbus/TCP zu Modbus/RTU Gateway wie z.B. das frei verfügbare [mbusd](https://github.com/3cky/mbusd), dessen Installation nachfolgend beschrieben ist.
 
+#### Aktivieren/Starten des `mbusd` nach Automatischer Installation
+Bei der automatischen Installation wird der `mbusd` bereits gebaut und installiert, aber zur Vermeidung unnötiger Einträge im Syslog nicht gestartet und im Boot-System aktiviert.
+Das lässt sich bei Bedarf mit den beiden folgenden Befehlen nachholen, nachdem ein **USB-Modbus-Adapter** angeschlossen ist:
+```console
+sae@raspberrypi:/~ $ sudo systemctl start mbusd@ttyUSB0.service
+sae@raspberrypi:/~ $ sudo systemctl enable mbusd@ttyUSB0.service
+```
+
+#### Manuelle Installation
 Falls noch nicht installiert, muss als Git und cmake installiert werden:
 ```console
 pi@raspberrypi:/tmp $ sudo apt update

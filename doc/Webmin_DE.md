@@ -8,6 +8,27 @@ Danach erscheint die Anmeldeseite von *webmin*, wo man sich mit dem Benutzer `sa
 
 ![Login](../pics/webmin/login.png)
 
+## Dashboard
 Nach der erfolgreichen Anmeldung gelangt man zum **Dashboard**, das einen guten Überblick über den aktuellen Systemzustand bietet:
 
 ![Dashboard](../pics/webmin/dashboard.png)
+
+## Dateiverwaltung
+Der File Manager ermöglicht das Verwalten der Dateien, wobei hier insbesondere das Verzeichnis `/opt/sae` interessant ist. Nachdem man dieses Verzeichnis links in der Baumansicht angeklickt hat, werden rechts die in dem Verzeichnis befindlichen Dateien angezeigt. 
+
+Durch Klick auf eine Datei mit der rechten Maustaste werden die möglichen Datei-Operationen angezeigt:
+
+![File Manager](../pics/webmin/file_manager.png)
+
+Durch Klick auf das File-Menü oben werden auch Verzeichnis-Operationen angezeigt, wie beispielsweise "Upload to current directory":
+
+![File Menu](../pics/webmin/file_menu.png)
+
+## Dienstverwaltung
+Der *Smart Appliance Enabler* ist ein Dienst, der durch die Dienstverwaltung des Raspberry Pi (systemd) gestartet oder gestoppt wird
+
+In die Dienstverwaltung gelangt man im Seitenmenü über den Punkt `System` und den Unterpunkt `Bootup and Shutdown`.
+
+Um den *Smart Appliance Enabler* zu starten/stoppen/restarten muss in der Listen mit den Diensten die Checkbox vor `smartapplianceenabler.service` aktiviert werden und dann die entsprechende Schaltfläche unterhalb der Listen mit den Diensten angeklickt werden.
+
+![Bootup and Shutdown](../pics/webmin/bootup_and_shutdown.png)
