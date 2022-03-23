@@ -2,8 +2,8 @@
   <img src="https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/logo-384x384.png">
   <h3 align="center">Smart Appliance Enabler</h3>
   <p align="center">
-    <a href="https://github.com/camueller/SmartApplianceEnabler/releases/download/1.6.18/SmartApplianceEnabler-1.6.18.war">
-      <img src="https://img.shields.io/badge/Download-1.6.18-brightgreen.svg">
+    <a href="https://github.com/camueller/SmartApplianceEnabler/releases/download/1.6.20/SmartApplianceEnabler-1.6.20.war">
+      <img src="https://img.shields.io/badge/Download-1.6.20-brightgreen.svg">
     </a>
     <a href="https://hub.docker.com/repository/docker/avanux/smartapplianceenabler-arm32">
       <img src="https://img.shields.io/badge/Docker-arm32-blue">
