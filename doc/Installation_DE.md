@@ -72,25 +72,14 @@ Der *Smart Appliance Enabler* läuft jetzt und es kann mit der [Konfiguration](C
 
 Auch die Software zur Administration via Web-Browser (*webmin*) soll jetzt laufen - siehe [Hinweise zur Nutzung von webmin für *Smart Appliance Enabler*](Webmin_DE.md).
 
-# Update
+### Fehler bei der Installation
 
-## Vorbereitung des Updates
+Eine nicht erfolgreiche Installation lag nach meinen bisherigen Erfahrungen zu 90% daran, dass die **Anleitung nicht exakt befolgt wurde**. Insofern kann es duchaus sinnvoll sein, die Installation mit mehr Aufmerksamkeit zu wiederholen.
 
-Zur Vorbereitung der Installation muss die Konfigurationsdatei für das Update [update.config](https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/install/update.config) heruntergeladen und für die nachfolgenden Änderungen lokal gespeichert werden.
+Die Installation wird in der Datei `/tmp/install.log` protokolliert. Bei einer fehlerhaften Installation würde es bei der Fehleranalyse sehr helfen, wenn diese Datei vom Raspberry Pi gesichert wird (mit `scp` oder `WinSCP`). Vor der Sicherung darf der Raspberry Pi nicht vom Strom getrennt oder rebootet werden, weil die Datei sonst nicht mehr vorhanden ist! Vorausetzung für das Herunterladen der Datei ist natürlich, dass der Raspberry Pi über LAN oder WLAN erreichbar ist. 
 
-Hinweise und Beispiele zu den wenigen Konfigurationsparametern finden sich in der Datei selbst.
-
-Für das Update muss ein USB-Stick mit folgenden Dateien (und nur diesen!) vorbereitet werden:
-- `update.config` mit den anpassten Konfigurationsparametern
-- [update.sh](https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/install/update.sh)
-- [update2.sh](https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/install/update2.sh)
-
-Die Dateinamen dürfen nicht verändert werden (Gross-Kleinschreibung, Dateiendungen). Darauf ist insbesondere unter Windows zu achten, wenn dieses so eingestellt ist, dass sie nicht angezeigt werden!  
-
-## Durchführung des Updates
-
-Das Update kann nur durchgeführt werden, wenn der Raspberry Pi mit dem WLAN oder Ethernet verbunden ist.
-
-Zur Starten des Updates muss der **USB-Stick** in den Raspberry Pi gesteckt werden (egal, welche USB-Buchse). Sobald der Raspberry Pi (dank des modifizieren Images) den USB-Stick erkennt, wird er die **erste Phase des Updates** ausführen. Diese dauert nur einige Sekunden, wobei des Ende durch das **Erlöschen der roten LED** signalisiert wird.
-
-Jetzt muss der **USB-Stick entfernt** werden. Dadurch wird der Raspberry Pi (dank des modifizieren Images) **automatisch neu gestartet**, die rote LED geht wieder an und die **zweite Phase des Updates**  beginnt. Dabei wird die neueste Version des *Smart Appliance Enabler* heruntergeladen und installiert. Anschliessend wird der *Smart Appliance Enabler* neu gestartet. Diese Phase sollte nur wenige Minuten dauern. Wenn das Update beendet ist, wird die **rote LED für eine Stunde ausgeschaltet**.
+Die Datei `/tmp/install.log` [einer erfolgreichen Installation sieht so aus](../install/install.log). Interessant sind vor allem die mit `**********` beginnenden Zeilen, welche jeweils den Beginn eines Installationsschrittes markieren. Und hier ist insbesondere die Zeile
+```console
+********** Starting SAE ...
+```
+interessant, die besagt, dass der *Smart Appliance Enabler* jetzt laufen sollte.

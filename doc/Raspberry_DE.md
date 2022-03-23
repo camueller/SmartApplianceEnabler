@@ -13,4 +13,18 @@ Demzufolge muss im *Smart Appliance Enabler* diese Nummer als *GPIO-Anschluss* e
 
 ![Raspberry Pi Pinout](../pics/raspberry-pi-15b.jpg)
 
+## Ausschalten / Neu starten
 
+Wie jeder Computer mit einem Speichermedium mit Schreibzugriff sollte der Raspberry Pi nicht einfach von der Stromquelle getrennt werden, um ihn auszuschalten oder neu zu starten. Dabei kann das Dateisystem oder die SD-Karte kaputt gehen.
+
+Das Herunterfahren mit nachfolgendem Ausschalten erfolgt mit dem Befehl:
+```console
+sudo shutdown now
+```
+
+Das Herunterfahren mit nachfolgendem Neustart erfolgt mit dem Befehl:
+```console
+sudo shutdown -r now
+```
+
+*Webmin*: Wenn man im Seiten-Menü den Punkt `System` wählt und den Unterpunkt `Bootup and Shutdown` anklickt, finden sich ganz unten auf der Seite Schaltflächen für `Reboot System` und `Shutdown System`.

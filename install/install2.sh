@@ -22,8 +22,11 @@ set -x
 CONFIG_FILE=/usr/local/etc/install.config
 . $CONFIG_FILE
 
+if [ "$INSTALL_MBUSD" = true ] ; then
+  PACKAGES="$PACKAGES git cmake"
+fi
 if [ "$INSTALL_WEBMIN" = true ] ; then
-  PACKAGES="$PACKAGES perl libnet-ssleay-perl openssl libauthen-pam-perl libpam-runtime libio-pty-perl apt-show-versions python mon"
+  PACKAGES="$PACKAGES perl libnet-ssleay-perl openssl libauthen-pam-perl libpam-runtime libio-pty-perl shared-mime-info apt-show-versions python "
 fi
 if [ -n "$WIFI_SSID" ] ; then
   IP_ADDRESS=`ip addr | grep wlan0 | grep inet | awk '{print $2}' | awk -F '/' '{print $1}'`
@@ -52,6 +55,22 @@ cp /usr/share/zoneinfo/$TIMEZONE /etc/localtime 2>&1 >> $LOG
 
 echo "$PREFIX Install required packages ..." >> $LOG
 apt install $PACKAGES -y 2>&1 >> $LOG
+
+echo "$PREFIX Install wiring-pi in order support SAE < 2.x ..." >> $LOG
+wget "https://github.com/camueller/SmartApplianceEnabler/raw/master/run/wiringpi-latest.deb" -P /tmp 2>>$LOG
+dpkg -i "/tmp/wiringpi-latest.deb" 2>&1 >> $LOG
+
+echo "$PREFIX Setting up pigpiod ..." >> $LOG
+sed -i "s/ExecStart=\/usr\/bin\/pigpiod -l/ExecStart=\/usr\/bin\/pigpiod/g" /lib/systemd/system/pigpiod.service 2>&1 >> $LOG
+systemctl start pigpiod 2>&1 >> $LOG
+systemctl enable pigpiod 2>&1 >> $LOG
+
+echo "$PREFIX Setting up mosquitto ..." >> $LOG
+sed -i "s/persistence true/persistence false/g" /etc/mosquitto/mosquitto.conf 2>&1 >> $LOG
+echo "listener 1883" > /etc/mosquitto/conf.d/smartapplianceenabler.conf
+echo "allow_anonymous true" >> /etc/mosquitto/conf.d/smartapplianceenabler.conf
+systemctl start mosquitto 2>&1 >> $LOG
+systemctl enable mosquitto 2>&1 >> $LOG
 
 echo "$PREFIX Setting up user ..." >> $LOG
 mkdir $SAE_HOME 2>&1 >> $LOG
@@ -96,6 +115,23 @@ if [ "$INSTALL_WEBMIN" = true ] ; then
   echo "$PREFIX Installing Webmin ..." >> $LOG
   wget "http://prdownloads.sourceforge.net/webadmin/webmin_"$WEBMIN_VERSION"_all.deb" -P /tmp 2>>$LOG
   dpkg -i "/tmp/webmin_"$WEBMIN_VERSION"_all.deb" 2>&1 >> $LOG
+  sudo /etc/init.d/webmin start >> $LOG
+fi
+
+if [ "$INSTALL_MBUSD" = true ] ; then
+  echo "$PREFIX Installing mbusd ..." >> $LOG
+  cd /tmp >> $LOG
+  git clone https://github.com/camueller/mbusd.git 2>&1 >> $LOG
+  cd mbusd >> $LOG
+  mkdir build >> $LOG
+  cd build >> $LOG
+  cmake -DCMAKE_INSTALL_PREFIX=/usr .. 2>&1 >> $LOG
+  make >> $LOG
+  make install 2>&1 >> $LOG
+  systemctl daemon-reload >> $LOG
+  cp /etc/mbusd/mbusd.conf.example /etc/mbusd/mbusd-ttyUSB0.conf >> $LOG
+  # systemctl start mbusd@ttyUSB0.service 2>&1 >> $LOG
+  # systemctl enable mbusd@ttyUSB0.service 2>&1 >> $LOG
 fi
 
 echo "$PREFIX Clean up installation files ..." >> $LOG
