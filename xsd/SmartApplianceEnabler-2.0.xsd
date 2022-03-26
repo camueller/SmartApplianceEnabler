@@ -79,6 +79,7 @@
                 <xs:element name="MockSwitch" type="MockSwitchType" />
                 <xs:element name="ModbusSwitch" type="ModbusSwitchType" />
                 <xs:element name="ElectricVehicleCharger" type="ElectricVehicleChargerType" />
+                <xs:element name="PwmSwitch" type="PwmSwitchType" />
                 <xs:element name="StartingCurrentSwitch" type="StartingCurrentSwitchType" />
             </xs:choice>
             <xs:choice>
@@ -136,6 +137,16 @@
     </xs:complexType>
 
     <xs:complexType name="MockSwitchType">
+    </xs:complexType>
+
+    <xs:complexType name="PwmSwitchType">
+        <xs:sequence>
+            <xs:element name="Notifications" type="NotificationsType" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="gpio" type="xs:int" use="required" />
+        <xs:attribute name="pwmFrequency" type="xs:int" use="required"/>
+        <xs:attribute name="minDutyCycle" type="xs:double" />
+        <xs:attribute name="maxDutyCycle" type="xs:double" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="ElectricVehicleChargerType">

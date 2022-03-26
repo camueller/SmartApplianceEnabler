@@ -20,18 +20,21 @@ package de.avanux.smartapplianceenabler.mqtt;
 
 import java.time.LocalDateTime;
 
-public class EvChargerMessage extends ControlMessage {
-    private Integer chargePower;
+public class VariablePowerConsumerMessage extends ControlMessage {
+    public Integer power;
     private Boolean useOptionalEnergy;
 
-    public EvChargerMessage(
+    public VariablePowerConsumerMessage() {
+    }
+
+    public VariablePowerConsumerMessage(
             LocalDateTime time,
             boolean on,
-            Integer chargePower,
+            Integer power,
             Boolean useOptionalEnergy
     ) {
         super(time, on);
-        this.chargePower = chargePower;
+        this.power = power;
         this.useOptionalEnergy = useOptionalEnergy;
     }
 
@@ -39,7 +42,7 @@ public class EvChargerMessage extends ControlMessage {
     public String toString() {
         return "EvChargerMessage{" +
                 "on=" + on +
-                ", chargePower=" + chargePower +
+                ", power=" + power +
                 ", useOptionalEnergy=" + useOptionalEnergy +
                 '}';
     }

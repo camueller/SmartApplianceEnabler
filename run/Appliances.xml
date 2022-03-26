@@ -2,7 +2,7 @@
 <Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v2.0">
     <Configuration param="NodeRED.Dashboard.Url" value="http://localhost:1880"/>
     <Appliance id="F-00000001-000000000002-00">
-        <HttpSwitch>
+        <!--HttpSwitch>
             <HttpWrite url="http://tasmota/cm?cmnd=Power%20On">
                 <HttpWriteValue name="On" method="GET"/>
             </HttpWrite>
@@ -10,7 +10,8 @@
                 <HttpWriteValue name="Off" method="GET"/>
             </HttpWrite>
             <Notifications/>
-        </HttpSwitch>
+        </HttpSwitch-->
+        <PwmSwitch gpio="17" pwmFrequency="50" minDutyCycle="3" maxDutyCycle="12.5" />
         <HttpElectricityMeter contentProtocol="JSON">
             <HttpRead url="http://tasmota/cm?cmnd=Status%208">
                 <HttpReadValue name="Energy" method="GET" path="$.StatusSNS.ENERGY.Total"/>

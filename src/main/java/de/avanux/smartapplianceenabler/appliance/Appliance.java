@@ -32,6 +32,7 @@ import de.avanux.smartapplianceenabler.notification.Notification;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.notification.NotificationProvider;
 import de.avanux.smartapplianceenabler.schedule.*;
+import de.avanux.smartapplianceenabler.semp.webservice.Characteristics;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,6 +61,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
             @XmlElement(name = "ModbusSwitch", type = ModbusSwitch.class),
             @XmlElement(name = "StartingCurrentSwitch", type = StartingCurrentSwitch.class),
             @XmlElement(name = "Switch", type = Switch.class),
+            @XmlElement(name = "PwmSwitch", type = PwmSwitch.class),
             @XmlElement(name = "ElectricVehicleCharger", type = ElectricVehicleCharger.class),
     })
     private Control control;
@@ -238,13 +240,19 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
             );
             ((NotificationProvider) control).setNotificationHandler(notificationHandler);
         }
-        if(isEvCharger()) {
+        if(control instanceof ElectricVehicleCharger) {
             ElectricVehicleCharger evCharger = ((ElectricVehicleCharger) control);
             evCharger.setAppliance(this);
-
+        }
+        if(control instanceof VariablePowerConsumer) {
+            var powerConsumer = (VariablePowerConsumer) control;
             DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(this.id);
-            if(deviceInfo.getCharacteristics() != null && deviceInfo.getCharacteristics().getMinPowerConsumption() != null) {
-                evCharger.setMinPowerConsumption(deviceInfo.getCharacteristics().getMinPowerConsumption());
+            Characteristics characteristics = deviceInfo.getCharacteristics();
+            if(characteristics != null) {
+                if(characteristics.getMinPowerConsumption() != null) {
+                    powerConsumer.setMinPowerConsumption(characteristics.getMinPowerConsumption());
+                }
+                powerConsumer.setMaxPowerConsumption(characteristics.getMaxPowerConsumption());
             }
         }
         if(control instanceof StartingCurrentSwitch) {
@@ -317,7 +325,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
             logger.info("{}: Starting {}", id, control.getClass().getSimpleName());
             control.start(now, timer);
             logger.info("{}: Switch off appliance initially", id);
-            publishControlMessage(now, false);
+            publishControlMessage(now, false, null);
         }
     }
 
@@ -341,8 +349,10 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
         }
     }
 
-    private void publishControlMessage(LocalDateTime now, boolean on) {
-        mqttClient.publish(Control.TOPIC, new ControlMessage(now, on), true, true);
+    private void publishControlMessage(LocalDateTime now, boolean on, Integer power) {
+        var message = power != null ?
+                new VariablePowerConsumerMessage(now, on, power, null) : new ControlMessage(now, on);
+        mqttClient.publish(Control.TOPIC, message, true, true);
     }
 
     public void setHolidays(List<LocalDate> holidays) {
@@ -416,27 +426,14 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
                 || control instanceof ModbusSwitch
                 || control instanceof MockSwitch
                 || control instanceof StartingCurrentSwitch
-                || isEvCharger()
+                || control instanceof VariablePowerConsumer
             );
     }
 
-    private boolean isEvCharger() {
-        return this.control instanceof ElectricVehicleCharger;
-    }
-
-    public void setApplianceState(LocalDateTime now, boolean switchOn, Integer chargePower, String logMessage) {
+    public void setApplianceState(LocalDateTime now, boolean switchOn, Integer power, String logMessage) {
         if(control != null) {
             logger.debug("{}: {}", id, logMessage);
-            if(switchOn && isEvCharger()) {
-                ElectricVehicleCharger evCharger = (ElectricVehicleCharger) control;
-                if(chargePower != null) {
-                    evCharger.setChargePower(chargePower);
-                }
-                else if(!evCharger.isOn()) {
-                    evCharger.setChargePowerToMinimum();
-                }
-            }
-            publishControlMessage(now, switchOn);
+            publishControlMessage(now, switchOn, power);
         }
         else {
             logger.warn("{}: Appliance configuration does not contain control.", id);
@@ -444,7 +441,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
     }
 
     public void setEnergyDemand(LocalDateTime now, Integer evId, Integer socCurrent, Integer socRequested, LocalDateTime chargeEnd) {
-        if (isEvCharger()) {
+        if (this.control instanceof ElectricVehicleCharger) {
             ElectricVehicleCharger evCharger = (ElectricVehicleCharger) this.control;
             if(meterMessage != null && meterMessage.energy > 0.1) {
                 logger.debug("{}: skipping ev charger configuration to continue charging process already started", id);
@@ -474,7 +471,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
     }
 
     public void updateSoc(LocalDateTime now,  Integer socCurrent, Integer socRequested) {
-        if (isEvCharger()) {
+        if (control instanceof ElectricVehicleCharger) {
             ElectricVehicleCharger evCharger = (ElectricVehicleCharger) this.control;
             ElectricVehicle ev = evCharger.getConnectedVehicle();
             if(ev != null) {
@@ -510,13 +507,13 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
             if(control instanceof  ModbusSwitch) {
                 slaves.add((ModbusSwitch) control);
             }
-            else if(control instanceof  StartingCurrentSwitch) {
+            else if(control instanceof StartingCurrentSwitch) {
                 Control wrappedControl = ((StartingCurrentSwitch) control).getControl();
                 if(wrappedControl instanceof ModbusSwitch) {
                     slaves.add((ModbusSwitch) wrappedControl);
                 }
             }
-            else if(isEvCharger()) {
+            else if(control instanceof ElectricVehicleCharger) {
                 EVChargerControl evChargerControl = ((ElectricVehicleCharger) control).getControl();
                 if(evChargerControl instanceof EVModbusControl) {
                     slaves.add((EVModbusControl) evChargerControl);
@@ -527,7 +524,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
     }
 
     public boolean canConsumeOptionalEnergy(LocalDateTime now) {
-        if(isEvCharger()) {
+        if(this.control instanceof VariablePowerConsumer) {
             return true;
         }
         return hasTimeframesWithOptionalEnergyRequests();
@@ -542,7 +539,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
                                       TimeframeInterval activatedInterval, boolean wasRunning) {
         if(deactivatedInterval != null) {
             setApplianceState(now, false, null, "Switching off since timeframe interval was deactivated");
-            if(meter != null && ! isEvCharger()) {
+            if(meter != null && !(control instanceof ElectricVehicleCharger)) {
                 meter.resetEnergyMeter();
             }
         }

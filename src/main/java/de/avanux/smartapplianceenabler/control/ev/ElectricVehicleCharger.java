@@ -22,6 +22,7 @@ import de.avanux.smartapplianceenabler.appliance.*;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.configuration.Validateable;
 import de.avanux.smartapplianceenabler.control.Control;
+import de.avanux.smartapplianceenabler.control.VariablePowerConsumer;
 import de.avanux.smartapplianceenabler.http.EVHttpControl;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.modbus.EVModbusControl;
@@ -48,7 +49,7 @@ import java.util.Timer;
 import java.util.Vector;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Validateable, ApplianceIdConsumer,
+public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceLifeCycle, Validateable, ApplianceIdConsumer,
         TimeframeIntervalChangedListener, NotificationProvider {
 
     private transient Logger logger = LoggerFactory.getLogger(ElectricVehicleCharger.class);
@@ -180,6 +181,9 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
 
     public void setMinPowerConsumption(Integer minPowerConsumption) {
         this.minPowerConsumption = minPowerConsumption;
+    }
+
+    public void setMaxPowerConsumption(int maxPowerConsumption) {
     }
 
     public void setSocScriptAsync(boolean socScriptAsync) {
@@ -319,9 +323,18 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                 meterMessage = (MeterMessage) message;
             });
         }
-        mqttClient.subscribe(Control.TOPIC,true, true, ControlMessage.class, (topic, message) -> {
-            if(message instanceof ControlMessage) {
-                ControlMessage controlMessage = (ControlMessage) message;
+        mqttClient.subscribe(Control.TOPIC,true, true, VariablePowerConsumerMessage.class, (topic, message) -> {
+            if(message instanceof VariablePowerConsumerMessage) {
+                VariablePowerConsumerMessage controlMessage = (VariablePowerConsumerMessage) message;
+
+                if(controlMessage.on) {
+                    if(controlMessage.power != null) {
+                        setPower(now, controlMessage.power);
+                    }
+                    else if(!isOn()) {
+                        setPowerToMinimum();
+                    }
+                }
                 this.on(controlMessage.getTime(), controlMessage.on);
             }
         });
@@ -567,7 +580,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
                 socValues.batteryCapacity = firstVehicle.getBatteryCapacity();
             }
             if(getForceInitialCharging() && wasInStateOneTime(EVChargerState.VEHICLE_CONNECTED)) {
-                setChargePowerToMinimum();
+                setPowerToMinimum();
                 startCharging();
             }
         }
@@ -730,14 +743,14 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         return energyMeteredSinceLastSocScriptExecution;
     }
 
-    public void setChargePowerToMinimum() {
+    public void setPowerToMinimum() {
         logger.debug("{}: Set minimum charge power", applianceId);
         if(this.minPowerConsumption != null && this.minPowerConsumption > 0) {
-            setChargePower(this.minPowerConsumption);
+            setPower(LocalDateTime.now(), this.minPowerConsumption);
         }
     }
 
-    public synchronized void setChargePower(int power) {
+    public synchronized void setPower(LocalDateTime now, int power) {
         int phases = getPhases();
         int adjustedPower = power;
         ElectricVehicle chargingVehicle = getConnectedVehicle();
@@ -868,7 +881,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     }
 
     private void publishControlMessage(boolean on) {
-        EvChargerMessage message = new EvChargerMessage(
+        VariablePowerConsumerMessage message = new VariablePowerConsumerMessage(
                 LocalDateTime.now(),
                 on,
                 chargePower,

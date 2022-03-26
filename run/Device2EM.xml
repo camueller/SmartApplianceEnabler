@@ -9,7 +9,7 @@
             <DeviceVendor>Tasmota</DeviceVendor>
         </Identification>
         <Characteristics>
-            <MaxPowerConsumption>22000</MaxPowerConsumption>
+            <MaxPowerConsumption>4000</MaxPowerConsumption>
             <MinPowerConsumption>1380</MinPowerConsumption>
         </Characteristics>
         <Capabilities>

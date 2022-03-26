@@ -23,7 +23,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.time.LocalDateTime;
 
-public class ControlMessage extends MqttMessage{
+public class ControlMessage extends MqttMessage {
     public boolean on;
 
     public ControlMessage() {
