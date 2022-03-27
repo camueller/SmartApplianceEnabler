@@ -30,6 +30,7 @@ import {EvHttpControl} from './evcharger/http/ev-http-control';
 import {EvCharger} from './evcharger/ev-charger';
 import {ElectricVehicle} from './evcharger/electric-vehicle/electric-vehicle';
 import {MeterReportingSwitch} from './meterreporting/meter-reporting-switch';
+import {PwmSwitch} from './pwm/pwm-switch';
 
 export class ControlFactory {
 
@@ -80,6 +81,8 @@ export class ControlFactory {
       control.switch_ = this.createSwitch(rawControl);
     } else if (control.type === ModbusSwitch.TYPE) {
       control.modbusSwitch = this.createModbusSwitch(rawControl);
+    } else if (control.type === PwmSwitch.TYPE) {
+      control.pwmSwitch = this.createPwmSwitch(rawControl);
     } else if (control.type === EvCharger.TYPE) {
       control.evCharger = this.createEvCharger(rawControl);
     } else if (control.type === HttpSwitch.TYPE) {
@@ -98,6 +101,8 @@ export class ControlFactory {
       return control.switch_;
     } else if (control.type === ModbusSwitch.TYPE) {
       return control.modbusSwitch;
+    } else if (control.type === PwmSwitch.TYPE) {
+      return control.pwmSwitch;
     } else if (control.type === EvCharger.TYPE) {
       return control.evCharger;
     } else if (control.type === HttpSwitch.TYPE) {
@@ -132,6 +137,10 @@ export class ControlFactory {
 
   createHttpSwitch(rawHttpSwitch: any): HttpSwitch {
     return new HttpSwitch(rawHttpSwitch);
+  }
+
+  createPwmSwitch(rawPwmSwitch: any): PwmSwitch {
+    return new PwmSwitch(rawPwmSwitch);
   }
 
   createEvCharger(rawEvCharger: any): EvCharger {

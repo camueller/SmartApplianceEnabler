@@ -51,6 +51,8 @@ import {MeterReportingSwitch} from './meterreporting/meter-reporting-switch';
 import {NotificationComponent} from '../notification/notification.component';
 import {NotificationType} from '../notification/notification-type';
 import {ControlMeterreportingComponent} from './meterreporting/control-meterreporting.component';
+import {ControlPwmComponent} from './pwm/control-pwm.component';
+import {PwmSwitch} from './pwm/pwm-switch';
 
 @Component({
   selector: 'app-control',
@@ -58,18 +60,20 @@ import {ControlMeterreportingComponent} from './meterreporting/control-meterrepo
   styleUrls: ['./control.component.scss'],
 })
 export class ControlComponent implements OnInit, CanDeactivate<ControlComponent> {
-  @ViewChild(ControlMeterreportingComponent)
-  controlMeterreportingComp: ControlMeterreportingComponent;
-  @ViewChild(ControlSwitchComponent)
-  controlSwitchComp: ControlSwitchComponent;
-  @ViewChild(ControlModbusComponent)
-  controlModbusComp: ControlModbusComponent;
-  @ViewChild(ControlHttpComponent)
-  controlHttpComp: ControlHttpComponent;
   @ViewChild(ControlEvchargerComponent)
   controlEvchargerComp: ControlEvchargerComponent;
+  @ViewChild(ControlHttpComponent)
+  controlHttpComp: ControlHttpComponent;
+  @ViewChild(ControlMeterreportingComponent)
+  controlMeterreportingComp: ControlMeterreportingComponent;
+  @ViewChild(ControlModbusComponent)
+  controlModbusComp: ControlModbusComponent;
+  @ViewChild(ControlPwmComponent)
+  controlPwmComp: ControlPwmComponent;
   @ViewChild(ControlStartingcurrentComponent)
   controlStartingcurrentComp: ControlStartingcurrentComponent;
+  @ViewChild(ControlSwitchComponent)
+  controlSwitchComp: ControlSwitchComponent;
   @ViewChild(NotificationComponent)
   notificationComp: NotificationComponent;
   form: FormGroup;
@@ -119,8 +123,8 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
         this.control.type = EvCharger.TYPE;
       }
       const controlTypeKeys = this.settings.modbusSettings
-        ? [MeterReportingSwitch.TYPE, Switch.TYPE, ModbusSwitch.TYPE, HttpSwitch.TYPE, AlwaysOnSwitch.TYPE]
-        : [MeterReportingSwitch.TYPE, Switch.TYPE, HttpSwitch.TYPE, AlwaysOnSwitch.TYPE];
+        ? [MeterReportingSwitch.TYPE, Switch.TYPE, ModbusSwitch.TYPE, HttpSwitch.TYPE, PwmSwitch.TYPE, AlwaysOnSwitch.TYPE]
+        : [MeterReportingSwitch.TYPE, Switch.TYPE, HttpSwitch.TYPE, PwmSwitch.TYPE, AlwaysOnSwitch.TYPE];
       this.translate.get(controlTypeKeys).subscribe(translatedStrings => {
         Object.keys(translatedStrings).forEach(key => {
           this.controlTypes.push({value: simpleControlType(key), viewValue: translatedStrings[key]} as ListItem);
@@ -194,6 +198,10 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
     return this.control && this.control.type === HttpSwitch.TYPE;
   }
 
+  get isPwmSwitch() {
+    return this.control && this.control.type === PwmSwitch.TYPE;
+  }
+
   get isEvCharger() {
     return this.control && this.control.type === EvCharger.TYPE;
   }
@@ -230,7 +238,7 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   }
 
   get canHaveStartingCurrentDetection(): boolean {
-    return !(this.isMeterReportingSwitch || this.isAlwaysOnSwitch || this.control.type === MockSwitch.TYPE);
+    return !(this.isMeterReportingSwitch || this.isAlwaysOnSwitch || this.isPwmSwitch || this.control.type === MockSwitch.TYPE);
   }
 
   toggleStartingCurrentDetection() {
@@ -260,6 +268,9 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
     }
     if (this.controlHttpComp) {
       this.control.httpSwitch = this.controlHttpComp.updateModelFromForm();
+    }
+    if (this.controlPwmComp) {
+      this.control.pwmSwitch = this.controlPwmComp.updateModelFromForm();
     }
     if (this.controlEvchargerComp) {
       this.control.evCharger = this.controlEvchargerComp.updateModelFromForm();

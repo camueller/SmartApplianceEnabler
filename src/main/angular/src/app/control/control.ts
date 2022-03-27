@@ -25,6 +25,7 @@ import {Switch} from './switch/switch';
 import {EvCharger} from './evcharger/ev-charger';
 import {Notifications} from '../notification/notifications';
 import {MeterReportingSwitch} from './meterreporting/meter-reporting-switch';
+import {PwmSwitch} from './pwm/pwm-switch';
 
 export class Control {
   type: string;
@@ -37,6 +38,7 @@ export class Control {
   mockSwitch?: MockSwitch;
   httpSwitch?: HttpSwitch;
   evCharger?: EvCharger;
+  pwmSwitch?: PwmSwitch;
   notifications?: Notifications;
 
   public constructor(init?: Partial<Control>) {

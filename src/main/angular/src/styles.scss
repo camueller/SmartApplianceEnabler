@@ -74,6 +74,10 @@ button {
     align-items: baseline;
   }
 
+  &__gpio {
+    width: 7rem;
+  }
+
   &__heading-extra-top-margin {
     margin-top: 1.25rem;
   }

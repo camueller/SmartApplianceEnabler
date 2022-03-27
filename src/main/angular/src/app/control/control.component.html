@@ -62,6 +62,9 @@
                         [httpSwitch]="control.httpSwitch"
                         [controlDefaults]="controlDefaults"
       ></app-control-http>
+      <app-control-pwm *ngIf="isPwmSwitch"
+                       [pwmSwitch]="control.pwmSwitch"
+      ></app-control-pwm>
       <app-control-startingcurrent *ngIf="control.startingCurrentDetection"
                                    [form]="form"
                                    [startingCurrentSwitch]="control.startingCurrentSwitch"
