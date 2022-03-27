@@ -38,8 +38,6 @@ abstract public class GpioControllable implements ApplianceIdConsumer, Validatea
     // FIXME rename to pin
     @XmlAttribute
     private Integer gpio;
-    @XmlAttribute
-    private String pinPullResistance;
     private transient PigpioInterface pigpioInterface;
     private transient String applianceId;
 
@@ -72,18 +70,6 @@ abstract public class GpioControllable implements ApplianceIdConsumer, Validatea
         if (rc < 0) {
             throw new IOException("pigpioInterface.setPinPullResistance returned " + rc);
         }
-    }
-
-    protected PinPullResistance getPinPullResistance() {
-        if(pinPullResistance != null) {
-            if (pinPullResistance.equals("PULL_DOWN")) {
-                return PinPullResistance.PULL_DOWN;
-            }
-            if (pinPullResistance.equals("PULL_UP")) {
-                return PinPullResistance.PULL_UP;
-            }
-        }
-        return PinPullResistance.OFF;
     }
 
     protected void enableListener(PigpioCallback listener, PinEdge edge) throws IOException {

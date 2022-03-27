@@ -46,6 +46,8 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
     private Integer impulsesPerKwh;
     @XmlAttribute
     private Integer minPulseDuration; // milliseconds
+    @XmlAttribute
+    private String pinPullResistance;
     @XmlElement(name = "Notifications")
     private Notifications notifications;
     private transient LocalDateTime pulseTimestamp;
@@ -195,5 +197,17 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
             logger.debug("{}: power: {}W", getApplianceId(), averagePower);
             pulseTimestamp = null;
         }
+    }
+
+    protected PinPullResistance getPinPullResistance() {
+        if(pinPullResistance != null) {
+            if (pinPullResistance.equals("PULL_DOWN")) {
+                return PinPullResistance.PULL_DOWN;
+            }
+            if (pinPullResistance.equals("PULL_UP")) {
+                return PinPullResistance.PULL_UP;
+            }
+        }
+        return PinPullResistance.OFF;
     }
 }
