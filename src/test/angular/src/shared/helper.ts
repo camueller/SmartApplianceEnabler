@@ -32,6 +32,8 @@ import {NotificationPage} from '../page/notification/notification.page';
 import {MasterMeterPage} from '../page/meter/master-meter.page';
 import {SlaveElectricityMeter} from '../../../../main/angular/src/app/meter/slave/master-electricity-meter';
 import {SlaveMeterPage} from '../page/meter/slave-meter.page';
+import {PwmSwitch} from '../../../../main/angular/src/app/control/pwm/pwm-switch';
+import {PwmControlPage} from '../page/control/pwm-control.page';
 
 export function isDebug() {
   return !!process.env.DEBUG;
@@ -136,16 +138,19 @@ export async function createControl(t: TestController, applianceId: string, cont
   if (control.type === AlwaysOnSwitch.TYPE) {
     await AlwaysOnSwitchPage.setAlwaysOnSwitch(t, control.alwaysOnSwitch);
   }
-  if (control.type === Switch.TYPE) {
+  else if (control.type === Switch.TYPE) {
     await SwitchPage.setSwitch(t, control.switch_);
   }
-  if (control.type === HttpSwitch.TYPE) {
+  else if (control.type === HttpSwitch.TYPE) {
     await HttpControlPage.setHttpSwitch(t, control.httpSwitch);
   }
-  if (control.type === ModbusSwitch.TYPE) {
+  else if (control.type === ModbusSwitch.TYPE) {
     await ModbusControlPage.setModbusSwitch(t, control.modbusSwitch);
   }
-  if (control.type === EvCharger.TYPE) {
+  else if (control.type === PwmSwitch.TYPE) {
+    await PwmControlPage.setPwmSwitch(t, control.pwmSwitch);
+  }
+  else if (control.type === EvCharger.TYPE) {
     await EvchargerPage.setEvChargerFromTemplate(t, control.evCharger, controlTemplate);
     await EvchargerPage.setElectricVehicles(t, applianceId, control.evCharger.vehicles);
   }
@@ -160,16 +165,19 @@ export async function assertControl(t: TestController, applianceId: string, cont
   if (control.type === AlwaysOnSwitch.TYPE) {
     await AlwaysOnSwitchPage.assertAlwaysOnSwitch(t, control.alwaysOnSwitch);
   }
-  if (control.type === Switch.TYPE) {
+  else if (control.type === Switch.TYPE) {
     await SwitchPage.assertSwitch(t, control.switch_);
   }
-  if (control.type === HttpSwitch.TYPE) {
+  else if (control.type === HttpSwitch.TYPE) {
     await HttpControlPage.assertHttpSwitch(t, control.httpSwitch);
   }
-  if (control.type === ModbusSwitch.TYPE) {
+  else if (control.type === ModbusSwitch.TYPE) {
     await ModbusControlPage.assertModbusSwitch(t, control.modbusSwitch);
   }
-  if (control.type === EvCharger.TYPE) {
+  else if (control.type === PwmSwitch.TYPE) {
+    await PwmControlPage.assertPwmSwitch(t, control.pwmSwitch);
+  }
+  else if (control.type === EvCharger.TYPE) {
     await EvchargerPage.assertEvCharger(t, control.evCharger);
     await EvchargerPage.assertElectricVehicles(t, applianceId, control.evCharger.vehicles);
   }

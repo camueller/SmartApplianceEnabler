@@ -16,14 +16,6 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-import {Appliance} from '../../../../../main/angular/src/app/appliance/appliance';
+import {PwmSwitch} from '../../../../../main/angular/src/app/control/pwm/pwm-switch';
 
-export const heatingRod = new Appliance({
-  vendor: 'Technische Alternative RT',
-  name: 'EHS-R',
-  type: 'Heater',
-  serial: '987654321',
-  minPowerConsumption: 200,
-  maxPowerConsumption: 3000,
-  interruptionsAllowed: true,
-});
+export const pwmSwitch = new PwmSwitch({gpio: 17, pwmFrequency: 50, minDutyCycle: 3, maxDutyCycle: 12.5})
