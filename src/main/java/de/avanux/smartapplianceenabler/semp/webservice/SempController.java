@@ -20,7 +20,7 @@ package de.avanux.smartapplianceenabler.semp.webservice;
 import de.avanux.smartapplianceenabler.appliance.Appliance;
 import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
 import de.avanux.smartapplianceenabler.control.Control;
-import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
+import de.avanux.smartapplianceenabler.control.VariablePowerConsumer;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.mqtt.*;
 import de.avanux.smartapplianceenabler.schedule.AbstractEnergyRequest;
@@ -36,7 +36,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.StringWriter;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -111,7 +110,7 @@ public class SempController {
                 }
             }
         }
-        Device2EM device2EM = ApplianceManager.getInstance().getDevice2EM();
+        Device2EM device2EM = new Device2EM();
         device2EM.setDeviceInfo(deviceInfos);
         device2EM.setDeviceStatus(deviceStatuses);
         device2EM.setPlanningRequest(planningRequests);
@@ -150,9 +149,13 @@ public class SempController {
 
     protected DeviceInfo createDeviceInfo(LocalDateTime now, String deviceId) {
         if (deviceId != null) {
-            DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(deviceId);
+            DeviceInfo persistentDeviceInfo = ApplianceManager.getInstance().getDeviceInfo(deviceId);
             Appliance appliance = ApplianceManager.getInstance().findAppliance(deviceId);
-            deviceInfo.setCapabilities(createCapabilities(deviceInfo, appliance.getMeter() != null,
+            DeviceInfo deviceInfo = new DeviceInfo();
+            deviceInfo.setIdentification(persistentDeviceInfo.getIdentification());
+            deviceInfo.setCharacteristics(createCharacteristics(persistentDeviceInfo,
+                    appliance.getControl() != null && (appliance.getControl() instanceof VariablePowerConsumer)));
+            deviceInfo.setCapabilities(createCapabilities(persistentDeviceInfo, appliance.getMeter() != null,
                     appliance.canConsumeOptionalEnergy(now)));
             logger.debug("{}: {}", deviceId, deviceInfo.toString());
             return deviceInfo;
@@ -167,6 +170,19 @@ public class SempController {
             deviceInfos.add(createDeviceInfo(now, appliance.getId()));
         }
         return deviceInfos;
+    }
+
+    private Characteristics createCharacteristics(DeviceInfo deviceInfo, boolean variablePowerConsumer) {
+        Characteristics characteristics = new Characteristics();
+        if(deviceInfo.getCharacteristics() != null) {
+            characteristics.setMaxPowerConsumption(deviceInfo.getCharacteristics().getMaxPowerConsumption());
+            characteristics.setMinPowerConsumption(variablePowerConsumer ? deviceInfo.getCharacteristics().getMinPowerConsumption() : null);
+            characteristics.setMinOnTime(deviceInfo.getCharacteristics().getMinOnTime());
+            characteristics.setMinOffTime(deviceInfo.getCharacteristics().getMinOffTime());
+            characteristics.setMaxOnTime(deviceInfo.getCharacteristics().getMaxOnTime());
+            characteristics.setMaxOffTime(deviceInfo.getCharacteristics().getMaxOffTime());
+        }
+        return characteristics;
     }
 
     private Capabilities createCapabilities(DeviceInfo deviceInfo, boolean hasMeter, boolean canConsumeOptionalEnergy) {
