@@ -186,7 +186,7 @@ export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<Appl
     this.appliance.name = getValidString(this.form.controls.name.value);
     this.appliance.type = getValidString(this.form.controls.type.value);
     this.appliance.serial = getValidString(this.form.controls.serial.value);
-    this.appliance.minPowerConsumption = this.isEvCharger() ? getValidInt(this.form.controls.minPowerConsumption.value) : undefined;
+    this.appliance.minPowerConsumption = getValidInt(this.form.controls.minPowerConsumption.value);
     this.appliance.maxPowerConsumption = getValidInt(this.form.controls.maxPowerConsumption.value);
     this.appliance.interruptionsAllowed = this.form.controls.interruptionsAllowed.value;
     this.appliance.minOnTime = this.appliance.interruptionsAllowed ? getValidInt(this.form.controls.minOnTime.value) : undefined;

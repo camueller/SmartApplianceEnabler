@@ -20,7 +20,7 @@
   "ApplianceComponent.serial": "Serial number",
   "ApplianceComponent.characteristics": "Characteristics",
   "ApplianceComponent.minPowerConsumption": "Min. power consumption [W]",
-  "ApplianceComponent.minPowerConsumption.tooltip": "Provide only for devices with controllable power consumption. Any power recommendation will not undercut this value.",
+  "ApplianceComponent.minPowerConsumption.tooltip": "Provide only for devices with controllable power consumption (wallboxes, devices with PWM control). Any power recommendation will not undercut this value.",
   "ApplianceComponent.maxPowerConsumption": "Max. power consumption [W]",
   "ApplianceComponent.maxPowerConsumption.tooltip": "For devices without controllable power consumption this is the power consumption on the type label. Devices with controllable power consumption will not receive a power recommendation exceeding this value.",
   "ApplianceComponent.minOnTime": "Min. switch on time [s]",

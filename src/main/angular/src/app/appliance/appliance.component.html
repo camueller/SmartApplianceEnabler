@@ -60,7 +60,7 @@
   <section>
     <h2>{{'ApplianceComponent.characteristics' | translate}}</h2>
     <div class="sae__fields">
-      <mat-form-field class="minPowerConsumption" *ngIf="isEvCharger()">
+      <mat-form-field class="minPowerConsumption">
         <mat-label>{{'ApplianceComponent.minPowerConsumption' | translate}}</mat-label>
         <input matInput type="text" formControlName="minPowerConsumption"
                matTooltip="{{'ApplianceComponent.minPowerConsumption.tooltip' | translate}}"

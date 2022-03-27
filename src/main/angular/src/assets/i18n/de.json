@@ -20,7 +20,7 @@
   "ApplianceComponent.serial": "Seriennummer",
   "ApplianceComponent.characteristics": "Eigenschaften",
   "ApplianceComponent.minPowerConsumption": "Min. Leistungsaufnahme [W]",
-  "ApplianceComponent.minPowerConsumption.tooltip": "Nur angeben bei Geräten mit steuerbarer Leistungsaufnahme. Die empfohlene Leistungsaufnahme wird diesen Wert dann nicht unterschreiten.",
+  "ApplianceComponent.minPowerConsumption.tooltip": "Nur angeben bei Geräten mit steuerbarer Leistungsaufnahme (Wallboxen, Geräte mit PWM-Schalter). Die empfohlene Leistungsaufnahme wird diesen Wert dann nicht unterschreiten.",
   "ApplianceComponent.maxPowerConsumption": "Max. Leistungsaufnahme [W]",
   "ApplianceComponent.maxPowerConsumption.tooltip": "Bei Geräten, deren Leistungsaufnahme nicht steuerbar ist, die maximale Leistungsaufnahme laut Typenschild. Bei Geräten mit steuerbarer Leistungsaufnahme wird die empfohlene Leistungsaufnahme diesen Wert nicht überschreiten.",
   "ApplianceComponent.minOnTime": "Min. Einschaltdauer [s]",
