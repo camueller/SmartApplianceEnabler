@@ -53,6 +53,7 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
     @XmlElement(name = "Notifications")
     private Notifications notifications;
     private transient int range;
+    private transient Integer minPowerConsumption;
     private transient Integer maxPowerConsumption;
     private transient NotificationHandler notificationHandler;
     private transient GuardedTimerTask mqttPublishTimerTask;
@@ -61,6 +62,7 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
     private transient String mqttTopic = Control.TOPIC;
 
     public void setMinPowerConsumption(Integer minPowerConsumption) {
+        this.minPowerConsumption = minPowerConsumption;
     }
 
     public void setMaxPowerConsumption(int maxPowerConsumption) {
@@ -69,7 +71,7 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
 
     @Override
     public void validate() throws ConfigurationException {
-        logger.debug("{}: configured: maxPowerConsumption={}", getApplianceId(), maxPowerConsumption);
+        logger.debug("{}: configured: minPowerConsumption={} maxPowerConsumption={}", getApplianceId(), minPowerConsumption, maxPowerConsumption);
     }
 
     @Override
@@ -109,7 +111,17 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
                 mqttClient.subscribe(mqttTopic, true, true, VariablePowerConsumerMessage.class, (topic, message) -> {
                     if(message instanceof VariablePowerConsumerMessage) {
                         VariablePowerConsumerMessage controlMessage = (VariablePowerConsumerMessage) message;
-                        this.setPower(controlMessage.getTime(), controlMessage.power != null ? controlMessage.power : 0);
+                        if(controlMessage.on) {
+                            if(controlMessage.power != null) {
+                                setPower(now, controlMessage.power);
+                            }
+                            else if(!isOn()) {
+                                setPower(now, minPowerConsumption);
+                            }
+                        }
+                        else {
+                            this.setPower(controlMessage.getTime(), 0);
+                        }
                     }
                 });
             }
@@ -129,7 +141,7 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
     }
 
     public void setPower(LocalDateTime now, int power) {
-        logger.info("{}: Setting power to {}", getApplianceId(), power);
+        logger.info("{}: Setting power to {}W", getApplianceId(), power);
         int dutyCycle = Double.valueOf(((power / (double) this.maxPowerConsumption * (this.maxDutyCycle - this.minDutyCycle) / 100) + (this.minDutyCycle / 100)) * range).intValue();
         setDutyCycle(now, dutyCycle);
         publishControlMessage(now, power);

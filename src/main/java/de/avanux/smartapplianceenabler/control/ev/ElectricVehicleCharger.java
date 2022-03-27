@@ -326,7 +326,6 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
         mqttClient.subscribe(Control.TOPIC,true, true, VariablePowerConsumerMessage.class, (topic, message) -> {
             if(message instanceof VariablePowerConsumerMessage) {
                 VariablePowerConsumerMessage controlMessage = (VariablePowerConsumerMessage) message;
-
                 if(controlMessage.on) {
                     if(controlMessage.power != null) {
                         setPower(now, controlMessage.power);
