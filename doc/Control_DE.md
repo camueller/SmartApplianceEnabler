@@ -8,6 +8,7 @@ Derzeit unterstützt der *Smart Appliance Enabler* folgende Schalter:
 * [GPIO](GPIOSwitch_DE.md)
 * [Modbus](ModbusSwitch_DE.md) erscheint nur, wenn in den [Einstellungen](Settings_DE.md#user-content-modbus) mindesten ein Modbus konfiguriert wurde
 * [HTTP](HttpSwitch_DE.md)
+* [PWM-Schalter](PwmSwitch_DE.md)
 * [Immer eingeschaltet](AlwaysOnSwitch_DE.md)
 
 Entsprechend dieser Auswahl werden die für den gewählten Schalter-Typ konfigurierbaren Felder eingeblendet.

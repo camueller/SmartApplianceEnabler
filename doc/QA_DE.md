@@ -95,6 +95,7 @@ Wenn ein Schaltbefehl vom *Sunny Home Manager* empfangen wird, wird dieser an de
 - [GPIO-basierter Schalter](GPIOSwitch_DE.md#log)
 - [HTTP-basierter Schalter](HttpSwitch_DE.md#log)
 - [Modbus-basierter Schalter](ModbusSwitch_DE.md#log)
+- [PWM-Schalter](PwmSwitch_DE.md#log)
 - [Wallbox](EVCharger_DE.md#log)
 
 ### SAE5
