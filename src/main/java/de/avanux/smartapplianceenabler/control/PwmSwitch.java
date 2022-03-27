@@ -43,7 +43,7 @@ import java.util.Timer;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PwmSwitch extends GpioControllable implements VariablePowerConsumer, Validateable, ApplianceIdConsumer, NotificationProvider {
-    private transient Logger logger = LoggerFactory.getLogger(Switch.class);
+    private transient Logger logger = LoggerFactory.getLogger(PwmSwitch.class);
     @XmlAttribute
     private int pwmFrequency;
     @XmlAttribute
