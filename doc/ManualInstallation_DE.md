@@ -280,6 +280,9 @@ Zum Starten ohne Authentifizierung eignet sich folgender Befehl:
 $ docker run -it --rm -p 1883:1883 --name mosquitto eclipse-mosquitto mosquitto -c /mosquitto-no-auth.conf
 ```
 
+## Node-RED
+Die optionale [Installaton von Node-RED](NodeRED_DE.md) ermöglich die Nutzung eines detaillierten Dashboards auf Basis der MQTT-Nachrichten.
+
 ## Smart Appliance Enabler
 ### Erstinstallation
 
