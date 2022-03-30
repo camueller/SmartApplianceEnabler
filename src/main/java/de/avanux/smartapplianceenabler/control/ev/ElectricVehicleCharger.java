@@ -452,12 +452,13 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
         boolean errorState = control.isInErrorState();
         boolean hasOnlyEmptyRequestsBeforeTimeGap = hasOnlyEmptyRequestsBeforeTimeGap(now);
         boolean wasInStateVehicleConnected = wasInState(EVChargerState.VEHICLE_CONNECTED);
+        boolean activeTimeframeIntervalRequestIsUsingOptionalEnergy = appliance.getTimeframeIntervalHandler().getActiveTimeframeInterval().getRequest().isUsingOptionalEnergy(now);
         logger.debug("{}: currentState={} startChargingRequested={} stopChargingRequested={} vehicleNotConnected={} " +
                         "vehicleConnected={} charging={} errorState={} wasInStateVehicleConnected={} " +
-                        "firstInvocationAfterSkip={} hasOnlyEmptyRequestsBeforeTimeGap={}",
+                        "firstInvocationAfterSkip={} hasOnlyEmptyRequestsBeforeTimeGap={} activeTimeframeIntervalRequestIsUsingOptionalEnergy={}",
                 applianceId, currenState, startChargingRequested, stopChargingRequested, vehicleNotConnected,
                 vehicleConnected, charging, errorState, wasInStateVehicleConnected, firstInvocationAfterSkip,
-                hasOnlyEmptyRequestsBeforeTimeGap);
+                hasOnlyEmptyRequestsBeforeTimeGap, activeTimeframeIntervalRequestIsUsingOptionalEnergy);
 
         // only use variables logged above
         if(errorState) {
@@ -478,9 +479,9 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
             // the charger may start charging right after it has been connected
             return EVChargerState.CHARGING;
         }
-//        else if(currenState == EVChargerState.CHARGING_COMPLETED) {
-//            return EVChargerState.CHARGING_COMPLETED;
-//        }
+        else if(currenState == EVChargerState.CHARGING_COMPLETED && activeTimeframeIntervalRequestIsUsingOptionalEnergy) {
+            return EVChargerState.CHARGING_COMPLETED;
+        }
         else if(this.stopChargingRequested && vehicleConnected) {
             if(hasOnlyEmptyRequestsBeforeTimeGap && wasInStateVehicleConnected) {
                 return EVChargerState.CHARGING_COMPLETED;
