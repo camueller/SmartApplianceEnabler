@@ -38,6 +38,11 @@ public class MockSwitch implements Control, ApplianceIdConsumer {
     private transient boolean publishControlStateChangedEvent = true;
 
     @Override
+    public String getId() {
+        return null;
+    }
+
+    @Override
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
     }

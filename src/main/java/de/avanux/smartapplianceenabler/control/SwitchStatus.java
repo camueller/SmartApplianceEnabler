@@ -18,13 +18,38 @@
 
 package de.avanux.smartapplianceenabler.control;
 
-import java.time.LocalDateTime;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 
-public interface VariablePowerConsumer extends Control {
+@XmlAccessorType(XmlAccessType.FIELD)
+public class SwitchStatus {
+    @XmlAttribute
+    private String idref;
+    @XmlAttribute
+    private Boolean on;
 
-    void setPower(LocalDateTime now, int power);
+    public String getIdref() {
+        return idref;
+    }
 
-    void setMinPower(Integer minPower);
+    public void setIdref(String idref) {
+        this.idref = idref;
+    }
 
-    void setMaxPower(int maxPower);
+    public Boolean getOn() {
+        return on;
+    }
+
+    public void setOn(Boolean on) {
+        this.on = on;
+    }
+
+    @Override
+    public String toString() {
+        return "SwitchStatus{" +
+                "idref='" + idref + '\'' +
+                ", on=" + on +
+                '}';
+    }
 }

@@ -59,6 +59,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
             @XmlElement(name = "MeterReportingSwitch", type = MeterReportingSwitch.class),
             @XmlElement(name = "MockSwitch", type = MockSwitch.class),
             @XmlElement(name = "ModbusSwitch", type = ModbusSwitch.class),
+            @XmlElement(name = "MultiSwitch", type =MultiSwitch.class),
             @XmlElement(name = "StartingCurrentSwitch", type = StartingCurrentSwitch.class),
             @XmlElement(name = "Switch", type = Switch.class),
             @XmlElement(name = "PwmSwitch", type = PwmSwitch.class),
@@ -250,27 +251,19 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
             Characteristics characteristics = deviceInfo.getCharacteristics();
             if(characteristics != null) {
                 if(characteristics.getMinPowerConsumption() != null) {
-                    powerConsumer.setMinPowerConsumption(characteristics.getMinPowerConsumption());
+                    powerConsumer.setMinPower(characteristics.getMinPowerConsumption());
                 }
-                powerConsumer.setMaxPowerConsumption(characteristics.getMaxPowerConsumption());
+                powerConsumer.setMaxPower(characteristics.getMaxPowerConsumption());
             }
-        }
-        if(control instanceof StartingCurrentSwitch) {
-            Control wrappedControl = ((StartingCurrentSwitch) control).getControl();
-            ((ApplianceIdConsumer) wrappedControl).setApplianceId(id);
-            wrappedControl.setMqttTopic(StartingCurrentSwitch.WRAPPED_CONTROL_TOPIC);
-            wrappedControl.setPublishControlStateChangedEvent(false);
-        }
-        if(!(control instanceof StartingCurrentSwitch)) {
-            control.init();
         }
 
         if(control instanceof StartingCurrentSwitch) {
             StartingCurrentSwitch startingCurrentSwitch = (StartingCurrentSwitch) control;
             startingCurrentSwitch.setTimeframeIntervalHandler(timeframeIntervalHandler);
-            startingCurrentSwitch.init();
             logger.debug("{}: {} uses {}", id, control.getClass().getSimpleName(), meter.getClass().getSimpleName());
         }
+
+        control.init();
 
         if(getGpioControllables().size() > 0) {
             if(pigpioInterface != null) {

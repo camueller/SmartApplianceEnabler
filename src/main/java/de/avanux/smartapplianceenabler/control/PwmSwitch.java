@@ -45,6 +45,8 @@ import java.util.Timer;
 public class PwmSwitch extends GpioControllable implements VariablePowerConsumer, Validateable, ApplianceIdConsumer, NotificationProvider {
     private transient Logger logger = LoggerFactory.getLogger(PwmSwitch.class);
     @XmlAttribute
+    private String id;
+    @XmlAttribute
     private int pwmFrequency;
     @XmlAttribute
     private double minDutyCycle;
@@ -59,14 +61,31 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
     private transient GuardedTimerTask mqttPublishTimerTask;
     private transient MqttClient mqttClient;
     private transient MqttMessage mqttMessageSent;
-    private transient String mqttTopic = Control.TOPIC;
 
-    public void setMinPowerConsumption(Integer minPowerConsumption) {
-        this.minPowerConsumption = minPowerConsumption;
+    @Override
+    public String getId() {
+        return id;
     }
 
-    public void setMaxPowerConsumption(int maxPowerConsumption) {
-        this.maxPowerConsumption = maxPowerConsumption;
+    public void setMinPower(Integer minPower) {
+        this.minPowerConsumption = minPower;
+    }
+
+    public void setMaxPower(int maxPower) {
+        this.maxPowerConsumption = maxPower;
+    }
+
+    @Override
+    public void setNotificationHandler(NotificationHandler notificationHandler) {
+        this.notificationHandler = notificationHandler;
+        if(this.notificationHandler != null) {
+            this.notificationHandler.setRequestedNotifications(notifications);
+        }
+    }
+
+    @Override
+    public Notifications getNotifications() {
+        return notifications;
     }
 
     @Override
@@ -108,7 +127,7 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
                     }
                 };
                 timer.schedule(this.mqttPublishTimerTask, 0, this.mqttPublishTimerTask.getPeriod());
-                mqttClient.subscribe(mqttTopic, true, true, VariablePowerConsumerMessage.class, (topic, message) -> {
+                mqttClient.subscribe(Control.TOPIC, true, true, VariablePowerConsumerMessage.class, (topic, message) -> {
                     if(message instanceof VariablePowerConsumerMessage) {
                         VariablePowerConsumerMessage controlMessage = (VariablePowerConsumerMessage) message;
                         if(controlMessage.on) {
@@ -188,21 +207,8 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
     private void publishControlMessage(LocalDateTime now, Integer power) {
         MqttMessage message = new VariablePowerConsumerMessage(now, isOn(), power, null);
         if(!message.equals(mqttMessageSent)) {
-            mqttClient.publish(mqttTopic, message, true);
+            mqttClient.publish(Control.TOPIC, message, true);
             mqttMessageSent = message;
         }
-    }
-
-    @Override
-    public void setNotificationHandler(NotificationHandler notificationHandler) {
-        this.notificationHandler = notificationHandler;
-        if(this.notificationHandler != null) {
-            this.notificationHandler.setRequestedNotifications(notifications);
-        }
-    }
-
-    @Override
-    public Notifications getNotifications() {
-        return notifications;
     }
 }

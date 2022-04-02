@@ -54,6 +54,8 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
 
     private transient Logger logger = LoggerFactory.getLogger(ElectricVehicleCharger.class);
     @XmlAttribute
+    private String id;
+    @XmlAttribute
     private Integer voltage;
     @XmlAttribute
     private Integer phases;
@@ -111,6 +113,11 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
         if(timeframeIntervalHandler != null) {
             timeframeIntervalHandler.addTimeframeIntervalChangedListener(this);
         }
+    }
+
+    @Override
+    public String getId() {
+        return id;
     }
 
     @Override
@@ -179,11 +186,11 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
                 ElectricVehicleChargerDefaults.getForceInitialCharging();
     }
 
-    public void setMinPowerConsumption(Integer minPowerConsumption) {
-        this.minPowerConsumption = minPowerConsumption;
+    public void setMinPower(Integer minPower) {
+        this.minPowerConsumption = minPower;
     }
 
-    public void setMaxPowerConsumption(int maxPowerConsumption) {
+    public void setMaxPower(int maxPower) {
     }
 
     public void setSocScriptAsync(boolean socScriptAsync) {

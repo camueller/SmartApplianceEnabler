@@ -44,6 +44,8 @@ import java.util.Timer;
 public class Switch extends GpioControllable implements Control, ApplianceIdConsumer, NotificationProvider {
     private transient Logger logger = LoggerFactory.getLogger(Switch.class);
     @XmlAttribute
+    private String id;
+    @XmlAttribute
     private boolean reverseStates;
     @XmlElement(name = "Notifications")
     private Notifications notifications;
@@ -53,6 +55,11 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
     private transient MqttMessage mqttMessageSent;
     private transient String mqttTopic = Control.TOPIC;
     private transient boolean publishControlStateChangedEvent = true;
+
+    @Override
+    public String getId() {
+        return id;
+    }
 
     @Override
     public void setMqttTopic(String mqttTopic) {

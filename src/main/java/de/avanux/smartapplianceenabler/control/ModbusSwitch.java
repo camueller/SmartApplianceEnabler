@@ -33,6 +33,7 @@ import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import java.util.Collections;
 import java.util.List;
@@ -41,6 +42,8 @@ import java.util.Timer;
 public class ModbusSwitch extends ModbusSlave implements Control, Validateable, NotificationProvider {
 
     private transient Logger logger = LoggerFactory.getLogger(ModbusSwitch.class);
+    @XmlAttribute
+    private String id;
     @XmlElement(name = "ModbusWrite")
     private List<ModbusWrite> modbusWrites;
     @XmlElement(name = "Notifications")
@@ -51,6 +54,11 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
     private transient MqttMessage mqttMessageSent;
     private transient String mqttTopic = Control.TOPIC;
     private transient boolean publishControlStateChangedEvent = true;
+
+    @Override
+    public String getId() {
+        return id;
+    }
 
     public void setMqttTopic(String mqttTopic) {
         this.mqttTopic = mqttTopic;

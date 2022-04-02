@@ -26,6 +26,8 @@ import java.time.LocalDateTime;
 public interface Control extends ApplianceLifeCycle {
     String TOPIC = "Control";
 
+    public String getId();
+
     boolean isControllable();
 
     void setMqttTopic(String mqttTopic);

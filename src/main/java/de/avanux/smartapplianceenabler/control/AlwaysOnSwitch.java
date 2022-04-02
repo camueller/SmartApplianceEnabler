@@ -49,6 +49,11 @@ public class AlwaysOnSwitch implements Control, ApplianceIdConsumer, Notificatio
     private transient MqttClient mqttClient;
 
     @Override
+    public String getId() {
+        return null;
+    }
+
+    @Override
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
     }

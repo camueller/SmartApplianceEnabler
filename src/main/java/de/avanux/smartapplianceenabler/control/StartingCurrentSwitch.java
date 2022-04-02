@@ -51,6 +51,8 @@ import java.util.*;
 public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, MeterUpdateListener, NotificationProvider {
     private transient Logger logger = LoggerFactory.getLogger(StartingCurrentSwitch.class);
     @XmlAttribute
+    private String id;
+    @XmlAttribute
     private Integer powerThreshold;
     @XmlAttribute
     private Integer startingCurrentDetectionDuration; // seconds
@@ -81,6 +83,10 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Mete
     private transient MqttMessage mqttMessageSent;
     final static public String WRAPPED_CONTROL_TOPIC = "Wrapped" + Control.TOPIC;
 
+    @Override
+    public String getId() {
+        return id;
+    }
 
     @Override
     public void setApplianceId(String applianceId) {
@@ -102,6 +108,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Mete
     public void setMqttTopic(String mqttTopic) {
     }
 
+    @Override
     public void setPublishControlStateChangedEvent(boolean publishControlStateChangedEvent) {
     }
 
@@ -168,6 +175,8 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Mete
     public void init() {
         mqttClient = new MqttClient(applianceId, getClass());
         if(this.control != null) {
+            this.control.setMqttTopic(StartingCurrentSwitch.WRAPPED_CONTROL_TOPIC);
+            this.control.setPublishControlStateChangedEvent(false);
             this.control.init();
         }
     }

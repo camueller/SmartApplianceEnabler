@@ -58,6 +58,11 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
     private transient boolean publishControlStateChangedEvent = true;
 
     @Override
+    public String getId() {
+        return null;
+    }
+
+    @Override
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
     }

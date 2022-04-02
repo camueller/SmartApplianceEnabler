@@ -62,6 +62,15 @@
             <xs:selector xpath="sae:Appliance/sae:SlaveElectricityMeter" />
             <xs:field xpath="@masterElectricityMeterApplianceId" />
         </xs:keyref>
+        <!-- SwitchStatus idref -->
+        <xs:key name="SwitchID">
+            <xs:selector xpath="sae:Appliance/sae:MultiSwitch/sae:HttpSwitch|sae:Appliance/sae:MultiSwitch/sae:ModbusSwitch|sae:Appliance/sae:MultiSwitch/sae:Switch" />
+            <xs:field xpath="@id" />
+        </xs:key>
+        <xs:keyref name="SwitchStatusIDRef_HttpSwitchId" refer="SwitchID">
+            <xs:selector xpath="sae:Appliance/sae:MultiSwitch/sae:PowerLevel/sae:SwitchStatus" />
+            <xs:field xpath="@idref" />
+        </xs:keyref>
     </xs:element>
 
     <xs:complexType name="ConfigurationType">
@@ -81,6 +90,7 @@
                 <xs:element name="ElectricVehicleCharger" type="ElectricVehicleChargerType" />
                 <xs:element name="PwmSwitch" type="PwmSwitchType" />
                 <xs:element name="StartingCurrentSwitch" type="StartingCurrentSwitchType" />
+                <xs:element name="MultiSwitch" type="MultiSwitchType" />
             </xs:choice>
             <xs:choice>
                 <xs:element name="S0ElectricityMeter" type="S0ElectricityMeterType" minOccurs="0" />
@@ -113,6 +123,7 @@
         <xs:sequence>
             <xs:element name="Notifications" type="NotificationsType" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
+        <xs:attribute name="id" type="xs:int" />
         <xs:attribute name="gpio" type="xs:int" use="required" />
         <xs:attribute name="reverseStates" type="xs:boolean" />
     </xs:complexType>
@@ -122,6 +133,7 @@
             <xs:element name="ModbusWrite" type="ModbusWriteType" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="Notifications" type="NotificationsType" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
+        <xs:attribute name="id" type="xs:int" />
         <xs:attribute name="idref" type="xs:NCName" use="required" />
         <xs:attribute name="slaveAddress" type="xs:int" use="required" />
     </xs:complexType>
@@ -133,6 +145,7 @@
             <xs:element name="HttpRead" type="HttpReadType" minOccurs="0" maxOccurs="1" />
             <xs:element name="Notifications" type="NotificationsType" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
+        <xs:attribute name="id" type="xs:int" />
         <xs:attribute name="contentProtocol" type="ContentProtcolType" />
     </xs:complexType>
 
@@ -347,12 +360,34 @@
             <xs:element name="MockSwitch" type="MockSwitchType" minOccurs="0" />
             <xs:element name="ModbusSwitch" type="ModbusSwitchType" minOccurs="0" />
             <xs:element name="Switch" type="SwitchType" minOccurs="0" />
-            <xs:element name="ForceSchedule" type="DayTimeframeConditionType" minOccurs="0" />
         </xs:sequence>
         <xs:attribute name="powerThreshold" type="xs:int" />
         <xs:attribute name="startingCurrentDetectionDuration" type="xs:int" />
         <xs:attribute name="finishedCurrentDetectionDuration" type="xs:int" />
         <xs:attribute name="minRunningTime" type="xs:int" />
+    </xs:complexType>
+
+    <xs:complexType name="MultiSwitchType">
+        <xs:sequence>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="HttpSwitch" type="HttpSwitchType" minOccurs="0" />
+                <xs:element name="ModbusSwitch" type="ModbusSwitchType" minOccurs="0" />
+                <xs:element name="Switch" type="SwitchType" minOccurs="0" />
+            </xs:choice>
+            <xs:element name="PowerLevel" type="PowerLevelType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="PowerLevelType">
+        <xs:sequence>
+            <xs:element name="SwitchStatus" type="SwitchStatusType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="power" type="xs:int" />
+    </xs:complexType>
+
+    <xs:complexType name="SwitchStatusType">
+        <xs:attribute name="idref" type="xs:int" />
+        <xs:attribute name="on" type="xs:boolean" />
     </xs:complexType>
 
     <xs:complexType name="S0ElectricityMeterType">

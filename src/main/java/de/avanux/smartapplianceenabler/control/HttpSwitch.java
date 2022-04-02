@@ -55,6 +55,8 @@ import java.util.stream.Collectors;
 public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, ApplianceIdConsumer, NotificationProvider {
 
     private transient Logger logger = LoggerFactory.getLogger(HttpSwitch.class);
+    @XmlAttribute
+    private String id;
     @XmlElement(name = "HttpConfiguration")
     private HttpConfiguration httpConfiguration;
     @XmlElement(name = "HttpWrite")
@@ -82,6 +84,11 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
         this.applianceId = applianceId;
         this.httpTransactionExecutor.setApplianceId(applianceId);
         this.httpHandler.setApplianceId(applianceId);
+    }
+
+    @Override
+    public String getId() {
+        return id;
     }
 
     @Override
