@@ -26,7 +26,7 @@ import {EvCharger} from './evcharger/ev-charger';
 import {Notifications} from '../notification/notifications';
 import {MeterReportingSwitch} from './meterreporting/meter-reporting-switch';
 import {PwmSwitch} from './pwm/pwm-switch';
-import {MultiSwitch} from './multi/multi-switch';
+import {LevelSwitch} from './level/level-switch';
 
 export class Control {
   type: string;
@@ -38,7 +38,7 @@ export class Control {
   modbusSwitch?: ModbusSwitch;
   mockSwitch?: MockSwitch;
   httpSwitch?: HttpSwitch;
-  multiSwitch?: MultiSwitch;
+  levelSwitch?: LevelSwitch;
   pwmSwitch?: PwmSwitch;
   evCharger?: EvCharger;
   notifications?: Notifications;

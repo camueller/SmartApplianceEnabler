@@ -20,7 +20,7 @@ package de.avanux.smartapplianceenabler.semp.webservice;
 import de.avanux.smartapplianceenabler.appliance.Appliance;
 import de.avanux.smartapplianceenabler.appliance.ApplianceManager;
 import de.avanux.smartapplianceenabler.control.Control;
-import de.avanux.smartapplianceenabler.control.MultiSwitch;
+import de.avanux.smartapplianceenabler.control.LevelSwitch;
 import de.avanux.smartapplianceenabler.control.VariablePowerConsumer;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.mqtt.*;
@@ -183,9 +183,9 @@ public class SempController {
             characteristics.setMinOffTime(deviceInfo.getCharacteristics().getMinOffTime());
             characteristics.setMaxOnTime(deviceInfo.getCharacteristics().getMaxOnTime());
             characteristics.setMaxOffTime(deviceInfo.getCharacteristics().getMaxOffTime());
-            if(variablePowerConsumer instanceof MultiSwitch) {
+            if(variablePowerConsumer instanceof LevelSwitch) {
                 List<Integer> powerLevelValues = new ArrayList<>();
-                ((MultiSwitch) variablePowerConsumer).getPowerLevels().forEach(pl -> powerLevelValues.add(pl.getPower()));
+                ((LevelSwitch) variablePowerConsumer).getPowerLevels().forEach(pl -> powerLevelValues.add(pl.getPower()));
                 PowerLevels powerLevels = new PowerLevels();
                 powerLevels.setPowerLevels(powerLevelValues);
                 characteristics.setPowerLevels(powerLevels);

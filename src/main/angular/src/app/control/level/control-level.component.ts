@@ -24,7 +24,7 @@ import {simpleControlType} from '../../shared/form-util';
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {ControlContainer, FormArray, FormBuilder, FormControl, FormGroup, FormGroupDirective} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
-import {MultiSwitch} from './multi-switch';
+import {LevelSwitch} from './level-switch';
 import {Switch} from '../switch/switch';
 import {HttpSwitch} from '../http/http-switch';
 import {ListItem} from '../../shared/list-item';
@@ -34,19 +34,20 @@ import {ModbusSwitch} from '../modbus/modbus-switch';
 import {HttpWrite} from '../../http/write/http-write';
 import {ValueNameChangedEvent} from '../../meter/value-name-changed-event';
 import {ModbusSetting} from '../../settings/modbus/modbus-setting';
+import {ModbusWrite} from '../../modbus/write/modbus-write';
 
 @Component({
-  selector: 'app-control-multi',
-  templateUrl: './control-multi.component.html',
-  styleUrls: ['./control-multi.component.scss'],
+  selector: 'app-control-level',
+  templateUrl: './control-level.component.html',
+  styleUrls: ['./control-level.component.scss'],
   viewProviders: [
     {provide: ControlContainer, useExisting: FormGroupDirective}
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ControlMultiComponent implements OnChanges, OnInit {
+export class ControlLevelComponent implements OnChanges, OnInit {
   @Input()
-  multiSwitch: MultiSwitch;
+  levelSwitch: LevelSwitch;
   @Input()
   controlDefaults: ControlDefaults;
   @Input()
@@ -74,11 +75,11 @@ export class ControlMultiComponent implements OnChanges, OnInit {
 
   ngOnChanges(changes: SimpleChanges): void {
     this.form = this.parent.form;
-    if (changes.multiSwitch) {
-      if (changes.multiSwitch.currentValue) {
-        this.multiSwitch = changes.multiSwitch.currentValue;
+    if (changes.levelSwitch) {
+      if (changes.levelSwitch.currentValue) {
+        this.levelSwitch = changes.levelSwitch.currentValue;
       } else {
-        this.multiSwitch = new MultiSwitch();
+        this.levelSwitch = new LevelSwitch();
       }
       this.expandParentForm();
     }
@@ -98,21 +99,21 @@ export class ControlMultiComponent implements OnChanges, OnInit {
   }
 
   expandParentForm() {
-    const firstControlType = simpleControlType(this.multiSwitch?.controls[0]['@class']) ?? Switch.TYPE;
+    const firstControlType = simpleControlType(this.levelSwitch?.controls[0]['@class']) ?? Switch.TYPE;
     this.formHandler.addFormControl(this.form, 'realControlType', firstControlType);
     this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'controls',
-      this.multiSwitch.controls);
-    this.controlIds = this.multiSwitch.controls.map(control => control.id);
+      this.levelSwitch.controls);
+    this.controlIds = this.levelSwitch.controls.map(control => control.id);
     this.form.addControl('powerLevels', this.fb.array([]));
     this.powerLevelFormArray.clear();
-    this.multiSwitch.powerLevels.forEach(powerlevel => this.addPowerLevel(powerlevel));
+    this.levelSwitch.powerLevels.forEach(powerlevel => this.addPowerLevel(powerlevel));
   }
 
   realControlTypeChanged(newType?: string | undefined) {
     for(let i=0; i<this.controlsFormArray.length; i++) {
       this.controlsFormArray.removeAt(i);
     }
-    this.multiSwitch.controls = [];
+    this.levelSwitch.controls = [];
     this.controlIds = [];
     this.form.markAsDirty();
     this.changeDetectorRef.detectChanges();
@@ -165,7 +166,7 @@ export class ControlMultiComponent implements OnChanges, OnInit {
 
   removeControl(index: number) {
     this.controlsFormArray.removeAt(index);
-    this.multiSwitch.controls.splice(index, 1);
+    this.levelSwitch.controls.splice(index, 1);
 
     this.controlIds.splice(index, 1);
 
@@ -202,7 +203,7 @@ export class ControlMultiComponent implements OnChanges, OnInit {
     this.powerLevelFormArray.removeAt(index);
   }
 
-  updateModelFromForm(): MultiSwitch | undefined {
-    return this.multiSwitch;
+  updateModelFromForm(): LevelSwitch | undefined {
+    return this.levelSwitch;
   }
 }

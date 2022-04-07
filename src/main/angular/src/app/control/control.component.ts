@@ -53,7 +53,7 @@ import {NotificationType} from '../notification/notification-type';
 import {ControlMeterreportingComponent} from './meterreporting/control-meterreporting.component';
 import {ControlPwmComponent} from './pwm/control-pwm.component';
 import {PwmSwitch} from './pwm/pwm-switch';
-import {MultiSwitch} from './multi/multi-switch';
+import {LevelSwitch} from './level/level-switch';
 
 @Component({
   selector: 'app-control',
@@ -123,7 +123,7 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
       if (this.appliance.type === 'EVCharger') {
         this.control.type = EvCharger.TYPE;
       }
-      const controlTypeKeys = [MeterReportingSwitch.TYPE, Switch.TYPE, HttpSwitch.TYPE, AlwaysOnSwitch.TYPE, MultiSwitch.TYPE, PwmSwitch.TYPE];
+      const controlTypeKeys = [MeterReportingSwitch.TYPE, Switch.TYPE, HttpSwitch.TYPE, AlwaysOnSwitch.TYPE, LevelSwitch.TYPE, PwmSwitch.TYPE];
       if(this.settings.modbusSettings) {
         controlTypeKeys.splice(3, 0, ModbusSwitch.TYPE);
       }
@@ -203,8 +203,8 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
     return this.control && this.control.type === HttpSwitch.TYPE;
   }
 
-  get isMultiSwitch() {
-    return this.control && this.control.type === MultiSwitch.TYPE;
+  get isLevelSwitch() {
+    return this.control && this.control.type === LevelSwitch.TYPE;
   }
 
   get isPwmSwitch() {
@@ -247,7 +247,7 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   }
 
   get canHaveStartingCurrentDetection(): boolean {
-    return !(this.isMeterReportingSwitch || this.isAlwaysOnSwitch || this.isPwmSwitch || this.isMultiSwitch || this.control.type === MockSwitch.TYPE);
+    return !(this.isMeterReportingSwitch || this.isAlwaysOnSwitch || this.isPwmSwitch || this.isLevelSwitch || this.control.type === MockSwitch.TYPE);
   }
 
   toggleStartingCurrentDetection() {

@@ -31,7 +31,7 @@ import {EvCharger} from './evcharger/ev-charger';
 import {ElectricVehicle} from './evcharger/electric-vehicle/electric-vehicle';
 import {MeterReportingSwitch} from './meterreporting/meter-reporting-switch';
 import {PwmSwitch} from './pwm/pwm-switch';
-import {MultiSwitch} from './multi/multi-switch';
+import {LevelSwitch} from './level/level-switch';
 
 export class ControlFactory {
 
@@ -82,8 +82,8 @@ export class ControlFactory {
       control.switch_ = this.createSwitch(rawControl);
     } else if (control.type === ModbusSwitch.TYPE) {
       control.modbusSwitch = this.createModbusSwitch(rawControl);
-    } else if (control.type === MultiSwitch.TYPE) {
-      control.multiSwitch = this.createMultiSwitch(rawControl);
+    } else if (control.type === LevelSwitch.TYPE) {
+      control.levelSwitch = this.createLevelSwitch(rawControl);
     } else if (control.type === PwmSwitch.TYPE) {
       control.pwmSwitch = this.createPwmSwitch(rawControl);
     } else if (control.type === EvCharger.TYPE) {
@@ -142,8 +142,8 @@ export class ControlFactory {
     return new HttpSwitch(rawHttpSwitch);
   }
 
-  createMultiSwitch(rawMultiSwitch: any): MultiSwitch {
-    return new MultiSwitch(rawMultiSwitch);
+  createLevelSwitch(rawLevelSwitch: any): LevelSwitch {
+    return new LevelSwitch(rawLevelSwitch);
   }
 
   createPwmSwitch(rawPwmSwitch: any): PwmSwitch {

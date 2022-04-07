@@ -38,8 +38,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class MultiSwitch implements VariablePowerConsumer, ApplianceIdConsumer, Validateable, NotificationProvider {
-    private transient Logger logger = LoggerFactory.getLogger(MultiSwitch.class);
+public class LevelSwitch implements VariablePowerConsumer, ApplianceIdConsumer, Validateable, NotificationProvider {
+    private transient Logger logger = LoggerFactory.getLogger(LevelSwitch.class);
     @XmlAttribute
     private String id;
     @XmlElements({

@@ -23,7 +23,7 @@ import {HttpLoaderFactory} from '../shared/http-loader-factory';
 import {NotificationModule} from '../notification/notification.module';
 import { ControlMeterreportingComponent } from './meterreporting/control-meterreporting.component';
 import {ControlPwmComponent} from './pwm/control-pwm.component';
-import {ControlMultiComponent} from './multi/control-multi.component';
+import {ControlLevelComponent} from './level/control-level.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +34,7 @@ import {ControlMultiComponent} from './multi/control-multi.component';
     ControlHttpComponent,
     ControlMeterreportingComponent,
     ControlModbusComponent,
-    ControlMultiComponent,
+    ControlLevelComponent,
     ControlPwmComponent,
     ControlStartingcurrentComponent,
     ControlSwitchComponent,

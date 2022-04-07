@@ -1,4 +1,4 @@
-/*!
+/*
  * Copyright (C) 2022 Axel Müller <axel.mueller@avanux.de>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -15,15 +15,21 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-.ControlMultiComponent {
-  &__addControl {
-    margin-bottom: 2rem !important;
+
+import {Switch} from '../switch/switch';
+import {ModbusSwitch} from '../modbus/modbus-switch';
+import {HttpSwitch} from '../http/http-switch';
+import {PowerLevel} from './power-level';
+
+export class LevelSwitch {
+  static get TYPE(): string {
+    return 'de.avanux.smartapplianceenabler.control.LevelSwitch';
   }
-  &__removeControl {
-    margin-left: 1rem !important;
-  }
-  &__addPowerLevel {
-    margin-bottom: 2rem !important;
+  '@class' = LevelSwitch.TYPE;
+  controls?: (Switch | HttpSwitch | ModbusSwitch)[];
+  powerLevels?: PowerLevel[];
+
+  public constructor(init?: Partial<LevelSwitch>) {
+    Object.assign(this, init);
   }
 }
-
