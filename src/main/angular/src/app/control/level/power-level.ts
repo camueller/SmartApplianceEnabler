@@ -19,6 +19,14 @@
 import {SwitchStatus} from './switch-status';
 
 export class PowerLevel {
+  static get TYPE(): string {
+    return 'de.avanux.smartapplianceenabler.control.PowerLevel';
+  }
+  '@class' = PowerLevel.TYPE;
   power: number;
   switchStatuses: SwitchStatus[];
+
+  public constructor(init?: Partial<PowerLevel>) {
+    Object.assign(this, init);
+  }
 }

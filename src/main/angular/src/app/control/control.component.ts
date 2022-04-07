@@ -16,7 +16,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {Component, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, CanDeactivate} from '@angular/router';
 import {ControlFactory} from './control-factory';
 import {TranslateService} from '@ngx-translate/core';
@@ -54,6 +54,7 @@ import {ControlMeterreportingComponent} from './meterreporting/control-meterrepo
 import {ControlPwmComponent} from './pwm/control-pwm.component';
 import {PwmSwitch} from './pwm/pwm-switch';
 import {LevelSwitch} from './level/level-switch';
+import {ControlLevelComponent} from './level/control-level.component';
 
 @Component({
   selector: 'app-control',
@@ -65,6 +66,8 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   controlEvchargerComp: ControlEvchargerComponent;
   @ViewChild(ControlHttpComponent)
   controlHttpComp: ControlHttpComponent;
+  @ViewChild(ControlLevelComponent)
+  controlLevelComp: ControlLevelComponent;
   @ViewChild(ControlMeterreportingComponent)
   controlMeterreportingComp: ControlMeterreportingComponent;
   @ViewChild(ControlModbusComponent)
@@ -269,19 +272,22 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
     if (this.controlMeterreportingComp) {
       this.control.meterReportingSwitch = this.controlMeterreportingComp.updateModelFromForm();
     }
-    if (this.controlSwitchComp) {
+    else if (this.controlSwitchComp) {
       this.control.switch_ = this.controlSwitchComp.updateModelFromForm();
     }
-    if (this.controlModbusComp) {
+    else if (this.controlModbusComp) {
       this.control.modbusSwitch = this.controlModbusComp.updateModelFromForm();
     }
-    if (this.controlHttpComp) {
+    else if (this.controlHttpComp) {
       this.control.httpSwitch = this.controlHttpComp.updateModelFromForm();
     }
-    if (this.controlPwmComp) {
+    else if (this.controlLevelComp) {
+      this.control.levelSwitch = this.controlLevelComp.updateModelFromForm();
+    }
+    else if (this.controlPwmComp) {
       this.control.pwmSwitch = this.controlPwmComp.updateModelFromForm();
     }
-    if (this.controlEvchargerComp) {
+    else if (this.controlEvchargerComp) {
       this.control.evCharger = this.controlEvchargerComp.updateModelFromForm();
     }
     if (this.control.startingCurrentDetection) {

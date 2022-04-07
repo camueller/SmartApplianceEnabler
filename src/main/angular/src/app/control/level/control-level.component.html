@@ -34,6 +34,7 @@
                         [formGroup]="getControlFormGroup(i)"
                         [switch_]="control"
                         [controlDefaults]="controlDefaults"
+                        #controlSwitchComponents
     >
       <div class="sae__fields-with-button">
         <h2>{{'ControlLevelComponent.control.heading' | translate}} {{control.id}}</h2>
@@ -47,6 +48,7 @@
                         [formGroup]="getControlFormGroup(i)"
                         [httpSwitch]="control"
                         [controlDefaults]="controlDefaults"
+                        #controlHttpComponents
       >
         <div class="sae__fields-with-button">
           <h2>{{'ControlLevelComponent.control.heading' | translate}} {{control.id}}</h2>
@@ -61,6 +63,7 @@
                       [modbusSwitch]="control"
                       [modbusSettings]="modbusSettings"
                       [controlDefaults]="controlDefaults"
+                      #controlModbusComponents
     >
       <div class="sae__fields-with-button">
         <h2>{{'ControlLevelComponent.control.heading' | translate}} {{control.id}}</h2>

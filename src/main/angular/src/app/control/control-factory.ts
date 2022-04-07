@@ -104,6 +104,8 @@ export class ControlFactory {
       return control.switch_;
     } else if (control.type === ModbusSwitch.TYPE) {
       return control.modbusSwitch;
+    } else if (control.type === LevelSwitch.TYPE) {
+      return control.levelSwitch;
     } else if (control.type === PwmSwitch.TYPE) {
       return control.pwmSwitch;
     } else if (control.type === EvCharger.TYPE) {

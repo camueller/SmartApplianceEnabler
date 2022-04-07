@@ -21,7 +21,17 @@ import {ErrorMessages} from '../../shared/error-messages';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
 import {Logger} from '../../log/logger';
 import {simpleControlType} from '../../shared/form-util';
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  QueryList,
+  SimpleChanges,
+  ViewChildren
+} from '@angular/core';
 import {ControlContainer, FormArray, FormBuilder, FormControl, FormGroup, FormGroupDirective} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {LevelSwitch} from './level-switch';
@@ -32,9 +42,12 @@ import {ControlDefaults} from '../control-defaults';
 import {PowerLevel} from './power-level';
 import {ModbusSwitch} from '../modbus/modbus-switch';
 import {HttpWrite} from '../../http/write/http-write';
-import {ValueNameChangedEvent} from '../../meter/value-name-changed-event';
 import {ModbusSetting} from '../../settings/modbus/modbus-setting';
 import {ModbusWrite} from '../../modbus/write/modbus-write';
+import {ControlHttpComponent} from '../http/control-http.component';
+import {ControlModbusComponent} from '../modbus/control-modbus.component';
+import {ControlSwitchComponent} from '../switch/control-switch.component';
+import {SwitchStatus} from './switch-status';
 
 @Component({
   selector: 'app-control-level',
@@ -54,6 +67,12 @@ export class ControlLevelComponent implements OnChanges, OnInit {
   modbusSettings: ModbusSetting[];
   @Input()
   modbusConfigured: boolean;
+  @ViewChildren('controlSwitchComponents')
+  controlSwitchComps: QueryList<ControlSwitchComponent>;
+  @ViewChildren('controlHttpComponents')
+  controlHttpComps: QueryList<ControlHttpComponent>;
+  @ViewChildren('controlModbusComponents')
+  controlModbusComps: QueryList<ControlModbusComponent>;
   @Input()
   form: FormGroup;
   formHandler: FormHandler;
@@ -86,6 +105,7 @@ export class ControlLevelComponent implements OnChanges, OnInit {
   }
 
   ngOnInit() {
+    console.log('levelSwitch=', this.levelSwitch);
     const controlTypeKeys = [Switch.TYPE, HttpSwitch.TYPE];
     if(this.modbusConfigured) {
       controlTypeKeys.push(ModbusSwitch.TYPE);
@@ -204,6 +224,53 @@ export class ControlLevelComponent implements OnChanges, OnInit {
   }
 
   updateModelFromForm(): LevelSwitch | undefined {
+    let controls: (Switch | HttpSwitch | ModbusSwitch)[] = [];
+    if(this.isRealControlTypeSwitch) {
+      this.controlSwitchComps.forEach(controlSwitchComponent => {
+        const controlSwitch = controlSwitchComponent.updateModelFromForm();
+        if(controlSwitch) {
+          controls.push(controlSwitch);
+        }
+      });
+    } else if(this.isRealControlTypeHttp) {
+      this.controlHttpComps.forEach(controlHttpComponent => {
+        const controlHttp = controlHttpComponent.updateModelFromForm();
+        if(controlHttp) {
+          controls.push(controlHttp);
+        }
+      });
+    } else if(this.isRealControlTypeModbus) {
+      this.controlModbusComps.forEach(controlModbusComponent => {
+        const controlModbus = controlModbusComponent.updateModelFromForm();
+        if(controlModbus) {
+          controls.push(controlModbus);
+        }
+      });
+    }
+
+    const powerLevels: PowerLevel[] = [];
+    for(let i=0; i<this.powerLevelFormArray.length; i++) {
+      const power = this.getPowerLevelFormGroup(i).controls.power.value;
+
+      const switchStatuses: SwitchStatus[] = [];
+      this.controlIds.forEach(controlId => {
+        const switchStatus = new SwitchStatus({
+          idref: controlId,
+          on: this.getPowerLevelFormGroup(i).controls[controlId].value,
+        });
+        switchStatuses.push(switchStatus);
+      });
+
+      const powerLevel = new PowerLevel({power, switchStatuses});
+      powerLevels.push(powerLevel);
+    }
+
+    if (!(controls.length > 0 || powerLevels.length > 0)) {
+      return undefined;
+    }
+
+    this.levelSwitch.controls = controls;
+    this.levelSwitch.powerLevels = powerLevels;
     return this.levelSwitch;
   }
 }

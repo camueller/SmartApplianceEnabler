@@ -17,6 +17,14 @@
  */
 
 export class SwitchStatus {
+  static get TYPE(): string {
+    return 'de.avanux.smartapplianceenabler.control.SwitchStatus';
+  }
+  '@class' = SwitchStatus.TYPE;
   idref: string;
   on: boolean;
+
+  public constructor(init?: Partial<SwitchStatus>) {
+    Object.assign(this, init);
+  }
 }
