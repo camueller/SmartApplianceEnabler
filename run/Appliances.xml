@@ -3,24 +3,43 @@
     <Configuration param="NodeRED.Dashboard.Url" value="http://localhost:1880"/>
     <Appliance id="F-00000001-000000000002-00">
         <MultiSwitch>
-            <HttpSwitch id="1">
+            <!--HttpSwitch id="1">
                 <HttpWrite url="http://tasmota/cm?cmnd=Power%20On">
                     <HttpWriteValue name="On" method="GET"/>
                 </HttpWrite>
                 <HttpWrite url="http://tasmota/cm?cmnd=Power%20Off">
                     <HttpWriteValue name="Off" method="GET"/>
                 </HttpWrite>
+                <HttpRead url="http://tasmota/cm?cmnd=status">
+                    <HttpReadValue name="On"/>
+                </HttpRead>
                 <Notifications/>
             </HttpSwitch>
             <HttpSwitch id="2">
-                <HttpWrite url="http://tasmota/cm?cmnd=Power%20On">
+                <HttpWrite url="http://tasmota2/cm?cmnd=Power%20On">
                     <HttpWriteValue name="On" method="GET"/>
                 </HttpWrite>
-                <HttpWrite url="http://tasmota/cm?cmnd=Power%20Off">
+                <HttpWrite url="http://tasmota2/cm?cmnd=Power%20Off">
                     <HttpWriteValue name="Off" method="GET"/>
                 </HttpWrite>
                 <Notifications/>
-            </HttpSwitch>
+            </HttpSwitch-->
+            <ModbusSwitch id="1" idref="modbus" slaveAddress="1">
+                <ModbusWrite address="2" type="Coil">
+                    <ModbusWriteValue name="On" value="1"/>
+                    <ModbusWriteValue name="Off" value="0"/>
+                </ModbusWrite>
+            </ModbusSwitch>
+            <ModbusSwitch id="2" idref="modbus" slaveAddress="2">
+                <ModbusWrite address="3" type="Coil">
+                    <ModbusWriteValue name="On" value="1"/>
+                    <ModbusWriteValue name="Off" value="0"/>
+                </ModbusWrite>
+            </ModbusSwitch>
+            <!--
+            <Switch id="1" gpio="1" reverseStates="true" />
+            <Switch id="2" gpio="3" />
+            -->
             <PowerLevel power="500">
                 <SwitchStatus idref="1" on="true"/>
                 <SwitchStatus idref="2" on="false"/>

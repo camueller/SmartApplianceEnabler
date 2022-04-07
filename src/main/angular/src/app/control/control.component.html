@@ -59,9 +59,16 @@
                           [settingsDefaults]="settingsDefaults"
       ></app-control-modbus>
       <app-control-http *ngIf="isHttpSwitch"
+                        [form]="form"
                         [httpSwitch]="control.httpSwitch"
                         [controlDefaults]="controlDefaults"
       ></app-control-http>
+      <app-control-multi *ngIf="isMultiSwitch"
+                         [multiSwitch]="control.multiSwitch"
+                         [controlDefaults]="controlDefaults"
+                         [modbusSettings]="settings.modbusSettings"
+                         [modbusConfigured]="!!settings.modbusSettings?.length"
+      ></app-control-multi>
       <app-control-pwm *ngIf="isPwmSwitch"
                        [pwmSwitch]="control.pwmSwitch"
       ></app-control-pwm>

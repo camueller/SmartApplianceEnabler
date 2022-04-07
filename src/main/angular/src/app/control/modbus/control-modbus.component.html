@@ -1,4 +1,5 @@
 <div class="ControlModbusComponent">
+  <ng-content></ng-content>
   <messagebox [level]="MessageBoxLevel.INFO" *ngIf="modbusSettings.length === 0"
   >{{'error.modbus_not_configured' | translate}}</messagebox>
   <div [style]="displayNoneStyle">

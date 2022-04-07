@@ -23,6 +23,7 @@ export class ModbusSwitch {
     return 'de.avanux.smartapplianceenabler.control.ModbusSwitch';
   }
   '@class' = ModbusSwitch.TYPE;
+  id?: string;
   idref: string;
   slaveAddress: string;
   modbusWrites: ModbusWrite[];

@@ -119,11 +119,15 @@ export class ControlHttpComponent implements OnChanges, OnInit {
     return !!this.form.controls.httpRead;
   }
 
-  setReadControlState(readControlState: boolean) {
+  set readControlState(readControlState: boolean) {
     if (readControlState) {
-      this.form.addControl('httpRead', new FormGroup({}));
+      if(!this.form.controls.httpRead) {
+        this.form.addControl('httpRead', new FormGroup({}));
+      }
     } else {
-      this.form.removeControl('httpRead');
+      if(this.form.controls.httpRead) {
+        this.form.removeControl('httpRead');
+      }
     }
   }
 
@@ -155,15 +159,14 @@ export class ControlHttpComponent implements OnChanges, OnInit {
   expandParentForm() {
     this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'httpWrites',
       this.httpSwitch.httpWrites);
-    const readControlState = this.httpSwitch.httpRead && this.httpSwitch.httpRead.readValues
-      && this.httpSwitch.httpRead.readValues.length > 0;
+    const readControlState = this.httpSwitch.httpRead?.readValues.length > 0 ?? false;
     this.formHandler.addFormControl(this.form, 'readControlState', readControlState);
-    this.setReadControlState(readControlState);
+    this.readControlState = readControlState;
     this.form.controls.readControlState.valueChanges.subscribe(value => {
       if (value && !this.httpSwitch.httpRead) {
         this.httpSwitch.httpRead = HttpRead.createWithSingleChild();
       }
-      this.setReadControlState(value);
+      this.readControlState = value;
       this.form.markAsDirty();
     });
     this.form.setValidators(isControlValid(this.form, 'httpWrites', 'httpWriteValues'));

@@ -28,9 +28,10 @@ export class HttpSwitch {
   }
 
   '@class' = HttpSwitch.TYPE;
+  id?: string;
   httpConfiguration: HttpConfiguration;
   httpWrites: HttpWrite[] = [];
-  httpRead: HttpRead;
+  httpRead?: HttpRead;
 
   public constructor(init?: Partial<HttpSwitch>) {
     Object.assign(this, init);

@@ -27,4 +27,31 @@
             </Requests>
         </Capabilities>
     </DeviceInfo>
+    <DeviceInfo>
+        <Identification>
+            <DeviceId>F-00000001-000000000003-00</DeviceId>
+            <DeviceName>Tasmota2</DeviceName>
+            <DeviceType>Other</DeviceType>
+            <DeviceSerial>123458</DeviceSerial>
+            <DeviceVendor>Tasmota</DeviceVendor>
+        </Identification>
+        <Characteristics>
+            <MaxPowerConsumption>4000</MaxPowerConsumption>
+            <MinPowerConsumption>1380</MinPowerConsumption>
+        </Characteristics>
+        <Capabilities>
+            <CurrentPower>
+                <Method>Measurement</Method>
+            </CurrentPower>
+            <Timestamps>
+                <AbsoluteTimestamps>false</AbsoluteTimestamps>
+            </Timestamps>
+            <Interruptions>
+                <InterruptionsAllowed>true</InterruptionsAllowed>
+            </Interruptions>
+            <Requests>
+                <OptionalEnergy>true</OptionalEnergy>
+            </Requests>
+        </Capabilities>
+    </DeviceInfo>
 </Device2EM>

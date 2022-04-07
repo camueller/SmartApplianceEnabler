@@ -23,6 +23,7 @@ export class Switch {
   }
 
   '@class' = Switch.TYPE;
+  id?: string;
   gpio: number;
   reverseStates: boolean;
 

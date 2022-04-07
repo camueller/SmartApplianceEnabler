@@ -31,7 +31,7 @@ import {Logger} from '../log/logger';
 import {Settings} from '../settings/settings';
 import {SettingsDefaults} from '../settings/settings-defaults';
 import {Appliance} from '../appliance/appliance';
-import {FormGroup} from '@angular/forms';
+import {FormControl, FormGroup} from '@angular/forms';
 import {FormHandler} from '../shared/form-handler';
 import {Switch} from './switch/switch';
 import {ControlSwitchComponent} from './switch/control-switch.component';
@@ -53,6 +53,7 @@ import {NotificationType} from '../notification/notification-type';
 import {ControlMeterreportingComponent} from './meterreporting/control-meterreporting.component';
 import {ControlPwmComponent} from './pwm/control-pwm.component';
 import {PwmSwitch} from './pwm/pwm-switch';
+import {MultiSwitch} from './multi/multi-switch';
 
 @Component({
   selector: 'app-control',
@@ -122,9 +123,10 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
       if (this.appliance.type === 'EVCharger') {
         this.control.type = EvCharger.TYPE;
       }
-      const controlTypeKeys = this.settings.modbusSettings
-        ? [MeterReportingSwitch.TYPE, Switch.TYPE, ModbusSwitch.TYPE, HttpSwitch.TYPE, PwmSwitch.TYPE, AlwaysOnSwitch.TYPE]
-        : [MeterReportingSwitch.TYPE, Switch.TYPE, HttpSwitch.TYPE, PwmSwitch.TYPE, AlwaysOnSwitch.TYPE];
+      const controlTypeKeys = [MeterReportingSwitch.TYPE, Switch.TYPE, HttpSwitch.TYPE, AlwaysOnSwitch.TYPE, MultiSwitch.TYPE, PwmSwitch.TYPE];
+      if(this.settings.modbusSettings) {
+        controlTypeKeys.splice(3, 0, ModbusSwitch.TYPE);
+      }
       this.translate.get(controlTypeKeys).subscribe(translatedStrings => {
         Object.keys(translatedStrings).forEach(key => {
           this.controlTypes.push({value: simpleControlType(key), viewValue: translatedStrings[key]} as ListItem);
@@ -142,6 +144,9 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
     this.formHandler.addFormControl(this.form, 'controlType', this.control && simpleControlType(this.control.type));
     this.formHandler.addFormControl(this.form, 'startingCurrentDetection',
       this.control && this.control.startingCurrentDetection);
+
+    this.form.addControl('testControlName', new FormControl('parent'))
+
   }
 
   canDeactivate(): Observable<boolean> | boolean {
@@ -198,6 +203,10 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
     return this.control && this.control.type === HttpSwitch.TYPE;
   }
 
+  get isMultiSwitch() {
+    return this.control && this.control.type === MultiSwitch.TYPE;
+  }
+
   get isPwmSwitch() {
     return this.control && this.control.type === PwmSwitch.TYPE;
   }
@@ -238,7 +247,7 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   }
 
   get canHaveStartingCurrentDetection(): boolean {
-    return !(this.isMeterReportingSwitch || this.isAlwaysOnSwitch || this.isPwmSwitch || this.control.type === MockSwitch.TYPE);
+    return !(this.isMeterReportingSwitch || this.isAlwaysOnSwitch || this.isPwmSwitch || this.isMultiSwitch || this.control.type === MockSwitch.TYPE);
   }
 
   toggleStartingCurrentDetection() {

@@ -1,10 +1,13 @@
-<div class="ControlSwitchComponent sae__fields">
-  <mat-form-field class="sae__gpio">
-    <mat-label>{{'ControlSwitchComponent.gpio' | translate}}</mat-label>
-    <input matInput type="text" formControlName="gpio"
-           required="{{formHandler.isRequired('gpio')}}">
-    <mat-error *ngIf="errors.gpio">{{errors.gpio}}</mat-error>
-  </mat-form-field>
-  <mat-checkbox formControlName="reverseStates"
-  >{{'ControlSwitchComponent.reverseStates' | translate}}</mat-checkbox>
+<div class="ControlSwitchComponent">
+  <ng-content></ng-content>
+  <div class="sae__fields">
+    <mat-form-field class="sae__gpio">
+      <mat-label>{{'ControlSwitchComponent.gpio' | translate}}</mat-label>
+      <input matInput type="text" formControlName="gpio"
+             required="{{formHandler.isRequired('gpio')}}">
+      <mat-error *ngIf="errors.gpio">{{errors.gpio}}</mat-error>
+    </mat-form-field>
+    <mat-checkbox formControlName="reverseStates"
+    >{{'ControlSwitchComponent.reverseStates' | translate}}</mat-checkbox>
+  </div>
 </div>
