@@ -148,6 +148,7 @@
   "ControlComponent.type": "Type",
   "de.avanux.smartapplianceenabler.control.AlwaysOnSwitch": "Always switched on",
   "de.avanux.smartapplianceenabler.control.HttpSwitch": "HTTP",
+  "de.avanux.smartapplianceenabler.control.LevelSwitch": "Level switch",
   "de.avanux.smartapplianceenabler.control.MeterReportingSwitch": "Meter based state detector",
   "de.avanux.smartapplianceenabler.control.ModbusSwitch": "Modbus",
   "de.avanux.smartapplianceenabler.control.MockSwitch": "Mock switch",
@@ -190,6 +191,13 @@
   "ControlModbusComponent.slaveAddress": "Slave address",
   "ControlModbusComponent.button.addModbusWrite": "Add register",
   "ControlModbusComponent.error.slaveAddress_pattern": "The slave address has to be a number",
+
+  "ControlLevelComponent.type": "Real type",
+  "ControlLevelComponent.control.heading": "Control",
+  "ControlLevelComponent.button.addControl": "Add control",
+  "ControlLevelComponent.button.removeControl": "Delete control",
+  "ControlLevelComponent.powerlevels.heading": "Power levels",
+  "ControlLevelComponent.powerlevels.power": "Power [W]",
 
   "ControlPwmComponent.gpio": "GPIO",
   "ControlPwmComponent.pwmFrequency": "PWM frequency [Hz]",

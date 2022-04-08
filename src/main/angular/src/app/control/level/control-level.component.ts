@@ -99,13 +99,14 @@ export class ControlLevelComponent implements OnChanges, OnInit {
         this.levelSwitch = changes.levelSwitch.currentValue;
       } else {
         this.levelSwitch = new LevelSwitch();
+        this.levelSwitch.controls = [];
+        this.levelSwitch.powerLevels = [];
       }
       this.expandParentForm();
     }
   }
 
   ngOnInit() {
-    console.log('levelSwitch=', this.levelSwitch);
     const controlTypeKeys = [Switch.TYPE, HttpSwitch.TYPE];
     if(this.modbusConfigured) {
       controlTypeKeys.push(ModbusSwitch.TYPE);
@@ -119,14 +120,19 @@ export class ControlLevelComponent implements OnChanges, OnInit {
   }
 
   expandParentForm() {
-    const firstControlType = simpleControlType(this.levelSwitch?.controls[0]['@class']) ?? Switch.TYPE;
-    this.formHandler.addFormControl(this.form, 'realControlType', firstControlType);
-    this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'controls',
-      this.levelSwitch.controls);
-    this.controlIds = this.levelSwitch.controls.map(control => control.id);
+    let realControlType = simpleControlType(Switch.TYPE);
+    let controls = [];
+    this.controlIds = [];
+    if(this.levelSwitch?.controls && this.levelSwitch?.controls.length > 0) {
+      realControlType = simpleControlType(this.levelSwitch?.controls[0]['@class']) ?? Switch.TYPE;
+      controls = this.levelSwitch.controls;
+      this.controlIds = this.levelSwitch.controls.map(control => control.id);
+    }
+    this.formHandler.addFormControl(this.form, 'realControlType', realControlType);
+    this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'controls', controls);
     this.form.addControl('powerLevels', this.fb.array([]));
-    this.powerLevelFormArray.clear();
-    this.levelSwitch.powerLevels.forEach(powerlevel => this.addPowerLevel(powerlevel));
+    this.powerLevelFormArray?.clear();
+    this.levelSwitch.powerLevels?.forEach(powerlevel => this.addPowerLevel(powerlevel));
   }
 
   realControlTypeChanged(newType?: string | undefined) {
@@ -177,7 +183,7 @@ export class ControlLevelComponent implements OnChanges, OnInit {
     }
     this.controlIds.push(nextId.toString());
     this.controlsFormArray.push(new FormGroup({}))
-    for(let i=0; i<this.powerLevelFormArray.length; i++) {
+    for(let i=0; i<this.powerLevelFormArray?.length ?? 0; i++) {
       (this.powerLevelFormArray.at(i) as FormGroup).addControl(nextId.toString(), new FormControl());
     }
     this.form.markAsDirty();
@@ -256,7 +262,7 @@ export class ControlLevelComponent implements OnChanges, OnInit {
       this.controlIds.forEach(controlId => {
         const switchStatus = new SwitchStatus({
           idref: controlId,
-          on: this.getPowerLevelFormGroup(i).controls[controlId].value,
+          on: this.getPowerLevelFormGroup(i).controls[controlId].value ?? false,
         });
         switchStatuses.push(switchStatus);
       });
