@@ -67,6 +67,7 @@ public class ElectricVehicleChargerTest {
 
         when(appliance.getTimeframeIntervalHandler()).thenReturn(timeframeIntervalHandler);
         when(timeframeIntervalHandler.findTimeframeIntervalsUntilFirstGap()).thenReturn(new ArrayList<>());
+        when(timeframeIntervalHandler.getActiveTimeframeInterval()).thenReturn(timeframeInterval);
     }
 
     private void log(String message) {
