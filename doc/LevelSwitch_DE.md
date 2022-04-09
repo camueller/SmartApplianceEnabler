@@ -13,10 +13,10 @@ Wird ein Gerät (hier `F-00000001-000000000001-00`) mit konfiguriertem Stufensch
 
 ```console
 sae@raspi2:~ $ grep "c.LevelSwitch" /tmp/rolling-2022-04-09.log | grep F-00000001-000000000001-00
-2022-04-09 06:40:09,762 INFO [MQTT Call: F-00000001-000000000002-00-LevelSwitch] d.a.s.c.LevelSwitch [LevelSwitch.java:199] F-00000001-000000000001-00: Setting power to 2500W
-2022-04-09 06:40:09,763 DEBUG [MQTT Call: F-00000001-000000000002-00-LevelSwitch] d.a.s.c.LevelSwitch [LevelSwitch.java:191] F-00000001-000000000001-00: Setting wrapped control switch 1 to on
-2022-04-09 06:40:09,763 DEBUG [MQTT Call: F-00000001-000000000002-00-LevelSwitch] d.a.s.c.LevelSwitch [LevelSwitch.java:191] F-00000001-000000000001-00: Setting wrapped control switch 2 to off
-2022-04-09 06:40:09,764 DEBUG [MQTT Call: F-00000001-000000000002-00-LevelSwitch] d.a.s.c.LevelSwitch [LevelSwitch.java:191] F-00000001-000000000001-00: Setting wrapped control switch 3 to on
+2022-04-09 06:40:09,762 INFO [MQTT Call: F-00000001-000000000001-00-LevelSwitch] d.a.s.c.LevelSwitch [LevelSwitch.java:199] F-00000001-000000000001-00: Setting power to 2500W
+2022-04-09 06:40:09,763 DEBUG [MQTT Call: F-00000001-000000000001-00-LevelSwitch] d.a.s.c.LevelSwitch [LevelSwitch.java:191] F-00000001-000000000001-00: Setting wrapped control switch 1 to on
+2022-04-09 06:40:09,763 DEBUG [MQTT Call: F-00000001-000000000001-00-LevelSwitch] d.a.s.c.LevelSwitch [LevelSwitch.java:191] F-00000001-000000000001-00: Setting wrapped control switch 2 to off
+2022-04-09 06:40:09,764 DEBUG [MQTT Call: F-00000001-000000000001-00-LevelSwitch] d.a.s.c.LevelSwitch [LevelSwitch.java:191] F-00000001-000000000001-00: Setting wrapped control switch 3 to on
 ```
 
 *Webmin*: In [View Logfile](Logging_DE.md#user-content-webmin-logs) gibt man hinter `Only show lines with text` ein `c.LevelSwitch` und drückt Refresh.
