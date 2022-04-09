@@ -24,4 +24,3 @@ sae@raspi2:~ $ grep "c.PwmSwitch" /tmp/rolling-2022-03-27.log | grep F-00000001-
 ```
 
 *Webmin*: In [View Logfile](Logging_DE.md#user-content-webmin-logs) gibt man hinter `Only show lines with text` ein `c.PwmSwitch` und drückt Refresh.
-nnn
