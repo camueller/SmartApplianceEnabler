@@ -18,12 +18,12 @@
 
 import {Appliance} from '../../../../../main/angular/src/app/appliance/appliance';
 
-export const heatingRod = new Appliance({
-  vendor: 'Killus Technik',
-  name: 'Vario Heizer',
-  type: 'Heater',
-  serial: '987654321',
-  minPowerConsumption: 500,
-  maxPowerConsumption: 1500,
+export const charger = new Appliance({
+  vendor: 'Sun Power',
+  name: 'Controller PWM',
+  type: 'Charger',
+  serial: '654987',
+  minPowerConsumption: 100,
+  maxPowerConsumption: 2000,
   interruptionsAllowed: true,
 });

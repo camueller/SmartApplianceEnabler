@@ -34,6 +34,8 @@ import {SlaveElectricityMeter} from '../../../../main/angular/src/app/meter/slav
 import {SlaveMeterPage} from '../page/meter/slave-meter.page';
 import {PwmSwitch} from '../../../../main/angular/src/app/control/pwm/pwm-switch';
 import {PwmControlPage} from '../page/control/pwm-control.page';
+import {LevelSwitch} from '../../../../main/angular/src/app/control/level/level-switch';
+import {LevelControlPage} from '../page/control/level-control.page';
 
 export function isDebug() {
   return !!process.env.DEBUG;
@@ -147,6 +149,9 @@ export async function createControl(t: TestController, applianceId: string, cont
   else if (control.type === ModbusSwitch.TYPE) {
     await ModbusControlPage.setModbusSwitch(t, control.modbusSwitch);
   }
+  else if (control.type === LevelSwitch.TYPE) {
+    await LevelControlPage.setLevelSwitch(t, control.levelSwitch);
+  }
   else if (control.type === PwmSwitch.TYPE) {
     await PwmControlPage.setPwmSwitch(t, control.pwmSwitch);
   }
@@ -173,6 +178,9 @@ export async function assertControl(t: TestController, applianceId: string, cont
   }
   else if (control.type === ModbusSwitch.TYPE) {
     await ModbusControlPage.assertModbusSwitch(t, control.modbusSwitch);
+  }
+  else if (control.type === LevelSwitch.TYPE) {
+    await LevelControlPage.assertLevelSwitch(t, control.levelSwitch);
   }
   else if (control.type === PwmSwitch.TYPE) {
     await PwmControlPage.assertPwmSwitch(t, control.pwmSwitch);
